@@ -815,7 +815,6 @@ fi
 ## Font Loaders
 
 PKG_CHECK_MODULES([EET], [eet >= 1.7.0], [], [AC_MSG_ERROR([EET not found])])
-AC_DEFINE([BUILD_FONT_LOADER_EET], [1], [EET Font Loader Support])
 requirement_evas="eet >= 1.7.0 ${requirement_evas}"
 
 #####################################################################

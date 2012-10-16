@@ -6,9 +6,7 @@
 #include <sys/time.h>
 #endif
 
-#ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
-#endif
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -99,7 +97,6 @@ _font_slave_source_load(const char *file, const char *name)
              return NULL;
           }
      }
-#ifdef BUILD_FONT_LOADER_EET
    else
      {
         Eet_File *ef;
@@ -131,7 +128,6 @@ _font_slave_source_load(const char *file, const char *name)
              return NULL;
           }
      }
-#endif
 
    error = FT_Select_Charmap(fsi->face, ft_encoding_unicode);
    if (error)
@@ -600,9 +596,7 @@ cserve2_font_init(void)
    error = FT_Init_FreeType(&cserve2_ft_lib);
    if (error) return;
 
-#ifdef BUILD_FONT_LOADER_EET
    eet_init();
-#endif
 }
 
 void
@@ -619,9 +613,7 @@ cserve2_font_shutdown(void)
    FT_Done_FreeType(cserve2_ft_lib);
    cserve2_ft_lib = 0;
 
-#ifdef BUILD_FONT_LOADER_EET
    eet_shutdown();
-#endif
 }
 
 void

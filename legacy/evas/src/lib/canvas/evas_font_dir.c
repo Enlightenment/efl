@@ -6,9 +6,7 @@
 # include <Evil.h>
 #endif
 
-#ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
-#endif
 
 #ifdef HAVE_FONTCONFIG
 #include <fontconfig/fontconfig.h>
@@ -593,7 +591,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
      {
 	if (l == fonts || !font) /* First iteration OR no font */
 	  {
-#ifdef BUILD_FONT_LOADER_EET
 	     if (source) /* Load Font from "eet" source */
 	       {
 		  Eet_File *ef;
@@ -626,7 +623,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	       }
 	     if (!font) /* Source load failed */
 	       {
-#endif
 		  if (evas_file_path_is_full_path((char *)nm)) /* Try filename */
 		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size, wanted_rend);
 		  else /* search font path */
@@ -646,13 +642,10 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 			      }
 			 }
 		    }
-#ifdef BUILD_FONT_LOADER_EET
 	       }
-#endif
 	  }
 	else /* Base font loaded, append others */
 	  {
-#ifdef BUILD_FONT_LOADER_EET
 	     void *ok = NULL;
 
 	     if (source)
@@ -689,7 +682,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	       }
 	     if (!ok)
 	       {
-#endif
 		  if (evas_file_path_is_full_path((char *)nm))
 		    evas->engine.func->font_add(evas->engine.data.output, font, (char *)nm, size, wanted_rend);
 		  else
@@ -709,9 +701,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 			      }
 			 }
 		    }
-#ifdef BUILD_FONT_LOADER_EET
 	       }
-#endif
 	  }
 	eina_stringshare_del(nm);
      }
