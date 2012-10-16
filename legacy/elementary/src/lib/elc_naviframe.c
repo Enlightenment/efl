@@ -1312,14 +1312,13 @@ elm_naviframe_item_insert_before(Evas_Object *obj,
                                  Evas_Object *content,
                                  const char *item_style)
 {
-   Elm_Naviframe_Item *it, *prev_it;
+   Elm_Naviframe_Item *it, *prev_it = NULL;
 
    ELM_NAVIFRAME_CHECK(obj) NULL;
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(before, NULL);
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
    it = (Elm_Naviframe_Item *)before;
-   prev_it = NULL;
    if (EINA_INLIST_GET(it)->prev)
      prev_it = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(it)->prev,
                                          Elm_Naviframe_Item);
