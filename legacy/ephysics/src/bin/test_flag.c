@@ -4,7 +4,7 @@
 
 #include "ephysics_test.h"
 
-typedef struct _Grabbing_Data
+typedef struct _Dragging_Data
 {
   int mouse_status; // 0, up, 1, down
   EPhysics_Body *body;
@@ -13,58 +13,58 @@ typedef struct _Grabbing_Data
     int y;
     int node;
   } click_data;
-} Grabbing_Data;
+} Dragging_Data;
 
 static void
 _on_delete(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
-   Grabbing_Data *grabbing = ephysics_body_data_get(body);
-   free(grabbing);
+   Dragging_Data *dragging = ephysics_body_data_get(body);
+   free(dragging);
 }
 
 static void
 _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
-  Grabbing_Data *grabbing = data;
+  Dragging_Data *dragging = data;
   Evas_Event_Mouse_Down *mdown = event_info;
   Evas_Coord x, y;
 
   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-  grabbing->mouse_status = 1;
-  grabbing->click_data.x = mdown->output.x - x;
-  grabbing->click_data.y = mdown->output.y - y;
-  grabbing->click_data.node = ephysics_body_soft_body_triangle_index_get(
-                               grabbing->body, mdown->output.x, mdown->output.y);
+  dragging->mouse_status = 1;
+  dragging->click_data.x = mdown->output.x - x;
+  dragging->click_data.y = mdown->output.y - y;
+  dragging->click_data.node = ephysics_body_soft_body_triangle_index_get(
+                               dragging->body, mdown->output.x, mdown->output.y);
 
-  ephysics_body_soft_body_dragging_set(grabbing->body,
-                                       grabbing->click_data.node);
+  ephysics_body_soft_body_dragging_set(dragging->body,
+                                       dragging->click_data.node);
 }
 
 static void
 _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-  Grabbing_Data *grabbing = data;
-  ephysics_body_soft_body_dragging_unset(grabbing->body);
-  grabbing->mouse_status = 0;
+  Dragging_Data *dragging = data;
+  ephysics_body_soft_body_dragging_unset(dragging->body);
+  dragging->mouse_status = 0;
 }
 
 static void
 _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-  Grabbing_Data *grabbing = data;
+  Dragging_Data *dragging = data;
   Evas_Event_Mouse_Move *mmove = event_info;
   Evas_Coord nx, ny;
 
-  if (!grabbing->mouse_status) return;
+  if (!dragging->mouse_status) return;
 
   nx = mmove->cur.output.x;
   ny = mmove->cur.output.y;
 
-  if (nx < 0 || ny < 0 || grabbing->click_data.node < 0) return;
+  if (nx < 0 || ny < 0 || dragging->click_data.node < 0) return;
 
-  DBG("node: %d, nx: %d, ny: %d\n", grabbing->click_data.node, nx, ny);
-  ephysics_body_soft_body_triangle_move(grabbing->body,
-                                        grabbing->click_data.node, nx, ny, 10);
+  DBG("node: %d, nx: %d, ny: %d\n", dragging->click_data.node, nx, ny);
+  ephysics_body_soft_body_triangle_move(dragging->body,
+                                        dragging->click_data.node, nx, ny, 10);
 }
 
 static void
@@ -72,7 +72,7 @@ _world_populate(Test_Data *test_data)
 {
    Evas_Object *evas_obj;
    EPhysics_Body *flag_body, *pole_body;
-   Grabbing_Data *grabbing;
+   Dragging_Data *dragging;
 
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
@@ -108,16 +108,16 @@ _world_populate(Test_Data *test_data)
    ephysics_body_cloth_anchor_full_add(flag_body, pole_body,
                                        EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT);
 
-   grabbing = calloc(1, sizeof(Grabbing_Data));
-   grabbing->body = flag_body;
-   ephysics_body_data_set(flag_body, grabbing);
+   dragging = calloc(1, sizeof(Dragging_Data));
+   dragging->body = flag_body;
+   ephysics_body_data_set(flag_body, dragging);
 
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _mouse_down_cb, grabbing);
+                                  _mouse_down_cb, dragging);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _mouse_up_cb, grabbing);
+                                  _mouse_up_cb, dragging);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _mouse_move_cb, grabbing);
+                                  _mouse_move_cb, dragging);
 
   ephysics_body_event_callback_add(flag_body, EPHYSICS_CALLBACK_BODY_DEL,
                                     _on_delete, NULL);
