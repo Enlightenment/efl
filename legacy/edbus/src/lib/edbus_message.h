@@ -125,7 +125,7 @@ EAPI EDBus_Message_Iter *edbus_message_iter_container_new(EDBus_Message_Iter *it
 /**
  * @brief Append a basic type to EDBus_Iterator.
  */
-EAPI Eina_Bool               edbus_message_iter_append_basic(EDBus_Message_Iter *iter, int type, ...) EINA_ARG_NONNULL(1, 3);
+EAPI Eina_Bool               edbus_message_iter_basic_append(EDBus_Message_Iter *iter, int type, ...) EINA_ARG_NONNULL(1, 3);
 /**
  * @brief Set data to EDBus_Message_Iter. For each complete in signature
  * you need pass the value, in case of complex type a pointer to be allocated a
@@ -181,7 +181,7 @@ EAPI EDBus_Message_Iter *edbus_message_iter_get(EDBus_Message *msg) EINA_ARG_NON
 /**
  * @brief Get a basic type from EDBus_Iterator.
  */
-EAPI void                    edbus_message_iter_get_basic(EDBus_Message_Iter *iter, void *value) EINA_ARG_NONNULL(1, 2);
+EAPI void                    edbus_message_iter_basic_get(EDBus_Message_Iter *iter, void *value) EINA_ARG_NONNULL(1, 2);
 /**
  * @brief Returns the current signature of a message iterator.
  *

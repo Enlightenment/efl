@@ -505,7 +505,7 @@ edbus_message_iter_container_close(EDBus_Message_Iter *iter, EDBus_Message_Iter 
 }
 
 EAPI Eina_Bool
-edbus_message_iter_append_basic(EDBus_Message_Iter *iter, int type, ...)
+edbus_message_iter_basic_append(EDBus_Message_Iter *iter, int type, ...)
 {
    Eina_Bool r;
    va_list vl;
@@ -520,7 +520,7 @@ edbus_message_iter_append_basic(EDBus_Message_Iter *iter, int type, ...)
 }
 
 EAPI void
-edbus_message_iter_get_basic(EDBus_Message_Iter *iter, void *value)
+edbus_message_iter_basic_get(EDBus_Message_Iter *iter, void *value)
 {
    EDBUS_MESSAGE_ITERATOR_CHECK(iter);
    EINA_SAFETY_ON_TRUE_RETURN(iter->writable);

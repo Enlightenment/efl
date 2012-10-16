@@ -231,7 +231,7 @@ _properties_get(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    reply = edbus_message_method_return_new(msg);
    iter = edbus_message_iter_get(reply);
    variant = edbus_message_iter_container_new(iter, 'v', "s");
-   edbus_message_iter_append_basic(variant, 's', resp2);
+   edbus_message_iter_basic_append(variant, 's', resp2);
    printf("get %s\n", resp2);
    edbus_message_iter_container_close(iter, variant);
 

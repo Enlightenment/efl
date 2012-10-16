@@ -521,10 +521,10 @@ edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const 
    sig[1] = 0;
    msg = edbus_proxy_method_call_new(get_properties_proxy(proxy), "Set");
    iter = edbus_message_iter_get(msg);
-   edbus_message_iter_append_basic(iter, 's', proxy->interface);
-   edbus_message_iter_append_basic(iter, 's', name);
+   edbus_message_iter_basic_append(iter, 's', proxy->interface);
+   edbus_message_iter_basic_append(iter, 's', name);
    variant = edbus_message_iter_container_new(iter, 'v', sig);
-   edbus_message_iter_append_basic(variant, type, value);
+   edbus_message_iter_basic_append(variant, type, value);
    edbus_message_iter_container_close(iter, variant);
 
    pending = edbus_proxy_send(get_properties_proxy(proxy), msg, cb, data, -1);
