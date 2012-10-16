@@ -1612,10 +1612,7 @@ ephysics_world_light_all_bodies_get(const EPhysics_World *world)
      }
 
    if (!world->light)
-     {
-	INF("Light isn't set, can't get light property");
-	return EINA_FALSE;
-     }
+     return EINA_FALSE;
 
    return world->light->all_bodies;
 }
