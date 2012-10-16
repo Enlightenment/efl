@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment Ecore 1.7.0\n"
-"Report-Msgid-Bugs-To: Enlightenment-Devel <enlightenment-devel@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2012-08-30 22:29+0900\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2012-10-16 11:52+0900\n"
 "PO-Revision-Date: 2012-08-30 22:50+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
-"Language-Team: Enlightenment-Intl <enlightenment-intl@lists.sourceforge.net>\n"
+"Language-Team: Enlightenment-Intl <enlightenment-intl@lists.sourceforge."
+"net>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,25 +72,19 @@ msgstr "오류: 알 수 없는 옵션 -%c 입니다.\n"
 msgid "ERROR: "
 msgstr "오류: "
 
-#: src/lib/ecore/ecore_getopt.c:931
-#: src/lib/ecore/ecore_getopt.c:1068
-#: src/lib/ecore/ecore_getopt.c:1084
-#: src/lib/ecore/ecore_getopt.c:1099
-#: src/lib/ecore/ecore_getopt.c:1116
-#: src/lib/ecore/ecore_getopt.c:1163
-#: src/lib/ecore/ecore_getopt.c:1283
-#: src/lib/ecore/ecore_getopt.c:1324
+#: src/lib/ecore/ecore_getopt.c:931 src/lib/ecore/ecore_getopt.c:1068
+#: src/lib/ecore/ecore_getopt.c:1084 src/lib/ecore/ecore_getopt.c:1099
+#: src/lib/ecore/ecore_getopt.c:1116 src/lib/ecore/ecore_getopt.c:1163
+#: src/lib/ecore/ecore_getopt.c:1283 src/lib/ecore/ecore_getopt.c:1324
 msgid "value has no pointer set.\n"
 msgstr "값에 포인터 집합이 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:963
-#: src/lib/ecore/ecore_getopt.c:1183
+#: src/lib/ecore/ecore_getopt.c:963 src/lib/ecore/ecore_getopt.c:1183
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "알 수 없는 부울린 값 %s 입니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1014
-#: src/lib/ecore/ecore_getopt.c:1271
+#: src/lib/ecore/ecore_getopt.c:1014 src/lib/ecore/ecore_getopt.c:1271
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "잘못된 숫자 형식 %s 입니다\n"
@@ -182,4 +177,3 @@ msgstr "오류: '%s' 값의 좌표가 올바르지 않습니다\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "오류: '%s' 값의 크기가 올바르지 않습니다\n"
-

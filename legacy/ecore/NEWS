@@ -41,6 +41,7 @@ Fixes:
 
 Removal:
     * 16bpp evas engine support removed (API still there, but inactive).
+    * 8bpp evas engine support removed (API still there, but inactive).
     
 Improvements:
 

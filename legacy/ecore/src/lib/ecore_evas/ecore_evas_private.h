@@ -29,10 +29,6 @@
 # include <Evas_Engine_GL_X11.h>
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
-# include <Evas_Engine_Software_8_X11.h>
-#endif
-
 #ifdef BUILD_ECORE_EVAS_FB
 # include <Evas_Engine_FB.h>
 #endif

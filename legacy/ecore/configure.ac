@@ -157,7 +157,6 @@ want_ecore_evas="yes"
 want_ecore_evas_software_buffer="yes"
 want_ecore_evas_software_x11="no"
 want_ecore_evas_opengl_x11="no"
-want_ecore_evas_software_8_x11="no"
 want_ecore_evas_software_xcb="no"
 want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
@@ -229,7 +228,6 @@ case "$host_os" in
       want_ecore_wayland="yes"
       want_ecore_evas_software_x11="yes"
       want_ecore_evas_opengl_x11="yes"
-      want_ecore_evas_software_8_x11="yes"
       want_ecore_evas_software_xcb="no"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
@@ -1820,17 +1818,8 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" -o "x${have_ecore_evas_opengl_
     fi
 fi
 
-# ecore_evas_software_x11 8 bits
-
-ECORE_EVAS_CHECK_MODULE([software-8-x11],
-    [$want_ecore_evas_software_8_x11],
-    [Software 8bit X11],
-    $have_ecore_x_xcb)
-
-
 if test "x$have_ecore_evas_software_x11" = "xyes" -o \
         "x$have_ecore_evas_opengl_x11" = "xyes" -o \
-        "x$have_ecore_evas_software_8_x11" = "xyes" -o \
         "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X Window Engines in Ecore_Evas])
    requirements_ecore_evas="ecore-x >= 1.6.99 ${requirements_ecore_evas}"
@@ -2222,7 +2211,6 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    DirectFB...................: $have_ecore_evas_directfb"
   echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
-  echo "    Software 8bit grayscale XCB: $have_ecore_evas_software_8_x11"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
   echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"

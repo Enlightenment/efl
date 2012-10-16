@@ -1007,3 +1007,7 @@
 
        * Since evas has 16bit engines removed, remove support from ecore-evas.
 
+2012-10-16  Carsten Haitzler (The Rasterman)
+
+       * Since evas has 8bit engines removed, remove support from ecore-evas.
+
