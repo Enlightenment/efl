@@ -7,14 +7,18 @@
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
-static int _ecore_wl_cb_event_mask_update(unsigned int mask, void *data);
-static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl __UNUSED__);
-static void _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char *interface, unsigned int version __UNUSED__, void *data);
+static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl);
+static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version __UNUSED__);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
+static const struct wl_registry_listener _ecore_wl_registry_listener = 
+{
+   _ecore_wl_cb_handle_global,
+   NULL // handle_global_remove
+};
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
@@ -130,25 +134,23 @@ ecore_wl_init(const char *name)
         return --_ecore_wl_init_count;
      }
 
-   _ecore_wl_disp->fd = 
-     wl_display_get_fd(_ecore_wl_disp->wl.display, 
-                       _ecore_wl_cb_event_mask_update, _ecore_wl_disp);
+   _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
    _ecore_wl_disp->fd_hdl = 
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd, ECORE_FD_READ, 
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd, 
+                               ECORE_FD_READ | ECORE_FD_WRITE, 
                                _ecore_wl_cb_handle_data, _ecore_wl_disp, 
                                NULL, NULL);
 
    wl_list_init(&_ecore_wl_disp->inputs);
    wl_list_init(&_ecore_wl_disp->outputs);
 
-   wl_display_add_global_listener(_ecore_wl_disp->wl.display, 
-                                  _ecore_wl_cb_handle_global, _ecore_wl_disp);
+   _ecore_wl_disp->wl.registry = 
+     wl_display_get_registry(_ecore_wl_disp->wl.display);
+   wl_registry_add_listener(_ecore_wl_disp->wl.registry, 
+                            &_ecore_wl_registry_listener, _ecore_wl_disp);
 
-   /* Init egl */
-
-   /* FIXME: Process connection events ?? */
-   /* wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE); */
+   wl_display_dispatch(_ecore_wl_disp->wl.display);
 
    /* TODO: create pointer surfaces */
 
@@ -206,8 +208,7 @@ ecore_wl_flush(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   while (_ecore_wl_disp->mask & WL_DISPLAY_WRITABLE)
-     wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_WRITABLE);
+   wl_display_flush(_ecore_wl_disp->wl.display);
 }
 
 /**
@@ -323,7 +324,7 @@ ecore_wl_dpi_get(void)
 EAPI void 
 ecore_wl_display_iterate(void)
 {
-   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
+   wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
 
 /**
@@ -396,32 +397,27 @@ _ecore_wl_shutdown(Eina_Bool close)
    return _ecore_wl_init_count;
 }
 
-static int 
-_ecore_wl_cb_event_mask_update(unsigned int mask, void *data)
-{
-   Ecore_Wl_Display *ewd;
-
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   ewd = data;
-   ewd->mask = mask;
-   return 0;
-}
-
 static Eina_Bool 
-_ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
+_ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl_Display *ewd;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
-   wl_display_iterate(ewd->wl.display, ewd->mask);
+
+   /* FIXME: This should also catch ECORE_FD_ERROR and exit */
+
+   if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
+     wl_display_dispatch(ewd->wl.display);
+   else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
+     wl_display_flush(ewd->wl.display);
+
    return ECORE_CALLBACK_RENEW;
 }
 
 static void 
-_ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char *interface, unsigned int version __UNUSED__, void *data)
+_ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version __UNUSED__)
 {
    Ecore_Wl_Display *ewd;
 
@@ -429,21 +425,23 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
 
    ewd = data;
 
-   /* TODO: Add listener for wl_display so we can catch fatal errors !! */
-
    if (!strcmp(interface, "wl_compositor"))
-     ewd->wl.compositor = wl_display_bind(disp, id, &wl_compositor_interface);
+     {
+        ewd->wl.compositor = 
+          wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+     }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl_input_add(ewd, id);
    else if (!strcmp(interface, "wl_shell"))
-     ewd->wl.shell = wl_display_bind(disp, id, &wl_shell_interface);
-   /* else if (!strcmp(interface, "desktop_shell")) */
-   /*   ewd->wl.desktop_shell = wl_display_bind(disp, id, &wl_shell_interface); */
+     {
+        ewd->wl.shell = 
+          wl_registry_bind(registry, id, &wl_shell_interface, 1);
+     }
    else if (!strcmp(interface, "wl_shm"))
      {
-        ewd->wl.shm = wl_display_bind(disp, id, &wl_shm_interface);
+        ewd->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
 
         /* FIXME: We should not hard-code a cursor size here, and we should 
          * also import the theme name from a config or env variable */
@@ -452,7 +450,7 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
    else if (!strcmp(interface, "wl_data_device_manager"))
      {
         ewd->wl.data_device_manager = 
-          wl_display_bind(disp, id, &wl_data_device_manager_interface);
+          wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
      }
 
    if ((ewd->wl.compositor) && (ewd->wl.shm) && (ewd->wl.shell))
