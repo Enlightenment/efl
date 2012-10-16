@@ -241,7 +241,7 @@ _edbus_message_arguments_vget(EDBus_Message *msg, const char *signature, va_list
 }
 
 EAPI EDBus_Message_Iter *
-edbus_message_iter_get(EDBus_Message *msg)
+edbus_message_iter_get(const EDBus_Message *msg)
 {
    EDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    /* Something went wrong, msg->iterator should not be NULL */

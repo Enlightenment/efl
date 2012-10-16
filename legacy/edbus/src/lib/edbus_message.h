@@ -177,7 +177,7 @@ EAPI Eina_Bool               edbus_message_iter_container_close(EDBus_Message_It
 /**
  * @brief Get the main EDBus_Message_Iter from the EDBus_Message.
  */
-EAPI EDBus_Message_Iter *edbus_message_iter_get(EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI EDBus_Message_Iter *edbus_message_iter_get(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Get a basic type from EDBus_Iterator.
  */
