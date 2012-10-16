@@ -1701,18 +1701,18 @@ extern FLOAT_T          _edje_password_show_last_timeout;
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;
 
-extern Eina_Mempool *_emp_RECTANGLE;
-extern Eina_Mempool *_emp_TEXT;
-extern Eina_Mempool *_emp_IMAGE;
-extern Eina_Mempool *_emp_PROXY;
-extern Eina_Mempool *_emp_SWALLOW;
-extern Eina_Mempool *_emp_TEXTBLOCK;
-extern Eina_Mempool *_emp_GROUP;
-extern Eina_Mempool *_emp_BOX;
-extern Eina_Mempool *_emp_TABLE;
-extern Eina_Mempool *_emp_EXTERNAL;
-extern Eina_Mempool *_emp_SPACER;
-extern Eina_Mempool *_emp_part;
+EAPI extern Eina_Mempool *_emp_RECTANGLE;
+EAPI extern Eina_Mempool *_emp_TEXT;
+EAPI extern Eina_Mempool *_emp_IMAGE;
+EAPI extern Eina_Mempool *_emp_PROXY;
+EAPI extern Eina_Mempool *_emp_SWALLOW;
+EAPI extern Eina_Mempool *_emp_TEXTBLOCK;
+EAPI extern Eina_Mempool *_emp_GROUP;
+EAPI extern Eina_Mempool *_emp_BOX;
+EAPI extern Eina_Mempool *_emp_TABLE;
+EAPI extern Eina_Mempool *_emp_EXTERNAL;
+EAPI extern Eina_Mempool *_emp_SPACER;
+EAPI extern Eina_Mempool *_emp_part;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2);
 Edje_Part_Description_Common *_edje_part_description_find(Edje *ed,
@@ -1732,8 +1732,8 @@ void  _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
 void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
-void  _edje_edd_init(void);
-void  _edje_edd_shutdown(void);
+EAPI void _edje_edd_init(void);
+EAPI void _edje_edd_shutdown(void);
 
 int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
@@ -1916,7 +1916,7 @@ Edje_File *_edje_cache_file_coll_open(const char *file, const char *coll, int *e
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
-void _edje_cache_file_unref(Edje_File *edf);
+EAPI void _edje_cache_file_unref(Edje_File *edf);
 
 void _edje_embryo_globals_init(Edje *ed);
 

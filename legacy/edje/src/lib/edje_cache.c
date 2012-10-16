@@ -530,7 +530,7 @@ _edje_cache_file_clean(void)
      }
 }
 
-void
+EAPI void
 _edje_cache_file_unref(Edje_File *edf)
 {
    edf->references--;

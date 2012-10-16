@@ -58,7 +58,7 @@ Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_limit = NULL;
 
 #define EMP(Type, Minus)				\
-  Eina_Mempool *_emp_##Type = NULL;			\
+  EAPI Eina_Mempool *_emp_##Type = NULL;		\
 							\
   static void *						\
   mem_alloc_##Minus(size_t size)			\
