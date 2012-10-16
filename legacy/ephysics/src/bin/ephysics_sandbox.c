@@ -888,6 +888,7 @@ _category_add(Evas_Object *win, Evas_Object *bxparent, const char *label,
 
    cfr = elm_frame_add(win);
    elm_frame_autocollapse_set(cfr, collapse);
+   elm_frame_collapse_set(cfr, collapse);
    elm_object_text_set(cfr, label);
    evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
@@ -1282,7 +1283,7 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
 {
    Evas_Object *bx, *widget;
 
-   bx = _category_add(win, bxparent, "World", EINA_TRUE);
+   bx = _category_add(win, bxparent, "World", EINA_FALSE);
    _sandie_label_add(win, bx, "Gravity (px/s²)");
    widget = _sandie_slider_add(win, bx, "X:", "%1.2f",
                                -1000, 1000, 0);
@@ -1301,7 +1302,7 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _world_max_sleeping_time_cb, world);
 
-   bx = _category_add(win, bxparent, "Boundaries", EINA_TRUE);
+   bx = _category_add(win, bxparent, "Boundaries", EINA_FALSE);
    widget = _sandie_slider_add(win, bx, "Friction", "%1.3f",
                                0, 1, 0.5);
    evas_object_data_set(widget, "win", win);
