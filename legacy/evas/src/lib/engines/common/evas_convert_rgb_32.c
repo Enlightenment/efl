@@ -1,8 +1,6 @@
 #include "evas_common.h"
 #include "evas_convert_rgb_32.h"
 
-#ifdef BUILD_CONVERT_32_RGB_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT0
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -24,11 +22,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jum
      }
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGB_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT180
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -45,8 +39,6 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
    CONVERT_LOOP_END_ROT_180();
    return;
 }
-#endif
-#endif
 
 #ifdef TILE_ROTATE
 #define FAST_SIMPLE_ROTATE(suffix, pix_type) \
@@ -196,9 +188,6 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
 FAST_SIMPLE_ROTATE(8888, DATA32)
 #endif
 
-
-#ifdef BUILD_CONVERT_32_RGB_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT270
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -219,11 +208,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int
 #endif
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGB_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT90
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -341,11 +326,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 # endif
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGBX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT0
 void
 evas_common_convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -363,11 +344,7 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_ju
    CONVERT_LOOP_END_ROT_0();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGBX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT180
 void
 evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -385,11 +362,7 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_180 (DATA32 *src, DATA8 *dst, in
    CONVERT_LOOP_END_ROT_180();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGBX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT270
 void
 evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -407,11 +380,7 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, in
    CONVERT_LOOP_END_ROT_270();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGBX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT90
 void
 evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -429,11 +398,7 @@ evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int
    CONVERT_LOOP_END_ROT_90();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGR_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT0
 void
 evas_common_convert_rgba_to_32bpp_bgr_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -450,11 +415,7 @@ evas_common_convert_rgba_to_32bpp_bgr_8888 (DATA32 *src, DATA8 *dst, int src_jum
    CONVERT_LOOP_END_ROT_0();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGR_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT180
 void
 evas_common_convert_rgba_to_32bpp_bgr_8888_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -471,11 +432,7 @@ evas_common_convert_rgba_to_32bpp_bgr_8888_rot_180 (DATA32 *src, DATA8 *dst, int
    CONVERT_LOOP_END_ROT_180();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGR_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT270
 void
 evas_common_convert_rgba_to_32bpp_bgr_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -492,11 +449,7 @@ evas_common_convert_rgba_to_32bpp_bgr_8888_rot_270 (DATA32 *src, DATA8 *dst, int
    CONVERT_LOOP_END_ROT_270();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGR_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT90
 void
 evas_common_convert_rgba_to_32bpp_bgr_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -513,11 +466,7 @@ evas_common_convert_rgba_to_32bpp_bgr_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
    CONVERT_LOOP_END_ROT_90();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGRX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT0
 void
 evas_common_convert_rgba_to_32bpp_bgrx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -534,11 +483,7 @@ evas_common_convert_rgba_to_32bpp_bgrx_8888 (DATA32 *src, DATA8 *dst, int src_ju
    CONVERT_LOOP_END_ROT_0();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGRX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT180
 void
 evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_180 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -555,11 +500,7 @@ evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_180 (DATA32 *src, DATA8 *dst, in
    CONVERT_LOOP_END_ROT_180();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGRX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT270
 void
 evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -576,11 +517,7 @@ evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_270 (DATA32 *src, DATA8 *dst, in
    CONVERT_LOOP_END_ROT_270();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_BGRX_8888
-#ifdef BUILD_CONVERT_32_RGB_ROT90
 void
 evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -597,11 +534,7 @@ evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_90 (DATA32 *src, DATA8 *dst, int
    CONVERT_LOOP_END_ROT_90();
    return;
 }
-#endif
-#endif
 
-#ifdef BUILD_CONVERT_32_RGB_666
-#ifdef BUILD_CONVERT_32_RGB_ROT0
 void
 evas_common_convert_rgba_to_32bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -620,6 +553,3 @@ evas_common_convert_rgba_to_32bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump,
    CONVERT_LOOP_END_ROT_0();
    return;
 }
-#endif
-#endif
-

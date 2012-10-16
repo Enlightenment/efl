@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_convert_grypal_6.h"
 
-#ifdef BUILD_CONVERT_8_GRAYSCALE_64
 void evas_common_convert_rgba_to_8bpp_pal_gray64(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal)
 {
     DATA32 *src_ptr;
@@ -20,4 +19,3 @@ void evas_common_convert_rgba_to_8bpp_pal_gray64(DATA32 *src, DATA8 *dst, int sr
 
     CONVERT_LOOP_END_ROT_0();
 }
-#endif

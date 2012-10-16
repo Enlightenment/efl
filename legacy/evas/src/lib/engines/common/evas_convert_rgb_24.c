@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_convert_rgb_24.h"
 
-#ifdef BUILD_CONVERT_24_RGB_888
 void
 evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -27,8 +26,7 @@ evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump,
      }
    return;
 }
-#endif
-#ifdef BUILD_CONVERT_24_RGB_666
+
 void
 evas_common_convert_rgba_to_24bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -59,8 +57,7 @@ evas_common_convert_rgba_to_24bpp_rgb_666(DATA32 *src, DATA8 *dst, int src_jump,
      }
    return;
 }
-#endif
-#ifdef BUILD_CONVERT_24_BGR_888
+
 void
 evas_common_convert_rgba_to_24bpp_bgr_888(DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x __UNUSED__, int dith_y __UNUSED__, DATA8 *pal __UNUSED__)
 {
@@ -86,4 +83,3 @@ evas_common_convert_rgba_to_24bpp_bgr_888(DATA32 *src, DATA8 *dst, int src_jump,
      }
    return;
 }
-#endif

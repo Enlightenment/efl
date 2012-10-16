@@ -31,7 +31,6 @@ evas_blit_main.c \
 evas_convert_color.c \
 evas_convert_colorspace.c \
 evas_convert_gry_1.c \
-evas_convert_gry_4.c \
 evas_convert_gry_8.c \
 evas_convert_main.c \
 evas_convert_rgb_16.c \
@@ -74,7 +73,6 @@ evas_blend_private.h \
 evas_convert_color.h \
 evas_convert_colorspace.h \
 evas_convert_gry_1.h \
-evas_convert_gry_4.h \
 evas_convert_gry_8.h \
 evas_convert_grypal_6.h \
 evas_convert_main.h \

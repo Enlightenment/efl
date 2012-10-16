@@ -8,7 +8,6 @@ extern const DATA8 _evas_dither_44[4][4];
 extern const DATA8 _evas_dither_128128[128][128];
 #endif
 
-#ifdef BUILD_CONVERT_8_RGB_332
 void evas_common_convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -40,8 +39,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_666
+
 static DATA8 p_to_6[256];
 static DATA8 p_to_6_err[256];
 
@@ -80,8 +78,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_666_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_232
+
 void evas_common_convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -113,8 +110,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_222
+
 void evas_common_convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -145,8 +141,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_221
+
 void evas_common_convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -178,8 +173,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_121
+
 void evas_common_convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -212,8 +206,7 @@ void evas_common_convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif
-#ifdef BUILD_CONVERT_8_RGB_111
+
 void evas_common_convert_rgba_to_8bpp_rgb_111_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
@@ -245,4 +238,3 @@ void evas_common_convert_rgba_to_8bpp_rgb_111_dith     (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_0();
 }
-#endif

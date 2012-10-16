@@ -245,13 +245,6 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 
    if (!done)
      {
-# ifdef HARD_CODED_P3
-	cpu_feature_mask |= CPU_FEATURE_MMX;
-	cpu_feature_mask |= CPU_FEATURE_SSE;
-#endif
-#ifdef HARD_CODED_P2
-	cpu_feature_mask |= CPU_FEATURE_MMX;
-#endif
 	if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
 	if (cpu_feature_mask & CPU_FEATURE_MMX2) do_sse = 1;
 	if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
