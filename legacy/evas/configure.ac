@@ -1041,9 +1041,7 @@ case $host_cpu in
             AC_DEFINE(HAVE_ALTIVEC_H, 1, [Have altivec.h header file])
             build_cpu_altivec="yes"
           ],
-          [
-            build_cpu_altivec="no"
-          ]
+          [build_cpu_altivec="no"]
         )
         CFLAGS=$save_CFLAGS
         CPPFLAGS=$save_CPPFLAGS
@@ -1122,11 +1120,17 @@ AC_ARG_ENABLE(cpu-sse3,
 )
 
 EVAS_SSE3_CFLAGS=" "
+EVAS_ALTIVEC_CFLAGS=" "
+
 if test "x$build_cpu_sse3" = "xyes" ; then
     EVAS_SSE3_CFLAGS="-msse3 "
 fi
+if test "x$build_cpu_altivec" = "xyes" ; then
+    EVAS_ALTIVEC_CFLAGS="-maltivec "
+fi
 
 AC_SUBST(CFLAGS)
+AC_SUBST(EVAS_ALTIVEC_CFLAGS)
 AC_SUBST(EVAS_SSE3_CFLAGS)
 
 #######################################

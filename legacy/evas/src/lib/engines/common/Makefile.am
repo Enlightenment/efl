@@ -1,7 +1,6 @@
+MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = evas_op_add evas_op_blend evas_op_copy evas_op_mask evas_op_mul evas_op_sub
-
-MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS	     = -I. \
 		       -I$(top_srcdir)/src/lib \
@@ -11,12 +10,10 @@ AM_CPPFLAGS	     = -I. \
 		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
-                       @PIXMAN_CFLAGS@ \
-		       @EET_CFLAGS@ @pthread_cflags@ \
-		       @EVAS_GENERAL_CFLAGS@ \
-                       @FRIBIDI_CFLAGS@ @HARFBUZZ_CFLAGS@ \
-                       @PIXMAN_CFLAGS@
+		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ @PIXMAN_CFLAGS@ \
+                       @EET_CFLAGS@ @pthread_cflags@ @EVAS_GENERAL_CFLAGS@ \
+                       @FRIBIDI_CFLAGS@ @HARFBUZZ_CFLAGS@ @PIXMAN_CFLAGS@ \
+                       @EVAS_ALTIVEC_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
