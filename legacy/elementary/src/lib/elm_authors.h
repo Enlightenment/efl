@@ -60,6 +60,13 @@
  * @author Jérôme Pinot <ngc891@@gmail.com>
  * @author Davide Andreoli (davemds) <dave@@gurumeditation.it>
  * @author Michal Pakula vel Rutka <m.pakula@@samsung.com>
+ * @author Thiep Ha <thiep.ha@@samsung.com>
+ * @author Artem Popov <artem.popov@@samsung.com>
+ * @author Minseok Kim <minseok3.kim@@samsung.com>
+ * @author Jean-Philippe André <jpeg@@videolan.org>
+ * @author JiHyeon Seol <jihyeon.seol@@samsung.com>
+ * @author Flavio Ceolin <flavio.ceolin@@profusion.mobi>
+ * @author Igor Murzov <e-mail@@date.by>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
