@@ -251,7 +251,10 @@ ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h)
 
    if (!win) return;
    if (win->surface) 
-     wl_surface_damage(win->surface, x, y, w, h);
+     {
+        wl_surface_damage(win->surface, x, y, w, h);
+        wl_surface_commit(win->surface);
+     }
 }
 
 EAPI void 
@@ -286,6 +289,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
              wl_surface_attach(win->surface, buffer, x, y);
              wl_surface_damage(win->surface, 0, 0, 
                                win->allocation.w, win->allocation.h);
+             wl_surface_commit(win->surface);
 
              win->server_allocation = win->allocation;
           }
