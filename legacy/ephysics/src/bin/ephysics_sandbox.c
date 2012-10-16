@@ -113,7 +113,7 @@ _body_type_set(Evas_Object *obj, EPhysics_Body *body)
 
    ephysics_body_del(body); //FIX IT
 
-   if (elm_check_state_get(obj))
+   if (elm_radio_value_get(obj))
      {
         body = ephysics_body_soft_circle_add(world);
         ephysics_body_soft_body_hardness_set(body, 10);
@@ -813,24 +813,41 @@ _sandie_enum_add(Evas_Object *win, Evas_Object *bxparent,
 }
 
 static Evas_Object *
-_sandie_toggle_add(Evas_Object *win, Evas_Object *bxparent,
-                   const char *subcategory, const char *labeloff,
-                   const char *labelon)
+_sandie_radio_add(Evas_Object *win, Evas_Object *bxparent,
+                  const char *subcategory, const char *labeloff,
+                  const char *labelon)
 {
-   Evas_Object *tg;
+   Evas_Object *dbx, *rd, *rdg;
 
    _sandie_label_add(win, bxparent, subcategory);
 
-   tg = elm_check_add(win);
-   elm_object_style_set(tg, "toggle");
-   elm_object_part_text_set(tg, "off", labeloff);
-   elm_object_part_text_set(tg, "on", labelon);
-   evas_object_size_hint_align_set(tg, 0.5, 0.5);
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bxparent, tg);
-   evas_object_show(tg);
+   dbx = elm_box_add(win);
+   elm_box_horizontal_set(dbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
+   elm_box_align_set(dbx, 0.0, 0.5);
+   elm_box_pack_end(bxparent, dbx);
+   evas_object_show(dbx);
 
-   return tg;
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 0);
+   elm_object_text_set(rd, labeloff);
+   evas_object_size_hint_align_set(rd, 0.5, 0.5);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(dbx, rd);
+   evas_object_show(rd);
+   rdg = rd;
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 1);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, labelon);
+   evas_object_size_hint_align_set(rd, 0.5, 0.5);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(dbx, rd);
+   evas_object_show(rd);
+
+   return rdg;
 }
 
 static Evas_Object *
@@ -947,7 +964,7 @@ _menu_body_items_create(void *data)
 
    //Body 1
    bx = _category_add(sandie->win, bxbody1, "EPhysics Body 1");
-   type_widget = _sandie_toggle_add(sandie->win, bx, "Body Type", "Solid",
+   type_widget = _sandie_radio_add(sandie->win, bx, "<b>Body Type</b>", "Solid",
                                     "Soft");
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
@@ -1093,7 +1110,7 @@ _menu_body_items_create(void *data)
 
    //Body 2
    bx = _category_add(sandie->win, bxbody2, "EPhysics Body 2");
-   type_widget = _sandie_toggle_add(sandie->win, bx, "Body Type", "Solid",
+   type_widget = _sandie_radio_add(sandie->win, bx, "<b>Body Type</b>", "Solid",
                                     "Soft");
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
