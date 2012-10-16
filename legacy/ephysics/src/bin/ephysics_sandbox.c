@@ -1364,10 +1364,9 @@ _menu_create(Sandie_Data *sandie)
    elm_object_text_set(btn, "Restart");
    elm_box_pack_end(mainbx, btn);
    evas_object_size_hint_min_set(btn, 100, 30);
+   evas_object_size_hint_align_set(btn, 1, 0.5);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked", _restart, sandie);
-
-   _sandie_label_add(sandie->win, mainbx, "EPhysics Sandbox");
 
    sandie->tb = elm_toolbar_add(sandie->win);
    evas_object_size_hint_weight_set(sandie->tb, EVAS_HINT_EXPAND, 0);
