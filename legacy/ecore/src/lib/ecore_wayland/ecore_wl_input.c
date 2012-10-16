@@ -176,18 +176,13 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
    /* try to get this cursor from the theme */
    if (!(cursor = ecore_wl_cursor_get(input->cursor_name)))
      {
-        printf("No Cursor %s in Theme\n", input->cursor_name);
         /* if the theme does not have this cursor, default to left pointer */
         if (!(cursor = ecore_wl_cursor_get("left_ptr")))
-          {
-             printf("Failed to get Left Pointer Cursor\n");
-             return;
-          }
+          return;
      }
 
    if ((!cursor->images) || (!cursor->images[0]))
      {
-        printf("Cursor %s has no images\n", input->cursor_name);
         ecore_wl_input_pointer_set(input, NULL, 0, 0);
         return;
      }
@@ -206,8 +201,6 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
         if (!input->cursor_frame_cb)
           _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
      }
-   else
-     printf("No Buffer from Cursor Image\n");
 }
 
 EAPI void
@@ -330,19 +323,16 @@ _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum 
 {
    Ecore_Wl_Input *input;
 
-   printf("Seat Handle Capabilities\n");
    if (!(input = data)) return;
-   printf("\tInput Valid\n");
+
    if ((caps & WL_SEAT_CAPABILITY_POINTER) && (!input->pointer))
      {
-        printf("\tCreate New Pointer\n");
         input->pointer = wl_seat_get_pointer(seat);
         wl_pointer_set_user_data(input->pointer, input);
         wl_pointer_add_listener(input->pointer, &pointer_listener, input);
      }
    else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && (input->pointer))
      {
-        printf("\tDestroy POinter\n");
         wl_pointer_destroy(input->pointer);
         input->pointer = NULL;
      }
@@ -379,8 +369,6 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
    Ecore_Wl_Input *input;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
-
-   printf("Input Cb Pointer Motion\n");
 
    if (!(input = data)) return;
 
@@ -689,8 +677,6 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   printf("Input Cb Pointer Enter\n");
-
    if (!surface) return;
    if (!(input = data)) return;
 
@@ -758,8 +744,6 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer __UNUSED
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
 
-   printf("Input Cb Pointer Leave\n");
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!surface) return;
@@ -789,8 +773,6 @@ _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNU
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
-
-   printf("Keyboard Enter Event\n");
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
