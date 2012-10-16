@@ -770,10 +770,10 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
 static void
 _world_populate(Sandie_Data *sandie, Evas_Object *bxparent)
 {
-   sandie->body1 = _sandie_body_add(sandie->win, sandie->world, (int) WIDTH / 4,
+   sandie->body1 = _sandie_body_add(sandie->win, sandie->world, (int) WIDTH / 5,
                                     (int) HEIGHT / 5);
-   sandie->body2 = _sandie_body_add(sandie->win, sandie->world, (int) WIDTH / 4,
-                                    (int) HEIGHT / 2);
+   sandie->body2 = _sandie_body_add(sandie->win, sandie->world, (int) WIDTH / 2,
+                                    (int) HEIGHT / 5);
 
    _menu_body_items_create(sandie->win, bxparent, "EPhysics Body 1",
                            sandie->body1);
@@ -792,51 +792,50 @@ _restart(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static Evas_Object *
 _menu_create(Sandie_Data *sandie)
 {
-   Evas_Object *bx0, *fr, *lb, *bt, *sc, *bxparent, *layout;
+   Evas_Object *bx, *widget, *label;
 
-   layout = evas_object_data_get(sandie->win, "layout");
+   bx = elm_box_add(sandie->win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_part_content_set(evas_object_data_get(sandie->win, "layout"),
+                                                    "swallow", bx);
+   evas_object_show(bx);
 
-   bx0 = elm_box_add(sandie->win);
-   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_object_part_content_set(layout, "swallow", bx0);
-   evas_object_show(bx0);
+   widget = elm_frame_add(sandie->win);
+   elm_frame_autocollapse_set(widget, EINA_TRUE);
+   elm_object_text_set(widget, "EPhysics Sandbox");
+   elm_box_pack_end(bx, widget);
+   evas_object_show(widget);
 
-   fr = elm_frame_add(sandie->win);
-   elm_frame_autocollapse_set(fr, EINA_TRUE);
-   elm_object_text_set(fr, "Information");
-   elm_box_pack_end(bx0, fr);
-   evas_object_show(fr);
+   label = elm_label_add(sandie->win);
+   elm_object_text_set(label, "Please modify physical parameters below");
+   elm_object_content_set(widget, label);
+   evas_object_show(label);
 
-   lb = elm_label_add(sandie->win);
-   elm_object_text_set(lb,
-                       "Please modify physical parameters below<br/>"
-                       "the test button to show the test window.");
-   elm_object_content_set(fr, lb);
-   evas_object_show(lb);
+   widget = elm_button_add(sandie->win);
+   elm_object_text_set(widget, "Restart");
+   elm_box_pack_end(bx, widget);
+   evas_object_size_hint_min_set(widget, 100, 30);
+   evas_object_show(widget);
+   evas_object_smart_callback_add(widget, "clicked", _restart, sandie);
 
-   bt = elm_button_add(sandie->win);
-   elm_object_text_set(bt, "     Try     ");
-   elm_box_pack_end(bx0, bt);
-   evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _restart, sandie);
+   widget = elm_scroller_add(sandie->win);
+   elm_scroller_bounce_set(widget, EINA_FALSE, EINA_TRUE);
+   elm_scroller_policy_set(widget, ELM_SCROLLER_POLICY_OFF,
+                           ELM_SCROLLER_POLICY_ON);
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, widget);
+   evas_object_show(widget);
 
-   sc = elm_scroller_add(sandie->win);
-   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_ON);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx0, sc);
-   evas_object_show(sc);
+   bx = elm_box_add(sandie->win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(widget, bx);
+   evas_object_show(bx);
 
-   bxparent = elm_box_add(sandie->win);
-   evas_object_size_hint_weight_set(bxparent, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bxparent, EVAS_HINT_FILL, 0.0);
-   elm_object_content_set(sc, bxparent);
-   evas_object_show(bxparent);
+   _menu_items_create(sandie->win, bx, sandie->world);
 
-   _menu_items_create(sandie->win, bxparent, sandie->world);
-
-   return bxparent;
+   return bx;
 }
 
 static EPhysics_World *
