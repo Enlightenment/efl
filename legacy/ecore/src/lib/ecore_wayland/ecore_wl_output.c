@@ -35,7 +35,9 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
 
    output->display = ewd;
 
-   output->output = wl_display_bind(ewd->wl.display, id, &wl_output_interface);
+   output->output = 
+     wl_registry_bind(ewd->wl.registry, id, &wl_output_interface, 1);
+
    wl_list_insert(ewd->outputs.prev, &output->link);
    wl_output_add_listener(output->output, &_ecore_wl_output_listener, output);
 }
