@@ -15,7 +15,7 @@
 #define INITIAL_IMPULSE (9500)
 
 typedef struct _Sandie_Data {
-   Evas_Object *win, *tb, *nf;
+   Evas_Object *win, *tb, *nf, *sl_hardness1, *sl_hardness2;
    EPhysics_World *world;
    EPhysics_Body *body1, *body2;
 } Sandie_Data;
@@ -93,60 +93,68 @@ _world_restitution_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    ephysics_body_restitution_set(evas_object_data_get(win, "right"),
                                  elm_slider_value_get(obj));
 }
-/*
-static void
-_body_type_set(Evas_Object *obj, EPhysics_Body *body)
+
+static EPhysics_Body *
+_body_type_set(Evas_Object *obj, Evas_Object *slider, EPhysics_Body *body)
 {
-   EPhysics_World *world;
    Evas_Object *body_image;
+   EPhysics_World *world;
    double mass, rotation, friction, restitution, lin_damping, ang_damping;
    double lin_sleeping, ang_sleeping;
+   EPhysics_Body_Material material;
 
    mass = ephysics_body_mass_get(body);
-   rotation = ephysics_body_rotation_get(body);
+   ephysics_body_rotation_get(body, 0, 0, &rotation);
    friction = ephysics_body_friction_get(body);
    restitution = ephysics_body_restitution_get(body);
    ephysics_body_damping_get(body, &lin_damping, &ang_damping);
    ephysics_body_sleeping_threshold_get(body, &lin_sleeping, &ang_sleeping);
-   body_image = ephysics_body_evas_object_unset(body);
-   world = ephysics_body_world_get(body);
+   material = ephysics_body_material_get(body);
 
-   ephysics_body_del(body); //FIX IT
+   world = ephysics_body_world_get(body);
+   body_image = ephysics_body_evas_object_unset(body);
+
+   ephysics_body_del(body);
 
    if (elm_radio_value_get(obj))
      {
         body = ephysics_body_soft_circle_add(world);
-        ephysics_body_soft_body_hardness_set(body, 10);
-        elm_object_disabled_set(evas_object_data_get(obj, "hardness"),
-                                EINA_FALSE);
+        ephysics_body_soft_body_hardness_set(body,
+                                             elm_slider_value_get(slider));
+        elm_object_disabled_set(slider, EINA_FALSE);
      }
    else
      {
         body = ephysics_body_circle_add(world);
-        elm_object_disabled_set(evas_object_data_get(obj, "hardness"),
-                                EINA_TRUE);
+        elm_object_disabled_set(slider, EINA_TRUE);
      }
 
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, mass);
-   ephysics_body_rotation_set(body, rotation);
+   ephysics_body_rotation_set(body, 0, 0, rotation);
    ephysics_body_friction_set(body, friction);
+   ephysics_body_restitution_set(body, restitution);
+   ephysics_body_damping_set(body, lin_damping, ang_damping);
+   ephysics_body_sleeping_threshold_set(body, lin_sleeping, ang_sleeping);
+   ephysics_body_material_set(body, material);
+
+   return body;
 }
 
 static void
 _body1_type_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Sandie_Data *sandie = data;
-   _body_type_set(obj, sandie->body1);
+   sandie->body1 = _body_type_set(obj, sandie->sl_hardness1, sandie->body1);
 }
 
 static void
 _body2_type_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Sandie_Data *sandie = data;
-   _body_type_set(obj, sandie->body2);
+   sandie->body2 =  _body_type_set(obj, sandie->sl_hardness2, sandie->body2);
 }
-*/
+
 static void
 _body_material_set(Evas_Object *obj, EPhysics_Body *body)
 {
@@ -814,16 +822,15 @@ _sandie_enum_add(Evas_Object *win, Evas_Object *bxparent,
    return sp;
 }
 
-static Evas_Object *
-_sandie_radio_add(Evas_Object *win, Evas_Object *bxparent,
-                  const char *subcategory, const char *labeloff,
-                  const char *labelon)
+static void
+_type_radio_add(Sandie_Data *data, Evas_Object *bxparent,
+                void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
    Evas_Object *dbx, *rd, *rdg;
 
-   _sandie_label_add(win, bxparent, subcategory);
+   _sandie_label_add(data->win, bxparent, "Body Type");
 
-   dbx = elm_box_add(win);
+   dbx = elm_box_add(data->win);
    elm_box_horizontal_set(dbx, EINA_TRUE);
    evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
@@ -831,25 +838,25 @@ _sandie_radio_add(Evas_Object *win, Evas_Object *bxparent,
    elm_box_pack_end(bxparent, dbx);
    evas_object_show(dbx);
 
-   rd = elm_radio_add(win);
+   rd = elm_radio_add(data->win);
    elm_radio_state_value_set(rd, 0);
-   elm_object_text_set(rd, labeloff);
+   elm_object_text_set(rd, "Solid");
    evas_object_size_hint_align_set(rd, 0.5, 0.5);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(dbx, rd);
    evas_object_show(rd);
    rdg = rd;
+   evas_object_smart_callback_add(rd, "changed", func, data);
 
-   rd = elm_radio_add(win);
+   rd = elm_radio_add(data->win);
    elm_radio_state_value_set(rd, 1);
    elm_radio_group_add(rd, rdg);
-   elm_object_text_set(rd, labelon);
+   elm_object_text_set(rd, "Soft");
    evas_object_size_hint_align_set(rd, 0.5, 0.5);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(dbx, rd);
    evas_object_show(rd);
-
-   return rdg;
+   evas_object_smart_callback_add(rd, "changed", func, data);
 }
 
 static Evas_Object *
@@ -924,7 +931,7 @@ _menu_body_items_create(void *data)
 {
    Sandie_Data *sandie = data;
    Evas_Object *bx, *bxbody1, *bxbody2, *scbxbody1, *scbxbody2;
-   Evas_Object *widget, *aux_widget, *material_widget, *type_widget;
+   Evas_Object *widget, *aux_widget, *material_widget;
    Elm_Object_Item *it;
 
    scbxbody1 = elm_box_add(sandie->win);
@@ -943,12 +950,11 @@ _menu_body_items_create(void *data)
 
    bxbody2 = _scroller_box_add(sandie->win, scbxbody2);
 
-
-   //Body 1
+   /* Body 1 */
    bx = _category_add(sandie->win, bxbody1, "", EINA_FALSE);
 
-   type_widget = _sandie_radio_add(sandie->win, bx, "Body Type", "Solid",
-                                    "Soft");
+   _type_radio_add(sandie, bx, _body1_type_cb);
+
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
 
    bx = _category_add(sandie->win, bxbody1, "Properties", EINA_TRUE);
@@ -1006,7 +1012,6 @@ _menu_body_items_create(void *data)
 
    bx = _category_add(sandie->win, bxbody1, "Actions", EINA_TRUE);
 
-   //Impulse needs four values
    _sandie_label_add(sandie->win, bx, "Impulse X");
    aux_widget = _sandie_slider_add(sandie->win, bx, "X (kg * p/s)", "%1.3f",
                                    -9999, 9999, INITIAL_IMPULSE);
@@ -1035,7 +1040,6 @@ _menu_body_items_create(void *data)
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body1_impulse_y_rel_cb, sandie);
 
-   //Force needs four values
    _sandie_label_add(sandie->win, bx, "Force X");
    aux_widget = _sandie_slider_add(sandie->win, bx, "X (kg * p/s/s)", "%1.3f",
                                    -1999, 1999, 0);
@@ -1087,9 +1091,7 @@ _menu_body_items_create(void *data)
    elm_object_disabled_set(widget, EINA_TRUE);
    evas_object_smart_callback_add(widget, "delay,changed", _body1_hardness_cb,
                                   sandie);
-   evas_object_data_set(type_widget, "hardness", widget);
-   //evas_object_smart_callback_add(type_widget, "changed", _body1_type_cb,
-   //                               sandie);
+   sandie->sl_hardness1 = widget;
 
    it = elm_naviframe_item_insert_before(sandie->nf,
                                         evas_object_data_get(sandie->nf,
@@ -1099,11 +1101,11 @@ _menu_body_items_create(void *data)
    elm_naviframe_item_title_visible_set(it, EINA_FALSE);
    it = elm_toolbar_item_append(sandie->tb, NULL, "Body 1", _promote, it);
 
-   //Body 2 
+   /* Body 2 */
    bx = _category_add(sandie->win, bxbody2, "", EINA_FALSE);
 
-   type_widget = _sandie_radio_add(sandie->win, bx, "Body Type", "Solid",
-                                    "Soft");
+   _type_radio_add(sandie, bx, _body2_type_cb);
+
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
 
    bx = _category_add(sandie->win, bxbody2, "Properties", EINA_TRUE);
@@ -1161,7 +1163,6 @@ _menu_body_items_create(void *data)
 
    bx = _category_add(sandie->win, bxbody2, "Actions", EINA_TRUE);
 
-   //Impulse needs four values
    _sandie_label_add(sandie->win, bx, "Impulse X");
    aux_widget = _sandie_slider_add(sandie->win, bx, "X (kg * p/s)", "%1.3f",
                                    -9999, 9999, -INITIAL_IMPULSE);
@@ -1190,7 +1191,6 @@ _menu_body_items_create(void *data)
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body2_impulse_y_rel_cb, sandie);
 
-   //Force needs four values
    _sandie_label_add(sandie->win, bx, "Force X");
    aux_widget = _sandie_slider_add(sandie->win, bx, "X (kg * p/s/s)", "%1.3f",
                                    -1999, 1999, 0);
@@ -1242,9 +1242,7 @@ _menu_body_items_create(void *data)
    elm_object_disabled_set(widget, EINA_TRUE);
    evas_object_smart_callback_add(widget, "delay,changed", _body2_hardness_cb,
                                   sandie);
-   evas_object_data_set(type_widget, "hardness", widget);
-   //evas_object_smart_callback_add(type_widget, "changed", _body2_type_cb,
-   //                               sandie);
+   sandie->sl_hardness2 = widget;
 
    it = elm_naviframe_item_insert_before(sandie->nf,
                                         evas_object_data_get(sandie->nf,
@@ -1401,7 +1399,7 @@ _menu_create(Sandie_Data *sandie)
 }
 
 static EPhysics_World *
-_sandie_world_add(Evas_Object *win)
+_world_add(Evas_Object *win)
 {
    EPhysics_World *world;
 
@@ -1460,7 +1458,7 @@ elm_main()
 
    evas_object_show(sandie->win);
 
-   sandie->world = _sandie_world_add(sandie->win);
+   sandie->world = _world_add(sandie->win);
 
    _menu_create(sandie);
 
