@@ -578,7 +578,7 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    type_widget = _sandie_toggle_add(win, bx, "Body Type", "Solid", "Soft");
    material_widget = _sandie_enum_add(win, bx, "Body Material");
    aux_widget = _sandie_spinner_add(win, bx, "Mass", "%1.3f kg",
-                                0, 100, 15, 2);
+                                0, 9999, 15, 2);
    widget = _sandie_spinner_add(win, bx, "Density", "%1.3f kg/m³",
                                 0, 9999, 0, 2);
    evas_object_data_set(aux_widget, "density", widget);
@@ -589,7 +589,7 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    evas_object_smart_callback_add(widget, "delay,changed", _body_density_cb,
                                   body);
    widget = _sandie_spinner_add(win, bx, "Rotation", "%1.0fº",
-                                -360, 360, 0, 2);
+                                -360, 360, 0, 5);
    evas_object_smart_callback_add(widget, "delay,changed", _body_rotation_cb,
                                   body);
    widget = _sandie_spinner_add(win, bx, "Friction", "%1.3f",
@@ -615,31 +615,31 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
                                   _body_damping_angular_cb, body);
    dbx = _sandie_double_spinner_box_add(win, bx, "Sleeping Threshold");
    widget = _sandie_spinner_add(win, dbx, "Linear:", "%1.2f p/s",
-                                0, 100, 0, 2);
+                                0, 250, 24, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body_sleeping_threshold_linear_cb, body);
    widget = _sandie_spinner_add(win, dbx, "Angular:", "%1.2f º/s",
-                                0, 360, 0, 2);
+                                0, 360, 57.29, 5);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body_sleeping_threshold_angular_cb, body);
    widget = _sandie_spinner_add(win, bx, "Torque", "%1.3f",
-                                0, 1, 0.5, 0.05);
+                                0, 1, 0, 0.05);
    evas_object_smart_callback_add(widget, "delay,changed", _body_torque_cb,
                                   body);
 
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(win, bx, "Impulse X");
    aux_widget = _sandie_spinner_add(win, dbx, "X:", "%1.3f kg * p/s",
-                                    -360, 360, 0, 2);
+                                    -9999, 9999, 0, 100);
    widget = _sandie_spinner_add(win, dbx, "Rel Position X:", "%1.2f",
-                                0, 360, 0, 2);
+                                -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "relx", widget);
    dbx = _sandie_double_spinner_box_add(win, bx, "Impulse Y");
    widget = _sandie_spinner_add(win, dbx, "Y:", "%1.3f kg * p/s",
-                                -360, 360, 0, 2);
+                                -9999, 9999, 0, 100);
    evas_object_data_set(aux_widget, "y", widget);
    widget = _sandie_spinner_add(win, dbx, "Rel Position Y:", "%1.2f",
-                                0, 360, 0, 2);
+                                -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "rely", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _body_impulse_x_x_cb, body);
@@ -658,16 +658,16 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    //Force needs four values
    dbx = _sandie_double_spinner_box_add(win, bx, "Force X");
    aux_widget = _sandie_spinner_add(win, dbx, "X:", "%1.3f kg * p/s/s",
-                                    -360, 360, 0, 2);
+                                    -1999, 1999, 0, 100);
    widget = _sandie_spinner_add(win, dbx, "Rel Position X:", "%1.2f",
-                                0, 360, 0, 2);
+                                -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "relx", widget);
    dbx = _sandie_double_spinner_box_add(win, bx, "Force Y");
    widget = _sandie_spinner_add(win, dbx, "Y:", "%1.3f kg * p/s/s",
-                                -360, 360, 0, 2);
+                                -1999, 1999, 0, 100);
    evas_object_data_set(aux_widget, "y", widget);
    widget = _sandie_spinner_add(win, dbx, "Rel Position Y:", "%1.2f",
-                                0, 360, 0, 2);
+                                -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "rely", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _body_force_x_x_cb, body);
@@ -685,9 +685,9 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
 
    dbx = _sandie_double_spinner_box_add(win, bx, "Linear Velocity");
    aux_widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f p/s",
-                                    -800, 800, 0, 2);
+                                    -1499, 1499, 0, 50);
    widget = _sandie_spinner_add(win, dbx, "Y:", "%1.2f p/s",
-                                -800, 800, 0, 2);
+                                -1499, 1499, 0, 50);
    evas_object_data_set(aux_widget, "y", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _body_linear_velocity_x_cb, body);
@@ -696,7 +696,7 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
                                   _body_linear_velocity_y_cb, body);
 
    widget = _sandie_spinner_add(win, bx, "Angular Velocity", "%1.2f º/s",
-                                0, 360, 0, 2);
+                                -360, 360, 0, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body_angular_velocity_cb, body);
 /* widget = _sandie_spinner_add(win, bx, "Soft Body Hardness", "%1.2f%%",
@@ -751,7 +751,7 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
    evas_object_smart_callback_add(widget, "delay,changed", _world_rate_cb,
                                   world);
    widget = _sandie_spinner_add(win, bx, "Max Sleeping Time", "%1.0f s",
-                                0, 100, 2, 2);
+                                0, 50, 2, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _world_max_sleeping_time_cb, world);
 
