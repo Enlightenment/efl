@@ -705,7 +705,12 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
 
         dbus_free(iter_sig);
         dbus_signature_iter_next(&signature_iter);
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(c == current_type, EINA_FALSE);
+
+        if ((c != current_type) && !(current_type == 'r' && c == '('))
+          {
+             ERR("Type in iterator different of signature");
+             return EINA_FALSE;
+          }
 
         if (dbus_type_is_basic(current_type))
           get_basic(current_type, &iter->dbus_iterator, MAKE_PTR_FROM_VA_LIST(ap));
