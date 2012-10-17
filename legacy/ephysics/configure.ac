@@ -145,7 +145,7 @@ AM_CONDITIONAL([BUILD_DOCS_ONLY], [test "x${build_docs_only}" = "xyes"])
 
 
 # Dependencies for the library
-if test "${build_docs_only}" = "no" ; then
+if test "x${build_docs_only}" = "xno" ; then
 PKG_CHECK_MODULES([EPHYSICS],
    [
     eina >= 1.2.99
@@ -189,23 +189,26 @@ esac
 AC_SUBST(lt_enable_auto_import)
 
 ## Tests
-build_tests="no"
-if test "${build_docs_only}" = "no" ; then
-PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.0.99], [build_tests="yes"], [build_tests="no"])
+if test "x${build_docs_only}" = "xno" ; then
+PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.7.99], [build_tests="yes"], [build_tests="no"])
 AC_ARG_ENABLE([build-tests],
    AC_HELP_STRING([--disable-build-tests],
                   [Disable building tests. It is enabled by default unless
                    required dependencies are not present. @<:@default==enabled@:>@]),
    [
-    if test "x${enableval}" = "xyes" ; then
-       requirement_ephysics="elementary >= 1.0.99 ${requirement_ephysics}"
+    if test "x${enableval}" = "xno" ; then
+       build_tests="no"
+    else
+       requirement_ephysics="elementary >= 1.7.99 ${requirement_ephysics}"
     fi
    ],
    [])
+else
+   build_tests="no"
 fi
 AM_CONDITIONAL([BUILD_TESTS], [test "x${build_tests}" = "xyes"])
 
-if test "${build_tests}" = "yes" && test "${build_docs_only}" = "no" ; then
+if test "x${build_tests}" = "xyes" && test "x${build_docs_only}" = "xno" ; then
 PKG_CHECK_MODULES([EPHYSICS_TEST],
    [
     eina >= 1.2.99
