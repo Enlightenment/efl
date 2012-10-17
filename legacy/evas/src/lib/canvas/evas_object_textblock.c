@@ -6801,7 +6801,6 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
       Evas_Object_Textblock_Node_Text *n, size_t start, int end)
 {
    Evas_Object_Textblock_Node_Format *last_node, *itr;
-   Evas_Object_Textblock_Node_Text *new_node;
    int use_end = 1;
    int delta = 0;
    int first = 1;
@@ -6820,21 +6819,6 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
      {
         /* We don't want the last one */
         end--;
-     }
-
-   /* If we are not removing the text node, all should stay in this text
-    * node, otherwise, everything should move to the previous node */
-   if ((start == 0) && !use_end)
-     {
-        new_node = _NODE_TEXT(EINA_INLIST_GET(n)->prev);
-        if (!new_node)
-          {
-             new_node = n;
-          }
-     }
-   else
-     {
-        new_node = n;
      }
 
    /* Find the first node after start */
@@ -6894,7 +6878,6 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
                }
 
           }
-        last_node->text_node = new_node;
      }
 
    return EINA_FALSE;
@@ -7833,17 +7816,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
                {
                   should_merge = EINA_TRUE;
                }
-             else
-               {
-                  n = _NODE_TEXT(EINA_INLIST_GET(n1)->prev);
-                  /* Short path */
-                  if (!n)
-                    {
-                       /* Clear the whole textblock - do it nicer. */
-                       evas_object_textblock_text_markup_set(cur1->obj, "");
-                       return;
-                    }
-               }
+             _evas_textblock_node_text_adjust_offsets_to_start(o, n1, cur1->pos, -1);
           }
         else
           {
@@ -7857,7 +7830,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      {
         Evas_Object_Textblock_Node_Text *n;
         int len;
-        _evas_textblock_node_text_adjust_offsets_to_start(o, n1, cur1->pos, -1);
         n = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
         /* Remove all the text nodes between */
         while (n && (n != n2))
@@ -7865,10 +7837,13 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
              Evas_Object_Textblock_Node_Text *nnode;
 
              nnode = _NODE_TEXT(EINA_INLIST_GET(n)->next);
-             _evas_textblock_node_text_adjust_offsets_to_start(o, n, 0, -1);
              _evas_textblock_nodes_merge(o, n1);
              n = nnode;
           }
+        /* After we merged all the nodes, move the formats to the start of
+         * the range. */
+        _evas_textblock_node_text_adjust_offsets_to_start(o, n1, cur1->pos, -1);
+
         should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o, n2,
               0, cur2->pos);
 
