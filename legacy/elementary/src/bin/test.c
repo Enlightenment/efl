@@ -398,24 +398,14 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, "x");
-   elm_box_pack_end(bx0, lb);
-   evas_object_show(lb);
-   
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
-//   elm_object_text_set(tg, "UI-Mirroring:");
+   elm_object_text_set(tg, "UI-Mirroring:");
    elm_check_state_set(tg, elm_config_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _ui_tg_changed, NULL);
    elm_box_pack_end(bx0, tg);
    evas_object_show(tg);
 
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, "x");
-   elm_box_pack_end(bx0, lb);
-   evas_object_show(lb);
-   
    bx1 = elm_box_add(win);
    elm_box_horizontal_set(bx1, EINA_TRUE);
    evas_object_size_hint_weight_set(bx1, EVAS_HINT_EXPAND, 0.0);
