@@ -7,7 +7,8 @@ Changes since 1.7.0:
 
 Additions:
     * Add DOCTYPE children parsing in eina_simple_xml
-
+    * Add eina_barrier thread API
+    
 Improvements:
     * Single EFL tree now covring all EFL library components.
     * Speedup Eina Rbtree Iterator by recycling memory instead of

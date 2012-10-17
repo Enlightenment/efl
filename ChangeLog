@@ -39,3 +39,7 @@
 2012-10-04  Vincent Torri
 
 	* Update lz4 code to rev. 77. This fix compilation on NetBSD 5.0
+
+2012-10-17  Carsten Haitzler (The Rasterman)
+
+        * Add eina_barrier API to cover pthread_barrier functionality
