@@ -97,16 +97,16 @@ _elm_widget_theme_func(Evas_Object *obj)
    return EINA_TRUE;
 }
 
-static void
-_elm_widget_on_focus_region_func(const Evas_Object *obj,
-                                 Evas_Coord *x,
-                                 Evas_Coord *y,
-                                 Evas_Coord *w,
-                                 Evas_Coord *h)
+static Eina_Bool
+_elm_widget_on_focus_region_func_unimplemented(const Evas_Object *obj __UNUSED__,
+                                               Evas_Coord *x __UNUSED__,
+                                               Evas_Coord *y __UNUSED__,
+                                               Evas_Coord *w __UNUSED__,
+                                               Evas_Coord *h __UNUSED__)
 {
-   evas_object_geometry_get(obj, NULL, NULL, w, h);
-   if (x) *x = 0;
-   if (y) *y = 0;
+   WRN("The %s widget does not implement the \"on_focus_region\" function.",
+       elm_widget_type_get(obj));
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -720,7 +720,7 @@ _elm_widget_smart_set(Elm_Widget_Smart_Class *api)
    API_DEFAULT_SET_UNIMPLEMENTED(disable);
 
    API_DEFAULT_SET(theme);
-   API_DEFAULT_SET(on_focus_region);
+   API_DEFAULT_SET_UNIMPLEMENTED(on_focus_region);
 
    API_DEFAULT_SET_UNIMPLEMENTED(translate);
    API_DEFAULT_SET_UNIMPLEMENTED(event);
@@ -883,6 +883,10 @@ _propagate_event(void *data,
    elm_widget_event_propagate(obj, type, event_info, event_flags);
 }
 
+/**
+ * If elm_widget_focus_region_get() returns EINA_FALSE, this function will
+ * ignore region show action.
+ */
 static void
 _elm_widget_focus_region_show(const Evas_Object *obj)
 {
@@ -894,7 +898,9 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
    o = elm_widget_parent_get(obj);
    if (!o) return;
 
-   elm_widget_focus_region_get(obj, &x, &y, &w, &h);
+   if (!elm_widget_focus_region_get(obj, &x, &y, &w, &h))
+     return;
+
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
 
    while (o)
@@ -907,7 +913,11 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
 
              s_iface->content_region_show(o, x, y, w, h);
 
-             elm_widget_focus_region_get(o, &x, &y, &w, &h);
+             if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
+               {
+                  o = elm_widget_parent_get(o);
+                  continue;
+               }
           }
         else
           {
@@ -2775,12 +2785,13 @@ elm_widget_show_region_get(const Evas_Object *obj,
  *
  * Get the focus region of the given widget.
  *
+ * @return show region or not
+ * (@c EINA_TRUE = show region/@c EINA_FALSE = do not show region). Default is @c EINA_FALSE.
+ *
  * The focus region is the area of a widget that should brought into the
  * visible area when the widget is focused. Mostly used to show the part of
  * an entry where the cursor is, for example. The area returned is relative
  * to the object @p obj.
- * If the @p obj doesn't have the proper on_focus_region_hook set, this
- * function will return the full size of the object.
  *
  * @param obj The widget object
  * @param x Where to store the x coordinate of the area
@@ -2790,7 +2801,7 @@ elm_widget_show_region_get(const Evas_Object *obj,
  *
  * @ingroup Widget
  */
-EAPI void
+EAPI Eina_Bool
 elm_widget_focus_region_get(const Evas_Object *obj,
                             Evas_Coord *x,
                             Evas_Coord *y,
@@ -2802,12 +2813,12 @@ elm_widget_focus_region_get(const Evas_Object *obj,
         evas_object_geometry_get(obj, NULL, NULL, w, h);
         if (x) *x = 0;
         if (y) *y = 0;
-        return;
+        return EINA_FALSE;
      }
 
    ELM_WIDGET_DATA_GET(obj, sd);
 
-   sd->api->on_focus_region(obj, x, y, w, h);
+   return sd->api->on_focus_region(obj, x, y, w, h);
 }
 
 EAPI Eina_List *

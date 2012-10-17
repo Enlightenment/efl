@@ -422,7 +422,7 @@ typedef struct _Elm_Widget_Smart_Class
                              Evas_Object *source,
                              Evas_Callback_Type type,
                              void *event_info); /**< 'Virtual' function handling input events on the widget */
-   void             (*on_focus_region)(const Evas_Object *obj,
+   Eina_Bool        (*on_focus_region)(const Evas_Object *obj,
                                        Evas_Coord *x,
                                        Evas_Coord *y,
                                        Evas_Coord *w,
@@ -715,7 +715,7 @@ EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabl
 EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow);
 EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-EAPI void             elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI Eina_Bool        elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);

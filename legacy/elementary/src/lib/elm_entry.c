@@ -868,7 +868,7 @@ _elm_entry_smart_translate(Evas_Object *obj)
    return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _elm_entry_smart_on_focus_region(const Evas_Object *obj,
                                  Evas_Coord *x,
                                  Evas_Coord *y,
@@ -879,6 +879,7 @@ _elm_entry_smart_on_focus_region(const Evas_Object *obj,
 
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
+   return EINA_TRUE;
 }
 
 static void
