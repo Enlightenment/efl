@@ -354,7 +354,7 @@ have_magic_debug="yes"
 have_safety_checks="yes"
 want_log="yes"
 case "$build_profile" in
-   debug)
+   dev)
      with_max_log_level=""
      have_stringshare_usage="no"
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
@@ -362,7 +362,7 @@ case "$build_profile" in
      want_debug_threads="no"
      ;;
 
-   dev)
+   debug)
      with_max_log_level=""
      have_stringshare_usage="yes"
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
