@@ -23,8 +23,9 @@ EFL build is based on "profiles". It will default to "dev" for
 unreleased software and "release" for official tarballs. One can
 change it with --with-profile=NAME, where NAME is one of:
 
-  * dev: debug features, assert() and extra checks useful to test
-    software.
+  * dev: extra checks useful to test software.
+
+  * debug: superset of dev, with debug features and assert().
 
   * release: optimizations and less checks so it runs faster.
 

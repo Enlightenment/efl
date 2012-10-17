@@ -87,13 +87,13 @@ AC_CANONICAL_HOST
 
 AC_ARG_WITH([profile],
    [AC_HELP_STRING([--with-profile=PROFILE],
-                   [use the predefined build profile, one of: dev, release.
+                   [use the predefined build profile, one of: dev, debug and release.
                     @<:@default=dev@:>@])],
    [build_profile=${withval}],
    [build_profile=dev])
 
 case "$build_profile" in
-   dev|release)
+   dev|debug|release)
      ;;
    *)
      AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
@@ -218,7 +218,7 @@ AC_FUNC_ALLOCA
 
 prefer_assert="no"
 case "$build_profile" in
-   dev)
+   dev|debug)
      prefer_assert="yes"
      ;;
 esac
@@ -354,6 +354,14 @@ have_magic_debug="yes"
 have_safety_checks="yes"
 want_log="yes"
 case "$build_profile" in
+   debug)
+     with_max_log_level=""
+     have_stringshare_usage="no"
+     want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
+     want_debug_malloc="no"
+     want_debug_threads="no"
+     ;;
+
    dev)
      with_max_log_level=""
      have_stringshare_usage="yes"
