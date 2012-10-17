@@ -368,7 +368,7 @@ efreet_dirs_get(const char *key, const char *fallback)
     Eina_List *dirs = NULL;
     const char *path;
     char *tmp, *s, *p;
-    char ts[PATH_MAX];
+//    char ts[PATH_MAX];
     size_t len;
 
     path = getenv(key);
@@ -388,8 +388,9 @@ efreet_dirs_get(const char *key, const char *fallback)
         {
             // resolve path properly/fully to remove path//path2 to
             // path/path2, path/./path2 to path/path2 etc.
-            if (realpath(s, ts))
-                dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
+//            if (realpath(s, ts))
+//                dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
+           dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
         }
 
         s = ++p;
@@ -399,8 +400,9 @@ efreet_dirs_get(const char *key, const char *fallback)
     {
         // resolve path properly/fully to remove path//path2 to
         // path/path2, path/./path2 to path/path2 etc.
-        if (realpath(s, ts))
-            dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
+//        if (realpath(s, ts))
+//            dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
+       dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
     }
 
     return dirs;

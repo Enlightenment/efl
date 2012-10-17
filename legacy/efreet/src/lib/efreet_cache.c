@@ -803,9 +803,10 @@ Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
 {
     Efreet_Cache_Desktop *cache;
-    char rp[PATH_MAX];
+//    char rp[PATH_MAX];
+    const char *rp = file;
 
-    if (!realpath(file, rp)) return NULL;
+//    if (!realpath(file, rp)) return NULL;
 
     if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
 

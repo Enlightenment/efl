@@ -238,11 +238,12 @@ EAPI Efreet_Desktop *
 efreet_desktop_uncached_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
-    char rp[PATH_MAX];
+//    char rp[PATH_MAX];
+    const char *rp = file;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
-    if (!realpath(file, rp)) return NULL;
+//    if (!realpath(file, rp)) return NULL;
     if (!ecore_file_exists(rp)) return NULL;
 
     desktop = NEW(Efreet_Desktop, 1);
@@ -1036,9 +1037,10 @@ efreet_desktop_changes_listen_recursive(const char *path)
 static void
 efreet_desktop_changes_monitor_add(const char *path)
 {
-    char rp[PATH_MAX];
+//    char rp[PATH_MAX];
+    const char *rp = path;
 
-    if (!realpath(path, rp)) return;
+//    if (!realpath(path, rp)) return;
     if (eina_hash_find(change_monitors, rp)) return;
     eina_hash_add(change_monitors, rp,
                   ecore_file_monitor_add(rp,

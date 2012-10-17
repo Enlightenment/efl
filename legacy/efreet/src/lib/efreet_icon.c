@@ -852,9 +852,10 @@ efreet_icon_changes_listen(void)
 static void
 efreet_icon_changes_monitor_add(const char *path)
 {
-    char rp[PATH_MAX];
-
-    if (!realpath(path, rp)) return;
+//    char rp[PATH_MAX];
+//    if (!realpath(path, rp)) return;
+    const char *rp = path;
+   
     if (!ecore_file_is_dir(rp)) return;
     if (eina_hash_find(change_monitors, rp)) return;
     eina_hash_add(change_monitors, rp,
@@ -871,7 +872,8 @@ efreet_icon_changes_monitor_add(const char *path)
         if (!it) return;
         EINA_ITERATOR_FOREACH(it, ent)
         {
-            if (!realpath(ent, rp)) continue;
+            rp = ent;
+//            if (!realpath(ent, rp)) continue;
             if (!ecore_file_is_dir(rp)) continue;
             eina_hash_add(change_monitors, rp,
                           ecore_file_monitor_add(rp,
