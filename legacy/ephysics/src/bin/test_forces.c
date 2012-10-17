@@ -7,16 +7,17 @@
 static void
 _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
-   double x, y, torque, vx, vy, va;
+   double x, y, z, torque, vx, vy, vz, va;
 
    ephysics_body_evas_object_update(body);
-   ephysics_body_forces_get(body, &x, &y, NULL);
+   ephysics_body_forces_get(body, &x, &y, &z);
    ephysics_body_torques_get(body, NULL, NULL, &torque);
-   DBG("Body %p, fx: %lf, fy: %lf, torque: %lf", body, x, y, torque);
+   DBG("Body %p, fx: %lf, fy: %lf, fz: %lf, torque: %lf", body, x, y, z,
+       torque);
 
-   ephysics_body_linear_velocity_get(body, &vx, &vy, NULL);
+   ephysics_body_linear_velocity_get(body, &vx, &vy, &vz);
    ephysics_body_angular_velocity_get(body, NULL, NULL, &va);
-   DBG("Body %p, vx: %lf, vy: %lf, va: %lf", body, vx, vy, va);
+   DBG("Body %p, vx: %lf, vy: %lf, vz: %lf, va: %lf", body, vx, vy, vz, va);
 }
 
 static void

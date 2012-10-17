@@ -70,17 +70,18 @@
  * By setting the render geometry you tell ephysics the dimensions of rendered
  * area to be take on account by default updates.
  *
- * By default it starts with null x, y, width and height. Initially there's no
- * physics limits but - as we'll see later in this example - boundaries can be
- * added by issuing either ephysics_body_top_boundary_add(),
+ * By default it starts with null x, y, z, width, height and depth. Initially 
+ * there's no physics limits but - as we'll see later in this example -
+ * boundaries can be added by issuing either ephysics_body_top_boundary_add(),
  * ephysics_body_bottom_boundary_add(), ephysics_body_left_boundary_add() and
  * ephysics_body_right_boundary_add().
  *
  * While setting the worlds render geometry the first parameter is our just
- * created world, the following parameters indicate the x, y, width and height
- * of our area of interest.
+ * created world, the following parameters indicate the x, y, z, width, height
+ * and depth of our area of interest.
  *
- * @skipline ephysics_world_render_geometry_set
+ * @skip ephysics_world_render_geometry_set
+ * @until DEPTH);
  *
  * @section boundaries Adding boundaries
  *
@@ -173,16 +174,17 @@
  * We mainly use the ephysics_body_central_impulse_apply() function. This
  * function applies an inpulse on the center of a body.
  *
- * Once pressed \<Up> key it applies a central impulse of 0 kilos on X axis and
- * 10 kilos on Y - so the ball is forced up.
+ * Once pressed \<Up> key it applies a central impulse of 0 kilos on X axis,
+ * 10 kilos on Y and 0 kilos on Z - so the ball is forced up.
  *
- * If \<Down> key has been pressed we apply an impulse of 0 kilos on X axis and
- * -10 on Y - here the ball is forced down.
+ * If \<Down> key has been pressed we apply an impulse of 0 kilos on X axis,
+ * -10 kilos on Y and 0 kilos on Z - here the ball is forced down.
  *
  * In the case of \<Right> key pressing it's applied an impulse of 10 kilos on X
- * axis and 0 kilos on Y - which applies a force to the right side. But if the
- * key being pressed is \<Left> the opposite is done, and an impulse of -10
- * kilos is applied on X and 0 kilos on Y - and the ball is forced to the left.
+ * axis, 0 kilos on Y and 0 kilos on Z - which applies a force to the right side.
+ * But if the key being pressed is \<Left> the opposite is done, and an impulse
+ * of -10 kilos is applied on X, 0 kilos on Y and 0 kilos on Z - and the ball is
+ * forced to the left.
  *
  * @skip _on_keydown
  * @until }
@@ -335,7 +337,7 @@
  * @dontinclude test_camera.c
  *
  * @skip _camera_move_cb(void *data
- * @until &w, NULL);
+ * @until &w, NULL, NULL);
  *
  * Every world has a camera, so here we get this camera used by our
  * EPhysics_World.
@@ -609,7 +611,7 @@
  * @dontinclude test_collision_detection.c
  *
  * @skip _collision_cb
- * @until int x, y;
+ * @until int x, y, z;
  *
  * Now we want to know which body collides with and filter it.
  *
@@ -905,7 +907,7 @@
  * Note that in this blue cube we use an offset to apply the force, the two
  * last parameters are responsible to set a relative position to apply the
  * force.In other words, the force applied with an offset will make the body
- * rotates. Otherwise (0, 0) the force would be applied on the center of the
+ * rotates. Otherwise (0, 0, 0) the force would be applied on the center of the
  * body, in this case its recomended use the
  * ephysics_body_central_force_apply();
  *
@@ -1042,8 +1044,8 @@
  * @section add-gravity Setting Gravity
  * @dontinclude test_no_gravity.c
  *
- * Here we set EPhysics_worlds gravity in 2 axes (x, y) to (0, 0). Gravity
- * will act over bodies with mass over all the time.
+ * Here we set gravity on 3 axes (x, y, z) to (0, 0, 0). Gravity will act
+ * over bodies with mass over all the time.
  *
  * @skipline ephysics_world_gravity_set
  *
@@ -1148,7 +1150,8 @@
  * @until }
  *
  * This function is used to create the body setting its properties. Note that
- * we disable the rotation on Z axis to this letters don't tilt or recline.
+ * we disable its angular movement (rotation) on Z axis to this letters don't
+ * tilt or recline.
  * @dontinclude ephysics_logo.c
  *
  * @skip _letter_body_setup_common(EPhysics_Body *body
@@ -1297,9 +1300,9 @@
  * axis (rotate on x-y plane). Will make the body rolls on clockwise rotation,
  * if the value is negative, the impulse will be on counter clockwise.
  *
- * @skipline ephysics_body_torque_impulse_apply(body, 1);
+ * @skipline ephysics_body_torque_impulse_apply(body, 0, 0, 1);
  *
- * For the second body we'll use an offset to apply the force, the two
+ * For the second body we'll use an offset to apply the force, the three
  * last parameters are responsible to set a relative position to apply the
  * force.In other words, the force applied with an offset will make the body
  * rotates and move around the other cubes.
@@ -1327,7 +1330,7 @@
  * initial torque, changing the body angular acceleration and a callback to
  * delete the timers we'll add.
  *
- * @skipline ephysics_body_torque_apply(body, 2
+ * @skipline ephysics_body_torque_apply(body, 0, 0, 2
  * @skipline ephysics_body_event_callback_add(body,
  * @skipline EPHYSICS_CALLBACK_BODY_DEL,
  * @skipline _del_torque_cb, cube);
@@ -1458,8 +1461,8 @@
  *
  * Note in this part we get the angular and linear velocities.
  *
- * @skip vaz = ephysics_body
- * @until &vy);
+ * @skip ephysics_body_angular_velocity_get
+ * @until &vy, NULL);
  *
  * We need to handle the velocity using delta time to have the acceleration
  * on every tick. Check if its the first time to return before shows
@@ -1555,7 +1558,7 @@
  * vertices is possible to create polygons, in this case a pentagon.
  *
  * @skip ephysics_shape_point_add(pentagon_shape
- * @until , 1);
+ * @until , 21/35., 1, 1);
  *
  * Here we create a new physics body using a custom shape. The center of mass
  * will be the center of the shape. Its collision shape will be the convex
@@ -1576,7 +1579,7 @@
  * @dontinclude test_shapes.c
  *
  * @skip ephysics_shape_point_add(hexagon_shape
- * @until 18, 60);
+ * @until 18, 60, 10);
  *
  * Here we finish the example. The full source code can be found at
  * @ref test_shapes_c.
@@ -1754,10 +1757,10 @@
  * and pushed back.
  *
  * @skip constraint = ephysics_constraint_slider_add(box_body3
- * @until box_body3, -240, 0);
+ * @until box_body3, -240, 0, 0);
  *
  * @skip constraint = ephysics_constraint_slider_add(box_body4
- * @until box_body4, -600, 0);
+ * @until box_body4, -600, 0, 0);
  *
  * Here we finish the example. The full source code can be found at
  * @ref test_slider_c.
