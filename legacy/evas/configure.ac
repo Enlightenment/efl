@@ -1005,9 +1005,8 @@ build_pipe_render="no"
 #  AC_MSG_RESULT(no)
 #  build_pipe_render="no"
 #fi
-
-AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
-build_pipe_render="yes"
+dnl AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
+dnl build_pipe_render="yes"
 
 #######################################
 ## CPU architecture specific assembly
