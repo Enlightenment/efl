@@ -1180,12 +1180,12 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
    if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL)
      {
         ev->direction = 0;
-        ev->z = -value;
+        ev->z = value;
      }
    else if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL)
      {
         ev->direction = 1;
-        ev->z = -value;
+        ev->z = value;
      }
 
    if (input->grab)
