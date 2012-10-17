@@ -43,7 +43,8 @@ Fixes:
    * Fix diskselector bug with more than 4 items.
    * Fix conform widget to be part of focus chain.
    * Fix genlist reorder mode item not being resized on genlist resize.
-        
+   * Fix on_focus_region() issue.
+
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due

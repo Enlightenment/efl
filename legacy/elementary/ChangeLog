@@ -618,3 +618,9 @@
 2012-10-15  Prince Dubey Kumar <prince.dubey@samsung.com>
 
         * Fix genlist reorder mode item not being resized on genlist resize.
+
+2012-10-17  Daniel Juyung Seo <seojuyung2@gmail.com>
+
+       *  elm: Fixed on_focus_region() issue. Focused area should be scrolled
+       only when it is needed. Now only entry needs this feature.
+
