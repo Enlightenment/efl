@@ -513,6 +513,11 @@ EINA_CONFIG(ENABLE_LOG, test "x${enable_log}" = "xyes")
 
 EFL_CHECK_THREADS
 
+if ! test "x${efl_have_pthread_barrier}" = "xno" ; then
+   EINA_CONFIGURE_HAVE_PTHREAD_BARRIER="#define EINA_HAVE_PTHREAD_BARRIER"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_BARRIER)
+
 EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
@@ -802,7 +807,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
 echo "  Build Profile........: ${build_profile}"
-echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock})"
+echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock}) (barrier: ${efl_have_pthread_barrier})"
 echo "  Cryptographic System.: ${build_crypto}"
 if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"

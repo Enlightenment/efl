@@ -551,4 +551,6 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release)
    return ReleaseSemaphore(*sem, count_release, NULL) ? EINA_TRUE : EINA_FALSE;
 }
 
+#include "eina_inline_lock_barrier.x"
+
 #endif

@@ -106,6 +106,14 @@ static inline Eina_Bool eina_semaphore_lock(Eina_Semaphore *sem);
 /** @relates static Eina_Bool eina_semaphore_release(sem_t *sem, int count_release) */
 static inline Eina_Bool eina_semaphore_release(Eina_Semaphore *sem, int count_release);
 
+/** @relates static Eina_Bool eina_barrier_new(Eina_Barrier *barrier, int needed) @since 1.8 */
+static inline Eina_Bool eina_barrier_new(Eina_Barrier *barrier, int needed);
+/** @relates static void eina_barrier_free(Eina_Barrier *barrier); @since 1.8 */
+static inline void eina_barrier_free(Eina_Barrier *barrier);
+/** @relates static Eina_Bool eina_barrier_wait(Eina_Barrier *barrier); @since 1.8 */
+static inline Eina_Bool eina_barrier_wait(Eina_Barrier *barrier);
+
+
 #ifdef EINA_HAVE_DEBUG_THREADS
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\
   do {									\

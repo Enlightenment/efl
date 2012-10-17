@@ -544,4 +544,38 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release EINA_UNUSED)
    return (sem_post(sem) == 0) ? EINA_TRUE : EINA_FALSE;
 }
 
+#ifdef EINA_HAVE_PTHREAD_BARRIER
+typedef struct _Eina_Barrier Eina_Barrier;
+
+struct _Eina_Barrier
+{
+   pthread_barrier_t barrier;
+};
+
+static inline Eina_Bool
+eina_barrier_new(Eina_Barrier *barrier, int needed)
+{
+   if (!pthread_barrier_init(&(barrier->barrier), NULL, needed))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static inline void
+eina_barrier_free(Eina_Barrier *barrier)
+{
+   pthread_barrier_destroy(&(barrier->barrier));
+}
+
+static inline Eina_Bool
+eina_barrier_wait(Eina_Barrier *barrier)
+{
+   pthread_barrier_wait(&(barrier->barrier));
+   return EINA_TRUE;
+}
+
+#else
+#include "eina_inline_lock_barrier.x"
+#endif
+
+
 #endif

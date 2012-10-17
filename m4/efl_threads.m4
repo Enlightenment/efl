@@ -64,6 +64,16 @@ id = pthread_self();
        EFL_PTHREAD_LIBS=${_efl_threads_libs}
       ],
       [_efl_have_posix_threads="no"])
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_barrier_t barrier;
+pthread_barrier_init(&barrier, NULL, 1);
+                       ]])],
+      [efl_have_pthread_barrier="yes"],
+      [efl_have_pthread_barrier="no"])
    CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 
@@ -75,8 +85,10 @@ if test "x${_efl_have_posix_threads}" = "xyes" ; then
 else
    if test "x${_efl_have_win32_threads}" = "xyes" ; then
       efl_have_threads="Windows"
+      efl_have_pthread_barrier="no"
    else
       efl_have_threads="no"
+      efl_have_pthread_barrier="no"
    fi
 fi
 AC_MSG_RESULT([${efl_have_threads}])

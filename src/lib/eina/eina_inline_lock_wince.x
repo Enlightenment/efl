@@ -204,4 +204,6 @@ eina_semaphore_release(Eina_Semaphore *sem EINA_UNUSED,
    return EINA_FALSE;
 }
 
+#include "eina_inline_lock_barrier.x"
+
 #endif
