@@ -1,0 +1,106 @@
+/* EINA - EFL data type library
+ * Copyright (C) 2002,2003,2004,2005,2006,2007,2008,2010
+ *                         Carsten Haitzler,
+ *                         Jorge Luis Zapata Muga,
+ *                         Cedric Bail,
+ *                         Gustavo Sverzut Barbieri
+ *                         Tom Hacohen
+ *                         Brett Nash
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library;
+ * if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#include "eina_config.h"
+#include "eina_private.h"
+#include "eina_error.h"
+#include "eina_log.h"
+#include "eina_lock.h"
+#include "eina_share_common.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_tmpstr.h"
+
+typedef struct _Str Str;
+
+struct _Str
+{
+   Str *next;
+   char *str;
+};
+
+static Eina_Lock _mutex;
+static Str *strs = NULL;
+
+Eina_Bool
+eina_tmpstr_init(void)
+{
+   if (!eina_lock_new(&_mutex)) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eina_tmpstr_shutdown(void)
+{
+   eina_lock_free(&_mutex);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Tmpstr *
+eina_tmpstr_add(const char *str)
+{
+   Str *s;
+   int len;
+   
+   if (!str) return NULL;
+   len = strlen(str);
+   s = malloc(sizeof(Str) + len + 1);
+   if (!s) return NULL;
+   s->str = ((char *)s) + sizeof(Str);
+   strcpy(s->str, str);
+   eina_lock_take(&_mutex);
+   s->next = strs;
+   strs = s;
+   eina_lock_release(&_mutex);
+   return s->str;
+}
+
+EAPI void
+eina_tmpstr_del(Eina_Tmpstr *tmpstr)
+{
+   Str *s, *sp;
+   
+   if ((!strs) || (!tmpstr)) return;
+   eina_lock_take(&_mutex);
+   for (sp = NULL, s = strs; s; sp = s, s = s->next)
+     {
+        if (s->str == tmpstr)
+          {
+             if (sp) sp->next = s->next;
+             else strs = s->next;
+             free(s);
+             break;
+          }
+     }
+   eina_lock_release(&_mutex);
+}

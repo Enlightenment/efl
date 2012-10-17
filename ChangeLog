@@ -43,3 +43,4 @@
 2012-10-17  Carsten Haitzler (The Rasterman)
 
         * Add eina_barrier API to cover pthread_barrier functionality
+        * Add eina_tmpstr_add() and eina_tmpstr_del().

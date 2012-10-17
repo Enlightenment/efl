@@ -82,7 +82,8 @@ eina_mmap.h \
 eina_xattr.h \
 eina_value.h \
 eina_inline_value.x \
-eina_inline_lock_barrier.x
+eina_inline_lock_barrier.x \
+eina_tmpstr.h
 
 # Will be back for developper after 1.2.
 # eina_model.h
@@ -151,7 +152,8 @@ eina_value.c \
 eina_xattr.c \
 eina_share_common.h \
 eina_private.h \
-eina_strbuf_common.h
+eina_strbuf_common.h \
+eina_tmpstr.c
 
 # Will be back for developper after 1.2
 # eina_model.c \
