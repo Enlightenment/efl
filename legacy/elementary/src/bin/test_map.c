@@ -836,20 +836,23 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
      {
         down_x = down->canvas.x;
         down_y = down->canvas.y;
-        menu = elm_menu_add(obj);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Source", NULL, NULL);
-        _submenu_src_add(data, menu_it);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Move", NULL, NULL);
-        _submenu_move_add(data, menu_it);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Zoom", NULL, NULL);
-        _submenu_zoom_add(data, menu_it);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Prop", NULL, NULL);
-        _submenu_prop_add(data, menu_it);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Track", NULL, NULL);
-        _submenu_track_add(data, menu_it);
-        menu_it = elm_menu_item_add(menu, NULL, "", "Overlay", NULL, NULL);
-        _submenu_ovl_add(data, menu_it);
-
+        if (!menu)
+          {
+             menu = elm_menu_add(obj);
+             elm_menu_parent_set(menu, obj);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Source", NULL, NULL);
+             _submenu_src_add(data, menu_it);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Move", NULL, NULL);
+             _submenu_move_add(data, menu_it);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Zoom", NULL, NULL);
+             _submenu_zoom_add(data, menu_it);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Prop", NULL, NULL);
+             _submenu_prop_add(data, menu_it);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Track", NULL, NULL);
+             _submenu_track_add(data, menu_it);
+             menu_it = elm_menu_item_add(menu, NULL, "", "Overlay", NULL, NULL);
+             _submenu_ovl_add(data, menu_it);
+          }
          elm_menu_move(menu, down->canvas.x, down->canvas.y);
          evas_object_show(menu);
      }
@@ -997,8 +1000,10 @@ _del_map(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 
    if (route) elm_map_route_del(route);
    if (name) elm_map_name_del(name);
+   if (menu)  evas_object_del(menu);
    route = NULL;
    name = NULL;
+   menu = NULL;
 }
 
 void
