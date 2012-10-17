@@ -12,7 +12,7 @@ typedef struct _Thinfo
    RGBA_Image            *im;
    int                    thread_num;
    pthread_t              thread_id;
-   pthread_barrier_t     *barrier;
+   Eina_Barrier          *barrier;
    const Eina_Inlist     *tasks;
    Eina_Array             cutout_trash;
    Eina_Array             rects_task;
@@ -88,7 +88,7 @@ evas_common_pipe_thread(void *data)
 
         /* wait for start signal */
 // INF(" TH %i START...", thinfo->thread_num);
-        pthread_barrier_wait(&(thinfo->barrier[0]));
+        eina_barrier_wait(&(thinfo->barrier[0]));
 
         EINA_INLIST_FOREACH(thinfo->tasks, info)
           {
@@ -106,7 +106,7 @@ evas_common_pipe_thread(void *data)
 
         thinfo->tasks = NULL;
 
-        pthread_barrier_wait(&(thinfo->barrier[1]));
+        eina_barrier_wait(&(thinfo->barrier[1]));
      }
    return NULL;
 }
@@ -114,13 +114,13 @@ evas_common_pipe_thread(void *data)
 static Eina_List *im_task = NULL;
 static Eina_List *text_task = NULL;
 static Thinfo task_thinfo[TH_MAX];
-static pthread_barrier_t task_thbarrier[2];
+static Eina_Barrier task_thbarrier[2];
 static LK(im_task_mutex);
 static LK(text_task_mutex);
 
 static int               thread_num = 0;
 static Thinfo            thinfo[TH_MAX];
-static pthread_barrier_t thbarrier[2];
+static Eina_Barrier      thbarrier[2];
 
 static RGBA_Pipe_Thread_Info *buf = NULL;
 static unsigned int           buf_size = 0;
@@ -212,7 +212,7 @@ evas_common_pipe_begin(RGBA_Image *im)
        }
 
    /* tell worker threads to start */
-   pthread_barrier_wait(&(thbarrier[0]));
+   eina_barrier_wait(&(thbarrier[0]));
 }
 
 EAPI void
@@ -222,7 +222,7 @@ evas_common_pipe_flush(RGBA_Image *im)
    if (thread_num > 1)
      {
        /* sync worker threads */
-       pthread_barrier_wait(&(thbarrier[1]));
+       eina_barrier_wait(&(thbarrier[1]));
      }
    else
      {
@@ -614,16 +614,14 @@ evas_common_pipe_map_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGBA
 }
 
 static Eina_Bool
-evas_common_pipe_map_draw_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op)
+evas_common_pipe_map_draw_prepare(void *data __UNUSED__, RGBA_Image *dst, RGBA_Pipe_Op *op)
 {
    RGBA_Draw_Context context;
-   Thinfo *info = data; 
    Eina_Bool r; 
 
    memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
    r = evas_common_map_rgba_prepare(op->op.map.src, dst,
 				    &context, op->op.map.m);
-
    return r;
 }
 
@@ -634,7 +632,6 @@ evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
 {
    RGBA_Pipe_Op *op;
    /* RGBA_Map_Point *pts_copy; */
-   int i;
 
    if (!src) return;
    /* pts_copy = malloc(sizeof (RGBA_Map_Point) * 4); */
@@ -703,7 +700,7 @@ evas_common_pipe_load(void *data)
       Eina_Array_Iterator it;
       unsigned int i;
       /* wait for start signal */
-      pthread_barrier_wait(&(tinfo->barrier[0]));
+      eina_barrier_wait(&(tinfo->barrier[0]));
 
       while (im_task)
 	{
@@ -752,7 +749,7 @@ evas_common_pipe_load(void *data)
       eina_array_clean(&tinfo->rects_task);
 
       /* send finished signal */
-      pthread_barrier_wait(&(tinfo->barrier[1]));
+      eina_barrier_wait(&(tinfo->barrier[1]));
     }
 
   return NULL;
@@ -769,10 +766,10 @@ evas_common_pipe_load_do(RGBA_Image *im)
      task_thinfo[i].im = im;
 
    /* Notify worker thread. */
-   pthread_barrier_wait(&(task_thbarrier[0]));
+   eina_barrier_wait(&(task_thbarrier[0]));
 
    /* sync worker threads */
-   pthread_barrier_wait(&(task_thbarrier[1]));
+   eina_barrier_wait(&(task_thbarrier[1]));
 }
 
 EAPI void
@@ -868,8 +865,8 @@ evas_common_pipe_init(void)
         LKI(im_task_mutex);
 	LKI(text_task_mutex);
 
-	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
-	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
+	eina_barrier_new(&(thbarrier[0]), thread_num + 1);
+	eina_barrier_new(&(thbarrier[1]), thread_num + 1);
 	for (i = 0; i < thread_num; i++)
 	  {
 	     pthread_attr_t attr;
@@ -892,8 +889,8 @@ evas_common_pipe_init(void)
 	     pthread_attr_destroy(&attr);
 	  }
 
-	pthread_barrier_init(&(task_thbarrier[0]), NULL, thread_num + 1);
-	pthread_barrier_init(&(task_thbarrier[1]), NULL, thread_num + 1);
+	eina_barrier_new(&(task_thbarrier[0]), thread_num + 1);
+	eina_barrier_new(&(task_thbarrier[1]), thread_num + 1);
 	for (i = 0; i < thread_num; i++)
 	  {
 	     pthread_attr_t attr;
