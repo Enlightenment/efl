@@ -62,12 +62,10 @@ requirements_libs_deps_eina=""
 requirements_libs_deps_eo=""
 requirements_libs_deps_eet=""
 
-requirements_pc_evil=""
 requirements_pc_eina=""
 requirements_pc_eo=""
 requirements_pc_eet=""
 
-requirements_pc_deps_evil=""
 requirements_pc_deps_eina=""
 requirements_pc_deps_eo=""
 requirements_pc_deps_eet=""
@@ -77,28 +75,12 @@ AC_SUBST([requirements_libs_eina])
 AC_SUBST([requirements_libs_eo])
 AC_SUBST([requirements_libs_eet])
 
-AC_SUBST([requirements_pc_evil])
 AC_SUBST([requirements_pc_eina])
 AC_SUBST([requirements_pc_eo])
 AC_SUBST([requirements_pc_eet])
 
 
 AC_CANONICAL_HOST
-
-AC_ARG_WITH([profile],
-   [AC_HELP_STRING([--with-profile=PROFILE],
-                   [use the predefined build profile, one of: dev, debug and release.
-                    @<:@default=dev@:>@])],
-   [build_profile=${withval}],
-   [build_profile=dev])
-
-case "$build_profile" in
-   dev|debug|release)
-     ;;
-   *)
-     AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
-     ;;
-esac
 
 
 # TODO: move me to m4 file that setups module/so related variables
@@ -137,6 +119,21 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 
 #### Additional options to configure
+
+AC_ARG_WITH([profile],
+   [AC_HELP_STRING([--with-profile=PROFILE],
+                   [use the predefined build profile, one of: dev, debug and release.
+                    @<:@default=dev@:>@])],
+   [build_profile=${withval}],
+   [build_profile=dev])
+
+case "$build_profile" in
+   dev|debug|release)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
+     ;;
+esac
 
 
 #### Checks for programs
@@ -348,8 +345,6 @@ AC_MSG_NOTICE([Eina checks])
 
 ### Default values
 
-### Additional options to configure
-
 have_magic_debug="yes"
 have_safety_checks="yes"
 want_log="yes"
@@ -379,10 +374,10 @@ case "$build_profile" in
      ;;
 esac
 
-EINA_CONFIG(MAGIC_DEBUG, test "x${have_magic_debug}" = "xyes")
-EINA_CONFIG(SAFETY_CHECKS, test "x${have_safety_checks}" = "xyes")
+EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
+EINA_CONFIG([SAFETY_CHECKS], [test "x${have_safety_checks}" = "xyes"])
 
-if test -n "$with_max_log_level"; then
+if test -n "${with_max_log_level}"; then
    AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${with_max_log_level}])
    AC_DEFINE_UNQUOTED([EINA_LOG_LEVEL_MAXIMUM], [${with_max_log_level}], [if set, logging is limited to this amount.])
 fi
@@ -390,6 +385,8 @@ fi
 AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
    [test "x${have_stringshare_usage}" = "xyes"],
    [1], [Report Eina stringshare usage pattern])
+
+### Additional options to configure
 
 ### Checks for programs
 
@@ -441,10 +438,9 @@ else
 fi
 
 AC_DEFINE_IF([EINA_DEBUG_MALLOC],
-   [test "x${ac_cv_func_malloc_usable_size}" = "xyes" -a "x${want_debug_malloc}" = "xyes"],
+   [test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"],
    [1], [Turn on debugging overhead in mempool])
 
-## Modules
 if ! test "x${requirements_pc_deps_eina}" = "x" ; then
    PKG_CHECK_MODULES([EINA], [${requirements_pc_deps_eina}])
 fi
@@ -483,11 +479,11 @@ CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
 AC_CHECK_HEADERS([sys/mman.h])
 CFLAGS="${CFLAGS_save}"
 
-EINA_CONFIG(HAVE_INTTYPES_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
-EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_stdint_h}" = "xyes")
+EINA_CONFIG([HAVE_INTTYPES_H], [test "x${ac_cv_header_inttypes_h}" = "xyes"])
+EINA_CONFIG([HAVE_STDINT_H], [test "x${ac_cv_header_stdint_h}" = "xyes"])
 
 ### Checks for types
-EINA_CONFIG(HAVE_DIRENT_H, test "x${have_dirent}" = "xyes")
+EINA_CONFIG([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"])
 AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
    [1], [Define to 1 if you have a valid <dirent.h> header file.])
 
@@ -529,9 +525,9 @@ AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_BARRIER)
 EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
-EINA_CHECK_MODULE([chained-pool],   [static], [chained pool])
-EINA_CHECK_MODULE([pass-through],   [static], [pass through])
-EINA_CHECK_MODULE([one-big],        [static], [one big])
+EINA_CHECK_MODULE([chained-pool], [static], [chained pool])
+EINA_CHECK_MODULE([pass-through], [static], [pass through])
+EINA_CHECK_MODULE([one-big],      [static], [one big])
 
 
 #### End of Eina
@@ -814,11 +810,18 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
+if test "x${have_windows}" = "xyes" ; then
+   echo "  Windows version......: ${_efl_windows_version}"
+fi
 echo "  Build Profile........: ${build_profile}"
 echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock}) (barrier: ${efl_have_pthread_barrier})"
 echo "  Cryptographic System.: ${build_crypto}"
-if test "x${have_windows}" = "xyes" ; then
-   echo "  Windows version......: ${_efl_windows_version}"
+echo
+echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
+echo "Examples...............: make examples"
+echo "    installation.......: make install-examples"
+if test "x${build_doc}" = "xyes"; then
+echo "Documentation..........: make doc"
 fi
 echo
 echo "Compilation............: make (or gmake)"
@@ -826,12 +829,6 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  CXXFLAGS.............: $CXXFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
-echo
-echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
-echo "Examples...............: make examples (also install-examples)"
-if test "x${build_doc}" = "xyes"; then
-echo "Documentation..........: make doc"
-fi
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
