@@ -3079,6 +3079,12 @@ ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material material)
         return;
      }
 
+   if (material == EPHYSICS_BODY_MATERIAL_CUSTOM)
+     {
+        body->material = material;
+        return;
+     }
+
    ephysics_world_lock_take(body->world);
    body->density = ephysics_material_props[material].density;
    _ephysics_body_mass_set(body, 0);
