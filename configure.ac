@@ -127,7 +127,7 @@ AC_ARG_WITH([profile],
    [build_profile=${withval}],
    [build_profile=dev])
 
-case "$build_profile" in
+case "${build_profile}" in
    dev|debug|release)
      ;;
    *)
