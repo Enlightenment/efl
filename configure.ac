@@ -822,6 +822,8 @@ echo "Examples...............: make examples"
 echo "    installation.......: make install-examples"
 if test "x${build_doc}" = "xyes"; then
 echo "Documentation..........: make doc"
+else
+echo "Documentation..........: no"
 fi
 echo
 echo "Compilation............: make (or gmake)"
@@ -829,6 +831,7 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  CXXFLAGS.............: $CXXFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
+echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
