@@ -104,7 +104,11 @@ EFL_CHECK_THREADS
 if ! test "x${efl_have_threads}" = "xno" ; then
    EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
 fi
+if ! test "x${efl_have_pthread_barrier}" = "xno" ; then
+   EINA_CONFIGURE_HAVE_PTHREAD_BARRIER="#define EINA_HAVE_PTHREAD_BARRIER"
+fi
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
+AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_BARRIER)
 AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${efl_have_threads}" = "xno"])
 
 if test "x${efl_have_debug_threads}" = "xyes"; then
@@ -616,6 +620,7 @@ echo "  Log support..........: ${enable_log}"
 echo "  Thread Support.......: ${efl_have_threads}"
 if test "${efl_have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
+echo "    barrier............: ${efl_have_pthread_barrier}"
 echo "    debug usage........: ${efl_have_debug_threads}"
 echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
