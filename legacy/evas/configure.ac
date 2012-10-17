@@ -947,7 +947,7 @@ EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 
 # basic pthread support
 AC_CHECK_HEADER(pthread.h, [], [AC_MSG_ERROR([Pthread support missing.])])
-# sched_getaffinity pthread_attr_setaffinity_np
+# basic pthread support. eina does the rest.
 AC_CHECK_HEADERS([pthread.h],
    [
     CFLAGS_save="${CFLAGS}"
@@ -960,10 +960,10 @@ AC_CHECK_HEADERS([pthread.h],
 #include <pthread.h>
                        ]],
                        [[
-pthread_barrier_wait(NULL);
+pthread_create(NULL, NULL, NULL, NULL);
                        ]])],
       [],
-      [AC_MSG_ERROR([Your pthread implementation does not have pthread_barrier_wait])])
+      [AC_MSG_ERROR([You don't have pthread support.])])
     AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <stdlib.h>
