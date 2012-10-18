@@ -474,22 +474,19 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
     Efreet_Icon_Theme_Directory *dir;
     const char *tmp;
     struct stat st;
-    char rp[PATH_MAX];
 
     if (!theme || !path) return EINA_FALSE;
 
-    if (!realpath(path, rp)) return EINA_FALSE;
-
-    if (stat(rp, &st) < 0) return EINA_FALSE;
-    if (theme->path && !strcmp(theme->path, rp) && theme->last_cache_check >= (long long) st.st_mtime)
+    if (stat(path, &st) < 0) return EINA_FALSE;
+    if (theme->path && !strcmp(theme->path, path) && theme->last_cache_check >= (long long) st.st_mtime)
     {
         /* no change */
         theme->valid = 1;
         return EINA_TRUE;
     }
-    if (!theme->path || strcmp(theme->path, rp))
+    if (!theme->path || strcmp(theme->path, path))
     {
-        theme->path = eina_stringshare_add(rp);
+        theme->path = eina_stringshare_add(path);
         eina_array_push(strs, theme->path);
     }
     if ((long long) st.st_mtime > theme->last_cache_check)
