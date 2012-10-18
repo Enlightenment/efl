@@ -84,6 +84,7 @@ edbus_proxy_shutdown(void)
 
 static void _edbus_proxy_event_callback_call(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, const void *event_info);
 static void _edbus_proxy_context_event_cb_del(EDBus_Proxy_Context_Event *ce, EDBus_Proxy_Context_Event_Cb *ctx);
+static void _on_signal_handler_free(void *data, const void *dead_pointer);
 
 static void
 _edbus_proxy_call_del(EDBus_Proxy *proxy)
@@ -145,13 +146,15 @@ static void
 _edbus_proxy_free(EDBus_Proxy *proxy)
 {
    unsigned int i;
-   if (proxy->handlers)
+   EDBus_Signal_Handler *h;
+
+   EINA_LIST_FREE (proxy->handlers, h)
      {
-        EDBus_Signal_Handler *h;
-        CRITICAL("Proxy %p released with live signal handlers!", proxy);
-        EINA_LIST_FREE (proxy->handlers, h)
-          ERR("proxy=%p alive handler=%p %s", proxy, h,
-              edbus_signal_handler_match_get(h));
+        if (h->dangling)
+	  edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, proxy);
+        else
+           ERR("proxy=%p alive handler=%p %s", proxy, h,
+               edbus_signal_handler_match_get(h));
      }
 
    if (proxy->pendings)

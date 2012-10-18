@@ -59,6 +59,7 @@ edbus_object_shutdown(void)
 static void _edbus_object_event_callback_call(EDBus_Object *obj, EDBus_Object_Event_Type type, const void *event_info);
 static void _edbus_object_context_event_cb_del(EDBus_Object_Context_Event *ce, EDBus_Object_Context_Event_Cb *ctx);
 static void _on_connection_free(void *data, const void *dead_pointer);
+static void _on_signal_handler_free(void *data, const void *dead_pointer);
 
 static void
 _edbus_object_call_del(EDBus_Object *obj)
@@ -122,6 +123,8 @@ static void
 _edbus_object_free(EDBus_Object *obj)
 {
    unsigned int i;
+   EDBus_Signal_Handler *h;
+
    if (obj->proxies)
      {
         Eina_Iterator *iterator = eina_hash_iterator_data_new(obj->proxies);
@@ -133,11 +136,11 @@ _edbus_object_free(EDBus_Object *obj)
         eina_hash_free(obj->proxies);
      }
 
-   if (obj->signal_handlers)
+   EINA_LIST_FREE (obj->signal_handlers, h)
      {
-        EDBus_Signal_Handler *h;
-        CRITICAL("Object %p released with live signal handlers!", obj);
-        EINA_LIST_FREE (obj->signal_handlers, h)
+        if (h->dangling)
+          edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, obj);
+        else
           ERR("obj=%p alive handler=%p %s", obj, h,
               edbus_signal_handler_match_get(h));
      }
