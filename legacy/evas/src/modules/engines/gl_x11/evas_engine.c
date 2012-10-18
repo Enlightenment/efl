@@ -2436,7 +2436,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    if ((im->native.data) && evgl_direct_enabled(re->evgl_engine))
      {
         DBG("Rendering Directly to the window");
-        //evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(re->evgl_engine), EINA_TRUE);
+        evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(re->evgl_engine), EINA_TRUE);
      }
    else
      {
