@@ -27,29 +27,29 @@ _on_keydown(void *data, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__
      return EINA_FALSE;
 
    if (!strcmp(ev->keyname, "j"))
-     ephysics_body_central_impulse_apply(body, 0, -150, 0);
+     ephysics_body_central_impulse_apply(body, 0, -20, 0);
    else if (!strcmp(ev->keyname, "k"))
-     ephysics_body_central_impulse_apply(body, 0, 150, 0);
+     ephysics_body_central_impulse_apply(body, 0, 20, 0);
    else if (!strcmp(ev->keyname, "l"))
-     ephysics_body_central_impulse_apply(body, 150, 0, 0);
+     ephysics_body_central_impulse_apply(body, 20, 0, 0);
    else if (!strcmp(ev->keyname, "h"))
-     ephysics_body_central_impulse_apply(body, -150, 0, 0);
+     ephysics_body_central_impulse_apply(body, -20, 0, 0);
    else if (!strcmp(ev->keyname, "f"))
-     ephysics_body_central_impulse_apply(body, 0, 0, -150);
+     ephysics_body_central_impulse_apply(body, 0, 0, -20);
    else if (!strcmp(ev->keyname, "g"))
-     ephysics_body_central_impulse_apply(body, 0, 0, 150);
+     ephysics_body_central_impulse_apply(body, 0, 0, 20);
    else if (!strcmp(ev->keyname, "u"))
-     ephysics_body_torque_impulse_apply(body, 0, -5, 0);
+     ephysics_body_torque_impulse_apply(body, 0, -2, 0);
    else if (!strcmp(ev->keyname, "i"))
-     ephysics_body_torque_impulse_apply(body, 0, 5, 0);
+     ephysics_body_torque_impulse_apply(body, 0, 2, 0);
    else if (!strcmp(ev->keyname, "o"))
-     ephysics_body_torque_impulse_apply(body, 5, 0, 0);
+     ephysics_body_torque_impulse_apply(body, 2, 0, 0);
    else if (!strcmp(ev->keyname, "y"))
-     ephysics_body_torque_impulse_apply(body, -5, 0, 0);
+     ephysics_body_torque_impulse_apply(body, -2, 0, 0);
    else if (!strcmp(ev->keyname, "r"))
-     ephysics_body_torque_impulse_apply(body, 0, 0, -5);
+     ephysics_body_torque_impulse_apply(body, 0, 0, -2);
    else if (!strcmp(ev->keyname, "t"))
-     ephysics_body_torque_impulse_apply(body, 0, 0, 5);
+     ephysics_body_torque_impulse_apply(body, 0, 0, 2);
 
    return EINA_TRUE;
 }
@@ -71,15 +71,17 @@ _world_populate(Test_Data *test_data)
    cube = elm_image_add(test_data->win);
    elm_image_file_set(
       cube, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "purple-cube");
-   evas_object_move(cube, WIDTH / 3, HEIGHT / 8);
+   evas_object_move(cube, WIDTH / 2, HEIGHT / 2);
    evas_object_resize(cube, 70, 70);
    evas_object_show(cube);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, cube);
 
    box = ephysics_body_box_add(test_data->world);
    ephysics_body_evas_object_set(box, cube, EINA_TRUE);
-   ephysics_body_restitution_set(box, 0.95);
-   ephysics_body_friction_set(box, 0.1);
+   ephysics_body_restitution_set(box, 0);
+   ephysics_body_friction_set(box, 0);
+   ephysics_body_sleeping_threshold_set(box, 0, 0);
+   ephysics_body_damping_set(box, 0, 0);
    ephysics_body_linear_movement_enable_set(box, EINA_TRUE, EINA_TRUE,
                                             EINA_TRUE);
    ephysics_body_angular_movement_enable_set(box, EINA_TRUE, EINA_TRUE,
@@ -122,31 +124,34 @@ test_bouncing_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_object_signal_emit(test_data->layout, "controls,show", "ephysics_test");
 
    world = ephysics_world_new();
+   ephysics_world_gravity_set(world, 0, 0, 0);
    ephysics_world_render_geometry_set(world, 50, 40, -50,
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);
-   ephysics_body_restitution_set(boundary, 0.65);
-   ephysics_body_friction_set(boundary, 4);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    boundary = ephysics_body_right_boundary_add(test_data->world);
-   ephysics_body_restitution_set(boundary, 0.4);
-   ephysics_body_friction_set(boundary, 3);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    boundary = ephysics_body_left_boundary_add(test_data->world);
-   ephysics_body_restitution_set(boundary, 0.4);
-   ephysics_body_friction_set(boundary, 3);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    boundary = ephysics_body_front_boundary_add(test_data->world);
-   ephysics_body_restitution_set(boundary, 0.4);
-   ephysics_body_friction_set(boundary, 3);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    boundary = ephysics_body_back_boundary_add(test_data->world);
-   ephysics_body_restitution_set(boundary, 0.4);
-   ephysics_body_friction_set(boundary, 3);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    ephysics_body_top_boundary_add(test_data->world);
+   ephysics_body_restitution_set(boundary, 0);
+   ephysics_body_friction_set(boundary, 0);
 
    _world_populate(test_data);
    elm_object_event_callback_add(test_data->win, _on_keydown, test_data->data);
