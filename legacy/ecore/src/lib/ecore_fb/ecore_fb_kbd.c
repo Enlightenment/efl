@@ -133,7 +133,7 @@ static Eina_Bool _ecore_fb_kbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handl
 static void
 _ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
 {
-   Ecore_Fb_Event_Key_Up *e;
+   Ecore_Fb_Event_Key_Down *e;
    e = ev;
    free(e->keyname);
    if (e->keysymbol) free(e->keysymbol);
