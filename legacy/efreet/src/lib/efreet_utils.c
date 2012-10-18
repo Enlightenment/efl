@@ -358,16 +358,18 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
     char dbuf[PATH_MAX];
 
     snprintf(dbuf, sizeof(dbuf), "%s/menus", config_dir);
-    it = eina_file_direct_ls(dbuf);
+    it = eina_file_stat_ls(dbuf);
     if (!it) return menus;
     EINA_ITERATOR_FOREACH(it, info)
     {
         const char *exten;
+
+        if (info->type == EINA_FILE_DIR) continue;
+
         exten = strrchr(info->path + info->name_start, '.');
         if (!exten) continue;
-        if (strcmp(".menu", exten)) continue;
 
-        if (ecore_file_is_dir(info->path)) continue;
+        if (strcmp(".menu", exten)) continue;
 
         menus = eina_list_append(menus, strdup(info->path));
     }

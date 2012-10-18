@@ -140,7 +140,7 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
 
     if (!ecore_file_is_dir(path)) return 1;
 
-    it = eina_file_direct_ls(path);
+    it = eina_file_stat_ls(path);
     if (!it) return 1;
 
     id[0] = '\0';
@@ -159,7 +159,7 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
         }
 
         snprintf(buf, sizeof(buf), "%s/%s", path, fname);
-        if (ecore_file_is_dir(buf))
+        if (info->type == EINA_FILE_DIR)
         {
             if (recurse)
                 cache_scan(buf, file_id, priority, recurse, changed);

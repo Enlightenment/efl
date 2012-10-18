@@ -1033,11 +1033,12 @@ efreet_desktop_changes_listen_recursive(const char *path)
 
     efreet_desktop_changes_monitor_add(path);
 
-    it = eina_file_direct_ls(path);
+    it = eina_file_stat_ls(path);
     if (!it) return;
     EINA_ITERATOR_FOREACH(it, info)
     {
-        if (ecore_file_is_dir(info->path)) efreet_desktop_changes_listen_recursive(info->path);
+        if (info->type != EINA_FILE_DIR) continue;
+        efreet_desktop_changes_listen_recursive(info->path);
     }
     eina_iterator_free(it);
 }

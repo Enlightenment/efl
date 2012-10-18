@@ -1808,7 +1808,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     efreet_menu_create_filter_list(legacy_internal);
     legacy_internal->filters = eina_list_append(legacy_internal->filters, filter);
 
-    it = eina_file_direct_ls(path);
+    it = eina_file_stat_ls(path);
     if (it)
     {
         Eina_File_Direct_Info *info;
@@ -1822,7 +1822,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
             fname = info->path + info->name_start;
             /* recurse into sub directories */
-            if (ecore_file_is_dir(info->path))
+            if (info->type == EINA_FILE_DIR)
             {
                 Efreet_Menu_Internal *ret;
 
@@ -3295,7 +3295,7 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
     Eina_Iterator *it;
     Eina_File_Direct_Info *info;
 
-    it = eina_file_direct_ls(path);
+    it = eina_file_stat_ls(path);
     if (!it) return 1;
 
     EINA_ITERATOR_FOREACH(it, info)
@@ -3308,7 +3308,7 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
         else
             strcpy(buf2, fname);
 
-        if (ecore_file_is_dir(info->path))
+        if (info->type == EINA_FILE_DIR)
         {
             if (!legacy)
                 efreet_menu_app_dir_scan(internal, info->path, buf2, legacy);
@@ -3403,7 +3403,7 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
     Eina_File_Direct_Info *info;
     char *ext;
 
-    it = eina_file_direct_ls(path);
+    it = eina_file_stat_ls(path);
     if (!it) return 1;
 
     EINA_ITERATOR_FOREACH(it, info)
@@ -3416,7 +3416,7 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
         else
             strcpy(buf2, fname);
 
-        if (ecore_file_is_dir(info->path))
+        if (info->type == EINA_FILE_DIR)
             efreet_menu_directory_dir_scan(info->path, buf2, cache);
 
         else
