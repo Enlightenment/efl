@@ -216,10 +216,15 @@ EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
+    char *tmp;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
-    desktop = efreet_cache_desktop_find(file);
+    tmp = eina_file_path_sanitize(file);
+    if (!tmp) return NULL;
+
+    desktop = efreet_cache_desktop_find(tmp);
+    free(tmp);
     if (desktop)
     {
         desktop->ref++;
@@ -229,7 +234,6 @@ efreet_desktop_new(const char *file)
             return NULL;
         }
         return desktop;
-        efreet_desktop_free(desktop);
     }
     return efreet_desktop_uncached_new(file);
 }
@@ -238,17 +242,21 @@ EAPI Efreet_Desktop *
 efreet_desktop_uncached_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
-//    char rp[PATH_MAX];
-    const char *rp = file;
+    char *tmp;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+    if (!ecore_file_exists(file)) return NULL;
 
-//    if (!realpath(file, rp)) return NULL;
-    if (!ecore_file_exists(rp)) return NULL;
+    tmp = eina_file_path_sanitize(file);
+    if (!tmp) return NULL;
 
     desktop = NEW(Efreet_Desktop, 1);
-    if (!desktop) return NULL;
-    desktop->orig_path = strdup(rp);
+    if (!desktop)
+    {
+        free(tmp);
+        return NULL;
+    }
+    desktop->orig_path = tmp;
     desktop->ref = 1;
     if (!efreet_desktop_read(desktop))
     {
@@ -1037,13 +1045,9 @@ efreet_desktop_changes_listen_recursive(const char *path)
 static void
 efreet_desktop_changes_monitor_add(const char *path)
 {
-//    char rp[PATH_MAX];
-    const char *rp = path;
-
-//    if (!realpath(path, rp)) return;
-    if (eina_hash_find(change_monitors, rp)) return;
-    eina_hash_add(change_monitors, rp,
-                  ecore_file_monitor_add(rp,
+    if (eina_hash_find(change_monitors, path)) return;
+    eina_hash_add(change_monitors, path,
+                  ecore_file_monitor_add(path,
                                          efreet_desktop_changes_cb,
                                          NULL));
 }

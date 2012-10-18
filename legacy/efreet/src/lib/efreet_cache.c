@@ -803,14 +803,10 @@ Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
 {
     Efreet_Cache_Desktop *cache;
-//    char rp[PATH_MAX];
-    const char *rp = file;
-
-//    if (!realpath(file, rp)) return NULL;
 
     if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
 
-    cache = eina_hash_find(desktops, rp);
+    cache = eina_hash_find(desktops, file);
     if (cache == NON_EXISTING) return NULL;
     if (cache)
     {
@@ -829,11 +825,11 @@ efreet_cache_desktop_find(const char *file)
 
         /* We got stale data. The desktop will be free'd eventually as
          * users will call efreet_desktop_free */
-        eina_hash_set(desktops, rp, NON_EXISTING);
+        eina_hash_set(desktops, file, NON_EXISTING);
         cache = NULL;
     }
 
-    cache = eet_data_read(desktop_cache, efreet_desktop_edd(), rp);
+    cache = eet_data_read(desktop_cache, efreet_desktop_edd(), file);
     if (cache)
     {
         if (cache->desktop.load_time != ecore_file_mod_time(cache->desktop.orig_path))
@@ -841,7 +837,7 @@ efreet_cache_desktop_find(const char *file)
             /* Don't return stale data */
             INF("We got stale data in the desktop cache");
             efreet_cache_desktop_free(&cache->desktop);
-            eina_hash_set(desktops, rp, NON_EXISTING);
+            eina_hash_set(desktops, file, NON_EXISTING);
         }
         else
         {
@@ -852,7 +848,7 @@ efreet_cache_desktop_find(const char *file)
         }
     }
     else
-        eina_hash_set(desktops, rp, NON_EXISTING);
+        eina_hash_set(desktops, file, NON_EXISTING);
     return NULL;
 }
 

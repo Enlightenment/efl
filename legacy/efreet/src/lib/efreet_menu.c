@@ -1537,34 +1537,26 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 {
     Efreet_Xml *merge_xml;
     Efreet_Menu_Internal *internal;
-//    char rp[PATH_MAX];
-    char *rp = path;
 
     if (!parent || !xml || !path) return 0;
 
     /* do nothing if the file doesn't exist */
     if (!ecore_file_exists(path)) return 1;
 
-//    if (!realpath(path, rp))
-//    {
-//        INF("efreet_menu_merge() unable to get real path for %s", path);
-//        return 0;
-//    }
-
     /* don't merge the same path twice */
-    if (eina_hash_find(efreet_merged_menus, rp))
+    if (eina_hash_find(efreet_merged_menus, path))
     {
         return 1;
     }
 
-    eina_hash_add(efreet_merged_menus, rp, (void *)1);
+    eina_hash_add(efreet_merged_menus, path, (void *)1);
 
-    merge_xml = efreet_xml_new(rp);
+    merge_xml = efreet_xml_new(path);
 
     if (!merge_xml)
     {
         INF("efreet_menu_merge() failed to read in the "
-                "merge file (%s)", rp);
+                "merge file (%s)", path);
         return 0;
     }
 

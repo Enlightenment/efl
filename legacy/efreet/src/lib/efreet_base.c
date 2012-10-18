@@ -367,8 +367,7 @@ efreet_dirs_get(const char *key, const char *fallback)
 {
     Eina_List *dirs = NULL;
     const char *path;
-    char *tmp, *s, *p;
-//    char ts[PATH_MAX];
+    char *s, *p;
     size_t len;
 
     path = getenv(key);
@@ -377,20 +376,20 @@ efreet_dirs_get(const char *key, const char *fallback)
     if (!path) return dirs;
 
     len = strlen(path) + 1;
-    tmp = alloca(len);
-    memcpy(tmp, path, len);
-    s = tmp;
+    s = alloca(len);
+    memcpy(s, path, len);
     p = strchr(s, EFREET_PATH_SEP);
     while (p)
     {
         *p = '\0';
         if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
         {
-            // resolve path properly/fully to remove path//path2 to
-            // path/path2, path/./path2 to path/path2 etc.
-//            if (realpath(s, ts))
-//                dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
-           dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
+            char *tmp = eina_file_path_sanitize(s);
+            if (tmp)
+            {
+                dirs = eina_list_append(dirs, eina_stringshare_add(tmp));
+                free(tmp);
+            }
         }
 
         s = ++p;
@@ -398,11 +397,12 @@ efreet_dirs_get(const char *key, const char *fallback)
     }
     if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
     {
-        // resolve path properly/fully to remove path//path2 to
-        // path/path2, path/./path2 to path/path2 etc.
-//        if (realpath(s, ts))
-//            dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
-       dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
+        char *tmp = eina_file_path_sanitize(s);
+        if (tmp)
+        {
+            dirs = eina_list_append(dirs, eina_stringshare_add(tmp));
+            free(tmp);
+        }
     }
 
     return dirs;

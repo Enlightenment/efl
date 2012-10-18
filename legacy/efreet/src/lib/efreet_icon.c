@@ -852,36 +852,27 @@ efreet_icon_changes_listen(void)
 static void
 efreet_icon_changes_monitor_add(const char *path)
 {
-//    char rp[PATH_MAX];
-//    if (!realpath(path, rp)) return;
-    const char *rp = path;
+    Eina_Iterator *it;
+    const char *ent;
    
-    if (!ecore_file_is_dir(rp)) return;
-    if (eina_hash_find(change_monitors, rp)) return;
-    eina_hash_add(change_monitors, rp,
-                  ecore_file_monitor_add(rp,
+    if (!ecore_file_is_dir(path)) return;
+    if (eina_hash_find(change_monitors, path)) return;
+    eina_hash_add(change_monitors, path,
+                  ecore_file_monitor_add(path,
                                          efreet_icon_changes_cb,
                                          NULL));
 
-    if (ecore_file_is_dir(rp))
+    it = eina_file_ls(path);
+    if (!it) return;
+    EINA_ITERATOR_FOREACH(it, ent)
     {
-        Eina_Iterator *it;
-        const char *ent;
-
-        it = eina_file_ls(rp);
-        if (!it) return;
-        EINA_ITERATOR_FOREACH(it, ent)
-        {
-            rp = ent;
-//            if (!realpath(ent, rp)) continue;
-            if (!ecore_file_is_dir(rp)) continue;
-            eina_hash_add(change_monitors, rp,
-                          ecore_file_monitor_add(rp,
-                                                 efreet_icon_changes_cb,
-                                                 NULL));
-        }
-        eina_iterator_free(it);
+        if (!ecore_file_is_dir(ent)) continue;
+        eina_hash_add(change_monitors, ent,
+                      ecore_file_monitor_add(ent,
+                                             efreet_icon_changes_cb,
+                                             NULL));
     }
+    eina_iterator_free(it);
 }
 
 static void
