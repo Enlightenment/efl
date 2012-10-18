@@ -215,6 +215,59 @@ _mirrored_set(Evas_Object *obj,
 }
 
 static void
+_items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
+{
+   Elm_Toolbar_Item *it, *prev;
+   Eina_Bool full = EINA_FALSE, more = EINA_FALSE;
+   Evas_Coord min, mw, mh;
+   int sumf = 0, sumb = 0, prev_min = 0;
+
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   EINA_INLIST_FOREACH(sd->items, it)
+     {
+        min = mw = mh = -1;
+        if (it->in_box && it->in_box == sd->bx)
+          {
+             if (!it->separator && !it->object)
+               elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+             edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+             if (!it->separator && !it->object)
+               elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+          }
+        else if (!more)
+          {
+             more = EINA_TRUE;
+             elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+             edje_object_size_min_restricted_calc(sd->VIEW(more_item), &mw, &mh, mw, mh);
+             elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+          }
+
+        if (mw != -1 || mh != -1)
+          {
+             if (sd->vertical) min = mh;
+             else min = mw;
+
+             if ((!full) && ((sumf + min) > view))
+               {
+                  prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+                  if (prev && prev->separator)
+                    {
+                       sumf -= prev_min;
+                       sumb += prev_min;
+                    }
+                  full = EINA_TRUE;
+               }
+
+             if (!full) sumf += min;
+             else sumb += min;
+             prev_min = min;
+          }
+     }
+   if (sumf != 0) *bl = (Evas_Coord)(((sumf + sumb) * view) / sumf);
+}
+
+static void
 _resize_job(void *data)
 {
    Evas_Object *obj = (Evas_Object *)data;
@@ -382,6 +435,15 @@ _resize_job(void *data)
           }
         else
           evas_object_hide(sd->VIEW(more_item));
+
+        if (sd->vertical)
+          {
+             if (h > vh) _items_size_fit(obj, &h, vh);
+          }
+        else
+          {
+             if (w > vw) _items_size_fit(obj, &w, vw);
+          }
      }
    else
      {
@@ -835,15 +897,17 @@ _sizing_eval(Evas_Object *obj)
      }
    else if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        minw = minw_bx + (w - vw);
-        minh = minh_bx + (h - vh);
         if (sd->vertical)
           {
-             if (minh_bx < vh) minh_bx = vh;
+             minw = minw_bx + (w - vw);
+             if (minh_bx <= vh) minh_bx = vh;
+             else _items_size_fit(obj, &minh_bx, vh);
           }
         else
           {
-             if (minw_bx < vw) minw_bx = vw;
+             minh = minh_bx + (h - vh);
+             if (minw_bx <= vw) minw_bx = vw;
+             else _items_size_fit(obj, &minw_bx, vw);
           }
      }
    else

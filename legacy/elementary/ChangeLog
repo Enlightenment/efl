@@ -624,3 +624,9 @@
        *  elm: Fixed on_focus_region() issue. Focused area should be scrolled
        only when it is needed. Now only entry needs this feature.
 
+2012-10-18  Jaehwan Kim
+
+        * Add the fitting the size of items according the viewport size.
+        If the sum of item's min is larger than the viewport size in ELM_TOOLBAR_SHRINK_EXPAND mode,
+        it can be scroll. And the end of the item is fitted on the end of the viewport.
+
