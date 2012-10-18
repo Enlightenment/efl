@@ -3142,6 +3142,16 @@ ephysics_body_light_get(const EPhysics_Body *body)
    return body->light_apply;
 }
 
+EAPI double
+ephysics_body_volume_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("No body, no volume.");
+        return -1;
+     }
+   return _ephysics_body_volume_get(body);
+}
 
 #ifdef  __cplusplus
 }

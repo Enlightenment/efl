@@ -3448,6 +3448,23 @@ EAPI double ephysics_body_density_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Get body's volume.
+ *
+ * @note The unit of the returned value is meters ^ 3. Not pixels. Useful
+ * for calculation with mass and density.
+ *
+ * @param body The physics body.
+ * @return the @p body's volume, in meters ^ 3 or -1 on error.
+ *
+ * @see ephysics_body_geometry_set().
+ * @see ephysics_body_geometry_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_volume_get(const EPhysics_Body *body);
+
+/**
+ * @brief
  * Set body's material.
  *
  * This function makes properties setting easy. When a material is set to
