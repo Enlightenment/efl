@@ -831,15 +831,7 @@ _item_theme_hook(Evas_Object *obj,
    edje_object_size_min_restricted_calc(view, &mw, &mh, mw, mh);
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-
-   evas_object_size_hint_min_get(view, &minw, &minh);
-
-   if ((minw < mw) && (minh < mh))
-     evas_object_size_hint_min_set(view, mw, mh);
-   else if ((minw < mw) && (minh > mh))
-     evas_object_size_hint_min_set(view, mw, minh);
-   else if ((minw > mw) && (minh < mh))
-     evas_object_size_hint_min_set(view, minw, mh);
+   evas_object_size_hint_min_set(view, mw, mh);
 }
 
 static void
