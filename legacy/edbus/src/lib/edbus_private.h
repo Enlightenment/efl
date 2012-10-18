@@ -72,6 +72,8 @@ void                   edbus_connection_name_owner_monitor(EDBus_Connection *con
 
 EDBus_Pending         *_edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message_Cb cb, const void *cb_data, double timeout);
 
+EDBus_Message_Iter    *edbus_message_iter_sub_iter_get(EDBus_Message_Iter *iter);
+
 #ifdef HAVE_VA_LIST_AS_ARRAY
 #define MAKE_PTR_FROM_VA_LIST(arg) ((va_list *)(arg))
 #else

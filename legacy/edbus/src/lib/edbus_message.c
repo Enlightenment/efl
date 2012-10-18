@@ -527,6 +527,20 @@ edbus_message_iter_basic_get(EDBus_Message_Iter *iter, void *value)
    dbus_message_iter_get_basic(&iter->dbus_iterator, value);
 }
 
+EDBus_Message_Iter *
+edbus_message_iter_sub_iter_get(EDBus_Message_Iter *iter)
+{
+   EDBus_Message_Iter *sub;
+   EDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(iter->writable, NULL);
+
+   sub = _message_iterator_new(EINA_FALSE);
+   dbus_message_iter_recurse(&iter->dbus_iterator, &sub->dbus_iterator);
+   iter->iterators = eina_inlist_append(iter->iterators,
+                                        EINA_INLIST_GET(sub));
+   return sub;
+}
+
 EAPI char*
 edbus_message_iter_signature_get(EDBus_Message_Iter *iter)
 {

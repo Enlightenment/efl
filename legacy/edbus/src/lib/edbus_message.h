@@ -182,6 +182,7 @@ EAPI EDBus_Message_Iter *edbus_message_iter_get(const EDBus_Message *msg) EINA_A
  * @brief Get a basic type from EDBus_Iterator.
  */
 EAPI void                    edbus_message_iter_basic_get(EDBus_Message_Iter *iter, void *value) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Returns the current signature of a message iterator.
  *
