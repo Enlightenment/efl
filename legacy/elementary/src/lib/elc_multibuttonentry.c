@@ -1708,7 +1708,7 @@ elm_multibuttonentry_entry_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_multibuttonentry_expanded_get(const Evas_Object *obj)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj) - 1;
+   ELM_MULTIBUTTONENTRY_CHECK(obj) EINA_FALSE;
    ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
 
    return sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
