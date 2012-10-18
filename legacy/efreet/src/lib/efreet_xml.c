@@ -86,27 +86,27 @@ efreet_xml_new(const char *file)
     Efreet_Xml *xml = NULL;
     int size, fd = -1;
     char *data = MAP_FAILED;
+    struct stat st;
 
     if (!file) return NULL;
-    if (!ecore_file_exists(file)) return NULL;
-
-    size = ecore_file_size(file);
-    if (size <= 0) goto efreet_error;
 
     fd = open(file, O_RDONLY);
     if (fd == -1) goto efreet_error;
 
+    if (fstat(fd, &st) < 0) goto efreet_error;
+
     /* let's make mmap safe and just get 0 pages for IO erro */
     eina_mmap_safety_enabled_set(EINA_TRUE);
    
-    data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+    data = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (data == MAP_FAILED) goto efreet_error;
 
     error = 0;
+    size = st.st_size;
     xml = efreet_xml_parse(&data, &size);
     if (!xml || error) goto efreet_error;
 
-    munmap(data, size);
+    munmap(data, st.st_size);
     close(fd);
     return xml;
 
