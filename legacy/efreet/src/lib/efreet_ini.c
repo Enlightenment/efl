@@ -21,9 +21,6 @@ void *alloca (size_t);
 #endif
 
 #include <ctype.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <sys/mman.h>
 
 #include <Ecore_File.h>
 
@@ -97,92 +94,60 @@ efreet_ini_new(const char *file)
 static Eina_Hash *
 efreet_ini_parse(const char *file)
 {
-    const char *buffer, *line_start;
-    FILE *f;
+    Eina_File *f;
+    Eina_File_Line *line;
     Eina_Hash *data, *section = NULL;
-    struct stat file_stat;
-    int line_length, left;
+    Eina_Iterator *it;
 
-    if (!file) return NULL;
+    f = eina_file_open(file, EINA_FALSE);
+    if (!f) goto error;
 
-    f = fopen(file, "rb");
-    if (!f) return NULL;
+    data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
+    if (!data) goto error;
 
-    if (fstat(fileno(f), &file_stat) || (file_stat.st_size < 1))
-    {
-        fclose(f);
-        return NULL;
-    }
-    if (!S_ISREG(file_stat.st_mode)) /* if not a regular file - close */
-    {
-        fclose(f);
-        return NULL;
-    }
-
-    left = file_stat.st_size;
     /* let's make mmap safe and just get 0 pages for IO erro */
     eina_mmap_safety_enabled_set(EINA_TRUE);
 
-    buffer = mmap(NULL, left, PROT_READ, MAP_SHARED, fileno(f), 0);
-    if (buffer == MAP_FAILED)
+    it = eina_file_map_lines(f);
+    if (!it) goto error;
+    EINA_ITERATOR_FOREACH(it, line)
     {
-        fclose(f);
-        return NULL;
-    }
+        const char *eq;
+        unsigned int start = 0;
 
-    data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
-
-    line_start = buffer;
-    while (left > 0)
-    {
-        int sep;
-
-        /* find the end of line */
-        for (line_length = 0;
-                (line_length < left) &&
-                (line_start[line_length] != '\n'); line_length++)
-            ;
-
-        /* check for all white space */
-        while (isspace(line_start[0]) && (line_length > 0))
-        {
-            line_start++;
-            line_length--;
-        }
-
-        /* skip empty lines and comments */
-        if ((line_length == 0) || (line_start[0] == '\r') ||
-                (line_start[0] == '\n') || (line_start[0] == '#') ||
-                (line_start[0] == '\0'))
-            goto next_line;
+        /* skip empty lines */
+        if (line->length == 0) continue;
+        /* skip white space at start of line */
+        while ((start < line->length) && (isspace((unsigned char)line->start[start])))
+            start++;
+        /* skip empty lines */
+        if (start == line->length) continue;
+        /* skip comments */
+        if (line->start[start] == '#') continue;
 
         /* new section */
-        if (line_start[0] == '[')
+        if (line->start[start] == '[')
         {
-            int header_length;
+            const char *head_start;
+            const char *head_end;
 
-            /* find the ']' */
-            for (header_length = 1;
-                    (header_length < line_length) &&
-                    (line_start[header_length] != ']'); ++header_length)
-                ;
+            head_start = &(line->start[start]) + 1;
+            head_end = memchr(line->start, ']', line->length);
 
-            if (line_start[header_length] == ']')
+            if (head_end)
             {
-                const char *header;
+                char *header;
+                size_t len;
 
-                header = alloca(header_length * sizeof(unsigned char));
-                if (!header) goto next_line;
+                len = head_end - head_start + 1;
+                header = alloca(len);
 
-                memcpy((char*)header, line_start + 1, header_length - 1);
-                ((char*)header)[header_length - 1] = '\0';
+                memcpy(header, head_start, len - 1);
+                header[len - 1] = '\0';
 
                 section = eina_hash_string_small_new(EINA_FREE_CB(eina_stringshare_del));
 
                 eina_hash_del_by_key(data, header);
-//                if (old) INF("[efreet] Warning: duplicate section '%s' "
-  //                              "in file '%s'", header, file);
-
                 eina_hash_add(data, header, section);
             }
             else
@@ -191,7 +156,7 @@ efreet_ini_parse(const char *file)
                 /* just printf for now till we figure out what to do */
 //                ERR("Invalid file (%s) (missing ] on group name)", file);
             }
-            goto next_line;
+            continue;
         }
 
         if (!section)
@@ -200,62 +165,62 @@ efreet_ini_parse(const char *file)
             goto error;
         }
 
-        /* find for '=' */
-        for (sep = 0; (sep < line_length) && (line_start[sep] != '='); ++sep)
-            ;
+        eq = memchr(line->start, '=', line->length);
 
-        if (sep < line_length && line_start[sep] == '=')
+        if (eq)
         {
+            const char *key_start, *key_end;
+            const char *value_start, *value_end;
             char *key, *value;
-            int key_end, value_start, value_end;
+            size_t len;
+
+            key_start = &(line->start[start]);
+            key_end = eq - 1;
 
             /* trim whitespace from end of key */
-            for (key_end = sep - 1;
-                    (key_end > 0) && isspace(line_start[key_end]); --key_end)
-                ;
+            while ((isspace((unsigned char)*key_end)) && (key_end > key_start))
+                key_end--;
+            key_end++;
 
-            if (!isspace(line_start[key_end])) key_end++;
+            /* make sure we have a key */
+            if (key_start == key_end) continue;
+
+            value_start = eq + 1;
+            value_end = line->end;
+
+            /* line->end points to char after '\n' or '\r' */
+            value_end--;
+            /* trim whitespace from end of value */
+            while ((isspace((unsigned char)*value_end)) && (value_end > value_start))
+                value_end--;
+            value_end++;
 
             /* trim whitespace from start of value */
-            for (value_start = sep + 1;
-                 (value_start < line_length) &&
-                 isspace(line_start[value_start]); ++value_start)
-                ;
+            while ((isspace((unsigned char)*value_start)) && (value_start < value_end))
+                value_start++;
 
-            /* trim \n off of end of value */
-            for (value_end = line_length;
-                 (value_end > value_start) &&
-                 ((line_start[value_end] == '\n') ||
-                  (line_start[value_end] == '\r')); --value_end)
-                ;
+            len = key_end - key_start + 1;
+            key = alloca(len);
 
-            if (line_start[value_end] != '\n'
-                    && line_start[value_end] != '\r'
-                    && value_end < line_length)
-                value_end++;
+            memcpy(key, key_start, len - 1);
+            key[len - 1] = '\0';
 
-            /* make sure we have a key. blank values are allowed */
-            if (key_end <= 0)
+            /* empty value allowed */
+            if (value_end == value_start)
             {
-                /* invalid file... */
-//                INF("Invalid file (%s) (invalid key=value pair)", file);
-
-                goto next_line;
+                eina_hash_del_by_key(section, key);
+                eina_hash_add(section, key, "");
             }
+            else
+            {
+                len = value_end - value_start + 1;
+                value = alloca(len);
+                memcpy(value, value_start, len - 1);
+                value[len - 1] = '\0';
 
-            key = alloca(key_end + 1);
-            value = alloca(value_end - value_start + 1);
-            if (!key || !value) goto next_line;
-
-            memcpy(key, line_start, key_end);
-            key[key_end] = '\0';
-
-            memcpy(value, line_start + value_start,
-                    value_end - value_start);
-            value[value_end - value_start] = '\0';
-
-            eina_hash_del_by_key(section, key);
-            eina_hash_add(section, key, efreet_ini_unescape(value));
+                eina_hash_del_by_key(section, key);
+                eina_hash_add(section, key, efreet_ini_unescape(value));
+            }
         }
         else
         {
@@ -263,13 +228,9 @@ efreet_ini_parse(const char *file)
             INF("Invalid file (%s) (missing = from key=value pair)", file);
             goto error;
         }
-
-next_line:
-        left -= line_length + 1;
-        line_start += line_length + 1;
     }
-    munmap((char*) buffer, file_stat.st_size);
-    fclose(f);
+    eina_iterator_free(it);
+    eina_file_close(f);
 
 #if 0
     if (!eina_hash_population(data))
@@ -281,6 +242,8 @@ next_line:
     return data;
 error:
     if (data) eina_hash_free(data);
+    if (it) eina_iterator_free(it);
+    if (f) eina_file_close(f);
     return NULL;
 }
 
