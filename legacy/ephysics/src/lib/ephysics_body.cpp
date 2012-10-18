@@ -380,6 +380,16 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
      {
         stacking = (EPhysics_Body_Evas_Stacking *)data;
 
+        if (prev_obj && evas_object_layer_get(prev_obj) !=
+            evas_object_layer_get(stacking->evas))
+          {
+             INF("The world %p has bodies with associated evas objects on"
+                 " different layers, skipping the restaking for %p and %p",
+                 world, prev_obj, stacking->evas);
+             free(stacking);
+             continue;
+          }
+
         if (prev_obj)
           evas_object_stack_above(stacking->evas, prev_obj);
 
