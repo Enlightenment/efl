@@ -889,11 +889,16 @@ eina_file_stat_ls(const char *dir)
 #ifdef HAVE_DIRENT_H
    Eina_File_Direct_Iterator *it;
    size_t length;
+   DIR *dirp;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
    length = strlen(dir);
    if (length < 1)
+      return NULL;
+
+   dirp = opendir(dir);
+   if (!dirp)
       return NULL;
 
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
@@ -902,12 +907,7 @@ eina_file_stat_ls(const char *dir)
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-   it->dirp = opendir(dir);
-   if (!it->dirp)
-     {
-        free(it);
-        return NULL;
-     }
+   it->dirp = dirp;
 
    if (length + _eina_name_max(it->dirp) + 2 >= EINA_PATH_MAX)
      {
