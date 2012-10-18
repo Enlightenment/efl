@@ -26,6 +26,7 @@ Fixes:
    * Fix native surface set to null crash bug in gl engine.
    * Fix font sizing issue with some rare sizes and fonts when rounding wrong.
    * Fix software line drawing c fallback code.
+   * Fix the vertical line drawing on gl backened.
 
 Removal:
    * No more support s3c6410.
