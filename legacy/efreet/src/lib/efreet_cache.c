@@ -115,8 +115,6 @@ EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
 int
 efreet_cache_init(void)
 {
-    char buf[PATH_MAX];
-
     _efreet_cache_log_dom = eina_log_domain_register("efreet_cache", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_cache_log_dom < 0)
         return 0;
@@ -132,6 +130,8 @@ efreet_cache_init(void)
 
     if (efreet_cache_update)
     {
+        char buf[PATH_MAX];
+
         snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
         if (!ecore_file_exists(buf))
         {
