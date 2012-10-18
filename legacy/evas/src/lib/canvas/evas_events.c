@@ -2036,6 +2036,24 @@ evas_object_freeze_events_set(Evas_Object *eo_obj, Eina_Bool freeze)
    eo_do(eo_obj, evas_obj_freeze_events_set(freeze));
 }
 
+static void
+_feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Public_Data *evas = obj->layer->evas;
+   Eina_Bool in_output_rect;
+   in_output_rect = evas_object_is_in_output_rect(eo_obj, obj, evas->pointer.x,
+                                                  evas->pointer.y, 1, 1);
+   if ((in_output_rect) &&
+       ((!obj->precise_is_inside) || (evas_object_is_inside(eo_obj, obj,
+                                                            evas->pointer.x,
+                                                            evas->pointer.y))))
+     evas_event_feed_mouse_move(evas->evas,
+                                evas->pointer.x,
+                                evas->pointer.y,
+                                evas->last_timestamp,
+                                NULL);
+}
+
 void
 _freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
 {
@@ -2047,18 +2065,7 @@ _freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE,
                                              EINA_FALSE);
    if (obj->freeze_events) return;
-   if (evas_object_is_in_output_rect(eo_obj, obj,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y, 1, 1) &&
-       ((!obj->precise_is_inside) ||
-        (evas_object_is_inside(eo_obj, obj,
-                               obj->layer->evas->pointer.x,
-                               obj->layer->evas->pointer.y))))
-     evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                obj->layer->evas->pointer.x,
-                                obj->layer->evas->pointer.y,
-                                obj->layer->evas->last_timestamp,
-                                NULL);
+   _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
 EAPI Eina_Bool
@@ -2098,18 +2105,7 @@ _pass_events_set(Eo *eo_obj, void *_pd, va_list *list)
    if (obj->pass_events == pass) return;
    obj->pass_events = pass;
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_FALSE, EINA_FALSE);
-   if (evas_object_is_in_output_rect(eo_obj, obj,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y, 1, 1) &&
-       ((!obj->precise_is_inside) ||
-        (evas_object_is_inside(eo_obj, obj,
-                               obj->layer->evas->pointer.x,
-                               obj->layer->evas->pointer.y))))
-     evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                obj->layer->evas->pointer.x,
-                                obj->layer->evas->pointer.y,
-                                obj->layer->evas->last_timestamp,
-                                NULL);
+   _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
 EAPI Eina_Bool
@@ -2148,18 +2144,7 @@ _repeat_events_set(Eo *eo_obj, void *_pd, va_list *list)
    repeat = !!repeat;
    if (obj->repeat_events == repeat) return;
    obj->repeat_events = repeat;
-   if (evas_object_is_in_output_rect(eo_obj, obj,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y, 1, 1) &&
-       ((!obj->precise_is_inside) ||
-        (evas_object_is_inside(eo_obj, obj,
-                               obj->layer->evas->pointer.x,
-                               obj->layer->evas->pointer.y))))
-     evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                obj->layer->evas->pointer.x,
-                                obj->layer->evas->pointer.y,
-                                obj->layer->evas->last_timestamp,
-                                NULL);
+   _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
 EAPI Eina_Bool
