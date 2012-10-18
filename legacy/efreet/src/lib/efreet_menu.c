@@ -551,7 +551,7 @@ efreet_menu_get(void)
     if (efreet_menu_file)
     {
         if (ecore_file_exists(efreet_menu_file))
-        return efreet_menu_parse(efreet_menu_file);
+            return efreet_menu_parse(efreet_menu_file);
     }
 #endif
 
