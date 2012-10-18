@@ -209,8 +209,10 @@ static void
 _mass_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Body_Data *bd = data;
-   ephysics_body_mass_set(bd->body, elm_slider_value_get(obj));
-   elm_slider_value_set(evas_object_data_get(obj, "density"), 0);
+   double mass = elm_slider_value_get(obj);
+   ephysics_body_mass_set(bd->body, mass);
+   elm_slider_value_set(evas_object_data_get(obj, "density"),
+                        mass / ephysics_body_volume_get(bd->body));
 }
 
 static void
