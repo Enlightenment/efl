@@ -127,6 +127,7 @@ test_bouncing_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    ephysics_world_gravity_set(world, 0, 0, 0);
    ephysics_world_render_geometry_set(world, 50, 40, -50,
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
+   ephysics_world_perspective_enabled_set(world, EINA_TRUE);
    test_data->world = world;
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);

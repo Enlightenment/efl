@@ -1423,6 +1423,100 @@ EAPI void ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool e
 EAPI Eina_Bool ephysics_world_light_all_bodies_get(const EPhysics_World *world);
 
 /**
+ * @brief
+ * Set perspective to be applied on the scene.
+ *
+ * This applies a given perspective (3D) to the world rendering.
+ * It will be used when the scene is rendered, after each simulation step,
+ * by @ref ephysics_body_evas_object_update().
+ *
+ * The @p px and @p py points specify the "infinite distance" point in the 3D
+ * conversion (where all lines converge to like when artists draw 3D by hand).
+ * The @p z0 value specifies the z value at which there is a 1:1 mapping between
+ * spatial coordinates and screen coordinates. Any points on this z value will
+ * not have their X and Y values modified in the transform.
+ * Those further away (Z value higher) will shrink into the distance, and those
+ * less than this value will expand and become bigger. The foc value determines
+ * the "focal length" of the camera. This is in reality the distance between
+ * the camera lens plane itself (at or closer than this rendering results are
+ * undefined) and the @p z0 z value. This allows for some "depth" control and
+ * @p foc must be greater than 0.
+ *
+ * Considering the world geometry, by default, perspective is set to
+ * px = x + w / 2, py = y + h / 2, z0 = z + d / 2 and foc = 10 * (z + d).
+ * This means the conversion point is centered on render area, and @p z0
+ * is on the center of render area z axis. It is set when
+ * @ref ephysics_world_render_geometry_set() is called.
+ *
+ * @note The unit used for all parameters is Evas coordinates.
+ *
+ * @note To be used, perspective need to be enabled with
+ * @ref ephysics_world_perspective_enabled_set().
+ *
+ * @param world The physics world
+ * @param px The perspective distance X coordinate
+ * @param py The perspective distance Y coordinate
+ * @param z0 The "0" z plane value
+ * @param foc The focal distance
+ *
+ * @see ephysics_world_perspective_get().
+ * @see ephysics_world_perspective_enabled_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_perspective_set(EPhysics_World *world, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
+
+/**
+ * @brief
+ * Get perspective applied on the scene.
+ *
+ * @param world The physics world
+ * @param px The perspective distance X coordinate
+ * @param py The perspective distance Y coordinate
+ * @param z0 The "0" z plane value
+ * @param foc The focal distance
+ *
+ * @see ephysics_world_perspective_set() for more details.
+ * @see ephysics_world_perspective_enabled_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_perspective_get(const EPhysics_World *world, Evas_Coord *px, Evas_Coord *py, Evas_Coord *z0, Evas_Coord *foc);
+
+/**
+ * @brief
+ * Set if perspective should be applied.
+ *
+ * The applied perspective can be set with
+ * @ref ephysics_world_perspective_set().
+ *
+ * @param world The physics world.
+ * @param enabled @c EINA_TRUE if perspective should be used, or @c EINA_FALSE
+ * if it shouldn't.
+ *
+ * @see ephysics_world_perspective_set() for more details.
+ * @see ephysics_world_perspective_enabled_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_perspective_enabled_set(EPhysics_World *world, Eina_Bool enabled);
+
+/**
+ * @brief
+ * Return if perspective is enabled or not.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if perspective is enabled, or @c EINA_FALSE if it
+ * isn't, or on error.
+ *
+ * @see ephysics_world_perspective_set() for more details.
+ * @see ephysics_world_perspective_enabled_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_perspective_enabled_get(const EPhysics_World *world);
+
+/**
  * @}
  */
 

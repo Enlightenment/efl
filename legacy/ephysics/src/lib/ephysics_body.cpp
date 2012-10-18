@@ -1061,6 +1061,13 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    evas_map_util_quat_rotate(map, quat.x(), quat.y(), quat.z(), -quat.w(),
                              x + (w * body->cm.x), y + (h * body->cm.y), z);
 
+   if (ephysics_world_perspective_enabled_get(body->world))
+     {
+        int px, py, z0, foc;
+        ephysics_world_perspective_get(body->world, &px, &py, &z0, &foc);
+        evas_map_util_3d_perspective(map, px, py, z0, foc);
+     }
+
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
      {
