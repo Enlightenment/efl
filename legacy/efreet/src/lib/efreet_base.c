@@ -63,7 +63,7 @@ static const char *hostname = NULL;
 
 static const char *efreet_dir_get(const char *key, const char *fallback);
 static Eina_List  *efreet_dirs_get(const char *key,
-                                        const char *fallback);
+                                   const char *fallback);
 static const char *efreet_user_dir_get(const char *key, const char *fallback);
 
 /**
@@ -75,7 +75,7 @@ int
 efreet_base_init(void)
 {
     _efreet_base_log_dom = eina_log_domain_register
-      ("efreet_base", EFREET_DEFAULT_LOG_COLOR);
+        ("efreet_base", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_base_log_dom < 0)
     {
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_base.\n");
@@ -228,7 +228,7 @@ efreet_data_dirs_get(void)
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
 #else
     xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
-                            PACKAGE_DATA_DIR ":/usr/share:/usr/local/share");
+                                    PACKAGE_DATA_DIR ":/usr/share:/usr/local/share");
 #endif
     return xdg_data_dirs;
 }
@@ -264,33 +264,33 @@ efreet_runtime_dir_get(void)
     if (xdg_runtime_dir) return xdg_runtime_dir;
     xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
     if (stat(xdg_runtime_dir, &st) == -1)
-      {
-         ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
-             xdg_runtime_dir);
-         if (ecore_file_mkpath(xdg_runtime_dir))
-           chmod(xdg_runtime_dir, 0700);
-         else
-           {
-              CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
-              eina_stringshare_replace(&xdg_runtime_dir, NULL);
-           }
-      }
+    {
+        ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
+            xdg_runtime_dir);
+        if (ecore_file_mkpath(xdg_runtime_dir))
+            chmod(xdg_runtime_dir, 0700);
+        else
+        {
+            CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
+            eina_stringshare_replace(&xdg_runtime_dir, NULL);
+        }
+    }
     else if (!S_ISDIR(st.st_mode))
-      {
-         CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
-         eina_stringshare_replace(&xdg_runtime_dir, NULL);
-      }
+    {
+        CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
+        eina_stringshare_replace(&xdg_runtime_dir, NULL);
+    }
     else if ((st.st_mode & 0777) != 0700)
-      {
-         ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
-             xdg_runtime_dir, st.st_mode & 0777);
-         if (chmod(xdg_runtime_dir, 0700) != 0)
-           {
-              CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
-                       xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
-              eina_stringshare_replace(&xdg_runtime_dir, NULL);
-           }
-      }
+    {
+        ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
+            xdg_runtime_dir, st.st_mode & 0777);
+        if (chmod(xdg_runtime_dir, 0700) != 0)
+        {
+            CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
+                     xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
+            eina_stringshare_replace(&xdg_runtime_dir, NULL);
+        }
+    }
 
     return xdg_runtime_dir;
 }
@@ -411,46 +411,46 @@ efreet_dirs_get(const char *key, const char *fallback)
 static const char *
 efreet_env_expand(const char *in)
 {
-   Eina_Strbuf *sb;
-   const char *ret, *p, *e1 = NULL, *e2 = NULL, *val;
-   char *env;
+    Eina_Strbuf *sb;
+    const char *ret, *p, *e1 = NULL, *e2 = NULL, *val;
+    char *env;
 
-   if (!in) return NULL;
-   sb = eina_strbuf_new();
-   if (!sb) return NULL;
-   
-   /* maximum length of any env var is the input string */
-   env = alloca(strlen(in) + 1);
-   for (p = in; *p; p++)
-     {
+    if (!in) return NULL;
+    sb = eina_strbuf_new();
+    if (!sb) return NULL;
+
+    /* maximum length of any env var is the input string */
+    env = alloca(strlen(in) + 1);
+    for (p = in; *p; p++)
+    {
         if (!e1)
-          {
-             if (*p == '$') e1 = p + 1;
-             else eina_strbuf_append_char(sb, *p);
-          }
+        {
+            if (*p == '$') e1 = p + 1;
+            else eina_strbuf_append_char(sb, *p);
+        }
         else if (!(((*p >= 'a') && (*p <= 'z')) ||
                    ((*p >= 'A') && (*p <= 'Z')) ||
                    ((*p >= '0') && (*p <= '9')) ||
                    (*p == '_')))
-          {
-             size_t len;
-             
-             e2 = p;
-             len = (size_t)(e2 - e1);
-             if (len > 0)
-               {
-                  memcpy(env, e1, len);
-                  env[len] = 0;
-                  val = getenv(env);
-                  if (val) eina_strbuf_append(sb, val);
-               }
-             e1 = NULL;
-             eina_strbuf_append_char(sb, *p);
-          }
-     }
-   ret = eina_stringshare_add(eina_strbuf_string_get(sb));
-   eina_strbuf_free(sb);
-   return ret;
+        {
+            size_t len;
+
+            e2 = p;
+            len = (size_t)(e2 - e1);
+            if (len > 0)
+            {
+                memcpy(env, e1, len);
+                env[len] = 0;
+                val = getenv(env);
+                if (val) eina_strbuf_append(sb, val);
+            }
+            e1 = NULL;
+            eina_strbuf_append_char(sb, *p);
+        }
+    }
+    ret = eina_stringshare_add(eina_strbuf_string_get(sb));
+    eina_strbuf_free(sb);
+    return ret;
 }
 
 /**
@@ -464,22 +464,22 @@ efreet_env_expand(const char *in)
 static const char *
 efreet_user_dir_get(const char *key, const char *fallback)
 {
-   Eina_File *file = NULL;
-   Eina_File_Line *line;
-   Eina_Iterator *it = NULL;
-   const char *config_home;
-   char path[PATH_MAX];
-   char *ret = NULL;
+    Eina_File *file = NULL;
+    Eina_File_Line *line;
+    Eina_Iterator *it = NULL;
+    const char *config_home;
+    char path[PATH_MAX];
+    char *ret = NULL;
 
-   config_home = efreet_config_home_get();
-   snprintf(path, sizeof(path), "%s/user-dirs.dirs", config_home);
+    config_home = efreet_config_home_get();
+    snprintf(path, sizeof(path), "%s/user-dirs.dirs", config_home);
 
-   file = eina_file_open(path, EINA_FALSE);
-   if (!file) goto fallback;
-   it = eina_file_map_lines(file);
-   if (!it) goto fallback;
-   EINA_ITERATOR_FOREACH(it, line)
-     {
+    file = eina_file_open(path, EINA_FALSE);
+    if (!file) goto fallback;
+    it = eina_file_map_lines(file);
+    if (!it) goto fallback;
+    EINA_ITERATOR_FOREACH(it, line)
+    {
         const char *eq, *end;
 
         if (line->length < 3) continue;
@@ -497,16 +497,16 @@ efreet_user_dir_get(const char *key, const char *fallback)
         memcpy(ret, eq, end - eq);
         ret[end - eq] = '\0';
         break;
-     }
+    }
 fallback:
-   if (it) eina_iterator_free(it);
-   if (file) eina_file_close(file);
-   if (!ret)
-     {
+    if (it) eina_iterator_free(it);
+    if (file) eina_file_close(file);
+    if (!ret)
+    {
         const char *home;
         home = efreet_home_dir_get();
         ret = alloca(strlen(home) + strlen(fallback) + 2);
         sprintf(ret, "%s/%s", home, fallback);
-     }
-   return efreet_env_expand(ret);
+    }
+    return efreet_env_expand(ret);
 }
