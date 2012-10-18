@@ -734,12 +734,12 @@ efreet_mime_special_check(const char *file)
 #ifdef _WIN32
                if (!stat(file, &s2))
 #else
-                 if (!lstat(parent, &s2))
+               if (!lstat(parent, &s2))
 #endif
-                   {
-                      if (s.st_dev != s2.st_dev)
-                        return _mime_inode_mountpoint;
-                   }
+                 {
+                    if (s.st_dev != s2.st_dev)
+                      return _mime_inode_mountpoint;
+                 }
 
                return _mime_inode_directory;
             }
