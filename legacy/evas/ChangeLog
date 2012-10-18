@@ -1106,3 +1106,7 @@
 2012-10-16  ChunEon Park (Hermet)
 
        * Fix the vertical line drawing on gl backened.
+
+2012-10-18  ChunEon Park (Hermet)
+
+       * Update move event when object freeze event is off.

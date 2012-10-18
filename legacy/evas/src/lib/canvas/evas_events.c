@@ -2046,6 +2046,19 @@ _freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
    obj->freeze_events = freeze;
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE,
                                              EINA_FALSE);
+   if (obj->freeze_events) return;
+   if (evas_object_is_in_output_rect(eo_obj, obj,
+                                     obj->layer->evas->pointer.x,
+                                     obj->layer->evas->pointer.y, 1, 1) &&
+       ((!obj->precise_is_inside) ||
+        (evas_object_is_inside(eo_obj, obj,
+                               obj->layer->evas->pointer.x,
+                               obj->layer->evas->pointer.y))))
+     evas_event_feed_mouse_move(obj->layer->evas->evas,
+                                obj->layer->evas->pointer.x,
+                                obj->layer->evas->pointer.y,
+                                obj->layer->evas->last_timestamp,
+                                NULL);
 }
 
 EAPI Eina_Bool
