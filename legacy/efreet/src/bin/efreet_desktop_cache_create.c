@@ -272,6 +272,12 @@ main(int argc, char **argv)
         if (!ecore_file_mkpath(file)) goto efreet_error;
         efreet_setowner(file);
     }
+    snprintf(file, sizeof(file), "%s/efreet/update", efreet_cache_home_get());
+    if (!ecore_file_exists(file))
+    {
+        if (!ecore_file_mkpath(file)) goto efreet_error;
+        efreet_setowner(file);
+    }
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
@@ -491,7 +497,7 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
-    snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
+    snprintf(file, sizeof(file), "%s/efreet/update/desktop_data.update", efreet_cache_home_get());
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {

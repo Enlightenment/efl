@@ -142,6 +142,16 @@ efreet_cache_init(void)
             }
             efreet_setowner(buf);
         }
+        snprintf(buf, sizeof(buf), "%s/efreet/update", efreet_cache_home_get());
+        if (!ecore_file_exists(buf))
+        {
+            if (!ecore_file_mkpath(buf))
+            {
+                ERR("Failed to create directory '%s'", buf);
+                goto error;
+            }
+            efreet_setowner(buf);
+        }
 
         cache_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                     cache_exe_cb, NULL);

@@ -852,6 +852,12 @@ main(int argc, char **argv)
         if (!ecore_file_mkpath(file)) return -1;
         efreet_setowner(file);
     }
+    snprintf(file, sizeof(file), "%s/efreet/update", efreet_cache_home_get());
+    if (!ecore_file_exists(file))
+    {
+        if (!ecore_file_mkpath(file)) return -1;
+        efreet_setowner(file);
+    }
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
@@ -1112,7 +1118,7 @@ main(int argc, char **argv)
     free(theme_version);
 
     /* touch update file */
-    snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
+    snprintf(file, sizeof(file), "%s/efreet/update/icon_data.update", efreet_cache_home_get());
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
