@@ -51,8 +51,8 @@ struct _Evas_Object_Image
       int            frame;
       Evas_Colorspace cspace;
 
-      unsigned char  smooth_scale : 1;
-      unsigned char  has_alpha :1;
+      Eina_Bool      smooth_scale : 1;
+      Eina_Bool      has_alpha :1;
    } cur, prev;
 
    int               pixels_checked_out;
@@ -423,7 +423,7 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         if (o->load_error == EVAS_LOAD_ERROR_NONE)
           o->load_error = EVAS_LOAD_ERROR_GENERIC;
-        o->cur.has_alpha = 1;
+        o->cur.has_alpha = EINA_TRUE;
         o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
 
         if ((o->cur.image.w != 0) || (o->cur.image.h != 0))
@@ -3001,7 +3001,7 @@ evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty)
      }
    o->engine_data = NULL;
    o->load_error = EVAS_LOAD_ERROR_NONE;
-   o->cur.has_alpha = 1;
+   o->cur.has_alpha = EINA_TRUE;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    if ((o->cur.image.w != 0) || (o->cur.image.h != 0)) resize_call = EINA_TRUE;
    o->cur.image.w = 0;
@@ -3143,7 +3143,7 @@ evas_object_image_new(Evas_Object *eo_obj)
    Evas_Object_Image *o = eo_data_get(eo_obj, EVAS_OBJ_IMAGE_CLASS);
    o->cur.fill.w = 0;
    o->cur.fill.h = 0;
-   o->cur.smooth_scale = 1;
+   o->cur.smooth_scale = EINA_TRUE;
    o->cur.border.fill = 1;
    o->cur.border.scale = 1.0;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
