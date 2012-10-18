@@ -530,21 +530,22 @@ _type_radio_add(Body_Data *bd, Evas_Object *bxparent)
 {
    Evas_Object *dbx, *rd, *rdg;
 
-   _label_add(bxparent, "Body Type");
-
    dbx = elm_box_add(bxparent);
    elm_box_horizontal_set(dbx, EINA_TRUE);
    evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
-   elm_box_align_set(dbx, 0.0, 0.5);
+   elm_box_padding_set(dbx, 46, 0);
+   elm_box_align_set(dbx, 1, 0.5);
    elm_box_pack_end(bxparent, dbx);
    evas_object_show(dbx);
+
+   _label_add(dbx, "Body Type");
 
    rd = elm_radio_add(bxparent);
    elm_radio_state_value_set(rd, 0);
    elm_object_text_set(rd, "Solid");
-   evas_object_size_hint_align_set(rd, 0.5, 0.5);
-   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rd, 1, 0.5);
+   evas_object_size_hint_weight_set(rd, 0, EVAS_HINT_EXPAND);
    elm_box_pack_end(dbx, rd);
    evas_object_show(rd);
    rdg = rd;
@@ -554,8 +555,8 @@ _type_radio_add(Body_Data *bd, Evas_Object *bxparent)
    elm_radio_state_value_set(rd, 1);
    elm_radio_group_add(rd, rdg);
    elm_object_text_set(rd, "Soft");
-   evas_object_size_hint_align_set(rd, 0.5, 0.5);
-   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rd, 1, 0.5);
+   evas_object_size_hint_weight_set(rd, 0, EVAS_HINT_EXPAND);
    elm_box_pack_end(dbx, rd);
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", _type_set_cb, bd);
