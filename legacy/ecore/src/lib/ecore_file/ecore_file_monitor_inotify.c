@@ -128,16 +128,8 @@ ecore_file_monitor_inotify_add(const char *path,
 
    _monitors = ECORE_FILE_MONITOR(eina_inlist_append(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
-   if (ecore_file_exists(em->path))
-     {
-        if (!_ecore_file_monitor_inotify_monitor(em, em->path))
-          return NULL;
-     }
-   else
-     {
-        ecore_file_monitor_inotify_del(em);
-        return NULL;
-     }
+   if (!_ecore_file_monitor_inotify_monitor(em, em->path))
+     return NULL;
 
    return em;
 }
