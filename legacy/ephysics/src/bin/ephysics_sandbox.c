@@ -459,12 +459,6 @@ _simulate_body(Body_Data *bd, Evas_Coord x, Evas_Coord y)
 {
    ephysics_body_stop(bd->body);
    ephysics_body_geometry_set(bd->body, x, y, -15, 70, 70, 30);
-   ephysics_body_impulse_apply(bd->body,
-                               elm_slider_value_get(bd->controls.impulse.x),
-                               elm_slider_value_get(bd->controls.impulse.y), 0,
-                               elm_slider_value_get(bd->controls.impulse.relx),
-                               elm_slider_value_get(bd->controls.impulse.rely),
-                                                    0);
    ephysics_body_linear_velocity_set(bd->body,
                                      elm_slider_value_get(
                                         bd->controls.velocity.x),
@@ -473,6 +467,12 @@ _simulate_body(Body_Data *bd, Evas_Coord x, Evas_Coord y)
    ephysics_body_angular_velocity_set(bd->body, 0, 0,
                                       elm_slider_value_get(
                                          bd->controls.velocity.angular));
+   ephysics_body_impulse_apply(bd->body,
+                               elm_slider_value_get(bd->controls.impulse.x),
+                               elm_slider_value_get(bd->controls.impulse.y), 0,
+                               elm_slider_value_get(bd->controls.impulse.relx),
+                               elm_slider_value_get(bd->controls.impulse.rely),
+                                                    0);
 }
 
 static void
