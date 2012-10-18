@@ -89,14 +89,6 @@ struct _EPhysics_World {
      Eina_Lock mutex;
      Eina_Condition condition;
 
-     struct {
-          Evas_Coord px;
-          Evas_Coord py;
-          Evas_Coord z0;
-          Evas_Coord foc;
-          Eina_Bool enabled:1;
-     } perspective;
-
      Eina_Bool running:1;
      Eina_Bool ticked:1;
      Eina_Bool active:1;
@@ -1243,8 +1235,8 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
    world->geometry.h = h;
    world->geometry.d = d;
 
-   ephysics_world_perspective_set(world, x + w / 2, y + h / 2, z + d / 2,
-                                  10 * (z + d));
+   ephysics_camera_perspective_set(world->camera, x + w / 2, y + h / 2,
+                                   z + d / 2, 10 * (z + d));
 
    ephysics_body_world_boundaries_resize(world);
    ephysics_camera_position_set(world->camera, x, y);
@@ -1633,66 +1625,6 @@ ephysics_world_light_all_bodies_get(const EPhysics_World *world)
      return EINA_FALSE;
 
    return world->light->all_bodies;
-}
-
-EAPI void
-ephysics_world_perspective_set(EPhysics_World *world, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc)
-{
-   if (!world)
-     {
-	ERR("No world, can't set perspective.");
-	return;
-     }
-
-   if (foc <= 0)
-     {
-	ERR("Focal distance need to be greater than 0.");
-	return;
-     }
-
-   world->perspective.px = px;
-   world->perspective.py = py;
-   world->perspective.z0 = z0;
-   world->perspective.foc = foc;
-}
-
-EAPI void
-ephysics_world_perspective_get(const EPhysics_World *world, Evas_Coord *px, Evas_Coord *py, Evas_Coord *z0, Evas_Coord *foc)
-{
-   if (!world)
-     {
-	ERR("No world, can't get perspective.");
-	return;
-     }
-
-   if (px) *px = world->perspective.px;
-   if (py) *py = world->perspective.py;
-   if (z0) *z0 = world->perspective.z0;
-   if (foc) *foc = world->perspective.foc;
-}
-
-EAPI void
-ephysics_world_perspective_enabled_set(EPhysics_World *world, Eina_Bool enabled)
-{
-   if (!world)
-     {
-	ERR("No world, can't enable / disable perspective.");
-	return;
-     }
-
-   world->perspective.enabled = !!enabled;
-}
-
-EAPI Eina_Bool
-ephysics_world_perspective_enabled_get(const EPhysics_World *world)
-{
-   if (!world)
-     {
-	ERR("No world, can't get perspective behavior.");
-	return EINA_FALSE;
-     }
-
-   return world->perspective.enabled;
 }
 
 #ifdef  __cplusplus

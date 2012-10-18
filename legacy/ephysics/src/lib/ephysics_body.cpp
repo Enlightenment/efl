@@ -1061,10 +1061,10 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    evas_map_util_quat_rotate(map, quat.x(), quat.y(), quat.z(), -quat.w(),
                              x + (w * body->cm.x), y + (h * body->cm.y), z);
 
-   if (ephysics_world_perspective_enabled_get(body->world))
+   if (ephysics_camera_perspective_enabled_get(camera))
      {
         int px, py, z0, foc;
-        ephysics_world_perspective_get(body->world, &px, &py, &z0, &foc);
+        ephysics_camera_perspective_get(camera, &px, &py, &z0, &foc);
         evas_map_util_3d_perspective(map, px, py, z0, foc);
      }
 

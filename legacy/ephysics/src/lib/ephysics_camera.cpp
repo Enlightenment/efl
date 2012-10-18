@@ -14,6 +14,13 @@ struct _EPhysics_Camera {
      EPhysics_World *world;
      EPhysics_Body *target;
      int x, y;
+     struct {
+          Evas_Coord px;
+          Evas_Coord py;
+          Evas_Coord z0;
+          Evas_Coord foc;
+          Eina_Bool enabled:1;
+     } perspective;
      Eina_Bool track_horizontal:1;
      Eina_Bool track_vertical:1;
      Eina_Bool moved:1;
@@ -200,6 +207,66 @@ ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, 
    if (body) *body = camera->target;
    if (horizontal) *horizontal = camera->track_horizontal;
    if (vertical) *vertical = camera->track_vertical;
+}
+
+EAPI void
+ephysics_camera_perspective_set(EPhysics_Camera *camera, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc)
+{
+   if (!camera)
+     {
+	ERR("No camera, can't set perspective.");
+	return;
+     }
+
+   if (foc <= 0)
+     {
+	ERR("Focal distance need to be greater than 0.");
+	return;
+     }
+
+   camera->perspective.px = px;
+   camera->perspective.py = py;
+   camera->perspective.z0 = z0;
+   camera->perspective.foc = foc;
+}
+
+EAPI void
+ephysics_camera_perspective_get(const EPhysics_Camera *camera, Evas_Coord *px, Evas_Coord *py, Evas_Coord *z0, Evas_Coord *foc)
+{
+   if (!camera)
+     {
+	ERR("No camera, can't get perspective.");
+	return;
+     }
+
+   if (px) *px = camera->perspective.px;
+   if (py) *py = camera->perspective.py;
+   if (z0) *z0 = camera->perspective.z0;
+   if (foc) *foc = camera->perspective.foc;
+}
+
+EAPI void
+ephysics_camera_perspective_enabled_set(EPhysics_Camera *camera, Eina_Bool enabled)
+{
+   if (!camera)
+     {
+	ERR("No camera, can't enable / disable perspective.");
+	return;
+     }
+
+   camera->perspective.enabled = !!enabled;
+}
+
+EAPI Eina_Bool
+ephysics_camera_perspective_enabled_get(const EPhysics_Camera *camera)
+{
+   if (!camera)
+     {
+	ERR("No camera, can't get perspective behavior.");
+	return EINA_FALSE;
+     }
+
+   return camera->perspective.enabled;
 }
 
 #ifdef  __cplusplus
