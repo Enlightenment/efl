@@ -396,8 +396,7 @@ efreet_icon_new(const char *path)
         snprintf(ico_path, sizeof(ico_path), "%s.icon", icon->path);
         *p = '.';
 
-        if (ecore_file_exists(ico_path))
-            efreet_icon_populate(icon, ico_path);
+        efreet_icon_populate(icon, ico_path);
     }
 
     if (!icon->name)
