@@ -2,6 +2,16 @@
 # include "config.h"
 #endif
 
+//#define LOGFNS 1
+
+#ifdef LOGFNS
+# include <stdio.h>
+# define LOGFN(fl, ln, fn) \
+   printf("-ECORE_EVAS-WL: %25s: %5i - %s\n", fl, ln, fn);
+#else
+# define LOGFN(fl, ln, fn)
+#endif
+
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
@@ -27,6 +37,8 @@ _ecore_evas_wl_common_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, vo
    Ecore_Evas *ee;
    Ecore_Wl_Event_Mouse_In *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    ev = event;
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
@@ -46,6 +58,8 @@ _ecore_evas_wl_common_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, v
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Mouse_Out *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
    ee = ecore_event_window_match(ev->window);
@@ -68,6 +82,8 @@ _ecore_evas_wl_common_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, vo
    Ecore_Evas *ee;
    Ecore_Wl_Event_Focus_In *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    ev = event;
    ee = ecore_event_window_match(ev->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
@@ -83,6 +99,8 @@ _ecore_evas_wl_common_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, v
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Focus_In *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
    ee = ecore_event_window_match(ev->win);
@@ -100,6 +118,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data __UNUSED__, int type __UNUS
    Ecore_Evas *ee;
    Ecore_Wl_Event_Window_Configure *ev;
    int nw = 0, nh = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
    ee = ecore_event_window_match(ev->win);
@@ -151,6 +171,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data __UNUSED__, int type __UNUS
 int
 _ecore_evas_wl_common_init(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (++_ecore_evas_wl_init_count != 1)
      return _ecore_evas_wl_init_count;
 
@@ -180,6 +202,8 @@ _ecore_evas_wl_common_shutdown(void)
 {
    unsigned int i = 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (--_ecore_evas_wl_init_count != 0)
      return _ecore_evas_wl_init_count;
 
@@ -197,6 +221,8 @@ _ecore_evas_wl_common_shutdown(void)
 void
 _ecore_evas_wl_common_pre_free(Ecore_Evas *ee)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->engine.wl.frame) evas_object_del(ee->engine.wl.frame);
 }
@@ -204,6 +230,8 @@ _ecore_evas_wl_common_pre_free(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_free(Ecore_Evas *ee)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (ee->engine.wl.win) ecore_wl_window_free(ee->engine.wl.win);
    ee->engine.wl.win = NULL;
 
@@ -217,6 +245,8 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
@@ -319,6 +349,8 @@ _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_
 void
 _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
 
    ee->req.x = x;
@@ -339,6 +371,8 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
    Evas *evas;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(sd = calloc(1, sizeof(EE_Wl_Smart_Data)))) return;
 
@@ -368,6 +402,8 @@ _ecore_evas_wl_common_smart_del(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_del(sd->text);
    evas_object_del(sd->frame);
@@ -378,6 +414,8 @@ static void
 _ecore_evas_wl_common_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(sd = evas_object_smart_data_get(obj))) return;
    if ((sd->w == w) && (sd->h == h)) return;
@@ -391,6 +429,8 @@ _ecore_evas_wl_common_smart_show(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_show(sd->frame);
    evas_object_show(sd->text);
@@ -401,6 +441,8 @@ _ecore_evas_wl_common_smart_hide(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_hide(sd->text);
    evas_object_hide(sd->frame);
@@ -409,6 +451,8 @@ _ecore_evas_wl_common_smart_hide(Evas_Object *obj)
 static void
 _ecore_evas_wl_common_smart_init(void)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (_ecore_evas_wl_common_smart) return;
      {
         static const Evas_Smart_Class sc =
@@ -429,6 +473,8 @@ _ecore_evas_wl_common_smart_init(void)
 Evas_Object *
 _ecore_evas_wl_common_frame_add(Evas *evas)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    _ecore_evas_wl_common_smart_init();
    return evas_object_smart_add(evas, _ecore_evas_wl_common_smart);
 }
@@ -436,6 +482,8 @@ _ecore_evas_wl_common_frame_add(Evas *evas)
 void
 _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if ((!ee) || (!ee->visible)) return;
    ecore_wl_window_raise(ee->engine.wl.win);
 }
@@ -443,6 +491,8 @@ _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
@@ -463,6 +513,8 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 void
 _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.name) free(ee->prop.name);
    if (ee->prop.clas) free(ee->prop.clas);
@@ -479,6 +531,8 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
 void
 _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (w < 0) w = 0;
    if (h < 0) h = 0;
@@ -490,6 +544,8 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 void
 _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (w < 0) w = 0;
    if (h < 0) h = 0;
@@ -501,6 +557,8 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 void
 _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (w < 0) w = 0;
    if (h < 0) h = 0;
@@ -512,6 +570,8 @@ _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h)
 void
 _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (w < 0) w = 0;
    if (h < 0) h = 0;
@@ -523,6 +583,8 @@ _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
 void
 _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.layer == layer) return;
    if (layer < 1) layer = 1;
@@ -533,6 +595,8 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 void
 _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.iconified == iconify) return;
    ee->prop.iconified = iconify;
@@ -542,6 +606,8 @@ _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify)
 void
 _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.maximized == max) return;
    ee->prop.maximized = max;
@@ -551,6 +617,8 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
 void
 _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (ee->prop.fullscreen == full) return;
    ee->prop.fullscreen = full;
@@ -560,6 +628,8 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
 void
 _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    ee->ignore_events = ignore;
    /* NB: Hmmm, may need to pass this to ecore_wl_window in the future */
@@ -571,6 +641,8 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
    int rend = 0;
    Eina_List *ll = NULL;
    Ecore_Evas *ee2 = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
@@ -590,6 +662,8 @@ _ecore_evas_wl_common_render_updates(Ecore_Evas *ee)
 {
    int rend = 0;
    Eina_List *updates = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((updates = evas_render_updates(ee->evas)))
      {
@@ -612,6 +686,8 @@ _ecore_evas_wl_common_render_updates(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    _ecore_evas_idle_timeout_update(ee);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
@@ -620,6 +696,8 @@ int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
    int rend = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return 0;
    if (!ee->visible)
@@ -638,6 +716,8 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (x) *x = 0;
    if (y) *y = 0;
    ecore_wl_screen_size_get(w, h);
@@ -647,6 +727,8 @@ void
 _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi)
 {
    int dpi = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (xdpi) *xdpi = 0;
    if (ydpi) *ydpi = 0;
