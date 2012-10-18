@@ -855,10 +855,10 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
 }
 
 Eina_Bool
-evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
-                   void *context, void *surface,
-                   int off_x, int off_y, int mapped,
-                   int ecx, int ecy, int ecw, int ech
+evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
+                   Evas_Object_Protected_Data *obj, void *context,
+                   void *surface, int off_x, int off_y, int mapped, int ecx,
+                   int ecy, int ecw, int ech, Eina_Bool proxy_render
 #ifdef REND_DBG
                    , int level
 #endif
@@ -867,6 +867,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj, Evas_Object_Protect
    void *ctx;
    Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
+
+   if ((evas_object_is_source_invisible(eo_obj, obj) && (!proxy_render)))
+     return clean_them;
 
    evas_object_clip_recalc(eo_obj, obj);
 
@@ -1007,10 +1010,12 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj, Evas_Object_Protect
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2->object, obj2, ctx,
+                          clean_them |= evas_render_mapped(e, obj2->object,
+                                                           obj2, ctx,
                                                            obj->map.surface,
                                                            off_x2, off_y2, 1,
-                                                           ecx, ecy, ecw, ech
+                                                           ecx, ecy, ecw, ech,
+                                                           proxy_render
 #ifdef REND_DBG
                                                            , level + 1
 #endif
@@ -1119,10 +1124,11 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj, Evas_Object_Protect
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2->object, obj2, ctx,
-                                                           surface,
+                          clean_them |= evas_render_mapped(e, obj2->object,
+                                                           obj2, ctx, surface,
                                                            off_x, off_y, 1,
-                                                           ecx, ecy, ecw, ech
+                                                           ecx, ecy, ecw, ech,
+                                                           proxy_render
 #ifdef REND_DBG
                                                            , level + 1
 #endif
@@ -1218,10 +1224,11 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
 {
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+
+   if (evas_object_is_source_invisible(eo_obj, obj)) return;
    if (evas_object_is_opaque(eo_obj, obj))
      {
         Evas_Coord cox, coy, cow, coh;
-
         cox = obj->cur.cache.clip.x;
         coy = obj->cur.cache.clip.y;
         cow = obj->cur.cache.clip.w;
@@ -1412,7 +1419,7 @@ evas_render_updates_internal(Evas *eo_e,
              evas_object_move(e->framespace.clip,
                               e->framespace.x, e->framespace.y);
              evas_object_resize(e->framespace.clip,
-                                e->viewport.w - e->framespace.w, 
+                                e->viewport.w - e->framespace.w,
                                 e->viewport.h - e->framespace.h);
              evas_object_show(e->framespace.clip);
           }
@@ -1420,10 +1427,10 @@ evas_render_updates_internal(Evas *eo_e,
           {
              /* master clip is already present. check for size changes in the 
               * viewport, and update master clip size if needed */
-             if ((e->viewport.changed) || (e->output.changed) || 
+             if ((e->viewport.changed) || (e->output.changed) ||
                  (e->framespace.changed))
                {
-                  evas_object_move(e->framespace.clip, 
+                  evas_object_move(e->framespace.clip,
                                    e->framespace.x, e->framespace.y);
                   evas_object_resize(e->framespace.clip,
                                      e->viewport.w - e->framespace.w,
@@ -1431,7 +1438,7 @@ evas_render_updates_internal(Evas *eo_e,
                }
           }
 
-        Evas_Object_Protected_Data *framespace_clip = 
+        Evas_Object_Protected_Data *framespace_clip =
           eo_data_get(e->framespace.clip, EVAS_OBJ_CLASS);
 
         EINA_RECTANGLE_SET(&clip_rect,
@@ -1638,8 +1645,10 @@ evas_render_updates_internal(Evas *eo_e,
                               }
 #endif
                             clean_them |= evas_render_mapped(e, eo_obj, obj, e->engine.data.context,
-                                                             surface, off_x, off_y, 0,
-                                                             cx, cy, cw, ch
+                                                             surface, off_x,
+                                                             off_y, 0,
+                                                             cx, cy, cw, ch,
+                                                             EINA_FALSE
 #ifdef REND_DBG
                                                              , 1
 #endif

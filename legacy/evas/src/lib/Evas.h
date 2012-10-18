@@ -8017,6 +8017,7 @@ EAPI void                          evas_object_image_alpha_mask_set(Evas_Object 
  *
  * @see evas_object_image_source_get()
  * @see evas_object_image_source_unset()
+ * @see evas_object_image_source_render_set()
  */
 EAPI Eina_Bool                     evas_object_image_source_set(Evas_Object *obj, Evas_Object *src) EINA_ARG_NONNULL(1);
 
@@ -8041,6 +8042,44 @@ EAPI Evas_Object                  *evas_object_image_source_get(const Evas_Objec
  * @c NULL source.
  */
 EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the source object to be shown or hidden.
+ *
+ * @param obj Proxy (image) object.
+ * @param visible @c EINA_TRUE is source object to be shown, @c EINA_FALSE 
+ * otherwise.
+ *
+ * If the @p visible set to @c EINA_FALSE, the source object of the proxy(@p obj
+ * ) will be hidden.
+ *
+ * This API works differently with evas_object_show() and evas_object_hide().
+ * Once source object is hidden by evas_object_hide() then the proxy object will * be hidden also. Actually in this case both objects are excluded from the
+ * Evas internal updation. By this API, instead, you can set only proxy object
+ * to be shown. And even if source object is invisible, source object can be 
+ *updated for proxy.
+ *
+ * @see evas_object_image_source_visible_get()
+ * @see evas_object_image_source_set()
+ * @see evas_object_show()
+ * @see evas_object_hide()
+ * @since 1.8
+ */
+EAPI void                          evas_object_image_source_visible_set(Evas_Object *obj, Eina_Bool visible) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the state of the source object visibility.
+ *
+ * @param obj Proxy (image) object.
+ * @return @c EINA_TRUE if source object is visible, @c EINA_FALSE otherwise.
+ *
+ * @see evas_object_image_source_visible_get()
+ * @see evas_object_image_source_set()
+ * @see evas_object_show()
+ * @see evas_object_hide()
+ * @since 1.8
+ */
+EAPI Eina_Bool                     evas_object_image_source_visible_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Check if a file extension may be supported by @ref Evas_Object_Image.
@@ -15653,6 +15692,8 @@ enum
    EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET,
    EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET,
    EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET,
    EVAS_OBJ_IMAGE_SUB_ID_LAST
 };
 
@@ -15726,6 +15767,28 @@ enum
  * @see evas_object_image_source_get
  */
 #define evas_obj_image_source_get(src) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_GET), EO_TYPECHECK(Evas_Object **, src)
+
+/**
+ * @def evas_obj_image_source_visible_set
+ *
+ * Set the source object to be shown or hidden.
+ *
+ * @param[in] visible in
+ *
+ * @see evas_object_image_source_visible_get
+ */
+#define evas_obj_image_source_visible_set(visible) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET), EO_TYPECHECK(Eina_Bool, visible)
+
+/**
+ * @def evas_obj_image_source_visible_get
+ *
+ * Get the state of the source object visibility.
+ *
+ * @param[out] visible out
+ *
+ * @see evas_obj_image_source_visible_set
+ */
+#define evas_obj_image_source_visible_get(visible) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), EO_TYPECHECK(Eina_Bool *, visible)
 
 /**
  * @def evas_obj_image_border_set

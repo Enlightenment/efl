@@ -88,6 +88,7 @@ struct _Evas_Object_Image
    Eina_Bool         dirty_pixels : 1;
    Eina_Bool         filled : 1;
    Eina_Bool         proxyrendering : 1;
+   Eina_Bool         source_invisible : 1;
    Eina_Bool         preloading : 1;
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
@@ -556,12 +557,72 @@ evas_object_image_source_unset(Evas_Object *eo_obj)
 }
 
 EAPI void
+evas_object_image_source_visible_set(Evas_Object *eo_obj, Eina_Bool visible)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_obj, evas_obj_image_source_visible_set(visible));
+}
+
+void
+_image_source_visible_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *src_obj;
+   Evas_Object_Image *o = _pd;
+   Eina_Bool visible = va_arg(*list, int);
+
+   visible = !!visible;
+   if (o->source_invisible == !visible) return;
+   o->source_invisible = !visible;
+   if (!o->cur.source) return;
+   src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
+   src_obj->proxy.source_invisible = !visible;
+   evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
+                                             EINA_FALSE, EINA_TRUE);
+   src_obj->changed = EINA_TRUE;
+   evas_object_change(o->cur.source, src_obj);
+
+   //FIXME: Feed mouse events here.
+}
+
+EAPI Eina_Bool
+evas_object_image_source_visible_get(const Evas_Object *eo_obj)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   Eina_Bool visible;
+   eo_do((Eo*)eo_obj, evas_obj_image_source_visible_get(&visible));
+
+   return visible;
+}
+
+EAPI void
 evas_object_image_border_set(Evas_Object *eo_obj, int l, int r, int t, int b)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
    eo_do(eo_obj, evas_obj_image_border_set(l, r, t, b));
+}
+
+static void
+_image_source_visible_get(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *src_obj;
+   Evas_Object_Image *o = _pd;
+   Eina_Bool *visible = va_arg(*list, Eina_Bool *);
+   if (!visible) return;
+
+   src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
+   if (src_obj)
+     *visible = !o->source_invisible;
+   else *visible = EINA_FALSE;
 }
 
 static void
@@ -2564,6 +2625,12 @@ _proxy_unset(Evas_Object *proxy)
 
    cur_source->proxy.proxies = eina_list_remove(cur_source->proxy.proxies, proxy);
 
+   if (cur_source->proxy.source_invisible)
+     {
+        cur_source->proxy.source_invisible = EINA_FALSE;
+        evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
+                                                  EINA_FALSE, EINA_TRUE);
+     }
    o->cur.source = NULL;
    if (o->cur.defmap)
      {
@@ -2571,7 +2638,6 @@ _proxy_unset(Evas_Object *proxy)
         o->cur.defmap = NULL;
      }
 }
-
 
 static void
 _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
@@ -2586,6 +2652,12 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 
    src->proxy.proxies = eina_list_append(src->proxy.proxies, eo_proxy);
    src->proxy.redraw = EINA_TRUE;
+   if (o->source_invisible)
+     {
+        src->proxy.source_invisible = EINA_TRUE;
+        evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
+                                                  EINA_FALSE, EINA_TRUE);
+     }
 }
 
 /* Some moron just set a proxy on a proxy.
@@ -2704,11 +2776,12 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source)
    evas_render_mapped(e, eo_source, source, ctx, source->proxy.surface,
                       -source->cur.geometry.x,
                       -source->cur.geometry.y,
-                      1, 0, 0, e->output.w, e->output.h
+                      1, 0, 0, e->output.w, e->output.h, EINA_TRUE
 #ifdef REND_DBG
                       , 1
 #endif
                       );
+
    e->engine.func->context_free(e->engine.data.output, ctx);
    source->proxy.surface = e->engine.func->image_dirty_region
       (e->engine.data.output, source->proxy.surface, 0, 0, w, h);
@@ -4415,6 +4488,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET), _image_animated_loop_count_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET), _image_animated_frame_duration_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET), _image_animated_frame_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET), _image_source_visible_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), _image_source_visible_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -4486,6 +4561,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET, "Get the number times the animation of the object loops."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET, "Get the duration of a sequence of frames."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET, "Set the frame to current frame of an image object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET, "-"),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET, "-"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

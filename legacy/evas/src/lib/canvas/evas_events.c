@@ -2044,7 +2044,8 @@ _freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
    freeze = !!freeze;
    if (obj->freeze_events == freeze) return;
    obj->freeze_events = freeze;
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE);
+   evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE,
+                                             EINA_FALSE);
 }
 
 EAPI Eina_Bool
@@ -2083,7 +2084,7 @@ _pass_events_set(Eo *eo_obj, void *_pd, va_list *list)
    pass = !!pass;
    if (obj->pass_events == pass) return;
    obj->pass_events = pass;
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_FALSE);
+   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_FALSE, EINA_FALSE);
    if (evas_object_is_in_output_rect(eo_obj, obj,
                                      obj->layer->evas->pointer.x,
                                      obj->layer->evas->pointer.y, 1, 1) &&

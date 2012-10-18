@@ -247,7 +247,8 @@ _smart_member_add(Eo *smart_obj, void *_pd, va_list *list)
    obj->layer->usage++;
    obj->smart.parent = smart_obj;
    o->contained = eina_inlist_append(o->contained, EINA_INLIST_GET(obj));
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE);
+   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE,
+                                             EINA_TRUE);
    obj->restack = 1;
    evas_object_change(eo_obj, obj);
    evas_object_mapped_clip_across_mark(eo_obj, obj);
@@ -286,7 +287,7 @@ _smart_member_del(Eo *smart_obj, void *_pd EINA_UNUSED, va_list *list)
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
    o->member_count--;
    obj->smart.parent = NULL;
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE);
+   evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE, EINA_TRUE);
    obj->layer->usage--;
    obj->cur.layer = obj->layer->layer;
    evas_object_inject(eo_obj, obj, obj->layer->evas->evas);
@@ -1135,7 +1136,8 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
 void
 evas_object_smart_member_cache_invalidate(Evas_Object *eo_obj,
                                           Eina_Bool pass_events,
-                                          Eina_Bool freeze_events)
+                                          Eina_Bool freeze_events,
+                                          Eina_Bool source_invisible)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1148,15 +1150,17 @@ evas_object_smart_member_cache_invalidate(Evas_Object *eo_obj,
      obj->parent_cache.pass_events_valid = EINA_FALSE;
    if (freeze_events)
      obj->parent_cache.freeze_events_valid = EINA_FALSE;
+   if (source_invisible)
+     obj->parent_cache.source_invisible_valid = EINA_FALSE;
 
    if (!obj->is_smart) return;
    Evas_Object_Smart *o = eo_data_get(eo_obj, MY_CLASS);
    EINA_INLIST_FOREACH(o->contained, member)
      {
         Evas_Object *eo_member = member->object;
-        evas_object_smart_member_cache_invalidate(eo_member,
-                                               pass_events,
-                                               freeze_events);
+        evas_object_smart_member_cache_invalidate(eo_member, pass_events,
+                                                  freeze_events,
+                                                  source_invisible);
      }
 }
 

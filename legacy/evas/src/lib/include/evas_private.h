@@ -595,7 +595,8 @@ struct _Evas_Object_Protected_Data
       Eina_List               *proxies;
       void                    *surface;
       int                      w,h;
-      Eina_Bool                redraw;
+      Eina_Bool                redraw : 1;
+      Eina_Bool                source_invisible : 1;
    } proxy;
 
    // Pointer to the Evas_Object itself
@@ -644,6 +645,8 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                pass_events_valid : 1;
       Eina_Bool                freeze_events : 1;
       Eina_Bool                freeze_events_valid : 1;
+      Eina_Bool                source_invisible : 1;
+      Eina_Bool                source_invisible_valid : 1;
    } parent_cache;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_active : 1;
@@ -1074,7 +1077,7 @@ int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Descripti
 Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
 void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
-void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events);
+void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool sourve_invisible);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
@@ -1227,11 +1230,12 @@ void _evas_unwalk(Evas_Public_Data *e_pd);
 // expose for use in engines
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 EAPI const char *_evas_module_libdir_get(void);
-         
-Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj, Evas_Object_Protected_Data *source_pd,
-                             void *context, void *surface,
-                             int off_x, int off_y, int mapped,
-                             int ecx, int ecy, int ecw, int ech
+
+Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
+                             Evas_Object_Protected_Data *source_pd,
+                             void *context, void *surface, int off_x, int off_y,
+                             int mapped, int ecx, int ecy, int ecw, int ech,
+                             Eina_Bool proxy_render
 #ifdef REND_DBG
                              , int level
 #endif
