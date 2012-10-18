@@ -32,8 +32,20 @@ struct _World_Data {
 struct _Body_Data {
    World_Data *wd;
    EPhysics_Body *body;
-   Evas_Object *sl_hardness;
+   struct {
+        struct {
+           Evas_Object *x, *y, *relx, *rely;
+        }impulse;
+        struct {
+           Evas_Object *x, *y, *relx, *rely, *torque;
+        }force;
+        struct {
+           Evas_Object *x, *y, *angular;
+        }velocity;
+        Evas_Object *hardness;
+   }controls;
 };
+
 
 /*** Sandbox Callbacks ***/
 static void
@@ -128,13 +140,13 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
      {
         body = ephysics_body_soft_circle_add(world);
         ephysics_body_soft_body_hardness_set(
-           body, elm_slider_value_get(bd->sl_hardness));
-        elm_object_disabled_set(bd->sl_hardness, EINA_FALSE);
+           body, elm_slider_value_get(bd->controls.hardness));
+        elm_object_disabled_set(bd->controls.hardness, EINA_FALSE);
      }
    else
      {
         body = ephysics_body_circle_add(world);
-        elm_object_disabled_set(bd->sl_hardness, EINA_TRUE);
+        elm_object_disabled_set(bd->controls.hardness, EINA_TRUE);
      }
 
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
@@ -145,6 +157,14 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    ephysics_body_damping_set(body, lin_damping, ang_damping);
    ephysics_body_sleeping_threshold_set(body, lin_sleeping, ang_sleeping);
    ephysics_body_material_set(body, material);
+
+   ephysics_body_force_apply(body,
+                             elm_slider_value_get(bd->controls.force.x),
+                             elm_slider_value_get(bd->controls.force.y), 0,
+                             elm_slider_value_get(bd->controls.force.relx),
+                             elm_slider_value_get(bd->controls.force.rely), 0);
+   ephysics_body_torque_apply(body, 0, 0,
+                             elm_slider_value_get(bd->controls.force.torque));
 
    bd->body = body;
 }
@@ -438,10 +458,21 @@ static void
 _simulate_body(Body_Data *bd, Evas_Coord x, Evas_Coord y)
 {
    ephysics_body_stop(bd->body);
-   ephysics_body_forces_clear(bd->body);
    ephysics_body_geometry_set(bd->body, x, y, -15, 70, 70, 30);
-
-   /*FIXME TODO apply impulses, velocities, forces ... */
+   ephysics_body_impulse_apply(bd->body,
+                               elm_slider_value_get(bd->controls.impulse.x),
+                               elm_slider_value_get(bd->controls.impulse.y), 0,
+                               elm_slider_value_get(bd->controls.impulse.relx),
+                               elm_slider_value_get(bd->controls.impulse.rely),
+                                                    0);
+   ephysics_body_linear_velocity_set(bd->body,
+                                     elm_slider_value_get(
+                                        bd->controls.velocity.x),
+                                     elm_slider_value_get(
+                                        bd->controls.velocity.y), 0);
+   ephysics_body_angular_velocity_set(bd->body, 0, 0,
+                                      elm_slider_value_get(
+                                         bd->controls.velocity.angular));
 }
 
 static void
@@ -691,13 +722,17 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    _label_add(bx, "Impulse X");
    aux_widget = _slider_add(bx, "X (kg * p/s)", "%1.3f",
                                    -9999, 9999, 0);
+   bd->controls.impulse.x = aux_widget;
    widget = _slider_add(bx, "Rel Position X", "%1.2f",
                                -360, 360, 0);
+   bd->controls.impulse.relx = widget;
    evas_object_data_set(aux_widget, "relx", widget);
    _label_add(bx, "Impulse Y");
    widget = _slider_add(bx, "Y (kg * p/s)", "%1.3f", -9999, 9999, 0);
+   bd->controls.impulse.y = widget;
    evas_object_data_set(aux_widget, "y", widget);
    widget = _slider_add(bx, "Rel Position Y", "%1.2f", -360, 360, 0);
+   bd->controls.impulse.rely = widget;
    evas_object_data_set(aux_widget, "rely", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _impulse_x_x_set_cb, bd);
@@ -715,12 +750,16 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
 
    _label_add(bx, "Force X");
    aux_widget = _slider_add(bx, "X (kg * p/s/s)", "%1.3f", -1999, 1999, 0);
+   bd->controls.force.x = aux_widget;
    widget = _slider_add(bx, "Rel Position X", "%1.2f", -360, 360, 0);
+   bd->controls.force.relx = widget;
    evas_object_data_set(aux_widget, "relx", widget);
    _label_add(bx, "Force Y");
    widget = _slider_add(bx, "Y (kg * p/s/s)", "%1.3f", -1999, 1999, 0);
+   bd->controls.force.y = widget;
    evas_object_data_set(aux_widget, "y", widget);
    widget = _slider_add(bx, "Rel Position Y", "%1.2f", -360, 360, 0);
+   bd->controls.force.rely = widget;
    evas_object_data_set(aux_widget, "rely", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _force_x_x_set_cb, bd);
@@ -736,11 +775,14 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _force_y_rel_set_cb, bd);
    widget = _slider_add(bx, "Torque", "%1.3f", -100, 100, 0);
+   bd->controls.force.torque = widget;
    evas_object_smart_callback_add(widget, "delay,changed", _torque_set_cb, bd);
 
    _label_add(bx, "Linear Velocity");
    aux_widget = _slider_add(bx, "X (p/s)", "%1.2f", -1499, 1499, 0);
+   bd->controls.velocity.x = aux_widget;
    widget = _slider_add(bx, "Y (p/s)", "%1.2f", -1499, 1499, 0);
+   bd->controls.velocity.y = widget;
    evas_object_data_set(aux_widget, "y", widget);
    evas_object_smart_callback_add(aux_widget, "delay,changed",
                                   _linear_velocity_x_set_cb, bd);
@@ -749,15 +791,16 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
                                   _linear_velocity_y_set_cb, bd);
 
    widget = _slider_add(bx, "Angular Velocity (º/s)", "%1.2f", -360, 360, 0);
+   bd->controls.velocity.angular = widget;
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _angular_velocity_set_cb, bd);
 
    bx = _category_add(bxbody, "Soft Body", EINA_TRUE);
    widget = _slider_add(bx, "Hardness (%)", "%1.2f%", 0, 100, 100);
+   bd->controls.hardness = widget;
    elm_object_disabled_set(widget, EINA_TRUE);
    evas_object_smart_callback_add(widget, "delay,changed", _hardness_set_cb,
                                   bd);
-   bd->sl_hardness = widget;
 
    it = elm_naviframe_item_insert_before(wd->nf,
                                          evas_object_data_get(wd->nf, "world"),
