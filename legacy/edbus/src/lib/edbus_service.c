@@ -265,7 +265,7 @@ _have_signature(const EDBus_Arg_Info *args, EDBus_Message *msg)
    const char *sig = dbus_message_get_signature(msg->dbus_msg);
    const char *p = NULL;
 
-   for (; args->signature && *args->signature && *sig; args++)
+   for (; args && args->signature && *sig; args++)
      {
         p = args->signature;
         for (; *sig && *p; sig++, p++)
@@ -273,9 +273,9 @@ _have_signature(const EDBus_Arg_Info *args, EDBus_Message *msg)
              if (*p != *sig)
                return EINA_FALSE;
           }
-      }
+     }
 
-   if (*sig || (p && *p) || (args->signature && *args->signature))
+   if (*sig || (p && *p) || (args && args->signature))
      return EINA_FALSE;
 
    return EINA_TRUE;

@@ -151,11 +151,11 @@ static const EDBus_Signal signals[] = {
 
 static const EDBus_Method methods[] = {
       {
-        "Hello", EDBUS_ARGS({"", ""}), EDBUS_ARGS({"s", "message"}),
+        "Hello", NULL, EDBUS_ARGS({"s", "message"}),
         _hello, 0
       },
       {
-        "Quit", EDBUS_ARGS({"", ""}), EDBUS_ARGS({"", ""}),
+        "Quit", NULL, NULL,
         _quit, EDBUS_METHOD_FLAG_DEPRECATED
       },
       { "SendBool", EDBUS_ARGS({"b", "bool"}), EDBUS_ARGS({"b", "bool"}),
@@ -179,7 +179,7 @@ static const EDBus_Method methods[] = {
       { "SendString", EDBUS_ARGS({"s", "string"}), EDBUS_ARGS({"s", "string"}),
         _send_string, 0
       },
-      { "AsyncTest", EDBUS_ARGS({"", ""}), EDBUS_ARGS({"s", "text"}),
+      { "AsyncTest", NULL, EDBUS_ARGS({"s", "text"}),
         _async_test, 0
       },
       { }

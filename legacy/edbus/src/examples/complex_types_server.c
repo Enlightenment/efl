@@ -289,23 +289,23 @@ _properties_set(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 static const EDBus_Method methods[] = {
       {
         "ReceiveArray", EDBUS_ARGS({"as", "array_of_strings"}),
-        EDBUS_ARGS({"", ""}), _receive_array, 0
+        NULL, _receive_array, 0
       },
       {
         "ReceiveArrayOfStringIntWithSize",
         EDBUS_ARGS({"i", "size_of_array"}, {"a(si)", "array"}),
-        EDBUS_ARGS({"", ""}), _receive_array_of_string_int_with_size, 0
+        NULL, _receive_array_of_string_int_with_size, 0
       },
       {
         "SendVariantData", EDBUS_ARGS({"v", "variant_data"}),
-        EDBUS_ARGS({"", ""}), _send_variant, 0
+        NULL, _send_variant, 0
       },
       {
-        "SendArrayInt", EDBUS_ARGS({"", ""}),
+        "SendArrayInt", NULL,
         EDBUS_ARGS({"ai", "array_of_int"}), _send_array_int, 0
       },
       {
-        "SendArray", EDBUS_ARGS({"", ""}), EDBUS_ARGS({"as", "array_string"}),
+        "SendArray", NULL, EDBUS_ARGS({"as", "array_string"}),
         _send_array, 0
       },
       {
@@ -314,7 +314,7 @@ static const EDBus_Method methods[] = {
       },
       {
         "DoubleContainner", EDBUS_ARGS({"a(ii)", "array1"}, {"a(ii)", "array2"}),
-        EDBUS_ARGS({"", ""}), _double_container, 0
+        NULL, _double_container, 0
       },
       { }
 };
@@ -326,7 +326,7 @@ static const EDBus_Method properties_methods[] = {
       },
       {
         "Set", EDBUS_ARGS({"s", "interface"}, {"s", "property"}, {"v", "value"}),
-        EDBUS_ARGS({"", ""}), _properties_set, 0
+        NULL, _properties_set, 0
       },
       { }
 };
