@@ -123,6 +123,11 @@ fi
 AC_SUBST(EINA_CONFIGURE_HAVE_ON_OFF_THREADS)
 AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${efl_have_on_off_threads}" = "xno"])
 
+if ! test "x${efl_have_setaffinity}" = "xno" ; then
+   EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY="#define EINA_HAVE_PTHREAD_AFFINITY"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY)
+
 ### Additional options to configure
 
 # Magic debug
@@ -621,6 +626,7 @@ echo "  Thread Support.......: ${efl_have_threads}"
 if test "${efl_have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
 echo "    barrier............: ${efl_have_pthread_barrier}"
+echo "    affinity...........: ${efl_have_setaffinity}"
 echo "    debug usage........: ${efl_have_debug_threads}"
 echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
