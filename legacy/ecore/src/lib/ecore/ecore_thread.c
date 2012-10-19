@@ -40,7 +40,7 @@
 # define PH(x)        Eina_Thread x
 # define PHE(x, y)    eina_thread_equal(x, y)
 # define PHS()        eina_thread_self()
-# define PHC(x, f, d) eina_thread_create(&(x), EINA_THREAD_BACKGROUND, EINA_TRUE, (void *)f, d)
+# define PHC(x, f, d) eina_thread_create(&(x), EINA_THREAD_BACKGROUND, -1, (void *)f, d)
 # define PHJ(x)       eina_thread_join(x)
 
 # ifdef EFL_HAVE_POSIX_THREADS
