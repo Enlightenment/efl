@@ -567,7 +567,7 @@ evas_object_image_source_visible_set(Evas_Object *eo_obj, Eina_Bool visible)
 }
 
 void
-_image_source_visible_set(Eo *eo_obj, void *_pd, va_list *list)
+_image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object_Protected_Data *src_obj;
    Evas_Object_Image *o = _pd;
@@ -609,7 +609,7 @@ evas_object_image_border_set(Evas_Object *eo_obj, int l, int r, int t, int b)
 }
 
 static void
-_image_source_visible_get(Eo *eo_obj, void *_pd, va_list *list)
+_image_source_visible_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object_Protected_Data *src_obj;
    Evas_Object_Image *o = _pd;
