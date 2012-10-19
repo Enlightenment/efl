@@ -45,6 +45,7 @@ Fixes:
    * Fix genlist reorder mode item not being resized on genlist resize.
    * Fix on_focus_region() issue.
    * Fixed gengrid wrong_calc_job parameter.
+   * Fix elm_transit image animation that last few frames are skipped.
 
 Removals:
 

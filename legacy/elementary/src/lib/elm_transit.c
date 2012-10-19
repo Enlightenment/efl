@@ -2313,15 +2313,16 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
 
    type = eina_stringshare_add("elm_icon");
    len = eina_list_count(image_animation->images);
-
-   if (!len) count = floor(progress * len);
-   else count = floor(progress * (len - 1));
-
-   EINA_LIST_FOREACH(transit->objs, elist, obj)
+   if (len)
      {
-        if (elm_widget_type_check(obj, type, __func__))
-          elm_image_file_set(obj,
-                            eina_list_nth(image_animation->images, count), NULL);
+        count = floor(progress * len);
+        EINA_LIST_FOREACH(transit->objs, elist, obj)
+          {
+             if (elm_widget_type_check(obj, type, __func__))
+               elm_image_file_set(obj,
+                                  eina_list_nth(image_animation->images, count),
+                                  NULL);
+          }
      }
 
    eina_stringshare_del(type);
