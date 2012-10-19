@@ -37,6 +37,12 @@
 # define LRWKRL(x) eina_rwlock_take_read(&(x));
 # define LRWKU(x) eina_rwlock_release(&(x));
 
+# define PH(x)        Eina_Thread x
+# define PHE(x, y)    eina_thread_equal(x, y)
+# define PHS()        eina_thread_self()
+# define PHC(x, f, d) eina_thread_create(&(x), EINA_THREAD_BACKGROUND, EINA_TRUE, (void *)f, d)
+# define PHJ(x)       eina_thread_join(x)
+
 # ifdef EFL_HAVE_POSIX_THREADS
 #  include <pthread.h>
 #  ifdef __linux__
@@ -47,98 +53,11 @@
 #   include <errno.h>
 #  endif
 
-#  define PH(x)        pthread_t x
-#  define PHE(x, y)    pthread_equal(x, y)
-#  define PHS()        pthread_self()
-#  define PHC(x, f, d) pthread_create(&(x), NULL, (void *)f, d)
-#  define PHJ(x)       pthread_join(x, NULL)
-#  define PHA(x)       pthread_cancel(x)
-
 # else /* EFL_HAVE_WIN32_THREADS */
 
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  undef WIN32_LEAN_AND_MEAN
-
-typedef struct
-{
-   HANDLE thread;
-   void  *val;
-} win32_thread;
-
-static Eina_List    *_ecore_thread_win32_threads = NULL;
-static Eina_Lock     _ecore_thread_win32_lock;
-
-#  define PH(x)     win32_thread * x
-#  define PHE(x, y) ((x) == (y))
-
-static win32_thread *
-_ecore_thread_win32_self()
-{
-   win32_thread *t;
-   Eina_List *l;
-
-   LKL(_ecore_thread_win32_lock);
-   EINA_LIST_FOREACH(_ecore_thread_win32_threads, l, t)
-     if (t->thread == GetCurrentThread())
-       {
-          LKU(_ecore_thread_win32_lock);
-          return t;
-       }
-
-   LKU(_ecore_thread_win32_lock);
-   return NULL;
-}
-
-#  define PHS()     _ecore_thread_win32_self()
-
-static int
-_ecore_thread_win32_create(win32_thread         **x,
-                           LPTHREAD_START_ROUTINE f,
-                           void                  *d)
-{
-   win32_thread *t;
-
-   t = (win32_thread *)calloc(1, sizeof(win32_thread));
-   if (!t)
-     return -1;
-
-   LKL(_ecore_thread_win32_lock);
-   (t)->thread = CreateThread(NULL, 0, f, d, 0, NULL);
-   if (!t->thread)
-     {
-        free(t);
-        LKU(_ecore_thread_win32_lock);
-        return -1;
-     }
-   t->val = d;
-   *x = t;
-   _ecore_thread_win32_threads = eina_list_append(_ecore_thread_win32_threads, t);
-   LKU(_ecore_thread_win32_lock);
-
-   return 0;
-}
-
-#  define PHC(x, f, d) _ecore_thread_win32_create(&(x), (LPTHREAD_START_ROUTINE)f, d)
-
-static int
-_ecore_thread_win32_join(win32_thread *x,
-                         void        **res)
-{
-   if (!PHE(x, PHS()))
-     {
-        WaitForSingleObject(x->thread, INFINITE);
-        CloseHandle(x->thread);
-     }
-   if (res) *res = x->val;
-   _ecore_thread_win32_threads = eina_list_remove(_ecore_thread_win32_threads, x);
-   free(x);
-
-   return 0;
-}
-
-#  define PHJ(x) _ecore_thread_win32_join(x, NULL)
-#  define PHA(x)    TerminateThread(x->thread, 0)
 
 # endif
 
@@ -524,13 +443,6 @@ _ecore_feedback_job(PH(thread))
 static void *
 _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
-#ifdef EFL_POSIX_THREADS
-   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-#endif
-
-   eina_sched_prio_drop();
-
    work->self = PHS();
    if (work->message_run)
      work->u.message_run.func_main((void *) work->data, (Ecore_Thread *) work);
@@ -548,13 +460,6 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 static void *
 _ecore_thread_worker(void *data __UNUSED__)
 {
-#ifdef EFL_POSIX_THREADS
-   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-#endif
-
-   eina_sched_prio_drop();
-
 restart:
    _ecore_short_job(PHS());
    _ecore_feedback_job(PHS());
@@ -788,10 +693,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
         if (work->func_cancel)
           work->func_cancel((void *) work->data, (Ecore_Thread *) work);
 
-        CDD(work->cond);
-        LKD(work->mutex);
-        LKD(work->cancel_mutex);
-        free(work);
+	_ecore_thread_worker_free(work);
         work = NULL;
      }
    LKU(_ecore_pending_job_threads_mutex);

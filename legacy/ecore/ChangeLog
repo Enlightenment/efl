@@ -1014,3 +1014,7 @@
 2012-10-16  Christopher Michael
 
        * Update Ecore_Wayland to build & work with newest wayland (0.99) from git
+
+2012-10-19  Cedric Bail
+
+       * Use Eina_Thread for Ecore_Thread.

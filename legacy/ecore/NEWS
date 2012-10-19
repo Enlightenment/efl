@@ -46,6 +46,7 @@ Removal:
     * 8bpp evas engine support removed (API still there, but inactive).
     
 Improvements:
+    * Use Eina_Thread for Ecore_Thread.
 
 Ecore 1.7.0
 
