@@ -48,3 +48,7 @@
 2012-10-19  Patryk Kaczmarek
 
 	* eina_stringshare_add_length return NULL when func args are wrong.
+
+2012-10-19  Cedric Bail
+
+	* Add eina_thread API.

@@ -59,6 +59,7 @@ eina_inline_rbtree.x \
 eina_inline_mempool.x \
 eina_inline_rectangle.x \
 eina_inline_trash.x \
+eina_thread.h \
 eina_trash.h \
 eina_iterator.h \
 eina_main.h \
@@ -145,6 +146,7 @@ eina_strbuf.c \
 eina_strbuf_common.c \
 eina_stringshare.c \
 eina_tiler.c \
+eina_thread.c \
 eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \

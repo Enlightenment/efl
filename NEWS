@@ -9,6 +9,7 @@ Additions:
     * Add DOCTYPE children parsing in eina_simple_xml
     * Add eina_barrier thread API
     * Add eina_tmpstr_add() and eina_tmpstr_del()
+    * Add eina_thread API
     
 Improvements:
     * Single EFL tree now covring all EFL library components.
