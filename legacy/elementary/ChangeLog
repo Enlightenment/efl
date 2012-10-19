@@ -630,3 +630,6 @@
         If the sum of item's min is larger than the viewport size in ELM_TOOLBAR_SHRINK_EXPAND mode,
         it can be scroll. And the end of the item is fitted on the end of the viewport.
 
+2012-10-19  Tae-Hwan Kim (Bluezery)
+
+        * Fixed wrong_calc_job parameter.
