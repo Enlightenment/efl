@@ -903,7 +903,10 @@ eina_file_stat_ls(const char *dir)
 
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
    if (!it)
-      return NULL;
+     {
+        closedir(dirp);
+        return NULL;
+     }
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
