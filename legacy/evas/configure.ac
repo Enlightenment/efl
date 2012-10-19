@@ -943,46 +943,6 @@ EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 ## Cpu based optimizations
 
 #######################################
-## PTHREADS
-
-# basic pthread support
-AC_CHECK_HEADER(pthread.h, [], [AC_MSG_ERROR([Pthread support missing.])])
-# basic pthread support. eina does the rest.
-AC_CHECK_HEADERS([pthread.h],
-   [
-    CFLAGS_save="${CFLAGS}"
-    CFLAGS="${CFLAGS} -pthread"
-    LIBS_save="${LIBS}"
-    LIBS="${LIBS} -pthread"
-    AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM([[
-#include <stdlib.h>
-#include <pthread.h>
-                       ]],
-                       [[
-pthread_create(NULL, NULL, NULL, NULL);
-                       ]])],
-      [],
-      [AC_MSG_ERROR([You don't have pthread support.])])
-    AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM([[
-#include <stdlib.h>
-#include <pthread.h>
-#include <sched.h>
-                       ]],
-                       [[
-pthread_attr_setaffinity_np(NULL, 0, NULL);
-                       ]])],
-      [AC_DEFINE(HAVE_PTHREAD_AFFINITY, 1, [Pthread pthread_attr_setaffinity_np])],
-      [])
-   CFLAGS=${CFLAGS_save}
-   LIBS=${LIBS_save}
-  ],
-  [AC_MSG_ERROR([Missing pthread.h])])
-pthread_cflags="-pthread"
-pthread_libs="-pthread"
-
-#######################################
 ## Pipe Renderer
 build_pipe_render="no"
 

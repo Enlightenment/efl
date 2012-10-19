@@ -1,9 +1,5 @@
 #include "evas_common.h"
 #include <unistd.h>
-#include <pthread.h>
-#ifdef HAVE_PTHREAD_AFFINITY
-#include <sched.h>
-#endif
 
 #ifdef BUILD_PIPE_RENDER
 
@@ -11,7 +7,7 @@ typedef struct _Thinfo
 {
    RGBA_Image            *im;
    int                    thread_num;
-   pthread_t              thread_id;
+   Eina_Thread            thread_id;
    Eina_Barrier          *barrier;
    const Eina_Inlist     *tasks;
    Eina_Array             cutout_trash;
@@ -869,50 +865,26 @@ evas_common_pipe_init(void)
 	eina_barrier_new(&(thbarrier[1]), thread_num + 1);
 	for (i = 0; i < thread_num; i++)
 	  {
-	     pthread_attr_t attr;
-#ifdef HAVE_PTHREAD_AFFINITY             
-	     cpu_set_t cpu;
-#endif
-             
-	     pthread_attr_init(&attr);
-#ifdef HAVE_PTHREAD_AFFINITY             
-	     CPU_ZERO(&cpu);
-	     CPU_SET(i % cpunum, &cpu);
-	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-#endif             
 	     thinfo[i].thread_num = i;
 	     thinfo[i].tasks = NULL;
 	     thinfo[i].barrier = thbarrier;
-	     /* setup initial locks */
-	     pthread_create(&(thinfo[i].thread_id), &attr,
-			    evas_common_pipe_thread, &(thinfo[i]));
-	     pthread_attr_destroy(&attr);
+
+             eina_thread_create(&(thinfo[i].thread_id), EINA_THREAD_NORMAL, i,
+                                evas_common_pipe_thread, &(thinfo[i]));
 	  }
 
 	eina_barrier_new(&(task_thbarrier[0]), thread_num + 1);
 	eina_barrier_new(&(task_thbarrier[1]), thread_num + 1);
 	for (i = 0; i < thread_num; i++)
 	  {
-	     pthread_attr_t attr;
-#ifdef HAVE_PTHREAD_AFFINITY             
-	     cpu_set_t cpu;
-#endif
-	     
-             pthread_attr_init(&attr);
-#ifdef HAVE_PTHREAD_AFFINITY             
-	     CPU_ZERO(&cpu);
-	     CPU_SET(i % cpunum, &cpu);
-	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-#endif             
 	     task_thinfo[i].thread_num = i;
 	     task_thinfo[i].tasks = NULL;
 	     task_thinfo[i].barrier = task_thbarrier;
              eina_array_step_set(&task_thinfo[i].cutout_trash, sizeof (Eina_Array), 8);
              eina_array_step_set(&task_thinfo[i].rects_task, sizeof (Eina_Array), 8);
-	     /* setup initial locks */
-	     pthread_create(&(task_thinfo[i].thread_id), &attr,
-			    evas_common_pipe_load, &(task_thinfo[i]));
-	     pthread_attr_destroy(&attr);
+
+             eina_thread_create(&(task_thinfo[i].thread_id), EINA_THREAD_NORMAL, i,
+                                evas_common_pipe_load, &(task_thinfo[i]));
 	  }
      }
 
