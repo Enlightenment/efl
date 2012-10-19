@@ -88,7 +88,8 @@ noinst_PROGRAMS = \
 	src/examples/complex_types \
 	src/examples/complex_types_server \
 	src/examples/server \
-	src/examples/client
+	src/examples/client \
+	src/examples/simple-signal-emit
 
 EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@
 
@@ -113,6 +114,10 @@ src_examples_server_LDADD = $(EXAMPLES_LIBS)
 
 src_examples_client_SOURCES = src/examples/client.c
 src_examples_client_LDADD = $(EXAMPLES_LIBS)
+
+src_examples_simple_signal_emit_SOURCES = src/examples/simple-signal-emit.c
+src_examples_simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
+
 endif
 
 .PHONY: doc

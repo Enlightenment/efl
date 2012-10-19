@@ -36,6 +36,7 @@ src/examples/banshee
 src/examples/complex_types
 src/examples/complex_types_server
 src/examples/server
+src/examples/simple-signal-emit
 src/examples/client
 doc/Doxyfile
 doc/html/
