@@ -366,9 +366,7 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *
         evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
         goto done;
      }
-   if (obj->changed_map)
-   if ((obj->cur.map != obj->prev.map) ||
-       (obj->cur.usemap != obj->prev.usemap))
+   if (obj->changed_map || obj->changed_source_visible)
      {
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
         goto done;

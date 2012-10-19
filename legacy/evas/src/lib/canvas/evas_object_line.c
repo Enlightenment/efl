@@ -309,7 +309,7 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
 	goto done;
      }
-   if (obj->changed_map)
+   if (obj->changed_map || obj->changed_source_visible)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj,
                                             obj);

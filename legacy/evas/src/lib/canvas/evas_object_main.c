@@ -54,6 +54,7 @@ evas_object_change_reset(Evas_Object *eo_obj)
    obj->changed_color = EINA_FALSE;
    obj->changed_map = EINA_FALSE;
    obj->changed_pchange = EINA_FALSE;
+   obj->changed_source_visible = EINA_FALSE;
 }
 
 void

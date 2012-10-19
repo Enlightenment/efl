@@ -580,11 +580,10 @@ _image_source_visible_set(Eo *eo_obj, void *_pd, va_list *list)
    if (!o->cur.source) return;
    src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
    src_obj->proxy.source_invisible = !visible;
+   src_obj->changed_source_visible = EINA_TRUE;
    evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
                                              EINA_FALSE, EINA_TRUE);
-   src_obj->changed = EINA_TRUE;
    evas_object_change(o->cur.source, src_obj);
-
    //FIXME: Feed mouse events here.
 }
 
@@ -2628,6 +2627,8 @@ _proxy_unset(Evas_Object *proxy)
    if (cur_source->proxy.source_invisible)
      {
         cur_source->proxy.source_invisible = EINA_FALSE;
+        cur_source->changed_source_visible = EINA_TRUE;
+        evas_object_change(o->cur.source, cur_source);
         evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
                                                   EINA_FALSE, EINA_TRUE);
      }
@@ -3652,7 +3653,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         evas_object_render_pre_visible_change(&e->clip_changes, eo_obj, is_v, was_v);
         if (!o->pixel_updates) goto done;
      }
-   if (obj->changed_map)
+   if (obj->changed_map || obj->changed_source_visible)
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
         goto done;
