@@ -43,6 +43,7 @@ eina_inline_mempool.x \
 eina_inline_rectangle.x \
 eina_inline_trash.x \
 eina_trash.h \
+eina_thread.h \
 eina_iterator.h \
 eina_main.h \
 eina_cpu.h \

@@ -49,6 +49,7 @@ eina_strbuf.c \
 eina_strbuf_common.c \
 eina_stringshare.c \
 eina_tiler.c \
+eina_thread.c \
 eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \
