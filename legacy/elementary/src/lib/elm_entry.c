@@ -3222,12 +3222,14 @@ EAPI void
 elm_entry_entry_set(Evas_Object *obj,
                     const char *entry)
 {
+   ELM_ENTRY_CHECK(obj);
    _elm_entry_smart_text_set(obj, NULL, entry);
 }
 
 EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
+   ELM_ENTRY_CHECK(obj) NULL;
    return _elm_entry_smart_text_get(obj, NULL);
 }
 
