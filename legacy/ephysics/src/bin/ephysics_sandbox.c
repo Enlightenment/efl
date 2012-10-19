@@ -499,14 +499,14 @@ _promote(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
 /*** Sandbox Widgets ***/
 static void
-_label_add(Evas_Object *bxparent, const char *subcategory)
+_label_add(Evas_Object *bxparent, const char *subcategory, float align)
 {
    Evas_Object *label;
 
    label = elm_label_add(bxparent);
    elm_object_text_set(label, subcategory);
    evas_object_size_hint_weight_set(label, 0.0, 0.0);
-   evas_object_size_hint_align_set(label, 0.5, 0.5);
+   evas_object_size_hint_align_set(label, align, 0.5);
    elm_box_pack_end(bxparent, label);
    evas_object_show(label);
 }
@@ -518,14 +518,16 @@ _material_selector_add(Body_Data *bd, Evas_Object *bxparent)
 
    box = elm_box_add(bxparent);
    elm_box_horizontal_set(box, EINA_TRUE);
+   elm_box_homogeneous_set(box, EINA_TRUE);
+   elm_box_padding_set(box, 25, 0);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.0);
    evas_object_show(box);
    elm_box_pack_end(bxparent, box);
 
-   _label_add(box, "Body Material");
+   _label_add(box, "Body Material", 1);
 
-   hv = elm_hoversel_add(bxparent);
+   hv = elm_hoversel_add(box);
    elm_hoversel_hover_parent_set(hv, bd->wd->nf);
    elm_object_text_set(hv, materials[EPHYSICS_BODY_MATERIAL_CUSTOM]);
    elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_CUSTOM],
@@ -550,7 +552,7 @@ _material_selector_add(Body_Data *bd, Evas_Object *bxparent)
                          NULL, ELM_ICON_NONE, _material_set_cb,
                          (void *) EPHYSICS_BODY_MATERIAL_WOOD);
 
-   evas_object_size_hint_align_set(hv, 1, 0.5);
+   evas_object_size_hint_align_set(hv, 0.5, 0.5);
    elm_box_pack_end(box, hv);
    evas_object_show(hv);
    evas_object_data_set(hv, "bd", bd);
@@ -561,25 +563,34 @@ _material_selector_add(Body_Data *bd, Evas_Object *bxparent)
 static void
 _type_radio_add(Body_Data *bd, Evas_Object *bxparent)
 {
-   Evas_Object *dbx, *rd, *rdg;
+   Evas_Object *dbx, *rbx, *rd, *rdg;
 
    dbx = elm_box_add(bxparent);
    elm_box_horizontal_set(dbx, EINA_TRUE);
    evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
-   elm_box_padding_set(dbx, 46, 0);
+   elm_box_homogeneous_set(dbx, EINA_TRUE);
    elm_box_align_set(dbx, 1, 0.5);
    elm_box_pack_end(bxparent, dbx);
    evas_object_show(dbx);
 
-   _label_add(dbx, "Body Type");
+   _label_add(dbx, "Body Type", 1);
+
+   rbx = elm_box_add(bxparent);
+   elm_box_horizontal_set(rbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(rbx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rbx, EVAS_HINT_FILL, 0.0);
+   elm_box_padding_set(rbx, 25, 0);
+   elm_box_align_set(rbx, 0.5, 0.5);
+   elm_box_pack_end(dbx, rbx);
+   evas_object_show(rbx);
 
    rd = elm_radio_add(bxparent);
    elm_radio_state_value_set(rd, 0);
    elm_object_text_set(rd, "Solid");
    evas_object_size_hint_align_set(rd, 1, 0.5);
    evas_object_size_hint_weight_set(rd, 0, EVAS_HINT_EXPAND);
-   elm_box_pack_end(dbx, rd);
+   elm_box_pack_end(rbx, rd);
    evas_object_show(rd);
    rdg = rd;
    evas_object_smart_callback_add(rd, "changed", _type_set_cb, bd);
@@ -590,7 +601,7 @@ _type_radio_add(Body_Data *bd, Evas_Object *bxparent)
    elm_object_text_set(rd, "Soft");
    evas_object_size_hint_align_set(rd, 1, 0.5);
    evas_object_size_hint_weight_set(rd, 0, EVAS_HINT_EXPAND);
-   elm_box_pack_end(dbx, rd);
+   elm_box_pack_end(rbx, rd);
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", _type_set_cb, bd);
 }
@@ -599,17 +610,27 @@ static Evas_Object *
 _slider_add(Evas_Object *bxparent, const char *subcategory, const char *itemlb,
             float min, float max, float initial)
 {
-   Evas_Object *sl;
+   Evas_Object *sl, *dbx;
+
+   dbx = elm_box_add(bxparent);
+   elm_box_horizontal_set(dbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
+   elm_box_homogeneous_set(dbx, EINA_TRUE);
+   elm_box_align_set(dbx, 0, 0.5);
+   elm_box_pack_end(bxparent, dbx);
+   evas_object_show(dbx);
+
+   _label_add(dbx, subcategory, 1);
 
    sl = elm_slider_add(bxparent);
-   elm_object_text_set(sl, subcategory);
    elm_slider_unit_format_set(sl, itemlb);
    elm_slider_min_max_set(sl, min, max);
    elm_slider_value_set(sl, initial);
    elm_slider_span_size_set(sl, 100);
-   evas_object_size_hint_weight_set(sl, 0.0, 0.0);
-   evas_object_size_hint_align_set(sl, 1, 0.5);
-   elm_box_pack_end(bxparent, sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, 0, 0.5);
+   elm_box_pack_end(dbx, sl);
    evas_object_show(sl);
 
    return sl;
@@ -703,14 +724,14 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    evas_object_data_set(material_widget, "restitution", widget);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _restitution_set_cb, bd);
-   _label_add(bx, "Damping");
+   _label_add(bx, "Damping", 0.5);
    widget = _slider_add(bx, "Linear", "%1.3f", 0, 1, 0);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _linear_damping_set_cb, bd);
    widget = _slider_add(bx, "Angular", "%1.3f", 0, 1, 0);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _angular_damping_set_cb, bd);
-   _label_add(bx, "Sleeping Threshold");
+   _label_add(bx, "Sleeping Threshold", 0.5);
    widget = _slider_add(bx, "Linear (p/s)", "%1.2f",
                                0, 250, 24);
    evas_object_smart_callback_add(widget, "delay,changed",
@@ -721,7 +742,7 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
                                   _ang_sleeping_threshold_set_cb, bd);
 
    bx = _category_add(bxbody, "Actions", EINA_TRUE);
-   _label_add(bx, "Impulse X");
+   _label_add(bx, "Impulse X", 0.5);
    aux_widget = _slider_add(bx, "X (kg * p/s)", "%1.3f",
                                    -9999, 9999, 0);
    bd->controls.impulse.x = aux_widget;
@@ -729,7 +750,7 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
                                -360, 360, 0);
    bd->controls.impulse.relx = widget;
    evas_object_data_set(aux_widget, "relx", widget);
-   _label_add(bx, "Impulse Y");
+   _label_add(bx, "Impulse Y", 0.5);
    widget = _slider_add(bx, "Y (kg * p/s)", "%1.3f", -9999, 9999, 0);
    bd->controls.impulse.y = widget;
    evas_object_data_set(aux_widget, "y", widget);
@@ -750,13 +771,13 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _impulse_y_rel_set_cb, bd);
 
-   _label_add(bx, "Force X");
+   _label_add(bx, "Force X", 0.5);
    aux_widget = _slider_add(bx, "X (kg * p/s/s)", "%1.3f", -1999, 1999, 0);
    bd->controls.force.x = aux_widget;
    widget = _slider_add(bx, "Rel Position X", "%1.2f", -360, 360, 0);
    bd->controls.force.relx = widget;
    evas_object_data_set(aux_widget, "relx", widget);
-   _label_add(bx, "Force Y");
+   _label_add(bx, "Force Y", 0.5);
    widget = _slider_add(bx, "Y (kg * p/s/s)", "%1.3f", -1999, 1999, 0);
    bd->controls.force.y = widget;
    evas_object_data_set(aux_widget, "y", widget);
@@ -780,7 +801,7 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    bd->controls.force.torque = widget;
    evas_object_smart_callback_add(widget, "delay,changed", _torque_set_cb, bd);
 
-   _label_add(bx, "Linear Velocity");
+   _label_add(bx, "Linear Velocity", 0.5);
    aux_widget = _slider_add(bx, "X (p/s)", "%1.2f", -1499, 1499, 0);
    bd->controls.velocity.x = aux_widget;
    widget = _slider_add(bx, "Y (p/s)", "%1.2f", -1499, 1499, 0);
@@ -820,7 +841,7 @@ _menu_world_page_add(World_Data *wd)
    _menu_page_add(wd->win, &scbx, &bxparent);
 
    bx = _category_add(bxparent, "World", EINA_FALSE);
-   _label_add(bx, "Gravity (px/s²)");
+   _label_add(bx, "Gravity (px/s²)", 0.5);
    widget = _slider_add(bx, "X:", "%1.2f", -1000, 1000, 0);
    evas_object_smart_callback_add(widget, "delay,changed", _world_gravity_x_cb,
                                   wd->world);
@@ -851,7 +872,7 @@ _menu_world_page_add(World_Data *wd)
 static void
 _menu_create(World_Data *wd)
 {
-   Evas_Object *mainbx, *btn, *bg, *layout;
+   Evas_Object *mainbx, *dbx, *btn, *bg, *layout;
 
    bg = elm_bg_add(wd->win);
    elm_win_resize_object_add(wd->win, bg);
@@ -869,20 +890,29 @@ _menu_create(World_Data *wd)
    elm_object_part_content_set(layout, "swallow", mainbx);
    evas_object_show(mainbx);
 
-   btn = elm_button_add(wd->win);
-   elm_object_text_set(btn, "Restart");
-   elm_box_pack_end(mainbx, btn);
-   evas_object_size_hint_min_set(btn, 100, 30);
-   evas_object_size_hint_align_set(btn, 1, 0.5);
-   evas_object_show(btn);
-   evas_object_smart_callback_add(btn, "clicked", _simulate_cb, wd);
+   dbx = elm_box_add(mainbx);
+   elm_box_horizontal_set(dbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(dbx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(dbx, EVAS_HINT_FILL, 0.0);
+   elm_box_align_set(dbx, 0, 0.5);
+   elm_box_pack_end(mainbx, dbx);
+   evas_object_show(dbx);
 
    wd->tb = elm_toolbar_add(wd->win);
    evas_object_size_hint_weight_set(wd->tb, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_fill_set(wd->tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_toolbar_select_mode_set(wd->tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_box_pack_end(mainbx, wd->tb);
+   elm_box_pack_end(dbx, wd->tb);
    evas_object_show(wd->tb);
+
+   btn = elm_button_add(wd->win);
+   elm_object_text_set(btn, "Restart");
+   evas_object_size_hint_min_set(btn, 100, 30);
+   evas_object_size_hint_align_set(btn, 1, 0.5);
+   elm_box_pack_end(dbx, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked", _simulate_cb, wd);
+
 
    wd->nf = elm_naviframe_add(wd->win);
    evas_object_size_hint_weight_set(wd->nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
