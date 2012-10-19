@@ -787,6 +787,7 @@ eina_file_ls(const char *dir)
 #ifdef HAVE_DIRENT_H
    Eina_File_Iterator *it;
    size_t length;
+   DIR *dirp;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
@@ -794,18 +795,20 @@ eina_file_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   it = calloc(1, sizeof (Eina_File_Iterator) + length);
-   if (!it)
+   dirp = opendir(dir);
+   if (!dirp)
       return NULL;
+
+   it = calloc(1, sizeof (Eina_File_Iterator) + length);
+   if (EINA_UNLIKELY(!it))
+     {
+        closedir(dirp);
+        return NULL;
+     }
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-   it->dirp = opendir(dir);
-   if (!it->dirp)
-     {
-        free(it);
-        return NULL;
-     }
+   it->dirp = dirp;
 
    memcpy(it->dir, dir, length + 1);
    if (dir[length - 1] != '/')
@@ -832,6 +835,7 @@ eina_file_direct_ls(const char *dir)
 #ifdef HAVE_DIRENT_H
    Eina_File_Direct_Iterator *it;
    size_t length;
+   DIR *dirp;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
 
@@ -839,18 +843,20 @@ eina_file_direct_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
-   if (!it)
+   dirp = opendir(dir);
+   if (!dirp)
       return NULL;
+
+   it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
+   if (EINA_UNLIKELY(!it))
+     {
+        closedir(dirp);
+        return NULL;
+     }
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-   it->dirp = opendir(dir);
-   if (!it->dirp)
-     {
-        free(it);
-        return NULL;
-     }
+   it->dirp = dirp;
 
    if (length + _eina_name_max(it->dirp) + 2 >= EINA_PATH_MAX)
      {
@@ -902,7 +908,7 @@ eina_file_stat_ls(const char *dir)
       return NULL;
 
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
-   if (!it)
+   if (EINA_UNLIKELY(!it))
      {
         closedir(dirp);
         return NULL;
