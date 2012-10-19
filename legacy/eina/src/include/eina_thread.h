@@ -67,7 +67,7 @@ typedef enum _Eina_Thread_Priority
 EAPI Eina_Thread eina_thread_self(void);
 EAPI Eina_Bool eina_thread_equal(Eina_Thread t1, Eina_Thread t2);
 EAPI Eina_Bool eina_thread_create(Eina_Thread *t,
-                                  Eina_Thread_Priority prio, Eina_Bool affinity,
+                                  Eina_Thread_Priority prio, int affinity,
                                   Eina_Thread_Cb func, const void *data);
 EAPI void *eina_thread_join(Eina_Thread t);
 

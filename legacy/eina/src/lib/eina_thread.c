@@ -101,6 +101,7 @@ _eina_thread_win32_cb(LPVOID lpParam)
 
 static Eina_Bool
 _eina_thread_win32_create(Eina_Thread *t,
+                          int affinity,
                           Eina_Thread_Cb func,
                           const void *data)
 {
@@ -161,10 +162,11 @@ _eina_thread_win32_join(Eina_Thread t)
    return ret;
 }
 
-#  define PHE(x, y)    _eina_thread_win32_equal(x, y)
-#  define PHS()        _eina_thread_win32_self()
-#  define PHC(x, f, d) _eina_thread_win32_create(x, f, d)
-#  define PHJ(x)       _eina_thread_win32_join(x)
+#  define PHE(x, y)       _eina_thread_win32_equal(x, y)
+#  define PHS()           _eina_thread_win32_self()
+#  define PHC(x, a, f, d) _eina_thread_win32_create(x, a, f, d)
+#  define PHJ(x)          _eina_thread_win32_join(x)
+#  define PHA(a)
 
 # else
 #  include <pthread.h>
@@ -187,10 +189,40 @@ _eina_thread_join(Eina_Thread t)
    return NULL;
 }
 
-#  define PHE(x, y)    pthread_equal(x, y)
-#  define PHS()        pthread_self()
-#  define PHC(x, f, d) pthread_create(x, NULL, (void*) f, d)
-#  define PHJ(x)       _eina_thread_join(x)
+static Eina_Bool
+_eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), void *data)
+{
+   Eina_Bool r;
+   pthread_attr_t attr;
+#ifdef EINA_HAVE_PTHREAD_AFFINITY
+   cpu_set_t cpu;
+   int cpunum;
+#endif
+
+   pthread_attr_init(&attr);
+#ifdef EINA_HAVE_PTHREAD_AFFINITY
+   if (affinity >= 0)
+     {
+        cpunum = eina_cpu_count();
+
+        CPU_ZERO(&cpu);
+        CPU_SET(affinity % cpunum, &cpu);
+        pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+     }
+#else
+   (void) affinity;
+#endif
+   /* setup initial locks */
+   r = pthread_create(t, &attr, func, data) == 0;
+   pthread_attr_destroy(&attr);
+
+   return r;
+}
+
+#  define PHE(x, y)       pthread_equal(x, y)
+#  define PHS()           pthread_self()
+#  define PHC(x, a, f, d) _eina_thread_create(x, a, f, d)
+#  define PHJ(x)          _eina_thread_join(x)
 
 # endif
 #else
@@ -204,7 +236,7 @@ struct _Eina_Thread_Call
    const void *data;
 
    Eina_Thread_Priority prio;
-   Eina_Bool affinity;
+   int affinity;
 };
 
 #include "eina_thread.h"
@@ -241,7 +273,7 @@ eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 
 EAPI Eina_Bool
 eina_thread_create(Eina_Thread *t,
-                   Eina_Thread_Priority prio, Eina_Bool affinity,
+                   Eina_Thread_Priority prio, int affinity,
                    Eina_Thread_Cb func, const void *data)
 {
    Eina_Thread_Call *c;
@@ -254,7 +286,7 @@ eina_thread_create(Eina_Thread *t,
    c->prio = prio;
    c->affinity = affinity;
 
-   if (PHC(t, _eina_internal_call, c) == 0)
+   if (PHC(t, affinity, _eina_internal_call, c))
      return EINA_TRUE;
 
    free(c);
