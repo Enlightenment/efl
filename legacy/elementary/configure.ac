@@ -614,37 +614,56 @@ fi
 AC_SUBST(ELM_ETHUMB_DEF)
 
 ELM_WEB_DEF="#undef"
-have_elementary_web="no"
-want_elementary_web="auto"
-AC_ARG_ENABLE([web],
-   [AC_HELP_STRING([--disable-web], [disable web (WebKit) support. @<:@default=detect@:>@])],
-   [want_elementary_web=$enableval], [])
 
-if test "x$want_elementary_web" != "xno"; then
+elementary_web_backend="detect"
+elementary_web="none"
+want_elementary_web=""
+AC_ARG_WITH([elementary-web-backend],
+   [AC_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit/ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
+   [
+    elementary_web_backend=${withval}
+   ],
+   [elementary_web_backend="detect"])
+
+case "$elementary_web_backend" in
+    ewebkit|ewebkit2|detect|none) ;;
+    *) AC_MSG_ERROR([Invalid web backend: must be ewebkit, ewebkit2, detect or none]) ;;
+esac
+
+if test "x$elementary_web_backend" = "xdetect"; then
+    # FIXME : detect option should check both ewebkit and ewebkit2.
+    want_elementary_web="ewebkit"
+else
+    want_elementary_web=$elementary_web_backend
+fi
+
+if test "x$want_elementary_web" != "xnone"; then
     PKG_CHECK_MODULES([ELEMENTARY_WEB],
-       [
-        ewebkit
-       ],
+       [$want_elementary_web],
        [
         AC_DEFINE(HAVE_ELEMENTARY_WEB, 1, [Web support for Elementary])
-        webkit_datadir=$($PKG_CONFIG ewebkit --variable=datadir)
+        webkit_datadir=$($PKG_CONFIG $want_elementary_web --variable=datadir)
         AC_DEFINE_UNQUOTED(WEBKIT_DATADIR,
                            "$webkit_datadir",
                            "WebKit's data dir")
-        have_elementary_web="yes"
+        if test "x$elementary_web_backend" = "xewebkit2"; then
+            AC_DEFINE(USE_WEBKIT2, 1, [Use ewebkit2 as Elementary web backend])
+        fi
+
+        elementary_web=$want_elementary_web
         ELM_WEB_DEF="#define"
-## web_client? how about ewebkit? at least in current upstreak webkit
-## there is no web_client.pc        
-#        requirement_elm="web_client ${requirement_elm}"
-        requirement_elm="ewebkit ${requirement_elm}"
+        requirement_elm="${want_elementary_web} ${requirement_elm}"
        ],
-       [have_elementary_web="no"]
+       [elementary_web="none"]
     )
 else
-    have_elementary_web="no"
+    elementary_web="none"
 fi
-if test "x$want_elementary_web" = "xyes" -a "x$have_elementary_web" = "xno"; then
-    AC_MSG_ERROR([Web support requested, but no ewebkit found by pkg-config.])
+
+if test "x$elementary_web_backend" = "xewebkit" -o "x$elementary_web_backend" = "xewebkit2"; then
+    if test "x$elementary_web" = "xnone"; then
+        AC_MSG_ERROR([Web support requested, but no $elementary_web_backend found by pkg-config.])
+    fi
 fi
 AC_SUBST(ELM_WEB_DEF)
 
@@ -797,7 +816,7 @@ echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
 echo "    Ethumb.................: ${have_elementary_ethumb}"
-echo "    Web (WebKit)...........: ${have_elementary_web}"
+echo "    Web (WebKit)...........: ${elementary_web}"
 echo "    Quick Launch...........: ${have_fork}"
 echo "    EIO....................: ${have_eio}"
 echo "    Emotion................: ${have_emotion}"

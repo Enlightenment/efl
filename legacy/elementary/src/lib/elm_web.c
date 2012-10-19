@@ -7,6 +7,8 @@
 //  2 - review scrolling to match elm_scroller. Maybe in future use
 //  elm_interface_scroller
 
+#if !defined(HAVE_ELEMENTARY_WEB) || !defined(USE_WEBKIT2)
+
 #ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
 
@@ -2173,3 +2175,5 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
 // TODO: use all ewk_view_zoom stuff to implement bring-in and
 // animated zoom like elm_photocam. Should be simple to use, must not
 // expose every single bit to users!
+
+#endif

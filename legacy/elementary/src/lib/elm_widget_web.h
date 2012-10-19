@@ -2,7 +2,11 @@
 #define ELM_WIDGET_WEB_H
 
 #ifdef HAVE_ELEMENTARY_WEB
+#ifdef USE_WEBKIT2
+#include <EWebKit2.h>
+#else
 #include <EWebKit.h>
+#endif
 #endif
 
 /**
