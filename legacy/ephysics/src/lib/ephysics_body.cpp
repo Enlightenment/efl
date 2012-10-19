@@ -1068,6 +1068,22 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
         evas_map_util_3d_perspective(map, px, py, z0, foc);
      }
 
+   if (body->back_face_culling)
+     {
+        if (evas_map_util_clockwise_get(map))
+          {
+             body->clockwise = EINA_TRUE;
+             evas_object_show(body->evas_obj);
+          }
+        else
+          {
+             body->clockwise = EINA_FALSE;
+             evas_map_free(map);
+             evas_object_hide(body->evas_obj);
+             return;
+          }
+     }
+
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
      {
@@ -2173,8 +2189,6 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      }
 
    body->evas_obj = evas_obj;
-
-
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
                                   _ephysics_body_evas_obj_del_cb, body);
 
@@ -3158,6 +3172,39 @@ ephysics_body_volume_get(const EPhysics_Body *body)
         return -1;
      }
    return _ephysics_body_volume_get(body);
+}
+
+EAPI void
+ephysics_body_back_face_culling_set(EPhysics_Body *body, Eina_Bool enable)
+{
+   if (!body)
+     {
+        ERR("Body is NULL.");
+        return;
+     }
+   body->back_face_culling = !!enable;
+}
+
+EAPI Eina_Bool
+ephysics_body_back_face_culling_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Body is NULL.");
+        return EINA_FALSE;
+     }
+   return body->back_face_culling;
+}
+
+EAPI Eina_Bool
+ephysics_body_clockwise_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Body is NULL.");
+        return EINA_FALSE;
+     }
+   return body->clockwise;
 }
 
 #ifdef  __cplusplus

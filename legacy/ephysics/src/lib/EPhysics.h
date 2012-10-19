@@ -3642,6 +3642,68 @@ EAPI void ephysics_body_light_set(EPhysics_Body *body, Eina_Bool enable);
 EAPI Eina_Bool ephysics_body_light_get(const EPhysics_Body *body);
 
 /**
+ * @brief
+ * Set body's evas object to be hidden when it is counter-clockwise.
+ *
+ * @param body The physics body.
+ * @param enable If @c EINA_TRUE, evas object will be hidden,
+ * otherwise it will be visible, rotated.
+ *
+ * An object is said to be facing the user when all its points are placed in
+ * a clockwise fashion.
+ *
+ * @note When back-face culling is enabled, evas object visibility
+ * will be handled by @ref ephysics_body_evas_object_update().
+ *
+ * @see ephysics_body_back_face_culling_get().
+ * @see ephysics_body_clockwise_get().
+ * @see ephysics_body_evas_object_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_back_face_culling_set(EPhysics_Body *body, Eina_Bool enable);
+
+/**
+ * @brief
+ * Return if body's evas object will be hidden when it is counter-clockwise or
+ * not.
+ *
+ * @param body The physics body.
+ * @return @c EINA_TRUE if evas object will be hidden, or @c EINA_FALSE
+ * in the other case, or on error.
+ *
+ * @see ephysics_body_back_face_culling_set() for more details.
+ * @see ephysics_body_clockwise_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_Bool ephysics_body_back_face_culling_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Get the clockwise state of a body.
+ *
+ * This determines if the points of the evas object associated to the @p body
+ * are clockwise or counter-clockwise. This can be used for "back-face culling". * This is where you hide objects that "face away" from you.
+ * In this case objects that are not clockwise.
+ *
+ * It can be set with @ref ephysics_body_back_face_culling_set(), so EPhysics
+ * will handle visibility automatically on evas object update.
+ *
+ * @note This information only will be updated on
+ * ephysics_body_evas_object_update(). So if a custom rendering is being done,
+ * this function won't return the current value of the evas object.
+ *
+ * @param body The physics body.
+ * @return @c EINA_TRUE if clockwise, @c EINA_FALSE otherwise or on error.
+ *
+ * @see ephysics_body_back_face_culling_set() for more details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_Bool ephysics_body_clockwise_get(const EPhysics_Body *body);
+
+/**
  * @}
  */
 

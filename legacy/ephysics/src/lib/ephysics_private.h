@@ -112,16 +112,19 @@ struct _EPhysics_Body {
      int cloth_columns;
      int cloth_rows;
      int anchor_prop;
-     Eina_Bool active:1;
-     Eina_Bool deleted:1;
-     Eina_Bool light_apply:1;
      int material_index;
-     Eina_Bool rebounding;
      struct {
        int triangle;
        double mass[3];
        Eina_Bool dragging;
      } dragging_data;
+
+     Eina_Bool active:1;
+     Eina_Bool deleted:1;
+     Eina_Bool light_apply:1;
+     Eina_Bool rebounding:1;
+     Eina_Bool back_face_culling:1;
+     Eina_Bool clockwise:1;
 };
 
 extern int _ephysics_log_dom;
