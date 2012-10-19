@@ -37,7 +37,12 @@ _read_line(char *buf, int size)
    int len;
    char *c;
 
-   fgets(buf, size, stdin);
+   if (!fgets(buf, size, stdin))
+     {
+        buf[0] = 0;
+        return 0;
+     }
+
    c = strchr(buf, '#');
    if (c)
      *c = '\0';
@@ -354,7 +359,8 @@ int main(void)
           skip_cmd = 0;
         else
           printf("\n> ");
-        fgets(cmd, sizeof(cmd), stdin);
+        if (!fgets(cmd, sizeof(cmd), stdin))
+          break;
         len = strlen(cmd) - 1;
         cmd[len] = '\0';
 
