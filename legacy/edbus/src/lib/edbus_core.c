@@ -176,7 +176,7 @@ print_live_connection(EDBus_Connection *conn)
    else
      {
         EDBus_Pending *p;
-        EINA_INLIST_FOREACH (conn->pendings, p)
+        EINA_INLIST_FOREACH(conn->pendings, p)
           ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()",
               conn, p,
               edbus_pending_destination_get(p),
@@ -272,7 +272,7 @@ edbus_cbs_free_del(Eina_Inlist *lst, EDBus_Free_Cb cb, const void *data)
 {
    EDBus_Context_Free_Cb *ctx;
 
-   EINA_INLIST_FOREACH (lst, ctx)
+   EINA_INLIST_FOREACH(lst, ctx)
      {
         if (ctx->cb != cb) continue;
         if ((data) && (ctx->data != data)) continue;
@@ -300,7 +300,7 @@ edbus_data_find(Eina_Inlist **p_lst, const char *key)
    unsigned int keylen = strlen(key);
    EDBus_Data *d;
 
-   EINA_INLIST_FOREACH (*p_lst, d)
+   EINA_INLIST_FOREACH(*p_lst, d)
      {
         if ((keylen == d->keylen) && (memcmp(key, d->key, keylen) == 0))
           {
@@ -845,7 +845,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
                           &edbus_msg->iterator->dbus_iterator);
    conn->running_signal = EINA_TRUE;
 
-   EINA_INLIST_FOREACH (conn->signal_handlers, sh)
+   EINA_INLIST_FOREACH(conn->signal_handlers, sh)
      {
         if (sh->sender)
           {
@@ -1061,7 +1061,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
      {
         CRITICAL("Connection %p released with live pending calls!",
                 conn);
-        EINA_INLIST_FOREACH (conn->pendings, p)
+        EINA_INLIST_FOREACH(conn->pendings, p)
           ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()",
               conn, p,
               edbus_pending_destination_get(p),
@@ -1091,10 +1091,10 @@ _edbus_connection_unref(EDBus_Connection *conn)
    dbus_connection_unref(conn->dbus_conn);
    conn->dbus_conn = NULL;
 
-   EINA_INLIST_FOREACH_SAFE (conn->fd_handlers, list, fd_handler)
+   EINA_INLIST_FOREACH_SAFE(conn->fd_handlers, list, fd_handler)
      edbus_fd_handler_del(fd_handler);
 
-   EINA_INLIST_FOREACH_SAFE (conn->timeouts, list, timer)
+   EINA_INLIST_FOREACH_SAFE(conn->timeouts, list, timer)
      edbus_timeout_data_free(timer->handler);
 
    edbus_data_del_all(&conn->data);
@@ -1245,7 +1245,7 @@ edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, E
    cn = eina_hash_find(conn->names, bus);
    EINA_SAFETY_ON_NULL_RETURN(cn);
 
-   EINA_INLIST_FOREACH (cn->event_handlers.list, iter)
+   EINA_INLIST_FOREACH(cn->event_handlers.list, iter)
      {
         if (cb != iter->cb) continue;
         if ((cb_data) && (cb_data != iter->cb_data)) continue;
@@ -1316,7 +1316,7 @@ edbus_connection_event_callback_del(EDBus_Connection *conn, EDBus_Connection_Eve
 
    ce = conn->event_handlers + type;
 
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (cb != iter->cb) continue;
         if ((cb_data) && (cb_data != iter->cb_data)) continue;
@@ -1347,7 +1347,7 @@ _edbus_connection_event_callback_call(EDBus_Connection *conn, EDBus_Connection_E
    ce = conn->event_handlers + type;
 
    ce->walking++;
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (iter->deleted) continue;
         iter->cb((void *)iter->cb_data, conn, (void *)event_info);
@@ -1355,7 +1355,7 @@ _edbus_connection_event_callback_call(EDBus_Connection *conn, EDBus_Connection_E
    ce->walking--;
    if (ce->walking > 0) return;
 
-   EINA_LIST_FREE (ce->to_delete, iter)
+   EINA_LIST_FREE(ce->to_delete, iter)
      _edbus_connection_context_event_cb_del(ce, iter);
 }
 

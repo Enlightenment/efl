@@ -129,14 +129,14 @@ _edbus_object_free(EDBus_Object *obj)
      {
         Eina_Iterator *iterator = eina_hash_iterator_data_new(obj->proxies);
         EDBus_Proxy *proxy;
-        EINA_ITERATOR_FOREACH (iterator, proxy)
+        EINA_ITERATOR_FOREACH(iterator, proxy)
           ERR("obj=%p alive proxy=%p %s", obj, proxy,
               edbus_proxy_interface_get(proxy));
         eina_iterator_free(iterator);
         eina_hash_free(obj->proxies);
      }
 
-   EINA_LIST_FREE (obj->signal_handlers, h)
+   EINA_LIST_FREE(obj->signal_handlers, h)
      {
         if (h->dangling)
           edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, obj);
@@ -302,7 +302,7 @@ edbus_object_event_callback_del(EDBus_Object *obj, EDBus_Object_Event_Type type,
 
    ce = obj->event_handlers + type;
 
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (cb != iter->cb) continue;
         if ((cb_data) && (cb_data != iter->cb_data)) continue;
@@ -333,7 +333,7 @@ _edbus_object_event_callback_call(EDBus_Object *obj, EDBus_Object_Event_Type typ
    ce = obj->event_handlers + type;
 
    ce->walking++;
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (iter->deleted) continue;
         iter->cb((void *)iter->cb_data, obj, (void *)event_info);
@@ -341,7 +341,7 @@ _edbus_object_event_callback_call(EDBus_Object *obj, EDBus_Object_Event_Type typ
    ce->walking--;
    if (ce->walking > 0) return;
 
-   EINA_LIST_FREE (ce->to_delete, iter)
+   EINA_LIST_FREE(ce->to_delete, iter)
      _edbus_object_context_event_cb_del(ce, iter);
 }
 

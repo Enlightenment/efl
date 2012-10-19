@@ -148,7 +148,7 @@ _edbus_proxy_free(EDBus_Proxy *proxy)
    unsigned int i;
    EDBus_Signal_Handler *h;
 
-   EINA_LIST_FREE (proxy->handlers, h)
+   EINA_LIST_FREE(proxy->handlers, h)
      {
         if (h->dangling)
 	  edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, proxy);
@@ -306,7 +306,7 @@ edbus_proxy_event_callback_del(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, 
 
    ce = proxy->event_handlers + type;
 
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (cb != iter->cb) continue;
         if ((cb_data) && (cb_data != iter->cb_data)) continue;
@@ -337,7 +337,7 @@ _edbus_proxy_event_callback_call(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type
    ce = proxy->event_handlers + type;
 
    ce->walking++;
-   EINA_INLIST_FOREACH (ce->list, iter)
+   EINA_INLIST_FOREACH(ce->list, iter)
      {
         if (iter->deleted) continue;
         iter->cb((void *)iter->cb_data, proxy, (void *)event_info);
@@ -345,7 +345,7 @@ _edbus_proxy_event_callback_call(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type
    ce->walking--;
    if (ce->walking > 0) return;
 
-   EINA_LIST_FREE (ce->to_delete, iter)
+   EINA_LIST_FREE(ce->to_delete, iter)
      _edbus_proxy_context_event_cb_del(ce, iter);
 }
 
