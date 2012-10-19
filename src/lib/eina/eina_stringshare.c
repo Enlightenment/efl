@@ -611,8 +611,10 @@ eina_stringshare_del(Eina_Stringshare *str)
 EAPI Eina_Stringshare *
 eina_stringshare_add_length(const char *str, unsigned int slen)
 {
-   if ((!str) || (slen <= 0))
+   if (!str)
      return NULL;
+   else if (slen == 0)
+     return "";
    else if (slen == 1)
      return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
