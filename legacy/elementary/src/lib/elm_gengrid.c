@@ -1161,7 +1161,7 @@ _item_place(Elm_Gen_Item *it,
                             if (wsd->calc_job)
                               ecore_job_del(wsd->calc_job);
                             wsd->calc_job =
-                              ecore_job_add(_calc_job, WIDGET(it));
+                              ecore_job_add(_calc_job, wsd);
 
                             return;
                          }
@@ -2362,14 +2362,14 @@ static void
 _access_obj_process(Elm_Gengrid_Smart_Data * sd, Eina_Bool is_access)
 {
    Elm_Gen_Item *it;
-   
+
    EINA_INLIST_FOREACH(sd->items, it)
      {
         if (!it->realized) continue;
         if (is_access) _access_widget_item_register(it);
         else
           _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
-        
+
      }
 }
 
@@ -2378,13 +2378,13 @@ _access_hook(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_GENGRID_CHECK(obj);
    ELM_GENGRID_DATA_GET(obj, sd);
-   
+
    if (is_access)
      ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
      _elm_gengrid_smart_focus_next;
    else
      ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
-   
+
    _access_obj_process(sd, is_access);
 }
 
