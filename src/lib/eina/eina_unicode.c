@@ -193,12 +193,14 @@ eina_unicode_escape(const Eina_Unicode *str)
 EAPI Eina_Unicode
 eina_unicode_utf8_get_next(const char *buf, int *iindex)
 {
-   int ind = *iindex;
+   int ind;
    Eina_Unicode r;
    unsigned char d;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iindex, 0);
+
+   ind = *iindex;
 
    /* if this char is the null terminator, exit */
    if ((d = buf[ind++]) == 0) return 0;
