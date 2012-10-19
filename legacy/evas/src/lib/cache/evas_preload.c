@@ -4,7 +4,6 @@
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
-#include <pthread.h>
 #ifdef __linux__
 # include <sys/syscall.h>
 #endif
@@ -32,7 +31,7 @@ struct _Evas_Preload_Pthread_Worker
 
 struct _Evas_Preload_Pthread_Data
 {
-   pthread_t thread;
+   Eina_Thread thread;
 };
 
 static int _threads_count = 0;
@@ -46,7 +45,7 @@ _evas_preload_thread_end(void *data)
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Data *p = NULL;
 
-   if (pthread_join(pth->thread, (void **)&p) == 0) free(p);
+   if ((p = eina_thread_join(pth->thread))) free(p);
    else return;
    eina_threads_shutdown();
 }
@@ -66,14 +65,11 @@ _evas_preload_thread_done(void *target __UNUSED__, Evas_Callback_Type type __UNU
 }
 
 static void *
-_evas_preload_thread_worker(void *data)
+_evas_preload_thread_worker(void *data, Eina_Thread thread __UNUSED__)
 {
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Worker *work;
 
-   eina_sched_prio_drop();
-   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 on_error:
    for (;;)
      {
@@ -186,7 +182,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 
    eina_threads_init();
 
-   if (pthread_create(&pth->thread, NULL, _evas_preload_thread_worker, pth) == 0)
+   if (eina_thread_create(&pth->thread, EINA_THREAD_BACKGROUND, -1, _evas_preload_thread_worker, pth))
      {
 	LKL(_mutex);
 	_threads_count++;
