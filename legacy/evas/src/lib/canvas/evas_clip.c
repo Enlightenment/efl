@@ -9,7 +9,7 @@ evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
 
    if (obj->cur.cache.clip.dirty) return;
 
-   obj->cur.cache.clip.dirty = 1;
+   obj->cur.cache.clip.dirty = EINA_TRUE;
    Evas_Object_Protected_Data *clipee = NULL;
    EINA_LIST_FOREACH(obj->clip.clipees, l, data)
      {
