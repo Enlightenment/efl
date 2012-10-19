@@ -522,6 +522,11 @@ if ! test "x${efl_have_pthread_barrier}" = "xno" ; then
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_BARRIER)
 
+if ! test "x${efl_have_setaffinity}" = "xno" ; then
+   EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY="#define EINA_HAVE_PTHREAD_AFFINITY"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY)
+
 EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
@@ -814,7 +819,7 @@ if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
 echo "  Build Profile........: ${build_profile}"
-echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock}) (barrier: ${efl_have_pthread_barrier})"
+echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock}) (barrier: ${efl_have_pthread_barrier}) (affinity: ${efl_have_setaffinity})"
 echo "  Cryptographic System.: ${build_crypto}"
 echo
 echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"

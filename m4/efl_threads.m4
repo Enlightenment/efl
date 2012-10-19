@@ -74,6 +74,17 @@ pthread_barrier_init(&barrier, NULL, 1);
                        ]])],
       [efl_have_pthread_barrier="yes"],
       [efl_have_pthread_barrier="no"])
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <stdlib.h>
+#include <pthread.h>
+#include <sched.h>
+                       ]],
+                       [[
+pthread_attr_setaffinity_np(NULL, 0, NULL);
+                       ]])],
+      [efl_have_setaffinity="yes"],
+      [efl_have_setaffinity="no"])
    CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 
