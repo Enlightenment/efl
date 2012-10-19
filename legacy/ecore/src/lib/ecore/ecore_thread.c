@@ -673,7 +673,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    LKL(_ecore_pending_job_threads_mutex);
 
  retry:
-   if (PHC(thread, _ecore_thread_worker, NULL) == 0)
+   if (PHC(thread, _ecore_thread_worker, NULL))
      {
         _ecore_thread_count++;
 	LKU(_ecore_pending_job_threads_mutex);
@@ -874,7 +874,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
         eina_threads_init();
 
      retry_direct:
-        if (PHC(t, _ecore_direct_worker, worker) == 0)
+        if (PHC(t, _ecore_direct_worker, worker))
           return (Ecore_Thread *)worker;
 	if (!tried)
 	  {
@@ -910,7 +910,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 
    LKL(_ecore_pending_job_threads_mutex);
  retry:
-   if (PHC(thread, _ecore_thread_worker, NULL) == 0)
+   if (PHC(thread, _ecore_thread_worker, NULL))
      {
         _ecore_thread_count++;
 	LKU(_ecore_pending_job_threads_mutex);
@@ -1081,7 +1081,7 @@ ecore_thread_message_run(Ecore_Thread_Cb func_main,
 
   eina_threads_init();
 
-  if (PHC(t, _ecore_direct_worker, worker) == 0)
+  if (PHC(t, _ecore_direct_worker, worker))
     return (Ecore_Thread*) worker;
 
   eina_threads_shutdown();
