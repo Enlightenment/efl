@@ -1470,6 +1470,7 @@ elm_layout_box_append(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
    return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->box_append
             (obj, part, child);
@@ -1482,6 +1483,7 @@ elm_layout_box_prepend(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
    return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->box_prepend
             (obj, part, child);
@@ -1495,6 +1497,8 @@ elm_layout_box_insert_before(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reference, EINA_FALSE);
 
    return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->box_insert_before
             (obj, part, child, reference);
@@ -1508,6 +1512,7 @@ elm_layout_box_insert_at(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
    return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->box_insert_at
             (obj, part, child, pos);
