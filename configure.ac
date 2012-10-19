@@ -361,8 +361,8 @@ case "$build_profile" in
      with_max_log_level=""
      have_stringshare_usage="yes"
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
-     want_debug_malloc="yes"
-     want_debug_threads="yes"
+     want_debug_malloc="no"
+     want_debug_threads="no"
      ;;
 
    release)
