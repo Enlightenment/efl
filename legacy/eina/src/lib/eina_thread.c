@@ -300,12 +300,14 @@ eina_thread_join(Eina_Thread t)
    return PHJ(t);
 }
 
-void
+Eina_Bool
 eina_thread_init(void)
 {
+  return EINA_TRUE;
 }
 
-void
+Eina_Bool
 eina_thread_shutdown(void)
 {
+  return EINA_TRUE;
 }
