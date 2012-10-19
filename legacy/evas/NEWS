@@ -10,6 +10,7 @@ Additions:
    * Evas_Device registration/manipulation/querying API
    * Evas_Object_Display_Mode querying API
    * EVAS_GL_API_DEBUG=1 env. var option for outputting debug logs related to Evas GL's GL calls.
+   * Proxy source visibility set APIs
 
 Improvements:
 
