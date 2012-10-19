@@ -94,13 +94,14 @@ efreet_ini_new(const char *file)
 static Eina_Hash *
 efreet_ini_parse(const char *file)
 {
-    Eina_File *f;
+    Eina_Hash *data = NULL, *section = NULL;
+    Eina_Iterator *it = NULL;
     Eina_File_Line *line;
-    Eina_Hash *data, *section = NULL;
-    Eina_Iterator *it;
+    Eina_File *f;
 
     f = eina_file_open(file, EINA_FALSE);
-    if (!f) goto error;
+    if (!f)
+      return NULL;
 
     data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
     if (!data) goto error;
@@ -243,7 +244,8 @@ efreet_ini_parse(const char *file)
 error:
     if (data) eina_hash_free(data);
     if (it) eina_iterator_free(it);
-    if (f) eina_file_close(f);
+
+    eina_file_close(f);
     return NULL;
 }
 
