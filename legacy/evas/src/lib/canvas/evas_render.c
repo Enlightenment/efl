@@ -1683,16 +1683,9 @@ evas_render_updates_internal(Evas *eo_e,
         eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
         RD("    OBJ [%p] post... %i %i\n", obj, obj->changed, do_draw);
-        if ((obj->changed) && (do_draw))
+        if ((clean_them) || (obj->changed && do_draw))
           {
-             RD("    OBJ [%p] post... func1\n", obj);
-             obj->func->render_post(eo_obj, obj);
-             obj->restack = EINA_FALSE;
-             evas_object_change_reset(eo_obj);
-          }
-        else if (clean_them)
-          {
-             RD("    OBJ [%p] post... func2\n", obj);
+             RD("    OBJ [%p] post... func\n", obj);
              obj->func->render_post(eo_obj, obj);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
