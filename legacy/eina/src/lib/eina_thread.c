@@ -303,11 +303,11 @@ eina_thread_join(Eina_Thread t)
 Eina_Bool
 eina_thread_init(void)
 {
-  return EINA_TRUE;
+   return EINA_TRUE;
 }
 
 Eina_Bool
 eina_thread_shutdown(void)
 {
-  return EINA_TRUE;
+   return EINA_TRUE;
 }
