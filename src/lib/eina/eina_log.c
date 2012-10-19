@@ -1945,6 +1945,7 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
                        va_list args)
 {
 #ifdef EINA_ENABLE_LOG
+   EINA_SAFETY_ON_NULL_RETURN(data);
    FILE *f = data;
 #ifdef EFL_HAVE_THREADS
    if (_threads_enabled)
