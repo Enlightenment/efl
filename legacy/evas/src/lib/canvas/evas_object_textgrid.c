@@ -621,7 +621,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                   evas_object_textgrid_row_rect_append(row, rx, rw,
                                                        rr, rg, rb, ra);
                }
-             if (cells->codepoint > 0)
+             if ((cells->codepoint > 0) || (cells->underline) ||
+                 (cells->strikethrough))
                {
                   if (cells->fg_extended) palette = &(o->cur.palette_extended);
                   else palette = &(o->cur.palette_standard);
@@ -633,7 +634,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                                             cells->codepoint,
                                                             c->r, c->g, c->b, c->a);
                        // XXX: underlines and strikethroughs dont get
-                       // merghed into horizontal runs like bg rects above
+                       // merged into horizontal runs like bg rects above
                        if (cells->underline)
                          evas_object_textgrid_row_line_append(row, xp, w,
                                                               o->max_ascent + 1,
