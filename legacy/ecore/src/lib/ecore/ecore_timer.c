@@ -218,7 +218,6 @@ _timer_loop_constructor(Eo *obj, void *_pd, va_list *list)
    const void *data = va_arg(*list, const void *);
    double now;
 
-   _ecore_lock();
    now = ecore_loop_time_get();
 
    Ecore_Timer_Private_Data *timer = _pd;
