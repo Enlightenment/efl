@@ -24,7 +24,7 @@ typedef struct _EDBus_Arg_Info
  * The signature will be "ss" and each string will have a tag name on
  * introspect XML with the respective name.
  */
-#define EDBUS_ARGS(args...) (const EDBus_Arg_Info[]){ args, { } }
+#define EDBUS_ARGS(args...) (const EDBus_Arg_Info[]){ args, { NULL, NULL } }
 
 typedef struct _EDBus_Service_Interface EDBus_Service_Interface;
 typedef EDBus_Message * (*EDBus_Method_Cb)(const EDBus_Service_Interface *iface, const EDBus_Message *message);
