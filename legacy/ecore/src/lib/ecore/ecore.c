@@ -50,7 +50,7 @@ static int _ecore_memory_max_free = 0;
 static pid_t _ecore_memory_pid = 0;
 #endif
 
-EAPI Eo *_ecore_parent = NULL;
+Eo *_ecore_parent = NULL;
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
