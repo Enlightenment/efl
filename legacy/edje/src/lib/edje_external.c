@@ -26,11 +26,22 @@ edje_external_param_type_str(Edje_External_Param_Type type)
 EAPI Evas_Object *
 edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
 {
-   Edje *ed;
-   Edje_Real_Part *rp;
+   if (!obj) return NULL;
+   Evas_Object *ret = NULL;
+   eo_do((Eo *)obj, edje_obj_part_external_object_get(part, &ret));
+   return ret;
+}
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return NULL;
+void
+_part_external_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Edje *ed = (Edje *)_pd;
+   Edje_Real_Part *rp;
+   *ret = NULL;
+
+   if ((!ed) || (!part)) return;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
@@ -39,59 +50,86 @@ edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return NULL;
+	return;
      }
    if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
      {
 	ERR("cannot get external object of a part '%s' that is not EXTERNAL",
 	    rp->part->name);
-	return NULL;
+	return;
      }
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return NULL;
-   return rp->typedata.swallow->swallowed_object;
+       (!rp->typedata.swallow)) return;
+   *ret = rp->typedata.swallow->swallowed_object;
 }
 
 EAPI Eina_Bool
 edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Edje_External_Param *param)
 {
-   Edje *ed;
+   if (!obj) return EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, edje_obj_part_external_param_set(part, param, &ret));
+   return ret;
+}
+
+void
+_part_external_param_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   const Edje_External_Param *param = va_arg(*list, const Edje_External_Param *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if ((!param) || (!param->name)) return EINA_FALSE;
+   if ((!param) || (!param->name)) return;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if ((!ed) || (!part)) return;
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return EINA_FALSE;
+	return;
      }
 
-   return _edje_external_param_set(obj, rp, param);
+   if (_edje_external_param_set(obj, rp, param))
+      if (ret) *ret = EINA_TRUE;
 }
 
 EAPI Eina_Bool
 edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Edje_External_Param *param)
 {
-   Edje *ed;
+   if (!obj) return EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *)obj, edje_obj_part_external_param_get(part, param, &ret));
+   return ret;
+}
+
+void
+_part_external_param_get(Eo *obj, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   Edje_External_Param *param = va_arg(*list, Edje_External_Param *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+
+   const Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if ((!param) || (!param->name)) return EINA_FALSE;
+   if ((!param) || (!param->name)) return;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if ((!ed) || (!part)) return;
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return EINA_FALSE;
+	return;
      }
 
-   return _edje_external_param_get(obj, rp, param);
+   *ret = _edje_external_param_get(obj, rp, param);
 }
 
 
@@ -99,62 +137,90 @@ edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Ed
 EAPI Evas_Object *
 edje_object_part_external_content_get(const Evas_Object *obj, const char *part, const char *content)
 {
-   Edje *ed;
+   if (!obj) return NULL;
+   Evas_Object *ret = NULL;
+   eo_do((Eo *)obj, edje_obj_part_external_content_get(part, content, &ret));
+   return ret;
+}
+
+void
+_part_external_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   const char *content = va_arg(*list, const char *);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   *ret = NULL;
+
+   const Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if (!content) return EINA_FALSE;
+   if (!content) return;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if ((!ed) || (!part)) return;
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return EINA_FALSE;
+	return;
      }
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return NULL;
-   return _edje_external_content_get(rp->typedata.swallow->swallowed_object, content);
+       (!rp->typedata.swallow)) return;
+   *ret = _edje_external_content_get(rp->typedata.swallow->swallowed_object, content);
 }
 
 EAPI Edje_External_Param_Type
 edje_object_part_external_param_type_get(const Evas_Object *obj, const char *part, const char *param)
 {
-   Edje *ed;
+   if (!obj) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   Edje_External_Param_Type ret = EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   eo_do((Eo *)obj, edje_obj_part_external_param_type_get(part, param, &ret));
+   return ret;
+}
+
+void
+_part_external_param_type_get(Eo *obj, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   const char *param = va_arg(*list, const char *);
+   Edje_External_Param_Type *ret = va_arg(*list, Edje_External_Param_Type *);
+   *ret = EDJE_EXTERNAL_PARAM_TYPE_MAX;
+
+   const Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_External_Type *type;
    Edje_External_Param_Info *info;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   if ((!ed) || (!part)) return;
 
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
-	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+	return;
      }
   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-      (!rp->typedata.swallow)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+      (!rp->typedata.swallow)) return;
    type = evas_object_data_get(rp->typedata.swallow->swallowed_object, "Edje_External_Type");
    if (!type)
      {
 	ERR("no external type for object %p", obj);
-	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+	return;
      }
    if (!type->parameters_info)
      {
 	ERR("no parameters information for external type '%s'",
 	    type->module_name);
-	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+	return;
      }
    for (info = type->parameters_info; info->name; info++)
      if (strcmp(info->name, param) == 0)
-       return info->type;
+       {
+          *ret = info->type;
+          return;
+       }
 
    ERR("no parameter '%s' external type '%s'", param, type->module_name);
-   return EDJE_EXTERNAL_PARAM_TYPE_MAX;
 }
 
 

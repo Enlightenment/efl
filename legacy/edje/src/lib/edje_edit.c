@@ -12,6 +12,10 @@
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
 #include "Edje_Edit.h"
 
+#include <Eo.h>
+
+#define MY_CLASS EDJE_EDIT_CLASS
+
 static const char EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED_STR[] = "Current group cannot be deleted";
 static const char EDJE_EDIT_ERROR_GROUP_REFERENCED_STR[] = "Group still in use";
 static const char EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST_STR[] = "Group does not exist";
@@ -23,9 +27,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get eed(Edje_Edit*) from obj(Evas_Object*) */
 #define GET_EED_OR_RETURN(RET) \
    Edje_Edit *eed; \
-   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+   if (!eo_isa(obj, MY_CLASS)) \
      return RET; \
-   eed = evas_object_smart_data_get(obj); \
+   eed = eo_data_get(obj, MY_CLASS); \
    if (!eed) return RET;
 
 /* Get ed(Edje*) from obj(Evas_Object*) */
@@ -39,9 +43,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
    Edje *ed; \
    Edje_Edit *eed; \
    Edje_Real_Part *rp; \
-   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+   if (!eo_isa(obj, MY_CLASS)) \
      return RET; \
-   eed = evas_object_smart_data_get(obj); \
+   eed = eo_data_get(obj, MY_CLASS); \
    if (!eed) return RET; \
    ed = (Edje *)eed; \
    rp = _edje_real_part_get(ed, part); \
@@ -53,9 +57,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
    Edje_Edit *eed; \
    Edje_Real_Part *rp; \
    Edje_Part_Description_Common *pd; \
-   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+   if (!eo_isa(obj, MY_CLASS)) \
      return RET; \
-   eed = evas_object_smart_data_get(obj); \
+   eed = eo_data_get(obj, MY_CLASS); \
    if (!eed) return RET; \
    ed = (Edje *)eed; \
    rp = _edje_real_part_get(ed, part); \
@@ -66,7 +70,7 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get epr(Edje_Program*) from obj(Evas_Object*) and prog(char*)*/
 #define GET_EPR_OR_RETURN(RET) \
    Edje_Program *epr; \
-   if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
+   if (!eo_isa(obj, MY_CLASS)) \
      return RET; \
    epr = _edje_program_get_byname(obj, prog); \
    if (!epr) return RET;
@@ -120,46 +124,7 @@ struct _Program_Script
    Eina_Bool delete_me:1;
 };
 
-static void _edje_edit_smart_add(Evas_Object *obj);
-static void _edje_edit_smart_del(Evas_Object *obj);
-
-static Eina_Bool _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested);
 static Eina_Bool _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef);
-
-EVAS_SMART_SUBCLASS_NEW(_edje_edit_type, _edje_edit, Edje_Smart_Api,
-			Edje_Smart_Api, _edje_object_smart_class_get, NULL)
-
-static void
-_edje_edit_smart_set_user(Edje_Smart_Api *sc)
-{
-   sc->base.add = _edje_edit_smart_add;
-   sc->base.del = _edje_edit_smart_del;
-   sc->file_set = _edje_edit_smart_file_set;
-}
-
-static void
-_edje_edit_smart_add(Evas_Object *obj)
-{
-   Edje_Edit *eed;
-
-   eed = evas_object_smart_data_get(obj);
-   if (!eed)
-     {
-	const Evas_Smart *smart;
-	const Evas_Smart_Class *sc;
-
-	eed = calloc(1, sizeof(Edje_Edit));
-	if (!eed) return;
-
-	smart = evas_object_smart_smart_get(obj);
-	sc = evas_smart_class_get(smart);
-	eed->base.api = (const Edje_Smart_Api *)sc;
-
-	evas_object_smart_data_set(obj, eed);
-     }
-
-   _edje_edit_parent_sc->base.add(obj);
-}
 
 static void
 _edje_edit_data_clean(Edje_Edit *eed)
@@ -192,15 +157,12 @@ _edje_edit_data_clean(Edje_Edit *eed)
 }
 
 static void
-_edje_edit_smart_del(Evas_Object *obj)
+_edje_edit_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Edje_Edit *eed;
-
-   eed = evas_object_smart_data_get(obj);
-
+   Edje_Edit *eed = _pd;
    _edje_edit_data_clean(eed);
 
-   _edje_edit_parent_sc->base.del(obj);
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 static void
@@ -211,16 +173,20 @@ _edje_edit_program_script_free(Program_Script *ps)
    free(ps);
 }
 
-static Eina_Bool
-_edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested)
+static void
+_edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
 {
-   Edje_Edit *eed;
+   const char *file = va_arg(*list, const char *);
+   const char *group= va_arg(*list, const char *);
+   Eina_Array *nested = va_arg(*list, Eina_Array *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Edje_Edit *eed = _pd;
    Eet_File *ef;
    char **keys, buf[64];
    int count, i;
    int len = strlen("edje/scripts/embryo/source/");
 
-   eed = evas_object_smart_data_get(obj);
+   if (ret) *ret = EINA_FALSE;
 
    _edje_edit_data_clean(eed);
 
@@ -237,8 +203,10 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group,
     *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
     *    groups).
     */
-   if (!_edje_edit_parent_sc->file_set(obj, file, group, nested))
-     return EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, edje_obj_file_set(file, group, nested, &int_ret));
+   if (!int_ret)
+     return;
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
@@ -265,7 +233,7 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group,
    if (keys) free(keys);
    eet_close(ef);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -280,14 +248,22 @@ _edje_edit_error_register(void)
 }
 
 EAPI Evas_Object *
-edje_edit_object_add(Evas *e)
+edje_edit_object_add(Evas *evas)
 {
+   Evas_Object *e;
+   e = eo_add(MY_CLASS, evas);
+   eo_unref(e);
+   return e;
+}
+
+static void
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
    eina_error_set(0);
 
    if (!EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST)
      _edje_edit_error_register();
-
-   return evas_object_smart_add(e, _edje_edit_smart_class_new());
 }
 /* End of Edje_Edit smart stuff */
 
@@ -462,7 +438,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    int bytes;
 
    /* Try to load the file */
-   im = evas_object_image_add(ed->base.evas);
+   im = evas_object_image_add(ed->base->evas);
    if (!im) return EINA_FALSE;
 
    evas_object_image_file_set(im, path, NULL);
@@ -870,7 +846,7 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 
 //   pc = ed->collection;
 
-   part_obj = edje_edit_object_add(ed->base.evas);
+   part_obj = edje_edit_object_add(ed->base->evas);
 
    old = eina_stringshare_add(old_group_name);
 
@@ -2101,26 +2077,26 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    rp->part = ep;
 
    if (ep->type == EDJE_PART_TYPE_RECTANGLE)
-     rp->object = evas_object_rectangle_add(ed->base.evas);
+     rp->object = evas_object_rectangle_add(ed->base->evas);
    else if (ep->type == EDJE_PART_TYPE_IMAGE || ep->type == EDJE_PART_TYPE_PROXY)
-     rp->object = evas_object_image_add(ed->base.evas);
+     rp->object = evas_object_image_add(ed->base->evas);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
      {
 	_edje_text_part_on_add(ed, rp);
-	rp->object = evas_object_text_add(ed->base.evas);
+	rp->object = evas_object_text_add(ed->base->evas);
 	evas_object_text_font_source_set(rp->object, ed->path);
      }
    else if (ep->type == EDJE_PART_TYPE_SWALLOW ||
 	    ep->type == EDJE_PART_TYPE_GROUP ||
 	    ep->type == EDJE_PART_TYPE_EXTERNAL)
      {
-	rp->object = evas_object_rectangle_add(ed->base.evas);
+	rp->object = evas_object_rectangle_add(ed->base->evas);
 	evas_object_color_set(rp->object, 0, 0, 0, 0);
 	evas_object_pass_events_set(rp->object, 1);
 	evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
-     rp->object = evas_object_textblock_add(ed->base.evas);
+     rp->object = evas_object_textblock_add(ed->base->evas);
    else if (ep->type != EDJE_PART_TYPE_SPACER)
      ERR("wrong part type %i!", ep->type);
    if (rp->object)
@@ -2155,8 +2131,8 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	     if (child)
 	       _edje_real_part_swallow(rp, child, EINA_TRUE);
 	  }
-	evas_object_clip_set(rp->object, ed->base.clipper);
-	evas_object_show(ed->base.clipper);
+	evas_object_clip_set(rp->object, ed->base->clipper);
+	evas_object_show(ed->base->clipper);
      }
 
    /* Update table_parts */
@@ -2256,7 +2232,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
 	if (real->clip_to == rp)
 	  {
-	     evas_object_clip_set(real->object, ed->base.clipper);
+	     evas_object_clip_set(real->object, ed->base->clipper);
 	     real->clip_to = NULL;
 	  }
 	if (real->drag && real->drag->confine_to == rp)
@@ -2298,7 +2274,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    /* if all parts are gone, hide the clipper */
    if (ed->table_parts_size == 0)
-     evas_object_hide(ed->base.clipper);
+     evas_object_hide(ed->base->clipper);
 
    edje_object_calc_force(obj);
 
@@ -2507,9 +2483,9 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
 	     evas_object_clip_unset(rp->object);
 	  }
 
-	evas_object_clip_set(rp->object, ed->base.clipper);
+	evas_object_clip_set(rp->object, ed->base->clipper);
 	if (rp->typedata.swallow->swallowed_object)
-	  evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base.clipper);
+	  evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
 
 	rp->part->clip_to_id = -1;
 	rp->clip_to = NULL;
@@ -2692,7 +2668,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
    if (source)
      {
 	rp->part->source = eina_stringshare_add(source);
-	child_obj = edje_object_add(ed->base.evas);
+	child_obj = edje_object_add(ed->base->evas);
 	edje_object_file_set(child_obj, ed->file->path, source);
 	_edje_real_part_swallow(rp, child_obj, EINA_TRUE);
      }
@@ -7185,7 +7161,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    Edje_Part_Collection *pc;
    Eina_Bool ret = EINA_TRUE;
 
-   obj = edje_edit_object_add(ed->base.evas);
+   obj = edje_edit_object_add(ed->base->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
 
    ef = eet_open(ed->file->path, EET_FILE_MODE_READ);
@@ -7195,7 +7171,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
         return EINA_FALSE;
      }
 
-   eed = evas_object_smart_data_get(obj);
+   eed = eo_data_get(obj, MY_CLASS);
    pc = eed->base.collection;
 
    BUF_APPENDF(I1"group { name: \"%s\";\n", group);
@@ -7823,3 +7799,30 @@ edje_edit_print_internal_status(Evas_Object *obj)
    INF("******************  END  ************************");
  */
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_edit_smart_del),
+        EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), _edje_edit_smart_file_set),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     "Edje_Edit",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     sizeof(Edje_Edit),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(edje_edit_class_get, &class_desc, EDJE_OBJ_CLASS, NULL);
+

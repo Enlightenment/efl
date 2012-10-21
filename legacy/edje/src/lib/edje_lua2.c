@@ -1506,7 +1506,7 @@ static void
 _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
 {
    evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
+   evas_object_clip_set(elo->evas_obj, ed->base->clipper);
    evas_object_move(elo->evas_obj, ed->x, ed->y);
    evas_object_resize(elo->evas_obj, 0, 0);
    evas_object_data_set(elo->evas_obj, ELO, elo);

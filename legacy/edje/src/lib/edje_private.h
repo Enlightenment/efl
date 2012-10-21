@@ -173,15 +173,6 @@ EAPI extern int _edje_default_log_dom ;
  * use of this, but who knows what will be possible in the future */
 #define EDJE_SMART_API_VERSION 1
 
-typedef struct _Edje_Smart_Api Edje_Smart_Api;
-
-struct _Edje_Smart_Api
-{
-   Evas_Smart_Class base;
-   int version;
-   Eina_Bool (*file_set)(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested);
-};
-
 /* Basic macro to init the Edje Smart API */
 #define EDJE_SMART_API_INIT(smart_class_init) {smart_class_init, EDJE_SMART_API_VERSION, NULL}
 
@@ -1109,12 +1100,11 @@ typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 
 struct _Edje
 {
-   Evas_Object_Smart_Clipped_Data base;
+   Evas_Object_Smart_Clipped_Data *base;
    /* This contains (or should):
 	Evas_Object          *clipper; // a big rect to clip this Edje to
 	Evas                 *evas; // the Evas this Edje belongs to
    */
-   const Edje_Smart_Api *api;
    const char           *path;
    const char           *group;
    const char           *parent;
@@ -1752,9 +1742,6 @@ void _edje_collection_free_part_description_free(int type,
 						 Edje_Part_Collection_Directory_Entry *ce,
 						 Eina_Bool free_strings);
 
-void  _edje_object_smart_set(Edje_Smart_Api *sc);
-const Edje_Smart_Api * _edje_object_smart_class_get(void);
-
 void  _edje_del(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
@@ -1788,7 +1775,7 @@ const char *   _edje_text_class_font_get(Edje *ed,
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(const Edje *ed, const char *part);
-Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
+Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
 void              _edje_color_class_member_direct_del(const char *color_class, void *lookup);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);
@@ -2170,6 +2157,147 @@ void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params
 
 void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);
 void _edje_user_definition_free(Edje_User_Defined *eud);
+
+void _scale_set(Eo *obj, void *_pd, va_list *list);
+void _scale_get(Eo *obj, void *_pd, va_list *list);
+void _mirrored_get(Eo *obj, void *_pd, va_list *list);
+void _mirrored_set(Eo *obj, void *_pd, va_list *list);
+void _data_get(Eo *obj, void *_pd, va_list *list);
+void _freeze(Eo *obj, void *_pd, va_list *list);
+void _thaw(Eo *obj, void *_pd, va_list *list);
+void _color_class_set(Eo *obj, void *_pd, va_list *list);
+void _color_class_get(Eo *obj, void *_pd, va_list *list);
+void _text_class_set(Eo *obj, void *_pd, va_list *list);
+void _part_exists(Eo *obj, void *_pd, va_list *list);
+void _part_object_get(Eo *obj, void *_pd, va_list *list);
+void _part_geometry_get(Eo *obj, void *_pd, va_list *list);
+void _item_provider_set(Eo *obj, void *_pd, va_list *list);
+void _text_change_cb_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_style_user_push(Eo *obj, void *_pd, va_list *list);
+void _part_text_style_user_pop(Eo *obj, void *_pd, va_list *list);
+void _part_text_style_user_peek(Eo *obj, void *_pd, va_list *list);
+void _part_text_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_escaped_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_unescaped_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_unescaped_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_selection_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_none(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_all(Eo *obj, void *_pd, va_list *list);
+void _part_text_insert(Eo *obj, void *_pd, va_list *list);
+void _part_text_append(Eo *obj, void *_pd, va_list *list);
+void _part_text_anchor_list_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_anchor_geometry_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_item_list_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_item_geometry_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_geometry_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_user_insert(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_allow_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_abort(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_begin(Eo *obj, void *_pd, va_list *list);
+void _part_text_select_extend(Eo *obj, void *_pd, va_list *list);
+void _part_text_imf_context_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_next(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_prev(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_up(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_down(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_begin_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_end_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_copy(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_line_begin_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_line_end_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_coord_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_is_format_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_is_visible_format_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_content_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_pos_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_cursor_pos_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_imf_context_reset(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_layout_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_layout_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_autocapital_type_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_autocapital_type_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_prediction_allow_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_prediction_allow_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_enabled_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_enabled_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_show(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_hide(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_language_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_language_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_imdata_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_imdata_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_return_key_type_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_return_key_type_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_return_key_disabled_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_return_key_disabled_get(Eo *obj, void *_pd, va_list *list);
+void _text_insert_filter_callback_add(Eo *obj, void *_pd, va_list *list);
+void _text_insert_filter_callback_del(Eo *obj, void *_pd, va_list *list);
+void _text_insert_filter_callback_del_full(Eo *obj, void *_pd, va_list *list);
+void _text_markup_filter_callback_add(Eo *obj, void *_pd, va_list *list);
+void _text_markup_filter_callback_del(Eo *obj, void *_pd, va_list *list);
+void _text_markup_filter_callback_del_full(Eo *obj, void *_pd, va_list *list);
+void _part_swallow(Eo *obj, void *_pd, va_list *list);
+void _part_unswallow(Eo *obj, void *_pd, va_list *list);
+void _part_swallow_get(Eo *obj, void *_pd, va_list *list);
+void _size_min_get(Eo *obj, void *_pd, va_list *list);
+void _size_max_get(Eo *obj, void *_pd, va_list *list);
+void _calc_force(Eo *obj, void *_pd, va_list *list);
+void _size_min_calc(Eo *obj, void *_pd, va_list *list);
+void _parts_extends_calc(Eo *obj, void *_pd, va_list *list);
+void _size_min_restricted_calc(Eo *obj, void *_pd, va_list *list);
+void _part_state_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_dir_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_value_set(Eo *obj, void *_pd, va_list *list);
+void _part_drag_value_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_size_set(Eo *obj, void *_pd, va_list *list);
+void _part_drag_size_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_step_set(Eo *obj, void *_pd, va_list *list);
+void _part_drag_step_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_page_set(Eo *obj, void *_pd, va_list *list);
+void _part_drag_page_get(Eo *obj, void *_pd, va_list *list);
+void _part_drag_step(Eo *obj, void *_pd, va_list *list);
+void _part_drag_page(Eo *obj, void *_pd, va_list *list);
+void _part_box_append(Eo *obj, void *_pd, va_list *list);
+void _part_box_prepend(Eo *obj, void *_pd, va_list *list);
+void _part_box_insert_before(Eo *obj, void *_pd, va_list *list);
+void _part_box_insert_at(Eo *obj, void *_pd, va_list *list);
+void _part_box_remove(Eo *obj, void *_pd, va_list *list);
+void _part_box_remove_at(Eo *obj, void *_pd, va_list *list);
+void _part_box_remove_all(Eo *obj, void *_pd, va_list *list);
+void _access_part_list_get(Eo *obj, void *_pd, va_list *list);
+void _part_table_child_get(Eo *obj, void *_pd, va_list *list);
+void _part_table_pack(Eo *obj, void *_pd, va_list *list);
+void _part_table_unpack(Eo *obj, void *_pd, va_list *list);
+void _part_table_col_row_size_get(Eo *obj, void *_pd, va_list *list);
+void _part_table_clear(Eo *obj, void *_pd, va_list *list);
+void _perspective_set(Eo *obj, void *_pd, va_list *list);
+void _perspective_get(Eo *obj, void *_pd, va_list *list);
+void _preload(Eo *obj, void *_pd, va_list *list);
+void _update_hints_set(Eo *obj, void *_pd, va_list *list);
+void _update_hints_get(Eo *obj, void *_pd, va_list *list);
+
+void _part_external_object_get(Eo *obj, void *_pd, va_list *list);
+void _part_external_param_set(Eo *obj, void *_pd, va_list *list);
+void _part_external_param_get(Eo *obj, void *_pd, va_list *list);
+void _part_external_content_get(Eo *obj, void *_pd, va_list *list);
+void _part_external_param_type_get(Eo *obj, void *_pd, va_list *list);
+
+void _file_get(Eo *obj, void *_pd, va_list *list);
+void _load_error_get(Eo *obj, void *_pd, va_list *list);
+
+void _message_send(Eo *obj, void *_pd, va_list *list);
+void _message_handler_set(Eo *obj, void *_pd, va_list *list);
+void _message_signal_process(Eo *obj, void *_pd, va_list *list);
+
+void _signal_callback_add(Eo *obj, void *_pd, va_list *list);
+void _signal_callback_del(Eo *obj, void *_pd, va_list *list);
+void _signal_callback_del_full(Eo *obj, void *_pd, va_list *list);
+void _signal_emit(Eo *obj, void *_pd, va_list *list);
+void _play_set(Eo *obj, void *_pd, va_list *list);
+void _play_get(Eo *obj, void *_pd, va_list *list);
+void _animation_set(Eo *obj, void *_pd, va_list *list);
+void _animation_get(Eo *obj, void *_pd, va_list *list);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

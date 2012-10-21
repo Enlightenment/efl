@@ -53,11 +53,23 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, E
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
-   Edje *ed;
+   if (!obj) return;
+   eo_do(obj, edje_obj_signal_callback_add(emission, source, (Edje_Signal_Cb)func, data));
+}
+
+void
+_signal_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *emission = va_arg(*list, const char *);
+   const char *source = va_arg(*list, const char *);
+   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
+   void *data = va_arg(*list, void *);
+
+   Edje *ed = _pd;
    Edje_Signal_Callback *escb;
 
    if ((!emission) || (!source) || (!func)) return;
-   ed = _edje_fetch(obj);
+   ed = _pd;
    if (!ed) return;
    if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
@@ -80,14 +92,28 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
 EAPI void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
-   Edje *ed;
+   if (!obj) return NULL;
+   void *ret = NULL;
+   eo_do(obj, edje_obj_signal_callback_del(emission, source, (Edje_Signal_Cb)func, &ret));
+   return ret;
+}
+
+void
+_signal_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *emission = va_arg(*list, const char *);
+   const char *source = va_arg(*list, const char *);
+   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
+   void **ret = va_arg(*list, void **);
+   if (ret) *ret = NULL;
+
+   Edje *ed = _pd;
    Eina_List *l;
    Edje_Signal_Callback *escb;
 
-   if ((!emission) || (!source) || (!func)) return NULL;
-   ed = _edje_fetch(obj);
-   if (!ed) return NULL;
-   if (ed->delete_me) return NULL;
+   if ((!emission) || (!source) || (!func)) return;
+   if (!ed) return;
+   if (ed->delete_me) return;
    EINA_LIST_FOREACH(ed->callbacks, l, escb)
      {
 	if ((escb->func == func) &&
@@ -113,23 +139,39 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
 	       }
-	     return data;
+	     if (ret) *ret = data;
+             return;
 	  }
      }
-   return NULL;
+   return;
 }
 
 EAPI void *
 edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   Edje *ed;
+   if (!obj) return NULL;
+   void *ret = NULL;
+   eo_do(obj, edje_obj_signal_callback_del_full(emission, source, func, data, &ret));
+   return ret;
+}
+
+void
+_signal_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *emission = va_arg(*list, const char *);
+   const char *source = va_arg(*list, const char *);
+   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
+   void *data = va_arg(*list, void *);
+   void **ret = va_arg(*list, void **);
+   if (ret) *ret = NULL;
+
+   Edje *ed = _pd;
    Eina_List *l;
    Edje_Signal_Callback *escb;
 
-   if ((!emission) || (!source) || (!func)) return NULL;
-   ed = _edje_fetch(obj);
-   if (!ed) return NULL;
-   if (ed->delete_me) return NULL;
+   if ((!emission) || (!source) || (!func)) return;
+   if (!ed) return;
+   if (ed->delete_me) return;
    EINA_LIST_FOREACH(ed->callbacks, l, escb)
      {
 	if ((escb->func == func) && (escb->data == data) &&
@@ -155,19 +197,30 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 		  if (escb->source) eina_stringshare_del(escb->source);
 		  free(escb);
 	       }
-	     return data2;
+	     if (ret) *ret = data2;
+             return;
 	  }
      }
-   return NULL;
+   return;
 }
 
 EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
+   if (!obj) return;
+   if (!eo_isa(obj, EDJE_OBJ_CLASS)) return;
+   eo_do(obj, edje_obj_signal_emit(emission, source));
+}
+
+void
+_signal_emit(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *emission = va_arg(*list, const char *);
+   const char *source = va_arg(*list, const char *);
    Edje *ed;
 
    if ((!emission) || (!source)) return;
-   ed = _edje_fetch(obj);
+   ed = _pd;
    if (!ed) return;
    if (ed->delete_me) return;
    _edje_emit(ed, (char *)emission, (char *)source);
@@ -177,13 +230,21 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
 EAPI void
 edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
-   Edje *ed;
+   if (!obj) return;
+   eo_do(obj, edje_obj_play_set(play));
+}
+
+void
+_play_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool play = va_arg(*list, int);
+
+   Edje *ed = _pd;
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
    unsigned int i;
 
-   ed = _edje_fetch(obj);
    if (!ed) return;
    if (ed->delete_me) return;
    if (play)
@@ -216,24 +277,41 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 EAPI Eina_Bool
 edje_object_play_get(const Evas_Object *obj)
 {
-   Edje *ed;
+   if (!obj) return EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *)obj, edje_obj_play_get(&ret));
+   return ret;
+}
 
-   ed = _edje_fetch(obj);
-   if (!ed) return EINA_FALSE;
-   if (ed->delete_me) return EINA_FALSE;
-   if (ed->paused) return EINA_FALSE;
-   return EINA_TRUE;
+void
+_play_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   const Edje *ed = _pd;
+   *ret = EINA_FALSE;
+
+   if (!ed) return;
+   if (ed->delete_me) return;
+   if (ed->paused) return;
+   *ret = EINA_TRUE;
 }
 
 /* FIXDOC: Verify/Expand */
 EAPI void
 edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
 {
-   Edje *ed;
+   if (!obj) return;
+   eo_do(obj, edje_obj_animation_set(on));
+}
+
+void
+_animation_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool on = va_arg(*list, int);
+   Edje *ed = _pd;
    Eina_List *l;
    unsigned int i;
 
-   ed = _edje_fetch(obj);
    if (!ed) return;
    if (ed->delete_me) return;
    _edje_block(ed);
@@ -290,13 +368,23 @@ edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
 EAPI Eina_Bool
 edje_object_animation_get(const Evas_Object *obj)
 {
-   Edje *ed;
+   if (!obj) return EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *)obj, edje_obj_animation_get(&ret));
+   return ret;
+}
 
-   ed = _edje_fetch(obj);
-   if (!ed) return EINA_FALSE;
-   if (ed->delete_me) return EINA_FALSE;
-   if (ed->no_anim) return EINA_FALSE;
-   return EINA_TRUE;
+void
+_animation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   const Edje *ed = _pd;
+   *ret = EINA_FALSE;
+
+   if (!ed) return;
+   if (ed->delete_me) return;
+   if (ed->no_anim) return;
+   *ret = EINA_TRUE;
 }
 
 /* Private Routines */

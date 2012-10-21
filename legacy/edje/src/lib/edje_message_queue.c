@@ -34,6 +34,16 @@ _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int
 EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
+   if (!obj) return;
+   eo_do(obj, edje_obj_message_send(type, id, msg));
+}
+
+void
+_message_send(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Edje_Message_Type type = va_arg(*list, Edje_Message_Type);
+   int id = va_arg(*list, int);
+   void *msg = va_arg(*list, void *);
    _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
 }
 
@@ -41,15 +51,28 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
 EAPI void
 edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, void *data)
 {
-   Edje *ed;
+   if (!obj) return;
+   eo_do(obj, edje_obj_message_handler_set(func, data));
+}
 
-   ed = _edje_fetch(obj);
-   if (!ed) return;
+void
+_message_handler_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Edje_Message_Handler_Cb func = va_arg(*list, Edje_Message_Handler_Cb);
+   void *data = va_arg(*list, void *);
+   Edje *ed = _pd;
    _edje_message_cb_set(ed, func, data);
 }
 
 EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
+{
+   if (!obj) return;
+   eo_do(obj, edje_obj_message_signal_process());
+}
+
+void
+_message_signal_process(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *ed;
@@ -59,7 +82,7 @@ edje_object_message_signal_process(Evas_Object *obj)
    Eina_List *groups = NULL;
    int gotos = 0;
 
-   ed = _edje_fetch(obj);
+   ed = _pd;
    if (!ed) return;
 
    groups = ed->groups;

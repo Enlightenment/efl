@@ -1,5 +1,7 @@
 #include "edje_private.h"
 
+#include <Eo.h>
+
 typedef struct _Edje_Transition_Animation_Data Edje_Transition_Animation_Data;
 struct _Edje_Transition_Animation_Data
 {
@@ -169,7 +171,7 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
              ep->typedata.container->anim->end.align.x = param2_desc->box.align.x;
              ep->typedata.container->anim->end.align.y = param2_desc->box.align.y;
 
-             priv = evas_object_smart_data_get(ep->object);
+             priv = eo_data_get(ep->object, EVAS_OBJ_BOX_CLASS);
              if (priv == NULL)
                 return;
 

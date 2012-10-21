@@ -816,6 +816,315 @@ typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
  * @}
  */
 
+#define EDJE_OBJ_CLASS edje_object_class_get()
+
+const Eo_Class *edje_object_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EDJE_OBJ_BASE_ID;
+
+enum
+{
+   EDJE_OBJ_SUB_ID_SCALE_SET,
+   EDJE_OBJ_SUB_ID_SCALE_GET,
+   EDJE_OBJ_SUB_ID_MIRRORED_GET,
+   EDJE_OBJ_SUB_ID_MIRRORED_SET,
+   EDJE_OBJ_SUB_ID_DATA_GET,
+   EDJE_OBJ_SUB_ID_FREEZE,
+   EDJE_OBJ_SUB_ID_THAW,
+   EDJE_OBJ_SUB_ID_COLOR_CLASS_SET,
+   EDJE_OBJ_SUB_ID_COLOR_CLASS_GET,
+   EDJE_OBJ_SUB_ID_TEXT_CLASS_SET,
+   EDJE_OBJ_SUB_ID_PART_EXISTS,
+   EDJE_OBJ_SUB_ID_PART_OBJECT_GET,
+   EDJE_OBJ_SUB_ID_PART_GEOMETRY_GET,
+   EDJE_OBJ_SUB_ID_ITEM_PROVIDER_SET,
+   EDJE_OBJ_SUB_ID_TEXT_CHANGE_CB_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_PUSH,
+   EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_POP,
+   EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_PEEK,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_ESCAPED_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_UNESCAPED_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_UNESCAPED_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECTION_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_NONE,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ALL,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INSERT,
+   EDJE_OBJ_SUB_ID_PART_TEXT_APPEND,
+   EDJE_OBJ_SUB_ID_PART_TEXT_ANCHOR_LIST_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_ANCHOR_GEOMETRY_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_ITEM_LIST_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_ITEM_GEOMETRY_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_GEOMETRY_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_USER_INSERT,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ALLOW_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ABORT,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_BEGIN,
+   EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_EXTEND,
+   EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_NEXT,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_PREV,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_UP,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_DOWN,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_BEGIN_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_END_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_COPY,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_LINE_BEGIN_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_LINE_END_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_COORD_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_IS_FORMAT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_IS_VISIBLE_FORMAT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_CONTENT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_POS_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_POS_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_RESET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_ENABLED_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_ENABLED_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_HIDE,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LANGUAGE_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LANGUAGE_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_IMDATA_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_IMDATA_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_TYPE_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_TYPE_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_GET,
+   EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_ADD,
+   EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL,
+   EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL_FULL,
+   EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_ADD,
+   EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_DEL,
+   EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_DEL_FULL,
+   EDJE_OBJ_SUB_ID_PART_SWALLOW,
+   EDJE_OBJ_SUB_ID_PART_UNSWALLOW,
+   EDJE_OBJ_SUB_ID_PART_SWALLOW_GET,
+   EDJE_OBJ_SUB_ID_SIZE_MIN_GET,
+   EDJE_OBJ_SUB_ID_SIZE_MAX_GET,
+   EDJE_OBJ_SUB_ID_CALC_FORCE,
+   EDJE_OBJ_SUB_ID_SIZE_MIN_CALC,
+   EDJE_OBJ_SUB_ID_PARTS_EXTENDS_CALC,
+   EDJE_OBJ_SUB_ID_SIZE_MIN_RESTRICTED_CALC,
+   EDJE_OBJ_SUB_ID_PART_STATE_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_DIR_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_VALUE_SET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_VALUE_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_SIZE_SET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_SIZE_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_STEP_SET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_STEP_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_PAGE_SET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_PAGE_GET,
+   EDJE_OBJ_SUB_ID_PART_DRAG_STEP,
+   EDJE_OBJ_SUB_ID_PART_DRAG_PAGE,
+   EDJE_OBJ_SUB_ID_PART_BOX_APPEND,
+   EDJE_OBJ_SUB_ID_PART_BOX_PREPEND,
+   EDJE_OBJ_SUB_ID_PART_BOX_INSERT_BEFORE,
+   EDJE_OBJ_SUB_ID_PART_BOX_INSERT_AT,
+   EDJE_OBJ_SUB_ID_PART_BOX_REMOVE,
+   EDJE_OBJ_SUB_ID_PART_BOX_REMOVE_AT,
+   EDJE_OBJ_SUB_ID_PART_BOX_REMOVE_ALL,
+   EDJE_OBJ_SUB_ID_ACCESS_PART_LIST_GET,
+   EDJE_OBJ_SUB_ID_PART_TABLE_CHILD_GET,
+   EDJE_OBJ_SUB_ID_PART_TABLE_PACK,
+   EDJE_OBJ_SUB_ID_PART_TABLE_UNPACK,
+   EDJE_OBJ_SUB_ID_PART_TABLE_COL_ROW_SIZE_GET,
+   EDJE_OBJ_SUB_ID_PART_TABLE_CLEAR,
+   EDJE_OBJ_SUB_ID_PERSPECTIVE_SET,
+   EDJE_OBJ_SUB_ID_PERSPECTIVE_GET,
+   EDJE_OBJ_SUB_ID_PRELOAD,
+   EDJE_OBJ_SUB_ID_UPDATE_HINTS_SET,
+   EDJE_OBJ_SUB_ID_UPDATE_HINTS_GET,
+
+   EDJE_OBJ_SUB_ID_PART_EXTERNAL_OBJECT_GET,
+   EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_SET,
+   EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_GET,
+   EDJE_OBJ_SUB_ID_PART_EXTERNAL_CONTENT_GET,
+   EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_TYPE_GET,
+
+   EDJE_OBJ_SUB_ID_FILE_SET,
+   EDJE_OBJ_SUB_ID_FILE_GET,
+   EDJE_OBJ_SUB_ID_LOAD_ERROR_GET,
+
+   EDJE_OBJ_SUB_ID_MESSAGE_SEND,
+   EDJE_OBJ_SUB_ID_MESSAGE_HANDLER_SET,
+   EDJE_OBJ_SUB_ID_MESSAGE_SIGNAL_PROCESS,
+
+   EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_ADD,
+   EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL,
+   EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL_FULL,
+   EDJE_OBJ_SUB_ID_SIGNAL_EMIT,
+   EDJE_OBJ_SUB_ID_PLAY_SET,
+   EDJE_OBJ_SUB_ID_PLAY_GET,
+   EDJE_OBJ_SUB_ID_ANIMATION_SET,
+   EDJE_OBJ_SUB_ID_ANIMATION_GET,
+
+   EDJE_OBJ_SUB_ID_LAST
+};
+
+#define EDJE_OBJ_ID(sub_id) (EDJE_OBJ_BASE_ID + sub_id)
+
+#define edje_obj_scale_set(scale, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SCALE_SET), EO_TYPECHECK(double, scale), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_scale_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, ret)
+#define edje_obj_mirrored_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MIRRORED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_mirrored_set(rtl) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, rtl)
+#define edje_obj_data_get(key, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_DATA_GET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const char **, ret)
+#define edje_obj_freeze(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FREEZE), EO_TYPECHECK(int *, ret)
+#define edje_obj_thaw(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_THAW), EO_TYPECHECK(int *, ret)
+#define edje_obj_color_class_set(color_class, r, g, b, a, r2, g2, b2, a2, r3, g3, b3, a3, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_COLOR_CLASS_SET), EO_TYPECHECK(const char *, color_class), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a), EO_TYPECHECK(int, r2), EO_TYPECHECK(int, g2), EO_TYPECHECK(int, b2), EO_TYPECHECK(int, a2), EO_TYPECHECK(int, r3), EO_TYPECHECK(int, g3), EO_TYPECHECK(int, b3), EO_TYPECHECK(int, a3), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_color_class_get(color_class, r, g, b, a, r2, g2, b2, a2, r3, g3, b3, a3, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_COLOR_CLASS_GET), EO_TYPECHECK(const char *, color_class), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a), EO_TYPECHECK(int *, r2), EO_TYPECHECK(int *, g2), EO_TYPECHECK(int *, b2), EO_TYPECHECK(int *, a2), EO_TYPECHECK(int *, r3), EO_TYPECHECK(int *, g3), EO_TYPECHECK(int *, b3), EO_TYPECHECK(int *, a3), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_text_class_set(text_class, font, size, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_CLASS_SET), EO_TYPECHECK(const char *, text_class), EO_TYPECHECK(const char *, font), EO_TYPECHECK(Evas_Font_Size, size), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_exists(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXISTS), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_object_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_OBJECT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const Evas_Object **, ret)
+#define edje_obj_part_geometry_get(part, x, y, w, h, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_GEOMETRY_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_item_provider_set(func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_ITEM_PROVIDER_SET), EO_TYPECHECK(Edje_Item_Provider_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_text_change_cb_set(func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_CHANGE_CB_SET), EO_TYPECHECK(Edje_Text_Change_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_part_text_style_user_push(part, style) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_PUSH), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, style)
+#define edje_obj_part_text_style_user_pop(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_POP), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_style_user_peek(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_STYLE_USER_PEEK), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define edje_obj_part_text_set(part, text, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define edje_obj_part_text_escaped_set(part, text, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_ESCAPED_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_unescaped_set(part, text_to_escape, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_UNESCAPED_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text_to_escape), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_unescaped_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_UNESCAPED_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(char **, ret)
+#define edje_obj_part_text_selection_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECTION_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define edje_obj_part_text_select_none(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_NONE), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_select_all(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ALL), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_insert(part, text) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INSERT), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text)
+#define edje_obj_part_text_append(part, text) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_APPEND), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text)
+#define edje_obj_part_text_anchor_list_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_ANCHOR_LIST_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const Eina_List **, ret)
+#define edje_obj_part_text_anchor_geometry_get(part, anchor, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_ANCHOR_GEOMETRY_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, anchor), EO_TYPECHECK(const Eina_List **, ret)
+#define edje_obj_part_text_item_list_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_ITEM_LIST_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const Eina_List **, ret)
+#define edje_obj_part_text_item_geometry_get(part, item, cx, cy, cw, ch, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_ITEM_GEOMETRY_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, item), EO_TYPECHECK(Evas_Coord *, cx), EO_TYPECHECK(Evas_Coord *, cy), EO_TYPECHECK(Evas_Coord *, cw), EO_TYPECHECK(Evas_Coord *, ch), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_geometry_get(part, x, y, w, h) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_GEOMETRY_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define edje_obj_part_text_user_insert(part, text) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_USER_INSERT), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text)
+#define edje_obj_part_text_select_allow_set(part, allow) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ALLOW_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, allow)
+#define edje_obj_part_text_select_abort(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_ABORT), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_select_begin(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_BEGIN), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_select_extend(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_SELECT_EXTEND), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_imf_context_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(void **, ret)
+#define edje_obj_part_text_cursor_next(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_NEXT), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_prev(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_PREV), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_up(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_UP), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_down(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_DOWN), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_begin_set(part, cur) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_BEGIN_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur)
+#define edje_obj_part_text_cursor_end_set(part, cur) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_END_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur)
+#define edje_obj_part_text_cursor_copy(part, src, dst) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_COPY), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, src), EO_TYPECHECK(Edje_Cursor, dst)
+#define edje_obj_part_text_cursor_line_begin_set(part, cur) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_LINE_BEGIN_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur)
+#define edje_obj_part_text_cursor_line_end_set(part, cur) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_LINE_END_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur)
+#define edje_obj_part_text_cursor_coord_set(part, cur, x, y, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_COORD_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_is_format_get(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_IS_FORMAT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_is_visible_format_get(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_IS_VISIBLE_FORMAT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_cursor_content_get(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_CONTENT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(char **, ret)
+#define edje_obj_part_text_cursor_pos_set(part, cur, pos) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_POS_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(int, pos)
+#define edje_obj_part_text_cursor_pos_get(part, cur, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_CURSOR_POS_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Cursor, cur), EO_TYPECHECK(int *, ret)
+#define edje_obj_part_text_imf_context_reset(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_RESET), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_input_panel_layout_set(part, layout) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Layout, layout)
+#define edje_obj_part_text_input_panel_layout_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Layout *, ret)
+#define edje_obj_part_text_autocapital_type_set(part, autocapital_type) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Text_Autocapital_Type, autocapital_type)
+#define edje_obj_part_text_autocapital_type_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Text_Autocapital_Type *, ret)
+#define edje_obj_part_text_prediction_allow_set(part, prediction) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, prediction)
+#define edje_obj_part_text_prediction_allow_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_input_panel_enabled_set(part, enabled) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_ENABLED_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, enabled)
+#define edje_obj_part_text_input_panel_enabled_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_ENABLED_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_text_input_panel_show(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_input_panel_hide(part) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_HIDE), EO_TYPECHECK(const char *, part)
+#define edje_obj_part_text_input_panel_language_set(part, lang) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LANGUAGE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Lang, lang)
+#define edje_obj_part_text_input_panel_language_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LANGUAGE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Lang *, ret)
+#define edje_obj_part_text_input_panel_imdata_set(part, data, len) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_IMDATA_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const void *, data), EO_TYPECHECK(int, len)
+#define edje_obj_part_text_input_panel_imdata_get(part, data, len) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_IMDATA_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(void *, data), EO_TYPECHECK(int *, len)
+#define edje_obj_part_text_input_panel_return_key_type_set(part, return_key_type) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_TYPE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Return_Key_Type, return_key_type)
+#define edje_obj_part_text_input_panel_return_key_type_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_TYPE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Input_Panel_Return_Key_Type *, ret)
+#define edje_obj_part_text_input_panel_return_key_disabled_set(part, disabled) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, disabled)
+#define edje_obj_part_text_input_panel_return_key_disabled_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_text_insert_filter_callback_add(part, func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_ADD), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Text_Filter_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_text_insert_filter_callback_del(part, func, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Text_Filter_Cb, func), EO_TYPECHECK(void **, ret)
+#define edje_obj_text_insert_filter_callback_del_full(part, func, data, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL_FULL), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Text_Filter_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(void **, ret)
+#define edje_obj_text_markup_filter_callback_add(part, func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_ADD), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Markup_Filter_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_text_markup_filter_callback_del(part, func, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_DEL), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Markup_Filter_Cb, func), EO_TYPECHECK(void **, ret)
+#define edje_obj_text_markup_filter_callback_del_full(part, func, data, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_TEXT_MARKUP_FILTER_CALLBACK_DEL_FULL), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Markup_Filter_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(void **, ret)
+#define edje_obj_part_swallow(part, obj_swallow, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_SWALLOW), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, obj_swallow), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_unswallow(obj_swallow) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_UNSWALLOW), EO_TYPECHECK(Evas_Object *, obj_swallow)
+#define edje_obj_part_swallow_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_SWALLOW_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_size_min_get(minw, minh) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIZE_MIN_GET), EO_TYPECHECK(Evas_Coord *, minw), EO_TYPECHECK(Evas_Coord *, minh)
+#define edje_obj_size_max_get(maxw, maxh) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIZE_MAX_GET), EO_TYPECHECK(Evas_Coord *, maxw), EO_TYPECHECK(Evas_Coord *, maxh)
+#define edje_obj_calc_force() EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_CALC_FORCE)
+#define edje_obj_size_min_calc(minw, minh) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIZE_MIN_CALC), EO_TYPECHECK(Evas_Coord *, minw), EO_TYPECHECK(Evas_Coord *, minh)
+#define edje_obj_parts_extends_calc(x, y, w, h, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PARTS_EXTENDS_CALC), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_size_min_restricted_calc(minw, minh, restrictedw, restrictedh) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIZE_MIN_RESTRICTED_CALC), EO_TYPECHECK(Evas_Coord *, minw), EO_TYPECHECK(Evas_Coord *, minh), EO_TYPECHECK(Evas_Coord, restrictedw), EO_TYPECHECK(Evas_Coord, restrictedh)
+#define edje_obj_part_state_get(part, val_ret, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_STATE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double *, val_ret), EO_TYPECHECK(const char **, ret)
+#define edje_obj_part_drag_dir_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_DIR_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_Drag_Dir *, ret)
+#define edje_obj_part_drag_value_set(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_VALUE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dx), EO_TYPECHECK(double, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_value_get(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_VALUE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double *, dx), EO_TYPECHECK(double *, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_size_set(part, dw, dh, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_SIZE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dw), EO_TYPECHECK(double, dh), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_size_get(part, dw, dh, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_SIZE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double *, dw), EO_TYPECHECK(double *, dh), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_step_set(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_STEP_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dx), EO_TYPECHECK(double, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_step_get(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_STEP_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double *, dx), EO_TYPECHECK(double *, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_page_set(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_PAGE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dx), EO_TYPECHECK(double, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_page_get(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_PAGE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double *, dx), EO_TYPECHECK(double *, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_step(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_STEP), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dx), EO_TYPECHECK(double, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_drag_page(part, dx, dy, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_DRAG_PAGE), EO_TYPECHECK(const char *, part), EO_TYPECHECK(double, dx), EO_TYPECHECK(double, dy), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_box_append(part, child, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_APPEND), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_box_prepend(part, child, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_PREPEND), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_box_insert_before(part, child, reference, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_INSERT_BEFORE), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_box_insert_at(part, child, pos, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_INSERT_AT), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_box_remove(part, child, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_REMOVE), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_part_box_remove_at(part, pos, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_REMOVE_AT), EO_TYPECHECK(const char *, part), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_part_box_remove_all(part, clear, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_BOX_REMOVE_ALL), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, clear), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_access_part_list_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_ACCESS_PART_LIST_GET), EO_TYPECHECK(Eina_List **, ret)
+#define edje_obj_part_table_child_get(part, col, row, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TABLE_CHILD_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(unsigned int, col), EO_TYPECHECK(unsigned int, row), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_part_table_pack(part, child_obj, col, row, colspan, rowspan, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TABLE_PACK), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child_obj), EO_TYPECHECK(unsigned short, col), EO_TYPECHECK(unsigned short, row), EO_TYPECHECK(unsigned short, colspan), EO_TYPECHECK(unsigned short, rowspan), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_table_unpack(part, child_obj, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TABLE_UNPACK), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object *, child_obj), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_table_col_row_size_get(part, cols, rows, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TABLE_COL_ROW_SIZE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int *, cols), EO_TYPECHECK(int *, rows), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_table_clear(part, clear, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TABLE_CLEAR), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, clear), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_perspective_set(ps) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PERSPECTIVE_SET), EO_TYPECHECK(Edje_Perspective *, ps)
+#define edje_obj_perspective_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PERSPECTIVE_GET), EO_TYPECHECK(const Edje_Perspective **, ret)
+#define edje_obj_preload(cancel, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PRELOAD), EO_TYPECHECK(Eina_Bool, cancel), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_update_hints_set(update) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_UPDATE_HINTS_SET), EO_TYPECHECK(Eina_Bool, update)
+#define edje_obj_update_hints_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_UPDATE_HINTS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define edje_obj_part_external_object_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_OBJECT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_part_external_param_set(part, param, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const Edje_External_Param *, param), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_external_param_get(part, param, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Edje_External_Param *, param), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_part_external_content_get(part, content, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_CONTENT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, content), EO_TYPECHECK(Evas_Object **, ret)
+#define edje_obj_part_external_param_type_get(part, param, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_TYPE_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, param), EO_TYPECHECK(Edje_External_Param_Type *, ret)
+
+/**
+ * @def edje_obj_file_set
+ *
+ * @param[in] file in
+ * @param[in] group in
+ * @param[out] ret out
+ *
+ */
+#define edje_obj_file_set(file, group, nested, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), EO_TYPECHECK(const char*, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Array *, nested), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_file_get(file, group) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_GET), EO_TYPECHECK(const char **, file), EO_TYPECHECK(const char **, group)
+#define edje_obj_load_error_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_LOAD_ERROR_GET), EO_TYPECHECK(Edje_Load_Error *, ret)
+
+#define edje_obj_message_send(type, id, msg) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MESSAGE_SEND), EO_TYPECHECK(Edje_Message_Type, type), EO_TYPECHECK(int, id), EO_TYPECHECK(void *, msg)
+#define edje_obj_message_handler_set(func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MESSAGE_HANDLER_SET), EO_TYPECHECK(Edje_Message_Handler_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_message_signal_process() EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MESSAGE_SIGNAL_PROCESS)
+
+#define edje_obj_signal_callback_add(emission, source, func, data) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_ADD), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data)
+#define edje_obj_signal_callback_del(emission, source, func, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void **, ret)
+#define edje_obj_signal_callback_del_full(emission, source, func, data, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL_FULL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(void **, ret)
+#define edje_obj_signal_emit(emission, source) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_EMIT), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source)
+#define edje_obj_play_set(play) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PLAY_SET), EO_TYPECHECK(Eina_Bool, play)
+#define edje_obj_play_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PLAY_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_animation_set(on) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_ANIMATION_SET), EO_TYPECHECK(Eina_Bool, on)
+#define edje_obj_animation_get(ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_ANIMATION_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define EDJE_EDIT_CLASS edje_edit_class_get()
+
+const Eo_Class *edje_edit_class_get(void) EINA_CONST;
+
 /**
  * @defgroup Edje_External_Part_Group Edje Use of External Parts
  *

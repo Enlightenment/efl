@@ -653,3 +653,9 @@
 2012-10-10
 
 	* edje_entry: Add more tags(preedit_sub1~4) for a variety of preediting states.
+
+2012-10-21 Daniel Zaoui
+
+	* Edje: change Edje to use Eo.
+	This change adds Eo support to Edje while keeping the old API intact.
+	For more information, go to Eo.

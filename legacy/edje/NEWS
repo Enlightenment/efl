@@ -11,6 +11,7 @@ Additions:
     * Add more tags(preedit_sub1~4) for a variety of preediting states.
 
 Improvements:
+    * Change Edje to use Eo.
     * Check the number of parameter for image in edc.
     * Less memory used per part in an edje file (about 25% less).
     * O(1) lookup used when searching Part_Lookup in edje_cc.

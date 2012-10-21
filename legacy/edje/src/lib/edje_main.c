@@ -269,16 +269,15 @@ _edje_del(Edje *ed)
 
    _class_member_free(ed->members.text_class, _edje_text_class_member_direct_del);
    _class_member_free(ed->members.color_class, _edje_color_class_member_direct_del);
-   free(ed);
 }
 
 void
 _edje_clean_objects(Edje *ed)
 {
-   evas_object_del(ed->base.clipper);
-   ed->base.evas = NULL;
+   evas_object_del(ed->base->clipper);
+   ed->base->evas = NULL;
    ed->obj = NULL;
-   ed->base.clipper = NULL;
+   ed->base->clipper = NULL;
 }
 
 void
