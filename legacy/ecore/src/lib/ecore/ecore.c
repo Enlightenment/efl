@@ -37,8 +37,6 @@
 #include <malloc.h>
 
 
-EAPI Eo *_ecore_parent = NULL;
-
 static Ecore_Version _version = { VERS_MAJ, VERS_MIN, VERS_MIC, VERS_REV };
 EAPI Ecore_Version *ecore_version = &_version;
 
@@ -51,6 +49,8 @@ static int _ecore_memory_max_total = 0;
 static int _ecore_memory_max_free = 0;
 static pid_t _ecore_memory_pid = 0;
 #endif
+
+EAPI Eo *_ecore_parent = NULL;
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
