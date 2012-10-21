@@ -61,23 +61,29 @@ if HAVE_PO
 SUBDIRS += po
 
 MAINTAINERCLEANFILES += \
-			po/boldquot.sed \
-			po/en@boldquot.header \
-			po/en@quot.header \
-			po/insert-header.sin \
-			po/Makefile.in.in* \
-			po/Makevars.template \
-			po/quot.sed \
-			po/remove-potcdate.sin \
-			po/Rules-quot*
+po/boldquot.sed \
+po/en@boldquot.header \
+po/en@quot.header \
+po/insert-header.sin \
+po/Makefile.in.in* \
+po/Makevars.template \
+po/quot.sed \
+po/remove-potcdate.sin \
+po/Rules-quot*
 
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = efreet.pc efreet-mime.pc efreet-trash.pc
 
-servicedir = $(dbusservicedir)
+if HAVE_EFREETD
+if HAVE_DBUSSERVICEDIR
+servicedir = @dbusservicedir@
+else
+servicedir = $(datadir)/dbus-1/services
+endif
 service_DATA = org.enlightenment.Efreet.service
+endif
 
 EXTRA_DIST = \
 AUTHORS \
