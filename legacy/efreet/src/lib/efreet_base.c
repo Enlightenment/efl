@@ -308,6 +308,41 @@ efreet_hostname_get(void)
     return hostname;
 }
 
+/**
+ * @internal
+ * @param user_dir The user directory to work with
+ * @param system_dirs The system directories to work with
+ * @param suffix The path suffix to add
+ * @return Returns the list of directories
+ * @brief Creates the list of directories based on the user
+ * dir, system dirs and given suffix.
+ *
+ * Needs EAPI because of helper binaries
+ */
+EAPI Eina_List *
+efreet_default_dirs_get(const char *user_dir, Eina_List *system_dirs,
+                                                    const char *suffix)
+{
+    const char *xdg_dir;
+    char dir[PATH_MAX];
+    Eina_List *list = NULL;
+    Eina_List *l;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(user_dir, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(suffix, NULL);
+
+    snprintf(dir, sizeof(dir), "%s/%s", user_dir, suffix);
+    list = eina_list_append(list, eina_stringshare_add(dir));
+
+    EINA_LIST_FOREACH(system_dirs, l, xdg_dir)
+    {
+        snprintf(dir, sizeof(dir), "%s/%s", xdg_dir, suffix);
+        list = eina_list_append(list, eina_stringshare_add(dir));
+    }
+
+    return list;
+}
+
 void
 efreet_dirs_reset(void)
 {
