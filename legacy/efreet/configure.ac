@@ -166,10 +166,32 @@ AC_SUBST(EFL_EFREET_BUILD)
 AC_SUBST(EFL_EFREET_MIME_BUILD)
 AC_SUBST(EFL_EFREET_TRASH_BUILD)
 
+service=""
+have_efreetd=""
+dbusservicedir=""
+PKG_CHECK_MODULES(EFREETD, [
+   eina >= 1.7.99
+   ecore >= 1.7.99
+   ecore-file >= 1.7.99
+   edbus2 >= 1.7.99
+], [
+    have_efreetd="yes"
+    service="org.enlightenment.Efreet.service"
+    requirement_efreet="edbus2 ${requirement_efreet}"
+    dbusservicedir=${datadir}/dbus-1/services
+        AC_ARG_WITH([dbus-services],
+            AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES], [specify a directory to store dbus service files.]),
+                [ dbusservicedir=$withval ]
+        )
+
+   ], [
+    have_efreetd="no"
+])
+AM_CONDITIONAL([HAVE_EFREETD], [test "x${have_efreetd}" = "xyes"])
+
 requirement_efreet="ecore-file >= 1.6.99 ecore >= 1.6.99 eet >= 1.6.99 eina >= 1.6.99 ${requirement_efreet}"
 PKG_CHECK_MODULES(EFREET, [${requirement_efreet}])
 PKG_CHECK_MODULES(EINA, [eina >= 1.6.99])
-
 
 ### Checks for header files
 
@@ -234,6 +256,7 @@ if test "x$enable_coverage" = "xyes" ; then
 fi
 
 AC_SUBST(requirement_efreet)
+AC_SUBST(dbusservicedir)
 
 AC_OUTPUT([
 efreet.spec
@@ -251,6 +274,7 @@ src/tests/data/Makefile
 src/tests/data/sub/Makefile
 src/tests/compare/Makefile
 $po_makefile_in
+$service
 ])
 
 
@@ -270,6 +294,10 @@ echo "  Specification compliance:"
 echo "    Strict.............: ${enable_strict_spec}"
 echo "    Sloppy.............: ${enable_sloppy_spec}"
 echo
+if test "x$have_efreetd" = "xyes"; then
+   echo "  DBus services dir....: ${dbusservicedir}"
+   echo
+fi
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo

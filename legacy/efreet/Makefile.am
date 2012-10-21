@@ -76,6 +76,9 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = efreet.pc efreet-mime.pc efreet-trash.pc
 
+servicedir = $(dbusservicedir)
+service_DATA = org.enlightenment.Efreet.service
+
 EXTRA_DIST = \
 AUTHORS \
 COPYING \

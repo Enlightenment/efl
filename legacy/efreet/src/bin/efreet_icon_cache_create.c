@@ -1128,6 +1128,7 @@ main(int argc, char **argv)
         if (changed) c = 'c';
         if (write(tmpfd, &c, 1) != 1) perror("write");
         close(tmpfd);
+        printf("%c\n", c);
     }
 
     INF("done");

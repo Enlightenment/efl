@@ -40,12 +40,14 @@ m4/lt~obsolete.m4
 /missing
 src/bin/efreet_desktop_cache_create
 src/bin/efreet_icon_cache_create
+src/bin/efreetd
 src/tests/compare/efreet_alloc
 src/tests/compare/efreet_menu_alloc
 src/tests/efreet_cache_test
 src/tests/efreet_icon_cache_dump
 src/tests/efreet_spec_test
 src/tests/efreet_test
+src/tests/efreet_user_dir
 /m4/codeset.m4
 /m4/gettext.m4
 /m4/glibc21.m4
@@ -150,3 +152,4 @@ src/tests/efreet_test
 /po/*.gmo
 /po/stamp-po
 /stamp-h1
+/org.enlightenment.Efreet.service
