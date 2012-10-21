@@ -97,7 +97,7 @@ static const char _edje_edit_type[] = "edje_edit";
 typedef struct _Edje_Edit Edje_Edit;
 struct _Edje_Edit
 {
-   Edje base;
+   Edje *base;
 
    void *bytecode;
    int bytecode_size;
@@ -213,11 +213,11 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
    ef = eet_open(file, EET_FILE_MODE_READ);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
-            eed->base.collection->id);
+            eed->base->collection->id);
    eed->embryo_source = eet_read(ef, buf, &count);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i/*",
-            eed->base.collection->id);
+            eed->base->collection->id);
    keys = eet_list(ef, buf, &count);
    for (i = 0; i < count; i++)
      {
@@ -257,8 +257,11 @@ edje_edit_object_add(Evas *evas)
 }
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
+   Edje_Edit *eed = class_data;
+   eed->base = eo_data_get(obj, EDJE_OBJ_CLASS);
+
    eo_do_super(obj, eo_constructor());
    eina_error_set(0);
 
@@ -288,14 +291,14 @@ _edje_image_id_find(Edje_Edit *eed, const char *image_name)
 {
    unsigned int i;
 
-   if (!eed->base.file) return -1;
-   if (!eed->base.file->image_dir) return -1;
+   if (!eed->base->file) return -1;
+   if (!eed->base->file->image_dir) return -1;
 
    //printf("SEARCH IMAGE %s\n", image_name);
 
-   for (i = 0; i < eed->base.file->image_dir->entries_count; ++i)
-     if (eed->base.file->image_dir->entries[i].entry
-	 && !strcmp(image_name, eed->base.file->image_dir->entries[i].entry))
+   for (i = 0; i < eed->base->file->image_dir->entries_count; ++i)
+     if (eed->base->file->image_dir->entries[i].entry
+	 && !strcmp(image_name, eed->base->file->image_dir->entries[i].entry))
        return i;
 
    return -1;
@@ -304,16 +307,16 @@ _edje_image_id_find(Edje_Edit *eed, const char *image_name)
 static const char *
 _edje_image_name_find(Edje_Edit *eed, int image_id)
 {
-   if (!eed->base.file) return NULL;
-   if (!eed->base.file->image_dir) return NULL;
+   if (!eed->base->file) return NULL;
+   if (!eed->base->file->image_dir) return NULL;
 
    /* Special case for external image */
    if (image_id < 0) image_id = -image_id - 1;
 
    //printf("SEARCH IMAGE ID %d\n", image_id);
-   if ((unsigned int) image_id >= eed->base.file->image_dir->entries_count)
+   if ((unsigned int) image_id >= eed->base->file->image_dir->entries_count)
      return NULL;
-   return eed->base.file->image_dir->entries[image_id].entry;
+   return eed->base->file->image_dir->entries[image_id].entry;
 }
 
 static void
@@ -5090,9 +5093,9 @@ _edje_program_id_find(Edje_Edit *eed, const char *program)
    Edje_Program *epr;
    int i;
 
-   for (i = 0; i < eed->base.table_programs_size; i++)
+   for (i = 0; i < eed->base->table_programs_size; i++)
      {
-        epr = eed->base.table_programs[i];
+        epr = eed->base->table_programs[i];
         if (epr->name && !strcmp(epr->name, program))
           return epr->id;
      }
@@ -6424,7 +6427,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              free(ps->processed);
              ps->processed = NULL;
           }
-        epr = eed->base.table_programs[ps->id];
+        epr = eed->base->table_programs[ps->id];
         if (!ps->processed)
           ps->processed = _edje_edit_script_process(eed, epr->name, ps->code);
         if (!ps->processed)
@@ -6503,7 +6506,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    eed->script_need_recompile = EINA_FALSE;
    eed->all_dirty = EINA_FALSE;
 
-   edc = eed->base.collection;
+   edc = eed->base->collection;
    embryo_program_free(edc->script);
    edc->script = embryo_program_new(eed->bytecode, eed->bytecode_size);
    _edje_embryo_script_init(edc);
@@ -7172,7 +7175,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
      }
 
    eed = eo_data_get(obj, MY_CLASS);
-   pc = eed->base.collection;
+   pc = eed->base->collection;
 
    BUF_APPENDF(I1"group { name: \"%s\";\n", group);
    //TODO Support alias:
