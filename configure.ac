@@ -801,7 +801,12 @@ if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
 echo "  Build Profile........: ${build_profile}"
-echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock}) (barrier: ${efl_have_pthread_barrier}) (affinity: ${efl_have_setaffinity})"
+echo "  Threads Type.........: ${efl_have_threads}"
+if test "x${efl_have_threads}" = "xyes" ; then
+echo "    spinlocks..........: ${efl_have_posix_threads_spinlock}"
+echo "    barrier............: ${efl_have_pthread_barrier}"
+echo "    affinity...........: ${efl_have_setaffinity}"
+fi
 echo "  Cryptographic System.: ${build_crypto}"
 echo
 echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
