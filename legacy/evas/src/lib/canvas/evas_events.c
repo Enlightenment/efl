@@ -60,7 +60,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              return in;
           }
         if (evas_event_passes_through(eo_obj, obj)) continue;
-        //if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+        if (evas_object_is_source_invisible(eo_obj, obj)) continue;
         if ((obj->cur.visible) && (obj->delete_me == 0) &&
             (!obj->clip.clipees) &&
             (evas_object_clippers_is_visible(eo_obj, obj)))
@@ -828,7 +828,7 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                        obj->mouse_grabbed) &&
                       (!evas_event_passes_through(eo_obj, obj)) &&
                       (!evas_event_freezes_through(eo_obj, obj)) &&
-//                      (!evas_object_is_source_invisible(eo_obj, obj)) &&
+                      (!evas_object_is_source_invisible(eo_obj, obj)) &&
                       (!obj->clip.clipees))
                     {
                        if ((px != x) || (py != y))
@@ -970,7 +970,7 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                  eina_list_data_find(ins, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 //(!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
@@ -1144,7 +1144,7 @@ nogrep:
                  eina_list_data_find(newin, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 //(!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
@@ -1662,7 +1662,7 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                   obj->mouse_grabbed) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 //(!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
                  (!obj->clip.clipees))
                {
                   ev.cur.canvas.x = x;
@@ -1731,7 +1731,7 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                  eina_list_data_find(ins, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-//                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
