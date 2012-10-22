@@ -4,6 +4,10 @@
 
 EAPI Eo_Op EDJE_OBJ_BASE_ID = EO_NOOP;
 
+#ifdef MY_CLASS
+# undef MY_CLASS
+#endif
+
 #define MY_CLASS EDJE_OBJ_CLASS
 
 Eina_List *_edje_edjes = NULL;
@@ -20,7 +24,7 @@ edje_object_add(Evas *evas)
 }
 
 static void
-_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+_edje_smart_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Edje *ed = class_data;
    ed->base = eo_data_get(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
@@ -292,10 +296,10 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_edje_smart_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_smart_constructor),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _edje_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _edje_smart_move),
@@ -587,16 +591,16 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION_SENTINEL
 };
 
-static const Eo_Class_Description class_desc = {
+static const Eo_Class_Description edje_smart_class_desc = {
      EO_VERSION,
      "Edje_Smart",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EDJE_OBJ_BASE_ID, op_desc, EDJE_OBJ_SUB_ID_LAST),
      NULL,
      sizeof(Edje),
-     _class_constructor,
+     _edje_smart_class_constructor,
      NULL
 };
 
-EO_DEFINE_CLASS(edje_object_class_get, &class_desc, EVAS_OBJ_SMART_CLIPPED_CLASS, NULL);
+EO_DEFINE_CLASS(edje_object_class_get, &edje_smart_class_desc, EVAS_OBJ_SMART_CLIPPED_CLASS, NULL);
 

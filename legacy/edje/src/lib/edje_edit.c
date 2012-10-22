@@ -14,6 +14,10 @@
 
 #include <Eo.h>
 
+#ifdef MY_CLASS
+# undef MY_CLASS
+#endif
+
 #define MY_CLASS EDJE_EDIT_CLASS
 
 static const char EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED_STR[] = "Current group cannot be deleted";
@@ -257,7 +261,7 @@ edje_edit_object_add(Evas *evas)
 }
 
 static void
-_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+_edje_edit_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Edje_Edit *eed = class_data;
    eed->base = eo_data_get(obj, EDJE_OBJ_CLASS);
@@ -7804,10 +7808,10 @@ edje_edit_print_internal_status(Evas_Object *obj)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_edje_edit_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_edit_constructor),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_edit_smart_del),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), _edje_edit_smart_file_set),
         EO_OP_FUNC_SENTINEL
@@ -7816,16 +7820,16 @@ _class_constructor(Eo_Class *klass)
    eo_class_funcs_set(klass, func_desc);
 }
 
-static const Eo_Class_Description class_desc = {
+static const Eo_Class_Description edje_edit_class_desc = {
      EO_VERSION,
      "Edje_Edit",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      sizeof(Edje_Edit),
-     _class_constructor,
+     _edje_edit_class_constructor,
      NULL
 };
 
-EO_DEFINE_CLASS(edje_edit_class_get, &class_desc, EDJE_OBJ_CLASS, NULL);
+EO_DEFINE_CLASS(edje_edit_class_get, &edje_edit_class_desc, EDJE_OBJ_CLASS, NULL);
 
