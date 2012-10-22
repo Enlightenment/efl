@@ -422,17 +422,14 @@ esac
 
 # Valgrind
 
-if test "x${want_valgrind}" = "xyes"; then
+if test "x${want_valgrind}" = "xyes" ; then
    PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0],
       [
        have_valgrind="yes"
        requirements_pc_eina="valgrind >= 2.4.0 ${requirements_pc_eina}"
        requirements_pc_deps_eina="valgrind ${requirements_pc_deps_eina}"
       ],
-      [
-       have_valgrind="no"
-       AC_MSG_ERROR([Valgrind >= 2.4.0 is required])
-      ])
+      [AC_MSG_ERROR([Valgrind >= 2.4.0 is required])])
 else
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 fi
@@ -513,7 +510,7 @@ fi
 AC_MSG_CHECKING([wether to build Eina_Log infrastructure])
 AC_MSG_RESULT([${enable_log}])
 
-EINA_CONFIG(ENABLE_LOG, test "x${enable_log}" = "xyes")
+EINA_CONFIG([ENABLE_LOG], [test "x${enable_log}" = "xyes"])
 
 EFL_CHECK_THREADS
 
@@ -522,6 +519,7 @@ EINA_CONFIG(HAVE_PTHREAD_AFFINITY, test "x${efl_have_setaffinity}" = "xyes")
 EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
+
 EINA_CHECK_MODULE([chained-pool], [static], [chained pool])
 EINA_CHECK_MODULE([pass-through], [static], [pass through])
 EINA_CHECK_MODULE([one-big],      [static], [one big])
