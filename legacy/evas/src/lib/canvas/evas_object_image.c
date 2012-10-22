@@ -566,7 +566,7 @@ evas_object_image_source_visible_set(Evas_Object *eo_obj, Eina_Bool visible)
    eo_do(eo_obj, evas_obj_image_source_visible_set(visible));
 }
 
-void
+static void
 _image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object_Protected_Data *src_obj;
@@ -599,15 +599,6 @@ evas_object_image_source_visible_get(const Evas_Object *eo_obj)
    return visible;
 }
 
-EAPI void
-evas_object_image_border_set(Evas_Object *eo_obj, int l, int r, int t, int b)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_image_border_set(l, r, t, b));
-}
-
 static void
 _image_source_visible_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
@@ -620,6 +611,15 @@ _image_source_visible_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (src_obj)
      *visible = !o->source_invisible;
    else *visible = EINA_FALSE;
+}
+
+EAPI void
+evas_object_image_border_set(Evas_Object *eo_obj, int l, int r, int t, int b)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_image_border_set(l, r, t, b));
 }
 
 static void
@@ -4560,8 +4560,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET, "Get the number times the animation of the object loops."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET, "Get the duration of a sequence of frames."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET, "Set the frame to current frame of an image object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET, "-"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET, "-"),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET, "Set the source object visibility of a given image object being used as a proxy."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET, "Get the source object visibility of a given image object being used as a proxy."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
