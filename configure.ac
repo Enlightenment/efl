@@ -416,6 +416,21 @@ case "$host_vendor" in
     ;;
 esac
 
+# Exotic library for compilation on Coyote
+
+# TODO: add back whenever escape is merged into efl single tree
+#PKG_CHECK_EXISTS([exotic],
+#   [
+#    enable_exotic="yes"
+#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+#    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
+#    requirements_pc_eina="exotic ${requirements_pc_eina}"
+#   ],
+#   [enable_exotic="no"])
+#
+#AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+#AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
+
 ## Options
 
 # Valgrind
@@ -691,6 +706,7 @@ esac
 
 
 #### Eo
+
 AC_MSG_NOTICE([Eo checks])
 
 ### Default values
@@ -703,7 +719,6 @@ AC_MSG_NOTICE([Eo checks])
 
 # Eina library
 
-# TODO: really? do we need this? it's a local eina!
 requirements_pc_eo="eina >= 1.7.99"
 
 AC_ARG_VAR([EO_CFLAGS], [preprocessor flags for Eo])
@@ -802,11 +817,9 @@ if test "x${have_windows}" = "xyes" ; then
 fi
 echo "  Build Profile........: ${build_profile}"
 echo "  Threads Type.........: ${efl_have_threads}"
-if test "x${efl_have_threads}" = "xyes" ; then
 echo "    spinlocks..........: ${efl_have_posix_threads_spinlock}"
 echo "    barrier............: ${efl_have_pthread_barrier}"
 echo "    affinity...........: ${efl_have_setaffinity}"
-fi
 echo "  Cryptographic System.: ${build_crypto}"
 echo
 echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
