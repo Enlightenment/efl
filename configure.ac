@@ -500,6 +500,7 @@ EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow -Wpointer-arith])
 EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
+
 EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr fnmatch iconv shm_open setxattr])
 
 enable_log="no"
@@ -514,9 +515,9 @@ EINA_CONFIG([ENABLE_LOG], [test "x${enable_log}" = "xyes"])
 
 EFL_CHECK_THREADS
 
-EINA_CONFIG(HAVE_PTHREAD_BARRIER, test "x${efl_have_pthread_barrier}" = "xyes")
-EINA_CONFIG(HAVE_PTHREAD_AFFINITY, test "x${efl_have_setaffinity}" = "xyes")
-EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
+EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes"])
+EINA_CONFIG([HAVE_PTHREAD_AFFINITY], [test "x${efl_have_setaffinity}" = "xyes"])
+EINA_CONFIG([HAVE_DEBUG_THREADS], [test "$want_debug_threads" = "yes"])
 
 ### Modules
 
