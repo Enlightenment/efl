@@ -311,6 +311,7 @@ _entry_activated_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __
    _menu_create(str);
 }
 
+#if 0
 static void
 _btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -318,13 +319,14 @@ _btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
    if (!str) return;
    _menu_create(str);
 }
+#endif
 
 static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
 {
    Evas_Object *bg = NULL, *bx0 = NULL, *bx1 = NULL, *lb = NULL;
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *en = NULL;
-   Evas_Object *btn = NULL;
+   //Evas_Object *btn = NULL;
    Eina_List *l;
    struct elm_test *t = NULL;
 
@@ -425,16 +427,19 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
+   //evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
+   evas_object_smart_callback_add(en, "changed,user", _entry_activated_cb, NULL);
    elm_box_pack_end(bx1, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
 
+#if 0
    btn = elm_button_add(win);
    elm_object_text_set(btn, "Go");
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, en);
    elm_box_pack_end(bx1, btn);
    evas_object_show(btn);
+ #endif
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
