@@ -243,7 +243,8 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                 _evas_render_has_map(eo_obj, obj),
                 _evas_render_had_map(obj));
              if ((obj->is_smart) &&
-                 (_evas_render_has_map(eo_obj, obj)))
+                 ((_evas_render_has_map(eo_obj, obj) ||
+                 (obj->changed_source_visible))))
                {
                   RD("      has map + smart\n");
                   _evas_render_prev_cur_clip_cache_add(e, obj);
