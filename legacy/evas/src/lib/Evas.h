@@ -9040,7 +9040,7 @@ EAPI void                          evas_object_image_source_visible_set(Evas_Obj
  * @param obj Proxy (image) object.
  * @return @c EINA_TRUE if source object is visible, @c EINA_FALSE otherwise.
  *
- * @see evas_object_image_source_visible_get()
+ * @see evas_object_image_source_visible_set()
  * @see evas_object_image_source_set()
  * @see evas_object_show()
  * @see evas_object_hide()
