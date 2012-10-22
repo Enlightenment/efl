@@ -399,8 +399,6 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
-# TODO: WHAT? evil was build before, so it should already define this
-#      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eina="${requirements_pc_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
@@ -441,7 +439,6 @@ AC_DEFINE_IF([EINA_DEBUG_MALLOC],
 if ! test "x${requirements_pc_deps_eina}" = "x" ; then
    PKG_CHECK_MODULES([EINA], [${requirements_pc_deps_eina}])
 fi
-
 
 ## Examples
 
