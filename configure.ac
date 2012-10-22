@@ -517,16 +517,8 @@ EINA_CONFIG(ENABLE_LOG, test "x${enable_log}" = "xyes")
 
 EFL_CHECK_THREADS
 
-if ! test "x${efl_have_pthread_barrier}" = "xno" ; then
-   EINA_CONFIGURE_HAVE_PTHREAD_BARRIER="#define EINA_HAVE_PTHREAD_BARRIER"
-fi
-AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_BARRIER)
-
-if ! test "x${efl_have_setaffinity}" = "xno" ; then
-   EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY="#define EINA_HAVE_PTHREAD_AFFINITY"
-fi
-AC_SUBST(EINA_CONFIGURE_HAVE_PTHREAD_SETAFFINITY)
-
+EINA_CONFIG(HAVE_PTHREAD_BARRIER, test "x${efl_have_pthread_barrier}" = "xyes")
+EINA_CONFIG(HAVE_PTHREAD_AFFINITY, test "x${efl_have_setaffinity}" = "xyes")
 EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
