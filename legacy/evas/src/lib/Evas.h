@@ -8984,7 +8984,7 @@ EAPI void                          evas_object_image_alpha_mask_set(Evas_Object 
  *
  * @see evas_object_image_source_get()
  * @see evas_object_image_source_unset()
- * @see evas_object_image_source_render_set()
+ * @see evas_object_image_source_visible_set()
  */
 EAPI Eina_Bool                     evas_object_image_source_set(Evas_Object *obj, Evas_Object *src) EINA_ARG_NONNULL(1);
 
