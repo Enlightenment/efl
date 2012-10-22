@@ -346,7 +346,9 @@ static void
 _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Text *o = _pd;
-   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
+   Eina_Bool is, was = EINA_FALSE;
+   Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
+   Eina_Bool source_invisible = EINA_FALSE;
    Evas_Font_Description *fdesc;
 
    const char *font = va_arg(*list, const char*);

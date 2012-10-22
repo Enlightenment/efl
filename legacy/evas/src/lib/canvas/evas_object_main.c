@@ -696,7 +696,9 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
 
    Evas_Public_Data *evas;
-   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
+   Eina_Bool is, was = EINA_FALSE;
+   Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
+   Eina_Bool source_invisible = EINA_FALSE;
    int nx = 0, ny = 0;
 
    if (obj->delete_me) return;
@@ -790,8 +792,9 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
-
-   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
+   Eina_Bool is, was = EINA_FALSE;
+   Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
+   Eina_Bool source_invisible = EINA_FALSE;
 
    if (obj->delete_me) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
