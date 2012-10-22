@@ -544,11 +544,11 @@ AC_ARG_WITH([crypto],
    [build_crypto=${withval}],
    [build_crypto=openssl])
 
-case "$build_crypto" in
+case "${build_crypto}" in
    openssl|gnutls|none)
      ;;
    *)
-     AC_MSG_ERROR([Unknown build crypto --with-crypto=${build_crypto}])
+     AC_MSG_ERROR([Unknown build crypto option: --with-crypto=${build_crypto}])
      ;;
 esac
 
@@ -594,9 +594,8 @@ case "$build_crypto" in
       CFLAGS="${GNUTLS_CFLAGS}"
       LIBS="${GNUTLS_LIBS}"
       AC_CHECK_LIB([gnutls], [gnutls_x509_crt_verify_hash],
-         [
-          AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
-         ], [AC_MSG_NOTICE([Optional gnutls_x509_crt_verify_hash not present.])])
+         [AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])],
+         [AC_MSG_NOTICE([Optional gnutls_x509_crt_verify_hash not present.])])
       CFLAGS="${CFLAGS_save}"
       LIBS="${LIBS_save}"
 
@@ -606,9 +605,8 @@ case "$build_crypto" in
       CFLAGS="${GNUTLS_CFLAGS}"
       LIBS="${GNUTLS_LIBS}"
       AC_CHECK_LIB([gnutls], [gnutls_privkey_sign_data],
-         [
-          AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
-         ], [AC_MSG_NOTICE([Optional gnutls_privkey_sign_data not present.])])
+         [AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])],
+         [AC_MSG_NOTICE([Optional gnutls_privkey_sign_data not present.])])
       CFLAGS="${CFLAGS_save}"
       LIBS="${LIBS_save}"
 
@@ -618,9 +616,7 @@ case "$build_crypto" in
       CFLAGS="${GNUTLS_CFLAGS}"
       LIBS="${GNUTLS_LIBS}"
       AC_CHECK_LIB([gnutls], [gnutls_pubkey_verify_hash],
-         [
-          AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
-         ])
+         [AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])])
       CFLAGS="${CFLAGS_save}"
       LIBS="${LIBS_save}"
       ;;
