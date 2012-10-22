@@ -113,7 +113,8 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
    if (!(obj->layer->evas->is_frozen))
      {
         if (!evas_event_passes_through(eo_obj, obj) &&
-            !evas_event_freezes_through(eo_obj, obj))
+            !evas_event_freezes_through(eo_obj, obj) &&
+            !evas_object_is_source_invisible(eo_obj, obj))
           was = evas_object_is_in_output_rect(eo_obj, obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y,
@@ -158,7 +159,8 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
                                            obj->layer->evas->pointer.x,
                                            obj->layer->evas->pointer.y, 1, 1);
         if (!evas_event_passes_through(eo_obj, obj) &&
-            !evas_event_freezes_through(eo_obj, obj))
+            !evas_event_freezes_through(eo_obj, obj) &&
+            !evas_object_is_source_invisible(eo_obj, obj))
           {
              if ((is ^ was) && obj->cur.visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,

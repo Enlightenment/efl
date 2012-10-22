@@ -696,7 +696,7 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
 
    Evas_Public_Data *evas;
-   int is, was = 0, pass = 0, freeze = 0;
+   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
    int nx = 0, ny = 0;
 
    if (obj->delete_me) return;
@@ -729,7 +729,8 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         pass = evas_event_passes_through(eo_obj, obj);
         freeze = evas_event_freezes_through(eo_obj, obj);
-        if ((!pass) && (!freeze))
+        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
+        if ((!pass) && (!freeze) && (!source_invisible))
           was = evas_object_is_in_output_rect(eo_obj, obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y, 1, 1);
@@ -790,7 +791,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
 
-   int is, was = 0, pass = 0, freeze =0;
+   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
 
    if (obj->delete_me) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
@@ -809,6 +810,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         pass = evas_event_passes_through(eo_obj, obj);
         freeze = evas_event_freezes_through(eo_obj, obj);
+        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
         if ((!pass) && (!freeze))
           was = evas_object_is_in_output_rect(eo_obj, obj,
                                               obj->layer->evas->pointer.x,
@@ -1403,7 +1405,8 @@ _show (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         evas_object_clip_across_clippees_check(eo_obj, obj);
         evas_object_recalc_clippees(eo_obj, obj);
         if ((!evas_event_passes_through(eo_obj, obj)) &&
-            (!evas_event_freezes_through(eo_obj, obj)))
+            (!evas_event_freezes_through(eo_obj, obj)) &&
+            (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if (!obj->is_smart)
                {
@@ -1445,7 +1448,8 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         evas_object_clip_across_clippees_check(eo_obj, obj);
         evas_object_recalc_clippees(eo_obj, obj);
         if ((!evas_event_passes_through(eo_obj, obj)) &&
-            (!evas_event_freezes_through(eo_obj, obj)))
+            (!evas_event_freezes_through(eo_obj, obj)) &&
+            (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if ((!obj->is_smart) ||
                  ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
@@ -1833,6 +1837,7 @@ _canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              if (obj->delete_me) continue;
              if ((!include_pass_events_objects) &&
                  (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
@@ -1903,6 +1908,7 @@ _canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *li
              if (obj->delete_me) continue;
              if ((!include_pass_events_objects) &&
                  (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
@@ -1957,6 +1963,7 @@ _canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              if (obj->delete_me) continue;
              if ((!include_pass_events_objects) &&
                    (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
@@ -2028,6 +2035,7 @@ _canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              if (obj->delete_me) continue;
              if ((!include_pass_events_objects) &&
                  (evas_event_passes_through(eo_obj, obj))) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&

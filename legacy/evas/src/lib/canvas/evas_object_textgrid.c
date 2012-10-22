@@ -1078,7 +1078,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    const char *font_name = va_arg(*list, const char *);
    Evas_Font_Size font_size = va_arg(*list, Evas_Font_Size);
-   int is, was = 0, pass = 0, freeze = 0;
+   int is, was = 0, pass = 0, freeze = 0, source_invisible = 0;
    Evas_Font_Description *font_description;
    
    if ((!font_name) || (!*font_name) || (font_size <= 0))
@@ -1107,7 +1107,8 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         pass = evas_event_passes_through(eo_obj, obj);
         freeze = evas_event_freezes_through(eo_obj, obj);
-        if ((!pass) && (!freeze))
+        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
+        if ((!pass) && (!freeze) && (!source_invisible))
           was = evas_object_is_in_output_rect(eo_obj, obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y,
