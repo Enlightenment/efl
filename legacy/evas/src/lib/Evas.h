@@ -9233,7 +9233,7 @@ EAPI Evas_BiDi_Direction  evas_object_text_direction_get(const Evas_Object *obj)
  * @li strikethrough - "on" or "off"
  * @li backing_color - Background color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
  * @li backing - Enable/disable background color. ex) "on" or "off"
- * @li style - Either "off", "none", "plain", "shadow", "outline", "soft_outline", "outline_shadow", "outline_soft_shadow", "glow", "far_shadow", "soft_shadow", or "far_soft_shadow".
+ * @li style - Either "off", "none", "plain", "shadow", "outline", "soft_outline", "outline_shadow", "outline_soft_shadow", "glow", "far_shadow", "soft_shadow", or "far_soft_shadow". Direction can be selected by adding "bottom_right", "bottom", "bottom_left", "left", "top_left", "top", "top_right", or "right". E.g: "style=shadow,bottom_right".
  * @li tabstops - Pixel value for tab width.
  * @li linesize - Force a line size in pixels.
  * @li linerelsize - Either a floating point value or a percentage indicating the wanted size of the line relative to the calculated size.
