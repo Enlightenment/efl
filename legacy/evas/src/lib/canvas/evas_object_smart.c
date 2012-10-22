@@ -1330,8 +1330,6 @@ evas_object_smart_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_
 static void
 evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Public_Data *e;
-
    if (obj->pre_render_done) return;
    if (!obj->child_has_map && !obj->cur.cached_surface)
      {
@@ -1405,12 +1403,9 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 #endif
      }
 
-   e = obj->layer->evas;
-
-   if (obj->changed_map)
-     {
-        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-     }
+   if (obj->changed_map || obj->changed_source_visible)
+     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                         eo_obj, obj);
 
    obj->pre_render_done = EINA_TRUE;
 }
