@@ -529,7 +529,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    if (obj->mouse_grabbed > 0)
       obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
    if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
-      obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
+      obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, eo_obj);
    obj->mouse_grabbed = 0;
    obj->mouse_in = 0;
    if (obj->name) evas_object_name_set(eo_obj, NULL);
@@ -1476,7 +1476,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                   if (obj->mouse_grabbed > 0)
                     obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
                   if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
-                    obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
+                    obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, eo_obj);
                   obj->mouse_grabbed = 0;
                   if (obj->layer->evas->is_frozen)
                     {
@@ -1513,7 +1513,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         if (obj->mouse_grabbed > 0)
           obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
         if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
-          obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, obj);
+          obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, eo_obj);
         obj->mouse_grabbed = 0;
         obj->mouse_in = 0;
  */
@@ -1971,7 +1971,7 @@ _canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
                  (!obj->clip.clipees))
-               in = eina_list_prepend(in, obj);
+               in = eina_list_prepend(in, eo_obj);
           }
      }
    *ret = in;
@@ -2043,7 +2043,7 @@ _canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              evas_object_clip_recalc(eo_obj, obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
                  (!obj->clip.clipees))
-               in = eina_list_prepend(in, obj);
+               in = eina_list_prepend(in, eo_obj);
           }
      }
    *ret = in;
