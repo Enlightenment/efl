@@ -560,8 +560,6 @@ esac
 EFL_EET_BUILD=""
 case "$host_os" in
    mingw*)
-# TODO: WHAT? evil was build before, so it should already define this
-#      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eet="evil ${requirements_pc_eet}"
       EFL_EET_BUILD="-DEFL_EET_BUILD"
    ;;
