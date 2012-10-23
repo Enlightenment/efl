@@ -176,10 +176,47 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 #### Checks for header files
 
+# Common Checks (keep names sorted for ease of use):
+AC_HEADER_DIRENT
+AC_HEADER_TIME
+
+AC_CHECK_HEADERS([ \
+execinfo.h \
+inttypes.h \
+libgen.h \
+mcheck.h \
+netinet/in.h \
+siginfo.h \
+stdint.h \
+strings.h \
+sys/types.h \
+unistd.h \
+])
+
 EFL_CHECK_PATH_MAX
 
 
 #### Checks for types
+
+# wchar_t
+AC_CHECK_SIZEOF([wchar_t])
+EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
+AC_SUBST([EINA_SIZEOF_WCHAR_T])
+
+AC_CHECK_TYPES([siginfo_t], [], [],
+   [[
+#include <signal.h>
+#if HAVE_SIGINFO_H
+# include <siginfo.h>
+#endif
+   ]])
+
+# struct dirent
+
+AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
+   [[
+#include <dirent.h>
+   ]])
 
 
 #### Checks for structures
@@ -208,35 +245,6 @@ AC_SUBST([lt_enable_auto_import])
 
 #### Checks for library functions
 
-AC_FUNC_ALLOCA
-
-
-######################  EFL  ######################
-
-prefer_assert="no"
-case "$build_profile" in
-   dev|debug)
-     prefer_assert="yes"
-     ;;
-esac
-
-# Common Checks (keep names sorted for ease of use):
-AC_HEADER_DIRENT
-AC_HEADER_TIME
-
-AC_CHECK_HEADERS([ \
-execinfo.h \
-inttypes.h \
-libgen.h \
-mcheck.h \
-netinet/in.h \
-siginfo.h \
-stdint.h \
-strings.h \
-sys/types.h \
-unistd.h \
-])
-
 AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
@@ -249,25 +257,10 @@ openat \
 strlcpy \
 ])
 
-# wchar_t
-AC_CHECK_SIZEOF([wchar_t])
-EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
-AC_SUBST([EINA_SIZEOF_WCHAR_T])
-AC_CHECK_TYPES([siginfo_t], [], [],
-   [[
-#include <signal.h>
-#if HAVE_SIGINFO_H
-# include <siginfo.h>
-#endif
-   ]])
+AC_FUNC_ALLOCA
 
-# struct dirent
 
-AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
-   [[
-#include <dirent.h>
-   ]])
-
+######################  EFL  ######################
 
 
 #### Evil
@@ -463,6 +456,13 @@ fi
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 ## Tests
+
+prefer_assert="no"
+case "$build_profile" in
+   dev|debug)
+     prefer_assert="yes"
+     ;;
+esac
 
 EFL_CHECK_TESTS(EINA)
 
