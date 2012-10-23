@@ -656,7 +656,7 @@ fi
 
 # Eina library
 
-requirements_pc_eet="eina >= 1.7.99 ${requirements_pc_eet}"
+requirements_pc_eet="eina >= ${PACKAGE_VERSION} ${requirements_pc_eet}"
 
 PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
 
@@ -719,7 +719,7 @@ AC_MSG_NOTICE([Eo checks])
 
 # Eina library
 
-requirements_pc_eo="eina >= 1.7.99"
+requirements_pc_eo="eina >= ${PACKAGE_VERSION}"
 
 AC_ARG_VAR([EO_CFLAGS], [preprocessor flags for Eo])
 AC_SUBST([EO_CFLAGS])
