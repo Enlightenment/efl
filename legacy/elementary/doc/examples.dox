@@ -5202,8 +5202,8 @@
  * @page tutorial_notify Notify example
  * @dontinclude notify_example_01.c
  *
- * In this example we will have 3 notifys in 3 different positions. The first of
- * which will dissapear after 5 seconds or when a click outside it occurs, the
+ * In this example we will have 3 notifies in 3 different positions. The first
+ * will dissappear after 5 seconds or when a outside clickking occurs, the
  * second and third will not disappear and differ from each other only in
  * position.
  *
@@ -5217,7 +5217,7 @@
  * setting its timeout(to autohide it):
  * @until pack_end
  *
- * To have the notify dissapear when a click outside its area occur we have to
+ * To have the notify dissappear when a click outside its area occur we have to
  * listen to its "block,clicked" signal:
  * @until smart_callback
  *
