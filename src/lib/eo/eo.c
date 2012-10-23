@@ -749,7 +749,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
 
              if (EINA_UNLIKELY(!op_desc || (itr->op == EO_NOOP)))
                {
-                  ERR("Setting implementation for non-existent op %x for class '%s'. Func index: %d", itr->op, klass->desc->name, itr - func_descs);
+                  ERR("Setting implementation for non-existent op %x for class '%s'. Func index: %lu", itr->op, klass->desc->name, (unsigned long) (itr - func_descs));
                }
              else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
                {
@@ -757,12 +757,12 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else
                {
-                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %d",
+                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu",
                         itr->op_type,
                         (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
                         klass->desc->name,
                         (op_desc) ? op_desc->name : NULL,
-                        itr - func_descs);
+                        (unsigned long) (itr - func_descs));
                }
           }
      }
@@ -822,11 +822,11 @@ _eo_class_check_op_descs(const Eo_Class *klass)
           {
              if (itr->name)
                {
-                  ERR("Wrong order in Ops description for class '%s'. Expected %x and got %x", desc->name, i, itr->sub_op);
+                  ERR("Wrong order in Ops description for class '%s'. Expected %lx and got %lx", desc->name, (unsigned long) i, (unsigned long) itr->sub_op);
                }
              else
                {
-                  ERR("Found too few Ops description for class '%s'. Expected %x descriptions, but found %x.", desc->name, desc->ops.count, i);
+                  ERR("Found too few Ops description for class '%s'. Expected %lx descriptions, but found %lx.", desc->name, (unsigned long) desc->ops.count, (unsigned long) i);
                }
              return EINA_FALSE;
           }
@@ -834,7 +834,7 @@ _eo_class_check_op_descs(const Eo_Class *klass)
 
    if (itr && itr->name)
      {
-        ERR("Found extra Ops description for class '%s'. Expected %d descriptions, but found more.", desc->name, desc->ops.count);
+        ERR("Found extra Ops description for class '%s'. Expected %lu descriptions, but found more.", desc->name, (unsigned long) desc->ops.count);
         return EINA_FALSE;
      }
 
