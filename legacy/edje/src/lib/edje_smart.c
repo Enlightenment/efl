@@ -53,7 +53,7 @@ _edje_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_event_freeze(tev);
 
-   ed->base->evas = evas_object_evas_get(obj);
+   ed->base->evas = tev;
    ed->base->clipper = evas_object_rectangle_add(ed->base->evas);
    evas_object_static_clip_set(ed->base->clipper, 1);
    evas_object_smart_member_add(ed->base->clipper, obj);
