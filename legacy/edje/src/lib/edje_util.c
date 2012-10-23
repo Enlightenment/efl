@@ -1753,7 +1753,7 @@ _part_text_unescaped_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Edje *ed = _pd;
    Edje_Real_Part *rp;
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
