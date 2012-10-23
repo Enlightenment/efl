@@ -527,11 +527,9 @@ _elm_toolbar_smart_event(Evas_Object *obj __UNUSED__,
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   // Key Down Event precess for toolbar.
+   //TODO: Key Down Event precess for toolbar
 
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static void
