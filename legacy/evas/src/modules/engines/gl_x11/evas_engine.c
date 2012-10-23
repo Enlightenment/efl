@@ -2176,7 +2176,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
          break;
      }
 
-   if ((im_old) &&
+   if ((im_old->im) &&
        ((int)im_old->im->cache_entry.w == w) &&
        ((int)im_old->im->cache_entry.h == h))
      return image;

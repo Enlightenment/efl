@@ -606,8 +606,18 @@ eng_image_size_set(void *data, void *image, int w, int h)
         im->h = h;
         return image;
      }
+   eng_window_use(re->win);
+   if ((im->tex) && (im->tex->pt->dyn.img))
+     {
+        evas_gl_common_texture_free(im->tex);
+        im->tex = NULL;
+        im->w = w;
+        im->h = h;
+        im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
+        return image;
+     }
    im_old = image;
-
+   
    switch (eng_image_colorspace_get(data, image))
      {
       case EVAS_COLORSPACE_YCBCR422P601_PL:
@@ -619,7 +629,9 @@ eng_image_size_set(void *data, void *image, int w, int h)
          break;
      }
 
-   if ((im_old) && (im_old->im->cache_entry.w == w) && (im_old->im->cache_entry.h == h))
+   if ((im_old->im) &&
+       ((int)im_old->im->cache_entry.w == w) &&
+       ((int)im_old->im->cache_entry.h == h))
      return image;
    if (im_old)
      {

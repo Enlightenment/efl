@@ -28,6 +28,7 @@ Fixes:
    * Fix font sizing issue with some rare sizes and fonts when rounding wrong.
    * Fix software line drawing c fallback code.
    * Fix the vertical line drawing on gl backened.
+   * Fix potential segfault in gl engine if image internal image is NULL.
 
 Removal:
    * No more support s3c6410.

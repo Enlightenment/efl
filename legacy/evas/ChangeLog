@@ -1114,3 +1114,8 @@
 2012-10-19  ChunEon Park (Hermet)
 
        * Added Proxy'source visibility set APIs
+
+2012-10-23  Carsten Haitzler (The Rasterman)
+
+       * Fix possible segfault in gl engine if image->im is null in
+       image size set.

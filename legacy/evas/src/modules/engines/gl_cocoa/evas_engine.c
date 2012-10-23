@@ -684,10 +684,19 @@ eng_image_size_set(void *data, void *image, int w, int h)
         return image;
      }
    im_old = image;
-   if ((eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P601_PL) ||
-       (eng_image_colorspace_get(data, image) == EVAS_COLORSPACE_YCBCR422P709_PL))
-     w &= ~0x1;
-   if ((im_old) &&
+
+   switch (eng_image_colorspace_get(data, image))
+     {
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        w &= ~0x1;
+        break;
+     }
+   
+   if ((im_old->im) &&
        ((int)im_old->im->cache_entry.w == w) &&
        ((int)im_old->im->cache_entry.h == h))
      return image;
