@@ -3723,6 +3723,7 @@ _item_move_after(Elm_Gen_Item *it,
 {
    if (!it) return;
    if (!after) return;
+   if (it == after) return;
 
    GL_IT(it)->wsd->items =
      eina_inlist_remove(GL_IT(it)->wsd->items, EINA_INLIST_GET(it));
@@ -3747,6 +3748,7 @@ _item_move_before(Elm_Gen_Item *it,
 {
    if (!it) return;
    if (!before) return;
+   if (it == before) return;
 
    GL_IT(it)->wsd->items =
      eina_inlist_remove(GL_IT(it)->wsd->items, EINA_INLIST_GET(it));
