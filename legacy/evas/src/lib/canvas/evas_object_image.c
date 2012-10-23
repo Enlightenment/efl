@@ -89,6 +89,7 @@ struct _Evas_Object_Image
    Eina_Bool         filled : 1;
    Eina_Bool         proxyrendering : 1;
    Eina_Bool         source_invisible : 1;
+   Eina_Bool         source_events: 1;
    Eina_Bool         preloading : 1;
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
@@ -541,7 +542,7 @@ evas_object_image_source_get(const Evas_Object *eo_obj)
 }
 
 static void
-_image_source_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+_image_source_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    const Evas_Object_Image *o = _pd;
    Evas_Object **source = va_arg(*list, Evas_Object **);
@@ -554,6 +555,52 @@ evas_object_image_source_unset(Evas_Object *eo_obj)
    Eina_Bool result = EINA_FALSE;
    eo_do(eo_obj, evas_obj_image_source_set(NULL, &result));
    return result;
+}
+
+EAPI void
+evas_object_image_source_events_set(Evas_Object *eo_obj, Eina_Bool source_events)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_obj, evas_obj_image_source_events_set(source_events));
+}
+
+static void
+_image_source_events_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object_Image *o = _pd;
+   Eina_Bool source_events = va_arg(*list, int);
+
+   source_events = !!source_events;
+   if (o->source_events == source_events) return;
+   o->source_events = source_events;
+   if (!o->cur.source) return;
+   if ((o->source_invisible) || (!source_events)) return;
+   //FIXME: Feed mouse events here.
+}
+
+EAPI Eina_Bool
+evas_object_image_source_events_get(const Evas_Object *eo_obj)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   Eina_Bool source_events;
+   eo_do((Eo*)eo_obj, evas_obj_image_source_events_get(&source_events));
+
+   return source_events;
+}
+
+static void
+_image_source_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object_Image *o = _pd;
+   Eina_Bool *source_events = va_arg(*list, Eina_Bool *);
+   if (!source_events) return;
+   *source_events = o->source_events;
 }
 
 EAPI void
@@ -583,6 +630,7 @@ _image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
                                              EINA_FALSE, EINA_TRUE);
    evas_object_change(o->cur.source, src_obj);
+   if ((!visible) || (!o->source_events)) return;
    //FIXME: Feed mouse events here.
 }
 
@@ -2619,8 +2667,10 @@ _proxy_unset(Evas_Object *proxy)
    if (!o->cur.source) return;
 
    Evas_Object_Protected_Data *cur_source = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *cur_proxy = eo_data_get(proxy, EVAS_OBJ_CLASS);
 
    cur_source->proxy.proxies = eina_list_remove(cur_source->proxy.proxies, proxy);
+   cur_proxy->proxy.is_proxy = EINA_FALSE;
 
    if (cur_source->proxy.source_invisible)
      {
@@ -2642,10 +2692,12 @@ static void
 _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 {
    Evas_Object_Protected_Data *src = eo_data_get(eo_src, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = eo_data_get(eo_proxy, MY_CLASS);
 
    evas_object_image_file_set(eo_proxy, NULL, NULL);
 
+   proxy->proxy.is_proxy = EINA_TRUE;
    o->cur.source = eo_src;
    o->load_error = EVAS_LOAD_ERROR_NONE;
 
@@ -4340,6 +4392,12 @@ evas_object_image_filled_resize_listener(void *data __UNUSED__, Evas *e __UNUSED
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }
 
+Evas_Object *
+_evas_object_image_source_get(Evas_Object *eo_obj)
+{
+   Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
+   return o->cur.source;
+}
 
 Eina_Bool
 _evas_object_image_preloading_get(const Evas_Object *eo_obj)
@@ -4489,6 +4547,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET), _image_animated_frame_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET), _image_source_visible_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), _image_source_visible_get),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET), _image_source_events_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET), _image_source_events_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -4562,6 +4622,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET, "Set the frame to current frame of an image object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET, "Set the source object visibility of a given image object being used as a proxy."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET, "Get the source object visibility of a given image object being used as a proxy."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET, "Set the events to be repeated to the source object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET, "Get the state of the source events."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

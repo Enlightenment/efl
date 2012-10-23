@@ -4,7 +4,7 @@
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
-                               int x, int y, int *no_rep);
+                               int x, int y, int *no_rep, Eina_Bool source);
 
 static void
 _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *x, Evas_Coord *y, Eina_Bool mouse_grabbed)
@@ -42,7 +42,7 @@ _evas_event_framespace_adjust(Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y)
 static Eina_List *
 _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                    const Eina_Inlist *list, Evas_Object *stop,
-                                   int x, int y, int *no_rep)
+                                   int x, int y, int *no_rep, Eina_Bool source)
 {
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
@@ -59,11 +59,14 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              *no_rep = 1;
              return in;
           }
-        if (evas_event_passes_through(eo_obj, obj)) continue;
-        if (evas_object_is_source_invisible(eo_obj, obj)) continue;
-        if ((obj->cur.visible) && (obj->delete_me == 0) &&
-            (!obj->clip.clipees) &&
-            (evas_object_clippers_is_visible(eo_obj, obj)))
+        if (!source)
+          {
+             if (evas_event_passes_through(eo_obj, obj)) continue;
+             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
+          }
+        if ((obj->delete_me == 0) &&
+            ((source) || ((obj->cur.visible) && (!obj->clip.clipees) &&
+             evas_object_clippers_is_visible(eo_obj, obj))))
           {
              if (obj->is_smart)
                {
@@ -89,7 +92,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                      stop,
                                      obj->cur.geometry.x + obj->cur.map->mx,
                                      obj->cur.geometry.y + obj->cur.map->my,
-                                     &norep);
+                                     &norep, source);
                               }
                          }
                     }
@@ -108,7 +111,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                             obj->cur.geometry.y + obj->cur.geometry.h >= y))
                          in = _evas_event_object_list_in_get
                             (eo_e, in, evas_object_smart_members_get_direct(eo_obj),
-                            stop, x, y, &norep);
+                            stop, x, y, &norep, source);
                     }
                   if (norep)
                     {
@@ -154,14 +157,61 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    return in;
 }
 
+static void
+_evas_object_source_event(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
+{
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object *src_eo = _evas_object_image_source_get(eo_obj);
+   Evas_Object_Protected_Data *src = eo_data_get(src_eo,
+                                                 EVAS_OBJ_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   //FIXME: consider coord transformation for map.
+   Evas_Coord w1 = obj->cur.geometry.w;
+   Evas_Coord h1 = obj->cur.geometry.h;
+   Evas_Coord w2 = src->cur.geometry.w;
+   Evas_Coord h2 = src->cur.geometry.h;
+   Evas_Coord tx = e->pointer.x - obj->cur.geometry.x;
+   Evas_Coord ty = e->pointer.y - obj->cur.geometry.y;
+   if (w1 != w2)
+     tx = (Evas_Coord) ((float)tx * ((float)w2 / (float)w1));
+   if (h1 != h2)
+     ty = (Evas_Coord) ((float)ty * ((float)w2 / (float)w1));
+   Evas_Coord x = src->cur.geometry.x + tx;
+   Evas_Coord y = src->cur.geometry.y + ty;
+   if (src->is_smart)
+     {
+        Eina_List *in = NULL, *l = NULL;
+        Evas_Object *child_eo;
+        Evas_Object_Protected_Data *child;
+        int no_rep = 0;
+        //Optimize Here: Keep this list in proxy image for up and move 
+        in = _evas_event_object_list_raw_in_get(eo_e, in,
+                                                 evas_object_smart_members_get_direct(src_eo), NULL, x, y, &no_rep, EINA_TRUE);
+        EINA_LIST_FOREACH(in, l, child_eo)
+          {
+             if (obj->delete_me || src->delete_me) return;
+             child = eo_data_get(child_eo, EVAS_OBJ_CLASS);
+             if (child->delete_me) continue;
+             //FIXME: trasform the ev coords in src space also.
+             evas_object_event_callback_call(child_eo, child,
+                                             type,
+                                             ev,
+                                             event_id);
+          }
+        eina_list_free(in);
+     }
+   else
+     evas_object_event_callback_call(src_eo, src, type, ev, event_id);
+}
+
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
-                               int x, int y, int *no_rep)
+                               int x, int y, int *no_rep, Eina_Bool source)
 {
    if (!list) return NULL;
    return _evas_event_object_list_raw_in_get(eo_e, in, list->last, stop, x, y,
-                                             no_rep);
+                                             no_rep, source);
 }
 
 Eina_List *
@@ -177,7 +227,7 @@ evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
         int no_rep = 0;
         in = _evas_event_object_list_in_get(eo_e, in,
                                             EINA_INLIST_GET(lay->objects),
-                                            stop, x, y, &no_rep);
+                                            stop, x, y, &no_rep, EINA_FALSE);
         if (no_rep) return in;
      }
    return in;
@@ -411,7 +461,18 @@ _canvas_event_feed_mouse_down(Eo *eo_e, void *_pd, va_list *list)
         _evas_event_havemap_adjust(eo_obj, obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
 
         if (!e->is_frozen)
-          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_DOWN, &ev, event_id);
+          {
+             evas_object_event_callback_call(eo_obj, obj,
+                                             EVAS_CALLBACK_MOUSE_DOWN, &ev,
+                                             event_id);
+             //pass event to source
+             if (obj->proxy.is_proxy)
+               {
+                  printf("MOUSE DOWN! %d\n", EVAS_CALLBACK_MOUSE_DOWN);
+               _evas_object_source_event(eo_obj, eo_e, EVAS_CALLBACK_MOUSE_DOWN,
+                                        &ev, event_id);
+               }
+          }
         if (e->delete_me) break;
         if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
           break;
@@ -469,7 +530,16 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
                {
                   obj->mouse_in = 0;
                   if (!e->is_frozen)
-                     evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                    {
+                       evas_object_event_callback_call(eo_obj, obj,
+                                                       EVAS_CALLBACK_MOUSE_OUT,
+                                                       &ev, event_id);
+                       //pass event to source
+                       if (obj->proxy.is_proxy)
+                         _evas_object_source_event(eo_obj, eo_e,
+                                                   EVAS_CALLBACK_MOUSE_OUT,
+                                                   &ev, event_id);
+                    }
                }
           }
         if (e->delete_me) break;
@@ -509,7 +579,15 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
                     {
                        obj_itr->mouse_in = 1;
                        if (!e->is_frozen)
-                          evas_object_event_callback_call(eo_obj_itr, obj_itr, EVAS_CALLBACK_MOUSE_IN, &ev_in, event_id);
+                         {
+                            evas_object_event_callback_call(eo_obj_itr, obj_itr,
+                                                            EVAS_CALLBACK_MOUSE_IN, &ev_in, event_id);
+                            //pass event to source
+                            if (obj_itr->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj_itr, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_IN,
+                                                        &ev, event_id);
+                         }
                     }
                }
              if (e->delete_me) break;
@@ -613,7 +691,16 @@ _canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
                {
                   if ((!e->is_frozen) &&
                       (!evas_event_freezes_through(eo_obj, obj)))
-                      evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_UP, &ev, event_id);
+                    {
+                       evas_object_event_callback_call(eo_obj, obj,
+                                                       EVAS_CALLBACK_MOUSE_UP,
+                                                       &ev, event_id);
+                       //pass event to source
+                       if (obj->proxy.is_proxy)
+                         _evas_object_source_event(eo_obj, eo_e,
+                                                   EVAS_CALLBACK_MOUSE_UP,
+                                                   &ev, event_id);
+                    }
                }
              if (e->delete_me) break;
              if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
@@ -730,7 +817,16 @@ _canvas_event_feed_mouse_wheel(Eo *eo_e, void *_pd, va_list *list)
         _evas_event_framespace_adjust(eo_obj, &ev.canvas.x, &ev.canvas.y);
         _evas_event_havemap_adjust(eo_obj, obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
         if ((!e->is_frozen) && !evas_event_freezes_through(eo_obj, obj))
-          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev, event_id);
+          {
+             evas_object_event_callback_call(eo_obj, obj,
+                                             EVAS_CALLBACK_MOUSE_WHEEL, &ev,
+                                             event_id);
+             //pass event to source
+             if (obj->proxy.is_proxy)
+               _evas_object_source_event(eo_obj, eo_e,
+                                         EVAS_CALLBACK_MOUSE_WHEEL, &ev,
+                                         event_id);
+          }
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
@@ -832,7 +928,14 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                       (!obj->clip.clipees))
                     {
                        if ((px != x) || (py != y))
-                         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
+                         }
                     }
                   else
                     outs = eina_list_append(outs, eo_obj);
@@ -889,7 +992,15 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                             if (!obj->delete_me)
                               {
                                  if (!e->is_frozen)
-                                    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                                   {
+                                      evas_object_event_callback_call(eo_obj,
+                                                                      obj,
+                                                                      EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                                      //pass event to source
+                                      if (obj->proxy.is_proxy)
+                                        _evas_object_source_event(eo_obj, eo_e,
+                                                                  EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                                   }
                               }
                          }
                     }
@@ -981,6 +1092,11 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                        ev.cur.canvas.y = e->pointer.y;
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
+                       //pass event to source
+                       if (obj->proxy.is_proxy)
+                         _evas_object_source_event(eo_obj, eo_e,
+                                                   EVAS_CALLBACK_MOUSE_MOVE,
+                                                   &ev, event_id);
                     }
                }
              /* otherwise it has left the object */
@@ -994,7 +1110,15 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                        _evas_event_framespace_adjust(eo_obj, &ev2.canvas.x, &ev2.canvas.y);
                        _evas_event_havemap_adjust(eo_obj, obj, &ev2.canvas.x, &ev2.canvas.y, obj->mouse_grabbed);
                        if (!e->is_frozen)
-                          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_OUT,
+                                                        &ev2, event_id);
+                         }
                     }
                }
              if (e->delete_me) break;
@@ -1020,7 +1144,16 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                     {
                        obj->mouse_in = 1;
                        if (!e->is_frozen)
-                         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_IN,
+                                                        &ev3, event_id2);
+
+                         }
                     }
                }
              if (e->delete_me) break;
@@ -1118,7 +1251,7 @@ nogrep:
              ins = _evas_event_object_list_raw_in_get(eo_e, NULL,
                                                    EINA_INLIST_GET(below_obj), NULL,
                                                    e->pointer.x, e->pointer.y,
-                                                   &norep);
+                                                   &norep, EINA_FALSE);
           }
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
@@ -1156,6 +1289,11 @@ nogrep:
                        _evas_event_framespace_adjust(eo_obj, &ev.cur.canvas.x, &ev.cur.canvas.y);
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
+                       //pass event to source
+                       if (obj->proxy.is_proxy)
+                         _evas_object_source_event(eo_obj, eo_e,
+                                                   EVAS_CALLBACK_MOUSE_MOVE,
+                                                   &ev, event_id);
                     }
                }
              /* otherwise it has left the object */
@@ -1169,7 +1307,15 @@ nogrep:
                        _evas_event_framespace_adjust(eo_obj, &ev2.canvas.x, &ev2.canvas.y);
                        _evas_event_havemap_adjust(eo_obj, obj, &ev2.canvas.x, &ev2.canvas.y, obj->mouse_grabbed);
                        if (!e->is_frozen)
-                          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_OUT,
+                                                        &ev2, event_id);
+                         }
                     }
                }
              if (e->delete_me) break;
@@ -1195,7 +1341,15 @@ nogrep:
                     {
                        obj->mouse_in = 1;
                        if (!e->is_frozen)
-                         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_IN,
+                                                        &ev3, event_id2);
+                         }
                     }
                }
              if (e->delete_me) break;
@@ -1273,7 +1427,16 @@ _canvas_event_feed_mouse_in(Eo *eo_e, void *_pd, va_list *list)
                {
                   obj->mouse_in = 1;
                   if (!e->is_frozen)
-                     evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, &ev, event_id);
+                    {
+                     evas_object_event_callback_call(eo_obj, obj,
+                                                     EVAS_CALLBACK_MOUSE_IN,
+                                                     &ev, event_id);
+                     //pass event to source
+                     if (obj->proxy.is_proxy)
+                       _evas_object_source_event(eo_obj, eo_e,
+                                                 EVAS_CALLBACK_MOUSE_IN,
+                                                 &ev, event_id);
+                    }
                }
           }
         if (e->delete_me) break;
@@ -1350,7 +1513,15 @@ _canvas_event_feed_mouse_out(Eo *eo_e, void *_pd, va_list *list)
                   if (!obj->delete_me)
                     {
                        if (!e->is_frozen)
-                         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                         {
+                            evas_object_event_callback_call(eo_obj, obj,
+                                                            EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
+                            //pass event to source
+                            if (obj->proxy.is_proxy)
+                              _evas_object_source_event(eo_obj, eo_e,
+                                                        EVAS_CALLBACK_MOUSE_OUT,
+                                                        &ev, event_id);
+                         }
                     }
                   obj->mouse_grabbed = 0;
                }
@@ -1465,7 +1636,15 @@ _canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
         if (y != ev.canvas.y)
           ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
         if (!e->is_frozen)
-          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_DOWN, &ev, event_id);
+          {
+             evas_object_event_callback_call(eo_obj, obj,
+                                             EVAS_CALLBACK_MULTI_DOWN, &ev,
+                                             event_id);
+             //pass event to source
+             if (obj->proxy.is_proxy)
+               _evas_object_source_event(eo_obj, eo_e, EVAS_CALLBACK_MULTI_DOWN,
+                                         &ev, event_id);
+          }
         if (e->delete_me) break;
      }
    if (copy) eina_list_free(copy);
@@ -1568,7 +1747,15 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
              e->pointer.mouse_grabbed--;
           }
         if (!e->is_frozen)
-          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_UP, &ev, event_id);
+          {
+             evas_object_event_callback_call(eo_obj, obj,
+                                             EVAS_CALLBACK_MULTI_UP, &ev,
+                                             event_id);
+             //pass event to source
+             if (obj->proxy.is_proxy)
+               _evas_object_source_event(eo_obj, eo_e, EVAS_CALLBACK_MULTI_UP,
+                                         &ev, event_id);
+          }
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);
@@ -1675,7 +1862,12 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                     ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
-                    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
+                  evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
+                  //pass event to source
+                  if (obj->proxy.is_proxy)
+                    _evas_object_source_event(eo_obj, eo_e,
+                                              EVAS_CALLBACK_MULTI_MOVE, &ev,
+                                              event_id);
                }
              if (e->delete_me) break;
           }
@@ -1747,6 +1939,11 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
                     evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
+                  //pass event to source
+                  if (obj->proxy.is_proxy)
+                    _evas_object_source_event(eo_obj, eo_e,
+                                              EVAS_CALLBACK_MULTI_MOVE, &ev,
+                                              event_id);
                }
              if (e->delete_me) break;
           }
@@ -1841,6 +2038,11 @@ _canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
                          evas_object_event_callback_call(g->object, object_obj,
                                                          EVAS_CALLBACK_KEY_DOWN,
                                                          &ev, event_id);
+                       //pass event to source
+                       if (object_obj->proxy.is_proxy)
+                         _evas_object_source_event(g->object, eo_e,
+                                                   EVAS_CALLBACK_KEY_DOWN,
+                                                   &ev, event_id);
                        if (g->exclusive) exclusive = EINA_TRUE;
                     }
                }
@@ -1870,8 +2072,17 @@ _canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
      {
         Evas_Object_Protected_Data *focused_obj = eo_data_get(e->focused, EVAS_OBJ_CLASS);
         if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
-          evas_object_event_callback_call(e->focused, focused_obj, EVAS_CALLBACK_KEY_DOWN,
-                                          &ev, event_id);
+          {
+             evas_object_event_callback_call(e->focused, focused_obj,
+                                             EVAS_CALLBACK_KEY_DOWN,
+                                             &ev, event_id);
+             //pass event to source
+             if (focused_obj->proxy.is_proxy)
+               _evas_object_source_event(e->focused, eo_e,
+                                         EVAS_CALLBACK_KEY_DOWN,
+                                         &ev, event_id);
+
+          }
      }
    _evas_post_event_callback_call(eo_e, e);
    if (ev.dev) _evas_device_unref(ev.dev);
@@ -1946,8 +2157,16 @@ _canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
                   Evas_Object_Protected_Data *object_obj = eo_data_get(g->object, EVAS_OBJ_CLASS);
                   if (!e->is_frozen &&
                         !evas_event_freezes_through(g->object, object_obj))
-                    evas_object_event_callback_call(g->object, object_obj,
-                                                    EVAS_CALLBACK_KEY_UP, &ev, event_id);
+                    {
+                       evas_object_event_callback_call(g->object, object_obj,
+                                                       EVAS_CALLBACK_KEY_UP,
+                                                       &ev, event_id);
+                       //pass event to source
+                       if (object_obj->proxy.is_proxy)
+                         _evas_object_source_event(g->object, eo_e,
+                                                   EVAS_CALLBACK_KEY_UP,
+                                                   &ev, event_id);
+                    }
                   if (g->exclusive) exclusive = EINA_TRUE;
                }
              if (e->delete_me) break;
@@ -1978,8 +2197,16 @@ _canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
      {
         Evas_Object_Protected_Data *focused_obj = eo_data_get(e->focused, EVAS_OBJ_CLASS);
         if (!e->is_frozen && !evas_event_freezes_through(e->focused, focused_obj))
-          evas_object_event_callback_call(e->focused, focused_obj, EVAS_CALLBACK_KEY_UP,
-                                          &ev, event_id);
+          {
+             evas_object_event_callback_call(e->focused, focused_obj,
+                                             EVAS_CALLBACK_KEY_UP,
+                                             &ev, event_id);
+             //pass event to source
+             if (focused_obj->proxy.is_proxy)
+               _evas_object_source_event(e->focused, eo_e,
+                                         EVAS_CALLBACK_KEY_UP,
+                                         &ev, event_id);
+          }
      }
    _evas_post_event_callback_call(eo_e, e);
    if (ev.dev) _evas_device_unref(ev.dev);
@@ -2024,7 +2251,14 @@ _canvas_event_feed_hold(Eo *eo_e, void *_pd, va_list *list)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
         if ((!e->is_frozen) && !evas_event_freezes_through(eo_obj, obj))
-          evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD, &ev, event_id);
+          {
+             evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD,
+                                             &ev, event_id);
+             //pass event to source
+             if (obj->proxy.is_proxy)
+               _evas_object_source_event(eo_obj, eo_e, EVAS_CALLBACK_HOLD, &ev,
+                                         event_id);
+          }
         if (e->delete_me) break;
      }
    if (copy) copy = eina_list_free(copy);

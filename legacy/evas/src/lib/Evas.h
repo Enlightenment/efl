@@ -9160,6 +9160,44 @@ EAPI void                          evas_object_image_source_visible_set(Evas_Obj
 EAPI Eina_Bool                     evas_object_image_source_visible_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
+ * Set whether an Evas object is to source events.
+ *
+ * @param obj Proxy (image) object.
+ * @param source whether @p obj is to pass events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
+ *
+ * Set whether an Evas object is to repeat events to source.
+ *
+ * If @p source is @c EINA_TRUE, it will make events on @p obj to also be
+ * repeated for the source object (see evas_object_image_source_set()). Even the
+ * @p obj and source geometries are different, the event position will be
+ * transformed to the source object's space.
+ *
+ * If @p source is @c EINA_FALSE, events occurring on @p obj will be
+ * processed only on it.
+ *
+ * @see evas_object_image_source_get()
+ * @see evas_object_image_source_visible_set()
+ * @see evas_object_source_events_set()
+ * @since 1.8
+ */
+EAPI void evas_object_image_source_events_set(Evas_Object *obj, Eina_Bool source) EINA_ARG_NONNULL(1);
+
+/**
+ * Determine whether an object is set to source events.
+ *
+ * @param obj Proxy (image) object.
+ * @return source whether @p obj is set to source events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
+ *
+ * @see evas_object_image_source_set()
+ * @see evas_object_image_source_visible_set()
+ * @see evas_object_source_events_set()
+ * @since 1.8
+ */
+EAPI Eina_Bool evas_object_image_source_events_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
  * Check if a file extension may be supported by @ref Evas_Object_Image.
  *
  * @param file The file to check
@@ -18047,6 +18085,8 @@ enum
    EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET,
    EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET,
    EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET,
    EVAS_OBJ_IMAGE_SUB_ID_LAST
 };
 
@@ -18149,6 +18189,28 @@ enum
  * @see evas_obj_image_source_visible_set
  */
 #define evas_obj_image_source_visible_get(visible) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), EO_TYPECHECK(Eina_Bool *, visible)
+
+/**
+ * @def evas_obj_image_source_events_set
+ *
+ * Set events to be repeated to the source object.
+ *
+ * @param[in] source in
+ *
+ * @see evas_object_image_source_events_get
+ */
+#define evas_obj_image_source_events_set(source) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET), EO_TYPECHECK(Eina_Bool, source)
+
+/**
+ * @def evas_obj_image_source_events_get
+ *
+ * Get the state of the source event.
+ *
+ * @param[out] source out
+ *
+ * @see evas_obj_image_source_event_set
+ */
+#define evas_obj_image_source_events_get(source) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, source)
 
 /**
  * @def evas_obj_image_border_set
