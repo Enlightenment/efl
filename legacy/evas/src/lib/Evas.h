@@ -2460,6 +2460,7 @@ enum
 
 /**
  * @def evas_canvas_output_method_set
+ * @since 1.8
  *
  * Sets the output engine for the given evas.
  *
@@ -2471,6 +2472,7 @@ enum
 
 /**
  * @def evas_canvas_output_method_get
+ * @since 1.8
  *
  * Retrieves the number of the output engine used for the given evas.
  *
@@ -2482,6 +2484,7 @@ enum
 
 /**
  * @def evas_canvas_engine_info_get
+ * @since 1.8
  *
  * Retrieves the current render engine info struct from the given evas.
  *
@@ -2493,6 +2496,7 @@ enum
 
 /**
  * @def evas_canvas_engine_info_set
+ * @since 1.8
  *
  * Applies the engine settings for the given evas from the given @c
  * Evas_Engine_Info structure.
@@ -2506,6 +2510,7 @@ enum
 
 /**
  * @def evas_canvas_output_size_set
+ * @since 1.8
  *
  * Sets the output size of the render engine of the given evas.
  *
@@ -2518,6 +2523,7 @@ enum
 
 /**
  * @def evas_canvas_output_size_get
+ * @since 1.8
  *
  * Retrieve the output size of the render engine of the given evas.
  *
@@ -2530,6 +2536,7 @@ enum
 
 /**
  * @def evas_canvas_output_viewport_set
+ * @since 1.8
  *
  * Sets the output viewport of the given evas in evas units.
  *
@@ -2544,6 +2551,7 @@ enum
 
 /**
  * @def evas_canvas_output_viewport_get
+ * @since 1.8
  *
  * Get the render engine's output viewport co-ordinates in canvas units.
  *
@@ -2558,6 +2566,7 @@ enum
 
 /**
  * @def evas_canvas_output_framespace_set
+ * @since 1.8
  *
  * Sets the output framespace size of the render engine of the given evas.
  *
@@ -2572,6 +2581,7 @@ enum
 
 /**
  * @def evas_canvas_output_framespace_get
+ * @since 1.8
  *
  * Get the render engine's output framespace co-ordinates in canvas units.
  *
@@ -2586,6 +2596,7 @@ enum
 
 /**
  * @def evas_canvas_coord_screen_x_to_world
+ * @since 1.8
  *
  * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
  *
@@ -2598,6 +2609,7 @@ enum
 
 /**
  * @def evas_canvas_coord_screen_y_to_world
+ * @since 1.8
  *
  * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
  *
@@ -2610,6 +2622,7 @@ enum
 
 /**
  * @def evas_canvas_coord_world_x_to_screen
+ * @since 1.8
  *
  * Convert/scale a canvas co-ordinate into output screen co-ordinates
  *
@@ -2622,6 +2635,7 @@ enum
 
 /**
  * @def evas_canvas_coord_world_y_to_screen
+ * @since 1.8
  *
  * Convert/scale a canvas co-ordinate into output screen co-ordinates
  *
@@ -2634,6 +2648,7 @@ enum
 
 /**
  * @def evas_canvas_pointer_output_xy_get
+ * @since 1.8
  *
  * This function returns the current known pointer co-ordinates
  *
@@ -2646,6 +2661,7 @@ enum
 
 /**
  * @def evas_canvas_pointer_canvas_xy_get
+ * @since 1.8
  *
  * This function returns the current known pointer co-ordinates
  *
@@ -2658,6 +2674,7 @@ enum
 
 /**
  * @def evas_canvas_pointer_button_down_mask_get
+ * @since 1.8
  *
  * Returns a bitmask with the mouse buttons currently pressed, set to 1
  *
@@ -2669,6 +2686,7 @@ enum
 
 /**
  * @def evas_canvas_pointer_inside_get
+ * @since 1.8
  *
  * Returns whether the mouse pointer is logically inside the canvas
  *
@@ -2680,6 +2698,7 @@ enum
 
 /**
  * @def evas_canvas_data_attach_set
+ * @since 1.8
  *
  * Attaches a specific pointer to the evas for fetching later
  *
@@ -2691,6 +2710,7 @@ enum
 
 /**
  * @def evas_canvas_data_attach_get
+ * @since 1.8
  *
  * Returns the pointer attached by evas_data_attach_set()
  *
@@ -2702,6 +2722,7 @@ enum
 
 /**
  * @def evas_canvas_focus_in
+ * @since 1.8
  *
  * Inform to the evas that it got the focus.
  *
@@ -2712,6 +2733,7 @@ enum
 
 /**
  * @def evas_canvas_focus_out
+ * @since 1.8
  *
  * Inform to the evas that it lost the focus.
  *
@@ -2722,6 +2744,7 @@ enum
 
 /**
  * @def evas_canvas_focus_state_get
+ * @since 1.8
  *
  * Get the focus state known by the given evas
  *
@@ -2733,6 +2756,7 @@ enum
 
 /**
  * @def evas_canvas_nochange_push
+ * @since 1.8
  *
  * Push the nochange flag up 1
  *
@@ -2743,6 +2767,7 @@ enum
 
 /**
  * @def evas_canvas_nochange_pop
+ * @since 1.8
  *
  * Pop the nochange flag down 1
  *
@@ -2754,6 +2779,7 @@ enum
 
 /**
  * @def evas_canvas_event_default_flags_set
+ * @since 1.8
  *
  * Set the default set of flags an event begins with
  *
@@ -2765,6 +2791,7 @@ enum
 
 /**
  * @def evas_canvas_event_default_flags_get
+ * @since 1.8
  *
  * Get the defaulty set of flags an event begins with
  *
@@ -2776,6 +2803,7 @@ enum
 
 /**
  * @def evas_canvas_event_freeze
+ * @since 1.8
  *
  * Freeze all input events processing.
  *
@@ -2786,6 +2814,7 @@ enum
 
 /**
  * @def evas_canvas_event_thaw
+ * @since 1.8
  *
  * Thaw a canvas out after freezing (for input events).
  *
@@ -2796,6 +2825,7 @@ enum
 
 /**
  * @def evas_canvas_event_freeze_get
+ * @since 1.8
  *
  * Return the freeze count on input events of a given canvas.
  *
@@ -2807,6 +2837,7 @@ enum
 
 /**
  * @def evas_canvas_event_thaw_eval
+ * @since 1.8
  *
  * After thaw of a canvas, re-evaluate the state of objects and call callbacks
  *
@@ -2817,6 +2848,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_down
+ * @since 1.8
  *
  * Mouse down event feed.
  *
@@ -2831,6 +2863,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_up
+ * @since 1.8
  *
  * Mouse up event feed.
  *
@@ -2845,6 +2878,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_cancel
+ * @since 1.8
  *
  * Mouse cancel event feed.
  *
@@ -2857,6 +2891,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_wheel
+ * @since 1.8
  *
  * Mouse wheel event feed.
  *
@@ -2871,6 +2906,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_move
+ * @since 1.8
  *
  * Mouse move event feed.
  *
@@ -2885,6 +2921,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_in
+ * @since 1.8
  *
  * Mouse in event feed.
  *
@@ -2897,6 +2934,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_mouse_out
+ * @since 1.8
  *
  * Mouse out event feed.
  *
@@ -2912,6 +2950,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_key_down
+ * @since 1.8
  *
  * Key down event feed
  *
@@ -2928,6 +2967,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_key_up
+ * @since 1.8
  *
  * Key up event feed
  *
@@ -2944,6 +2984,7 @@ enum
 
 /**
  * @def evas_canvas_event_feed_hold
+ * @since 1.8
  *
  * Hold event feed
  *
@@ -2957,6 +2998,7 @@ enum
 
 /**
  * @def evas_canvas_event_refeed_event
+ * @since 1.8
  *
  * Re feed event.
  *
@@ -2969,6 +3011,7 @@ enum
 
 /**
  * @def evas_canvas_event_down_count_get
+ * @since 1.8
  *
  * Get the number of mouse or multi presses currently active
  *
@@ -2980,6 +3023,7 @@ enum
 
 /**
  * @def evas_canvas_focus_get
+ * @since 1.8
  *
  * Retrieve the object that currently has focus.
  *
@@ -2992,6 +3036,7 @@ enum
 
 /**
  * @def evas_canvas_font_path_clear
+ * @since 1.8
  *
  * Removes all font paths loaded into memory for the given evas.
  *
@@ -3002,6 +3047,7 @@ enum
 
 /**
  * @def evas_canvas_font_path_append
+ * @since 1.8
  *
  * Appends a font path to the list of font paths used by the given evas.
  *
@@ -3013,6 +3059,7 @@ enum
 
 /**
  * @def evas_canvas_font_path_prepend
+ * @since 1.8
  *
  * Prepends a font path to the list of font paths used by the given evas.
  *
@@ -3024,6 +3071,7 @@ enum
 
 /**
  * @def evas_canvas_font_path_list
+ * @since 1.8
  *
  * Retrieves the list of font paths used by the given evas.
  *
@@ -3035,6 +3083,7 @@ enum
 
 /**
  * @def evas_canvas_font_hinting_set
+ * @since 1.8
  *
  * Changes the font hinting for the given evas.
  *
@@ -3046,6 +3095,7 @@ enum
 
 /**
  * @def evas_canvas_font_hinting_get
+ * @since 1.8
  *
  * Retrieves the font hinting used by the given evas.
  *
@@ -3057,6 +3107,7 @@ enum
 
 /**
  * @def evas_canvas_font_hinting_can_hint
+ * @since 1.8
  *
  * Checks if the font hinting is supported by the given evas.
  *
@@ -3069,6 +3120,7 @@ enum
 
 /**
  * @def evas_canvas_font_cache_flush
+ * @since 1.8
  *
  * Force the given evas and associated engine to flush its font cache.
  *
@@ -3079,6 +3131,7 @@ enum
 
 /**
  * @def evas_canvas_font_cache_set
+ * @since 1.8
  *
  * Changes the size of font cache of the given evas.
  *
@@ -3090,6 +3143,7 @@ enum
 
 /**
  * @def evas_canvas_font_cache_get
+ * @since 1.8
  *
  * Changes the size of font cache of the given evas.
  *
@@ -3101,6 +3155,7 @@ enum
 
 /**
  * @def evas_canvas_font_available_list
+ * @since 1.8
  *
  * List of available font descriptions known or found by this evas.
  *
@@ -3113,6 +3168,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_get
+ * @since 1.8
  *
  * Returns a handle to the list of modifier keys registered in the
  *
@@ -3124,6 +3180,7 @@ enum
 
 /**
  * @def evas_canvas_key_lock_get
+ * @since 1.8
  *
  * Returns a handle to the list of lock keys registered in the canvas
  *
@@ -3135,6 +3192,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_add
+ * @since 1.8
  *
  * Adds the keyname key to the current list of modifier keys.
  *
@@ -3146,6 +3204,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_del
+ * @since 1.8
  *
  * Removes the keyname key from the current list of modifier keys
  *
@@ -3157,6 +3216,7 @@ enum
 
 /**
  * @def evas_canvas_key_lock_add
+ * @since 1.8
  *
  * Adds the keyname key to the current list of lock keys.
  *
@@ -3168,6 +3228,7 @@ enum
 
 /**
  * @def evas_canvas_key_lock_del
+ * @since 1.8
  *
  * Removes the keyname key from the current list of lock keys on
  *
@@ -3179,6 +3240,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_on
+ * @since 1.8
  *
  * Enables or turns on programmatically the modifier key with name @p keyname.
  *
@@ -3190,6 +3252,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_off
+ * @since 1.8
  *
  * Disables or turns off programmatically the modifier key with name @p keyname
  *
@@ -3201,6 +3264,7 @@ enum
 
 /**
  * @def evas_canvas_key_lock_on
+ * @since 1.8
  *
  * Enables or turns on programmatically the lock key with name @p keyname
  *
@@ -3212,6 +3276,7 @@ enum
 
 /**
  * @def evas_canvas_key_lock_off
+ * @since 1.8
  *
  * Disables or turns off programmatically the lock key with name @p keyname
  *
@@ -3223,6 +3288,7 @@ enum
 
 /**
  * @def evas_canvas_key_modifier_mask_get
+ * @since 1.8
  *
  * Creates a bit mask from the keyname @b modifier key.
  *
@@ -3235,6 +3301,7 @@ enum
 
 /**
  * @def evas_canvas_damage_rectangle_add
+ * @since 1.8
  *
  * Add a damage rectangle.
  *
@@ -3249,6 +3316,7 @@ enum
 
 /**
  * @def evas_canvas_obscured_rectangle_add
+ * @since 1.8
  *
  * Add an "obscured region" to an Evas canvas.
  *
@@ -3263,6 +3331,7 @@ enum
 
 /**
  * @def evas_canvas_obscured_clear
+ * @since 1.8
  *
  * Remove all "obscured regions" from an Evas canvas.
  *
@@ -3273,6 +3342,7 @@ enum
 
 /**
  * @def evas_canvas_render_updates
+ * @since 1.8
  *
  * Force immediate renderization of the given Evas canvas.
  *
@@ -3284,6 +3354,7 @@ enum
 
 /**
  * @def evas_canvas_render
+ * @since 1.8
  *
  * Force renderization of the given canvas.
  *
@@ -3294,6 +3365,7 @@ enum
 
 /**
  * @def evas_canvas_norender
+ * @since 1.8
  *
  * Update the canvas internal objects but not triggering immediate
  * renderization.
@@ -3305,6 +3377,7 @@ enum
 
 /**
  * @def evas_canvas_render_idle_flush
+ * @since 1.8
  *
  * Make the canvas discard internally cached data used for rendering.
  *
@@ -3316,6 +3389,7 @@ enum
 
 /**
  * @def evas_canvas_render_dump
+ * @since 1.8
  *
  * Make the canvas discard as much data as possible used by the engine at
  *
@@ -3327,6 +3401,7 @@ enum
 
 /**
  * @def evas_canvas_object_bottom_get
+ * @since 1.8
  *
  * Get the lowest (stacked) Evas object on the canvas e.
  *
@@ -3338,6 +3413,7 @@ enum
 
 /**
  * @def evas_canvas_object_top_get
+ * @since 1.8
  *
  * Get the highest (stacked) Evas object on the canvas e.
  *
@@ -3350,6 +3426,7 @@ enum
 
 /**
  * @def evas_canvas_touch_point_list_count
+ * @since 1.8
  *
  * Get the number of touched point in the evas.
  *
@@ -3361,6 +3438,7 @@ enum
 
 /**
  * @def evas_canvas_touch_point_list_nth_xy_get
+ * @since 1.8
  *
  * This function returns the nth touch point's co-ordinates.
  *
@@ -3374,6 +3452,7 @@ enum
 
 /**
  * @def evas_canvas_touch_point_list_nth_id_get
+ * @since 1.8
  *
  * This function returns the id of nth touch point.
  *
@@ -3386,6 +3465,7 @@ enum
 
 /**
  * @def evas_canvas_touch_point_list_nth_state_get
+ * @since 1.8
  *
  * This function returns the state of nth touch point.
  *
@@ -3398,6 +3478,7 @@ enum
 
 /**
  * @def evas_canvas_image_cache_flush
+ * @since 1.8
  *
  * Flush the image cache of the canvas.
  *
@@ -3408,6 +3489,7 @@ enum
 
 /**
  * @def evas_canvas_image_cache_reload
+ * @since 1.8
  *
  * Reload the image cache
  *
@@ -3418,6 +3500,7 @@ enum
 
 /**
  * @def evas_canvas_image_cache_set
+ * @since 1.8
  *
  * Set the image cache.
  *
@@ -3429,6 +3512,7 @@ enum
 
 /**
  * @def evas_canvas_image_cache_get
+ * @since 1.8
  *
  * Get the image cache
  *
@@ -3440,6 +3524,7 @@ enum
 
 /**
  * @def evas_canvas_image_max_size_get
+ * @since 1.8
  *
  * Get the maximum image size evas can possibly handle
  *
@@ -3453,6 +3538,7 @@ enum
 
 /**
  * @def evas_canvas_object_name_find
+ * @since 1.8
  *
  * Retrieves the object on the given evas with the given name.
  *
@@ -3465,12 +3551,15 @@ enum
 
 /**
  * @def evas_canvas_object_top_at_xy_get
+ * @since 1.8
  *
  * Retrieve the Evas object stacked at the top of a given position in
  * a canvas.
  *
- * @param[out] x
- * @param[out] y
+ * @param[in] x
+ * @param[in] y
+ * @param[in] include_pass_events_objects
+ * @param[in] include_hidden_objects
  * @param[out] ret
  *
  * @see evas_object_top_at_xy_get
@@ -3479,14 +3568,17 @@ enum
 
 /**
  * @def evas_canvas_object_top_in_rectangle_get
+ * @since 1.8
  *
  * Retrieve the Evas object stacked at the top of a given rectangular
  * region in a canvas.
  *
- * @param[out] x
- * @param[out] y
- * @param[out] w
- * @param[out] h
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] include_pass_events_objects
+ * @param[in] include_hidden_objects
  * @param[out] ret
  *
  * @see evas_object_top_in_rectangle_get
@@ -3495,22 +3587,40 @@ enum
 
 /**
  * @def evas_canvas_objects_at_xy_get
+ * @since 1.8
  *
  * Retrieve a list of Evas objects lying over a given position in
  * a canvas.
  *
- * @param[out] x
- * @param[out] y
+ * @param[in] x
+ * @param[in] y
+ * @param[in] include_pass_events_objects
+ * @param[in] include_hidden_objects
  * @param[out] ret
  *
  * @see evas_objects_at_xy_get
  */
 #define evas_canvas_objects_at_xy_get(x, y, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECTS_AT_XY_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Eina_List **, ret)
-#define evas_canvas_objects_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECTS_IN_RECTANGLE_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Eina_List **, ret)
 
+/**
+ * @def evas_canvas_objects_in_rectangle_get
+ * @since 1.8
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] include_pass_events_objects
+ * @param[in] include_hidden_objects
+ * @param[out] ret
+ *
+ * @see evas_objects_in_rectangle_get
+ */
+#define evas_canvas_objects_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECTS_IN_RECTANGLE_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Eina_List **, ret)
 
 /**
  * @def evas_canvas_smart_objects_calculate
+ * @since 1.8
  *
  * Call user-provided calculate() smart functions and unset the
  * flag signalling that the object needs to get recalculated to @b all
@@ -3523,6 +3633,7 @@ enum
 
 /**
  * @def evas_canvas_smart_objects_calculate_count_get
+ * @since 1.8
  *
  * This gets the internal counter that counts the number of smart calculations
  *
@@ -9348,6 +9459,7 @@ enum
 
 /**
  * @def evas_obj_text_font_source_set
+ * @since 1.8
  *
  * Set the font (source) file to be used on a given text object.
  *
@@ -9359,6 +9471,7 @@ enum
 
 /**
  * @def evas_obj_text_font_source_get
+ * @since 1.8
  *
  * Get the font file's path which is being used on a given text
  * object.
@@ -9371,6 +9484,7 @@ enum
 
 /**
  * @def evas_obj_text_font_set
+ * @since 1.8
  *
  * Set the font family and size on a given text object.
  *
@@ -9383,6 +9497,7 @@ enum
 
 /**
  * @def evas_obj_text_font_get
+ * @since 1.8
  *
  * Retrieve the font family and size in use on a given text object.
  *
@@ -9395,6 +9510,7 @@ enum
 
 /**
  * @def evas_obj_text_text_set
+ * @since 1.8
  *
  * Sets the text string to be displayed by the given text object.
  *
@@ -9406,11 +9522,12 @@ enum
 
 /**
  * @def evas_obj_text_text_get
+ * @since 1.8
  *
  * Retrieves the text string currently being displayed by the given
  * text object.
  *
- * @param[in] delim in
+ * @param[out] text out
  *
  * @see evas_object_text_text_get
  */
@@ -9418,6 +9535,7 @@ enum
 
 /**
  * @def evas_obj_text_bidi_delimiters_set
+ * @since 1.8
  *
  * Sets the BiDi delimiters used in the textblock.
  *
@@ -9429,6 +9547,7 @@ enum
 
 /**
  * @def evas_obj_text_bidi_delimiters_get
+ * @since 1.8
  *
  * Gets the BiDi delimiters used in the textblock.
  *
@@ -9440,6 +9559,7 @@ enum
 
 /**
  * @def evas_obj_text_direction_get
+ * @since 1.8
  *
  * Retrieves the direction of the text currently being displayed in the
  * text object.
@@ -9452,6 +9572,7 @@ enum
 
 /**
  * @def evas_obj_text_ascent_get
+ * @since 1.8
  *
  * @param[out] ascent out
  *
@@ -9461,6 +9582,7 @@ enum
 
 /**
  * @def evas_obj_text_descent_get
+ * @since 1.8
  *
  * @param[out] descent out
  *
@@ -9470,6 +9592,7 @@ enum
 
 /**
  * @def evas_obj_text_max_ascent_get
+ * @since 1.8
  *
  * @param[out] max_ascent out
  *
@@ -9479,6 +9602,7 @@ enum
 
 /**
  * @def evas_obj_text_max_descent_get
+ * @since 1.8
  *
  * @param[out] max_descent out
  *
@@ -9488,6 +9612,7 @@ enum
 
 /**
  * @def evas_obj_text_inset_get
+ * @since 1.8
  *
  * @param[out] inset out
  *
@@ -9497,6 +9622,7 @@ enum
 
 /**
  * @def evas_obj_text_horiz_advance_get
+ * @since 1.8
  *
  * @param[out] horiz out
  *
@@ -9505,15 +9631,18 @@ enum
 #define evas_obj_text_horiz_advance_get(horiz) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_HORIZ_ADVANCE_GET), EO_TYPECHECK(Evas_Coord *, horiz)
 
 /**
- * @def evas_obj_text_vert_advance_get_
+ * @def evas_obj_text_vert_advance_get
+ * @since 1.8
  *
  * @param[out] vert out
  *
  * @see evas_object_text_vert_advance_get
  */
 #define evas_obj_text_vert_advance_get(vert) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_VERT_ADVANCE_GET), EO_TYPECHECK(Evas_Coord *, vert)
+
 /**
  * @def evas_obj_text_char_pos_get
+ * @since 1.8
  *
  * Retrieve position and dimension information of a character within a text @c Evas_Object.
  *
@@ -9530,6 +9659,7 @@ enum
 
 /**
  * @def evas_obj_text_last_up_to_pos
+ * @since 1.8
  *
  * Returns the logical position of the last char in the text
  * up to the pos given. this is NOT the position of the last char
@@ -9544,6 +9674,7 @@ enum
 #define evas_obj_text_last_up_to_pos(x, y, res) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_LAST_UP_TO_POS), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, res)
 /**
  * @def evas_obj_text_char_coords_get
+ * @since 1.8
  *
  * @param[in] x in
  * @param[in] y in
@@ -9559,6 +9690,7 @@ enum
 
 /**
  * @def evas_obj_text_style_set
+ * @since 1.8
  *
  * Sets the style to apply on the given text object.
  *
@@ -9570,6 +9702,7 @@ enum
 
 /**
  * @def evas_obj_text_style_get
+ * @since 1.8
  *
  * Retrieves the style on use on the given text object.
  *
@@ -9581,6 +9714,7 @@ enum
 
 /**
  * @def evas_obj_text_shadow_color_set
+ * @since 1.8
  *
  * Sets the shadow color for the given text object.
  *
@@ -9595,6 +9729,7 @@ enum
 
 /**
  * @def evas_obj_text_shadow_color_get
+ * @since 1.8
  *
  * Retrieves the shadow color for the given text object.
  *
@@ -9609,6 +9744,7 @@ enum
 
 /**
  * @def evas_obj_text_glow_color_set
+ * @since 1.8
  *
  * Sets the glow color for the given text object.
  *
@@ -9623,6 +9759,7 @@ enum
 
 /**
  * @def evas_obj_text_glow_color_get
+ * @since 1.8
  *
  * Retrieves the glow color for the given text object.
  *
@@ -9637,6 +9774,7 @@ enum
 
 /**
  * @def evas_obj_text_glow2_color_set
+ * @since 1.8
  *
  * Sets the 'glow 2' color for the given text object.
  *
@@ -9651,6 +9789,7 @@ enum
 
 /**
  * @def evas_obj_text_glow2_color_get
+ * @since 1.8
  *
  * Retrieves the 'glow 2' color for the given text object.
  *
@@ -9665,6 +9804,7 @@ enum
 
 /**
  * @def evas_obj_text_outline_color_set
+ * @since 1.8
  *
  * Sets the outline color for the given text object.
  *
@@ -9679,6 +9819,7 @@ enum
 
 /**
  * @def evas_obj_text_outline_color_get
+ * @since 1.8
  *
  * Retrieves the outline color for the given text object.
  *
@@ -9693,6 +9834,7 @@ enum
 
 /**
  * @def evas_obj_text_style_pad_get
+ * @since 1.8
  *
  * Gets the text style pad of a text object.
  *
@@ -10290,6 +10432,7 @@ enum
 
 /**
  * @def evas_obj_textblock_style_set
+ * @since 1.8
  *
  * Set the objects style to ts.
  *
@@ -10301,6 +10444,7 @@ enum
 
 /**
  * @def evas_obj_textblock_style_get
+ * @since 1.8
  *
  * Return the style of an object.
  *
@@ -10312,6 +10456,7 @@ enum
 
 /**
  * @def evas_obj_textblock_style_user_push
+ * @since 1.8
  *
  * Push ts to the top of the user style stack.
  *
@@ -10323,6 +10468,7 @@ enum
 
 /**
  * @def evas_obj_textblock_style_user_peek
+ * @since 1.8
  *
  * Get (don't remove) the style at the top of the user style stack.
  *
@@ -10334,6 +10480,7 @@ enum
 
 /**
  * @def evas_obj_textblock_style_user_pop
+ * @since 1.8
  *
  * Del the from the top of the user style stack.
  *
@@ -10344,6 +10491,7 @@ enum
 
 /**
  * @def evas_obj_textblock_replace_char_set
+ * @since 1.8
  *
  * Set the "replacement character" to use for the given textblock object.
  *
@@ -10355,6 +10503,7 @@ enum
 
 /**
  * @def evas_obj_textblock_legacy_newline_set
+ * @since 1.8
  *
  * Sets newline mode. When true, newline character will behave
  * as a paragraph separator.
@@ -10367,6 +10516,7 @@ enum
 
 /**
  * @def evas_obj_textblock_legacy_newline_get
+ * @since 1.8
  *
  * Gets newline mode. When true, newline character behaves
  * as a paragraph separator.
@@ -10379,6 +10529,7 @@ enum
 
 /**
  * @def evas_obj_textblock_valign_set
+ * @since 1.8
  *
  * Sets the vertical alignment of text within the textblock object
  *
@@ -10390,6 +10541,7 @@ enum
 
 /**
  * @def evas_obj_textblock_valign_get
+ * @since 1.8
  *
  * Gets the vertical alignment of a textblock
  *
@@ -10401,6 +10553,7 @@ enum
 
 /**
  * @def evas_obj_textblock_bidi_delimiters_set
+ * @since 1.8
  *
  * Sets the BiDi delimiters used in the textblock.
  *
@@ -10412,6 +10565,7 @@ enum
 
 /**
  * @def evas_obj_textblock_bidi_delimiters_get
+ * @since 1.8
  *
  * Gets the BiDi delimiters used in the textblock.
  *
@@ -10423,6 +10577,7 @@ enum
 
 /**
  * @def evas_obj_textblock_replace_char_get
+ * @since 1.8
  *
  * Get the "replacement character" for given textblock object.
  *
@@ -10434,6 +10589,7 @@ enum
 
 /**
  * @def evas_obj_textblock_text_markup_set
+ * @since 1.8
  *
  * Sets the tetxblock's text to the markup text.
  *
@@ -10445,6 +10601,7 @@ enum
 
 /**
  * @def evas_obj_textblock_text_markup_get
+ * @since 1.8
  *
  * Return the markup of the object.
  *
@@ -10456,6 +10613,7 @@ enum
 
 /**
  * @def evas_obj_textblock_cursor_get
+ * @since 1.8
  *
  * Return the object's main cursor.
  *
@@ -10467,6 +10625,7 @@ enum
 
 /**
  * @def evas_obj_textblock_cursor_new
+ * @since 1.8
  *
  * Create a new cursor, associate it to the obj and init it to point
  * to the start of the textblock. Association to the object means the cursor
@@ -10484,6 +10643,7 @@ enum
 
 /**
  * @def evas_obj_textblock_line_number_geometry_get
+ * @since 1.8
  *
  * Get the geometry of a line number.
  *
@@ -10500,6 +10660,7 @@ enum
 
 /**
  * @def evas_obj_textblock_clear
+ * @since 1.8
  *
  * Clear the textblock object.
  *
@@ -10510,6 +10671,7 @@ enum
 
 /**
  * @def evas_obj_textblock_size_formatted_get
+ * @since 1.8
  *
  * Get the formatted width and height. This calculates the actual size after restricting
  * the textblock to the current size of the object.
@@ -10523,6 +10685,7 @@ enum
 
 /**
  * @def evas_obj_textblock_size_native_get
+ * @since 1.8
  *
  * Get the native width and height. This calculates the actual size without taking account
  * the current size of the object.
@@ -11435,6 +11598,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_size_set
+ * @since 1.8
  *
  * Set the size of the textgrid object.
  *
@@ -11447,6 +11611,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_size_get
+ * @since 1.8
  *
  * Get the size of the textgrid object.
  *
@@ -11459,6 +11624,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_font_source_set
+ * @since 1.8
  *
  * Set the font (source) file to be used on a given textgrid object.
  *
@@ -11470,6 +11636,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_font_source_get
+ * @since 1.8
  *
  * Get the font file's path which is being used on a given textgrid object.
  *
@@ -11481,6 +11648,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_font_set
+ * @since 1.8
  *
  * Set the font family and size on a given textgrid object.
  *
@@ -11493,6 +11661,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_font_get
+ * @since 1.8
  *
  * Retrieve the font family and size in use on a given textgrid object.
  *
@@ -11505,6 +11674,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_cell_size_get
+ * @since 1.8
  *
  * Retrieve the size of a cell of the given textgrid object in pixels.
  *
@@ -11517,6 +11687,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_palette_set
+ * @since 1.8
  *
  * The set color to the given palette at the given index of the given textgrid object.
  *
@@ -11533,6 +11704,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_palette_get
+ * @since 1.8
  *
  * The retrieve color to the given palette at the given index of the given textgrid object.
  *
@@ -11551,6 +11723,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_cellrow_set
+ * @since 1.8
  *
  * Set the string at the given row of the given textgrid object.
  *
@@ -11563,6 +11736,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_cellrow_get
+ * @since 1.8
  *
  * Get the string at the given row of the given textgrid object.
  *
@@ -11575,6 +11749,7 @@ enum
 
 /**
  * @def evas_obj_textgrid_update_add
+ * @since 1.8
  *
  * Indicate for evas that part of a textgrid region (cells) has been updated.
  *
@@ -11957,6 +12132,7 @@ enum
 
 /**
  * @def evas_obj_line_xy_set
+ * @since 1.8
  *
  * Sets the coordinates of the end points of the given evas line object.
  *
@@ -11971,6 +12147,7 @@ enum
 
 /**
  * @def evas_obj_line_xy_get
+ * @since 1.8
  *
  * Retrieves the coordinates of the end points of the given evas line object.
  *
@@ -12050,6 +12227,7 @@ enum
 
 /**
  * @def evas_obj_polygon_point_add
+ * @since 1.8
  *
  * Adds the given point to the given evas polygon object.
  *
@@ -12062,6 +12240,7 @@ enum
 
 /**
  * @def evas_obj_polygon_points_clear
+ * @since 1.8
  *
  * Removes all of the points from the given evas polygon object.
  *
@@ -12555,6 +12734,7 @@ enum
 
 /**
  * @def evas_obj_smart_data_set
+ * @since 1.8
  *
  * Store a pointer to user data for a given smart object.
  *
@@ -12566,6 +12746,7 @@ enum
 
 /**
  * @def evas_obj_smart_smart_get
+ * @since 1.8
  *
  * Get the #Evas_Smart from which smart object was created.
  *
@@ -12577,6 +12758,7 @@ enum
 
 /**
  * @def evas_obj_smart_member_add
+ * @since 1.8
  *
  * Set an Evas object as a member of a given smart object.
  *
@@ -12588,6 +12770,7 @@ enum
 
 /**
  * @def evas_obj_smart_member_del
+ * @since 1.8
  *
  * Removes a member object from a given smart object.
  *
@@ -12599,6 +12782,7 @@ enum
 
 /**
  * @def evas_obj_smart_members_get
+ * @since 1.8
  *
  * Retrieves the list of the member objects of a given Evas smart
  * object
@@ -12611,6 +12795,7 @@ enum
 
 /**
  * @def evas_obj_smart_callback_priority_add
+ * @since 1.8
  *
  * Add (register) a callback function to the smart event specified by
  * @p event on the smart object. Except for the priority field,
@@ -12627,6 +12812,7 @@ enum
 
 /**
  * @def evas_obj_smart_callback_del
+ * @since 1.8
  *
  * Delete (unregister) a callback function from the smart event
  * specified by @p event on the smart object.
@@ -12641,6 +12827,7 @@ enum
 
 /**
  * @def evas_obj_smart_callback_del_full
+ * @since 1.8
  *
  * Delete (unregister) a callback function from the smart event
  * specified by @p event on the smart object.
@@ -12656,6 +12843,7 @@ enum
 
 /**
  * @def evas_obj_smart_callback_call
+ * @since 1.8
  *
  * Call a given smart callback on the smart object.
  *
@@ -12668,6 +12856,7 @@ enum
 
 /**
  * @def evas_obj_smart_callbacks_descriptions_set
+ * @since 1.8
  *
  * Set an smart object @b instance's smart callbacks descriptions.
  *
@@ -12680,6 +12869,7 @@ enum
 
 /**
  * @def evas_obj_smart_callbacks_descriptions_get
+ * @since 1.8
  *
  * Retrieve an smart object's know smart callback descriptions (both
  * instance and class ones).
@@ -12695,6 +12885,7 @@ enum
 
 /**
  * @def evas_obj_smart_callback_description_find
+ * @since 1.8
  *
  * Find callback description for callback called @a name.
  *
@@ -12708,6 +12899,7 @@ enum
 
 /**
  * @def evas_obj_smart_need_recalculate_set
+ * @since 1.8
  *
  * Set or unset the flag signalling that a given smart object needs to
  * get recalculated.
@@ -12720,6 +12912,7 @@ enum
 
 /**
  * @def evas_obj_smart_need_recalculate_get
+ * @since 1.8
  *
  * Get the value of the flag signalling that a given smart object needs to
  * get recalculated.
@@ -12732,6 +12925,7 @@ enum
 
 /**
  * @def evas_obj_smart_calculate
+ * @since 1.8
  *
  * Call the @b calculate() smart function immediately on a given smart
  * object.
@@ -12742,6 +12936,7 @@ enum
 
 /**
  * @def evas_obj_smart_changed
+ * @since 1.8
  *
  * Mark smart object as changed, dirty.
  *
@@ -12752,6 +12947,7 @@ enum
 
 /**
  * @def evas_obj_smart_add
+ * @since 1.8
  *
  * Instantiates a new smart object described by s.
  *
@@ -13941,6 +14137,7 @@ enum
 
 /**
  * @def evas_obj_box_add_to
+ * @since 1.8
  *
  * Add a new box as a child of a given smart object.
  *
@@ -13952,6 +14149,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_set
+ * @since 1.8
  *
  * Set a new layouting function to a given box object
  *
@@ -13965,6 +14163,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_horizontal
+ * @since 1.8
  *
  * Layout function which sets the box o to a (basic) horizontal box
  *
@@ -13975,6 +14174,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_vertical
+ * @since 1.8
  *
  * Layout function which sets the box o to a (basic) vertical box
  *
@@ -13985,6 +14185,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_homogeneous_horizontal
+ * @since 1.8
  *
  * Layout function which sets the box o to a @b homogeneous
  *
@@ -13995,6 +14196,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_homogeneous_vertical
+ * @since 1.8
  *
  * Layout function which sets the box o to a @b homogeneous
  *
@@ -14005,8 +14207,9 @@ enum
 
 /**
  * @def evas_obj_box_layout_homogeneous_max_size_horizontal
+ * @since 1.8
  *
- * Layout function which sets the box o to a <b>maximum size,
+ * Layout function which sets the box o to a maximum size.
  *
  *
  * @see evas_object_box_layout_homogeneous_max_size_horizontal
@@ -14015,6 +14218,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_homogeneous_max_size_vertical
+ * @since 1.8
  *
  * Layout function which sets the box o to a <b>maximum size,
  *
@@ -14025,6 +14229,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_flow_horizontal
+ * @since 1.8
  *
  * Layout function which sets the box o to a @b flow horizontal
  *
@@ -14035,6 +14240,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_flow_vertical
+ * @since 1.8
  *
  * Layout function which sets the box o to a @b flow vertical box.
  *
@@ -14045,6 +14251,7 @@ enum
 
 /**
  * @def evas_obj_box_layout_stack
+ * @since 1.8
  *
  * Layout function which sets the box o to a @b stacking box
  *
@@ -14055,6 +14262,7 @@ enum
 
 /**
  * @def evas_obj_box_align_set
+ * @since 1.8
  *
  * Set the alignment of the whole bounding box of contents, for a
  *
@@ -14067,6 +14275,7 @@ enum
 
 /**
  * @def evas_obj_box_align_get
+ * @since 1.8
  *
  * Get the alignment of the whole bounding box of contents, for a
  *
@@ -14079,6 +14288,7 @@ enum
 
 /**
  * @def evas_obj_box_padding_set
+ * @since 1.8
  *
  * Set the (space) padding between cells set for a given box object.
  *
@@ -14091,6 +14301,7 @@ enum
 
 /**
  * @def evas_obj_box_padding_get
+ * @since 1.8
  *
  * Get the (space) padding between cells set for a given box object.
  *
@@ -14103,6 +14314,7 @@ enum
 
 /**
  * @def evas_obj_box_append
+ * @since 1.8
  *
  * Append a new child object to the given box object @a o.
  *
@@ -14115,6 +14327,7 @@ enum
 
 /**
  * @def evas_obj_box_prepend
+ * @since 1.8
  *
  * Prepend a new child object to the given box object @a o.
  *
@@ -14127,6 +14340,7 @@ enum
 
 /**
  * @def evas_obj_box_insert_before
+ * @since 1.8
  *
  * Insert a new child object <b>before another existing one</b>, in
  *
@@ -14140,6 +14354,7 @@ enum
 
 /**
  * @def evas_obj_box_insert_after
+ * @since 1.8
  *
  * Insert a new child object <b>after another existing one</b>, in
  *
@@ -14153,6 +14368,7 @@ enum
 
 /**
  * @def evas_obj_box_insert_at
+ * @since 1.8
  *
  * Insert a new child object <b>at a given position</b>, in a given
  *
@@ -14166,6 +14382,7 @@ enum
 
 /**
  * @def evas_obj_box_remove
+ * @since 1.8
  *
  * Remove a given object from a box object, unparenting it again.
  *
@@ -14178,6 +14395,7 @@ enum
 
 /**
  * @def evas_obj_box_remove_at
+ * @since 1.8
  *
  * Remove an object, <b>bound to a given position</b> in a box object,
  *
@@ -14190,6 +14408,7 @@ enum
 
 /**
  * @def evas_obj_box_remove_all
+ * @since 1.8
  *
  * Remove all child objects from a box object, unparenting them
  *
@@ -14202,6 +14421,7 @@ enum
 
 /**
  * @def evas_obj_box_iterator_new
+ * @since 1.8
  *
  * Get an iterator to walk the list of children of a given box object.
  *
@@ -14213,6 +14433,7 @@ enum
 
 /**
  * @def evas_obj_box_accessor_new
+ * @since 1.8
  *
  * Get an accessor (a structure providing random items access) to the
  *
@@ -14224,6 +14445,7 @@ enum
 
 /**
  * @def evas_obj_box_option_property_name_get
+ * @since 1.8
  *
  * Get the name of the property of the child elements of the box o
  *
@@ -14236,6 +14458,7 @@ enum
 
 /**
  * @def evas_obj_box_option_property_id_get
+ * @since 1.8
  *
  * Get the numerical identifier of the property of the child elements
  *
@@ -14248,6 +14471,7 @@ enum
 
 /**
  * @def evas_obj_box_option_property_vset
+ * @since 1.8
  *
  * Set a property value (by its given numerical identifier), on a
  *
@@ -14262,6 +14486,7 @@ enum
 
 /**
  * @def evas_obj_box_option_property_vget
+ * @since 1.8
  *
  * Get a property's value (by its given numerical identifier), on a
  *
@@ -15051,6 +15276,7 @@ enum
 
 /**
  * @def evas_obj_table_add_to
+ * @since 1.8
  *
  * Create a table that is child of a given element parent.
  *
@@ -15062,6 +15288,7 @@ enum
 
 /**
  * @def evas_obj_table_homogeneous_set
+ * @since 1.8
  *
  * Set how this table should layout children.
  *
@@ -15073,6 +15300,7 @@ enum
 
 /**
  * @def evas_obj_table_homogeneous_get
+ * @since 1.8
  *
  * Get the current layout homogeneous mode.
  *
@@ -15084,6 +15312,7 @@ enum
 
 /**
  * @def evas_obj_table_align_set
+ * @since 1.8
  *
  * Set the alignment of the whole bounding box of contents.
  *
@@ -15096,6 +15325,7 @@ enum
 
 /**
  * @def evas_obj_table_align_get
+ * @since 1.8
  *
  * Get alignment of the whole bounding box of contents.
  *
@@ -15108,6 +15338,7 @@ enum
 
 /**
  * @def evas_obj_table_padding_set
+ * @since 1.8
  *
  * Set padding between cells.
  *
@@ -15120,6 +15351,7 @@ enum
 
 /**
  * @def evas_obj_table_padding_get
+ * @since 1.8
  *
  * Get padding between cells.
  *
@@ -15132,6 +15364,7 @@ enum
 
 /**
  * @def evas_obj_table_pack_get
+ * @since 1.8
  *
  * Get packing location of a child of table
  *
@@ -15148,6 +15381,7 @@ enum
 
 /**
  * @def evas_obj_table_pack
+ * @since 1.8
  *
  * Add a new child to a table object or set its current packing.
  *
@@ -15164,6 +15398,7 @@ enum
 
 /**
  * @def evas_obj_table_unpack
+ * @since 1.8
  *
  * Remove child from table.
  *
@@ -15176,6 +15411,7 @@ enum
 
 /**
  * @def evas_obj_table_clear
+ * @since 1.8
  *
  * Faster way to remove all child objects from a table object.
  *
@@ -15187,6 +15423,7 @@ enum
 
 /**
  * @def evas_obj_table_col_row_size_get
+ * @since 1.8
  *
  * Get the number of columns and rows this table takes.
  *
@@ -15199,6 +15436,7 @@ enum
 
 /**
  * @def evas_obj_table_iterator_new
+ * @since 1.8
  *
  * Get an iterator to walk the list of children for the table.
  *
@@ -15210,6 +15448,7 @@ enum
 
 /**
  * @def evas_obj_table_accessor_new
+ * @since 1.8
  *
  * Get an accessor to get random access to the list of children for the table.
  *
@@ -15221,6 +15460,7 @@ enum
 
 /**
  * @def evas_obj_table_children_get
+ * @since 1.8
  *
  * Get the list of children for the table.
  *
@@ -15232,6 +15472,7 @@ enum
 
 /**
  * @def evas_obj_table_mirrored_get
+ * @since 1.8
  *
  * Gets the mirrored mode of the table.
  *
@@ -15243,6 +15484,7 @@ enum
 
 /**
  * @def evas_obj_table_mirrored_set
+ * @since 1.8
  *
  * Sets the mirrored mode of the table. In mirrored mode the table items go
  *
@@ -15494,6 +15736,7 @@ enum
 
 /**
  * @def evas_obj_grid_add
+ * @since 1.8
  *
  * Create a new grid.
  *
@@ -15505,6 +15748,7 @@ enum
 
 /**
  * @def evas_obj_grid_add_to
+ * @since 1.8
  *
  * Create a grid that is child of a given element parent.
  *
@@ -15516,6 +15760,7 @@ enum
 
 /**
  * @def evas_obj_grid_size_set
+ * @since 1.8
  *
  * Set the virtual resolution for the grid
  *
@@ -15528,6 +15773,7 @@ enum
 
 /**
  * @def evas_obj_grid_size_get
+ * @since 1.8
  *
  * Get the current virtual resolution
  *
@@ -15540,6 +15786,7 @@ enum
 
 /**
  * @def evas_obj_grid_pack
+ * @since 1.8
  *
  * Add a new child to a grid object.
  *
@@ -15556,6 +15803,7 @@ enum
 
 /**
  * @def evas_obj_grid_unpack
+ * @since 1.8
  *
  * Remove child from grid.
  *
@@ -15568,6 +15816,7 @@ enum
 
 /**
  * @def evas_obj_grid_clear
+ * @since 1.8
  *
  * Faster way to remove all child objects from a grid object.
  *
@@ -15579,6 +15828,7 @@ enum
 
 /**
  * @def evas_obj_grid_pack_get
+ * @since 1.8
  *
  * Get the pack options for a grid child
  *
@@ -15595,6 +15845,7 @@ enum
 
 /**
  * @def evas_obj_grid_iterator_new
+ * @since 1.8
  *
  * Get an iterator to walk the list of children for the grid.
  *
@@ -15606,6 +15857,7 @@ enum
 
 /**
  * @def evas_obj_grid_accessor_new
+ * @since 1.8
  *
  * Get an accessor to get random access to the list of children for the grid.
  *
@@ -15617,6 +15869,7 @@ enum
 
 /**
  * @def evas_obj_grid_children_get
+ * @since 1.8
  *
  * Get the list of children for the grid.
  *
@@ -15628,6 +15881,7 @@ enum
 
 /**
  * @def evas_obj_grid_mirrored_get
+ * @since 1.8
  *
  * Gets the mirrored mode of the grid.
  *
@@ -15639,6 +15893,7 @@ enum
 
 /**
  * @def evas_obj_grid_mirrored_set
+ * @since 1.8
  *
  * Sets the mirrored mode of the grid. In mirrored mode the grid items go
  *
@@ -16743,6 +16998,7 @@ enum
 
 /**
  * @def evas_obj_position_set
+ * @since 1.8
  *
  * Move the given Evas object to the given location inside its
  * canvas' viewport.
@@ -16756,6 +17012,7 @@ enum
 
 /**
  * @def evas_obj_position_get
+ * @since 1.8
  *
  * Retrieves the position of the given Evas object.
  *
@@ -16768,10 +17025,11 @@ enum
 
 /**
  * @def evas_obj_size_set
+ * @since 1.8
  * Changes the size of the given Evas object.
  *
- * @param w[in] in
- * @param h[in] in
+ * @param [in] w in
+ * @param [in] h in
  *
  * @see evas_object_resize
  */
@@ -16779,6 +17037,7 @@ enum
 
 /**
  * @def evas_obj_size_get
+ * @since 1.8
  *
  * Retrieves the (rectangular) size of the given Evas object.
  *
@@ -16791,6 +17050,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_min_set
+ * @since 1.8
  *
  * Sets the hints for an object's minimum size.
  *
@@ -16803,6 +17063,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_min_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's minimum size.
  *
@@ -16815,6 +17076,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_max_set
+ * @since 1.8
  *
  * Sets the hints for an object's maximum size.
  *
@@ -16827,6 +17089,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_max_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's maximum size.
  *
@@ -16839,6 +17102,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_request_set
+ * @since 1.8
  *
  * Sets the hints for an object's optimum size.
  *
@@ -16851,6 +17115,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_request_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's optimum size.
  *
@@ -16863,6 +17128,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_aspect_set
+ * @since 1.8
  *
  * Sets the hints for an object's aspect ratio.
  *
@@ -16876,6 +17142,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_aspect_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's aspect ratio.
  *
@@ -16889,6 +17156,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_align_set
+ * @since 1.8
  *
  * Sets the hints for an object's alignment.
  *
@@ -16901,6 +17169,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_align_get
+ * @since 1.8
  *
  * Retrieves the hints for on object's alignment.
  *
@@ -16913,6 +17182,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_weight_set
+ * @since 1.8
  *
  * Sets the hints for an object's weight.
  *
@@ -16925,6 +17195,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_weight_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's weight.
  *
@@ -16937,6 +17208,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_padding_set
+ * @since 1.8
  *
  * Sets the hints for an object's padding space.
  *
@@ -16951,6 +17223,7 @@ enum
 
 /**
  * @def evas_obj_size_hint_padding_get
+ * @since 1.8
  *
  * Retrieves the hints for an object's padding space.
  *
@@ -16965,6 +17238,7 @@ enum
 
 /**
  * @def evas_obj_visibility_set
+ * @since 1.8
  *
  * Makes the given Evas object visible or invisible.
  * @param[in] v @c EINA_TRUE if to make the object visible, @c EINA_FALSE
@@ -16977,6 +17251,7 @@ enum
 
 /**
  * @def evas_obj_visibility_get
+ * @since 1.8
  *
  * Retrieves whether or not the given Evas object is visible.
  *
@@ -16989,6 +17264,7 @@ enum
 
 /**
  * @def evas_obj_color_set
+ * @since 1.8
  *
  * Sets the general/main color of the given Evas object to the given
  * one.
@@ -17004,6 +17280,7 @@ enum
 
 /**
  * @def evas_obj_color_get
+ * @since 1.8
  * Retrieves the general/main color of the given Evas object.
  *
  * @param r out
@@ -17017,6 +17294,7 @@ enum
 
 /**
  * @def evas_obj_anti_alias_set
+ * @since 1.8
  *
  * Sets whether or not the given Evas object is to be drawn anti-aliased.
  *
@@ -17028,6 +17306,7 @@ enum
 
 /**
  * @def evas_obj_anti_alias_get
+ * @since 1.8
  *
  * Retrieves whether or not the given Evas object is to be drawn anti_aliased.
  *
@@ -17039,6 +17318,7 @@ enum
 
 /**
  * @def evas_obj_scale_set
+ * @since 1.8
  *
  * Sets the scaling factor for an Evas object. Does not affect all
  * objects.
@@ -17051,6 +17331,7 @@ enum
 
 /**
  * @def evas_obj_scale_get
+ * @since 1.8
  *
  * Retrieves the scaling factor for the given Evas object.
  *
@@ -17062,6 +17343,7 @@ enum
 
 /**
  * @def evas_obj_render_op_set
+ * @since 1.8
  *
  * Sets the render_op to be used for rendering the Evas object.
  *
@@ -17073,6 +17355,7 @@ enum
 
 /**
  * @def evas_obj_render_op_get
+ * @since 1.8
  *
  * Retrieves the current value of the operation used for rendering the Evas object.
  *
@@ -17084,15 +17367,17 @@ enum
 
 /**
  * @def evas_obj_evas_get
+ * @since 1.8
  * Retrieves the Evas canvas that the given object lives on.
  *
- * @param[out] out.
+ * @param[out] evas
  * @see evas_object_evas_get
  */
 #define evas_obj_evas_get(evas) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_EVAS_GET), EO_TYPECHECK(Evas **, evas)
 
 /**
  * @def evas_obj_type_get
+ * @since 1.8
  * Retrieves the type of the given Evas object.
  *
  * @param[out] type out
@@ -17102,6 +17387,7 @@ enum
 
 /**
  * @def evas_obj_type_set
+ * @since 1.8
  * Sets the type of the given Evas object.
  *
  * @param[in] type in
@@ -17110,6 +17396,7 @@ enum
 
 /**
  * @def evas_obj_precise_is_inside_set
+ * @since 1.8
  *
  * Set whether to use precise (usually expensive) point collision
  * detection for a given Evas object.
@@ -17122,6 +17409,7 @@ enum
 
 /**
  * @def evas_obj_precise_is_inside_get
+ * @since 1.8
  *
  * Determine whether an object is set to use precise point collision
  * detection.
@@ -17134,6 +17422,7 @@ enum
 
 /**
  * @def evas_obj_static_clip_set
+ * @since 1.8
  *
  * Set a hint flag on the given Evas object that it's used as a "static
  * clipper".
@@ -17146,6 +17435,7 @@ enum
 
 /**
  * @def evas_obj_static_clip_get
+ * @since 1.8
  *
  * Get the "static clipper" hint flag for a given Evas object.
  *
@@ -17157,6 +17447,7 @@ enum
 
 /**
  * @def evas_obj_is_frame_object_set
+ * @since 1.8
  *
  * @param[in] is_frame in
  *
@@ -17166,6 +17457,7 @@ enum
 
 /**
  * @def evas_obj_is_frame_object_get
+ * @since 1.8
  *
  * @param[out] is_frame out
  *
@@ -17175,6 +17467,7 @@ enum
 
 /**
  * @def evas_obj_freeze_events_set
+ * @since 1.8
  *
  * Set whether an Evas object is to freeze (discard) events.
  *
@@ -17186,6 +17479,7 @@ enum
 
 /**
  * @def evas_obj_freeze_events_get
+ * @since 1.8
  *
  * Determine whether an object is set to freeze (discard) events.
  *
@@ -17197,6 +17491,7 @@ enum
 
 /**
  * @def evas_obj_pass_events_set
+ * @since 1.8
  *
  * Set whether an Evas object is to pass (ignore) events.
  *
@@ -17208,6 +17503,7 @@ enum
 
 /**
  * @def evas_obj_pass_events_get
+ * @since 1.8
  *
  * Determine whether an object is set to pass (ignore) events.
  *
@@ -17219,6 +17515,7 @@ enum
 
 /**
  * @def evas_obj_repeat_events_set
+ * @since 1.8
  *
  * Set whether an Evas object is to repeat events.
  *
@@ -17230,6 +17527,7 @@ enum
 
 /**
  * @def evas_obj_repeat_events_get
+ * @since 1.8
  *
  * Determine whether an object is set to repeat events.
  *
@@ -17241,6 +17539,7 @@ enum
 
 /**
  * @def evas_obj_propagate_events_set
+ * @since 1.8
  *
  * Set whether events on a smart object's member should get propagated
  * up to its parent.
@@ -17252,6 +17551,7 @@ enum
 
 /**
  * @def evas_obj_propagate_events_get
+ * @since 1.8
  *
  * Retrieve whether an Evas object is set to propagate events.
  *
@@ -17263,10 +17563,11 @@ enum
 
 /**
  * @def evas_obj_pointer_mode_set
+ * @since 1.8
  *
  * Set pointer behavior.
  *
- * @param[in] setting in
+ * @param[in] pointer_mode in
  *
  * @see evas_object_pointer_mode_set
  */
@@ -17274,10 +17575,11 @@ enum
 
 /**
  * @def evas_obj_pointer_mode_get
+ * @since 1.8
  *
  * Determine how pointer will behave.
  *
- * @param[out] setting out
+ * @param[out] pointer_mode out
  *
  * @see evas_object_pointer_mode_get
  */
@@ -17285,9 +17587,10 @@ enum
 
 /**
  * @def evas_obj_clip_set
+ * @since 1.8
  * Clip one object to another.
  *
- * @parami[in] clip in
+ * @param[in] clip in
  *
  * @see evas_object_clip_set
  */
@@ -17295,6 +17598,7 @@ enum
 
 /**
  * @def evas_obj_clip_get
+ * @since 1.8
  * Get the object clipping @p obj (if any).
  *
  * @param[out] clip out
@@ -17305,6 +17609,7 @@ enum
 
 /**
  * @def evas_obj_clip_unset
+ * @since 1.8
  * Disable/cease clipping on a clipped @p obj object.
  *
  * @see evas_object_clip_unset
@@ -17313,6 +17618,7 @@ enum
 
 /**
  * @def evas_obj_clipees_get
+ * @since 1.8
  * Return a list of objects currently clipped by @p obj.
  *
  * @param[out] clipees out
@@ -17323,6 +17629,7 @@ enum
 
 /**
  * @def evas_obj_focus_set
+ * @since 1.8
  * Sets or unsets a given object as the currently focused one on its
  * canvas.
  * @param[in] focus in
@@ -17333,6 +17640,7 @@ enum
 
 /**
  * @def evas_obj_focus_get
+ * @since 1.8
  * Retrieve whether an object has the focus.
  *
  * @param[out] focus out
@@ -17343,6 +17651,7 @@ enum
 
 /**
  * @def evas_obj_name_set
+ * @since 1.8
  * Sets the name of the given Evas object to the given name.
  *
  * @param[in]   name in
@@ -17353,6 +17662,7 @@ enum
 
 /**
  * @def evas_obj_name_get
+ * @since 1.8
  *
  * Retrieves the name of the given Evas object.
  *
@@ -17365,6 +17675,7 @@ enum
 
 /**
  * @def evas_obj_name_child_find
+ * @since 1.8
  *
  * Retrieves the object from children of the given object with the given name.
  * @param[in] name in
@@ -17377,6 +17688,7 @@ enum
 
 /**
  * @def evas_obj_key_grab
+ * @since 1.8
  *
  * Requests @p keyname key events be directed to the obj.
  * @param[in] keyname in
@@ -17391,6 +17703,7 @@ enum
 
 /**
  * @def evas_obj_key_ungrab
+ * @since 1.8
  *
  * Removes the grab on @p keyname key events by the obj.
  *
@@ -17404,25 +17717,30 @@ enum
 
 /**
  * @def evas_obj_layer_set
+ * @since 1.8
  * Sets the layer of the its canvas that the given object will be part
  * of.
  *
  * @param[in]   l   in
  *
- * @see evas_object_layer_set()
+ * @see evas_object_layer_set
  */
 #define evas_obj_layer_set(l) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_SET), EO_TYPECHECK(short, l)
 
 /**
  * @def evas_obj_layer_get
+ * @since 1.8
  * Retrieves the layer of its canvas that the given object is part of.
  *
- * @param  Number of the its layer
+ * @param[out] l out
+ *
+ * @see evas_object_layer_get
  */
 #define evas_obj_layer_get(l) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_GET), EO_TYPECHECK(short *, l)
 
 /**
  * @def evas_obj_map_enable_set
+ * @since 1.8
  *
  * Enable or disable the map that is set.
  *
@@ -17434,6 +17752,7 @@ enum
 
 /**
  * @def evas_obj_map_enable_get
+ * @since 1.8
  *
  * Get the map enabled state
  *
@@ -17445,6 +17764,7 @@ enum
 
 /**
  * @def evas_obj_map_source_set
+ * @since 1.8
  *
  * Set the map source object
  *
@@ -17456,6 +17776,7 @@ enum
 
 /**
  * @def evas_obj_map_source_get
+ * @since 1.8
  *
  * Get the map source object
  *
@@ -17467,6 +17788,7 @@ enum
 
 /**
  * @def evas_obj_map_set
+ * @since 1.8
  *
  * Set current object transformation map.
  *
@@ -17478,6 +17800,7 @@ enum
 
 /**
  * @def evas_obj_map_get
+ * @since 1.8
  *
  * Get current object transformation map.
  *
@@ -17489,6 +17812,7 @@ enum
 
 /**
  * @def evas_obj_smart_parent_get
+ * @since 1.8
  *
  * Gets the parent smart object of a given Evas object, if it has one.
  *
@@ -17499,6 +17823,7 @@ enum
 #define evas_obj_smart_parent_get(smart_parent) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_PARENT_GET), EO_TYPECHECK(Evas_Object **, smart_parent)
 /**
  * @def evas_obj_smart_data_get
+ * @since 1.8
  *
  * Retrieve user data stored on a given smart object.
  *
@@ -17510,6 +17835,7 @@ enum
 
 /**
  * @def evas_obj_smart_type_check
+ * @since 1.8
  *
  * Checks whether a given smart object or any of its smart object
  * parents is of a given smart class.
@@ -17523,6 +17849,7 @@ enum
 
 /**
  * @def evas_obj_smart_type_check_ptr
+ * @since 1.8
  *
  * Checks whether a given smart object or any of its smart object
  * parents is of a given smart class, <b>using pointer comparison</b>.
@@ -17536,6 +17863,7 @@ enum
 
 /**
  * @def evas_obj_smart_move_children_relative
+ * @since 1.8
  *
  * Moves all children objects of a given smart object relative to a
  * given offset.
@@ -17549,6 +17877,7 @@ enum
 
 /**
  * @def evas_obj_smart_clipped_clipper_get
+ * @since 1.8
  *
  * Get the clipper object for the given clipped smart object.
  *
@@ -17560,6 +17889,7 @@ enum
 
 /**
  * @def evas_obj_raise
+ * @since 1.8
  *
  * Raise obj to the top of its layer.
  *
@@ -17569,6 +17899,7 @@ enum
 
 /**
  * @def evas_obj_lower
+ * @since 1.8
  *
  * Lower obj to the bottom of its layer.
  *
@@ -17578,6 +17909,7 @@ enum
 
 /**
  * @def evas_obj_stack_above
+ * @since 1.8
  *
  * Stack the object immediately above @p above
  *
@@ -17589,6 +17921,7 @@ enum
 
 /**
  * @def evas_obj_stack_below
+ * @since 1.8
  *
  * Stack the object immediately below @p below
  *
@@ -17600,6 +17933,7 @@ enum
 
 /**
  * @def evas_obj_above_get
+ * @since 1.8
  *
  * Get the Evas object stacked right above the object
  *
@@ -17611,6 +17945,7 @@ enum
 
 /**
  * @def evas_obj_below_get
+ * @since 1.8
  *
  * Get the Evas object stacked right below the object
  *
@@ -17622,6 +17957,7 @@ enum
 
 /**
  * @def evas_obj_type_check
+ * @since 1.8
  *
  * Checks whether a given object is of a given class.
  *
@@ -17718,6 +18054,7 @@ enum
 
 /**
  * @def evas_obj_image_memfile_set
+ * @since 1.8
  *
  * Sets the data for an image from memory to be loaded
  *
@@ -17732,6 +18069,7 @@ enum
 
 /**
  * @def evas_obj_image_file_set
+ * @since 1.8
  *
  * Set the source file from where an image object must fetch the real
  * image data (it may be an Eet file, besides pure image ones).
@@ -17745,6 +18083,7 @@ enum
 
 /**
  * @def evas_obj_image_file_get
+ * @since 1.8
  *
  * This is the same as evas_object_image_file_set() but the file to be loaded
  * may exist at an address in memory (the data for the file, not the filename
@@ -17764,6 +18103,7 @@ enum
 
 /**
  * @def evas_obj_image_source_set
+ * @since 1.8
  *
  * Set the source object on an image object to used as a @b proxy.
  *
@@ -17776,6 +18116,7 @@ enum
 
 /**
  * @def evas_obj_image_source_get
+ * @since 1.8
  *
  * Get the current source object of an image object.
  *
@@ -17787,6 +18128,7 @@ enum
 
 /**
  * @def evas_obj_image_source_visible_set
+ * @since 1.8
  *
  * Set the source object to be shown or hidden.
  *
@@ -17798,6 +18140,7 @@ enum
 
 /**
  * @def evas_obj_image_source_visible_get
+ * @since 1.8
  *
  * Get the state of the source object visibility.
  *
@@ -17809,6 +18152,7 @@ enum
 
 /**
  * @def evas_obj_image_border_set
+ * @since 1.8
  *
  * Set the dimensions for an image object's border, a region which @b
  * won't ever be scaled together with its center.
@@ -17824,6 +18168,7 @@ enum
 
 /**
  * @def evas_obj_image_border_get
+ * @since 1.8
  *
  * Retrieve the dimensions for an image object's border, a region
  * which @b won't ever be scaled together with its center.
@@ -17839,6 +18184,7 @@ enum
 
 /**
  * @def evas_obj_image_border_center_fill_set
+ * @since 1.8
  *
  * Sets @b how the center part of the given image object (not the
  * borders) should be drawn when Evas is rendering it.
@@ -17851,6 +18197,7 @@ enum
 
 /**
  * @def evas_obj_image_border_center_fill_get
+ * @since 1.8
  *
  * Retrieves @b how the center part of the given image object (not the
  * borders) is to be drawn when Evas is rendering it.
@@ -17863,6 +18210,7 @@ enum
 
 /**
  * @def evas_obj_image_filled_set
+ * @since 1.8
  *
  * Set whether the image object's fill property should track the
  * object's size.
@@ -17875,6 +18223,7 @@ enum
 
 /**
  * @def evas_obj_image_filled_get
+ * @since 1.8
  *
  * Retrieve whether the image object's fill property should track the
  * object's size.
@@ -17887,6 +18236,7 @@ enum
 
 /**
  * @def evas_obj_image_border_scale_set
+ * @since 1.8
  *
  * Sets the scaling factor (multiplier) for the borders of an image
  * object.
@@ -17899,6 +18249,7 @@ enum
 
 /**
  * @def evas_obj_image_border_scale_get
+ * @since 1.8
  *
  * Retrieves the scaling factor (multiplier) for the borders of an
  * image object.
@@ -17911,6 +18262,7 @@ enum
 
 /**
  * @def evas_obj_image_fill_set
+ * @since 1.8
  *
  * Set how to fill an image object's drawing rectangle given the
  * (real) image bound to it.
@@ -17926,6 +18278,7 @@ enum
 
 /**
  * @def evas_obj_image_fill_get
+ * @since 1.8
  *
  * Retrieve how an image object is to fill its drawing rectangle,
  * given the (real) image bound to it.
@@ -17941,6 +18294,7 @@ enum
 
 /**
  * @def evas_obj_image_fill_spread_set
+ * @since 1.8
  *
  * Sets the tiling mode for the given evas image object's fill.
  *
@@ -17952,6 +18306,7 @@ enum
 
 /**
  * @def evas_obj_image_fill_spread_get
+ * @since 1.8
  *
  * Retrieves the spread (tiling mode) for the given image object's
  * fill.
@@ -17964,6 +18319,7 @@ enum
 
 /**
  * @def evas_obj_image_size_set
+ * @since 1.8
  *
  * Sets the size of the given image object.
  *
@@ -17976,6 +18332,7 @@ enum
 
 /**
  * @def evas_obj_image_size_get
+ * @since 1.8
  *
  * Retrieves the size of the given image object.
  *
@@ -17988,6 +18345,7 @@ enum
 
 /**
  * @def evas_obj_image_stride_get
+ * @since 1.8
  *
  * Retrieves the row stride of the given image object.
  *
@@ -17998,18 +18356,8 @@ enum
 #define evas_obj_image_stride_get(stride) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_STRIDE_GET), EO_TYPECHECK(int *, stride)
 
 /**
- * @de evas_obj_image_load_error_get
- *
- * Retrieves a number representing any error that occurred during the
- * last loading of the given image object's source image.
- *
- * @param[out] load_error out
- *
- * @see evas_object_image_load_error_get
- */
-
-/**
  * @def evas_obj_image_load_error_get
+ * @since 1.8
  *
  * Retrieves a number representing any error that occurred during the
  * last loading of the given image object's source image.
@@ -18022,11 +18370,12 @@ enum
 
 /**
  * @def evas_obj_image_data_convert
+ * @since 1.8
  *
  * Converts the raw image data of the given image object to the
  * specified colorspace.
  *
- * @param[in] cspace in
+ * @param[in] to_cspace in
  * @param[out] data out
  *
  * @see evas_object_image_data_convert
@@ -18035,6 +18384,7 @@ enum
 
 /**
  * @def evas_obj_image_data_set
+ * @since 1.8
  *
  * Sets the raw image data of the given image object.
  *
@@ -18046,6 +18396,7 @@ enum
 
 /**
  * @def evas_obj_image_data_get
+ * @since 1.8
  *
  * Get a pointer to the raw image data of the given image object.
  *
@@ -18058,6 +18409,7 @@ enum
 
 /**
  * @def evas_obj_image_data_copy_set
+ * @since 1.8
  *
  * Replaces the raw image data of the given image object.
  *
@@ -18069,12 +18421,13 @@ enum
 
 /**
  * @def evas_obj_image_data_update_add
+ * @since 1.8
  *
  * Mark a sub-region of the given image object to be redrawn.
  *
  * @param[in] x in
  * @param[in] y in
- * @param[in] r in
+ * @param[in] w in
  * @param[in] h in
  *
  * @see evas_object_image_data_update_add
@@ -18083,6 +18436,7 @@ enum
 
 /**
  * @def evas_obj_image_alpha_set
+ * @since 1.8
  *
  * Enable or disable alpha channel usage on the given image object.
  *
@@ -18094,6 +18448,7 @@ enum
 
 /**
  * @def evas_obj_image_alpha_get
+ * @since 1.8
  *
  * Retrieve whether alpha channel data is being used on the given
  * image object.
@@ -18106,6 +18461,7 @@ enum
 
 /**
  * @def evas_obj_image_smooth_scale_set
+ * @since 1.8
  *
  * Sets whether to use high-quality image scaling algorithm on the
  * given image object.
@@ -18118,6 +18474,7 @@ enum
 
 /**
  * @def evas_obj_image_smooth_scale_get
+ * @since 1.8
  *
  * Retrieves whether the given image object is using high-quality
  * image scaling algorithm.
@@ -18130,6 +18487,7 @@ enum
 
 /**
  * @def evas_obj_image_preload
+ * @since 1.8
  *
  * Preload an image object's image data in the background
  *
@@ -18141,6 +18499,7 @@ enum
 
 /**
  * @def evas_obj_image_reload
+ * @since 1.8
  *
  * Reload an image object's image data.
  *
@@ -18150,6 +18509,7 @@ enum
 
 /**
  * @def evas_obj_image_save
+ * @since 1.8
  *
  * Save the given image object's contents to an (image) file.
  *
@@ -18164,6 +18524,7 @@ enum
 
 /**
  * @def evas_obj_image_pixels_import
+ * @since 1.8
  *
  * Import pixels from given source to a given canvas image object.
  *
@@ -18176,6 +18537,7 @@ enum
 
 /**
  * @def evas_obj_image_pixels_get_callback_set
+ * @since 1.8
  *
  * Set the callback function to get pixels from a canvas' image.
  *
@@ -18188,6 +18550,7 @@ enum
 
 /**
  * @def evas_obj_image_pixels_dirty_set
+ * @since 1.8
  *
  * Mark whether the given image object is dirty (needs to be redrawn).
  *
@@ -18199,6 +18562,7 @@ enum
 
 /**
  * @def evas_obj_image_pixels_dirty_get
+ * @since 1.8
  *
  * Retrieves whether the given image object is dirty (needs to be redrawn).
  *
@@ -18210,6 +18574,7 @@ enum
 
 /**
  * @def evas_obj_image_load_dpi_set
+ * @since 1.8
  *
  * Set the DPI resolution of an image object's source image.
  *
@@ -18221,6 +18586,7 @@ enum
 
 /**
  * @def evas_obj_image_load_dpi_get
+ * @since 1.8
  *
  * Get the DPI resolution of a loaded image object in the canvas.
  *
@@ -18232,6 +18598,7 @@ enum
 
 /**
  * @def evas_obj_image_load_size_set
+ * @since 1.8
  *
  * Set the size of a given image object's source image, when loading
  * it.
@@ -18245,6 +18612,7 @@ enum
 
 /**
  * @def evas_obj_image_load_size_get
+ * @since 1.8
  *
  * Get the size of a given image object's source image, when loading
  * it.
@@ -18258,6 +18626,7 @@ enum
 
 /**
  * @def evas_obj_image_load_scale_down_set
+ * @since 1.8
  *
  * Set the scale down factor of a given image object's source image,
  * when loading it.
@@ -18270,6 +18639,7 @@ enum
 
 /**
  * @def evas_obj_image_load_scale_down_get
+ * @since 1.8
  *
  * Get the scale down factor of a given image object's source image,
  * when loading it.
@@ -18282,6 +18652,7 @@ enum
 
 /**
  * @def evas_obj_image_load_region_set
+ * @since 1.8
  *
  * Inform a given image object to load a selective region of its
  * source image.
@@ -18297,6 +18668,7 @@ enum
 
 /**
  * @def evas_obj_image_load_region_get
+ * @since 1.8
  *
  * Retrieve the coordinates of a given image object's selective
  * (source image) load region.
@@ -18312,6 +18684,7 @@ enum
 
 /**
  * @def evas_obj_image_load_orientation_set
+ * @since 1.8
  *
  * Define if the orientation information in the image file should be honored.
  *
@@ -18323,6 +18696,7 @@ enum
 
 /**
  * @def evas_obj_image_load_orientation_get
+ * @since 1.8
  *
  * Get if the orientation information in the image file should be honored.
  *
@@ -18334,6 +18708,7 @@ enum
 
 /**
  * @def evas_obj_image_colorspace_set
+ * @since 1.8
  *
  * Set the colorspace of a given image of the canvas.
  *
@@ -18345,6 +18720,7 @@ enum
 
 /**
  * @def evas_obj_image_colorspace_get
+ * @since 1.8
  *
  * Get the colorspace of a given image of the canvas.
  *
@@ -18356,6 +18732,7 @@ enum
 
 /**
  * @def evas_obj_image_video_surface_set
+ * @since 1.8
  *
  * Set the video surface linked to a given image of the canvas
  *
@@ -18367,6 +18744,7 @@ enum
 
 /**
  * @def evas_obj_image_video_surface_get
+ * @since 1.8
  *
  * Get the video surface linked to a given image of the canvas
  *
@@ -18378,6 +18756,7 @@ enum
 
 /**
  * @def evas_obj_image_native_surface_set
+ * @since 1.8
  *
  * Set the native surface of a given image of the canvas
  *
@@ -18389,6 +18768,7 @@ enum
 
 /**
  * @def evas_obj_image_native_surface_get
+ * @since 1.8
  *
  * Get the native surface of a given image of the canvas
  *
@@ -18400,6 +18780,7 @@ enum
 
 /**
  * @def evas_obj_image_scale_hint_set
+ * @since 1.8
  *
  * Set the scale hint of a given image of the canvas.
  *
@@ -18411,6 +18792,7 @@ enum
 
 /**
  * @def evas_obj_image_scale_hint_get
+ * @since 1.8
  *
  * Get the scale hint of a given image of the canvas.
  *
@@ -18422,6 +18804,7 @@ enum
 
 /**
  * @def evas_obj_image_content_hint_set
+ * @since 1.8
  *
  * Set the content hint setting of a given image object of the canvas.
  *
@@ -18433,6 +18816,7 @@ enum
 
 /**
  * @def evas_obj_image_content_hint_get
+ * @since 1.8
  *
  * Get the content hint setting of a given image object of the canvas.
  *
@@ -18444,6 +18828,7 @@ enum
 
 /**
  * @def evas_obj_image_region_support_get
+ * @since 1.8
  *
  * Get the support state of a given image
  *
@@ -18455,6 +18840,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_get
+ * @since 1.8
  *
  * Check if an image object can be animated (have multiple frames)
  *
@@ -18466,6 +18852,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_frame_count_get
+ * @since 1.8
  *
  * Get the total number of frames of the image object.
  *
@@ -18477,6 +18864,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_loop_type_get
+ * @since 1.8
  *
  * Get the kind of looping the image object does.
  *
@@ -18488,6 +18876,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_loop_count_get
+ * @since 1.8
  *
  * Get the number times the animation of the object loops.
  *
@@ -18499,6 +18888,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_frame_duration_get
+ * @since 1.8
  *
  * Get the duration of a sequence of frames.
  *
@@ -18512,6 +18902,7 @@ enum
 
 /**
  * @def evas_obj_image_animated_frame_set
+ * @since 1.8
  *
  * Set the frame to current frame of an image object
  *

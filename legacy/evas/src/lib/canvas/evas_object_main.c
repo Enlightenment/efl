@@ -1979,7 +1979,7 @@ _canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
 
 /**
  * Retrieves the objects in the given rectangle region
- * @param   e The given evas object.
+ * @param   eo_e The given evas object.
  * @param   x The horizontal coordinate.
  * @param   y The vertical coordinate.
  * @param   w The width size.
