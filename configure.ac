@@ -51,7 +51,6 @@ AC_SUBST([VMAJ])
 
 #### Default values
 
-
 requirements_libs_evil=""
 requirements_libs_eina=""
 requirements_libs_eo=""
@@ -489,6 +488,7 @@ EINA_CONFIG([HAVE_INTTYPES_H], [test "x${ac_cv_header_inttypes_h}" = "xyes"])
 EINA_CONFIG([HAVE_STDINT_H], [test "x${ac_cv_header_stdint_h}" = "xyes"])
 
 ### Checks for types
+
 EINA_CONFIG([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"])
 AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
    [1], [Define to 1 if you have a valid <dirent.h> header file.])
