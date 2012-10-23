@@ -398,7 +398,7 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 
 case "$host_os" in
    mingw*)
-      requirements_pc_eina="${requirements_pc_eina} evil"
+      requirements_pc_eina="${requirements_pc_eina} evil >= ${PACKAGE_VERSION}"
    ;;
 esac
 
@@ -571,7 +571,7 @@ esac
 
 case "$host_os" in
    mingw*)
-      requirements_pc_eet="evil ${requirements_pc_eet}"
+      requirements_pc_eet="evil >= ${PACKAGE_VERSION} ${requirements_pc_eet}"
    ;;
 esac
 
