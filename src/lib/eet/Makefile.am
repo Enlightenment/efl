@@ -10,8 +10,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
-@EET_CFLAGS@ \
-@EFL_EET_BUILD@
+-DEFL_EET_BUILD \
+@EET_CFLAGS@
 
 if HAVE_WINDOWS
 AM_CPPFLAGS += \

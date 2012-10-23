@@ -396,14 +396,11 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 
 # Evil library for compilation on Windows
 
-EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
       requirements_pc_eina="${requirements_pc_eina} evil"
-      EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
 esac
-AC_SUBST([EFL_EINA_BUILD])
 
 # Escape library for compilation on Playstation 3
 
@@ -572,14 +569,11 @@ esac
 
 # Evil library for compilation on Windows
 
-EFL_EET_BUILD=""
 case "$host_os" in
    mingw*)
       requirements_pc_eet="evil ${requirements_pc_eet}"
-      EFL_EET_BUILD="-DEFL_EET_BUILD"
    ;;
 esac
-AC_SUBST(EFL_EET_BUILD)
 
 ## Secure layer
 
@@ -739,14 +733,6 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 ### Checks for structures
 
 ### Checks for compiler characteristics
-
-EFL_EO_BUILD=""
-case "$host_os" in
-   mingw*)
-      EFL_EO_BUILD="-DEFL_EO_BUILD"
-   ;;
-esac
-AC_SUBST([EFL_EO_BUILD])
 
 ### Checks for linker characteristics
 

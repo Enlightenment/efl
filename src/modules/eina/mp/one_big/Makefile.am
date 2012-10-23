@@ -4,7 +4,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
-@EFL_EINA_BUILD@ \
+-DEFL_EINA_BUILD \
 @VALGRIND_CFLAGS@
 
 controllerdir = $(libdir)/eina/modules/mp/one_big/$(MODULE_ARCH)

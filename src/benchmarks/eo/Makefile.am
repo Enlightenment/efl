@@ -6,7 +6,6 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
-@EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
 EXTRA_PROGRAMS = eo_bench

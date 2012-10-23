@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -DNDEBUG \
-@EFL_EO_BUILD@ \
+-DEFL_EO_BUILD \
 @EO_CFLAGS@
 
 if HAVE_WINDOWS
