@@ -25,7 +25,7 @@ _a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event
    (void) desc;
    (void) obj;
    int new_a = *((int *) event_info);
-   printf("%s event_info:'%d' data:'%d'\n", __func__, new_a, (int) data);
+   printf("%s event_info:'%d' data:'%d'\n", __func__, new_a, (int) (intptr_t) data);
 
    cb_count++;
 
