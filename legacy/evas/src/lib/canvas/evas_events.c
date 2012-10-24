@@ -165,19 +165,26 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
    Evas_Object_Protected_Data *src = eo_data_get(src_eo,
                                                  EVAS_OBJ_CLASS);
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
-   //FIXME: consider coord transformation for map.
    Evas_Coord w1 = obj->cur.geometry.w;
    Evas_Coord h1 = obj->cur.geometry.h;
    Evas_Coord w2 = src->cur.geometry.w;
    Evas_Coord h2 = src->cur.geometry.h;
-   Evas_Coord tx = e->pointer.x - obj->cur.geometry.x;
-   Evas_Coord ty = e->pointer.y - obj->cur.geometry.y;
-   if (w1 != w2)
-     tx = (Evas_Coord) ((float)tx * ((float)w2 / (float)w1));
-   if (h1 != h2)
-     ty = (Evas_Coord) ((float)ty * ((float)w2 / (float)w1));
-   Evas_Coord x = src->cur.geometry.x + tx;
-   Evas_Coord y = src->cur.geometry.y + ty;
+   Evas_Coord tx;
+   Evas_Coord ty;
+
+   if (obj->cur.usemap && obj->cur.map)
+     evas_map_coords_get(obj->cur.map, e->pointer.x, e->pointer.y, &tx, &ty, 0);
+   else
+     {
+        tx = e->pointer.x - obj->cur.geometry.x;
+        ty = e->pointer.y - obj->cur.geometry.y;
+     }
+
+   if (w1 != w2) tx = (Evas_Coord) ((float)tx * ((float)w2 / (float)w1));
+   if (h1 != h2) ty = (Evas_Coord) ((float)ty * ((float)w2 / (float)w1));
+   tx += src->cur.geometry.x;
+   ty += src->cur.geometry.y;
+
    if (src->is_smart)
      {
         Eina_List *in = NULL, *l = NULL;
@@ -186,7 +193,7 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
         int no_rep = 0;
         //Optimize Here: Keep this list in proxy image for up and move 
         in = _evas_event_object_list_raw_in_get(eo_e, in,
-                                                 evas_object_smart_members_get_direct(src_eo), NULL, x, y, &no_rep, EINA_TRUE);
+                                                 evas_object_smart_members_get_direct(src_eo), NULL, tx, ty, &no_rep, EINA_TRUE);
         EINA_LIST_FOREACH(in, l, child_eo)
           {
              if (obj->delete_me || src->delete_me) return;
