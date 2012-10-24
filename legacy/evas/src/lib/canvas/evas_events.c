@@ -199,7 +199,6 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
              if (obj->delete_me || src->delete_me) return;
              child = eo_data_get(child_eo, EVAS_OBJ_CLASS);
              if (child->delete_me) continue;
-             //FIXME: trasform the ev coords in src space also.
              evas_object_event_callback_call(child_eo, child,
                                              type,
                                              ev,
