@@ -18193,6 +18193,7 @@ enum
 
 /**
  * @def evas_obj_image_source_events_set
+ * @since 1.8
  *
  * Set events to be repeated to the source object.
  *
@@ -18204,6 +18205,7 @@ enum
 
 /**
  * @def evas_obj_image_source_events_get
+ * @since 1.8
  *
  * Get the state of the source event.
  *
