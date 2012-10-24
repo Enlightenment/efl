@@ -1119,3 +1119,8 @@
 
        * Fix possible segfault in gl engine if image->im is null in
        image size set.
+
+2012-10-24  ChunEon Park (Hermet)
+
+       * Added Proxy'source events set APIs
+
