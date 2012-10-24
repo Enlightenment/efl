@@ -787,6 +787,10 @@ compile(void)
    else *p = 0;
    snprintf(tmpn, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
    fd = mkstemp(tmpn);
+   if (fd < 0)
+     error_and_abort(ef, "Unable to open temp file \"%s\" for pre-processor.",
+                     sc->tmpn);
+
    if (fd >= 0)
      {
 	int ret;
