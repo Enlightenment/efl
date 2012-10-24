@@ -2362,12 +2362,16 @@ _elm_genlist_smart_focus_next(const Evas_Object *obj,
                            Elm_Focus_Direction dir,
                            Evas_Object **next)
 {
+   Evas_Coord x, y, w, h;
+   Evas_Coord sx, sy, sw, sh;
    Item_Block *itb;
    Eina_List *items = NULL;
    Eina_Bool done = EINA_FALSE;
 
    ELM_GENLIST_CHECK(obj) EINA_FALSE;
    ELM_GENLIST_DATA_GET(obj, sd);
+
+   evas_object_geometry_get(ELM_WIDGET_DATA(sd)->obj, &sx, &sy, &sw, &sh);
 
    EINA_INLIST_FOREACH(sd->blocks, itb)
      {
@@ -2380,7 +2384,16 @@ _elm_genlist_smart_focus_next(const Evas_Object *obj,
              EINA_LIST_FOREACH(itb->items, l, it)
                {
                   if (it->realized)
-                    items = eina_list_append(items, it->base.access_obj);
+                    {
+                       evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
+
+                       /* check item which displays more than half of its size */
+                       if (((x + (w / 2)) >= sx) &&
+                           ((y + (h / 2)) >= sy) &&
+                           ((x + (w / 2)) <= (sx + sw)) &&
+                           ((y + (h / 2)) <= (sy + sh)))
+                         items = eina_list_append(items, it->base.access_obj);
+                    }
                }
           }
         else if (done) break;
