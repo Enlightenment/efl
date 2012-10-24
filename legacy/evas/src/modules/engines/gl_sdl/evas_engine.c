@@ -606,7 +606,6 @@ eng_image_size_set(void *data, void *image, int w, int h)
         im->h = h;
         return image;
      }
-   eng_window_use(re->win);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
         evas_gl_common_texture_free(im->tex);
