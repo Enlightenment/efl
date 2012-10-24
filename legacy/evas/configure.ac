@@ -807,7 +807,9 @@ AC_SUBST([evas_image_loader_generic_cflags])
 AC_SUBST([evas_image_loader_generic_libs])
 AM_CONDITIONAL(BUILD_LOADER_GENERIC, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_GENERIC, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_GENERIC, [${do_static}], [Static Generic Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_GENERIC, [1], [Static Generic Loader])
+fi
 AC_DEFINE(BUILD_LOADER_GENERIC, [1], [Generic Loader])
 
 #####################################################################
@@ -817,7 +819,9 @@ AC_SUBST([evas_image_loader_xpm_cflags])
 AC_SUBST([evas_image_loader_xpm_libs])
 AM_CONDITIONAL(BUILD_LOADER_XPM, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_XPM, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_XPM, [${do_static}], [Static XPM Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_XPM, [1], [StaticXPM Loader])
+fi
 AC_DEFINE(BUILD_LOADER_XPM, [1], [XPM Loader])
 
 #####################################################################
@@ -827,7 +831,9 @@ AC_SUBST([evas_image_loader_bmp_cflags])
 AC_SUBST([evas_image_loader_bmp_libs])
 AM_CONDITIONAL(BUILD_LOADER_BMP, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_BMP, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_BMP, [${do_static}], [Static BMP Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_BMP, [1], [Static BMP Loader])
+fi
 AC_DEFINE(BUILD_LOADER_BMP, [1], [BMP Loader])
 
 #####################################################################
@@ -837,7 +843,9 @@ AC_SUBST([evas_image_loader_ico_cflags])
 AC_SUBST([evas_image_loader_ico_libs])
 AM_CONDITIONAL(BUILD_LOADER_ICO, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_ICO, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_ICO, [${do_static}], [Static ICO Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_ICO, [1], [Static ICO Loader])
+fi
 AC_DEFINE(BUILD_LOADER_ICO, [1], [ICO Loader])
 
 #####################################################################
@@ -847,7 +855,9 @@ AC_SUBST([evas_image_loader_pmaps_cflags])
 AC_SUBST([evas_image_loader_pmaps_libs])
 AM_CONDITIONAL(BUILD_LOADER_PMAPS, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_PMAPS, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_PMAPS, [${do_static}], [Static PMAPS Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_PMAPS, [1], [Static PMAPS Loader])
+fi
 AC_DEFINE(BUILD_LOADER_PMAPS, [1], [PMAPS Loader])
 
 #####################################################################
@@ -857,7 +867,9 @@ AC_SUBST([evas_image_loader_psd_cflags])
 AC_SUBST([evas_image_loader_psd_libs])
 AM_CONDITIONAL(BUILD_LOADER_PSD, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_PSD, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_PSD, [${do_static}], [Static PSD Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_PSD, [1], [Static PSD Loader])
+fi
 AC_DEFINE(BUILD_LOADER_PSD, [1], [PSD Loader])
 
 #####################################################################
@@ -867,7 +879,9 @@ AC_SUBST([evas_image_loader_tga_cflags])
 AC_SUBST([evas_image_loader_tga_libs])
 AM_CONDITIONAL(BUILD_LOADER_TGA, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_TGA, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_TGA, [${do_static}], [Static TGA Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_TGA, [1], [Static TGA Loader])
+fi
 AC_DEFINE(BUILD_LOADER_TGA, [1], [TGA Loader])
 
 #####################################################################
@@ -877,7 +891,9 @@ AC_SUBST([evas_image_loader_wbmp_cflags])
 AC_SUBST([evas_image_loader_wbmp_libs])
 AM_CONDITIONAL(BUILD_LOADER_WBMP, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_WBMP, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_WBMP, [${do_static}], [Static WBMP Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_WBMP, [1], [Static WBMP Loader])
+fi
 AC_DEFINE(BUILD_LOADER_WBMP, [1], [WBMP Loader])
 
 #####################################################################
@@ -887,7 +903,9 @@ AC_SUBST([evas_image_loader_eet_cflags])
 AC_SUBST([evas_image_loader_eet_libs])
 AM_CONDITIONAL(BUILD_LOADER_EET, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_EET, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_EET, [${do_static}], [Static EET Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_EET, [1], [Static EET Loader])
+fi
 AC_DEFINE(BUILD_LOADER_EET, [1], [EET Loader])
 
 #####################################################################
@@ -913,7 +931,9 @@ AC_SUBST([evas_image_loader_jpeg_cflags])
 AC_SUBST([evas_image_loader_jpeg_libs])
 AM_CONDITIONAL(BUILD_LOADER_JPEG, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_JPEG, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_JPEG, [${do_static}], [Static JPEG Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_JPEG, [1], [Static JPEG Loader])
+fi
 AC_DEFINE(BUILD_LOADER_JPEG, [1], [JPEG Loader])
 case "$host_os" in
    mingw*)
@@ -942,7 +962,9 @@ AC_SUBST([evas_image_loader_png_cflags])
 AC_SUBST([evas_image_loader_png_libs])
 AM_CONDITIONAL(BUILD_LOADER_PNG, [${do_module}])
 AM_CONDITIONAL(EVAS_STATIC_BUILD_PNG, [${do_static}])
-AC_DEFINE(EVAS_STATIC_BUILD_PNG, [${do_static}], [Static PNG Loader])
+if test "x${do_static}" = "xtrue"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_PNG, [1], [Static PNG Loader])
+fi
 AC_DEFINE(BUILD_LOADER_PNG, [1], [PNG Loader])
 
 EVAS_CHECK_IMAGE_LOADER([WEBP], [${want_evas_image_loader_webp}])
