@@ -10,7 +10,7 @@
  *
  * This is a @b digital clock widget. In its default theme, it has a
  * vintage "flipping numbers clock" appearance, which will animate
- * sheets of individual algarisms individually as time goes by.
+ * sheets of individual algorisms individually as time goes by.
  *
  * A newly created clock will fetch system's time (already
  * considering local time adjustments) to start with, and will tick
@@ -25,7 +25,7 @@
  * Also, when under edition mode, user clicks on the cited arrows
  * which are @b held for some time will make the clock to flip the
  * sheet, thus editing the time, continuously and automatically for
- * the user. The interval between sheet flips will keep growing in
+ * the user. The interval between sheet flips will keep reducing in
  * time, so that it helps the user to reach a time which is distant
  * from the one set.
  *
