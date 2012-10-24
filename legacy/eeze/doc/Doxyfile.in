@@ -62,7 +62,6 @@ HIDE_SCOPE_NAMES       = NO
 HIDE_UNDOC_CLASSES     = YES
 HIDE_UNDOC_MEMBERS     = YES
 HIDE_UNDOC_RELATIONS   = YES
-HTML_ALIGN_MEMBERS     = YES
 HTML_FILE_EXTENSION    = .html
 HTML_FOOTER            = @srcdir@/foot.html
 HTML_HEADER            = @srcdir@/head.html
