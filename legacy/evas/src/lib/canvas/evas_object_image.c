@@ -88,8 +88,6 @@ struct _Evas_Object_Image
    Eina_Bool         dirty_pixels : 1;
    Eina_Bool         filled : 1;
    Eina_Bool         proxyrendering : 1;
-   Eina_Bool         source_invisible : 1;
-   Eina_Bool         source_events: 1;
    Eina_Bool         preloading : 1;
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
@@ -572,12 +570,13 @@ _image_source_events_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object_Image *o = _pd;
    Eina_Bool source_events = va_arg(*list, int);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
 
    source_events = !!source_events;
-   if (o->source_events == source_events) return;
-   o->source_events = source_events;
+   if (obj->proxy.source_events == source_events) return;
+   obj->proxy.source_events = source_events;
    if (!o->cur.source) return;
-   if ((o->source_invisible) || (!source_events)) return;
+   if ((obj->proxy.source_invisible) || (!source_events)) return;
    //FIXME: Feed mouse events here.
 }
 
@@ -597,10 +596,10 @@ evas_object_image_source_events_get(const Evas_Object *eo_obj)
 static void
 _image_source_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   Evas_Object_Image *o = _pd;
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Eina_Bool *source_events = va_arg(*list, Eina_Bool *);
    if (!source_events) return;
-   *source_events = o->source_events;
+   *source_events = obj->proxy.source_events;
 }
 
 EAPI void
@@ -620,17 +619,17 @@ _image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object_Image *o = _pd;
    Eina_Bool visible = va_arg(*list, int);
 
-   visible = !!visible;
-   if (o->source_invisible == !visible) return;
-   o->source_invisible = !visible;
    if (!o->cur.source) return;
+
+   visible = !!visible;
    src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
+   if (src_obj->proxy.source_invisible == !visible) return;
    src_obj->proxy.source_invisible = !visible;
    src_obj->changed_source_visible = EINA_TRUE;
    evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
                                              EINA_FALSE, EINA_TRUE);
    evas_object_change(o->cur.source, src_obj);
-   if ((!visible) || (!o->source_events)) return;
+   if ((!visible) || (!src_obj->proxy.source_events)) return;
    //FIXME: Feed mouse events here.
 }
 
@@ -653,11 +652,11 @@ _image_source_visible_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object_Protected_Data *src_obj;
    Evas_Object_Image *o = _pd;
    Eina_Bool *visible = va_arg(*list, Eina_Bool *);
-   if (!visible) return;
 
+   if (!visible) return;
+   if (!o->cur.source) *visible = EINA_FALSE;
    src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
-   if (src_obj)
-     *visible = !o->source_invisible;
+   if (src_obj) *visible = !src_obj->proxy.source_invisible;
    else *visible = EINA_FALSE;
 }
 
@@ -2703,12 +2702,6 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 
    src->proxy.proxies = eina_list_append(src->proxy.proxies, eo_proxy);
    src->proxy.redraw = EINA_TRUE;
-   if (o->source_invisible)
-     {
-        src->proxy.source_invisible = EINA_TRUE;
-        evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
-                                                  EINA_FALSE, EINA_TRUE);
-     }
 }
 
 /* Some moron just set a proxy on a proxy.

@@ -158,7 +158,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 }
 
 static void
-_evas_object_source_event(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
+_evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object *src_eo = _evas_object_image_source_get(eo_obj);
@@ -207,8 +207,8 @@ _evas_object_source_event(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type ty
 static inline void
 _evas_event_pass_to_source(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
 {
-   if (obj->proxy.is_proxy)
-     _evas_object_source_event(eo_obj, eo_e, type, ev, event_id);
+   if (obj->proxy.is_proxy && obj->proxy.source_events)
+     _evas_object_source_events(eo_obj, eo_e, type, ev, event_id);
 }
 
 static Eina_List *
