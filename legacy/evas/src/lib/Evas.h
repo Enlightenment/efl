@@ -9122,20 +9122,21 @@ EAPI Evas_Object                  *evas_object_image_source_get(const Evas_Objec
 EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Set the source object to be shown or hidden.
+ * Set the source object to be visible or not.
  *
  * @param obj Proxy (image) object.
  * @param visible @c EINA_TRUE is source object to be shown, @c EINA_FALSE 
  * otherwise.
  *
  * If the @p visible set to @c EINA_FALSE, the source object of the proxy(@p obj
- * ) will be hidden.
+ * ) will be invisible.
  *
- * This API works differently with evas_object_show() and evas_object_hide().
- * Once source object is hidden by evas_object_hide() then the proxy object will * be hidden also. Actually in this case both objects are excluded from the
- * Evas internal updation. By this API, instead, you can set only proxy object
- * to be shown. And even if source object is invisible, source object can be 
- *updated for proxy.
+ * This API works differently to evas_object_show() and evas_object_hide().
+ * Once source object is hidden by evas_object_hide() then the proxy object will * be hidden as well. Actually in this case both objects are excluded from the
+ * Evas internal update circle.
+ *
+ * By this API, instead, one can toggle the visibility of a proxy's source
+ * object remaining the proxy visibility untouched.
  *
  * @see evas_object_image_source_visible_get()
  * @see evas_object_image_source_set()
