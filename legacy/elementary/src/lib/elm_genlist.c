@@ -2388,10 +2388,8 @@ _elm_genlist_smart_focus_next(const Evas_Object *obj,
                        evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
 
                        /* check item which displays more than half of its size */
-                       if (((x + (w / 2)) >= sx) &&
-                           ((y + (h / 2)) >= sy) &&
-                           ((x + (w / 2)) <= (sx + sw)) &&
-                           ((y + (h / 2)) <= (sy + sh)))
+                       if (ELM_RECTS_INTERSECT
+                             (x + (w / 2), y + (h / 2), 0, 0, sx, sy, sw, sh))
                          items = eina_list_append(items, it->base.access_obj);
                     }
                }
