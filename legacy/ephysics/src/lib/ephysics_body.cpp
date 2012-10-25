@@ -359,11 +359,11 @@ _ephysics_body_evas_stacking_sort_cb(const void *d1, const void *d2)
    stacking1 = (const EPhysics_Body_Evas_Stacking *)d1;
    stacking2 = (const EPhysics_Body_Evas_Stacking *)d2;
 
-   if (!stacking1) return 1;
-   if (!stacking2) return -1;
+   if (!stacking1) return -1;
+   if (!stacking2) return 1;
 
-   if (stacking1->stacking < stacking2->stacking) return -1;
-   if (stacking2->stacking > stacking2->stacking) return 1;
+   if (stacking1->stacking < stacking2->stacking) return 1;
+   if (stacking2->stacking > stacking2->stacking) return -1;
 
    return 0;
 }
@@ -430,7 +430,7 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
           }
 
         if (prev_obj)
-          evas_object_stack_above(stacking->evas, prev_obj);
+          evas_object_stack_below(stacking->evas, prev_obj);
 
         prev_obj = stacking->evas;
         free(stacking);
