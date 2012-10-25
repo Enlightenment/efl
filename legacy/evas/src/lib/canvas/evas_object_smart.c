@@ -1151,7 +1151,7 @@ evas_object_smart_member_cache_invalidate(Evas_Object *eo_obj,
    if (freeze_events)
      obj->parent_cache.freeze_events_valid = EINA_FALSE;
    if (source_invisible)
-     obj->parent_cache.source_invisible_valid = EINA_FALSE;
+     obj->parent_cache.src_invisible_valid = EINA_FALSE;
 
    if (!obj->is_smart) return;
    Evas_Object_Smart *o = eo_data_get(eo_obj, MY_CLASS);
@@ -1403,7 +1403,7 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 #endif
      }
 
-   if (obj->changed_map || obj->changed_source_visible)
+   if (obj->changed_map || obj->changed_src_visible)
      evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                          eo_obj, obj);
 

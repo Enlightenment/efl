@@ -109,16 +109,16 @@ evas_event_passes_through(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_
 static inline int
 evas_object_is_source_invisible(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_Data *obj)
 {
-   if (obj->parent_cache.source_invisible_valid)
-     return obj->parent_cache.source_invisible;
-   if (obj->proxy.proxies && obj->proxy.source_invisible) return 1;
+   if (obj->parent_cache.src_invisible_valid)
+     return obj->parent_cache.src_invisible;
+   if (obj->proxy.proxies && obj->proxy.src_invisible) return 1;
    if (!obj->smart.parent) return 0;
    Evas_Object_Protected_Data *smart_parent_pd =
       eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
-   obj->parent_cache.source_invisible =
+   obj->parent_cache.src_invisible =
       evas_object_is_source_invisible(obj->smart.parent, smart_parent_pd);
-   obj->parent_cache.source_invisible_valid = EINA_TRUE;
-   return obj->parent_cache.source_invisible;
+   obj->parent_cache.src_invisible_valid = EINA_TRUE;
+   return obj->parent_cache.src_invisible;
 }
 
 static inline int

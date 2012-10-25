@@ -595,11 +595,11 @@ struct _Evas_Object_Protected_Data
       Eina_List               *proxies;
       void                    *surface;
       int                      w,h;
-      Eina_List               *event_in;
+      Eina_List               *src_event_in;
       Eina_Bool                redraw : 1;
       Eina_Bool                is_proxy : 1;
-      Eina_Bool                source_invisible : 1;
-      Eina_Bool                source_events: 1;
+      Eina_Bool                src_invisible : 1;
+      Eina_Bool                src_events: 1;
    } proxy;
 
    // Pointer to the Evas_Object itself
@@ -648,8 +648,8 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                pass_events_valid : 1;
       Eina_Bool                freeze_events : 1;
       Eina_Bool                freeze_events_valid : 1;
-      Eina_Bool                source_invisible : 1;
-      Eina_Bool                source_invisible_valid : 1;
+      Eina_Bool                src_invisible : 1;
+      Eina_Bool                src_invisible_valid : 1;
    } parent_cache;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_active : 1;
@@ -670,7 +670,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   changed_color : 1;
    Eina_Bool                   changed_map : 1;
    Eina_Bool                   changed_pchange : 1;
-   Eina_Bool                   changed_source_visible : 1;
+   Eina_Bool                   changed_src_visible : 1;
    Eina_Bool                   del_ref : 1;
 
    Eina_Bool                   is_frame : 1;
