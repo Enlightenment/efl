@@ -1531,6 +1531,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         
         if (*p2)
           {
+             fprintf(stderr, "FMT: '%s' '%s'\n", p1, p2);
              if      (!strcmp(p2, "bottom_right")) EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
              else if (!strcmp(p2, "bottom"))       EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
              else if (!strcmp(p2, "bottom_left"))  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);
@@ -1796,7 +1797,7 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
-   fmt2->font.fdesc = evas_font_desc_ref(fmt->font.fdesc);
+   if (fmt->font.fdesc) fmt2->font.fdesc = evas_font_desc_ref(fmt->font.fdesc);
 
    if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
