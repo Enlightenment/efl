@@ -735,6 +735,9 @@ EAPI void ephysics_world_del(EPhysics_World *world);
  *
  * When a world is created it starts running.
  *
+ * @param world The world to be played / paused.
+ * @param running If @c EINA_TRUE it will play, otherwise it will pause.
+ *
  * @see ephysics_world_running_get()
  *
  * @ingroup EPhysics_World
@@ -746,6 +749,10 @@ EAPI void ephysics_world_running_set(EPhysics_World *world, Eina_Bool running);
  * Get running status of world.
  *
  * By default a world starts running.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if it's running, or @c EINA_FALSE if it's paused or on
+ * error.
  *
  * @see ephysics_world_running_set() for more details.
  *
@@ -1917,13 +1924,14 @@ EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Co
  * Set the soft body number of position iterations.
  *
  * Both soft body and cloth can have its number of position iterations changed.
- * The number of position iterations will change how many time the physics engine
+ * The number of position iterations will change how many time the physics
+ * engine
  * will iterate the position solver, a greater value will change deformation
- * behaves and how hard the soft body looks like. The greater position iterations
- * the harder the soft body will be.
+ * behaves and how hard the soft body looks like. The greater position
+ * iterations the harder the soft body will be.
  *
- * @node For soft bodies the default value is set to 1, and for cloth it's set to
- * the number of rows / 5;
+ * @note For soft bodies the default value is set to 1, and for cloth it's set
+ * to the number of rows / 5;
  *
  * @param body The body to be set.
  * @param iterations The number of iterations.
@@ -2004,8 +2012,8 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  * Just like rotation, deformation will be applied on associated
  * evas object using evas map.
  *
- * @note When working with soft bodies it's importante to adjust the simulation's
- * fixed time step due its multi point nature.
+ * @note When working with soft bodies it's importante to adjust the
+ * simulation's fixed time step due its multi point nature.
  *
  * For a rigid circle, check @ref ephysics_body_circle_add().
  *
@@ -2049,8 +2057,8 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * Just like rotation, deformation will be applied on associated
  * evas object using evas map.
  *
- * @note When working with soft bodies it's importante to adjust the simulation's
- * fixed time step due its multi point nature.
+ * @note When working with soft bodies it's importante to adjust the
+ * simulation's fixed time step due its multi point nature.
  *
  * For a rigid circle, check @ref ephysics_body_circle_add().
  *
