@@ -158,7 +158,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 }
 
 static void
-_evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
+_evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Callback_Type type, void *ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object *src_eo = _evas_object_image_source_get(eo_obj);
@@ -169,22 +169,18 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
    Evas_Coord h1 = obj->cur.geometry.h;
    Evas_Coord w2 = src->cur.geometry.w;
    Evas_Coord h2 = src->cur.geometry.h;
-   Evas_Coord tx;
-   Evas_Coord ty;
 
-   if (obj->cur.usemap && obj->cur.map)
-     evas_map_coords_get(obj->cur.map, e->pointer.x, e->pointer.y, &tx, &ty, 0);
-   else
-     {
-        tx = e->pointer.x - obj->cur.geometry.x;
-        ty = e->pointer.y - obj->cur.geometry.y;
-     }
+   x -= obj->cur.geometry.x;
+   y -= obj->cur.geometry.y;
 
-   if (w1 != w2) tx = (Evas_Coord) ((float)tx * ((float)w2 / (float)w1));
-   if (h1 != h2) ty = (Evas_Coord) ((float)ty * ((float)w2 / (float)w1));
-   tx += src->cur.geometry.x;
-   ty += src->cur.geometry.y;
+   if (w1 != w2) x = (Evas_Coord) ((float)x * ((float)w2 / (float)w1));
+   if (h1 != h2) y = (Evas_Coord) ((float)y * ((float)w2 / (float)w1));
 
+   x += src->cur.geometry.x;
+   y += src->cur.geometry.y;
+
+   //FIXME: handle for key events and hold
+   //FIXME: If the src doesn't have geometry info
    if (src->is_smart)
      {
         Eina_List *in = NULL, *l = NULL;
@@ -193,7 +189,7 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
         int no_rep = 0;
         //Optimize Here: Keep this list in proxy image for up and move 
         in = _evas_event_object_list_raw_in_get(eo_e, in,
-                                                 evas_object_smart_members_get_direct(src_eo), NULL, tx, ty, &no_rep, EINA_TRUE);
+                                                 evas_object_smart_members_get_direct(src_eo), NULL, x, y, &no_rep, EINA_TRUE);
         EINA_LIST_FOREACH(in, l, child_eo)
           {
              if (obj->delete_me || src->delete_me) return;
@@ -211,10 +207,10 @@ _evas_object_source_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Callback_Type t
 }
 
 static inline void
-_evas_event_pass_to_source(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *eo_e, Evas_Callback_Type type, void *ev, int event_id)
+_evas_event_pass_to_source(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Callback_Type type, void *ev, int event_id)
 {
    if (obj->proxy.is_proxy && obj->proxy.source_events)
-     _evas_object_source_events(eo_obj, eo_e, type, ev, event_id);
+     _evas_object_source_events(eo_obj, eo_e, x, y, type, ev, event_id);
 }
 
 static Eina_List *
@@ -478,9 +474,9 @@ _canvas_event_feed_mouse_down(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(eo_obj, obj,
                                              EVAS_CALLBACK_MOUSE_DOWN, &ev,
                                              event_id);
-             _evas_event_pass_to_source(eo_obj, obj, eo_e,
-                                        EVAS_CALLBACK_MOUSE_DOWN, &ev,
-                                        event_id);
+             _evas_event_pass_to_source(eo_obj, obj, eo_e, ev.canvas.x,
+                                        ev.canvas.y, EVAS_CALLBACK_MOUSE_DOWN,
+                                        &ev, event_id);
           }
         if (e->delete_me) break;
         if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
@@ -544,6 +540,7 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
                                                        EVAS_CALLBACK_MOUSE_OUT,
                                                        &ev, event_id);
                        _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                  ev.canvas.x, ev.canvas.y,
                                                   EVAS_CALLBACK_MOUSE_OUT, &ev,
                                                   event_id);
                     }
@@ -590,7 +587,8 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
                             evas_object_event_callback_call(eo_obj_itr, obj_itr,
                                                             EVAS_CALLBACK_MOUSE_IN, &ev_in, event_id);
                             _evas_event_pass_to_source(eo_obj_itr, obj_itr,
-                                                       eo_e,
+                                                       eo_e, ev_in.canvas.x,
+                                                       ev_in.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_IN,
                                                        &ev, event_id);
 
@@ -703,6 +701,7 @@ _canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
                                                        EVAS_CALLBACK_MOUSE_UP,
                                                        &ev, event_id);
                        _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                  ev.canvas.x, ev.canvas.y,
                                                   EVAS_CALLBACK_MOUSE_UP,
                                                   &ev, event_id);
                     }
@@ -826,8 +825,8 @@ _canvas_event_feed_mouse_wheel(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(eo_obj, obj,
                                              EVAS_CALLBACK_MOUSE_WHEEL, &ev,
                                              event_id);
-             _evas_event_pass_to_source(eo_obj, obj, eo_e,
-                                        EVAS_CALLBACK_MOUSE_WHEEL,
+             _evas_event_pass_to_source(eo_obj, obj, eo_e, ev.canvas.x,
+                                        ev.canvas.y, EVAS_CALLBACK_MOUSE_WHEEL,
                                         &ev, event_id);
           }
         if (e->delete_me) break;
@@ -935,6 +934,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev.cur.canvas.x,
+                                                       ev.cur.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_MOVE,
                                                        &ev, event_id);
                          }
@@ -1000,6 +1001,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                                                                       EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
                                       _evas_event_pass_to_source(eo_obj, obj,
                                                                  eo_e,
+                                                                 ev.canvas.x,
+                                                                 ev.canvas.y,
                                                                  EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
                                    }
                               }
@@ -1094,6 +1097,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
                        _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                  ev.cur.canvas.x,
+                                                  ev.cur.canvas.y,
                                                   EVAS_CALLBACK_MOUSE_MOVE, &ev,
                                                   event_id);
                     }
@@ -1113,6 +1118,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev2.canvas.x,
+                                                       ev2.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_OUT,
                                                        &ev2, event_id);
                          }
@@ -1145,6 +1152,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev3.canvas.x,
+                                                       ev3.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_IN,
                                                        &ev3, event_id2);
                          }
@@ -1284,6 +1293,8 @@ nogrep:
                        _evas_event_havemap_adjust(eo_obj, obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, &ev, event_id);
                        _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                  ev.cur.canvas.x,
+                                                  ev.cur.canvas.y,
                                                   EVAS_CALLBACK_MOUSE_MOVE,
                                                   &ev, event_id);
                     }
@@ -1303,6 +1314,8 @@ nogrep:
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_OUT, &ev2, event_id);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev2.canvas.x,
+                                                       ev2.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_OUT,
                                                        &ev2, event_id);
                          }
@@ -1335,6 +1348,8 @@ nogrep:
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_IN, &ev3, event_id2);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev3.canvas.x,
+                                                       ev3.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_IN,
                                                        &ev3, event_id2);
                          }
@@ -1420,6 +1435,7 @@ _canvas_event_feed_mouse_in(Eo *eo_e, void *_pd, va_list *list)
                                                      EVAS_CALLBACK_MOUSE_IN,
                                                      &ev, event_id);
                      _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                ev.canvas.x, ev.canvas.y,
                                                 EVAS_CALLBACK_MOUSE_IN,
                                                 &ev, event_id);
                     }
@@ -1503,6 +1519,7 @@ _canvas_event_feed_mouse_out(Eo *eo_e, void *_pd, va_list *list)
                             evas_object_event_callback_call(eo_obj, obj,
                                                             EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
                             _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                                       ev.canvas.x, ev.canvas.y,
                                                        EVAS_CALLBACK_MOUSE_OUT,
                                                        &ev, event_id);
                          }
@@ -1624,8 +1641,9 @@ _canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(eo_obj, obj,
                                              EVAS_CALLBACK_MULTI_DOWN, &ev,
                                              event_id);
-             _evas_event_pass_to_source(eo_obj, obj, eo_e,
-                                        EVAS_CALLBACK_MULTI_DOWN, &ev,
+             _evas_event_pass_to_source(eo_obj, obj, eo_e, ev.canvas.x,
+                                        ev.canvas.y, EVAS_CALLBACK_MULTI_DOWN,
+                                        &ev,
                                         event_id);
           }
         if (e->delete_me) break;
@@ -1734,8 +1752,9 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(eo_obj, obj,
                                              EVAS_CALLBACK_MULTI_UP, &ev,
                                              event_id);
-             _evas_event_pass_to_source(eo_obj, obj, eo_e,
-                                        EVAS_CALLBACK_MULTI_UP, &ev, event_id);
+             _evas_event_pass_to_source(eo_obj, obj, eo_e, ev.canvas.x,
+                                        ev.canvas.y, EVAS_CALLBACK_MULTI_UP,
+                                        &ev, event_id);
           }
         if (e->delete_me) break;
      }
@@ -1844,7 +1863,8 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
-                  _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                  _evas_event_pass_to_source(eo_obj, obj, eo_e, ev.cur.canvas.x,
+                                             ev.cur.canvas.y,
                                              EVAS_CALLBACK_MULTI_MOVE, &ev,
                                              event_id);
                }
@@ -1919,6 +1939,7 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
                     evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
                     _evas_event_pass_to_source(eo_obj, obj, eo_e,
+                                               ev.cur.canvas.x, ev.cur.canvas.y,
                                                EVAS_CALLBACK_MULTI_MOVE, &ev,
                                                event_id);
                }
@@ -2017,7 +2038,7 @@ _canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
                                                             object_obj,
                                                             EVAS_CALLBACK_KEY_DOWN, &ev, event_id);
                             _evas_event_pass_to_source(g->object, object_obj,
-                                                       eo_e,
+                                                       eo_e, 0, 0,
                                                        EVAS_CALLBACK_KEY_DOWN,
                                                        &ev, event_id);
                          }
@@ -2054,7 +2075,7 @@ _canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(e->focused, focused_obj,
                                              EVAS_CALLBACK_KEY_DOWN,
                                              &ev, event_id);
-             _evas_event_pass_to_source(e->focused, focused_obj, eo_e,
+             _evas_event_pass_to_source(e->focused, focused_obj, eo_e, 0, 0,
                                         EVAS_CALLBACK_KEY_DOWN,
                                         &ev, event_id);
           }
@@ -2137,7 +2158,7 @@ _canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
                                                        EVAS_CALLBACK_KEY_UP,
                                                        &ev, event_id);
                        _evas_event_pass_to_source(g->object, object_obj, eo_e,
-                                                  EVAS_CALLBACK_KEY_UP,
+                                                  0, 0, EVAS_CALLBACK_KEY_UP,
                                                   &ev, event_id);
                     }
                   if (g->exclusive) exclusive = EINA_TRUE;
@@ -2174,7 +2195,7 @@ _canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(e->focused, focused_obj,
                                              EVAS_CALLBACK_KEY_UP,
                                              &ev, event_id);
-             _evas_event_pass_to_source(e->focused, focused_obj, eo_e,
+             _evas_event_pass_to_source(e->focused, focused_obj, eo_e, 0, 0,
                                         EVAS_CALLBACK_KEY_UP,
                                         &ev, event_id);
           }
@@ -2226,7 +2247,7 @@ _canvas_event_feed_hold(Eo *eo_e, void *_pd, va_list *list)
              evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD,
                                              &ev, event_id);
              _evas_event_pass_to_source(eo_obj, obj, eo_e, EVAS_CALLBACK_HOLD,
-                                        &ev, event_id);
+                                        0, 0, &ev, event_id);
           }
         if (e->delete_me) break;
      }
