@@ -39,33 +39,24 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET) \
    Edje *ed; \
-   GET_EED_OR_RETURN(RET); \
-   ed = (Edje *)eed;
+   if (!eo_isa(obj, EDJE_OBJ_CLASS)) \
+     return RET; \
+   ed = eo_data_get(obj, EDJE_OBJ_CLASS); \
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
-   Edje *ed; \
-   Edje_Edit *eed; \
+   GET_EED_OR_RETURN(RET) \
+   GET_ED_OR_RETURN(RET) \
    Edje_Real_Part *rp; \
-   if (!eo_isa(obj, MY_CLASS)) \
-     return RET; \
-   eed = eo_data_get(obj, MY_CLASS); \
-   if (!eed) return RET; \
-   ed = (Edje *)eed; \
    rp = _edje_real_part_get(ed, part); \
    if (!rp) return RET;
 
 /* Get pd(Edje_Part_Description*) from obj(Evas_Object*), part(char*) and state (char*) */
 #define GET_PD_OR_RETURN(RET) \
-   Edje *ed; \
-   Edje_Edit *eed; \
+   GET_EED_OR_RETURN(RET) \
+   GET_ED_OR_RETURN(RET) \
    Edje_Real_Part *rp; \
    Edje_Part_Description_Common *pd; \
-   if (!eo_isa(obj, MY_CLASS)) \
-     return RET; \
-   eed = eo_data_get(obj, MY_CLASS); \
-   if (!eed) return RET; \
-   ed = (Edje *)eed; \
    rp = _edje_real_part_get(ed, part); \
    if (!rp) return RET; \
    pd = _edje_part_description_find_byname(eed, part, state, value); \
@@ -4668,6 +4659,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!name) return EINA_FALSE;
@@ -5224,6 +5216,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
@@ -5359,6 +5352,7 @@ edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_n
 {
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
@@ -6047,6 +6041,7 @@ edje_edit_script_get(Evas_Object *obj)
 {
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(NULL);
    GET_ED_OR_RETURN(NULL);
 
    if (!ed->collection) return NULL;
@@ -7588,6 +7583,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
    Edje_File *ef;
    Eet_File *eetf;
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_ED_OR_RETURN(EINA_FALSE);
 
    ef = ed->file;
