@@ -1914,6 +1914,42 @@ EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Co
 
 /**
  * @brief
+ * Set the soft body number of position iterations.
+ *
+ * Both soft body and cloth can have its number of position iterations changed.
+ * The number of position iterations will change how many time the physics engine
+ * will iterate the position solver, a greater value will change deformation
+ * behaves and how hard the soft body looks like. The greater position iterations
+ * the harder the soft body will be.
+ *
+ * @node For soft bodies the default value is set to 1, and for cloth it's set to
+ * the number of rows / 5;
+ *
+ * @param body The body to be set.
+ * @param iterations The number of iterations.
+ *
+ * @see ephysics_body_cloth_add() for more informations about cloth.
+ * @see ephysics_body_soft_body_position_iterations_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_position_iterations_set(EPhysics_Body *body, int iterations);
+
+/**
+ * @brief
+ * Get the soft body number of position iterations.
+ *
+ * @param body The body to get the number os position iterations from.
+ * @return The number of position solver iterations of a soft @p body.
+ *
+ * @see ephysics_body_soft_body_position_iterations_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI int ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body);
+
+/**
+ * @brief
  * Move a body's triangle.
  *
  * Move the triangle of @p idx of @p body to @p x, @p y and @p z.

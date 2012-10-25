@@ -1571,6 +1571,47 @@ _ephysics_body_slices_add(EPhysics_Body *body, double delta, double max)
    return EINA_TRUE;
 }
 
+EAPI void
+ephysics_body_soft_body_position_iterations_set(EPhysics_Body *body, int iterations)
+{
+   if (!body)
+     {
+        ERR("Could not set the number of iterations for position solver, body "
+            "is null.");
+        return;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Could not set the number of iterations for position solver, body "
+            "must be a soft body or a cloth");
+        return;
+     }
+
+   body->soft_body->m_cfg.piterations = iterations;
+   DBG("Soft body position solver iterations set to: %d", iterations);
+}
+
+EAPI int
+ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Could not get the number of iterations for position solver, body "
+            "is null.");
+        return 0;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Could not get the number of iterations for position solver, body "
+            "must be a soft body or a cloth");
+        return 0;
+     }
+
+   return body->soft_body->m_cfg.piterations;
+}
+
 EAPI EPhysics_Body *
 ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 {
