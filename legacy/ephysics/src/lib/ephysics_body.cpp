@@ -921,8 +921,14 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
 
    trans = _ephysics_body_transform_get(body);
    trans.setOrigin(btVector3(mx, my, mz));
-   body->rigid_body->proceedToTransform(trans);
-   body->rigid_body->getMotionState()->setWorldTransform(trans);
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     _ephysics_body_transform_set(body, trans);
+   else
+     {
+        body->rigid_body->proceedToTransform(trans);
+        body->rigid_body->getMotionState()->setWorldTransform(trans);
+     }
 
    ephysics_body_activate(body, EINA_TRUE);
 
