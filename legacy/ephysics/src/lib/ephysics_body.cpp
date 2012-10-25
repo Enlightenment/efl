@@ -224,15 +224,12 @@ static void
 _ephysics_body_soft_body_slices_init(EPhysics_Body *body)
 {
    EPhysics_Body_Soft_Body_Slice *slice = NULL;
-   Evas_Coord x, y, w, h, wy, wh;
    btVector3 p0, p1, p2;
    void *slice_data;
    Eina_List *l;
    Evas *evas;
 
    evas = evas_object_evas_get(body->evas_obj);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
-                                      NULL);
 
    EINA_LIST_FOREACH(body->soft_data->slices, l, slice_data)
      {
@@ -240,10 +237,7 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body)
         slice->evas_obj = evas_object_image_filled_add(evas);
         evas_object_image_source_set(slice->evas_obj,
                                      body->soft_data->base_obj);
-
-        evas_object_geometry_get(body->soft_data->base_obj, &x, &y, &w, &h);
-        evas_object_resize(slice->evas_obj, w, h);
-        evas_object_move(slice->evas_obj, x, y);
+        evas_object_resize(slice->evas_obj, 1, 1);
         evas_object_show(slice->evas_obj);
         evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
      }
