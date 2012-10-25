@@ -86,6 +86,7 @@ struct _EPhysics_Body {
      Evas_Coord w;
      Evas_Coord h;
      Evas_Coord d;
+     btVector3 scale;
      void *data;
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;

@@ -455,15 +455,6 @@ _ephysics_body_transform_set(EPhysics_Body *body, btTransform trans)
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 }
 
-static btVector3
-_ephysics_body_scale_get(const EPhysics_Body *body)
-{
-   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
-     return body->collision_shape->getLocalScaling();
-
-   return body->soft_body->getCollisionShape()->getLocalScaling();
-}
-
 void
 ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate)
 {
@@ -658,6 +649,7 @@ _ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_
         return NULL;
      }
 
+   body->scale = btVector3(1, 1, 1);
    body->mass = mass;
    body->world = world;
    body->cm.x = cm_x;
@@ -987,6 +979,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    body->w = w;
    body->h = h;
    body->d = d;
+   body->scale = body_scale;
 
    DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
    DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
@@ -2379,7 +2372,7 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
      }
 
    trans = _ephysics_body_transform_get(body);
-   scale = _ephysics_body_scale_get(body);
+   scale = body->scale;
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
