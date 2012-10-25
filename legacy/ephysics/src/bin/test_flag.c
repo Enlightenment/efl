@@ -158,6 +158,8 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 
    ephysics_world_light_set(world, 300, 50, -200, 255, 255, 255, 0, 0, 0);
    ephysics_world_light_all_bodies_set(world, EINA_TRUE);
+   ephysics_camera_perspective_enabled_set(ephysics_world_camera_get(world),
+                                           EINA_TRUE);
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);
    ephysics_body_restitution_set(boundary, 0.65);

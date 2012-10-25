@@ -78,10 +78,14 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
    int lr, lg, lb, ar, ag, ab;
    Evas_Coord lx, ly, lz;
    Eina_Bool light = EINA_FALSE;
+   EPhysics_Camera *camera;
+   int px, py, pz, foc;
+   Eina_Bool perspective = EINA_FALSE;
 
    soft_data = (EPhysics_Body_Soft_Body_Data *)evas_object_data_get(obj,
                                                                     SOFT_DATA);
    body = soft_data->body;
+   camera = ephysics_world_camera_get(body->world);
    rate = ephysics_world_rate_get(body->world);
 
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
@@ -94,6 +98,12 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
         if (ephysics_world_light_get(body->world, &lx, &ly, &lz,
                                      &lr, &lg, &lb, &ar, &ag, &ab))
           light = EINA_TRUE;
+     }
+
+   if (ephysics_camera_perspective_enabled_get(camera))
+     {
+        ephysics_camera_perspective_get(camera, &px, &py, &pz, &foc);
+        perspective = EINA_TRUE;
      }
 
    EINA_LIST_FOREACH(soft_data->slices, l, list_data)
@@ -130,6 +140,21 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
         evas_map_point_coord_set(map, 1, x1, y1, z1);
         evas_map_point_coord_set(map, 2, x2, y2, z2);
         evas_map_point_coord_set(map, 3, x2, y2, z2);
+
+        if (perspective)
+          evas_map_util_3d_perspective(map, px, py, pz, foc);
+
+        if (body->back_face_culling)
+          {
+             if (evas_map_util_clockwise_get(map))
+                  evas_object_show(slice->evas_obj);
+             else
+               {
+                  evas_map_free(map);
+                  evas_object_hide(slice->evas_obj);
+                  continue;
+               }
+          }
 
         if (light)
           evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
