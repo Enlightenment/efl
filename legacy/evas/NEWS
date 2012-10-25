@@ -19,6 +19,7 @@ Improvements:
    * EVAS_GL_NO_BLACKLIST env var to turn off blacklisted drivers in gl
    * Evas gl engine can do partial swaps now.
    * evas_object_del() now takes NULL parameters
+   * make xpm loader faster (from O(N) to O(log(N))).
 
 Fixes:
    * Fix segmentation fault with the esvg loader.

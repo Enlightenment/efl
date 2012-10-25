@@ -31,6 +31,23 @@ static Evas_Image_Load_Func evas_image_load_xpm_func =
 static Eina_File *rgb_txt;
 static void *rgb_txt_map;
 
+static int
+_xpm_hexa_int(const char *s, int len)
+{
+   const char *hexa = "0123456789abcdef";
+   const char *lookup;
+   int i, c, r;
+
+   for (r = 0, i = 0; i < len; i++)
+     {
+        c = s[i];
+        lookup = strchr(hexa, tolower(c));
+        r = (r << 4) | (lookup ? lookup - hexa : 0);
+     }
+
+   return r;
+}
+
 static void
 xpm_parse_color(char *color, int *r, int *g, int *b)
 {
@@ -43,26 +60,15 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
    if (color[0] == '#')
      {
         int                 len;
-        char                val[32];
 
         len = strlen(color) - 1;
         if (len < 96)
           {
-             int                 i;
 
              len /= 3;
-             for (i = 0; i < len; i++)
-                val[i] = color[1 + i + (0 * len)];
-             val[i] = 0;
-             sscanf(val, "%x", r);
-             for (i = 0; i < len; i++)
-                val[i] = color[1 + i + (1 * len)];
-             val[i] = 0;
-             sscanf(val, "%x", g);
-             for (i = 0; i < len; i++)
-                val[i] = color[1 + i + (2 * len)];
-             val[i] = 0;
-             sscanf(val, "%x", b);
+             *r = _xpm_hexa_int(&(color[1 + (0 * len)]), len);
+             *g = _xpm_hexa_int(&(color[1 + (1 * len)]), len);
+             *b = _xpm_hexa_int(&(color[1 + (2 * len)]), len);
              if (len == 1)
                {
                   *r = (*r << 4) | *r;
@@ -92,7 +98,7 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
              int rr, gg, bb;
              char name[4096];
 
-             /* FIXME: not really efficient */
+             /* FIXME: not really efficient, should be loaded once in memory with a lookup table */
              memcpy(buf, tmp, endline - tmp);
              buf[endline - tmp + 1] = '\0';
 
@@ -111,29 +117,56 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
      }
 }
 
+typedef struct _CMap CMap;
+struct _CMap {
+   EINA_RBTREE;
+   short         r, g, b;
+   char          str[6];
+   unsigned char transp;
+};
+
+Eina_Rbtree_Direction
+_cmap_cmp_node_cb(const Eina_Rbtree *left, const Eina_Rbtree *right, void *data __UNUSED__)
+{
+   CMap *lcm;
+   CMap *rcm;
+
+   lcm = EINA_RBTREE_CONTAINER_GET(left, CMap);
+   rcm = EINA_RBTREE_CONTAINER_GET(right, CMap);
+
+   if (strcmp(lcm->str, rcm->str) < 0)
+     return EINA_RBTREE_LEFT;
+   return EINA_RBTREE_RIGHT;
+}
+
+int
+_cmap_cmp_key_cb(const Eina_Rbtree *node, const void *key, int length __UNUSED__, void *data __UNUSED__)
+{
+   CMap *root = EINA_RBTREE_CONTAINER_GET(node, CMap);
+
+   return strcmp(root->str, key);
+}
+
 /** FIXME: clean this up and make more efficient  **/
 static Eina_Bool
 evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UNUSED__, int load_data, int *error)
 {
-   DATA32             *ptr, *end;
-   Eina_File          *f;
-   const char         *map;
-   size_t              length;
-   size_t              position;
+   DATA32      *ptr, *end, *head;
+   Eina_File   *f;
+   const char  *map;
+   size_t       length;
+   size_t       position;
 
-   int                 pc, c, i, j, k, w, h, ncolors, cpp, comment, transp,
-                       quote, context, len, done, r, g, b, backslash, lu1, lu2;
-   char               *line = NULL;
-   char                s[256], tok[128], col[256], *tl;
-   int                 lsz = 256;
-   struct _cmap {
-      char             str[6];
-      unsigned char    transp;
-      short            r, g, b;
-   }                  *cmap = NULL;
+   int          pc, c, i, j, k, w, h, ncolors, cpp, comment, transp,
+                quote, context, len, done, r, g, b, backslash, lu1, lu2;
+   char        *line = NULL;
+   char         s[256], tok[128], col[256], *tl;
+   int          lsz = 256;
+   CMap        *cmap = NULL;
+   Eina_Rbtree *root = NULL;
 
-   short               lookup[128 - 32][128 - 32];
-   int                 count, pixels;
+   short        lookup[128 - 32][128 - 32];
+   int          count, pixels;
 
    done = 0;
 //   transp = -1;
@@ -264,7 +297,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 
                        if (!cmap)
                          {
-                            cmap = malloc(sizeof(struct _cmap) * ncolors);
+                            cmap = malloc(sizeof(CMap) * ncolors);
                             if (!cmap)
                               {
 				*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
@@ -293,6 +326,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                             len = strlen(line);
                             strncpy(cmap[j].str, line, cpp);
                             cmap[j].str[cpp] = 0;
+                            if (load_data) root = eina_rbtree_inline_insert(root, EINA_RBTREE_GET(&cmap[j]), _cmap_cmp_node_cb, NULL);
 			    for (slen = 0; slen < cpp; slen++)
 			      {
 				 /* fix the ascii of the  color string - if its < 32 - just limit to 32 */
@@ -304,9 +338,11 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                               {
                                  if (line[k] != ' ')
                                    {
-                                      s[0] = 0;
-                                      sscanf(&line[k], "%255s", s);
-                                      slen = strlen(s);
+                                      const char *tmp = strchr(&line[k], ' ');
+                                      slen = tmp ? tmp - &line[k]: 255;
+
+                                      strncpy(s, &line[k], slen);
+                                      s[slen] = 0;
                                       k += slen;
                                       if (slen == 1 && *s == 'c') iscolor = 1;
                                       if ((slen == 1 && ((s[0] == 'm') || (s[0] == 's') || (s[0] == 'g') || (s[0] == 'c'))) ||
@@ -367,7 +403,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                               }
                          }
                        j++;
-                       if (j >= ncolors)
+                       if (load_data && j >= ncolors)
                          {
                             if (cpp == 1)
 			      {
@@ -388,6 +424,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                          {
                             evas_cache_image_surface_alloc(ie, w, h);
                             ptr = evas_cache_image_pixels(ie);
+                            head = ptr;
                             if (!ptr)
                               {
 				 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
@@ -520,6 +557,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
+                                      Eina_Rbtree *l;
+
                                       for (j = 0; j < cpp; j++, i++)
 					{
 					   col[j] = line[i];
@@ -527,30 +566,26 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 					}
                                       col[j] = 0;
                                       i--;
-                                      for (j = 0; j < ncolors; j++)
+
+                                      l = eina_rbtree_inline_lookup(root, col, j, _cmap_cmp_key_cb, NULL);
+                                      if (l)
                                         {
-                                           if (!strcmp(col, cmap[j].str))
+                                           CMap *cm = EINA_RBTREE_CONTAINER_GET(l, CMap);
+
+                                           r = (unsigned char)cm->r;
+                                           g = (unsigned char)cm->g;
+                                           b = (unsigned char)cm->b;
+                                           if (cm->transp)
                                              {
-                                                if (cmap[j].transp)
-                                                  {
-                                                     r = (unsigned char)cmap[j].r;
-                                                     g = (unsigned char)cmap[j].g;
-                                                     b = (unsigned char)cmap[j].b;
-						     *ptr = RGB_JOIN(r, g, b);
-						     ptr++;
-                                                     count++;
-                                                  }
-                                                else
-                                                  {
-						     r = (unsigned char)cmap[j].r;
-                                                     g = (unsigned char)cmap[j].g;
-                                                     b = (unsigned char)cmap[j].b;
-						     *ptr = ARGB_JOIN(0xff, r, g, b);
-						     ptr++;
-                                                     count++;
-                                                  }
-						break;
+                                                *ptr = RGB_JOIN(r, g, b);
                                              }
+                                           else
+                                             {
+                                                *ptr = ARGB_JOIN(0xff, r, g, b);
+                                             }
+
+                                           ptr++;
+                                           count++;
                                         }
                                    }
                               }
@@ -560,24 +595,26 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
+                                      Eina_Rbtree *l;
+
                                       for (j = 0; j < cpp; j++, i++)
                                         {
                                            col[j] = line[i];
                                         }
                                       col[j] = 0;
                                       i--;
-                                      for (j = 0; j < ncolors; j++)
+
+                                      l = eina_rbtree_inline_lookup(root, col, 0, _cmap_cmp_key_cb, NULL);
+                                      if (l)
                                         {
-                                           if (!strcmp(col, cmap[j].str))
-                                             {
-                                                r = (unsigned char)cmap[j].r;
-                                                g = (unsigned char)cmap[j].g;
-                                                b = (unsigned char)cmap[j].b;
-						*ptr = ARGB_JOIN(0xff, r, g, b);
-						ptr++;
-						count++;
-                                                break;
-                                             }
+                                           CMap *cm = EINA_RBTREE_CONTAINER_GET(l, CMap);
+                                           
+                                           r = (unsigned char)cm->r;
+                                           g = (unsigned char)cm->g;
+                                           b = (unsigned char)cm->b;
+                                           *ptr = ARGB_JOIN(0xff, r, g, b);
+                                           ptr++;
+                                           count++;
                                         }
                                    }
                               }
@@ -610,7 +647,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
              if (!tl) break;
 	     line = tl;
           }
-        if (((ptr) && ((ptr - evas_cache_image_pixels(ie)) >= (w * h * (int)sizeof(DATA32)))) ||
+        if (((ptr) && ((ptr - head) >= (w * h * (int)sizeof(DATA32)))) ||
             ((context > 1) && (count >= pixels)))
 	  break;
      }

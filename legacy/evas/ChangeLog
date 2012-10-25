@@ -1124,3 +1124,6 @@
 
        * Added Proxy'source events set APIs
 
+2012-10-25  Cedric Bail
+
+       * Make XPM loader faster.
