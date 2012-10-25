@@ -101,6 +101,7 @@ struct _EPhysics_World {
      Eina_Bool outside_front:1;
      Eina_Bool outside_back:1;
      Eina_Bool pending_simulation:1;
+     Eina_Bool stacking:1;
 };
 
 static int _ephysics_world_init_count = 0;
@@ -242,7 +243,8 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
           }
      }
 
-   ephysics_body_evas_objects_restack(world);
+   if (world->stacking)
+     ephysics_body_evas_objects_restack(world);
 
    if (camera_moved)
      {
@@ -752,8 +754,9 @@ ephysics_world_new(void)
      INF("Couldn't initialize the collision filter.");
    else
      world->dynamics_world->getPairCache()->setOverlapFilterCallback(
-                                                               world->filter_cb);
+        world->filter_cb);
 
+   world->stacking = EINA_TRUE;
    world->rate = 30;
    world->max_sub_steps = 3;
    world->fixed_time_step = 1/60.f;
@@ -1625,6 +1628,29 @@ ephysics_world_light_all_bodies_get(const EPhysics_World *world)
      return EINA_FALSE;
 
    return world->light->all_bodies;
+}
+
+EAPI void
+ephysics_world_stack_enable_set(EPhysics_World *world, Eina_Bool enabled)
+{
+   if (!world)
+     {
+        ERR("Can't enable / disable stacking, world wasn't provided.");
+        return;
+     }
+   world->stacking = !!enabled;
+}
+
+EAPI Eina_Bool
+ephysics_world_stack_enable_get(const EPhysics_World *world)
+{
+   if (!world)
+     {
+	ERR("No world, no stacking status for you.");
+	return EINA_FALSE;
+     }
+
+   return world->stacking;
 }
 
 #ifdef  __cplusplus

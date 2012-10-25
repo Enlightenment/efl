@@ -1524,6 +1524,50 @@ EAPI void ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool e
 EAPI Eina_Bool ephysics_world_light_all_bodies_get(const EPhysics_World *world);
 
 /**
+ * @brief
+ * Enable / disable stacking based on bodies z coordinates.
+ *
+ * Evas objects associated to bodies will be restacked when it's enabled.
+ * So if a body A has coordinates x = 10, y = 10, z = 8 and a body B
+ * has coordinates x = 10, y = 10, z = 10, the evas object associated to B
+ * will be displayed below the evas object associated to A.
+ *
+ * Evas objects will be restacked at each simulation tick. It's enabled by
+ * default, and disabling it can lead to wrong scenarios when movement
+ * on Z axis is enabled or when cloths are used.
+ *
+ * But disabling it can save performance, so if you won't face these
+ * scenarios, it safe to disable it, since no evas object will be moved to
+ * be below or above others.
+ *
+ * @param world The physics world.
+ * @param enabled If @c EINA_TRUE, stacking based on Z coordinates will be
+ * enabled, otherwise it will be disabled.
+ *
+ * @see ephysics_world_stack_enable_get()
+ * @see ephysics_body_evas_object_set()
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_stack_enable_set(EPhysics_World *world, Eina_Bool enabled);
+
+/**
+ * @brief
+ * Get stacking status of world.
+ *
+ * Stacking based on bodies z coordinates can be enabled or disabled.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if it's running, or @c EINA_FALSE if it's paused or on
+ * error.
+ *
+ * @see ephysics_world_stack_enable_set() for more details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_stack_enable_get(const EPhysics_World *world);
+
+/**
  * @}
  */
 
