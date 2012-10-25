@@ -136,7 +136,7 @@ _eina_thread_win32_create(Eina_Thread *t,
    return EINA_TRUE;
 
  close_thread:
-   Closehandle(tw->thread);
+   CloseHandle(tw->thread);
    tw->thread = NULL;
  on_error:
    _thread_pool = eina_list_append(_thread_pool, tw);
