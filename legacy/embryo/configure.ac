@@ -95,16 +95,13 @@ AC_SUBST(pkgconfig_requires_private)
 
 # Evil library for compilation on Windows
 
-EFL_EMBRYO_BUILD=""
 case "$host_os" in
    mingw*)
    PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
    AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
    requirement_embryo="evil ${requirement_embryo}"
-   EFL_EMBRYO_BUILD="-DEFL_EMBRYO_BUILD"
    ;;
 esac
-AC_SUBST(EFL_EMBRYO_BUILD)
 
 # For embryo_cc_prefix.c
 PKG_CHECK_MODULES([EINA], [eina >= 1.6.99])
@@ -155,14 +152,6 @@ AC_SUBST(EMBRYO_CFLAGS)
 
 
 ### Checks for linker characteristics
-
-lt_enable_auto_import=""
-case "$host_os" in
-   mingw*)
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-      ;;
-esac
-AC_SUBST(lt_enable_auto_import)
 
 
 ### Checks for library functions
