@@ -290,6 +290,7 @@ _ephysics_body_soft_body_evas_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, 
    EPhysics_Body *body;
    body = (EPhysics_Body *) evas_object_data_del(obj, BODY);
    _ephysics_body_soft_body_data_free(body->soft_data);
+   body->soft_data = NULL;
 }
 
 static EPhysics_Body_Soft_Body_Data *
@@ -388,6 +389,8 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
    EINA_LIST_FOREACH(bodies, l, data)
      {
         body = (EPhysics_Body *)data;
+        if (body->deleted) continue;
+
         if (body->type == EPHYSICS_BODY_TYPE_RIGID)
           {
              if (!body->evas_obj) continue;
