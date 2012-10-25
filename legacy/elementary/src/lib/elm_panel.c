@@ -33,6 +33,19 @@ _elm_panel_smart_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
+static char *
+_access_state_cb(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   ELM_PANEL_DATA_GET(data, sd);
+
+   if (!sd->hidden) return strdup(E_("state: opened"));
+   else return strdup(E_("state: closed"));
+
+   return NULL;
+}
+
 static void
 _orient_set_do(Evas_Object *obj)
 {
@@ -66,6 +79,18 @@ _orient_set_do(Evas_Object *obj)
           elm_layout_theme_set
             (obj, "panel", "left", elm_widget_style_get(obj));
         break;
+     }
+
+   /* access */
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        Evas_Object *ao;
+        ao = _elm_access_edje_object_part_object_register
+               (obj, ELM_WIDGET_DATA(sd)->resize_obj, "btn_icon");
+        _elm_access_text_set(_elm_access_object_get(ao),
+                             ELM_ACCESS_TYPE, E_("panel button"));
+        _elm_access_callback_set
+          (_elm_access_object_get(ao), ELM_ACCESS_STATE, _access_state_cb, obj);
      }
 }
 
@@ -112,6 +137,16 @@ _elm_panel_smart_focus_next(const Evas_Object *obj,
    /* Try to Focus cycle in subitem */
    if (!sd->hidden)
      return elm_widget_focus_next_get(cur, dir, next);
+
+   /* access */
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     {
+        Evas_Object *ao, *po;
+        po = (Evas_Object *)edje_object_part_object_get
+               (ELM_WIDGET_DATA(sd)->resize_obj, "btn_icon");
+        ao = evas_object_data_get(po, "_part_access_obj");
+        _elm_access_highlight_set(ao);
+     }
 
    /* Return */
    *next = (Evas_Object *)obj;
@@ -295,6 +330,20 @@ _elm_panel_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_panel_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_PANEL_CHECK(obj);
+   ELM_PANEL_DATA_GET(obj, sd);
+
+   if (is_access)
+     _elm_access_edje_object_part_object_register
+       (obj, ELM_WIDGET_DATA(sd)->resize_obj, "btn_icon");
+   else
+     _elm_access_edje_object_part_object_unregister
+       (obj, ELM_WIDGET_DATA(sd)->resize_obj, "btn_icon");
+}
+
+static void
 _elm_panel_smart_set_user(Elm_Panel_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_panel_smart_add;
@@ -303,6 +352,7 @@ _elm_panel_smart_set_user(Elm_Panel_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_panel_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->theme = _elm_panel_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_panel_smart_event;
+   ELM_WIDGET_CLASS(sc)->access = _elm_panel_smart_access;
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_panel_smart_content_set;
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_panel_smart_content_get;
