@@ -2764,10 +2764,24 @@ ephysics_body_world_get(const EPhysics_Body *body)
    return body->world;
 }
 
+static void
+_ephysics_body_soft_body_central_impulse_apply(EPhysics_Body *body, btVector3 impulse)
+{
+   btSoftBody::Face *face;
+
+   for (int m = 0; m < body->soft_body->m_faces.size(); m++)
+     {
+        face = &body->soft_body->m_faces[m];
+        for (int n = 0; n < 3; n++)
+             face->m_n[n]->m_v += impulse * face->m_n[n]->m_im;
+     }
+}
+
 EAPI void
 ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, double z)
 {
    double rate;
+   btVector3 impulse;
 
    if (!body)
      {
@@ -2779,8 +2793,14 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, dou
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->applyCentralImpulse(btVector3(x / rate, - y / rate,
-                                                   z / rate));
+
+   impulse = btVector3(x / rate, - y / rate, z / rate);
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     _ephysics_body_soft_body_central_impulse_apply(body, impulse);
+   else
+     body->rigid_body->applyCentralImpulse(impulse);
+
    ephysics_world_lock_release(body->world);
 }
 
