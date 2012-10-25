@@ -712,6 +712,9 @@ typedef struct _Evas_Point                 Evas_Point;   /**< integer point */
 typedef struct _Evas_Coord_Point           Evas_Coord_Point;    /**< Evas_Coord point */
 typedef struct _Evas_Coord_Precision_Point Evas_Coord_Precision_Point;   /**< Evas_Coord point with sub-pixel precision */
 
+typedef struct _Evas_Coord_Size            Evas_Coord_Size;    /** <Evas_Coord size @since 1.8 */
+typedef struct _Evas_Coord_Precision_Size  Evas_Coord_Precision_Size;    /** <Evas_Coord size with sub-pixel precision @since 1.8 */
+
 typedef struct _Evas_Position              Evas_Position;   /**< associates given point in Canvas and Output */
 typedef struct _Evas_Precision_Position    Evas_Precision_Position;   /**< associates given point in Canvas and Output, with sub-pixel precision */
 
@@ -825,21 +828,35 @@ struct _Evas_Coord_Rectangle /**< A rectangle in Evas_Coord */
    Evas_Coord h; /**< height of rectangle */
 };
 
-struct _Evas_Point
-{
-   int x, y;
-};
-
 struct _Evas_Coord_Point
 {
    Evas_Coord x; /**< x co-ordinate */
    Evas_Coord y; /**< y co-ordinate */
 };
 
+struct _Evas_Coord_Size
+{
+   Evas_Coord w; /**< width */
+   Evas_Coord h; /**< height */
+};
+
+struct _Evas_Coord_Precision_Size
+{
+   Evas_Coord w; /** < width */
+   Evas_Coord h; /** < height */
+   double wsub;  /** < subpixel precision for width */
+   double ysub;  /** < subpixel precision for height */
+};
+
 struct _Evas_Coord_Precision_Point
 {
    Evas_Coord x, y;
    double     xsub, ysub;
+};
+
+struct _Evas_Point
+{
+   int x, y;
 };
 
 struct _Evas_Position
