@@ -75,6 +75,9 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
    EPhysics_Body_Soft_Body_Data *soft_data;
    EPhysics_Body *body;
    btVector3 b0, b1;
+   int lr, lg, lb, ar, ag, ab;
+   Evas_Coord lx, ly, lz;
+   Eina_Bool light = EINA_FALSE;
 
    soft_data = (EPhysics_Body_Soft_Body_Data *)evas_object_data_get(obj,
                                                                     SOFT_DATA);
@@ -83,6 +86,16 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
 
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
                                       NULL);
+
+   if ((body->light_apply) ||
+       (ephysics_world_light_all_bodies_get(body->world)))
+     {
+
+        if (ephysics_world_light_get(body->world, &lx, &ly, &lz,
+                                     &lr, &lg, &lb, &ar, &ag, &ab))
+          light = EINA_TRUE;
+     }
+
    EINA_LIST_FOREACH(soft_data->slices, l, list_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)list_data;
@@ -117,6 +130,9 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
         evas_map_point_coord_set(map, 1, x1, y1, z1);
         evas_map_point_coord_set(map, 2, x2, y2, z2);
         evas_map_point_coord_set(map, 3, x2, y2, z2);
+
+        if (light)
+          evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
 
         evas_object_map_set(slice->evas_obj, map);
         evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
