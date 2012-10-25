@@ -595,6 +595,7 @@ struct _Evas_Object_Protected_Data
       Eina_List               *proxies;
       void                    *surface;
       int                      w,h;
+      Eina_List               *event_in;
       Eina_Bool                redraw : 1;
       Eina_Bool                is_proxy : 1;
       Eina_Bool                source_invisible : 1;
