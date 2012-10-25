@@ -12,6 +12,7 @@ Additions:
    * EVAS_GL_API_DEBUG=1 env. var option for outputting debug logs related to Evas GL's GL calls.
    * Proxy source visibility set APIs
    * Proxy source events set APIs
+   * Evas_Coord_Size, Evas_Coord_Precision_Size types
 
 Improvements:
 

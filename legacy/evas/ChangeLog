@@ -1122,8 +1122,12 @@
 
 2012-10-24  ChunEon Park (Hermet)
 
-       * Added Proxy'source events set APIs
+       * Added Proxy'source events set APIs.
 
 2012-10-25  Cedric Bail
 
        * Make XPM loader faster.
+
+2012-10-25  ChunEon Park (Hermet)
+
+       * Added Evas_Coord_Size, Evas_Coord_Precision_Size type.
