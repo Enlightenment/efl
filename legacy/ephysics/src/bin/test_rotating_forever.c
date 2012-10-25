@@ -49,9 +49,8 @@ _del_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_del_torque_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info __UNUSED__)
+_del_torque_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *obj = data;
    Ecore_Timer *timer;
 
    timer = evas_object_data_get(obj, "increase_timer");
@@ -155,9 +154,8 @@ _world_populate(Test_Data *test_data)
                                     _update_object_cb, NULL);
 
    ephysics_body_torque_apply(body, 0, 0, 2);
-   ephysics_body_event_callback_add(body,
-                                    EPHYSICS_CALLBACK_BODY_DEL,
-                                    _del_torque_cb, cube);
+   evas_object_event_callback_add(cube, EVAS_CALLBACK_DEL,
+                                  _del_torque_cb, NULL);
 
    timer = ecore_timer_add(3, _increase_torque_cb, body);
    evas_object_data_set(cube, "increase_timer", timer);
