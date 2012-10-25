@@ -2611,6 +2611,7 @@ _item_block_del(Elm_Gen_Item *it)
    Item_Block *itb = it->item->block;
    Eina_Bool block_changed = EINA_FALSE;
 
+   if (!itb) return;
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
    itb->changed = EINA_TRUE;
