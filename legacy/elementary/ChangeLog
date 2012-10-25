@@ -636,3 +636,7 @@
 2012-10-19  ChunEon Park (Hermet)
 
         * Fix elm_transit image animation which last few frames are skipped.
+
+2012-10-25  Michael Bouchaud (yoz)
+
+        * some fix for promote and demote in genlist
