@@ -43,8 +43,14 @@ typedef struct _EPhysics_Body_Evas_Stacking {
 
 typedef struct _EPhysics_Body_Soft_Body_Slice
 {
-     int index;
      Evas_Object *evas_obj;
+     int index;
+     Evas_Coord x0;
+     Evas_Coord x1;
+     Evas_Coord x2;
+     Evas_Coord y0;
+     Evas_Coord y1;
+     Evas_Coord y2;
      float stacking;
 } EPhysics_Body_Soft_Body_Slice;
 
@@ -61,7 +67,7 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
    double rate;
    void *list_data;
    Eina_List *l;
-   Evas_Coord x, y, h, wy, wh, y0, y1, y2, x0, x1, x2, z0, z1, z2, bw, bh;
+   Evas_Coord wy, wh, y0, y1, y2, x0, x1, x2, z0, z1, z2, bw, bh;
    Evas_Map *map;
    btVector3 p0, p1, p2;
    btSoftBody::tFaceArray faces;
@@ -80,7 +86,6 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
    EINA_LIST_FOREACH(soft_data->slices, l, list_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)list_data;
-        evas_object_geometry_get(slice->evas_obj, &x, &y, NULL, &h);
 
         faces = body->soft_body->m_faces;
         p0 = faces[slice->index].m_n[0]->m_x;
@@ -101,11 +106,12 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
 
         slice->stacking = p0.z() + p1.z() + p2.z();
 
-        evas_object_map_enable_set(slice->evas_obj, EINA_FALSE);
-        map = (Evas_Map *)evas_object_map_get((const Evas_Object *)
-                                              slice->evas_obj);
+        map = evas_map_new(4);
 
-        evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
+        evas_map_point_image_uv_set(map, 0, slice->x0, slice->y0);
+        evas_map_point_image_uv_set(map, 1, slice->x1, slice->y1);
+        evas_map_point_image_uv_set(map, 2, slice->x2, slice->y2);
+        evas_map_point_image_uv_set(map, 3, slice->x2, slice->y2);
 
         evas_map_point_coord_set(map, 0, x0, y0, z0);
         evas_map_point_coord_set(map, 1, x1, y1, z1);
@@ -114,7 +120,7 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
 
         evas_object_map_set(slice->evas_obj, map);
         evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
-        evas_object_show(slice->evas_obj);
+        evas_map_free(map);
      }
 
    b0 = body->soft_body->m_bounds[0];
@@ -150,13 +156,12 @@ _ephysics_body_soft_body_slice_new(int index, Evas_Object *evas_obj)
 static Eina_Bool
 _ephysics_body_soft_body_slices_init(EPhysics_Body *body, EPhysics_Body_Soft_Body_Data *soft_data)
 {
-   double rate;
-   Evas_Coord x, y, w, h, wy, wh, y0, y1, y2, x0, x1, x2, z0, z1, z2;
-   Evas_Map *map;
-   Evas *evas;
+   EPhysics_Body_Soft_Body_Slice *slice = NULL;
+   Evas_Coord x, y, w, h, wy, wh;
    btSoftBody::tFaceArray faces;
-   EPhysics_Body_Soft_Body_Slice *slice;
    btVector3 p0, p1, p2;
+   double rate;
+   Evas *evas;
 
    evas = evas_object_evas_get(body->evas_obj);
 
@@ -166,8 +171,8 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, EPhysics_Body_Soft_Bod
 
    for (int i = 0; i < body->slices; i++)
      {
-        slice = _ephysics_body_soft_body_slice_new(body->points_deform[i],
-                                             evas_object_image_filled_add(evas));
+        slice = _ephysics_body_soft_body_slice_new(
+           body->points_deform[i], evas_object_image_filled_add(evas));
 
         if (!slice) return EINA_FALSE;
 
@@ -177,44 +182,27 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, EPhysics_Body_Soft_Bod
         evas_object_resize(slice->evas_obj, w, h);
         evas_object_move(slice->evas_obj, x, y);
         evas_object_show(slice->evas_obj);
+        evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
 
         faces = body->soft_body->m_faces;
         p0 = faces[slice->index].m_n[0]->m_x;
         p1 = faces[slice->index].m_n[1]->m_x;
         p2 = faces[slice->index].m_n[2]->m_x;
 
-        y0 = wh + wy - (p0.y() * rate);
-        y1 = wh + wy - (p1.y() * rate);
-        y2 = wh + wy - (p2.y() * rate);
-
-        x0 = p0.x() * rate;
-        x1 = p1.x() * rate;
-        x2 = p2.x() * rate;
-
-        z0 = p0.z() * rate;
-        z1 = p1.z() * rate;
-        z2 = p2.z() * rate;
-
-        map = evas_map_new(4);
-        evas_map_util_points_populate_from_object(map, slice->evas_obj);
-
-        evas_map_point_image_uv_set(map, 0, x0 - x, y0 - y);
-        evas_map_point_image_uv_set(map, 1, x1 - x, y1 - y);
-        evas_map_point_image_uv_set(map, 2, x2 - x, y2 - y);
-        evas_map_point_image_uv_set(map, 3, x2 - x, y2 - y);
-
-        evas_map_point_coord_set(map, 0, x0, y0, z0);
-        evas_map_point_coord_set(map, 1, x1, y1, z1);
-        evas_map_point_coord_set(map, 2, x2, y2, z2);
-        evas_map_point_coord_set(map, 3, x2, y2, z2);
-
-        evas_object_map_set(slice->evas_obj, map);
-        evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
-        evas_map_free(map);
+        slice->x0 = p0.x() * rate - x;
+        slice->x1 = p1.x() * rate - x;
+        slice->x2 = p2.x() * rate - x;
+        slice->y0 = wh + wy - (p0.y() * rate) - y;
+        slice->y1 = wh + wy - (p1.y() * rate) - y;
+        slice->y2 = wh + wy - (p2.y() * rate) - y;
 
         soft_data->slices = eina_list_append(soft_data->slices, slice);
      }
 
+   if (slice)
+     evas_object_stack_above(body->evas_obj, slice->evas_obj);
+
+   _ephysics_body_soft_body_slices_apply(NULL, NULL, body->evas_obj, NULL);
    return EINA_TRUE;
 }
 
@@ -238,7 +226,7 @@ _ephysics_body_soft_body_evas_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, 
    free(soft_data);
 }
 
-static Evas_Object *
+static void
 _ephysics_body_soft_body_evas_add(EPhysics_Body *body)
 {
    Evas_Object *obj;
@@ -250,35 +238,39 @@ _ephysics_body_soft_body_evas_add(EPhysics_Body *body)
    if (!soft_data)
      {
         ERR("Could not allocate soft body data struct.");
-        return NULL;
+        return;
      }
 
    soft_data->body = body;
    soft_data->slices = NULL;
    soft_data->base_obj = body->evas_obj;
 
-   if (!_ephysics_body_soft_body_slices_init(body, soft_data))
-     goto error;
-
    evas_object_geometry_get(body->evas_obj, &x, &y, &w, &h);
-   evas_object_move(body->evas_obj, 0, -h);
 
    obj = evas_object_rectangle_add(evas_object_evas_get(body->evas_obj));
    evas_object_color_set(obj, 0, 0, 0, 0);
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
-   evas_object_show(obj);
    evas_object_data_set(obj, SOFT_DATA, soft_data);
+   evas_object_show(obj);
+
+   body->evas_obj = obj;
+
+   if (!_ephysics_body_soft_body_slices_init(body, soft_data))
+     goto error;
+
+   evas_object_move(soft_data->base_obj, 0, -h);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
                                   _ephysics_body_soft_body_slices_apply, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _ephysics_body_soft_body_evas_del_cb, NULL);
-   return obj;
+
+   return;
 
  error:
    free(soft_data);
-   return NULL;
+   return;
 }
 
 static Evas_Object *
@@ -2206,8 +2198,8 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
         evas_object_event_callback_del(evas_obj, EVAS_CALLBACK_DEL,
                                        _ephysics_body_evas_obj_del_cb);
 
-        evas_obj = _ephysics_body_soft_body_evas_add(body);
-        body->evas_obj = evas_obj;
+        _ephysics_body_soft_body_evas_add(body);
+        evas_obj = body->evas_obj;
 
         evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_DEL,
                                        _ephysics_body_evas_obj_del_cb, body);
