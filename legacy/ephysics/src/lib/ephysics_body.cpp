@@ -843,6 +843,43 @@ _ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
 }
 
 static void
+_ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
+{
+   int valid_nodes;
+   btSoftBody::Node node;
+   double inverse_mass;
+
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT)
+        body->soft_body->setTotalMass(mass);
+   else
+     {
+        valid_nodes = 0;
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          {
+             node = body->soft_body->m_nodes[i];
+             if (node.m_im && !node.m_battach)
+               valid_nodes++;
+          }
+
+        inverse_mass = 1 / (mass / valid_nodes);
+        if (body->dragging_data.dragging)
+          {
+             valid_nodes++;
+             inverse_mass = 1 / (mass / valid_nodes);
+             for (int i = 0; i < 3; i++)
+               body->dragging_data.mass[i] = inverse_mass;
+          }
+
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          {
+             node = body->soft_body->m_nodes[i];
+             if (node.m_im && !node.m_battach)
+                  node.m_im = inverse_mass;
+          }
+     }
+}
+
+static void
 _ephysics_body_mass_set(EPhysics_Body *body, double mass)
 {
    btVector3 inertia(0, 0, 0);
@@ -851,12 +888,7 @@ _ephysics_body_mass_set(EPhysics_Body *body, double mass)
      mass = body->density * _ephysics_body_volume_get(body);
 
    if (body->soft_body)
-     {
-        body->soft_body->setTotalMass(mass);
-        if (body->dragging_data.dragging)
-          _ephysics_body_soft_body_dragging_set(body,
-                                                body->dragging_data.triangle);
-     }
+     _ephysics_body_soft_body_mass_set(body, mass);
    else
      {
         body->collision_shape->calculateLocalInertia(mass, inertia);
@@ -1467,6 +1499,7 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
 {
    int rows;
    int columns;
+   double anchor_mass;
 
    if (!body1 || !body2)
      {
@@ -1483,34 +1516,47 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
 
    rows = body1->cloth_rows;
    columns = body1->cloth_columns;
+   anchor_mass = body1->soft_body->m_nodes.size() * 0.025;
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT)
      {
         for (int i = 0; i < rows; i++)
-          body1->soft_body->appendAnchor(i, body2->rigid_body);
+          {
+             body1->soft_body->setMass(i, anchor_mass);
+             body1->soft_body->appendAnchor(i, body2->rigid_body);
+          }
         return;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT)
      {
         for (int i = 1; i <= rows; i++)
-          body1->soft_body->appendAnchor((rows * columns) - i,
-                                         body2->rigid_body);
+          {
+             body1->soft_body->setMass((rows * columns) - i, anchor_mass);
+             body1->soft_body->appendAnchor((rows * columns) - i,
+                                            body2->rigid_body);
+          }
         return;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_BOTTOM)
      {
         for (int i = 0; i <= rows; i++)
-          body1->soft_body->appendAnchor(i * rows, body2->rigid_body);
+          {
+             body1->soft_body->setMass((i * rows), anchor_mass);
+             body1->soft_body->appendAnchor(i * rows, body2->rigid_body);
+          }
         return;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_TOP)
      {
         for (int i = 0; i < columns; i++)
+          {
+             body1->soft_body->setMass((rows - 1) + rows * i, anchor_mass);
              body1->soft_body->appendAnchor((rows - 1) + rows * i,
                                            body2->rigid_body);
+          }
      }
 }
 
@@ -1705,6 +1751,10 @@ _ephysics_body_soft_body_single_face_transform(btSoftBody *soft_body, int face_i
    const btScalar margin = soft_body->getCollisionShape()->getMargin();
 
    node = soft_body->m_faces[face_idx].m_n[node_idx];
+
+   if (node->m_battach)
+     return;
+
    node->m_x = trans * node->m_x;
    node->m_q = trans * node->m_q;
    node->m_n = trans.getBasis() * node->m_n;
