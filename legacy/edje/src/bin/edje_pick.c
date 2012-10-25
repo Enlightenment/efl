@@ -526,7 +526,7 @@ static int
 _id_cmp(const void *d1, const void *d2)
 {
    /* Find currect ID struct */
-   return (((Edje_Pick_Data *) d1)->id.old_id - ((int) d2));
+   return (((Edje_Pick_Data *) d1)->id.old_id - ((intptr_t) d2));
 }
 
 static int
@@ -536,7 +536,7 @@ _edje_pick_new_id_get(Eina_List *id_list, int id, Eina_Bool set_used)
      {
         Edje_Pick_Data *p_id = eina_list_search_unsorted(id_list,
                                                          _id_cmp,
-                                                         (void *) id);
+                                                         (void *) (intptr_t) id);
 
 
         if (p_id)
@@ -998,7 +998,7 @@ _edje_pick_sound_dir_compose(Eina_List *samples, Eina_List *tones, Edje_File *o)
              t = o->sound_dir->tones;
              EINA_LIST_FOREACH(tones, l, tone)
                {
-                  memcpy(t, tones, sizeof(Edje_Sound_Tone));
+                  memcpy(t, tone, sizeof(Edje_Sound_Tone));
                   t++;
                }
 
