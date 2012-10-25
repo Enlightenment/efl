@@ -1292,7 +1292,12 @@ _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
    int m = body->material_index;
    btSoftBody *soft_body = body->soft_body;
-   soft_body->m_cfg.kAHR = (hardness / body->anchor_prop) * 0.6;
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     soft_body->m_cfg.kAHR = 0.8;
+   else
+     soft_body->m_cfg.kAHR = (hardness / 1000) * 0.6;
+
    soft_body->m_materials[m]->m_kVST = (hardness / 1000);
    soft_body->m_materials[m]->m_kLST = (hardness / 1000);
    soft_body->m_materials[m]->m_kAST = (hardness / 1000);
@@ -1440,7 +1445,6 @@ _ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_
      }
 
    body->material_index = 0;
-   body->anchor_prop = 1000;
    body->type = EPHYSICS_BODY_TYPE_SOFT;
    _ephysics_body_soft_body_default_config(body, soft_body);
 
@@ -1595,7 +1599,6 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 
    body->cloth_columns = columns;
    body->cloth_rows = rows;
-   body->anchor_prop = 1;
    body->type = EPHYSICS_BODY_TYPE_CLOTH;
 
    ephysics_world_soft_body_add(world, body);

@@ -111,7 +111,6 @@ struct _EPhysics_Body {
      EPhysics_Body_Type type;
      int cloth_columns;
      int cloth_rows;
-     int anchor_prop;
      int material_index;
      struct {
        int triangle;
