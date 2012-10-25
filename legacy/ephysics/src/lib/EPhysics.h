@@ -2070,25 +2070,21 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * Create a new deformable cloth physics body.
  *
  * A cloth has its points of deformation conceptually split into rows and
- * columns
- * where every square is also split into two triangles - afore named nodes. To
- * fine tune the deformation one can increase this granularity by increasing the
- * @p granularity parameter.
+ * columns where every square is also split into two triangles - afore named
+ * nodes. To fine tune the deformation one can increase this granularity by
+ * increasing the number of  @p rows and @p columns.
  *
- * The number of rows is always proportional to the number of columns, for
- * example passing @p granularity of 20 will create a cloth with 20 rows and 20
- * columns.
+ * By default - if passed 0 as @p rows and @p columns - EPhysics creates a cloth
+ * with 15 rows and 15 columns, these default values will generally fit the most
+ * common scenarios.
  *
- * By default EPhysics creates a cloth with 15 rows and 15 columns, these
- * default values will generally fit the most common scenarios.
- *
- * If the informed @p granularity is of 0 then the default value - of 15 - is
- * assumed.
+ * If the informed @p rows is of 0 then the default value - of 15 - is
+ * assumed. The same is true for @p columns.
  *
  * @param world The world this body will belong to.
- * @param granularity Define - proportionally - the number of rows and columns,
- * if 0 the default value - of 15 - is assumed.
- * @return a bew body or @c NULL on erros.
+ * @param rows The number os rows.
+ * @param columns The number of columns.
+ * @return a new body or @c NULL on erros.
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
@@ -2098,7 +2094,7 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity);
+EAPI EPhysics_Body *ephysics_body_cloth_add(EPhysics_World *world, unsigned short rows, unsigned short columns);
 
 /**
  * @brief

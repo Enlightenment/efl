@@ -1613,13 +1613,13 @@ ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body)
 }
 
 EAPI EPhysics_Body *
-ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
+ephysics_body_cloth_add(EPhysics_World *world, unsigned short rows, unsigned short columns)
 {
    EPhysics_Body *body;
    btSoftBodyWorldInfo *world_info;
    btSoftBody *soft_body;
-   const int rows = (!granularity) ? 15 : granularity;
-   const int columns = (!granularity) ? 15 : granularity;
+   const int body_rows = (!rows) ? 15 : rows;
+   const int body_columns = (!columns) ? 15 : columns;
 
    if (!world)
      {
@@ -1633,7 +1633,8 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
                                               btVector3(2, 1, 0),
                                               btVector3(1, 2, 0),
                                               btVector3(1, 1, 0),
-                                              rows, columns, 0, false);
+                                              body_rows, body_columns, 0, false);
+
    if (!soft_body)
      {
         ERR("Couldn't create a new soft body.");
@@ -1648,7 +1649,7 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 
    soft_body->appendMaterial();
    body->material_index = 1;
-   soft_body->m_cfg.piterations = rows / 5;
+   soft_body->m_cfg.piterations = body_rows / 5;
 
    _ephysics_body_soft_body_default_config(body, soft_body);
    _ephysics_body_cloth_constraints_rebuild(body);
@@ -1677,8 +1678,8 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
         goto no_slices;
      }
 
-   body->cloth_columns = columns;
-   body->cloth_rows = rows;
+   body->cloth_columns = body_columns;
+   body->cloth_rows = body_rows;
    body->type = EPHYSICS_BODY_TYPE_CLOTH;
 
    ephysics_world_soft_body_add(world, body);

@@ -97,7 +97,7 @@ _world_populate(Test_Data *test_data)
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
-   flag_body = ephysics_body_cloth_add(test_data->world, 0);
+   flag_body = ephysics_body_cloth_add(test_data->world, 0, 0);
    ephysics_body_mass_set(flag_body, 10);
    ephysics_body_soft_body_hardness_set(flag_body, 1);
    evas_obj = ephysics_body_evas_object_set(flag_body, evas_obj, EINA_TRUE);
