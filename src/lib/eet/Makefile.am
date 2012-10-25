@@ -48,7 +48,7 @@ endif
 
 libeet_la_LIBADD += @EET_LIBS@ -lm
 
-libeet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libeet_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
 EXTRA_DIST = lz4/README
 

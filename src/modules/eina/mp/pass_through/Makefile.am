@@ -13,7 +13,7 @@ module_la_SOURCES = eina_pass_through.c
 
 module_la_CFLAGS = @EINA_CFLAGS@
 module_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LIBS@
-module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 install-data-hook:

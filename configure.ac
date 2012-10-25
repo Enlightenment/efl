@@ -55,32 +55,97 @@ requirements_libs_evil=""
 requirements_libs_eina=""
 requirements_libs_eo=""
 requirements_libs_eet=""
+#requirements_libs_evas=""
+#requirements_libs_ecore=""
+#requirements_libs_embryo=""
+#requirements_libs_eio=""
+#requirements_libs_edje=""
+#requirements_libs_efreet=""
+#requirements_libs_e_dbus=""
+#requirements_libs_eeze=""
+#requirements_libs_emotion=""
+#requirements_libs_ethumb=""
+#requirements_libs_elementary=""
 
 requirements_libs_deps_evil=""
 requirements_libs_deps_eina=""
 requirements_libs_deps_eo=""
 requirements_libs_deps_eet=""
+#requirements_libs_deps_evas=""
+#requirements_libs_deps_ecore=""
+#requirements_libs_deps_embryo=""
+#requirements_libs_deps_eio=""
+#requirements_libs_deps_edje=""
+#requirements_libs_deps_efreet=""
+#requirements_libs_deps_e_dbus=""
+#requirements_libs_deps_eeze=""
+#requirements_libs_deps_emotion=""
+#requirements_libs_deps_ethumb=""
+#requirements_libs_deps_elementary=""
 
 requirements_pc_eina=""
 requirements_pc_eo=""
 requirements_pc_eet=""
+#requirements_pc_evas=""
+#requirements_pc_ecore=""
+#requirements_pc_embryo=""
+#requirements_pc_eio=""
+#requirements_pc_edje=""
+#requirements_pc_efreet=""
+#requirements_pc_e_dbus=""
+#requirements_pc_eeze=""
+#requirements_pc_emotion=""
+#requirements_pc_ethumb=""
+#requirements_pc_elementary=""
 
 requirements_pc_deps_eina=""
 requirements_pc_deps_eo=""
 requirements_pc_deps_eet=""
+#requirements_pc_deps_evas=""
+#requirements_pc_deps_ecore=""
+#requirements_pc_deps_embryo=""
+#requirements_pc_deps_eio=""
+#requirements_pc_deps_edje=""
+#requirements_pc_deps_efreet=""
+#requirements_pc_deps_e_dbus=""
+#requirements_pc_deps_eeze=""
+#requirements_pc_deps_emotion=""
+#requirements_pc_deps_ethumb=""
+#requirements_pc_deps_elementary=""
 
 AC_SUBST([requirements_libs_evil])
 AC_SUBST([requirements_libs_eina])
 AC_SUBST([requirements_libs_eo])
 AC_SUBST([requirements_libs_eet])
+#AC_SUBST([requirements_libs_evas])
+#AC_SUBST([requirements_libs_ecore])
+#AC_SUBST([requirements_libs_embryo])
+#AC_SUBST([requirements_libs_eio])
+#AC_SUBST([requirements_libs_edje])
+#AC_SUBST([requirements_libs_efreet])
+#AC_SUBST([requirements_libs_e_dbus])
+#AC_SUBST([requirements_libs_eeze])
+#AC_SUBST([requirements_libs_emotion])
+#AC_SUBST([requirements_libs_ethumb])
+#AC_SUBST([requirements_libs_elementary])
 
 AC_SUBST([requirements_pc_eina])
 AC_SUBST([requirements_pc_eo])
 AC_SUBST([requirements_pc_eet])
+#AC_SUBST([requirements_pc_evas])
+#AC_SUBST([requirements_pc_ecore])
+#AC_SUBST([requirements_pc_embryo])
+#AC_SUBST([requirements_pc_eio])
+#AC_SUBST([requirements_pc_edje])
+#AC_SUBST([requirements_pc_efreet])
+#AC_SUBST([requirements_pc_e_dbus])
+#AC_SUBST([requirements_pc_eeze])
+#AC_SUBST([requirements_pc_emotion])
+#AC_SUBST([requirements_pc_ethumb])
+#AC_SUBST([requirements_pc_elementary])
 
 
 AC_CANONICAL_HOST
-
 
 # TODO: move me to m4 file that setups module/so related variables
 have_wince="no"
@@ -93,12 +158,18 @@ case "$host_os" in
    mingw32ce*)
       have_wince="yes"
       have_windows="yes"
+      want_efreet="no"
+      want_e_dbus="no"
+      want_eeze="no"
+      want_emotion="no"
+      want_ethumb="no"
       MODULE_ARCH="$host_os-$host_cpu"
       MODULE_EXT=".dll"
    ;;
    mingw*)
       have_win32="yes"
       have_windows="yes"
+      want_eeze="no"
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".dll"
    ;;
@@ -133,6 +204,8 @@ case "${build_profile}" in
      AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
      ;;
 esac
+
+# TODO: add some build "profile" (server, full, etc...)
 
 
 #### Checks for programs
@@ -229,17 +302,6 @@ AC_C_INLINE
 
 
 #### Checks for linker characteristics
-
-# TODO: do we really need this? maybe setup in the specific m4 file that
-# does the windows related variables? Do we need to manually specify this
-# for every module? it's annoying and easy to forget!
-lt_enable_auto_import=""
-case "${host_os}" in
-   mingw*)
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-   ;;
-esac
-AC_SUBST([lt_enable_auto_import])
 
 
 #### Checks for library functions
@@ -539,6 +601,7 @@ EINA_CHECK_MODULE([one-big],      [static], [one big])
 
 
 #### Eet
+
 AC_MSG_NOTICE([Eet checks])
 
 ### Default values
@@ -642,6 +705,7 @@ fi
 # libjpeg and zlib
 
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
+
 # TODO: better way to force those instead of is secondary check
 if test "x${efl_lib_zlib}" != "xyes" -o "x${efl_lib_libjpeg}" != "xyes" ; then
    AC_MSG_ERROR([Required EET libraries were not found.])
@@ -658,12 +722,10 @@ PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
 
 case "$host_os" in
    mingw32ce*)
-# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
       requirements_libs_eet="${requirements_libs_eet} -lws2"
       requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2"
       ;;
    mingw*)
-# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
       requirements_libs_eet="${requirements_libs_eet} -lws2_32"
       requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2_32"
       ;;
@@ -687,7 +749,6 @@ case "${host_os}" in
    openbsd*)
    ;;
    *)
-# TODO: here? Why don't do everywhere or let user specify it?
       EFL_CHECK_LINKER_FLAGS([EET], [-Wl,--as-needed])
    ;;
 esac

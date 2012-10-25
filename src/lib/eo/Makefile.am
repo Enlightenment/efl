@@ -22,7 +22,7 @@ lib_LTLIBRARIES = libeo.la
 
 libeo_la_SOURCES = eo.c eo_base_class.c eo_private.h
 libeo_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la @EO_LIBS@
-libeo_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libeo_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
 clean-local:
 	rm -rf *.gcno

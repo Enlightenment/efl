@@ -28,5 +28,3 @@ eet_LDADD += $(top_builddir)/src/lib/evil/libdl.la
 endif
 
 eet_LDADD += @EET_LIBS@
-
-eet_LDFLAGS = @lt_enable_auto_import@

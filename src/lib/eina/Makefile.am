@@ -196,7 +196,7 @@ endif
 
 libeina_la_LIBADD += -lm
 
-libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
+libeina_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
 
 clean-local:
 	rm -rf *.gcno
