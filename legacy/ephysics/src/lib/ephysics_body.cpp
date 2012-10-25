@@ -1449,14 +1449,14 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
    rows = body1->cloth_rows;
    columns = body1->cloth_columns;
 
-   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT)
+   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT)
      {
         for (int i = 0; i < rows; i++)
           body1->soft_body->appendAnchor(i, body2->rigid_body);
         return;
      }
 
-   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT)
+   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT)
      {
         for (int i = 1; i <= rows; i++)
           body1->soft_body->appendAnchor((rows * columns) - i,
@@ -1464,14 +1464,14 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
         return;
      }
 
-   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_TOP)
+   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_BOTTOM)
      {
         for (int i = 0; i <= rows; i++)
           body1->soft_body->appendAnchor(i * rows, body2->rigid_body);
         return;
      }
 
-   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_BOTTOM)
+   if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_TOP)
      {
         for (int i = 0; i < columns; i++)
              body1->soft_body->appendAnchor((rows - 1) + rows * i,
@@ -1533,10 +1533,10 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 
    world_info = ephysics_world_info_get(world);
    soft_body = btSoftBodyHelpers::CreatePatch(*world_info,
-                                              btVector3(1, 2, 0),
-                                              btVector3(1, 1, 0),
                                               btVector3(2, 2, 0),
                                               btVector3(2, 1, 0),
+                                              btVector3(1, 2, 0),
+                                              btVector3(1, 1, 0),
                                               rows, columns, 0, false);
    if (!soft_body)
      {
