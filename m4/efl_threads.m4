@@ -24,6 +24,7 @@ _efl_have_win32_threads="no"
 case "$host_os" in
    mingw*)
       _efl_have_win32_threads="yes"
+      efl_have_setaffinity="yes"
       AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
       AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
       ;;

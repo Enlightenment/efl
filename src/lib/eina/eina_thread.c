@@ -22,10 +22,6 @@
 
 #include <stdlib.h>
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_thread.h"
 #include "eina_sched.h"
@@ -34,6 +30,8 @@
 # ifdef _WIN32_WCE
 
 # elif defined(_WIN32)
+
+#  include "eina_list.h"
 
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
@@ -72,6 +70,8 @@ static Eina_Thread
 _eina_thread_win32_self(void)
 {
    HANDLE t;
+   Eina_Thread_Win32 *tw;
+   Eina_List *l;
 
    t = GetCurrentThread();
    EINA_LIST_FOREACH(_thread_running, l, tw)
@@ -121,20 +121,26 @@ _eina_thread_win32_create(Eina_Thread *t,
         } while (tw->index == 0); /* prevent having a "false" main loop */
      }
 
-   tw->func = f;
-   tw->data = d;
+   tw->func = func;
+   tw->data = (void *)data;
 
    tw->thread = CreateThread(NULL, 0, _eina_thread_win32_cb, tw, 0, NULL);
    if (!tw->thread) goto on_error;
+
+   if (!SetThreadAffinityMask(tw->thread, 1 << affinity))
+     goto close_thread;
 
    _thread_running = eina_list_append(_thread_running, tw);
 
    *t = tw->index;
    return EINA_TRUE;
 
+ close_thread:
+   Closehandle(tw->thread);
+   tw->thread = NULL;
  on_error:
    _thread_pool = eina_list_append(_thread_pool, tw);
-   return EINA_FALSE;   
+   return EINA_FALSE;
 }
 
 static void *
