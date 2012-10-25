@@ -49,6 +49,7 @@ extern "C" {
 #define RAD_TO_DEG 57.29582 /* 2 * pi radians == 360 degree */
 
 typedef struct _EPhysics_Point EPhysics_Point;
+typedef struct _EPhysics_Body_Soft_Body_Data EPhysics_Body_Soft_Body_Data;
 
 typedef enum _EPhysics_World_Boundary
 {
@@ -113,6 +114,7 @@ struct _EPhysics_Body {
      int cloth_columns;
      int cloth_rows;
      int material_index;
+     EPhysics_Body_Soft_Body_Data *soft_data;
      struct {
        int triangle;
        double mass[3];
