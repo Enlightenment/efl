@@ -1168,7 +1168,7 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
 {
    Eina_Bool callback_called = EINA_FALSE;
 
-   if (!body)
+   if (!body || body->deleted)
      return;
 
    callback_called = _ephysics_body_event_callback_call(
