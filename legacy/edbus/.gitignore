@@ -38,6 +38,7 @@ src/examples/complex_types_server
 src/examples/server
 src/examples/simple-signal-emit
 src/examples/client
+src/examples/complex_types_client_eina_value
 doc/Doxyfile
 doc/html/
 doc/latex/

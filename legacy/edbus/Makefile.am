@@ -92,7 +92,8 @@ noinst_PROGRAMS = \
 	src/examples/complex_types_server \
 	src/examples/server \
 	src/examples/client \
-	src/examples/simple-signal-emit
+	src/examples/simple-signal-emit \
+	src/examples/complex_types_client_eina_value
 
 EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@
 
@@ -120,6 +121,9 @@ src_examples_client_LDADD = $(EXAMPLES_LIBS)
 
 src_examples_simple_signal_emit_SOURCES = src/examples/simple-signal-emit.c
 src_examples_simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
+
+src_examples_complex_types_client_eina_value_SOURCES = src/examples/complex_types_client_eina_value.c
+src_examples_complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 
 endif
 

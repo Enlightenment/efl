@@ -15,28 +15,6 @@ _timer1_cb(void *data)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_read_cache(void *data)
-{
-   EDBus_Proxy *proxy = data;
-   const char *txt;
-   int num;
-   Eina_Value *v = edbus_proxy_property_local_get(proxy, "text");
-   eina_value_get(v, &txt);
-   v = edbus_proxy_property_local_get(proxy, "int32");
-   eina_value_get(v, &num);
-
-   printf("Read cache: %s | %d\n", txt, num);
-
-   v = edbus_proxy_property_local_get(proxy, "st");
-   eina_value_struct_get(v, "arg0", &txt);
-   printf("Read cache: [st] %s | ", txt);
-   eina_value_struct_get(v, "arg1", &txt);
-   printf("%s\n", txt);
-
-   return EINA_FALSE;
-}
-
 static void
 on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
@@ -201,39 +179,6 @@ on_receive_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
      }
 }
 
-static void
-_property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
-{
-   EDBus_Proxy_Event_Property_Changed *event = event_info;
-   const char *name;
-   const Eina_Value *value;
-   printf("property changed\n");
-
-   name = event->name;
-   value = event->value;
-
-   if (!strcmp(name, "text"))
-     {
-        const char *txt;
-        eina_value_get(value, &txt);
-        printf("[%s] = %s\n", name, txt);
-     }
-   else if (!strcmp(name, "int32"))
-     {
-        int num;
-        eina_value_get(value, &num);
-        printf("[%s] = %d\n", name, num);
-     }
-   else if (!strcmp(name, "st"))
-     {
-        const char *txt;
-        eina_value_struct_get(value, "arg0", &txt);
-        printf("[%s] %s | ", name, txt);
-        eina_value_struct_get(value, "arg1", &txt);
-        printf("%s\n", txt);
-     }
-}
-
 int
 main(void)
 {
@@ -326,14 +271,11 @@ main(void)
                               -1 , "i", plus_one);
 
    pending = edbus_proxy_property_get(test2_proxy, "Resp2", get_property_resp2, test2_proxy);
-   edbus_proxy_event_callback_add(test2_proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, _property_changed, NULL);
 
-   ecore_timer_add(10, _read_cache, test2_proxy);
-   ecore_timer_add(50, _timer1_cb, NULL);
+   ecore_timer_add(10, _timer1_cb, NULL);
 
    ecore_main_loop_begin();
 
-   edbus_proxy_event_callback_del(test2_proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, _property_changed, NULL);
    edbus_connection_unref(conn);
 
    edbus_shutdown();
