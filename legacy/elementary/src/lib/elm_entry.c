@@ -2591,7 +2591,8 @@ proceed:
         size_t tlen;
 
         tlen = strlen(text);
-        tmpbuf = malloc(sd->append_text_len + 1);
+	/* FIXME: need that or we do copy unitialised data */
+        tmpbuf = calloc(1, sd->append_text_len + 1);
         if (!tmpbuf)
           {
              ERR("Failed to allocate memory for entry's text %p", obj);
@@ -2777,6 +2778,7 @@ _elm_entry_smart_add(Evas_Object *obj)
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
    priv->scroll = EINA_FALSE;
+   priv->text = NULL;
 
    priv->input_panel_imdata = NULL;
 
