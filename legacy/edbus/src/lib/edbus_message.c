@@ -280,7 +280,9 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
    Eina_Bool r = EINA_TRUE;
    char *type;
 
+   EDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
 
    dbus_signature_iter_init(&signature_iter, signature);
    while ((type = dbus_signature_iter_get_signature(&signature_iter)))
@@ -422,8 +424,9 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
    char *type;
    Eina_Bool r = EINA_TRUE;
 
-   if (!signature || !signature[0]) return EINA_TRUE;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate(signature, NULL), EINA_FALSE);
+   if (!signature[0]) return EINA_TRUE;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate(signature, NULL),
+                                   EINA_FALSE);
 
    iter = edbus_message_iter_get(msg);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
@@ -436,9 +439,9 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
                            &iter->dbus_iterator);
         else
           {
-             ERR("edbus_message_arguments_set() and \
+             ERR("sig = %s | edbus_message_arguments_set() and \
                   edbus_message_arguments_vset() only support basic types, \
-                  to complex types use edbus_message_iter_* functions");
+                  to complex types use edbus_message_iter_* functions", signature);
              r = EINA_FALSE;
           }
 
@@ -541,9 +544,10 @@ edbus_message_iter_sub_iter_get(EDBus_Message_Iter *iter)
    return sub;
 }
 
-EAPI char*
+EAPI char *
 edbus_message_iter_signature_get(EDBus_Message_Iter *iter)
 {
+   EDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, NULL);
    return dbus_message_iter_get_signature(&iter->dbus_iterator);
 }
 
