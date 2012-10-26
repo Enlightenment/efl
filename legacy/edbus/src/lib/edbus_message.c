@@ -283,7 +283,7 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
 
    dbus_signature_iter_init(&signature_iter, signature);
-   while ((type = dbus_signature_iter_get_signature(&signature_iter)) && r)
+   while ((type = dbus_signature_iter_get_signature(&signature_iter)))
      {
         if (type[0] != DBUS_TYPE_VARIANT && !type[1])
           r = append_basic(type[0], MAKE_PTR_FROM_VA_LIST(ap),
@@ -325,7 +325,7 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
           }
 
         dbus_free(type);
-        if (!dbus_signature_iter_next(&signature_iter)) break;
+        if (!r || !dbus_signature_iter_next(&signature_iter)) break;
         continue;
 error:
        r = EINA_FALSE;
@@ -429,7 +429,7 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
 
    dbus_signature_iter_init(&signature_iter, signature);
-   while ((type = dbus_signature_iter_get_signature(&signature_iter)) && r)
+   while ((type = dbus_signature_iter_get_signature(&signature_iter)))
      {
         if (dbus_type_is_basic(type[0]))
           r = append_basic(type[0], MAKE_PTR_FROM_VA_LIST(ap),
@@ -443,7 +443,7 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
           }
 
         dbus_free(type);
-        if (!dbus_signature_iter_next(&signature_iter)) break;
+        if (!r || !dbus_signature_iter_next(&signature_iter)) break;
      }
 
    return r;
