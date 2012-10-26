@@ -2611,7 +2611,6 @@ _item_block_del(Elm_Gen_Item *it)
    Item_Block *itb = it->item->block;
    Eina_Bool block_changed = EINA_FALSE;
 
-   if (!itb) return;
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
    itb->changed = EINA_TRUE;
@@ -3739,7 +3738,7 @@ _item_move_after(Elm_Gen_Item *it,
 
    GL_IT(it)->wsd->items =
      eina_inlist_remove(GL_IT(it)->wsd->items, EINA_INLIST_GET(it));
-   _item_block_del(it);
+   if (it->item->block) _item_block_del(it);
 
    GL_IT(it)->wsd->items = eina_inlist_append_relative
        (GL_IT(it)->wsd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
@@ -3764,7 +3763,7 @@ _item_move_before(Elm_Gen_Item *it,
 
    GL_IT(it)->wsd->items =
      eina_inlist_remove(GL_IT(it)->wsd->items, EINA_INLIST_GET(it));
-   _item_block_del(it);
+   if (it->item->block) _item_block_del(it);
    GL_IT(it)->wsd->items = eina_inlist_prepend_relative
        (GL_IT(it)->wsd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
    it->item->rel = before;
