@@ -382,8 +382,6 @@ _scale_set(Eo *obj, void *_pd, va_list *list)
         if ((ep->part->type == EDJE_PART_TYPE_BOX)
             || (ep->part->type == EDJE_PART_TYPE_TABLE))
           {
-             Eina_List *l;
-             Evas_Object *o;
              EINA_LIST_FOREACH(ep->typedata.container->items, l, o)
                 edje_object_scale_set(o, scale);
           }
