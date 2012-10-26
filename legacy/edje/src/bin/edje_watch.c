@@ -134,7 +134,7 @@ main(int argc, char **argv)
           anotate = EINA_TRUE;
         eina_strbuf_append_printf(buf, "%s ", argv[i]);
      }
-   eina_strbuf_append(buf, "> /dev/null 2>/dev/null");
+   eina_strbuf_append(buf, "> /dev/null");
 
    edje_cc_command = eina_strbuf_string_steal(buf);
 
