@@ -31,7 +31,6 @@ embryo_cc_scvars.c \
 embryo_cc_prefix.c \
 embryo_cc_prefix.h
 
-embryo_cc_CFLAGS = @EMBRYO_CFLAGS@
 embryo_cc_LDADD = $(top_builddir)/src/lib/libembryo.la @EVIL_LIBS@ @EINA_LIBS@ -lm
 
 EXTRA_DIST = \

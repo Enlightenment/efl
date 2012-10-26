@@ -12,8 +12,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEFL_EMBRYO_BUILD \
 @EVIL_CFLAGS@ \
-@EXOTIC_CFLAGS@ \
-@EMBRYO_CPPFLAGS@
+@EXOTIC_CFLAGS@
 
 includes_HEADERS = Embryo.h
 includesdir = $(includedir)/embryo-@VMAJ@
@@ -27,10 +26,8 @@ embryo_float.c \
 embryo_main.c \
 embryo_rand.c \
 embryo_str.c \
-embryo_time.c
+embryo_time.c \
+embryo_private.h
 
-libembryo_la_CFLAGS = @EMBRYO_CFLAGS@
 libembryo_la_LIBADD = @EXOTIC_LIBS@ @EVIL_LIBS@ -lm
 libembryo_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
-
-EXTRA_DIST = embryo_private.h

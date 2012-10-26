@@ -63,7 +63,6 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
 requirement_embryo=""
-embryoincludedir="${datadir}/include"
 
 
 ### Additional options to configure
@@ -133,30 +132,15 @@ EFL_CHECK_PATH_MAX
 
 ### Checks for compiler characteristics
 AC_C_BIGENDIAN
-AM_PROG_CC_C_O
-AC_C_CONST
 AC_C_INLINE
 AC_PROG_CC_STDC
-AC_HEADER_STDC
 AC_C___ATTRIBUTE__
-
-EMBRYO_CPPFLAGS=""
-EMBRYO_CFLAGS=""
-case "$host_os" in
-   mingw32ce*)
-      EMBRYO_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      ;;
-esac
-AC_SUBST(EMBRYO_CPPFLAGS)
-AC_SUBST(EMBRYO_CFLAGS)
 
 
 ### Checks for linker characteristics
 
 
 ### Checks for library functions
-
-AC_ISC_POSIX
 
 # alloca
 AC_FUNC_ALLOCA
@@ -168,8 +152,7 @@ EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 EFL_CHECK_GETTIMEOFDAY([], [AC_MSG_ERROR([Cannot find gettimeofday()])])
 
 
-AC_SUBST(requirement_embryo)
-AC_SUBST(embryoincludedir)
+AC_SUBST([requirement_embryo])
 
 AC_OUTPUT([
 Makefile
