@@ -753,3 +753,20 @@ edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable)
           }
      }
 }
+
+EAPI Eina_Value *
+edbus_proxy_property_local_get(EDBus_Proxy *proxy, const char *name)
+{
+   EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(proxy->props, NULL);
+   return eina_hash_find(proxy->props, name);
+}
+
+EAPI const Eina_Hash *
+edbus_proxy_property_local_get_all(EDBus_Proxy *proxy)
+{
+   EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(proxy->props, NULL);
+   return proxy->props;
+}

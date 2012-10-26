@@ -91,6 +91,11 @@ EAPI EDBus_Pending        *edbus_object_introspect(EDBus_Object *obj, EDBus_Mess
 
 /**
  * Enable or disable local cache of properties.
+ *
+ * After enable you can call edbus_proxy_property_local_get() or
+ * edbus_proxy_property_local_get_all() to get cached properties.
+ *
+ * @note After enable, it will asynchrony get the properties values.
  */
 EAPI void edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable);
 
@@ -98,6 +103,22 @@ EAPI EDBus_Pending        *edbus_proxy_property_get(EDBus_Proxy *proxy, const ch
 EAPI EDBus_Pending        *edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const void *value, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 4);
 EAPI EDBus_Pending        *edbus_proxy_property_get_all(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 EAPI EDBus_Signal_Handler *edbus_proxy_properties_changed_callback_add(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Return the cached value of property.
+ * This only work if you have enable edbus_proxy_properties_monitor or
+ * if you have call edbus_proxy_event_callback_add of type
+ * EDBUS_PROXY_EVENT_PROPERTY_CHANGED and the property you want had changed.
+ */
+EAPI Eina_Value           *edbus_proxy_property_local_get(EDBus_Proxy *proxy, const char *name) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Return a Eina_Hash with all cached properties.
+ * This only work if you have enable edbus_proxy_properties_monitor or
+ * if you have call edbus_proxy_event_callback_add of type
+ * EDBUS_PROXY_EVENT_PROPERTY_CHANGED.
+ */
+EAPI const Eina_Hash      *edbus_proxy_property_local_get_all(EDBus_Proxy *proxy) EINA_ARG_NONNULL(1);
 /**
  * @}
  */

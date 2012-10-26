@@ -15,6 +15,22 @@ _timer1_cb(void *data)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_read_cache(void *data)
+{
+   EDBus_Proxy *proxy = data;
+   const char *txt;
+   int num;
+   Eina_Value *v = edbus_proxy_property_local_get(proxy, "text");
+   eina_value_get(v, &txt);
+   v = edbus_proxy_property_local_get(proxy, "int32");
+   eina_value_get(v, &num);
+
+   printf("Read cache: %s | %d\n", txt, num);
+
+   return EINA_FALSE;
+}
+
 static void
 on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
@@ -298,7 +314,8 @@ main(void)
    pending = edbus_proxy_property_get(test2_proxy, "Resp2", get_property_resp2, test2_proxy);
    edbus_proxy_event_callback_add(test2_proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, _property_changed, NULL);
 
-   ecore_timer_add(20, _timer1_cb, NULL);
+   ecore_timer_add(10, _read_cache, test2_proxy);
+   ecore_timer_add(50, _timer1_cb, NULL);
 
    ecore_main_loop_begin();
 
