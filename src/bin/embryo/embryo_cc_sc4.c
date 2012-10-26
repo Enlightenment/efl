@@ -32,6 +32,8 @@
 #include <limits.h>		/* for PATH_MAX */
 #include <string.h>
 
+#include <Eina.h>
+
 #include "embryo_cc_sc.h"
 
 /* When a subroutine returns to address 0, the AMX must halt. In earlier
@@ -216,7 +218,7 @@ endexpr(int fullexpr)
  *  Global references: funcstatus  (referred to only)
  */
 void
-startfunc(char *fname __UNUSED__)
+startfunc(char *fname EINA_UNUSED)
 {
    stgwrite("\tproc");
    stgwrite("\n");

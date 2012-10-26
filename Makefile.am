@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src doc
+SUBDIRS = src data doc
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -48,7 +48,8 @@ spec/efl.spec \
 pc/evil.pc \
 pc/eina.pc \
 pc/eet.pc \
-pc/eo.pc
+pc/eo.pc \
+pc/embryo.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -60,7 +61,8 @@ endif
 pkgconfig_DATA += \
 pc/eina.pc \
 pc/eo.pc \
-pc/eet.pc
+pc/eet.pc \
+pc/embryo.pc
 
 
 .PHONY: doc benchmark examples install-examples

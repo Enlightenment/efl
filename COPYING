@@ -4,3 +4,5 @@ name and the license file covering it.
 evil:            licenses/COPYING.BSD
 eet:             licenses/COPYING.BSD
 eina:            licenses/COPYING.LGPL
+eo:              licenses/COPYING.BSD
+embryo:          licenses/COPYING.BSD

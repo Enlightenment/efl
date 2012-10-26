@@ -36,6 +36,8 @@
 # include <unistd.h>
 #endif
 
+#include <Eina.h>
+
 #include "embryo_cc_sc.h"
 #include "embryo_cc_sc5.scp"
 

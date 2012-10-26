@@ -19,6 +19,8 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <Eina.h>
+
 #include "Embryo.h"
 #include "embryo_private.h"
 
@@ -31,7 +33,7 @@ void *alloca (size_t);
 /* exported args api */
 
 static Embryo_Cell
-_embryo_args_numargs(Embryo_Program *ep, Embryo_Cell *params __UNUSED__)
+_embryo_args_numargs(Embryo_Program *ep, Embryo_Cell *params EINA_UNUSED)
 {
    Embryo_Header *hdr;
    unsigned char *data;

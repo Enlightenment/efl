@@ -40,7 +40,9 @@
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
-#endif /* HAVE_EVIL */
+#endif
+
+#include <Eina.h>
 
 #include "embryo_cc_sc.h"
 #include "embryo_cc_prefix.h"
@@ -117,7 +119,7 @@ static int         *wqptr;	/* pointer to next entry */
 static char         binfname[PATH_MAX];	/* binary file name */
 
 int
-main(int argc, char *argv[], char *env[] __UNUSED__)
+main(int argc, char *argv[], char *env[] EINA_UNUSED)
 {
    e_prefix_determine(argv[0]);
    return sc_compile(argc, argv);
@@ -573,7 +575,7 @@ initglobals(void)
 
 static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
-             char *pname __UNUSED__, char *rname __UNUSED__)
+             char *pname EINA_UNUSED, char *rname EINA_UNUSED)
 {
    char str[PATH_MAX];
    int i, stack_size;

@@ -204,12 +204,12 @@ stgwrite(char *st)
  *                     staging (referred to only)
  */
 void
-stgout(int index)
+stgout(int idx)
 {
    if (!staging)
       return;
-   stgstring(&stgbuf[index], &stgbuf[stgidx]);
-   stgidx = index;
+   stgstring(&stgbuf[idx], &stgbuf[stgidx]);
+   stgidx = idx;
 }
 
 typedef struct
@@ -319,21 +319,21 @@ stgstring(char *start, char *end)
  *                     staging (referred to only)
  */
 void
-stgdel(int index, cell code_index)
+stgdel(int idx, cell code_index)
 {
    if (staging)
      {
-	stgidx = index;
+	stgidx = idx;
 	code_idx = code_index;
      }				/* if */
 }
 
 int
-stgget(int *index, cell * code_index)
+stgget(int *idx, cell * code_index)
 {
    if (staging)
      {
-	*index = stgidx;
+	*idx = stgidx;
 	*code_index = code_idx;
      }				/* if */
    return staging;

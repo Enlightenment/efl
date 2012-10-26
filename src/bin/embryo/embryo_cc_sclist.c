@@ -185,12 +185,12 @@ insert_path(char *path)
    return cur;
 }
 
-char       *
-get_path(int index)
+char *
+get_path(int idx)
 {
    stringlist         *cur = includepaths.next;
 
-   while (cur && index-- > 0)
+   while (cur && idx-- > 0)
       cur = cur->next;
    if (cur)
      {

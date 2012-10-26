@@ -1,14 +1,6 @@
 #ifndef _EMBRYO_PRIVATE_H
 #define _EMBRYO_PRIVATE_H
 
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-// BROKEN in gcc 4 on amd64
-//#  pragma GCC visibility push(hidden)
-# endif
-#endif
-
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
 enum _Embryo_Opcode

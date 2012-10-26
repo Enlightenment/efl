@@ -57,7 +57,7 @@ requirements_libs_eo=""
 requirements_libs_eet=""
 #requirements_libs_evas=""
 #requirements_libs_ecore=""
-#requirements_libs_embryo=""
+requirements_libs_embryo=""
 #requirements_libs_eio=""
 #requirements_libs_edje=""
 #requirements_libs_efreet=""
@@ -73,7 +73,7 @@ requirements_libs_deps_eo=""
 requirements_libs_deps_eet=""
 #requirements_libs_deps_evas=""
 #requirements_libs_deps_ecore=""
-#requirements_libs_deps_embryo=""
+requirements_libs_deps_embryo=""
 #requirements_libs_deps_eio=""
 #requirements_libs_deps_edje=""
 #requirements_libs_deps_efreet=""
@@ -88,7 +88,7 @@ requirements_pc_eo=""
 requirements_pc_eet=""
 #requirements_pc_evas=""
 #requirements_pc_ecore=""
-#requirements_pc_embryo=""
+requirements_pc_embryo=""
 #requirements_pc_eio=""
 #requirements_pc_edje=""
 #requirements_pc_efreet=""
@@ -103,7 +103,7 @@ requirements_pc_deps_eo=""
 requirements_pc_deps_eet=""
 #requirements_pc_deps_evas=""
 #requirements_pc_deps_ecore=""
-#requirements_pc_deps_embryo=""
+requirements_pc_deps_embryo=""
 #requirements_pc_deps_eio=""
 #requirements_pc_deps_edje=""
 #requirements_pc_deps_efreet=""
@@ -119,7 +119,7 @@ AC_SUBST([requirements_libs_eo])
 AC_SUBST([requirements_libs_eet])
 #AC_SUBST([requirements_libs_evas])
 #AC_SUBST([requirements_libs_ecore])
-#AC_SUBST([requirements_libs_embryo])
+AC_SUBST([requirements_libs_embryo])
 #AC_SUBST([requirements_libs_eio])
 #AC_SUBST([requirements_libs_edje])
 #AC_SUBST([requirements_libs_efreet])
@@ -134,7 +134,7 @@ AC_SUBST([requirements_pc_eo])
 AC_SUBST([requirements_pc_eet])
 #AC_SUBST([requirements_pc_evas])
 #AC_SUBST([requirements_pc_ecore])
-#AC_SUBST([requirements_pc_embryo])
+AC_SUBST([requirements_pc_embryo])
 #AC_SUBST([requirements_pc_eio])
 #AC_SUBST([requirements_pc_edje])
 #AC_SUBST([requirements_pc_efreet])
@@ -330,6 +330,9 @@ strlcpy \
 ])
 
 AC_FUNC_ALLOCA
+
+EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday])
+
 
 
 ######################  EFL  ######################
@@ -583,7 +586,7 @@ EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
 
-EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr fnmatch iconv shm_open setxattr])
+EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr iconv shm_open setxattr])
 
 enable_log="no"
 if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then
@@ -752,8 +755,6 @@ EET_LIBS="${EET_LIBS} ${requirements_libs_deps_eet}"
 
 ### Checks for compiler characteristics
 
-EFL_CHECK_COMPILER_FLAGS([EET], [-Wshadow -Wpointer-arith])
-
 ### Checks for linker characteristics
 
 case "${host_os}" in
@@ -815,8 +816,65 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 #### End of Eo
 
 
+#### Embryo
+
+AC_MSG_NOTICE([Embryo checks])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+
+## Compatibility layers
+
+# Evil library for compilation on Windows
+
+case "$host_os" in
+   mingw*)
+      requirements_pc_embryo="${requirements_pc_embryo} evil >= ${PACKAGE_VERSION}"
+   ;;
+esac
+
+# Eina library
+
+requirements_pc_embryo="eina >= ${PACKAGE_VERSION} ${requirements_pc_embryo}"
+
+AC_ARG_VAR([EMBRYO_CFLAGS], [preprocessor flags for Embryo])
+AC_SUBST([EMBRYO_CFLAGS])
+AC_ARG_VAR([EMBRYO_LIBS], [linker flags for Embryo])
+AC_SUBST([EMBRYO_LIBS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+if ! test "x${efl_func_fnmatch}" = "xyes" ; then
+   AC_MSG_ERROR([Cannot find fnmatch()])
+fi
+
+if ! test "x${efl_func_gettimeofday}" = "xyes" ; then
+   AC_MSG_ERROR([Cannot find gettimeofday()])
+fi
+
+### Check availability
+
+#### End of Embryo
+
+
 AC_CONFIG_FILES([
 Makefile
+data/Makefile
 doc/Makefile
 doc/Doxyfile
 src/Makefile
@@ -826,6 +884,7 @@ src/benchmarks/eo/Makefile
 src/bin/Makefile
 src/bin/evil/Makefile
 src/bin/eet/Makefile
+src/bin/embryo/Makefile
 src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
@@ -836,6 +895,7 @@ src/lib/eina/Makefile
 src/lib/eina/eina_config.h
 src/lib/eet/Makefile
 src/lib/eo/Makefile
+src/lib/embryo/Makefile
 src/modules/Makefile
 src/modules/eina/Makefile
 src/modules/eina/mp/Makefile
@@ -853,6 +913,7 @@ pc/evil.pc
 pc/eina.pc
 pc/eet.pc
 pc/eo.pc
+pc/embryo.pc
 ])
 
 AC_OUTPUT

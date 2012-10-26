@@ -44,6 +44,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include <Eina.h>
+
 #include "Embryo.h"
 #include "embryo_private.h"
 
@@ -72,7 +74,7 @@ _embryo_fp_degrees_to_radians(float angle, int radix)
 /* exported float api */
 
 static Embryo_Cell
-_embryo_fp(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = long value to convert to a float */
    float f;
@@ -101,7 +103,7 @@ _embryo_fp_str(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_mul(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_mul(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
@@ -113,7 +115,7 @@ _embryo_fp_mul(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_div(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_div(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float dividend (top) */
    /* params[2] = float divisor (bottom) */
@@ -136,7 +138,7 @@ _embryo_fp_div(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_add(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_add(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
@@ -148,7 +150,7 @@ _embryo_fp_add(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_sub(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_sub(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
@@ -161,7 +163,7 @@ _embryo_fp_sub(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 
 /* Return fractional part of float */
 static Embryo_Cell
-_embryo_fp_fract(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_fract(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -174,7 +176,7 @@ _embryo_fp_fract(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 
 /* Return integer part of float, rounded */
 static Embryo_Cell
-_embryo_fp_round(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_round(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    /* params[2] = Type of rounding (cell) */
@@ -202,7 +204,7 @@ _embryo_fp_round(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_cmp(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_cmp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
@@ -234,7 +236,7 @@ _embryo_fp_sqroot(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_power(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_power(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 */
    /* params[2] = float operand 2 */
@@ -274,7 +276,7 @@ _embryo_fp_log(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_sin(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_sin(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -288,7 +290,7 @@ _embryo_fp_sin(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_cos(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_cos(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -302,7 +304,7 @@ _embryo_fp_cos(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_tan(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_tan(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -316,7 +318,7 @@ _embryo_fp_tan(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_abs(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_abs(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -328,7 +330,7 @@ _embryo_fp_abs(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_asin(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_asin(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -342,7 +344,7 @@ _embryo_fp_asin(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_acos(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_acos(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -356,7 +358,7 @@ _embryo_fp_acos(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_atan(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_atan(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (angle) */
    /* params[2] = float operand 2 (radix) */
@@ -370,7 +372,7 @@ _embryo_fp_atan(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_atan2(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_atan2(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (y) */
    /* params[2] = float operand 2 (x) */
@@ -386,7 +388,7 @@ _embryo_fp_atan2(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_log1p(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_log1p(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -398,7 +400,7 @@ _embryo_fp_log1p(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_cbrt(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_cbrt(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -410,7 +412,7 @@ _embryo_fp_cbrt(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_exp(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_exp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -422,7 +424,7 @@ _embryo_fp_exp(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_exp2(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_exp2(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f;
@@ -434,7 +436,7 @@ _embryo_fp_exp2(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 }
 
 static Embryo_Cell
-_embryo_fp_hypot(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
+_embryo_fp_hypot(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 {
    /* params[1] = float operand */
    float f, ff;

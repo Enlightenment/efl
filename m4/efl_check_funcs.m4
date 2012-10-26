@@ -7,6 +7,7 @@ dnl dirfd
 dnl dladdr
 dnl dlopen
 dnl fnmatch
+dnl gettimeofday
 dnl iconv
 dnl setxattr (an al.)
 dnl shm_open
@@ -225,6 +226,52 @@ dnl Check is fnmatch is in libfnmatch
 dnl Check is fnmatch is in libiberty
       if test "x${_efl_have_fct}" = "xno" ; then
          _EFL_CHECK_FUNC_FNMATCH_PRIV([$1], [-liberty], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+      fi
+   ;;
+esac
+
+AS_IF([test "x${_efl_have_fct}" = "xyes"], [$2], [$3])
+])
+
+dnl _EFL_CHECK_FUNC_GETTIMEOFDAY is for internal use
+dnl _EFL_CHECK_FUNC_GETTIMEOFDAY(EFL, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
+
+AC_DEFUN([_EFL_CHECK_FUNC_GETTIMEOFDAY],
+[
+case "$host_os" in
+   mingw*)
+      _efl_have_fct="yes"
+   ;;
+   *)
+      AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM([[
+#include <stdlib.h>
+#include <sys/time.h>
+                          ]],
+                          [[
+int res;
+res = gettimeofday(NULL, NULL);
+      	                  ]])],
+         [_efl_have_fct="yes"],
+         [_efl_have_fct="no"])
+
+      if test "x${_efl_have_fct}" = "xno" && test "x${enable_exotic}" = "xyes"; then
+         SAVE_LIBS="${LIBS}"
+         SAVE_CFLAGS="${CFLAGS}"
+         LIBS="${LIBS} ${EXOTIC_LIBS}"
+         CFLAGS="${CFLAGS} ${EXOTIC_CFLAGS}"
+         AC_LINK_IFELSE(
+            [AC_LANG_PROGRAM([[
+#include <Exotic.h>
+                             ]],
+                             [[
+int res;
+res = gettimeofday(NULL, NULL);
+                             ]])],
+            [_efl_have_fct="yes"],
+            [_efl_have_fct="no"])
+         LIBS="${SAVE_LIBS}"
+         CFLAGS="${SAVE_CFLAGS}"
       fi
    ;;
 esac

@@ -8,4 +8,4 @@ SUBDIRS += evil
 
 endif
 
-SUBDIRS += eina eo eet
+SUBDIRS += eina eo eet embryo

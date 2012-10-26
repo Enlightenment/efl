@@ -390,10 +390,10 @@ skim(int *opstr, void (*testfunc) (int), int dropval, int endval,
    int                 lvalue, hits, droplab, endlab, opidx;
    int                 allconst;
    cell                constval;
-   int                 index;
+   int                 idx;
    cell                cidx;
 
-   stgget(&index, &cidx);	/* mark position in code generator */
+   stgget(&idx, &cidx);	/* mark position in code generator */
    hits = FALSE;		/* no logical operators "hit" yet */
    allconst = TRUE;		/* assume all values "const" */
    constval = 0;
@@ -440,7 +440,7 @@ skim(int *opstr, void (*testfunc) (int), int dropval, int endval,
 	       {
 		  lval->ident = iCONSTEXPR;
 		  lval->constval = constval;
-		  stgdel(index, cidx);	/* scratch generated code and calculate */
+		  stgdel(idx, cidx);	/* scratch generated code and calculate */
 	       }
 	     else
 	       {
@@ -589,13 +589,13 @@ plnge_rel(int *opstr, int opoff, int (*hier) (value * lval), value * lval)
 static int
 plnge1(int          (*hier) (value * lval), value * lval)
 {
-   int                 lvalue, index;
+   int                 lvalue, idx;
    cell                cidx;
 
-   stgget(&index, &cidx);	/* mark position in code generator */
+   stgget(&idx, &cidx);	/* mark position in code generator */
    lvalue = (*hier) (lval);
    if (lval->ident == iCONSTEXPR)
-      stgdel(index, cidx);	/* load constant later */
+      stgdel(idx, cidx);	/* load constant later */
    return lvalue;
 }
 
@@ -608,10 +608,10 @@ static void
 plnge2(void         (*oper) (void),
        int (*hier) (value * lval), value * lval1, value * lval2)
 {
-   int                 index;
+   int                 idx;
    cell                cidx;
 
-   stgget(&index, &cidx);	/* mark position in code generator */
+   stgget(&idx, &cidx);	/* mark position in code generator */
    if (lval1->ident == iCONSTEXPR)
      {				/* constant on left side; it is not yet loaded */
 	if (plnge1(hier, lval2))
@@ -632,7 +632,7 @@ plnge2(void         (*oper) (void),
 	     if (commutative(oper))
 	       {		/* test for commutative operators */
 		  value               lvaltmp = { NULL, 0, 0, 0, 0, NULL };
-		  stgdel(index, cidx);	/* scratch push1() and constant fetch (then
+		  stgdel(idx, cidx);	/* scratch push1() and constant fetch (then
 					 * fetch the constant again */
 		  const2(lval2->constval << dbltest(oper, lval1, lval2));
 		  /* now, the primary register has the left operand and the secondary
@@ -693,7 +693,7 @@ plnge2(void         (*oper) (void),
 	else if (lval1->ident == iCONSTEXPR && lval2->ident == iCONSTEXPR)
 	  {
 	     /* only constant expression if both constant */
-	     stgdel(index, cidx);	/* scratch generated code and calculate */
+	     stgdel(idx, cidx);	/* scratch generated code and calculate */
 	     if (!matchtag(lval1->tag, lval2->tag, FALSE))
 		error(213);	/* tagname mismatch */
 	     lval1->constval =
@@ -1483,7 +1483,7 @@ hier2(value * lval)
 static int
 hier1(value * lval1)
 {
-   int                 lvalue, index, tok, symtok;
+   int                 lvalue, idx, tok, symtok;
    cell                val, cidx;
    value               lval2 = { NULL, 0, 0, 0, 0, NULL };
    char               *st;
@@ -1527,7 +1527,7 @@ hier1(value * lval1)
 		  needtoken(close);
 		  return FALSE;
 	       }		/* if */
-	     stgget(&index, &cidx);	/* mark position in code generator */
+	     stgget(&idx, &cidx);	/* mark position in code generator */
 	     push1();		/* save base address of the array */
 	     if (hier14(&lval2))	/* create expression for the array index */
 		rvalue(&lval2);
@@ -1538,7 +1538,7 @@ hier1(value * lval1)
 		error(213);
 	     if (lval2.ident == iCONSTEXPR)
 	       {		/* constant expression */
-		  stgdel(index, cidx);	/* scratch generated code */
+		  stgdel(idx, cidx);	/* scratch generated code */
 		  if (lval1->arrayidx)
 		    {		/* keep constant index, for checking */
 		       assert(sym->dim.array.level >= 0
@@ -2365,7 +2365,7 @@ commutative(void    (*oper) ())
 static int
 constant(value * lval)
 {
-   int                 tok, index, constant;
+   int                 tok, idx, constant;
    cell                val, item, cidx;
    char               *st;
    symbol             *sym;
@@ -2413,9 +2413,9 @@ constant(value * lval)
 	     /* cannot call constexpr() here, because "staging" is already turned
 	      * on at this point */
 	     assert(staging);
-	     stgget(&index, &cidx);	/* mark position in code generator */
+	     stgget(&idx, &cidx);	/* mark position in code generator */
 	     expression(&constant, &item, &tag, FALSE);
-	     stgdel(index, cidx);	/* scratch generated code */
+	     stgdel(idx, cidx);	/* scratch generated code */
 	     if (constant == 0)
 		error(8);	/* must be constant expression */
 	     if (lasttag < 0)

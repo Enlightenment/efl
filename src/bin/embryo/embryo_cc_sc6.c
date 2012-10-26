@@ -31,6 +31,9 @@
 #include <stdlib.h>		/* for macro max() */
 #include <string.h>
 #include <ctype.h>
+
+#include <Eina.h>
+
 #include "embryo_cc_sc.h"
 
 typedef             cell(*OPCODE_PROC) (FILE * fbin, char *params, cell opcode);
@@ -164,31 +167,31 @@ write_encoded(FILE * fbin, ucell * c, int num)
 	     ucell               p = (ucell) * c;
 	     unsigned char       t[5];	/* a 32-bit cell is encoded in max. 5 bytes (3 bytes for a 16-bit cell) */
 	     unsigned char       code;
-	     int                 index;
+	     int                 idx;
 
-	     for (index = 0; index < 5; index++)
+	     for (idx = 0; idx < 5; idx++)
 	       {
-		  t[index] = (unsigned char)(p & 0x7f);	/* store 7 bits */
+		  t[idx] = (unsigned char)(p & 0x7f);	/* store 7 bits */
 		  p >>= 7;
 	       }		/* for */
 	     /* skip leading zeros */
-	     while (index > 1 && t[index - 1] == 0
-		    && (t[index - 2] & 0x40) == 0)
-		index--;
-	     /* skip leading -1s *//* ??? for BIT16, check for index==3 && t[index-1]==0x03 */
-	     if (index == 5 && t[index - 1] == 0x0f
-		 && (t[index - 2] & 0x40) != 0)
-		index--;
-	     while (index > 1 && t[index - 1] == 0x7f
-		    && (t[index - 2] & 0x40) != 0)
-		index--;
+	     while (idx > 1 && t[idx - 1] == 0
+		    && (t[idx - 2] & 0x40) == 0)
+		idx--;
+	     /* skip leading -1s *//* ??? for BIT16, check for idx==3 && t[idx-1]==0x03 */
+	     if (idx == 5 && t[idx - 1] == 0x0f
+		 && (t[idx - 2] & 0x40) != 0)
+		idx--;
+	     while (idx > 1 && t[idx - 1] == 0x7f
+		    && (t[idx - 2] & 0x40) != 0)
+		idx--;
 	     /* write high byte first, write continuation bits */
-	     assert(index > 0);
-	     while (index-- > 0)
+	     assert(idx > 0);
+	     while (idx-- > 0)
 	       {
 		  code =
-		     (unsigned char)((index == 0) ? t[index]
-				     : (t[index] | 0x80));
+		     (unsigned char)((idx == 0) ? t[idx]
+				     : (t[idx] | 0x80));
 		  writeerror |= !sc_writebin(fbin, &code, 1);
 		  bytes_out++;
 	       }		/* while */
@@ -211,7 +214,7 @@ write_encoded(FILE * fbin, ucell * c, int num)
 #endif
 
 static cell
-noop(FILE * fbin __UNUSED__, char *params __UNUSED__, cell opcode __UNUSED__)
+noop(FILE * fbin EINA_UNUSED, char *params EINA_UNUSED, cell opcode EINA_UNUSED)
 {
    return 0;
 }
@@ -221,7 +224,7 @@ noop(FILE * fbin __UNUSED__, char *params __UNUSED__, cell opcode __UNUSED__)
 #endif
 
 static cell
-parm0(FILE * fbin, char *params __UNUSED__, cell opcode)
+parm0(FILE * fbin, char *params EINA_UNUSED, cell opcode)
 {
    if (fbin)
       write_encoded(fbin, (ucell *) & opcode, 1);
@@ -261,7 +264,7 @@ parm2(FILE * fbin, char *params, cell opcode)
 #endif
 
 static cell
-do_dump(FILE * fbin, char *params, cell opcode __UNUSED__)
+do_dump(FILE * fbin, char *params, cell opcode EINA_UNUSED)
 {
    ucell               p;
    int                 num = 0;
@@ -427,7 +430,7 @@ do_switch(FILE * fbin, char *params, cell opcode)
 #endif
 
 static cell
-do_case(FILE * fbin, char *params, cell opcode __UNUSED__)
+do_case(FILE * fbin, char *params, cell opcode EINA_UNUSED)
 {
    int                 i;
    ucell               p, v;
@@ -451,7 +454,7 @@ do_case(FILE * fbin, char *params, cell opcode __UNUSED__)
 #endif
 
 static cell
-curfile(FILE * fbin __UNUSED__, char *params, cell opcode __UNUSED__)
+curfile(FILE * fbin EINA_UNUSED, char *params, cell opcode EINA_UNUSED)
 {
    fcurrent = (int)hex2long(params, NULL);
    return 0;

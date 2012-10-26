@@ -2,10 +2,6 @@
 # include "config.h"
 #endif
 
-#ifndef EFL_HAVE_GETTIMEOFDAY
-# error "Your platform isn't supported yet"
-#endif
-
 #include <sys/time.h>
 #include <time.h>
 
@@ -21,13 +17,15 @@
 # include <Exotic.h>
 #endif
 
+#include <Eina.h>
+
 #include "Embryo.h"
 #include "embryo_private.h"
 
 /* exported time api */
 
 static Embryo_Cell
-_embryo_time_seconds(Embryo_Program *ep __UNUSED__, Embryo_Cell *params __UNUSED__)
+_embryo_time_seconds(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params EINA_UNUSED)
 {
    struct timeval      timev;
    double t;

@@ -33,6 +33,8 @@
 # include <Exotic.h>
 #endif
 
+#include <Eina.h>
+
 #include "Embryo.h"
 #include "embryo_private.h"
 
@@ -450,7 +452,7 @@ embryo_program_vm_pop(Embryo_Program *ep)
 EAPI void
 embryo_swap_16(unsigned short *v
 #ifndef WORDS_BIGENDIAN
-               __UNUSED__
+               EINA_UNUSED
 #endif               
               )
 {
@@ -462,7 +464,7 @@ embryo_swap_16(unsigned short *v
 EAPI void
 embryo_swap_32(unsigned int *v
 #ifndef WORDS_BIGENDIAN
-               __UNUSED__
+               EINA_UNUSED
 #endif
                )
 {
