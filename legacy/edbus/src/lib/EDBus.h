@@ -134,6 +134,7 @@ typedef void (*EDBus_Signal_Cb)(void *data, const EDBus_Message *msg);
 #include "edbus_freedesktop.h"
 #include "edbus_service.h"
 #include "edbus_message_helper.h"
+#include "edbus_message_to_eina_value.h"
 
 #ifdef __cplusplus
 }
