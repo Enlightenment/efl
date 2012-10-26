@@ -172,10 +172,9 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
    return reply;
 }
 
-static const EDBus_Method instrospect = { "Introspect", EDBUS_ARGS({ "", "" }),
-                                          EDBUS_ARGS({ "s", "xml" }),
-                                          cb_introspect, 0
-                                        };
+static const EDBus_Method instrospect = {
+   "Introspect", NULL, EDBUS_ARGS({ "s", "xml" }), cb_introspect
+};
 
 static void
 _introspectable_create(void)
