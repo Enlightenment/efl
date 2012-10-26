@@ -2009,7 +2009,7 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
         if (ev.dev) _evas_device_ref(ev.dev);
-        
+
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
@@ -2037,6 +2037,7 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                }
              if (e->delete_me || e->is_frozen) break;
           }
+        eina_list_free(copy);
         _evas_post_event_callback_call(eo_e, e);
         if (ev.dev) _evas_device_unref(ev.dev);
      }

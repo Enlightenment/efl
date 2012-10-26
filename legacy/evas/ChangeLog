@@ -1131,3 +1131,11 @@
 2012-10-25  ChunEon Park (Hermet)
 
        * Added Evas_Coord_Size, Evas_Coord_Precision_Size type.
+
+2012-10-26  ChunEon Park (Hermet)
+
+       * Added Evas_Coord_Size, Evas_Coord_Precision_Size type.
+
+2012-10-27  ChunEon Park (Hermet)
+
+       * Fixed event multi move memory leak.
