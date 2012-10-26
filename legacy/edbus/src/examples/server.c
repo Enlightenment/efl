@@ -144,7 +144,7 @@ _async_test(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static const EDBus_Signal signals[] = {
-   [TEST_SIGNAL_ALIVE] = {"Alive", EDBUS_ARGS({ NULL, NULL }), 0},
+   [TEST_SIGNAL_ALIVE] = {"Alive", NULL, 0},
    [TEST_SIGNAL_HELLO] = {"Hello", EDBUS_ARGS({ "s", "message" }), 0},
    { }
 };
