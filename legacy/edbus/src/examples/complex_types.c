@@ -179,6 +179,31 @@ on_receive_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
      }
 }
 
+static void
+_property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
+{
+   EDBus_Proxy_Event_Property_Changed *event = event_info;
+   const char *name;
+   const Eina_Value *value;
+   printf("property changed\n");
+
+   name = event->name;
+   value = event->value;
+
+   if (!strcmp(name, "text"))
+     {
+        const char *txt;
+        eina_value_get(value, &txt);
+        printf("[%s] = %s\n", name, txt);
+     }
+   else if (!strcmp(name, "int32"))
+     {
+        int num;
+        eina_value_get(value, &num);
+        printf("[%s] = %d\n", name, num);
+     }
+}
+
 int
 main(void)
 {
@@ -271,11 +296,13 @@ main(void)
                               -1 , "i", plus_one);
 
    pending = edbus_proxy_property_get(test2_proxy, "Resp2", get_property_resp2, test2_proxy);
+   edbus_proxy_event_callback_add(test2_proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, _property_changed, NULL);
 
-   ecore_timer_add(5, _timer1_cb, NULL);
+   ecore_timer_add(20, _timer1_cb, NULL);
 
    ecore_main_loop_begin();
 
+   edbus_proxy_event_callback_del(test2_proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, _property_changed, NULL);
    edbus_connection_unref(conn);
 
    edbus_shutdown();

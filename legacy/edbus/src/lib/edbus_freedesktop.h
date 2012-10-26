@@ -86,26 +86,13 @@ EAPI EDBus_Pending        *edbus_object_introspect(EDBus_Object *obj, EDBus_Mess
 
 /**
  * @defgroup EDBus_FDO_Properties org.freedesktop.DBus.Properties
- *
- * Whenever edbus_proxy_properties_monitor() is called on a
- * proxy to an object it will automatically listen for properties
- * changed on that interface, emitting events with
- * edbus_object_event_type being
- * #EDBUS_OBJECT_EVENT_PROPERTY_CHANGED and
- * #EDBUS_OBJECT_EVENT_PROPERTY_REMOVED, as well as
- * #EDBUS_PROXY_EVENT_PROPERTY_CHANGED and
- * #EDBUS_PROXY_EVENT_PROPERTY_REMOVED.
- *
- * One may manually query the properties
- * edbus_proxy_property_get() and edbus_proxy_property_get_all()
- * or listen for changes with
- * edbus_proxy_properties_changed_callback_add().
- *
- * To set property call edbus_proxy_property_set().
- *
  * @{
  */
-EAPI void                  edbus_proxy_properties_monitor(EDBus_Proxy *proxy);
+
+/**
+ * Enable or disable local cache of properties.
+ */
+EAPI void edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable);
 
 EAPI EDBus_Pending        *edbus_proxy_property_get(EDBus_Proxy *proxy, const char *name, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI EDBus_Pending        *edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const void *value, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 4);

@@ -30,6 +30,9 @@ struct _EDBus_Proxy
    Eina_List                *handlers;
    Eina_Inlist              *cbs_free;
    EDBus_Proxy_Context_Event event_handlers[EDBUS_PROXY_EVENT_LAST];
+   Eina_Hash *props;
+   EDBus_Signal_Handler *properties_changed;
+   Eina_Bool monitor_enabled:1;
 };
 
 #define EDBUS_PROXY_CHECK(proxy)                         \
@@ -85,6 +88,7 @@ edbus_proxy_shutdown(void)
 static void _edbus_proxy_event_callback_call(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, const void *event_info);
 static void _edbus_proxy_context_event_cb_del(EDBus_Proxy_Context_Event *ce, EDBus_Proxy_Context_Event_Cb *ctx);
 static void _on_signal_handler_free(void *data, const void *dead_pointer);
+static EDBus_Proxy *get_properties_proxy(EDBus_Proxy *proxy);
 
 static void
 _edbus_proxy_call_del(EDBus_Proxy *proxy)
@@ -139,6 +143,10 @@ _edbus_proxy_clear(EDBus_Proxy *proxy)
      }
 
    edbus_cbs_free_dispatch(&(proxy->cbs_free), proxy);
+   if (proxy->props)
+     eina_hash_free(proxy->props);
+   if (proxy->properties_changed)
+     edbus_signal_handler_del(proxy->properties_changed);
    proxy->refcount = 0;
 }
 
@@ -267,6 +275,87 @@ edbus_proxy_cb_free_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
    proxy->cbs_free = edbus_cbs_free_del(proxy->cbs_free, cb, data);
 }
 
+static void
+_property_changed_iter(void *data, const void *key, EDBus_Message_Iter *var)
+{
+   EDBus_Proxy *proxy = data;
+   const char *skey = key;
+   Eina_Value *st_value, stack_value, *value;
+   EDBus_Proxy_Event_Property_Changed event;
+
+   st_value = _message_iter_struct_to_eina_value(var);
+   eina_value_struct_value_get(st_value, "arg0", &stack_value);
+
+   value = eina_hash_find(proxy->props, skey);
+   if (value)
+     {
+        eina_value_flush(value);
+        eina_value_copy(&stack_value, value);
+     }
+   else
+     {
+        value = calloc(1, sizeof(Eina_Value));
+        eina_value_copy(&stack_value, value);
+        eina_hash_add(proxy->props, skey, value);
+     }
+
+   event.name = skey;
+   event.value = value;
+   _edbus_proxy_event_callback_call(proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
+                                    &event);
+
+   edbus_message_to_eina_value_free(st_value);
+   //TODO if value have any STRUCT at this point it will not be accessible
+   eina_value_flush(&stack_value);
+}
+
+static void
+_properties_changed(void *data, const EDBus_Message *msg)
+{
+   EDBus_Proxy *proxy = data;
+   EDBus_Message_Iter *array, *invalidate;
+   const char *iface;
+   const char *invalidate_prop;
+
+   if (!edbus_message_arguments_get(msg, "sa{sv}as", &iface, &array, &invalidate))
+     {
+        ERR("Error getting data from properties changed signal.");
+        return;
+     }
+   if (proxy->props)
+     edbus_message_iter_dict_iterate(array, "sv", _property_changed_iter,
+                                     proxy);
+
+   while (edbus_message_iter_get_and_next(invalidate, 's', &invalidate_prop))
+     {
+        EDBus_Proxy_Event_Property_Removed event;
+        event.interface = proxy->interface;
+        event.name = invalidate_prop;
+        event.proxy = proxy;
+        if (proxy->props)
+          eina_hash_del(proxy->props, event.name, NULL);
+        _edbus_proxy_event_callback_call(proxy, EDBUS_PROXY_EVENT_PROPERTY_REMOVED,
+                                         &event);
+     }
+}
+
+static void
+_props_cache_free(void *data)
+{
+   Eina_Value *value = data;
+   eina_value_free(value);
+}
+
+static void
+_properties_changed_add(EDBus_Proxy *proxy)
+{
+   proxy->properties_changed =
+            edbus_proxy_signal_handler_add(get_properties_proxy(proxy),
+            "PropertiesChanged", _properties_changed, proxy);
+   edbus_signal_handler_match_extra_set(proxy->properties_changed, "arg0",
+                                        proxy->interface, NULL);
+}
+
 EAPI void
 edbus_proxy_event_callback_add(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, EDBus_Proxy_Event_Cb cb, const void *cb_data)
 {
@@ -285,6 +374,19 @@ edbus_proxy_event_callback_add(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, 
    ctx->cb_data = cb_data;
 
    ce->list = eina_inlist_append(ce->list, EINA_INLIST_GET(ctx));
+
+   if (type == EDBUS_PROXY_EVENT_PROPERTY_CHANGED)
+     {
+        if (proxy->properties_changed) return;
+        if (!proxy->props)
+          proxy->props = eina_hash_string_superfast_new(_props_cache_free);
+        _properties_changed_add(proxy);
+     }
+   else if (type == EDBUS_PROXY_EVENT_PROPERTY_REMOVED)
+     {
+        if (proxy->properties_changed) return;
+        _properties_changed_add(proxy);
+     }
 }
 
 static void
@@ -326,6 +428,36 @@ edbus_proxy_event_callback_del(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, 
      }
 
    _edbus_proxy_context_event_cb_del(ce, found);
+
+   if (type == EDBUS_PROXY_EVENT_PROPERTY_CHANGED)
+     {
+        EDBus_Proxy_Context_Event *ce_prop_remove;
+        ce_prop_remove = proxy->event_handlers +
+                 EDBUS_PROXY_EVENT_PROPERTY_REMOVED;
+        if (!ce->list && !proxy->monitor_enabled)
+          {
+             eina_hash_free(proxy->props);
+             proxy->props = NULL;
+          }
+
+        if (!ce_prop_remove->list && !ce->list && !proxy->monitor_enabled)
+          {
+             edbus_signal_handler_unref(proxy->properties_changed);
+             proxy->properties_changed = NULL;
+          }
+     }
+   else if (type == EDBUS_PROXY_EVENT_PROPERTY_REMOVED)
+     {
+        EDBus_Proxy_Context_Event *ce_prop_changed;
+        ce_prop_changed = proxy->event_handlers +
+                 EDBUS_PROXY_EVENT_PROPERTY_CHANGED;
+
+        if (!ce_prop_changed->list && !ce->list && !proxy->monitor_enabled)
+          {
+             edbus_signal_handler_unref(proxy->properties_changed);
+             proxy->properties_changed = NULL;
+          }
+     }
 }
 
 static void
@@ -542,4 +674,82 @@ edbus_proxy_property_get_all(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    return edbus_proxy_call(get_properties_proxy(proxy), "GetAll", cb, data, -1,
                            "s", proxy->interface);
+}
+
+static void
+_property_iter(void *data, const void *key, EDBus_Message_Iter *var)
+{
+   EDBus_Proxy *proxy = data;
+   const char *skey = key;
+   Eina_Value *st_value, stack_value, *value;
+
+   st_value = _message_iter_struct_to_eina_value(var);
+   eina_value_struct_value_get(st_value, "arg0", &stack_value);
+
+   value = eina_hash_find(proxy->props, skey);
+   if (value)
+     {
+        eina_value_flush(value);
+        eina_value_copy(&stack_value, value);
+     }
+   else
+     {
+        value = calloc(1, sizeof(Eina_Value));
+        eina_value_copy(&stack_value, value);
+        eina_hash_add(proxy->props, skey, value);
+     }
+
+   edbus_message_to_eina_value_free(st_value);
+   eina_value_flush(&stack_value);
+}
+
+static void
+_props_get_all(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+{
+   EDBus_Proxy *proxy = data;
+   EDBus_Message_Iter *dict;
+
+   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+     {
+        ERR("Error getting data from properties getAll.");
+        return;
+     }
+   edbus_message_iter_dict_iterate(dict, "sv", _property_iter, proxy);
+}
+
+EAPI void
+edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable)
+{
+   EDBUS_PROXY_CHECK(proxy);
+   if (proxy->monitor_enabled == enable)
+     return;
+
+   proxy->monitor_enabled = enable;
+   if (enable)
+     {
+        if (!proxy->props)
+          proxy->props = eina_hash_string_superfast_new(_props_cache_free);
+        edbus_proxy_property_get_all(proxy, _props_get_all, proxy);
+
+        if (proxy->properties_changed)
+          return;
+        _properties_changed_add(proxy);
+     }
+   else
+     {
+        EDBus_Proxy_Context_Event *ce_prop_changed, *ce_prop_removed;
+        ce_prop_changed = proxy->event_handlers + EDBUS_PROXY_EVENT_PROPERTY_CHANGED;
+        ce_prop_removed = proxy->event_handlers + EDBUS_PROXY_EVENT_PROPERTY_REMOVED;
+
+        if (!ce_prop_changed->list)
+          {
+             eina_hash_free(proxy->props);
+             proxy->props = NULL;
+          }
+        if (!ce_prop_changed->list && !ce_prop_removed->list)
+          {
+             edbus_signal_handler_unref(proxy->properties_changed);
+             proxy->properties_changed = NULL;
+          }
+     }
 }

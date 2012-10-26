@@ -3,7 +3,6 @@
 
 static void _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, EDBus_Message_Iter *iter);
 static void _eina_value_struct_free(Eina_Value *value, Eina_Array *array);
-static Eina_Value *_message_iter_struct_to_eina_value(EDBus_Message_Iter *iter);
 
 static const Eina_Value_Type *
 _dbus_type_to_eina_value_type(char type)
@@ -217,7 +216,7 @@ _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, EDBus_Mess
 
 #define ARG "arg%d"
 
-static Eina_Value *
+Eina_Value *
 _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
 {
    int type;
