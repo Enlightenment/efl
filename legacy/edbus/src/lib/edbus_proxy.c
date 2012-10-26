@@ -303,9 +303,7 @@ _property_changed_iter(void *data, const void *key, EDBus_Message_Iter *var)
    event.value = value;
    _edbus_proxy_event_callback_call(proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                     &event);
-
-   edbus_message_to_eina_value_free(st_value);
-   //TODO if value have any STRUCT at this point it will not be accessible
+   eina_value_free(st_value);
    eina_value_flush(&stack_value);
 }
 
@@ -707,7 +705,7 @@ _property_iter(void *data, const void *key, EDBus_Message_Iter *var)
         eina_hash_add(proxy->props, skey, value);
      }
 
-   edbus_message_to_eina_value_free(st_value);
+   eina_value_free(st_value);
    eina_value_flush(&stack_value);
 }
 

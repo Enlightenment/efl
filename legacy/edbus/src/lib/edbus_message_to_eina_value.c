@@ -2,7 +2,6 @@
 #include "edbus_private_types.h"
 
 static void _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, EDBus_Message_Iter *iter);
-static void _eina_value_struct_free(Eina_Value *value, Eina_Array *array);
 
 static const Eina_Value_Type *
 _dbus_type_to_eina_value_type(char type)
@@ -216,6 +215,48 @@ _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, EDBus_Mess
 
 #define ARG "arg%d"
 
+typedef struct _EDBus_Struct_Desc
+{
+   Eina_Value_Struct_Desc base;
+   int refcount;
+} EDBus_Struct_Desc;
+
+static void *
+_ops_malloc(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc)
+{
+   EDBus_Struct_Desc *edesc = (EDBus_Struct_Desc*)desc;
+   edesc->refcount++;
+   DBG("%p refcount=%d", edesc, edesc->refcount);
+   return malloc(desc->size);
+}
+
+static void
+_ops_free(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, void *memory)
+{
+   EDBus_Struct_Desc *edesc = (EDBus_Struct_Desc*) desc;
+   edesc->refcount--;
+   free(memory);
+   DBG("%p refcount=%d", edesc, edesc->refcount);
+   if (edesc->refcount <= 0)
+     {
+        unsigned i;
+        for (i = 0; i < edesc->base.member_count; i++)
+          free((char *)edesc->base.members[i].name);
+        free((Eina_Value_Struct_Member *)edesc->base.members);
+        free(edesc);
+     }
+}
+
+static Eina_Value_Struct_Operations operations =
+{
+   EINA_VALUE_STRUCT_OPERATIONS_VERSION,
+   _ops_malloc,
+   _ops_free,
+   NULL,
+   NULL,
+   NULL
+};
+
 Eina_Value *
 _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
 {
@@ -225,13 +266,13 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
    unsigned int offset = 0, z;
    static char name[7];//arg000 + \0
    Eina_Value_Struct_Member *members;
-   Eina_Value_Struct_Desc *st_desc;
+   EDBus_Struct_Desc *st_desc;
    Eina_Array *st_values = eina_array_new(1);
 
    DBG("begin struct");
-   st_desc = calloc(1, sizeof(Eina_Value_Struct_Desc));
-   st_desc->version = EINA_VALUE_STRUCT_DESC_VERSION;
-   st_desc->ops = NULL;
+   st_desc = calloc(1, sizeof(EDBus_Struct_Desc));
+   st_desc->base.version = EINA_VALUE_STRUCT_DESC_VERSION;
+   st_desc->base.ops = &operations;
 
    //create member list
    z = 0;
@@ -364,10 +405,10 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
      }
 
    //setup
-   st_desc->members = members;
-   st_desc->member_count = eina_array_count(st_members);
-   st_desc->size = offset;
-   value_st = eina_value_struct_new(st_desc);
+   st_desc->base.members = members;
+   st_desc->base.member_count = eina_array_count(st_members);
+   st_desc->base.size = offset;
+   value_st = eina_value_struct_new((Eina_Value_Struct_Desc *)st_desc);
    eina_array_free(st_members);
 
    //filling with data
@@ -391,93 +432,4 @@ edbus_message_to_eina_value(const EDBus_Message *msg)
    iter = edbus_message_iter_get(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
    return _message_iter_struct_to_eina_value(iter);
-}
-
-static void
-_eina_value_array_free(Eina_Value *value, Eina_Array *array)
-{
-   Eina_Value_Array value_array;
-   unsigned i;
-
-   eina_value_pget(value, &value_array);
-   if (value_array.subtype == EINA_VALUE_TYPE_STRUCT)
-     {
-        for (i = 0; i < eina_value_array_count(value); i++)
-          {
-             Eina_Value st;
-             eina_value_array_value_get(value, i, &st);
-             _eina_value_struct_free(&st, array);
-             eina_value_flush(&st);
-          }
-     }
-   else if (value_array.subtype == EINA_VALUE_TYPE_ARRAY)
-     {
-        for (i = 0; i < eina_value_array_count(value); i++)
-          {
-             Eina_Value inner_array;
-             eina_value_array_value_get(value, i, &inner_array);
-             _eina_value_array_free(&inner_array, array);
-             eina_value_flush(&inner_array);
-          }
-     }
-}
-static void
-_eina_value_struct_free(Eina_Value *value, Eina_Array *array)
-{
-   Eina_Value_Struct st;
-   unsigned i;
-   static char name[7];
-
-   DBG("value %p", value);
-   EINA_SAFETY_ON_FALSE_RETURN(eina_value_pget(value, &st));
-
-   for (i = 0; i < st.desc->member_count; i++)
-     {
-        DBG("arg%d of %p", i, value);
-        if (st.desc->members[i].type == EINA_VALUE_TYPE_STRUCT)
-          {
-             Eina_Value sub;
-             sprintf(name, ARG, i);
-             eina_value_struct_value_get(value, name, &sub);
-             _eina_value_struct_free(&sub, array);
-             eina_value_flush(&sub);
-          }
-        else if (st.desc->members[i].type == EINA_VALUE_TYPE_ARRAY)
-          {
-             Eina_Value sub;
-             sprintf(name, ARG, i);
-             eina_value_struct_value_get(value, name, &sub);
-             _eina_value_array_free(&sub, array);
-             eina_value_flush(&sub);
-          }
-     }
-   eina_array_push(array, st.desc);
-   DBG("end value %p", value);
-}
-
-EAPI void
-edbus_message_to_eina_value_free(Eina_Value *value)
-{
-   Eina_Array *descriptions;
-   Eina_Value_Struct_Desc *st_desc;
-
-   EINA_SAFETY_ON_NULL_RETURN(value);
-   EINA_SAFETY_ON_FALSE_RETURN(eina_value_type_get(value) == EINA_VALUE_TYPE_STRUCT);
-
-   descriptions = eina_array_new(1);
-   _eina_value_struct_free(value, descriptions);
-   eina_value_free(value);
-
-   while ((st_desc = eina_array_pop(descriptions)))
-     {
-        unsigned i;
-        for (i = 0; i < st_desc->member_count; i++)
-          {
-             char *name = (char *)st_desc->members[i].name;
-             free(name);
-          }
-        free((Eina_Value_Struct_Member *)st_desc->members);
-        free(st_desc);
-     }
-   eina_array_free(descriptions);
 }

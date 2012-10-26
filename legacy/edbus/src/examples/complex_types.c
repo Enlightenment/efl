@@ -28,6 +28,12 @@ _read_cache(void *data)
 
    printf("Read cache: %s | %d\n", txt, num);
 
+   v = edbus_proxy_property_local_get(proxy, "st");
+   eina_value_struct_get(v, "arg0", &txt);
+   printf("Read cache: [st] %s | ", txt);
+   eina_value_struct_get(v, "arg1", &txt);
+   printf("%s\n", txt);
+
    return EINA_FALSE;
 }
 
@@ -217,6 +223,14 @@ _property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
         int num;
         eina_value_get(value, &num);
         printf("[%s] = %d\n", name, num);
+     }
+   else if (!strcmp(name, "st"))
+     {
+        const char *txt;
+        eina_value_struct_get(value, "arg0", &txt);
+        printf("[%s] %s | ", name, txt);
+        eina_value_struct_get(value, "arg1", &txt);
+        printf("%s\n", txt);
      }
 }
 

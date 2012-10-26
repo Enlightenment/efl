@@ -348,7 +348,7 @@ static Eina_Bool _emmit_changed(void *data)
 {
    EDBus_Service_Interface *iface = data;
    EDBus_Message *sig = edbus_service_signal_new(iface, 0);
-   EDBus_Message_Iter *main_iter, *array, *entry, *var, *invalidate;
+   EDBus_Message_Iter *main_iter, *array, *entry, *var, *invalidate, *st;
 
    main_iter = edbus_message_iter_get(sig);
    if (!edbus_message_iter_arguments_set(main_iter, "sa{sv}", IFACE, &array))
@@ -368,6 +368,15 @@ static Eina_Bool _emmit_changed(void *data)
    edbus_message_iter_arguments_set(entry, "s", "int32");
    var = edbus_message_iter_container_new(entry, 'v', "i");
    edbus_message_iter_arguments_set(var, "i", 35);
+   edbus_message_iter_container_close(entry, var);
+   edbus_message_iter_container_close(array, entry);
+
+   edbus_message_iter_arguments_set(array, "{sv}", &entry);
+   edbus_message_iter_arguments_set(entry, "s", "st");
+   var = edbus_message_iter_container_new(entry, 'v', "(ss)");
+   edbus_message_iter_arguments_set(var, "(ss)", &st);
+   edbus_message_iter_arguments_set(st, "ss", "string1", "string2");
+   edbus_message_iter_container_close(var, st);
    edbus_message_iter_container_close(entry, var);
    edbus_message_iter_container_close(array, entry);
 

@@ -80,7 +80,8 @@ libedbus2_la_SOURCES = \
 	src/lib/edbus_service.c \
 	src/lib/edbus_signal_handler.c \
 	src/lib/edbus_message_helper.c \
-	src/lib/edbus_message_to_eina_value.c
+	src/lib/edbus_message_to_eina_value.c \
+	src/lib/edbus_message_from_eina_value.c
 
 if EFL_BUILD_EXAMPLES
 noinst_PROGRAMS = \
