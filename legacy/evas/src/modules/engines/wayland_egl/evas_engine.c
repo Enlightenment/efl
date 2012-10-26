@@ -2232,8 +2232,13 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#ifdef GL_GLES
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, sfc->w, sfc->h,
                      0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
+#else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL, sfc->w, sfc->h,
+                     0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+#endif
        if (sfc->rt_msaa_samples)
           {
              glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER,
@@ -2432,7 +2437,12 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
    if (attachment)
      {
         // This is a little hacky but this is how we'll have to do for now.
+        // PS: Now it's even more hacky.
+#ifdef GL_GLES
         if (attach_fmt == GL_DEPTH_STENCIL_OES)
+#else
+        if (attach_fmt == GL_DEPTH_STENCIL)
+#endif
           {
              glGenTextures(1, &ds_tex);
              glBindTexture(GL_TEXTURE_2D, ds_tex);
@@ -2440,8 +2450,13 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#ifdef GL_GLES
              glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, w, h,
                           0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
+#else
+             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL, w, h,
+                          0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+#endif
              if (mult_samples)
                {
                   glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
@@ -2538,6 +2553,7 @@ _set_gl_surface_cap(Render_Engine *re)
 
         re->gl_cap.depth_8[i]   = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, re->gl_cap.msaa_samples[i]);
         re->gl_cap.depth_16[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, re->gl_cap.msaa_samples[i]);
+#ifdef GL_GLES
         re->gl_cap.depth_24[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24_OES, re->gl_cap.msaa_samples[i]);
         re->gl_cap.depth_32[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32_OES, re->gl_cap.msaa_samples[i]);
 
@@ -2546,6 +2562,16 @@ _set_gl_surface_cap(Render_Engine *re)
         re->gl_cap.stencil_8[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
 
         re->gl_cap.depth_24_stencil_8[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_STENCIL_OES, GL_DEPTH_STENCIL_OES, re->gl_cap.msaa_samples[i]);
+#else
+        re->gl_cap.depth_24[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_32[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32, re->gl_cap.msaa_samples[i]);
+
+        re->gl_cap.stencil_1[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX1, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_4[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX4, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_8[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
+
+        re->gl_cap.depth_24_stencil_8[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_STENCIL, GL_DEPTH_STENCIL, re->gl_cap.msaa_samples[i]);
+#endif
      }
 
 //   _print_gl_surface_cap(re, 0);

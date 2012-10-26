@@ -11,8 +11,13 @@
 #define GL_GLEXT_PROTOTYPES
 
 #include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#ifdef GL_GLES
+# include <GLES2/gl2.h>
+# include <GLES2/gl2ext.h>
+#else
+# include <GL/gl.h>
+# include <GL/glext.h>
+#endif
 #include <wayland-egl.h>
 
 extern int _evas_engine_wl_egl_log_dom;
