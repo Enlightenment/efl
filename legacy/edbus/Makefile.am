@@ -65,7 +65,7 @@ include_HEADERS = \
 	src/lib/edbus_service.h \
 	src/lib/edbus_signal_handler.h \
 	src/lib/edbus_message_helper.h \
-	src/lib/edbus_message_to_eina_value.h
+	src/lib/edbus_message_eina_value.h
 
 libedbus2_la_LIBADD = @ECORE_LIBS@ @DBUS_LIBS@
 libedbus2_la_SOURCES = \

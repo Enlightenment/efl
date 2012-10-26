@@ -1,3 +1,9 @@
+/**
+ * @defgroup EDBus_Message_Helpers Helpers
+ *
+ * @{
+ */
+
 typedef void (*EDBus_Dict_Cb_Get)(void *data, const void *key, EDBus_Message_Iter *var);
 
 /**
@@ -9,3 +15,7 @@ typedef void (*EDBus_Dict_Cb_Get)(void *data, const void *key, EDBus_Message_Ite
  * @param data context data
  */
 EAPI void edbus_message_iter_dict_iterate(EDBus_Message_Iter *dict, const char *signature, EDBus_Dict_Cb_Get cb, const void *data);
+
+/**
+ * @}
+ */

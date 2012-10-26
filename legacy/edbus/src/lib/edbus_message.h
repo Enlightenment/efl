@@ -271,6 +271,10 @@ EAPI void                  edbus_message_iter_del(EDBus_Message_Iter *iter) EINA
 /**
  * @}
  */
+
+#include "edbus_message_helper.h"
+#include "edbus_message_eina_value.h"
+
 /**
  * @}
  */
