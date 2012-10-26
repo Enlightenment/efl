@@ -332,6 +332,11 @@ static const EDBus_Method properties_methods[] = {
       { }
 };
 
+
+/*
+ * Temporary way to test the PropertiesChanged signal in FDO Properties
+ * interface. TODO: Remove me when service part is done.
+ */
 static const EDBus_Signal properties_signals[] = {
    { "PropertiesChanged",
      EDBUS_ARGS({"s", "interface"}, {"a{sv}", "data"}, {"as", "invalidate"}), 0
