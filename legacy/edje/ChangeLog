@@ -659,3 +659,7 @@
 	* Edje: change Edje to use Eo.
 	This change adds Eo support to Edje while keeping the old API intact.
 	For more information, go to Eo.
+
+2012-10-26  Michael Bouchaud (yoz)
+
+        * fix edje_object_scale_set with edje containing boxes and/or tables

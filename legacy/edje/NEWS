@@ -23,6 +23,8 @@ Improvements:
     * Lua 5.2 support added, still works fine with 5.1.
 
 Fixes:
+    * fix scale_set with edje containing boxes and/or tables
+    * fix scale_set with edje containing groups
 
 
 Edje 1.7.0
