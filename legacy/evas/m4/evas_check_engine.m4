@@ -739,26 +739,23 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
+if test "x${gl_flavor_gles}" = "xyes" ; then
+    gl_library="glesv2"
+else
+    gl_library="gl"
+fi
+
 PKG_CHECK_MODULES([WAYLAND_EGL],
-   [egl >= 7.10 glesv2 gl wayland-client wayland-egl],
+   [egl >= 7.10 ${gl_library} wayland-client wayland-egl],
    [
     have_dep="yes"
-    requirement="egl >= 7.10 glesv2 gl wayland-client wayland-egl"
+    requirement="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
     evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
     evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
    ],[
     have_dep="no"
    ]
 )
-
-if test "x${have_dep}" = "xyes" ; then
-   PKG_CHECK_MODULES([GL_EET], [eet >= 1.6.99], [have_dep="yes"], [have_dep="no"])
-      AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL -lm)
-      if test "x${have_glesv2}" = "xyes" ; then
-         evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
-         evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGL -lGLESv2 -lEGL"
-      fi
-fi
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
