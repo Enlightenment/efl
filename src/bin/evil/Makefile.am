@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib/evil \
 -I$(top_builddir)/src/lib/evil \
+@EFL_CFLAGS@ \
 @EVIL_CPPFLAGS@
 
 AM_CFLAGS = @EVIL_CFLAGS@

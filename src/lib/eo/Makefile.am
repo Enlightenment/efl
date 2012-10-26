@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eo \
 -DNDEBUG \
 -DEFL_EO_BUILD \
+@EFL_CFLAGS@ \
 @EO_CFLAGS@
 
 if HAVE_WINDOWS

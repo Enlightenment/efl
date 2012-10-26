@@ -298,7 +298,18 @@ AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
 
 AC_C_BIGENDIAN
 AC_C_INLINE
-# EFL_CHECK_COMPILER_FLAGS([MY_LIB], [-Wall -Wextra])
+EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith])
+case "${build_profile}" in
+   dev)
+     EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
+     ;;
+
+   debug)
+     ;;
+
+   release)
+     ;;
+esac
 
 
 #### Checks for linker characteristics
@@ -402,7 +413,7 @@ AC_MSG_NOTICE([Eina checks])
 have_magic_debug="yes"
 have_safety_checks="yes"
 want_log="yes"
-case "$build_profile" in
+case "${build_profile}" in
    dev)
      with_max_log_level=""
      have_stringshare_usage="no"

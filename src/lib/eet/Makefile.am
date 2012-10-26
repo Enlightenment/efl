@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DEFL_EET_BUILD \
+@EFL_CFLAGS@ \
 @EET_CFLAGS@
 
 if HAVE_WINDOWS
