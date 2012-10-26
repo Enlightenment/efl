@@ -102,7 +102,7 @@ EAPI void edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable);
 EAPI EDBus_Pending        *edbus_proxy_property_get(EDBus_Proxy *proxy, const char *name, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI EDBus_Pending        *edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const void *value, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 4);
 EAPI EDBus_Pending        *edbus_proxy_property_get_all(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI EDBus_Signal_Handler *edbus_proxy_properties_changed_callback_add(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI EDBus_Signal_Handler *edbus_proxy_properties_changed_callback_add(EDBus_Proxy *proxy, EDBus_Signal_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Return the cached value of property.
