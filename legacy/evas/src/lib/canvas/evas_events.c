@@ -612,7 +612,7 @@ _evas_event_source_multi_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 
    Eina_List *l;
    Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child;
+   Evas_Object_Protected_Data *child = NULL;
 
    int addgrab = 0;
    if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
@@ -633,6 +633,7 @@ _evas_event_source_multi_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
      {
         Evas_Coord point_x = ev->canvas.x;
         Evas_Coord point_y = ev->canvas.y;
+
         ev->canvas.x = point_x;
         ev->canvas.y = point_y;
         _evas_event_framespace_adjust(eo_child,
@@ -678,7 +679,7 @@ _evas_event_source_multi_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
 
    Eina_List *l;
    Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child;
+   Evas_Object_Protected_Data *child = NULL;
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
         ev->canvas.x = point_x;
