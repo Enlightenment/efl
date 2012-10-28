@@ -530,7 +530,6 @@ _evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e, void *ev, int ev
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = eo_data_get(eo_src, EVAS_OBJ_CLASS);
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
    if (obj->layer->evas->is_frozen) return;
 
