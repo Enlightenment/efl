@@ -41,7 +41,7 @@ typedef struct _Eina_Thread_Win32 Eina_Thread_Win32;
 struct _Eina_Thread_Win32
 {
    HANDLE thread;
-   Eina_Thread_Cb func;
+   void *(*func)(void *data);
    void *data;
    void *ret;
 
@@ -94,7 +94,7 @@ _eina_thread_win32_cb(LPVOID lpParam)
 {
    Eina_Thread_Win32 *tw = lpParam;
 
-   tw->ret = tw->func(tw->data, tw->index);
+   tw->ret = tw->func(tw->data);
 
    return 0;
 }
@@ -102,7 +102,7 @@ _eina_thread_win32_cb(LPVOID lpParam)
 static Eina_Bool
 _eina_thread_win32_create(Eina_Thread *t,
                           int affinity,
-                          Eina_Thread_Cb func,
+                          void *(*func)(void *data),
                           const void *data)
 {
    Eina_Thread_Win32 *tw;
@@ -127,17 +127,14 @@ _eina_thread_win32_create(Eina_Thread *t,
    tw->thread = CreateThread(NULL, 0, _eina_thread_win32_cb, tw, 0, NULL);
    if (!tw->thread) goto on_error;
 
-   if (!SetThreadAffinityMask(tw->thread, 1 << affinity))
-     goto close_thread;
+   /* affinity is an hint, if we fail, we continue without */
+   SetThreadAffinityMask(tw->thread, 1 << affinity);
 
    _thread_running = eina_list_append(_thread_running, tw);
 
    *t = tw->index;
    return EINA_TRUE;
 
- close_thread:
-   CloseHandle(tw->thread);
-   tw->thread = NULL;
  on_error:
    _thread_pool = eina_list_append(_thread_pool, tw);
    return EINA_FALSE;
