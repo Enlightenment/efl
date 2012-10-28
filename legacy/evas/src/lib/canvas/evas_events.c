@@ -739,11 +739,11 @@ _evas_event_source_multi_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
-             if ((evas_object_clippers_is_visible(eo_child, child) ||
-                  (child->mouse_grabbed) &&
+             if (((evas_object_clippers_is_visible(eo_child, child)) ||
+                  ((child->mouse_grabbed) &&
                   (!evas_event_passes_through(eo_child, child)) &&
                   (!evas_event_freezes_through(eo_child, child)) &&
-                  (!child->clip.clipees)))
+                  (!child->clip.clipees))))
                {
                   ev->cur.canvas.x = point_x;
                   ev->cur.canvas.y = point_y;
