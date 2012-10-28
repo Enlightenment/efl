@@ -2826,6 +2826,9 @@ _edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
    _edje_emit_full(rp->edje, "entry,changed,user", rp->part->name,
                    info, _free_entry_change_info);
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+
+   _edje_entry_imf_cursor_info_set(en);
+   _edje_entry_real_part_configure(rp);
 }
 
 void
@@ -3679,6 +3682,9 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, v
                         info, _free_entry_change_info);
         _edje_emit(ed, "cursor,changed", rp->part->name);
      }
+
+   _edje_entry_imf_cursor_info_set(en);
+   _edje_entry_real_part_configure(rp);
 }
 
 static void
