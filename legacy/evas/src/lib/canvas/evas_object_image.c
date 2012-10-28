@@ -594,7 +594,7 @@ evas_object_image_source_events_get(const Evas_Object *eo_obj)
 }
 
 static void
-_image_source_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+_image_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Eina_Bool *source_events = va_arg(*list, Eina_Bool *);
