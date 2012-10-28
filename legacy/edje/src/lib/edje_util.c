@@ -366,7 +366,7 @@ _scale_set(Eo *obj, void *_pd, va_list *list)
    Edje *ed, *ged;
    Evas_Object *o;
    Eina_List *l;
-   int i;
+   unsigned int i;
 
    ed = _pd;
    if (ed->scale == scale) return;
