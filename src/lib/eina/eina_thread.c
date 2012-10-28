@@ -146,7 +146,7 @@ _eina_thread_win32_join(Eina_Thread t)
    Eina_Thread_Win32 *tw;
    void *ret;
 
-   tw = _eina_thread_win32_find(index);
+   tw = _eina_thread_win32_find(t);
    if (!tw) return NULL;
 
    WaitForSingleObject(tw->thread, INFINITE);
