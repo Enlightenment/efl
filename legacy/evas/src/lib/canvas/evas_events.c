@@ -525,7 +525,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
 }
 
 static void
-_evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e, void *ev, int event_id)
+_evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, void *ev, int event_id)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
@@ -822,7 +822,7 @@ _evas_event_source_multi_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 }
 
 static void
-_evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_Mouse_In *ev, int event_id)
+_evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, Evas_Event_Mouse_In *ev, int event_id)
 {
    //FIXME: Should implement again.
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
