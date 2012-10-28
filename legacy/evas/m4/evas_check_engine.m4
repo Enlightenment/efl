@@ -745,6 +745,8 @@ else
     gl_library="gl"
 fi
 
+PKG_CHECK_MODULES([GL_EET], [eet >= 1.6.99], [have_dep="yes"], [have_dep="no"])
+
 PKG_CHECK_MODULES([WAYLAND_EGL],
    [egl >= 7.10 ${gl_library} wayland-client wayland-egl],
    [
