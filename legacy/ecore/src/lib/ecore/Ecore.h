@@ -145,11 +145,11 @@ sudo make install
  * repeatedly doing something with a set interval.
  * @see Ecore_Timer_Group
  *
- * @subsection poolers Poolers
+ * @subsection pollers Pollers
  *
- * Poolers allow for pooling to be centralized into a single place therefore
+ * Pollers allow for polling to be centralized into a single place therefore
  * alleviating the need for different parts of the program to wake up at
- * different times to do pooling, thereby making the code simpler and more
+ * different times to do polling, thereby making the code simpler and more
  * efficient.
  * @see Ecore_Poller_Group
  *
