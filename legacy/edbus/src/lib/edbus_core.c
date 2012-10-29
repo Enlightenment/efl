@@ -472,15 +472,14 @@ cleanup:
 static void
 on_name_owner_changed(void *data, const EDBus_Message *msg)
 {
-   char *bus, *older_id, *new_id;
-   const char *name, *text;
+   const char *bus, *older_id, *new_id;
    EDBus_Connection_Name *cn = data;
 
-   if (edbus_message_error_get(msg, &name, &text))
-     ERR("NameOwnerChanged cn=%s name=%s text=%s",
-         cn->name, name, text);
    if (!edbus_message_arguments_get(msg, "sss", &bus, &older_id, &new_id))
-     ERR("Error getting arguments from NameOwnerChanged cn=%s", cn->name);
+     {
+        ERR("Error getting arguments from NameOwnerChanged cn=%s", cn->name);
+        return;
+     }
 
    eina_stringshare_del(cn->unique_id);
    cn->unique_id = eina_stringshare_add(new_id);
