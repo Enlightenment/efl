@@ -4,10 +4,6 @@
 
 #include <Ecore.h>
 
-#define NAME_OWNER_MATCH "type='signal',sender='org.freedesktop.DBus',\
-         path='/org/freedesktop/DBus',interface='org.freedesktop.DBus',\
-         member='NameOwnerChanged',arg0='%s'"
-
 #define EDBUS_CONNECTION_CHECK(conn)                        \
   do                                                        \
     {                                                       \
