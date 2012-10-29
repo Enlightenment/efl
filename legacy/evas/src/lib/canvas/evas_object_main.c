@@ -2067,10 +2067,10 @@ _type_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    const char **type = va_arg(*list, const char **);
    if (obj->delete_me)
      {
-        if (type) *type = "";
+        *type = "";
         return;
      }
-   if (type) *type = obj->type;
+   *type = obj->type;
 }
 
 static void
