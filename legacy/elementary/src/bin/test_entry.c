@@ -1868,7 +1868,7 @@ test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(en, "Editable, Cursor Positioin");
+   elm_object_text_set(en, "Editable, Cursor Position");
    evas_object_show(en);
    elm_grid_pack(gd, en, 10, 10, 60, 30);
 
