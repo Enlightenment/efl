@@ -48,7 +48,7 @@ _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, con
    while (edbus_message_iter_get_and_next(array, 'r', &struct_si))
      {
         char *txt;
-        char num;
+        int num;
 
         if (!edbus_message_iter_arguments_get(struct_si, "si", &txt, &num))
           {
