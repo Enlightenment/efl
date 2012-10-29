@@ -974,6 +974,7 @@ enum
 
 /**
  * @def edje_obj_scale_set
+ * @since 1.8
  *
  * @brief Set the scaling factor for a given Edje object.
  *
@@ -986,6 +987,7 @@ enum
 
 /**
  * @def edje_obj_scale_get
+ * @since 1.8
  *
  * @brief Get a given Edje object's scaling factor.
  *
@@ -997,6 +999,7 @@ enum
 
 /**
  * @def edje_obj_mirrored_get
+ * @since 1.8
  *
  * @brief Get the RTL orientation for this object.
  *
@@ -1008,6 +1011,7 @@ enum
 
 /**
  * @def edje_obj_mirrored_set
+ * @since 1.8
  *
  * @brief Set the RTL orientation for this object.
  *
@@ -1019,6 +1023,7 @@ enum
 
 /**
  * @def edje_obj_data_get
+ * @since 1.8
  *
  * @brief Retrieve an <b>EDC data field's value</b> from a given Edje.
  *
@@ -1031,6 +1036,7 @@ enum
 
 /**
  * @def edje_obj_freeze
+ * @since 1.8
  *
  * @brief Freezes the Edje object.
  *
@@ -1042,6 +1048,7 @@ enum
 
 /**
  * @def edje_obj_thaw
+ * @since 1.8
  *
  * @brief Thaws the Edje object.
  *
@@ -1053,6 +1060,7 @@ enum
 
 /**
  * @def edje_obj_color_class_set
+ * @since 1.8
  *
  * @brief Sets the object color class.
  *
@@ -1077,6 +1085,7 @@ enum
 
 /**
  * @def edje_obj_color_class_get
+ * @since 1.8
  *
  * @brief Gets the object color class.
  *
@@ -1101,6 +1110,7 @@ enum
 
 /**
  * @def edje_obj_text_class_set
+ * @since 1.8
  *
  * @brief Sets Edje text class.
  *
@@ -1115,6 +1125,7 @@ enum
 
 /**
  * @def edje_obj_part_exists
+ * @since 1.8
  *
  * @brief Check if an Edje part exists in a given Edje object's group
  *
@@ -1127,6 +1138,7 @@ enum
 
 /**
  * @def edje_obj_part_object_get
+ * @since 1.8
  *
  * @brief Get a handle to the Evas object implementing a given Edje
  *
@@ -1139,6 +1151,7 @@ enum
 
 /**
  * @def edje_obj_part_geometry_get
+ * @since 1.8
  *
  * @brief Retrieve the geometry of a given Edje part, in a given Edje
  *
@@ -1155,6 +1168,7 @@ enum
 
 /**
  * @def edje_obj_item_provider_set
+ * @since 1.8
  *
  * @brief Set the function that provides item objects for named items in an edje entry text
  *
@@ -1167,6 +1181,7 @@ enum
 
 /**
  * @def edje_obj_text_change_cb_set
+ * @since 1.8
  *
  * @brief Set the object text callback.
  *
@@ -1179,6 +1194,7 @@ enum
 
 /**
  * @def edje_obj_part_text_style_user_push
+ * @since 1.8
  *
  * @brief Set the style of the part.
  *
@@ -1191,6 +1207,7 @@ enum
 
 /**
  * @def edje_obj_part_text_style_user_pop
+ * @since 1.8
  *
  * @brief Delete the top style form the user style stack.
  *
@@ -1202,6 +1219,7 @@ enum
 
 /**
  * @def edje_obj_part_text_style_user_peek
+ * @since 1.8
  *
  * @brief Return the text of the object part.
  *
@@ -1214,6 +1232,7 @@ enum
 
 /**
  * @def edje_obj_part_text_set
+ * @since 1.8
  *
  * @brief Sets the text for an object part
  *
@@ -1227,6 +1246,7 @@ enum
 
 /**
  * @def edje_obj_part_text_get
+ * @since 1.8
  *
  * @brief Return the text of the object part.
  *
@@ -1239,6 +1259,7 @@ enum
 
 /**
  * @def edje_obj_part_text_escaped_set
+ * @since 1.8
  *
  * @brief Sets the text for an object part, but converts HTML escapes to UTF8
  *
@@ -1252,6 +1273,7 @@ enum
 
 /**
  * @def edje_obj_part_text_unescaped_set
+ * @since 1.8
  *
  * @brief Sets the raw (non escaped) text for an object part.
  *
@@ -1265,6 +1287,7 @@ enum
 
 /**
  * @def edje_obj_part_text_unescaped_get
+ * @since 1.8
  *
  * @brief Returns the text of the object part, without escaping.
  *
@@ -1277,6 +1300,7 @@ enum
 
 /**
  * @def edje_obj_part_text_selection_get
+ * @since 1.8
  *
  * @brief Return the selection text of the object part.
  *
@@ -1289,6 +1313,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_none
+ * @since 1.8
  *
  * @brief Set the selection to be none.
  *
@@ -1300,6 +1325,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_all
+ * @since 1.8
  *
  * @brief Set the selection to be everything.
  *
@@ -1311,6 +1337,7 @@ enum
 
 /**
  * @def edje_obj_part_text_insert
+ * @since 1.8
  *
  * @brief Insert text for an object part.
  *
@@ -1323,6 +1350,7 @@ enum
 
 /**
  * @def edje_obj_part_text_append
+ * @since 1.8
  *
  * @brief Insert text for an object part.
  *
@@ -1335,6 +1363,7 @@ enum
 
 /**
  * @def edje_obj_part_text_anchor_list_get
+ * @since 1.8
  *
  * @brief Return a list of char anchor names.
  *
@@ -1347,6 +1376,7 @@ enum
 
 /**
  * @def edje_obj_part_text_anchor_geometry_get
+ * @since 1.8
  *
  * @brief Return a list of Evas_Textblock_Rectangle anchor rectangles.
  *
@@ -1360,6 +1390,7 @@ enum
 
 /**
  * @def edje_obj_part_text_item_list_get
+ * @since 1.8
  *
  * @brief Return a list of char item names.
  *
@@ -1372,6 +1403,7 @@ enum
 
 /**
  * @def edje_obj_part_text_item_geometry_get
+ * @since 1.8
  *
  * @brief Return item geometry.
  *
@@ -1389,6 +1421,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_geometry_get
+ * @since 1.8
  *
  * @brief Returns the cursor geometry of the part relative to the edje
  *
@@ -1404,6 +1437,7 @@ enum
 
 /**
  * @def edje_obj_part_text_user_insert
+ * @since 1.8
  *
  * @brief This function inserts text as if the user has inserted it.
  *
@@ -1416,6 +1450,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_allow_set
+ * @since 1.8
  *
  * @brief Enables selection if the entry is an EXPLICIT selection mode
  *
@@ -1428,6 +1463,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_abort
+ * @since 1.8
  *
  * @brief Aborts any selection action on a part.
  *
@@ -1439,6 +1475,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_begin
+ * @since 1.8
  *
  * @brief Starts selecting at current cursor position
  *
@@ -1450,6 +1487,7 @@ enum
 
 /**
  * @def edje_obj_part_text_select_extend
+ * @since 1.8
  *
  * @brief Extends the current selection to the current cursor position
  *
@@ -1461,6 +1499,7 @@ enum
 
 /**
  * @def edje_obj_part_text_imf_context_get
+ * @since 1.8
  *
  * @brief Get the input method context in entry.
  *
@@ -1473,6 +1512,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_next
+ * @since 1.8
  *
  * @brief Advances the cursor to the next cursor position.
  *
@@ -1486,6 +1526,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_prev
+ * @since 1.8
  *
  * @brief Moves the cursor to the previous char
  *
@@ -1499,6 +1540,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_up
+ * @since 1.8
  *
  * @brief Move the cursor to the char above the current cursor position.
  *
@@ -1512,6 +1554,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_down
+ * @since 1.8
  *
  * @brief Moves the cursor to the char below the current cursor position.
  *
@@ -1525,6 +1568,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_begin_set
+ * @since 1.8
  *
  * @brief Moves the cursor to the beginning of the text part
  *
@@ -1537,6 +1581,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_end_set
+ * @since 1.8
  *
  * @brief Moves the cursor to the end of the text part.
  *
@@ -1549,6 +1594,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_copy
+ * @since 1.8
  *
  * @brief Copy the cursor to another cursor.
  *
@@ -1562,6 +1608,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_line_begin_set
+ * @since 1.8
  *
  * @brief Move the cursor to the beginning of the line.
  *
@@ -1574,6 +1621,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_line_end_set
+ * @since 1.8
  *
  * @brief Move the cursor to the end of the line.
  *
@@ -1586,6 +1634,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_coord_set
+ * @since 1.8
  *
  * Position the given cursor to a X,Y position.
  *
@@ -1601,6 +1650,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_is_format_get
+ * @since 1.8
  *
  * @brief Returns whether the cursor points to a format.
  *
@@ -1614,6 +1664,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_is_visible_format_get
+ * @since 1.8
  *
  * @brief Return true if the cursor points to a visible format
  *
@@ -1627,6 +1678,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_content_get
+ * @since 1.8
  *
  * @brief Returns the content (char) at the cursor position.
  *
@@ -1640,6 +1692,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_pos_set
+ * @since 1.8
  *
  * @brief Sets the cursor position to the given value
  *
@@ -1653,6 +1706,7 @@ enum
 
 /**
  * @def edje_obj_part_text_cursor_pos_get
+ * @since 1.8
  *
  * @brief Retrieves the current position of the cursor
  *
@@ -1666,6 +1720,7 @@ enum
 
 /**
  * @def edje_obj_part_text_imf_context_reset
+ * @since 1.8
  *
  * @brief Reset the input method context if needed.
  *
@@ -1677,6 +1732,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_layout_set
+ * @since 1.8
  *
  * @brief Set the layout of the input panel.
  *
@@ -1689,6 +1745,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_layout_get
+ * @since 1.8
  *
  * @brief Get the layout of the input panel.
  *
@@ -1701,6 +1758,7 @@ enum
 
 /**
  * @def edje_obj_part_text_autocapital_type_set
+ * @since 1.8
  *
  * @brief Set the autocapitalization type on the immodule.
  *
@@ -1713,6 +1771,7 @@ enum
 
 /**
  * @def edje_obj_part_text_autocapital_type_get
+ * @since 1.8
  *
  * @brief Retrieves the autocapitalization type
  *
@@ -1725,6 +1784,7 @@ enum
 
 /**
  * @def edje_obj_part_text_prediction_allow_set
+ * @since 1.8
  *
  * @brief Set whether the prediction is allowed or not.
  *
@@ -1737,6 +1797,7 @@ enum
 
 /**
  * @def edje_obj_part_text_prediction_allow_get
+ * @since 1.8
  *
  * @brief Get whether the prediction is allowed or not.
  *
@@ -1749,6 +1810,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_enabled_set
+ * @since 1.8
  *
  * @brief Sets the attribute to show the input panel automatically.
  *
@@ -1761,6 +1823,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_enabled_get
+ * @since 1.8
  *
  * @brief Retrieve the attribute to show the input panel automatically.
  *
@@ -1773,6 +1836,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_show
+ * @since 1.8
  *
  * @brief Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
  *
@@ -1784,6 +1848,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_hide
+ * @since 1.8
  *
  * @brief Hide the input panel (virtual keyboard).
  *
@@ -1795,6 +1860,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_language_set
+ * @since 1.8
  *
  * Set the language mode of the input panel.
  *
@@ -1807,6 +1873,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_language_get
+ * @since 1.8
  *
  * Get the language mode of the input panel.
  *
@@ -1819,6 +1886,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_imdata_set
+ * @since 1.8
  *
  * Set the input panel-specific data to deliver to the input panel.
  *
@@ -1832,6 +1900,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_imdata_get
+ * @since 1.8
  *
  * Get the specific data of the current active input panel.
  *
@@ -1845,6 +1914,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_return_key_type_set
+ * @since 1.8
  *
  * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
  *
@@ -1857,6 +1927,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_return_key_type_get
+ * @since 1.8
  *
  * Get the "return" key type.
  *
@@ -1869,6 +1940,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_return_key_disabled_set
+ * @since 1.8
  *
  * Set the return key on the input panel to be disabled.
  *
@@ -1881,6 +1953,7 @@ enum
 
 /**
  * @def edje_obj_part_text_input_panel_return_key_disabled_get
+ * @since 1.8
  *
  * Get whether the return key on the input panel should be disabled or not.
  *
@@ -1893,6 +1966,7 @@ enum
 
 /**
  * @def edje_obj_text_insert_filter_callback_add
+ * @since 1.8
  *
  * Add a filter function for newly inserted text.
  *
@@ -1906,6 +1980,7 @@ enum
 
 /**
  * @def edje_obj_text_insert_filter_callback_del
+ * @since 1.8
  *
  * Delete a function from the filter list.
  *
@@ -1919,6 +1994,7 @@ enum
 
 /**
  * @def edje_obj_text_insert_filter_callback_del_full
+ * @since 1.8
  *
  * Delete a function and matching user data from the filter list.
  *
@@ -1933,6 +2009,7 @@ enum
 
 /**
  * @def edje_obj_text_markup_filter_callback_add
+ * @since 1.8
  *
  * Add a markup filter function for newly inserted text.
  *
@@ -1946,6 +2023,7 @@ enum
 
 /**
  * @def edje_obj_text_markup_filter_callback_del
+ * @since 1.8
  *
  * Delete a function from the markup filter list.
  *
@@ -1959,6 +2037,7 @@ enum
 
 /**
  * @def edje_obj_text_markup_filter_callback_del_full
+ * @since 1.8
  *
  * Delete a function and matching user data from the markup filter list.
  *
@@ -1973,6 +2052,7 @@ enum
 
 /**
  * @def edje_obj_part_swallow
+ * @since 1.8
  *
  * @brief "Swallows" an object into one of the Edje object SWALLOW
  *
@@ -1986,6 +2066,7 @@ enum
 
 /**
  * @def edje_obj_part_unswallow
+ * @since 1.8
  *
  * @brief Unswallow an object.
  *
@@ -1997,6 +2078,7 @@ enum
 
 /**
  * @def edje_obj_part_swallow_get
+ * @since 1.8
  *
  * @brief Get the object currently swallowed by a part.
  *
@@ -2009,6 +2091,7 @@ enum
 
 /**
  * @def edje_obj_size_min_get
+ * @since 1.8
  *
  * @brief Get the minimum size specified -- as an EDC property -- for a
  * given Edje object
@@ -2022,6 +2105,7 @@ enum
 
 /**
  * @def edje_obj_size_max_get
+ * @since 1.8
  *
  * @brief Get the maximum size specified -- as an EDC property -- for a
  * given Edje object
@@ -2035,6 +2119,7 @@ enum
 
 /**
  * @def edje_obj_calc_force
+ * @since 1.8
  *
  * @brief Force a Size/Geometry calculation.
  *
@@ -2045,6 +2130,7 @@ enum
 
 /**
  * @def edje_obj_size_min_calc
+ * @since 1.8
  *
  * @brief Calculate the minimum required size for a given Edje object.
  *
@@ -2057,6 +2143,7 @@ enum
 
 /**
  * @def edje_obj_parts_extends_calc
+ * @since 1.8
  *
  * Calculate the geometry of the region, relative to a given Edje
  *
@@ -2072,6 +2159,7 @@ enum
 
 /**
  * @def edje_obj_size_min_restricted_calc
+ * @since 1.8
  *
  * @brief Calculate the minimum required size for a given Edje object.
  *
@@ -2086,6 +2174,7 @@ enum
 
 /**
  * @def edje_obj_part_state_get
+ * @since 1.8
  *
  * @brief Returns the state of the Edje part.
  *
@@ -2099,6 +2188,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_dir_get
+ * @since 1.8
  *
  * @brief Determine dragable directions.
  *
@@ -2111,6 +2201,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_value_set
+ * @since 1.8
  *
  * @brief Set the dragable object location.
  *
@@ -2125,6 +2216,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_value_get
+ * @since 1.8
  *
  * @brief Get the dragable object location.
  *
@@ -2139,6 +2231,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_size_set
+ * @since 1.8
  *
  * @brief Set the dragable object size.
  *
@@ -2153,6 +2246,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_size_get
+ * @since 1.8
  *
  * @brief Get the dragable object size.
  *
@@ -2167,6 +2261,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_step_set
+ * @since 1.8
  *
  * @brief Sets the drag step increment.
  *
@@ -2181,6 +2276,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_step_get
+ * @since 1.8
  *
  * @brief Gets the drag step increment values.
  *
@@ -2195,6 +2291,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_page_set
+ * @since 1.8
  *
  * @brief Sets the page step increments.
  *
@@ -2209,6 +2306,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_page_get
+ * @since 1.8
  *
  * @brief Gets the page step increments.
  *
@@ -2223,6 +2321,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_step
+ * @since 1.8
  *
  * @brief Steps the dragable x,y steps.
  *
@@ -2237,6 +2336,7 @@ enum
 
 /**
  * @def edje_obj_part_drag_page
+ * @since 1.8
  *
  * @brief Pages x,y steps.
  *
@@ -2251,6 +2351,7 @@ enum
 
 /**
  * @def edje_obj_part_box_append
+ * @since 1.8
  *
  * @brief Appends an object to the box.
  *
@@ -2264,6 +2365,7 @@ enum
 
 /**
  * @def edje_obj_part_box_prepend
+ * @since 1.8
  *
  * @brief Prepends an object to the box.
  *
@@ -2277,6 +2379,7 @@ enum
 
 /**
  * @def edje_obj_part_box_insert_before
+ * @since 1.8
  *
  * @brief Adds an object to the box.
  *
@@ -2291,6 +2394,7 @@ enum
 
 /**
  * @def edje_obj_part_box_insert_at
+ * @since 1.8
  *
  * @brief Inserts an object to the box.
  *
@@ -2305,6 +2409,7 @@ enum
 
 /**
  * @def edje_obj_part_box_remove
+ * @since 1.8
  *
  * @brief Removes an object from the box.
  *
@@ -2318,6 +2423,7 @@ enum
 
 /**
  * @def edje_obj_part_box_remove_at
+ * @since 1.8
  *
  * @brief Removes an object from the box.
  *
@@ -2331,6 +2437,7 @@ enum
 
 /**
  * @def edje_obj_part_box_remove_all
+ * @since 1.8
  *
  * @brief Removes all elements from the box.
  *
@@ -2344,6 +2451,7 @@ enum
 
 /**
  * @def edje_obj_access_part_list_get
+ * @since 1.8
  *
  * @brief Retrieve a list all accessibility part names
  *
@@ -2355,6 +2463,7 @@ enum
 
 /**
  * @def edje_obj_part_table_child_get
+ * @since 1.8
  *
  * @brief Retrieve a child from a table
  *
@@ -2369,6 +2478,7 @@ enum
 
 /**
  * @def edje_obj_part_table_pack
+ * @since 1.8
  *
  * @brief Packs an object into the table.
  *
@@ -2386,6 +2496,7 @@ enum
 
 /**
  * @def edje_obj_part_table_unpack
+ * @since 1.8
  *
  * @brief Removes an object from the table.
  *
@@ -2399,6 +2510,7 @@ enum
 
 /**
  * @def edje_obj_part_table_col_row_size_get
+ * @since 1.8
  *
  * @brief Gets the number of columns and rows the table has.
  *
@@ -2413,6 +2525,7 @@ enum
 
 /**
  * @def edje_obj_part_table_clear
+ * @since 1.8
  *
  * @brief Removes all object from the table.
  *
@@ -2426,6 +2539,7 @@ enum
 
 /**
  * @def edje_obj_perspective_set
+ * @since 1.8
  *
  * Set the given perspective object on this Edje object.
  *
@@ -2437,6 +2551,7 @@ enum
 
 /**
  * @def edje_obj_perspective_get
+ * @since 1.8
  *
  * Get the current perspective used on this Edje object.
  *
@@ -2448,6 +2563,7 @@ enum
 
 /**
  * @def edje_obj_preload
+ * @since 1.8
  *
  * @brief Preload the images on the Edje Object in the background.
  *
@@ -2460,6 +2576,7 @@ enum
 
 /**
  * @def edje_obj_update_hints_set
+ * @since 1.8
  *
  * @brief Edje will automatically update the size hints on itself.
  *
@@ -2471,6 +2588,7 @@ enum
 
 /**
  * @def edje_obj_update_hints_get
+ * @since 1.8
  *
  * @brief Wether or not Edje will update size hints on itself.
  *
@@ -2483,6 +2601,7 @@ enum
 
 /**
  * @def edje_obj_part_external_object_get
+ * @since 1.8
  *
  * @brief Get the object created by this external part.
  *
@@ -2495,6 +2614,7 @@ enum
 
 /**
  * @def edje_obj_part_external_param_set
+ * @since 1.8
  *
  * @brief Set the parameter for the external part.
  *
@@ -2508,6 +2628,7 @@ enum
 
 /**
  * @def edje_obj_part_external_param_get
+ * @since 1.8
  *
  * @brief Get the parameter for the external part.
  *
@@ -2521,6 +2642,7 @@ enum
 
 /**
  * @def edje_obj_part_external_content_get
+ * @since 1.8
  *
  * @brief Get an object contained in an part of type EXTERNAL
  *
@@ -2534,6 +2656,7 @@ enum
 
 /**
  * @def edje_obj_part_external_param_type_get
+ * @since 1.8
  *
  * Facility to query the type of the given parameter of the given part.
  *
@@ -2547,6 +2670,7 @@ enum
 
 /**
  * @def edje_obj_file_set
+ * @since 1.8
  *
  * @param[in] file in
  * @param[in] group in
@@ -2559,6 +2683,7 @@ enum
 
 /**
  * @def edje_obj_file_get
+ * @since 1.8
  *
  * @brief Get the file and group name that a given Edje object is bound to
  *
@@ -2571,6 +2696,7 @@ enum
 
 /**
  * @def edje_obj_load_error_get
+ * @since 1.8
  *
  * @brief Gets the (last) file loading error for a given Edje object
  *
@@ -2583,6 +2709,7 @@ enum
 
 /**
  * @def edje_obj_message_send
+ * @since 1.8
  *
  * @brief Send an (Edje) message to a given Edje object
  *
@@ -2596,6 +2723,7 @@ enum
 
 /**
  * @def edje_obj_message_handler_set
+ * @since 1.8
  *
  * @brief Set an Edje message handler function for a given Edje object.
  *
@@ -2608,6 +2736,7 @@ enum
 
 /**
  * @def edje_obj_message_signal_process
+ * @since 1.8
  *
  * @brief Process an object's message queue.
  *
@@ -2619,6 +2748,7 @@ enum
 
 /**
  * @def edje_obj_signal_callback_add
+ * @since 1.8
  *
  * @brief Add a callback for an arriving Edje signal, emitted by
  * a given Ejde object.
@@ -2634,6 +2764,7 @@ enum
 
 /**
  * @def edje_obj_signal_callback_del
+ * @since 1.8
  *
  * @brief Remove a signal-triggered callback from an object.
  *
@@ -2648,6 +2779,7 @@ enum
 
 /**
  * @def edje_obj_signal_callback_del_full
+ * @since 1.8
  *
  * @brief Unregister/delete a callback set for an arriving Edje
  *
@@ -2663,6 +2795,7 @@ enum
 
 /**
  * @def edje_obj_signal_emit
+ * @since 1.8
  *
  * @brief Send/emit an Edje signal to a given Edje object
  *
@@ -2675,6 +2808,7 @@ enum
 
 /**
  * @def edje_obj_play_set
+ * @since 1.8
  *
  * @brief Set the Edje object to playing or paused states.
  *
@@ -2686,6 +2820,7 @@ enum
 
 /**
  * @def edje_obj_play_get
+ * @since 1.8
  *
  * @brief Get the Edje object's state.
  *
@@ -2697,6 +2832,7 @@ enum
 
 /**
  * @def edje_obj_animation_set
+ * @since 1.8
  *
  * @brief Set the object's animation state.
  *
@@ -2708,6 +2844,7 @@ enum
 
 /**
  * @def edje_obj_animation_get
+ * @since 1.8
  *
  * @brief Get the Edje object's animation state.
  *
