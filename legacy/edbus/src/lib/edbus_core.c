@@ -118,6 +118,9 @@ edbus_init(void)
    eina_magic_string_set(EDBUS_PENDING_MAGIC, "EDBus_Pending");
    eina_magic_string_set(EDBUS_OBJECT_MAGIC, "EDBus_Object");
    eina_magic_string_set(EDBUS_PROXY_MAGIC, "EDBus_Proxy");
+   eina_magic_string_set(EDBUS_MESSAGE_ITERATOR_MAGIC, "EDBus_Message_Iterator");
+   eina_magic_string_set(EDBUS_SERVICE_INTERFACE_MAGIC, "EDBus_Service_Interface");
+
 
    if (!edbus_message_init()) goto message_failed;
    if (!edbus_signal_handler_init()) goto signal_handler_failed;
