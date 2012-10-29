@@ -342,7 +342,7 @@ EAPI extern Edje_Version *edje_version;
  *
  * @return The new init count. The initial value is zero.
  *
- * This function initializes the Ejde library, making the proper calls
+ * This function initializes the Edje library, making the proper calls
  * to internal initialization functions. It will also initialize its
  * @b dependencies, making calls to @c eina_init(), @c ecore_init(),
  * @c embryo_init() and @c eet_init(). So, there is no need to call
@@ -3954,7 +3954,7 @@ typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, c
 
 /**
  * @brief Add a callback for an arriving Edje signal, emitted by
- * a given Ejde object.
+ * a given Edje object.
  *
  * @param obj A handle to an Edje object
  * @param emission The signal's "emission" string
@@ -4037,7 +4037,7 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
 
 /**
  * @brief Unregister/delete a callback set for an arriving Edje
- * signal, emitted by a given Ejde object.
+ * signal, emitted by a given Edje object.
  *
  * @param obj A handle to an Edje object
  * @param emission The signal's "emission" string
