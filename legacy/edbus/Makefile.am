@@ -83,8 +83,7 @@ libedbus2_la_SOURCES = \
 	src/lib/edbus_message_to_eina_value.c \
 	src/lib/edbus_message_from_eina_value.c
 
-if EFL_BUILD_EXAMPLES
-noinst_PROGRAMS = \
+EXAMPLES = \
 	src/examples/connman-list-services \
 	src/examples/ofono-dial \
 	src/examples/banshee \
@@ -96,6 +95,8 @@ noinst_PROGRAMS = \
 	src/examples/complex_types_client_eina_value
 
 EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@
+
+EXTRA_PROGRAMS = $(EXAMPLES)
 
 src_examples_connman_list_services_SOURCES = \
 	src/examples/connman-list-services.c
@@ -125,9 +126,9 @@ src_examples_simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
 src_examples_complex_types_client_eina_value_SOURCES = src/examples/complex_types_client_eina_value.c
 src_examples_complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 
-endif
+.PHONY: doc examples
 
-.PHONY: doc
+examples: $(EXAMPLES)
 
 # Documentation
 
