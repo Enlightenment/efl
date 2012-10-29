@@ -9530,6 +9530,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    obj->type = o_type;
 
    o->cursor->obj = eo_obj;
+   o->cursor->node = o->text_nodes = _evas_textblock_node_text_new();
    evas_object_textblock_text_markup_set(eo_obj, "");
 
    o->legacy_newline = EINA_TRUE;
