@@ -4258,13 +4258,8 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
      }
 
    return_value = (a != 0);
-   goto finish;
 
-   finish:
-
-   obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
-                                  o->engine_data,
-                                  data);
+finish:
    return return_value;
 }
 
