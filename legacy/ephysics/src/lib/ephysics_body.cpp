@@ -2393,6 +2393,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
                                        _ephysics_body_evas_obj_del_cb);
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
                                        _ephysics_body_evas_obj_resize_cb);
+        evas_object_map_enable_set(body->evas_obj, EINA_FALSE);
         if (body->soft_data)
           _ephysics_body_soft_body_slices_clean(body->soft_data);
      }
@@ -2446,6 +2447,7 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
                                        _ephysics_body_evas_obj_del_cb);
         evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE,
                                        _ephysics_body_evas_obj_resize_cb);
+        evas_object_map_enable_set(obj, EINA_FALSE);
      }
 
    if (body->type != EPHYSICS_BODY_TYPE_RIGID)
