@@ -226,15 +226,15 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
      {
         // Clip against original image object
         if (objc[0] < imgc[0]) objc[0] = imgc[0];
-        if (objc[0] > imgc[2]) objc[0] = 0;
+        if (objc[0] > imgc[2]) objc[0] = imgc[2];
 
         if (objc[1] < imgc[1]) objc[1] = imgc[1];
-        if (objc[1] > imgc[3]) objc[1] = 0;
+        if (objc[1] > imgc[3]) objc[1] = imgc[3];
 
-        if (objc[2] < imgc[0]) objc[0] = 0;
+        if (objc[2] < imgc[0]) objc[2] = imgc[0];
         if (objc[2] > imgc[2]) objc[2] = imgc[2];
 
-        if (objc[3] < imgc[1]) objc[1] = 0;
+        if (objc[3] < imgc[1]) objc[3] = imgc[1];
         if (objc[3] > imgc[3]) objc[3] = imgc[3];
      }
 

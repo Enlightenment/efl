@@ -224,6 +224,7 @@ Fixes:
     * TGA loader detects false positives less and handles alpha TGAs better
     * repeat event flag not inherited from parent smart like pass events
     * texture size for nv12 format
+    * coordinate compute bug for Evas GL direct rendering.
 
 Improvements:
 

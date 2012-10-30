@@ -1135,3 +1135,9 @@
 2012-10-26  ChunEon Park (Hermet)
 
        * Fixed event multi move memory leak.
+
+2012-10-30  Sung W. Park (sung_)
+
+       * Fix clip bug while computing coordinates for Evas GL
+       direct rendering optimization.
+ 
