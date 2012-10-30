@@ -399,22 +399,27 @@ ecore_file_remove(const char *file)
 EAPI Eina_Bool
 ecore_file_recursive_rm(const char *dir)
 {
-   Eina_Iterator *it;
-   char buf[PATH_MAX];
    struct stat st;
-   int ret;
+
+#ifdef _WIN32
+   char buf[PATH_MAX];
 
    if (readlink(dir, buf, sizeof(buf) - 1) > 0)
      return ecore_file_unlink(dir);
+   if (stat(dir, &st) == -1)
+     return EINA_FALSE;
+#else
+   if (lstat(dir, &st) == -1)
+     return EINA_FALSE;
+#endif
 
-   ret = stat(dir, &st);
-   if ((ret == 0) && (S_ISDIR(st.st_mode)))
+   if (S_ISDIR(st.st_mode))
      {
         Eina_File_Direct_Info *info;
+        Eina_Iterator *it;
+        int ret;
 
         ret = 1;
-        if (stat(dir, &st) == -1) return EINA_FALSE; /* WOOT: WHY ARE WE CALLING STAT TWO TIMES ??? */
-
         it = eina_file_direct_ls(dir);
         EINA_ITERATOR_FOREACH(it, info)
           {
@@ -431,7 +436,6 @@ ecore_file_recursive_rm(const char *dir)
      }
    else
      {
-        if (ret == -1) return EINA_FALSE;
         return ecore_file_unlink(dir);
      }
 }
