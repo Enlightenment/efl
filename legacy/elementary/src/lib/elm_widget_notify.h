@@ -124,9 +124,6 @@ struct _Elm_Notify_Smart_Data
 
    Evas_Object             *notify, *content, *parent;
    Evas_Object             *block_events;
-
-   Elm_Notify_Orient        orient;
-
    double                   timeout;
    double                   horizontal_align, vertical_align;
    Ecore_Timer             *timer;

@@ -16,59 +16,6 @@ EVAS_SMART_SUBCLASS_NEW
   (ELM_NOTIFY_SMART_NAME, _elm_notify, Elm_Notify_Smart_Class,
   Elm_Container_Smart_Class, elm_container_smart_class_get, NULL);
 
-/**
- * Return Notification orientation with RTL
- *
- * This function switches-sides of notification area when in RTL mode.
- *
- * @param obj notification object.
- *
- * @param orient Original notification orientation.
- *
- * @return notification orientation with respect to the object RTL mode.
- *
- * @internal
- **/
-static Elm_Notify_Orient
-_notify_orientation_rtl_fix(Evas_Object *obj,
-                            Elm_Notify_Orient orient)
-{
-   if (elm_widget_mirrored_get(obj))
-     {
-        switch (orient)
-          {
-           case ELM_NOTIFY_ORIENT_LEFT:
-             orient = ELM_NOTIFY_ORIENT_RIGHT;
-             break;
-
-           case ELM_NOTIFY_ORIENT_RIGHT:
-             orient = ELM_NOTIFY_ORIENT_LEFT;
-             break;
-
-           case ELM_NOTIFY_ORIENT_TOP_LEFT:
-             orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
-             break;
-
-           case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-             orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
-             break;
-
-           case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-             orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
-             break;
-
-           case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-             orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
-             break;
-
-           default:
-             break;
-          }
-     }
-
-   return orient;
-}
-
 static void
 _notify_theme_apply(Evas_Object *obj)
 {
@@ -457,7 +404,6 @@ _elm_notify_smart_add(Evas_Object *obj)
    priv->allow_events = EINA_TRUE;
 
    priv->notify = edje_object_add(evas_object_evas_get(obj));
-   priv->orient = -1;
    priv->horizontal_align = 0.5;
    priv->vertical_align = 0.0;
 
@@ -605,62 +551,82 @@ EINA_DEPRECATED EAPI void
 elm_notify_orient_set(Evas_Object *obj,
                       Elm_Notify_Orient orient)
 {
-   ELM_NOTIFY_CHECK(obj);
-   ELM_NOTIFY_DATA_GET(obj, sd);
+   double horizontal = 0, vertical = 0;
 
-   if (sd->orient == orient) return;
-   sd->orient = orient;
-
-   switch (_notify_orientation_rtl_fix(obj, sd->orient))
+   //notify rtl orientation fix
+   switch (orient)
      {
       case ELM_NOTIFY_ORIENT_TOP:
-        elm_notify_align_set(obj, 0.5, 0.0);
+         horizontal = 0.5; vertical = 0.0;
         break;
 
       case ELM_NOTIFY_ORIENT_CENTER:
-        elm_notify_align_set(obj, 0.5, 0.5);
+         horizontal = 0.5; vertical = 0.5;
         break;
 
       case ELM_NOTIFY_ORIENT_BOTTOM:
-        elm_notify_align_set(obj, 0.5, 1.0);
+         horizontal = 0.5; vertical = 1.0;
         break;
 
       case ELM_NOTIFY_ORIENT_LEFT:
-        elm_notify_align_set(obj, 0.0, 0.5);
+         horizontal = 0.0; vertical = 0.5;
         break;
 
       case ELM_NOTIFY_ORIENT_RIGHT:
-        elm_notify_align_set(obj, 1.0, 0.5);
+         horizontal = 1.0; vertical = 0.5;
         break;
 
       case ELM_NOTIFY_ORIENT_TOP_LEFT:
-        elm_notify_align_set(obj, 0.0, 0.0);
+         horizontal = 0.0; vertical = 0.0;
         break;
 
       case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-        elm_notify_align_set(obj, 1.0, 0.0);
+         horizontal = 1.0; vertical = 0.0;
         break;
 
       case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-        elm_notify_align_set(obj, 0.0, 1.0);
+         horizontal = 0.0; vertical = 1.0;
         break;
 
       case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-        elm_notify_align_set(obj, 1.0, 1.0);
+         horizontal = 1.0; vertical = 1.0;
         break;
 
       case ELM_NOTIFY_ORIENT_LAST:
         break;
      }
+   elm_notify_align_set(obj, horizontal, vertical);
 }
 
 EINA_DEPRECATED EAPI Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
-   ELM_NOTIFY_CHECK(obj) - 1;
-   ELM_NOTIFY_DATA_GET(obj, sd);
+   Elm_Notify_Orient orient;
+   double horizontal, vertical;
 
-   return sd->orient;
+   elm_notify_align_get(obj, &horizontal, &vertical);
+
+   if ((horizontal == 0.5) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
+   else if ((horizontal == 0.5) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_CENTER;
+   else if ((horizontal == 0.5) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM;
+   else if ((horizontal == 0.0) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_RIGHT;
+   else if ((horizontal == 0.0) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
+   else if ((horizontal == 0.0) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
+   else
+     orient = ELM_NOTIFY_ORIENT_TOP;
+   return orient;
 }
 
 EAPI void
