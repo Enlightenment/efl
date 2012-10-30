@@ -29,8 +29,6 @@ _del_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
    evas_object_del(shadow);
    evas_object_del(obj);
 
-   collision_data->base.bodies = eina_list_remove(collision_data->base.bodies,
-                                                  body);
    collision_data->sphere = NULL;
 }
 
@@ -43,6 +41,9 @@ _collision_cb(void *data, EPhysics_Body *body, void *event_info)
 
    contact_body = ephysics_body_collision_contact_body_get(collision);
    if (contact_body != collision_data->sphere2) return;
+
+   collision_data->base.bodies = eina_list_remove(collision_data->base.bodies,
+                                                  body);
 
    INF("Collision Detected");
    ephysics_body_del(body);
