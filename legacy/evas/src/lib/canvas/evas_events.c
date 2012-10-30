@@ -228,7 +228,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
         src->proxy.src_event_in = _evas_event_object_list_raw_in_get(eo_e, src->proxy.src_event_in, evas_object_smart_members_get_direct(eo_src), NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
      }
    else
-     src->proxy.src_event_in = eina_list_append(src->proxy.src_event_in, src);
+     src->proxy.src_event_in = eina_list_append(src->proxy.src_event_in, eo_src);
 
    int addgrab = 0;
    if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
@@ -774,7 +774,7 @@ _evas_event_source_multi_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
              ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src), NULL, ev->cur.canvas.x, ev->cur.canvas.y, &no_rep, EINA_TRUE);
           }
         else
-          ins = eina_list_append(ins, src);
+          ins = eina_list_append(ins, eo_src);
         Eina_List *copy = evas_event_list_copy(src->proxy.src_event_in);
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
@@ -838,15 +838,15 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,  Evas_Event_
 
    ev->output.x = ev->canvas.x;
    ev->output.y = ev->canvas.y;
-
    Eina_List *ins = NULL;
    if (src->is_smart)
      {
         int no_rep = 0;
         ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src), NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
+
      }
    else
-     ins = eina_list_append(ins, src);
+     ins = eina_list_append(ins, eo_src);
 
    Evas_Coord point_x = ev->canvas.x;
    Evas_Coord point_y = ev->canvas.y;
@@ -859,11 +859,13 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,  Evas_Event_
         if (!eina_list_data_find(src->proxy.src_event_in, eo_child))
           {
              if(child->mouse_in) continue;
+
              child->mouse_in = 1;
              ev->canvas.x = point_x;
              ev->canvas.y = point_y;
              _evas_event_framespace_adjust(eo_child, &ev->canvas.x,
                                            &ev->canvas.y);
+
              _evas_event_havemap_adjust(eo_child, child, &ev->canvas.x,
                                         &ev->canvas.y,
                                         child->mouse_grabbed);
