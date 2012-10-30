@@ -237,6 +237,8 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body)
         slice->evas_obj = evas_object_image_filled_add(evas);
         evas_object_image_source_set(slice->evas_obj,
                                      body->soft_data->base_obj);
+        evas_object_layer_set(slice->evas_obj,
+                              evas_object_layer_get(body->soft_data->base_obj));
         evas_object_resize(slice->evas_obj, 1, 1);
         evas_object_show(slice->evas_obj);
         evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
@@ -321,6 +323,7 @@ _ephysics_body_soft_body_evas_add(EPhysics_Body *body)
    evas_object_resize(obj, w, h);
    evas_object_data_set(obj, BODY, body);
    evas_object_show(obj);
+   evas_object_layer_set(obj, evas_object_layer_get(body->evas_obj));
 
    body->evas_obj = obj;
    _ephysics_body_soft_body_slices_init(body);
@@ -368,33 +371,84 @@ _ephysics_body_evas_stacking_sort_cb(const void *d1, const void *d2)
    return 0;
 }
 
+static void
+_ephysics_body_evas_objects_restack_free(void *data)
+{
+   Eina_List *l, *stack_list = (Eina_List *)data;
+   void *ldata;
+
+   EINA_LIST_FOREACH(stack_list, l, ldata)
+     free(ldata);
+
+   eina_list_free(stack_list);
+}
+
+static EPhysics_Body_Evas_Stacking *
+_ephysics_body_evas_stacking_new(Evas_Object *obj, float index)
+{
+   EPhysics_Body_Evas_Stacking *stacking;
+
+   stacking = (EPhysics_Body_Evas_Stacking *)calloc(
+                1, sizeof(EPhysics_Body_Evas_Stacking));
+
+   if (!stacking)
+     {
+        ERR("Could not allocate ephysics soft body evas stacking data.");
+        return NULL;
+     }
+
+   stacking->evas = obj;
+   stacking->stacking = index;
+   return stacking;
+}
+
 void
 ephysics_body_evas_objects_restack(EPhysics_World *world)
 {
-   void *data, *slice_data;
+   void *data, *slice_data, *stack_data;
    EPhysics_Body *body;
    btTransform trans;
    EPhysics_Body_Evas_Stacking *stacking;
    EPhysics_Body_Soft_Body_Slice *slice;
    Eina_List *l, *slices, *bodies, *stack_list = NULL;
    Evas_Object *prev_obj = NULL;
+   Eina_Hash *hash;
+   Eina_Iterator *it;
+   int layer;
+   Eina_Bool previously_added;
 
    bodies = ephysics_world_bodies_get(world);
+
+   if (!eina_list_count(bodies))
+     return;
+
+   hash = eina_hash_int32_new(_ephysics_body_evas_objects_restack_free);
+
    EINA_LIST_FOREACH(bodies, l, data)
      {
         body = (EPhysics_Body *)data;
         if (body->deleted) continue;
+        previously_added = EINA_FALSE;
 
         if (body->type == EPHYSICS_BODY_TYPE_RIGID)
           {
              if (!body->evas_obj) continue;
              trans = _ephysics_body_transform_get(body);
-             stacking = (EPhysics_Body_Evas_Stacking *)calloc(
-                1, sizeof(EPhysics_Body_Evas_Stacking));
+             stacking = _ephysics_body_evas_stacking_new(body->evas_obj,
+                                                         trans.getOrigin().z());
              if (!stacking) goto error;
-             stacking->stacking = trans.getOrigin().z();
-             stacking->evas = body->evas_obj;
+
+             layer = evas_object_layer_get(stacking->evas);
+             stack_list = (Eina_List *)eina_hash_find(hash, &layer);
+
+             if (stack_list)
+               previously_added = EINA_TRUE;
+
              stack_list = eina_list_append(stack_list, stacking);
+
+             if (!previously_added)
+               eina_hash_add(hash, &layer, stack_list);
+
              continue;
           }
 
@@ -402,46 +456,53 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
 
         EINA_LIST_FOREACH(body->soft_data->slices, slices, slice_data)
           {
+             previously_added = EINA_FALSE;
              slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
-             stacking = (EPhysics_Body_Evas_Stacking *)calloc(
-                1, sizeof(EPhysics_Body_Evas_Stacking));
+
+             stacking = _ephysics_body_evas_stacking_new(slice->evas_obj,
+                                                         slice->stacking);
              if (!stacking) goto error;
-             stacking->stacking = slice->stacking;
-             stacking->evas = slice->evas_obj;
+
+             layer = evas_object_layer_get(stacking->evas);
+             stack_list = (Eina_List *)eina_hash_find(hash, &layer);
+
+             if (stack_list)
+               previously_added = EINA_TRUE;
+
              stack_list = eina_list_append(stack_list, stacking);
+
+             if (!previously_added)
+               eina_hash_add(hash, &layer, stack_list);
           }
      }
 
-   stack_list = eina_list_sort(stack_list, eina_list_count(stack_list),
-                               _ephysics_body_evas_stacking_sort_cb);
 
-   EINA_LIST_FREE(stack_list, data)
+   it = eina_hash_iterator_data_new(hash);
+   while (eina_iterator_next(it, &data))
      {
-        stacking = (EPhysics_Body_Evas_Stacking *)data;
+        stack_list = (Eina_List *)data;
+        stack_list = eina_list_sort(stack_list, eina_list_count(stack_list),
+                                    _ephysics_body_evas_stacking_sort_cb);
+        prev_obj = NULL;
 
-        if (prev_obj && evas_object_layer_get(prev_obj) !=
-            evas_object_layer_get(stacking->evas))
+        EINA_LIST_FOREACH(stack_list, l, stack_data)
           {
-             INF("The world %p has bodies with associated evas objects on"
-                 " different layers, skipping the restaking for %p and %p",
-                 world, prev_obj, stacking->evas);
-             free(stacking);
-             continue;
+             stacking = (EPhysics_Body_Evas_Stacking *)stack_data;
+
+             if (prev_obj)
+               evas_object_stack_below(stacking->evas, prev_obj);
+
+             prev_obj = stacking->evas;
           }
-
-        if (prev_obj)
-          evas_object_stack_below(stacking->evas, prev_obj);
-
-        prev_obj = stacking->evas;
-        free(stacking);
      }
 
+   eina_iterator_free(it);
+   eina_hash_free(hash);
    return;
 
  error:
    ERR("Could not allocate evas stacking data memory.");
-   EINA_LIST_FREE(stack_list, data)
-        free(data);
+   eina_hash_free(hash);
 }
 
 static void
