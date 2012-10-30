@@ -34,6 +34,8 @@ static const char *commands = \
   "\tp - change proxy image's source\n"
   "\ts - print noise image's stride value\n"
   "\ta - save noise image to disk (/tmp dir)\n"
+  "\tv - change source visibility\n"
+  "\te - enable/disable source events\n"
   "\th - print help\n";
 
 const char *file_path = "/tmp/evas-images2-example.png";
@@ -47,6 +49,86 @@ struct test_data
 };
 
 static struct test_data d = {0};
+
+static void
+_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+            void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   printf("Mouse Down - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+            void *event_info)
+{
+   Evas_Event_Mouse_Move *ev = event_info;
+   printf("Mouse Move - obj(%p), coords(%d %d)\n", obj, ev->cur.canvas.x,
+          ev->cur.canvas.y);
+}
+
+static void
+_mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+          void *event_info)
+{
+   Evas_Event_Mouse_Up *ev = event_info;
+   printf("Mouse Up - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_multi_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+            void *event_info)
+{
+   Evas_Event_Multi_Down *ev = event_info;
+   printf("Multi Down - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_multi_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+             void *event_info)
+{
+   Evas_Event_Multi_Move *ev = event_info;
+   printf("Multi Move - obj(%p), coords(%d %d)\n", obj, ev->cur.canvas.x,
+          ev->cur.canvas.y);
+}
+
+static void
+_multi_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+          void *event_info)
+{
+   Evas_Event_Multi_Up *ev = event_info;
+   printf("Multi Up - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_mouse_in(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+          void *event_info)
+{
+   Evas_Event_Mouse_In *ev = event_info;
+   printf("Mouse In - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_mouse_out(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+           void *event_info)
+{
+   Evas_Event_Mouse_Out *ev = event_info;
+   printf("Mouse Out - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
+          ev->canvas.y);
+}
+
+static void
+_hold(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+      void *event_info)
+{
+   Evas_Event_Hold *ev = event_info;
+   printf("Hold - obj(%p), hold(%d)\n", obj, ev->hold);
+}
 
 static void
 _on_preloaded(void        *data __UNUSED__,
@@ -123,6 +205,21 @@ _on_keydown(void        *data __UNUSED__,
 
         return;
      }
+
+   if (strcmp(ev->keyname, "v") == 0) /* change source visibility */
+     {
+        Eina_Bool src_visible =
+           evas_object_image_source_visible_get(d.proxy_img);
+        evas_object_image_source_visible_set(d.proxy_img, !src_visible);
+        return;
+     }
+
+   if (strcmp(ev->keyname, "e") == 0) /* change source events */
+     {
+        Eina_Bool src_events = evas_object_image_source_events_get(d.proxy_img);
+        evas_object_image_source_events_set(d.proxy_img, !src_events);
+        return;
+     }
 }
 
 int
@@ -167,6 +264,16 @@ main(void)
 
    evas_object_image_file_set(d.logo, img_path, NULL);
    evas_object_resize(d.logo, WIDTH / 2, HEIGHT / 2);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MOUSE_UP, _mouse_up, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MOUSE_IN, _mouse_in, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MOUSE_OUT, _mouse_out, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MULTI_DOWN, _multi_down, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MULTI_UP, _multi_up, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_MULTI_MOVE, _multi_move, 0);
+   evas_object_event_callback_add(d.logo, EVAS_CALLBACK_HOLD, _hold, 0);
+
    evas_object_show(d.logo);
 
    /* creating noise image */
