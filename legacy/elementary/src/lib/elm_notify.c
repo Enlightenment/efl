@@ -553,7 +553,6 @@ elm_notify_orient_set(Evas_Object *obj,
 {
    double horizontal = 0, vertical = 0;
 
-   //notify rtl orientation fix
    switch (orient)
      {
       case ELM_NOTIFY_ORIENT_TOP:
