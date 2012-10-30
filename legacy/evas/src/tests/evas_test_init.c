@@ -10,8 +10,6 @@
 
 START_TEST(evas_simple)
 {
-   fail_if(evas_init() != 1); /* one init by test suite */
-   fail_if(evas_shutdown() != 0);
 }
 END_TEST
 

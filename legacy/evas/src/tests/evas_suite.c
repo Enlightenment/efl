@@ -93,6 +93,7 @@ main(int argc, char **argv)
 	  return 0;
        }
 
+   evas_init();
    s = evas_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
@@ -100,5 +101,6 @@ main(int argc, char **argv)
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
 
+   evas_shutdown();
    return (failed_count == 0) ? 0 : 255;
 }
