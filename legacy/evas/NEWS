@@ -32,6 +32,7 @@ Fixes:
    * Fix software line drawing c fallback code.
    * Fix the vertical line drawing on gl backened.
    * Fix potential segfault in gl engine if image internal image is NULL.
+    * coordinate compute bug for Evas GL direct rendering.
 
 Removal:
    * No more support s3c6410.
@@ -224,7 +225,6 @@ Fixes:
     * TGA loader detects false positives less and handles alpha TGAs better
     * repeat event flag not inherited from parent smart like pass events
     * texture size for nv12 format
-    * coordinate compute bug for Evas GL direct rendering.
 
 Improvements:
 
