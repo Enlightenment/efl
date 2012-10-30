@@ -433,4 +433,9 @@ void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
 double _elm_atof(const char *s);
 
+typedef struct _Scrol_Effect Scroll_Effect;
+Scroll_Effect * elm_scrl_effect_add(Evas_Object *target);
+void elm_scrl_effect_del(Scroll_Effect *se);
+
+
 #endif

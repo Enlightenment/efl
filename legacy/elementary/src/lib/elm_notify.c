@@ -73,56 +73,24 @@ static void
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
+   double ax, ay;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
 
-   switch (sd->orient)
-     {
-      case ELM_NOTIFY_ORIENT_TOP:
-        elm_widget_theme_object_set(obj, sd->notify, "notify", "top", style);
-        break;
+   ax = sd->horizontal_align;
+   ay = sd->vertical_align;
+   if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
-      case ELM_NOTIFY_ORIENT_CENTER:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "center", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_BOTTOM:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "bottom", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_LEFT:
-        elm_widget_theme_object_set(obj, sd->notify, "notify", "left", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_RIGHT:
-        elm_widget_theme_object_set(obj, sd->notify, "notify", "right", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_TOP_LEFT:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "top_left", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "top_right", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "bottom_left", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-        elm_widget_theme_object_set
-          (obj, sd->notify, "notify", "bottom_right", style);
-        break;
-
-      case ELM_NOTIFY_ORIENT_LAST:
-        break;
-     }
+   if (ay == 0.0)
+     elm_widget_theme_object_set(obj, sd->notify, "notify", "top", style);
+   else if (ay == 1.0)
+     elm_widget_theme_object_set(obj, sd->notify, "notify", "bottom", style);
+   else if (ax == 0.0)
+     elm_widget_theme_object_set(obj, sd->notify, "notify", "left", style);
+   else if (ax == 1.0)
+     elm_widget_theme_object_set(obj, sd->notify, "notify", "right", style);
+   else
+     elm_widget_theme_object_set(obj, sd->notify, "notify", "center", style);
 }
 
 /**
@@ -140,60 +108,27 @@ _notify_theme_apply(Evas_Object *obj)
 static void
 _notify_move_to_orientation(Evas_Object *obj)
 {
-   int offx;
-   int offy;
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
+   double ax, ay;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_get(sd->notify, &minw, &minh);
    edje_object_size_min_restricted_calc(sd->notify, &minw, &minh, minw, minh);
-   offx = (w - minw) / 2;
-   offy = (h - minh) / 2;
 
-   switch (_notify_orientation_rtl_fix(obj, sd->orient))
-     {
-      case ELM_NOTIFY_ORIENT_TOP:
-        evas_object_move(sd->notify, x + offx, y);
-        break;
+   ax = sd->horizontal_align;
+   ay = sd->vertical_align;
+   if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
-      case ELM_NOTIFY_ORIENT_CENTER:
-        evas_object_move(sd->notify, x + offx, y + offy);
-        break;
+   if (ax == ELM_NOTIFY_ALIGN_FILL) minw = w;
+   if (ay == ELM_NOTIFY_ALIGN_FILL) minh = h;
 
-      case ELM_NOTIFY_ORIENT_BOTTOM:
-        evas_object_move(sd->notify, x + offx, y + h - minh);
-        break;
+   x = x + ((w - minw) * ax);
+   y = y + ((h - minh) * ay);
 
-      case ELM_NOTIFY_ORIENT_LEFT:
-        evas_object_move(sd->notify, x, y + offy);
-        break;
-
-      case ELM_NOTIFY_ORIENT_RIGHT:
-        evas_object_move(sd->notify, x + w - minw, y + offy);
-        break;
-
-      case ELM_NOTIFY_ORIENT_TOP_LEFT:
-        evas_object_move(sd->notify, x, y);
-        break;
-
-      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-        evas_object_move(sd->notify, x + w - minw, y);
-        break;
-
-      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-        evas_object_move(sd->notify, x, y + h - minh);
-        break;
-
-      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-        evas_object_move(sd->notify, x + w - minw, y + h - minh);
-        break;
-
-      case ELM_NOTIFY_ORIENT_LAST:
-        break;
-     }
+   evas_object_move(sd->notify, x, y);
 }
 
 static void
@@ -262,6 +197,9 @@ _calc(Evas_Object *obj)
    edje_object_size_min_get(sd->notify, &minw, &minh);
    edje_object_size_min_restricted_calc(sd->notify, &minw, &minh, minw, minh);
 
+   if (sd->horizontal_align == ELM_NOTIFY_ALIGN_FILL) minw = w;
+   if (sd->vertical_align == ELM_NOTIFY_ALIGN_FILL) minh = h;
+
    if (sd->content)
      {
         _notify_move_to_orientation(obj);
@@ -274,15 +212,6 @@ _changed_size_hints_cb(void *data,
                        Evas *e __UNUSED__,
                        Evas_Object *obj __UNUSED__,
                        void *event_info __UNUSED__)
-{
-   _calc(data);
-}
-
-static void
-_content_resize_cb(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
 {
    _calc(data);
 }
@@ -301,8 +230,6 @@ _elm_notify_smart_sub_object_del(Evas_Object *obj,
         evas_object_event_callback_del_full
           (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _changed_size_hints_cb, obj);
-        evas_object_event_callback_del_full
-          (sobj, EVAS_CALLBACK_RESIZE, _content_resize_cb, obj);
         sd->content = NULL;
      }
 
@@ -482,8 +409,6 @@ _elm_notify_smart_content_set(Evas_Object *obj,
         evas_object_event_callback_add
           (content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _changed_size_hints_cb, obj);
-        evas_object_event_callback_add
-          (content, EVAS_CALLBACK_RESIZE, _content_resize_cb, obj);
         edje_object_part_swallow(sd->notify, "elm.swallow.content", content);
      }
 
@@ -533,12 +458,14 @@ _elm_notify_smart_add(Evas_Object *obj)
 
    priv->notify = edje_object_add(evas_object_evas_get(obj));
    priv->orient = -1;
+   priv->horizontal_align = 0.5;
+   priv->vertical_align = 0.0;
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESTACK, _restack_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
-   elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
+   elm_notify_align_set(obj, 0.5, 0.0);
 }
 
 static void
@@ -674,7 +601,7 @@ elm_notify_parent_get(const Evas_Object *obj)
    return sd->parent;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_notify_orient_set(Evas_Object *obj,
                       Elm_Notify_Orient orient)
 {
@@ -684,11 +611,50 @@ elm_notify_orient_set(Evas_Object *obj,
    if (sd->orient == orient) return;
    sd->orient = orient;
 
-   _notify_theme_apply(obj);
-   _calc(obj);
+   switch (_notify_orientation_rtl_fix(obj, sd->orient))
+     {
+      case ELM_NOTIFY_ORIENT_TOP:
+        elm_notify_align_set(obj, 0.5, 0.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_CENTER:
+        elm_notify_align_set(obj, 0.5, 0.5);
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM:
+        elm_notify_align_set(obj, 0.5, 1.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_LEFT:
+        elm_notify_align_set(obj, 0.0, 0.5);
+        break;
+
+      case ELM_NOTIFY_ORIENT_RIGHT:
+        elm_notify_align_set(obj, 1.0, 0.5);
+        break;
+
+      case ELM_NOTIFY_ORIENT_TOP_LEFT:
+        elm_notify_align_set(obj, 0.0, 0.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+        elm_notify_align_set(obj, 1.0, 0.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+        elm_notify_align_set(obj, 0.0, 1.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+        elm_notify_align_set(obj, 1.0, 1.0);
+        break;
+
+      case ELM_NOTIFY_ORIENT_LAST:
+        break;
+     }
 }
 
-EAPI Elm_Notify_Orient
+EINA_DEPRECATED EAPI Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
    ELM_NOTIFY_CHECK(obj) - 1;
@@ -746,4 +712,27 @@ elm_notify_allow_events_get(const Evas_Object *obj)
    ELM_NOTIFY_DATA_GET(obj, sd);
 
    return sd->allow_events;
+}
+
+EAPI void
+elm_notify_align_set(Evas_Object *obj, double horizontal, double vertical)
+{
+   ELM_NOTIFY_CHECK(obj);
+   ELM_NOTIFY_DATA_GET(obj, sd);
+
+   sd->horizontal_align = horizontal;
+   sd->vertical_align = vertical;
+
+   _notify_theme_apply(obj);
+   _calc(obj);
+}
+
+EAPI void
+elm_notify_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
+{
+   ELM_NOTIFY_CHECK(obj);
+   ELM_NOTIFY_DATA_GET(obj, sd);
+
+   *horizontal = sd->horizontal_align;
+   *vertical = sd->vertical_align;
 }

@@ -32,27 +32,7 @@
  * @{
  */
 
-/**
- * @brief Possible orient values for notify.
- *
- * This values should be used in conjunction to elm_notify_orient_set() to
- * set the position in which the notify should appear(relative to its parent)
- * and in conjunction with elm_notify_orient_get() to know where the notify
- * is appearing.
- */
-typedef enum
-{
-   ELM_NOTIFY_ORIENT_TOP, /**< Notify should appear in the top of parent, default */
-   ELM_NOTIFY_ORIENT_CENTER, /**< Notify should appear in the center of parent */
-   ELM_NOTIFY_ORIENT_BOTTOM, /**< Notify should appear in the bottom of parent */
-   ELM_NOTIFY_ORIENT_LEFT, /**< Notify should appear in the left of parent */
-   ELM_NOTIFY_ORIENT_RIGHT, /**< Notify should appear in the right of parent */
-   ELM_NOTIFY_ORIENT_TOP_LEFT, /**< Notify should appear in the top left of parent */
-   ELM_NOTIFY_ORIENT_TOP_RIGHT, /**< Notify should appear in the top right of parent */
-   ELM_NOTIFY_ORIENT_BOTTOM_LEFT, /**< Notify should appear in the bottom left of parent */
-   ELM_NOTIFY_ORIENT_BOTTOM_RIGHT, /**< Notify should appear in the bottom right of parent */
-   ELM_NOTIFY_ORIENT_LAST /**< Sentinel value, @b don't use */
-} Elm_Notify_Orient;
+#define ELM_NOTIFY_ALIGN_FILL                   -1.0  /**< Use with elm_notify_align_set() */
 
 /**
  * @brief Add a new notify to the parent
@@ -88,32 +68,6 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  * @ingroup Notify
  */
 EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
-
-/**
- * @brief Set the orientation
- *
- * @param obj The notify object
- * @param orient The new orientation
- *
- * Sets the position in which the notify will appear in its parent.
- *
- * @see @ref Elm_Notify_Orient for possible values.
- *
- * @ingroup Notify
- */
-EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
-
-/**
- * @brief Return the orientation
- * @param obj The notify object
- * @return The orientation of the notification
- *
- * @see elm_notify_orient_set()
- * @see Elm_Notify_Orient
- *
- * @ingroup Notify
- */
-EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
 
 /**
  * @brief Set the time interval after which the notify window is going to be
@@ -172,6 +126,31 @@ EAPI void                         elm_notify_allow_events_set(Evas_Object *obj, 
  * @ingroup Notify
  */
 EAPI Eina_Bool                    elm_notify_allow_events_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the alignment of the notify object
+ *
+ * @param obj The notify object
+ * @param horizontal The horizontal alignment of the notification
+ * @param vertical The vertical alignment of the notification
+ *
+ * Sets the alignment in which the notify will appear in its parent.
+ *
+ * @ingroup Notify
+ */
+EAPI void                         elm_notify_align_set(Evas_Object *obj, double horizontal, double vertical);
+
+/**
+ * @brief Get the alignment of the notify object
+ * @param obj The notify object
+ * @param horizontal The horizontal alignment of the notification
+ * @param vertical The vertical alignment of the notification
+ *
+ * @see elm_notify_align_set()
+ *
+ * @ingroup Notify
+ */
+EAPI void                         elm_notify_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
 
 /**
  * @}
