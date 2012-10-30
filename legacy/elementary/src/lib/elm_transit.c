@@ -418,6 +418,7 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
    int iw, ih;
    const char *type = evas_object_type_get(obj);
    if ((!type) || (strcmp(type, "image"))) return EINA_FALSE;
+   if (evas_object_image_source_get(obj)) return EINA_FALSE;
 
    evas_object_image_size_get(obj, &iw, &ih);
 
@@ -1702,7 +1703,8 @@ _transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         type = evas_object_type_get(obj);
-        if ((!type) || (strcmp(type, "image")))
+        if ((!type) || (strcmp(type, "image")) ||
+            evas_object_image_source_get(obj))
           evas_object_geometry_get(obj, &_x, &_y, &_w, &_h);
         else
           {
