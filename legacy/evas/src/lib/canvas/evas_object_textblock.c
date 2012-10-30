@@ -510,6 +510,7 @@ static void evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protec
 static void evas_object_textblock_free(Evas_Object *eo_obj);
 static void evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_textblock_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static Evas_Object_Textblock_Node_Text *_evas_textblock_node_text_new(void);
 
 static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_textblock_visual_id_get(Evas_Object *eo_obj);
@@ -682,6 +683,11 @@ _nodes_clear(const Evas_Object *eo_obj)
         o->format_nodes = _NODE_FORMAT(eina_inlist_remove(EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
         _evas_textblock_node_format_free(o, n);
      }
+
+   o->cursor->node = _evas_textblock_node_text_new();
+   o->text_nodes = _NODE_TEXT(eina_inlist_append(
+            EINA_INLIST_GET(o->text_nodes),
+            EINA_INLIST_GET(o->cursor->node)));
 }
 
 /**
@@ -5180,7 +5186,6 @@ _textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
      }
 
    evas_textblock_cursor_paragraph_first(o->cursor);
-   evas_textblock_cursor_text_append(o->cursor, "");
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
    /* Point all the cursors to the starrt */
@@ -9530,7 +9535,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    obj->type = o_type;
 
    o->cursor->obj = eo_obj;
-   o->cursor->node = o->text_nodes = _evas_textblock_node_text_new();
+   evas_object_textblock_text_markup_set(eo_obj, "");
 
    o->legacy_newline = EINA_TRUE;
    evas_object_event_callback_priority_add(eo_obj, EVAS_CALLBACK_RESIZE, -1000,
