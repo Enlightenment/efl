@@ -421,3 +421,35 @@ EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_disabled_se
  */
 EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
 
+/**
+ * @deprecated Possible orient values for notify.
+ *
+ * This values should be used in conjunction to elm_notify_orient_set() to
+ * set the position in which the notify should appear(relative to its parent)
+ * and in conjunction with elm_notify_orient_get() to know where the notify
+ * is appearing.
+ */
+typedef enum
+{
+   ELM_NOTIFY_ORIENT_TOP, /**< Notify should appear in the top of parent, default */
+   ELM_NOTIFY_ORIENT_CENTER, /**< Notify should appear in the center of parent */
+   ELM_NOTIFY_ORIENT_BOTTOM, /**< Notify should appear in the bottom of parent */
+   ELM_NOTIFY_ORIENT_LEFT, /**< Notify should appear in the left of parent */
+   ELM_NOTIFY_ORIENT_RIGHT, /**< Notify should appear in the right of parent */
+   ELM_NOTIFY_ORIENT_TOP_LEFT, /**< Notify should appear in the top left of parent */
+   ELM_NOTIFY_ORIENT_TOP_RIGHT, /**< Notify should appear in the top right of parent */
+   ELM_NOTIFY_ORIENT_BOTTOM_LEFT, /**< Notify should appear in the bottom left of parent */
+   ELM_NOTIFY_ORIENT_BOTTOM_RIGHT, /**< Notify should appear in the bottom right of parent */
+   ELM_NOTIFY_ORIENT_LAST /**< Sentinel value, @b don't use */
+} Elm_Notify_Orient;
+
+
+/**
+ * @deprecated Use elm_notify_align_set instead.
+ */
+EINA_DEPRECATED EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
+
+/**
+ * @deprecated Use elm_notify_align_get instead.
+ */
+EINA_DEPRECATED EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);

@@ -50,8 +50,10 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(tb);
 
+   // Notify top
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notify, 0.5, 0.0);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -70,15 +72,18 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Top");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 1, 0, 1, 1);
+   elm_table_pack(tb, bt, 2, 1, 1, 1);
    evas_object_show(bt);
 
+   // Notify bottom
    notify = elm_notify_add(win);
    elm_notify_allow_events_set(notify, EINA_FALSE);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
+   elm_notify_align_set(notify, 0.5, 1.0);
+
    elm_notify_timeout_set(notify, 5.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
    evas_object_smart_callback_add(notify, "block,clicked", _notify_block, NULL);
@@ -101,14 +106,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Bottom");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 1, 2, 1, 1);
+   elm_table_pack(tb, bt, 2, 3, 1, 1);
    evas_object_show(bt);
 
+   // Notify left
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_LEFT);
+   elm_notify_align_set(notify, 0.0, 0.5);
    elm_notify_timeout_set(notify, 10.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
@@ -129,14 +136,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Left");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 0, 1, 1, 1);
+   elm_table_pack(tb, bt, 1, 2, 1, 1);
    evas_object_show(bt);
 
+   // Notify center
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_align_set(notify, 0.5, 0.5);
    elm_notify_timeout_set(notify, 10.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
@@ -157,14 +166,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Center");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 1, 1, 1, 1);
+   elm_table_pack(tb, bt, 2, 2, 1, 1);
    evas_object_show(bt);
 
+   // Notify right
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_RIGHT);
+   elm_notify_align_set(notify, 1.0, 0.5);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -183,14 +194,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Right");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 2, 1, 1, 1);
+   elm_table_pack(tb, bt, 3, 2, 1, 1);
    evas_object_show(bt);
 
+   // Notify top left
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_LEFT);
+   elm_notify_align_set(notify, 0.0, 0.0);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -209,14 +222,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Top Left");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 0, 0, 1, 1);
+   elm_table_pack(tb, bt, 1, 1, 1, 1);
    evas_object_show(bt);
 
+   // Notify top right
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_RIGHT);
+   elm_notify_align_set(notify, 1.0, 0.0);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -235,14 +250,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Top Right");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 2, 0, 1, 1);
+   elm_table_pack(tb, bt, 3, 1, 1, 1);
    evas_object_show(bt);
 
+   // Notify bottom left
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_LEFT);
+   elm_notify_align_set(notify, 0.0, 1.0);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -261,14 +278,16 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Bottom Left");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 0, 2, 1, 1);
+   elm_table_pack(tb, bt, 1, 3, 1, 1);
    evas_object_show(bt);
 
+   // Notify bottom right
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_RIGHT);
+   elm_notify_align_set(notify, 1.0, 1.0);
 
    bx = elm_box_add(win);
    elm_object_content_set(notify, bx);
@@ -287,14 +306,132 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Bottom Right");
    evas_object_smart_callback_add(bt, "clicked", _bt, notify);
-   elm_table_pack(tb, bt, 2, 2, 1, 1);
+   elm_table_pack(tb, bt, 3, 3, 1, 1);
+   evas_object_show(bt);
+
+   // Notify top fill
+   notify = elm_notify_add(win);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 0.0);
+   elm_notify_timeout_set(notify, 5.0);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(notify, bx);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Fill top. This notify fills horizontal area.<br/>"
+         "<b>elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 0.0); </b>");
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(bt, "Top fill");
+   evas_object_smart_callback_add(bt, "clicked", _bt, notify);
+   elm_table_pack(tb, bt, 1, 0, 3, 1);
+   evas_object_show(bt);
+
+   // Notify bottom fill
+   notify = elm_notify_add(win);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 1.0);
+   elm_notify_timeout_set(notify, 5.0);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(notify, bx);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lb, 0.0, 0.5);
+   elm_object_text_set(lb, "Fill Bottom. This notify fills horizontal area.<br/>"
+	 "<b>elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 1.0); </b>");
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(bt, "Bottom fill");
+   evas_object_smart_callback_add(bt, "clicked", _bt, notify);
+   elm_table_pack(tb, bt, 1, 4, 3, 1);
+   evas_object_show(bt);
+
+   // Notify left fill
+   notify = elm_notify_add(win);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notify, 0.0, EVAS_HINT_FILL);
+   elm_notify_timeout_set(notify, 5.0);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(notify, bx);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Left fill.");
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, 0.5, EVAS_HINT_FILL);
+   elm_object_text_set(bt, "Left fill");
+   evas_object_smart_callback_add(bt, "clicked", _bt, notify);
+   elm_table_pack(tb, bt, 0, 1, 1, 3);
+   evas_object_show(bt);
+
+   // Notify right fill
+   notify = elm_notify_add(win);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notify, 1.0, EVAS_HINT_FILL);
+   elm_notify_timeout_set(notify, 5.0);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(notify, bx);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Right fill.");
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Close");
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_size_hint_align_set(bt, 0.5, EVAS_HINT_FILL);
+   elm_object_text_set(bt, "Right fill");
+   evas_object_smart_callback_add(bt, "clicked", _bt, notify);
+   elm_table_pack(tb, bt, 4, 1, 1, 3);
    evas_object_show(bt);
 
    evas_object_show(win);
-   evas_object_resize(win, 300, 350);
+   evas_object_resize(win, 400, 400);
 }
 
 #endif
-
