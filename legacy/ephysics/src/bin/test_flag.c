@@ -154,7 +154,7 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
 
-   ephysics_world_light_set(world, 300, 50, -200, 255, 255, 255, 0, 0, 0);
+   ephysics_world_point_light_position_set(world, 300, 50, -200);
    ephysics_world_light_all_bodies_set(world, EINA_TRUE);
    ephysics_camera_perspective_enabled_set(ephysics_world_camera_get(world),
                                            EINA_TRUE);

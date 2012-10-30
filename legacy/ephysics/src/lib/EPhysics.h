@@ -1413,7 +1413,7 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
 
 /**
  * @brief
- * Set light properties to be applied on the scene.
+ * Set position of point light to be applied on the scene.
  *
  * It will perform lighting calculations on the evas map applied on evas
  * objects associated with all the bodies to have light applied over.
@@ -1434,63 +1434,110 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  * @ref ephysics_world_light_all_bodies_set(). The other, is to set each body
  * individually, with @ref ephysics_body_light_set().
  *
- * By default, no light is set. And after a light is set, by default,
- * no body will be affected. No change will be visible until
+ * By default, point light is set to position (0, 0, -200) and has white color
+ * (r=255, g=255, b=255). The ambient color is black (r=0, g=0, b=0).
+ * But no body will be affected. No change will be visible until
  * some bodies are set to be enlightened.
  *
  * @param world The physics world.
  * @param lx X coordinate in space of light point
  * @param ly Y coordinate in space of light point
  * @param lz Z coordinate in space of light point
+ *
+ * @see ephysics_world_point_light_position_get().
+ * @see ephysics_world_point_light_color_set().
+ * @see ephysics_world_ambient_light_color_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_point_light_position_set(EPhysics_World *world, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz);
+
+/**
+ * @brief
+ * Set color of point light to be applied on the scene.
+ *
+ * By default color of point light is r=255, g=255, b=255.
+ *
+ * @param world The physics world.
  * @param lr light red value (0 - 255)
  * @param lg light green value (0 - 255)
  * @param lb light blue value (0 - 255)
+ *
+ * @see ephysics_world_point_light_position_set() for more details.
+ * @see ephysics_world_point_light_color_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_point_light_color_set(EPhysics_World *world, int lr, int lg, int lb);
+
+/**
+ * @brief
+ * Set color of the ambient light to be applied on the scene.
+ *
+ * By default, ambient color is set to r=0, g=0, b=0.
+ *
+ * @param world The physics world.
  * @param ar ambient color red value (0 - 255)
  * @param ag ambient color green value (0 - 255)
  * @param ab ambient color blue value (0 - 255)
  *
- * @see ephysics_world_light_get().
+ * @see ephysics_world_point_light_position_set() for more details.
+ * @see ephysics_world_ambient_light_color_get().
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_light_set(EPhysics_World *world, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz, int lr, int lg, int lb, int ar, int ag, int ab);
+EAPI void ephysics_world_ambient_light_color_set(EPhysics_World *world, int ar, int ag, int ab);
 
 /**
  * @brief
- * Get light properties.
+ * Get position of point light applied on the scene.
  *
  * @param world The physics world.
  * @param lx X coordinate in space of light point
  * @param ly Y coordinate in space of light point
  * @param lz Z coordinate in space of light point
- * @param lr light red value (0 - 255)
- * @param lg light green value (0 - 255)
- * @param lb light blue value (0 - 255)
- * @param ar ambient color red value (0 - 255)
- * @param ag ambient color green value (0 - 255)
- * @param ab ambient color blue value (0 - 255)
- * @return @c EINA_TRUE if light is set, or @c EINA_FALSE if it isn't set,
- * or on error. On this case the other parameters won't be set.
  *
- * @see ephysics_world_light_set() for more details.
+ * @see ephysics_world_point_light_position_set() for details.
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_light_get(const EPhysics_World *world, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz, int *lr, int *lg, int *lb, int *ar, int *ag, int *ab);
+EAPI void ephysics_world_point_light_position_get(const EPhysics_World *world, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz);
 
 /**
  * @brief
- * Unset light on the scene.
+ * Get color of point light applied on the scene.
  *
- * It will unset light, so no body will be enlightened anymore.
+ * By default color of point light is r=255, g=255, b=255.
  *
  * @param world The physics world.
+ * @param lr light red value (0 - 255)
+ * @param lg light green value (0 - 255)
+ * @param lb light blue value (0 - 255)
  *
- * @see ephysics_world_light_set() for more details.
+ * @see ephysics_world_point_light_position_set() for more details.
+ * @see ephysics_world_point_light_color_set().
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_light_unset(EPhysics_World *world);
+EAPI void ephysics_world_point_light_color_get(const EPhysics_World *world, int *lr, int *lg, int *lb);
+
+/**
+ * @brief
+ * Set color of the ambient light to be applied on the scene.
+ *
+ * By default, ambient color is set to r=0, g=0, b=0.
+ *
+ * @param world The physics world.
+ * @param ar ambient color red value (0 - 255)
+ * @param ag ambient color green value (0 - 255)
+ * @param ab ambient color blue value (0 - 255)
+ *
+ * @see ephysics_world_point_light_position_set() for more details.
+ * @see ephysics_world_ambient_light_color_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_ambient_light_color_get(const EPhysics_World *world, int *ar, int *ag, int *ab);
 
 /**
  * @brief
@@ -1501,7 +1548,7 @@ EAPI void ephysics_world_light_unset(EPhysics_World *world);
  * all the bodies, or @c EINA_FALSE if it only should be applied on bodies with
  * light property set.
  *
- * @see ephysics_world_light_set() for more details.
+ * @see ephysics_world_point_light_position_set() for more details.
  * @see ephysics_world_light_all_bodies_get().
  *
  * @ingroup EPhysics_World

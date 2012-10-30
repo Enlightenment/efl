@@ -92,10 +92,10 @@ _ephysics_body_soft_body_slices_apply(void *data __UNUSED__, Evas *e __UNUSED__,
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
      {
-
-        if (ephysics_world_light_get(body->world, &lx, &ly, &lz,
-                                     &lr, &lg, &lb, &ar, &ag, &ab))
-          light = EINA_TRUE;
+        ephysics_world_point_light_position_get(body->world, &lx, &ly, &lz);
+        ephysics_world_point_light_color_get(body->world, &lr, &lg, &lb);
+        ephysics_world_ambient_light_color_get(body->world, &ar, &ag, &ab);
+        light = EINA_TRUE;
      }
 
    if (ephysics_camera_perspective_enabled_get(camera))
@@ -1160,9 +1160,10 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
         int lr, lg, lb, ar, ag, ab;
         Evas_Coord lx, ly, lz;
 
-        if (ephysics_world_light_get(body->world, &lx, &ly, &lz,
-                                     &lr, &lg, &lb, &ar, &ag, &ab))
-          evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
+        ephysics_world_point_light_position_get(body->world, &lx, &ly, &lz);
+        ephysics_world_point_light_color_get(body->world, &lr, &lg, &lb);
+        ephysics_world_ambient_light_color_get(body->world, &ar, &ag, &ab);
+        evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
      }
 
    evas_object_map_set(body->evas_obj, map);

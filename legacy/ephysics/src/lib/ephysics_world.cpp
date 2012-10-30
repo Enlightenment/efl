@@ -32,21 +32,6 @@ struct _EPhysics_World_Callback {
      Eina_Bool deleted:1;
 };
 
-typedef struct _EPhysics_Light EPhysics_Light;
-
-struct _EPhysics_Light {
-     Evas_Coord lx;
-     Evas_Coord ly;
-     Evas_Coord lz;
-     int lr;
-     int lg;
-     int lb;
-     int ar;
-     int ag;
-     int ab;
-     Eina_Bool all_bodies:1;
-};
-
 struct _EPhysics_World {
      EINA_INLIST;
 
@@ -70,7 +55,6 @@ struct _EPhysics_World {
 
      EPhysics_Body *boundaries[6];
      EPhysics_Camera *camera;
-     EPhysics_Light *light;
      Eina_Inlist *callbacks;
      Eina_Inlist *bodies;
      Eina_List *to_delete;
@@ -88,6 +72,19 @@ struct _EPhysics_World {
      double max_sleeping_time;
      Eina_Lock mutex;
      Eina_Condition condition;
+
+     struct {
+          Evas_Coord lx;
+          Evas_Coord ly;
+          Evas_Coord lz;
+          int lr;
+          int lg;
+          int lb;
+          int ar;
+          int ag;
+          int ab;
+          Eina_Bool all_bodies:1;
+     } light;
 
      Eina_Bool running:1;
      Eina_Bool ticked:1;
@@ -380,9 +377,6 @@ _ephysics_world_free(EPhysics_World *world)
 
    eina_condition_free(&world->condition);
    eina_lock_free(&world->mutex);
-
-   if (world->light)
-     free(world->light);
 
    free(world);
    INF("World %p deleted.", world);
@@ -755,6 +749,11 @@ ephysics_world_new(void)
    else
      world->dynamics_world->getPairCache()->setOverlapFilterCallback(
         world->filter_cb);
+
+   world->light.lr = 255;
+   world->light.lg = 255;
+   world->light.lb = 255;
+   world->light.lz = -200;
 
    world->stacking = EINA_TRUE;
    world->rate = 30;
@@ -1518,83 +1517,87 @@ ephysics_world_lock_release(EPhysics_World *world)
 }
 
 EAPI void
-ephysics_world_light_set(EPhysics_World *world,
-                         Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
-                         int lr, int lg, int lb,
-                         int ar, int ag, int ab)
+ephysics_world_point_light_position_set(EPhysics_World *world, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz)
 {
    if (!world)
      {
-	ERR("No world, can't set light.");
+	ERR("No world, can't set light properties.");
 	return;
      }
 
-   if (!world->light)
-     world->light = (EPhysics_Light *) calloc(1, sizeof(EPhysics_Light));
-
-   if (!world->light)
-     {
-	ERR("Failed to create light.");
-	return;
-     }
-
-   world->light->lx = lx;
-   world->light->ly = ly;
-   world->light->lz = lz;
-   world->light->lr = lr;
-   world->light->lg = lg;
-   world->light->lb = lb;
-   world->light->ar = ar;
-   world->light->ag = ag;
-   world->light->ab = ab;
-   world->light->all_bodies = EINA_FALSE;
-}
-
-EAPI Eina_Bool
-ephysics_world_light_get(const EPhysics_World *world,
-                         Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz,
-                         int *lr, int *lg, int *lb,
-                         int *ar, int *ag, int *ab)
-{
-   if (!world)
-     {
-	ERR("No world, can't get light.");
-	return EINA_FALSE;
-     }
-
-   if (!world->light)
-     {
-	INF("Light isn't set.");
-	return EINA_FALSE;
-     }
-
-   if (lx) *lx = world->light->lx;
-   if (ly) *ly = world->light->ly;
-   if (lz) *lz = world->light->lz;
-   if (lr) *lr = world->light->lr;
-   if (lg) *lg = world->light->lg;
-   if (lb) *lb = world->light->lb;
-   if (ar) *ar = world->light->ar;
-   if (ag) *ag = world->light->ag;
-   if (ab) *ab = world->light->ab;
-
-   return EINA_TRUE;
+   world->light.lx = lx;
+   world->light.ly = ly;
+   world->light.lz = lz;
 }
 
 EAPI void
-ephysics_world_light_unset(EPhysics_World *world)
+ephysics_world_point_light_color_set(EPhysics_World *world, int lr, int lg, int lb)
 {
    if (!world)
      {
-	ERR("No world, can't unset light.");
+	ERR("No world, can't set light properties.");
 	return;
      }
 
-   if (!world->light)
-     return;
+   world->light.lr = lr;
+   world->light.lg = lg;
+   world->light.lb = lb;
+}
 
-   free(world->light);
-   world->light = NULL;
+EAPI void
+ephysics_world_ambient_light_color_set(EPhysics_World *world, int ar, int ag, int ab)
+{
+   if (!world)
+     {
+	ERR("No world, can't set light properties.");
+	return;
+     }
+
+   world->light.ar = ar;
+   world->light.ag = ag;
+   world->light.ab = ab;
+}
+
+EAPI void
+ephysics_world_ambient_light_color_get(const EPhysics_World *world, int *ar, int *ag, int *ab)
+{
+   if (!world)
+     {
+	ERR("No world, can't get light properties.");
+	return;
+     }
+
+   if (ar) *ar = world->light.ar;
+   if (ag) *ag = world->light.ag;
+   if (ab) *ab = world->light.ab;
+}
+
+EAPI void
+ephysics_world_point_light_color_get(const EPhysics_World *world, int *lr, int *lg, int *lb)
+{
+   if (!world)
+     {
+	ERR("No world, can't get light properties.");
+	return;
+     }
+
+   if (lr) *lr = world->light.lr;
+   if (lg) *lg = world->light.lg;
+   if (lb) *lb = world->light.lb;
+}
+
+EAPI void
+ephysics_world_point_light_position_get(const EPhysics_World *world, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz)
+{
+   if (!world)
+     {
+	ERR("No world, can't get light properties.");
+	return;
+     }
+
+   if (lx) *lx = world->light.lx;
+   if (ly) *ly = world->light.ly;
+   if (lz) *lz = world->light.lz;
 }
 
 EAPI void
@@ -1606,13 +1609,7 @@ ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable)
 	return;
      }
 
-   if (!world->light)
-     {
-	ERR("Light isn't set, can't apply on bodies");
-	return;
-     }
-
-   world->light->all_bodies = !!enable;
+   world->light.all_bodies = !!enable;
 }
 
 EAPI Eina_Bool
@@ -1624,10 +1621,7 @@ ephysics_world_light_all_bodies_get(const EPhysics_World *world)
 	return EINA_FALSE;
      }
 
-   if (!world->light)
-     return EINA_FALSE;
-
-   return world->light->all_bodies;
+   return world->light.all_bodies;
 }
 
 EAPI void
