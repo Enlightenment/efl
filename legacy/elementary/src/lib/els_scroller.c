@@ -166,7 +166,6 @@ struct _Smart_Data
    Evas_Object *pan_obj;
    Evas_Object *edje_obj;
    Evas_Object *event_obj;
-   Evas_Object *effect_obj;
 
    Evas_Object *widget;
 
@@ -255,7 +254,6 @@ struct _Smart_Data
 
    double pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
-   Scroll_Effect *se;
 
    Eina_Bool hbar_visible : 1;
    Eina_Bool vbar_visible : 1;
@@ -3060,6 +3058,7 @@ _smart_add(Evas_Object *obj)
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
    evas_object_smart_data_set(obj, sd);
+
    sd->smart_obj = obj;
    sd->x = 0;
    sd->y = 0;
@@ -3118,7 +3117,6 @@ _smart_add(Evas_Object *obj)
    sd->pan_func.gravity_get = _elm_smart_pan_gravity_get;
 
    _smart_scrollbar_reset(sd);
-   sd->se = elm_scrl_effect_add(obj);
 }
 
 static void
@@ -3136,7 +3134,6 @@ _smart_del(Evas_Object *obj)
    if (sd->down.bounce_y_animator) ecore_animator_del(sd->down.bounce_y_animator);
    if (sd->scrollto.x.animator) ecore_animator_del(sd->scrollto.x.animator);
    if (sd->scrollto.y.animator) ecore_animator_del(sd->scrollto.y.animator);
-   elm_scrl_effect_del(sd->se);
    free(sd);
    evas_object_smart_data_set(obj, NULL);
 }

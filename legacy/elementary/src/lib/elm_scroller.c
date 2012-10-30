@@ -710,6 +710,7 @@ elm_scroller_add(Evas_Object *parent)
 {
    Evas *e;
    Evas_Object *obj;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
    e = evas_object_evas_get(parent);
@@ -719,8 +720,6 @@ elm_scroller_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   //elm_scrl_effect_add(obj);
 
    return obj;
 }
