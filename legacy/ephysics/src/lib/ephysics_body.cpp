@@ -3103,16 +3103,18 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, doub
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
-   trans = _ephysics_body_transform_get(body);
 
    quat.setEuler(-rot_x / RAD_TO_DEG, -rot_y / RAD_TO_DEG, -rot_z / RAD_TO_DEG);
-   trans.setRotation(quat);
 
    if (body->soft_body)
-     body->soft_body->transform(trans);
-
-   body->rigid_body->proceedToTransform(trans);
-   body->rigid_body->getMotionState()->setWorldTransform(trans);
+     body->soft_body->rotate(quat);
+   else
+     {
+        trans = _ephysics_body_transform_get(body);
+        trans.setRotation(quat);
+        body->rigid_body->proceedToTransform(trans);
+        body->rigid_body->getMotionState()->setWorldTransform(trans);
+     }
 
    DBG("Body %p rotation set to (%lf, %lf, %lf)", body, rot_x, rot_y, rot_z);
    ephysics_world_lock_release(body->world);
