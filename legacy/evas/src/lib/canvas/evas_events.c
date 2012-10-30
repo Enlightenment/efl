@@ -162,21 +162,6 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 }
 
 static void
-_evas_event_source_events_call(Evas_Object_Protected_Data *src, Evas_Callback_Type type, void *ev, int event_id)
-{
-   Eina_List *l;
-   Evas_Object *child_eo;
-   Evas_Object_Protected_Data *child;
-   EINA_LIST_FOREACH(src->proxy.src_event_in, l, child_eo)
-     {
-        if (src->delete_me) return;
-        child = eo_data_get(child_eo, EVAS_OBJ_CLASS);
-        evas_object_event_callback_call(child_eo, child, type, ev, event_id);
-        if (src->layer->evas->delete_me) break;
-     }
-}
-
-static void
 _transform_to_src_space(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *src, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord obj_w = obj->cur.geometry.w, obj_h = obj->cur.geometry.h;
