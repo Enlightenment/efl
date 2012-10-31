@@ -1347,7 +1347,7 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
    double rate;
    int wy, wh;
 
-   if ((!body) || (!contact_body))
+   if ((!body) || (!contact_body) || (body->collision_cb < 1))
      return;
 
    collision = (EPhysics_Body_Collision *)calloc(
@@ -2845,6 +2845,8 @@ ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Typ
    cb->data = (void *)data;
 
    body->callbacks = eina_inlist_append(body->callbacks, EINA_INLIST_GET(cb));
+   if (type == EPHYSICS_CALLBACK_BODY_COLLISION)
+       body->collision_cb++;
 }
 
 EAPI void *
@@ -2866,8 +2868,9 @@ ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Typ
 
         cb_data = cb->data;
         _ephysics_body_event_callback_del(body, cb);
+        if (type == EPHYSICS_CALLBACK_BODY_COLLISION)
+            body->collision_cb--;
         break;
-
      }
 
    return cb_data;

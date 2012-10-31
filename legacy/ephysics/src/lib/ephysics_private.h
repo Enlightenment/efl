@@ -114,6 +114,7 @@ struct _EPhysics_Body {
      int cloth_columns;
      int cloth_rows;
      int material_index;
+     int collision_cb;
      EPhysics_Body_Soft_Body_Data *soft_data;
      struct {
        int triangle;
