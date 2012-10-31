@@ -606,7 +606,7 @@ elm_notify_orient_get(const Evas_Object *obj)
    elm_notify_align_get(obj, &horizontal, &vertical);
 
    if ((horizontal == 0.5) && (vertical == 0.0))
-     orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
+     orient = ELM_NOTIFY_ORIENT_TOP;
    else if ((horizontal == 0.5) && (vertical == 0.5))
      orient = ELM_NOTIFY_ORIENT_CENTER;
    else if ((horizontal == 0.5) && (vertical == 1.0))
