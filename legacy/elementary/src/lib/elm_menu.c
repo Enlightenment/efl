@@ -200,8 +200,9 @@ _elm_menu_smart_theme(Evas_Object *obj)
                     elm_widget_style_get(obj));
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
-                  elm_menu_item_icon_name_set((Elm_Object_Item *)item,
-                                              item->icon_str);
+                  if (item->icon_str)
+                    elm_menu_item_icon_name_set((Elm_Object_Item *)item,
+                                                item->icon_str);
                }
              _item_disable_hook((Elm_Object_Item *)item);
              edje_object_scale_set
