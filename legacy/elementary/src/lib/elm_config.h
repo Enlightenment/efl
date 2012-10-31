@@ -712,7 +712,9 @@ EAPI const Eina_List *elm_config_font_overlay_list_get(void);
  *
  * @param text_class Text class name
  * @param font Font name and style string
- * @param size Font size
+ * @param size Font size.
+ *
+ * @note If the @p size is lower than zero, the value will be the amount of the size percentage. ex) -50: half of the current size, -100: current size, -10: 1/10 size.
  *
  * @ingroup Fonts
  *
