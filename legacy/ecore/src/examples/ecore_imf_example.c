@@ -145,7 +145,9 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
    if (!en) return;
 
    str = evas_object_textblock_text_markup_get(en->txt_obj);
-   *text = str ? strdup(str) : strdup("");
+
+   if (text)
+     *text = str ? strdup(str) : strdup("");
 
    /* get the current position of cursor */
    if (cursor_pos)
