@@ -1803,13 +1803,13 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
 EAPI int
 ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
 {
-   btVector3 ray_from;
-   btVector3 ray_to;
-   btSoftBody::sRayCast result;
-   Evas_Coord wh, bw;
-   btScalar xx, yy;
-   double rate;
-   int index = -1;
+   int w, h, r, c, index = -1;
+
+   if (!body->evas_obj)
+     {
+        ERR("No evas object associated to body");
+        return -1;
+     }
 
    if (body->type == EPHYSICS_BODY_TYPE_RIGID)
      {
@@ -1817,21 +1817,17 @@ ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Ev
         return -1;
      }
 
-   ephysics_world_lock_take(body->world);
-   rate = ephysics_world_rate_get(body->world);
-   ephysics_world_render_geometry_get(body->world, NULL, NULL, NULL, NULL, &wh,
-                                      NULL);
-   ephysics_body_geometry_get(body, NULL, NULL, NULL, &bw, NULL, NULL);
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT)
+     {
+        ERR("Can't get node index, not implemented for soft bodies yet.");
+        return -1;
+     }
 
-   xx =  x / rate;
-   yy = (wh -  y) / rate;
+   evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
+   r = y * body->cloth_rows / h;
+   c = (w - x) * body->cloth_columns / w;
 
-   ray_from = btVector3(xx, yy, -100);
-   ray_to = btVector3(xx, yy, 100);
-
-   if (body->soft_body->rayTest(ray_from, ray_to, result))
-     index = result.index;
-   ephysics_world_lock_release(body->world);
+   index = 2 * r + c * body->cloth_rows * 2;
 
    return index;
 }
