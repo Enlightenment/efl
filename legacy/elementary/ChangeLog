@@ -648,3 +648,7 @@
 2012-10-30  ChunEon Park (Hermet)
 
         * Fix the transit to accept proxy object.
+
+2012-10-31  TaeHwan Kim (Bluezery)
+
+        * Don't crash glview even if you failed to create obj.

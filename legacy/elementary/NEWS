@@ -48,6 +48,7 @@ Fixes:
    * Fixed gengrid wrong_calc_job parameter.
    * Fix elm_transit image animation that last few frames are skipped.
    * FIx elm_transit to accept proxy object.
+   * Fix glview crash even if the object is failed allocating.
 
 Removals:
 

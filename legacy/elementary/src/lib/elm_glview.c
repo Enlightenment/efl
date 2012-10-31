@@ -203,7 +203,6 @@ _elm_glview_smart_add(Evas_Object *obj)
    if (!priv->config)
      {
         ERR("Failed Creating a Config Object.\n");
-        evas_object_del(obj);
 
         evas_gl_free(priv->evasgl);
         priv->evasgl = NULL;
@@ -234,7 +233,6 @@ _elm_glview_smart_add(Evas_Object *obj)
    if (!priv->context)
      {
         ERR("Error Creating an Evas_GL Context.\n");
-        evas_object_del(obj);
 
         evas_gl_config_free(priv->config);
         evas_gl_free(priv->evasgl);
@@ -306,7 +304,10 @@ elm_glview_add(Evas_Object *parent)
    ELM_GLVIEW_DATA_GET(obj, sd);
 
    if (!sd->evasgl)
-     return NULL;
+     {
+        evas_object_del(obj);
+        return NULL;
+     }
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
