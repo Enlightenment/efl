@@ -2635,30 +2635,30 @@ ephysics_body_stop(EPhysics_Body *body)
 EAPI void
 ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double angular_damping)
 {
-    if (!body)
+   if (!body)
      {
         ERR("Can't set body damping, body is null.");
         return;
      }
 
    ephysics_world_lock_take(body->world);
-    body->rigid_body->setDamping(btScalar(linear_damping),
-                                 btScalar(angular_damping));
+   body->rigid_body->setDamping(btScalar(linear_damping),
+                                btScalar(angular_damping));
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
 ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, double *angular_damping)
 {
-    if (!body)
+   if (!body)
      {
         ERR("Can't get damping, body is null.");
         return;
      }
 
-    if (linear_damping) *linear_damping = body->rigid_body->getLinearDamping();
-    if (angular_damping) *angular_damping =
-      body->rigid_body->getAngularDamping();
+   if (linear_damping) *linear_damping = body->rigid_body->getLinearDamping();
+   if (angular_damping) *angular_damping =
+     body->rigid_body->getAngularDamping();
 }
 
 EAPI void
