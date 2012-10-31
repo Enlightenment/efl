@@ -678,10 +678,13 @@ eng_setup(Evas *eo_e, void *in)
         e->engine.data.output = re;
         gl_wins++;
 
+        re->evgl_engine = evgl_engine_create(&evgl_funcs, (void*)re);
+        if (!re->evgl_engine)
+          ERR("Error Creating Evas_GL Engine. Evas GL will not be supported!");
+
         if (!initted)
           {
              evas_common_cpu_init();
-
              evas_common_blend_init();
              evas_common_image_init();
              evas_common_convert_init();
@@ -692,14 +695,6 @@ eng_setup(Evas *eo_e, void *in)
              evas_common_font_init();
              evas_common_draw_init();
              evas_common_tilebuf_init();
-
-             re->evgl_engine = evgl_engine_create(&evgl_funcs, (void*)re);
-
-             if (!re->evgl_engine)
-               {
-                  ERR("Error Creating Evas_GL Engine. Evas GL will not be supported!");
-               }
-
              initted = 1;
           }
      }
@@ -2657,7 +2652,6 @@ eng_gl_context_create(void *data, void *share_context)
 {
    Render_Engine *re   = (Render_Engine *)data;
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
-
    return evgl_context_create(re->evgl_engine, sctx);
 }
 

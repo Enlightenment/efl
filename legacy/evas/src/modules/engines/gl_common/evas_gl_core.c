@@ -1028,6 +1028,8 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
    int direct_off = 0, debug_mode = 0;
    char *s = NULL;
 
+   if (evgl_engine) return evgl_engine;
+
    // Initialize Log Domain
    if (_evas_gl_log_dom < 0)
       _evas_gl_log_dom = eina_log_domain_register("EvasGL", EVAS_DEFAULT_LOG_COLOR);
