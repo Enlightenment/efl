@@ -1779,7 +1779,6 @@ elm_config_font_overlay_set(const char    *text_class,
                      Evas_Font_Size size)
 {
    EINA_SAFETY_ON_NULL_RETURN(text_class);
-   if (size < 0) return;
    _elm_config_font_overlay_set(text_class, font, size);
 }
 
