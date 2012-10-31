@@ -641,6 +641,10 @@
 
         * some fix for promote and demote in genlist
 
+2012-10-30  SeungGyun Kim
+
+        * Added elm_notify_align_set/get and Deprecated elm_notify_orient_set/get
+
 2012-10-30  ChunEon Park (Hermet)
 
         * Fix the transit to accept proxy object.
