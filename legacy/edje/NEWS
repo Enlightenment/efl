@@ -25,6 +25,7 @@ Improvements:
 Fixes:
     * fix scale_set with edje containing boxes and/or tables
     * fix scale_set with edje containing groups
+    * fix edje_cc to use max, not default compression
 
 
 Edje 1.7.0

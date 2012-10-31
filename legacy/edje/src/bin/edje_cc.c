@@ -29,7 +29,7 @@ int        no_raw = 0;
 int        no_save = 0;
 int        min_quality = 0;
 int        max_quality = 100;
-int        compress_mode = EET_COMPRESSION_DEFAULT;
+int        compress_mode = EET_COMPRESSION_HI;
 int        threads = 0;
 int	   anotate = 0;
 

@@ -663,3 +663,8 @@
 2012-10-26  Michael Bouchaud (yoz)
 
         * fix edje_object_scale_set with edje containing boxes and/or tables
+
+2012-10-31  Carsten Haitzler (The Rasterman)
+
+        * Fix edje_cc to use max compression, not default compression.
+        
