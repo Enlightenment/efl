@@ -101,10 +101,9 @@ _world_populate(Test_Data *test_data)
    ephysics_body_soft_body_position_iterations_set(flag_body, 10);
    ephysics_body_mass_set(flag_body, 10);
    ephysics_body_soft_body_hardness_set(flag_body, 1);
-   evas_obj = ephysics_body_evas_object_set(flag_body, evas_obj, EINA_TRUE);
+   ephysics_body_evas_object_set(flag_body, evas_obj, EINA_TRUE);
    ephysics_body_restitution_set(flag_body, 0.5);
    ephysics_body_friction_set(flag_body, 0.1);
-   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
    test_data->bodies = eina_list_append(test_data->bodies, flag_body);
    ephysics_body_cloth_anchor_full_add(flag_body, pole_body,
                                        EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT);

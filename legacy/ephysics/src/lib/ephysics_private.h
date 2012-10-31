@@ -92,6 +92,7 @@ struct _EPhysics_Body {
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;
      Eina_List *to_delete;
+     Eina_List *slices_list;
      EPhysics_Body_Material material;
      double mass;
      double density;
@@ -125,7 +126,6 @@ struct _EPhysics_Body {
      Eina_Bool active:1;
      Eina_Bool deleted:1;
      Eina_Bool light_apply:1;
-     Eina_Bool rebounding:1;
      Eina_Bool back_face_culling:1;
      Eina_Bool clockwise:1;
 };

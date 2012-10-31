@@ -149,12 +149,12 @@ if test "x${build_docs_only}" = "xno" ; then
 PKG_CHECK_MODULES([EPHYSICS],
    [
     eina >= 1.2.99
-    evas >= 1.2.99
+    evas >= 1.7.99
     ecore >= 1.2.99
     bullet >= 2.80
    ])
 
-requirement_ephysics="bullet >= 2.80 ecore >= 1.2.99 evas >= 1.2.99 eina >= 1.2.99 ${requirement_ephysics}"
+requirement_ephysics="bullet >= 2.80 ecore >= 1.2.99 evas >= 1.7.99 eina >= 1.2.99 ${requirement_ephysics}"
 fi
 
 ### Checks for header files
@@ -212,7 +212,7 @@ if test "x${build_tests}" = "xyes" && test "x${build_docs_only}" = "xno" ; then
 PKG_CHECK_MODULES([EPHYSICS_TEST],
    [
     eina >= 1.2.99
-    evas >= 1.2.99
+    evas >= 1.7.99
     ecore >= 1.2.99
     elementary >= 1.0.99
     bullet >= 2.80
