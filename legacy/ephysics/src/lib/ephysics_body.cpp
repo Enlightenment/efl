@@ -1484,8 +1484,8 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
         return;
      }
 
-   rows = body1->cloth_rows;
-   columns = body1->cloth_columns;
+   rows = body1->cloth_rows + 1;
+   columns = body1->cloth_columns + 1;
    anchor_mass = body1->soft_body->m_nodes.size() * 0.025;
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT)
@@ -1648,7 +1648,8 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short rows, unsigned sho
                                               btVector3(2, 1, 0),
                                               btVector3(1, 2, 0),
                                               btVector3(1, 1, 0),
-                                              body_rows, body_columns, 0, false);
+                                              body_rows + 1, body_columns + 1,
+                                              0, false);
 
    if (!soft_body)
      {
