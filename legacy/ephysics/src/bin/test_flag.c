@@ -6,13 +6,8 @@
 
 typedef struct _Dragging_Data
 {
-  int mouse_status; // 0, up, 1, down
   EPhysics_Body *body;
-  struct {
-    int x;
-    int y;
-    int node;
-  } click_data;
+  int node;
 } Dragging_Data;
 
 static void
@@ -29,40 +24,49 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
   Evas_Event_Mouse_Down *mdown = event_info;
   Evas_Coord x, y;
 
+  if (mdown->button != 1) return;
+
   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-  dragging->mouse_status = 1;
-  dragging->click_data.x = mdown->output.x - x;
-  dragging->click_data.y = mdown->output.y - y;
-  dragging->click_data.node = ephysics_body_soft_body_triangle_index_get(
-                               dragging->body, mdown->output.x, mdown->output.y);
+  dragging->node = ephysics_body_soft_body_triangle_index_get(
+     dragging->body, mdown->output.x - x, mdown->output.y - y);
 
   ephysics_body_soft_body_dragging_set(dragging->body,
-                                       dragging->click_data.node);
+                                       dragging->node);
+
+  DBG("Mouse down on %i, %i", mdown->output.x - x, mdown->output.y - y);
+  DBG("Selected node: %i", dragging->node);
 }
 
 static void
-_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
+  Evas_Event_Mouse_Up *mup = event_info;
   Dragging_Data *dragging = data;
+  if (mup->button != 1) return;
   ephysics_body_soft_body_dragging_unset(dragging->body);
-  dragging->mouse_status = 0;
+  dragging->node = -1;
 }
 
 static void
-_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
   Dragging_Data *dragging = data;
   Evas_Event_Mouse_Move *mmove = event_info;
   Evas_Coord nx, ny;
+  Evas_Coord x, y;
 
-  if (!dragging->mouse_status || dragging->click_data.node < 0) return;
+  evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+  printf("canvas = (%i, %i), output = (%i, %i)\n", mmove->cur.canvas.x,
+          mmove->cur.canvas.y, mmove->cur.output.x, mmove->cur.output.y);
 
-  nx = mmove->cur.output.x;
-  ny = mmove->cur.output.y;
+  if ((mmove->buttons != 1) || (dragging->node < 0)) return;
 
-  DBG("node: %d, nx: %d, ny: %d\n", dragging->click_data.node, nx, ny);
+  nx = mmove->cur.canvas.x;
+  ny = mmove->cur.canvas.y;
+
+  DBG("Node: %d, nx: %d, ny: %d", dragging->node, nx, ny);
   ephysics_body_soft_body_triangle_move(dragging->body,
-                                        dragging->click_data.node, nx, ny, 10);
+                                        dragging->node, nx, ny, 10);
 }
 
 static void
@@ -73,6 +77,7 @@ _world_populate(Test_Data *test_data)
    Dragging_Data *dragging;
 
    dragging = calloc(1, sizeof(Dragging_Data));
+   dragging->node = -1;
 
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
@@ -149,6 +154,7 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
 
    world = ephysics_world_new();
+   ephysics_world_gravity_set(world, 100, 0, 0);
    ephysics_world_render_geometry_set(world, 50, 40, -50,
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
