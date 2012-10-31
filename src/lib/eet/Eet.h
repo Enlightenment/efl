@@ -538,6 +538,27 @@ typedef struct _Eet_File Eet_File;
 typedef struct _Eet_Dictionary Eet_Dictionary;
 
 /**
+ * @typedef Eet_Entries
+ * Eet files may contains multiple Entries per file, this handle describe them. You can get that handle from an iterator given by eet_list_entries().
+ *
+ * @see eet_list_entries()
+ * @since 1.8.0
+ */
+typedef struct _Eet_Entry Eet_Entry;
+struct _Eet_Entry
+{
+   const char *name; /**< The entry name */
+
+   int offset;       /**< Where it start in the file  */
+   int size;         /**< The size on disk */
+   int data_size;    /**< The decompressed size if relevant */
+
+   Eina_Bool compression; /**< Is this data compressed ? */
+   Eina_Bool ciphered;    /**< Is it ciphered ? */
+   Eina_Bool alias;       /**< Is it an alias ? */
+};
+
+/**
  * @}
  */
 
@@ -890,6 +911,17 @@ EAPI char **
 eet_list(Eet_File *ef,
          const char *glob,
          int *count_ret);
+
+/**
+ * Return an iterator that will describe each entry of an Eet_File.
+ * @param ef A valid eet file handle.
+ * @return An interator of Eet_Entry.
+ *
+ * @since 1.8.0
+ * @ingroup Eet_File_Group
+ */
+
+EAPI Eina_Iterator *eet_list_entries(Eet_File *ef);
 
 /**
  * Return the number of entries in the specified eet file.

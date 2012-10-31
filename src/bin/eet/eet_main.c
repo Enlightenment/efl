@@ -44,11 +44,12 @@ static int _eet_main_log_dom = -1;
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eet_main_log_dom, __VA_ARGS__)
 
 static void
-do_eet_list(const char *file)
+do_eet_list(const char *file, Eina_Bool verbose)
 {
-   int i, num;
-   char **list;
+   Eina_Iterator *it;
+   Eet_Entry *entry;
    Eet_File *ef;
+   unsigned long long total = 0;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -57,12 +58,38 @@ do_eet_list(const char *file)
         exit(-1);
      }
 
-   list = eet_list(ef, "*", &num);
-   if (list)
+   it = eet_list_entries(ef);
+   EINA_ITERATOR_FOREACH(it, entry)
      {
-        for (i = 0; i < num; i++)
-          printf("%s\n", list[i]);
-        free(list);
+        if (verbose)
+          {
+             if (entry->alias)
+               {
+                  printf("%s is an alias for %s\n",
+                         entry->name, eet_alias_get(ef, entry->name));
+               }
+             else
+               {
+                  if (entry->compression)
+                    printf("%s start at %i with a size of %i Bytes with an uncompressed size of %i Bytes.\n",
+                           entry->name, entry->offset, entry->size, entry->data_size);
+                  else
+                    printf("%s start at %i with a size of %i Bytes.\n",
+                           entry->name, entry->offset, entry->size);
+                  total += entry->size;
+               }
+          }
+        else
+          {
+             printf("%s\n", entry->name);
+          }
+     }
+   eina_iterator_free(it);
+
+   if (verbose)
+     {
+        printf("*** ***\n");
+        printf("Total payload size : %lli.\n", total);
      }
 
    eet_close(ef);
@@ -415,7 +442,7 @@ main(int    argc,
 help:
         printf(
           "Usage:\n"
-          "  eet -l FILE.EET                                    list all keys in FILE.EET\n"
+          "  eet -l [-v] FILE.EET                               list all keys in FILE.EET\n"
           "  eet -x FILE.EET KEY [OUT-FILE] [CRYPTO_KEY]        extract data stored in KEY in FILE.EET and write to OUT-FILE or standard output\n"
           "  eet -d FILE.EET KEY [OUT-FILE] [CRYPTO_KEY]        extract and decode data stored in KEY in FILE.EET and write to OUT-FILE or standard output\n"
           "  eet -i FILE.EET KEY IN-FILE COMPRESS [CRYPTO_KEY]  insert data to KEY in FILE.EET from IN-FILE and if COMPRESS is 1, compress it\n"
@@ -431,8 +458,15 @@ help:
 
    if ((!strncmp(argv[1], "-h", 2)))
      goto help;
-   else if ((!strcmp(argv[1], "-l")) && (argc > 2))
-     do_eet_list(argv[2]);
+   else if (((!strcmp(argv[1], "-l")) || (!strcmp(argv[1], "-v"))) && (argc > 2))
+     {
+        if (argc == 3)
+          do_eet_list(argv[2], EINA_FALSE);
+        else if ((!strcmp(argv[2], "-l")) || (!strcmp(argv[2], "-v")))
+          do_eet_list(argv[3], EINA_TRUE);
+        else
+          goto help;
+     }
    else if ((!strcmp(argv[1], "-x")) && (argc > 3))
      {
         switch (argc)

@@ -63,9 +63,6 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif /* ifdef HAVE_GNUTLS */
 #endif /* ifdef EINA_HAVE_THREADS */
 
-/* this has to be here until 2.0 */
-#define EET_OLD_EET_FILE_FORMAT 1
-
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -1045,7 +1042,7 @@ eet_internal_read2(Eet_File *ef)
    return ef;
 }
 
-#ifdef EET_OLD_EET_FILE_FORMAT
+#if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
 eet_internal_read1(Eet_File *ef)
 {
@@ -1227,7 +1224,7 @@ eet_internal_read1(Eet_File *ef)
    return ef;
 }
 
-#endif /* ifdef EET_OLD_EET_FILE_FORMAT */
+#endif /* if EET_OLD_EET_FILE_FORMAT */
 
 /*
  * this should only be called when the cache lock is already held
@@ -1248,11 +1245,11 @@ eet_internal_read(Eet_File *ef)
 
    switch (ntohl(*data))
      {
-#ifdef EET_OLD_EET_FILE_FORMAT
+#if EET_OLD_EET_FILE_FORMAT
       case EET_MAGIC_FILE:
         return eet_internal_read1(ef);
 
-#endif /* ifdef EET_OLD_EET_FILE_FORMAT */
+#endif /* if EET_OLD_EET_FILE_FORMAT */
       case EET_MAGIC_FILE2:
         return eet_internal_read2(ef);
 
@@ -2676,6 +2673,122 @@ eet_num_entries(Eet_File *ef)
    UNLOCK_FILE(ef);
 
    return ret;
+}
+
+typedef struct _Eet_Entries_Iterator Eet_Entries_Iterator;
+struct _Eet_Entries_Iterator
+{
+   Eina_Iterator iterator;
+
+   Eet_File *ef;
+   Eet_File_Node *efn;
+   int index;
+
+   Eet_Entry entry;
+
+   Eina_Bool locked;
+};
+
+Eina_Bool
+_eet_entries_iterator_next(Eet_Entries_Iterator *it, void **data)
+{
+   if (it->efn == NULL)
+     {
+        int num;
+
+        num = (1 << it->ef->header->directory->size);
+
+        do
+          {
+             it->index++;
+
+             if (!(it->index < num))
+               return EINA_FALSE;
+
+             it->efn = it->ef->header->directory->nodes[it->index];
+          }
+        while (!it->efn);
+     }
+
+   /* copy info in public header */
+   it->entry.name = it->efn->name;
+   it->entry.offset = it->efn->offset;
+   it->entry.size = it->efn->size;
+   it->entry.data_size = it->efn->data_size;
+   it->entry.compression = it->efn->compression;
+   it->entry.ciphered = it->efn->ciphered;
+   it->entry.alias = it->efn->alias;
+
+   *data = &it->entry;
+   it->efn = it->efn->next;
+   return EINA_TRUE;
+}
+
+void *
+_eet_entries_iterator_container(Eet_Entries_Iterator *it)
+{
+   return it->ef;
+}
+
+void
+_eet_entries_iterator_free(Eet_Entries_Iterator *it)
+{
+   if (it->locked)
+     {
+        CRIT("Iterator still LOCKED !");
+        UNLOCK_FILE(it->ef);
+     }
+}
+
+Eina_Bool
+_eet_entries_iterator_lock(Eet_Entries_Iterator *it)
+{
+   if (it->locked)
+     {
+        CRIT("Iterator already LOCKED !");
+        return EINA_TRUE;
+     }
+
+   LOCK_FILE(it->ef);
+   it->locked = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_eet_entries_iterator_unlock(Eet_Entries_Iterator *it)
+{
+   if (!it->locked)
+     {
+        CRIT("Iterator already UNLOCKED !");
+        return EINA_TRUE;
+     }
+
+   UNLOCK_FILE(it->ef);
+   it->locked = EINA_FALSE;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Iterator *
+eet_list_entries(Eet_File *ef)
+{
+   Eet_Entries_Iterator *it;
+
+   it = malloc(sizeof (Eet_Entries_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->ef = ef;
+   it->efn = NULL;
+   it->index = -1;
+   it->locked = EINA_FALSE;
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eet_entries_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eet_entries_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eet_entries_iterator_free);
+   it->iterator.lock = FUNC_ITERATOR_LOCK(_eet_entries_iterator_lock);
+   it->iterator.unlock = FUNC_ITERATOR_LOCK(_eet_entries_iterator_unlock);
+
+   return &it->iterator;
 }
 
 static Eet_File_Node *

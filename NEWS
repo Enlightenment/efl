@@ -15,6 +15,7 @@ Improvements:
     * Single EFL tree now covring all EFL library components.
     * Speedup Eina Rbtree Iterator by recycling memory instead of
     massively calling malloc/free.
+    * Display more information with eet -l -v.
 
 Fixes:
     * Fix PPC (big endian) image codec bug.

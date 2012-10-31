@@ -52,3 +52,8 @@
 2012-10-19  Cedric Bail
 
 	* Add eina_thread API.
+
+2012-10-31  Cedric Bail
+
+	* Add eet_list_entries().
+	* Add eet -l -v to give more information about an eet file.
