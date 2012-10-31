@@ -320,9 +320,12 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (!strcmp(ev->key, "BackSpace"))
      {
         if (evas_textblock_cursor_char_prev(en->cursor))
-          evas_textblock_cursor_char_delete(en->cursor);
-
-        return;
+          {
+             evas_textblock_cursor_char_delete(en->cursor);
+             /* notify cursor information */
+             _imf_cursor_info_set(en);
+          }
+         return;
      }
    else if (!strcmp(ev->key, "Delete") ||
             (!strcmp(ev->key, "KP_Delete") && !ev->string))
