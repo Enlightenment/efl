@@ -11,7 +11,7 @@ Additions:
    * Add a way to know which month is displayed in elm_calendar
    * Add color picker to elm_colorselector.
    * Add a search API to list all localisations corresponding to a name in map
-	* Add elm_notify_align_set/get
+   * Add elm_notify_align_set/get
 
 Improvements:
 
