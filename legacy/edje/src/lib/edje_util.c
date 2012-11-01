@@ -964,9 +964,8 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    else
      {
         /* Match and the same, return */
-        if ((tc->size == size) ||
-            (tc->font == font) ||
-            (tc->font && font && !strcmp(tc->font, font)))
+        if (((tc->font && font) && !strcmp(tc->font, font)) &&
+            (tc->size == size))
           return EINA_TRUE;
 
         /* Update the class found */

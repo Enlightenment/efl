@@ -667,4 +667,7 @@
 2012-10-31  Carsten Haitzler (The Rasterman)
 
         * Fix edje_cc to use max compression, not default compression.
-        
+
+2012-10-31  ChunEon Park (Hermet)
+
+        * Fix to update the text classes when text classes are changed.
