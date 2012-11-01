@@ -117,6 +117,10 @@ static const EDBus_Method methods[] = {
        { NULL, NULL, NULL, NULL, 0 }
 };
 
+const static EDBus_Service_Interface_Desc desc = {
+   INTERFACE, methods, signals
+};
+
 static void
 on_name_request(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
 {
@@ -140,8 +144,7 @@ on_name_request(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *
         return;
      }
 
-   iface = edbus_service_interface_register(conn, PATH, INTERFACE, methods,
-                                            signals);
+   iface = edbus_service_interface_register(conn, PATH, &desc);
 }
 
 /* external */
