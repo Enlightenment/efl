@@ -101,7 +101,7 @@ void *alloca (size_t);
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
 
 #define EINA_SMALL_PAGE 4096
-# define EINA_HUGE_PAGE 16 * 1024 * 1024
+#define EINA_HUGE_PAGE 16 * 1024 * 1024
 
 #ifdef HAVE_DIRENT_H
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
