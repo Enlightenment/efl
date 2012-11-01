@@ -171,10 +171,10 @@ bin_evil_evil_suite_CPPFLAGS += \
 endif
 
 bin_evil_evil_suite_LDADD = \
-$(top_builddir)/src/lib/evil/libevil.la \
-$(top_builddir)/src/lib/eina/libdl.la \
+lib/evil/libevil.la \
+lib/eina/libdl.la \
 -lm
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 
-bin_evil_test_evil_LDADD = $(top_builddir)/src/lib/evil/libevil.la
+bin_evil_test_evil_LDADD = lib/evil/libevil.la

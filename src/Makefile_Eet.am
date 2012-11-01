@@ -42,10 +42,10 @@ lib_eet_libeet_la_CPPFLAGS += \
 -I$(top_builddir)/src/lib/evil
 endif
 
-lib_eet_libeet_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la
+lib_eet_libeet_la_LIBADD = lib/eina/libeina.la
 
 if HAVE_WINDOWS
-lib_eet_libeet_la_LIBADD += $(top_builddir)/src/lib/evil/libevil.la
+lib_eet_libeet_la_LIBADD += lib/evil/libevil.la
 endif
 
 lib_eet_libeet_la_LIBADD += @EET_LIBS@ -lm
@@ -78,11 +78,11 @@ bin_eet_eet_CPPFLAGS += \
 endif
 
 bin_eet_eet_LDADD = \
-$(top_builddir)/src/lib/eet/libeet.la \
-$(top_builddir)/src/lib/eina/libeina.la
+lib/eet/libeet.la \
+lib/eina/libeina.la
 
 if HAVE_WINDOWS
-bin_eet_eet_LDADD += $(top_builddir)/src/lib/evil/libevil.la
+bin_eet_eet_LDADD += lib/evil/libevil.la
 endif
 
 bin_eet_eet_LDADD += @EET_LIBS@

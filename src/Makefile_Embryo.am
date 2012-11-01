@@ -31,10 +31,10 @@ lib_embryo_libembryo_la_CPPFLAGS += \
 -I$(top_builddir)/src/lib/evil
 endif
 
-lib_embryo_libembryo_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la
+lib_embryo_libembryo_la_LIBADD = lib/eina/libeina.la
 
 if HAVE_WINDOWS
-lib_embryo_libembryo_la_LIBADD += $(top_builddir)/src/lib/evil/libevil.la
+lib_embryo_libembryo_la_LIBADD += lib/evil/libevil.la
 endif
 
 lib_embryo_libembryo_la_LIBADD += -lm
@@ -78,11 +78,11 @@ bin_embryo_embryo_cc_CPPFLAGS += \
 endif
 
 bin_embryo_embryo_cc_LDADD = \
-$(top_builddir)/src/lib/embryo/libembryo.la \
-$(top_builddir)/src/lib/eina/libeina.la
+lib/embryo/libembryo.la \
+lib/eina/libeina.la
 
 if HAVE_WINDOWS
-bin_embryo_embryo_cc_LDADD += $(top_builddir)/src/lib/evil/libevil.la
+bin_embryo_embryo_cc_LDADD += lib/evil/libevil.la
 endif
 
 EXTRA_DIST += \
