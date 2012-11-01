@@ -45,6 +45,13 @@ typedef struct _EDBus_Signal
    unsigned int flags;
 } EDBus_Signal;
 
+typedef struct _EDBus_Service_Interface_Desc
+{
+   const char *interface;
+   const EDBus_Method *methods;
+   const EDBus_Signal *signals;
+} EDBus_Service_Interface_Desc;
+
 /**
  * @brief Register an interface in the given path and connection.
  *
@@ -60,7 +67,8 @@ typedef struct _EDBus_Signal
  *
  * @return Interface
  */
-EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection *conn, const char *path, const char *interface, const EDBus_Method methods[], const EDBus_Signal signals[]);
+EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection *conn, const char *path, const EDBus_Service_Interface_Desc *desc);
+
 /**
  * @brief Unregister a interface.
  * If this is the last interface of the object path, the object path will be

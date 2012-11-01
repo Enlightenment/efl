@@ -293,7 +293,7 @@ _edbus_service_method_add(EDBus_Service_Interface *interface, EDBus_Method *meth
 }
 
 EAPI EDBus_Service_Interface *
-edbus_service_interface_register(EDBus_Connection *conn, const char *path, const char *interface, const EDBus_Method methods[], const EDBus_Signal signals[])
+edbus_service_interface_register(EDBus_Connection *conn, const char *path, const EDBus_Service_Interface_Desc *desc)
 {
    EDBus_Service_Object *obj;
    EDBus_Service_Interface *iface;
@@ -303,7 +303,8 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(interface, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->interface, EINA_FALSE);
 
    if (!dbus_connection_get_object_path_data(conn->dbus_conn, path,
                                              (void*)&obj))
@@ -316,7 +317,7 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
      obj = _edbus_service_object_add(conn, path);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
-   iface = _edbus_service_interface_add(obj, interface);
+   iface = _edbus_service_interface_add(obj, desc->interface);
    if (!iface)
      {
         if (eina_hash_population(obj->interfaces) < 2)
@@ -324,21 +325,23 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
         return NULL;
      }
 
-   for (method = (EDBus_Method *)methods; method && method->member; method++)
+   for (method = (EDBus_Method *)desc->methods; method && method->member; method++)
      _edbus_service_method_add(iface, method);
 
    if (!iface->sign_of_signals)
      iface->sign_of_signals = eina_array_new(1);
-   for (i = 0; &signals[i] && signals[i].name; i++)
+   for (i = 0; &desc->signals[i] && desc->signals[i].name; i++)
      {
         buf = eina_strbuf_new();
-        for (z = 0; &signals[i].args[z] && signals[i].args[z].signature; z++)
-          eina_strbuf_append(buf, signals[i].args[z].signature);
+        for (z = 0;
+             &desc->signals[i].args[z] && desc->signals[i].args[z].signature;
+             z++)
+          eina_strbuf_append(buf, desc->signals[i].args[z].signature);
 
         if (!dbus_signature_validate(eina_strbuf_string_get(buf), NULL))
           {
              ERR("Signal with invalid signature: interface=%s signal=%s",
-                 iface->name, signals[i].name);
+                 iface->name, desc->signals[i].name);
              eina_strbuf_free(buf);
              continue;
           }
@@ -347,7 +350,7 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
 			eina_stringshare_add(eina_strbuf_string_get(buf)));
 	eina_strbuf_free(buf);
      }
-   iface->signals = signals;
+   iface->signals = desc->signals;
 
    return iface;
 }

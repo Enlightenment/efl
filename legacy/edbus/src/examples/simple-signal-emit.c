@@ -56,6 +56,10 @@ static void emit_alive(EDBus_Service_Interface *iface)
    edbus_service_signal_emit(iface, TEST_SIGNAL_ALIVE);
 }
 
+static const EDBus_Service_Interface_Desc iface_desc = {
+   "org.enlightenment.Test", NULL, test_signals
+};
+
 int main(void)
 {
    EDBus_Connection *conn;
@@ -64,8 +68,8 @@ int main(void)
    edbus_init();
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-   iface = edbus_service_interface_register(
-      conn, "/org/enlightenment", "org.enlightenment.Test", NULL, test_signals);
+   iface = edbus_service_interface_register(conn, "/org/enlightenment",
+                                            &iface_desc);
 
    emit_alive(iface);
    emit_name(iface);

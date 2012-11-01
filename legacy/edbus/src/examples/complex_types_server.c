@@ -6,7 +6,6 @@
 #define IFACE "com.profusion.Test"
 
 static char *resp2;
-static Ecore_Timer *timer;
 
 static EDBus_Message *
 _receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
@@ -344,59 +343,15 @@ static const EDBus_Signal properties_signals[] = {
    { }
 };
 
-static Eina_Bool _emmit_changed(void *data)
-{
-   EDBus_Service_Interface *iface = data;
-   EDBus_Message *sig = edbus_service_signal_new(iface, 0);
-   EDBus_Message_Iter *main_iter, *array, *entry, *var, *invalidate, *st;
-
-   main_iter = edbus_message_iter_get(sig);
-   if (!edbus_message_iter_arguments_set(main_iter, "sa{sv}", IFACE, &array))
-     {
-        printf("Error setting arguments of signal");
-        goto end;
-     }
-
-   edbus_message_iter_arguments_set(array, "{sv}", &entry);
-   edbus_message_iter_arguments_set(entry, "s", "text");
-   var = edbus_message_iter_container_new(entry, 'v', "s");
-   edbus_message_iter_arguments_set(var, "s", "lalala text");
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(array, entry);
-
-   edbus_message_iter_arguments_set(array, "{sv}", &entry);
-   edbus_message_iter_arguments_set(entry, "s", "int32");
-   var = edbus_message_iter_container_new(entry, 'v', "i");
-   edbus_message_iter_arguments_set(var, "i", 35);
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(array, entry);
-
-   edbus_message_iter_arguments_set(array, "{sv}", &entry);
-   edbus_message_iter_arguments_set(entry, "s", "st");
-   var = edbus_message_iter_container_new(entry, 'v', "(ss)");
-   edbus_message_iter_arguments_set(var, "(ss)", &st);
-   edbus_message_iter_arguments_set(st, "ss", "string1", "string2");
-   edbus_message_iter_container_close(var, st);
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(array, entry);
-
-   edbus_message_iter_container_close(main_iter, array);
-
-   edbus_message_iter_arguments_set(main_iter, "as", &invalidate);
-   edbus_message_iter_container_close(main_iter, invalidate);
-
-   edbus_service_signal_send(iface, sig);
-end:
-   edbus_message_unref(sig);
-   return EINA_TRUE;
-}
+static const EDBus_Service_Interface_Desc iface_desc = {
+   IFACE, methods
+};
 
 static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    EDBus_Connection *conn = data;
    unsigned int flag;
-   EDBus_Service_Interface *piface;
 
    resp2 = malloc(sizeof(char) * 5);
    strcpy(resp2, "test");
@@ -419,10 +374,7 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   edbus_service_interface_register(conn, PATH, IFACE, methods, NULL);
-   piface = edbus_service_interface_register(conn, PATH, EDBUS_FDO_INTERFACE_PROPERTIES,
-                                             properties_methods, properties_signals);
-   timer = ecore_timer_add(3, _emmit_changed, piface);
+   edbus_service_interface_register(conn, PATH, &iface_desc);
 }
 
 int
@@ -440,7 +392,6 @@ main(void)
    ecore_main_loop_begin();
 
    free(resp2);
-   ecore_timer_del(timer);
    edbus_connection_unref(conn);
 
    edbus_shutdown();

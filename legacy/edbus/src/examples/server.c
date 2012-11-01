@@ -185,6 +185,10 @@ static const EDBus_Method methods[] = {
       { }
 };
 
+static const EDBus_Service_Interface_Desc iface_desc = {
+   INTERFACE, methods, signals
+};
+
 static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
@@ -209,8 +213,7 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   iface = edbus_service_interface_register(conn, PATH, INTERFACE, methods,
-                                            signals);
+   iface = edbus_service_interface_register(conn, PATH, &iface_desc);
    ecore_timer_add(5, send_signal_alive, iface);
    ecore_timer_add(6, send_signal_hello, iface);
 }
