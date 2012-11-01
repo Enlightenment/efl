@@ -29,6 +29,9 @@ typedef struct _EDBus_Arg_Info
 typedef struct _EDBus_Service_Interface EDBus_Service_Interface;
 typedef EDBus_Message * (*EDBus_Method_Cb)(const EDBus_Service_Interface *iface, const EDBus_Message *message);
 
+typedef Eina_Bool (*EDBus_Property_Get_Cb)(EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error);
+typedef EDBus_Message *(*EDBus_Property_Set_Cb)(EDBus_Service_Interface *iface, const char *propname, EDBus_Message *input_msg);
+
 typedef struct _EDBus_Method
 {
    const char *member;
@@ -45,11 +48,23 @@ typedef struct _EDBus_Signal
    unsigned int flags;
 } EDBus_Signal;
 
+typedef struct _EDBus_Property
+{
+   const char *name;
+   const char *type;
+   unsigned int flags;
+   EDBus_Property_Set_Cb set_func;
+   EDBus_Property_Get_Cb get_func;
+} EDBus_Property;
+
 typedef struct _EDBus_Service_Interface_Desc
 {
    const char *interface;
    const EDBus_Method *methods;
    const EDBus_Signal *signals;
+   const EDBus_Property *properties;
+   const EDBus_Property_Set_Cb default_set;
+   const EDBus_Property_Get_Cb default_get;
 } EDBus_Service_Interface_Desc;
 
 /**
