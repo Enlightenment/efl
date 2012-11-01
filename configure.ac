@@ -230,6 +230,7 @@ AC_PROG_CXX
 AC_LANG(C)
 AC_PROG_CPP
 AC_PROG_CC
+AM_PROG_CC_C_O
 
 # pkg-config
 
@@ -881,27 +882,11 @@ src/Makefile
 src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
-src/bin/Makefile
-src/bin/evil/Makefile
-src/bin/eet/Makefile
-src/bin/embryo/Makefile
 src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
 src/examples/eo/Makefile
-src/lib/Makefile
-src/lib/evil/Makefile
-src/lib/eina/Makefile
 src/lib/eina/eina_config.h
-src/lib/eet/Makefile
-src/lib/eo/Makefile
-src/lib/embryo/Makefile
-src/modules/Makefile
-src/modules/eina/Makefile
-src/modules/eina/mp/Makefile
-src/modules/eina/mp/chained_pool/Makefile
-src/modules/eina/mp/pass_through/Makefile
-src/modules/eina/mp/one_big/Makefile
 src/scripts/Makefile
 src/scripts/eina/Makefile
 src/tests/Makefile

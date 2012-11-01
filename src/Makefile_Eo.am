@@ -1,0 +1,26 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/eo/libeo.la
+
+installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
+dist_installed_eomainheaders_DATA = lib/eo/Eo.h
+
+lib_eo_libeo_la_SOURCES = \
+lib/eo/eo.c \
+lib/eo/eo_base_class.c \
+lib/eo/eo_private.h
+
+lib_eo_libeo_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-DNDEBUG \
+-DEFL_EO_BUILD \
+@EFL_CFLAGS@ \
+@EO_CFLAGS@
+
+lib_eo_libeo_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la @EO_LIBS@
+
+lib_eo_libeo_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

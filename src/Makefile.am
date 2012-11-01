@@ -1,6 +1,21 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib modules bin scripts benchmarks tests examples
+SUBDIRS = . scripts benchmarks tests examples
+
+lib_LTLIBRARIES =
+bin_PROGRAMS =
+EXTRA_DIST =
+
+if HAVE_WINDOWS
+include Makefile_Evil.am
+endif
+
+include Makefile_Eina.am
+include Makefile_Eo.am
+include Makefile_Eet.am
+include Makefile_Embryo.am
 
 .PHONY: benchmark examples
 

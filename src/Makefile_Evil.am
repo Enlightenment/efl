@@ -1,0 +1,180 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/evil/libevil.la lib/evil/libdl.la
+
+install_evilheadersdir = $(includedir)/evil-@VMAJ@
+dist_install_evilheaders_DATA = \
+lib/evil/Evil.h \
+lib/evil/evil_fcntl.h \
+lib/evil/evil_inet.h \
+lib/evil/evil_langinfo.h \
+lib/evil/evil_libgen.h \
+lib/evil/evil_macro.h \
+lib/evil/evil_macro_pop.h \
+lib/evil/evil_main.h \
+lib/evil/evil_print.h \
+lib/evil/evil_stdlib.h \
+lib/evil/evil_stdio.h \
+lib/evil/evil_string.h \
+lib/evil/evil_time.h \
+lib/evil/evil_unistd.h \
+lib/evil/evil_util.h
+
+evilstdheadersdir = $(includedir)/evil-@VMAJ@
+nobase_dist_evilstdheaders_DATA = \
+lib/evil/pwd.h \
+lib/evil/sys/mman.h \
+lib/evil/fnmatch.h \
+lib/evil/dirent.h \
+lib/evil/dlfcn.h
+
+if HAVE_WINCE
+nobase_dist_evilstdheaders_DATA += lib/evil/mingw32ce/errno.h
+endif
+
+# gdtoa
+lib_evil_libevil_la_SOURCES = \
+lib/evil/gdtoa/arithchk.c \
+lib/evil/gdtoa/dmisc.c \
+lib/evil/gdtoa/dtoa.c \
+lib/evil/gdtoa/gd_arith.h \
+lib/evil/gdtoa/g_dfmt.c \
+lib/evil/gdtoa/gd_qnan.h \
+lib/evil/gdtoa/gdtoa.c \
+lib/evil/gdtoa/gdtoa_fltrnds.h \
+lib/evil/gdtoa/gdtoa.h \
+lib/evil/gdtoa/gdtoaimp.h \
+lib/evil/gdtoa/gethex.c \
+lib/evil/gdtoa/g_ffmt.c \
+lib/evil/gdtoa/g__fmt.c \
+lib/evil/gdtoa/gmisc.c \
+lib/evil/gdtoa/g_xfmt.c \
+lib/evil/gdtoa/hd_init.c \
+lib/evil/gdtoa/hexnan.c \
+lib/evil/gdtoa/misc.c \
+lib/evil/gdtoa/qnan.c \
+lib/evil/gdtoa/smisc.c \
+lib/evil/gdtoa/strtodg.c \
+lib/evil/gdtoa/strtof.c \
+lib/evil/gdtoa/strtopx.c \
+lib/evil/gdtoa/sum.c \
+lib/evil/gdtoa/ulp.c
+
+#evil
+lib_evil_libevil_la_SOURCES += \
+lib/evil/evil_dirent.c \
+lib/evil/evil_fcntl.c \
+lib/evil/evil_fnmatch.c \
+lib/evil/evil_fnmatch_list_of_states.c \
+lib/evil/evil_inet.c \
+lib/evil/evil_langinfo.c \
+lib/evil/evil_libgen.c \
+lib/evil/evil_main.c \
+lib/evil/evil_mman.c \
+lib/evil/evil_pformata.c \
+lib/evil/evil_pformatw.c \
+lib/evil/evil_printa.c \
+lib/evil/evil_printw.c \
+lib/evil/evil_pwd.c \
+lib/evil/evil_stdlib.c \
+lib/evil/evil_stdio.c \
+lib/evil/evil_string.c \
+lib/evil/evil_time.c \
+lib/evil/evil_unistd.c \
+lib/evil/evil_util.c \
+lib/evil/evil_uuid.c \
+lib/evil/evil_pformat.h \
+lib/evil/evil_private.h \
+lib/evil/evil_fnmatch_private.h
+
+if HAVE_WINCE
+lib_evil_libevil_la_SOURCES += lib/evil/evil_errno.c lib/evil/evil_link_ce.c
+else
+lib_evil_libevil_la_SOURCES += lib/evil/evil_link_xp.cpp
+endif
+
+lib_evil_libevil_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
+@EVIL_CPPFLAGS@
+lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@
+lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
+lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
+lib_evil_libevil_la_LDFLAGS = -no-undefined -version-info @version_info@
+
+if HAVE_WINCE
+lib_evil_libevil_la_LINK = $(LINK) $(libevil_la_LDFLAGS)
+else
+lib_evil_libevil_la_LINK = $(CXXLINK) $(libevil_la_LDFLAGS)
+endif
+
+lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
+
+lib_evil_libdl_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
+@EVIL_DLFCN_CPPFLAGS@
+
+lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@
+
+lib_evil_libdl_la_LIBADD = $(top_builddir)/src/lib/evil/libevil.la @EVIL_DLFCN_LIBS@
+
+lib_evil_libdl_la_LDFLAGS = -no-undefined -version-info @version_info@
+
+EXTRA_DIST += lib/evil/gdtoa/README lib/evil/gdtoa/README.mingw
+
+### Binary
+
+bin_PROGRAMS += bin/evil/evil_suite bin/evil/test_evil
+
+bin_evil_evil_suite_SOURCES = \
+bin/evil/evil_suite.c \
+bin/evil/evil_test_dlfcn.c \
+bin/evil/evil_test_environment.c \
+bin/evil/evil_test_gettimeofday.c \
+bin/evil/evil_test_link.c \
+bin/evil/evil_test_memcpy.c \
+bin/evil/evil_test_mkstemp.c \
+bin/evil/evil_test_pipe.c \
+bin/evil/evil_test_print.c \
+bin/evil/evil_test_realpath.c \
+bin/evil/evil_test_util.c \
+bin/evil/evil_suite.h \
+bin/evil/evil_test_dlfcn.h \
+bin/evil/evil_test_environment.h \
+bin/evil/evil_test_gettimeofday.h \
+bin/evil/evil_test_link.h \
+bin/evil/evil_test_memcpy.h \
+bin/evil/evil_test_mkstemp.h \
+bin/evil/evil_test_pipe.h \
+bin/evil/evil_test_print.h \
+bin/evil/evil_test_realpath.h \
+bin/evil/evil_test_util.h
+
+if HAVE_WINCE
+bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
+#else
+#suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S
+endif
+
+bin_evil_evil_suite_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
+@EFL_CFLAGS@ \
+@EVIL_CPPFLAGS@
+
+if HAVE_WINDOWS
+bin_evil_evil_suite_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
+bin_evil_evil_suite_LDADD = \
+$(top_builddir)/src/lib/evil/libevil.la \
+$(top_builddir)/src/lib/eina/libdl.la \
+-lm
+
+bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
+
+bin_evil_test_evil_LDADD = $(top_builddir)/src/lib/evil/libevil.la

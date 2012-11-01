@@ -1,0 +1,88 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/eet/libeet.la
+
+installed_eetmainheadersdir = $(includedir)/eet-@VMAJ@
+dist_installed_eetmainheaders_DATA = lib/eet/Eet.h
+
+lib_eet_libeet_la_SOURCES = \
+lib/eet/Eet_private.h \
+lib/eet/eet_alloc.c \
+lib/eet/eet_cipher.c \
+lib/eet/eet_connection.c \
+lib/eet/eet_data.c \
+lib/eet/eet_dictionary.c \
+lib/eet/eet_image.c \
+lib/eet/eet_lib.c \
+lib/eet/eet_node.c \
+lib/eet/eet_utils.c \
+lib/eet/lz4/lz4.c \
+lib/eet/lz4/lz4.h \
+lib/eet/lz4/lz4hc.c \
+lib/eet/lz4/lz4hc.h
+
+lib_eet_libeet_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/eet/lz4 \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eet/lz4 \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DEFL_EET_BUILD \
+@EFL_CFLAGS@ \
+@EET_CFLAGS@
+
+if HAVE_WINDOWS
+lib_eet_libeet_la_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
+lib_eet_libeet_la_LIBADD = $(top_builddir)/src/lib/eina/libeina.la
+
+if HAVE_WINDOWS
+lib_eet_libeet_la_LIBADD += $(top_builddir)/src/lib/evil/libevil.la
+endif
+
+lib_eet_libeet_la_LIBADD += @EET_LIBS@ -lm
+
+lib_eet_libeet_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+EXTRA_DIST += lib/eet/lz4/README
+
+### Binary
+
+bin_PROGRAMS += bin/eet/eet
+
+bin_eet_eet_SOURCES = bin/eet/eet_main.c
+
+bin_eet_eet_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EFL_CFLAGS@ \
+@EET_CFLAGS@
+
+if HAVE_WINDOWS
+bin_eet_eet_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
+bin_eet_eet_LDADD = \
+$(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/eina/libeina.la
+
+if HAVE_WINDOWS
+bin_eet_eet_LDADD += $(top_builddir)/src/lib/evil/libevil.la
+endif
+
+bin_eet_eet_LDADD += @EET_LIBS@
