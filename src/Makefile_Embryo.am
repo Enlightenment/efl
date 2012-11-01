@@ -21,7 +21,7 @@ lib_embryo_libembryo_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \
 -DEFL_EMBRYO_BUILD \
 @EFL_CFLAGS@
 
@@ -68,7 +68,7 @@ bin_embryo_embryo_cc_CPPFLAGS = \
 -I$(top_builddir)/src/lib/embryo \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \
 @EFL_CFLAGS@
 
 if HAVE_WINDOWS
@@ -88,4 +88,3 @@ endif
 EXTRA_DIST += \
 bin/embryo/embryo_cc_sc5.scp \
 bin/embryo/embryo_cc_sc7.scp
-

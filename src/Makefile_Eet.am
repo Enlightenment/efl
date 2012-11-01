@@ -31,7 +31,7 @@ lib_eet_libeet_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eet/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
 -DEFL_EET_BUILD \
 @EFL_CFLAGS@ \
 @EET_CFLAGS@
