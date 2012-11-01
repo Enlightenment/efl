@@ -32,7 +32,7 @@
  * @{
  */
 
-#define ELM_NOTIFY_ALIGN_FILL                   -1.0  /**< Use with elm_notify_align_set() */
+#define ELM_NOTIFY_ALIGN_FILL                   -1.0  /**< Use with elm_notify_align_set() @since 1.8 */
 
 /**
  * @brief Add a new notify to the parent
@@ -136,6 +136,10 @@ EAPI Eina_Bool                    elm_notify_allow_events_get(const Evas_Object 
  *
  * Sets the alignment in which the notify will appear in its parent.
  *
+ * @note To fill the notify box in the parent area, please pass the
+ * @c ELM_NOTIFY_ALIGN_FILL to @p horizontal, @p vertical.
+ *
+ * @since 1.8
  * @ingroup Notify
  */
 EAPI void                         elm_notify_align_set(Evas_Object *obj, double horizontal, double vertical);
@@ -148,6 +152,7 @@ EAPI void                         elm_notify_align_set(Evas_Object *obj, double 
  *
  * @see elm_notify_align_set()
  *
+ * @since 1.8
  * @ingroup Notify
  */
 EAPI void                         elm_notify_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
