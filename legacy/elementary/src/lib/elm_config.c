@@ -18,6 +18,7 @@ static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_color_edd = NULL;
 static Eet_Data_Descriptor *_config_color_palette_edd = NULL;
 const char *_elm_preferred_engine = NULL;
+Eina_List  *_font_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 
@@ -114,6 +115,25 @@ _prop_all_update_cb(void *data __UNUSED__)
    return EINA_FALSE;
 }
 
+void
+_elm_font_overlays_del_free(void)
+{
+   char *text_class;
+   Eina_List *l;
+   EINA_LIST_FOREACH(_font_overlays_del, l, text_class)
+     eina_stringshare_del(text_class);
+   _font_overlays_del = eina_list_free(_font_overlays_del);
+}
+
+void
+_elm_config_font_overlays_cancel(void)
+{
+   Elm_Font_Overlay *efd;
+   Eina_List *l;
+   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
+     edje_text_class_del(efd->text_class);
+}
+
 static Eina_Bool
 _prop_config_get(void)
 {
@@ -158,6 +178,7 @@ _prop_config_get(void)
    /* What in the case the version is older? Do we even support those
     * cases or we only check for equality above? */
 
+   _elm_config_font_overlays_cancel();
    _config_free();
    _elm_config = config_data;
    _env_get();
@@ -596,7 +617,9 @@ _elm_config_font_overlay_remove(const char *text_class)
      {
         if (strcmp(efd->text_class, text_class))
           continue;
-
+        _font_overlays_del =
+           eina_list_append(_font_overlays_del,
+                            eina_stringshare_add(text_class));
         _elm_config->font_overlays =
           eina_list_remove_list(_elm_config->font_overlays, l);
         if (efd->text_class) eina_stringshare_del(efd->text_class);
@@ -612,10 +635,13 @@ _elm_config_font_overlay_apply(void)
 {
    Elm_Font_Overlay *efd;
    Eina_List *l;
-   int i;
-
-   for (i = 0; _elm_text_classes[i].desc; i++)
-     edje_text_class_del(_elm_text_classes[i].name);
+   char *text_class;
+   EINA_LIST_FOREACH(_font_overlays_del, l, text_class)
+     {
+        edje_text_class_del(text_class);
+        eina_stringshare_del(text_class);
+     }
+   _font_overlays_del = eina_list_free(_font_overlays_del);
 
    EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
      edje_text_class_set(efd->text_class, efd->font, efd->size);
@@ -2336,6 +2362,8 @@ _elm_config_shutdown(void)
         free(_elm_profile);
         _elm_profile = NULL;
      }
+
+   _elm_font_overlays_del_free();
    _desc_shutdown();
 }
 
