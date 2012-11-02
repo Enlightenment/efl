@@ -684,6 +684,7 @@ cb_watch_toggle(DBusWatch *watch, void *data)
 {
    EDBus_Handler_Data *hd;
    hd = dbus_watch_get_data(watch);
+   if (!hd) return;
    DBG("cb_watch_toggle %d", hd->fd);
 
    hd->enabled = dbus_watch_get_enabled(watch);
