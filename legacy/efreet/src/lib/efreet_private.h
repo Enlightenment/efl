@@ -195,13 +195,14 @@ const char *efreet_lang_modifier_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
-void efreet_cache_desktop_update(void);
 void efreet_cache_desktop_close(void);
-void efreet_cache_icon_update(void);
+void efreet_cache_desktop_build(void);
 
 Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 void efreet_cache_desktop_add(Efreet_Desktop *desktop);
+void efreet_cache_icon_exts_add(Eina_List *exts);
+void efreet_cache_icon_dirs_add(Eina_List *dirs);
 Efreet_Cache_Array_String *efreet_cache_desktop_dirs(void);
 
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);

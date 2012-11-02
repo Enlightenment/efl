@@ -45,8 +45,6 @@ static const char *desktop_environment = NULL;
  */
 static Eina_List *efreet_desktop_types = NULL;
 
-static Eina_Hash *change_monitors = NULL;
-
 EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
 EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
@@ -90,12 +88,6 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Desktop *desktop);
 
-static void efreet_desktop_changes_listen(void);
-static void efreet_desktop_changes_listen_recursive(const char *path);
-static void efreet_desktop_changes_monitor_add(const char *path);
-static void efreet_desktop_changes_cb(void *data, Ecore_File_Monitor *em,
-                                             Ecore_File_Event event, const char *path);
-
 /**
  * @internal
  * @return Returns > 0 on success or 0 on failure
@@ -132,7 +124,6 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
-    efreet_desktop_changes_listen();
     return 1;
 }
 
@@ -149,7 +140,6 @@ efreet_desktop_shutdown(void)
     IF_RELEASE(desktop_environment);
     EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
-    IF_FREE_HASH(change_monitors);
 #ifdef HAVE_EVIL
     evil_sockets_shutdown();
 #endif
@@ -990,103 +980,4 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
     }
 
     return 1;
-}
-
-static void
-efreet_desktop_changes_listen(void)
-{
-    Efreet_Cache_Array_String *arr;
-    Eina_List *dirs;
-    const char *path;
-
-    if (!efreet_cache_update) return;
-
-    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
-    if (!change_monitors) return;
-
-    dirs = efreet_default_dirs_get(efreet_data_home_get(),
-                                   efreet_data_dirs_get(), "applications");
-
-    EINA_LIST_FREE(dirs, path)
-    {
-        if (ecore_file_is_dir(path))
-            efreet_desktop_changes_listen_recursive(path);
-        eina_stringshare_del(path);
-    }
-
-    arr = efreet_cache_desktop_dirs();
-    if (arr)
-    {
-        unsigned int i;
-
-        for (i = 0; i < arr->array_count; i++)
-            efreet_desktop_changes_monitor_add(arr->array[i]);
-        efreet_cache_array_string_free(arr);
-    }
-}
-
-static void
-efreet_desktop_changes_listen_recursive(const char *path)
-{
-    Eina_Iterator *it;
-    Eina_File_Direct_Info *info;
-
-    efreet_desktop_changes_monitor_add(path);
-
-    it = eina_file_stat_ls(path);
-    if (!it) return;
-    EINA_ITERATOR_FOREACH(it, info)
-    {
-        if (info->type != EINA_FILE_DIR) continue;
-        efreet_desktop_changes_listen_recursive(info->path);
-    }
-    eina_iterator_free(it);
-}
-
-static void
-efreet_desktop_changes_monitor_add(const char *path)
-{
-    if (eina_hash_find(change_monitors, path)) return;
-    eina_hash_add(change_monitors, path,
-                  ecore_file_monitor_add(path,
-                                         efreet_desktop_changes_cb,
-                                         NULL));
-}
-
-static void
-efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
-                                 Ecore_File_Event event, const char *path)
-{
-    const char *ext;
-
-    /* TODO: If we get a stale symlink, we need to rerun cache creation */
-    /* TODO: Check for desktop*.cache, as this will be created when app is installed */
-    /* TODO: Do efreet_cache_icon_update() when app is installed, as it has the same
-     *       symlink problem */
-    switch (event)
-    {
-        case ECORE_FILE_EVENT_NONE:
-            /* noop */
-            break;
-
-        case ECORE_FILE_EVENT_CREATED_FILE:
-        case ECORE_FILE_EVENT_DELETED_FILE:
-        case ECORE_FILE_EVENT_MODIFIED:
-        case ECORE_FILE_EVENT_CLOSED:
-            ext = strrchr(path, '.');
-            if (ext && (!strcmp(ext, ".desktop") || !strcmp(ext, ".directory")))
-                efreet_cache_desktop_update();
-            break;
-
-        case ECORE_FILE_EVENT_DELETED_SELF:
-        case ECORE_FILE_EVENT_DELETED_DIRECTORY:
-            eina_hash_del_by_key(change_monitors, path);
-            efreet_cache_desktop_update();
-            break;
-
-        case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-            efreet_desktop_changes_monitor_add(path);
-            efreet_cache_desktop_update();
-            break;
-    }
 }

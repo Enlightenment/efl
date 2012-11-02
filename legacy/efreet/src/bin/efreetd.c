@@ -45,7 +45,8 @@ dbus_error:
 ecore_file_error:
    ecore_shutdown();
 ecore_error:
-   eina_log_domain_unregister(efreetd_log_dom);
+   if (efreetd_log_dom >= 0)
+     eina_log_domain_unregister(efreetd_log_dom);
    efreetd_log_dom = -1;
    eina_shutdown();
    return 1;

@@ -187,7 +187,7 @@ efreet_lang_reset(void)
 
    efreet_dirs_reset();
    efreet_cache_desktop_close();
-   efreet_cache_desktop_update();
+   efreet_cache_desktop_build();
 }
 
 /**

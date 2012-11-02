@@ -4,6 +4,7 @@
 void cache_desktop_dir_add(const char *dir);
 void cache_icon_dir_add(const char *dir);
 void cache_icon_ext_add(const char *ext);
+void cache_desktop_update(void);
 
 Eina_Bool cache_init(void);
 Eina_Bool cache_shutdown(void);

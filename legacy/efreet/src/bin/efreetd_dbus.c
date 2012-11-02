@@ -7,8 +7,8 @@
 #include "efreetd.h"
 #include "efreetd_cache.h"
 
-#define BUS "org.enlightenment"
-#define PATH "/org/enlightenment"
+#define BUS "org.enlightenment.Efreet"
+#define PATH "/org/enlightenment/Efreet"
 #define INTERFACE "org.enlightenment.Efreet"
 
 /* internal */
@@ -24,17 +24,15 @@ static EDBus_Service_Interface *iface;
 static EDBus_Message *
 ping(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
-   printf("ping\n");
    return edbus_message_method_return_new(message);
 }
- 
+
 static EDBus_Message *
 add_desktop_dirs(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
    EDBus_Message_Iter *array = NULL;
    const char *dir;
 
-   printf("Add desktop dirs\n");
    if (!edbus_message_arguments_get(message, "as", &array))
      {
         ERR("Error getting arguments.");
@@ -55,7 +53,6 @@ add_icon_dirs(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message
    EDBus_Message_Iter *array = NULL;
    const char *dir;
 
-   printf("Add icon dirs\n");
    if (!edbus_message_arguments_get(message, "as", &array))
      {
         ERR("Error getting arguments.");
@@ -71,12 +68,18 @@ add_icon_dirs(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message
 }
 
 static EDBus_Message *
+build_desktop_cache(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message __UNUSED__)
+{
+   cache_desktop_update();
+   return NULL;
+}
+
+static EDBus_Message *
 add_icon_exts(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
    EDBus_Message_Iter *array = NULL;
    const char *ext;
 
-   printf("Add icon exts\n");
    if (!edbus_message_arguments_get(message, "as", &array))
      {
         ERR("Error getting arguments.");
@@ -98,26 +101,31 @@ static const EDBus_Signal signals[] = {
 };
 
 static const EDBus_Method methods[] = {
+     /* TODO: Register / Unregister */
        {
           "Ping", NULL, NULL,
           ping, 0
        },
        {
-          "AddDesktopDirs", NULL, EDBUS_ARGS({"as", "dirs"}),
+          "AddDesktopDirs", EDBUS_ARGS({"as", "dirs"}), NULL,
           add_desktop_dirs, EDBUS_METHOD_FLAG_NOREPLY
        },
        {
-          "AddIconDirs", NULL, EDBUS_ARGS({"as", "dirs"}),
+          "BuildDesktopCache", NULL, NULL,
+          build_desktop_cache, EDBUS_METHOD_FLAG_NOREPLY
+       },
+       {
+          "AddIconDirs", EDBUS_ARGS({"as", "dirs"}), NULL,
           add_icon_dirs, EDBUS_METHOD_FLAG_NOREPLY
        },
        {
-          "AddIconExts", NULL, EDBUS_ARGS({"as", "exts"}),
+          "AddIconExts", EDBUS_ARGS({"as", "exts"}), NULL,
           add_icon_exts, EDBUS_METHOD_FLAG_NOREPLY
        },
        { NULL, NULL, NULL, NULL, 0 }
 };
 
-const static EDBus_Service_Interface_Desc desc = {
+static const EDBus_Service_Interface_Desc desc = {
    INTERFACE, methods, signals
 };
 

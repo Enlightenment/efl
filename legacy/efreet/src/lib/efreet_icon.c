@@ -35,8 +35,6 @@ static const char *efreet_icon_user_dir = NULL;
 static Eina_List *efreet_icon_extensions = NULL;
 static Eina_List *efreet_extra_icon_dirs = NULL;
 
-static Eina_Hash *change_monitors = NULL;
-
 typedef struct Efreet_Icon_Cache Efreet_Icon_Cache;
 struct Efreet_Icon_Cache
 {
@@ -59,12 +57,7 @@ static const char *efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem,
 static const char *efreet_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon);
 static const char *efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon,
                                                                const char *path);
-
-static void efreet_icon_changes_listen(void);
-static void efreet_icon_changes_monitor_add(const char *path);
-static void efreet_icon_changes_cb(void *data, Ecore_File_Monitor *em,
-                                   Ecore_File_Event event, const char *path);
-
+static void efreet_cache_icon_dirs_add_cb(void *data);
 
 /**
  * @internal
@@ -86,9 +79,8 @@ efreet_icon_init(void)
     for (i = 0; default_exts[i]; i++)
         efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
 
-    efreet_icon_changes_listen();
-
     efreet_extra_icon_dirs = NULL;
+    efreet_cache_icon_exts_add(efreet_icon_extensions);
 
     return 1;
 }
@@ -109,7 +101,6 @@ efreet_icon_shutdown(void)
 
     eina_log_domain_unregister(_efreet_icon_log_dom);
     _efreet_icon_log_dom = -1;
-    IF_FREE_HASH(change_monitors);
 }
 
 EAPI const char *
@@ -166,11 +157,13 @@ efreet_icon_extension_add(const char *ext)
     }
     else
         efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
+    efreet_cache_icon_exts_add(efreet_icon_extensions);
 }
 
 EAPI Eina_List **
 efreet_icon_extra_list_get(void)
 {
+    ecore_job_add(efreet_cache_icon_dirs_add_cb, NULL);
     return &efreet_extra_icon_dirs;
 }
 
@@ -813,90 +806,7 @@ efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const ch
 }
 
 static void
-efreet_icon_changes_listen(void)
+efreet_cache_icon_dirs_add_cb(void *data __UNUSED__)
 {
-    Eina_List *l;
-    Eina_List *xdg_dirs;
-    char buf[PATH_MAX];
-    const char *dir;
-
-    if (!efreet_cache_update) return;
-
-    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
-    if (!change_monitors) return;
-
-    efreet_icon_changes_monitor_add(efreet_icon_deprecated_user_dir_get());
-    efreet_icon_changes_monitor_add(efreet_icon_user_dir_get());
-    EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
-        efreet_icon_changes_monitor_add(dir);
-
-    xdg_dirs = efreet_data_dirs_get();
-    EINA_LIST_FOREACH(xdg_dirs, l, dir)
-    {
-        snprintf(buf, sizeof(buf), "%s/icons", dir);
-        efreet_icon_changes_monitor_add(buf);
-    }
-
-#ifndef STRICT_SPEC
-    EINA_LIST_FOREACH(xdg_dirs, l, dir)
-    {
-        snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
-        efreet_icon_changes_monitor_add(buf);
-    }
-#endif
-
-    efreet_icon_changes_monitor_add("/usr/share/pixmaps");
-}
-
-static void
-efreet_icon_changes_monitor_add(const char *path)
-{
-    Eina_Iterator *it;
-    Eina_File_Direct_Info *info;
-   
-    if (!ecore_file_is_dir(path)) return;
-    if (eina_hash_find(change_monitors, path)) return;
-    eina_hash_add(change_monitors, path,
-                  ecore_file_monitor_add(path,
-                                         efreet_icon_changes_cb,
-                                         NULL));
-
-    it = eina_file_stat_ls(path);
-    if (!it) return;
-    EINA_ITERATOR_FOREACH(it, info)
-    {
-        if (info->type != EINA_FILE_DIR) continue;
-        eina_hash_add(change_monitors, info->path,
-                      ecore_file_monitor_add(info->path,
-                                             efreet_icon_changes_cb,
-                                             NULL));
-    }
-    eina_iterator_free(it);
-}
-
-static void
-efreet_icon_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
-                       Ecore_File_Event event, const char *path)
-{
-    /* TODO: If we get a stale symlink, we need to rerun cache creation */
-    switch (event)
-    {
-        case ECORE_FILE_EVENT_NONE:
-            /* noop */
-            break;
-
-        case ECORE_FILE_EVENT_CREATED_FILE:
-        case ECORE_FILE_EVENT_DELETED_FILE:
-        case ECORE_FILE_EVENT_MODIFIED:
-        case ECORE_FILE_EVENT_CLOSED:
-        case ECORE_FILE_EVENT_DELETED_DIRECTORY:
-        case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-            efreet_cache_icon_update();
-            break;
-
-        case ECORE_FILE_EVENT_DELETED_SELF:
-            eina_hash_del_by_key(change_monitors, path);
-            efreet_cache_icon_update();
-            break;
-    }
+    efreet_cache_icon_dirs_add(efreet_extra_icon_dirs);
 }

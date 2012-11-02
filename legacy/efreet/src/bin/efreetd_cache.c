@@ -12,6 +12,7 @@
 #include "Efreet.h"
 #define EFREET_MODULE_LOG_DOM efreetd_log_dom
 #include "efreet_private.h"
+#include "efreetd_cache.h"
 
 static Eina_Hash *change_monitors = NULL;
 
@@ -22,9 +23,11 @@ static Ecore_Exe           *desktop_cache_exe = NULL;
 static Ecore_Timer         *icon_cache_timer = NULL;
 static Ecore_Timer         *desktop_cache_timer = NULL;
 
+static Eina_List *desktop_system_dirs = NULL;
 static Eina_List *desktop_extra_dirs = NULL;
 static Eina_List *icon_extra_dirs = NULL;
-static Eina_List *icon_extra_exts = NULL;
+static Eina_List *icon_exts = NULL;
+static Eina_Bool  icon_flush = EINA_FALSE;
 
 static void desktop_changes_monitor_add(const char *path);
 
@@ -36,6 +39,8 @@ icon_cache_update_cache_cb(void *data __UNUSED__)
    int prio;
 
    icon_cache_timer = NULL;
+
+   if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
 
    /* TODO: Queue if already running */
    prio = ecore_exe_run_priority_get();
@@ -53,29 +58,35 @@ icon_cache_update_cache_cb(void *data __UNUSED__)
              eina_strlcat(file, p, sizeof(file));
           }
      }
-   if (icon_extra_exts)
+   if (icon_exts)
      {
         Eina_List *ll;
         char *p;
 
         eina_strlcat(file, " -e", sizeof(file));
-        EINA_LIST_FOREACH(icon_extra_exts, ll, p)
+        EINA_LIST_FOREACH(icon_exts, ll, p)
           {
              eina_strlcat(file, " ", sizeof(file));
              eina_strlcat(file, p, sizeof(file));
           }
      }
-   icon_cache_exe = ecore_exe_run(file, NULL);
+   if (icon_flush)
+     eina_strlcat(file, " -f", sizeof(file));
+   icon_flush = EINA_FALSE;
+   icon_cache_exe =
+      ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
    ecore_exe_run_priority_set(prio);
 
    return ECORE_CALLBACK_CANCEL;
 }
 
 static void
-cache_icon_update(void)
+cache_icon_update(Eina_Bool flush)
 {
    if (icon_cache_timer)
      ecore_timer_del(icon_cache_timer);
+   if (flush)
+     icon_flush = flush;
    icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
 }
 
@@ -104,18 +115,11 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
           }
      }
    INF("Run desktop cache creation: %s", file);
-   desktop_cache_exe = ecore_exe_run(file, NULL);
+   desktop_cache_exe =
+      ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
    ecore_exe_run_priority_set(prio);
 
    return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-cache_desktop_update(void)
-{
-   if (desktop_cache_timer)
-     ecore_timer_del(desktop_cache_timer);
-   desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
 }
 
 static Eina_Bool
@@ -139,6 +143,7 @@ cache_exe_data_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 
         if ((ev->lines) && (*ev->lines->line == 'c'))
           update = EINA_TRUE;
+
         send_signal_icon_cache_update(update);
      }
    return ECORE_CALLBACK_RENEW;
@@ -178,12 +183,12 @@ icon_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
       case ECORE_FILE_EVENT_CLOSED:
       case ECORE_FILE_EVENT_DELETED_DIRECTORY:
       case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-         cache_icon_update();
+         cache_icon_update(EINA_FALSE);
          break;
 
       case ECORE_FILE_EVENT_DELETED_SELF:
          eina_hash_del_by_key(change_monitors, path);
-         cache_icon_update();
+         cache_icon_update(EINA_FALSE);
          break;
      }
 }
@@ -193,23 +198,26 @@ icon_changes_monitor_add(const char *path)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
+   Ecore_File_Monitor *mon;
 
    if (!ecore_file_is_dir(path)) return;
    if (eina_hash_find(change_monitors, path)) return;
-   eina_hash_add(change_monitors, path,
-                 ecore_file_monitor_add(path,
-                                        icon_changes_cb,
-                                        NULL));
+   mon = ecore_file_monitor_add(path,
+                                icon_changes_cb,
+                                NULL);
+   if (mon)
+     eina_hash_add(change_monitors, path, mon);
 
    it = eina_file_stat_ls(path);
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->type != EINA_FILE_DIR) continue;
-        eina_hash_add(change_monitors, info->path,
-                      ecore_file_monitor_add(info->path,
-                                             icon_changes_cb,
-                                             NULL));
+        mon = ecore_file_monitor_add(info->path,
+                                     icon_changes_cb,
+                                     NULL);
+        if (mon)
+          eina_hash_add(change_monitors, info->path, mon);
      }
    eina_iterator_free(it);
 }
@@ -286,11 +294,14 @@ desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 static void
 desktop_changes_monitor_add(const char *path)
 {
+   Ecore_File_Monitor *mon;
+
    if (eina_hash_find(change_monitors, path)) return;
-   eina_hash_add(change_monitors, path,
-                 ecore_file_monitor_add(path,
-                                        desktop_changes_cb,
-                                        NULL));
+   mon = ecore_file_monitor_add(path,
+                                desktop_changes_cb,
+                                NULL);
+   if (mon)
+     eina_hash_add(change_monitors, path, mon);
 }
 
 static void
@@ -314,17 +325,13 @@ desktop_changes_listen_recursive(const char *path)
 static void
 desktop_changes_listen(void)
 {
-   Eina_List *dirs, *l;
+   Eina_List *l;
    const char *path;
 
-   dirs = efreet_default_dirs_get(efreet_data_home_get(),
-                                  efreet_data_dirs_get(), "applications");
-
-   EINA_LIST_FREE(dirs, path)
+   EINA_LIST_FOREACH(desktop_system_dirs, l, path)
      {
         if (ecore_file_is_dir(path))
           desktop_changes_listen_recursive(path);
-        eina_stringshare_del(path);
      }
 
    EINA_LIST_FOREACH(desktop_extra_dirs, l, path)
@@ -332,7 +339,7 @@ desktop_changes_listen(void)
 }
 
 static void
-fill_extra(const char *file, Eina_List **l)
+fill_list(const char *file, Eina_List **l)
 {
    Eina_File *f = NULL;
    Eina_Iterator *it = NULL;
@@ -349,7 +356,6 @@ fill_extra(const char *file, Eina_List **l)
         const char *end;
         end = line->end - 1;
         *l = eina_list_append(*l, eina_stringshare_add_length(line->start, end - line->start));
-        printf("fill: %s\n", (const char *)(*l)->data);
      }
    eina_iterator_free(it);
 error:
@@ -357,15 +363,15 @@ error:
 }
 
 static void
-read_extra(void)
+read_lists(void)
 {
-   fill_extra("extra_desktop.dirs", &desktop_extra_dirs);
-   fill_extra("extra_icon.dirs", &icon_extra_dirs);
-   fill_extra("extra_icon.exts", &icon_extra_exts);
+   fill_list("extra_desktop.dirs", &desktop_extra_dirs);
+   fill_list("extra_icon.dirs", &icon_extra_dirs);
+   fill_list("icon.exts", &icon_exts);
 }
 
 static void
-save_extra(const char *file, Eina_List *l)
+save_list(const char *file, Eina_List *l)
 {
    FILE *f;
    char buf[PATH_MAX];
@@ -373,11 +379,17 @@ save_extra(const char *file, Eina_List *l)
    const char *path;
 
    snprintf(buf, sizeof(buf), "%s/efreet/%s", efreet_cache_home_get(), file);
-   f = fopen("wb", buf);
+   f = fopen(buf, "wb");
    if (!f) return;
    EINA_LIST_FOREACH(l, ll, path)
       fprintf(f, "%s\n", path);
    fclose(f);
+}
+
+static int
+strcmplen(const void *data1, const void *data2)
+{
+    return strncmp(data1, data2, eina_stringshare_strlen(data1));
 }
 
 /* external */
@@ -388,10 +400,11 @@ cache_desktop_dir_add(const char *dir)
 
    san = eina_file_path_sanitize(dir);
    if (!san) return;
-   if (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san))
+   if ((!eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)) &&
+       (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san)))
      {
         desktop_extra_dirs = eina_list_append(desktop_extra_dirs, eina_stringshare_add(san));
-        save_extra("extra_desktop.dirs", desktop_extra_dirs);
+        save_list("extra_desktop.dirs", desktop_extra_dirs);
         cache_desktop_update();
      }
    free(san);
@@ -407,8 +420,8 @@ cache_icon_dir_add(const char *dir)
    if (!eina_list_search_unsorted_list(icon_extra_dirs, EINA_COMPARE_CB(strcmp), san))
      {
         icon_extra_dirs = eina_list_append(icon_extra_dirs, eina_stringshare_add(san));
-        save_extra("extra_icon.dirs", icon_extra_dirs);
-        cache_icon_update();
+        save_list("extra_icon.dirs", icon_extra_dirs);
+        cache_icon_update(EINA_TRUE);
      }
    free(san);
 }
@@ -416,12 +429,20 @@ cache_icon_dir_add(const char *dir)
 void
 cache_icon_ext_add(const char *ext)
 {
-   if (!eina_list_search_unsorted_list(icon_extra_exts, EINA_COMPARE_CB(strcmp), ext))
+   if (!eina_list_search_unsorted_list(icon_exts, EINA_COMPARE_CB(strcmp), ext))
      {
-        icon_extra_exts = eina_list_append(icon_extra_exts, eina_stringshare_add(ext));
-        save_extra("extra_icon.exts", icon_extra_exts);
-        cache_icon_update();
+        icon_exts = eina_list_append(icon_exts, eina_stringshare_add(ext));
+        save_list("icon.exts", icon_exts);
+        cache_icon_update(EINA_TRUE);
      }
+}
+
+void
+cache_desktop_update(void)
+{
+   if (desktop_cache_timer)
+     ecore_timer_del(desktop_cache_timer);
+   desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
 }
 
 Eina_Bool
@@ -437,14 +458,14 @@ cache_init(void)
      }
 
    cache_exe_del_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                               cache_exe_del_cb, NULL);
+                                                   cache_exe_del_cb, NULL);
    if (!cache_exe_del_handler)
      {
         ERR("Failed to add exe del handler\n");
         goto error;
      }
    cache_exe_data_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
-                                               cache_exe_data_cb, NULL);
+                                                    cache_exe_data_cb, NULL);
    if (!cache_exe_data_handler)
      {
         ERR("Failed to add exe del handler\n");
@@ -456,10 +477,13 @@ cache_init(void)
    efreet_cache_update = 0;
    if (!efreet_init()) goto error;
 
-   read_extra();
+   read_lists();
+   /* TODO: Should check if system dirs has changed and handles extra_dirs */
+   desktop_system_dirs = efreet_default_dirs_get(efreet_data_home_get(),
+                                                 efreet_data_dirs_get(), "applications");
    icon_changes_listen();
    desktop_changes_listen();
-   cache_icon_update();
+   cache_icon_update(EINA_FALSE);
    cache_desktop_update();
 
    return EINA_TRUE;
@@ -485,11 +509,14 @@ cache_shutdown(void)
 
    if (change_monitors)
      eina_hash_free(change_monitors);
+   change_monitors = NULL;
+   EINA_LIST_FREE(desktop_system_dirs, data)
+      eina_stringshare_del(data);
    EINA_LIST_FREE(desktop_extra_dirs, data)
       eina_stringshare_del(data);
    EINA_LIST_FREE(icon_extra_dirs, data)
       eina_stringshare_del(data);
-   EINA_LIST_FREE(icon_extra_exts, data)
+   EINA_LIST_FREE(icon_exts, data)
       eina_stringshare_del(data);
    return EINA_TRUE;
 }
