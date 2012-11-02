@@ -11,6 +11,12 @@
 
 int efreetd_log_dom = -1;
 
+void
+quit(void)
+{
+   ecore_main_loop_quit();
+}
+
 int
 main(void)
 {

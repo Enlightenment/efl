@@ -29,4 +29,6 @@ extern int efreetd_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(efreetd_log_dom, __VA_ARGS__)
 
+void quit(void);
+
 #endif

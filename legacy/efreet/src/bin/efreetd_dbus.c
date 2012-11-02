@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <Ecore.h>
 #include <EDBus.h>
 
 #include "efreetd.h"
@@ -21,14 +22,40 @@ enum
 static EDBus_Connection *conn;
 static EDBus_Service_Interface *iface;
 
+static Ecore_Timer *shutdown = NULL;
+static int clients = 0;
+
+static Eina_Bool
+do_shutdown(void *data __UNUSED__)
+{
+   quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static EDBus_Message *
-ping(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
+do_register(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
    EDBus_Message *reply;
 
+   clients++;
+   if (shutdown) ecore_timer_del(shutdown);
+   shutdown = NULL;
    reply = edbus_message_method_return_new(message);
    edbus_message_arguments_set(reply, "b", cache_desktop_exists());
    return reply;
+}
+
+static EDBus_Message *
+do_unregister(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message __UNUSED__)
+{
+   clients--;
+   if (clients <= 0)
+     {
+        clients = 0;
+        if (shutdown) ecore_timer_del(shutdown);
+        shutdown = ecore_timer_add(10.0, do_shutdown, NULL);
+     }
+   return NULL;
 }
 
 static EDBus_Message *
@@ -105,10 +132,13 @@ static const EDBus_Signal signals[] = {
 };
 
 static const EDBus_Method methods[] = {
-     /* TODO: Register / Unregister */
        {
-          "Ping", NULL, EDBUS_ARGS({"b", "cache exists"}),
-          ping, 0
+          "Register", NULL, EDBUS_ARGS({"b", "cache exists"}),
+          do_register, 0
+       },
+       {
+          "UnRegister", NULL, NULL,
+          do_unregister, 0
        },
        {
           "AddDesktopDirs", EDBUS_ARGS({"as", "dirs"}), NULL,
@@ -130,7 +160,7 @@ static const EDBus_Method methods[] = {
 };
 
 static const EDBus_Service_Interface_Desc desc = {
-   INTERFACE, methods, signals
+   INTERFACE, methods, signals, NULL, NULL, NULL
 };
 
 static void

@@ -93,7 +93,7 @@ static void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 static Eina_Bool efreet_cache_check(Eet_File **ef, const char *path, int major);
 static void *efreet_cache_close(Eet_File *ef);
 
-static void on_send_ping(void *data, const EDBus_Message *msg, EDBus_Pending *pending);
+static void on_send_register(void *data, const EDBus_Message *msg, EDBus_Pending *pending);
 static void desktop_cache_update(void *context, const EDBus_Message *msg);
 static void icon_cache_update(void *context, const EDBus_Message *msg);
 
@@ -134,7 +134,7 @@ efreet_cache_init(void)
         edbus_proxy_signal_handler_add(proxy, "IconCacheUpdate", icon_cache_update, NULL);
         edbus_proxy_signal_handler_add(proxy, "DesktopCacheUpdate", desktop_cache_update, NULL);
 
-        edbus_proxy_call(proxy, "Ping", on_send_ping, NULL, -1, "");
+        edbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "");
 
         /*
          * TODO: Needed?
@@ -210,7 +210,11 @@ efreet_cache_shutdown(void)
      * TODO: Needed??
     edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
     */
-    if (conn) edbus_connection_unref(conn);
+    if (conn)
+    {
+        edbus_proxy_call(proxy, "UnRegister", NULL, NULL, -1, "");
+        edbus_connection_unref(conn);
+    }
 
     edbus_shutdown();
 }
@@ -1049,7 +1053,7 @@ efreet_cache_util_names(const char *key)
 }
 
 static void
-on_send_ping(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
+on_send_register(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
 {
     const char *errname, *errmsg;
     Eina_Bool exists;
