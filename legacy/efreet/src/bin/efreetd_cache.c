@@ -42,6 +42,7 @@ icon_cache_update_cache_cb(void *data __UNUSED__)
 
    icon_cache_timer = NULL;
 
+   if (icon_cache_exe) return ECORE_CALLBACK_CANCEL;
    if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
 
    /* TODO: Queue if already running */
@@ -100,6 +101,7 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
 
    desktop_cache_timer = NULL;
 
+   if (desktop_cache_exe) return ECORE_CALLBACK_CANCEL;
    /* TODO: Queue if already running */
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
