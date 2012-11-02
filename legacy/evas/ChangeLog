@@ -1141,3 +1141,7 @@
        * Fix clip bug while computing coordinates for Evas GL
        direct rendering optimization.
  
+2012-11-02  Carsten Haitzler (The Rasterman)
+
+       * Fix evas textblock tag parser to respect escaped spaces and
+         escaped single quotes. This fixes an edje text class restyling bug.

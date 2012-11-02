@@ -1,5 +1,11 @@
 Evas 1.8.0
 
+Changes since Evas 1.7.1
+-------------------------
+
+Fixes:
+   * Fix evas textblock tag parser to respect escaped spaces and escaped single quotes
+
 Changes since Evas 1.7.0:
 -------------------------
 

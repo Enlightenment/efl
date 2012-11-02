@@ -1684,20 +1684,48 @@ _format_param_parse(const char *item, const char **key, const char **val)
      {
         start = quote + 1;
         end = strchr(start, '\'');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, '\'');
      }
    else
      {
         end = strchr(start, ' ');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, ' ');
      }
 
    /* Null terminate before the spaces */
    if (end)
      {
-        *val = eina_stringshare_add_length(start, end - start);
+        char *tmp = alloca(end - start + 1);
+        char *s, *d;
+        
+        for (d = tmp, s = (char *)start; s < end; s++)
+          {
+             if (*s != '\\')
+               {
+                  *d = *s;
+                  d++;
+               }
+          }
+        *d = 0;
+        *val = eina_stringshare_add(tmp);
      }
    else
      {
-        *val = eina_stringshare_add(start);
+        char *tmp = alloca(strlen(start) + 1);
+        char *s, *d;
+        
+        for (d = tmp, s = (char *)start; *s; s++)
+          {
+             if (*s != '\\')
+               {
+                  *d = *s;
+                  d++;
+               }
+          }
+        *d = 0;
+        *val = eina_stringshare_add(tmp);
      }
 }
 
