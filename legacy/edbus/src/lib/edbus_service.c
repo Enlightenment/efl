@@ -53,7 +53,7 @@ static DBusObjectPathVTable vtable = {
 EDBus_Service_Interface *introspectable;
 
 static void
-_instrospect_append_signal(Eina_Strbuf *buf, const EDBus_Signal *sig)
+_introspect_append_signal(Eina_Strbuf *buf, const EDBus_Signal *sig)
 {
    int i;
    const char *part, *name;
@@ -134,7 +134,7 @@ _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
 
    size = eina_array_count(iface->sign_of_signals);
    for (i = 0; i < size; i++)
-     _instrospect_append_signal(buf, &iface->signals[i]);
+     _introspect_append_signal(buf, &iface->signals[i]);
 
    eina_strbuf_append(buf, "</interface>");
 }
@@ -172,7 +172,7 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
    return reply;
 }
 
-static const EDBus_Method instrospect = {
+static const EDBus_Method introspect = {
    "Introspect", NULL, EDBUS_ARGS({ "s", "xml" }), cb_introspect
 };
 
@@ -187,11 +187,11 @@ _introspectable_create(void)
    introspectable->name = eina_stringshare_add("org.freedesktop.DBus.Introspectable");
    introspectable->methods = eina_hash_string_small_new(NULL);
 
-   eina_hash_add(introspectable->methods, instrospect.member, &instrospect);
+   eina_hash_add(introspectable->methods, introspect.member, &introspect);
 }
 
 static void
-_instrospectable_free(void)
+_introspectable_free(void)
 {
    eina_hash_free(introspectable->methods);
    eina_stringshare_del(introspectable->name);
@@ -211,7 +211,7 @@ edbus_service_init(void)
 void
 edbus_service_shutdown(void)
 {
-   _instrospectable_free();
+   _introspectable_free();
 }
 
 static EDBus_Service_Object *
