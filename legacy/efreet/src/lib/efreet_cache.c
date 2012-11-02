@@ -861,16 +861,19 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
 {
     EDBus_Message *msg;
     EDBus_Message_Iter *iter, *array_of_string;
+    char *path;
 
     if (!efreet_cache_update) return;
     /* TODO: Chunk updates */
+    path = ecore_file_dir_get(desktop->orig_path);
     msg = edbus_proxy_method_call_new(proxy, "AddDesktopDirs");
     iter = edbus_message_iter_get(msg);
     array_of_string = edbus_message_iter_container_new(iter, 'a',"s");
-    edbus_message_iter_basic_append(array_of_string, 's', desktop->orig_path);
+    edbus_message_iter_basic_append(array_of_string, 's', path);
     edbus_message_iter_container_close(iter, array_of_string);
     edbus_proxy_send(proxy, msg, NULL, NULL, -1);
     edbus_message_unref(msg);
+    free(path);
 }
 
 void
