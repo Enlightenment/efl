@@ -28,7 +28,6 @@ $(top_builddir)/src/lib/libefreet.la \
 efreet_icon_cache_create_SOURCES = \
 efreet_icon_cache_create.c
 
-if HAVE_EFREETD
 bin_PROGRAMS = \
 efreetd
 
@@ -42,5 +41,4 @@ efreetd_dbus.h \
 efreetd_dbus.c \
 efreetd_cache.h \
 efreetd_cache.c
-endif
 

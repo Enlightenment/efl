@@ -76,14 +76,12 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = efreet.pc efreet-mime.pc efreet-trash.pc
 
-if HAVE_EFREETD
 if HAVE_DBUSSERVICEDIR
 servicedir = @dbusservicedir@
 else
 servicedir = $(datadir)/dbus-1/services
 endif
 service_DATA = org.enlightenment.Efreet.service
-endif
 
 EXTRA_DIST = \
 AUTHORS \
