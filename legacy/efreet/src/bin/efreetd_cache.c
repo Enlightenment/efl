@@ -90,7 +90,7 @@ cache_icon_update(Eina_Bool flush)
      ecore_timer_del(icon_cache_timer);
    if (flush)
      icon_flush = flush;
-   icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
+   icon_cache_timer = ecore_timer_add(1.0, icon_cache_update_cache_cb, NULL);
 }
 
 static Eina_Bool
@@ -450,7 +450,7 @@ cache_desktop_update(void)
 {
    if (desktop_cache_timer)
      ecore_timer_del(desktop_cache_timer);
-   desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
+   desktop_cache_timer = ecore_timer_add(1.0, desktop_cache_update_cache_cb, NULL);
 }
 
 Eina_Bool
@@ -467,7 +467,7 @@ cache_init(void)
    snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
    if (!ecore_file_mkpath(buf))
      {
-        ERR("Failed to create directory '%s'\n", buf);
+        ERR("Failed to create directory '%s'", buf);
         goto error;
      }
 
@@ -475,14 +475,14 @@ cache_init(void)
                                                    cache_exe_del_cb, NULL);
    if (!cache_exe_del_handler)
      {
-        ERR("Failed to add exe del handler\n");
+        ERR("Failed to add exe del handler");
         goto error;
      }
    cache_exe_data_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
                                                     cache_exe_data_cb, NULL);
    if (!cache_exe_data_handler)
      {
-        ERR("Failed to add exe del handler\n");
+        ERR("Failed to add exe data handler");
         goto error;
      }
 
@@ -493,6 +493,7 @@ cache_init(void)
 
    read_lists();
    /* TODO: Should check if system dirs has changed and handles extra_dirs */
+   /* TODO: get desktop-directories as well */
    desktop_system_dirs = efreet_default_dirs_get(efreet_data_home_get(),
                                                  efreet_data_dirs_get(), "applications");
    icon_changes_listen();
