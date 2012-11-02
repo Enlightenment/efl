@@ -479,9 +479,15 @@ _elm_entry_smart_disable(Evas_Object *obj)
    ELM_ENTRY_DATA_GET(obj, sd);
 
    if (elm_object_disabled_get(obj))
-     edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
+     {
+        edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
+        sd->disabled = EINA_TRUE;
+     }
    else
-     edje_object_signal_emit(sd->entry_edje, "elm,state,enabled", "elm");
+     {
+        edje_object_signal_emit(sd->entry_edje, "elm,state,enabled", "elm");
+        sd->disabled = EINA_FALSE;
+     }
 
    return EINA_TRUE;
 }
