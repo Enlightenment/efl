@@ -34,6 +34,9 @@ CLEANFILES += edbus2.pc
 EXTRA_DIST += edbus2.pc.in
 
 EXTRA_DIST += \
+	README \
+	AUTHORS \
+	COPYING \
 	m4/efl_doxygen.m4 \
 	m4/efl_compiler_flag.m4
 
