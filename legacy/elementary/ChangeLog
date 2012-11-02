@@ -652,3 +652,7 @@
 2012-10-31  TaeHwan Kim (Bluezery)
 
         * Don't crash glview even if you failed to create obj.
+
+2012-11-02  ChunEon Park (Hermet)
+
+        * Don't update map uv with image size for proxy object in elm_flip.

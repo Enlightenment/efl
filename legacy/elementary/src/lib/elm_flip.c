@@ -910,7 +910,8 @@ _flip_do(Evas_Object *obj,
         const char *type = evas_object_type_get(sd->front.content);
 
         // FIXME: only handles filled obj
-        if ((type) && (!strcmp(type, "image")))
+        if ((type) && (!strcmp(type, "image") &&
+                       !evas_object_image_source_get(sd->front.content)))
           {
              int iw, ih;
              evas_object_image_size_get(sd->front.content, &iw, &ih);
@@ -931,7 +932,8 @@ _flip_do(Evas_Object *obj,
      {
         const char *type = evas_object_type_get(sd->back.content);
 
-        if ((type) && (!strcmp(type, "image")))
+        if ((type) && (!strcmp(type, "image") &&
+                       !evas_object_image_source_get(sd->front.content)))
           {
              int iw, ih;
              evas_object_image_size_get(sd->back.content, &iw, &ih);
