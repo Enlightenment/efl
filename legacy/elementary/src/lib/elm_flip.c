@@ -886,6 +886,32 @@ _flip_show_hide(Evas_Object *obj)
 }
 
 static void
+_map_uv_set(Evas_Object *obj, Evas_Map *map)
+{
+   Evas_Coord x, y, w, h;
+   const char *type = evas_object_type_get(obj);
+
+   // FIXME: only handles filled obj
+   if ((type) && (!strcmp(type, "image") &&
+                  !evas_object_image_source_get(obj)))
+     {
+        int iw, ih;
+        evas_object_image_size_get(obj, &iw, &ih);
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
+        evas_map_util_points_populate_from_geometry(map, x, y, w, h, 0);
+        evas_map_point_image_uv_set(map, 0, 0, 0);
+        evas_map_point_image_uv_set(map, 1, iw, 0);
+        evas_map_point_image_uv_set(map, 2, iw, ih);
+        evas_map_point_image_uv_set(map, 3, 0, ih);
+     }
+   else
+     {
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
+        evas_map_util_points_populate_from_geometry(map, x, y, w, h, 0);
+     }
+}
+
+static void
 _flip_do(Evas_Object *obj,
          double t,
          Elm_Flip_Mode mode,
@@ -906,50 +932,9 @@ _flip_do(Evas_Object *obj,
    evas_map_smooth_set(mb, EINA_FALSE);
 
    if (sd->front.content)
-     {
-        const char *type = evas_object_type_get(sd->front.content);
-
-        // FIXME: only handles filled obj
-        if ((type) && (!strcmp(type, "image") &&
-                       !evas_object_image_source_get(sd->front.content)))
-          {
-             int iw, ih;
-             evas_object_image_size_get(sd->front.content, &iw, &ih);
-             evas_object_geometry_get(sd->front.content, &x, &y, &w, &h);
-             evas_map_util_points_populate_from_geometry(mf, x, y, w, h, 0);
-             evas_map_point_image_uv_set(mf, 0, 0, 0);
-             evas_map_point_image_uv_set(mf, 1, iw, 0);
-             evas_map_point_image_uv_set(mf, 2, iw, ih);
-             evas_map_point_image_uv_set(mf, 3, 0, ih);
-          }
-        else
-          {
-             evas_object_geometry_get(sd->front.content, &x, &y, &w, &h);
-             evas_map_util_points_populate_from_geometry(mf, x, y, w, h, 0);
-          }
-     }
+     _map_uv_set(sd->front.content, mf);
    if (sd->back.content)
-     {
-        const char *type = evas_object_type_get(sd->back.content);
-
-        if ((type) && (!strcmp(type, "image") &&
-                       !evas_object_image_source_get(sd->front.content)))
-          {
-             int iw, ih;
-             evas_object_image_size_get(sd->back.content, &iw, &ih);
-             evas_object_geometry_get(sd->back.content, &x, &y, &w, &h);
-             evas_map_util_points_populate_from_geometry(mb, x, y, w, h, 0);
-             evas_map_point_image_uv_set(mb, 0, 0, 0);
-             evas_map_point_image_uv_set(mb, 1, iw, 0);
-             evas_map_point_image_uv_set(mb, 2, iw, ih);
-             evas_map_point_image_uv_set(mb, 3, 0, ih);
-          }
-        else
-          {
-             evas_object_geometry_get(sd->back.content, &x, &y, &w, &h);
-             evas_map_util_points_populate_from_geometry(mb, x, y, w, h, 0);
-          }
-     }
+     _map_uv_set(sd->back.content, mb);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
