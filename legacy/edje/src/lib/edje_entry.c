@@ -347,7 +347,7 @@ _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entr
          cur_type = EVAS_TEXTBLOCK_CURSOR_BEFORE;
          break;
       case EDJE_ENTRY_CURSOR_MODE_UNDER:
-         /* no break for a resaon */
+         /* no break for a reason */
       default:
          cur_type = EVAS_TEXTBLOCK_CURSOR_UNDER;
      }
@@ -2432,7 +2432,7 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
          cur_type = EVAS_TEXTBLOCK_CURSOR_BEFORE;
          break;
       case EDJE_ENTRY_CURSOR_MODE_UNDER:
-         /* no break for a resaon */
+         /* no break for a reason */
       default:
          cur_type = EVAS_TEXTBLOCK_CURSOR_UNDER;
      }
