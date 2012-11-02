@@ -23,6 +23,8 @@ static Ecore_Exe           *desktop_cache_exe = NULL;
 static Ecore_Timer         *icon_cache_timer = NULL;
 static Ecore_Timer         *desktop_cache_timer = NULL;
 
+static Eina_Bool  desktop_exists = EINA_FALSE;
+
 static Eina_List *desktop_system_dirs = NULL;
 static Eina_List *desktop_extra_dirs = NULL;
 static Eina_List *icon_extra_dirs = NULL;
@@ -135,6 +137,7 @@ cache_exe_data_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
         if ((ev->lines) && (*ev->lines->line == 'c'))
           update = EINA_TRUE;
 
+        desktop_exists = EINA_TRUE;
         send_signal_desktop_cache_update(update);
      }
    else if (ev->exe == icon_cache_exe)
@@ -202,6 +205,7 @@ icon_changes_monitor_add(const char *path)
 
    if (!ecore_file_is_dir(path)) return;
    if (eina_hash_find(change_monitors, path)) return;
+   /* TODO: Check for symlink and monitor the real path */
    mon = ecore_file_monitor_add(path,
                                 icon_changes_cb,
                                 NULL);
@@ -213,6 +217,7 @@ icon_changes_monitor_add(const char *path)
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->type != EINA_FILE_DIR) continue;
+        /* TODO: Check for symlink and monitor the real path */
         mon = ecore_file_monitor_add(info->path,
                                      icon_changes_cb,
                                      NULL);
@@ -297,6 +302,7 @@ desktop_changes_monitor_add(const char *path)
    Ecore_File_Monitor *mon;
 
    if (eina_hash_find(change_monitors, path)) return;
+   /* TODO: Check for symlink and monitor the real path */
    mon = ecore_file_monitor_add(path,
                                 desktop_changes_cb,
                                 NULL);
@@ -443,6 +449,12 @@ cache_desktop_update(void)
    if (desktop_cache_timer)
      ecore_timer_del(desktop_cache_timer);
    desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
+}
+
+Eina_Bool
+cache_desktop_exists(void)
+{
+   return desktop_exists;
 }
 
 Eina_Bool

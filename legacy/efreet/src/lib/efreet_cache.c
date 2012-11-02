@@ -1049,12 +1049,15 @@ static void
 on_send_ping(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
 {
     const char *errname, *errmsg;
+    Eina_Bool exists;
 
     if (edbus_message_error_get(msg, &errname, &errmsg))
     {
         ERR("%s %s", errname, errmsg);
         return;
     }
+    if (edbus_message_arguments_get(msg, "b", &exists) && exists)
+        ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
 }
 
 static void
@@ -1074,7 +1077,6 @@ desktop_cache_update(void *context __UNUSED__, const EDBus_Message *msg)
             if (ev)
                 ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, NULL, NULL);
         }
-        /* TODO: Need to send this event always */
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
     }
 }

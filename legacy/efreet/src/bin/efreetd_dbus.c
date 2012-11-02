@@ -24,7 +24,11 @@ static EDBus_Service_Interface *iface;
 static EDBus_Message *
 ping(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
-   return edbus_message_method_return_new(message);
+   EDBus_Message *reply;
+
+   reply = edbus_message_method_return_new(message);
+   edbus_message_arguments_set(reply, "b", cache_desktop_exists());
+   return reply;
 }
 
 static EDBus_Message *
@@ -103,7 +107,7 @@ static const EDBus_Signal signals[] = {
 static const EDBus_Method methods[] = {
      /* TODO: Register / Unregister */
        {
-          "Ping", NULL, NULL,
+          "Ping", NULL, EDBUS_ARGS({"b", "cache exists"}),
           ping, 0
        },
        {
