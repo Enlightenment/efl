@@ -350,7 +350,6 @@ static const EDBus_Service_Interface_Desc iface_desc = {
 static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   EDBus_Connection *conn = data;
    unsigned int flag;
 
    resp2 = malloc(sizeof(char) * 5);
@@ -373,8 +372,6 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         printf("error name already in use\n");
         return;
      }
-
-   edbus_service_interface_register(conn, PATH, &iface_desc);
 }
 
 int
@@ -387,7 +384,8 @@ main(void)
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
-   edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE, on_name_request, conn);
+   edbus_service_interface_register(conn, PATH, &iface_desc);
+   edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE, on_name_request, NULL);
 
    ecore_main_loop_begin();
 

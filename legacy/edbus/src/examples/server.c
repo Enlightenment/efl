@@ -195,6 +195,7 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    EDBus_Service_Interface *iface;
    unsigned int flag;
 
+   iface = data;
    if (edbus_message_error_get(msg, NULL, NULL))
      {
         printf("error on on_name_request\n");
@@ -213,7 +214,6 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   iface = edbus_service_interface_register(conn, PATH, &iface_desc);
    ecore_timer_add(5, send_signal_alive, iface);
    ecore_timer_add(6, send_signal_hello, iface);
 }
@@ -221,13 +221,16 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 int
 main(void)
 {
+   EDBus_Service_Interface *iface;
+
    ecore_init();
    edbus_init();
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
+   iface = edbus_service_interface_register(conn, PATH, &iface_desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
-                      on_name_request, NULL);
+                      on_name_request, iface);
 
    ecore_main_loop_begin();
 
