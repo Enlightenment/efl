@@ -1181,7 +1181,7 @@ static void
 _compose_seq_reset(Entry *en)
 {
    char *str;
-   
+
    EINA_LIST_FREE(en->seq, str) eina_stringshare_del(str);
    en->composing = EINA_FALSE;
 }
@@ -1624,7 +1624,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         char *compres = NULL, *string = (char *)ev->string;
         Eina_Bool free_string = EINA_FALSE;
         Ecore_Compose_State state;
-        
+
         if (!en->composing)
           {
              _compose_seq_reset(en);
@@ -1914,7 +1914,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                     {
                        Evas_Textblock_Rectangle *r1, *r2;
                        Evas_Coord d, d1, d2;
-                       
+
                        r1 = first->data;
                        r2 = last->data;
                        d = r1->x - cx;
@@ -2372,7 +2372,7 @@ void
 _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2411,7 +2411,7 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
      }
 #endif
    _compose_seq_reset(en);
-   
+
    free(en);
 }
 
@@ -2421,7 +2421,7 @@ _edje_entry_real_part_configure(Edje_Real_Part *rp)
    Evas_Coord x, y, w, h, xx, yy, ww, hh;
    Entry *en;
    Evas_Textblock_Cursor_Type cur_type;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2461,7 +2461,7 @@ const char *
 _edje_entry_selection_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
@@ -2477,7 +2477,7 @@ const char *
 _edje_entry_text_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
@@ -2490,7 +2490,7 @@ void
 _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2516,7 +2516,7 @@ void
 _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2539,7 +2539,7 @@ void
 _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2564,7 +2564,7 @@ void
 _edje_entry_set_cursor_start(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2578,7 +2578,7 @@ void
 _edje_entry_set_cursor_end(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2592,7 +2592,7 @@ void
 _edje_entry_select_none(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2604,7 +2604,7 @@ void
 _edje_entry_select_all(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2627,7 +2627,7 @@ void
 _edje_entry_select_begin(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2649,7 +2649,7 @@ void
 _edje_entry_select_extend(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2761,7 +2761,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    Evas_Coord x, y, w, h, xx, yy, ww, hh;
    Entry *en;
    Evas_Textblock_Cursor_Type cur_type;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2835,7 +2835,7 @@ void
 _edje_entry_select_allow_set(Edje_Real_Part *rp, Eina_Bool allow)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2849,7 +2849,7 @@ Eina_Bool
 _edje_entry_select_allow_get(const Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -2861,7 +2861,7 @@ void
 _edje_entry_select_abort(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2880,7 +2880,7 @@ void *
 _edje_entry_imf_context_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
@@ -2897,7 +2897,7 @@ void
 _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2916,7 +2916,7 @@ Edje_Text_Autocapital_Type
 _edje_entry_autocapital_type_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
    en = rp->typedata.text->entry_data;
@@ -2934,7 +2934,7 @@ void
 _edje_entry_prediction_allow_set(Edje_Real_Part *rp, Eina_Bool prediction)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2950,7 +2950,7 @@ Eina_Bool
 _edje_entry_prediction_allow_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -2962,7 +2962,7 @@ void
 _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2978,7 +2978,7 @@ Eina_Bool
 _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -2990,7 +2990,7 @@ void
 _edje_entry_input_panel_show(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3005,7 +3005,7 @@ void
 _edje_entry_input_panel_hide(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3020,7 +3020,7 @@ void
 _edje_entry_input_panel_language_set(Edje_Real_Part *rp, Edje_Input_Panel_Lang lang)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3036,7 +3036,7 @@ Edje_Input_Panel_Lang
 _edje_entry_input_panel_language_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
    en = rp->typedata.text->entry_data;
@@ -3053,7 +3053,7 @@ _edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data __UNUSED
 #endif
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3073,7 +3073,7 @@ _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data __UNUSED__, in
 #endif
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3093,7 +3093,7 @@ _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel
 #endif
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3108,7 +3108,7 @@ Edje_Input_Panel_Return_Key_Type
 _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
    en = rp->typedata.text->entry_data;
@@ -3129,7 +3129,7 @@ _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool di
 #endif
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3144,7 +3144,7 @@ Eina_Bool
 _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -3160,7 +3160,7 @@ static Evas_Textblock_Cursor *
 _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
@@ -3200,12 +3200,12 @@ _edje_entry_cursor_next(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
    if (!en) return EINA_FALSE;
-   
+
    if (!c) return EINA_FALSE;
 
    _edje_entry_imf_context_reset(rp);
@@ -3227,7 +3227,7 @@ _edje_entry_cursor_prev(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -3258,7 +3258,7 @@ _edje_entry_cursor_up(Edje_Real_Part *rp, Edje_Cursor cur)
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
    Evas_Coord lx, ly, lw, lh, cx, cy, cw, ch;
    int ln;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
@@ -3332,7 +3332,7 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3354,7 +3354,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3401,7 +3401,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3423,7 +3423,7 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3486,7 +3486,7 @@ _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3517,7 +3517,7 @@ void
 _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -3534,7 +3534,7 @@ Edje_Input_Panel_Layout
 _edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
    en = rp->typedata.text->entry_data;
@@ -3551,7 +3551,7 @@ void
 _edje_entry_imf_context_reset(Edje_Real_Part *rp)
 {
    Entry *en;
-   
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
