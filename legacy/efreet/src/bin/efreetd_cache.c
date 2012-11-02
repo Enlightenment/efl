@@ -493,9 +493,12 @@ cache_init(void)
 
    read_lists();
    /* TODO: Should check if system dirs has changed and handles extra_dirs */
-   /* TODO: get desktop-directories as well */
    desktop_system_dirs = efreet_default_dirs_get(efreet_data_home_get(),
                                                  efreet_data_dirs_get(), "applications");
+   desktop_system_dirs =
+      eina_list_merge(
+         desktop_system_dirs, efreet_default_dirs_get(efreet_data_home_get(),
+                                                      efreet_data_dirs_get(), "desktop-directories"));
    icon_changes_listen();
    desktop_changes_listen();
    cache_icon_update(EINA_FALSE);
