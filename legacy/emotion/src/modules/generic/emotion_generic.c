@@ -1048,6 +1048,8 @@ em_partial_shutdown(Emotion_Generic_Video *ev)
 	ev->player.exe = NULL;
      }
 
+   ev->file_ready = EINA_FALSE;
+
    if (ev->shared)
      munmap(ev->shared, ev->shared->size);
    ev->shared = NULL;
