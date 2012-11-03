@@ -127,7 +127,7 @@ typedef void (*EDBus_Proxy_Event_Cb)(void *data, EDBus_Proxy *proxy, void *event
  */
 EAPI void edbus_proxy_event_callback_add(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, EDBus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 /**
- * @brief Remove callback registered in edbus_connection_event_callback_add().
+ * @brief Remove callback registered in edbus_proxy_event_callback_add().
  */
 EAPI void edbus_proxy_event_callback_del(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, EDBus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
