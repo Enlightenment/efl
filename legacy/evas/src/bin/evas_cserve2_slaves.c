@@ -320,7 +320,6 @@ static const char *
 _slave_proc_path_get(const char *name)
 {
    char buf[PATH_MAX], cwd[PATH_MAX];
-   char *ret;
 
    if (name[0] == '/')
      {
@@ -329,7 +328,7 @@ _slave_proc_path_get(const char *name)
         return eina_stringshare_add(name);
      }
 
-   ret = getcwd(cwd, sizeof(cwd));
+   getcwd(cwd, sizeof(cwd));
    snprintf(buf, sizeof(buf), "%s/%s", cwd, name);
    if (!access(buf, X_OK))
      return eina_stringshare_add(buf);
@@ -454,7 +453,6 @@ static void *
 _slave_thread_cb(void *data)
 {
    ssize_t n;
-   int ret;
    Slave_Command cmd;
 
    Slave_Thread_Data *sd = data;
@@ -477,7 +475,7 @@ _slave_thread_cb(void *data)
              continue;
           }
         sd->cmdanswer = sd->cb(sd, &cmd, sd->cmddata, sd->cb_data);
-        ret = write(sd->write_fd, &cmd, sizeof(cmd));
+        write(sd->write_fd, &cmd, sizeof(cmd));
 
         n = read(sd->read_fd, &cmd, sizeof(cmd));
      }

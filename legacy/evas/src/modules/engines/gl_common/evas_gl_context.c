@@ -1266,7 +1266,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                  int clip, int cx, int cy, int cw, int ch,
                                  int r, int g, int b, int a)
 {
-   int pnum, nv, nc, nu, nt, i;
+   int pnum, nv, nc, i;
    Eina_Bool blend = 0;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
@@ -1295,7 +1295,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = 0;
 
    pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4;
    gc->pipe[pn].array.num += 2;
    array_alloc(gc, pn);
 
@@ -1321,7 +1321,7 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int x, int y, int w, int h,
                                       int r, int g, int b, int a)
 {
-   int pnum, nv, nc, nu, nt, i;
+   int pnum, nv, nc, i;
    Eina_Bool blend = 0;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
@@ -1447,7 +1447,7 @@ again:
    pipe_region_expand(gc, pn, x, y, w, h);
 
    pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1473,7 +1473,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
-   int pnum, nv, nc, nu, nu2, nt, i;
+   int pnum, nv, nc, nu, i;
    GLfloat tx1, tx2, ty1, ty2;
    Eina_Bool blend = 1;
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
@@ -1543,8 +1543,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, x, y, w, h);
 
    pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
-   nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1596,7 +1595,7 @@ evas_gl_common_context_image_mask_push(Evas_Engine_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nm, nt, i;
+   int pnum, nv, nc, nu, nm, i;
    GLfloat tx1, tx2, ty1, ty2;
    GLfloat txm1, txm2, tym1, tym2;
    Eina_Bool blend = 1;
@@ -1649,7 +1648,6 @@ evas_gl_common_context_image_mask_push(Evas_Engine_GL_Context *gc,
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nm = pnum * 2; nu = pnum * 2;
-   nt = pnum * 4;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1721,7 +1719,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                  int x, int y, int w, int h,
                                  int r, int g, int b, int a)
 {
-   int pnum, nv, nc, nu, nt, i;
+   int pnum, nv, nc, nu, i;
    GLfloat tx1, tx2, ty1, ty2;
    GLuint prog = gc->shared->shader[SHADER_FONT].prog;
    int pn = 0;
@@ -1755,7 +1753,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, x, y, w, h);
 
    pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nt = pnum * 4;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1804,7 +1802,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                 int r, int g, int b, int a,
                                 Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   int pnum, nv, nc, nu, nu2, nu3, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -1847,7 +1845,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   nu2 = pnum * 2; nu3 = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1907,7 +1905,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   int pnum, nv, nc, nu, nu2, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -1949,7 +1947,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   nu2 = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -2001,7 +1999,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
-   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   int pnum, nv, nc, nu, nu2, i;
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Eina_Bool blend = 0;
    GLuint prog;
@@ -2045,7 +2043,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   nu2 = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -2099,7 +2097,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       Eina_Bool smooth, Eina_Bool tex_only,
                                       Evas_Colorspace cspace)
 {
-   int pnum, nv, nc, nu, nu2, nu3, nt, i;
+   int pnum, nv, nc, nu, nu2, nu3, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    int x = 0, y = 0, w = 0, h = 0, px = 0, py = 0;
    GLfloat tx[4], ty[4], t2x[4], t2y[4];
@@ -2287,7 +2285,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; nu2 = pnum * 2;
-   nu2 = pnum * 2; nu3 = pnum * 2; nt = pnum * 4;
+   nu2 = pnum * 2; nu3 = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
