@@ -212,7 +212,7 @@ efreet_cache_shutdown(void)
     */
     if (conn)
     {
-        edbus_proxy_call(proxy, "UnRegister", NULL, NULL, -1, "");
+        edbus_proxy_call(proxy, "Unregister", NULL, NULL, -1, "");
         edbus_connection_unref(conn);
     }
 

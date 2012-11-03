@@ -137,7 +137,7 @@ static const EDBus_Method methods[] = {
           do_register, 0
        },
        {
-          "UnRegister", NULL, NULL,
+          "Unregister", NULL, NULL,
           do_unregister, 0
        },
        {
