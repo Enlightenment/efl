@@ -153,3 +153,8 @@
 	for all possible extensions. This will mainly help those which do not
 	build evas .svg loader, as many themes only provides .svg, and we can
 	find .png in inherited themes.
+
+2012-11-02  Sebastian Dransfeld
+
+	* Add common dbus daemon to listen for file system updates and to do
+	cache building.
