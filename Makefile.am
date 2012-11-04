@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
 compile \
+config.cache-env \
 config.guess \
 config.h.in \
 config.h.in~ \
@@ -33,6 +34,7 @@ m4/evil_windows.m4 \
 m4/eina_check.m4
 
 EXTRA_DIST += \
+autogen.sh \
 licenses/COPYING.LGPL \
 licenses/COPYING.GPL \
 licenses/COPYING.BSD \
@@ -50,6 +52,19 @@ pc/evil.pc \
 pc/eina.pc \
 pc/eet.pc \
 pc/eo.pc \
+pc/evas.pc \
+pc/evas-directfb.pc \
+pc/evas-fb.pc \
+pc/evas-opengl-x11.pc \
+pc/evas-opengl-sdl.pc \
+pc/evas-software-buffer.pc \
+pc/evas-software-x11.pc \
+pc/evas-software-gdi.pc \
+pc/evas-software-ddraw.pc \
+pc/evas-direct3d.pc \
+pc/evas-psl1ght.pc \
+pc/evas-wayland-shm.pc \
+pc/evas-wayland-egl.pc \
 pc/embryo.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -63,7 +78,60 @@ pkgconfig_DATA += \
 pc/eina.pc \
 pc/eo.pc \
 pc/eet.pc \
+pc/evas.pc \
 pc/embryo.pc
+
+if BUILD_ENGINE_SOFTWARE_X11
+pkgconfig_DATA += pc/evas-software-x11.pc
+endif
+
+if BUILD_ENGINE_DIRECTFB
+pkgconfig_DATA += pc/evas-directfb.pc
+endif
+
+if BUILD_ENGINE_FB
+pkgconfig_DATA += pc/evas-fb.pc
+endif
+
+if BUILD_ENGINE_BUFFER
+pkgconfig_DATA += pc/evas-software-buffer.pc
+endif
+
+if BUILD_ENGINE_GL_X11
+pkgconfig_DATA += pc/evas-opengl-x11.pc
+endif
+
+if BUILD_ENGINE_GL_SDL
+pkgconfig_DATA += pc/evas-opengl-sdl.pc
+endif
+
+if BUILD_ENGINE_GL_COCOA
+pkgconfig_DATA += pc/evas-opengl-cocoa.pc
+endif
+
+if BUILD_ENGINE_SOFTWARE_GDI
+pkgconfig_DATA += pc/evas-software-gdi.pc
+endif
+
+if BUILD_ENGINE_SOFTWARE_DDRAW
+pkgconfig_DATA += pc/evas-software-ddraw.pc
+endif
+
+if BUILD_ENGINE_DIRECT3D
+pkgconfig_DATA += pc/evas-direct3d.pc
+endif
+
+if BUILD_ENGINE_PSL1GHT
+pkgconfig_DATA += pc/evas-psl1ght.pc
+endif
+
+if BUILD_ENGINE_WAYLAND_SHM
+pkgconfig_DATA += pc/evas-wayland-shm.pc
+endif
+
+if BUILD_ENGINE_WAYLAND_EGL
+pkgconfig_DATA += pc/evas-wayland-egl.pc
+endif
 
 
 .PHONY: doc benchmark examples install-examples

@@ -239,3 +239,7 @@ EXTRA_DIST += \
 lib/eina/eina_config.h.in \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x
+
+### Script
+
+bin_SCRIPTS = scripts/eina/eina-bench-cmp

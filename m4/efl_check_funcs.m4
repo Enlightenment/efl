@@ -53,11 +53,14 @@ LIBS="${LIBS} $2"
 AC_LINK_IFELSE(
    [AC_LANG_PROGRAM(
        [[
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+#include <stdlib>
 #include <dlfcn.h>
          ]],
          [[
-int res = dladdr(0, 0);
+int res = dladdr(NULL, NULL);
        ]])],
    [
     m4_defn([UPEFL])[]_LIBS="${m4_defn([UPEFL])[]_LIBS} $2"
@@ -161,6 +164,75 @@ dnl Check is dlopen is in libc
 dnl Check is dlopen is in libdl
       if test "x${_efl_have_fct}" = "xno" ; then
          _EFL_CHECK_FUNC_DLOPEN_PRIV([$1], [-ldl], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+      fi
+   ;;
+esac
+
+AS_IF([test "x${_efl_have_fct}" = "xyes"], [$2], [$3])
+
+m4_popdef([DOWNEFL])
+m4_popdef([UPEFL])
+])
+
+dnl _EFL_CHECK_FUNC_DLSYM_PRIV is for internal use
+dnl _EFL_CHECK_FUNC_DLSYM_PRIV(EFL, LIB, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
+
+AC_DEFUN([_EFL_CHECK_FUNC_DLSYM_PRIV],
+[
+m4_pushdef([UPEFL], m4_translit([$1], [-a-z], [_A-Z]))dnl
+m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
+
+LIBS_save="${LIBS}"
+LIBS="${LIBS} $2"
+AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+#include <stdlib.h>
+#include <dlfcn.h>
+         ]],
+         [[
+void *res = dlsym(NULL, NULL);
+       ]])],
+   [
+    m4_defn([UPEFL])[]_LIBS="${m4_defn([UPEFL])[]_LIBS} $2"
+    requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} $2"
+    _efl_have_fct="yes"
+   ],
+   [_efl_have_fct="no"])
+
+LIBS="${LIBS_save}"
+
+AS_IF([test "x${_efl_have_fct}" = "xyes"], [$3], [$4])
+
+m4_popdef([DOWNEFL])
+m4_popdef([UPEFL])
+])
+
+dnl _EFL_CHECK_FUNC_DLSYM is for internal use
+dnl _EFL_CHECK_FUNC_DLSYM(EFL, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
+
+AC_DEFUN([_EFL_CHECK_FUNC_DLSYM],
+[
+m4_pushdef([UPEFL], m4_translit([$1], [-a-z], [_A-Z]))dnl
+m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
+
+case "$host_os" in
+   mingw*)
+      _efl_have_fct="yes"
+      requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -ldl"
+   ;;
+   *)
+      _efl_have_fct="no"
+
+dnl Check is dlsym is in libc
+      _EFL_CHECK_FUNC_DLSYM_PRIV([$1], [], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+
+dnl Check is dlopen is in libdl
+      if test "x${_efl_have_fct}" = "xno" ; then
+         _EFL_CHECK_FUNC_DLSYM_PRIV([$1], [-ldl], [_efl_have_fct="yes"], [_efl_have_fct="no"])
       fi
    ;;
 esac

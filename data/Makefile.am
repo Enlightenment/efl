@@ -1,6 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-filesdir = $(datadir)/embryo/include
-files_DATA = embryo/default.inc
+embryofilesdir = $(datadir)/embryo/include
+embryofiles_DATA = embryo/default.inc
 
-EXTRA_DIST = $(files_DATA)
+evasfilesdir = $(datadir)/evas
+evasfiles_DATA = evas/checkme
+
+EXTRA_DIST = embryo/default.inc evas/checkme
