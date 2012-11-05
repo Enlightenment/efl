@@ -35,8 +35,8 @@ AC_DEFUN([ECORE_CHECK_INOTIFY],
 _ecore_want_inotify=$1
 _ecore_have_inotify="no"
 
-dnl We need to check if the right inotify version is accessible
 _ecore_want_inotify="yes"
+_ecore_have_inotify="no"
 AC_ARG_ENABLE(inotify,
    [AC_HELP_STRING([--disable-inotify], [disable inotify in the ecore_file module])],
    [
@@ -47,36 +47,19 @@ AC_ARG_ENABLE(inotify,
     fi
    ])
 
-AC_MSG_CHECKING(whether inotify is to be used for filemonitoring)
-AC_MSG_RESULT($_ecore_want_inotify)
-
-dnl It is hard to find a good test on how to check the correct
-dnl inotify version. They changed the headers a lot.
-dnl in kernel 2.6.13 __NR_inotify_init was added to the defined syscalls
-dnl in asm/unistd.h and IN_MOVE_SELF was added to linux/inotify.h
-dnl so with this check you need a very new kernel and kernel-headers!
-
 if test "x${_ecore_want_inotify}" = "xyes" ; then
-   AC_CHECK_LIB([c], [inotify_init],
+   AC_CHECK_HEADER([sys/inotify.h],
       [
        AC_DEFINE(HAVE_INOTIFY, 1, [ File monitoring with Inotify ])
-       AC_DEFINE(HAVE_SYS_INOTIFY, 1, [ File monitoring with Inotify - sys/inotify.h ])
        _ecore_have_inotify="yes"
       ],
       [
-       AC_TRY_COMPILE(
-          [
-           #include <asm/unistd.h>
-           #include <linux/inotify.h>
-          ],
-          [int a = __NR_inotify_init; int b = IN_MOVE_SELF;],
-          [
-           AC_DEFINE([HAVE_INOTIFY], [1], [ File monitoring with Inotify ])
-           _ecore_have_inotify="yes"
-          ],
-          [_ecore_have_inotify="no"])
+       _ecore_have_inotify="no"
       ])
 fi
+
+AC_MSG_CHECKING(whether inotify is to be used for filemonitoring)
+AC_MSG_RESULT($_ecore_have_inotify)
 
 if test "x$_ecore_have_inotify" = "xyes" ; then
    m4_default([$2], [:])
