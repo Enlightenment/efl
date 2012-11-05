@@ -235,11 +235,13 @@ lib_eina_libeina_la_LIBADD += -lm
 
 lib_eina_libeina_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
 
-EXTRA_DIST += \
-lib/eina/eina_config.h.in \
-lib/eina/eina_strbuf_template_c.x \
-lib/eina/eina_binbuf_template_c.x
-
 ### Script
 
 bin_SCRIPTS = scripts/eina/eina-bench-cmp
+
+EXTRA_DIST += \
+lib/eina/eina_config.h.in \
+lib/eina/eina_strbuf_template_c.x \
+lib/eina/eina_binbuf_template_c.x \
+$(bin_SCRIPTS)
+
