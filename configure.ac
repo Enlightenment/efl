@@ -1877,6 +1877,75 @@ echo "    barrier............: ${efl_have_pthread_barrier}"
 echo "    affinity...........: ${efl_have_setaffinity}"
 echo "  Cryptographic System.: ${build_crypto}"
 echo
+echo "Evas:"
+echo
+echo "  Engines:"
+echo "    Software Memory Buffer.....: $have_evas_engine_buffer"
+echo "    Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
+echo $ECHO_N "    OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) $ECHO_C"
+if test "x$have_evas_engine_gl_x11" = "xyes"; then
+  echo "(GLES: $gl_flavor_gles)"
+else
+  echo
+fi
+echo "    Software GDI...............: $have_evas_engine_software_gdi"
+echo "    Software DirectDraw........: $have_evas_engine_software_ddraw"
+echo "    Direct3d...................: $have_evas_engine_direct3d"
+echo "    OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
+if test "x$have_evas_engine_gl_sdl" = "xyes"; then
+  echo "(GLES: $gl_flavor_gles)"
+else
+  echo
+fi
+echo "    OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
+echo "    Software Framebuffer.......: $have_evas_engine_fb"
+echo "    DirectFB...................: $have_evas_engine_directfb"
+echo "    PSL1GHT....................: $have_evas_engine_psl1ght"
+echo "    Wayland Shm................: $have_evas_engine_wayland_shm"
+echo "    Wayland Egl................: $have_evas_engine_wayland_egl"
+echo
+echo "  Image Loaders:"
+echo "    JPEG region decode......: $have_jpeg_region"
+echo "    WEBP....................: $have_evas_image_loader_webp"
+echo "    GIF.....................: $have_evas_image_loader_gif"
+echo "    TIFF....................: $have_evas_image_loader_tiff"
+echo "    SVG.....................: $have_evas_image_loader_svg"
+echo
+echo "  Font Searching Systems:"
+echo "    Fontconfig..............: $have_fontconfig"
+echo
+echo "  Font Rendering Helpers:"
+echo "    Fribidi.................: $have_fribidi"
+echo "    Harfbuzz................: $have_harfbuzz"
+# FIXME: add non freetype2 font engine support
+# FIXME: make freetype2 optional
+echo
+echo "  CPU Specific Extensions:"
+echo "    MMX/SSE.................: $build_cpu_mmx"
+echo "    SSE3....................: $build_cpu_sse3"
+echo "    ALTIVEC.................: $build_cpu_altivec"
+echo "    NEON....................: $build_cpu_neon"
+echo
+echo "  Features:"
+echo "    MAGIC_DEBUG.............: $want_evas_magic_debug"
+echo "    Cache Server 2..........: $want_evas_cserve2"
+echo "    Threaded Pipe Rendering.: $build_pipe_render"
+echo
+echo "  Optional pixman rendering path:"
+echo "    Pixman..................: $have_pixman"
+echo "    Pixman Fonts............: $have_pixman_font"
+echo "    Pixman Rects............: $have_pixman_rect"
+echo "    Pixman Lines............: $have_pixman_line"
+echo "    Pixman Polygons.........: $have_pixman_poly"
+echo "    Pixman Images...........: $have_pixman_image"
+echo "    Pixman Image ScaleSample: $have_pixman_image_scale_sample"
+echo
+echo "  Conversion Options:"
+echo "    Smaller Dither Mask.....: $conv_small_dither"
+echo "    Line Dither Mask........: $conv_line_dither"
+echo "    No Dither Mask for 16bpp: $conv_no_dither"
+echo "    Tiled 32BPP rotate......: $have_tile_rotate"
+echo
 echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
 echo "Examples...............: make examples"
 echo "    installation.......: make install-examples"

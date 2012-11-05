@@ -11,11 +11,7 @@ evas_engine_[]$1[]_libs=""
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -61,11 +57,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -136,19 +128,16 @@ if test "x${gl_flavor_gles}" = "xyes" ; then
 fi
 
 if test "x${have_dep}" = "xyes" ; then
-   PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-   if test "x${have_dep}" = "xyes" ; then
-      if test "x$2" = "xyes" ; then
-         x_libs="${x_libs} -lX11 -lXext -lXrender"
-      else
-         x_dir=${x_dir:-/usr/X11R6}
-         x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-         x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
-      fi
+   if test "x$2" = "xyes" ; then
+      x_libs="${x_libs} -lX11 -lXext -lXrender"
+   else
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
+   fi
    evas_engine_[]$1[]_cflags="-I/usr/include ${x_cflags}"
    evas_engine_[]$1[]_libs="${x_libs} -lGL $gl_pt_lib"
    evas_engine_gl_common_libs="-lGL $gl_pt_lib"
-   fi
 else
    if test "x$2" = "xyes" ; then
       x_libs="${x_libs} -lX11 -lXext -lXrender"
@@ -172,21 +161,18 @@ else
       ])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lm $gl_pt_lib)
-      if test "x${have_glesv2}" = "xyes" ; then
-         PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-         if test "x${have_dep}" = "xyes" ; then
-            evas_engine_[]$1[]_cflags="${x_cflags}"
-            evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
-            evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
-            have_dep="yes"
-            AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
-            gles_variety_sgx="yes"
-         fi
+      if test "x${have_dep}" = "xyes" ; then
+         evas_engine_[]$1[]_cflags="${x_cflags}"
+         evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
+         evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
+         have_dep="yes"
+         AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
+         gles_variety_sgx="yes"
       fi
    fi
 fi
 
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
+if test "x$3" = "xstatic" && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
    requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
@@ -194,12 +180,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -209,34 +190,34 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB],
 [
 
 requirement=""
+requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([XCB],
-   [xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
+PKG_CHECK_EXISTS([xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
     requirement="xcb xcb-shm xcb-image pixman-1"
+    requirement_version="xcb xcb-shm xcb-image >= 0.2.1 pixman-1"
    ],
    [have_dep="no"])
 
-evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
-evas_engine_[]$1[]_libs="${XCB_LIBS}"
-
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-   requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+if test "x${have_dep}" = "xyes" ; then
+   if test "x$2" = "xstatic" ; then
+      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+   else
+      PKG_CHECK_MODULES([XCB], [${requirement_version}])
+      evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
+      evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
+   fi
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -247,6 +228,7 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_XCB],
 [
 
 requirement=""
+requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -300,13 +282,24 @@ if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"], -lX11 -lXext -lXrender -lm $gl_pt_lib)
 fi
 
-PKG_CHECK_MODULES([XCB_GL],
-   [x11-xcb xcb xcb-glx xcb-render xcb-renderutil],
+PKG_CHECK_EXISTS([xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
     requirement="x11-xcb xcb xcb-glx xcb-render xcb-renderutil"
+    requirement_version="x11-xcb xcb xcb-glx xcb-render xcb-renderutil"
    ],
    [have_dep="no"])
+
+if test "x${have_dep}" = "xyes" ; then
+   if test "x$2" = "xstatic" ; then
+      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+   else
+      PKG_CHECK_MODULES([XCB_GL], [${requirement_version}])
+      evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
+      evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
+   fi
+fi
 
 evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS}"
 evas_engine_[]$1[]_libs="${XCB_GL_LIBS}"
@@ -316,19 +309,16 @@ if test "x$gl_flavor_gles" = "xyes" ; then
 fi
 
 if test "x${have_dep}" = "xyes" ; then
-   PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-   if test "x${have_dep}" = "xyes" ; then
-      if test "x$2" = "xyes" ; then
-         x_libs="${x_libs} -lX11 -lXext -lXrender"
-      else
-         x_dir=${x_dir:-/usr/X11R6}
-         x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-         x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
-      fi
+   if test "x$2" = "xyes" ; then
+      x_libs="${x_libs} -lX11 -lXext -lXrender"
+   else
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
+   fi
    evas_engine_[]$1[]_cflags="-I/usr/include ${XCB_GL_CFLAGS} ${x_cflags}"
    evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGL $gl_pt_lib"
    evas_engine_gl_common_libs="-lGL $gl_pt_lib"
-   fi
 else
    if test "x$2" = "xyes" ; then
       x_libs="${x_libs} -lX11 -lXext -lXrender"
@@ -347,16 +337,13 @@ else
       ])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lm $gl_pt_lib)
-      if test "x${have_glesv2}" = "xyes" ; then
-         PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-         if test "x${have_dep}" = "xyes" ; then
-            evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS} ${x_cflags}"
-            evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
-            evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
-            have_dep="yes"
-            AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
-            gles_variety_sgx="yes"
-         fi
+      if test "x${have_dep}" = "xyes" ; then
+         evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS} ${x_cflags}"
+         evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
+         evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
+         have_dep="yes"
+         AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+         gles_variety_sgx="yes"
       fi
    fi
 fi
@@ -371,11 +358,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -403,11 +386,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -426,7 +405,7 @@ AC_CHECK_HEADER([ddraw.h],
     evas_engine_[]$1[]_libs="-lddraw"
    ])
 
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
+if test "x$3" = "xstatic" && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
    requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
@@ -434,11 +413,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -465,11 +440,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -510,10 +481,6 @@ LIBS="$LIBS_save"
 
 AC_LANG_POP([Objective C])
 
-if test "x${have_dep}" = "xyes" ; then
-   PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-fi
-
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
    requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
@@ -522,11 +489,7 @@ fi
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -536,19 +499,29 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_SDL],
 [
 
 requirement=""
+requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([SDL],
-   [sdl >= 1.2.0],
+PKG_CHECK_EXISTS([sdl >= 1.2.0],
    [
     have_dep="yes"
     requirement="sdl"
-   ])
+    requirement_version="sdl >= 1.2.0"
+   ],
+   [have_dep="no"])
 
-evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
-evas_engine_[]$1[]_libs="${SDL_LIBS}"
+if test "x${have_dep}" = "xyes" ; then
+   if test "x$2" = "xstatic" ; then
+      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+   else
+      PKG_CHECK_MODULES([SDL], [${requirement_version}])
+      evas_image_loader_[]$1[]_cflags="${SDL_CFLAGS}"
+      evas_image_loader_[]$1[]_libs="${SDL_LIBS}"
+   fi
+fi
 
 gl_pt_lib="";
 have_gl_pt="no"
@@ -588,8 +561,7 @@ if test "x$gl_flavor_gles" = "xyes" ; then
 fi
 
 if test "x${have_dep}" = "xyes" ; then
-   evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
-   evas_engine_[]$1[]_libs="${SDL_LIBS} -lGL -lm $gl_pt_lib"
+   evas_engine_[]$1[]_libs="${evas_engine_[]$1[]_libs} -lGL -lm $gl_pt_lib"
    evas_engine_gl_common_libs="-lGL -lm $gl_pt_lib"
 else
    AC_CHECK_HEADER([SDL/SDL_opengles.h],
@@ -602,21 +574,13 @@ else
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL -lm $gl_pt_lib)
       if test "x${have_glesv2}" = "xyes" ; then
-         evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
-         evas_engine_[]$1[]_libs="${SDL_LIBS} -lGLESv2 -lEGL -lm $gl_pt_lib"
+         evas_engine_[]$1[]_libs="${evas_engine_[]$1[]_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
          evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
          have_dep="yes"
          AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
          gles_variety_sgx="yes"
       fi
    fi
-fi
-
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
-   requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-   requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -626,11 +590,7 @@ if test "x$3" = "xstatic" ; then
    requirement_evas="${requirement} ${requirement_evas}"
 fi
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -648,11 +608,7 @@ AC_CHECK_HEADER([linux/fb.h], [have_dep="yes"])
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -662,32 +618,34 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECTFB],
 [
 
 requirement=""
+requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([DIRECTFB],
-   [directfb >= 0.9.16],
+PKG_CHECK_EXISTS([directfb >= 0.9.16],
    [
     have_dep="yes"
     requirement="directfb"
-    evas_engine_[]$1[]_cflags="${DIRECTFB_CFLAGS}"
-    evas_engine_[]$1[]_libs="${DIRECTFB_LIBS}"
-   ])
+    requirement_version="directfb >= 0.9.16"
+   ],
+   [have_dep="no"])
 
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-   requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+if test "x${have_dep}" = "xyes" ; then
+   if test "x$2" = "xstatic" ; then
+      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+   else
+      PKG_CHECK_MODULES([DIRECTFB], [${requirement_version}])
+      evas_image_loader_[]$1[]_cflags="${DIRECTFB_CFLAGS}"
+      evas_image_loader_[]$1[]_libs="${DIRECTFB_LIBS}"
+   fi
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -705,11 +663,7 @@ AC_CHECK_HEADER([rsx/rsx.h], [have_dep="yes"])
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -726,11 +680,7 @@ evas_engine_[]$1[]_libs=""
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
@@ -741,6 +691,7 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_WAYLAND_EGL],
 [
 
 requirement=""
+requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -751,32 +702,29 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_MODULES([GL_EET], [eet >= ${PACKAGE_VERSION}], [have_dep="yes"], [have_dep="no"])
-
-PKG_CHECK_MODULES([WAYLAND_EGL],
-   [egl >= 7.10 ${gl_library} wayland-client wayland-egl],
+PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client wayland-egl],
    [
     have_dep="yes"
     requirement="egl ${gl_library} wayland-client wayland-egl"
+    requirement_version="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
    ],
    [have_dep="no"])
 
-evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
-evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
-
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-   requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+if test "x${have_dep}" = "xyes" ; then
+   if test "x$2" = "xstatic" ; then
+      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+   else
+      PKG_CHECK_MODULES([WAYLAND_EGL], [${requirement_version}])
+      evas_image_loader_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
+      evas_image_loader_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
+   fi
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
 
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
+AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
