@@ -1248,7 +1248,7 @@ requirements_pc_evas="eo >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >=
 PKG_CHECK_EXISTS([freetype2 >= 9.3.0],
    [requirements_pc_evas="freetype2 >= 9.3.0 ${requirements_pc_evas}"])
 
-requirements_pc_deps_evas="freetype2 ${requirements_pc_deps_evas}"
+requirements_pc_deps_evas="freetype2 >= 9.3.0 ${requirements_pc_deps_evas}"
 
 ## optional dependencies
 
@@ -1259,8 +1259,8 @@ if test "x${want_fontconfig}" = "xyes"; then
       [
        have_fontconfig="yes"
        AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
-       requirements_pc_evas="fontconfig ${requirements_pc_evas}"
-       requirements_pc_deps_evas="fontconfig ${requirements_pc_deps_evas}"
+       requirements_pc_evas="fontconfig >= 2.5.0 ${requirements_pc_evas}"
+       requirements_pc_deps_evas="fontconfig >= 2.5.0 ${requirements_pc_deps_evas}"
       ])
 fi
 
@@ -1271,8 +1271,8 @@ if test "x${want_fribidi}" = "xyes"; then
       [
        have_fribidi="yes"
        AC_DEFINE([HAVE_FRIBIDI], [1], [have fribidi support])
-       requirements_pc_evas="fribidi ${requirements_pc_evas}"
-       requirements_pc_deps_evas="fribidi ${requirements_pc_deps_evas}"
+       requirements_pc_evas="fribidi >= 0.19.2 ${requirements_pc_evas}"
+       requirements_pc_deps_evas="fribidi >= 0.19.2 ${requirements_pc_deps_evas}"
        CPPFLAGS_SAVE="$CPPFLAGS"
        CPPFLAGS="$CPPFLAGS $FRIBIDI_CFLAGS"
        AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
@@ -1287,8 +1287,8 @@ if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
    PKG_CHECK_EXISTS([harfbuzz >= 0.9.0],
       [
        have_harfbuzz="yes"
-       requirements_pc_evas="harfbuzz ${requirements_pc_evas}"
-       requirements_pc_deps_evas="harfbuzz ${requirements_pc_deps_evas}"
+       requirements_pc_evas="harfbuzz >= 0.9.0 ${requirements_pc_evas}"
+       requirements_pc_deps_evas="harfbuzz >= 0.9.0 ${requirements_pc_deps_evas}"
       ],
       [
        if test "x$want_harfbuzz" = "xyes" && test "x$use_strict" = "xyes" ; then
@@ -1927,7 +1927,6 @@ echo "    ALTIVEC.................: $build_cpu_altivec"
 echo "    NEON....................: $build_cpu_neon"
 echo
 echo "  Features:"
-echo "    MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo "    Cache Server 2..........: $want_evas_cserve2"
 echo "    Threaded Pipe Rendering.: $build_pipe_render"
 echo

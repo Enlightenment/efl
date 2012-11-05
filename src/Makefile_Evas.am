@@ -724,7 +724,6 @@ lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @evas_engine_gl_cocoa_cflags@
 lib_evas_libevas_la_LIBADD += \
-lib/evas/libevas.la \
 modules/evas/engines/gl_common/libevas_engine_gl_common.la \
 @evas_engine_gl_cocoa_libs@
 else
@@ -782,6 +781,8 @@ modules_evas_engines_gl_sdl_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/include \
@@ -1041,7 +1042,7 @@ lib_evas_libevas_la_SOURCES += $(WAYLAND_EGL_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @evas_engine_wayland_egl_cflags@
-lib_evas_libevas_la_LIBADD += lib/evas/libevas.la @EFL_LIBS@ @evas_engine_wayland_egl_libs@
+lib_evas_libevas_la_LIBADD += @EFL_LIBS@ @evas_engine_wayland_egl_libs@
 else
 enginewaylandeglpkgdir = $(libdir)/evas/modules/engines/wayland_egl/$(MODULE_ARCH)
 enginewaylandeglpkg_LTLIBRARIES = modules/evas/engines/wayland_egl/module.la
@@ -1084,7 +1085,7 @@ modules/evas/engines/wayland_shm/evas_engine.h
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@
-lib_evas_libevas_la_LIBADD += lib/evas/libevas.la @EFL_LIBS@ @evas_engine_wayland_shm_libs@
+lib_evas_libevas_la_LIBADD += @EFL_LIBS@ @evas_engine_wayland_shm_libs@
 else
 enginewaylandshmpkgdir = $(libdir)/evas/modules/engines/wayland_shm/$(MODULE_ARCH)
 enginewaylandshmpkg_LTLIBRARIES = modules/evas/engines/wayland_shm/module.la

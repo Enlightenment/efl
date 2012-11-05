@@ -190,7 +190,6 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -198,17 +197,16 @@ evas_engine_[]$1[]_libs=""
 PKG_CHECK_EXISTS([xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [
     have_dep="yes"
-    requirement="xcb xcb-shm xcb-image pixman-1"
-    requirement_version="xcb xcb-shm xcb-image >= 0.2.1 pixman-1"
+    requirement="xcb xcb-shm xcb-image >= 0.2.1 pixman-1"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([XCB], [${requirement_version}])
+      PKG_CHECK_MODULES([XCB], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
    fi
@@ -228,7 +226,6 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_XCB],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -282,20 +279,19 @@ if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([GL], [glXCreateContext], [have_dep="yes"], [have_dep="no"], -lX11 -lXext -lXrender -lm $gl_pt_lib)
 fi
 
-PKG_CHECK_EXISTS([xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
+PKG_CHECK_EXISTS([x11-xcb xcb xcb-glx xcb-render xcb-renderutil],
    [
     have_dep="yes"
     requirement="x11-xcb xcb xcb-glx xcb-render xcb-renderutil"
-    requirement_version="x11-xcb xcb xcb-glx xcb-render xcb-renderutil"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([XCB_GL], [${requirement_version}])
+      PKG_CHECK_MODULES([XCB_GL], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
    fi
@@ -499,7 +495,6 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_SDL],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -507,17 +502,16 @@ evas_engine_[]$1[]_libs=""
 PKG_CHECK_EXISTS([sdl >= 1.2.0],
    [
     have_dep="yes"
-    requirement="sdl"
-    requirement_version="sdl >= 1.2.0"
+    requirement="sdl >= 1.2.0"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([SDL], [${requirement_version}])
+      PKG_CHECK_MODULES([SDL], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${SDL_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${SDL_LIBS}"
    fi
@@ -618,7 +612,6 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECTFB],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -626,17 +619,16 @@ evas_engine_[]$1[]_libs=""
 PKG_CHECK_EXISTS([directfb >= 0.9.16],
    [
     have_dep="yes"
-    requirement="directfb"
-    requirement_version="directfb >= 0.9.16"
+    requirement="directfb >= 0.9.16"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([DIRECTFB], [${requirement_version}])
+      PKG_CHECK_MODULES([DIRECTFB], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${DIRECTFB_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${DIRECTFB_LIBS}"
    fi
@@ -691,7 +683,6 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_WAYLAND_EGL],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
@@ -705,17 +696,16 @@ fi
 PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client wayland-egl],
    [
     have_dep="yes"
-    requirement="egl ${gl_library} wayland-client wayland-egl"
-    requirement_version="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
+    requirement="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([WAYLAND_EGL], [${requirement_version}])
+      PKG_CHECK_MODULES([WAYLAND_EGL], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
    fi

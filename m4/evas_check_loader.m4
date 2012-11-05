@@ -181,7 +181,6 @@ AC_DEFUN([EVAS_CHECK_LOADER_DEP_PNG],
 [
 
 requirement=""
-requirement_version=""
 have_dep="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
@@ -191,8 +190,7 @@ dnl We check it first.
 PKG_CHECK_EXISTS([libpng >= 1.2.10],
    [
     have_dep="yes"
-    requirement="libpng"
-    requirement_version="libpng >= 1.2.10"
+    requirement="libpng >= 1.2.10"
    ],
    [have_dep="no"])
 
@@ -201,7 +199,6 @@ if test "x${have_dep}" = "xno" ; then
       [
        have_dep="yes"
        requirement="libpng15"
-       requirement_version="libpng15"
       ],
       [have_dep="no"])
 fi
@@ -211,7 +208,6 @@ if test "x${have_dep}" = "xno" ; then
       [
        have_dep="yes"
        requirement="libpng14"
-       requirement_version="libpng14"
       ],
       [have_dep="no"])
 fi
@@ -220,18 +216,17 @@ if test "x${have_dep}" = "xno" ; then
    PKG_CHECK_EXISTS([libpng12 >= 1.2.10],
       [
        have_dep="yes"
-       requirement="libpng12"
-       requirement_version="libpng12"
+       requirement="libpng12 >= 1.2.10"
       ],
       [have_dep="no"])
 fi
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([PNG], [${requirement_version}])
+      PKG_CHECK_MODULES([PNG], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${PNG_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${PNG_LIBS}"
    fi
@@ -266,7 +261,6 @@ AC_DEFUN([EVAS_CHECK_LOADER_DEP_SVG],
 [
 
 requirement=""
-requirement_version=""
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 version_esvg="0.0.18"
@@ -275,17 +269,16 @@ version_ender="0.0.6"
 PKG_CHECK_EXISTS([esvg >= ${version_esvg} ender >= ${version_ender}],
    [
     have_dep="yes"
-    requirement="esvg ender"
-    requirement_version="esvg >= ${version_esvg} ender >= ${version_ender}"
+    requirement="esvg ender >= ${version_esvg} ender >= ${version_ender}"
    ],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
-      requirements_pc_evas="${requirement_version} ${requirements_pc_evas}"
+      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([SVG], [${requirement_version}])
+      PKG_CHECK_MODULES([SVG], [${requirement}])
       evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS}"
       evas_image_loader_[]$1[]_libs="${SVG_LIBS}"
    fi
