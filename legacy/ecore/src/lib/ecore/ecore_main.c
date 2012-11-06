@@ -996,23 +996,20 @@ ecore_main_loop_select_func_get(void)
    return main_loop_select;
 }
 
-EAPI Ecore_Fd_Handler *
-ecore_main_fd_handler_add(int                    fd,
-                          Ecore_Fd_Handler_Flags flags,
-                          Ecore_Fd_Cb            func,
-                          const void            *data,
-                          Ecore_Fd_Cb            buf_func,
-                          const void            *buf_data)
+Ecore_Fd_Handler *
+_ecore_main_fd_handler_add(int                    fd,
+                           Ecore_Fd_Handler_Flags flags,
+                           Ecore_Fd_Cb            func,
+                           const void            *data,
+                           Ecore_Fd_Cb            buf_func,
+                           const void            *buf_data)
 {
    Ecore_Fd_Handler *fdh = NULL;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
-
-   if ((fd < 0) || (flags == 0) || (!func)) goto unlock;
+   if ((fd < 0) || (flags == 0) || (!func)) return NULL;
 
    fdh = ecore_fd_handler_calloc(1);
-   if (!fdh) goto unlock;
+   if (!fdh) return NULL;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
    fdh->next_ready = NULL;
    fdh->fd = fd;
@@ -1022,8 +1019,7 @@ ecore_main_fd_handler_add(int                    fd,
         int err = errno;
         ERR("Failed to add poll on fd %d (errno = %d: %s)!", fd, err, strerror(err));
         ecore_fd_handler_mp_free(fdh);
-        fdh = NULL;
-        goto unlock;
+        return NULL;
      }
    fdh->read_active = EINA_FALSE;
    fdh->write_active = EINA_FALSE;
@@ -1038,9 +1034,23 @@ ecore_main_fd_handler_add(int                    fd,
    fd_handlers = (Ecore_Fd_Handler *)
      eina_inlist_append(EINA_INLIST_GET(fd_handlers),
                         EINA_INLIST_GET(fdh));
-unlock:
-   _ecore_unlock();
 
+   return fdh;
+}
+
+EAPI Ecore_Fd_Handler *
+ecore_main_fd_handler_add(int                    fd,
+                          Ecore_Fd_Handler_Flags flags,
+                          Ecore_Fd_Cb            func,
+                          const void            *data,
+                          Ecore_Fd_Cb            buf_func,
+                          const void            *buf_data)
+{
+   Ecore_Fd_Handler *fdh = NULL;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   _ecore_lock();
+   fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data);
+   _ecore_unlock();
    return fdh;
 }
 

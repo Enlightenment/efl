@@ -181,7 +181,7 @@ ecore_init(void)
    eina_condition_new(&_thread_cond, &_thread_mutex);
    eina_lock_new(&_thread_feedback_mutex);
    eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
-   _thread_call = ecore_pipe_add(_thread_callback, NULL);
+   _thread_call = _ecore_pipe_add(_thread_callback, NULL);
    eina_lock_new(&_thread_safety);
 
    eina_lock_new(&_thread_id_lock);
@@ -268,8 +268,8 @@ ecore_shutdown(void)
     */
      p = _thread_call;
      _thread_call = NULL;
-     ecore_pipe_wait(p, 1, 0.1);
-     ecore_pipe_del(p);
+     _ecore_pipe_wait(p, 1, 0.1);
+     _ecore_pipe_del(p);
      eina_lock_free(&_thread_safety);
      eina_condition_free(&_thread_cond);
      eina_lock_free(&_thread_mutex);
