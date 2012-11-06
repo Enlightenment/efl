@@ -241,7 +241,7 @@ group { name: "elm/check/base/default";
             set_state(PART:"elm.swallow.content", "default", 0.0);
 
             get_state(PART:"check", st, 30, vl);
-            if (!strcmp(st, "visible"))
+            if (!strcmp(st, "disabled_visible"))
             set_state(PART:"check", "visible", 0.0);
             else
             set_state(PART:"check", "default", 0.0);
