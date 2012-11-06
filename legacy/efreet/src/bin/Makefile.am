@@ -37,6 +37,7 @@ $(top_builddir)/src/lib/libefreet.la \
 
 efreetd_SOURCES = \
 efreetd.c \
+efreetd.h \
 efreetd_dbus.h \
 efreetd_dbus.c \
 efreetd_cache.h \
