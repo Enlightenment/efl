@@ -656,3 +656,7 @@
 2012-11-02  ChunEon Park (Hermet)
 
         * Don't update map uv with image size for proxy object in elm_flip.
+
+2012-11-06  Gustavo Lima (glima)
+
+        * Fix typo on check's theme -- back from disabled state was broken.
