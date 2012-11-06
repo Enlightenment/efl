@@ -59,7 +59,7 @@ test_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(video);
 
    notify = elm_notify_add(win);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
+   elm_notify_align_set(notify, 0.5, 1.0);
    elm_notify_timeout_set(notify, 3.0);
 
    player = elm_player_add(win);

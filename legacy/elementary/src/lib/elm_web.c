@@ -973,7 +973,7 @@ _ewk_view_popup_create_cb(void *data,
 
    notify = elm_notify_add(obj);
    elm_notify_allow_events_set(notify, EINA_FALSE);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
+   elm_notify_align_set(notify, 0.5, 1.0);
 
    list = elm_list_add(obj);
    elm_list_select_mode_set(data, ELM_OBJECT_SELECT_MODE_ALWAYS);

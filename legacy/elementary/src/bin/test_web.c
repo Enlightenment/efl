@@ -125,7 +125,7 @@ _alert_hook(void *data __UNUSED__, Evas_Object *obj, const char *message)
    Evas_Object *popup, *label;
 
    popup = elm_notify_add(obj);
-   elm_notify_orient_set(popup, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_align_set(popup, 0.5, 0.5);
    // Using the timeout doesn't seem to go well with the second main loop
    //elm_notify_timeout_set(popup, 2.0);
    elm_notify_allow_events_set(popup, EINA_FALSE);
@@ -167,7 +167,7 @@ _confirm_hook(void *data __UNUSED__, Evas_Object *obj, const char *message, Eina
    Evas_Object *popup, *box, *box2, *label, *btn_ok, *btn_cancel;
 
    popup = elm_notify_add(obj);
-   elm_notify_orient_set(popup, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_align_set(popup, 0.5, 0.5);
    elm_notify_allow_events_set(popup, EINA_FALSE);
    evas_object_show(popup);
 

@@ -139,7 +139,7 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_smart_callback_add(slideshow, "transition,end", _slide_transition, slide_last_it);
 
    notify = elm_notify_add(win);
-   elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
+   elm_notify_align_set(notify, 0.5, 1.0);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, notify);
    elm_notify_timeout_set(notify, 3.0);

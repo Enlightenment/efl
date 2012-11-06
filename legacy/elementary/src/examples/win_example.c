@@ -108,7 +108,7 @@ _main_win_del_cb(void *data, Evas_Object *obj, void *event)
    Evas_Object *msg, *box, *box2, *btn, *lbl, *sep;
 
    msg = elm_notify_add(obj);
-   elm_notify_orient_set(msg, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_align_set(msg, 0.5, 0.5);
    elm_notify_allow_events_set(msg, EINA_FALSE);
    evas_object_show(msg);
 

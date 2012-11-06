@@ -1236,7 +1236,7 @@ _elm_popup_smart_add(Evas_Object *obj)
      (ELM_WIDGET_DATA(priv)->resize_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    priv->notify = elm_notify_add(obj);
-   elm_notify_orient_set(priv->notify, ELM_NOTIFY_ORIENT_CENTER);
+   elm_notify_align_set(priv->notify, 0.5, 0.5);
    elm_notify_allow_events_set(priv->notify, EINA_FALSE);
    evas_object_size_hint_weight_set
      (priv->notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1374,6 +1374,91 @@ elm_popup_content_text_wrap_type_get(const Evas_Object *obj)
    return sd->content_text_wrap_type;
 }
 
+/* keeping old externals orient api for notify, but taking away the
+ * introduced deprecation warning by copying the deprecated code
+ * here */
+static Elm_Notify_Orient
+_elm_notify_orient_get(const Evas_Object *obj)
+{
+   Elm_Notify_Orient orient;
+   double horizontal, vertical;
+
+   elm_notify_align_get(obj, &horizontal, &vertical);
+
+   if ((horizontal == 0.5) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP;
+   else if ((horizontal == 0.5) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_CENTER;
+   else if ((horizontal == 0.5) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM;
+   else if ((horizontal == 0.0) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 0.5))
+     orient = ELM_NOTIFY_ORIENT_RIGHT;
+   else if ((horizontal == 0.0) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 0.0))
+     orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
+   else if ((horizontal == 0.0) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
+   else if ((horizontal == 1.0) && (vertical == 1.0))
+     orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
+   else
+     orient = ELM_NOTIFY_ORIENT_TOP;
+   return orient;
+}
+
+static void
+_elm_notify_orient_set(Evas_Object *obj,
+                       Elm_Notify_Orient orient)
+{
+   double horizontal = 0, vertical = 0;
+
+   switch (orient)
+     {
+      case ELM_NOTIFY_ORIENT_TOP:
+         horizontal = 0.5; vertical = 0.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_CENTER:
+         horizontal = 0.5; vertical = 0.5;
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM:
+         horizontal = 0.5; vertical = 1.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_LEFT:
+         horizontal = 0.0; vertical = 0.5;
+        break;
+
+      case ELM_NOTIFY_ORIENT_RIGHT:
+         horizontal = 1.0; vertical = 0.5;
+        break;
+
+      case ELM_NOTIFY_ORIENT_TOP_LEFT:
+         horizontal = 0.0; vertical = 0.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+         horizontal = 1.0; vertical = 0.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+         horizontal = 0.0; vertical = 1.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+         horizontal = 1.0; vertical = 1.0;
+        break;
+
+      case ELM_NOTIFY_ORIENT_LAST:
+        break;
+     }
+
+   elm_notify_align_set(obj, horizontal, vertical);
+}
+
 EAPI void
 elm_popup_orient_set(Evas_Object *obj,
                      Elm_Popup_Orient orient)
@@ -1382,7 +1467,7 @@ elm_popup_orient_set(Evas_Object *obj,
    ELM_POPUP_DATA_GET(obj, sd);
 
    if (orient >= ELM_POPUP_ORIENT_LAST) return;
-   elm_notify_orient_set(sd->notify, (Elm_Notify_Orient)orient);
+   _elm_notify_orient_set(sd->notify, (Elm_Notify_Orient)orient);
 }
 
 EAPI Elm_Popup_Orient
@@ -1391,7 +1476,7 @@ elm_popup_orient_get(const Evas_Object *obj)
    ELM_POPUP_CHECK(obj) - 1;
    ELM_POPUP_DATA_GET(obj, sd);
 
-   return (Elm_Popup_Orient)elm_notify_orient_get(sd->notify);
+   return (Elm_Popup_Orient)_elm_notify_orient_get(sd->notify);
 }
 
 EAPI void
