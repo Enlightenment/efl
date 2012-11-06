@@ -420,7 +420,7 @@ AC_CHECK_HEADERS([errno.h])
 
 EVIL_CPPFLAGS="-DEFL_EVIL_BUILD"
 EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
-EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith -mms-bitfields"
+EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith"
 EVIL_CXXFLAGS=""
 
 if test "x${have_win32}" = "xyes" ; then
