@@ -397,7 +397,7 @@ case "$host_os" in
     EVIL_DLFCN_LIBS="-ltoolhelp"
     ;;
   *)
-    EVIL_LIBS="-luuid -lole32 -lws2_32 -lsecur32"
+    EVIL_LIBS="-lole32 -lws2_32 -lsecur32 -luuid"
     EVIL_DLFCN_LIBS="-lpsapi"
     ;;
 esac
@@ -1194,7 +1194,6 @@ case "$host_os" in
    mingw*)
       want_evas_engine_software_gdi="yes"
       want_evas_engine_software_ddraw="yes"
-      want_evas_engine_direct3d="yes"
       ;;
    darwin*)
       want_evas_engine_software_xlib="auto"

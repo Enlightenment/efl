@@ -21,6 +21,12 @@ lib_eo_libeo_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EO_CFLAGS@
 
+if HAVE_WINDOWS
+lib_eo_libeo_la_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 lib_eo_libeo_la_LIBADD = lib/eina/libeina.la @EO_LIBS@
 
 lib_eo_libeo_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

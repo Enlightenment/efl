@@ -104,9 +104,9 @@ lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_LDFLAGS = -no-undefined -version-info @version_info@
 
 if HAVE_WINCE
-lib_evil_libevil_la_LINK = $(LINK) $(libevil_la_LDFLAGS)
+lib_evil_libevil_la_LINK = $(LINK) $(lib_evil_libevil_la_LDFLAGS)
 else
-lib_evil_libevil_la_LINK = $(CXXLINK) $(libevil_la_LDFLAGS)
+lib_evil_libevil_la_LINK = $(CXXLINK) $(lib_evil_libevil_la_LDFLAGS)
 endif
 
 lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
@@ -118,7 +118,7 @@ lib_evil_libdl_la_CPPFLAGS = \
 
 lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@
 
-lib_evil_libdl_la_LIBADD = $(top_builddir)/src/lib/evil/libevil.la @EVIL_DLFCN_LIBS@
+lib_evil_libdl_la_LIBADD = lib/evil/libevil.la @EVIL_DLFCN_LIBS@
 
 lib_evil_libdl_la_LDFLAGS = -no-undefined -version-info @version_info@
 
@@ -172,7 +172,7 @@ endif
 
 bin_evil_evil_suite_LDADD = \
 lib/evil/libevil.la \
-lib/eina/libdl.la \
+lib/evil/libdl.la \
 -lm
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c

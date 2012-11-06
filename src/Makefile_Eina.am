@@ -227,8 +227,8 @@ lib_eina_libeina_la_LIBADD = @EINA_LIBS@
 
 if HAVE_WINDOWS
 lib_eina_libeina_la_LIBADD += \
-$(top_builddir)/src/lib/evil/libevil.la \
-$(top_builddir)/src/lib/evil/libdl.la
+lib/evil/libevil.la \
+lib/evil/libdl.la
 endif
 
 lib_eina_libeina_la_LIBADD += -lm
