@@ -793,10 +793,10 @@ EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, co
 #define elm_layout_icon_set(_ly, _obj)                                 \
   do {                                                                 \
        const char *sig;                                                \
-       elm_object_part_content_set((_ly), "elm.swallow.icon", (_obj)); \
+       elm_layout_content_set((_ly), "elm.swallow.icon", (_obj));      \
        if ((_obj)) sig = "elm,state,icon,visible";                     \
        else sig = "elm,state,icon,hidden";                             \
-       elm_object_signal_emit((_ly), sig, "elm");                      \
+       elm_layout_signal_emit((_ly), sig, "elm");                      \
     } while (0)
 
 /**
@@ -807,7 +807,7 @@ EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, co
  * @ingroup Layout
  */
 #define elm_layout_icon_get(_ly) \
-  elm_object_part_content_get((_ly), "elm.swallow.icon")
+  elm_layout_content_get((_ly), "elm.swallow.icon")
 
 /**
  * @def elm_layout_end_set
@@ -819,10 +819,10 @@ EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, co
 #define elm_layout_end_set(_ly, _obj)                                 \
   do {                                                                \
        const char *sig;                                               \
-       elm_object_part_content_set((_ly), "elm.swallow.end", (_obj)); \
+       elm_layout_content_set((_ly), "elm.swallow.end", (_obj));      \
        if ((_obj)) sig = "elm,state,end,visible";                     \
        else sig = "elm,state,end,hidden";                             \
-       elm_object_signal_emit((_ly), sig, "elm");                     \
+       elm_layout_signal_emit((_ly), sig, "elm");                     \
     } while (0)
 
 /**
@@ -833,7 +833,7 @@ EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, co
  * @ingroup Layout
  */
 #define elm_layout_end_get(_ly) \
-  elm_object_part_content_get((_ly), "elm.swallow.end")
+  elm_layout_content_get((_ly), "elm.swallow.end")
 
 /**
  * @}
