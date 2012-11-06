@@ -218,7 +218,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   evas_object_smart_callback_call(data, SIG_THUMB_ERROR, NULL);
+   evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_THUMB_ERROR, NULL);
 
    _icon_thumb_cleanup(client);
 }

@@ -660,3 +660,7 @@
 2012-11-06  Gustavo Lima (glima)
 
         * Fix typo on check's theme -- back from disabled state was broken.
+
+2012-11-07  Mikael Sans (xhell)
+
+        * Fix wrong parameter for thumbnail error in elm_icon.
