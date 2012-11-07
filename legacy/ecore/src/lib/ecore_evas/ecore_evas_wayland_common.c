@@ -592,7 +592,7 @@ _ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj _
 void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
-   int x, y;
+   int x, y, fx, fy;
 
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
 
@@ -614,10 +614,11 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
    ecore_wl_window_pointer_set(ee->engine.wl.win, NULL, 0, 0);
 
    evas_pointer_output_xy_get(ee->evas, &x, &y);
+   evas_output_framespace_get(ee->evas, &fx, &fy, NULL, NULL);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_move(ee->prop.cursor.object,
-                    x - ee->prop.cursor.hot.x,
-                    y - ee->prop.cursor.hot.y);
+                    x - fx - ee->prop.cursor.hot.x,
+                    y - fy - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
