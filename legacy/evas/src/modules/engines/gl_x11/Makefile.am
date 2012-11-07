@@ -19,7 +19,7 @@ GL_X11_SOURCES = \
 evas_engine.c \
 evas_x_main.c
 
-GL_X11_LIBADD = @evas_engine_gl_xlib_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la 
+GL_X11_LIBADD = @evas_engine_gl_xlib_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
 
 includes_HEADERS = Evas_Engine_GL_X11.h
@@ -32,7 +32,7 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(GL_X11_SOURCES)
 module_la_LIBADD = @EVAS_GENERAL_LIBS@ @GL_EET_LIBS@ $(GL_X11_LIBADD) $(top_builddir)/src/lib/libevas.la @dlopen_libs@
-module_la_LDFLAGS = -module -avoid-version
+module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 else

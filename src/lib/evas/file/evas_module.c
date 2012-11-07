@@ -360,7 +360,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
 # define EVAS_MODULE_NAME_IMAGE_LOADER "loader_%s.dll"
 # define EVAS_MODULE_NAME_ENGINE "engine_%s.dll"
 # define EVAS_MODULE_NAME_OBJECT "object_%s.dll"
-#elif _WIN32
+#elif defined(_WIN32) || defined(__CYGWIN__)
 # define EVAS_MODULE_NAME_IMAGE_SAVER "module.dll"
 # define EVAS_MODULE_NAME_IMAGE_LOADER "module.dll"
 # define EVAS_MODULE_NAME_ENGINE "module.dll"
