@@ -42,7 +42,7 @@ syn keyword	cLabel		size_w size_h size_max_w size_max_h size_min_w size_min_w
 syn keyword	cLabel		spread scale_hint elipsis ellipsis pointer_mode prefer
 syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
-syn keyword	cLabel		external params size_range border_scale
+syn keyword	cLabel		external params size_range border_scale minmul
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
