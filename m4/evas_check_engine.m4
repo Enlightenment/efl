@@ -706,8 +706,8 @@ if test "x${have_dep}" = "xyes" ; then
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
       PKG_CHECK_MODULES([WAYLAND_EGL], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
+      evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
+      evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
    fi
 fi
 
