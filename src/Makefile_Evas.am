@@ -2,6 +2,7 @@
 ### Library
 
 lib_LTLIBRARIES += lib/evas/libevas.la
+noinst_LTLIBRARIES =
 
 installed_evasmainheadersdir = $(includedir)/evas-@VMAJ@
 dist_installed_evasmainheaders_DATA = lib/evas/Evas.h lib/evas/Evas_GL.h
@@ -188,10 +189,6 @@ lib/evas/common/language/evas_script_table.h \
 lib/evas/common/evas_text_utils.h \
 lib/evas/common/evas_font_ot.h
 
-# SSE3
-lib_evas_libevas_la_SOURCES += \
-lib/evas/common/evas_op_blend/op_blend_master_sse3.c
-
 lib_evas_libevas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_builddir)/src/lib/evas \
@@ -218,7 +215,16 @@ lib_evas_libevas_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
-@EVAS_ALTIVEC_CFLAGS@ \
+@EVAS_ALTIVEC_CFLAGS@
+
+# SSE3
+noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la
+
+lib_evas_common_libevas_op_blend_sse3_la_SOURCES = \
+lib/evas/common/evas_op_blend/op_blend_master_sse3.c
+
+lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = \
+$(lib_evas_libevas_la_CPPFLAGS) \
 @EVAS_SSE3_CFLAGS@
 
 if HAVE_WINDOWS
@@ -230,6 +236,7 @@ endif
 lib_evas_libevas_la_CXXFLAGS =
 
 lib_evas_libevas_la_LIBADD = \
+lib/evas/common/libevas_op_blend_sse3.la \
 lib/eina/libeina.la \
 lib/eet/libeet.la \
 lib/eo/libeo.la \
@@ -695,7 +702,7 @@ if EVAS_STATIC_BUILD_GL_COMMON
 lib_evas_libevas_la_SOURCES += $(GL_COMMON_SOURCES)
 lib_evas_libevas_la_LIBADD += @evas_engine_gl_common_libs@
 else
-noinst_LTLIBRARIES = modules/evas/engines/gl_common/libevas_engine_gl_common.la
+noinst_LTLIBRARIES += modules/evas/engines/gl_common/libevas_engine_gl_common.la
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_SOURCES = $(GL_COMMON_SOURCES)
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
