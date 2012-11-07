@@ -576,19 +576,20 @@ EAPI Eina_Bool             elm_win_shaped_get(const Evas_Object *obj);
  * windows, with elm_win_shaped_set().
  *
  * @param obj The window object
- * @param alpha If true, the window has an alpha channel
+ * @param enabled EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise
  *
  * @see elm_win_alpha_set()
  *
  * @ingroup Win
  */
-EAPI void                  elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha);
+EAPI void                  elm_win_alpha_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Get the alpha channel state of a window.
  *
  * @param obj The window object
- * @return If true, the window has an alpha channel
+ * @return EINA_TRUE if the window alpha channel is enabled, EINA_FALSE
+ * otherwise
  *
  * @ingroup Win
  */

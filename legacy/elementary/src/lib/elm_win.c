@@ -3043,35 +3043,35 @@ elm_win_shaped_get(const Evas_Object *obj)
 
 EAPI void
 elm_win_alpha_set(Evas_Object *obj,
-                  Eina_Bool alpha)
+                  Eina_Bool enabled)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
    if (sd->img_obj)
      {
-        evas_object_image_alpha_set(sd->img_obj, alpha);
-        ecore_evas_alpha_set(sd->ee, alpha);
+        evas_object_image_alpha_set(sd->img_obj, enabled);
+        ecore_evas_alpha_set(sd->ee, enabled);
      }
    else
      {
 #ifdef HAVE_ELEMENTARY_X
         if (sd->x.xwin)
           {
-             if (alpha)
+             if (enabled)
                {
                   if (!_elm_config->compositing)
-                    elm_win_shaped_set(obj, alpha);
+                    elm_win_shaped_set(obj, enabled);
                   else
-                    TRAP(sd, alpha_set, alpha);
+                    TRAP(sd, alpha_set, enabled);
                }
              else
-               TRAP(sd, alpha_set, alpha);
+               TRAP(sd, alpha_set, enabled);
              _elm_win_xwin_update(sd);
           }
         else
 #endif
-          TRAP(sd, alpha_set, alpha);
+          TRAP(sd, alpha_set, enabled);
      }
 }
 
