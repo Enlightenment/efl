@@ -18,7 +18,7 @@ lib_LTLIBRARIES = libecore_x.la
 libecore_x_la_SOURCES =
 
 libecore_x_la_LIBADD = $(DEP) @EINA_LIBS@
-libecore_x_la_LDFLAGS = -version-info @version_info@ @release_info@
+libecore_x_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 libecore_x_la_DEPENDENCIES = $(DEP)
 
 includes_HEADERS = \

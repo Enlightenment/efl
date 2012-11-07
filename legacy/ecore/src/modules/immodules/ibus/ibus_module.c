@@ -1,8 +1,14 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+
+#include <Ecore.h>
+#include <Ecore_IMF.h>
+
 #include <ibus.h>
 #include "ibus_imcontext.h"
-#include <Ecore_IMF.h>
-#include <Ecore.h>
-#include <stdio.h>
 
 #define IBUS_LOCALDIR ""
 static const Ecore_IMF_Context_Info ibus_im_info = {
