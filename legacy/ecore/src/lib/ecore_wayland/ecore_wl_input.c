@@ -379,8 +379,6 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
 
    if (input->pointer_focus)
      _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp);
-
-   ecore_wl_input_cursor_from_name_set(input, input->cursor_name);
 }
 
 static void 
