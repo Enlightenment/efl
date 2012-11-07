@@ -17,5 +17,5 @@ $(top_builddir)/src/lib/libethumb.la \
 @EPDF_LIBS@ \
 @EVAS_LIBS@ \
 @EINA_LIBS@
-epdf_la_LDFLAGS = -module -avoid-version
+epdf_la_LDFLAGS = -no-undefined -module -avoid-version
 epdf_la_LIBTOOLFLAGS = --tag=disable-static

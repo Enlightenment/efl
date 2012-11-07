@@ -36,7 +36,7 @@ $(top_builddir)/src/lib/libethumb.la \
 @ECORE_FILE_LIBS@ \
 @EVAS_LIBS@ \
 @EINA_LIBS@
-emotion_la_LDFLAGS = -module -avoid-version
+emotion_la_LDFLAGS = -no-undefined -module -avoid-version
 emotion_la_LIBTOOLFLAGS = --tag=disable-static
 
 
