@@ -161,7 +161,7 @@ else
       ])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lm $gl_pt_lib)
-      if test "x${have_dep}" = "xyes" ; then
+      if test "x${have_glesv2}" = "xyes" ; then
          evas_engine_[]$1[]_cflags="${x_cflags}"
          evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
          evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
@@ -333,7 +333,7 @@ else
       ])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL ${x_libs} -lm $gl_pt_lib)
-      if test "x${have_dep}" = "xyes" ; then
+      if test "x${have_glesv2}" = "xyes" ; then
          evas_engine_[]$1[]_cflags="${XCB_GL_CFLAGS} ${x_cflags}"
          evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
          evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
