@@ -23,6 +23,12 @@
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
+#ifdef __CYGWIN__
+# define LIBEXT ".dll"
+#else
+# define LIBEXT ".so"
+#endif
+
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
 
@@ -625,7 +631,7 @@ elm_quicklaunch_prepare(int argc __UNUSED__,
         char *exe2, *p;
         char *exename;
 
-        exe2 = malloc(strlen(exe) + 1 + 10);
+        exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
         strcpy(exe2, exe);
         p = strrchr(exe2, '/');
         if (p) p++;
@@ -635,7 +641,7 @@ elm_quicklaunch_prepare(int argc __UNUSED__,
         *p = 0;
         strcat(p, "../lib/");
         strcat(p, exename);
-        strcat(p, ".so");
+        strcat(p, LIBEXT);
         if (!access(exe2, R_OK | X_OK))
           {
              free(exe);
