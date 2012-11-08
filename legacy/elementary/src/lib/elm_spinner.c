@@ -659,7 +659,7 @@ _elm_spinner_smart_focus_next(const Evas_Object *obj,
 }
 
 static void
-_access_hook(Evas_Object *obj, Eina_Bool is_access)
+_elm_spinner_smart_access(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_SPINNER_CHECK(obj);
    ELM_SPINNER_DATA_GET(obj, sd);
@@ -698,7 +698,7 @@ _elm_spinner_smart_set_user(Elm_Spinner_Smart_Class *sc)
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      ELM_WIDGET_CLASS(sc)->focus_next = _elm_spinner_smart_focus_next;
 
-   ELM_WIDGET_CLASS(sc)->access = _access_hook;
+   ELM_WIDGET_CLASS(sc)->access = _elm_spinner_smart_access;
 }
 
 EAPI const Elm_Spinner_Smart_Class *

@@ -1390,7 +1390,7 @@ _elm_diskselector_smart_member_add(Evas_Object *obj,
 }
 
 static void
-_access_hook(Evas_Object *obj, Eina_Bool is_access)
+_elm_diskselector_smart_access(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
    
@@ -1420,7 +1420,7 @@ _elm_diskselector_smart_set_user(Elm_Diskselector_Smart_Class *sc)
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      ELM_WIDGET_CLASS(sc)->focus_next = _elm_diskselector_smart_focus_next;
 
-   ELM_WIDGET_CLASS(sc)->access = _access_hook;
+   ELM_WIDGET_CLASS(sc)->access = _elm_diskselector_smart_access;
 }
 
 EAPI const Elm_Diskselector_Smart_Class *

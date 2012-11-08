@@ -962,7 +962,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 static void
-_access_hook(Evas_Object *obj, Eina_Bool is_access)
+_elm_calendar_smart_access(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_CALENDAR_CHECK(obj);
    ELM_CALENDAR_DATA_GET(obj, sd);
@@ -995,7 +995,7 @@ _elm_calendar_smart_set_user(Elm_Calendar_Smart_Class *sc)
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      ELM_WIDGET_CLASS(sc)->focus_next = _elm_calendar_smart_focus_next;
 
-   ELM_WIDGET_CLASS(sc)->access = _access_hook;
+   ELM_WIDGET_CLASS(sc)->access = _elm_calendar_smart_access;
 }
 
 EAPI const Elm_Calendar_Smart_Class *
