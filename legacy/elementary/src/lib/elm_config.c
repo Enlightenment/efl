@@ -404,7 +404,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_double_tap_timeout, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, access_mode, T_INT);
+   ELM_CONFIG_VAL(D, T, access_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, glayer_continues_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, week_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_start, T_INT);

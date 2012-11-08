@@ -144,8 +144,8 @@ extern const char *_elm_engines[];
 
 #define ELM_FONT_TOKEN_STYLE  ":style="
 
-#define ELM_ACCESS_MODE_OFF   0
-#define ELM_ACCESS_MODE_ON    1
+#define ELM_ACCESS_MODE_OFF   EINA_FALSE
+#define ELM_ACCESS_MODE_ON    EINA_TRUE
 
 #undef MIN
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -214,7 +214,7 @@ struct _Elm_Config
    unsigned int  glayer_flick_time_limit_ms;
    double        glayer_long_tap_start_timeout;
    double        glayer_double_tap_timeout;
-   int           access_mode;
+   Eina_Bool     access_mode;
    unsigned char glayer_continues_enable;
    int           week_start;
    int           weekend_start;
