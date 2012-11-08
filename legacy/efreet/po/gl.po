@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-10-09 15:16-0300\n"
-"PO-Revision-Date: 2012-09-16 11:07+0200\n"
+"PO-Revision-Date: 2012-11-07 22:52+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -21,28 +21,29 @@ msgstr "Escritorio"
 
 #: src/lib/efreet_base.c:152
 msgid "Downloads"
-msgstr ""
+msgstr "Descargas"
 
 #: src/lib/efreet_base.c:161
 msgid "Templates"
-msgstr ""
+msgstr "Modelos"
 
 #: src/lib/efreet_base.c:170
 msgid "Public"
-msgstr ""
+msgstr "Público"
 
 #: src/lib/efreet_base.c:179
 msgid "Documents"
-msgstr ""
+msgstr "Documentos"
 
 #: src/lib/efreet_base.c:187
 msgid "Music"
-msgstr ""
+msgstr "Música"
 
 #: src/lib/efreet_base.c:195
 msgid "Pictures"
-msgstr ""
+msgstr "Imaxes"
 
 #: src/lib/efreet_base.c:203
 msgid "Videos"
-msgstr ""
+msgstr "Vídeos"
+
