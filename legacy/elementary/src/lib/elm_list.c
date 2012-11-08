@@ -1387,19 +1387,22 @@ _item_new(Evas_Object *obj,
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
    // ACCESS
-   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        _elm_access_widget_item_register((Elm_Widget_Item *)it);
 
-   _elm_access_text_set(_elm_access_object_get(it->base.access_obj),
-                        ELM_ACCESS_TYPE, E_("List Item"));
-   _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
-                            ELM_ACCESS_INFO,
-                            _access_info_cb, it);
-   _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
-                            ELM_ACCESS_STATE,
-                            _access_state_cb, it);
-   _elm_access_on_highlight_hook_set(
-     _elm_access_object_get(it->base.access_obj), _access_on_highlight_cb,
-     it);
+        _elm_access_text_set(_elm_access_object_get(it->base.access_obj),
+                             ELM_ACCESS_TYPE, E_("List Item"));
+        _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
+                                 ELM_ACCESS_INFO,
+                                 _access_info_cb, it);
+        _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
+                                 ELM_ACCESS_STATE,
+                                 _access_state_cb, it);
+        _elm_access_on_highlight_hook_set(
+           _elm_access_object_get(it->base.access_obj), _access_on_highlight_cb,
+           it);
+     }
 
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
    evas_object_event_callback_add
