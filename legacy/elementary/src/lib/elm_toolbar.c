@@ -1614,6 +1614,18 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static void
+_access_widget_item_register(Elm_Toolbar_Item *it)
+{
+   Elm_Access_Info *ai;
+   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   ai = _elm_access_object_get(it->base.access_obj);
+
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Toolbar Item"));
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+   _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
+}
+
 static Elm_Toolbar_Item *
 _item_new(Evas_Object *obj,
           const char *icon,
@@ -1657,15 +1669,7 @@ _item_new(Evas_Object *obj,
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     {
-        Elm_Access_Info *ai;
-        _elm_access_widget_item_register((Elm_Widget_Item *)it);
-        ai = _elm_access_object_get(it->base.access_obj);
-
-        _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Toolbar Item"));
-        _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
-        _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
-     }
+     _access_widget_item_register(it);
 
    if (_item_icon_set(icon_obj, "toolbar/", icon))
      {
@@ -2200,6 +2204,83 @@ _elm_toolbar_smart_member_add(Evas_Object *obj,
      evas_object_raise(sd->hit_rect);
 }
 
+static Eina_List *
+_access_item_find_append(const Evas_Object *obj,
+                         Evas_Object *bx,
+                         Eina_List *items)
+{
+   Elm_Toolbar_Item *it;
+   Eina_List *list;
+
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   list = evas_object_box_children_get(bx);
+   if (!list) return items;
+
+   EINA_INLIST_FOREACH (sd->items, it)
+     {
+        if (it->separator) continue;
+        if (eina_list_data_find(list, it->base.view))
+          items = eina_list_append(items, it->base.access_obj);
+     }
+
+   return items;
+}
+
+static Eina_Bool
+_elm_toolbar_smart_focus_next(const Evas_Object *obj,
+                              Elm_Focus_Direction dir,
+                              Evas_Object **next)
+{
+   Eina_List *items = NULL;
+
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (sd->more_item && sd->more_item->selected)
+     {
+        items = _access_item_find_append(obj, sd->bx_more, items);
+        items = _access_item_find_append(obj, sd->bx_more2, items);
+        items = eina_list_append(items, sd->more_item->base.access_obj);
+     }
+   else
+     {
+        items = _access_item_find_append(obj, sd->bx, items);
+        if (sd->more_item &&
+            eina_list_data_find(evas_object_box_children_get(sd->bx),
+                                            sd->more_item->base.view))
+          items = eina_list_append(items, sd->more_item->base.access_obj);
+     }
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_obj_process(Elm_Toolbar_Smart_Data * sd, Eina_Bool is_access)
+{
+   Elm_Toolbar_Item *it;
+
+   EINA_INLIST_FOREACH (sd->items, it)
+     {
+        if (is_access) _access_widget_item_register(it);
+        else _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+     }
+}
+
+static void
+_elm_toolbar_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_TOOLBAR_CHECK(obj);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+       _elm_toolbar_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+   _access_obj_process(sd, is_access);
+}
+
 static void
 _elm_toolbar_smart_set_user(Elm_Toolbar_Smart_Class *sc)
 {
@@ -2213,6 +2294,11 @@ _elm_toolbar_smart_set_user(Elm_Toolbar_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->event = _elm_toolbar_smart_event;
    ELM_WIDGET_CLASS(sc)->theme = _elm_toolbar_smart_theme;
    ELM_WIDGET_CLASS(sc)->translate = _elm_toolbar_smart_translate;
+
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_toolbar_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _elm_toolbar_smart_access;
 }
 
 EAPI const Elm_Toolbar_Smart_Class *
