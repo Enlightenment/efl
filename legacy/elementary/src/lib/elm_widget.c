@@ -2388,11 +2388,16 @@ elm_widget_focus_list_next_get(const Evas_Object *obj,
 
    /* Recovery last focused sub item */
    if (elm_widget_focus_get(obj))
-     for (; l; l = list_next(l))
-       {
-          Evas_Object *cur = list_data_get(l);
-          if (elm_widget_focus_get(cur)) break;
-       }
+     {
+        for (; l; l = list_next(l))
+          {
+             Evas_Object *cur = list_data_get(l);
+             if (elm_widget_focus_get(cur)) break;
+          }
+
+         /* Focused object, but no focused sub item */
+         if (!l) l = items;
+     }
 
    const Eina_List *start = l;
    Evas_Object *to_focus = NULL;

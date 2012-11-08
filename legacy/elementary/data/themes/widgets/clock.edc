@@ -555,6 +555,32 @@ group { name: "elm/clock/flipdigit/default";
             visible: 1;
          }
       }
+      part { name: "access.t";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "t";
+            rel2.to: "t";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.b";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
    }
    programs {
       program { name: "load";
@@ -603,6 +629,40 @@ group { name: "elm/clock/flipdigit/default";
       program { name: "down,stop";
          signal: "mouse,up,1";
          source: "b";
+         action: SIGNAL_EMIT "elm,action,down,stop" "";
+      }
+      program { name: "access_edit_on";
+         signal: "elm,state,access,edit,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access_edit_off";
+         signal: "elm,state,access,edit,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access,up";
+         signal: "mouse,down,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,start" "";
+      }
+      program { name: "access,up,stop";
+         signal: "mouse,up,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,stop" "";
+      }
+      program { name: "access,down";
+         signal: "mouse,down,1";
+         source: "access.b";
+         action: SIGNAL_EMIT "elm,action,down,start" "";
+      }
+      program { name: "access,down,stop";
+         signal: "mouse,up,1";
+         source: "access.b";
          action: SIGNAL_EMIT "elm,action,down,stop" "";
       }
    }
@@ -876,6 +936,32 @@ group { name: "elm/clock/flipampm/default";
             visible: 1;
          }
       }
+      part { name: "access.t";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "t";
+            rel2.to: "t";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.b";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
    }
    programs {
       program { name: "load";
@@ -924,6 +1010,40 @@ group { name: "elm/clock/flipampm/default";
       source: "b";
       action: SIGNAL_EMIT "elm,action,down,stop" "";
    }
+      program { name: "access_edit_on";
+         signal: "elm,state,access,edit,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access_edit_off";
+         signal: "elm,state,edit,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access,up";
+         signal: "mouse,down,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,start" "";
+      }
+      program { name: "access,up,stop";
+         signal: "mouse,up,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,stop" "";
+      }
+      program { name: "access,down";
+         signal: "mouse,down,1";
+         source: "access.b";
+         action: SIGNAL_EMIT "elm,action,down,start" "";
+      }
+      program { name: "access,down,stop";
+         signal: "mouse,up,1";
+         source: "access.b";
+         action: SIGNAL_EMIT "elm,action,down,stop" "";
+      }
    }
 }
 
@@ -1166,6 +1286,18 @@ group { name: "elm/clock/base-am_pm/default";
 ///////////////////////////////////////////////////////////////////////////////
 group { name: "elm/clock/base/default";
    parts {
+      part { name: "base";
+         type: RECT;
+         scale : 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
       part { name: "d0";
          type: SWALLOW;
          description { state: "default" 0.0;
@@ -1210,6 +1342,20 @@ group { name: "elm/clock/base/default";
             rel1.relative: 0.777777778 0.0;
             rel2.relative: 1.000000000 1.0;
          }
+      }
+   }
+   programs {
+      program { name: "access_on";
+         signal: "elm,state,access,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "access_off";
+         signal: "elm,state,access,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
       }
    }
 }

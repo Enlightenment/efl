@@ -175,6 +175,134 @@ _on_clock_val_change_stop(void *data,
 }
 
 static void
+_access_time_register(Evas_Object *obj, Eina_Bool is_access)
+{
+   Evas_Object *ao, *po;
+
+   ELM_CLOCK_DATA_GET(obj, sd);
+
+   if (!sd->edit) return;
+
+   /* hour, min, sec edit button */
+   int i;
+   for (i = 0; i < 6; i++)
+     {
+        if (is_access && (sd->digedit & (1 << i)))
+          {
+             char *digit = NULL;
+
+             switch (1 << i)
+               {
+                case ELM_CLOCK_EDIT_HOUR_DECIMAL:
+                  digit = "hour decimal";
+                  break;
+                case ELM_CLOCK_EDIT_HOUR_UNIT:
+                  digit = "hour unit";
+                  break;
+                case ELM_CLOCK_EDIT_MIN_DECIMAL:
+                  digit = "minute decimal";
+                  break;
+                case ELM_CLOCK_EDIT_MIN_UNIT:
+                  digit = "minute unit";
+                  break;
+                case ELM_CLOCK_EDIT_SEC_DECIMAL:
+                  digit = "second decimal";
+                  break;
+                case ELM_CLOCK_EDIT_SEC_UNIT:
+                  digit = "second unit";
+                  break;
+               }
+
+             Eina_Strbuf *strbuf;
+             strbuf = eina_strbuf_new();
+
+             /* increment button */
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, sd->digit[i], "access.t");
+
+             eina_strbuf_append_printf(strbuf,
+               "clock increment button for %s", digit);
+             _elm_access_text_set(_elm_access_object_get(ao),
+               ELM_ACCESS_TYPE, eina_strbuf_string_get(strbuf));
+
+             /* decrement button */
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, sd->digit[i], "access.b");
+
+             eina_strbuf_replace(strbuf, "increment", "decrement", 1);
+             _elm_access_text_set(_elm_access_object_get(ao),
+               ELM_ACCESS_TYPE, eina_strbuf_string_get(strbuf));
+
+             eina_strbuf_free(strbuf);
+
+             edje_object_signal_emit
+               (sd->digit[i], "elm,state,access,edit,on", "elm");
+          }
+        else if (!is_access && (sd->digedit & (1 << i)))
+          {
+             _elm_access_edje_object_part_object_unregister
+               (obj, sd->digit[i], "access.t");
+
+             _elm_access_edje_object_part_object_unregister
+               (obj, sd->digit[i], "access.b");
+
+             edje_object_signal_emit
+               (sd->digit[i], "elm,state,access,edit,off", "elm");
+          }
+
+        /* no need to propagate mouse event with acess */
+        po = (Evas_Object *)edje_object_part_object_get
+               (sd->digit[i], "access.t");
+        evas_object_propagate_events_set(po, !is_access);
+
+        po = (Evas_Object *)edje_object_part_object_get
+               (sd->digit[i], "access.b");
+        evas_object_propagate_events_set(po, !is_access);
+
+     }
+
+   /* am, pm edit button  */
+   if (is_access && sd->am_pm)
+     {
+        /* increment button */
+        ao = _elm_access_edje_object_part_object_register
+               (obj, sd->am_pm_obj, "access.t");
+        _elm_access_text_set(_elm_access_object_get(ao),
+          ELM_ACCESS_TYPE, E_("clock increment button for am,pm"));
+
+        /* decrement button */
+        ao = _elm_access_edje_object_part_object_register
+               (obj, sd->am_pm_obj, "access.b");
+        _elm_access_text_set(_elm_access_object_get(ao),
+          ELM_ACCESS_TYPE, E_("clock decrement button for am,pm"));
+
+         edje_object_signal_emit
+           (sd->am_pm_obj, "elm,state,access,edit,on", "elm");
+     }
+   else if (!is_access && sd->am_pm)
+     {
+        _elm_access_edje_object_part_object_register
+          (obj, sd->am_pm_obj, "access.t");
+
+        _elm_access_edje_object_part_object_register
+          (obj, sd->am_pm_obj, "access.b");
+
+         edje_object_signal_emit
+           (sd->am_pm_obj, "elm,state,access,edit,off", "elm");
+     }
+
+    /* no need to propagate mouse event with access */
+    po = (Evas_Object *)edje_object_part_object_get
+           (sd->am_pm_obj, "access.t");
+    evas_object_propagate_events_set(po, !is_access);
+
+    po = (Evas_Object *)edje_object_part_object_get
+           (sd->am_pm_obj, "access.b");
+    evas_object_propagate_events_set(po, !is_access);
+
+}
+
+static void
 _time_update(Evas_Object *obj)
 {
    ELM_CLOCK_DATA_GET(obj, sd);
@@ -288,6 +416,10 @@ _time_update(Evas_Object *obj)
              elm_layout_content_set(obj, "ampm", sd->am_pm_obj);
              evas_object_show(sd->am_pm_obj);
           }
+
+       /* access */
+       if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          _access_time_register(obj, EINA_TRUE);
 
         edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &mw, &mh);
         evas_object_size_hint_min_set(obj, mw, mh);
@@ -439,6 +571,52 @@ _ticker(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   int hrs;
+   char *ret;
+   char *ampm = NULL;
+   Eina_Strbuf *buf;
+
+   ELM_CLOCK_DATA_GET(obj, sd);
+
+   buf = eina_strbuf_new();
+
+   hrs = sd->hrs;
+
+   if (sd->am_pm)
+     {
+        if (hrs >= 12)
+          {
+             if (hrs > 12) hrs -= 12;
+             ampm = "PM";
+          }
+        else ampm = "AM";
+     }
+
+   eina_strbuf_append_printf(buf, (ampm) ? ("%d, %d, %s") : ("%d, %d"),
+                             hrs, sd->min, ampm);
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static char *
+_access_state_cb(void *data __UNUSED__,
+                 Evas_Object *obj,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   ELM_CLOCK_DATA_GET(obj, sd);
+   if (sd->edit)
+     return strdup(E_("State: Editable"));
+
+   return NULL;
+}
+
 static void
 _elm_clock_smart_add(Evas_Object *obj)
 {
@@ -458,6 +636,23 @@ _elm_clock_smart_add(Evas_Object *obj)
 
    _time_update(obj);
    _ticker(obj);
+
+   /* access */
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     {
+        evas_object_propagate_events_set(obj, EINA_FALSE);
+        edje_object_signal_emit(ELM_WIDGET_DATA(priv)->resize_obj,
+          "elm,state,access,on", "elm");
+     }
+
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Clock"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   evas_object_propagate_events_set(obj, EINA_FALSE);
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 }
 
 static void
@@ -473,6 +668,95 @@ _elm_clock_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_clock_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_clock_smart_focus_next(const Evas_Object *obj,
+                            Elm_Focus_Direction dir,
+                            Evas_Object **next)
+{
+   Evas_Object *ao, *po;
+   Eina_List *items = NULL;
+
+   ELM_CLOCK_DATA_GET(obj, sd);
+
+   if (!sd->edit)
+     {
+        *next = (Evas_Object *)obj;
+        return !elm_widget_focus_get(obj);
+     }
+   else if (!elm_widget_focus_get(obj))
+     {
+        *next = (Evas_Object *)obj;
+        return EINA_TRUE;
+     }
+
+   int i;
+   for (i = 0; i < 6; i++)
+     {
+        if ((!sd->seconds) && (i >= 4)) break;
+        if (sd->digedit & (1 << i))
+          {
+             po = (Evas_Object *)edje_object_part_object_get
+                    (sd->digit[i], "access.t");
+             ao = evas_object_data_get(po, "_part_access_obj");
+             items = eina_list_append(items, ao);
+
+             po = (Evas_Object *)edje_object_part_object_get
+                    (sd->digit[i], "access.b");
+             ao = evas_object_data_get(po, "_part_access_obj");
+             items = eina_list_append(items, ao);
+          }
+     }
+
+   if (sd->am_pm)
+     {
+        po = (Evas_Object *)edje_object_part_object_get
+               (sd->am_pm_obj, "access.t");
+        ao = evas_object_data_get(po, "_part_access_obj");
+        items = eina_list_append(items, ao);
+
+        po = (Evas_Object *)edje_object_part_object_get
+               (sd->am_pm_obj, "access.b");
+        ao = evas_object_data_get(po, "_part_access_obj");
+        items = eina_list_append(items, ao);
+     }
+
+   return elm_widget_focus_list_next_get
+           (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_obj_process(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_CLOCK_DATA_GET(obj, sd);
+
+   /* clock object */
+   evas_object_propagate_events_set(obj, !is_access);
+
+   if (is_access)
+     edje_object_signal_emit(ELM_WIDGET_DATA(sd)->resize_obj,
+       "elm,state,access,on", "elm");
+   else
+     edje_object_signal_emit(ELM_WIDGET_DATA(sd)->resize_obj,
+       "elm,state,access,off", "elm");
+
+    /* clock time objects */
+    _access_time_register(obj, is_access);
+}
+
+static void
+_elm_clock_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_CLOCK_CHECK(obj);
+   ELM_CLOCK_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+       _elm_clock_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+   _access_obj_process(obj, is_access);
+}
+
 static void
 _elm_clock_smart_set_user(Elm_Clock_Smart_Class *sc)
 {
@@ -484,6 +768,12 @@ _elm_clock_smart_set_user(Elm_Clock_Smart_Class *sc)
    /* not a 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+
+   /* access */
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_clock_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _elm_clock_smart_access;
 }
 
 EAPI const Elm_Clock_Smart_Class *
