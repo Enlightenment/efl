@@ -3840,11 +3840,9 @@ EAPI EPhysics_Body_Material ephysics_body_material_get(const EPhysics_Body *body
  * is set to be applied over all the bodies, @p body will be displayed
  * with light over it.
  *
- * Also, if no light is set on the world with @ref ephysics_world_light_set(),
- * nothing will happens.
- *
  * @see ephysics_body_light_get().
- * @see ephysics_world_light_set() for more details regarding lighting.
+ * @see ephysics_world_point_light_position_set() for more details
+ * regarding lighting.
  *
  * @ingroup EPhysics_Body
  */
