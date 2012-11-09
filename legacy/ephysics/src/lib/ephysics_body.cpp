@@ -1484,6 +1484,12 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
         return;
      }
 
+   if ((side < 0) || (side >= EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LAST))
+     {
+        ERR("Could not add anchors, side is invalid.");
+        return;
+     }
+
    rows = body1->cloth_rows + 1;
    columns = body1->cloth_columns + 1;
    anchor_mass = body1->soft_body->m_nodes.size() * 0.025;
