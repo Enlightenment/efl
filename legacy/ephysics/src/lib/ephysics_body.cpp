@@ -2322,7 +2322,7 @@ ephysics_body_del(EPhysics_Body *body)
 EAPI void
 ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
-   int obj_x, obj_y, obj_w, obj_h;
+   int obj_x, obj_y, obj_w, obj_h, bz, bd;
    double rate;
 
    if (!body)
@@ -2360,10 +2360,10 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
 
    rate = ephysics_world_rate_get(body->world);
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+   ephysics_body_geometry_get(body, NULL, NULL, &bz, NULL, NULL, &bd);
 
    ephysics_world_lock_take(body->world);
-   _ephysics_body_geometry_set(body, obj_x, obj_y, - rate / 2,
-                               obj_w, obj_h, rate, rate);
+   _ephysics_body_geometry_set(body, obj_x, obj_y, bz, obj_w, obj_h, bd, rate);
    ephysics_world_lock_release(body->world);
    evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESIZE,
                                   _ephysics_body_evas_obj_resize_cb, body);
