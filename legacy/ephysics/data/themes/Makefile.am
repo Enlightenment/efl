@@ -42,6 +42,8 @@ TEST_FILES = \
 	images/bt_shoot_pressed.png \
 	images/bt_stop.png \
 	images/bt_stop_pressed.png \
+	images/coin0.png \
+	images/coin1.png \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \

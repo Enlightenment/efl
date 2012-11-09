@@ -21,6 +21,7 @@ test_bouncing_ball.c \
 test_bouncing_text.c \
 test_camera.c \
 test_camera_track.c \
+test_coins.c \
 test_colliding_balls.c \
 test_collision_detection.c \
 test_collision_filter.c \

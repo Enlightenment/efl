@@ -20,6 +20,7 @@ void test_bouncing_ball(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_text(void *data, Evas_Object *obj, void *event_info);
 void test_camera(void *data, Evas_Object *obj, void *event_info);
 void test_camera_track(void *data, Evas_Object *obj, void *event_info);
+void test_coins(void *data, Evas_Object *obj, void *event_info);
 void test_colliding_balls(void *data, Evas_Object *obj, void *event_info);
 void test_collision(void *data, Evas_Object *obj, void *event_info);
 void test_collision_filter(void *data, Evas_Object *obj, void *event_info);
@@ -69,6 +70,7 @@ static const EPhysics_Test tests[] = {
        {"Light", test_light},
        {"Material", test_material},
        {"No Gravity", test_no_gravity},
+       {"Raster's Coins", test_coins},
        {"Rotate", test_rotate},
        {"Rotating Forever", test_rotating_forever},
        {"Velocity", test_velocity},

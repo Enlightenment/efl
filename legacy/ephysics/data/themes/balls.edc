@@ -24,4 +24,7 @@ ADD_CIRCLE(big-red-ball, ball-red70)
 ADD_CIRCLE(green-ball, ball-green)
 ADD_CIRCLE(big-green-ball, ball-green70)
 
+ADD_CIRCLE(coin0, coin0)
+ADD_CIRCLE(coin1, coin1)
+
 #undef ADD_CIRCLE
