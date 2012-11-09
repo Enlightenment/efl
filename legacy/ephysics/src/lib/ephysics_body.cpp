@@ -1063,6 +1063,53 @@ _ephysics_body_del(EPhysics_Body *body)
 }
 
 static void
+_ephysics_body_evas_obj_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Object *obj, Eina_Bool bfc, Eina_Bool update_cw)
+{
+   EPhysics_Camera *camera = ephysics_world_camera_get(body->world);
+
+   if (ephysics_camera_perspective_enabled_get(camera))
+     {
+        int px, py, z0, foc;
+        ephysics_camera_perspective_get(camera, &px, &py, &z0, &foc);
+        evas_map_util_3d_perspective(map, px, py, z0, foc);
+     }
+
+   if (bfc)
+     {
+        if (evas_map_util_clockwise_get(map))
+          {
+             if (update_cw)
+               body->clockwise = EINA_TRUE;
+             evas_object_show(obj);
+          }
+        else
+          {
+             if (update_cw)
+               body->clockwise = EINA_FALSE;
+             evas_map_free(map);
+             evas_object_hide(obj);
+             return;
+          }
+     }
+
+   if ((body->light_apply) ||
+       (ephysics_world_light_all_bodies_get(body->world)))
+     {
+        int lr, lg, lb, ar, ag, ab;
+        Evas_Coord lx, ly, lz;
+
+        ephysics_world_point_light_position_get(body->world, &lx, &ly, &lz);
+        ephysics_world_point_light_color_get(body->world, &lr, &lg, &lb);
+        ephysics_world_ambient_light_color_get(body->world, &ar, &ag, &ab);
+        evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
+     }
+
+   evas_object_map_set(obj, map);
+   evas_object_map_enable_set(obj, EINA_TRUE);
+   evas_map_free(map);
+}
+
+static void
 _ephysics_cloth_face_objs_update(EPhysics_Body *body __UNUSED__)
 {
 
@@ -1077,6 +1124,121 @@ _ephysics_cylinder_face_objs_update(EPhysics_Body *body __UNUSED__)
 static void
 _ephysics_box_face_objs_update(EPhysics_Body *body)
 {
+   EPhysics_Body_Face_Obj *face_obj;
+   int i, x, y, z, wx, wy, wh, cx, cy;
+   EPhysics_Camera *camera;
+   Evas_Coord v[8][3];
+   btQuaternion quat;
+   btTransform trans;
+   btBoxShape *shape;
+   Evas_Map *map;
+   Eina_List *l;
+   double rate;
+   void *ldata;
+
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL,
+                                      NULL, &wh, NULL);
+   camera = ephysics_world_camera_get(body->world);
+   ephysics_camera_position_get(camera, &cx, &cy);
+   cx -= wx;
+   cy -= wy;
+
+   rate = ephysics_world_rate_get(body->world);
+   trans = _ephysics_body_transform_get(body);
+
+   x = (int) (trans.getOrigin().getX() * rate) - cx;
+   y = wh + wy - (int) (trans.getOrigin().getY() * rate) - cy;
+   z = (int) (trans.getOrigin().getZ() * rate);
+
+   shape = (btBoxShape *) body->collision_shape;
+   for (i = 0; i < 8; i++)
+     {
+        btVector3 vertice;
+        shape->getVertex(i, vertice);
+        v[i][0] = vertice.getX() * rate + x;
+        v[i][1] = - vertice.getY() * rate + y;
+        v[i][2] = vertice.getZ() * rate + z;
+     }
+
+   quat = trans.getRotation();
+   quat.normalize();
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        Evas_Object *obj;
+        Evas_Coord w, h;
+
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        obj = face_obj->obj;
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+        map = evas_map_new(4);
+        evas_map_point_image_uv_set(map, 0, 0, 0);
+        evas_map_point_image_uv_set(map, 1, w, 0);
+        evas_map_point_image_uv_set(map, 2, w, h);
+        evas_map_point_image_uv_set(map, 3, 0, h);
+
+        switch(face_obj->face)
+          {
+           case EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT:
+              evas_map_point_coord_set(map, 0, v[5][0], v[5][1], z);
+              evas_map_point_coord_set(map, 1, v[4][0], v[4][1], z);
+              evas_map_point_coord_set(map, 2, v[6][0], v[6][1], z);
+              evas_map_point_coord_set(map, 3, v[7][0], v[7][1], z);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK:
+              evas_map_point_coord_set(map, 0, v[0][0], v[0][1], z);
+              evas_map_point_coord_set(map, 1, v[1][0], v[1][1], z);
+              evas_map_point_coord_set(map, 2, v[3][0], v[3][1], z);
+              evas_map_point_coord_set(map, 3, v[2][0], v[2][1], z);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_FRONT:
+              evas_map_point_coord_set(map, 0, v[5][0], v[5][1], v[5][2]);
+              evas_map_point_coord_set(map, 1, v[4][0], v[4][1], v[4][2]);
+              evas_map_point_coord_set(map, 2, v[6][0], v[6][1], v[6][2]);
+              evas_map_point_coord_set(map, 3, v[7][0], v[7][1], v[7][2]);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_BACK:
+              evas_map_point_coord_set(map, 0, v[0][0], v[0][1], v[0][2]);
+              evas_map_point_coord_set(map, 1, v[1][0], v[1][1], v[1][2]);
+              evas_map_point_coord_set(map, 2, v[3][0], v[3][1], v[3][2]);
+              evas_map_point_coord_set(map, 3, v[2][0], v[2][1], v[2][2]);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_RIGHT:
+              evas_map_point_coord_set(map, 0, v[4][0], v[4][1], v[4][2]);
+              evas_map_point_coord_set(map, 1, v[0][0], v[0][1], v[0][2]);
+              evas_map_point_coord_set(map, 2, v[2][0], v[2][1], v[2][2]);
+              evas_map_point_coord_set(map, 3, v[6][0], v[6][1], v[6][2]);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_LEFT:
+              evas_map_point_coord_set(map, 0, v[1][0], v[1][1], v[1][2]);
+              evas_map_point_coord_set(map, 1, v[5][0], v[5][1], v[5][2]);
+              evas_map_point_coord_set(map, 2, v[7][0], v[7][1], v[7][2]);
+              evas_map_point_coord_set(map, 3, v[3][0], v[3][1], v[3][2]);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_TOP:
+              evas_map_point_coord_set(map, 0, v[1][0], v[1][1], v[1][2]);
+              evas_map_point_coord_set(map, 1, v[0][0], v[0][1], v[0][2]);
+              evas_map_point_coord_set(map, 2, v[4][0], v[4][1], v[4][2]);
+              evas_map_point_coord_set(map, 3, v[5][0], v[5][1], v[5][2]);
+              break;
+           case EPHYSICS_BODY_BOX_FACE_BOTTOM:
+              evas_map_point_coord_set(map, 0, v[7][0], v[7][1], v[7][2]);
+              evas_map_point_coord_set(map, 1, v[6][0], v[6][1], v[6][2]);
+              evas_map_point_coord_set(map, 2, v[2][0], v[2][1], v[2][2]);
+              evas_map_point_coord_set(map, 3, v[3][0], v[3][1], v[3][2]);
+              break;
+           default:
+              WRN("Face %i not updated", face_obj->face);
+              evas_map_free(map);
+              continue;
+          }
+
+        evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
+                                  x, y, z);
+        _ephysics_body_evas_obj_map_apply(body, map, obj, EINA_TRUE,
+                                          EINA_FALSE);
+     }
 }
 
 static void
@@ -1141,45 +1303,8 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    quat.normalize();
    evas_map_util_quat_rotate(map, quat.x(), quat.y(), quat.z(), -quat.w(),
                              x + (w * body->cm.x), y + (h * body->cm.y), z);
-
-   if (ephysics_camera_perspective_enabled_get(camera))
-     {
-        int px, py, z0, foc;
-        ephysics_camera_perspective_get(camera, &px, &py, &z0, &foc);
-        evas_map_util_3d_perspective(map, px, py, z0, foc);
-     }
-
-   if (body->back_face_culling)
-     {
-        if (evas_map_util_clockwise_get(map))
-          {
-             body->clockwise = EINA_TRUE;
-             evas_object_show(body->evas_obj);
-          }
-        else
-          {
-             body->clockwise = EINA_FALSE;
-             evas_map_free(map);
-             evas_object_hide(body->evas_obj);
-             return;
-          }
-     }
-
-   if ((body->light_apply) ||
-       (ephysics_world_light_all_bodies_get(body->world)))
-     {
-        int lr, lg, lb, ar, ag, ab;
-        Evas_Coord lx, ly, lz;
-
-        ephysics_world_point_light_position_get(body->world, &lx, &ly, &lz);
-        ephysics_world_point_light_color_get(body->world, &lr, &lg, &lb);
-        ephysics_world_ambient_light_color_get(body->world, &ar, &ag, &ab);
-        evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
-     }
-
-   evas_object_map_set(body->evas_obj, map);
-   evas_object_map_enable_set(body->evas_obj, EINA_TRUE);
-   evas_map_free(map);
+   _ephysics_body_evas_obj_map_apply(body, map, body->evas_obj,
+                                     body->back_face_culling, EINA_TRUE);
 }
 
 static void
