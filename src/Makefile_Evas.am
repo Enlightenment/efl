@@ -2163,3 +2163,6 @@ bin_evas_loaders_xpm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 endif
+
+clean-local:
+	rm -rf lib/evas/*.gcno lib/evas/cache/*.gcno lib/evas/cache2/*.gcno lib/evas/canvas/*.gcno lib/evas/common/*.gcno lib/evas/cserve2/*.gcno lib/evas/file/*.gcno

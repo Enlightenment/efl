@@ -88,3 +88,6 @@ endif
 EXTRA_DIST += \
 bin/embryo/embryo_cc_sc5.scp \
 bin/embryo/embryo_cc_sc7.scp
+
+clean-local:
+	rm -rf lib/evas/*.gcno
