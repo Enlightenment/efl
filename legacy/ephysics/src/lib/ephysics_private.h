@@ -122,6 +122,7 @@ struct _EPhysics_Body {
      Eina_List *collision_groups;
      Eina_List *to_delete;
      Eina_List *slices_list;
+     Eina_List *face_objs;
      EPhysics_Body_Material material;
      double mass;
      double density;

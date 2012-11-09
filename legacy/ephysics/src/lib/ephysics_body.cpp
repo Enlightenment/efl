@@ -17,9 +17,13 @@
 extern "C" {
 #endif
 
+#define SHAPE_BOX "Box"
+#define SHAPE_CYLINDER "CylinderZ"
+
 typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 typedef struct _EPhysics_Body_Evas_Stacking EPhysics_Body_Evas_Stacking;
 typedef struct _EPhysics_Body_Soft_Body_Slice EPhysics_Body_Soft_Body_Slice;
+typedef struct _EPhysics_Body_Face_Obj EPhysics_Body_Face_Obj;
 
 struct _EPhysics_Body_Callback {
      EINA_INLIST;
@@ -50,6 +54,11 @@ struct _EPhysics_Body_Soft_Body_Slice
           double y;
      } p[3];
      float stacking;
+};
+
+struct _EPhysics_Body_Face_Obj {
+    int face;
+    Evas_Object *obj;
 };
 
 static void
@@ -1057,6 +1066,23 @@ _ephysics_body_del(EPhysics_Body *body)
 }
 
 static void
+_ephysics_cloth_face_objs_update(EPhysics_Body *body __UNUSED__)
+{
+
+}
+
+static void
+_ephysics_cylinder_face_objs_update(EPhysics_Body *body __UNUSED__)
+{
+
+}
+
+static void
+_ephysics_box_face_objs_update(EPhysics_Body *body)
+{
+}
+
+static void
 _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 {
    int x, y, z, w, h, wx, wy, wh, cx, cy;
@@ -1065,6 +1091,19 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    btQuaternion quat;
    Evas_Map *map;
    double rate;
+
+   if (body->face_objs)
+     {
+        if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+          _ephysics_cloth_face_objs_update(body);
+        else if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+          {
+             if (!(strcmp(body->collision_shape->getName(), SHAPE_CYLINDER)))
+               _ephysics_cylinder_face_objs_update(body);
+             else if (!(strcmp(body->collision_shape->getName(), SHAPE_BOX)))
+               _ephysics_box_face_objs_update(body);
+          }
+     }
 
    if (!body->evas_obj)
      return;
@@ -3373,6 +3412,614 @@ ephysics_body_clockwise_get(const EPhysics_Body *body)
         return EINA_FALSE;
      }
    return body->clockwise;
+}
+
+static void
+_ephysics_body_face_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body *body = (EPhysics_Body *) data;
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->obj == obj)
+          {
+             body->face_objs = eina_list_remove(body->face_objs, face_obj);
+             free(face_obj);
+             return;
+          }
+     }
+}
+
+static void
+_ephysics_body_face_obj_unset(Evas_Object *obj, Evas_Object_Event_Cb resize_func)
+{
+   evas_object_map_enable_set(obj, EINA_FALSE);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                                  _ephysics_body_face_obj_del_cb);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE, resize_func);
+}
+
+static void
+_ephysics_body_face_evas_object_add(EPhysics_Body *body, int face, Evas_Object *evas_obj, Evas_Object_Event_Cb resize_func)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          {
+             _ephysics_body_face_obj_unset(face_obj->obj, resize_func);
+             face_obj->obj = evas_obj;
+             return;
+          }
+     }
+
+   face_obj = (EPhysics_Body_Face_Obj *)calloc(1,
+                                               sizeof(EPhysics_Body_Face_Obj));
+   if (!face_obj)
+     {
+        ERR("Failed to create face object");
+        return;
+     }
+
+   face_obj->face = face;
+   face_obj->obj = evas_obj;
+   body->face_objs = eina_list_append(body->face_objs, face_obj);
+}
+
+static void
+_ephysics_body_box_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body_Box_Face face = EPHYSICS_BODY_BOX_FACE_LAST;
+   EPhysics_Body *body = (EPhysics_Body *) data;
+   EPhysics_Body_Face_Obj *face_obj;
+   int w, h, bw, bh, bd;
+   Eina_List *l;
+   void *ldata;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->obj == obj)
+          {
+             face = (EPhysics_Body_Box_Face) face_obj->face;
+             break;
+          }
+     }
+
+   switch(face)
+     {
+      case EPHYSICS_BODY_BOX_FACE_FRONT:
+      case EPHYSICS_BODY_BOX_FACE_BACK:
+      case EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT:
+      case EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK:
+         if ((w == body->size.w) && (h == body->size.h))
+           return;
+         bw = w;
+         bh = h;
+         bd = body->size.d;
+         break;
+      case EPHYSICS_BODY_BOX_FACE_RIGHT:
+      case EPHYSICS_BODY_BOX_FACE_LEFT:
+         if ((w == body->size.d) && (h == body->size.h))
+           return;
+         bw = body->size.w;
+         bh = h;
+         bd = w;
+      case EPHYSICS_BODY_BOX_FACE_TOP:
+      case EPHYSICS_BODY_BOX_FACE_BOTTOM:
+         if ((w == body->size.w) && (h == body->size.d))
+           return;
+         bw = w;
+         bh = body->size.h;
+         bd = h;
+      default:
+         return;
+     }
+
+   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, bw, bh, bd);
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_resize(body, bw, bh, bd);
+   ephysics_world_lock_release(body->world);
+}
+
+EAPI void
+ephysics_body_box_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Box_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
+{
+   int obj_x, obj_y, obj_w, obj_h, bx, by, bz, bw, bh, bd;
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't set evas object to body, the last wasn't provided.");
+        return;
+     }
+
+   if (!evas_obj)
+     {
+        ERR("Can't set evas object to body, the first wasn't provided.");
+        return;
+     }
+
+   if ((strcmp(body->collision_shape->getName(), SHAPE_BOX)))
+     {
+        ERR("Can't set evas object to body, it's not a box.");
+        return;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_BOX_FACE_LAST))
+     {
+        ERR("Can't set evas object to body, face is invalid.");
+        return;
+     }
+
+   if (body->soft_body)
+     {
+        ERR("Not implemented for soft bodies yet.");
+        return;
+     }
+
+   _ephysics_body_face_evas_object_add(body, face, evas_obj,
+                                       _ephysics_body_box_face_obj_resize_cb);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
+                                  _ephysics_body_face_obj_del_cb, body);
+
+   if (!use_obj_pos)
+     return;
+
+   rate = ephysics_world_rate_get(body->world);
+   evas_object_geometry_get(evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+   ephysics_body_geometry_get(body, &bx, &by, &bz, &bw, &bh, &bd);
+
+   ephysics_world_lock_take(body->world);
+
+   switch(face)
+     {
+      case EPHYSICS_BODY_BOX_FACE_FRONT:
+      case EPHYSICS_BODY_BOX_FACE_BACK:
+      case EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT:
+      case EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK:
+         _ephysics_body_geometry_set(body, obj_x, obj_y, bz,
+                                     obj_w, obj_h, bd, rate);
+         break;
+      case EPHYSICS_BODY_BOX_FACE_RIGHT:
+      case EPHYSICS_BODY_BOX_FACE_LEFT:
+         _ephysics_body_geometry_set(body, bx, by, bz,
+                                     bw, obj_h, obj_w, rate);
+      case EPHYSICS_BODY_BOX_FACE_TOP:
+      case EPHYSICS_BODY_BOX_FACE_BOTTOM:
+         _ephysics_body_geometry_set(body, bx, by, bz,
+                                     obj_w, bh, obj_h, rate);
+      default:
+         break;
+     }
+
+   ephysics_world_lock_release(body->world);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+                                  _ephysics_body_box_face_obj_resize_cb,
+                                  body);
+}
+
+EAPI Evas_Object *
+ephysics_body_box_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Box_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't get evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (strcmp(body->collision_shape->getName(), SHAPE_BOX))
+     {
+        ERR("Can't get evas object from body, it's not a box.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_BOX_FACE_LAST))
+     {
+        ERR("Can't get evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          return face_obj->obj;
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
+}
+
+EAPI Evas_Object *
+ephysics_body_box_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Box_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't unset evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (strcmp(body->collision_shape->getName(), SHAPE_BOX))
+     {
+        ERR("Can't unset evas object from body, it's not a box.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_BOX_FACE_LAST))
+     {
+        ERR("Can't unset evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          {
+             Evas_Object *obj = face_obj->obj;
+             _ephysics_body_face_obj_unset(
+                obj, _ephysics_body_box_face_obj_resize_cb);
+             body->face_objs = eina_list_remove(body->face_objs, face_obj);
+             free(face_obj);
+             return obj;
+          }
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
+}
+
+static void
+_ephysics_body_cylinder_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body_Cylinder_Face face = EPHYSICS_BODY_CYLINDER_FACE_LAST;
+   EPhysics_Body *body = (EPhysics_Body *) data;
+   EPhysics_Body_Face_Obj *face_obj;
+   int w, h, bw, bh, bd;
+   Eina_List *l;
+   void *ldata;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->obj == obj)
+          {
+             face = (EPhysics_Body_Cylinder_Face) face_obj->face;
+             break;
+          }
+     }
+
+   switch(face)
+     {
+      case EPHYSICS_BODY_CYLINDER_FACE_FRONT:
+      case EPHYSICS_BODY_CYLINDER_FACE_BACK:
+      case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT:
+      case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK:
+         if ((w == body->size.w) && (h == body->size.h))
+           return;
+         bw = w;
+         bh = h;
+         bd = body->size.d;
+         break;
+      case EPHYSICS_BODY_CYLINDER_FACE_CURVED:
+         if ((h == body->size.d))
+           return;
+         bw = body->size.w;
+         bh = body->size.h;
+         bd = h;
+      default:
+         return;
+     }
+
+   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, bw, bh, bd);
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_resize(body, bw, bh, bd);
+   ephysics_world_lock_release(body->world);
+}
+
+EAPI void
+ephysics_body_cylinder_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Cylinder_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
+{
+   int obj_x, obj_y, obj_w, obj_h, bx, by, bz, bw, bh, bd;
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't set evas object to body, the last wasn't provided.");
+        return;
+     }
+
+   if (!evas_obj)
+     {
+        ERR("Can't set evas object to body, the first wasn't provided.");
+        return;
+     }
+
+   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+     {
+        ERR("Can't set evas object to body, it's not a cylinder.");
+        return;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CYLINDER_FACE_LAST))
+     {
+        ERR("Can't set evas object to body, face is invalid.");
+        return;
+     }
+
+   if (body->soft_body)
+     {
+        ERR("Not implemented for soft bodies yet.");
+        return;
+     }
+
+   _ephysics_body_face_evas_object_add(
+      body, face, evas_obj, _ephysics_body_cylinder_face_obj_resize_cb);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
+                                  _ephysics_body_face_obj_del_cb, body);
+
+   if (!use_obj_pos)
+     return;
+
+   rate = ephysics_world_rate_get(body->world);
+   evas_object_geometry_get(evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+   ephysics_body_geometry_get(body, &bx, &by, &bz, &bw, &bh, &bd);
+
+   ephysics_world_lock_take(body->world);
+
+   switch(face)
+     {
+      case EPHYSICS_BODY_CYLINDER_FACE_FRONT:
+      case EPHYSICS_BODY_CYLINDER_FACE_BACK:
+      case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT:
+      case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK:
+         _ephysics_body_geometry_set(body, obj_x, obj_y, bz,
+                                     obj_w, obj_h, bd, rate);
+         break;
+      case EPHYSICS_BODY_CYLINDER_FACE_CURVED:
+         _ephysics_body_geometry_set(body, bx, by, bz,
+                                     bw, bh, obj_h, rate);
+      default:
+         break;
+     }
+
+   ephysics_world_lock_release(body->world);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+                                  _ephysics_body_cylinder_face_obj_resize_cb,
+                                  body);
+}
+
+EAPI Evas_Object *
+ephysics_body_cylinder_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Cylinder_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't get evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+     {
+        ERR("Can't get evas object from body, it's not a cylinder.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CYLINDER_FACE_LAST))
+     {
+        ERR("Can't get evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          return face_obj->obj;
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
+}
+
+EAPI Evas_Object *
+ephysics_body_cylinder_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Cylinder_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't unset evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+     {
+        ERR("Can't unset evas object from body, it's not a cylinder.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CYLINDER_FACE_LAST))
+     {
+        ERR("Can't unset evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          {
+             Evas_Object *obj = face_obj->obj;
+             _ephysics_body_face_obj_unset(
+                obj, _ephysics_body_cylinder_face_obj_resize_cb);
+             body->face_objs = eina_list_remove(body->face_objs, face_obj);
+             free(face_obj);
+             return obj;
+          }
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
+}
+
+EAPI void
+ephysics_body_cloth_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Cloth_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
+{
+   int obj_x, obj_y, obj_w, obj_h, bz, bd;
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't set evas object to body, the last wasn't provided.");
+        return;
+     }
+
+   if (!evas_obj)
+     {
+        ERR("Can't set evas object to body, the first wasn't provided.");
+        return;
+     }
+
+   if (body->type != EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Can't set evas object to body, it's not a cloth.");
+        return;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CLOTH_FACE_LAST))
+     {
+        ERR("Can't set evas object to body, face is invalid.");
+        return;
+     }
+
+   if (body->soft_body)
+     {
+        ERR("Not implemented for soft bodies yet.");
+        return;
+     }
+
+   _ephysics_body_face_evas_object_add(body, face, evas_obj,
+                                       _ephysics_body_evas_obj_resize_cb);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
+                                  _ephysics_body_face_obj_del_cb, body);
+
+   if (!use_obj_pos)
+     return;
+
+   rate = ephysics_world_rate_get(body->world);
+   evas_object_geometry_get(evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+
+   ephysics_world_lock_take(body->world);
+   ephysics_body_geometry_get(body, NULL, NULL, &bz, NULL, NULL, &bd);
+   _ephysics_body_geometry_set(body, obj_x, obj_y, bz, obj_w, obj_h, bd, rate);
+   ephysics_world_lock_release(body->world);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+                                  _ephysics_body_evas_obj_resize_cb,
+                                  body);
+}
+
+EAPI Evas_Object *
+ephysics_body_cloth_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Cloth_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't get evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (body->type != EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Can't get evas object from body, it's not a cloth.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CLOTH_FACE_LAST))
+     {
+        ERR("Can't get evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          return face_obj->obj;
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
+}
+
+EAPI Evas_Object *
+ephysics_body_cloth_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Cloth_Face face)
+{
+   EPhysics_Body_Face_Obj *face_obj;
+   Eina_List *l;
+   void *ldata;
+
+   if (!body)
+     {
+        ERR("Can't unset evas object from body, it wasn't provided.");
+        return NULL;
+     }
+
+   if (body->type != EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Can't unset evas object from body, it's not a cloth.");
+        return NULL;
+     }
+
+   if ((face < 0) || (face >= EPHYSICS_BODY_CLOTH_FACE_LAST))
+     {
+        ERR("Can't unset evas object from body, face is invalid.");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        if (face_obj->face == face)
+          {
+             Evas_Object *obj = face_obj->obj;
+             _ephysics_body_face_obj_unset(
+                obj, _ephysics_body_evas_obj_resize_cb);
+             body->face_objs = eina_list_remove(body->face_objs, face_obj);
+             free(face_obj);
+             return obj;
+          }
+     }
+
+   ERR("Couldn't find an object associated to face %i.", face);
+   return NULL;
 }
 
 #ifdef  __cplusplus
