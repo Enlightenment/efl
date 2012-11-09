@@ -6,6 +6,9 @@
 #define IFACE "com.profusion.Test"
 
 static char *resp2;
+/* dummy, incremented each time DBus.Properties.Get() is called */
+static int int32 = 35;
+static Ecore_Timer *timer;
 
 static EDBus_Message *
 _receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
@@ -199,47 +202,31 @@ _double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg
    return reply;
 }
 
-static EDBus_Message *
-_properties_get(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+static Eina_Bool
+_properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error)
 {
-   EDBus_Message *reply;
-   char *interface, *property;
-   EDBus_Message_Iter *variant, *iter;
-
-   if (!edbus_message_arguments_get(msg, "ss", &interface, &property))
+   printf("Properties_get - %s\n", propname);
+   if (!strcmp(propname, "Resp2"))
+     edbus_message_iter_basic_append(iter, 's', resp2);
+   else if (!strcmp(propname, "text"))
+     edbus_message_iter_basic_append(iter, 's', "lalalala");
+   else if (!strcmp(propname, "int32"))
      {
-        printf("Error on edbus_message_arguments_get()\n");
-        return NULL;
+        edbus_message_iter_arguments_set(iter, "i", int32);
+        int32++;
      }
-
-   if (strcmp(interface, IFACE))
+   else if (!strcmp(propname, "st"))
      {
-        reply = edbus_message_error_new(msg,
-                                        "org.freedesktop.DBus.Error.UnknownInterface",
-                                        "Interface not found.");
-        return reply;
+        EDBus_Message_Iter *st;
+        edbus_message_iter_arguments_set(iter, "(ss)", &st);
+        edbus_message_iter_arguments_set(st, "ss", "string1", "string2");
+        edbus_message_iter_container_close(iter, st);
      }
-
-   if (strcmp(property, "Resp2"))
-     {
-        reply = edbus_message_error_new(msg,
-                                        "org.freedesktop.DBus.Error.UnknownProperty",
-                                        "Property not found.");
-        return reply;
-     }
-
-   reply = edbus_message_method_return_new(msg);
-   iter = edbus_message_iter_get(reply);
-   variant = edbus_message_iter_container_new(iter, 'v', "s");
-   edbus_message_iter_basic_append(variant, 's', resp2);
-   printf("get %s\n", resp2);
-   edbus_message_iter_container_close(iter, variant);
-
-   return reply;
+   return EINA_TRUE;
 }
 
 static EDBus_Message *
-_properties_set(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_properties_set(const EDBus_Service_Interface *iface, const char *propname, const EDBus_Message *msg)
 {
    EDBus_Message *reply;
    char *interface, *property, *type, *txt;
@@ -251,24 +238,7 @@ _properties_set(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
         return NULL;
      }
 
-   if (strcmp(interface, IFACE))
-     {
-        reply = edbus_message_error_new(msg,
-                                        "org.freedesktop.DBus.Error.UnknownInterface",
-                                        "Interface not found.");
-        return reply;
-     }
-
-   if (strcmp(property, "Resp2"))
-     {
-        reply = edbus_message_error_new(msg,
-                                        "org.freedesktop.DBus.Error.UnknownProperty",
-                                        "Property not found.");
-        return reply;
-     }
-
    type = edbus_message_iter_signature_get(variant);
-
    if (type[0] != 's')
      {
         reply = edbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidSignature",
@@ -279,6 +249,7 @@ _properties_set(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 
    reply = edbus_message_method_return_new(msg);
    edbus_message_iter_arguments_get(variant, "s", &txt);
+   printf("Resp2 was set to: %s, previously was: %s\n", txt, resp2);
    free(type);
    free(resp2);
    resp2 = strdup(txt);
@@ -319,38 +290,30 @@ static const EDBus_Method methods[] = {
       { }
 };
 
-static const EDBus_Method properties_methods[] = {
-      {
-        "Get", EDBUS_ARGS({"s", "interface"}, {"s", "property"}),
-        EDBUS_ARGS({"v", "value"}), _properties_get, 0
-      },
-      {
-        "Set", EDBUS_ARGS({"s", "interface"}, {"s", "property"}, {"v", "value"}),
-        NULL, _properties_set, 0
-      },
+static const EDBus_Property properties[] = {
+      { "Resp2", "s", NULL, _properties_set },
+      { "text", "s", NULL, NULL },
+      { "int32", "i", NULL, NULL },
+      { "st", "(ss)", NULL, NULL},
       { }
 };
 
-
-/*
- * Temporary way to test the PropertiesChanged signal in FDO Properties
- * interface. TODO: Remove me when service part is done.
- */
-static const EDBus_Signal properties_signals[] = {
-   { "PropertiesChanged",
-     EDBUS_ARGS({"s", "interface"}, {"a{sv}", "data"}, {"as", "invalidate"}), 0
-   },
-   { }
-};
-
 static const EDBus_Service_Interface_Desc iface_desc = {
-   IFACE, methods
+   IFACE, methods, NULL, properties, _properties_get
 };
+
+static Eina_Bool _emit_changed(void *data)
+{
+   EDBus_Service_Interface *iface = data;
+   edbus_service_property_changed(iface, "int32");
+   return EINA_TRUE;
+}
 
 static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    unsigned int flag;
+   EDBus_Service_Interface *iface = data;
 
    resp2 = malloc(sizeof(char) * 5);
    strcpy(resp2, "test");
@@ -372,24 +335,29 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         printf("error name already in use\n");
         return;
      }
+
+   timer = ecore_timer_add(3, _emit_changed, iface);
 }
 
 int
 main(void)
 {
    EDBus_Connection *conn;
+   EDBus_Service_Interface *iface;
 
    ecore_init();
    edbus_init();
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
-   edbus_service_interface_register(conn, PATH, &iface_desc);
-   edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE, on_name_request, NULL);
+   iface = edbus_service_interface_register(conn, PATH, &iface_desc);
+   edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
+                      on_name_request, iface);
 
    ecore_main_loop_begin();
 
    free(resp2);
+   ecore_timer_del(timer);
    edbus_connection_unref(conn);
 
    edbus_shutdown();

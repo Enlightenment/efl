@@ -150,6 +150,11 @@ struct _EDBus_Service_Interface
    const EDBus_Signal *signals;
    Eina_Array *sign_of_signals;
    EDBus_Service_Object *obj;
+   Eina_Hash *properties;
+   EDBus_Property_Set_Cb set_func;
+   EDBus_Property_Get_Cb get_func;
+   Ecore_Idler *idler_propschanged;
+   Eina_Array *props_changed;
 };
 
 typedef struct _Signal_Argument

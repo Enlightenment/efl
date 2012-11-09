@@ -11,6 +11,8 @@
 
 #define EDBUS_SIGNAL_FLAG_DEPRECATED 1
 
+#define EDBUS_PROPERTY_FLAG_DEPRECATED 1
+
 typedef struct _EDBus_Arg_Info
 {
    const char *signature;
@@ -29,8 +31,8 @@ typedef struct _EDBus_Arg_Info
 typedef struct _EDBus_Service_Interface EDBus_Service_Interface;
 typedef EDBus_Message * (*EDBus_Method_Cb)(const EDBus_Service_Interface *iface, const EDBus_Message *message);
 
-typedef Eina_Bool (*EDBus_Property_Get_Cb)(EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error);
-typedef EDBus_Message *(*EDBus_Property_Set_Cb)(EDBus_Service_Interface *iface, const char *propname, EDBus_Message *input_msg);
+typedef Eina_Bool (*EDBus_Property_Get_Cb)(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error);
+typedef EDBus_Message *(*EDBus_Property_Set_Cb)(const EDBus_Service_Interface *iface, const char *propname, const EDBus_Message *input_msg);
 
 typedef struct _EDBus_Method
 {
@@ -52,19 +54,19 @@ typedef struct _EDBus_Property
 {
    const char *name;
    const char *type;
-   unsigned int flags;
-   EDBus_Property_Set_Cb set_func;
    EDBus_Property_Get_Cb get_func;
+   EDBus_Property_Set_Cb set_func;
+   unsigned int flags;
 } EDBus_Property;
 
 typedef struct _EDBus_Service_Interface_Desc
 {
-   const char *interface;
-   const EDBus_Method *methods;
-   const EDBus_Signal *signals;
-   const EDBus_Property *properties;
-   const EDBus_Property_Set_Cb default_set;
-   const EDBus_Property_Get_Cb default_get;
+   const char *interface; /**< interface name */
+   const EDBus_Method *methods; /**< array of the methods that should be registered in this interface, the last item of array should be filled with NULL */
+   const EDBus_Signal *signals; /**< array of signal that this interface send, the last item of array should be filled with NULL */
+   const EDBus_Property *properties; /**< array of property that this interface have, the last item of array should be filled with NULL  */
+   const EDBus_Property_Get_Cb default_get; /**< default get function, if a property don't have a get function this will be used */
+   const EDBus_Property_Set_Cb default_set; /**< default set function, if a property don't have a set function this will be used */
 } EDBus_Service_Interface_Desc;
 
 /**
@@ -72,13 +74,7 @@ typedef struct _EDBus_Service_Interface_Desc
  *
  * @param conn where the interface should listen
  * @param path object path
- * @param iface interface
- * @param methods array of the methods that should be registered in this
- * interface, the last item of array should be filled with NULL
- * @param signals array of signal that this interface send, the last item
- * of array should be filled with NULL
- *
- * @note methods and signals must be static variables
+ * @param desc description of interface
  *
  * @return Interface
  */
@@ -150,6 +146,13 @@ EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, c
  * @return pointer to data if found otherwise NULL
  */
 EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const char *key);
+
+/**
+ * Add property to changed list. *
+ * A PropertiesChanged signal will be send on next idler iteration with all
+ * properties in changed list.
+ */
+EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name);
 /**
  * @}
  */

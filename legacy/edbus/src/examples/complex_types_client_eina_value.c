@@ -158,7 +158,7 @@ _property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
    name = event->name;
    value = event->value;
 
-   if (!strcmp(name, "text"))
+   if (!strcmp(name, "text") || !strcmp(name, "Resp2"))
      {
         const char *txt;
         eina_value_get(value, &txt);
@@ -189,18 +189,27 @@ _read_cache(void *data)
    Eina_Value *v;
 
    v = edbus_proxy_property_local_get(proxy, "text");
-   eina_value_get(v, &txt);
-   printf("Read cache: [txt] = %s\n", txt);
+   if (v)
+     {
+        eina_value_get(v, &txt);
+        printf("Read cache: [txt] = %s\n", txt);
+     }
 
    v = edbus_proxy_property_local_get(proxy, "int32");
-   eina_value_get(v, &num);
-   printf("Read cache: [int32] = %d\n", num);
+   if (v)
+     {
+        eina_value_get(v, &num);
+        printf("Read cache: [int32] = %d\n", num);
+     }
 
    v = edbus_proxy_property_local_get(proxy, "st");
-   eina_value_struct_get(v, "arg0", &txt);
-   printf("Read cache: [st] %s | ", txt);
-   eina_value_struct_get(v, "arg1", &txt);
-   printf("%s\n", txt);
+   if (v)
+     {
+        eina_value_struct_get(v, "arg0", &txt);
+        printf("Read cache: [st] %s | ", txt);
+        eina_value_struct_get(v, "arg1", &txt);
+        printf("%s\n", txt);
+     }
 
    return EINA_FALSE;
 }
@@ -258,6 +267,7 @@ main(void)
                                   EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                   _property_changed, NULL);
 
+   edbus_proxy_properties_monitor(proxy, EINA_TRUE);
    ecore_timer_add(10, _read_cache, proxy);
 
    ecore_main_loop_begin();
