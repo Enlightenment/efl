@@ -4,71 +4,68 @@
 
 #include "ephysics_test.h"
 
-typedef struct _Dragging_Data
-{
-  int mouse_status; // 0, up, 1, down
-  EPhysics_Body *body;
-  double curr_mass;
-  struct {
-    int x;
-    int y;
-  } clicked_position;
+typedef struct _Dragging_Data {
+     int mouse_status; // 0, up, 1, down
+     double curr_mass;
+     struct {
+          int x;
+          int y;
+     } clicked_position;
 } Dragging_Data;
 
 static void
 _on_delete(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    Dragging_Data *dragging = ephysics_body_data_get(body);
-   free(dragging);
+   if (dragging)
+     free(dragging);
 }
 
 static void
-_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-  Dragging_Data *dragging = ephysics_body_data_get(data);
-  Evas_Event_Mouse_Down *mdown = event_info;
-  Evas_Coord x, y;
+   Dragging_Data *dragging = ephysics_body_data_get(data);
+   Evas_Event_Mouse_Down *mdown = event_info;
+   Evas_Coord x, y;
 
-  evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-  dragging->mouse_status = 1;
-  dragging->clicked_position.x = mdown->output.x - x;
-  dragging->clicked_position.y = mdown->output.y - y;
-  ephysics_body_mass_get(data);
-  dragging->curr_mass = ephysics_body_mass_get(data);
-  ephysics_body_mass_set(data, 0);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   dragging->mouse_status = 1;
+   dragging->clicked_position.x = mdown->output.x - x;
+   dragging->clicked_position.y = mdown->output.y - y;
+   dragging->curr_mass = ephysics_body_mass_get(data);
+   ephysics_body_mass_set(data, 0);
 }
 
 static void
 _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-  Dragging_Data *dragging = ephysics_body_data_get(data);
-  dragging->mouse_status = 0;
-  ephysics_body_mass_set(data, dragging->curr_mass);
-  dragging->curr_mass = 0;
+   Dragging_Data *dragging = ephysics_body_data_get(data);
+   dragging->mouse_status = 0;
+   ephysics_body_mass_set(data, dragging->curr_mass);
+   dragging->curr_mass = 0;
 }
 
 static void
-_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-  Dragging_Data *dragging = ephysics_body_data_get(data);
-  Evas_Event_Mouse_Move *mmove = event_info;
-  Evas_Coord x, y, w, h, nx, ny;
+   EPhysics_Body *body = data;
+   Dragging_Data *dragging = ephysics_body_data_get(body);
+   Evas_Event_Mouse_Move *mmove = event_info;
+   Evas_Coord nx, ny;
 
-  if (!dragging->mouse_status) return;
+   if (!dragging->mouse_status) return;
 
-  nx = mmove->cur.output.x - dragging->clicked_position.x;
-  ny = mmove->cur.output.y - dragging->clicked_position.y;
+   nx = mmove->cur.output.x - dragging->clicked_position.x;
+   ny = mmove->cur.output.y - dragging->clicked_position.y;
 
-  if (nx < 0 || ny < 0) return;
-
-  evas_object_geometry_get(obj, &x, &y, &w, &h);
-  ephysics_body_move(dragging->body, nx, ny, -15);
+   if (nx < 0 || ny < 0) return;
+   ephysics_body_move(body, nx, ny, -15);
 }
 
 static void
 _box_add(Test_Data *test_data, Evas_Coord x, Evas_Coord y, const char *file)
 {
-   Evas_Object *evas, *shadow;
+   Evas_Object *evas_obj, *shadow;
    EPhysics_Body *body;
    Dragging_Data *dragging;
 
@@ -80,34 +77,31 @@ _box_add(Test_Data *test_data, Evas_Coord x, Evas_Coord y, const char *file)
    evas_object_show(shadow);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
 
-   evas = elm_image_add(test_data->win);
+   evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
-      evas, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", file);
-   evas_object_move(evas, x, y - 70);
-   evas_object_resize(evas, 70, 70);
-   evas_object_show(evas);
-   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas);
+      evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", file);
+   evas_object_move(evas_obj, x, y - 70);
+   evas_object_resize(evas_obj, 70, 70);
+   evas_object_show(evas_obj);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    body = ephysics_body_box_add(test_data->world);
-   ephysics_body_evas_object_set(body, evas, EINA_TRUE);
+   ephysics_body_evas_object_set(body, evas_obj, EINA_TRUE);
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, shadow);
    test_data->bodies = eina_list_append(test_data->bodies, body);
-   test_data->data = body;
 
    dragging = calloc(1, sizeof(Dragging_Data));
-   dragging->body = body;
    ephysics_body_data_set(body, dragging);
 
-   evas_object_event_callback_add(evas, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb,
-				 body);
-   evas_object_event_callback_add(evas, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb,
-				 body);
-   evas_object_event_callback_add(evas, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb,
-				 body);
-
-   ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL, _on_delete,
-                                   NULL);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _mouse_down_cb, body);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _mouse_up_cb, body);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _mouse_move_cb, body);
+   ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
+                                    _on_delete, NULL);
 }
 
 static void
