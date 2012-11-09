@@ -86,6 +86,3 @@ bin_eet_eet_LDADD += lib/evil/libevil.la
 endif
 
 bin_eet_eet_LDADD += @EET_LIBS@
-
-clean-local:
-	rm -rf lib/eet/*.gcno

@@ -178,6 +178,3 @@ lib/evil/libdl.la \
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 
 bin_evil_test_evil_LDADD = lib/evil/libevil.la
-
-clean-local:
-	rm -rf lib/evil/*.gcno

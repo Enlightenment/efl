@@ -30,3 +30,17 @@ examples:
 
 install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C examples install-examples
+
+clean-local:
+	rm -rf lib/evil/*.gcno
+	rm -rf lib/eina/*.gcno
+	rm -rf lib/eo/*.gcno
+	rm -rf lib/eet/*.gcno
+	rm -rf lib/evas/*.gcno
+	rm -rf lib/evas/cache/*.gcno
+	rm -rf lib/evas/cache2/*.gcno
+	rm -rf lib/evas/canvas/*.gcno
+	rm -rf lib/evas/common/*.gcno
+	rm -rf lib/evas/cserve2/*.gcno
+	rm -rf lib/evas/file/*.gcno
+	rm -rf lib/embryo/*.gcno

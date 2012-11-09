@@ -244,6 +244,3 @@ lib/eina/eina_config.h.in \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
 $(bin_SCRIPTS)
-
-clean-local:
-	rm -rf lib/eina/*.gcno
