@@ -17,9 +17,6 @@
 extern "C" {
 #endif
 
-#define SHAPE_BOX "Box"
-#define SHAPE_CYLINDER "CylinderZ"
-
 typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 typedef struct _EPhysics_Body_Evas_Stacking EPhysics_Body_Evas_Stacking;
 typedef struct _EPhysics_Body_Soft_Body_Slice EPhysics_Body_Soft_Body_Slice;
@@ -1098,9 +1095,9 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
           _ephysics_cloth_face_objs_update(body);
         else if (body->type == EPHYSICS_BODY_TYPE_RIGID)
           {
-             if (!(strcmp(body->collision_shape->getName(), SHAPE_CYLINDER)))
+             if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
                _ephysics_cylinder_face_objs_update(body);
-             else if (!(strcmp(body->collision_shape->getName(), SHAPE_BOX)))
+             else if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
                _ephysics_box_face_objs_update(body);
           }
      }
@@ -1922,6 +1919,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    if (!body)
      goto no_body;
 
+   body->shape = EPHYSICS_BODY_SHAPE_CYLINDER;
    body->slices = 19;
    body->points_deform = (int *)malloc(body->slices * sizeof(int));
    if (!body->points_deform)
@@ -1977,6 +1975,7 @@ ephysics_body_circle_add(EPhysics_World *world)
    ephysics_world_lock_take(world);
    body = _ephysics_body_rigid_body_add(world, collision_shape, "circle", 0.5,
                                         0.5, 0.5);
+   body->shape = EPHYSICS_BODY_SHAPE_CYLINDER;
    ephysics_world_lock_release(world);
    return body;
 }
@@ -2020,6 +2019,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    if (!body)
      goto no_body;
 
+   body->shape = EPHYSICS_BODY_SHAPE_BOX;
    body->slices = 16;
    body->points_deform = (int *)malloc(body->slices * sizeof(int));
    if (!body->points_deform)
@@ -2070,6 +2070,7 @@ ephysics_body_box_add(EPhysics_World *world)
    ephysics_world_lock_take(world);
    body = _ephysics_body_rigid_body_add(world, collision_shape, "box", 0.5,
                                         0.5, 0.5);
+   body->shape = EPHYSICS_BODY_SHAPE_BOX;
    ephysics_world_lock_release(world);
    return body;
 }
@@ -2194,6 +2195,7 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
                                         "generic", (cm_x - min_x) / range_x,
                                         1 - (cm_y - min_y) / range_y,
                                         (cm_z - min_z) / range_z);
+   body->shape = EPHYSICS_BODY_SHAPE_CUSTOM;
    ephysics_world_lock_release(world);
    return body;
 }
@@ -3917,10 +3919,10 @@ ephysics_body_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face,
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_set(body, face, evas_obj,
                                                       use_obj_pos);
-   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_set(body, face, evas_obj,
                                                          use_obj_pos);
-   if (strcmp(body->collision_shape->getName(), SHAPE_BOX))
+   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_set(body, face, evas_obj,
                                                     use_obj_pos);
 
@@ -3938,9 +3940,9 @@ ephysics_body_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face
 
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_get(body, face);
-   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_get(body, face);
-   if (strcmp(body->collision_shape->getName(), SHAPE_BOX))
+   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_get(body, face);
 
    ERR("Can't handle body %p type.", body);
@@ -3958,9 +3960,9 @@ ephysics_body_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face fac
 
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_unset(body, face);
-   if (strcmp(body->collision_shape->getName(), SHAPE_CYLINDER))
+   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_unset(body, face);
-   if (strcmp(body->collision_shape->getName(), SHAPE_BOX))
+   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_unset(body, face);
 
    ERR("Can't handle body %p type.", body);

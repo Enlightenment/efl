@@ -55,6 +55,14 @@ typedef struct _EPhysics_Point EPhysics_Point;
 typedef struct _EPhysics_Dragging_Data EPhysics_Dragging_Data;
 typedef struct _EPhysics_Body_Soft_Body_Data EPhysics_Body_Soft_Body_Data;
 
+typedef enum _EPhysics_Body_Shape
+{
+  EPHYSICS_BODY_SHAPE_BOX,
+  EPHYSICS_BODY_SHAPE_CUSTOM,
+  EPHYSICS_BODY_SHAPE_CYLINDER,
+  EPHYSICS_BODY_SHAPE_LAST,
+} EPhysics_Body_Shape;
+
 typedef enum _EPhysics_World_Boundary
 {
    EPHYSICS_WORLD_BOUNDARY_TOP,
@@ -131,6 +139,7 @@ struct _EPhysics_Body {
      int slices;
      int *points_deform;
      EPhysics_Body_Type type;
+     EPhysics_Body_Shape shape;
      int cloth_columns;
      int cloth_rows;
      int material_index;
