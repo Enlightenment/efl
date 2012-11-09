@@ -1415,16 +1415,10 @@ _box_layout_flow_horizontal(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    /* *per row* arrays */
    row_max_h = (int *)alloca(sizeof(int) * n_children);
-   if (!row_max_h)
-     return;
    row_break = (int *)alloca(sizeof(int) * n_children);
-   if (!row_break)
-     return;
    row_width = (int *)alloca(sizeof(int) * n_children);
-   if (!row_width)
-     return;
 
-   memset(row_width, 0, sizeof(row_width));
+   memset(row_width, 0, sizeof(int) * n_children);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1603,16 +1597,10 @@ _box_layout_flow_vertical(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    /* *per col* arrays */
    col_max_w = (int *)alloca(sizeof(int) * n_children);
-   if (!col_max_w)
-     return;
    col_break = (int *)alloca(sizeof(int) * n_children);
-   if (!col_break)
-     return;
    col_height = (int *)alloca(sizeof(int) * n_children);
-   if (!col_height)
-     return;
 
-   memset(col_height, 0, sizeof(col_height));
+   memset(col_height, 0, sizeof(int) * n_children);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
