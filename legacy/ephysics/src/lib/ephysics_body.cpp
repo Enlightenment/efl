@@ -427,7 +427,7 @@ _ephysics_body_transform_set(EPhysics_Body *body, btTransform trans)
    btTransform origin;
    btTransform dest;
 
-   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+   if (body->type != EPHYSICS_BODY_TYPE_RIGID)
      {
         origin = _ephysics_body_transform_get(body);
         dest.setIdentity();
@@ -887,20 +887,29 @@ static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    double rate, sx, sy, sz;
+   btVector3 body_scale;
 
    rate = ephysics_world_rate_get(body->world);
    sx = w / rate;
    sy = h / rate;
    sz = d / rate;
 
-   if (body->soft_body)
+   body_scale = btVector3(sx, sy, sz);
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
-        body->soft_body->scale(btVector3(sx, sy, sz));
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(body_scale);
         _ephysics_body_soft_body_constraints_rebuild(body);
+     }
+   else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(body_scale);
+        _ephysics_body_cloth_constraints_rebuild(body);
      }
    else
      {
-        body->collision_shape->setLocalScaling(btVector3(sx, sy, sz));
+        body->collision_shape->setLocalScaling(body_scale);
 
         if(!body->rigid_body->isStaticObject())
           _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
@@ -909,7 +918,7 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body->size.w = w;
    body->size.h = h;
    body->size.d = d;
-   body->scale = btVector3(sx, sy, sz);
+   body->scale = body_scale;
 
    ephysics_body_activate(body, EINA_TRUE);
 
@@ -974,14 +983,15 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
         body->soft_body->scale(body_scale);
-        body->soft_body->getCollisionShape()->setLocalScaling(body_scale);
         body->rigid_body->proceedToTransform(trans);
-        body->soft_body->transform(trans);
+        _ephysics_body_transform_set(body, trans);
         _ephysics_body_soft_body_constraints_rebuild(body);
      }
    else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      {
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
         body->soft_body->scale(body_scale);
         _ephysics_body_transform_set(body, trans);
         _ephysics_body_cloth_constraints_rebuild(body);
