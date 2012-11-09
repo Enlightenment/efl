@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
+-DNDEBUG \
 @EO_CFLAGS@ \
 @CHECK_CFLAGS@
 
