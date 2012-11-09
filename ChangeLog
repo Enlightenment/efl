@@ -57,3 +57,7 @@
 
 	* Add eet_list_entries().
 	* Add eet -l -v to give more information about an eet file.
+
+2012-11-09  Vincent Torri
+
+	* Fixed longstanding memset bug in evas box.
