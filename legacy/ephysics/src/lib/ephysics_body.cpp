@@ -1244,7 +1244,7 @@ _ephysics_box_face_objs_update(EPhysics_Body *body)
 static void
 _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 {
-   int x, y, z, w, h, wx, wy, wh, cx, cy;
+   int bx, by, x, y, z, w, h, wx, wy, wh, cx, cy;
    EPhysics_Camera *camera;
    btTransform trans;
    btQuaternion quat;
@@ -1277,8 +1277,10 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
    rate = ephysics_world_rate_get(body->world);
-   x = (int) (trans.getOrigin().getX() * rate) - w * body->cm.x - cx;
-   y = wh + wy - (int) (trans.getOrigin().getY() * rate) - h * body->cm.y - cy;
+   bx = (int) (trans.getOrigin().getX() * rate) - cx;
+   by = wh + wy - (int) (trans.getOrigin().getY() * rate) - cy;
+   x = bx - w * body->cm.x;
+   y = by - h * body->cm.y;
    z = (int) (trans.getOrigin().getZ() * rate);
 
    evas_object_move(body->evas_obj, x, y);
@@ -1301,8 +1303,9 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    quat = trans.getRotation();
    quat.normalize();
-   evas_map_util_quat_rotate(map, quat.x(), quat.y(), quat.z(), -quat.w(),
-                             x + (w * body->cm.x), y + (h * body->cm.y), z);
+   evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
+                             bx, by, z);
+
    _ephysics_body_evas_obj_map_apply(body, map, body->evas_obj,
                                      body->back_face_culling, EINA_TRUE);
 }
