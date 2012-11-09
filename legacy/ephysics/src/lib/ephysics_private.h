@@ -48,7 +48,11 @@ extern "C" {
 
 #define RAD_TO_DEG 57.29582 /* 2 * pi radians == 360 degree */
 
+typedef struct _EPhysics_Force EPhysics_Force;
+typedef struct _EPhysics_Body_Center_Mass EPhysics_Body_Center_Mass;
+typedef struct _EPhysics_Body_Size EPhysics_Body_Size;
 typedef struct _EPhysics_Point EPhysics_Point;
+typedef struct _EPhysics_Dragging_Data EPhysics_Dragging_Data;
 typedef struct _EPhysics_Body_Soft_Body_Data EPhysics_Body_Soft_Body_Data;
 
 typedef enum _EPhysics_World_Boundary
@@ -62,6 +66,13 @@ typedef enum _EPhysics_World_Boundary
    EPHYSICS_WORLD_BOUNDARY_LAST
 } EPhysics_World_Boundary;
 
+typedef enum _EPhysics_Body_Type
+{
+  EPHYSICS_BODY_TYPE_RIGID,
+  EPHYSICS_BODY_TYPE_SOFT,
+  EPHYSICS_BODY_TYPE_CLOTH,
+} EPhysics_Body_Type;
+
 struct _EPhysics_Point {
      EINA_INLIST;
      double x;
@@ -69,12 +80,32 @@ struct _EPhysics_Point {
      double z;
 };
 
-typedef enum _EPhysics_Body_Type
-{
-  EPHYSICS_BODY_TYPE_RIGID,
-  EPHYSICS_BODY_TYPE_SOFT,
-  EPHYSICS_BODY_TYPE_CLOTH,
-} EPhysics_Body_Type;
+struct _EPhysics_Force {
+     double x;
+     double y;
+     double z;
+     double torque_x;
+     double torque_y;
+     double torque_z;
+};
+
+struct _EPhysics_Dragging_Data {
+     int triangle;
+     double mass[3];
+     Eina_Bool dragging:1;
+};
+
+struct _EPhysics_Body_Center_Mass {
+     double x;
+     double y;
+     double z;
+};
+
+struct _EPhysics_Body_Size {
+     Evas_Coord w;
+     Evas_Coord h;
+     Evas_Coord d;
+};
 
 struct _EPhysics_Body {
      EINA_INLIST;
@@ -84,9 +115,7 @@ struct _EPhysics_Body {
      Evas_Object *evas_obj;
      EPhysics_World *world;
      int walking;
-     Evas_Coord w;
-     Evas_Coord h;
-     Evas_Coord d;
+     EPhysics_Body_Size size;
      btVector3 scale;
      void *data;
      Eina_Inlist *callbacks;
@@ -96,19 +125,8 @@ struct _EPhysics_Body {
      EPhysics_Body_Material material;
      double mass;
      double density;
-     struct {
-          double x;
-          double y;
-          double z;
-          double torque_x;
-          double torque_y;
-          double torque_z;
-     } force;
-     struct {
-          double x;
-          double y;
-          double z;
-     } cm;
+     EPhysics_Force force;
+     EPhysics_Body_Center_Mass cm;
      int slices;
      int *points_deform;
      EPhysics_Body_Type type;
@@ -117,11 +135,7 @@ struct _EPhysics_Body {
      int material_index;
      int collision_cb;
      EPhysics_Body_Soft_Body_Data *soft_data;
-     struct {
-       int triangle;
-       double mass[3];
-       Eina_Bool dragging;
-     } dragging_data;
+     EPhysics_Dragging_Data dragging_data;
 
      Eina_Bool active:1;
      Eina_Bool deleted:1;

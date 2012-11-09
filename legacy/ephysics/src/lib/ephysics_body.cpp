@@ -895,9 +895,9 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
           _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
      }
 
-   body->w = w;
-   body->h = h;
-   body->d = d;
+   body->size.w = w;
+   body->size.h = h;
+   body->size.d = d;
 
    ephysics_body_activate(body, EINA_TRUE);
 
@@ -917,9 +917,9 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
                                       NULL, &height, NULL);
    height += wy;
 
-   mx = (x + body->w * body->cm.x) / rate;
-   my = (height - (y + body->h * body->cm.y)) / rate;
-   mz = (z + body->d * body->cm.z) / rate;
+   mx = (x + body->size.w * body->cm.x) / rate;
+   my = (height - (y + body->size.h * body->cm.y)) / rate;
+   mz = (z + body->size.d * body->cm.z) / rate;
 
    trans = _ephysics_body_transform_get(body);
    trans.setOrigin(btVector3(mx, my, mz));
@@ -986,9 +986,9 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    _ephysics_body_transform_set(body, trans);
    ephysics_body_activate(body, EINA_TRUE);
 
-   body->w = w;
-   body->h = h;
-   body->d = d;
+   body->size.w = w;
+   body->size.h = h;
+   body->size.d = d;
    body->scale = body_scale;
 
    DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
@@ -1002,12 +1002,12 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
    int w, h;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   if ((w == body->w) && (h == body->h))
+   if ((w == body->size.w) && (h == body->size.h))
      return;
 
-   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, w, h, body->d);
+   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, w, h, body->size.d);
    ephysics_world_lock_take(body->world);
-   _ephysics_body_resize(body, w, h, body->d);
+   _ephysics_body_resize(body, w, h, body->size.d);
    ephysics_world_lock_release(body->world);
 }
 
@@ -2485,9 +2485,9 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
    if (y) *y = height - round((trans.getOrigin().getY() + scale.y() / 2)
                               * rate);
    if (z) *z = round((trans.getOrigin().getZ() - scale.z() / 2) * rate);
-   if (w) *w = body->w;
-   if (h) *h = body->h;
-   if (d) *d = body->d;
+   if (w) *w = body->size.w;
+   if (h) *h = body->size.h;
+   if (d) *d = body->size.d;
 }
 
 EAPI void
