@@ -150,6 +150,7 @@ struct _EPhysics_Body {
      Eina_Bool light_apply:1;
      Eina_Bool back_face_culling:1;
      Eina_Bool clockwise:1;
+     Eina_Bool boundary:1;
 };
 
 extern int _ephysics_log_dom;

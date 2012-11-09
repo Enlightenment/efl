@@ -2467,6 +2467,7 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
    if (!body)
      return NULL;
 
+   body->boundary = EINA_TRUE;
    ephysics_body_mass_set(body, 0);
    ephysics_world_boundary_set(world, boundary, body);
    ephysics_body_geometry_set(body, x, y, z, w, h, d);

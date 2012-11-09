@@ -316,10 +316,28 @@ _ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
    ephysics_orphan_body_del(body);
 }
 
+static void
+_ephysics_world_boundary_del(EPhysics_World *world, EPhysics_Body *body)
+{
+   int i;
+
+   for (i = 0; i < EPHYSICS_WORLD_BOUNDARY_LAST; i++)
+     {
+        if (world->boundaries[i] == body)
+          {
+             world->boundaries[i] = NULL;
+             return;
+          }
+     }
+}
+
 Eina_Bool
 ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
    EPhysics_Body *bd;
+
+   if (body->boundary)
+     _ephysics_world_boundary_del(world, body);
 
    if (world->pending_ticks)
      {
@@ -448,22 +466,6 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
    return EINA_TRUE;
 }
 
-static void
-_ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
-{
-   EPhysics_World *world = (EPhysics_World *) data;
-   int i;
-
-   for (i = 0; i < EPHYSICS_WORLD_BOUNDARY_LAST; i++)
-     {
-        if (world->boundaries[i] == body)
-          {
-             world->boundaries[i] = NULL;
-             return;
-          }
-     }
-}
-
 Eina_Bool
 ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body)
 {
@@ -554,8 +556,6 @@ void
 ephysics_world_boundary_set(EPhysics_World *world, EPhysics_World_Boundary boundary, EPhysics_Body *body)
 {
    world->boundaries[boundary] = body;
-   ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
-                                    _ephysics_world_boundary_del_cb, world);
 }
 
 EPhysics_Body *
