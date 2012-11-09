@@ -4,7 +4,7 @@
 
 #include "ephysics_test.h"
 
-void
+static void
 _pos_print_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    Evas_Coord x, y, z;

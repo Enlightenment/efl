@@ -45,6 +45,12 @@ TEST_FILES = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
+	images/dice1.png \
+	images/dice2.png \
+	images/dice3.png \
+	images/dice4.png \
+	images/dice5.png \
+	images/dice6.png \
 	images/green-flag.png \
 	images/hexagon.png \
 	images/list-item.png \

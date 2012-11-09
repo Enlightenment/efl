@@ -21,4 +21,11 @@
 ADD_CUBE(blue-cube, cube-blue);
 ADD_CUBE(purple-cube, cube-purple);
 
+ADD_CUBE(dice1, dice1);
+ADD_CUBE(dice2, dice2);
+ADD_CUBE(dice3, dice3);
+ADD_CUBE(dice4, dice4);
+ADD_CUBE(dice5, dice5);
+ADD_CUBE(dice6, dice6);
+
 #undef ADD_CUBE
