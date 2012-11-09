@@ -1,9 +1,5 @@
-* Sandbox tools to try different materials / properties
 * create shape from image
 * set best shape based on evas object
-* optimize collision shapes usage
-* deform objects
-* support linear moves on Z axis and rotation on X and Y axes.
 
 FAR FAR FUTURE:
 * support Box2d backend
