@@ -53,7 +53,6 @@ typedef struct _EPhysics_Body_Center_Mass EPhysics_Body_Center_Mass;
 typedef struct _EPhysics_Body_Size EPhysics_Body_Size;
 typedef struct _EPhysics_Point EPhysics_Point;
 typedef struct _EPhysics_Dragging_Data EPhysics_Dragging_Data;
-typedef struct _EPhysics_Body_Soft_Body_Data EPhysics_Body_Soft_Body_Data;
 
 typedef enum _EPhysics_Body_Shape
 {
@@ -144,7 +143,6 @@ struct _EPhysics_Body {
      int cloth_rows;
      int material_index;
      int collision_cb;
-     EPhysics_Body_Soft_Body_Data *soft_data;
      EPhysics_Dragging_Data dragging_data;
 
      Eina_Bool active:1;
