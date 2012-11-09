@@ -106,7 +106,6 @@ _eina_thread_win32_create(Eina_Thread *t,
                           const void *data)
 {
    Eina_Thread_Win32 *tw;
-   Eina_List *l;
 
    tw = eina_list_data_get(_thread_pool);
    _thread_pool = eina_list_remove_list(_thread_pool, _thread_pool);
