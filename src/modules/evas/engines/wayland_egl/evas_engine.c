@@ -2679,11 +2679,14 @@ eng_gl_surface_destroy(void *data, void *surface)
 
    if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
 
-   ret = eglMakeCurrent(re->win->egl_disp, rsc->surface, rsc->surface, rsc->context);
-   if (!ret)
+   if (re->win)
      {
-        ERR("xxxMakeCurrent() failed!");
-        return 0;
+        ret = eglMakeCurrent(re->win->egl_disp, rsc->surface, rsc->surface, rsc->context);
+        if (!ret)
+          {
+             ERR("xxxMakeCurrent() failed!");
+             return 0;
+          }
      }
 
    // Delete FBO/RBO and Texture here
@@ -2696,12 +2699,15 @@ eng_gl_surface_destroy(void *data, void *surface)
    if (sfc->rb_stencil)
       glDeleteRenderbuffers(1, &sfc->rb_stencil);
 
-   ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (!ret)
+   if (re->win)
      {
-        ERR("xxxMakeCurrent() failed!");
-        free(sfc);
-        return 0;
+        ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (!ret)
+          {
+             ERR("xxxMakeCurrent() failed!");
+             free(sfc);
+             return 0;
+          }
      }
 
    free(sfc);
@@ -2777,12 +2783,15 @@ eng_gl_context_destroy(void *data, void *context)
    if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
 
    // 1. Do a make current with the given context
-   ret = eglMakeCurrent(re->win->egl_disp, rsc->surface,
-                        rsc->surface, ctx->context);
-   if (!ret)
+   if (re->win)
      {
-        ERR("xxxMakeCurrent() failed!");
-        return 0;
+        ret = eglMakeCurrent(re->win->egl_disp, rsc->surface,
+                             rsc->surface, ctx->context);
+        if (!ret)
+          {
+             ERR("xxxMakeCurrent() failed!");
+             return 0;
+          }
      }
 
    // 2. Delete the FBO
@@ -2790,16 +2799,20 @@ eng_gl_context_destroy(void *data, void *context)
      glDeleteFramebuffers(1, &ctx->context_fbo);
 
    // 3. Destroy the Context
-   eglDestroyContext(re->win->egl_disp, ctx->context);
+   if (re->win)
+     eglDestroyContext(re->win->egl_disp, ctx->context);
 
    ctx->context = EGL_NO_CONTEXT;
 
-   ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE,
-                        EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (!ret)
+   if (re->win)
      {
-        ERR("xxxMakeCurrent() failed!");
-        return 0;
+        ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE,
+                             EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (!ret)
+          {
+             ERR("xxxMakeCurrent() failed!");
+             return 0;
+          }
      }
 
    if (current_evgl_ctx == ctx)
@@ -2881,10 +2894,11 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
                   eng_window_use(NULL);
 
                   // Do a make current
-                  ret = eglMakeCurrent(re->win->egl_disp, 
-                                       re->win->egl_surface[0], 
-                                       re->win->egl_surface[0],
-                                       ctx->context);
+                  if (re->win)
+                     ret = eglMakeCurrent(re->win->egl_disp,
+                                          re->win->egl_surface[0],
+                                          re->win->egl_surface[0],
+                                          ctx->context);
 
                   if (!ret)
                     {
