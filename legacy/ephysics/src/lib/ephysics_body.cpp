@@ -1116,9 +1116,86 @@ _ephysics_cloth_face_objs_update(EPhysics_Body *body __UNUSED__)
 }
 
 static void
-_ephysics_cylinder_face_objs_update(EPhysics_Body *body __UNUSED__)
+_ephysics_cylinder_face_objs_update(EPhysics_Body *body)
 {
+   int bx, by, x, y, z, wx, wy, wh, cx, cy;
+   EPhysics_Body_Face_Obj *face_obj;
+   EPhysics_Camera *camera;
+   btQuaternion quat;
+   btTransform trans;
+   Evas_Map *map;
+   Eina_List *l;
+   double rate;
+   void *ldata;
 
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL,
+                                      NULL, &wh, NULL);
+   camera = ephysics_world_camera_get(body->world);
+   ephysics_camera_position_get(camera, &cx, &cy);
+   cx -= wx;
+   cy -= wy;
+
+   rate = ephysics_world_rate_get(body->world);
+   trans = _ephysics_body_transform_get(body);
+
+   bx = (int) (trans.getOrigin().getX() * rate) - cx;
+   by = wh + wy - (int) (trans.getOrigin().getY() * rate) - cy;
+   x = bx - body->size.w / 2;
+   y = by - body->size.h / 2;
+   z = (int) (trans.getOrigin().getZ() * rate);
+
+   quat = trans.getRotation();
+   quat.normalize();
+
+   EINA_LIST_FOREACH(body->face_objs, l, ldata)
+     {
+        Evas_Object *obj;
+        Evas_Coord w, h;
+
+        face_obj = (EPhysics_Body_Face_Obj *)ldata;
+        obj = face_obj->obj;
+
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+        evas_object_move(obj, x, y);
+        if ((!w) || (!h))
+          {
+             DBG("Evas object with no geometry: %p, w=%i h=%i", obj, w, h);
+             continue;
+          }
+
+        map = evas_map_new(4);
+
+        switch(face_obj->face)
+          {
+           case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT:
+              evas_map_util_points_populate_from_object_full(map, obj, z);
+              break;
+           case EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK:
+              evas_map_util_points_populate_from_object_full(map, obj, z + 1);
+              evas_map_util_3d_rotate(map, 0, 180, 0, bx, by, z + 1);
+              break;
+           case EPHYSICS_BODY_CYLINDER_FACE_FRONT:
+              evas_map_util_points_populate_from_object_full(
+                 map, obj, z - body->size.d / 2);
+              break;
+           case EPHYSICS_BODY_CYLINDER_FACE_BACK:
+              evas_map_util_points_populate_from_object_full(
+                 map, obj, z + body->size.d / 2);
+              evas_map_util_3d_rotate(map, 0, 180, 0, bx, by,
+                                      z + body->size.d / 2);
+              break;
+           default:
+              WRN("Face %i not updated", face_obj->face);
+              evas_map_free(map);
+              continue;
+          }
+
+        evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
+                                  bx, by, z);
+
+        _ephysics_body_evas_obj_map_apply(body, map, obj, EINA_TRUE,
+                                          EINA_FALSE);
+     }
 }
 
 static void
