@@ -11,6 +11,13 @@ typedef struct _Dragging_Data
 } Dragging_Data;
 
 static void
+_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_World *world = data;
+   ephysics_world_light_all_bodies_set(world, elm_check_state_get(obj));
+}
+
+static void
 _on_delete(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    Dragging_Data *dragging = ephysics_body_data_get(body);
@@ -142,6 +149,7 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 {
    EPhysics_World *world;
    Test_Data *test_data;
+   Evas_Object *tg;
 
    if (!ephysics_init())
      return;
@@ -153,11 +161,21 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
                                   _restart, test_data);
    elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
 
+   tg = elm_check_add(test_data->win);
+   elm_object_style_set(tg, "toggle");
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, 0.5);
+   elm_check_state_set(tg, EINA_TRUE);
+   evas_object_show(tg);
+   elm_layout_content_set(test_data->layout, "extra_input", tg);
+
    world = ephysics_world_new();
    ephysics_world_gravity_set(world, 100, 0, 0);
    ephysics_world_render_geometry_set(world, 50, 40, -50,
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
+
+   evas_object_smart_callback_add(tg, "changed", _changed_cb, world);
 
    ephysics_world_point_light_position_set(world, 300, 50, -200);
    ephysics_world_light_all_bodies_set(world, EINA_TRUE);
