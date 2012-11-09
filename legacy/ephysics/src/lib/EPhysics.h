@@ -1842,16 +1842,16 @@ typedef enum _EPhysics_Body_Cloth_Anchor_Side
 } EPhysics_Body_Cloth_Anchor_Side;
 
 /**
- * @enum _EPhysics_Body_Box_Face
- * @typedef EPhysics_Body_Box_Face
+ * @enum _EPhysics_Body_Face
+ * @typedef EPhysics_Body_Face
  *
- * Define in wich box's face the evas object should be set.
+ * Define in wich body's face the evas object should be set.
  *
- * @see ephysics_body_box_face_evas_object_set()
+ * @see ephysics_body_face_evas_object_set()
  *
  * @ingroup EPhysics_Body
  */
-typedef enum _EPhysics_Body_Box_Face
+typedef enum _EPhysics_Body_Face
 {
   EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT,
   EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK,
@@ -1861,45 +1861,18 @@ typedef enum _EPhysics_Body_Box_Face
   EPHYSICS_BODY_BOX_FACE_RIGHT,
   EPHYSICS_BODY_BOX_FACE_TOP,
   EPHYSICS_BODY_BOX_FACE_BOTTOM,
-  EPHYSICS_BODY_BOX_FACE_LAST,
-} EPhysics_Body_Box_Face;
 
-/**
- * @enum _EPhysics_Body_Cylinder_Face
- * @typedef EPhysics_Body_Cylinder_Face
- *
- * Define in wich cylinder's face the evas object should be set.
- *
- * @see ephysics_body_cylinder_face_evas_object_set()
- *
- * @ingroup EPhysics_Body
- */
-typedef enum _EPhysics_Body_Cylinder_Face
-{
   EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
   EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
   EPHYSICS_BODY_CYLINDER_FACE_FRONT,
   EPHYSICS_BODY_CYLINDER_FACE_BACK,
   EPHYSICS_BODY_CYLINDER_FACE_CURVED,
-  EPHYSICS_BODY_CYLINDER_FACE_LAST,
-} EPhysics_Body_Cylinder_Face;
 
-/**
- * @enum _EPhysics_Body_Cloth_Face
- * @typedef EPhysics_Body_Cloth_Face
- *
- * Define in wich cloth's face the evas object should be set.
- *
- * @see ephysics_body_cloth_face_evas_object_set()
- *
- * @ingroup EPhysics_Body
- */
-typedef enum _EPhysics_Body_Cloth_Face
-{
   EPHYSICS_BODY_CLOTH_FACE_FRONT,
   EPHYSICS_BODY_CLOTH_FACE_BACK,
-  EPHYSICS_BODY_CLOTH_FACE_LAST,
-} EPhysics_Body_Cloth_Face;
+
+  EPHYSICS_BODY_FACE_LAST,
+} EPhysics_Body_Face;
 
 /**
  * @typedef EPhysics_Body_Collision
@@ -2145,7 +2118,7 @@ EAPI void ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Ev
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
- * @see ephysics_body_cylinder_face_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -2176,7 +2149,7 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
- * @see ephysics_body_cylinder_face_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
  * @see ephysics_world_simulation_set().
  *
  * @ingroup EPhysics_Body
@@ -2198,7 +2171,7 @@ EAPI EPhysics_Body *ephysics_body_soft_circle_add(EPhysics_World *world);
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
- * @see ephysics_body_box_face_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -2224,7 +2197,7 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
- * @see ephysics_body_box_face_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
  * @see ephysics_world_simulation_set().
  *
  * @ingroup EPhysics_Body
@@ -2254,7 +2227,7 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
- * @see ephysics_body_cloth_face_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
  * @see ephysics_world_simulation_set().
  * @see ephysics_body_cloth_anchor_add().
  * @see ephysics_body_cloth_anchor_full_add().
@@ -2497,10 +2470,7 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  * evas objects properties under certain conditions of position or rotation.
  *
  * If it's required to associate evas object to specific faces of the body,
- * the following functions could be used, depending on the body's shape:
- * @li @ref ephysics_body_box_face_evas_object_set();
- * @li @ref ephysics_body_cylinder_face_evas_object_set();
- * @li @ref ephysics_body_cloth_face_evas_object_set().
+ * function @ref ephysics_body_face_evas_object_set() could be used.
  *
  * @param body The body to associate to an evas object.
  * @param evas_obj The evas object that will be associated to this @p body.
@@ -2548,7 +2518,7 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
 
 /**
  * @brief
- * Set an evas object to a physics box body face.
+ * Set an evas object to a physics body face.
  *
  * It will create a direct association between a specific face of the physics
  * body and an evas object.
@@ -2565,165 +2535,44 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  * @param use_obj_pos If @c EINA_TRUE it will set the physics body position
  * to match evas object position taking world rate on consideration.
  *
- * @see ephysics_body_box_face_evas_object_unset().
- * @see ephysics_body_box_face_evas_object_get().
- * @see ephysics_body_box_add().
- * @see ephysics_body_soft_box_add().
+ * @see ephysics_body_face_evas_object_unset().
+ * @see ephysics_body_face_evas_object_get().
  * @see ephysics_body_evas_object_set().
  * @see ephysics_world_rate_set().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_box_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Box_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
+EAPI void ephysics_body_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
 
 /**
  * @brief
- * Get the evas object associated to a physics box body face.
+ * Get the evas object associated to a physics body face.
  *
  * @param body The body to get an evas object from.
  * @param face The specific face of @p body where the evas object was placed.
  * @return The associated evas object, or @c NULL if no object is associated
  * or on error.
  *
- * @see ephysics_body_box_face_evas_object_set() for more details.
+ * @see ephysics_body_face_evas_object_set() for more details.
  *
  * @ingroup EPhysics_Body
  */
-EAPI Evas_Object *ephysics_body_box_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Box_Face face);
+EAPI Evas_Object *ephysics_body_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face face);
 
 /**
  * @brief
- * Unset the evas object associated to a physics box body face.
+ * Unset the evas object associated to a physics body face.
  *
  * @param body The body to unset an evas object from.
  * @param face The specific face of @p body where the evas object was placed.
  * @return The associated evas object, or @c NULL if no object is associated
  * or on error.
  *
- * @see ephysics_body_box_face_evas_object_set() for more details.
+ * @see ephysics_body_face_evas_object_set() for more details.
  *
  * @ingroup EPhysics_Body
  */
-EAPI Evas_Object *ephysics_body_box_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Box_Face face);
-
-/**
- * @brief
- * Set an evas object to a physics cylinder body face.
- *
- * It will create a direct association between a specific face of the physics
- * body and an evas object.
- * With that EPhysics will be able to update evas object
- * position and rotation automatically.
- *
- * If it's required to associate only one evas object to this body, a more
- * generic function @see ephysics_body_evas_object_set() can be used.
- *
- * @param body The body to associate to an evas object.
- * @param face The specific face of @p body where the evas object will be
- * placed.
- * @param evas_obj The evas object that will be associated to this @p body.
- * @param use_obj_pos If @c EINA_TRUE it will set the physics body position
- * to match evas object position taking world rate on consideration.
- *
- * @see ephysics_body_cylinder_face_evas_object_unset().
- * @see ephysics_body_cylinder_face_evas_object_get().
- * @see ephysics_body_circle_add().
- * @see ephysics_body_soft_circle_add().
- * @see ephysics_body_evas_object_set().
- * @see ephysics_world_rate_set().
- *
- * @ingroup EPhysics_Body
- */
-EAPI void ephysics_body_cylinder_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Cylinder_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
-
-/**
- * @brief
- * Get the evas object associated to a physics cylinder body face.
- *
- * @param body The body to get an evas object from.
- * @param face The specific face of @p body where the evas object was placed.
- * @return The associated evas object, or @c NULL if no object is associated
- * or on error.
- *
- * @see ephysics_body_cylinder_face_evas_object_set() for more details.
- *
- * @ingroup EPhysics_Body
- */
-EAPI Evas_Object *ephysics_body_cylinder_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Cylinder_Face face);
-
-/**
- * @brief
- * Unset the evas object associated to a physics cylinder body face.
- *
- * @param body The body to unset an evas object from.
- * @param face The specific face of @p body where the evas object was placed.
- * @return The associated evas object, or @c NULL if no object is associated
- * or on error.
- *
- * @see ephysics_body_cylinder_face_evas_object_set() for more details.
- *
- * @ingroup EPhysics_Body
- */
-EAPI Evas_Object *ephysics_body_cylinder_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Cylinder_Face face);
-
-/**
- * @brief
- * Set an evas object to a physics cloth body face.
- *
- * It will create a direct association between a specific face of the physics
- * body and an evas object.
- * With that EPhysics will be able to update evas object
- * position and rotation automatically.
- *
- * If it's required to associate only one evas object to this body, a more
- * generic function @see ephysics_body_evas_object_set() can be used.
- *
- * @param body The body to associate to an evas object.
- * @param face The specific face of @p body where the evas object will be
- * placed.
- * @param evas_obj The evas object that will be associated to this @p body.
- * @param use_obj_pos If @c EINA_TRUE it will set the physics body position
- * to match evas object position taking world rate on consideration.
- *
- * @see ephysics_body_cloth_face_evas_object_unset().
- * @see ephysics_body_cloth_face_evas_object_get().
- * @see ephysics_body_cloth_add().
- * @see ephysics_body_evas_object_set().
- * @see ephysics_world_rate_set().
- *
- * @ingroup EPhysics_Body
- */
-EAPI void ephysics_body_cloth_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Cloth_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
-
-/**
- * @brief
- * Get the evas object associated to a physics cloth body face.
- *
- * @param body The body to get an evas object from.
- * @param face The specific face of @p body where the evas object was placed.
- * @return The associated evas object, or @c NULL if no object is associated
- * or on error.
- *
- * @see ephysics_body_cloth_face_evas_object_set() for more details.
- *
- * @ingroup EPhysics_Body
- */
-EAPI Evas_Object *ephysics_body_cloth_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Cloth_Face face);
-
-/**
- * @brief
- * Unset the evas object associated to a physics cloth body face.
- *
- * @param body The body to unset an evas object from.
- * @param face The specific face of @p body where the evas object was placed.
- * @return The associated evas object, or @c NULL if no object is associated
- * or on error.
- *
- * @see ephysics_body_cloth_face_evas_object_set() for more details.
- *
- * @ingroup EPhysics_Body
- */
-EAPI Evas_Object *ephysics_body_cloth_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Cloth_Face face);
+EAPI Evas_Object *ephysics_body_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face face);
 
 /**
  * @brief
