@@ -967,6 +967,7 @@ elm_main()
    evas_object_show(win);
 
    world = ephysics_world_new();
+   ephysics_world_simulation_set(world, 1/100.f, 10);
    ephysics_world_render_geometry_set(world, 80, 80, -50,
                                       (int) WIDTH * 0.7 - 160, HEIGHT - 160,
                                       DEPTH);
