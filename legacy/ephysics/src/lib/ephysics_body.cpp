@@ -618,6 +618,7 @@ static EPhysics_Body *
 _ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_y, double cm_z)
 {
    EPhysics_Body *body;
+   double rate;
 
    body = (EPhysics_Body *) calloc(1, sizeof(EPhysics_Body));
    if (!body)
@@ -626,7 +627,11 @@ _ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_
         return NULL;
      }
 
+   rate = ephysics_world_rate_get(world);
    body->scale = btVector3(1, 1, 1);
+   body->size.w = rate;
+   body->size.h = rate;
+   body->size.d = rate;
    body->mass = mass;
    body->world = world;
    body->cm.x = cm_x;
@@ -898,6 +903,7 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body->size.w = w;
    body->size.h = h;
    body->size.d = d;
+   body->scale = btVector3(sx, sy, sz);
 
    ephysics_body_activate(body, EINA_TRUE);
 
