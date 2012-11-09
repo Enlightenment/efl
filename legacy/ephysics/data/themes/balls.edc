@@ -1,124 +1,27 @@
-   images {
-      image: "ball-blue.png" COMP;
-      image: "ball-blue70.png" COMP;
-      image: "ball-green.png" COMP;
-      image: "ball-green70.png" COMP;
-      image: "ball-red.png" COMP;
-      image: "ball-red70.png" COMP;
+#define ADD_CIRCLE(_group, _file) \
+   images { \
+      image: #_file##".png" COMP; \
+   } \
+   group { \
+      name: #_group; \
+      parts { \
+         part { \
+            name: "ball"; \
+            mouse_events: 0; \
+            type: IMAGE; \
+            description { \
+               state: "default" 0.0; \
+               image.normal: #_file##".png"; \
+            } \
+         } \
+      } \
    }
 
-   group {
-      name: "blue-ball";
+ADD_CIRCLE(blue-ball, ball-blue)
+ADD_CIRCLE(big-blue-ball, ball-blue70)
+ADD_CIRCLE(red-ball, ball-red)
+ADD_CIRCLE(big-red-ball, ball-red70)
+ADD_CIRCLE(green-ball, ball-green)
+ADD_CIRCLE(big-green-ball, ball-green70)
 
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-blue.png";
-            }
-         }
-
-      }
-
-   }
-
-   group {
-      name: "big-blue-ball";
-
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-blue70.png";
-            }
-         }
-
-      }
-
-   }
-
-   group {
-      name: "red-ball";
-
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-red.png";
-            }
-         }
-
-      }
-
-   }
-
-   group {
-      name: "big-red-ball";
-
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-red70.png";
-            }
-         }
-
-      }
-
-   }
-
-   group {
-      name: "green-ball";
-
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-green.png";
-            }
-         }
-
-      }
-
-   }
-
-   group {
-      name: "big-green-ball";
-
-      parts {
-
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-green70.png";
-            }
-         }
-
-      }
-
-   }
-
-
+#undef ADD_CIRCLE

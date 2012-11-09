@@ -1,42 +1,24 @@
-   images {
-      image: "cube-blue.png" COMP;
-      image: "cube-purple.png" COMP;
+#define ADD_CUBE(_group, _file) \
+   images { \
+      image: #_file##".png" COMP; \
+   } \
+   group { \
+      name: #_group; \
+      parts { \
+         part { \
+            name: "cube"; \
+            type: IMAGE; \
+            mouse_events: 1; \
+            repeat_events: 0; \
+            description { \
+               state: "default" 0.0; \
+               image.normal: #_file##".png"; \
+            } \
+         } \
+      } \
    }
 
-   group {
-      name: "blue-cube";
+ADD_CUBE(blue-cube, cube-blue);
+ADD_CUBE(purple-cube, cube-purple);
 
-      parts {
-
-         part {
-            name: "cube";
-            type: IMAGE;
-            mouse_events: 1;
-            repeat_events: 0;
-            description {
-               state: "default" 0.0;
-               image.normal: "cube-blue.png";
-            }
-         }
-
-      }
-   }
-
-   group {
-      name: "purple-cube";
-
-      parts {
-
-         part {
-            name: "cube";
-            type: IMAGE;
-            mouse_events: 1;
-            repeat_events: 0;
-            description {
-               state: "default" 0.0;
-               image.normal: "cube-purple.png";
-            }
-         }
-
-      }
-   }
+#undef ADD_CUBE
