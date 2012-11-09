@@ -13,5 +13,6 @@ collections {
 #include "shadows.edc"
 #include "shapes.edc"
 #include "spinner.edc"
+#include "toggle.edc"
 #include "others.edc"
 }

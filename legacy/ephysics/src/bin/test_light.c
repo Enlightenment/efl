@@ -75,7 +75,7 @@ test_light(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
 
    tg = elm_check_add(test_data->win);
-   elm_object_style_set(tg, "toggle");
+   elm_object_style_set(tg, "ephysics-test");
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(tg, EINA_TRUE);

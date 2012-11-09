@@ -24,6 +24,7 @@ TEST_FILES = \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
+	toggle.edc \
 	images/arrows.png \
 	images/background.jpg \
 	images/ball-blue.png \
@@ -69,7 +70,11 @@ TEST_FILES = \
 	images/spinner_bt_left_pressed.png \
 	images/spinner_bt_right.png \
 	images/spinner_bt_right_pressed.png \
-	images/star.png
+	images/star.png \
+	images/tog_base_off.png \
+	images/tog_base_on.png \
+	images/tog_bt_off.png \
+	images/tog_bt_on.png
 
 SANDBOX_FILES = \
 	ephysics_sandbox.edc \
