@@ -50,6 +50,7 @@ Fixes:
    * FIx elm_transit to accept proxy object.
    * Fix glview crash even if the object is failed allocating.
    * Fix the elm_flip to accept proxy object.
+   * Fix wrong parameter for thumbnail error in elm_icon.
 
 Removals:
 
