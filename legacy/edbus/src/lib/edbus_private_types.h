@@ -155,6 +155,7 @@ struct _EDBus_Service_Interface
    EDBus_Property_Get_Cb get_func;
    Ecore_Idler *idler_propschanged;
    Eina_Array *props_changed;
+   Eina_Array *prop_invalidated;
 };
 
 typedef struct _Signal_Argument

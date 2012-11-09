@@ -136,11 +136,17 @@ _introspect_append_method(Eina_Strbuf *buf, const EDBus_Method *method)
    eina_strbuf_append(buf, "</method>");
 }
 
+typedef struct _Property
+{
+   EDBus_Property *property;
+   Eina_Bool is_invalidate:1;
+} Property;
+
 static void
 _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
 {
    EDBus_Method *method;
-   EDBus_Property *prop;
+   Property *prop;
    Eina_Iterator *iterator;
    unsigned short i;
    unsigned int size;
@@ -157,7 +163,7 @@ _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
 
    iterator = eina_hash_iterator_data_new(iface->properties);
    EINA_ITERATOR_FOREACH(iterator, prop)
-     _instrospect_append_property(buf, prop, iface);
+     _instrospect_append_property(buf, prop->property, iface);
    eina_iterator_free(iterator);
 
    eina_strbuf_append(buf, "</interface>");
@@ -169,7 +175,7 @@ _cb_property_get(const EDBus_Service_Interface *piface, const EDBus_Message *msg
    const char *propname, *iface_name;
    EDBus_Service_Object *obj = piface->obj;
    EDBus_Service_Interface *iface;
-   EDBus_Property *prop;
+   Property *prop;
    EDBus_Message *reply, *error_reply = NULL;
    EDBus_Message_Iter *main_iter, *variant;
    Eina_Bool ret;
@@ -184,10 +190,10 @@ _cb_property_get(const EDBus_Service_Interface *piface, const EDBus_Message *msg
                                     "Interface not found.");
 
    prop = eina_hash_find(iface->properties, propname);
-   if (!prop) goto not_found;
+   if (!prop || prop->is_invalidate) goto not_found;
 
-   if (prop->get_func)
-     getter = prop->get_func;
+   if (prop->property->get_func)
+     getter = prop->property->get_func;
    else if (iface->get_func)
      getter = iface->get_func;
 
@@ -197,7 +203,8 @@ _cb_property_get(const EDBus_Service_Interface *piface, const EDBus_Message *msg
    EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
 
    main_iter = edbus_message_iter_get(reply);
-   variant = edbus_message_iter_container_new(main_iter, 'v', prop->type);
+   variant = edbus_message_iter_container_new(main_iter, 'v',
+                                              prop->property->type);
 
    ret = getter(iface, propname, variant, &error_reply);
 
@@ -222,7 +229,7 @@ _cb_property_getall(const EDBus_Service_Interface *piface, const EDBus_Message *
    EDBus_Service_Object *obj = piface->obj;
    EDBus_Service_Interface *iface;
    Eina_Iterator *iterator;
-   EDBus_Property *prop;
+   Property *prop;
    EDBus_Message *reply, *error_reply;
    EDBus_Message_Iter *main_iter, *dict;
 
@@ -250,21 +257,22 @@ _cb_property_getall(const EDBus_Service_Interface *piface, const EDBus_Message *
         Eina_Bool ret;
         EDBus_Property_Get_Cb getter = NULL;
 
-        if (prop->get_func)
-          getter = prop->get_func;
+        if (prop->property->get_func)
+          getter = prop->property->get_func;
         else if (iface->get_func)
           getter = iface->get_func;
 
-        if (!getter)
+        if (!getter || prop->is_invalidate)
           continue;
 
         if (!edbus_message_iter_arguments_set(dict, "{sv}", &entry))
           continue;
 
-        edbus_message_iter_basic_append(entry, 's', prop->name);
-        var = edbus_message_iter_container_new(entry, 'v', prop->type);
+        edbus_message_iter_basic_append(entry, 's', prop->property->name);
+        var = edbus_message_iter_container_new(entry, 'v',
+                                               prop->property->type);
 
-        ret = getter(iface, prop->name, var, &error_reply);
+        ret = getter(iface, prop->property->name, var, &error_reply);
 
         if (!ret)
           {
@@ -289,7 +297,7 @@ _cb_property_set(const EDBus_Service_Interface *piface, const EDBus_Message *msg
    const char *propname, *iface_name;
    EDBus_Service_Object *obj = piface->obj;
    EDBus_Service_Interface *iface;
-   EDBus_Property *prop;
+   Property *prop;
    EDBus_Message *reply;
    EDBus_Message_Iter *main_iter;
    EDBus_Property_Set_Cb setter = NULL;
@@ -308,18 +316,19 @@ _cb_property_set(const EDBus_Service_Interface *piface, const EDBus_Message *msg
                                     "Interface not found.");
 
    prop = eina_hash_find(iface->properties, propname);
-   if (!prop)
+   if (!prop || prop->is_invalidate)
      return edbus_message_error_new(msg, DBUS_ERROR_UNKNOWN_PROPERTY,
                                     "Property not found.");
 
-   if (prop->set_func)
-     setter = prop->set_func;
+   if (prop->property->set_func)
+     setter = prop->property->set_func;
    else if (iface->set_func)
      setter = iface->set_func;
 
    if (!setter)
      return edbus_message_error_new(msg, DBUS_ERROR_PROPERTY_READ_ONLY,
                                     "This property is read only");
+
    reply = setter(iface, propname, msg);
    return reply;
 }
@@ -479,6 +488,13 @@ _edbus_service_object_add(EDBus_Connection *conn, const char *path)
    return obj;
 }
 
+static void
+_props_free(void *data)
+{
+   Property *p = data;
+   free(p);
+}
+
 static EDBus_Service_Interface *
 _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
 {
@@ -493,7 +509,7 @@ _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
    EINA_MAGIC_SET(iface, EDBUS_SERVICE_INTERFACE_MAGIC);
    iface->name = eina_stringshare_add(interface);
    iface->methods = eina_hash_string_superfast_new(NULL);
-   iface->properties = eina_hash_string_superfast_new(NULL);
+   iface->properties = eina_hash_string_superfast_new(_props_free);
    iface->obj = obj;
    eina_hash_add(obj->interfaces, iface->name, iface);
    return iface;
@@ -536,13 +552,18 @@ _edbus_service_method_add(EDBus_Service_Interface *interface, EDBus_Method *meth
 static Eina_Bool
 _edbus_service_property_add(EDBus_Service_Interface *interface, EDBus_Property *property)
 {
+   Property *p;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!!eina_hash_find(interface->properties,
                                   property->name), EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(property->type, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
             dbus_signature_validate_single(property->type, NULL), EINA_FALSE);
 
-   return eina_hash_add(interface->properties, property->name, property);
+   p = calloc(1, sizeof(Property));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, EINA_FALSE);
+   p->property = property;
+
+   return eina_hash_add(interface->properties, property->name, p);
 }
 
 EAPI EDBus_Service_Interface *
@@ -633,6 +654,8 @@ _interface_free(EDBus_Service_Interface *interface)
      eina_array_free(interface->props_changed);
    if (interface->idler_propschanged)
      ecore_idler_del(interface->idler_propschanged);
+   if (interface->prop_invalidated)
+     eina_array_free(interface->prop_invalidated);
    free(interface);
 }
 
@@ -859,7 +882,7 @@ _idler_propschanged(void *data)
    EDBus_Message *msg;
    EDBus_Message_Iter *main_iter, *dict, *array_invalidate;
    Eina_Hash *added = NULL;
-   EDBus_Property *prop;
+   Property *prop;
 
    iface->idler_propschanged = NULL;
 
@@ -884,25 +907,26 @@ _idler_propschanged(void *data)
         Eina_Bool ret;
         EDBus_Property_Get_Cb getter = NULL;
 
-        if (eina_hash_find(added, prop->name))
+        if (eina_hash_find(added, prop->property->name))
           continue;
-        eina_hash_add(added, prop->name, prop);
+        eina_hash_add(added, prop->property->name, prop);
 
-        if (prop->get_func)
-          getter = prop->get_func;
+        if (prop->property->get_func)
+          getter = prop->property->get_func;
         else if (iface->get_func)
           getter = iface->get_func;
 
-        if (!getter)
+        if (!getter || prop->is_invalidate)
           continue;
 
         EINA_SAFETY_ON_FALSE_GOTO(
                 edbus_message_iter_arguments_set(dict, "{sv}", &entry), error);
 
-        edbus_message_iter_basic_append(entry, 's', prop->name);
-        var = edbus_message_iter_container_new(entry, 'v', prop->type);
+        edbus_message_iter_basic_append(entry, 's', prop->property->name);
+        var = edbus_message_iter_container_new(entry, 'v',
+                                               prop->property->type);
 
-        ret = getter(iface, prop->name, var, &error_reply);
+        ret = getter(iface, prop->property->name, var, &error_reply);
 
         if (!ret)
           {
@@ -923,6 +947,17 @@ invalidate:
    edbus_message_iter_container_close(main_iter, dict);
 
    edbus_message_iter_arguments_set(main_iter, "as", &array_invalidate);
+
+   if (!iface->prop_invalidated)
+     goto end;
+   while ((prop = eina_array_pop(iface->prop_invalidated)))
+     {
+        if (!prop->is_invalidate)
+          continue;
+        edbus_message_iter_basic_append(array_invalidate, 's',
+                                        prop->property->name);
+     }
+end:
    edbus_message_iter_container_close(main_iter, array_invalidate);
 
    edbus_service_signal_send(iface, msg);
@@ -932,13 +967,15 @@ error:
      eina_hash_free(added);
    if (iface->props_changed)
      eina_array_flush(iface->props_changed);
+   if (iface->prop_invalidated)
+     eina_array_flush(iface->prop_invalidated);
    return ECORE_CALLBACK_CANCEL;
 }
 
 EAPI Eina_Bool
 edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name)
 {
-   EDBus_Property *prop;
+   Property *prop;
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
 
@@ -946,11 +983,40 @@ edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name)
    EINA_SAFETY_ON_NULL_RETURN_VAL(prop, EINA_FALSE);
 
    if (!iface->idler_propschanged)
-     {
-        iface->idler_propschanged = ecore_idler_add(_idler_propschanged, iface);
-        if (!iface->props_changed)
-          iface->props_changed = eina_array_new(1);
-     }
+     iface->idler_propschanged = ecore_idler_add(_idler_propschanged, iface);
+   if (!iface->props_changed)
+     iface->props_changed = eina_array_new(1);
 
    return eina_array_push(iface->props_changed, prop);
+}
+
+EAPI Eina_Bool
+edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate)
+{
+   Property *prop;
+
+   EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+
+   prop = eina_hash_find(iface->properties, name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(prop, EINA_FALSE);
+
+   if (prop->is_invalidate == is_invalidate)
+     return EINA_TRUE;
+
+   prop->is_invalidate = is_invalidate;
+
+   if (!iface->idler_propschanged)
+     iface->idler_propschanged = ecore_idler_add(_idler_propschanged, iface);
+
+   if (is_invalidate)
+     {
+        if (!iface->props_changed)
+          iface->props_changed = eina_array_new(1);
+        return eina_array_push(iface->props_changed, prop);
+     }
+
+   if (!iface->prop_invalidated)
+     iface->prop_invalidated = eina_array_new(1);
+   return eina_array_push(iface->prop_invalidated, prop);
 }

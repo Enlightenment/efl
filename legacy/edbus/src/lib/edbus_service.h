@@ -153,6 +153,8 @@ EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const c
  * properties in changed list.
  */
 EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name);
+
+EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate);
 /**
  * @}
  */

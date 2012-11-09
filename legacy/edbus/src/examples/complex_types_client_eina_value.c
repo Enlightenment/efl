@@ -148,6 +148,14 @@ on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
+_property_removed(void *data, EDBus_Proxy *proxy, void *event_info)
+{
+   EDBus_Proxy_Event_Property_Removed *event = event_info;
+
+   printf("\nproperty removed: %s", event->name);
+}
+
+static void
 _property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
 {
    EDBus_Proxy_Event_Property_Changed *event = event_info;
@@ -266,6 +274,8 @@ main(void)
    edbus_proxy_event_callback_add(proxy,
                                   EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                   _property_changed, NULL);
+   edbus_proxy_event_callback_add(proxy, EDBUS_PROXY_EVENT_PROPERTY_REMOVED,
+                                  _property_removed, NULL);
 
    edbus_proxy_properties_monitor(proxy, EINA_TRUE);
    ecore_timer_add(10, _read_cache, proxy);

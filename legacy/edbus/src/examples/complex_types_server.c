@@ -306,6 +306,7 @@ static Eina_Bool _emit_changed(void *data)
 {
    EDBus_Service_Interface *iface = data;
    edbus_service_property_changed(iface, "int32");
+   edbus_service_property_invalidate_set(iface, "Resp2", EINA_TRUE);
    return EINA_TRUE;
 }
 
