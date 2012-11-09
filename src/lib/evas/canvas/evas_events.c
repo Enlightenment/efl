@@ -206,11 +206,13 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
    int no_rep = 0;
    Eina_List *l;
    Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child;
 
    if (src->is_smart)
      {
-        src->proxy.src_event_in = _evas_event_object_list_raw_in_get(eo_e, src->proxy.src_event_in, evas_object_smart_members_get_direct(eo_src), NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
+        src->proxy.src_event_in = 
+          _evas_event_object_list_raw_in_get(eo_e, src->proxy.src_event_in, 
+                                             evas_object_smart_members_get_direct(eo_src), 
+                                             NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
      }
    else
      src->proxy.src_event_in = eina_list_append(src->proxy.src_event_in, eo_src);
@@ -220,8 +222,9 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 
    EINA_LIST_FOREACH(src->proxy.src_event_in, l, eo_child)
      {
-        Evas_Object_Protected_Data *child = eo_data_get(eo_child,
-                                                        EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *child;
+
+        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         if ((child->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
             (child->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN))
           {
@@ -242,6 +245,8 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
    Eina_List *copy = evas_event_list_copy(src->proxy.src_event_in);
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
+        Evas_Object_Protected_Data *child;
+
         child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         ev->canvas.x = point_x;
         ev->canvas.y = point_y;
@@ -597,15 +602,15 @@ _evas_event_source_multi_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 
    Eina_List *l;
    Evas_Object *eo_child;
-   Evas_Object_Protected_Data *child = NULL;
 
    int addgrab = 0;
    if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
 
    EINA_LIST_FOREACH(src->proxy.src_event_in, l, eo_child)
      {
-        Evas_Object_Protected_Data *child = eo_data_get(eo_child,
-                                                        EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *child;
+
+        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         if (child->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
           {
              child->mouse_grabbed += (addgrab + 1);
@@ -618,6 +623,9 @@ _evas_event_source_multi_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
      {
         Evas_Coord point_x = ev->canvas.x;
         Evas_Coord point_y = ev->canvas.y;
+        Evas_Object_Protected_Data *child;
+
+        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
 
         ev->canvas.x = point_x;
         ev->canvas.y = point_y;
@@ -628,7 +636,6 @@ _evas_event_source_multi_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
                                    &ev->canvas.x,
                                    &ev->canvas.y,
                                    child->mouse_grabbed);
-        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         evas_object_event_callback_call(eo_child, child,
                                         EVAS_CALLBACK_MULTI_DOWN, ev, event_id);
         if (e->delete_me) break;
