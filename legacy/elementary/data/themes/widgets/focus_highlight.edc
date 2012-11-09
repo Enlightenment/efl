@@ -1,0 +1,232 @@
+   group { name: "elm/focus_highlight/top/default";
+      images {
+         image: "emo-unhappy.png" COMP;
+      }
+
+      data {
+         item: "animate" "on";
+      }
+
+      script {
+         public s_x, s_y, s_w, s_h; /* source */
+         public difx, dify, difw, difh;
+         public rot_dir;
+
+         public animator1(val, Float:pos) {
+            new x, y, w, h, dx, dy, dw, dh, Float:rot;
+
+            dx = round(float_mul(float(get_int(difx)), pos));
+            x = get_int(s_x) + dx;
+            dy = round(float_mul(float(get_int(dify)), pos));
+            y = get_int(s_y) + dy;
+            dw = round(float_mul(float(get_int(difw)), pos));
+            w = get_int(s_w) + dw;
+            dy = round(float_mul(float(get_int(difh)), pos));
+            h = get_int(s_h) + dh;
+
+            update_offset(x, y, w, h);
+
+            rot = 360.0 * pos * float(get_int(rot_dir));
+            set_state_val(PART:"shine", STATE_MAP_ROT_Z, rot);
+
+            if (pos >= 1.0) {
+               emit("elm,action,focus,anim,end", "");
+               set_state(PART:"shine", "default", 0.0);
+            }
+         }
+
+         public update_offset(x, y, w, h) {
+            new x1, y1, x2, y2;
+            x1 = x + w - 15;
+            y1 = y - 15;
+            x2 = x + w + 14;
+            y2 = y + 14;
+            set_state_val(PART:"shine", STATE_REL1_OFFSET, x1, y1);
+            set_state_val(PART:"shine", STATE_REL2_OFFSET, x2, y2);
+         }
+
+         public message(Msg_Type:type, id, ...) {
+            if ((type == MSG_INT_SET) && (id == 1)) {
+               new x1, y1, w1, h1;
+               new x2, y2, w2, h2;
+               new px1, px2, py1, py2;
+               new rd;
+
+               x1 = getarg(2);
+               y1 = getarg(3);
+               w1 = getarg(4);
+               h1 = getarg(5);
+               x2 = getarg(6);
+               y2 = getarg(7);
+               w2 = getarg(8);
+               h2 = getarg(9);
+
+               set_int(s_x, x1);
+               set_int(s_y, y1);
+               set_int(s_w, w1);
+               set_int(s_h, h1);
+               set_int(difx, x2 - x1);
+               set_int(dify, y2 - y1);
+               set_int(difw, w2 - w1);
+               set_int(difh, h2 - h1);
+
+               px1 = x1 + w1;
+               px2 = x2 + w2;
+               py1 = y1 + h1;
+               py2 = y2 + h2;
+               if (px2 > px1) {
+                  rd = 1;
+               } else if (px1 > px2) {
+                  rd = -1;
+               } else {
+                  if (py2 > py1) {
+                     rd = 1;
+                  } else {
+                     rd = -1;
+                  }
+               }
+               set_int(rot_dir, rd);
+
+               custom_state(PART:"shine", "default", 0.0);
+               set_state_val(PART:"shine", STATE_REL1, 0.0, 0.0);
+               set_state_val(PART:"shine", STATE_REL2, 0.0, 0.0);
+               set_state_val(PART:"shine", STATE_MAP_ON, 1);
+               set_state_val(PART:"shine", STATE_MAP_ROT_Z, 0.0);
+               update_offset(x1, y1, w1, h1);
+               set_state(PART:"shine", "custom", 0.0);
+
+               anim(0.2, "animator1", 1);
+            }
+         }
+      }
+
+      parts {
+         part { name: "base";
+            type: RECT;
+            repeat_events: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               visible: 0;
+            }
+         }
+         part { name: "shine";
+            type: IMAGE;
+            mouse_events: 1;
+            repeat_events: 1;
+            ignore_flags: ON_HOLD;
+            description { state: "default" 0.0;
+               image {
+                  normal: "emo-unhappy.png";
+               }
+               rel1.to: "base";
+               rel1.relative: 1.0 0.0;
+               rel1.offset: -15 -15;
+               rel2.to: "base";
+               rel2.relative: 1.0 0.0;
+               rel2.offset: 14 14;
+            }
+            description { state: "disabled" 0.0;
+               inherit:  "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+
+         program { name: "show";
+            signal: "elm,action,focus,show";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "hide";
+            target: "hide_start";
+            target: "hide_end";
+            after: "show_start";
+         }
+         program { name: "show_start";
+            action:  STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "shine";
+            after: "show_end";
+         }
+         program { name: "show_end";
+            action: SIGNAL_EMIT "elm,action,focus,show,end" "";
+         }
+         program { name: "hide";
+            signal: "elm,action,focus,hide";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "show";
+            target: "show_start";
+            target: "show_end";
+            after: "hide_start";
+         }
+         program { name: "hide_start";
+            action:  STATE_SET "disabled" 0.0;
+            transition: LINEAR 0.2;
+            target: "shine";
+            after: "hide_end";
+         }
+         program { name: "hide_end";
+            action: SIGNAL_EMIT "elm,action,focus,hide,end" "";
+         }
+      }
+   }
+
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/focus_highlight/bottom/default";
+      parts {
+         part { name: "shine";
+            type: RECT;
+            mouse_events: 1;
+            repeat_events: 1;
+            ignore_flags: ON_HOLD;
+            description { state: "default" 0.0;
+               color: 0 255 0 50;
+               rel1.offset: 0 0;
+               rel2.offset: 0 0;
+            }
+            description { state: "disabled" 0.0;
+               inherit:  "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+
+         program { name: "show";
+            signal: "elm,action,focus,show";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "hide";
+            target: "hide_start";
+            target: "hide_end";
+            after: "show_start";
+         }
+         program { name: "show_start";
+            action:  STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "shine";
+            after: "show_end";
+         }
+         program { name: "show_end";
+            action: SIGNAL_EMIT "elm,action,focus,show,end" "";
+         }
+         program { name: "hide";
+            signal: "elm,action,focus,hide";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "show";
+            target: "show_start";
+            target: "show_end";
+            after: "hide_start";
+         }
+         program { name: "hide_start";
+            action:  STATE_SET "disabled" 0.0;
+            transition: LINEAR 0.2;
+            target: "shine";
+            after: "hide_end";
+         }
+         program { name: "hide_end";
+            action: SIGNAL_EMIT "elm,action,focus,hide,end" "";
+         }
+      }
+   }
+
+

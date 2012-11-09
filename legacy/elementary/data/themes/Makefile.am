@@ -13,8 +13,10 @@ files_DATA = default.edj default-desktop.edj
 EXTRA_DIST = \
 default.edc \
 default-desktop.edc \
+widgets/access.edc \
 widgets/actionslider.edc \
 widgets/fileselector.edc \
+widgets/focus_highlight.edc \
 widgets/menu.edc \
 widgets/segment_control.edc \
 widgets/bg.edc \
