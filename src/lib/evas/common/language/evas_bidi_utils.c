@@ -50,8 +50,8 @@ _evas_bidi_fribidichar_to_unicode(Eina_Unicode *dest, const FriBidiChar *src)
 {
    Eina_Unicode *ret = dest;
 
-   while (*src)
-        *dest++ = *src++;
+   if ((!src) || (!dest)) return NULL;
+   while (*src) *dest++ = *src++;
    *dest = 0;
    return ret;
 }
@@ -62,8 +62,8 @@ _evas_bidi_unicode_to_fribidichar(FriBidiChar *dest, const Eina_Unicode *src)
 {
    FriBidiChar *ret = dest;
 
-   while (*src)
-        *dest++ = *src++;
+   if ((!src) || (!dest)) return NULL;
+   while (*src) *dest++ = *src++;
    *dest = 0;
    return ret;
 }
