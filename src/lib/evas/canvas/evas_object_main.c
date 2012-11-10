@@ -805,7 +805,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
-   /* Eina_Bool source_invisible = EINA_FALSE; */
+   Eina_Bool source_invisible = EINA_FALSE;
 
    if (obj->delete_me) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
@@ -824,8 +824,8 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         pass = evas_event_passes_through(eo_obj, obj);
         freeze = evas_event_freezes_through(eo_obj, obj);
-        /* source_invisible = evas_object_is_source_invisible(eo_obj, obj); */
-        if ((!pass) && (!freeze))
+        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
+        if ((!pass) && (!freeze) && (!source_invisible))
           was = evas_object_is_in_output_rect(eo_obj, obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y, 1, 1);
