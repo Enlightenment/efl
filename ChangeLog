@@ -61,3 +61,7 @@
 2012-11-09  Vincent Torri
 
 	* Fixed longstanding memset bug in evas box.
+
+2012-11-10  Vincent Torri
+
+        * Fix build of eina_file on Solaris 10

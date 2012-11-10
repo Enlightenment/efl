@@ -1438,14 +1438,14 @@ EAPI int
 eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
 {
    struct stat buf;
-#ifdef HAVE_FSTATAT
+#if defined(HAVE_FSTATAT) && defined(HAVE_DIRFD)
    int fd;
 #endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
 
-#ifdef HAVE_FSTATAT
+#if defined(HAVE_FSTATAT) && defined(HAVE_DIRFD)
    fd = dirfd((DIR*) container);
    if (fstatat(fd, info->path + info->name_start, &buf, 0))
 #else
