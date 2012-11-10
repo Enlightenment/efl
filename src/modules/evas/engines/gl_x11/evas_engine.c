@@ -592,7 +592,7 @@ int _evas_engine_GL_X11_log_dom = -1;
 static Evas_Func func, pfunc;
 
 static void *
-eng_info(Evas *eo_e)
+eng_info(Evas *eo_e EINA_UNUSED)
 {
    Evas_Engine_Info_GL_X11 *info;
 
@@ -603,7 +603,6 @@ eng_info(Evas *eo_e)
    info->func.best_depth_get = eng_best_depth_get;
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
-   eo_e = NULL;
 }
 
 static void
