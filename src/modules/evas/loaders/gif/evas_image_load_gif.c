@@ -577,13 +577,10 @@ _evas_image_load_frame(Image_Entry *ie, GifFileType *gif, Image_Entry_Frame *fra
    GifRecordType       rec;
    int                 gra_res = 0, img_res = 0;
    Eina_Bool           res = EINA_FALSE;
-   Gif_Frame          *gif_frame = NULL;
 
    if ((!gif) || (!frame)) return EINA_FALSE;
-   gif_frame = (Gif_Frame *) frame->info;
-
    if (type > LOAD_FRAME_DATA_INFO) return EINA_FALSE;
-   
+
    do
      {
         if (DGifGetRecordType(gif, &rec) == GIF_ERROR) return EINA_FALSE;
@@ -631,23 +628,13 @@ _evas_image_load_frame(Image_Entry *ie, GifFileType *gif, Image_Entry_Frame *fra
 static Eina_Bool
 evas_image_load_file_data_gif_internal(Image_Entry *ie, Image_Entry_Frame *frame, int *error)
 {
-   int        w;
-   int        h;
-   int        dst_x;
-   int        dst_y;
    DATA32    *dst;
    DATA32    *src;
    int        cache_w, cache_h;
    size_t     siz;
-   Gif_Frame *gif_frame = NULL;
 
-   gif_frame = (Gif_Frame *) frame->info;
    cache_w = ie->w;
    cache_h = ie->h;
-   w = gif_frame->image_des.w;
-   h = gif_frame->image_des.h;
-   dst_x = gif_frame->image_des.x;
-   dst_y = gif_frame->image_des.y;
 
    src = frame->data;
 
@@ -979,7 +966,6 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
    int                 fd;
    GifFileType        *gif;
    GifRecordType       rec;
-   int                 done;
    int                 current_frame = 1;
    int                 remain_frames = frame_num;
    double              duration = 0;
@@ -990,8 +976,6 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
    if (!ie->flags.animated) return -1;
    if ((start_frame + frame_num) > frame_count) return -1;
    if (frame_num < 0) return -1;
-
-   done = 0;
 
 #ifndef __EMX__
    fd = open(file, O_RDONLY);
