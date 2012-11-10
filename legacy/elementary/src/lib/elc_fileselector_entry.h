@@ -295,7 +295,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_O
  *
  * @param obj The file selector entry widget
  * @param value @c EINA_TRUE to make it use an inner window, @c
- * EINA_TRUE to make it use a dedicated window
+ * EINA_FALSE to make it use a dedicated window
  *
  * @see elm_win_inwin_add() for more information on inner windows
  * @see elm_fileselector_entry_inwin_mode_get()
