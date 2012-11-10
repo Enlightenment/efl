@@ -29,7 +29,7 @@ typedef struct Pmaps_Buffer Pmaps_Buffer;
 struct Pmaps_Buffer
 {
    Eina_File *file;
-   void *map;
+   unsigned char *map;
    size_t position;
 
    /* the buffer */
