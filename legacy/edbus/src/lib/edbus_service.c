@@ -10,6 +10,18 @@
 #define DBUS_ANNOTATION_DEPRECATED  DBUS_ANNOTATION("Deprecated", "true")
 #define DBUS_ANNOTATION_NOREPLY     DBUS_ANNOTATION("Method.NoReply", "true")
 
+#ifndef DBUS_ERROR_UNKNOWN_INTERFACE
+# define DBUS_ERROR_UNKNOWN_INTERFACE          "org.freedesktop.DBus.Error.UnknownInterface"
+#endif
+
+#ifndef DBUS_ERROR_UNKNOWN_PROPERTY
+# define DBUS_ERROR_UNKNOWN_PROPERTY           "org.freedesktop.DBus.Error.UnknownProperty"
+#endif
+
+#ifndef DBUS_ERROR_PROPERTY_READ_ONLY
+# define DBUS_ERROR_PROPERTY_READ_ONLY         "org.freedesktop.DBus.Error.PropertyReadOnly"
+#endif
+
 #define EDBUS_SERVICE_INTERFACE_CHECK(obj)                         \
   do                                                            \
     {                                                           \
