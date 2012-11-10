@@ -22,9 +22,11 @@ _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
    if ((!obj->cur.usemap) || (!obj->cur.map) || (!obj->cur.map->count == 4))
       return;
 
-   evas_map_coords_get(obj->cur.map, *x, *y, x, y, mouse_grabbed);
-   *x += obj->cur.geometry.x;
-   *y += obj->cur.geometry.y;
+   if(evas_map_coords_get(obj->cur.map, *x, *y, x, y, mouse_grabbed))
+     {
+        *x += obj->cur.geometry.x;
+        *y += obj->cur.geometry.y;
+     }
 }
 
 static void
