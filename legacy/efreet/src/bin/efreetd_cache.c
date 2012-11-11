@@ -236,7 +236,7 @@ icon_changes_listen_recursive(const char *path, Eina_Bool base)
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->type != EINA_FILE_DIR) continue;
-        icon_changes_listen_recursive(info->path, EINA_FALSE);
+        icon_changes_monitor_add(info->path);
      }
    eina_iterator_free(it);
 }
