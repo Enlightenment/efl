@@ -11,6 +11,9 @@
 #define BUS "org.enlightenment.Efreet"
 #define PATH "/org/enlightenment/Efreet"
 #define INTERFACE "org.enlightenment.Efreet"
+/* TODO: Get from dbus include */
+#define DBUS_PATH_LOCAL "/org/freedesktop/DBus/Local"
+#define DBUS_INTERFACE_LOCAL "org.freedesktop.DBus.Local"
 
 /* internal */
 enum
@@ -30,6 +33,13 @@ do_shutdown(void *data __UNUSED__)
 {
    quit();
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+disconnected(void *context __UNUSED__, const EDBus_Message *msg __UNUSED__)
+{
+   INF("disconnected");
+   quit();
 }
 
 static EDBus_Message *
@@ -166,25 +176,29 @@ static const EDBus_Service_Interface_Desc desc = {
 static void
 on_name_request(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
 {
-   unsigned int flag;
+   unsigned int reply;
 
    if (edbus_message_error_get(msg, NULL, NULL))
      {
         ERR("error on on_name_request");
+        quit();
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "u", &flag))
+   if (!edbus_message_arguments_get(msg, "u", &reply))
      {
         ERR("error getting arguments on on_name_request");
+        quit();
         return;
      }
 
-   if (!(flag & EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
+   if (reply != EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
      {
         ERR("error name already in use");
+        quit();
         return;
      }
+   INF("name requested");
 }
 
 /* external */
@@ -208,6 +222,7 @@ dbus_init(void)
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!conn) goto conn_error;
 
+   edbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL, "Disconnected", disconnected, NULL);
    iface = edbus_service_interface_register(conn, PATH, &desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                       on_name_request, NULL);
