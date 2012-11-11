@@ -48,6 +48,7 @@ icon_cache_update_cache_cb(void *data __UNUSED__)
    /* TODO: Queue if already running */
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
+   // XXX: use eina_prefix, not hard-coded prefixes
    eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", sizeof(file));
    if (icon_extra_dirs)
      {
@@ -105,6 +106,7 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
    /* TODO: Queue if already running */
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
+   // XXX: use eina_prefix, not hard-coded prefixes
    eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", sizeof(file));
    if (desktop_extra_dirs)
      {
