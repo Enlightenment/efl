@@ -230,7 +230,7 @@ icon_changes_listen_recursive(const char *path, Eina_Bool base)
         // monitoring the next specific child dir down until we are
         // monitoring the original path again.
      }
-   desktop_changes_monitor_add(path);
+   icon_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
