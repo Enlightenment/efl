@@ -315,67 +315,63 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
 }
 
 static int
-_edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part_Description_Image *st, Edje_Part_Image_Id *imid)
+_edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, 
+                 Edje_Part_Description_Image *st, Edje_Part_Image_Id *imid)
 {
-  Edje_Image_Directory_Set_Entry *entry;
-  Edje_Image_Directory_Set *set = NULL;
-  Eina_List *l;
-  int w = 0;
-  int h = 0;
-  int id;
-
-  if (!st && !imid)
-    return -1;
-
-  if (st && !st->image.set)
-    return st->image.id;
-
-  if (imid && !imid->set)
-    return imid->id;
-
-  if (imid)
-    id = imid->id;
-  else
-    id = st->image.id;
-
-  evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-
-  if (eps && *eps)
-    {
-       if ((*eps)->id == id)
-         set = (*eps)->set;
-
-       if (set)
-         if ((*eps)->entry->size.min.w <= w && w <= (*eps)->entry->size.max.w)
-           if ((*eps)->entry->size.min.h <= h && h <= (*eps)->entry->size.max.h)
-             return (*eps)->entry->id;
-    }
-
-  if (!set)
-    set = ed->file->image_dir->sets + id;
-
-  EINA_LIST_FOREACH(set->entries, l, entry)
-    {
-       if (entry->size.min.w <= w && w <= entry->size.max.w)
-         if (entry->size.min.h <= h && h <= entry->size.max.h)
-           {
-              if (eps)
-                {
-                   if (!*eps)
-                     *eps = calloc(1, sizeof (Edje_Real_Part_Set));
-
-                   if (*eps)
-                     {
-                        (*eps)->entry = entry;
-                        (*eps)->set = set;
-                        (*eps)->id = id;
-                     }
-                }
-              return entry->id;
-           }
-    }
-
-  return -1;
+   Edje_Image_Directory_Set_Entry *entry;
+   Edje_Image_Directory_Set *set = NULL;
+   Eina_List *l;
+   int w = 0, h = 0, id;
+   
+   if (!st && !imid)         return -1;
+   if (st && !st->image.set) return st->image.id;
+   if (imid && !imid->set)   return imid->id;
+   
+   if (imid) id = imid->id;
+   else      id = st->image.id;
+   
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (eps && *eps)
+     {
+        if ((*eps)->id == id) set = (*eps)->set;
+        if (set)
+          {
+             if (((*eps)->entry->size.min.w <= w) && 
+                 (w <= (*eps)->entry->size.max.w))
+               {
+                  if (((*eps)->entry->size.min.h <= h) && 
+                      (h <= (*eps)->entry->size.max.h))
+                    {
+                       return (*eps)->entry->id;
+                    }
+               }
+          }
+     }
+   
+   if (!set) set = ed->file->image_dir->sets + id;
+   
+   EINA_LIST_FOREACH(set->entries, l, entry)
+     {
+        if ((entry->size.min.w <= w) && (w <= entry->size.max.w))
+          {
+             if ((entry->size.min.h <= h) && (h <= entry->size.max.h))
+               {
+                  if (eps)
+                    {
+                       if (!*eps) *eps = calloc(1, sizeof(Edje_Real_Part_Set));
+                       if (*eps)
+                         {
+                            (*eps)->entry = entry;
+                            (*eps)->set = set;
+                            (*eps)->id = id;
+                         }
+                    }
+                  return entry->id;
+               }
+          }
+     }
+   
+   return -1;
 }
 
 static void
