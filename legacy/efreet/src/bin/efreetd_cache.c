@@ -201,11 +201,8 @@ icon_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 static void
 icon_changes_monitor_add(const char *path)
 {
-   Eina_Iterator *it;
-   Eina_File_Direct_Info *info;
    Ecore_File_Monitor *mon;
 
-   if (!ecore_file_is_dir(path)) return;
    if (eina_hash_find(change_monitors, path)) return;
    /* TODO: Check for symlink and monitor the real path */
    mon = ecore_file_monitor_add(path,
@@ -213,18 +210,31 @@ icon_changes_monitor_add(const char *path)
                                 NULL);
    if (mon)
      eina_hash_add(change_monitors, path, mon);
+}
 
+static void
+icon_changes_listen_recursive(const char *path, Eina_Bool base)
+{
+   Eina_Iterator *it;
+   Eina_File_Direct_Info *info;
+
+   if ((!ecore_file_is_dir(path)) && (base))
+     {
+        // XXX: if it doesn't exist... walk the parent dirs back down
+        // to this path until we find one that doesn't exist, then
+        // monitor its parent, and treat it specially as it needs
+        // to look for JUST the creation of this specific child
+        // and when this child is created, replace this monitor with
+        // monitoring the next specific child dir down until we are
+        // monitoring the original path again.
+     }
+   desktop_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->type != EINA_FILE_DIR) continue;
-        /* TODO: Check for symlink and monitor the real path */
-        mon = ecore_file_monitor_add(info->path,
-                                     icon_changes_cb,
-                                     NULL);
-        if (mon)
-          eina_hash_add(change_monitors, info->path, mon);
+        icon_changes_listen_recursive(info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
 }
@@ -237,23 +247,25 @@ icon_changes_listen(void)
    char buf[PATH_MAX];
    const char *dir;
 
-   icon_changes_monitor_add(efreet_icon_deprecated_user_dir_get());
-   icon_changes_monitor_add(efreet_icon_user_dir_get());
+   icon_changes_listen_recursive(efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
+   icon_changes_listen_recursive(efreet_icon_user_dir_get(), EINA_TRUE);
    EINA_LIST_FOREACH(icon_extra_dirs, l, dir)
-      icon_changes_monitor_add(dir);
+     {
+        icon_changes_listen_recursive(dir, EINA_TRUE);
+     }
 
    xdg_dirs = efreet_data_dirs_get();
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
-        icon_changes_monitor_add(buf);
+        icon_changes_listen_recursive(buf, EINA_TRUE);
      }
 
 #ifndef STRICT_SPEC
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
-        icon_changes_monitor_add(buf);
+        icon_changes_listen_recursive(buf, EINA_TRUE);
      }
 #endif
 
@@ -313,19 +325,28 @@ desktop_changes_monitor_add(const char *path)
 }
 
 static void
-desktop_changes_listen_recursive(const char *path)
+desktop_changes_listen_recursive(const char *path, Eina_Bool base)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
 
+   if ((!ecore_file_is_dir(path)) && (base))
+     {
+        // XXX: if it doesn't exist... walk the parent dirs back down
+        // to this path until we find one that doesn't exist, then
+        // monitor its parent, and treat it specially as it needs
+        // to look for JUST the creation of this specific child
+        // and when this child is created, replace this monitor with
+        // monitoring the next specific child dir down until we are
+        // monitoring the original path again.
+     }
    desktop_changes_monitor_add(path);
-
    it = eina_file_stat_ls(path);
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->type != EINA_FILE_DIR) continue;
-        desktop_changes_listen_recursive(info->path);
+        desktop_changes_listen_recursive(info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
 }
@@ -338,12 +359,13 @@ desktop_changes_listen(void)
 
    EINA_LIST_FOREACH(desktop_system_dirs, l, path)
      {
-        if (ecore_file_is_dir(path))
-          desktop_changes_listen_recursive(path);
+        desktop_changes_listen_recursive(path, EINA_TRUE);
      }
 
    EINA_LIST_FOREACH(desktop_extra_dirs, l, path)
-      desktop_changes_monitor_add(path);
+     {
+        desktop_changes_listen_recursive(path, EINA_TRUE);
+     }
 }
 
 static void
