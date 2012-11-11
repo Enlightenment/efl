@@ -447,12 +447,10 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
           }
         else
           {
-             char buf[1024];
+             char buf[1024] = "edje/images/";
 
              /* Replace snprint("edje/images/%i") == memcpy + itoa */
-#define IMAGES "edje/images/"
-             memcpy(buf, IMAGES, strlen(IMAGES));
-             eina_convert_itoa(image_id, buf + strlen(IMAGES)); /* No need to check length as 2³² need only 10 characteres. */
+             eina_convert_itoa(image_id, buf + 12); /* No need to check length as 2³² need only 10 characteres. */
 
              evas_object_image_file_set(ep->object, ed->file->path, buf);
              if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
