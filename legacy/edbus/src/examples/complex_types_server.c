@@ -313,7 +313,7 @@ static Eina_Bool _emit_changed(void *data)
 static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   unsigned int flag;
+   unsigned int reply;
    EDBus_Service_Interface *iface = data;
 
    resp2 = malloc(sizeof(char) * 5);
@@ -325,13 +325,13 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "u", &flag))
+   if (!edbus_message_arguments_get(msg, "u", &reply))
      {
         printf("error geting arguments on on_name_request\n");
         return;
      }
 
-   if (!(flag & EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
+   if (reply != EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
      {
         printf("error name already in use\n");
         return;

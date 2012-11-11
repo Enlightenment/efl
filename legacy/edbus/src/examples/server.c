@@ -193,7 +193,7 @@ static void
 on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    EDBus_Service_Interface *iface;
-   unsigned int flag;
+   unsigned int reply;
 
    iface = data;
    if (edbus_message_error_get(msg, NULL, NULL))
@@ -202,13 +202,13 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "u", &flag))
+   if (!edbus_message_arguments_get(msg, "u", &reply))
     {
        printf("error geting arguments on on_name_request\n");
        return;
     }
 
-   if (!(flag & EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
+   if (reply != EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
      {
         printf("error name already in use\n");
         return;
