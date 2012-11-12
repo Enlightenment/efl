@@ -67,3 +67,6 @@ src/bin/xcf/evas_image_loader_xcf-main.o
 src/bin/xcf/evas_image_loader_xcf-pixelfuncs.o
 src/bin/xcf/evas_image_loader_xcf-shmfile.o
 stamp-h1
+src/bin/gst/evas_image_loader_gst-timeout.o
+src/bin/svg/evas_image_loader_svg-timeout.o
+src/bin/xcf/evas_image_loader_xcf-timeout.o
