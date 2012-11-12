@@ -651,8 +651,8 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
    EDBus_Service_Interface *iface;
    EDBus_Method *method;
    EDBus_Property *property;
-   unsigned short i, z;
-   Eina_Strbuf *buf = NULL;
+   unsigned i;
+   Eina_Strbuf *buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
@@ -683,9 +683,13 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
 
    if (!iface->sign_of_signals)
      iface->sign_of_signals = eina_array_new(1);
+
+   buf = eina_strbuf_new();
    for (i = 0; &desc->signals[i] && desc->signals[i].name; i++)
      {
-        buf = eina_strbuf_new();
+        unsigned z;
+
+        eina_strbuf_reset(buf);
         for (z = 0;
              &desc->signals[i].args[z] && desc->signals[i].args[z].signature;
              z++)
@@ -695,14 +699,13 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
           {
              ERR("Signal with invalid signature: interface=%s signal=%s",
                  iface->name, desc->signals[i].name);
-             eina_strbuf_free(buf);
              continue;
           }
 
 	eina_array_push(iface->sign_of_signals,
 			eina_stringshare_add(eina_strbuf_string_get(buf)));
-	eina_strbuf_free(buf);
      }
+   eina_strbuf_free(buf);
    iface->signals = desc->signals;
 
    for (property = (EDBus_Property *)desc->properties;
