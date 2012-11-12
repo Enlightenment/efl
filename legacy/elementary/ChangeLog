@@ -664,3 +664,8 @@
 2012-11-07  Mikael Sans (xhell)
 
         * Fix wrong parameter for thumbnail error in elm_icon.
+
+2012-11-12  ChunEon Park (Hermet)
+
+        * Support virtualkeypad, clipbard state shange signals from
+		  conformant

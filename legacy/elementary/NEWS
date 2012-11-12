@@ -12,6 +12,7 @@ Additions:
    * Add color picker to elm_colorselector.
    * Add a search API to list all localisations corresponding to a name in map
    * Add elm_notify_align_set/get
+   * Add virtualkeypad, clipboard state change signals from conformant.
 
 Improvements:
 

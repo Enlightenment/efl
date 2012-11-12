@@ -365,7 +365,9 @@ _on_content_resize(void *data,
 {
    ELM_CONFORMANT_DATA_GET(data, sd);
 
-   if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) return;
+   if ((sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) &&
+       (sd->clipboard_state == ECORE_X_ILLUME_CLIPBOARD_STATE_OFF))
+     return;
 
    if (sd->show_region_job) ecore_job_del(sd->show_region_job);
    sd->show_region_job = ecore_job_add(_show_region_job, data);
@@ -415,14 +417,64 @@ _autoscroll_objects_update(void *data)
      }
 }
 
+static void
+_virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
+{
+   ELM_CONFORMANT_DATA_GET(obj, sd);
+
+   Ecore_X_Window zone = ecore_x_e_illume_zone_get(ev->win);
+   Ecore_X_Virtual_Keyboard_State state =
+      ecore_x_e_virtual_keyboard_state_get(zone);
+
+   if (sd->vkb_state == state) return;
+   sd->vkb_state = state;
+
+   if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
+     {
+        evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
+        evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
+        elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
+        evas_object_smart_callback_call(obj, "virtualkeypad,state,off", NULL);
+     }
+   else if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
+     {
+        elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
+        _autoscroll_objects_update(obj);
+        evas_object_smart_callback_call(obj, "virtualkeypad,state,on", NULL);
+     }
+}
+
+static void
+_clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
+{
+   ELM_CONFORMANT_DATA_GET(obj, sd);
+
+   Ecore_X_Window zone = ecore_x_e_illume_zone_get(ev->win);
+   Ecore_X_Illume_Clipboard_State state =
+      ecore_x_e_illume_clipboard_state_get(zone);
+
+   if (sd->clipboard_state == state) return;
+   sd->clipboard_state = state;
+
+   if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_OFF)
+     {
+        evas_object_size_hint_min_set(sd->clipboard, -1, 0);
+        evas_object_size_hint_max_set(sd->clipboard, -1, 0);
+        evas_object_smart_callback_call(obj, "clipboard,state,off", NULL);
+     }
+   else if(state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
+     {
+        _autoscroll_objects_update(obj);
+        evas_object_smart_callback_call(obj, "clipboard,state,on", NULL);
+     }
+}
+
 static Eina_Bool
 _on_prop_change(void *data,
                 int type __UNUSED__,
                 void *event)
 {
    Ecore_X_Event_Window_Property *ev = event;
-
-   ELM_CONFORMANT_DATA_GET(data, sd);
 
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
@@ -444,44 +496,9 @@ _on_prop_change(void *data,
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY)
      _conformant_part_sizing_eval(data, ELM_CONFORMANT_CLIPBOARD_PART);
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
-     {
-        Ecore_X_Window zone;
-        Ecore_X_Virtual_Keyboard_State vkb_state;
-
-        DBG("Keyboard Geometry Changed\n");
-        zone = ecore_x_e_illume_zone_get(ev->win);
-        vkb_state = ecore_x_e_virtual_keyboard_state_get(zone);
-        if (sd->vkb_state != vkb_state)
-          {
-             sd->vkb_state = vkb_state;
-             if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
-               {
-                  evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
-                  evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
-                  elm_widget_display_mode_set(data, EVAS_DISPLAY_MODE_NONE);
-               }
-             else if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
-               {
-                  elm_widget_display_mode_set(data, EVAS_DISPLAY_MODE_COMPRESS);
-                  _autoscroll_objects_update(data);
-               }
-          }
-     }
+     _virtualkeypad_state_change(data, ev);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE)
-     {
-        Ecore_X_Window zone;
-        Ecore_X_Illume_Clipboard_State state;
-
-        zone = ecore_x_e_illume_zone_get(ev->win);
-        state = ecore_x_e_illume_clipboard_state_get(zone);
-
-        if (state != ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
-          {
-             evas_object_size_hint_min_set(sd->clipboard, -1, 0);
-             evas_object_size_hint_max_set(sd->clipboard, -1, 0);
-          }
-        else _autoscroll_objects_update(data);
-     }
+     _clipboard_state_change(data, ev);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -538,6 +555,7 @@ _elm_conformant_smart_parent_set(Evas_Object *obj,
         sd->prop_hdl = ecore_event_handler_add
             (ECORE_X_EVENT_WINDOW_PROPERTY, _on_prop_change, obj);
         sd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
+        sd->clipboard_state = ECORE_X_ILLUME_CLIPBOARD_STATE_OFF;
      }
    // FIXME: get kbd region prop
 #endif

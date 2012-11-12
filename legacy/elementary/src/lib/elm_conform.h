@@ -22,7 +22,18 @@
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for conformant objects.
  *
- * This widget emits the same signals sent from @ref Layout:
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li "virtualkeypad,state,on": if virtualkeypad state is switched to "on".
+ * (@since 1.8)
+ * @li "virtualkeypad,state,off": if virtualkeypad state is switched to "off".
+ * (@since 1.8) 
+ * @li "clipboard,state,on": if clipboard state is switched to "on".
+ * (@since 1.8)
+ * @li "clipboard,state,off": if clipboard state is switched to "off".
+ * (@since 1.8)
+ * In all cases, the @c event parameter of the callback will be
+ * @c NULL.
  *
  * Available styles for it:
  * - @c "default"

@@ -131,6 +131,7 @@ struct _Elm_Conformant_Smart_Data
 #ifdef HAVE_ELEMENTARY_X
    Ecore_Event_Handler           *prop_hdl;
    Ecore_X_Virtual_Keyboard_State vkb_state;
+   Ecore_X_Illume_Clipboard_State clipboard_state;
 #endif
    struct
    {
