@@ -489,6 +489,7 @@ edbus_service_shutdown(void)
 static EDBus_Service_Object *
 _edbus_service_object_parent_find(EDBus_Service_Object *obj)
 {
+   EDBus_Service_Object *parent = NULL;
    size_t len = strlen(obj->path);
    char *path = strdup(obj->path);
    char *slash;
@@ -496,22 +497,18 @@ _edbus_service_object_parent_find(EDBus_Service_Object *obj)
    for (slash = path[len] != '/' ? &path[len - 1] : &path[len - 2];
         slash > path; slash--)
      {
-        EDBus_Service_Object *parent = NULL;
-
         if (*slash != '/')
           continue;
 
         *slash = '\0';
 
-        if (dbus_connection_get_object_path_data(obj->conn->dbus_conn, path,(void **)&parent) && parent != NULL)
-          {
-             free(path);
-             return parent;
-          }
+        if (dbus_connection_get_object_path_data(obj->conn->dbus_conn,
+                                     path, (void **) &parent) && parent != NULL)
+          break;
      }
 
    free(path);
-   return NULL;
+   return parent;
 }
 
 static EDBus_Service_Object *
