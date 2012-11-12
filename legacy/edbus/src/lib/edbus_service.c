@@ -356,6 +356,7 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
         Eina_Iterator *iterator;
         EDBus_Service_Interface *iface;
         EDBus_Service_Object *child;
+        size_t baselen;
 
         if (obj->introspection_data)
           eina_strbuf_reset(obj->introspection_data);
@@ -372,15 +373,15 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
           _introspect_append_interface(obj->introspection_data, iface);
         eina_iterator_free(iterator);
 
+        baselen = strlen(obj->path);
+        /* account for the last '/' */
+        if (baselen != 1)
+          baselen++;
+
         EINA_INLIST_FOREACH(obj->children, child)
-          {
-             const char *subpath;
-             if (strlen(obj->path) == 1)
-               subpath = child->path+strlen(obj->path);
-             else
-               subpath = child->path+strlen(obj->path)+1;
-             eina_strbuf_append_printf(obj->introspection_data, "<node name=\"%s\" />", subpath);
-          }
+           eina_strbuf_append_printf(obj->introspection_data,
+                                     "<node name=\"%s\" />",
+                                     child->path + baselen);
 
         eina_strbuf_append(obj->introspection_data, "</node>");
         obj->introspection_dirty = EINA_FALSE;
