@@ -97,9 +97,12 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    if (obj->cache_map) evas_map_free(obj->cache_map);
    if (obj->map.surface)
      {
-        obj->layer->evas->engine.func->image_map_surface_free
-          (obj->layer->evas->engine.data.output,
-              obj->map.surface);
+        if (obj->layer)
+          {
+             obj->layer->evas->engine.func->image_map_surface_free
+               (obj->layer->evas->engine.data.output,
+                   obj->map.surface);
+          }
         obj->map.surface = NULL;
      }
    evas_object_grabs_cleanup(eo_obj, obj);
@@ -143,6 +146,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Object *eo_obj2;
    Eina_Bool movch = EINA_FALSE;
 
+   if (!obj->layer) return;
    if (obj->layer->evas->nochange) return;
    obj->layer->evas->changed = EINA_TRUE;
 
@@ -320,6 +324,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
    int x, y, w, h;
 
    if (!obj) return;
+   if (!obj->layer) return;
 
    if (obj->is_smart) goto end;
    /* FIXME: was_v isn't used... why? */
@@ -528,17 +533,20 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    if (obj->focused)
      {
         obj->focused = EINA_FALSE;
-        obj->layer->evas->focused = NULL;
+        if (obj->layer)
+          obj->layer->evas->focused = NULL;
         _evas_object_event_new();
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, _evas_event_counter);
-        _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+        if (obj->layer)
+          _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
      }
    _evas_object_event_new();
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_event_counter);
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
-   if (obj->mouse_grabbed > 0)
+   if (obj->layer)
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+   if ((obj->mouse_grabbed > 0) && (obj->layer))
       obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
-   if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
+   if (((obj->mouse_in) || (obj->mouse_grabbed > 0)) && (obj->layer))
       obj->layer->evas->pointer.object.in = eina_list_remove(obj->layer->evas->pointer.object.in, eo_obj);
    obj->mouse_grabbed = 0;
    obj->mouse_in = 0;
@@ -559,7 +567,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    if (obj->is_smart) evas_object_smart_del(eo_obj);
    _evas_object_event_new();
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, _evas_event_counter);
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+   if (obj->layer)
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
    evas_object_smart_cleanup(eo_obj);
    obj->delete_me = 1;
    evas_object_change(eo_obj, obj);
@@ -713,7 +722,8 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    int nx = 0, ny = 0;
 
    if (obj->delete_me) return;
-
+   if (!obj->layer) return;
+   
    nx = x;
    ny = y;
 
@@ -808,6 +818,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    Eina_Bool source_invisible = EINA_FALSE;
 
    if (obj->delete_me) return;
+   if (!obj->layer) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
 
    if (evas_object_intercept_call_resize(eo_obj, w, h)) return;
@@ -893,7 +904,7 @@ _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord *x = va_arg(*list, Evas_Coord *);
    Evas_Coord *y = va_arg(*list, Evas_Coord *);
 
-   if (obj->delete_me)
+   if ((obj->delete_me) || (!obj->layer))
      {
         if (x) *x = 0; if (y) *y = 0;
         return;
@@ -1400,8 +1411,9 @@ _visible_set(Eo *eo_obj, void *_pd, va_list *list)
 }
 
 static void
-_show (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   if (!obj->layer) return;
    if (obj->delete_me) return;
    if (evas_object_intercept_call_show(eo_obj)) return;
    if (obj->is_smart)
@@ -1445,6 +1457,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (!obj->layer) return;
    if (obj->delete_me) return;
    if (evas_object_intercept_call_hide(eo_obj)) return;
    if (obj->is_smart)
@@ -1805,7 +1818,7 @@ _evas_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    const Evas_Object_Protected_Data *obj = _pd;
    Evas **evas = va_arg(*list, Evas **);
 
-   if (obj->delete_me)
+   if ((obj->delete_me) || (!obj->layer))
      {
         *evas = NULL;
         return;

@@ -8,6 +8,8 @@ evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
 {
    Evas_Layer *lay;
 
+   if (!obj) return;
+   if (!e) return;
    if (obj->in_layer) return;
    lay = evas_layer_find(e, obj->cur.layer);
    if (!lay)
