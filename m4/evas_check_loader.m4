@@ -269,7 +269,7 @@ version_ender="0.0.6"
 PKG_CHECK_EXISTS([esvg >= ${version_esvg} ender >= ${version_ender}],
    [
     have_dep="yes"
-    requirement="esvg ender >= ${version_esvg} ender >= ${version_ender}"
+    requirement="esvg >= ${version_esvg} ender >= ${version_ender}"
    ],
    [have_dep="no"])
 
