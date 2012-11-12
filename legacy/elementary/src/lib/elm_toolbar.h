@@ -998,5 +998,29 @@ EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj
 EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Object *obj);
 
 /**
+ * Show a specific item, when the toolbar can be scrolled.
+ *
+ * @param it the toolbar item
+ *
+ * see elm_toolbar_item_bring_in()
+ *
+ * since 1.8
+ * @ingroup Toolbar
+ */
+EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it);
+
+/**
+ * Show a specific item with scroll animation, when the toolbar can be scrolled.
+ *
+ * @param it the toolbar item
+ *
+ * see elm_toolbar_item_show()
+ *
+ * since 1.8
+ * @ingroup Toolbar
+ */
+EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it);
+
+/**
  * @}
  */

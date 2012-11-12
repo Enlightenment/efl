@@ -3256,3 +3256,35 @@ elm_toolbar_reorder_mode_get(const Evas_Object *obj)
 
    return sd->reorder_mode;
 }
+
+EAPI void
+elm_toolbar_item_show(Elm_Object_Item *it)
+{
+   Evas_Coord x, y, w, h, bx, by;
+   Elm_Toolbar_Item *item = (Elm_Toolbar_Item *)it;
+
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
+   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
+
+   evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
+   evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
+   x = x - bx;
+   y = y - by;
+   sd->s_iface->content_region_show(WIDGET(item), x, y, w, h);
+}
+
+EAPI void
+elm_toolbar_item_bring_in(Elm_Object_Item *it)
+{
+   Evas_Coord x, y, w, h, bx, by;
+   Elm_Toolbar_Item *item = (Elm_Toolbar_Item *)it;
+
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
+   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
+
+   evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
+   evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
+   x = x - bx;
+   y = y - by;
+   sd->s_iface->region_bring_in(WIDGET(item), x, y, w, h);
+}
