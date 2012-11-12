@@ -1939,7 +1939,7 @@ eng_image_native_set(void *data, void *image, void *native)
                         ERR("Try glXCreatePixmap on GLX with no support");
                       if (n->glx_pixmap)
                         {
-//                           printf("%p: new native texture for %x | %4i x %4i @ %2i = %p\n",
+//                          printf("%p: new native texture for %x | %4i x %4i @ %2i = %p\n",
 //                                  n, pm, w, h, depth, n->glx_pixmap);
                            if (!target)
                              {
