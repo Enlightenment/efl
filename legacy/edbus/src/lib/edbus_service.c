@@ -71,7 +71,16 @@ _introspect_append_signal(Eina_Strbuf *buf, const EDBus_Signal *sig)
    int i;
    const char *part, *name;
 
-   eina_strbuf_append_printf(buf, "<signal name=\"%s\">", sig->name);
+   eina_strbuf_append_printf(buf, "<signal name=\"%s\"", sig->name);
+
+   if (!sig->flags && !(sig->args && sig->args->signature))
+     {
+        eina_strbuf_append(buf, " />");
+        return;
+     }
+
+   eina_strbuf_append(buf, ">");
+
    if (sig->flags & EDBUS_SIGNAL_FLAG_DEPRECATED)
      eina_strbuf_append(buf, DBUS_ANNOTATION_DEPRECATED);
 
@@ -94,10 +103,19 @@ _instrospect_append_property(Eina_Strbuf *buf, const EDBus_Property *prop, const
 {
    eina_strbuf_append_printf(buf, "<property name=\"%s\" type=\"%s\" access=\"",
                              prop->name, prop->type);
+
    if (iface->get_func || prop->get_func)
      eina_strbuf_append(buf, "read");
+
    if (iface->set_func || prop->set_func)
      eina_strbuf_append(buf, "write");
+
+   if (!prop->flags)
+     {
+        eina_strbuf_append(buf, "\" />");
+        return;
+     }
+
    eina_strbuf_append(buf, "\">");
 
    if (prop->flags & EDBUS_PROPERTY_FLAG_DEPRECATED)
