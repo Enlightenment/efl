@@ -644,6 +644,47 @@ _edbus_service_property_add(EDBus_Service_Interface *interface, EDBus_Property *
    return eina_hash_add(interface->properties, property->name, p);
 }
 
+/* Check if all signals in desc have valid signatures and return an Eina_Array
+ * with each of them. Return NULL if any of the signatures is invalid */
+static inline Eina_Array *
+_edbus_service_interface_desc_signals_signatures_get(
+   const EDBus_Service_Interface_Desc *desc)
+{
+   const EDBus_Signal *sig;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Array *signatures = eina_array_new(1);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(signatures, NULL);
+
+   for (sig = desc->signals; sig && sig->name; sig++)
+     {
+        const EDBus_Arg_Info *arg;
+
+        eina_strbuf_reset(buf);
+        for (arg = sig->args; arg && arg->signature; arg++)
+          eina_strbuf_append(buf, arg->signature);
+
+        if (!dbus_signature_validate(eina_strbuf_string_get(buf), NULL))
+          {
+             ERR("Signal with invalid signature: interface=%s signal=%s",
+                 desc->interface, sig->name);
+             goto fail_signature;
+          }
+
+	eina_array_push(signatures,
+                        eina_stringshare_add(eina_strbuf_string_get(buf)));
+     }
+   eina_strbuf_free(buf);
+
+   return signatures;
+
+fail_signature:
+   eina_strbuf_free(buf);
+   eina_array_free(signatures);
+   return NULL;
+}
+
 EAPI EDBus_Service_Interface *
 edbus_service_interface_register(EDBus_Connection *conn, const char *path, const EDBus_Service_Interface_Desc *desc)
 {
@@ -651,8 +692,7 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
    EDBus_Service_Interface *iface;
    EDBus_Method *method;
    EDBus_Property *property;
-   unsigned i;
-   Eina_Strbuf *buf;
+   Eina_Array *signatures;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
@@ -666,47 +706,23 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
         return NULL;
      }
 
+   signatures = _edbus_service_interface_desc_signals_signatures_get(desc);
+   if (!signatures)
+     return NULL;
+
    if (obj == NULL)
      obj = _edbus_service_object_add(conn, path);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_GOTO(obj, fail);
 
    iface = _edbus_service_interface_add(obj, desc->interface);
    if (!iface)
-     {
-        if (eina_hash_population(obj->interfaces) < 2)
-           _object_free(obj);
-        return NULL;
-     }
+     goto fail;
 
    for (method = (EDBus_Method *)desc->methods; method && method->member; method++)
      _edbus_service_method_add(iface, method);
 
-   if (!iface->sign_of_signals)
-     iface->sign_of_signals = eina_array_new(1);
-
-   buf = eina_strbuf_new();
-   for (i = 0; &desc->signals[i] && desc->signals[i].name; i++)
-     {
-        unsigned z;
-
-        eina_strbuf_reset(buf);
-        for (z = 0;
-             &desc->signals[i].args[z] && desc->signals[i].args[z].signature;
-             z++)
-          eina_strbuf_append(buf, desc->signals[i].args[z].signature);
-
-        if (!dbus_signature_validate(eina_strbuf_string_get(buf), NULL))
-          {
-             ERR("Signal with invalid signature: interface=%s signal=%s",
-                 iface->name, desc->signals[i].name);
-             continue;
-          }
-
-	eina_array_push(iface->sign_of_signals,
-			eina_stringshare_add(eina_strbuf_string_get(buf)));
-     }
-   eina_strbuf_free(buf);
    iface->signals = desc->signals;
+   iface->sign_of_signals = signatures;
 
    for (property = (EDBus_Property *)desc->properties;
         property && property->name; property++)
@@ -716,6 +732,14 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
    iface->set_func = desc->default_set;
 
    return iface;
+
+fail:
+   eina_array_free(signatures);
+
+   if (obj && (eina_hash_population(obj->interfaces) < 2))
+     _object_free(obj);
+
+   return NULL;
 }
 
 static void
