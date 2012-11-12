@@ -149,14 +149,14 @@ _introspect_append_method(Eina_Strbuf *buf, const EDBus_Method *method)
 
 typedef struct _Property
 {
-   EDBus_Property *property;
+   const EDBus_Property *property;
    Eina_Bool is_invalidate:1;
 } Property;
 
 static void
 _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
 {
-   EDBus_Method *method;
+   const EDBus_Method *method;
    Property *prop;
    Eina_Iterator *iterator;
    unsigned short i;
@@ -616,7 +616,8 @@ _have_signature(const EDBus_Arg_Info *args, EDBus_Message *msg)
 }
 
 static Eina_Bool
-_edbus_service_method_add(EDBus_Service_Interface *interface, EDBus_Method *method)
+_edbus_service_method_add(EDBus_Service_Interface *interface,
+                          const EDBus_Method *method)
 {
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!!eina_hash_find(interface->methods,
                                   method->member), EINA_FALSE);
@@ -628,14 +629,15 @@ _edbus_service_method_add(EDBus_Service_Interface *interface, EDBus_Method *meth
 }
 
 static Eina_Bool
-_edbus_service_property_add(EDBus_Service_Interface *interface, EDBus_Property *property)
+_edbus_service_property_add(EDBus_Service_Interface *interface,
+                            const EDBus_Property *property)
 {
    Property *p;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!!eina_hash_find(interface->properties,
                                   property->name), EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(property->type, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
-            dbus_signature_validate_single(property->type, NULL), EINA_FALSE);
+      dbus_signature_validate_single(property->type, NULL), EINA_FALSE);
 
    p = calloc(1, sizeof(Property));
    EINA_SAFETY_ON_NULL_RETURN_VAL(p, EINA_FALSE);
@@ -690,8 +692,8 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
 {
    EDBus_Service_Object *obj;
    EDBus_Service_Interface *iface;
-   EDBus_Method *method;
-   EDBus_Property *property;
+   const EDBus_Method *method;
+   const EDBus_Property *property;
    Eina_Array *signatures;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
@@ -718,14 +720,13 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
    if (!iface)
      goto fail;
 
-   for (method = (EDBus_Method *)desc->methods; method && method->member; method++)
+   for (method = desc->methods; method && method->member; method++)
      _edbus_service_method_add(iface, method);
 
    iface->signals = desc->signals;
    iface->sign_of_signals = signatures;
 
-   for (property = (EDBus_Property *)desc->properties;
-        property && property->name; property++)
+   for (property = desc->properties; property && property->name; property++)
      _edbus_service_property_add(iface, property);
 
    iface->get_func = desc->default_get;
@@ -850,7 +851,7 @@ _object_handler(DBusConnection *conn, DBusMessage *msg, void *user_data)
 {
    EDBus_Service_Object *obj;
    EDBus_Service_Interface *iface;
-   EDBus_Method *method;
+   const EDBus_Method *method;
    EDBus_Message *edbus_msg;
    EDBus_Message *reply;
 
