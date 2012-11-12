@@ -1612,6 +1612,18 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
        list = eina_list_remove_list(list, list), \
        data = eina_list_data_get(list))
 
+/**
+ * @def EINA_LIST_LAST_DATA_GET
+ * @brief Macro to return the last list node's data
+ *
+ * @param list The list
+ * @return The node's data, or @c NULL on being passed a @c NULL pointer
+ *
+ * This macro is a shortcut for typing eina_list_data_get(eina_list_last())
+ */
+#define eina_list_last_data_get(list) \
+  eina_list_data_get(eina_list_last(list))
+
 #include "eina_inline_list.x"
 
 /**

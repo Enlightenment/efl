@@ -65,3 +65,7 @@
 2012-11-10  Vincent Torri
 
         * Fix build of eina_file on Solaris 10
+
+2012-11-12  Mike Blumenkrantz
+
+        * Add eina_list_last_data_get

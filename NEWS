@@ -10,14 +10,15 @@ Additions:
     * Add eina_barrier thread API
     * Add eina_tmpstr_add() and eina_tmpstr_del()
     * Add eina_thread API
+    * Add eina_list_last_data_get
 
 Improvements:
-    * Single EFL tree now covring all EFL library components.
+    * Single EFL tree covering all EFL library components.
     * Speedup Eina Rbtree Iterator by recycling memory instead of
-    massively calling malloc/free.
+      repeatedly calling malloc/free.
     * Display more information with eet -l -v.
 
 Fixes:
     * Fix PPC (big endian) image codec bug.
     * Fix return value of eina_mmap_safety_enabled_set() and future
-    eina_mmap_safety_enabled_get() returns after success
+      eina_mmap_safety_enabled_get() returns after success
