@@ -52,7 +52,6 @@ static DBusHandlerResult _object_handler(DBusConnection *conn, DBusMessage *mess
 static void _object_free(EDBus_Service_Object *obj);
 static void _interface_free(EDBus_Service_Interface *interface);
 static void _on_connection_free(void *data, const void *dead_pointer);
-static EDBus_Service_Object *_edbus_service_object_parent_find(EDBus_Service_Object *obj);
 
 static DBusObjectPathVTable vtable = {
   _object_unregister,
@@ -485,6 +484,34 @@ void
 edbus_service_shutdown(void)
 {
    _default_interfaces_free();
+}
+
+static EDBus_Service_Object *
+_edbus_service_object_parent_find(EDBus_Service_Object *obj)
+{
+   size_t len = strlen(obj->path);
+   char *path = strdup(obj->path);
+   char *slash;
+
+   for (slash = path[len] != '/' ? &path[len - 1] : &path[len - 2];
+        slash > path; slash--)
+     {
+        EDBus_Service_Object *parent = NULL;
+
+        if (*slash != '/')
+          continue;
+
+        *slash = '\0';
+
+        if (dbus_connection_get_object_path_data(obj->conn->dbus_conn, path,(void **)&parent) && parent != NULL)
+          {
+             free(path);
+             return parent;
+          }
+     }
+
+   free(path);
+   return NULL;
 }
 
 static EDBus_Service_Object *
@@ -1091,32 +1118,4 @@ edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char
    if (!iface->prop_invalidated)
      iface->prop_invalidated = eina_array_new(1);
    return eina_array_push(iface->prop_invalidated, prop);
-}
-
-static EDBus_Service_Object *
-_edbus_service_object_parent_find(EDBus_Service_Object *obj)
-{
-   size_t len = strlen(obj->path);
-   char *path = strdup(obj->path);
-   char *slash;
-
-   for (slash = path[len] != '/' ? &path[len - 1] : &path[len - 2];
-        slash > path; slash--)
-     {
-        EDBus_Service_Object *parent = NULL;
-
-        if (*slash != '/')
-          continue;
-
-        *slash = '\0';
-
-        if (dbus_connection_get_object_path_data(obj->conn->dbus_conn, path,(void **)&parent) && parent != NULL)
-          {
-             free(path);
-             return parent;
-          }
-     }
-
-   free(path);
-   return NULL;
 }
