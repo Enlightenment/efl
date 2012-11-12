@@ -90,8 +90,6 @@ _img_new(Evas_Object *obj)
    return img;
 }
 
-/* fixme: testar drag and drop depois! */
-
 static void
 _elm_image_internal_sizing_eval(Elm_Image_Smart_Data *sd)
 {
