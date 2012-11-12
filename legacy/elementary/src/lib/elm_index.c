@@ -989,6 +989,7 @@ elm_index_item_selected_set(Elm_Object_Item *it,
      {
         evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
         _sel_eval(WIDGET(it), x + (w / 2), y + (h / 2));
+        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
      }
    else _sel_eval(WIDGET(it), -99999, -9999);
 }

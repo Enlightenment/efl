@@ -53,6 +53,7 @@ Fixes:
    * Fix glview crash even if the object is failed allocating.
    * Fix the elm_flip to accept proxy object.
    * Fix wrong parameter for thumbnail error in elm_icon.
+   * Fix missing selected event in elm_index (elm_index_item_selected_set)
 
 Removals:
 

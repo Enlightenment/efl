@@ -674,3 +674,7 @@
 
         * Add elm_toolbar_item_show/bring_in.
           It show or bring a specific item, when the toolbar can be scrolled.
+
+2012-10-25  Michael Bouchaud (yoz)
+
+        * Add missing selected event in elm_index (elm_index_item_selected_set)
