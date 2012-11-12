@@ -1620,6 +1620,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * @return The node's data, or @c NULL on being passed a @c NULL pointer
  *
  * This macro is a shortcut for typing eina_list_data_get(eina_list_last())
+ * @since 1.8
  */
 #define eina_list_last_data_get(list) \
   eina_list_data_get(eina_list_last(list))
