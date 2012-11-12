@@ -3,6 +3,7 @@
 
 #define BUS "org.Enlightenment"
 #define PATH "/org/enlightenment"
+#define PATH_TEST_SON "/org/enlightenment/son"
 #define INTERFACE "org.enlightenment.Test"
 
 EDBus_Connection *conn;
@@ -231,6 +232,8 @@ main(void)
    iface = edbus_service_interface_register(conn, PATH, &iface_desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                       on_name_request, iface);
+
+   edbus_service_interface_register(conn, PATH_TEST_SON, &iface_desc);
 
    ecore_main_loop_begin();
 
