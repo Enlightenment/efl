@@ -514,8 +514,9 @@ _edbus_service_object_parent_find(EDBus_Service_Object *obj)
 static EDBus_Service_Object *
 _edbus_service_object_add(EDBus_Connection *conn, const char *path)
 {
-   EDBus_Service_Object *obj, *aux;
+   EDBus_Service_Object *obj, *rootobj;
    Eina_Inlist *safe;
+   size_t pathlen;
 
    obj = calloc(1, sizeof(EDBus_Service_Object));
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -543,16 +544,24 @@ _edbus_service_object_add(EDBus_Connection *conn, const char *path)
         return obj;
      }
 
-   EINA_INLIST_FOREACH_SAFE(conn->root_objs, safe, aux)
+   /*
+    * If there wasn't any object above us, check if anyone in conn->root_obj
+    * should become our child and append ourselves there.
+    */
+   pathlen = strlen(obj->path);
+   EINA_INLIST_FOREACH_SAFE(conn->root_objs, safe, rootobj)
      {
-        if (!strncmp(obj->path,  aux->path, strlen(obj->path)))
-          {
-             conn->root_objs = eina_inlist_remove(conn->root_objs,
-                                                  EINA_INLIST_GET(aux));
-             obj->children = eina_inlist_append(obj->children,
-                                                 EINA_INLIST_GET(aux));
-             aux->parent = obj;
-          }
+        if (strncmp(obj->path,  rootobj->path, pathlen) != 0)
+          continue;
+
+        if (rootobj->path[pathlen] != '/')
+          continue;
+
+        conn->root_objs = eina_inlist_remove(conn->root_objs,
+                                             EINA_INLIST_GET(rootobj));
+        obj->children = eina_inlist_append(obj->children,
+                                           EINA_INLIST_GET(rootobj));
+        rootobj->parent = obj;
      }
    conn->root_objs = eina_inlist_append(conn->root_objs, EINA_INLIST_GET(obj));
 
