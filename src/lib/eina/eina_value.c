@@ -3557,7 +3557,8 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type EINA_UNUSED, con
      {
         const char *other_mem;
         char buf[64];
-        snprintf(buf, sizeof(buf), "%ld.%06ld", v.tv_sec, v.tv_usec);
+        strftime
+          (buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&(v.tv_sec)));
         other_mem = buf; /* required due &buf == buf */
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
