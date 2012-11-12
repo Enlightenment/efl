@@ -52,6 +52,7 @@ static DBusHandlerResult _object_handler(DBusConnection *conn, DBusMessage *mess
 static void _object_free(EDBus_Service_Object *obj);
 static void _interface_free(EDBus_Service_Interface *interface);
 static void _on_connection_free(void *data, const void *dead_pointer);
+static EDBus_Service_Object *_edbus_service_object_parent_find(EDBus_Service_Object *obj);
 
 static DBusObjectPathVTable vtable = {
   _object_unregister,
@@ -354,6 +355,7 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
      {
         Eina_Iterator *iterator;
         EDBus_Service_Interface *iface;
+        EDBus_Service_Object *child;
 
         if (obj->introspection_data)
           eina_strbuf_reset(obj->introspection_data);
@@ -369,8 +371,18 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
         EINA_ITERATOR_FOREACH(iterator, iface)
           _introspect_append_interface(obj->introspection_data, iface);
         eina_iterator_free(iterator);
-        eina_strbuf_append(obj->introspection_data, "</node>");
 
+        EINA_INLIST_FOREACH(obj->children, child)
+          {
+             const char *subpath;
+             if (strlen(obj->path) == 1)
+               subpath = child->path+strlen(obj->path);
+             else
+               subpath = child->path+strlen(obj->path)+1;
+             eina_strbuf_append_printf(obj->introspection_data, "<node name=\"%s\" />", subpath);
+          }
+
+        eina_strbuf_append(obj->introspection_data, "</node>");
         obj->introspection_dirty = EINA_FALSE;
      }
 
@@ -477,7 +489,8 @@ edbus_service_shutdown(void)
 static EDBus_Service_Object *
 _edbus_service_object_add(EDBus_Connection *conn, const char *path)
 {
-   EDBus_Service_Object *obj;
+   EDBus_Service_Object *obj, *aux;
+   Eina_Inlist *safe;
 
    obj = calloc(1, sizeof(EDBus_Service_Object));
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -496,6 +509,27 @@ _edbus_service_object_add(EDBus_Connection *conn, const char *path)
 
    eina_hash_add(obj->interfaces, introspectable->name, introspectable);
    eina_hash_add(obj->interfaces, properties_iface->name, properties_iface);
+
+   obj->parent = _edbus_service_object_parent_find(obj);
+   if (obj->parent)
+     {
+        obj->parent->children = eina_inlist_append(obj->parent->children,
+                                                    EINA_INLIST_GET(obj));
+        return obj;
+     }
+
+   EINA_INLIST_FOREACH_SAFE(conn->root_objs, safe, aux)
+     {
+        if (!strncmp(obj->path,  aux->path, strlen(obj->path)))
+          {
+             conn->root_objs = eina_inlist_remove(conn->root_objs,
+                                                  EINA_INLIST_GET(aux));
+             obj->children = eina_inlist_append(obj->children,
+                                                 EINA_INLIST_GET(aux));
+             aux->parent = obj;
+          }
+     }
+   conn->root_objs = eina_inlist_append(conn->root_objs, EINA_INLIST_GET(obj));
 
    return obj;
 }
@@ -680,6 +714,31 @@ _object_free(EDBus_Service_Object *obj)
    iterator = eina_hash_iterator_data_new(obj->interfaces);
    EINA_ITERATOR_FOREACH(iterator, iface)
      _interface_free(iface);
+
+   while (obj->children)
+     {
+        EDBus_Service_Object *child;
+        child = EINA_INLIST_CONTAINER_GET(obj->children, EDBus_Service_Object);
+        obj->children = eina_inlist_remove(obj->children, obj->children);
+        if (obj->parent)
+          {
+             obj->parent->children = eina_inlist_append(obj->parent->children,
+                                                         EINA_INLIST_GET(child));
+             child->parent = obj->parent;
+          }
+        else
+          {
+             obj->conn->root_objs = eina_inlist_append(obj->conn->root_objs,
+                                                       EINA_INLIST_GET(child));
+             child->parent = NULL;
+          }
+     }
+   if (obj->parent)
+     obj->parent->children = eina_inlist_remove(obj->parent->children,
+                                                 EINA_INLIST_GET(obj));
+   else
+     obj->conn->root_objs = eina_inlist_remove(obj->conn->root_objs,
+                                               EINA_INLIST_GET(obj));
 
    edbus_data_del_all(&obj->data);
 
@@ -1031,4 +1090,32 @@ edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char
    if (!iface->prop_invalidated)
      iface->prop_invalidated = eina_array_new(1);
    return eina_array_push(iface->prop_invalidated, prop);
+}
+
+static EDBus_Service_Object *
+_edbus_service_object_parent_find(EDBus_Service_Object *obj)
+{
+   size_t len = strlen(obj->path);
+   char *path = strdup(obj->path);
+   char *slash;
+
+   for (slash = path[len] != '/' ? &path[len - 1] : &path[len - 2];
+        slash > path; slash--)
+     {
+        EDBus_Service_Object *parent = NULL;
+
+        if (*slash != '/')
+          continue;
+
+        *slash = '\0';
+
+        if (dbus_connection_get_object_path_data(obj->conn->dbus_conn, path,(void **)&parent) && parent != NULL)
+          {
+             free(path);
+             return parent;
+          }
+     }
+
+   free(path);
+   return NULL;
 }

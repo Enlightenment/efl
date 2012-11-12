@@ -61,6 +61,7 @@ struct _EDBus_Connection
    Ecore_Idler                   *idler;
    Eina_Bool                      running_signal;
    EDBus_Connection_Context_Event event_handlers[EDBUS_CONNECTION_EVENT_LAST];
+   Eina_Inlist                   *root_objs;//service_object
 };
 
 struct _EDBus_Object
@@ -132,15 +133,19 @@ struct _EDBus_Message
    EDBus_Message_Iter *iterator;
 };
 
-typedef struct _EDBus_Service_Object
+typedef struct _EDBus_Service_Object EDBus_Service_Object;
+struct _EDBus_Service_Object
 {
+   EINA_INLIST;
    EDBus_Connection *conn;
    const char *path;
    Eina_Hash *interfaces;
    Eina_Strbuf *introspection_data;
    Eina_Bool introspection_dirty;
    Eina_Inlist *data;
-} EDBus_Service_Object;
+   EDBus_Service_Object *parent;
+   Eina_Inlist *children;
+};
 
 struct _EDBus_Service_Interface
 {
