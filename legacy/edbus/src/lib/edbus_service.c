@@ -65,12 +65,28 @@ static DBusObjectPathVTable vtable = {
 EDBus_Service_Interface *introspectable;
 EDBus_Service_Interface *properties_iface;
 
-static void
+static inline void
+_introspect_arguments_append(Eina_Strbuf *buf, const EDBus_Arg_Info *args,
+                             const char *direction)
+{
+   for (; args && args->signature; args++)
+     {
+        if (args->name && args->name[0])
+          eina_strbuf_append_printf(buf, "<arg type=\"%s\" name=\"%s\"",
+                                    args->signature, args->name);
+        else
+          eina_strbuf_append_printf(buf, "<arg type=\"%s\"", args->signature);
+
+        if (direction)
+          eina_strbuf_append_printf(buf, " direction=\"%s\" />", direction);
+        else
+          eina_strbuf_append(buf, " />");
+     }
+}
+
+static inline void
 _introspect_append_signal(Eina_Strbuf *buf, const EDBus_Signal *sig)
 {
-   int i;
-   const char *part, *name;
-
    eina_strbuf_append_printf(buf, "<signal name=\"%s\"", sig->name);
 
    if (!sig->flags && !(sig->args && sig->args->signature))
@@ -84,21 +100,12 @@ _introspect_append_signal(Eina_Strbuf *buf, const EDBus_Signal *sig)
    if (sig->flags & EDBUS_SIGNAL_FLAG_DEPRECATED)
      eina_strbuf_append(buf, DBUS_ANNOTATION_DEPRECATED);
 
-   for (i = 0; &sig->args[i] && sig->args[i].signature; i++)
-     {
-        part = sig->args[i].signature;
-        name = sig->args[i].name;
+   _introspect_arguments_append(buf, sig->args, NULL);
 
-        if (name && name[0])
-          eina_strbuf_append_printf(buf, "<arg type=\"%s\" name=\"%s\"/>",
-                                    part, name);
-        else
-          eina_strbuf_append_printf(buf, "<arg type=\"%s\"/>", part);
-     }
    eina_strbuf_append(buf, "</signal>");
 }
 
-static void
+static inline void
 _instrospect_append_property(Eina_Strbuf *buf, const EDBus_Property *prop, const EDBus_Service_Interface *iface)
 {
    eina_strbuf_append_printf(buf, "<property name=\"%s\" type=\"%s\" access=\"",
@@ -124,45 +131,19 @@ _instrospect_append_property(Eina_Strbuf *buf, const EDBus_Property *prop, const
    eina_strbuf_append(buf, "</property>");
 }
 
-static void
+static inline void
 _introspect_append_method(Eina_Strbuf *buf, const EDBus_Method *method)
 {
-   int i;
-   const char *part, *name;
-
    eina_strbuf_append_printf(buf, "<method name=\"%s\">", method->member);
+
    if (method->flags & EDBUS_METHOD_FLAG_DEPRECATED)
      eina_strbuf_append(buf, DBUS_ANNOTATION_DEPRECATED);
+
    if (method->flags & EDBUS_METHOD_FLAG_NOREPLY)
      eina_strbuf_append(buf, DBUS_ANNOTATION_NOREPLY);
 
-   for (i = 0; &method->in[i] && method->in[i].signature; i++)
-     {
-        part = method->in[i].signature;
-        name = method->in[i].name;
-
-        if (name && name[0])
-          eina_strbuf_append_printf(buf,
-                                    "<arg type=\"%s\" name=\"%s\" direction=\"in\"/>",
-                                    part, name);
-        else
-          eina_strbuf_append_printf(buf, "<arg type=\"%s\" direction=\"in\"/>",
-                                    part);
-     }
-
-   for (i = 0; &method->out[i] && method->out[i].signature; i++)
-     {
-        part = method->out[i].signature;
-        name = method->out[i].name;
-
-        if (name && name[0])
-          eina_strbuf_append_printf(buf,
-                                    "<arg type=\"%s\" name=\"%s\" direction=\"out\"/>",
-                                    part, name);
-        else
-          eina_strbuf_append_printf(buf, "<arg type=\"%s\" direction=\"out\"/>",
-                                    part);
-     }
+   _introspect_arguments_append(buf, method->in, "in");
+   _introspect_arguments_append(buf, method->out, "out");
    eina_strbuf_append(buf, "</method>");
 }
 
@@ -179,16 +160,15 @@ _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
    Property *prop;
    Eina_Iterator *iterator;
    unsigned short i;
-   unsigned int size;
 
    eina_strbuf_append_printf(buf, "<interface name=\"%s\">", iface->name);
+
    iterator = eina_hash_iterator_data_new(iface->methods);
    EINA_ITERATOR_FOREACH(iterator, method)
      _introspect_append_method(buf, method);
    eina_iterator_free(iterator);
 
-   size = eina_array_count(iface->sign_of_signals);
-   for (i = 0; i < size; i++)
+   for (i = 0; i < eina_array_count(iface->sign_of_signals); i++)
      _introspect_append_signal(buf, &iface->signals[i]);
 
    iterator = eina_hash_iterator_data_new(iface->properties);
