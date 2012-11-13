@@ -228,8 +228,12 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    MAGIC_CHECK_END();
 
    if (m->count < 4) return EINA_FALSE;
-   if ((!mx) && (!my))
-     return evas_map_inside_get(m, x, y);
+
+   Eina_Bool inside = evas_map_inside_get(m, x, y);
+   if ((!mx) && (!my)) return inside;
+
+   // FIXME: need to handle grab mode and extrapolate coords outside map
+   if (grab && !inside) return EINA_FALSE;
 
    int i, j, edges, edge[m->count][2];
    Eina_Bool douv = EINA_FALSE;
@@ -237,8 +241,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
 
-   // FIXME need to handle grab mode and extrapolte coords outside
-   // map
+/*
    if (grab)
      {
         Evas_Coord ymin, ymax;
@@ -253,6 +256,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
         if (y <= ymin) y = ymin + 1;
         if (y >= ymax) y = ymax - 1;
      }
+*/
    edges = EINA_FALSE;
    for (i = 0; i < m->count; i++)
      {
@@ -348,7 +352,8 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                }
              return EINA_TRUE;
           }
-        if (grab)
+/*
+		  if (grab)
           {
              if (douv)
                {
@@ -361,6 +366,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                }
              return EINA_TRUE;
           }
+*/
      }
    return EINA_FALSE;
 }
