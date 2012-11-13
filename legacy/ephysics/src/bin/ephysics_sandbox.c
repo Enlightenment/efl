@@ -115,16 +115,17 @@ _world_restitution_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   double mass, rotation, friction, restitution, lin_damping, ang_damping;
+   double mass, friction, restitution, lin_damping, ang_damping;
    double lin_sleeping, ang_sleeping;
    EPhysics_Body_Material material;
+   EPhysics_Quaternion *rotation;
    Evas_Object *body_image;
    EPhysics_World *world;
    Body_Data *bd = data;
    EPhysics_Body *body = bd->body;
 
    mass = ephysics_body_mass_get(body);
-   ephysics_body_rotation_get(body, 0, 0, &rotation);
+   rotation = ephysics_body_rotation_get(body);
    friction = ephysics_body_friction_get(body);
    restitution = ephysics_body_restitution_get(body);
    ephysics_body_damping_get(body, &lin_damping, &ang_damping);
@@ -151,7 +152,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, mass);
-   ephysics_body_rotation_set(body, 0, 0, rotation);
+   ephysics_body_rotation_set(body, rotation);
    ephysics_body_friction_set(body, friction);
    ephysics_body_restitution_set(body, restitution);
    ephysics_body_damping_set(body, lin_damping, ang_damping);
@@ -167,6 +168,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
                              elm_slider_value_get(bd->controls.force.torque));
 
    bd->body = body;
+   free(rotation);
 }
 
 static void
@@ -227,8 +229,13 @@ _density_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _rotation_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
+   EPhysics_Quaternion *quat;
    Body_Data *bd = data;
-   ephysics_body_rotation_set(bd->body, 0, 0, elm_slider_value_get(obj));
+
+   quat = ephysics_quaternion_new(0, 0, 0, 0);
+   ephysics_quaternion_euler_set(quat, 0, 0, elm_slider_value_get(obj));
+   ephysics_body_rotation_set(bd->body, quat);
+   free(quat);
 }
 
 static void
@@ -713,7 +720,7 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
    evas_object_data_set(widget, "mass", aux_widget);
    evas_object_smart_callback_add(widget, "delay,changed", _density_set_cb,
                                   bd);
-   widget = _slider_add(bx, "Rotation (º)", "%1.0f", 0, 360, 0);
+   widget = _slider_add(bx, "Rotation (rad)", "%1.3f", -3.1415, 3.1415, 0);
    evas_object_smart_callback_add(widget, "delay,changed", _rotation_set_cb,
                                   bd);
    widget = _slider_add(bx, "Friction", "%1.3f", 0, 1, 0.5);

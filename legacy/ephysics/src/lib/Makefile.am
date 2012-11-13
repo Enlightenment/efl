@@ -18,6 +18,7 @@ base_sources = \
     ephysics_camera.cpp \
     ephysics_constraints.cpp \
     ephysics_main.cpp \
+    ephysics_quaternion.cpp \
     ephysics_shape.cpp \
     ephysics_world.cpp
 

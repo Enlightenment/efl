@@ -9,16 +9,25 @@
 static void
 _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
+   EPhysics_Quaternion *quat_prev, *quat_delta, *quat;
    Evas_Event_Mouse_Move *mmove = event_info;
    EPhysics_Body *body = data;
-   double rx, ry, rz;
+   double rx, ry;
 
    if (mmove->buttons != 1) return;
 
-   ephysics_body_rotation_get(body, &rx, &ry, &rz);
-   rx += mmove->cur.output.y - mmove->prev.output.y;
-   ry += mmove->cur.output.x - mmove->prev.output.x;
-   ephysics_body_rotation_set(body, rx, ry, rz);
+   rx = mmove->cur.output.y - mmove->prev.output.y;
+   ry = mmove->cur.output.x - mmove->prev.output.x;
+
+   quat_prev = ephysics_body_rotation_get(body);
+   quat_delta = ephysics_quaternion_new(0, 0, 0, 0);
+   ephysics_quaternion_euler_set(quat_delta, -ry * 0.06, - rx * 0.04, 0);
+   quat = ephysics_quaternion_multiply(quat_prev, quat_delta);
+   ephysics_body_rotation_set(body, quat);
+
+   free(quat_prev);
+   free(quat_delta);
+   free(quat);
 }
 
 static void

@@ -21,6 +21,7 @@ typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 typedef struct _EPhysics_Body_Evas_Stacking EPhysics_Body_Evas_Stacking;
 typedef struct _EPhysics_Body_Soft_Body_Slice EPhysics_Body_Soft_Body_Slice;
 typedef struct _EPhysics_Body_Face_Obj EPhysics_Body_Face_Obj;
+typedef struct _EPhysics_Quaternion EPhysics_Quaternion;
 
 struct _EPhysics_Body_Callback {
      EINA_INLIST;
@@ -3266,31 +3267,32 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
    if (enable_z) *enable_z = !!body->rigid_body->getAngularFactor().z();
 }
 
-EAPI void
-ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot_y, double *rot_z)
+EAPI EPhysics_Quaternion *
+ephysics_body_rotation_get(const EPhysics_Body *body)
 {
-   btScalar yaw, pitch, roll;
+   EPhysics_Quaternion *quat;
    btTransform trans;
 
    if (!body)
      {
         ERR("Can't get rotation, body is null.");
-        return;
+        return NULL;
      }
 
    trans = _ephysics_body_transform_get(body);
-
-   trans.getBasis().getEulerYPR(yaw, pitch, roll);
-   if (rot_x) *rot_x = -roll * RAD_TO_DEG;
-   if (rot_y) *rot_y = -pitch * RAD_TO_DEG;
-   if (rot_z) *rot_z = -yaw * RAD_TO_DEG;
+   quat = ephysics_quaternion_new(trans.getRotation().x(),
+                                  trans.getRotation().y(),
+                                  trans.getRotation().z(),
+                                  trans.getRotation().getW());
+   return quat;
 }
 
 EAPI void
-ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, double rot_z)
+ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat)
 {
+   btQuaternion bt_quat;
    btTransform trans;
-   btQuaternion quat;
+   double x, y, z, w;
 
    if (!body)
      {
@@ -3298,45 +3300,30 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, doub
         return;
      }
 
+   if (!quat)
+     {
+        ERR("Can't set rotation, quaternion is null.");
+        return;
+     }
+
+   ephysics_quaternion_get(quat, &x, &y, &z, &w);
+
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
 
-   quat.setEuler(-rot_y / RAD_TO_DEG, -rot_x / RAD_TO_DEG, -rot_z / RAD_TO_DEG);
+   bt_quat = btQuaternion(x, y, z, w);
 
    if (body->soft_body)
-     body->soft_body->rotate(quat);
+     body->soft_body->rotate(bt_quat);
    else
      {
         trans = _ephysics_body_transform_get(body);
-        trans.setRotation(quat);
+        trans.setRotation(bt_quat);
         body->rigid_body->proceedToTransform(trans);
         body->rigid_body->getMotionState()->setWorldTransform(trans);
      }
 
-   DBG("Body %p rotation set to (%lf, %lf, %lf)", body, rot_x, rot_y, rot_z);
    ephysics_world_lock_release(body->world);
-}
-
-EAPI void
-ephysics_body_rotation_quaternion_get(const EPhysics_Body *body, double *x, double *y, double *z, double *w)
-{
-   btTransform trans;
-   btQuaternion quat;
-
-   if (!body)
-     {
-        ERR("Can't get rotation, body is null.");
-        return;
-     }
-
-   trans = _ephysics_body_transform_get(body);
-   quat = trans.getRotation();
-   quat.normalize();
-
-   if (x) *x = quat.x();
-   if (y) *y = quat.y();
-   if (z) *z = quat.z();
-   if (w) *w = -quat.w();
 }
 
 EAPI void

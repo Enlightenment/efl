@@ -120,6 +120,319 @@ EAPI int ephysics_shutdown(void);
  */
 
 /**
+ * @defgroup EPhysics_Quaternion EPhysics Quaternion
+ * @ingroup EPhysics
+ *
+ * @{
+ *
+ * Quaternions are used to perform linear algebra rotations.
+ *
+ * Functions regarding rotation, like @ref ephysics_body_rotation_set()
+ * and @ref ephysics_body_rotation_get() would need that. Quaternions
+ * can be used to rotate evas maps as well, with evas_map_util_quat_rotate(),
+ * but in this case quaternion values need to be get with
+ * @ref ephysics_quaternion_get(), since evas don't accept
+ * EPhysics_Quaternion type.
+ *
+ * A quaternion can be created with ephysics_quaternion_new(), and many
+ * operations can be performed with that, as:
+ * @li Sum: @ref ephysics_quaternion_sum()
+ * @li Difference: @ref ephysics_quaternion_diff()
+ * @li Multiple by another quaternion: @ref ephysics_quaternion_multiply()
+ * @li Multiply by scalar: @ref ephysics_quaternion_scale()
+ * @li Divide by scalar: @ref ephysics_quaternion_inverse_scale()
+ * @li Calculate length: @ref ephysics_quaternion_length_get()
+ * @li Calculate angle between quaternions: @ref ephysics_quaternion_angle_get()
+ */
+
+/**
+ * @typedef EPhysics_Quaternion
+ *
+ * Quaternion handle, represents a quaternion to be used to rotate bodies.
+ *
+ * Created with @ref ephysics_quaternion_new() and deleted with free().
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+typedef struct _EPhysics_Quaternion EPhysics_Quaternion;
+
+/**
+ * @brief
+ * Create a new quaternion.
+ *
+ * @note It should be deleted with free() after usage is concluded.
+ *
+ * This values can be modified later by quaternion operations or set directly.
+ *
+ * @param x The x coordinate.
+ * @param y The y coordinate.
+ * @param z The z coordinate.
+ * @param w The rotation.
+ * @return The created quaternion or @c NULL on error.
+ *
+ * @see ephysics_quaternion_set();
+ * @see ephysics_quaternion_axis_angle_set();
+ * @see ephysics_quaternion_euler_set();
+ * @see ephysics_quaternion_scale();
+ * @see ephysics_quaternion_sum();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI EPhysics_Quaternion *ephysics_quaternion_new(double x, double y, double z, double w);
+
+/**
+ * @brief
+ * Get quaternion values.
+ *
+ * @param quat Quaternion to get values from.
+ * @param x The x coordinate.
+ * @param y The y coordinate.
+ * @param z The z coordinate.
+ * @param w The rotation.
+ *
+ * @see ephysics_quaternion_set();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_get(const EPhysics_Quaternion *quat, double *x, double *y, double *z, double *w);
+
+/**
+ * @brief
+ * Get quaternion axis and angle.
+ *
+ * @param quat Quaternion to get values from.
+ * @param nx The x component of the axis of rotation.
+ * @param ny The y component of the axis of rotation.
+ * @param nz The z component of the axis of rotation.
+ * @param a The angle of rotation.
+ *
+ * @see ephysics_quaternion_axis_angle_set();
+ * @see ephysics_quaternion_get();
+ * @see ephysics_quaternion_set();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_axis_angle_get(const EPhysics_Quaternion *quat, double *nx, double *ny, double *nz, double *a);
+
+/**
+ * @brief
+ * Set quaternion values.
+ *
+ * @param quat Quaternion to be set.
+ * @param x The x coordinate.
+ * @param y The y coordinate.
+ * @param z The z coordinate.
+ * @param w The rotation.
+ *
+ * @see ephysics_quaternion_get();
+ * @see ephysics_quaternion_euler_set();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_set(EPhysics_Quaternion *quat, double x, double y, double z, double w);
+
+/**
+ * @brief
+ * Set quaternion using axis angle notation.
+ *
+ * [w, x, y, z] = [cos(a/2), sin(a/2) * nx, sin(a/2)* ny, sin(a/2) * nz]
+ *
+ * @param quat Quaternion to be set.
+ * @param nx The x component of the axis of rotation.
+ * @param ny The y component of the axis of rotation.
+ * @param nz The z component of the axis of rotation.
+ * @param a The angle of rotation.
+ *
+ * @see ephysics_quaternion_axis_angle_get();
+ * @see ephysics_quaternion_set();
+ * @see ephysics_quaternion_euler_set();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_axis_angle_set(EPhysics_Quaternion *quat, double nx, double ny, double nz, double a);
+
+/**
+ * @brief
+ * Set quaternion using Euler angles.
+ *
+ * It's an alternative to @ref ephysics_quaternion_set() usage. Euler angles
+ * will be converted.
+ *
+ * @param quat Quaternion to be set.
+ * @param yaw The angle around Y axis.
+ * @param pitch The angle around X axis.
+ * @param roll The angle around Z axis.
+ *
+ * @see ephysics_quaternion_get();
+ * @see ephysics_quaternion_set();
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_euler_set(EPhysics_Quaternion *quat, double yaw, double pitch, double roll);
+
+/**
+ * @brief
+ * Normalize the quaternion.
+ *
+ * A normalized quaternion is such that x^2 + y^2 + z^2 + w^2 = 1.
+ *
+ * @param quat Quaternion to be normalized.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_normalize(EPhysics_Quaternion *quat);
+
+/**
+ * @brief
+ * Invert the quaternion.
+ *
+ * @param quat Quaternion to be inverted.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_invert(EPhysics_Quaternion *quat);
+
+/**
+ * @brief
+ * Scale the quaternion.
+ *
+ * @param quat Quaternion to be scaled.
+ * @param scale The scale factor.
+ *
+ * @see ephysics_quaternion_inverse_scale()
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_scale(EPhysics_Quaternion *quat, double scale);
+
+/**
+ * @brief
+ * Inversely scale the quaternion.
+ *
+ * @param quat Quaternion to be scaled.
+ * @param scale The scale factor.
+ *
+ * @see ephysics_quaternion_scale()
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI void ephysics_quaternion_inverse_scale(EPhysics_Quaternion *quat, double scale);
+
+/**
+ * @brief
+ * Returns a sum of two quaternions.
+ *
+ * @param quat1 First quaternion to sum.
+ * @param quat2 Second quaternion to sum.
+ * @return The sum quaternion or @c NULL on error.
+ *
+ * @note It should be freed after usage.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI EPhysics_Quaternion *ephysics_quaternion_sum(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+
+/**
+ * @brief
+ * Returns a difference between two quaternions.
+ *
+ * @param quat1 First quaternion.
+ * @param quat2 Second quaternion.
+ * @return The difference between @p quat1 and @p quat2, or @c NULL on error.
+ *
+ * @note It should be freed after usage.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI EPhysics_Quaternion *ephysics_quaternion_diff(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+
+/**
+ * @brief
+ * Multiply two quaternions.
+ *
+ * @param quat1 First quaternion.
+ * @param quat2 Second quaternion.
+ * @return The @p quat1 multiplied by @p quat2 on the right, or @c NULL
+ * on error.
+ *
+ * @note It should be freed after usage.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI EPhysics_Quaternion *ephysics_quaternion_multiply(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+
+/**
+ * @brief
+ * Return the quaternion which is the result of Spherical Linear Interpolation
+ * between two quaternions.
+ *
+ * Slerp interpolates assuming constant velocity.
+ *
+ * @param quat1 First quaternion.
+ * @param quat2 Second quaternion.
+ * @param ratio The ratio between @p quat1 and @p quat2 to interpolate. If
+ * @p ratio = 0, the result is @p quat1, if @p ratio = 1, the result is
+ * @p quat2.
+ * @return The result of slerp between @p quat1 and @p quat2, or @c NULL
+ * on error.
+ *
+ * @note It should be freed after usage.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI EPhysics_Quaternion *ephysics_quaternion_slerp(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, double ratio);
+
+/**
+ * @brief
+ * Return the dot product between two quaternions.
+ *
+ * @param quat1 First quaternion.
+ * @param quat2 Second quaternion.
+ * @return The dot product between @p quat1 and @p quat2 or @c 0 on error.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI double ephysics_quaternion_dot(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+
+/**
+ * @brief
+ * Return the angle between two quaternions.
+ *
+ * @param quat1 First quaternion.
+ * @param quat2 Second quaternion.
+ * @return The angle between @p quat1 and @p quat2 or @c 0 on error.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI double ephysics_quaternion_angle_get(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+
+/**
+ * @brief
+ * Return the length of the quaternion.
+ *
+ * @param quat Quaternion to get length of.
+ * @return The lenght of @p quat or @c 0 on error.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI double ephysics_quaternion_length_get(const EPhysics_Quaternion *quat);
+
+/**
+ * @brief
+ * Return the length squared of the quaternion.
+ *
+ * @param quat Quaternion to get length of.
+ * @return The lenght of @p quat or @c 0 on error.
+ *
+ * @ingroup EPhysics_Quaternion
+ */
+EAPI double ephysics_quaternion_length2_get(const EPhysics_Quaternion *quat);
+
+/**
+ * @}
+ */
+
+/**
  * @defgroup EPhysics_Shape EPhysics Shape
  * @ingroup EPhysics
  *
@@ -3422,61 +3735,36 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
 
 /**
  * @brief
- * Get body's rotation on x, y and z axes.
+ * Get body's rotation quaternion.
  *
  * By default rotation is 0 degree on all axes.
  *
- * @note The unit used for rotation is degrees.
- *
  * @param body The physics body.
- * @param rot_x The amount of degrees @p body is rotated on x axis.
- * @param rot_y The amount of degrees @p body is rotated on y axis.
- * @param rot_z The amount of degrees @p body is rotated on z axis.
+ * @return A quaternion or @c NULL on error. It should be freed with free()
+ * after usage.
  *
  * @see ephysics_body_rotation_set()
- * @see ephysics_body_rotation_quaternion_get()
+ * @see ephysics_quaternion_get()
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot_y, double *rot_z);
+EAPI EPhysics_Quaternion *ephysics_body_rotation_get(const EPhysics_Body *body);
 
 /**
  * @brief
- * Set body's rotation on z axis.
+ * Set body's rotation.
  *
  * By default rotation is 0 degrees on all axes.
- * Negative values indicates rotation on counter clockwise direction.
- *
- * @note The unit used for rotation is degrees.
  *
  * @param body The physics body.
- * @param rot_x The amount of degrees @p body should be rotated on x axis.
- * @param rot_y The amount of degrees @p body should be rotated on y axis.
- * @param rot_z The amount of degrees @p body should be rotated on z axis.
+ * @param quat Quaternion representing the rotation.
  *
  * @see ephysics_body_rotation_get()
+ * @see ephysics_quaternion_new()
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, double rot_z);
-
-/**
- * @brief
- * Get body's normalized rotation quaternion (x, y, z and w).
- *
- * @param body The physics body.
- * @param x the x component of the imaginary part of the quaternion.
- * @param y the y component of the imaginary part of the quaternion.
- * @param z the z component of the imaginary part of the quaternion.
- * @param w the w component of the real part of the quaternion.
- *
- * @see ephysics_body_rotation_set()
- * @see ephysics_body_rotation_get()
- *
- * @ingroup EPhysics_Body
- */
-EAPI void
-ephysics_body_rotation_quaternion_get(const EPhysics_Body *body, double *x, double *y, double *z, double *w);
+EAPI void ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat);
 
 /**
  * @brief
