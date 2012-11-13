@@ -1555,7 +1555,7 @@ case "$host_os" in
    mingw*)
       ;;
    *)
-      if test "x${have_evas_image_loader_jpeg}" = "xyes" ; then
+      if test "x${have_evas_image_loader_jpeg}" = "xyes" -o "x${have_evas_image_loader_jpeg}" = "xstatic"; then
          AC_DEFINE([EVAS_BUILD_SAVER_JPEG], [1], [Build JPEG saver])
          have_evas_image_saver_jpeg="yes"
       fi
