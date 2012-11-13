@@ -264,9 +264,6 @@ eng_window_new(Display *disp,
      }
    if (gw->context)
      {
-        int i, j,  num;
-        GLXFBConfig *fbc;
-
         if (gw->glxwin)
           {
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin,
@@ -397,88 +394,6 @@ eng_window_new(Display *disp,
         else
           {
              // noothing yet. add more cases and options over time
-          }
-
-        fbc = glXGetFBConfigs(gw->disp, screen, &num);
-        if (!fbc)
-          {
-             ERR("glXGetFBConfigs() returned no fb configs");
-             eng_window_free(gw);
-             return NULL;
-          }
-        for (i = 0; i <= 32; i++)
-          {
-             for (j = 0; j < num; j++)
-               {
-                  XVisualInfo *vi;
-                  int vd;
-                  int alph, val, dbuf, stencil, tdepth;
-                  int rgba;
-
-                  vi = glXGetVisualFromFBConfig(gw->disp, fbc[j]);
-                  if (!vi) continue;
-                  vd = vi->depth;
-                  XFree(vi);
-
-                  if (vd != i) continue;
-
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_ALPHA_SIZE, &alph);
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BUFFER_SIZE, &val);
-
-                  if ((val != i) && ((val - alph) != i)) continue;
-
-                  val = 0;
-                  rgba = 0;
-
-                  if (i == 32)
-                    {
-                       glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
-                       if (val)
-                         {
-                            rgba = 1;
-                            gw->depth_cfg[i].tex_format = GLX_TEXTURE_FORMAT_RGBA_EXT;
-                         }
-                    }
-                  if (!val)
-                    {
-                       if (rgba) continue;
-                       glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
-                       if (!val) continue;
-                       gw->depth_cfg[i].tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
-                    }
-
-                  dbuf = 0x7fff;
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_DOUBLEBUFFER, &val);
-                  if (val > dbuf) continue;
-                  dbuf = val;
-
-                  stencil = 0x7fff;
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_STENCIL_SIZE, &val);
-                  if (val > stencil) continue;
-                  stencil = val;
-
-                  tdepth = 0x7fff;
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_DEPTH_SIZE, &val);
-                  if (val > tdepth) continue;
-                  tdepth = val;
-
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
-                  if (val < 0) continue;
-                  gw->depth_cfg[i].mipmap = val;
-
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_Y_INVERTED_EXT, &val);
-                  gw->depth_cfg[i].yinvert = val;
-
-                  glXGetFBConfigAttrib(gw->disp, fbc[j], GLX_BIND_TO_TEXTURE_TARGETS_EXT, &val);
-                  gw->depth_cfg[i].tex_target = val;
-
-                  gw->depth_cfg[i].fbc = fbc[j];
-               }
-          }
-        XFree(fbc);
-        if (!gw->depth_cfg[DefaultDepth(gw->disp, screen)].fbc)
-          {
-             WRN("texture from pixmap not going to work");
           }
      }
 #endif

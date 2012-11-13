@@ -83,13 +83,6 @@ struct _Evas_GL_X11_Window
 #else
    GLXContext       context;
    GLXWindow        glxwin;
-   struct {
-      GLXFBConfig   fbc;
-      int           tex_format;
-      int           tex_target;
-      int           mipmap;
-      unsigned char yinvert : 1;
-   } depth_cfg[33]; // config for all 32 possible depths!
 
    struct {
       unsigned int loose_binding : 1;

@@ -1,3 +1,42 @@
+2012-11-13  Carsten Haitzler (The Rasterman)
+
+        * Fixed GLX native surface handling to use glXChooseFBConfig.
+        This frixes a break in compositing on new intel mesa drivers.
+
+2012-11-12  Mike Blumenkrantz
+
+        * Add eina_list_last_data_get
+        
+2012-11-10  Vincent Torri
+
+        * Fix build of eina_file on Solaris 10
+
+2012-11-09  Vincent Torri
+
+	* Fixed longstanding memset bug in evas box.
+
+2012-10-19  Cedric Bail
+
+	* Add eina_thread API.
+
+2012-10-19  Patryk Kaczmarek
+
+	* eina_stringshare_add_length return NULL when func args are wrong.
+
+2012-10-17  Carsten Haitzler (The Rasterman)
+
+        * Add eina_barrier API to cover pthread_barrier functionality
+        * Add eina_tmpstr_add() and eina_tmpstr_del().
+
+2012-10-04  Vincent Torri
+
+	* Update lz4 code to rev. 77. This fix compilation on NetBSD 5.0
+
+2012-10-31  Cedric Bail
+
+	* Add eet_list_entries().
+	* Add eet -l -v to give more information about an eet file.
+
 2012-09-27 Patryk Kaczmarek <patryk.k@samsung.com>
 
         * Add eet file handle null checks to eet_data_write_cipher(),
@@ -35,37 +74,3 @@
 
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
-
-2012-10-04  Vincent Torri
-
-	* Update lz4 code to rev. 77. This fix compilation on NetBSD 5.0
-
-2012-10-17  Carsten Haitzler (The Rasterman)
-
-        * Add eina_barrier API to cover pthread_barrier functionality
-        * Add eina_tmpstr_add() and eina_tmpstr_del().
-
-2012-10-19  Patryk Kaczmarek
-
-	* eina_stringshare_add_length return NULL when func args are wrong.
-
-2012-10-19  Cedric Bail
-
-	* Add eina_thread API.
-
-2012-10-31  Cedric Bail
-
-	* Add eet_list_entries().
-	* Add eet -l -v to give more information about an eet file.
-
-2012-11-09  Vincent Torri
-
-	* Fixed longstanding memset bug in evas box.
-
-2012-11-10  Vincent Torri
-
-        * Fix build of eina_file on Solaris 10
-
-2012-11-12  Mike Blumenkrantz
-
-        * Add eina_list_last_data_get

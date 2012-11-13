@@ -22,3 +22,5 @@ Fixes:
     * Fix PPC (big endian) image codec bug.
     * Fix return value of eina_mmap_safety_enabled_set() and future
       eina_mmap_safety_enabled_get() returns after success
+    * Fixed GLX native surface handling to use glXChooseFBConfig.
+      This frixes a break in compositing on new intel mesa drivers.

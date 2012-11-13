@@ -342,9 +342,8 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    eglDestroySurface(re->win->egl_disp, (EGLSurface)surface);
 #endif
 
-   surface = NULL;
-
    return 1;
+   if (surface) return 0;
 }
 
 static void *
@@ -1888,16 +1887,88 @@ eng_image_native_set(void *data, void *image, void *native)
                  n = calloc(1, sizeof(Native));
                  if (n)
                    {
-                      int pixmap_att[20];
-                      unsigned int target = 0;
-                      unsigned int i = 0;
+                      int pixmap_att[20], i;
+                      int config_attrs[40], num = 0;
+                      int tex_format = 0, tex_target = 0, yinvert = 0, mipmap = 0;
+                      unsigned int target;
+                      GLXFBConfig *configs;
+                      
+                      i = 0;
+                      config_attrs[i++] = GLX_BUFFER_SIZE;
+                      config_attrs[i++] = depth;
+                      if (depth == 32)
+                        {
+                           config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGBA_EXT;
+                           config_attrs[i++] = 1;
+                        }
+                      else
+                        {
+                           config_attrs[i++] = GLX_BIND_TO_TEXTURE_RGB_EXT;
+                           config_attrs[i++] = 1;
+                        }
+                      
+#ifndef GLX_VISUAL_ID
+# define GLX_VISUAL_ID 0x800b
+#endif
+                      config_attrs[i++] = GLX_VISUAL_ID;
+                      config_attrs[i++] = XVisualIDFromVisual(vis);
+#ifndef GLX_SAMPLE_BUFFERS
+# define GLX_SAMPLE_BUFFERS 0x186a0
+#endif
+                      config_attrs[i++] = GLX_SAMPLE_BUFFERS;
+                      config_attrs[i++] = 0;
+                      config_attrs[i++] = GLX_DEPTH_SIZE;
+                      config_attrs[i++] = 0;
+                      config_attrs[i++] = GLX_STENCIL_SIZE;
+                      config_attrs[i++] = 0;
+                      config_attrs[i++] = GLX_AUX_BUFFERS;
+                      config_attrs[i++] = 0;
+                      config_attrs[i++] = GLX_STEREO;
+                      config_attrs[i++] = 0;
+                      
+                      config_attrs[i++] = 0;
+                      
+                      configs = glXChooseFBConfig(re->win->disp,
+                                                  re->win->screen,
+                                                  config_attrs,
+                                                  &num);
+                      if (configs)
+                        {
+                           int j = 0, val = 0;
+                           
+                           tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                           glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                GLX_ALPHA_SIZE, &val);
+                           if (val > 0)
+                             {
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
+                                if (val) tex_format = GLX_TEXTURE_FORMAT_RGBA_EXT;
+                             }
+                           else
+                             {
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
+                                if (val) tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                             }
+                           glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                GLX_Y_INVERTED_EXT, &val);
+                           yinvert = val;
+                           glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                GLX_BIND_TO_TEXTURE_TARGETS_EXT,
+                                                &val);
+                           tex_target = val;
+                           glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
+                           mipmap = val;
+                           n->fbc = configs[j];
+                           XFree(configs);
+                        }
                       
                       eina_hash_add(re->win->gl_context->shared->native_pm_hash, &pmid, im);
-                      if ((re->win->depth_cfg[depth].tex_target &
-                           GLX_TEXTURE_2D_BIT_EXT))
+                      if ((tex_target & GLX_TEXTURE_2D_BIT_EXT))
                         target = GLX_TEXTURE_2D_EXT;
-                      else if ((re->win->depth_cfg[depth].tex_target &
-                                GLX_TEXTURE_RECTANGLE_BIT_EXT))
+                      else if ((target & GLX_TEXTURE_RECTANGLE_BIT_EXT))
                         {
                            ERR("rect!!! (not handled)");
                            target = GLX_TEXTURE_RECTANGLE_EXT;
@@ -1905,31 +1976,27 @@ eng_image_native_set(void *data, void *image, void *native)
                       if (!target)
                         {
                            ERR("broken tex-from-pixmap");
-                           if (!(re->win->depth_cfg[depth].tex_target &
-                                 GLX_TEXTURE_2D_BIT_EXT))
+                           if (!(tex_target & GLX_TEXTURE_2D_BIT_EXT))
                              target = GLX_TEXTURE_RECTANGLE_EXT;
-                           else if (!(re->win->depth_cfg[depth].tex_target &
-                                      GLX_TEXTURE_RECTANGLE_BIT_EXT))
+                           else if (!(tex_target & GLX_TEXTURE_RECTANGLE_BIT_EXT))
                              target = GLX_TEXTURE_2D_EXT;
                         }
                       
+                      i = 0;
                       pixmap_att[i++] = GLX_TEXTURE_FORMAT_EXT;
-                      pixmap_att[i++] = re->win->depth_cfg[depth].tex_format;
+                      pixmap_att[i++] = tex_format;
                       pixmap_att[i++] = GLX_MIPMAP_TEXTURE_EXT;
-                      pixmap_att[i++] = re->win->depth_cfg[depth].mipmap;
-                      
+                      pixmap_att[i++] = mipmap;
                       if (target)
                         {
                            pixmap_att[i++] = GLX_TEXTURE_TARGET_EXT;
                            pixmap_att[i++] = target;
                         }
-                      
                       pixmap_att[i++] = 0;
                       
                       memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                       n->pixmap = pm;
                       n->visual = vis;
-                      n->fbc = re->win->depth_cfg[depth].fbc;
                       if (glsym_glXCreatePixmap)
                         n->glx_pixmap = glsym_glXCreatePixmap(re->win->disp,
                                                               n->fbc,
@@ -1953,7 +2020,7 @@ eng_image_native_set(void *data, void *image, void *native)
                            if (target == GLX_TEXTURE_2D_EXT)
                              {
                                 im->native.target = GL_TEXTURE_2D;
-                                im->native.mipmap = re->win->depth_cfg[depth].mipmap;
+                                im->native.mipmap = mipmap;
                              }
 #  ifdef GL_TEXTURE_RECTANGLE_ARB
                            else if (target == GLX_TEXTURE_RECTANGLE_EXT)
@@ -1971,7 +2038,7 @@ eng_image_native_set(void *data, void *image, void *native)
                         }
                       else
                         ERR("GLX Pixmap create fail");
-                      im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
+                      im->native.yinvert     = yinvert;
                       im->native.loose       = re->win->detected.loose_binding;
                       im->native.data        = n;
                       im->native.func.data   = re;
