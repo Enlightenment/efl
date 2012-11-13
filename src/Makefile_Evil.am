@@ -19,19 +19,19 @@ lib/evil/evil_stdio.h \
 lib/evil/evil_string.h \
 lib/evil/evil_time.h \
 lib/evil/evil_unistd.h \
-lib/evil/evil_util.h
-
-evilstdheadersdir = $(includedir)/evil-@VMAJ@
-nobase_dist_evilstdheaders_DATA = \
+lib/evil/evil_util.h \
 lib/evil/pwd.h \
-lib/evil/sys/mman.h \
 lib/evil/fnmatch.h \
 lib/evil/dirent.h \
 lib/evil/dlfcn.h
 
 if HAVE_WINCE
-nobase_dist_evilstdheaders_DATA += lib/evil/mingw32ce/errno.h
+dist_install_evilheaders_DATA += lib/evil/mingw32ce/errno.h
 endif
+
+evilmmanheadersdir = $(includedir)/evil-@VMAJ@/sys
+nobase_dist_evilmmanheaders_DATA = \
+lib/evil/sys/mman.h
 
 # gdtoa
 lib_evil_libevil_la_SOURCES = \
