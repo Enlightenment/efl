@@ -175,6 +175,27 @@ _on_clock_val_change_stop(void *data,
 }
 
 static void
+_access_activate_cb(void *data,
+                    Evas_Object *part_obj,
+                    Elm_Widget_Item *item __UNUSED__)
+{
+   Evas_Object *digit, *inc_btn;
+   ELM_CLOCK_DATA_GET(data, sd);
+
+   digit = evas_object_smart_parent_get(part_obj);
+   if (!digit) return;
+
+   inc_btn = (Evas_Object *)edje_object_part_object_get(digit, "access.t");
+
+   if (part_obj != inc_btn)
+     _on_clock_val_down_start(data, digit, NULL, NULL);
+   else
+     _on_clock_val_up_start(data, digit, NULL, NULL);
+
+   _on_clock_val_change_stop(sd, NULL, NULL, NULL);
+}
+
+static void
 _access_time_register(Evas_Object *obj, Eina_Bool is_access)
 {
    Evas_Object *ao, *po;
@@ -224,6 +245,8 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
                "clock increment button for %s", digit);
              _elm_access_text_set(_elm_access_object_get(ao),
                ELM_ACCESS_TYPE, eina_strbuf_string_get(strbuf));
+             _elm_access_activate_callback_set
+               (_elm_access_object_get(ao), _access_activate_cb, obj);
 
              /* decrement button */
              ao = _elm_access_edje_object_part_object_register
@@ -232,6 +255,8 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
              eina_strbuf_replace(strbuf, "increment", "decrement", 1);
              _elm_access_text_set(_elm_access_object_get(ao),
                ELM_ACCESS_TYPE, eina_strbuf_string_get(strbuf));
+             _elm_access_activate_callback_set
+               (_elm_access_object_get(ao), _access_activate_cb, obj);
 
              eina_strbuf_free(strbuf);
 
@@ -269,12 +294,16 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
                (obj, sd->am_pm_obj, "access.t");
         _elm_access_text_set(_elm_access_object_get(ao),
           ELM_ACCESS_TYPE, E_("clock increment button for am,pm"));
+        _elm_access_activate_callback_set
+          (_elm_access_object_get(ao), _access_activate_cb, obj);
 
         /* decrement button */
         ao = _elm_access_edje_object_part_object_register
                (obj, sd->am_pm_obj, "access.b");
         _elm_access_text_set(_elm_access_object_get(ao),
           ELM_ACCESS_TYPE, E_("clock decrement button for am,pm"));
+        _elm_access_activate_callback_set
+          (_elm_access_object_get(ao), _access_activate_cb, obj);
 
          edje_object_signal_emit
            (sd->am_pm_obj, "elm,state,access,edit,on", "elm");
@@ -553,6 +582,7 @@ _ticker(void *data)
 
    gettimeofday(&timev, NULL);
    t = ((double)(1000000 - timev.tv_usec)) / 1000000.0;
+
    sd->ticker = ecore_timer_add(t, _ticker, data);
    if (!sd->edit)
      {

@@ -26,6 +26,20 @@ _elm_access_smart_on_focus(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_elm_access_smart_activate(Evas_Object *obj, Elm_Activate act)
+{
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+
+   Elm_Access_Info *ac = evas_object_data_get(obj, "_elm_access");
+   if (!ac) return EINA_FALSE;
+
+   if (ac->activate)
+     ac->activate(ac->activate_data, ac->part_object, ac->widget_item);
+
+   return EINA_TRUE;
+}
+
 static void
 _elm_access_smart_set_user(Elm_Widget_Smart_Class *sc)
 {
@@ -35,6 +49,7 @@ _elm_access_smart_set_user(Elm_Widget_Smart_Class *sc)
    sc->focus_next = NULL;
    sc->focus_direction = NULL;
    sc->on_focus = _elm_access_smart_on_focus;
+   sc->activate = _elm_access_smart_activate;
 
    return;
 }
@@ -294,6 +309,16 @@ _elm_access_on_highlight_hook_set(Elm_Access_Info           *ac,
 }
 
 EAPI void
+_elm_access_activate_callback_set(Elm_Access_Info           *ac,
+                                  Elm_Access_Activate_Cb     func,
+                                  void                      *data)
+{
+   if (!ac) return;
+   ac->activate = func;
+   ac->activate_data = data;
+}
+
+EAPI void
 _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 {
    Evas_Object *highlight_obj;
@@ -506,6 +531,7 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
    Evas_Object *ao;
    Evas_Object *po = (Evas_Object *)edje_object_part_object_get(eobj, part);
    Evas_Coord x, y, w, h;
+   Elm_Access_Info *ac;
 
    if (!obj || !po) return NULL;
 
@@ -539,6 +565,10 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 
    // set access object
    evas_object_data_set(po, "_part_access_obj", ao);
+
+   /* set owner part object */
+   ac = evas_object_data_get(ao, "_elm_access");
+   ac->part_object = po;
 
    return ao;
 }
@@ -693,6 +723,7 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
 {
    Evas_Object *ao, *ho;
    Evas_Coord x, y, w, h;
+   Elm_Access_Info *ac;
 
    if (!item) return;
 
@@ -713,6 +744,10 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
    _elm_access_object_register(ao, ho);
 
    item->access_obj = ao;
+
+   /* set owner widget item */
+   ac = evas_object_data_get(ao, "_elm_access");
+   ac->widget_item = item;
 }
 
 EAPI void
