@@ -85,6 +85,8 @@ if HAVE_WINDOWS
 bin_embryo_embryo_cc_LDADD += lib/evil/libevil.la
 endif
 
+bin_embryo_embryo_cc_LDADD += -lm
+
 EXTRA_DIST += \
 bin/embryo/embryo_cc_sc5.scp \
 bin/embryo/embryo_cc_sc7.scp
