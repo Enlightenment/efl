@@ -3269,6 +3269,7 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
 EAPI void
 ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot_y, double *rot_z)
 {
+   btScalar yaw, pitch, roll;
    btTransform trans;
 
    if (!body)
@@ -3279,12 +3280,10 @@ ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot
 
    trans = _ephysics_body_transform_get(body);
 
-   if (rot_x) *rot_x = - trans.getRotation().getAngle() * RAD_TO_DEG *
-     trans.getRotation().getAxis().getX();
-   if (rot_y) *rot_y = - trans.getRotation().getAngle() * RAD_TO_DEG *
-     trans.getRotation().getAxis().getY();
-   if (rot_z) *rot_z = - trans.getRotation().getAngle() * RAD_TO_DEG *
-     trans.getRotation().getAxis().getZ();
+   trans.getBasis().getEulerYPR(yaw, pitch, roll);
+   if (rot_x) *rot_x = -roll * RAD_TO_DEG;
+   if (rot_y) *rot_y = -pitch * RAD_TO_DEG;
+   if (rot_z) *rot_z = -yaw * RAD_TO_DEG;
 }
 
 EAPI void
@@ -3302,7 +3301,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, doub
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
 
-   quat.setEuler(-rot_x / RAD_TO_DEG, -rot_y / RAD_TO_DEG, -rot_z / RAD_TO_DEG);
+   quat.setEuler(-rot_y / RAD_TO_DEG, -rot_x / RAD_TO_DEG, -rot_z / RAD_TO_DEG);
 
    if (body->soft_body)
      body->soft_body->rotate(quat);
