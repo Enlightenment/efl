@@ -328,21 +328,12 @@ desktop_changes_monitor_add(const char *path)
 }
 
 static void
-desktop_changes_listen_recursive(const char *path, Eina_Bool base)
+desktop_changes_listen_recursive(const char *path)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
 
-   if ((!ecore_file_is_dir(path)) && (base))
-     {
-        // XXX: if it doesn't exist... walk the parent dirs back down
-        // to this path until we find one that doesn't exist, then
-        // monitor its parent, and treat it specially as it needs
-        // to look for JUST the creation of this specific child
-        // and when this child is created, replace this monitor with
-        // monitoring the next specific child dir down until we are
-        // monitoring the original path again.
-     }
+   if (!ecore_file_is_dir(path)) return;
    desktop_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
    if (!it) return;
@@ -362,14 +353,10 @@ desktop_changes_listen(void)
    const char *path;
 
    EINA_LIST_FOREACH(desktop_system_dirs, l, path)
-     {
-        desktop_changes_listen_recursive(path, EINA_TRUE);
-     }
+      desktop_changes_listen_recursive(path);
 
    EINA_LIST_FOREACH(desktop_extra_dirs, l, path)
-     {
-        desktop_changes_listen_recursive(path, EINA_TRUE);
-     }
+      desktop_changes_listen_recursive(path);
 }
 
 static void
@@ -431,15 +418,24 @@ void
 cache_desktop_dir_add(const char *dir)
 {
    char *san;
+   Eina_List *l;
 
    san = eina_file_path_sanitize(dir);
    if (!san) return;
    if ((!eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)) &&
        (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san)))
      {
+        /* Not a registered path */
         desktop_extra_dirs = eina_list_append(desktop_extra_dirs, eina_stringshare_add(san));
         save_list("extra_desktop.dirs", desktop_extra_dirs);
         cache_desktop_update();
+     }
+   else if ((l = eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)))
+     {
+        /* Path is registered, but maybe not monitored */
+        const char *path = eina_list_data_get(l);
+        if (!eina_hash_find(change_monitors, path))
+          cache_desktop_update();
      }
    free(san);
 }
