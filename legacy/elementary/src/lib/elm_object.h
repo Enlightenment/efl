@@ -37,13 +37,14 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  * @param content The new content for that part
  *
  * All widgets deriving from the @ref elm-container-class may hold
- * child objects as content at given parts.  This sets new content to
+ * child objects as content at given parts. This sets new content to
  * a given part. If any object was already set as a content object in
  * the same part, the previous object will be deleted automatically
- * with this call. If you wish to preserve it, issue
+ * with this call. If the @content is NULL, this call will just delete the
+ * previous object. If the If you wish to preserve it, issue
  * elm_object_part_content_unset() on it first.
  *
- * @see elm_object_part_content_set()
+ * @see elm_object_part_content_get()
  *
  * @ingroup General
  */
