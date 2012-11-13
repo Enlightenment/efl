@@ -235,8 +235,9 @@ icon_changes_listen_recursive(const char *path, Eina_Bool base)
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
-        if (info->type != EINA_FILE_DIR) continue;
-        icon_changes_monitor_add(info->path);
+        if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
+            (info->type == EINA_FILE_DIR))
+          icon_changes_monitor_add(info->path);
      }
    eina_iterator_free(it);
 }
@@ -347,8 +348,9 @@ desktop_changes_listen_recursive(const char *path, Eina_Bool base)
    if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
-        if (info->type != EINA_FILE_DIR) continue;
-        desktop_changes_listen_recursive(info->path, EINA_FALSE);
+        if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
+            (info->type == EINA_FILE_DIR))
+          desktop_changes_listen_recursive(info->path);
      }
    eina_iterator_free(it);
 }
