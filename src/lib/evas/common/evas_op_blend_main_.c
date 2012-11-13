@@ -101,33 +101,40 @@ op_blend_init(void)
    memset(op_blend_span_funcs, 0, sizeof(op_blend_span_funcs));
    memset(op_blend_pt_funcs, 0, sizeof(op_blend_pt_funcs));
 #ifdef BUILD_SSE3
-   evas_common_op_blend_init_sse3();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+     evas_common_op_blend_init_sse3();
 #endif
 #ifdef BUILD_MMX
-   init_blend_pixel_span_funcs_mmx();
-   init_blend_pixel_color_span_funcs_mmx();
-   init_blend_pixel_mask_span_funcs_mmx();
-   init_blend_color_span_funcs_mmx();
-   init_blend_mask_color_span_funcs_mmx();
-
-   init_blend_pixel_pt_funcs_mmx();
-   init_blend_pixel_color_pt_funcs_mmx();
-   init_blend_pixel_mask_pt_funcs_mmx();
-   init_blend_color_pt_funcs_mmx();
-   init_blend_mask_color_pt_funcs_mmx();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        init_blend_pixel_span_funcs_mmx();
+        init_blend_pixel_color_span_funcs_mmx();
+        init_blend_pixel_mask_span_funcs_mmx();
+        init_blend_color_span_funcs_mmx();
+        init_blend_mask_color_span_funcs_mmx();
+        
+        init_blend_pixel_pt_funcs_mmx();
+        init_blend_pixel_color_pt_funcs_mmx();
+        init_blend_pixel_mask_pt_funcs_mmx();
+        init_blend_color_pt_funcs_mmx();
+        init_blend_mask_color_pt_funcs_mmx();
+     }
 #endif
 #ifdef BUILD_NEON
-   init_blend_pixel_span_funcs_neon();
-   init_blend_pixel_color_span_funcs_neon();
-   init_blend_pixel_mask_span_funcs_neon();
-   init_blend_color_span_funcs_neon();
-   init_blend_mask_color_span_funcs_neon();
-
-   init_blend_pixel_pt_funcs_neon();
-   init_blend_pixel_color_pt_funcs_neon();
-   init_blend_pixel_mask_pt_funcs_neon();
-   init_blend_color_pt_funcs_neon();
-   init_blend_mask_color_pt_funcs_neon();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        init_blend_pixel_span_funcs_neon();
+        init_blend_pixel_color_span_funcs_neon();
+        init_blend_pixel_mask_span_funcs_neon();
+        init_blend_color_span_funcs_neon();
+        init_blend_mask_color_span_funcs_neon();
+        
+        init_blend_pixel_pt_funcs_neon();
+        init_blend_pixel_color_pt_funcs_neon();
+        init_blend_pixel_mask_pt_funcs_neon();
+        init_blend_color_pt_funcs_neon();
+        init_blend_mask_color_pt_funcs_neon();
+     }
 #endif
    init_blend_pixel_span_funcs_c();
    init_blend_pixel_color_span_funcs_c();

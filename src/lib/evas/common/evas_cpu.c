@@ -163,54 +163,75 @@ evas_common_cpu_init(void)
    if (called) return;
    called = 1;
 #ifdef BUILD_MMX
-   cpu_feature_mask |= CPU_FEATURE_MMX *
-     evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
-   evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_MMX"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX;
-   cpu_feature_mask |= CPU_FEATURE_MMX2 *
-     evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
-   evas_common_cpu_end_opt();
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_MMX *
+          evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
+        evas_common_cpu_end_opt();
+     }
    if (getenv("EVAS_CPU_NO_MMX2"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX2;
-   cpu_feature_mask |= CPU_FEATURE_SSE *
-     evas_common_cpu_feature_test(evas_common_cpu_sse_test);
-   evas_common_cpu_end_opt();
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_MMX2 *
+          evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
+        evas_common_cpu_end_opt();
+     }
    if (getenv("EVAS_CPU_NO_SSE"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_SSE *
+          evas_common_cpu_feature_test(evas_common_cpu_sse_test);
+        evas_common_cpu_end_opt();
+     }
 # ifdef BUILD_SSE3
-   cpu_feature_mask |= CPU_FEATURE_SSE3 *
-     evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
-   evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_SSE3"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_SSE3 *
+          evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
+        evas_common_cpu_end_opt();
+     }
 # endif /* BUILD_SSE3 */
 #endif /* BUILD_MMX */
 #ifdef BUILD_ALTIVEC
 # ifdef __POWERPC__
 #  ifdef __VEC__
-   cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
-     evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
-   evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_ALTIVEC"))
      cpu_feature_mask &= ~CPU_FEATURE_ALTIVEC;
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
+          evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
+        evas_common_cpu_end_opt();
+     }
 #  endif /* __VEC__ */
 # endif /* __POWERPC__ */
 #endif /* BUILD_ALTIVEC */
 #ifdef __SPARC__
-   cpu_feature_mask |= CPU_FEATURE_VIS *
-     evas_common_cpu_feature_test(evas_common_cpu_vis_test);
-   evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_VIS"))
      cpu_feature_mask &= ~CPU_FEATURE_VIS;
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_VIS *
+          evas_common_cpu_feature_test(evas_common_cpu_vis_test);
+        evas_common_cpu_end_opt();
+     }
 #endif /* __SPARC__ */
 #if defined(__ARM_ARCH__)
 # ifdef BUILD_NEON
-   cpu_feature_mask |= CPU_FEATURE_NEON *
-     evas_common_cpu_feature_test(evas_common_cpu_neon_test);
-   evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_NEON"))
      cpu_feature_mask &= ~CPU_FEATURE_NEON;
+   else
+     {
+        cpu_feature_mask |= CPU_FEATURE_NEON *
+          evas_common_cpu_feature_test(evas_common_cpu_neon_test);
+        evas_common_cpu_end_opt();
+     }
 # endif
 #endif
 }
