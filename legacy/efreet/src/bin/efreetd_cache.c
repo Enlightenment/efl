@@ -422,20 +422,19 @@ cache_desktop_dir_add(const char *dir)
 
    san = eina_file_path_sanitize(dir);
    if (!san) return;
-   if ((!eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)) &&
-       (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san)))
-     {
-        /* Not a registered path */
-        desktop_extra_dirs = eina_list_append(desktop_extra_dirs, eina_stringshare_add(san));
-        save_list("extra_desktop.dirs", desktop_extra_dirs);
-        cache_desktop_update();
-     }
-   else if ((l = eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)))
+   if ((l = eina_list_search_unsorted_list(desktop_system_dirs, strcmplen, san)))
      {
         /* Path is registered, but maybe not monitored */
         const char *path = eina_list_data_get(l);
         if (!eina_hash_find(change_monitors, path))
           cache_desktop_update();
+     }
+   else if (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san))
+     {
+        /* Not a registered path */
+        desktop_extra_dirs = eina_list_append(desktop_extra_dirs, eina_stringshare_add(san));
+        save_list("extra_desktop.dirs", desktop_extra_dirs);
+        cache_desktop_update();
      }
    free(san);
 }
