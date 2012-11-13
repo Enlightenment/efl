@@ -220,34 +220,6 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
 }
 
 Eina_Bool
-_evas_map_inside_map_coords(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
-{
-   int i = 0, j = m->count - 1;
-   double pt1_x, pt1_y, pt2_x, pt2_y, tmp_x;
-   Eina_Bool inside = EINA_FALSE;
-
-   //Check the point inside the map coords by using Jordan curve theorem.
-   for (i = 0; i < m->count; i++)
-     {
-        pt1_x = m->points[i].x;
-        pt1_y = m->points[i].y;
-        pt2_x = m->points[j].x;
-        pt2_y = m->points[j].y;
-
-        //Is the point inside the map on y axis?
-        if (((y >= pt1_y) && (y < pt2_y)) || ((y >= pt2_y) && (y < pt1_y)))
-          {
-             //Check the point is left side of the line segment.
-             tmp_x = (pt1_x + ((pt2_x - pt1_x) / (pt2_y - pt1_y)) *
-                      ((double)y - pt1_y));
-             if ((double)x < tmp_x) inside = !inside;
-          }
-        j = i;
-     }
-   return inside;
-}
-
-Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
 {
@@ -255,10 +227,9 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   if (m->count < 4) return 0;
-
-   if ((!grab) && (!mx) && (!my))
-     return _evas_map_inside_map_coords(m, x, y);
+   if (m->count < 4) return EINA_FALSE;
+   if ((!mx) && (!my))
+     return evas_map_inside_get(m, x, y);
 
    int i, j, edges, edge[m->count][2];
    Eina_Bool douv = EINA_FALSE;
@@ -266,7 +237,6 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
 
-   if (m->count < 4) return 0;
    // FIXME need to handle grab mode and extrapolte coords outside
    // map
    if (grab)
@@ -283,7 +253,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
         if (y <= ymin) y = ymin + 1;
         if (y >= ymax) y = ymax - 1;
      }
-   edges = 0;
+   edges = EINA_FALSE;
    for (i = 0; i < m->count; i++)
      {
         j = (i + 1) % m->count;
@@ -398,7 +368,29 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
 Eina_Bool
 evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 {
-   return evas_map_coords_get(m, x, y, NULL, NULL, 0);
+   int i = 0, j = m->count - 1;
+   double pt1_x, pt1_y, pt2_x, pt2_y, tmp_x;
+   Eina_Bool inside = EINA_FALSE;
+
+   //Check the point inside the map coords by using Jordan curve theorem.
+   for (i = 0; i < m->count; i++)
+     {
+        pt1_x = m->points[i].x;
+        pt1_y = m->points[i].y;
+        pt2_x = m->points[j].x;
+        pt2_y = m->points[j].y;
+
+        //Is the point inside the map on y axis?
+        if (((y >= pt1_y) && (y < pt2_y)) || ((y >= pt2_y) && (y < pt1_y)))
+          {
+             //Check the point is left side of the line segment.
+             tmp_x = (pt1_x + ((pt2_x - pt1_x) / (pt2_y - pt1_y)) *
+                      ((double)y - pt1_y));
+             if ((double)x < tmp_x) inside = !inside;
+          }
+        j = i;
+     }
+   return inside;
 }
 
 static Eina_Bool
