@@ -27,6 +27,7 @@ test_collision_detection.c \
 test_collision_filter.c \
 test_collision_speed.c \
 test_constraint.c \
+test_cube_3d.c \
 test_delete.c \
 test_dices.c \
 test_falling_letters.c \

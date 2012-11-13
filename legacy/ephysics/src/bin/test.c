@@ -26,6 +26,7 @@ void test_collision(void *data, Evas_Object *obj, void *event_info);
 void test_collision_filter(void *data, Evas_Object *obj, void *event_info);
 void test_collision_speed(void *data, Evas_Object *obj, void *event_info);
 void test_constraint(void *data, Evas_Object *obj, void *event_info);
+void test_cube_3d(void *data, Evas_Object *obj, void *event_info);
 void test_delete(void *data, Evas_Object *obj, void *event_info);
 void test_dices(void *data, Evas_Object *obj, void *event_info);
 void test_falling_letters(void *data, Evas_Object *obj, void *event_info);
@@ -58,6 +59,7 @@ static const EPhysics_Test tests[] = {
        {"Collision Filter", test_collision_filter},
        {"Collision High Speed", test_collision_speed},
        {"Constraint", test_constraint},
+       {"Cube 3D", test_cube_3d},
        {"Dices", test_dices},
        {"Delete Body", test_delete},
        {"Falling Letters", test_falling_letters},

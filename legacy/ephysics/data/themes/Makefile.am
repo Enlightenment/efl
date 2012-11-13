@@ -48,6 +48,12 @@ TEST_FILES = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
+	images/cube_back.png \
+	images/cube_bottom.png \
+	images/cube_front.png \
+	images/cube_left.png \
+	images/cube_right.png \
+	images/cube_top.png \
 	images/dice1.png \
 	images/dice2.png \
 	images/dice3.png \

@@ -20,6 +20,12 @@
 
 ADD_CUBE(blue-cube, cube-blue);
 ADD_CUBE(purple-cube, cube-purple);
+ADD_CUBE(cube_top, cube_top);
+ADD_CUBE(cube_bottom, cube_bottom);
+ADD_CUBE(cube_front, cube_front);
+ADD_CUBE(cube_back, cube_back);
+ADD_CUBE(cube_right, cube_right);
+ADD_CUBE(cube_left, cube_left);
 
 ADD_CUBE(dice1, dice1);
 ADD_CUBE(dice2, dice2);
