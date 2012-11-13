@@ -3286,7 +3286,7 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  * @brief
  * Apply a torque impulse over a body.
  *
- * An impulse will be applied over the body to make it rotate around Z axis.
+ * An impulse will be applied over the body to make it rotate.
  * Impulse is the product of the force over the time this force is applied.
  * In ephysics case, it would be the time of a tick, so it behaves just
  * summing current angular velocity to the result of a calculation involving
@@ -3311,8 +3311,7 @@ EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, 
  * @brief
  * Apply an impulse over a body.
  *
- * An impulse will be applied over the body to make it move and rotate around
- * Z axis.
+ * An impulse will be applied over the body to make it move and rotate.
  *
  * Impulse is the product of the force over the time this force is applied.
  * It can be applied in the center of the body, avoiding rotating it,
@@ -3321,7 +3320,7 @@ EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, 
  * or can be used to lead to both behaviors with
  * @ref ephysics_body_impulse_apply().
  *
- * It will result in a central impulse with impulse (@p x, @p y) and a
+ * It will result in a central impulse with impulse (@p x, @p y, @p z) and a
  * torque impulse that will be calculated as a cross product on impulse
  * and relative position.
  *
