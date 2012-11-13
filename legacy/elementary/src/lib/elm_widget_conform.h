@@ -122,8 +122,8 @@ typedef struct _Elm_Conformant_Smart_Data Elm_Conformant_Smart_Data;
 struct _Elm_Conformant_Smart_Data
 {
    Elm_Layout_Smart_Data          base;
-   Evas_Object                   *portrait_indicator;
-   Evas_Object                   *landscape_indicator;
+
+   Evas_Object                   *indicator;
    Evas_Object                   *softkey;
    Evas_Object                   *virtualkeypad;
    Evas_Object                   *clipboard;
@@ -141,11 +141,6 @@ struct _Elm_Conformant_Smart_Data
       Evas_Coord      x, y; // current delta
    } delta;
    Ecore_Job                     *show_region_job;
-   Elm_Win_Indicator_Mode         indmode;
-   Elm_Win_Indicator_Opacity_Mode ind_o_mode;
-   Ecore_Timer                   *indi_timer;
-
-   int                            rot;
 };
 
 /* Enum to identify conformant swallow parts */

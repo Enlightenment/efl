@@ -678,8 +678,3 @@
 2012-10-25  Michael Bouchaud (yoz)
 
         * Add missing selected event in elm_index (elm_index_item_selected_set)
-
-2012-11-13  Jiyoun Park (jypark)
-
-        * Support indicator service in elm_conformant. elm conformant can manage
-	indicator(elm_plug).

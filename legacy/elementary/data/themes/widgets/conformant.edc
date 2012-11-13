@@ -1,36 +1,22 @@
 group { name: "elm/conformant/base/default";
    parts {
-      part { name: "elm.swallow.bg";
+      part { name: "elm.swallow.indicator";
          type: SWALLOW;
-         scale: 1;
          description { state: "default" 0.0;
+            fixed: 0 1;
+            align: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
          }
       }
       part { name: "elm.swallow.content";
          type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-            align: 0.5 0.5;
-            rel1.relative: 0.0 1.0;
-            rel1.to: "elm.swallow.indicator";
-            rel2.relative: 1.0 0.0;
-            rel2.to: "elm.swallow.clipboard";
-         }
-      }
-      part { name: "elm.swallow.indicator";
-         type: SWALLOW;
-         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
-            align: 0.5 0.0;
-            min: 0 50;
+            align: 0.5 0.5;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "elm.swallow.indicator";
             rel2.relative: 1.0 0.0;
-            visible: 1;
-         }
-         description { state: "hide" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-            min: 0 0;
+            rel2.to_y: "elm.swallow.clipboard";
          }
       }
       part { name: "elm.swallow.clipboard";
@@ -62,20 +48,6 @@ group { name: "elm/conformant/base/default";
             align: 0.0 1.0;
             rel1.relative: 0.0 1.0;
          }
-      }
-   }
-   programs {
-      program { name: "show_indicator";
-         signal: "elm,state,indicator,show";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.swallow.indicator";
-      }
-      program { name: "hide_indicator";
-         signal: "elm,state,indicator,hide";
-         source: "elm";
-         action: STATE_SET "hide" 0.0;
-         target: "elm.swallow.indicator";
       }
    }
 }

@@ -50,7 +50,6 @@ test_clock.c \
 test_cnp.c \
 test_colorselector.c \
 test_conform.c \
-test_conform_indicator.c \
 test_ctxpopup.c \
 test_cursor.c \
 test_datetime.c \
