@@ -1,8 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EDJE_CC = @edje_cc@
-EDJE_FLAGS = -v \
-	-id $(top_srcdir)/data/frames/images
+EDJE_FLAGS = -id $(top_srcdir)/data/frames/images
 
 filesdir = ${datadir}/ethumb/data/frames
 files_DATA = default.edj
