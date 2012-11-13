@@ -220,6 +220,34 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
 }
 
 Eina_Bool
+_evas_map_inside_map_coords(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
+{
+   int i = 0, j = m->count - 1;
+   double pt1_x, pt1_y, pt2_x, pt2_y, tmp_x;
+   Eina_Bool inside = EINA_FALSE;
+
+   //Check the point inside the map coords by using Jordan curve theorem.
+   for (i = 0; i < m->count; i++)
+     {
+        pt1_x = m->points[i].x;
+        pt1_y = m->points[i].y;
+        pt2_x = m->points[j].x;
+        pt2_y = m->points[j].y;
+
+        //Is the point inside the map on y axis?
+        if (((y >= pt1_y) && (y < pt2_y)) || ((y >= pt2_y) && (y < pt1_y)))
+          {
+             //Check the point is left side of the line segment.
+             tmp_x = (pt1_x + ((pt2_x - pt1_x) / (pt2_y - pt1_y)) *
+                      ((double)y - pt1_y));
+             if ((double)x < tmp_x) inside = !inside;
+          }
+        j = i;
+     }
+   return inside;
+}
+
+Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
 {
@@ -227,7 +255,13 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   int i, j, edges, edge[m->count][2], douv;
+   if (m->count < 4) return 0;
+
+   if ((!grab) && (!mx) && (!my))
+     return _evas_map_inside_map_coords(m, x, y);
+
+   int i, j, edges, edge[m->count][2];
+   Eina_Bool douv = EINA_FALSE;
    Evas_Coord xe[2];
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
@@ -266,8 +300,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
              edges++;
           }
      }
-   douv = 0;
-   if ((mx) || (my)) douv = 1;
+   if ((mx) || (my)) douv = EINA_TRUE;
    for (i = 0; i < (edges - 1); i+= 2)
      {
         Evas_Coord yp, yd;
@@ -339,7 +372,7 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                   if (mx)
                     *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) /
                                   (xe[1] - xe[0]));
-                 if (my)
+                  if (my)
                     *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) /
                                   (xe[1] - xe[0]));
                }
