@@ -1015,6 +1015,34 @@ EAPI Eina_Bool elm_config_mirrored_get(void);
 EAPI void      elm_config_mirrored_set(Eina_Bool mirrored);
 
 /**
+ * Get the indicator service name when rotation degree is 0.
+ *
+ * @return The indicator service name when rotation degree is 0.
+ */
+EAPI const char *elm_config_indicator_service_0_get(void);
+
+/**
+ * Get the indicator service name when rotation degree is 90.
+ *
+ * @return The indicator service name when rotation degree is 90.
+ */
+EAPI const char *elm_config_indicator_service_90_get(void);
+
+/**
+ * Get the indicator service name when rotation degree is 180.
+ *
+ * @return The indicator service name when rotation degree is 180.
+ */
+EAPI const char *elm_config_indicator_service_180_get(void);
+
+/**
+ * Get the indicator service name when rotation degree is 270.
+ *
+ * @return The indicator service name when rotation degree is 270.
+ */
+EAPI const char *elm_config_indicator_service_270_get(void);
+
+/**
  * @}
  */
 
