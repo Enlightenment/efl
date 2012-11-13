@@ -30,7 +30,7 @@ dist_install_evilheaders_DATA += lib/evil/mingw32ce/errno.h
 endif
 
 evilmmanheadersdir = $(includedir)/evil-@VMAJ@/sys
-nobase_dist_evilmmanheaders_DATA = \
+dist_evilmmanheaders_DATA = \
 lib/evil/sys/mman.h
 
 # gdtoa
