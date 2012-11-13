@@ -44,3 +44,6 @@ clean-local:
 	rm -rf lib/evas/cserve2/*.gcno
 	rm -rf lib/evas/file/*.gcno
 	rm -rf lib/embryo/*.gcno
+	rm -rf modules/eina/mp/pass_through/*.gcno
+	rm -rf modules/eina/mp/one_big/*.gcno
+	rm -rf modules/eina/mp/chained_pool/*.gcno
