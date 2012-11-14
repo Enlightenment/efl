@@ -1615,6 +1615,28 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static void
+_access_activate_cb(void *data __UNUSED__,
+                    Evas_Object *part_obj __UNUSED__,
+                    Elm_Widget_Item *item)
+{
+   Elm_Toolbar_Item *it;
+   it = (Elm_Toolbar_Item *)item;
+
+   if (elm_widget_item_disabled_get(it)) return;
+
+   if (it->selected)
+     {
+        _elm_access_say(E_("Unselected"));
+        _item_unselect(it);
+     }
+   else
+     {
+        _elm_access_say(E_("Selected"));
+        _item_select(it);
+     }
+}
+
+static void
 _access_widget_item_register(Elm_Toolbar_Item *it)
 {
    Elm_Access_Info *ai;
@@ -1624,6 +1646,7 @@ _access_widget_item_register(Elm_Toolbar_Item *it)
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Toolbar Item"));
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
+   _elm_access_activate_callback_set(ai, _access_activate_cb, NULL);
 }
 
 static Elm_Toolbar_Item *
