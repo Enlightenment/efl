@@ -8,6 +8,13 @@ static void drop_cb(void *mydata, Evas_Object *obj, void *evdata);
 static void drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata);
 static void drag_start_cb(void *mydata, Evas_Object *obj, void *evdata);
 
+static void
+_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
+{
+   printf("photo clicked\n");
+}
+
 void
 test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -41,6 +48,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
         for (i = 0; i < 12; i++)
           {
              ph = elm_photo_add(win);
+             evas_object_smart_callback_add(ph, "clicked", _clicked_cb, NULL);
              snprintf(buf, sizeof(buf), "%s/images/%s",
                       elm_app_data_dir_get(), img[n]);
              n++;
