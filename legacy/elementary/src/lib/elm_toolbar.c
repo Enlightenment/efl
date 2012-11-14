@@ -439,10 +439,12 @@ _resize_job(void *data)
         if (sd->vertical)
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
+             sd->s_iface->paging_set(obj, 0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count)));
           }
         else
           {
              if (w > vw) _items_size_fit(obj, &w, vw);
+             sd->s_iface->paging_set(obj, 0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0);
           }
      }
    else
@@ -2756,6 +2758,8 @@ elm_toolbar_item_separator_set(Elm_Object_Item *it,
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
    evas_object_size_hint_min_set(VIEW(item), -1, -1);
+   if (separator) sd->separator_count++;
+   else sd->separator_count--;
 }
 
 EAPI Eina_Bool

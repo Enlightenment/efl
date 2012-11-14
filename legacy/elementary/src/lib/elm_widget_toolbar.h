@@ -141,6 +141,7 @@ struct _Elm_Toolbar_Smart_Data
                                          icon_size;
    int                                   standard_priority;
    unsigned int                          item_count;
+   unsigned int                          separator_count;
    double                                align;
    Elm_Object_Select_Mode                select_mode;
    Ecore_Timer                          *long_timer;
