@@ -204,7 +204,7 @@ typedef struct _Path_Node              Path_Node;
 typedef struct _Path_Waypoint          Path_Waypoint;
 typedef struct _Route_Dump             Route_Dump;
 typedef struct _Name_Dump              Name_Dump;
-typedef struct _Delayed_Data           Delayed_Data;
+typedef struct _Calc_Job               Calc_Job;
 
 enum _Route_Xml_Attribute
 {
@@ -239,16 +239,6 @@ struct _Path
 struct _Region
 {
    double lon, lat;
-};
-
-struct _Delayed_Data
-{
-   void                (*func)(void *data);
-   Elm_Map_Smart_Data *wsd;
-   Elm_Map_Zoom_Mode   mode;
-   int                 zoom;
-   double              lon, lat;
-   Eina_List          *overlays;
 };
 
 struct _Color
@@ -484,6 +474,20 @@ struct _Grid
    Eina_Matrixsparse  *grid;
 };
 
+struct _Calc_Job
+{
+   double zoom;
+   void (*zoom_mode_set)(Elm_Map_Smart_Data *sd, double zoom);
+
+   Eina_Bool bring_in : 1;
+   double lon, lat;
+   void (*region_show_bring_in)(Elm_Map_Smart_Data *sd, double lon,
+                                double lat, Eina_Bool bring_in);
+
+   Eina_List *overlays;
+   void (*overlays_show)(Elm_Map_Smart_Data *sd, Eina_List *overlays);
+};
+
 struct _Elm_Map_Smart_Data
 {
    Elm_Widget_Smart_Data                 base; /* base widget smart data as
@@ -550,7 +554,6 @@ struct _Elm_Map_Smart_Data
    const char                           *user_agent;
 
    Evas_Coord                            pan_x, pan_y;
-   Eina_List                            *delayed_jobs;
 
    Ecore_Timer                          *scr_timer;
    Ecore_Timer                          *long_timer;
@@ -574,6 +577,8 @@ struct _Elm_Map_Smart_Data
    Eina_Bool                             wheel_disabled : 1;
    Eina_Bool                             on_hold : 1;
    Eina_Bool                             paused : 1;
+
+   Calc_Job                               calc_job;
 };
 
 typedef struct _Elm_Map_Pan_Smart_Class

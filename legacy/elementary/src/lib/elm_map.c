@@ -538,24 +538,6 @@ _canvas_to_coord(Elm_Map_Smart_Data *sd,
 }
 
 static void
-_region_show(void *data)
-{
-   Delayed_Data *dd = data;
-   int x, y, w, h;
-
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   _region_to_coord_convert
-     (dd->wsd, dd->lon, dd->lat, dd->wsd->size.w, &x, &y);
-   _viewport_coord_get(dd->wsd, NULL, NULL, &w, &h);
-   x = x - (w / 2);
-   y = y - (h / 2);
-   dd->wsd->s_iface->content_region_show
-     (ELM_WIDGET_DATA(dd->wsd)->obj, x, y, w, h);
-   evas_object_smart_changed(dd->wsd->pan_obj);
-}
-
-static void
 _grid_item_coord_get(Grid_Item *gi,
                      int *x,
                      int *y,
@@ -1021,16 +1003,23 @@ _track_place(Elm_Map_Smart_Data *sd)
 }
 
 static void
-_delayed_do(Elm_Map_Smart_Data *sd)
+_calc_job(Elm_Map_Smart_Data *sd)
 {
-   Delayed_Data *dd;
-
-   dd = eina_list_nth(sd->delayed_jobs, 0);
-   if (dd && !dd->wsd->zoom_animator)
+   if (sd->calc_job.region_show_bring_in)
      {
-        dd->func(dd);
-        sd->delayed_jobs = eina_list_remove(sd->delayed_jobs, dd);
-        free(dd);
+        sd->calc_job.region_show_bring_in
+          (sd, sd->calc_job.lon, sd->calc_job.lat, sd->calc_job.bring_in);
+        sd->calc_job.region_show_bring_in = NULL;
+     }
+   if (sd->calc_job.zoom_mode_set)
+     {
+        sd->calc_job.zoom_mode_set(sd, sd->calc_job.zoom);
+        sd->calc_job.zoom_mode_set = NULL;
+     }
+   if (sd->calc_job.overlays_show)
+     {
+        sd->calc_job.overlays_show(sd, sd->calc_job.overlays);
+        sd->calc_job.overlays_show = NULL;
      }
 }
 
@@ -2628,172 +2617,6 @@ _overlay_obj_get(const Elm_Map_Overlay *overlay)
      }
 }
 
-static void
-_overlays_show(void *data)
-{
-   double max_lon, min_lon, max_lat, min_lat;
-   Delayed_Data *dd = data;
-   int zoom, zoom_max;
-   Evas_Coord vw, vh;
-
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   _region_max_min_get(dd->overlays, &max_lon, &min_lon, &max_lat, &min_lat);
-   dd->lon = (max_lon + min_lon) / 2;
-   dd->lat = (max_lat + min_lat) / 2;
-
-   zoom = dd->wsd->src_tile->zoom_min;
-   _viewport_coord_get(dd->wsd, NULL, NULL, &vw, &vh);
-   if (dd->wsd->src_tile->zoom_max < dd->wsd->zoom_max)
-     zoom_max = dd->wsd->src_tile->zoom_max;
-   else zoom_max = dd->wsd->zoom_max;
-   while (zoom <= zoom_max)
-     {
-        Evas_Coord size, max_x, max_y, min_x, min_y;
-
-        size = pow(2.0, zoom) * dd->wsd->tsize;
-        _region_to_coord_convert
-          (dd->wsd, min_lon, max_lat, size, &min_x, &max_y);
-        _region_to_coord_convert
-          (dd->wsd, max_lon, min_lat, size, &max_x, &min_y);
-        if ((max_x - min_x) > vw || (max_y - min_y) > vh) break;
-        zoom++;
-     }
-   zoom--;
-
-   _zoom_do(dd->wsd, zoom);
-   _region_show(dd);
-   evas_object_smart_changed(dd->wsd->pan_obj);
-}
-
-static void
-_elm_map_pan_smart_pos_set(Evas_Object *obj,
-                           Evas_Coord x,
-                           Evas_Coord y)
-{
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   if ((x == psd->wsd->pan_x) && (y == psd->wsd->pan_y)) return;
-
-   psd->wsd->pan_x = x;
-   psd->wsd->pan_y = y;
-
-   evas_object_smart_changed(obj);
-}
-
-static void
-_elm_map_pan_smart_pos_get(const Evas_Object *obj,
-                           Evas_Coord *x,
-                           Evas_Coord *y)
-{
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   if (x) *x = psd->wsd->pan_x;
-   if (y) *y = psd->wsd->pan_y;
-}
-
-static void
-_elm_map_pan_smart_pos_max_get(const Evas_Object *obj,
-                               Evas_Coord *x,
-                               Evas_Coord *y)
-{
-   Evas_Coord ow, oh;
-
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   ow = psd->wsd->size.w - ow;
-   oh = psd->wsd->size.h - oh;
-
-   if (ow < 0) ow = 0;
-   if (oh < 0) oh = 0;
-   if (x) *x = ow;
-   if (y) *y = oh;
-}
-
-static void
-_elm_map_pan_smart_pos_min_get(const Evas_Object *obj __UNUSED__,
-                               Evas_Coord *x,
-                               Evas_Coord *y)
-{
-   if (x) *x = 0;
-   if (y) *y = 0;
-}
-
-static void
-_elm_map_pan_smart_content_size_get(const Evas_Object *obj,
-                                    Evas_Coord *w,
-                                    Evas_Coord *h)
-{
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   if (w) *w = psd->wsd->size.w;
-   if (h) *h = psd->wsd->size.h;
-}
-
-static void
-_elm_map_pan_smart_add(Evas_Object *obj)
-{
-   /* here just to allocate our extended data */
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Map_Pan_Smart_Data);
-
-   ELM_PAN_CLASS(_elm_map_pan_parent_sc)->base.add(obj);
-}
-
-static void
-_elm_map_pan_smart_resize(Evas_Object *obj,
-                          Evas_Coord w __UNUSED__,
-                          Evas_Coord h __UNUSED__)
-{
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   _sizing_eval(psd->wsd);
-   elm_map_zoom_mode_set(ELM_WIDGET_DATA(psd->wsd)->obj, psd->wsd->mode);
-   evas_object_smart_changed(obj);
-}
-
-static void
-_elm_map_pan_smart_calculate(Evas_Object *obj)
-{
-   Evas_Coord w, h;
-
-   ELM_MAP_PAN_DATA_GET(obj, psd);
-
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   if (w <= 0 || h <= 0) return;
-
-   _grid_place(psd->wsd);
-   _overlay_place(psd->wsd);
-   _track_place(psd->wsd);
-   _delayed_do(psd->wsd);
-}
-
-static void
-_elm_map_pan_smart_move(Evas_Object *obj,
-                        Evas_Coord x __UNUSED__,
-                        Evas_Coord y __UNUSED__)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-
-   evas_object_smart_changed(obj);
-}
-
-static void
-_elm_map_pan_smart_set_user(Elm_Map_Pan_Smart_Class *sc)
-{
-   ELM_PAN_CLASS(sc)->base.add = _elm_map_pan_smart_add;
-   ELM_PAN_CLASS(sc)->base.move = _elm_map_pan_smart_move;
-   ELM_PAN_CLASS(sc)->base.resize = _elm_map_pan_smart_resize;
-   ELM_PAN_CLASS(sc)->base.calculate = _elm_map_pan_smart_calculate;
-
-   ELM_PAN_CLASS(sc)->pos_set = _elm_map_pan_smart_pos_set;
-   ELM_PAN_CLASS(sc)->pos_get = _elm_map_pan_smart_pos_get;
-   ELM_PAN_CLASS(sc)->pos_max_get = _elm_map_pan_smart_pos_max_get;
-   ELM_PAN_CLASS(sc)->pos_min_get = _elm_map_pan_smart_pos_min_get;
-   ELM_PAN_CLASS(sc)->content_size_get =
-     _elm_map_pan_smart_content_size_get;
-}
-
 static Eina_Bool
 _xml_name_attrs_dump_cb(void *data,
                         const char *key,
@@ -3720,26 +3543,26 @@ _source_all_load(Elm_Map_Smart_Data *sd)
 }
 
 static void
-_zoom_mode_set(void *data)
+_zoom_mode_set(Elm_Map_Smart_Data *sd, double zoom)
 {
-   Delayed_Data *dd = data;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   dd->wsd->mode = dd->mode;
-   if (dd->mode != ELM_MAP_ZOOM_MODE_MANUAL)
+   if (sd->mode == ELM_MAP_ZOOM_MODE_MANUAL)
      {
-        double zoom;
+        if (sd->paused) _zoom_do(sd, zoom);
+        else _zoom_with_animation(sd, zoom, 10);
+     }
+   else
+     {
         double diff;
         Evas_Coord w, h;
         Evas_Coord vw, vh;
 
-        w = dd->wsd->size.w;
-        h = dd->wsd->size.h;
-        zoom = dd->wsd->zoom_detail;
-        _viewport_coord_get(dd->wsd, NULL, NULL, &vw, &vh);
+        w = sd->size.w;
+        h = sd->size.h;
+        _viewport_coord_get(sd, NULL, NULL, &vw, &vh);
 
-        if (dd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
+        if (sd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
           {
              if ((w < vw) && (h < vh))
                {
@@ -3747,8 +3570,8 @@ _zoom_mode_set(void *data)
                   while ((w < vw) && (h < vh))
                     {
                        zoom += diff;
-                       w = pow(2.0, zoom) * dd->wsd->tsize;
-                       h = pow(2.0, zoom) * dd->wsd->tsize;
+                       w = pow(2.0, zoom) * sd->tsize;
+                       h = pow(2.0, zoom) * sd->tsize;
                     }
                }
              else
@@ -3757,12 +3580,12 @@ _zoom_mode_set(void *data)
                   while ((w > vw) || (h > vh))
                     {
                        zoom += diff;
-                       w = pow(2.0, zoom) * dd->wsd->tsize;
-                       h = pow(2.0, zoom) * dd->wsd->tsize;
+                       w = pow(2.0, zoom) * sd->tsize;
+                       h = pow(2.0, zoom) * sd->tsize;
                     }
                }
           }
-        else if (dd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
+        else if (sd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
           {
              if ((w < vw) || (h < vh))
                {
@@ -3770,8 +3593,8 @@ _zoom_mode_set(void *data)
                   while ((w < vw) || (h < vh))
                     {
                        zoom += diff;
-                       w = pow(2.0, zoom) * dd->wsd->tsize;
-                       h = pow(2.0, zoom) * dd->wsd->tsize;
+                       w = pow(2.0, zoom) * sd->tsize;
+                       h = pow(2.0, zoom) * sd->tsize;
                     }
                }
              else
@@ -3780,45 +3603,197 @@ _zoom_mode_set(void *data)
                   while ((w > vw) && (h > vh))
                     {
                        zoom += diff;
-                       w = pow(2.0, zoom) * dd->wsd->tsize;
-                       h = pow(2.0, zoom) * dd->wsd->tsize;
+                       w = pow(2.0, zoom) * sd->tsize;
+                       h = pow(2.0, zoom) * sd->tsize;
                     }
                }
           }
-        _zoom_do(dd->wsd, zoom);
+        _zoom_do(sd, zoom);
      }
 }
 
 static void
-_zoom_set(void *data)
+_region_show_bring_in(Elm_Map_Smart_Data *wsd, double lon, double lat, Eina_Bool bring_in)
 {
-   Delayed_Data *dd = data;
+   int x, y, w, h;
 
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(wsd);
 
-   if (dd->wsd->paused) _zoom_do(dd->wsd, dd->zoom);
-   else _zoom_with_animation(dd->wsd, dd->zoom, 10);
+   _region_to_coord_convert
+     (wsd, lon, lat, wsd->size.w, &x, &y);
+   _viewport_coord_get(wsd, NULL, NULL, &w, &h);
+   x = x - (w / 2);
+   y = y - (h / 2);
 
-   evas_object_smart_changed(dd->wsd->pan_obj);
+   if (bring_in) wsd->s_iface->region_bring_in(ELM_WIDGET_DATA(wsd)->obj, x, y, w, h);
+   else wsd->s_iface->content_region_show(ELM_WIDGET_DATA(wsd)->obj, x, y, w, h);
 }
 
 static void
-_region_bring_in(void *data)
+_overlays_show(Elm_Map_Smart_Data *sd, Eina_List *overlays)
 {
-   Delayed_Data *dd = data;
-   int x, y, w, h;
+   double max_lon, min_lon, max_lat, min_lat, lon, lat;
+   int zoom, zoom_max;
+   Evas_Coord vw, vh;
 
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN(overlays);
 
-   _region_to_coord_convert
-     (dd->wsd, dd->lon, dd->lat, dd->wsd->size.w, &x, &y);
-   _viewport_coord_get(dd->wsd, NULL, NULL, &w, &h);
-   x = x - (w / 2);
-   y = y - (h / 2);
-   dd->wsd->s_iface->region_bring_in
-     (ELM_WIDGET_DATA(dd->wsd)->obj, x, y, w, h);
-   evas_object_smart_changed(dd->wsd->pan_obj);
+   _region_max_min_get(overlays, &max_lon, &min_lon, &max_lat, &min_lat);
+   lon = (max_lon + min_lon) / 2;
+   lat = (max_lat + min_lat) / 2;
+
+   zoom = sd->src_tile->zoom_min;
+   _viewport_coord_get(sd, NULL, NULL, &vw, &vh);
+   if (sd->src_tile->zoom_max < sd->zoom_max)
+     zoom_max = sd->src_tile->zoom_max;
+   else zoom_max = sd->zoom_max;
+   while (zoom <= zoom_max)
+     {
+        Evas_Coord size, max_x, max_y, min_x, min_y;
+
+        size = pow(2.0, zoom) * sd->tsize;
+        _region_to_coord_convert
+          (sd, min_lon, max_lat, size, &min_x, &max_y);
+        _region_to_coord_convert
+          (sd, max_lon, min_lat, size, &max_x, &min_y);
+        if ((max_x - min_x) > vw || (max_y - min_y) > vh) break;
+        zoom++;
+     }
+   zoom--;
+
+   _zoom_do(sd, zoom);
+   _region_show_bring_in(sd, lon, lat, EINA_FALSE);
 }
+
+static void
+_elm_map_pan_smart_pos_set(Evas_Object *obj,
+                           Evas_Coord x,
+                           Evas_Coord y)
+{
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   if ((x == psd->wsd->pan_x) && (y == psd->wsd->pan_y)) return;
+
+   psd->wsd->pan_x = x;
+   psd->wsd->pan_y = y;
+
+   evas_object_smart_changed(obj);
+}
+
+static void
+_elm_map_pan_smart_pos_get(const Evas_Object *obj,
+                           Evas_Coord *x,
+                           Evas_Coord *y)
+{
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   if (x) *x = psd->wsd->pan_x;
+   if (y) *y = psd->wsd->pan_y;
+}
+
+static void
+_elm_map_pan_smart_pos_max_get(const Evas_Object *obj,
+                               Evas_Coord *x,
+                               Evas_Coord *y)
+{
+   Evas_Coord ow, oh;
+
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   ow = psd->wsd->size.w - ow;
+   oh = psd->wsd->size.h - oh;
+
+   if (ow < 0) ow = 0;
+   if (oh < 0) oh = 0;
+   if (x) *x = ow;
+   if (y) *y = oh;
+}
+
+static void
+_elm_map_pan_smart_pos_min_get(const Evas_Object *obj __UNUSED__,
+                               Evas_Coord *x,
+                               Evas_Coord *y)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+}
+
+static void
+_elm_map_pan_smart_content_size_get(const Evas_Object *obj,
+                                    Evas_Coord *w,
+                                    Evas_Coord *h)
+{
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   if (w) *w = psd->wsd->size.w;
+   if (h) *h = psd->wsd->size.h;
+}
+
+static void
+_elm_map_pan_smart_add(Evas_Object *obj)
+{
+   /* here just to allocate our extended data */
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Map_Pan_Smart_Data);
+
+   ELM_PAN_CLASS(_elm_map_pan_parent_sc)->base.add(obj);
+}
+
+static void
+_elm_map_pan_smart_resize(Evas_Object *obj,
+                          Evas_Coord w __UNUSED__,
+                          Evas_Coord h __UNUSED__)
+{
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   _sizing_eval(psd->wsd);
+   elm_map_zoom_mode_set(ELM_WIDGET_DATA(psd->wsd)->obj, psd->wsd->mode);
+   evas_object_smart_changed(obj);
+}
+
+static void
+_elm_map_pan_smart_calculate(Evas_Object *obj)
+{
+   Evas_Coord w, h;
+
+   ELM_MAP_PAN_DATA_GET(obj, psd);
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (w <= 0 || h <= 0) return;
+
+   _grid_place(psd->wsd);
+   _overlay_place(psd->wsd);
+   _track_place(psd->wsd);
+   _calc_job(psd->wsd);
+}
+
+static void
+_elm_map_pan_smart_move(Evas_Object *obj,
+                        Evas_Coord x __UNUSED__,
+                        Evas_Coord y __UNUSED__)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
+   evas_object_smart_changed(obj);
+}
+
+static void
+_elm_map_pan_smart_set_user(Elm_Map_Pan_Smart_Class *sc)
+{
+   ELM_PAN_CLASS(sc)->base.add = _elm_map_pan_smart_add;
+   ELM_PAN_CLASS(sc)->base.move = _elm_map_pan_smart_move;
+   ELM_PAN_CLASS(sc)->base.resize = _elm_map_pan_smart_resize;
+   ELM_PAN_CLASS(sc)->base.calculate = _elm_map_pan_smart_calculate;
+
+   ELM_PAN_CLASS(sc)->pos_set = _elm_map_pan_smart_pos_set;
+   ELM_PAN_CLASS(sc)->pos_get = _elm_map_pan_smart_pos_get;
+   ELM_PAN_CLASS(sc)->pos_max_get = _elm_map_pan_smart_pos_max_get;
+   ELM_PAN_CLASS(sc)->pos_min_get = _elm_map_pan_smart_pos_min_get;
+   ELM_PAN_CLASS(sc)->content_size_get =
+     _elm_map_pan_smart_content_size_get;
+}
+
 
 static Eina_Bool
 _elm_map_smart_on_focus(Evas_Object *obj)
@@ -4045,7 +4020,6 @@ _elm_map_smart_del(Evas_Object *obj)
 {
    Elm_Map_Route *r;
    Elm_Map_Name *na;
-   Delayed_Data *dd;
    Eina_List *l, *ll;
    Evas_Object *track;
    Elm_Map_Overlay *overlay;
@@ -4074,10 +4048,6 @@ _elm_map_smart_del(Evas_Object *obj)
 
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    if (sd->long_timer) ecore_timer_del(sd->long_timer);
-
-   if (sd->delayed_jobs)
-     EINA_LIST_FREE (sd->delayed_jobs, dd)
-       free(dd);
 
    if (sd->user_agent) eina_stringshare_del(sd->user_agent);
    if (sd->ua) eina_hash_free(sd->ua);
@@ -4216,7 +4186,6 @@ elm_map_zoom_set(Evas_Object *obj,
                  int zoom)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   Delayed_Data *data;
 
    ELM_MAP_CHECK(obj);
    ELM_MAP_DATA_GET(obj, sd);
@@ -4226,12 +4195,10 @@ elm_map_zoom_set(Evas_Object *obj,
    if (zoom < 0) zoom = 0;
    if (sd->zoom == zoom) return;
 
-   data = ELM_NEW(Delayed_Data);
-   data->func = _zoom_set;
-   data->wsd = sd;
-   data->zoom = zoom;
-   data->wsd->delayed_jobs = eina_list_append(data->wsd->delayed_jobs, data);
-   evas_object_smart_changed(data->wsd->pan_obj);
+   sd->calc_job.zoom = zoom;
+   sd->calc_job.zoom_mode_set = _zoom_mode_set;
+
+   evas_object_smart_changed(sd->pan_obj);
 #else
    (void)obj;
    (void)zoom;
@@ -4257,19 +4224,16 @@ elm_map_zoom_mode_set(Evas_Object *obj,
                       Elm_Map_Zoom_Mode mode)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   Delayed_Data *data;
-
    ELM_MAP_CHECK(obj);
    ELM_MAP_DATA_GET(obj, sd);
 
    if ((mode == ELM_MAP_ZOOM_MODE_MANUAL) && (sd->mode == !!mode)) return;
 
-   data = ELM_NEW(Delayed_Data);
-   data->mode = mode;
-   data->func = _zoom_mode_set;
-   data->wsd = sd;
-   data->wsd->delayed_jobs = eina_list_append(data->wsd->delayed_jobs, data);
-   evas_object_smart_changed(data->wsd->pan_obj);
+   sd->mode = mode;
+   sd->calc_job.zoom = sd->zoom_detail;
+   sd->calc_job.zoom_mode_set = _zoom_mode_set;
+
+   evas_object_smart_changed(sd->pan_obj);
 #else
    (void)obj;
    (void)mode;
@@ -4358,18 +4322,15 @@ elm_map_region_bring_in(Evas_Object *obj,
                         double lat)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   Delayed_Data *data;
-
    ELM_MAP_CHECK(obj);
    ELM_MAP_DATA_GET(obj, sd);
 
-   data = ELM_NEW(Delayed_Data);
-   data->func = _region_bring_in;
-   data->wsd = sd;
-   data->lon = lon;
-   data->lat = lat;
-   data->wsd->delayed_jobs = eina_list_append(data->wsd->delayed_jobs, data);
-   evas_object_smart_changed(data->wsd->pan_obj);
+   sd->calc_job.bring_in = EINA_TRUE;
+   sd->calc_job.lon = lon;
+   sd->calc_job.lat = lat;
+   sd->calc_job.region_show_bring_in = _region_show_bring_in;
+
+   evas_object_smart_changed(sd->pan_obj);
 #else
    (void)obj;
    (void)lon;
@@ -4383,18 +4344,15 @@ elm_map_region_show(Evas_Object *obj,
                     double lat)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   Delayed_Data *data;
-
    ELM_MAP_CHECK(obj);
    ELM_MAP_DATA_GET(obj, sd);
 
-   data = ELM_NEW(Delayed_Data);
-   data->func = _region_show;
-   data->wsd = sd;
-   data->lon = lon;
-   data->lat = lat;
-   data->wsd->delayed_jobs = eina_list_append(data->wsd->delayed_jobs, data);
-   evas_object_smart_changed(data->wsd->pan_obj);
+   sd->calc_job.bring_in = EINA_FALSE;
+   sd->calc_job.lon = lon;
+   sd->calc_job.lat = lat;
+   sd->calc_job.region_show_bring_in = _region_show_bring_in;
+
+   evas_object_smart_changed(sd->pan_obj);
 #else
    (void)obj;
    (void)lon;
@@ -5310,7 +5268,6 @@ EAPI void
 elm_map_overlays_show(Eina_List *overlays)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   Delayed_Data *data;
    Elm_Map_Overlay *overlay;
 
    EINA_SAFETY_ON_NULL_RETURN(overlays);
@@ -5318,12 +5275,10 @@ elm_map_overlays_show(Eina_List *overlays)
 
    overlay = eina_list_data_get(overlays);
 
-   data = ELM_NEW(Delayed_Data);
-   data->func = _overlays_show;
-   data->wsd = overlay->wsd;
-   data->overlays = eina_list_clone(overlays);
-   data->wsd->delayed_jobs = eina_list_append(data->wsd->delayed_jobs, data);
-   evas_object_smart_changed(data->wsd->pan_obj);
+   overlay->wsd->calc_job.overlays = overlays;
+   overlay->wsd->calc_job.overlays_show = _overlays_show;
+
+   evas_object_smart_changed(overlay->wsd->pan_obj);
 #else
    (void)overlays;
 #endif
