@@ -17,6 +17,19 @@ EAPI const char ELM_CONFORMANT_SMART_NAME[] = "elm_conformant";
 static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
 #endif
 
+static const char SIG_VIRTUALKEYPAD_STATE_ON[] = "virtualkeypad,state,on";
+static const char SIG_VIRTUALKEYPAD_STATE_OFF[] = "virtualkeypad,state,off";
+static const char SIG_CLIPBOARD_STATE_ON[] = "clipboard,state,on";
+static const char SIG_CLIPBOARD_STATE_OFF[] = "clipboard,state,off";
+
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   {SIG_VIRTUALKEYPAD_STATE_ON, ""},
+   {SIG_VIRTUALKEYPAD_STATE_OFF, ""},
+   {SIG_CLIPBOARD_STATE_ON, ""},
+   {SIG_CLIPBOARD_STATE_OFF, ""},
+   {NULL, NULL}
+};
+
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"icon", "elm.swallow.content"},
@@ -25,7 +38,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 
 EVAS_SMART_SUBCLASS_NEW
   (ELM_CONFORMANT_SMART_NAME, _elm_conformant, Elm_Conformant_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
+  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 /* Example of env vars:
  * ILLUME_KBD="0, 0, 800, 301"
@@ -434,13 +447,13 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
         evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
-        evas_object_smart_callback_call(obj, "virtualkeypad,state,off", NULL);
+        evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_OFF, NULL);
      }
    else if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
      {
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
-        evas_object_smart_callback_call(obj, "virtualkeypad,state,on", NULL);
+        evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_ON, NULL);
      }
 }
 
@@ -460,12 +473,12 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
      {
         evas_object_size_hint_min_set(sd->clipboard, -1, 0);
         evas_object_size_hint_max_set(sd->clipboard, -1, 0);
-        evas_object_smart_callback_call(obj, "clipboard,state,off", NULL);
+        evas_object_smart_callback_call(obj, SIG_CLIPBOARD_STATE_OFF, NULL);
      }
    else if(state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
      {
         _autoscroll_objects_update(obj);
-        evas_object_smart_callback_call(obj, "clipboard,state,on", NULL);
+        evas_object_smart_callback_call(obj, SIG_CLIPBOARD_STATE_ON, NULL);
      }
 }
 
@@ -579,11 +592,13 @@ elm_conformant_smart_class_get(void)
    static Elm_Conformant_Smart_Class _sc =
      ELM_CONFORMANT_SMART_CLASS_INIT_NAME_VERSION(ELM_CONFORMANT_SMART_NAME);
    static const Elm_Conformant_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
    if (class)
      return class;
 
    _elm_conformant_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
    class = &_sc;
 
    return class;
