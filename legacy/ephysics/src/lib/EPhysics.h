@@ -22,6 +22,7 @@
  * @li @ref EPhysics_Body
  * @li @ref EPhysics_Camera
  * @li @ref EPhysics_Constraint
+ * @li @ref EPhysics_Quaternion
  * @li @ref EPhysics_Shape
  *
  * Please see the @ref authors page for contact details.
