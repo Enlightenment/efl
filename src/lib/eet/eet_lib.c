@@ -1487,7 +1487,10 @@ open_error:
    else
      {
         if (mode != EET_FILE_MODE_WRITE)
-          return NULL;
+          {
+            UNLOCK_CACHE;
+            return NULL;
+          }
 
         size = 0;
 
