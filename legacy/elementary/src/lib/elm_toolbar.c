@@ -946,6 +946,10 @@ _elm_toolbar_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_toolbar_parent_sc)->theme(obj))
      return EINA_FALSE;
 
+   elm_widget_theme_object_set
+     (obj, ELM_WIDGET_DATA(sd)->resize_obj, "toolbar", "base",
+     elm_widget_style_get(obj));
+
    elm_layout_theme_set
      (sd->more, "toolbar", "more", elm_widget_style_get(obj));
 
