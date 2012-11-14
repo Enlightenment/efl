@@ -1432,8 +1432,9 @@ _item_reorder_start(Elm_Toolbar_Item *item)
 }
 
 static Eina_Bool
-_long_press(Elm_Toolbar_Item *it)
+_long_press_cb(void *data)
 {
+   Elm_Toolbar_Item *it = data;
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    sd->long_timer = NULL;
@@ -1496,7 +1497,7 @@ _mouse_down_cb(Elm_Toolbar_Item *it,
        (sd->long_timer, _elm_config->longpress_timeout);
    else
      sd->long_timer = ecore_timer_add
-         (_elm_config->longpress_timeout, (Ecore_Task_Cb)_long_press, it);
+         (_elm_config->longpress_timeout, _long_press_cb, it);
 
    evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
                                   (Evas_Object_Event_Cb)_mouse_move_cb, it);
