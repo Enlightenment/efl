@@ -14,8 +14,8 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_win_conformant_set(win, EINA_TRUE);
 
    conform = elm_conformant_add(win);
-   elm_win_resize_object_add(win, conform);
    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, conform);
    evas_object_show(conform);
 
    bx = elm_box_add(win);
@@ -98,7 +98,6 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 

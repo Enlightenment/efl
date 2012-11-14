@@ -63,8 +63,8 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
       _focus_out, NULL);
 
    bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
 #define PARENT bx /* this is broken, but should work */

@@ -19,7 +19,6 @@ test_external_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "external/button");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
@@ -40,7 +39,6 @@ test_external_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "external/slider");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
@@ -61,7 +59,6 @@ test_external_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void 
    snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "external/scroller");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
@@ -156,7 +153,6 @@ test_external_pbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "external/pbar");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
@@ -181,7 +177,6 @@ test_external_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "external/video");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 

@@ -55,9 +55,8 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bg);
 
    panes = elm_panes_add(win);
-   elm_win_resize_object_add(win, panes);
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(panes, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, panes);
    evas_object_show(panes);
 
    evas_object_smart_callback_add(panes, "clicked", _clicked, panes);

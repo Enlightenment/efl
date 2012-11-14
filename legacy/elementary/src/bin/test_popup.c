@@ -333,9 +333,9 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    elm_win_autodel_set(win, EINA_TRUE);
 
    list = elm_list_add(win);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, list);
    elm_list_mode_set(list, ELM_LIST_LIMIT);
-   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(list, "selected", _list_click, NULL);
 
    elm_list_item_append(list, "popup-center-text", NULL, NULL,

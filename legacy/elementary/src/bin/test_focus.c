@@ -66,9 +66,8 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    Evas_Object *mainbx = elm_box_add(win);
    elm_box_horizontal_set(mainbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(mainbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, mainbx);
-   evas_object_size_hint_weight_set(mainbx, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
    my_show(mainbx);
 
      { //First Col

@@ -35,13 +35,12 @@ bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_autodel_set(win, EINA_TRUE);
 
    ic = elm_icon_add(win);
+   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ic);
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg",
             elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
 
-   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    elm_image_aspect_fixed_set(ic, EINA_FALSE);
    elm_image_preload_disabled_set(ic, EINA_TRUE);
@@ -60,16 +59,13 @@ test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
-   elm_win_resize_object_add(win, box);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    content_box = elm_box_add(win);
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, content_box);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL,
-                                   EVAS_HINT_FILL);
    elm_box_pack_end(box, content_box);
    evas_object_show(content_box);
 

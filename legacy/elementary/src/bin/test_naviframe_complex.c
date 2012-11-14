@@ -317,7 +317,6 @@ test_naviframe_complex(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void 
 
    box = elm_box_add(win);
    EXPAND(box);
-   FILL(box);
    elm_box_horizontal_set(box, EINA_TRUE);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);

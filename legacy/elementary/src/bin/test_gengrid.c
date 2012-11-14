@@ -375,16 +375,13 @@ filled_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
-   elm_win_resize_object_add(win, box);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    content_box = elm_box_add(win);
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, content_box);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL,
-                                   EVAS_HINT_FILL);
    elm_box_pack_end(box, content_box);
    evas_object_show(content_box);
 
@@ -433,16 +430,13 @@ cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
-   elm_win_resize_object_add(win, box);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    content_box = elm_box_add(win);
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, content_box);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL,
-                                   EVAS_HINT_FILL);
    elm_box_pack_end(box, content_box);
    evas_object_show(content_box);
 
@@ -496,8 +490,8 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    bxx = elm_box_add(win);
    api->box = bxx;
-   elm_win_resize_object_add(win, bxx);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
    content_box = elm_box_add(win);

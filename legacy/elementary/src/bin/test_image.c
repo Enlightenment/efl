@@ -42,8 +42,8 @@ test_image(void *data __UNUSED__, Evas_Object *obj  __UNUSED__, void *event_info
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
-   elm_win_resize_object_add(win, box);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    im = elm_image_add(win);

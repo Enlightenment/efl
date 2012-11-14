@@ -39,7 +39,6 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    bx = elm_box_add(win);
    elm_box_padding_set(bx, 0, 10);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, bx);
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(exp_modes); i++)

@@ -172,8 +172,8 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
    gl = elm_genlist_add(win);
@@ -183,7 +183,6 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    api->dt.id = id = elm_index_add(win);
    evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, id);
 
    bt = elm_button_add(win);
@@ -344,8 +343,7 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(box);
 
    gui->id = elm_index_add(win);
-   evas_object_size_hint_weight_set(gui->id, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(gui->id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, gui->id);
    evas_object_smart_callback_add(gui->id, "delay,changed",
                                   test_index2_id_changed, NULL);

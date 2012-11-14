@@ -43,9 +43,9 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    scr = elm_scroller_add(win);
    elm_scroller_bounce_set(scr, EINA_FALSE, EINA_TRUE);
    elm_scroller_policy_set(scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+   evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, scr);
    evas_object_show(scr);
-   evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -537,9 +537,9 @@ test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    bx = elm_box_add(win);
    tb = elm_table_add(win);
    elm_box_pack_end(bx, tb);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, 0.5, 0.5);
+   elm_win_resize_object_add(win, bx);
    evas_object_show(tb);
    evas_object_show(bx);
 

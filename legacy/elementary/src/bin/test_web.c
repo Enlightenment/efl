@@ -99,8 +99,7 @@ _new_window_hook(void *data, Evas_Object *obj __UNUSED__, Eina_Bool js __UNUSED_
 
    new_web = elm_web_add(new_win);
    elm_web_useragent_set(new_web, wt->user_agent);
-   evas_object_size_hint_weight_set(new_web, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(new_web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(new_win, new_web);
    evas_object_show(new_web);
 
@@ -354,8 +353,8 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
    bx2 = elm_box_add(win);

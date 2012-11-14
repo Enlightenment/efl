@@ -296,8 +296,8 @@ test_list(void        *data __UNUSED__,
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
    li = elm_list_add(win);
@@ -454,8 +454,8 @@ test_list_horizontal(void        *data __UNUSED__,
    li = elm_list_add(win);
    elm_list_horizontal_set(li, EINA_TRUE);
    elm_list_mode_set(li, ELM_LIST_LIMIT);
-   elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, li);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -596,8 +596,8 @@ test_list2(void        *data __UNUSED__,
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
-   elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
@@ -733,8 +733,8 @@ test_list3(void        *data __UNUSED__,
    elm_win_autodel_set(win, EINA_TRUE);
 
    li = elm_list_add(win);
-   elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, li);
    elm_list_mode_set(li, ELM_LIST_COMPRESS);
 
    ic = elm_icon_add(win);
@@ -891,9 +891,8 @@ test_list4(void        *data __UNUSED__,
    info.win = win;
 
    naviframe = elm_naviframe_add(win);
-   elm_win_resize_object_add(win, naviframe);
    evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, naviframe);
    evas_object_show(naviframe);
    info.naviframe = naviframe;
 
@@ -1116,8 +1115,8 @@ test_list6(void        *data __UNUSED__,
 
    gd = elm_grid_add(win);
    elm_grid_size_set(gd, 100, 100);
-   elm_win_resize_object_add(win, gd);
    evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, gd);
 
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1199,12 +1198,11 @@ test_list7(void        *data __UNUSED__,
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
-   elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    li = elm_list_add(win);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, li);
    elm_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_ALWAYS);

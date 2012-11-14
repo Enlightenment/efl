@@ -13,8 +13,8 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    if (do_bg)
      {
         bg = elm_bg_add(win);
-        elm_win_resize_object_add(win, bg);
         evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(win, bg);
         evas_object_show(bg);
      }
 
@@ -222,8 +222,8 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(bg, buf, NULL);
-   elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    win2 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);

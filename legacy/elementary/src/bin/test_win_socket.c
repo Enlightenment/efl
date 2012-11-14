@@ -20,8 +20,8 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    if (do_bg)
      {
         bg = elm_bg_add(win);
-        elm_win_resize_object_add(win, bg);
         evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(win, bg);
         evas_object_show(bg);
      }
 
@@ -153,7 +153,6 @@ test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,

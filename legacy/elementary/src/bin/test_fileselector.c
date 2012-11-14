@@ -146,8 +146,8 @@ test_fileselector(void *data       __UNUSED__,
    elm_win_autodel_set(win, EINA_TRUE);
 
    vbox = elm_box_add(win);
-   elm_win_resize_object_add(win, vbox);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, vbox);
    evas_object_show(vbox);
 
    fs = elm_fileselector_add(win);

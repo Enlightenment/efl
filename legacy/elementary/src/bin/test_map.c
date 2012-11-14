@@ -548,8 +548,8 @@ _track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_win_autodel_set(fs_win, 1);
 
    vbox = elm_box_add(fs_win);
-   elm_win_resize_object_add(fs_win, vbox);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(fs_win, vbox);
    evas_object_show(vbox);
 
    fs = elm_fileselector_add(fs_win);

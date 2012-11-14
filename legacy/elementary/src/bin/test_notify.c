@@ -46,8 +46,8 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_win_autodel_set(win, EINA_TRUE);
 
    tb = elm_table_add(win);
-   elm_win_resize_object_add(win, tb);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, tb);
    evas_object_show(tb);
 
    // Notify top
