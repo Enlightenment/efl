@@ -3529,3 +3529,23 @@ elm_gengrid_item_select_mode_get(const Elm_Object_Item *item)
    if (!it) return ELM_OBJECT_SELECT_MODE_MAX;
    return it->select_mode;
 }
+
+EAPI Elm_Object_Item *
+elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
+{
+   Elm_Gen_Item *it = NULL;
+   Eina_Accessor *a;
+   void *data;
+
+   ELM_GENGRID_CHECK(obj) EINA_FALSE;
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   if (!sd->items) return NULL;
+
+   a = eina_inlist_accessor_new(sd->items);
+   if (!a) return NULL;
+   if (eina_accessor_data_get(a, nth, &data))
+     it = ELM_GEN_ITEM_FROM_INLIST(data);
+   eina_accessor_free(a);
+   return (Elm_Object_Item *)it;
+}

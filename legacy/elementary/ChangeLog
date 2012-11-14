@@ -682,3 +682,4 @@
 2012-11-14  Michael Bouchaud (yoz)
 
         * Add elm_genlist_nth_item_get
+        * Add elm_gengrid_nth_item_get
