@@ -179,8 +179,8 @@ _mouse_down(void *data,
    if (ev->button != 1) return;
 
    if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
-   /* FIXME: Hard coded timeout */
-   sd->long_press_timer = ecore_timer_add(0.7, _long_press_cb, data);
+   sd->long_press_timer = ecore_timer_add(_elm_config->longpress_timeout,
+                                          _long_press_cb, data);
    evas_object_event_callback_add
      (icon, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, data);
 }
