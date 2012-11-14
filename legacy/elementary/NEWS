@@ -14,6 +14,7 @@ Additions:
    * Add elm_notify_align_set/get
    * Add virtualkeypad, clipboard state change signals from conformant.
    * Add elm_toolbar_item_show/bring_in.
+   * Add elm_genlist_nth_item_get
 
 Improvements:
 

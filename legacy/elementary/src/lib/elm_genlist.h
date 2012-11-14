@@ -1913,6 +1913,23 @@ elm_genlist_item_select_mode_set(Elm_Object_Item *it,
 EAPI Elm_Object_Select_Mode
 elm_genlist_item_select_mode_get(const Elm_Object_Item *it);
 
+
+/**
+ * Get the nth item, in a given genlist widget, placed at position @p nth, in
+ * its internal items list
+ *
+ * @param obj The genlist object
+ * @param nth The number of the item to grab (0 being the first)
+ *
+ * @return The item stored in @p obj at position @p nth or @c NULL, if there's
+ * no item with that index (and on errors)
+ *
+ * @ingroup Genilst
+ * @since 1.8
+ */
+EAPI Elm_Object_Item *
+elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
+
 /**
  * @}
  */

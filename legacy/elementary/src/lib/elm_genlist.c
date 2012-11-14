@@ -6761,3 +6761,23 @@ elm_genlist_tree_effect_enabled_get(const Evas_Object *obj)
    return sd->tree_effect_enabled;
 }
 
+EAPI Elm_Object_Item *
+elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
+{
+   Elm_Gen_Item *it = NULL;
+   Eina_Accessor *a;
+   void *data;
+
+   ELM_GENLIST_CHECK(obj) NULL;
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   if (!sd->items) return NULL;
+
+   a = eina_inlist_accessor_new(sd->items);
+   if (!a) return NULL;
+   if (eina_accessor_data_get(a, nth, &data))
+     it = ELM_GEN_ITEM_FROM_INLIST(data);
+   eina_accessor_free(a);
+   return (Elm_Object_Item *)it;
+}
+
