@@ -289,16 +289,13 @@ test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 void
-test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+test_index2_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
-   Elm_Object_Item *list_it, *list_it_next;
-   Elm_Object_Item *iit;
+   Elm_Object_Item *list_it = event_info, *list_it_next, *iit;
 
-   list_it = elm_list_selected_item_get(obj);
    list_it_next = elm_list_item_next(list_it);
-
    if (!list_it_next)
      {
         iit = elm_index_item_find(gui->id, list_it);
@@ -311,10 +308,13 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    label_next = elm_object_item_text_get(list_it_next);
 
    iit = elm_index_item_find(gui->id, list_it);
-   if (label[0] == label_next[0])
-     elm_object_item_data_set(iit, list_it_next);
-   else
-     elm_object_item_del(iit);
+   if (iit)
+     {
+        if (label[0] == label_next[0])
+          elm_object_item_data_set(iit, list_it_next);
+        else
+          elm_object_item_del(iit);
+     }
 
    elm_object_item_del(list_it);
 }
