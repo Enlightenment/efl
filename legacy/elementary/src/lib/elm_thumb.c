@@ -54,12 +54,10 @@ _mouse_down_cb(void *data,
    Elm_Thumb_Smart_Data *sd = data;
    Evas_Event_Mouse_Down *ev = event_info;
 
-   if (ev->button != 1)
-     return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     sd->on_hold = EINA_TRUE;
-   else
-     sd->on_hold = EINA_FALSE;
+   if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
+   else sd->on_hold = EINA_FALSE;
+
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(obj, SIG_CLICKED_DOUBLE, NULL);
    else
@@ -75,12 +73,10 @@ _mouse_up_cb(void *data,
    Elm_Thumb_Smart_Data *sd = data;
    Evas_Event_Mouse_Up *ev = event_info;
 
-   if (ev->button != 1)
-     return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     sd->on_hold = EINA_TRUE;
-   else
-     sd->on_hold = EINA_FALSE;
+   if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
+   else sd->on_hold = EINA_FALSE;
+
    if (!sd->on_hold)
      evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
 

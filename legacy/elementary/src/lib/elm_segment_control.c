@@ -311,15 +311,15 @@ _on_mouse_up(void *data,
              Evas_Object *obj __UNUSED__,
              void *event_info)
 {
-   Elm_Segment_Item *it;
-   Evas_Event_Mouse_Up *ev;
+   Elm_Segment_Item *it = data;
+   Evas_Event_Mouse_Up *ev = event_info;
    Evas_Coord x, y, w, h;
 
-   it = data;
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
+   if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
-
    if (it == sd->selected_item) return;
 
    ev = event_info;
@@ -338,13 +338,13 @@ _on_mouse_down(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   Elm_Segment_Item *it;
+   Elm_Segment_Item *it = data;
+   Evas_Event_Mouse_Down *ev = event_info;
 
-   it = data;
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
+   if (ev->button != 1) return;
    if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
-
    if (it == sd->selected_item) return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,segment,pressed", "elm");

@@ -172,10 +172,13 @@ _mouse_down(void *data,
             Evas_Object *icon,
             void *event_info __UNUSED__)
 {
+   Evas_Event_Mouse_Down *ev = event_info;
+
    ELM_PHOTO_DATA_GET(data, sd);
 
-   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
+   if (ev->button != 1) return;
 
+   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
    /* FIXME: Hard coded timeout */
    sd->long_press_timer = ecore_timer_add(0.7, _long_press_cb, data);
    evas_object_event_callback_add
@@ -188,7 +191,11 @@ _mouse_up(void *data,
           Evas_Object *obj __UNUSED__,
           void *event_info __UNUSED__)
 {
+   Evas_Event_Mouse_Up *ev = event_info;
    ELM_PHOTO_DATA_GET(data, sd);
+
+   if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if (sd->long_press_timer)
      {

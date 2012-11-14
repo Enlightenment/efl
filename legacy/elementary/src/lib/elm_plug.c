@@ -54,8 +54,13 @@ static void
 _on_mouse_up(void *data,
              Evas *e __UNUSED__,
              Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+             void *event_info)
 {
+   Evas_Event_Mouse_Up *ev = event_info;
+
+   if (ev->button != 1) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
