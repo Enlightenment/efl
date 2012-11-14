@@ -1,3 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = eina eo eet
+SUBDIRS = eina eo eet evas

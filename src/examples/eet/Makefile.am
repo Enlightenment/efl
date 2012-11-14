@@ -1,4 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
@@ -44,10 +45,10 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(pkgdatadir)/examples/eet
-	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples/eet
+	mkdir -p $(datadir)/eet/examples
+	$(install_sh_DATA) -c $(SRCS) $(datadir)/eet/examples
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(pkgdatadir)/examples/eet/$$f ; \
+	  rm -f $(datadir)/eet/examples/$$f ; \
 	done

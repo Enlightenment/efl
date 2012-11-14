@@ -1827,11 +1827,13 @@ src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
 src/examples/eo/Makefile
+src/examples/evas/Makefile
 src/lib/eina/eina_config.h
 src/tests/Makefile
 src/tests/eina/Makefile
 src/tests/eet/Makefile
 src/tests/eo/Makefile
+src/tests/evas/Makefile
 spec/efl.spec
 pc/evil.pc
 pc/eina.pc

@@ -112,12 +112,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(pkgdatadir)/examples/eina
-	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples/eina
+	mkdir -p $(datadir)/eina/examples
+	$(install_sh_DATA) -c $(SRCS) $(datadir)/eina/examples
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(pkgdatadir)/examples/eina/$$f ; \
+	  rm -f $(datadir)/eina/examples/$$f ; \
 	done
 
 EXTRA_DIST = addr_book.txt chat.xml

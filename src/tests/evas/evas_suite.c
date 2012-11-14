@@ -5,27 +5,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <Edje.h>
+#include <Evas.h>
 
-#include "edje_suite.h"
+#include "evas_suite.h"
 
-typedef struct _Edje_Test_Case Edje_Test_Case;
+typedef struct _Evas_Test_Case Evas_Test_Case;
 
-struct _Edje_Test_Case
+struct _Evas_Test_Case
 {
    const char *test_case;
    void      (*build)(TCase *tc);
 };
 
-static const Edje_Test_Case etc[] = {
-  { "Edje", edje_test_edje },
+static const Evas_Test_Case etc[] = {
+  { "Evas", evas_test_init },
+  { "Object Textblock", evas_test_textblock },
+  { "Object Text", evas_test_text },
+  { "Callbacks", evas_test_callbacks },
   { NULL, NULL }
 };
 
 static void
 _list_tests(void)
 {
-  const Edje_Test_Case *itr;
+  const Evas_Test_Case *itr;
 
    itr = etc;
    fputs("Available Test Cases:\n", stderr);
@@ -45,13 +48,13 @@ _use_test(int argc, const char **argv, const char *test_case)
 }
 
 static Suite *
-edje_suite_build(int argc, const char **argv)
+evas_suite_build(int argc, const char **argv)
 {
    TCase *tc;
    Suite *s;
    int i;
 
-   s = suite_create("Edje");
+   s = suite_create("Evas");
 
    for (i = 0; etc[i].test_case; ++i)
      {
@@ -90,12 +93,14 @@ main(int argc, char **argv)
 	  return 0;
        }
 
-   s = edje_suite_build(argc - 1, (const char **)argv + 1);
+   evas_init();
+   s = evas_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
 
+   evas_shutdown();
    return (failed_count == 0) ? 0 : 255;
 }

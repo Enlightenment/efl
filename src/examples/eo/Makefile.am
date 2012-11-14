@@ -67,20 +67,20 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(pkgdatadir)/examples/eo/isa
-	$(install_sh_DATA) -c $(eo_isa_SOURCES) $(pkgdatadir)/examples/eo/isa
-	mkdir -p $(pkgdatadir)/examples/eo/evas
-	$(install_sh_DATA) -c $(evas_SOURCES) $(pkgdatadir)/examples/eo/evas
-	mkdir -p $(pkgdatadir)/examples/eo/simple
-	$(install_sh_DATA) -c $(simple_SOURCES) $(pkgdatadir)/examples/eo/simple
+	mkdir -p $(datadir)/eo/examples/isa
+	$(install_sh_DATA) -c $(eo_isa_SOURCES) $(datadir)/eo/examples/isa
+	mkdir -p $(datadir)/eo/examples/evas
+	$(install_sh_DATA) -c $(evas_SOURCES) $(datadir)/eo/examples/evas
+	mkdir -p $(datadir)/eo/examples/simple
+	$(install_sh_DATA) -c $(simple_SOURCES) $(datadir)/eo/examples/simple
 
 uninstall-local:
 	for f in $(eo_isa_SOURCES) ; do \
-	  rm -f $(pkgdatadir)/examples/eo/isa/$$f ; \
+	  rm -f $(datadir)/eo/examples/isa/$$f ; \
 	done
 	for f in $(evas_SOURCES) ; do \
-	  rm -f $(pkgdatadir)/examples/eo/evas/$$f ; \
+	  rm -f $(datadir)/eo/examples/evas/$$f ; \
 	done
 	for f in $(simple_SOURCES) ; do \
-	  rm -f $(pkgdatadir)/examples/eo/simple/$$f ; \
+	  rm -f $(datadir)/eo/examples/simple/$$f ; \
 	done

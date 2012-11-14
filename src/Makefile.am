@@ -21,11 +21,11 @@ include Makefile_Embryo.am
 .PHONY: benchmark examples
 
 benchmark:
-	@$(MAKE) $(AM_MAKEFLAGS) -C lib
+	@$(MAKE) $(AM_MAKEFLAGS)
 	@$(MAKE) $(AM_MAKEFLAGS) -C benchmarks benchmark
 
 examples:
-	@make -C lib
+	@make
 	@$(MAKE) $(AM_MAKEFLAGS) -C examples examples
 
 install-examples:
