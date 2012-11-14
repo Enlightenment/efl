@@ -3268,7 +3268,7 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
 }
 
 EAPI EPhysics_Quaternion *
-ephysics_body_rotation_get(const EPhysics_Body *body)
+ephysics_body_rotation_get(const EPhysics_Body *body, EPhysics_Quaternion *rotation)
 {
    EPhysics_Quaternion *quat;
    btTransform trans;
@@ -3279,11 +3279,20 @@ ephysics_body_rotation_get(const EPhysics_Body *body)
         return NULL;
      }
 
+   if (!rotation)
+     {
+        quat = ephysics_quaternion_new();
+        if (!quat) return NULL;
+     }
+   else
+     quat = rotation;
+
    trans = _ephysics_body_transform_get(body);
-   quat = ephysics_quaternion_new(trans.getRotation().x(),
-                                  trans.getRotation().y(),
-                                  trans.getRotation().z(),
-                                  trans.getRotation().getW());
+   quat->x = trans.getRotation().x();
+   quat->y = trans.getRotation().y();
+   quat->z = trans.getRotation().z();
+   quat->w = trans.getRotation().getW();
+
    return quat;
 }
 

@@ -7,18 +7,14 @@
 static void
 _pos_print_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
-   EPhysics_Quaternion *quat;
-   double rx, ry, rz, rw;
+   EPhysics_Quaternion quat;
    Evas_Coord x, y, z;
 
    ephysics_body_geometry_get(body, &x, &y, &z, NULL, NULL, NULL);
-
-   quat = ephysics_body_rotation_get(body);
-   ephysics_quaternion_get(quat, &rx, &ry, &rz, &rw);
-   free(quat);
+   ephysics_body_rotation_get(body, &quat);
 
    printf("Position X:%i Y:%i Z:%i\n", x, y, z);
-   printf("Rotation X:%lf Y:%lf Z:%lf W:%lf\n", rx, ry, rz, rw);
+   printf("Rotation X:%lf Y:%lf Z:%lf W:%lf\n", quat.x, quat.y, quat.z, quat.w);
 }
 
 static Eina_Bool

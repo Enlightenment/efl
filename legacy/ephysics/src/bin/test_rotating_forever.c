@@ -7,19 +7,15 @@
 static Eina_Bool
 _rotate_cb(void *data)
 {
-   EPhysics_Quaternion *quat_prev, *quat_delta, *quat;
+   EPhysics_Quaternion *quat_prev, quat_delta, quat;
    EPhysics_Body *body = data;
 
-   quat_prev = ephysics_body_rotation_get(body);
-   quat_delta = ephysics_quaternion_new(0, 0, -0.15, 0.98);
-   ephysics_quaternion_normalize(quat_delta);
-   quat = ephysics_quaternion_multiply(quat_delta, quat_prev);
-
-   ephysics_body_rotation_set(body, quat);
-
+   quat_prev = ephysics_body_rotation_get(body, NULL);
+   ephysics_quaternion_set(&quat_delta, 0, 0, -0.15, 0.98);
+   ephysics_quaternion_normalize(&quat_delta);
+   ephysics_body_rotation_set(
+      body, ephysics_quaternion_multiply(&quat_delta, quat_prev, &quat));
    free(quat_prev);
-   free(quat_delta);
-   free(quat);
 
    return EINA_TRUE;
 }
@@ -74,14 +70,13 @@ static void
 _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    double rx, ry, rz, rw, vrot, torque;
-   EPhysics_Quaternion *quat;
+   EPhysics_Quaternion quat;
 
    ephysics_body_angular_velocity_get(body, NULL, NULL, &vrot);
    ephysics_body_torques_get(body, NULL, NULL, &torque);
 
-   quat = ephysics_body_rotation_get(body);
-   ephysics_quaternion_get(quat, &rx, &ry, &rz, &rw);
-   free(quat);
+   ephysics_body_rotation_get(body, &quat);
+   ephysics_quaternion_get(&quat, &rx, &ry, &rz, &rw);
 
    ephysics_body_evas_object_update(body);
 

@@ -158,18 +158,28 @@ EAPI int ephysics_shutdown(void);
 typedef struct _EPhysics_Quaternion EPhysics_Quaternion;
 
 /**
+ * @struct _EPhysics_Quaternion
+ *
+ * Quaternion coordinates and rotation (w, x, y, z)
+ */
+struct _EPhysics_Quaternion
+{
+   double w; /**< rotation */
+   double x; /**< x coordinate */
+   double y; /**< y coordinate */
+   double z; /**< z coordinate */
+};
+
+/**
  * @brief
  * Create a new quaternion.
  *
- * @note It should be deleted with free() after usage is concluded.
- *
+ * By default a quaternion is created as identity  (w = 1, x = 0, y = 0, z = 0).
  * This values can be modified later by quaternion operations or set directly.
  *
- * @param x The x coordinate.
- * @param y The y coordinate.
- * @param z The z coordinate.
- * @param w The rotation.
  * @return The created quaternion or @c NULL on error.
+ *
+ * @note It should be deleted with free() after usage is concluded.
  *
  * @see ephysics_quaternion_set();
  * @see ephysics_quaternion_axis_angle_set();
@@ -179,7 +189,7 @@ typedef struct _EPhysics_Quaternion EPhysics_Quaternion;
  *
  * @ingroup EPhysics_Quaternion
  */
-EAPI EPhysics_Quaternion *ephysics_quaternion_new(double x, double y, double z, double w);
+EAPI EPhysics_Quaternion *ephysics_quaternion_new(void);
 
 /**
  * @brief
@@ -325,13 +335,13 @@ EAPI void ephysics_quaternion_inverse_scale(EPhysics_Quaternion *quat, double sc
  *
  * @param quat1 First quaternion to sum.
  * @param quat2 Second quaternion to sum.
+ * @param result Quaternion used to store the result. If it's @c NULL, a new
+ * quaternion will be allocated (and should be freed after usage).
  * @return The sum quaternion or @c NULL on error.
- *
- * @note It should be freed after usage.
  *
  * @ingroup EPhysics_Quaternion
  */
-EAPI EPhysics_Quaternion *ephysics_quaternion_sum(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+EAPI EPhysics_Quaternion *ephysics_quaternion_sum(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result);
 
 /**
  * @brief
@@ -339,13 +349,13 @@ EAPI EPhysics_Quaternion *ephysics_quaternion_sum(const EPhysics_Quaternion *qua
  *
  * @param quat1 First quaternion.
  * @param quat2 Second quaternion.
+ * @param result Quaternion used to store the result. If it's @c NULL, a new
+ * quaternion will be allocated (and should be freed after usage).
  * @return The difference between @p quat1 and @p quat2, or @c NULL on error.
- *
- * @note It should be freed after usage.
  *
  * @ingroup EPhysics_Quaternion
  */
-EAPI EPhysics_Quaternion *ephysics_quaternion_diff(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+EAPI EPhysics_Quaternion *ephysics_quaternion_diff(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result);
 
 /**
  * @brief
@@ -353,14 +363,14 @@ EAPI EPhysics_Quaternion *ephysics_quaternion_diff(const EPhysics_Quaternion *qu
  *
  * @param quat1 First quaternion.
  * @param quat2 Second quaternion.
+ * @param result Quaternion used to store the result. If it's @c NULL, a new
+ * quaternion will be allocated (and should be freed after usage).
  * @return The @p quat1 multiplied by @p quat2 on the right, or @c NULL
  * on error.
  *
- * @note It should be freed after usage.
- *
  * @ingroup EPhysics_Quaternion
  */
-EAPI EPhysics_Quaternion *ephysics_quaternion_multiply(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2);
+EAPI EPhysics_Quaternion *ephysics_quaternion_multiply(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result);
 
 /**
  * @brief
@@ -374,14 +384,14 @@ EAPI EPhysics_Quaternion *ephysics_quaternion_multiply(const EPhysics_Quaternion
  * @param ratio The ratio between @p quat1 and @p quat2 to interpolate. If
  * @p ratio = 0, the result is @p quat1, if @p ratio = 1, the result is
  * @p quat2.
+ * @param result Quaternion used to store the result. If it's @c NULL, a new
+ * quaternion will be allocated (and should be freed after usage).
  * @return The result of slerp between @p quat1 and @p quat2, or @c NULL
  * on error.
  *
- * @note It should be freed after usage.
- *
  * @ingroup EPhysics_Quaternion
  */
-EAPI EPhysics_Quaternion *ephysics_quaternion_slerp(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, double ratio);
+EAPI EPhysics_Quaternion *ephysics_quaternion_slerp(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, double ratio, EPhysics_Quaternion *result);
 
 /**
  * @brief
@@ -3738,18 +3748,19 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
  * @brief
  * Get body's rotation quaternion.
  *
- * By default rotation is 0 degree on all axes.
+ * By default rotation is 0 degree on all axes (1, 0, 0, 0).
  *
  * @param body The physics body.
- * @return A quaternion or @c NULL on error. It should be freed with free()
- * after usage.
+ * @param rotation Quaternion used to store the result. If it's @c NULL, a new
+ * quaternion will be allocated (and should be freed after usage).
+ * @return A quaternion or @c NULL on error.
  *
  * @see ephysics_body_rotation_set()
  * @see ephysics_quaternion_get()
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Quaternion *ephysics_body_rotation_get(const EPhysics_Body *body);
+EAPI EPhysics_Quaternion *ephysics_body_rotation_get(const EPhysics_Body *body, EPhysics_Quaternion *rotation);
 
 /**
  * @brief

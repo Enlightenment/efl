@@ -118,14 +118,14 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    double mass, friction, restitution, lin_damping, ang_damping;
    double lin_sleeping, ang_sleeping;
    EPhysics_Body_Material material;
-   EPhysics_Quaternion *rotation;
+   EPhysics_Quaternion rotation;
    Evas_Object *body_image;
    EPhysics_World *world;
    Body_Data *bd = data;
    EPhysics_Body *body = bd->body;
 
    mass = ephysics_body_mass_get(body);
-   rotation = ephysics_body_rotation_get(body);
+   ephysics_body_rotation_get(body, &rotation);
    friction = ephysics_body_friction_get(body);
    restitution = ephysics_body_restitution_get(body);
    ephysics_body_damping_get(body, &lin_damping, &ang_damping);
@@ -152,7 +152,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, mass);
-   ephysics_body_rotation_set(body, rotation);
+   ephysics_body_rotation_set(body, &rotation);
    ephysics_body_friction_set(body, friction);
    ephysics_body_restitution_set(body, restitution);
    ephysics_body_damping_set(body, lin_damping, ang_damping);
@@ -168,7 +168,6 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
                              elm_slider_value_get(bd->controls.force.torque));
 
    bd->body = body;
-   free(rotation);
 }
 
 static void
@@ -229,13 +228,10 @@ _density_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _rotation_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   EPhysics_Quaternion *quat;
+   EPhysics_Quaternion quat;
    Body_Data *bd = data;
-
-   quat = ephysics_quaternion_new(0, 0, 0, 0);
-   ephysics_quaternion_euler_set(quat, 0, 0, elm_slider_value_get(obj));
-   ephysics_body_rotation_set(bd->body, quat);
-   free(quat);
+   ephysics_quaternion_euler_set(&quat, 0, 0, elm_slider_value_get(obj));
+   ephysics_body_rotation_set(bd->body, &quat);
 }
 
 static void
