@@ -915,6 +915,9 @@ EAPI void                  elm_map_overlay_region_get(const Elm_Map_Overlay *ove
  *
  * For alpha channel, 0 represents completely transparent, and 255, opaque.
  *
+ * Function supports only ELM_MAP_OVERLAY_TYPE_CLASS, ELM_MAP_OVERLAY_TYPE_DEFAULT
+ * and ELM_MAP_OVERLAY_TYPE_ROUTE Elm_Map_Overlay_Type types.
+ *
  * @see elm_map_overlay_color_get()
  *
  * @ingroup Map
