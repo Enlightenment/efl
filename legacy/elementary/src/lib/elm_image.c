@@ -221,6 +221,8 @@ _elm_image_edje_file_set(Evas_Object *obj,
         evas_object_smart_member_add(sd->img, obj);
         if (sd->show) evas_object_show(sd->img);
         evas_object_clip_set(sd->img, pclip);
+        evas_object_event_callback_add
+           (sd->img, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
      }
 
    sd->edje = EINA_TRUE;
