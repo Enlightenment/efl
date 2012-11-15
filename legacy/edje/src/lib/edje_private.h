@@ -530,8 +530,8 @@ struct _Edje_Image_Directory
    Edje_Image_Directory_Entry *entries; /* an array of Edje_Image_Directory_Entry */
    unsigned int entries_count;
 
-   Edje_Image_Directory_Set *sets;
-   unsigned int sets_count; /* an array of Edje_Image_Directory_Set */
+   Edje_Image_Directory_Set *sets; /* an array of Edje_Image_Directory_Set */
+   unsigned int sets_count;
 };
 
 struct _Edje_Image_Directory_Entry

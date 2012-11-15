@@ -60,6 +60,7 @@ filesdir = $(pkgdatadir)/examples
 files_DATA = \
 $(EDCS) \
 bubble.png \
+bubble-blue.png \
 red.png \
 test.png \
 Vera.ttf \

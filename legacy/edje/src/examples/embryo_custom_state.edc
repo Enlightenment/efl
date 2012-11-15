@@ -1,10 +1,29 @@
 collections {
+   images {
+      image: "bubble.png" COMP;
+      image: "bubble-blue.png" COMP;
+   }
+
    group { name: "main";
       script {
          /* define 3 global vars to hold the rotation values */
          public rotx;
          public roty;
          public rotz;
+
+         public change_image(part[], img[]) {
+               new imgid;
+               new partid;
+
+               partid = get_part_id(part);
+               imgid = get_image_id(img);
+
+               custom_state(partid, "default", 0.0);
+               /* change the rotation in the custom state */
+               set_state_val(partid, STATE_IMAGE, imgid);
+               /* apply the custom state */
+               set_state(partid, "custom", 0.0);
+        }
       }
       parts {
          part { name: "bg";
@@ -13,6 +32,18 @@ collections {
                color: 255 255 255 255;
             }
          }
+         part { name: "img";
+            type: IMAGE;
+            description { state: "default" 0.0;
+              image { normal: "bubble.png"; }
+            }
+            /* Dummy state - otherwise edje_cc discards bubble-blue.png
+               as it thinks it's unused */
+            description { state: "foo" 0.0;
+              image { normal: "bubble-blue.png"; }
+            }
+         }
+            
          part { name: "title";
             type: TEXT;
             description { state: "default" 0.0;
@@ -58,6 +89,18 @@ collections {
                   font: "Sans";
                   size: 12;
                   align: 0.9 0.5;
+               }
+            }
+         }
+         part { name: "setimg";
+            type: TEXT;
+            description { state: "default" 0.0;
+              color: 0 0 0 255;
+              text {
+                text: "Change image";
+                font: "Sans";
+                  size: 12;
+                  align: 0.5 1;
                }
             }
          }
@@ -127,6 +170,13 @@ collections {
                set_state(PART:"rect", "custom", 0.0);
                snprintf(buf, sizeof(buf), "Rot Z (%d)", round(z));
                set_text(PART:"Z", buf);
+            }
+         }
+         program {
+            signal: "mouse,down,1";
+            source: "setimg";
+            script {
+               change_image("img", "bubble-blue.png");
             }
          }
       }

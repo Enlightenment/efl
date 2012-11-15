@@ -828,6 +828,33 @@ _edje_embryo_fn_get_part_id(Embryo_Program *ep, Embryo_Cell *params)
    return -1;
 }
 
+/* get_image_id(img[]) */
+static Embryo_Cell
+_edje_embryo_fn_get_image_id(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Edje_File *file;
+   Edje_Image_Directory *dir;
+   Edje_Image_Directory_Entry *dirent;
+   char *p;
+   unsigned int i, j;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   GETSTR(p, params[1]);
+   if (!p) return -1;
+   file = ed->file;
+   if (!file) return -1;
+   dir = file->image_dir;
+   dirent = dir->entries;
+   for (i = 0; i < dir->entries_count; i++, dirent++)
+     {
+        if (!dirent->entry) continue;
+        if (!strcmp(dirent->entry, p)) return dirent->id;
+     }
+   return -1;
+}
+
 static Embryo_Cell
 _edje_embryo_fn_play_sample(Embryo_Program *ep, Embryo_Cell *params)
 {
@@ -3022,6 +3049,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    embryo_program_native_call_add(ep, "get_part_id", _edje_embryo_fn_get_part_id);
+   embryo_program_native_call_add(ep, "get_image_id", _edje_embryo_fn_get_image_id);
    embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
    embryo_program_native_call_add(ep, "get_state", _edje_embryo_fn_get_state);
    embryo_program_native_call_add(ep, "set_tween_state", _edje_embryo_fn_set_tween_state);
