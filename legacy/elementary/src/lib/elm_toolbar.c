@@ -267,6 +267,59 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
    if (sumf != 0) *bl = (Evas_Coord)(((sumf + sumb) * view) / sumf);
 }
 
+static Eina_Bool
+_elm_toolbar_item_coordinates_calc(Elm_Object_Item *item,
+                                   Elm_Toolbar_Item_Scrollto_Type type,
+                                   Evas_Coord *x,
+                                   Evas_Coord *y,
+                                   Evas_Coord *w,
+                                   Evas_Coord *h)
+{
+   Evas_Coord ix, iy, iw, ih, bx, by, vw, vh;
+
+   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
+
+   sd->s_iface->content_viewport_size_get(WIDGET(item), &vw, &vh);
+   evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
+   evas_object_geometry_get(VIEW(item), &ix, &iy, &iw, &ih);
+
+   switch (type)
+     {
+      case ELM_TOOLBAR_ITEM_SCROLLTO_IN:
+         *x = ix - bx;
+         *y = iy - by;
+         *w = iw;
+         *h = ih;
+         break;
+
+      case ELM_TOOLBAR_ITEM_SCROLLTO_FIRST:
+         *x = ix - bx;
+         *y = iy - by;
+         *w = vw;
+         *h = vh;
+         break;
+
+      case ELM_TOOLBAR_ITEM_SCROLLTO_MIDDLE:
+         *x = ix - bx + (iw / 2) - (vw / 2);
+         *y = iy - by + (ih / 2) - (vh / 2);
+         *w = vw;
+         *h = vh;
+         break;
+
+      case ELM_TOOLBAR_ITEM_SCROLLTO_LAST:
+         *x = ix - bx + iw - vw;
+         *y = iy - by + ih - vh;
+         *w = vw;
+         *h = vh;
+         break;
+
+      default:
+         return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 static void
 _resize_job(void *data)
 {
@@ -3290,33 +3343,27 @@ elm_toolbar_reorder_mode_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_toolbar_item_show(Elm_Object_Item *it)
+elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type)
 {
-   Evas_Coord x, y, w, h, bx, by;
+   Evas_Coord x, y, w, h;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *)it;
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
-   evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
-   evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   x = x - bx;
-   y = y - by;
-   sd->s_iface->content_region_show(WIDGET(item), x, y, w, h);
+   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+     sd->s_iface->content_region_show(WIDGET(item), x, y, w, h);
 }
 
 EAPI void
-elm_toolbar_item_bring_in(Elm_Object_Item *it)
+elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type)
 {
-   Evas_Coord x, y, w, h, bx, by;
+   Evas_Coord x, y, w, h;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *)it;
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
-   evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
-   evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   x = x - bx;
-   y = y - by;
-   sd->s_iface->region_bring_in(WIDGET(item), x, y, w, h);
+   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+     sd->s_iface->region_bring_in(WIDGET(item), x, y, w, h);
 }

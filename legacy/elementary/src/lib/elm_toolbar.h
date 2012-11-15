@@ -81,6 +81,20 @@ typedef enum
    ELM_TOOLBAR_SHRINK_LAST /**< Indicates error if returned by elm_toolbar_shrink_mode_get() */
 } Elm_Toolbar_Shrink_Mode;
 
+/**
+ * Defines where to position the item in the toolbar.
+ *
+ * @ingroup Toolbar
+ */
+typedef enum
+{
+   ELM_TOOLBAR_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
+   ELM_TOOLBAR_ITEM_SCROLLTO_IN = (1 << 0),   /**< to the nearest viewport */
+   ELM_TOOLBAR_ITEM_SCROLLTO_FIRST = (1 << 1),   /**< to the first of viewport */
+   ELM_TOOLBAR_ITEM_SCROLLTO_MIDDLE = (1 << 2),   /**< to the middle of viewport */
+   ELM_TOOLBAR_ITEM_SCROLLTO_LAST = (1 << 3)   /**< to the last of viewport */
+} Elm_Toolbar_Item_Scrollto_Type;
+
 typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of a Elm_Toolbar_Item. Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del(). */
 
 /**
@@ -1007,7 +1021,7 @@ EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Objec
  * @since 1.8
  * @ingroup Toolbar
  */
-EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it);
+EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type);
 
 /**
  * Show a specific item with scroll animation, when the toolbar can be scrolled.
@@ -1019,7 +1033,7 @@ EAPI void                          elm_toolbar_item_show(Elm_Object_Item *it);
  * @since 1.8
  * @ingroup Toolbar
  */
-EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it);
+EAPI void                          elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type);
 
 /**
  * @}
