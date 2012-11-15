@@ -953,9 +953,8 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *tb, *ph, *sl;
+   Evas_Object *win, *bx, *tb, *ph;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
-   Elm_Object_Item *tb_it;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("toolbar9", "Toolbar 9");
@@ -981,15 +980,15 @@ test_toolbar9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph3 = elm_photo_add(win);
    ph4 = elm_photo_add(win);
 
-   tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", _tb_sel1_cb, ph1);
-   tb_it = elm_toolbar_item_append(tb, "folder-new", "World", _tb_sel2_cb, ph1);
-   tb_it = elm_toolbar_item_append(tb, "object-rotate-right", "H", _tb_sel3_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "mail-send", "Comes", _tb_sel4_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "edit-cut", "Shrink", _tb_sel4_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "edit-copy", "Mode", _tb_sel4_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "edit-paste", "is set to", _tb_sel4_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "edit-delete", "Menu", _tb_sel4_cb, ph4);
-   tb_it = elm_toolbar_item_append(tb, "clock", "Elementary", _tb_sel5_cb, ph4);
+   elm_toolbar_item_append(tb, "document-print", "Hello", _tb_sel1_cb, ph1);
+   elm_toolbar_item_append(tb, "folder-new", "World", _tb_sel2_cb, ph1);
+   elm_toolbar_item_append(tb, "object-rotate-right", "H", _tb_sel3_cb, ph4);
+   elm_toolbar_item_append(tb, "mail-send", "Comes", _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-cut", "Shrink", _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-copy", "Mode", _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-paste", "is set to", _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "edit-delete", "Menu", _tb_sel4_cb, ph4);
+   elm_toolbar_item_append(tb, "clock", "Elementary", _tb_sel5_cb, ph4);
 
    evas_object_smart_callback_add(tb, "clicked", toolbar_clicked_cb, NULL);
 
