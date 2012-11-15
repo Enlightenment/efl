@@ -622,17 +622,20 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    /* GRAYSCLAE => RGB YCbCr => RGB and YCCK => CMYK */
    switch (cinfo.jpeg_color_space)
      {
-     case JCS_UNKNOWN:
-       break;
-     case JCS_GRAYSCALE:
-     case JCS_RGB:
-     case JCS_YCbCr:
-       cinfo.out_color_space = JCS_RGB;
-       break;
-     case JCS_CMYK:
-     case JCS_YCCK:
-       cinfo.out_color_space = JCS_CMYK;
-       break;
+      case JCS_UNKNOWN:
+        break;
+      case JCS_GRAYSCALE:
+      case JCS_RGB:
+      case JCS_YCbCr:
+        cinfo.out_color_space = JCS_RGB;
+        break;
+      case JCS_CMYK:
+      case JCS_YCCK:
+        cinfo.out_color_space = JCS_CMYK;
+        break;
+      default:
+        cinfo.out_color_space = JCS_RGB;
+        break;
      }
 
 /* head decoding */
