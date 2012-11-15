@@ -760,7 +760,7 @@ fi
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
 
 # TODO: better way to force those instead of is secondary check
-if test "x${efl_lib_zlib}" != "xyes" -o "x${efl_lib_libjpeg}" != "xyes" ; then
+if test "x${efl_lib_zlib}" != "xyes" || test "x${efl_lib_libjpeg}" != "xyes" ; then
    AC_MSG_ERROR([Required EET libraries were not found.])
 fi
 
@@ -1286,7 +1286,7 @@ fi
 # harfbuzz support
 have_harfbuzz="no"
 have_harfbuzz_ft="no"
-if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
+if test "x${want_harfbuzz}" = "xyes" || test "x${want_harfbuzz}" = "xauto" ; then
    PKG_CHECK_EXISTS([harfbuzz >= 0.9.0],
       [
        have_harfbuzz="yes"
@@ -1385,7 +1385,7 @@ AC_MSG_RESULT([${have_evas_engine_software_xlib}])
 # If software_x11 is available, define everything needed for X11
 
 have_evas_engine_software_x11="no"
-if test "x${have_evas_engine_software_xlib}" = "xyes" -o "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xyes" -o "x${have_evas_engine_software_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_software_xlib}" = "xyes" || test "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xyes" || test "x${have_evas_engine_software_xcb}" = "xstatic" ; then
    have_evas_engine_software_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_SOFTWARE_X11], [1], [Build software X11 engine])
 fi
@@ -1455,7 +1455,7 @@ AC_MSG_RESULT([${have_evas_engine_gl_xlib}])
 # If opengl_x11 is available, define everything needed for X11
 
 have_evas_engine_gl_x11="no"
-if test "x${have_evas_engine_gl_xlib}" = "xyes" -o "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xyes" -o "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_gl_xlib}" = "xyes" || test "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xyes" || test "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
    have_evas_engine_gl_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_GL_X11], [1], [Build OpenGL X11 engine])
 fi
@@ -1555,7 +1555,7 @@ case "$host_os" in
    mingw*)
       ;;
    *)
-      if test "x${have_evas_image_loader_jpeg}" = "xyes" -o "x${have_evas_image_loader_jpeg}" = "xstatic"; then
+      if test "x${have_evas_image_loader_jpeg}" = "xyes" || test "x${have_evas_image_loader_jpeg}" = "xstatic"; then
          AC_DEFINE([EVAS_BUILD_SAVER_JPEG], [1], [Build JPEG saver])
          have_evas_image_saver_jpeg="yes"
       fi
