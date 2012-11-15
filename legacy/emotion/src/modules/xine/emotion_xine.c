@@ -1169,7 +1169,7 @@ em_meta_get(void *ef, int meta)
 }
 
 static Eina_Bool
-_em_fd_active(void *data, Ecore_Fd_Handler *fdh)
+_em_fd_active(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 {
    void *buf;
    int fd, len;
