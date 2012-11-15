@@ -2277,27 +2277,21 @@ elm_config_preferred_engine_set(const char *engine)
 }
 
 EAPI const char *
-elm_config_indicator_service_0_get(void)
+elm_config_indicator_service_get(int rotation)
 {
-   return _elm_config->indicator_service_0;
-}
-
-EAPI const char *
-elm_config_indicator_service_90_get(void)
-{
-   return _elm_config->indicator_service_90;
-}
-
-EAPI const char *
-elm_config_indicator_service_180_get(void)
-{
-   return _elm_config->indicator_service_180;
-}
-
-EAPI const char *
-elm_config_indicator_service_270_get(void)
-{
-   return _elm_config->indicator_service_270;
+   switch (rotation)
+     {
+      case 0:
+        return _elm_config->indicator_service_0;
+      case 90:
+        return _elm_config->indicator_service_90;
+      case 180:
+        return _elm_config->indicator_service_180;
+      case 270:
+        return _elm_config->indicator_service_270;
+      default:
+        return NULL;
+     }
 }
 
 void

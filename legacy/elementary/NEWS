@@ -31,6 +31,7 @@ Improvements:
    * Plug widget handles image object deletion
    * Handle COMPOUND_TEXT cnp
    * Conformant widget handles displaymode change related with keypad.
+   * Conformant widget handles indicator service.
 
 Fixes:
 

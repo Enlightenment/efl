@@ -683,3 +683,8 @@
 
         * Add elm_genlist_nth_item_get
         * Add elm_gengrid_nth_item_get
+
+2012-11-15  Jiyoun Park (jypark)
+
+        * Support indicator service in elm_conformant. elm conformant can manage
+          indicator(elm_plug).

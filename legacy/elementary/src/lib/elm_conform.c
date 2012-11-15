@@ -145,7 +145,10 @@ _conformant_part_sizing_eval(Evas_Object *obj,
              ;
 #endif
           }
-        _conformant_part_size_hints_set(obj, sd->indicator, sx, sy, sw, sh);
+        if (((sd->rot == 90) || (sd->rot == 270)) && sd->landscape_indicator)
+          _conformant_part_size_hints_set(obj, sd->landscape_indicator, sx, sy, sw, sh);
+        else if (((sd->rot == 0) || (sd->rot == 180)) && sd->portrait_indicator)
+          _conformant_part_size_hints_set(obj, sd->portrait_indicator, sx, sy, sw, sh);
      }
 
    if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
@@ -212,17 +215,7 @@ _conformant_parts_swallow(Evas_Object *obj)
    sd->scroller = NULL;
 
    //Indicator
-   if (!sd->indicator)
-     {
-        sd->indicator = evas_object_rectangle_add(e);
-        evas_object_size_hint_min_set(sd->indicator, -1, 0);
-        evas_object_size_hint_max_set(sd->indicator, -1, 0);
-     }
-   else
-     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_INDICATOR_PART);
-
-   evas_object_color_set(sd->indicator, 0, 0, 0, 0);
-   elm_layout_content_set(obj, "elm.swallow.indicator", sd->indicator);
+   //Indicator swallow can occur Only indicator show or rotation change
 
    //Virtual Keyboard
    if (!sd->virtualkeypad)
@@ -262,6 +255,260 @@ _conformant_parts_swallow(Evas_Object *obj)
 
    evas_object_color_set(sd->softkey, 0, 0, 0, 0);
    elm_layout_content_set(obj, "elm.swallow.softkey", sd->softkey);
+}
+
+static Eina_Bool
+_indicator_connect_cb(void *data)
+{
+   const char   *indicator_serv_name;
+   int           rot = 0;
+   Elm_Conformant_Smart_Data *sd = data;
+
+   if (!sd) return ECORE_CALLBACK_CANCEL;
+   if (sd->indmode != ELM_WIN_INDICATOR_SHOW) return ECORE_CALLBACK_CANCEL;
+
+   rot = sd->rot;
+
+   indicator_serv_name = elm_config_indicator_service_get(rot);
+   if (!indicator_serv_name)
+     {
+        DBG("Conformant cannot find indicator service name: Rotation=%d\n",rot);
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   if ((rot == 90) || (rot == 270))
+     {
+        if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
+          {
+             DBG("Conformant connect to server[%s]\n", indicator_serv_name);
+             return ECORE_CALLBACK_CANCEL;
+          }
+     }
+   else
+     {
+        if (elm_plug_connect(sd->portrait_indicator, indicator_serv_name, 0, EINA_FALSE))
+          {
+             DBG("Conformant connect to server[%s]\n", indicator_serv_name);
+             return ECORE_CALLBACK_CANCEL;
+          }
+     }
+
+   ecore_timer_interval_set(sd->indi_timer, 1);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_indicator_disconnected(void *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *conform = data;
+
+   ELM_CONFORMANT_DATA_GET(conform, sd);
+
+   sd->indi_timer = ecore_timer_add(1, _indicator_connect_cb, sd);
+
+}
+
+static Evas_Object *
+_create_portrait_indicator(Evas_Object *obj)
+{
+   Evas_Object *port_indicator = NULL;
+   const char *port_indicator_serv_name;
+
+   ELM_CONFORMANT_DATA_GET(obj, sd);
+
+   port_indicator_serv_name = elm_config_indicator_service_get(sd->rot);
+   if (!port_indicator_serv_name)
+     {
+        DBG("Conformant cannot get portrait indicator service name\n");
+        return NULL;
+     }
+
+   port_indicator = elm_plug_add(obj);
+   if (!port_indicator)
+     {
+        DBG("Conformant cannot create plug to server[%s]\n", port_indicator_serv_name);
+        return NULL;
+     }
+
+   if (!elm_plug_connect(port_indicator, port_indicator_serv_name, 0, EINA_FALSE))
+     {
+        DBG("Conformant cannot connect to server[%s]\n", port_indicator_serv_name);
+        return NULL;
+     }
+
+   elm_widget_sub_object_add(obj, port_indicator);
+   evas_object_smart_callback_add(port_indicator, "image.deleted", _indicator_disconnected, obj);
+
+   evas_object_size_hint_min_set(port_indicator, -1, 0);
+   evas_object_size_hint_max_set(port_indicator, -1, 0);
+
+   return port_indicator;
+}
+
+static Evas_Object *
+_create_landscape_indicator(Evas_Object *obj)
+{
+   Evas_Object *land_indicator = NULL;
+   const char *land_indicator_serv_name;
+
+   ELM_CONFORMANT_DATA_GET(obj, sd);
+
+   land_indicator_serv_name = elm_config_indicator_service_get(sd->rot);
+   if (!land_indicator_serv_name)
+     {
+        DBG("Conformant cannot get portrait indicator service name\n");
+        return NULL;
+     }
+
+   land_indicator = elm_plug_add(obj);
+   if (!land_indicator)
+     {
+        DBG("Conformant cannot create plug to server[%s]\n", land_indicator_serv_name);
+        return NULL;
+     }
+
+   if (!elm_plug_connect(land_indicator, land_indicator_serv_name, 0, EINA_FALSE))
+     {
+        DBG("Conformant cannot connect to server[%s]\n", land_indicator_serv_name);
+        return NULL;
+     }
+
+   elm_widget_sub_object_add(obj, land_indicator);
+   evas_object_smart_callback_add(land_indicator, "image.deleted",_indicator_disconnected, obj);
+
+   evas_object_size_hint_min_set(land_indicator, -1, 0);
+   evas_object_size_hint_max_set(land_indicator, -1, 0);
+   return land_indicator;
+}
+
+static void
+_indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
+{
+   Evas_Object *old_indi = NULL;
+   ELM_CONFORMANT_DATA_GET(conformant, sd);
+   sd->indmode = indmode;
+
+   if (indmode == ELM_WIN_INDICATOR_SHOW)
+     {
+        old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+
+        //create new indicator
+        if (!old_indi)
+          {
+             if ((sd->rot == 90)||(sd->rot == 270))
+               {
+                  if (!sd->landscape_indicator)
+                    sd->landscape_indicator = _create_landscape_indicator(conformant);
+
+                  if (!sd->landscape_indicator) return;
+
+                  evas_object_show(sd->landscape_indicator);
+                  elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
+               }
+             else
+               {
+                  if (!sd->portrait_indicator)
+                    sd->portrait_indicator = _create_portrait_indicator(conformant);
+
+                  if (!sd->portrait_indicator) return;
+
+                  evas_object_show(sd->portrait_indicator);
+                  elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
+               }
+
+          }
+        elm_object_signal_emit(conformant, "elm,state,indicator,show", "elm");
+     }
+   else
+     {
+        old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+        if (old_indi)
+          {
+             evas_object_hide(old_indi);
+          }
+        elm_object_signal_emit(conformant, "elm,state,indicator,hide", "elm");
+     }
+}
+
+static void
+_indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode ind_o_mode)
+{
+   ELM_CONFORMANT_DATA_GET(conformant, sd);
+   sd->ind_o_mode = ind_o_mode;
+   //TODO: opacity change
+}
+
+static void
+_on_indicator_mode_changed(void *data,
+                    Evas_Object *obj,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *conformant = data;
+   Evas_Object *win = obj;
+
+   Elm_Win_Indicator_Mode indmode;
+   Elm_Win_Indicator_Opacity_Mode ind_o_mode;
+
+   ELM_CONFORMANT_DATA_GET(conformant, sd);
+
+   indmode = elm_win_indicator_mode_get(win);
+   ind_o_mode = elm_win_indicator_opacity_get(win);
+   if (indmode == sd->indmode)
+     {
+        if (ind_o_mode == sd->ind_o_mode) return;
+        else _indicator_opacity_set(conformant, ind_o_mode);
+     }
+   else
+     _indicator_mode_set(conformant, indmode);
+
+}
+
+static void
+_on_rotation_changed(void *data,
+              Evas_Object *obj,
+              void *event_info __UNUSED__)
+{
+   int rot = 0;
+   Evas_Object *win = obj;
+   Evas_Object *conformant = data;
+   Evas_Object *old_indi = NULL;
+
+   ELM_CONFORMANT_DATA_GET(data, sd);
+
+   rot = elm_win_rotation_get(win);
+
+   if (rot == sd->rot) return;
+
+   sd->rot = rot;
+   old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+   /* this means ELM_WIN_INDICATOR_SHOW never be set.we don't need to change indicator type*/
+   if (!old_indi) return;
+
+   if (old_indi)
+     evas_object_hide(elm_layout_content_unset(old_indi, "elm.swallow.indicator"));
+
+   if ((rot == 90) || (rot == 270) || (rot == -90) || (rot == -270))
+     {
+        if (!sd->landscape_indicator)
+          sd->landscape_indicator = _create_landscape_indicator(conformant);
+
+        if (!sd->landscape_indicator) return;
+
+        evas_object_show(sd->landscape_indicator);
+        elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
+     }
+   else
+     {
+        if (!sd->portrait_indicator)
+          sd->portrait_indicator = _create_portrait_indicator(conformant);
+
+        if (!sd->portrait_indicator) return;
+
+        evas_object_show(sd->portrait_indicator);
+        elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
+     }
 }
 
 static Eina_Bool
@@ -531,6 +778,9 @@ _elm_conformant_smart_add(Evas_Object *obj)
 
    _conformant_parts_swallow(obj);
 
+   priv->landscape_indicator = NULL;
+   priv->portrait_indicator = NULL;
+
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _move_resize_cb, obj);
    evas_object_event_callback_add
@@ -549,6 +799,22 @@ _elm_conformant_smart_del(Evas_Object *obj)
 #endif
 
    if (sd->show_region_job) ecore_job_del(sd->show_region_job);
+   if (sd->indi_timer)
+     {
+        ecore_timer_del(sd->indi_timer);
+        sd->indi_timer = NULL;
+     }
+
+   if (sd->portrait_indicator)
+     {
+        evas_object_del(sd->portrait_indicator);
+        sd->portrait_indicator = NULL;
+     }
+   if (sd->landscape_indicator)
+     {
+        evas_object_del(sd->landscape_indicator);
+        sd->landscape_indicator = NULL;
+     }
 
    ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->base.del(obj);
 }
@@ -608,6 +874,7 @@ EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent)
 {
    Evas_Object *obj;
+   Evas_Object *top;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
@@ -616,6 +883,21 @@ elm_conformant_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
+
+   ELM_CONFORMANT_DATA_GET(obj, sd);
+
+   top = elm_widget_top_get(obj);
+   _on_indicator_mode_changed(obj, top, NULL);
+   _on_rotation_changed(obj, top, NULL);
+
+   sd->indmode = elm_win_indicator_mode_get(top);
+   sd->ind_o_mode = elm_win_indicator_opacity_get(top);
+   sd->rot = elm_win_rotation_get(top);
+
+   evas_object_smart_callback_add
+     (top, "indicator,prop,changed", _on_indicator_mode_changed, obj);
+   evas_object_smart_callback_add
+     (top, "rotation,changed", _on_rotation_changed, obj);
 
    return obj;
 }

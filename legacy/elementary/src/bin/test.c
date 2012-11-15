@@ -147,6 +147,8 @@ void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
+void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
+void test_conformant_indicator_service(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
 void test_floating(void *data, Evas_Object *obj, void *event_info);
 void test_launcher(void *data, Evas_Object *obj, void *event_info);
@@ -701,6 +703,8 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
    ADD_TEST(NULL, "Standardization", "Conformant 2", test_conformant2);
+   ADD_TEST(NULL, "Standardization", "Conformant indicator", test_conformant_indicator);
+   ADD_TEST(NULL, "Standardization", "Conformant indicator service", test_conformant_indicator_service);
 
    //------------------------------//
    ADD_TEST(NULL, "Helpers", "Store", test_store);
