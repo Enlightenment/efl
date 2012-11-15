@@ -1287,7 +1287,6 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
    if (!fash)
      {
         // this should not happen really, so let the user know he fucked up
-        system("format c:");
         return NULL;
      }
 
