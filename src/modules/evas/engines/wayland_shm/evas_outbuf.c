@@ -118,14 +118,12 @@ evas_outbuf_new_region_for_update(Outbuf *ob, int x, int y, int w, int h, int *c
 void 
 evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h) 
 {
-   DATA32 *dst, *src, *dest;
+   DATA32 *dst, *src;
    int bytes = 0;
 
    if (!ob->priv.dest) return;
 
    bytes = ((w * sizeof(int)) * h);
-   dest = (DATA32 *)((DATA8 *)(ob->priv.dest) + (y * bytes) + (x * 4));
-
    if (!ob->priv.buffer) 
      {
         Gfx_Func_Copy func;
@@ -140,7 +138,7 @@ evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x, int y, in
                   src = update->image.data + (yy * update->cache_entry.w);
                   dst = (DATA32 *)((DATA8 *)(ob->priv.dest) + 
                                    ((y + yy) * bytes));
-                  func(src, dst, w);
+                  func(src, dst + x, w);
                }
           }
      }
