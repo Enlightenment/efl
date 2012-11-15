@@ -1385,7 +1385,7 @@ AC_MSG_RESULT([${have_evas_engine_software_xlib}])
 # If software_x11 is available, define everything needed for X11
 
 have_evas_engine_software_x11="no"
-if test "x${have_evas_engine_software_xlib}" = "xyes" || test "x${have_evas_engine_software_xcb}" = "xyes" ; then
+if test "x${have_evas_engine_software_xlib}" = "xyes" -o "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xyes" -o "x${have_evas_engine_software_xcb}" = "xstatic" ; then
    have_evas_engine_software_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_SOFTWARE_X11], [1], [Build software X11 engine])
 fi
@@ -1455,7 +1455,7 @@ AC_MSG_RESULT([${have_evas_engine_gl_xlib}])
 # If opengl_x11 is available, define everything needed for X11
 
 have_evas_engine_gl_x11="no"
-if test "x${have_evas_engine_gl_xlib}" = "xyes" || test "x${have_evas_engine_gl_xcb}" = "xyes" ; then
+if test "x${have_evas_engine_gl_xlib}" = "xyes" -o "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xyes" -o "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
    have_evas_engine_gl_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_GL_X11], [1], [Build OpenGL X11 engine])
 fi
