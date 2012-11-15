@@ -151,7 +151,7 @@ _cmap_cmp_key_cb(const Eina_Rbtree *node, const void *key, int length EINA_UNUSE
 static Eina_Bool
 evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int load_data, int *error)
 {
-   DATA32      *ptr, *end, *head;
+   DATA32      *ptr, *end, *head = NULL;
    Eina_File   *f;
    const char  *map;
    size_t       length;
