@@ -1003,29 +1003,29 @@ _callbacks_unregister(Evas_Object *obj)
 
    if (!sd->target) return;
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb);
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb);
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MULTI_DOWN, _multi_down_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MULTI_DOWN, _multi_down_cb, obj);
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MULTI_MOVE, _multi_move_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MULTI_MOVE, _multi_move_cb, obj);
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_MULTI_UP, _multi_up_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_MULTI_UP, _multi_up_cb, obj);
 
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb);
-   evas_object_event_callback_del
-     (sd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb, obj);
 }
 
 /**
