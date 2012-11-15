@@ -837,7 +837,7 @@ _edje_embryo_fn_get_image_id(Embryo_Program *ep, Embryo_Cell *params)
    Edje_Image_Directory *dir;
    Edje_Image_Directory_Entry *dirent;
    char *p;
-   unsigned int i, j;
+   unsigned int i;
 
    CHKPARAM(1);
    ed = embryo_program_data_get(ep);
