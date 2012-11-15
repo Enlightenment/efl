@@ -109,15 +109,16 @@ _tex_format_index(GLuint format)
 static void
 _tex_2d(int intfmt, int w, int h, int fmt, int type)
 {
-#ifdef GL_TEXTURE_INTERNAL_FORMAT
-   int intfmtret = -1;
-#endif   
    glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
+# ifdef GL_GLES
+# else   
 // this is not in opengles!!! hrrrm   
-   if (glGetTexLevelParameteriv)
+//   if (glGetTexLevelParameteriv) // in case of weak symbols?
      {
+        int intfmtret = -1;
+        
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0,
                                  GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
         if (intfmtret != intfmt)
@@ -126,10 +127,11 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
              //        XXX send async err to evas
           }
      }
-   else
-     {
-        ERR("GL_TEXTURE_INTERNAL_FORMAT defined but no symbol loaded.");
-     }
+//   else
+//     {
+//        ERR("GL_TEXTURE_INTERNAL_FORMAT defined but no symbol loaded.");
+//     }
+# endif   
 #endif   
 }
 
@@ -591,11 +593,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
    glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #else
-   gc = NULL;
-   w = 0;
-   h = 0;
-   intformat = 0;
-   format = 0;
+   if (gc + w + h + intformat + format) return pt;
 #endif
    return pt;
 

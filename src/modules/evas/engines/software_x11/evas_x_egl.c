@@ -278,4 +278,6 @@ evas_software_egl_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
                                  int shape_dither, int destination_alpha)
 {
    return NULL;
+   w = h = rot = depth = draw = cmap = x_depth = grayscale = max_colors = mask = shape_dither = destination_alpha = 0;
+   disp = NULL; vis = NULL;
 }

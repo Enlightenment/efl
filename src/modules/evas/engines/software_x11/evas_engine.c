@@ -133,6 +133,7 @@ _output_egl_setup(int w, int h, int rot, Display *disp, Drawable draw,
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    
    return re;
+   debug = 0;
 }
 
 static void

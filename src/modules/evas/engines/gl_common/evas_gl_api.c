@@ -119,7 +119,7 @@ _evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint*
         precision[0] = 24; // floor(-log2((1.0/16777218.0)));
      }
    return;
-   shadertype = precisiontype = 0;
+   if (shadertype) shadertype = precisiontype = 0;
 #endif
 }
 
