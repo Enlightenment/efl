@@ -661,7 +661,7 @@ assemble(FILE * fout, FILE * fin)
    constvalue         *constptr;
    cell                mainaddr;
    int                 nametable, tags, libraries, publics, natives, pubvars;
-   int                 cod, defsize;
+   int                 cod;
 
 #if !defined NDEBUG
    /* verify that the opcode list is sorted (skip entry 1; it is reserved
@@ -775,7 +775,7 @@ assemble(FILE * fout, FILE * fin)
 //  #ifdef WORDS_BIGENDIAN
 //    hdr.flags|=AMX_FLAG_BIGENDIAN;
 //  #endif
-   defsize = hdr.defsize = sizeof(FUNCSTUB);
+   hdr.defsize = sizeof(FUNCSTUB);
    assert((hdr.defsize % sizeof(cell)) == 0);
    publics = hdr.publics = sizeof hdr;	/* public table starts right after the header */
    natives = hdr.natives = hdr.publics + numpublics * sizeof(FUNCSTUB);

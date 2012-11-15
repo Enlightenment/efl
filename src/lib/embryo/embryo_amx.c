@@ -115,7 +115,6 @@ _embryo_func_get(Embryo_Program *ep, int idx, char *funcname)
 static int
 _embryo_var_get(Embryo_Program *ep, int idx, char *varname, Embryo_Cell *ep_addr)
 {
-
   Embryo_Header    *hdr;
   Embryo_Func_Stub *var;
 
@@ -207,6 +206,8 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 #endif
    ep->flags = EMBRYO_FLAG_RELOC;
 
+#ifdef WORDS_BIGENDIAN
+/* until we do more... this is only used for bigendian */   
      {
 	Embryo_Cell cip, code_size, cip_end;
 	Embryo_Cell *code;
@@ -222,9 +223,10 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 #ifdef WORDS_BIGENDIAN
 	     embryo_swap_32(&(code[cip]));
 #endif
-
 	  }
      }
+#endif
+   
    /* init native api for handling floating point - default in embryo */
    _embryo_args_init(ep);
    _embryo_fp_init(ep);
@@ -734,11 +736,9 @@ embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
 EAPI Embryo_Cell
 embryo_data_heap_push(Embryo_Program *ep, int cells)
 {
-   Embryo_Header *hdr;
    Embryo_Cell    addr;
 
    if ((!ep) || (!ep->base)) return EMBRYO_CELL_NONE;
-   hdr = (Embryo_Header *)ep->base;
    if (ep->stk - ep->hea - (cells * sizeof(Embryo_Cell)) < STKMARGIN)
      return EMBRYO_CELL_NONE;
    addr = ep->hea;

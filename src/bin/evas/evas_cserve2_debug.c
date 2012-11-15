@@ -425,27 +425,21 @@ main(void)
    Font_Entry *fe;
 
    eina_init();
-
    _evas_cserve2_debug_log_dom = eina_log_domain_register
       ("evas_cserve2_debug", EINA_COLOR_BLUE);
-
    if (!_server_connect())
      {
         ERR("Could not connect to server.");
         return -1;
      }
-
    _debug_msg_send();
-
    fonts = _debug_msg_read();
-
    EINA_LIST_FREE(fonts, fe)
      {
         _font_entry_print(fe);
         _font_entry_free(fe);
      }
-
    _server_disconnect();
-
    eina_shutdown();
+   return 0;
 }

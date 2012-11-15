@@ -34,6 +34,7 @@ evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *ke
    size_t header_size = 30;
    uint8_t header[30];
 
+   // XXX: use eina_file to mmap things
    f = fopen(file, "rb");
    if (!f)
    {
@@ -72,9 +73,10 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
 {
    FILE *f;
    size_t file_size;
-   uint8_t *data, *decoded, *surface;
+   void *data, *decoded, *surface;
    int width, height;
 
+   // XXX: use eina_file to mmap things
    f = fopen(file, "rb");
    if (!f)
    {
@@ -121,6 +123,7 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto free_data;
      }
+   // XXX: this copy of the surface is inefficient
    memcpy(surface, decoded, width * height * 4);
    evas_common_image_premul(ie);  
 

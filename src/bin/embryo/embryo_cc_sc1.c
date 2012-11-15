@@ -3480,9 +3480,11 @@ static void
 doif(void)
 {
    int                 flab1, flab2;
+#if 0   
    int                 ifindent;
 
    ifindent = stmtindent;	/* save the indent of the "if" instruction */
+#endif   
    flab1 = getlabel();		/* get label number for false branch */
    test(flab1, TRUE, FALSE);	/*get expression, branch to flab1 if false */
    statement(NULL, FALSE);	/* if true, do a statement */

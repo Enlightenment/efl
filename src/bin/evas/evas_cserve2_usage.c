@@ -227,21 +227,16 @@ int
 main(void)
 {
    eina_init();
-
    _evas_cserve2_usage_log_dom = eina_log_domain_register
       ("evas_cserve2_usage", EINA_COLOR_BLUE);
-
    if (!_server_connect())
      {
         ERR("Could not connect to server.");
         return -1;
      }
-
    _usage_msg_send();
-
    _usage_msg_read();
-
    _server_disconnect();
-
    eina_shutdown();
+   return 0;
 }

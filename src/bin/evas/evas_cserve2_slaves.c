@@ -328,7 +328,11 @@ _slave_proc_path_get(const char *name)
         return eina_stringshare_add(name);
      }
 
-   getcwd(cwd, sizeof(cwd));
+   if (!getcwd(cwd, sizeof(cwd)))
+     {
+        WRN("getcwd() write returned < 0.");
+        return NULL;
+     }
    snprintf(buf, sizeof(buf), "%s/%s", cwd, name);
    if (!access(buf, X_OK))
      return eina_stringshare_add(buf);
@@ -475,8 +479,10 @@ _slave_thread_cb(void *data)
              continue;
           }
         sd->cmdanswer = sd->cb(sd, &cmd, sd->cmddata, sd->cb_data);
-        write(sd->write_fd, &cmd, sizeof(cmd));
-
+        if (write(sd->write_fd, &cmd, sizeof(cmd)) < 0)
+          {
+             WRN("_slave_thread_cb() write returned < 0.");
+          }
         n = read(sd->read_fd, &cmd, sizeof(cmd));
      }
 
