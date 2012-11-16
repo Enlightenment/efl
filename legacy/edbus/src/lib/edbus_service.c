@@ -684,7 +684,7 @@ _edbus_service_object_add(EDBus_Connection *conn, const char *path)
         if (strncmp(obj->path,  rootobj->path, pathlen) != 0)
           continue;
 
-        if (rootobj->path[pathlen] != '/')
+        if (rootobj->path[pathlen] != '/' && pathlen > 1)
           continue;
 
         conn->root_objs = eina_inlist_remove(conn->root_objs,
