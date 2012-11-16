@@ -2824,8 +2824,9 @@ _item_del(Elm_Gen_Item *it)
 static void
 _item_unselect(Elm_Gen_Item *it)
 {
-   if ((it->generation < GL_IT(it)->wsd->generation) || (!it->selected))
-     return;
+   if ((it->generation < GL_IT(it)->wsd->generation)) return;
+   _item_unhighlight(it); /* unhighlight the item first */
+   if (!it->selected) return; /* then check whether the item is selected */
 
    it->selected = EINA_FALSE;
    GL_IT(it)->wsd->selected = eina_list_remove(GL_IT(it)->wsd->selected, it);
@@ -2852,10 +2853,7 @@ _item_mouse_move_cb(void *data,
           {
              sd->on_hold = EINA_TRUE;
              if ((!sd->wasselected) && (!it->flipped))
-               {
-                  _item_unhighlight(it);
-                  _item_unselect(it);
-               }
+               _item_unselect(it);
           }
      }
    if (sd->multi_touched)
@@ -2950,10 +2948,7 @@ _item_mouse_move_cb(void *data,
              it->long_timer = NULL;
           }
         if (!sd->wasselected)
-          {
-             _item_unhighlight(it);
-             _item_unselect(it);
-          }
+          _item_unselect(it);
         if (dy < 0)
           {
              if (ady > adx)
@@ -3169,10 +3164,7 @@ _item_multi_down_cb(void *data,
    GL_IT(it)->wsd->prev_mx = ev->canvas.x;
    GL_IT(it)->wsd->prev_my = ev->canvas.y;
    if (!GL_IT(it)->wsd->wasselected)
-     {
-        _item_unhighlight(it);
-        _item_unselect(it);
-     }
+     _item_unselect(it);
    GL_IT(it)->wsd->wasselected = EINA_FALSE;
    GL_IT(it)->wsd->longpressed = EINA_FALSE;
    if (it->long_timer)
@@ -3777,20 +3769,14 @@ _access_activate_cb(void *data __UNUSED__,
              it->sel_cb(it);
           }
         else
-          {
-             _item_unhighlight(it);
-             _item_unselect(it);
-          }
+          _item_unselect(it);
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               {
-                  _item_unhighlight(sd->selected->data);
-                  _item_unselect(sd->selected->data);
-               }
+               _item_unselect(sd->selected->data);
           }
         else
           {
@@ -3798,11 +3784,8 @@ _access_activate_cb(void *data __UNUSED__,
              Elm_Gen_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it)
-                 {
-                    _item_unhighlight(it2);
-                    _item_unselect(it2);
-                 }
+                if (it2 != it)
+                  _item_unselect(it2);
           }
         _item_highlight(it);
         it->sel_cb(it);
@@ -3919,10 +3902,7 @@ _item_mouse_up_cb(void *data,
      {
         sd->longpressed = EINA_FALSE;
         if ((!sd->wasselected) && (!it->flipped))
-          {
-             _item_unhighlight(it);
-             _item_unselect(it);
-          }
+          _item_unselect(it);
         sd->wasselected = EINA_FALSE;
         return;
      }
@@ -3948,20 +3928,14 @@ _item_mouse_up_cb(void *data,
              it->sel_cb(it);
           }
         else
-          {
-             _item_unhighlight(it);
-             _item_unselect(it);
-          }
+          _item_unselect(it);
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               {
-                  _item_unhighlight(sd->selected->data);
-                  _item_unselect(sd->selected->data);
-               }
+               _item_unselect(sd->selected->data);
           }
         else
           {
@@ -3969,11 +3943,8 @@ _item_mouse_up_cb(void *data,
              Elm_Gen_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it)
-                 {
-                    _item_unhighlight(it2);
-                    _item_unselect(it2);
-                 }
+                if (it2 != it)
+                  _item_unselect(it2);
           }
         _item_highlight(it);
         it->sel_cb(it);
@@ -6649,7 +6620,6 @@ _flip_job(void *data)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
 
-   _item_unhighlight(it);
    _item_unselect(it);
    _elm_genlist_item_unrealize(it, EINA_FALSE);
 
