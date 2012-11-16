@@ -93,7 +93,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_input_evas \
-@EFL_ECORE_EVAS_BUILD@ \
+-DEFL_ECORE_EVAS_BUILD \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
@@ -108,8 +108,6 @@ $(ECORE_IPC_INC) \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @WAYLAND_EGL_CFLAGS@
-
-AM_CFLAGS = @WIN32_CFLAGS@
 
 lib_LTLIBRARIES = libecore_evas.la
 includes_HEADERS = Ecore_Evas.h
@@ -130,7 +128,8 @@ ecore_evas_ews.c \
 ecore_evas_psl1ght.c \
 ecore_evas_wayland_shm.c \
 ecore_evas_wayland_egl.c \
-ecore_evas_extn.c
+ecore_evas_extn.c \
+ecore_evas_private.h
 
 if BUILD_ECORE_WAYLAND
 libecore_evas_la_SOURCES += \
@@ -159,7 +158,4 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EFL_SHM_OPEN_LIBS@ \
 @WAYLAND_EGL_LIBS@
 
-libecore_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-EXTRA_DIST = \
-ecore_evas_private.h
+libecore_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

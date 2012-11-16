@@ -1,7 +1,12 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = @GLIB_CFLAGS@ @EVIL_CFLAGS@ @EINA_CFLAGS@ @WIN32_CPPFLAGS@ @EFL_ECORE_BUILD@
-AM_CFLAGS = @WIN32_CFLAGS@ @EFL_PTHREAD_CFLAGS@
+AM_CPPFLAGS = \
+@GLIB_CFLAGS@ \
+@EVIL_CFLAGS@ \
+@EINA_CFLAGS@ \
+-DEFL_ECORE_BUILD
+
+AM_CFLAGS = @EFL_PTHREAD_CFLAGS@
 
 lib_LTLIBRARIES = libecore.la
 includes_HEADERS = \
@@ -27,7 +32,8 @@ ecore_time.c \
 ecore_timer.c \
 ecore_thread.c \
 ecore_glib.c \
-ecore_throttle.c
+ecore_throttle.c \
+ecore_private.h
 
 if ECORE_HAVE_WIN32
 
@@ -64,6 +70,4 @@ endif
 endif
 
 libecore_la_LIBADD = @dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
-libecore_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
-
-EXTRA_DIST = ecore_private.h
+libecore_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@

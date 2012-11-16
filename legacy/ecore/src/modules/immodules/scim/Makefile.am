@@ -32,5 +32,5 @@ scim_la_LIBADD = \
 	@SCIM_LIBS@ \
 	@EVAS_LIBS@ \
 	@EINA_LIBS@
-scim_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+scim_la_LDFLAGS = -no-undefined -module -avoid-version
 scim_la_LIBTOOLFLAGS = --tag=disable-static

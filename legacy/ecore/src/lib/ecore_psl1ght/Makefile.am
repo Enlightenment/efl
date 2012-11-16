@@ -18,13 +18,13 @@ includesdir = $(includedir)/ecore-@VMAJ@
 libecore_psl1ght_la_SOURCES = \
 ecore_psl1ght.c \
 moveutil.c \
-spursutil.c
+spursutil.c \
+Ecore_Psl1ght_Keys.h \
+ecore_psl1ght_private.h
 
 libecore_psl1ght_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@
 
-libecore_psl1ght_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-EXTRA_DIST = Ecore_Psl1ght_Keys.h ecore_psl1ght_private.h
+libecore_psl1ght_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_imf \
-@EFL_ECORE_IMF_EVAS_BUILD@ \
+-DEFL_ECORE_IMF_EVAS_BUILD \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
@@ -19,4 +19,4 @@ $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@
 
-libecore_imf_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libecore_imf_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

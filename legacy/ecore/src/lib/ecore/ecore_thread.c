@@ -530,9 +530,6 @@ _ecore_thread_init(void)
      _ecore_thread_count_max = 1;
 
 #ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_WIN32_THREADS
-   LKI(_ecore_thread_win32_lock);
-# endif
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
@@ -611,9 +608,6 @@ _ecore_thread_shutdown(void)
     LKD(_ecore_thread_global_hash_mutex);
     LKD(_ecore_running_job_mutex);
     CDD(_ecore_thread_global_hash_cond);
-# ifdef EFL_HAVE_WIN32_THREADS
-   LKU(_ecore_thread_win32_lock);
-# endif
 #endif
 }
 

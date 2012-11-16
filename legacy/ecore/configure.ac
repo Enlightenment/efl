@@ -423,29 +423,17 @@ case "$host_os" in
       requirements_ecore_file="evil ${requirements_ecore_file}"
       requirements_ecore_imf="evil ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="evil ${requirements_ecore_imf_evas}"
-      EFL_ECORE_BUILD="-DEFL_ECORE_BUILD"
-      EFL_ECORE_CON_BUILD="-DEFL_ECORE_CON_BUILD"
-      EFL_ECORE_EVAS_BUILD="-DEFL_ECORE_EVAS_BUILD"
-      EFL_ECORE_FILE_BUILD="-DEFL_ECORE_FILE_BUILD"
-      EFL_ECORE_IMF_BUILD="-DEFL_ECORE_IMF_BUILD"
-      EFL_ECORE_IMF_EVAS_BUILD="-DEFL_ECORE_IMF_EVAS_BUILD"
-      EFL_ECORE_INPUT_BUILD="-DEFL_ECORE_INPUT_BUILD"
-      EFL_ECORE_INPUT_EVAS_BUILD="-DEFL_ECORE_INPUT_EVAS_BUILD"
-      EFL_ECORE_IPC_BUILD="-DEFL_ECORE_IPC_BUILD"
       ;;
 esac
 
 have_win32=""
 have_wince=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
-      EFL_ECORE_WINCE_BUILD="-DEFL_ECORE_WINCE_BUILD"
+   mingw32ce*)
       requirements_ecore_wince="evil ${requirements_ecore_wince}"
       have_wince="yes"
       ;;
    mingw*)
-      EFL_ECORE_WIN32_BUILD="-DEFL_ECORE_WIN32_BUILD"
-      EFL_ECORE_SDL_BUILD="-DEFL_ECORE_SDL_BUILD"
       requirements_ecore_win32="evil ${requirements_ecore_win32}"
       requirements_ecore_sdl="evil ${requirements_ecore_sdl}"
       have_win32="yes"
@@ -506,7 +494,7 @@ AM_CONDITIONAL(ECORE_HAVE_PS3, test "x${have_ps3}" = "xyes")
 
 WIN32_LIBS=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       WIN32_LIBS="-lws2"
       dlopen_libs="-ldl"
       ;;
@@ -1219,7 +1207,7 @@ AC_SYS_LARGEFILE
 
 have_addrinfo="no"
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       AC_DEFINE(HAVE_DLFCN_H, 1, [Define to 1 if you have the <dlfcn.h> header file.])
       AC_DEFINE(HAVE_SYS_MMAN_H, 1, [Define to 1 if you have the <sys/mman.h> header file.])
       AC_DEFINE(HAVE_SYS_TIME_H, 1, [Define to 1 if you have the <sys/time.h> header file.])
@@ -1375,35 +1363,8 @@ AC_C_BIGENDIAN
 AC_HEADER_STDC
 AC_C___ATTRIBUTE__
 
-WIN32_CPPFLAGS=""
-WIN32_CFLAGS=""
-case "$host_os" in
-   mingw32ce*)
-      WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      ;;
-   cegcc*)
-      WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      WIN32_CFLAGS="-mwin32"
-      ;;
-   mingw*)
-      WIN32_CPPFLAGS="-D_WIN32_WINNT=0x0501"
-      ;;
-esac
-AC_SUBST(WIN32_CPPFLAGS)
-AC_SUBST(WIN32_CFLAGS)
-
 
 ### Checks for linker characteristics
-
-# use --enable-auto-import on Windows
-
-lt_enable_auto_import=""
-case "$host_os" in
-   mingw* | cegcc*)
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-      ;;
-esac
-AC_SUBST(lt_enable_auto_import)
 
 ### Checks for library functions
 AC_ISC_POSIX

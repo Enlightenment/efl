@@ -33,5 +33,5 @@ $(top_builddir)/src/lib/ecore_x/libecore_x.la \
 @IBUS_LIBS@ \
 @EVAS_LIBS@ \
 @EINA_LIBS@
-ibus_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
+ibus_la_LDFLAGS = -no-undefined -module -avoid-version
 ibus_la_LIBTOOLFLAGS = --tag=disable-static

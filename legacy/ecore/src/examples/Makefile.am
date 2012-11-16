@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_con \
 -DPACKAGE_EXAMPLES_DIR=\"$(datadir)/$(PACKAGE)/examples\" \
-@GLIB_CFLAGS@ @EVIL_CFLAGS@ @EVAS_CFLAGS@ @EINA_CFLAGS@ @WIN32_CPPFLAGS@ @EFL_ECORE_BUILD@
+@GLIB_CFLAGS@ @EVIL_CFLAGS@ @EVAS_CFLAGS@ @EINA_CFLAGS@ @EFL_ECORE_BUILD@
 
 ECOREBASELDADD = \
 	$(top_builddir)/src/lib/ecore/libecore.la \
