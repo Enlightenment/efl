@@ -108,12 +108,6 @@ typedef enum
 
 typedef enum
 {
-   ELM_FOCUS_PREVIOUS,
-   ELM_FOCUS_NEXT
-} Elm_Focus_Direction;
-
-typedef enum
-{
    ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode */
    ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode */
    ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode */

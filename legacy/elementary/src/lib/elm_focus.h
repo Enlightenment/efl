@@ -34,6 +34,17 @@
  */
 
 /**
+ * Focus directions.
+ *
+ * @ingroup Focus
+ */
+typedef enum
+{
+   ELM_FOCUS_PREVIOUS, /**< previous direction */
+   ELM_FOCUS_NEXT      /**< next direction */
+} Elm_Focus_Direction;
+
+/**
  * Get the whether an Elementary object has the focus or not.
  *
  * @param obj The Elementary object to get the information from
