@@ -136,6 +136,8 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    ctx_mod = (Ctxpopup_Module_Data *)data;
    if (!ctx_mod || !ctx_mod->ctxpopup) return;
 
+   elm_ctxpopup_hover_parent_set(ctx_mod->ctxpopup, elm_widget_top_get(obj));
+
    // because of the diskselector behaviour, it is being recreated
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
    snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
@@ -316,7 +318,7 @@ obj_hook(Evas_Object *obj)
    ctx_mod = ELM_NEW(Ctxpopup_Module_Data);
    if (!ctx_mod) return NULL;
 
-   ctx_mod->ctxpopup = elm_ctxpopup_add(elm_widget_top_get(obj));
+   ctx_mod->ctxpopup = elm_ctxpopup_add(obj);
    snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
    elm_object_style_set(ctx_mod->ctxpopup, buf);
    elm_ctxpopup_horizontal_set(ctx_mod->ctxpopup, EINA_TRUE);
