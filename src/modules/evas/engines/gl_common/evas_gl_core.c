@@ -664,8 +664,6 @@ _glenum_string_get(GLenum e)
          return "GL_DEPTH_COMPONENT24_OES";
 
          // Stencil
-      case GL_STENCIL_INDEX:
-         return "GL_STENCIL_INDEX";
       case GL_STENCIL_INDEX1_OES:
          return "GL_STENCIL_INDEX1_OES";
       case GL_STENCIL_INDEX4_OES:
