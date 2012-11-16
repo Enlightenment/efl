@@ -46,6 +46,7 @@ extern "C" {
 #define EDBUS_FDO_PATH "/org/freedesktop/DBus"
 #define EDBUS_FDO_INTERFACE EDBUS_FDO_BUS
 #define EDBUS_FDO_INTERFACE_PROPERTIES "org.freedesktop.DBus.Properties"
+#define EDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager"
 
 typedef struct _EDBus_Version
 {

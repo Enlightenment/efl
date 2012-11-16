@@ -182,6 +182,22 @@ EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const c
 EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name);
 
 EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate);
+
+/**
+ * Attach ObjectManager interface.
+ *
+ * @param iface ObjectManager will be attach in object path of this interface.
+ * @return EINA_TRUE if success
+ */
+EAPI Eina_Bool edbus_service_object_manager_attach(EDBus_Service_Interface *iface);
+
+/**
+ * Detach ObjectManager interface.
+ *
+ * @param iface ObjectManager of object path of this interface will be detach.
+ * @return EINA_TRUE if success
+ */
+EAPI Eina_Bool edbus_service_object_manager_detach(EDBus_Service_Interface *iface);
 /**
  * @}
  */
