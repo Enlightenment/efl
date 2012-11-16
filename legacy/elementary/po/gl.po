@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-10-26 11:57+0200\n"
-"PO-Revision-Date: 2012-10-26 12:11+0100\n"
-"Last-Translator: Khany <khany@member.trisquel.info>\n"
+"POT-Creation-Date: 2012-11-16 21:49+0100\n"
+"PO-Revision-Date: 2012-11-16 21:51+0100\n"
+"Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgid "Home"
 msgstr "Cartafol persoal"
 
 #: src/lib/elc_fileselector.c:992
-#: src/lib/elm_entry.c:1258
+#: src/lib/elm_entry.c:1264
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -41,13 +41,13 @@ msgid "Clicked"
 msgstr "Premido"
 
 #: src/lib/elm_button.c:266
-#: src/lib/elm_check.c:186
+#: src/lib/elm_check.c:196
 #: src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1288
+#: src/lib/elm_genlist.c:1291
 #: src/lib/elm_list.c:1353
 #: src/lib/elm_radio.c:241
 #: src/lib/elm_spinner.c:503
-#: src/lib/elm_toolbar.c:1578
+#: src/lib/elm_toolbar.c:1638
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -76,56 +76,72 @@ msgid "calendar month"
 msgstr "mes do calendario"
 
 #: src/lib/elm_check.c:44
-#: src/lib/elm_check.c:199
+#: src/lib/elm_check.c:209
 #: src/lib/elm_radio.c:83
 #: src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Estado: Conectado"
 
 #: src/lib/elm_check.c:50
-#: src/lib/elm_check.c:211
+#: src/lib/elm_check.c:221
 #: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Estado: Desconectado"
 
-#: src/lib/elm_check.c:195
-#: src/lib/elm_check.c:208
+#: src/lib/elm_check.c:205
+#: src/lib/elm_check.c:218
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elm_check.c:275
+#: src/lib/elm_check.c:285
 msgid "Check"
 msgstr "Comprobar"
+
+#: src/lib/elm_clock.c:296
+msgid "clock increment button for am,pm"
+msgstr "Botón de aumento do reloxo para am,pm"
+
+#: src/lib/elm_clock.c:304
+msgid "clock decrement button for am,pm"
+msgstr "Botón de diminución do reloxo para am,pm"
+
+#: src/lib/elm_clock.c:645
+msgid "State: Editable"
+msgstr "Estado: Editable"
+
+#: src/lib/elm_clock.c:680
+msgid "Clock"
+msgstr "Reloxo"
 
 #: src/lib/elm_colorselector.c:1336
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
-#: src/lib/elm_config.c:2124
+#: src/lib/elm_config.c:2149
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
-#: src/lib/elm_diskselector.c:631
+#: src/lib/elm_diskselector.c:633
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1250
+#: src/lib/elm_entry.c:1256
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1254
+#: src/lib/elm_entry.c:1260
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1270
+#: src/lib/elm_entry.c:1276
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1277
+#: src/lib/elm_entry.c:1283
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:2927
+#: src/lib/elm_entry.c:2933
 msgid "Entry"
 msgstr "Entrada"
 
@@ -133,7 +149,7 @@ msgstr "Entrada"
 msgid "Gengrid Item"
 msgstr "Grella xenérica"
 
-#: src/lib/elm_genlist.c:1322
+#: src/lib/elm_genlist.c:1325
 msgid "Genlist Item"
 msgstr "Lista xenérica"
 
@@ -149,7 +165,7 @@ msgstr "Índice"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elm_list.c:1393
+#: src/lib/elm_list.c:1395
 msgid "List Item"
 msgstr "Lista"
 
@@ -189,23 +205,28 @@ msgstr "botón de disminución"
 msgid "spinner"
 msgstr "botón de spinner"
 
-#: src/lib/elm_toolbar.c:1214
+#: src/lib/elm_toolbar.c:1273
+#: src/lib/elm_toolbar.c:1694
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:1576
+#: src/lib/elm_toolbar.c:1636
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1580
+#: src/lib/elm_toolbar.c:1640
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
-#: src/lib/elm_toolbar.c:1582
+#: src/lib/elm_toolbar.c:1642
 msgid "Has menu"
 msgstr "Ten menú"
 
-#: src/lib/elm_toolbar.c:1663
+#: src/lib/elm_toolbar.c:1689
+msgid "Unselected"
+msgstr "Non seleccionado"
+
+#: src/lib/elm_toolbar.c:1706
 msgid "Toolbar Item"
 msgstr "Elemento da barra de ferramentas"
 

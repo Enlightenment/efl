@@ -2,18 +2,17 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-11-08 02:06+0100\n"
-"PO-Revision-Date: 2012-11-08 02:06+0100\n"
+"POT-Creation-Date: 2012-11-16 21:49+0100\n"
+"PO-Revision-Date: 2012-11-16 21:53+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/lib/elc_fileselector.c:749
@@ -42,13 +41,13 @@ msgid "Clicked"
 msgstr "Clicado"
 
 #: src/lib/elm_button.c:266
-#: src/lib/elm_check.c:186
+#: src/lib/elm_check.c:196
 #: src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1288
+#: src/lib/elm_genlist.c:1291
 #: src/lib/elm_list.c:1353
 #: src/lib/elm_radio.c:241
 #: src/lib/elm_spinner.c:503
-#: src/lib/elm_toolbar.c:1578
+#: src/lib/elm_toolbar.c:1638
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -77,26 +76,42 @@ msgid "calendar month"
 msgstr "mes del calendario"
 
 #: src/lib/elm_check.c:44
-#: src/lib/elm_check.c:199
+#: src/lib/elm_check.c:209
 #: src/lib/elm_radio.c:83
 #: src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Estado: Conectado"
 
 #: src/lib/elm_check.c:50
-#: src/lib/elm_check.c:211
+#: src/lib/elm_check.c:221
 #: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Estado: Desconectado"
 
-#: src/lib/elm_check.c:195
-#: src/lib/elm_check.c:208
+#: src/lib/elm_check.c:205
+#: src/lib/elm_check.c:218
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elm_check.c:275
+#: src/lib/elm_check.c:285
 msgid "Check"
 msgstr "Comprobar"
+
+#: src/lib/elm_clock.c:296
+msgid "clock increment button for am,pm"
+msgstr "Botón de aumento del reloj para am,pm"
+
+#: src/lib/elm_clock.c:304
+msgid "clock decrement button for am,pm"
+msgstr "Botón de disminución del reloj para am,pm"
+
+#: src/lib/elm_clock.c:645
+msgid "State: Editable"
+msgstr "Estado: Editable"
+
+#: src/lib/elm_clock.c:680
+msgid "Clock"
+msgstr "Reloj"
 
 #: src/lib/elm_colorselector.c:1336
 msgid "color selector palette item"
@@ -106,7 +121,7 @@ msgstr "Paleta de selección de color"
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
-#: src/lib/elm_diskselector.c:631
+#: src/lib/elm_diskselector.c:633
 msgid "diskselector item"
 msgstr "Selector de disco"
 
@@ -134,7 +149,7 @@ msgstr "Entrada"
 msgid "Gengrid Item"
 msgstr "Cuadrícula genérica"
 
-#: src/lib/elm_genlist.c:1322
+#: src/lib/elm_genlist.c:1325
 msgid "Genlist Item"
 msgstr "Lista genérica"
 
@@ -150,7 +165,7 @@ msgstr "Índice"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elm_list.c:1393
+#: src/lib/elm_list.c:1395
 msgid "List Item"
 msgstr "Lista"
 
@@ -190,23 +205,28 @@ msgstr "botón de disminución"
 msgid "spinner"
 msgstr "botón de spinner"
 
-#: src/lib/elm_toolbar.c:1214
+#: src/lib/elm_toolbar.c:1273
+#: src/lib/elm_toolbar.c:1694
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:1576
+#: src/lib/elm_toolbar.c:1636
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1580
+#: src/lib/elm_toolbar.c:1640
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
-#: src/lib/elm_toolbar.c:1582
+#: src/lib/elm_toolbar.c:1642
 msgid "Has menu"
 msgstr "Tiene menú"
 
-#: src/lib/elm_toolbar.c:1663
+#: src/lib/elm_toolbar.c:1689
+msgid "Unselected"
+msgstr "Sin seleccionar"
+
+#: src/lib/elm_toolbar.c:1706
 msgid "Toolbar Item"
 msgstr "Elemento de la barra de herramientas"
 
