@@ -203,7 +203,7 @@ _double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg
 }
 
 static Eina_Bool
-_properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error)
+_properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *request_msg, EDBus_Message **error)
 {
    printf("Properties_get - %s\n", propname);
    if (!strcmp(propname, "Resp2"))

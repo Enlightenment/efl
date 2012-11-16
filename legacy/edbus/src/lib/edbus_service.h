@@ -31,7 +31,34 @@ typedef struct _EDBus_Arg_Info
 typedef struct _EDBus_Service_Interface EDBus_Service_Interface;
 typedef EDBus_Message * (*EDBus_Method_Cb)(const EDBus_Service_Interface *iface, const EDBus_Message *message);
 
-typedef Eina_Bool (*EDBus_Property_Get_Cb)(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, EDBus_Message **error);
+/**
+ * Callback function to append property value to message.
+ *
+ * @param iface interface of property
+ * @param propname name of property
+ * @param iter variant iterator in which value must be appended
+ * @param request_msg message that request property
+ * @param error if a error happen you must set a message error to be send caller
+ *
+ * @return EINA_TRUE if success
+ *
+ * @note request_msg and error arguments are only different from NULL when a
+ * client request a property with Properties.Get or Properties.GetAll. Upon
+ * calls to edbus_service_property_changed(), this callback will also be called.
+ * It's a mistake to return an error in this case because if a property changed,
+ * it must have a new value set and it should be able to be read.
+ */
+typedef Eina_Bool (*EDBus_Property_Get_Cb)(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *request_msg, EDBus_Message **error);
+
+/**
+ * Callback function to set property value from message.
+ *
+ * @param iface interface of property
+ * @param propname name of property
+ * @param input_msg message call where you have to get value
+ *
+ * @return Message of response, could be a simple method_return, error or NULL to send response later.
+ */
 typedef EDBus_Message *(*EDBus_Property_Set_Cb)(const EDBus_Service_Interface *iface, const char *propname, const EDBus_Message *input_msg);
 
 typedef struct _EDBus_Method

@@ -216,7 +216,7 @@ _cb_property_get(const EDBus_Service_Interface *piface, const EDBus_Message *msg
    variant = edbus_message_iter_container_new(main_iter, 'v',
                                               prop->property->type);
 
-   ret = getter(iface, propname, variant, &error_reply);
+   ret = getter(iface, propname, variant, msg, &error_reply);
 
    if (ret)
      {
@@ -282,7 +282,7 @@ _cb_property_getall(const EDBus_Service_Interface *piface, const EDBus_Message *
         var = edbus_message_iter_container_new(entry, 'v',
                                                prop->property->type);
 
-        ret = getter(iface, prop->property->name, var, &error_reply);
+        ret = getter(iface, prop->property->name, var, msg, &error_reply);
 
         if (!ret)
           {
@@ -1034,7 +1034,7 @@ _idler_propschanged(void *data)
    while ((prop = eina_array_pop(iface->props_changed)))
      {
         EDBus_Message_Iter *entry, *var;
-        EDBus_Message *error_reply;
+        EDBus_Message *error_reply = NULL;
         Eina_Bool ret;
         EDBus_Property_Get_Cb getter = NULL;
 
@@ -1057,17 +1057,16 @@ _idler_propschanged(void *data)
         var = edbus_message_iter_container_new(entry, 'v',
                                                prop->property->type);
 
-        ret = getter(iface, prop->property->name, var, &error_reply);
-
+        ret = getter(iface, prop->property->name, var, NULL, &error_reply);
         if (!ret)
           {
-             const char *errorname, *errormsg;
-             if (error_reply &&
-                 edbus_message_error_get(error_reply, &errorname, &errormsg))
-               ERR("%s %s", errorname, errormsg);
-
              edbus_message_unref(msg);
-             if (error_reply) edbus_message_unref(error_reply);
+             if (error_reply)
+               {
+                  ERR("Error reply was set without pass any input message.");
+                  edbus_message_unref(error_reply);
+               }
+             ERR("Getter of property %s returned error.", prop->property->name);
              goto error;
           }
 
