@@ -465,6 +465,6 @@ edbus_object_introspect(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data
    EDBus_Proxy *introspectable;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
 
-   introspectable = edbus_proxy_get(obj, "org.freedesktop.DBus.Introspectable");
+   introspectable = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE_INTROSPECTABLE);
    return edbus_proxy_call(introspectable, "Introspect", cb, data, -1, "");
 }

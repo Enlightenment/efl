@@ -408,7 +408,7 @@ _introspectable_create(void)
    EINA_MAGIC_SET(introspectable, EDBUS_SERVICE_INTERFACE_MAGIC);
    introspectable->sign_of_signals = eina_array_new(1);
    introspectable->properties = eina_hash_string_small_new(NULL);
-   introspectable->name = eina_stringshare_add("org.freedesktop.DBus.Introspectable");
+   introspectable->name = EDBUS_FDO_INTERFACE_INTROSPECTABLE;
    introspectable->methods = eina_hash_string_small_new(NULL);
 
    eina_hash_add(introspectable->methods, introspect.member, &introspect);
@@ -419,7 +419,6 @@ _default_interfaces_free(void)
 {
    eina_hash_free(introspectable->methods);
    eina_hash_free(introspectable->properties);
-   eina_stringshare_del(introspectable->name);
    eina_array_free(introspectable->sign_of_signals);
    free(introspectable);
 
