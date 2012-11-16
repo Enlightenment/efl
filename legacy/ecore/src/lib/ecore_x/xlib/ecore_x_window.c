@@ -470,6 +470,7 @@ ecore_x_window_hide(Ecore_X_Window win)
                   &uidum,
                   &uidum);
 
+   XUnmapWindow(_ecore_x_disp, win);
    xev.xunmap.type = UnmapNotify;
    xev.xunmap.serial = 0;
    xev.xunmap.send_event = True;
@@ -479,7 +480,6 @@ ecore_x_window_hide(Ecore_X_Window win)
    xev.xunmap.from_configure = False;
    XSendEvent(_ecore_x_disp, xev.xunmap.event, False,
               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-   XUnmapWindow(_ecore_x_disp, win);
 }
 
 /**
