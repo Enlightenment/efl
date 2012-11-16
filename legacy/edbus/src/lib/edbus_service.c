@@ -995,16 +995,15 @@ fail:
 static void
 _interface_free(EDBus_Service_Interface *interface)
 {
-   unsigned size, i;
+   const char *sig;
    EDBus_Service_Object *parent;
    if (interface == introspectable || interface == properties_iface ||
        interface == objmanager)
      return;
 
    eina_hash_free(interface->methods);
-   size = eina_array_count(interface->sign_of_signals);
-   for (i = 0; i < size; i++)
-     eina_stringshare_del(eina_array_data_get(interface->sign_of_signals, i));
+   while ((sig = eina_array_pop(interface->sign_of_signals)))
+     eina_stringshare_del(sig);
    eina_array_free(interface->sign_of_signals);
    eina_hash_free(interface->properties);
    if (interface->props_changed)
