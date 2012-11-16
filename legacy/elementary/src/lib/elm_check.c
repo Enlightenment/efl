@@ -82,6 +82,16 @@ _elm_check_smart_sub_object_del(Evas_Object *obj,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_elm_check_smart_activate(Evas_Object *obj, Elm_Activate act)
+{
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+
+   _activate(obj);
+
+   return EINA_TRUE;
+}
+
 /* FIXME: replicated from elm_layout just because check's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
@@ -292,6 +302,7 @@ _elm_check_smart_set_user(Elm_Check_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_check_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_check_smart_event;
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_check_smart_sub_object_del;
+   ELM_WIDGET_CLASS(sc)->activate = _elm_check_smart_activate;
 
    /* not a 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
