@@ -734,6 +734,7 @@ ecore_x_window_hide(Ecore_X_Window win)
              free(reply);
           }
 
+        xcb_unmap_window(_ecore_xcb_conn, win);
         memset(&ev, 0, sizeof(xcb_unmap_notify_event_t));
 
         ev.response_type = XCB_UNMAP_NOTIFY;
@@ -746,7 +747,6 @@ ecore_x_window_hide(Ecore_X_Window win)
                         XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT),
                        (const char *)&ev);
 
-        xcb_unmap_window(_ecore_xcb_conn, win);
 //        ecore_x_flush();
      }
 }
