@@ -115,6 +115,9 @@ static void      _calc_job(void *);
 static Eina_Bool _item_block_recalc(Item_Block *, int, Eina_Bool);
 static void      _item_mouse_callbacks_add(Elm_Gen_Item *, Evas_Object *);
 static void      _item_mouse_callbacks_del(Elm_Gen_Item *, Evas_Object *);
+static void      _access_activate_cb(void *data __UNUSED__,
+                                     Evas_Object *part_obj __UNUSED__,
+                                     Elm_Widget_Item *item);
 
 static void
 _elm_genlist_pan_smart_pos_set(Evas_Object *obj,
@@ -1323,6 +1326,7 @@ _access_widget_item_register(Elm_Gen_Item *it)
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
    _elm_access_on_highlight_hook_set(ai, _access_on_highlight_cb, it);
+   _elm_access_activate_callback_set(ai, _access_activate_cb, it);
 }
 
 static void
@@ -3749,6 +3753,60 @@ _item_move_after(Elm_Gen_Item *it,
    _item_queue(GL_IT(it)->wsd, it, NULL);
 
    evas_object_smart_callback_call(WIDGET(it), SIG_MOVED_AFTER, it);
+}
+
+static void
+_access_activate_cb(void *data __UNUSED__,
+                    Evas_Object *part_obj __UNUSED__,
+                    Elm_Widget_Item *item)
+{
+   Elm_Genlist_Smart_Data *sd;
+   Elm_Gen_Item *it;
+
+   it = (Elm_Gen_Item *)item;
+   if (!it) return;
+
+   sd = GL_IT(it)->wsd;
+   if (!sd) return;
+
+   if (sd->multi)
+     {
+        if (!it->selected)
+          {
+             _item_highlight(it);
+             it->sel_cb(it);
+          }
+        else
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
+     }
+   else
+     {
+        if (!it->selected)
+          {
+             while (sd->selected)
+               {
+                  _item_unhighlight(sd->selected->data);
+                  _item_unselect(sd->selected->data);
+               }
+          }
+        else
+          {
+             const Eina_List *l, *l_next;
+             Elm_Gen_Item *it2;
+
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
+               if (it2 != it)
+                 {
+                    _item_unhighlight(it2);
+                    _item_unselect(it2);
+                 }
+          }
+        _item_highlight(it);
+        it->sel_cb(it);
+     }
 }
 
 /* If the application wants to know the relative item, use
