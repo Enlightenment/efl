@@ -2828,24 +2828,25 @@ elm_gengrid_item_selected_set(Elm_Object_Item *item,
                               Eina_Bool selected)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
+   Elm_Gengrid_Smart_Data *sd;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
 
-   if ((it->generation < GG_IT(it)->wsd->generation) ||
-       elm_widget_item_disabled_get(it))
+   sd = GG_IT(it)->wsd;
+   if ((it->generation < sd->generation) || elm_widget_item_disabled_get(it))
      return;
    selected = !!selected;
    if (it->selected == selected) return;
 
    if (selected)
      {
-        if (!GG_IT(it)->wsd->multi)
+        if (!sd->multi)
           {
-             while (GG_IT(it)->wsd->selected)
+             while (sd->selected)
                {
                   if (it->unhighlight_cb)
-                    it->unhighlight_cb(GG_IT(it)->wsd->selected->data);
-                  it->unsel_cb(GG_IT(it)->wsd->selected->data);
+                    it->unhighlight_cb(sd->selected->data);
+                  it->unsel_cb(sd->selected->data);
                }
           }
         it->highlight_cb(it);
