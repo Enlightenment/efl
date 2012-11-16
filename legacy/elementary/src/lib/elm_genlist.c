@@ -5047,13 +5047,15 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 
 static Elm_Gen_Item *
 _elm_genlist_item_new(Elm_Genlist_Smart_Data *sd,
-                      const Elm_Gen_Item_Class *itc,
+                      const Elm_Genlist_Item_Class *itc,
                       const void *data,
                       Elm_Gen_Item *parent,
+                      Elm_Genlist_Item_Type type,
                       Evas_Smart_Cb func,
                       const void *func_data)
 {
-   Elm_Gen_Item *it;
+   Elm_Gen_Item *it, *it2;
+   int depth = 0;
 
    if (!itc) return NULL;
 
@@ -5075,30 +5077,6 @@ _elm_genlist_item_new(Elm_Genlist_Smart_Data *sd,
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
-   return it;
-}
-
-static Elm_Gen_Item *
-_item_new(Elm_Genlist_Smart_Data *sd,
-          const Elm_Genlist_Item_Class *itc,
-          const void *data,
-          Elm_Gen_Item *parent,
-          Elm_Genlist_Item_Type type,
-          Evas_Smart_Cb func,
-          const void *func_data)
-{
-   Elm_Gen_Item *it, *it2;
-   int depth = 0;
-
-   it = _elm_genlist_item_new(sd, itc, data, parent, func, func_data);
-   if (!it) return NULL;
-
-   it->item = ELM_NEW(Elm_Gen_Item_Type);
-   it->item->type = type;
-   if (type & ELM_GENLIST_ITEM_GROUP) it->group++;
-   it->item->expanded_depth = 0;
-   it->item->wsd = sd;
-
    it->del_cb = (Ecore_Cb)_item_del;
    it->highlight_cb = (Ecore_Cb)_item_highlight;
    it->unhighlight_cb = (Ecore_Cb)_item_unhighlight;
@@ -5106,18 +5084,23 @@ _item_new(Elm_Genlist_Smart_Data *sd,
    it->unsel_cb = (Ecore_Cb)_item_unselect;
    it->unrealize_cb = (Ecore_Cb)_item_unrealize_cb;
 
+   GL_IT(it) = ELM_NEW(Elm_Gen_Item_Type);
+   GL_IT(it)->wsd = sd;
+   GL_IT(it)->type = type;
+   if (type & ELM_GENLIST_ITEM_GROUP) it->group++;
+
    if (it->parent)
      {
         if (it->parent->group)
-          it->item->group_item = parent;
-        else if (it->parent->item->group_item)
-          it->item->group_item = it->parent->item->group_item;
+          GL_IT(it)->group_item = parent;
+        else if (GL_IT(it->parent)->group_item)
+          GL_IT(it)->group_item = GL_IT(it->parent)->group_item;
      }
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
      {
         if (!it2->parent->group) depth += 1;
      }
-   it->item->expanded_depth = depth;
+   GL_IT(it)->expanded_depth = depth;
    sd->item_count++;
 
    return it;
@@ -5167,7 +5150,7 @@ elm_genlist_item_append(Evas_Object *obj,
    ELM_GENLIST_CHECK(obj) NULL;
    ELM_GENLIST_DATA_GET(obj, sd);
 
-   it = _item_new
+   it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
    if (!it) return NULL;
 
@@ -5211,7 +5194,7 @@ elm_genlist_item_prepend(Evas_Object *obj,
 
    ELM_GENLIST_CHECK(obj) NULL;
    ELM_GENLIST_DATA_GET(obj, sd);
-   it = _item_new
+   it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
    if (!it) return NULL;
 
@@ -5263,7 +5246,7 @@ elm_genlist_item_insert_after(Evas_Object *obj,
     * NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->items, NULL);
 
-   it = _item_new
+   it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
    if (!it) return NULL;
 
@@ -5310,7 +5293,7 @@ elm_genlist_item_insert_before(Evas_Object *obj,
     * != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->items, NULL);
 
-   it = _item_new
+   it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
    if (!it) return NULL;
 
@@ -5352,7 +5335,7 @@ elm_genlist_item_sorted_insert(Evas_Object *obj,
    ELM_GENLIST_CHECK(obj) NULL;
    ELM_GENLIST_DATA_GET(obj, sd);
 
-   it = _item_new
+   it = _elm_genlist_item_new
        (sd, itc, data, (Elm_Gen_Item *)parent, type, func, func_data);
    if (!it) return NULL;
 

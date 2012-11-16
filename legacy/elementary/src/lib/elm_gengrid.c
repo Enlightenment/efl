@@ -2219,21 +2219,20 @@ _elm_gengrid_item_new(Elm_Gengrid_Smart_Data *sd,
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
-   it->item = ELM_NEW(Elm_Gen_Item_Type);
-
-   GG_IT(it)->wsd = sd;
-
-   sd->item_count++;
-   it->group = it->itc->item_style &&
-     (!strcmp(it->itc->item_style, "group_index"));
-
    it->del_cb = (Ecore_Cb)_item_del;
    it->highlight_cb = (Ecore_Cb)_item_highlight;
    it->sel_cb = (Ecore_Cb)_item_select;
    it->unsel_cb = (Ecore_Cb)_item_unselect;
    it->unrealize_cb = (Ecore_Cb)_item_unrealize_cb;
 
-   return it;
+   GG_IT(it) = ELM_NEW(Elm_Gen_Item_Type);
+   GG_IT(it)->wsd = sd;
+
+   it->group = it->itc->item_style &&
+     (!strcmp(it->itc->item_style, "group_index"));
+   sd->item_count++;
+
+  return it;
 }
 
 /* common layout sizing won't apply here */
