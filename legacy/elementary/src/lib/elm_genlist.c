@@ -5063,18 +5063,17 @@ _elm_genlist_item_new(Elm_Genlist_Smart_Data *sd,
    it->generation = sd->generation;
    it->itc = itc;
    elm_genlist_item_class_ref((Elm_Genlist_Item_Class *)itc);
+
    it->base.data = data;
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
+
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
-
-   /* TEMPORARY */
-   it->sel_cb = (Ecore_Cb)_item_select;
 
    return it;
 }
@@ -5102,8 +5101,9 @@ _item_new(Elm_Genlist_Smart_Data *sd,
 
    it->del_cb = (Ecore_Cb)_item_del;
    it->highlight_cb = (Ecore_Cb)_item_highlight;
-   it->unsel_cb = (Ecore_Cb)_item_unselect;
    it->unhighlight_cb = (Ecore_Cb)_item_unhighlight;
+   it->sel_cb = (Ecore_Cb)_item_select;
+   it->unsel_cb = (Ecore_Cb)_item_unselect;
    it->unrealize_cb = (Ecore_Cb)_item_unrealize_cb;
 
    if (it->parent)

@@ -48,8 +48,9 @@ struct Elm_Gen_Item
    } func;
 
    Elm_Gen_Item_Tooltip      tooltip;
-   Ecore_Cb                  del_cb, sel_cb, highlight_cb;
-   Ecore_Cb                  unsel_cb, unhighlight_cb, unrealize_cb;
+   Ecore_Cb                  del_cb, unrealize_cb;
+   Ecore_Cb                  sel_cb, unsel_cb;
+   Ecore_Cb                  highlight_cb, unhighlight_cb;
 
    int                       position;
    Elm_Object_Select_Mode    select_mode;
