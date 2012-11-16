@@ -1,5 +1,6 @@
 /**
- * @defgroup EDBus_Message_Helpers Helpers
+ * @ingroup EDBus_Message
+ * @defgroup EDBus_Message_Helpers Message Helpers
  *
  * @{
  */

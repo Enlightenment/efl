@@ -1,18 +1,4 @@
 /**
- * @page Examples Examples
- *
- * Here is a page with some EDBus examples:
- * 
- * @li @ref banshee
- * @li @ref simple_dbus_client
- * @li @ref simple_dbus_server
- * @li @ref complex_types
- * @li @ref complex_types_server
- * @li @ref connman
- * @li @ref ofono
- */
-
-/**
  * @page banshee Banshee dbus client
  * 
  * @include banshee.c
@@ -37,19 +23,26 @@
  */
 
 /**
- * @page complex_types_server Handling with dbus complex types server side
- * 
+ * @page complex_types_server Handling with dbus complex types in server side
  * @include complex_types_server.c
  */
 
 /**
- * @page connman Connman
- * 
+ * @page connman Connman client
  * @include connman-list-services.c
  */
 
 /**
- * @page ofono Ofono
- * 
+ * @page ofono Ofono client
  * @include ofono-dial.c
+ */
+ 
+/**
+ * @page eina_value Eina_Value to/from Message
+ * @include complex_types_client_eina_value.c
+ */
+  
+/**
+ * @page signal_emmiter Simple signal emmiter
+ * @include simple-signal-emit.c
  */

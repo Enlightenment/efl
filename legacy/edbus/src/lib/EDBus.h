@@ -1,3 +1,51 @@
+/**
+ * @mainpage EDBus
+ *
+ * @section edbus_intro_sec Introduction
+ *
+ * EDBus is a wrapper around the
+ * <a href="http://www.freedesktop.org/wiki/Software/dbus">dbus</a>
+ * library, which is a message bus system. It also implements a set of
+ * specifications using dbus as interprocess communication.
+ *
+ * @section edbus_modules_sec Modules
+ *
+ * <ul>
+ * <li> @ref EDBus_Core
+ * <li> @ref EDBus_Conneciton
+ * <li> @ref EDBus_Object_Mapper
+ * <li> @ref EDBus_Proxy
+ * <li> @ref EDBus_Message
+ *      <ul>
+ *              <li>@ref EDBus_Message_Iter
+ *              <li>@ref EDBus_Message_Helpers
+ *              <li>@ref Eina_Value
+ *      </ul>
+ * <li> @ref EDBus_Signal_Handler
+ * <li> @ref EDBus_Pending
+ * <li> @ref EDBus_Service
+ * <li> @ref EDBus_Basic
+ * </ul>
+ *
+ * @section edbus_examples_sec Examples
+ *
+ * Here some EDBus examples:
+ *
+ * @li @ref banshee
+ * @li @ref simple_dbus_client
+ * @li @ref simple_dbus_server
+ * @li @ref complex_types
+ * @li @ref complex_types_server
+ * @li @ref eina_value
+ * @li @ref signal_emmiter
+ * @li @ref connman
+ * @li @ref ofono
+ *
+ * @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
+ * @author José Roberto de Souza <zehortigoza@profusion.mobi>
+ * @author Leandro Pereira <leandro@profusion.mobi>
+ * @author Lucas De Marchi <lucas.demarchi@profusion.mobi>
+ */
 #ifndef EDBUS_H
 #define EDBUS_H
 

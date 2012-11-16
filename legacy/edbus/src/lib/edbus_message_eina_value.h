@@ -1,5 +1,6 @@
 /**
- * @defgroup Eina_Value
+ * @ingroup EDBus_Message
+ * @defgroup Eina_Value Eina_Value to/from Message
  * @{
  */
 
