@@ -261,7 +261,7 @@ Eina_Value *
 _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
 {
    int type;
-   Eina_Value *value_st;
+   Eina_Value *value_st = NULL;
    Eina_Array *st_members = eina_array_new(1);
    unsigned int offset = 0, z;
    static char name[7];//arg000 + \0
@@ -394,6 +394,12 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
         z++;
      }
 
+   if (!z)
+     {
+        free(st_desc);
+        goto end;
+     }
+
    members = malloc(eina_array_count(st_members) * sizeof(Eina_Value_Struct_Member));
    for (z = 0; z < eina_array_count(st_members); z++)
      {
@@ -409,7 +415,6 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
    st_desc->base.member_count = eina_array_count(st_members);
    st_desc->base.size = offset;
    value_st = eina_value_struct_new((Eina_Value_Struct_Desc *)st_desc);
-   eina_array_free(st_members);
 
    //filling with data
    for (z = 0; z < eina_array_count(st_values); z++)
@@ -419,6 +424,9 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
         eina_value_struct_value_set(value_st, name, v);
         eina_value_free(v);
      }
+
+end:
+   eina_array_free(st_members);
    eina_array_free(st_values);
    DBG("end struct");
    return value_st;
