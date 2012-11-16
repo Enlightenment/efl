@@ -2596,16 +2596,10 @@ elm_win_add(Evas_Object *parent,
      _win_inlined_image_set(sd);
 
 #ifdef HAVE_ELEMENTARY_X
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
-     sd->x.client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
-     sd->x.client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
-     sd->x.client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
-   else if (ENGINE_COMPARE(ELM_OPENGL_X11))
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_8_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11))
      sd->x.client_message_handler = ecore_event_handler_add
          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
