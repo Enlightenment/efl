@@ -87,7 +87,7 @@ EAPI void                  edbus_object_event_callback_del(EDBus_Object *obj, ED
 
 EAPI EDBus_Connection     *edbus_object_connection_get(const EDBus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI const char           *edbus_object_bus_name_get(const EDBus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-EAPI const char           *edbus_object_bus_path_get(const EDBus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI const char           *edbus_object_path_get(const EDBus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Send a message.

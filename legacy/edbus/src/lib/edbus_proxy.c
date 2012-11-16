@@ -532,7 +532,7 @@ edbus_proxy_method_call_new(EDBus_Proxy *proxy, const char *member)
 
    msg = edbus_message_method_call_new(
                            edbus_object_bus_name_get(proxy->obj),
-                           edbus_object_bus_path_get(proxy->obj),
+                           edbus_object_path_get(proxy->obj),
                            proxy->interface, member);
    return msg;
 }
@@ -603,7 +603,7 @@ edbus_proxy_signal_handler_add(EDBus_Proxy *proxy, const char *member, EDBus_Sig
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
 
    name = edbus_object_bus_name_get(proxy->obj);
-   path = edbus_object_bus_path_get(proxy->obj);
+   path = edbus_object_path_get(proxy->obj);
 
    handler = edbus_signal_handler_add(proxy->obj->conn, name, path,
                                       proxy->interface, member, cb, cb_data);

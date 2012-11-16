@@ -360,7 +360,7 @@ edbus_object_bus_name_get(const EDBus_Object *obj)
 }
 
 EAPI const char *
-edbus_object_bus_path_get(const EDBus_Object *obj)
+edbus_object_path_get(const EDBus_Object *obj)
 {
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    return obj->path;
