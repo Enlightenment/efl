@@ -285,8 +285,8 @@ _evgl_glClear(GLbitfield mask)
 
              if ((ctx->scissor_upated) && (ctx->scissor_enabled))
                {
-                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
-                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                  glScissor(ctx->dr_scissor_coord[0], ctx->dr_scissor_coord[1],
+                            ctx->dr_scissor_coord[2], ctx->dr_scissor_coord[3]);
                   ctx->direct_scissor = 0;
                }
              else
@@ -341,6 +341,62 @@ _evgl_glDisable(GLenum cap)
    glDisable(cap);
 }
 
+void
+_evgl_glGetIntegerv(GLenum pname, GLint* params)
+{
+   EVGL_Engine *ee = evgl_engine;
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Evas_Object_Protected_Data *img;
+
+   if (evgl_direct_enabled(evgl_engine))
+     {
+        if (!params)
+          {
+             ERR("Inavlid Parameter");
+             return;
+          }
+
+        rsc=_evgl_tls_resource_get(ee);
+        ctx = rsc->current_ctx;
+
+        // Only need to handle it if it's directly rendering to the window
+        if (!(rsc->current_ctx->current_fbo))
+          {
+             img = eo_data_get(rsc->direct_img_obj, EVAS_OBJ_CLASS);
+
+             if (pname==GL_SCISSOR_BOX)
+               {
+                  if (ctx->scissor_upated)
+                    {
+                       memcpy(params, ctx->scissor_coord, sizeof(int)*4);
+                       return;
+                    }
+               }
+
+             if (pname==GL_VIEWPORT)
+               {
+                  if (ctx->viewport_updated)
+                    {
+                       memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                       return;
+                    }
+               }
+
+             // If it hasn't been initialized yet, return img object size
+             if ((pname==GL_SCISSOR_BOX) || (pname==GL_VIEWPORT))
+               {
+                  params[0] = 0;
+                  params[1] = 0;
+                  params[2] = (GLint)img->cur.geometry.w;
+                  params[3] = (GLint)img->cur.geometry.h;
+                  return;
+               }
+          }
+     }
+
+   glGetIntegerv(pname, params);
+}
 
 static void
 _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
@@ -425,11 +481,17 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
              glScissor(nc[0], nc[1], nc[2], nc[3]);
 
-             // Update coordinates
-             ctx->scissor_coord[0] = nc[0];
-             ctx->scissor_coord[1] = nc[1];
-             ctx->scissor_coord[2] = nc[2];
-             ctx->scissor_coord[3] = nc[3];
+             // Keep a copy of the original coordinates
+             ctx->scissor_coord[0] = x;
+             ctx->scissor_coord[1] = y;
+             ctx->scissor_coord[2] = width;
+             ctx->scissor_coord[3] = height;
+
+             // Update direct rendering coordinates
+             ctx->dr_scissor_coord[0] = nc[0];
+             ctx->dr_scissor_coord[1] = nc[1];
+             ctx->dr_scissor_coord[2] = nc[2];
+             ctx->dr_scissor_coord[3] = nc[3];
 
              ctx->direct_scissor = 0;
 
@@ -501,14 +563,22 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
              if ((ctx->scissor_upated) && (ctx->scissor_enabled))
                {
-                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
-                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                  glScissor(ctx->dr_scissor_coord[0], ctx->dr_scissor_coord[1],
+                            ctx->dr_scissor_coord[2], ctx->dr_scissor_coord[3]);
                   ctx->direct_scissor = 0;
                }
              else
                 glScissor(oc[0], oc[1], oc[2], oc[3]);
 
              glViewport(nc[0], nc[1], nc[2], nc[3]);
+
+             // Keep a copy of the original coordinates
+             ctx->viewport_coord[0] = x;
+             ctx->viewport_coord[1] = y;
+             ctx->viewport_coord[2] = width;
+             ctx->viewport_coord[3] = height;
+
+             ctx->viewport_updated   = 1;
           }
         else
           {
@@ -1324,18 +1394,6 @@ _evgld_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, G
 {
    EVGL_FUNC_BEGIN();
    glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-_evgld_glGetIntegerv(GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetIntegerv(pname, params);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    goto finish;
 
@@ -2538,6 +2596,17 @@ finish:
    EVGL_FUNC_END();
 }
 
+void
+_evgld_glGetIntegerv(GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   _evgl_glGetIntegerv(pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
 
 static void
 _evgld_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
@@ -2650,7 +2719,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glGetError);
    ORD(glGetFloatv);
    ORD(glGetFramebufferAttachmentParameteriv);
-   ORD(glGetIntegerv);
+//   ORD(glGetIntegerv);
    ORD(glGetProgramiv);
    ORD(glGetProgramInfoLog);
    ORD(glGetRenderbufferParameteriv);
@@ -2743,6 +2812,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glClear);
    ORD(glDisable);
    ORD(glEnable);
+   ORD(glGetIntegerv);
    ORD(glReadPixels);
    ORD(glScissor);
    ORD(glViewport);

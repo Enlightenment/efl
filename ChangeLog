@@ -1,3 +1,9 @@
+2012-11-16  Sung W. Park (sung_)
+
+        * Fixed glGetIntegerv() in Direct Rendering mode for Evas GL
+        to properly handle GL_SCISSOR_BOX and GL_VIEWPORT parameters.
+
+
 2012-11-13  Carsten Haitzler (The Rasterman)
 
         * Fixed GLX native surface handling to use glXChooseFBConfig.

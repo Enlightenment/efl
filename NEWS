@@ -24,3 +24,5 @@ Fixes:
       eina_mmap_safety_enabled_get() returns after success
     * Fixed GLX native surface handling to use glXChooseFBConfig.
       This frixes a break in compositing on new intel mesa drivers.
+    * Fixed glGetIntegerv() in Direct Rendering mode for Evas GL
+      to properly handle GL_SCISSOR_BOX and GL_VIEWPORT parameters.

@@ -121,8 +121,11 @@ struct _EVGL_Context
    int          scissor_enabled;
    int          scissor_upated;
    int          scissor_coord[4];
-
+   int          dr_scissor_coord[4];
    int          direct_scissor;
+
+   int          viewport_updated;
+   int          viewport_coord[4];
 
    EVGL_Surface *current_sfc;
 };
