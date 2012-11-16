@@ -693,17 +693,13 @@ _property_iter(void *data, const void *key, EDBus_Message_Iter *var)
    eina_value_struct_value_get(st_value, "arg0", &stack_value);
 
    value = eina_hash_find(proxy->props, skey);
-   if (value)
+   if (!value)
      {
-        eina_value_flush(value);
-        eina_value_copy(&stack_value, value);
-     }
-   else
-     {
-        value = calloc(1, sizeof(Eina_Value));
-        eina_value_copy(&stack_value, value);
+        value = eina_value_new(eina_value_type_get(&stack_value));
         eina_hash_add(proxy->props, skey, value);
      }
+   eina_value_flush(value);
+   eina_value_copy(&stack_value, value);
 
    eina_value_free(st_value);
    eina_value_flush(&stack_value);
