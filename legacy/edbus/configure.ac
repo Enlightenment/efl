@@ -107,6 +107,7 @@ AC_SUBST(VMIN)
 
 AC_CONFIG_FILES([
 Makefile
+edbus.spec
 doc/Makefile
 doc/Doxyfile
 ])
