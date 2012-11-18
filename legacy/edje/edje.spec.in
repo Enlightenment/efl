@@ -14,8 +14,8 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, vim-enhanced
-BuildRequires: eet-devel, embryo-devel, eio-devel, evas-devel, ecore-devel, lua-devel
-Requires:  evas-module_loader_eet, eio
+BuildRequires: efl-devel, eio-devel, ecore-devel, lua-devel
+Requires:  efl, eio
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -38,7 +38,7 @@ configure parts of the display.
 Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}, %{name}-bin = %{version}
-Requires: eet-devel embryo-devel evas-devel ecore-devel lua-devel
+Requires: efl-devel ecore-devel lua-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Edje
@@ -47,9 +47,7 @@ Headers, static libraries, test programs and documentation for Edje
 Summary: Edje file compiler/decompiler suite
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: embryo-bin
-Requires: evas-module_saver_eet, evas-module_loader_png, evas-module_saver_png
-Requires: evas-module_loader_jpeg, evas-module_saver_jpeg, evas-module_engine_buffer
+Requires: efl
 
 %description bin
 Edje file compiler/decompiler suite
@@ -95,6 +93,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/edje_codegen
 %{_bindir}/edje_decc
 %{_bindir}/edje_recc
+%{_bindir}/edje_pick
 %{_bindir}/edje_player
 %{_bindir}/edje_external_inspector
 %{_bindir}/edje_inspector

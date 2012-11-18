@@ -50,7 +50,7 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, XFree86-devel, libX11-devel, c-ares-devel
 BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
-BuildRequires: curl-devel, evas-devel, eet-devel %{?breq_lib_ecore_sdl}
+BuildRequires: curl-devel, efl-devel %{?breq_lib_ecore_sdl}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -63,7 +63,7 @@ use of the work put into Ecore to make this job easy for applications.
 Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
-Requires: curl-devel, openssl-devel, evas-devel, eet-devel
+Requires: curl-devel, openssl-devel, efl-devel
 Requires: ecore-con, ecore-evas, ecore-file, ecore-ipc
 Requires: ecore-x %{?with_lib_ecore_fb:ecore-fb} %{?with_lib_ecore_directfb:ecore-directfb}
 

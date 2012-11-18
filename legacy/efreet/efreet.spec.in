@@ -57,6 +57,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 %{_libdir}/efreet/
 %{_datadir}/locale/*/LC_MESSAGES/*.mo
+%{_libdir}/*.a
+%{_datadir}/dbus-1/services/org.enlightenment.Efreet.service
 
 %files devel
 %defattr(-, root, root)
