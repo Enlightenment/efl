@@ -54,7 +54,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS README NEWS COPYING licenses/COPYING.BSD licenses/COPYING.LGPL licenses/COPYING.GPL
 %{_bindir}/*
-%{_libdir}/*.so
 %{_libdir}/*.so.*
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.so
 %{_libdir}/evas/modules/engines/*/linux-gnu-*/*.so
@@ -68,6 +67,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 %{_libdir}/*.a
 %{_libdir}/*.la
+%{_libdir}/*.so
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.la
 %{_libdir}/evas/modules/engines/*/linux-gnu-*/*.la
 %{_libdir}/evas/modules/loaders/*/linux-gnu-*/*.la
