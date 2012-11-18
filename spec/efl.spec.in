@@ -14,6 +14,7 @@ Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 URL: http://www.enlightenment.org/
 BuildRequires: libjpeg-devel zlib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
+Provides: eo, eina, eet, embryo, evas
 
 %description
 EFL is a copllection of libraries ranging from data structure handling
@@ -23,6 +24,7 @@ through to communications, rendering and widgets.
 Summary: EFL headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
+Provides: eo-devel, eina-devel, eet-devel, embryo-devel, evas-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for EFL
