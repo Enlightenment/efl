@@ -2,10 +2,11 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = . benchmarks tests examples
+SUBDIRS = . benchmarks examples
 
 lib_LTLIBRARIES =
 bin_PROGRAMS =
+check_PROGRAMS =
 EXTRA_DIST =
 
 if HAVE_WINDOWS
@@ -32,6 +33,7 @@ install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C examples install-examples
 
 clean-local:
+	rm -rf bin/eet/*.gcno
 	rm -rf lib/evil/*.gcno
 	rm -rf lib/eina/*.gcno
 	rm -rf lib/eo/*.gcno
@@ -41,9 +43,47 @@ clean-local:
 	rm -rf lib/evas/cache2/*.gcno
 	rm -rf lib/evas/canvas/*.gcno
 	rm -rf lib/evas/common/*.gcno
+	rm -rf lib/evas/common/evas_op_blend/*.gcno
+	rm -rf lib/evas/common/language/*.gcno
 	rm -rf lib/evas/cserve2/*.gcno
 	rm -rf lib/evas/file/*.gcno
 	rm -rf lib/embryo/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno
+	rm -rf modules/evas/engines/buffer/*.gcno
+	rm -rf modules/evas/engines/direct3d/*.gcno
+	rm -rf modules/evas/engines/directfb/*.gcno
+	rm -rf modules/evas/engines/fb/*.gcno
+	rm -rf modules/evas/engines/gl_cocoa/*.gcno
+	rm -rf modules/evas/engines/gl_common/*.gcno
+	rm -rf modules/evas/engines/gl_sdl/*.gcno
+	rm -rf modules/evas/engines/gl_x11/*.gcno
+	rm -rf modules/evas/engines/psl1ght/*.gcno
+	rm -rf modules/evas/engines/software_ddraw/*.gcno
+	rm -rf modules/evas/engines/software_gdi/*.gcno
+	rm -rf modules/evas/engines/software_generic/*.gcno
+	rm -rf modules/evas/engines/software_x11/*.gcno
+	rm -rf modules/evas/engines/wayland_egl/*.gcno
+	rm -rf modules/evas/engines/wayland_shm/*.gcno
+	rm -rf modules/evas/loaders/bmp/*.gcno
+	rm -rf modules/evas/loaders/eet/*.gcno
+	rm -rf modules/evas/loaders/generic/*.gcno
+	rm -rf modules/evas/loaders/gif/*.gcno
+	rm -rf modules/evas/loaders/ico/*.gcno
+	rm -rf modules/evas/loaders/jpeg/*.gcno
+	rm -rf modules/evas/loaders/pmaps/*.gcno
+	rm -rf modules/evas/loaders/png/*.gcno
+	rm -rf modules/evas/loaders/psd/*.gcno
+	rm -rf modules/evas/loaders/svg/*.gcno
+	rm -rf modules/evas/loaders/tga/*.gcno
+	rm -rf modules/evas/loaders/tiff/*.gcno
+	rm -rf modules/evas/loaders/wbmp/*.gcno
+	rm -rf modules/evas/loaders/webp/*.gcno
+	rm -rf modules/evas/loaders/xpm/*.gcno
+	rm -rf modules/evas/savers/eet/*.gcno
+	rm -rf modules/evas/savers/jpeg/*.gcno
+	rm -rf modules/evas/savers/png/*.gcno
+	rm -rf modules/evas/savers/tiff/*.gcno
+	rm -rf static_libs/liblinebreak/*.gcno
+	rm -rf static_libs/lz4/*.gcno

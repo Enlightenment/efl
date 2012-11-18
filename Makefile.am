@@ -31,7 +31,11 @@ m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
 m4/efl_threads.m4 \
 m4/evil_windows.m4 \
-m4/eina_check.m4
+m4/eina_check.m4 \
+m4/eina_config.m4 \
+m4/evas_check_engine.m4 \
+m4/evas_check_loader.m4 \
+m4/evas_dither.m4
 
 EXTRA_DIST += \
 autogen.sh \

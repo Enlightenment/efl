@@ -213,6 +213,7 @@ lib_evas_libevas_la_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 @EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @EVAS_ALTIVEC_CFLAGS@
@@ -225,7 +226,10 @@ lib/evas/common/evas_op_blend/op_blend_master_sse3.c
 
 lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = \
 $(lib_evas_libevas_la_CPPFLAGS) \
+@EFL_COV_CFLAGS@ \
 @EVAS_SSE3_CFLAGS@
+
+lib_evas_common_libevas_op_blend_sse3_la_LIBADD = @EFL_COV_LIBS@
 
 if HAVE_WINDOWS
 lib_evas_libevas_la_CPPFLAGS += \
@@ -241,6 +245,7 @@ lib/eina/libeina.la \
 lib/eet/libeet.la \
 lib/eo/libeo.la \
 @EVAS_LIBS@ \
+@EFL_COV_LIBS@ \
 -lm
 
 lib_evas_libevas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
@@ -2161,5 +2166,38 @@ bin_evas_loaders_xpm_module_la_LIBADD = @EFL_LIBS@ @evas_image_loader_xpm_libs@
 bin_evas_loaders_xpm_module_la_LDFLAGS = -no-undefined -module -avoid-version
 bin_evas_loaders_xpm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
+
+endif
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/evas/evas_suite
+
+tests_evas_evas_suite_SOURCES = \
+tests/evas/evas_suite.c \
+tests/evas/evas_test_init.c \
+tests/evas/evas_test_textblock.c \
+tests/evas/evas_test_text.c \
+tests/evas/evas_test_callbacks.c \
+tests/evas/evas_tests_helpers.h \
+tests/evas/evas_suite.h
+
+tests_evas_evas_suite_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+@CHECK_CFLAGS@ \
+@EVAS_CFLAGS@
+
+tests_evas_evas_suite_LDADD = \
+lib/evas/libevas.la \
+lib/eina/libeina.la \
+@CHECK_LIBS@ \
+@EVAS_CFLAGS@
 
 endif

@@ -34,6 +34,7 @@ lib_eet_libeet_la_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
 -DEFL_EET_BUILD \
 @EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
 @EET_CFLAGS@
 
 if HAVE_WINDOWS
@@ -48,7 +49,7 @@ if HAVE_WINDOWS
 lib_eet_libeet_la_LIBADD += lib/evil/libevil.la
 endif
 
-lib_eet_libeet_la_LIBADD += @EET_LIBS@ -lm
+lib_eet_libeet_la_LIBADD += @EET_LIBS@ @EFL_COV_LIBS@ -lm
 
 lib_eet_libeet_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
@@ -69,6 +70,7 @@ bin_eet_eet_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
 @EET_CFLAGS@
 
 if HAVE_WINDOWS
@@ -85,4 +87,38 @@ if HAVE_WINDOWS
 bin_eet_eet_LDADD += lib/evil/libevil.la
 endif
 
-bin_eet_eet_LDADD += @EET_LIBS@
+bin_eet_eet_LDADD += @EET_LIBS@ @EFL_COV_LIBS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eet/eet_suite
+
+tests_eet_eet_suite_SOURCES = \
+tests/eet/eet_suite.c \
+tests/eet/eet_data_suite.c \
+tests/eet/eet_suite.h
+
+tests_eet_eet_suite_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
+-DTESTS_SRC_DIR=\"$(top_srcdir)\" \
+@CHECK_CFLAGS@ \
+@EET_CFLAGS@
+
+tests_eet_eet_suite_LDADD = \
+lib/eet/libeet.la \
+lib/eina/libeina.la \
+@CHECK_LIBS@ \
+@EET_LIBS@
+
+endif
+
+EXTRA_DIST += \
+tests/eet/cert.pem \
+tests/eet/key_enc_none.pem \
+tests/eet/key_enc.pem \
+tests/eet/key.pem

@@ -49,6 +49,44 @@ VMAJ=v_maj
 AC_SUBST([VMAJ])
 
 
+#### Additional options to configure
+
+AC_ARG_WITH([profile],
+   [AC_HELP_STRING([--with-profile=PROFILE],
+                   [use the predefined build profile, one of: dev, debug and release.
+                    @<:@default=dev@:>@])],
+   [build_profile=${withval}],
+   [build_profile=dev])
+
+case "${build_profile}" in
+   dev|debug|release)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
+     ;;
+esac
+
+prefer_assert="no"
+case "${build_profile}" in
+   dev|debug)
+     prefer_assert="yes"
+     ;;
+esac
+
+# TODO: add some build "profile" (server, full, etc...)
+
+AC_ARG_ENABLE([coverage],
+   [AC_HELP_STRING([--enable-coverage], [enable unit testing coverage. @<:@default==disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_coverage="yes"
+    else
+       want_coverage="no"
+    fi
+   ],
+   [want_coverage="no"])
+
+
 #### Default values
 
 requirements_libs_evil=""
@@ -193,26 +231,6 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 
-#### Additional options to configure
-
-AC_ARG_WITH([profile],
-   [AC_HELP_STRING([--with-profile=PROFILE],
-                   [use the predefined build profile, one of: dev, debug and release.
-                    @<:@default=dev@:>@])],
-   [build_profile=${withval}],
-   [build_profile=dev])
-
-case "${build_profile}" in
-   dev|debug|release)
-     ;;
-   *)
-     AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
-     ;;
-esac
-
-# TODO: add some build "profile" (server, full, etc...)
-
-
 #### Checks for programs
 
 ### libtool
@@ -274,8 +292,41 @@ fi
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
+# lcov
+
+_efl_enable_coverage="no"
+if test "x${want_coverage}" = "xyes" ; then
+   AC_CHECK_PROG([have_lcov], [lcov], [yes], [no])
+   if test "x${have_lcov}" = "xyes" ; then
+      EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -fprofile-arcs -ftest-coverage"
+      EFL_COV_LIBS="${EFL_COV_LIBS} -lgcov"
+      if test "x${prefer_assert}" = "xno"; then
+         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -DNDEBUG"
+      else
+         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -g -O0 -DDEBUG"
+      fi
+      _efl_enable_coverage="yes"
+   else
+      AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
+   fi
+fi
+
+AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "x${_efl_enable_coverage}" = "xyes"])
+
+AC_SUBST([EFL_COV_CFLAGS])
+AC_SUBST([EFL_COV_LIBS])
+
 
 #### Checks for libraries
+
+# check unit testing library
+
+PKG_CHECK_MODULES([CHECK],
+   [check >= 0.9.5],
+   [_efl_enable_tests="yes"],
+   [_efl_enable_tests="no"])
+
+AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "x${_efl_enable_tests}" = "xyes"])
 
 
 #### Checks for header files
@@ -568,17 +619,6 @@ fi
 #   [build_tiler_example="no"])
 
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
-
-## Tests
-
-prefer_assert="no"
-case "$build_profile" in
-   dev|debug)
-     prefer_assert="yes"
-     ;;
-esac
-
-EFL_CHECK_TESTS(EINA)
 
 ## Benchmarks
 
@@ -1829,11 +1869,6 @@ src/examples/eet/Makefile
 src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/lib/eina/eina_config.h
-src/tests/Makefile
-src/tests/eina/Makefile
-src/tests/eet/Makefile
-src/tests/eo/Makefile
-src/tests/evas/Makefile
 spec/efl.spec
 pc/evil.pc
 pc/eina.pc
@@ -1950,7 +1985,11 @@ echo "    Line Dither Mask........: $conv_line_dither"
 echo "    No Dither Mask for 16bpp: $conv_no_dither"
 echo "    Tiled 32BPP rotate......: $have_tile_rotate"
 echo
-echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
+echo "Tests..................: ${_efl_enable_tests}"
+if test "x${_efl_enable_tests}" = "xyes"; then
+echo "    Coverage...........: ${_efl_enable_coverage}"
+echo "    Build and run......: make check"
+fi
 echo "Examples...............: make examples"
 echo "    installation.......: make install-examples"
 if test "x${build_doc}" = "xyes"; then

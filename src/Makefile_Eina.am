@@ -213,6 +213,7 @@ lib_eina_libeina_la_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEFL_EINA_BUILD \
 @EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
 @EFL_PTHREAD_CFLAGS@ \
 @EINA_CFLAGS@ \
 @VALGRIND_CFLAGS@
@@ -223,7 +224,7 @@ lib_eina_libeina_la_CPPFLAGS += \
 -I$(top_builddir)/src/lib/evil
 endif
 
-lib_eina_libeina_la_LIBADD = @EINA_LIBS@
+lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@
 
 if HAVE_WINDOWS
 lib_eina_libeina_la_LIBADD += \
@@ -238,6 +239,102 @@ lib_eina_libeina_la_LDFLAGS = -no-undefined -version-info @version_info@ @releas
 ### Script
 
 bin_SCRIPTS = scripts/eina/eina-bench-cmp
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eina/eina_suite tests/eina/cxx_compile_test
+
+tests_eina_eina_suite_SOURCES = \
+tests/eina/eina_suite.c \
+tests/eina/eina_suite.h \
+tests/eina/eina_test_fp.c \
+tests/eina/eina_test_stringshare.c \
+tests/eina/eina_test_ustringshare.c \
+tests/eina/eina_test_ustr.c \
+tests/eina/eina_test_binshare.c \
+tests/eina/eina_test_binbuf.c \
+tests/eina/eina_test_inarray.c \
+tests/eina/eina_test_array.c \
+tests/eina/eina_test_clist.c \
+tests/eina/eina_test_error.c \
+tests/eina/eina_test_sched.c \
+tests/eina/eina_test_log.c \
+tests/eina/eina_test_magic.c \
+tests/eina/eina_test_inlist.c \
+tests/eina/eina_test_main.c \
+tests/eina/eina_test_counter.c \
+tests/eina/eina_test_lalloc.c \
+tests/eina/eina_test_hash.c \
+tests/eina/eina_test_iterator.c \
+tests/eina/eina_test_accessor.c \
+tests/eina/eina_test_module.c \
+tests/eina/eina_test_convert.c \
+tests/eina/eina_test_rbtree.c \
+tests/eina/eina_test_file.c \
+tests/eina/eina_test_benchmark.c \
+tests/eina/eina_test_mempool.c \
+tests/eina/eina_test_rectangle.c \
+tests/eina/eina_test_list.c \
+tests/eina/eina_test_matrixsparse.c \
+tests/eina/eina_test_tiler.c \
+tests/eina/eina_test_strbuf.c \
+tests/eina/eina_test_str.c \
+tests/eina/eina_test_quadtree.c \
+tests/eina/eina_test_simple_xml_parser.c \
+tests/eina/eina_test_value.c
+# tests/eina/eina_test_model.c
+
+tests_eina_eina_suite_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
+@CHECK_CFLAGS@ \
+@EINA_CFLAGS@
+
+tests_eina_eina_suite_LDADD = \
+lib/eina/libeina.la \
+@CHECK_LIBS@ \
+@EINA_LIBS@ \
+-lm
+
+tests_eina_cxx_compile_test_SOURCES = tests/eina/cxx_compile_test.cxx
+
+tests_eina_cxx_compile_test_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+@CHECK_CFLAGS@ \
+@EINA_CFLAGS@
+
+tests_eina_cxx_compile_test_LDADD = \
+lib/eina/libeina.la \
+@EINA_LIBS@
+
+EXTRA_LTLIBRARIES = tests/eina/module_dummy.la
+
+check-local: tests/eina/module_dummy.la
+
+tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
+
+tests_eina_module_dummy_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
+@CHECK_CFLAGS@ \
+@EINA_CFLAGS@ \
+-DEFL_EINA_BUILD
+
+tests_eina_module_dummy_la_LIBADD = \
+lib/eina/libeina.la \
+@EINA_LIBS@ \
+-lm
+
+tests_eina_module_dummy_la_LDFLAGS = -no-undefined -module -avoid-version
+
+tests_eina_module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
+
+endif
 
 EXTRA_DIST += \
 lib/eina/eina_config.h.in \
