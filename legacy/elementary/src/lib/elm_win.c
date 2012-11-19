@@ -3434,6 +3434,7 @@ elm_win_rotation_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
+   if (rotation < 0) rotation = -rotation;
    if (sd->rot == rotation) return;
    sd->rot = rotation;
    TRAP(sd, rotation_set, rotation);

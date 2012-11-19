@@ -487,7 +487,7 @@ _on_rotation_changed(void *data,
    if (!old_indi) return;
    evas_object_hide(old_indi);
 
-   if ((rot == 90) || (rot == 270) || (rot == -90) || (rot == -270))
+   if ((rot == 90) || (rot == 270))
      {
         if (!sd->landscape_indicator)
           sd->landscape_indicator = _create_landscape_indicator(conformant);
