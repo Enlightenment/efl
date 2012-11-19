@@ -64,6 +64,7 @@ struct _Elm_Win_Smart_Data
    {
       Ecore_X_Window       xwin;
       Ecore_Event_Handler *client_message_handler;
+      Ecore_Event_Handler *property_handler;
    } x;
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -1319,6 +1320,8 @@ _elm_win_smart_del(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.client_message_handler)
      ecore_event_handler_del(sd->x.client_message_handler);
+   if (sd->x.property_handler)
+     ecore_event_handler_del(sd->x.property_handler);
 #endif
 
    if (sd->img_obj)
@@ -1893,6 +1896,24 @@ _elm_win_client_message(void *data,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_elm_win_property_change(void *data,
+                         int type __UNUSED__,
+                         void *event)
+{
+   Elm_Win_Smart_Data *sd = data;
+   Ecore_X_Event_Window_Property *e = event;
+
+   if (e->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE)
+     {
+        if (e->win == sd->x.xwin)
+          {
+             sd->indmode = ecore_x_e_illume_indicator_state_get(e->win);
+             evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_INDICATOR_PROP_CHANGED, NULL);
+          }
+     }
+   return ECORE_CALLBACK_PASS_ON;
+}
 #endif
 
 static void
@@ -2600,8 +2621,12 @@ elm_win_add(Evas_Object *parent,
             ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
             ENGINE_COMPARE(ELM_SOFTWARE_8_X11) ||
             ENGINE_COMPARE(ELM_OPENGL_X11))
-     sd->x.client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+     {
+        sd->x.client_message_handler = ecore_event_handler_add
+            (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+        sd->x.property_handler = ecore_event_handler_add
+            (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_win_property_change, sd);
+     }
 #endif
 
    else if (!strncmp(ENGINE_GET(), "shot:", 5))
