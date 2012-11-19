@@ -4,9 +4,11 @@
 
 #include <stdlib.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#endif
+
+#ifdef _MSC_VER
 # include <process.h>
 #endif
 

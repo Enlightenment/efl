@@ -16,10 +16,10 @@
 # include <mach/mach_time.h>
 #endif
 
+#include <time.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
-
-#include <time.h>
 
 #if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
 static clockid_t _ecore_time_clock_id = -1;

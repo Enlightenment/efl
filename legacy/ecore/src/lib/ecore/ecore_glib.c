@@ -9,7 +9,7 @@
 #include "ecore_private.h"
 
 #ifdef HAVE_GLIB
-#include <glib.h>
+# include <glib.h>
 
 static Eina_Bool _ecore_glib_active = EINA_FALSE;
 static Ecore_Select_Function _ecore_glib_select_original;

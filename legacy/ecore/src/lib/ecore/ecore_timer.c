@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <Eo.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
-
-#include "Eo.h"
 
 #define MY_CLASS ECORE_TIMER_CLASS
 #define MY_CLASS_NAME "ecore_timer"

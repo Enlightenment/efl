@@ -2,9 +2,9 @@
 # include <config.h>
 #endif
 
-#include <Eo.h>
-
 #include <stdlib.h>
+
+#include <Eo.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

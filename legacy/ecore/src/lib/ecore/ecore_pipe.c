@@ -40,12 +40,6 @@
 # include <Exotic.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
-
-/* How of then we should retry to write to the pipe */
-#define ECORE_PIPE_WRITE_RETRY 6
-
 /*
  * On Windows, pipe() is implemented with sockets.
  * Contrary to Linux, Windows uses different functions
@@ -78,8 +72,11 @@
 
 #endif /* ! _WIN32 */
 
-#include <Ecore.h>
+#include "Ecore.h"
 #include "ecore_private.h"
+
+/* How of then we should retry to write to the pipe */
+#define ECORE_PIPE_WRITE_RETRY 6
 
 struct _Ecore_Pipe
 {

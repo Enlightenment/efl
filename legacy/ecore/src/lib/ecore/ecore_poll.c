@@ -4,10 +4,10 @@
 
 #include <stdlib.h>
 
+#include <Eo.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
-
-#include "Eo.h"
 
 #define MY_CLASS ECORE_POLLER_CLASS
 

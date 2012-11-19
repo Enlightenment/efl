@@ -21,6 +21,7 @@ ecore_anim.c \
 ecore_app.c \
 ecore_events.c \
 ecore_getopt.c \
+ecore_glib.c \
 ecore_idle_enterer.c \
 ecore_idle_exiter.c \
 ecore_idler.c \
@@ -31,7 +32,6 @@ ecore_poll.c \
 ecore_time.c \
 ecore_timer.c \
 ecore_thread.c \
-ecore_glib.c \
 ecore_throttle.c \
 ecore_private.h
 
@@ -69,5 +69,5 @@ endif
 
 endif
 
-libecore_la_LIBADD = @dlopen_libs@ @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
+libecore_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@ @GLIB_LIBS@ @WIN32_LIBS@ @LTLIBINTL@ @EFL_PTHREAD_LIBS@ @rt_libs@ -lm
 libecore_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@

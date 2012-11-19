@@ -23,10 +23,15 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#endif
+
+#ifdef _MSC_VER
 # include <float.h>
 #endif
 
@@ -113,15 +118,15 @@ epoll_ctl(int                 epfd __UNUSED__,
 #endif
 
 #ifdef HAVE_SYS_TIMERFD_H
-#include <sys/timerfd.h>
+# include <sys/timerfd.h>
 #else
 /* fallback code if we don't have real timerfd - reduces number of ifdefs  */
-#ifndef CLOCK_MONOTONIC
-#define CLOCK_MONOTONIC 0 /* bogus value */
-#endif
-#ifndef TFD_NONBLOCK
-#define TFD_NONBLOCK    0 /* bogus value */
-#endif
+# ifndef CLOCK_MONOTONIC
+#  define CLOCK_MONOTONIC 0 /* bogus value */
+# endif
+# ifndef TFD_NONBLOCK
+#  define TFD_NONBLOCK    0 /* bogus value */
+# endif
 static inline int
 timerfd_create(int clockid __UNUSED__,
                int flags __UNUSED__)
