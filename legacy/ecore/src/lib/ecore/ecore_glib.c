@@ -319,7 +319,7 @@ ecore_main_loop_glib_integrate(void)
    _ecore_glib_active = EINA_TRUE;
    return EINA_TRUE;
 #else
-   fputs("ERROR: no glib support in ecore.\n", stderr);
+   ERR("No glib support");
    return EINA_FALSE;
 #endif
 }
