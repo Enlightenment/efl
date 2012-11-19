@@ -416,7 +416,7 @@ struct _ecore_string
 };
 
 EAPI int         ecore_string_init();
-EAPI void        ecore_string_shutdown();
+EAPI int         ecore_string_shutdown();
 EAPI const char *ecore_string_instance(const char *string);
 EAPI void        ecore_string_release(const char *string);
 

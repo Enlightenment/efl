@@ -57,10 +57,10 @@ static Eina_Stringshare_Test eina_str = {
 
 static Eina_Stringshare_Test evas_str = {
    "evas",
-/*  evas_stringshare_init, */
+   NULL,
    evas_stringshare_add,
-   evas_stringshare_del
-/*  evas_stringshare_shutdown */
+   evas_stringshare_del,
+   NULL
 };
 
 static Eina_Stringshare_Test ecore_str = {
@@ -71,7 +71,7 @@ static Eina_Stringshare_Test ecore_str = {
    ecore_string_shutdown
 };
 
-static Eina_Stringshare_Test *str[] = {
+static Eina_Stringshare_Test *tests[] = {
    &eina_str,
    &evas_str,
    &ecore_str,
@@ -87,16 +87,17 @@ eina_bench_e17_stringshare(Eina_Stringshare_Test *str)
 
    eina_counter_start(cnt);
 
-   str->init();
+   if (str->init)
+     str->init();
 
-#include "strlog"
+//#include "strlog"
 
-   str->shutdown();
+   if (str->shutdown)
+     str->shutdown();
 
    eina_counter_stop(cnt, 1);
 
-   fprintf(stderr, "For `%s`:\n", str->name);
-   eina_counter_dump(cnt);
+   fprintf(stderr, "For `%s`:\n%s\n", str->name,eina_counter_dump(cnt));
 
    eina_counter_free(cnt);
 }
@@ -110,8 +111,8 @@ eina_bench_e17(void)
 
    eina_init();
 
-   for (i = 0; str[i]; ++i)
-      eina_bench_e17_stringshare(str[i]);
+   for (i = 0; tests[i]; ++i)
+      eina_bench_e17_stringshare(tests[i]);
 
    eina_shutdown();
 #endif

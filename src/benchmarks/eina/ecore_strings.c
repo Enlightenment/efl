@@ -33,7 +33,7 @@ static int ecore_string_init_count = 0;
  * @return  Zero on failure, non-zero on successful initialization.
  */
 EAPI int
-ecore_string_init()
+ecore_string_init(void)
 {
    /*
     * No strings have been loaded at this point, so create the hash
@@ -138,9 +138,11 @@ ecore_string_hash_dump_stats(void)
 
 /**
  * Shutdown the ecore string internal structures
+ * @return 0 when the module is completely shut down, 1 or
+ * greater otherwise.
  */
-EAPI void
-ecore_string_shutdown()
+EAPI int
+ecore_string_shutdown(void)
 {
    --ecore_string_init_count;
    if (!ecore_string_init_count)
@@ -148,6 +150,7 @@ ecore_string_shutdown()
         ecore_hash_destroy(ecore_strings);
         ecore_strings = NULL;
      }
+   return ecore_string_init_count;
 }
 
 static void
