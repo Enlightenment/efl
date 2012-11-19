@@ -946,8 +946,8 @@ static Tilebuf_Rect *
 _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 {
    Tilebuf_Rect *r, *rects;
-   int x1, y1, x2, y2;
-   
+   Evas_Point p1, p2;
+
    if (r1)
      {
         EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
@@ -977,23 +977,23 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 // between multiple update regions to render and total pixels to render.
    if (rects)
      {
-        x1 = rects->x; y1 = rects->y;
-        x2 = rects->x + rects->w; y2 = rects->y + rects->h;
+        p1.x = rects->x; p1.y = rects->y;
+        p2.x = rects->x + rects->w; p2.y = rects->y + rects->h;
         EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
           {
-             if (r->x < x1) x1 = r->x;
-             if (r->y < y1) y1 = r->y;
-             if ((r->x + r->w) > x2) x2 = r->x + r->w;
-             if ((r->y + r->h) > y2) y2 = r->y + r->h;
+             if (r->x < p1.x) p1.x = r->x;
+             if (r->y < p1.y) p1.y = r->y;
+             if ((r->x + r->w) > p2.x) p2.x = r->x + r->w;
+             if ((r->y + r->h) > p2.y) p2.y = r->y + r->h;
           }
         evas_common_tilebuf_free_render_rects(rects);
         rects = calloc(1, sizeof(Tilebuf_Rect));
         if (rects)
           {
-             rects->x = x1;
-             rects->y = y1;
-             rects->w = x2 - x1;
-             rects->h = y2 - y1;
+             rects->x = p1.x;
+             rects->y = p1.y;
+             rects->w = p2.x - p2.x;
+             rects->h = p2.y - p2.y;
           }
      }
    evas_common_tilebuf_clear(tb);
@@ -1313,7 +1313,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 }
 
 static void
-eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data, void *context, void *surface, int p1x, int p1y, int p2x, int p2y)
 {
    Render_Engine *re;
 
@@ -1321,7 +1321,7 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
-   evas_gl_common_line_draw(re->win->gl_context, x1, y1, x2, y2);
+   evas_gl_common_line_draw(re->win->gl_context, p1x, p1y, p2x, p2y);
 }
 
 static void *
