@@ -1040,13 +1040,13 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 
    if (fn != EMBRYO_FUNCTION_CONT)
      {
-	int i;
+	int j;
 
-	for (i = ep->params_size - 1; i >= 0; i--)
+	for (j = ep->params_size - 1; j >= 0; j--)
 	  {
 	     Embryo_Param *pr;
 
-	     pr = &(ep->params[i]);
+	     pr = &(ep->params[j]);
 	     if (pr->string)
 	       {
 		  int len;
@@ -1788,22 +1788,22 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		  return EMBRYO_PROGRAM_SLEEP;
 	       }
 	       {
-		  Embryo_Header    *hdr;
-		  int i, num;
+		  Embryo_Header    *hdr2;
+		  int j, num2;
 		  Embryo_Func_Stub *func_entry;
 
-		  hdr = (Embryo_Header *)ep->code;
-		  num = NUMENTRIES(hdr, natives, libraries);
-		  func_entry = GETENTRY(hdr, natives, 0);
-		  for (i = 0; i < num; i++)
+		  hdr2 = (Embryo_Header *)ep->code;
+		  num2 = NUMENTRIES(hdr2, natives, libraries);
+		  func_entry = GETENTRY(hdr2, natives, 0);
+		  for (j = 0; j < num2; j++)
 		    {
 		       char *entry_name;
 
-		       entry_name = GETENTRYNAME(hdr, func_entry);
-		       if (i == offs)
-			 printf("EMBRYO: CALL [%i] %s() non-existent!\n", i, entry_name);
+		       entry_name = GETENTRYNAME(hdr2, func_entry);
+		       if (j == offs)
+			 printf("EMBRYO: CALL [%i] %s() non-existent!\n", j, entry_name);
 		       func_entry =
-			 (Embryo_Func_Stub *)((unsigned char *)func_entry + hdr->defsize);
+			 (Embryo_Func_Stub *)((unsigned char *)func_entry + hdr2->defsize);
 		    }
 	       }
 	     ABORT(ep, num);
