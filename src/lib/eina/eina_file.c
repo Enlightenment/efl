@@ -551,8 +551,7 @@ _eina_file_escape(const char *path, int *length)
 		   {
 		      len -= p + 2 - q;
 		      result[len] = '\0';
-		      q = p;
-		      ++p;
+                      break;
 		   }
 		 else
 		   {
@@ -560,6 +559,17 @@ _eina_file_escape(const char *path, int *length)
 		      ++p;
 		   }
 	    }
+        else
+          if (p[1] == '.'
+              && p[2] == '/')
+            {
+               // remove '/./'
+               len -= 2;
+               memmove(p, p + 2, len - (p - result));
+               result[len] = '\0';
+               q = p;
+               ++p;
+            }
 	  else
 	    {
 	       q = p;
