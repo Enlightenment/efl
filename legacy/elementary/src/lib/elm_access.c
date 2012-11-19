@@ -164,21 +164,7 @@ _access_obj_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 static void
 _access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Access_Info *ac;
-
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
-                                       _access_obj_mouse_in_cb, data);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_OUT,
-                                       _access_obj_mouse_out_cb, data);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _access_obj_del_cb, data);
-   ac = evas_object_data_get(data, "_elm_access");
-   evas_object_data_del(data, "_elm_access");
-   if (ac)
-     {
-        _elm_access_clear(ac);
-        free(ac);
-     }
+   _elm_access_object_unregister(data, obj);
 
    // _elm_access_edje_object_part_object_register(); set below object data
    evas_object_data_del(obj, "_part_access_obj");
@@ -640,6 +626,27 @@ _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj)
    evas_object_data_set(obj, "_elm_access", ac);
 }
 
+EAPI void
+_elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
+{
+   Elm_Access_Info *ac;
+
+   evas_object_event_callback_del_full(hoverobj, EVAS_CALLBACK_MOUSE_IN,
+                                       _access_obj_mouse_in_cb, obj);
+   evas_object_event_callback_del_full(hoverobj, EVAS_CALLBACK_MOUSE_OUT,
+                                       _access_obj_mouse_out_cb, obj);
+   evas_object_event_callback_del_full(hoverobj, EVAS_CALLBACK_DEL,
+                                       _access_obj_del_cb, obj);
+
+   ac = evas_object_data_get(obj, "_elm_access");
+   evas_object_data_del(obj, "_elm_access");
+   if (ac)
+     {
+        _elm_access_clear(ac);
+        free(ac);
+     }
+}
+
 static Eina_Bool
 _access_item_over_timeout_cb(void *data)
 {
@@ -727,6 +734,10 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
 
    if (!item) return;
 
+   /* check previous access object */
+   if (item->access_obj)
+     _elm_access_widget_item_unregister(item);
+
    // create access object
    ho = item->view;
    ao = _elm_access_add(item->widget);
@@ -755,7 +766,7 @@ _elm_access_widget_item_unregister(Elm_Widget_Item *item)
 {
    Evas_Object *ho;
 
-   if (!item || item->access_obj) return;
+   if (!item || !item->access_obj) return;
 
    ho = item->view;
    evas_object_event_callback_del_full(ho, EVAS_CALLBACK_RESIZE,
@@ -763,7 +774,10 @@ _elm_access_widget_item_unregister(Elm_Widget_Item *item)
    evas_object_event_callback_del_full(ho, EVAS_CALLBACK_MOVE,
                                   _content_move, item->access_obj);
 
+   _elm_access_object_unregister(item->access_obj, ho);
+
    evas_object_del(item->access_obj);
+   item->access_obj = NULL;
 }
 
 EAPI void

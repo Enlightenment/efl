@@ -4204,6 +4204,10 @@ _item_unrealize_cb(Elm_Gen_Item *it)
    EINA_LIST_FREE (it->item->flip_content_objs, content)
      evas_object_del(content);
 
+   /* access */
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+
    // unswallow VIEW(it) first then manipulate VIEW(it)
    _decorate_item_unrealize(it);
    if (GL_IT(it)->wsd->decorate_all_mode) _decorate_all_item_unrealize(it);
@@ -4685,7 +4689,7 @@ _elm_genlist_smart_member_add(Evas_Object *obj,
 }
 
 static void
-_access_obj_process(Elm_Genlist_Smart_Data * sd, Eina_Bool is_access)
+_access_obj_process(Elm_Genlist_Smart_Data *sd, Eina_Bool is_access)
 {
    Item_Block *itb;
    Eina_Bool done = EINA_FALSE;

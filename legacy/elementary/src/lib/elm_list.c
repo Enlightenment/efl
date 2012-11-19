@@ -1364,6 +1364,25 @@ _access_on_highlight_cb(void *data)
    elm_list_item_bring_in(it);
 }
 
+static void
+_access_widget_item_register(Elm_List_Item *it, Eina_Bool is_access)
+{
+   Elm_Access_Info *ai;
+
+   if (!is_access) _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+   else
+     {
+        _elm_access_widget_item_register((Elm_Widget_Item *)it);
+
+        ai = _elm_access_object_get(it->base.access_obj);
+
+        _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("List Item"));
+        _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+        _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
+        _elm_access_on_highlight_hook_set(ai, _access_on_highlight_cb, it);
+     }
+}
+
 static Elm_List_Item *
 _item_new(Evas_Object *obj,
           const char *label,
@@ -1386,23 +1405,9 @@ _item_new(Evas_Object *obj,
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
-   // ACCESS
+   /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     {
-        _elm_access_widget_item_register((Elm_Widget_Item *)it);
-
-        _elm_access_text_set(_elm_access_object_get(it->base.access_obj),
-                             ELM_ACCESS_TYPE, E_("List Item"));
-        _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
-                                 ELM_ACCESS_INFO,
-                                 _access_info_cb, it);
-        _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
-                                 ELM_ACCESS_STATE,
-                                 _access_state_cb, it);
-        _elm_access_on_highlight_hook_set(
-           _elm_access_object_get(it->base.access_obj), _access_on_highlight_cb,
-           it);
-     }
+     _access_widget_item_register(it, EINA_TRUE);
 
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
    evas_object_event_callback_add
@@ -1629,6 +1634,18 @@ _elm_list_smart_member_add(Evas_Object *obj,
 }
 
 static void
+_elm_list_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   Eina_List *elist = NULL;
+   Elm_List_Item *it;
+
+   ELM_LIST_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->items, elist, it)
+     _access_widget_item_register(it, is_access);
+}
+
+static void
 _elm_list_smart_set_user(Elm_List_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_list_smart_add;
@@ -1645,6 +1662,7 @@ _elm_list_smart_set_user(Elm_List_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->disable = _elm_list_smart_disable;
    ELM_WIDGET_CLASS(sc)->event = _elm_list_smart_event;
    ELM_WIDGET_CLASS(sc)->translate = _elm_list_smart_translate;
+   ELM_WIDGET_CLASS(sc)->access = _elm_list_smart_access;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_list_smart_sizing_eval;
 }
