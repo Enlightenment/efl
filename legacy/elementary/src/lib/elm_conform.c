@@ -258,57 +258,88 @@ _conformant_parts_swallow(Evas_Object *obj)
 }
 
 static Eina_Bool
-_indicator_connect_cb(void *data)
+_port_indicator_connect_cb(void *data)
 {
    const char   *indicator_serv_name;
-   int           rot = 0;
    Elm_Conformant_Smart_Data *sd = data;
+   int rot;
 
-   if (!sd) return ECORE_CALLBACK_CANCEL;
-   if (sd->indmode != ELM_WIN_INDICATOR_SHOW) return ECORE_CALLBACK_CANCEL;
-
-   rot = sd->rot;
-
+   if (!sd || (sd->indmode != ELM_WIN_INDICATOR_SHOW))
+     {
+        sd->port_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   rot = (int) evas_object_data_get(sd->portrait_indicator, "_elm_conformant");
    indicator_serv_name = elm_config_indicator_service_get(rot);
    if (!indicator_serv_name)
      {
         DBG("Conformant cannot find indicator service name: Rotation=%d\n",rot);
+        sd->port_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-
-   if ((rot == 90) || (rot == 270))
+   if (elm_plug_connect(sd->portrait_indicator, indicator_serv_name, 0, EINA_FALSE))
      {
-        if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
-          {
-             DBG("Conformant connect to server[%s]\n", indicator_serv_name);
-             return ECORE_CALLBACK_CANCEL;
-          }
+        DBG("Conformant connect to server[%s]\n", indicator_serv_name);
+        sd->port_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
      }
-   else
-     {
-        if (elm_plug_connect(sd->portrait_indicator, indicator_serv_name, 0, EINA_FALSE))
-          {
-             DBG("Conformant connect to server[%s]\n", indicator_serv_name);
-             return ECORE_CALLBACK_CANCEL;
-          }
-     }
+   return ECORE_CALLBACK_RENEW;
+}
 
-   ecore_timer_interval_set(sd->indi_timer, 1);
+
+static Eina_Bool
+_land_indicator_connect_cb(void *data)
+{
+   const char   *indicator_serv_name;
+   Elm_Conformant_Smart_Data *sd = data;
+   int rot;
+
+   if (!sd || (sd->indmode != ELM_WIN_INDICATOR_SHOW))
+     {
+        sd->land_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   rot = (int) evas_object_data_get(sd->landscape_indicator, "_elm_conformant");
+   indicator_serv_name = elm_config_indicator_service_get(rot);
+   if (!indicator_serv_name)
+     {
+        DBG("Conformant cannot find indicator service name: Rotation=%d\n",rot);
+        sd->land_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
+     {
+        DBG("Conformant connect to server[%s]\n", indicator_serv_name);
+        sd->land_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_indicator_disconnected(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+_land_indicator_disconnected(void *data,
+                             Evas_Object *obj __UNUSED__,
+                             void *event_info __UNUSED__)
 {
    Evas_Object *conform = data;
 
    ELM_CONFORMANT_DATA_GET(conform, sd);
 
-   sd->indi_timer = ecore_timer_add(1, _indicator_connect_cb, sd);
-
+   sd->land_indi_timer = ecore_timer_add(1, _land_indicator_connect_cb, sd);
 }
+
+static void
+_port_indicator_disconnected(void *data,
+                             Evas_Object *obj __UNUSED__,
+                             void *event_info __UNUSED__)
+{
+   Evas_Object *conform = data;
+
+   ELM_CONFORMANT_DATA_GET(conform, sd);
+
+   sd->port_indi_timer = ecore_timer_add(1, _port_indicator_connect_cb, sd);
+}
+
 
 static Evas_Object *
 _create_portrait_indicator(Evas_Object *obj)
@@ -339,7 +370,7 @@ _create_portrait_indicator(Evas_Object *obj)
      }
 
    elm_widget_sub_object_add(obj, port_indicator);
-   evas_object_smart_callback_add(port_indicator, "image.deleted", _indicator_disconnected, obj);
+   evas_object_smart_callback_add(port_indicator, "image.deleted", _port_indicator_disconnected, obj);
 
    evas_object_size_hint_min_set(port_indicator, -1, 0);
    evas_object_size_hint_max_set(port_indicator, -1, 0);
@@ -376,7 +407,7 @@ _create_landscape_indicator(Evas_Object *obj)
      }
 
    elm_widget_sub_object_add(obj, land_indicator);
-   evas_object_smart_callback_add(land_indicator, "image.deleted",_indicator_disconnected, obj);
+   evas_object_smart_callback_add(land_indicator, "image.deleted",_land_indicator_disconnected, obj);
 
    evas_object_size_hint_min_set(land_indicator, -1, 0);
    evas_object_size_hint_max_set(land_indicator, -1, 0);
@@ -495,6 +526,7 @@ _on_rotation_changed(void *data,
         if (!sd->landscape_indicator) return;
 
         evas_object_show(sd->landscape_indicator);
+        evas_object_data_set(sd->landscape_indicator, "_elm_conformant_rot", (void *) rot);
         elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
      }
    else
@@ -505,6 +537,7 @@ _on_rotation_changed(void *data,
         if (!sd->portrait_indicator) return;
 
         evas_object_show(sd->portrait_indicator);
+        evas_object_data_set(sd->portrait_indicator, "_elm_conformant_rot", (void *) rot);
         elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
      }
 }
@@ -603,6 +636,7 @@ _show_region_job(void *data)
         Evas_Coord x, y, w, h;
 
         elm_widget_show_region_get(focus_obj, &x, &y, &w, &h);
+
 
         if (h < _elm_config->finger_size)
           h = _elm_config->finger_size;
@@ -776,9 +810,6 @@ _elm_conformant_smart_add(Evas_Object *obj)
 
    _conformant_parts_swallow(obj);
 
-   priv->landscape_indicator = NULL;
-   priv->portrait_indicator = NULL;
-
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _move_resize_cb, obj);
    evas_object_event_callback_add
@@ -797,22 +828,12 @@ _elm_conformant_smart_del(Evas_Object *obj)
 #endif
 
    if (sd->show_region_job) ecore_job_del(sd->show_region_job);
-   if (sd->indi_timer)
-     {
-        ecore_timer_del(sd->indi_timer);
-        sd->indi_timer = NULL;
-     }
-
+   if (sd->port_indi_timer) ecore_timer_del(sd->port_indi_timer);
+   if (sd->land_indi_timer) ecore_timer_del(sd->land_indi_timer);
    if (sd->portrait_indicator)
-     {
-        evas_object_del(sd->portrait_indicator);
-        sd->portrait_indicator = NULL;
-     }
+     evas_object_del(sd->portrait_indicator);
    if (sd->landscape_indicator)
-     {
-        evas_object_del(sd->landscape_indicator);
-        sd->landscape_indicator = NULL;
-     }
+     evas_object_del(sd->landscape_indicator);
 
    ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->base.del(obj);
 }

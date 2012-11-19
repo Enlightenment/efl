@@ -143,7 +143,8 @@ struct _Elm_Conformant_Smart_Data
    Ecore_Job                     *show_region_job;
    Elm_Win_Indicator_Mode         indmode;
    Elm_Win_Indicator_Opacity_Mode ind_o_mode;
-   Ecore_Timer                   *indi_timer;
+   Ecore_Timer                   *land_indi_timer;
+   Ecore_Timer                   *port_indi_timer;
 
    int                            rot;
 };
