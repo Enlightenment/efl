@@ -1365,6 +1365,57 @@ _access_on_highlight_cb(void *data)
 }
 
 static void
+_access_activate_cb(void *data __UNUSED__,
+                    Evas_Object *part_obj __UNUSED__,
+                    Elm_Widget_Item *item)
+{
+   Elm_List_Item *it;
+   Evas_Object *obj;
+
+   it = (Elm_List_Item *)item;
+   ELM_LIST_ITEM_CHECK_OR_RETURN(it);
+
+   obj = WIDGET(it);
+   ELM_LIST_DATA_GET(obj, sd);
+
+   evas_object_ref(obj);
+   _elm_list_walk(sd);
+
+   if (sd->multi)
+     {
+        if (!it->selected)
+          {
+             _item_highlight(it);
+             _item_select(it);
+          }
+        else _item_unselect(it);
+     }
+   else
+     {
+        if (!it->selected)
+          {
+             while (sd->selected)
+               _item_unselect(sd->selected->data);
+             _item_highlight(it);
+             _item_select(it);
+          }
+        else
+          {
+             const Eina_List *l, *l_next;
+             Elm_List_Item *it2;
+
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
+               if (it2 != it) _item_unselect(it2);
+             _item_highlight(it);
+             _item_select(it);
+          }
+     }
+
+   _elm_list_unwalk(sd);
+   evas_object_unref(obj);
+}
+
+static void
 _access_widget_item_register(Elm_List_Item *it, Eina_Bool is_access)
 {
    Elm_Access_Info *ai;
@@ -1380,6 +1431,7 @@ _access_widget_item_register(Elm_List_Item *it, Eina_Bool is_access)
         _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
         _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
         _elm_access_on_highlight_hook_set(ai, _access_on_highlight_cb, it);
+        _elm_access_activate_callback_set(ai, _access_activate_cb, it);
      }
 }
 
