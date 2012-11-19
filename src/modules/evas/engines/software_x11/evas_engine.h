@@ -60,6 +60,13 @@ enum _Outbuf_Depth
    OUTBUF_DEPTH_LAST
 };
 
+enum {
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE
+};
+
 typedef struct _Outbuf Outbuf;
 
 struct _Outbuf
@@ -112,6 +119,8 @@ struct _Outbuf
         /* 1 big buffer for updates - flush on idle_flush */
         RGBA_Image *onebuf;
         Eina_Array  onebuf_regions;
+        
+        void *swapper;
 
         /* a list of pending regions to write to the target */
         Eina_List *pending_writes;

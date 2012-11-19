@@ -14,7 +14,6 @@
 #include "evas_xlib_buffer.h"
 #include "evas_xlib_color.h"
 
-
 typedef struct _Outbuf_Region   Outbuf_Region;
 
 struct _Outbuf_Region
@@ -188,10 +187,10 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
 
 Outbuf *
 evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
-				 Display *disp, Drawable draw, Visual *vis,
-				 Colormap cmap, int x_depth,
-				 int grayscale, int max_colors, Pixmap mask,
-				 int shape_dither, int destination_alpha)
+                                  Display *disp, Drawable draw, Visual *vis,
+                                  Colormap cmap, int x_depth,
+                                  int grayscale, int max_colors, Pixmap mask,
+                                  int shape_dither, int destination_alpha)
 {
    Outbuf             *buf;
 
@@ -199,6 +198,8 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
    if (!buf)
       return NULL;
 
+   if (x_depth < 15) rot = 0;
+   
    buf->w = w;
    buf->h = h;
    buf->depth = depth;
@@ -214,7 +215,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 
    eina_array_step_set(&buf->priv.onebuf_regions, sizeof (Eina_Array), 8);
 
-   {
+     {
       Gfx_Func_Convert    conv_func;
       X_Output_Buffer    *xob;
 

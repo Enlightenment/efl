@@ -93,6 +93,8 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
    if (!(buf = calloc(1, sizeof(Outbuf)))) 
      return NULL;
 
+   if (xdepth < 15) rot = 0;
+   
    setup = xcb_get_setup(conn);
 
    buf->w = w;

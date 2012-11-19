@@ -1007,6 +1007,7 @@ if BUILD_ENGINE_SOFTWARE_X11
 dist_installed_evasmainheaders_DATA += modules/evas/engines/software_x11/Evas_Engine_Software_X11.h
 SOFTWARE_X11_SOURCES = \
 modules/evas/engines/software_x11/evas_engine.c \
+modules/evas/engines/software_x11/evas_engine.h \
 modules/evas/engines/software_x11/evas_x_egl.c \
 modules/evas/engines/software_x11/evas_x_egl.h
 SOFTWARE_X11_CPPFLAGS = \
@@ -1025,10 +1026,17 @@ SOFTWARE_X11_CPPFLAGS = \
 SOFTWARE_X11_LIBADD =
 if BUILD_ENGINE_SOFTWARE_XLIB
 SOFTWARE_X11_SOURCES += \
+modules/evas/engines/software_x11/evas_xlib_swapbuf.c \
 modules/evas/engines/software_x11/evas_xlib_outbuf.c \
 modules/evas/engines/software_x11/evas_xlib_buffer.c \
 modules/evas/engines/software_x11/evas_xlib_color.c \
-modules/evas/engines/software_x11/evas_xlib_main.c
+modules/evas/engines/software_x11/evas_xlib_main.c \
+modules/evas/engines/software_x11/evas_xlib_swapper.c \
+modules/evas/engines/software_x11/evas_xlib_outbuf.h \
+modules/evas/engines/software_x11/evas_xlib_swapbuf.h \
+modules/evas/engines/software_x11/evas_xlib_buffer.h \
+modules/evas/engines/software_x11/evas_xlib_color.h \
+modules/evas/engines/software_x11/evas_xlib_swapper.h
 SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xlib_cflags@
 SOFTWARE_X11_LIBADD += @evas_engine_software_xlib_libs@
 endif
@@ -1039,10 +1047,6 @@ modules/evas/engines/software_x11/evas_xcb_outbuf.c \
 modules/evas/engines/software_x11/evas_xcb_buffer.c \
 modules/evas/engines/software_x11/evas_xcb_color.c \
 modules/evas/engines/software_x11/evas_xcb_main.c \
-modules/evas/engines/software_x11/evas_engine.h \
-modules/evas/engines/software_x11/evas_xlib_outbuf.h \
-modules/evas/engines/software_x11/evas_xlib_buffer.h \
-modules/evas/engines/software_x11/evas_xlib_color.h \
 modules/evas/engines/software_x11/evas_xcb_outbuf.h \
 modules/evas/engines/software_x11/evas_xcb_buffer.h \
 modules/evas/engines/software_x11/evas_xcb_color.h \
