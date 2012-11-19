@@ -482,12 +482,10 @@ _on_rotation_changed(void *data,
    if (rot == sd->rot) return;
 
    sd->rot = rot;
-   old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+   old_indi = elm_layout_content_unset(conformant, "elm.swallow.indicator");
    /* this means ELM_WIN_INDICATOR_SHOW never be set.we don't need to change indicator type*/
    if (!old_indi) return;
-
-   if (old_indi)
-     evas_object_hide(elm_layout_content_unset(old_indi, "elm.swallow.indicator"));
+   evas_object_hide(old_indi);
 
    if ((rot == 90) || (rot == 270) || (rot == -90) || (rot == -270))
      {
