@@ -60,6 +60,7 @@ struct _infra_data
    icon_properties *icons;
    Ecore_Timer *colortimer;
    char buf[1024];
+   int long_tap_count;
 };
 typedef struct _infra_data infra_data;
 
@@ -206,10 +207,12 @@ static Evas_Event_Flags
 n_long_tap_start(void *data , void *event_info)
 {
    Elm_Gesture_Taps_Info *p = (Elm_Gesture_Taps_Info *) event_info;
+   infra_data *infra = data;
 
    printf("N long tap started <%p> x,y=<%d,%d> count=<%d>\n",
          event_info, p->x, p->y, p->n);
    _color_and_icon_set(data, LONG_TAP_NAME, p->n, MAX_LONG_TAP, START_COLOR);
+   infra->long_tap_count = 0;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -217,10 +220,16 @@ static Evas_Event_Flags
 n_long_tap_move(void *data , void *event_info)
 {
    Elm_Gesture_Taps_Info *p = (Elm_Gesture_Taps_Info *) event_info;
+   infra_data *infra = data;
+
+   infra->long_tap_count++;
    _color_and_icon_set(data, LONG_TAP_NAME, p->n, MAX_LONG_TAP, MOVE_COLOR);
 
    printf("N long tap moved <%p> x,y=<%d,%d> count=<%d>\n",
          event_info, p->x, p->y, p->n);
+   if (infra->long_tap_count == 1)
+     printf("This is a first long tap.\n");
+
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
