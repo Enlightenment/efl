@@ -125,6 +125,13 @@ _canvas_obscured_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSE
 }
 
 static Eina_Bool
+_evas_clip_changes_free(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+   eina_rectangle_free(data);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _evas_render_had_map(Evas_Object_Protected_Data *obj)
 {
    return ((obj->prev.map) && (obj->prev.usemap));
@@ -1743,6 +1750,7 @@ evas_render_updates_internal(Evas *eo_e,
         eina_array_clean(&e->render_objects);
         eina_array_clean(&e->restack_objects);
         eina_array_clean(&e->temporary_objects);
+        eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
 /* we should flush here and have a mempool system for this        
         eina_array_flush(&e->active_objects);
@@ -1860,6 +1868,7 @@ _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    eina_array_flush(&e->delete_objects);
    eina_array_flush(&e->obscuring_objects);
    eina_array_flush(&e->temporary_objects);
+   eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
    eina_array_flush(&e->clip_changes);
 
    e->invalidate = EINA_TRUE;
