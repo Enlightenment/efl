@@ -81,6 +81,6 @@
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
 
-2012-11-20  ChunEon Park <hermet@hermet.pe.kr>
+2012-11-20  ChunEon Park (Hermet)
 
         * Fix the evas memory leak - eina_rectangles allocated internally.
