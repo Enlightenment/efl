@@ -696,7 +696,7 @@ static Tilebuf_Rect *
 _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 {
    Tilebuf_Rect *r, *rects;
-   int x1, y1, x2, y2;
+//   int px1, py1, px2, py2;
    
    if (r1)
      {
@@ -728,23 +728,23 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
    // between multiple update regions to render and total pixels to render.
    if (rects)
      {
-        x1 = rects->x; y1 = rects->y;
-        x2 = rects->x + rects->w; y2 = rects->y + rects->h;
+        px1 = rects->x; py1 = rects->y;
+        px2 = rects->x + rects->w; py2 = rects->y + rects->h;
         EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
           {
-             if (r->x < x1) x1 = r->x;
-             if (r->y < y1) y1 = r->y;
-             if ((r->x + r->w) > x2) x2 = r->x + r->w;
-             if ((r->y + r->h) > y2) y2 = r->y + r->h;
+             if (r->x < x1) px1 = r->x;
+             if (r->y < y1) py1 = r->y;
+             if ((r->x + r->w) > x2) px2 = r->x + r->w;
+             if ((r->y + r->h) > y2) py2 = r->y + r->h;
           }
         evas_common_tilebuf_free_render_rects(rects);
         rects = calloc(1, sizeof(Tilebuf_Rect));
         if (rects)
           {
-             rects->x = x1;
-             rects->y = y1;
-             rects->w = x2 - x1;
-             rects->h = y2 - y1;
+             rects->x = px1;
+             rects->y = py1;
+             rects->w = px2 - px1;
+             rects->h = py2 - py1;
           }
      }
  */
