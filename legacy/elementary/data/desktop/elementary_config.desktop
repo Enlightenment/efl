@@ -2,12 +2,16 @@
 Encoding=UTF-8
 Name=Elementary Configuration
 Name[ru]=Конфигурация Elementary
+Name[es]=Configuración de Elementary
 Name[fr]=Elementary Configuration
+Name[gl]=Configuración de Elementary
 Name[pt]=Configuração do Elementary
 Name[cs]=Konfigurace Elementary
 Comment=Elementary Configuration
 Comment[ru]=Конфигурация для Elementary (Элементарий)
+Comment[es]=Configure Elementary
 Comment[fr]=Configuration pour Elementary
+Comment[gl]=Configure Elementary
 Comment[it]=Configurazione di Elementary
 Comment[pt]=Configure o Elementary
 Comment[cs]=Konfigurace Elementary
