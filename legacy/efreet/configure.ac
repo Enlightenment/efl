@@ -126,11 +126,11 @@ fi
 #AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
 AM_CONDITIONAL(DEFAULT_VISIBILITY, false)
 
+dbusservicedir="${datadir}/dbus-1/services"
 AC_ARG_WITH([dbus-services],
    [AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES],
       [specify a directory to store dbus service files.])],
-   [dbusservicedir=$withval]
-   [dbusservicedir]="")
+   [dbusservicedir=$withval])
 
 
 ### Checks for programs
@@ -182,7 +182,6 @@ PKG_CHECK_MODULES([EFREETD],
 )
 requirement_efreet="ecore-file >= 1.6.99 ecore >= 1.6.99 eet >= 1.6.99 eina >= 1.6.99 edbus2 >= 1.7.99 ${requirement_efreet}"
 PKG_CHECK_MODULES(EFREET, [${requirement_efreet}])
-AM_CONDITIONAL([HAVE_DBUSSERVICEDIR], [! test "x${dbusservicedir}" = "x"])
 
 ### Checks for header files
 
@@ -285,13 +284,8 @@ echo "  Specification compliance:"
 echo "    Strict.............: ${enable_strict_spec}"
 echo "    Sloppy.............: ${enable_sloppy_spec}"
 echo
-if test "x$dbusservicedir" = "xyes"; then
-   echo "  DBus services dir....: ${dbusservicedir}"
-   echo
-else
-   echo "  DBus services dir....: ${datadir}/dbus-1/services"
-   echo
-fi
+echo "  DBus services dir....: ${dbusservicedir}"
+echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"
 echo
