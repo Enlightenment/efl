@@ -992,8 +992,8 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
           {
              rects->x = p1.x;
              rects->y = p1.y;
-             rects->w = p2.x - p2.x;
-             rects->h = p2.y - p2.y;
+             rects->w = p2.x - p1.x;
+             rects->h = p2.y - p1.y;
           }
      }
    evas_common_tilebuf_clear(tb);
