@@ -1193,7 +1193,9 @@ _elm_popup_smart_focus_next(const Evas_Object *obj,
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
-   if (!elm_widget_focus_next_get(sd->notify, dir, next))
+   if (!elm_widget_focus_next_get(sd->content_area, dir, next) &&
+       !elm_widget_focus_next_get(sd->action_area, dir, next)
+      )
      {
         // XXX: ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -1201,8 +1203,10 @@ _elm_popup_smart_focus_next(const Evas_Object *obj,
              *next = sd->title_access_obj;
              return EINA_TRUE;
           }
-        elm_widget_focused_object_clear(sd->notify);
-        elm_widget_focus_next_get(sd->notify, dir, next);
+        elm_widget_focused_object_clear((Evas_Object *)obj);
+        if (!elm_widget_focus_next_get(sd->content_area, dir, next))
+          return elm_widget_focus_next_get(sd->action_area, dir, next);
+        return EINA_TRUE;
      }
 
    return EINA_TRUE;
