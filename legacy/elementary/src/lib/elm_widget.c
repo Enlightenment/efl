@@ -743,6 +743,14 @@ _elm_widget_smart_set(Elm_Widget_Smart_Class *api)
 }
 
 // internal funcs
+/**
+ * @internal
+ * Check if the widget has its own focus next function.
+ *
+ * @param obj The widget.
+ * @return focus next function is implemented/unimplemented.
+ * (@c EINA_TRUE = implemented/@c EINA_FALSE = unimplemented.)
+ */
 static inline Eina_Bool
 _elm_widget_focus_chain_manager_is(const Evas_Object *obj)
 {
