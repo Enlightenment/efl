@@ -170,6 +170,38 @@ _item_text_signals_emit(Elm_Naviframe_Item *it)
      }
 }
 
+static Evas_Object *
+_access_object_get(Elm_Naviframe_Item *it, const char* part)
+{
+   Evas_Object *po, *ao;
+
+   if (!edje_object_part_text_get(VIEW(it), part)) return NULL;
+
+   po = (Evas_Object *)edje_object_part_object_get(VIEW(it), part);
+   ao = evas_object_data_get(po, "_part_access_obj");
+
+   return ao;
+}
+
+static void
+_access_focus_set(Elm_Naviframe_Item *it)
+{
+   Evas_Object *ao;
+
+   if (!it->title_visible)
+     {
+        elm_object_focus_set(it->content, EINA_TRUE);
+        return;
+     }
+
+   ao =_access_object_get(it, "elm.text.title");
+   if (ao) elm_object_focus_set(ao, EINA_TRUE);
+   else if ((it->title_icon) &&
+            (elm_widget_can_focus_get(it->title_icon) ||
+             elm_widget_child_can_focus_get(it->title_icon)))
+     elm_object_focus_set(it->title_icon, EINA_TRUE);
+}
+
 /* FIXME: we need to handle the case when this function is called
  * during a transition */
 static void
@@ -204,11 +236,15 @@ _item_style_set(Elm_Naviframe_Item *it,
 static void
 _item_title_visible_update(Elm_Naviframe_Item *nit)
 {
+   /* access */
+   if (_elm_config->access_mode) _access_focus_set(nit);
+
    if (nit->title_visible)
      edje_object_signal_emit(VIEW(nit), "elm,state,title,show", "elm");
    else
      edje_object_signal_emit(VIEW(nit), "elm,state,title,hide", "elm");
    edje_object_message_signal_process(VIEW(nit));
+
 }
 
 static Eina_Bool
@@ -233,6 +269,57 @@ _elm_naviframe_smart_theme(Evas_Object *obj)
 }
 
 static void
+_access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
+{
+   Evas_Object *ao;
+   Elm_Naviframe_Text_Item_Pair *pair;
+
+   if (is_access)
+     {
+        if (!_access_object_get(it, "elm.text.title"))
+          {
+             ao =_elm_access_edje_object_part_object_register
+                     (WIDGET(it), VIEW(it), "elm.text.title");
+            _elm_access_text_set(_elm_access_object_get(ao),
+                                ELM_ACCESS_TYPE, E_("title"));
+         }
+
+        if (!_access_object_get(it, "elm.text.subtitle"))
+          {
+             ao =_elm_access_edje_object_part_object_register
+                  (WIDGET(it), VIEW(it), "elm.text.subtitle");
+             _elm_access_text_set(_elm_access_object_get(ao),
+                             ELM_ACCESS_TYPE, E_("sub title"));
+          }
+
+        EINA_INLIST_FOREACH(it->text_list, pair)
+          {
+             if (!_access_object_get(it, pair->part))
+               {
+                  ao = _elm_access_edje_object_part_object_register
+                                 (WIDGET(it), VIEW(it), pair->part);
+                  _elm_access_text_set(_elm_access_object_get(ao),
+                                   ELM_ACCESS_TYPE, E_(pair->part));
+               }
+          }
+     }
+   else
+     {
+        if (it->title_label)
+          _elm_access_edje_object_part_object_unregister
+                (WIDGET(it), VIEW(it), "elm.text.title");
+
+        if (it->subtitle_label)
+          _elm_access_edje_object_part_object_unregister
+             (WIDGET(it), VIEW(it), "elm.text.subtitle");
+
+        EINA_INLIST_FOREACH(it->text_list, pair)
+          _elm_access_edje_object_part_object_unregister
+            (WIDGET(it), VIEW(it), pair->part);
+     }
+}
+
+static void
 _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
@@ -246,29 +333,11 @@ _item_text_set_hook(Elm_Object_Item *it,
      {
         eina_stringshare_replace(&nit->title_label, label);
         snprintf(buf, sizeof(buf), "elm.text.title");
-
-        //XXX: ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             nit->title = _elm_access_edje_object_part_object_register
-                          (WIDGET(nit), VIEW(nit), buf);
-             _elm_access_text_set(_elm_access_object_get(nit->title),
-                                  ELM_ACCESS_TYPE, E_("title"));
-          }
      }
    else if (!strcmp("subtitle", part))
      {
         eina_stringshare_replace(&nit->subtitle_label, label);
         snprintf(buf, sizeof(buf), "elm.text.subtitle");
-
-        //XXX: ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             nit->subtitle = _elm_access_edje_object_part_object_register
-                             (WIDGET(nit), VIEW(nit), buf);
-             _elm_access_text_set(_elm_access_object_get(nit->subtitle),
-                                  ELM_ACCESS_TYPE, E_("sub title"));
-          }
      }
    else
      {
@@ -289,19 +358,14 @@ _item_text_set_hook(Elm_Object_Item *it,
              nit->text_list = eina_inlist_append(nit->text_list,
                                                  EINA_INLIST_GET(pair));
           }
-
-        //XXX: ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             pair->access_object = _elm_access_edje_object_part_object_register
-                             (WIDGET(nit), VIEW(nit), buf);
-             _elm_access_text_set(_elm_access_object_get(pair->access_object),
-                                  ELM_ACCESS_TYPE, E_(buf));
-          }
      }
 
    edje_object_part_text_set(VIEW(nit), buf, label);
    _item_text_signals_emit(nit);
+
+   /* access */
+   if (_elm_config->access_mode)
+     _access_obj_process(nit, EINA_TRUE);
 
    elm_layout_sizing_eval(WIDGET(nit));
 }
@@ -985,7 +1049,9 @@ _item_new(Evas_Object *obj,
      (VIEW(it), "elm,action,title,clicked", "", _on_item_title_clicked, it);
 
    _item_style_set(it, item_style);
-   _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
+
+   if (title_label)
+     _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
 
    //title buttons
    if ((!prev_btn) && sd->auto_pushed && prev_it)
@@ -1040,6 +1106,7 @@ _elm_naviframe_smart_focus_next(const Evas_Object *obj,
                                 Elm_Focus_Direction dir,
                                 Evas_Object **next)
 {
+   Evas_Object *ao;
    Eina_Bool ret;
    Eina_List *l = NULL;
    Elm_Naviframe_Item *top_it;
@@ -1057,18 +1124,28 @@ _elm_naviframe_smart_focus_next(const Evas_Object *obj,
 
    list_data_get = eina_list_data_get;
 
-   //Forcus order: prev button, next button, contents
-   //XXX: ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   /* access */
+   if (_elm_config->access_mode)
      {
-        if (top_it->title) l = eina_list_append(l, top_it->title);
-        if (top_it->subtitle) l = eina_list_append(l, top_it->subtitle);
+        ao = _access_object_get(top_it, "elm.text.title");
+        if (ao) l = eina_list_append(l, ao);
+
+        ao = _access_object_get(top_it, "elm.text.subtitle");
+        if (ao) l = eina_list_append(l, ao);
+
+
         EINA_INLIST_FOREACH(top_it->text_list, text_pair)
           {
-             if (text_pair->access_object)
-               l = eina_list_append(l, text_pair->access_object);
+             ao = _access_object_get(top_it, text_pair->part);
+             if (ao) l = eina_list_append(l, ao);
           }
      }
+
+   /* icon would be able to have an widget. ex: segment control */
+   if ((top_it->title_icon) &&
+       (elm_widget_can_focus_get(top_it->title_icon) ||
+        elm_widget_child_can_focus_get(top_it->title_icon)))
+     l = eina_list_append(l, top_it->title_icon);
 
    if (top_it->title_prev_btn)
      l = eina_list_append(l, top_it->title_prev_btn);
@@ -1133,6 +1210,18 @@ _elm_naviframe_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_naviframe_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   Elm_Naviframe_Item *it;
+
+   ELM_NAVIFRAME_CHECK(obj);
+   ELM_NAVIFRAME_DATA_GET(obj, sd);
+
+   EINA_INLIST_FOREACH(sd->stack, it)
+     _access_obj_process(it, is_access);
+}
+
+static void
 _elm_naviframe_smart_set_user(Elm_Naviframe_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_naviframe_smart_add;
@@ -1140,6 +1229,7 @@ _elm_naviframe_smart_set_user(Elm_Naviframe_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_naviframe_smart_theme;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_naviframe_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->access = _elm_naviframe_smart_access;
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_naviframe_smart_content_set;
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_naviframe_smart_content_get;
@@ -1285,9 +1375,8 @@ elm_naviframe_item_push(Evas_Object *obj,
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
    evas_object_raise(VIEW(it));
 
-   //XXX: ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     elm_object_focus_set(it->title, EINA_TRUE);
+   /* access */
+   if (_elm_config->access_mode) _access_focus_set(it);
 
    elm_layout_sizing_eval(obj);
 
@@ -1359,6 +1448,9 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
         evas_object_hide(VIEW(after));
      }
 
+   /* access */
+   if (_elm_config->access_mode) _access_focus_set(it);
+
    elm_layout_sizing_eval(obj);
 
    return (Elm_Object_Item *)it;
@@ -1405,9 +1497,8 @@ elm_naviframe_item_pop(Evas_Object *obj)
         elm_widget_resize_object_set(obj, VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
 
-        //XXX: ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          elm_object_focus_set(prev_it->title, EINA_TRUE);
+        /* access */
+        if (_elm_config->access_mode) _access_focus_set(prev_it);
 
         /* these 2 signals MUST take place simultaneously */
         edje_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
@@ -1512,6 +1603,9 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    edje_object_message_signal_process(VIEW(nit));
    if (sd->animator) ecore_animator_del(sd->animator);
    sd->animator = ecore_animator_add(_push_transition_cb, nit->base.widget);
+
+   /* access */
+   if (_elm_config->access_mode) _access_focus_set(nit);
 }
 
 EAPI void

@@ -146,8 +146,6 @@ struct _Elm_Naviframe_Item
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
-   Evas_Object *title;
-   Evas_Object *subtitle;
    const char  *style;
    const char  *title_label;
    const char  *subtitle_label;
@@ -172,7 +170,6 @@ struct _Elm_Naviframe_Text_Item_Pair
 {
    EINA_INLIST;
    const char *part;
-   Evas_Object *access_object;
 };
 
 /**
