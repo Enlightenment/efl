@@ -3462,8 +3462,8 @@ _win_rotation_degree_check(int rotation)
 {
    if ((rotation > 360) || (rotation < 0))
      {
-        WRN("Rotation degree should be 0 ~ 360");
-        if (rotation > 360) rotation %= 360;
+        WRN("Rotation degree should be 0 ~ 360 (passed degree: %d)", rotation);
+        rotation %= 360;
         if (rotation < 0) rotation += 360;
      }
    return rotation;
