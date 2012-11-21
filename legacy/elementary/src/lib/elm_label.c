@@ -293,7 +293,14 @@ _elm_label_smart_text_set(Evas_Object *obj,
    if (!label) label = "";
    _label_format_set(ELM_WIDGET_DATA(sd)->resize_obj, sd->format);
 
-   return _elm_label_parent_sc->text_set(obj, item, label);
+   if (_elm_label_parent_sc->text_set(obj, item, label))
+     {
+        sd->lastw = 0;
+        _elm_label_smart_sizing_eval(obj);
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
