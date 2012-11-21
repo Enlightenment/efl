@@ -950,12 +950,8 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 }
 
 static int
-_evgl_direct_renderable(EVGL_Engine *ee, EVGL_Context *ctx, EVGL_Surface *sfc)
+_evgl_direct_renderable(EVGL_Engine *ee, EVGL_Resource *rsc, EVGL_Context *ctx, EVGL_Surface *sfc)
 {
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
-
    if (ee->force_direct_off) return 0;
    if (rsc->id != ee->main_tid) return 0;
    if (!ctx) return 0;
@@ -966,7 +962,7 @@ _evgl_direct_renderable(EVGL_Engine *ee, EVGL_Context *ctx, EVGL_Surface *sfc)
 }
 
 //---------------------------------------------------------------//
-// Retrieve the internal resource object from TLS
+// Functions used by Evas GL module
 //---------------------------------------------------------------//
 EVGL_Resource *
 _evgl_tls_resource_get(EVGL_Engine *ee)
@@ -1007,6 +1003,37 @@ _evgl_current_context_get()
      }
    else
       return rsc->current_ctx;
+}
+
+int
+_evgl_not_in_pixel_get(EVGL_Engine *ee)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get(ee))) return 1;
+
+   EVGL_Context *ctx = rsc->current_ctx;
+
+   if ((!ee->force_direct_off) && (rsc->id == ee->main_tid) &&
+       (ctx) && (ctx->current_sfc) && (ctx->current_sfc->direct_fb_opt) &&
+       (!rsc->direct_img_obj))
+      return 1;
+   else
+      return 0;
+}
+
+int
+_evgl_direct_enabled(EVGL_Engine *ee)
+{
+   EVGL_Resource *rsc;
+   EVGL_Context  *ctx;
+   EVGL_Surface  *sfc;
+
+   if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
+   if (!(ctx=rsc->current_ctx)) return 0;
+   if (!(sfc=rsc->current_ctx->current_sfc)) return 0;
+
+   return _evgl_direct_renderable(ee, rsc, ctx, sfc);
 }
 
 //---------------------------------------------------------------//
@@ -1153,9 +1180,6 @@ int evgl_engine_destroy(EVGL_Engine *ee)
    return 1;
 }
 
-//-----------------------------------------------------//
-// Exported functions for evas_engine to use
-//    - We just need to implement these functions and have evas_engine load them :)
 void *
 evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
 {
@@ -1426,7 +1450,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
       glGenFramebuffers(1, &ctx->surface_fbo);
 
    // Direct Rendering
-   if (_evgl_direct_renderable(ee, ctx, sfc))
+   if (_evgl_direct_renderable(ee, rsc, ctx, sfc))
      {
         // This is to transition from FBO rendering to direct rendering
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
@@ -1435,7 +1459,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
              ctx->current_fbo = 0;
           }
-        rsc->direct_enabled = 1;
+        rsc->direct_rendered = 1;
      }
    else
      {
@@ -1452,8 +1476,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
              if (ctx->current_fbo)
                 glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
           }
-
-        rsc->direct_enabled = 0;
+        rsc->direct_rendered = 0;
      }
 
    ctx->current_sfc = sfc;
@@ -1507,30 +1530,13 @@ evgl_native_surface_get(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_Native_Surface 
 }
 
 int
-_evgl_not_in_pixel_get(EVGL_Engine *ee)
-{
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get(ee))) return 1;
-
-   EVGL_Context *ctx = rsc->current_ctx;
-
-   if ((!ee->force_direct_off) && (rsc->id == ee->main_tid) &&
-       (ctx) && (ctx->current_sfc) && (ctx->current_sfc->direct_fb_opt) &&
-       (!rsc->direct_img_obj))
-      return 1;
-   else
-      return 0;
-}
-
-int
-evgl_direct_enabled(EVGL_Engine *ee)
+evgl_direct_rendered(EVGL_Engine *ee)
 {
    EVGL_Resource *rsc;
 
    if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
 
-   return rsc->direct_enabled;
+   return rsc->direct_rendered;
 }
 
 void

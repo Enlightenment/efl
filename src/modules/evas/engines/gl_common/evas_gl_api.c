@@ -68,7 +68,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
    // Take care of BindFramebuffer 0 issue
    if (framebuffer==0)
      {
-        if (evgl_direct_enabled(evgl_engine))
+        if (_evgl_direct_enabled(evgl_engine))
            glBindFramebuffer(target, 0);
         else
            glBindFramebuffer(target, ctx->surface_fbo);
@@ -270,7 +270,7 @@ _evgl_glClear(GLbitfield mask)
         return;
      }
 
-   if (evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled(evgl_engine))
      {
         if (!(rsc->current_ctx->current_fbo))
           {
@@ -351,7 +351,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
    EVGL_Context *ctx;
    Evas_Object_Protected_Data *img;
 
-   if (evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled(evgl_engine))
      {
         if (!params)
           {
@@ -423,7 +423,7 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
         return;
      }
 
-   if (evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled(evgl_engine))
      {
 
         if (!(rsc->current_ctx->current_fbo))
@@ -468,7 +468,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
         return;
      }
 
-   if (evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled(evgl_engine))
      {
         if (!(rsc->current_ctx->current_fbo))
           {
@@ -548,7 +548,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
         return;
      }
 
-   if (evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled(evgl_engine))
      {
         if (!(rsc->current_ctx->current_fbo))
           {

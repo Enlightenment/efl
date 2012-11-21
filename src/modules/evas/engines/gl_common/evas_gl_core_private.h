@@ -200,7 +200,7 @@ struct _EVGL_Resource
 
    EVGL_Context        *current_ctx;
 
-   int                  direct_enabled;
+   int                  direct_rendered;
    Evas_Object         *direct_img_obj;
 };
 
@@ -249,5 +249,6 @@ extern void           _evgl_api_get(Evas_GL_API *api, int debug);
 extern EVGL_Resource *_evgl_tls_resource_get(EVGL_Engine *ee);
 extern EVGL_Context  *_evgl_current_context_get();
 extern int            _evgl_not_in_pixel_get();
+extern int            _evgl_direct_enabled(EVGL_Engine *ee);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

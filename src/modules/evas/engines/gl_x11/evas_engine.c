@@ -2491,10 +2491,12 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    Render_Engine *re;
    re = (Render_Engine *)data;
    Evas_GL_Image *im = image;
+   Native *n;
 
    if (!im) return;
+   n = im->native.data;
 
-   if ((im->native.data) && evgl_direct_enabled(re->evgl_engine))
+   if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) && (evgl_direct_rendered(re->evgl_engine)))
      {
         DBG("Rendering Directly to the window");
         evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(re->evgl_engine), EINA_TRUE);

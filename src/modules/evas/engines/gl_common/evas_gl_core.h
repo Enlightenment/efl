@@ -31,7 +31,7 @@ extern void        *evgl_proc_address_get(const char *name);
 extern int          evgl_native_surface_get(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_Native_Surface *ns);
 extern Evas_GL_API *evgl_api_get(EVGL_Engine *ee);
 
-extern int          evgl_direct_enabled(EVGL_Engine *ee);
+extern int          evgl_direct_rendered(EVGL_Engine *ee);
 extern void         evgl_direct_img_obj_set(EVGL_Engine *ee, Evas_Object *img);
 extern Evas_Object *evgl_direct_img_obj_get(EVGL_Engine *ee);
 
