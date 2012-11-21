@@ -6,6 +6,14 @@
 #include "evas_macros.h"
 #include "evas_xlib_swapper.h"
 
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>      /* dlopen,dlclose,etc */
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+
+#if 0
+// X(shm)image emulation of multiple buffers + swapping /////////////////////
 typedef struct
 {
    XImage          *xim;
@@ -172,7 +180,7 @@ _buf_put(X_Swapper *swp, Buffer *buf, Eina_Rectangle *rects, int nrects)
    XSync(swp->disp, False);
 }
 
-////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 X_Swapper *
 evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
@@ -279,3 +287,514 @@ evas_xlib_swapper_bit_order_get(X_Swapper *swp)
 {
    return swp->buf[0].xim->bitmap_bit_order;
 }
+
+#else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// DRM/DRI buffer swapping+access (driver specific) /////////////////////
+
+static Eina_Bool tried = EINA_FALSE;
+////////////////////////////////////
+//libdrm.so.2
+static void *drm_lib = NULL;
+
+typedef unsigned int drm_magic_t;
+static int (*sym_drmGetMagic) (int fd, drm_magic_t *magic) = NULL;
+
+////////////////////////////////////
+// libdrm_slp.so.1
+#define DRM_SLP_DEVICE_CPU 1
+#define DRM_SLP_OPTION_READ     (1 << 0)
+#define DRM_SLP_OPTION_WRITE    (1 << 1)
+static void *drm_slp_lib = NULL;
+
+typedef struct _drm_slp_bufmgr *drm_slp_bufmgr;
+typedef struct _drm_slp_bo *drm_slp_bo;
+static drm_slp_bo (*sym_drm_slp_bo_import) (drm_slp_bufmgr bufmgr, unsigned int key) = NULL;
+// XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
+// void * at least
+static unsigned int (*sym_drm_slp_bo_map) (drm_slp_bo bo, int device, int opt) = NULL;
+static int (*sym_drm_slp_bo_unmap)  (drm_slp_bo bo, int device) = NULL;
+static void (*sym_drm_slp_bo_unref) (drm_slp_bo bo) = NULL;
+static drm_slp_bufmgr (*sym_drm_slp_bufmgr_init) (int fd, void *arg) = NULL;
+static void (*sym_drm_slp_bufmgr_destroy) (drm_slp_bufmgr bufmgr) = NULL;
+
+////////////////////////////////////
+// libdri2.so.0
+#define DRI2BufferBackLeft 1
+static void *dri_lib = NULL;
+
+typedef unsigned long long CD64;
+
+typedef struct
+{
+   unsigned int attachment;
+   unsigned int name;
+   unsigned int pitch;
+   unsigned int cpp;
+   unsigned int flags;
+} DRI2Buffer;
+
+#define DRI2_BUFFER_TYPE_WINDOW 0x0
+#define DRI2_BUFFER_TYPE_PIXMAP 0x1
+#define DRI2_BUFFER_TYPE_FB     0x2
+
+typedef union
+{
+   unsigned int flags;
+   struct
+     {
+        unsigned int type:1;
+        unsigned int is_framebuffer:1;
+        unsigned int is_mapped:1;
+        unsigned int is_reused:1;
+        unsigned int idx_reuse:3;
+     }
+   data;
+} DRI2BufferFlags;
+
+static DRI2Buffer *(*sym_DRI2GetBuffers) (Display *display, XID drawable, int *width, int *height, unsigned int *attachments, int count, int *outCount) = NULL;
+static Bool (*sym_DRI2QueryExtension) (Display *display, int *eventBase, int *errorBase) = NULL;
+static Bool (*sym_DRI2QueryVersion) (Display *display, int *major, int *minor) = NULL;
+static Bool (*sym_DRI2Connect) (Display *display, XID window, char **driverName, char **deviceName) = NULL;
+static Bool (*sym_DRI2Authenticate) (Display *display, XID window, unsigned int magic) = NULL;
+static void (*sym_DRI2CreateDrawable) (Display *display, XID drawable) = NULL;
+static void (*sym_DRI2SwapBuffersWithRegion) (Display *display, XID drawable, XID region, CD64 *count) = NULL;
+static void (*sym_DRI2SwapBuffers) (Display *display, XID drawable, CD64 target_msc, CD64 divisor, CD64 remainder, CD64 *count) = NULL;
+static void (*sym_DRI2DestroyDrawable) (Display *display, XID handle) = NULL;
+
+////////////////////////////////////
+// libXfixes.so.3
+static void *xfixes_lib = NULL;
+
+static Bool (*sym_XFixesQueryExtension) (Display *display, int *event_base_return, int *error_base_return) = NULL;
+static Status (*sym_XFixesQueryVersion) (Display *display, int *major_version_return, int *minor_version_return) = NULL;
+static XID (*sym_XFixesCreateRegion) (Display *display, XRectangle *rectangles, int nrectangles) = NULL;
+static void (*sym_XFixesDestroyRegion) (Display *dpy, XID region) = NULL;
+
+////////////////////////////////////////////////////////////////////////////
+struct _X_Swapper
+{
+   Display    *disp;
+   Drawable    draw;
+   Visual     *vis;
+   int         w, h, depth;
+   drm_slp_bo  buf_bo;
+   DRI2Buffer *buf;
+   void       *buf_data;
+   int         buf_w, buf_h;
+   Eina_Bool mapped: 1;
+};
+
+static int inits = 0;
+static int xfixes_ev_base = 0, xfixes_err_base = 0;
+static int xfixes_major = 0, xfixes_minor = 0;
+static int dri2_ev_base = 0, dri2_err_base = 0;
+static int dri2_major = 0, dri2_minor = 0;
+static int drm_fd = -1;
+static drm_slp_bufmgr bufmgr = NULL;
+
+static Eina_Bool
+_drm_init(Display *disp, int scr)
+{
+   char *drv_name = NULL, *dev_name = NULL;
+   drm_magic_t magic = 0;
+   
+   if (xfixes_lib) return EINA_TRUE;
+   if ((tried) && (!xfixes_lib)) return EINA_FALSE;
+   tried = EINA_TRUE;
+   drm_lib = dlopen("libdrm.so.2", RTLD_NOW | RTLD_LOCAL);
+   if (!drm_lib) goto err;
+   drm_slp_lib = dlopen("libdrm_slp.so.1", RTLD_NOW | RTLD_LOCAL);
+   if (!drm_slp_lib) goto err;
+   dri_lib = dlopen("libdri2.so.0", RTLD_NOW | RTLD_LOCAL);
+   if (!dri_lib) goto err;
+   xfixes_lib = dlopen("libXfixes.so.3", RTLD_NOW | RTLD_LOCAL);
+   if (!xfixes_lib) goto err;
+   
+#define SYM(l, x) \
+   do { sym_ ## x = dlsym(l, #x); \
+      if (!sym_ ## x) { \
+         printf("swapper: can't find symbol: %s\n", #x); \
+         goto err; \
+      } \
+   } while (0)
+   
+   SYM(drm_lib, drmGetMagic);
+
+   SYM(drm_slp_lib, drm_slp_bo_import);
+   SYM(drm_slp_lib, drm_slp_bo_map);
+   SYM(drm_slp_lib, drm_slp_bo_unmap);
+   SYM(drm_slp_lib, drm_slp_bo_unref);
+   SYM(drm_slp_lib, drm_slp_bufmgr_init);
+   SYM(drm_slp_lib, drm_slp_bufmgr_destroy);
+
+   SYM(dri_lib, DRI2GetBuffers);
+   SYM(dri_lib, DRI2QueryExtension);
+   SYM(dri_lib, DRI2QueryVersion);
+   SYM(dri_lib, DRI2Connect);
+   SYM(dri_lib, DRI2Authenticate);
+   SYM(dri_lib, DRI2CreateDrawable);
+   SYM(dri_lib, DRI2SwapBuffersWithRegion);
+   SYM(dri_lib, DRI2SwapBuffers);
+   SYM(dri_lib, DRI2DestroyDrawable);
+
+   SYM(xfixes_lib, XFixesQueryExtension);
+   SYM(xfixes_lib, XFixesQueryVersion);
+   SYM(xfixes_lib, XFixesCreateRegion);
+   SYM(xfixes_lib, XFixesDestroyRegion);
+   
+   if (!sym_XFixesQueryExtension(disp, &xfixes_ev_base, &xfixes_err_base))
+     {
+        printf("no xfixes extn\n");
+        goto err;
+     }
+   sym_XFixesQueryVersion(disp, &xfixes_major, &xfixes_minor);
+   
+   if (!sym_DRI2QueryExtension(disp, &dri2_ev_base, &dri2_err_base))
+     {
+        printf("no dri2 extn\n");
+        goto err;
+     }
+   if (!sym_DRI2Connect(disp, RootWindow(disp, scr), &drv_name, &dev_name))
+     {
+        printf("cant connect to dri2\n");
+        goto err;
+     }
+   
+   drm_fd = open(dev_name, O_RDWR);
+   if (drm_fd < 0)
+     {
+        printf("cant open drm fd\n");
+        goto err;
+     }
+   if (sym_drmGetMagic(drm_fd, &magic))
+     {
+        printf("drm magic fail\n");
+        goto err;
+     }
+   if (!sym_DRI2Authenticate(disp, RootWindow(disp, scr), 
+                             (unsigned int)magic))
+     {
+        printf("dri2 auth fail\n");
+        goto err;
+     }
+   
+   if (!(bufmgr = sym_drm_slp_bufmgr_init(drm_fd, NULL)))
+     {
+        printf("bufmgr init fail\n");
+        goto err;
+     }
+   
+   return EINA_TRUE;
+err:
+   if (drm_fd >= 0)
+     {
+        close(drm_fd);
+        drm_fd = -1;
+     }
+   if (drm_lib)
+     {
+        dlclose(drm_lib);
+        drm_lib = NULL;
+     }
+   if (drm_slp_lib)
+     {
+        dlclose(drm_slp_lib);
+        drm_slp_lib = NULL;
+     }
+   if (dri_lib)
+     {
+        dlclose(dri_lib);
+        dri_lib = NULL;
+     }
+   if (xfixes_lib)
+     {
+        dlclose(xfixes_lib);
+        xfixes_lib = NULL;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_drm_shutdown(void)
+{
+   return;
+   if (bufmgr)
+     {
+        sym_drm_slp_bufmgr_destroy(bufmgr);
+        bufmgr = NULL;
+     }
+   if (drm_fd >= 0) close(drm_fd);
+   drm_fd = -1;
+   dlclose(drm_slp_lib);
+   drm_slp_lib = NULL;
+   dlclose(dri_lib);
+   dri_lib = NULL;
+   dlclose(xfixes_lib);
+   xfixes_lib = NULL;
+}
+
+static Eina_Bool
+_drm_setup(X_Swapper *swp)
+{
+   sym_DRI2CreateDrawable(swp->disp, swp->draw);
+   return EINA_TRUE;
+}
+
+static void
+_drm_cleanup(X_Swapper *swp)
+{
+   sym_DRI2DestroyDrawable(swp->disp, swp->draw);
+}
+
+X_Swapper *
+evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
+                      int depth, int w, int h)
+{
+   X_Swapper *swp;
+
+   if (inits <= 0)
+     {
+        if (!_drm_init(disp, 0)) return NULL;
+     }
+   inits++;
+   
+   swp = calloc(1, sizeof(X_Swapper));
+   if (!swp) return NULL;
+   swp->disp = disp;
+   swp->draw = draw;
+   swp->vis = vis;
+   swp->depth = depth;
+   swp->w = w;
+   swp->h = h;
+   if (!_drm_setup(swp))
+     {
+        inits--;
+        if (inits == 0) _drm_shutdown();
+        free(swp);
+        return NULL;
+     }
+   return swp;
+}
+
+void
+evas_xlib_swapper_free(X_Swapper *swp)
+{
+   if (swp->mapped) evas_xlib_swapper_buffer_unmap(swp);
+   _drm_cleanup(swp);
+   free(swp);
+   inits--;
+   if (inits == 0) _drm_shutdown();
+}
+
+void *
+evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl)
+{
+   unsigned int attach = DRI2BufferBackLeft;
+   int num;
+   
+   if (swp->mapped)
+     {
+        if (bpl) *bpl = swp->w * 4;
+        return swp->buf_data;
+     }
+   swp->buf = sym_DRI2GetBuffers(swp->disp, swp->draw, 
+                                 &(swp->buf_w), &(swp->buf_h),
+                                 &attach, 1, &num);
+   if (!swp->buf) return NULL;
+   if (!swp->buf->name) return NULL;
+   swp->buf_bo = sym_drm_slp_bo_import(bufmgr, swp->buf->name);
+   if (!swp->buf_bo) return NULL;
+   // XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
+   // void * at least
+   swp->buf_data = (void *)sym_drm_slp_bo_map(swp->buf_bo, DRM_SLP_DEVICE_CPU, 
+                                              DRM_SLP_OPTION_READ |
+                                              DRM_SLP_OPTION_WRITE);
+   if (!swp->buf_data) return NULL;
+   if (bpl) *bpl = swp->buf->pitch;
+   swp->mapped = EINA_TRUE;
+   printf("buf: %ix%i vs.. %ix%i\n", swp->w, swp->h, swp->buf_w, swp->buf_h);
+   swp->w = swp->buf_w;
+   swp->h = swp->buf_h;
+   return swp->buf_data;
+}
+
+void
+evas_xlib_swapper_buffer_unmap(X_Swapper *swp)
+{
+   if (!swp->mapped) return;
+   sym_drm_slp_bo_unmap(swp->buf_bo, DRM_SLP_DEVICE_CPU);
+   sym_drm_slp_bo_unref(swp->buf_bo);
+   free(swp->buf);
+   swp->buf = NULL;
+   swp->buf_bo = NULL;
+   swp->buf_data = NULL;
+   swp->mapped = EINA_FALSE;
+}
+
+void
+evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects)
+{
+   XRectangle *xrects = alloca(nrects * sizeof(XRectangle));
+   XID region;
+   int i;
+   unsigned long long sbc_count = 0;
+   
+   for (i = 0; i < nrects; i++)
+     {
+        xrects[i].x = rects[i].x; xrects[i].y = rects[i].y;
+        xrects[i].width = rects[i].w; xrects[i].height = rects[i].h;
+     }
+   region = sym_XFixesCreateRegion(swp->disp, xrects, nrects);
+   sym_DRI2SwapBuffersWithRegion(swp->disp, swp->draw, region, &sbc_count);
+   sym_XFixesDestroyRegion(swp->disp, region);
+}
+
+int
+evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
+{
+   DRI2BufferFlags *flags;
+   
+   if (!swp->mapped) evas_xlib_swapper_buffer_map(swp, NULL);
+   if (!swp->mapped) return MODE_FULL;
+   flags = (DRI2BufferFlags *)(&(swp->buf->flags));
+   printf("flags: %i\n", flags->data.idx_reuse);
+   if (flags->data.idx_reuse == 0) return MODE_FULL;
+   else if (flags->data.idx_reuse == 1) return MODE_COPY;
+   else if (flags->data.idx_reuse == 2) return MODE_DOUBLE;
+   else if (flags->data.idx_reuse == 3) return MODE_TRIPLE;
+   return MODE_FULL;
+}
+
+int
+evas_xlib_swapper_depth_get(X_Swapper *swp)
+{
+   return swp->depth;
+}
+
+int
+evas_xlib_swapper_byte_order_get(X_Swapper *swp EINA_UNUSED)
+{
+   return LSBFirst;
+}
+
+int
+evas_xlib_swapper_bit_order_get(X_Swapper *swp EINA_UNUSED)
+{
+   return LSBFirst;
+}
+
+#endif
+
+#else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X_Swapper *
+evas_xlib_swapper_new(Display *disp EINA_UNUSED, Drawable draw EINA_UNUSED,
+                      Visual *vis EINA_UNUSED, int depth EINA_UNUSED,
+                      int w EINA_UNUSED, int h EINA_UNUSED)
+{
+   return NULL;
+}
+
+void
+evas_xlib_swapper_free(X_Swapper *swp EINA_UNUSED)
+{
+}
+
+void *
+evas_xlib_swapper_buffer_map(X_Swapper *swp EINA_UNUSED, int *bpl EINA_UNUSED)
+{
+   return NULL;
+}
+
+void
+evas_xlib_swapper_buffer_unmap(X_Swapper *swp EINA_UNUSED)
+{
+}
+
+void
+evas_xlib_swapper_swap(X_Swapper *swp EINA_UNUSED, Eina_Rectangle *rects EINA_UNUSED, int nrects EINA_UNUSED)
+{
+}
+
+int
+evas_xlib_swapper_buffer_state_get(X_Swapper *swp EINA_UNUSED)
+{
+   return MODE_FULL;
+}
+
+int
+evas_xlib_swapper_depth_get(X_Swapper *swp EINA_UNUSED)
+{
+   return 0;
+}
+
+int
+evas_xlib_swapper_byte_order_get(X_Swapper *swp EINA_UNUSED)
+{
+   return 0;
+}
+
+int
+evas_xlib_swapper_bit_order_get(X_Swapper *swp EINA_UNUSED)
+{
+   return 0;
+}
+#endif
