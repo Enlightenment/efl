@@ -1,3 +1,9 @@
+2012-11-21  Carsten Haitzler (The Rasterman)
+
+        * Fixed leak in textblock and text props in general that made
+        textblock recalcs lead very badly. Required changed to textgrid
+        though a sit relied on the leaky behavior.
+
 2012-11-16  Sung W. Park (sung_)
 
         * Fixed glGetIntegerv() in Direct Rendering mode for Evas GL

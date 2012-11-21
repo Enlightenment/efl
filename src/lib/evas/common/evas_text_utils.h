@@ -81,6 +81,9 @@ void
 evas_common_text_props_content_ref(Evas_Text_Props *props);
 
 void
+evas_common_text_props_content_nofree_unref(Evas_Text_Props *props);
+
+void
 evas_common_text_props_content_unref(Evas_Text_Props *props);
 
 EAPI int

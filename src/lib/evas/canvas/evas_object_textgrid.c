@@ -197,7 +197,7 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
 
    if (o->last_glyphs)
      {
-        if (o->last_mask && (o->last_mask & codepoint) == o->last_mask)
+        if ((o->last_mask) && ((o->last_mask & codepoint) == o->last_mask))
           goto end;
      }
 
@@ -238,8 +238,8 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
         goto end;
      }
 
-   while (shift > 8
-          && o->master[offset].next[(codepoint & mask) >> shift] != 0)
+   while ((shift > 8)
+          && (o->master[offset].next[(codepoint & mask) >> shift] != 0))
      {
         offset = o->master[offset].next[(codepoint & mask) >> shift];
         mask >>= 4;
@@ -325,7 +325,12 @@ evas_object_textgrid_textprop_unref(Evas_Object_Textgrid *o, unsigned int props_
           eina_array_push(&o->glyphs_cleanup,
                           (void *)((uintptr_t)props_index));
         else
-          evas_common_text_props_content_unref(props);
+          {
+             Evas_Glyph *glyphs = props->glyphs;
+             int glyphs_length = props->glyphs_length;
+
+             evas_common_text_props_content_nofree_unref(props);
+          }
      }
 }
 
@@ -441,8 +446,8 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
         props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
         prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
-        
-        evas_common_text_props_content_unref(prop);
+
+        evas_common_text_props_content_nofree_unref(prop);
         if (!prop->info)
           {
              o->glyphs_used[props_index >> 8]--;
@@ -840,7 +845,7 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data
         props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
         prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
         
-        evas_common_text_props_content_unref(prop);
+        evas_common_text_props_content_nofree_unref(prop);
         if (!prop->info)
           {
              o->glyphs_used[props_index >> 8]--;
@@ -1197,7 +1202,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
         props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
         prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
         
-        evas_common_text_props_content_unref(prop);
+        evas_common_text_props_content_nofree_unref(prop);
         if (!prop->info)
           {
              o->glyphs_used[props_index >> 8]--;

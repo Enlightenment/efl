@@ -54,6 +54,36 @@ evas_common_text_props_content_ref(Evas_Text_Props *props)
 }
 
 void
+evas_common_text_props_content_nofree_unref(Evas_Text_Props *props)
+{
+   /* No content in this case */
+   if (!props->info)
+      return;
+
+   if (props->font_instance)
+     {
+        evas_common_font_int_unref(props->font_instance);
+        props->font_instance = NULL;
+     }
+
+   if (--(props->info->refcount) == 0)
+     {
+        free(props->glyphs);
+        props->glyphs = NULL;
+        props->glyphs_length = 0;
+        
+        if (props->info->glyph)
+          free(props->info->glyph);
+#ifdef OT_SUPPORT
+        if (props->info->ot)
+          free(props->info->ot);
+#endif
+        free(props->info);
+        props->info = NULL;
+     }
+}
+
+void
 evas_common_text_props_content_unref(Evas_Text_Props *props)
 {
    /* No content in this case */
@@ -66,12 +96,12 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
         props->font_instance = NULL;
      }
    
+   free(props->glyphs);
+   props->glyphs = NULL;
+   props->glyphs_length = 0;
+
    if (--(props->info->refcount) == 0)
      {
-        free(props->glyphs);
-        props->glyphs = NULL;
-        props->glyphs_length = 0;
-
         if (props->info->glyph)
           free(props->info->glyph);
 #ifdef OT_SUPPORT
