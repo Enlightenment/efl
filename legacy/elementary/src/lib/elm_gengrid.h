@@ -356,16 +356,17 @@ EAPI Eina_Bool                     elm_gengrid_multi_select_get(const Evas_Objec
  * placing its items.
  *
  * @param obj The gengrid object.
- * @param horizontal @c EINA_TRUE to make the gengrid expand
- * horizontally, @c EINA_FALSE to expand vertically.
+ * @param horizontal @c EINA_TRUE to make the gengrid expand horizontally,
+ * @c EINA_FALSE to expand vertically.
  *
- * When in "horizontal mode" (@c EINA_TRUE), items will be placed
- * in @b columns, from top to bottom and, when the space for a
- * column is filled, another one is started on the right, thus
- * expanding the grid horizontally. When in "vertical mode"
- * (@c EINA_FALSE), though, items will be placed in @b rows, from left
- * to right and, when the space for a row is filled, another one is
+ * When in "horizontal mode" (@c EINA_TRUE), items will be placed in @b columns,
+ * from top to bottom and, when the space for a column is filled, another one is
+ * started on the right, thus expanding the grid horizontally. When in
+ * "vertical mode" (@c EINA_FALSE), though, items will be placed in @b rows,
+ * from left to right and, when the space for a row is filled, another one is
  * started below, thus expanding the grid vertically.
+ *
+ * @note By default, gengrid is in vertical mode, @c EINA_FALSE.
  *
  * @see elm_gengrid_horizontal_get()
  *
