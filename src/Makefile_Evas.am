@@ -1916,7 +1916,9 @@ bin_evas_loaders_eet_module_la_CPPFLAGS = \
 @evas_image_loader_eet_cflags@ \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@
-bin_evas_loaders_eet_module_la_LIBADD = @EFL_LIBS@ @evas_image_loader_eet_libs@ lib/evas/libeet.la
+bin_evas_loaders_eet_module_la_LIBADD = @EFL_LIBS@ \
+@evas_image_loader_eet_libs@ \
+lib/eet/libeet.la
 bin_evas_loaders_eet_module_la_LDFLAGS = -no-undefined -module -avoid-version
 bin_evas_loaders_eet_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
