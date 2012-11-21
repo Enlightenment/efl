@@ -576,9 +576,17 @@ _create_internal_glue_resources(void *data)
    context_attrs[2] = EGL_NONE;
 
    // Create resource surface for EGL
-   rsc->surface = 
-     eglCreateWindowSurface(re->win->egl_disp, re->win->egl_config,
-                            (EGLNativeWindowType)re->win->win, NULL);
+   if (re->win->egl_surface[0])
+     {
+        rsc->surface = re->win->egl_surface[0];
+     } 
+   else 
+     {
+        rsc->surface = 
+          eglCreateWindowSurface(re->win->egl_disp, re->win->egl_config,
+                                (EGLNativeWindowType)re->win->win, NULL);
+     }
+
    if (!rsc->surface)
      {
         ERR("Creating internal resource surface failed.");
