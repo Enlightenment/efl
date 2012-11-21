@@ -577,9 +577,7 @@ _create_internal_glue_resources(void *data)
 
    // Create resource surface for EGL
    if (re->win->egl_surface[0])
-     {
-        rsc->surface = re->win->egl_surface[0];
-     } 
+     rsc->surface = re->win->egl_surface[0];
    else 
      {
         rsc->surface = 
