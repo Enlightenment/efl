@@ -950,11 +950,10 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 }
 
 static int
-_evgl_direct_renderable(EVGL_Engine *ee, EVGL_Resource *rsc, EVGL_Context *ctx, EVGL_Surface *sfc)
+_evgl_direct_renderable(EVGL_Engine *ee, EVGL_Resource *rsc, EVGL_Surface *sfc)
 {
    if (ee->force_direct_off) return 0;
    if (rsc->id != ee->main_tid) return 0;
-   if (!ctx) return 0;
    if (!sfc->direct_fb_opt) return 0;
    if (!rsc->direct_img_obj) return 0;
 
@@ -1026,14 +1025,13 @@ int
 _evgl_direct_enabled(EVGL_Engine *ee)
 {
    EVGL_Resource *rsc;
-   EVGL_Context  *ctx;
    EVGL_Surface  *sfc;
 
    if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
-   if (!(ctx=rsc->current_ctx)) return 0;
+   if (!(rsc->current_ctx)) return 0;
    if (!(sfc=rsc->current_ctx->current_sfc)) return 0;
 
-   return _evgl_direct_renderable(ee, rsc, ctx, sfc);
+   return _evgl_direct_renderable(ee, rsc, sfc);
 }
 
 //---------------------------------------------------------------//
@@ -1450,7 +1448,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
       glGenFramebuffers(1, &ctx->surface_fbo);
 
    // Direct Rendering
-   if (_evgl_direct_renderable(ee, rsc, ctx, sfc))
+   if (_evgl_direct_renderable(ee, rsc, sfc))
      {
         // This is to transition from FBO rendering to direct rendering
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
