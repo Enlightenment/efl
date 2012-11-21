@@ -56,6 +56,7 @@ struct _Elm_Win_Smart_Data
    Evas                 *evas;
    Evas_Object          *parent; /* parent *window* object*/
    Evas_Object          *img_obj, *frame_obj;
+   Evas_Coord           fx, fy, fw, fh;
    Eina_List            *resize_objs; /* a window may have
                                        * *multiple* resize
                                        * objects */
@@ -570,12 +571,7 @@ _elm_win_resize_job(void *data)
      }
 
    if (sd->frame_obj)
-     {
-        int fw, fh;
-
-        evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
-        evas_object_resize(sd->frame_obj, w + fw, h + fh);
-     }
+     evas_object_resize(sd->frame_obj, w, h);
 
    /* if (sd->img_obj) */
    /*   { */
@@ -584,8 +580,8 @@ _elm_win_resize_job(void *data)
    evas_object_resize(ELM_WIDGET_DATA(sd)->obj, w, h);
    EINA_LIST_FOREACH(sd->resize_objs, l, obj)
      {
-        evas_object_move(obj, 0, 0);
-        evas_object_resize(obj, w, h);
+        evas_object_move(obj, sd->fx, sd->fy);
+        evas_object_resize(obj, w - sd->fw, h - sd->fy);
      }
 }
 
@@ -1730,7 +1726,8 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (h < minh) h = minh;
    if ((maxw >= 0) && (w > maxw)) w = maxw;
    if ((maxh >= 0) && (h > maxh)) h = maxh;
-   evas_object_resize(obj, w, h);
+   evas_object_move(obj, 0, 0);
+   evas_object_resize(obj, w + sd->fw, h + sd->fh);
 }
 
 static void
@@ -2136,9 +2133,18 @@ static void
 _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
 {
-   evas_output_framespace_set(sd->evas, 0, 22, 0, 26);
+   Evas_Object *obj = ELM_WIDGET_DATA(sd)->obj;
+   short layer;
+
+   // FIXME: Don't use hardcoded framespace values, get it from theme
+   sd->fx = 0;
+   sd->fy = 22;
+   sd->fw = 0;
+   sd->fh = 26;
 
    sd->frame_obj = edje_object_add(sd->evas);
+   layer = evas_object_layer_get(obj);
+   evas_object_layer_set(sd->frame_obj, layer + 1);
    elm_widget_theme_object_set
      (ELM_WIDGET_DATA(sd)->obj, sd->frame_obj, "border", "base", style);
 
@@ -2204,8 +2210,6 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
         evas_object_del(sd->frame_obj);
         sd->frame_obj = NULL;
      }
-
-   evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
 }
 
 #ifdef ELM_DEBUG
@@ -2817,8 +2821,8 @@ elm_win_resize_object_add(Evas_Object *obj,
      _elm_win_on_resize_obj_changed_size_hints, obj);
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_move(subobj, 0, 0);
-   evas_object_resize(subobj, w, h);
+   evas_object_move(subobj, sd->fx, sd->fy);
+   evas_object_resize(subobj, w - sd->fw, h - sd->fh);
 
    _elm_win_resize_objects_eval(obj);
 }
