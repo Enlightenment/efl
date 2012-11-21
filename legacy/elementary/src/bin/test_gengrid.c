@@ -481,38 +481,28 @@ _btn_show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 void
 test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bt, *content_box, *bxx, *bx, *tg;
+   Evas_Object *win, *bt, *bxx, *bx, *tg;
    api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_util_standard_add("gengrid", "GenGrid");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
-   bxx = elm_box_add(win);
-   api->box = bxx;
+   api->box = bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
-   content_box = elm_box_add(win);
-   api->box = content_box;
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(content_box);
-
-   /* Create GenGrid */
-   api->grid = create_gengrid(win, (12 * 12));
-
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
-   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked,
-                                  (void *)api);
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *)api);
    elm_box_pack_end(bxx, bt);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    evas_object_show(bt);
 
-   elm_box_pack_end(content_box, api->grid);
-   elm_box_pack_end(bxx, content_box);
+   /* Create GenGrid */
+   api->grid = create_gengrid(win, (12 * 12));
+   elm_box_pack_end(bxx, api->grid);
    evas_object_show(api->grid);
 
    bx = elm_box_add(win);
