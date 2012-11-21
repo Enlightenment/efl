@@ -294,6 +294,7 @@ group { name: "elm/gengrid/item/default/default";
    }
 }
 
+// TEXTBLOCK version of default style
 group { name: "elm/gengrid/item/default_style/default";
    styles
    {
@@ -611,6 +612,7 @@ group { name: "elm/gengrid/item/default_style/default";
    }
 }
 
+// 'up' icon + text part
 group { name: "elm/gengrid/item/up/default";
    data.item: "texts" "elm.text";
    images {
@@ -779,6 +781,7 @@ group { name: "elm/gengrid/item/up/default";
    }
 }
 
+// 4 icons + 1 floder image + 1 text
 group { name: "elm/gengrid/item/album-preview/default";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon.1 elm.swallow.icon.2 elm.swallow.icon.3 elm.swallow.icon.4";
@@ -1066,6 +1069,7 @@ group { name: "elm/gengrid/item/album-preview/default";
    }
 }
 
+// thumbnail background image
 group { name: "elm/gengrid/item/thumb/default";
    data {
       item: "contents" "elm.swallow.icon";
@@ -1238,6 +1242,8 @@ group { name: "elm/gengrid/item/thumb/default";
       }
    }
 }
+
+// group index style
 group { name: "elm/gengrid/item/group_index/default";
    data.item: "selectraise" "on";
    data.item: "texts" "elm.text";
