@@ -721,14 +721,6 @@ _elm_naviframe_smart_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static Eina_Bool
-_item_pop_idler(void *data)
-{
-   elm_naviframe_item_pop(data);
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 _on_item_back_btn_clicked(void *data,
                           Evas_Object *obj,
@@ -739,8 +731,7 @@ _on_item_back_btn_clicked(void *data,
       prevent those scenario and guarantee only one clicked for it's own
       page. */
    evas_object_smart_callback_del(obj, "clicked", _on_item_back_btn_clicked);
-
-   ecore_idler_add(_item_pop_idler, data);
+   elm_naviframe_item_pop(data);
 }
 
 static Evas_Object *
