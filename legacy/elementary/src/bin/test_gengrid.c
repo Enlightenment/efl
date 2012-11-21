@@ -6,6 +6,11 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#define WEIGHT evas_object_size_hint_weight_set
+#define ALIGN_ evas_object_size_hint_align_set
+#define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
+#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
+
 static Elm_Gengrid_Item_Class *gic;
 static Elm_Gengrid_Item_Class ggic;
 
@@ -851,6 +856,138 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    evas_object_resize(win, 600, 600);
    evas_object_show(win);
+}
+
+/* test gengrid item styles */
+
+static void
+_del_cb(void *data, Evas_Object *obj __UNUSED__)
+{
+   free(data);
+}
+
+static Evas_Object *
+_gengrid_create(Evas_Object *obj, int items, const char *style)
+{
+   static Evas_Object *grid = NULL;
+   Elm_Gengrid_Item_Class *ic;
+   Testitem *ti;
+   int i, n;
+   char buf[PATH_MAX];
+
+   if (grid)
+     elm_gengrid_clear(grid);
+   else
+     {
+        if (!obj) return NULL;
+        grid = elm_gengrid_add(obj);
+        elm_gengrid_item_size_set(grid, 150, 150);
+        EXPAND(grid); FILL(grid);
+     }
+
+   ic = elm_gengrid_item_class_new();
+   if (style) ic->item_style = style;
+   else ic->item_style = "default";
+   ic->func.text_get = grid_text_get;
+   ic->func.content_get = grid_content_get;
+   ic->func.state_get = NULL;
+   ic->func.del = _del_cb;
+
+   n = 0;
+   for (i = 0; i < items; i++)
+     {
+        ti = calloc(1, sizeof(Testitem));
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
+        n = (n + 1) % 9;
+        ti->mode = i;
+        ti->path = eina_stringshare_add(buf);
+        ti->item = elm_gengrid_item_append(grid, ic, ti, NULL, NULL);
+     }
+   elm_gengrid_item_class_free(ic);
+
+   return grid;
+}
+
+static void
+_item_style_sel_cb(void *data, Evas_Object *obj __UNUSED__,
+                   void *event_info __UNUSED__)
+{
+   _gengrid_create(NULL, (12*12), data);
+}
+
+static Evas_Object *
+_item_styles_list_create(Evas_Object *parent)
+{
+   Evas_Object *list;
+
+   list = elm_list_add(parent);
+   EXPAND(list); FILL(list);
+   elm_list_item_append(list, "default", NULL, NULL,
+                        _item_style_sel_cb, "default");
+   elm_list_item_append(list, "default_style", NULL, NULL,
+                        _item_style_sel_cb, "default_style");
+   elm_list_item_append(list, "up", NULL, NULL,
+                        _item_style_sel_cb, "up");
+   elm_list_item_append(list, "album-preview", NULL, NULL,
+                        _item_style_sel_cb, "album-preview");
+   elm_list_item_append(list, "thumb", NULL, NULL,
+                        _item_style_sel_cb, "thumb");
+   elm_list_go(list);
+
+   return list;
+}
+
+/* Set elementary widget's min size.
+ * We should not set min size hint to elementary widgets because elementary has
+ * its own size policy/logic. This is an official trick from raster
+ */
+static Evas_Object *
+_elm_min_set(Evas_Object *obj, Evas_Object *parent, Evas_Coord w, Evas_Coord h)
+{
+   Evas_Object *table, *rect;
+
+   table = elm_table_add(parent);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(table));
+   evas_object_size_hint_min_set(rect, w, h);
+   EXPAND(rect); FILL(rect);
+   elm_table_pack(table, rect, 0, 0, 1, 1);
+
+   EXPAND(obj); FILL(obj);
+   elm_table_pack(table, obj, 0, 0, 1, 1);
+
+   return table;
+}
+
+void
+test_gengrid_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                         void *event_info __UNUSED__)
+{
+   Evas_Object *win, *box, *gengrid, *list, *table;
+
+   win = elm_win_util_standard_add("gengrid-styles", "Gengrid Item Styles");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+
+   box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   EXPAND(box);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   list = _item_styles_list_create(box);
+   evas_object_show(list);
+
+   table = _elm_min_set(list, box, 100, 0);
+   WEIGHT(table, 0, EVAS_HINT_EXPAND);
+   FILL(table);
+   elm_box_pack_end(box, table);
+   evas_object_show(table);
+
+   gengrid = _gengrid_create(win, (12 * 12), NULL);
+   elm_box_pack_end(box, gengrid);
+   evas_object_show(gengrid);
 }
 
 #endif
