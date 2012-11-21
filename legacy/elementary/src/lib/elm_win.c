@@ -3456,6 +3456,19 @@ elm_win_render(Evas_Object *obj)
    ecore_evas_manual_render(sd->ee);
 }
 
+
+static int
+_win_rotation_degree_check(int rotation)
+{
+   if ((rotation > 360) || (rotation < 0))
+     {
+        WRN("Rotation degree should be 0 ~ 360");
+        if (rotation > 360) rotation %= 360;
+        if (rotation < 0) rotation += 360;
+     }
+   return rotation;
+}
+
 EAPI void
 elm_win_rotation_set(Evas_Object *obj,
                      int rotation)
@@ -3463,12 +3476,7 @@ elm_win_rotation_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   if ((rotation > 360) || (rotation < 0))
-     {
-        WRN("Rotation degree should be 0 ~ 360");
-        if (rotation > 360) rotation %= 360;
-        if (rotation < 0) rotation += 360;
-     }
+   rotation = _win_rotation_degree_check(rotation);
    if (sd->rot == rotation) return;
    sd->rot = rotation;
    TRAP(sd, rotation_set, rotation);
@@ -3488,6 +3496,7 @@ elm_win_rotation_with_resize_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
+   rotation = _win_rotation_degree_check(rotation);
    if (sd->rot == rotation) return;
    sd->rot = rotation;
    TRAP(sd, rotation_with_resize_set, rotation);
