@@ -1215,6 +1215,8 @@ _elm_layout_smart_del(Evas_Object *obj)
 
    ELM_LAYOUT_DATA_GET(obj, sd);
 
+   elm_layout_freeze(obj);
+
    EINA_LIST_FREE (sd->subs, sub_d)
      {
         eina_stringshare_del(sub_d->part);
