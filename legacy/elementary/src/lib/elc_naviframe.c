@@ -84,16 +84,19 @@ _item_free(Elm_Naviframe_Item *it)
      evas_object_del(it->title_next_btn);
    if (it->title_icon) evas_object_del(it->title_icon);
 
-   if (sd->preserve && it->content)
+   if (it->content)
      {
-        /* so that elm does not delete the contents with the item's
-         * view after the del_pre_hook */
-        edje_object_part_unswallow(VIEW(it), it->content);
-        evas_object_event_callback_del
-          (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
+        if ((sd->preserve) && (!sd->on_deletion))
+          {
+             /* so that elm does not delete the contents with the item's
+              * view after the del_pre_hook */
+             edje_object_part_unswallow(VIEW(it), it->content);
+             evas_object_event_callback_del
+                (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
+          }
+        else
+          evas_object_del(it->content);
      }
-   else if (it->content)
-     evas_object_del(it->content);
 }
 
 static void

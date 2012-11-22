@@ -695,4 +695,11 @@
 
 2012-11-22  Michael Bouchaud (yoz)
 
-        * fix elm_flip to show only one face at a time 
+        * fix elm_flip to show only one face at a time
+
+2012-11-22  ChunEon Park (Hermet)
+
+        * Lets remove contents regardless of the preseve_on_set if naviframe is
+		  deleted.
+
+

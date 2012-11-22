@@ -60,6 +60,7 @@ Fixes:
    * Fix the elm_image which is made up of a edje object can call a callback function
    * Fix update the min size hint on elm_label after a text set
    * Fix flip widget who show the two face at same time
+   * Fix the naviframe to delete contents which are preserved_on set if the naviframe is deleted.
 
 Removals:
 
