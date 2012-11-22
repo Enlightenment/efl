@@ -689,6 +689,10 @@
         * Support indicator service in elm_conformant. elm conformant can manage
           indicator(elm_plug).
 
-2012-11-14  Michael Bouchaud (yoz)
+2012-11-21  Michael Bouchaud (yoz)
 
         * update the min size hint on elm_label after a text set
+
+2012-11-22  Michael Bouchaud (yoz)
+
+        * fix elm_flip to show only one face at a time 

@@ -59,6 +59,7 @@ Fixes:
    * Fix missing selected event in elm_index (elm_index_item_selected_set)
    * Fix the elm_image which is made up of a edje object can call a callback function
    * Fix update the min size hint on elm_label after a text set
+   * Fix flip widget who show the two face at same time
 
 Removals:
 
