@@ -62,6 +62,7 @@ Fixes:
    * Fix flip widget who show the two face at same time
    * Fix the naviframe to delete contents which are preserved_on set if the naviframe is deleted.
    * Fix the naviframe to clear the title contents when it's item is deleted.
+   * Fix entry to enable have_selection only when a text is actually selected.
 
 Removals:
 
