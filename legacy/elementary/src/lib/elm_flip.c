@@ -873,10 +873,7 @@ _flip_show_hide(Evas_Object *obj)
           }
         else
           {
-             if (sd->front.content)
-               evas_object_show(sd->front.clip);
-             else
-               evas_object_hide(sd->front.clip);
+             evas_object_hide(sd->front.clip);
              if (sd->back.content)
                evas_object_show(sd->back.clip);
              else
