@@ -70,8 +70,29 @@ _item_title_icon_del_cb(void *data,
 }
 
 static void
+_title_content_del(void *data,
+                   Evas *e __UNUSED__,
+                   Evas_Object *obj __UNUSED__,
+                   void *event_info __UNUSED__)
+{
+   char buf[1024];
+   Elm_Naviframe_Content_Item_Pair *pair = data;
+   Elm_Naviframe_Item *it = pair->it;
+   snprintf(buf, sizeof(buf), "elm,state,%s,hide", pair->part);
+   edje_object_signal_emit(VIEW(it), buf, "elm");
+   it->content_list = eina_inlist_remove(it->content_list,
+                                         EINA_INLIST_GET(pair));
+   eina_stringshare_del(pair->part);
+   free(pair);
+}
+
+static void
 _item_free(Elm_Naviframe_Item *it)
 {
+   Eina_Inlist *l;
+   Elm_Naviframe_Content_Item_Pair *content_pair;
+   Evas_Object *title_content;
+
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    eina_stringshare_del(it->style);
@@ -83,6 +104,20 @@ _item_free(Elm_Naviframe_Item *it)
    if (it->title_next_btn)
      evas_object_del(it->title_next_btn);
    if (it->title_icon) evas_object_del(it->title_icon);
+
+   EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
+     {
+        title_content = edje_object_part_swallow_get(VIEW(it), content_pair->part);
+        if (title_content)
+          {
+             evas_object_event_callback_del(title_content,
+                                            EVAS_CALLBACK_DEL,
+                                            _title_content_del);
+             evas_object_del(title_content);
+          }
+        eina_stringshare_del(content_pair->part);
+        free(content_pair);
+     }
 
    if (it->content)
      {
@@ -578,23 +613,6 @@ _part_aliasing_eval(const char **part)
      *part = NEXT_BTN_PART;
    else if (!strcmp(*part, "icon"))
      *part = ICON_PART;
-}
-
-static void
-_title_content_del(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
-{
-   char buf[1024];
-   Elm_Naviframe_Content_Item_Pair *pair = data;
-   Elm_Naviframe_Item *it = pair->it;
-   snprintf(buf, sizeof(buf), "elm,state,%s,hide", pair->part);
-   edje_object_signal_emit(VIEW(it), buf, "elm");
-   it->content_list = eina_inlist_remove(it->content_list,
-                                         EINA_INLIST_GET(pair));
-   eina_stringshare_del(pair->part);
-   free(pair);
 }
 
 static void

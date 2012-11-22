@@ -702,4 +702,6 @@
         * Lets remove contents regardless of the preseve_on_set if naviframe is
         deleted.
 
+2012-11-22  Shilpa Sigh (shilpa.singh@samsung.com)
 
+        * Clear the title contents when naviframe item is deleted.
