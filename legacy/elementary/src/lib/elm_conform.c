@@ -822,6 +822,7 @@ _elm_conformant_smart_add(Evas_Object *obj)
 static void
 _elm_conformant_smart_del(Evas_Object *obj)
 {
+   Evas_Object *top;
    ELM_CONFORMANT_DATA_GET(obj, sd);
 
 #ifdef HAVE_ELEMENTARY_X
@@ -835,6 +836,8 @@ _elm_conformant_smart_del(Evas_Object *obj)
      evas_object_del(sd->portrait_indicator);
    if (sd->landscape_indicator)
      evas_object_del(sd->landscape_indicator);
+   top = elm_widget_top_get(obj);
+   evas_object_data_set(top, "\377 elm,conformant", NULL);
 
    ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->base.del(obj);
 }
@@ -913,6 +916,7 @@ elm_conformant_add(Evas_Object *parent)
    sd->indmode = elm_win_indicator_mode_get(top);
    sd->ind_o_mode = elm_win_indicator_opacity_get(top);
    sd->rot = elm_win_rotation_get(top);
+   evas_object_data_set(top, "\377 elm,conformant", obj);
 
    evas_object_smart_callback_add
      (top, "indicator,prop,changed", _on_indicator_mode_changed, obj);
