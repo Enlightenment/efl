@@ -1,3 +1,12 @@
+2012-11-22  Sung W. Park (sung_)
+
+        * Fixed a bug where if an image object rendered using Evas GL 
+        direct rendering and then another image object using Native
+        Surface rendering, there was a potential for it to fall into
+        the same direct rendering path.
+        * Fixed some minor Evas GL extension bugs that came from refactoring.
+
+
 2012-11-21  Carsten Haitzler (The Rasterman)
 
         * Fixed leak in textblock and text props in general that made

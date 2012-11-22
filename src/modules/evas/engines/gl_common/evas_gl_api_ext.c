@@ -151,7 +151,8 @@ re->info->info.screen);
 
 #define _EVASGL_EXT_BEGIN(name) \
      { \
-        int *ext_support = &_gl_ext_support_##name;
+        int *ext_support = &_gl_ext_support_##name; \
+        *ext_support = 0;
 
 #define _EVASGL_EXT_END() \
      }
@@ -160,7 +161,7 @@ re->info->info.screen);
    (strstr(glexts, #name) != NULL || strstr(glueexts, #name) != NULL)
 
 #define _EVASGL_EXT_DISCARD_SUPPORT() \
-   ext_support = 0;
+   *ext_support = 0;
 
 #define _EVASGL_EXT_DRVNAME(name) \
    if (_EVASGL_EXT_CHECK_SUPPORT(name)) *ext_support = 1;
@@ -174,7 +175,7 @@ re->info->info.screen);
      }
 
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name) \
-   *drvfunc = name;
+   if ((*drvfunc) == NULL) *drvfunc = name;
 
 #include "evas_gl_api_ext_def.h"
 

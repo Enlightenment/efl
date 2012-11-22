@@ -41,7 +41,6 @@ struct _Render_Engine
 
 static int initted = 0;
 static int gl_wins = 0;
-static int  _ext_initted = 0;
 
 typedef void            (*_eng_fn) (void);
 typedef _eng_fn         (*glsym_func_eng_fn) ();
@@ -513,7 +512,7 @@ static EVGL_Interface evgl_funcs =
 
 
 static void
-_ext_sym_init(void)
+gl_symbols(void)
 {
    static int done = 0;
 
@@ -584,6 +583,8 @@ _ext_sym_init(void)
    FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
 
 #endif
+
+   done = 1;
 }
 
 int _evas_engine_GL_X11_log_dom = -1;
@@ -682,6 +683,8 @@ eng_setup(Evas *eo_e, void *in)
 
         if (!initted)
           {
+             gl_symbols();
+
              evas_common_cpu_init();
              evas_common_blend_init();
              evas_common_image_init();
@@ -833,12 +836,6 @@ eng_setup(Evas *eo_e, void *in)
    eng_window_use(re->win);
 
    re->vsync = 0;
-
-   if (!_ext_initted)
-     {
-        _ext_sym_init();
-        _ext_initted = 1 ;
-     }
 
    return 1;
 }
@@ -2491,7 +2488,9 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    if (!im) return;
    n = im->native.data;
 
-   if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) && (evgl_direct_rendered(re->evgl_engine)))
+   if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) &&
+       (n->ns.data.opengl.framebuffer_id == 0) &&
+       (evgl_direct_rendered(re->evgl_engine)))
      {
         DBG("Rendering Directly to the window");
         evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(re->evgl_engine), EINA_TRUE);
