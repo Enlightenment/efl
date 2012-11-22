@@ -162,7 +162,7 @@ id_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bxx, *gl, *id, *bt;
+   Evas_Object *win, *bxx, *gl, *id, *bt, *tb;
    Elm_Object_Item *glit;
    int i, j;
    api_data *api = calloc(1, sizeof(api_data));
@@ -176,23 +176,32 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(tb);
+   
    gl = elm_genlist_add(win);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, gl, 0, 0, 1, 1);
    evas_object_show(gl);
 
    api->dt.id = id = elm_index_add(win);
    evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, id);
+   evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_index_autohide_disabled_set(id, EINA_FALSE);
+   elm_table_pack(tb, id, 0, 0, 1, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
    evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
    elm_box_pack_end(bxx, bt);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bt);
 
-   elm_box_pack_end(bxx, gl);
+   elm_box_pack_end(bxx, tb);
 
    evas_object_show(id);
 
