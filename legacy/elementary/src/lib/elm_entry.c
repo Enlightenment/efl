@@ -1250,16 +1250,13 @@ _menu_call(Evas_Object *obj)
           {
              if (!sd->password)
                {
-                  if (sd->have_selection)
-                    {
-                       elm_hoversel_item_add
-                         (sd->hoversel, E_("Copy"), NULL, ELM_ICON_NONE,
-                         _copy_cb, obj);
-                       if (sd->editable)
-                         elm_hoversel_item_add
-                           (sd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
-                           _cut_cb, obj);
-                    }
+                  elm_hoversel_item_add
+                     (sd->hoversel, E_("Copy"), NULL, ELM_ICON_NONE,
+                      _copy_cb, obj);
+                  if (sd->editable)
+                    elm_hoversel_item_add
+                       (sd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
+                        _cut_cb, obj);
                   elm_hoversel_item_add
                     (sd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
                     _hover_cancel_cb, obj);
@@ -1284,6 +1281,10 @@ _menu_call(Evas_Object *obj)
                            _paste_cb, obj);
                     }
                }
+             else
+               elm_hoversel_item_add
+                  (sd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
+                   _hover_cancel_cb, obj);
           }
 
         EINA_LIST_FOREACH(sd->items, l, it)
@@ -1548,7 +1549,6 @@ _entry_selection_start_signal_cb(void *data,
      {
         if (entry != data) elm_entry_select_none(entry);
      }
-   sd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
 #ifdef HAVE_ELEMENTARY_X
    if (sd->sel_notify_handler)
@@ -3431,7 +3431,6 @@ elm_entry_select_all(Evas_Object *obj)
             (sd->entry_edje, "elm.text", EINA_FALSE);
         edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
      }
-   sd->have_selection = EINA_TRUE;
    edje_object_part_text_select_all(sd->entry_edje, "elm.text");
 }
 
