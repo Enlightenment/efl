@@ -453,19 +453,23 @@ eng_setup(Evas *eo_e, void *in)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
-             // this is disabled for now as we should only use/need the
-             // swapper infra *IF* we can get direct access to the "backbuffer"
-             // of a window in x11.
-             if (0)
-             re = _output_swapbuf_setup(e->output.w, e->output.h,
-                                        info->info.rotation, info->info.connection,
-                                        info->info.drawable, info->info.visual,
-                                        info->info.colormap,
-                                        info->info.depth, info->info.debug,
-                                        info->info.alloc_grayscale,
-                                        info->info.alloc_colors_max,
-                                        info->info.mask, info->info.shape_dither,
-                                        info->info.destination_alpha);
+             static int try_swapbuf = -1;
+             
+             if (try_swapbuf == -1)
+               {
+                  if (getenv("EVAS_NO_DRI_SWAPBUF")) try_swapbuf = 0;
+                  else try_swapbuf = 1;
+               }
+             if (try_swapbuf)
+               re = _output_swapbuf_setup(e->output.w, e->output.h,
+                                          info->info.rotation, info->info.connection,
+                                          info->info.drawable, info->info.visual,
+                                          info->info.colormap,
+                                          info->info.depth, info->info.debug,
+                                          info->info.alloc_grayscale,
+                                          info->info.alloc_colors_max,
+                                          info->info.mask, info->info.shape_dither,
+                                          info->info.destination_alpha);
              if (re)
                {
                   re->outbuf_free                   = evas_software_xlib_swapbuf_free;
@@ -760,13 +764,12 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    RGBA_Image *surface;
    Tilebuf_Rect *rect;
    Eina_Bool first_rect = EINA_FALSE;
-   int i;
 
 #define CLEAR_PREV_RECTS(x) \
    do { \
-      if (re->rects_prev[i]) \
-        evas_common_tilebuf_free_render_rects(re->rects_prev[i]); \
-      re->rects_prev[i] = NULL; \
+      if (re->rects_prev[x]) \
+        evas_common_tilebuf_free_render_rects(re->rects_prev[x]); \
+      re->rects_prev[x] = NULL; \
    } while (0)
    
    re = (Render_Engine *)data;
@@ -795,32 +798,27 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                }
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
+             evas_common_tilebuf_clear(re->tb);
+             CLEAR_PREV_RECTS(2);
+             re->rects_prev[2] = re->rects_prev[1];
+             re->rects_prev[1] = re->rects_prev[0];
+             re->rects_prev[0] = re->rects;
+             re->rects = NULL;
              switch (re->mode)
                {
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
-                  for (i = 0; i < 3; i++) CLEAR_PREV_RECTS(i);
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL);
                   break;
                 case MODE_DOUBLE: // double mode - only 1 level of prev rect
-                  for (i = 1; i < 3; i++) CLEAR_PREV_RECTS(i);
-                  re->rects_prev[1] = re->rects_prev[0];
-                  re->rects_prev[0] = re->rects;
-                  // merge prev[1] + prev[0] -> rects
                   re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL);
                   break;
                 case MODE_TRIPLE: // keep all
-                  for (i = 2; i < 3; i++) CLEAR_PREV_RECTS(i);
-                  re->rects_prev[2] = re->rects_prev[1];
-                  re->rects_prev[1] = re->rects_prev[0];
-                  re->rects_prev[0] = re->rects;
-                  re->rects = NULL;
-                  // merge prev[2] + prev[1] + prev[0] -> rects
                   re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2]);
                   break;
                 default:
                   break;
                }
-             re->cur_rect = EINA_INLIST_GET(re->rects);
              first_rect = EINA_TRUE;
           }
         evas_common_tilebuf_clear(re->tb);

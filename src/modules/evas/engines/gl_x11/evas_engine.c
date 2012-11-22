@@ -1008,14 +1008,13 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 {
    Render_Engine *re;
    Tilebuf_Rect *rect;
-   int i;
    Eina_Bool first_rect = EINA_FALSE;
    
 #define CLEAR_PREV_RECTS(x) \
    do { \
-      if (re->rects_prev[i]) \
-        evas_common_tilebuf_free_render_rects(re->rects_prev[i]); \
-      re->rects_prev[i] = NULL; \
+      if (re->rects_prev[x]) \
+        evas_common_tilebuf_free_render_rects(re->rects_prev[x]); \
+      re->rects_prev[x] = NULL; \
    } while (0)
 
    re = (Render_Engine *)data;
@@ -1040,35 +1039,31 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                }
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
+            evas_common_tilebuf_clear(re->tb);
+             CLEAR_PREV_RECTS(2);
+             re->rects_prev[2] = re->rects_prev[1];
+             re->rects_prev[1] = re->rects_prev[0];
+             re->rects_prev[0] = re->rects;
+             re->rects = NULL;
              switch (re->mode)
                {
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
-                  for (i = 0; i < 3; i++) CLEAR_PREV_RECTS(i);
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL);
                   break;
                 case MODE_DOUBLE: // double mode - only 1 level of prev rect
-                  for (i = 1; i < 3; i++) CLEAR_PREV_RECTS(i);
-                  re->rects_prev[1] = re->rects_prev[0];
-                  re->rects_prev[0] = re->rects;
-                  // merge prev[1] + prev[0] -> rects
                   re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL);
                   break;
                 case MODE_TRIPLE: // keep all
-                  for (i = 2; i < 3; i++) CLEAR_PREV_RECTS(i);
-                  re->rects_prev[2] = re->rects_prev[1];
-                  re->rects_prev[1] = re->rects_prev[0];
-                  re->rects_prev[0] = re->rects;
-                  re->rects = NULL;
-                  // merge prev[2] + prev[1] + prev[0] -> rects
                   re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2]);
                   break;
                 default:
                   break;
                }
-             re->cur_rect = EINA_INLIST_GET(re->rects);
              first_rect = EINA_TRUE;
           }
         evas_common_tilebuf_clear(re->tb);
+        re->cur_rect = EINA_INLIST_GET(re->rects);
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;
