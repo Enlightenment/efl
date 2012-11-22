@@ -1783,7 +1783,7 @@ st_color_class_color(void)
     @parameters
         [red] [green] [blue] [alpha]
     @effect
-        Used as shadow in text and textblock parts.
+        Used as outline in text and textblock parts.
     @endproperty
 */
 static void
@@ -1807,7 +1807,7 @@ st_color_class_color2(void)
     @parameters
         [red] [green] [blue] [alpha]
     @effect
-        Used as outline in text and textblock parts.
+        Used as shadow in text and textblock parts.
     @endproperty
 */
 static void
