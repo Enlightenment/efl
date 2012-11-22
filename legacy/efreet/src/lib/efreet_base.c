@@ -21,6 +21,7 @@ void *alloca (size_t);
 #endif
 
 #include <unistd.h>
+#include <ctype.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
@@ -524,9 +525,16 @@ efreet_user_dir_get(const char *key, const char *fallback)
         if (!eq) continue;
         if (strncmp(key, line->start, eq - line->start)) continue;
         if (++eq >= line->end) continue;
-        if (*eq != '"') continue;
-        if (++eq >= line->end) continue;
-        end = memchr(eq, '"', line->end - eq);
+        if (*eq == '"')
+        {
+            if (++eq >= line->end) continue;
+            end = memchr(eq, '"', line->end - eq);
+        }
+        else
+        {
+            end = line->end;
+            while (isspace(*end)) end--;
+        }
         if (!end) continue;
         ret = alloca(end - eq + 1);
         memcpy(ret, eq, end - eq);
