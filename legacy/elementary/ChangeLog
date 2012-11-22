@@ -700,6 +700,6 @@
 2012-11-22  ChunEon Park (Hermet)
 
         * Lets remove contents regardless of the preseve_on_set if naviframe is
-		  deleted.
+        deleted.
 
 
