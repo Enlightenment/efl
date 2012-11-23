@@ -2,7 +2,6 @@
 # include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
-#undef alloca
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__

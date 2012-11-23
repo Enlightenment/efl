@@ -7,10 +7,6 @@
 #include <errno.h>
 #include <math.h>
 
-#ifdef __SUNPRO_C
-# include <ieeefp.h>
-#endif
-
 #ifdef HAVE_ISFINITE
 # define ECORE_FINITE(t)  isfinite(t)
 #else
