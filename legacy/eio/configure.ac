@@ -180,6 +180,7 @@ AC_SUBST(lt_enable_auto_import)
 
 ### Checks for library functions
 AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
+AC_FUNC_ALLOCA
 
 ### Check for splice system call
 

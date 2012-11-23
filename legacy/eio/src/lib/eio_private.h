@@ -1,10 +1,6 @@
 #ifndef EIO_PRIVATE_H_
 #define EIO_PRIVATE_H_
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <sys/types.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
