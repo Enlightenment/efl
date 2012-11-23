@@ -38,6 +38,7 @@ external_elm_check.edc \
 external_elm_panes.edc \
 external_emotion_elm.edc \
 lua_script.edc \
+messages_echo.edc \
 perspective.edc \
 signalsBubble.edc \
 signals-messages.edc \
