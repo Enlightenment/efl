@@ -206,7 +206,7 @@ _ephysics_body_soft_body_slice_new(EPhysics_Body *body, double delta, double max
 }
 
 static void
-_ephysics_body_soft_body_slices_init(EPhysics_Body *body, Eina_List *slices)
+_ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina_List *slices)
 {
    EPhysics_Body_Soft_Body_Slice *slice = NULL;
    btVector3 p0, p1, p2;
@@ -215,16 +215,16 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Eina_List *slices)
    Eina_List *l;
    Evas *evas;
 
-   evas = evas_object_evas_get(body->evas_obj);
-   evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
+   evas = evas_object_evas_get(obj);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
    EINA_LIST_FOREACH(slices, l, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *) slice_data;
         slice->evas_obj = evas_object_image_filled_add(evas);
         evas_object_layer_set(slice->evas_obj,
-                              evas_object_layer_get(body->evas_obj));
-        evas_object_image_source_set(slice->evas_obj, body->evas_obj);
+                              evas_object_layer_get(obj));
+        evas_object_image_source_set(slice->evas_obj, obj);
         evas_object_image_source_events_set(slice->evas_obj, EINA_TRUE);
         evas_object_resize(slice->evas_obj, w, h);
         evas_object_show(slice->evas_obj);
@@ -2796,7 +2796,8 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      {
         evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESTACK,
                                  _ephysics_body_soft_body_evas_restack_cb, body);
-        _ephysics_body_soft_body_slices_init(body, body->default_face->slices);
+        _ephysics_body_soft_body_slices_init(body, body->evas_obj,
+                                             body->default_face->slices);
      }
 
    if (!use_obj_pos)
