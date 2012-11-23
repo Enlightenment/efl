@@ -144,8 +144,8 @@ static void
 _slave_mode_help(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
 {
    puts("Help:\n"
-	"One command per line, arguments separated by space. Strings may have "
-	"spaces if enclosed in quotes (\").\n"
+        "One command per line, arguments separated by space.\n"
+        "Strings may have spaces if enclosed in quotes (\").\n"
 	"\n"
 	"\t<command> [arguments]\n"
 	"\n"
@@ -296,10 +296,10 @@ _print_message(void *data __UNUSED__, Evas_Object *edje __UNUSED__, Edje_Message
 	 typestr = "STRING_FLOAT";
 	 break;
       case EDJE_MESSAGE_STRING_INT_SET:
-	 typestr = "INT_SET";
+	 typestr = "STRING_INT_SET";
 	 break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
-	 typestr = "FLOAT_SET";
+	 typestr = "STRING_FLOAT_SET";
 	 break;
       default:
 	 snprintf(buf, sizeof(buf), "UNKNOWN(%d)", type);
