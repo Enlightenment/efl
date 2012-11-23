@@ -679,3 +679,7 @@
 2012-11-15  Daniel Willmann
 
         * Add embryo function get_image_id
+
+2012-11-23  Bruno Dilly
+
+        * Support message sending on edje player.

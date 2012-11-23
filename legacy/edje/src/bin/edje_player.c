@@ -111,6 +111,312 @@ _slave_mode_signal(Evas_Object *edje, char *args)
 }
 
 static void
+_slave_mode_message_string(Evas_Object *edje, int id, char *arg)
+{
+   Edje_Message_String msg;
+   msg.str = arg;
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING, id, &msg);
+}
+
+static void
+_slave_mode_message_int(Evas_Object *edje, int id, char *arg)
+{
+   Edje_Message_Int msg;
+   msg.val = atoi(arg);
+   edje_object_message_send(edje, EDJE_MESSAGE_INT, id, &msg);
+}
+
+static void
+_slave_mode_message_float(Evas_Object *edje, int id, char *arg)
+{
+   Edje_Message_Float msg;
+   msg.val = atof(arg);
+   edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, id, &msg);
+}
+
+static void
+_slave_mode_message_string_set(Evas_Object *edje, int id, char *arg,
+                               char *extra_args)
+{
+   Edje_Message_String_Set *msg;
+   int count, i;
+
+   count = atoi(arg);
+   msg = alloca(sizeof(Edje_Message_String_Set) + (count - 1) * sizeof(char *));
+
+   for (i = 0; i < count; i++)
+     {
+        char *next = _slave_mode_tok(&extra_args);
+        if (!extra_args)
+          {
+             fputs("ERROR: Message missing arg.\n", stderr);
+             return;
+          }
+        msg->str[i] = extra_args;
+        extra_args = next;
+     }
+
+   msg->count = count;
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING_SET, id, msg);
+}
+
+static void
+_slave_mode_message_int_set(Evas_Object *edje, int id, char *arg,
+                            char *extra_args)
+{
+   Edje_Message_Int_Set *msg;
+   int count, i;
+
+   count = atoi(arg);
+   msg = alloca(sizeof(Edje_Message_Int_Set) + (count - 1) * sizeof(int));
+
+   for (i = 0; i < count; i++)
+     {
+        char *next = _slave_mode_tok(&extra_args);
+        if (!extra_args)
+          {
+             fputs("ERROR: Message missing arg.\n", stderr);
+             return;
+          }
+        msg->val[i] = atoi(extra_args);
+        extra_args = next;
+     }
+
+   msg->count = count;
+   edje_object_message_send(edje, EDJE_MESSAGE_INT_SET, id, msg);
+}
+
+static void
+_slave_mode_message_float_set(Evas_Object *edje, int id, char *arg,
+                              char *extra_args)
+{
+   Edje_Message_Float_Set *msg;
+   int count, i;
+
+   count = atoi(arg);
+   msg = alloca(sizeof(Edje_Message_Float_Set) + (count - 1) * sizeof(double));
+
+   for (i = 0; i < count; i++)
+     {
+        char *next = _slave_mode_tok(&extra_args);
+        if (!extra_args)
+          {
+             fputs("ERROR: Message missing arg.\n", stderr);
+             return;
+          }
+        msg->val[i] = atof(extra_args);
+        extra_args = next;
+     }
+
+   msg->count = count;
+   edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, id, msg);
+}
+
+static void
+_slave_mode_message_string_int(Evas_Object *edje, int id, char *arg,
+                               char *extra_args)
+{
+   Edje_Message_String_Int msg;
+
+   if (!extra_args)
+     {
+	fputs("ERROR: Message STRING_INT requires integer arg.\n", stderr);
+	return;
+     }
+   _slave_mode_tok(&extra_args);
+
+   msg.str = arg;
+   msg.val = atoi(extra_args);
+
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING_INT, id, &msg);
+}
+
+static void
+_slave_mode_message_string_float(Evas_Object *edje, int id, char *arg,
+                                 char *extra_args)
+{
+   Edje_Message_String_Float msg;
+
+   if (!extra_args)
+     {
+	fputs("ERROR: Message STRING_FLOAT requires float arg.\n", stderr);
+	return;
+     }
+   _slave_mode_tok(&extra_args);
+
+   msg.str = arg;
+   msg.val = atof(extra_args);
+
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING_FLOAT, id, &msg);
+}
+
+static void
+_slave_mode_message_string_int_set(Evas_Object *edje, int id, char *arg,
+                                   char *extra_args)
+{
+   Edje_Message_String_Int_Set *msg;
+   int count, i;
+   char *val;
+
+   if (!extra_args)
+     {
+	fputs("ERROR: Message STRING_INT_SET requires int args.\n", stderr);
+	return;
+     }
+
+   val = _slave_mode_tok(&extra_args);
+   count = atoi(extra_args);
+   msg = alloca(sizeof(Edje_Message_String_Int_Set) +
+                (count - 1) * sizeof(int));
+
+   for (i = 0; i < count; i++)
+     {
+        char *next = _slave_mode_tok(&val);
+        if (!val)
+          {
+             fputs("ERROR: Message missing arg.\n", stderr);
+             return;
+          }
+        msg->val[i] = atoi(val);
+        val = next;
+     }
+
+   msg->count = count;
+   msg->str = arg;
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING_INT_SET, id, msg);
+}
+
+static void
+_slave_mode_message_string_float_set(Evas_Object *edje, int id, char *arg,
+                                     char *extra_args)
+{
+   Edje_Message_String_Float_Set *msg;
+   int count, i;
+   char *val;
+
+   if (!extra_args)
+     {
+	fputs("ERROR: Message STRING_FLOAT_SET requires float set.\n", stderr);
+	return;
+     }
+
+   val = _slave_mode_tok(&extra_args);
+   count = atoi(extra_args);
+   msg = alloca(sizeof(Edje_Message_String_Float_Set) +
+                (count - 1) * sizeof(double));
+
+   for (i = 0; i < count; i++)
+     {
+        char *next = _slave_mode_tok(&val);
+        if (!val)
+          {
+             fputs("ERROR: Message missing arg.\n", stderr);
+             return;
+          }
+        msg->val[i] = atof(val);
+        val = next;
+     }
+
+   msg->count = count;
+   msg->str = arg;
+   edje_object_message_send(edje, EDJE_MESSAGE_STRING_FLOAT_SET, id, msg);
+}
+
+static void
+_slave_mode_message(Evas_Object *edje, char *args)
+{
+   char *id_str, *type, *message_arg, *extra_args;
+   int id;
+
+   id_str = args;
+   type = _slave_mode_tok(&id_str);
+   message_arg = _slave_mode_tok(&type);
+   extra_args = _slave_mode_tok(&message_arg);
+
+   if (!id_str)
+     {
+	fputs("ERROR: Message id is required.\n", stderr);
+	return;
+     }
+
+   id = atoi(id_str);
+
+   if (!type)
+     {
+	fputs("ERROR: Message type is required.\n", stderr);
+	return;
+     }
+
+   if (!message_arg)
+     {
+	fputs("ERROR: Missing message argument.\n", stderr);
+	return;
+     }
+
+   if (!strcmp(type, "STRING"))
+     {
+        _slave_mode_message_string(edje, id, message_arg);
+        return;
+     }
+
+   if (!strcmp(type, "INT"))
+     {
+        _slave_mode_message_int(edje, id, message_arg);
+        return;
+     }
+
+   if (!strcmp(type, "FLOAT"))
+     {
+        _slave_mode_message_float(edje, id, message_arg);
+        return;
+     }
+
+   if (!strcmp(type, "STRING_SET"))
+     {
+        _slave_mode_message_string_set(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "INT_SET"))
+     {
+        _slave_mode_message_int_set(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "FLOAT_SET"))
+     {
+        _slave_mode_message_float_set(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "STRING_INT"))
+     {
+        _slave_mode_message_string_int(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "STRING_FLOAT"))
+     {
+        _slave_mode_message_string_float(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "STRING_INT_SET"))
+     {
+        _slave_mode_message_string_int_set(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   if (!strcmp(type, "STRING_FLOAT_SET"))
+     {
+        _slave_mode_message_string_float_set(edje, id, message_arg, extra_args);
+        return;
+     }
+
+   fputs("ERROR: Invalid type. Check types list using \"help\".\n", stderr);
+}
+
+static void
 _slave_mode_info(Evas_Object *edje, char *args)
 {
    _slave_mode_tok(&args);
@@ -152,6 +458,19 @@ _slave_mode_help(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
 	"Available commands:\n"
 	"\tsignal <emission> <source>\n"
 	"\t   sends a signal to edje\n"
+	"\tmessage <id> <type> <args list>\n"
+	"\t   sends a message to edje.\n"
+	"\t   Possible types (and args):\n"
+	"\t     * STRING \"string\"\n"
+	"\t     * INT integer\n"
+	"\t     * FLOAT float\n"
+	"\t     * STRING_SET <set length> \"string1\" \"string2\" ...\n"
+	"\t     * INT_SET <set length> integer1 integer2 integer3 ...\n"
+	"\t     * FLOAT_SET <set length> float1 float2 float3 ...\n"
+	"\t     * STRING_INT \"message\" interger\n"
+	"\t     * STRING_FLOAT \"message\" float\n"
+	"\t     * STRING_INT_SET \"string\" <set length> interger1 ...\n"
+	"\t     * STRING_FLOAT_SET \"string\" <set length> float1 float2 ...\n"
 	"\tinfo <part>\n"
 	"\t   Print part geometry: <x>,<y>,<w>,<h>\n"
 	"\tquit\n"
@@ -160,7 +479,6 @@ _slave_mode_help(Evas_Object *edje __UNUSED__, char *args __UNUSED__)
 	"\t   shows this message.\n");
    /*
     * Extension ideas (are they useful?):
-    *  - message: send a message
     *  - data: show data value
     *  - color_class: set color class values (maybe also list?)
     *  - text_class: set text class values (maybe also list?)
@@ -175,6 +493,7 @@ struct slave_cmd
    void (*func)(Evas_Object *edje, char *args);
 } _slave_mode_commands[] = {
   {"signal", _slave_mode_signal},
+  {"message", _slave_mode_message},
   {"info", _slave_mode_info},
   {"quit", _slave_mode_quit},
   {"help", _slave_mode_help},
