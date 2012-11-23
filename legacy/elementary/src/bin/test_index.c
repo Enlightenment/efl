@@ -200,6 +200,8 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    evas_object_show(bt);
 
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   
    elm_box_pack_end(bxx, tb);
 
    evas_object_show(id);
