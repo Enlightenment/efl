@@ -1038,6 +1038,23 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
    ephysics_world_lock_release(body->world);
 }
 
+ static void
+_ephysics_body_soft_body_evas_restack_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body *body = (EPhysics_Body *)data;
+   Eina_List *l;
+   void *ldata;
+   EPhysics_Body_Soft_Body_Slice *slice;
+   short layer = evas_object_layer_get(obj);
+
+   EINA_LIST_FOREACH(body->slices_list, l, ldata)
+     {
+        slice = (EPhysics_Body_Soft_Body_Slice *)ldata;
+        evas_object_layer_set(slice->evas_obj, layer);
+     }
+   DBG("Body's slices layer reset to: %d", layer);
+}
+
 static void
 _ephysics_body_del(EPhysics_Body *body)
 {
@@ -1050,6 +1067,10 @@ _ephysics_body_del(EPhysics_Body *body)
                                        _ephysics_body_evas_obj_del_cb);
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
                                        _ephysics_body_evas_obj_resize_cb);
+
+        if (body->slices_list)
+          evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESTACK,
+                                       _ephysics_body_soft_body_evas_restack_cb);
      }
 
    while (body->callbacks)
@@ -2652,7 +2673,12 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
                                        _ephysics_body_evas_obj_resize_cb);
         if (body->slices_list)
-          _ephysics_body_soft_body_slices_clean(body);
+          {
+             evas_object_event_callback_del(body->evas_obj,
+                                       EVAS_CALLBACK_RESTACK,
+                                       _ephysics_body_soft_body_evas_restack_cb);
+             _ephysics_body_soft_body_slices_clean(body);
+          }
      }
 
    body->evas_obj = evas_obj;
@@ -2660,7 +2686,11 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
                                   _ephysics_body_evas_obj_del_cb, body);
 
    if (body->soft_body)
-     _ephysics_body_soft_body_slices_init(body);
+     {
+        evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESTACK,
+                                 _ephysics_body_soft_body_evas_restack_cb, body);
+        _ephysics_body_soft_body_slices_init(body);
+     }
 
    if (!use_obj_pos)
      return;
@@ -2700,7 +2730,12 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
      }
 
    if (body->slices_list)
-     _ephysics_body_soft_body_slices_clean(body);
+     {
+        evas_object_event_callback_del(body->evas_obj,
+                                       EVAS_CALLBACK_RESTACK,
+                                       _ephysics_body_soft_body_evas_restack_cb);
+        _ephysics_body_soft_body_slices_clean(body);
+     }
 
    return obj;
 }
