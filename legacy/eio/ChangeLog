@@ -55,3 +55,7 @@
 2012-10-03  Daniel Willmann
 	* Fix memory corruption by allocating enough memory in
 	eio_eet_data_read_cipher().
+
+2012-11-23  Sebastian Dransfeld
+
+	* Correctly define alloca
