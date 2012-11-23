@@ -2370,6 +2370,33 @@ EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Co
 
 /**
  * @brief
+ * Apply an impulse on a given soft body triangle.
+ *
+ * The impulse is equal to the change of momentum of the body.
+ * Impulse is the product of the force over the time this force is applied. In
+ * ephysics case, it would be the time of a tick, so it behaves just summing
+ * current linear velocity to impulse per mass(per triangle mass).
+ *
+ * When a impulse is applied over a body, it will have its velocity changed. This
+ * impulse will be applied on body's specified triangle @p idx, so it won't
+ * imply in rotating the body.
+ *
+ * @note Impulse is measured in kg * p / s.
+ *
+ * @param body The body to apply impulse to.
+ * @param idx The soft body triangle index.
+ * @param x The axis @p x component of impulse.
+ * @param y The axis @p y component of impulse
+ * @param z The axis @p z component of impulse
+ *
+ * @see ephysics_body_soft_body_triangle_index_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, double x, double y, double z);
+
+/**
+ * @brief
  * Set the soft body number of position iterations.
  *
  * Both soft body and cloth can have its number of position iterations changed.
