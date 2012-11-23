@@ -63,13 +63,13 @@ _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
   Evas_Coord x, y;
 
   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-  printf("canvas = (%i, %i), output = (%i, %i)\n", mmove->cur.canvas.x,
+  DBG("canvas = (%i, %i), output = (%i, %i)\n", mmove->cur.canvas.x,
           mmove->cur.canvas.y, mmove->cur.output.x, mmove->cur.output.y);
 
   if ((mmove->buttons != 1) || (dragging->node < 0)) return;
 
-  nx = mmove->cur.canvas.x;
-  ny = mmove->cur.canvas.y;
+  nx = mmove->cur.output.x;
+  ny = mmove->cur.output.y;
 
   DBG("Node: %d, nx: %d, ny: %d", dragging->node, nx, ny);
   ephysics_body_soft_body_triangle_move(dragging->body,
