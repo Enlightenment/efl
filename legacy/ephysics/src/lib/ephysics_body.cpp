@@ -2290,13 +2290,89 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
-ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, double x, double y, double z)
+EAPI Eina_List *
+ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
+{
+   Eina_List *face_list = NULL;
+   btSoftBody::Face *bt_face;
+   btSoftBody::Node *node;
+   int out, *idx;
+   btScalar nx, ny, nz, xx, yy, zz, dd, ww, hh;
+   Evas_Coord wy, wh;
+   double rate;
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can't get triangle indexes, operation not permited to rigid"
+            " bodies.");
+        return NULL;
+     }
+
+   ephysics_world_lock_take(body->world);
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
+                                      NULL);
+   xx = x / rate;
+   yy = ((wh + wy) -  y) / rate;
+   zz = z / rate;
+   dd = d / rate;
+   ww = w / rate;
+   hh = h / rate;
+
+   for (int m = 0; m < body->soft_body->m_faces.size(); m++)
+     {
+        out = 0;
+        bt_face = &body->soft_body->m_faces[m];
+        for (int n = 0; n < 3; n++)
+          {
+             node = bt_face->m_n[n];
+             nx = node->m_x.x();
+             ny = node->m_x.y();
+             nz = node->m_x.z();
+
+             if ((nz > zz || nz < dd) || (nx < xx || nx > xx + ww) ||
+                 (ny > yy || ny < ny - hh))
+               out++;
+          }
+
+        if (!out)
+          {
+             idx = (int *)malloc(sizeof(int));
+             *idx = m;
+             face_list = eina_list_append(face_list, idx);
+          }
+     }
+
+   ephysics_world_lock_release(body->world);
+
+   return face_list;
+}
+
+static void
+_ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body *body, int idx, double x, double y, double z)
 {
    btSoftBody::Face face;
    btSoftBody::Node *node;
    double rate;
    btVector3 impulse;
+
+   rate = ephysics_world_rate_get(body->world);
+   impulse = btVector3(x / rate, y / rate, z / rate);
+
+   face = body->soft_body->m_faces[idx];
+   for (int i = 0; i < 3; i++)
+     {
+        node = face.m_n[i];
+        node->m_v += impulse * node->m_im;
+     }
+
+   DBG("Impulse applied to soft body node(%d): %lf, %lf, %lf", idx, impulse.x(),
+       impulse.y(), impulse.z());
+}
+
+EAPI void
+ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, double x, double y, double z)
+{
 
    if (body->type == EPHYSICS_BODY_TYPE_RIGID)
      {
@@ -2311,18 +2387,40 @@ ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, do
         return;
      }
 
-   rate = ephysics_world_rate_get(body->world);
-   impulse = btVector3(x / rate, y / rate, z / rate);
-
    ephysics_world_lock_take(body->world);
-
-   face = body->soft_body->m_faces[idx];
-   node = face.m_n[0];
-   node->m_f += impulse * node->m_im;
-
+   _ephysics_body_soft_body_triangle_impulse_apply(body, idx, x, y, z);
    ephysics_world_lock_release(body->world);
-   DBG("Impulse applied to soft body node(%d): %lf, %lf, %lf", idx, impulse.x(),
-       impulse.y(), impulse.z());
+}
+
+EAPI void
+ephysics_body_soft_body_triangle_list_impulse_apply(EPhysics_Body *body, Eina_List *triangles, double x, double y, double z)
+{
+   Eina_List *l;
+   void *ldata;
+   int idx, faces_cnt;
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can't apply impulse, operation not permited to rigid bodies.");
+        return;
+     }
+
+   faces_cnt = body->soft_body->m_faces.size();
+   ephysics_world_lock_take(body->world);
+   EINA_LIST_FOREACH(triangles, l, ldata)
+     {
+        idx = *(int *)ldata;
+        if (idx < 0 || idx >= faces_cnt)
+          {
+             INF("Could not apply impulse to triangle %d, provided body"
+                 " triangle index ranges from 0 to %d", idx, faces_cnt);
+             continue;
+          }
+
+        _ephysics_body_soft_body_triangle_impulse_apply(body, idx, x, y, z);
+        DBG("Applied impulse on body %p, triangle: %d", body, idx);
+     }
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI int

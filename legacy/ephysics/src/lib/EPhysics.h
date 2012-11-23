@@ -2428,6 +2428,35 @@ EAPI EPhysics_Body *ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int 
 
 /**
  * @brief
+ * Get a list of triangles indexes inside an area.
+ *
+ * Get a list of triangles indexes given an area defined by @p x, @p y, @p z, @p
+ * w, @p h and @p d, the z axis components are represented by @p x and @p d
+ * where all triangles between @p z and @p d are considered, that's triangles
+ * with their z component greater than @p z and smaller than @p d.
+ *
+ * @note EPhysics will not free the returned list, remember to do so.
+ *
+ * @param body The body to get triangles indexes from.
+ * @param x The x component.
+ * @param y The y component.
+ * @param z The z component.
+ * @param w The w component.
+ * @param h The h component.
+ * @param d The d component.
+ *
+ * @return NULL on errors or no triangles found, a list of triangles indexes
+ * otherwhise.
+ *
+ * @see ephysics_body_soft_body_triangle_index_get().
+ * @see ephysics_body_soft_body_slice_index_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_List *ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d);
+
+/**
+ * @brief
  * Apply an impulse on a given soft body triangle.
  *
  * The impulse is equal to the change of momentum of the body.
@@ -2452,6 +2481,27 @@ EAPI EPhysics_Body *ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int 
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, double x, double y, double z);
+
+/**
+ * @brief
+ * Apply impulse in a list of triangles.
+ *
+ * Apply impulse in a list of triangles all at once considering the same impulse
+ * values on @p x, @p y and @p z.
+ *
+ * @param body The body to apply impulse.
+ * @param triangles A list of triangles indexes.
+ * @param x The axis @p x component of impulse.
+ * @param y The axis @p y component of impulse.
+ * @param z The axis @p z component of impulse.
+ *
+ * @see ephysics_body_soft_body_triangle_impulse_apply() to see about impulse
+ * applying on soft bodies.
+ * @see ephysics_body_soft_body_triangles_inside_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_triangle_list_impulse_apply(EPhysics_Body *body, Eina_List *triangles, double x, double y, double z);
 
 /**
  * @brief
