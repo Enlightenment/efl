@@ -1026,3 +1026,4 @@
 2012-11-23  Sebastian Dransfeld
 
 	* Correctly define alloca
+	* Fix ieeefp.h inclusion on Solaris

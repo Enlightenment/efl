@@ -678,7 +678,7 @@ size_t dns_strlcat(char *dst, const char *src, size_t lim) {
 } /* dns_strlcat() */
 
 
-#if _WIN32
+#if defined(_WIN32) || defined(__SUNPRO_C)
 
 static char *dns_strsep(char **sp, const char *delim) {
 	char *p;
