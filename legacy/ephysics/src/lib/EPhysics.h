@@ -2425,6 +2425,28 @@ EAPI void ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Ev
 
 /**
  * @brief
+ * Add new bending constraints to some @p body.
+ *
+ * Bending constraints define how a soft body is to be deformeable. In fact a
+ * bending constraints represents a link between a soft body mesh triangle and
+ * other. The hardness property is used to define the bending constraint of
+ * those new links.
+ *
+ * By default EPhysics create a new soft body or cloth with a single bending
+ * constraint.
+ *
+ * @param body The body to add bending constraints to.
+ * @param number The number of bending constraints to be added, it must be
+ * greater than 0.
+ *
+ * @see ephysics_body_soft_body_hardness_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, int number);
+
+/**
+ * @brief
  * Create a new circle physics body.
  *
  * Its collision shape will be a circle of diameter 1. To change it's size

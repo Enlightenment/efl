@@ -749,6 +749,16 @@ _ephysics_body_soft_body_anchors_rebuild(int node, btRigidBody *rigid_body, btSo
      }
 }
 
+void
+ephysics_body_soft_body_bending_constraints_generate(EPhysics_Body *body)
+{
+   btSoftBody *soft_body = body->soft_body;
+
+   for (; body->bending_constraints; body->bending_constraints--)
+     soft_body->generateBendingConstraints(2, soft_body->m_materials
+                                           [body->material_index]);
+}
+
 static void
 _ephysics_body_cloth_constraints_rebuild(EPhysics_Body *body)
 {
@@ -776,12 +786,7 @@ _ephysics_body_cloth_constraints_rebuild(EPhysics_Body *body)
           }
      }
    soft_body->generateClusters(0);
-   if (!body->bending_constraints)
-     {
-        soft_body->generateBendingConstraints(2, soft_body->
-                                              m_materials[body->material_index]);
-        body->bending_constraints = EINA_TRUE;
-     }
+   ephysics_body_soft_body_bending_constraints_generate(body);
 }
 
 static void
@@ -802,12 +807,7 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
      }
 
    soft_body->generateClusters(0);
-   if (!body->bending_constraints)
-     {
-        soft_body->generateBendingConstraints(10, soft_body->
-                                              m_materials[body->material_index]);
-        body->bending_constraints = EINA_TRUE;
-     }
+   ephysics_body_soft_body_bending_constraints_generate(body);
 }
 
 inline static double
@@ -1685,6 +1685,7 @@ ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
 static void
 _ephysics_body_soft_body_default_config(EPhysics_Body *body, btSoftBody *soft_body)
 {
+   body->bending_constraints = 1;
    body->soft_body = soft_body;
    body->soft_body->getCollisionShape()->setMargin(btScalar(0.02));
    body->soft_body->setUserPointer(body);
@@ -1890,6 +1891,26 @@ ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body)
      }
 
    return body->soft_body->m_cfg.piterations;
+}
+
+EAPI void
+ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, int number)
+{
+   if (!body)
+     {
+        ERR("Could add new bending constraint, body is null.");
+        return;
+     }
+
+   if (number <= 0)
+     {
+        ERR("Could not add new bending constraints, number must be greater"
+            " than 0");
+        return;
+     }
+
+   body->bending_constraints += number;
+   DBG("Added new bending constraints to body: %p", body);
 }
 
 EAPI EPhysics_Body *

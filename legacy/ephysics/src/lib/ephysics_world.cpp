@@ -590,6 +590,9 @@ _th_simulate(void *data, Ecore_Thread *th)
              ephysics_body_forces_apply(body);
              if (body->dragging_data.dragging)
                ephysics_body_soft_body_dragging_apply(body);
+
+             if (body->bending_constraints)
+               ephysics_body_soft_body_bending_constraints_generate(body);
           }
 
         time_now = ecore_time_get();

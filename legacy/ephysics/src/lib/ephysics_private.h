@@ -151,7 +151,7 @@ struct _EPhysics_Body {
      Eina_Bool back_face_culling:1;
      Eina_Bool clockwise:1;
      Eina_Bool boundary:1;
-     Eina_Bool bending_constraints:1;
+     int bending_constraints;
 };
 
 extern int _ephysics_log_dom;
@@ -189,6 +189,7 @@ void ephysics_body_forces_apply(EPhysics_Body *body);
 void ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate);
 void ephysics_body_evas_objects_restack(EPhysics_World *world);
 void ephysics_body_soft_body_dragging_apply(EPhysics_Body *body);
+void ephysics_body_soft_body_bending_constraints_generate(EPhysics_Body *body);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
