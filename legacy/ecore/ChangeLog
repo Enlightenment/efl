@@ -1022,3 +1022,7 @@
 2012-11-23  Eduardo Lima (Etrunko)
 
        * Fix leak of strcut wl_registry in Ecore Wayland
+
+2012-11-23  Sebastian Dransfeld
+
+	* Correctly define alloca
