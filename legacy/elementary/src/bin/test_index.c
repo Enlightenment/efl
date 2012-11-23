@@ -198,7 +198,6 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
    elm_box_pack_end(bxx, bt);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bt);
 
    elm_box_pack_end(bxx, tb);
