@@ -60,7 +60,7 @@ struct _EPhysics_Body_Face_Obj {
 };
 
 static void
-_ephysics_body_soft_body_slices_apply(EPhysics_Body *body)
+_ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Eina_List *slices)
 {
    double rate;
    void *list_data;
@@ -98,7 +98,7 @@ _ephysics_body_soft_body_slices_apply(EPhysics_Body *body)
         perspective = EINA_TRUE;
      }
 
-   EINA_LIST_FOREACH(body->slices_list, l, list_data)
+   EINA_LIST_FOREACH(slices, l, list_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)list_data;
 
@@ -206,7 +206,7 @@ _ephysics_body_soft_body_slice_new(EPhysics_Body *body, double delta, double max
 }
 
 static void
-_ephysics_body_soft_body_slices_init(EPhysics_Body *body)
+_ephysics_body_soft_body_slices_init(EPhysics_Body *body, Eina_List *slices)
 {
    EPhysics_Body_Soft_Body_Slice *slice = NULL;
    btVector3 p0, p1, p2;
@@ -218,7 +218,7 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body)
    evas = evas_object_evas_get(body->evas_obj);
    evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
 
-   EINA_LIST_FOREACH(body->slices_list, l, slice_data)
+   EINA_LIST_FOREACH(slices, l, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *) slice_data;
         slice->evas_obj = evas_object_image_filled_add(evas);
@@ -234,17 +234,17 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body)
    if (slice)
      evas_object_image_source_visible_set(slice->evas_obj, EINA_FALSE);
 
-   _ephysics_body_soft_body_slices_apply(body);
+   _ephysics_body_soft_body_slices_apply(body, slices);
 }
 
 static void
-_ephysics_body_soft_body_slices_clean(EPhysics_Body *body)
+_ephysics_body_soft_body_slices_clean(Eina_List *slices)
 {
    EPhysics_Body_Soft_Body_Slice *slice;
    void *slice_data;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(body->slices_list, l, slice_data)
+   EINA_LIST_FOREACH(slices, l, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
         evas_object_del(slice->evas_obj);
@@ -731,7 +731,7 @@ static void
 _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
-   _ephysics_body_soft_body_slices_clean(body);
+   _ephysics_body_soft_body_slices_clean(body->slices_list);
    body->evas_obj = NULL;
    DBG("Evas object deleted. Updating body: %p", body);
 }
@@ -1407,7 +1407,7 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    if (body->type != EPHYSICS_BODY_TYPE_RIGID)
      {
-        _ephysics_body_soft_body_slices_apply(body);
+        _ephysics_body_soft_body_slices_apply(body, body->slices_list);
         return;
      }
 
@@ -1854,23 +1854,29 @@ ephysics_body_cloth_anchor_del(EPhysics_Body *body)
    body->soft_body->m_anchors.resize(0);
 }
 
-static Eina_Bool
-_ephysics_body_slices_add(EPhysics_Body *body, double delta, double max)
+static Eina_List *
+_ephysics_body_slices_add(EPhysics_Body *body, int slices_cnt, int *points, double delta, double max)
 {
+   Eina_List *slices = NULL;
    EPhysics_Body_Soft_Body_Slice *slice;
    btSoftBody::tFaceArray faces;
+   void *ldata;
 
-   for (int i = 0; i < body->slices; i++)
+   for (int i = 0; i < slices_cnt; i++)
      {
         faces = body->soft_body->m_faces;
 
         slice = _ephysics_body_soft_body_slice_new(body, delta, max,
-                                                   body->points_deform[i]);
-        if (!slice) return EINA_FALSE;
+                                                   points[i]);
+        if (!slice) goto no_slices;
 
-        body->slices_list = eina_list_append(body->slices_list, slice);
+        slices = eina_list_append(slices, slice);
      }
-   return EINA_TRUE;
+   return slices;
+
+ no_slices:
+   _ephysics_body_soft_body_slices_clean(slices);
+   return NULL;
 }
 
 EAPI void
@@ -1988,7 +1994,10 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short rows, unsigned sho
    for (int i = 0; i < body->slices; i++)
      body->points_deform[i] = i;
 
-   if (!_ephysics_body_slices_add(body, -1, 1))
+   body->slices_list = _ephysics_body_slices_add(body, body->slices,
+                                            body->points_deform, -1, 1);
+
+   if (!body->slices_list)
      {
         ERR("Couldn't create slices.");
         goto no_slices;
@@ -2217,7 +2226,10 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    for (int i = 0; i < body->slices; i++)
      body->points_deform[i] = points[i];
 
-   if (!_ephysics_body_slices_add(body, 0.55, 1.1))
+   body->slices_list = _ephysics_body_slices_add(body, body->slices,
+                                                 body->points_deform, 0.55, 1.1);
+
+   if (!body->slices_list)
      {
         ERR("Couldn't create slices.");
         goto no_slices;
@@ -2317,7 +2329,10 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    for (int i = 0; i < body->slices; i++)
      body->points_deform[i] = points[i];
 
-   if (!_ephysics_body_slices_add(body, 0.55, 1.1))
+   body->slices_list = _ephysics_body_slices_add(body, body->slices,
+                                                 body->points_deform, 0.55, 1.1);
+
+   if (!body->slices_list)
      {
         ERR("Couldn't create slices.");
         goto no_slices;
@@ -2677,7 +2692,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
              evas_object_event_callback_del(body->evas_obj,
                                        EVAS_CALLBACK_RESTACK,
                                        _ephysics_body_soft_body_evas_restack_cb);
-             _ephysics_body_soft_body_slices_clean(body);
+             _ephysics_body_soft_body_slices_clean(body->slices_list);
           }
      }
 
@@ -2689,7 +2704,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      {
         evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESTACK,
                                  _ephysics_body_soft_body_evas_restack_cb, body);
-        _ephysics_body_soft_body_slices_init(body);
+        _ephysics_body_soft_body_slices_init(body, body->slices_list);
      }
 
    if (!use_obj_pos)
@@ -2734,7 +2749,7 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
         evas_object_event_callback_del(body->evas_obj,
                                        EVAS_CALLBACK_RESTACK,
                                        _ephysics_body_soft_body_evas_restack_cb);
-        _ephysics_body_soft_body_slices_clean(body);
+        _ephysics_body_soft_body_slices_clean(body->slices_list);
      }
 
    return obj;
