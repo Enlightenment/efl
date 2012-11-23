@@ -956,7 +956,9 @@ static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    double rate, sx, sy, sz;
-   btVector3 body_scale;
+   btVector3 body_scale, center;
+   btScalar radius;
+   btTransform trans;
 
    rate = ephysics_world_rate_get(body->world);
    sx = w / rate;
@@ -968,6 +970,12 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
      {
         body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
         body->soft_body->scale(body_scale);
+
+        body->soft_body->getCollisionShape()->getBoundingSphere(center, radius);
+        trans.setIdentity();
+        trans.setOrigin(center);
+        body->rigid_body->proceedToTransform(trans);
+
         _ephysics_body_soft_body_constraints_rebuild(body);
      }
    else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
