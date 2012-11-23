@@ -254,6 +254,15 @@ ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Object *slice)
 }
 
 static void
+_ephysics_body_soft_body_slice_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body_Soft_Body_Slice *slice = (EPhysics_Body_Soft_Body_Slice *)data;
+   slice->evas_obj = NULL;
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                                  _ephysics_body_soft_body_slice_del_cb);
+}
+
+static void
 _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina_List *slices)
 {
    EPhysics_Body_Soft_Body_Slice *slice = NULL;
@@ -277,6 +286,9 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina
         evas_object_resize(slice->evas_obj, w, h);
         evas_object_show(slice->evas_obj);
         evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
+        evas_object_event_callback_add(slice->evas_obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_soft_body_slice_del_cb,
+                                       slice);
      }
 
    if (slice)
@@ -294,7 +306,8 @@ _ephysics_body_soft_body_slices_free(Eina_List *slices)
    EINA_LIST_FREE(slices, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
-        evas_object_del(slice->evas_obj);
+        if (slice->evas_obj)
+          evas_object_del(slice->evas_obj);
         free(slice);
      }
 }
@@ -309,8 +322,8 @@ _ephysics_body_soft_body_slices_clean(Eina_List *slices)
    EINA_LIST_FOREACH(slices, l, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
-        evas_object_del(slice->evas_obj);
-        slice->evas_obj = NULL;
+        if (slice->evas_obj)
+          evas_object_del(slice->evas_obj);
      }
 }
 
