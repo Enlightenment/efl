@@ -238,6 +238,20 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina
 }
 
 static void
+_ephysics_body_soft_body_slices_free(Eina_List *slices)
+{
+   EPhysics_Body_Soft_Body_Slice *slice;
+   void *slice_data;
+
+   EINA_LIST_FREE(slices, slice_data)
+     {
+        slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
+        evas_object_del(slice->evas_obj);
+        free(slice);
+     }
+}
+
+static void
 _ephysics_body_soft_body_slices_clean(Eina_List *slices)
 {
    EPhysics_Body_Soft_Body_Slice *slice;
@@ -349,7 +363,6 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
    Eina_Hash *hash;
    Eina_Iterator *it;
    int layer;
-   Eina_Bool previously_added;
 
    bodies = ephysics_world_bodies_get(world);
 
@@ -358,11 +371,10 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
 
    hash = eina_hash_int32_new(_ephysics_body_evas_objects_restack_free);
 
-   EINA_LIST_FOREACH(bodies, l, data)
+   EINA_LIST_FREE(bodies, data)
      {
         body = (EPhysics_Body *)data;
         if (body->deleted) continue;
-        previously_added = EINA_FALSE;
 
         if (body->type == EPHYSICS_BODY_TYPE_RIGID)
           {
@@ -374,14 +386,8 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
 
              layer = evas_object_layer_get(stacking->evas);
              stack_list = (Eina_List *)eina_hash_find(hash, &layer);
-
-             if (stack_list)
-               previously_added = EINA_TRUE;
-
              stack_list = eina_list_append(stack_list, stacking);
-
-             if (!previously_added)
-               eina_hash_add(hash, &layer, stack_list);
+             eina_hash_set(hash, &layer, stack_list);
 
              continue;
           }
@@ -391,7 +397,6 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
 
         EINA_LIST_FREE(slices, slice_data)
           {
-             previously_added = EINA_FALSE;
              slice = (EPhysics_Body_Soft_Body_Slice *)slice_data;
 
              stacking = _ephysics_body_evas_stacking_new(slice->evas_obj,
@@ -400,14 +405,8 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
 
              layer = evas_object_layer_get(stacking->evas);
              stack_list = (Eina_List *)eina_hash_find(hash, &layer);
-
-             if (stack_list)
-               previously_added = EINA_TRUE;
-
              stack_list = eina_list_append(stack_list, stacking);
-
-             if (!previously_added)
-               eina_hash_add(hash, &layer, stack_list);
+             eina_hash_set(hash, &layer, stack_list);
           }
      }
 
@@ -1080,7 +1079,7 @@ _ephysics_body_soft_body_evas_restack_cb(void *data, Evas *evas __UNUSED__, Evas
 static void
 _ephysics_body_face_slice_del(EPhysics_Body_Face_Slice *face_slice)
 {
-   _ephysics_body_soft_body_slices_clean(face_slice->slices);
+   _ephysics_body_soft_body_slices_free(face_slice->slices);
    free(face_slice->points_deform);
    free(face_slice);
 }
