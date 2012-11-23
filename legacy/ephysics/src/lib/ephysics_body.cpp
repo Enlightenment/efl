@@ -205,6 +205,54 @@ _ephysics_body_soft_body_slice_new(EPhysics_Body *body, double delta, double max
    return slice;
 }
 
+static Eina_List *
+_ephysics_body_soft_body_slices_get(EPhysics_Body *body)
+{
+   Eina_List *l, *slices_list, *slices = NULL;
+   void *ldata, *slice_data;
+   EPhysics_Body_Face_Slice *face_slice;
+
+   EINA_LIST_FOREACH(body->faces_slices, l, ldata)
+     {
+        face_slice = (EPhysics_Body_Face_Slice *)ldata;
+        EINA_LIST_FOREACH(face_slice->slices, slices_list, slice_data)
+             slices = eina_list_append(slices, slice_data);
+     }
+
+   return slices;
+}
+
+EAPI int
+ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Object *slice)
+{
+   Eina_List *slices;
+   void *ldata;
+   EPhysics_Body_Soft_Body_Slice *slice_data;
+
+   if (!body)
+     {
+        ERR("Can't get soft body slice index, body is null.");
+        return -1;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can't get soft body slice index, operation not allowed for rigid"
+            " bodies.");
+        return -1;
+     }
+
+   slices = _ephysics_body_soft_body_slices_get(body);
+   EINA_LIST_FREE(slices, ldata)
+     {
+        slice_data = (EPhysics_Body_Soft_Body_Slice *)ldata;
+        if (slice_data->evas_obj == slice)
+          return slice_data->index;
+     }
+
+   return -1;
+}
+
 static void
 _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina_List *slices)
 {
@@ -331,23 +379,6 @@ _ephysics_body_evas_stacking_new(Evas_Object *obj, float index)
    stacking->evas = obj;
    stacking->stacking = index;
    return stacking;
-}
-
-static Eina_List *
-_ephysics_body_soft_body_slices_get(EPhysics_Body *body)
-{
-   Eina_List *l, *slices_list, *slices = NULL;
-   void *ldata, *slice_data;
-   EPhysics_Body_Face_Slice *face_slice;
-
-   EINA_LIST_FOREACH(body->faces_slices, l, ldata)
-     {
-        face_slice = (EPhysics_Body_Face_Slice *)ldata;
-        EINA_LIST_FOREACH(face_slice->slices, slices_list, slice_data)
-             slices = eina_list_append(slices, slice_data);
-     }
-
-   return slices;
 }
 
 void

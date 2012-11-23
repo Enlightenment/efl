@@ -2388,6 +2388,24 @@ EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Co
 
 /**
  * @brief
+ * Get the slice index of a soft body based on its slice`s Evas Object.
+ *
+ * Registering a mouse event callback on an associated evas object one can get
+ * the clicked slice evas object. With that pointer the user can get the slice
+ * index based on its related evas object.
+ *
+ * @param body The body to get the slice index from.
+ * @param slice The slice evas object.
+ * @return The slice index on success, -1 otherwise.
+ *
+ * @see ephysics_body_soft_body_triangle_index_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI int ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Object *slice);
+
+/**
+ * @brief
  * Add a soft ellipsoid.
  *
  * Add a new soft 3d ellipsoid to the simulation. The @p granularity defines how
