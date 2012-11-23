@@ -1786,9 +1786,9 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    pl = eina_hash_find(part_pc_dest_lookup, &key);
    if (pl)
      {
-        free(pl->name);
         if (name[0])
           {
+             free(pl->name);
              pl->name = mem_strdup(name);
           }
         else
@@ -1796,7 +1796,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
              list = eina_hash_find(part_dest_lookup, &pl->dest);
              list = eina_list_remove(list, pl);
              eina_hash_set(part_dest_lookup, &pl->dest, list);
-             free(pl);
+             eina_hash_del(part_pc_dest_lookup, &key, pl);
           }
         return ;
      }
