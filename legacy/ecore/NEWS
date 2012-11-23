@@ -40,6 +40,7 @@ Fixes:
      - send ECORE_X_EVENT_SELECTION_NOTIFY even if there is no data.
     * ecore_wayland:
      - Update to work with latest wayland (0.99) from git.
+     - Fix leak of struct wl_registry
 
 Removal:
     * 16bpp evas engine support removed (API still there, but inactive).

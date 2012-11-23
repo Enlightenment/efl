@@ -379,6 +379,7 @@ _ecore_wl_shutdown(Eina_Bool close)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
         if (_ecore_wl_disp->wl.display)
           {
+             wl_registry_destroy(_ecore_wl_disp->wl.registry);
              wl_display_flush(_ecore_wl_disp->wl.display);
              wl_display_disconnect(_ecore_wl_disp->wl.display);
           }

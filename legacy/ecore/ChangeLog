@@ -1018,3 +1018,7 @@
 2012-10-19  Cedric Bail
 
        * Use Eina_Thread for Ecore_Thread.
+
+2012-11-23  Eduardo Lima (Etrunko)
+
+       * Fix leak of strcut wl_registry in Ecore Wayland
