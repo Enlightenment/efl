@@ -8,7 +8,7 @@ files_DATA =
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib/ \
-@EIO_CFLAGS@ @EFL_EIO_BUILD@
+@EIO_CFLAGS@
 
 ECOREBASELDADD = \
 	$(top_builddir)/src/lib/libeio.la \

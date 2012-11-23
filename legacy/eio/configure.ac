@@ -105,16 +105,13 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-EFL_EIO_BUILD=""
 case "$host_os" in
    mingw*)
       PKG_CHECK_EXISTS([evil >= 1.6.99])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
       requirements_eio="${requirements_eio} evil >= 1.6.99"
-      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
    ;;
 esac
-AC_SUBST([EFL_EIO_BUILD])
 
 requirements_eio="${requirements_eio} eet >= 1.6.99 eina >= 1.6.99 ecore >= 1.6.99"
 AC_SUBST([requirements_eio])
@@ -158,27 +155,10 @@ AC_C_INLINE
 AC_C___ATTRIBUTE__
 AM_PROG_CC_C_O
 
-EFL_EIO_BUILD=""
-case "$host_os" in
-   mingw*)
-      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
-   ;;
-esac
-AC_SUBST(EFL_EIO_BUILD)
-
 ### Checks for linker characteristics
 
-# use --enable-auto-import on Windows
-
-lt_enable_auto_import=""
-case "$host_os" in
-   mingw* | cegcc*)
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-      ;;
-esac
-AC_SUBST(lt_enable_auto_import)
-
 ### Checks for library functions
+AC_FUNC_ALLOCA
 AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
 
 ### Check for splice system call
