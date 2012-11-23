@@ -16,14 +16,16 @@ endif
 
 #put here all EDCs one needs to the examples
 EDCS = \
+animations2.edc \
+animations.edc \
+basic2.edc \
 basic.edc \
-swallow.edc \
-text.edc \
-table.edc \
 box.edc \
 codegen.edc \
+color-class.edc \
 drag.edc \
 edje_example.edc \
+edje-nested.edc \
 embryo_custom_state.edc \
 embryo_pong.edc \
 embryo_run_program.edc \
@@ -35,16 +37,15 @@ external_elm_button.edc \
 external_elm_check.edc \
 external_elm_panes.edc \
 external_emotion_elm.edc \
-toggle_using_filter.edc \
-signals-messages.edc \
-color-class.edc \
-perspective.edc \
-animations.edc \
 lua_script.edc \
+perspective.edc \
+signalsBubble.edc \
+signals-messages.edc \
 sigtest.edc \
-animations2.edc \
-basic2.edc \
-signalsBubble.edc
+swallow.edc \
+table.edc \
+text.edc \
+toggle_using_filter.edc
 
 if ENABLE_MULTISENSE
 EDCS += multisense.edc
