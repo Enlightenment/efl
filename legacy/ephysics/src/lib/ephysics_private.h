@@ -51,6 +51,7 @@ extern "C" {
 typedef struct _EPhysics_Force EPhysics_Force;
 typedef struct _EPhysics_Body_Center_Mass EPhysics_Body_Center_Mass;
 typedef struct _EPhysics_Body_Size EPhysics_Body_Size;
+typedef struct _EPhysics_Body_Face_Slice EPhysics_Body_Face_Slice;
 typedef struct _EPhysics_Point EPhysics_Point;
 typedef struct _EPhysics_Dragging_Data EPhysics_Dragging_Data;
 
@@ -114,6 +115,13 @@ struct _EPhysics_Body_Size {
      Evas_Coord d;
 };
 
+struct _EPhysics_Body_Face_Slice {
+     EPhysics_Body_Face face;
+     int slices_cnt;
+     int *points_deform;
+     Eina_List *slices;
+};
+
 struct _EPhysics_Body {
      EINA_INLIST;
      btCollisionShape *collision_shape;
@@ -128,15 +136,14 @@ struct _EPhysics_Body {
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;
      Eina_List *to_delete;
-     Eina_List *slices_list;
      Eina_List *face_objs;
      EPhysics_Body_Material material;
      double mass;
      double density;
      EPhysics_Force force;
      EPhysics_Body_Center_Mass cm;
-     int slices;
-     int *points_deform;
+     Eina_List *faces_slices;
+     EPhysics_Body_Face_Slice *default_face;
      EPhysics_Body_Type type;
      EPhysics_Body_Shape shape;
      int cloth_columns;
