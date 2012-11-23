@@ -158,14 +158,20 @@ _key_grab(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Key_Grab *g;
 
    Evas_Object_Protected_Data *obj = _pd;
-   if (!keyname)
-      *ret = EINA_FALSE;
+   if (((modifiers == not_modifiers) && (modifiers != 0)) || (!keyname))
+     {
+        *ret = EINA_FALSE;
+        return;
+     }
    if (exclusive)
      {
         g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers,
                                exclusive);
         if (g)
-           *ret = EINA_FALSE;
+          {
+             *ret = EINA_FALSE;
+             return;
+          }
      }
    g = evas_key_grab_new(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
    *ret = (!g) ? EINA_FALSE : EINA_TRUE;
