@@ -110,6 +110,7 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    flag_body = ephysics_body_cloth_add(test_data->world, 0, 0);
+   ephysics_body_soft_body_bending_constraints_add(flag_body, 1);
    ephysics_body_soft_body_position_iterations_set(flag_body, 10);
    ephysics_body_mass_set(flag_body, 10);
    ephysics_body_soft_body_hardness_set(flag_body, 1);
@@ -170,7 +171,6 @@ test_flag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_layout_content_set(test_data->layout, "extra_input", tg);
 
    world = ephysics_world_new();
-   ephysics_world_gravity_set(world, 100, 0, 0);
    ephysics_world_render_geometry_set(world, 50, 40, -50,
                                       WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
