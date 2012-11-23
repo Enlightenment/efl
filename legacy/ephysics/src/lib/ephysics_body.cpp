@@ -776,8 +776,12 @@ _ephysics_body_cloth_constraints_rebuild(EPhysics_Body *body)
           }
      }
    soft_body->generateClusters(0);
-   soft_body->generateBendingConstraints(2, soft_body->m_materials[
-                                                          body->material_index]);
+   if (!body->bending_constraints)
+     {
+        soft_body->generateBendingConstraints(2, soft_body->
+                                              m_materials[body->material_index]);
+        body->bending_constraints = EINA_TRUE;
+     }
 }
 
 static void
@@ -798,8 +802,12 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
      }
 
    soft_body->generateClusters(0);
-   soft_body->generateBendingConstraints(10, soft_body->m_materials[
-                                                          body->material_index]);
+   if (!body->bending_constraints)
+     {
+        soft_body->generateBendingConstraints(10, soft_body->
+                                              m_materials[body->material_index]);
+        body->bending_constraints = EINA_TRUE;
+     }
 }
 
 inline static double
