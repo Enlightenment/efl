@@ -2388,6 +2388,28 @@ EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Co
 
 /**
  * @brief
+ * Add a soft ellipsoid.
+ *
+ * Add a new soft 3d ellipsoid to the simulation. The @p granularity defines how
+ * many triangles are to be added.
+ *
+ * @note if no @p granularity is informed(i.e @p granularity = 0) the soft body
+ * will be created with a triangle mesh of 100.
+ *
+ * @param world The world the new soft ellipsoid is to be added.
+ * @param granularity How many triangles the soft body triangle mesh must have.
+ * @return a new body or @c NULL on errors.
+ *
+ * @see ephysics_body_del().
+ * @see ephysics_body_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity);
+
+/**
+ * @brief
  * Apply an impulse on a given soft body triangle.
  *
  * The impulse is equal to the change of momentum of the body.

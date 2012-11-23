@@ -60,6 +60,7 @@ typedef enum _EPhysics_Body_Shape
   EPHYSICS_BODY_SHAPE_BOX,
   EPHYSICS_BODY_SHAPE_CUSTOM,
   EPHYSICS_BODY_SHAPE_CYLINDER,
+  EPHYSICS_BODY_SHAPE_ELLIPSOID,
   EPHYSICS_BODY_SHAPE_LAST,
 } EPhysics_Body_Shape;
 
@@ -116,6 +117,7 @@ struct _EPhysics_Body_Size {
 };
 
 struct _EPhysics_Body_Face_Slice {
+     EPhysics_Body *body;
      EPhysics_Body_Face face;
      int slices_cnt;
      int *points_deform;
