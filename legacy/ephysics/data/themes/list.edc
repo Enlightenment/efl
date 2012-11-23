@@ -87,7 +87,7 @@
 
    group {
       name: "elm/list/item/ephysics-test";
-      name: "elm/list/item_odd/ephysics-test";
+      alias: "elm/list/item_odd/ephysics-test";
 
       parts {
 
