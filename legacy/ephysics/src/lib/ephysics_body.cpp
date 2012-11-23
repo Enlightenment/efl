@@ -819,11 +819,8 @@ _ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
    body->dragging_data.dragging = EINA_TRUE;
 
    face = body->soft_body->m_faces[triangle];
-   for (int i = 0; i < 3; i++)
-     {
-        node = face.m_n[i];
-        body->dragging_data.mass[i] = node->m_im;
-     }
+   node = face.m_n[0];
+   body->dragging_data.mass = node->m_im;
 }
 
 static void
@@ -850,8 +847,7 @@ _ephysics_body_soft_body_mass_set(EPhysics_Body *body, double mass)
           {
              valid_nodes++;
              inverse_mass = 1 / (mass / valid_nodes);
-             for (int i = 0; i < 3; i++)
-               body->dragging_data.mass[i] = inverse_mass;
+             body->dragging_data.mass = inverse_mass;
           }
 
         for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
@@ -1651,13 +1647,10 @@ ephysics_body_soft_body_dragging_unset(EPhysics_Body *body)
 
    ephysics_world_lock_take(body->world);
    face = body->soft_body->m_faces[body->dragging_data.triangle];
-   for (int i = 0; i < 3; i++)
-     {
-        node = face.m_n[i];
-        node->m_im = body->dragging_data.mass[i];
-        body->dragging_data.mass[i] = 0;
-     }
+   node = face.m_n[0];
+   node->m_im = body->dragging_data.mass;
 
+   body->dragging_data.mass = 0;
    body->dragging_data.dragging = EINA_FALSE;
    body->dragging_data.triangle = 0;
    ephysics_world_lock_release(body->world);
@@ -1994,19 +1987,16 @@ ephysics_body_soft_body_dragging_apply(EPhysics_Body *body)
    btSoftBody::Node *node;
 
    face = body->soft_body->m_faces[body->dragging_data.triangle];
-   for (int i = 0; i < 3; i++)
-     {
-        node = face.m_n[i];
-        node->m_v *= 0;
-        node->m_im *= 0;
-     }
+   node = face.m_n[0];
+   node->m_v *= 0;
+   node->m_im *= 0;
 }
 
 EAPI void
 ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
    btScalar xx, yy, zz;
-   Evas_Coord wh;
+   Evas_Coord wh, wy;
    double rate;
    btVector3 new_pos;
    btTransform diff;
@@ -2027,34 +2017,29 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
      }
 
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_render_geometry_get(body->world, NULL, NULL, NULL, NULL, &wh,
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
                                       NULL);
 
    xx = x / rate;
-   yy = (wh -  y) / rate;
+   yy = ((wh + wy) -  y) / rate;
    zz = z / rate;
 
    new_pos = btVector3(xx, yy, zz);
    ephysics_world_lock_take(body->world);
 
    face = body->soft_body->m_faces[idx];
-   for (int i = 0; i < 3; i++)
+
+   node = face.m_n[0];
+   diff.setIdentity();
+   diff.setOrigin(new_pos - node->m_x);
+   _ephysics_body_soft_body_single_face_transform(body->soft_body, idx, 0, diff);
+
+   diff.setOrigin(diff.getOrigin() * 0.1);
+   for (int m = 0; m < body->soft_body->m_faces.size(); m++)
      {
-        node = face.m_n[i];
-        diff.setIdentity();
-        diff.setOrigin(new_pos - node->m_x);
-        _ephysics_body_soft_body_single_face_transform(body->soft_body, idx, i,
+        if (m == idx) continue;
+        _ephysics_body_soft_body_single_face_transform(body->soft_body, m, 0,
                                                        diff);
-
-        if (!i) continue;
-
-        diff.setOrigin(diff.getOrigin() * 0.1);
-        for (int m = 0; m < body->soft_body->m_faces.size(); m++)
-          {
-             if (m == idx) continue;
-             _ephysics_body_soft_body_single_face_transform(body->soft_body, m,
-                                                            i, diff);
-          }
      }
 
    body->soft_body->updateClusters();

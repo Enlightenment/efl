@@ -98,7 +98,7 @@ struct _EPhysics_Force {
 
 struct _EPhysics_Dragging_Data {
      int triangle;
-     double mass[3];
+     double mass;
      Eina_Bool dragging:1;
 };
 
