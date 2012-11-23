@@ -1,0 +1,30 @@
+#define PAGE_GROUP(_name) \
+   group { \
+      name: "page-"##_name##""; \
+      images { \
+         image: "page_"##_name##".png" COMP; \
+      } \
+\
+      parts { \
+\
+         part { \
+            name: "page"; \
+            mouse_events: 1; \
+            repeat_events: 1; \
+            type: IMAGE; \
+            description { \
+               state: "default" 0.0; \
+               image.normal: "page_"##_name##".png"; \
+            } \
+         } \
+\
+      } \
+\
+   } \
+
+PAGE_GROUP(00)
+PAGE_GROUP(01)
+PAGE_GROUP(02)
+PAGE_GROUP(03)
+
+#undef PAGE_GROUP

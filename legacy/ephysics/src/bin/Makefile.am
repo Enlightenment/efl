@@ -31,6 +31,8 @@ test_cube_3d.c \
 test_delete.c \
 test_dices.c \
 test_falling_letters.c \
+test_flag.c \
+test_flip_page.c \
 test_forces.c \
 test_grab.c \
 test_growing_balls.c \
@@ -46,8 +48,7 @@ test_shapes.c \
 test_sleeping_threshold.c \
 test_slider.c \
 test_soft_body.c \
-test_win_resize.c \
-test_flag.c
+test_win_resize.c
 
 ephysics_logo_SOURCES = \
 ephysics_logo.c

@@ -21,6 +21,7 @@ TEST_FILES = \
 	list.edc \
 	loading_bar.edc \
 	others.edc \
+	pages.edc \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
@@ -68,6 +69,10 @@ TEST_FILES = \
 	images/list-item-pressed.png \
 	images/loading_bar.png \
 	images/loading_knob.png \
+	images/page_00.png \
+	images/page_01.png \
+	images/page_02.png \
+	images/page_03.png \
 	images/pentagon.png \
 	images/shadow-ball.png \
 	images/shadow-cube.png \

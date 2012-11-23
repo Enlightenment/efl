@@ -168,6 +168,28 @@
          }
 
          part {
+            name: "light_msg";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.relative: 0.08 0.96;
+               rel2.relative: 0.92 1.0;
+               text {
+                  font: "Sans";
+                  size: 12;
+                  text: "Press x to turn lights on/off.";
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 95 56 19 255;
+            }
+         }
+
+         part {
             name: "linear_vel";
             type: TEXT;
             mouse_events: 0;
@@ -364,6 +386,14 @@
             action: STATE_SET "visible" 0.0;
             target: "arrows";
             target: "grab_msg";
+          }
+
+          program {
+            name: "light,show";
+            source: "ephysics_test";
+            signal: "light,show";
+            action: STATE_SET "visible" 0.0;
+            target: "light_msg";
           }
 
           program {

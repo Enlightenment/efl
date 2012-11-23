@@ -31,6 +31,7 @@ void test_delete(void *data, Evas_Object *obj, void *event_info);
 void test_dices(void *data, Evas_Object *obj, void *event_info);
 void test_falling_letters(void *data, Evas_Object *obj, void *event_info);
 void test_flag(void *data, Evas_Object *obj, void *event_info);
+void test_flip_page(void *data, Evas_Object *obj, void *event_info);
 void test_forces(void *data, Evas_Object *obj, void *event_info);
 void test_grab(void *data, Evas_Object *obj, void *event_info);
 void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
@@ -64,6 +65,7 @@ static const EPhysics_Test tests[] = {
        {"Delete Body", test_delete},
        {"Falling Letters", test_falling_letters},
        {"Flag - Cloth", test_flag},
+       {"Flip Page", test_flip_page},
        {"Forces", test_forces},
        {"Grab", test_grab},
        {"Growing Balls", test_growing_balls},
