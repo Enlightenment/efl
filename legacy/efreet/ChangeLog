@@ -158,3 +158,7 @@
 
 	* Add common dbus daemon to listen for file system updates and to do
 	cache building.
+
+2012-11-22  Sebastian Dransfeld
+
+	* Accept unquoted values in user-dirs.dirs
