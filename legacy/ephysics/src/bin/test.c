@@ -48,6 +48,7 @@ void test_sleeping(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
 void test_soft_body(void *data, Evas_Object *obj, void *event_info);
 void test_soft_button(void *data, Evas_Object *obj, void *event_info);
+void test_soft_ellipsoid(void *data, Evas_Object *obj, void *event_info);
 void test_win_resize(void *data, Evas_Object *obj, void *event_info);
 
 static const EPhysics_Test tests[] = {
@@ -84,6 +85,7 @@ static const EPhysics_Test tests[] = {
        {"Slider", test_slider},
        {"Soft Body", test_soft_body},
        {"Soft Button", test_soft_button},
+       {"Soft Ellipsoid", test_soft_ellipsoid},
        {"Win Resize", test_win_resize},
 };
 

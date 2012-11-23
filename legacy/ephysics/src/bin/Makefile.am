@@ -49,6 +49,7 @@ test_sleeping_threshold.c \
 test_slider.c \
 test_soft_body.c \
 test_soft_button.c \
+test_soft_ellipsoid.c \
 test_win_resize.c
 
 ephysics_logo_SOURCES = \
