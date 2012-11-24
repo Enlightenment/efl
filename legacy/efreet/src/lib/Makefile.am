@@ -66,4 +66,4 @@ libefreet_trash_la_CPPFLAGS = \
 libefreet_trash_la_LIBADD = @EFREET_LIBS@ libefreet.la
 libefreet_trash_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
-EXTRA_DIST = efreet_private.h efreet_xml.h efreet_cache_private.h
+EXTRA_DIST = efreet_private.h efreet_xml.h efreet_cache_private.h efreet_alloca.h

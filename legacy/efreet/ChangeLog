@@ -162,3 +162,7 @@
 2012-11-22  Sebastian Dransfeld
 
 	* Accept unquoted values in user-dirs.dirs
+
+2012-11-24  Sebastian Dransfeld
+
+	* Fix alloca
