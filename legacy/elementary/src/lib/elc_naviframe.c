@@ -91,6 +91,7 @@ _item_free(Elm_Naviframe_Item *it)
 {
    Eina_Inlist *l;
    Elm_Naviframe_Content_Item_Pair *content_pair;
+   Elm_Naviframe_Text_Item_Pair *text_pair;
    Evas_Object *title_content;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
@@ -117,6 +118,11 @@ _item_free(Elm_Naviframe_Item *it)
           }
         eina_stringshare_del(content_pair->part);
         free(content_pair);
+     }
+   EINA_INLIST_FOREACH_SAFE(it->text_list, l, text_pair)
+     {
+        eina_stringshare_del(text_pair->part);
+        free(text_pair);
      }
 
    if (it->content)

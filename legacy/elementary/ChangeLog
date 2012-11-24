@@ -709,3 +709,7 @@
 2012-11-22  Thiep Ha 
 
         * Fixed entry to enable have_selection only when a text is actually selected.
+
+2012-11-23  ChunEon Park (Hermet)
+
+        * Free the text parts of the naviframe item when item is deleted.
