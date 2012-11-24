@@ -831,6 +831,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
    GLuint fmt;
 
+   if (!im->image.data) return;
+
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex);
@@ -852,7 +854,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
           }
      }
    if (!tex->pt) return;
-   if (!im->image.data) return;
 
    fmt = tex->pt->format;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
