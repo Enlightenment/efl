@@ -7,6 +7,7 @@ _evas_map_calc_geom_change(Evas_Object *eo_obj)
 {
    int is, was = 0;
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   if (!obj) return;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    if (!(obj->layer->evas->is_frozen))
@@ -37,6 +38,7 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    Eina_Bool ch = EINA_FALSE;
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   if (!obj) return;
    if (!obj->cur.map) return;
    // WARN: Do not merge below code to SLP until it is fixed.
    // It has an infinite loop bug.
@@ -168,7 +170,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
    if (eo_obj)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-        if (obj->spans)
+        if ((obj) && (obj->spans))
           {
              obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->spans);
              free(obj->spans);
@@ -407,6 +409,7 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
 
    if (!eo_parent) return EINA_FALSE;
    Evas_Object_Protected_Data *parent = eo_data_get(eo_parent, EVAS_OBJ_CLASS);
+   if (!parent) return EINA_FALSE;
    list = evas_object_smart_members_get_direct(parent->smart.parent);
    EINA_INLIST_FOREACH(list, o)
      if (o->cur.usemap) break ;
@@ -473,7 +476,8 @@ _map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
         for (eo_parents = obj->smart.parent; eo_parents; eo_parents = parents->smart.parent)
           {
              parents = eo_data_get(eo_parents, EVAS_OBJ_CLASS);
-             parents->child_has_map = EINA_TRUE;
+             if (parents)
+               parents->child_has_map = EINA_TRUE;
           }
      }
    else
@@ -798,6 +802,7 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *e
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
 
+   if (!obj) return;
    if (m->count != 4)
      {
         ERR("map has count=%d where 4 was expected.", m->count);
@@ -818,7 +823,8 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
    return;
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-
+   
+   if (!obj) return;
    if (m->count != 4)
      {
         ERR("map has count=%d where 4 was expected.", m->count);
@@ -1177,6 +1183,7 @@ evas_object_map_update(Evas_Object *eo_obj,
    const Evas_Map_Point *p, *p_end;
    RGBA_Map_Point *pts, *pt;
 
+   if (!obj) return;
    if (obj->spans)
      {
         if (obj->spans->x != x || obj->spans->y != y ||
