@@ -363,7 +363,6 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
    _tex_adjust(gc, &w, &h);
    pt->gc = gc;
    pt->w = w;
