@@ -5,11 +5,11 @@
 #include "ecore_wl_private.h"
 
 /* local function prototypes */
-static void _ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial);
-static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h);
-static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__);
-static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__);
-static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__);
+static void _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial);
+static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED, unsigned int edges, int w, int h);
+static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED);
+static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
+static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 
@@ -605,14 +605,14 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 
 /* local functions */
 static void 
-_ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial)
+_ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial)
 {
    if (!shell_surface) return;
    wl_shell_surface_pong(shell_surface, serial);
 }
 
 static void 
-_ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h)
+_ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED, unsigned int edges, int w, int h)
 {
    Ecore_Wl_Window *win;
 
@@ -635,7 +635,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 }
 
 static void 
-_ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__)
+_ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
 
@@ -647,7 +647,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 }
 
 static void 
-_ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__)
+_ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
 
@@ -658,7 +658,7 @@ _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct
 }
 
 static void 
-_ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__)
+_ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
 

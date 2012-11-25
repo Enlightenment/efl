@@ -4,9 +4,9 @@
 
 /* local function prototypes */
 static int _ecore_xcb_shutdown(Eina_Bool close_display);
-static Eina_Bool _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
-static Eina_Bool _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__);
-static Eina_Bool _ecore_xcb_idle_enter(void *data __UNUSED__);
+static Eina_Bool _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED);
+static Eina_Bool _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED);
+static Eina_Bool _ecore_xcb_idle_enter(void *data EINA_UNUSED);
 
 /* local variables */
 static int _ecore_xcb_init_count = 0;
@@ -1028,7 +1028,7 @@ ecore_x_bell(int percent)
 }
 
 EAPI void
-ecore_x_display_size_get(Ecore_X_Display *dsp __UNUSED__, int *w, int *h)
+ecore_x_display_size_get(Ecore_X_Display *dsp EINA_UNUSED, int *w, int *h)
 {
    xcb_screen_t *screen;
 
@@ -1042,7 +1042,7 @@ ecore_x_display_size_get(Ecore_X_Display *dsp __UNUSED__, int *w, int *h)
 }
 
 EAPI unsigned long
-ecore_x_display_black_pixel_get(Ecore_X_Display *dsp __UNUSED__)
+ecore_x_display_black_pixel_get(Ecore_X_Display *dsp EINA_UNUSED)
 {
    xcb_screen_t *screen;
 
@@ -1055,7 +1055,7 @@ ecore_x_display_black_pixel_get(Ecore_X_Display *dsp __UNUSED__)
 }
 
 EAPI unsigned long
-ecore_x_display_white_pixel_get(Ecore_X_Display *dsp __UNUSED__)
+ecore_x_display_white_pixel_get(Ecore_X_Display *dsp EINA_UNUSED)
 {
    xcb_screen_t *screen;
 
@@ -1346,7 +1346,7 @@ ecore_x_visual_id_get(Ecore_X_Visual visual)
  * @since 1.1.0
  */
 EAPI Ecore_X_Visual
-ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+ecore_x_default_visual_get(Ecore_X_Display *disp EINA_UNUSED, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
    xcb_depth_iterator_t diter;
@@ -1378,7 +1378,7 @@ ecore_x_default_visual_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *scr
  * @since 1.1.0
  */
 EAPI Ecore_X_Colormap
-ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+ecore_x_default_colormap_get(Ecore_X_Display *disp EINA_UNUSED, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
 
@@ -1396,7 +1396,7 @@ ecore_x_default_colormap_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *s
  * @since 1.1.0
  */
 EAPI int
-ecore_x_default_depth_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *screen)
+ecore_x_default_depth_get(Ecore_X_Display *disp EINA_UNUSED, Ecore_X_Screen *screen)
 {
    xcb_screen_t *s;
 
@@ -1507,7 +1507,7 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
 }
 
 static Eina_Bool
-_ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
+_ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
@@ -1548,7 +1548,7 @@ _ecore_xcb_fd_handle(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 }
 
 static Eina_Bool
-_ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
+_ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    xcb_connection_t *conn;
    xcb_generic_event_t *ev = NULL;
@@ -1573,7 +1573,7 @@ _ecore_xcb_fd_handle_buff(void *data, Ecore_Fd_Handler *hdlr __UNUSED__)
 }
 
 static Eina_Bool
-_ecore_xcb_idle_enter(void *data __UNUSED__)
+_ecore_xcb_idle_enter(void *data EINA_UNUSED)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;

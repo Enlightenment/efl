@@ -783,7 +783,7 @@ ecore_x_window_focus(Ecore_X_Window win)
  */
 EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window win,
-                             Ecore_X_Time   time __UNUSED__)
+                             Ecore_X_Time   time EINA_UNUSED)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;

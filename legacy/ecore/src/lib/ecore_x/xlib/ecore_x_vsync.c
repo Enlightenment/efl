@@ -129,32 +129,32 @@ _dri_drm_tick_schedule(void)
 }
 
 static void
-_dri_drm_tick_begin(void *data __UNUSED__)
+_dri_drm_tick_begin(void *data EINA_UNUSED)
 {
    drm_event_is_busy = 1;
    _dri_drm_tick_schedule();
 }
 
 static void
-_dri_drm_tick_end(void *data __UNUSED__)
+_dri_drm_tick_end(void *data EINA_UNUSED)
 {
    drm_event_is_busy = 0;
 }
 
 static void
-_dri_drm_vblank_handler(int fd __UNUSED__,
-                        unsigned int frame __UNUSED__,
-                        unsigned int sec __UNUSED__,
-                        unsigned int usec __UNUSED__,
-                        void *data __UNUSED__)
+_dri_drm_vblank_handler(int fd EINA_UNUSED,
+                        unsigned int frame EINA_UNUSED,
+                        unsigned int sec EINA_UNUSED,
+                        unsigned int usec EINA_UNUSED,
+                        void *data EINA_UNUSED)
 {
    ecore_animator_custom_tick();
    if (drm_event_is_busy) _dri_drm_tick_schedule();
 }
 
 static Eina_Bool
-_dri_drm_cb(void *data __UNUSED__,
-            Ecore_Fd_Handler *fd_handler __UNUSED__)
+_dri_drm_cb(void *data EINA_UNUSED,
+            Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    sym_drmHandleEvent(drm_fd, &drm_evctx);
    return ECORE_CALLBACK_RENEW;

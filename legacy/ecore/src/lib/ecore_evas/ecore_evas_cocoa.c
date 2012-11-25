@@ -105,7 +105,7 @@ _ecore_evas_cocoa_match(void)
 }
 
 static int
-_ecore_evas_cocoa_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
   Ecore_Evas                   *ee;
 
@@ -122,7 +122,7 @@ _ecore_evas_cocoa_event_got_focus(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static int
-_ecore_evas_cocoa_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
   Ecore_Evas                   *ee;
 
@@ -139,7 +139,7 @@ _ecore_evas_cocoa_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static int
-_ecore_evas_cocoa_event_video_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
   /*Ecore_Cocoa_Event_Video_Resize *e;
    Ecore_Evas                   *ee;
@@ -157,7 +157,7 @@ _ecore_evas_cocoa_event_video_resize(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static int
-_ecore_evas_cocoa_event_video_expose(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
   Ecore_Evas                   *ee;
   int                          w;
@@ -175,7 +175,7 @@ _ecore_evas_cocoa_event_video_expose(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static int
-_ecore_evas_idle_enter(void *data __UNUSED__)
+_ecore_evas_idle_enter(void *data EINA_UNUSED)
 {
   Ecore_Evas  *ee;
   double       t1 = 0.;

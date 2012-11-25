@@ -1322,7 +1322,7 @@ size_t dns_d_cleave(void *dst, size_t lim, const void *src, size_t len) {
 } /* dns_d_cleave() */
 
 
-size_t dns_d_comp(void *dst_, size_t lim, const void *src_, size_t len, struct dns_packet *P, int *error __UNUSED__) {
+size_t dns_d_comp(void *dst_, size_t lim, const void *src_, size_t len, struct dns_packet *P, int *error EINA_UNUSED) {
 	struct { unsigned char *b; size_t p, x; } dst, src;
 	unsigned char ch	= '.';
 
@@ -1943,12 +1943,12 @@ lower:
 } /* dns_rr_i_skip() */
 
 
-int dns_rr_i_packet(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i __UNUSED__, struct dns_packet *P __UNUSED__) {
+int dns_rr_i_packet(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i EINA_UNUSED, struct dns_packet *P EINA_UNUSED) {
 	return (int)a->dn.p - (int)b->dn.p;
 } /* dns_rr_i_packet() */
 
 
-int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i __UNUSED__, struct dns_packet *P) {
+int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i EINA_UNUSED, struct dns_packet *P) {
 	int cmp;
 
 	if ((cmp = a->section - b->section))
@@ -1961,7 +1961,7 @@ int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i __UNUS
 } /* dns_rr_i_order() */
 
 
-int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P __UNUSED__) {
+int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P EINA_UNUSED) {
 	int cmp;
 
 	while (!i->state.regs[0])
@@ -1974,7 +1974,7 @@ int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, str
 } /* dns_rr_i_shuffle() */
 
 
-struct dns_rr_i *dns_rr_i_init(struct dns_rr_i *i, struct dns_packet *P __UNUSED__) {
+struct dns_rr_i *dns_rr_i_init(struct dns_rr_i *i, struct dns_packet *P EINA_UNUSED) {
 	static const struct dns_rr_i i_initializer;
 
 	i->state	= i_initializer.state;
@@ -2948,7 +2948,7 @@ int dns_txt_push(struct dns_packet *P, struct dns_txt *txt) {
 } /* dns_txt_push() */
 
 
-int dns_txt_cmp(const struct dns_txt *a __UNUSED__, const struct dns_txt *b __UNUSED__) {
+int dns_txt_cmp(const struct dns_txt *a EINA_UNUSED, const struct dns_txt *b EINA_UNUSED) {
 	return -1;
 } /* dns_txt_cmp() */
 
@@ -4040,7 +4040,7 @@ struct dns_hints {
 }; /* struct dns_hints */
 
 
-struct dns_hints *dns_hints_open(struct dns_resolv_conf *resconf __UNUSED__, int *error) {
+struct dns_hints *dns_hints_open(struct dns_resolv_conf *resconf EINA_UNUSED, int *error) {
 	static const struct dns_hints H_initializer;
 	struct dns_hints *H;
 
@@ -4439,47 +4439,47 @@ int dns_hints_dump(struct dns_hints *hints, FILE *fp) {
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static dns_atomic_t dns_cache_acquire(struct dns_cache *cache __UNUSED__) {
+static dns_atomic_t dns_cache_acquire(struct dns_cache *cache EINA_UNUSED) {
 	return 0;
 } /* dns_cache_acquire() */
 
 
-static dns_atomic_t dns_cache_release(struct dns_cache *cache __UNUSED__) {
+static dns_atomic_t dns_cache_release(struct dns_cache *cache EINA_UNUSED) {
 	return 0;
 } /* dns_cache_release() */
 
 
-static struct dns_packet *dns_cache_query(struct dns_packet *query __UNUSED__, struct dns_cache *cache __UNUSED__, int *error __UNUSED__) {
+static struct dns_packet *dns_cache_query(struct dns_packet *query EINA_UNUSED, struct dns_cache *cache EINA_UNUSED, int *error EINA_UNUSED) {
 	return 0;
 } /* dns_cache_submit() */
 
 
-static int dns_cache_submit(struct dns_packet *query __UNUSED__, struct dns_cache *cache __UNUSED__) {
+static int dns_cache_submit(struct dns_packet *query EINA_UNUSED, struct dns_cache *cache EINA_UNUSED) {
 	return 0;
 } /* dns_cache_submit() */
 
 
-static int dns_cache_check(struct dns_cache *cache __UNUSED__) {
+static int dns_cache_check(struct dns_cache *cache EINA_UNUSED) {
 	return 0;
 } /* dns_cache_check() */
 
 
-static struct dns_packet *dns_cache_fetch(struct dns_cache *cache __UNUSED__, int *error __UNUSED__) {
+static struct dns_packet *dns_cache_fetch(struct dns_cache *cache EINA_UNUSED, int *error EINA_UNUSED) {
 	return 0;
 } /* dns_cache_fetch() */
 
 
-static int dns_cache_pollfd(struct dns_cache *cache __UNUSED__) {
+static int dns_cache_pollfd(struct dns_cache *cache EINA_UNUSED) {
 	return -1;
 } /* dns_cache_pollfd() */
 
 
-static short dns_cache_events(struct dns_cache *cache __UNUSED__) {
+static short dns_cache_events(struct dns_cache *cache EINA_UNUSED) {
 	return 0;
 } /* dns_cache_events() */
 
 
-static void dns_cache_clear(struct dns_cache *cache __UNUSED__) {
+static void dns_cache_clear(struct dns_cache *cache EINA_UNUSED) {
 	return;
 } /* dns_cache_clear() */
 
@@ -5345,7 +5345,7 @@ epilog:
 } /* dns_res_stub() */
 
 
-static void dns_res_reset_frame(struct dns_resolver *R __UNUSED__, struct dns_res_frame *frame) {
+static void dns_res_reset_frame(struct dns_resolver *R EINA_UNUSED, struct dns_res_frame *frame) {
 	free(frame->query);
 	free(frame->answer);
 	free(frame->hints);

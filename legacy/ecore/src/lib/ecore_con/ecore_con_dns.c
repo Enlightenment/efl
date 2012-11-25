@@ -123,7 +123,7 @@ error:
 }
 
 static Eina_Bool
-_dns_fd_cb(Ecore_Con_DNS *dns, Ecore_Fd_Handler *fdh __UNUSED__)
+_dns_fd_cb(Ecore_Con_DNS *dns, Ecore_Fd_Handler *fdh EINA_UNUSED)
 {
    if (_ecore_con_dns_check(dns) != 1) return ECORE_CALLBACK_RENEW;
    if (ecore_main_fd_handler_fd_get(dns->fdh) != dns_ai_pollfd(dns->ai))

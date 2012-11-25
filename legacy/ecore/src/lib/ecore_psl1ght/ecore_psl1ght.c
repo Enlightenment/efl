@@ -72,7 +72,7 @@ static void xmb_event_handler(u64 status, u64 param, void *user_data);
  * @ingroup Ecore_PSL1GHT_Library_Group
  */
 EAPI int
-ecore_psl1ght_init(const char *name __UNUSED__)
+ecore_psl1ght_init(const char *name EINA_UNUSED)
 {
    videoState state;
    videoResolution resolution;

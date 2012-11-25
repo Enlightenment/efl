@@ -35,7 +35,7 @@ static Eina_Rbtree *repeat = NULL;
 static Eina_Rbtree_Direction
 _ecore_sdl_pressed_key(const Ecore_SDL_Pressed *left,
                        const Ecore_SDL_Pressed *right,
-                       __UNUSED__ void *data)
+                       EINA_UNUSED void *data)
 {
    return left->key < right->key ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
 }
@@ -43,8 +43,8 @@ _ecore_sdl_pressed_key(const Ecore_SDL_Pressed *left,
 static int
 _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
                         const SDLKey *key,
-                        __UNUSED__ int length,
-                        __UNUSED__ void *data)
+                        EINA_UNUSED int length,
+                        EINA_UNUSED void *data)
 {
    return node->key - *key;
 }
@@ -63,7 +63,7 @@ _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
  * @ingroup Ecore_SDL_Library_Group
  */
 EAPI int
-ecore_sdl_init(const char *name __UNUSED__)
+ecore_sdl_init(const char *name EINA_UNUSED)
 {
    if(++_ecore_sdl_init_count != 1)
      return _ecore_sdl_init_count;

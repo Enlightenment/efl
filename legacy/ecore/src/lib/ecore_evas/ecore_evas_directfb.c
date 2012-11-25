@@ -75,7 +75,7 @@ _ecore_evas_directfb_match(DFBWindowID win)
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Key_Down *e;
@@ -90,7 +90,7 @@ _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Key_Up *e;
@@ -105,7 +105,7 @@ _ecore_evas_directfb_event_key_up(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_motion(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_motion(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Motion *e;
@@ -119,7 +119,7 @@ _ecore_evas_directfb_event_motion(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Button_Down *e;
@@ -134,7 +134,7 @@ _ecore_evas_directfb_event_button_down(void *data __UNUSED__, int type __UNUSED_
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Button_Up *e;
@@ -150,7 +150,7 @@ _ecore_evas_directfb_event_button_up(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_enter(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Enter *e;
@@ -165,7 +165,7 @@ _ecore_evas_directfb_event_enter(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_leave(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_leave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Leave *e;
@@ -182,7 +182,7 @@ _ecore_evas_directfb_event_leave(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Wheel *e;
@@ -196,7 +196,7 @@ _ecore_evas_directfb_event_wheel(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Got_Focus *e;
@@ -210,7 +210,7 @@ _ecore_evas_directfb_event_got_focus(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_evas_directfb_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_directfb_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_DirectFB_Event_Lost_Focus *e;
@@ -305,7 +305,7 @@ _ecore_evas_directfb_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_directfb_focus_set(Ecore_Evas *ee, int on __UNUSED__)
+_ecore_evas_directfb_focus_set(Ecore_Evas *ee, int on EINA_UNUSED)
 {
    ecore_directfb_window_focus(ee->engine.directfb.window);
 }
@@ -338,7 +338,7 @@ _ecore_evas_directfb_shaped_set(Ecore_Evas *ee, int shaped)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -584,7 +584,7 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
 }
 #else
 EAPI Ecore_Evas *
-ecore_evas_directfb_new(const char *disp_name __UNUSED__, int windowed __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_directfb_new(const char *disp_name EINA_UNUSED, int windowed EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
@@ -599,7 +599,7 @@ ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 }
 #else
 EAPI Ecore_DirectFB_Window *
-ecore_evas_directfb_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_directfb_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
   return NULL;
 }

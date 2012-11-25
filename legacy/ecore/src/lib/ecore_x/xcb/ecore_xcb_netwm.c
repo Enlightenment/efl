@@ -1359,16 +1359,16 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window  win,
 
 /* local functions */
 int
-_ecore_xcb_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
-                                    uint8_t        data __UNUSED__)
+_ecore_xcb_netwm_startup_info_begin(Ecore_X_Window win EINA_UNUSED,
+                                    uint8_t        data EINA_UNUSED)
 {
    // TODO: TBD
      return 1;
 }
 
 int
-_ecore_xcb_netwm_startup_info(Ecore_X_Window win __UNUSED__,
-                              uint8_t        data __UNUSED__)
+_ecore_xcb_netwm_startup_info(Ecore_X_Window win EINA_UNUSED,
+                              uint8_t        data EINA_UNUSED)
 {
    // TODO: TBD
      return 1;

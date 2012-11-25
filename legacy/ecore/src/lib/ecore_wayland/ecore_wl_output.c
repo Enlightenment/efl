@@ -5,8 +5,8 @@
 #include "ecore_wl_private.h"
 
 /* local function prototypes */
-static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w, int h, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__);
-static void _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output __UNUSED__, unsigned int flags, int w, int h, int refresh __UNUSED__);
+static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED);
+static void _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED);
 
 /* wayland listeners */
 static const struct wl_output_listener _ecore_wl_output_listener = 
@@ -54,7 +54,7 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
 
 /* local functions */
 static void 
-_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w, int h, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__)
+_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED)
 {
    Ecore_Wl_Output *output;
 
@@ -68,7 +68,7 @@ _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__,
 }
 
 static void 
-_ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output __UNUSED__, unsigned int flags, int w, int h, int refresh __UNUSED__)
+_ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED)
 {
    Ecore_Wl_Output *output;
    Ecore_Wl_Display *ewd;

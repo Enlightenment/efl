@@ -90,7 +90,7 @@ ecore_file_download_shutdown(void)
 #ifdef BUILD_ECORE_CON
 # ifdef HAVE_CURL
 static Eina_Bool
-_ecore_file_download_headers_foreach_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+_ecore_file_download_headers_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    Ecore_File_Download_Job *job = fdata;
    ecore_con_url_additional_header_add(job->url_con, key, data);
@@ -299,7 +299,7 @@ _ecore_file_download_url_compare_job(const void *data1, const void *data2)
 }
 
 static Eina_Bool
-_ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_file_download_url_complete_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Url_Complete *ev = event;
    Ecore_File_Download_Job      *job;
@@ -320,7 +320,7 @@ _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_file_download_url_progress_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
 /* this reports the downloads progress. if we return 0, then download
  * continues, if we return anything else, then the download stops */

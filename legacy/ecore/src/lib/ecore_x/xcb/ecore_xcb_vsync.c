@@ -86,16 +86,16 @@ static Eina_Bool _ecore_xcb_dri_link(void);
 static Eina_Bool _ecore_xcb_dri_start(void);
 static void      _ecore_xcb_dri_shutdown(void);
 
-static Eina_Bool _ecore_xcb_dri_cb(void             *data __UNUSED__,
-                                   Ecore_Fd_Handler *fdh __UNUSED__);
-static void      _ecore_xcb_dri_tick_begin(void *data __UNUSED__);
-static void      _ecore_xcb_dri_tick_end(void *data __UNUSED__);
+static Eina_Bool _ecore_xcb_dri_cb(void             *data EINA_UNUSED,
+                                   Ecore_Fd_Handler *fdh EINA_UNUSED);
+static void      _ecore_xcb_dri_tick_begin(void *data EINA_UNUSED);
+static void      _ecore_xcb_dri_tick_end(void *data EINA_UNUSED);
 static void      _ecore_xcb_dri_tick_schedule(void);
-static void      _ecore_xcb_dri_vblank_handler(int          fd __UNUSED__,
-                                               unsigned int frame __UNUSED__,
-                                               unsigned int sec __UNUSED__,
-                                               unsigned int usec __UNUSED__,
-                                               void        *data __UNUSED__);
+static void      _ecore_xcb_dri_vblank_handler(int          fd EINA_UNUSED,
+                                               unsigned int frame EINA_UNUSED,
+                                               unsigned int sec EINA_UNUSED,
+                                               unsigned int usec EINA_UNUSED,
+                                               void        *data EINA_UNUSED);
 
 /* local variables */
 static Ecore_X_Window _vsync_root = 0;
@@ -326,22 +326,22 @@ _ecore_xcb_dri_shutdown(void)
 }
 
 static Eina_Bool
-_ecore_xcb_dri_cb(void             *data __UNUSED__,
-                  Ecore_Fd_Handler *fdh __UNUSED__)
+_ecore_xcb_dri_cb(void             *data EINA_UNUSED,
+                  Ecore_Fd_Handler *fdh EINA_UNUSED)
 {
    sym_drmHandleEvent(_drm_fd, &_drm_evctx);
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_ecore_xcb_dri_tick_begin(void *data __UNUSED__)
+_ecore_xcb_dri_tick_begin(void *data EINA_UNUSED)
 {
    _drm_event_busy = EINA_TRUE;
    _ecore_xcb_dri_tick_schedule();
 }
 
 static void
-_ecore_xcb_dri_tick_end(void *data __UNUSED__)
+_ecore_xcb_dri_tick_end(void *data EINA_UNUSED)
 {
    _drm_event_busy = EINA_FALSE;
 }
@@ -362,11 +362,11 @@ _ecore_xcb_dri_tick_schedule(void)
 }
 
 static void
-_ecore_xcb_dri_vblank_handler(int          fd __UNUSED__,
-                              unsigned int frame __UNUSED__,
-                              unsigned int sec __UNUSED__,
-                              unsigned int usec __UNUSED__,
-                              void        *data __UNUSED__)
+_ecore_xcb_dri_vblank_handler(int          fd EINA_UNUSED,
+                              unsigned int frame EINA_UNUSED,
+                              unsigned int sec EINA_UNUSED,
+                              unsigned int usec EINA_UNUSED,
+                              void        *data EINA_UNUSED)
 {
    ecore_animator_custom_tick();
    if (_drm_event_busy) _ecore_xcb_dri_tick_schedule();

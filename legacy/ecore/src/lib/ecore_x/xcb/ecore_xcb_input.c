@@ -80,7 +80,7 @@ void
 #ifdef ECORE_XCB_XINPUT
 _ecore_xcb_input_handle_event(xcb_generic_event_t *event)
 #else
-_ecore_xcb_input_handle_event(xcb_generic_event_t * event __UNUSED__)
+_ecore_xcb_input_handle_event(xcb_generic_event_t * event EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XCB_XINPUT

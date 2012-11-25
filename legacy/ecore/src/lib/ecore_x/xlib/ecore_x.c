@@ -1066,7 +1066,7 @@ ecore_x_bell(int percent)
 
 static Eina_Bool
 _ecore_x_fd_handler(void *data,
-                    Ecore_Fd_Handler *fd_handler __UNUSED__)
+                    Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Display *d;
 
@@ -1096,7 +1096,7 @@ _ecore_x_fd_handler(void *data,
 
 static Eina_Bool
 _ecore_x_fd_handler_buf(void *data,
-                        Ecore_Fd_Handler *fd_handler __UNUSED__)
+                        Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Display *d;
 
@@ -1295,7 +1295,7 @@ static void _ecore_x_window_manage_error(void *data);
 
 static int _ecore_x_window_manage_failed = 0;
 static void
-_ecore_x_window_manage_error(void *data __UNUSED__)
+_ecore_x_window_manage_error(void *data EINA_UNUSED)
 {
    if ((ecore_x_error_request_get() == X_ChangeWindowAttributes) &&
        (ecore_x_error_code_get() == BadAccess))

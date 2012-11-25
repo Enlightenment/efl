@@ -38,7 +38,7 @@ static void _ecore_fb_event_filter_end(void *data, void *loop_data);
 */
 
 static Eina_Bool
-_ecore_fb_signal_usr_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
+_ecore_fb_signal_usr_handler(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev)
 {
    Ecore_Event_Signal_User *e;
 
@@ -284,7 +284,7 @@ struct _Ecore_Fb_Filter_Data
 };
 
 static void *
-_ecore_fb_event_filter_start(void *data __UNUSED__)
+_ecore_fb_event_filter_start(void *data EINA_UNUSED)
 {
    Ecore_Fb_Filter_Data *filter_data;
 
@@ -293,7 +293,7 @@ _ecore_fb_event_filter_start(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
+_ecore_fb_event_filter_filter(void *data EINA_UNUSED, void *loop_data,int type, void *event EINA_UNUSED)
 {
    Ecore_Fb_Filter_Data *filter_data;
 
@@ -312,7 +312,7 @@ _ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, v
 }
 
 static void
-_ecore_fb_event_filter_end(void *data __UNUSED__, void *loop_data)
+_ecore_fb_event_filter_end(void *data EINA_UNUSED, void *loop_data)
 {
    Ecore_Fb_Filter_Data *filter_data;
 

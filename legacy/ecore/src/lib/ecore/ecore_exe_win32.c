@@ -378,11 +378,11 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
 
 /* Not used on Windows */
 EAPI void
-ecore_exe_auto_limits_set(Ecore_Exe *exe __UNUSED__,
-                          int        start_bytes __UNUSED__,
-                          int        end_bytes __UNUSED__,
-                          int        start_lines __UNUSED__,
-                          int        end_lines __UNUSED__)
+ecore_exe_auto_limits_set(Ecore_Exe *exe EINA_UNUSED,
+                          int        start_bytes EINA_UNUSED,
+                          int        end_bytes EINA_UNUSED,
+                          int        start_lines EINA_UNUSED,
+                          int        end_lines EINA_UNUSED)
 {
 }
 
@@ -629,7 +629,7 @@ ecore_exe_kill(Ecore_Exe *exe)
 
 EAPI void
 ecore_exe_signal(Ecore_Exe *exe,
-                 int        num __UNUSED__)
+                 int        num EINA_UNUSED)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
@@ -852,7 +852,7 @@ _ecore_exe_win32_pipes_close(Ecore_Exe *exe)
 }
 
 static DWORD WINAPI
-_ecore_exe_thread_procedure(LPVOID data __UNUSED__)
+_ecore_exe_thread_procedure(LPVOID data EINA_UNUSED)
 {
    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, 0);
@@ -927,7 +927,7 @@ _ecore_exe_enum_windows_procedure(HWND   window,
 }
 
 static void
-_ecore_exe_event_add_free(void *data __UNUSED__,
+_ecore_exe_event_add_free(void *data EINA_UNUSED,
                           void *ev)
 {
    Ecore_Exe_Event_Add *e;
@@ -937,7 +937,7 @@ _ecore_exe_event_add_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_exe_event_del_free(void *data __UNUSED__,
+_ecore_exe_event_del_free(void *data EINA_UNUSED,
                           void *ev)
 {
    Ecore_Exe_Event_Del *e;
@@ -949,7 +949,7 @@ _ecore_exe_event_del_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_exe_event_exe_data_free(void *data __UNUSED__,
+_ecore_exe_event_exe_data_free(void *data EINA_UNUSED,
                                void *ev)
 {
    Ecore_Exe_Event_Data *e;
@@ -960,7 +960,7 @@ _ecore_exe_event_exe_data_free(void *data __UNUSED__,
 
 static Eina_Bool
 _ecore_exe_close_cb(void                *data,
-                    Ecore_Win32_Handler *wh __UNUSED__)
+                    Ecore_Win32_Handler *wh EINA_UNUSED)
 {
    Ecore_Exe_Event_Del *e;
    Ecore_Exe *exe;
@@ -1009,7 +1009,7 @@ _ecore_exe_pipe_read_cb(void        *data,
 
 static int
 _ecore_exe_pipe_write_cb(void                *data,
-                         Ecore_Win32_Handler *wh __UNUSED__)
+                         Ecore_Win32_Handler *wh EINA_UNUSED)
 {
    char buf[READBUFSIZ];
    Ecore_Exe *exe;

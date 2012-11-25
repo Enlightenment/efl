@@ -134,7 +134,7 @@ _ecore_signal_count_get(void)
 }
 
 static void
-_ecore_signal_generic_free(void *data __UNUSED__,
+_ecore_signal_generic_free(void *data EINA_UNUSED,
                            void *event)
 {
    free(event);
@@ -423,16 +423,16 @@ _ecore_signal_callback_set(int            sig,
 }
 
 static void
-_ecore_signal_callback_ignore(int        sig __UNUSED__,
-                              siginfo_t *si __UNUSED__,
-                              void      *foo __UNUSED__)
+_ecore_signal_callback_ignore(int        sig EINA_UNUSED,
+                              siginfo_t *si EINA_UNUSED,
+                              void      *foo EINA_UNUSED)
 {
 }
 
 static void
-_ecore_signal_callback_sigchld(int        sig __UNUSED__,
+_ecore_signal_callback_sigchld(int        sig EINA_UNUSED,
                                siginfo_t *si,
-                               void      *foo __UNUSED__)
+                               void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigchld_count;
@@ -449,9 +449,9 @@ _ecore_signal_callback_sigchld(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sigusr1(int        sig __UNUSED__,
+_ecore_signal_callback_sigusr1(int        sig EINA_UNUSED,
                                siginfo_t *si,
-                               void      *foo __UNUSED__)
+                               void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigusr1_count;
@@ -467,9 +467,9 @@ _ecore_signal_callback_sigusr1(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sigusr2(int        sig __UNUSED__,
+_ecore_signal_callback_sigusr2(int        sig EINA_UNUSED,
                                siginfo_t *si,
-                               void      *foo __UNUSED__)
+                               void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigusr2_count;
@@ -485,9 +485,9 @@ _ecore_signal_callback_sigusr2(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sighup(int        sig __UNUSED__,
+_ecore_signal_callback_sighup(int        sig EINA_UNUSED,
                               siginfo_t *si,
-                              void      *foo __UNUSED__)
+                              void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sighup_count;
@@ -503,9 +503,9 @@ _ecore_signal_callback_sighup(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sigquit(int        sig __UNUSED__,
+_ecore_signal_callback_sigquit(int        sig EINA_UNUSED,
                                siginfo_t *si,
-                               void      *foo __UNUSED__)
+                               void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigquit_count;
@@ -521,9 +521,9 @@ _ecore_signal_callback_sigquit(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sigint(int        sig __UNUSED__,
+_ecore_signal_callback_sigint(int        sig EINA_UNUSED,
                               siginfo_t *si,
-                              void      *foo __UNUSED__)
+                              void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigint_count;
@@ -539,9 +539,9 @@ _ecore_signal_callback_sigint(int        sig __UNUSED__,
 }
 
 static void
-_ecore_signal_callback_sigterm(int        sig __UNUSED__,
+_ecore_signal_callback_sigterm(int        sig EINA_UNUSED,
                                siginfo_t *si,
-                               void      *foo __UNUSED__)
+                               void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigterm_count;
@@ -558,9 +558,9 @@ _ecore_signal_callback_sigterm(int        sig __UNUSED__,
 
 #ifdef SIGPWR
 static void
-_ecore_signal_callback_sigpwr(int        sig __UNUSED__,
+_ecore_signal_callback_sigpwr(int        sig EINA_UNUSED,
                               siginfo_t *si,
-                              void      *foo __UNUSED__)
+                              void      *foo EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    n = sigpwr_count;

@@ -19,8 +19,8 @@ struct _dnd_read_ctx
 };
 
 /* local function prototypes */
-static void _ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer __UNUSED__, const char *type);
-static void _ecore_wl_dnd_cb_enter_free(void *data __UNUSED__, void *event);
+static void _ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, const char *type);
+static void _ecore_wl_dnd_cb_enter_free(void *data EINA_UNUSED, void *event);
 
 static void _ecore_wl_dnd_data_source_target(void *data, struct wl_data_source *source, const char *mime_type);
 static void _ecore_wl_dnd_data_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd);
@@ -49,7 +49,7 @@ ecore_wl_dnd_get()
 }
 
 EAPI Eina_Bool
-ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd __UNUSED__)
+ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd EINA_UNUSED)
 {
    //TODO:
    return EINA_TRUE;
@@ -117,13 +117,13 @@ ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd)
 
 /* local functions */
 static void
-_ecore_wl_dnd_data_source_target(void *data __UNUSED__, struct wl_data_source *source __UNUSED__, const char *mime_type __UNUSED__)
+_ecore_wl_dnd_data_source_target(void *data EINA_UNUSED, struct wl_data_source *source EINA_UNUSED, const char *mime_type EINA_UNUSED)
 {
    //TODO:
 }
 
 static void 
-_ecore_wl_dnd_cb_data_source_send_free(void *data __UNUSED__, void *event)
+_ecore_wl_dnd_cb_data_source_send_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Data_Source_Send *ev;
 
@@ -136,7 +136,7 @@ _ecore_wl_dnd_cb_data_source_send_free(void *data __UNUSED__, void *event)
 }
 
 static void
-_ecore_wl_dnd_data_source_send(void *data, struct wl_data_source *source __UNUSED__, const char *mime_type, int32_t fd)
+_ecore_wl_dnd_data_source_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
 {
    Ecore_Wl_Event_Data_Source_Send *event;
 
@@ -153,13 +153,13 @@ _ecore_wl_dnd_data_source_send(void *data, struct wl_data_source *source __UNUSE
 }
 
 static void
-_ecore_wl_dnd_data_source_cancelled(void *data __UNUSED__, struct wl_data_source *source)
+_ecore_wl_dnd_data_source_cancelled(void *data EINA_UNUSED, struct wl_data_source *source)
 {
    wl_data_source_destroy(source);
 }
 
 void 
-_ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device __UNUSED__, struct wl_data_offer *offer)
+_ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device EINA_UNUSED, struct wl_data_offer *offer)
 {
    Ecore_Wl_Dnd_Source *source;
 
@@ -175,7 +175,7 @@ _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device __UN
 }
 
 void 
-_ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
+_ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp EINA_UNUSED, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
    Ecore_Wl_Event_Dnd_Enter *event;
    Ecore_Wl_Input *input;
@@ -214,7 +214,7 @@ _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, u
 }
 
 void 
-_ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__)
+_ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device EINA_UNUSED)
 {
    Ecore_Wl_Input *input;
 
@@ -228,7 +228,7 @@ _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__)
 }
 
 void 
-_ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, wl_fixed_t x, wl_fixed_t y)
+_ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl_Event_Dnd_Position *event;
    Ecore_Wl_Input *input;
@@ -260,7 +260,7 @@ _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, 
 }
 
 void 
-_ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device __UNUSED__)
+_ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device EINA_UNUSED)
 {
    Ecore_Wl_Event_Dnd_Drop *event;
    Ecore_Wl_Input *input;
@@ -289,7 +289,7 @@ _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device __UNUSED__)
 }
 
 void 
-_ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device __UNUSED__, struct wl_data_offer *offer)
+_ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device EINA_UNUSED, struct wl_data_offer *offer)
 {
    Ecore_Wl_Input *input;
 
@@ -329,7 +329,7 @@ _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
 
 /* local functions */
 static void 
-_ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer __UNUSED__, const char *type)
+_ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, const char *type)
 {
    Ecore_Wl_Dnd_Source *source;
    char **p;
@@ -342,7 +342,7 @@ _ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer __UNUSED__, 
 }
 
 static void 
-_ecore_wl_dnd_cb_enter_free(void *data __UNUSED__, void *event)
+_ecore_wl_dnd_cb_enter_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Enter *ev;
 
@@ -353,7 +353,7 @@ _ecore_wl_dnd_cb_enter_free(void *data __UNUSED__, void *event)
 }
 
 static void 
-_ecore_wl_dnd_cb_selection_data_ready_free(void *data __UNUSED__, void *event)
+_ecore_wl_dnd_cb_selection_data_ready_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Selection_Data_Ready *ev;
 
@@ -366,7 +366,7 @@ _ecore_wl_dnd_cb_selection_data_ready_free(void *data __UNUSED__, void *event)
 }
 
 static Eina_Bool 
-_ecore_wl_dnd_read_data(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_wl_dnd_read_data(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    int len;
    char buffer[4096];

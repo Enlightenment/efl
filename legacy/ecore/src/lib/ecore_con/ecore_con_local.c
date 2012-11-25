@@ -62,7 +62,7 @@ ecore_con_local_shutdown(void)
 int
 ecore_con_local_connect(Ecore_Con_Server *svr,
                         Eina_Bool (*cb_done)(void *data, Ecore_Fd_Handler *fd_handler),
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
 #ifndef HAVE_LOCAL_SOCKETS
    return 0;
@@ -180,7 +180,7 @@ ecore_con_local_listen(
                                 Ecore_Fd_Handler *
                                 fd_handler),
   void *data
-  __UNUSED__)
+  EINA_UNUSED)
 {
 #ifdef HAVE_LOCAL_SOCKETS
    char buf[4096];

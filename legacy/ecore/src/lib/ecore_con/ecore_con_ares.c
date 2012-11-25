@@ -351,7 +351,7 @@ ecore_con_info_data_clear(void *info)
 }
 
 static Eina_Bool
-_ecore_con_info_cares_timeout_cb(void *data __UNUSED__)
+_ecore_con_info_cares_timeout_cb(void *data EINA_UNUSED)
 {
    ares_process_fd(info_channel, ARES_SOCKET_BAD, ARES_SOCKET_BAD);
    return ECORE_CALLBACK_RENEW;
@@ -383,7 +383,7 @@ _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
 }
 
 static void
-_ecore_con_info_cares_state_cb(void *data __UNUSED__,
+_ecore_con_info_cares_state_cb(void *data EINA_UNUSED,
                                ares_socket_t fd,
                                int readable,
                                int writable)
@@ -428,7 +428,7 @@ _ecore_con_info_cares_state_cb(void *data __UNUSED__,
 static void
 _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                              int              status,
-                             int              timeouts  __UNUSED__,
+                             int              timeouts  EINA_UNUSED,
                              struct hostent  *hostent)
 {
    struct sockaddr *addr;
@@ -590,7 +590,7 @@ on_error:
 static void
 _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
                               int              status,
-                              int              timeouts __UNUSED__,
+                              int              timeouts EINA_UNUSED,
                               char            *node,
                               char            *service)
 {

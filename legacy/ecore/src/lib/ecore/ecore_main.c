@@ -92,25 +92,25 @@ struct epoll_event
 };
 
 static inline int
-epoll_create(int size __UNUSED__)
+epoll_create(int size EINA_UNUSED)
 {
    return -1;
 }
 
 static inline int
-epoll_wait(int                 epfd __UNUSED__,
-           struct epoll_event *events __UNUSED__,
-           int                 maxevents __UNUSED__,
-           int                 timeout __UNUSED__)
+epoll_wait(int                 epfd EINA_UNUSED,
+           struct epoll_event *events EINA_UNUSED,
+           int                 maxevents EINA_UNUSED,
+           int                 timeout EINA_UNUSED)
 {
    return -1;
 }
 
 static inline int
-epoll_ctl(int                 epfd __UNUSED__,
-          int                 op __UNUSED__,
-          int                 fd __UNUSED__,
-          struct epoll_event *event __UNUSED__)
+epoll_ctl(int                 epfd EINA_UNUSED,
+          int                 op EINA_UNUSED,
+          int                 fd EINA_UNUSED,
+          struct epoll_event *event EINA_UNUSED)
 {
    return -1;
 }
@@ -128,17 +128,17 @@ epoll_ctl(int                 epfd __UNUSED__,
 #  define TFD_NONBLOCK    0 /* bogus value */
 # endif
 static inline int
-timerfd_create(int clockid __UNUSED__,
-               int flags __UNUSED__)
+timerfd_create(int clockid EINA_UNUSED,
+               int flags EINA_UNUSED)
 {
    return -1;
 }
 
 static inline int
-timerfd_settime(int                      fd __UNUSED__,
-                int                      flags __UNUSED__,
-                const struct itimerspec *new_value __UNUSED__,
-                struct itimerspec       *old_value __UNUSED__)
+timerfd_settime(int                      fd EINA_UNUSED,
+                int                      flags EINA_UNUSED,
+                const struct itimerspec *new_value EINA_UNUSED,
+                struct itimerspec       *old_value EINA_UNUSED)
 {
    return -1;
 }
@@ -516,7 +516,7 @@ _ecore_main_fdh_glib_mark_active(void)
 
 /* like we are about to enter main_loop_select in  _ecore_main_select */
 static gboolean
-_ecore_main_gsource_prepare(GSource *source __UNUSED__,
+_ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                             gint    *next_time)
 {
    gboolean ready = FALSE;
@@ -607,7 +607,7 @@ _ecore_main_gsource_prepare(GSource *source __UNUSED__,
 }
 
 static gboolean
-_ecore_main_gsource_check(GSource *source __UNUSED__)
+_ecore_main_gsource_check(GSource *source EINA_UNUSED)
 {
    gboolean ret = FALSE;
 
@@ -658,9 +658,9 @@ _ecore_main_gsource_check(GSource *source __UNUSED__)
 
 /* like we just came out of main_loop_select in  _ecore_main_select */
 static gboolean
-_ecore_main_gsource_dispatch(GSource    *source __UNUSED__,
-                             GSourceFunc callback __UNUSED__,
-                             gpointer    user_data __UNUSED__)
+_ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
+                             GSourceFunc callback EINA_UNUSED,
+                             gpointer    user_data EINA_UNUSED)
 {
    gboolean events_ready, timers_ready, idlers_ready;
    double next_time;
@@ -730,7 +730,7 @@ _ecore_main_gsource_dispatch(GSource    *source __UNUSED__,
 }
 
 static void
-_ecore_main_gsource_finalize(GSource *source __UNUSED__)
+_ecore_main_gsource_finalize(GSource *source EINA_UNUSED)
 {
 }
 
@@ -1135,9 +1135,9 @@ ecore_main_win32_handler_add(void                 *h,
 
 #else
 EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void                 *h __UNUSED__,
-                             Ecore_Win32_Handle_Cb func __UNUSED__,
-                             const void           *data __UNUSED__)
+ecore_main_win32_handler_add(void                 *h EINA_UNUSED,
+                             Ecore_Win32_Handle_Cb func EINA_UNUSED,
+                             const void           *data EINA_UNUSED)
 {
    return NULL;
 }
@@ -1182,7 +1182,7 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
 
 #else
 EAPI void *
-ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
+ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler EINA_UNUSED)
 {
    return NULL;
 }
@@ -1930,7 +1930,7 @@ done: /*******************************************************************/
 
 #ifdef _WIN32
 static int
-_ecore_main_win32_select(int             nfds __UNUSED__,
+_ecore_main_win32_select(int             nfds EINA_UNUSED,
                          fd_set         *readfds,
                          fd_set         *writefds,
                          fd_set         *exceptfds,

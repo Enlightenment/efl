@@ -176,7 +176,7 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
 }
 
 static Eina_Bool
-_ecore_file_monitor_poll_handler(void *data __UNUSED__)
+_ecore_file_monitor_poll_handler(void *data EINA_UNUSED)
 {
    Ecore_File_Monitor *l;
 

@@ -1544,7 +1544,7 @@ _ecore_con_url_curl_clear(void)
 }
 
 static Eina_Bool
-_ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_con_url_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Ecore_Fd_Handler *fdh;
    long ms;
@@ -1600,7 +1600,7 @@ _ecore_con_url_fdset(void)
 }
 
 static Eina_Bool
-_ecore_con_url_timer(void *data __UNUSED__)
+_ecore_con_url_timer(void *data EINA_UNUSED)
 {
    Ecore_Fd_Handler *fdh;
    int still_running;

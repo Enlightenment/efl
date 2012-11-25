@@ -37,7 +37,7 @@ _ecore_evas_psl1ght_match(void)
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_psl1ght_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -53,7 +53,7 @@ _ecore_evas_psl1ght_event_got_focus(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_psl1ght_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -69,7 +69,7 @@ _ecore_evas_psl1ght_event_lost_focus(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event_video_expose(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_psl1ght_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
    int w;
@@ -85,7 +85,7 @@ _ecore_evas_psl1ght_event_video_expose(void *data __UNUSED__, int type __UNUSED_
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event_key_modifiers(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_psl1ght_event_key_modifiers(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Psl1ght_Event_Key_Modifiers *e = event;
@@ -99,7 +99,7 @@ _ecore_evas_psl1ght_event_key_modifiers(void *data __UNUSED__, int type __UNUSED
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event_quit (void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_psl1ght_event_quit (void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -157,14 +157,14 @@ _ecore_evas_psl1ght_render(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_ecore_evas_psl1ght_event(void *data __UNUSED__)
+_ecore_evas_psl1ght_event(void *data EINA_UNUSED)
 {
    ecore_psl1ght_poll_events();
    return ECORE_CALLBACK_RENEW;
 }
 
 static int
-_ecore_evas_psl1ght_init(int w __UNUSED__, int h __UNUSED__)
+_ecore_evas_psl1ght_init(int w EINA_UNUSED, int h EINA_UNUSED)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -283,7 +283,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_resize (ee, w, h);
 }
@@ -298,7 +298,7 @@ _ecore_evas_show(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
+_ecore_evas_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    if (x) *x = 0;
    if (y) *y = 0;
@@ -306,7 +306,7 @@ _ecore_evas_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y,
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -506,7 +506,7 @@ ecore_evas_psl1ght_new(const char *name, int w, int h)
 #else /* BUILD_ECORE_EVAS_PSL1GHT */
 
 EAPI Ecore_Evas *
-ecore_evas_psl1ght_new(const char *name __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_psl1ght_new(const char *name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    ERR("OUTCH !");
    return NULL;

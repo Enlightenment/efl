@@ -587,7 +587,7 @@ _ecore_animator_run(void *data)
 }
 
 static Eina_Bool
-_ecore_animator(void *data __UNUSED__)
+_ecore_animator(void *data EINA_UNUSED)
 {
    Eina_Bool r;
    _ecore_lock();

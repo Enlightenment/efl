@@ -607,8 +607,8 @@ ecore_x_selection_converter_text(char *target,
                                  int size,
                                  void **data_ret,
                                  int *size_ret,
-                                 Ecore_X_Atom *targprop __UNUSED__,
-                                 int *s __UNUSED__)
+                                 Ecore_X_Atom *targprop EINA_UNUSED,
+                                 int *s EINA_UNUSED)
 {
    XTextProperty text_prop;
    char *mystr;
@@ -820,7 +820,7 @@ static void *
 _ecore_x_selection_parser_files(const char *target,
                                 void *_data,
                                 int size,
-                                int format __UNUSED__)
+                                int format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Files *sel;
    char *t, *data = _data;
@@ -924,10 +924,10 @@ _ecore_x_selection_data_files_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_text(const char *target __UNUSED__,
+_ecore_x_selection_parser_text(const char *target EINA_UNUSED,
                                void *_data,
                                int size,
-                               int format __UNUSED__)
+                               int format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Text *sel;
    unsigned char *data = _data;
@@ -969,10 +969,10 @@ _ecore_x_selection_data_text_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_targets(const char *target __UNUSED__,
+_ecore_x_selection_parser_targets(const char *target EINA_UNUSED,
                                   void *data,
                                   int size,
-                                  int format __UNUSED__)
+                                  int format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Targets *sel;
    unsigned long *targets;

@@ -39,7 +39,7 @@ static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
 static Eina_Bool
-_ecore_evas_idle_enter(void *data __UNUSED__)
+_ecore_evas_idle_enter(void *data EINA_UNUSED)
 {
    Ecore_Evas *ee;
    double t1 = 0.0;
@@ -208,7 +208,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 }
 
 static void
-_ecore_evas_fork_cb(void *data __UNUSED__)
+_ecore_evas_fork_cb(void *data EINA_UNUSED)
 {
    int fd;
    
@@ -480,7 +480,7 @@ _ecore_evas_constructor_software_8_x11(int x, int y, int w, int h, const char *e
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 static Ecore_Evas *
-_ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+_ecore_evas_constructor_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    unsigned int fullscreen = 0, hwsurface = 0, noframe = 0, alpha = 0;
@@ -501,7 +501,7 @@ _ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, co
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
 static Ecore_Evas *
-_ecore_evas_constructor_opengl_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+_ecore_evas_constructor_opengl_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    unsigned int fullscreen = 0, noframe = 0;
@@ -538,7 +538,7 @@ _ecore_evas_constructor_directfb(int x, int y, int w, int h, const char *extra_o
 
 #ifdef BUILD_ECORE_EVAS_FB
 static Ecore_Evas *
-_ecore_evas_constructor_fb(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+_ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    char *disp_name = NULL;
@@ -557,7 +557,7 @@ _ecore_evas_constructor_fb(int x __UNUSED__, int y __UNUSED__, int w, int h, con
 
 #ifdef BUILD_ECORE_EVAS_PSL1GHT
 static Ecore_Evas *
-_ecore_evas_constructor_psl1ght(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+_ecore_evas_constructor_psl1ght(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
    char *name = NULL;
@@ -641,7 +641,7 @@ _ecore_evas_constructor_opengl_glew(int x, int y, int w, int h, const char *extr
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static Ecore_Evas *
-_ecore_evas_constructor_buffer(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options __UNUSED__)
+_ecore_evas_constructor_buffer(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options EINA_UNUSED)
 {
    return ecore_evas_buffer_new(w, h);
 }
@@ -649,7 +649,7 @@ _ecore_evas_constructor_buffer(int x __UNUSED__, int y __UNUSED__, int w, int h,
 
 #ifdef BUILD_ECORE_EVAS_EWS
 static Ecore_Evas *
-_ecore_evas_constructor_ews(int x, int y, int w, int h, const char *extra_options __UNUSED__)
+_ecore_evas_constructor_ews(int x, int y, int w, int h, const char *extra_options EINA_UNUSED)
 {
    return ecore_evas_ews_new(x, y, w, h);
 }
@@ -2462,7 +2462,7 @@ _ecore_evas_cb_idle_flush(void *data)
 }
 
 static Eina_Bool
-_ecore_evas_async_events_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_evas_async_events_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    evas_async_events_process();
 
@@ -2742,38 +2742,38 @@ ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED)
 {
 
 }
 
 #else
 EAPI void
-ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+ecore_evas_wayland_resize(Ecore_Evas *ee EINA_UNUSED, int location EINA_UNUSED)
 {
 
 }
 
 EAPI void 
-ecore_evas_wayland_move(Ecore_Evas *ee __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+ecore_evas_wayland_move(Ecore_Evas *ee EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
 
 }
 
 EAPI void
-ecore_evas_wayland_type_set(Ecore_Evas *ee __UNUSED__, int type __UNUSED__)
+ecore_evas_wayland_type_set(Ecore_Evas *ee EINA_UNUSED, int type EINA_UNUSED)
 {
 
 }
 
 EAPI Ecore_Wl_Window *
-ecore_evas_wayland_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_wayland_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI void
-ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED)
 {
 
 }

@@ -142,8 +142,8 @@ _destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
  */
 
 static Eina_Bool
-_ecore_job_event_handler(void *data __UNUSED__,
-                         int   type __UNUSED__,
+_ecore_job_event_handler(void *data EINA_UNUSED,
+                         int   type EINA_UNUSED,
                          void *ev)
 {
    Ecore_Job_Private_Data *job;
@@ -155,7 +155,7 @@ _ecore_job_event_handler(void *data __UNUSED__,
 
 static void
 _ecore_job_event_free(void *data,
-                      void *job __UNUSED__)
+                      void *job EINA_UNUSED)
 {
    eo_parent_set(data, NULL);
 

@@ -206,7 +206,7 @@ _ecore_config_ipc_bundle_label_find(Ecore_Config_Server * srv,
 }
 
 static Eina_Bool
-_ecore_config_ipc_poll(void *data __UNUSED__)
+_ecore_config_ipc_poll(void *data EINA_UNUSED)
 {
    Ecore_Config_Server *s;
 

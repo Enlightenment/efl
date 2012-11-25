@@ -476,7 +476,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 
 /* TODO: we need to make this work for all the states, not just sticky */
 static Eina_Bool
-_ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Property *e;
@@ -687,7 +687,7 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_visibility_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Visibility_Change *e;
@@ -709,7 +709,7 @@ _ecore_evas_x_event_visibility_change(void *data __UNUSED__, int type __UNUSED__
 }
 
 static Eina_Bool
-_ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Client_Message *e;
@@ -761,7 +761,7 @@ _ecore_evas_x_event_client_message(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_In *e;
@@ -816,7 +816,7 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Out *e;
@@ -881,7 +881,7 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_In *e;
@@ -899,7 +899,7 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_Out *e;
@@ -920,7 +920,7 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_damage(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Damage *e;
@@ -980,7 +980,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Destroy *e;
@@ -996,7 +996,7 @@ _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Configure *e;
@@ -1060,7 +1060,7 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_delete_request(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Delete_Request *e;
@@ -1074,7 +1074,7 @@ _ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUS
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Show *e;
@@ -1115,7 +1115,7 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Hide *e;
@@ -1656,7 +1656,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 #define _USE_WIN_ROT_EFFECT 1
 
 #if _USE_WIN_ROT_EFFECT
-static void _ecore_evas_x_flush_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__);
+static void _ecore_evas_x_flush_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED);
 
 typedef struct _Ecore_Evas_X_Rotation_Effect Ecore_Evas_X_Rotation_Effect;
 struct _Ecore_Evas_X_Rotation_Effect
@@ -2227,7 +2227,7 @@ _ecore_evas_x_size_step_set(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -2295,7 +2295,7 @@ _ecore_evas_x_layer_set(Ecore_Evas *ee, int layer)
 }
 
 static void
-_ecore_evas_x_focus_set(Ecore_Evas *ee, int on __UNUSED__)
+_ecore_evas_x_focus_set(Ecore_Evas *ee, int on EINA_UNUSED)
 {
    ecore_x_window_focus(ee->prop.window);
 }
@@ -2508,7 +2508,7 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
+_ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    int outnum = 0;
    int px = 0, py = 0, pw = 0, ph = 0;
@@ -2669,7 +2669,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_X11) || defined (BUILD_ECORE_EVAS_OPENGL_X11)
 static void
-_ecore_evas_x_flush_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_x_flush_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
 
@@ -2691,7 +2691,7 @@ _ecore_evas_x_flush_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
 
@@ -2912,8 +2912,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 }
 #else
 EAPI Ecore_Evas *
-ecore_evas_software_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
-                            int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_software_x11_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
+                            int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
@@ -2936,7 +2936,7 @@ ecore_evas_software_x11_window_get(const Ecore_Evas *ee)
 }
 #else
 EAPI Ecore_X_Window
-ecore_evas_software_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
@@ -2974,7 +2974,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 }
 #else
 EAPI void
-ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
+ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
 {
 }
 #endif
@@ -2993,7 +2993,7 @@ ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee)
 }
 #else
 EAPI Eina_Bool
-ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
@@ -3026,7 +3026,7 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
 }
 #else
 EAPI void
-ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
 {
 }
 #endif
@@ -3162,14 +3162,14 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
 }
 #else
 EAPI Ecore_Evas *
-ecore_evas_gl_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
-                      int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_gl_x11_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
+                      int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
 EAPI Ecore_Evas *
-ecore_evas_gl_x11_options_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
-                              int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, const int *opt __UNUSED__)
+ecore_evas_gl_x11_options_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
+                              int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, const int *opt EINA_UNUSED)
 {
    return NULL;
 }
@@ -3192,7 +3192,7 @@ ecore_evas_gl_x11_window_get(const Ecore_Evas *ee)
 }
 #else
 EAPI Ecore_X_Window
-ecore_evas_gl_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_gl_x11_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
@@ -3212,7 +3212,7 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 }
 #else
 EAPI void
-ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
+ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
 {
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -3231,7 +3231,7 @@ ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee)
 }
 #else
 EAPI Eina_Bool
-ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
@@ -3251,7 +3251,7 @@ ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 }
 #else
 EAPI void
-ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
 {
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -3286,101 +3286,101 @@ ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, v
 }
 #else
 EAPI void
-ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee __UNUSED__, void *data __UNUSED__, void (*pre_cb) (void *data, Evas *e) __UNUSED__, void (*post_cb) (void *data, Evas *e) __UNUSED__)
+ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee EINA_UNUSED, void *data EINA_UNUSED, void (*pre_cb) (void *data, Evas *e) EINA_UNUSED, void (*post_cb) (void *data, Evas *e) EINA_UNUSED)
 {
    return;
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 EAPI Ecore_Evas *
-ecore_evas_xrender_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
-                           int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_xrender_x11_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
+                           int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI Ecore_X_Window
-ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
+ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
 {
 }
 
 EAPI Eina_Bool
-ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
 {
 }
 
 EAPI Ecore_Evas *
-ecore_evas_software_x11_16_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
-                               int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_software_x11_16_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
+                               int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI Ecore_X_Window
-ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
+ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
 {
 }
 
 EAPI Eina_Bool
-ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
 {
 }
 
 EAPI Ecore_Evas *
-ecore_evas_software_x11_8_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_software_x11_8_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI Ecore_X_Window
-ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI Ecore_X_Window
-ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
+ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
 {
 }
 
 EAPI Eina_Bool
-ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
+ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
 {
    return 0;
 }
 
 EAPI void
-ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
+ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
 {
    return;
 }

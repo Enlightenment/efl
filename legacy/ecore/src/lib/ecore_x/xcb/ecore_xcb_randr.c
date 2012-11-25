@@ -196,7 +196,7 @@ static Eina_Bool
 #ifdef ECORE_XCB_RANDR
 _ecore_xcb_randr_root_validate(Ecore_X_Window root)
 #else
-_ecore_xcb_randr_root_validate(Ecore_X_Window root __UNUSED__)
+_ecore_xcb_randr_root_validate(Ecore_X_Window root EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XCB_RANDR

@@ -389,7 +389,7 @@ _ecore_evas_extn_shutdown(void)
 }
 
 static void
-_ecore_evas_extn_event_free(void *data, void *ev __UNUSED__)
+_ecore_evas_extn_event_free(void *data, void *ev EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    if (ee->engine.buffer.image)
@@ -461,21 +461,21 @@ _ecore_evas_socket_unlock(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_extn_plug_targer_render_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_targer_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    if (ee) _ecore_evas_socket_lock(ee);
 }
 
 static void
-_ecore_evas_extn_plug_targer_render_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_targer_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    if (ee) _ecore_evas_socket_unlock(ee);
 }
 
 static void
-_ecore_evas_extn_plug_image_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_image_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    if (ee) ecore_evas_free(ee);
@@ -621,7 +621,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_resize(ee, w, h);
 }
@@ -676,7 +676,7 @@ _ecore_evas_modifiers_locks_mask_set(Evas *e, int mask)
 }
 
 static void
-_ecore_evas_extn_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_In *ev = event_info;
@@ -696,7 +696,7 @@ _ecore_evas_extn_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_ecore_evas_extn_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Out *ev = event_info;
@@ -716,7 +716,7 @@ _ecore_evas_extn_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj _
 }
 
 static void
-_ecore_evas_extn_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -754,7 +754,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_extn_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Up *ev = event_info;
@@ -776,7 +776,7 @@ _ecore_evas_extn_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_ecore_evas_extn_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -802,7 +802,7 @@ _ecore_evas_extn_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Wheel *ev = event_info;
@@ -824,7 +824,7 @@ _ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj
 }
 
 static void
-_ecore_evas_extn_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Multi_Down *ev = event_info;
@@ -860,7 +860,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
 
 static void
-_ecore_evas_extn_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Multi_Up *ev = event_info;
@@ -895,7 +895,7 @@ _ecore_evas_extn_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_ecore_evas_extn_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Multi_Move *ev = event_info;
@@ -929,7 +929,7 @@ _ecore_evas_extn_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_extn_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_free(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -938,7 +938,7 @@ _ecore_evas_extn_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_ecore_evas_extn_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Key_Down *ev = event_info;
@@ -994,7 +994,7 @@ _ecore_evas_extn_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_ecore_evas_extn_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Key_Up *ev = event_info;
@@ -1050,7 +1050,7 @@ _ecore_evas_extn_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_ecore_evas_extn_cb_hold(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_extn_cb_hold(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Hold *ev = event_info;
@@ -1070,7 +1070,7 @@ _ecore_evas_extn_cb_hold(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_ecore_evas_extn_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Extn *extn;
@@ -1084,7 +1084,7 @@ _ecore_evas_extn_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 }
 
 static void
-_ecore_evas_extn_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Extn *extn;
@@ -1098,7 +1098,7 @@ _ecore_evas_extn_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj _
 }
 
 static void
-_ecore_evas_extn_cb_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Extn *extn;
@@ -1112,7 +1112,7 @@ _ecore_evas_extn_cb_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_ecore_evas_extn_cb_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_cb_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Extn *extn;
@@ -1187,7 +1187,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 };
 
 static Eina_Bool
-_ipc_server_add(void *data, int type __UNUSED__, void *event)
+_ipc_server_add(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Server_Add *e = event;
    Ecore_Evas *ee = data;
@@ -1204,7 +1204,7 @@ _ipc_server_add(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ipc_server_del(void *data, int type __UNUSED__, void *event)
+_ipc_server_del(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Server_Del *e = event;
    Ecore_Evas *ee = data;
@@ -1231,7 +1231,7 @@ _ipc_server_del(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ipc_server_data(void *data, int type __UNUSED__, void *event)
+_ipc_server_data(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Server_Data *e = event;
    Ecore_Evas *ee = data;
@@ -1641,7 +1641,7 @@ _ecore_evas_socket_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_socket_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_socket_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_socket_resize(ee, w, h);
 }
@@ -1698,7 +1698,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_ipc_client_add(void *data, int type __UNUSED__, void *event)
+_ipc_client_add(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Client_Add *e = event;
    Ecore_Evas *ee = data;
@@ -1733,7 +1733,7 @@ _ipc_client_add(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ipc_client_del(void *data, int type __UNUSED__, void *event)
+_ipc_client_del(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Client_Del *e = event;
    Ecore_Evas *ee = data;
@@ -1749,7 +1749,7 @@ _ipc_client_del(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ipc_client_data(void *data, int type __UNUSED__, void *event)
+_ipc_client_data(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Client_Data *e = event;
    Ecore_Evas *ee = data;

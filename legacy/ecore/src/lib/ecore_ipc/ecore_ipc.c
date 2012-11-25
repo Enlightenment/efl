@@ -1026,7 +1026,7 @@ ecore_ipc_ssl_available_get(void)
 
 
 static Eina_Bool
-_ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_client_add(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Client_Add *e;
    Ecore_Ipc_Server *svr;
@@ -1064,7 +1064,7 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 }
 
 static Eina_Bool
-_ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_client_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Client_Del *e;
    Ecore_Ipc_Server *svr;
@@ -1099,7 +1099,7 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
 }
 
 static Eina_Bool
-_ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_server_add(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Server_Add *e;
 
@@ -1128,7 +1128,7 @@ _ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
 }
 
 static Eina_Bool
-_ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_server_del(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Server_Del *e;
 
@@ -1199,7 +1199,7 @@ _ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
    msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
 
 static Eina_Bool
-_ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_client_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Client_Data *e;
    Ecore_Ipc_Server *svr;
@@ -1391,7 +1391,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
    msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
 
 static Eina_Bool
-_ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
 
@@ -1531,7 +1531,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 }
 
 static void
-_ecore_ipc_event_client_add_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_client_add_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Client_Add *e;
 
@@ -1543,7 +1543,7 @@ _ecore_ipc_event_client_add_free(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_ipc_event_client_del_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_client_del_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Client_Del *e;
 
@@ -1555,7 +1555,7 @@ _ecore_ipc_event_client_del_free(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_client_data_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Client_Data *e;
 
@@ -1568,7 +1568,7 @@ _ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_ipc_event_server_add_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_server_add_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Server_Add *e;
 
@@ -1580,7 +1580,7 @@ _ecore_ipc_event_server_add_free(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_ipc_event_server_del_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_server_del_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Server_Add *e;
 
@@ -1592,7 +1592,7 @@ _ecore_ipc_event_server_del_free(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_ipc_event_server_data_free(void *data __UNUSED__, void *ev)
+_ecore_ipc_event_server_data_free(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Ipc_Event_Server_Data *e;
 

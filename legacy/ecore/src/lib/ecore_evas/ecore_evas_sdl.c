@@ -49,14 +49,14 @@ _ecore_evas_sdl_match(void)
 }
 
 static void *
-_ecore_evas_sdl_switch_buffer(void *data, void *dest __UNUSED__)
+_ecore_evas_sdl_switch_buffer(void *data, void *dest EINA_UNUSED)
 {
    SDL_Flip(data);
    return ((SDL_Surface*)data)->pixels;
 }
 
 static Eina_Bool
-_ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_sdl_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas                   *ee;
 
@@ -71,7 +71,7 @@ _ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_ecore_evas_sdl_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_sdl_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas                   *ee;
 
@@ -86,7 +86,7 @@ _ecore_evas_sdl_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_ecore_evas_sdl_event_video_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_sdl_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Sdl_Event_Video_Resize *e;
    Ecore_Evas                   *ee;
@@ -143,7 +143,7 @@ _ecore_evas_sdl_event_video_resize(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_ecore_evas_sdl_event_video_expose(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_evas_sdl_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas                   *ee;
    int                          w;
@@ -202,14 +202,14 @@ _ecore_evas_sdl_render(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_ecore_evas_sdl_event(void *data __UNUSED__)
+_ecore_evas_sdl_event(void *data EINA_UNUSED)
 {
    ecore_sdl_feed_events();
    return ECORE_CALLBACK_RENEW;
 }
 
 static int
-_ecore_evas_sdl_init(int w __UNUSED__, int h __UNUSED__)
+_ecore_evas_sdl_init(int w EINA_UNUSED, int h EINA_UNUSED)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -321,7 +321,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
@@ -343,7 +343,7 @@ _ecore_evas_show(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -618,7 +618,7 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
 }
 #else
 EAPI Ecore_Evas*
-ecore_evas_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
+ecore_evas_sdl_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
 {
    ERR("OUTCH !");
    return NULL;
@@ -626,7 +626,7 @@ ecore_evas_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED
 #endif
 
 EAPI Ecore_Evas*
-ecore_evas_sdl16_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
+ecore_evas_sdl16_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
 {
    ERR("OUTCH !");
    return NULL;
@@ -648,7 +648,7 @@ ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int nofram
 }
 #else
 EAPI Ecore_Evas*
-ecore_evas_gl_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int noframe __UNUSED__)
+ecore_evas_gl_sdl_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int noframe EINA_UNUSED)
 {
    ERR("OUTCH !");
    return NULL;

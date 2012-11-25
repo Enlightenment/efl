@@ -150,7 +150,7 @@ static Eina_Bool            _ecore_exe_data_read_handler(void             *data,
 static Eina_Bool            _ecore_exe_data_write_handler(void             *data,
                                                           Ecore_Fd_Handler *fd_handler);
 static void                 _ecore_exe_flush(Ecore_Exe *exe);
-static void                 _ecore_exe_event_exe_data_free(void *data __UNUSED__,
+static void                 _ecore_exe_event_exe_data_free(void *data EINA_UNUSED,
                                                            void *ev);
 static Ecore_Exe           *_ecore_exe_is_it_alive(pid_t pid);
 static Eina_Bool            _ecore_exe_make_sure_its_dead(void *data);
@@ -187,8 +187,8 @@ static int _ecore_exe_check_errno(int         result,
 
 static int
 _ecore_exe_check_errno(int         result,
-                       const char *file __UNUSED__,
-                       int         line __UNUSED__)
+                       const char *file EINA_UNUSED,
+                       int         line EINA_UNUSED)
 {
    int saved_errno = errno;
 
@@ -1777,7 +1777,7 @@ _ecore_exe_data_read_handler(void             *data,
 
 static Eina_Bool
 _ecore_exe_data_write_handler(void             *data,
-                              Ecore_Fd_Handler *fd_handler __UNUSED__)
+                              Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Ecore_Exe *exe;
 
@@ -1844,7 +1844,7 @@ _ecore_exe_flush(Ecore_Exe *exe)
 }
 
 static void
-_ecore_exe_event_exe_data_free(void *data __UNUSED__,
+_ecore_exe_event_exe_data_free(void *data EINA_UNUSED,
                                void *ev)
 {
    Ecore_Exe_Event_Data *e;
@@ -1863,7 +1863,7 @@ _ecore_exe_event_add_new(void)
 }
 
 static void
-_ecore_exe_event_add_free(void *data __UNUSED__,
+_ecore_exe_event_add_free(void *data EINA_UNUSED,
                           void *ev)
 {
    Ecore_Exe_Event_Add *e;
@@ -1882,7 +1882,7 @@ _ecore_exe_event_del_new(void)
 }
 
 void
-_ecore_exe_event_del_free(void *data __UNUSED__,
+_ecore_exe_event_del_free(void *data EINA_UNUSED,
                           void *ev)
 {
    Ecore_Exe_Event_Del *e;

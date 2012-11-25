@@ -183,7 +183,7 @@ unlock:
 }
 
 static void
-_ecore_event_generic_free(void *data __UNUSED__,
+_ecore_event_generic_free(void *data EINA_UNUSED,
                           void *event)
 { /* DO NOT MEMPOOL FREE THIS */
    free(event);

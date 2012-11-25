@@ -41,7 +41,7 @@ ecore_fb_ps2_shutdown(void)
 }
 
 static Eina_Bool
-_ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_fb_ps2_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    static int prev_x = 0, prev_y = 0, prev_button = 0;
    static double last_time = 0;

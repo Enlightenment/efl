@@ -131,7 +131,7 @@ static Ecore_Fd_Handler *_ecore_fb_kbd_fd_handler_handle = NULL;
 static Eina_Bool _ecore_fb_kbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static void
-_ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
+_ecore_fb_event_free_key_down(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Fb_Event_Key_Down *e;
    e = ev;
@@ -142,7 +142,7 @@ _ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_fb_event_free_key_up(void *data __UNUSED__, void *ev)
+_ecore_fb_event_free_key_up(void *data EINA_UNUSED, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
 
@@ -154,7 +154,7 @@ _ecore_fb_event_free_key_up(void *data __UNUSED__, void *ev)
 }
 
 static Eina_Bool
-_ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_fb_kbd_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    int v = 0;
 

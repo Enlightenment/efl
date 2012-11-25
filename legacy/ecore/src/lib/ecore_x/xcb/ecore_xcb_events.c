@@ -95,20 +95,20 @@ static void                     _ecore_xcb_event_handle_shape_change(xcb_generic
 #endif
 static void                     _ecore_xcb_event_handle_sync_counter(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_handle_sync_alarm(xcb_generic_event_t *event);
-static void                     _ecore_xcb_event_handle_xfixes_selection_notify(xcb_generic_event_t *event __UNUSED__);
+static void                     _ecore_xcb_event_handle_xfixes_selection_notify(xcb_generic_event_t *event EINA_UNUSED);
 static void                     _ecore_xcb_event_handle_xfixes_cursor_notify(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_handle_input_event(xcb_generic_event_t *event);
 
 static void                     _ecore_xcb_event_key_press(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_key_release(xcb_generic_event_t *event);
-static void                     _ecore_xcb_event_mouse_move_free(void *data __UNUSED__,
+static void                     _ecore_xcb_event_mouse_move_free(void *data EINA_UNUSED,
                                                                  void *event);
 static Ecore_X_Event_Mode       _ecore_xcb_event_mode_get(uint8_t mode);
 static Ecore_X_Event_Detail     _ecore_xcb_event_detail_get(uint8_t detail);
-static void                     _ecore_xcb_event_xdnd_enter_free(void *data __UNUSED__,
+static void                     _ecore_xcb_event_xdnd_enter_free(void *data EINA_UNUSED,
                                                                  void *event);
-static void                     _ecore_xcb_event_selection_notify_free(void *data __UNUSED__,
+static void                     _ecore_xcb_event_selection_notify_free(void *data EINA_UNUSED,
                                                                        void *event);
 static void                     _ecore_xcb_event_generic_event_free(void *data,
                                                                     void *event);
@@ -849,7 +849,7 @@ _ecore_xcb_event_handle_leave_notify(xcb_generic_event_t *event)
 }
 
 static void
-_ecore_xcb_event_handle_keymap_notify(xcb_generic_event_t *event __UNUSED__)
+_ecore_xcb_event_handle_keymap_notify(xcb_generic_event_t *event EINA_UNUSED)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1148,7 +1148,7 @@ _ecore_xcb_event_handle_configure_request(xcb_generic_event_t *event)
 }
 
 static void
-_ecore_xcb_event_handle_gravity_notify(xcb_generic_event_t *event __UNUSED__)
+_ecore_xcb_event_handle_gravity_notify(xcb_generic_event_t *event EINA_UNUSED)
 {
 /*
    xcb_gravity_notify_event_t *ev;
@@ -2298,7 +2298,7 @@ _ecore_xcb_event_handle_xfixes_selection_notify(xcb_generic_event_t *event)
 }
 
 static void
-_ecore_xcb_event_handle_xfixes_cursor_notify(xcb_generic_event_t *event __UNUSED__)
+_ecore_xcb_event_handle_xfixes_cursor_notify(xcb_generic_event_t *event EINA_UNUSED)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 //  FIXME: TBD
@@ -2550,7 +2550,7 @@ _ecore_xcb_event_mouse_move(uint16_t     timestamp,
 }
 
 static void
-_ecore_xcb_event_mouse_move_free(void *data __UNUSED__,
+_ecore_xcb_event_mouse_move_free(void *data EINA_UNUSED,
                                  void *event)
 {
    Ecore_Event_Mouse_Move *ev;
@@ -2749,7 +2749,7 @@ _ecore_xcb_event_detail_get(uint8_t detail)
 }
 
 static void
-_ecore_xcb_event_xdnd_enter_free(void *data __UNUSED__,
+_ecore_xcb_event_xdnd_enter_free(void *data EINA_UNUSED,
                                  void *event)
 {
    Ecore_X_Event_Xdnd_Enter *e;
@@ -2763,7 +2763,7 @@ _ecore_xcb_event_xdnd_enter_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_xcb_event_selection_notify_free(void *data __UNUSED__,
+_ecore_xcb_event_selection_notify_free(void *data EINA_UNUSED,
                                        void *event)
 {
    Ecore_X_Event_Selection_Notify *e;

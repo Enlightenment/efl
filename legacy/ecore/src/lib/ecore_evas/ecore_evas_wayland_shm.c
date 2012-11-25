@@ -487,7 +487,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 }
 
 static void
-_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t time __UNUSED__)
+_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t time EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Wl_Window *win = NULL;
@@ -649,7 +649,7 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
 }
 #else
 EAPI Ecore_Evas *
-ecore_evas_wayland_shm_new(const char *disp_name __UNUSED__, unsigned int parent __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, Eina_Bool frame __UNUSED__)
+ecore_evas_wayland_shm_new(const char *disp_name EINA_UNUSED, unsigned int parent EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, Eina_Bool frame EINA_UNUSED)
 {
    return NULL;
 }

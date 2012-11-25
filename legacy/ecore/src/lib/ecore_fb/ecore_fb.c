@@ -20,7 +20,7 @@ static int _ecore_fb_console_h = 0;
 static sighandler_t oldhand = NULL;
 
 static void
-nosigint(int val __UNUSED__)
+nosigint(int val EINA_UNUSED)
 {
 }
 
@@ -38,7 +38,7 @@ nosigint(int val __UNUSED__)
  * the Ecore_Fb library.
  */
 EAPI int
-ecore_fb_init(const char *name __UNUSED__)
+ecore_fb_init(const char *name EINA_UNUSED)
 {
    if (++_ecore_fb_init_count != 1)
       return _ecore_fb_init_count;

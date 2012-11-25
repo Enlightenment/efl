@@ -88,13 +88,13 @@ _ecore_x_dnd_shutdown(void)
 }
 
 static Eina_Bool
-_ecore_x_dnd_converter_copy(char *target __UNUSED__,
+_ecore_x_dnd_converter_copy(char *target EINA_UNUSED,
                             void *data,
                             int size,
                             void **data_ret,
                             int *size_ret,
-                            Ecore_X_Atom *tprop __UNUSED__,
-                            int *count __UNUSED__)
+                            Ecore_X_Atom *tprop EINA_UNUSED,
+                            int *count EINA_UNUSED)
 {
    XTextProperty text_prop;
    char *mystr;

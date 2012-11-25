@@ -70,8 +70,8 @@ ecore_x_gesture_events_select(Ecore_X_Window win,
                               Ecore_X_Gesture_Event_Mask mask)
 #else
 EAPI Eina_Bool
-ecore_x_gesture_events_select(Ecore_X_Window win __UNUSED__,
-                              Ecore_X_Gesture_Event_Mask mask __UNUSED__)
+ecore_x_gesture_events_select(Ecore_X_Window win EINA_UNUSED,
+                              Ecore_X_Gesture_Event_Mask mask EINA_UNUSED)
 #endif
 
 {
@@ -94,7 +94,7 @@ EAPI Ecore_X_Gesture_Event_Mask
 ecore_x_gesture_events_selected_get(Ecore_X_Window win)
 #else
 EAPI Ecore_X_Gesture_Event_Mask
-ecore_x_gesture_events_selected_get(Ecore_X_Window win __UNUSED__)
+ecore_x_gesture_events_selected_get(Ecore_X_Window win EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XCB_XGESTURE
@@ -129,9 +129,9 @@ ecore_x_gesture_event_grab(Ecore_X_Window win,
                            int num_fingers)
 #else
 EAPI Eina_Bool
-ecore_x_gesture_event_grab(Ecore_X_Window win __UNUSED__,
-                           Ecore_X_Gesture_Event_Type type __UNUSED__,
-                           int num_fingers __UNUSED__)
+ecore_x_gesture_event_grab(Ecore_X_Window win EINA_UNUSED,
+                           Ecore_X_Gesture_Event_Type type EINA_UNUSED,
+                           int num_fingers EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XCB_XGESTURE
@@ -169,9 +169,9 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
                              int num_fingers)
 #else
 EAPI Eina_Bool
-ecore_x_gesture_event_ungrab(Ecore_X_Window win __UNUSED__,
-                             Ecore_X_Gesture_Event_Type type __UNUSED__,
-                             int num_fingers __UNUSED__)
+ecore_x_gesture_event_ungrab(Ecore_X_Window win EINA_UNUSED,
+                             Ecore_X_Gesture_Event_Type type EINA_UNUSED,
+                             int num_fingers EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XCB_XGESTURE

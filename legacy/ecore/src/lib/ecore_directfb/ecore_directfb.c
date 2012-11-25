@@ -65,7 +65,7 @@ static DFBResult _err; // useful for DFBCHECK
 /****************************************/
 
 static void
-_ecore_directfb_event_free_key_down(void *data __UNUSED__, void *ev)
+_ecore_directfb_event_free_key_down(void *data EINA_UNUSED, void *ev)
 {
    Ecore_DirectFB_Event_Key_Down *e;
 
@@ -83,7 +83,7 @@ _ecore_directfb_event_free_key_down(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_directfb_event_free_key_up(void *data __UNUSED__, void *ev)
+_ecore_directfb_event_free_key_up(void *data EINA_UNUSED, void *ev)
 {
    Ecore_DirectFB_Event_Key_Up *e;
 
@@ -398,7 +398,7 @@ _ecore_directfb_event_handle_lost_focus(DFBWindowEvent *evt)
  * window at a time */
 
 static Eina_Bool
-_ecore_directfb_input_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_directfb_input_event_fd_handler(void *data EINA_UNUSED,Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    DFBEvent evt;
    int v = 0;
@@ -431,7 +431,7 @@ _ecore_directfb_input_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *f
 }
 
 static Eina_Bool
-_ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_directfb_window_event_fd_handler(void *data EINA_UNUSED,Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    DFBEvent evt;
    int v = 0;
@@ -676,7 +676,7 @@ ecore_directfb_window_size_get(Ecore_DirectFB_Window *ecore_window, int *w, int 
 }
 
 EAPI int
-ecore_directfb_init(const char *name __UNUSED__)
+ecore_directfb_init(const char *name EINA_UNUSED)
 {
    int i = 0;
 

@@ -356,7 +356,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 }
 
 static void
-_ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *iev __UNUSED__)
+_ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *iev EINA_UNUSED)
 {
    if (!dev->listen) return;
 
@@ -397,7 +397,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
 }
 
 static Eina_Bool
-_ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh __UNUSED__)
+_ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh EINA_UNUSED)
 {
    Ecore_Fb_Input_Device *dev;
    struct input_event ev[64];

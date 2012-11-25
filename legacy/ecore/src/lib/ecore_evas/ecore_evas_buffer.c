@@ -98,7 +98,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_resize(ee, w, h);
 }
@@ -231,7 +231,7 @@ _ecore_evas_buffer_transfer_modifiers_locks(Evas *e, Evas *e2)
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_In *ev;
@@ -243,7 +243,7 @@ _ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Out *ev;
@@ -255,7 +255,7 @@ _ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj __UNUSED__
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Down *ev;
@@ -267,7 +267,7 @@ _ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED_
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Up *ev;
@@ -279,7 +279,7 @@ _ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Move *ev;
@@ -295,7 +295,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED_
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Wheel *ev;
@@ -307,7 +307,7 @@ _ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj __UNUSED
 }
 
 static void
-_ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Down *ev;
@@ -328,7 +328,7 @@ _ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj __UNUSED_
 }
 
 static void
-_ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Up *ev;
@@ -349,7 +349,7 @@ _ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Move *ev;
@@ -370,7 +370,7 @@ _ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj __UNUSED_
 }
 
 static void
-_ecore_evas_buffer_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_free(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -379,7 +379,7 @@ _ecore_evas_buffer_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Key_Down *ev;
@@ -391,7 +391,7 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Key_Up *ev;
@@ -403,7 +403,7 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, v
 }
 
 static void
-_ecore_evas_buffer_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -414,7 +414,7 @@ _ecore_evas_buffer_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_buffer_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -425,7 +425,7 @@ _ecore_evas_buffer_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj
 }
 
 static void
-_ecore_evas_buffer_cb_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -435,7 +435,7 @@ _ecore_evas_buffer_cb_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_ecore_evas_buffer_cb_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -531,13 +531,13 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 #endif
 
 static void *
-_ecore_evas_buffer_pix_alloc(void *data __UNUSED__, int size)
+_ecore_evas_buffer_pix_alloc(void *data EINA_UNUSED, int size)
 {
    return malloc(size);
 }
 
 static void
-_ecore_evas_buffer_pix_free(void *data __UNUSED__, void *pix)
+_ecore_evas_buffer_pix_free(void *data EINA_UNUSED, void *pix)
 {
    free(pix);
 }

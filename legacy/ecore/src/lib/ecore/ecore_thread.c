@@ -276,7 +276,7 @@ _ecore_thread_handler(void *data)
 
 #if 0
 static void
-_ecore_nothing_handler(void *data __UNUSED__, void *buffer __UNUSED__, unsigned int nbyte __UNUSED__)
+_ecore_nothing_handler(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int nbyte EINA_UNUSED)
 {
 }
 #endif
@@ -460,7 +460,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 }
 
 static void *
-_ecore_thread_worker(void *data __UNUSED__)
+_ecore_thread_worker(void *data EINA_UNUSED)
 {
 restart:
    _ecore_short_job(PHS());

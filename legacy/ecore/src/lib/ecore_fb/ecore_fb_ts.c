@@ -212,7 +212,7 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
 }
 
 static Eina_Bool
-_ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_ecore_fb_ts_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    static int prev_x = 0, prev_y = 0, prev_pressure = 0;
    static double last_time = 0;

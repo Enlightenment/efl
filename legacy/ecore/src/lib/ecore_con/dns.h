@@ -47,6 +47,8 @@
 #include <netdb.h>		/* struct addrinfo */
 #endif
 
+#include <Eina.h>		/* EINA_UNUSED */
+
 
 /*
  * V E R S I O N

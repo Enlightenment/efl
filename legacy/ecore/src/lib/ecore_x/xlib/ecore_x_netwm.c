@@ -1633,8 +1633,8 @@ ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
 }
 
 int
-_ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
-                                  char *data __UNUSED__)
+_ecore_x_netwm_startup_info_begin(Ecore_X_Window win EINA_UNUSED,
+                                  char *data EINA_UNUSED)
 {
 #if 0
    Ecore_X_Startup_Info *info;
@@ -1682,8 +1682,8 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
 }
 
 int
-_ecore_x_netwm_startup_info(Ecore_X_Window win __UNUSED__,
-                            char *data __UNUSED__)
+_ecore_x_netwm_startup_info(Ecore_X_Window win EINA_UNUSED,
+                            char *data EINA_UNUSED)
 {
 #if 0
    Ecore_X_Startup_Info *info;

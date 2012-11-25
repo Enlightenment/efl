@@ -62,7 +62,7 @@ _ecore_evas_fb_match(void)
 }
 
 static void
-_ecore_evas_fb_lose(void *data __UNUSED__)
+_ecore_evas_fb_lose(void *data EINA_UNUSED)
 {
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
@@ -74,7 +74,7 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 }
 
 static void
-_ecore_evas_fb_gain(void *data __UNUSED__)
+_ecore_evas_fb_gain(void *data EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Eina_List *ll;
@@ -96,7 +96,7 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_event_mouse_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Event_Mouse_Button *e;
@@ -109,7 +109,7 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_event_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Event_Mouse_Button *e;
@@ -122,7 +122,7 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_event_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Event_Mouse_Move *e;
@@ -135,7 +135,7 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_event_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Event_Mouse_Wheel *e;
@@ -285,7 +285,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    ee->req.w = w;
    ee->req.h = h;
@@ -308,7 +308,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
-_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
+_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 {
    Evas_Engine_Info_FB *einfo;
    int rot_dif;
@@ -389,7 +389,7 @@ _ecore_evas_hide(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -671,7 +671,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 }
 #else
 EAPI Ecore_Evas *
-ecore_evas_fb_new(const char *disp_name __UNUSED__, int rotation __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+ecore_evas_fb_new(const char *disp_name EINA_UNUSED, int rotation EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return NULL;
 }

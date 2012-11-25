@@ -547,8 +547,8 @@ ecore_thread_main_loop_end(void)
 }
 
 EAPI void
-ecore_print_warning(const char *function __UNUSED__,
-                    const char *sparam __UNUSED__)
+ecore_print_warning(const char *function EINA_UNUSED,
+                    const char *sparam EINA_UNUSED)
 {
    WRN("***** Developer Warning ***** :\n"
        "\tThis program is calling:\n\n"
@@ -563,7 +563,7 @@ EAPI void
 _ecore_magic_fail(const void *d,
                   Ecore_Magic m,
                   Ecore_Magic req_m,
-                  const char *fname __UNUSED__)
+                  const char *fname EINA_UNUSED)
 {
    ERR("\n"
        "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
@@ -749,7 +749,7 @@ _ecore_fps_debug_runtime_add(double t)
 
 #if HAVE_MALLINFO
 static Eina_Bool
-_ecore_memory_statistic(__UNUSED__ void *data)
+_ecore_memory_statistic(EINA_UNUSED void *data)
 {
    struct mallinfo mi;
    static int uordblks = 0;
@@ -857,9 +857,9 @@ _ecore_main_call_flush(void)
 }
 
 static void
-_thread_callback(void        *data __UNUSED__,
-                 void        *buffer __UNUSED__,
-                 unsigned int nbyte __UNUSED__)
+_thread_callback(void        *data EINA_UNUSED,
+                 void        *buffer EINA_UNUSED,
+                 unsigned int nbyte EINA_UNUSED)
 {
    _ecore_main_call_flush();
 }

@@ -42,7 +42,7 @@ static int                  _ecore_wince_mouse_up_count = 0;
 static Ecore_Wince_Key_Mask _ecore_wince_key_mask = 0;
 
 static void
-_ecore_wince_event_free_key_down(void *data __UNUSED__,
+_ecore_wince_event_free_key_down(void *data EINA_UNUSED,
                                  void *ev)
 {
    Ecore_Event_Key *e;
@@ -55,7 +55,7 @@ _ecore_wince_event_free_key_down(void *data __UNUSED__,
 }
 
 static void
-_ecore_wince_event_free_key_up(void *data __UNUSED__,
+_ecore_wince_event_free_key_up(void *data EINA_UNUSED,
                                void *ev)
 {
    Ecore_Event_Key *e;

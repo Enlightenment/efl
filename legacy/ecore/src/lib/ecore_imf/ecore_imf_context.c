@@ -1023,7 +1023,7 @@ ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *curs
 }
 
 static void
-_ecore_imf_event_free_preedit(void *data __UNUSED__, void *event)
+_ecore_imf_event_free_preedit(void *data EINA_UNUSED, void *event)
 {
    free(event);
 }
@@ -1112,7 +1112,7 @@ ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx)
 }
 
 static void
-_ecore_imf_event_free_commit(void *data __UNUSED__, void *event)
+_ecore_imf_event_free_commit(void *data EINA_UNUSED, void *event)
 {
    Ecore_IMF_Event_Commit *ev;
 
@@ -1152,7 +1152,7 @@ ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str)
 }
 
 static void
-_ecore_imf_event_free_delete_surrounding(void *data __UNUSED__, void *event)
+_ecore_imf_event_free_delete_surrounding(void *data EINA_UNUSED, void *event)
 {
    free(event);
 }

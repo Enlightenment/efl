@@ -16,7 +16,7 @@ EAPI Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_down(const char *key)
 #else
-ecore_x_test_fake_key_down(const char *key __UNUSED__)
+ecore_x_test_fake_key_down(const char *key EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XTEST
@@ -48,7 +48,7 @@ EAPI Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_up(const char *key)
 #else
-ecore_x_test_fake_key_up(const char *key __UNUSED__)
+ecore_x_test_fake_key_up(const char *key EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XTEST
@@ -80,7 +80,7 @@ EAPI Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_press(const char *key)
 #else
-ecore_x_test_fake_key_press(const char *key __UNUSED__)
+ecore_x_test_fake_key_press(const char *key EINA_UNUSED)
 #endif
 {
 #ifdef ECORE_XTEST

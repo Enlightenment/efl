@@ -163,13 +163,13 @@ _ecore_wince_window_procedure(HWND   window,
 }
 
 static void
-_ecore_wince_error_print_cb(const Eina_Log_Domain *d __UNUSED__,
-                            Eina_Log_Level  level __UNUSED__,
-                            const char     *file __UNUSED__,
+_ecore_wince_error_print_cb(const Eina_Log_Domain *d EINA_UNUSED,
+                            Eina_Log_Level  level EINA_UNUSED,
+                            const char     *file EINA_UNUSED,
                             const char     *fnc,
                             int             line,
                             const char     *fmt,
-                            void           *data __UNUSED__,
+                            void           *data EINA_UNUSED,
                             va_list         args)
 {
    fprintf(stderr, "[%s:%d] ", fnc, line);

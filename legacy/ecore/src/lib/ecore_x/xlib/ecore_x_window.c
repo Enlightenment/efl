@@ -1204,7 +1204,7 @@ ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window base,
  * @ingroup Ecore_X_Window_Geometry_Group
  */
 EAPI Ecore_X_Window
-ecore_x_window_shadow_parent_get(Ecore_X_Window root __UNUSED__,
+ecore_x_window_shadow_parent_get(Ecore_X_Window root EINA_UNUSED,
                                  Ecore_X_Window win)
 {
    Shadow *s;

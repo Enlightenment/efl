@@ -87,7 +87,7 @@ static void      _ecore_con_info_slave_free(CB_Data *cbdata);
 static Eina_Bool _ecore_con_info_data_handler(void             *data,
                                               Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_info_exit_handler(void    *data,
-                                              int type __UNUSED__,
+                                              int type EINA_UNUSED,
                                               void    *event);
 
 static int info_init = 0;
@@ -440,7 +440,7 @@ _ecore_con_info_data_handler(void             *data,
 
 static Eina_Bool
 _ecore_con_info_exit_handler(void    *data,
-                             int type __UNUSED__,
+                             int type EINA_UNUSED,
                              void    *event)
 {
    CB_Data *cbdata;

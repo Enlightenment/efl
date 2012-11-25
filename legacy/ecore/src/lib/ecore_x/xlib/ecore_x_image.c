@@ -43,8 +43,8 @@ static int _ecore_x_image_shm_can = -1;
 static int _ecore_x_image_err = 0;
 
 static int
-_ecore_x_image_error_handler(Display *d __UNUSED__,
-                             XErrorEvent *ev __UNUSED__)
+_ecore_x_image_error_handler(Display *d EINA_UNUSED,
+                             XErrorEvent *ev EINA_UNUSED)
 {
    _ecore_x_image_err = 1;
    return 0;

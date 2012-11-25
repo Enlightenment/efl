@@ -12,13 +12,13 @@ typedef struct _Version_Cache_Item
 } Version_Cache_Item;
 
 /* local function prototypes */
-static Eina_Bool _ecore_xcb_dnd_converter_copy(char         *target __UNUSED__,
+static Eina_Bool _ecore_xcb_dnd_converter_copy(char         *target EINA_UNUSED,
                                                void         *data,
                                                int           size,
                                                void        **data_ret,
                                                int          *size_ret,
-                                               Ecore_X_Atom *tprop __UNUSED__,
-                                               int          *count __UNUSED__);
+                                               Ecore_X_Atom *tprop EINA_UNUSED,
+                                               int          *count EINA_UNUSED);
 
 /* local variables */
 static int _ecore_xcb_dnd_init_count = 0;
@@ -643,13 +643,13 @@ ecore_x_dnd_source_action_get(void)
 
 /* local functions */
 static Eina_Bool
-_ecore_xcb_dnd_converter_copy(char         *target __UNUSED__,
+_ecore_xcb_dnd_converter_copy(char         *target EINA_UNUSED,
                               void         *data,
                               int           size,
                               void        **data_ret,
                               int          *size_ret,
-                              Ecore_X_Atom *tprop __UNUSED__,
-                              int          *count __UNUSED__)
+                              Ecore_X_Atom *tprop EINA_UNUSED,
+                              int          *count EINA_UNUSED)
 {
    Ecore_Xcb_Textproperty text_prop;
    Ecore_Xcb_Encoding_Style style = XcbTextStyle;

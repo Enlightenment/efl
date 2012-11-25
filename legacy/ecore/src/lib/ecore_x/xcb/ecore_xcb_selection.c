@@ -4,18 +4,18 @@
 #define ECORE_XCB_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
 /* local function prototypes */
-static void *_ecore_xcb_selection_parser_text(const char *target __UNUSED__,
+static void *_ecore_xcb_selection_parser_text(const char *target EINA_UNUSED,
                                               void       *data,
                                               int         size,
-                                              int         format __UNUSED__);
+                                              int         format EINA_UNUSED);
 static void *_ecore_xcb_selection_parser_files(const char *target,
                                                void       *data,
                                                int         size,
-                                               int         format __UNUSED__);
-static void *_ecore_xcb_selection_parser_targets(const char *target __UNUSED__,
+                                               int         format EINA_UNUSED);
+static void *_ecore_xcb_selection_parser_targets(const char *target EINA_UNUSED,
                                                  void       *data,
                                                  int         size,
-                                                 int         format __UNUSED__);
+                                                 int         format EINA_UNUSED);
 
 //static int _ecore_xcb_selection_data_free(void *data);
 static int       _ecore_xcb_selection_data_text_free(void *data);
@@ -671,8 +671,8 @@ ecore_x_selection_converter_text(char         *target,
                                  int           size,
                                  void        **data_ret,
                                  int          *size_ret,
-                                 Ecore_X_Atom *type __UNUSED__,
-                                 int          *size_type __UNUSED__)
+                                 Ecore_X_Atom *type EINA_UNUSED,
+                                 int          *size_type EINA_UNUSED)
 {
    Ecore_Xcb_Encoding_Style style;
    Ecore_Xcb_Textproperty ret;
@@ -732,10 +732,10 @@ ecore_x_selection_converter_text(char         *target,
 }
 
 static void *
-_ecore_xcb_selection_parser_text(const char *target __UNUSED__,
+_ecore_xcb_selection_parser_text(const char *target EINA_UNUSED,
                                  void       *data,
                                  int         size,
-                                 int         format __UNUSED__)
+                                 int         format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Text *sel;
    unsigned char *_data;
@@ -772,7 +772,7 @@ static void *
 _ecore_xcb_selection_parser_files(const char *target,
                                   void       *data,
                                   int         size,
-                                  int         format __UNUSED__)
+                                  int         format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Files *sel;
    char *_data, *tmp, *t, **t2;
@@ -858,10 +858,10 @@ _ecore_xcb_selection_parser_files(const char *target,
 }
 
 static void *
-_ecore_xcb_selection_parser_targets(const char *target __UNUSED__,
+_ecore_xcb_selection_parser_targets(const char *target EINA_UNUSED,
                                     void       *data,
                                     int         size,
-                                    int         format __UNUSED__)
+                                    int         format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Targets *sel;
    unsigned long *targets;

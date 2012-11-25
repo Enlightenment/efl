@@ -8,7 +8,7 @@
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
 static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl);
-static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version __UNUSED__);
+static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
 
@@ -418,7 +418,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 }
 
 static void 
-_ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version __UNUSED__)
+_ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED)
 {
    Ecore_Wl_Display *ewd;
 

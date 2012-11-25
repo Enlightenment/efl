@@ -1811,7 +1811,7 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr)
 
 static Eina_Bool
 _ecore_con_svr_tcp_handler(void                        *data,
-                           Ecore_Fd_Handler *fd_handler __UNUSED__)
+                           Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl = NULL;
@@ -2458,7 +2458,7 @@ _ecore_con_event_client_data_free(Ecore_Con_Server *svr,
 }
 
 static void
-_ecore_con_event_server_add_free(void *data __UNUSED__,
+_ecore_con_event_server_add_free(void *data EINA_UNUSED,
                                  void      *ev)
 {
    Ecore_Con_Event_Server_Add *e;
@@ -2477,7 +2477,7 @@ _ecore_con_event_server_add_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_con_event_server_del_free(void *data __UNUSED__,
+_ecore_con_event_server_del_free(void *data EINA_UNUSED,
                                  void      *ev)
 {
    Ecore_Con_Event_Server_Del *e;
@@ -2496,7 +2496,7 @@ _ecore_con_event_server_del_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_con_event_server_write_free(void *data __UNUSED__,
+_ecore_con_event_server_write_free(void *data EINA_UNUSED,
                                    Ecore_Con_Event_Server_Write *e)
 {
    if (e->server)
@@ -2513,7 +2513,7 @@ _ecore_con_event_server_write_free(void *data __UNUSED__,
 }
 
 static void
-_ecore_con_event_server_data_free(void *data __UNUSED__,
+_ecore_con_event_server_data_free(void *data EINA_UNUSED,
                                   void      *ev)
 {
    Ecore_Con_Event_Server_Data *e;
@@ -2535,7 +2535,7 @@ _ecore_con_event_server_data_free(void *data __UNUSED__,
 
 
 static void
-_ecore_con_event_server_error_free(void *data __UNUSED__, Ecore_Con_Event_Server_Error *e)
+_ecore_con_event_server_error_free(void *data EINA_UNUSED, Ecore_Con_Event_Server_Error *e)
 {
    if (e->server)
      {

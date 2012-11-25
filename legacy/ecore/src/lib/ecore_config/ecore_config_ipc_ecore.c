@@ -50,7 +50,7 @@ _ecore_config_ipc_ecore_string_get(char **m, char **r)
 }
 
 static char               *
-_ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long serial __UNUSED__)
+_ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv EINA_UNUSED, long serial EINA_UNUSED)
 {
    Ecore_Config_DB_File  *db;
    char                 **keys;
@@ -232,7 +232,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 /*****************************************************************************/
 
 static Eina_Bool
-_ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
+_ecore_config_ipc_client_add(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;
@@ -248,7 +248,7 @@ _ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
+_ecore_config_ipc_client_del(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;
@@ -264,7 +264,7 @@ _ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ecore_config_ipc_client_sent(void *data, int type __UNUSED__, void *event)
+_ecore_config_ipc_client_sent(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;

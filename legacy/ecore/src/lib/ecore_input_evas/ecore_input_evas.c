@@ -223,7 +223,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *e;
    Ecore_Input_Window *lookup;
@@ -260,13 +260,13 @@ ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_DOWN);
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP);
 }
@@ -296,19 +296,19 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 }
 
 EAPI Eina_Bool
-ecore_event_evas_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_DOWN);
 }
 
 EAPI Eina_Bool
-ecore_event_evas_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_UP);
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Wheel *e;
    Ecore_Input_Window *lookup;
@@ -322,13 +322,13 @@ ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_IN);
 }
 
 EAPI Eina_Bool
-ecore_event_evas_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+ecore_event_evas_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_OUT);
 }

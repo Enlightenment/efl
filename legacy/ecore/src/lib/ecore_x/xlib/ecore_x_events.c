@@ -87,7 +87,7 @@ _ecore_x_mouse_down_info_get(int dev)
 }
 
 static void
-_ecore_x_event_free_mouse_move(void *data __UNUSED__,
+_ecore_x_event_free_mouse_move(void *data EINA_UNUSED,
                                void *ev)
 {
    Ecore_Event_Mouse_Move *e;
@@ -137,7 +137,7 @@ ecore_x_event_mask_unset(Ecore_X_Window w,
 }
 
 static void
-_ecore_x_event_free_xdnd_enter(void *data __UNUSED__,
+_ecore_x_event_free_xdnd_enter(void *data EINA_UNUSED,
                                void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *e;
@@ -151,7 +151,7 @@ _ecore_x_event_free_xdnd_enter(void *data __UNUSED__,
 }
 
 static void
-_ecore_x_event_free_selection_notify(void *data __UNUSED__,
+_ecore_x_event_free_selection_notify(void *data EINA_UNUSED,
                                      void *ev)
 {
    Ecore_X_Event_Selection_Notify *e;
@@ -960,7 +960,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_keymap_notify(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_keymap_notify(XEvent *xevent EINA_UNUSED)
 {
    _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */
@@ -1199,7 +1199,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_gravity_notify(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_gravity_notify(XEvent *xevent EINA_UNUSED)
 {
    _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */

@@ -32,7 +32,7 @@ static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[5];
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Mouse_In *ev;
@@ -54,7 +54,7 @@ _ecore_evas_wl_common_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Mouse_Out *ev;
@@ -77,7 +77,7 @@ _ecore_evas_wl_common_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Focus_In *ev;
@@ -95,7 +95,7 @@ _ecore_evas_wl_common_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Focus_In *ev;
@@ -113,7 +113,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Window_Configure *ev;
@@ -581,7 +581,7 @@ _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee;
 
@@ -760,7 +760,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 }
 
 void
-_ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
+_ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -770,7 +770,7 @@ _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *
 }
 
 void
-_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi)
+_ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
 {
    int dpi = 0;
 

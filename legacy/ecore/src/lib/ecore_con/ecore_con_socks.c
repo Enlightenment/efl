@@ -231,7 +231,7 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
             data = buf
 
 static void
-_ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 __UNUSED__, const unsigned char *buf, unsigned int num)
+_ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUSED, const unsigned char *buf, unsigned int num)
 {
    const unsigned char *data;
    DBG("SOCKS: %d bytes", num);
@@ -543,7 +543,7 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
 }
 
 void
-ecore_con_socks_dns_cb(const char *canonname __UNUSED__, const char *ip, struct sockaddr *addr, int addrlen __UNUSED__, Ecore_Con_Server *svr)
+ecore_con_socks_dns_cb(const char *canonname EINA_UNUSED, const char *ip, struct sockaddr *addr, int addrlen EINA_UNUSED, Ecore_Con_Server *svr)
 {
    svr->ip = eina_stringshare_add(ip);
    svr->ecs_state++;
