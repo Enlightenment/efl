@@ -83,6 +83,8 @@
  * @li "maximized": window has been maximized
  * @li "unmaximized": window has stopped being maximized
  * @li "ioerr": there has been a low-level I/O error with the display system
+ * @li "indicator,prop,changed": an indicator's property has been changed
+ * @li "rotation,changed": window rotation has been changed
  *
  * Examples:
  * @li @ref win_example_01
