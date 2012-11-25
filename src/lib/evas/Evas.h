@@ -2961,8 +2961,76 @@ enum
  * @see evas_event_feed_mouse_out
  */
 #define evas_canvas_event_feed_mouse_out(timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_OUT), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_canvas_event_feed_multi_down
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] d
+ * @param[in] x
+ * @param[in] y
+ * @param[in] rad
+ * @param[in] radx
+ * @param[in] rady
+ * @param[in] pres
+ * @param[in] ang
+ * @param[in] fx
+ * @param[in] fy
+ * @param[in] flags
+ * @param[in] timestamp
+ * @param[in] data
+ *
+ * @see evas_event_feed_multi_down
+ */
 #define evas_canvas_event_feed_multi_down(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_DOWN), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_canvas_event_feed_multi_up
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] d
+ * @param[in] x
+ * @param[in] y
+ * @param[in] rad
+ * @param[in] radx
+ * @param[in] rady
+ * @param[in] pres
+ * @param[in] ang
+ * @param[in] fx
+ * @param[in] fy
+ * @param[in] flags
+ * @param[in] timestamp
+ * @param[in] data
+ *
+ * @see evas_event_feed_multi_up
+ */
 #define evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_UP), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_canvas_event_feed_multi_move
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] d
+ * @param[in] x
+ * @param[in] y
+ * @param[in] rad
+ * @param[in] radx
+ * @param[in] rady
+ * @param[in] pres
+ * @param[in] ang
+ * @param[in] fx
+ * @param[in] fy
+ * @param[in] timestamp
+ * @param[in] data
+ *
+ * @see evas_event_feed_multi_move
+ */
 #define evas_canvas_event_feed_multi_move(d, x, y, rad, radx, rady, pres, ang, fx, fy, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_MOVE), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
 
 /**
@@ -3402,6 +3470,14 @@ enum
  * @see evas_render_idle_flush
  */
 #define evas_canvas_render_idle_flush() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_IDLE_FLUSH)
+
+/**
+ * @def evas_canvas_sync
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define evas_canvas_sync() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SYNC)
 
 /**
@@ -10692,9 +10768,54 @@ enum
  * @see evas_object_textblock_cursor_new
  */
 #define evas_obj_textblock_cursor_new(cur) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_CURSOR_NEW), EO_TYPECHECK(Evas_Textblock_Cursor **, cur)
-#define evas_obj_textblock_node_format_list_get(obj, anchor, list) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LIST_GET), EO_TYPECHECK(const char *, anchor), EO_TYPECHECK(const Eina_List **, list)
+
+/**
+ * @def evas_obj_textblock_node_format_list_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] anchor
+ * @param[out] list
+ *
+ * @see evas_textblock_node_format_list_get
+ */
+#define evas_obj_textblock_node_format_list_get(anchor, list) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LIST_GET), EO_TYPECHECK(const char *, anchor), EO_TYPECHECK(const Eina_List **, list)
+
+/**
+ * @def evas_obj_textblock_node_format_first_get
+ * @since 1.8
+ *
+ * Returns the first format node.
+ *
+ * @param[out] format
+ *
+ * @see evas_textblock_node_format_first_get
+ */
 #define evas_obj_textblock_node_format_first_get(format) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_FIRST_GET), EO_TYPECHECK(const Evas_Object_Textblock_Node_Format **, format)
+
+/**
+ * @def evas_obj_textblock_node_format_last_get
+ * @since 1.8
+ *
+ * Returns the last format node.
+ *
+ * @param[out] format
+ *
+ * @see evas_textblock_node_format_last_get
+ */
 #define evas_obj_textblock_node_format_last_get(format) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LAST_GET), EO_TYPECHECK(const Evas_Object_Textblock_Node_Format **, format)
+
+/**
+ * @def evas_obj_textblock_node_format_remove_pair
+ * @since 1.8
+ *
+ * Remove a format node and its match.
+ *
+ * @param[in] n
+ *
+ * @see evas_textblock_node_format_remove_pair
+ */
 #define evas_obj_textblock_node_format_remove_pair(n) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_REMOVE_PAIR), EO_TYPECHECK(Evas_Object_Textblock_Node_Format *, n)
 
 /**
@@ -10752,6 +10873,20 @@ enum
  * @see evas_object_textblock_size_native_get
  */
 #define evas_obj_textblock_size_native_get(w, h) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_SIZE_NATIVE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_textblock_style_insets_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] l
+ * @param[out] r
+ * @param[out] t
+ * @param[out] b
+ *
+ * @see evas_object_textblock_style_insets_get
+ */
 #define evas_obj_textblock_style_insets_get(l, r, t, b) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_INSETS_GET), EO_TYPECHECK(Evas_Coord *, l), EO_TYPECHECK(Evas_Coord *, r), EO_TYPECHECK(Evas_Coord *, t), EO_TYPECHECK(Evas_Coord *, b)
 
 /**
@@ -11774,7 +11909,29 @@ enum
  * @see evas_object_textgrid_palette_get
  */
 #define evas_obj_textgrid_palette_get(pal, idx, r, g, b, a) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_PALETTE_GET), EO_TYPECHECK(Evas_Textgrid_Palette, pal), EO_TYPECHECK(int, idx), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_textgrid_supported_font_styles_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] styles
+ *
+ * @see evas_object_textgrid_supported_font_styles_set
+ */
 #define evas_obj_textgrid_supported_font_styles_set(styles) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_SET), EO_TYPECHECK(Evas_Textgrid_Font_Style, styles)
+
+/**
+ * @def evas_obj_textgrid_supported_font_styles_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see evas_object_textgrid_supported_font_styles_get
+ */
 #define evas_obj_textgrid_supported_font_styles_get(ret) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_GET), EO_TYPECHECK(Evas_Textgrid_Font_Style *, ret)
 
 /**
@@ -13011,13 +13168,85 @@ enum
  * @see evas_object_smart_add
  */
 #define evas_obj_smart_add() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD)
+
+/**
+ * @def evas_obj_smart_del
+ * @since 1.8
+ *
+ * Deletes a smart object.
+ *
+ */
 #define evas_obj_smart_del() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL)
+
+/**
+ * @def evas_obj_smart_resize
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] w
+ * @param[in] h
+ */
 #define evas_obj_smart_resize(w, h) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_smart_move
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] x
+ * @param[in] y
+ */
 #define evas_obj_smart_move(x, y) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
+
+/**
+ * @def evas_obj_smart_show
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ */
 #define evas_obj_smart_show() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW)
+
+/**
+ * @def evas_obj_smart_hide
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ */
 #define evas_obj_smart_hide() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE)
+
+/**
+ * @def evas_obj_smart_color_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] a
+ *
+ * @see evas_object_smart_color_set
+ */
 #define evas_obj_smart_color_set(r, g, b, a) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_smart_clip_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] clip
+ */
 #define evas_obj_smart_clip_set(clip) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_SET), EO_TYPECHECK(Evas_Object *, clip)
+
+/**
+ * @def evas_obj_smart_clip_unset
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ */
 #define evas_obj_smart_clip_unset() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET)
 
 /**
@@ -14180,14 +14409,124 @@ enum
 
 #define EVAS_OBJ_BOX_ID(sub_id) (EVAS_OBJ_BOX_BASE_ID + sub_id)
 
+
+/**
+ * @def evas_obj_box_internal_append
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[out] option
+ *
+ * @see evas_object_box_internal_append
+ */
 #define evas_obj_box_internal_append(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_APPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+
+/**
+ * @def evas_obj_box_internal_prepend
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[out] option
+ *
+ * @see evas_object_box_internal_prepend
+ */
 #define evas_obj_box_internal_prepend(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_PREPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+
+/**
+ * @def evas_obj_box_internal_insert_before
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[in] reference
+ * @param[out] option
+ *
+ * @see evas_object_box_internal_insert_before
+ */
 #define evas_obj_box_internal_insert_before(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_BEFORE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+
+/**
+ * @def evas_obj_box_internal_insert_after
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[in] reference
+ * @param[out] option
+ *
+ * @see evas_object_box_internal_insert_after
+ */
 #define evas_obj_box_internal_insert_after(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AFTER), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+
+/**
+ * @def evas_obj_box_internal_insert_at
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[in] pos
+ * @param[out] option
+ *
+ * @see evas_object_box_internal_insert_at
+ */
 #define evas_obj_box_internal_insert_at(child, pos, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AT), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+
+/**
+ * @def evas_obj_box_internal_remove
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[out] result
+ *
+ * @see evas_object_box_internal_remove
+ */
 #define evas_obj_box_internal_remove(child, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object **, result)
+
+/**
+ * @def evas_obj_box_internal_remove_at
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] pos
+ * @param[out] result
+ *
+ * @see evas_object_box_internal_remove_at
+ */
 #define evas_obj_box_internal_remove_at(pos, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE_AT), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object **, result)
+
+/**
+ * @def evas_obj_box_internal_option_new
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[out] ret
+ *
+ * @see evas_object_box_internal_option_new
+ */
 #define evas_obj_box_internal_option_new(child, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_NEW), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, ret)
+
+/**
+ * @def evas_obj_box_internal_option_free
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] opt
+ *
+ * @see evas_object_box_internal_option_free
+ */
 #define evas_obj_box_internal_option_free(opt) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_FREE), EO_TYPECHECK(Evas_Object_Box_Option *, opt)
 
 
@@ -16965,6 +17304,17 @@ enum
 
 #define EVAS_COMMON_ID(sub_id) (EVAS_COMMON_BASE_ID + sub_id)
 
+
+/**
+ * @def evas_common_evas_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see evas_object_evas_common_evas_get
+ */
 #define evas_common_evas_get(ret) EVAS_COMMON_ID(EVAS_COMMON_SUB_ID_EVAS_GET), EO_TYPECHECK(Evas **, ret)
 
 extern EAPI Eo_Op EVAS_OBJ_BASE_ID;

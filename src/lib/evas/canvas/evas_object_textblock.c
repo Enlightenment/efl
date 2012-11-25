@@ -5992,7 +5992,7 @@ EAPI const Eina_List *
 evas_textblock_node_format_list_get(const Evas_Object *eo_obj, const char *anchor)
 {
    const Eina_List *list = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_textblock_node_format_list_get(eo_obj, anchor, &list));
+   eo_do((Eo *)eo_obj, evas_obj_textblock_node_format_list_get(anchor, &list));
    return list;
 }
 
