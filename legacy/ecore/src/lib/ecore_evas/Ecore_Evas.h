@@ -662,26 +662,6 @@ EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on);
  */
 EAPI Eina_Bool   ecore_evas_maximized_get(const Ecore_Evas *ee);
 /**
- * @brief Set Ecore_Evas's window profile list.
- *
- * @param ee The Ecore_Evas
- * @param profiles The profile name list
- * @param num_profiles The number of profile names
- *
- * @warning Support for this depends on the underlying windowing system.
- * @since 1.7.0
- */
-EAPI void        ecore_evas_profiles_set(Ecore_Evas *ee, const char **profiles, unsigned int num_profiles);
-/**
- * @brief Get Ecore_Evas's window profile name.
- *
- * @param ee The Ecore_Evas
- * @return The profile name
- *
- * @since 1.7.0
- */
-EAPI const char *ecore_evas_profile_get(const Ecore_Evas *ee);
-/**
  * @brief Move an Ecore_Evas.
  *
  * @param ee The Ecore_Evas to move
