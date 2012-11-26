@@ -173,7 +173,8 @@ _elm_popup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_callback_del
      (sd->notify, "block,clicked", _block_clicked_cb);
    evas_object_smart_callback_del(sd->notify, "timeout", _timeout_cb);
-
+   evas_object_event_callback_del
+     (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
    sd->button_count = 0;
 
@@ -344,9 +345,6 @@ _elm_popup_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
    Elm_Popup_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-
-   evas_object_event_callback_del
-     (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
    eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
