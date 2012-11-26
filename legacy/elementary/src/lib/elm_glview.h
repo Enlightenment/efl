@@ -16,6 +16,9 @@
  *
  */
 
+/**
+ * @ingroup GLView
+ */
 #define ELM_OBJ_GLVIEW_CLASS elm_obj_glview_class_get()
 
 const Eo_Class *elm_obj_glview_class_get(void) EINA_CONST;
@@ -179,6 +182,11 @@ enum
 
 typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
+/**
+ * Defines mode of GLView
+ *
+ * @ingroup GLView
+ */
 typedef enum _Elm_GLView_Mode
 {
    ELM_GLVIEW_NONE    = 0,
@@ -199,6 +207,7 @@ typedef enum _Elm_GLView_Mode
  * scaled.
  *
  * @note Default is ELM_GLVIEW_RESIZE_POLICY_RECREATE
+ * @ingroup GLView
  */
 typedef enum
 {
@@ -215,6 +224,7 @@ typedef enum
  * only when it is visible.
  *
  * @note Default is ELM_GLVIEW_RENDER_POLICY_ON_DEMAND
+ * @ingroup GLView
  */
 typedef enum
 {
