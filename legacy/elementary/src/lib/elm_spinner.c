@@ -3,6 +3,8 @@
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
 
+#include "Eo.h"
+
 EAPI Eo_Op ELM_OBJ_SPINNER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_SPINNER_CLASS
@@ -520,13 +522,56 @@ _access_state_cb(void *data,
 }
 
 static void
-_access_spinner_register(Evas_Object *obj)
+_access_activate_cb(void *data,
+                    Evas_Object *part_obj,
+                    Elm_Widget_Item *item __UNUSED__)
 {
+   char *text;
+   Eina_Strbuf *buf;
+   Evas_Object *eo, *inc_btn;
+   const char* increment_part;
+
+   if (!strcmp(elm_widget_style_get(data), "vertical"))
+     increment_part = "up_bt";
+   else
+     increment_part = "right_bt";
+
+   eo = elm_layout_edje_get(data);
+   inc_btn = (Evas_Object *)edje_object_part_object_get(eo, increment_part);
+
+   if (part_obj != inc_btn)
+     {
+        _val_dec_start(data);
+        elm_layout_signal_emit(data, "elm,left,anim,activate", "elm");
+        _val_dec_stop(data);
+        text = "decremented";
+     }
+   else
+     {
+        _val_inc_start(data);
+        elm_layout_signal_emit(data, "elm,right,anim,activate", "elm");
+        _val_inc_stop(data);
+        text = "incremented";
+     }
+
+   buf = eina_strbuf_new();
+
+   eina_strbuf_append_printf(buf, "%s, %s", text,
+            elm_layout_text_get(data, "elm.text"));
+
+   text = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   _elm_access_say(text);
+}
+
+static void
+_access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
+{
+   Evas_Object *ao;
    Elm_Access_Info *ai;
    const char* increment_part;
    const char* decrement_part;
-
-   ELM_SPINNER_DATA_GET(obj, sd);
 
    if (!strcmp(elm_widget_style_get(obj), "vertical"))
      {
@@ -539,27 +584,44 @@ _access_spinner_register(Evas_Object *obj)
         decrement_part = "left_bt";
      }
 
-   // increment button
-   sd->increment_btn_access =
-     _elm_access_edje_object_part_object_register
-       (obj, elm_layout_edje_get(obj), increment_part);
+   if (!is_access)
+     {
+        /* unregister increment button, decrement button and spinner label */
+        _elm_access_edje_object_part_object_unregister
+          (obj, elm_layout_edje_get(obj), increment_part);
 
-   ai = _elm_access_object_get(sd->increment_btn_access);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner increment button"));
+        _elm_access_edje_object_part_object_unregister
+          (obj, elm_layout_edje_get(obj), decrement_part);
 
-   // decrement button
-   sd->decrement_btn_access =
-     _elm_access_edje_object_part_object_register
-       (obj, elm_layout_edje_get(obj), decrement_part);
+        _elm_access_edje_object_part_object_unregister
+          (obj, elm_layout_edje_get(obj), "access_text");
 
-   ai = _elm_access_object_get(sd->decrement_btn_access);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner decrement button"));
+        return;
+     }
 
-   // spinner label
-   sd->access_obj = _elm_access_edje_object_part_object_register
-                       (obj, elm_layout_edje_get(obj), "access_text");
+   /* register increment button */
+   ao = _elm_access_edje_object_part_object_register
+          (obj, elm_layout_edje_get(obj), increment_part);
 
-   ai = _elm_access_object_get(sd->access_obj);
+   ai = _elm_access_object_get(ao);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE,
+                        E_("spinner increment button"));
+   _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
+
+   /* register decrement button */
+   ao = _elm_access_edje_object_part_object_register
+          (obj, elm_layout_edje_get(obj), decrement_part);
+
+   ai = _elm_access_object_get(ao);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE,
+                        E_("spinner decrement button"));
+   _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
+
+   /* register spinner label */
+   ao = _elm_access_edje_object_part_object_register
+          (obj, elm_layout_edje_get(obj), "access_text");
+
+   ai = _elm_access_object_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner"));
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, obj);
@@ -615,9 +677,9 @@ _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_layout_sizing_eval(obj);
 
-   // ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     _access_spinner_register(obj);
+   /* access */
+   if (_elm_config->access_mode)
+     _access_spinner_register(obj, EINA_TRUE);
 }
 
 static void
@@ -652,8 +714,8 @@ _elm_spinner_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                               elm_widget_style_get(obj));
    if (ret) *ret = int_ret;
 
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     _access_spinner_register(obj);
+   if (_elm_config->access_mode)
+     _access_spinner_register(obj, EINA_TRUE);
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
@@ -672,9 +734,23 @@ _elm_spinner_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EIN
    *ret = EINA_FALSE;
 }
 
-static void
-_elm_spinner_smart_focus_next(Eo *obj, void *_pd, va_list *list)
+static Evas_Object *
+_access_object_get(const Evas_Object *obj, const char* part)
 {
+   Evas_Object *eo, *po, *ao;
+
+   eo = elm_layout_edje_get(obj);
+
+   po = (Evas_Object *)edje_object_part_object_get(eo, part);
+   ao = evas_object_data_get(po, "_part_access_obj");
+
+   return ao;
+}
+
+static void
+_elm_spinner_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *ao;
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -682,13 +758,30 @@ _elm_spinner_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
 
    Eina_List *items = NULL;
+   const char* increment_part;
+   const char* decrement_part;
 
    ELM_SPINNER_CHECK(obj);
-   Elm_Spinner_Smart_Data *sd = _pd;
 
-   items = eina_list_append(items, sd->access_obj);
-   items = eina_list_append(items, sd->decrement_btn_access);
-   items = eina_list_append(items, sd->increment_btn_access);
+   if (!strcmp(elm_widget_style_get(obj), "vertical"))
+     {
+        increment_part = "up_bt";
+        decrement_part = "down_bt";
+     }
+   else
+     {
+        increment_part = "right_bt";
+        decrement_part = "left_bt";
+     }
+
+   ao = _access_object_get(obj, "access_text");
+   items = eina_list_append(items, ao);
+
+   ao = _access_object_get(obj, decrement_part);
+   items = eina_list_append(items, ao);
+
+   ao = _access_object_get(obj, increment_part);
+   items = eina_list_append(items, ao);
 
    int_ret = elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
@@ -701,14 +794,7 @@ _elm_spinner_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ELM_SPINNER_CHECK(obj);
 
    _elm_spinner_smart_focus_next_enable = va_arg(*list, int);
-   if (_elm_spinner_smart_focus_next_enable)
-     {
-        _access_spinner_register(obj);
-     }
-   else
-     {
-        //TODO: unregister edje part object
-     }
+   _access_spinner_register(obj, _elm_spinner_smart_focus_next_enable);
 }
 
 EAPI Evas_Object *
@@ -1176,7 +1262,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   if (_elm_config->access_mode)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
 static const Eo_Op_Description op_desc[] = {
