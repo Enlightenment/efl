@@ -20,6 +20,8 @@ EVAS_SMART_SUBCLASS_NEW
   (ELM_POPUP_SMART_NAME, _elm_popup, Elm_Popup_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
+static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
 static void
 _visuals_set(Evas_Object *obj)
 {
@@ -328,6 +330,9 @@ _elm_popup_smart_sub_object_del(Evas_Object *obj,
    Elm_Popup_Item *item;
 
    ELM_POPUP_DATA_GET(obj, sd);
+
+   evas_object_event_callback_del
+     (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
    if (!ELM_WIDGET_CLASS(_elm_popup_parent_sc)->sub_object_del(obj, sobj))
      return EINA_FALSE;
