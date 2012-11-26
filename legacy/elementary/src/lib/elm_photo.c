@@ -2,7 +2,13 @@
 #include "elm_priv.h"
 #include "elm_widget_photo.h"
 
-EAPI const char ELM_PHOTO_SMART_NAME[] = "elm_photo";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_PHOTO_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_PHOTO_CLASS
+
+#define MY_CLASS_NAME "elm_photo"
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_DRAG_START[] = "drag,start";
@@ -14,10 +20,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_PHOTO_SMART_NAME, _elm_photo, Elm_Photo_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
-
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -25,6 +27,7 @@ _sizing_eval(Evas_Object *obj)
    double scale;
 
    ELM_PHOTO_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->size <= 0) return;
 
@@ -33,7 +36,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(sd->icon, scale, scale);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
-     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+     (wd->resize_obj, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    maxw = minw;
    maxh = minh;
@@ -41,28 +44,32 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-static Eina_Bool
-_elm_photo_smart_theme(Evas_Object *obj)
+static void
+_elm_photo_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_PHOTO_DATA_GET(obj, sd);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Photo_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   if (!ELM_WIDGET_CLASS(_elm_photo_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
    edje_object_mirrored_set
-     (ELM_WIDGET_DATA(sd)->resize_obj, elm_widget_mirrored_get(obj));
+     (wd->resize_obj, elm_widget_mirrored_get(obj));
 
    elm_widget_theme_object_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, "photo", "base",
+     (obj, wd->resize_obj, "photo", "base",
      elm_widget_style_get(obj));
 
    elm_object_scale_set(sd->icon, elm_widget_scale_get(obj));
 
-   edje_object_scale_set(ELM_WIDGET_DATA(sd)->resize_obj,
+   edje_object_scale_set(wd->resize_obj,
                          elm_widget_scale_get(obj) * elm_config_scale_get());
    _sizing_eval(obj);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -74,6 +81,7 @@ _icon_move_resize_cb(void *data,
    Evas_Coord w, h;
 
    ELM_PHOTO_DATA_GET(data, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->fill_inside)
      {
@@ -87,7 +95,7 @@ _icon_move_resize_cb(void *data,
         msg->val[1] = (int)h;
 
         edje_object_message_send
-          (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_MESSAGE_INT_SET, 0, msg);
+          (wd->resize_obj, EDJE_MESSAGE_INT_SET, 0, msg);
      }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -240,11 +248,12 @@ _on_thumb_done(void *data,
 }
 
 static void
-_elm_photo_smart_add(Evas_Object *obj)
+_elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Photo_Smart_Data);
+   Elm_Photo_Smart_Data *priv = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   ELM_WIDGET_CLASS(_elm_photo_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -278,65 +287,41 @@ _elm_photo_smart_add(Evas_Object *obj)
        (obj, edje_object_add(evas_object_evas_get(obj)));
 
    elm_widget_theme_object_set
-     (obj, ELM_WIDGET_DATA(priv)->resize_obj, "photo", "base", "default");
+     (obj, wd->resize_obj, "photo", "base", "default");
 
    edje_object_part_swallow
-     (ELM_WIDGET_DATA(priv)->resize_obj, "elm.swallow.content", priv->icon);
+     (wd->resize_obj, "elm.swallow.content", priv->icon);
 
    elm_photo_file_set(obj, NULL);
 }
 
 static void
-_elm_photo_smart_del(Evas_Object *obj)
+_elm_photo_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_PHOTO_DATA_GET(obj, sd);
+   Elm_Photo_Smart_Data * sd = _pd;
 
    if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
    sd->long_press_timer = NULL;
 
-   ELM_WIDGET_CLASS(_elm_photo_parent_sc)->base.del(obj);
-}
-
-static void
-_elm_photo_smart_set_user(Elm_Photo_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_photo_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_photo_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_photo_smart_theme;
-}
-
-EAPI const Elm_Photo_Smart_Class *
-elm_photo_smart_class_get(void)
-{
-   static Elm_Photo_Smart_Class _sc =
-     ELM_PHOTO_SMART_CLASS_INIT_NAME_VERSION(ELM_PHOTO_SMART_NAME);
-   static const Elm_Photo_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class) return class;
-
-   _elm_photo_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
 elm_photo_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   obj = elm_widget_add(_elm_photo_smart_class_new(), parent);
-   if (!obj) return NULL;
-
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
    return obj;
+}
+
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
 EAPI Eina_Bool
@@ -344,22 +329,33 @@ elm_photo_file_set(Evas_Object *obj,
                    const char *file)
 {
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
-   ELM_PHOTO_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_photo_file_set(file, &ret));
+   return ret;
+}
+
+static void
+_file_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Elm_Photo_Smart_Data *sd = _pd;
 
    if (!file)
      {
         if (!elm_icon_standard_set(sd->icon, "no_photo"))
-          return EINA_FALSE;
+          return;
      }
    else
      {
         if (!elm_image_file_set(sd->icon, file, NULL))
-          return EINA_FALSE;
+          return;
      }
 
    _sizing_eval(obj);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI void
@@ -367,7 +363,14 @@ elm_photo_size_set(Evas_Object *obj,
                    int size)
 {
    ELM_PHOTO_CHECK(obj);
-   ELM_PHOTO_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_photo_size_set(size));
+}
+
+static void
+_size_set(Eo *obj, void *_pd, va_list *list)
+{
+   int size = va_arg(*list, int);
+   Elm_Photo_Smart_Data *sd = _pd;
 
    sd->size = (size > 0) ? size : 0;
 
@@ -381,7 +384,14 @@ elm_photo_fill_inside_set(Evas_Object *obj,
                           Eina_Bool fill)
 {
    ELM_PHOTO_CHECK(obj);
-   ELM_PHOTO_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_photo_fill_inside_set(fill));
+}
+
+static void
+_fill_inside_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool fill = va_arg(*list, int);
+   Elm_Photo_Smart_Data *sd = _pd;
 
    elm_image_fill_outside_set(sd->icon, !fill);
    sd->fill_inside = !!fill;
@@ -391,23 +401,37 @@ elm_photo_fill_inside_set(Evas_Object *obj,
 
 EAPI void
 elm_photo_editable_set(Evas_Object *obj,
-                       Eina_Bool set)
+      Eina_Bool set)
 {
    ELM_PHOTO_CHECK(obj);
-   ELM_PHOTO_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_photo_editable_set(set));
+}
 
+static void
+_editable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool set = va_arg(*list, int);
+   Elm_Photo_Smart_Data *sd = _pd;
    elm_image_editable_set(sd->icon, set);
 }
 
 EAPI void
 elm_photo_thumb_set(const Evas_Object *obj,
-                    const char *file,
-                    const char *group)
+      const char *file,
+      const char *group)
 {
    ELM_PHOTO_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_photo_thumb_set(file, group));
+}
+
+static void
+_thumb_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *group = va_arg(*list, const char *);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   ELM_PHOTO_DATA_GET(obj, sd);
+   Elm_Photo_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->thumb.file.path, file);
    eina_stringshare_replace(&sd->thumb.file.key, group);
@@ -422,19 +446,81 @@ elm_photo_thumb_set(const Evas_Object *obj,
 
 EAPI void
 elm_photo_aspect_fixed_set(Evas_Object *obj,
-                           Eina_Bool fixed)
+      Eina_Bool fixed)
 {
    ELM_PHOTO_CHECK(obj);
-   ELM_PHOTO_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_photo_aspect_fixed_set(fixed));
+}
 
-   return elm_image_aspect_fixed_set(sd->icon, fixed);
+static void
+_aspect_fixed_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool fixed = va_arg(*list, int);
+   Elm_Photo_Smart_Data *sd = _pd;
+   elm_image_aspect_fixed_set(sd->icon, fixed);
 }
 
 EAPI Eina_Bool
 elm_photo_aspect_fixed_get(const Evas_Object *obj)
 {
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
-   ELM_PHOTO_DATA_GET(obj, sd);
-
-   return elm_image_aspect_fixed_get(sd->icon);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_photo_aspect_fixed_get(&ret));
+   return ret;
 }
+
+static void
+_aspect_fixed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Photo_Smart_Data *sd = _pd;
+   *ret = elm_image_aspect_fixed_get(sd->icon);
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_photo_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_photo_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_photo_smart_theme),
+
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILE_SET), _file_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_SIZE_SET), _size_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET), _fill_inside_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET), _editable_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_THUMB_SET), _thumb_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_SET), _aspect_fixed_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET), _aspect_fixed_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_FILE_SET, "Set the file that will be used as the photo widget's image."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_SIZE_SET, "Set the size that will be used on the photo."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET, "Set if the photo should be completely visible or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET, "Set editability of the photo."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_THUMB_SET, "Set the file that will be used as thumbnail in the photo."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_SET, "Set whether the original aspect ratio of the photo should be kept on resize."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET, "Get if the object keeps the original aspect ratio."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_PHOTO_BASE_ID, op_desc, ELM_OBJ_PHOTO_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Photo_Smart_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_photo_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, EVAS_SMART_DRAGGABLE_INTERFACE, NULL);
+

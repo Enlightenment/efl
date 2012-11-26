@@ -1,48 +1,55 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_separator.h"
+#include "elm_widget_layout.h"
 
-EAPI const char ELM_SEPARATOR_SMART_NAME[] = "elm_separator";
+#include "Eo.h"
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_SEPARATOR_SMART_NAME, _elm_separator, Elm_Separator_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
+EAPI Eo_Op ELM_OBJ_SEPARATOR_BASE_ID = EO_NOOP;
 
-static Eina_Bool
-_elm_separator_smart_theme(Evas_Object *obj)
+#define MY_CLASS ELM_OBJ_SEPARATOR_CLASS
+
+#define MY_CLASS_NAME "elm_separator"
+
+static void
+_elm_separator_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_SEPARATOR_DATA_GET(obj, sd);
+   Elm_Separator_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+   Elm_Layout_Smart_Data *ld = eo_data_get(obj, ELM_OBJ_LAYOUT_CLASS);
 
    if (sd->horizontal)
-     eina_stringshare_replace(&(ELM_LAYOUT_DATA(sd)->group), "horizontal");
+     eina_stringshare_replace(&ld->group, "horizontal");
    else
-     eina_stringshare_replace(&(ELM_LAYOUT_DATA(sd)->group), "vertical");
+     eina_stringshare_replace(&ld->group, "vertical");
 
-   if (!ELM_WIDGET_CLASS(_elm_separator_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
-_elm_separator_smart_sizing_eval(Evas_Object *obj)
+_elm_separator_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   ELM_SEPARATOR_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
+   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
    evas_object_size_hint_align_set(obj, maxw, maxh);
 }
 
 static void
-_elm_separator_smart_add(Evas_Object *obj)
+_elm_separator_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Separator_Smart_Data);
+   Elm_Separator_Smart_Data *priv = _pd;
 
-   ELM_WIDGET_CLASS(_elm_separator_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    priv->horizontal = EINA_FALSE;
 
@@ -54,50 +61,25 @@ _elm_separator_smart_add(Evas_Object *obj)
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_elm_separator_smart_set_user(Elm_Separator_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_separator_smart_add;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_separator_smart_theme;
-
-   /* not a 'focus chain manager' */
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
-   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
-
-   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_separator_smart_sizing_eval;
-}
-
-EAPI const Elm_Separator_Smart_Class *
-elm_separator_smart_class_get(void)
-{
-   static Elm_Separator_Smart_Class _sc =
-     ELM_SEPARATOR_SMART_CLASS_INIT_NAME_VERSION(ELM_SEPARATOR_SMART_NAME);
-   static const Elm_Separator_Smart_Class *class = NULL;
-
-   if (class)
-     return class;
-
-   _elm_separator_smart_set(&_sc);
-   class = &_sc;
-
-   return class;
-}
-
 EAPI Evas_Object *
 elm_separator_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   obj = elm_widget_add(_elm_separator_smart_class_new(), parent);
-   if (!obj) return NULL;
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME));
 
+   Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 EAPI void
@@ -105,21 +87,89 @@ elm_separator_horizontal_set(Evas_Object *obj,
                              Eina_Bool horizontal)
 {
    ELM_SEPARATOR_CHECK(obj);
-   ELM_SEPARATOR_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_separator_horizontal_set(horizontal));
+}
+
+static void
+_horizontal_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool horizontal = va_arg(*list, int);
+   Elm_Separator_Smart_Data *sd = _pd;
 
    horizontal = !!horizontal;
    if (sd->horizontal == horizontal) return;
 
    sd->horizontal = horizontal;
 
-   _elm_separator_smart_theme(obj);
+   eo_do(obj, elm_wdg_theme(NULL));
 }
 
 EAPI Eina_Bool
 elm_separator_horizontal_get(const Evas_Object *obj)
 {
    ELM_SEPARATOR_CHECK(obj) EINA_FALSE;
-   ELM_SEPARATOR_DATA_GET(obj, sd);
-
-   return sd->horizontal;
+   Eina_Bool ret;
+   eo_do((Eo *) obj, elm_obj_separator_horizontal_get(&ret));
+   return ret;
 }
+
+static void
+_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Separator_Smart_Data *sd = _pd;
+   *ret = sd->horizontal;
+}
+
+static void
+_elm_separator_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+}
+
+static void
+_elm_separator_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_separator_smart_add),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_separator_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_separator_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_separator_smart_focus_direction_manager_is),
+
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_separator_smart_sizing_eval),
+
+        EO_OP_FUNC(ELM_OBJ_SEPARATOR_ID(ELM_OBJ_SEPARATOR_SUB_ID_HORIZONTAL_SET), _horizontal_set),
+        EO_OP_FUNC(ELM_OBJ_SEPARATOR_ID(ELM_OBJ_SEPARATOR_SUB_ID_HORIZONTAL_GET), _horizontal_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_SEPARATOR_SUB_ID_HORIZONTAL_SET, "Set the horizontal mode of a separator object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEPARATOR_SUB_ID_HORIZONTAL_GET, "Get the horizontal mode of a separator object."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_SEPARATOR_BASE_ID, op_desc, ELM_OBJ_SEPARATOR_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Separator_Smart_Data),
+     _class_constructor,
+     NULL
+};
+EO_DEFINE_CLASS(elm_obj_separator_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);

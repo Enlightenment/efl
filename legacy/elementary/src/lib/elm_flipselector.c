@@ -2,6 +2,14 @@
 #include "elm_priv.h"
 #include "elm_widget_flipselector.h"
 
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_FLIPSELECTOR_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_FLIPSELECTOR_CLASS
+
+#define MY_CLASS_NAME "elm_flipselector"
+
 /* TODO: ideally, the default theme would use map{} blocks on the TEXT
    parts to implement their fading in/out propertly (as in the clock
    widget) */
@@ -15,8 +23,6 @@
 /* TODO: find a way to, in the default theme, to detect we are
  * bootstrapping (receiving the 1st message) and populate the downmost
  * TEXT parts with the same text as the upmost, where appropriate. */
-
-EAPI const char ELM_FLIPSELECTOR_SMART_NAME[] = "elm_flipselector";
 
 #define FLIP_FIRST_INTERVAL (0.85)
 #define FLIP_MIN_INTERVAL   (0.1)
@@ -36,18 +42,14 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_FLIPSELECTOR_SMART_NAME, _elm_flipselector,
-  Elm_Flipselector_Smart_Class, Elm_Layout_Smart_Class,
-  elm_layout_smart_class_get, _smart_callbacks);
-
 static void
-_elm_flipselector_smart_sizing_eval(Evas_Object *obj)
+_elm_flipselector_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    char *tmp = NULL;
    Evas_Coord minw = -1, minh = -1, w, h;
 
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->evaluating) return;
 
@@ -64,7 +66,7 @@ _elm_flipselector_smart_sizing_eval(Evas_Object *obj)
      }
 
    edje_object_size_min_restricted_calc
-     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+     (wd->resize_obj, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 2, &minh);
    evas_object_size_hint_min_get(obj, &w, &h);
 
@@ -89,6 +91,7 @@ _update_view(Evas_Object *obj)
    Elm_Flipselector_Item *item;
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    label = NULL;
    item = DATA_GET(sd->current);
@@ -97,7 +100,7 @@ _update_view(Evas_Object *obj)
    elm_layout_text_set(obj, "elm.top", label ? label : "");
    elm_layout_text_set(obj, "elm.bottom", label ? label : "");
 
-   edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+   edje_object_message_signal_process(wd->resize_obj);
 }
 
 static void
@@ -214,13 +217,13 @@ _flipselector_process_deletions(Elm_Flipselector_Smart_Data *sd)
 
         if (eina_list_count(sd->items) <= 1)
           elm_layout_signal_emit
-            (ELM_WIDGET_DATA(sd)->obj, "elm,state,button,hidden", "elm");
+            (sd->obj, "elm,state,button,hidden", "elm");
         else
           elm_layout_signal_emit
-            (ELM_WIDGET_DATA(sd)->obj, "elm,state,button,visible", "elm");
+            (sd->obj, "elm,state,button,visible", "elm");
      }
 
-   if (!skip) _update_view(ELM_WIDGET_DATA(sd)->obj);
+   if (!skip) _update_view(sd->obj);
 
    if (sentinel_eval) _sentinel_eval(sd);
 
@@ -255,7 +258,7 @@ _on_item_changed(Elm_Flipselector_Smart_Data *sd)
      item->func((void *)item->base.data, WIDGET(item), item);
    if (!item->deleted)
      evas_object_smart_callback_call
-       (ELM_WIDGET_DATA(sd)->obj, SIG_SELECTED, item);
+       (sd->obj, SIG_SELECTED, item);
 }
 
 static void
@@ -264,11 +267,12 @@ _send_msg(Elm_Flipselector_Smart_Data *sd,
           char *label)
 {
    Edje_Message_String msg;
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
    msg.str = label;
    edje_object_message_send
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_MESSAGE_STRING, flipside, &msg);
-   edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+     (wd->resize_obj, EDJE_MESSAGE_STRING, flipside, &msg);
+   edje_object_message_signal_process(wd->resize_obj);
 
    _on_item_changed(sd);
 }
@@ -348,17 +352,22 @@ _item_new(Evas_Object *obj,
    return it;
 }
 
-static Eina_Bool
-_elm_flipselector_smart_theme(Evas_Object *obj)
+static void
+_elm_flipselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    const char *max_len;
 
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool int_ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 
-   if (!ELM_WIDGET_CLASS(_elm_flipselector_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   max_len = edje_object_data_get(ELM_WIDGET_DATA(sd)->resize_obj, "max_len");
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
+
+   max_len = edje_object_data_get(wd->resize_obj, "max_len");
    if (!max_len) sd->max_len = MAX_LEN_DEFAULT;
    else
      {
@@ -370,7 +379,7 @@ _elm_flipselector_smart_theme(Evas_Object *obj)
    _update_view(obj);
    elm_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -385,7 +394,7 @@ _flip_up(Elm_Flipselector_Smart_Data *sd)
      {
         sd->current = eina_list_last(sd->items);
         evas_object_smart_callback_call
-          (ELM_WIDGET_DATA(sd)->obj, SIG_UNDERFLOWED, NULL);
+          (sd->obj, SIG_UNDERFLOWED, NULL);
      }
    else
      sd->current = eina_list_prev(sd->current);
@@ -409,7 +418,7 @@ _flip_down(Elm_Flipselector_Smart_Data *sd)
      {
         sd->current = sd->items;
         evas_object_smart_callback_call
-          (ELM_WIDGET_DATA(sd)->obj, SIG_OVERFLOWED, NULL);
+          (sd->obj, SIG_OVERFLOWED, NULL);
      }
 
    item = DATA_GET(sd->current);
@@ -418,28 +427,32 @@ _flip_down(Elm_Flipselector_Smart_Data *sd)
    _send_msg(sd, MSG_FLIP_DOWN, (char *)item->label);
 }
 
-static Eina_Bool
-_elm_flipselector_smart_event(Evas_Object *obj,
-                              Evas_Object *src __UNUSED__,
-                              Evas_Callback_Type type,
-                              void *event_info)
+static void
+_elm_flipselector_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Event_Key_Down *ev;
    Eina_Bool is_up = EINA_TRUE;
 
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   (void) src;
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
 
    ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      is_up = EINA_FALSE;
    else if ((strcmp(ev->keyname, "Up")) && (strcmp(ev->keyname, "KP_Up")))
-     return EINA_FALSE;
+     return;
 
    if (sd->spin) ecore_timer_del(sd->spin);
    sd->spin = NULL;
@@ -455,7 +468,7 @@ _elm_flipselector_smart_event(Evas_Object *obj,
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static Eina_Bool
@@ -538,11 +551,11 @@ _signal_val_change_stop(void *data,
 }
 
 static void
-_elm_flipselector_smart_add(Evas_Object *obj)
+_elm_flipselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Flipselector_Smart_Data);
+   Elm_Flipselector_Smart_Data *priv = _pd;
 
-   ELM_WIDGET_CLASS(_elm_flipselector_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_layout_theme_set
      (obj, "flipselector", "base", elm_widget_style_get(obj));
@@ -561,13 +574,13 @@ _elm_flipselector_smart_add(Evas_Object *obj)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   _elm_flipselector_smart_theme(obj);
+   eo_do(obj, elm_wdg_theme(NULL));
 }
 
 static void
-_elm_flipselector_smart_del(Evas_Object *obj)
+_elm_flipselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
    sd->deleting = EINA_TRUE;
    
@@ -578,65 +591,44 @@ _elm_flipselector_smart_del(Evas_Object *obj)
 
    if (sd->spin) ecore_timer_del(sd->spin);
 
-   ELM_WIDGET_CLASS(_elm_flipselector_parent_sc)->base.del(obj);
-}
-
-static void
-_elm_flipselector_smart_set_user(Elm_Flipselector_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_flipselector_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_flipselector_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_flipselector_smart_theme;
-   ELM_WIDGET_CLASS(sc)->event = _elm_flipselector_smart_event;
-
-   /* not a 'focus chain manager' */
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
-   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
-
-   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_flipselector_smart_sizing_eval;
-}
-
-EAPI const Elm_Flipselector_Smart_Class *
-elm_flipselector_smart_class_get(void)
-{
-   static Elm_Flipselector_Smart_Class _sc =
-     ELM_FLIPSELECTOR_SMART_CLASS_INIT_NAME_VERSION
-       (ELM_FLIPSELECTOR_SMART_NAME);
-   static const Elm_Flipselector_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class)
-     return class;
-
-   _elm_flipselector_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
 elm_flipselector_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   obj = elm_widget_add(_elm_flipselector_smart_class_new(), parent);
-   if (!obj) return NULL;
+static void
+_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   sd->obj = obj;
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
+   Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 EAPI void
 elm_flipselector_flip_next(Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_CHECK(obj);
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_flipselector_flip_next());
+}
+
+static void
+_flip_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
    if (sd->spin) ecore_timer_del(sd->spin);
    sd->spin = NULL;
@@ -650,8 +642,13 @@ EAPI void
 elm_flipselector_flip_prev(Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_flipselector_flip_prev());
+}
 
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+static void
+_flip_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
    if (sd->spin) ecore_timer_del(sd->spin);
    sd->spin = NULL;
@@ -667,13 +664,27 @@ elm_flipselector_item_append(Evas_Object *obj,
                              void (*func)(void *, Evas_Object *, void *),
                              void *data)
 {
+   Elm_Flipselector_Item *ret = NULL;
+   ELM_FLIPSELECTOR_CHECK(obj) NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_item_append(label, func, data, &ret));
+   return (Elm_Object_Item *)ret;
+}
+
+static void
+_item_append(Eo *obj, void *_pd, va_list *list)
+{
+   const char *label = va_arg(*list, const char *);
+   flipselector_func_type func = va_arg(*list, flipselector_func_type);
+   void *data = va_arg(*list, void *);
+   Elm_Flipselector_Item **ret = va_arg(*list, Elm_Flipselector_Item **);
+   *ret = NULL;
+
    Elm_Flipselector_Item *item;
 
-   ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
    item = _item_new(obj, label, func, data);
-   if (!item) return NULL;
+   if (!item) return;
 
    sd->items = eina_list_append(sd->items, item);
    if (!sd->current)
@@ -693,7 +704,7 @@ elm_flipselector_item_append(Evas_Object *obj,
    if (eina_list_count(sd->items) > 1)
      elm_layout_signal_emit(obj, "elm,state,button,visible", "elm");
 
-   return (Elm_Object_Item *)item;
+   *ret = item;
 }
 
 EAPI Elm_Object_Item *
@@ -702,13 +713,27 @@ elm_flipselector_item_prepend(Evas_Object *obj,
                               void (*func)(void *, Evas_Object *, void *),
                               void *data)
 {
+   Elm_Flipselector_Item *ret = NULL;
+   ELM_FLIPSELECTOR_CHECK(obj) NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_item_prepend(label, func, data, &ret));
+   return (Elm_Object_Item *)ret;
+}
+
+static void
+_item_prepend(Eo *obj, void *_pd, va_list *list)
+{
+   const char *label = va_arg(*list, const char *);
+   flipselector_func_type func = va_arg(*list, flipselector_func_type);
+   void *data = va_arg(*list, void *);
+   Elm_Flipselector_Item **ret = va_arg(*list, Elm_Flipselector_Item **);
+   *ret = NULL;
+
    Elm_Flipselector_Item *item;
 
-   ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
    item = _item_new(obj, label, func, data);
-   if (!item) return NULL;
+   if (!item) return;
 
    sd->items = eina_list_prepend(sd->items, item);
    if (!sd->current)
@@ -728,65 +753,102 @@ elm_flipselector_item_prepend(Evas_Object *obj,
    if (eina_list_count(sd->items) >= 2)
      elm_layout_signal_emit(obj, "elm,state,button,visible", "elm");
 
-   return (Elm_Object_Item *)item;
+   *ret = item;
 }
 
 EAPI const Eina_List *
 elm_flipselector_items_get(const Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   const Eina_List *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_items_get(&ret));
+   return ret;
+}
 
-   return sd->items;
+static void
+_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Eina_List **ret = va_arg(*list, const Eina_List **);
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   *ret = sd->items;
 }
 
 EAPI Elm_Object_Item *
 elm_flipselector_first_item_get(const Evas_Object *obj)
 {
+   ELM_FLIPSELECTOR_CHECK(obj) NULL;
+   Elm_Object_Item *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_first_item_get(&ret));
+   return ret;
+}
+
+static void
+_first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   *ret = NULL;
+
    Elm_Flipselector_Item *it;
    Eina_List *l;
 
-   ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
-   if (!sd->items) return NULL;
+   if (!sd->items) return;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->deleted) continue;
-        return (Elm_Object_Item *)it;
+        *ret = (Elm_Object_Item *)it;
+        return;
      }
-
-   return NULL;
 }
 
 EAPI Elm_Object_Item *
 elm_flipselector_last_item_get(const Evas_Object *obj)
 {
+   ELM_FLIPSELECTOR_CHECK(obj) NULL;
+   Elm_Object_Item *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_last_item_get(&ret));
+   return ret;
+}
+
+static void
+_last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   *ret = NULL;
+
    Elm_Flipselector_Item *it;
    Eina_List *l;
 
-   ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Flipselector_Smart_Data *sd = _pd;
 
-   if (!sd->items) return NULL;
+
+   if (!sd->items) return;
 
    EINA_LIST_REVERSE_FOREACH(sd->items, l, it)
      {
         if (it->deleted) continue;
-        return (Elm_Object_Item *)it;
+        *ret = (Elm_Object_Item *)it;
+        return;
      }
-
-   return NULL;
 }
 
 EAPI Elm_Object_Item *
 elm_flipselector_selected_item_get(const Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_CHECK(obj) NULL;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Object_Item *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_flipselector_selected_item_get(&ret));
+   return ret;
+}
 
-   return DATA_GET(sd->current);
+static void
+_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   *ret = DATA_GET(sd->current);
 }
 
 EAPI void
@@ -889,8 +951,14 @@ elm_flipselector_first_interval_set(Evas_Object *obj,
                                     double interval)
 {
    ELM_FLIPSELECTOR_CHECK(obj);
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_flipselector_first_interval_set(interval));
+}
 
+static void
+_first_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double interval = va_arg(*list, double);
+   Elm_Flipselector_Smart_Data *sd = _pd;
    sd->first_interval = interval;
 }
 
@@ -898,7 +966,84 @@ EAPI double
 elm_flipselector_first_interval_get(const Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_CHECK(obj) 0;
-   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
-
-   return sd->first_interval;
+   double ret = 0;
+   eo_do((Eo *) obj, elm_obj_flipselector_first_interval_get(&ret));
+   return ret;
 }
+
+static void
+_first_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Flipselector_Smart_Data *sd = _pd;
+   *ret = sd->first_interval;
+}
+
+static void
+_elm_flipselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+}
+
+static void
+_elm_flipselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_flipselector_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_flipselector_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_flipselector_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_flipselector_smart_event),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_flipselector_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_flipselector_smart_focus_direction_manager_is),
+
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_flipselector_smart_sizing_eval),
+
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FLIP_NEXT), _flip_next),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FLIP_PREV), _flip_prev),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_APPEND), _item_append),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_PREPEND), _item_prepend),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEMS_GET), _items_get),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_ITEM_GET), _first_item_get),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_LAST_ITEM_GET), _last_item_get),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_SELECTED_ITEM_GET), _selected_item_get),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_INTERVAL_SET), _first_interval_set),
+        EO_OP_FUNC(ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_INTERVAL_GET), _first_interval_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_FLIP_NEXT, "Programmatically select the next item of a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_FLIP_PREV, "Programmatically select the previous item of a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_APPEND, "Append a (text) item to a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_PREPEND, "Prepend a (text) item to a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEMS_GET, "Get the internal list of items in a given flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_ITEM_GET, "Get the first item in the given flip selector widget's list of items."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_LAST_ITEM_GET, "Get the last item in the given flip selector widget's list of items."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_SELECTED_ITEM_GET, "Get the currently selected item in a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_INTERVAL_SET, "Set the interval on time updates for a user mouse button hold on a flip selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_INTERVAL_GET, "Get the interval on time updates for a user mouse button hold on a flip selector widget."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_FLIPSELECTOR_BASE_ID, op_desc, ELM_OBJ_FLIPSELECTOR_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Flipselector_Smart_Data),
+     _class_constructor,
+     NULL
+};
+EO_DEFINE_CLASS(elm_obj_flipselector_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);

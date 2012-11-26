@@ -1,12 +1,16 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+
 #include "elm_widget_inwin.h"
+#include "elm_widget_layout.h"
 
-EAPI const char ELM_INWIN_SMART_NAME[] = "elm_inwin";
+#include "Eo.h"
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_INWIN_SMART_NAME, _elm_inwin, Elm_Inwin_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
+EAPI Eo_Op ELM_OBJ_WIN_INWIN_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_WIN_INWIN_CLASS
+
+#define MY_CLASS_NAME "elm_inwin"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -15,29 +19,38 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 };
 
 static void
-_elm_inwin_smart_sizing_eval(Evas_Object *obj)
+_elm_inwin_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object *content;
    Evas_Coord minw = -1, minh = -1;
 
-   ELM_INWIN_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    content = elm_layout_content_get(obj, NULL);
 
    if (!content) return;
 
    evas_object_size_hint_min_get(content, &minw, &minh);
-   edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
+   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
 
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static Eina_Bool
-_elm_inwin_smart_focus_next(const Evas_Object *obj,
-                            Elm_Focus_Direction dir,
-                            Evas_Object **next)
+static void
+_elm_inwin_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_TRUE;
+}
+
+static void
+_elm_inwin_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
    Evas_Object *content;
 
    content = elm_layout_content_get(obj, NULL);
@@ -47,19 +60,19 @@ _elm_inwin_smart_focus_next(const Evas_Object *obj,
      {
         elm_widget_focus_next_get(content, dir, next);
         if (*next)
-          return EINA_TRUE;
+          {
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
 
    *next = (Evas_Object *)obj;
-   return EINA_FALSE;
 }
 
 static void
-_elm_inwin_smart_add(Evas_Object *obj)
+_elm_inwin_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Inwin_Smart_Data);
-
-   ELM_WIDGET_CLASS(_elm_inwin_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -70,70 +83,64 @@ _elm_inwin_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_inwin_smart_parent_set(Evas_Object *obj,
-                            Evas_Object *parent)
+_elm_inwin_smart_parent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Evas_Object *parent = va_arg(*list, Evas_Object *);
    elm_win_resize_object_add(parent, obj);
 
    elm_layout_sizing_eval(obj);
 }
 
 static void
-_elm_inwin_smart_set_user(Elm_Inwin_Smart_Class *sc)
+_elm_inwin_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_inwin_smart_add;
-
-   ELM_WIDGET_CLASS(sc)->focus_next = _elm_inwin_smart_focus_next;
-   ELM_WIDGET_CLASS(sc)->parent_set = _elm_inwin_smart_parent_set;
-
-   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_inwin_smart_sizing_eval;
-
-   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
-}
-
-EAPI const Elm_Inwin_Smart_Class *
-elm_inwin_smart_class_get(void)
-{
-   static Elm_Inwin_Smart_Class _sc =
-     ELM_INWIN_SMART_CLASS_INIT_NAME_VERSION(ELM_INWIN_SMART_NAME);
-   static const Elm_Inwin_Smart_Class *class = NULL;
-
-   if (class)
-     return class;
-
-   _elm_inwin_smart_set(&_sc);
-   class = &_sc;
-
-   return class;
+   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
+   *aliases = _content_aliases;
 }
 
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   if (!parent || !elm_widget_type_check((parent), "elm_win", __func__))
-     return NULL;  /* *has* to have a parent window */
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Evas_Object *parent = eo_parent_get(obj);
 
-   obj = elm_widget_add(_elm_inwin_smart_class_new(), parent);
-   if (!obj) return NULL;
+   if (!eo_isa(parent, ELM_OBJ_WIN_CLASS))
+     {
+        eo_error_set(obj);  /* *has* to have a parent window */
+        return;
+     }
+
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 EAPI void
 elm_win_inwin_activate(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj);
-   ELM_INWIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_inwin_activate());
+}
+
+static void
+_elm_inwin_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_raise(obj);
    evas_object_show(obj);
    edje_object_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, "elm,action,show", "elm");
+     (wd->resize_obj, "elm,action,show", "elm");
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
@@ -142,25 +149,61 @@ elm_win_inwin_content_set(Evas_Object *obj,
                           Evas_Object *content)
 {
    ELM_INWIN_CHECK(obj);
-   ELM_INWIN_DATA_GET_OR_RETURN(obj, sd);
-
-   ELM_CONTAINER_CLASS(_elm_inwin_parent_sc)->content_set(obj, NULL, content);
+   eo_do(obj, elm_obj_container_content_set(NULL, content, NULL));
 }
 
 EAPI Evas_Object *
 elm_win_inwin_content_get(const Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
-   ELM_INWIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-
-   return ELM_CONTAINER_CLASS(_elm_inwin_parent_sc)->content_get(obj, NULL);
+   Evas_Object *ret = NULL;
+   eo_do((Eo *)obj, elm_obj_container_content_get(NULL, &ret));
+   return ret;
 }
 
 EAPI Evas_Object *
 elm_win_inwin_content_unset(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
-   ELM_INWIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-
-   return ELM_CONTAINER_CLASS(_elm_inwin_parent_sc)->content_unset(obj, NULL);
+   Evas_Object *ret = NULL;
+   eo_do(obj, elm_obj_container_content_unset(NULL, &ret));
+   return ret;
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_inwin_smart_add),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_inwin_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_inwin_smart_focus_next),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_inwin_smart_parent_set),
+
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_inwin_smart_sizing_eval),
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_inwin_smart_content_aliases_get),
+
+        EO_OP_FUNC(ELM_OBJ_WIN_INWIN_ID(ELM_OBJ_WIN_INWIN_SUB_ID_ACTIVATE), _elm_inwin_smart_activate),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_INWIN_SUB_ID_ACTIVATE, "Activates an inwin object, ensuring its visibility."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_WIN_INWIN_BASE_ID, op_desc, ELM_OBJ_WIN_INWIN_SUB_ID_LAST),
+     NULL,
+     0,
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_win_inwin_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+

@@ -1,8 +1,15 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_bg.h"
+#include "elm_widget_layout.h"
 
-EAPI const char ELM_BG_SMART_NAME[] = "elm_bg";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_BG_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_BG_CLASS
+
+#define MY_CLASS_NAME "elm_bg"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -10,12 +17,8 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_BG_SMART_NAME, _elm_bg, Elm_Bg_Smart_Class, Elm_Layout_Smart_Class,
-  elm_layout_smart_class_get, NULL);
-
 static void
-_elm_bg_smart_sizing_eval(Evas_Object *obj)
+_elm_bg_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord iw = 0, ih = 0, mw = -1, mh = -1;
    Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
@@ -23,7 +26,8 @@ _elm_bg_smart_sizing_eval(Evas_Object *obj)
    Evas_Coord nx = 0, ny = 0, nw = 0, nh = 0;
    const char *p;
 
-   ELM_BG_DATA_GET(obj, sd);
+   Elm_Bg_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if ((!sd->img) || (!sd->file)) return;
    if (((p = strrchr(sd->file, '.'))) && (!strcasecmp(p, ".edj"))) return;
@@ -34,7 +38,7 @@ _elm_bg_smart_sizing_eval(Evas_Object *obj)
 
    /* grab base object dimensions */
    evas_object_geometry_get
-     (ELM_WIDGET_DATA(sd)->resize_obj, &bx, &by, &bw, &bh);
+     (wd->resize_obj, &bx, &by, &bw, &bh);
 
    /* set some defaults */
    nx = bx;
@@ -95,11 +99,11 @@ _on_resize(void *data,
 }
 
 static void
-_elm_bg_smart_add(Evas_Object *obj)
+_elm_bg_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Bg_Smart_Data);
+   Elm_Bg_Smart_Data *priv = _pd;
 
-   ELM_WIDGET_CLASS(_elm_bg_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -111,45 +115,30 @@ _elm_bg_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_bg_smart_set_user(Elm_Bg_Smart_Class *sc)
+_elm_bg_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_bg_smart_add;
-
-   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_bg_smart_sizing_eval;
-
-   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
-}
-
-EAPI const Elm_Bg_Smart_Class *
-elm_bg_smart_class_get(void)
-{
-   static Elm_Bg_Smart_Class _sc =
-     ELM_BG_SMART_CLASS_INIT_NAME_VERSION(ELM_BG_SMART_NAME);
-   static const Elm_Bg_Smart_Class *class = NULL;
-
-   if (class)
-     return class;
-
-   _elm_bg_smart_set(&_sc);
-   class = &_sc;
-
-   return class;
+   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
+   *aliases = _content_aliases;
 }
 
 EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   obj = elm_widget_add(_elm_bg_smart_class_new(), parent);
-   if (!obj) return NULL;
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 
+   Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 static void
@@ -171,10 +160,22 @@ elm_bg_file_set(Evas_Object *obj,
                 const char *group)
 {
    ELM_BG_CHECK(obj) EINA_FALSE;
-   ELM_BG_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_bg_file_set(file, group, &ret));
+   return ret;
+}
+
+static void
+_file_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *group = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Bg_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    const char *p;
-   Eina_Bool ret;
+   Eina_Bool int_ret;
 
    if (sd->img)
      {
@@ -187,15 +188,16 @@ elm_bg_file_set(Evas_Object *obj,
         sd->file = NULL;
         eina_stringshare_del(sd->group);
         sd->group = NULL;
-        return EINA_TRUE;
+        if (ret) *ret = EINA_TRUE;
+        return;
      }
    eina_stringshare_replace(&sd->file, file);
    eina_stringshare_replace(&sd->group, group);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      {
         sd->img = edje_object_add
-            (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
-        ret = edje_object_file_set(sd->img, file, group);
+            (evas_object_evas_get(wd->resize_obj));
+        int_ret = edje_object_file_set(sd->img, file, group);
         edje_object_signal_callback_del
           (sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
         edje_object_signal_callback_add
@@ -206,7 +208,7 @@ elm_bg_file_set(Evas_Object *obj,
         int err;
 
         sd->img = evas_object_image_add
-            (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
+            (evas_object_evas_get(wd->resize_obj));
         if ((sd->load_opts.w > 0) && (sd->load_opts.h > 0))
           evas_object_image_load_size_set
             (sd->img, sd->load_opts.w, sd->load_opts.h);
@@ -217,19 +219,19 @@ elm_bg_file_set(Evas_Object *obj,
           {
              ERR("Could not load image '%s': %s\n",
                  file, evas_load_error_str(err));
-             ret = EINA_FALSE;
+             int_ret = EINA_FALSE;
           }
         else
-          ret = EINA_TRUE;
+          int_ret = EINA_TRUE;
      }
 
    evas_object_repeat_events_set(sd->img, EINA_TRUE);
 
-   ret &= elm_layout_content_set(obj, "elm.swallow.background", sd->img);
+   int_ret &= elm_layout_content_set(obj, "elm.swallow.background", sd->img);
 
    elm_layout_sizing_eval(obj);
 
-   return ret;
+   if (ret) *ret = int_ret;
 }
 
 EAPI void
@@ -238,7 +240,15 @@ elm_bg_file_get(const Evas_Object *obj,
                 const char **group)
 {
    ELM_BG_CHECK(obj);
-   ELM_BG_DATA_GET_OR_RETURN(obj, sd);
+   eo_do((Eo *) obj, elm_obj_bg_file_get(file, group));
+}
+
+static void
+_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **file = va_arg(*list, const char **);
+   const char **group = va_arg(*list, const char **);
+   Elm_Bg_Smart_Data *sd = _pd;
 
    if (file) *file = sd->file;
    if (group) *group = sd->group;
@@ -249,7 +259,14 @@ elm_bg_option_set(Evas_Object *obj,
                   Elm_Bg_Option option)
 {
    ELM_BG_CHECK(obj);
-   ELM_BG_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_bg_option_set(option));
+}
+
+static void
+_option_set(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Bg_Option option = va_arg(*list, Elm_Bg_Option);
+   Elm_Bg_Smart_Data *sd = _pd;
 
    sd->option = option;
 
@@ -259,10 +276,19 @@ elm_bg_option_set(Evas_Object *obj,
 EAPI Elm_Bg_Option
 elm_bg_option_get(const Evas_Object *obj)
 {
-   ELM_BG_CHECK(obj) EINA_FALSE;
-   ELM_BG_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_BG_OPTION_LAST);
+   ELM_BG_CHECK(obj) ELM_BG_OPTION_LAST;
+   Elm_Bg_Option ret = ELM_BG_OPTION_LAST;
+   eo_do((Eo *) obj, elm_obj_bg_option_get(&ret));
+   return ret;
+}
 
-   return sd->option;
+static void
+_option_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Bg_Option *ret = va_arg(*list, Elm_Bg_Option *);
+   Elm_Bg_Smart_Data *sd = _pd;
+
+   *ret = sd->option;
 }
 
 EAPI void
@@ -272,12 +298,22 @@ elm_bg_color_set(Evas_Object *obj,
                  int b)
 {
    ELM_BG_CHECK(obj);
-   ELM_BG_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_bg_color_set(r, g, b));
+}
+
+static void
+_color_set(Eo *obj, void *_pd, va_list *list)
+{
+   int r = va_arg(*list, int);
+   int g = va_arg(*list, int);
+   int b = va_arg(*list, int);
+   Elm_Bg_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!sd->rect)
      {
         sd->rect = evas_object_rectangle_add
-            (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
+            (evas_object_evas_get(wd->resize_obj));
 
         elm_layout_content_set(obj, "elm.swallow.rectangle", sd->rect);
 
@@ -294,7 +330,16 @@ elm_bg_color_get(const Evas_Object *obj,
                  int *b)
 {
    ELM_BG_CHECK(obj);
-   ELM_BG_DATA_GET_OR_RETURN(obj, sd);
+   eo_do((Eo *) obj, elm_obj_bg_color_get(r, g, b));
+}
+
+static void
+_color_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *r = va_arg(*list, int *);
+   int *g = va_arg(*list, int *);
+   int *b = va_arg(*list, int *);
+   Elm_Bg_Smart_Data *sd = _pd;
 
    evas_object_color_get(sd->rect, r, g, b, NULL);
 }
@@ -305,7 +350,15 @@ elm_bg_load_size_set(Evas_Object *obj,
                      Evas_Coord h)
 {
    ELM_BG_CHECK(obj);
-   ELM_BG_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_bg_load_size_set(w, h));
+}
+
+static void
+_load_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
+   Elm_Bg_Smart_Data *sd = _pd;
    const char *p;
 
    sd->load_opts.w = w;
@@ -315,3 +368,49 @@ elm_bg_load_size_set(Evas_Object *obj,
    if (!(((p = strrchr(sd->file, '.'))) && (!strcasecmp(p, ".edj"))))
      evas_object_image_load_size_set(sd->img, w, h);
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_bg_smart_add),
+
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_bg_smart_sizing_eval),
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_bg_smart_content_aliases_get),
+
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_FILE_SET), _file_set),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_FILE_GET), _file_get),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_OPTION_SET), _option_set),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_OPTION_GET), _option_get),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_SET), _color_set),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_GET), _color_get),
+        EO_OP_FUNC(ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_LOAD_SIZE_SET), _load_size_set),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_FILE_SET, "Set the file (image or edje collection) to give life for the background."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_FILE_GET, "Get the file (image or edje collection) set on a given background."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_OPTION_SET, "Set the mode of display for a given background widget's image."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_OPTION_GET, "Get the mode of display for a given background widget's image."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_COLOR_SET, "Set the color on a given background widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_COLOR_GET, "Get the color set on a given background widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_BG_SUB_ID_LOAD_SIZE_SET, "Set the size of the pixmap representation of the image set on a given background widget."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_BG_BASE_ID, op_desc, ELM_OBJ_BG_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Bg_Smart_Data),
+     _class_constructor,
+     NULL
+};
+EO_DEFINE_CLASS(elm_obj_bg_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+

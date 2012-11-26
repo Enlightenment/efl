@@ -1,13 +1,19 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_icon.h"
+#include "elm_widget_image.h"
+
+#include <Eo.h>
 
 #ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;
 #endif
 
-EAPI const char ELM_ICON_SMART_NAME[] = "elm_icon";
+EAPI Eo_Op ELM_OBJ_ICON_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_ICON_CLASS
+#define MY_CLASS_NAME "elm_icon"
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *_elm_icon_retry = NULL;
@@ -21,10 +27,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_THUMB_ERROR, ""},
    {NULL, NULL}
 };
-
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_ICON_SMART_NAME, _elm_icon, Elm_Icon_Smart_Class,
-  Elm_Image_Smart_Class, elm_image_smart_class_get, _smart_callbacks);
 
 /* FIXME: move this code to ecore */
 #ifdef _WIN32
@@ -101,7 +103,7 @@ _icon_thumb_display(Elm_Icon_Smart_Data *sd)
           }
 
         ret = elm_image_file_set
-            (ELM_WIDGET_DATA(sd)->obj, sd->thumb.thumb.path,
+            (sd->obj, sd->thumb.thumb.path,
             sd->thumb.thumb.key);
 
         sd->is_video = EINA_FALSE;
@@ -109,14 +111,14 @@ _icon_thumb_display(Elm_Icon_Smart_Data *sd)
 
    if (!ret)
      ret = elm_image_file_set
-         (ELM_WIDGET_DATA(sd)->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
+         (sd->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
 
    if (ret)
      evas_object_smart_callback_call
-       (ELM_WIDGET_DATA(sd)->obj, SIG_THUMB_DONE, NULL);
+       (sd->obj, SIG_THUMB_DONE, NULL);
    else
      evas_object_smart_callback_call
-       (ELM_WIDGET_DATA(sd)->obj, SIG_THUMB_ERROR, NULL);
+       (sd->obj, SIG_THUMB_ERROR, NULL);
 
    return ret;
 }
@@ -150,9 +152,9 @@ _icon_thumb_finish(Elm_Icon_Smart_Data *sd,
                    Ethumb_Client *ethumbd)
 {
    const char *file = NULL, *group = NULL;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
-   elm_image_file_get(ELM_WIDGET_DATA(sd)->obj, &file, &group);
+   elm_image_file_get(sd->obj, &file, &group);
    file = eina_stringshare_ref(file);
    group = eina_stringshare_ref(group);
 
@@ -167,7 +169,7 @@ _icon_thumb_finish(Elm_Icon_Smart_Data *sd,
           }
 
         /* Back to previous image */
-        elm_image_file_set(ELM_WIDGET_DATA(sd)->obj, file, group);
+        elm_image_file_set(sd->obj, file, group);
      }
 
    _icon_thumb_cleanup(ethumbd);
@@ -218,7 +220,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_THUMB_ERROR, NULL);
+   evas_object_smart_callback_call(sd->obj, SIG_THUMB_ERROR, NULL);
 
    _icon_thumb_cleanup(client);
 }
@@ -239,7 +241,7 @@ _icon_thumb_apply(Elm_Icon_Smart_Data *sd)
    if (!ethumb_client_file_set
          (ethumbd, sd->thumb.file.path, sd->thumb.file.key)) return;
 
-   min_size = _icon_size_min_get(ELM_WIDGET_DATA(sd)->obj);
+   min_size = _icon_size_min_get(sd->obj);
    ethumb_client_size_set(ethumbd, min_size, min_size);
 
    sd->thumb.request = ethumb_client_thumb_async_get
@@ -319,11 +321,11 @@ _icon_freedesktop_set(Evas_Object * obj __UNUSED__,
 }
 
 static void
-_elm_icon_smart_sizing_eval(Evas_Object *obj)
+_elm_icon_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    int w, h;
 
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
 
    if (sd->in_eval) return;
 
@@ -344,7 +346,7 @@ _elm_icon_smart_sizing_eval(Evas_Object *obj)
      }
 #endif
 
-   _elm_icon_parent_sc->sizing_eval(obj);
+   eo_do_super(obj, elm_obj_image_sizing_eval());
 
    sd->in_eval--;
 }
@@ -362,16 +364,21 @@ _edje_signals_free(Elm_Icon_Smart_Data *sd)
      }
 }
 
-static Eina_Bool
-_elm_icon_smart_file_set(Evas_Object *obj,
-                         const char *file,
-                         const char *key)
+static void
+_elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *pclip;
 
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
+   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   const char *file = va_arg(*list, const char *);
+   const char *key = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN(file);
 
    _edje_signals_free(sd);
 
@@ -383,79 +390,88 @@ _elm_icon_smart_file_set(Evas_Object *obj,
      }
 #endif
 
-   if (!sd->is_video) return _elm_icon_parent_sc->file_set(obj, file, key);
+   if (!sd->is_video)
+     {
+        eo_do_super(obj, elm_obj_image_file_set(file, key, &int_ret));
+        if (ret) *ret = int_ret;
+        return;
+     }
 
    /* parent's edje file setting path replicated here (we got .eet
     * extension, so bypassing it) */
-   if (ELM_IMAGE_DATA(sd)->prev_img)
-     evas_object_del(ELM_IMAGE_DATA(sd)->prev_img);
-   ELM_IMAGE_DATA(sd)->prev_img = NULL;
+   if (id->prev_img)
+     evas_object_del(id->prev_img);
+   id->prev_img = NULL;
 
-   if (!ELM_IMAGE_DATA(sd)->edje)
+   if (!id->edje)
      {
-        pclip = evas_object_clip_get(ELM_IMAGE_DATA(sd)->img);
-        if (ELM_IMAGE_DATA(sd)->img) evas_object_del(ELM_IMAGE_DATA(sd)->img);
+        pclip = evas_object_clip_get(id->img);
+        if (id->img) evas_object_del(id->img);
 
         /* Edje object instead */
-        ELM_IMAGE_DATA(sd)->img = edje_object_add(evas_object_evas_get(obj));
-        evas_object_smart_member_add(ELM_IMAGE_DATA(sd)->img, obj);
-        if (ELM_IMAGE_DATA(sd)->show)
-          evas_object_show(ELM_IMAGE_DATA(sd)->img);
-        evas_object_clip_set(ELM_IMAGE_DATA(sd)->img, pclip);
+        id->img = edje_object_add(evas_object_evas_get(obj));
+        evas_object_smart_member_add(id->img, obj);
+        if (id->show)
+          evas_object_show(id->img);
+        evas_object_clip_set(id->img, pclip);
      }
 
-   ELM_IMAGE_DATA(sd)->edje = EINA_TRUE;
-   if (!edje_object_file_set(ELM_IMAGE_DATA(sd)->img, file, key))
+   id->edje = EINA_TRUE;
+   if (!edje_object_file_set(id->img, file, key))
      {
         ERR("failed to set edje file '%s', group '%s': %s", file, key,
             edje_load_error_str
-              (edje_object_load_error_get(ELM_IMAGE_DATA(sd)->img)));
-        return EINA_FALSE;
+              (edje_object_load_error_get(id->img)));
+        return;
      }
 
-   evas_object_move(ELM_IMAGE_DATA(sd)->img, ELM_IMAGE_DATA(sd)->img_x,
-                    ELM_IMAGE_DATA(sd)->img_y);
-   evas_object_resize(ELM_IMAGE_DATA(sd)->img, ELM_IMAGE_DATA(sd)->img_w,
-                      ELM_IMAGE_DATA(sd)->img_h);
+   evas_object_move(id->img, id->img_x,
+                    id->img_y);
+   evas_object_resize(id->img, id->img_w,
+                      id->img_h);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
-static Eina_Bool
-_elm_icon_smart_memfile_set(Evas_Object *obj,
-                            const void *img,
-                            size_t size,
-                            const char *format,
-                            const char *key)
+static void
+_elm_icon_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
 
-   Eina_Bool ret;
+   const void *img = va_arg(*list, const void *);
+   size_t size = va_arg(*list, size_t);
+   const char *format = va_arg(*list, const char *);
+   const char *key = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN(img);
+   EINA_SAFETY_ON_TRUE_RETURN(!size);
    eina_stringshare_del(sd->stdicon);
    sd->stdicon = NULL;
 
    _edje_signals_free(sd);
 
-   ret = _elm_icon_parent_sc->memfile_set(obj, img, size, format, key);
-
-   return ret;
+   eo_do_super(obj, elm_obj_image_memfile_set(img, size, format, key, &int_ret));
+   if (ret) *ret = int_ret;
 }
 
-static Eina_Bool
-_elm_icon_smart_theme(Evas_Object *obj)
+static void
+_elm_icon_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   if (!ELM_WIDGET_CLASS(_elm_icon_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static Eina_Bool
@@ -504,7 +520,7 @@ _elm_icon_standard_set(Evas_Object *obj,
                        Eina_Bool *fdo)
 {
    char *tmp;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
    ELM_ICON_DATA_GET(obj, sd);
 
@@ -542,7 +558,7 @@ _elm_icon_standard_set(Evas_Object *obj,
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
-        _elm_icon_smart_sizing_eval(obj);
+        eo_do(obj, elm_obj_image_sizing_eval());
         return EINA_TRUE;
      }
 
@@ -590,11 +606,10 @@ _elm_icon_thumb_resize_cb(void *data,
 #endif
 
 static void
-_elm_icon_smart_add(Evas_Object *obj)
+_elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Icon_Smart_Data);
-
-   ELM_WIDGET_CLASS(_elm_icon_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
+   Elm_Icon_Smart_Data *priv = _pd;
 
    priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
 
@@ -604,13 +619,13 @@ _elm_icon_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_icon_smart_del(Evas_Object *obj)
+_elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_ETHUMB
    Ethumb_Client *ethumbd;
 #endif
 
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
 
    if (sd->stdicon) eina_stringshare_del(sd->stdicon);
 
@@ -629,7 +644,7 @@ _elm_icon_smart_del(Evas_Object *obj)
 
    _edje_signals_free(sd);
 
-   ELM_WIDGET_CLASS(_elm_icon_parent_sc)->base.del(obj);
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 /* WARNING: to be deprecated */
@@ -638,11 +653,12 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *emission,
                       const char *source)
 {
-   ELM_ICON_DATA_GET(obj, sd);
 
-   if (!ELM_IMAGE_DATA(sd)->edje) return;
+   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
 
-   edje_object_signal_emit(ELM_IMAGE_DATA(sd)->img, emission, source);
+   if (!id->edje) return;
+
+   edje_object_signal_emit(id->img, emission, source);
 }
 
 static void
@@ -667,8 +683,9 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
+   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
 
-   if (!ELM_IMAGE_DATA(sd)->edje) return;
+   if (!id->edje) return;
 
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;
@@ -682,7 +699,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
      eina_list_append(sd->edje_signals, esd);
 
    edje_object_signal_callback_add
-     (ELM_IMAGE_DATA(sd)->img, emission, source, _edje_signal_callback, esd);
+     (id->img, emission, source, _edje_signal_callback, esd);
 }
 
 /* WARNING: to be deprecated */
@@ -697,8 +714,9 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
+   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
 
-   if (!ELM_IMAGE_DATA(sd)->edje) return NULL;
+   if (!id->edje) return NULL;
 
    EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
@@ -712,7 +730,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
              free(esd);
 
              edje_object_signal_callback_del_full
-               (ELM_IMAGE_DATA(sd)->img, emission, source,
+               (id->img, emission, source,
                _edje_signal_callback, esd);
 
              return data; /* stop at 1st match */
@@ -722,50 +740,28 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    return data;
 }
 
-static void
-_elm_icon_smart_set_user(Elm_Icon_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_icon_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_icon_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_icon_smart_theme;
-
-   ELM_IMAGE_CLASS(sc)->file_set = _elm_icon_smart_file_set;
-   ELM_IMAGE_CLASS(sc)->memfile_set = _elm_icon_smart_memfile_set;
-   ELM_IMAGE_CLASS(sc)->sizing_eval = _elm_icon_smart_sizing_eval;
-}
-
-EAPI const Elm_Icon_Smart_Class *
-elm_icon_smart_class_get(void)
-{
-   static Elm_Icon_Smart_Class _sc =
-     ELM_ICON_SMART_CLASS_INIT_NAME_VERSION(ELM_ICON_SMART_NAME);
-   static const Elm_Icon_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class) return class;
-
-   _elm_icon_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
-}
-
 EAPI Evas_Object *
 elm_icon_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   obj = elm_widget_add(_elm_icon_smart_class_new(), parent);
-   if (!obj) return NULL;
-
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
    return obj;
+}
+
+static void
+_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Icon_Smart_Data *sd = _pd;
+   sd->obj = obj;
+
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+
+   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
+     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
 }
 
 EAPI Eina_Bool
@@ -777,7 +773,9 @@ elm_icon_memfile_set(Evas_Object *obj,
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
-   return elm_image_memfile_set(obj, img, size, format, key);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_image_memfile_set(img, size, format, key, &ret));
+   return ret;
 }
 
 EAPI Eina_Bool
@@ -786,8 +784,11 @@ elm_icon_file_set(Evas_Object *obj,
                   const char *group)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
-   return elm_image_file_set(obj, file, group);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_image_file_set(file, group, &ret));
+   return ret;
 }
 
 EAPI void
@@ -806,9 +807,16 @@ elm_icon_thumb_set(Evas_Object *obj,
                    const char *group)
 {
    ELM_ICON_CHECK(obj);
+   eo_do(obj, elm_obj_icon_thumb_set(file, group));
+}
 
+static void
+_thumb_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *group = va_arg(*list, const char *);
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Smart_Data *sd = _pd;
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
@@ -834,6 +842,7 @@ elm_icon_thumb_set(Evas_Object *obj,
      }
 #else
    (void)obj;
+   (void)_pd;
    (void)file;
    (void)group;
 #endif
@@ -886,32 +895,58 @@ elm_icon_standard_set(Evas_Object *obj,
                       const char *name)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
-   ELM_ICON_DATA_GET(obj, sd);
+
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_icon_standard_set(name, &ret));
+   return ret;
+}
+
+static void
+_standard_set(Eo *obj, void *_pd, va_list *list)
+{
+
+   Elm_Icon_Smart_Data *sd = _pd;
 
    Eina_Bool fdo = EINA_FALSE;
-   Eina_Bool ret;
+   const char *name = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-   if (!name) return EINA_FALSE;
+   if (!name)
+     {
+        if (ret) *ret = EINA_FALSE;
+        return;
+     }
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
 
-   ret = _elm_icon_standard_set(obj, name, &fdo);
+   Eina_Bool int_ret = _elm_icon_standard_set(obj, name, &fdo);
 
    if (fdo)
      evas_object_event_callback_add
        (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
 
-   return ret;
+   if (ret) *ret = int_ret;
 }
 
 EAPI const char *
 elm_icon_standard_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) NULL;
-   ELM_ICON_DATA_GET(obj, sd);
 
-   return sd->stdicon;
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_icon_standard_get(&ret));
+   return ret;
+}
+
+static void
+_standard_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+
+   Elm_Icon_Smart_Data *sd = _pd;
+   const char **ret = va_arg(*list, const char **);
+
+   *ret = sd->stdicon;
 }
 
 EAPI void
@@ -919,7 +954,16 @@ elm_icon_order_lookup_set(Evas_Object *obj,
                           Elm_Icon_Lookup_Order order)
 {
    ELM_ICON_CHECK(obj);
-   ELM_ICON_DATA_GET(obj, sd);
+
+   eo_do(obj, elm_obj_icon_order_lookup_set(order));
+}
+
+static void
+_order_lookup_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+
+   Elm_Icon_Smart_Data *sd = _pd;
+   Elm_Icon_Lookup_Order order = va_arg(*list, Elm_Icon_Lookup_Order);
 
    sd->lookup_order = order;
 }
@@ -928,9 +972,19 @@ EAPI Elm_Icon_Lookup_Order
 elm_icon_order_lookup_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) ELM_ICON_LOOKUP_THEME_FDO;
-   ELM_ICON_DATA_GET(obj, sd);
+   Elm_Icon_Lookup_Order ret = ELM_ICON_LOOKUP_THEME_FDO;
+   eo_do((Eo *) obj, elm_obj_icon_order_lookup_get(&ret));
+   return ret;
+}
 
-   return sd->lookup_order;
+static void
+_order_lookup_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+
+   Elm_Icon_Smart_Data *sd = _pd;
+   Elm_Icon_Lookup_Order *ret = va_arg(*list, Elm_Icon_Lookup_Order *);
+
+   *ret = sd->lookup_order;
 }
 
 EAPI void
@@ -1064,3 +1118,48 @@ elm_icon_aspect_fixed_get(const Evas_Object *obj)
 
    return elm_image_aspect_fixed_get(obj);
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_icon_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_icon_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_icon_smart_theme),
+
+        EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_FILE_SET), _elm_icon_smart_file_set),
+        EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_MEMFILE_SET), _elm_icon_smart_memfile_set),
+        EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SIZING_EVAL), _elm_icon_smart_sizing_eval),
+
+        EO_OP_FUNC(ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_THUMB_SET), _thumb_set),
+        EO_OP_FUNC(ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_STANDARD_SET), _standard_set),
+        EO_OP_FUNC(ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_STANDARD_GET), _standard_get),
+        EO_OP_FUNC(ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_SET), _order_lookup_set),
+        EO_OP_FUNC(ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_GET), _order_lookup_get),
+
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_THUMB_SET, "Set the file that will be used, but use a generated thumbnail."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_STANDARD_SET, "Set the icon by icon standards names."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_STANDARD_GET, "Get the icon name set by icon standard names."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_SET, "Sets the icon lookup order used by elm_icon_standard_set()."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_GET, "Gets the icon lookup order."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_ICON_BASE_ID, op_desc, ELM_OBJ_ICON_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Icon_Smart_Data),
+     _class_constructor,
+     NULL
+};
+EO_DEFINE_CLASS(elm_obj_icon_class_get, &class_desc, ELM_OBJ_IMAGE_CLASS, NULL);

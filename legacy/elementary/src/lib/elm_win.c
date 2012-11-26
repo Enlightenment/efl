@@ -2,7 +2,13 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
-static const char WIN_SMART_NAME[] = "elm_win";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_WIN_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_WIN_CLASS
+
+#define MY_CLASS_NAME "elm_win"
 
 static const Elm_Win_Trap *trap = NULL;
 
@@ -11,13 +17,13 @@ static const Elm_Win_Trap *trap = NULL;
     {                                                                   \
        if ((!trap) || (!trap->name) ||                                  \
            ((trap->name) &&                                             \
-            (trap->name(sd->trap_data, sd->base.obj, ## __VA_ARGS__)))) \
+            (trap->name(sd->trap_data, sd->obj, ## __VA_ARGS__)))) \
          ecore_evas_##name(sd->ee, ##__VA_ARGS__);                      \
     }                                                                   \
   while (0)
 
 #define ELM_WIN_DATA_GET(o, sd) \
-  Elm_Win_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Win_Smart_Data * sd = eo_data_get(o, MY_CLASS)
 
 #define ELM_WIN_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_WIN_DATA_GET(o, ptr);                          \
@@ -38,7 +44,7 @@ static const Elm_Win_Trap *trap = NULL;
     }
 
 #define ELM_WIN_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), WIN_SMART_NAME, __func__)) \
+  if (!obj || !eo_isa(obj, MY_CLASS)) \
     return
 
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : (_elm_config->engine ? _elm_config->engine : ""))
@@ -48,10 +54,6 @@ typedef struct _Elm_Win_Smart_Data Elm_Win_Smart_Data;
 
 struct _Elm_Win_Smart_Data
 {
-   Elm_Widget_Smart_Data base; /* base widget smart data as
-                                * first member obligatory, as
-                                * we're inheriting from it */
-
    Ecore_Evas           *ee;
    Evas                 *evas;
    Evas_Object          *parent; /* parent *window* object*/
@@ -60,6 +62,7 @@ struct _Elm_Win_Smart_Data
    Eina_List            *resize_objs; /* a window may have
                                        * *multiple* resize
                                        * objects */
+   Evas_Object          *obj; /* The object itself */
 #ifdef HAVE_ELEMENTARY_X
    struct
    {
@@ -185,10 +188,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ROTATION_CHANGED, ""},
    {NULL, NULL}
 };
-
-EVAS_SMART_SUBCLASS_NEW
-  (WIN_SMART_NAME, _elm_win, Elm_Widget_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
@@ -549,7 +548,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_MOVED, NULL);
+   evas_object_smart_callback_call(sd->obj, SIG_MOVED, NULL);
 }
 
 static void
@@ -577,7 +576,7 @@ _elm_win_resize_job(void *data)
    /*   { */
    /*   } */
 
-   evas_object_resize(ELM_WIDGET_DATA(sd)->obj, w, h);
+   evas_object_resize(sd->obj, w, h);
    EINA_LIST_FOREACH(sd->resize_objs, l, obj)
      {
         evas_object_move(obj, sd->fx, sd->fy);
@@ -644,7 +643,7 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
    Evas_Object *previous = sd->focus_highlight.prev.target;
    Evas_Object *target = sd->focus_highlight.cur.target;
 
-   evas_object_geometry_get(ELM_WIDGET_DATA(sd)->obj, NULL, NULL, &w, &h);
+   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    evas_object_geometry_get(target, &tx, &ty, &tw, &th);
    evas_object_geometry_get(previous, &px, &py, &pw, &ph);
    evas_object_move(obj, 0, 0);
@@ -730,7 +729,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
         else
           str = "default";
         elm_widget_theme_object_set
-          (ELM_WIDGET_DATA(sd)->obj, top, "focus_highlight", "top", str);
+          (sd->obj, top, "focus_highlight", "top", str);
         sd->focus_highlight.changed_theme = EINA_FALSE;
 
         if (_elm_config->focus_highlight_animate)
@@ -776,7 +775,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   obj = ELM_WIDGET_DATA(sd)->obj;
+   obj = sd->obj;
 
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
    if (!elm_widget_focus_order_get(obj))
@@ -808,7 +807,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   obj = ELM_WIDGET_DATA(sd)->obj;
+   obj = sd->obj;
 
    elm_object_focus_set(obj, EINA_FALSE);
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
@@ -839,7 +838,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   obj = ELM_WIDGET_DATA(sd)->obj;
+   obj = sd->obj;
 
    if (sd->withdrawn) _elm_win_count_withdrawn--;
    if (sd->iconified) _elm_win_count_iconified--;
@@ -906,89 +905,117 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
 }
 
-static Eina_Bool
-_elm_win_smart_focus_next(const Evas_Object *obj,
-                          Elm_Focus_Direction dir,
-                          Evas_Object **next)
+static void
+_elm_win_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_TRUE;
+}
+
+static void
+_elm_win_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
    /* Focus chain */
-   if (ELM_WIDGET_DATA(sd)->subobjs)
+   if (wd->subobjs)
      {
         if (!(items = elm_widget_focus_custom_chain_get(obj)))
           {
-             items = ELM_WIDGET_DATA(sd)->subobjs;
+             items = wd->subobjs;
              if (!items)
-               return EINA_FALSE;
+               return;
           }
         list_data_get = eina_list_data_get;
 
         elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
 
         if (*next)
-          return EINA_TRUE;
+          {
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
    *next = (Evas_Object *)obj;
-   return EINA_FALSE;
+   return;
 }
 
-static Eina_Bool
-_elm_win_smart_focus_direction(const Evas_Object *obj,
-                               const Evas_Object *base,
-                               double degree,
-                               Evas_Object **direction,
-                               double *weight)
+static void
+_elm_win_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_TRUE;
+}
+
+static void
+_elm_win_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   const Evas_Object *base = va_arg(*list, Evas_Object *);
+   double degree = va_arg(*list, double);
+   Evas_Object **direction = va_arg(*list, Evas_Object **);
+   double *weight = va_arg(*list, double *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   ELM_WIN_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    /* Focus chain */
-   if (ELM_WIDGET_DATA(sd)->subobjs)
+   if (wd->subobjs)
      {
         if (!(items = elm_widget_focus_custom_chain_get(obj)))
-          items = ELM_WIDGET_DATA(sd)->subobjs;
+          items = wd->subobjs;
 
         list_data_get = eina_list_data_get;
 
-        return elm_widget_focus_list_direction_get
+        int_ret = elm_widget_focus_list_direction_get
                  (obj, base, items, list_data_get, degree, direction, weight);
+        if (ret) *ret = int_ret;
      }
-
-   return EINA_FALSE;
 }
 
-static Eina_Bool
-_elm_win_smart_on_focus(Evas_Object *obj)
+static void
+_elm_win_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_TRUE;
+
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->img_obj)
      evas_object_focus_set(sd->img_obj, elm_widget_focus_get(obj));
    else
      evas_object_focus_set(obj, elm_widget_focus_get(obj));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
-_elm_win_smart_event(Evas_Object *obj,
-                     Evas_Object *src __UNUSED__,
-                     Evas_Callback_Type type,
-                     void *event_info)
+static void
+_elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Evas_Object *source = va_arg(*list, Evas_Object *);
+   (void) source;
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
    Evas_Event_Key_Down *ev = event_info;
    Evas_Object *current_focused;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return;
 
    if (type != EVAS_CALLBACK_KEY_DOWN)
-     return EINA_FALSE;
+     return;
 
    current_focused = elm_widget_focused_object_get(obj);
    if ((!strcmp(ev->keyname, "Tab")) ||
@@ -1042,11 +1069,11 @@ _elm_win_smart_event(Evas_Object *obj,
         goto success;
      }
 
-   return EINA_FALSE;
+   return;
 
 success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -1057,16 +1084,16 @@ _deferred_ecore_evas_free(void *data)
 }
 
 static void
-_elm_win_smart_show(Evas_Object *obj)
+_elm_win_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (!evas_object_visible_get(obj))
      {
         _elm_win_count_shown++;
         _elm_win_state_eval_queue();
      }
-   _elm_win_parent_sc->base.show(obj);
+   eo_do_super(obj, evas_obj_smart_show());
 
    TRAP(sd, show);
 
@@ -1075,16 +1102,16 @@ _elm_win_smart_show(Evas_Object *obj)
 }
 
 static void
-_elm_win_smart_hide(Evas_Object *obj)
+_elm_win_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (evas_object_visible_get(obj))
      {
         _elm_win_count_shown--;
         _elm_win_state_eval_queue();
      }
-   _elm_win_parent_sc->base.hide(obj);
+   eo_do_super(obj, evas_obj_smart_hide());
 
    TRAP(sd, hide);
 
@@ -1278,9 +1305,9 @@ _elm_win_on_img_obj_del(void *data,
 }
 
 static void
-_elm_win_smart_del(Evas_Object *obj)
+_elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Elm_Win_Smart_Data *sd = _pd;
 
    /* NB: child deletion handled by parent's smart del */
 
@@ -1352,7 +1379,7 @@ _elm_win_smart_del(Evas_Object *obj)
    ecore_evas_callback_move_set(sd->ee, NULL);
    ecore_evas_callback_state_change_set(sd->ee, NULL);
 
-   _elm_win_parent_sc->base.del(obj); /* handles freeing sd */
+   eo_do_super(obj, evas_obj_smart_del());
 
    if ((!_elm_win_list) &&
        (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
@@ -1392,11 +1419,11 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 static void
-_elm_win_smart_move(Evas_Object *obj,
-                    Evas_Coord x,
-                    Evas_Coord y)
+_elm_win_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Evas_Coord x = va_arg(*list, Evas_Coord);
+   Evas_Coord y = va_arg(*list, Evas_Coord);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->img_obj)
      {
@@ -1414,7 +1441,7 @@ _elm_win_smart_move(Evas_Object *obj,
         if (!ecore_evas_override_get(sd->ee))  return;
      }
 
-   _elm_win_parent_sc->base.move(obj, x, y);
+   eo_do_super(obj, evas_obj_smart_move(x, y));
 
    if (ecore_evas_override_get(sd->ee))
      {
@@ -1436,13 +1463,14 @@ _elm_win_smart_move(Evas_Object *obj,
 }
 
 static void
-_elm_win_smart_resize(Evas_Object *obj,
-                      Evas_Coord w,
-                      Evas_Coord h)
+_elm_win_smart_resize(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_WIN_DATA_GET(obj, sd);
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
 
-   _elm_win_parent_sc->base.resize(obj, w, h);
+   Elm_Win_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, evas_obj_smart_resize(w, h));
 
    if (sd->img_obj)
      {
@@ -1471,7 +1499,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   obj = ELM_WIDGET_DATA(sd)->obj;
+   obj = sd->obj;
 
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
@@ -1816,7 +1844,7 @@ _elm_win_client_message(void *data,
      {
         if ((unsigned int)e->data.l[0] == sd->x.xwin)
           {
-             Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
+             Evas *evas = evas_object_evas_get(sd->obj);
              if (evas)
                {
                   edje_file_cache_flush();
@@ -1830,7 +1858,7 @@ _elm_win_client_message(void *data,
      {
         if ((unsigned int)e->data.l[0] == sd->x.xwin)
           {
-             Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
+             Evas *evas = evas_object_evas_get(sd->obj);
              if (evas)
                {
                   edje_file_cache_flush();
@@ -1859,7 +1887,7 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE)
                {
                   _elm_access_highlight_object_activate
-                    (ELM_WIDGET_DATA(sd)->obj, ELM_ACTIVATE_DEFAULT);
+                    (sd->obj, ELM_ACTIVATE_DEFAULT);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
@@ -1880,13 +1908,13 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP)
                {
                   _elm_access_highlight_object_activate
-                    (ELM_WIDGET_DATA(sd)->obj, ELM_ACTIVATE_UP);
+                    (sd->obj, ELM_ACTIVATE_UP);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN)
                {
                   _elm_access_highlight_object_activate
-                    (ELM_WIDGET_DATA(sd)->obj, ELM_ACTIVATE_DOWN);
+                    (sd->obj, ELM_ACTIVATE_DOWN);
                }
           }
      }
@@ -1906,7 +1934,7 @@ _elm_win_property_change(void *data,
         if (e->win == sd->x.xwin)
           {
              sd->indmode = ecore_x_e_illume_indicator_state_get(e->win);
-             evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_INDICATOR_PROP_CHANGED, NULL);
+             evas_object_smart_callback_call(sd->obj, SIG_INDICATOR_PROP_CHANGED, NULL);
           }
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -2117,7 +2145,7 @@ _elm_win_frame_cb_close(void *data,
 
    if (!(sd = data)) return;
 
-   win = ELM_WIDGET_DATA(sd)->obj;
+   win = sd->obj;
 
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
@@ -2133,7 +2161,7 @@ static void
 _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
 {
-   Evas_Object *obj = ELM_WIDGET_DATA(sd)->obj;
+   Evas_Object *obj = sd->obj;
    short layer;
 
    // FIXME: Don't use hardcoded framespace values, get it from theme
@@ -2146,7 +2174,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    layer = evas_object_layer_get(obj);
    evas_object_layer_set(sd->frame_obj, layer + 1);
    elm_widget_theme_object_set
-     (ELM_WIDGET_DATA(sd)->obj, sd->frame_obj, "border", "base", style);
+     (sd->obj, sd->frame_obj, "border", "base", style);
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
    evas_object_move(sd->frame_obj, 0, 0);
@@ -2242,7 +2270,7 @@ _win_img_hide(void *data,
 {
    Elm_Win_Smart_Data *sd = data;
 
-   elm_widget_focus_hide_handle(ELM_WIDGET_DATA(sd)->obj);
+   elm_widget_focus_hide_handle(sd->obj);
 }
 
 static void
@@ -2254,7 +2282,7 @@ _win_img_mouse_up(void *data,
    Elm_Win_Smart_Data *sd = data;
    Evas_Event_Mouse_Up *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     elm_widget_focus_mouse_up_handle(ELM_WIDGET_DATA(sd)->obj);
+     elm_widget_focus_mouse_up_handle(sd->obj);
 }
 
 static void
@@ -2264,7 +2292,7 @@ _win_img_focus_in(void *data,
                   void *event_info __UNUSED__)
 {
    Elm_Win_Smart_Data *sd = data;
-   elm_widget_focus_steal(ELM_WIDGET_DATA(sd)->obj);
+   elm_widget_focus_steal(sd->obj);
 }
 
 static void
@@ -2274,7 +2302,7 @@ _win_img_focus_out(void *data,
                    void *event_info __UNUSED__)
 {
    Elm_Win_Smart_Data *sd = data;
-   elm_widget_focused_object_clear(ELM_WIDGET_DATA(sd)->obj);
+   elm_widget_focused_object_clear(sd->obj);
 }
 
 static void
@@ -2307,31 +2335,13 @@ _elm_win_on_icon_del(void *data,
 }
 
 static void
-_elm_win_smart_add(Evas_Object *obj)
+_elm_win_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Win_Smart_Data);
-
-   _elm_win_parent_sc->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
-}
-
-static void
-_elm_win_smart_set_user(Elm_Widget_Smart_Class *sc)
-{
-   sc->base.add = _elm_win_smart_add;
-   sc->base.del = _elm_win_smart_del;
-   sc->base.show = _elm_win_smart_show;
-   sc->base.hide = _elm_win_smart_hide;
-   sc->base.move = _elm_win_smart_move;
-   sc->base.resize = _elm_win_smart_resize;
-
-   sc->focus_next = _elm_win_smart_focus_next;
-   sc->focus_direction = _elm_win_smart_focus_direction;
-   sc->on_focus = _elm_win_smart_on_focus;
-   sc->event = _elm_win_smart_event;
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -2352,8 +2362,21 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
+   Evas_Object *obj = eo_add_custom(MY_CLASS, parent, elm_obj_win_constructor(name, type));
+   eo_unref(obj);
+   return obj;
+}
+
+static void
+_win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Win_Smart_Data *sd = _pd;
+   sd->obj = obj; // in ctor
+
+   const char *name = va_arg(*list, const char *);
+   Elm_Win_Type type = va_arg(*list, Elm_Win_Type);
+   Evas_Object *parent = eo_parent_get(obj);
    Evas *e;
-   Evas_Object *obj;
    const Eina_List *l;
    const char *fontpath, *fallback = NULL;
 
@@ -2592,13 +2615,15 @@ elm_win_add(Evas_Object *parent,
    if (!tmp_sd.ee)
      {
         ERR("Cannot create window.");
-        return NULL;
+        eo_error_set(obj);
+        return;
      }
 
-   obj = evas_object_smart_add
-       (ecore_evas_get(tmp_sd.ee), _elm_win_smart_class_new());
-
-   ELM_WIN_DATA_GET(obj, sd);
+   eo_parent_set(obj, ecore_evas_get(tmp_sd.ee));
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
    /* copying possibly altered fields back */
 #define SD_CPY(_field)             \
@@ -2771,8 +2796,13 @@ elm_win_add(Evas_Object *parent,
      {
         // do nothing
      }
+}
 
-   return obj;
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_error_set(obj);
+   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 EAPI Evas_Object *
@@ -2802,14 +2832,21 @@ EAPI void
 elm_win_resize_object_add(Evas_Object *obj,
                           Evas_Object *subobj)
 {
+   ELM_WIN_CHECK(obj);
+   eo_do(obj, elm_obj_win_resize_object_add(subobj));
+}
+
+static void
+_resize_object_add(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *subobj = va_arg(*list, Evas_Object *);
    Evas_Coord w, h;
 
-   ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (eina_list_data_find(sd->resize_objs, subobj)) return;
 
-   if (!ELM_WIDGET_DATA(sd)->api->sub_object_add(obj, subobj))
+   if (!elm_widget_sub_object_add(obj, subobj))
      ERR("could not add %p as sub object of %p", subobj, obj);
 
    sd->resize_objs = eina_list_append(sd->resize_objs, subobj);
@@ -2832,9 +2869,16 @@ elm_win_resize_object_del(Evas_Object *obj,
                           Evas_Object *subobj)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_resize_object_del(subobj));
+}
 
-   if (!ELM_WIDGET_DATA(sd)->api->sub_object_del(obj, subobj))
+static void
+_resize_object_del(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *subobj = va_arg(*list, Evas_Object *);
+   Elm_Win_Smart_Data *sd = _pd;
+
+   if (!elm_widget_sub_object_del(obj, subobj))
      ERR("could not remove sub object %p from %p", subobj, obj);
 
    sd->resize_objs = eina_list_remove(sd->resize_objs, subobj);
@@ -2853,7 +2897,14 @@ elm_win_title_set(Evas_Object *obj,
                   const char *title)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_title_set(title));
+}
+
+static void
+_title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *title = va_arg(*list, const char *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (!title) return;
    eina_stringshare_replace(&(sd->title), title);
@@ -2867,9 +2918,17 @@ EAPI const char *
 elm_win_title_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_title_get(&ret));
+   return ret;
+}
 
-   return sd->title;
+static void
+_title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->title;
 }
 
 EAPI void
@@ -2877,7 +2936,14 @@ elm_win_icon_name_set(Evas_Object *obj,
                       const char *icon_name)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_icon_name_set(icon_name));
+}
+
+static void
+_icon_name_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *icon_name = va_arg(*list, const char *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (!icon_name) return;
    eina_stringshare_replace(&(sd->icon_name), icon_name);
@@ -2890,16 +2956,31 @@ EAPI const char *
 elm_win_icon_name_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_icon_name_get(&ret));
+   return ret;
+}
 
-   return sd->icon_name;
+static void
+_icon_name_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->icon_name;
 }
 
 EAPI void
 elm_win_role_set(Evas_Object *obj, const char *role)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_role_set(role));
+}
+
+static void
+_role_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *role = va_arg(*list, const char *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (!role) return;
    eina_stringshare_replace(&(sd->role), role);
@@ -2912,9 +2993,17 @@ EAPI const char *
 elm_win_role_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_role_get(&ret));
+   return ret;
+}
 
-   return sd->role;
+static void
+_role_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->role;
 }
 
 EAPI void
@@ -2922,7 +3011,14 @@ elm_win_icon_object_set(Evas_Object *obj,
                         Evas_Object *icon)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_icon_object_set(icon));
+}
+
+static void
+_icon_object_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object *icon = va_arg(*list, Evas_Object *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->icon)
      evas_object_event_callback_del_full
@@ -2940,9 +3036,17 @@ EAPI const Evas_Object *
 elm_win_icon_object_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const Evas_Object *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_icon_object_get(&ret));
+   return ret;
+}
 
-   return sd->icon;
+static void
+_icon_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Evas_Object **ret = va_arg(*list, const Evas_Object **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->icon;
 }
 
 EAPI void
@@ -2950,8 +3054,14 @@ elm_win_autodel_set(Evas_Object *obj,
                     Eina_Bool autodel)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_autodel_set(autodel));
+}
 
+static void
+_autodel_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool autodel = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
    sd->autodel = autodel;
 }
 
@@ -2959,17 +3069,30 @@ EAPI Eina_Bool
 elm_win_autodel_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_autodel_get(&ret));
+   return ret;
+}
 
-   return sd->autodel;
+static void
+_autodel_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->autodel;
 }
 
 EAPI void
 elm_win_activate(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_activate());
+}
 
+static void
+_activate(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Win_Smart_Data *sd = _pd;
    TRAP(sd, activate);
 }
 
@@ -2977,8 +3100,13 @@ EAPI void
 elm_win_lower(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_lower());
+}
 
+static void
+_lower(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Win_Smart_Data *sd = _pd;
    TRAP(sd, lower);
 }
 
@@ -2986,8 +3114,13 @@ EAPI void
 elm_win_raise(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_raise());
+}
 
+static void
+_raise(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Win_Smart_Data *sd = _pd;
    TRAP(sd, raise);
 }
 
@@ -2996,10 +3129,18 @@ elm_win_center(Evas_Object *obj,
                Eina_Bool h,
                Eina_Bool v)
 {
+   ELM_WIN_CHECK(obj);
+   eo_do(obj, elm_obj_win_center(h, v));
+}
+
+static void
+_center(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool h = va_arg(*list, int);
+   Eina_Bool v = va_arg(*list, int);
    int win_w, win_h, screen_w, screen_h, nx, ny;
 
-   ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj)))
      return;
@@ -3025,7 +3166,14 @@ elm_win_borderless_set(Evas_Object *obj,
                        Eina_Bool borderless)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_borderless_set(borderless));
+}
+
+static void
+_borderless_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool borderless = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    TRAP(sd, borderless_set, borderless);
 #ifdef HAVE_ELEMENTARY_X
@@ -3037,9 +3185,17 @@ EAPI Eina_Bool
 elm_win_borderless_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_borderless_get(&ret));
+   return ret;
+}
 
-   return ecore_evas_borderless_get(sd->ee);
+static void
+_borderless_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = ecore_evas_borderless_get(sd->ee);
 }
 
 EAPI void
@@ -3047,7 +3203,14 @@ elm_win_shaped_set(Evas_Object *obj,
                    Eina_Bool shaped)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_shaped_set(shaped));
+}
+
+static void
+_shaped_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool shaped = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    TRAP(sd, shaped_set, shaped);
 #ifdef HAVE_ELEMENTARY_X
@@ -3059,9 +3222,17 @@ EAPI Eina_Bool
 elm_win_shaped_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_shaped_get(&ret));
+   return ret;
+}
 
-   return ecore_evas_shaped_get(sd->ee);
+static void
+_shaped_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = ecore_evas_shaped_get(sd->ee);
 }
 
 EAPI void
@@ -3069,7 +3240,14 @@ elm_win_alpha_set(Evas_Object *obj,
                   Eina_Bool enabled)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_alpha_set(enabled));
+}
+
+static void
+_alpha_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool enabled = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->img_obj)
      {
@@ -3102,14 +3280,25 @@ EAPI Eina_Bool
 elm_win_alpha_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_alpha_get(&ret));
+   return ret;
+}
+
+static void
+_alpha_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->img_obj)
      {
-        return evas_object_image_alpha_get(sd->img_obj);
+        *ret = evas_object_image_alpha_get(sd->img_obj);
      }
-
-   return ecore_evas_alpha_get(sd->ee);
+   else
+     {
+        *ret = ecore_evas_alpha_get(sd->ee);
+     }
 }
 
 EAPI void
@@ -3117,7 +3306,14 @@ elm_win_override_set(Evas_Object *obj,
                      Eina_Bool override)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_override_set(override));
+}
+
+static void
+_override_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool override = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    TRAP(sd, override_set, override);
 #ifdef HAVE_ELEMENTARY_X
@@ -3129,9 +3325,17 @@ EAPI Eina_Bool
 elm_win_override_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_override_get(&ret));
+   return ret;
+}
 
-   return ecore_evas_override_get(sd->ee);
+static void
+_override_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = ecore_evas_override_get(sd->ee);
 }
 
 EAPI void
@@ -3139,7 +3343,14 @@ elm_win_fullscreen_set(Evas_Object *obj,
                        Eina_Bool fullscreen)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_fullscreen_set(fullscreen));
+}
+
+static void
+_fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool fullscreen = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
    // YYY: handle if sd->img_obj
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
@@ -3177,17 +3388,26 @@ EAPI Eina_Bool
 elm_win_fullscreen_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_fullscreen_get(&ret));
+   return ret;
+}
+
+static void
+_fullscreen_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
         // these engines... can ONLY be fullscreen
-        return EINA_TRUE;
+        *ret = EINA_TRUE;
      }
    else
      {
-        return sd->fullscreen;
+        *ret = sd->fullscreen;
      }
 }
 
@@ -3196,7 +3416,14 @@ elm_win_maximized_set(Evas_Object *obj,
                       Eina_Bool maximized)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_maximized_set(maximized));
+}
+
+static void
+_maximized_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool maximized = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->maximized = maximized;
    // YYY: handle if sd->img_obj
@@ -3210,9 +3437,17 @@ EAPI Eina_Bool
 elm_win_maximized_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_maximized_get(&ret));
+   return ret;
+}
 
-   return sd->maximized;
+static void
+_maximized_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->maximized;
 }
 
 EAPI void
@@ -3220,7 +3455,14 @@ elm_win_iconified_set(Evas_Object *obj,
                       Eina_Bool iconified)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_iconified_set(iconified));
+}
+
+static void
+_iconified_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool iconified = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->iconified = iconified;
    TRAP(sd, iconified_set, iconified);
@@ -3233,9 +3475,17 @@ EAPI Eina_Bool
 elm_win_iconified_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_iconified_get(&ret));
+   return ret;
+}
 
-   return sd->iconified;
+static void
+_iconified_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->iconified;
 }
 
 EAPI void
@@ -3243,7 +3493,14 @@ elm_win_withdrawn_set(Evas_Object *obj,
                       Eina_Bool withdrawn)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_withdrawn_set(withdrawn));
+}
+
+static void
+_withdrawn_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool withdrawn = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->withdrawn = withdrawn;
    TRAP(sd, withdrawn_set, withdrawn);
@@ -3256,9 +3513,17 @@ EAPI Eina_Bool
 elm_win_withdrawn_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_withdrawn_get(&ret));
+   return ret;
+}
 
-   return sd->withdrawn;
+static void
+_withdrawn_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->withdrawn;
 }
 
 EAPI void
@@ -3266,7 +3531,14 @@ elm_win_urgent_set(Evas_Object *obj,
                    Eina_Bool urgent)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_urgent_set(urgent));
+}
+
+static void
+_urgent_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool urgent = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->urgent = urgent;
    TRAP(sd, urgent_set, urgent);
@@ -3279,9 +3551,17 @@ EAPI Eina_Bool
 elm_win_urgent_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_urgent_get(&ret));
+   return ret;
+}
 
-   return sd->urgent;
+static void
+_urgent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->urgent;
 }
 
 EAPI void
@@ -3289,7 +3569,14 @@ elm_win_demand_attention_set(Evas_Object *obj,
                              Eina_Bool demand_attention)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_demand_attention_set(demand_attention));
+}
+
+static void
+_demand_attention_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool demand_attention = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->demand_attention = demand_attention;
    TRAP(sd, demand_attention_set, demand_attention);
@@ -3302,9 +3589,17 @@ EAPI Eina_Bool
 elm_win_demand_attention_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_demand_attention_get(&ret));
+   return ret;
+}
 
-   return sd->demand_attention;
+static void
+_demand_attention_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->demand_attention;
 }
 
 EAPI void
@@ -3312,7 +3607,14 @@ elm_win_modal_set(Evas_Object *obj,
                   Eina_Bool modal)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_modal_set(modal));
+}
+
+static void
+_modal_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool modal = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->modal = modal;
    TRAP(sd, modal_set, modal);
@@ -3325,9 +3627,17 @@ EAPI Eina_Bool
 elm_win_modal_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_modal_get(&ret));
+   return ret;
+}
 
-   return sd->modal;
+static void
+_modal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->modal;
 }
 
 EAPI void
@@ -3335,7 +3645,14 @@ elm_win_aspect_set(Evas_Object *obj,
                    double aspect)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_aspect_set(aspect));
+}
+
+static void
+_aspect_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double aspect = va_arg(*list, double);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->aspect = aspect;
    TRAP(sd, aspect_set, aspect);
@@ -3348,16 +3665,32 @@ EAPI double
 elm_win_aspect_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) 0.0;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0.0);
+   double ret = 0.0;
+   eo_do((Eo *) obj, elm_obj_win_aspect_get(&ret));
+   return ret;
+}
 
-   return sd->aspect;
+static void
+_aspect_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->aspect;
 }
 
 EAPI void
 elm_win_size_base_set(Evas_Object *obj, int w, int h)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_size_base_set(w, h));
+}
+
+static void
+_size_base_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int w = va_arg(*list, int);
+   int h = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
    sd->size_base_w = w;
    sd->size_base_h = h;
    TRAP(sd, size_base_set, w, h);
@@ -3370,7 +3703,16 @@ EAPI void
 elm_win_size_base_get(Evas_Object *obj, int *w, int *h)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_size_base_get(w, h));
+}
+
+static void
+_size_base_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *w = va_arg(*list, int *);
+   int *h = va_arg(*list, int *);
+
+   Elm_Win_Smart_Data *sd = _pd;
    if (w) *w = sd->size_base_w;
    if (w) *h = sd->size_base_h;
 }
@@ -3379,7 +3721,15 @@ EAPI void
 elm_win_size_step_set(Evas_Object *obj, int w, int h)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_size_step_set(w, h));
+}
+
+static void
+_size_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int w = va_arg(*list, int);
+   int h = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
    sd->size_step_w = w;
    sd->size_step_h = h;
    TRAP(sd, size_step_set, w, h);
@@ -3392,7 +3742,15 @@ EAPI void
 elm_win_size_step_get(Evas_Object *obj, int *w, int *h)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_size_step_get(w, h));
+}
+
+static void
+_size_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *w = va_arg(*list, int *);
+   int *h = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
    if (w) *w = sd->size_step_w;
    if (w) *h = sd->size_step_h;
 }
@@ -3402,7 +3760,14 @@ elm_win_layer_set(Evas_Object *obj,
                   int layer)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_layer_set(layer));
+}
+
+static void
+_layer_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int layer = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    TRAP(sd, layer_set, layer);
 #ifdef HAVE_ELEMENTARY_X
@@ -3414,9 +3779,17 @@ EAPI int
 elm_win_layer_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   int ret = - 1;
+   eo_do((Eo *) obj, elm_obj_win_layer_get(&ret));
+   return ret;
+}
 
-   return ecore_evas_layer_get(sd->ee);
+static void
+_layer_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = ecore_evas_layer_get(sd->ee);
 }
 
 EAPI void
@@ -3474,7 +3847,14 @@ elm_win_rotation_set(Evas_Object *obj,
                      int rotation)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_rotation_set(rotation));
+}
+
+static void
+_rotation_set(Eo *obj, void *_pd, va_list *list)
+{
+   int rotation = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    rotation = _win_rotation_degree_check(rotation);
    if (sd->rot == rotation) return;
@@ -3494,7 +3874,14 @@ elm_win_rotation_with_resize_set(Evas_Object *obj,
                                  int rotation)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_rotation_with_resize_set(rotation));
+}
+
+static void
+_rotation_with_resize_set(Eo *obj, void *_pd, va_list *list)
+{
+   int rotation = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    rotation = _win_rotation_degree_check(rotation);
    if (sd->rot == rotation) return;
@@ -3514,9 +3901,17 @@ EAPI int
 elm_win_rotation_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   int ret = - 1;
+   eo_do((Eo *) obj, elm_obj_win_rotation_get(&ret));
+   return ret;
+}
 
-   return sd->rot;
+static void
+_rotation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->rot;
 }
 
 EAPI void
@@ -3524,7 +3919,14 @@ elm_win_sticky_set(Evas_Object *obj,
                    Eina_Bool sticky)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_sticky_set(sticky));
+}
+
+static void
+_sticky_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool sticky = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->sticky = sticky;
    TRAP(sd, sticky_set, sticky);
@@ -3537,9 +3939,17 @@ EAPI Eina_Bool
 elm_win_sticky_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_sticky_get(&ret));
+   return ret;
+}
 
-   return sd->sticky;
+static void
+_sticky_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->sticky;
 }
 
 EAPI void
@@ -3547,7 +3957,14 @@ elm_win_keyboard_mode_set(Evas_Object *obj,
                           Elm_Win_Keyboard_Mode mode)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_keyboard_mode_set(mode));
+}
+
+static void
+_keyboard_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Keyboard_Mode mode = va_arg(*list, Elm_Win_Keyboard_Mode);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (mode == sd->kbdmode) return;
 #ifdef HAVE_ELEMENTARY_X
@@ -3565,9 +3982,17 @@ EAPI Elm_Win_Keyboard_Mode
 elm_win_keyboard_mode_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) ELM_WIN_KEYBOARD_UNKNOWN;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_KEYBOARD_UNKNOWN);
+   Elm_Win_Keyboard_Mode ret = ELM_WIN_KEYBOARD_UNKNOWN;
+   eo_do((Eo *) obj, elm_obj_win_keyboard_mode_get(&ret));
+   return ret;
+}
 
-   return sd->kbdmode;
+static void
+_keyboard_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Keyboard_Mode *ret = va_arg(*list, Elm_Win_Keyboard_Mode *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->kbdmode;
 }
 
 EAPI void
@@ -3575,7 +4000,14 @@ elm_win_keyboard_win_set(Evas_Object *obj,
                          Eina_Bool is_keyboard)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_keyboard_win_set(is_keyboard));
+}
+
+static void
+_keyboard_win_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool is_keyboard = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3590,22 +4022,41 @@ EAPI Eina_Bool
 elm_win_keyboard_win_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_keyboard_win_get(&ret));
+   return ret;
+}
+
+static void
+_keyboard_win_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+     {
+        *ret = ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+        return;
+     }
 #endif
-   return EINA_FALSE;
+   *ret = EINA_FALSE;
 }
 
 EAPI void
 elm_win_indicator_mode_set(Evas_Object *obj,
-                           Elm_Win_Indicator_Mode mode)
+      Elm_Win_Indicator_Mode mode)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_indicator_mode_set(mode));
+}
+
+static void
+_indicator_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Indicator_Mode mode = va_arg(*list, Elm_Win_Indicator_Mode);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (mode == sd->indmode) return;
 #ifdef HAVE_ELEMENTARY_X
@@ -3630,9 +4081,17 @@ EAPI Elm_Win_Indicator_Mode
 elm_win_indicator_mode_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) ELM_WIN_INDICATOR_UNKNOWN;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_UNKNOWN);
+   Elm_Win_Indicator_Mode ret = ELM_WIN_INDICATOR_UNKNOWN;
+   eo_do((Eo *) obj, elm_obj_win_indicator_mode_get(&ret));
+   return ret;
+}
 
-   return sd->indmode;
+static void
+_indicator_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Indicator_Mode *ret = va_arg(*list, Elm_Win_Indicator_Mode *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->indmode;
 }
 
 EAPI void
@@ -3640,7 +4099,14 @@ elm_win_indicator_opacity_set(Evas_Object *obj,
                               Elm_Win_Indicator_Opacity_Mode mode)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_indicator_opacity_set(mode));
+}
+
+static void
+_indicator_opacity_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Indicator_Opacity_Mode mode = va_arg(*list, Elm_Win_Indicator_Opacity_Mode);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (mode == sd->ind_o_mode) return;
    sd->ind_o_mode = mode;
@@ -3666,9 +4132,17 @@ EAPI Elm_Win_Indicator_Opacity_Mode
 elm_win_indicator_opacity_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_OPACITY_UNKNOWN);
+   Elm_Win_Indicator_Opacity_Mode ret = ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
+   eo_do((Eo *) obj, elm_obj_win_indicator_opacity_get(&ret));
+   return ret;
+}
 
-   return sd->ind_o_mode;
+static void
+_indicator_opacity_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Win_Indicator_Opacity_Mode *ret = va_arg(*list, Elm_Win_Indicator_Opacity_Mode *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->ind_o_mode;
 }
 
 EAPI void
@@ -3677,7 +4151,15 @@ elm_win_screen_position_get(const Evas_Object *obj,
                             int *y)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do((Eo *) obj, elm_obj_win_screen_position_get(x, y));
+}
+
+static void
+_screen_position_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *x = va_arg(*list, int *);
+   int *y = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    if (x) *x = sd->screen.x;
    if (y) *y = sd->screen.y;
@@ -3687,9 +4169,17 @@ EAPI Eina_Bool
 elm_win_focus_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_focus_get(&ret));
+   return ret;
+}
 
-   return ecore_evas_focus_get(sd->ee);
+static void
+_focus_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = ecore_evas_focus_get(sd->ee);
 }
 
 EAPI void
@@ -3697,8 +4187,14 @@ elm_win_screen_constrain_set(Evas_Object *obj,
                              Eina_Bool constrain)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_screen_constrain_set(constrain));
+}
 
+static void
+_screen_constrain_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool constrain = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
    sd->constrain = !!constrain;
 }
 
@@ -3706,9 +4202,17 @@ EAPI Eina_Bool
 elm_win_screen_constrain_get(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_win_screen_constrain_get(&ret));
+   return ret;
+}
 
-   return sd->constrain;
+static void
+_screen_constrain_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->constrain;
 }
 
 EAPI void
@@ -3719,7 +4223,17 @@ elm_win_screen_size_get(const Evas_Object *obj,
                         int *h)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do((Eo *) obj, elm_obj_win_screen_size_get(x, y, w, h));
+}
+
+static void
+_screen_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *x = va_arg(*list, int *);
+   int *y = va_arg(*list, int *);
+   int *w = va_arg(*list, int *);
+   int *h = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    ecore_evas_screen_geometry_get(sd->ee, x, y, w, h);
 }
@@ -3730,7 +4244,15 @@ elm_win_screen_dpi_get(const Evas_Object *obj,
                        int *ydpi)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do((Eo *) obj, elm_obj_win_screen_dpi_get(xdpi, ydpi));
+}
+
+static void
+_screen_dpi_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *xdpi = va_arg(*list, int *);
+   int *ydpi = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
 }
@@ -3740,7 +4262,14 @@ elm_win_conformant_set(Evas_Object *obj,
                        Eina_Bool conformant)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_conformant_set(conformant));
+}
+
+static void
+_conformant_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool conformant = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3755,14 +4284,23 @@ EAPI Eina_Bool
 elm_win_conformant_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_conformant_get(&ret));
+   return ret;
+}
+
+static void
+_conformant_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_conformant_get(sd->x.xwin);
+     *ret = ecore_x_e_illume_conformant_get(sd->x.xwin);
 #endif
-   return EINA_FALSE;
 }
 
 EAPI void
@@ -3770,7 +4308,14 @@ elm_win_quickpanel_set(Evas_Object *obj,
                        Eina_Bool quickpanel)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_quickpanel_set(quickpanel));
+}
+
+static void
+_quickpanel_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool quickpanel = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
@@ -3795,14 +4340,23 @@ EAPI Eina_Bool
 elm_win_quickpanel_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_quickpanel_get(&ret));
+   return ret;
+}
+
+static void
+_quickpanel_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
+     *ret = ecore_x_e_illume_quickpanel_get(sd->x.xwin);
 #endif
-   return EINA_FALSE;
 }
 
 EAPI void
@@ -3810,7 +4364,14 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj,
                                       int priority)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_quickpanel_priority_major_set(priority));
+}
+
+static void
+_quickpanel_priority_major_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int priority = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3825,14 +4386,23 @@ EAPI int
 elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   int ret = - 1;
+   eo_do((Eo *) obj, elm_obj_win_quickpanel_priority_major_get(&ret));
+   return ret;
+}
+
+static void
+_quickpanel_priority_major_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = -1;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
+     *ret = ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
 #endif
-   return -1;
 }
 
 EAPI void
@@ -3840,7 +4410,14 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj,
                                       int priority)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_quickpanel_priority_minor_set(priority));
+}
+
+static void
+_quickpanel_priority_minor_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int priority = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3855,14 +4432,23 @@ EAPI int
 elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   int ret = - 1;
+   eo_do((Eo *) obj, elm_obj_win_quickpanel_priority_minor_get(&ret));
+   return ret;
+}
+
+static void
+_quickpanel_priority_minor_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = -1;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
+     *ret = ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
 #endif
-   return -1;
 }
 
 EAPI void
@@ -3870,7 +4456,14 @@ elm_win_quickpanel_zone_set(Evas_Object *obj,
                             int zone)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_quickpanel_zone_set(zone));
+}
+
+static void
+_quickpanel_zone_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int zone = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3885,14 +4478,23 @@ EAPI int
 elm_win_quickpanel_zone_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) 0;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+   int ret = 0;
+   eo_do((Eo *) obj, elm_obj_win_quickpanel_zone_get(&ret));
+   return ret;
+}
+
+static void
+_quickpanel_zone_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = 0;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
+     *ret = ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
 #endif
-   return 0;
 }
 
 EAPI void
@@ -3900,7 +4502,14 @@ elm_win_prop_focus_skip_set(Evas_Object *obj,
                             Eina_Bool skip)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_prop_focus_skip_set(skip));
+}
+
+static void
+_prop_focus_skip_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool skip = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    sd->skip_focus = skip;
    TRAP(sd, focus_skip_set, skip);
@@ -3909,10 +4518,19 @@ elm_win_prop_focus_skip_set(Evas_Object *obj,
 EAPI void
 elm_win_illume_command_send(Evas_Object *obj,
                             Elm_Illume_Command command,
-                            void *params __UNUSED__)
+                            void *params)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_illume_command_send(command, params));
+}
+
+static void
+_illume_command_send(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Illume_Command command = va_arg(*list, Elm_Illume_Command);
+   void *params = va_arg(*list, void *);
+   (void) params;
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
@@ -3949,9 +4567,17 @@ EAPI Evas_Object *
 elm_win_inlined_image_object_get(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   Evas_Object *ret = NULL;
+   eo_do(obj, elm_obj_win_inlined_image_object_get(&ret));
+   return ret;
+}
 
-   return sd->img_obj;
+static void
+_inlined_image_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->img_obj;
 }
 
 EAPI void
@@ -3959,7 +4585,14 @@ elm_win_focus_highlight_enabled_set(Evas_Object *obj,
                                     Eina_Bool enabled)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_focus_highlight_enabled_set(enabled));
+}
+
+static void
+_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool enabled = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
 
    enabled = !!enabled;
    if (sd->focus_highlight.enabled == enabled)
@@ -3977,9 +4610,17 @@ EAPI Eina_Bool
 elm_win_focus_highlight_enabled_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_focus_highlight_enabled_get(&ret));
+   return ret;
+}
 
-   return sd->focus_highlight.enabled;
+static void
+_focus_highlight_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->focus_highlight.enabled;
 }
 
 EAPI void
@@ -3987,7 +4628,14 @@ elm_win_focus_highlight_style_set(Evas_Object *obj,
                                   const char *style)
 {
    ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   eo_do(obj, elm_obj_win_focus_highlight_style_set(style));
+}
+
+static void
+_focus_highlight_style_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *style = va_arg(*list, const char *);
+   Elm_Win_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->focus_highlight.style, style);
    sd->focus_highlight.changed_theme = EINA_TRUE;
@@ -3998,9 +4646,17 @@ EAPI const char *
 elm_win_focus_highlight_style_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_focus_highlight_style_get(&ret));
+   return ret;
+}
 
-   return sd->focus_highlight.style;
+static void
+_focus_highlight_style_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->focus_highlight.style;
 }
 
 EAPI Eina_Bool
@@ -4010,14 +4666,27 @@ elm_win_socket_listen(Evas_Object *obj,
                       Eina_Bool svcsys)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_win_socket_listen(svcname, svcnum, svcsys, &ret));
+   return ret;
+}
 
-   if (!sd->ee) return EINA_FALSE;
+static void
+_socket_listen(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *svcname = va_arg(*list, const char *);
+   int svcnum = va_arg(*list, int);
+   Eina_Bool svcsys = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = EINA_FALSE;
+
+   if (!sd->ee) return;
 
    if (!ecore_evas_extn_socket_listen(sd->ee, svcname, svcnum, svcsys))
-     return EINA_FALSE;
+     return;
 
-   return EINA_TRUE;
+   *ret = EINA_TRUE;
 }
 
 /* windowing specific calls - shall we do this differently? */
@@ -4027,20 +4696,37 @@ elm_win_xwindow_get(const Evas_Object *obj)
 {
    if (!obj) return 0;
 
-   if (!evas_object_smart_type_check_ptr(obj, WIN_SMART_NAME))
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         return _elm_ee_xwin_get(ee);
      }
 
    ELM_WIN_CHECK(obj) 0;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+   Ecore_X_Window ret = 0;
+   eo_do((Eo *) obj, elm_obj_win_xwindow_get(&ret));
+   return ret;
+}
+
+static void
+_xwindow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Ecore_X_Window *ret = va_arg(*list, Ecore_X_Window *);
+   Elm_Win_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin) return sd->x.xwin;
-   if (sd->parent) return elm_win_xwindow_get(sd->parent);
+   if (sd->x.xwin)
+     {
+        *ret = sd->x.xwin;
+        return;
+     }
+   if (sd->parent)
+     {
+        *ret = elm_win_xwindow_get(sd->parent);
+        return;
+     }
 #endif
-   return 0;
+   *ret = 0;
 }
 
 EAPI Ecore_Wl_Window *
@@ -4048,19 +4734,36 @@ elm_win_wl_window_get(const Evas_Object *obj)
 {
    if (!obj) return NULL;
 
-   if (!evas_object_smart_type_check_ptr(obj, WIN_SMART_NAME))
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         return ecore_evas_wayland_window_get(ee);
      }
 
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   Ecore_Wl_Window *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_wl_window_get(&ret));
+   return ret;
+}
+
+static void
+_wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Ecore_Wl_Window **ret = va_arg(*list, Ecore_Wl_Window **);
 #if HAVE_ELEMENTARY_WAYLAND
-   if (sd->wl.win) return sd->wl.win;
-   if (sd->parent) return elm_win_wl_window_get(sd->parent);
+   Elm_Win_Smart_Data *sd = _pd;
+   if (sd->wl.xwin)
+     {
+        *ret = sd->wl.xwin;
+        return;
+     }
+   if (sd->parent)
+     {
+        *ret = elm_win_wl_window_get(sd->parent);
+        return;
+     }
 #endif
-   return NULL;
+   *ret = NULL;
 }
 
 EAPI Eina_Bool
@@ -4110,3 +4813,216 @@ elm_win_floating_mode_get(const Evas_Object *obj)
    return sd->floating;
 }
 
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_win_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_win_smart_del),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_win_smart_resize),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_win_smart_move),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_win_smart_show),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_win_smart_hide),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_win_smart_on_focus),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_win_smart_event),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_win_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_win_smart_focus_next),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_win_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_win_smart_focus_direction),
+
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR), _win_constructor),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD), _resize_object_add),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL), _resize_object_del),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TITLE_SET), _title_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TITLE_GET), _title_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICON_NAME_SET), _icon_name_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICON_NAME_GET), _icon_name_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ROLE_SET), _role_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ROLE_GET), _role_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICON_OBJECT_SET), _icon_object_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICON_OBJECT_GET), _icon_object_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AUTODEL_SET), _autodel_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AUTODEL_GET), _autodel_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ACTIVATE), _activate),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_LOWER), _lower),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RAISE), _raise),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_CENTER), _center),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_BORDERLESS_SET), _borderless_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_BORDERLESS_GET), _borderless_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SHAPED_SET), _shaped_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SHAPED_GET), _shaped_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ALPHA_SET), _alpha_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ALPHA_GET), _alpha_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_OVERRIDE_SET), _override_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_OVERRIDE_GET), _override_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_SET), _fullscreen_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET), _fullscreen_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_SET), _maximized_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_GET), _maximized_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICONIFIED_SET), _iconified_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICONIFIED_GET), _iconified_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_SET), _withdrawn_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET), _withdrawn_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_URGENT_SET), _urgent_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_URGENT_GET), _urgent_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_SET), _demand_attention_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_GET), _demand_attention_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MODAL_SET), _modal_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MODAL_GET), _modal_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ASPECT_SET), _aspect_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ASPECT_GET), _aspect_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SIZE_BASE_SET), _size_base_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SIZE_BASE_GET), _size_base_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SIZE_STEP_SET), _size_step_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SIZE_STEP_GET), _size_step_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_LAYER_SET), _layer_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_LAYER_GET), _layer_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ROTATION_SET), _rotation_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ROTATION_WITH_RESIZE_SET), _rotation_with_resize_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ROTATION_GET), _rotation_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_STICKY_SET), _sticky_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_STICKY_GET), _sticky_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_KEYBOARD_MODE_SET), _keyboard_mode_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_KEYBOARD_MODE_GET), _keyboard_mode_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_KEYBOARD_WIN_SET), _keyboard_win_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_KEYBOARD_WIN_GET), _keyboard_win_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_INDICATOR_MODE_SET), _indicator_mode_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_INDICATOR_MODE_GET), _indicator_mode_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_INDICATOR_OPACITY_SET), _indicator_opacity_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_INDICATOR_OPACITY_GET), _indicator_opacity_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SCREEN_POSITION_GET), _screen_position_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_GET), _focus_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SCREEN_CONSTRAIN_SET), _screen_constrain_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SCREEN_CONSTRAIN_GET), _screen_constrain_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SCREEN_SIZE_GET), _screen_size_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SCREEN_DPI_GET), _screen_dpi_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_CONFORMANT_SET), _conformant_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_CONFORMANT_GET), _conformant_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_SET), _quickpanel_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_GET), _quickpanel_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MAJOR_SET), _quickpanel_priority_major_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MAJOR_GET), _quickpanel_priority_major_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MINOR_SET), _quickpanel_priority_minor_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MINOR_GET), _quickpanel_priority_minor_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_ZONE_SET), _quickpanel_zone_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_ZONE_GET), _quickpanel_zone_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_PROP_FOCUS_SKIP_SET), _prop_focus_skip_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ILLUME_COMMAND_SEND), _illume_command_send),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_INLINED_IMAGE_OBJECT_GET), _inlined_image_object_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_SET), _focus_highlight_enabled_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_GET), _focus_highlight_enabled_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET), _focus_highlight_style_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), _focus_highlight_style_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN), _socket_listen),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET), _xwindow_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), _wl_window_get),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR, "Adds a window object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD, "Add subobj as a resize object of window obj."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL, "Delete subobj as a resize object of window obj."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_TITLE_SET, "Set the title of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_TITLE_GET, "Get the title of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICON_NAME_SET, "Set the icon name of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICON_NAME_GET, "Get the icon name of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ROLE_SET, "Set the role of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ROLE_GET, "Get the role of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICON_OBJECT_SET, "Set a window object's icon."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICON_OBJECT_GET, "Get the icon object used for the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_AUTODEL_SET, "Set the window's autodel state."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_AUTODEL_GET, "Get the window's autodel state."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ACTIVATE, "Activate a window object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_LOWER, "Lower a window object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_RAISE, "Raise a window object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_CENTER, "Center a window on its screen."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_BORDERLESS_SET, "Set the borderless state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_BORDERLESS_GET, "Get the borderless state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SHAPED_SET, "Set the shaped state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SHAPED_GET, "Get the shaped state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ALPHA_SET, "Set the alpha channel state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ALPHA_GET, "Get the alpha channel state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_OVERRIDE_SET, "Set the override state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_OVERRIDE_GET, "Get the override state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_SET, "Set the fullscreen state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET, "Get the fullscreen state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_SET, "Set the maximized state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_GET, "Get the maximized state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICONIFIED_SET, "Set the iconified state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICONIFIED_GET, "Get the iconified state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_SET, "Set the withdrawn state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET, "Get the withdrawn state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_URGENT_SET, "Set the urgent state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_URGENT_GET, "Get the urgent state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_SET, "Set the demand_attention state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_GET, "Get the demand_attention state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MODAL_SET, "Set the modal state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MODAL_GET, "Get the modal state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ASPECT_SET, "Set the aspect ratio of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ASPECT_GET, "Get the aspect ratio of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SIZE_BASE_SET, "Set the base window size used with stepping calculation."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SIZE_BASE_GET, "Get the base size of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SIZE_STEP_SET, "Set the window stepping used with sizing calculation."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SIZE_STEP_GET, "Get the stepping of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_LAYER_SET, "Set the layer of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_LAYER_GET, "Get the layer of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ROTATION_SET, "Set the rotation of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ROTATION_WITH_RESIZE_SET, "Rotates the window and resizes it."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ROTATION_GET, "Get the rotation of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_STICKY_SET, "Set the sticky state of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_STICKY_GET, "Get the sticky state of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_KEYBOARD_MODE_SET, "Sets the keyboard mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_KEYBOARD_MODE_GET, "Gets the keyboard mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_KEYBOARD_WIN_SET, "Sets whether the window is a keyboard."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_KEYBOARD_WIN_GET, "Gets whether the window is a keyboard."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_INDICATOR_MODE_SET, "Sets the indicator mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_INDICATOR_MODE_GET, "Gets the indicator mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_INDICATOR_OPACITY_SET, "Sets the indicator opacity mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_INDICATOR_OPACITY_GET, "Gets the indicator opacity mode of the window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SCREEN_POSITION_GET, "Get the screen position of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_GET, "Determine whether a window has focus."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SCREEN_CONSTRAIN_SET, "Constrain the maximum width and height of a window to the width and height of its screen."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SCREEN_CONSTRAIN_GET, "Retrieve the constraints on the maximum width and height of a window relative to the width and height of its screen."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SCREEN_SIZE_GET, "Get screen geometry details for the screen that a window is on."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SCREEN_DPI_GET, "Get screen dpi for the screen that a window is on."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_CONFORMANT_SET, "Set if this window is an illume conformant window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_CONFORMANT_GET, "Get if this window is an illume conformant window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_SET, "Set a window to be an illume quickpanel window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_GET, "Get if this window is a quickpanel or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MAJOR_SET, "Set the major priority of a quickpanel window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MAJOR_GET, "Get the major priority of a quickpanel window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MINOR_SET, "Set the minor priority of a quickpanel window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_PRIORITY_MINOR_GET, "Get the minor priority of a quickpanel window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_ZONE_SET, "Set which zone this quickpanel should appear in."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_QUICKPANEL_ZONE_GET, "Get which zone this quickpanel should appear in."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_PROP_FOCUS_SKIP_SET, "Set the window to be skipped by keyboard focus."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ILLUME_COMMAND_SEND, "Send a command to the windowing environment."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_INLINED_IMAGE_OBJECT_GET, "Get the inlined image object handle."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_SET, "Set the enabled status for the focus highlight in a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_GET, "Get the enabled value of the focus highlight for this window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET, "Set the style for the focus highlight on this window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET, "Get the style set for the focus highlight object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN, "Create a socket to provide the service for Plug widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET, "Get the Ecore_X_Window of an Evas_Object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET, "Get the Ecore_Wl_Window of and Evas_Object."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_WIN_BASE_ID, op_desc, ELM_OBJ_WIN_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Win_Smart_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_win_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);

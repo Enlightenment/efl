@@ -1,7 +1,7 @@
 #ifndef ELM_WIDGET_MAP_H
 #define ELM_WIDGET_MAP_H
 
-#include "elm_interface_scrollable.h"
+#include "Elementary.h"
 
 /**
  * @addtogroup Widget
@@ -13,106 +13,6 @@
  * foundation -- the Elementary Map Class -- in order to create
  * other widgets which are a map with some more logic on top.
  */
-
-/**
- * @def ELM_MAP_CLASS
- *
- * Use this macro to cast whichever subclass of
- * #Elm_Map_Smart_Class into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_MAP_CLASS(x) ((Elm_Map_Smart_Class *) x)
-
-/**
- * @def ELM_MAP_DATA
- *
- * Use this macro to cast whichever subdata of
- * #Elm_Map_Smart_Data into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_MAP_DATA(x) ((Elm_Map_Smart_Data *) x)
-
-/**
- * @def ELM_MAP_SMART_CLASS_VERSION
- *
- * Current version for Elementary map @b base smart class, a value
- * which goes to _Elm_Map_Smart_Class::version.
- *
- * @ingroup Widget
- */
-#define ELM_MAP_SMART_CLASS_VERSION 1
-
-/**
- * @def ELM_MAP_SMART_CLASS_INIT
- *
- * Initializer for a whole #Elm_Map_Smart_Class structure, with
- * @c NULL values on its specific fields.
- *
- * @param smart_class_init initializer to use for the "base" field
- * (#Evas_Smart_Class).
- *
- * @see EVAS_SMART_CLASS_INIT_NULL
- * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_MAP_SMART_CLASS_INIT_NULL
- * @see ELM_MAP_SMART_CLASS_INIT_NAME_VERSION
- *
- * @ingroup Widget
- */
-#define ELM_MAP_SMART_CLASS_INIT(smart_class_init)                        \
-  {smart_class_init, ELM_MAP_SMART_CLASS_VERSION}
-
-/**
- * @def ELM_MAP_SMART_CLASS_INIT_NULL
- *
- * Initializer to zero out a whole #Elm_Map_Smart_Class structure.
- *
- * @see ELM_MAP_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_MAP_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_MAP_SMART_CLASS_INIT_NULL \
-  ELM_MAP_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
-
-/**
- * @def ELM_MAP_SMART_CLASS_INIT_NAME_VERSION
- *
- * Initializer to zero out a whole #Elm_Map_Smart_Class structure and
- * set its name and version.
- *
- * This is similar to #ELM_MAP_SMART_CLASS_INIT_NULL, but it will
- * also set the version field of #Elm_Map_Smart_Class (base field)
- * to the latest #ELM_MAP_SMART_CLASS_VERSION and name it to the
- * specific value.
- *
- * It will keep a reference to the name field as a <c>"const char *"</c>,
- * i.e., the name must be available while the structure is
- * used (hint: static or global variable!) and must not be modified.
- *
- * @see ELM_MAP_SMART_CLASS_INIT_NULL
- * @see ELM_MAP_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_MAP_SMART_CLASS_INIT_NAME_VERSION(name) \
-  ELM_MAP_SMART_CLASS_INIT(ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION(name))
-
-/**
- * Elementary map base smart class. This inherits directly from
- * #Elm_Widget_Smart_Class and is meant to build widgets extending the
- * behavior of a map.
- *
- * All of the functions listed on @ref Map namespace will work for
- * objects deriving from #Elm_Map_Smart_Class.
- */
-typedef struct _Elm_Map_Smart_Class
-{
-   Elm_Widget_Smart_Class base;
-
-   int                    version; /**< Version of this smart class definition */
-} Elm_Map_Smart_Class;
 
 /**
  * Base widget smart data extended with map instance data.
@@ -490,14 +390,10 @@ struct _Calc_Job
 
 struct _Elm_Map_Smart_Data
 {
-   Elm_Widget_Smart_Data                 base; /* base widget smart data as
-                                                * first member obligatory, as
-                                                * we're inheriting from it */
-
    Evas_Object                          *hit_rect;
-   const Elm_Scrollable_Smart_Interface *s_iface;
    Evas_Object                          *pan_obj;
    Evas_Object                          *g_layer;
+   Evas_Object                          *obj; // The object itself
 
    /* Tiles are below this and overlays are on top */
    Evas_Object                          *sep_maps_overlays;
@@ -581,15 +477,10 @@ struct _Elm_Map_Smart_Data
    Calc_Job                               calc_job;
 };
 
-typedef struct _Elm_Map_Pan_Smart_Class
-{
-   Elm_Pan_Smart_Class base;
-} Elm_Map_Pan_Smart_Class;
-
 typedef struct _Elm_Map_Pan_Smart_Data Elm_Map_Pan_Smart_Data;
 struct _Elm_Map_Pan_Smart_Data
 {
-   Elm_Pan_Smart_Data  base;
+   Evas_Object            *wobj;
    Elm_Map_Smart_Data *wsd;
 };
 
@@ -597,15 +488,11 @@ struct _Elm_Map_Pan_Smart_Data
  * @}
  */
 
-EAPI extern const char ELM_MAP_SMART_NAME[];
-EAPI extern const char ELM_MAP_PAN_SMART_NAME[];
-EAPI const Elm_Map_Smart_Class *elm_map_smart_class_get(void);
-
 #define ELM_MAP_DATA_GET(o, sd) \
-  Elm_Map_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Map_Smart_Data * sd = eo_data_get(o, ELM_OBJ_MAP_CLASS)
 
 #define ELM_MAP_PAN_DATA_GET(o, sd) \
-  Elm_Map_Pan_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Map_Pan_Smart_Data * sd = eo_data_get(o, ELM_OBJ_MAP_PAN_CLASS)
 
 #define ELM_MAP_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_MAP_DATA_GET(o, ptr);                     \
@@ -626,8 +513,7 @@ EAPI const Elm_Map_Smart_Class *elm_map_smart_class_get(void);
     }
 
 #define ELM_MAP_CHECK(obj)                     \
-  if (!obj || !elm_widget_type_check                \
-        ((obj), ELM_MAP_SMART_NAME, __func__)) \
+  if (!eo_isa((obj), ELM_OBJ_MAP_CLASS))       \
     return
 
 #endif

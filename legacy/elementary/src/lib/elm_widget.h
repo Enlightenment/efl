@@ -302,93 +302,6 @@
  * @{
  */
 
-/**
- * @def ELM_WIDGET_CLASS
- *
- * Use this macro to cast whichever subclass of
- * #Elm_Widget_Smart_Class into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_WIDGET_CLASS(x) ((Elm_Widget_Smart_Class *) x)
-
-/**
- * @def ELM_WIDGET_DATA
- *
- * Use this macro to cast whichever subdata of
- * #Elm_Widget_Smart_Data into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_WIDGET_DATA(x) ((Elm_Widget_Smart_Data *) x)
-
-/**
- * @def ELM_WIDGET_SMART_CLASS_VERSION
- *
- * Current version for Elementary widget @b base smart class, a value
- * which goes to _Elm_Widget_Smart_Class::version.
- *
- * @ingroup Wiget
- */
-#define ELM_WIDGET_SMART_CLASS_VERSION 1
-
-/**
- * @def ELM_WIDGET_SMART_CLASS_INIT
- *
- * Initializer for a whole #Elm_Widget_Smart_Class structure, with
- * @c NULL values on its specific fields.
- *
- * @param smart_class_init initializer to use for the "base" field
- * (#Evas_Smart_Class).
- *
- * @see EVAS_SMART_CLASS_INIT_NULL
- * @see EVAS_SMART_CLASS_INIT_VERSION
- * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_WIDGET_SMART_CLASS_INIT_NULL
- * @see ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION
- *
- * @ingroup Widget
- */
-#define ELM_WIDGET_SMART_CLASS_INIT(smart_class_init)                        \
-  {smart_class_init, ELM_WIDGET_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, \
-   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
-
-/**
- * @def ELM_WIDGET_SMART_CLASS_INIT_NULL
- *
- * Initializer to zero out a whole #Elm_Widget_Smart_Class structure.
- *
- * @see ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_WIDGET_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_WIDGET_SMART_CLASS_INIT_NULL \
-  ELM_WIDGET_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
-
-/**
- * @def ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION
- *
- * Initializer to zero out a whole #Elm_Widget_Smart_Class structure and
- * set its name and version.
- *
- * This is similar to #ELM_WIDGET_SMART_CLASS_INIT_NULL, but it will
- * also set the version field of #Elm_Widget_Smart_Class (base field)
- * to the latest #ELM_WIDGET_SMART_CLASS_VERSION and name it to the
- * specific value.
- *
- * It will keep a reference to the name field as a <c>"const char *"</c>,
- * i.e., the name must be available while the structure is
- * used (hint: static or global variable!) and must not be modified.
- *
- * @see ELM_WIDGET_SMART_CLASS_INIT_NULL
- * @see ELM_WIDGET_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION(name) \
-  ELM_WIDGET_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
-
 /* Elm_Activate is used in 'Virtual' function Eina_Bool (*activate)
  * (Evas_Object *obj, Elm_Activate act); of Elm_Widget_Smart_Class */
 typedef enum
@@ -456,8 +369,6 @@ typedef struct _Elm_Widget_Smart_Class
  */
 typedef struct _Elm_Widget_Smart_Data
 {
-   const Elm_Widget_Smart_Class *api; /**< This is the pointer to the object's class, from where we can reach/call its class functions */
-
    Evas_Object                  *obj;
    Evas_Object                  *parent_obj;
    Evas_Object                  *parent2;
@@ -827,8 +738,15 @@ EAPI Eina_List       *elm_widget_scrollable_children_get(Evas_Object *obj);
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
 
-#define ELM_WIDGET_DATA_GET(o, sd) \
-  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_WIDGET_DATA_GET_NO_INST(o, wd) \
+  wd = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ? \
+        eo_data_get(o, ELM_OBJ_WIDGET_CLASS) : \
+        NULL)
+
+#define ELM_WIDGET_DATA_GET(o, wd) \
+  Elm_Widget_Smart_Data *wd; \
+  ELM_WIDGET_DATA_GET_NO_INST(o, wd)
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_WIDGET_DATA_GET(o, ptr);                       \
@@ -838,6 +756,10 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
+
+#define ELM_WIDGET_CHECK(obj)                       \
+  if (!obj || !eo_isa((obj), ELM_OBJ_WIDGET_CLASS)) \
+    return
 
 /**
  * Convenience macro to create new widget item, doing casts for you.
@@ -1078,4 +1000,287 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *widget);
 EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (*dragdone) (void *data, Evas_Object *), void *donecbdata);
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
+#define ELM_OBJ_WIDGET_CLASS elm_widget_class_get()
+
+const Eo_Class *elm_widget_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op ELM_WIDGET_BASE_ID;
+
+enum
+{
+   ELM_WIDGET_SUB_ID_ON_FOCUS,
+   ELM_WIDGET_SUB_ID_DISABLE,
+   ELM_WIDGET_SUB_ID_THEME,
+   ELM_WIDGET_SUB_ID_TRANSLATE,
+   ELM_WIDGET_SUB_ID_EVENT,
+   ELM_WIDGET_SUB_ID_ON_FOCUS_REGION,
+   ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS,
+   ELM_WIDGET_SUB_ID_FOCUS_NEXT,
+   ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS,
+   ELM_WIDGET_SUB_ID_FOCUS_DIRECTION,
+   ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD,
+   ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL,
+   ELM_WIDGET_SUB_ID_ACCESS,
+   ELM_WIDGET_SUB_ID_PARENT_SET,
+   ELM_WIDGET_SUB_ID_PARENT_GET,
+   ELM_WIDGET_SUB_ID_PARENT2_SET,
+   ELM_WIDGET_SUB_ID_PARENT2_GET,
+   ELM_WIDGET_SUB_ID_ACTIVATE,
+
+   ELM_WIDGET_SUB_ID_MIRRORED_GET,
+   ELM_WIDGET_SUB_ID_MIRRORED_SET,
+   ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_GET,
+   ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_SET,
+
+   ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_SET,
+   ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET,
+   ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET,
+   ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET,
+
+   ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH,
+   ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP,
+   ELM_WIDGET_SUB_ID_SCROLL_HOLD_GET,
+   ELM_WIDGET_SUB_ID_SCROLL_FREEZE_PUSH,
+   ELM_WIDGET_SUB_ID_SCROLL_FREEZE_POP,
+   ELM_WIDGET_SUB_ID_SCROLL_FREEZE_GET,
+
+   ELM_WIDGET_SUB_ID_ON_SHOW_REGION_HOOK_SET,
+   ELM_WIDGET_SUB_ID_RESIZE_OBJECT_SET,
+   ELM_WIDGET_SUB_ID_HOVER_OBJECT_SET,
+
+   ELM_WIDGET_SUB_ID_CAN_FOCUS_SET,
+   ELM_WIDGET_SUB_ID_CAN_FOCUS_GET,
+   ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_GET,
+   ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET,
+   ELM_WIDGET_SUB_ID_TOP_GET,
+
+   ELM_WIDGET_SUB_ID_PARENT_WIDGET_GET,
+
+   ELM_WIDGET_SUB_ID_FOCUS_SET,
+   ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_CLEAR,
+   ELM_WIDGET_SUB_ID_FOCUS_STEAL,
+   ELM_WIDGET_SUB_ID_FOCUS_RESTORE,
+
+   ELM_WIDGET_SUB_ID_DISABLED_SET,
+   ELM_WIDGET_SUB_ID_DISABLED_GET,
+   ELM_WIDGET_SUB_ID_SHOW_REGION_SET,
+   ELM_WIDGET_SUB_ID_SHOW_REGION_GET,
+
+   ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET,
+   ELM_WIDGET_SUB_ID_SCALE_SET,
+   ELM_WIDGET_SUB_ID_SCALE_GET,
+
+   ELM_WIDGET_SUB_ID_TEXT_PART_SET,
+   ELM_WIDGET_SUB_ID_TEXT_PART_GET,
+   ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_TEXT_PART_SET,
+   ELM_WIDGET_SUB_ID_TRANSLATABLE_TEXT_PART_GET,
+   ELM_WIDGET_SUB_ID_ACCESS_INFO_SET,
+   ELM_WIDGET_SUB_ID_ACCESS_INFO_GET,
+
+   ELM_WIDGET_SUB_ID_THEME_SET,
+   ELM_WIDGET_SUB_ID_THEME_GET,
+
+   ELM_WIDGET_SUB_ID_STYLE_SET,
+   ELM_WIDGET_SUB_ID_STYLE_GET,
+   ELM_WIDGET_SUB_ID_TOOLTIP_ADD,
+   ELM_WIDGET_SUB_ID_TOOLTIP_DEL,
+   ELM_WIDGET_SUB_ID_CURSOR_ADD,
+   ELM_WIDGET_SUB_ID_CURSOR_DEL,
+
+   ELM_WIDGET_SUB_ID_DRAG_LOCK_X_SET,
+   ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_SET,
+   ELM_WIDGET_SUB_ID_DRAG_LOCK_X_GET,
+   ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_GET,
+   ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_X_GET,
+   ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_Y_GET,
+
+   ELM_WIDGET_SUB_ID_EVENT_CALLBACK_ADD,
+   ELM_WIDGET_SUB_ID_EVENT_CALLBACK_DEL,
+   ELM_WIDGET_SUB_ID_EVENT_PROPAGATE,
+
+   ELM_WIDGET_SUB_ID_SIGNAL_EMIT,
+   ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_ADD,
+   ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_DEL,
+
+   ELM_WIDGET_SUB_ID_NAME_FIND,
+
+   ELM_WIDGET_SUB_ID_FOCUS_HIDE_HANDLE,
+   ELM_WIDGET_SUB_ID_FOCUS_MOUSE_UP_HANDLE,
+   ELM_WIDGET_SUB_ID_FOCUS_TREE_UNFOCUSABLE_HANDLE,
+   ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE,
+   ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_REGION_GET,
+
+   ELM_WIDGET_SUB_ID_THEME_OBJECT_SET,
+/* internal */
+   ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET,
+   ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_UNSET,
+   ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_APPEND,
+   ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_PREPEND,
+   ELM_WIDGET_SUB_ID_FOCUS_CYCLE,
+   ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GO,
+   ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET,
+
+   ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET,
+   ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET,
+
+   ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_SET,
+   ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET,
+
+   ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET,
+#if 0
+   ELM_WIDGET_SUB_ID_THEME, /* API + virtual*/
+   ELM_WIDGET_SUB_ID_THEME_SPECIFIC,
+   ELM_WIDGET_SUB_ID_TRANSLATE, /* API + virtual*/
 #endif
+
+
+   ELM_WIDGET_SUB_ID_LAST
+};
+
+typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
+typedef void * (*list_data_get_func_type)(const Eina_List * l);
+#define ELM_WIDGET_ID(sub_id) (ELM_WIDGET_BASE_ID + sub_id)
+
+#define elm_wdg_on_focus(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_disable(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_theme(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_translate(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_event(source, type, event_info, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), EO_TYPECHECK(Evas_Object *, source), EO_TYPECHECK(Evas_Callback_Type, type), EO_TYPECHECK(void *, event_info), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_on_focus_region(x, y, w, h, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focus_next_manager_is(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focus_next(dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focus_direction_manager_is(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focus_direction(base, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_sub_object_add(sobj, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD), EO_TYPECHECK(Evas_Object *, sobj), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_sub_object_del(sobj, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), EO_TYPECHECK(Evas_Object *, sobj), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_access(is_access) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), EO_TYPECHECK(Eina_Bool, is_access)
+
+#define elm_wdg_parent_set(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), EO_TYPECHECK(Evas_Object *, parent)
+#define elm_wdg_parent_get(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), EO_TYPECHECK(Evas_Object **, parent)
+
+#define elm_wdg_parent2_set(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), EO_TYPECHECK(Evas_Object *, parent)
+#define elm_wdg_parent2_get(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), EO_TYPECHECK(Evas_Object **, parent)
+
+#define elm_wdg_activate(act, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), EO_TYPECHECK(Elm_Activate, act), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_mirrored_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_mirrored_set(mirrored) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
+#define elm_wdg_mirrored_automatic_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_mirrored_automatic_set(automatic) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_SET), EO_TYPECHECK(Eina_Bool, automatic)
+
+#define elm_wdg_highlight_ignore_set(ignore) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_SET), EO_TYPECHECK(Eina_Bool, ignore)
+#define elm_wdg_highlight_ignore_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_highlight_in_theme_set(highlight) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET), EO_TYPECHECK(Eina_Bool, highlight)
+#define elm_wdg_highlight_in_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_scroll_hold_push() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH)
+#define elm_wdg_scroll_hold_pop() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP)
+#define elm_wdg_scroll_hold_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_GET), EO_TYPECHECK(int *, ret)
+#define elm_wdg_scroll_freeze_push() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_PUSH)
+#define elm_wdg_scroll_freeze_pop() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_POP)
+#define elm_wdg_scroll_freeze_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_GET), EO_TYPECHECK(int *, ret)
+
+#define elm_wdg_on_show_region_hook_set(func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_SHOW_REGION_HOOK_SET), EO_TYPECHECK(region_hook_func_type, func), EO_TYPECHECK(void *, data)
+#define elm_wdg_resize_object_set(sobj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_RESIZE_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj)
+#define elm_wdg_hover_object_set(sobj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HOVER_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj)
+
+#define elm_wdg_can_focus_set(can_focus) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_SET), EO_TYPECHECK(Eina_Bool, can_focus)
+#define elm_wdg_can_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_child_can_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focused_object_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+#define elm_wdg_top_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOP_GET), EO_TYPECHECK(Evas_Object **, ret)
+#define elm_wdg_parent_widget_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_WIDGET_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+#define elm_wdg_focus_set(first) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_SET), EO_TYPECHECK(int, first)
+#define elm_wdg_focused_object_clear() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_CLEAR)
+#define elm_wdg_focus_steal() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_STEAL)
+#define elm_wdg_focus_restore() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_RESTORE)
+
+#define elm_wdg_disabled_set(disabled) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
+#define elm_wdg_disabled_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_show_region_set(x, y, w, h, forceshow) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, forceshow)
+#define elm_wdg_show_region_get(x, y, w, h) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+#define elm_wdg_scrollable_children_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET), EO_TYPECHECK(Eina_List **, ret)
+#define elm_wdg_scale_set(scale) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_SET), EO_TYPECHECK(double, scale)
+#define elm_wdg_scale_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, ret)
+
+#define elm_wdg_text_part_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
+#define elm_wdg_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+
+#define elm_wdg_domain_translatable_text_part_set(part, domain, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, domain), EO_TYPECHECK(const char *, label)
+#define elm_wdg_translatable_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+
+#define elm_wdg_access_info_set(txt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_INFO_SET), EO_TYPECHECK(const char *, txt)
+#define elm_wdg_access_info_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_INFO_GET), EO_TYPECHECK(const char **, ret)
+
+#define elm_wdg_theme_set(th) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_SET), EO_TYPECHECK(Elm_Theme *, th)
+#define elm_wdg_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_GET), EO_TYPECHECK(Elm_Theme **, ret)
+
+#define elm_wdg_style_set(style, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_STYLE_SET), EO_TYPECHECK(const char *, style), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_style_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_STYLE_GET), EO_TYPECHECK(const char **, ret)
+#define elm_wdg_tooltip_add(tt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOOLTIP_ADD), EO_TYPECHECK(Elm_Tooltip *, tt)
+#define elm_wdg_tooltip_del(tt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOOLTIP_DEL), EO_TYPECHECK(Elm_Tooltip *, tt)
+#define elm_wdg_cursor_add(cur) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CURSOR_ADD), EO_TYPECHECK(Elm_Cursor *, cur)
+#define elm_wdg_cursor_del(cur) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CURSOR_DEL), EO_TYPECHECK(Elm_Cursor *, cur)
+
+#define elm_wdg_drag_lock_x_set(lock) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_X_SET), EO_TYPECHECK(Eina_Bool, lock)
+#define elm_wdg_drag_lock_y_set(lock) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_SET), EO_TYPECHECK(Eina_Bool, lock)
+#define elm_wdg_drag_lock_x_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_X_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_drag_lock_y_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_drag_child_locked_x_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_X_GET), EO_TYPECHECK(int *, ret)
+#define elm_wdg_drag_child_locked_y_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_Y_GET), EO_TYPECHECK(int *, ret)
+
+#define elm_wdg_event_callback_add(func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_CALLBACK_ADD), EO_TYPECHECK(Elm_Event_Cb, func), EO_TYPECHECK(const void *, data)
+#define elm_wdg_event_callback_del(func, data, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(Elm_Event_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(void **, ret)
+#define elm_wdg_event_propagate(type, event_info, event_flags, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_PROPAGATE), EO_TYPECHECK(Evas_Callback_Type, type), EO_TYPECHECK(void *, event_info), EO_TYPECHECK(Evas_Event_Flags *, event_flags), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_signal_emit(emission, source) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_EMIT), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source)
+#define elm_wdg_signal_callback_add(emission, source, func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_ADD), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data)
+#define elm_wdg_signal_callback_del(emission, source, func, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_DEL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void **, ret)
+
+#define elm_wdg_name_find(name, recurse, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NAME_FIND), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int, recurse), EO_TYPECHECK(Evas_Object **, ret)
+
+#define elm_wdg_focus_hide_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIDE_HANDLE)
+#define elm_wdg_focus_mouse_up_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_MOUSE_UP_HANDLE)
+#define elm_wdg_focus_tree_unfocusable_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_TREE_UNFOCUSABLE_HANDLE)
+#define elm_wdg_focus_disabled_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE)
+#define elm_wdg_focus_order_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET), EO_TYPECHECK(unsigned int *, ret)
+#define elm_wdg_focus_region_get(x, y, w, h, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_theme_object_set(edj, wname, welement, wstyle, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET), EO_TYPECHECK(Evas_Object *, edj), EO_TYPECHECK(const char *, wname), EO_TYPECHECK(const char *, welement), EO_TYPECHECK(const char *, wstyle), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_focus_custom_chain_set(objs) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET), EO_TYPECHECK(Eina_List *, objs)
+#define elm_wdg_focus_custom_chain_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET), EO_TYPECHECK(const Eina_List **, ret)
+#define elm_wdg_focus_custom_chain_unset() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_UNSET)
+#define elm_wdg_focus_custom_chain_append(child, relative_child) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_APPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object *, relative_child)
+#define elm_wdg_focus_custom_chain_prepend(child, relative_child) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_PREPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object *, relative_child)
+#define elm_wdg_focus_cycle(dir) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CYCLE), EO_TYPECHECK(Elm_Focus_Direction, dir)
+#define elm_wdg_focus_direction_go(degree, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GO), EO_TYPECHECK(double, degree), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_focus_direction_get(base, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GET), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_focus_list_direction_get(base, items, list_data_get, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_focus_next_get(dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_focus_list_next_get(items, list_data_get, dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_display_mode_set(dispmode) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), EO_TYPECHECK(Evas_Display_Mode, dispmode)
+#define elm_wdg_display_mode_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), EO_TYPECHECK(Evas_Display_Mode *, ret)
+
+#define elm_wdg_tree_unfocusable_set(tree_unfocusable) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_SET), EO_TYPECHECK(Eina_Bool, tree_unfocusable)
+#define elm_wdg_tree_unfocusable_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define elm_wdg_can_focus_child_list_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), EO_TYPECHECK(Eina_List **, ret)
+
+#endif
+

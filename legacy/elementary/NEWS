@@ -3,6 +3,7 @@ Changes since Elementary 1.7.0:
 
 Additions:
 
+   * Porting to Eo
    * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
    * Add elementary_codegen
    * Add window floating mode api's

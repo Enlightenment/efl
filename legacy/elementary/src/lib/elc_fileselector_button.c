@@ -2,8 +2,13 @@
 #include "elm_priv.h"
 #include "elm_widget_fileselector_button.h"
 
-EAPI const char ELM_FILESELECTOR_BUTTON_SMART_NAME[] =
-  "elm_fileselector_button";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_FILESELECTOR_BUTTON_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_FILESELECTOR_BUTTON_CLASS
+
+#define MY_CLASS_NAME "elm_fileselector_button"
 
 #define DEFAULT_WINDOW_TITLE "Select a file"
 
@@ -13,34 +18,33 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_FILESELECTOR_BUTTON_SMART_NAME, _elm_fileselector_button,
-  Elm_Fileselector_Button_Smart_Class, Elm_Button_Smart_Class,
-  elm_button_smart_class_get, _smart_callbacks);
-
-static Eina_Bool
-_elm_fileselector_button_smart_theme(Evas_Object *obj)
+static void
+_elm_fileselector_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+
    char buf[4096];
    const char *style;
 
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    style = eina_stringshare_add(elm_widget_style_get(obj));
 
    snprintf(buf, sizeof(buf), "fileselector_button/%s", style);
 
    /* file selector button's style has an extra bit */
-   eina_stringshare_replace(&(ELM_WIDGET_DATA(sd)->style), buf);
+   eina_stringshare_replace(&(wd->style), buf);
 
-   if (!ELM_WIDGET_CLASS(_elm_fileselector_button_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
-   eina_stringshare_replace(&(ELM_WIDGET_DATA(sd)->style), style);
+   eina_stringshare_replace(&(wd->style), style);
 
    eina_stringshare_del(style);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -60,7 +64,7 @@ _selection_done(void *data,
    evas_object_del(del);
 
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_FILE_CHOSEN, (void *)file);
+     (sd->obj, SIG_FILE_CHOSEN, (void *)file);
 }
 
 static Evas_Object *
@@ -100,7 +104,7 @@ _activate(Elm_Fileselector_Button_Smart_Data *sd)
 
    if (sd->inwin_mode)
      {
-        sd->fsw = _parent_win_get(ELM_WIDGET_DATA(sd)->obj);
+        sd->fsw = _parent_win_get(sd->obj);
 
         if (!sd->fsw)
           sd->fsw = _new_window_add(sd);
@@ -115,7 +119,7 @@ _activate(Elm_Fileselector_Button_Smart_Data *sd)
 
    sd->fs = elm_fileselector_add(sd->fsw);
    elm_widget_mirrored_set
-     (sd->fs, elm_widget_mirrored_get(ELM_WIDGET_DATA(sd)->obj));
+     (sd->fs, elm_widget_mirrored_get(sd->obj));
    elm_widget_mirrored_automatic_set(sd->fs, EINA_FALSE);
    elm_fileselector_expandable_set(sd->fs, sd->fsd.expandable);
    elm_fileselector_folder_only_set(sd->fs, sd->fsd.folder_only);
@@ -148,11 +152,11 @@ _button_clicked(void *data,
 }
 
 static void
-_elm_fileselector_button_smart_add(Evas_Object *obj)
+_elm_fileselector_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Fileselector_Button_Smart_Data);
+   Elm_Fileselector_Button_Smart_Data *priv = _pd;
 
-   ELM_WIDGET_CLASS(_elm_fileselector_button_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    if (getenv("HOME")) priv->fsd.path = eina_stringshare_add(getenv("HOME"));
@@ -167,16 +171,16 @@ _elm_fileselector_button_smart_add(Evas_Object *obj)
 
    evas_object_smart_callback_add(obj, "clicked", _button_clicked, priv);
 
-   _elm_fileselector_button_smart_theme(obj);
+   eo_do(obj, elm_wdg_theme(NULL));
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
 static void
-_elm_fileselector_button_smart_del(Evas_Object *obj)
+_elm_fileselector_button_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object *win;
 
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    if (sd->window_title) eina_stringshare_del(sd->window_title);
    if (sd->fsd.path) eina_stringshare_del(sd->fsd.path);
@@ -186,53 +190,39 @@ _elm_fileselector_button_smart_del(Evas_Object *obj)
         evas_object_del(win);
      }
 
-   ELM_WIDGET_CLASS(_elm_fileselector_button_parent_sc)->base.del(obj);
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 static void
-_elm_fileselector_button_smart_set_user(
-  Elm_Fileselector_Button_Smart_Class *sc)
+_elm_fileselector_button_smart_admits_autorepeat_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_fileselector_button_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_fileselector_button_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_fileselector_button_smart_theme;
-
-   ELM_BUTTON_CLASS(sc)->admits_autorepeat = EINA_FALSE;
-}
-
-EAPI const Elm_Fileselector_Button_Smart_Class *
-elm_fileselector_button_smart_class_get(void)
-{
-   static Elm_Fileselector_Button_Smart_Class _sc =
-     ELM_FILESELECTOR_BUTTON_SMART_CLASS_INIT_NAME_VERSION
-       (ELM_FILESELECTOR_BUTTON_SMART_NAME);
-   static const Elm_Fileselector_Button_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class) return class;
-
-   _elm_fileselector_button_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
 }
 
 EAPI Evas_Object *
 elm_fileselector_button_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   obj = elm_widget_add(_elm_fileselector_button_smart_class_new(), parent);
-   if (!obj) return NULL;
+static void
+_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+   sd->obj = obj;
 
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+
+   Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 EAPI void
@@ -240,7 +230,14 @@ elm_fileselector_button_window_title_set(Evas_Object *obj,
                                          const char *title)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_window_title_set(title));
+}
+
+static void
+_window_title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *title = va_arg(*list, const char *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->window_title, title);
 
@@ -251,9 +248,18 @@ EAPI const char *
 elm_fileselector_button_window_title_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) NULL;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_window_title_get(&ret));
+   return ret;
+}
 
-   return sd->window_title;
+static void
+_window_title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->window_title;
 }
 
 EAPI void
@@ -262,7 +268,15 @@ elm_fileselector_button_window_size_set(Evas_Object *obj,
                                         Evas_Coord height)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_window_size_set(width, height));
+}
+
+static void
+_window_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord width = va_arg(*list, Evas_Coord);
+   Evas_Coord height = va_arg(*list, Evas_Coord);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    sd->w = width;
    sd->h = height;
@@ -276,7 +290,15 @@ elm_fileselector_button_window_size_get(const Evas_Object *obj,
                                         Evas_Coord *height)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do((Eo *) obj, elm_obj_fileselector_button_window_size_get(width, height));
+}
+
+static void
+_window_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord *width = va_arg(*list, Evas_Coord *);
+   Evas_Coord *height = va_arg(*list, Evas_Coord *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    if (width) *width = sd->w;
    if (height) *height = sd->h;
@@ -287,7 +309,14 @@ elm_fileselector_button_path_set(Evas_Object *obj,
                                  const char *path)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_path_set(path));
+}
+
+static void
+_path_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *path = va_arg(*list, const char *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->fsd.path, path);
 
@@ -298,9 +327,18 @@ EAPI const char *
 elm_fileselector_button_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) NULL;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_path_get(&ret));
+   return ret;
+}
 
-   return sd->fsd.path;
+static void
+_path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->fsd.path;
 }
 
 EAPI void
@@ -308,7 +346,14 @@ elm_fileselector_button_expandable_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_expandable_set(value));
+}
+
+static void
+_expandable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool value = va_arg(*list, int);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    sd->fsd.expandable = value;
 
@@ -319,9 +364,18 @@ EAPI Eina_Bool
 elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) EINA_FALSE;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_expandable_get(&ret));
+   return ret;
+}
 
-   return sd->fsd.expandable;
+static void
+_expandable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->fsd.expandable;
 }
 
 EAPI void
@@ -329,7 +383,14 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj,
                                         Eina_Bool value)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_folder_only_set(value));
+}
+
+static void
+_folder_only_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool value = va_arg(*list, int);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    sd->fsd.folder_only = value;
 
@@ -340,9 +401,18 @@ EAPI Eina_Bool
 elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) EINA_FALSE;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_folder_only_get(&ret));
+   return ret;
+}
 
-   return sd->fsd.folder_only;
+static void
+_folder_only_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->fsd.folder_only;
 }
 
 EAPI void
@@ -350,7 +420,14 @@ elm_fileselector_button_is_save_set(Evas_Object *obj,
                                     Eina_Bool value)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_is_save_set(value));
+}
+
+static void
+_is_save_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool value = va_arg(*list, int);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    sd->fsd.is_save = value;
 
@@ -361,9 +438,18 @@ EAPI Eina_Bool
 elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) EINA_FALSE;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_is_save_get(&ret));
+   return ret;
+}
 
-   return sd->fsd.is_save;
+static void
+_is_save_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->fsd.is_save;
 }
 
 EAPI void
@@ -371,7 +457,14 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj);
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_fileselector_button_inwin_mode_set(value));
+}
+
+static void
+_inwin_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool value = va_arg(*list, int);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    sd->inwin_mode = value;
 }
@@ -380,7 +473,79 @@ EAPI Eina_Bool
 elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_BUTTON_CHECK(obj) EINA_FALSE;
-   ELM_FILESELECTOR_BUTTON_DATA_GET(obj, sd);
-
-   return sd->inwin_mode;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_button_inwin_mode_get(&ret));
+   return ret;
 }
+
+static void
+_inwin_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Button_Smart_Data *sd = _pd;
+
+   *ret = sd->inwin_mode;
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_fileselector_button_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_fileselector_button_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_fileselector_button_smart_theme),
+
+        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_fileselector_button_smart_admits_autorepeat_get),
+
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_SET), _window_title_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_GET), _window_title_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_SET), _window_size_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_GET), _window_size_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_SET), _path_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_GET), _path_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_SET), _expandable_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_GET), _expandable_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_SET), _folder_only_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_GET), _folder_only_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_SET), _is_save_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_GET), _is_save_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_SET), _inwin_mode_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_GET), _inwin_mode_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_SET, "Set the title for a given file selector button widget's window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_GET, "Get the title for a given file selector button widget's window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_SET, "Set the size of a given file selector button widget's window, holding the file selector itself."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_GET, "Get the size of a given file selector button widget's window, holding the file selector itself."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_SET, "Set the initial file system path for a given file selector button widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_GET, "Get the initial file system path set for a given file selector button widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_SET, "Enable/disable a tree view in the given file selector button widget's internal file selector."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_GET, "Get whether tree view is enabled for the given file selector button widget's internal file selector."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_SET, "Set whether a given file selector button widget's internal file selector is to display folders only or the directory contents, as well."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_GET, "Get whether a given file selector button widget's internal file selector is displaying folders only or the directory contents, as well."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_SET, "Enable/disable the file name entry box where the user can type in a name for a file, in a given file selector button widget's internal file selector."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_GET, "Get whether the given file selector button widget's internal file selector is in 'saving dialog' mode."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_SET, "Set whether a given file selector button widget's internal file selector will raise an Elementary 'inner window', instead of a dedicated Elementary window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_GET, "Get whether a given file selector button widget's internal file selector will raise an Elementary 'inner window', instead of a dedicated Elementary window."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_FILESELECTOR_BUTTON_BASE_ID, op_desc, ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Fileselector_Button_Smart_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_fileselector_button_class_get, &class_desc, ELM_OBJ_BUTTON_CLASS, NULL);
+

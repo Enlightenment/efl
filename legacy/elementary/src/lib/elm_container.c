@@ -2,67 +2,31 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 
-static const char CONTAINER_SMART_NAME[] = "elm_container";
+#include "Eo.h"
 
-/* Elementary smart class for all widgets containing others */
-EVAS_SMART_SUBCLASS_NEW
-  (CONTAINER_SMART_NAME, _elm_container, Elm_Container_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
+EAPI Eo_Op ELM_OBJ_CONTAINER_BASE_ID = EO_NOOP;
 
-/* no *direct* instantiation of this class, so far */
-__UNUSED__ static Evas_Smart *_elm_container_smart_class_new(void);
+#define MY_CLASS ELM_OBJ_CONTAINER_CLASS
 
-static Eina_Bool
-_unimplemented_smart_content_set(Evas_Object *obj,
-                                 const char *name __UNUSED__,
-                                 Evas_Object *content __UNUSED__)
-{
-    WRN("The %s widget does not implement the \"content_set()\" function.",
-         elm_widget_type_get(obj));
+#define MY_CLASS_NAME "elm_container"
 
-    return EINA_FALSE;
-}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET, "Set the content on part of a given container widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET, "Get the content on a part of a given container widget"),
+     EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET, "Unset the content on a part of a given container widget"),
+     EO_OP_DESCRIPTION_SENTINEL
+};
 
-static Evas_Object *
-_unimplemented_smart_content_get(const Evas_Object *obj,
-                                 const char *name __UNUSED__)
-{
-    WRN("The %s widget does not implement the \"content_get()\" function.",
-         elm_widget_type_get(obj));
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_CONTAINER_BASE_ID, op_desc, ELM_OBJ_CONTAINER_SUB_ID_LAST),
+     NULL,
+     0,
+     NULL,
+     NULL
+};
 
-    return NULL;
-}
+EO_DEFINE_CLASS(elm_obj_container_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
 
-static Evas_Object *
-_unimplemented_smart_content_unset(Evas_Object *obj,
-                                   const char *name __UNUSED__)
-{
-    WRN("The %s widunset does not implement the \"content_unset()\" function.",
-         elm_widget_type_get(obj));
-
-    return NULL;
-}
-
-EAPI const Elm_Container_Smart_Class *
-elm_container_smart_class_get(void)
-{
-   static Elm_Container_Smart_Class _sc =
-     ELM_CONTAINER_SMART_CLASS_INIT_NAME_VERSION(CONTAINER_SMART_NAME);
-   static const Elm_Container_Smart_Class *class = NULL;
-
-   if (class)
-     return class;
-
-   _elm_container_smart_set(&_sc);
-   class = &_sc;
-
-   return class;
-}
-
-static void
-_elm_container_smart_set_user(Elm_Container_Smart_Class *sc)
-{
-   sc->content_set = _unimplemented_smart_content_set;
-   sc->content_get = _unimplemented_smart_content_get;
-   sc->content_unset = _unimplemented_smart_content_unset;
-}

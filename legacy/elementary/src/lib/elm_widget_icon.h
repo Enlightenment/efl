@@ -1,7 +1,7 @@
 #ifndef ELM_WIDGET_ICON_H
 #define ELM_WIDGET_ICON_H
 
-#include "elm_widget_image.h"
+#include "Elementary.h"
 
 /**
  * @addtogroup Widget
@@ -13,108 +13,10 @@
  * an icon as their basic graphics.
  */
 
- /**
-  * @def ELM_ICON_CLASS
-  *
-  * Use this macro to cast whichever subclass of
-  * #Elm_Icon_Smart_Class into it, so to access its fields.
-  *
-  * @ingroup Widget
-  */
- #define ELM_ICON_CLASS(x) ((Elm_Icon_Smart_Class *) x)
-
-/**
- * @def ELM_ICON_DATA
- *
- * Use this macro to cast whichever subdata of
- * #Elm_Icon_Smart_Data into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_ICON_DATA(x) ((Elm_Icon_Smart_Data *) x)
-
-/**
- * @def ELM_ICON_SMART_CLASS_VERSION
- *
- * Current version for Elementary icon @b base smart class, a value
- * which goes to _Elm_Icon_Smart_Class::version.
- *
- * @ingroup Widget
- */
-#define ELM_ICON_SMART_CLASS_VERSION 1
-
-/**
- * @def ELM_ICON_SMART_CLASS_INIT
- *
- * Initializer for a whole #Elm_Icon_Smart_Class structure, with
- * @c NULL values on its specific fields.
- *
- * @param smart_class_init initializer to use for the "base" field
- * (#Evas_Smart_Class).
- *
- * @see EVAS_SMART_CLASS_INIT_NULL
- * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_ICON_SMART_CLASS_INIT_NULL
- * @see ELM_ICON_SMART_CLASS_INIT_NAME_VERSION
- *
- * @ingroup Widget
- */
-#define ELM_ICON_SMART_CLASS_INIT(smart_class_init)                        \
-    {smart_class_init, ELM_ICON_SMART_CLASS_VERSION}
-
-/**
- * @def ELM_ICON_SMART_CLASS_INIT_NULL
- *
- * Initializer to zero out a whole #Elm_Icon_Smart_Class structure.
- *
- * @see ELM_ICON_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_ICON_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_ICON_SMART_CLASS_INIT_NULL \
-  ELM_ICON_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
-
-/**
- * @def ELM_ICON_SMART_CLASS_INIT_NAME_VERSION
- *
- * Initializer to zero out a whole #Elm_Icon_Smart_Class structure and
- * set its name and version.
- *
- * This is similar to #ELM_ICON_SMART_CLASS_INIT_NULL, but it will
- * also set the version field of #Elm_Icon_Smart_Class (base field)
- * to the latest #ELM_ICON_SMART_CLASS_VERSION and name it to the
- * specific value.
- *
- * It will keep a reference to the name field as a <c>"const char *"</c>,
- * i.e., the name must be available while the structure is
- * used (hint: static or global variable!) and must not be modified.
- *
- * @see ELM_ICON_SMART_CLASS_INIT_NULL
- * @see ELM_ICON_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_ICON_SMART_CLASS_INIT_NAME_VERSION(name) \
-  ELM_ICON_SMART_CLASS_INIT(ELM_IMAGE_SMART_CLASS_INIT_NAME_VERSION(name))
-
-/**
- * Elementary icon base smart class. This inherits directly from
- * #Elm_Image_Smart_Class and is meant to build widgets relying on an
- * icon as the building block of its visuals.
- */
-typedef struct _Elm_Icon_Smart_Class
-{
-   Elm_Image_Smart_Class base;
-
-   int                    version; /**< Version of this smart class definition */
-} Elm_Icon_Smart_Class;
-
 typedef struct _Elm_Icon_Smart_Data Elm_Icon_Smart_Data;
 struct _Elm_Icon_Smart_Data
 {
-   Elm_Image_Smart_Data  base;
-
+   Evas_Object          *obj; // the object itself
    const char           *stdicon;
    Elm_Icon_Lookup_Order lookup_order;
 
@@ -157,11 +59,8 @@ struct _Elm_Icon_Smart_Data
  * @}
  */
 
-EAPI extern const char ELM_ICON_SMART_NAME[];
-EAPI const Elm_Icon_Smart_Class *elm_icon_smart_class_get(void);
-
 #define ELM_ICON_DATA_GET(o, sd) \
-  Elm_Icon_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Icon_Smart_Data * sd = eo_data_get(o, ELM_OBJ_ICON_CLASS)
 
 #define ELM_ICON_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_ICON_DATA_GET(o, ptr);                         \
@@ -182,7 +81,7 @@ EAPI const Elm_Icon_Smart_Class *elm_icon_smart_class_get(void);
     }
 
 #define ELM_ICON_CHECK(obj)                                                 \
-  if (!obj || !elm_widget_type_check((obj), ELM_ICON_SMART_NAME, __func__)) \
+  if (!eo_isa((obj), ELM_OBJ_ICON_CLASS)) \
     return
 
 #endif

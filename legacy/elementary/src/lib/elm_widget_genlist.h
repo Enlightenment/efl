@@ -2,8 +2,7 @@
 #define ELM_WIDGET_GENLIST_H
 
 #include "elm_gen_common.h"
-#include "elm_interface_scrollable.h"
-#include "elm_widget_layout.h"
+#include "Elementary.h"
 
 /**
  * @addtogroup Widget
@@ -15,107 +14,6 @@
  * foundation -- the Elementary Genlist Class -- in order to create
  * other widgets which are a genlist with some more logic on top.
  */
-
-/**
- * @def ELM_GENLIST_CLASS
- *
- * Use this macro to cast whichever subclass of
- * #Elm_Genlist_Smart_Class into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_CLASS(x) ((Elm_Genlist_Smart_Class *)x)
-
-/**
- * @def ELM_GENLIST_DATA
- *
- * Use this macro to cast whichever subdata of
- * #Elm_Genlist_Smart_Data into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_DATA(x)  ((Elm_Genlist_Smart_Data *)x)
-
-/**
- * @def ELM_GENLIST_SMART_CLASS_VERSION
- *
- * Current version for Elementary genlist @b base smart class, a value
- * which goes to _Elm_Genlist_Smart_Class::version.
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_SMART_CLASS_VERSION 1
-
-/**
- * @def ELM_GENLIST_SMART_CLASS_INIT
- *
- * Initializer for a whole #Elm_Genlist_Smart_Class structure, with
- * @c NULL values on its specific fields.
- *
- * @param smart_class_init initializer to use for the "base" field
- * (#Evas_Smart_Class).
- *
- * @see EVAS_SMART_CLASS_INIT_NULL
- * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_GENLIST_SMART_CLASS_INIT_NULL
- * @see ELM_GENLIST_SMART_CLASS_INIT_NAME_VERSION
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_SMART_CLASS_INIT(smart_class_init) \
-  {smart_class_init, ELM_GENLIST_SMART_CLASS_VERSION}
-
-/**
- * @def ELM_GENLIST_SMART_CLASS_INIT_NULL
- *
- * Initializer to zero out a whole #Elm_Genlist_Smart_Class structure.
- *
- * @see ELM_GENLIST_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_GENLIST_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_SMART_CLASS_INIT_NULL \
-  ELM_GENLIST_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
-
-/**
- * @def ELM_GENLIST_SMART_CLASS_INIT_NAME_VERSION
- *
- * Initializer to zero out a whole #Elm_Genlist_Smart_Class structure and
- * set its name and version.
- *
- * This is similar to #ELM_GENLIST_SMART_CLASS_INIT_NULL, but it will
- * also set the version field of #Elm_Genlist_Smart_Class (base field)
- * to the latest #ELM_GENLIST_SMART_CLASS_VERSION and name it to the
- * specific value.
- *
- * It will keep a reference to the name field as a <c>"const char *"</c>,
- * i.e., the name must be available while the structure is
- * used (hint: static or global variable!) and must not be modified.
- *
- * @see ELM_GENLIST_SMART_CLASS_INIT_NULL
- * @see ELM_GENLIST_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_GENLIST_SMART_CLASS_INIT_NAME_VERSION(name) \
-  ELM_GENLIST_SMART_CLASS_INIT                          \
-    (ELM_LAYOUT_SMART_CLASS_INIT_NAME_VERSION(name))
-
-/**
- * Elementary genlist base smart class. This inherits directly from
- * #Elm_Layout_Smart_Class and is meant to build widgets extending the
- * behavior of a genlist.
- *
- * All of the functions listed on @ref Genlist namespace will work for
- * objects deriving from #Elm_Genlist_Smart_Class.
- */
-typedef struct _Elm_Genlist_Smart_Class
-{
-   Elm_Layout_Smart_Class base;
-
-   int                    version;    /**< Version of this smart class definition */
-} Elm_Genlist_Smart_Class;
 
 /**
  * Base widget smart data extended with genlist instance data.
@@ -131,15 +29,10 @@ typedef enum
 
 struct _Elm_Genlist_Smart_Data
 {
-   Elm_Layout_Smart_Data                 base; /* base widget smart data as
-                                                * first member obligatory, as
-                                                * we're inheriting from it */
-
-   const Elm_Scrollable_Smart_Interface *s_iface;
-
    Eina_Inlist_Sorted_State             *state;
    Evas_Object                          *hit_rect;
    Evas_Object                          *pan_obj;
+   Evas_Object                          *obj; // the object itself
 
    Eina_List                            *selected; /* a list of
                                                     * selected
@@ -368,15 +261,10 @@ struct _Item_Cache
    Eina_Bool    tree : 1; // it->group
 };
 
-typedef struct _Elm_Genlist_Pan_Smart_Class
-{
-   Elm_Pan_Smart_Class base;
-} Elm_Genlist_Pan_Smart_Class;
-
 typedef struct _Elm_Genlist_Pan_Smart_Data Elm_Genlist_Pan_Smart_Data;
 struct _Elm_Genlist_Pan_Smart_Data
 {
-   Elm_Pan_Smart_Data      base;
+   Evas_Object            *wobj;
    Elm_Genlist_Smart_Data *wsd;
    Ecore_Job              *resize_job;
 };
@@ -385,14 +273,11 @@ struct _Elm_Genlist_Pan_Smart_Data
  * @}
  */
 
-EAPI extern const char ELM_GENLIST_SMART_NAME[];
-EAPI const Elm_Genlist_Smart_Class *elm_genlist_smart_class_get(void);
-
 #define ELM_GENLIST_DATA_GET(o, sd) \
-  Elm_Genlist_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Genlist_Smart_Data * sd = eo_data_get(o, ELM_OBJ_GENLIST_CLASS)
 
 #define ELM_GENLIST_PAN_DATA_GET(o, sd) \
-  Elm_Genlist_Pan_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Genlist_Pan_Smart_Data * sd = eo_data_get(o, ELM_OBJ_GENLIST_PAN_CLASS)
 
 #define ELM_GENLIST_DATA_GET_OR_RETURN(o, ptr)       \
   ELM_GENLIST_DATA_GET(o, ptr);                      \
@@ -412,8 +297,8 @@ EAPI const Elm_Genlist_Smart_Class *elm_genlist_smart_class_get(void);
        return val;                                      \
     }
 
-#define ELM_GENLIST_CHECK(obj)                                                 \
-  if (!obj || !elm_widget_type_check((obj), ELM_GENLIST_SMART_NAME, __func__)) \
+#define ELM_GENLIST_CHECK(obj)                       \
+  if (!eo_isa((obj), ELM_OBJ_GENLIST_CLASS)) \
     return
 
 #define ELM_GENLIST_ITEM_CHECK(it)                          \
@@ -426,7 +311,7 @@ EAPI const Elm_Genlist_Smart_Class *elm_genlist_smart_class_get(void);
 
 #define ELM_GENLIST_ITEM_CHECK_OR_GOTO(it, label)              \
   ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
-  if (!it->base.widget || !elm_widget_type_check               \
-        ((it->base.widget), ELM_GENLIST_SMART_NAME, __func__)) goto label;
+  if (!it->base.widget || !eo_isa                              \
+        ((it->base.widget), ELM_OBJ_GENLIST_CLASS)) goto label;
 
 #endif

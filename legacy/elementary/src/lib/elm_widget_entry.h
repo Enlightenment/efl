@@ -15,107 +15,6 @@
  * other widgets which are a entry with some more logic on top.
  */
 
-/**
- * @def ELM_ENTRY_CLASS
- *
- * Use this macro to cast whichever subclass of
- * #Elm_Entry_Smart_Class into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_CLASS(x) ((Elm_Entry_Smart_Class *)x)
-
-/**
- * @def ELM_ENTRY_DATA
- *
- * Use this macro to cast whichever subdata of
- * #Elm_Entry_Smart_Data into it, so to access its fields.
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_DATA(x)  ((Elm_Entry_Smart_Data *)x)
-
-/**
- * @def ELM_ENTRY_SMART_CLASS_VERSION
- *
- * Current version for Elementary entry @b base smart class, a value
- * which goes to _Elm_Entry_Smart_Class::version.
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_SMART_CLASS_VERSION 1
-
-/**
- * @def ELM_ENTRY_SMART_CLASS_INIT
- *
- * Initializer for a whole #Elm_Entry_Smart_Class structure, with
- * @c NULL values on its specific fields.
- *
- * @param smart_class_init initializer to use for the "base" field
- * (#Evas_Smart_Class).
- *
- * @see EVAS_SMART_CLASS_INIT_NULL
- * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_ENTRY_SMART_CLASS_INIT_NULL
- * @see ELM_ENTRY_SMART_CLASS_INIT_NAME_VERSION
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_SMART_CLASS_INIT(smart_class_init) \
-  {smart_class_init, ELM_ENTRY_SMART_CLASS_VERSION}
-
-/**
- * @def ELM_ENTRY_SMART_CLASS_INIT_NULL
- *
- * Initializer to zero out a whole #Elm_Entry_Smart_Class structure.
- *
- * @see ELM_ENTRY_SMART_CLASS_INIT_NAME_VERSION
- * @see ELM_ENTRY_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_SMART_CLASS_INIT_NULL \
-  ELM_ENTRY_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
-
-/**
- * @def ELM_ENTRY_SMART_CLASS_INIT_NAME_VERSION
- *
- * Initializer to zero out a whole #Elm_Entry_Smart_Class structure and
- * set its name and version.
- *
- * This is similar to #ELM_ENTRY_SMART_CLASS_INIT_NULL, but it will
- * also set the version field of #Elm_Entry_Smart_Class (base field)
- * to the latest #ELM_ENTRY_SMART_CLASS_VERSION and name it to the
- * specific value.
- *
- * It will keep a reference to the name field as a <c>"const char *"</c>,
- * i.e., the name must be available while the structure is
- * used (hint: static or global variable!) and must not be modified.
- *
- * @see ELM_ENTRY_SMART_CLASS_INIT_NULL
- * @see ELM_ENTRY_SMART_CLASS_INIT
- *
- * @ingroup Widget
- */
-#define ELM_ENTRY_SMART_CLASS_INIT_NAME_VERSION(name) \
-  ELM_ENTRY_SMART_CLASS_INIT                          \
-    (ELM_LAYOUT_SMART_CLASS_INIT_NAME_VERSION(name))
-
-/**
- * Elementary entry base smart class. This inherits directly from
- * #Elm_Layout_Smart_Class and is meant to build widgets extending the
- * behavior of a entry.
- *
- * All of the functions listed on @ref Entry namespace will work for
- * objects deriving from #Elm_Entry_Smart_Class.
- */
-typedef struct _Elm_Entry_Smart_Class
-{
-   Elm_Layout_Smart_Class base;
-
-   int                    version;    /**< Version of this smart class definition */
-} Elm_Entry_Smart_Class;
-
 typedef struct _Mod_Api                     Mod_Api;
 
 /**
@@ -124,12 +23,7 @@ typedef struct _Mod_Api                     Mod_Api;
 typedef struct _Elm_Entry_Smart_Data        Elm_Entry_Smart_Data;
 struct _Elm_Entry_Smart_Data
 {
-   Elm_Layout_Smart_Data                 base; /* base widget smart data as
-                                                * first member obligatory, as
-                                                * we're inheriting from it */
-
    Evas_Object                          *hit_rect, *entry_edje, *scr_edje;
-   const Elm_Scrollable_Smart_Interface *s_iface;
 
    Evas_Object                          *hoversel;
    Ecore_Job                            *deferred_recalc_job;
@@ -236,11 +130,8 @@ typedef enum _Length_Unit
  * @}
  */
 
-EAPI extern const char ELM_ENTRY_SMART_NAME[];
-EAPI const Elm_Entry_Smart_Class *elm_entry_smart_class_get(void);
-
 #define ELM_ENTRY_DATA_GET(o, sd) \
-  Elm_Entry_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Entry_Smart_Data * sd = eo_data_get(o, ELM_OBJ_ENTRY_CLASS)
 
 #define ELM_ENTRY_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_ENTRY_DATA_GET(o, ptr);                        \
@@ -261,8 +152,7 @@ EAPI const Elm_Entry_Smart_Class *elm_entry_smart_class_get(void);
     }
 
 #define ELM_ENTRY_CHECK(obj)                     \
-  if (!obj || !elm_widget_type_check             \
-        ((obj), ELM_ENTRY_SMART_NAME, __func__)) \
+  if (!eo_isa((obj), ELM_OBJ_ENTRY_CLASS))       \
     return
 
 #endif

@@ -1,7 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static const char GESTURE_LAYER_SMART_NAME[] = "elm_gesture_layer";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_GESTURE_LAYER_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_GESTURE_LAYER_CLASS
+
+#define MY_CLASS_NAME "elm_gesture_layer"
 
 /* Some defaults */
 #define ELM_MOUSE_DEVICE             0
@@ -49,7 +55,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ((sd->gesture[T]) ? sd->gesture[T]->test : EINA_FALSE)
 
 #define ELM_GESTURE_LAYER_DATA_GET(o, sd) \
-  Elm_Gesture_Layer_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Gesture_Layer_Smart_Data * sd = eo_data_get(o, MY_CLASS)
 
 #define ELM_GESTURE_LAYER_DATA_GET_OR_RETURN(o, ptr) \
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \
@@ -70,13 +76,8 @@ _glayer_buf_dup(void *buf, size_t size)
     }
 
 #define ELM_GESTURE_LAYER_CHECK(obj)                                      \
-  if (!obj || !elm_widget_type_check((obj),                               \
-                                     GESTURE_LAYER_SMART_NAME, __func__)) \
+  if (!obj || !eo_isa(obj, MY_CLASS)) \
     return
-
-EVAS_SMART_SUBCLASS_NEW
-  (GESTURE_LAYER_SMART_NAME, _elm_gesture_layer, Elm_Widget_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
 /**
  * @internal
@@ -355,10 +356,6 @@ typedef struct _Rotate_Type                  Rotate_Type;
 typedef struct _Elm_Gesture_Layer_Smart_Data Elm_Gesture_Layer_Smart_Data;
 struct _Elm_Gesture_Layer_Smart_Data
 {
-   Elm_Widget_Smart_Data base;    /* base widget smart data as
-                                   * first member obligatory, as
-                                   * we're inheriting from it */
-
    Evas_Object          *target; /* Target Widget */
    Event_History        *event_history_list;
 
@@ -3570,23 +3567,24 @@ _rotate_test(Evas_Object *obj,
      }
 }
 
-static Eina_Bool
-_elm_gesture_layer_smart_disable(Evas_Object *obj)
+static void
+_elm_gesture_layer_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
-_elm_gesture_layer_smart_add(Evas_Object *obj)
+_elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Gesture_Layer_Smart_Data);
+   eo_do_super(obj, evas_obj_smart_add());
 
-   _elm_gesture_layer_parent_sc->base.add(obj);
+   Elm_Gesture_Layer_Smart_Data *priv = _pd;
 
    priv->target = NULL;
    priv->line_min_length =
@@ -3614,12 +3612,11 @@ _elm_gesture_layer_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_gesture_layer_smart_del(Evas_Object *obj)
+_elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
    Pointer_Event *data;
    int i;
-
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
 
    _event_history_clear(obj);
    eina_list_free(sd->pending);
@@ -3640,41 +3637,43 @@ _elm_gesture_layer_smart_del(Evas_Object *obj)
           free(sd->gesture[i]);
        }
 
-   _elm_gesture_layer_parent_sc->base.del(obj); /* handles freeing sd */
-}
-
-static void
-_elm_gesture_layer_smart_set_user(Elm_Widget_Smart_Class *sc)
-{
-   sc->base.add = _elm_gesture_layer_smart_add;
-   sc->base.del = _elm_gesture_layer_smart_del;
-
-   sc->disable = _elm_gesture_layer_smart_disable;
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
 elm_gesture_layer_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   obj = elm_widget_add(_elm_gesture_layer_smart_class_new(), parent);
-   if (!obj) return NULL;
-
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
    return obj;
+}
+
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
+
+   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
+     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
 }
 
 EAPI Eina_Bool
 elm_gesture_layer_hold_events_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) EINA_FALSE;
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_gesture_layer_hold_events_get(&ret));
+   return ret;
+}
 
-   return !sd->repeat_events;
+static void
+_hold_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+   *ret = !sd->repeat_events;
 }
 
 EAPI void
@@ -3682,7 +3681,14 @@ elm_gesture_layer_hold_events_set(Evas_Object *obj,
                                   Eina_Bool hold_events)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_gesture_layer_hold_events_set(hold_events));
+}
+
+static void
+_hold_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool hold_events = va_arg(*list, int);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
    sd->repeat_events = !(!!hold_events);
 }
@@ -3691,9 +3697,17 @@ EAPI double
 elm_gesture_layer_zoom_step_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   double ret = 0;
+   eo_do((Eo *) obj, elm_obj_gesture_layer_zoom_step_get(&ret));
+   return ret;
+}
 
-   return sd->zoom_step;
+static void
+_zoom_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+   *ret = sd->zoom_step;
 }
 
 EAPI void
@@ -3701,7 +3715,14 @@ elm_gesture_layer_zoom_step_set(Evas_Object *obj,
                                 double step)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_gesture_layer_zoom_step_set(step));
+}
+
+static void
+_zoom_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double step = va_arg(*list, double);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
    if (step < 0) return;
 
@@ -3712,9 +3733,17 @@ EAPI double
 elm_gesture_layer_rotate_step_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   double ret = 0;
+   eo_do((Eo *) obj, elm_obj_gesture_layer_rotate_step_get(&ret));
+   return ret;
+}
 
-   return sd->rotate_step;
+static void
+_rotate_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+   *ret = sd->rotate_step;
 }
 
 EAPI void
@@ -3722,7 +3751,14 @@ elm_gesture_layer_rotate_step_set(Evas_Object *obj,
                                   double step)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_gesture_layer_rotate_step_set(step));
+}
+
+static void
+_rotate_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double step = va_arg(*list, double);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
    if (step < 0) return;
 
@@ -3734,9 +3770,20 @@ elm_gesture_layer_attach(Evas_Object *obj,
                          Evas_Object *target)
 {
    ELM_GESTURE_LAYER_CHECK(obj) EINA_FALSE;
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_gesture_layer_attach(target, &ret));
+   return ret;
+}
 
-   if (!target) return EINA_FALSE;
+static void
+_attach(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *target = va_arg(*list, Evas_Object *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+   if (ret) *ret = EINA_FALSE;
+
+   if (!target) return;
 
    /* if was attached before, unregister callbacks first */
    if (sd->target)
@@ -3745,7 +3792,7 @@ elm_gesture_layer_attach(Evas_Object *obj,
    sd->target = target;
 
    _callbacks_register(obj);
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI void
@@ -3755,10 +3802,20 @@ elm_gesture_layer_cb_set(Evas_Object *obj,
                          Elm_Gesture_Event_Cb cb,
                          void *data)
 {
-   Gesture_Info *p;
-
    ELM_GESTURE_LAYER_CHECK(obj);
-   ELM_GESTURE_LAYER_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_gesture_layer_cb_set(idx, cb_type, cb, data));
+}
+
+static void
+_cb_set(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
+   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
+   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
+   void *data = va_arg(*list, void *);
+
+   Gesture_Info *p;
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
    if (!sd->gesture[idx])
      sd->gesture[idx] = calloc(1, sizeof(Gesture_Info));
@@ -3772,3 +3829,52 @@ elm_gesture_layer_cb_set(Evas_Object *obj,
    p->state = ELM_GESTURE_STATE_UNDEFINED;
    SET_TEST_BIT(p);
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_gesture_layer_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_gesture_layer_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_gesture_layer_smart_disable),
+
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_GET), _hold_events_get),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_SET), _hold_events_set),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_GET), _zoom_step_get),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_SET), _zoom_step_set),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_GET), _rotate_step_get),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET), _rotate_step_set),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH), _attach),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), _cb_set),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_GET, "Call this function to get repeat-events settings."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_SET, "This function is to make gesture-layer repeat events."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_GET, "This function returns step-value for zoom action."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_SET, "This function sets step-value for zoom action."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_GET, "This function returns step-value for rotate action."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET, "This function sets step-value for rotate action."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH, "Attach a given gesture layer widget to an Evas object, thus setting the widget's target."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET, "Use function to set callbacks to be notified about change of state of gesture."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_GESTURE_LAYER_BASE_ID, op_desc, ELM_OBJ_GESTURE_LAYER_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Gesture_Layer_Smart_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_gesture_layer_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);

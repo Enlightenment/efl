@@ -2,7 +2,13 @@
 #include "elm_priv.h"
 #include "elm_widget_segment_control.h"
 
-EAPI const char ELM_SEGMENT_CONTROL_SMART_NAME[] = "elm_segment_control";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_SEGMENT_CONTROL_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_SEGMENT_CONTROL_CLASS
+
+#define MY_CLASS_NAME "elm_segment_control"
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -10,25 +16,21 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_SEGMENT_CONTROL_SMART_NAME, _elm_segment_control,
-  Elm_Segment_Control_Smart_Class, Elm_Layout_Smart_Class,
-  elm_layout_smart_class_get, _smart_callbacks);
-
 static void
-_elm_segment_control_smart_sizing_eval(Evas_Object *obj)
+_elm_segment_control_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord w, h;
    int item_count;
 
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    item_count = eina_list_count(sd->items);
 
    elm_coords_finger_size_adjust(item_count, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
-     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+     (wd->resize_obj, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(item_count, &minw, 1, &minh);
 
    evas_object_size_hint_min_get(obj, &w, &h);
@@ -60,13 +62,15 @@ _position_items(Elm_Segment_Control_Smart_Data *sd)
    Elm_Segment_Item *it;
    int bx, by, bw, bh, pos;
 
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+
    item_count = eina_list_count(sd->items);
    if (item_count <= 0) return;
 
    evas_object_geometry_get
-     (ELM_WIDGET_DATA(sd)->resize_obj, &bx, &by, &bw, &bh);
+     (wd->resize_obj, &bx, &by, &bw, &bh);
    sd->item_width = bw / item_count;
-   rtl = elm_widget_mirrored_get(ELM_WIDGET_DATA(sd)->obj);
+   rtl = elm_widget_mirrored_get(sd->obj);
 
    if (rtl) pos = bx + bw - sd->item_width;
    else pos = bx;
@@ -79,7 +83,7 @@ _position_items(Elm_Segment_Control_Smart_Data *sd)
         else pos += sd->item_width;
      }
 
-   elm_layout_sizing_eval(ELM_WIDGET_DATA(sd)->obj);
+   elm_layout_sizing_eval(sd->obj);
 }
 
 static void
@@ -133,7 +137,7 @@ _update_list(Elm_Segment_Control_Smart_Data *sd)
         else
           edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 
-        if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj))
+        if (elm_widget_disabled_get(sd->obj))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
@@ -142,7 +146,7 @@ _update_list(Elm_Segment_Control_Smart_Data *sd)
         return;
      }
 
-   rtl = elm_widget_mirrored_get(ELM_WIDGET_DATA(sd)->obj);
+   rtl = elm_widget_mirrored_get(sd->obj);
    EINA_LIST_FOREACH(sd->items, l, it)
      {
         it->seg_index = idx;
@@ -176,7 +180,7 @@ _update_list(Elm_Segment_Control_Smart_Data *sd)
         else
           edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 
-        if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj))
+        if (elm_widget_disabled_get(sd->obj))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
@@ -186,17 +190,20 @@ _update_list(Elm_Segment_Control_Smart_Data *sd)
      }
 }
 
-static Eina_Bool
-_elm_segment_control_smart_theme(Evas_Object *obj)
+static void
+_elm_segment_control_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Eina_List *l;
    Eina_Bool rtl;
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
 
-   if (!ELM_WIDGET_CLASS(_elm_segment_control_parent_sc)->theme(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
    rtl = elm_widget_mirrored_get(obj);
 
@@ -212,20 +219,23 @@ _elm_segment_control_smart_theme(Evas_Object *obj)
 
    _update_list(sd);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
-static Eina_Bool
-_elm_segment_control_smart_disable(Evas_Object *obj)
+static void
+_elm_segment_control_smart_disable(Eo *obj, void *_pd, va_list *list)
 {
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
 
-   if (!ELM_WIDGET_CLASS(_elm_segment_control_parent_sc)->disable(obj))
-     return EINA_FALSE;
+   eo_do_super(obj, elm_wdg_disable(&int_ret));
+   if (!int_ret) return;
 
    _update_list(sd);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 // TODO: elm_widget_focus_list_next_get supports only Elm_widget list,
@@ -244,16 +254,20 @@ _elm_list_data_get(const Eina_List *list)
    return VIEW(it);
 }
 
-static Eina_Bool
-_elm_segment_control_smart_focus_next(const Evas_Object *obj,
-                                      Elm_Focus_Direction dir,
-                                      Evas_Object **next)
+static void
+_elm_segment_control_smart_focus_next(Eo *obj, void *_pd, va_list *list)
 {
    static int count = 0;
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+
+   Elm_Segment_Control_Smart_Data *sd = _pd;
 
    /* Focus chain */
    if ((items = elm_widget_focus_custom_chain_get(obj)))
@@ -262,10 +276,11 @@ _elm_segment_control_smart_focus_next(const Evas_Object *obj,
      {
         items = sd->items;
         list_data_get = _elm_list_data_get;
-        if (!items) return EINA_FALSE;
+        if (!items) return;
      }
 
-   return elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
+   int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
+   if (ret) *ret = int_ret;
 }
 
 #endif
@@ -292,7 +307,7 @@ _segment_on(Elm_Segment_Item *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    sd->selected_item = it;
-   evas_object_smart_callback_call(ELM_WIDGET_DATA(sd)->obj, SIG_CHANGED, it);
+   evas_object_smart_callback_call(sd->obj, SIG_CHANGED, it);
 }
 
 static void
@@ -319,7 +334,8 @@ _on_mouse_up(void *data,
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
+   if (elm_widget_disabled_get(sd->obj)) return;
+
    if (it == sd->selected_item) return;
 
    ev = event_info;
@@ -344,7 +360,8 @@ _on_mouse_down(void *data,
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (ev->button != 1) return;
-   if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
+   if (elm_widget_disabled_get(sd->obj)) return;
+
    if (it == sd->selected_item) return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,segment,pressed", "elm");
@@ -501,8 +518,9 @@ _access_state_cb(void *data,
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(WIDGET(it), ELM_OBJ_WIDGET_CLASS);
 
-   if (ELM_WIDGET_DATA(sd)->disabled)
+   if (wd->disabled)
      return strdup(E_("State: Disabled"));
 
    if (it == sd->selected_item)
@@ -575,11 +593,9 @@ _item_new(Evas_Object *obj,
 }
 
 static void
-_elm_segment_control_smart_add(Evas_Object *obj)
+_elm_segment_control_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Segment_Control_Smart_Data);
-
-   ELM_WIDGET_CLASS(_elm_segment_control_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_layout_theme_set
      (obj, "segment_control", "base", elm_widget_style_get(obj));
@@ -593,11 +609,11 @@ _elm_segment_control_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_segment_control_smart_del(Evas_Object *obj)
+_elm_segment_control_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
 
    EINA_LIST_FREE (sd->items, it)
      {
@@ -605,26 +621,45 @@ _elm_segment_control_smart_del(Evas_Object *obj)
         elm_widget_item_free(it);
      }
 
-   ELM_WIDGET_CLASS(_elm_segment_control_parent_sc)->base.del(obj);
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
-static Eina_Bool
-_elm_segment_control_smart_focus_next(const Evas_Object *obj,
-                           Elm_Focus_Direction dir,
-                           Evas_Object **next)
+static Eina_Bool _elm_segment_control_smart_focus_next_enable = EINA_FALSE;
+
+static void
+_elm_segment_control_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = _elm_segment_control_smart_focus_next_enable;
+}
+
+static void
+_elm_segment_control_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
+
    Eina_List *items = NULL;
    Eina_List *l;
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_CHECK(obj) EINA_FALSE;
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   ELM_SEGMENT_CONTROL_CHECK(obj);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      items = eina_list_append(items, it->base.access_obj);
 
-   return elm_widget_focus_list_next_get
+   *ret = elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_elm_segment_control_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = EINA_FALSE;
 }
 
 static void
@@ -642,78 +677,36 @@ _access_obj_process(Elm_Segment_Control_Smart_Data * sd, Eina_Bool is_access)
 }
 
 static void
-_elm_segment_control_smart_access(Evas_Object *obj, Eina_Bool is_access)
+_elm_segment_control_smart_access(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   ELM_SEGMENT_CONTROL_CHECK(obj);
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
-   
-   if (is_access)
-     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
-     _elm_segment_control_smart_focus_next;
-   else
-     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
-   _access_obj_process(sd, is_access);
-}
-
-static void
-_elm_segment_control_smart_set_user(Elm_Segment_Control_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_segment_control_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_segment_control_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->theme = _elm_segment_control_smart_theme;
-   ELM_WIDGET_CLASS(sc)->disable = _elm_segment_control_smart_disable;
-
-#if 0
-   ELM_WIDGET_CLASS(sc)->focus_next = _elm_segment_control_smart_focus_next;
-#else
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL; /* not 'focus chain manager' */
-#endif
-
-   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
-
-   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_segment_control_smart_sizing_eval;
-
-   // ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     ELM_WIDGET_CLASS(sc)->focus_next = _elm_segment_control_smart_focus_next;
-
-   ELM_WIDGET_CLASS(sc)->access = _elm_segment_control_smart_access;
-}
-
-EAPI const Elm_Segment_Control_Smart_Class *
-elm_segment_control_smart_class_get(void)
-{
-   static Elm_Segment_Control_Smart_Class _sc =
-     ELM_SEGMENT_CONTROL_SMART_CLASS_INIT_NAME_VERSION
-       (ELM_SEGMENT_CONTROL_SMART_NAME);
-   static const Elm_Segment_Control_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class)
-     return class;
-
-   _elm_segment_control_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   _elm_segment_control_smart_focus_next_enable = va_arg(*list, int);
+   _access_obj_process(sd, _elm_segment_control_smart_focus_next_enable);
 }
 
 EAPI Evas_Object *
 elm_segment_control_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
+   return obj;
+}
 
-   obj = elm_widget_add(_elm_segment_control_smart_class_new(), parent);
-   if (!obj) return NULL;
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   sd->obj = obj;
 
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+
+   Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   return obj;
 }
 
 EAPI Elm_Object_Item *
@@ -721,18 +714,31 @@ elm_segment_control_item_add(Evas_Object *obj,
                              Evas_Object *icon,
                              const char *label)
 {
+   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
+   Elm_Object_Item *ret;
+   eo_do(obj, elm_obj_segment_control_item_add(icon, label, &ret));
+   return ret;
+}
+
+static void
+_item_add(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *icon = va_arg(*list, Evas_Object *);
+   const char *label = va_arg(*list, const char *);
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   *ret = NULL;
+
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
 
    it = _item_new(obj, icon, label);
-   if (!it) return NULL;
+   if (!it) return;
 
    sd->items = eina_list_append(sd->items, it);
    _update_list(sd);
 
-   return (Elm_Object_Item *)it;
+   *ret =(Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -741,15 +747,29 @@ elm_segment_control_item_insert_at(Evas_Object *obj,
                                    const char *label,
                                    int idx)
 {
+   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
+   Elm_Object_Item *ret;
+   eo_do(obj, elm_obj_segment_control_item_insert_at(icon, label, idx, &ret));
+   return ret;
+}
+
+static void
+_item_insert_at(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *icon = va_arg(*list, Evas_Object *);
+   const char *label = va_arg(*list, const char *);
+   int idx = va_arg(*list, int);
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   *ret = NULL;
+
    Elm_Segment_Item *it, *it_rel;
 
-   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
 
    if (idx < 0) idx = 0;
 
    it = _item_new(obj, icon, label);
-   if (!it) return NULL;
+   if (!it) return;
 
    it_rel = _item_find(obj, idx);
    if (it_rel) sd->items = eina_list_prepend_relative(sd->items, it, it_rel);
@@ -757,16 +777,22 @@ elm_segment_control_item_insert_at(Evas_Object *obj,
 
    _update_list(sd);
 
-   return (Elm_Object_Item *)it;
+   *ret = (Elm_Object_Item *)it;
 }
 
 EAPI void
 elm_segment_control_item_del_at(Evas_Object *obj,
                                 int idx)
 {
-   Elm_Segment_Item *it;
-
    ELM_SEGMENT_CONTROL_CHECK(obj);
+   eo_do(obj, elm_obj_segment_control_item_del_at(idx));
+}
+
+static void
+_item_del_at(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   Elm_Segment_Item *it;
 
    it = _item_find(obj, idx);
    if (!it) return;
@@ -778,14 +804,22 @@ EAPI const char *
 elm_segment_control_item_label_get(const Evas_Object *obj,
                                    int idx)
 {
+   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
+   const char *ret;
+   eo_do((Eo *) obj, elm_obj_segment_control_item_label_get(idx, &ret));
+   return ret;
+}
+
+static void
+_item_label_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   const char **ret = va_arg(*list, const char **);
+   *ret = NULL;
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
-
    it = _item_find(obj, idx);
-   if (it) return it->label;
-
-   return NULL;
+   if (it) *ret = it->label;
 }
 
 EAPI Evas_Object *
@@ -793,20 +827,38 @@ elm_segment_control_item_icon_get(const Evas_Object *obj,
                                   int idx)
 {
    ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
+   Evas_Object *ret;
+   eo_do((Eo *) obj, elm_obj_segment_control_item_icon_get(idx, &ret));
+   return ret;
+}
+
+static void
+_item_icon_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   *ret = NULL;
 
    Elm_Segment_Item *it = _item_find(obj, idx);
-   if (it) return it->icon;
-
-   return NULL;
+   if (it) *ret = it->icon;
 }
 
 EAPI int
 elm_segment_control_item_count_get(const Evas_Object *obj)
 {
    ELM_SEGMENT_CONTROL_CHECK(obj) 0;
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   int ret;
+   eo_do((Eo *) obj, elm_obj_segment_control_item_count_get(&ret));
+   return ret;
+}
 
-   return eina_list_count(sd->items);
+static void
+_item_count_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   *ret = eina_list_count(sd->items);
 }
 
 EAPI Evas_Object *
@@ -821,9 +873,17 @@ EAPI Elm_Object_Item *
 elm_segment_control_item_selected_get(const Evas_Object *obj)
 {
    ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   Elm_Object_Item *ret;
+   eo_do((Eo *) obj, elm_obj_segment_control_item_selected_get(&ret));
+   return ret;
+}
 
-   return (Elm_Object_Item *)sd->selected_item;
+static void
+_item_selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   Elm_Segment_Control_Smart_Data *sd = _pd;
+   *ret = (Elm_Object_Item *)sd->selected_item;
 }
 
 EAPI void
@@ -852,8 +912,17 @@ elm_segment_control_item_get(const Evas_Object *obj,
                              int idx)
 {
    ELM_SEGMENT_CONTROL_CHECK(obj) NULL;
+   Elm_Object_Item *ret;
+   eo_do((Eo *) obj, elm_obj_segment_control_item_get(idx, &ret));
+   return ret;
+}
 
-   return (Elm_Object_Item *)_item_find(obj, idx);
+static void
+_item_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   *ret = (Elm_Object_Item *)_item_find(obj, idx);
 }
 
 EAPI int
@@ -863,3 +932,58 @@ elm_segment_control_item_index_get(const Elm_Object_Item *it)
 
    return ((Elm_Segment_Item *)it)->seg_index;
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_segment_control_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_segment_control_smart_del),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_segment_control_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_segment_control_smart_disable),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_segment_control_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_segment_control_smart_focus_next),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_segment_control_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_segment_control_smart_access),
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_segment_control_smart_sizing_eval),
+
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_ADD), _item_add),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_INSERT_AT), _item_insert_at),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_DEL_AT), _item_del_at),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_LABEL_GET), _item_label_get),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_ICON_GET), _item_icon_get),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_COUNT_GET), _item_count_get),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_SELECTED_GET), _item_selected_get),
+        EO_OP_FUNC(ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_GET), _item_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+      _elm_segment_control_smart_focus_next_enable = EINA_TRUE;
+}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_ADD, "Append a new item to the segment control object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_INSERT_AT, "Insert a new item to the segment control object at specified position."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_DEL_AT, "Remove a segment control item at given index from its parent,."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_LABEL_GET, "Get the label of item."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_ICON_GET, "Get the icon associated to the item."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_COUNT_GET, "Get the Segment items count from segment control."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_SELECTED_GET, "Get the selected item."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_GET, "Get the item placed at specified index."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_SEGMENT_CONTROL_BASE_ID, op_desc, ELM_OBJ_SEGMENT_CONTROL_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Segment_Control_Smart_Data),
+     _class_constructor,
+     NULL
+};
+EO_DEFINE_CLASS(elm_obj_segment_control_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);

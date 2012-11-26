@@ -1,57 +1,51 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static const char ACCESS_SMART_NAME[] = "elm_access";
+#include "Eo.h"
 
-ELM_INTERNAL_SMART_SUBCLASS_NEW
-  (ACCESS_SMART_NAME, _elm_access, Elm_Widget_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
+const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
+
+#define ELM_OBJ_ACCESS_CLASS elm_obj_access_class_get()
+
+#define MY_CLASS ELM_OBJ_ACCESS_CLASS
+
+#define MY_CLASS_NAME "elm_access"
 
 static Evas_Object * _elm_access_add(Evas_Object *parent);
 
 static void
-_elm_access_smart_add(Evas_Object *obj)
+_elm_access_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Widget_Smart_Data);
-   ELM_WIDGET_CLASS(_elm_access_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
-static Eina_Bool
-_elm_access_smart_on_focus(Evas_Object *obj)
+static void
+_elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   evas_object_focus_set(obj, elm_widget_focus_get(obj));
+   Elm_Activate act = va_arg(*list, Elm_Activate);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
 
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_elm_access_smart_activate(Evas_Object *obj, Elm_Activate act)
-{
-   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act != ELM_ACTIVATE_DEFAULT) return;
 
    Elm_Access_Info *ac = evas_object_data_get(obj, "_elm_access");
-   if (!ac) return EINA_FALSE;
+   if (!ac) return;
 
    if (ac->activate)
      ac->activate(ac->activate_data, ac->part_object, ac->widget_item);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
-_elm_access_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_access_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   sc->base.add = _elm_access_smart_add;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   evas_object_focus_set(obj, elm_widget_focus_get(obj));
 
-   /* not a 'focus chain manager' */
-   sc->focus_next = NULL;
-   sc->focus_direction = NULL;
-   sc->on_focus = _elm_access_smart_on_focus;
-   sc->activate = _elm_access_smart_activate;
-
-   return;
+   if (ret) *ret = EINA_TRUE;
 }
 
 typedef struct _Mod_Api Mod_Api;
@@ -820,15 +814,50 @@ _elm_access_2nd_click_timeout(Evas_Object *obj)
 static Evas_Object *
 _elm_access_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   obj = elm_widget_add(_elm_access_smart_class_new(), parent);
-   if (!obj) return NULL;
-
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
    return obj;
 }
+
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME));
+
+   Evas_Object *parent = eo_parent_get(obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_access_smart_add),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_access_smart_on_focus),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_access_smart_activate),
+
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     0,
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+

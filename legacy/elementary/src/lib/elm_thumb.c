@@ -2,7 +2,11 @@
 #include "elm_priv.h"
 #include "elm_widget_thumb.h"
 
-EAPI const char ELM_THUMB_SMART_NAME[] = "elm_thumb";
+#include "Eo.h"
+
+EAPI Eo_Op ELM_OBJ_THUMB_BASE_ID = EO_NOOP;
+
+#define MY_CLASS ELM_OBJ_THUMB_CLASS
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
@@ -39,10 +43,6 @@ static int pending_request = 0;
 #endif
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
-
-EVAS_SMART_SUBCLASS_NEW
-  (ELM_THUMB_SMART_NAME, _elm_thumb, Elm_Thumb_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static void
@@ -91,23 +91,25 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
    Evas_Coord mw, mh;
    Evas_Coord aw, ah;
 
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+
    evas_object_image_size_get(sd->view, &aw, &ah);
    evas_object_size_hint_aspect_set
      (sd->view, EVAS_ASPECT_CONTROL_BOTH, aw, ah);
    elm_layout_content_set
-     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.content", sd->view);
-   edje_object_size_min_get(ELM_WIDGET_DATA(sd)->resize_obj, &mw, &mh);
+     (wd->resize_obj, "elm.swallow.content", sd->view);
+   edje_object_size_min_get(wd->resize_obj, &mw, &mh);
    edje_object_size_min_restricted_calc
-     (ELM_WIDGET_DATA(sd)->resize_obj, &mw, &mh, mw, mh);
-   evas_object_size_hint_min_set(ELM_WIDGET_DATA(sd)->obj, mw, mh);
+     (wd->resize_obj, &mw, &mh, mw, mh);
+   evas_object_size_hint_min_set(sd->obj, mw, mh);
    eina_stringshare_replace(&(sd->thumb.file), thumb_path);
    eina_stringshare_replace(&(sd->thumb.key), thumb_key);
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_STOP, NULL);
+     (sd->obj, SIG_GENERATE_STOP, NULL);
 }
 
 static void
@@ -196,7 +198,8 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    Evas *evas;
    int r;
 
-   evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   evas = evas_object_evas_get(sd->obj);
    if ((sd->view) && (sd->is_video ^ sd->was_video))
      {
         evas_object_del(sd->view);
@@ -282,19 +285,20 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
           evas_object_del(sd->view);
           sd->view = NULL;
 
+          wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
           elm_layout_signal_emit
-            (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+            (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           evas_object_smart_callback_call
-            (ELM_WIDGET_DATA(sd)->obj, SIG_LOAD_ERROR, NULL);
+            (sd->obj, SIG_LOAD_ERROR, NULL);
        }
 
    return;
 
 err:
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_LOAD_ERROR, NULL);
+     (sd->obj, SIG_LOAD_ERROR, NULL);
 }
 
 static void
@@ -335,10 +339,11 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file, sd->thumb.key ? sd->thumb.key : "");
 
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_ERROR, NULL);
+     (sd->obj, SIG_GENERATE_ERROR, NULL);
 }
 
 static void
@@ -357,12 +362,13 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
 
    if (!sd->file) return;
 
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
+     (wd->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_START, NULL);
+     (sd->obj, SIG_GENERATE_START, NULL);
 
    pending_request++;
    ethumb_client_file_set(_elm_ethumb_client, sd->file, sd->key);
@@ -383,7 +389,8 @@ _thumbnailing_available_cb(void *data,
 static void
 _thumb_show(Elm_Thumb_Smart_Data *sd)
 {
-   evas_object_show(ELM_WIDGET_DATA(sd)->resize_obj);
+   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   evas_object_show(wd->resize_obj);
 
    if (elm_thumb_ethumb_client_connected_get())
      {
@@ -399,11 +406,11 @@ _thumb_show(Elm_Thumb_Smart_Data *sd)
 #endif
 
 static void
-_elm_thumb_smart_show(Evas_Object *obj)
+_elm_thumb_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_THUMB_DATA_GET(obj, sd);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
-   ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.show(obj);
+   eo_do_super(obj, evas_obj_smart_show());
 
 #ifdef ELM_ETHUMB
    _thumb_show(sd);
@@ -413,13 +420,18 @@ _elm_thumb_smart_show(Evas_Object *obj)
 }
 
 static void
-_elm_thumb_smart_hide(Evas_Object *obj)
+_elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_THUMB_DATA_GET(obj, sd);
+#ifdef ELM_ETHUMB
+   Elm_Thumb_Smart_Data *sd = _pd;
+#else
+   (void) _pd;
+#endif
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.hide(obj);
+   eo_do_super(obj, evas_obj_smart_hide());
 
-   evas_object_hide(ELM_WIDGET_DATA(sd)->resize_obj);
+   evas_object_hide(wd->resize_obj);
 
 #ifdef ELM_ETHUMB
    if (sd->thumb.request)
@@ -428,9 +440,9 @@ _elm_thumb_smart_hide(Evas_Object *obj)
         sd->thumb.request = NULL;
 
         elm_layout_signal_emit
-          (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+          (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
         evas_object_smart_callback_call
-          (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_STOP, NULL);
+          (sd->obj, SIG_GENERATE_STOP, NULL);
      }
 
    if (sd->thumb.retry)
@@ -519,16 +531,17 @@ elm_need_ethumb(void)
 }
 
 static void
-_elm_thumb_smart_add(Evas_Object *obj)
+_elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Thumb_Smart_Data);
+   Elm_Thumb_Smart_Data *priv = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.add(obj);
+   eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_resize_object_set(obj, elm_layout_add(obj));
 
    elm_layout_theme_set
-     (ELM_WIDGET_DATA(priv)->resize_obj, "thumb", "base",
+     (wd->resize_obj, "thumb", "base",
      elm_widget_style_get(obj));
 
    priv->view = NULL;
@@ -553,9 +566,9 @@ _elm_thumb_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_thumb_smart_del(Evas_Object *obj)
+_elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   ELM_THUMB_DATA_GET(obj, sd);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    if (sd->thumb.request)
@@ -578,57 +591,44 @@ _elm_thumb_smart_del(Evas_Object *obj)
 
    if (sd->eeh) ecore_event_handler_del(sd->eeh);
 
-   ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.del(obj);
-}
-
-static void
-_elm_thumb_smart_set_user(Elm_Thumb_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_thumb_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_thumb_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->base.show = _elm_thumb_smart_show;
-   ELM_WIDGET_CLASS(sc)->base.hide = _elm_thumb_smart_hide;
-}
-
-EAPI const Elm_Thumb_Smart_Class *
-elm_thumb_smart_class_get(void)
-{
-   static Elm_Thumb_Smart_Class _sc =
-     ELM_THUMB_SMART_CLASS_INIT_NAME_VERSION(ELM_THUMB_SMART_NAME);
-   static const Elm_Thumb_Smart_Class *class = NULL;
-   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
-
-   if (class) return class;
-
-   _elm_thumb_smart_set(&_sc);
-   esc->callbacks = _smart_callbacks;
-   class = &_sc;
-
-   return class;
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
 elm_thumb_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   obj = elm_widget_add(_elm_thumb_smart_class_new(), parent);
-   if (!obj) return NULL;
-
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   eo_unref(obj);
    return obj;
+}
+
+static void
+_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set("Elm_Thumb"),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+
+   Elm_Thumb_Smart_Data *sd = _pd;
+   sd->obj = obj;
+
+   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
+     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
 }
 
 EAPI void
 elm_thumb_reload(Evas_Object *obj)
 {
    ELM_THUMB_CHECK(obj);
-   ELM_THUMB_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_thumb_reload());
+}
+
+static void
+_reload(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Thumb_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&(sd->thumb.file), NULL);
    eina_stringshare_replace(&(sd->thumb.key), NULL);
@@ -644,10 +644,18 @@ elm_thumb_file_set(Evas_Object *obj,
                    const char *file,
                    const char *key)
 {
+   ELM_THUMB_CHECK(obj);
+   eo_do(obj, elm_obj_thumb_file_set(file, key));
+}
+
+static void
+_file_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *key = va_arg(*list, const char *);
    Eina_Bool file_replaced, key_replaced;
 
-   ELM_THUMB_CHECK(obj);
-   ELM_THUMB_DATA_GET(obj, sd);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
    file_replaced = eina_stringshare_replace(&(sd->file), file);
    key_replaced = eina_stringshare_replace(&(sd->key), key);
@@ -692,7 +700,15 @@ elm_thumb_file_get(const Evas_Object *obj,
                    const char **key)
 {
    ELM_THUMB_CHECK(obj);
-   ELM_THUMB_DATA_GET(obj, sd);
+   eo_do((Eo *) obj, elm_obj_thumb_file_get(file, key));
+}
+
+static void
+_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **file = va_arg(*list, const char **);
+   const char **key = va_arg(*list, const char **);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
    if (file)
      *file = sd->file;
@@ -706,7 +722,15 @@ elm_thumb_path_get(const Evas_Object *obj,
                    const char **key)
 {
    ELM_THUMB_CHECK(obj);
-   ELM_THUMB_DATA_GET(obj, sd);
+   eo_do((Eo *) obj, elm_obj_thumb_path_get(file, key));
+}
+
+static void
+_path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **file = va_arg(*list, const char **);
+   const char **key = va_arg(*list, const char **);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
    if (file)
      *file = sd->thumb.file;
@@ -719,7 +743,14 @@ elm_thumb_animate_set(Evas_Object *obj,
                       Elm_Thumb_Animation_Setting setting)
 {
    ELM_THUMB_CHECK(obj);
-   ELM_THUMB_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_thumb_animate_set(setting));
+}
+
+static void
+_animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Thumb_Animation_Setting setting = va_arg(*list, Elm_Thumb_Animation_Setting);
+   Elm_Thumb_Smart_Data *sd = _pd;
 
    EINA_SAFETY_ON_TRUE_RETURN(setting >= ELM_THUMB_ANIMATION_LAST);
 
@@ -736,9 +767,17 @@ EAPI Elm_Thumb_Animation_Setting
 elm_thumb_animate_get(const Evas_Object *obj)
 {
    ELM_THUMB_CHECK(obj) ELM_THUMB_ANIMATION_LAST;
-   ELM_THUMB_DATA_GET(obj, sd);
+   Elm_Thumb_Animation_Setting ret;
+   eo_do((Eo *) obj, elm_obj_thumb_animate_get(&ret));
+   return ret;
+}
 
-   return sd->anim_setting;
+static void
+_animate_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Thumb_Animation_Setting *ret = va_arg(*list, Elm_Thumb_Animation_Setting *);
+   Elm_Thumb_Smart_Data *sd = _pd;
+   *ret = sd->anim_setting;
 }
 
 EAPI void *
@@ -758,25 +797,92 @@ elm_thumb_editable_set(Evas_Object *obj,
                        Eina_Bool edit)
 {
    ELM_THUMB_CHECK(obj) EINA_FALSE;
-   ELM_THUMB_DATA_GET(obj, sd);
+   Eina_Bool ret;
+   eo_do((Eo *) obj, elm_obj_thumb_editable_set(edit, &ret));
+   return ret;
+}
+
+static void
+_editable_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool edit = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Thumb_Smart_Data *sd = _pd;
+   if (ret) *ret = EINA_TRUE;
 
    edit = !!edit;
-   if (sd->edit == edit) return EINA_TRUE;
+   if (sd->edit == edit) return;
 
    sd->edit = edit;
    if (sd->edit)
      elm_drop_target_add(obj, ELM_SEL_FORMAT_IMAGE, _elm_thumb_dnd_cb, obj);
    else
      elm_drop_target_del(obj);
-
-   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_thumb_editable_get(const Evas_Object *obj)
 {
    ELM_THUMB_CHECK(obj) EINA_FALSE;
-   ELM_THUMB_DATA_GET(obj, sd);
-
-   return sd->edit;
+   Eina_Bool ret;
+   eo_do((Eo *) obj, elm_obj_thumb_editable_get(&ret));
+   return ret;
 }
+
+static void
+_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Thumb_Smart_Data *sd = _pd;
+   *ret = sd->edit;
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_thumb_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_thumb_smart_del),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_thumb_smart_show),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_thumb_smart_hide),
+
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_RELOAD), _reload),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FILE_SET), _file_set),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FILE_GET), _file_get),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_PATH_GET), _path_get),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ANIMATE_SET), _animate_set),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ANIMATE_GET), _animate_get),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_EDITABLE_SET), _editable_set),
+        EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_EDITABLE_GET), _editable_get),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_RELOAD, "Reload thumbnail if it was generated before."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_FILE_SET, "Set the file that will be used as thumbnail source."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_FILE_GET, "Get the image or video path and key used to generate the thumbnail."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_PATH_GET, "Get the path and key to the image or video thumbnail generated by ethumb."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_ANIMATE_SET, "Set the animation state for the thumb object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_ANIMATE_GET, "Get the animation state for the thumb object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_EDITABLE_SET, "Make the thumbnail 'editable'."),
+     EO_OP_DESCRIPTION(ELM_OBJ_THUMB_SUB_ID_EDITABLE_GET, "Make the thumbnail 'editable'."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     "elm_thumb",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_THUMB_BASE_ID, op_desc, ELM_OBJ_THUMB_SUB_ID_LAST),
+     NULL,
+     sizeof(Elm_Thumb_Smart_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_thumb_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+
