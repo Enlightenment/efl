@@ -275,7 +275,7 @@ test_clock3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "Check time updates for an user mouse button hold."
+                       "Check time updates for a user mouse button hold."
                        );
    evas_object_size_hint_weight_set(lb, 0.0, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
