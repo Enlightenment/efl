@@ -687,6 +687,7 @@ _ecore_evas_extn_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_In ipc;
+        memset(&ipc, 0, sizeof(ipc));
 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
@@ -707,6 +708,7 @@ _ecore_evas_extn_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Out ipc;
+        memset(&ipc, 0, sizeof(ipc));
 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
@@ -729,6 +731,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
        /* We have send mouse move event before mouse down event */
        {
           Ipc_Data_Ev_Mouse_Move ipc_move;
+          memset(&ipc_move, 0, sizeof(ipc_move));
           Evas_Coord x, y;
 
           x = ev->canvas.x;
@@ -743,6 +746,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
        }
        {
           Ipc_Data_Ev_Mouse_Down ipc;
+          memset(&ipc, 0, sizeof(ipc));
           ipc.b = ev->button;
           ipc.flags = ev->flags;
           ipc.timestamp = ev->timestamp;
@@ -765,6 +769,7 @@ _ecore_evas_extn_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Up ipc;
+        memset(&ipc, 0, sizeof(ipc));
 
         ipc.b = ev->button;
         ipc.flags = ev->flags;
@@ -787,6 +792,7 @@ _ecore_evas_extn_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Move ipc;
+        memset(&ipc, 0, sizeof(ipc));
         Evas_Coord x, y;
 
         x = ev->cur.canvas.x;
@@ -813,6 +819,7 @@ _ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Wheel ipc;
+        memset(&ipc, 0, sizeof(ipc));
 
         ipc.direction = ev->direction;
         ipc.z = ev->z;
@@ -835,6 +842,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Down ipc;
+        memset(&ipc, 0, sizeof(ipc));
         Evas_Coord x, y;
 
         ipc.d = ev->device;
@@ -871,6 +879,7 @@ _ecore_evas_extn_cb_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Up ipc;
+        memset(&ipc, 0, sizeof(ipc));
         Evas_Coord x, y;
 
         ipc.d = ev->device;
@@ -906,6 +915,7 @@ _ecore_evas_extn_cb_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Move ipc;
+        memset(&ipc, 0, sizeof(ipc));
         Evas_Coord x, y;
 
         ipc.d = ev->device;
@@ -1061,6 +1071,7 @@ _ecore_evas_extn_cb_hold(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    if (extn->ipc.server)
      {
         Ipc_Data_Ev_Hold ipc;
+        memset(&ipc, 0, sizeof(ipc));
 
         ipc.hold = ev->hold;
         ipc.timestamp = ev->timestamp;
