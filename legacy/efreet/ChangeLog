@@ -166,3 +166,7 @@
 2012-11-24  Sebastian Dransfeld
 
 	* Fix alloca
+
+2012-11-26  Sebastian Dransfeld
+
+	* Update language for efreetd

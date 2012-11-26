@@ -134,7 +134,7 @@ efreet_cache_init(void)
         edbus_proxy_signal_handler_add(proxy, "IconCacheUpdate", icon_cache_update, NULL);
         edbus_proxy_signal_handler_add(proxy, "DesktopCacheUpdate", desktop_cache_update, NULL);
 
-        edbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "");
+        edbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "s", efreet_language_get());
 
         /*
          * TODO: Needed?
@@ -958,7 +958,8 @@ void
 efreet_cache_desktop_build(void)
 {
     if (!efreet_cache_update) return;
-    edbus_proxy_call(proxy, "BuildDesktopCache", NULL, NULL, -1, "");
+    if (proxy)
+        edbus_proxy_call(proxy, "BuildDesktopCache", NULL, NULL, -1, "s", efreet_language_get());
 }
 
 static Eina_Bool

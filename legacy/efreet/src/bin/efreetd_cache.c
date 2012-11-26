@@ -31,6 +31,9 @@ static Eina_List *icon_extra_dirs = NULL;
 static Eina_List *icon_exts = NULL;
 static Eina_Bool  icon_flush = EINA_FALSE;
 
+static Eina_Bool desktop_queue = EINA_FALSE;
+static Eina_Bool icon_queue = EINA_FALSE;
+
 static void desktop_changes_monitor_add(const char *path);
 
 /* internal */
@@ -42,7 +45,12 @@ icon_cache_update_cache_cb(void *data __UNUSED__)
 
    icon_cache_timer = NULL;
 
-   if (icon_cache_exe) return ECORE_CALLBACK_CANCEL;
+   if (icon_cache_exe)
+     {
+        icon_queue = EINA_TRUE;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   icon_queue = EINA_FALSE;
    if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
 
    /* TODO: Queue if already running */
@@ -102,8 +110,12 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
 
    desktop_cache_timer = NULL;
 
-   if (desktop_cache_exe) return ECORE_CALLBACK_CANCEL;
-   /* TODO: Queue if already running */
+   if (desktop_cache_exe)
+     {
+        desktop_queue = EINA_TRUE;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   desktop_queue = EINA_FALSE;
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
    // XXX: use eina_prefix, not hard-coded prefixes
@@ -165,10 +177,12 @@ cache_exe_del_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
    if (ev->exe == desktop_cache_exe)
      {
         desktop_cache_exe = NULL;
+        if (desktop_queue) cache_desktop_update();
      }
    else if (ev->exe == icon_cache_exe)
      {
         icon_cache_exe = NULL;
+        if (icon_queue) cache_icon_update(EINA_FALSE);
      }
    return ECORE_CALLBACK_RENEW;
 }

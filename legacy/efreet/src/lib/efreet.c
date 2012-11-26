@@ -29,6 +29,7 @@ static int efreet_parsed_locale = 0;
 static const char *efreet_lang = NULL;
 static const char *efreet_lang_country = NULL;
 static const char *efreet_lang_modifier = NULL;
+static const char *efreet_language = NULL;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
 
@@ -151,6 +152,7 @@ efreet_shutdown(void)
    IF_RELEASE(efreet_lang);
    IF_RELEASE(efreet_lang_country);
    IF_RELEASE(efreet_lang_modifier);
+   IF_RELEASE(efreet_language);
    efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
 
    ecore_file_shutdown();
@@ -167,9 +169,11 @@ efreet_lang_reset(void)
    IF_RELEASE(efreet_lang);
    IF_RELEASE(efreet_lang_country);
    IF_RELEASE(efreet_lang_modifier);
+   IF_RELEASE(efreet_language);
    efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
 
    efreet_dirs_reset();
+   efreet_parse_locale();
    efreet_cache_desktop_close();
    efreet_cache_desktop_build();
 }
@@ -215,6 +219,15 @@ efreet_lang_modifier_get(void)
 
    efreet_parse_locale();
    return efreet_lang_modifier;
+}
+
+EAPI const char *
+efreet_language_get(void)
+{
+   if (efreet_parsed_locale) return efreet_language;
+
+   efreet_parse_locale();
+   return efreet_language;
 }
 
 /**
@@ -286,6 +299,8 @@ efreet_parse_locale_setting(const char *env)
         found = 1;
      }
 
+   if (found)
+     efreet_language = eina_stringshare_add(getenv(env));
    return found;
 }
 

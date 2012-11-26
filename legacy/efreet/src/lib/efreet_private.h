@@ -192,6 +192,7 @@ void        efreet_dirs_reset(void);
 const char *efreet_lang_get(void);
 const char *efreet_lang_country_get(void);
 const char *efreet_lang_modifier_get(void);
+EAPI const char *efreet_language_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 

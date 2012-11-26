@@ -46,6 +46,14 @@ static EDBus_Message *
 do_register(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
    EDBus_Message *reply;
+   const char *lang;
+
+   if (!edbus_message_arguments_get(message, "s", &lang))
+     {
+        ERR("Error getting arguments.");
+        return NULL;
+     }
+   setenv("LANG", lang, 1);
 
    clients++;
    if (shutdown) ecore_timer_del(shutdown);
@@ -111,6 +119,15 @@ add_icon_dirs(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message
 static EDBus_Message *
 build_desktop_cache(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message __UNUSED__)
 {
+   const char *lang;
+
+   if (!edbus_message_arguments_get(message, "s", &lang))
+     {
+        ERR("Error getting arguments.");
+        return NULL;
+     }
+   setenv("LANG", lang, 1);
+
    cache_desktop_update();
    return NULL;
 }
@@ -143,7 +160,7 @@ static const EDBus_Signal signals[] = {
 
 static const EDBus_Method methods[] = {
        {
-          "Register", NULL, EDBUS_ARGS({"b", "cache exists"}),
+          "Register", EDBUS_ARGS({"s", "lang info"}), EDBUS_ARGS({"b", "cache exists"}),
           do_register, 0
        },
        {
@@ -155,7 +172,7 @@ static const EDBus_Method methods[] = {
           add_desktop_dirs, EDBUS_METHOD_FLAG_NOREPLY
        },
        {
-          "BuildDesktopCache", NULL, NULL,
+          "BuildDesktopCache", EDBUS_ARGS({"s", "lang info"}), NULL,
           build_desktop_cache, EDBUS_METHOD_FLAG_NOREPLY
        },
        {
