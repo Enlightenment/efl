@@ -4,8 +4,6 @@
 #include "elm_priv.h"
 #include "elm_widget_fileselector_entry.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_FILESELECTOR_ENTRY_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_FILESELECTOR_ENTRY_CLASS

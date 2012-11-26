@@ -1,8 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#include "Eo.h"
-
 const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
 
 #define ELM_OBJ_ACCESS_CLASS elm_obj_access_class_get()

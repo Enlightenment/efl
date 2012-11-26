@@ -3,8 +3,6 @@
 #include "elm_widget_progressbar.h"
 #include "elm_widget_layout.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_PROGRESSBAR_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_PROGRESSBAR_CLASS

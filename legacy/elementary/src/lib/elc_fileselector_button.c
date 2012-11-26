@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_fileselector_button.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_FILESELECTOR_BUTTON_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_FILESELECTOR_BUTTON_CLASS

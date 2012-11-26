@@ -3,8 +3,6 @@
 #include "elm_widget_icon.h"
 #include "elm_widget_image.h"
 
-#include <Eo.h>
-
 #ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;

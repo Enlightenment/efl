@@ -3,8 +3,6 @@
 #include "elm_widget_flip.h"
 #include "elm_widget_container.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_FLIP_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_FLIP_CLASS

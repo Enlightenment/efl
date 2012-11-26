@@ -3,8 +3,6 @@
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_WIDGET_CLASS

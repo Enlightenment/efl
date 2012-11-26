@@ -7,8 +7,6 @@
 # include <Emotion.h>
 #endif
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_PLAYER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_PLAYER_CLASS

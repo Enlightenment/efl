@@ -3,8 +3,6 @@
 #include "els_box.h"
 #include "elm_widget_box.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_BOX_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_BOX_CLASS

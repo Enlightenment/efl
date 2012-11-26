@@ -3,7 +3,6 @@
 #include "elm_interface_scrollable.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
-#include "Eo.h"
 
 EAPI Eo_Op ELM_OBJ_SCROLLER_BASE_ID = EO_NOOP;
 

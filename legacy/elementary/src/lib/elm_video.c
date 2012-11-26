@@ -10,8 +10,6 @@
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_VIDEO_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_VIDEO_CLASS

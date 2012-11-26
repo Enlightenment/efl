@@ -3,8 +3,6 @@
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_SPINNER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_SPINNER_CLASS

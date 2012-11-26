@@ -3,8 +3,6 @@
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_NAVIFRAME_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_NAVIFRAME_CLASS

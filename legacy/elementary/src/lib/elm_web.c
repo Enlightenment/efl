@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_web.h"
 
-#include "Eo.h"
-
 // TODO:
 //  1 - easy to use zoom like elm_photocam API
 //  2 - review scrolling to match elm_scroller. Maybe in future use

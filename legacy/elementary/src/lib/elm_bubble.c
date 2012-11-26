@@ -3,8 +3,6 @@
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_BUBBLE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_BUBBLE_CLASS

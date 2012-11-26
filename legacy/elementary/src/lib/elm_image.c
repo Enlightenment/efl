@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_image.h"
 
-#include <Eo.h>
-
 #ifdef _WIN32
 # define FMT_SIZE_T "%Iu"
 #else

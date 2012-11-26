@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_segment_control.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_SEGMENT_CONTROL_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_SEGMENT_CONTROL_CLASS

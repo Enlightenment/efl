@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_multibuttonentry.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_MULTIBUTTONENTRY_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_MULTIBUTTONENTRY_CLASS

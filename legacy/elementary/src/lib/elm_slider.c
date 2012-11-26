@@ -3,8 +3,6 @@
 #include "elm_widget_slider.h"
 #include "elm_widget_layout.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_SLIDER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_SLIDER_CLASS

@@ -4,8 +4,6 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_index.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_INDEX_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_INDEX_CLASS

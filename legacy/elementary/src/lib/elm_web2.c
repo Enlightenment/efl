@@ -5,8 +5,6 @@
 #if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
 #include <EWebKit2.h>
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_WEB_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_WEB_CLASS

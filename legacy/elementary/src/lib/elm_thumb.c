@@ -2,8 +2,6 @@
 #include "elm_priv.h"
 #include "elm_widget_thumb.h"
 
-#include "Eo.h"
-
 EAPI Eo_Op ELM_OBJ_THUMB_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_THUMB_CLASS
