@@ -72,7 +72,7 @@ _activate(Evas_Object *obj)
 
    if (sd->group->value == sd->value) return;
 
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
+   if ((!_elm_config->access_mode) ||
        (_elm_access_2nd_click_timeout(obj)))
      {
         sd->group->value = sd->value;
@@ -80,7 +80,7 @@ _activate(Evas_Object *obj)
 
         _state_set_all(sd);
 
-        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+        if (_elm_config->access_mode)
           _elm_access_say(E_("State: On"));
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
      }
@@ -524,6 +524,20 @@ _elm_radio_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_
 }
 
 static void
+_elm_radio_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Activate act = va_arg(*list, Elm_Activate);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   if (act != ELM_ACTIVATE_DEFAULT) return;
+
+   _activate(obj);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -538,6 +552,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_radio_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_radio_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_radio_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_radio_smart_activate),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_radio_smart_content_set),
 
