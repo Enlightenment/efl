@@ -1893,7 +1893,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    fr = elm_frame_add(win);
-   elm_object_text_set(fr, "Decorate Mode Type");
+   elm_object_text_set(fr, "Decorate Item Mode Type");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
