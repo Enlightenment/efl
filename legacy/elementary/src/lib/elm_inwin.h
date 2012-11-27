@@ -55,6 +55,13 @@ enum
 
 #define ELM_OBJ_WIN_INWIN_ID(sub_id) (ELM_OBJ_WIN_INWIN_BASE_ID + sub_id)
 
+/**
+ * @def elm_obj_win_inwin_activate
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_obj_win_inwin_activate() ELM_OBJ_WIN_INWIN_ID(ELM_OBJ_WIN_INWIN_SUB_ID_ACTIVATE)
 
 /**

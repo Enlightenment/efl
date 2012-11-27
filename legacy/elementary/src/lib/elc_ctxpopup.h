@@ -77,7 +77,7 @@ enum
 
 
 /**
- * @def ctxpopup_hover_parent_set
+ * @def elm_obj_ctxpopup_hover_parent_set
  * @since 1.8
  *
  * @brief Set the Ctxpopup's parent
@@ -89,7 +89,7 @@ enum
 #define elm_obj_ctxpopup_hover_parent_set(parent) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_SET), EO_TYPECHECK(Evas_Object *, parent)
 
 /**
- * @def ctxpopup_hover_parent_get
+ * @def elm_obj_ctxpopup_hover_parent_get
  * @since 1.8
  *
  * @brief Get the Ctxpopup's parent
@@ -101,7 +101,7 @@ enum
 #define elm_obj_ctxpopup_hover_parent_get(ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_GET), EO_TYPECHECK(Evas_Object **, ret)
 
 /**
- * @def ctxpopup_clear
+ * @def elm_obj_ctxpopup_clear
  * @since 1.8
  *
  * @brief Clear all items in the given ctxpopup object.
@@ -112,7 +112,7 @@ enum
 #define elm_obj_ctxpopup_clear() ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_CLEAR)
 
 /**
- * @def ctxpopup_horizontal_set
+ * @def elm_obj_ctxpopup_horizontal_set
  * @since 1.8
  *
  * @brief Change the ctxpopup's orientation to horizontal or vertical.
@@ -124,7 +124,7 @@ enum
 #define elm_obj_ctxpopup_horizontal_set(horizontal) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_SET), EO_TYPECHECK(Eina_Bool, horizontal)
 
 /**
- * @def ctxpopup_horizontal_get
+ * @def elm_obj_ctxpopup_horizontal_get
  * @since 1.8
  *
  * @brief Get the value of current ctxpopup object's orientation.
@@ -136,7 +136,7 @@ enum
 #define elm_obj_ctxpopup_horizontal_get(ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
- * @def ctxpopup_item_append
+ * @def elm_obj_ctxpopup_item_append
  * @since 1.8
  *
  * @brief Add a new item to a ctxpopup object.
@@ -152,7 +152,7 @@ enum
 #define elm_obj_ctxpopup_item_append(label, icon, func, data, ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(Evas_Object *, icon), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Object_Item **, ret)
 
 /**
- * @def ctxpopup_direction_priority_set
+ * @def elm_obj_ctxpopup_direction_priority_set
  * @since 1.8
  *
  * @brief Set the direction priority of a ctxpopup.
@@ -167,7 +167,7 @@ enum
 #define elm_obj_ctxpopup_direction_priority_set(first, second, third, fourth) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_SET), EO_TYPECHECK(Elm_Ctxpopup_Direction, first), EO_TYPECHECK(Elm_Ctxpopup_Direction, second), EO_TYPECHECK(Elm_Ctxpopup_Direction, third), EO_TYPECHECK(Elm_Ctxpopup_Direction, fourth)
 
 /**
- * @def ctxpopup_direction_priority_get
+ * @def elm_obj_ctxpopup_direction_priority_get
  * @since 1.8
  *
  * @brief Get the direction priority of a ctxpopup.
@@ -182,7 +182,7 @@ enum
 #define elm_obj_ctxpopup_direction_priority_get(first, second, third, fourth) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET), EO_TYPECHECK(Elm_Ctxpopup_Direction *, first), EO_TYPECHECK(Elm_Ctxpopup_Direction *, second), EO_TYPECHECK(Elm_Ctxpopup_Direction *, third), EO_TYPECHECK(Elm_Ctxpopup_Direction *, fourth)
 
 /**
- * @def ctxpopup_direction_get
+ * @def elm_obj_ctxpopup_direction_get
  * @since 1.8
  *
  * @brief Get the current direction of a ctxpopup.
@@ -194,7 +194,7 @@ enum
 #define elm_obj_ctxpopup_direction_get(ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET), EO_TYPECHECK(Elm_Ctxpopup_Direction *, ret)
 
 /**
- * @def ctxpopup_dismiss
+ * @def elm_obj_ctxpopup_dismiss
  * @since 1.8
  *
  * @brief Dismiss a ctxpopup object

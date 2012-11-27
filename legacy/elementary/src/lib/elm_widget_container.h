@@ -49,8 +49,42 @@ enum
 
 #define ELM_OBJ_CONTAINER_ID(sub_id) (ELM_OBJ_CONTAINER_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_obj_container_content_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] name
+ * @param[in] content
+ * @param[out] ret
+ *
+ */
 #define elm_obj_container_content_set(name, content, ret) ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), EO_TYPECHECK(const char*, name), EO_TYPECHECK(Evas_Object *,content), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_container_content_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] name
+ * @param[out] ret
+ *
+ */
 #define elm_obj_container_content_get(name, ret) ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), EO_TYPECHECK(const char*, name), EO_TYPECHECK(Evas_Object **,ret)
+
+/**
+ * @def elm_obj_container_content_unset
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] name
+ * @param[out] ret
+ *
+ */
 #define elm_obj_container_content_unset(name, ret) ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), EO_TYPECHECK(const char*, name), EO_TYPECHECK(Evas_Object **,ret)
 
 #endif

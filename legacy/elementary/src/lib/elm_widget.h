@@ -1147,139 +1147,1214 @@ typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 #define ELM_WIDGET_ID(sub_id) (ELM_WIDGET_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_wdg_on_focus
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_on_focus(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_disable
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_disable(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_theme
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_theme(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_translate
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_translate(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_event
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] source
+ * @param[in] type
+ * @param[in] event_info
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_event(source, type, event_info, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), EO_TYPECHECK(Evas_Object *, source), EO_TYPECHECK(Evas_Callback_Type, type), EO_TYPECHECK(void *, event_info), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_on_focus_region
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_on_focus_region(x, y, w, h, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_next_manager_is
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_next_manager_is(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_next
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] dir
+ * @param[out] next
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_next(dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_direction_manager_is
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_direction_manager_is(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_direction
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] base
+ * @param[in] degree
+ * @param[out] direction
+ * @param[out] weight
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_direction(base, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_sub_object_add
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] sobj
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_sub_object_add(sobj, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD), EO_TYPECHECK(Evas_Object *, sobj), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_sub_object_del
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] sobj
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_sub_object_del(sobj, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), EO_TYPECHECK(Evas_Object *, sobj), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_access
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] is_access
+ *
+ */
 #define elm_wdg_access(is_access) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), EO_TYPECHECK(Eina_Bool, is_access)
 
+
+/**
+ * @def elm_wdg_parent_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] parent
+ *
+ */
 #define elm_wdg_parent_set(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), EO_TYPECHECK(Evas_Object *, parent)
+
+/**
+ * @def elm_wdg_parent_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] parent
+ *
+ */
 #define elm_wdg_parent_get(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), EO_TYPECHECK(Evas_Object **, parent)
 
+
+/**
+ * @def elm_wdg_parent2_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] parent
+ *
+ */
 #define elm_wdg_parent2_set(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), EO_TYPECHECK(Evas_Object *, parent)
+
+/**
+ * @def elm_wdg_parent2_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] parent
+ *
+ */
 #define elm_wdg_parent2_get(parent) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), EO_TYPECHECK(Evas_Object **, parent)
 
+
+/**
+ * @def elm_wdg_activate
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] act
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_activate(act, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), EO_TYPECHECK(Elm_Activate, act), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_mirrored_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_mirrored_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_mirrored_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] mirrored
+ *
+ */
 #define elm_wdg_mirrored_set(mirrored) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
+
+/**
+ * @def elm_wdg_mirrored_automatic_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_mirrored_automatic_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_mirrored_automatic_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] automatic
+ *
+ */
 #define elm_wdg_mirrored_automatic_set(automatic) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_MIRRORED_AUTOMATIC_SET), EO_TYPECHECK(Eina_Bool, automatic)
 
+
+/**
+ * @def elm_wdg_highlight_ignore_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] ignore
+ *
+ */
 #define elm_wdg_highlight_ignore_set(ignore) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_SET), EO_TYPECHECK(Eina_Bool, ignore)
+
+/**
+ * @def elm_wdg_highlight_ignore_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_highlight_ignore_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_highlight_in_theme_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] highlight
+ *
+ */
 #define elm_wdg_highlight_in_theme_set(highlight) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET), EO_TYPECHECK(Eina_Bool, highlight)
+
+/**
+ * @def elm_wdg_highlight_in_theme_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_highlight_in_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_wdg_scroll_hold_push
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_scroll_hold_push() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH)
+
+/**
+ * @def elm_wdg_scroll_hold_pop
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_scroll_hold_pop() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP)
+
+/**
+ * @def elm_wdg_scroll_hold_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_scroll_hold_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_GET), EO_TYPECHECK(int *, ret)
+
+/**
+ * @def elm_wdg_scroll_freeze_push
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_scroll_freeze_push() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_PUSH)
+
+/**
+ * @def elm_wdg_scroll_freeze_pop
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_scroll_freeze_pop() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_POP)
+
+/**
+ * @def elm_wdg_scroll_freeze_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_scroll_freeze_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_FREEZE_GET), EO_TYPECHECK(int *, ret)
 
+
+/**
+ * @def elm_wdg_on_show_region_hook_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] func
+ * @param[in] data
+ *
+ */
 #define elm_wdg_on_show_region_hook_set(func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_SHOW_REGION_HOOK_SET), EO_TYPECHECK(region_hook_func_type, func), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_wdg_resize_object_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] sobj
+ *
+ */
 #define elm_wdg_resize_object_set(sobj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_RESIZE_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj)
+
+/**
+ * @def elm_wdg_hover_object_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] sobj
+ *
+ */
 #define elm_wdg_hover_object_set(sobj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HOVER_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj)
 
+
+/**
+ * @def elm_wdg_can_focus_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] can_focus
+ *
+ */
 #define elm_wdg_can_focus_set(can_focus) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_SET), EO_TYPECHECK(Eina_Bool, can_focus)
+
+/**
+ * @def elm_wdg_can_focus_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_can_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_child_can_focus_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_child_can_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_focus_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focused_object_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focused_object_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET), EO_TYPECHECK(Evas_Object **, ret)
 
+
+/**
+ * @def elm_wdg_top_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_top_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOP_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+/**
+ * @def elm_wdg_parent_widget_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_parent_widget_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_WIDGET_GET), EO_TYPECHECK(Evas_Object **, ret)
 
+
+/**
+ * @def elm_wdg_focus_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] first
+ *
+ */
 #define elm_wdg_focus_set(first) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_SET), EO_TYPECHECK(int, first)
+
+/**
+ * @def elm_wdg_focused_object_clear
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focused_object_clear() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_CLEAR)
+
+/**
+ * @def elm_wdg_focus_steal
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_steal() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_STEAL)
+
+/**
+ * @def elm_wdg_focus_restore
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_restore() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_RESTORE)
 
+
+/**
+ * @def elm_wdg_disabled_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] disabled
+ *
+ */
 #define elm_wdg_disabled_set(disabled) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
+
+/**
+ * @def elm_wdg_disabled_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_disabled_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_show_region_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] forceshow
+ *
+ */
 #define elm_wdg_show_region_set(x, y, w, h, forceshow) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, forceshow)
+
+/**
+ * @def elm_wdg_show_region_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ *
+ */
 #define elm_wdg_show_region_get(x, y, w, h) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
 
+/**
+ * @def elm_wdg_scrollable_children_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_scrollable_children_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET), EO_TYPECHECK(Eina_List **, ret)
+
+/**
+ * @def elm_wdg_scale_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scale
+ *
+ */
 #define elm_wdg_scale_set(scale) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_SET), EO_TYPECHECK(double, scale)
+
+/**
+ * @def elm_wdg_scale_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_scale_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, ret)
 
+
+/**
+ * @def elm_wdg_text_part_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[in] label
+ *
+ */
 #define elm_wdg_text_part_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
+
+/**
+ * @def elm_wdg_text_part_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
+
+/**
+ * @def elm_wdg_domain_translatable_text_part_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[in] domain
+ * @param[in] label
+ *
+ */
 #define elm_wdg_domain_translatable_text_part_set(part, domain, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, domain), EO_TYPECHECK(const char *, label)
+
+/**
+ * @def elm_wdg_translatable_text_part_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_translatable_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
+
+/**
+ * @def elm_wdg_access_info_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] txt
+ *
+ */
 #define elm_wdg_access_info_set(txt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_INFO_SET), EO_TYPECHECK(const char *, txt)
+
+/**
+ * @def elm_wdg_access_info_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_access_info_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_INFO_GET), EO_TYPECHECK(const char **, ret)
 
+
+/**
+ * @def elm_wdg_theme_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] th
+ *
+ */
 #define elm_wdg_theme_set(th) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_SET), EO_TYPECHECK(Elm_Theme *, th)
+
+/**
+ * @def elm_wdg_theme_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_GET), EO_TYPECHECK(Elm_Theme **, ret)
 
+
+/**
+ * @def elm_wdg_style_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] style
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_style_set(style, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_STYLE_SET), EO_TYPECHECK(const char *, style), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_style_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_style_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_STYLE_GET), EO_TYPECHECK(const char **, ret)
+
+/**
+ * @def elm_wdg_tooltip_add
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] tt
+ *
+ */
 #define elm_wdg_tooltip_add(tt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOOLTIP_ADD), EO_TYPECHECK(Elm_Tooltip *, tt)
+
+/**
+ * @def elm_wdg_tooltip_del
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] tt
+ *
+ */
 #define elm_wdg_tooltip_del(tt) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOOLTIP_DEL), EO_TYPECHECK(Elm_Tooltip *, tt)
+
+/**
+ * @def elm_wdg_cursor_add
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] cur
+ *
+ */
 #define elm_wdg_cursor_add(cur) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CURSOR_ADD), EO_TYPECHECK(Elm_Cursor *, cur)
+
+/**
+ * @def elm_wdg_cursor_del
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] cur
+ *
+ */
 #define elm_wdg_cursor_del(cur) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CURSOR_DEL), EO_TYPECHECK(Elm_Cursor *, cur)
 
+
+/**
+ * @def elm_wdg_drag_lock_x_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] lock
+ *
+ */
 #define elm_wdg_drag_lock_x_set(lock) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_X_SET), EO_TYPECHECK(Eina_Bool, lock)
+
+/**
+ * @def elm_wdg_drag_lock_y_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] lock
+ *
+ */
 #define elm_wdg_drag_lock_y_set(lock) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_SET), EO_TYPECHECK(Eina_Bool, lock)
+
+/**
+ * @def elm_wdg_drag_lock_x_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_drag_lock_x_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_X_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_drag_lock_y_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_drag_lock_y_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_drag_child_locked_x_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_drag_child_locked_x_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_X_GET), EO_TYPECHECK(int *, ret)
+
+/**
+ * @def elm_wdg_drag_child_locked_y_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_drag_child_locked_y_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_Y_GET), EO_TYPECHECK(int *, ret)
 
+
+/**
+ * @def elm_wdg_event_callback_add
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] func
+ * @param[in] data
+ *
+ */
 #define elm_wdg_event_callback_add(func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_CALLBACK_ADD), EO_TYPECHECK(Elm_Event_Cb, func), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def elm_wdg_event_callback_del
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] func
+ * @param[in] data
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_event_callback_del(func, data, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(Elm_Event_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(void **, ret)
+
+/**
+ * @def elm_wdg_event_propagate
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] type
+ * @param[in] event_info
+ * @param[in] event_flags
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_event_propagate(type, event_info, event_flags, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT_PROPAGATE), EO_TYPECHECK(Evas_Callback_Type, type), EO_TYPECHECK(void *, event_info), EO_TYPECHECK(Evas_Event_Flags *, event_flags), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_signal_emit
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] emission
+ * @param[in] source
+ *
+ */
 #define elm_wdg_signal_emit(emission, source) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_EMIT), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source)
+
+/**
+ * @def elm_wdg_signal_callback_add
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] emission
+ * @param[in] source
+ * @param[in] func
+ * @param[in] data
+ *
+ */
 #define elm_wdg_signal_callback_add(emission, source, func, data) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_ADD), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_wdg_signal_callback_del
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] emission
+ * @param[in] source
+ * @param[in] func
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_signal_callback_del(emission, source, func, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SIGNAL_CALLBACK_DEL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void **, ret)
 
+
+/**
+ * @def elm_wdg_name_find
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] name
+ * @param[in] recurse
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_name_find(name, recurse, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NAME_FIND), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int, recurse), EO_TYPECHECK(Evas_Object **, ret)
 
+/**
+ * @def elm_wdg_focus_hide_handle
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_hide_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIDE_HANDLE)
+
+/**
+ * @def elm_wdg_focus_mouse_up_handle
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_mouse_up_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_MOUSE_UP_HANDLE)
+
+/**
+ * @def elm_wdg_focus_tree_unfocusable_handle
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_tree_unfocusable_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_TREE_UNFOCUSABLE_HANDLE)
+
+/**
+ * @def elm_wdg_focus_disabled_handle
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_disabled_handle() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE)
+
+/**
+ * @def elm_wdg_focus_order_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_order_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET), EO_TYPECHECK(unsigned int *, ret)
+
+/**
+ * @def elm_wdg_focus_region_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_region_get(x, y, w, h, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_theme_object_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] edj
+ * @param[in] wname
+ * @param[in] welement
+ * @param[in] wstyle
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_theme_object_set(edj, wname, welement, wstyle, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET), EO_TYPECHECK(Evas_Object *, edj), EO_TYPECHECK(const char *, wname), EO_TYPECHECK(const char *, welement), EO_TYPECHECK(const char *, wstyle), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_focus_custom_chain_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] objs
+ *
+ */
 #define elm_wdg_focus_custom_chain_set(objs) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET), EO_TYPECHECK(Eina_List *, objs)
+
+/**
+ * @def elm_wdg_focus_custom_chain_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_custom_chain_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET), EO_TYPECHECK(const Eina_List **, ret)
+
+/**
+ * @def elm_wdg_focus_custom_chain_unset
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_wdg_focus_custom_chain_unset() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_UNSET)
+
+/**
+ * @def elm_wdg_focus_custom_chain_append
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[in] relative_child
+ *
+ */
 #define elm_wdg_focus_custom_chain_append(child, relative_child) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_APPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object *, relative_child)
+
+/**
+ * @def elm_wdg_focus_custom_chain_prepend
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] child
+ * @param[in] relative_child
+ *
+ */
 #define elm_wdg_focus_custom_chain_prepend(child, relative_child) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_PREPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object *, relative_child)
+
+/**
+ * @def elm_wdg_focus_cycle
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] dir
+ *
+ */
 #define elm_wdg_focus_cycle(dir) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CYCLE), EO_TYPECHECK(Elm_Focus_Direction, dir)
+
+/**
+ * @def elm_wdg_focus_direction_go
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] degree
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_direction_go(degree, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GO), EO_TYPECHECK(double, degree), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_direction_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] base
+ * @param[in] degree
+ * @param[out] direction
+ * @param[out] weight
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_direction_get(base, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_GET), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_focus_list_direction_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] base
+ * @param[in] items
+ * @param[in] list_data_get
+ * @param[in] degree
+ * @param[out] direction
+ * @param[out] weight
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_list_direction_get(base, items, list_data_get, degree, direction, weight, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET), EO_TYPECHECK(const Evas_Object *, base), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(double, degree), EO_TYPECHECK(Evas_Object **, direction), EO_TYPECHECK(double *, weight), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_focus_next_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] dir
+ * @param[out] next
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_next_get(dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_focus_list_next_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] items
+ * @param[in] list_data_get
+ * @param[in] dir
+ * @param[out] next
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_focus_list_next_get(items, list_data_get, dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_display_mode_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] dispmode
+ *
+ */
 #define elm_wdg_display_mode_set(dispmode) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), EO_TYPECHECK(Evas_Display_Mode, dispmode)
+
+/**
+ * @def elm_wdg_display_mode_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_display_mode_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), EO_TYPECHECK(Evas_Display_Mode *, ret)
 
+
+/**
+ * @def elm_wdg_tree_unfocusable_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] tree_unfocusable
+ *
+ */
 #define elm_wdg_tree_unfocusable_set(tree_unfocusable) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_SET), EO_TYPECHECK(Eina_Bool, tree_unfocusable)
+
+/**
+ * @def elm_wdg_tree_unfocusable_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_tree_unfocusable_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_wdg_can_focus_child_list_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
 #define elm_wdg_can_focus_child_list_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), EO_TYPECHECK(Eina_List **, ret)
 
 #endif

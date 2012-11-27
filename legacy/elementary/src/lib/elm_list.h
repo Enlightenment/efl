@@ -194,7 +194,29 @@
  * @see elm_list_horizontal_get
  */
 #define elm_obj_list_horizontal_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_HORIZONTAL_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_list_select_mode_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] mode
+ *
+ * @see elm_list_select_mode_set
+ */
 #define elm_obj_list_select_mode_set(mode) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_SELECT_MODE_SET), EO_TYPECHECK(Elm_Object_Select_Mode, mode)
+
+/**
+ * @def elm_obj_list_select_mode_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_list_select_mode_get
+ */
 #define elm_obj_list_select_mode_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_SELECT_MODE_GET), EO_TYPECHECK(Elm_Object_Select_Mode *, ret)
 
 /**

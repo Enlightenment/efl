@@ -26,6 +26,17 @@ enum
 
 #define ELM_OBJ_ROUTE_ID(sub_id) (ELM_OBJ_ROUTE_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_obj_route_emap_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] emap
+ *
+ * @see elm_route_emap_set
+ */
 #define elm_obj_route_emap_set(emap) ELM_OBJ_ROUTE_ID(ELM_OBJ_ROUTE_SUB_ID_EMAP_SET), EO_TYPECHECK(EMap_Route *, emap)
 
 /**

@@ -176,6 +176,18 @@ enum
  * @see elm_image_smooth_get
  */
 #define elm_obj_image_smooth_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_image_size_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] w
+ * @param[out] h
+ *
+ * @see elm_image_size_get
+ */
 #define elm_obj_image_size_get(w, h) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_OBJECT_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
 
 /**
@@ -409,24 +421,164 @@ enum
  */
 #define elm_obj_image_animated_play_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_ANIMATED_PLAY_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_obj_image_sizing_eval
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
 #define elm_obj_image_sizing_eval() ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SIZING_EVAL)
+
+/**
+ * @def elm_obj_image_smooth_scale_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] smooth
+ *
+ * @see elm_image_smooth_scale_set
+ */
 #define elm_obj_image_smooth_scale_set(smooth) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_SET), EO_TYPECHECK(Eina_Bool, smooth)
+
+/**
+ * @def elm_obj_image_smooth_scale_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_smooth_scale_get
+ */
 #define elm_obj_image_smooth_scale_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_obj_image_fill_inside_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] fill_inside
+ *
+ * @see elm_image_fill_inside_set
+ */
 #define elm_obj_image_fill_inside_set(fill_inside) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_FILL_INSIDE_SET), EO_TYPECHECK(Eina_Bool, fill_inside)
+
+/**
+ * @def elm_obj_image_fill_inside_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_fill_inside_get
+ */
 #define elm_obj_image_fill_inside_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_FILL_INSIDE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_obj_image_load_size_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] size
+ *
+ * @see elm_image_load_size_set
+ */
 #define elm_obj_image_load_size_set(size) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_LOAD_SIZE_SET), EO_TYPECHECK(int, size)
+
+/**
+ * @def elm_obj_image_load_size_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_load_size_get
+ */
 #define elm_obj_image_load_size_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET), EO_TYPECHECK(int *, ret)
 
+
+/**
+ * @def elm_obj_image_resize_down_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] resize_down
+ *
+ * @see elm_image_resize_down_set
+ */
 #define elm_obj_image_resize_down_set(resize_down) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_RESIZE_DOWN_SET), EO_TYPECHECK(Eina_Bool, resize_down)
+
+/**
+ * @def elm_obj_image_resize_down_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_resize_down_get
+ */
 #define elm_obj_image_resize_down_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_RESIZE_DOWN_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_obj_image_resize_up_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] resize_up
+ *
+ * @see elm_image_resize_up_set
+ */
 #define elm_obj_image_resize_up_set(resize_up) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_RESIZE_UP_SET), EO_TYPECHECK(Eina_Bool, resize_up)
+
+/**
+ * @def elm_obj_image_resize_up_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_resize_up_get
+ */
 #define elm_obj_image_resize_up_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_RESIZE_UP_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+
+/**
+ * @def elm_obj_image_scale_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scale
+ *
+ * @see elm_image_scale_set
+ */
 #define elm_obj_image_scale_set(scale) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SCALE_SET), EO_TYPECHECK(double, scale)
+
+/**
+ * @def elm_obj_image_scale_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_image_scale_get
+ */
 #define elm_obj_image_scale_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, ret)
+
 /**
  * @addtogroup Image
  * @{

@@ -53,7 +53,29 @@ enum
 
 #define ELM_OBJ_NOTIFY_ID(sub_id) (ELM_OBJ_NOTIFY_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_obj_notify_orient_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] orient
+ *
+ * @see elm_notify_orient_set
+ */
 #define elm_obj_notify_orient_set(orient) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_SET), EO_TYPECHECK(Elm_Notify_Orient, orient)
+
+/**
+ * @def elm_obj_notify_orient_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_notify_orient_get
+ */
 #define elm_obj_notify_orient_get(ret) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_GET), EO_TYPECHECK(Elm_Notify_Orient *, ret)
 
 /**

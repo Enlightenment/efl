@@ -191,6 +191,17 @@ enum
 
 #define ELM_OBJ_WIN_ID(sub_id) (ELM_OBJ_WIN_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_obj_win_constructor
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] name
+ * @param[in] type
+ *
+ */
 #define elm_obj_win_constructor(name, type) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR), EO_TYPECHECK(const char *, name), EO_TYPECHECK(Elm_Win_Type, type)
 
 /**

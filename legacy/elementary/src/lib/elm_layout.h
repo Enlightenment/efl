@@ -573,11 +573,78 @@
  * @see elm_layout_part_cursor_engine_only_get
  */
 #define elm_obj_layout_part_cursor_engine_only_get(part_name, ret) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_PART_CURSOR_ENGINE_ONLY_GET), EO_TYPECHECK(const char *, part_name), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_layout_edje_object_can_access_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] can_access
+ * @param[out] ret
+ *
+ * @see elm_layout_edje_object_can_access_set
+ */
 #define elm_obj_layout_edje_object_can_access_set(can_access, ret) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_EDJE_OBJECT_CAN_ACCESS_SET), EO_TYPECHECK(Eina_Bool, can_access), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_layout_edje_object_can_access_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_layout_edje_object_can_access_get
+ */
 #define elm_obj_layout_edje_object_can_access_get(ret) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_EDJE_OBJECT_CAN_ACCESS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_layout_smart_text_aliases_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] aliases
+ *
+ * @see elm_layout_smart_text_aliases_get
+ */
 #define elm_obj_layout_smart_text_aliases_get(aliases) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), EO_TYPECHECK(const Elm_Layout_Part_Alias_Description **, aliases)
+
+/**
+ * @def elm_obj_layout_smart_content_aliases_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] aliases
+ *
+ * @see elm_layout_smart_content_aliases_get
+ */
 #define elm_obj_layout_smart_content_aliases_get(aliases) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), EO_TYPECHECK(const Elm_Layout_Part_Alias_Description **, aliases)
+
+/**
+ * @def elm_obj_layout_sub_object_add_enable
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] enable
+ *
+ * @see elm_layout_sub_object_add_enable
+ */
 #define elm_obj_layout_sub_object_add_enable(enable) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SUB_OBJECT_ADD_ENABLE), EO_TYPECHECK(Eina_Bool *, enable)
+
+/**
+ * @def elm_obj_layout_theme_enable
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] enable
+ *
+ * @see elm_layout_theme_enable
+ */
 #define elm_obj_layout_theme_enable(enable) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_THEME_ENABLE), EO_TYPECHECK(Eina_Bool *, enable)
 
 /**

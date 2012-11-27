@@ -85,6 +85,17 @@ enum
 
 #define ELM_OBJ_BUTTON_ID(sub_id) (ELM_OBJ_BUTTON_BASE_ID + sub_id)
 
+
+/**
+ * @def elm_obj_button_admits_autorepeat_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ * @see elm_button_admits_autorepeat_get
+ */
 #define elm_obj_button_admits_autorepeat_get(ret) ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
