@@ -98,6 +98,7 @@ void test_genlist16(void *data, Evas_Object *obj, void *event_info);
 void test_genlist17(void *data, Evas_Object *obj, void *event_info);
 void test_genlist18(void *data, Evas_Object *obj, void *event_info);
 void test_genlist19(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_item_styles(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
@@ -590,6 +591,7 @@ add_tests:
    ADD_TEST(NULL, "Lists", "Genlist Decorate Modes", test_genlist17);
    ADD_TEST(NULL, "Lists", "Genlist Tree and Decorate All Mode", test_genlist18);
    ADD_TEST(NULL, "Lists", "Genlist Full Widget", test_genlist19);
+   ADD_TEST(NULL, "Lists", "Genlist Item Styles", test_genlist_item_styles);
    ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
    ADD_TEST(NULL, "Lists", "GenGrid 2", test_gengrid2);
    ADD_TEST(NULL, "Lists", "GenGrid Group", test_gengrid3);

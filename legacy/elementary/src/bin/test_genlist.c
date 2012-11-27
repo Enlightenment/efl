@@ -5,6 +5,15 @@
 #endif
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+#define WEIGHT evas_object_size_hint_weight_set
+#define ALIGN_ evas_object_size_hint_align_set
+#define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
+#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
+
+Evas_Object * _elm_min_set(Evas_Object *obj, Evas_Object *parent,
+                           Evas_Coord w, Evas_Coord h);
+
 struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
@@ -3173,6 +3182,100 @@ test_genlist19(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
+}
+
+/* test genlist item styles */
+
+const char *_genlist_styles[] = {
+   "default", "full", "one_icon", "end_icon", "no_icon",
+   "default_style", "double_label", "icon_top_text_bottom",
+   NULL
+};
+
+static void
+_genlist_renew(Evas_Object *obj, const char *style)
+{
+   Elm_Genlist_Item_Class *ic;
+   int i;
+
+   if (!obj) return;
+   elm_genlist_clear(obj);
+
+   ic = elm_genlist_item_class_new();
+   ic->item_style = style;
+   ic->func.text_get = gl_text_get;
+   ic->func.content_get = gl_content_get;
+   ic->func.state_get = NULL;
+   ic->func.del = NULL;
+
+   for (i = 0; i < 50; i++)
+     {
+        elm_genlist_item_append(obj, ic, (void *)(long)i, NULL,
+                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
+     }
+   elm_genlist_item_class_free(ic);
+}
+
+static void
+_item_style_sel_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *gl = evas_object_data_get(obj, "genlist");
+   if (gl)
+     _genlist_renew(gl, elm_object_item_text_get(event_info));
+}
+
+static Evas_Object *
+_item_styles_list_create(Evas_Object *parent)
+{
+   Evas_Object *list;
+   int i = 0;
+
+   list = elm_list_add(parent);
+   EXPAND(list); FILL(list);
+
+   while (_genlist_styles[i])
+     {
+        elm_list_item_append(list, _genlist_styles[i], NULL, NULL,
+                             _item_style_sel_cb, _genlist_styles[i]);
+        i++;
+     }
+
+   return list;
+}
+
+void
+test_genlist_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                         void *event_info __UNUSED__)
+{
+   Evas_Object *win, *box, *gl, *list, *table;
+
+   win = elm_win_util_standard_add("genlist-item-styles", "Gengrid Item Styles");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+
+   box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   EXPAND(box);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   list = _item_styles_list_create(box);
+   evas_object_show(list);
+
+   table = _elm_min_set(list, box, 100, 0);
+   WEIGHT(table, 0, EVAS_HINT_EXPAND);
+   FILL(table);
+   elm_box_pack_end(box, table);
+   evas_object_show(table);
+
+   gl = elm_genlist_add(box);
+   EXPAND(gl); FILL(gl);
+    _genlist_renew(gl, "default");
+   elm_box_pack_end(box, gl);
+   evas_object_show(gl);
+
+   evas_object_data_set(list, "genlist", gl);
 }
 
 #endif
