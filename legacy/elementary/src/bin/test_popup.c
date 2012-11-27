@@ -323,6 +323,36 @@ _popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
    evas_object_show(popup);
 }
 
+static void
+_list_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_del(data);
+}
+
+static void
+_popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj __UNUSED__,
+                                            void *event_info __UNUSED__)
+{
+   Evas_Object *popup, *list;
+   Evas_Object *btn;
+
+   popup = elm_popup_add(data);
+   elm_object_part_text_set(popup, "title,text", "Title");
+   evas_object_show(popup);
+
+   list = elm_list_add(popup);
+   elm_list_mode_set(list, ELM_LIST_EXPAND);
+   elm_list_item_append(list, "List Item #1", NULL, NULL, _list_cb, popup);
+   elm_list_item_append(list, "List Item #2", NULL, NULL, _list_cb, popup);
+   elm_list_item_append(list, "List Item #3", NULL, NULL, _list_cb, popup);
+   elm_object_content_set(popup, list);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "OK");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+}
+
 void
 test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
            void *event_info __UNUSED__)
@@ -361,6 +391,9 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                         _popup_center_text_1button_hide_show_cb, win);
    elm_list_item_append(list, "popup-transparent", NULL, NULL,
                         _popup_transparent_cb, win);
+   elm_list_item_append(list, "popup-center-title + list content + 1 button",
+                        NULL, NULL, _popup_center_title_list_content_1button_cb,
+                        win);
    elm_list_go(list);
    evas_object_show(list);
    evas_object_show(win);
