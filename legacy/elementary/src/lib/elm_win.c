@@ -4750,9 +4750,9 @@ _wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    Ecore_Wl_Window **ret = va_arg(*list, Ecore_Wl_Window **);
 #if HAVE_ELEMENTARY_WAYLAND
    Elm_Win_Smart_Data *sd = _pd;
-   if (sd->wl.xwin)
+   if (sd->wl.win)
      {
-        *ret = sd->wl.xwin;
+        *ret = sd->wl.win;
         return;
      }
    if (sd->parent)
