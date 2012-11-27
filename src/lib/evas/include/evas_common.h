@@ -500,6 +500,12 @@ struct _RGBA_Image_Loadopts
    struct {
       unsigned int      x, y, w, h;
    } region;
+   struct {
+      int src_x, src_y, src_w, src_h;
+      int dst_w, dst_h;
+      int smooth;
+      Evas_Image_Scale_Hint scale_hint;
+   } scale_load;
 
    Eina_Bool            orientation; // if EINA_TRUE => should honor orientation information provided by file (like jpeg exif info)
 };

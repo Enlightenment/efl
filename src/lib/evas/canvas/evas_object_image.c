@@ -12,6 +12,9 @@
 
 #include "evas_common.h"
 #include "evas_private.h"
+#ifdef EVAS_CSERVE2
+#include "../cserve2/evas_cs2_private.h"
+#endif
 #include "../common/evas_convert_color.h"
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
@@ -66,6 +69,12 @@ struct _Evas_Object_Image
       struct {
          short       x, y, w, h;
       } region;
+      struct {
+         int src_x, src_y, src_w, src_h;
+         int dst_w, dst_h;
+         int smooth;
+         int scale_hint;
+      } scale_load;
       Eina_Bool  orientation : 1;
    } load_opts;
 
@@ -392,6 +401,14 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
    lo.region.y = o->load_opts.region.y;
    lo.region.w = o->load_opts.region.w;
    lo.region.h = o->load_opts.region.h;
+   lo.scale_load.src_x = o->load_opts.scale_load.src_x;
+   lo.scale_load.src_y = o->load_opts.scale_load.src_y;
+   lo.scale_load.src_w = o->load_opts.scale_load.src_w;
+   lo.scale_load.src_h = o->load_opts.scale_load.src_h;
+   lo.scale_load.dst_w = o->load_opts.scale_load.dst_w;
+   lo.scale_load.dst_h = o->load_opts.scale_load.dst_h;
+   lo.scale_load.smooth = o->load_opts.scale_load.smooth;
+   lo.scale_load.scale_hint = o->load_opts.scale_load.scale_hint;
    lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
                                                               o->cur.file,
@@ -3490,17 +3507,48 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                            (o->cur.border.t == 0) &&
                            (o->cur.border.b == 0) &&
                            (o->cur.border.fill != 0))
-                         obj->layer->evas->engine.func->image_draw(output,
-                                                                   context,
-                                                                   surface,
-                                                                   pixels,
-                                                                   0, 0,
-                                                                   imagew,
-                                                                   imageh,
-                                                                   obj->cur.geometry.x + ix + x,
-                                                                   obj->cur.geometry.y + iy + y,
-                                                                   iw, ih,
-                                                                   o->cur.smooth_scale);
+                         {
+#ifdef EVAS_CSERVE2
+                            if (evas_cserve2_use_get())
+                              {
+                                 Image_Entry *ie;
+                                 void *data = pixels;
+                                 int w = imagew, h = imageh;
+
+                                 ie = evas_cache2_image_scale_load
+                                   ((Image_Entry *)pixels,
+                                    0, 0,
+                                    imagew, imageh,
+                                    iw, ih, o->cur.smooth_scale);
+                                 if (ie != &((RGBA_Image *)pixels)->cache_entry)
+                                   {
+                                      data = ie;
+                                      w = iw;
+                                      h = ih;
+                                   }
+
+                                 obj->layer->evas->engine.func->image_draw
+                                   (output, context, surface, data,
+                                    0, 0,
+                                    w, h,
+                                    obj->cur.geometry.x + ix + x,
+                                    obj->cur.geometry.y + iy + y,
+                                    iw, ih,
+                                    o->cur.smooth_scale);
+                              }
+                            else
+#endif
+                              {
+                                 obj->layer->evas->engine.func->image_draw
+                                   (output, context, surface, pixels,
+                                    0, 0,
+                                    imagew, imageh,
+                                    obj->cur.geometry.x + ix + x,
+                                    obj->cur.geometry.y + iy + y,
+                                    iw, ih,
+                                    o->cur.smooth_scale);
+                              }
+                         }
                        else
                          {
                             int inx, iny, inw, inh, outx, outy, outw, outh;

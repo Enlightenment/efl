@@ -76,6 +76,10 @@ struct _Msg_Setopts {
       int w, h;
       int scale_down;
       int rx, ry, rw, rh;
+      int scale_src_x, scale_src_y, scale_src_w, scale_src_h;
+      int scale_dst_w, scale_dst_h;
+      int scale_smooth;
+      int scale_hint;
       Eina_Bool orientation;
    } opts;
 };

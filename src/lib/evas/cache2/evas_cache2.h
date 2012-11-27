@@ -59,6 +59,7 @@ extern "C" {
 EAPI Evas_Cache2*        evas_cache2_init(const Evas_Cache2_Image_Func *cb);
 EAPI void                evas_cache2_shutdown(Evas_Cache2 *cache);
 EAPI Image_Entry * evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RGBA_Image_Loadopts *lo, int *error);
+EAPI Image_Entry *evas_cache2_image_scale_load(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth);
 EAPI int evas_cache2_image_open_wait(Image_Entry *im);
 EAPI void evas_cache2_image_close(Image_Entry *im);
 EAPI int evas_cache2_image_load_data(Image_Entry *ie);

@@ -101,6 +101,10 @@ parse_input_setopts(int *size)
    int w, h;
    int scale;
    int rx, ry, rw, rh;
+   int scale_src_x, scale_src_y, scale_src_w, scale_src_h;
+   int scale_dst_w, scale_dst_h;
+   int scale_smooth;
+   int scale_hint;
    int orientation;
 
    // reading file_id, image_id
@@ -123,10 +127,29 @@ parse_input_setopts(int *size)
    _read_line(line, sizeof(line));
    sscanf(line, "%d %d %d %d", &rx, &ry, &rw, &rh);
 
+   // reading original image's source coord
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d %d", &scale_src_x, &scale_src_y);
+
+   // reading original size
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d %d", &scale_src_w, &scale_src_h);
+
+   // reading scale size
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d %d", &scale_dst_w, &scale_dst_h);
+
+   // reading scale smooth
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d", &scale_smooth);
+
+   // reading scale hint
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d", &scale_hint);
+
    // reading orientation
    _read_line(line, sizeof(line));
    sscanf(line, "%d", &orientation);
-
 
    msg = calloc(1, sizeof(*msg));
 
@@ -142,6 +165,14 @@ parse_input_setopts(int *size)
    msg->opts.ry = ry;
    msg->opts.rw = rw;
    msg->opts.rh = rh;
+   msg->opts.scale_src_x = scale_src_x;
+   msg->opts.scale_src_y = scale_src_y;
+   msg->opts.scale_src_w = scale_src_w;
+   msg->opts.scale_src_h = scale_src_h;
+   msg->opts.scale_dst_w = scale_dst_w;
+   msg->opts.scale_dst_h = scale_dst_h;
+   msg->opts.scale_smooth = scale_smooth;
+   msg->opts.scale_hint = scale_hint;
    msg->opts.orientation = !!orientation;
 
    *size = sizeof(*msg);

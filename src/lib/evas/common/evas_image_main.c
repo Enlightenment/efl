@@ -20,6 +20,7 @@
 
 static Evas_Cache_Image * eci = NULL;
 #ifdef EVAS_CSERVE2
+#define EVAS_CSERVE2_SCALE_CACHE_SIZE (4 * 1024 * 1024)
 static Evas_Cache2      * eci2 = NULL;
 #endif
 static int                reference = 0;
@@ -743,7 +744,7 @@ evas_common_image_set_cache(unsigned int size)
      evas_cache_image_set(eci, size);
 #ifdef EVAS_CSERVE2
    if (eci2)
-     evas_cache2_limit_set(eci2, size);
+     evas_cache2_limit_set(eci2, size + EVAS_CSERVE2_SCALE_CACHE_SIZE);
 #endif
 }
 

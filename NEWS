@@ -11,6 +11,7 @@ Additions:
     * Add eina_tmpstr_add() and eina_tmpstr_del()
     * Add eina_thread API
     * Add eina_list_last_data_get
+    * Add Cserve2 scalecache support
 
 Improvements:
     * Single EFL tree covering all EFL library components.

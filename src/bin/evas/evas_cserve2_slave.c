@@ -349,6 +349,8 @@ image_load(const char *file, const char *key, const char *shmfile, Slave_Msg_Ima
    if (!api->data_load(&ilp, file, key, &err))
      ret = err;
 
+   result->w = params->w;
+   result->h = params->h;
    result->alpha_sparse = ilp.alpha_sparse;
 
 done:

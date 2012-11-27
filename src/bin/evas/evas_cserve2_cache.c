@@ -3,6 +3,7 @@
 #endif
 
 #include <string.h>
+#include <sys/mman.h>
 
 #ifdef DEBUG_LOAD_TIME
    #include <sys/time.h>
@@ -65,6 +66,10 @@ struct _Image_Data {
       int w, h; // w and h < -1
       int scale_down; // scale_down < -1
       int rx, ry, rw, rh; // rx, ry, rw, rh < -1
+      int scale_src_x, scale_src_y, scale_src_w, scale_src_h;
+      int scale_dst_w, scale_dst_h;
+      int scale_smooth;
+      int scale_hint;
       Eina_Bool orientation; // orientation == 0
    } opts;
    Shm_Handle *shm;
@@ -179,7 +184,7 @@ static Eina_List *image_entries_lru = NULL;
 
 static Eina_List *font_shm_lru = NULL;
 
-static int max_unused_mem_usage = 5 * 1024; /* in kbytes */
+static int max_unused_mem_usage = 5 * 4 * 1024; /* in kbytes */
 static int unused_mem_usage = 0;
 static int max_font_usage = 10 * 4 * 1024; /* in kbytes */
 static int font_mem_usage = 0;
@@ -474,6 +479,78 @@ _load_request_build(Image_Data *i, int *bufsize)
    return buf;
 }
 
+static inline Eina_Bool
+_scaling_needed(Image_Data *entry, Slave_Msg_Image_Loaded *resp)
+{
+   return (((entry->opts.scale_dst_w) && (entry->opts.scale_dst_h)) &&
+           ((entry->opts.scale_dst_w != resp->w) ||
+            (entry->opts.scale_dst_h != resp->h)));
+}
+
+static int
+_scaling_do(Shm_Handle *scale_shm, Image_Data *entry)
+{
+   char *scale_map, *orig_map;
+   void *src_data, *dst_data;
+
+   scale_map = cserve2_shm_map(scale_shm);
+   if (scale_map == MAP_FAILED)
+     {
+        ERR("Failed to memory map file for scale image.");
+        return -1;
+     }
+
+   orig_map = cserve2_shm_map(entry->shm);
+   if (orig_map == MAP_FAILED)
+     {
+        ERR("Failed to memory map file for original image.");
+
+        cserve2_shm_unmap(scale_shm);
+        return -1;
+     }
+
+   src_data = orig_map + cserve2_shm_map_offset_get(entry->shm);
+   dst_data = scale_map + cserve2_shm_map_offset_get(scale_shm);
+
+   DBG("Scaling image ([%d,%d:%dx%d] --> [%d,%d:%dx%d])",
+       entry->opts.scale_src_x, entry->opts.scale_src_y,
+       entry->opts.scale_src_w, entry->opts.scale_src_h,
+       0, 0,
+       entry->opts.scale_dst_w, entry->opts.scale_dst_h);
+
+   cserve2_rgba_image_scale_do(src_data, dst_data,
+                               entry->opts.scale_src_x, entry->opts.scale_src_y,
+                               entry->opts.scale_src_w, entry->opts.scale_src_h,
+                               0, 0,
+                               entry->opts.scale_dst_w, entry->opts.scale_dst_h,
+                               entry->file->alpha, entry->opts.scale_smooth);
+
+   cserve2_shm_unmap(entry->shm);
+   cserve2_shm_unmap(scale_shm);
+
+   return 0;
+}
+
+static int
+_scaling_prepare_and_do(Image_Data *orig)
+{
+   Shm_Handle *scale_shm;
+
+   DBG("Original image's shm path %s", cserve2_shm_name_get(orig->shm));
+
+   scale_shm =
+     cserve2_shm_request(orig->opts.scale_dst_w * orig->opts.scale_dst_h * 4);
+
+   DBG("Scale image's shm path %s", cserve2_shm_name_get(scale_shm));
+
+   if (_scaling_do(scale_shm, orig)) return -1;
+
+   cserve2_shm_unref(orig->shm); /* unreference old shm */
+   orig->shm = scale_shm; /* update shm */
+
+   return 0;
+}
+
 static Msg_Loaded *
 _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
 {
@@ -484,6 +561,20 @@ _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
    e->alpha_sparse = resp->alpha_sparse;
    if (!e->doload)
      DBG("Entry %d loaded by speculative preload.", e->base.id);
+
+   if (_scaling_needed(e, resp))
+     {
+        DBG("About to scale down image '%s%s'", e->file->path, e->file->key);
+
+        if (!_scaling_prepare_and_do(e))
+          DBG("Image '%s:%s' has been scaled down.",
+              e->file->path, e->file->key);
+        else
+          ERR("Failed to scale down image '%s%s'",
+              e->file->path, e->file->key);
+     }
+   else
+     DBG("No scaling needed for image '%s%s'", e->file->path, e->file->key);
 
    return _image_loaded_msg_create(e, size);
 }
@@ -500,10 +591,15 @@ _img_opts_id_get(Image_Data *im, char *buf, int size)
 {
    uintptr_t image_id;
 
-   snprintf(buf, size, "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:%d",
+   snprintf(buf, size,
+            "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d",
             im->file_id, im->opts.dpi, im->opts.w, im->opts.h,
             im->opts.scale_down, im->opts.rx, im->opts.ry,
-            im->opts.rw, im->opts.rh, im->opts.orientation);
+            im->opts.rw, im->opts.rh,
+            im->opts.scale_src_x, im->opts.scale_src_y,
+            im->opts.scale_src_w, im->opts.scale_src_h,
+            im->opts.scale_dst_w, im->opts.scale_dst_h, im->opts.scale_smooth,
+            im->opts.orientation);
 
    image_id = (uintptr_t)eina_hash_find(image_ids, buf);
 
@@ -972,6 +1068,14 @@ _image_msg_new(Client *client, Msg_Setopts *msg)
    im_entry->opts.ry = msg->opts.ry;
    im_entry->opts.rw = msg->opts.rw;
    im_entry->opts.rh = msg->opts.rh;
+   im_entry->opts.scale_src_x = msg->opts.scale_src_x;
+   im_entry->opts.scale_src_y = msg->opts.scale_src_y;
+   im_entry->opts.scale_src_w = msg->opts.scale_src_w;
+   im_entry->opts.scale_src_h = msg->opts.scale_src_h;
+   im_entry->opts.scale_dst_w = msg->opts.scale_dst_w;
+   im_entry->opts.scale_dst_h = msg->opts.scale_dst_h;
+   im_entry->opts.scale_smooth = msg->opts.scale_smooth;
+   im_entry->opts.scale_hint = msg->opts.scale_hint;
    im_entry->opts.orientation = msg->opts.orientation;
 
    return im_entry;
@@ -2034,9 +2138,10 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    fentry = entry->file;
    fentry->images = eina_list_append(fentry->images, entry);
 
-   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
-                                             0, NULL, fentry->base.request,
-                                             &_load_funcs, entry);
+   if ((!entry->opts.scale_dst_w) && (!entry->opts.scale_dst_h))
+     entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
+                                               0, NULL, fentry->base.request,
+                                               &_load_funcs, entry);
    return 0;
 }
 

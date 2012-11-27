@@ -105,7 +105,14 @@ _cserve2_client_setopts(Client *client)
    INF("\tsize: %dx%d", msg->opts.w, msg->opts.h);
    INF("\tscale down: %d", msg->opts.scale_down);
    INF("\tregion: %d,%d + %dx%d",
-          msg->opts.rx, msg->opts.ry, msg->opts.rw, msg->opts.rh);
+       msg->opts.rx, msg->opts.ry, msg->opts.rw, msg->opts.rh);
+   INF("\toriginal image's source coord: %d,%d",
+       msg->opts.scale_src_x, msg->opts.scale_src_y);
+   INF("\toriginal image size: %dx%d",
+       msg->opts.scale_src_w, msg->opts.scale_src_h);
+   INF("\tscale size: %dx%d", msg->opts.scale_dst_w, msg->opts.scale_dst_h);
+   INF("\tscale smooth: %d", msg->opts.scale_smooth);
+   INF("\tscale hint: %d", msg->opts.scale_hint);
    INF("\torientation: %d\n", msg->opts.orientation);
 
    if (cserve2_cache_image_opts_set(client, msg) != 0)
@@ -336,6 +343,8 @@ main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
 
    cserve2_requests_init();
 
+   cserve2_scale_init();
+
    cserve2_font_init();
 
    cserve2_cache_init();
@@ -349,6 +358,8 @@ main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
    cserve2_cache_shutdown();
 
    cserve2_font_shutdown();
+
+   cserve2_scale_shutdown();
 
    cserve2_requests_shutdown();
 

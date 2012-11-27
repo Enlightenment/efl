@@ -923,22 +923,38 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
 
 image_loaded:
 #endif
-        evas_common_rgba_image_scalecache_prepare(&im->cache_entry, surface, context, smooth,
-                                                  src_x, src_y, src_w, src_h,
-                                                  dst_x, dst_y, dst_w, dst_h);
-        evas_common_rgba_image_scalecache_do(&im->cache_entry, surface, context, smooth,
-                                             src_x, src_y, src_w, src_h,
-                                             dst_x, dst_y, dst_w, dst_h);
-/*        
-	if (smooth)
-	  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
-						       src_x, src_y, src_w, src_h,
-						       dst_x, dst_y, dst_w, dst_h);
-	else
-	  evas_common_scale_rgba_in_to_out_clip_sample(im, surface, context,
-						       src_x, src_y, src_w, src_h,
-						       dst_x, dst_y, dst_w, dst_h);
- */
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          {
+             if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+               evas_cache2_image_load_data(&im->cache_entry);
+
+             evas_common_image_colorspace_normalize(im);
+
+             if (smooth)
+               evas_common_scale_rgba_in_to_out_clip_smooth
+                 (im, surface, context,
+                  src_x, src_y, src_w, src_h,
+                  dst_x, dst_y, dst_w, dst_h);
+             else
+               evas_common_scale_rgba_in_to_out_clip_sample
+                 (im, surface, context,
+                  src_x, src_y, src_w, src_h,
+                  dst_x, dst_y, dst_w, dst_h);
+          }
+        else
+#endif
+          {
+             evas_common_rgba_image_scalecache_prepare
+               (&im->cache_entry, surface, context, smooth,
+                src_x, src_y, src_w, src_h,
+                dst_x, dst_y, dst_w, dst_h);
+             evas_common_rgba_image_scalecache_do
+               (&im->cache_entry, surface, context, smooth,
+                src_x, src_y, src_w, src_h,
+                dst_x, dst_y, dst_w, dst_h);
+          }
+
 	evas_common_cpu_end_opt();
      }
 }

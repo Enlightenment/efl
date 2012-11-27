@@ -109,6 +109,7 @@ struct _Slave_Msg_Image_Load {
 };
 
 struct _Slave_Msg_Image_Loaded {
+   int w, h;
    Eina_Bool alpha_sparse : 1;
 };
 
@@ -275,6 +276,9 @@ size_t cserve2_shm_size_normalize(size_t size);
 
 void cserve2_command_run(Client *client, Message_Type type);
 
+void cserve2_scale_init(void);
+void cserve2_scale_shutdown(void);
+
 void cserve2_cache_init(void);
 void cserve2_cache_shutdown(void);
 void cserve2_cache_client_new(Client *client);
@@ -282,6 +286,7 @@ void cserve2_cache_client_del(Client *client);
 int cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid);
 void cserve2_cache_file_close(Client *client, unsigned int client_file_id);
 int cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg);
+void cserve2_rgba_image_scale_do(void *src_data, void *dst_data, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int alpha, int smooth);
 void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);

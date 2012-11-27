@@ -561,6 +561,14 @@ _image_setopts_server_send(Image_Entry *ie)
    msg.opts.ry = ie->load_opts.region.y;
    msg.opts.rw = ie->load_opts.region.w;
    msg.opts.rh = ie->load_opts.region.h;
+   msg.opts.scale_src_x = ie->load_opts.scale_load.src_x;
+   msg.opts.scale_src_y = ie->load_opts.scale_load.src_y;
+   msg.opts.scale_src_w = ie->load_opts.scale_load.src_w;
+   msg.opts.scale_src_h = ie->load_opts.scale_load.src_h;
+   msg.opts.scale_dst_w = ie->load_opts.scale_load.dst_w;
+   msg.opts.scale_dst_h = ie->load_opts.scale_load.dst_h;
+   msg.opts.scale_smooth = ie->load_opts.scale_load.smooth;
+   msg.opts.scale_hint = ie->load_opts.scale_load.scale_hint;
    msg.opts.orientation = ie->load_opts.orientation;
 
    if (!_server_send(&msg, sizeof(msg), 0, NULL))

@@ -25,6 +25,11 @@
    Var = NULL;                 \
 }
 
+/* Size of characters used to determine a string that'll be used for load
+ * options in hash keys.
+ */
+#define HKEY_LOAD_OPTS_STR_LEN 215
+
 static void _evas_cache_image_dirty_add(Image_Entry *im);
 static void _evas_cache_image_dirty_del(Image_Entry *im);
 static void _evas_cache_image_activ_add(Image_Entry *im);
@@ -567,7 +572,39 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
         size += eina_convert_xtoa(lo->region.w, hkey + size);
         hkey[size] = 'x';
         size += 1;
+
         size += eina_convert_xtoa(lo->region.h, hkey + size);
+        hkey[size++] = '!';
+        hkey[size++] = '(';
+
+        hkey[size] = '[';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.src_x, hkey + size);
+        hkey[size] = ',';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.src_y, hkey + size);
+        hkey[size] = ':';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.src_w, hkey + size);
+        hkey[size] = 'x';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.src_h, hkey + size);
+        hkey[size++] = ']';
+
+        hkey[size++] = '-';
+
+        hkey[size] = '[';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.dst_w, hkey + size);
+        hkey[size] = 'x';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.dst_h, hkey + size);
+        hkey[size] = ':';
+        size += 1;
+        size += eina_convert_xtoa(lo->scale_load.smooth, hkey + size);
+        hkey[size++] = ']';
+
+        hkey[size++] = ')';
 
         if (lo->orientation)
           {
@@ -591,7 +628,8 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RG
    int                   stat_done = 0, stat_failed = 0;
    struct stat           st;
    Image_Timestamp       tstamp;
-   Evas_Image_Load_Opts  prevent = { 0, 0.0, 0, 0, 0, { 0, 0, 0, 0 }, EINA_FALSE };
+   Evas_Image_Load_Opts  prevent = { 0, 0.0, 0, 0, 0, { 0, 0, 0, 0 },
+                                     { 0, 0, 0, 0, 0, 0, 0, 0 }, EINA_FALSE };
 
    if ((!path) || ((!path) && (!key)))
      {
@@ -601,7 +639,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RG
 
    pathlen = strlen(path);
    keylen = key ? strlen(key) : 6;
-   size = pathlen + keylen + 132;
+   size = pathlen + keylen + HKEY_LOAD_OPTS_STR_LEN;
    hkey = alloca(sizeof(char) * size);
 
    _create_hash_key(hkey, path, pathlen, key, keylen, lo);
@@ -614,6 +652,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RG
         (lo->dpi == 0.0) &&
         ((lo->w == 0) || (lo->h == 0)) &&
         ((lo->region.w == 0) || (lo->region.h == 0)) &&
+        ((lo->scale_load.dst_w == 0) || (lo->scale_load.dst_h == 0)) &&
         (lo->orientation == 0)
        ))
      {
@@ -729,6 +768,128 @@ evas_cache2_image_open_wait(Image_Entry *im)
      return EVAS_LOAD_ERROR_GENERIC;
 
    return EVAS_LOAD_ERROR_NONE;
+}
+
+static Image_Entry *
+_scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
+{
+   size_t               pathlen, keylen, size;
+   char                 *hkey;
+   RGBA_Image_Loadopts  lo;
+   Image_Entry          *ret;
+
+   if (((!im->file) || ((!im->file) && (!im->key))) || (!im->data1) ||
+       ((src_w == dst_w) && (src_h == dst_h)) ||
+       ((!im->flags.alpha) && (!smooth))) return NULL;
+
+   pathlen = strlen(im->file);
+   keylen = im->key ? strlen(im->key) : 6;
+   size = pathlen + keylen + HKEY_LOAD_OPTS_STR_LEN;
+   hkey = alloca(sizeof(char) * size);
+
+   memcpy(&lo, &im->load_opts, sizeof lo);
+   lo.scale_load.src_x = src_x;
+   lo.scale_load.src_y = src_y;
+   lo.scale_load.src_w = src_w;
+   lo.scale_load.src_h = src_h;
+   lo.scale_load.dst_w = dst_w;
+   lo.scale_load.dst_h = dst_h;
+   lo.scale_load.smooth = smooth;
+
+   if (!smooth)
+     {
+        lo.scale_load.smooth = 1;
+        _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+
+        ret = eina_hash_find(im->cache2->activ, hkey);
+        if (ret) goto found;
+
+        ret = eina_hash_find(im->cache2->inactiv, hkey);
+        if (ret) goto handle_inactiv;
+
+        lo.scale_load.smooth = smooth;
+     }
+
+   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+
+   ret = eina_hash_find(im->cache2->activ, hkey);
+   if (ret) goto found;
+
+   ret = eina_hash_find(im->cache2->inactiv, hkey);
+
+ handle_inactiv:
+   if (!ret) return NULL;
+
+   /* Remove from lru and make it active again */
+   _evas_cache_image_lru_del(ret);
+   _evas_cache_image_activ_add(ret);
+
+ found:
+   evas_cache2_image_load_data(ret);
+
+   return ret;
+}
+
+EAPI Image_Entry *
+evas_cache2_image_scale_load(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
+{
+   size_t               pathlen, keylen, size;
+   char                 *hkey;
+   RGBA_Image_Loadopts  lo;
+   int                  error = EVAS_LOAD_ERROR_NONE;
+   Image_Entry          *ret;
+
+   if (((!im->file) || ((!im->file) && (!im->key))) ||
+       ((src_w == 0) || (src_h == 0) || (dst_w == 0) || (dst_h == 0)) ||
+       (im->scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)) goto parent_out;
+
+   if (((src_w == dst_w) && (src_h == dst_h)) ||
+       ((!im->flags.alpha) && (!smooth))) goto parent_out;
+
+   ret = _scaled_image_find(im, src_x, src_y, src_w, src_h,
+                            dst_w, dst_h, smooth);
+   if (ret) return ret;
+
+   pathlen = strlen(im->file);
+   keylen = im->key ? strlen(im->key) : 6;
+   size = pathlen + keylen + HKEY_LOAD_OPTS_STR_LEN;
+   hkey = alloca(sizeof(char) * size);
+
+   memcpy(&lo, &im->load_opts, sizeof lo);
+   lo.scale_load.src_x = src_x;
+   lo.scale_load.src_y = src_y;
+   lo.scale_load.src_w = src_w;
+   lo.scale_load.src_h = src_h;
+   lo.scale_load.dst_w = dst_w;
+   lo.scale_load.dst_h = dst_h;
+   lo.scale_load.smooth = smooth;
+   lo.scale_load.scale_hint = im->scale_hint;
+
+   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+
+   ret = _evas_cache_image_entry_new(im->cache2, hkey, NULL, im->file, im->key,
+                                     &lo, &error);
+   if (error != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Failed to create scale image entry with error code %d.", error);
+
+        if (ret) _evas_cache_image_entry_delete(im->cache2, ret);
+        goto parent_out;
+     }
+
+   evas_cserve2_image_load_wait(ret);
+   evas_cache2_image_load_data(ret);
+
+   ret->references++;
+   ret->w = dst_w;
+   ret->h = dst_h;
+
+   return ret;
+
+ parent_out:
+   evas_cache2_image_load_data(im);
+
+   return im;
 }
 
 EAPI void
