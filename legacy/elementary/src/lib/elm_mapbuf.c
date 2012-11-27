@@ -248,9 +248,8 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_pass_events_set(wd->resize_obj, EINA_TRUE);
    evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
 
-   priv->enabled = 0;
-   priv->alpha = 1;
-   priv->smooth = 1;
+   priv->alpha = EINA_TRUE;
+   priv->smooth = EINA_TRUE;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
