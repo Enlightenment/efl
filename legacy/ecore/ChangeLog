@@ -1027,3 +1027,7 @@
 
 	* Correctly define alloca
 	* Fix ieeefp.h inclusion on Solaris
+
+2012-11-27  Alexey Yakovenko
+
+	* Fix ecore_evas_sdl window resize bug.
