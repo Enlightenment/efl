@@ -106,7 +106,7 @@ const Ecore_Getopt optdesc = {
   NULL,
   PACKAGE_VERSION,
   "(C) 2009 - ProFUSION embedded systems",
-  "LGPL v3 - GNU Lesser General Public License",
+  "LGPL v2.1 - GNU Lesser General Public License",
   "Thumbnails generator client using DBus and ethumbd.\n"
   "\n"
   "This program uses ethumbd server to create thumbnails from pictures. "

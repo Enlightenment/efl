@@ -194,7 +194,7 @@ const Ecore_Getopt optdesc = {
   NULL,
   PACKAGE_VERSION,
   "(C) 2009 - ProFUSION embedded systems",
-  "LGPL v3 - GNU Lesser General Public License",
+  "LGPL v2.1 - GNU Lesser General Public License",
   "Ethumb daemon.\n"
   "\n"
   "ethumbd uses the Ethumb library to create thumbnails for any "
