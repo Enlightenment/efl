@@ -28,6 +28,7 @@
 typedef struct _Elm_Image_Smart_Data Elm_Image_Smart_Data;
 struct _Elm_Image_Smart_Data
 {
+   Evas_Object          *hit_rect;
    Evas_Object          *img;
    Evas_Object          *prev_img;
 

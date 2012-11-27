@@ -172,6 +172,8 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Smart_Data *sd)
         evas_object_image_fill_set(sd->img, 0, 0, w, h);
         evas_object_resize(sd->img, w, h);
      }
+   evas_object_move(sd->hit_rect, x, y);
+   evas_object_resize(sd->hit_rect, w, h);
 }
 
 static void
@@ -626,6 +628,17 @@ _elm_image_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Image_Smart_Data *priv = _pd;
 
+   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(priv->hit_rect, obj);
+   elm_widget_sub_object_add(obj, priv->hit_rect);
+
+   evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
+   evas_object_show(priv->hit_rect);
+   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
+
+   evas_object_event_callback_add
+     (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+
    /* starts as an Evas image. may switch to an Edje object */
    priv->img = _img_new(obj);
    priv->prev_img = NULL;
@@ -725,6 +738,18 @@ _elm_image_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->prev_img) evas_object_del(sd->prev_img);
    sd->prev_img = NULL;
+}
+
+static void
+_elm_image_smart_member_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Evas_Object *member = va_arg(*list, Evas_Object *);
+   Elm_Image_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, evas_obj_smart_member_add(member));
+
+   if (sd->hit_rect)
+     evas_object_raise(sd->hit_rect);
 }
 
 static void
@@ -1511,6 +1536,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_image_smart_move),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_image_smart_show),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_image_smart_hide),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_image_smart_member_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_COLOR_SET), _elm_image_smart_color_set),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_SET), _elm_image_smart_clip_set),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET), _elm_image_smart_clip_unset),
