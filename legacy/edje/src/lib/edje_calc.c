@@ -2984,6 +2984,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_GROUP:
            case EDJE_PART_TYPE_EXTERNAL:
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
+#ifdef HAVE_EPHYSICS
+              if (ep->body)
+                {
+                   Evas_Coord z;
+                   ephysics_body_geometry_get(ep->body, NULL, NULL, &z,
+                                              NULL, NULL, NULL);
+                   ephysics_body_move(ep->body,
+                                      ed->x + pf->x, ed->y + pf->y, z);
+                }
+              else
+#endif
               evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
               evas_object_resize(ep->object, pf->w, pf->h);
              

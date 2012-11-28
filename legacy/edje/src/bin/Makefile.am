@@ -36,7 +36,7 @@ edje_cc_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEPP_DIR=\"$(libdir)/$(PACKAGE)/utils\" \
-@EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EIO_CFLAGS@ @EVIL_CFLAGS@ @SNDFILE_CFLAGS@
+@EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EIO_CFLAGS@ @EPHYSICS_CFLAGS@ @EVIL_CFLAGS@ @SNDFILE_CFLAGS@
 edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CC_LIBS@ @EDJE_LIBS@ @EVIL_LIBS@ @VORBISENC_LIBS@ @FLAC_LIBS@ @SNDFILE_LIBS@ -lm
 edje_cc_LDFLAGS = @lt_enable_auto_import@
 
@@ -58,7 +58,7 @@ edje_pick_CPPFLAGS = \
 -I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
-@EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EIO_CFLAGS@ @EVIL_CFLAGS@
+@EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EIO_CFLAGS@ @EPHYSICS_CFLAGS@ @EVIL_CFLAGS@
 edje_pick_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 edje_pick_LDFLAGS = @lt_enable_auto_import@
 
@@ -71,7 +71,7 @@ edje_cc_sources.c
 edje_decc_CPPFLAGS = \
 -I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/lib \
-@EDJE_CFLAGS@ @EDJE_DECC_CFLAGS@ @EIO_CFLAGS@ @EVIL_CFLAGS@
+@EDJE_CFLAGS@ @EDJE_DECC_CFLAGS@ @EIO_CFLAGS@ @EPHYSICS_CFLAGS@ @EVIL_CFLAGS@
 edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_DECC_LIBS@ @EDJE_LIBS@ @VORBISENC_LIBS@ @FLAC_LIBS@ @SNDFILE_LIBS@
 edje_decc_LDFLAGS = @lt_enable_auto_import@
 

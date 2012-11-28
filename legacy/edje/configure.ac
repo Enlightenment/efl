@@ -327,6 +327,26 @@ if test "x${want_eio}" = "xyes" -a "x${have_eio}" = "xno"; then
    AC_MSG_ERROR([Eio required, but not found])
 fi
 
+want_ephysics="auto"
+have_ephysics="no"
+AC_ARG_ENABLE([ephysics],
+   [AC_HELP_STRING([--disable-ephysics], [Disable build with ephysics])],
+   [want_ephysics="${enableval}"])
+
+if test "x${want_ephysics}" != "xno"; then
+   PKG_CHECK_MODULES([EPHYSICS],
+      [ephysics],
+      [
+       AC_DEFINE([HAVE_EPHYSICS], [1], [EPhysics is available for physics support])
+       have_ephysics="yes"
+       requirement_edje="ephysics ${requirement_edje}"
+      ],
+      [have_ephysics="no"])
+fi
+if test "x${want_ephysics}" = "xyes" -a "x${have_ephysics}" = "xno"; then
+   AC_MSG_ERROR([EPhysics required, but not found])
+fi
+
 
 # Enable Multisense use
 want_multisense="no"
@@ -643,6 +663,7 @@ echo
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
 echo "  EIO..................: $have_eio"
+echo "  EPhysics.............: $have_ephysics"
 dnl echo "  Multisense...........: $want_multisense"
 
 if test "x${want_multisense}" = "xyes" ; then

@@ -141,6 +141,9 @@ static Edje_Part *edje_cc_handlers_part_make(void);
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
+#ifdef HAVE_EPHYSICS
+static void st_collections_group_parts_part_physics_body(void);
+#endif
 static void st_collections_group_parts_part_insert_before(void);
 static void st_collections_group_parts_part_insert_after(void);
 static void st_collections_group_parts_part_effect(void);
@@ -386,6 +389,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.api", st_collections_group_parts_part_api},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
+#ifdef HAVE_EPHYSICS
+     {"collections.group.parts.part.physics_body", st_collections_group_parts_part_physics_body},
+#endif
      {"collections.group.parts.part.insert_before", st_collections_group_parts_part_insert_before},
      {"collections.group.parts.part.insert_after", st_collections_group_parts_part_insert_after},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -3204,6 +3210,66 @@ st_collections_group_parts_part_type(void)
 
    current_part->type = type;
 }
+
+#ifdef HAVE_EPHYSICS
+/**
+    @page edcref
+    @property
+        physics_body
+    @parameters
+        [TYPE]
+    @effect
+        Set the type (all caps) from among the available types of physics
+        body, it's set to NONE by default. If type is NONE no physics
+        will be applied and physics block inside part will be discarded.
+        Valid types:
+            @li NONE
+            @li RIGID_BOX
+            @li RIGID_CIRCLE
+            @li SOFT_BOX
+            @li SOFT_CIRCLE
+            @li CLOTH
+            @li BOUNDARY_TOP
+            @li BOUNDARY_BOTTOM
+            @li BOUNDARY_RIGHT
+            @li BOUNDARY_LEFT
+            @li BOUNDARY_FRONT
+            @li BOUNDARY_BACK
+    @endproperty
+    @since 1.8.0
+*/
+static void
+st_collections_group_parts_part_physics_body(void)
+{
+   unsigned int body;
+
+   check_arg_count(1);
+
+   body = parse_enum(0,
+                     "NONE", EDJE_PART_PHYSICS_BODY_NONE,
+                     "RIGID_BOX", EDJE_PART_PHYSICS_BODY_RIGID_BOX,
+                     "RIGID_CIRCLE", EDJE_PART_PHYSICS_BODY_RIGID_CIRCLE,
+                     "SOFT_BOX", EDJE_PART_PHYSICS_BODY_SOFT_BOX,
+                     "SOFT_CIRCLE", EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE,
+                     "CLOTH", EDJE_PART_PHYSICS_BODY_CLOTH,
+                     "BOUNDARY_TOP", EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP,
+                     "BOUNDARY_BOTTOM", EDJE_PART_PHYSICS_BODY_BOUNDARY_BOTTOM,
+                     "BOUNDARY_RIGHT", EDJE_PART_PHYSICS_BODY_BOUNDARY_RIGHT,
+                     "BOUNDARY_LEFT", EDJE_PART_PHYSICS_BODY_BOUNDARY_LEFT,
+                     "BOUNDARY_FRONT", EDJE_PART_PHYSICS_BODY_BOUNDARY_FRONT,
+                     "BOUNDARY_BACK", EDJE_PART_PHYSICS_BODY_BOUNDARY_BACK,
+                     NULL);
+
+   current_part->physics_body = body;
+
+   if (body)
+     {
+        Edje_Part_Collection *pc;
+        pc = eina_list_data_get(eina_list_last(edje_collections));
+        pc->physics_enabled = 1;
+     }
+}
+#endif
 
 /**
     @page edcref

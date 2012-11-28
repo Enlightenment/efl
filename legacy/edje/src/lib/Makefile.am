@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @EDJE_CFLAGS@ \
 @ECORE_IMF_CFLAGS@ \
 @EIO_CFLAGS@ \
+@EPHYSICS_CFLAGS@ \
 @EFL_EDJE_BUILD@ \
 @REMIX_CFLAGS@ \
 @SNDFILE_CFLAGS@ 
@@ -136,7 +137,7 @@ else
 libedje_la_SOURCES = $(base_sources)
 endif
 
-libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EIO_LIBS@ @EVIL_LIBS@ @REMIX_LIBS@ @SNDFILE_LIBS@ -lm
+libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EIO_LIBS@ @EPHYSICS_LIBS@ @EVIL_LIBS@ @REMIX_LIBS@ @SNDFILE_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = edje_private.h edje_container.h edje_convert.h

@@ -79,6 +79,10 @@ void *alloca (size_t);
 # include <Eio.h>
 #endif
 
+#ifdef HAVE_EPHYSICS
+# include <EPhysics.h>
+#endif
+
 #include "Edje.h"
 
 EAPI extern int _edje_default_log_dom ;
@@ -731,6 +735,23 @@ typedef enum {
   EDJE_PART_LIMIT_OVER
 } Edje_Part_Limit_State;
 
+#ifdef HAVE_EPHYSICS
+typedef enum {
+  EDJE_PART_PHYSICS_BODY_NONE= 0,
+  EDJE_PART_PHYSICS_BODY_RIGID_BOX,
+  EDJE_PART_PHYSICS_BODY_RIGID_CIRCLE,
+  EDJE_PART_PHYSICS_BODY_SOFT_BOX,
+  EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE,
+  EDJE_PART_PHYSICS_BODY_CLOTH,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_BOTTOM,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_RIGHT,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_LEFT,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_FRONT,
+  EDJE_PART_PHYSICS_BODY_BOUNDARY_BACK
+} Edje_Part_Physics_Body;
+#endif
+
 struct _Edje_Part_Limit
 {
    int part;
@@ -804,6 +825,10 @@ struct _Edje_Part_Collection
 
    unsigned char    broadcast_signal;
 
+#ifdef HAVE_EPHYSICS
+   unsigned char    physics_enabled; /* will be 1 if a body is declared */
+#endif
+
    unsigned char    checked : 1;
 };
 
@@ -853,6 +878,9 @@ struct _Edje_Part
    Edje_Pack_Element    **items; /* packed items for box and table */
    unsigned int           items_count;
    unsigned char          type; /* what type (image, rect, text) */
+#ifdef HAVE_EPHYSICS
+   unsigned char          physics_body; /* body (none, rigid box, soft circle, ...) */
+#endif
    unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
@@ -1184,6 +1212,10 @@ struct _Edje
 
    int                   walking_callbacks;
 
+#ifdef HAVE_EPHYSICS
+   EPhysics_World       *world;
+#endif
+
    Eina_Bool          dirty : 1;
    Eina_Bool          recalc : 1;
    Eina_Bool          delete_callbacks : 1;
@@ -1364,6 +1396,9 @@ struct _Edje_Real_Part
    Edje_Calc_Params         *current; // 4
    Edje_Real_Part           *clip_to; // 4
    Edje_Running_Program     *program; // 4
+#ifdef HAVE_EPHYSICS
+   EPhysics_Body            *body; // 4
+#endif
    union {
       Edje_Real_Part_Text      *text;
       Edje_Real_Part_Container *container;

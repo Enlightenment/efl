@@ -99,6 +99,14 @@ _edje_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_data_set(obj, NULL);
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#ifdef HAVE_EPHYSICS
+   /* clear physics world  / shutdown ephysics */
+   if ((ed->collection) && (ed->collection->physics_enabled))
+     {
+        ephysics_world_del(ed->world);
+        ephysics_shutdown();
+     }
+#endif
    if (ed->persp) edje_object_perspective_set(obj, NULL);
    _edje_file_del(ed);
    _edje_clean_objects(ed);
@@ -217,6 +225,11 @@ _edje_smart_resize(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
      }
    ed->w = w;
    ed->h = h;
+#ifdef HAVE_EPHYSICS
+   if (ed->world)
+        ephysics_world_render_geometry_set(ed->world, ed->x, ed->y, -50,
+                                           ed->w, ed->h, 100);
+#endif
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
 #endif
