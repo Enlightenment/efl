@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "Ecore_DirectFB.h"
 #include "ecore_directfb_private.h"
