@@ -2302,8 +2302,8 @@ typedef void (*EPhysics_Body_Event_Cb)(void *data, EPhysics_Body *body, void *ev
  *
  * The hardness percentage will define how the soft body is supposed to deform,
  * its default is set to 100%. The soft body mass will also interfere on soft
- * body deformation, so bare in mind that the bodies mass must also be changed to
- * have different deformation results.
+ * body deformation, so bare in mind that the bodies mass must also be changed
+ * to have different deformation results.
  *
  * Valid values vary from 0 to 100.
  *
@@ -2340,8 +2340,8 @@ EAPI double ephysics_body_soft_body_hardness_get(const EPhysics_Body *body);
  * ephysics_body_soft_body_dragging_unset().
  *
  * @note Freezing a specific trimesh face means no forces are applied to it, no
- * gravity enforced, that's @p triangle will have no mass untill it dragging gets
- * unset.
+ * gravity enforced, that's @p triangle will have no mass untill it dragging
+ * gets unset.
  *
  * @param body The body of interest.
  * @param triangle The triangle to freeze.
@@ -2721,7 +2721,7 @@ EAPI EPhysics_Body *ephysics_body_cloth_add(EPhysics_World *world, unsigned shor
  * @brief
  * Anchors a cloth with a rigid body.
  *
- * All the informed @p side of @p body1 will be anchored to @p body1 wherever
+ * All the informed @p side of @p body1 will be anchored to @p body2 wherever
  * it's in time of anchoring. That is, all the nodes in the informed "edge".
  *
  * An anchor assumes the @p body1 positions, if it's 20px far from @p body2 then
@@ -3774,7 +3774,7 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  * torque impulse and body's inertia.
  *
  * @param body The physics body that will receive the impulse.
- * @param pitch Impulse to rotate body around Z axis (rotate on y - z plane).
+ * @param pitch Impulse to rotate body around X axis (rotate on y - z plane).
  * Negative values will impulse body on counter clockwise rotation.
  * @param yaw Impulse to rotate body around Y axis (rotate on x - z plane).
  * Negative values will impulse body on counter clockwise rotation.
@@ -4020,7 +4020,6 @@ EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, doubl
  *
  * A torque will be applied over the @p body to change the angular acceleration
  * of this body. It will leads to a change on angular velocity over time.
- * And the body will rotate around Z axis considering this angular velocity.
  *
  * @param body The physics body that will receive the torque.
  * @param torque_x Torque to change angular acceleration of the body around X
