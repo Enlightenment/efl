@@ -59,7 +59,7 @@ syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
 syn keyword	cConstant	VERTICAL HORIZONTAL ON_HOLD BOTH EDITABLE EXPLICIT
 syn keyword	cConstant	FOCUS_SET "default" NEITHER
-syn keyword	cConstant	DYNAMIC STATIC
+syn keyword	cConstant	DYNAMIC STATIC PASSWORD
 
 syn keyword	cTodo		contained TODO FIXME XXX
 
