@@ -536,7 +536,7 @@ requirements_ecore_input_evas="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_eco
 requirements_ecore_ipc="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_ipc}"
 requirements_ecore_cocoa="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_cocoa}"
 requirements_ecore_sdl="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_sdl}"
-requirements_ecore_psl1ght="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_sdl}"
+requirements_ecore_psl1ght="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_psl1ght}"
 requirements_ecore_win32="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_wince}"
 requirements_ecore_x="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_x}"
@@ -1692,7 +1692,7 @@ ECORE_CHECK_MODULE([directfb], [${want_ecore_directfb}], [DirectFB], [${have_dir
 # ecore_wince
 
 ECORE_CHECK_MODULE([wince], [${want_ecore_wince}], [WinCE], [${have_ecore_input}],
-   [requirements_ecore_win32="ecore-input >= 1.6.99 ${requirements_ecore_win32}"])
+   [requirements_ecore_wince="ecore-input >= 1.6.99 ${requirements_ecore_wince}"])
 
 ## Ecore Evas
 
