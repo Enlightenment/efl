@@ -3015,7 +3015,11 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
    body->boundary = EINA_TRUE;
    ephysics_body_mass_set(body, 0);
    ephysics_world_boundary_set(world, boundary, body);
-   ephysics_body_geometry_set(body, x, y, z, w, h, d);
+
+   if ((w <= 0) || (h <= 0) || (d <= 0))
+     INF("Boundary added with default geometry. Render geometry not set yet");
+   else
+     ephysics_body_geometry_set(body, x, y, z, w, h, d);
 
    return body;
 }
