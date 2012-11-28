@@ -1,5 +1,7 @@
 * create shape from image
 * set best shape based on evas object
+* create a way of guessing a good number of slices when slicing clothes.
+  (discussed on ML).
 
 FAR FAR FUTURE:
 * support Box2d backend
