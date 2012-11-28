@@ -13,12 +13,6 @@
 # include <winsock2.h>
 #endif
 
-#if USE_GNUTLS_OPENSSL
-# include <gnutls/openssl.h>
-#elif USE_OPENSSL
-# include <openssl/ssl.h>
-#endif
-
 #include <Ecore.h>
 #include <ecore_private.h>
 #include <Ecore_Con.h>
