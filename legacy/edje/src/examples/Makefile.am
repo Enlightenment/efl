@@ -52,6 +52,10 @@ if ENABLE_MULTISENSE
 EDCS += multisense.edc
 endif
 
+if ENABLE_EPHYSICS
+EDCS += physics_basic.edc
+endif
+
 .edc.edj:
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $< $(builddir)/$(@F)
 

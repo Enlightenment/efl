@@ -346,6 +346,7 @@ fi
 if test "x${want_ephysics}" = "xyes" -a "x${have_ephysics}" = "xno"; then
    AC_MSG_ERROR([EPhysics required, but not found])
 fi
+AM_CONDITIONAL([ENABLE_EPHYSICS], [test "x${have_ephysics}" != "xno"])
 
 
 # Enable Multisense use
