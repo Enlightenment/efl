@@ -1351,6 +1351,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    _visuals_set(obj);
+   edje_object_message_signal_process(wd->resize_obj);
 }
 
 static void
