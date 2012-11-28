@@ -10,7 +10,7 @@ evas_common_rectangle_init(void)
 }
 
 EAPI void
-evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
+evas_common_rectangle_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, Evas_Common_Rectangle_Draw_Cb cb)
 {
    static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
@@ -27,7 +27,7 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    /* no cutouts - cut right to the chase */
    if (!dc->cutout.rects)
      {
-	rectangle_draw_internal(dst, dc, x, y, w, h);
+	cb(dst, dc, x, y, w, h);
      }
    else
      {
@@ -40,12 +40,18 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 	       {
 		  r = rects->rects + i;
 		  evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-		  rectangle_draw_internal(dst, dc, x, y, w, h);
+		  cb(dst, dc, x, y, w, h);
 	       }
 	  }
      }
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+EAPI void
+evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
+{
+   evas_common_rectangle_draw_cb(dst, dc, x, y, w, h, rectangle_draw_internal);
 }
 
 EAPI Eina_Bool
