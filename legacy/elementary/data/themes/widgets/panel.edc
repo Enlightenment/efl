@@ -7,6 +7,7 @@ group { name: "elm/panel/left/default";
       image: "bt_dis_base.png" COMP;
       image: "icon_arrow_left.png" COMP;
       image: "icon_arrow_right.png" COMP;
+      image: "frame_2.png" COMP;
    }
    data {
       item: "focus_highlight" "on";
