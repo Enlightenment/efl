@@ -3236,6 +3236,9 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
         return;
      }
 
+   INF("Body: %p geometry set to x=%i y=%i z=%i w=%i h=%i d=%i.",
+       body, x, y, z, w, h, d);
+
    if ((w <= 0) || (h <= 0) || (d <= 0))
      {
         ERR("Width, height and depth must to be a non-null, positive value.");

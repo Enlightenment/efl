@@ -1240,6 +1240,9 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
    world->geometry.h = h;
    world->geometry.d = d;
 
+   INF("World %p render geometry set: x=%i y=%i z=%i w=%i h=%i d=%i",
+       world, x, y, z, w, h, d);
+
    ephysics_camera_perspective_set(world->camera, x + w / 2, y + h / 2,
                                    z + d / 2, 10 * (z + d));
 
