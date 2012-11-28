@@ -1050,9 +1050,9 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    mx = (x + w * body->cm.x) / rate;
    my = (height - (y + h * body->cm.y)) / rate;
    mz = (z + d * body->cm.z) / rate;
-   sx = w / rate;
-   sy = h / rate;
-   sz = d / rate;
+   sx = (w <= 0) ? 1 : w / rate;
+   sy = (h <= 0) ? 1 : h / rate;
+   sz = (d <= 0) ? 1 : d / rate;
 
    trans = _ephysics_body_transform_get(body);
    trans.setOrigin(btVector3(mx, my, mz));
