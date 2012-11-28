@@ -123,7 +123,7 @@ _ecore_sdl_event_modifiers(int mod)
 }
 
 static Ecore_Event_Key*
-_ecore_sdl_event_key(SDL_Event *event, double time)
+_ecore_sdl_event_key(SDL_Event *event, double timestamp)
 {
    Ecore_Event_Key *ev;
    unsigned int i;
@@ -131,7 +131,7 @@ _ecore_sdl_event_key(SDL_Event *event, double time)
    ev = malloc(sizeof(Ecore_Event_Key));
    if (!ev) return NULL;
 
-   ev->timestamp = time;
+   ev->timestamp = timestamp;
    ev->window = 0;
    ev->event_window = 0;
    ev->modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
@@ -155,11 +155,11 @@ EAPI void
 ecore_sdl_feed_events(void)
 {
    SDL_Event    event;
-   unsigned int time;
+   unsigned int timestamp;
 
    while(SDL_PollEvent(&event))
      {
-        time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
+        timestamp = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
         switch(event.type)
           {
           case SDL_MOUSEMOTION:
@@ -169,7 +169,7 @@ ecore_sdl_feed_events(void)
              ev = malloc(sizeof(Ecore_Event_Mouse_Move));
              if (!ev) return ;
 
-             ev->timestamp = time;
+             ev->timestamp = timestamp;
              ev->window = 0;
              ev->event_window = 0;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
@@ -197,7 +197,7 @@ ecore_sdl_feed_events(void)
                   ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
                   if (!ev) return ;
 
-                  ev->timestamp = time;
+                  ev->timestamp = timestamp;
                   ev->window = 0;
                   ev->event_window = 0;
                   ev->modifiers = 0; /* FIXME: keep modifier around. */
@@ -213,7 +213,7 @@ ecore_sdl_feed_events(void)
                   ev = malloc(sizeof(Ecore_Event_Mouse_Button));
                   if (!ev) return ;
 
-                  ev->timestamp = time;
+                  ev->timestamp = timestamp;
                   ev->window = 0;
                   ev->event_window = 0;
                   ev->modifiers = 0; /* FIXME: keep modifier around. */
@@ -237,7 +237,7 @@ ecore_sdl_feed_events(void)
 
              ev = malloc(sizeof(Ecore_Event_Mouse_Button));
              if (!ev) return ;
-             ev->timestamp = time;
+             ev->timestamp = timestamp;
              ev->window = 0;
              ev->event_window = 0;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
@@ -281,11 +281,11 @@ ecore_sdl_feed_events(void)
                                                                     EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
              if (entry)
                {
-                  ev = _ecore_sdl_event_key(&event, time);
+                  ev = _ecore_sdl_event_key(&event, timestamp);
                   if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
                }
 
-             ev = _ecore_sdl_event_key(&event, time);
+             ev = _ecore_sdl_event_key(&event, timestamp);
              if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
              if (!entry)
@@ -314,7 +314,7 @@ ecore_sdl_feed_events(void)
                   free(entry);
                }
 
-             ev = _ecore_sdl_event_key(&event, time);
+             ev = _ecore_sdl_event_key(&event, timestamp);
              if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
