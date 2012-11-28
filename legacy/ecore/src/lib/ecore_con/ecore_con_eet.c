@@ -468,7 +468,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
    r->handler_data = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
                                              (Ecore_Event_Handler_Cb)_ecore_con_eet_server_data, r);
    r->data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_data_free);
-   r->raw_data_callbacks = eina_hash_superfast_new(_ecore_con_eet_raw_data_free);
+   r->raw_data_callbacks = eina_hash_string_superfast_new(_ecore_con_eet_raw_data_free);
 
    _ecore_con_eet_data_descriptor_setup(r);
 
@@ -494,7 +494,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
    r->handler_data = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
                                              (Ecore_Event_Handler_Cb)_ecore_con_eet_client_data, r);
    r->data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_data_free);
-   r->raw_data_callbacks = eina_hash_superfast_new(_ecore_con_eet_raw_data_free);
+   r->raw_data_callbacks = eina_hash_string_superfast_new(_ecore_con_eet_raw_data_free);
 
    _ecore_con_eet_data_descriptor_setup(r);
 
