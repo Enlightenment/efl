@@ -646,14 +646,12 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 #include "evas_map_image_internal.c"
 
 EAPI void
-evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
-                      RGBA_Draw_Context *dc,
-                      int npoints EINA_UNUSED, RGBA_Map_Point *p,
-                      int smooth, int level)
+evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
+                        RGBA_Draw_Context *dc,
+                        int npoints EINA_UNUSED, RGBA_Map_Point *p,
+                        int smooth, int level,
+                        Evas_Common_Map_RGBA_Cb cb)
 {
-#ifdef BUILD_MMX
-   int mmx, sse, sse2;
-#endif
    static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
@@ -670,17 +668,10 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
      }
    evas_common_image_colorspace_normalize(src);
    if (!src->image.data) return;
-#ifdef BUILD_MMX
-   evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif   
+
    if ((!dc->cutout.rects) && (!dc->clip.use))
      {
-#ifdef BUILD_MMX
-        if (mmx)
-          evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
-        else
-#endif
-          evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
+        cb(src, dst, dc, p, smooth, level);
         return;
      }
    /* save out clip info */
@@ -697,15 +688,30 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
      {
         r = rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-#ifdef BUILD_MMX
-        if (mmx)
-          evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
-        else
-#endif
-          evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
+        cb(src, dst, dc, p, smooth, level);
      }
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+EAPI void
+evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
+                     RGBA_Draw_Context *dc,
+                     int npoints EINA_UNUSED, RGBA_Map_Point *p,
+                     int smooth, int level)
+{
+   Evas_Common_Map_RGBA_Cb cb;
+#ifdef BUILD_MMX
+   int mmx, sse, sse2;
+
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
+   if (mmx)
+     cb = evas_common_map_rgba_internal_mmx;
+   else
+#endif
+     cb = evas_common_map_rgba_internal;
+
+   evas_common_map_rgba_cb(src, dst, dc, npoints, p, smooth, level, cb);
 }
 
 EAPI void
