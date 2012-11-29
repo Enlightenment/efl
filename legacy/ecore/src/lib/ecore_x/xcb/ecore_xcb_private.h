@@ -417,7 +417,7 @@ void _ecore_xcb_input_shutdown(void);
 # ifdef ECORE_XCB_XINPUT
 void _ecore_xcb_input_handle_event(xcb_generic_event_t *event);
 # else
-void _ecore_xcb_input_handle_event(xcb_generic_event_t *event __UNUSED__);
+void _ecore_xcb_input_handle_event(xcb_generic_event_t *event);
 # endif
 
 void           _ecore_xcb_dri_init(void);
@@ -439,10 +439,10 @@ void           _ecore_xcb_window_grab_allow_events(Ecore_X_Window event_win,
                                                    void *event,
                                                    Ecore_X_Time timestamp);
 
-int                  _ecore_xcb_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
-                                                         uint8_t data __UNUSED__);
-int                  _ecore_xcb_netwm_startup_info(Ecore_X_Window win __UNUSED__,
-                                                   uint8_t data __UNUSED__);
+int                  _ecore_xcb_netwm_startup_info_begin(Ecore_X_Window win,
+                                                         uint8_t data);
+int                  _ecore_xcb_netwm_startup_info(Ecore_X_Window win,
+                                                   uint8_t data);
 Ecore_X_Window_State _ecore_xcb_netwm_window_state_get(Ecore_X_Atom atom);
 
 int                  _ecore_xcb_error_handle(xcb_generic_error_t *err);

@@ -67,7 +67,7 @@ HRESULT DropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
     return S_OK;
 }
 
-HRESULT DropSource::GiveFeedback(DWORD dwEffect __UNUSED__)
+HRESULT DropSource::GiveFeedback(DWORD dwEffect EINA_UNUSED)
 {
     return DRAGDROP_S_USEDEFAULTCURSORS;
 }

@@ -119,7 +119,7 @@ HRESULT DataObject::GetData(FORMATETC *pFormatEtc, STGMEDIUM *pMedium)
    return S_OK;
 }
 
-HRESULT DataObject::GetDataHere(FORMATETC *pFormatEtc __UNUSED__, STGMEDIUM *pmedium __UNUSED__)
+HRESULT DataObject::GetDataHere(FORMATETC *pFormatEtc EINA_UNUSED, STGMEDIUM *pmedium EINA_UNUSED)
 {
    return DATA_E_FORMATETC;
 }
@@ -129,14 +129,14 @@ HRESULT DataObject::QueryGetData(FORMATETC *pFormatEtc)
    return (lookup_format_etc(pFormatEtc) == -1) ? DV_E_FORMATETC : S_OK;
 }
 
-HRESULT DataObject::GetCanonicalFormatEtc(FORMATETC *pFormatEct __UNUSED__, FORMATETC *pFormatEtcOut)
+HRESULT DataObject::GetCanonicalFormatEtc(FORMATETC *pFormatEct EINA_UNUSED, FORMATETC *pFormatEtcOut)
 {
    // Apparently we have to set this field to NULL even though we don't do anything else
    pFormatEtcOut->ptd = NULL;
    return E_NOTIMPL;
 }
 
-HRESULT DataObject::SetData(FORMATETC *pFormatEtc __UNUSED__, STGMEDIUM *pMedium __UNUSED__,  BOOL fRelease __UNUSED__)
+HRESULT DataObject::SetData(FORMATETC *pFormatEtc EINA_UNUSED, STGMEDIUM *pMedium EINA_UNUSED,  BOOL fRelease EINA_UNUSED)
 {
    return E_NOTIMPL;
 }
@@ -157,17 +157,17 @@ HRESULT DataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC **ppEnumForm
    }
 }
 
-HRESULT DataObject::DAdvise(FORMATETC *pFormatEtc __UNUSED__,  DWORD advf __UNUSED__, IAdviseSink *, DWORD *)
+HRESULT DataObject::DAdvise(FORMATETC *pFormatEtc EINA_UNUSED,  DWORD advf EINA_UNUSED, IAdviseSink *, DWORD *)
 {
    return OLE_E_ADVISENOTSUPPORTED;
 }
 
-HRESULT DataObject::DUnadvise(DWORD dwConnection __UNUSED__)
+HRESULT DataObject::DUnadvise(DWORD dwConnection EINA_UNUSED)
 {
    return OLE_E_ADVISENOTSUPPORTED;
 }
 
-HRESULT DataObject::EnumDAdvise(IEnumSTATDATA **ppEnumAdvise __UNUSED__)
+HRESULT DataObject::EnumDAdvise(IEnumSTATDATA **ppEnumAdvise EINA_UNUSED)
 {
    return OLE_E_ADVISENOTSUPPORTED;
 }
