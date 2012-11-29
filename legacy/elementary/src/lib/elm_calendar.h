@@ -802,8 +802,8 @@ EAPI double               elm_calendar_interval_get(const Evas_Object *obj);
  * Set the first day of week to use on calendar widgets'.
  *
  * @param obj The calendar object
- * @param day An int which correspond to the first day of the week (Sunday = 0, monday = 1,
- * ..., saturday = 6)
+ * @param day An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
+ * ..., Saturday = 6)
  *
  * @ingroup Calendar
  */
@@ -813,8 +813,8 @@ EAPI void                 elm_calendar_first_day_of_week_set(Evas_Object *obj, E
  * Get the first day of week, who are used on calendar widgets'.
  *
  * @param obj The calendar object
- * @return An int which correspond to the first day of the week (Sunday = 0, monday = 1,
- * ..., saturday = 6)
+ * @return An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
+ * ..., Saturday = 6)
  *
  * @see elm_calendar_first_day_of_week_set() for more details
  *
