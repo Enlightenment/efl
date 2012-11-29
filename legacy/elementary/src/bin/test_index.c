@@ -390,4 +390,60 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(win);
 }
 
+/***** Index Horizontal Mode ******/
+
+void
+_index_list_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                       void *event_info)
+{
+   elm_list_item_bring_in(elm_object_item_data_get(event_info));
+}
+
+void
+test_index_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                      void *event_info __UNUSED__)
+{
+   Evas_Object *win, *list, *id, *tb;
+   Elm_Object_Item *lit;
+   int i;
+   char buf[30];
+
+   api_data *api = calloc(1, sizeof(api_data));
+
+   win = elm_win_util_standard_add("index-horizontal", "Index Horizontal");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, tb);
+   evas_object_show(tb);
+
+   list = elm_list_add(win);
+   elm_list_horizontal_set(list, EINA_TRUE);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, list, 0, 0, 1, 1);
+   evas_object_show(list);
+
+   api->dt.id = id = elm_index_add(win);
+   elm_index_horizontal_set(id, EINA_TRUE);
+   evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, id, 0, 0, 1, 1);
+   evas_object_show(id);
+
+   for (i = 1; i < 15; i++)
+     {
+        sprintf(buf, "Item #%d", i);
+        lit = elm_list_item_append(list, buf, NULL, NULL, NULL, NULL);
+        sprintf(buf, "%d", i);
+        elm_index_item_append(id, buf, id_cb, lit);
+     }
+   evas_object_smart_callback_add(id, "changed", _index_list_changed_cb, NULL);
+   elm_index_level_go(id, 0);
+   evas_object_resize(win, 480, 320);
+   evas_object_show(win);
+}
+
 #endif

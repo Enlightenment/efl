@@ -123,6 +123,7 @@ void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
+void test_index_horizontal(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
@@ -621,6 +622,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Selectors", "Index", test_index);
    ADD_TEST(NULL, "Selectors", "Index 2", test_index2);
+   ADD_TEST(NULL, "Selectors", "Index Horizontal", test_index_horizontal);
    ADD_TEST(NULL, "Selectors", "File Selector", test_fileselector);
    ADD_TEST(NULL, "Selectors", "File Selector Entry", test_fileselector_entry);
    ADD_TEST(NULL, "Selectors", "File Selector Button", test_fileselector_button);
