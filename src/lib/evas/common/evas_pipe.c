@@ -71,7 +71,7 @@ evas_common_pipe_op_free(RGBA_Pipe_Op *op)
 
 /* main api calls */
 static void *
-evas_common_pipe_thread(void *data)
+evas_common_pipe_thread(void *data, Eina_Thread t EINA_UNUSED)
 {
    Thinfo *thinfo;
 
@@ -685,7 +685,7 @@ evas_common_pipe_map_render(RGBA_Image *root)
 }
 
 static void*
-evas_common_pipe_load(void *data)
+evas_common_pipe_load(void *data, Eina_Thread t EINA_UNUSED)
 {
   Thinfo *tinfo;
 
