@@ -32,6 +32,7 @@ void test_transit8(void *data, Evas_Object *obj, void *event_info);
 void test_transit9(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
+void test_frame(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
 void test_clock2(void *data, Evas_Object *obj, void *event_info);
 void test_clock3(void *data, Evas_Object *obj, void *event_info);
@@ -496,6 +497,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Box Horiz", test_box_horiz);
    ADD_TEST(NULL, "Containers", "Box Homogeneous", test_box_homo);
    ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
+   ADD_TEST(NULL, "Containers", "Frame", test_frame);
    ADD_TEST(NULL, "Containers", "Table", test_table);
    ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);
    ADD_TEST(NULL, "Containers", "Table 3", test_table3);
@@ -801,7 +803,7 @@ elm_main(int argc, char **argv)
    /* if the mainloop that elm_run() runs exist - we exit the app */
 
    EINA_LIST_FREE(tests, t)
-      free(t);
+     free(t);
 
    elm_shutdown(); /* clean up and shut down */
    /* exit code */
