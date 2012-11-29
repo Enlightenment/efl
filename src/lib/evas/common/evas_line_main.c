@@ -41,7 +41,7 @@ evas_common_line_init(void)
 }
 
 EAPI void
-evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
+evas_common_line_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1, Evas_Common_Line_Draw_Cb cb)
 {
    int  x, y, w, h;
    int  clx, cly, clw, clh;
@@ -88,10 +88,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, in
    dc->clip.w = clw;
    dc->clip.h = clh;
 
-   if (dc->anti_alias)
-	_evas_draw_line_aa(dst, dc, x0, y0, x1, y1);
-   else
-	_evas_draw_line(dst, dc, x0, y0, x1, y1);
+   cb(dst, dc, x0, y0, x1, y1);
 
    /* restore clip info */
    dc->clip.use = cuse;
@@ -101,6 +98,14 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, in
    dc->clip.h = ch;
 }
 
+EAPI void
+evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
+{
+   Evas_Common_Line_Draw_Cb cb;
+
+   cb = dc->anti_alias ? _evas_draw_line_aa : _evas_draw_line;
+   evas_common_line_draw_cb(dst, dc, x0, y0, x1, y1, cb);
+}
 
 static void
 _evas_draw_point(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y)
