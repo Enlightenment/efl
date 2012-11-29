@@ -31,6 +31,8 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"left", "elm.swallow.left"},
    {"right", "elm.swallow.right"},
+   {"top", "elm.swallow.left"},
+   {"bottom", "elm.swallow.right"},
    {NULL, NULL}
 };
 

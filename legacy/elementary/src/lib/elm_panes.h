@@ -33,6 +33,8 @@
  * Default content parts of the panes widget that you can use are:
  * @li "left" - A leftside content of the panes
  * @li "right" - A rightside content of the panes
+ * @li "top" - A top content of the vertical panes
+ * @li "bottom" - A bottom content of the vertical panes
  *
  * If panes are displayed vertically, left content will be displayed on
  * top.
@@ -302,6 +304,8 @@ EAPI void                         elm_panes_content_right_size_set(Evas_Object *
  *
  * Use this function to change how your panes is to be
  * disposed: vertically or horizontally.
+ * Horizontal panes have "top" and "bottom" contents, vertical panes have
+ * "left" and "right" contents.
  *
  * By default it's displayed horizontally.
  *

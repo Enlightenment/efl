@@ -96,7 +96,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_object_part_content_set(panes_h, "left", bt);
+   elm_object_part_content_set(panes_h, "top", bt);
    //
 
    //
@@ -105,7 +105,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_object_part_content_set(panes_h, "right", bt);
+   elm_object_part_content_set(panes_h, "bottom", bt);
    //
 
 
