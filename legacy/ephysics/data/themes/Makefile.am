@@ -34,6 +34,9 @@ TEST_FILES = \
 	images/ball-green70.png \
 	images/ball-red.png \
 	images/ball-red70.png \
+	images/door-back.png \
+	images/door-front.png \
+	images/door-post.png \
 	images/bg_floor.jpg \
 	images/brown-pole.png \
 	images/bt_jump.png \

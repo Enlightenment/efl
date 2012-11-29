@@ -37,6 +37,7 @@ test_forces.c \
 test_grab.c \
 test_growing_balls.c \
 test_heavy.c \
+test_hinge.c \
 test_jumping_balls.c \
 test_light.c \
 test_material.c \

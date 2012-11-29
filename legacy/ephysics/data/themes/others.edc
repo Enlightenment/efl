@@ -1,6 +1,9 @@
    images {
       image: "green-flag.png" COMP;
       image: "brown-pole.png" COMP;
+      image: "door-front.png" COMP;
+      image: "door-back.png" COMP;
+      image: "door-post.png" COMP;
    }
 
    group {
@@ -35,6 +38,63 @@
             description {
                state: "default" 0.0;
                image.normal: "brown-pole.png";
+            }
+         }
+
+      }
+
+   }
+
+   group {
+      name: "door-front";
+
+      parts {
+
+         part {
+            name: "door-front";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "door-front.png";
+            }
+         }
+
+      }
+
+   }
+
+   group {
+      name: "door-back";
+
+      parts {
+
+         part {
+            name: "door-back";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "door-back.png";
+            }
+         }
+
+      }
+
+   }
+
+   group {
+      name: "door-post";
+
+      parts {
+
+         part {
+            name: "door-post";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "door-post.png";
             }
          }
 
