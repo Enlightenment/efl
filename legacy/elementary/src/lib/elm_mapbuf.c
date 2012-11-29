@@ -113,20 +113,40 @@ _configure(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   if (sd->content)
-     {
-        Evas_Coord x, y, w, h, x2, y2;
+   if (!sd->content) return;
+   Evas_Coord x, y, w, h, x2, y2, w2, h2;
+   evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
+   evas_object_geometry_get(sd->content, &x2, &y2, &w2, &h2);
 
-        evas_object_geometry_get
-          (wd->resize_obj, &x, &y, &w, &h);
-        evas_object_geometry_get(sd->content, &x2, &y2, NULL, NULL);
-        if ((x != x2) || (y != y2))
+   if ((x != x2) || (y != y2))
+     {
+        if (!sd->enabled)
+          evas_object_move(sd->content, x, y);
+        else
           {
-             if (!sd->enabled)
+             //Let give the chance to update the content whenever content is
+             //coming inside buffer from the outside. It means the content may
+             //have been changed when it is on the outside, but the surface
+             //may not be updated because contents would be outside of the 
+             //viewport.
+             Evas_Coord output_w, output_h;
+             Evas *e = evas_object_evas_get(obj);
+             evas_output_size_get(e, &output_w, &output_h);
+             Eina_Bool update = EINA_FALSE;
+
+             if ((x2 >= output_w) || (y2 >= output_h) ||
+                 ((x2 + w2) <= 0) || ((y2 + h2) <= 0))
+               sd->outside = EINA_TRUE;
+             else if (sd->outside)
+               {
+                  sd->outside = EINA_FALSE;
+                  update = EINA_TRUE;
+               }
+
+             if (update)
                evas_object_move(sd->content, x, y);
              else
                {
-                  Evas *e = evas_object_evas_get(obj);
                   evas_smart_objects_calculate(e);
                   evas_nochange_push(e);
                   evas_object_move(sd->content, x, y);

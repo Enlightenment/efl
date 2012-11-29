@@ -715,4 +715,10 @@
         * Free the text parts of the naviframe item when item is deleted.
 
 2012-11-26  Daniel Zaoui and Yaakov Goldberg
+
         * Porting of Elementary to Eo
+
+2012-11-29  ChunEon Park (Hermet)
+
+        * Fix the mapbuf to update it's contents correctly, even if they go
+        outside of the buffer
