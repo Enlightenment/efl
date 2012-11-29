@@ -184,6 +184,7 @@ Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
 btSoftBodyWorldInfo *ephysics_world_info_get(const EPhysics_World *world);
 void ephysics_world_lock_take(EPhysics_World *world);
 void ephysics_world_lock_release(EPhysics_World *world);
+Eina_List *ephysics_world_constraints_get(EPhysics_World *world);
 
 /* Body */
 Eina_Bool ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1);
@@ -199,6 +200,7 @@ void ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate);
 void ephysics_body_evas_objects_restack(EPhysics_World *world);
 void ephysics_body_soft_body_dragging_apply(EPhysics_Body *body);
 void ephysics_body_soft_body_bending_constraints_generate(EPhysics_Body *body);
+void ephysics_constraint_body_del(EPhysics_Body *body);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

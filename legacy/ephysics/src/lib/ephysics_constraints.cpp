@@ -15,6 +15,36 @@ struct _EPhysics_Constraint {
 };
 
 static void
+_ephysics_constraint_del(EPhysics_Constraint *constraint)
+{
+   ephysics_world_constraint_del(constraint->world, constraint,
+                                 constraint->bt_constraint);
+   delete constraint->bt_constraint;
+   free(constraint);
+}
+
+void
+ephysics_constraint_body_del(EPhysics_Body *body)
+{
+   void *ldata;
+   EPhysics_Constraint *constraint;
+   Eina_List *l, *constraints, *rem = NULL;
+
+   constraints = ephysics_world_constraints_get(body->world);
+   if (!constraints) return;
+
+   EINA_LIST_FOREACH(constraints, l, ldata)
+     {
+        constraint = (EPhysics_Constraint *)ldata;
+        if (constraint->bodies[0] == body || constraint->bodies[1])
+          rem = eina_list_append(rem, constraint);
+     }
+
+   EINA_LIST_FREE(rem, ldata)
+     _ephysics_constraint_del((EPhysics_Constraint *)ldata);
+}
+
+static void
 _ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *lower_x, Evas_Coord *upper_x, Evas_Coord *lower_y, Evas_Coord *upper_y, Evas_Coord *lower_z, Evas_Coord *upper_z, double rate)
 {
    btVector3 linear_limit;
@@ -374,11 +404,7 @@ ephysics_constraint_del(EPhysics_Constraint *constraint)
      }
 
    ephysics_world_lock_take(constraint->world);
-   ephysics_world_constraint_del(constraint->world, constraint,
-                                 constraint->bt_constraint);
-   delete constraint->bt_constraint;
-   free(constraint);
-
+   _ephysics_constraint_del(constraint);
    INF("Constraint deleted.");
    ephysics_world_lock_release(constraint->world);
 }

@@ -499,6 +499,12 @@ ephysics_world_soft_body_add(EPhysics_World *world, EPhysics_Body *body)
    return EINA_TRUE;
 }
 
+Eina_List *
+ephysics_world_constraints_get(EPhysics_World *world)
+{
+   return world->constraints;
+}
+
 void
 ephysics_world_constraint_add(EPhysics_World *world, EPhysics_Constraint *constraint, btGeneric6DofConstraint *bt_constraint)
 {

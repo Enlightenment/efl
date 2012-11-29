@@ -1218,6 +1218,8 @@ _ephysics_body_del(EPhysics_Body *body)
         free(cb);
      }
 
+   ephysics_constraint_body_del(body);
+
    EINA_LIST_FREE(body->collision_groups, group)
       eina_stringshare_del((Eina_Stringshare *)group);
 
