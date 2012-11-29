@@ -299,7 +299,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 }
 
 EAPI void
-evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props)
+evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props, Evas_Common_Font_Draw_Cb cb)
 {
    static Cutout_Rects *rects = NULL;
    int ext_x, ext_y, ext_w, ext_h;
@@ -342,9 +342,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, cons
 
    if (!dc->cutout.rects)
      {
-        evas_common_font_draw_internal(dst, dc, x, y, text_props,
-                                       func, ext_x, ext_y, ext_w, ext_h,
-                                       im_w, im_h);
+        cb(dst, dc, x, y, text_props,
+           func, ext_x, ext_y, ext_w, ext_h,
+           im_w, im_h);
      }
    else
      {
@@ -358,13 +358,20 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, cons
                {
                   r = rects->rects + i;
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-                  evas_common_font_draw_internal(dst, dc, x, y, text_props,
-                                                 func, r->x, r->y, r->w, r->h,
-                                                 im_w, im_h);
+                  cb(dst, dc, x, y, text_props,
+                     func, r->x, r->y, r->w, r->h,
+                     im_w, im_h);
                }
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
      }
+}
+
+EAPI void
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props)
+{
+   evas_common_font_draw_cb(dst, dc, x, y, text_props,
+                            evas_common_font_draw_internal);
 }
 
 EAPI void
