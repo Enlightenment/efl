@@ -1,9 +1,10 @@
 2012-11-22 Paulo Alcantara (pcacjr)
+
 	* Add scalecache support to Cserve2
 
 2012-11-22  Sung W. Park (sung_)
 
-        * Fixed a bug where if an image object rendered using Evas GL 
+        * Fixed a bug where if an image object rendered using Evas GL
         direct rendering and then another image object using Native
         Surface rendering, there was a potential for it to fall into
         the same direct rendering path.
@@ -30,7 +31,7 @@
 2012-11-12  Mike Blumenkrantz
 
         * Add eina_list_last_data_get
-        
+
 2012-11-10  Vincent Torri
 
         * Fix build of eina_file on Solaris 10
