@@ -8,7 +8,7 @@ extern "C" {
 typedef struct _EPhysics_Body_Material_Props EPhysics_Body_Material_Props;
 struct _EPhysics_Body_Material_Props {
      EPhysics_Body_Material material;
-     int density;
+     double density;
      double friction;
      double restitution;
 };
