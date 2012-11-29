@@ -4,15 +4,13 @@
 
 #include <SDL/SDL.h>
 
-#include "Eina.h"
+#include <Eina.h>
+#include <Ecore.h>
+#include <ecore_private.h>
+#include <Ecore_Input.h>
 #include "Ecore_Sdl.h"
-#include "Ecore_Input.h"
-#include "Ecore.h"
-#include "ecore_sdl_private.h"
-#include "ecore_private.h"
 #include "Ecore_Sdl_Keys.h"
-
-#include <eina_rbtree.h>
+#include "ecore_sdl_private.h"
 
 int _ecore_sdl_log_dom = -1;
 
