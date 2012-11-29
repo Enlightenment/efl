@@ -233,6 +233,7 @@ struct _Elm_Config
    const char   *indicator_service_90;
    const char   *indicator_service_180;
    const char   *indicator_service_270;
+   unsigned char selection_clear_enable;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

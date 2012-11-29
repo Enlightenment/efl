@@ -599,6 +599,20 @@ ac_change(void *data       __UNUSED__,
 }
 
 static void
+sel_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool sel = elm_config_selection_unfocused_clear_get();
+
+   if (val == sel) return;
+   elm_config_selection_unfocused_clear_set(val);
+   elm_config_all_flush();
+   elm_config_save();
+}
+
+static void
 _status_basic(Evas_Object *win,
               Evas_Object *bx0)
 {
@@ -753,6 +767,14 @@ _cf_access(void            *data,
            void *event_info __UNUSED__)
 {
    _flip_to(data, "access");
+}
+
+static void
+_cf_selection(void            *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
+{
+   _flip_to(data, "selection");
 }
 
 const char *
@@ -1263,6 +1285,33 @@ _status_config_access(Evas_Object *win,
    evas_object_smart_callback_add(ck, "changed", ac_change, NULL);
 
    evas_object_data_set(win, "access", bx);
+
+   elm_naviframe_item_simple_push(naviframe, bx);
+}
+
+static void
+_status_config_selection(Evas_Object *win,
+                      Evas_Object *naviframe)
+{
+   Evas_Object *bx, *ck;
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+
+   ck = elm_check_add(win);
+   elm_object_tooltip_text_set(ck, "Set selection mode");
+   elm_object_text_set(ck, "Enable clear selection when unfocus");
+   evas_object_data_set(win, "selection_check", ck);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   elm_check_state_set(ck, elm_config_selection_unfocused_clear_get());
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   evas_object_smart_callback_add(ck, "changed", sel_change, NULL);
+
+   evas_object_data_set(win, "selection", bx);
 
    elm_naviframe_item_simple_push(naviframe, bx);
 }
@@ -3046,6 +3095,7 @@ _status_config_full(Evas_Object *win,
                            _cf_rendering, win);
    elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
    elm_toolbar_item_append(tb, "stock_spellcheck", "Access", _cf_access, win);
+   elm_toolbar_item_append(tb, "clear-selection-check", "Selection", _cf_selection, win);
 
    elm_box_pack_end(bx0, tb);
    evas_object_show(tb);
@@ -3062,6 +3112,7 @@ _status_config_full(Evas_Object *win,
    _status_config_scrolling(win, naviframe);
    _status_config_caches(win, naviframe);
    _status_config_access(win, naviframe);
+   _status_config_selection(win, naviframe);
    _status_config_sizing(win, naviframe); // Note: call this at the end.
 
    // FIXME uncomment after flip style fix, please

@@ -756,6 +756,33 @@ EAPI Eina_Bool        elm_config_access_get(void);
 EAPI void             elm_config_access_set(Eina_Bool is_access);
 
 /**
+ * Get whether selection should be cleared when entry widget is unfocused.
+ *
+ * @return if the selection would be cleared on unfocus.
+ *
+ * @since 1.7
+ *
+ * @ingroup Selection 
+ *
+ * @see elm_config_selection_unfocused_clear_set()
+ */
+EAPI Eina_Bool        elm_config_selection_unfocused_clear_get(void);
+
+/**
+ * Set whether selection should be cleared when entry widget is unfocused.
+ *
+ * @param enabled If EINA_TRUE clear selection when unfocus,
+ * otherwise does not clear selection when unfocus.
+ *
+ * @since 1.7
+ *
+ * @ingroup Selection 
+ *
+ * @see elm_config_selection_unfocused_clear_get()
+ */
+EAPI void             elm_config_selection_unfocused_clear_set(Eina_Bool enabled);
+
+/**
  * Unset a font overlay for a given Elementary text class.
  *
  * @param text_class Text class name

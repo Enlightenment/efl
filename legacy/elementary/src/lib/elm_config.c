@@ -405,6 +405,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_double_tap_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, access_mode, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, selection_clear_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, glayer_continues_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, week_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_start, T_INT);
@@ -574,6 +575,18 @@ void _elm_config_access_set(Eina_Bool is_access)
    if (_elm_config->access_mode == is_access) return;
    _elm_config->access_mode = is_access;
    _elm_win_access(is_access);
+}
+
+Eina_Bool _elm_config_selection_unfocused_clear_get(void)
+{
+   return _elm_config->selection_clear_enable;
+}
+
+void _elm_config_selection_unfocused_clear_set(Eina_Bool enabled)
+{
+   enabled = !!enabled;
+   if (_elm_config->selection_clear_enable == enabled) return;
+   _elm_config->selection_clear_enable = enabled;
 }
 
 void
@@ -1092,6 +1105,7 @@ _config_load(void)
    _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
    _elm_config->access_mode = ELM_ACCESS_MODE_OFF;
+   _elm_config->selection_clear_enable = EINA_FALSE;
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */
    _elm_config->weekend_len = 2;
@@ -1594,6 +1608,9 @@ _env_get(void)
    s = getenv("ELM_ACCESS_MODE");
    if (s) _elm_config->access_mode = ELM_ACCESS_MODE_ON;
 
+   s = getenv("ELM_SELECTION_CLEAR_ENABLE");
+   if (s) _elm_config->selection_clear_enable = !!atoi(s);
+
    s = getenv("ELM_AUTO_THROTTLE");
    if (s) _elm_config->auto_throttle = EINA_TRUE;
    s = getenv("ELM_AUTO_THROTTLE_AMOUNT");
@@ -1797,6 +1814,18 @@ EAPI void
 elm_config_access_set(Eina_Bool is_access)
 {
    _elm_config_access_set(is_access);
+}
+
+EAPI Eina_Bool
+elm_config_selection_unfocused_clear_get(void)
+{
+   return _elm_config_selection_unfocused_clear_get();
+}
+
+EAPI void
+elm_config_selection_unfocused_clear_set(Eina_Bool enabled)
+{
+   _elm_config_selection_unfocused_clear_set(enabled);
 }
 
 EAPI void

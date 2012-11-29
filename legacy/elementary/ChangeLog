@@ -722,3 +722,7 @@
 
         * Fix the mapbuf to update it's contents correctly, even if they go
         outside of the buffer
+
+2012-11-29  Thiep Ha
+
+	* Entry: add a mode to clear selection when entry loose focus.

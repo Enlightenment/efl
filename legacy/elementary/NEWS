@@ -17,6 +17,7 @@ Additions:
    * Add elm_toolbar_item_show/bring_in.
    * Add elm_genlist_nth_item_get
    * Add elm_gengrid_nth_item_get
+   * Add elm_config_selection_unfocused_clear_get and elm_config_selection_unfocused_clear_set
 
 Improvements:
 

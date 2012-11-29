@@ -860,6 +860,18 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
+
+        if (_elm_config->selection_clear_enable)
+          {
+             if ((sd->have_selection) && (!sd->hoversel))
+               {
+                  sd->sel_mode = EINA_FALSE;
+                  elm_widget_scroll_hold_pop(obj);
+                  edje_object_part_text_select_allow_set(sd->entry_edje, "elm.text", EINA_FALSE);
+                  edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+                  edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+               }
+          }
      }
 
    if (ret) *ret = EINA_TRUE;
