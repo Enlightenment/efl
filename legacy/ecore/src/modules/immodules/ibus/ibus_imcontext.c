@@ -175,9 +175,9 @@ ibus_im_context_new(void)
 }
 
 static void
-_process_key_event_done (GObject      *object,
-                         GAsyncResult *res,
-                         gpointer      user_data)
+_process_key_event_done(GObject      *object,
+                        GAsyncResult *res,
+                        gpointer      user_data)
 {
     IBusInputContext *context = (IBusInputContext *)object;
     KeyEvent *event = (KeyEvent *)user_data;
