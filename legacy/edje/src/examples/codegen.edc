@@ -1,9 +1,6 @@
 collections {
 
    group {
-      externals { /* declare the modules you want to load */
-         external: "elm"; /* toolkit/widgets */
-      }
 
       name: "example_group";
       min: 50 50;
@@ -72,18 +69,6 @@ collections {
             }
          }
 
-         part {
-            name: "part_five";
-            type: EXTERNAL;
-            source: "elm/button";
-            api: "part_five" "An elm button using externals";
-            description {
-               state: "default" 0.0;
-               rel1.relative: 0.9 0.5;
-               rel2.relative: 1.0 0.6;
-               params.string: "icon" "apps";
-            }
-         }
       }
 
       programs {

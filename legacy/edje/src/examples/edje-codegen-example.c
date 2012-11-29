@@ -79,15 +79,6 @@ _on_mouse_over(void *data, Evas_Object *obj, const char *emission,
 	codegen_example_part_four_clear(obj, EINA_TRUE);
 	_columns_rows_print(obj);
 	codegen_example_part_three_remove_all(obj, EINA_TRUE);
-	part_five_part_five_disabled_set(obj, EINA_TRUE);
-
-	if (part_five_part_five_disabled_get(obj, &disabled))
-	  if (disabled)
-	    fprintf(stdout, "Button is disabled\n");
-	  else
-	    fprintf(stdout, "Button is enabled\n");
-	else
-	  fprintf(stderr, "Couldn't check if the button is disabled\n");
      }
 }
 
@@ -187,22 +178,6 @@ main(int argc, char *argv[])
 
    if (!codegen_example_part_four_pack(edje_obj, rects[3], 1, 1, 1, 1))
      fprintf(stderr, "Cannot add the rectangle 4 to table\n");
-
-   if (!part_five_part_five_label_set(edje_obj, "new label"))
-     fprintf(stderr, "Cannot set the label of the button\n");
-
-   if (part_five_part_five_label_get(edje_obj, &aux))
-     fprintf(stdout, "Label contents: %s\n", aux);
-   else
-     fprintf(stderr, "Couldn't get the label contents\n");
-
-   if (part_five_part_five_disabled_get(edje_obj, &disabled))
-     if (disabled)
-       fprintf(stdout, "Button is disabled\n");
-     else
-       fprintf(stdout, "Button is enabled\n");
-   else
-     fprintf(stderr, "Couldn't check if the button is disabled\n");
 
    _columns_rows_print(edje_obj);
    ecore_evas_show(ee);
