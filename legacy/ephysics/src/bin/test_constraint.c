@@ -5,11 +5,26 @@
 #include "ephysics_test.h"
 
 static void
+_constraint_set(Test_Data *test_data, EPhysics_Body *body1, EPhysics_Body *body2)
+{
+   EPhysics_Constraint *constraint;
+   Evas_Coord b1x, b1y, b1z, b1w, b1h, b1d, b2x, b2y, b2z, b2w, b2h, b2d;
+
+   ephysics_body_geometry_get(body1, &b1x, &b1y, &b1z, &b1w, &b1h, &b1d);
+   ephysics_body_geometry_get(body2, &b2x, &b2y, &b2z, &b2w, &b2h, &b2d);
+
+   constraint = ephysics_constraint_linked_add(body1, body2);
+
+   ephysics_constraint_anchor_set(constraint, b1x + b1w / 2, b1y + b1h / 2 + 100,
+                                  b1z, b2x + b2w / 2, b2y + b2h / 2, b2z);
+   test_data->constraints = eina_list_append(test_data->constraints, constraint);
+}
+
+static void
 _world_populate(Test_Data *test_data)
 {
    EPhysics_Body *box_body1, *box_body2;
    Evas_Object *box1, *box2, *sh1, *sh2;
-   EPhysics_Constraint *constraint;
 
    sh1 = elm_layout_add(test_data->win);
    elm_layout_file_set(
@@ -52,18 +67,15 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, box2);
 
    box_body2 = ephysics_body_box_add(test_data->world);
-   ephysics_body_mass_set(box_body2, 5);
    ephysics_body_evas_object_set(box_body2, box2, EINA_TRUE);
+   ephysics_body_mass_set(box_body2, 5);
    ephysics_body_event_callback_add(box_body2, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, sh2);
    ephysics_body_restitution_set(box_body2, 0.5);
    ephysics_body_friction_set(box_body2, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
 
-   constraint = ephysics_constraint_p2p_add(box_body1, box_body2, 0, 100, 0,
-                                            0);
-   test_data->constraints = eina_list_append(test_data->constraints,
-                                             constraint);
+   _constraint_set(test_data, box_body1, box_body2);
 }
 
 static void

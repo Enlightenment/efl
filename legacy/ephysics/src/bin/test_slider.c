@@ -60,10 +60,10 @@ _world_populate(Test_Data *test_data)
    ephysics_body_friction_set(box_body2, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
 
-   constraint = ephysics_constraint_slider_add(box_body2);
-   ephysics_constraint_slider_linear_limit_set(constraint, 0,
-                                               HEIGHT - (HEIGHT / 8), 0, 0);
-   ephysics_constraint_slider_angular_limit_set(constraint, 0, 45);
+   constraint = ephysics_constraint_add(box_body2);
+   ephysics_constraint_linear_limit_set(constraint, 0, 0, 0,
+                                        HEIGHT - (HEIGHT / 8), 0, 0);
+   ephysics_constraint_angular_limit_set(constraint, 0, 0, 0, 0, 0, 45);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);
 
@@ -91,9 +91,8 @@ _world_populate(Test_Data *test_data)
    ephysics_body_friction_set(box_body3, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body3);
 
-   constraint = ephysics_constraint_slider_add(box_body3);
-   ephysics_constraint_slider_linear_limit_set(constraint, WIDTH - 120, 0, 0,
-                                               0);
+   constraint = ephysics_constraint_add(box_body3);
+   ephysics_constraint_linear_limit_set(constraint, WIDTH - 120, 0, 0, 0, 0, 0);
    ephysics_body_central_impulse_apply(box_body3, -240, 0, 0);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);
@@ -122,8 +121,8 @@ _world_populate(Test_Data *test_data)
    ephysics_body_friction_set(box_body4, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body4);
 
-   constraint = ephysics_constraint_slider_add(box_body4);
-   ephysics_constraint_slider_linear_limit_set(constraint, WIDTH / 3, 0, 0, 0);
+   constraint = ephysics_constraint_add(box_body4);
+   ephysics_constraint_linear_limit_set(constraint, WIDTH / 3, 0, 0, 0, 0, 0);
    ephysics_body_central_impulse_apply(box_body4, -600, 0, 0);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);

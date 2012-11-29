@@ -500,14 +500,14 @@ ephysics_world_soft_body_add(EPhysics_World *world, EPhysics_Body *body)
 }
 
 void
-ephysics_world_constraint_add(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint)
+ephysics_world_constraint_add(EPhysics_World *world, EPhysics_Constraint *constraint, btGeneric6DofConstraint *bt_constraint)
 {
-   world->dynamics_world->addConstraint(bt_constraint);
+   world->dynamics_world->addConstraint(bt_constraint, true);
    world->constraints = eina_list_append(world->constraints, constraint);
 }
 
 void
-ephysics_world_constraint_del(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint)
+ephysics_world_constraint_del(EPhysics_World *world, EPhysics_Constraint *constraint, btGeneric6DofConstraint *bt_constraint)
 {
    world->dynamics_world->removeConstraint(bt_constraint);
    world->constraints = eina_list_remove(world->constraints, constraint);

@@ -4397,123 +4397,192 @@ EAPI Eina_Bool ephysics_body_clockwise_get(const EPhysics_Body *body);
  * between bodies and the world. Constraints can limit movement angle,
  * translation, or work like a motor.
  *
- * Constraints can be created with @ref ephysics_constraint_p2p_add()
- * or @ref ephysics_constraint_slider_add() and removed
+ * Constraints can be created with @ref ephysics_constraint_linked_add()
+ * or @ref ephysics_constraint_add() and removed
  * with @ref ephysics_constraint_del().
  * Can be applied between two bodies or between a body and the world.
  */
 
-typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with @ref ephysics_constraint_p2p_add() or @ref ephysics_constraint_slider_add() and deleted with @ref ephysics_constraint_del(). */
+typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with @ref ephysics_constraint_linked_add() or @ref ephysics_constraint_add() and deleted with @ref ephysics_constraint_del(). */
 
 /**
  * @brief
  * Create a new constraint between 2 bodies(Point to Point constraint).
  *
- * The constraint will join two bodies(@p body1 and @p body2) limiting their
- * movements based on specified anchors.
+ * The constraint will join two bodies(@p body1 and @p body2) with angular and
+ * linear movements limited by calling ephysics_constraint_linear_limit_set()
+ * and ephysics_constraint_angular_limit_set(). Anchors values can be defined
+ * with ephysics_constraint_anchor_set().
  *
  * @param body1 The first body to apply the constraint.
  * @param body2 The second body to apply the constraint.
- * @param anchor_b1_x The first body X anchor.
- * @param anchor_b1_y The fist body Y anchor.
- * @param anchor_b2_x The second body X anchor.
- * @param anchor_b2_y The second body Y anchor.
- * @return A new p2p(point to point) constraint or @c NULL, on errors.
+ * @return A new linked(joining 2 bodies) constraint or @c NULL, on errors.
  *
  * @see ephysics_constraint_del().
  *
  * @ingroup EPhysics_Constraint
  */
-EAPI EPhysics_Constraint *ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y);
+EAPI EPhysics_Constraint *ephysics_constraint_linked_add(EPhysics_Body *body1, EPhysics_Body *body2);
 
 /**
  * @brief
- * Create a new slider constraint.
+ * Change the constraints anchors values on both constrained bodies.
  *
- * The constraint will limit the linear and angular moving of a body.
+ * @note By default the anchors are in the middle of a body, if a body of 20, 20
+ * is positioned at (10, 10) then its anchor is set to (20, 20).
+ *
+ * @note There`s no need to inform @p anchor_b2_x, @p anchor_b2_y and @p
+ * anchor_b2_z if the constraint has been created using
+ * ephysics_constraint_add().
+ *
+ * @param constraint The constraint to be set.
+ * @param anchor_b1_x The first body X anchor.
+ * @param anchor_b1_y The first body Y anchor.
+ * @param anchor_b1_z The first body Z anchor.
+ * @param anchor_b2_x The second body X anchor.
+ * @param anchor_b2_y The second body Y anchor.
+ * @param anchor_b2_z The second body Z anchor.
+ *
+ * @see ephysics_constraint_anchor_get().
+ * @see ephysics_constraint_linked_add().
+ *
+ * @ingroup EPhysics_Constraint
+ */
+EAPI void ephysics_constraint_anchor_set(EPhysics_Constraint *constraint, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b1_z, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y, Evas_Coord anchor_b2_z);
+
+/**
+ * @brief
+ * Get the constraints anchors values on both constrained bodies.
+ *
+ * @param constraint The constraint to get anchor values from.
+ * @param anchor_b1_x Pointer to an Evas_Coord in which to store the first body
+ * X anchor value.
+ * @param anchor_b1_y Pointer to an Evas_Coord in which to store the first body
+ * Y anchor value.
+ * @param anchor_b1_z Pointer to an Evas_Coord in which to store the first body
+ * Z anchor value.
+ * @param anchor_b2_x Pointer to an Evas_Coord in which to store the second body
+ * X anchor value.
+ * @param anchor_b2_y Pointer to an Evas_Coord in which to store the second body
+ * Y anchor value.
+ * @param anchor_b2_z Pointer to an Evas_Coord in which to store the second body
+ * Z anchor value.
+ *
+ * @see ephysics_constraint_anchor_set().
+ * @see ephysics_constraint_linked_add().
+ *
+ * @ingroup EPhysics_Constraint
+ */
+EAPI void ephysics_constraint_anchor_get(const EPhysics_Constraint *constraint, Evas_Coord *anchor_b1_x, Evas_Coord *anchor_b1_y, Evas_Coord *anchor_b1_z, Evas_Coord *anchor_b2_x, Evas_Coord *anchor_b2_y, Evas_Coord *anchor_b2_z);
+
+/**
+ * @brief
+ * Create a new constraint.
+ *
+ * The constraint will limit the linear and angular moving of a body. This simple
+ * constraint is designated to constraint a single body.
  *
  * @param body The body to apply the constraint.
  *
- * @see ephysics_constraint_slider_linear_limit_set() for linear moving limit
+ * @see ephysics_constraint_linear_limit_set() for linear moving limit
  * configuration.
- * @see ephysics_constraint_slider_angular_limit_set() for angular moving limit
+ * @see ephysics_constraint_angular_limit_set() for angular moving limit
  * configuration.
- * @return A new slider constraint or @c NULL on erros.
+ * @return A new constraint or @c NULL on erros.
  *
  * @see ephysics_constraint_del().
  *
  * @ingroup EPhysics_Constraint
  */
-EAPI EPhysics_Constraint *ephysics_constraint_slider_add(EPhysics_Body *body);
+EAPI EPhysics_Constraint *ephysics_constraint_add(EPhysics_Body *body);
 
 /**
  * @brief
- * Define the linear moving limits of a slider @p constraint.
+ * Define the linear moving limits of a @p constraint.
  *
  * The linear limits are defined from the body's position on. The user will
- * want to limit the movements to the left, right, under and above the rigid
- * body. The unit for every limits are defined on Evas coordinates.
+ * want to limit the movements on X, Y and Z axis where lower == upper axis
+ * will be locked, lower > upper axis is free, lower < upper axis is limited to
+ * the range.
+ *
+ * The unit for every limits are defined on Evas coordinates.
  *
  * @param constraint The constraint to be set.
- * @param left_x The moving limit to the left on X axis - from the body's
- * position on.
- * @param under_y The moving limit down on Y axis - from the body's position
- * on.
- * @param right_x The moving limit to the right on X axis - from the body's
- * position on.
- * @param above_y The moving limit up on Y axis - from the body's position on.
+ * @param lower_x The lower linear moving limit on X axis.
+ * @param upper_x The upper linear moving limit on X axis.
+ * @param lower_y The lower linear moving limit on Y axis.
+ * @param upper_y The upper linear moving limit on Y axis.
+ * @param lower_z The lower linear moving limit on Z axis.
+ * @param upper_z The upper linear moving limit on Z axis.
  *
- * @see ephysics_constraint_slider_linear_limit_get()
+ *
+ * @see ephysics_constraint_linear_limit_get()
  * @ingroup EPhysics_Constraint
  */
-EAPI void ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord left_x, Evas_Coord under_y, Evas_Coord right_x, Evas_Coord above_y);
+EAPI void ephysics_constraint_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord lower_x, Evas_Coord upper_x, Evas_Coord lower_y, Evas_Coord upper_y, Evas_Coord lower_z, Evas_Coord upper_z);
 
 /**
  * @brief
- * Get the linear moving limits of a slider constraint.
+ * Get the linear moving limits of a @p constraint.
  *
  * @param constraint The constraint to get linear limits from.
- * @param left_x Pointer to set with the limit to the left on X axis.
- * @param under_y Pointer to set with the limit down on Y axis.
- * @param right_x Pointer to set with the limit to the right on X axis.
- * @param above_y Pointer to set with the limit up on Y axis.
+ * @param lower_x Pointer to set with the lower limit to the X axis.
+ * @param upper_x Pointer to set with the upper limit to the X axis.
+ * @param lower_y Pointer to set with the lower limit to the Y axis.
+ * @param upper_y Pointer to set with the upper limit to the Y axis.
+ * @param lower_z Pointer to set with the lower limit to the Z axis.
+ * @param upper_z Pointer to set with the upper limit to the Z axis.
  *
- * @see ephysics_constraint_slider_linear_limit_set()
+ * @see ephysics_constraint_linear_limit_set()
  * @ingroup EPhysics_Constraint
  */
-EAPI void ephysics_constraint_slider_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *left_x, Evas_Coord *under_y, Evas_Coord *right_x, Evas_Coord *above_y);
+EAPI void ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *lower_x, Evas_Coord *upper_x, Evas_Coord *lower_y, Evas_Coord *upper_y, Evas_Coord *lower_z, Evas_Coord *upper_z);
 
 /**
  * @brief
- * Set the angular moving limits of a slider @p constraint.
+ * Set the angular moving limits of a @p constraint.
  *
  * The angular moving limits is defined in degrees and will limit the moving on
  * Z axis - counter clockwise and clockwise directions.
  *
  * @param constraint The constraint to be set.
+ * @param counter_clock_x Amount of degrees from 0.0 to 360.0 to limit counter
+ * clockwise rotation on X axis.
+ * @param clock_wise_x Amount of degrees from 0.0 to 360.0 to limit clockwise
+ * rotation on X axis.
+ * @param counter_clock_y Amount of degrees from 0.0 to 360.0 to limit counter
+ * clockwise rotation o Y axis.
+ * @param clock_wise_y Amount of degrees from 0.0 to 360.0 to limit clockwise
+ * rotation on Y axis.
  * @param counter_clock_z Amount of degrees from 0.0 to 360.0 to limit
- * counter clockwise rotation.
+ * counter clockwise rotation on Z axis.
  * @param clock_wise_z Amount of degrees from 0.0 to 360.0 to limit clockwise
- * rotation.
+ * rotation on Z axis.
  *
- * @see ephysics_constraint_slider_angular_limit_get()
+ * @see ephysics_constraint_angular_limit_get()
  * @ingroup EPhysics_Constraint
  */
-EAPI void ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_z, double clock_wise_z);
+EAPI void ephysics_constraint_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_x, double clock_wise_x, double counter_clock_y, double clock_wise_y, double counter_clock_z, double clock_wise_z);
 
 /**
  * @brief
- * Get the angular moving limits of a slider @p constraint.
+ * Get the angular moving limits of a @p constraint.
  *
  * @param constraint The constraint to get the angular limits from.
+ * @param counter_clock_x Pointer to set with the counter clockwise limmit
+ * degrees on X axis.
+ * @param clock_wise_x Pointer to set with the clockwise limit degrees on X axis.
+ * @param counter_clock_y Pointer to set with the  counter clockwise limit
+ * degrees on Y axis.
+ * @param clock_wise_y Pointer to set with the clockwise limit degrees on Y axis.
  * @param counter_clock_z Pointer to set with the counter clockwise limit
- * degrees.
- * @param clock_wise_z Pointer to set with the clockwise limit degrees.
+ * degrees on Z axis.
+ * @param clock_wise_z Pointer to set with the clockwise limit degrees on Z axis.
  *
- * @see ephysics_constraint_slider_angular_limit_set()
+ * @see ephysics_constraint_angular_limit_set()
  * @ingroup EPhysics_Constraint
  */
-EAPI void ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_z, double *clock_wise_z);
+EAPI void ephysics_constraint_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_x, double *clock_wise_x, double *counter_clock_y, double *clock_wise_y, double *counter_clock_z, double *clock_wise_z);
 
 /**
  * @brief
@@ -4521,7 +4590,7 @@ EAPI void ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint
  *
  * @param constraint The constraint to be deleted.
  *
- * @see ephysics_constraint_p2p_add() for more details.
+ * @see ephysics_constraint_linked_add() for more details.
  * @see ephysics_constraint_slider_add() for more details.
  *
  * @ingroup EPhysics_Constraint

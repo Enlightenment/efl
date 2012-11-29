@@ -8,107 +8,67 @@
 extern "C" {
 #endif
 
-typedef enum _EPhysics_Constraint_Type {
-   EPHYSICS_CONSTRAINT_P2P,
-   EPHYSICS_CONSTRAINT_SLIDER,
-} EPhysics_Constraint_Type;
-
 struct _EPhysics_Constraint {
-     btTypedConstraint *bt_constraint;
+     btGeneric6DofConstraint *bt_constraint;
      EPhysics_World *world;
-     EPhysics_Constraint_Type type;
-     struct {
-          EPhysics_Body *body1;
-          EPhysics_Body *body2;
-          Evas_Coord anchor_b1_x;
-          Evas_Coord anchor_b1_y;
-          Evas_Coord anchor_b2_x;
-          Evas_Coord anchor_b2_y;
-     } p2p;
+     EPhysics_Body *bodies[2];
 };
 
-/* FIXME: it shouldn't be this way.
- * All constraints should be generic and have all these options
- * set after add().
- */
-static Eina_Bool
-_ephysics_constraint_p2p_set(EPhysics_Constraint *constraint, double rate)
+static void
+_ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *lower_x, Evas_Coord *upper_x, Evas_Coord *lower_y, Evas_Coord *upper_y, Evas_Coord *lower_z, Evas_Coord *upper_z, double rate)
 {
-   if (!constraint->p2p.body2)
-     constraint->bt_constraint = new btPoint2PointConstraint(
-        *ephysics_body_rigid_body_get(constraint->p2p.body1),
-        btVector3(constraint->p2p.anchor_b1_x / rate,
-                  constraint->p2p.anchor_b1_y / rate, 0));
-   else
-     constraint->bt_constraint = new btPoint2PointConstraint(
-        *ephysics_body_rigid_body_get(constraint->p2p.body1),
-        *ephysics_body_rigid_body_get(constraint->p2p.body2),
-        btVector3(constraint->p2p.anchor_b1_x / rate,
-                  constraint->p2p.anchor_b1_y / rate, 0),
-        btVector3(constraint->p2p.anchor_b2_x / rate,
-                  constraint->p2p.anchor_b2_y / rate, 0));
+   btVector3 linear_limit;
 
-   if (!constraint->bt_constraint)
+   if (lower_x || lower_y || lower_z)
      {
-        ERR("Failed to create a btConstraint");
-        free(constraint);
-        return EINA_FALSE;
+        constraint->bt_constraint->getLinearLowerLimit(linear_limit);
+
+        if (lower_x) *lower_x = linear_limit.getX() * rate;
+        if (lower_y) *lower_y = linear_limit.getY() * rate;
+        if (lower_z) *lower_z = linear_limit.getZ() * rate;
      }
 
-   constraint->type = EPHYSICS_CONSTRAINT_P2P;
-   ephysics_world_constraint_add(constraint->world, constraint,
-                                 constraint->bt_constraint);
+   if (upper_x || upper_y || upper_z)
+     {
+        constraint->bt_constraint->getLinearUpperLimit(linear_limit);
 
-   return EINA_TRUE;
+        if (upper_x) *upper_x = linear_limit.getX() * rate;
+        if (upper_y) *upper_y = linear_limit.getY() * rate;
+        if (upper_z) *upper_z = linear_limit.getZ() * rate;
+     }
 }
 
 static void
-_ephysics_constraint_p2p_recalc(EPhysics_Constraint *constraint, double rate)
+_ephysics_constraint_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord lower_x, Evas_Coord upper_x, Evas_Coord lower_y, Evas_Coord upper_y, Evas_Coord lower_z, Evas_Coord upper_z, double rate)
 {
-   ephysics_world_constraint_del(constraint->world, constraint,
-                                 constraint->bt_constraint);
-   delete constraint->bt_constraint;
+   lower_x = (lower_x) / rate;
+   upper_x = (upper_x) / rate;
 
-   _ephysics_constraint_p2p_set(constraint, rate);
-}
+   lower_y = (lower_y) / rate;
+   upper_y = (upper_y) / rate;
 
-static void
-_ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord left_x, Evas_Coord under_y, Evas_Coord right_x, Evas_Coord above_y, double rate)
-{
-   btGeneric6DofConstraint *slider_constraint;
+   lower_z = (lower_z) / rate;
+   upper_z = (upper_z) / rate;
 
-   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
-   rate = ephysics_world_rate_get(constraint->world);
-
-   left_x = (left_x) / rate;
-   right_x = (right_x) / rate;
-
-   under_y = (under_y) / rate;
-   above_y = (above_y) / rate;
-
-   slider_constraint->setLinearLowerLimit(btVector3(-left_x, -under_y, 0));
-   slider_constraint->setLinearUpperLimit(btVector3(right_x, above_y, 0));
+   constraint->bt_constraint->setLinearLowerLimit(btVector3(-lower_x, -upper_y,
+                                                            -lower_z));
+   constraint->bt_constraint->setLinearUpperLimit(btVector3(upper_x, upper_y,
+                                                            upper_z));
 }
 
 void
 ephysics_constraint_recalc(EPhysics_Constraint *constraint, double rate)
 {
-   Evas_Coord left_x, under_y, right_x, above_y;
+   Evas_Coord lower_x, upper_x, lower_y, upper_y, lower_z, upper_z;
 
-   if (constraint->type == EPHYSICS_CONSTRAINT_P2P)
-     {
-        _ephysics_constraint_p2p_recalc(constraint, rate);
-        return;
-     }
-
-   ephysics_constraint_slider_linear_limit_get(constraint, &left_x, &under_y,
-                                               &right_x, &above_y);
-   _ephysics_constraint_slider_linear_limit_set(constraint, left_x, under_y,
-                                                right_x, above_y, rate);
+   _ephysics_constraint_linear_limit_get(constraint, &lower_x, &upper_x,
+                                   &lower_y, &upper_y, &lower_z, &upper_z, rate);
+   _ephysics_constraint_linear_limit_set(constraint, lower_x, upper_x, lower_y,
+                                   upper_y, lower_z, upper_z, rate);
 }
 
 EAPI EPhysics_Constraint *
-ephysics_constraint_slider_add(EPhysics_Body *body)
+ephysics_constraint_add(EPhysics_Body *body)
 {
    EPhysics_Constraint *constraint;
    btTransform trans;
@@ -116,13 +76,6 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
    if (!body)
      {
         ERR("To create a constraint body must to be non null.");
-        return NULL;
-     }
-
-   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
-     {
-        ERR("Constraints are allowed only between rigid -> rigid bodies or "
-            "rigid -> soft bodies");
         return NULL;
      }
 
@@ -135,6 +88,7 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
 
    ephysics_world_lock_take(ephysics_body_world_get(body));
    trans.setIdentity();
+   trans.setOrigin(btVector3(0, 0, 0));
    constraint->bt_constraint = new
        btGeneric6DofConstraint(*ephysics_body_rigid_body_get(body), trans,
                                false);
@@ -146,7 +100,7 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
         return NULL;
      }
 
-   constraint->type = EPHYSICS_CONSTRAINT_SLIDER;
+   constraint->bodies[0] = body;
    constraint->world = ephysics_body_world_get(body);
    ephysics_world_constraint_add(constraint->world, constraint,
                                  constraint->bt_constraint);
@@ -157,32 +111,26 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord left_x, Evas_Coord under_y, Evas_Coord right_x, Evas_Coord above_y)
+ephysics_constraint_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord lower_x, Evas_Coord upper_x, Evas_Coord lower_y, Evas_Coord upper_y, Evas_Coord lower_z, Evas_Coord upper_z)
 {
+   double rate;
+
    if (!constraint)
      {
         ERR("Can't set constraint's linear limit, constraint is null.");
         return;
      }
 
-   if (constraint->type != EPHYSICS_CONSTRAINT_SLIDER)
-     {
-        ERR("Can't set linear limit, this is not an slider constraint.");
-        return;
-     }
-
    ephysics_world_lock_take(constraint->world);
-   _ephysics_constraint_slider_linear_limit_set(
-      constraint, left_x, under_y, right_x, above_y,
-      ephysics_world_rate_get(constraint->world));
+   rate = ephysics_world_rate_get(constraint->world);
+   _ephysics_constraint_linear_limit_set(constraint, lower_x, upper_x, lower_y,
+                                         upper_y, lower_z, upper_z, rate);
    ephysics_world_lock_release(constraint->world);
 }
 
 EAPI void
-ephysics_constraint_slider_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *left_x, Evas_Coord *under_y, Evas_Coord *right_x, Evas_Coord *above_y)
+ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *lower_x, Evas_Coord *upper_x, Evas_Coord *lower_y, Evas_Coord *upper_y, Evas_Coord *lower_z, Evas_Coord *upper_z)
 {
-   btGeneric6DofConstraint *slider_constraint;
-   btVector3 linear_limit;
    int rate;
 
    if (!constraint)
@@ -191,31 +139,14 @@ ephysics_constraint_slider_linear_limit_get(const EPhysics_Constraint *constrain
         return;
      }
 
-   if (constraint->type != EPHYSICS_CONSTRAINT_SLIDER)
-     {
-        ERR("Can't get linear limit, this is not an slider constraint.");
-        return;
-     }
-
    rate = ephysics_world_rate_get(constraint->world);
-   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
-   if (left_x || under_y)
-     slider_constraint->getLinearLowerLimit(linear_limit);
-
-   if (left_x) *left_x = linear_limit.getX() * rate;
-   if (under_y) *under_y = linear_limit.getY() * rate;
-
-   if (right_x || above_y)
-     slider_constraint->getLinearUpperLimit(linear_limit);
-
-   if (right_x) *right_x = linear_limit.getX() * rate;
-   if (above_y) *above_y = linear_limit.getY() * rate;
+   _ephysics_constraint_linear_limit_get(constraint, lower_x, upper_x, lower_y,
+                                         upper_y, lower_z, upper_z, rate);
 }
 
 EAPI void
-ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_z, double clock_wise_z)
+ephysics_constraint_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_x, double clock_wise_x, double counter_clock_y, double clock_wise_y, double counter_clock_z, double clock_wise_z)
 {
-   btGeneric6DofConstraint *slider_constraint;
 
    if (!constraint)
      {
@@ -223,25 +154,20 @@ ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, do
         return;
      }
 
-   if (constraint->type != EPHYSICS_CONSTRAINT_SLIDER)
-     {
-        ERR("Can't set angular limit, this is not an slider constraint.");
-        return;
-     }
-
    ephysics_world_lock_take(constraint->world);
-   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
-   slider_constraint->setAngularLowerLimit(btVector3(0, 0,
-                                                 -counter_clock_z/RAD_TO_DEG));
-   slider_constraint->setAngularUpperLimit(btVector3(0, 0,
-                                                 clock_wise_z/RAD_TO_DEG));
+
+   constraint->bt_constraint->setAngularLowerLimit(btVector3(
+                    -counter_clock_x / RAD_TO_DEG, -counter_clock_y / RAD_TO_DEG,
+                    -counter_clock_z/RAD_TO_DEG));
+   constraint->bt_constraint->setAngularUpperLimit(btVector3(
+                    clock_wise_x / RAD_TO_DEG, clock_wise_y / RAD_TO_DEG,
+                    clock_wise_z/RAD_TO_DEG));
    ephysics_world_lock_release(constraint->world);
 }
 
 EAPI void
-ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_z, double *clock_wise_z)
+ephysics_constraint_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_x, double *clock_wise_x, double *counter_clock_y, double *clock_wise_y, double *counter_clock_z, double *clock_wise_z)
 {
-   btGeneric6DofConstraint *slider_constraint;
    btVector3 angular_limit;
 
    if (!constraint)
@@ -250,39 +176,148 @@ ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint *constrai
         return;
      }
 
-   if (constraint->type != EPHYSICS_CONSTRAINT_SLIDER)
+   if (counter_clock_x)
      {
-        ERR("Can't get angular limit, this is not an slider constraint.");
-        return;
+        constraint->bt_constraint->getAngularLowerLimit(angular_limit);
+        *counter_clock_x = angular_limit.getX() * RAD_TO_DEG;
      }
 
-   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
+   if (clock_wise_x)
+     {
+        constraint->bt_constraint->getAngularUpperLimit(angular_limit);
+        *clock_wise_x = angular_limit.getX() * RAD_TO_DEG;
+     }
+
+   if (counter_clock_y)
+     {
+        constraint->bt_constraint->getAngularLowerLimit(angular_limit);
+        *counter_clock_y = angular_limit.getY() * RAD_TO_DEG;
+     }
+
+   if (clock_wise_y)
+     {
+        constraint->bt_constraint->getAngularUpperLimit(angular_limit);
+        *clock_wise_y = angular_limit.getY() * RAD_TO_DEG;
+     }
+
    if (counter_clock_z)
      {
-        slider_constraint->getAngularLowerLimit(angular_limit);
-        *counter_clock_z = angular_limit.getZ();
+        constraint->bt_constraint->getAngularLowerLimit(angular_limit);
+        *counter_clock_z = angular_limit.getZ() * RAD_TO_DEG;
      }
 
    if (clock_wise_z)
      {
-        slider_constraint->getAngularUpperLimit(angular_limit);
-        *clock_wise_z = angular_limit.getZ();
+        constraint->bt_constraint->getAngularUpperLimit(angular_limit);
+        *clock_wise_z = angular_limit.getZ() * RAD_TO_DEG;
      }
 }
 
+EAPI void
+ephysics_constraint_anchor_set(EPhysics_Constraint *constraint, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b1_z, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y, Evas_Coord anchor_b2_z)
+{
+   btTransform anchor_b1;
+   btTransform anchor_b2;
+   btTransform center_mass;
+   double rate;
+   Evas_Coord b1x, b1y, b1z, b1w, b1h, b1d, b2x, b2y, b2z, b2w, b2h, b2d, wx, wy,
+     wh;
+   btScalar ab1x, ab1y, ab1z, ab2x, ab2y, ab2z;
+
+   if (!constraint)
+     {
+        ERR("Can't set constraint's anchors, constraint is null.");
+        return;
+     }
+
+   ephysics_world_lock_take(constraint->world);
+
+   ephysics_world_render_geometry_get(constraint->world, &wx, &wy, NULL, NULL,
+                                      &wh, NULL);
+
+   ephysics_body_geometry_get(constraint->bodies[0], &b1x, &b1y, &b1z, &b1w,
+                              &b1h, &b1d);
+
+   rate = ephysics_world_rate_get(constraint->world);
+
+   ab1x = (anchor_b1_x - (b1x + b1w / 2)) / rate;
+   ab1y = (anchor_b1_y - (b1y + b1h / 2)) / rate;
+   ab1z = (anchor_b1_z - (b1z + b1d / 2)) / rate;
+   DBG("body1 anchor set to: %lf, %lf, %lf", ab1x, ab1y, ab1z);
+
+   anchor_b1.setIdentity();
+   anchor_b1.setOrigin(btVector3(ab1x, ab1y, ab1z));
+
+   if (constraint->bodies[1])
+     {
+        ephysics_body_geometry_get(constraint->bodies[1], &b2x, &b2y, &b2z, &b2w,
+                                &b2h, &b2d);
+
+        ab2x = (anchor_b2_x - (b2x + b2w / 2)) / rate;
+        ab2y = (anchor_b2_y - (b2y + b2h / 2)) / rate;
+        ab2z = (anchor_b2_z - (b2z + b2d / 2)) / rate;
+
+        DBG("body2 anchor set to: %lf, %lf, %lf", ab2x, ab2y, ab2z);
+
+        anchor_b2.setIdentity();
+        anchor_b2.setOrigin(btVector3(ab2x, ab2y, ab2z));
+     }
+   else
+     {
+        anchor_b2.setIdentity();
+        anchor_b2.setOrigin(btVector3(anchor_b1.getOrigin().x(),
+                                      anchor_b1.getOrigin().y(),
+                                      anchor_b1.getOrigin().z()));
+
+        center_mass = constraint->bodies[0]->rigid_body->
+          getCenterOfMassTransform();
+
+        anchor_b1.setIdentity();
+        anchor_b1 = center_mass * anchor_b2;
+     }
+
+   constraint->bt_constraint->setFrames(anchor_b1, anchor_b2);
+   ephysics_world_lock_release(constraint->world);
+}
+
+EAPI void
+ephysics_constraint_anchor_get(const EPhysics_Constraint *constraint, Evas_Coord *anchor_b1_x, Evas_Coord *anchor_b1_y, Evas_Coord *anchor_b1_z, Evas_Coord *anchor_b2_x, Evas_Coord *anchor_b2_y, Evas_Coord *anchor_b2_z)
+{
+   btTransform anchor_b1;
+   btTransform anchor_b2;
+   double rate;
+
+   if (!constraint)
+     {
+        ERR("Can't set constraint's anchors, constraint is null.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(constraint->world);
+
+   anchor_b1 = constraint->bt_constraint->getFrameOffsetA();
+   anchor_b2 = constraint->bt_constraint->getFrameOffsetB();
+
+   if (anchor_b1_x) *anchor_b1_x = round(anchor_b1.getOrigin().x() * rate);
+   if (anchor_b1_y) *anchor_b1_y = round(anchor_b1.getOrigin().y() * rate);
+   if (anchor_b1_z) *anchor_b1_z = round(anchor_b1.getOrigin().z() * rate);
+   if (anchor_b2_x) *anchor_b2_x = round(anchor_b2.getOrigin().x() * rate);
+   if (anchor_b2_y) *anchor_b2_y = round(anchor_b2.getOrigin().y() * rate);
+   if (anchor_b2_z) *anchor_b2_z = round(anchor_b2.getOrigin().z() * rate);
+}
+
 EAPI EPhysics_Constraint *
-ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y)
+ephysics_constraint_linked_add(EPhysics_Body *body1, EPhysics_Body *body2)
 {
    EPhysics_Constraint *constraint;
 
-   if (!body1)
+   if (!body1 || !body2)
      {
-        ERR("To create a constraint body1 must to be non null.");
+        ERR("To create a linked constraint body1 and bod2 must to be non null.");
         return NULL;
      }
 
-   if ((body2) &&
-       (ephysics_body_world_get(body1) != ephysics_body_world_get(body2)))
+   if (ephysics_body_world_get(body1) != ephysics_body_world_get(body2))
      {
         ERR("To create a constraint both bodies must belong to the same"
             "world.");
@@ -305,22 +340,24 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
      }
 
    constraint->world = ephysics_body_world_get(body1);
-   constraint->p2p.body1 = body1;
-   constraint->p2p.body2 = body2;
-   constraint->p2p.anchor_b1_x = anchor_b1_x;
-   constraint->p2p.anchor_b1_y = anchor_b1_y;
-   constraint->p2p.anchor_b2_x = anchor_b2_x;
-   constraint->p2p.anchor_b2_y = anchor_b2_y;
+   constraint->bodies[0] = body1;
+   constraint->bodies[1] = body2;
 
    ephysics_world_lock_take(constraint->world);
-   if (!_ephysics_constraint_p2p_set(
-         constraint, ephysics_world_rate_get(ephysics_body_world_get(
-               constraint->p2p.body1))))
+
+   constraint->bt_constraint = new btGeneric6DofConstraint(
+      *ephysics_body_rigid_body_get(body1), *ephysics_body_rigid_body_get(body2),
+      btTransform(), btTransform(), false);
+
+   if (!constraint->bt_constraint)
      {
         ephysics_world_lock_release(constraint->world);
         free(constraint);
         return NULL;
      }
+
+   ephysics_world_constraint_add(constraint->world, constraint,
+                                 constraint->bt_constraint);
 
    ephysics_world_lock_release(constraint->world);
    INF("Constraint added.");
