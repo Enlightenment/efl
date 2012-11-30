@@ -22,7 +22,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @EIO_CFLAGS@
 
-ELM_PREFS_CC = @elm_prefs_cc@
+ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
 
 noinst_DATA = widget_preview_prefs.epb
 
