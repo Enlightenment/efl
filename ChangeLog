@@ -1,3 +1,8 @@
+2012-11-30 Gustavo Sverzut Barbieri (k-s)
+
+	* Fix evas_object_box.c to properly reset size_hint_min to zero if
+	there are no objects packed into the box.
+
 2012-11-22 Paulo Alcantara (pcacjr)
 
 	* Add scalecache support to Cserve2

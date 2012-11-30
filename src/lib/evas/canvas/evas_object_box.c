@@ -745,11 +745,17 @@ _box_layout_horizontal(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    objects = (Evas_Object_Box_Option **)alloca(sizeof(Evas_Object_Box_Option *) * n_children);
    if (!objects)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.h;
@@ -911,11 +917,17 @@ _box_layout_vertical(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    objects = (Evas_Object_Box_Option **)alloca(sizeof(Evas_Object_Box_Option *) * n_children);
    if (!objects)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.v;
@@ -1021,7 +1033,10 @@ _box_layout_homogeneous_horizontal(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1090,7 +1105,10 @@ _box_layout_homogeneous_vertical(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1159,7 +1177,10 @@ _box_layout_homogeneous_max_size_horizontal(Eo *o, void *_pd, va_list *list EINA
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1251,7 +1272,10 @@ _box_layout_homogeneous_max_size_vertical(Eo *o, void *_pd, va_list *list EINA_U
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1411,7 +1435,10 @@ _box_layout_flow_horizontal(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    /* *per row* arrays */
    row_max_h = (int *)alloca(sizeof(int) * n_children);
@@ -1593,7 +1620,10 @@ _box_layout_flow_vertical(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 
    n_children = eina_list_count(priv->children);
    if (!n_children)
-     return;
+     {
+        evas_object_size_hint_min_set(o, 0, 0);
+        return;
+     }
 
    /* *per col* arrays */
    col_max_w = (int *)alloca(sizeof(int) * n_children);
