@@ -441,6 +441,9 @@ _item_del_pre_hook(Elm_Object_Item *it)
    nit = (Elm_Naviframe_Item *)it;
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
+   if (it == sd->compress_it)
+     sd->compress_it = NULL;
+
    top = (it == elm_naviframe_top_item_get(WIDGET(nit)));
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
      goto end;
@@ -1138,9 +1141,11 @@ _on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
      {
       case EVAS_DISPLAY_MODE_COMPRESS:
         edje_object_signal_emit(VIEW(it), "display,mode,compress", "");
+        sd->compress_it = it;
         break;
       default:
-        edje_object_signal_emit(VIEW(it), "display,mode,default", "");
+        if (sd->compress_it)
+          edje_object_signal_emit(VIEW(sd->compress_it), "display,mode,default", "");
         break;
      }
 }
