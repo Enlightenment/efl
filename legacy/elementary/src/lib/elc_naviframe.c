@@ -419,6 +419,8 @@ _item_text_set_hook(Elm_Object_Item *it,
           }
      }
 
+   edje_object_part_text_set(VIEW(nit), buf, label);
+
    /* access */
    if (_elm_config->access_mode)
      _access_obj_process(nit, EINA_TRUE);
