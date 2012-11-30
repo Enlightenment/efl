@@ -3848,7 +3848,9 @@ _elm_scroll_page_show(Eo *obj, void *_pd, va_list *list)
    int pagenumber_h = va_arg(*list, int);
    int pagenumber_v = va_arg(*list, int);
 
-   Evas_Coord x, y, w, h;
+   Evas_Coord w, h;
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
@@ -3867,7 +3869,9 @@ _elm_scroll_page_bring_in(Eo *obj, void *_pd, va_list *list)
    int pagenumber_h = va_arg(*list, int);
    int pagenumber_v = va_arg(*list, int);
 
-   Evas_Coord x, y, w, h;
+   Evas_Coord w, h;
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
