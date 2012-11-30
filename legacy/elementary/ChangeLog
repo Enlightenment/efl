@@ -730,3 +730,7 @@
 2012-11-30  ChunEon Park (Hermet)
 
         * Fix the naviframe to resize it's items which are inserted.
+
+2012-11-30  ChunEon Park (Hermet)
+
+        * emit the signals for content_set/unset text_set/unset one time!
