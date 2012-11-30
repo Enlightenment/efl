@@ -2041,9 +2041,9 @@ st_styles_style_tag(void)
     @context
         collections {
             ..
-            group { }
-            group { }
             sounds { }
+            group { }
+            group { }
             ..
         }
     @description
@@ -2304,8 +2304,9 @@ st_collections_group_sound_tone(void)
                 min: width height;
                 max: width height;
 
-                data { }
                 script { }
+                limits { }
+                data { }
                 parts { }
                 programs { }
             }
@@ -3114,9 +3115,9 @@ st_collections_group_parts_alias(void)
                     pointer_mode: AUTOGRAB;
                     use_alternate_font_metrics: 0;
 
-                    description { }
                     dragable { }
                     items { }
+                    description { }
                 }
                 ..
             }
@@ -5618,6 +5619,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
                 tween:  "filenameN.ext";
                 border:  left right top bottom;
                 middle:  0/1/NONE/DEFAULT/SOLID;
+                fill { }
             }
             ..
         }
