@@ -521,6 +521,7 @@ EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
 EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
 EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
+EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base

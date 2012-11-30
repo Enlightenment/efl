@@ -1890,17 +1890,21 @@ _elm_win_client_message(void *data,
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
                {
-                  // XXX: call right access func
+                  /* there would be better way to read highlight object */
+                  int x, y;
+                  ecore_x_pointer_xy_get(sd->x.xwin, &x, &y);
+                  ecore_x_mouse_in_send(sd->x.xwin, x, y);
+                  ecore_x_mouse_move_send(sd->x.xwin, x, y);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_NEXT)
                {
-                  // XXX: call right access func
+                  _elm_access_highlight_cycle(sd->obj, ELM_FOCUS_NEXT);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_PREV)
                {
-                  // XXX: call right access func
+                  _elm_access_highlight_cycle(sd->obj, ELM_FOCUS_PREVIOUS);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP)

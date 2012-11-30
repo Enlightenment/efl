@@ -229,7 +229,18 @@ _access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Ob
    evas_object_resize(o, w, h);
 }
 
+static Evas_Object *
+_access_highlight_object_get(Evas_Object *obj)
+{
+   Evas_Object *o, *ho;
 
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o) return NULL;
+
+   ho = evas_object_data_get(o, "_elm_access_target");
+
+   return ho;
+}
 
 //-------------------------------------------------------------------------//
 EAPI void
@@ -299,9 +310,27 @@ _elm_access_activate_callback_set(Elm_Access_Info           *ac,
 EAPI void
 _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 {
-   Evas_Object *highlight_obj;
-   highlight_obj = elm_widget_focused_object_get(obj);
-   elm_widget_activate(highlight_obj, act);
+   Evas_Object *highlight;
+
+   highlight = _access_highlight_object_get(obj);
+   if (!highlight) return;
+
+   elm_widget_activate(highlight, act);
+}
+
+EAPI void
+_elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   Evas_Object *highlight, *focused;
+
+   highlight = _access_highlight_object_get(obj);
+   focused = elm_widget_focused_object_get(obj);
+
+   if (highlight && (highlight != focused))
+     elm_object_focus_set(highlight, EINA_TRUE);
+
+   /* use focus cycle to read next, previous object */
+   elm_widget_focus_cycle(obj, dir);
 }
 
 EAPI char *
