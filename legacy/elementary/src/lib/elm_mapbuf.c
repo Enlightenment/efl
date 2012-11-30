@@ -127,7 +127,7 @@ _configure(Evas_Object *obj)
              //Let give the chance to update the content whenever content is
              //coming inside buffer from the outside. It means the content may
              //have been changed when it is on the outside, but the surface
-             //may not be updated because contents would be outside of the 
+             //may not be updated because contents would be outside of the
              //viewport.
              Evas_Coord output_w, output_h;
              Evas *e = evas_object_evas_get(obj);
