@@ -2674,7 +2674,13 @@ _win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    sd->wl.win = ecore_evas_wayland_window_get(sd->ee);
 #endif
 
-   if ((_elm_config->bgpixmap) && (!_elm_config->compositing))
+   if ((_elm_config->bgpixmap) 
+#ifdef HAVE_ELEMENTARY_X
+       && 
+       (((sd->x.xwin) && (!ecore_x_screen_is_composited(0))) ||
+           (!sd->x.xwin)))
+#endif       
+      )
      TRAP(sd, avoid_damage_set, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
    // bg pixmap done by x - has other issues like can be redrawn by x before it
    // is filled/ready by app
@@ -3259,7 +3265,7 @@ _alpha_set(Eo *obj, void *_pd, va_list *list)
           {
              if (enabled)
                {
-                  if (!_elm_config->compositing)
+                  if (!ecore_x_screen_is_composited(0))
                     elm_win_shaped_set(obj, enabled);
                   else
                     TRAP(sd, alpha_set, enabled);
