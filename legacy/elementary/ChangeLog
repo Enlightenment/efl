@@ -725,4 +725,8 @@
 
 2012-11-29  Thiep Ha
 
-	* Entry: add a mode to clear selection when entry loose focus.
+        * Entry: add a mode to clear selection when entry loose focus.
+
+2012-11-30  ChunEon Park (Hermet)
+
+        * Fix the naviframe to resize it's items which are inserted.

@@ -66,7 +66,8 @@ Fixes:
    * Fix the naviframe to clear the title contents when it's item is deleted.
    * Fix entry to enable have_selection only when a text is actually selected.
    * Fix the naviframe to clear the text parts when it's item is deleted.
-   * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer.  
+   * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer.
+   * Fix the naviframe to resize it's items which are inserted.	
 
 Removals:
 
