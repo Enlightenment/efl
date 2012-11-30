@@ -428,7 +428,7 @@ enum
  *
  * @since 1.8
  */
-typedef enum _Elm_Prefs_Item_Type
+enum _Elm_Prefs_Item_Type
 {
    ELM_PREFS_TYPE_UNKNOWN = 0,
    ELM_PREFS_TYPE_ACTION, /***< action type, bound to button-like UI elements */
@@ -444,7 +444,7 @@ typedef enum _Elm_Prefs_Item_Type
    ELM_PREFS_TYPE_SAVE, /**< saving trigger type, bound to button-like UI elements */
    ELM_PREFS_TYPE_SEPARATOR, /**< separator type, bound to separator-like UI elements */
    ELM_PREFS_TYPE_SWALLOW /**< swallow type, bound to an empty 'spot' on the UI meant to receive and display external content */
-} Elm_Prefs_Item_Type;
+};
 
 /**
  * Modes of resetting a prefs widget.
