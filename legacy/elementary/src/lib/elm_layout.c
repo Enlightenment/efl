@@ -647,9 +647,7 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
    else
      eo_do(sd->obj, elm_obj_layout_smart_content_aliases_get(&aliases));
 
-   if (!aliases) return EINA_TRUE;
-
-   while (aliases->alias && aliases->real_part)
+   while (aliases && aliases->alias && aliases->real_part)
      {
         /* NULL matches the 1st */
         if ((!*part) || (!strcmp(*part, aliases->alias)))
