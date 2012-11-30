@@ -22,7 +22,6 @@ struct _Elm_Naviframe_Smart_Data
 {
    Eina_Inlist          *stack; /* top item is the list's LAST item */
    Evas_Object          *dummy_edje;
-   Ecore_Animator       *animator;
    Evas_Display_Mode     dispmode;
    Elm_Object_Item      *compress_it;
 
@@ -44,6 +43,7 @@ struct _Elm_Naviframe_Item
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
+   Ecore_Animator *animator;
    const char  *style;
    const char  *title_label;
    const char  *subtitle_label;

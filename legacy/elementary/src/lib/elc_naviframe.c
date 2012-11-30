@@ -444,6 +444,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (it == sd->compress_it)
      sd->compress_it = NULL;
 
+   if (nit->animator) ecore_animator_del(nit->animator);
+
    top = (it == elm_naviframe_top_item_get(WIDGET(nit)));
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
      goto end;
@@ -1259,8 +1261,6 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_del(sd->dummy_edje);
 
-   if (sd->animator) ecore_animator_del(sd->animator);
-
    eo_do_super(obj, evas_obj_smart_del());
 }
 
@@ -1282,18 +1282,19 @@ _push_transition_cb(void *data)
    ELM_NAVIFRAME_DATA_GET(data, sd);
 
    it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(data);
+   it->animator = NULL;
 
    if (sd->stack->last->prev)
      {
         prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last->prev,
                                             Elm_Naviframe_Item);
-        edje_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed,deferred", "elm");
+        edje_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed,deferred",
+                                "elm");
         edje_object_message_signal_process(VIEW(prev_it));
      }
    edje_object_signal_emit(VIEW(it), "elm,state,new,pushed,deferred", "elm");
    edje_object_message_signal_process(VIEW(it));
 
-   sd->animator = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1302,8 +1303,8 @@ _pop_transition_cb(void *data)
 {
    Elm_Naviframe_Item *prev_it, *it;
    it = (Elm_Naviframe_Item *)data;
-   if (!it) return ECORE_CALLBACK_CANCEL;
-   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
+
+   it->animator = NULL;
 
    prev_it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(WIDGET(it));
    if (prev_it)
@@ -1315,7 +1316,6 @@ _pop_transition_cb(void *data)
 
    edje_object_message_signal_process(VIEW(it));
 
-   sd->animator = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1404,8 +1404,8 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         /* animate new one */
         edje_object_message_signal_process(VIEW(it));
 
-        if (sd->animator) ecore_animator_del(sd->animator);
-        sd->animator = ecore_animator_add(_push_transition_cb, obj);
+        if (it->animator) ecore_animator_del(it->animator);
+        it->animator = ecore_animator_add(_push_transition_cb, obj);
      }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
@@ -1591,8 +1591,8 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
         edje_object_message_signal_process(VIEW(it));
         edje_object_message_signal_process(VIEW(prev_it));
 
-        if (sd->animator) ecore_animator_del(sd->animator);
-        sd->animator = ecore_animator_add(_pop_transition_cb, it);
+        if (it->animator) ecore_animator_del(it->animator);
+        it->animator = ecore_animator_add(_pop_transition_cb, it);
      }
    else
      elm_widget_item_del(it);
@@ -1684,8 +1684,8 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 
    edje_object_message_signal_process(VIEW(prev_it));
    edje_object_message_signal_process(VIEW(nit));
-   if (sd->animator) ecore_animator_del(sd->animator);
-   sd->animator = ecore_animator_add(_push_transition_cb, nit->base.widget);
+   if (nit->animator) ecore_animator_del(nit->animator);
+   nit->animator = ecore_animator_add(_push_transition_cb, WIDGET(nit));
 
    /* access */
    if (_elm_config->access_mode) _access_focus_set(nit);
