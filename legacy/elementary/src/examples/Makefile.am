@@ -35,7 +35,7 @@ EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
 EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 
-ELM_PREFS_CC = @elm_prefs_cc@
+ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
 
 ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/@ELEMENTARY_CODEGEN_PRG@
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
