@@ -1345,7 +1345,7 @@ _config_update(void)
        {
           if (!strstr(_elm_config->modules, PREFS_IFACE_MODULE_STR))
             new = eina_stringshare_printf
-                ("%s:%s", orig_modules, PREFS_IFACE_MODULE_STR);
+                ("%s:%s", _elm_config->modules, PREFS_IFACE_MODULE_STR);
        }
 
      if (new)
