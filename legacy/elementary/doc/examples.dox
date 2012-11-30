@@ -112,6 +112,12 @@
  * @ref efl_thread_5
  *
  * @ref efl_thread_6
+ *
+ * @ref prefs_example_01
+ *
+ * @ref prefs_example_02
+ *
+ * @ref prefs_example_03
  */
 
 /**
@@ -1784,7 +1790,7 @@
  * taken from system @b locale. Note, besides, that the strings are different
  *  for different language settings.
  *
- * <b>Datetime format</b> can be programmatically set by using 
+ * <b>Datetime format</b> can be programmatically set by using
  * elm_datetime_format_set():
  * @dontinclude datetime_example.c
  * @skip DATE and TIME
@@ -5130,7 +5136,7 @@
  * @skip Format callback
  * @until }
  * @until }
- * 
+ *
  * The last horizontal progress bar has a callback that gets called when its
  * value is @b changed. This callback updates a label to provide an estimate
  * when the operation finishes.
@@ -5422,7 +5428,7 @@
  * And now get to the "color,item,selected" callback that sets the color of the rectangle:
  * @until }
  *
- * And now get to the "color,item,longpressed" callback that gets and displays 
+ * And now get to the "color,item,longpressed" callback that gets and displays
  * the color of the rectangle:
  * @until }
  *
@@ -6178,6 +6184,369 @@
  */
 
 /**
+ * @page prefs_example_01 Prefs Example 01
+ *
+ * This example shows how to create a simple prefs widget with Elementary,
+ * where the items values are "reset" on each timer tick. We do that
+ * <b>programmatically</b>, to demonstrate that by touching a given prefs
+ * widgets prefs data values, the changes reflect instantly on the UI.
+ *
+ * We'll create items on the .EPC file and after handle it on the .C file.
+ *
+ * @section prefs-epc-01 Creating items on EPC file
+ * @dontinclude prefs_example_01.epc
+ *
+ * First we'll create prefs items on .EPC file that we'll use later on
+ * the .C file. Note that the code is similar to .EDC (edje) files.
+ *
+ * @skip collection
+ * @until subtitle: "Example 01";
+ *
+ * Here we define a page item. Pages are group of items grouped together,
+ * on a given prefs widget.
+ *
+ * @skipline widget: "elm/vertical_box";
+ *
+ * In this part, we create a @c INT type item, that by default will
+ * become a spinner widget in the UI, and default, min and max
+ * parameters are optional as well as in @c FLOAT type.
+ *
+ * @skip items {
+ * @until max: 150;
+ * @skipline }
+ * @skipline }
+ *
+ * Other @c INT type widget implementations may exist, as is exemplifyed
+ * on the item that follows.
+ *
+ * @skip item {
+ * @until min: 0;
+ * @skipline }
+ * @skipline }
+ *
+ * Now we create a LABEL type item and by default will become a read-only
+ * label in UI.
+ *
+ * @skip item {
+ * @until }
+ *
+ * Now we create a TEXT type item and by default will become a single-line
+ * text entry in UI. Note that we use a Regular Expression to deny only
+ * entries with numbers.
+ *
+ * @skip item {
+ * @until }
+ * @skipline }
+ *
+ * In this part we create a DATE type item, by default will become a datetime
+ * in UI, and default, min and max parameters are optional.
+ *
+ * @skip item {
+ * @until }
+ *
+ * Here we create a SEPARATOR type item, it has no value bound,
+ * serves only to divide and organize prefs items.
+ *
+ * @skip item {
+ * @until }
+ *
+ * In this part, we create a SAVE type item that will get all the values
+ * bounded to items and save it on CFG file. Next time you execute the
+ * application, all the values that you saved before will be loaded.
+ *
+ * @skip item {
+ * @until }
+ *
+ * Here we create a RESET type item that will return all the values bounded
+ * to items as default declared on .EPC file.
+ *
+ * @skip item {
+ * @until }
+ *
+ * Pages and items have default implementation widgets, but, with the tag
+ * 'widget', you can use different widgets for prefs items. To a list of
+ * default widgets supported by each type, by default, refer to the Elementary
+ * Prefs Collection reference sheet. One can also register, at run time,
+ * custom item widget handlers too.
+ *
+ * @section prefs-c-01 Handling items on C File
+ * @dontinclude prefs_example_01.c
+ *
+ * Now we're handling the .C file and first we'll create a prefs widget.
+ *
+ * @skip prefs = elm_prefs_add(win);
+ * @until evas_object_show(prefs);
+ *
+ * Here we add some specific callbacks, for example "item,changed" that will
+ * be called when any item that we created on EPC file changes.
+ *
+ * @skip evas_object_smart_callback_add
+ * @until _item_changed_cb, win);
+ *
+ * Here we set the prefs to save its values back (on the user data file)
+ * automatically on every UI element changes.
+ *
+ * @skipline elm_prefs_autosave_set(prefs, EINA_TRUE);
+ *
+ * In this part we create the prefs data handle and set the .EPB file
+ * (.EPC compiled). This .EPB file contains all the default values from the
+ * items that we created, this file will be loaded when the program starts or
+ * when clicked on a RESET type item. There is another file created when
+ * the values from prefs items are saved, the .CFG file, that contains all the
+ * non-standard saved values from the prefs items, this file will be loaded
+ * when program starts as well.
+ *
+ * @dontinclude prefs_example_01.c
+ * @skipline Elm_Prefs_Data *prefs_data;
+ *
+ * @skip prefs_data = elm_prefs_data_new
+ * @until elm_prefs_data_set(prefs, prefs_data);
+ *
+ * Here we just create a notify widget to appear when the values are reset.
+ *
+ * @skip label = elm_label_add(win);
+ * @until evas_object_show(notify);
+ *
+ * Now we add a timer to reset the items values on each 5.0 seconds and
+ * show the notify.
+ *
+ * @skipline evas_object_data_set(notify
+ * @skipline timer = ecore_timer_add(5.0,
+ *
+ * @dontinclude prefs_example_01.c
+ * @skip _elm_prefs_data_change(void *data)
+ * @until return ECORE_CALLBACK_RENEW;
+ * @skipline }
+ *
+ * Here we finish the example. The full source code can be found on
+ * @ref prefs_example_01_c and
+ * @ref prefs_example_01_epc
+ *
+ */
+
+/**
+ * @page prefs_example_02 Prefs Example 02
+ *
+ * This example shows how to create a simple prefs widget with Elementary,
+ * where some items properties are changed on each timer tick.
+ *
+ * We'll create items on the .EPC file and after handle it on the .C file.
+ *
+ * @section prefs-epc-02 Creating items on EPC file
+ * @dontinclude prefs_example_02.epc
+ *
+ * First we'll create prefs items on .EPC file that we'll use later on
+ * the .C file. Note that the code is similar to .EDC (edje) files.
+ *
+ * @skip collection
+ * @until widget: "elm/vertical_frame";
+ *
+ * In this part, we create a @c TEXTAREA item and, by default, it will
+ * become a multi-line text entry in the UI. Note that we use a
+ * regular expression to accept only characters and whitespaces in it.
+ *
+ * @skip items {
+ * @until }
+ * @skipline }
+ *
+ * Now we create a FLOAT type item, by default will become a spinner in UI,
+ * and default, min and max parameters are optional as well as in INT type.
+ *
+ * @skip item {
+ * @until }
+ * @skipline }
+ *
+ * Here we create a BOOL type item, by default will become a checkbox in UI.
+ *
+ * @skip item {
+ * @until }
+ * @skipline }
+ *
+ * Here we create two items, separator and save types, that we've already
+ * covered in
+ * @ref prefs_example_01
+ *
+ * @skip item {
+ * @until label: "Save";
+ * @skipline }
+ *
+ * In this part, we create a ACTION type item. when clicked, the
+ * action item will emit a signal to .C file and call a smart callback.
+ *
+ * @skip item {
+ * @until }
+ * @skipline }
+ * @skipline }
+ * @skipline }
+ *
+ * @section prefs-c-02 Handling items on C File
+ * @dontinclude prefs_example_02.c
+ *
+ * Now we're handling the .C file and first we'll create a prefs widget.
+ *
+ * @skip prefs = elm_prefs_add(win);
+ * @until evas_object_show(prefs);
+ *
+ * In this part we add the action smart callback, that will be called when
+ * the action item be clicked.
+ *
+ * @skipline evas_object_smart_callback_add
+ *
+ * Here we add a simple action item callback that sets a text to another item.
+ *
+ * @dontinclude prefs_example_02.c
+ * @skip _action_cb(void *data
+ * @until }
+ *
+ * Now we set the prefs to save its values back (on the user data file)
+ * automatically on every UI element changes.
+ *
+ * @skipline elm_prefs_autosave_set(prefs, EINA_TRUE);
+ *
+ * In this part we create the prefs data handle and set the .EPB file
+ * (.EPC compiled).
+ *
+ * @dontinclude prefs_example_02.c
+ * @skipline Elm_Prefs_Data *prefs_data;
+ *
+ * @skip prefs_data = elm_prefs_data_new
+ * @until elm_prefs_data_set(prefs, prefs_data);
+ *
+ * Here we just create a notify widget to appear when the items properties
+ * are changed.
+ *
+ * @skip label = elm_label_add(win);
+ * @until evas_object_show(notify);
+ *
+ * Now we add a timer to change text editable, spinners visibility and checkbox
+ * enable/disable properties on each 5.0 seconds and show the notify.
+ *
+ * @skip evas_object_data_set(notify
+ * @until _elm_prefs_items_change, notify);
+ *
+ * @dontinclude prefs_example_02.c
+ * @skip _elm_prefs_items_change(void *data)
+ * @until return ECORE_CALLBACK_RENEW;
+ * @skipline }
+ *
+ * Here we finish the example. The full source code can be found on
+ * @ref prefs_example_02_c and
+ * @ref prefs_example_02_epc
+ *
+ */
+
+/**
+ * @page prefs_example_03 Prefs Example 03
+ *
+ * This example shows how to create a prefs widget with Elementary, where some
+ * prefs item values are changed, some actions take place on an object
+ * different than the prefs widget (an Edge object). With this new object,
+ * we're also exemplifying the prefs SWALLOW item type, as the Edje object is
+ * put inside the prefs widget's viewport.
+ *
+ * It also shows how subpages can be created using the prefs PAGE item type.
+ *
+ * Explain step by step the .EDC file is out of scope, the source code
+ * can be found at
+ * @ref prefs_example_03_edc
+ *
+ * @section prefs-epc-03 Creating items on EPC file
+ * @dontinclude prefs_example_03.epc
+ *
+ * First we'll create prefs items on .EPC file that we'll use later on
+ * the .C file.
+ *
+ * @skip collection
+ * @until widget: "elm/vertical_frame";
+ *
+ * In the following part, we create an item of the PAGE type, that will create a
+ * subpage inside the main page. The source parameter is used to set which page
+ * will be used to fill the subpage, in this example, the page named
+ * "configpage" will be used.
+ *
+ * @skip items {
+ * @until type: SEPARATOR;
+ * @skipline }
+ *
+ * Now we create a SWALLOW type item, that, as the name suggests, will
+ * swallow an Evas_Object.
+ *
+ * @skip item {
+ * @until }
+ *
+ * Now we create the page that will be used to fill the item "config" of the
+ * main page. It has another two subpages and a SEPARATOR item arranged
+ * horizontally so we could achieve the desired layout.
+ *
+ * @skip page
+ * @until source: "buttonspage";
+ * @skipline }
+ * @skipline }
+ * @skipline }
+ *
+ * Then we create the pages used by the "configpage" page, whose items
+ * were covered in @ref prefs_example_01 and @ref prefs_example_02.
+ *
+ * @skip page
+ * @until label: "Reset";
+ * @skipline }
+ * @skipline }
+ * @skipline }
+ *
+ * @section prefs-c-03 Handling items on C File
+ * @dontinclude prefs_example_03.c
+ *
+ * Now we're handling the .C file and first we'll create a layout setting the
+ * edje file to after a prefs item swallows it.
+ *
+ * @skip layout = elm_layout_add(win);
+ * @until "prefs_edje");
+ *
+ * Here we create the prefs widget, add smart callbacks and create the prefs
+ * data handle.
+ *
+ * @skip prefs = elm_prefs_add(win);
+ * @until elm_prefs_data_set(prefs, prefs_data);
+ *
+ * Now we "swallow" the layout into the SWALLOW item of the prefs widget.
+ *
+ * @skipline elm_prefs_item_swallow(prefs,
+ *
+ * Page loaded and item changed callbacks will call update functions.
+ *
+ * @dontinclude prefs_example_03.c
+ * @skip _page_loaded_cb(void *data,
+ * @until _update_animation(obj, layout);
+ * @skipline }
+ *
+ * These update functions will be called in order to get the new value from
+ * the items and pass it as signal to edje handle it and affects on animation.
+ *
+ * @dontinclude prefs_example_03.c
+ * @skip _update(Evas_Object *prefs,
+ * @until }
+ *
+ * In this function we'll get the checkbox (bool) value and start or stop
+ * the animation on edje.
+ *
+ * @dontinclude prefs_example_03.c
+ * @skip _update_animation(Evas_Object *prefs,
+ * @until }
+ *
+ * In this function we'll get the slider (float item) value and send it as
+ * animation time to edje.
+ *
+ * @skip _update_animation_time(Evas_Object *prefs,
+ * @until }
+ *
+ * Here we finish the example. The full source code can be found on
+ * @ref prefs_example_03_c,
+ * @ref prefs_example_03_epc and
+ * @ref prefs_example_03_edc
+ *
+ */
+
+/**
  * @page bg_example_01_c bg_example_01.c
  * @include bg_example_01.c
  * @example bg_example_01.c
@@ -6384,4 +6753,46 @@
  * @page efl_thread_6_c EFL Threading example 6
  * @include efl_thread_6.c
  * @example efl_thread_6.c
+ */
+
+/**
+ * @page prefs_example_01_c prefs_example_01.c
+ * @include prefs_example_01.c
+ * @example prefs_example_01.c
+ */
+
+/**
+ * @page prefs_example_01_epc prefs_example_01.epc
+ * @include prefs_example_01.epc
+ * @example prefs_example_01.epc
+ */
+
+/**
+ * @page prefs_example_02_c prefs_example_02.c
+ * @include prefs_example_02.c
+ * @example prefs_example_02.c
+ */
+
+/**
+ * @page prefs_example_02_epc prefs_example_02.epc
+ * @include prefs_example_02.epc
+ * @example prefs_example_02.epc
+ */
+
+/**
+ * @page prefs_example_03_c prefs_example_03.c
+ * @include prefs_example_03.c
+ * @example prefs_example_03.c
+ */
+
+/**
+ * @page prefs_example_03_epc prefs_example_03.epc
+ * @include prefs_example_03.epc
+ * @example prefs_example_03.epc
+ */
+
+/**
+ * @page prefs_example_03_edc prefs_example_03.edc
+ * @include prefs_example_03.edc
+ * @example prefs_example_03.edc
  */

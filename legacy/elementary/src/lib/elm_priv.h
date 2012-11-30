@@ -267,6 +267,13 @@ struct _Elm_Datetime_Module_Data
                                     Elm_Datetime_Field_Type field_type);
 };
 
+void                 _elm_prefs_init(void);
+void                 _elm_prefs_shutdown(void);
+
+/* these already issued by the two above, respectively */
+void                 _elm_prefs_data_init(void);
+void                 _elm_prefs_data_shutdown(void);
+
 void                 _elm_emotion_init(void);
 void                 _elm_emotion_shutdown(void);
 

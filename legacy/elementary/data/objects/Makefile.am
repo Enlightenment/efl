@@ -9,11 +9,15 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V)) -id $(top_srcdir)/data/objects -fd $(top_srcdir)
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj
+files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb
+
+ELM_PREFS_CC = @elm_prefs_cc@
 
 EXTRA_DIST = \
 test.edc \
 test_external.edc \
+test_prefs.edc \
+test_prefs.epc \
 multip.edc \
 cursors.edc \
 font_preview.edc \
@@ -63,6 +67,16 @@ multibuttonentry.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/objects/multibuttonentry.edc \
 	$(top_builddir)/data/objects/multibuttonentry.edj
-      
+
+test_prefs.edj: Makefile test_prefs.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/objects/test_prefs.edc \
+	$(top_builddir)/data/objects/test_prefs.edj
+
+test_prefs.epb: Makefile test_prefs.epc
+	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
+	$(top_srcdir)/data/objects/test_prefs.epc \
+	$(top_builddir)/data/objects/test_prefs.epb
+
 clean-local:
 	rm -f *.edj

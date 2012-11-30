@@ -523,6 +523,8 @@ EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm
 EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
+#define ELM_PREFS_DATA_MAGIC 0xe1f5da7a
+
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base
 

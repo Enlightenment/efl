@@ -1,7 +1,7 @@
 PROJECT_NAME           = Elementary
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib @srcdir@/index.doxy
+INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib @srcdir@/index.doxy @top_srcdir@/src/bin/elm_prefs_cc_handlers.c
 IMAGE_PATH             = @srcdir@/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -49,7 +49,18 @@ GENERATE_TODOLIST      = YES
 GENERATE_TESTLIST      = YES
 GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= YES
-ALIASES                =
+
+# Aliases used by epcref
+ALIASES                = block="<tr><td class=\"block\"><b>"
+ALIASES               += context="</b></td><td class=\"context\" colspan=2>\code"
+ALIASES               += description="\endcode</td></tr><tr><td>&nbsp;</td><td class=\"description\" colspan=2>"
+ALIASES               += endblock="</td></tr>"
+ALIASES               += property="<tr><td>&nbsp;</td><td><table class=\"edcref\" border=\"0\"><tr><td class=\"property\"><tt>"
+ALIASES               += parameters="</tt></td><td class=\"parameters\"><tt>"
+ALIASES               += effect="</tt></td></tr><tr><td>&nbsp;</td><td class=\"effect\">"
+ALIASES               += endproperty="</td></tr></table></td></tr>"
+ALIASES               += epcsection{2}="<tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+
 ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 OPTIMIZE_OUTPUT_FOR_C  = YES

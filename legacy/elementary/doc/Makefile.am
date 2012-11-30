@@ -69,6 +69,8 @@ WGT_PREVIEW = \
 	panes:preview-00.png:widget_preview_panes:200:100 \
 	photocam:preview-00.png:widget_preview_photocam:243:162 \
 	popup:preview-00.png:widget_preview_popup:480:400 \
+	prefs:preview-00.png:widget_preview_prefs:200:160 \
+	prefs:preview-00.png:widget_preview_prefs:280:250 \
 	progressbar:preview-00.png:widget_preview_progressbar:150:50 \
 	radio:preview-00.png:widget_preview_radio:60:20 \
 	scroller:preview-00.png:widget_preview_scroller:100:30 \
@@ -137,6 +139,7 @@ WGT_TREE = \
 	player \
 	plug \
 	popup \
+	prefs \
 	progressbar \
 	radio \
 	route \

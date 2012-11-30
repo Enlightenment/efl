@@ -93,6 +93,7 @@ elm_widget_photocam.h \
 elm_widget_player.h \
 elm_widget_plug.h \
 elm_widget_popup.h \
+elm_widget_prefs.h \
 elm_widget_progressbar.h \
 elm_widget_radio.h \
 elm_widget_route.h \
@@ -111,10 +112,9 @@ includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
 elc_ctxpopup.h \
-elm_dayselector.h \
+elc_fileselector.h \
 elc_fileselector_button.h \
 elc_fileselector_entry.h \
-elc_fileselector.h \
 elc_hoversel.h \
 elc_multibuttonentry.h \
 elc_naviframe.h \
@@ -136,6 +136,7 @@ elm_config.h \
 elm_conform.h \
 elm_cursor.h \
 elm_datetime.h \
+elm_dayselector.h \
 elm_debug.h \
 elm_deprecated.h \
 elm_diskselector.h \
@@ -157,16 +158,15 @@ elm_grid.h \
 elm_hover.h \
 elm_icon.h \
 elm_image.h \
-elm_inwin.h \
-elm_plug.h \
 elm_index.h \
 elm_intro.h \
+elm_inwin.h \
 elm_label.h \
 elm_layout.h \
 elm_list.h \
 elm_macros.h \
-elm_mapbuf.h \
 elm_map.h \
+elm_mapbuf.h \
 elm_menu.h \
 elm_mirroring.h \
 elm_need.h \
@@ -175,14 +175,17 @@ elm_object.h \
 elm_object_item.h \
 elm_panel.h \
 elm_panes.h \
-elm_photocam.h \
 elm_photo.h \
+elm_photocam.h \
+elm_plug.h \
+elm_prefs.h \
+elm_prefs_data.h \
 elm_progressbar.h \
 elm_radio.h \
 elm_route.h \
 elm_scale.h \
-elm_scroller.h \
 elm_scroll.h \
+elm_scroller.h \
 elm_segment_control.h \
 elm_separator.h \
 elm_slider.h \
@@ -263,6 +266,9 @@ elm_panes.c \
 elm_photo.c \
 elm_photocam.c \
 elm_plug.c \
+elm_prefs.c \
+elm_prefs_data.c \
+elm_prefs_edd.x \
 elm_progressbar.c \
 elm_radio.c \
 elm_route.c \

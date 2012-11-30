@@ -130,18 +130,26 @@ _elm_module_load(Elm_Module *m)
    home = getenv("HOME");
    if (home)
      {
-        snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
+        snprintf(buf, sizeof(buf),
+                 "%s/"ELEMENTARY_BASE_DIR "/modules/%s/%s/module"
+                 EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
         m->module = eina_module_new(buf);
-        if (m->module && eina_module_load (m->module) == EINA_TRUE)
+        if ((m->module) && (eina_module_load(m->module) == EINA_TRUE))
           {
-             m->init_func = eina_module_symbol_get(m->module, "elm_modapi_init");
+             m->init_func =
+               eina_module_symbol_get(m->module, "elm_modapi_init");
              if (m->init_func)
                {
-                  m->shutdown_func = eina_module_symbol_get(m->module, "elm_modapi_shutdown");
+                  m->shutdown_func =
+                    eina_module_symbol_get(m->module, "elm_modapi_shutdown");
                   m->so_path = eina_stringshare_add(buf);
-                  snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/modules/%s/%s", home, m->name, MODULE_ARCH);
+                  snprintf(buf, sizeof(buf),
+                           "%s/"ELEMENTARY_BASE_DIR "/modules/%s/%s",
+                           home, m->name, MODULE_ARCH);
                   m->bin_dir = eina_stringshare_add(buf);
-                  snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/modules/%s", home, m->name);
+                  snprintf(buf, sizeof(buf),
+                           "%s/"ELEMENTARY_BASE_DIR "/modules/%s",
+                           home, m->name);
                   m->data_dir = eina_stringshare_add(buf);
                }
              else
@@ -157,43 +165,47 @@ _elm_module_load(Elm_Module *m)
           }
         else if (m->module)
           {
-            eina_module_free(m->module);
-            m->module = NULL;
+             eina_module_free(m->module);
+             m->module = NULL;
           }
      }
 
-   if (!m->module)
+   if (m->module) return EINA_TRUE;
+
+   snprintf(buf, sizeof(buf),
+            "%s/elementary/modules/%s/%s/module"EFL_SHARED_EXTENSION,
+            _elm_lib_dir, m->name, MODULE_ARCH);
+   m->module = eina_module_new(buf);
+   if ((m->module) && (eina_module_load(m->module) == EINA_TRUE))
      {
-        snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
-        m->module = eina_module_new(buf);
-        if (m->module && eina_module_load (m->module) == EINA_TRUE)
+        m->init_func = eina_module_symbol_get(m->module, "elm_modapi_init");
+        if (m->init_func)
           {
-             m->init_func = eina_module_symbol_get(m->module, "elm_modapi_init");
-             if (m->init_func)
+             m->shutdown_func =
+               eina_module_symbol_get(m->module, "elm_modapi_shutdown");
+             m->so_path = eina_stringshare_add(buf);
+             snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s",
+                      _elm_lib_dir, m->name, MODULE_ARCH);
+             m->bin_dir = eina_stringshare_add(buf);
+             snprintf(buf, sizeof(buf), "%s/elementary/modules/%s",
+                      _elm_lib_dir, m->name);
+             m->data_dir = eina_stringshare_add(buf);
+          }
+        else
+          {
+             if (m->module)
                {
-                  m->shutdown_func = eina_module_symbol_get(m->module, "elm_modapi_shutdown");
-                  m->so_path = eina_stringshare_add(buf);
-                  snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, m->name, MODULE_ARCH);
-                  m->bin_dir = eina_stringshare_add(buf);
-                  snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, m->name);
-                  m->data_dir = eina_stringshare_add(buf);
+                  eina_module_unload(m->module);
+                  eina_module_free(m->module);
+                  m->module = NULL;
                }
-             else
-               {
-                  if (m->module)
-                    {
-                       eina_module_unload(m->module);
-                       eina_module_free(m->module);
-                       m->module = NULL;
-                    }
-                  return EINA_FALSE;
-               }
+             return EINA_FALSE;
           }
      }
    else if (m->module)
      {
-       eina_module_free(m->module);
-       m->module = NULL;
+        eina_module_free(m->module);
+        m->module = NULL;
      }
 
    if (!m->module) return EINA_FALSE;

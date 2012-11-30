@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib \
 -I$(top_srcdir)/src/bin \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
@@ -28,12 +29,17 @@ AM_CPPFLAGS = \
 @EIO_CFLAGS@ \
 @EMOTION_CFLAGS@
 
-bin_PROGRAMS = @ELEMENTARY_TEST_PRG@ @ELEMENTARY_CONFIG_PRG@  @ELEMENTARY_CODEGEN_PRG@
+bin_PROGRAMS = \
+@ELEMENTARY_TEST_PRG@ \
+@ELEMENTARY_CONFIG_PRG@  \
+@ELEMENTARY_CODEGEN_PRG@ \
+@ELM_PREFS_CC_PRG@
+
 if BUILD_QUICKLAUNCH
 bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
 endif
 
-EXTRA_PROGRAMS = elementary_test elementary_config elementary_codegen
+EXTRA_PROGRAMS = elementary_test elementary_config elementary_codegen elm_prefs_cc
 
 elementary_test_SOURCES = \
 test.c \
@@ -102,6 +108,7 @@ test_panes.c \
 test_photo.c \
 test_photocam.c \
 test_popup.c \
+test_prefs.c \
 test_progressbar.c \
 test_radio.c \
 test_scaling.c \
@@ -169,6 +176,22 @@ elementary_codegen_LDADD = \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
 elementary_codegen_LDFLAGS =
+
+noinst_HEADERS = \
+elm_prefs_cc.h
+
+elm_prefs_cc_SOURCES = \
+elm_prefs_cc.c \
+elm_prefs_cc_mem.c \
+elm_prefs_cc_out.c \
+elm_prefs_cc_parse.c \
+elm_prefs_cc_handlers.c
+
+elm_prefs_cc_LDADD = \
+$(top_builddir)/src/lib/libelementary.la \
+@ELEMENTARY_LIBS@ \
+@EIO_LIBS@ \
+@my_libs@
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c

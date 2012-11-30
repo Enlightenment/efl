@@ -126,6 +126,7 @@ void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index_horizontal(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
+void test_prefs(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
 void test_icon_desktops(void *data, Evas_Object *obj, void *event_info);
 void test_icon_animated(void *data, Evas_Object *obj, void *event_info);
@@ -524,6 +525,9 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Buttons", test_button);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Prefs", "Prefs", test_prefs);
 
    //------------------------------//
    ADD_TEST(NULL, "Effects", "Transit", test_transit);

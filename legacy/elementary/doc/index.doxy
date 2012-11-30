@@ -16,6 +16,7 @@
  * @li @ref General
  * @li @ref Elm_Gesture_Layer
  * @li @ref Password_last_show
+ * @li @ref elm-prefs-data
  * @li @ref Start
  * @li @ref Scrolling
  * @li @ref Scrollhints
@@ -178,8 +179,13 @@
  * @image latex img/widget/photocam/preview-00.eps
  * @li @ref Popup
  *
- * @image html img/widget/popup/preview-00.png
- * @image latex img/widget/popup/preview-00.eps
+ * @li @ref Prefs
+ *
+ * @image html img/widget/prefs/preview-00.png
+ * @image latex img/widget/prefs/preview-00.eps
+ * @image html img/prefs.png
+ * @image latex img/prefs.eps
+ *
  * @li @ref Progressbar
  *
  * @image html img/widget/progressbar/preview-00.png

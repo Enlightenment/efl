@@ -705,11 +705,13 @@ AC_SUBST(requirement_elm)
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
+EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 EFL_ENABLE_BIN([elementary-test])
 EFL_ENABLE_BIN([elementary-codegen])
+EFL_ENABLE_BIN([elm-prefs-cc])
 EFL_ENABLE_BIN([elementary-config])
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
@@ -767,6 +769,7 @@ src/lib/Makefile
 src/lib/Elementary.h
 src/bin/Makefile
 src/modules/Makefile
+src/modules/prefs/Makefile
 src/modules/access_output/Makefile
 src/modules/datetime_input_ctxpopup/Makefile
 src/modules/test_entry/Makefile
@@ -826,6 +829,7 @@ echo "  edje_cc..................: ${edje_cc}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
 echo "  Build elementary_codegen.: ${have_elementary_codegen}"
+echo "  Build elm_prefs_cc.......: ${have_elm_prefs_cc}"
 echo "  Examples.................: ${enable_build_examples}"
 echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"

@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/bin \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DDOCW_DIR=\"$(abs_top_builddir)/doc/widgets\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_FB_CFLAGS@ \
@@ -20,6 +21,15 @@ AM_CPPFLAGS = \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @EIO_CFLAGS@
+
+ELM_PREFS_CC = @elm_prefs_cc@
+
+noinst_DATA = widget_preview_prefs.epb
+
+widget_preview_prefs.epb: Makefile widget_preview_prefs.epc
+	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
+	$(top_srcdir)/doc/widgets/widget_preview_prefs.epc \
+	$(top_builddir)/doc/widgets/widget_preview_prefs.epb
 
 noinst_PROGRAMS = \
 widget_preview_actionslider \
@@ -81,6 +91,7 @@ widget_preview_panel \
 widget_preview_panes \
 widget_preview_photocam \
 widget_preview_popup \
+widget_preview_prefs \
 widget_preview_progressbar \
 widget_preview_radio \
 widget_preview_scroller \
@@ -158,6 +169,8 @@ EXTRA_DIST = \
 	widget_preview_genlist3.c \
 	widget_preview_genlist4.c \
 	widget_preview_genlist5.c \
+	widget_preview_prefs.c \
+	widget_preview_prefs.epc \
 	widget_preview_progressbar.c \
 	widget_preview_box.c \
 	widget_preview_notify.c \

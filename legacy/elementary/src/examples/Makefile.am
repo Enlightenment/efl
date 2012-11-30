@@ -35,6 +35,8 @@ EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
 EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 
+ELM_PREFS_CC = @elm_prefs_cc@
+
 ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/@ELEMENTARY_CODEGEN_PRG@
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
 
@@ -113,6 +115,9 @@ notify_example_01.c \
 panes_example.c \
 panel_example_01.c \
 photocam_example_01.c \
+prefs_example_01.c \
+prefs_example_02.c \
+prefs_example_03.c \
 popup_example_01.c \
 popup_example_02.c \
 popup_example_03.c \
@@ -144,6 +149,9 @@ win_example.c
 .edc.edj:
 	$(EDJE_CC) $(EDJE_FLAGS) $< $@
 
+.epc.epb:
+	$(ELM_PREFS_CC) $< $@
+
 if EFL_INSTALL_EXAMPLES
 files_DATA += $(SRCS) \
 	dict.txt
@@ -151,12 +159,16 @@ endif
 
 if EFL_BUILD_EXAMPLES
 files_DATA += \
+	prefs_example_01.epb \
+	prefs_example_02.epb \
+	prefs_example_03.epb \
+	prefs_example_03.edj \
 	theme_example.edj \
 	layout_example.edj\
 	codegen_example.edj
 
 clean-local:
-	rm -f *.edj
+	rm -f *.edj *.epb *.cfg *.cfg.bkp
 
 codegen_example_generated.c codegen_example_generated.h: codegen_example.edj
 	$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) codegen_example.edj \
@@ -240,6 +252,9 @@ notify_example_01 \
 panes_example \
 panel_example_01 \
 photocam_example_01 \
+prefs_example_01 \
+prefs_example_02 \
+prefs_example_03 \
 popup_example_01 \
 popup_example_02 \
 popup_example_03 \
