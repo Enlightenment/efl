@@ -172,15 +172,10 @@ _item_content_signals_emit(Elm_Naviframe_Item *it)
    EINA_INLIST_FOREACH(it->content_list, content_pair)
      {
         if (edje_object_part_swallow_get(VIEW(it), content_pair->part))
-          {
-             snprintf(buf, sizeof(buf), "elm,state,%s,show", content_pair->part);
-             edje_object_signal_emit(VIEW(it), buf, "elm");
-          }
+          snprintf(buf, sizeof(buf), "elm,state,%s,show", content_pair->part);
         else
-          {
-             snprintf(buf, sizeof(buf), "elm,state,%s,hide", content_pair->part);
-             edje_object_signal_emit(VIEW(it), buf, "elm");
-          }
+          snprintf(buf, sizeof(buf), "elm,state,%s,hide", content_pair->part);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
      }
 }
 
@@ -203,15 +198,10 @@ _item_text_signals_emit(Elm_Naviframe_Item *it)
    EINA_INLIST_FOREACH(it->text_list, text_pair)
      {
         if (edje_object_part_text_get(VIEW(it), text_pair->part))
-          {
-             snprintf(buf, sizeof(buf), "elm,state,%s,show", text_pair->part);
-             edje_object_signal_emit(VIEW(it), buf, "elm");
-          }
+          snprintf(buf, sizeof(buf), "elm,state,%s,show", text_pair->part);
         else
-          {
-             snprintf(buf, sizeof(buf), "elm,state,%s,hide", text_pair->part);
-             edje_object_signal_emit(VIEW(it), buf, "elm");
-          }
+          snprintf(buf, sizeof(buf), "elm,state,%s,hide", text_pair->part);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
      }
 }
 
