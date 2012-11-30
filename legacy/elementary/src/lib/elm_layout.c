@@ -594,11 +594,12 @@ _elm_layout_smart_signal_callback_del(Eo *obj, void *_pd, va_list *list)
              eina_stringshare_del(esd->emission);
              eina_stringshare_del(esd->source);
              data = esd->data;
-             free(esd);
 
              edje_object_signal_callback_del_full
                (wd->resize_obj, emission, source,
                _edje_signal_callback, esd);
+
+             free(esd);
 
              if (ret) *ret = data;
              return; /* stop at 1st match */

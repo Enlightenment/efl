@@ -725,11 +725,12 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
              eina_stringshare_del(esd->emission);
              eina_stringshare_del(esd->source);
              data = esd->data;
-             free(esd);
 
              edje_object_signal_callback_del_full
                (id->img, emission, source,
                _edje_signal_callback, esd);
+
+             free(esd);
 
              return data; /* stop at 1st match */
           }
