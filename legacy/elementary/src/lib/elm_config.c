@@ -1317,7 +1317,7 @@ _config_update(void)
      {
         /* weird profile or something? We should probably fill
          * with hardcoded defaults, or get from default previx */
-          return;
+        return;
      }
 #define IFCFG(v)   if ((_elm_config->config_version & 0xffff) < (v)) {
 #define IFCFGELSE } else {
@@ -1332,6 +1332,28 @@ _config_update(void)
 
      IFCFG(0x0003);
      COPYVAL(longpress_timeout);
+     IFCFGEND;
+
+     IFCFG(0x0004);
+
+#define PREFS_IFACE_MODULE_STR "prefs>prefs_iface"
+
+     const char *new = NULL;
+     if (!_elm_config->modules)
+       new = eina_stringshare_add(PREFS_IFACE_MODULE_STR);
+     else
+       {
+          if (!strstr(_elm_config->modules, PREFS_IFACE_MODULE_STR))
+            new = eina_stringshare_printf
+                ("%s:%s", orig_modules, PREFS_IFACE_MODULE_STR);
+       }
+
+     if (new)
+       {
+          eina_stringshare_del(_elm_config->modules);
+          _elm_config->modules = new;
+       }
+
      IFCFGEND;
 
 #undef COPYSTR
