@@ -189,6 +189,7 @@ ALIASES               += parameters="</tt></td><td class=\"parameters\"><tt>"
 ALIASES               += effect="</tt></td></tr><tr><td>&nbsp;</td><td class=\"effect\">"
 ALIASES               += endproperty="</td></tr></table></td></tr>"
 ALIASES               += edcsection{2}="<tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+ALIASES               += edcsubsection{2}="<tr class=\"subsection\"><td class=\"subsection\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
 
 # Aliases used by luaref
 ALIASES               += luaclass{2}="\anchor \1 \n<div class=\"luaclass\">\2</div>"

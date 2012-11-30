@@ -289,6 +289,18 @@ table.edcref tr.section td.section a {
         text-decoration: none;
 }
 
+table.edcref tr.subsection td.subsection, div.luaclass {
+        color: #888;
+        font-size: 11pt;
+        padding: 1px;
+        text-align: center;
+}
+
+table.edcref tr.subsection td.subsection a {
+        color: #888;
+        text-decoration: none;
+}
+
 div.luaattrib {
         color: #888;
         border: 1px solid #ccc;

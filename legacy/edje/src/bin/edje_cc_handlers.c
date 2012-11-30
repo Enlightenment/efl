@@ -48,16 +48,69 @@
  * @anchor sec_quickaccess Quick access to block descriptions:
  * <ul>
  *    <li>@ref sec_toplevel "Top-Level"</li>
- *    <li>@ref sec_group "Group"</li>
- *    <li>@ref sec_description "State description"</li>
  *    <ul>
- *      <li>@ref sec_description_image "Image"</li>
- *      <li>@ref sec_description_text "Text"</li>
- *      <li>@ref sec_description_box "Box"</li>
- *      <li>@ref sec_description_table "Table"</li>
- *      <li>@ref sec_description_map "Map (3d/transformations)"</li>
+ *      <li>@ref sec_toplevel_externals "Externals"</li>
+ *      <li>@ref sec_toplevel_images "Images"</li>
+ *      <ul>
+ *        <li>@ref sec_toplevel_images_set "Set"</li>
+ *        <ul>
+ *          <li>@ref sec_toplevel_images_image "Image"</li>
+ *        </ul>
+ *      </ul>
+ *      <li>@ref sec_toplevel_fonts "Fonts"</li>
+ *      <li>@ref sec_toplevel_data "Data"</li>
+ *      <li>@ref sec_toplevel_color_classes "Color Classes"</li>
+ *      <li>@ref sec_toplevel_styles "Styles"</li>
  *    </ul>
- *    <li>@ref sec_program "Program block"</li>
+ *    <li>@ref sec_collections "Collections"</li>
+ *    <ul>
+ *      <li>@ref sec_collections_sounds "Sounds"</li>
+ *      <ul>
+ *        <li>@ref sec_collections_sounds_sample "Sample"</li>
+ *      </ul>
+ *      <li>@ref sec_collections_group "Group"</li>
+ *      <ul>
+ *        <li>@ref sec_collections_group_script "Script"</li>
+ *        <li>@ref sec_collections_group_limits "Limits"</li>
+ *        <li>@ref sec_toplevel_data "Data"</li>
+ *        <li>@ref sec_collections_group_parts "Parts"</li>
+ *        <ul>
+ *          <li>@ref sec_collections_group_parts_part "Part"</li>
+ *          <ul>
+ *            <li>@ref sec_collections_group_parts_dragable "Dragable"</li>
+ *            <li>@ref sec_collections_group_parts_items "Items"</li>
+ *            <li>@ref sec_collections_group_parts_description "Description"</li>
+ *            <ul>
+ *              <li>@ref sec_collections_group_parts_description_relatives "Relatives (rel1/rel2)"</li>
+ *              <li>@ref sec_collections_group_parts_description_image "Image"</li>
+ *              <ul>
+ *                <li>@ref sec_collections_group_parts_description_image_fill "Fill"</li>
+ *                <ul>
+ *                  <li>@ref sec_collections_group_parts_description_image_fill_origin "Origin"</li>
+ *                  <li>@ref sec_collections_group_parts_description_image_fill_size "Size"</li>
+ *                </ul>
+ *              </ul>
+ *              <li>@ref sec_collections_group_parts_description_text "Text"</li>
+ *              <li>@ref sec_collections_group_parts_description_box "Box"</li>
+ *              <ul>
+ *                <li>@ref sec_collections_group_parts_items "Items"</li>
+ *              </ul>
+ *              <li>@ref sec_collections_group_parts_description_table "Table"</li>
+ *              <li>@ref sec_collections_group_parts_description_map "Map (3d/transformations)"</li>
+ *              <ul>
+ *                <li>@ref sec_collections_group_parts_description_map_rotation "Rotation"</li>
+ *              </ul>
+ *              <li>@ref sec_collections_group_parts_description_perspective "Perspective"</li>
+ *              <li>@ref sec_collections_group_parts_descriptions_params "Params"</li>
+ *            </ul>
+ *          </ul>
+ *        </ul>
+ *        <li>@ref sec_collections_group_programs "Programs"</li>
+ *        <ul>
+ *          <li>@ref sec_collections_group_script "Script"</li>
+ *        </ul>
+ *      </ul>
+ *    </ul>
  * </ul>
  *
  * @author Andres Blanc (dresb) andresblanc@gmail.com
@@ -1151,6 +1204,10 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
  */
 
 /**
+   @edcsubsection{toplevel_externals,Externals}
+ */
+
+/**
     @page edcref
 
     @block
@@ -1216,6 +1273,10 @@ st_externals_external(void)
 	edje_file->external_dir->entries[edje_file->external_dir->entries_count - 1].entry = mem_strdup(ex->name);
      }
 }
+
+/**
+   @edcsubsection{toplevel_images,Images}
+ */
 
 /**
     @page edcref
@@ -1343,6 +1404,10 @@ st_images_image(void)
 }
 
 /**
+   @edcsubsection{toplevel_images_set,Set}
+ */
+
+/**
     @page edcref
 
     @block
@@ -1412,6 +1477,10 @@ st_images_set_name(void)
 
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].name = parse_str(0);
 }
+
+/**
+   @edcsubsection{toplevel_images_image,Image}
+ */
 
 /**
     @page edcref
@@ -1513,6 +1582,10 @@ st_images_set_image_size(void)
 }
 
 /**
+   @edcsubsection{toplevel_fonts,Fonts}
+ */
+
+/**
     @page edcref
 
     @block
@@ -1562,6 +1635,10 @@ st_fonts_font(void)
 
    eina_hash_direct_add(edje_file->fonts, fn->name, fn);
 }
+
+/**
+   @edcsubsection{toplevel_data,Data}
+ */
 
 /**
     @page edcref
@@ -1683,6 +1760,10 @@ st_data_file(void)
 
    free(filename);
 }
+
+/**
+   @edcsubsection{toplevel_color_classes,Color Classes}
+ */
 
 /**
     @page edcref
@@ -1831,6 +1912,10 @@ st_color_class_color3(void)
 }
 
 /**
+   @edcsubsection{toplevel_styles,Styles}
+ */
+
+/**
     @page edcref
     @block
         styles
@@ -1946,6 +2031,10 @@ st_styles_style_tag(void)
 }
 
 /**
+   @edcsection{collections,Collections Blocks}
+ */
+
+/**
     @page edcref
     @block
         collections
@@ -1974,6 +2063,10 @@ ob_collections(void)
 }
 
 /**
+   @edcsubsection{collections_sounds,Sounds}
+ */
+
+/**
     @page edcref
     @block
         sounds
@@ -1993,6 +2086,14 @@ ob_collections(void)
     @description
         The "sounds" block contains a list of one or more sound sample and tones items.
     @endblock
+*/
+
+/**
+   @edcsubsection{collections_sounds_sample,Sample}
+ */
+
+/**
+    @page edcref
     @block
         sample
     @context
@@ -2187,7 +2288,7 @@ st_collections_group_sound_tone(void)
 }
 
 /**
-   @edcsection{group,Group sub blocks}
+   @edcsubsection{collections_group,Group}
  */
 
 /**
@@ -2706,6 +2807,10 @@ st_collections_group_broadcast_signal(void)
 }
 
 /**
+   @edcsubsection{collections_group_script,Script}
+ */
+
+/**
     @page edcref
     @block
         script
@@ -2849,6 +2954,10 @@ st_collections_group_orientation(void)
 }
 
 /**
+   @edcsubsection{collections_group_limits,Limits}
+ */
+
+/**
     @page edcref
     @block
         limits
@@ -2942,6 +3051,10 @@ st_collections_group_limits_horizontal(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts,Parts}
+ */
+
+/**
     @page edcref
     @block
         parts
@@ -2978,6 +3091,9 @@ st_collections_group_parts_alias(void)
    eina_hash_add(pc->aliased, aliased, alias);
 }
 
+/**
+   @edcsubsection{collections_group_parts_part,Part}
+ */
 
 /**
     @page edcref
@@ -3858,6 +3974,10 @@ st_collections_group_parts_part_access(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_dragable,Dragable}
+ */
+
+/**
     @page edcref
     @block
         dragable
@@ -3985,6 +4105,10 @@ st_collections_group_parts_part_dragable_events(void)
 	free(name);
      }
 }
+
+/**
+   @edcsubsection{collections_group_parts_items,Items}
+ */
 
 /**
     @page edcref
@@ -4390,7 +4514,7 @@ static void st_collections_group_parts_part_table_items_item_span(void)
 }
 
 /**
-   @edcsection{description,State description sub blocks}
+   @edcsubsection{collections_group_parts_description,Description}
  */
 
 /**
@@ -5241,6 +5365,10 @@ st_collections_group_parts_part_description_color3(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_description_relatives,Relatives (rel1/rel2)}
+ */
+
+/**
     @page edcref
     @block
         rel1/rel2
@@ -5473,7 +5601,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 }
 
 /**
-   @edcsection{description_image,Image state description sub blocks}
+   @edcsubsection{collections_group_parts_description_image,Image}
  */
 
 /**
@@ -5754,6 +5882,10 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_description_image_fill,Fill}
+ */
+
+/**
     @page edcref
     @block
         fill
@@ -5931,6 +6063,10 @@ st_collections_group_parts_part_description_fill_type(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_description_image_fill_origin,Origin}
+ */
+
+/**
     @page edcref
     @block
         origin
@@ -6050,6 +6186,10 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    fill->pos_abs_x = parse_int(0);
    fill->pos_abs_y = parse_int(1);
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_image_fill_size,Size}
+ */
 
 /**
     @page edcref
@@ -6176,7 +6316,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
 
 
 /**
-   @edcsection{description_text,Text state description sub blocks}
+   @edcsubsection{collections_group_parts_description_text,Text}
  */
 
 /**
@@ -6703,7 +6843,7 @@ st_collections_group_parts_part_description_text_elipsis(void)
 
 
 /**
-   @edcsection{description_box,Box state description sub blocks}
+   @edcsubsection{collections_group_parts_description_box,Box}
  */
 
 /**
@@ -6858,7 +6998,7 @@ st_collections_group_parts_part_description_box_min(void)
 
 
 /**
-   @edcsection{description_table,Table state description sub blocks}
+   @edcsubsection{collections_group_parts_description_table,Table}
  */
 
 /**
@@ -7004,7 +7144,7 @@ st_collections_group_parts_part_description_table_min(void)
 }
 
 /**
-   @edcsection{description_map,Map state description sub blocks}
+   @edcsubsection{collections_group_parts_description_map,Map}
  */
 
 /**
@@ -7200,6 +7340,11 @@ st_collections_group_parts_part_description_map_perspective_on(void)
 
    current_desc->map.persp_on = parse_bool(0);
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_map_rotation,Rotation}
+ */
+
 /**
     @page edcref
     @block
@@ -7307,6 +7452,10 @@ st_collections_group_parts_part_description_map_rotation_z(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_description_perspective,Perspective}
+ */
+
+/**
     @page edcref
     @block
         perspective
@@ -7363,7 +7512,7 @@ st_collections_group_parts_part_description_perspective_focal(void)
 
 
 /**
-   @edcsection{description_params,Params state description sub blocks}
+   @edcsubsection{collections_group_parts_descriptions_params,Params}
  */
 
 /**
@@ -7537,13 +7686,13 @@ st_collections_group_parts_part_description_params_choice(void)
 
 
 /**
-   @edcsection{program, Program block}
+   @edcsubsection{collections_group_programs,Programs}
  */
 
 /**
     @page edcref
     @block
-        program
+        programs
     @context
         group {
             programs {
