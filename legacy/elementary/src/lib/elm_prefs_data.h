@@ -31,6 +31,29 @@
  */
 
 /**
+ * Elm Prefs item types.
+ *
+ * @since 1.8
+ */
+typedef enum _Elm_Prefs_Item_Type
+{
+   ELM_PREFS_TYPE_UNKNOWN = 0,
+   ELM_PREFS_TYPE_ACTION, /***< action type, bound to button-like UI elements */
+   ELM_PREFS_TYPE_BOOL, /**< boolean type, bound to checkbox-like UI elements */
+   ELM_PREFS_TYPE_INT, /**< integer type, bound to spinner-like UI elements */
+   ELM_PREFS_TYPE_FLOAT, /**< floating point type, bound to spinner-like UI elements */
+   ELM_PREFS_TYPE_LABEL, /**< label type, bound to read-only, label UI elements */
+   ELM_PREFS_TYPE_DATE, /**< date type, bound to date selection UI elements */
+   ELM_PREFS_TYPE_TEXT, /**< text type, bound to single-line, text entry UI elements */
+   ELM_PREFS_TYPE_TEXTAREA, /**< text area type, bound to multi-line, text entry UI elements */
+   ELM_PREFS_TYPE_PAGE, /**< page type, used to nest pages */
+   ELM_PREFS_TYPE_RESET, /**< values resetting trigger type, bound to button-like UI elements */
+   ELM_PREFS_TYPE_SAVE, /**< saving trigger type, bound to button-like UI elements */
+   ELM_PREFS_TYPE_SEPARATOR, /**< separator type, bound to separator-like UI elements */
+   ELM_PREFS_TYPE_SWALLOW /**< swallow type, bound to an empty 'spot' on the UI meant to receive and display external content */
+} Elm_Prefs_Item_Type;
+
+/**
  * Types of events a given prefs data handle may issue.
  *
  * @see elm_prefs_data_event_callback_add()
@@ -172,8 +195,6 @@ EAPI void            elm_prefs_data_unref(Elm_Prefs_Data *prefs_data);
  *
  * @since 1.8
  */
-typedef enum _Elm_Prefs_Item_Type Elm_Prefs_Item_Type;
-
 EAPI Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
                                               const char *path,
                                               const Elm_Prefs_Item_Type type,

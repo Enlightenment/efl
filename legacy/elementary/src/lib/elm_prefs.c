@@ -1497,7 +1497,7 @@ _elm_prefs_item_value_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Prefs_Item_Node *it;
 
    const char *name = va_arg(*list, const char *);
-   const Eina_Value *value = va_arg(*list, const Eina_Value *);
+   Eina_Value *value = va_arg(*list, Eina_Value *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
    it = _elm_prefs_item_api_entry_common(obj, name);
