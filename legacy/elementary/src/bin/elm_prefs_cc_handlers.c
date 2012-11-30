@@ -37,6 +37,9 @@
 
 #include "elm_prefs_cc.h"
 
+void check_min_arg_count(int min_required_args);
+int params_min_check(int n);
+
 /**
  * @page epcref Elementary Prefs Data Collection Reference
  * An Elementary Prefs Collection is a plain text file (normally
