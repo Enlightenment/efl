@@ -11050,8 +11050,7 @@ EAPI const char                              *evas_object_textblock_replace_char
  *
  * Normally alignment is 0.0 (top of object). Values given should be
  * between 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered
- * etc.). Function sets 0.0 on values less than 0.0 and 1.0 on values
- * greater than 1.0.
+ * etc.).
  *
  * @param obj The given textblock object.
  * @param align A value between @c 0.0 and @c 1.0.
