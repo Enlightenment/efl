@@ -42,12 +42,11 @@ _elm_prefs_items_change(void *data)
 static void
 _action_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *prefs, *notify = data;
+   Evas_Object *notify = data;
    Elm_Prefs_Data *prefs_data;
    Elm_Prefs_Item_Type type;
    Eina_Value value;
 
-   prefs = evas_object_data_get(notify, "prefs");
    prefs_data = evas_object_data_get(notify, "prefs_data");
 
    if (elm_prefs_data_value_get(prefs_data, "main:text", &type, &value))
@@ -60,7 +59,6 @@ _action_cb(void *data, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Ecore_Timer *timer;
    Evas_Object *win, *prefs, *notify, *label;
    Elm_Prefs_Data *prefs_data;
 
@@ -101,7 +99,7 @@ elm_main(int argc, char **argv)
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 
-   timer = ecore_timer_add(5.0, _elm_prefs_items_change, notify);
+   ecore_timer_add(5.0, _elm_prefs_items_change, notify);
 
    elm_run();
 
