@@ -24,7 +24,9 @@ elm_prefs_datetime_add(const Elm_Prefs_Item_Iface *iface __UNUSED__,
                        Elm_Prefs_Item_Changed_Cb cb)
 {
    Evas_Object *obj = elm_datetime_add(prefs);
-   struct tm time = {0};
+   struct tm t;
+
+   memset(&t, 0, sizeof t);
 
    elm_datetime_field_visible_set(obj, ELM_DATETIME_HOUR, EINA_FALSE);
    elm_datetime_field_visible_set(obj, ELM_DATETIME_MINUTE, EINA_FALSE);
@@ -32,17 +34,17 @@ elm_prefs_datetime_add(const Elm_Prefs_Item_Iface *iface __UNUSED__,
 
    evas_object_smart_callback_add(obj, "changed", _item_changed_cb, cb);
 
-   time.tm_year = spec.d.min.y - 1900;
-   time.tm_mon = spec.d.min.m - 1;
-   time.tm_mday = spec.d.min.d;
+   t.tm_year = spec.d.min.y - 1900;
+   t.tm_mon = spec.d.min.m - 1;
+   t.tm_mday = spec.d.min.d;
 
-   elm_datetime_value_min_set(obj, &time);
+   elm_datetime_value_min_set(obj, &t);
 
-   time.tm_year = spec.d.max.y - 1900;
-   time.tm_mon = spec.d.max.m - 1;
-   time.tm_mday = spec.d.max.d;
+   t.tm_year = spec.d.max.y - 1900;
+   t.tm_mon = spec.d.max.m - 1;
+   t.tm_mday = spec.d.max.d;
 
-   elm_datetime_value_max_set(obj, &time);
+   elm_datetime_value_max_set(obj, &t);
 
    return obj;
 }
@@ -52,16 +54,16 @@ elm_prefs_datetime_value_set(Evas_Object *obj,
                              Eina_Value *value)
 {
    struct timeval val;
-   struct tm *time;
+   struct tm *t;
 
    if (eina_value_type_get(value) != EINA_VALUE_TYPE_TIMEVAL)
      return EINA_FALSE;
 
    eina_value_get(value, &val);
 
-   time = gmtime(&(val.tv_sec));
+   t = gmtime(&(val.tv_sec));
 
-   if (elm_datetime_value_set(obj, time)) return EINA_TRUE;
+   if (elm_datetime_value_set(obj, t)) return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -70,12 +72,14 @@ static Eina_Bool
 elm_prefs_datetime_value_get(Evas_Object *obj,
                              Eina_Value *value)
 {
-   struct timeval val = {0};
-   struct tm time;
+   struct timeval val;
+   struct tm t;
 
-   if (!elm_datetime_value_get(obj, &time)) return EINA_FALSE;
+   memset(&val, 0, sizeof val);
 
-   val.tv_sec = mktime(&time);
+   if (!elm_datetime_value_get(obj, &t)) return EINA_FALSE;
+
+   val.tv_sec = mktime(&t);
 
    if (!eina_value_setup(value, EINA_VALUE_TYPE_TIMEVAL)) return EINA_FALSE;
    if (!eina_value_set(value, val)) return EINA_FALSE;
