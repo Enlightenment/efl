@@ -187,3 +187,6 @@ EXTRA_DIST = \
 	widget_preview_web.c \
 	widget_preview_tmpl_foot.c \
 	widget_preview_tmpl_head.c
+
+clean-local:
+	rm -f widget_preview_prefs.epb

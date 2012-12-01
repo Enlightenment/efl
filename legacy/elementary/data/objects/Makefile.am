@@ -80,3 +80,4 @@ test_prefs.epb: Makefile test_prefs.epc
 
 clean-local:
 	rm -f *.edj
+	rm -f test_prefs.epb
