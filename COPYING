@@ -7,4 +7,5 @@ eet:             licenses/COPYING.BSD
 eina:            licenses/COPYING.LGPL
 eo:              licenses/COPYING.BSD
 evas:            licenses/COPYING.BSD
+ecore:           licenses/COPYING.BSD
 embryo:          licenses/COPYING.SMALL
