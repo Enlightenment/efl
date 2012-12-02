@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-con
+Description: E core library, Con module
+Requires.private: @requirements_pc_ecore_con@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_con
+Libs.private: @requirements_libs_ecore_con@
+Cflags: -I${includedir}/ecore-@VMAJ@

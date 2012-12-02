@@ -1,0 +1,186 @@
+
+### Library
+
+lib_LTLIBRARIES += \
+lib/ecore_imf/libecore_imf.la \
+lib/ecore_imf/libecore_imf_evas.la
+
+installed_ecoreimfmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreimfmainheaders_DATA = \
+lib/ecore_imf/Ecore_IMF.h
+
+lib_ecore_imf_libecore_imf_la_SOURCES = \
+lib/ecore_imf/ecore_imf.c \
+lib/ecore_imf/ecore_imf_context.c \
+lib/ecore_imf/ecore_imf_module.c \
+lib/ecore_imf/ecore_imf_private.h
+
+lib_ecore_imf_libecore_imf_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_imf \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_ECORE_IMF_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_imf_libecore_imf_la_LIBADD = \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_imf_libecore_imf_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+installed_ecoreimfevasmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreimfevasmainheaders_DATA = \
+lib/ecore_imf/Ecore_IMF_Evas.h
+
+lib_ecore_imf_libecore_imf_evas_la_SOURCES = \
+lib/ecore_imf/ecore_imf_evas.c
+
+lib_ecore_imf_libecore_imf_evas_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_srcdir)/src/lib/ecore_imf_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_imf_evas \
+-DEFL_ECORE_IMF_EVAS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_imf_libecore_imf_evas_la_LIBADD = \
+lib/ecore_imf/libecore_imf.la \
+lib/ecore/libecore.la \
+lib/evas/libevas.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_imf_libecore_imf_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+
+### Modules
+
+# Ibus
+
+if BUILD_ECORE_IMF_IBUS
+ecoreimfibuspkgdir = $(libdir)/ecore/immodules
+ecoreimfibuspkg_LTLIBRARIES = modules/ecore/immodules/ibus/ibus.la
+modules_ecore_immodules_ibus_ibus_la_SOURCES = \
+modules/ecore/immodules/ibus/ibus_module.c \
+modules/ecore/immodules/ibus/ibus_imcontext.c \
+modules/ecore/immodules/ibus/ibus_imcontext.h
+modules_ecore_immodules_ibus_ibus_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_evas \
+-DEFL_ECORE_IMF_EVAS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@IBUS_CFLAGS@
+modules_ecore_immodules_ibus_ibus_la_LIBADD = \
+lib/ecore_imf/libecore_evas.la \
+lib/ecore_imf/libecore_imf.la \
+lib/ecore_x/libecore_x.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+@IBUS_LIBS@
+modules_ecore_immodules_ibus_ibus_la_LDFLAGS = -no-undefined -module -avoid-version
+modules_ecore_immodules_ibus_ibus_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+
+# Scim
+
+if BUILD_ECORE_IMF_SCIM
+ecoreimfscimpkgdir = $(libdir)/ecore/immodules
+ecoreimfscimpkg_LTLIBRARIES = modules/ecore/immodules/scim/scim.la
+modules_ecore_immodules_scim_scim_la_SOURCES = \
+modules/ecore/immodules/scim/scim_module.cpp \
+modules/ecore/immodules/scim/scim_imcontext.cpp \
+modules/ecore/immodules/scim/scim_imcontext.h
+modules_ecore_immodules_scim_scim_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_evas \
+-DEFL_ECORE_IMF_EVAS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@SCIM_CFLAGS@
+modules_ecore_immodules_scim_scim_la_LIBADD = \
+lib/ecore_imf/libecore_evas.la \
+lib/ecore_imf/libecore_imf.la \
+lib/ecore_x/libecore_x.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+@SCIM_LIBS@
+modules_ecore_immodules_scim_scim_la_LDFLAGS = -no-undefined -module -avoid-version
+modules_ecore_immodules_scim_scim_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+
+# Xim
+
+if BUILD_ECORE_IMF_XIM
+ecoreimfximpkgdir = $(libdir)/ecore/immodules
+ecoreimfximpkg_LTLIBRARIES = modules/ecore/immodules/xim/xim.la
+modules_ecore_immodules_xim_xim_la_SOURCES = \
+modules/ecore/immodules/xim/ecore_imf_xim.c
+modules_ecore_immodules_xim_xim_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
+-DEFL_ECORE_IMF_EVAS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+modules_ecore_immodules_xim_xim_la_LIBADD = \
+lib/ecore_imf/libecore_imf.la \
+lib/ecore_x/libecore_x.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+modules_ecore_immodules_xim_xim_la_LDFLAGS = -no-undefined -module -avoid-version
+modules_ecore_immodules_xim_xim_la_LIBTOOLFLAGS = --tag=disable-static
+endif

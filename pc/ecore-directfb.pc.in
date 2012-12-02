@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-directfb
+Description: E core library, DirectFB module
+Requires.private: @requirements_pc_ecore_directfb@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_directfb
+Libs.private: @requirements_libs_ecore_directfb@
+Cflags: -I${includedir}/ecore-@VMAJ@

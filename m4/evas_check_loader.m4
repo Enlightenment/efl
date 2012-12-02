@@ -84,7 +84,6 @@ fi
 
 if test "x$2" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
@@ -149,7 +148,6 @@ fi
 
 if test "x$2" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
@@ -350,7 +348,6 @@ fi
 
 if test "x$2" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
@@ -399,7 +396,6 @@ fi
 
 if test "x$2" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])

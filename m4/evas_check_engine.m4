@@ -51,7 +51,6 @@ fi
 
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -174,7 +173,6 @@ fi
 
 if test "x$3" = "xstatic" && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -346,7 +344,6 @@ fi
 
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
    requirements_pc_evas="${requirement} ${requirements_pc_evas}"
    requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
 fi
@@ -376,7 +373,6 @@ AC_CHECK_HEADER([windows.h],
 
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -403,7 +399,6 @@ AC_CHECK_HEADER([ddraw.h],
 
 if test "x$3" = "xstatic" && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -430,7 +425,6 @@ AC_CHECK_HEADERS([d3d9.h d3dx9.h],
 
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -479,7 +473,6 @@ AC_LANG_POP([Objective C])
 
 if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
    requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-   requirements_libs_deps_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_deps_evas}"
 fi
 
 AC_SUBST([evas_engine_$1_cflags])

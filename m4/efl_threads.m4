@@ -28,15 +28,10 @@ case "$host_os" in
       AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
       AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
       ;;
-   solaris*)
-      _efl_enable_posix_threads="yes"
-      _efl_threads_cflags="-mt"
-      _efl_threads_libs="-mt"
-      ;;
    *)
       _efl_enable_posix_threads="yes"
-      _efl_threads_cflags="-pthread"
-      _efl_threads_libs="-pthread"
+      _efl_threads_cflags="-D_REENTRANT"
+      _efl_threads_libs="-lpthread"
       ;;
 esac
 

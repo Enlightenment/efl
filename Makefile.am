@@ -2,6 +2,12 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src data doc
 
+if HAVE_PO
+
+SUBDIRS += po
+
+endif
+
 MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
@@ -53,6 +59,7 @@ old/NEWS.eet \
 old/README.eet \
 spec/efl.spec \
 pc/evil.pc \
+pc/escape.pc \
 pc/eina.pc \
 pc/eet.pc \
 pc/eo.pc \
@@ -65,10 +72,27 @@ pc/evas-software-buffer.pc \
 pc/evas-software-x11.pc \
 pc/evas-software-gdi.pc \
 pc/evas-software-ddraw.pc \
-pc/evas-direct3d.pc \
 pc/evas-psl1ght.pc \
 pc/evas-wayland-shm.pc \
 pc/evas-wayland-egl.pc \
+pc/ecore.pc \
+pc/ecore-con.pc \
+pc/ecore-ipc.pc \
+pc/ecore-file.pc \
+pc/ecore-input.pc \
+pc/ecore-input-evas.pc \
+pc/ecore-cocoa.pc \
+pc/ecore-directfb.pc \
+pc/ecore-fb.pc \
+pc/ecore-psl1ght.pc \
+pc/ecore-sdl.pc \
+pc/ecore-wayland.pc \
+pc/ecore-win32.pc \
+pc/ecore-wince.pc \
+pc/ecore-x.pc \
+pc/ecore-imf.pc \
+pc/ecore-imf-evas.pc \
+pc/ecore-evas.pc \
 pc/embryo.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -78,11 +102,24 @@ if HAVE_WINDOWS
 pkgconfig_DATA += pc/evil.pc
 endif
 
+if HAVE_PS3
+pkgconfig_DATA += pc/escape.pc
+endif
+
 pkgconfig_DATA += \
 pc/eina.pc \
 pc/eo.pc \
 pc/eet.pc \
 pc/evas.pc \
+pc/ecore.pc \
+pc/ecore-con.pc \
+pc/ecore-ipc.pc \
+pc/ecore-file.pc \
+pc/ecore-input.pc \
+pc/ecore-input-evas.pc \
+pc/ecore-imf.pc \
+pc/ecore-imf-evas.pc \
+pc/ecore-evas.pc \
 pc/embryo.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
@@ -121,10 +158,6 @@ if BUILD_ENGINE_SOFTWARE_DDRAW
 pkgconfig_DATA += pc/evas-software-ddraw.pc
 endif
 
-if BUILD_ENGINE_DIRECT3D
-pkgconfig_DATA += pc/evas-direct3d.pc
-endif
-
 if BUILD_ENGINE_PSL1GHT
 pkgconfig_DATA += pc/evas-psl1ght.pc
 endif
@@ -135,6 +168,42 @@ endif
 
 if BUILD_ENGINE_WAYLAND_EGL
 pkgconfig_DATA += pc/evas-wayland-egl.pc
+endif
+
+if HAVE_ECORE_COCOA
+pkgconfig_DATA += pc/ecore-cocoa.pc
+endif
+
+if HAVE_ECORE_DIRECTFB
+pkgconfig_DATA += pc/ecore-directfb.pc
+endif
+
+if HAVE_ECORE_FB
+pkgconfig_DATA += pc/ecore-fb.pc
+endif
+
+if HAVE_PS3
+pkgconfig_DATA += pc/ecore-psl1ght.pc
+endif
+
+if HAVE_ECORE_SDL
+pkgconfig_DATA += pc/ecore-sdl.pc
+endif
+
+if HAVE_ECORE_WAYLAND
+pkgconfig_DATA += pc/ecore-wayland.pc
+endif
+
+if HAVE_WIN32
+pkgconfig_DATA += pc/ecore-win32.pc
+endif
+
+if HAVE_WINCE
+pkgconfig_DATA += pc/ecore-wince.pc
+endif
+
+if HAVE_ECORE_X
+pkgconfig_DATA += pc/ecore-x.pc
 endif
 
 

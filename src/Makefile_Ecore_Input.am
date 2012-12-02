@@ -1,0 +1,70 @@
+
+### Library
+
+lib_LTLIBRARIES += \
+lib/ecore_input/libecore_input.la \
+lib/ecore_input/libecore_input_evas.la
+
+installed_ecoreinputmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreinputmainheaders_DATA = \
+lib/ecore_input/Ecore_Input.h
+
+lib_ecore_input_libecore_input_la_SOURCES = \
+lib/ecore_input/ecore_input.c \
+lib/ecore_input/ecore_input_compose.c \
+lib/ecore_input/ecore_input_compose.h \
+lib/ecore_input/ecore_input_private.h
+
+lib_ecore_input_libecore_input_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-DEFL_ECORE_INPUT_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_input_libecore_input_la_LIBADD = \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_input_libecore_input_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+installed_ecoreinputevasmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreinputevasmainheaders_DATA = \
+lib/ecore_input/Ecore_Input_Evas.h
+
+lib_ecore_input_libecore_input_evas_la_SOURCES = \
+lib/ecore_input/ecore_input_evas.c \
+lib/ecore_input/ecore_input_evas_private.h
+
+lib_ecore_input_libecore_input_evas_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_input_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_input_evas \
+-DEFL_ECORE_INPUT_EVAS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_input_libecore_input_evas_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
+lib/ecore/libecore.la \
+lib/evas/libevas.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_input_libecore_input_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -1,0 +1,37 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_ipc/libecore_ipc.la
+
+installed_ecoreipcmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreipcmainheaders_DATA = \
+lib/ecore_ipc/Ecore_Ipc.h
+
+lib_ecore_ipc_libecore_ipc_la_SOURCES = \
+lib/ecore_ipc/ecore_ipc.c \
+lib/ecore_ipc/ecore_ipc_private.h
+
+lib_ecore_ipc_libecore_ipc_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_ipc \
+-DEFL_ECORE_IPC_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_ipc_libecore_ipc_la_LIBADD = \
+lib/ecore_con/libecore_con.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_ipc_libecore_ipc_la_LIBADD += @EFL_COV_LIBS@ -lm
+
+lib_ecore_ipc_libecore_ipc_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -1,0 +1,42 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_fb/libecore_fb.la
+
+installed_ecorefbmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecorefbmainheaders_DATA = \
+lib/ecore_fb/Ecore_Fb.h
+
+lib_ecore_fb_libecore_fb_la_SOURCES = \
+lib/ecore_fb/ecore_fb.c \
+lib/ecore_fb/ecore_fb_li.c \
+lib/ecore_fb/ecore_fb_ts.c \
+lib/ecore_fb/ecore_fb_vt.c \
+lib/ecore_fb/ecore_fb_keytable.h \
+lib/ecore_fb/ecore_fb_private.h
+# deprecated sources (might not compile):
+# lib/ecore_fb/ecore_fb_kbd.c
+# lib/ecore_fb/ecore_fb_ps2.c
+
+lib_ecore_fb_libecore_fb_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_fb \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_fb \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@ECORE_FB_CFLAGS@
+
+lib_ecore_fb_libecore_fb_la_LIBADD = \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+@ECORE_FB_LIBS@
+
+lib_ecore_fb_libecore_fb_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

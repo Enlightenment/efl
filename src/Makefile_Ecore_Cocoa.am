@@ -1,0 +1,37 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_cocoa/libecore_cocoa.la
+
+installed_ecorecocoamainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecorecocoamainheaders_DATA = \
+lib/ecore_cocoa/Ecore_Cocoa.h \
+lib/ecore_cocoa/Ecore_Cocoa_Keys.h
+
+lib_ecore_cocoa_libecore_cocoa_la_SOURCES = \
+lib/ecore_cocoa/ecore_cocoa.m \
+lib/ecore_cocoa/ecore_cocoa_window.m \
+lib/ecore_cocoa/ecore_cocoa_private.h
+
+lib_ecore_cocoa_libecore_cocoa_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_cocoa \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_cocoa \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_cocoa_libecore_cocoa_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+@ECORE_COCOA_LIBS@
+
+lib_ecore_cocoa_libecore_cocoa_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

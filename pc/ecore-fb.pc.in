@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-fb
+Description: E core library, FB module
+Requires.private: @requirements_pc_ecore_fb@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_fb
+Libs.private: @requirements_libs_ecore_fb@
+Cflags: -I${includedir}/ecore-@VMAJ@

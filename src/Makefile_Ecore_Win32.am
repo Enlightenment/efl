@@ -1,0 +1,51 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_win32/libecore_win32.la
+
+installed_ecorewin32mainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecorewin32mainheaders_DATA = \
+lib/ecore_win32/Ecore_Win32.h
+
+lib_ecore_win32_libecore_win32_la_SOURCES = \
+lib/ecore_win32/ecore_win32.c \
+lib/ecore_win32/ecore_win32_cursor.c \
+lib/ecore_win32/ecore_win32_dnd.c \
+lib/ecore_win32/ecore_win32_dnd_enumformatetc.cpp \
+lib/ecore_win32/ecore_win32_dnd_data_object.cpp \
+lib/ecore_win32/ecore_win32_dnd_drop_source.cpp \
+lib/ecore_win32/ecore_win32_dnd_drop_target.cpp \
+lib/ecore_win32/ecore_win32_event.c \
+lib/ecore_win32/ecore_win32_window.c \
+lib/ecore_win32/ecore_win32_private.h \
+lib/ecore_win32/ecore_win32_dnd_enumformatetc.h \
+lib/ecore_win32/ecore_win32_dnd_data_object.h \
+lib/ecore_win32/ecore_win32_dnd_drop_source.h \
+lib/ecore_win32/ecore_win32_dnd_drop_target.h
+
+lib_ecore_win32_libecore_win32_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_win32 \
+-I$(top_builddir)/src/lib/evil \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_win32 \
+-DEFL_ECORE_WIN32_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_win32_libecore_win32_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+lib/evil/libevil.la \
+@ECORE_WIN32_LIBS@
+
+lib_ecore_win32_libecore_win32_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

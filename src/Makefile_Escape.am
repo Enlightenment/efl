@@ -1,0 +1,25 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/escape/libescape.la
+
+install_escapeheadersdir = $(includedir)/escape-@VMAJ@
+dist_install_escapeheaders_DATA = \
+lib/escape/Escape.h \
+lib/escape/escape_libgen.h \
+lib/escape/escape_unistd.h
+
+escapemmanheadersdir = $(includedir)/escape-@VMAJ@/sys
+dist_escapemmanheaders_DATA = \
+lib/escape/sys/mman.h
+
+lib_escape_libescape_la_SOURCES = \
+lib/escape/escape_libgen.c \
+lib/escape/escape_mman.c \
+lib/escape/escape_unistd.c
+
+lib_escape_libescape_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/escape \
+-I$(top_builddir)/src/lib/escape
+lib_escape_libescape_la_LIBADD = @ESCAPE_LIBS@
+lib_escape_libescape_la_LDFLAGS = -no-undefined -version-info @version_info@

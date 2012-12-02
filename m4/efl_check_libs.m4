@@ -26,7 +26,6 @@ if test "x${have_dep}" = "xyes" ; then
       [
        have_dep="yes"
        requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -ljpeg"
-       requirements_libs_deps_[]m4_defn([DOWNEFL])="${requirements_libs_deps_[]m4_defn([DOWNEFL])} -ljpeg"
       ],
       [
        AC_MSG_ERROR("Cannot find libjpeg library. Make sure your LDFLAGS environment variable contains include lines for the location of this file")
@@ -66,7 +65,6 @@ else
          [
           _efl_have_lib="yes"
           requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -lz"
-          requirements_libs_deps_[]m4_defn([DOWNEFL])="${requirements_libs_deps_[]m4_defn([DOWNEFL])} -lz"
          ],
          [
           AC_MSG_ERROR(["Cannot find libjpeg library. Make sure your LDFLAGS environment variable contains include lines for the location of this file"])

@@ -1,0 +1,41 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_wince/libecore_wince.la
+
+installed_ecorewincemainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecorewincemainheaders_DATA = \
+lib/ecore_wince/Ecore_Wince.h
+
+lib_ecore_wince_libecore_wince_la_SOURCES = \
+lib/ecore_wince/ecore_wince.c \
+lib/ecore_wince/ecore_wince_event.c \
+lib/ecore_wince/ecore_wince_window.c \
+lib/ecore_wince/ecore_wince_private.h
+
+lib_ecore_wince_libecore_wince_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_wince \
+-I$(top_builddir)/src/lib/evil \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_wince \
+-DEFL_ECORE_WINCE_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_wince_libecore_wince_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+lib/evil/libevil.la \
+@ECORE_WINCE_LIBS@
+
+lib_ecore_wince_libecore_wince_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -1,0 +1,38 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_sdl/libecore_sdl.la
+
+installed_ecoresdlmainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoresdlmainheaders_DATA = \
+lib/ecore_sdl/Ecore_Sdl.h
+
+lib_ecore_sdl_libecore_sdl_la_SOURCES = \
+lib/ecore_sdl/ecore_sdl.c \
+lib/ecore_sdl/Ecore_Sdl_Keys.h \
+lib/ecore_sdl/ecore_sdl_private.h
+
+lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_sdl \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_sdl \
+-DEFL_ECORE_SDL_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@ECORE_SDL_CFLAGS@
+
+lib_ecore_sdl_libecore_sdl_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la \
+@ECORE_SDL_LIBS@
+
+lib_ecore_sdl_libecore_sdl_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -1,0 +1,41 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_file/libecore_file.la
+
+installed_ecorefilemainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecorefilemainheaders_DATA = \
+lib/ecore_file/Ecore_File.h
+
+lib_ecore_file_libecore_file_la_SOURCES = \
+lib/ecore_file/ecore_file.c \
+lib/ecore_file/ecore_file_download.c \
+lib/ecore_file/ecore_file_monitor.c \
+lib/ecore_file/ecore_file_monitor_inotify.c \
+lib/ecore_file/ecore_file_monitor_poll.c \
+lib/ecore_file/ecore_file_monitor_win32.c \
+lib/ecore_file/ecore_file_path.c \
+lib/ecore_file/ecore_file_private.h
+
+lib_ecore_file_libecore_file_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_file \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_file \
+-DEFL_ECORE_FILE_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+lib_ecore_file_libecore_file_la_LIBADD = \
+lib/ecore_con/libecore_con.la \
+lib/ecore/libecore.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_file_libecore_file_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
