@@ -47,7 +47,7 @@ syn keyword	cLabel		external params size_range border_scale minmul
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
 syn keyword	cConstant	COMP RAW LOSSY USER
-syn keyword	cConstant	RECT TEXT IMAGE SWALLOW TEXTBLOCK GRADIENT
+syn keyword	cConstant	RECT TEXT IMAGE SWALLOW TEXTBLOCK GRADIENT SPACER
 syn keyword	cConstant	GROUP BOX TABLE EXTERNAL ITEM
 syn keyword	cConstant	SOLID AUTOGRAB NOGRAB
 syn keyword	cConstant	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
