@@ -93,7 +93,6 @@ evas_module_paths_init(void)
   { evas_##Tn##_##Name##_init, evas_##Tn##_##Name##_shutdown }
 
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
-EVAS_EINA_STATIC_MODULE_DEFINE(engine, direct3d);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, directfb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
@@ -132,9 +131,6 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_BUFFER
   EVAS_EINA_STATIC_MODULE_USE(engine, buffer),
 #endif
-#ifdef EVAS_STATIC_BUILD_DIRECT3D
-  EVAS_EINA_STATIC_MODULE_USE(engine, direct3d),
-#endif
 #ifdef EVAS_STATIC_BUILD_DIRECTFB
   EVAS_EINA_STATIC_MODULE_USE(engine, directfb),
 #endif
@@ -149,18 +145,6 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_PSL1GHT
   EVAS_EINA_STATIC_MODULE_USE(engine, psl1ght),
-#endif
-#ifdef EVAS_STATIC_BUILD_SOFTWARE_GDI
-  EVAS_EINA_STATIC_MODULE_USE(engine, software_gdi),
-#endif
-#ifdef EVAS_STATIC_BUILD_SOFTWARE_DDRAW
-  EVAS_EINA_STATIC_MODULE_USE(engine, software_ddraw),
-#endif
-#ifdef EVAS_STATIC_BUILD_SOFTWARE_8
-  EVAS_EINA_STATIC_MODULE_USE(engine, software_8),
-#endif
-#ifdef EVAS_STATIC_BUILD_SOFTWARE_8_X11
-  EVAS_EINA_STATIC_MODULE_USE(engine, software_8_x11),
 #endif
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_DDRAW
   EVAS_EINA_STATIC_MODULE_USE(engine, software_ddraw),
