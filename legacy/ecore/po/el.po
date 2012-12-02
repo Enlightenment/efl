@@ -1,19 +1,24 @@
 # Greek translation for Ecore.
 # This file is put in the public domain.
 # ragecryx <ragecryx@yahoo.gr>, 2009.
+# George Rizopoulos <george.rizopoulos.1@gmail.com> 20 11
+# Alex-P. Natsios <drakevr@linuxteam.teilar.gr> 2012
+# Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-10-16 11:52+0900\n"
-"PO-Revision-Date: 2011-11-20 22:42+0200\n"
-"Last-Translator: George Rizopoulos <george.rizopoulos.1@gmail.com>\n"
-"Language-Team: Greek\n"
+"PO-Revision-Date: 2012-12-01 18:25+0200\n"
+"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
+"Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: Gtranslator 2.91.5\n"
 
 #: src/lib/ecore/ecore_getopt.c:95
 msgid "Version:"
@@ -38,11 +43,11 @@ msgstr "Άδεια:"
 
 #: src/lib/ecore/ecore_getopt.c:457
 msgid "Type: "
-msgstr "Τύπος:"
+msgstr "Τύπος: "
 
 #: src/lib/ecore/ecore_getopt.c:533
 msgid "Default: "
-msgstr "Προκαθορισμένο:"
+msgstr "Προκαθορισμένο: "
 
 #: src/lib/ecore/ecore_getopt.c:560
 msgid "Choices: "
@@ -64,14 +69,14 @@ msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:848
 msgid "ERROR: "
-msgstr "ΣΦΑΛΜΑ:"
+msgstr "ΣΦΑΛΜΑ: "
 
 #: src/lib/ecore/ecore_getopt.c:931 src/lib/ecore/ecore_getopt.c:1068
 #: src/lib/ecore/ecore_getopt.c:1084 src/lib/ecore/ecore_getopt.c:1099
 #: src/lib/ecore/ecore_getopt.c:1116 src/lib/ecore/ecore_getopt.c:1163
 #: src/lib/ecore/ecore_getopt.c:1283 src/lib/ecore/ecore_getopt.c:1324
 msgid "value has no pointer set.\n"
-msgstr "η τιμή δεν έχει δείκτη ορισμένο.\n"
+msgstr "η τιμή δεν έχει καθορισμένο τον δείκτη.\n"
 
 #: src/lib/ecore/ecore_getopt.c:963 src/lib/ecore/ecore_getopt.c:1183
 #, c-format
@@ -81,7 +86,7 @@ msgstr "άγνωστη τιμή boolean %s.\n"
 #: src/lib/ecore/ecore_getopt.c:1014 src/lib/ecore/ecore_getopt.c:1271
 #, c-format
 msgid "invalid number format %s\n"
-msgstr "άγνωστη μορφή αριθμού %s\n"
+msgstr "μη έγκυρη μορφή αριθμού %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1129
 #, c-format
@@ -90,7 +95,7 @@ msgstr "μη έγκυρη επιλογή \"%s\". Οι έγκυρες τιμές 
 
 #: src/lib/ecore/ecore_getopt.c:1157
 msgid "missing parameter to append.\n"
-msgstr "ελλιπής παράμετρος προς επισύναψη.\n"
+msgstr "απούσα παράμετρος για προσάρτηση.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1261
 msgid "could not parse value.\n"
@@ -98,11 +103,11 @@ msgstr "αδυναμία ανάλυσης τιμών.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1318
 msgid "missing parameter.\n"
-msgstr "ελλιπής παράμετρος.\n"
+msgstr "απούσα παράμετρος.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1331
 msgid "missing callback function!\n"
-msgstr "λείπει η λειτουργία επανάκλησης!\n"
+msgstr "απούσα λειτουργία επανάκλησης!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1360
 msgid "no version was defined.\n"
@@ -119,12 +124,12 @@ msgstr "δεν έχει οριστεί άδεια.\n"
 #: src/lib/ecore/ecore_getopt.c:1469
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr "ΣΦΑΛΜΑ:άγνωστη επιλογή --%s, αγνοήθηκε.\n"
+msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή --%s, αγνοήθηκε.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1502
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr "ΣΦΑΛΜΑ: η επιλογή --%s απαιτεί παραμέτρους!\n"
+msgstr "ΣΦΑΛΜΑ: η επιλογή --%s απαιτεί μια παράμετρο!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1544
 #, c-format
@@ -137,13 +142,12 @@ msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ΣΦAΛΜΑ: η επιλογή -%c απαιτεί μία παράμετρο!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1793
-#, fuzzy
 msgid "ERROR: no parser provided.\n"
-msgstr "ΣΦΑΛΜΑ:δεν παρέχεται αναλυτής.\n"
+msgstr "ΣΦΑΛΜΑ: δεν παρέχεται αναλυτής.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1798
 msgid "ERROR: no values provided.\n"
-msgstr "ΣΦΑΛΜΑ:δεν έχουν δοθεί τιμές.\n"
+msgstr "ΣΦΑΛΜΑ: δεν έχουν δοθεί τιμές.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1807
 msgid "ERROR: no arguments provided.\n"
