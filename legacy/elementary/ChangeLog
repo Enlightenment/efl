@@ -734,3 +734,7 @@
 2012-11-30  ChunEon Park (Hermet)
 
         * emit the signals for content_set/unset text_set/unset one time!
+
+2012-12-02  Mike Blumenkrantz
+
+        * Fix case where tooltips could go offscreen unnecessarily

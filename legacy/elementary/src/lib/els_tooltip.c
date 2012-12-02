@@ -426,22 +426,36 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         TTDBG("INIT (INTERPRETED)\n");
      }
    TTDBG("ADJUST (POINTER):  tx=%d,ty=%d\n", tx, ty);
-   if (tx < 0)
+   if ((tx < 0) || (tx + tw > cw))
      {
         /* if we're offscreen, try to flip over the Y axis */
-        if (abs((tx + 2 * tw) - cw) < abs(tx))
+        if ((tx < 0) && (abs((tx + 2 * tw) - cw) < abs(tx)))
           tx += tw;
+        else if (tx + tw > cw)
+          {
+             int test_x = tx - tw;
+
+             if ((test_x >= 0) || (tx + tw - cw > abs(test_x)))
+               tx -= tw;
+          }
      }
    else if ((tx > px) && (px > tw))
      {
         if (tx + tw < cw)
           tx += tw;
      }
-   if (ty < 0)
+   if ((ty < 0) || (ty + th > ch))
      {
         /* if we're offscreen, try to flip over the X axis */
-        if (abs((ty + 2 * th) - ch) < abs(ty))
+        if ((ty < 0) && (abs((ty + 2 * th) - ch) < abs(ty)))
           ty += th;
+        else if (ty + th > ch)
+          {
+             int test_y = ty - th;
+
+             if ((test_y >= 0) || (ty + th - ch > abs(test_y)))
+               ty -= th;
+          }
      }
    else if ((ty > py) && (py > th))
      {

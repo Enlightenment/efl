@@ -69,6 +69,7 @@ Fixes:
    * Fix the mapbuf to update it's content correcltly evenif they go outside of the buffer.
    * Fix the naviframe to resize it's items which are inserted.
    * Fix the naviframe to send signal emits one time for content show/hide, text show/hide.
+   * Fix case where tooltips could go offscreen unnecessarily
 
 Removals:
 
