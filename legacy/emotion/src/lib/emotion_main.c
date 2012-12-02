@@ -38,11 +38,10 @@ void *alloca (size_t);
 # ifdef HAVE_V4L2
 #  include <linux/videodev2.h>
 # endif
-
-# include <Ecore.h>
 # include <Eeze.h>
 #endif
 
+#include <Ecore.h>
 #include <Eet.h>
 
 #include "Emotion.h"
@@ -202,9 +201,6 @@ _emotion_webcams_data(void)
    return _webcams_edd;
 }
 
-#ifdef EMOTION_HAVE_EEZE
-static Eeze_Udev_Watch *eeze_watcher = NULL;
-
 static void
 emotion_webcam_destroy(Emotion_Webcam *ew)
 {
@@ -216,6 +212,9 @@ emotion_webcam_destroy(Emotion_Webcam *ew)
      }
    free(ew);
 }
+
+#ifdef EMOTION_HAVE_EEZE
+static Eeze_Udev_Watch *eeze_watcher = NULL;
 
 static void
 _emotion_check_device(Emotion_Webcam *ew)
@@ -396,11 +395,9 @@ emotion_shutdown(void)
 
    EINA_LIST_FREE(_emotion_webcams->webcams, ew)
      {
-#ifdef EMOTION_HAVE_EEZE
         /* There is currently no way to refcount from the outside, this help, but could lead to some issue */
         EINA_REFCOUNT_UNREF(ew)
           emotion_webcam_destroy(ew);
-#endif
      }
    free(_emotion_webcams);
    _emotion_webcams = NULL;
