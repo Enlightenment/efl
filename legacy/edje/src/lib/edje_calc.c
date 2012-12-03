@@ -2289,6 +2289,9 @@ _edje_part_recalc_single(Edje *ed,
          break;
      }
 
+#ifdef HAVE_EPHYSICS
+   params->physics.mass = desc->physics.mass;
+#endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
 
@@ -2802,6 +2805,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->color.b = INTP(p1->color.b, p2->color.b, pos2);
         p3->color.a = INTP(p1->color.a, p2->color.a, pos2);
 
+#ifdef HAVE_EPHYSICS
+        p3->physics.mass = TO_DOUBLE(FINTP(p1->physics.mass, p2->physics.mass,
+                                         pos));
+#endif
+
         switch (part_type)
           {
            case EDJE_PART_TYPE_IMAGE:
@@ -2992,6 +3000,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                               NULL, NULL, NULL);
                    ephysics_body_move(ep->body,
                                       ed->x + pf->x, ed->y + pf->y, z);
+                   ephysics_body_mass_set(ep->body, pf->physics.mass);
                 }
               else
 #endif

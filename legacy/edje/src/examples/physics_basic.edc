@@ -31,6 +31,16 @@ collections {
                rel1.relative: 0.55 0.1;
                rel2.relative: 0.75 0.3;
                aspect: 1 1;
+               physics {
+                  mass: 10.8;
+               }
+            }
+            description {
+               state: "light" 0.0;
+               inherit: "default" 0.0;
+               physics {
+                  mass: 6.66;
+               }
             }
          }
 
@@ -57,6 +67,17 @@ collections {
                state: "default" 0.0;
                visible: 0;
             }
+         }
+      }
+
+      programs {
+         program {
+            name: "load";
+            signal: "load";
+            in: 2 0;
+            action: STATE_SET "light" 0.0;
+            transition: LINEAR 0.5;
+            target: "red_box";
          }
       }
 

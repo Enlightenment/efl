@@ -958,6 +958,12 @@ struct _Edje_Part_Description_Common
       int focal;
    } persp;
 
+#ifdef HAVE_EPHYSICS
+   struct {
+      double mass;
+   } physics;
+#endif
+
    unsigned char     visible; /* is it shown */
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
 };
@@ -1286,6 +1292,11 @@ struct _Edje_Calc_Params
          int focal;
       } persp;
    } map;
+#ifdef HAVE_EPHYSICS
+   struct {
+      double mass; // 8
+   } physics; // 8
+#endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
    unsigned char    mapped : 1;

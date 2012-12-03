@@ -96,6 +96,7 @@
  *                <li>@ref sec_collections_group_parts_items "Items"</li>
  *              </ul>
  *              <li>@ref sec_collections_group_parts_description_table "Table"</li>
+ *              <li>@ref sec_collections_group_parts_description_physics "Physics"</li>
  *              <li>@ref sec_collections_group_parts_description_map "Map (3d/transformations)"</li>
  *              <ul>
  *                <li>@ref sec_collections_group_parts_description_map_rotation "Rotation"</li>
@@ -308,6 +309,9 @@ static void st_collections_group_parts_part_description_table_homogeneous(void);
 static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
 static void st_collections_group_parts_part_description_table_min(void);
+#ifdef HAVE_EPHYSICS
+static void st_collections_group_parts_part_description_physics_mass(void);
+#endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
 static void st_collections_group_parts_part_description_map_rotation_center(void);
@@ -588,6 +592,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.align", st_collections_group_parts_part_description_table_align},
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
      {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
+#ifdef HAVE_EPHYSICS
+     {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
+#endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
      {"collections.group.parts.part.description.map.rotation.center", st_collections_group_parts_part_description_map_rotation_center},
@@ -833,6 +840,9 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.table", NULL},
+#ifdef HAVE_EPHYSICS
+     {"collections.group.parts.part.description.physics", NULL},
+#endif
      {"collections.group.parts.part.description.map", NULL},
      {"collections.group.parts.part.description.map.rotation", NULL},
      {"collections.group.parts.part.description.perspective", NULL},
@@ -1071,6 +1081,10 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
             type, part, collection);
         exit(-1);
      }
+
+#ifdef HAVE_EPHYSICS
+   result->physics.mass = FROM_DOUBLE(1.0);
+#endif
 
    return result;
 }
@@ -3328,7 +3342,6 @@ st_collections_group_parts_part_type(void)
    current_part->type = type;
 }
 
-#ifdef HAVE_EPHYSICS
 /**
     @page edcref
     @property
@@ -3355,6 +3368,7 @@ st_collections_group_parts_part_type(void)
     @endproperty
     @since 1.8.0
 */
+#ifdef HAVE_EPHYSICS
 static void
 st_collections_group_parts_part_physics_body(void)
 {
@@ -7144,6 +7158,49 @@ st_collections_group_parts_part_description_table_min(void)
    ed->table.min.h = parse_bool(0);
    ed->table.min.v = parse_bool(1);
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_physics,Physics}
+ */
+
+/**
+    @page edcref
+    @block
+        physics
+    @context
+    description {
+        ..
+        physics {
+            mass: 5.31;
+        }
+        ..
+    }
+
+    @description
+    @endblock
+
+    @property
+        mass
+    @parameters
+        [body's mass in kilograms]
+    @effect
+        Double value used to set inertial mass of the body.
+        It is a quantitative measure of an object's resistance to the change of
+        its speed. If mass is set to 0 the body will have infinite mass,
+        so it will be immovable, static.
+    @endproperty
+    @since 1.8.0
+*/
+
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_mass(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.mass = parse_float(0);
+}
+#endif
 
 /**
    @edcsubsection{collections_group_parts_description_map,Map}
