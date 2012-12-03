@@ -86,3 +86,38 @@ endif
 lib_ecore_libecore_la_LIBADD += @ECORE_LIBS@ @EFL_COV_LIBS@ -lm
 
 lib_ecore_libecore_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ecore/ecore_suite
+
+tests_ecore_ecore_suite_SOURCES = \
+tests/ecore/ecore_suite.c \
+tests/ecore/ecore_test_ecore.c \
+tests/ecore/ecore_test_ecore_con.c \
+tests/ecore/ecore_test_ecore_x.c \
+tests/ecore/ecore_suite.h
+
+tests_ecore_ecore_suite_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_x \
+-DTESTS_SRC_DIR=\"$(top_srcdir)\" \
+@CHECK_CFLAGS@
+
+tests_ecore_ecore_suite_LDADD = \
+lib/ecore_con/libecore_con.la \
+lib/ecore/libecore.la \
+lib/eina/libeina.la \
+@CHECK_LIBS@
+
+endif
