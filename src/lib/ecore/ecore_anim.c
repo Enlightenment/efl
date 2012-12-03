@@ -402,6 +402,7 @@ ecore_animator_del(Ecore_Animator *obj)
    Ecore_Animator_Private_Data *animator = eo_data_get(obj, MY_CLASS);
    _ecore_lock();
 
+   if (!animator) goto unlock;
    if (animator->delete_me)
      {
         data = animator->data;
