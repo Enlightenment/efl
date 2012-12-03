@@ -1288,10 +1288,10 @@ _elm_naviframe_smart_access(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list 
 static Eina_Bool
 _push_transition_cb(void *data)
 {
-   Elm_Naviframe_Item *prev_it, *it;
+   Elm_Naviframe_Item *prev_it, *it = data;
+
    ELM_NAVIFRAME_DATA_GET(data, sd);
 
-   it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(data);
    it->animator = NULL;
 
    if (sd->stack->last->prev)
@@ -1413,8 +1413,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
 
         /* animate new one */
         edje_object_message_signal_process(VIEW(it));
-
-        it->animator = ecore_animator_add(_push_transition_cb, obj);
+        it->animator = ecore_animator_add(_push_transition_cb, it);
      }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
@@ -1694,7 +1693,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    edje_object_message_signal_process(VIEW(prev_it));
    edje_object_message_signal_process(VIEW(nit));
    if (nit->animator) ecore_animator_del(nit->animator);
-   nit->animator = ecore_animator_add(_push_transition_cb, WIDGET(nit));
+   nit->animator = ecore_animator_add(_push_transition_cb, nit);
 
    /* access */
    if (_elm_config->access_mode) _access_focus_set(nit);
