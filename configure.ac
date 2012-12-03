@@ -4063,6 +4063,7 @@ src/examples/evas/Makefile
 src/lib/eina/eina_config.h
 spec/efl.spec
 pc/evil.pc
+pc/escape.pc
 pc/eina.pc
 pc/eet.pc
 pc/eo.pc
@@ -4089,7 +4090,9 @@ pc/ecore-input-evas.pc
 pc/ecore-cocoa.pc
 pc/ecore-directfb.pc
 pc/ecore-fb.pc
+pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
+pc/ecore-wayland.pc
 pc/ecore-win32.pc
 pc/ecore-wince.pc
 pc/ecore-x.pc

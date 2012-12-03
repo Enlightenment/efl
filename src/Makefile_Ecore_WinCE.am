@@ -5,7 +5,7 @@ lib_LTLIBRARIES += lib/ecore_wince/libecore_wince.la
 
 installed_ecorewincemainheadersdir = $(includedir)/ecore-@VMAJ@
 dist_installed_ecorewincemainheaders_DATA = \
-lib/ecore_wince/Ecore_Wince.h
+lib/ecore_wince/Ecore_WinCE.h
 
 lib_ecore_wince_libecore_wince_la_SOURCES = \
 lib/ecore_wince/ecore_wince.c \

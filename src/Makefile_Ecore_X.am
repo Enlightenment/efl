@@ -9,8 +9,11 @@ lib/ecore_x/Ecore_X.h \
 lib/ecore_x/Ecore_X_Atoms.h \
 lib/ecore_x/Ecore_X_Cursor.h
 
-if HAVE_ECORE_X_XCB
 lib_ecore_x_libecore_x_la_SOURCES = \
+lib/ecore_x/ecore_x_atoms_decl.h
+
+if HAVE_ECORE_X_XCB
+lib_ecore_x_libecore_x_la_SOURCES += \
 lib/ecore_x/xcb/ecore_xcb.c \
 lib/ecore_x/xcb/ecore_xcb_atoms.c \
 lib/ecore_x/xcb/ecore_xcb_extensions.c \
@@ -51,7 +54,7 @@ lib/ecore_x/xcb/ecore_xcb_vsync.c \
 lib/ecore_x/xcb/ecore_xcb_xdefaults.c \
 lib/ecore_x/xcb/ecore_xcb_private.h
 else
-lib_ecore_x_libecore_x_la_SOURCES = \
+lib_ecore_x_libecore_x_la_SOURCES += \
 lib/ecore_x/xlib/ecore_x.c \
 lib/ecore_x/xlib/ecore_x_dnd.c \
 lib/ecore_x/xlib/ecore_x_sync.c \

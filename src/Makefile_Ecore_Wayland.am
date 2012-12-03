@@ -8,12 +8,12 @@ dist_installed_ecorewaylandmainheaders_DATA = \
 lib/ecore_wayland/Ecore_Wayland.h
 
 lib_ecore_wayland_libecore_wayland_la_SOURCES = \
-lib/ecore_wayland/ecore_wayland.c \
+lib/ecore_wayland/ecore_wl.c \
 lib/ecore_wayland/ecore_wl_dnd.c \
 lib/ecore_wayland/ecore_wl_input.c \
 lib/ecore_wayland/ecore_wl_output.c \
 lib/ecore_wayland/ecore_wl_window.c \
-lib/ecore_wayland/ecore_wayland_private.h
+lib/ecore_wayland/ecore_wl_private.h
 
 lib_ecore_wayland_libecore_wayland_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
