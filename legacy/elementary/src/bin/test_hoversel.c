@@ -26,6 +26,8 @@ typedef enum _api_state api_state;
 static void
 set_api_state(api_data *api)
 {
+   Evas_Object *icon;
+
    const Eina_List *items = elm_box_children_get(api->box);
    if (!eina_list_count(items))
      return;
@@ -49,7 +51,8 @@ set_api_state(api_data *api)
 
       case HOVERSEL_ICON_UNSET: /* 3 */
          elm_object_text_set(eina_list_nth(items, 5), "Label only");
-         elm_object_part_content_unset(eina_list_nth(items, 5), "icon");
+         icon = elm_object_part_content_unset(eina_list_nth(items, 5), "icon");
+         evas_object_del(icon);
          break;
 
       case HOVERSEL_CLEAR_OPEN: /* 4 */
