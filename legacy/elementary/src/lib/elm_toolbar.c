@@ -487,14 +487,16 @@ _resize_job(void *data)
         if (sd->vertical)
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
-             eo_do(obj,
-                   elm_scrollable_interface_paging_set(0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count))));
+             if (sd->item_count - sd->separator_count > 0)
+               eo_do(obj, elm_scrollable_interface_paging_set
+                     (0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count))));
           }
         else
           {
              if (w > vw) _items_size_fit(obj, &w, vw);
-             eo_do(obj,
-                   elm_scrollable_interface_paging_set(0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0));
+             if (sd->item_count - sd->separator_count > 0)
+               eo_do(obj, elm_scrollable_interface_paging_set
+                     (0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0));
           }
      }
    else
