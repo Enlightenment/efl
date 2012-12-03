@@ -68,7 +68,7 @@ typedef enum
  * @defgroup Sensor_Events Available eeze sensor events
  * @brief Sensor events that are emitted from the library as ecore events
  *
- * Event types used to register #ecore_event_handler on. These events are used
+ * Event types used to register ecore_event_handler on. These events are used
  * for #eeze_sensor_async_read to deliver read out data. It is also used for
  * generated events like facedown or shake.
  *
