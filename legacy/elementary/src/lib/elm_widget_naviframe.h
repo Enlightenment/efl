@@ -21,6 +21,7 @@ typedef struct _Elm_Naviframe_Smart_Data Elm_Naviframe_Smart_Data;
 struct _Elm_Naviframe_Smart_Data
 {
    Eina_Inlist          *stack; /* top item is the list's LAST item */
+   Eina_List            *popping;
    Evas_Object          *dummy_edje;
    Evas_Display_Mode     dispmode;
    Elm_Object_Item      *compress_it;
