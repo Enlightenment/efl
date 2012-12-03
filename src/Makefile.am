@@ -53,8 +53,8 @@ endif
 if HAVE_ECORE_X
 include Makefile_Ecore_X.am
 endif
-include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Imf.am
+include Makefile_Ecore_Evas.am
 include Makefile_Embryo.am
 
 .PHONY: benchmark examples
