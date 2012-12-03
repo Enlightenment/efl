@@ -2372,11 +2372,6 @@ fi
 
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
-# FIXME: to remove
-
-AC_DEFINE(ECORE_HAVE_EET, 1, [Define if Ecore_Con Eet_Connection helper is supported])
-AM_CONDITIONAL([ECORE_HAVE_EET], [true])
-
 PKG_CHECK_MODULES([ECORE_CON], [${requirements_pc_deps_ecore_con}])
 
 case "$host_os" in
@@ -2573,9 +2568,6 @@ if ! test "x${have_atfile_source}" = "xno" ; then
        have_atfile_source="no"
       ])
 fi
-
-# FIXME: remove that
-AC_DEFINE([BUILD_ECORE_CON], [1], [Ecore_Con is supported])
 
 ### Checks for programs
 

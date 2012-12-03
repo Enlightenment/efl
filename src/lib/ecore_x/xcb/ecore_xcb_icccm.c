@@ -166,11 +166,7 @@ EAPI char *
 ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_t prop;
-#else
    xcb_icccm_get_text_property_reply_t prop;
-#endif
    uint8_t ret = 0;
    char *title = NULL;
 
@@ -178,31 +174,18 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    CHECK_XCB_CONN;
 
    if (!win) return NULL;
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_name_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_name_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#else
    cookie = xcb_icccm_get_wm_name_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_name_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#endif
    if (ret == 0) return NULL;
    if (prop.name_len < 1)
      {
-#ifdef OLD_XCB_VERSION
-        xcb_get_text_property_reply_wipe(&prop);
-#else
         xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
         return NULL;
      }
 
    if (!(title = malloc((prop.name_len + 1) * sizeof(char *))))
      {
-#ifdef OLD_XCB_VERSION
-        xcb_get_text_property_reply_wipe(&prop);
-#else
         xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
         return NULL;
      }
    memcpy(title, prop.name, sizeof(char *) * prop.name_len);
@@ -232,11 +215,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
           }
      }
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_wipe(&prop);
-#else
    xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
    return title;
 }
 
@@ -266,23 +245,13 @@ ecore_x_icccm_title_set(Ecore_X_Window win,
 
    if (ret)
      {
-#ifdef OLD_XCB_VERSION
-        xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
-                        strlen(prop.value), prop.value);
-#else
         xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8,
                               strlen(prop.value), prop.value);
-#endif
         if (prop.value) free(prop.value);
      }
    else
-#ifdef OLD_XCB_VERSION
-     xcb_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
-                     strlen(title), title);
-#else
      xcb_icccm_set_wm_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING, 8,
                            strlen(title), title);
-#endif
    free(list[0]);
 }
 
@@ -300,11 +269,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win,
                              char         **class)
 {
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_class_reply_t prop;
-#else
    xcb_icccm_get_wm_class_reply_t prop;
-#endif
    uint8_t ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -313,23 +278,14 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win,
    if (name) *name = NULL;
    if (class) *class = NULL;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_class_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_class_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#else
    cookie = xcb_icccm_get_wm_class_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_class_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#endif
    if (ret == 0) return;
 
    if (name) *name = strdup(prop.instance_name);
    if (class) *class = strdup(prop.class_name);
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_class_reply_wipe(&prop);
-#else
    xcb_icccm_get_wm_class_reply_wipe(&prop);
-#endif
 }
 
 /**
@@ -420,13 +376,8 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_transient_for_unchecked(_ecore_xcb_conn, win);
-   xcb_get_wm_transient_for_reply(_ecore_xcb_conn, cookie, &forwin, NULL);
-#else
    cookie = xcb_icccm_get_wm_transient_for_unchecked(_ecore_xcb_conn, win);
    xcb_icccm_get_wm_transient_for_reply(_ecore_xcb_conn, cookie, &forwin, NULL);
-#endif
 
    return forwin;
 }
@@ -519,25 +470,6 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
      }
 
    prop = (uint8_t *)xcb_get_property_value(reply);
-#ifdef OLD_XCB_VERSION
-   switch (prop[0])
-     {
-      case XCB_WM_STATE_WITHDRAWN:
-        hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
-        break;
-
-      case XCB_WM_STATE_NORMAL:
-        hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-        break;
-
-      case XCB_WM_STATE_ICONIC:
-        hint = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-        break;
-
-      default:
-        break;
-     }
-#else
    switch (prop[0])
      {
       case XCB_ICCCM_WM_STATE_WITHDRAWN:
@@ -555,7 +487,6 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
       default:
         break;
      }
-#endif
 
    free(reply);
    return hint;
@@ -565,29 +496,11 @@ EAPI void
 ecore_x_icccm_state_set(Ecore_X_Window            win,
                         Ecore_X_Window_State_Hint state)
 {
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_t hints;
-#else
    xcb_icccm_wm_hints_t hints;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_set_none(&hints);
-
-   hints.flags = XCB_WM_HINT_STATE;
-
-   if (state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
-     xcb_wm_hints_set_withdrawn(&hints);
-   else if (state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
-     xcb_wm_hints_set_normal(&hints);
-   else if (state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
-     xcb_wm_hints_set_iconic(&hints);
-
-   xcb_set_wm_hints(_ecore_xcb_conn, win, &hints);
-#else
    xcb_icccm_wm_hints_set_none(&hints);
 
    hints.flags = XCB_ICCCM_WM_HINT_STATE;
@@ -600,7 +513,6 @@ ecore_x_icccm_state_set(Ecore_X_Window            win,
      xcb_icccm_wm_hints_set_iconic(&hints);
 
    xcb_icccm_set_wm_hints(_ecore_xcb_conn, win, &hints);
-#endif
 }
 
 EAPI void
@@ -623,34 +535,11 @@ ecore_x_icccm_hints_set(Ecore_X_Window            win,
                         Ecore_X_Window            window_group,
                         Eina_Bool                 is_urgent)
 {
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_t hints;
-#else
    xcb_icccm_wm_hints_t hints;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_set_none(&hints);
-   xcb_wm_hints_set_input(&hints, accepts_focus);
-
-   if (initial_state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
-     xcb_wm_hints_set_withdrawn(&hints);
-   else if (initial_state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
-     xcb_wm_hints_set_normal(&hints);
-   else if (initial_state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
-     xcb_wm_hints_set_iconic(&hints);
-
-   if (icon_pixmap != 0) xcb_wm_hints_set_icon_pixmap(&hints, icon_pixmap);
-   if (icon_mask != 0) xcb_wm_hints_set_icon_mask(&hints, icon_mask);
-   if (icon_window != 0) xcb_wm_hints_set_icon_window(&hints, icon_window);
-   if (window_group != 0) xcb_wm_hints_set_window_group(&hints, window_group);
-   if (is_urgent) xcb_wm_hints_set_urgency(&hints);
-
-   xcb_set_wm_hints(_ecore_xcb_conn, win, &hints);
-#else
    xcb_icccm_wm_hints_set_none(&hints);
    xcb_icccm_wm_hints_set_input(&hints, accepts_focus);
 
@@ -673,7 +562,6 @@ ecore_x_icccm_hints_set(Ecore_X_Window            win,
      xcb_icccm_wm_hints_set_urgency(&hints);
 
    xcb_icccm_set_wm_hints(_ecore_xcb_conn, win, &hints);
-#endif
 }
 
 EAPI Eina_Bool
@@ -687,11 +575,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window             win,
                         Eina_Bool                 *is_urgent)
 {
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_t hints;
-#else
    xcb_icccm_wm_hints_t hints;
-#endif
    uint8_t ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -705,22 +589,12 @@ ecore_x_icccm_hints_get(Ecore_X_Window             win,
    if (window_group) *window_group = 0;
    if (is_urgent) *is_urgent = EINA_FALSE;
 
-#ifdef OLD_XCB_VERSION
-   xcb_wm_hints_set_none(&hints);
-   cookie = xcb_get_wm_hints_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
-#else
    xcb_icccm_wm_hints_set_none(&hints);
    cookie = xcb_icccm_get_wm_hints_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
-#endif
    if (!ret) return EINA_FALSE;
 
-#ifdef OLD_XCB_VERSION
-   if ((hints.flags & XCB_WM_HINT_INPUT) && (accepts_focus))
-#else
    if ((hints.flags & XCB_ICCCM_WM_HINT_INPUT) && (accepts_focus))
-#endif
      {
         if (hints.input)
           *accepts_focus = EINA_TRUE;
@@ -728,32 +602,6 @@ ecore_x_icccm_hints_get(Ecore_X_Window             win,
           *accepts_focus = EINA_FALSE;
      }
 
-#ifdef OLD_XCB_VERSION
-   if ((hints.flags & XCB_WM_HINT_STATE) && (initial_state))
-     {
-        if (hints.initial_state == XCB_WM_STATE_WITHDRAWN)
-          *initial_state = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
-        else if (hints.initial_state == XCB_WM_STATE_NORMAL)
-          *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-        else if (hints.initial_state == XCB_WM_STATE_ICONIC)
-          *initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-     }
-
-   if ((hints.flags & XCB_WM_HINT_ICON_PIXMAP) && (icon_pixmap))
-     *icon_pixmap = hints.icon_pixmap;
-
-   if ((hints.flags & XCB_WM_HINT_ICON_MASK) && (icon_mask))
-     *icon_mask = hints.icon_mask;
-
-   if ((hints.flags & XCB_WM_HINT_ICON_WINDOW) && (icon_window))
-     *icon_window = hints.icon_window;
-
-   if ((hints.flags & XCB_WM_HINT_WINDOW_GROUP) && (window_group))
-     *window_group = hints.window_group;
-
-   if ((hints.flags & XCB_WM_HINT_X_URGENCY) && (is_urgent))
-     *is_urgent = EINA_TRUE;
-#else
    if ((hints.flags & XCB_ICCCM_WM_HINT_STATE) && (initial_state))
      {
         if (hints.initial_state == XCB_ICCCM_WM_STATE_WITHDRAWN)
@@ -778,7 +626,6 @@ ecore_x_icccm_hints_get(Ecore_X_Window             win,
 
    if ((hints.flags & XCB_ICCCM_WM_HINT_X_URGENCY) && (is_urgent))
      *is_urgent = EINA_TRUE;
-#endif
 
    return EINA_TRUE;
 }
@@ -794,11 +641,7 @@ EAPI char *
 ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_t prop;
-#else
    xcb_icccm_get_text_property_reply_t prop;
-#endif
    uint8_t ret = 0;
    char *tmp = NULL;
 
@@ -807,32 +650,19 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 
    if (!win) return NULL;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_icon_name_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_icon_name_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#else
    cookie = xcb_icccm_get_wm_icon_name_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_icon_name_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#endif
    if (ret == 0) return NULL;
 
    if (prop.name_len < 1)
      {
-#ifdef OLD_XCB_VERSION
-        xcb_get_text_property_reply_wipe(&prop);
-#else
         xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
         return NULL;
      }
 
    if (!(tmp = malloc((prop.name_len + 1) * sizeof(char *))))
      {
-#ifdef OLD_XCB_VERSION
-        xcb_get_text_property_reply_wipe(&prop);
-#else
         xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
         return NULL;
      }
    memcpy(tmp, prop.name, sizeof(char *) * prop.name_len);
@@ -862,11 +692,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
           }
      }
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_wipe(&prop);
-#else
    xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
    return tmp;
 }
 
@@ -903,23 +729,13 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win,
 
    if (ret)
      {
-#ifdef OLD_XCB_VERSION
-        xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
-                             strlen(prop.value), prop.value);
-#else
         xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                                    8, strlen(prop.value), prop.value);
-#endif
         if (prop.value) free(prop.value);
      }
    else
-#ifdef OLD_XCB_VERSION
-     xcb_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
-                          strlen(name), name);
-#else
      xcb_icccm_set_wm_icon_name(_ecore_xcb_conn, win, ECORE_X_ATOM_STRING,
                                 8, strlen(name), name);
-#endif
 
    free(list[0]);
 }
@@ -942,11 +758,7 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
    ev.format = 32;
    ev.window = win;
    ev.type = ECORE_X_ATOM_WM_CHANGE_STATE;
-#ifdef OLD_XCB_VERSION
-   ev.data.data32[0] = XCB_WM_STATE_ICONIC;
-#else
    ev.data.data32[0] = XCB_ICCCM_WM_STATE_ICONIC;
-#endif
 
    xcb_send_event(_ecore_xcb_conn, 0, root,
                   (XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
@@ -968,11 +780,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
 {
    Ecore_X_Atom proto;
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_protocols_reply_t protos;
-#else
    xcb_icccm_get_wm_protocols_reply_t protos;
-#endif
    int i = 0, count = 0, set = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -980,13 +788,8 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
 
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM) return;
    proto = _ecore_xcb_atoms_wm_protocol[protocol];
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_protocols_unchecked(_ecore_xcb_conn, win, proto);
-   if (!xcb_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &protos, NULL))
-#else
    cookie = xcb_icccm_get_wm_protocols_unchecked(_ecore_xcb_conn, win, proto);
    if (!xcb_icccm_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &protos, NULL))
-#endif
      count = 0;
    else
      count = protos.atoms_len;
@@ -1012,15 +815,9 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
                   for (i = 0; i < count; i++)
                     atoms[i] = protos.atoms[i];
                   atoms[count] = proto;
-#ifdef OLD_XCB_VERSION
-                  xcb_set_wm_protocols(_ecore_xcb_conn,
-                                       ECORE_X_ATOM_WM_PROTOCOLS,
-                                       win, count, atoms);
-#else
                   xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
                                              ECORE_X_ATOM_WM_PROTOCOLS,
                                              count, atoms);
-#endif
                   free(atoms);
                }
           }
@@ -1038,15 +835,9 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
                        for (j = (i + 1); j < count; j++)
                          protos.atoms[j - 1] = protos.atoms[j];
                        if (count > 1)
-#ifdef OLD_XCB_VERSION
-                         xcb_set_wm_protocols(_ecore_xcb_conn,
-                                              ECORE_X_ATOM_WM_PROTOCOLS,
-                                              win, count - 1, protos.atoms);
-#else
                          xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
                                                     ECORE_X_ATOM_WM_PROTOCOLS,
                                                     count - 1, protos.atoms);
-#endif
                        else
                          ecore_x_window_prop_property_del(win,
                                                           ECORE_X_ATOM_WM_PROTOCOLS);
@@ -1056,11 +847,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
           }
      }
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_protocols_reply_wipe(&protos);
-#else
    xcb_icccm_get_wm_protocols_reply_wipe(&protos);
-#endif
 }
 
 /**
@@ -1076,11 +863,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
    Ecore_X_Atom proto;
    Eina_Bool ret = EINA_FALSE;
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_protocols_reply_t reply;
-#else
    xcb_icccm_get_wm_protocols_reply_t reply;
-#endif
    uint8_t val = 0;
    unsigned int i = 0;
 
@@ -1090,13 +873,8 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM) return EINA_FALSE;
 
    proto = _ecore_xcb_atoms_wm_protocol[protocol];
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_protocols_unchecked(_ecore_xcb_conn, win, proto);
-   val = xcb_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &reply, NULL);
-#else
    cookie = xcb_icccm_get_wm_protocols_unchecked(_ecore_xcb_conn, win, proto);
    val = xcb_icccm_get_wm_protocols_reply(_ecore_xcb_conn, cookie, &reply, NULL);
-#endif
    if (!val) return EINA_FALSE;
 
    for (i = 0; i < reply.atoms_len; i++)
@@ -1106,11 +884,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
           break;
        }
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_wm_protocols_reply_wipe(&reply);
-#else
    xcb_icccm_get_wm_protocols_reply_wipe(&reply);
-#endif
 
    return ret;
 }
@@ -1130,13 +904,8 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
    CHECK_XCB_CONN;
 
    if (num > 0)
-#ifdef OLD_XCB_VERSION
-     xcb_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS,
-                          win, num, protos);
-#else
-     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
+     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win,
                                 ECORE_X_ATOM_WM_PROTOCOLS, num, protos);
-#endif
    else
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_WM_PROTOCOLS);
 }
@@ -1181,51 +950,29 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
    if (min_aspect) *min_aspect = mina;
    if (max_aspect) *max_aspect = maxa;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
-#else
    cookie = xcb_icccm_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie,
                                              &hints, NULL);
-#endif
    if (!ret) return EINA_FALSE;
 
-#ifdef OLD_XCB_VERSION
-   if ((hints.flags & XCB_SIZE_HINT_US_POSITION) ||
-       (hints.flags & XCB_SIZE_HINT_P_POSITION))
-#else
    if ((hints.flags & XCB_ICCCM_SIZE_HINT_US_POSITION) ||
        (hints.flags & XCB_ICCCM_SIZE_HINT_P_POSITION))
-#endif
      {
         if (request_pos) *request_pos = EINA_TRUE;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_P_WIN_GRAVITY)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_P_WIN_GRAVITY)
-#endif
      {
         if (gravity) *gravity = hints.win_gravity;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_P_MIN_SIZE)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_P_MIN_SIZE)
-#endif
      {
         minw = hints.min_width;
         minh = hints.min_height;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_P_MAX_SIZE)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_P_MAX_SIZE)
-#endif
      {
         maxw = hints.max_width;
         maxh = hints.max_height;
@@ -1233,11 +980,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
         if (maxh < minh) maxh = minh;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_BASE_SIZE)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_BASE_SIZE)
-#endif
      {
         basew = hints.base_width;
         baseh = hints.base_height;
@@ -1245,11 +988,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
         if (baseh > minh) minh = baseh;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_P_RESIZE_INC)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_P_RESIZE_INC)
-#endif
      {
         stepx = hints.width_inc;
         stepy = hints.height_inc;
@@ -1257,11 +996,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
         if (stepy < 1) stepy = 1;
      }
 
-#ifdef OLD_XCB_VERSION
-   if (hints.flags & XCB_SIZE_HINT_P_ASPECT)
-#else
    if (hints.flags & XCB_ICCCM_SIZE_HINT_P_ASPECT)
-#endif
      {
         if (hints.min_aspect_den > 0)
           mina = ((double)hints.min_aspect_num) / ((double)hints.min_aspect_den);
@@ -1306,39 +1041,13 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie, &hints, NULL);
-#else
    cookie = xcb_icccm_get_wm_normal_hints_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_normal_hints_reply(_ecore_xcb_conn, cookie,
                                              &hints, NULL);
-#endif
    if (!ret) memset(&hints, 0, sizeof(xcb_size_hints_t));
 
    hints.flags = 0;
 
-#ifdef OLD_XCB_VERSION
-   if (request_pos)
-     hints.flags |= XCB_SIZE_HINT_US_POSITION;
-
-   if (gravity != ECORE_X_GRAVITY_NW)
-     xcb_size_hints_set_win_gravity(&hints, gravity);
-   if ((min_w > 0) || (min_h > 0))
-     xcb_size_hints_set_min_size(&hints, min_w, min_h);
-   if ((max_w > 0) || (max_h > 0))
-     xcb_size_hints_set_max_size(&hints, max_w, max_h);
-   if ((base_w > 0) || (base_h > 0))
-     xcb_size_hints_set_base_size(&hints, base_w, base_h);
-   if ((step_x > 1) || (step_y > 1))
-     xcb_size_hints_set_resize_inc(&hints, step_x, step_y);
-   if ((min_aspect > 0.0) || (max_aspect > 0.0))
-     xcb_size_hints_set_aspect(&hints,
-                               (int32_t)(min_aspect * 10000), 10000,
-                               (int32_t)(max_aspect * 10000), 10000);
-
-   xcb_set_wm_normal_hints(_ecore_xcb_conn, win, &hints);
-#else
    if (request_pos)
      hints.flags |= XCB_ICCCM_SIZE_HINT_US_POSITION;
 
@@ -1358,7 +1067,6 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  win,
                                      (int32_t)(max_aspect * 10000), 10000);
 
    xcb_icccm_set_wm_normal_hints(_ecore_xcb_conn, win, &hints);
-#endif
 }
 
 EAPI void
@@ -1404,45 +1112,28 @@ EAPI char *
 ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
    xcb_get_property_cookie_t cookie;
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_t prop;
-#else
    xcb_icccm_get_text_property_reply_t prop;
-#endif
    uint8_t ret = 0;
    char *tmp = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-#ifdef OLD_XCB_VERSION
-   cookie = xcb_get_wm_client_machine_unchecked(_ecore_xcb_conn, win);
-   ret = xcb_get_wm_client_machine_reply(_ecore_xcb_conn, cookie, &prop, NULL);
-#else
    cookie = xcb_icccm_get_wm_client_machine_unchecked(_ecore_xcb_conn, win);
    ret = xcb_icccm_get_wm_client_machine_reply(_ecore_xcb_conn, cookie,
                                                &prop, NULL);
-#endif
    if (ret == 0) return NULL;
 
    tmp = malloc((prop.name_len + 1) * sizeof(char *));
    if (!tmp)
      {
-#ifdef OLD_XCB_VERSION
-        xcb_get_text_property_reply_wipe(&prop);
-#else
         xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
         return NULL;
      }
    memcpy(tmp, prop.name, sizeof(char *) * prop.name_len);
    tmp[prop.name_len] = '\0';
 
-#ifdef OLD_XCB_VERSION
-   xcb_get_text_property_reply_wipe(&prop);
-#else
    xcb_icccm_get_text_property_reply_wipe(&prop);
-#endif
 
    return tmp;
 }
@@ -1566,4 +1257,3 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
      }
    if (odata) free(odata);
 }
-
