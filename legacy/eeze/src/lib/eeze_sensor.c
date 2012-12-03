@@ -232,7 +232,7 @@ eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
    return EINA_FALSE;
 }
 
-void
+EAPI void
 eeze_sensor_shutdown(void)
 {
    eeze_sensor_modules_unload();
@@ -244,7 +244,7 @@ eeze_sensor_shutdown(void)
    eina_shutdown();
 }
 
-Eina_Bool
+EAPI Eina_Bool
 eeze_sensor_init(void)
 {
    if (!eina_init()) return EINA_FALSE;
