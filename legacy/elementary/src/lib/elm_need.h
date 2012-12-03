@@ -36,9 +36,11 @@ EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
  *
  * @return EINA_TRUE if support exists and initialization succeeded.
  *
+ * @since 1.8.0
+ *
  * @ingroup edbus
  */
-EAPI Eina_Bool elm_need_edbus(void) EINA_DEPRECATED;
+EAPI Eina_Bool elm_need_edbus(void);
 
 /**
  * Request that your elementary application needs ethumb
