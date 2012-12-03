@@ -1669,12 +1669,16 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    if (item != sd->more_item) /* more item does not get in the list */
      {
-        next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
+        if (!sd->on_deletion)
+          next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(item));
         sd->item_count--;
-        if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
-        if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
-            item->selected && next) _item_select(next);
+        if (!sd->on_deletion)
+          {
+             if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
+             if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
+                 item->selected && next) _item_select(next);
+          }
      }
 
    _item_del(item);
