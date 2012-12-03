@@ -162,6 +162,12 @@ _edbus_object_free(EDBus_Object *obj)
         eina_list_free(ce->to_delete);
      }
 
+   if (obj->interfaces_added)
+     edbus_signal_handler_del(obj->interfaces_added);
+   if (obj->interfaces_removed)
+     edbus_signal_handler_del(obj->interfaces_removed);
+   if (obj->properties_changed)
+     edbus_signal_handler_del(obj->properties_changed);
    eina_stringshare_del(obj->name);
    eina_stringshare_del(obj->path);
    EINA_MAGIC_SET(obj, EINA_MAGIC_NONE);
@@ -262,6 +268,110 @@ edbus_object_cb_free_del(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
    obj->cbs_free = edbus_cbs_free_del(obj->cbs_free, cb, data);
 }
 
+static void
+_cb_interfaces_added(void *data, const EDBus_Message *msg)
+{
+   EDBus_Object *obj = data;
+   const char *obj_path;
+   EDBus_Message_Iter *array_ifaces, *entry_iface;
+
+   if (!edbus_message_arguments_get(msg, "oa{sa{sv}}", &obj_path, &array_ifaces))
+     return;
+
+   while (edbus_message_iter_get_and_next(array_ifaces, 'e', &entry_iface))
+     {
+        const char *iface_name;
+        EDBus_Object_Event_Interface_Added event;
+        EDBus_Proxy *proxy;
+
+        edbus_message_iter_basic_get(entry_iface, &iface_name);
+        proxy = edbus_proxy_get(obj, iface_name);
+        EINA_SAFETY_ON_NULL_RETURN(proxy);
+        event.interface = iface_name;
+        event.proxy = proxy;
+        _edbus_object_event_callback_call(obj, EDBUS_OBJECT_EVENT_IFACE_ADDED,
+                                          &event);
+     }
+}
+
+static void
+_cb_interfaces_removed(void *data, const EDBus_Message *msg)
+{
+   EDBus_Object *obj = data;
+   const char *obj_path, *iface;
+   EDBus_Message_Iter *array_ifaces;
+
+   if (!edbus_message_arguments_get(msg, "oas", &obj_path, &array_ifaces))
+     return;
+
+   while (edbus_message_iter_get_and_next(array_ifaces, 's', &iface))
+     {
+        EDBus_Object_Event_Interface_Removed event;
+        event.interface = iface;
+        _edbus_object_event_callback_call(obj, EDBUS_OBJECT_EVENT_IFACE_REMOVED,
+                                          &event);
+     }
+}
+
+static void
+_property_changed_iter(void *data, const void *key, EDBus_Message_Iter *var)
+{
+   EDBus_Proxy *proxy = data;
+   const char *skey = key;
+   Eina_Value *st_value, stack_value;
+   EDBus_Object_Event_Property_Changed event;
+
+   st_value = _message_iter_struct_to_eina_value(var);
+   eina_value_struct_value_get(st_value, "arg0", &stack_value);
+
+   event.interface = edbus_proxy_interface_get(proxy);
+   event.proxy = proxy;
+   event.name = skey;
+   event.value = &stack_value;
+   _edbus_object_event_callback_call(edbus_proxy_object_get(proxy),
+                                     EDBUS_OBJECT_EVENT_IFACE_REMOVED,
+                                     &event);
+   eina_value_free(st_value);
+   eina_value_flush(&stack_value);
+}
+
+static void
+_cb_properties_changed(void *data, const EDBus_Message *msg)
+{
+   EDBus_Object *obj = data;
+   EDBus_Proxy *proxy;
+   EDBus_Message_Iter *array, *invalidate;
+   const char *iface;
+   const char *invalidate_prop;
+
+   if (!edbus_message_arguments_get(msg, "sa{sv}as", &iface, &array, &invalidate))
+     {
+        ERR("Error getting data from properties changed signal.");
+        return;
+     }
+
+   proxy = edbus_proxy_get(obj, iface);
+   EINA_SAFETY_ON_NULL_RETURN(proxy);
+
+   if (obj->event_handlers[EDBUS_OBJECT_EVENT_PROPERTY_CHANGED].list)
+     edbus_message_iter_dict_iterate(array, "sv", _property_changed_iter,
+                                     proxy);
+
+   if (!obj->event_handlers[EDBUS_OBJECT_EVENT_PROPERTY_REMOVED].list)
+     return;
+
+   while (edbus_message_iter_get_and_next(invalidate, 's', &invalidate_prop))
+     {
+        EDBus_Object_Event_Property_Removed event;
+        event.interface = iface;
+        event.name = invalidate_prop;
+        event.proxy = proxy;
+        _edbus_object_event_callback_call(obj,
+                                          EDBUS_OBJECT_EVENT_PROPERTY_REMOVED,
+                                          &event);
+     }
+}
+
 EAPI void
 edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type, EDBus_Object_Event_Cb cb, const void *cb_data)
 {
@@ -281,6 +391,53 @@ edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type,
    ctx->cb_data = cb_data;
 
    ce->list = eina_inlist_append(ce->list, EINA_INLIST_GET(ctx));
+
+   switch (type)
+     {
+      case EDBUS_OBJECT_EVENT_IFACE_ADDED:
+         {
+            if (obj->interfaces_added)
+              break;
+            obj->interfaces_added =
+                     edbus_signal_handler_add(obj->conn, obj->name, NULL,
+                                              EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                              "InterfacesAdded",
+                                              _cb_interfaces_added, obj);
+            EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_added);
+            edbus_signal_handler_match_extra_set(obj->interfaces_added, "arg0",
+                                                 obj->path, NULL);
+            break;
+         }
+      case EDBUS_OBJECT_EVENT_IFACE_REMOVED:
+        {
+           if (obj->interfaces_removed)
+             break;
+           obj->interfaces_removed =
+                    edbus_signal_handler_add(obj->conn, obj->name, NULL,
+                                             EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                             "InterfacesRemoved",
+                                             _cb_interfaces_removed, obj);
+           EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_added);
+           edbus_signal_handler_match_extra_set(obj->interfaces_removed,
+                                                "arg0", obj->path, NULL);
+           break;
+        }
+      case EDBUS_OBJECT_EVENT_PROPERTY_CHANGED:
+      case EDBUS_OBJECT_EVENT_PROPERTY_REMOVED:
+        {
+           if (obj->properties_changed)
+             break;
+           obj->properties_changed =
+                    edbus_object_signal_handler_add(obj,
+                                                    EDBUS_FDO_INTERFACE_PROPERTIES,
+                                                    "PropertiesChanged",
+                                                    _cb_properties_changed, obj);
+           EINA_SAFETY_ON_NULL_RETURN(obj->properties_changed);
+           break;
+        }
+      default:
+        break;
+     }
 }
 
 static void
@@ -322,6 +479,38 @@ edbus_object_event_callback_del(EDBus_Object *obj, EDBus_Object_Event_Type type,
      }
 
    _edbus_object_context_event_cb_del(ce, found);
+
+   switch (type)
+     {
+      case EDBUS_OBJECT_EVENT_IFACE_ADDED:
+         {
+            if (obj->event_handlers[EDBUS_OBJECT_EVENT_IFACE_ADDED].list)
+              break;
+            edbus_signal_handler_del(obj->interfaces_added);
+            obj->interfaces_added = NULL;
+            break;
+         }
+      case EDBUS_OBJECT_EVENT_IFACE_REMOVED:
+        {
+           if (obj->event_handlers[EDBUS_OBJECT_EVENT_IFACE_REMOVED].list)
+             break;
+           edbus_signal_handler_del(obj->interfaces_removed);
+           obj->interfaces_removed = NULL;
+           break;
+        }
+      case EDBUS_OBJECT_EVENT_PROPERTY_CHANGED:
+      case EDBUS_OBJECT_EVENT_PROPERTY_REMOVED:
+        {
+           if (obj->event_handlers[EDBUS_OBJECT_EVENT_PROPERTY_CHANGED].list ||
+               obj->event_handlers[EDBUS_OBJECT_EVENT_PROPERTY_REMOVED].list)
+             break;
+           edbus_signal_handler_del(obj->properties_changed);
+           obj->properties_changed = NULL;
+           break;
+        }
+      default:
+        break;
+     }
 }
 
 static void

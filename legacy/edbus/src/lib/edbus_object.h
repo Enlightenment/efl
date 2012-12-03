@@ -39,8 +39,8 @@ EAPI void          edbus_object_cb_free_del(EDBus_Object *obj, EDBus_Free_Cb cb,
 
 typedef enum
 {
-   EDBUS_OBJECT_EVENT_IFACE_ADDED = 0,
-   EDBUS_OBJECT_EVENT_IFACE_REMOVED,
+   EDBUS_OBJECT_EVENT_IFACE_ADDED = 0, /**< a parent path must have a ObjectManager interface */
+   EDBUS_OBJECT_EVENT_IFACE_REMOVED, /**< a parent path must have a ObjectManager interface */
    EDBUS_OBJECT_EVENT_PROPERTY_CHANGED,
    EDBUS_OBJECT_EVENT_PROPERTY_REMOVED,
    EDBUS_OBJECT_EVENT_DEL,

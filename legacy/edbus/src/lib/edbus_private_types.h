@@ -77,6 +77,9 @@ struct _EDBus_Object
    Eina_List                 *signal_handlers;
    Eina_Inlist               *cbs_free;
    EDBus_Object_Context_Event event_handlers[EDBUS_OBJECT_EVENT_LAST];
+   EDBus_Signal_Handler *interfaces_added;
+   EDBus_Signal_Handler *interfaces_removed;
+   EDBus_Signal_Handler *properties_changed;
 };
 
 struct _EDBus_Signal_Handler
