@@ -3605,6 +3605,7 @@ ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Bod
 static void
 _ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
 {
+   DBG("Body %p restitution set to %lf", body, restitution);
    if (body->type == EPHYSICS_BODY_TYPE_RIGID)
      {
         body->rigid_body->setRestitution(btScalar(restitution));
@@ -3612,7 +3613,6 @@ _ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
      }
 
    body->soft_body->setRestitution(btScalar(restitution));
-   DBG("Body %p restitution set to %lf", body, restitution);
 }
 
 EAPI void
@@ -3648,6 +3648,7 @@ ephysics_body_restitution_get(const EPhysics_Body *body)
 static void
 _ephysics_body_friction_set(EPhysics_Body *body, double friction)
 {
+   DBG("Body %p friction set to %lf", body, friction);
    if (body->type == EPHYSICS_BODY_TYPE_RIGID)
      {
         body->rigid_body->setFriction(btScalar(friction));
@@ -3655,7 +3656,6 @@ _ephysics_body_friction_set(EPhysics_Body *body, double friction)
      }
 
    body->soft_body->setFriction(btScalar(friction));
-   DBG("Body %p friction set to %lf", body, friction);
 }
 
 EAPI void
