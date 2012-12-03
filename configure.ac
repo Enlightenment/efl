@@ -3385,8 +3385,6 @@ fi
 
 ## XCB
 
-# FIXME: remove OLD_XCB_VERSION support
-
 if test "x${have_ecore_x_xcb}" = "xyes" ; then
 
    PKG_CHECK_EXISTS([x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8],
