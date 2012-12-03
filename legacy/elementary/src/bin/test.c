@@ -55,6 +55,7 @@ void test_entry_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_multibuttonentry(void *data, Evas_Object *obj, void *event_info);
 void test_entry_anchor2(void *data, Evas_Object *obj, void *event_info);
 void test_entry_anchor(void *data, Evas_Object *obj, void *event_info);
+void test_entry_emoticon(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar2(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar3(void *data, Evas_Object *obj, void *event_info);
@@ -522,6 +523,7 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Multibuttonentry", test_multibuttonentry);
    ADD_TEST(NULL, "Entries", "Entry Anchor", test_entry_anchor);
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
+   ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
 
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Buttons", test_button);

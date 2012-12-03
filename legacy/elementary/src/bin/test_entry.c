@@ -2253,4 +2253,63 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
+
+void
+test_entry_emoticon(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *win, *en;
+
+   win = elm_win_util_standard_add("entry-emoticon", "Entry Emoticon");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 400, 500);
+   evas_object_show(win);
+
+   en = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, en);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_text_set(en,
+                       "angry <item absize=64x64 vsize=ascent href=emoticon/angry></item> <br>"
+                       "angry-shout <item absize=64x64 vsize=ascent href=emoticon/angry-shout></item> <br>"
+                       "crazy-laugh <item absize=64x64 vsize=ascent href=emoticon/crazy-laugh></item> <br>"
+                       "evil-laugh <item absize=64x64 vsize=ascent href=emoticon/evil-laugh></item> <br>"
+                       "evil <item absize=64x64 vsize=ascent href=emoticon/evil></item> <br>"
+                       "goggle-smile <item absize=64x64 vsize=ascent href=emoticon/goggle-smile></item> <br>"
+                       "grumpy <item absize=64x64 vsize=ascent href=emoticon/grumpy></item> <br>"
+                       "guilty <item absize=64x64 vsize=ascent href=emoticon/guilty></item> <br>"
+                       "haha <item absize=64x64 vsize=ascent href=emoticon/haha></item> <br>"
+                       "happy-panting <item absize=64x64 vsize=ascent href=emoticon/happy-panting></item> <br>"
+                       "happy <item absize=64x64 vsize=ascent href=emoticon/happy></item> <br>"
+                       "indifferent <item absize=64x64 vsize=ascent href=emoticon/indifferent></item> <br>"
+                       "kiss <item absize=64x64 vsize=ascent href=emoticon/kiss></item> <br>"
+                       "knowing-grin <item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item> <br>"
+                       "laugh <item absize=64x64 vsize=ascent href=emoticon/laugh></item> <br>"
+                       "little-bit-sorry <item absize=64x64 vsize=ascent href=emoticon/little-bit-sorry></item> <br>"
+                       "love-lots <item absize=64x64 vsize=ascent href=emoticon/love-lots></item> <br>"
+                       "love <item absize=64x64 vsize=ascent href=emoticon/love></item> <br>"
+                       "minimal-smile <item absize=64x64 vsize=ascent href=emoticon/minimal-smile></item> <br>"
+                       "not-happy <item absize=64x64 vsize=ascent href=emoticon/not-happy></item> <br>"
+                       "not-impressed <item absize=64x64 vsize=ascent href=emoticon/not-impressed></item> <br>"
+                       "omg <item absize=64x64 vsize=ascent href=emoticon/omg></item> <br>"
+                       "opensmile <item absize=64x64 vsize=ascent href=emoticon/opensmile></item> <br>"
+                       "smile <item absize=64x64 vsize=ascent href=emoticon/smile></item> <br>"
+                       "sorry <item absize=64x64 vsize=ascent href=emoticon/sorry></item> <br>"
+                       "squint-laugh <item absize=64x64 vsize=ascent href=emoticon/squint-laugh></item> <br>"
+                       "surprised <item absize=64x64 vsize=ascent href=emoticon/surprised></item> <br>"
+                       "suspicious <item absize=64x64 vsize=ascent href=emoticon/suspicious></item> <br>"
+                       "tongue-dangling <item absize=64x64 vsize=ascent href=emoticon/tongue-dangling></item> <br>"
+                       "tongue-poke <item absize=64x64 vsize=ascent href=emoticon/tongue-poke></item> <br>"
+                       "uh <item absize=64x64 vsize=ascent href=emoticon/uh></item> <br>"
+                       "unhappy <item absize=64x64 vsize=ascent href=emoticon/unhappy></item> <br>"
+                       "very-sorry <item absize=64x64 vsize=ascent href=emoticon/very-sorry></item> <br>"
+                       "what <item absize=64x64 vsize=ascent href=emoticon/what></item> <br>"
+                       "wink <item absize=64x64 vsize=ascent href=emoticon/wink></item> <br>"
+                       "worried <item absize=64x64 vsize=ascent href=emoticon/worried></item> <br>"
+                       "wtf <item absize=64x64 vsize=ascent href=emoticon/wtf></item> <br>"
+                      );
+   evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
+}
+
 #endif
