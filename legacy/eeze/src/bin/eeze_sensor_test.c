@@ -54,17 +54,28 @@ main(void)
    int acc;
    unsigned long long timestamp;
 
+   /* Init the subsystems we use to make sure they are ready to use. */
    ecore_init();
    eeze_init();
 
    printf("=== Test sync reads: ===\n");
+   /* Create a new sensor object from the type MAGNETIC. We will operate on this
+    * object to get data out of the sensor */
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_MAGNETIC);
    if (sens)
      {
+         /* Request the actual sensor data from the object. A magnetic sensor
+          * has three data points so we have to use the xyz function. The data
+          * could be cached from the last read so better also get the timestamp
+          * when the data got read form the physical sensor. */
          if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
+         /* Get the accurancy of the reading. Not all sensors support this. */
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
+         /* Here we read the timestamp the data was read out from the physical
+          * sensor. Can be used to detect how old the readout it.*/
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
          printf("Magnetic output: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+         /* Free the sensor when we do not longer use it. */
          eeze_sensor_free(sens);
      }
    else
@@ -129,7 +140,10 @@ main(void)
    else
      printf("Could not find a light sensor!\n");
 
-   /* Get updated values on a sensor. Read out is synchronous */
+   /* Get updated values on a sensor. This readout is synchronous. This way we
+    * can force a read out of the physical sensor instead of using the cached
+    * values. Depending on the hardware this can take a long time. If you don't have special
+    * requirements the cached values should be used. */
    eeze_sensor_read(sens);
    if (!sens) printf("can't find an light sensor!\n");
    if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
@@ -139,8 +153,8 @@ main(void)
    eeze_sensor_free(sens);
 
    printf("=== Test async reads / events: ===\n");
-   /* Async read request for sensors. You have to register an event handler for it first and then
-    * request the read out */
+   /* Async read request for sensors. You have to register an event handler for
+    * it first and then request the readout */
    ecore_event_handler_add(EEZE_SENSOR_EVENT_ACCELEROMETER, event_cb, NULL);
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_ACCELEROMETER);
    eeze_sensor_async_read(sens, NULL);
