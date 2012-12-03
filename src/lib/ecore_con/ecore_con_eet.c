@@ -312,7 +312,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
    else if (eet_connection_empty(n->econn) && size > (int) (4 * sizeof (unsigned int) + 2))
      {
         unsigned int *tmp = data;
-        size -= 4 * sizeof (unsigned int) + 2;
+        size -= 4 * sizeof (unsigned int);
 
         if (ntohl(tmp[0]) == ECORE_CON_EET_RAW_MAGIC)
           {
@@ -340,7 +340,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                        n->buffer_length = data_length;
                        n->buffer_current = 0;
                        if (n->buffer_handler)
-                         n->buffer = malloc(sizeof (data_length));
+                         n->buffer = malloc(sizeof (char) * data_length);
                        else
                          n->buffer = (void*) 1;
                        if (n->buffer)
@@ -355,7 +355,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                }
           }
 
-        size += 4 * sizeof (unsigned int) + 2;
+        size += 4 * sizeof (unsigned int);
      }
 
    eet_connection_received(n->econn, data, size);
@@ -468,7 +468,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
    r->handler_data = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
                                              (Ecore_Event_Handler_Cb)_ecore_con_eet_server_data, r);
    r->data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_data_free);
-   r->raw_data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_raw_data_free);
+   r->raw_data_callbacks = eina_hash_string_superfast_new(_ecore_con_eet_raw_data_free);
 
    _ecore_con_eet_data_descriptor_setup(r);
 
@@ -494,7 +494,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
    r->handler_data = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
                                              (Ecore_Event_Handler_Cb)_ecore_con_eet_client_data, r);
    r->data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_data_free);
-   r->raw_data_callbacks = eina_hash_stringshared_new(_ecore_con_eet_raw_data_free);
+   r->raw_data_callbacks = eina_hash_string_superfast_new(_ecore_con_eet_raw_data_free);
 
    _ecore_con_eet_data_descriptor_setup(r);
 
@@ -658,7 +658,7 @@ ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
    c->func = func;
    c->data = data;
 
-   ece->u.server.client_connect_callbacks = eina_list_append(ece->u.server.client_disconnect_callbacks, c);
+   ece->u.server.client_disconnect_callbacks = eina_list_append(ece->u.server.client_disconnect_callbacks, c);
 }
 
 EAPI void
@@ -805,7 +805,7 @@ ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const 
    size = sizeof (protocol) + protocol_length + section_length;
    tmp = alloca(size);
    memcpy(tmp, protocol, sizeof (protocol));
-   memcpy(tmp + sizeof (protocol), protocol, protocol_length);
+   memcpy(tmp + sizeof (protocol), protocol_name, protocol_length);
    memcpy(tmp + sizeof (protocol) + protocol_length, section, section_length);
 
    if (reply->client)
