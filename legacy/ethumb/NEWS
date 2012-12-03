@@ -1,5 +1,19 @@
 Ethumb 1.7.0
 
+Changes since Ethumb 1.7.0:
+
+Additions:
+
+        - Port to edbus (v2), added new dependency.
+
+Fixes:
+
+Improvements:
+
+Removal:
+
+        - Removal of e_dbus (v1) dependency.
+
 Changes since Ethumb 1.0.0:
 -------------------------
 
