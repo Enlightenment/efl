@@ -3864,6 +3864,27 @@ ephysics_body_rotation_get(const EPhysics_Body *body, EPhysics_Quaternion *rotat
    return quat;
 }
 
+static void
+_ephysics_body_soft_body_rotation_set(EPhysics_Body *body, btTransform trans)
+{
+   btSoftBody::Node *node;
+   const btScalar margin= body->soft_body->getCollisionShape()->getMargin();
+   ATTRIBUTE_ALIGNED16(btDbvtVolume) vol;
+
+   for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+     {
+        node = &body->soft_body->m_nodes[i];
+        node->m_n = (trans.getBasis() * btVector3(1, 1, 1));
+        vol = btDbvtVolume::FromCR(node->m_x, margin);
+
+        body->soft_body->m_ndbvt.update(node->m_leaf, vol);
+     }
+
+   body->soft_body->updateNormals();
+   body->soft_body->updateBounds();
+   body->soft_body->updateConstants();
+}
+
 EAPI void
 ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat)
 {
@@ -3889,13 +3910,13 @@ ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat)
    ephysics_body_activate(body, EINA_TRUE);
 
    bt_quat = btQuaternion(x, y, z, w);
+   trans = _ephysics_body_transform_get(body);
+   trans.setRotation(bt_quat);
 
    if (body->soft_body)
-     body->soft_body->rotate(bt_quat);
+     _ephysics_body_soft_body_rotation_set(body, trans);
    else
      {
-        trans = _ephysics_body_transform_get(body);
-        trans.setRotation(bt_quat);
         body->rigid_body->proceedToTransform(trans);
         body->rigid_body->getMotionState()->setWorldTransform(trans);
      }
