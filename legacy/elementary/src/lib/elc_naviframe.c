@@ -1024,8 +1024,6 @@ _on_item_pop_finished(void *data,
 {
    Elm_Naviframe_Item *it = data;
 
-   if (!it) return;
-
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    if (sd->preserve && it->content)
