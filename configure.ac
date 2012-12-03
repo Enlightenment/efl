@@ -127,6 +127,7 @@ requirements_pc_ecore_con=""
 requirements_pc_ecore_ipc=""
 requirements_pc_ecore_file=""
 requirements_pc_ecore_input=""
+requirements_pc_ecore_input_evas=""
 requirements_pc_ecore_cocoa=""
 requirements_pc_ecore_directfb=""
 requirements_pc_ecore_fb=""
@@ -206,6 +207,7 @@ AC_SUBST([requirements_pc_ecore_con])
 AC_SUBST([requirements_pc_ecore_ipc])
 AC_SUBST([requirements_pc_ecore_file])
 AC_SUBST([requirements_pc_ecore_input])
+AC_SUBST([requirements_pc_ecore_input_evas])
 AC_SUBST([requirements_pc_ecore_cocoa])
 AC_SUBST([requirements_pc_ecore_directfb])
 AC_SUBST([requirements_pc_ecore_fb])
@@ -2479,7 +2481,7 @@ AC_MSG_NOTICE([Ecore_Ipc checks])
 
 # Eina, Ecore, Ecore_Con
 
-requirements_pc_ecore_ipc="ecore_con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_ipc}"
+requirements_pc_ecore_ipc="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_ipc}"
 
 ### Checks for header files
 
@@ -2587,7 +2589,7 @@ fi
 
 # Eina, Ecore, Ecore_Con
 
-requirements_pc_ecore_file="ecore_con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file}"
+requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file}"
 
 ### Checks for header files
 
