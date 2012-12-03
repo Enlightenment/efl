@@ -445,6 +445,9 @@ AC_CHECK_SIZEOF([wchar_t])
 EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
 AC_SUBST([EINA_SIZEOF_WCHAR_T])
 
+AC_CHECK_SIZEOF(int, 4)
+AC_CHECK_SIZEOF(long, 4)
+
 AC_CHECK_TYPES([siginfo_t], [], [],
    [[
 #include <signal.h>
