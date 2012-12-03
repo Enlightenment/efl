@@ -12,7 +12,6 @@
 #include "Ecore_Sdl_Keys.h"
 #include "ecore_sdl_private.h"
 
-
 int _ecore_sdl_log_dom = -1;
 
 typedef struct _Ecore_SDL_Pressed Ecore_SDL_Pressed;
