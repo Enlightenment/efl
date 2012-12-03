@@ -1322,7 +1322,7 @@ _push_transition_cb(void *data)
 {
    Elm_Naviframe_Item *prev_it, *it = data;
 
-   ELM_NAVIFRAME_DATA_GET(data, sd);
+   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    it->animator = NULL;
 
