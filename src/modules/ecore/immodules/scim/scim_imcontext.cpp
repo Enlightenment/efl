@@ -1455,7 +1455,7 @@ isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
 
 /* Panel Slot functions */
 static void
-panel_slot_reload_config(int context __UNUSED__)
+panel_slot_reload_config(int context EINA_UNUSED)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
    _config->reload();
@@ -1834,7 +1834,7 @@ panel_finalize(void)
 }
 
 static Eina_Bool
-panel_iochannel_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler)
+panel_iochannel_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
@@ -2753,7 +2753,7 @@ slot_update_property(IMEngineInstanceBase *si,
 }
 
 static void
-slot_beep(IMEngineInstanceBase *si __UNUSED__)
+slot_beep(IMEngineInstanceBase *si EINA_UNUSED)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 }
@@ -2886,7 +2886,7 @@ reload_config_callback(const ConfigPointer &config)
 }
 
 static void
-fallback_commit_string_cb(IMEngineInstanceBase  *si __UNUSED__,
+fallback_commit_string_cb(IMEngineInstanceBase  *si EINA_UNUSED,
                           const WideString      &str)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";

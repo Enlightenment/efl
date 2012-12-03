@@ -3713,7 +3713,7 @@ if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; th
        AC_DEFINE([BUILD_ECORE_IMF_IBUS], [1], [Ecore Imf IBUS Support])
       ],
       [have_ecore_imf_ibus="no"])
-   IBUS_CFLAGS="${GLIB_CFLAGS} ${IBUS_CFLAGS}"²
+   IBUS_CFLAGS="${GLIB_CFLAGS} ${IBUS_CFLAGS}"
    IBUS_LIBS="${GLIB_LIBS} ${IBUS_LIBS}"
 fi
 

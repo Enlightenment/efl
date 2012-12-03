@@ -89,6 +89,7 @@ modules_ecore_immodules_ibus_ibus_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/evas \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/ecore \
@@ -101,7 +102,7 @@ modules_ecore_immodules_ibus_ibus_la_CPPFLAGS = \
 @EFL_COV_CFLAGS@ \
 @IBUS_CFLAGS@
 modules_ecore_immodules_ibus_ibus_la_LIBADD = \
-lib/ecore_imf/libecore_evas.la \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
@@ -129,6 +130,7 @@ modules_ecore_immodules_scim_scim_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/evas \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/ecore \
@@ -141,7 +143,7 @@ modules_ecore_immodules_scim_scim_la_CPPFLAGS = \
 @EFL_COV_CFLAGS@ \
 @SCIM_CFLAGS@
 modules_ecore_immodules_scim_scim_la_LIBADD = \
-lib/ecore_imf/libecore_evas.la \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
