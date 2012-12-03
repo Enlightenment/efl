@@ -100,10 +100,8 @@ _item_free(Elm_Naviframe_Item *it)
    eina_stringshare_del(it->title_label);
    eina_stringshare_del(it->subtitle_label);
 
-   if (it->title_prev_btn)
-     evas_object_del(it->title_prev_btn);
-   if (it->title_next_btn)
-     evas_object_del(it->title_next_btn);
+   if (it->title_prev_btn) evas_object_del(it->title_prev_btn);
+   if (it->title_next_btn) evas_object_del(it->title_next_btn);
    if (it->title_icon) evas_object_del(it->title_icon);
 
    EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
@@ -516,7 +514,6 @@ _item_title_prev_btn_set(Elm_Naviframe_Item *it,
 
    edje_object_part_swallow(VIEW(it), PREV_BTN_PART, btn);
    edje_object_signal_emit(VIEW(it), "elm,state,prev_btn,show", "elm");
-
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb, it);
 }
@@ -649,8 +646,7 @@ _title_content_set(Elm_Naviframe_Item *it,
    if (pair)
      {
         if (pair->content == content) return;
-        if (content)
-          edje_object_part_swallow(VIEW(it), part, content);
+        if (content) edje_object_part_swallow(VIEW(it), part, content);
         if (pair->content)
           {
              evas_object_event_callback_del(pair->content,
@@ -662,6 +658,24 @@ _title_content_set(Elm_Naviframe_Item *it,
    else
      {
         if (!content) return;
+
+        //Remove the pair if new content was swallowed into other part.
+        EINA_INLIST_FOREACH(it->content_list, pair)
+          {
+             if (pair->content == content)
+               {
+                  eina_stringshare_del(pair->part);
+                  it->content_list = eina_inlist_remove(it->content_list,
+                                                        EINA_INLIST_GET(pair));
+                  free(pair);
+                  evas_object_event_callback_del(pair->content,
+                                                 EVAS_CALLBACK_DEL,
+                                                 _title_content_del);
+                  break;
+               }
+          }
+
+        //New pair
         pair = ELM_NEW(Elm_Naviframe_Content_Item_Pair);
         if (!pair)
           {
@@ -678,12 +692,10 @@ _title_content_set(Elm_Naviframe_Item *it,
         snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
         edje_object_signal_emit(VIEW(it), buf, "elm");
      }
-
    evas_object_event_callback_add(content,
                                   EVAS_CALLBACK_DEL,
                                   _title_content_del,
                                   pair);
-
 }
 
 static void
