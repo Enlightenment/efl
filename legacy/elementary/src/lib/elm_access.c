@@ -406,12 +406,6 @@ _elm_access_object_get(const Evas_Object *obj)
    return evas_object_data_get(obj, "_elm_access");
 }
 
-EAPI Elm_Access_Info *
-_elm_access_item_get(const Elm_Widget_Item *it)
-{
-   return it->access;
-}
-
 EAPI void
 _elm_access_object_hilight(Evas_Object *obj)
 {
@@ -668,84 +662,6 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
      }
 }
 
-static Eina_Bool
-_access_item_over_timeout_cb(void *data)
-{
-   Elm_Access_Info *ac = ((Elm_Widget_Item *)data)->access;
-   if (!ac) return EINA_FALSE;
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-     {
-        _elm_access_object_hilight(((Elm_Widget_Item *)data)->view);
-        _elm_access_read(ac, ELM_ACCESS_CANCEL, NULL, data);
-        _elm_access_read(ac, ELM_ACCESS_TYPE,   NULL, data);
-        _elm_access_read(ac, ELM_ACCESS_INFO,   NULL, data);
-        _elm_access_read(ac, ELM_ACCESS_STATE,  NULL, data);
-        _elm_access_read(ac, ELM_ACCESS_DONE,   NULL, data);
-     }
-   ac->delay_timer = NULL;
-   return EINA_FALSE;
-}
-
-static void
-_access_item_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
-{
-   Elm_Access_Info *ac = ((Elm_Widget_Item *)data)->access;
-   if (!ac) return;
-
-   if (ac->delay_timer)
-     {
-        ecore_timer_del(ac->delay_timer);
-        ac->delay_timer = NULL;
-     }
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-      ac->delay_timer = ecore_timer_add(0.2, _access_item_over_timeout_cb, data);
-}
-
-static void
-_access_item_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Elm_Access_Info *ac = ((Elm_Widget_Item *)data)->access;
-   if (!ac) return;
-
-   _elm_access_object_unhilight(((Elm_Widget_Item *)data)->view);
-   if (ac->delay_timer)
-     {
-        ecore_timer_del(ac->delay_timer);
-        ac->delay_timer = NULL;
-     }
-}
-
-static void _access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-
-EAPI void
-_elm_access_item_unregister(Elm_Widget_Item *item)
-{
-   Elm_Access_Info *ac;
-
-   ac = item->access;
-   if (ac)
-     {
-        evas_object_event_callback_del_full(ac->hoverobj,
-                                            EVAS_CALLBACK_MOUSE_IN,
-                                            _access_item_mouse_in_cb, item);
-        evas_object_event_callback_del_full(ac->hoverobj,
-                                            EVAS_CALLBACK_MOUSE_OUT,
-                                            _access_item_mouse_out_cb, item);
-        evas_object_event_callback_del_full(ac->hoverobj,
-                                            EVAS_CALLBACK_DEL,
-                                            _access_item_del_cb, item);
-        item->access = NULL;
-        _elm_access_clear(ac);
-        free(ac);
-     }
-}
-
-static void
-_access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   _elm_access_item_unregister((Elm_Widget_Item *)data);
-}
-
 EAPI void
 _elm_access_widget_item_register(Elm_Widget_Item *item)
 {
@@ -799,22 +715,6 @@ _elm_access_widget_item_unregister(Elm_Widget_Item *item)
 
    evas_object_del(item->access_obj);
    item->access_obj = NULL;
-}
-
-EAPI void
-_elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj)
-{
-   Elm_Access_Info *ac;
-
-   evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_MOUSE_IN,
-                                  _access_item_mouse_in_cb, item);
-   evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_MOUSE_OUT,
-                                  _access_item_mouse_out_cb, item);
-   evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_DEL,
-                                  _access_item_del_cb, item);
-   ac = calloc(1, sizeof(Elm_Access_Info));
-   ac->hoverobj = hoverobj;
-   item->access = ac;
 }
 
 EAPI Eina_Bool

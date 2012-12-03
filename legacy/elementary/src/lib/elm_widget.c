@@ -4375,19 +4375,11 @@ _elm_widget_item_free(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
-   _elm_access_item_unregister(item);
-
    if (item->del_func)
      item->del_func((void *)item->data, item->widget, item);
 
    if (item->view)
      evas_object_del(item->view);
-
-   if (item->access)
-     {
-        _elm_access_clear(item->access);
-        free(item->access);
-     }
 
    if (item->access_info)
      eina_stringshare_del(item->access_info);
