@@ -1660,7 +1660,7 @@ _access_state_cb(void *data,
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   Elm_Toolbar_Item *item, *next;
+   Elm_Toolbar_Item *item, *next = NULL;
    Evas_Object *obj;
 
    item = (Elm_Toolbar_Item *)it;
