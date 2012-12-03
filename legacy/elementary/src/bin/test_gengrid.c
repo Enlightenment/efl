@@ -11,8 +11,7 @@
 #define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
 #define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
 
-static Elm_Gengrid_Item_Class *gic;
-static Elm_Gengrid_Item_Class ggic;
+static Elm_Gengrid_Item_Class *gic, *ggic;
 
 Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
 char *grid_text_get(void *data, Evas_Object *obj __UNUSED__,
@@ -828,11 +827,12 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    gic->func.state_get = grid_state_get;
    gic->func.del = grid_del;
 
-   ggic.item_style = "group_index";
-   ggic.func.text_get = grid_text_get;
-   ggic.func.content_get = NULL;
-   ggic.func.state_get = NULL;
-   ggic.func.del = NULL;
+   ggic = elm_gengrid_item_class_new();
+   ggic->item_style = "group_index";
+   ggic->func.text_get = grid_text_get;
+   ggic->func.content_get = NULL;
+   ggic->func.state_get = NULL;
+   ggic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < 12 * 12; i++)
@@ -843,13 +843,14 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         ti[i].path = eina_stringshare_add(buf);
         if (i == 0 || i == 18 || i == 53 || i == 100)
           //if (i == 0 || i == 18)
-          ti[i].item = elm_gengrid_item_append(grid, &ggic, &(ti[i]), grid_sel, NULL);
+          ti[i].item = elm_gengrid_item_append(grid, ggic, &(ti[i]), grid_sel, NULL);
         else
           ti[i].item = elm_gengrid_item_append(grid, gic, &(ti[i]), grid_sel, NULL);
         if (!(i % 5))
           elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
      }
    elm_gengrid_item_class_free(gic);
+   elm_gengrid_item_class_free(ggic);
 
    evas_object_show(grid);
    elm_win_resize_object_add(win, grid);
