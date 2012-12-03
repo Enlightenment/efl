@@ -20,6 +20,7 @@
 
 ADD_CUBE(blue-cube, cube-blue);
 ADD_CUBE(purple-cube, cube-purple);
+ADD_CUBE(purple-cube420, cube-purple420);
 ADD_CUBE(cube_top, cube_top);
 ADD_CUBE(cube_bottom, cube_bottom);
 ADD_CUBE(cube_front, cube_front);

@@ -52,6 +52,7 @@ TEST_FILES = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
+	images/cube-purple420.png \
 	images/cube_back.png \
 	images/cube_bottom.png \
 	images/cube_front.png \
