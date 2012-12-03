@@ -1749,20 +1749,73 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
    return body->soft_body;
 }
 
+EAPI void
+ephysics_body_soft_body_anchor_hardness_set(EPhysics_Body *body, double hardness)
+{
+   if (!body)
+     {
+        ERR("Can't set soft body's anchor hardness, body is null.");
+        return;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't set soft body's anchor hardness, body seems not to be a soft"
+            " body.");
+        return;
+     }
+
+   if (hardness < 0 || hardness > 100)
+     {
+        ERR("Can't set soft body's anchor hardness, it must be between 0 and"
+            " 100.");
+        return;
+     }
+
+   ephysics_world_lock_take(body->world);
+   body->anchor_hardness = EINA_TRUE;
+   body->soft_body->m_cfg.kAHR = 1 - (hardness / 100);
+   ephysics_world_lock_release(body->world);
+   DBG("Soft body anchor hardness set to: %lf", hardness);
+}
+
+EAPI double
+ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get soft body's anchor hardness, body is null.");
+        return -1;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't get soft body's anchor hardness, body seems not to be a soft"
+            " body.");
+        return -1;
+     }
+
+   return body->soft_body->m_cfg.kAHR * 100;
+}
+
 static void
 _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
    int m = body->material_index;
    btSoftBody *soft_body = body->soft_body;
 
-   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
-     soft_body->m_cfg.kAHR = 0.8;
-   else
-     soft_body->m_cfg.kAHR = (hardness / 1000) * 0.6;
+   if (!body->anchor_hardness)
+     {
+        if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+          soft_body->m_cfg.kAHR = 0.8;
+        else
+          soft_body->m_cfg.kAHR = (hardness / 1000) * 0.6;
+     }
 
    soft_body->m_materials[m]->m_kVST = (hardness / 1000);
    soft_body->m_materials[m]->m_kLST = (hardness / 1000);
    soft_body->m_materials[m]->m_kAST = (hardness / 1000);
+
    DBG("Soft body %p hardness set to %lf.", body, hardness);
 }
 
@@ -2365,7 +2418,7 @@ _ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body *body, int idx, do
    for (int i = 0; i < 3; i++)
      {
         node = face.m_n[i];
-        node->m_v += impulse * node->m_im;
+        node->m_v = impulse * node->m_im;
      }
 
    DBG("Impulse applied to soft body node(%d): %lf, %lf, %lf", idx, impulse.x(),
@@ -2573,6 +2626,8 @@ ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity)
    body = _ephysics_body_soft_body_add(world, shape, soft_body);
    if (!body)
      goto no_body;
+
+   body->soft_body->setPose(false, true);
 
    front_face = _ephysics_body_soft_ellipsoid_face_slices_add(body,
                              EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT, center);

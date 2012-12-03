@@ -2332,6 +2332,46 @@ EAPI double ephysics_body_soft_body_hardness_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Set the soft body anchor hardness percentage.
+ *
+ * The anchor hardness percentage(together with general hardness settings
+ * set with ephysics_body_soft_body_hardness_set()) will define how the soft
+ * body is supposed to deform.
+ *
+ * By default EPhysics will calculate the anchor hardness depending on the
+ * general hardness settings, by default it`s set to 70% of general hardness on
+ * soft body and a fixed 80% for cloths.
+ *
+ * Anchor hardness will result on a contrary force to impulse and velocities
+ * applied to soft bodies. So it implies on force reduction.
+ *
+ * @note Since it`s a percentage value @p hardness will range from 0 - 100.
+ *
+ * @param body The body to be set.
+ * @param hardness The hardness to be set to @p body.
+ *
+ * @see ephysics_body_soft_body_hardness_set() for general hardness.
+ * @see ephysics_body_soft_body_anchor_hardness_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_anchor_hardness_set(EPhysics_Body *body, double hardness);
+
+/**
+ * @brief
+ * Get the soft body anchor hardnees percentage.
+ *
+ * @param body The body to get the anchor hardness percentage from.
+ * @return The anchor hardness percentage on success -1 on failure.
+ *
+ * @see ephysics_body_soft_body_anchor_hardness_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body);
+
+/**
+ * @brief
  * Set the soft body dragging status.
  *
  * While dragging a soft body the user may want to freeze a specific trimesh

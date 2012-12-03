@@ -161,6 +161,7 @@ struct _EPhysics_Body {
      Eina_Bool clockwise:1;
      Eina_Bool boundary:1;
      int bending_constraints;
+     Eina_Bool anchor_hardness;
 };
 
 extern int _ephysics_log_dom;
