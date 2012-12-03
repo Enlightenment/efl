@@ -14,7 +14,7 @@ static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
-static const struct wl_registry_listener _ecore_wl_registry_listener = 
+static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
    _ecore_wl_cb_handle_global,
    NULL // handle_global_remove
@@ -41,21 +41,21 @@ EAPI int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
 
 /**
  * @defgroup Ecore_Wl_Init_Group Wayland Library Init and Shutdown Functions
- * 
+ *
  * Functions that start and shutdown the Ecore Wayland Library.
  */
 
 /**
  * Initialize the Wayland display connection to the given display.
- * 
- * @param   name Display target name. if @c NULL, the default display is 
+ *
+ * @param   name Display target name. if @c NULL, the default display is
  *          assumed.
- * @return  The number of times the library has been initialized without being 
+ * @return  The number of times the library has been initialized without being
  *          shut down. 0 is returned if an error occurs.
- * 
+ *
  * @ingroup Ecore_Wl_Init_Group
  */
-EAPI int 
+EAPI int
 ecore_wl_init(const char *name)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -64,7 +64,7 @@ ecore_wl_init(const char *name)
 
    if (!eina_init()) return --_ecore_wl_init_count;
 
-   _ecore_wl_log_dom = 
+   _ecore_wl_log_dom =
      eina_log_domain_register("ecore_wl", ECORE_WL_DEFAULT_LOG_COLOR);
    if (_ecore_wl_log_dom < 0)
      {
@@ -136,18 +136,18 @@ ecore_wl_init(const char *name)
 
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
-   _ecore_wl_disp->fd_hdl = 
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd, 
+   _ecore_wl_disp->fd_hdl =
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd,
                                ECORE_FD_READ | ECORE_FD_WRITE,
-                               _ecore_wl_cb_handle_data, _ecore_wl_disp, 
+                               _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
    wl_list_init(&_ecore_wl_disp->inputs);
    wl_list_init(&_ecore_wl_disp->outputs);
 
-   _ecore_wl_disp->wl.registry = 
+   _ecore_wl_disp->wl.registry =
      wl_display_get_registry(_ecore_wl_disp->wl.display);
-   wl_registry_add_listener(_ecore_wl_disp->wl.registry, 
+   wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
    wl_display_dispatch(_ecore_wl_disp->wl.display);
@@ -171,16 +171,16 @@ ecore_wl_init(const char *name)
 
 /**
  * Shuts down the Ecore Wayland Library
- * 
- * In shutting down the library, the Wayland display connection is terminated 
+ *
+ * In shutting down the library, the Wayland display connection is terminated
  * and any event handlers for it are removed.
- * 
- * @return  The number of times the library has been initialized without 
+ *
+ * @return  The number of times the library has been initialized without
  *          being shut down.
- * 
+ *
  * @ingroup Ecore_Wl_Init_Group
  */
-EAPI int 
+EAPI int
 ecore_wl_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -190,18 +190,18 @@ ecore_wl_shutdown(void)
 
 /**
  * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
- * 
- * Functions that ensure that all commands which have been issued by the 
+ *
+ * Functions that ensure that all commands which have been issued by the
  * Ecore Wayland library have been sent to the server.
  */
 
 /**
  * Sends all Wayland commands to the Wayland Display.
- * 
+ *
  * @ingroup Ecore_Wl_Flush_Group
  * @since 1.2
  */
-EAPI void 
+EAPI void
 ecore_wl_flush(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -210,13 +210,13 @@ ecore_wl_flush(void)
 }
 
 /**
- * Flushes the command buffer and waits until all requests have been 
+ * Flushes the command buffer and waits until all requests have been
  * processed by the server.
- * 
+ *
  * @ingroup Ecore_Wl_Flush_Group
  * @since 1.2
  */
-EAPI void 
+EAPI void
 ecore_wl_sync(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -226,15 +226,15 @@ ecore_wl_sync(void)
 
 /**
  * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
- * 
+ *
  * Functions that set and retrieve various information about the Wayland Display.
  */
 
 /**
  * Retrieves the Wayland Shm Interface used for the current Wayland connection.
- * 
+ *
  * @return The current wayland shm interface
- * 
+ *
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.2
  */
@@ -246,9 +246,9 @@ ecore_wl_shm_get(void)
 
 /**
  * Retrieves the Wayland Display Interface used for the current Wayland connection.
- * 
+ *
  * @return The current wayland display interface
- * 
+ *
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.2
  */
@@ -260,14 +260,14 @@ ecore_wl_display_get(void)
 
 /**
  * Retrieves the size of the current screen.
- * 
+ *
  * @param w where to return the width. May be NULL. Returns 0 on error.
  * @param h where to return the height. May be NULL. Returns 0 on error.
- * 
+ *
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.2
  */
-EAPI void 
+EAPI void
 ecore_wl_screen_size_get(int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -282,7 +282,7 @@ ecore_wl_screen_size_get(int *w, int *h)
 }
 
 /* @since 1.2 */
-EAPI void 
+EAPI void
 ecore_wl_pointer_xy_get(int *x, int *y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -298,10 +298,10 @@ ecore_wl_pointer_xy_get(int *x, int *y)
  * xrandr where different parts of the screen may have different DPI etc.
  *
  * @return the general screen DPI (dots/pixels per inch).
- * 
+ *
  * @since 1.2
  */
-EAPI int 
+EAPI int
 ecore_wl_dpi_get(void)
 {
    int w, mw;
@@ -314,12 +314,12 @@ ecore_wl_dpi_get(void)
    if (mw <= 0) return 75;
 
    w = _ecore_wl_disp->output->allocation.w;
-   /* FIXME: NB: Hrrrmmm, need to verify this. xorg code is using a different 
+   /* FIXME: NB: Hrrrmmm, need to verify this. xorg code is using a different
     * formula to calc this */
    return (((w * 254) / mw) + 5) / 10;
 }
 
-EAPI void 
+EAPI void
 ecore_wl_display_iterate(void)
 {
    wl_display_dispatch(_ecore_wl_disp->wl.display);
@@ -327,7 +327,7 @@ ecore_wl_display_iterate(void)
 
 /**
  * Retrieves the requested cursor from the cursor theme
- * 
+ *
  * @param cursor_name The desired cursor name to be looked up in the theme
  * @return the cursor or NULL if the cursor cannot be found
  *
@@ -336,7 +336,7 @@ ecore_wl_display_iterate(void)
 EAPI struct wl_cursor *
 ecore_wl_cursor_get(const char *cursor_name)
 {
-   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->cursor_theme)) 
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->cursor_theme))
      return NULL;
 
    return wl_cursor_theme_get_cursor(_ecore_wl_disp->cursor_theme,
@@ -344,7 +344,7 @@ ecore_wl_cursor_get(const char *cursor_name)
 }
 
 /* local functions */
-static Eina_Bool 
+static Eina_Bool
 _ecore_wl_shutdown(Eina_Bool close)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -354,10 +354,10 @@ _ecore_wl_shutdown(Eina_Bool close)
 
    _ecore_wl_window_shutdown();
 
-   if (_ecore_wl_disp->fd_hdl) 
+   if (_ecore_wl_disp->fd_hdl)
      ecore_main_fd_handler_del(_ecore_wl_disp->fd_hdl);
 
-   if (close) 
+   if (close)
      {
         Ecore_Wl_Output *out, *tout;
         Ecore_Wl_Input *in, *tin;
@@ -370,7 +370,7 @@ _ecore_wl_shutdown(Eina_Bool close)
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
-        if (_ecore_wl_disp->wl.shell) 
+        if (_ecore_wl_disp->wl.shell)
           wl_shell_destroy(_ecore_wl_disp->wl.shell);
         if (_ecore_wl_disp->wl.shm) wl_shm_destroy(_ecore_wl_disp->wl.shm);
         if (_ecore_wl_disp->wl.data_device_manager)
@@ -396,7 +396,7 @@ _ecore_wl_shutdown(Eina_Bool close)
    return _ecore_wl_init_count;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl_Display *ewd;
@@ -417,7 +417,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void 
+static void
 _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED)
 {
    Ecore_Wl_Display *ewd;
@@ -428,7 +428,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
    if (!strcmp(interface, "wl_compositor"))
      {
-        ewd->wl.compositor = 
+        ewd->wl.compositor =
           wl_registry_bind(registry, id, &wl_compositor_interface, 1);
      }
    else if (!strcmp(interface, "wl_output"))
@@ -437,20 +437,20 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      _ecore_wl_input_add(ewd, id);
    else if (!strcmp(interface, "wl_shell"))
      {
-        ewd->wl.shell = 
+        ewd->wl.shell =
           wl_registry_bind(registry, id, &wl_shell_interface, 1);
      }
    else if (!strcmp(interface, "wl_shm"))
      {
         ewd->wl.shm = wl_registry_bind(registry, id, &wl_shm_interface, 1);
 
-        /* FIXME: We should not hard-code a cursor size here, and we should 
+        /* FIXME: We should not hard-code a cursor size here, and we should
          * also import the theme name from a config or env variable */
         ewd->cursor_theme = wl_cursor_theme_load(NULL, 32, ewd->wl.shm);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
      {
-        ewd->wl.data_device_manager = 
+        ewd->wl.data_device_manager =
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
      }
 
@@ -469,7 +469,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      }
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_wl_xkb_init(Ecore_Wl_Display *ewd)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -480,7 +480,7 @@ _ecore_wl_xkb_init(Ecore_Wl_Display *ewd)
    return EINA_TRUE;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
