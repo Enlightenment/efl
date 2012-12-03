@@ -764,6 +764,7 @@ _elm_image_smart_color_set(Eo *obj, void *_pd, va_list *list)
 
    eo_do_super(obj, evas_obj_smart_color_set(r, g, b, a));
 
+   evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
    evas_object_color_set(sd->img, r, g, b, a);
    if (sd->prev_img) evas_object_color_set(sd->prev_img, r, g, b, a);
 }
