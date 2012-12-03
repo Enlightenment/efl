@@ -17,6 +17,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WIN32_CFLAGS@ \
 @ELEMENTARY_WINCE_CFLAGS@ \
 @ELEMENTARY_EDBUS_CFLAGS@ \
+@ELEMENTARY_EDBUS2_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
@@ -140,6 +141,7 @@ endif
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
@@ -154,6 +156,7 @@ config.c
 elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
@@ -169,6 +172,7 @@ elementary_codegen_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
@@ -198,6 +202,7 @@ elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
@@ -223,6 +228,7 @@ elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
@@ -236,6 +242,7 @@ elementary_testql_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EDBUS2_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
