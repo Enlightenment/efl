@@ -33,6 +33,8 @@ collections {
                aspect: 1 1;
                physics {
                   mass: 10.8;
+                  restitution: 0.7;
+                  friction: 1.0;
                }
             }
             description {
@@ -40,6 +42,7 @@ collections {
                inherit: "default" 0.0;
                physics {
                   mass: 6.66;
+                  friction: 1.2;
                }
             }
          }

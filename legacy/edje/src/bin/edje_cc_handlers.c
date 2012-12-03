@@ -311,6 +311,8 @@ static void st_collections_group_parts_part_description_table_padding(void);
 static void st_collections_group_parts_part_description_table_min(void);
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
+static void st_collections_group_parts_part_description_physics_restitution(void);
+static void st_collections_group_parts_part_description_physics_friction(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
@@ -594,6 +596,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
+     {"collections.group.parts.part.description.physics.restitution", st_collections_group_parts_part_description_physics_restitution},
+     {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
@@ -1084,6 +1088,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 
 #ifdef HAVE_EPHYSICS
    result->physics.mass = FROM_DOUBLE(1.0);
+   result->physics.friction = FROM_DOUBLE(0.5);
 #endif
 
    return result;
@@ -7172,6 +7177,8 @@ st_collections_group_parts_part_description_table_min(void)
         ..
         physics {
             mass: 5.31;
+            friction: 0.5;
+            restitution: 0.82;
         }
         ..
     }
@@ -7199,6 +7206,66 @@ st_collections_group_parts_part_description_physics_mass(void)
    check_arg_count(1);
 
    current_desc->physics.mass = parse_float(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        restitution
+    @parameters
+        [body's restitution]
+    @effect
+        The coefficient of restitution is proporcion between speed after and
+        before a collision. It's 0 by default.
+
+        COR = relative speed after collision / relative speed before collision
+
+        @li elastically collide for COR == 1;
+        @li inelastically collide for 0 < COR < 1;
+        @li completelly stop (no bouncing at all) for COR == 0.
+
+    @endproperty
+    @since 1.8.0
+*/
+
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_restitution(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.restitution = parse_float(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        friction
+    @parameters
+        [body's friction]
+    @effect
+        Friction is used to make objects slide along each ot
+
+        The friction parameter is usually set between 0 and 1, but can be any
+        non-negative value. A friction value of 0 turns off friction and a value
+        of 1 makes the friction strong.
+
+        By default friction value is 0.5 and simulation resulsts will be better
+        when friction in non-zero.
+
+    @endproperty
+    @since 1.8.0
+*/
+
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_friction(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.friction = parse_float(0);
 }
 #endif
 

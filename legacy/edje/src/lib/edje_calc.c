@@ -2291,6 +2291,8 @@ _edje_part_recalc_single(Edje *ed,
 
 #ifdef HAVE_EPHYSICS
    params->physics.mass = desc->physics.mass;
+   params->physics.restitution = desc->physics.restitution;
+   params->physics.friction = desc->physics.friction;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2808,6 +2810,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #ifdef HAVE_EPHYSICS
         p3->physics.mass = TO_DOUBLE(FINTP(p1->physics.mass, p2->physics.mass,
                                          pos));
+        p3->physics.restitution = TO_DOUBLE(FINTP(p1->physics.restitution,
+                                                  p2->physics.restitution,
+                                                  pos));
+        p3->physics.friction = TO_DOUBLE(FINTP(p1->physics.friction,
+                                               p2->physics.friction, pos));
 #endif
 
         switch (part_type)
@@ -3001,6 +3008,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                    ephysics_body_move(ep->body,
                                       ed->x + pf->x, ed->y + pf->y, z);
                    ephysics_body_mass_set(ep->body, pf->physics.mass);
+                   ephysics_body_restitution_set(ep->body,
+                                                 pf->physics.restitution);
+                   ephysics_body_friction_set(ep->body, pf->physics.friction);
                 }
               else
 #endif

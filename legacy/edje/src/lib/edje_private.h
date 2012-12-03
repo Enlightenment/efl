@@ -961,6 +961,8 @@ struct _Edje_Part_Description_Common
 #ifdef HAVE_EPHYSICS
    struct {
       double mass;
+      double restitution;
+      double friction;
    } physics;
 #endif
 
@@ -1295,7 +1297,9 @@ struct _Edje_Calc_Params
 #ifdef HAVE_EPHYSICS
    struct {
       double mass; // 8
-   } physics; // 8
+      double restitution; // 8
+      double friction; // 8
+   } physics; // 24
 #endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
