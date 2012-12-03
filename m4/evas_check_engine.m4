@@ -200,7 +200,7 @@ PKG_CHECK_EXISTS([xcb xcb-shm xcb-image >= 0.2.1 pixman-1],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xstatic" ; then
+   if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
@@ -285,7 +285,7 @@ PKG_CHECK_EXISTS([x11-xcb xcb xcb-glx xcb-render xcb-renderutil],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xstatic" ; then
+   if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
@@ -500,7 +500,7 @@ PKG_CHECK_EXISTS([sdl >= 1.2.0],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xstatic" ; then
+   if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
@@ -617,7 +617,7 @@ PKG_CHECK_EXISTS([directfb >= 0.9.16],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xstatic" ; then
+   if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
@@ -694,7 +694,7 @@ PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client wayland-egl],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xstatic" ; then
+   if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else

@@ -682,7 +682,6 @@ lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @evas_engine_gl_cocoa_cflags@
 lib_evas_libevas_la_LIBADD += \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
 @evas_engine_gl_cocoa_libs@
 else
 engineglcocoapkgdir = $(libdir)/evas/modules/engines/gl_cocoa/$(MODULE_ARCH)
@@ -706,8 +705,12 @@ modules_evas_engines_gl_cocoa_module_la_CPPFLAGS = \
 @evas_engine_gl_cocoa_cflags@ \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@
-modules_evas_engines_gl_cocoa_module_la_LIBADD = \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
+modules_evas_engines_gl_cocoa_module_la_LIBADD =
+if ! EVAS_STATIC_BUILD_GL_COMMON
+modules_evas_engines_gl_cocoa_module_la_LIBADD += \
+modules/evas/engines/gl_common/libevas_engine_gl_common.la
+endif
+modules_evas_engines_gl_cocoa_module_la_LIBADD += \
 lib/eet/libeet.la \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
@@ -728,7 +731,6 @@ lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @evas_engine_gl_sdl_cflags@
 lib_evas_libevas_la_LIBADD += \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
 @evas_engine_gl_sdl_libs@
 else
 engineglsdlpkgdir = $(libdir)/evas/modules/engines/gl_sdl/$(MODULE_ARCH)
@@ -752,8 +754,12 @@ modules_evas_engines_gl_sdl_module_la_CPPFLAGS = \
 @evas_engine_gl_sdl_cflags@ \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@
-modules_evas_engines_gl_sdl_module_la_LIBADD = \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
+modules_evas_engines_gl_sdl_module_la_LIBADD =
+if ! EVAS_STATIC_BUILD_GL_COMMON
+modules_evas_engines_gl_sdl_module_la_LIBADD += \
+modules/evas/engines/gl_common/libevas_engine_gl_common.la
+endif
+modules_evas_engines_gl_sdl_module_la_LIBADD += \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
 @evas_engine_gl_sdl_libs@
@@ -774,7 +780,6 @@ lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 @evas_engine_gl_xlib_cflags@
 lib_evas_libevas_la_LIBADD += \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
 @evas_engine_gl_xlib_libs@
 else
 engineglx11pkgdir = $(libdir)/evas/modules/engines/gl_x11/$(MODULE_ARCH)
@@ -798,8 +803,12 @@ modules_evas_engines_gl_x11_module_la_CPPFLAGS = \
 @evas_engine_gl_xlib_cflags@ \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@
-modules_evas_engines_gl_x11_module_la_LIBADD = \
-modules/evas/engines/gl_common/libevas_engine_gl_common.la \
+modules_evas_engines_gl_x11_module_la_LIBADD =
+if ! EVAS_STATIC_BUILD_GL_COMMON
+modules_evas_engines_gl_x11_module_la_LIBADD += \
+modules/evas/engines/gl_common/libevas_engine_gl_common.la
+endif
+modules_evas_engines_gl_x11_module_la_LIBADD += \
 lib/eet/libeet.la \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
