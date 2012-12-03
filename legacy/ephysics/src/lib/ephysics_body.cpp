@@ -2315,7 +2315,7 @@ ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coo
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
                                       NULL);
    xx = x / rate;
-   yy = ((wh + wy) -  y) / rate;
+   yy = (wy + (wh -  y)) / rate;
    zz = z / rate;
    dd = d / rate;
    ww = w / rate;
@@ -2333,7 +2333,7 @@ ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coo
              nz = node->m_x.z();
 
              if ((nz > zz || nz < dd) || (nx < xx || nx > xx + ww) ||
-                 (ny > yy || ny < ny - hh))
+                 (ny > yy || ny < yy - hh))
                out++;
           }
 
@@ -2359,7 +2359,7 @@ _ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body *body, int idx, do
    btVector3 impulse;
 
    rate = ephysics_world_rate_get(body->world);
-   impulse = btVector3(x / rate, y / rate, z / rate);
+   impulse = btVector3(x / rate, - y / rate, z / rate);
 
    face = body->soft_body->m_faces[idx];
    for (int i = 0; i < 3; i++)
