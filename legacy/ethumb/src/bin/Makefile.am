@@ -48,6 +48,7 @@ ethumbd_client_SOURCES = ethumbd_client.c
 ethumbd_client_LDADD = \
 $(top_builddir)/src/lib/client/libethumb_client.la \
 $(top_builddir)/src/lib/libethumb.la \
+@EDBUS_LIBS@ \
 @ECORE_LIBS@ \
 @EINA_LIBS@
 

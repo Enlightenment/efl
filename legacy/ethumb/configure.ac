@@ -153,7 +153,7 @@ fi
 AM_CONDITIONAL(HAVE_EDBUS, false)
 define([CHECK_MODULE_ETHUMBD],
 [
-        AC_ETH_CHECK_PKG(EDBUS, edbus, [], [ETHUMBD=false])
+        AC_ETH_CHECK_PKG(EDBUS, edbus2, [], [ETHUMBD=false])
 ])
 
 AC_ETH_OPTIONAL_MODULE([ethumbd], true, [CHECK_MODULE_ETHUMBD])

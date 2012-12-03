@@ -127,7 +127,7 @@ typedef void (*Ethumb_Client_Generate_Cancel_Cb)(void *data, Eina_Bool success);
 EAPI int ethumb_client_init(void);
 EAPI int ethumb_client_shutdown(void);
 
-EAPI Ethumb_Client * ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
+EAPI Ethumb_Client *ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_disconnect(Ethumb_Client *client);
 EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data);
 
