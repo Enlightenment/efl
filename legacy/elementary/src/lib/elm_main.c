@@ -343,6 +343,32 @@ _elm_unneed_e_dbus(void)
 #endif
 }
 
+#ifdef ELM_EDBUS2
+static int _elm_need_edbus = 0;
+#endif
+EAPI Eina_Bool
+elm_need_edbus(void)
+{
+#ifdef ELM_EDBUS2
+   if (_elm_need_edbus++) return EINA_TRUE;
+   edbus_init();
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+static void
+_elm_unneed_edbus(void)
+{
+#ifdef ELM_EDBUS2
+   if (--_elm_need_edbus) return;
+
+   _elm_need_edbus = 0;
+   edbus_shutdown();
+#endif
+}
+
 #ifdef ELM_EFREET
 static int _elm_need_efreet = 0;
 #endif
@@ -553,6 +579,7 @@ elm_quicklaunch_shutdown(void)
    _elm_theme_shutdown();
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
+   _elm_unneed_edbus();
    _elm_unneed_ethumb();
    _elm_unneed_web();
    ecore_file_shutdown();

@@ -20,9 +20,25 @@ EAPI Eina_Bool elm_need_efreet(void);
  *
  * @return EINA_TRUE if support exists and initialization succeeded.
  *
+ * @deprecated use elm_need_edbus() for EDBus (v2) support. Old API is
+ * deprecated.
+ *
  * @ingroup E_dbus
  */
-EAPI Eina_Bool elm_need_e_dbus(void);
+EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
+
+/**
+ * Request that your elementary application needs edbus
+ *
+ * This initializes the edbus (aka v2) library when called and if
+ * support exists it returns EINA_TRUE, otherwise returns
+ * EINA_FALSE. This must be called before any edbus calls.
+ *
+ * @return EINA_TRUE if support exists and initialization succeeded.
+ *
+ * @ingroup edbus
+ */
+EAPI Eina_Bool elm_need_edbus(void) EINA_DEPRECATED;
 
 /**
  * Request that your elementary application needs ethumb

@@ -18,6 +18,7 @@ Additions:
    * Add elm_genlist_nth_item_get
    * Add elm_gengrid_nth_item_get
    * Add elm_config_selection_unfocused_clear_get and elm_config_selection_unfocused_clear_set
+   * Add elm_need_edbus() and EDBus.h support with ELM_EDBUS2 macro to integrate edbus (v2). Deprecated elm_need_e_dbus() (e_dbus, v1).
 
 Improvements:
 

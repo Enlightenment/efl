@@ -497,6 +497,34 @@ if test "x$want_elementary_edbus" = "xyes" -a "x$have_elementary_edbus" = "xno";
 fi
 AC_SUBST(ELM_EDBUS_DEF)
 
+ELM_EDBUS2_DEF="#undef"
+have_elementary_edbus2="no"
+want_elementary_edbus2="auto"
+AC_ARG_ENABLE([edbus2],
+   [AC_HELP_STRING([--disable-edbus2], [disable edbus2 support. @<:@default=detect@:>@])],
+   [want_elementary_edbus2=$enableval], [])
+
+if test "x$want_elementary_edbus2" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_EDBUS2],
+       [
+        edbus2 >= 1.7.99
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_EDBUS2, 1, [EDbus2 support for Elementary])
+        have_elementary_edbus2="yes"
+        ELM_EDBUS2_DEF="#define"
+        requirement_elm="edbus2 >= 1.7.99 ${requirement_elm}"
+       ],
+       [have_elementary_edbus2="no"]
+    )
+else
+    have_elementary_edbus2="no"
+fi
+if test "x$want_elementary_edbus2" = "xyes" -a "x$have_elementary_edbus2" = "xno"; then
+    AC_MSG_ERROR([EDBus (v2) support requested, but no edbus2 found by pkg-config.])
+fi
+AC_SUBST(ELM_EDBUS2_DEF)
+
 ELM_EFREET_DEF="#undef"
 have_elementary_efreet="no"
 want_elementary_efreet="auto"
@@ -814,7 +842,7 @@ echo
 echo "  Features:"
 echo "    Ecore_IMF..............: ${have_ecore_imf}"
 echo "    Ecore_Con..............: ${have_ecore_con}"
-echo "    EDBus..................: ${have_elementary_edbus}"
+echo "    EDBus..................: v1=${have_elementary_edbus}, v2=${have_elementary_edbus2}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
