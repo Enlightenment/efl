@@ -1414,7 +1414,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         /* animate new one */
         edje_object_message_signal_process(VIEW(it));
 
-        if (it->animator) ecore_animator_del(it->animator);
         it->animator = ecore_animator_add(_push_transition_cb, obj);
      }
 
