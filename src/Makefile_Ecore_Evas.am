@@ -25,7 +25,7 @@ lib/ecore_evas/ecore_evas_wayland_egl.c \
 lib/ecore_evas/ecore_evas_extn.c \
 lib/ecore_evas/ecore_evas_private.h
 
-if BUILD_ECORE_WAYLAND
+if HAVE_ECORE_WAYLAND
 lib_ecore_evas_libecore_evas_la_SOURCES += \
 lib/ecore_evas/ecore_evas_wayland_common.c
 endif
@@ -33,127 +33,154 @@ endif
 lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_input_evas \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/modules/evas/engines/buffer \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_input_evas \
 -I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/modules/evas/engines/buffer \
 -DEFL_ECORE_EVAS_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
-if BUILD_ECORE_COCOA
+if HAVE_ECORE_COCOA
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_cocoa \
--I$(top_builddir)/src/lib/ecore_cocoa
+-I$(top_srcdir)/src/modules/evas/engines/gl_cocoa \
+-I$(top_builddir)/src/lib/ecore_cocoa \
+-I$(top_builddir)/src/modules/evas/engines/gl_cocoa
 endif
 
-if BUILD_ECORE_DIRECTFB
+if HAVE_ECORE_DIRECTFB
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_directfb \
--I$(top_builddir)/src/lib/ecore_directfb
+-I$(top_srcdir)/src/modules/evas/engines/directfb \
+-I$(top_builddir)/src/lib/ecore_directfb \
+-I$(top_builddir)/src/modules/evas/engines/directfb
 endif
 
-if BUILD_ECORE_FB
+if HAVE_ECORE_FB
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_fb \
--I$(top_builddir)/src/lib/ecore_fb
+-I$(top_srcdir)/src/modules/evas/engines/fb \
+-I$(top_builddir)/src/lib/ecore_fb \
+-I$(top_builddir)/src/modules/evas/engines/fb
 endif
 
-if BUILD_ECORE_PSL1GHT
+if HAVE_PS3
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_psl1ght \
--I$(top_builddir)/src/lib/ecore_psl1ght
+-I$(top_srcdir)/src/modules/evas/engines/psl1ght \
+-I$(top_builddir)/src/lib/ecore_psl1ght \
+-I$(top_builddir)/src/modules/evas/engines/psl1ght
 endif
 
-if BUILD_ECORE_SDL
+if HAVE_ECORE_SDL
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_sdl \
--I$(top_builddir)/src/lib/ecore_sdl
+-I$(top_srcdir)/src/modules/evas/engines/gl_sdl \
+-I$(top_builddir)/src/lib/ecore_sdl \
+-I$(top_builddir)/src/modules/evas/engines/gl_sdl
 endif
 
-if BUILD_ECORE_WAYLAND
+if HAVE_ECORE_WAYLAND
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_wayland \
--I$(top_builddir)/src/lib/ecore_wayland
+-I$(top_srcdir)/src/modules/evas/engines/wayland_shm \
+-I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
+-I$(top_builddir)/src/lib/ecore_wayland \
+-I$(top_builddir)/src/modules/evas/engines/wayland_shm \
+-I$(top_builddir)/src/modules/evas/engines/wayland_egl
 endif
 
-if BUILD_ECORE_WIN32
+if HAVE_WIN32
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_win32 \
--I$(top_builddir)/src/lib/ecore_win32
+-I$(top_srcdir)/src/modules/evas/engines/software_ddraw \
+-I$(top_srcdir)/src/modules/evas/engines/direct3d \
+-I$(top_builddir)/src/lib/ecore_win32 \
+-I$(top_builddir)/src/modules/evas/engines/software_ddraw \
+-I$(top_builddir)/src/modules/evas/engines/direct3d
 endif
 
-if BUILD_ECORE_WINCE
+if HAVE_WINCE
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_wince \
 -I$(top_builddir)/src/lib/ecore_wince
 endif
 
-if BUILD_ECORE_X
+if HAVE_ECORE_X
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_x \
--I$(top_builddir)/src/lib/ecore_x
+-I$(top_srcdir)/src/modules/evas/engines/software_x11 \
+-I$(top_srcdir)/src/modules/evas/engines/gl_x11 \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/modules/evas/engines/software_x11 \
+-I$(top_builddir)/src/modules/evas/engines/gl_x11
 endif
 
 lib_ecore_evas_libecore_evas_la_LIBADD = \
-lib/ecore_input_evas/libecore_input_evas.la \
+lib/ecore_input/libecore_input_evas.la \
 lib/ecore_input/libecore_input.la \
 lib/ecore_ipc/libecore_ipc.la \
 lib/ecore/libecore.la \
+lib/evas/libevas.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
 @ECORE_EVAS_LIBS@
 
-if BUILD_ECORE_COCOA
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_COCOA
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_cocoa/libecore_cocoa.la
 endif
 
-if BUILD_ECORE_DIRECTFB
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_DIRECTFB
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_directfb/libecore_directfb.la
 endif
 
-if BUILD_ECORE_FB
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_FB
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_fb/libecore_fb.la
 endif
 
-if BUILD_ECORE_PSL1GHT
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_PS3
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_psl1ght/libecore_psl1ght.la
 endif
 
-if BUILD_ECORE_SDL
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_SDL
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_sdl/libecore_sdl.la
 endif
 
-if BUILD_ECORE_WAYLAND
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_WAYLAND
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_wayland/libecore_wayland.la
 endif
 
-if BUILD_ECORE_WIN32
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_WIN32
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_win32/libecore_win32.la
 endif
 
-if BUILD_ECORE_WINCE
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_WINCE
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_wince/libecore_wince.la
 endif
 
-if BUILD_ECORE_X
-lib_ecore_evas_libecore_evas_la_LIBADD = \
+if HAVE_ECORE_X
+lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_x/libecore_x.la
 endif
 
