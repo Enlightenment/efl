@@ -93,7 +93,6 @@ _item_free(Elm_Naviframe_Item *it)
    Eina_Inlist *l;
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
-   Evas_Object *title_content;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
@@ -109,13 +108,12 @@ _item_free(Elm_Naviframe_Item *it)
 
    EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
      {
-        title_content = edje_object_part_swallow_get(VIEW(it), content_pair->part);
-        if (title_content)
+        if (content_pair->content)
           {
-             evas_object_event_callback_del(title_content,
+             evas_object_event_callback_del(content_pair->content,
                                             EVAS_CALLBACK_DEL,
                                             _title_content_del);
-             evas_object_del(title_content);
+             evas_object_del(content_pair->content);
           }
         eina_stringshare_del(content_pair->part);
         free(content_pair);
@@ -171,7 +169,7 @@ _item_content_signals_emit(Elm_Naviframe_Item *it)
 
    EINA_INLIST_FOREACH(it->content_list, content_pair)
      {
-        if (edje_object_part_swallow_get(VIEW(it), content_pair->part))
+        if (content_pair->content)
           snprintf(buf, sizeof(buf), "elm,state,%s,show", content_pair->part);
         else
           snprintf(buf, sizeof(buf), "elm,state,%s,hide", content_pair->part);
@@ -644,23 +642,21 @@ _title_content_set(Elm_Naviframe_Item *it,
                    Evas_Object *content)
 {
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
-   Evas_Object *prev_content = NULL;
    char buf[1024];
 
    EINA_INLIST_FOREACH(it->content_list, pair)
      if (!strcmp(part, pair->part)) break;
    if (pair)
      {
-        prev_content = edje_object_part_swallow_get(VIEW(it), part);
-        if (prev_content == content) return;
+        if (pair->content == content) return;
         if (content)
           edje_object_part_swallow(VIEW(it), part, content);
-        if (prev_content)
+        if (pair->content)
           {
-             evas_object_event_callback_del(prev_content,
+             evas_object_event_callback_del(pair->content,
                                             EVAS_CALLBACK_DEL,
                                             _title_content_del);
-             evas_object_del(prev_content);
+             evas_object_del(pair->content);
           }
      }
    else
@@ -674,17 +670,20 @@ _title_content_set(Elm_Naviframe_Item *it,
              return;
           }
         pair->it = it;
+        pair->content = content;
         eina_stringshare_replace(&pair->part, part);
         it->content_list = eina_inlist_append(it->content_list,
                                               EINA_INLIST_GET(pair));
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_DEL,
-                                       _title_content_del,
-                                       pair);
         edje_object_part_swallow(VIEW(it), part, content);
         snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
         edje_object_signal_emit(VIEW(it), buf, "elm");
      }
+
+   evas_object_event_callback_add(content,
+                                  EVAS_CALLBACK_DEL,
+                                  _title_content_del,
+                                  pair);
+
 }
 
 static void
@@ -744,7 +743,7 @@ _title_content_unset(Elm_Naviframe_Item *it, const char *part)
      {
         if (!strcmp(part, pair->part))
           {
-             content = edje_object_part_swallow_get(VIEW(it), part);
+             content = pair->content;
              eina_stringshare_del(pair->part);
              it->content_list = eina_inlist_remove(it->content_list,
                                                    EINA_INLIST_GET(pair));
@@ -1214,9 +1213,8 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      l = eina_list_append(l, top_it->content);
    EINA_INLIST_FOREACH(top_it->content_list, content_pair)
      {
-        if (edje_object_part_swallow_get(VIEW(top_it), content_pair->part))
-          l = eina_list_append(l, edje_object_part_swallow_get(VIEW(top_it),
-                                                               content_pair->part));
+        if (content_pair->content)
+          l = eina_list_append(l, content_pair->content);
      }
    l = eina_list_append(l, VIEW(top_it));
 
