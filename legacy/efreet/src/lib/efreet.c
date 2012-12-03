@@ -247,7 +247,10 @@ efreet_parse_locale(void)
    if (efreet_parse_locale_setting("LC_ALL"))
      return;
 
-   efreet_parse_locale_setting("LC_MESSAGES");
+   if (efreet_parse_locale_setting("LC_MESSAGES"))
+     return;
+   
+   efreet_language = eina_stringshare_add("C");
 }
 
 /**
