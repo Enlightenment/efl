@@ -99,6 +99,7 @@ struct _EPhysics_World {
      Eina_Bool outside_back:1;
      Eina_Bool pending_simulation:1;
      Eina_Bool stacking:1;
+     Eina_Bool force_update:1;
 };
 
 static int _ephysics_world_init_count = 0;
@@ -107,6 +108,12 @@ static Eina_Inlist *_worlds = NULL;
 static Eina_List *_worlds_to_delete = NULL;
 static Ecore_Animator *_anim_simulate = NULL;
 static int _worlds_walking = 0;
+
+void
+ephysics_world_force_update_set(EPhysics_World *world, Eina_Bool force_update)
+{
+   world->force_update = force_update;
+}
 
 btSoftBodyWorldInfo *
 ephysics_world_info_get(const EPhysics_World *world)
@@ -235,7 +242,7 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
         else
           {
              ephysics_body_active_set(body, EINA_FALSE);
-             if (camera_moved)
+             if (camera_moved || world->force_update)
                ephysics_body_evas_object_update_select(body);
           }
      }
@@ -243,6 +250,7 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
    if (world->stacking)
      ephysics_body_evas_objects_restack(world);
 
+   world->force_update = EINA_FALSE;
    if (camera_moved)
      {
         ephysics_camera_moved_set(world->camera, EINA_FALSE);
@@ -1540,6 +1548,7 @@ ephysics_world_point_light_position_set(EPhysics_World *world, Evas_Coord lx, Ev
    world->light.lx = lx;
    world->light.ly = ly;
    world->light.lz = lz;
+   world->force_update = EINA_TRUE;
 }
 
 EAPI void
@@ -1554,6 +1563,7 @@ ephysics_world_point_light_color_set(EPhysics_World *world, int lr, int lg, int 
    world->light.lr = lr;
    world->light.lg = lg;
    world->light.lb = lb;
+   world->force_update = EINA_TRUE;
 }
 
 EAPI void
@@ -1568,6 +1578,7 @@ ephysics_world_ambient_light_color_set(EPhysics_World *world, int ar, int ag, in
    world->light.ar = ar;
    world->light.ag = ag;
    world->light.ab = ab;
+   world->force_update = EINA_TRUE;
 }
 
 EAPI void
@@ -1622,6 +1633,7 @@ ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable)
      }
 
    world->light.all_bodies = !!enable;
+   world->force_update = EINA_TRUE;
 }
 
 EAPI Eina_Bool

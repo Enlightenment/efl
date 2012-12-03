@@ -185,6 +185,7 @@ btSoftBodyWorldInfo *ephysics_world_info_get(const EPhysics_World *world);
 void ephysics_world_lock_take(EPhysics_World *world);
 void ephysics_world_lock_release(EPhysics_World *world);
 Eina_List *ephysics_world_constraints_get(EPhysics_World *world);
+void ephysics_world_force_update_set(EPhysics_World *world, Eina_Bool force_update);
 
 /* Body */
 Eina_Bool ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1);

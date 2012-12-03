@@ -228,6 +228,7 @@ ephysics_camera_perspective_set(EPhysics_Camera *camera, Evas_Coord px, Evas_Coo
    camera->perspective.py = py;
    camera->perspective.z0 = z0;
    camera->perspective.foc = foc;
+   ephysics_world_force_update_set(camera->world, EINA_TRUE);
 }
 
 EAPI void
@@ -255,6 +256,7 @@ ephysics_camera_perspective_enabled_set(EPhysics_Camera *camera, Eina_Bool enabl
      }
 
    camera->perspective.enabled = !!enabled;
+   ephysics_world_force_update_set(camera->world, EINA_TRUE);
 }
 
 EAPI Eina_Bool
