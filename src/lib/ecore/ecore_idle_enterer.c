@@ -175,6 +175,8 @@ _ecore_idle_enterer_del(Ecore_Idle_Enterer *obj)
 {
    Ecore_Idle_Enterer_Private_Data *idle_enterer = eo_data_get(obj, MY_CLASS);
 
+   /* Double free case */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(idle_enterer, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(idle_enterer->delete_me, NULL);
    idle_enterer->delete_me = 1;
    idle_enterers_delete_me = 1;
