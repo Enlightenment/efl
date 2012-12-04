@@ -60,14 +60,14 @@ evas_common_text_props_content_nofree_unref(Evas_Text_Props *props)
    if (!props->info)
       return;
 
-   if (props->font_instance)
-     {
-        evas_common_font_int_unref(props->font_instance);
-        props->font_instance = NULL;
-     }
-
    if (--(props->info->refcount) == 0)
      {
+        if (props->font_instance)
+          {
+             evas_common_font_int_unref(props->font_instance);
+             props->font_instance = NULL;
+          }
+
         free(props->glyphs);
         props->glyphs = NULL;
         props->glyphs_length = 0;
