@@ -71,6 +71,7 @@ Fixes:
    * Fix the naviframe to resize it's items which are inserted.
    * Fix the naviframe to send signal emits one time for content show/hide, text show/hide.
    * Fix case where tooltips could go offscreen unnecessarily
+   * Fix possible divide by zero in els_scroller animator.
 
 Removals:
 

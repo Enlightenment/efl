@@ -2124,14 +2124,16 @@ _smart_hold_animator(void *data)
              while ((pos[src_index].t < time_interval * i) && (src_index <= count))
                {
                   src_index++;
-          }
+	       }
              if (src_index <= count)
-          {
+	       {
                   xsum += pos[src_index].x;
                   ysum += pos[src_index].y;
                   dst_index++;
                }
           }
+        /* Note: difficult to trigger, but may be possible to get src_index == 0 and count < 0 and so trigger a divide by zero. */
+        if (!dst_index) dst_index = 1;
         fx = xsum / dst_index;
         fy = ysum / dst_index;
      }

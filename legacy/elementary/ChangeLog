@@ -742,4 +742,8 @@
 
 2012-12-02  Mike Blumenkrantz
 
-        * Fix case where tooltips could go offscreen unnecessarily
+        * Fix case where tooltips could go offscreen unnecessarily.
+
+2012-12-04  Cedric Bail
+
+	* Fix a possible divide by zero in els_scroller animator.
