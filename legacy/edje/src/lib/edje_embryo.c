@@ -855,6 +855,29 @@ _edje_embryo_fn_get_image_id(Embryo_Program *ep, Embryo_Cell *params)
    return -1;
 }
 
+/* get_program_id(program[]) */
+static Embryo_Cell
+_edje_embryo_fn_get_program_id(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Edje_Program **prog;
+   char *p;
+   int i;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   GETSTR(p, params[1]);
+   if (!p) return -1;
+   prog = ed->table_programs;
+   if (!prog) return -1;
+   for (i = 0; i < ed->table_programs_size; i++, prog++)
+     {
+        if (!(*prog)->name) continue;
+        if (!strcmp((*prog)->name, p)) return (*prog)->id;
+     }
+   return -1;
+}
+
 static Embryo_Cell
 _edje_embryo_fn_play_sample(Embryo_Program *ep, Embryo_Cell *params)
 {
@@ -3050,6 +3073,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    embryo_program_native_call_add(ep, "get_part_id", _edje_embryo_fn_get_part_id);
    embryo_program_native_call_add(ep, "get_image_id", _edje_embryo_fn_get_image_id);
+   embryo_program_native_call_add(ep, "get_program_id", _edje_embryo_fn_get_program_id);
    embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
    embryo_program_native_call_add(ep, "get_state", _edje_embryo_fn_get_state);
    embryo_program_native_call_add(ep, "set_tween_state", _edje_embryo_fn_set_tween_state);

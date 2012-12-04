@@ -683,3 +683,7 @@
 2012-11-23  Bruno Dilly
 
         * Support message sending on edje player.
+
+2012-11-23  Eduardo Lima (Etrunko)
+
+        * Add embryo function get_program_id
