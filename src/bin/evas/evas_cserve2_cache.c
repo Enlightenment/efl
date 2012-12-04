@@ -2138,10 +2138,9 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    fentry = entry->file;
    fentry->images = eina_list_append(fentry->images, entry);
 
-   if ((!entry->opts.scale_dst_w) && (!entry->opts.scale_dst_h))
-     entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
-                                               0, NULL, fentry->base.request,
-                                               &_load_funcs, entry);
+   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
+                                             0, NULL, fentry->base.request,
+                                             &_load_funcs, entry);
    return 0;
 }
 
