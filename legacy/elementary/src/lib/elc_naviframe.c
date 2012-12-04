@@ -558,7 +558,7 @@ _item_content_unset(Elm_Naviframe_Item *it)
 
    if (!content) return NULL;
 
-   edje_object_part_unswallow(VIEW(it), it->content);
+   edje_object_part_unswallow(VIEW(it), content);
    edje_object_signal_emit(VIEW(it), "elm,state,content,hide", "elm");
 
    evas_object_event_callback_del
