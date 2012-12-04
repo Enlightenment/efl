@@ -4064,6 +4064,10 @@ AC_MSG_NOTICE([Eio checks])
 
 requirements_pc_eio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_eio}"
 
+requirements_libs_eio="${requirements_libs_eio} -lm"
+EIO_LIBS=${requirements_pc_eio}
+AC_SUBST([EIO_LIBS])
+
 ### Checks for header files
 
 AC_CHECK_HEADERS([grp.h pwd.h])

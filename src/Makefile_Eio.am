@@ -38,13 +38,15 @@ lib_eio_libeio_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/eio \
 -DEFL_EIO_BUILD \
-@EFL_CFLAGS@
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
 
 lib_eio_libeio_la_LIBADD = \
 lib/eina/libeina.la \
 lib/eo/libeo.la \
 lib/eet/libeet.la \
 lib/ecore/libecore.la \
--lm
+@EIO_LIBS@ \
+@EFL_COV_LIBS@
 
 lib_eio_libeio_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
