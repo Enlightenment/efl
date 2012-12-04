@@ -3088,6 +3088,14 @@ evas_object_image_load(Evas_Object *eo_obj)
    lo.region.y = o->load_opts.region.y;
    lo.region.w = o->load_opts.region.w;
    lo.region.h = o->load_opts.region.h;
+   lo.scale_load.src_x = o->load_opts.scale_load.src_x;
+   lo.scale_load.src_y = o->load_opts.scale_load.src_y;
+   lo.scale_load.src_w = o->load_opts.scale_load.src_w;
+   lo.scale_load.src_h = o->load_opts.scale_load.src_h;
+   lo.scale_load.dst_w = o->load_opts.scale_load.dst_w;
+   lo.scale_load.dst_h = o->load_opts.scale_load.dst_h;
+   lo.scale_load.smooth = o->load_opts.scale_load.smooth;
+   lo.scale_load.scale_hint = o->load_opts.scale_load.scale_hint;
    lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load
       (obj->layer->evas->engine.data.output,
