@@ -376,7 +376,7 @@ _theme_set_write(void)
 {
    Eina_Bool ret = EINA_FALSE;
    char *str[3];  /* *klas, *style, *group */
-   char *aux, *token, *_group, buf[512];
+   char *token, *_group, buf[512];
    int i;
 
    str[0] = str[1] = str[2] = NULL;
@@ -386,9 +386,9 @@ _theme_set_write(void)
    if (!_group) return EINA_FALSE;
 
    token = strtok(_group, "/");
-   for (i = 0, aux = NULL; i < 3; i++, aux = NULL)
+   for (i = 0; i < 3; i++)
      {
-	token = strtok(aux, "/");
+	token = strtok(NULL, "/");
 	if (!token) break;
 
 	str[i] = token;
