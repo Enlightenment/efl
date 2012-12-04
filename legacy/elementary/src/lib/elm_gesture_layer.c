@@ -1947,6 +1947,11 @@ _n_long_tap_test(Evas_Object *obj,
         st->touched = _touched_device_add(st->touched, pe);
         st->info.n = eina_list_count(st->touched);
 
+        _event_consume(sd, event_info, event_type, ev_flag);
+        _compute_taps_center(st, &st->info.x, &st->info.y, pe);
+        st->center_x = st->info.x;  /* Update coords for */
+        st->center_y = st->info.y;  /* reporting START  */
+
         /* This is the first mouse down we got */
         if (eina_list_count(st->touched) == 1)
           {
@@ -1966,11 +1971,6 @@ _n_long_tap_test(Evas_Object *obj,
                 ecore_timer_reset(st->timeout);
           }
 
-
-        _event_consume(sd, event_info, event_type, ev_flag);
-        _compute_taps_center(st, &st->info.x, &st->info.y, pe);
-        st->center_x = st->info.x;
-        st->center_y = st->info.y;
         break;
 
       case EVAS_CALLBACK_MULTI_UP:
