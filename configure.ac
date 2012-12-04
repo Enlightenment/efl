@@ -2983,8 +2983,6 @@ AC_MSG_NOTICE([Ecore_Wayland checks])
 
 ### Checks for libraries
 
-# Evil library for compilation on Windows
-
 ## Eina, Ecore, Ecore_Input
 
 requirements_pc_ecore_wayland="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
