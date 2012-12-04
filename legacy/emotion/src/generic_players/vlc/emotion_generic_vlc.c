@@ -708,7 +708,12 @@ _position_changed(struct _App *app)
 	w = 1;
 	h = 1;
      }
-   _send_resize(app, w, h);
+
+   if (w > 0 || h > 0)
+     {
+        _send_resize(app, w, h);
+        app->size_sent = 1;
+     }
 
    /* sending audio track info */
    _send_all_track_info(app);
@@ -716,7 +721,8 @@ _position_changed(struct _App *app)
    /* sending meta info */
    _send_all_meta_info(app);
 
-   libvlc_media_player_stop(app->mp);
+   if (app->size_sent)
+     libvlc_media_player_stop(app->mp);
 }
 
 static void
