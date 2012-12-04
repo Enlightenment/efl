@@ -308,7 +308,9 @@ create_gengrid(Evas_Object *obj, int items)
    char buf[PATH_MAX];
 
    grid = elm_gengrid_add(obj);
-   elm_gengrid_item_size_set(grid, 150, 150);
+   elm_gengrid_item_size_set(grid,
+                             elm_config_scale_get() * 150,
+                             elm_config_scale_get() * 150);
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
    elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
@@ -692,7 +694,8 @@ _size_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *grid = data;
    int size = elm_spinner_value_get(obj);
-   elm_gengrid_item_size_set(grid, size, size);
+   elm_gengrid_item_size_set(grid, elm_config_scale_get() * size,
+                             elm_config_scale_get() * size);
 }
 
 void
@@ -709,7 +712,8 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    grid = elm_gengrid_add(win);
-   elm_gengrid_item_size_set(grid, 150, 150);
+   elm_gengrid_item_size_set(grid, elm_config_scale_get() * 150,
+                             elm_config_scale_get() * 150);
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_FALSE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
@@ -803,8 +807,10 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    grid = elm_gengrid_add(win);
-   elm_gengrid_item_size_set(grid, 150, 150);
-   elm_gengrid_group_item_size_set(grid, 31, 31);
+   elm_gengrid_item_size_set(grid, elm_config_scale_get() * 150,
+                             elm_config_scale_get() * 150);
+   elm_gengrid_group_item_size_set(grid, elm_config_scale_get() * 31,
+                                   elm_config_scale_get() * 31);
    //elm_gengrid_horizontal_set(grid, EINA_TRUE);
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
@@ -882,7 +888,8 @@ _gengrid_create(Evas_Object *obj, int items, const char *style)
      {
         if (!obj) return NULL;
         grid = elm_gengrid_add(obj);
-        elm_gengrid_item_size_set(grid, 150, 150);
+        elm_gengrid_item_size_set(grid, elm_config_scale_get() * 150,
+                                  elm_config_scale_get() * 150);
         EXPAND(grid); FILL(grid);
      }
 
