@@ -56,6 +56,7 @@ endif
 include Makefile_Ecore_Imf.am
 include Makefile_Ecore_Evas.am
 include Makefile_Embryo.am
+include Makefile_Eio.am
 
 .PHONY: benchmark examples
 

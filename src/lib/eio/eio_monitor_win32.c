@@ -59,7 +59,7 @@ struct _Eio_Monitor_Backend
 static Eina_Bool _eio_monitor_win32_native = EINA_FALSE;
 
 static Eina_Bool
-_eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
+_eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 {
    PFILE_NOTIFY_INFORMATION   fni;
    Eio_Monitor_Win32_Watcher *w;

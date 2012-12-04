@@ -59,7 +59,7 @@ _eio_ls_xattr_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_ls_xattr_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_ls_xattr_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Char_Ls *async = data;
    const char *xattr = msg_data;
@@ -117,7 +117,7 @@ _eio_file_xattr_free(Eio_File_Xattr *async)
 }
 
 static void
-_eio_file_xattr_get_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_xattr_get_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Xattr *async = data;
 
@@ -145,7 +145,7 @@ _eio_file_xattr_get_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_xattr_get_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_xattr_get_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Xattr *async = data;
 
@@ -186,7 +186,7 @@ _eio_file_xattr_set(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_xattr_set_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_xattr_set_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Xattr *async = data;
 
@@ -197,7 +197,7 @@ _eio_file_xattr_set_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_xattr_set_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_xattr_set_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Xattr *async = data;
 

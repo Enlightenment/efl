@@ -41,7 +41,10 @@ m4/eina_check.m4 \
 m4/eina_config.m4 \
 m4/evas_check_engine.m4 \
 m4/evas_check_loader.m4 \
-m4/evas_dither.m4
+m4/evas_dither.m4 \
+m4/ecore_check_c_extension.m4 \
+m4/ecore_check_module.m4 \
+m4/eio_check_options.m4
 
 EXTRA_DIST += \
 autogen.sh \
@@ -93,7 +96,8 @@ pc/ecore-x.pc \
 pc/ecore-imf.pc \
 pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
-pc/embryo.pc
+pc/embryo.pc \
+pc/eio.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -120,7 +124,8 @@ pc/ecore-input-evas.pc \
 pc/ecore-imf.pc \
 pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
-pc/embryo.pc
+pc/embryo.pc \
+pc/eio.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc

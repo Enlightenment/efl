@@ -107,10 +107,10 @@ if HAVE_WIN32
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_win32 \
 -I$(top_srcdir)/src/modules/evas/engines/software_ddraw \
--I$(top_srcdir)/src/modules/evas/engines/direct3d \
+-I$(top_srcdir)/src/modules/evas/engines/software_gdi \
 -I$(top_builddir)/src/lib/ecore_win32 \
 -I$(top_builddir)/src/modules/evas/engines/software_ddraw \
--I$(top_builddir)/src/modules/evas/engines/direct3d
+-I$(top_builddir)/src/modules/evas/engines/software_gdi
 endif
 
 if HAVE_WINCE

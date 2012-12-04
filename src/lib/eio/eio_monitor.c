@@ -52,7 +52,7 @@ _eio_monitor_free(Eio_Monitor *monitor)
 }
 
 static void
-_eio_monitor_error_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
+_eio_monitor_error_cleanup_cb(EINA_UNUSED void *user_data, void *func_data)
 {
    Eio_Monitor_Error *ev = func_data;
 
@@ -62,7 +62,7 @@ _eio_monitor_error_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
 }
 
 static void
-_eio_monitor_event_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
+_eio_monitor_event_cleanup_cb(EINA_UNUSED void *user_data, void *func_data)
 {
    Eio_Monitor_Event *ev = func_data;
 
@@ -73,7 +73,7 @@ _eio_monitor_event_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
 }
 
 static void
-_eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const Eina_Stat *st)
+_eio_monitor_stat_cb(void *data, EINA_UNUSED Eio_File *handler, EINA_UNUSED const Eina_Stat *st)
 {
    Eio_Monitor *monitor = data;
 
@@ -102,7 +102,7 @@ _eio_monitor_error(Eio_Monitor *monitor, int error)
 }
 
 static void
-_eio_monitor_error_cb(void *data, Eio_File *handler __UNUSED__, int error)
+_eio_monitor_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_Monitor *monitor = data;
 

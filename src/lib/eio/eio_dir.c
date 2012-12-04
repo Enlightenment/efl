@@ -441,7 +441,7 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_dir_copy_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_dir_copy_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_Dir_Copy *copy = data;
    Eio_Progress *progress = msg_data;
@@ -458,7 +458,7 @@ _eio_dir_copy_free(Eio_Dir_Copy *copy)
 }
 
 static void
-_eio_dir_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_dir_copy_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Dir_Copy *copy = data;
 
@@ -468,7 +468,7 @@ _eio_dir_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_dir_copy_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_dir_copy_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Dir_Copy *copy = data;
 
@@ -748,7 +748,7 @@ _eio_dir_direct_find_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_dir_stat_find_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Dir_Ls *async = data;
    Eina_List *pack = msg_data;
@@ -771,7 +771,7 @@ _eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg
 }
 
 static void
-_eio_dir_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_dir_stat_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Ls *async = data;
 
@@ -781,7 +781,7 @@ _eio_dir_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_dir_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_dir_stat_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Ls *async = data;
 

@@ -108,7 +108,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_file_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Char_Ls *async = data;
    Eina_List *pack = msg_data;
@@ -220,7 +220,7 @@ _eio_file_stat_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_file_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Direct_Ls *async = data;
    Eina_List *pack = msg_data;
@@ -245,8 +245,8 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_d
 }
 
 static void
-_eio_eina_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
-			  Eio_File_Progress *op __UNUSED__,
+_eio_eina_file_copy_xattr(Ecore_Thread *thread EINA_UNUSED,
+			  Eio_File_Progress *op EINA_UNUSED,
 			  Eina_File *f, int out)
 {
    Eina_Iterator *it;
@@ -264,8 +264,8 @@ _eio_eina_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
 
 #ifdef HAVE_XATTR
 static void
-_eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
-                     Eio_File_Progress *op __UNUSED__,
+_eio_file_copy_xattr(Ecore_Thread *thread EINA_UNUSED,
+                     Eio_File_Progress *op EINA_UNUSED,
                      int in, int out)
 {
    char *tmp;
@@ -417,7 +417,7 @@ _eio_file_copy_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_copy_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_file_copy_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Progress *copy = data;
 
@@ -433,7 +433,7 @@ _eio_file_copy_free(Eio_File_Progress *copy)
 }
 
 static void
-_eio_file_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_copy_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Progress *copy = data;
 
@@ -443,7 +443,7 @@ _eio_file_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_copy_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_copy_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Progress *copy = data;
 
@@ -461,7 +461,7 @@ _eio_file_move_free(Eio_File_Move *move)
 }
 
 static void
-_eio_file_move_copy_progress(void *data, Eio_File *handler __UNUSED__, const Eio_Progress *info)
+_eio_file_move_copy_progress(void *data, Eio_File *handler EINA_UNUSED, const Eio_Progress *info)
 {
    Eio_File_Move *move = data;
 
@@ -469,7 +469,7 @@ _eio_file_move_copy_progress(void *data, Eio_File *handler __UNUSED__, const Eio
 }
 
 static void
-_eio_file_move_unlink_done(void *data, Eio_File *handler __UNUSED__)
+_eio_file_move_unlink_done(void *data, Eio_File *handler EINA_UNUSED)
 {
    Eio_File_Move *move = data;
 
@@ -479,7 +479,7 @@ _eio_file_move_unlink_done(void *data, Eio_File *handler __UNUSED__)
 }
 
 static void
-_eio_file_move_unlink_error(void *data, Eio_File *handler __UNUSED__, int error)
+_eio_file_move_unlink_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_File_Move *move = data;
 
@@ -492,7 +492,7 @@ _eio_file_move_unlink_error(void *data, Eio_File *handler __UNUSED__, int error)
 }
 
 static void
-_eio_file_move_copy_done(void *data, Eio_File *handler __UNUSED__)
+_eio_file_move_copy_done(void *data, Eio_File *handler EINA_UNUSED)
 {
    Eio_File_Move *move = data;
    Eio_File *rm;
@@ -505,7 +505,7 @@ _eio_file_move_copy_done(void *data, Eio_File *handler __UNUSED__)
 }
 
 static void
-_eio_file_move_copy_error(void *data, Eio_File *handler __UNUSED__, int error)
+_eio_file_move_copy_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_File_Move *move = data;
 
@@ -527,7 +527,7 @@ _eio_file_move_heavy(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_move_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+_eio_file_move_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data)
 {
    Eio_File_Move *move = data;
 
@@ -535,7 +535,7 @@ _eio_file_move_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_dat
 }
 
 static void
-_eio_file_move_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_move_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Move *move = data;
 
@@ -545,7 +545,7 @@ _eio_file_move_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_move_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_move_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Move *move = data;
 
@@ -710,7 +710,7 @@ eio_async_free(Eio_File_Ls *async)
 }
 
 void
-eio_async_end(void *data, Ecore_Thread *thread __UNUSED__)
+eio_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Ls *async = data;
 
@@ -720,7 +720,7 @@ eio_async_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 void
-eio_async_error(void *data, Ecore_Thread *thread __UNUSED__)
+eio_async_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Ls *async = data;
 

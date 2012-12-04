@@ -48,7 +48,7 @@ _eio_file_open_free(Eio_File_Map *map)
 }
 
 static void
-_eio_file_open_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_open_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
@@ -57,7 +57,7 @@ _eio_file_open_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_open_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
@@ -66,7 +66,7 @@ _eio_file_open_cancel(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_close_job(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_close_job(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
@@ -74,7 +74,7 @@ _eio_file_close_job(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_close_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_close_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
@@ -83,7 +83,7 @@ _eio_file_close_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_close_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_close_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map *map = data;
 
@@ -139,7 +139,7 @@ _eio_file_map_new_job(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_map_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_map_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map_Rule *map = data;
 
@@ -148,7 +148,7 @@ _eio_file_map_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_map_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_map_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Map_Rule *map = data;
 

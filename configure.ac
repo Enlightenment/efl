@@ -109,7 +109,7 @@ requirements_libs_ecore_wince=""
 requirements_libs_ecore_x=""
 requirements_libs_ecore_evas=""
 requirements_libs_embryo=""
-#requirements_libs_eio=""
+requirements_libs_eio=""
 #requirements_libs_edje=""
 #requirements_libs_efreet=""
 #requirements_libs_e_dbus=""
@@ -139,7 +139,7 @@ requirements_pc_ecore_wince=""
 requirements_pc_ecore_x=""
 requirements_pc_ecore_evas=""
 requirements_pc_embryo=""
-#requirements_pc_eio=""
+requirements_pc_eio=""
 #requirements_pc_edje=""
 #requirements_pc_efreet=""
 #requirements_pc_e_dbus=""
@@ -159,7 +159,6 @@ requirements_pc_deps_ecore_sdl=""
 requirements_pc_deps_ecore_wayland=""
 requirements_pc_deps_ecore_evas=""
 requirements_pc_deps_embryo=""
-#requirements_pc_deps_eio=""
 #requirements_pc_deps_edje=""
 #requirements_pc_deps_efreet=""
 #requirements_pc_deps_e_dbus=""
@@ -189,7 +188,7 @@ AC_SUBST([requirements_libs_ecore_wince])
 AC_SUBST([requirements_libs_ecore_x])
 AC_SUBST([requirements_libs_ecore_evas])
 AC_SUBST([requirements_libs_embryo])
-#AC_SUBST([requirements_libs_eio])
+AC_SUBST([requirements_libs_eio])
 #AC_SUBST([requirements_libs_edje])
 #AC_SUBST([requirements_libs_efreet])
 #AC_SUBST([requirements_libs_e_dbus])
@@ -219,7 +218,7 @@ AC_SUBST([requirements_pc_ecore_wince])
 AC_SUBST([requirements_pc_ecore_x])
 AC_SUBST([requirements_pc_ecore_evas])
 AC_SUBST([requirements_pc_embryo])
-#AC_SUBST([requirements_pc_eio])
+AC_SUBST([requirements_pc_eio])
 #AC_SUBST([requirements_pc_edje])
 #AC_SUBST([requirements_pc_efreet])
 #AC_SUBST([requirements_pc_e_dbus])
@@ -3770,6 +3769,7 @@ AC_MSG_NOTICE([Ecore_Evas checks])
 ### Default values
 
 have_ecore_evas="yes"
+have_extn="yes"
 
 want_ecore_evas_software_buffer="yes"
 want_ecore_evas_software_x11="no"
@@ -3796,6 +3796,7 @@ case "$host_os" in
       want_ecore_evas_software_ddraw="yes"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
+      want_ecore_evas_extn="no"
       ;;
    darwin*)
       want_ecore_evas_software_sdl="yes"
@@ -3862,10 +3863,10 @@ ECORE_EVAS_CHECK_MODULE_FULL([ews],
 
 # ecore_evas_extn
 
-have_extn="yes"
 if test "x${have_ecore_ipc}" = "xno" || \
    test "x${have_ecore_evas_software_buffer}" = "xno" || \
-   test "x${have_shm_open}" = "xno" ; then
+   test "x${have_shm_open}" = "xno" || \
+   test "x${have_windows}" = "xyes" ; then
    have_extn="no"
 fi
 
@@ -4049,6 +4050,116 @@ fi
 #### End of Ecore_Evas
 
 
+#### Eio
+
+AC_MSG_NOTICE([Eio checks])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+
+requirements_pc_eio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_eio}"
+
+### Checks for header files
+
+AC_CHECK_HEADERS([grp.h pwd.h])
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
+
+# Check for splice system call
+
+AC_MSG_CHECKING([whether to use splice for file copy])
+AC_TRY_LINK(
+   [
+#if defined(HAVE_UNISTD_H)
+# include <unistd.h>
+#endif
+#include <fcntl.h>
+   ],
+   [
+long ret = splice(0,0,1,0,400,0);
+   ],
+   [have_splice="yes"],
+   [have_splice="no"])
+AC_MSG_RESULT([${have_splice}])
+
+if test "x${have_splice}" = "xyes" ; then
+   AC_DEFINE([HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
+fi
+
+# Check for lstat
+
+AC_MSG_CHECKING([whether lstat is available])
+AC_TRY_LINK(
+   [
+#include <sys/types.h>
+#include <sys/stat.h>
+#if defined(HAVE_UNISTD_H)
+# include <unistd.h>
+#endif
+   ],
+   [
+struct stat st;
+lstat("/tmp", &st);
+   ],
+   [have_lstat="yes"],
+   [have_lstat="no"])
+AC_MSG_RESULT([${have_lstat}])
+
+if test "x${have_lstat}" = "xyes" ; then
+   AC_DEFINE([HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
+fi
+
+# extended attribute
+
+AC_MSG_CHECKING([for extended attributes])
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
+       ]],
+       [[
+size_t tmp = listxattr("/", NULL, 0);
+tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
+setxattr("/", "user.ethumb.md5", NULL, 0, 0);
+       ]])],
+   [
+    AC_DEFINE([HAVE_XATTR], [1], [Define to 1 if you have the `listxattr', `setxattr' and `getxattr' functions.])
+    have_xattr="yes"
+   ],
+   [have_xattr="no"])
+
+AC_MSG_RESULT([${have_xattr}])
+
+# Check for inotify specificity
+have_inotify="no"
+have_notify_win32="no"
+EIO_CHECK_INOTIFY([have_inotify="yes"], [have_inotify="no"])
+EIO_CHECK_NOTIFY_WIN32([have_notify_win32="yes"], [have_notify_win32="no"])
+
+AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
+AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x${have_notify_win32}" = "xyes"])
+
+#### End of Eio
+
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -4104,6 +4215,7 @@ pc/ecore-evas.pc
 pc/ecore-imf.pc
 pc/ecore-imf-evas.pc
 pc/embryo.pc
+pc/eio.pc
 $po_makefile_in
 ])
 
@@ -4326,6 +4438,10 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
+echo
+echo "Eio"
+echo "  Inotify..............: ${have_inotify}"
+echo "  Windows notification.: ${have_notify_win32}"
 echo
 echo "Tests..................: ${_efl_enable_tests}"
 if test "x${_efl_enable_tests}" = "xyes"; then

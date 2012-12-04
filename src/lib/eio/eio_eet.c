@@ -47,7 +47,7 @@ _eio_eet_open_free(Eio_Eet_Open *eet)
 }
 
 static void
-_eio_eet_open_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_open_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Open *eet = data;
 
@@ -56,7 +56,7 @@ _eio_eet_open_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_open_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Open *eet = data;
 
@@ -83,7 +83,7 @@ _eio_eet_sync_job(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_eet_simple_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_simple_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Simple *eet = data;
 
@@ -92,7 +92,7 @@ _eio_eet_simple_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_simple_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_simple_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Simple *eet = data;
 
@@ -121,7 +121,7 @@ _eio_eet_write_cipher_free(Eio_Eet_Write *ew)
 }
 
 static void
-_eio_eet_data_write_cipher_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_data_write_cipher_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Write *ew = data;
 
@@ -130,7 +130,7 @@ _eio_eet_data_write_cipher_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_data_write_cipher_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_data_write_cipher_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Write *ew = data;
 
@@ -163,7 +163,7 @@ _eio_eet_image_write_free(Eio_Eet_Image_Write *eiw)
 }
 
 static void
-_eio_eet_image_write_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_image_write_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Image_Write *eiw = data;
 
@@ -172,7 +172,7 @@ _eio_eet_image_write_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_image_write_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_image_write_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Image_Write *eiw = data;
 
@@ -193,7 +193,7 @@ _eio_eet_write_job(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_eet_write_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_write_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Write *ew = data;
 
@@ -202,7 +202,7 @@ _eio_eet_write_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_write_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_write_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Write *ew = data;
 
@@ -229,7 +229,7 @@ _eio_eet_read_free(Eio_Eet_Read *er)
 }
 
 static void
-_eio_eet_data_read_cipher_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_data_read_cipher_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Read *er = data;
 
@@ -238,7 +238,7 @@ _eio_eet_data_read_cipher_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_data_read_cipher_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_data_read_cipher_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Read *er = data;
 
@@ -256,7 +256,7 @@ _eio_eet_read_direct_job(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_eet_read_direct_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_read_direct_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Read *er = data;
 
@@ -266,7 +266,7 @@ _eio_eet_read_direct_end(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_eet_read_cancel(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_read_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Read *er = data;
 
@@ -285,7 +285,7 @@ _eio_eet_read_cipher_job(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_eet_read_cipher_end(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_eet_read_cipher_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Eet_Read *er = data;
 

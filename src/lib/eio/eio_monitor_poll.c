@@ -212,7 +212,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Monitor_Backend *backend = data;
 
@@ -221,7 +221,7 @@ _eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_Monitor_Backend *backend = data;
 

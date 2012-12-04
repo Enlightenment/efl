@@ -46,7 +46,7 @@ _eio_mkdir_free(Eio_File_Mkdir *m)
 }
 
 static void
-_eio_file_mkdir_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_mkdir_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Mkdir *m = data;
 
@@ -57,7 +57,7 @@ _eio_file_mkdir_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_mkdir_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_mkdir_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Mkdir *m = data;
 
@@ -82,7 +82,7 @@ _eio_unlink_free(Eio_File_Unlink *l)
 }
 
 static void
-_eio_file_unlink_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_unlink_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Unlink *l = data;
 
@@ -93,7 +93,7 @@ _eio_file_unlink_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_unlink_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_unlink_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Unlink *l = data;
 
@@ -173,7 +173,7 @@ _eio_stat_free(Eio_File_Stat *s)
 }
 
 static void
-_eio_file_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_stat_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Stat *s = data;
 
@@ -184,7 +184,7 @@ _eio_file_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_stat_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Stat *s = data;
 
@@ -276,7 +276,7 @@ _eio_chown_free(Eio_File_Chown *ch)
 }
 
 static void
-_eio_file_chown_done(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_chown_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Chown *ch = data;
 
@@ -287,7 +287,7 @@ _eio_file_chown_done(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_chown_error(void *data, Ecore_Thread *thread __UNUSED__)
+_eio_file_chown_error(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eio_File_Chown *ch = data;
 
