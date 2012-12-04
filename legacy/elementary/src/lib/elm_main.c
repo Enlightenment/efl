@@ -119,6 +119,8 @@ _elm_emotion_shutdown(void)
 }
 
 static void *app_mainfunc = NULL;
+static const char *app_name = NULL;
+static const char *app_desktop_entry = NULL;
 static const char *app_domain = NULL;
 static const char *app_checkfile = NULL;
 
@@ -230,6 +232,18 @@ elm_shutdown(void)
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 // wrningz :(
 //   _prefix_shutdown();
+   if (app_name)
+     {
+        eina_stringshare_del(app_name);
+        app_name = NULL;
+     }
+
+   if (app_desktop_entry)
+     {
+        eina_stringshare_del(app_desktop_entry);
+        app_desktop_entry = NULL;
+     }
+
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
    return _elm_init_count;
@@ -241,6 +255,18 @@ elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile)
    app_mainfunc = mainfunc;
    eina_stringshare_replace(&app_domain, dom);
    eina_stringshare_replace(&app_checkfile, checkfile);
+}
+
+EAPI void
+elm_app_name_set(const char *name)
+{
+   eina_stringshare_replace(&app_name, name);
+}
+
+EAPI void
+elm_app_desktop_entry_set(const char *path)
+{
+   eina_stringshare_replace(&app_desktop_entry, path);
 }
 
 EAPI void
@@ -265,6 +291,22 @@ EAPI void
 elm_app_compile_locale_set(const char *dir)
 {
    eina_stringshare_replace(&app_compile_locale_dir, dir);
+}
+
+EAPI const char *
+elm_app_name_get(void)
+{
+   if (app_name) return app_name;
+
+   return "";
+}
+
+EAPI const char *
+elm_app_desktop_entry_get(void)
+{
+   if (app_desktop_entry) return app_desktop_entry;
+
+   return "";
 }
 
 EAPI const char *
@@ -455,7 +497,11 @@ elm_quicklaunch_init(int    argc,
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
-   if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
+   if (argv)
+     {
+        _elm_appname = strdup(ecore_file_file_get(argv[0]));
+        elm_app_name_set(_elm_appname);
+     }
 
    pfx = eina_prefix_new(argv ? argv[0] : NULL, elm_quicklaunch_init,
                          "ELM", "elementary", "config/profile.cfg",

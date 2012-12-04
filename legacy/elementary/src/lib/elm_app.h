@@ -77,6 +77,28 @@
 EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
 
 /**
+ * Set a formal name to be used with the elm application.
+ *
+ * @param name Application name.
+ *
+ * @since 1.8
+ */
+EAPI void        elm_app_name_set(const char *name);
+
+/**
+ * Set the path to the '.desktop' file to be associated
+ * with the elm application.
+ *
+ * @param path The path to the '.desktop' file
+ *
+ * @warning Since this path is very environment dependent,
+ * this will hold whatever value is passed to it.
+ *
+ * @since 1.8
+ */
+EAPI void        elm_app_desktop_entry_set(const char *path);
+
+/**
  * Provide information on the @b fallback application's binaries
  * directory, in scenarios where they get overridden by
  * elm_app_info_set().
@@ -142,6 +164,25 @@ EAPI void        elm_app_compile_data_dir_set(const char *dir);
  * elm_app_info_set().
  */
 EAPI void        elm_app_compile_locale_set(const char *dir);
+
+/**
+ * Retrieve the application formal name, as set by elm_app_name_set().
+ *
+ * @return The application formal name.
+ *
+ * @since 1.8
+ */
+EAPI const char *elm_app_name_get(void);
+
+/**
+ * Retrieve the path to the '.desktop' file, as set by
+ * elm_app_desktop_entry_set().
+ *
+ * @return The '.desktop' file path.
+ *
+ * @since 1.8
+ */
+EAPI const char *elm_app_desktop_entry_get(void);
 
 /**
  * Retrieve the application's run time prefix directory, as set by
