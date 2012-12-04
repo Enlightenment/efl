@@ -205,8 +205,6 @@ _drag_step(void *data,
            const char *emission __UNUSED__,
            const char *source __UNUSED__)
 {
-   return;
-
    _slider_update(data);
 }
 

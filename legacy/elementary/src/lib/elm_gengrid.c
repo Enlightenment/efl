@@ -2900,8 +2900,6 @@ elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
 
    if (item->generation < GG_IT(item)->wsd->generation) return NULL;
    return item->itc;
-
-   return (Elm_Gengrid_Item_Class *)elm_gengrid_item_item_class_get(it);
 }
 
 EAPI void
