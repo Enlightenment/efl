@@ -31,7 +31,7 @@ lib_ecore_wayland_libecore_wayland_la_CPPFLAGS = \
 @ECORE_WAYLAND_CFLAGS@
 
 lib_ecore_wayland_libecore_wayland_la_LIBADD = \
-lib/ecore/libecore_input.la \
+lib/ecore_input/libecore_input.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \

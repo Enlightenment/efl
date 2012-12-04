@@ -2983,9 +2983,16 @@ AC_MSG_NOTICE([Ecore_Wayland checks])
 
 ### Checks for libraries
 
-## Evil, Eina, Ecore, Ecore_Input
+# Evil library for compilation on Windows
+case "$host_os" in
+   mingw*)
+      requirements_pc_ecore_wayland="evil >= ${PACKAGE_VERSION} ${requirements_pc_ecore_con}"
+      ;;
+esac
 
-requirements_pc_ecore_wayland="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} evil >= ${PACKAGE_VERSION} ${requirements_pc_ecore_wayland}"
+## Eina, Ecore, Ecore_Input
+
+requirements_pc_ecore_wayland="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_wayland}"
 
 ## Wayland
 
@@ -3916,14 +3923,14 @@ ECORE_EVAS_CHECK_MODULE_FULL([opengl-sdl],
 # ecore_evas_wayland
 
 ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm],
-   [wayland-shm],
+   [${have_evas_engine_wayland_shm}],
    [${want_ecore_evas_wayland_shm}],
    [Wayland Shm],
    [${have_ecore_wayland}],
    [requirements_pc_ecore_evas="ecore-wayland >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
 
 ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl],
-   [wayland-egl egl >= 7.10],
+   [${have_evas_engine_wayland_egl}],
    [${want_ecore_evas_wayland_egl}],
    [Wayland Egl],
    [${have_ecore_wayland}],
