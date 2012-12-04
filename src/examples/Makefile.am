@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = eina eo eet evas
+SUBDIRS = eina eo eet evas ecore
 
 examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C eina examples
