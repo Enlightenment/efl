@@ -685,7 +685,6 @@ _title_content_set(Elm_Naviframe_Item *it,
              return;
           }
         pair->it = it;
-        pair->content = content;
         eina_stringshare_replace(&pair->part, part);
         it->content_list = eina_inlist_append(it->content_list,
                                               EINA_INLIST_GET(pair));
@@ -693,6 +692,7 @@ _title_content_set(Elm_Naviframe_Item *it,
         snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
         edje_object_signal_emit(VIEW(it), buf, "elm");
      }
+   pair->content = content;
    evas_object_event_callback_add(content,
                                   EVAS_CALLBACK_DEL,
                                   _title_content_del,
