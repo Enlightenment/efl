@@ -680,13 +680,16 @@ _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *it,
 
       case ELM_PREFS_TYPE_DATE:
       {
-         struct timeval val = {0};
-         struct tm time = {0};
+         struct timeval val;
+         struct tm t;
 
-         time.tm_year = it->spec.d.def.y - 1900;
-         time.tm_mon = it->spec.d.def.m - 1;
-         time.tm_mday = it->spec.d.def.d;
-         val.tv_sec = mktime(&time);
+         memset(&t, 0, sizeof t);
+         memset(&val, 0, sizeof val);
+
+         t.tm_year = it->spec.d.def.y - 1900;
+         t.tm_mon = it->spec.d.def.m - 1;
+         t.tm_mday = it->spec.d.def.d;
+         val.tv_sec = mktime(&t);
 
          if (!eina_value_setup(&value, EINA_VALUE_TYPE_TIMEVAL)) goto err;
          if (!eina_value_set(&value, val))
