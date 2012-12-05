@@ -73,9 +73,7 @@ Fixes:
    * Fix the naviframe to send signal emits one time for content show/hide, text show/hide.
    * Fix case where tooltips could go offscreen unnecessarily
    * Fix possible divide by zero in els_scroller animator.
-   * Fix uninitialized data path in elm_flip.
-   * Fix uninitialized data path in elm_gesture_layer.
-   * Fix uninitialized data path in elm_interface_scrollable.
+   * Fix uninitialized data path in elm_flip, elm_gesture_layer, elm_interface_scrollable.
 
 Removals:
 
