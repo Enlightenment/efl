@@ -2,31 +2,26 @@
 # include <config.h>
 #endif
 
-#include <Ecore.h>
-#include <Ecore_Input.h>
-#include <Ecore_Input_Evas.h>
-#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
-# include <Ecore_Sdl.h>
-# ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-#  include <Evas_Engine_GL_SDL.h>
-# endif
-#endif
-
-#include <stdlib.h>
-#include <string.h>
-
-#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
-#include <SDL/SDL.h>
-#endif
 
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
+
+#include <Ecore.h>
+#include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
+#include <Ecore_Sdl.h>
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+#  include <Evas_Engine_GL_SDL.h>
+#endif
+
+#include <stdlib.h>
+#include <string.h>
+#include <SDL/SDL.h>
 /*
  * SDL only handle one window at a time. That's by definition, there is nothing wrong here.
  *
  */
-#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
 
 /* static char *ecore_evas_default_display = "0"; */
 /* static Ecore_List *ecore_evas_input_devices = NULL; */
@@ -610,11 +605,10 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    sdl_ee = ee;
    return ee;
 }
-#endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-EAPI Ecore_Evas*
-ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
+EAPI Ecore_Evas *
+ecore_evas_sdl_new_internal(const char* name, int w, int h, int fullscreen,
+			    int hwsurface, int noframe, int alpha)
 {
    Ecore_Evas          *ee;
    int                  rmethod;
@@ -625,25 +619,17 @@ ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface
    ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
    return ee;
 }
-#else
-EAPI Ecore_Evas*
-ecore_evas_sdl_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
-{
-   ERR("OUTCH !");
-   return NULL;
-}
-#endif
 
 EAPI Ecore_Evas*
-ecore_evas_sdl16_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
+ecore_evas_sdl16_new_internal(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
 {
    ERR("OUTCH !");
    return NULL;
 }
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-EAPI Ecore_Evas*
-ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int noframe)
+EAPI Ecore_Evas *
+ecore_evas_gl_sdl_new_internal(const char* name, int w, int h, int fullscreen, int noframe)
 {
    Ecore_Evas          *ee;
    int                  rmethod;
@@ -654,13 +640,6 @@ ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int nofram
    ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, 0, noframe, 0);
    if (ee) ee->driver = "gl_sdl";
    return ee;
-}
-#else
-EAPI Ecore_Evas*
-ecore_evas_gl_sdl_new(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int noframe EINA_UNUSED)
-{
-   ERR("OUTCH !");
-   return NULL;
 }
 #endif
 

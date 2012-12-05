@@ -1,16 +1,4 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-//#define LOGFNS 1
-
-#ifdef LOGFNS
-# include <stdio.h>
-# define LOGFN(fl, ln, fn) \
-   printf("-ECORE_EVAS-WL: %25s: %5i - %s\n", fl, ln, fn);
-#else
-# define LOGFN(fl, ln, fn)
-#endif
+#include "ecore_evas_wayland_private.h"
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 # include <stdlib.h>
@@ -18,16 +6,8 @@
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/mman.h>
-#endif
-
-#include <Eina.h>
-
-#include "Ecore_Evas.h"
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-# include "ecore_evas_private.h"
 # include <Evas_Engine_Wayland_Egl.h>
-# include <Ecore_Wayland.h>
+
 
 /* local function prototypes */
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
@@ -101,10 +81,13 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 
 /* external functions */
 EAPI Ecore_Evas *
-ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame)
+ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
+				      int x, int y, int w, int h, Eina_Bool frame)
 {
    Ecore_Wl_Window *p = NULL;
    Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Interface_Wayland *iface;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas *ee;
    int method = 0, count = 0;
 
@@ -131,11 +114,22 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
         goto ee_err;
      }
 
+   if (!(wdata = calloc(1, sizeof(Ecore_Evas_Engine_Wl_Data))))
+     {
+        ERR("Failed to allocate Ecore_Evas_Engine_Wl_Data");
+	free(ee);
+        goto ee_err;
+     }
+
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_wl_common_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_wl_engine_func;
+   ee->engine.data = wdata;
+
+   iface = _ecore_evas_wl_interface_new();
+   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    ee->driver = "wayland_egl";
    if (disp_name) ee->name = strdup(disp_name);
@@ -175,10 +169,10 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
 
    /* FIXME: Get if parent is alpha, and set */
 
-   ee->engine.wl.parent = p;
-   ee->engine.wl.win = 
+   wdata->parent = p;
+   wdata->win = 
      ecore_wl_window_new(p, x, y, w, h, ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
-   ee->prop.window = ee->engine.wl.win->id;
+   ee->prop.window = wdata->win->id;
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
@@ -202,9 +196,9 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
 
    if (ee->prop.draw_frame) 
      {
-        ee->engine.wl.frame = _ecore_evas_wl_common_frame_add(ee->evas);
-        evas_object_is_frame_object_set(ee->engine.wl.frame, EINA_TRUE);
-        evas_object_move(ee->engine.wl.frame, 0, 0);
+        wdata->frame = _ecore_evas_wl_common_frame_add(ee->evas);
+        evas_object_is_frame_object_set(wdata->frame, EINA_TRUE);
+        evas_object_move(wdata->frame, 0, 0);
      }
 
    _ecore_evas_register(ee);
@@ -230,6 +224,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
 static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
@@ -239,6 +234,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    ee->req.w = w;
    ee->req.h = h;
 
+   wdata = ee->engine.data;
    if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
@@ -278,14 +274,14 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
              ecore_evas_avoid_damage_set(ee, pdam);
           }
 
-        if (ee->engine.wl.frame)
-          evas_object_resize(ee->engine.wl.frame, w, h);
+        if (wdata->frame)
+          evas_object_resize(wdata->frame, w, h);
 
 
-        if (ee->engine.wl.win)
+        if (wdata->win)
           {
-             ecore_wl_window_update_size(ee->engine.wl.win, w, h);
-             ecore_wl_window_buffer_attach(ee->engine.wl.win, NULL, 0, 0);
+             ecore_wl_window_update_size(wdata->win, w, h);
+             ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
           }
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
@@ -296,32 +292,34 @@ static void
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((!ee) || (ee->visible)) return;
 
-   if (ee->engine.wl.win)
+   wdata = ee->engine.data;
+   if (wdata->win)
      {
-        ecore_wl_window_show(ee->engine.wl.win);
-        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
-        ecore_wl_window_buffer_attach(ee->engine.wl.win, NULL, 0, 0);
+        ecore_wl_window_show(wdata->win);
+        ecore_wl_window_update_size(wdata->win, ee->w, ee->h);
+        ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
 
-        if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
-          wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
+        if ((ee->prop.clas) && (wdata->win->shell_surface))
+          wl_shell_surface_set_class(wdata->win->shell_surface, 
                                      ee->prop.clas);
-        if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
-          wl_shell_surface_set_title(ee->engine.wl.win->shell_surface, 
+        if ((ee->prop.title) && (wdata->win->shell_surface))
+          wl_shell_surface_set_title(wdata->win->shell_surface, 
                                      ee->prop.title);
      }
 
-   if (ee->engine.wl.frame)
+   if (wdata->frame)
      {
-        evas_object_show(ee->engine.wl.frame);
-        evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
+        evas_object_show(wdata->frame);
+        evas_object_resize(wdata->frame, ee->w, ee->h);
      }
 
-   if (ee->engine.wl.win)
+   if (wdata->win)
      {
         einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
         if (!einfo)
@@ -330,7 +328,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
              return;
           }
 
-        einfo->info.surface = ecore_wl_window_surface_get(ee->engine.wl.win);
+        einfo->info.surface = ecore_wl_window_surface_get(wdata->win);
         /* if (einfo->info.surface) */
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
         /* else */
@@ -344,11 +342,13 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 static void 
 _ecore_evas_wl_hide(Ecore_Evas *ee)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
    Evas_Engine_Info_Wayland_Egl *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((!ee) || (!ee->visible)) return;
+   wdata = ee->engine.data;
 
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
    if (einfo)
@@ -357,8 +357,8 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
 
-   if (ee->engine.wl.win) 
-     ecore_wl_window_hide(ee->engine.wl.win);
+   if (wdata->win) 
+     ecore_wl_window_hide(wdata->win);
 
    ee->visible = 0;
    ee->should_be_visible = 0;
@@ -408,10 +408,13 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 void 
 _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->engine.wl.win) 
+   wdata = ee->engine.data;
+   if (wdata->win) 
      {
         Evas_Engine_Info_Wayland_Egl *einfo;
 
@@ -422,14 +425,8 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
                ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
 
-        ee->engine.wl.win->resizing = EINA_TRUE;
-        ecore_wl_window_resize(ee->engine.wl.win, ee->w, ee->h, location);
+        wdata->win->resizing = EINA_TRUE;
+        ecore_wl_window_resize(wdata->win, ee->w, ee->h, location);
      }
-}
-#else
-EAPI Ecore_Evas *
-ecore_evas_wayland_egl_new(const char *disp_name EINA_UNUSED, unsigned int parent EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, Eina_Bool frame EINA_UNUSED)
-{
-   return NULL;
 }
 #endif

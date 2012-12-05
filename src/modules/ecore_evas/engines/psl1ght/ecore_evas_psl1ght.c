@@ -9,7 +9,6 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-#ifdef BUILD_ECORE_EVAS_PSL1GHT
 #include <Ecore_Psl1ght.h>
 #include <Evas_Engine_PSL1GHT.h>
 
@@ -130,17 +129,15 @@ _ecore_evas_psl1ght_render(Ecore_Evas *ee)
 {
    int rend = 0;
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    Eina_List *ll;
    Ecore_Evas *ee2;
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        rend |= _ecore_evas_buffer_render(ee2);
+        rend |= ecore_evas_buffer_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
-#endif
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
@@ -411,7 +408,7 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
 };
 
 EAPI Ecore_Evas *
-ecore_evas_psl1ght_new(const char *name, int w, int h)
+ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
 {
    void *einfo;
    Ecore_Evas *ee;
@@ -503,14 +500,3 @@ ecore_evas_psl1ght_new(const char *name, int w, int h)
    
    return ee;
 }
-
-#else /* BUILD_ECORE_EVAS_PSL1GHT */
-
-EAPI Ecore_Evas *
-ecore_evas_psl1ght_new(const char *name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   ERR("OUTCH !");
-   return NULL;
-}
-
-#endif /* BUILD_ECORE_EVAS_PSL1GHT */

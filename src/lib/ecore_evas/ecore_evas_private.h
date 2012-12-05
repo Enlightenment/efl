@@ -1,6 +1,8 @@
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
+#include "Ecore_Evas_Types.h"
+
 #include <Evas.h>
 #include <Ecore.h>
 #include <ecore_private.h>
@@ -9,65 +11,8 @@
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
-#ifdef BUILD_ECORE_EVAS_X11
-# include <Ecore_X.h>
-# include <Ecore_X_Atoms.h>
-# ifdef HAVE_ECORE_X_XCB
-#  include <xcb/xcb.h>
-# endif
-# ifdef HAVE_ECORE_X_XLIB
-#  include <X11/Xlib.h>
-#  include <X11/Xutil.h>
-# endif
-#endif
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
-# include <Evas_Engine_Software_X11.h>
-#endif
-
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
-# include <Evas_Engine_GL_X11.h>
-#endif
-
-#ifdef BUILD_ECORE_EVAS_FB
-# include <Evas_Engine_FB.h>
-#endif
-
 #if defined(BUILD_ECORE_EVAS_SOFTWARE_BUFFER) || defined(BUILD_ECORE_EVAS_EWS)
 # include <Evas_Engine_Buffer.h>
-#endif
-
-#ifdef BUILD_ECORE_EVAS_WIN32
-# include "Ecore_Win32.h"
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
-#  include <Evas_Engine_Software_Gdi.h>
-# endif
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
-#  include <Evas_Engine_Software_DDraw.h>
-# endif
-# ifdef BUILD_ECORE_EVAS_DIRECT3D
-#  include <Evas_Engine_Direct3D.h>
-# endif
-# ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
-#  include <Evas_Engine_GL_Glew.h>
-# endif
-#endif
-
-#ifdef BUILD_ECORE_EVAS_GL_COCOA
-# include "Ecore_Cocoa.h"
-# include <Evas_Engine_Gl_Cocoa.h>
-#endif
-
-#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
-# include "Ecore_Wayland.h"
-#endif
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-# include <Evas_Engine_Wayland_Shm.h>
-#endif
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-# include <Evas_Engine_Wayland_Egl.h>
 #endif
 
 /** Log domain macros and variables **/
@@ -109,6 +54,17 @@ typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee);
 
 typedef struct _Ecore_Evas_Engine Ecore_Evas_Engine;
 typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
+typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
+
+/* Engines interfaces */
+typedef struct _Ecore_Evas_Interface_Buffer Ecore_Evas_Interface_Buffer;
+typedef struct _Ecore_Evas_Interface_Extn Ecore_Evas_Interface_Extn;
+typedef struct _Ecore_Evas_Interface_X11 Ecore_Evas_Interface_X11;
+typedef struct _Ecore_Evas_Interface_Software_X11 Ecore_Evas_Interface_Software_X11;
+typedef struct _Ecore_Evas_Interface_Gl_X11 Ecore_Evas_Interface_Gl_X11;
+typedef struct _Ecore_Evas_Interface_Wayland Ecore_Evas_Interface_Wayland;
+typedef struct _Ecore_Evas_Interface_Win32 Ecore_Evas_Interface_Win32;
+
 
 struct _Ecore_Evas_Engine_Func
 {
@@ -173,102 +129,89 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
 };
 
+struct _Ecore_Evas_Interface
+
+{
+    const char *name;
+    unsigned int version;
+};
+
+struct _Ecore_Evas_Interface_Buffer {
+   Ecore_Evas_Interface base;
+
+   const void*    (*pixels_get)(Ecore_Evas *ee);
+   int            (*render)(Ecore_Evas *ee);
+};
+
+struct _Ecore_Evas_Interface_X11 {
+   Ecore_Evas_Interface base;
+
+   void           (*leader_set)(Ecore_Evas *ee, Ecore_X_Window win);
+   Ecore_X_Window (*leader_get)(Ecore_Evas *ee);
+   void           (*leader_default_set)(Ecore_Evas *ee);
+   void           (*shape_input_rectangle_set)(Ecore_Evas *ee, int x, int y, int w, int h);
+   void           (*shape_input_rectangle_add)(Ecore_Evas *ee, int x, int y, int w, int h);
+   void           (*shape_input_rectangle_subtract)(Ecore_Evas *ee, int x, int y, int w, int h);
+   void           (*shape_input_empty)(Ecore_Evas *ee);
+   void           (*shape_input_reset)(Ecore_Evas *ee);
+   void           (*shape_input_apply)(Ecore_Evas *ee);
+};
+
+struct _Ecore_Evas_Interface_Software_X11 {
+   Ecore_Evas_Interface base;
+
+   Ecore_X_Window (*window_get)(const Ecore_Evas *ee);
+   void           (*resize_set)(Ecore_Evas *ee, Eina_Bool on);
+   Eina_Bool      (*resize_get)(const Ecore_Evas *ee);
+   void           (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
+};
+
+struct _Ecore_Evas_Interface_Gl_X11 {
+   Ecore_Evas_Interface base;
+
+   Ecore_X_Window  (*window_get)(const Ecore_Evas *ee);
+   void            (*resize_set)(Ecore_Evas *ee, Eina_Bool on);
+   Eina_Bool       (*resize_get)(const Ecore_Evas *ee);
+   void            (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
+   void            (*pre_post_swap_callback_set)(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
+};
+
+struct _Ecore_Evas_Interface_Extn {
+   Ecore_Evas_Interface base;
+
+    void            (*data_lock)(Ecore_Evas *ee);
+    void            (*data_unlock)(Ecore_Evas *ee);
+    Eina_Bool       (*connect)(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
+    Eina_Bool       (*listen)(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
+};
+
+struct _Ecore_Evas_Interface_Wayland {
+   Ecore_Evas_Interface base;
+
+    void             (*resize)(Ecore_Evas *ee, int location);
+    void             (*move)(Ecore_Evas *ee, int x, int y);
+    void             (*pointer_set)(Ecore_Evas *ee, int hot_x, int hot_y);
+    void             (*type_set)(Ecore_Evas *ee, int type);
+    Ecore_Wl_Window* (*window_get)(const Ecore_Evas *ee);
+};
+
+struct _Ecore_Evas_Interface_Win32 {
+   Ecore_Evas_Interface base;
+
+   Ecore_Win32_Window* (*window_get)(const Ecore_Evas *ee);
+};
+
 struct _Ecore_Evas_Engine
 {
    Ecore_Evas_Engine_Func *func;
-
-/* TODO: UGLY! This should be an union or inheritance! */
-#ifdef BUILD_ECORE_EVAS_X11
-   struct 
-     {
-      Ecore_X_Window win_root;
-      Eina_List     *win_extra;
-      Ecore_X_Pixmap pmap;
-      Ecore_X_Pixmap mask;
-      Ecore_X_GC     gc;
-      Ecore_X_XRegion *damages;
-      Ecore_X_Sync_Counter sync_counter;
-      Ecore_X_Window leader;
-      Ecore_X_Sync_Counter netwm_sync_counter;
-      int            netwm_sync_val_hi;
-      unsigned int   netwm_sync_val_lo;
-      int            sync_val; // bigger! this will screw up at 2 billion frames (414 days of continual rendering @ 60fps)
-      int            screen_num;
-      int            px, py, pw, ph;
-      unsigned char  direct_resize : 1;
-      unsigned char  using_bg_pixmap : 1;
-      unsigned char  managed : 1;
-      unsigned char  sync_began : 1;
-      unsigned char  sync_cancel : 1;
-      unsigned char  netwm_sync_set : 1;
-      unsigned char  configure_coming : 1;
-      struct {
-	   unsigned char modal : 1;
-	   unsigned char sticky : 1;
-	   unsigned char maximized_v : 1;
-	   unsigned char maximized_h : 1;
-	   unsigned char shaded : 1;
-	   unsigned char skip_taskbar : 1;
-	   unsigned char skip_pager : 1;
-	   unsigned char fullscreen : 1;
-	   unsigned char above : 1;
-	   unsigned char below : 1;
-      } state;
-      struct {
-         unsigned char available : 1; // need to setup available profiles in a window
-         unsigned char change : 1; // need to send change event to the WM
-         unsigned char done : 1; // need to send change done event to the WM
-      } profile;
-      Ecore_X_Window win_shaped_input;
-   } x;
-#endif
-#ifdef BUILD_ECORE_EVAS_FB
-   struct {
-      int real_w;
-      int real_h;
-   } fb;
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-   struct {
-      void *pixels;
-      Evas_Object *image;
-      void  (*free_func) (void *data, void *pix);
-      void *(*alloc_func) (void *data, int size);
-      void *data;
-   } buffer;
-#endif
-#ifdef BUILD_ECORE_EVAS_WIN32
-   struct {
-      Ecore_Win32_Window *parent;
-      struct {
-         unsigned char region     : 1;
-         unsigned char fullscreen : 1;
-      } state;
-   } win32;
-#endif
+   void *data;
+   Eina_List *ifaces;
+   Ecore_Timer *idle_flush_timer;
 #ifdef BUILD_ECORE_EVAS_EWS
    struct {
       Evas_Object *image;
    } ews;
 #endif
-
-#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
-   struct 
-     {
-        Ecore_Wl_Window *parent, *win;
-        Evas_Object *frame;
-
-# if defined(BUILD_ECORE_EVAS_WAYLAND_SHM)
-        struct wl_shm_pool *pool;
-        size_t pool_size;
-        void *pool_data;
-        struct wl_buffer *buffer;
-# endif
-
-     } wl;
-#endif
-
-   Ecore_Timer *idle_flush_timer;
 };
 
 struct _Ecore_Evas
@@ -383,67 +326,11 @@ struct _Ecore_Evas
 
 void _ecore_evas_ref(Ecore_Evas *ee);
 void _ecore_evas_unref(Ecore_Evas *ee);
+int ecore_evas_buffer_render(Ecore_Evas *ee);
 
-#ifdef BUILD_ECORE_EVAS_X11
-int _ecore_evas_x_shutdown(void);
-#endif
-#ifdef BUILD_ECORE_EVAS_FB
-int _ecore_evas_fb_shutdown(void);
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-int _ecore_evas_buffer_shutdown(void);
-int _ecore_evas_buffer_render(Ecore_Evas *ee);
-#endif
-#ifdef BUILD_ECORE_EVAS_WIN32
-int _ecore_evas_win32_shutdown(void);
-#endif
 #ifdef BUILD_ECORE_EVAS_EWS
 void _ecore_evas_ews_events_init(void);
 int _ecore_evas_ews_shutdown(void);
-#endif
-
-#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
-int  _ecore_evas_wl_common_init(void);
-int  _ecore_evas_wl_common_shutdown(void);
-void _ecore_evas_wl_common_pre_free(Ecore_Evas *ee);
-void _ecore_evas_wl_common_free(Ecore_Evas *ee);
-void _ecore_evas_wl_common_callback_resize_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_delete_request_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
-void _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y);
-void _ecore_evas_wl_common_raise(Ecore_Evas *ee);
-void _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title);
-void _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
-void _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h);
-void _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h);
-void _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h);
-void _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h);
-void _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
-void _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer);
-void _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify);
-void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max);
-void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full);
-void _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore);
-int  _ecore_evas_wl_common_pre_render(Ecore_Evas *ee);
-int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee);
-void _ecore_evas_wl_common_post_render(Ecore_Evas *ee);
-int  _ecore_evas_wl_common_render(Ecore_Evas *ee);
-void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
-void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
-
-Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
-#endif
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
-#endif
 #endif
 
 void _ecore_evas_fps_debug_init(void);
@@ -482,8 +369,12 @@ void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
 
 extern Eina_Bool _ecore_evas_app_comp_sync;
 
-void _ecore_evas_extn_init(void);
-void _ecore_evas_extn_shutdown(void);
+
+Eina_Module *_ecore_evas_engine_load(const char *engine);
+void _ecore_evas_engine_init();
+void _ecore_evas_engine_shutdown();
+
+Ecore_Evas_Interface *_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname);
 
 /**
  * @brief Free the string of the window profile.
@@ -500,3 +391,4 @@ void _ecore_evas_window_profile_free(Ecore_Evas *ee);
 void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
 
 #endif
+

@@ -7,21 +7,27 @@
 #include <dirent.h>
 
 #include <Ecore.h>
-#include "ecore_private.h"
-#ifdef BUILD_ECORE_EVAS_FB
+#include <Ecore_Evas.h>
 #include <Ecore_Fb.h>
+#include <ecore_evas_private.h>
 #include <ecore_fb_private.h>
-#endif
+#include <ecore_private.h>
 
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
+#include <Eina.h>
+#include <Evas_Engine_FB.h>
 
-#ifdef BUILD_ECORE_EVAS_FB
 static int _ecore_evas_init_count = 0;
 
 static char *ecore_evas_default_display = "0";
 static Eina_List *ecore_evas_input_devices = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[4] = {NULL, NULL, NULL, NULL};
+
+typedef struct _Ecore_Evas_Engine_FB_Data Ecore_Evas_Engine_FB_Data;
+
+struct _Ecore_Evas_Engine_FB_Data {
+   int real_w;
+   int real_h;
+};
 
 static void
 _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y)
@@ -53,37 +59,28 @@ _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y)
      }
 }
 
-static Ecore_Evas *fb_ee = NULL;
-
-static Ecore_Evas *
-_ecore_evas_fb_match(void)
-{
-   return fb_ee;
-}
-
 static void
-_ecore_evas_fb_lose(void *data EINA_UNUSED)
+_ecore_evas_fb_lose(void *data)
 {
+   Ecore_Evas *ee = data;
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   if (fb_ee) fb_ee->visible = 0;
+   if (ee) ee->visible = 0;
 
    EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
      ecore_fb_input_device_listen(dev, 0);
 }
 
 static void
-_ecore_evas_fb_gain(void *data EINA_UNUSED)
+_ecore_evas_fb_gain(void *data)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   if (fb_ee)
+   if (ee)
      {
-        ee = fb_ee;
-
         ee->visible = 1;
         if ((ee->rotation == 90) || (ee->rotation == 270))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -96,52 +93,48 @@ _ecore_evas_fb_gain(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_evas_event_mouse_button_down(void *data, int type EINA_UNUSED, void *event)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
    Ecore_Event_Mouse_Button *e;
 
    e = event;
-   ee = _ecore_evas_fb_match();
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_evas_event_mouse_button_up(void *data, int type EINA_UNUSED, void *event)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
    Ecore_Event_Mouse_Button *e;
 
    e = event;
-   ee = _ecore_evas_fb_match();
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_evas_event_mouse_move(void *data, int type EINA_UNUSED, void *event)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
    Ecore_Event_Mouse_Move *e;
 
    e = event;
-   ee = _ecore_evas_fb_match();
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ecore_evas_event_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_evas_event_mouse_wheel(void *data, int type EINA_UNUSED, void *event)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
    Ecore_Event_Mouse_Wheel *e;
 
    e = event;
-   ee = _ecore_evas_fb_match();
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    _ecore_evas_mouse_move_process_fb(ee, e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
@@ -164,7 +157,7 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
           {
              if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
              if (ee2->engine.func->fn_render)
-               rend |= ee2->engine.func->fn_render(ee2);
+	       rend |= ee2->engine.func->fn_render(ee2);
              if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
           }
 
@@ -252,11 +245,33 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
    return _ecore_evas_init_count;
 }
 
+int
+_ecore_evas_fb_shutdown(void)
+{
+   _ecore_evas_init_count--;
+   if (_ecore_evas_init_count == 0)
+     {
+        int i;
+
+        for (i = 0; i < 4; i++)
+          {
+             if (ecore_evas_event_handlers[i])
+               ecore_event_handler_del(ecore_evas_event_handlers[i]);
+          }
+        ecore_fb_ts_shutdown();
+        ecore_event_evas_shutdown();
+     }
+   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
+   return _ecore_evas_init_count;
+}
+
 static void
 _ecore_evas_fb_free(Ecore_Evas *ee)
 {
+   Ecore_Evas_Engine_FB_Data *idata = ee->engine.data;
+
    ecore_evas_input_event_unregister(ee);
-   if (fb_ee == ee) fb_ee = NULL;
+   free(idata);
    _ecore_evas_fb_shutdown();
    ecore_fb_shutdown();
 }
@@ -435,6 +450,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 {
    Eina_List *l;
    Ecore_Fb_Input_Device *dev;
+   Ecore_Evas_Engine_FB_Data *idata = ee->engine.data;
    int resized = 0;
 
    if (((ee->prop.fullscreen) && (on)) ||
@@ -443,8 +459,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      {
         int w, h;
 
-        ee->engine.fb.real_w = ee->w;
-        ee->engine.fb.real_h = ee->h;
+        idata->real_w = ee->w;
+        idata->real_h = ee->h;
         w = ee->w;
         h = ee->h;
         ecore_fb_size_get(&w, &h);
@@ -464,9 +480,9 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      }
    else
      {
-        if ((ee->engine.fb.real_w != ee->w) || (ee->engine.fb.real_h != ee->h)) resized = 1;
-        ee->w = ee->engine.fb.real_w;
-        ee->h = ee->engine.fb.real_h;
+        if ((idata->real_w != ee->w) || (idata->real_h != ee->h)) resized = 1;
+        ee->w = idata->real_w;
+        ee->h = idata->real_h;
         ee->req.w = ee->w;
         ee->req.h = ee->h;
         evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -481,26 +497,6 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      {
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
-}
-
-int
-_ecore_evas_fb_shutdown(void)
-{
-   _ecore_evas_init_count--;
-   if (_ecore_evas_init_count == 0)
-     {
-        int i;
-
-        for (i = 0; i < 4; i++)
-          {
-             if (ecore_evas_event_handlers[i])
-               ecore_event_handler_del(ecore_evas_event_handlers[i]);
-          }
-        ecore_fb_ts_shutdown();
-        ecore_event_evas_shutdown();
-     }
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
-   return _ecore_evas_init_count;
 }
 
 static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
@@ -564,22 +560,13 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL, // render
      NULL, // screen_geometry_get
      NULL  // screen_dpi_get
-};
-#endif
+ };
 
-/**
- * @brief Create Ecore_Evas using fb backend.
- * @param disp_name The name of the display to be used.
- * @param rotation The rotation to be used.
- * @param w The width of the Ecore_Evas to be created.
- * @param h The height of the Ecore_Evas to be created.
- * @return The new Ecore_Evas.
- */
-#ifdef BUILD_ECORE_EVAS_FB
-EAPI Ecore_Evas *
-ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
+Ecore_Evas *
+ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
 {
    Evas_Engine_Info_FB *einfo;
+   Ecore_Evas_Engine_FB_Data *idata;
    Ecore_Evas *ee;
 
    int rmethod;
@@ -591,14 +578,18 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    if (!rmethod) return NULL;
 
    if (!ecore_fb_init(disp_name)) return NULL;
-   ecore_fb_callback_gain_set(_ecore_evas_fb_gain, NULL);
-   ecore_fb_callback_lose_set(_ecore_evas_fb_lose, NULL);
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee) return NULL;
+   idata = calloc(1, sizeof(Ecore_Evas_Engine_FB_Data));
+
+   ee->engine.data = idata;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_fb_init(ee, w, h);
+
+   ecore_fb_callback_gain_set(_ecore_evas_fb_gain, ee);
+   ecore_fb_callback_lose_set(_ecore_evas_fb_lose, ee);
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_fb_engine_func;
 
@@ -666,14 +657,6 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 
    ee->engine.func->fn_render = _ecore_evas_fb_render;
    _ecore_evas_register(ee);
-   fb_ee = ee;
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return ee;
 }
-#else
-EAPI Ecore_Evas *
-ecore_evas_fb_new(const char *disp_name EINA_UNUSED, int rotation EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   return NULL;
-}
-#endif

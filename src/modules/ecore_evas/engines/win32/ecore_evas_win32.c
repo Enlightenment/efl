@@ -6,16 +6,28 @@
 
 #include <Ecore.h>
 #include "ecore_private.h"
-#ifdef BUILD_ECORE_EVAS_WIN32
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-# include <Ecore_Win32.h>
-# include <ecore_win32_private.h>
-#endif /* BUILD_ECORE_EVAS_WIN32 */
-
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+
+#include "Ecore_Win32.h"
+#include "ecore_win32_private.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+# include <Evas_Engine_Software_Gdi.h>
+#ndif
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
+# include <Evas_Engine_Software_DDraw.h>
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECT3D
+# include <Evas_Engine_Direct3D.h>
+#endif
+#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
+# include <Evas_Engine_GL_Glew.h>
+#endif
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 
@@ -24,6 +36,19 @@
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
+
+
+typedef struct _Ecore_Evas_Engine_Data_Win32 Ecore_Evas_Engine_Data_Win32;
+
+struct _Ecore_Evas_Engine_Data_Win32 {
+   Ecore_Win32_Window *parent;
+   struct {
+   unsigned char region     : 1;
+         unsigned char fullscreen : 1;
+      } state;
+};
+
+static Ecore_Evas_Interface_Win32 *_ecore_evas_win32_interface_new(void);
 
 static Eina_Bool _ecore_evas_win32_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
@@ -644,9 +669,11 @@ _ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void
 _ecore_evas_win32_shaped_set(Ecore_Evas *ee, int shaped)
 {
+   Ecore_Evas_Engine_Data_Win32 *wdata;
    if (((ee->shaped) && (shaped)) || ((!ee->shaped) && (!shaped)))
      return;
 
+   wdata = ee->engine.data;
    if (!strcmp(ee->driver, "software_ddraw")) return;
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
@@ -658,8 +685,8 @@ _ecore_evas_win32_shaped_set(Ecore_Evas *ee, int shaped)
         ee->shaped = shaped;
         if (einfo)
           {
-             ee->engine.win32.state.region = ee->shaped;
-             einfo->info.region = ee->engine.win32.state.region;
+             wdata->state.region = ee->shaped;
+             einfo->info.region = wdata->state.region;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -886,14 +913,15 @@ static void
 _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 {
    struct _Ecore_Win32_Window *window;
+   Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
 
    INF("ecore evas fullscreen set");
 
-   if ((ee->engine.win32.state.fullscreen && on) ||
-      (!ee->engine.win32.state.fullscreen && !on))
+   if ((wdata->state.fullscreen && on) ||
+      (!wdata->state.fullscreen && !on))
      return;
 
-   ee->engine.win32.state.fullscreen = on;
+   wdata->state.fullscreen = on;
    ee->prop.fullscreen = on;
 
    window = (struct _Ecore_Win32_Window *)ee->prop.window;
@@ -948,6 +976,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 static void
 _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
 {
+   Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
    alpha = !!alpha;
    if ((ee->alpha == alpha)) return;
 
@@ -975,19 +1004,19 @@ _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
         /* else */
         /*   { */
         /*      if (ee->prop.override) */
-        /*        ee->prop.window = ecore_win32_window_override_new(ee->engine.win32.win_root, */
+        /*        ee->prop.window = ecore_win32_window_override_new(wdata->win_root, */
         /*                                                          ee->req.x, */
         /*                                                          ee->req.y, */
         /*                                                          ee->req.w, */
         /*                                                          ee->req.h); */
         /*      else */
-        /*        ee->prop.window = ecore_win32_window_new(ee->engine.win32.win_root, */
+        /*        ee->prop.window = ecore_win32_window_new(wdata->win_root, */
         /*                                                 ee->req.x, */
         /*                                                 ee->req.y, */
         /*                                                 ee->req.w, */
         /*                                                 ee->req.h); */
-        /*      if (ee->engine.win32.mask) ecore_x_pixmap_free(ee->engine.x.mask); */
-        /*      ee->engine.win32.mask = 0; */
+        /*      if (wdata->mask) ecore_x_pixmap_free(ee->engine.x.mask); */
+        /*      wdata->mask = 0; */
         /*      ecore_win32_window_shape_input_mask_set(ee->prop.window, 0); */
         /*   } */
 
@@ -996,7 +1025,7 @@ _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
 
 //        if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
 //        ee->engine.x.mask = 0;
-        /* einfo->info.mask = ee->engine.win32.mask; */
+        /* einfo->info.mask = wdata->mask; */
         /* einfo->info.drawable = ee->prop.window; */
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -1291,7 +1320,6 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 }
 #endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
-#ifdef BUILD_ECORE_EVAS_WIN32
 static Ecore_Evas *
 _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
                                Ecore_Win32_Window *parent,
@@ -1301,6 +1329,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
                                int                 height)
 {
    Ecore_Evas *ee;
+   Ecore_Evas_Engine_Data_Win32 *wdata;
 
    if (!ecore_win32_init())
      return NULL;
@@ -1308,12 +1337,22 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee)
      return NULL;
+   wdata = calloc(1, sizeof(Ecore_Evas_Engine_Data_Win32));
+   if (!wdata)
+     {
+	free(ee);
+	return NULL;
+     }
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_win32_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_win32_engine_func;
+   ee->engine.data = wdata;
+
+   iface = _ecore_evas_win32_interface_new();
+   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    if (width < 1) width = 1;
    if (height < 1) height = 1;
@@ -1340,7 +1379,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
    evas_output_size_set(ee->evas, width, height);
    evas_output_viewport_set(ee->evas, 0, 0, width, height);
 
-   ee->engine.win32.parent = parent;
+   wdata->parent = parent;
    ee->prop.window = (Ecore_Window)ecore_win32_window_new(parent, x, y, width, height);
    if (!ee->prop.window)
      {
@@ -1366,8 +1405,6 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
 
    return ee;
 }
-
-#endif /* BUILD_ECORE_EVAS_WIN32 */
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
 
@@ -1505,21 +1542,24 @@ ecore_evas_gl_glew_new(Ecore_Win32_Window *parent EINA_UNUSED,
 
 #endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
-
-#ifdef BUILD_ECORE_EVAS_WIN32
-
-EAPI Ecore_Win32_Window *
-ecore_evas_win32_window_get(const Ecore_Evas *ee)
+static Ecore_Win32_Window *
+_ecore_evas_win32_window_get(const Ecore_Evas *ee)
 {
    return (Ecore_Win32_Window *) ecore_evas_window_get(ee);
 }
 
-#else
-
-EAPI Ecore_Win32_Window *
-ecore_evas_win32_window_get(const Ecore_Evas *ee EINA_UNUSED)
+static Ecore_Evas_Interface_Win32 *
+_ecore_evas_win32_interface_new(void)
 {
-   return NULL;
-}
+   Ecore_Evas_Interface_Win32 *iface;
 
-#endif /* BUILD_ECORE_EVAS_WIN32 */
+   iface = calloc(1, sizeof(Ecore_Evas_Interface_Win32));
+   if (!iface) return NULL;
+
+   iface->base.name = interface_win32_name;
+   iface->base.version = interface_win32_version;
+
+   iface->window_get = _ecore_evas_win32_window_get;
+
+   return iface;
+}
