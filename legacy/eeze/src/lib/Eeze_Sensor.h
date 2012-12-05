@@ -19,16 +19,27 @@
 
 /**
  * @file Eeze_Sensor.h
- * @brief Sensor information
+ * @brief Sensor information subsystem
  *
  * Eeze sensor functions allow you to gather sensor information from different
- * sensor sources available on the hardware. It supports a plugin architecture
+ * sensor sources available on your hardware. It supports a plugin architecture
  * to support different hardware platforms and devices. These plugins can be
- * loaded at runtime to allow support for a specific set of hardware or
- * platform.
+ * loaded at runtime.
  *
  * Right now we have support for the Tizen sensor framework as well as a simple
- * fake plugin to be used as a test harness for developing.
+ * fake plugin to be used as a test harness for development. Plugins for other
+ * sensor frameworks or platforms are always welcome.
+ *
+ * Synchronous as well as asynchronous reads are possible. As reading the
+ * physical sensor might be bound to a high latency and thus cost the value of
+ * the last read is cached within Eeze_Sensor together with a timestamp of the
+ * actual read out. This can speed up the value access for application while the
+ * values are still getting updating asynchronously in the background. The
+ * timestamp should be checked if the specific time requirements are needed.
+ *
+ * As an alternative the sensor could be read synchronously. With the
+ * disadvantage that the function call will block until the data is read from
+ * the sensor.
  *
  * @since 1.8
  *
