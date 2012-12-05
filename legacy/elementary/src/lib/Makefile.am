@@ -209,7 +209,6 @@ elm_gen_common.h \
 elm_priv.h \
 els_box.h \
 els_pan.h \
-els_scroller.h \
 elc_ctxpopup.c \
 elc_fileselector.c \
 elc_fileselector_button.c \
@@ -294,7 +293,6 @@ elm_win.c \
 els_box.c \
 els_cursor.c \
 els_pan.c \
-els_scroller.c \
 els_tooltip.c \
 elu_ews_wm.c
 
