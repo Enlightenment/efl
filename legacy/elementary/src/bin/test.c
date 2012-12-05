@@ -197,6 +197,7 @@ void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_external_pbar(void *data, Evas_Object *obj, void *event_info);
 void test_external_video(void *data, Evas_Object *obj, void *event_info);
+void test_config(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -727,6 +728,7 @@ add_tests:
    ADD_TEST(NULL, "Micellaneous", "Weather", test_weather);
    ADD_TEST(NULL, "Micellaneous", "Icon Desktops", test_icon_desktops);
    ADD_TEST(NULL, "Micellaneous", "Floating Objects", test_floating);
+   ADD_TEST(NULL, "Micellaneous", "Configuration", test_config);
 
 #undef ADD_TEST
 

@@ -56,6 +56,7 @@ test_check.c \
 test_clock.c \
 test_cnp.c \
 test_colorselector.c \
+test_config.c \
 test_conform.c \
 test_conform_indicator.c \
 test_ctxpopup.c \

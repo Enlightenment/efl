@@ -129,6 +129,13 @@ struct _Elm_Win_Smart_Data
    const char  *icon_name;
    const char  *role;
 
+   struct
+   {
+      const char  *name;
+      const char **available_list;
+      unsigned int count;
+   } profile;
+
    void *trap_data;
 
    double       aspect;
@@ -166,6 +173,7 @@ static const char SIG_UNMAXIMIZED[] = "unmaximized";
 static const char SIG_IOERR[] = "ioerr";
 static const char SIG_INDICATOR_PROP_CHANGED[] = "indicator,prop,changed";
 static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
+static const char SIG_PROFILE_CHANGED[] = "profile,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -184,6 +192,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_IOERR, ""},
    {SIG_INDICATOR_PROP_CHANGED, ""},
    {SIG_ROTATION_CHANGED, ""},
+   {SIG_PROFILE_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -824,6 +833,97 @@ _elm_win_focus_out(Ecore_Evas *ee)
 }
 
 static void
+_elm_win_available_profiles_del(Elm_Win_Smart_Data *sd)
+{
+   if (!sd->profile.available_list) return;
+
+   unsigned int i;
+   for (i = 0; i < sd->profile.count; i++)
+     if (sd->profile.available_list[i])
+       {
+          eina_stringshare_del(sd->profile.available_list[i]);
+          sd->profile.available_list[i] = NULL;
+       }
+   sd->profile.count = 0;
+   free(sd->profile.available_list);
+   sd->profile.available_list = NULL;
+}
+
+static void
+_elm_win_profile_del(Elm_Win_Smart_Data *sd)
+{
+   if (!sd->profile.name) return;
+   eina_stringshare_del(sd->profile.name);
+   sd->profile.name = NULL;
+}
+
+static Eina_Bool
+_elm_win_profile_set(Elm_Win_Smart_Data *sd, const char *profile)
+{
+   Eina_Bool changed = EINA_FALSE;
+   if (profile)
+     {
+        if (sd->profile.name)
+          {
+             if (strcmp(sd->profile.name, profile) != 0)
+               {
+                  eina_stringshare_replace(&(sd->profile.name), profile);
+                  changed = EINA_TRUE;
+               }
+          }
+        else
+          {
+             sd->profile.name = eina_stringshare_add(profile);
+             changed = EINA_TRUE;
+          }
+     }
+   else
+     _elm_win_profile_del(sd);
+
+   return changed;
+}
+
+static void
+_elm_win_profile_update(Elm_Win_Smart_Data *sd)
+{
+   if (sd->profile.available_list)
+     {
+        Eina_Bool found = EINA_FALSE;
+        if (sd->profile.name)
+          {
+             unsigned int i;
+             for (i = 0; i < sd->profile.count; i++)
+               {
+                  if (!strcmp(sd->profile.name,
+                              sd->profile.available_list[i]))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
+
+        /* If current profile is not present in an available profiles,
+         * change current profile to the 1st element of an array.
+         */
+        if (!found)
+          _elm_win_profile_set(sd, sd->profile.available_list[0]);
+     }
+
+   _elm_config_profile_set(sd->profile.name);
+
+   /* update sub ee */
+   Ecore_Evas *ee2;
+   Eina_List *sub, *l = NULL;
+
+   sub = ecore_evas_sub_ecore_evas_list_get(sd->ee);
+   EINA_LIST_FOREACH(sub, l, ee2)
+     ecore_evas_window_profile_set(ee2, sd->profile.name);
+
+   evas_object_smart_callback_call(sd->obj, SIG_PROFILE_CHANGED, NULL);
+}
+
+static void
 _elm_win_state_change(Ecore_Evas *ee)
 {
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
@@ -833,6 +933,8 @@ _elm_win_state_change(Ecore_Evas *ee)
    Eina_Bool ch_iconified = EINA_FALSE;
    Eina_Bool ch_fullscreen = EINA_FALSE;
    Eina_Bool ch_maximized = EINA_FALSE;
+   Eina_Bool ch_profile = EINA_FALSE;
+   const char *profile;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -867,6 +969,9 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_maximized = EINA_TRUE;
      }
 
+   profile = ecore_evas_window_profile_get(sd->ee);
+   ch_profile = _elm_win_profile_set(sd, profile);
+
    if (sd->withdrawn) _elm_win_count_withdrawn++;
    if (sd->iconified) _elm_win_count_iconified++;
    _elm_win_state_eval_queue();
@@ -900,6 +1005,10 @@ _elm_win_state_change(Ecore_Evas *ee)
           evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
         else
           evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
+     }
+   if (ch_profile)
+     {
+        _elm_win_profile_update(sd);
      }
 }
 
@@ -1367,6 +1476,9 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->icon_name) eina_stringshare_del(sd->icon_name);
    if (sd->role) eina_stringshare_del(sd->role);
    if (sd->icon) evas_object_del(sd->icon);
+
+   _elm_win_profile_del(sd);
+   _elm_win_available_profiles_del(sd);
 
    /* Don't let callback in the air that point to sd */
    ecore_evas_callback_delete_request_set(sd->ee, NULL);
@@ -3536,6 +3648,164 @@ _withdrawn_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_win_available_profiles_set(Evas_Object  *obj,
+                               const char  **profiles,
+                               unsigned int  count)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_available_profiles_set(profiles, count));
+}
+
+static void
+_available_profiles_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **profiles = va_arg(*list, const char **);
+   unsigned int count = va_arg(*list, unsigned int);
+   Elm_Win_Smart_Data *sd = _pd;
+   Eina_Bool found = EINA_FALSE;
+
+   _elm_win_available_profiles_del(sd);
+   if ((profiles) && (count >= 1))
+     {
+        sd->profile.available_list = calloc(count, sizeof(char *));
+        if (sd->profile.available_list)
+          {
+             if (!sd->profile.name) found = EINA_TRUE;
+
+             unsigned int i;
+             for (i = 0; i < count; i++)
+               {
+                  sd->profile.available_list[i] = eina_stringshare_add(profiles[i]);
+
+                  /* check to see if a given array has a current profile of elm_win */
+                  if ((sd->profile.name) &&
+                      (!strcmp(sd->profile.name, profiles[i])))
+                    {
+                       found = EINA_TRUE;
+                    }
+               }
+             sd->profile.count = count;
+          }
+     }
+
+   if (ecore_evas_window_profile_supported_get(sd->ee))
+     {
+        ecore_evas_window_available_profiles_set(sd->ee,
+                                                 sd->profile.available_list,
+                                                 sd->profile.count);
+
+        /* current profile of elm_win is wrong, change profile */
+        if ((sd->profile.available_list) && (!found))
+          {
+             eina_stringshare_replace(&(sd->profile.name),
+                                      sd->profile.available_list[0]);
+             ecore_evas_window_profile_set(sd->ee, sd->profile.name);
+          }
+
+     }
+   else
+     {
+        if (sd->profile.available_list)
+          _elm_win_profile_update(sd);
+     }
+}
+
+EAPI Eina_Bool
+elm_win_available_profiles_get(Evas_Object   *obj,
+                               char        ***profiles,
+                               unsigned int  *count)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_available_profiles_get(&ret, profiles, count));
+   return ret;
+}
+
+static void
+_available_profiles_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   char ***profiles = va_arg(*list, char ***);
+   unsigned int *count = va_arg(*list, unsigned int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   Eina_Bool res;
+
+   if (ecore_evas_window_profile_supported_get(sd->ee))
+     {
+        res = ecore_evas_window_available_profiles_get(sd->ee,
+                                                       profiles,
+                                                       count);
+     }
+   else
+     {
+        if (profiles) *profiles = (char **)sd->profile.available_list;
+        if (count) *count = sd->profile.count;
+        res = EINA_TRUE;
+     }
+   *ret = res;
+}
+
+EAPI void
+elm_win_profile_set(Evas_Object *obj,
+                    const char *profile)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_profile_set(profile));
+}
+
+static void
+_profile_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *profile = va_arg(*list, const char *);
+   Elm_Win_Smart_Data *sd = _pd;
+
+   /* check to see if a given profile is present in an available profiles */
+   if ((profile) && (sd->profile.available_list))
+     {
+        Eina_Bool found = EINA_FALSE;
+        unsigned int i;
+        for (i = 0; i < sd->profile.count; i++)
+          {
+             if (!strcmp(profile,
+                         sd->profile.available_list[i]))
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found) return;
+     }
+
+   if (ecore_evas_window_profile_supported_get(sd->ee))
+     {
+        if (!profile) _elm_win_profile_del(sd);
+        ecore_evas_window_profile_set(sd->ee, profile);
+     }
+   else
+     {
+        if (_elm_win_profile_set(sd, profile))
+          _elm_win_profile_update(sd);
+     }
+}
+
+EAPI const char *
+elm_win_profile_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_win_profile_get(&ret));
+   return ret;
+}
+
+static void
+_profile_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->profile.name;
+}
+
+EAPI void
 elm_win_urgent_set(Evas_Object *obj,
                    Eina_Bool urgent)
 {
@@ -4874,6 +5144,10 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICONIFIED_GET), _iconified_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_SET), _withdrawn_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET), _withdrawn_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_SET), _available_profiles_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET), _available_profiles_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_PROFILE_SET), _profile_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_PROFILE_GET), _profile_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_URGENT_SET), _urgent_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_URGENT_GET), _urgent_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_SET), _demand_attention_set),
@@ -4967,6 +5241,10 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICONIFIED_GET, "Get the iconified state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_SET, "Set the withdrawn state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET, "Get the withdrawn state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_SET, "Set the array of available profiles to a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET, "Get the array of available profiles of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_PROFILE_SET, "Set the profile of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_PROFILE_GET, "Get the profile of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_URGENT_SET, "Set the urgent state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_URGENT_GET, "Get the urgent state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_SET, "Set the demand_attention state of a window."),

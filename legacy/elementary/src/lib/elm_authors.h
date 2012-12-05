@@ -68,6 +68,7 @@
  * @author Flavio Ceolin <flavio.ceolin@@profusion.mobi>
  * @author Igor Murzov <e-mail@@date.by>
  * @author Jiyoun Park <jy0703.park@@samsung.com>
+ * @author Gwanglim Lee <gl77.lee@@samsung.com> <gwanglim@@gmail.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.

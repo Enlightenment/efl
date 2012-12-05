@@ -85,6 +85,7 @@
  * @li "ioerr": there has been a low-level I/O error with the display system
  * @li "indicator,prop,changed": an indicator's property has been changed
  * @li "rotation,changed": window rotation has been changed
+ * @li "profile,changed": profile of the window has been changed
  *
  * Examples:
  * @li @ref win_example_01
@@ -133,6 +134,10 @@ enum
      ELM_OBJ_WIN_SUB_ID_ICONIFIED_GET,
      ELM_OBJ_WIN_SUB_ID_WITHDRAWN_SET,
      ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET,
+     ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_SET,
+     ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET,
+     ELM_OBJ_WIN_SUB_ID_PROFILE_SET,
+     ELM_OBJ_WIN_SUB_ID_PROFILE_GET,
      ELM_OBJ_WIN_SUB_ID_URGENT_SET,
      ELM_OBJ_WIN_SUB_ID_URGENT_GET,
      ELM_OBJ_WIN_SUB_ID_DEMAND_ATTENTION_SET,
@@ -585,6 +590,57 @@ enum
  * @see elm_win_withdrawn_get
  */
 #define elm_obj_win_withdrawn_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WITHDRAWN_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_win_available_profiles_set
+ * @since 1.8
+ *
+ * Set the array of available profiles to a window.
+ *
+ * @param[in] profiles
+ * @param[in] count
+ *
+ * @see elm_win_available_profiles_set
+ */
+#define elm_obj_win_available_profiles_set(profiles, count) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_SET), EO_TYPECHECK(const char **, profiles), EO_TYPECHECK(unsigned int, count)
+
+/**
+ * @def elm_obj_win_available_profiles_get
+ * @since 1.8
+ *
+ * Get the array of available profiles of a window.
+ *
+ * @param[out] ret
+ * @param[out] profiles
+ * @param[out] count
+ *
+ * @see elm_win_available_profiles_get
+ */
+#define elm_obj_win_available_profiles_get(ret, profiles, count) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET), EO_TYPECHECK(Eina_Bool *, ret), EO_TYPECHECK(char ***, profiles), EO_TYPECHECK(unsigned int *, count)
+
+/**
+ * @def elm_obj_win_profile_set
+ * @since 1.8
+ *
+ * Set the profile of a window.
+ *
+ * @param[in] profile
+ *
+ * @see elm_win_profile_set
+ */
+#define elm_obj_win_profile_set(profile) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_PROFILE_SET), EO_TYPECHECK(const char *, profile)
+
+/**
+ * @def elm_obj_win_profile_get
+ * @since 1.8
+ *
+ * Get the profile of a window.
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_profile_get
+ */
+#define elm_obj_win_profile_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_PROFILE_GET), EO_TYPECHECK(const char **, ret)
 
 /**
  * @def elm_obj_win_urgent_set
@@ -1852,6 +1908,53 @@ EAPI void                  elm_win_withdrawn_set(Evas_Object *obj, Eina_Bool wit
  * @ingroup Win
  */
 EAPI Eina_Bool             elm_win_withdrawn_get(const Evas_Object *obj);
+
+/**
+ * Set the array of available profiles to a window.
+ *
+ * @param obj The window object
+ * @param profiles The string array of available profiles
+ * @param count The number of members in profiles
+ *
+ * @ingroup Win
+ * @since 1.8
+ */
+EAPI void                  elm_win_available_profiles_set(Evas_Object *obj, const char **profiles, unsigned int count);
+
+/**
+ * Get the array of available profiles of a window.
+ *
+ * @param obj The window object
+ * @param profiles Where to return the string array of available profiles
+ * @param count Where to return the number of members in profiles
+ * @return EINA_TRUE if available profiles exist, EINA_FALSE otherwise
+ *
+ * @ingroup Win
+ * @since 1.8
+ */
+EAPI Eina_Bool             elm_win_available_profiles_get(Evas_Object *obj, char ***profiles, unsigned int *count);
+
+/**
+ * Set the profile of a window.
+ *
+ * @param obj The window object
+ * @param profile The string value of a window profile
+ *
+ * @ingroup Win
+ * @since 1.8
+ */
+EAPI void                  elm_win_profile_set(Evas_Object *obj, const char *profile);
+
+/**
+ * Get the profile of a window.
+ *
+ * @param obj The window object
+ * @return The string value of a window profile, or NULL if none exists
+ *
+ * @ingroup Win
+ * @since 1.8
+ */
+EAPI const char           *elm_win_profile_get(const Evas_Object *obj);
 
 /**
  * Set the urgent state of a window.

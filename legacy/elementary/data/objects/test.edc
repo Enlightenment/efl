@@ -695,4 +695,17 @@ collections {
             }
       }
    }
+   group {
+      name: "win_config";
+      parts {
+           part {
+                 name: "swallow";
+                 type: SWALLOW;
+                 description {
+                     state: "default" 0.0;
+                     min: 10 150;
+                }
+            }
+      }
+   }
 }

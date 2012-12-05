@@ -753,6 +753,10 @@
 	* Add elm_app_name_set/get(): Formal application name string.
 	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
 
+2012-12-04  Gwanglim Lee
+
+        * Add window profile set/get API in elm_win
+
 2012-12-05  Cedric Bail
 
 	* Fix uninitialized data path in elm_flip.
