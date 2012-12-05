@@ -77,7 +77,7 @@
 #ifdef ELM_EDBUS
 #include <E_DBus.h>
 #endif
-#ifdef ELM_EDBUS
+#ifdef ELM_EDBUS2
 #include <EDBus.h>
 #endif
 
