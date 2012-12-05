@@ -85,12 +85,21 @@ _view_add(Evas_Object *parent)
    return view;
 }
 
-static int _elm_need_web = 0;
+static Eina_Bool _elm_need_web = EINA_FALSE;
+
+void
+_elm_unneed_web(void)
+{
+   if (!_elm_need_web) return;
+   _elm_need_web = EINA_FALSE;
+   ewk_shutdown();
+}
 
 EAPI Eina_Bool
 elm_need_web(void)
 {
-   if (_elm_need_web++) return EINA_TRUE;
+   if (_elm_need_web) return EINA_TRUE;
+   _elm_need_web = EINA_TRUE;
    ewk_init();
    return EINA_TRUE;
 }

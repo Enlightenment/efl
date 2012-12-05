@@ -458,7 +458,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 #ifdef ELM_ETHUMB
-static int _elm_need_ethumb = 0;
+static Eina_Bool _elm_need_ethumb = EINA_FALSE;
 static void _on_die_cb(void *, Ethumb_Client *);
 
 static void
@@ -493,7 +493,8 @@ void
 _elm_unneed_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (--_elm_need_ethumb) return;
+   if (!_elm_need_ethumb) return;
+   _elm_need_ethumb = EINA_FALSE;
 
    ethumb_client_disconnect(_elm_ethumb_client);
    _elm_ethumb_client = NULL;
@@ -516,7 +517,8 @@ EAPI Eina_Bool
 elm_need_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (_elm_need_ethumb++) return EINA_TRUE;
+   if (_elm_need_ethumb) return EINA_TRUE;
+   _elm_need_ethumb = EINA_TRUE;
 
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();

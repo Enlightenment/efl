@@ -1097,16 +1097,15 @@ _bring_in_anim_cb(void *data,
 #endif
 
 #ifdef HAVE_ELEMENTARY_WEB
-static int _elm_need_web = 0;
+static Eina_Bool _elm_need_web = EINA_FALSE;
 #endif
 
 void
 _elm_unneed_web(void)
 {
 #ifdef HAVE_ELEMENTARY_WEB
-   if (--_elm_need_web) return;
-
-   _elm_need_web = 0;
+   if (!_elm_need_web) return;
+   _elm_need_web = EINA_FALSE;
    ewk_shutdown();
 #endif
 }
@@ -1115,7 +1114,8 @@ EAPI Eina_Bool
 elm_need_web(void)
 {
 #ifdef HAVE_ELEMENTARY_WEB
-   if (_elm_need_web++) return EINA_TRUE;
+   if (_elm_need_web) return EINA_TRUE;
+   _elm_need_web = EINA_TRUE;
    ewk_init();
    return EINA_TRUE;
 #else
