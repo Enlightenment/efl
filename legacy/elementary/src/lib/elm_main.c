@@ -360,13 +360,14 @@ elm_app_locale_dir_get(void)
 }
 
 #ifdef ELM_EDBUS
-static int _elm_need_e_dbus = 0;
+static Eina_Bool _elm_need_e_dbus = EINA_FALSE;
 #endif
 EAPI Eina_Bool
 elm_need_e_dbus(void)
 {
 #ifdef ELM_EDBUS
-   if (_elm_need_e_dbus++) return EINA_TRUE;
+   if (_elm_need_e_dbus) return EINA_TRUE;
+   _elm_need_e_dbus = EINA_TRUE;
    e_dbus_init();
    return EINA_TRUE;
 #else
@@ -378,21 +379,21 @@ static void
 _elm_unneed_e_dbus(void)
 {
 #ifdef ELM_EDBUS
-   if (--_elm_need_e_dbus) return;
-
-   _elm_need_e_dbus = 0;
+   if (!_elm_need_e_dbus) return;
+   _elm_need_e_dbus = EINA_FALSE;
    e_dbus_shutdown();
 #endif
 }
 
 #ifdef ELM_EDBUS2
-static int _elm_need_edbus = 0;
+static Eina_Bool _elm_need_edbus = EINA_FALSE;
 #endif
 EAPI Eina_Bool
 elm_need_edbus(void)
 {
 #ifdef ELM_EDBUS2
-   if (_elm_need_edbus++) return EINA_TRUE;
+   if (_elm_need_edbus) return EINA_TRUE;
+   _elm_need_edbus = EINA_TRUE;
    edbus_init();
    return EINA_TRUE;
 #else
@@ -404,21 +405,21 @@ static void
 _elm_unneed_edbus(void)
 {
 #ifdef ELM_EDBUS2
-   if (--_elm_need_edbus) return;
-
-   _elm_need_edbus = 0;
+   if (!_elm_need_edbus) return;
+   _elm_need_edbus = EINA_FALSE;
    edbus_shutdown();
 #endif
 }
 
 #ifdef ELM_EFREET
-static int _elm_need_efreet = 0;
+static Eina_Bool _elm_need_efreet = EINA_FALSE;
 #endif
 EAPI Eina_Bool
 elm_need_efreet(void)
 {
 #ifdef ELM_EFREET
-   if (_elm_need_efreet++) return EINA_TRUE;
+   if (_elm_need_efreet) return EINA_TRUE;
+   _elm_need_efreet = EINA_TRUE;
    efreet_init();
    efreet_mime_init();
    efreet_trash_init();
@@ -446,9 +447,8 @@ static void
 _elm_unneed_efreet(void)
 {
 #ifdef ELM_EFREET
-   if (--_elm_need_efreet) return;
-
-   _elm_need_efreet = 0;
+   if (!_elm_need_efreet) return;
+   _elm_need_efreet = EINA_FALSE;
    efreet_trash_shutdown();
    efreet_mime_shutdown();
    efreet_shutdown();
