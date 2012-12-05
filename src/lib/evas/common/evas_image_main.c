@@ -203,20 +203,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
            ie->file, ie->key);
    // if (ie->data1) evas_cserve2_image_free(ie);
 #endif
-/*
- * FIXME: This doesn't seem to be needed... But I'm not sure why.
- *	 -- nash
-     {
-        Filtered_Image *fi;
 
-        EINA_LIST_FREE(im->filtered, fi)
-          {
-             free(fi->key);
-             _evas_common_rgba_image_delete((Image_Entry *)(fi->image));
-             free(fi);
-          }
-     }
-*/
    if (ie->frames)
      {
         Eina_List *l;

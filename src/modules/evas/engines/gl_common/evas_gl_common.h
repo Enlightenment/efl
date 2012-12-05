@@ -483,25 +483,6 @@ extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
 extern Evas_GL_Program_Source shader_tex_nomul_frag_src;
 extern Evas_GL_Program_Source shader_tex_nomul_vert_src;
-
-extern Evas_GL_Program_Source shader_filter_invert_frag_src;
-extern Evas_GL_Program_Source shader_filter_invert_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_invert_bgra_frag_src;
-extern Evas_GL_Program_Source shader_filter_invert_bgra_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_sepia_frag_src;
-extern Evas_GL_Program_Source shader_filter_sepia_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_sepia_bgra_frag_src;
-extern Evas_GL_Program_Source shader_filter_sepia_bgra_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_greyscale_frag_src;
-extern Evas_GL_Program_Source shader_filter_greyscale_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_greyscale_bgra_frag_src;
-extern Evas_GL_Program_Source shader_filter_greyscale_bgra_nomul_frag_src;
-/* blur (annoyingly) needs (aka is faster with) a vertex shader */
-extern Evas_GL_Program_Source shader_filter_blur_vert_src;
-extern Evas_GL_Program_Source shader_filter_blur_frag_src;
-extern Evas_GL_Program_Source shader_filter_blur_nomul_frag_src;
-extern Evas_GL_Program_Source shader_filter_blur_bgra_frag_src;
-extern Evas_GL_Program_Source shader_filter_blur_bgra_nomul_frag_src;
 #endif
 
 void glerr(int err, const char *file, const char *func, int line, const char *op);
@@ -624,13 +605,6 @@ Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int x, int y);
 
 void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2);
-
-#if 0 // filtering disabled
-void              evas_gl_common_filter_draw(Evas_Engine_GL_Context *context, Evas_GL_Image *im, Evas_Filter_Info *filter);
-Filtered_Image   *evas_gl_common_image_filtered_get(Evas_GL_Image *im, uint8_t *key, size_t keylen);
-Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_Image *fimage, uint8_t *key, size_t keylen);
-void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
-#endif
 
 extern void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 extern void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);

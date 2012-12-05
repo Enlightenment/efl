@@ -487,10 +487,6 @@ typedef enum _Font_Rend_Flags
 
 /*****************************************************************************/
 
-#if 0 // filtering disabled
-typedef struct _Filtered_Image Filtered_Image;
-#endif
-
 struct _RGBA_Image_Loadopts
 {
    int                  scale_down_by; // if > 1 then use this
@@ -806,10 +802,6 @@ struct _RGBA_Image
       Eina_Bool          dirty: 1;
    } mask;
 
-#if 0 // filtering disabled
-   Eina_List            *filtered;
-#endif
-
    struct {
       LK(lock);
       Eina_List *list;
@@ -858,16 +850,6 @@ struct _RGBA_Map
 
    RGBA_Map_Point pts[1];
 };
-
-#if 0 // filtering disabled
-struct _Filtered_Image
-{
-   void       *key;
-   size_t      keylen;
-   RGBA_Image *image;
-   int ref;
-};
-#endif
 
 // for fonts...
 /////

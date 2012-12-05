@@ -88,9 +88,6 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
 
    int was_smart_child = 0;
 
-#if 0 // filtering disabled
-   evas_filter_free(eo_obj);
-#endif
    if (!strcmp(obj->type, "image")) evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_map_set(eo_obj, NULL);
    if (obj->prev.map) evas_map_free(obj->prev.map);

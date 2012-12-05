@@ -487,35 +487,6 @@ struct _Evas_Map
    Evas_Map_Point        points[]; // actual points
 };
 
-#if 0 // filtering disabled
-/* nash: Split into two bits */
-typedef struct Evas_Filter_Info
-{
-   Evas_Filter filter;
-   Evas_Filter_Mode mode;
-
-   Eina_Bool dirty : 1;
-
-   int datalen;
-   void *data;
-   void (*data_free)(void *);
-
-   uint8_t *key;
-   uint32_t len;
-   Filtered_Image *cached;
-} Evas_Filter_Info;
-
-typedef Eina_Bool (*Evas_Software_Filter_Fn)(Evas_Filter_Info *, RGBA_Image *, RGBA_Image *);
-
-int evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
-                     int *outw, int *outh, Eina_Bool inv);
-Eina_Bool evas_filter_always_alpha(Evas_Filter_Info *info);
-uint8_t *evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp);
-// expose for use in engines
-EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
-void evas_filter_free(Evas_Object *o);
-#endif
-
 struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
@@ -601,9 +572,6 @@ struct _Evas_Object_Protected_Data
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
-#if 0 // filtering disabled
-   Evas_Filter_Info           *filter;
-#endif
 
    Evas_Size_Hints            *size_hints;
 
@@ -902,13 +870,6 @@ struct _Evas_Func
    int  (*font_pen_coords_get)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
    Eina_Bool (*font_text_props_info_create) (void *data, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len, Evas_Text_Props_Mode mode);
    int  (*font_right_inset_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
-
-#if 0 // filtering disabled
-   void (*image_draw_filtered)             (void *data, void *context, void *surface, void *image, Evas_Filter_Info *filter);
-   Filtered_Image *(*image_filtered_get)   (void *image, uint8_t *key, size_t len);
-   Filtered_Image *(*image_filtered_save)  (void *image, void *filtered, uint8_t *key, size_t len);
-   void (*image_filtered_free)             (void *image, Filtered_Image *);
-#endif
 
    /* EFL-GL Glue Layer */
    void *(*gl_surface_create)            (void *data, void *config, int w, int h);

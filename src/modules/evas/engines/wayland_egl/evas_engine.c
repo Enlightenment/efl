@@ -1563,40 +1563,6 @@ eng_image_native_get(void *data EINA_UNUSED, void *image)
    return &(n->ns);
 }
 
-#if 0 // filtering disabled
-static void
-eng_image_draw_filtered(void *data, void *context, void *surface,
-                        void *image, Evas_Filter_Info *filter)
-{
-   Render_Engine *re = data;
-
-   if (!image) return;
-   eng_window_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-
-   evas_gl_common_filter_draw(re->win->gl_context, image, filter);
-}
-
-static Filtered_Image *
-eng_image_filtered_get(void *im, uint8_t *key, size_t keylen)
-{
-   return evas_gl_common_image_filtered_get(im, key, keylen);
-}
-
-static Filtered_Image *
-eng_image_filtered_save(void *im, void *fim, uint8_t *key, size_t keylen)
-{
-   return evas_gl_common_image_filtered_save(im, fim, key, keylen);
-}
-
-static void
-eng_image_filtered_free(void *im, Filtered_Image *fim)
-{
-   evas_gl_common_image_filtered_free(im, fim);
-}
-#endif
-
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
@@ -3776,12 +3742,6 @@ module_open(Evas_Module *em)
    ORD(image_mask_create);
    ORD(image_native_set);
    ORD(image_native_get);
-#if 0 // filtering disabled
-   ORD(image_draw_filtered);
-   ORD(image_filtered_get);
-   ORD(image_filtered_save);
-   ORD(image_filtered_free);
-#endif
 
    ORD(font_draw);
 

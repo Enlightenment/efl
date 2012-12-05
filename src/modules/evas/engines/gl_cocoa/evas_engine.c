@@ -564,40 +564,6 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
 // drivers?
 // 
 //#define GLX_TEX_PIXMAP_RECREATE 1
-#if 0
-static void
-eng_image_draw_filtered(void *data, void *context, void *surface,
-                        void *image, Evas_Filter_Info *filter)
-{
-   Render_Engine *re = data;
-
-   if (!image) return;
-   eng_window_use(re->win);
-   evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
-   re->win->gl_context->dc = context;
-
-   evas_gl_common_filter_draw(re->win->gl_context, image, filter);
-}
-
-static Filtered_Image *
-eng_image_filtered_get(void *im, uint8_t *key, size_t keylen)
-{
-   return evas_gl_common_image_filtered_get(im, key, keylen);
-}
-
-static Filtered_Image *
-eng_image_filtered_save(void *im, void *fim, uint8_t *key, size_t keylen)
-{
-   return evas_gl_common_image_filtered_save(im, fim, key, keylen);
-}
-
-static void
-eng_image_filtered_free(void *im, Filtered_Image *fim)
-{
-   evas_gl_common_image_filtered_free(im, fim);
-}
-
-#endif
 
 //
 //
@@ -1419,10 +1385,6 @@ module_open(Evas_Module *em)
    ORD(image_mask_create);
    //   ORD(image_native_set);
    //   ORD(image_native_get);
-   //   ORD(image_draw_filtered);
-   //   ORD(image_filtered_get);
-   //   ORD(image_filtered_save);
-   //   ORD(image_filtered_free);
    
    ORD(font_draw);
    
