@@ -135,6 +135,7 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
    if (!read_uint(map, fsize, &position, &offset)) goto close_file;
    if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
+   if (offset > fsize) goto close_file;
    if (head_size == 12) // OS/2 V1 + Windows 3.0
      {
         short tmp;
@@ -424,6 +425,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
    if (!read_uint(map, fsize, &position, &offset)) goto close_file;
    if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
+   if (offset > fsize) goto close_file;
    image_size = fsize - offset;
    if (image_size < 1) goto close_file;
 
