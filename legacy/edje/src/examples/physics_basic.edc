@@ -27,21 +27,11 @@ collections {
             description {
                state: "default" 0.0;
                color: 255 0 0 255; /* red */
-               rel1.relative: 0.55 0.1;
-               rel2.relative: 0.75 0.3;
+               rel1.relative: 0.75 0.1;
+               rel2.relative: 0.95 0.3;
                aspect: 1 1;
                physics {
-                  mass: 10.8;
-                  restitution: 0.7;
-                  friction: 1.0;
-               }
-            }
-            description {
-               state: "light" 0.0;
-               inherit: "default" 0.0;
-               physics {
-                  mass: 6.66;
-                  friction: 1.2;
+                  restitution: 0.85;
                }
             }
          }
@@ -68,18 +58,10 @@ collections {
             description {
                state: "default" 0.0;
                visible: 0;
+               physics {
+                  restitution: 0.7;
+               }
             }
-         }
-      }
-
-      programs {
-         program {
-            name: "load";
-            signal: "load";
-            in: 2 0;
-            action: STATE_SET "light" 0.0;
-            transition: LINEAR 0.5;
-            target: "red_box";
          }
       }
 

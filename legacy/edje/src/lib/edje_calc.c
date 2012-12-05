@@ -2293,6 +2293,7 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.mass = desc->physics.mass;
    params->physics.restitution = desc->physics.restitution;
    params->physics.friction = desc->physics.friction;
+   params->ignore_part_position = desc->physics.ignore_part_position;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2443,16 +2444,19 @@ _edje_physics_world_geometry_check(EPhysics_World *world)
 }
 
 static void
-_edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf)
+_edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_Bool pos_update)
 {
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
      {
-        Evas_Coord z;
-
-        ephysics_body_geometry_get(ep->body, NULL, NULL, &z, NULL, NULL, NULL);
-        ephysics_body_move(ep->body, ep->edje->x + pf->x, ep->edje->y + pf->y,
-                           z);
+        if (pos_update)
+          {
+             Evas_Coord z;
+             ephysics_body_geometry_get(ep->body, NULL, NULL, &z,
+                                        NULL, NULL, NULL);
+             ephysics_body_move(ep->body, ep->edje->x + pf->x,
+                                ep->edje->y + pf->y, z);
+          }
         ephysics_body_mass_set(ep->body, pf->physics.mass);
      }
 
@@ -2897,6 +2901,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                                   pos));
         p3->physics.friction = TO_DOUBLE(FINTP(p1->physics.friction,
                                                p2->physics.friction, pos));
+        if ((p1->ignore_part_position) && (p2->ignore_part_position))
+          p3->ignore_part_position = 1;
+        else
+          p3->ignore_part_position = 0;
 #endif
 
         switch (part_type)
@@ -3093,7 +3101,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                    if (_edje_physics_world_geometry_check(ep->edje->world))
                      {
                         _edje_physics_body_add(ep, ep->edje->world);
-                        _edje_physics_body_props_update(ep, pf);
+                        _edje_physics_body_props_update(ep, pf, EINA_TRUE);
                      }
                 }
               else if (ep->body)
@@ -3101,7 +3109,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                    if (((ep->prev_description) &&
                         (chosen_desc != ep->prev_description)) ||
                        (pf != p1))
-                     _edje_physics_body_props_update(ep, pf);
+                     _edje_physics_body_props_update(ep, pf,
+                                                     !pf->ignore_part_position);
                 }
               else
 #endif

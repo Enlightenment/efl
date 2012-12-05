@@ -313,6 +313,7 @@ static void st_collections_group_parts_part_description_table_min(void);
 static void st_collections_group_parts_part_description_physics_mass(void);
 static void st_collections_group_parts_part_description_physics_restitution(void);
 static void st_collections_group_parts_part_description_physics_friction(void);
+static void st_collections_group_parts_part_description_physics_ignore_part_position(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
@@ -598,6 +599,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
      {"collections.group.parts.part.description.physics.restitution", st_collections_group_parts_part_description_physics_restitution},
      {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
+     {"collections.group.parts.part.description.physics.ignore_part_position", st_collections_group_parts_part_description_physics_ignore_part_position},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
@@ -1089,6 +1091,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 #ifdef HAVE_EPHYSICS
    result->physics.mass = FROM_DOUBLE(1.0);
    result->physics.friction = FROM_DOUBLE(0.5);
+   result->physics.ignore_part_position = 1;
 #endif
 
    return result;
@@ -7176,6 +7179,7 @@ st_collections_group_parts_part_description_table_min(void)
     description {
         ..
         physics {
+            ignore_part_position: 1;
             mass: 5.31;
             friction: 0.5;
             restitution: 0.82;
@@ -7266,6 +7270,31 @@ st_collections_group_parts_part_description_physics_friction(void)
    check_arg_count(1);
 
    current_desc->physics.friction = parse_float(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        ignore_part_position
+    @parameters
+        [1 or 0]
+    @effect
+        If enabled, the body won't be positioned following rel1/rel2.
+        It will keep its position updated only by physics calculations.
+        If disabled, when the state is set, the body will be moved to
+        the position described by the blocks rel1/rel2.
+        Default is 1 (enabled).
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_ignore_part_position(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.ignore_part_position = parse_bool(0);
 }
 #endif
 

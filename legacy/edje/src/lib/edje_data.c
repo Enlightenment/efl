@@ -516,6 +516,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", physics.mass, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", physics.restitution, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", physics.friction, EET_T_DOUBLE); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_position", physics.ignore_part_position, EET_T_UCHAR); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)	\
@@ -583,6 +584,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", Dec.physics.mass, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", Dec.physics.restitution, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", Dec.physics.friction, EET_T_DOUBLE); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_position", Dec.physics.ignore_part_position, EET_T_UCHAR); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)	 \

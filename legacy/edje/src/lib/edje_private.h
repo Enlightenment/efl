@@ -963,6 +963,7 @@ struct _Edje_Part_Description_Common
       double mass;
       double restitution;
       double friction;
+      unsigned char ignore_part_position;
    } physics;
 #endif
 
@@ -1300,6 +1301,7 @@ struct _Edje_Calc_Params
       double restitution; // 8
       double friction; // 8
    } physics; // 24
+   unsigned char    ignore_part_position : 1;
 #endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;

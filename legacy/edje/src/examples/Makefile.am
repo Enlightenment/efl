@@ -53,7 +53,9 @@ EDCS += multisense.edc
 endif
 
 if ENABLE_EPHYSICS
-EDCS += physics_basic.edc
+EDCS += \
+physics_basic.edc \
+physics_complex.edc
 endif
 
 .edc.edj:
