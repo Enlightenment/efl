@@ -760,4 +760,4 @@
 2012-12-05  Cedric Bail
 
 	* Fix uninitialized data path in elm_flip, elm_gesture_layer,
-	elm_interface_scrollable.
+	elm_interface_scrollable, els_scroller.

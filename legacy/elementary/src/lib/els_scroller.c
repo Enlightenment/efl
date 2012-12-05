@@ -2091,6 +2091,8 @@ _smart_hold_animator(void *data)
         tdiff = sd->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
 
+        memset(pos, 0, sizeof (pos));
+
         for(i = 0; i < queue_size; i++)
           {
              x = sd->down.history[i].x;
