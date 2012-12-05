@@ -7953,11 +7953,12 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
    Evas_Object_Textblock_Node_Text *tnode;
    Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
-   buf = eina_strbuf_new();
 
    if (!cur1 || !cur1->node) return NULL;
    if (!_cur2 || !_cur2->node) return NULL;
    if (cur1->obj != _cur2->obj) return NULL;
+   buf = eina_strbuf_new();
+
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -8072,11 +8073,11 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Textblock_Cursor *cur2;
 
-   buf = eina_ustrbuf_new();
-
    if (!cur1 || !cur1->node) return NULL;
    if (!_cur2 || !_cur2->node) return NULL;
    if (cur1->obj != _cur2->obj) return NULL;
+   buf = eina_ustrbuf_new();
+
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;

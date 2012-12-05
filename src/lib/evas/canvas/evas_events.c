@@ -53,7 +53,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                    int x, int y, int *no_rep, Eina_Bool source)
 {
    Evas_Object *eo_obj;
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = NULL;
    int inside;
 
    if (!list) return in;
@@ -626,6 +626,7 @@ _evas_event_source_multi_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
    EINA_LIST_FOREACH(copy, l, eo_child)
      {
         ev->canvas = point;
+        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         if ((child->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB) &&
             (child->mouse_grabbed > 0))
           {
@@ -639,7 +640,6 @@ _evas_event_source_multi_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
                                    &ev->canvas.x,
                                    &ev->canvas.y,
                                    child->mouse_grabbed);
-        child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
         evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MULTI_UP,
                                         ev, event_id);
         if (e->delete_me || e->is_frozen) break;
