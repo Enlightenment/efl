@@ -34,6 +34,7 @@ lib_ecore_fb_libecore_fb_la_CPPFLAGS = \
 @ECORE_FB_CFLAGS@
 
 lib_ecore_fb_libecore_fb_la_LIBADD = \
+lib/ecore_input/libecore_input.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \

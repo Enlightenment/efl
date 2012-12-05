@@ -4123,6 +4123,7 @@ src/examples/eet/Makefile
 src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/examples/ecore/Makefile
+src/examples/eio/Makefile
 src/lib/eina/eina_config.h
 spec/efl.spec
 pc/evil.pc
