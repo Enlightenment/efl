@@ -17,7 +17,7 @@
 
 /** Log domain macros and variables **/
 
-extern int _ecore_evas_log_dom;
+EAPI extern int _ecore_evas_log_dom;
 
 #ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
 # undef ECORE_EVAS_DEFAULT_LOG_COLOR
@@ -324,23 +324,18 @@ struct _Ecore_Evas
    unsigned char profile_supported : 1;
 };
 
-void _ecore_evas_ref(Ecore_Evas *ee);
-void _ecore_evas_unref(Ecore_Evas *ee);
-int ecore_evas_buffer_render(Ecore_Evas *ee);
+EAPI void _ecore_evas_ref(Ecore_Evas *ee);
+EAPI void _ecore_evas_unref(Ecore_Evas *ee);
+EAPI int ecore_evas_buffer_render(Ecore_Evas *ee);
 
-#ifdef BUILD_ECORE_EVAS_EWS
-void _ecore_evas_ews_events_init(void);
-int _ecore_evas_ews_shutdown(void);
-#endif
-
-void _ecore_evas_fps_debug_init(void);
-void _ecore_evas_fps_debug_shutdown(void);
-void _ecore_evas_fps_debug_rendertime_add(double t);
-void _ecore_evas_register(Ecore_Evas *ee);
-void _ecore_evas_free(Ecore_Evas *ee);
-void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
-void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
-void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
+EAPI void _ecore_evas_fps_debug_init(void);
+EAPI void _ecore_evas_fps_debug_shutdown(void);
+EAPI void _ecore_evas_fps_debug_rendertime_add(double t);
+EAPI void _ecore_evas_register(Ecore_Evas *ee);
+EAPI void _ecore_evas_free(Ecore_Evas *ee);
+EAPI void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
+EAPI void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
+EAPI void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                           int x, int y,
                                           double radius,
                                           double radius_x, double radius_y,
@@ -348,7 +343,7 @@ void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                           double angle,
                                           double mx, double my,
                                           unsigned int timestamp);
-void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
+EAPI void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                           int x, int y,
                                           double radius,
                                           double radius_x, double radius_y,
@@ -357,7 +352,7 @@ void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                           double mx, double my,
                                           Evas_Button_Flags flags,
                                           unsigned int timestamp);
-void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
+EAPI void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                         int x, int y,
                                         double radius,
                                         double radius_x, double radius_y,
@@ -367,28 +362,33 @@ void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                         Evas_Button_Flags flags,
                                         unsigned int timestamp);
 
-extern Eina_Bool _ecore_evas_app_comp_sync;
+EAPI extern Eina_Bool _ecore_evas_app_comp_sync;
 
 
-Eina_Module *_ecore_evas_engine_load(const char *engine);
-void _ecore_evas_engine_init();
-void _ecore_evas_engine_shutdown();
-
-Ecore_Evas_Interface *_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname);
+EAPI Ecore_Evas_Interface *_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname);
 
 /**
  * @brief Free the string of the window profile.
  *
  * This is a helper function to free window profile.
  */
-void _ecore_evas_window_profile_free(Ecore_Evas *ee);
+EAPI void _ecore_evas_window_profile_free(Ecore_Evas *ee);
 
 /**
  * @brief Free the string array of available window profiles.
  *
  * This is a helper function to free available window profiles.
  */
-void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
+EAPI void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
+
+#ifdef BUILD_ECORE_EVAS_EWS
+void _ecore_evas_ews_events_init(void);
+int _ecore_evas_ews_shutdown(void);
+#endif
+
+Eina_Module *_ecore_evas_engine_load(const char *engine);
+void _ecore_evas_engine_init();
+void _ecore_evas_engine_shutdown();
 
 #endif
 

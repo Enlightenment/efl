@@ -28,8 +28,8 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-Eina_Bool _ecore_evas_app_comp_sync = 1;
-int _ecore_evas_log_dom = -1;
+EAPI Eina_Bool _ecore_evas_app_comp_sync = 1;
+EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
 static Eina_Bool _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -68,7 +68,7 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-Ecore_Evas_Interface *
+EAPI Ecore_Evas_Interface *
 _ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
 {
    Eina_List *l;
@@ -2307,7 +2307,7 @@ static int _ecore_evas_fps_debug_init_count = 0;
 static int _ecore_evas_fps_debug_fd = -1;
 unsigned int *_ecore_evas_fps_rendertime_mmap = NULL;
 
-void
+EAPI void
 _ecore_evas_fps_debug_init(void)
 {
    char buf[4096];
@@ -2362,7 +2362,7 @@ _ecore_evas_fps_debug_init(void)
      }
 }
 
-void
+EAPI void
 _ecore_evas_fps_debug_shutdown(void)
 {
    _ecore_evas_fps_debug_init_count--;
@@ -2383,7 +2383,7 @@ _ecore_evas_fps_debug_shutdown(void)
      }
 }
 
-void
+EAPI void
 _ecore_evas_fps_debug_rendertime_add(double t)
 {
    static double rtime = 0.0;
@@ -2413,7 +2413,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
 }
 
-void
+EAPI void
 _ecore_evas_register(Ecore_Evas *ee)
 {
    ee->registered = 1;
@@ -2421,13 +2421,13 @@ _ecore_evas_register(Ecore_Evas *ee)
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
 }
 
-void
+EAPI void
 _ecore_evas_ref(Ecore_Evas *ee)
 {
    ee->refcount++;
 }
 
-void
+EAPI void
 _ecore_evas_unref(Ecore_Evas *ee)
 {
    ee->refcount--;
@@ -2439,7 +2439,7 @@ _ecore_evas_unref(Ecore_Evas *ee)
      ERR("Ecore_Evas %p->refcount=%d < 0", ee, ee->refcount);
 }
 
-void
+EAPI void
 _ecore_evas_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Interface *iface;
@@ -2507,7 +2507,7 @@ _ecore_evas_async_events_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd
    return ECORE_CALLBACK_RENEW;
 }
 
-void
+EAPI void
 _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 {
    if (ee->engine.idle_flush_timer)
@@ -2517,7 +2517,7 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
                                                  ee);
 }
 
-void
+EAPI void
 _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
    ee->mouse.x = x;
@@ -2554,7 +2554,7 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
      evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
 }
 
-void
+EAPI void
 _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                      int x, int y,
                                      double radius,
@@ -2602,7 +2602,7 @@ _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                  timestamp, NULL);
 }
 
-void
+EAPI void
 _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                      int x, int y,
                                      double radius,
@@ -2651,7 +2651,7 @@ _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                  flags, timestamp, NULL);
 }
 
-void
+EAPI void
 _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                    int x, int y,
                                    double radius,
@@ -2700,14 +2700,14 @@ _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                flags, timestamp, NULL);
 }
 
-void
+EAPI void
 _ecore_evas_window_profile_free(Ecore_Evas *ee)
 {
    if (ee->prop.profile.name)
      eina_stringshare_del(ee->prop.profile.name);
 }
 
-void
+EAPI void
 _ecore_evas_window_available_profiles_free(Ecore_Evas *ee)
 {
    if (ee->prop.profile.available_list)
@@ -2724,6 +2724,22 @@ _ecore_evas_window_available_profiles_free(Ecore_Evas *ee)
         free(ee->prop.profile.available_list);
      }
 }
+
+EAPI int
+ecore_evas_buffer_render(Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_Buffer *iface;
+   iface = (Ecore_Evas_Interface_Buffer *)_ecore_evas_interface_get(ee, "buffer");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+   return iface->render(ee);
+}
+
+
+
+
+
+
 
 EAPI Eina_List *
 ecore_evas_ecore_evas_list_get(void)
@@ -3126,16 +3142,6 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(w, h, alloc_func, free_func, data);
-}
-
-int
-ecore_evas_buffer_render(Ecore_Evas *ee)
-{
-   Ecore_Evas_Interface_Buffer *iface;
-   iface = (Ecore_Evas_Interface_Buffer *)_ecore_evas_interface_get(ee, "buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
-
-   return iface->render(ee);
 }
 
 EAPI Ecore_Evas *
