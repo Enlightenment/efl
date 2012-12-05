@@ -1806,6 +1806,45 @@ ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body)
    return body->soft_body->m_cfg.kAHR * 100;
 }
 
+EAPI void
+ephysics_body_soft_body_drag_coefficient_set(EPhysics_Body *body, double coefficient)
+{
+   if (!body)
+     {
+        ERR("Can't set soft body's drag coefficient, body is null.");
+        return;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't set soft body's drag coefficient, body seems not to be a soft"
+            " body.");
+        return;
+     }
+
+   body->soft_body->m_cfg.kDG = coefficient;
+   DBG("Soft body drag coefficient set to: %lf", coefficient);
+}
+
+EAPI double
+ephysics_body_soft_body_drag_coefficient_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get soft body's drag coefficient, body is null.");
+        return -1;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't get soft body's drag coefficient, body seems not to be a soft"
+            " body.");
+        return -1;
+     }
+
+   return body->soft_body->m_cfg.kDG;
+}
+
 static void
 _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {

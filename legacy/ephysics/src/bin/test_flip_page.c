@@ -163,6 +163,7 @@ _page_add(Test_Data *test_data, EPhysics_Body *anchor, const char *img, Evas_Coo
    evas_object_geometry_get(evas_obj, &page_data->x, NULL, NULL, NULL);
 
    body = ephysics_body_cloth_add(test_data->world, 10, 20);
+   ephysics_body_soft_body_drag_coefficient_set(body, 0.0008);
    ephysics_body_soft_body_position_iterations_set(body, 6);
    ephysics_body_soft_body_bending_constraints_add(body, 1);
    ephysics_body_restitution_set(body, 0);

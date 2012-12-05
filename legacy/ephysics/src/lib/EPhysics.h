@@ -2372,6 +2372,53 @@ EAPI double ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body);
 
 /**
  * @brief
+ * Set the drag coefficient of a soft body.
+ *
+ * Drag coefficient is a dimensionless quantity used to quantify an objects drag
+ * or resistance in the environment - like air or water resistance. It is used in
+ * the drag equation, where a lower drag coefficient indicates the object will
+ * have less aerodynamic or hydrodynamic drag.
+ *
+ * The drag coefficient is defined as:
+ *
+ * cd = 2Fd / (pv ^ 2)A
+ *
+ * Where:
+ *
+ * - @c Fd is the drag force, which is by definition the force component in the
+ * direction of the flow velocity;
+ * - @c p is the mass density;
+ * - @c v is the speed;
+ * - @c A is the reference area;
+ *
+ * The reference area depends on what type of drag coefficient is being measured.
+ *
+ * @note default value set to 0.
+ *
+ * @param body The body to be set.
+ * @param coefficient  The drag coefficient.
+ *
+ * @see ephysics_body_soft_body_drag_coefficient_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_drag_coefficient_set(EPhysics_Body *body, double coefficient);
+
+/**
+ * @brief
+ * Get the drag coefficient of a soft body.
+ *
+ * @param body The body to get the drag coefficient from.
+ * @return The drag coefficient set to @p body on success, -1 on failure.
+ *
+ * @see ephysics_body_soft_body_drag_coefficient_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_soft_body_drag_coefficient_get(const EPhysics_Body *body);
+
+/**
+ * @brief
  * Set the soft body dragging status.
  *
  * While dragging a soft body the user may want to freeze a specific trimesh
