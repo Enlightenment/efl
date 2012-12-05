@@ -108,3 +108,8 @@
 2012-11-20  ChunEon Park (Hermet)
 
         * Fix the evas memory leak - eina_rectangles allocated internally.
+
+2012-12-05  Cedric Bail
+
+	* Fix build of Ecore_Evas_Extn on Solaris 11.
+

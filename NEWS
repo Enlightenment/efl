@@ -29,3 +29,4 @@ Fixes:
       to properly handle GL_SCISSOR_BOX and GL_VIEWPORT parameters.
     * Fixed textblock textprop leak.
     * Fixed evas_object_box to reset size_hint_min to zero when no child.
+    * Fix build of Ecore_Evas_Extn on Solaris.

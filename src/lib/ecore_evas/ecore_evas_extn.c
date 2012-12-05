@@ -442,7 +442,7 @@ _ecore_evas_socket_lock(Ecore_Evas *ee)
    if (extn->file.have_lock) return;
    extn->file.have_lock = EINA_TRUE;
    if (_ecore_evas_lock_other_have(ee)) return;
-   flock(extn->file.lockfd, LOCK_EX);
+   lockf(extn->file.lockfd, F_ULOCK, 0);
    extn->file.have_real_lock = EINA_TRUE;
 }
 
@@ -457,7 +457,7 @@ _ecore_evas_socket_unlock(Ecore_Evas *ee)
    if (!extn->file.have_lock) return;
    extn->file.have_lock = EINA_FALSE;
    if (!extn->file.have_real_lock) return;
-   flock(extn->file.lockfd, LOCK_UN);
+   lockf(extn->file.lockfd, F_ULOCK, 0);
 }
 
 static void
