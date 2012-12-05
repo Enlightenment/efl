@@ -4239,7 +4239,6 @@ echo "    NEON....................: $build_cpu_neon"
 echo
 echo "  Features:"
 echo "    Cache Server 2..........: $want_evas_cserve2"
-echo "    Threaded Pipe Rendering.: $build_pipe_render"
 echo
 echo "  Optional pixman rendering path:"
 echo "    Pixman..................: $have_pixman"
