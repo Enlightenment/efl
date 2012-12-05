@@ -174,55 +174,6 @@ evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
    dc->mul.use = 0;
 }
 
-EAPI void
-evas_common_draw_context_set_mask(RGBA_Draw_Context *dc, RGBA_Image *mask, int x, int y, int w, int h)
-{
-   dc->mask.mask = mask;
-   dc->mask.x = x;
-   dc->mask.y = y;
-   dc->mask.w = w;
-   dc->mask.h = h;
-
-#ifdef HAVE_PIXMAN
-   if (mask->pixman.im)
-     pixman_image_unref(mask->pixman.im);
-   
-   if (mask->cache_entry.flags.alpha)
-     {
-        mask->pixman.im = pixman_image_create_bits(PIXMAN_a8r8g8b8, w, h, 
-                                                   (uint32_t *)mask->mask.mask,
-                                                   w * 4);
-     }
-   else
-     {
-        mask->pixman.im = pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, 
-                                                   (uint32_t *)mask->mask.mask,
-                                                   w * 4);
-     }
-#endif
-
-}
-
-EAPI void
-evas_common_draw_context_unset_mask(RGBA_Draw_Context *dc)
-{
-   dc->mask.mask = NULL;
-
-#ifdef HAVE_PIXMAN
-   RGBA_Image *mask;
-   mask = (RGBA_Image *)dc->mask.mask;
-
-   if (mask && mask->pixman.im)
-     {
-        pixman_image_unref(mask->pixman.im);
-        mask->pixman.im = NULL;
-     }
-#endif
-}
-
-
-
-
 
 EAPI void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)

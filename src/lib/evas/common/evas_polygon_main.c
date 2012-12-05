@@ -289,17 +289,9 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_POLY
-	     if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-		 (!dc->mask.mask))
+	     if ((dst->pixman.im) && (dc->col.pixman_color_image))
 	       pixman_image_composite(op, dc->col.pixman_color_image,
 				      NULL, dst->pixman.im,
-				      span->x, span->y, 0, 0,
-				      span->x, span->y, span->w, 1);
-	     else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-		      (dc->mask.mask))
-	       pixman_image_composite(op, dc->col.pixman_color_image,
-				      dc->mask.mask->pixman.im,
-				      dst->pixman.im,
 				      span->x, span->y, 0, 0,
 				      span->x, span->y, span->w, 1);
 	     else

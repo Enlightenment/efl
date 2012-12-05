@@ -290,17 +290,10 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
 
    /* If it's NOT a rectangle set the mask bits too */
    /* FIXME: Optmz ths chck */
-   if (clip->type == o_rect_type)
-      obj->cur.mask = NULL;
-   else
+   if (clip->type != o_rect_type)
      {
-        void *engdata;
-        obj->cur.mask = eo_clip;
-        engdata = clip->func->engine_data_get(eo_clip);
-        /* FIXME: Images only */
-        clip->layer->evas->engine.func->image_mask_create(
-          clip->layer->evas->engine.data.output,
-          engdata);
+        ERR("Not supported clipping to type '%s', just rectangles.",
+            clip->type);
      }
    evas_object_change(eo_clip, clip);
    evas_object_change(eo_obj, obj);

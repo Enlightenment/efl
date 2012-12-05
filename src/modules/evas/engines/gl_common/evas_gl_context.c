@@ -1326,21 +1326,6 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
 
-   if (gc->dc->mask.mask)
-     {
-        RGBA_Draw_Context *dc;
-        dc = gc->dc;
-        Evas_GL_Image *im;
-        im = (void *)dc->mask.mask;
-        evas_gl_common_context_font_push(gc, im->tex,
-                                         x - dc->mask.x,
-                                         y - dc->mask.y,
-                                         dc->mask.w, dc->mask.h,
-                                         x, y, w, h,
-                                         r, g, b, a);
-        return;
-     }
-
    if (a < 255) blend = 1;
    if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
 

@@ -200,16 +200,9 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
              p = dst->image.data + (dstw * y0) + x0;
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                  
-             if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                 (!dc->mask.mask))
+             if ((dst->pixman.im) && (dc->col.pixman_color_image))
                pixman_image_composite(op, dc->col.pixman_color_image,
                                       NULL, dst->pixman.im,
-                                      x0, y0, 0, 0, x0, y0, len, 1);
-             else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                      (dc->mask.mask))
-               pixman_image_composite(op, dc->col.pixman_color_image,
-                                      dc->mask.mask->pixman.im,
-                                      dst->pixman.im,
                                       x0, y0, 0, 0, x0, y0, len, 1);
              else
 # endif
@@ -237,15 +230,9 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
              p = dst->image.data + (dstw * y0) + x0;
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE             
-             if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                 (!dc->mask.mask))
+             if ((dst->pixman.im) && (dc->col.pixman_color_image))
                pixman_image_composite(op, dc->col.pixman_color_image,
                                       NULL, dst->pixman.im,
-                                      x0, y0, 0, 0, x0, y0, 1, len);
-             else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                      (dc->mask.mask))
-               pixman_image_composite(op, dc->col.pixman_color_image,
-                                      dc->mask.mask->pixman.im, dst->pixman.im,
                                       x0, y0, 0, 0, x0, y0, 1, len);
              else
 # endif
@@ -347,22 +334,12 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
           {
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                  
-             if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                 (!dc->mask.mask))
+             if ((dst->pixman.im) && (dc->col.pixman_color_image))
                pixman_image_composite(op, dc->col.pixman_color_image,
                                       NULL, dst->pixman.im,
                                       pixman_x_position,
                                       pixman_y_position,
                                       0, 0, pixman_x_position,
-                                      pixman_y_position, 1, 1);
-             else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                      (dc->mask.mask))
-               pixman_image_composite(op, dc->col.pixman_color_image,
-                                      dc->mask.mask->pixman.im,
-                                      dst->pixman.im,
-                                      pixman_x_position,
-                                      pixman_y_position, 0, 0,
-                                      pixman_x_position,
                                       pixman_y_position, 1, 1);
              else
 # endif
@@ -621,17 +598,9 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
               {
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                       
-                 if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                     (!dc->mask.mask))
+                 if ((dst->pixman.im) && (dc->col.pixman_color_image))
                    pixman_image_composite(op, dc->col.pixman_color_image,
                                           NULL, dst->pixman.im,
-                                          pix_x, pix_y, 0, 0,
-                                          pix_x, pix_y, 1, 1);
-                 else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                          (dc->mask.mask))
-                   pixman_image_composite(op, dc->col.pixman_color_image,
-                                          dc->mask.mask->pixman.im,
-                                          dst->pixman.im,
                                           pix_x, pix_y, 0, 0,
                                           pix_x, pix_y, 1, 1);
                  else
@@ -685,17 +654,9 @@ next_x:
           {
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                  
-             if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                 (!dc->mask.mask))
+             if ((dst->pixman.im) && (dc->col.pixman_color_image))
                pixman_image_composite(op, dc->col.pixman_color_image,
                                       NULL, dst->pixman.im,
-                                      pix_x, pix_y, 0, 0,
-                                      pix_x, pix_y, 1, 1);
-             else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                      (dc->mask.mask))
-               pixman_image_composite(op, dc->col.pixman_color_image,
-                                      dc->mask.mask->pixman.im,
-                                      dst->pixman.im,
                                       pix_x, pix_y, 0, 0,
                                       pix_x, pix_y, 1, 1);
              else
@@ -828,18 +789,10 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
                       aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1,
                                                                (uint32_t *)&alpha_data_buffer, 4);
                       
-                      if ((dst->pixman.im) && (dc->col.pixman_color_image ) &&
-                          (!dc->mask.mask))
+                      if ((dst->pixman.im) && (dc->col.pixman_color_image))
                         pixman_image_composite(PIXMAN_OP_OVER,
                                                dc->col.pixman_color_image,
                                                aa_mask_image, dst->pixman.im,
-                                               pix_x, pix_y, 0, 0,
-                                               pix_x, pix_y, 1, 1);
-                      else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                               (dc->mask.mask) )
-                        pixman_image_composite(op, dc->col.pixman_color_image,
-                                               dc->mask.mask->pixman.im,
-                                               dst->pixman.im,
                                                pix_x, pix_y, 0, 0,
                                                pix_x, pix_y, 1, 1);
                       else
@@ -860,18 +813,10 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
                       aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1,
                                                                (uint32_t *)&alpha_data_buffer, 4);
                       
-                      if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                          (!dc->mask.mask))
+                      if ((dst->pixman.im) && (dc->col.pixman_color_image))
                         pixman_image_composite(PIXMAN_OP_OVER,
                                                dc->col.pixman_color_image,
                                                aa_mask_image, dst->pixman.im,
-                                               pix_x, pix_y + 1, 0, 0,
-                                               pix_x, pix_y + 1, 1, 1);
-                      else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                               (dc->mask.mask))
-                        pixman_image_composite(op, dc->col.pixman_color_image,
-                                               dc->mask.mask->pixman.im,
-                                               dst->pixman.im,
                                                pix_x, pix_y + 1, 0, 0,
                                                pix_x, pix_y + 1, 1, 1);
                       else
@@ -937,18 +882,10 @@ next_x:
                   alpha_data_buffer = 255 - aa;
                   aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1, (uint32_t *)&alpha_data_buffer, 4);
                   
-                  if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                      (!dc->mask.mask))
+                  if ((dst->pixman.im) && (dc->col.pixman_color_image))
                     pixman_image_composite(PIXMAN_OP_OVER,
                                            dc->col.pixman_color_image,
                                            aa_mask_image, dst->pixman.im,
-                                           pix_x, pix_y, 0, 0,
-                                           pix_x, pix_y, 1, 1);
-                  else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                           (dc->mask.mask))
-                    pixman_image_composite(op, dc->col.pixman_color_image,
-                                           dc->mask.mask->pixman.im,
-                                           dst->pixman.im,
                                            pix_x, pix_y, 0, 0,
                                            pix_x, pix_y, 1, 1);
                   else
@@ -970,20 +907,12 @@ next_x:
                   aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1, 
                                                            (uint32_t *)&alpha_data_buffer, 4);
                   
-                  if ((dst->pixman.im) && (dc->col.pixman_color_image) && 
-                      (!dc->mask.mask))
+                  if ((dst->pixman.im) && (dc->col.pixman_color_image))
                        pixman_image_composite(PIXMAN_OP_OVER, 
                                               dc->col.pixman_color_image, 
                                               aa_mask_image, dst->pixman.im,
                                               pix_x + 1, pix_y, 0, 0, 
                                               pix_x + 1, pix_y, 1, 1);
-                  else if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
-                           (dc->mask.mask))
-                    pixman_image_composite(op, dc->col.pixman_color_image,
-                                           dc->mask.mask->pixman.im,
-                                           dst->pixman.im,
-                                           pix_x + 1, pix_y, 0, 0,
-                                           pix_x + 1, pix_y, 1, 1);
                   else
 # endif
 #endif

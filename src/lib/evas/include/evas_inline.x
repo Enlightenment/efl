@@ -66,7 +66,6 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->is_smart) return 0;
    /* If a mask: Assume alpha */
-   if (obj->cur.mask) return 0;
    if (obj->cur.cache.clip.a == 255)
      {
         if (obj->func->is_opaque)

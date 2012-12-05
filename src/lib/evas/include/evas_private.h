@@ -498,7 +498,6 @@ struct _Evas_Object_Protected_Data
       Evas_Map             *map;
       Evas_Object_Protected_Data *clipper;
       Evas_Object          *eo_clipper;
-      Evas_Object          *mask;
       Evas_Object          *map_parent;
       double                scale;
       Evas_Coord_Rectangle  geometry;
@@ -774,8 +773,6 @@ struct _Evas_Func
    void (*context_clip_clip)               (void *data, void *context, int x, int y, int w, int h);
    void (*context_clip_unset)              (void *data, void *context);
    int  (*context_clip_get)                (void *data, void *context, int *x, int *y, int *w, int *h);
-   void (*context_mask_set)                (void *data, void *context, void *mask, int x, int y, int w, int h);
-   void (*context_mask_unset)              (void *data, void *context);
    void (*context_color_set)               (void *data, void *context, int r, int g, int b, int a);
    int  (*context_color_get)               (void *data, void *context, int *r, int *g, int *b, int *a);
    void (*context_multiplier_set)          (void *data, void *context, int r, int g, int b, int a);
@@ -820,7 +817,6 @@ struct _Evas_Func
    void (*image_colorspace_set)            (void *data, void *image, int cspace);
    int  (*image_colorspace_get)            (void *data, void *image);
    Eina_Bool (*image_can_region_get)       (void *data, void *image);
-   void (*image_mask_create)               (void *data, void *image);
    void *(*image_native_set)               (void *data, void *image, void *native);
    void *(*image_native_get)               (void *data, void *image);
 

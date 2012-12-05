@@ -369,25 +369,6 @@ eng_context_multiplier_get(void *data EINA_UNUSED, void *context, int *r, int *g
 }
 
 static void
-eng_context_mask_set(void *data EINA_UNUSED, void *context, void *mask, int x, int y, int w, int h)
-{
-   evas_common_draw_context_set_mask(context, mask, x, y, w, h);
-}
-
-static void
-eng_context_mask_unset(void *data EINA_UNUSED, void *context)
-{
-   evas_common_draw_context_unset_mask(context);
-}
-/*
-static void *
-eng_context_mask_get(void *data EINA_UNUSED, void *context)
-{
-   return ((RGBA_Draw_Context *)context)->mask.mask;
-}
-*/
-
-static void
 eng_context_cutout_add(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_add_cutout(context, x, y, w, h);
@@ -530,32 +511,6 @@ eng_image_can_region_get(void *data EINA_UNUSED, void *image)
    im = image;
    return ((Evas_Image_Load_Func*) im->info.loader)->do_region;
 }
-
-static void
-eng_image_mask_create(void *data EINA_UNUSED, void *image)
-{
-   RGBA_Image *im;
-   int sz;
-   uint8_t *dst,*end;
-   uint32_t *src;
-
-   if (!image) return;
-   im = image;
-   if (im->mask.mask && !im->mask.dirty) return;
-
-   if (im->mask.mask) free(im->mask.mask);
-   sz = im->cache_entry.w * im->cache_entry.h;
-   im->mask.mask = malloc(sz);
-   dst = im->mask.mask;
-   if (!im->image.data)
-      evas_cache_image_load_data(&im->cache_entry);
-   src = (void*) im->image.data;
-   if (!src) return;
-   for (end = dst + sz ; dst < end ; dst ++, src ++)
-      *dst = *src >> 24;
-   im->mask.dirty = 0;
-}
-
 
 static void *
 eng_image_alpha_set(void *data EINA_UNUSED, void *image, int has_alpha)
@@ -1713,8 +1668,6 @@ static Evas_Func func =
      eng_context_clip_clip,
      eng_context_clip_unset,
      eng_context_clip_get,
-     eng_context_mask_set,
-     eng_context_mask_unset,
      eng_context_color_set,
      eng_context_color_get,
      eng_context_multiplier_set,
@@ -1759,7 +1712,6 @@ static Evas_Func func =
      eng_image_colorspace_set,
      eng_image_colorspace_get,
      eng_image_can_region_get,
-     eng_image_mask_create,
      eng_image_native_set,
      eng_image_native_get,
      /* image cache funcs */

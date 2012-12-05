@@ -680,10 +680,6 @@ struct _RGBA_Draw_Context
       int    x, y, w, h;
       Eina_Bool use : 1;
    } clip;
-   struct {
-      int x, y, w, h;
-      RGBA_Image *mask;
-   } mask;
    Cutout_Rects cutout;
    struct {
       struct {
@@ -796,11 +792,6 @@ struct _RGBA_Image
       DATA32            *data;
       Eina_Bool          no_free : 1;
    } image;
-
-   struct {
-      DATA8             *mask;
-      Eina_Bool          dirty: 1;
-   } mask;
 
    struct {
       LK(lock);

@@ -1625,20 +1625,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                     obj->cur.cache.clip.w,
                                                     obj->cur.cache.clip.h);
                               }
-                            if (obj->cur.mask)
-                              {
-                                 Evas_Object_Protected_Data *cur_mask = eo_data_get(obj->cur.mask, EVAS_OBJ_CLASS);
-                                 e->engine.func->context_mask_set(e->engine.data.output,
-                                                               e->engine.data.context,
-                                                               cur_mask->func->engine_data_get(obj->cur.mask),
-                                                               cur_mask->cur.geometry.x + off_x,
-                                                               cur_mask->cur.geometry.y + off_y,
-                                                               cur_mask->cur.geometry.w,
-                                                               cur_mask->cur.geometry.h);
-                              }
-                            else
-                              e->engine.func->context_mask_unset(e->engine.data.output,
-                                                                 e->engine.data.context);
+
                             e->engine.func->context_clip_set(e->engine.data.output,
                                                              e->engine.data.context,
                                                              x, y, w, h);
