@@ -944,15 +944,10 @@ case "$build_crypto" in
       requirements_pc_eet="gnutls >= 2.11 ${requirements_pc_eet}"
       requirements_pc_deps_eet="gnutls >= 2.11 ${requirements_pc_deps_eet}"
 
-      # TODO: do we need this?
       # libgcrypt
       AC_PATH_GENERIC([libgcrypt], [], [:],
          [AC_MSG_ERROR([libgcrypt required but not found])])
       requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
-
-      AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
-      AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
-      AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
       ;;
 
    openssl)

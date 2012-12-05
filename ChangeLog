@@ -2,6 +2,7 @@
 
 	* Removed DirectFB support (both ecore_directfb, evas and ecore_evas).
 	* Removed XRender, WinCE, X11-16 and X11-8 ecore_evas support.
+	* Bumped gnutls version requirement to >= 2.11 (released in 2010).
 
 2012-12-04  Gwanglim Lee
 

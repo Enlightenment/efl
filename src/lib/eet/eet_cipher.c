@@ -56,9 +56,7 @@ void *alloca(size_t);
 
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
-#  if defined EET_USE_NEW_PUBKEY_VERIFY_HASH || defined EET_USE_NEW_PRIVKEY_SIGN_DATA
-#   include <gnutls/abstract.h>
-#  endif
+#  include <gnutls/abstract.h>
 #  include <gnutls/x509.h>
 #  include <gcrypt.h>
 # else /* ifdef HAVE_GNUTLS */
@@ -500,10 +498,8 @@ eet_identity_sign(FILE    *fp,
    gnutls_datum_t datum = { NULL, 0 };
    size_t sign_len = 0;
    size_t cert_len = 0;
-#ifdef EET_USE_NEW_PRIVKEY_SIGN_DATA
    gnutls_datum_t signum = { NULL, 0 };
    gnutls_privkey_t privkey;
-#endif
 # else /* ifdef HAVE_GNUTLS */
    EVP_MD_CTX md_ctx;
    unsigned int sign_len = 0;
@@ -535,7 +531,6 @@ eet_identity_sign(FILE    *fp,
    datum.size = st_buf.st_size;
 
    /* Get the signature length */
-#ifdef EET_USE_NEW_PRIVKEY_SIGN_DATA
    if (gnutls_privkey_init(&privkey) < 0)
      {
         err = EET_ERROR_SIGNATURE_FAILED;
@@ -556,30 +551,6 @@ eet_identity_sign(FILE    *fp,
 
    sign = signum.data;
    sign_len = signum.size;
-#else
-   if (gnutls_x509_privkey_sign_data(key->private_key, GNUTLS_DIG_SHA1, 0,
-                                     &datum, sign, &sign_len) &&
-       !sign_len)
-     {
-        err = EET_ERROR_SIGNATURE_FAILED;
-        goto on_error;
-     }
-
-   /* Get the signature */
-   sign = malloc(sign_len);
-   if (!sign ||
-       gnutls_x509_privkey_sign_data(key->private_key, GNUTLS_DIG_SHA1, 0,
-                                     &datum,
-                                     sign, &sign_len))
-     {
-        if (!sign)
-          err = EET_ERROR_OUT_OF_MEMORY;
-        else
-          err = EET_ERROR_SIGNATURE_FAILED;
-
-        goto on_error;
-     }
-#endif
 
    /* Get the certificate length */
    if (gnutls_x509_crt_export(key->certificate, GNUTLS_X509_FMT_DER, cert,
@@ -725,15 +696,11 @@ eet_identity_check(const void   *data_base,
    gnutls_x509_crt_t cert;
    gnutls_datum_t datum;
    gnutls_datum_t signature;
-#  if EET_USE_NEW_GNUTLS_API
-#  if EET_USE_NEW_PUBKEY_VERIFY_HASH
    gnutls_pubkey_t pubkey;
    gnutls_digest_algorithm_t hash_algo;
-#  endif
    unsigned char *hash;
    gcry_md_hd_t md;
    int err;
-#  endif /* if EET_USE_NEW_GNUTLS_API */
 
    /* Create an understanding certificate structure for gnutls */
    datum.data = (void *)cert_der;
@@ -745,7 +712,6 @@ eet_identity_check(const void   *data_base,
    signature.size = sign_len;
 
    /* Verify the signature */
-#  if EET_USE_NEW_GNUTLS_API
    /*
       I am waiting for my patch being accepted in GnuTLS release.
       But we now have a way to prevent double computation of SHA1.
@@ -763,7 +729,6 @@ eet_identity_check(const void   *data_base,
    datum.size = gcry_md_get_algo_dlen(GCRY_MD_SHA1);
    datum.data = hash;
 
-#  ifdef EET_USE_NEW_PUBKEY_VERIFY_HASH
    if (gnutls_pubkey_init(&pubkey) < 0)
      goto on_error;
 
@@ -775,10 +740,6 @@ eet_identity_check(const void   *data_base,
 
    if (gnutls_pubkey_verify_hash(pubkey, 0, &datum, &signature) < 0)
      goto on_error;
-#  else
-   if (!gnutls_x509_crt_verify_hash(cert, 0, &datum, &signature))
-     goto on_error;
-#  endif
 
    if (sha1)
      {
@@ -790,20 +751,6 @@ eet_identity_check(const void   *data_base,
      }
 
    gcry_md_close(md);
-#  else /* if EET_USE_NEW_GNUTLS_API */
-   datum.data = (void *)data_base;
-   datum.size = data_length;
-
-   if (!gnutls_x509_crt_verify_data(cert, 0, &datum, &signature))
-     return NULL;
-
-   if (sha1)
-     {
-        *sha1 = NULL;
-        *sha1_length = -1;
-     }
-
-#  endif /* if EET_USE_NEW_GNUTLS_API */
    gnutls_x509_crt_deinit(cert);
 
 # else /* ifdef HAVE_GNUTLS */
@@ -857,11 +804,9 @@ eet_identity_check(const void   *data_base,
 
    return cert_der;
 # ifdef HAVE_GNUTLS
-#  if EET_USE_NEW_GNUTLS_API
  on_error:
    gcry_md_close(md);
    return NULL;
-#  endif
 # endif
 #else /* ifdef HAVE_SIGNATURE */
    data_base = NULL;
