@@ -1,13 +1,3 @@
-2012-12-04 Murilo Pinoti Belluzzo (mbelluzzo)
-
-	* Add elm_app_name_set/get(): Formal application name string.
-	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
-
-2012-12-03 Gustavo Sverzut Barbieri (k-s)
-
-	* Add elm_need_edbus(), deprecate elm_need_e_dbus(), integrating
-	edbus (v2).
-
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         * 1.0.0 release
@@ -749,6 +739,17 @@
 
         * Fix case where tooltips could go offscreen unnecessarily.
 
+2012-12-03 Gustavo Sverzut Barbieri (k-s)
+
+	* Add elm_need_edbus(), deprecate elm_need_e_dbus(), integrating
+	edbus (v2).
+
 2012-12-04  Cedric Bail
 
 	* Fix a possible divide by zero in els_scroller animator.
+
+2012-12-04 Murilo Pinoti Belluzzo (mbelluzzo)
+
+	* Add elm_app_name_set/get(): Formal application name string.
+	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
+
