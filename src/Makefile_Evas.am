@@ -215,7 +215,7 @@ lib_evas_libevas_la_CPPFLAGS = \
 @EFL_COV_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
-@EVAS_ALTIVEC_CFLAGS@
+@ALTIVEC_CFLAGS@
 
 # SSE3
 noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la
@@ -226,7 +226,7 @@ lib/evas/common/evas_op_blend/op_blend_master_sse3.c
 lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = \
 $(lib_evas_libevas_la_CPPFLAGS) \
 @EFL_COV_CFLAGS@ \
-@EVAS_SSE3_CFLAGS@
+@SSE3_CFLAGS@
 
 lib_evas_common_libevas_op_blend_sse3_la_LIBADD = @EFL_COV_LIBS@
 

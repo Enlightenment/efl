@@ -485,6 +485,96 @@ EFL_ATTRIBUTE_ALWAYS_INLINE
 EFL_LIBS=
 AC_SUBST([EFL_LIBS])
 
+## CPU architecture specific assembly
+
+build_cpu_mmx="no"
+build_cpu_sse3="no"
+build_cpu_altivec="no"
+build_cpu_neon="no"
+
+SSE3_CFLAGS=""
+ALTIVEC_CFLAGS=""
+
+case $host_cpu in
+  i*86|x86_64|amd64)
+    AC_DEFINE([BUILD_MMX], [1], [Build MMX Code])
+    build_cpu_mmx="yes"
+    AC_CHECK_HEADER([immintrin.h],
+       [
+        AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+        build_cpu_sse3="yes"
+       ],
+       [build_cpu_sse3="no"])
+    AC_MSG_CHECKING([whether to build SSE3 code])
+    AC_MSG_RESULT([${build_cpu_sse3}])
+
+    if test "x$build_cpu_sse3" = "xyes" ; then
+       SSE3_CFLAGS="-msse3"
+    fi
+    ;;
+  *power* | *ppc*)
+    build_cpu_altivec="yes"
+    AC_CHECK_HEADER([altivec.h],
+       [
+        AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
+        AC_DEFINE([HAVE_ALTIVEC_H], [1], [Have altivec.h header file])
+        build_cpu_altivec="yes"
+       ],
+       [
+        save_CFLAGS=$CFLAGS
+        save_CPPFLAGS=$CPPFLAGS
+        CFLAGS=$CFLAGS" -maltivec"
+        CPPFLAGS=$CPPFLAGS" -maltivec"
+        unset ac_cv_header_altivec_h
+        AC_CHECK_HEADER([altivec.h],
+          [
+            AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
+            AC_DEFINE([HAVE_ALTIVEC_H], [1], [Have altivec.h header file])
+            build_cpu_altivec="yes"
+          ],
+          [build_cpu_altivec="no"]
+        )
+        CFLAGS=$save_CFLAGS
+        CPPFLAGS=$save_CPPFLAGS
+       ]
+    )
+    if test "x${build_cpu_altivec}" = "xyes"; then
+       AC_MSG_CHECKING([whether to use altivec compiler flag])
+       if test "x$GCC" = "xyes"; then
+          if echo "int main(){return 0;}" | ${CPP} -faltivec - > /dev/null 2>&1; then
+             altivec_cflags="-faltivec"
+             AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
+          elif echo "int main(){return 0;}" | ${CPP} -maltivec - > /dev/null 2>&1; then
+             altivec_cflags="-maltivec"
+             AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
+          fi
+       fi
+       AC_MSG_RESULT([${altivec_cflags}])
+       CFLAGS="$CFLAGS ${altivec_cflags}"
+       ALTIVEC_CFLAGS="-maltivec"
+    fi
+    ;;
+  arm*)
+    build_cpu_neon="yes"
+    AC_MSG_CHECKING([whether to use NEON instructions])
+    AC_TRY_COMPILE([#include <arm_neon.h>],
+       [asm volatile ("vqadd.u8 d0, d1, d0\n")],
+       [
+        AC_MSG_RESULT([yes])
+        AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
+        build_cpu_neon="yes"
+       ],
+       [
+        AC_MSG_RESULT([no])
+        build_cpu_neon="no"
+       ])
+    ;;
+esac
+
+AC_SUBST([CFLAGS])
+AC_SUBST([ALTIVEC_CFLAGS])
+AC_SUBST([SSE3_CFLAGS])
+
 #### Checks for linker characteristics
 
 
@@ -1173,18 +1263,6 @@ AC_ARG_ENABLE([tile-rotate],
   ],
   [have_tile_rotate="no"])
 
-# SSE3
-AC_ARG_ENABLE([cpu-sse3],
-   [AC_HELP_STRING([--enable-cpu-sse3],
-       [enable SSE3 code. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_sse3="yes"
-    else
-       want_sse3="no"
-    fi
-   ],
-   [want_sse3="yes"])
 
 # Engines
 
@@ -1796,105 +1874,6 @@ if test "x${have_tile_rotate}" = "xyes" ; then
    AC_DEFINE(TILE_ROTATE, 1, [Enable tiled rotate algorithm])
 fi
 
-## CPU architecture specific assembly
-
-build_cpu_mmx="no"
-build_cpu_sse3="no"
-build_cpu_altivec="no"
-build_cpu_neon="no"
-
-case $host_cpu in
-  i*86|x86_64|amd64)
-    AC_DEFINE([BUILD_MMX], [1], [Build MMX Code])
-    build_cpu_mmx="yes"
-    build_cpu_sse3="yes"
-    ;;
-  *power* | *ppc*)
-    build_cpu_altivec="yes"
-    AC_CHECK_HEADER([altivec.h],
-       [
-        AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
-        AC_DEFINE([HAVE_ALTIVEC_H], [1], [Have altivec.h header file])
-        build_cpu_altivec="yes"
-       ],
-       [
-        save_CFLAGS=$CFLAGS
-        save_CPPFLAGS=$CPPFLAGS
-        CFLAGS=$CFLAGS" -maltivec"
-        CPPFLAGS=$CPPFLAGS" -maltivec"
-        unset ac_cv_header_altivec_h
-        AC_CHECK_HEADER([altivec.h],
-          [
-            AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
-            AC_DEFINE([HAVE_ALTIVEC_H], [1], [Have altivec.h header file])
-            build_cpu_altivec="yes"
-          ],
-          [build_cpu_altivec="no"]
-        )
-        CFLAGS=$save_CFLAGS
-        CPPFLAGS=$save_CPPFLAGS
-       ]
-    )
-    if test "x${build_cpu_altivec}" = "xyes"; then
-       AC_MSG_CHECKING([whether to use altivec compiler flag])
-       if test "x$GCC" = "xyes"; then
-          if echo "int main(){return 0;}" | ${CPP} -faltivec - > /dev/null 2>&1; then
-             altivec_cflags="-faltivec"
-             AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
-          elif echo "int main(){return 0;}" | ${CPP} -maltivec - > /dev/null 2>&1; then
-             altivec_cflags="-maltivec"
-             AC_DEFINE([BUILD_ALTIVEC], [1], [Build Altivec Code])
-          fi
-       fi
-       AC_MSG_RESULT([${altivec_cflags}])
-       CFLAGS="$CFLAGS ${altivec_cflags}"
-    fi
-    ;;
-  arm*)
-    build_cpu_neon="yes"
-    AC_MSG_CHECKING([whether to use NEON instructions])
-    AC_TRY_COMPILE([#include <arm_neon.h>],
-       [asm volatile ("vqadd.u8 d0, d1, d0\n")],
-       [
-        AC_MSG_RESULT([yes])
-        AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
-        build_cpu_neon="yes"
-       ],
-       [
-        AC_MSG_RESULT([no])
-        build_cpu_neon="no"
-       ])
-    ;;
-esac
-
-AC_SUBST([altivec_cflags])
-
-# SSE3
-
-if test "x${want_sse3}" = "xyes" && test "x${build_cpu_sse3}" = "xyes" ; then
-   AC_CHECK_HEADER([immintrin.h],
-      [AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])],
-      [build_cpu_sse3="no"])
-else
-   build_cpu_sse3="no"
-fi
-
-AC_MSG_CHECKING([whether to build sse3 code])
-AC_MSG_RESULT([${build_cpu_sse3}])
-
-EVAS_SSE3_CFLAGS=" "
-EVAS_ALTIVEC_CFLAGS=" "
-
-if test "x$build_cpu_sse3" = "xyes" ; then
-    EVAS_SSE3_CFLAGS="-msse3"
-fi
-if test "x$build_cpu_altivec" = "xyes" ; then
-    EVAS_ALTIVEC_CFLAGS="-maltivec"
-fi
-
-AC_SUBST([CFLAGS])
-AC_SUBST([EVAS_ALTIVEC_CFLAGS])
-AC_SUBST([EVAS_SSE3_CFLAGS])
 
 ## dither options
 
@@ -4171,6 +4150,40 @@ AC_OUTPUT
 
 #### Info
 
+cpu_summary="$host_cpu ("
+case $host_cpu in
+  i*86|x86_64|amd64)
+    if test "x${build_cpu_mmx}" = "xyes"; then
+       cpu_summary="${cpu_summary}+mmx"
+    else
+       cpu_summary="${cpu_summary}-mmx"
+    fi
+
+    cpu_summary="${cpu_summary} "
+
+    if test "x${build_cpu_sse3}" = "xyes"; then
+       cpu_summary="${cpu_summary}+sse3"
+    else
+       cpu_summary="${cpu_summary}-sse3"
+    fi
+    ;;
+  *power* | *ppc*)
+    if test "x${build_cpu_altivec}" = "xyes"; then
+       cpu_summary="${cpu_summary}+altivec"
+    else
+       cpu_summary="${cpu_summary}-altivec"
+    fi
+    ;;
+  arm*)
+    if test "x${build_cpu_neon}" = "xyes"; then
+       cpu_summary="${cpu_summary}+neon"
+    else
+       cpu_summary="${cpu_summary}-neon"
+    fi
+    ;;
+esac
+cpu_summary="${cpu_summary})"
+
 echo
 echo
 echo
@@ -4185,6 +4198,7 @@ if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
 echo "  Build Profile........: ${build_profile}"
+echo "  CPU Extensions.......: ${cpu_summary}"
 echo "  Threads Type.........: ${efl_have_threads}"
 echo "    spinlocks..........: ${efl_have_posix_threads_spinlock}"
 echo "    barrier............: ${efl_have_pthread_barrier}"
@@ -4233,11 +4247,6 @@ echo "    Harfbuzz................: $have_harfbuzz"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo
-echo "  CPU Specific Extensions:"
-echo "    MMX/SSE.................: $build_cpu_mmx"
-echo "    SSE3....................: $build_cpu_sse3"
-echo "    ALTIVEC.................: $build_cpu_altivec"
-echo "    NEON....................: $build_cpu_neon"
 echo
 echo "  Features:"
 echo "    Cache Server 2..........: $want_evas_cserve2"
