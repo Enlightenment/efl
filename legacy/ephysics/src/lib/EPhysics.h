@@ -893,6 +893,7 @@ typedef enum _EPhysics_Callback_World_Type
    EPHYSICS_CALLBACK_WORLD_DEL, /**< World being deleted (called before free) */
    EPHYSICS_CALLBACK_WORLD_STOPPED, /**< no objects are moving any more */
    EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED, /**< camera position changed */
+   EPHYSICS_CALLBACK_WORLD_UPDATE, /**< world being updated */
    EPHYSICS_CALLBACK_WORLD_LAST, /**< kept as sentinel, not really an event */
 } EPhysics_Callback_World_Type;
 

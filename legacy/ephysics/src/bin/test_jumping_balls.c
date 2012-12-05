@@ -100,6 +100,12 @@ _world_stopped_cb(void *data, EPhysics_World *world __UNUSED__, void *event_info
    INF("World stopped\n");
 }
 
+static void
+_world_update_cb(void *data __UNUSED__, EPhysics_World *world __UNUSED__, void *event_info __UNUSED__)
+{
+   INF("World update\n");
+}
+
 void
 test_jumping_balls(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -130,6 +136,8 @@ test_jumping_balls(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    test_data->data = bt;
    ephysics_world_event_callback_add(world, EPHYSICS_CALLBACK_WORLD_STOPPED,
                                      _world_stopped_cb, bt);
+   ephysics_world_event_callback_add(world, EPHYSICS_CALLBACK_WORLD_UPDATE,
+                                     _world_update_cb, NULL);
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);
    ephysics_body_restitution_set(boundary, 0.65);

@@ -266,6 +266,9 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
                                        NULL);
 
 body_del:
+   if (world_active)
+     _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_UPDATE,
+                                         NULL);
    world->pending_ticks--;
    if (!world->pending_ticks)
      {
