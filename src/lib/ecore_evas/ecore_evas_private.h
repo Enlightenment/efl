@@ -33,11 +33,6 @@
 # include <Evas_Engine_FB.h>
 #endif
 
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-# include <Evas_Engine_DirectFB.h>
-# include "Ecore_DirectFB.h"
-#endif
-
 #if defined(BUILD_ECORE_EVAS_SOFTWARE_BUFFER) || defined(BUILD_ECORE_EVAS_EWS)
 # include <Evas_Engine_Buffer.h>
 #endif
@@ -242,11 +237,6 @@ struct _Ecore_Evas_Engine
       void *data;
    } buffer;
 #endif
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-   struct {
-      Ecore_DirectFB_Window *window;
-   } directfb;
-#endif
 #ifdef BUILD_ECORE_EVAS_WIN32
    struct {
       Ecore_Win32_Window *parent;
@@ -403,9 +393,6 @@ int _ecore_evas_fb_shutdown(void);
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 int _ecore_evas_buffer_shutdown(void);
 int _ecore_evas_buffer_render(Ecore_Evas *ee);
-#endif
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-int _ecore_evas_directfb_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_WIN32
 int _ecore_evas_win32_shutdown(void);

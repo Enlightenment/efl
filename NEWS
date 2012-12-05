@@ -46,6 +46,10 @@ Deprecations:
        ECORE_X_ATOM_E_PROFILE_LIST
        ecore_x_e_window_profile_list_set()
        ecore_x_e_window_profile_list_get()
+    * ecore_evas: deprecate directfb engine.
+
+Removed:
+    * directfb support: ecore_directfb and evas directfb engine.
 
 Improvements:
     * Single EFL tree covering all EFL library components.

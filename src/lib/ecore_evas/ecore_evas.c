@@ -146,11 +146,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_DIRECTFB:
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_FB:
 #ifdef BUILD_ECORE_EVAS_FB
         return EINA_TRUE;
@@ -303,9 +299,6 @@ ecore_evas_shutdown(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    while (_ecore_evas_buffer_shutdown());
-#endif
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-   while (_ecore_evas_directfb_shutdown());
 #endif
 
    if (_ecore_evas_async_events_fd)
@@ -518,24 +511,6 @@ _ecore_evas_constructor_opengl_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, 
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-static Ecore_Evas *
-_ecore_evas_constructor_directfb(int x, int y, int w, int h, const char *extra_options)
-{
-   Ecore_Evas *ee;
-   char *disp_name = NULL;
-   unsigned int windowed = 1;
-
-   _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
-   _ecore_evas_parse_extra_options_uint(extra_options, "windowed=", &windowed);
-
-   ee = ecore_evas_directfb_new(disp_name, windowed, x, y, w, h);
-   free(disp_name);
-
-   return ee;
-}
-#endif
-
 #ifdef BUILD_ECORE_EVAS_FB
 static Ecore_Evas *
 _ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
@@ -666,9 +641,6 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
   {"software_8_x11", _ecore_evas_constructor_software_8_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_DIRECTFB
-  {"directfb", _ecore_evas_constructor_directfb},
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
   {"fb", _ecore_evas_constructor_fb},

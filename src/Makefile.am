@@ -29,9 +29,6 @@ include Makefile_Ecore_Input.am
 if HAVE_ECORE_COCOA
 include Makefile_Ecore_Cocoa.am
 endif
-if HAVE_ECORE_DIRECTFB
-include Makefile_Ecore_DirectFB.am
-endif
 if HAVE_ECORE_FB
 include Makefile_Ecore_FB.am
 endif
@@ -92,7 +89,6 @@ clean-local:
 	rm -rf modules/eina/mp/chained_pool/*.gcno
 	rm -rf modules/evas/engines/buffer/*.gcno
 	rm -rf modules/evas/engines/direct3d/*.gcno
-	rm -rf modules/evas/engines/directfb/*.gcno
 	rm -rf modules/evas/engines/fb/*.gcno
 	rm -rf modules/evas/engines/gl_cocoa/*.gcno
 	rm -rf modules/evas/engines/gl_common/*.gcno

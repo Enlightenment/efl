@@ -8639,8 +8639,7 @@ EAPI void                          evas_object_image_data_set(Evas_Object *obj, 
  * Each time you call this function on an image object, its data
  * buffer will have an internal reference counter
  * incremented. Decrement it back by using
- * evas_object_image_data_set(). This is specially important for the
- * directfb Evas engine.
+ * evas_object_image_data_set().
  *
  * This is best suited for when you want to modify an existing image,
  * without changing its dimensions.

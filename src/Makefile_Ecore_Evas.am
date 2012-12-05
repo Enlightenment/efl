@@ -61,14 +61,6 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_builddir)/src/modules/evas/engines/gl_cocoa
 endif
 
-if HAVE_ECORE_DIRECTFB
-lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/ecore_directfb \
--I$(top_srcdir)/src/modules/evas/engines/directfb \
--I$(top_builddir)/src/lib/ecore_directfb \
--I$(top_builddir)/src/modules/evas/engines/directfb
-endif
-
 if HAVE_ECORE_FB
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/ecore_fb \
@@ -142,11 +134,6 @@ lib/eina/libeina.la \
 if HAVE_ECORE_COCOA
 lib_ecore_evas_libecore_evas_la_LIBADD += \
 lib/ecore_cocoa/libecore_cocoa.la
-endif
-
-if HAVE_ECORE_DIRECTFB
-lib_ecore_evas_libecore_evas_la_LIBADD += \
-lib/ecore_directfb/libecore_directfb.la
 endif
 
 if HAVE_ECORE_FB

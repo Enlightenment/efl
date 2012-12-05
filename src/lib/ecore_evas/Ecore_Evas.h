@@ -93,7 +93,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_FB 1
 #define HAVE_ECORE_EVAS_X11_GL 1
 //#define HAVE_ECORE_EVAS_X11_16 1
-#define HAVE_ECORE_EVAS_DIRECTFB 1
+//#define HAVE_ECORE_EVAS_DIRECTFB 1
 #define HAVE_ECORE_EVAS_WIN32 1
 #define HAVE_ECORE_EVAS_COCOA 1
 #define HAVE_ECORE_EVAS_SDL 1
@@ -935,8 +935,8 @@ EAPI void            ecore_evas_software_x11_16_extra_event_window_add(Ecore_Eva
 
 EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h);
 
-EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h);
-EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee);
+EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h) EINA_DEPRECATED;
+EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
 
 EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame);

@@ -67,7 +67,6 @@ pc/eina.pc \
 pc/eet.pc \
 pc/eo.pc \
 pc/evas.pc \
-pc/evas-directfb.pc \
 pc/evas-fb.pc \
 pc/evas-opengl-x11.pc \
 pc/evas-opengl-sdl.pc \
@@ -85,7 +84,6 @@ pc/ecore-file.pc \
 pc/ecore-input.pc \
 pc/ecore-input-evas.pc \
 pc/ecore-cocoa.pc \
-pc/ecore-directfb.pc \
 pc/ecore-fb.pc \
 pc/ecore-psl1ght.pc \
 pc/ecore-sdl.pc \
@@ -131,10 +129,6 @@ if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
 endif
 
-if BUILD_ENGINE_DIRECTFB
-pkgconfig_DATA += pc/evas-directfb.pc
-endif
-
 if BUILD_ENGINE_FB
 pkgconfig_DATA += pc/evas-fb.pc
 endif
@@ -177,10 +171,6 @@ endif
 
 if HAVE_ECORE_COCOA
 pkgconfig_DATA += pc/ecore-cocoa.pc
-endif
-
-if HAVE_ECORE_DIRECTFB
-pkgconfig_DATA += pc/ecore-directfb.pc
 endif
 
 if HAVE_ECORE_FB

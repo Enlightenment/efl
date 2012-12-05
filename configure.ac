@@ -99,7 +99,6 @@ requirements_libs_ecore_ipc=""
 requirements_libs_ecore_file=""
 requirements_libs_ecore_input=""
 requirements_libs_ecore_cocoa=""
-requirements_libs_ecore_directfb=""
 requirements_libs_ecore_fb=""
 requirements_libs_ecore_psl1ght=""
 requirements_libs_ecore_sdl=""
@@ -129,7 +128,6 @@ requirements_pc_ecore_file=""
 requirements_pc_ecore_input=""
 requirements_pc_ecore_input_evas=""
 requirements_pc_ecore_cocoa=""
-requirements_pc_ecore_directfb=""
 requirements_pc_ecore_fb=""
 requirements_pc_ecore_psl1ght=""
 requirements_pc_ecore_sdl=""
@@ -178,7 +176,6 @@ AC_SUBST([requirements_libs_ecore_ipc])
 AC_SUBST([requirements_libs_ecore_file])
 AC_SUBST([requirements_libs_ecore_input])
 AC_SUBST([requirements_libs_ecore_cocoa])
-AC_SUBST([requirements_libs_ecore_directfb])
 AC_SUBST([requirements_libs_ecore_fb])
 AC_SUBST([requirements_libs_ecore_psl1ght])
 AC_SUBST([requirements_libs_ecore_sdl])
@@ -208,7 +205,6 @@ AC_SUBST([requirements_pc_ecore_file])
 AC_SUBST([requirements_pc_ecore_input])
 AC_SUBST([requirements_pc_ecore_input_evas])
 AC_SUBST([requirements_pc_ecore_cocoa])
-AC_SUBST([requirements_pc_ecore_directfb])
 AC_SUBST([requirements_pc_ecore_fb])
 AC_SUBST([requirements_pc_ecore_psl1ght])
 AC_SUBST([requirements_pc_ecore_sdl])
@@ -1323,7 +1319,6 @@ want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_sdl="no"
 want_evas_engine_gl_cocoa="no"
 want_evas_engine_fb="no"
-want_evas_engine_directfb="no"
 want_evas_engine_psl1ght="no"
 want_evas_engine_wayland_shm="no"
 want_evas_engine_wayland_egl="no"
@@ -1502,7 +1497,6 @@ fi
 ## Engines
 
 EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [yes], [Buffer])
-EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
 EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
@@ -2726,47 +2720,6 @@ AM_CONDITIONAL([HAVE_ECORE_COCOA], [test "x${have_ecore_cocoa}" = "xyes"])
 #### End of Ecore_Cocoa
 
 
-#### Ecore_DirectFB
-
-AC_MSG_NOTICE([Ecore_DirectFB checks])
-
-### Additional options to configure
-
-### Default values
-
-### Checks for programs
-
-### Checks for libraries
-
-## Eina, Ecore
-
-requirements_pc_ecore_directfb="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_directfb}"
-
-## DirectFB
-
-PKG_CHECK_MODULES([ECORE_DIRECTFB],
-   [directfb >= 0.9.16],
-   [
-    have_ecore_directfb="yes"
-    requirements_pc_ecore_directfb="directfb >= 0.9.16 ${requirements_pc_ecore_directfb}"
-   ],
-   [have_ecore_directfb="no"])
-
-AM_CONDITIONAL([HAVE_ECORE_DIRECTFB], [test "x${have_ecore_directfb}" = "xyes"])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-#### End of Ecore_Directfb
 
 
 #### Ecore_FB
@@ -3781,7 +3734,6 @@ want_ecore_evas_software_ddraw="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
 want_ecore_evas_gl_cocoa="no"
-want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_ews="yes"
 want_ecore_evas_extn="yes"
@@ -3811,7 +3763,6 @@ case "$host_os" in
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_gl_cocoa="no"
-      want_ecore_evas_directfb="yes"
       want_ecore_evas_fb="yes"
       want_ecore_evas_wayland_shm="yes"
       want_ecore_evas_wayland_egl="yes"
@@ -3844,15 +3795,6 @@ ECORE_EVAS_CHECK_MODULE_FULL([opengl-cocoa],
    [OpenGL Cocoa],
    [${have_ecore_cocoa}],
    [requirements_pc_ecore_evas="ecore-cocoa >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
-
-# ecore_evas_directfb
-
-ECORE_EVAS_CHECK_MODULE_FULL([directfb],
-   [${have_evas_engine_directfb}],
-   [${want_ecore_evas_directfb}],
-   [DirectFB],
-   [${have_ecore_directfb}],
-   [requirements_pc_ecore_evas="ecore-directfb >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
 
 # ecore_evas_ews
 
@@ -4187,7 +4129,6 @@ pc/escape.pc
 pc/eina.pc
 pc/eet.pc
 pc/eo.pc
-pc/evas-directfb.pc
 pc/evas-fb.pc
 pc/evas-opengl-x11.pc
 pc/evas-opengl-sdl.pc
@@ -4208,7 +4149,6 @@ pc/ecore-file.pc
 pc/ecore-input.pc
 pc/ecore-input-evas.pc
 pc/ecore-cocoa.pc
-pc/ecore-directfb.pc
 pc/ecore-fb.pc
 pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
@@ -4271,7 +4211,6 @@ else
 fi
 echo "    OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
 echo "    Software Framebuffer.......: $have_evas_engine_fb"
-echo "    DirectFB...................: $have_evas_engine_directfb"
 echo "    PSL1GHT....................: $have_evas_engine_psl1ght"
 echo "    Wayland Shm................: $have_evas_engine_wayland_shm"
 echo "    Wayland Egl................: $have_evas_engine_wayland_egl"
@@ -4413,7 +4352,6 @@ echo "  Ecore_FB...................: $have_ecore_fb"
 if test "x${have_ecore_fb}" = "xyes" ; then
   echo "    Touchscreen..............: $have_tslib"
 fi
-echo "  Ecore_DirectFB.............: $have_ecore_directfb"
 echo "  Ecore_WinCE................: $have_wince"
 echo "  Ecore_PSL1GHT..............: $have_ps3"
 echo "  Ecore_Wayland..............: $have_ecore_wayland"
@@ -4436,7 +4374,6 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
-  echo "    DirectFB...................: $have_ecore_evas_directfb"
   echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"

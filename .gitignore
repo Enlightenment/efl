@@ -41,7 +41,6 @@ Makefile.in
 /pc/evil.pc
 /pc/embryo.pc
 /pc/evas-direct3d.pc
-/pc/evas-directfb.pc
 /pc/evas-fb.pc
 /pc/evas-opengl-cocoa.pc
 /pc/evas-opengl-sdl.pc
@@ -99,7 +98,6 @@ m4/wint_t.m4
 m4/xsize.m4
 pc/ecore-cocoa.pc
 pc/ecore-con.pc
-pc/ecore-directfb.pc
 pc/ecore-evas.pc
 pc/ecore-fb.pc
 pc/ecore-file.pc
