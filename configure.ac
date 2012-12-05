@@ -3877,7 +3877,6 @@ ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl],
     PKG_CHECK_MODULES([WAYLAND_EGL], [wayland-egl], [have_wayland_egl="yes"], [have_wayland_egl="no"])
     if test "x${have_wayland_egl}" = "xyes" ; then
        requirements_pc_ecore_evas="wayland-egl egl >= 7.10 ecore-wayland >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
-       requirements_pc_deps_ecore_evas="wayland-egl egl >= 7.10 ecore-wayland >= ${PACKAGE_VERSION} ${requirements_pc_deps_ecore_evas}"
     fi
    ])
 
