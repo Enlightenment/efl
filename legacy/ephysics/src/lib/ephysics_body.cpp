@@ -534,9 +534,17 @@ _ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_thresho
 static inline void
 _ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double z, double rate)
 {
+   btVector3 linear_velocity = btVector3(x / rate, -y / rate, z / rate);
+
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->setLinearVelocity(btVector3(x / rate, -y / rate,
-                                                 z / rate));
+   if (body->rigid_body)
+     body->rigid_body->setLinearVelocity(linear_velocity);
+
+   if (body->soft_body)
+     {
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          body->soft_body->m_nodes[i].m_v = linear_velocity;
+     }
 }
 
 static void
@@ -3425,6 +3433,21 @@ ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, doubl
    DBG("Linear velocity of body %p set to (%lf, %lf, %lf).", body, x, y, z);
 }
 
+static void
+_ephysics_body_soft_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z, double rate)
+{
+   btVector3 total_velocity = btVector3(0, 0, 0);
+   int nodes_size = body->soft_body->m_nodes.size();
+
+   for (int i = 0; i < nodes_size; i++)
+     total_velocity += body->soft_body->m_nodes[i].m_v;
+
+   total_velocity /= nodes_size;
+   if (x) *x = total_velocity.getX() * rate;
+   if (y) *y = -total_velocity.getY() * rate;
+   if (z) *z = total_velocity.getZ() * rate;
+}
+
 EAPI void
 ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
@@ -3437,9 +3460,14 @@ ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *
      }
 
    rate = ephysics_world_rate_get(body->world);
-   if (x) *x = body->rigid_body->getLinearVelocity().getX() * rate;
-   if (y) *y = -body->rigid_body->getLinearVelocity().getY() * rate;
-   if (z) *z = body->rigid_body->getLinearVelocity().getZ() * rate;
+   if (body->rigid_body)
+     {
+        if (x) *x = body->rigid_body->getLinearVelocity().getX() * rate;
+        if (y) *y = -body->rigid_body->getLinearVelocity().getY() * rate;
+        if (z) *z = body->rigid_body->getLinearVelocity().getZ() * rate;
+        return;
+     }
+   _ephysics_body_soft_body_linear_velocity_get(body, x, y, z, rate);
 }
 
 EAPI void
@@ -3451,10 +3479,18 @@ ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, doub
         return;
      }
 
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Can't set angular velocity, not implemented for cloth.");
+        return;
+     }
+
    ephysics_world_lock_take(body->world);
+   ephysics_body_activate(body, EINA_TRUE);
    body->rigid_body->setAngularVelocity(btVector3(-x / RAD_TO_DEG,
                                                   -y / RAD_TO_DEG,
                                                   -z/RAD_TO_DEG));
+
    DBG("Angular velocity of body %p set to (%lf, %lf, %lf).", body, x, y, z);
    ephysics_world_lock_release(body->world);
 }
@@ -3465,6 +3501,12 @@ ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double 
    if (!body)
      {
         ERR("Can't get angular velocity, body is null.");
+        return;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Can't get angular velocity, not implemented for cloth.");
         return;
      }
 
@@ -3518,8 +3560,20 @@ ephysics_body_stop(EPhysics_Body *body)
      }
 
    ephysics_world_lock_take(body->world);
-   body->rigid_body->setLinearVelocity(btVector3(0, 0, 0));
-   body->rigid_body->setAngularVelocity(btVector3(0, 0, 0));
+   if (body->rigid_body)
+     {
+        body->rigid_body->setLinearVelocity(btVector3(0, 0, 0));
+        body->rigid_body->setAngularVelocity(btVector3(0, 0, 0));
+     }
+
+   if (body->soft_body)
+     {
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          {
+             body->soft_body->m_nodes[i].m_v *= 0;
+             body->soft_body->m_nodes[i].m_f *= 0;
+          }
+     }
    ephysics_world_lock_release(body->world);
 
    DBG("Body %p stopped", body);

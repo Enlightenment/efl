@@ -3282,6 +3282,8 @@ EAPI void ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, doubl
  * @param z The linear velocity on axis z.
  *
  * @note EPhysics unit for linear velocity is Evas coordinates per second.
+ * @note For cloth bodies the returned value is a velocity average of nodes
+ * velocities.
  *
  * @see ephysics_body_linear_velocity_set().
  * @see ephysics_body_angular_velocity_get().
