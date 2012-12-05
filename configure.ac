@@ -2368,7 +2368,9 @@ fi
 
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
-PKG_CHECK_MODULES([ECORE_CON], [${requirements_pc_deps_ecore_con}])
+if test "x${requirements_pc_deps_ecore_con}" != "x" ; then
+   PKG_CHECK_MODULES([ECORE_CON], [${requirements_pc_deps_ecore_con}])
+fi
 
 case "$host_os" in
    mingw32ce*)
