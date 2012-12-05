@@ -748,8 +748,11 @@
 
 	* Fix a possible divide by zero in els_scroller animator.
 
-2012-12-04 Murilo Pinoti Belluzzo (mbelluzzo)
+2012-12-04  Murilo Pinoti Belluzzo (mbelluzzo)
 
 	* Add elm_app_name_set/get(): Formal application name string.
 	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
 
+2012-12-05  Cedric Bail
+
+	* Fix uninitialized data path in elm_flip.

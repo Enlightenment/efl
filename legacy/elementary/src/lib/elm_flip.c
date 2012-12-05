@@ -692,6 +692,8 @@ _state_update(Evas_Object *obj)
           {
              Vertex3 vo[4];
 
+             memset(vo, 0, sizeof (vo));
+
              if (b > 0) nn = num + sd->slices_h - row - 1;
              else nn = num + row;
 
