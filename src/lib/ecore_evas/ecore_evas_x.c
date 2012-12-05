@@ -1732,7 +1732,6 @@ static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    if (ee->rotation == rotation) return;
-   if (!strcmp(ee->driver, "xrender_x11")) return;
 
 #if _USE_WIN_ROT_EFFECT
    int angles[2];
@@ -3381,99 +3380,6 @@ ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee EINA_UNUSED, v
    return;
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
-
-EAPI Ecore_Evas *
-ecore_evas_xrender_x11_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
-                           int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   return NULL;
-}
-
-EAPI Ecore_X_Window
-ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
-{
-}
-
-EAPI Eina_Bool
-ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
-{
-}
-
-EAPI Ecore_Evas *
-ecore_evas_software_x11_16_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED,
-                               int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   return NULL;
-}
-
-EAPI Ecore_X_Window
-ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
-{
-}
-
-EAPI Eina_Bool
-ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
-{
-}
-
-EAPI Ecore_Evas *
-ecore_evas_software_x11_8_new(const char *disp_name EINA_UNUSED, Ecore_X_Window parent EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
-{
-   return NULL;
-}
-
-EAPI Ecore_X_Window
-ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI Ecore_X_Window
-ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee EINA_UNUSED, Eina_Bool on EINA_UNUSED)
-{
-}
-
-EAPI Eina_Bool
-ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee EINA_UNUSED)
-{
-   return 0;
-}
-
-EAPI void
-ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee EINA_UNUSED, Ecore_X_Window win EINA_UNUSED)
-{
-   return;
-}
 
 EAPI void
 ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win)

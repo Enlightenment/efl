@@ -1,6 +1,7 @@
 2012-12-05  Gustavo Sverzut Barbieri (k-s)
 
 	* Removed DirectFB support (both ecore_directfb, evas and ecore_evas).
+	* Removed XRender, WinCE, X11-16 and X11-8 ecore_evas support.
 
 2012-12-04  Gwanglim Lee
 
