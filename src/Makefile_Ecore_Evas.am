@@ -13,11 +13,10 @@ lib/ecore_evas/ecore_evas_util.c \
 lib/ecore_evas/ecore_evas_x.c \
 lib/ecore_evas/ecore_evas_fb.c \
 lib/ecore_evas/ecore_evas_buffer.c \
-lib/ecore_evas/ecore_evas_directfb.c \
+lib/ecore_evas/ecore_evas_deprecated.c \
 lib/ecore_evas/ecore_evas_win32.c \
 lib/ecore_evas/ecore_evas_sdl.c \
 lib/ecore_evas/ecore_evas_cocoa.c \
-lib/ecore_evas/ecore_evas_wince.c \
 lib/ecore_evas/ecore_evas_ews.c \
 lib/ecore_evas/ecore_evas_psl1ght.c \
 lib/ecore_evas/ecore_evas_wayland_shm.c \

@@ -1183,33 +1183,33 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
                                                    int                 x,
                                                    int                 y,
                                                    int                 width,
-                                                   int                 height);
+                                                   int                 height) EINA_DEPRECATED;
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_fb_new(Ecore_WinCE_Window *parent,
                                                       int                 x,
                                                       int                 y,
                                                       int                 width,
-                                                      int                 height);
+                                                      int                 height) EINA_DEPRECATED;
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_gapi_new(Ecore_WinCE_Window *parent,
                                                         int                 x,
                                                         int                 y,
                                                         int                 width,
-                                                        int                 height);
+                                                        int                 height) EINA_DEPRECATED;
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_ddraw_new(Ecore_WinCE_Window *parent,
                                                          int                 x,
                                                          int                 y,
                                                          int                 width,
-                                                         int                 height);
+                                                         int                 height) EINA_DEPRECATED;
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *parent,
                                                        int                 x,
                                                        int                 y,
                                                        int                 width,
-                                                       int                 height);
+                                                       int                 height) EINA_DEPRECATED;
 
-EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee);
+EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
 EAPI Ecore_Evas *ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent,
 				      int x,
