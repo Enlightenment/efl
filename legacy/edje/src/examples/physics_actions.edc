@@ -1,0 +1,161 @@
+/* It can be tested with edje_player slave mode
+ * $ edje_player -S physics_actions.edj
+ * signal up impulse   -> will throw both balls up
+ * signal left impulse -> will throw blue ball to the left
+ */
+
+collections {
+
+   images {
+      image: "bubble-blue.png" COMP;
+   }
+
+   group {
+      name: "example_group";
+
+      parts {
+         part {
+            name: "background";
+            type: RECT;
+            physics_body: NONE;
+            description {
+               state: "default" 0.0;
+               color: 255 255 255 255; /* white */
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+
+         part {
+            name: "blue_circle";
+            type: IMAGE;
+            physics_body: RIGID_CIRCLE;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.35 0.1;
+               rel2.relative: 0.55 0.2;
+               aspect: 1 1;
+               image {
+                  normal: "bubble-blue.png";
+               }
+               physics {
+                  restitution: 0.85;
+                  friction: 1.0;
+               }
+            }
+         }
+
+         part {
+            name: "red_circle";
+            type: IMAGE;
+            physics_body: RIGID_CIRCLE;
+            description {
+               state: "default" 0.0;
+               color: 255 0 0 255; /* light red */
+               rel1.relative: 0.65 0.1;
+               rel2.relative: 0.85 0.2;
+               aspect: 1 1;
+               image {
+                  normal: "bubble-blue.png";
+               }
+               physics {
+                  restitution: 0.85;
+                  friction: 1.0;
+               }
+            }
+         }
+
+         part {
+            name: "floor";
+            type: RECT;
+            physics_body: BOUNDARY_BOTTOM;
+            description {
+               state: "default" 0.0;
+               visible: 0;
+               physics {
+                  restitution: 0.6;
+                  friction: 1.0;
+               }
+            }
+         }
+
+         part {
+            name: "right_wall";
+            type: RECT;
+            physics_body: BOUNDARY_RIGHT;
+            description {
+               state: "default" 0.0;
+               visible: 0;
+               physics {
+                  restitution: 0.3;
+               }
+            }
+         }
+
+         part {
+            name: "left_wall";
+            type: RECT;
+            physics_body: BOUNDARY_LEFT;
+            description {
+               state: "default" 0.0;
+               visible: 0;
+               physics {
+                  restitution: 0.3;
+               }
+            }
+         }
+
+         part {
+            name: "roof";
+            type: RECT;
+            physics_body: BOUNDARY_TOP;
+            description {
+               state: "default" 0.0;
+               visible: 0;
+               physics {
+                  restitution: 0.2;
+               }
+            }
+         }
+      }
+
+      programs {
+
+         program {
+            name: "impulse_up";
+            signal: "up";
+            source: "impulse";
+            action: PHYSICS_IMPULSE 0 -300 0;
+            target: "blue_circle";
+            target: "red_circle";
+         }
+
+         program {
+            name: "impulse_down";
+            signal: "down";
+            source: "impulse";
+            action: PHYSICS_IMPULSE 0 300 0;
+            target: "red_circle";
+            target: "blue_circle";
+         }
+
+         program {
+            name: "impulse_left";
+            signal: "left";
+            source: "impulse";
+            action: PHYSICS_IMPULSE -300 0 0;
+            target: "blue_circle";
+         }
+
+         program {
+            name: "impulse_right";
+            signal: "right";
+            source: "impulse";
+            action: PHYSICS_IMPULSE 300 0 0;
+            target: "red_circle";
+         }
+
+      }
+
+   }
+}

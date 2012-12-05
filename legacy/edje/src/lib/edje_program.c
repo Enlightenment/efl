@@ -933,6 +933,23 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
              if (_edje_block_break(ed)) goto break_prog;
           }
         break;
+#ifdef HAVE_EPHYSICS
+     case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if ((rp) && (rp->body))
+                    ephysics_body_central_impulse_apply(
+                       rp->body, pr->physics.impulse.x, pr->physics.impulse.y,
+                       pr->physics.impulse.z);
+               }
+          }
+        break;
+#endif
      default:
         // _edje_emit(ed, "program,start", pr->name);
         // _edje_emit(ed, "program,stop", pr->name);

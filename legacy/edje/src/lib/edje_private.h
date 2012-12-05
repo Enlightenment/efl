@@ -646,6 +646,17 @@ struct _Edje_Program /* a conditional program to be run */
       int dst; /* part where parameter is being stored */
    } param;
 
+#ifdef HAVE_EPHYSICS
+   /* used for actions related to physics, as PHYSICS_IMPULSE */
+   struct {
+      struct {
+        double x;
+        double y;
+        double z;
+      } impulse;
+   } physics;
+#endif
+
    Eina_Bool exec : 1;
 };
 

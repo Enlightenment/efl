@@ -4155,7 +4155,8 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_PARAM_SET           = 12,
    EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
    EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_LAST                = 15
+   EDJE_ACTION_TYPE_PHYSICS_IMPULSE     = 15, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_LAST                = 16
 } Edje_Action_Type;
 
 /**
