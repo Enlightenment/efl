@@ -939,10 +939,10 @@ esac
 
 case "$build_crypto" in
    gnutls)
-      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 1.7.6])
+      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11])
       AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
-      requirements_pc_eet="gnutls >= 1.7.6 ${requirements_pc_eet}"
-      requirements_pc_deps_eet="gnutls >= 1.7.6 ${requirements_pc_deps_eet}"
+      requirements_pc_eet="gnutls >= 2.11 ${requirements_pc_eet}"
+      requirements_pc_deps_eet="gnutls >= 2.11 ${requirements_pc_deps_eet}"
 
       # TODO: do we need this?
       # libgcrypt
@@ -950,38 +950,9 @@ case "$build_crypto" in
          [AC_MSG_ERROR([libgcrypt required but not found])])
       requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
 
-      # TODO: do we need this? can't we just bump required version?
-      # Specific GNUTLS improvement
-      CFLAGS_save="${CFLAGS}"
-      LIBS_save="${LIBS}"
-      CFLAGS="${GNUTLS_CFLAGS}"
-      LIBS="${GNUTLS_LIBS}"
-      AC_CHECK_LIB([gnutls], [gnutls_x509_crt_verify_hash],
-         [AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])],
-         [AC_MSG_NOTICE([Optional gnutls_x509_crt_verify_hash not present.])])
-      CFLAGS="${CFLAGS_save}"
-      LIBS="${LIBS_save}"
-
-      # TODO: do we need this? can't we just bump required version?
-      CFLAGS_save="${CFLAGS}"
-      LIBS_save="${LIBS}"
-      CFLAGS="${GNUTLS_CFLAGS}"
-      LIBS="${GNUTLS_LIBS}"
-      AC_CHECK_LIB([gnutls], [gnutls_privkey_sign_data],
-         [AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])],
-         [AC_MSG_NOTICE([Optional gnutls_privkey_sign_data not present.])])
-      CFLAGS="${CFLAGS_save}"
-      LIBS="${LIBS_save}"
-
-      # TODO: do we need this? can't we just bump required version?
-      CFLAGS_save="${CFLAGS}"
-      LIBS_save="${LIBS}"
-      CFLAGS="${GNUTLS_CFLAGS}"
-      LIBS="${GNUTLS_LIBS}"
-      AC_CHECK_LIB([gnutls], [gnutls_pubkey_verify_hash],
-         [AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])])
-      CFLAGS="${CFLAGS_save}"
-      LIBS="${LIBS_save}"
+      AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
+      AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
+      AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
       ;;
 
    openssl)
@@ -2292,12 +2263,12 @@ requirements_pc_ecore_con="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION}
 # gnuTLS
 
 if test "x${have_gnutls}" = "xyes" ; then
-   PKG_CHECK_EXISTS([gnutls >= 2.10.2],
+   PKG_CHECK_EXISTS([gnutls >= 2.11],
       [
        have_gnutls="yes"
        AC_DEFINE([USE_GNUTLS], [1], [Use GnuTLS])
-       requirements_pc_ecore_con="gnutls >= 2.10.2 ${requirements_pc_ecore_con}"
-       requirements_pc_deps_ecore_con="gnutls >= 2.10.2 ${requirements_pc_deps_ecore_con}"
+       requirements_pc_ecore_con="gnutls >= 2.11 ${requirements_pc_ecore_con}"
+       requirements_pc_deps_ecore_con="gnutls >= 2.11 ${requirements_pc_deps_ecore_con}"
       ],
       [have_gnutls="no"])
 fi
