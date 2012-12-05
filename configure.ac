@@ -3381,7 +3381,8 @@ if test "x${have_ecore_x_xlib}" = "xyes" ; then
    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent], [$want_ecore_x_xtest])
    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput], [$want_ecore_x_screensaver])
    ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice], [$want_ecore_x_input])
-
+   ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi], [XIGrabTouchBegin], [$want_ecore_x_input])
+   
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
 fi
 
@@ -4400,6 +4401,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xtest......................: $use_xtest"
     echo "    XIM........................: $want_xim"
     echo "    Xi2........................: $use_xi2"
+    echo "    Xi2.2......................: $use_xi2_2"
   fi
 else
   echo "  Ecore_X....................: $have_ecore_x"
