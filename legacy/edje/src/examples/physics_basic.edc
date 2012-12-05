@@ -6,7 +6,6 @@ collections {
 
    group {
       name: "example_group";
-      min: 100 100;
 
       parts {
          part {

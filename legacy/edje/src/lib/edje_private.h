@@ -1412,6 +1412,7 @@ struct _Edje_Real_Part
    Edje_Real_Part           *clip_to; // 4
    Edje_Running_Program     *program; // 4
 #ifdef HAVE_EPHYSICS
+   Edje_Part_Description_Common *prev_description; // 4
    EPhysics_Body            *body; // 4
 #endif
    union {

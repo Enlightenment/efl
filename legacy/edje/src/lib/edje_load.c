@@ -341,53 +341,6 @@ _edje_programs_patterns_init(Edje *ed)
    ssp->sources_patterns = edje_match_programs_source_init(all, j);
 }
 
-#ifdef HAVE_EPHYSICS
-static void
-_edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
-{
-   switch (rp->part->physics_body)
-     {
-      case EDJE_PART_PHYSICS_BODY_RIGID_BOX:
-         rp->body = ephysics_body_box_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_RIGID_CIRCLE:
-         rp->body = ephysics_body_circle_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_SOFT_BOX:
-         rp->body = ephysics_body_soft_box_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE:
-         rp->body = ephysics_body_soft_circle_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_CLOTH:
-         rp->body = ephysics_body_cloth_add(world, 0, 0);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP:
-         rp->body = ephysics_body_top_boundary_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_BOTTOM:
-         rp->body = ephysics_body_bottom_boundary_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_RIGHT:
-         rp->body = ephysics_body_right_boundary_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_LEFT:
-         rp->body = ephysics_body_left_boundary_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_FRONT:
-         rp->body = ephysics_body_front_boundary_add(world);
-         break;
-      case EDJE_PART_PHYSICS_BODY_BOUNDARY_BACK:
-         rp->body = ephysics_body_back_boundary_add(world);
-         break;
-      default:
-         ERR("Invalid body: %i", rp->part->physics_body);
-         return;
-     }
-   ephysics_body_evas_object_set(rp->body, rp->object, EINA_TRUE);
-}
-#endif
-
 int
 _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
@@ -728,10 +681,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->part->clip_to_id < 0)
 			 evas_object_clip_set(rp->object, ed->base->clipper);
 		    }
-#ifdef HAVE_EPHYSICS
-                  if (ep->physics_body)
-                    _edje_physics_body_add(rp, ed->world);
-#endif
 	       }
 	     if (n > 0)
 	       {
