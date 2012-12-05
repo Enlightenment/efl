@@ -520,6 +520,8 @@ _state_update(State *st)
           {
              Vertex3 vo[4];
 
+             memset(vo, 0, sizeof (vo));
+
              if (b > 0) nn = num + st->slices_h - row - 1;
              else nn = num + row;
 
