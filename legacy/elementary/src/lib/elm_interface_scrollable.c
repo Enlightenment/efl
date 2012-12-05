@@ -2625,6 +2625,8 @@ _elm_scroll_hold_animator(void *data)
         tdiff = sid->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
 
+        memset(pos, 0, sizeof (pos));
+
         for (i = 0; i < QUEUE_SIZE; i++)
           {
              x = sid->down.history[i].x;

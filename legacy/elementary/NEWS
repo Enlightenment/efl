@@ -75,6 +75,7 @@ Fixes:
    * Fix possible divide by zero in els_scroller animator.
    * Fix uninitialized data path in elm_flip.
    * Fix uninitialized data path in elm_gesture_layer.
+   * Fix uninitialized data path in elm_interface_scrollable.
 
 Removals:
 
