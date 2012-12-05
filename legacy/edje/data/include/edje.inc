@@ -219,3 +219,12 @@ native get_state_val(part_id, State_Param:p, ...);
 /* Multisense */
 native       play_sample      (sample_name[], Float:speed);
 native       play_tone        (tone_name[], Float:duration);
+
+/***********************************************************/
+/* Edje physics calls.                                     */
+/***********************************************************/
+/* Example:
+ *
+ * physics_impulse(PART:"logo", 0, 50.8, 0);
+ */
+native       physics_impulse  (part_id, Float:x, Float:y, Float:z);

@@ -200,6 +200,8 @@
  * external_param_get_bool(id, param_name[])
  * external_param_set_bool(id, param_name[], value)
  *
+ * physics_impulse(part_id, Float:x, Float:y, Float:z)
+ *
  * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  *
  */
@@ -3029,6 +3031,39 @@ _edje_embryo_fn_external_param_set_bool(Embryo_Program *ep, Embryo_Cell *params)
    return _edje_external_param_set(NULL, rp, &eep);
 }
 
+#ifdef HAVE_EPHYSICS
+/* physics_impulse(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_impulse(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+        if (rp->body)
+          {
+             double x, y, z;
+
+             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
+             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
+             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
+
+             ephysics_body_central_impulse_apply(rp->body, x, y, z);
+          }
+     }
+   return 0;
+}
+#endif
+
 void
 _edje_embryo_script_init(Edje_Part_Collection *edc)
 {
@@ -3123,6 +3158,10 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "external_param_set_choice", _edje_embryo_fn_external_param_set_choice);
    embryo_program_native_call_add(ep, "external_param_get_bool", _edje_embryo_fn_external_param_get_bool);
    embryo_program_native_call_add(ep, "external_param_set_bool", _edje_embryo_fn_external_param_set_bool);
+
+#ifdef HAVE_EPHYSICS
+   embryo_program_native_call_add(ep, "physics_impulse", _edje_embryo_fn_physics_impulse);
+#endif
 }
 
 void

@@ -2,7 +2,11 @@
  * $ edje_player -S physics_actions.edj
  * signal up impulse   -> will throw both balls up
  * signal left impulse -> will throw blue ball to the left
+ * message 1 FLOAT_SET 3 50 -100 0 -> apply an impulse on blue ball with
+ *    x = 50, y = -100, z = 0, for example
  */
+
+#define ID_IMPULSE (1)
 
 collections {
 
@@ -12,6 +16,20 @@ collections {
 
    group {
       name: "example_group";
+
+      script {
+         public message(Msg_Type:type, id, ...) {
+            if ((id == ID_IMPULSE) && (type == MSG_FLOAT_SET)) {
+               new Float:x, Float:y, Float:z;
+               new n = numargs();
+               if (n < 5) return;
+               x = getfarg(2);
+               y = getfarg(3);
+               z = getfarg(4);
+               physics_impulse(PART:"blue_circle", x, y, z);
+            }
+         }
+      }
 
       parts {
          part {
