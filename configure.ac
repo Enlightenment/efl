@@ -571,7 +571,6 @@ case $host_cpu in
     ;;
 esac
 
-AC_SUBST([CFLAGS])
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
 
