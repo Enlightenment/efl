@@ -341,6 +341,15 @@ _edje_programs_patterns_init(Edje *ed)
    ssp->sources_patterns = edje_match_programs_source_init(all, j);
 }
 
+#ifdef HAVE_EPHYSICS
+static void
+_edje_physics_world_update_cb(void *data, EPhysics_World *world __UNUSED__, void *event_info __UNUSED__)
+{
+   Edje *edje = data;
+   _edje_recalc_do(edje);
+}
+#endif
+
 int
 _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
@@ -447,6 +456,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                {
                   ephysics_init();
                   ed->world = ephysics_world_new();
+                  ephysics_world_event_callback_add(
+                     ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
+                     _edje_physics_world_update_cb, ed);
                }
 #endif
 

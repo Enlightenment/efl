@@ -2456,12 +2456,26 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
                                         NULL, NULL, NULL);
              ephysics_body_move(ep->body, ep->edje->x + pf->x,
                                 ep->edje->y + pf->y, z);
+             ep->x = pf->x;
+             ep->y = pf->y;
+             ep->w = pf->w;
+             ep->h = pf->h;
           }
         ephysics_body_mass_set(ep->body, pf->physics.mass);
      }
 
    ephysics_body_restitution_set(ep->body, pf->physics.restitution);
    ephysics_body_friction_set(ep->body, pf->physics.friction);
+}
+
+static void
+_edje_physics_body_update_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
+{
+   Edje_Real_Part *rp = data;
+   ephysics_body_geometry_get(body, &(rp->x), &(rp->y), NULL,
+                              &(rp->w), &(rp->h), NULL);
+   ephysics_body_evas_object_update(body);
+   rp->edje->dirty = EINA_TRUE;
 }
 
 static void
@@ -2516,6 +2530,8 @@ _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
      }
 
    ephysics_body_evas_object_set(rp->body, rp->object, resize);
+   ephysics_body_event_callback_add(rp->body, EPHYSICS_CALLBACK_BODY_UPDATE,
+                                    _edje_physics_body_update_cb, rp);
 }
 #endif
 
@@ -3283,24 +3299,34 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
              else
                {
+#ifdef HAVE_EPHYSICS
+                  if (!ep->body)
+                    {
+#endif
                   evas_object_map_enable_set(mo, 0);
                   evas_object_map_set(mo, NULL);
+#ifdef HAVE_EPHYSICS
+                    }
+#endif
                }
           }
      }
 
+#ifdef HAVE_EPHYSICS
+   ep->prev_description = chosen_desc;
+   if (!ep->body)
+     {
+#endif
    ep->x = pf->x;
    ep->y = pf->y;
    ep->w = pf->w;
    ep->h = pf->h;
+#ifdef HAVE_EPHYSICS
+     }
+#endif
 
    ep->calculated |= flags;
    ep->calculating = FLAG_NONE;
-
-#ifdef HAVE_EPHYSICS
-   ep->prev_description = chosen_desc;
-#endif
-
 
 #ifdef EDJE_CALC_CACHE
    if (ep->calculated == FLAG_XY)
