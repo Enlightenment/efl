@@ -1269,9 +1269,6 @@ _image_data_get(Eo *eo_obj, void *_pd, va_list *list)
         if (ret_data) *ret_data = NULL;
         return;
      }
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_pipe_op_image_flush(o->engine_data);
-#endif
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    data = NULL;
