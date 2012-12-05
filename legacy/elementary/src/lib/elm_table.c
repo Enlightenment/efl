@@ -28,7 +28,7 @@ _elm_table_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_List *(*list_free)(Eina_List *list);
    void *(*list_data_get)(const Eina_List *list);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
@@ -76,7 +76,7 @@ _elm_table_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_List *(*list_free)(Eina_List *list);
    void *(*list_data_get)(const Eina_List *list);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
@@ -107,7 +107,7 @@ _elm_table_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_mirrored_set(wd->resize_obj, rtl);
 }
@@ -134,7 +134,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord w, h;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_min_get
      (wd->resize_obj, &minw, &minh);
@@ -200,7 +200,7 @@ _elm_table_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Eina_List *l;
    Evas_Object *child;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_event_callback_del_full
      (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -252,7 +252,7 @@ static void
 _homogeneous_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool homogeneous = va_arg(*list, int);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_homogeneous_set
      (wd->resize_obj, homogeneous);
@@ -271,7 +271,7 @@ static void
 _homogeneous_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = evas_object_table_homogeneous_get(wd->resize_obj);
 }
 
@@ -289,7 +289,7 @@ _padding_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord horizontal = va_arg(*list, Evas_Coord);
    Evas_Coord vertical = va_arg(*list, Evas_Coord);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_padding_set
      (wd->resize_obj, horizontal, vertical);
@@ -309,7 +309,7 @@ _padding_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord *horizontal = va_arg(*list, Evas_Coord *);
    Evas_Coord *vertical = va_arg(*list, Evas_Coord *);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_padding_get
      (wd->resize_obj, horizontal, vertical);
@@ -335,7 +335,7 @@ _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int y = va_arg(*list, int);
    int w = va_arg(*list, int);
    int h = va_arg(*list, int);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, x, y, w, h);
@@ -353,7 +353,7 @@ static void
 _unpack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_del(obj, subobj);
    evas_object_table_unpack(wd->resize_obj, subobj);
@@ -381,7 +381,7 @@ _pack_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int w = va_arg(*list, int);
    int h = va_arg(*list, int);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_pack(wd->resize_obj, subobj, x, y, w, h);
 }
@@ -408,7 +408,7 @@ _pack_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int *h = va_arg(*list, int *);
 
    unsigned short ix, iy, iw, ih;
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_pack_get
      (wd->resize_obj, subobj, &ix, &iy, &iw, &ih);
@@ -430,7 +430,7 @@ static void
 _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool clear = va_arg(*list, int);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_clear(wd->resize_obj, clear);
 }

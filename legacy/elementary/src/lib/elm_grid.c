@@ -27,7 +27,7 @@ _elm_grid_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
@@ -74,7 +74,7 @@ _elm_grid_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
@@ -103,7 +103,7 @@ _elm_grid_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_mirrored_set(wd->resize_obj, rtl);
 }
@@ -144,7 +144,7 @@ _elm_grid_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Eina_List *l;
    Evas_Object *child;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* let's make our grid object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
@@ -194,7 +194,7 @@ _size_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_size_set(wd->resize_obj, w, h);
 }
@@ -214,7 +214,7 @@ _size_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_size_get(wd->resize_obj, w, h);
 }
@@ -241,7 +241,7 @@ _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
@@ -260,7 +260,7 @@ _unpack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_del(obj, subobj);
    evas_object_grid_unpack(wd->resize_obj, subobj);
@@ -282,7 +282,7 @@ _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_List *chld;
    Evas_Object *o;
 
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!clear)
      {
@@ -304,7 +304,7 @@ elm_grid_pack_set(Evas_Object *subobj,
    Evas_Object *obj = elm_widget_parent_widget_get(subobj);
 
    ELM_GRID_CHECK(obj);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
 }
@@ -319,7 +319,7 @@ elm_grid_pack_get(Evas_Object *subobj,
    Evas_Object *obj = elm_widget_parent_widget_get(subobj);
 
    ELM_GRID_CHECK(obj);
-   ELM_WIDGET_DATA_GET(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_pack_get
      (wd->resize_obj, subobj, x, y, w, h);

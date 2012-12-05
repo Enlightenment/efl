@@ -737,22 +737,15 @@ EAPI Eina_List       *elm_widget_scrollable_children_get(Evas_Object *obj);
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
 
-
-#define ELM_WIDGET_DATA_GET_NO_INST(o, wd) \
-  wd = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ? \
-        eo_data_get(o, ELM_OBJ_WIDGET_CLASS) : \
-        NULL)
-
-#define ELM_WIDGET_DATA_GET(o, wd) \
-  Elm_Widget_Smart_Data *wd; \
-  ELM_WIDGET_DATA_GET_NO_INST(o, wd)
-
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_WIDGET_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
+  Elm_Widget_Smart_Data *ptr;			     \
+  ptr = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ?	     \
+	 eo_data_get(o, ELM_OBJ_WIDGET_CLASS) :	     \
+	 NULL);					     \
+  if (!ptr)					     \
     {                                                \
        CRITICAL("no widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+                o, evas_object_type_get(o));	     \
        return;                                       \
     }
 

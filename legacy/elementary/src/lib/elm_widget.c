@@ -9,6 +9,15 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_widget"
 
+#define ELM_WIDGET_DATA_GET_NO_INST(o, wd)     \
+  wd = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ? \
+        eo_data_get(o, ELM_OBJ_WIDGET_CLASS) : \
+        NULL)
+
+#define ELM_WIDGET_DATA_GET(o, wd)		\
+  Elm_Widget_Smart_Data *wd;			\
+  ELM_WIDGET_DATA_GET_NO_INST(o, wd)
+
 #define API_ENTRY                                    \
   ELM_WIDGET_DATA_GET(obj, sd);                      \
   if ((!sd) || (!_elm_widget_is(obj)))
