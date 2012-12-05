@@ -687,3 +687,7 @@
 2012-11-23  Eduardo Lima (Etrunko)
 
         * Add embryo function get_program_id
+
+2012-12-05  Robert David
+
+	* Fix Solaris 11 build.

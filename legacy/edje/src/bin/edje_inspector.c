@@ -2,6 +2,11 @@
 # include "config.h"
 #endif
 
+#include <locale.h>
+#include <fnmatch.h>
+#include <unistd.h>
+#include <errno.h>
+
 #include "Edje.h"
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
 #include "Edje_Edit.h"
@@ -9,9 +14,6 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
-#include <locale.h>
-#include <fnmatch.h>
-#include <unistd.h>
 
 static int _log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
