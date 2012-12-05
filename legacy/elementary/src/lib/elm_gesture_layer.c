@@ -3414,6 +3414,10 @@ _rotate_test(Evas_Object *obj,
              Evas_Callback_Type event_type,
              Elm_Gesture_Type g_type)
 {
+   Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
+   Gesture_Info *gesture;
+   Rotate_Type *st = NULL;
+
    if (!_elm_config->glayer_rotate_finger_enable)
      return;
 
@@ -3424,20 +3428,17 @@ _rotate_test(Evas_Object *obj,
 
    if (!sd->gesture[g_type]) return;
 
-   Gesture_Info *gesture = sd->gesture[g_type];
-   Rotate_Type *st;
-   if (gesture)
+   gesture = sd->gesture[g_type];
+   if (!gesture) return ;
+
+   st = gesture->data;
+   if (!st) /* Allocated once on first time */
      {
-        st = gesture->data;
-        if (!st) /* Allocated once on first time */
-          {
-             st = calloc(1, sizeof(Rotate_Type));
-             gesture->data = st;
-             _rotate_test_reset(gesture);
-          }
+       st = calloc(1, sizeof(Rotate_Type));
+       gesture->data = st;
+       _rotate_test_reset(gesture);
      }
 
-   Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
    switch (event_type)
      {
       case EVAS_CALLBACK_MOUSE_MOVE:

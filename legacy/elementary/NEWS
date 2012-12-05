@@ -74,6 +74,7 @@ Fixes:
    * Fix case where tooltips could go offscreen unnecessarily
    * Fix possible divide by zero in els_scroller animator.
    * Fix uninitialized data path in elm_flip.
+   * Fix uninitialized data path in elm_gesture_layer.
 
 Removals:
 
