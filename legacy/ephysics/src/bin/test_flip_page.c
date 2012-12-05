@@ -138,6 +138,16 @@ _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
                                          -nz);
 }
 
+static void
+_page_update_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
+{
+   Evas_Coord z;
+
+   ephysics_body_geometry_get(body, NULL, NULL, &z, NULL, NULL, NULL);
+   if (z > -5 && z < 0) ephysics_body_stop(body);
+   ephysics_body_evas_object_update(body);
+}
+
 static Page_Data *
 _page_add(Test_Data *test_data, EPhysics_Body *anchor, const char *img, Evas_Coord z)
 {
@@ -162,12 +172,16 @@ _page_add(Test_Data *test_data, EPhysics_Body *anchor, const char *img, Evas_Coo
 
    evas_object_geometry_get(evas_obj, &page_data->x, NULL, NULL, NULL);
 
-   body = ephysics_body_cloth_add(test_data->world, 10, 20);
+   body = ephysics_body_cloth_add(test_data->world, 10, 10);
+   ephysics_body_soft_body_anchor_hardness_set(body, 10);
    ephysics_body_soft_body_drag_coefficient_set(body, 0.0008);
-   ephysics_body_soft_body_position_iterations_set(body, 6);
-   ephysics_body_soft_body_bending_constraints_add(body, 1);
+   ephysics_body_soft_body_bending_constraints_add(body, 2);
    ephysics_body_restitution_set(body, 0);
+   ephysics_body_friction_set(body, 0.9);
    ephysics_body_evas_object_set(body, evas_obj, EINA_TRUE);
+
+   ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_UPDATE,
+                                    _page_update_cb, NULL);
 
    ephysics_body_move(body, x, y, -z * 3);
 
@@ -203,6 +217,7 @@ _world_populate(Test_Data *test_data)
 
    anchor = ephysics_body_back_boundary_add(test_data->world);
    ephysics_body_restitution_set(anchor, 0);
+   ephysics_body_friction_set(anchor, 0.9);
    test_data->bodies = eina_list_append(test_data->bodies, anchor);
 
    pages = eina_hash_pointer_new(NULL);
