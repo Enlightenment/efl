@@ -148,7 +148,6 @@
 ./src/lib/els_box.c
 ./src/lib/els_cursor.c
 ./src/lib/els_pan.c
-./src/lib/els_scroller.c
 ./src/lib/els_tooltip.c
 ./src/modules/test_entry/mod.c
 ./src/modules/test_map/mod.c
