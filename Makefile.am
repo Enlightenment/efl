@@ -237,6 +237,7 @@ endif
 	@./src/tests/eet/eet_suite$(EXEEXT)
 	@./src/tests/eo/eo_suite$(EXEEXT)
 	@./src/tests/evas/evas_suite$(EXEEXT)
+	@./src/tests/ecore/ecore_suite$(EXEEXT)
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
