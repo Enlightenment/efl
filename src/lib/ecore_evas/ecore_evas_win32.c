@@ -1111,6 +1111,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_alpha_set,
      NULL, //transparent
      NULL, // profiles_set
+     NULL, // profile_set
 
      NULL,
      NULL,

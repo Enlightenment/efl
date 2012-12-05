@@ -189,6 +189,8 @@ enum // opcodes
    OP_UPDATE_DONE,
    OP_LOCK_FILE,
    OP_SHM_REF,
+   OP_PROFILE_CHANGE_REQUEST,
+   OP_PROFILE_CHANGE_DONE,
    OP_EV_MOUSE_IN,
    OP_EV_MOUSE_OUT,
    OP_EV_MOUSE_UP,
@@ -218,6 +220,7 @@ enum
 
 typedef struct _Ipc_Data_Resize Ipc_Data_Resize;
 typedef struct _Ipc_Data_Update Ipc_Data_Update;
+typedef struct _Ipc_Data_Profile Ipc_Data_Profile;
 typedef struct _Ipc_Data_Ev_Mouse_In Ipc_Data_Ev_Mouse_In;
 typedef struct _Ipc_Data_Ev_Mouse_Out Ipc_Data_Ev_Mouse_Out;
 typedef struct _Ipc_Data_Ev_Mouse_Up Ipc_Data_Ev_Mouse_Up;
@@ -239,6 +242,11 @@ struct _Ipc_Data_Resize
 struct _Ipc_Data_Update
 {
    int x, w, y, h;
+};
+
+struct _Ipc_Data_Profile
+{
+   const char *name;
 };
 
 struct _Ipc_Data_Ev_Mouse_In
@@ -368,6 +376,9 @@ struct _Extn
         Eina_Bool   have_lock : 1;
         Eina_Bool   have_real_lock : 1;
    } file;
+   struct {
+        Eina_Bool   done : 1; /* need to send change done event to the client(plug) */
+   } profile;
 };
 
 static Eina_List *extn_ee_list = NULL;
@@ -1136,6 +1147,49 @@ _ecore_evas_extn_cb_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_HIDE, 0, 0, 0, NULL, 0);
 }
 
+static void
+_ecore_evas_extn_plug_profile_set(Ecore_Evas *ee, const char *profile)
+{
+   Extn *extn;
+
+   _ecore_evas_window_profile_free(ee);
+   ee->prop.profile.name = NULL;
+
+   extn = ee->engine.buffer.data;
+   if (!extn) return;
+
+   if (profile)
+     {
+        ee->prop.profile.name = (char *)eina_stringshare_add(profile);
+        if (extn->ipc.server)
+          {
+             Ipc_Data_Profile *ipc;
+             char *st, *p;
+             int len = 0;
+
+             len += sizeof(Ipc_Data_Profile);
+             len += strlen(ee->prop.profile.name) + 1;
+             len += 1;
+
+             st = alloca(len);
+             ipc = (Ipc_Data_Profile *)st;
+             memset(st, 0, len);
+             p = st + sizeof(Ipc_Data_Profile);
+
+             strcpy(p, ee->prop.profile.name);
+             ipc->name = p - (long)st;
+             p += strlen(p) + 1;
+
+             /* send window profile change request to the server(socket)
+              * and wait for profile change done from the server
+              */
+             ecore_ipc_server_send(extn->ipc.server, MAJOR,
+                                   OP_PROFILE_CHANGE_REQUEST,
+                                   0, 0, 0, ipc, len);
+          }
+     }
+}
+
 static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 {
    _ecore_evas_extn_free,
@@ -1185,6 +1239,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL, //transparent
    NULL, // profiles_set
+   _ecore_evas_extn_plug_profile_set,
    NULL,
    NULL,
    NULL,
@@ -1363,6 +1418,10 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
               _ecore_evas_resize(ee, ipc->w, ipc->h);
            }
          break;
+      case OP_PROFILE_CHANGE_DONE:
+         /* profile change finished being sent - done now. */
+         /* do something here */
+         break;
       default:
          break;
      }
@@ -1414,6 +1473,7 @@ ecore_evas_extn_plug_new(Ecore_Evas *ee_target)
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->profile_supported = 1;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -1657,6 +1717,40 @@ _ecore_evas_socket_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNU
    _ecore_evas_socket_resize(ee, w, h);
 }
 
+static void
+_ecore_evas_extn_socket_window_profile_change_done_send(Ecore_Evas *ee)
+{
+   Extn *extn;
+   Ecore_Ipc_Client *client;
+   Eina_List *l = NULL;
+   Ipc_Data_Profile *ipc;
+   char *st, *p;
+   int len = 0;
+
+   extn = ee->engine.buffer.data;
+   if (!extn) return;
+
+   len += sizeof(Ipc_Data_Profile);
+   len += strlen(ee->prop.profile.name) + 1;
+   len += 1;
+
+   st = alloca(len);
+   ipc = (Ipc_Data_Profile *)st;
+   memset(st, 0, len);
+   p = st + sizeof(Ipc_Data_Profile);
+
+   strcpy(p, ee->prop.profile.name);
+   ipc->name = p - (long)st;
+   p += strlen(p) + 1;
+
+   EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+     {
+        ecore_ipc_client_send(client, MAJOR,
+                              OP_PROFILE_CHANGE_DONE,
+                              0, 0, 0, ipc, len);
+     }
+}
+
 int
 _ecore_evas_extn_socket_render(Ecore_Evas *ee)
 {
@@ -1702,6 +1796,11 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
         _ecore_evas_idle_timeout_update(ee);
         EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
            ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0, 0, NULL, 0);
+        if (extn->profile.done)
+          {
+             _ecore_evas_extn_socket_window_profile_change_done_send(ee);
+             extn->profile.done = EINA_FALSE;
+          }
      }
 
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
@@ -1995,6 +2094,27 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
               evas_event_default_flags_set(ee->evas, flags);
            }
          break;
+      case OP_PROFILE_CHANGE_REQUEST:
+         if (e->size >= (int)sizeof(Ipc_Data_Profile))
+           {
+              if ((e->data) && (e->size > 0) &&
+                  (((unsigned char *)e->data)[e->size - 1] == 0))
+                {
+                   Ipc_Data_Profile *ipc = e->data;
+                   STRGET(name);
+                   if (ipc->name)
+                     {
+                        _ecore_evas_window_profile_free(ee);
+                        ee->prop.profile.name = (char *)eina_stringshare_add(ipc->name);
+
+                        if (ee->func.fn_state_change)
+                          ee->func.fn_state_change(ee);
+
+                        extn->profile.done = EINA_TRUE;
+                     }
+                }
+           }
+         break;
       default:
          break;
      }
@@ -2031,6 +2151,43 @@ _ecore_evas_extn_socket_alpha_set(Ecore_Evas *ee, int alpha)
                                  ee->w, ee->h, ee->alpha,
                                  extn->file.shmfile->file,
                                  strlen(extn->file.shmfile->file) + 1);
+     }
+}
+
+static void
+_ecore_evas_extn_socket_profile_set(Ecore_Evas *ee, const char *profile)
+{
+   _ecore_evas_window_profile_free(ee);
+   ee->prop.profile.name = NULL;
+
+   if (profile)
+     {
+        ee->prop.profile.name = (char *)eina_stringshare_add(profile);
+
+        if (ee->func.fn_state_change)
+          ee->func.fn_state_change(ee);
+     }
+}
+
+static void
+_ecore_evas_extn_socket_available_profiles_set(Ecore_Evas *ee, const char **plist, int n)
+{
+   int i;
+   _ecore_evas_window_available_profiles_free(ee);
+   ee->prop.profile.available_list = NULL;
+
+   if ((plist) && (n >= 1))
+     {
+        ee->prop.profile.available_list = calloc(n, sizeof(char *));
+        if (ee->prop.profile.available_list)
+          {
+             for (i = 0; i < n; i++)
+                ee->prop.profile.available_list[i] = (char *)eina_stringshare_add(plist[i]);
+             ee->prop.profile.count = n;
+
+             if (ee->func.fn_state_change)
+               ee->func.fn_state_change(ee);
+          }
      }
 }
 
@@ -2082,7 +2239,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,
    _ecore_evas_extn_socket_alpha_set,
    NULL, //transparent
-   NULL, // profiles_set
+   _ecore_evas_extn_socket_available_profiles_set,
+   _ecore_evas_extn_socket_profile_set,
 
    NULL,
    NULL,
@@ -2123,6 +2281,7 @@ ecore_evas_extn_socket_new(int w, int h)
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->profile_supported = 1; /* to accept the profile change request from the client(plug) */
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;

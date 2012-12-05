@@ -662,6 +662,59 @@ EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on);
  */
 EAPI Eina_Bool   ecore_evas_maximized_get(const Ecore_Evas *ee);
 /**
+ * @brief Query if the underlying windowing system supports the window profile.
+ *
+ * @param ee The Ecore_Evas
+ * @return @c EINA_TRUE if the window profile is supported, @c EINA_FALSE otherwise.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ */
+EAPI Eina_Bool   ecore_evas_window_profile_supported_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the window profile
+ *
+ * @param ee The Ecore_Evas to set
+ * @param profile The string value of the window profile
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ */
+EAPI void        ecore_evas_window_profile_set(Ecore_Evas *ee, const char *profile);
+/**
+ * @brief Get the window profile
+ *
+ * @param ee The Ecore_Evas to get the window profile from.
+ * @return The string value of the window profile, or NULL if none exists
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ */
+EAPI const char *ecore_evas_window_profile_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the array of available window profiles
+ *
+ * @param ee The Ecore_Evas to set
+ * @param profiles The string array of available window profiels
+ * @param count The number of members in profiles
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ */
+EAPI void        ecore_evas_window_available_profiles_set(Ecore_Evas *ee, const char **profiles, const unsigned int count);
+/**
+ * @brief Get the array of available window profiles
+ *
+ * @param ee The Ecore_Evas to get available window profiles from.
+ * @param profiles Where to return the string array of available window profiles
+ * @param count Where to return the number of members in profiles
+ * @return EINA_TRUE if available window profiles exist, EINA_FALSE otherwise
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ */
+EAPI Eina_Bool   ecore_evas_window_available_profiles_get(Ecore_Evas *ee, char ***profiles, unsigned int *count);
+/**
  * @brief Move an Ecore_Evas.
  *
  * @param ee The Ecore_Evas to move
@@ -1886,6 +1939,13 @@ EAPI unsigned char ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Get
  * just deleting the list.
  */
 EAPI Eina_List   *ecore_evas_ecore_evas_list_get(void);
+/**
+ * @brief Get a list of all the sub ecore_evases.
+ *
+ * @param ee Ecore_Evas to get the list from.
+ * @return A list of sub ecore_evases, or @c NULL if there is no sub ecore_evases.
+ */
+EAPI Eina_List   *ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee);
 
 /* specific calls to an x11 environment ecore_evas */
 EAPI void           ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win);

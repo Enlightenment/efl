@@ -1859,6 +1859,77 @@ ecore_evas_maximized_get(const Ecore_Evas *ee)
    return ee->prop.maximized ? EINA_TRUE : EINA_FALSE;
 }
 
+EAPI Eina_Bool
+ecore_evas_window_profile_supported_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_window_profile_supported_get");
+        return EINA_FALSE;
+     }
+   return ee->profile_supported ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_window_profile_set(Ecore_Evas *ee, const char *profile)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_window_profile_set");
+        return;
+     }
+   IFC(ee, fn_profile_set) (ee, profile);
+   IFE;
+}
+
+EAPI const char *
+ecore_evas_window_profile_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_window_profile_get");
+        return NULL;
+     }
+   return ee->prop.profile.name;
+}
+
+EAPI void
+ecore_evas_window_available_profiles_set(Ecore_Evas *ee, const char **profiles, const unsigned int count)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_window_available_profiles_set");
+        return;
+     }
+   IFC(ee, fn_profiles_set) (ee, profiles, count);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_window_available_profiles_get(Ecore_Evas *ee, char ***profiles, unsigned int *count)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_window_available_profiles_get");
+        return EINA_FALSE;
+     }
+
+   if ((ee->prop.profile.available_list) &&
+       (ee->prop.profile.count >= 1))
+     {
+        if (profiles) *profiles = ee->prop.profile.available_list;
+        if (count) *count = ee->prop.profile.count;
+        return EINA_TRUE;
+     }
+   else
+     return EINA_FALSE;
+}
+
 EAPI void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
@@ -2433,6 +2504,10 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.name = NULL;
    if (ee->prop.clas) free(ee->prop.clas);
    ee->prop.clas = NULL;
+   _ecore_evas_window_profile_free(ee);
+   ee->prop.profile.name = NULL;
+   _ecore_evas_window_available_profiles_free(ee);
+   ee->prop.profile.available_list = NULL;
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    ee->prop.cursor.object = NULL;
    if (ee->evas) evas_free(ee->evas);
@@ -2662,6 +2737,31 @@ _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                flags, timestamp, NULL);
 }
 
+void
+_ecore_evas_window_profile_free(Ecore_Evas *ee)
+{
+   if (ee->prop.profile.name)
+     eina_stringshare_del(ee->prop.profile.name);
+}
+
+void
+_ecore_evas_window_available_profiles_free(Ecore_Evas *ee)
+{
+   if (ee->prop.profile.available_list)
+     {
+        int i;
+        for (i = 0; i < ee->prop.profile.count; i++)
+          {
+             if (ee->prop.profile.available_list[i])
+               {
+                  eina_stringshare_del(ee->prop.profile.available_list[i]);
+                  ee->prop.profile.available_list[i] = NULL;
+               }
+          }
+        free(ee->prop.profile.available_list);
+     }
+}
+
 EAPI Eina_List *
 ecore_evas_ecore_evas_list_get(void)
 {
@@ -2674,6 +2774,18 @@ ecore_evas_ecore_evas_list_get(void)
      }
 
    return l;
+}
+
+EAPI Eina_List *
+ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_sub_ecore_evas_list_get");
+        return NULL;
+     }
+   return ee->sub_ecore_evas;
 }
 
 EAPI void

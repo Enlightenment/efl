@@ -467,6 +467,22 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
      }
 }
 
+static void
+_ecore_evas_buffer_profile_set(Ecore_Evas *ee, const char *profile)
+{
+   _ecore_evas_window_profile_free(ee);
+   ee->prop.profile.name = NULL;
+
+   if (profile)
+     {
+        ee->prop.profile.name = (char *)eina_stringshare_add(profile);
+
+        /* just change ee's state.*/
+        if (ee->func.fn_state_change)
+          ee->func.fn_state_change(ee);
+     }
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -516,6 +532,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      _ecore_evas_buffer_alpha_set,
      NULL, //transparent
      NULL, // profiles_set
+     _ecore_evas_buffer_profile_set,
 
      NULL,
      NULL,
@@ -583,6 +600,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->profile_supported = 1;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -722,6 +740,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->profile_supported = 1;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;

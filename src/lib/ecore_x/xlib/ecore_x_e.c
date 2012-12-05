@@ -1138,7 +1138,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
 
 /*
  * @since 1.3
- * 
+ * @deprecated use ecore_x_e_window_available_profiles_set
  */
 EAPI void
 ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
@@ -1151,14 +1151,14 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
    if (!win)
      return;
 
-   if (!num_profiles)
-     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_PROFILE_LIST);
+   if ((!profiles) || (num_profiles <= 0))
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST);
    else
      {
         atoms = alloca(num_profiles * sizeof(Ecore_X_Atom));
         ecore_x_atoms_get(profiles, num_profiles, atoms);
         ecore_x_window_prop_property_set(win,
-                                         ECORE_X_ATOM_E_PROFILE_LIST,
+                                         ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST,
                                          XA_ATOM, 32, (void *)atoms,
                                          num_profiles);
      }
@@ -1166,6 +1166,7 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
 
 /*
  * @since 1.3
+ * @deprecated use ecore_x_e_window_available_profiles_get
  */
 EAPI Eina_Bool
 ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
@@ -1176,6 +1177,8 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
    Ecore_X_Atom *atoms;
    int num, i;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (ret_num)
      *ret_num = 0;
 
@@ -1185,9 +1188,8 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
    if (!win)
      return EINA_FALSE;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_property_get(win,
-                                         ECORE_X_ATOM_E_PROFILE_LIST,
+                                         ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST,
                                          XA_ATOM, 32, &data, &num))
      return EINA_FALSE;
 
@@ -1233,11 +1235,11 @@ ecore_x_e_window_profile_set(Ecore_X_Window win,
      return;
 
    if (!profile)
-     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_PROFILE);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_WINDOW_PROFILE);
    else
      {
         atom = ecore_x_atom_get(profile);
-        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_E_PROFILE,
+        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_E_WINDOW_PROFILE,
                                          XA_ATOM, 32, (void *)&atom, 1);
      }
 }
@@ -1254,7 +1256,7 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
    int num;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_E_PROFILE,
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_E_WINDOW_PROFILE,
                                          XA_ATOM, 32, &data, &num))
      return NULL;
 
@@ -1265,6 +1267,243 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
      profile = ecore_x_atom_name_get(atom[0]);
 
    return profile;
+}
+
+EAPI void
+ecore_x_e_window_profile_supported_set(Ecore_X_Window root,
+                                       Eina_Bool      enabled)
+{
+   Ecore_X_Window win;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   if (enabled)
+     {
+        win = ecore_x_window_new(root, 1, 2, 3, 4);
+        ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+                                    ECORE_X_ATOM_WINDOW, &win, 1);
+        ecore_x_window_prop_xid_set(root, ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+                                    ECORE_X_ATOM_WINDOW, &win, 1);
+     }
+   else
+     {
+        int ret;
+
+        ret =
+          ecore_x_window_prop_xid_get(root,
+                                      ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+                                      ECORE_X_ATOM_WINDOW,
+                                      &win, 1);
+        if ((ret == 1) && (win))
+          {
+             ecore_x_window_prop_property_del(
+               root,
+               ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED);
+             ecore_x_window_free(win);
+          }
+     }
+}
+
+EAPI Eina_Bool
+ecore_x_e_window_profile_supported_get(Ecore_X_Window root)
+{
+   Ecore_X_Window win, win2;
+   int ret;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   ret =
+     ecore_x_window_prop_xid_get(root,
+                                 ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+                                 ECORE_X_ATOM_WINDOW,
+                                 &win, 1);
+   if ((ret == 1) && (win))
+     {
+        ret =
+          ecore_x_window_prop_xid_get(win,
+                                      ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+                                      ECORE_X_ATOM_WINDOW,
+                                      &win2, 1);
+        if ((ret == 1) && (win2 == win))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI void
+ecore_x_e_window_available_profiles_set(Ecore_X_Window  win,
+                                        const char    **profiles,
+                                        unsigned int    count)
+{
+   Ecore_X_Atom *atoms;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win)
+     return;
+
+   if ((!profiles) || (count <= 0))
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST);
+   else
+     {
+        atoms = alloca(count * sizeof(Ecore_X_Atom));
+        ecore_x_atoms_get(profiles, count, atoms);
+        ecore_x_window_prop_property_set(win,
+                                         ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST,
+                                         XA_ATOM, 32, (void *)atoms,
+                                         count);
+     }
+}
+
+EAPI Eina_Bool
+ecore_x_e_window_available_profiles_get(Ecore_X_Window   win,
+                                        const char    ***profiles,
+                                        int             *count)
+{
+   unsigned char *data;
+   Ecore_X_Atom *atoms;
+   int num, i;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (count)
+     *count = 0;
+
+   if (profiles)
+     *profiles = NULL;
+
+   if (!win)
+     return EINA_FALSE;
+
+   if (!ecore_x_window_prop_property_get(win,
+                                         ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST,
+                                         XA_ATOM, 32, &data, &num))
+     return EINA_FALSE;
+
+   if (count)
+     *count = num;
+
+   if (profiles)
+     {
+        (*profiles) = calloc(num, sizeof(char *));
+        if (!(*profiles))
+          {
+             if (count)
+               *count = 0;
+
+             if (data)
+               free(data);
+
+             return EINA_FALSE;
+          }
+
+        atoms = (Ecore_X_Atom *)data;
+        for (i = 0; i < num; i++)
+           (*profiles)[i] = ecore_x_atom_name_get(atoms[i]);
+     }
+
+   if (data)
+     XFree(data);
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
+                                     Ecore_X_Window  win,
+                                     const char     *profile)
+{
+   XEvent xev;
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   if (!win)
+     return;
+
+   atom = ecore_x_atom_get(profile);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = atom;
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              &xev);
+}
+
+EAPI void
+ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
+                                             const char    *profile)
+{
+   XEvent xev;
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!win)
+     return;
+
+   atom = ecore_x_atom_get(profile);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = atom;
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+
+   XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+}
+
+
+EAPI void
+ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
+                                          Ecore_X_Window win,
+                                          const char    *profile)
+{
+   XEvent xev;
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   atom = ecore_x_atom_get(profile);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_DONE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = atom;
+   xev.xclient.data.l[2] = 0; // later
+   xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              &xev);
 }
 
 EAPI void

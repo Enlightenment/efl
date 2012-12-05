@@ -552,6 +552,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL, //transparent
      NULL, // profiles_set
+     NULL, // profile_set
 
      NULL,
      NULL,

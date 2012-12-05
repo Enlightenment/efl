@@ -133,6 +133,63 @@ _ecore_evas_x_sync_clear(Ecore_Evas *ee)
    ee->engine.x.sync_counter = 0;
 }
 
+static void
+_ecore_evas_x_window_profile_protocol_set(Ecore_Evas *ee)
+{
+   /* check and set profile protocol hint */
+   if (ecore_x_e_window_profile_supported_get(ee->engine.x.win_root))
+     {
+        unsigned int v = 1;
+        ecore_x_window_prop_card32_set
+          (ee->prop.window,
+          ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED,
+          &v, 1);
+
+        ee->profile_supported = 1;
+     }
+   else
+     ee->profile_supported = 0;
+}
+
+static void
+_ecore_evas_x_window_profile_set(Ecore_Evas *ee)
+{
+   if (((ee->should_be_visible) || (ee->visible)) &&
+       (ee->profile_supported))
+     {
+        if (ee->engine.x.profile.available)
+          {
+             ecore_x_e_window_available_profiles_set
+               (ee->prop.window,
+               (const char **)ee->prop.profile.available_list,
+               (const int)ee->prop.profile.count);
+
+             ee->engine.x.profile.available = 0;
+          }
+
+        if (ee->engine.x.profile.change)
+          {
+             if (ee->prop.profile.name)
+               {
+                  /* We need to keep the profile as an x property to let the WM.
+                   * Then the WM reads it when creating the border window.
+                   */
+                  Ecore_X_Atom a = ecore_x_atom_get(ee->prop.profile.name);
+                  ecore_x_window_prop_atom_set
+                    (ee->prop.window,
+                    ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE,
+                    &a, 1);
+
+                  ecore_x_e_window_profile_change_send
+                    (ee->engine.x.win_root,
+                    ee->prop.window,
+                    ee->prop.profile.name);
+               }
+             ee->engine.x.profile.change = 0;
+          }
+     }
+}
+
 # ifdef BUILD_ECORE_EVAS_OPENGL_X11
 static Ecore_X_Window
 _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int argb, const int *opt)
@@ -650,34 +707,6 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
              break;
           }
      }
-   else if (e->atom == ECORE_X_ATOM_E_PROFILE)
-     {
-        char *p = ecore_x_e_window_profile_get(e->win);
-        if ((p) && (ee->prop.profile))
-          {
-             if (strcmp(p, ee->prop.profile) != 0)
-               {
-                  free(ee->prop.profile);
-                  ee->prop.profile = strdup(p);
-                  state_change = 1;
-               }
-          }
-        else if ((!p) && (ee->prop.profile))
-          {
-             free(ee->prop.profile);
-             ee->prop.profile = NULL;
-             state_change = 1;
-          }
-        else if ((p) && (!ee->prop.profile))
-          {
-             ee->prop.profile = strdup(p);
-             state_change = 1;
-          }
-
-        if (p)
-          free(p);
-     }
-
    if (state_change)
      {
         if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
@@ -756,6 +785,29 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
         ee->engine.x.netwm_sync_val_lo = (unsigned int)e->data.l[2];
         ee->engine.x.netwm_sync_val_hi = (int)e->data.l[3];
         ee->engine.x.netwm_sync_set = 1;
+     }
+   else if ((e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST))
+     {
+        ee = ecore_event_window_match(e->win);
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+        if (ee->profile_supported)
+          {
+             char *p = ecore_x_atom_name_get(e->data.l[1]);
+             if (p)
+               {
+                  _ecore_evas_window_profile_free(ee);
+                  ee->prop.profile.name = (char *)eina_stringshare_add(p);
+
+                  /* window profiles of each sub_ecore_evas will be changed
+                   * in fn_state_change callback.
+                   */
+                  if (ee->func.fn_state_change)
+                    ee->func.fn_state_change(ee);
+
+                  ee->engine.x.profile.done = 1;
+                  free(p);
+               }
+          }
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1879,6 +1931,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
+        _ecore_evas_x_window_profile_protocol_set(ee);
         _ecore_evas_x_sync_set(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
@@ -1999,6 +2052,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
+        _ecore_evas_x_window_profile_protocol_set(ee);
         _ecore_evas_x_sync_set(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -2128,6 +2182,7 @@ _ecore_evas_x_show(Ecore_Evas *ee)
    if (ee->prop.avoid_damage)
      _ecore_evas_x_render(ee);
    _ecore_evas_x_sync_set(ee);
+   _ecore_evas_x_window_profile_set(ee);
    ecore_x_window_show(ee->prop.window);
    if (ee->prop.fullscreen)
      ecore_x_window_focus(ee->prop.window);
@@ -2436,10 +2491,36 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 }
 
 static void
+_ecore_evas_x_profile_set(Ecore_Evas *ee, const char *profile)
+{
+   _ecore_evas_window_profile_free(ee);
+   ee->prop.profile.name = NULL;
+
+   if (profile)
+     ee->prop.profile.name = (char *)eina_stringshare_add(profile);
+   ee->engine.x.profile.change = 1;
+   _ecore_evas_x_window_profile_set(ee);
+}
+
+static void
 _ecore_evas_x_profiles_set(Ecore_Evas *ee, const char **plist, int n)
 {
-   /* Ecore_Evas's profile will be updated when WM sets the E_PROFILE. */
-   ecore_x_e_window_profile_list_set(ee->prop.window, plist, n);
+   int i;
+   _ecore_evas_window_available_profiles_free(ee);
+   ee->prop.profile.available_list = NULL;
+
+   if ((plist) && (n >= 1))
+     {
+        ee->prop.profile.available_list = calloc(n, sizeof(char *));
+        if (ee->prop.profile.available_list)
+          {
+             for (i = 0; i < n; i++)
+               ee->prop.profile.available_list[i] = (char *)eina_stringshare_add(plist[i]);
+             ee->prop.profile.count = n;
+          }
+     }
+   ee->engine.x.profile.available = 1;
+   _ecore_evas_x_window_profile_set(ee);
 }
 
 static void
@@ -2648,6 +2729,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_alpha_set,
      _ecore_evas_x_transparent_set,
      _ecore_evas_x_profiles_set,
+     _ecore_evas_x_profile_set,
    
      _ecore_evas_x_window_group_set,
      _ecore_evas_x_aspect_set,
@@ -2716,6 +2798,12 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
                                    ee->engine.x.netwm_sync_val_hi,
                                    ee->engine.x.netwm_sync_val_lo);
         ee->engine.x.netwm_sync_set = 0;
+     }
+   if (ee->engine.x.profile.done)
+     {
+        ecore_x_e_window_profile_change_done_send
+          (ee->engine.x.win_root, ee->prop.window,ee->prop.profile.name);
+        ee->engine.x.profile.done = 0;
      }
 }
 #endif
@@ -2898,6 +2986,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    _ecore_evas_x_group_leader_set(ee);
    ecore_x_window_defaults_set(ee->prop.window);
    _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
@@ -3147,6 +3236,7 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
    _ecore_evas_x_group_leader_set(ee);
    ecore_x_window_defaults_set(ee->prop.window);
    _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;

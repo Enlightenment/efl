@@ -1682,10 +1682,122 @@ EAPI void                            ecore_x_e_comp_dump_send(Ecore_X_Window win
 EAPI void                            ecore_x_e_comp_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pixmap);
 EAPI Ecore_X_Pixmap                  ecore_x_e_comp_pixmap_get(Ecore_X_Window win);
 
+/**
+ * @brief Get the window profile
+ *
+ * @param win The client x window
+ * @return The string value of the window profile, or NULL if none exists
+ */
 EAPI char                            *ecore_x_e_window_profile_get(Ecore_X_Window win);
+/**
+ * @brief Set the window profile
+ *
+ * @param win The client x window
+ * @param profile The string value of the window profile
+ */
 EAPI void                             ecore_x_e_window_profile_set(Ecore_X_Window win, const char *profile);
+/**
+ * @brief Set the array of window profiles
+ *
+ * @param win The client x window
+ * @param profiles The string array of window profiles
+ * @param num_profiles The number of window profiles
+ *
+ * @deprecated use ecore_x_e_window_available_profiles_set
+ */
 EAPI void                             ecore_x_e_window_profile_list_set(Ecore_X_Window  win, const char **profiles, unsigned int num_profiles);
+/**
+ * @brief Get the array of window profiles
+ *
+ * @param win The client x window
+ * @param profiles Where to return the string array of window profiles
+ * @param ret_num Where to return the number of window profiles
+ * @return EINA_TRUE if window profiles exist, EINA_FALSE otherwise
+ *
+ * @deprecated use ecore_x_e_window_available_profiles_get
+ */
 EAPI Eina_Bool                        ecore_x_e_window_profile_list_get(Ecore_X_Window win, const char ***profiles, int *ret_num);
+/**
+ * @brief Set the status for the window profile support
+ *
+ * @param root The root window
+ * @param enabled The enabled value for the window profile support
+ *
+ * @since 1.8
+ */
+EAPI void                             ecore_x_e_window_profile_supported_set(Ecore_X_Window root, Eina_Bool enabled);
+/**
+ * @brief Query if the window profile is supported
+ *
+ * @param root The root window
+ * @return EINA_TRUE if it is supported, EINA_FALSE otherwise
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool                        ecore_x_e_window_profile_supported_get(Ecore_X_Window root);
+/**
+ * @brief Set the array of available window profiles
+ *
+ * @param win The client x window
+ * @param profiles The string array of available window profiles
+ * @param count The number of available window profiles
+ *
+ * @since 1.8
+ */
+EAPI void                             ecore_x_e_window_available_profiles_set(Ecore_X_Window win, const char **profiles, unsigned int count);
+/**
+ * @brief Get the array of avaialbe window profiles
+ *
+ * @param win The client x window
+ * @param profiles Where to return the string array of available window profiles
+ * @param count Where to return the number of members in profiles
+ * @return EINA_TRUE if available window profiles exist, EINA_FALSE otherwise
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool                        ecore_x_e_window_available_profiles_get(Ecore_X_Window win, const char ***profiles, int *count);
+/**
+ * @brief Send a profile change event to the window manager
+ *
+ * This function sends a request to the window manager to change the profile.
+ * If honored by the window manager, the client will receive a profile change
+ * request event back. If the client has replied, the window manager will move
+ * the client window on the virtual desktop associated with changed profile.
+ *
+ * @param root The root x window
+ * @param win The client x window
+ * @param profile The string value of the window profile
+ *
+ * @since 1.8
+ */
+EAPI void                             ecore_x_e_window_profile_change_send(Ecore_X_Window root, Ecore_X_Window win, const char *profile);
+/**
+ * @brief Send a profile change request event to the client
+ *
+ * This function sends a request to the client to change the profile.
+ * If the client has replied, the window manager will move the client window
+ * on the virtual desktop associated with changed profile.
+ *
+ * @param win The client x window
+ * @param profile The string value of the window profile
+ *
+ * @since 1.8
+ */
+EAPI void                             ecore_x_e_window_profile_change_request_send(Ecore_X_Window win, const char *profile);
+/**
+ * @brief Send a profile change done event to the window manager
+ *
+ * This function sends a profile change done event to the window manager.
+ * Upon receiving, the window manager will move the client window
+ * on the virtual desktop associated with changed profile.
+ *
+ * @param root The root x window
+ * @param win The client x window
+ * @param profile The string value of the window profile
+ *
+ * @since 1.8
+ */
+EAPI void                             ecore_x_e_window_profile_change_done_send(Ecore_X_Window root, Ecore_X_Window win, const char *profile);
 
 EAPI Ecore_X_Sync_Alarm              ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI Eina_Bool                       ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);

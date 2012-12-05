@@ -1,3 +1,20 @@
+2012-12-04  Gwanglim Lee
+
+        * Add window profile support:
+        * Add ecore_evas and ecore_x APIs to support the window profile.
+        * Implement window profile for ecore_evas_x, ecore_evas_extn_socket,
+          ecore_evas_extn_plug and ecore_evas_buffer.
+        * Deprecate ECORE_X_ATOM_E_PROFILE and ECORE_X_ATOM_E_PROFILE_LIST.
+        * Deprecate ecore_x_e_window_profile_list_set. Use
+          ecore_x_e_window_available_profiles_set instead.
+        * Deprecate ecore_x_e_window_profile_list_get. Use
+          ecore_x_e_window_available_profiles_get instead.
+        * Add ecore_evas_sub_ecore_evas_list_get API.
+
+2012-12-05  Cedric Bail
+
+	* Fix build of Ecore_Evas_Extn on Solaris 11.
+
 2012-11-30 Gustavo Sverzut Barbieri (k-s)
 
 	* Fix evas_object_box.c to properly reset size_hint_min to zero if
@@ -108,8 +125,4 @@
 2012-11-20  ChunEon Park (Hermet)
 
         * Fix the evas memory leak - eina_rectangles allocated internally.
-
-2012-12-05  Cedric Bail
-
-	* Fix build of Ecore_Evas_Extn on Solaris 11.
 

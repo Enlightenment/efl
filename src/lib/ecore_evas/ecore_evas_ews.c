@@ -684,6 +684,7 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      _ecore_evas_ews_alpha_set,
      _ecore_evas_ews_transparent_set,
      NULL, // profiles_set
+     NULL, // profile_set
    
      NULL,
      NULL,

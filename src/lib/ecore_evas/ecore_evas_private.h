@@ -163,7 +163,8 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
    void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
-   void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int num_profiles);
+   void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int count);
+   void (*fn_profile_set) (Ecore_Evas *ee, const char *profile);
 
    void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
    void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
@@ -218,6 +219,11 @@ struct _Ecore_Evas_Engine
 	   unsigned char above : 1;
 	   unsigned char below : 1;
       } state;
+      struct {
+         unsigned char available : 1; // need to setup available profiles in a window
+         unsigned char change : 1; // need to send change event to the WM
+         unsigned char done : 1; // need to send change done event to the WM
+      } profile;
       Ecore_X_Window win_shaped_input;
    } x;
 #endif
@@ -310,7 +316,11 @@ struct _Ecore_Evas
       char           *title;
       char           *name;
       char           *clas;
-      char           *profile;
+      struct {
+         char        *name;
+         char       **available_list;
+         int          count;
+      } profile;
       struct {
 	 int          w, h;
       } min,
@@ -378,6 +388,7 @@ struct _Ecore_Evas
    unsigned char semi_sync  : 1;
    unsigned char deleted : 1;
    int           gl_sync_draw_done; // added by gl77.lee
+   unsigned char profile_supported : 1;
 };
 
 void _ecore_evas_ref(Ecore_Evas *ee);
@@ -486,5 +497,19 @@ extern Eina_Bool _ecore_evas_app_comp_sync;
 
 void _ecore_evas_extn_init(void);
 void _ecore_evas_extn_shutdown(void);
+
+/**
+ * @brief Free the string of the window profile.
+ *
+ * This is a helper function to free window profile.
+ */
+void _ecore_evas_window_profile_free(Ecore_Evas *ee);
+
+/**
+ * @brief Free the string array of available window profiles.
+ *
+ * This is a helper function to free available window profiles.
+ */
+void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
 
 #endif

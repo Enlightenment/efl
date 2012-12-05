@@ -122,6 +122,7 @@ sudo make install
    @author Haifeng Deng <haifeng.deng@samsung.com>
    @author Jérémy Zurcher <jeremy@asynk.ch>
    @author Vikram Narayanan <vikram186@gmail.com>
+   @author Gwanglim Lee <gl77.lee@samsung.com> <gwanglim@gmail.com>
 
    Please contact <enlightenment-devel@lists.sourceforge.net> to get in
    contact with the developers and maintainers.

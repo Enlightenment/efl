@@ -12,6 +12,40 @@ Additions:
     * Add eina_thread API
     * Add eina_list_last_data_get
     * Add Cserve2 scalecache support
+    * ecore_x:
+     - Add window profile support.
+       ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED
+       ECORE_X_ATOM_E_WINDOW_PROFILE
+       ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE
+       ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST
+       ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST
+       ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_DONE
+       ecore_x_e_window_profile_supported_set()
+       ecore_x_e_window_profile_supported_get()
+       ecore_x_e_window_available_profiles_set()
+       ecore_x_e_window_available_profiles_get()
+       ecore_x_e_window_profile_change_send()
+       ecore_x_e_window_profile_change_request_send()
+       ecore_x_e_window_profile_change_done_send()
+    * ecore_evas:
+     - ecore_evas_window_profile_supported_get()
+     - ecore_evas_window_profile_set()
+     - ecore_evas_window_profile_get()
+     - ecore_evas_window_available_profiles_set()
+     - ecore_evas_window_available_profiles_get()
+     - ecore_evas_sub_ecore_evas_list_get()
+    * ecore_evas_extn:
+     - Add window profile support.
+    * ecore_evas_buffer:
+     - Add window profile support.
+
+Deprecations:
+    * ecore_x:
+     - Old profile stuffs.
+       ECORE_X_ATOM_E_PROFILE
+       ECORE_X_ATOM_E_PROFILE_LIST
+       ecore_x_e_window_profile_list_set()
+       ecore_x_e_window_profile_list_get()
 
 Improvements:
     * Single EFL tree covering all EFL library components.
