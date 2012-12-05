@@ -752,6 +752,7 @@
 
 	* Add elm_app_name_set/get(): Formal application name string.
 	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
+	* Add elm_sys_notify to expose System Notifications (D-Bus atm).
 
 2012-12-04  Gwanglim Lee
 

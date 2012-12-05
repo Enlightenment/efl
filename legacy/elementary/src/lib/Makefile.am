@@ -193,6 +193,7 @@ elm_slider.h \
 elm_slideshow.h \
 elm_spinner.h \
 elm_store.h \
+elm_sys_notify.h \
 elm_table.h \
 elm_theme.h \
 elm_thumb.h \
@@ -279,6 +280,7 @@ elm_slider.c \
 elm_slideshow.c \
 elm_spinner.c \
 elm_store.c \
+elm_sys_notify.c \
 elm_table.c \
 elm_theme.c \
 elm_thumb.c \

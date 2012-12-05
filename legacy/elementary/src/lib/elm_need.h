@@ -12,6 +12,20 @@
 EAPI Eina_Bool elm_need_efreet(void);
 
 /**
+ * Request that your elementary application needs Elm_Sys_Notify
+ *
+ * This initializes the Elm_Sys_Notify when called and if support exists
+ * it returns EINA_TRUE, otherwise returns EINA_FALSE. This must be called
+ * before any elm_sys_notify calls.
+ *
+ * @return EINA_TRUE if support exists and initialization succeeded.
+ *
+ * @ingroup Elm_Sys_Notify
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_need_sys_notify(void);
+
+/**
  * Request that your elementary application needs e_dbus
  *
  * This initializes the E_dbus library when called and if support exists

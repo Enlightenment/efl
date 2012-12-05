@@ -177,6 +177,7 @@ void test_ctxpopup(void *data, Evas_Object *obj, void *event_info);
 void test_bubble(void *data, Evas_Object *obj, void *event_info);
 void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
+void test_sys_notify(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
 void test_win_socket(void *data, Evas_Object *obj, void *event_info);
 void test_win_plug(void *data, Evas_Object *obj, void *event_info);
@@ -722,6 +723,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Helpers", "Store", test_store);
 //   ADD_TEST(NULL, "Helpers", "Factory", test_factory);
+
+   //------------------------------//
+   ADD_TEST(NULL, "System", "Notification", test_sys_notify);
 
    //------------------------------//
    ADD_TEST(NULL, "Micellaneous", "Copy And Paste", test_cnp);

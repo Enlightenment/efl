@@ -623,6 +623,7 @@ elm_quicklaunch_shutdown(void)
    _elm_exit_handler = NULL;
 
    _elm_theme_shutdown();
+   _elm_unneed_sys_notify();
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_edbus();

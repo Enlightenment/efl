@@ -1,0 +1,69 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+#include <Elementary.h>
+#ifndef ELM_LIB_QUICKLAUNCH
+
+#define WIDTH  320
+#define HEIGHT 160
+
+static Evas_Object *s = NULL;
+static Evas_Object *b = NULL;
+
+static void
+_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_sys_notify_simple_send("", elm_entry_entry_get(s), elm_entry_entry_get(b));
+}
+
+void
+test_sys_notify(void *data __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bx, *it;
+
+   elm_need_sys_notify();
+
+   win = elm_win_add(NULL, "Sys Notify", ELM_WIN_BASIC);
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   elm_win_title_set(win, "System Notification");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   it = elm_bg_add(win);
+   elm_win_resize_object_add(win, it);
+   evas_object_size_hint_min_set(it, WIDTH, HEIGHT);
+   evas_object_size_hint_max_set(it, WIDTH, HEIGHT);
+   evas_object_show(it);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   s = elm_entry_add(win);
+   elm_entry_single_line_set(s, EINA_TRUE);
+   elm_entry_scrollable_set(s, EINA_TRUE);
+   elm_entry_entry_set(s, "Summary");
+   evas_object_size_hint_align_set(s, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, s);
+   evas_object_show(s);
+
+   b = elm_entry_add(win);
+   elm_entry_single_line_set(b, EINA_TRUE);
+   elm_entry_scrollable_set(b, EINA_TRUE);
+   elm_entry_entry_set(b, "Body long description.");
+   evas_object_size_hint_align_set(b, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, b);
+   evas_object_show(b);
+
+   it = elm_button_add(win);
+   elm_object_text_set(it, "Send Notification");
+   evas_object_smart_callback_add(it, "clicked", _bt_clicked, NULL);
+   elm_box_pack_end(bx, it);
+   evas_object_show(it);
+
+   evas_object_resize(win, WIDTH, HEIGHT);
+   evas_object_show(win);
+}
+#endif
