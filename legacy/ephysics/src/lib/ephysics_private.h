@@ -5,11 +5,17 @@
 # include <Evil.h>
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include <BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h>
 #include <BulletSoftBody/btDefaultSoftBodySolver.h>
 #include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
 #include <BulletSoftBody/btSoftBodyHelpers.h>
 #include <btBulletDynamicsCommon.h>
+
+#pragma GCC diagnostic pop
+
 #include "EPhysics.h"
 
 #ifdef EPHYSICS_LOG_COLOR
