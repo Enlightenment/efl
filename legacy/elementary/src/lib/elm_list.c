@@ -338,7 +338,7 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
             && (!sd->multi) && (sd->selected))
      {
         it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-	if (it) evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
+        if (it) evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
      }
    else if (!strcmp(ev->keyname, "Escape"))
      {
