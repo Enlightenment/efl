@@ -87,17 +87,6 @@ _elm_widget_mirrored_reload(Evas_Object *obj)
 }
 
 static void
-_elm_widget_theme_func(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   _elm_widget_mirrored_reload(obj);
-
-   elm_widget_disabled_set(obj, elm_widget_disabled_get(obj));
-
-   if (ret) *ret = EINA_TRUE;
-}
-
-static void
 _elm_widget_on_focus_region(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    va_arg(*list, Evas_Coord *);
@@ -170,182 +159,6 @@ _on_sub_obj_del(void *data,
         if (!elm_widget_sub_object_del(sd->obj, obj))
           ERR("failed to remove sub object %p from %p\n", obj, sd->obj);
      }
-}
-
-static void
-_elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   double scale, pscale = elm_widget_scale_get(sobj);
-   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
-   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
-
-   Elm_Widget_Smart_Data *sd = _pd;
-   EINA_SAFETY_ON_TRUE_RETURN(obj == sobj);
-
-   if (sobj == sd->parent_obj)
-     {
-        /* in this case, sobj must be an elm widget, or something
-         * very wrong is happening */
-        if (!_elm_widget_is(sobj)) return;
-
-        if (!elm_widget_sub_object_del(sobj, obj)) return;
-        WRN("You passed a parent object of obj = %p as the sub object = %p!",
-            obj, sobj);
-     }
-
-   if (_elm_widget_is(sobj))
-     {
-        ELM_WIDGET_DATA_GET(sobj, sdc);
-
-        if (sdc->parent_obj == obj) goto end;;
-        if (sdc->parent_obj)
-          {
-             if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
-               return;
-          }
-        sdc->parent_obj = obj;
-        _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
-
-        /* update child focusable-ness on self and parents, now that a
-         * focusable child got in */
-        if (!sd->child_can_focus && (_is_focusable(sobj)))
-          {
-             Elm_Widget_Smart_Data *sdp = sd;
-
-             sdp->child_can_focus = EINA_TRUE;
-             while (sdp->parent_obj)
-               {
-                  ELM_WIDGET_DATA_GET_NO_INST(sdp->parent_obj, sdp);
-
-                  if (sdp->child_can_focus) break;
-
-                  sdp->child_can_focus = EINA_TRUE;
-               }
-          }
-     }
-   else
-     {
-        void *data = evas_object_data_get(sobj, "elm-parent");
-
-        if (data)
-          {
-             if (data == obj) goto end;
-             if (!elm_widget_sub_object_del(data, sobj)) return;
-          }
-     }
-
-   sd->subobjs = eina_list_append(sd->subobjs, sobj);
-   evas_object_data_set(sobj, "elm-parent", obj);
-   evas_object_event_callback_add
-     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, sd);
-   if (_elm_widget_is(sobj))
-     {
-        evas_object_event_callback_add
-          (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, sd);
-
-        scale = elm_widget_scale_get(sobj);
-        th = elm_widget_theme_get(sobj);
-        mirrored = elm_widget_mirrored_get(sobj);
-
-        if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
-          elm_widget_theme(sobj);
-
-        if (elm_widget_focus_get(sobj)) _parents_focus(obj);
-     }
-
-end:
-   if (ret) *ret = EINA_TRUE;
-}
-
-static void
-_elm_widget_sub_object_del(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Evas_Object *sobj_parent;
-
-   if (!sobj) return;
-
-   Elm_Widget_Smart_Data *sd = _pd;
-   EINA_SAFETY_ON_TRUE_RETURN(obj == sobj);
-
-   sobj_parent = evas_object_data_del(sobj, "elm-parent");
-   if (sobj_parent != obj)
-     {
-        static int abort_on_warn = -1;
-
-        ERR("removing sub object %p (%s) from parent %p (%s), "
-            "but elm-parent is different %p (%s)!",
-            sobj, elm_widget_type_get(sobj), obj, elm_widget_type_get(obj),
-            sobj_parent, elm_widget_type_get(sobj_parent));
-
-        if (EINA_UNLIKELY(abort_on_warn == -1))
-          {
-             if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
-             else abort_on_warn = 0;
-          }
-        if (abort_on_warn == 1) abort();
-
-        return;
-     }
-
-   if (_elm_widget_is(sobj))
-     {
-        if (elm_widget_focus_get(sobj))
-          {
-             elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
-             elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
-          }
-        if ((sd->child_can_focus) && (_is_focusable(sobj)))
-          {
-             Evas_Object *parent = obj;
-
-             /* update child focusable-ness on self and parents, now that a
-              * focusable child is gone */
-             while (parent)
-               {
-                  const Eina_List *l;
-                  Evas_Object *subobj;
-
-                  ELM_WIDGET_DATA_GET(parent, sdp);
-
-                  sdp->child_can_focus = EINA_FALSE;
-                  EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
-                    {
-                       if ((subobj != sobj) && (_is_focusable(subobj)))
-                         {
-                            sdp->child_can_focus = EINA_TRUE;
-                            break;
-                         }
-                    }
-
-                  /* break again, child_can_focus went back to
-                   * original value */
-                  if (sdp->child_can_focus) break;
-                  parent = sdp->parent_obj;
-               }
-          }
-
-        ELM_WIDGET_DATA_GET(sobj, sdc);
-        sdc->parent_obj = NULL;
-     }
-
-   if (sd->resize_obj == sobj) sd->resize_obj = NULL;
-
-   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-
-   evas_object_event_callback_del_full
-     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, sd);
-   if (_elm_widget_is(sobj))
-     evas_object_event_callback_del_full
-       (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, sd);
-
-   if (ret) *ret = EINA_TRUE;
 }
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -892,6 +705,12 @@ elm_widget_parent_set(Evas_Object *obj,
    eo_do(obj, elm_wdg_parent_set(parent));
 }
 
+static void
+_elm_widget_parent_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   va_arg(*list, Evas_Object *);
+}
+
 EAPI Eina_Bool
 elm_widget_api_check(int ver)
 {
@@ -918,6 +737,12 @@ elm_widget_access(Evas_Object *obj,
    eo_do(obj, elm_wdg_access(is_access));
 
    return ret;
+}
+
+static void
+_elm_widget_access(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   va_arg(*list, int);
 }
 
 EAPI Eina_Bool
@@ -990,6 +815,17 @@ elm_widget_theme_specific(Evas_Object *obj,
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
    eo_do(obj, elm_wdg_theme(NULL));
+}
+
+static void
+_elm_widget_theme_func(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   _elm_widget_mirrored_reload(obj);
+
+   elm_widget_disabled_set(obj, elm_widget_disabled_get(obj));
+
+   if (ret) *ret = EINA_TRUE;
 }
 
 /**
@@ -1136,6 +972,94 @@ elm_widget_sub_object_add(Evas_Object *obj,
    eo_do(obj, elm_wdg_sub_object_add(sobj, &ret));
    return ret;
 }
+static void
+_elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *sobj = va_arg(*list, Evas_Object *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   double scale, pscale = elm_widget_scale_get(sobj);
+   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
+   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
+
+   Elm_Widget_Smart_Data *sd = _pd;
+   EINA_SAFETY_ON_TRUE_RETURN(obj == sobj);
+
+   if (sobj == sd->parent_obj)
+     {
+        /* in this case, sobj must be an elm widget, or something
+         * very wrong is happening */
+        if (!_elm_widget_is(sobj)) return;
+
+        if (!elm_widget_sub_object_del(sobj, obj)) return;
+        WRN("You passed a parent object of obj = %p as the sub object = %p!",
+            obj, sobj);
+     }
+
+   if (_elm_widget_is(sobj))
+     {
+        ELM_WIDGET_DATA_GET(sobj, sdc);
+
+        if (sdc->parent_obj == obj) goto end;;
+        if (sdc->parent_obj)
+          {
+             if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
+               return;
+          }
+        sdc->parent_obj = obj;
+        _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
+
+        /* update child focusable-ness on self and parents, now that a
+         * focusable child got in */
+        if (!sd->child_can_focus && (_is_focusable(sobj)))
+          {
+             Elm_Widget_Smart_Data *sdp = sd;
+
+             sdp->child_can_focus = EINA_TRUE;
+             while (sdp->parent_obj)
+               {
+                  ELM_WIDGET_DATA_GET_NO_INST(sdp->parent_obj, sdp);
+
+                  if (sdp->child_can_focus) break;
+
+                  sdp->child_can_focus = EINA_TRUE;
+               }
+          }
+     }
+   else
+     {
+        void *data = evas_object_data_get(sobj, "elm-parent");
+
+        if (data)
+          {
+             if (data == obj) goto end;
+             if (!elm_widget_sub_object_del(data, sobj)) return;
+          }
+     }
+
+   sd->subobjs = eina_list_append(sd->subobjs, sobj);
+   evas_object_data_set(sobj, "elm-parent", obj);
+   evas_object_event_callback_add
+     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, sd);
+   if (_elm_widget_is(sobj))
+     {
+        evas_object_event_callback_add
+          (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, sd);
+
+        scale = elm_widget_scale_get(sobj);
+        th = elm_widget_theme_get(sobj);
+        mirrored = elm_widget_mirrored_get(sobj);
+
+        if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
+          elm_widget_theme(sobj);
+
+        if (elm_widget_focus_get(sobj)) _parents_focus(obj);
+     }
+
+end:
+   if (ret) *ret = EINA_TRUE;
+}
 
 EAPI Eina_Bool
 elm_widget_sub_object_del(Evas_Object *obj,
@@ -1149,6 +1073,93 @@ elm_widget_sub_object_del(Evas_Object *obj,
    Eina_Bool ret = EINA_FALSE;
    eo_do(obj, elm_wdg_sub_object_del(sobj, &ret));
    return ret;
+}
+
+static void
+_elm_widget_sub_object_del(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *sobj = va_arg(*list, Evas_Object *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Evas_Object *sobj_parent;
+
+   if (!sobj) return;
+
+   Elm_Widget_Smart_Data *sd = _pd;
+   EINA_SAFETY_ON_TRUE_RETURN(obj == sobj);
+
+   sobj_parent = evas_object_data_del(sobj, "elm-parent");
+   if (sobj_parent != obj)
+     {
+        static int abort_on_warn = -1;
+
+        ERR("removing sub object %p (%s) from parent %p (%s), "
+            "but elm-parent is different %p (%s)!",
+            sobj, elm_widget_type_get(sobj), obj, elm_widget_type_get(obj),
+            sobj_parent, elm_widget_type_get(sobj_parent));
+
+        if (EINA_UNLIKELY(abort_on_warn == -1))
+          {
+             if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+             else abort_on_warn = 0;
+          }
+        if (abort_on_warn == 1) abort();
+
+        return;
+     }
+
+   if (_elm_widget_is(sobj))
+     {
+        if (elm_widget_focus_get(sobj))
+          {
+             elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
+             elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
+          }
+        if ((sd->child_can_focus) && (_is_focusable(sobj)))
+          {
+             Evas_Object *parent = obj;
+
+             /* update child focusable-ness on self and parents, now that a
+              * focusable child is gone */
+             while (parent)
+               {
+                  const Eina_List *l;
+                  Evas_Object *subobj;
+
+                  ELM_WIDGET_DATA_GET(parent, sdp);
+
+                  sdp->child_can_focus = EINA_FALSE;
+                  EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
+                    {
+                       if ((subobj != sobj) && (_is_focusable(subobj)))
+                         {
+                            sdp->child_can_focus = EINA_TRUE;
+                            break;
+                         }
+                    }
+
+                  /* break again, child_can_focus went back to
+                   * original value */
+                  if (sdp->child_can_focus) break;
+                  parent = sdp->parent_obj;
+               }
+          }
+
+        ELM_WIDGET_DATA_GET(sobj, sdc);
+        sdc->parent_obj = NULL;
+     }
+
+   if (sd->resize_obj == sobj) sd->resize_obj = NULL;
+
+   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+
+   evas_object_event_callback_del_full
+     (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, sd);
+   if (_elm_widget_is(sobj))
+     evas_object_event_callback_del_full
+       (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, sd);
+
+   if (ret) *ret = EINA_TRUE;
 }
 
 /* a resize object is a sub object with some more callbacks on it and
@@ -3657,6 +3668,13 @@ elm_widget_translate(Evas_Object *obj)
 #endif
 }
 
+static void
+_elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+}
+
 EAPI void
 elm_widget_content_part_set(Evas_Object *obj,
                             const char *part,
@@ -5199,13 +5217,6 @@ _elm_widget_disable(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-}
-
-static void
 _elm_widget_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    va_arg(*list, Evas_Object *);
@@ -5231,18 +5242,6 @@ _elm_widget_focus_direction_manager_is_unimplemented(Eo *obj EINA_UNUSED, void *
    *ret = EINA_FALSE;
    WRN("The %s widget does not implement the \"focus_direction/focus_direction_manager_is\" functions.",
        eo_class_name_get(eo_class_get(obj)));
-}
-
-static void
-_elm_widget_access(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   va_arg(*list, int);
-}
-
-static void
-_elm_widget_parent_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   va_arg(*list, Evas_Object *);
 }
 
 static void
