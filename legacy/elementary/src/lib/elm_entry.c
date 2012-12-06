@@ -119,47 +119,33 @@ ok: // ok - return api
 }
 
 static char *
-_buf_append(char *buf,
-            const char *str,
-            int *len,
-            int *alloc)
-{
-   int len2 = strlen(str);
-
-   if ((*len + len2) >= *alloc)
-     {
-        char *buf2 = realloc(buf, *alloc + len2 + 512);
-        if (!buf2) return NULL;
-        buf = buf2;
-        *alloc += (512 + len2);
-     }
-
-   strcpy(buf + *len, str);
-   *len += len2;
-
-   return buf;
-}
-
-static char *
 _file_load(const char *file)
 {
-   FILE *f;
-   size_t size;
-   int alloc = 0, len = 0;
-   char *text = NULL, buf[16384 + 1];
+   Eina_File *f;
+   char *text = NULL;
+   void *tmp = NULL;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f) return NULL;
-   while ((size = fread(buf, 1, sizeof(buf) - 1, f)))
-     {
-        char *tmp_text;
 
-        buf[size] = 0;
-        tmp_text = _buf_append(text, buf, &len, &alloc);
-        if (!tmp_text) break;
-        text = tmp_text;
+   tmp = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+   if (!tmp) goto on_error;
+
+   text = malloc(eina_file_size_get(f) + 1);
+   if (!text) goto on_error;
+
+   memcpy(text, tmp, eina_file_size_get(f));
+   text[eina_file_size_get(f)] = 0;
+
+   if (eina_file_map_faulted(f))
+     {
+        free(text);
+        text = NULL;
      }
-   fclose(f);
+
+ on_error:
+   if (tmp) eina_file_map_free(tmp);
+   eina_file_close(f);
 
    return text;
 }
