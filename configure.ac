@@ -851,7 +851,7 @@ else
 fi
 
 AC_DEFINE_IF([EINA_DEBUG_MALLOC],
-   [test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"],
+   [test "x${ac_cv_func_malloc_usable_size}" = "xyes" -a "x${want_debug_malloc}" = "xyes"],
    [1], [Turn on debugging overhead in mempool])
 
 if ! test "x${requirements_pc_deps_eina}" = "x" ; then
@@ -916,7 +916,7 @@ EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr iconv shm_open setxattr])
 
 enable_log="no"
-if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then
+if test "x${efl_func_fnmatch}" = "xyes" -a "x${want_log}" = "xyes" ; then
    enable_log="yes"
 fi
 
@@ -980,7 +980,7 @@ fi
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
 
 # TODO: better way to force those instead of is secondary check
-if test "x${efl_lib_zlib}" != "xyes" || test "x${efl_lib_libjpeg}" != "xyes" ; then
+if test "x${efl_lib_zlib}" != "xyes" -o "x${efl_lib_libjpeg}" != "xyes" ; then
    AC_MSG_ERROR([Required EET libraries were not found.])
 fi
 
@@ -1490,7 +1490,7 @@ fi
 # harfbuzz support
 have_harfbuzz="no"
 have_harfbuzz_ft="no"
-if test "x${want_harfbuzz}" = "xyes" || test "x${want_harfbuzz}" = "xauto" ; then
+if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
    PKG_CHECK_EXISTS([harfbuzz >= 0.9.0],
       [
        have_harfbuzz="yes"
@@ -1498,7 +1498,7 @@ if test "x${want_harfbuzz}" = "xyes" || test "x${want_harfbuzz}" = "xauto" ; the
        requirements_pc_deps_evas="harfbuzz >= 0.9.0 ${requirements_pc_deps_evas}"
       ],
       [
-       if test "x$want_harfbuzz" = "xyes" && test "x$use_strict" = "xyes" ; then
+       if test "x$want_harfbuzz" = "xyes" -a "x$use_strict" = "xyes" ; then
           AC_MSG_ERROR([Harfbuzz not found (strict dependencies checking)])
        fi
       ])
@@ -1510,7 +1510,7 @@ fi
 
 # Pixman
 have_pixman="no"
-if test "x${want_pixman}" = "xyes" || test "x${want_pixman}" = "xauto" ; then
+if test "x${want_pixman}" = "xyes" -o "x${want_pixman}" = "xauto" ; then
    PKG_CHECK_EXISTS([pixman-1],
       [
        have_pixman="yes"
@@ -1587,16 +1587,16 @@ AC_MSG_RESULT([${have_evas_engine_software_xlib}])
 # If software_x11 is available, define everything needed for X11
 
 have_evas_engine_software_x11="no"
-if test "x${have_evas_engine_software_xlib}" = "xyes" || test "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xyes" || test "x${have_evas_engine_software_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_software_xlib}" = "xyes" -o "x${have_evas_engine_software_xlib}" = "xstatic" -o "x${have_evas_engine_software_xcb}" = "xyes" -o "x${have_evas_engine_software_xcb}" = "xstatic" ; then
    have_evas_engine_software_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_SOFTWARE_X11], [1], [Build software X11 engine])
 fi
 AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_X11], [test "x${have_evas_engine_software_x11}" = "xyes"])
 
-if test "x${have_evas_engine_software_xlib}" = "xstatic" || test "x${have_evas_engine_software_xcb}" = "xstatic"; then
+if test "x${have_evas_engine_software_xlib}" = "xstatic" -o "x${have_evas_engine_software_xcb}" = "xstatic"; then
    AC_DEFINE_UNQUOTED([EVAS_STATIC_BUILD_SOFTWARE_X11], [1], [Build software X11 engine as part of libevas])
 fi
-AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [test "x${have_evas_engine_software_xcb}" = "xstatic" || test "x${have_evas_engine_software_xlib}" = "xstatic"])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [test "x${have_evas_engine_software_xcb}" = "xstatic" -o "x${have_evas_engine_software_xlib}" = "xstatic"])
 
 # Needed for evas-software-x11.pc
 
@@ -1608,7 +1608,7 @@ AC_SUBST([have_evas_engine_software_xcb])
 AC_MSG_CHECKING([Whether to build software generic engine as part of libevas])
 AC_MSG_RESULT([${have_static_software_generic}])
 
-if test "x${have_static_module}" = "xyes" && test "x${have_static_software_generic}" = "xno"; then
+if test "x${have_static_module}" = "xyes" -a "x${have_static_software_generic}" = "xno"; then
    AC_MSG_WARN([Forcing --enable-static-software-generic as engines must be compiled statically])
    have_static_software_generic="yes"
 fi
@@ -1657,16 +1657,16 @@ AC_MSG_RESULT([${have_evas_engine_gl_xlib}])
 # If opengl_x11 is available, define everything needed for X11
 
 have_evas_engine_gl_x11="no"
-if test "x${have_evas_engine_gl_xlib}" = "xyes" || test "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xyes" || test "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
+if test "x${have_evas_engine_gl_xlib}" = "xyes" -o "x${have_evas_engine_gl_xlib}" = "xstatic" -o "x${have_evas_engine_gl_xcb}" = "xyes" -o "x${have_evas_engine_gl_xcb}" = "xstatic" ; then
    have_evas_engine_gl_x11="yes"
    AC_DEFINE_UNQUOTED([BUILD_ENGINE_GL_X11], [1], [Build OpenGL X11 engine])
 fi
 AM_CONDITIONAL([BUILD_ENGINE_GL_X11], [test "x${have_evas_engine_gl_x11}" = "xyes"])
 
-if test "x${have_evas_engine_gl_xlib}" = "xstatic" || test "x${have_evas_engine_gl_xcb}" = "xstatic"; then
+if test "x${have_evas_engine_gl_xlib}" = "xstatic" -o "x${have_evas_engine_gl_xcb}" = "xstatic"; then
    AC_DEFINE_UNQUOTED([EVAS_STATIC_BUILD_GL_X11], [1], [Build OpenGL X11 engine as part of libevas])
 fi
-AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_X11], [test "x${have_evas_engine_gl_xcb}" = "xstatic" || test "x${have_evas_engine_gl_xlib}" = "xstatic"])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_X11], [test "x${have_evas_engine_gl_xcb}" = "xstatic" -o "x${have_evas_engine_gl_xlib}" = "xstatic"])
 
 # Needed for evas-opengl-x11.pc
 
@@ -1675,7 +1675,7 @@ AC_SUBST([have_evas_engine_gl_xcb])
 
 # OpenGL SDL
 
-if test "x$have_evas_engine_gl_sdl" = "xyes" || test "x$have_evas_engine_gl_sdl" = "xstatic" ; then
+if test "x$have_evas_engine_gl_sdl" = "xyes" -o "x$have_evas_engine_gl_sdl" = "xstatic" ; then
    AC_CHECK_DECL([SDL_GL_CONTEXT_MAJOR_VERSION],
       [AC_DEFINE([HAVE_SDL_GL_CONTEXT_VERSION], [1], [SDL_GL version attributes present])],,
       [#include <SDL/SDL_video.h>])
@@ -1695,18 +1695,18 @@ AC_SUBST([evas_engine_gl_common_libs])
 
 have_evas_engine_gl_common="no"
 have_static_evas_engine_gl_common="no"
-if test "x$have_evas_engine_gl_xlib" = "xyes" || \
-   test "x$have_evas_engine_gl_xcb" = "xyes" || \
-   test "x$have_evas_engine_gl_sdl" = "xyes" || \
-   test "x$have_evas_engine_gl_cocoa" = "xyes" || \
-   test "x$have_evas_engine_wayland_egl" = "xyes"; then
+if test "x$have_evas_engine_gl_xlib" = "xyes" -o \
+        "x$have_evas_engine_gl_xcb" = "xyes" -o \
+        "x$have_evas_engine_gl_sdl" = "xyes" -o \
+        "x$have_evas_engine_gl_cocoa" = "xyes" -o \
+        "x$have_evas_engine_wayland_egl" = "xyes"; then
    have_evas_engine_gl_common="yes"
 fi
-if test "x$have_evas_engine_gl_xlib" = "xstatic" || \
-   test "x$have_evas_engine_gl_xcb" = "xstatic" || \
-   test "x$have_evas_engine_gl_sdl" = "xstatic" || \
-   test "x$have_evas_engine_gl_cocoa" = "xstatic" || \
-   test "x$have_evas_engine_wayland_egl" = "xstatic"; then
+if test "x$have_evas_engine_gl_xlib" = "xstatic" -o \
+        "x$have_evas_engine_gl_xcb" = "xstatic" -o \
+        "x$have_evas_engine_gl_sdl" = "xstatic" -o \
+        "x$have_evas_engine_gl_cocoa" = "xstatic" -o \
+        "x$have_evas_engine_wayland_egl" = "xstatic"; then
    have_evas_engine_gl_common="yes"
    have_static_evas_engine_gl_common="yes"
 fi
@@ -1757,7 +1757,7 @@ case "$host_os" in
    mingw*)
       ;;
    *)
-      if test "x${have_evas_image_loader_jpeg}" = "xyes" || test "x${have_evas_image_loader_jpeg}" = "xstatic"; then
+      if test "x${have_evas_image_loader_jpeg}" = "xyes" -o "x${have_evas_image_loader_jpeg}" = "xstatic"; then
          AC_DEFINE([EVAS_BUILD_SAVER_JPEG], [1], [Build JPEG saver])
          have_evas_image_saver_jpeg="yes"
       fi
@@ -1785,7 +1785,7 @@ if test "x$have_harfbuzz" = "xyes" ; then
        AC_DEFINE([HAVE_HARFBUZZ], [1], [have harfbuzz support])
       ],
       [
-       if test "x$want_harfbuzz" = "xyes" && test "x$use_strict" = "xyes" ; then
+       if test "x$want_harfbuzz" = "xyes" -a "x$use_strict" = "xyes" ; then
           AC_MSG_ERROR([Harfbuzz-ft not found (strict dependencies checking)])
        fi
        have_harfbuzz="no"
@@ -1819,7 +1819,7 @@ if test "x${res}" = "xyes" ; then
   AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])
 fi
 
-if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
+if test "x${want_evas_image_loader_generic}" = "xyes" -o "x${want_evas_cserve2}" = "xyes" ; then
    EFL_CHECK_FUNC([EVAS], [shm_open])
 fi
 
@@ -1976,12 +1976,12 @@ case "$host_os" in
 esac
 
 want_glib="no"
-if test "x${with_glib}" = "xyes" || test "x${with_glib}" = "xalways" ; then
+if test "x${with_glib}" = "xyes" -o "x${with_glib}" = "xalways" ; then
    want_glib="yes"
 fi
 
 want_ecore_timer_dump="no"
-if test "x${build_profile}" = "xdebug" && test "x${ac_cv_func_backtrace}" = "xyes"; then
+if test "x${build_profile}" = "xdebug" -a "x${ac_cv_func_backtrace}" = "xyes"; then
    want_ecore_timer_dump="yes"
    AC_DEFINE([WANT_ECORE_TIMER_DUMP], [1], [Want Ecore_Timer dump infrastructure])
 fi
@@ -2015,7 +2015,7 @@ if test "x${want_glib}" = "xyes" ; then
    PKG_CHECK_EXISTS([glib-2.0], [have_glib="yes"], [have_glib="no"])
 fi
 
-if test "x${want_glib}" = "xyes" && test "x${have_glib}" = "xno"; then
+if test "x${want_glib}" = "xyes" -a "x${have_glib}" = "xno"; then
    AC_MSG_ERROR([GLib support requested, but no GLib found by pkg-config.])
 elif test "x${have_glib}" = "xyes" ; then
    AC_DEFINE([HAVE_GLIB], [1], [Have GLib])
@@ -2027,7 +2027,7 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
-if test "x${with_glib}" = "xalways" && test "x${want_g_main_loop}" = "xyes"; then
+if test "x${with_glib}" = "xalways" -a "x${want_g_main_loop}" = "xyes"; then
   AC_MSG_ERROR([--with-glib set to always and --enable-glib-main-loop are mutually exclusive])
 fi
 
@@ -2280,7 +2280,7 @@ AC_CHECK_HEADERS([sys/un.h], [], [],
 ])
 AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h ws2tcpip.h netdb.h])
 
-if test "x${ac_cv_header_netdb_h}" = "xno" && test "x${have_windows}" = "xno"; then
+if test "x${ac_cv_header_netdb_h}" = "xno" -a "x${have_windows}" = "xno"; then
    AC_MSG_ERROR([netdb.h is requested to have Ecore_Con. Exiting...])
 fi
 
@@ -3162,7 +3162,7 @@ if test "x${have_ecore_x_xlib}" = "xyes" ; then
    have_ecore_x="yes"
 fi
 
-if test "x${have_ecore_x_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes" ; then
+if test "x${have_ecore_x_xlib}" = "xyes" -a "x$want_ecore_x_cursor" = "xyes" ; then
    AC_CHECK_LIB([Xcursor],
       [XcursorImageLoadCursor],
       [
@@ -3520,7 +3520,7 @@ requirements_pc_ecore_imf_evas="ecore_imf >= ${PACKAGE_VERSION} ecore >= ${PACKA
 # ibus
 
 have_ecore_imf_ibus="no"
-if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; then
+if test "x${want_ecore_imf_ibus}" = "xyes" -a "x${have_glib}" = "xyes" ; then
    PKG_CHECK_MODULES([IBUS],
       [ibus-1.0 >= 1.4],
       [
@@ -3551,7 +3551,7 @@ AM_CONDITIONAL([BUILD_ECORE_IMF_SCIM], [test "x${have_ecore_imf_scim}" = "xyes"]
 # xim
 
 have_ecore_imf_xim="no"
-if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
+if test "x${want_xim}" = "xyes" -a "x${want_ecore_imf_xim}" = "xyes" ; then
    have_ecore_imf_xim="yes"
    AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
 fi
@@ -3665,18 +3665,18 @@ ECORE_EVAS_CHECK_MODULE_FULL([ews],
 
 # ecore_evas_extn
 
-if test "x${have_ecore_ipc}" = "xno" || \
-   test "x${have_ecore_evas_software_buffer}" = "xno" || \
-   test "x${have_shm_open}" = "xno" || \
-   test "x${have_windows}" = "xyes" ; then
+if test "x${have_ecore_ipc}" = "xno" -o \
+        "x${have_ecore_evas_software_buffer}" = "xno" -o \
+        "x${have_shm_open}" = "xno" -o \
+        "x${have_windows}" = "xyes" ; then
    have_extn="no"
 fi
 
 dnl THIS IS SPECIAL - dont use normal ECORE_EVAS_CHECK_MODULE
 have_ecore_evas_extn="no"
-if test "x${want_ecore_evas_extn}" = "xyes" && \
-   test "x${have_extn}" = "xyes" && \
-   test "x${have_ecore_evas}" = "xyes"; then
+if test "x${want_ecore_evas_extn}" = "xyes" -a \
+        "x${have_extn}" = "xyes" -a \
+        "x${have_ecore_evas}" = "xyes"; then
    have_ecore_evas_extn="yes"
    AC_DEFINE([BUILD_ECORE_EVAS_EXTN], [1], [Support for Extn Engine in Ecore_Evas])
    requirements_pc_ecore_evas="ecore-ipc >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
@@ -3750,8 +3750,8 @@ ECORE_EVAS_CHECK_MODULE_FULL([software-ddraw],
    [Software DirectDraw],
    [${have_win32}])
 
-if test "x${have_ecore_evas_software_gdi}" = "xyes" || \
-   test "x${have_ecore_evas_software_ddraw}" = "xyes" ; then
+if test "x${have_ecore_evas_software_gdi}" = "xyes" -o \
+        "x${have_ecore_evas_software_ddraw}" = "xyes" ; then
    AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
    requirements_pc_ecore_evas="ecore-win32 >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
 fi
@@ -3771,14 +3771,14 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    if test "x${have_ecore_evas_software_xlib}" = "xstatic"; then
       have_ecore_evas_software_xlib="yes"
    fi
-   if test "x${have_ecore_evas_software_xlib}" = "xyes" && test "x${have_ecore_x_xlib}" = "xyes" ; then
+   if test "x${have_ecore_evas_software_xlib}" = "xyes" -a "x${have_ecore_x_xlib}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XLIB], [1], [Evas Software Xlib Engine Support])
    fi
    have_ecore_evas_software_xcb=`${PKG_CONFIG} --variable=XCB evas-software-x11`
    if test "x$have_ecore_evas_software_xcb" = "xstatic"; then
       have_ecore_evas_software_xcb="yes"
    fi
-   if test "x$have_ecore_evas_software_xcb" = "xyes" && test "x${have_ecore_x_xcb}" = "xyes" ; then
+   if test "x$have_ecore_evas_software_xcb" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XCB], [1], [Evas Software XCB Engine Support])
    fi
 fi
@@ -3793,7 +3793,7 @@ ECORE_EVAS_CHECK_MODULE_FULL([opengl-x11],
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
-if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_opengl_x11}" = "xstatic" ; then
+if test "x${have_ecore_evas_opengl_x11}" = "xyes" -o "x${have_ecore_evas_opengl_x11}" = "xstatic" ; then
    have_ecore_evas_opengl_xlib=`${PKG_CONFIG} --variable=Xlib evas-opengl-x11`
    if test "x${have_ecore_evas_opengl_xlib}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_XLIB], [1], [OpenGL Xlib rendering backend])
@@ -3804,7 +3804,7 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
    if test "x${have_ecore_evas_opengl_xcb}" = "xstatic"; then
       have_ecore_evas_opengl_xcb="yes"
    fi
-   if test "x${have_ecore_evas_opengl_xcb}" = "xyes" && test "x${have_ecore_x_xcb}" = "xyes" ; then
+   if test "x${have_ecore_evas_opengl_xcb}" = "xyes" -a "x${have_ecore_x_xcb}" = "xyes" ; then
       PKG_CHECK_MODULES([XCB_X11],
          [x11-xcb],
          [
@@ -3820,9 +3820,9 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
     fi
 fi
 
-if test "x$have_ecore_evas_software_x11" = "xyes" || \
-   test "x$have_ecore_evas_opengl_x11" = "xyes" || \
-   test "x$have_ecore_evas_software_xcb" = "xyes"; then
+if test "x$have_ecore_evas_software_x11" = "xyes" -o \
+        "x$have_ecore_evas_opengl_x11" = "xyes" -o \
+        "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
    requirements_pc_ecore_evas="ecore-x >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
 fi
