@@ -4137,7 +4137,6 @@ echo "  Gathering timer allocation.: $want_ecore_timer_dump"
 echo
 
 echo "Ecore_Con:"
-echo "  TLS........................: $with_crypto"
 echo "  IPv6.......................: $have_ipv6"
 echo "  CURL.......................: $have_curl"
 echo "  Local Sockets..............: $want_ecore_con_local_sockets"
@@ -4151,10 +4150,6 @@ echo "  Resolver...................: dns.c"
 else
 echo "  Resolver...................: fork"
 fi
-echo
-
-echo "Ecore_Ipc:"
-echo "  TLS........................: $with_crypto"
 echo
 
 echo "Ecore_File:"
