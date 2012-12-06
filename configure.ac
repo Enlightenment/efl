@@ -468,6 +468,7 @@ netinet/in.h \
 siginfo.h \
 stdint.h \
 strings.h \
+sys/epoll.h \
 sys/inotify.h \
 sys/types.h \
 sys/param.h \
@@ -1962,20 +1963,6 @@ AC_ARG_ENABLE([g-main-loop],
    ],
    [want_g_main_loop="no"])
 
-# epoll
-
-AC_ARG_ENABLE([epoll],
-   [AC_HELP_STRING([--disable-epoll],
-       [disable epoll support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_epoll="yes"
-    else
-       want_epoll="no"
-    fi
-   ],
-   [want_epoll="yes"])
-
 ### Default values
 
 case "$host_os" in
@@ -2074,10 +2061,6 @@ sys/resource.h \
 sys/select.h \
 sys/timerfd.h \
 ])
-
-if test "x${want_epoll}" = "xyes" ; then
-   AC_CHECK_HEADERS([sys/epoll.h])
-fi
 
 ### Checks for types
 
