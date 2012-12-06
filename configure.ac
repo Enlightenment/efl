@@ -2148,17 +2148,6 @@ AC_MSG_NOTICE([Ecore_Con checks])
 
 ### Additional options to configure
 
-AC_ARG_ENABLE([ipv6],
-   [AC_HELP_STRING([--disable-ipv6],
-       [disable ipv6 functionality @<:@default=detect@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_ipv6="yes"
-    else
-       want_ipv6="no"
-    fi],
-   [want_ipv6="auto"])
-
 AC_ARG_ENABLE([curl],
    [AC_HELP_STRING([--disable-curl], [disable curl support. @<:@default=enabled@:>@])],
    [
@@ -2336,24 +2325,21 @@ fi
 ### Checks for types
 
 have_ipv6="no"
-if test "x${want_ipv6}" != "xno" ; then
-   AC_CHECK_TYPES([struct ipv6_mreq],
-      [have_ipv6="yes"],
-      [have_ipv6="no"],
-      [[
+AC_CHECK_TYPES([struct ipv6_mreq],
+   [have_ipv6="yes"],
+   [have_ipv6="no"],
+   [[
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
-      ]])
-fi
+]])
 
-if test "x${have_ipv6}" = "xyes" ; then
-   AC_DEFINE([HAVE_IPV6], 1, [Define if IPV6 is supported])
-fi
-
+AC_DEFINE_IF([HAVE_IPV6],
+   [test "x${have_ipv6}" = "xyes"],
+   [1], [Define if IPV6 is supported])
 AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
 
 ### Checks for structures
