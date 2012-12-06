@@ -137,7 +137,7 @@ _file_load(const char *file)
    memcpy(text, tmp, eina_file_size_get(f));
    text[eina_file_size_get(f)] = 0;
 
-   if (eina_file_map_faulted(f))
+   if (eina_file_map_faulted(f, tmp))
      {
         free(text);
         text = NULL;
