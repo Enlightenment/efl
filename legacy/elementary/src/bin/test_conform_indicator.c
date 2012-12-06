@@ -6,11 +6,8 @@
 
 static int vis = 0;
 static int rotate_with_resize = 0;
-
-static void win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
-{
-   elm_exit();
-}
+static Evas_Object *win_port = NULL;
+static Evas_Object *win_land = NULL;
 
 static void
 _rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -52,7 +49,8 @@ _rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
      elm_win_rotation_set(win, 270);
 }
 
-static void _visible_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+static void
+_visible_change_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("visible change before=%d\n",vis);
    Evas_Object *win = (Evas_Object *) data;
@@ -70,70 +68,63 @@ static void _visible_change(void *data, Evas_Object *obj __UNUSED__, void *event
    printf("visible change after=%d\n",vis);
 }
 
-void
-test_conformant_indicator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+static void
+_launch_conformant_indicator_window_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *conform, *bt, *bx;
-   Evas_Object *plug_port = NULL;
-   Evas_Object *plug_land = NULL;
+   Evas_Object *plug_port = NULL, *plug_land = NULL;
+   char *svr_name_port = "elm_indicator_portrait";
+   char *svr_name_land = "elm_indicator_landscape";
 
-   win = elm_win_util_standard_add("conformant indicator", "Conformant 3");
+   win = elm_win_util_standard_add("conformant-indicator",
+                                   "Conformant Indicator");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_conformant_set(win, EINA_TRUE);
 
-   //Create bg
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_bg_color_set(bg, 0, 255, 255);
-   evas_object_show(bg);
-
    //Create conformant
    conform = elm_conformant_add(win);
-   elm_win_resize_object_add(win, conform);
    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, conform);
    evas_object_show(conform);
 
    bx = elm_box_add(conform);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Rot 0");
    evas_object_smart_callback_add(bt, "clicked", _rot_0, win);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Rot 90");
    evas_object_smart_callback_add(bt, "clicked", _rot_90, win);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Rot 180");
    evas_object_smart_callback_add(bt, "clicked", _rot_180, win);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Rot 270");
    evas_object_smart_callback_add(bt, "clicked", _rot_270, win);
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   char *svr_name_port = "elm_indicator_portrait";
-   char *svr_name_land = "elm_indicator_landscape";
-
+   /* portrait plug */
    plug_port = elm_plug_add(win);
    if (!plug_port)
      {
@@ -151,6 +142,7 @@ test_conformant_indicator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
    evas_object_show(plug_port);
    elm_box_pack_end(bx, plug_port);
 
+   /* landscape plug */
    plug_land = elm_plug_add(win);
    if (!plug_land)
      {
@@ -170,22 +162,16 @@ test_conformant_indicator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Show/Hide");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _visible_change, win);
-
-
+   evas_object_smart_callback_add(bt, "clicked", _visible_change_cb, win);
 
    elm_object_content_set(conform, bx);
-   evas_object_show(bx);
 
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
 }
-
-static Evas_Object *win_port = NULL;
-static Evas_Object *win_land = NULL;
 
 static void
 _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
@@ -210,25 +196,22 @@ _mouse_move_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 
-static Evas_Object *
+static void
 _fill_portrait(Evas_Object *win)
 {
-   Evas_Object *btn;
-   Evas_Object *rect;
+   Evas_Object *bg, *btn;
 
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_resize(rect, 720, 60);
-   evas_object_color_set(rect, 221, 187, 187, 255);
-   evas_object_move(rect, 0, 0);
-   evas_object_show(rect);
+   bg = elm_bg_add(win);
+   evas_object_resize(bg, 720, 60);
+   elm_bg_color_set(bg, 221, 187, 187);
+   evas_object_show(bg);
 
-   btn = elm_button_add(rect);
+   btn = elm_button_add(win);
    if (!btn)
-   {
-      printf("fail to elm_button_add() \n");
-      return NULL;
-   }
-
+     {
+        printf("fail to elm_button_add() \n");
+        return NULL;
+     }
 
    elm_object_text_set(btn, "portrait");
 
@@ -237,30 +220,26 @@ _fill_portrait(Evas_Object *win)
    evas_object_show(btn);
 
    // This check: indicator get mouse event well from application
-   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
-   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
-
-   return rect;
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
 }
 
-static Evas_Object *
+static void
 _fill_landscape(Evas_Object *win)
 {
-   Evas_Object *btn;
-   Evas_Object *rect;
+   Evas_Object *bg, *btn;
 
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_resize(rect, 1280, 60);
-   evas_object_color_set(rect, 207, 255, 255, 255);
-   evas_object_move(rect, 0, 0);
-   evas_object_show(rect);
+   bg = elm_bg_add(win);
+   evas_object_resize(bg, 1280, 60);
+   elm_bg_color_set(bg, 207, 255, 255);
+   evas_object_show(bg);
 
-   btn = elm_button_add(rect);
+   btn = elm_button_add(win);
    if (!btn)
-   {
-      printf("fail to elm_button_add() \n");
-      return NULL;
-   }
+     {
+        printf("fail to elm_button_add() \n");
+        return NULL;
+     }
 
    elm_object_text_set(btn, "landscape");
 
@@ -269,10 +248,8 @@ _fill_landscape(Evas_Object *win)
    evas_object_show(btn);
 
    // This check: indicator get mouse event well from application
-   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
-   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
-
-   return rect;
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
 }
 
 static Evas_Object *
@@ -281,10 +258,12 @@ _create_portrait(void)
    const char *port_indi_name;
 
    win_port = elm_win_add(NULL, "portrait_indicator", ELM_WIN_SOCKET_IMAGE);
-   if (!win_port) {
+   if (!win_port)
+     {
         printf("fail to elm_win_add:port\n");
         return NULL;
-   }
+     }
+   elm_win_autodel_set(win_port, EINA_TRUE);
 
    port_indi_name = elm_config_indicator_service_get(0);
    if (!port_indi_name)
@@ -303,7 +282,6 @@ _create_portrait(void)
    elm_win_title_set(win_port, "win sock test:port");
    elm_win_borderless_set(win_port, EINA_TRUE);
 
-   evas_object_smart_callback_add(win_port, "delete,request", win_del, NULL);
    evas_object_move(win_port, 0, 0);
    evas_object_resize(win_port, 720, 60);
 
@@ -322,6 +300,7 @@ _create_landscape(void)
         printf("fail to elm_win_add:land\n");
         return NULL;
      }
+   elm_win_autodel_set(win_land, EINA_TRUE);
 
    land_indi_name = elm_config_indicator_service_get(90);
    if (!land_indi_name)
@@ -340,24 +319,25 @@ _create_landscape(void)
    elm_win_title_set(win_land, "win sock test:land");
    elm_win_borderless_set(win_land, EINA_TRUE);
 
-   evas_object_smart_callback_add(win_land, "delete,request", win_del, NULL);
    evas_object_move(win_land, 0, 0);
    evas_object_resize(win_land, 1280, 60);
 
    _fill_landscape(win_land);
+
    return win_land;
 }
 
 static void
-popobj(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_indicator_service_start_btn_cb(void *data, Evas_Object *obj __UNUSED__,
+                                void *event __UNUSED__)
 {
+   elm_object_disabled_set(data, EINA_TRUE);
+
    win_port = _create_portrait();
-   if (!win_port)
-     return;
+   if (!win_port) return;
 
    win_land = _create_landscape();
-   if (!win_land)
-     return;
+   if (!win_land) return;
 
    evas_object_show(win_port);
    evas_object_show(win_land);
@@ -365,11 +345,13 @@ popobj(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED_
 }
 
 void
-test_conformant_indicator_service(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+test_conformant_indicator(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                          void *event __UNUSED__)
 {
    Evas_Object *win, *btn, *bx;
 
-   win = elm_win_util_standard_add("conformant indicator service", "Conformant 4");
+   win = elm_win_util_standard_add("conformant-indicator-service",
+                                   "Conformant Indicator Service");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -379,16 +361,24 @@ test_conformant_indicator_service(void *data __UNUSED__, Evas_Object *obj __UNUS
    evas_object_show(bx);
 
    btn = elm_button_add(win);
-   elm_object_focus_allow_set(btn, EINA_FALSE);
-   elm_object_text_set(btn, "start indicator service");
-   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
+   elm_object_text_set(btn, "Start Indicator Service");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _indicator_service_start_btn_cb, btn);
 
-   evas_object_smart_callback_add(btn, "clicked", popobj, win);
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "Launch Conformant Indicator Window");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _launch_conformant_indicator_window_btn_cb, win);
 
-   evas_object_resize(win, 240, 480);
+   evas_object_resize(win, 200, 200);
    evas_object_show(win);
 }
 
