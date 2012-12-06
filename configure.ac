@@ -431,7 +431,8 @@ AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "x${_efl_enable_tests}" = "xyes"])
 # check for crypto/tls library to use
 case "$build_crypto" in
    gnutls)
-      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11])
+      EFL_PKG_CHECK_STRICT([gnutls >= 2.11])
+
       AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
       requirements_pc_crypto="gnutls >= 2.11 ${requirements_pc_crypto}"
       requirements_pc_deps_crypto="gnutls >= 2.11 ${requirements_pc_deps_crypto}"
@@ -443,12 +444,11 @@ case "$build_crypto" in
       ;;
 
    openssl)
-      PKG_CHECK_EXISTS([openssl],
-         [
-          AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
-          requirements_pc_crypto="openssl ${requirements_pc_crypto}"
-          requirements_pc_deps_crypto="openssl ${requirements_pc_deps_crypto}"
-         ])
+      EFL_PKG_CHECK_STRICT([openssl])
+
+      AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
+      requirements_pc_crypto="openssl ${requirements_pc_crypto}"
+      requirements_pc_deps_crypto="openssl ${requirements_pc_deps_crypto}"
       ;;
 esac
 
@@ -1453,9 +1453,8 @@ esac
 requirements_pc_evas="eo >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_evas}"
 
 # Freetype
-PKG_CHECK_EXISTS([freetype2 >= 9.3.0],
-   [requirements_pc_evas="freetype2 >= 9.3.0 ${requirements_pc_evas}"])
-
+EFL_PKG_CHECK_STRICT([freetype2 >= 9.3.0])
+requirements_pc_evas="freetype2 >= 9.3.0 ${requirements_pc_evas}"
 requirements_pc_deps_evas="freetype2 >= 9.3.0 ${requirements_pc_deps_evas}"
 
 ## optional dependencies
@@ -1463,53 +1462,46 @@ requirements_pc_deps_evas="freetype2 >= 9.3.0 ${requirements_pc_deps_evas}"
 # FontConfig
 have_fontconfig="no"
 if test "x${want_fontconfig}" = "xyes"; then
-   PKG_CHECK_EXISTS([fontconfig >= 2.5.0],
-      [
-       have_fontconfig="yes"
-       AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
-       requirements_pc_evas="fontconfig >= 2.5.0 ${requirements_pc_evas}"
-       requirements_pc_deps_evas="fontconfig >= 2.5.0 ${requirements_pc_deps_evas}"
-      ])
+   EFL_PKG_CHECK_STRICT([fontconfig >= 2.5.0])
+   have_fontconfig="yes"
+   AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
+   requirements_pc_evas="fontconfig >= 2.5.0 ${requirements_pc_evas}"
+   requirements_pc_deps_evas="fontconfig >= 2.5.0 ${requirements_pc_deps_evas}"
 fi
 
 # fribidi support
 have_fribidi="no"
 if test "x${want_fribidi}" = "xyes"; then
-   PKG_CHECK_EXISTS([fribidi >= 0.19.2],
-      [
-       have_fribidi="yes"
-       AC_DEFINE([HAVE_FRIBIDI], [1], [have fribidi support])
-       requirements_pc_evas="fribidi >= 0.19.2 ${requirements_pc_evas}"
-       requirements_pc_deps_evas="fribidi >= 0.19.2 ${requirements_pc_deps_evas}"
-       CPPFLAGS_SAVE="$CPPFLAGS"
-       CPPFLAGS="$CPPFLAGS $FRIBIDI_CFLAGS"
-       AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
-       CPPFLAGS="$CPPFLAGS_SAVE"
-      ])
+   EFL_PKG_CHECK_STRICT([fribidi >= 0.19.2])
+   have_fribidi="yes"
+   AC_DEFINE([HAVE_FRIBIDI], [1], [have fribidi support])
+   requirements_pc_evas="fribidi >= 0.19.2 ${requirements_pc_evas}"
+   requirements_pc_deps_evas="fribidi >= 0.19.2 ${requirements_pc_deps_evas}"
+
+   CPPFLAGS_SAVE="$CPPFLAGS"
+   CPPFLAGS="$CPPFLAGS $FRIBIDI_CFLAGS"
+   AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
+   CPPFLAGS="$CPPFLAGS_SAVE"
 fi
 
 # harfbuzz support
 have_harfbuzz="no"
 have_harfbuzz_ft="no"
 if test "x${want_harfbuzz}" = "xyes"; then
-   PKG_CHECK_EXISTS([harfbuzz >= 0.9.0],
-      [
-       have_harfbuzz="yes"
-       requirements_pc_evas="harfbuzz >= 0.9.0 ${requirements_pc_evas}"
-       requirements_pc_deps_evas="harfbuzz >= 0.9.0 ${requirements_pc_deps_evas}"
-      ], [AC_MSG_ERROR([pkg-config missing harfbuzz >= 0.9.0])])
+   EFL_PKG_CHECK_STRICT([harfbuzz >= 0.9.0])
+   have_harfbuzz="yes"
+   requirements_pc_evas="harfbuzz >= 0.9.0 ${requirements_pc_evas}"
+   requirements_pc_deps_evas="harfbuzz >= 0.9.0 ${requirements_pc_deps_evas}"
 fi
 
 # Pixman
 have_pixman="no"
 if test "x${want_pixman}" = "xyes"; then
-   PKG_CHECK_EXISTS([pixman-1],
-      [
-       have_pixman="yes"
-       AC_DEFINE([HAVE_PIXMAN], [1], [have pixman for rendering])
-       requirements_pc_evas="pixman-1 ${requirements_pc_evas}"
-       requirements_pc_deps_evas="pixman-1 ${requirements_pc_deps_evas}"
-      ], [AC_MSG_ERROR([pkg-config missing pixman-1])])
+   EFL_PKG_CHECK_STRICT([pixman-1])
+   have_pixman="yes"
+   AC_DEFINE([HAVE_PIXMAN], [1], [have pixman for rendering])
+   requirements_pc_evas="pixman-1 ${requirements_pc_evas}"
+   requirements_pc_deps_evas="pixman-1 ${requirements_pc_deps_evas}"
 fi
 
 if test "x${have_pixman}" = "xyes" ; then
@@ -1990,18 +1982,12 @@ requirements_pc_ecore="eo >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${req
 
 have_glib="no"
 if test "x${want_glib}" = "xyes" ; then
-   PKG_CHECK_EXISTS([glib-2.0], [have_glib="yes"], [have_glib="no"])
-fi
-
-if test "x${want_glib}" = "xyes" && test "x${have_glib}" = "xno"; then
-   AC_MSG_ERROR([GLib support requested, but no GLib found by pkg-config.])
-elif test "x${have_glib}" = "xyes" ; then
+   EFL_PKG_CHECK_STRICT([glib-2.0])
+   have_glib="yes"
    AC_DEFINE([HAVE_GLIB], [1], [Have GLib])
    requirements_pc_ecore="glib-2.0 ${requirements_pc_ecore}"
    requirements_pc_deps_ecore="glib-2.0 ${requirements_pc_deps_ecore}"
-fi
-
-if test "x${have_glib}" = "xno"; then
+else
    want_g_main_loop="no"
 fi
 
@@ -2172,28 +2158,22 @@ requirements_libs_ecore_con="${requirements_libs_crypto} ${requirements_libs_eco
 
 have_curl="no"
 if test "x${want_curl}" = "xyes" ; then
-   PKG_CHECK_EXISTS([libcurl],
-      [
-       have_curl="yes"
-       AC_DEFINE([HAVE_CURL], [1], [Downloading with CURL])
-       requirements_pc_ecore_con="libcurl ${requirements_pc_ecore_con}"
-       requirements_pc_deps_ecore_con="libcurl ${requirements_pc_deps_ecore_con}"
-      ],
-      [have_curl="no"])
+   EFL_PKG_CHECK_STRICT([libcurl])
+   have_curl="yes"
+   AC_DEFINE([HAVE_CURL], [1], [Downloading with CURL])
+   requirements_pc_ecore_con="libcurl ${requirements_pc_ecore_con}"
+   requirements_pc_deps_ecore_con="libcurl ${requirements_pc_deps_ecore_con}"
 fi
 
 # c-ares
 
 have_cares="no"
 if test "x${want_cares}" = "xyes" ; then
-   PKG_CHECK_EXISTS([libcares >= 1.6.1],
-     [
-      have_cares="yes"
-      AC_DEFINE([HAVE_CARES], [1], [Build Ecore_Con_Info with c-ares support])
-       requirements_pc_ecore_con="libcares >= 1.6.1 ${requirements_pc_ecore_con}"
-       requirements_pc_deps_ecore_con="libcares >= 1.6.1 ${requirements_pc_deps_ecore_con}"
-     ],
-     [have_cares="no"])
+   EFL_PKG_CHECK_STRICT([libcares >= 1.6.1])
+   have_cares="yes"
+   AC_DEFINE([HAVE_CARES], [1], [Build Ecore_Con_Info with c-ares support])
+   requirements_pc_ecore_con="libcares >= 1.6.1 ${requirements_pc_ecore_con}"
+   requirements_pc_deps_ecore_con="libcares >= 1.6.1 ${requirements_pc_deps_ecore_con}"
 fi
 
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
