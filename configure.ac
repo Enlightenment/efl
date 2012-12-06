@@ -2367,19 +2367,6 @@ AC_MSG_NOTICE([Ecore_File checks])
 
 ### Additional options to configure
 
-AC_ARG_ENABLE([poll],
-   [AC_HELP_STRING([--disable-poll],
-      [disable poll in the ecore_file module. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_poll="yes"
-    else
-       want_poll="no"
-    fi
-   ],
-   [want_poll="yes"])
-
-
 AC_ARG_ENABLE([atfile-source],
    [AC_HELP_STRING([--disable-atfile-source],
        [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@])],
@@ -2392,12 +2379,6 @@ AC_ARG_ENABLE([atfile-source],
    [have_atfile_source=auto])
 
 ### Default values
-
-have_poll="no"
-if test "x${want_poll}" = "xyes" ; then
-   AC_DEFINE([HAVE_POLL], [1], [File monitoring with polling])
-   have_poll="yes"
-fi
 
 if ! test "x${have_atfile_source}" = "xno" ; then
    AC_CHECK_FUNCS([mkdirat],
