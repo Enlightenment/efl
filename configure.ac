@@ -1295,17 +1295,6 @@ AC_ARG_ENABLE([gl-flavor-gles],
    ],
    [gl_flavor_gles="no"])
 
-AC_ARG_ENABLE([sdl-primitive],
-   [AC_HELP_STRING([--enable-sdl-primitive], [enable SDL primitives. @<:@default=disabled@:>@])],
-   [
-    if test "x$enableval" = "xyes" ; then
-       sdl_primitive="yes"
-    else
-       sdl_primitive="no"
-    fi
-   ],
-   [sdl_primitive="no"])
-
 # Loaders
 
 AC_ARG_ENABLE([image-loader-gif],
@@ -1733,15 +1722,6 @@ if test "x${have_static_evas_engine_gl_common}" = "xyes"; then
 fi
 
 AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_COMMON], [test "x${have_static_evas_engine_gl_common}" = "xyes"])
-
-# SDL
-
-AC_MSG_CHECKING([whether to use SDL primitive when possible])
-AC_MSG_RESULT([${sdl_primitive}])
-
-if test "x${sdl_primitive}" = "xyes" ; then
-   AC_DEFINE([ENGINE_SDL_PRIMITIVE], [1], [Use SDL primitive when possible])
-fi
 
 ## Image Loaders
 
