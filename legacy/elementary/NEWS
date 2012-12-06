@@ -78,6 +78,8 @@ Fixes:
    els_scroller.
    * Fix possible segv in elm_quicklaunch infrastructure.
    * Fix buffer to always have a final '\0' in elm_conform.
+   * Fix forgotten break in elm_map that would have thrown error when the action was properly
+   taken in fact.
 
 Removals:
 

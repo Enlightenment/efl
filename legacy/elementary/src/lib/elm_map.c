@@ -2535,6 +2535,7 @@ _overlay_show(Elm_Map_Overlay *overlay)
       case ELM_MAP_OVERLAY_TYPE_SCALE:
         if (overlay->visible) _overlay_scale_show(overlay->ovl);
         else _overlay_scale_hide(overlay->ovl);
+	break;
       default:
         ERR("Invalid overlay type to show: %d", overlay->type);
      }

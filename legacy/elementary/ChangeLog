@@ -772,3 +772,5 @@
 
 	* Fix possible segv in elm_quicklaunch infrastructure.
 	* Fix elm_conform buffer to always finish with at least one '\0';
+	* Fix forgotten break in elm_map that would have thrown error when the
+	action was properly taken in fact.
