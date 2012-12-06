@@ -640,9 +640,11 @@ AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
 execvp \
+dirfd \
 fpathconf \
 fstatat \
 malloc_usable_size \
+mkdirat \
 mtrace \
 openat \
 strlcpy \
@@ -651,6 +653,11 @@ strlcpy \
 AC_FUNC_ALLOCA
 
 EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday])
+
+have_atfile_source="${ac_cv_func_fstatat}"
+AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
+   [test "x${have_atfile_source}" = "xyes"],
+   [1], [Use fstatat and other -at file functions])
 
 
 
@@ -926,7 +933,7 @@ EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
 
-EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr iconv shm_open setxattr])
+EFL_CHECK_FUNCS([EINA], [dlopen dladdr iconv shm_open setxattr])
 
 enable_log="no"
 if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then
@@ -2345,32 +2352,7 @@ AC_MSG_NOTICE([Ecore_File checks])
 
 ### Additional options to configure
 
-AC_ARG_ENABLE([atfile-source],
-   [AC_HELP_STRING([--disable-atfile-source],
-       [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       have_atfile_source="yes"
-    else
-       have_atfile_source="no"
-    fi],
-   [have_atfile_source=auto])
-
 ### Default values
-
-if ! test "x${have_atfile_source}" = "xno" ; then
-   AC_CHECK_FUNCS([mkdirat],
-      [
-       have_atfile_source="yes"
-       AC_DEFINE(HAVE_ATFILE_SOURCE, 1, [mkdirat exists])
-      ],
-      [
-       if test "x${have_atfile_source}" = "xyes" ; then
-          AC_MSG_ERROR([required atfile-source but no mkdirat()])
-       fi
-       have_atfile_source="no"
-      ])
-fi
 
 ### Checks for programs
 
