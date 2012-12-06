@@ -246,7 +246,12 @@ extern Eina_Lock _ecore_main_loop_lock;
 static inline void
 _ecore_lock(void)
 {
+#ifdef HAVE_THREAD_SAFETY
    eina_lock_take(&_ecore_main_loop_lock);
+#else
+   /* at least check we're not being called from a thread */
+   EINA_MAIN_LOOP_CHECK_RETURN;
+#endif
    _ecore_main_lock_count++;
    /* assert(_ecore_main_lock_count == 1); */
 }
@@ -256,7 +261,9 @@ _ecore_unlock(void)
 {
    _ecore_main_lock_count--;
    /* assert(_ecore_main_lock_count == 0); */
+#ifdef HAVE_THREAD_SAFETY
    eina_lock_release(&_ecore_main_loop_lock);
+#endif
 }
 
 /*
