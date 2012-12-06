@@ -55,7 +55,7 @@ static void _mempool_init(void)
    eina_init();
    /* force modules to be loaded in case they are not installed */
    _modules = eina_module_list_get(NULL,
-                                   PACKAGE_BUILD_DIR "/src/modules",
+                                   PACKAGE_BUILD_DIR "/src/modules/eina",
                                    EINA_TRUE,
                                    NULL,
                                    NULL);
