@@ -7,6 +7,68 @@ static Eina_List   *_edje_file_cache = NULL;
 
 static int          _edje_collection_cache_size = 16;
 
+EAPI void
+edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
+{  /* Init Eina Mempools this is also used in edje_pick.c */
+   char *buffer;
+#define INIT_EMP(Tp, Sz, Ce)                                           \
+   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);               \
+   sprintf(buffer, "%s/%s", ce->entry, #Tp);                           \
+   Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
+   _emp_##Tp = Ce->mp.Tp;
+
+#define INIT_EMP_BOTH(Tp, Sz, Ce)                                       \
+   INIT_EMP(Tp, Sz, Ce)                                                 \
+   Ce->mp_rtl.Tp = eina_mempool_add("one_big", buffer, NULL,            \
+         sizeof (Sz), Ce->count.Tp);
+
+   INIT_EMP_BOTH(RECTANGLE, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(TEXT, Edje_Part_Description_Text, ce);
+   INIT_EMP_BOTH(IMAGE, Edje_Part_Description_Image, ce);
+   INIT_EMP_BOTH(PROXY, Edje_Part_Description_Proxy, ce);
+   INIT_EMP_BOTH(SWALLOW, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(TEXTBLOCK, Edje_Part_Description_Text, ce);
+   INIT_EMP_BOTH(GROUP, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(BOX, Edje_Part_Description_Box, ce);
+   INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
+   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
+   INIT_EMP_BOTH(SPACER, Edje_Part_Description_Common, ce);
+   INIT_EMP(part, Edje_Part, ce);
+}
+
+EAPI void
+edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
+{  /* Free Eina Mempools this is also used in edje_pick.c */
+   /* Destroy all part and description. */
+   eina_mempool_del(ce->mp.RECTANGLE);
+   eina_mempool_del(ce->mp.TEXT);
+   eina_mempool_del(ce->mp.IMAGE);
+   eina_mempool_del(ce->mp.PROXY);
+   eina_mempool_del(ce->mp.SWALLOW);
+   eina_mempool_del(ce->mp.TEXTBLOCK);
+   eina_mempool_del(ce->mp.GROUP);
+   eina_mempool_del(ce->mp.BOX);
+   eina_mempool_del(ce->mp.TABLE);
+   eina_mempool_del(ce->mp.EXTERNAL);
+   eina_mempool_del(ce->mp.SPACER);
+   eina_mempool_del(ce->mp.part);
+   memset(&ce->mp, 0, sizeof (ce->mp));
+
+   eina_mempool_del(ce->mp_rtl.RECTANGLE);
+   eina_mempool_del(ce->mp_rtl.TEXT);
+   eina_mempool_del(ce->mp_rtl.IMAGE);
+   eina_mempool_del(ce->mp_rtl.PROXY);
+   eina_mempool_del(ce->mp_rtl.SWALLOW);
+   eina_mempool_del(ce->mp_rtl.TEXTBLOCK);
+   eina_mempool_del(ce->mp_rtl.GROUP);
+   eina_mempool_del(ce->mp_rtl.BOX);
+   eina_mempool_del(ce->mp_rtl.TABLE);
+   eina_mempool_del(ce->mp_rtl.EXTERNAL);
+   eina_mempool_del(ce->mp_rtl.SPACER);
+   memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
+   ce->ref = NULL;
+}
+
 static Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
@@ -15,7 +77,6 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    int id = -1, size = 0;
    Eina_List *l;
    char buf[256];
-   char *buffer;
    void *data;
 
    ce = eina_hash_find(edf->collection, coll);
@@ -42,30 +103,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    id = ce->id;
    if (id < 0) return NULL;
 
-#define INIT_EMP(Tp, Sz, Ce)                                           \
-   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);               \
-   sprintf(buffer, "%s/%s", ce->entry, #Tp);                           \
-   Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
-   _emp_##Tp = Ce->mp.Tp;
-
-#define INIT_EMP_BOTH(Tp, Sz, Ce)                                       \
-   INIT_EMP(Tp, Sz, Ce)                                                 \
-   Ce->mp_rtl.Tp = eina_mempool_add("one_big", buffer, NULL,            \
-         sizeof (Sz), Ce->count.Tp);
-
-   INIT_EMP_BOTH(RECTANGLE, Edje_Part_Description_Common, ce);
-   INIT_EMP_BOTH(TEXT, Edje_Part_Description_Text, ce);
-   INIT_EMP_BOTH(IMAGE, Edje_Part_Description_Image, ce);
-   INIT_EMP_BOTH(PROXY, Edje_Part_Description_Proxy, ce);
-   INIT_EMP_BOTH(SWALLOW, Edje_Part_Description_Common, ce);
-   INIT_EMP_BOTH(TEXTBLOCK, Edje_Part_Description_Text, ce);
-   INIT_EMP_BOTH(GROUP, Edje_Part_Description_Common, ce);
-   INIT_EMP_BOTH(BOX, Edje_Part_Description_Box, ce);
-   INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
-   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
-   INIT_EMP_BOTH(SPACER, Edje_Part_Description_Common, ce);
-   INIT_EMP(part, Edje_Part, ce);
-
+   edje_cache_emp_alloc(ce);
    snprintf(buf, sizeof(buf), "edje/collections/%i", id);
    edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
    if (!edc) return NULL;

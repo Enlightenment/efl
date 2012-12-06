@@ -41,14 +41,7 @@ source_edd(void)
    _external_list_edd = eet_data_descriptor_stream_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_external_list_edd, External_List, "list", list, _external_edd);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "font", sizeof (Font));
-   _font_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "file", file, EET_T_INLINED_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_font_edd, Font, "name", name, EET_T_INLINED_STRING);
-
-   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc), "font_list", sizeof (Font_List));
-   _font_list_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_LIST(_font_list_edd, Font_List, "list", list, _font_edd);
+   _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
 }
 
 static void source_fetch_file(const char *fil, const char *filname);

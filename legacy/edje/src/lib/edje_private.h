@@ -1731,8 +1731,9 @@ const Eina_Array *edje_match_signal_source_hash_get(const char *signal,
 						    const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 
-// FIXME remove below 2 eapi decls when edje_convert goes
+// FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
+EAPI void _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd, Eet_Data_Descriptor **_font_edd);
 EAPI void _edje_edd_shutdown(void);
 
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
@@ -1967,6 +1968,8 @@ Edje_File *_edje_cache_file_coll_open(const char *file, const char *coll, int *e
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
+EAPI void edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce);
+EAPI void edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce);
 EAPI void _edje_cache_file_unref(Edje_File *edf);
 
 void _edje_embryo_globals_init(Edje *ed);

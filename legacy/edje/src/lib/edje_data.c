@@ -1,3 +1,4 @@
+#include "edje_cc.h"  /* For struct Font */
 #include "edje_private.h"
 
 EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
@@ -948,4 +949,25 @@ _edje_edd_init(void)
 #ifdef HAVE_EPHYSICS
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "physics_enabled", physics_enabled, EET_T_UCHAR);
 #endif
+}
+
+EAPI void
+_edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd,
+      Eet_Data_Descriptor **_font_edd)
+{  /* User have to free: _font_list_edd, _font_edd */
+   Eet_Data_Descriptor_Class eddc;
+
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
+                                             "font", sizeof (Font));
+   *_font_edd = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Font,
+                                 "file", file, EET_T_INLINED_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Font,
+                                 "name", name, EET_T_INLINED_STRING);
+
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
+                                             "font_list", sizeof (Font_List));
+   *_font_list_edd = eet_data_descriptor_stream_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST(*_font_list_edd, Font_List,
+                                "list", list, *_font_edd);
 }
