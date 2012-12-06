@@ -767,7 +767,3 @@
 
 	* Fix naviframe to not send hide signals even before item doens't created
   	yet.
-
-2012-12-06  Cedric Bail
-
-	* Properly read file elm_entry.
