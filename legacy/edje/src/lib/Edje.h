@@ -4157,7 +4157,10 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_SOUND_TONE               = 14, /**< @since 1.1 */
    EDJE_ACTION_TYPE_PHYSICS_IMPULSE          = 15, /**< @since 1.8 */
    EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE   = 16, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_LAST                     = 17
+   EDJE_ACTION_TYPE_PHYSICS_FORCE            = 17, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_PHYSICS_TORQUE           = 18, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR     = 19, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_LAST                     = 20
 } Edje_Action_Type;
 
 /**

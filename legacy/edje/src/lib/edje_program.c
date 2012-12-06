@@ -962,6 +962,47 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                }
           }
         break;
+     case EDJE_ACTION_TYPE_PHYSICS_FORCE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if ((rp) && (rp->body))
+                    ephysics_body_central_force_apply(
+                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
+               }
+          }
+        break;
+     case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if ((rp) && (rp->body))
+                    ephysics_body_torque_apply(
+                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
+               }
+          }
+        break;
+     case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if ((rp) && (rp->body))
+                    ephysics_body_forces_clear(rp->body);
+               }
+          }
+        break;
 #endif
      default:
         // _edje_emit(ed, "program,start", pr->name);

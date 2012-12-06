@@ -202,6 +202,11 @@
  *
  * physics_impulse(part_id, Float:x, Float:y, Float:z)
  * physics_torque_impulse(part_id, Float:x, Float:y, Float:z)
+ * physics_force(part_id, Float:x, Float:y, Float:z)
+ * physics_torque(part_id, Float:x, Float:y, Float:z)
+ * physics_forces_clear(part_id)
+ * physics_forces_get(part_id, &Float:x, &Float:y, &Float:z)
+ * physics_torques_get(part_id, &Float:x, &Float:y, &Float:z)
  *
  * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  *
@@ -3094,6 +3099,147 @@ _edje_embryo_fn_physics_torque_impulse(Embryo_Program *ep, Embryo_Cell *params)
      }
    return 0;
 }
+
+/* physics_force(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_force(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+        if (rp->body)
+          {
+             double x, y, z;
+
+             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
+             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
+             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
+
+             ephysics_body_central_force_apply(rp->body, x, y, z);
+          }
+     }
+   return 0;
+}
+
+/* physics_torque(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_torque(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+        if (rp->body)
+          {
+             double x, y, z;
+
+             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
+             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
+             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
+
+             ephysics_body_torque_apply(rp->body, x, y, z);
+          }
+     }
+   return 0;
+}
+
+/* physics_forces_clear(part_id) */
+static Embryo_Cell
+_edje_embryo_fn_physics_forces_clear(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(1);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if ((rp) && (rp->body))
+     ephysics_body_forces_clear(rp->body);
+
+   return 0;
+}
+
+/* physics_forces_get(part_id, &Float:x, &Float:y, &Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_forces_get(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+        if (rp->body)
+          {
+             double x, y, z;
+             ephysics_body_forces_get(rp->body, &x, &y, &z);
+             SETFLOAT(x, params[2]);
+             SETFLOAT(y, params[3]);
+             SETFLOAT(z, params[4]);
+          }
+     }
+   return 0;
+}
+
+/* physics_torques_get(part_id, &Float:x, &Float:y, &Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_torques_get(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+        if (rp->body)
+          {
+             double x, y, z;
+             ephysics_body_torques_get(rp->body, &x, &y, &z);
+             SETFLOAT(x, params[2]);
+             SETFLOAT(y, params[3]);
+             SETFLOAT(z, params[4]);
+          }
+     }
+   return 0;
+}
 #endif
 
 void
@@ -3194,6 +3340,11 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 #ifdef HAVE_EPHYSICS
    embryo_program_native_call_add(ep, "physics_impulse", _edje_embryo_fn_physics_impulse);
    embryo_program_native_call_add(ep, "physics_torque_impulse", _edje_embryo_fn_physics_torque_impulse);
+   embryo_program_native_call_add(ep, "physics_force", _edje_embryo_fn_physics_force);
+   embryo_program_native_call_add(ep, "physics_torque", _edje_embryo_fn_physics_torque);
+   embryo_program_native_call_add(ep, "physics_forces_clear", _edje_embryo_fn_physics_forces_clear);
+   embryo_program_native_call_add(ep, "physics_forces_get", _edje_embryo_fn_physics_forces_get);
+   embryo_program_native_call_add(ep, "physics_torques_get", _edje_embryo_fn_physics_torques_get);
 #endif
 }
 
