@@ -265,13 +265,16 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
 
            case ELM_PREFS_TYPE_DATE:
            {
-              struct timeval val = {0};
-              struct tm time = {0};
+              struct timeval val;
+              struct tm t;
 
-              time.tm_year = it->value.d.y - 1900;
-              time.tm_mon = it->value.d.m - 1;
-              time.tm_mday = it->value.d.d;
-              val.tv_sec = mktime(&time);
+              memset(&val, 0, sizeof val);
+              memset(&t, 0, sizeof t);
+
+              t.tm_year = it->value.d.y - 1900;
+              t.tm_mon = it->value.d.m - 1;
+              t.tm_mday = it->value.d.d;
+              val.tv_sec = mktime(&t);
 
               if (!eina_value_setup(&(item->value), EINA_VALUE_TYPE_TIMEVAL))
                 setup_err = EINA_TRUE;
@@ -456,15 +459,15 @@ _eet_data_save(const Elm_Prefs_Data *prefs_data,
         else if (t == EINA_VALUE_TYPE_TIMEVAL)
           {
              struct timeval val;
-             struct tm *time;
+             struct tm *tm;
 
              if (eina_value_get(&(item->value), &val))
                {
-                  time = gmtime(&(val.tv_sec));
+                  tm = gmtime(&(val.tv_sec));
 
-                  it->value.d.y = time->tm_year + 1900;
-                  it->value.d.m = time->tm_mon + 1;
-                  it->value.d.d = time->tm_mday;
+                  it->value.d.y = tm->tm_year + 1900;
+                  it->value.d.m = tm->tm_mon + 1;
+                  it->value.d.d = tm->tm_mday;
                }
              else
                err = EINA_TRUE;
