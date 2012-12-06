@@ -470,6 +470,7 @@ stdint.h \
 strings.h \
 sys/epoll.h \
 sys/inotify.h \
+sys/signalfd.h \
 sys/types.h \
 sys/param.h \
 sys/mman.h \
@@ -1821,15 +1822,15 @@ if test "x${efl_func_shm_open}" = "xno" ; then
    want_evas_cserve2="no"
 fi
 
-if test "x${want_evas_cserve2}" = "xyes" ; then
-   AC_CHECK_HEADERS([sys/epoll.h sys/inotify.h sys/signalfd.h],
-      [],
-      [want_evas_cserve2="no"])
+if test "x${want_evas_cserve2}" = "xyes"; then
+   if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
+      want_evas_cserve2="no"
+   fi
 fi
 
-if test "x${want_evas_cserve2}" = "xyes" ; then
-  AC_DEFINE([EVAS_CSERVE2], [1], [Shared cache server.])
-fi
+AC_DEFINE_IF([EVAS_CSERVE2],
+   [test "x${want_evas_cserve2}" = "xyes"],
+   [1], [Shared cache server.])
 AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
 
 ### Configuration
