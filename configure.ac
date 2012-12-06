@@ -2141,30 +2141,10 @@ AC_ARG_ENABLE([curl],
    ],
    [want_curl="yes"])
 
-AC_ARG_ENABLE([local-sockets],
-   [AC_HELP_STRING([--disable-local-sockets], [disable local sockets.])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_ecore_con_local_sockets="yes"
-    else
-       want_ecore_con_local_sockets="no"
-    fi
-   ],
-   [want_ecore_con_local_sockets="yes"])
-
-AC_ARG_ENABLE([abstract-sockets],
-   [AC_HELP_STRING([--disable-abstract-sockets], [disable abstract sockets.])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_ecore_con_abstract_sockets="yes"
-    else
-       want_ecore_con_abstract_sockets="no"
-    fi
-   ],
-   [want_ecore_con_abstract_sockets="yes"])
-
 ### Default values
 
+want_ecore_con_local_sockets="yes"
+want_ecore_con_abstract_sockets="yes"
 
 case "$host_os" in
    mingw32ce*)
@@ -2188,16 +2168,16 @@ esac
 case "$host_vendor" in
   ps3*)
       want_ecore_con_local_sockets="no"
+      want_ecore_con_abstract_sockets="no"
       ;;
 esac
 
-if test "x${want_ecore_con_local_sockets}" = "xyes" ; then
-   AC_DEFINE([HAVE_LOCAL_SOCKETS], [1], [Have local sockets support])
-fi
-
-if test "x${want_ecore_con_abstract_sockets}" = "xyes" ; then
-   AC_DEFINE([HAVE_ABSTRACT_SOCKETS], [1], [Have abstract sockets namespace])
-fi
+AC_DEFINE_IF([HAVE_LOCAL_SOCKETS],
+   [test "x${want_ecore_con_local_sockets}" = "xyes"],
+   [1], [Have local sockets support])
+AC_DEFINE_IF([HAVE_ABSTRACT_SOCKETS],
+   [test "x${want_ecore_con_abstract_sockets}" = "xyes"],
+   [1], [Have abstract sockets namespace])
 
 ### Checks for programs
 
