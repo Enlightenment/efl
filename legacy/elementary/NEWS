@@ -81,6 +81,8 @@ Fixes:
    * Fix forgotten break in elm_map that would have thrown error when the action was properly
    taken in fact.
    * Fix wheel scroll direction with shift.
+   * Fix the mapbuf to show it's content properly, If the content doesn't
+   have resized, it wouldn't be showed up.
 
 Removals:
 

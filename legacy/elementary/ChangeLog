@@ -778,3 +778,8 @@
 2012-12-06 Daniel Juyung Seo (SeoZ)
 
 	* Fix wheel scroll direction with shift.
+
+2012-12-06 ChunEon Park (Hermet)
+
+	* Fix the mapbuf to show the content always. Sometimes mapbuf couldn't show
+	the content properly.
