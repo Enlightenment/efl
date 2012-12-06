@@ -2036,10 +2036,6 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
-if test "x${with_glib}" = "xalways" && test "x${want_g_main_loop}" = "xyes"; then
-  AC_MSG_ERROR([--with-glib set to always and --enable-glib-main-loop are mutually exclusive])
-fi
-
 want_glib_integration_always=no
 if test "x${with_glib}" = "xalways" ; then
   want_glib_integration_always="yes"
