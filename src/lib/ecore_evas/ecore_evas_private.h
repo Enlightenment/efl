@@ -387,8 +387,9 @@ int _ecore_evas_ews_shutdown(void);
 #endif
 
 Eina_Module *_ecore_evas_engine_load(const char *engine);
-void _ecore_evas_engine_init();
-void _ecore_evas_engine_shutdown();
+const Eina_List *_ecore_evas_available_engines_get(void);
+void _ecore_evas_engine_init(void);
+void _ecore_evas_engine_shutdown(void);
 
 #endif
 

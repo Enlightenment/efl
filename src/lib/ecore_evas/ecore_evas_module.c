@@ -5,8 +5,9 @@
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
 
-Eina_Hash *_registered_engines = NULL;
-Eina_List *_engines_paths = NULL;
+static Eina_Hash *_registered_engines = NULL;
+static Eina_List *_engines_paths = NULL;
+static Eina_List *_engines_available = NULL;
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__) || defined(_WIN32)
 # define ECORE_EVAS_ENGINE_NAME "module.dll"
@@ -93,4 +94,51 @@ _ecore_evas_engine_shutdown(void)
 
    EINA_LIST_FREE(_engines_paths, path)
      free(path);
+
+   EINA_LIST_FREE(_engines_available, path)
+     eina_stringshare_del(path);
+}
+
+static Eina_Bool
+_file_exists(const char *file)
+{
+   struct stat st;
+   if (!file) return EINA_FALSE;
+
+   if (stat(file, &st) < 0) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+const Eina_List *
+_ecore_evas_available_engines_get(void)
+{
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
+   Eina_List *l = NULL, *result = NULL;
+   const char *path;
+
+   if (_engines_available) return _engines_available;
+
+   EINA_LIST_FOREACH(_engines_paths, l, path)
+     {
+	it = eina_file_direct_ls(path);
+
+	if (it)
+	  {
+	     EINA_ITERATOR_FOREACH(it, info)
+	       {
+		  char tmp[PATH_MAX];
+		  snprintf(tmp, sizeof (tmp), "%s/%s/" ECORE_EVAS_ENGINE_NAME,
+			   info->path, MODULE_ARCH);
+
+		  if (_file_exists(tmp))
+		    result = eina_list_append(result,
+					      eina_stringshare_add(info->path + info->name_start));
+	       }
+	     eina_iterator_free(it);
+	  }
+     }
+
+   _engines_available = result;
+   return result;
 }

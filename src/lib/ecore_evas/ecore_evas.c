@@ -407,7 +407,6 @@ _ecore_evas_parse_extra_options_x(const char *extra_options, char **disp_name, u
    return extra_options;
 }
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 static Ecore_Evas *
 _ecore_evas_constructor_software_x11(int x, int y, int w, int h, const char *extra_options)
 {
@@ -421,9 +420,7 @@ _ecore_evas_constructor_software_x11(int x, int y, int w, int h, const char *ext
 
    return ee;
 }
-#endif
 
-#ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
 static Ecore_Evas *
 _ecore_evas_constructor_cocoa(int x, int y, int w, int h, const char *extra_options)
 {
@@ -437,9 +434,7 @@ _ecore_evas_constructor_cocoa(int x, int y, int w, int h, const char *extra_opti
    if (ee) ecore_evas_move(ee, x, y);
    return ee;
 }
-#endif
 
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 static Ecore_Evas *
 _ecore_evas_constructor_opengl_x11(int x, int y, int w, int h, const char *extra_options)
 {
@@ -453,9 +448,7 @@ _ecore_evas_constructor_opengl_x11(int x, int y, int w, int h, const char *extra
 
    return ee;
 }
-#endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 static Ecore_Evas *
 _ecore_evas_constructor_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
@@ -474,9 +467,6 @@ _ecore_evas_constructor_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, 
 
    return ee;
 }
-#endif
-
-#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
 static Ecore_Evas *
 _ecore_evas_constructor_opengl_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
@@ -493,7 +483,6 @@ _ecore_evas_constructor_opengl_sdl(int x EINA_UNUSED, int y EINA_UNUSED, int w, 
 
    return ee;
 }
-#endif
 
 static Ecore_Evas *
 _ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
@@ -510,7 +499,6 @@ _ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, c
 
    return ee;
 }
-
 
 static Ecore_Evas *
 _ecore_evas_constructor_psl1ght(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
@@ -603,63 +591,20 @@ _ecore_evas_constructor_ews(int x, int y, int w, int h, const char *extra_option
 /* note: keep sorted by priority, highest first */
 static const struct ecore_evas_engine _engines[] = {
   /* unix */
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
   {"software_x11", _ecore_evas_constructor_software_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_OPENGL_X11
   {"opengl_x11", _ecore_evas_constructor_opengl_x11},
-#endif
-#ifdef BUILD_ECORE_EVAS_FB
   {"fb", _ecore_evas_constructor_fb},
-#endif
-
-  /* windows */
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
   {"software_gdi", _ecore_evas_constructor_software_gdi},
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
   {"software_ddraw", _ecore_evas_constructor_software_ddraw},
-#endif
-#ifdef BUILD_ECORE_EVAS_DIRECT3D
   {"direct3d", _ecore_evas_constructor_direct3d},
-#endif
-#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
   {"opengl_glew", _ecore_evas_constructor_opengl_glew},
-#endif
-
-  /* Apple */
-#ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
   {"opengl_cocoa", _ecore_evas_constructor_cocoa},
-#endif
-
-  /* PS3 support */
-#ifdef BUILD_ECORE_EVAS_PSL1GHT
   {"psl1ght", _ecore_evas_constructor_psl1ght},
-#endif
-
-   /* Wayland */
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
   {"wayland_shm", _ecore_evas_constructor_wayland_shm},
-#endif
-
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
   {"wayland_egl", _ecore_evas_constructor_wayland_egl},
-#endif
-
-   /* Last chance to have a window */
-#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
   {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
-#endif
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
-#endif
-
-  /* independent */
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
   {"buffer", _ecore_evas_constructor_buffer},
-#endif
-
 #ifdef BUILD_ECORE_EVAS_EWS
   {"ews", _ecore_evas_constructor_ews},
 #endif
@@ -669,13 +614,7 @@ static const struct ecore_evas_engine _engines[] = {
 EAPI Eina_List *
 ecore_evas_engines_get(void)
 {
-   const struct ecore_evas_engine *itr;
-   Eina_List *lst = NULL;
-
-   for (itr = _engines; itr->name; itr++)
-     lst = eina_list_append(lst, itr->name);
-
-   return lst;
+   return eina_list_clone(_ecore_evas_available_engines_get());
 }
 
 EAPI void
