@@ -944,8 +944,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                   rp = ed->table_parts[pt->id % ed->table_parts_size];
                   if ((rp) && (rp->body))
                     ephysics_body_central_impulse_apply(
-                       rp->body, pr->physics.impulse.x, pr->physics.impulse.y,
-                       pr->physics.impulse.z);
+                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
                }
           }
         break;
@@ -959,8 +958,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                   rp = ed->table_parts[pt->id % ed->table_parts_size];
                   if ((rp) && (rp->body))
                     ephysics_body_torque_impulse_apply(
-                       rp->body, pr->physics.impulse.x, pr->physics.impulse.y,
-                       pr->physics.impulse.z);
+                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
                }
           }
         break;

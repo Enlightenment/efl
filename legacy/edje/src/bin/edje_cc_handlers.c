@@ -8161,17 +8161,12 @@ st_collections_group_programs_program_action(void)
 	free(part);
      }
 #ifdef HAVE_EPHYSICS
-   else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE)
+   else if ((ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE) ||
+            (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE))
      {
-        ep->physics.impulse.x = parse_float(1);
-        ep->physics.impulse.y = parse_float(2);
-        ep->physics.impulse.z = parse_float(3);
-     }
-   else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE)
-     {
-        ep->physics.impulse.x = parse_float(1);
-        ep->physics.impulse.y = parse_float(2);
-        ep->physics.impulse.z = parse_float(3);
+        ep->physics.x = parse_float(1);
+        ep->physics.y = parse_float(2);
+        ep->physics.z = parse_float(3);
      }
 #endif
 

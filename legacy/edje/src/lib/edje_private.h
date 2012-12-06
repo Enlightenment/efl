@@ -647,13 +647,11 @@ struct _Edje_Program /* a conditional program to be run */
    } param;
 
 #ifdef HAVE_EPHYSICS
-   /* used for actions related to physics, as PHYSICS_IMPULSE */
+   /* used for actions related to physics, as physics impulses and forces */
    struct {
-      struct {
-        double x;
-        double y;
-        double z;
-      } impulse;
+      double x;
+      double y;
+      double z;
    } physics;
 #endif
 

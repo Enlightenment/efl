@@ -438,9 +438,9 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "param.dst", param.dst, EET_T_INT);
 
 #ifdef HAVE_EPHYSICS
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.impulse.x", physics.impulse.x, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.impulse.y", physics.impulse.y, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.impulse.z", physics.impulse.z, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.x", physics.x, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.y", physics.y, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.z", physics.z, EET_T_DOUBLE);
 #endif
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Image_Id);
