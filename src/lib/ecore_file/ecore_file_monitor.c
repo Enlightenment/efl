@@ -6,7 +6,7 @@
 
 typedef enum {
      ECORE_FILE_MONITOR_TYPE_NONE,
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
      ECORE_FILE_MONITOR_TYPE_INOTIFY,
 #endif
 #ifdef HAVE_NOTIFY_WIN32
@@ -22,7 +22,7 @@ static Ecore_File_Monitor_Type monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
 int
 ecore_file_monitor_init(void)
 {
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
    monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
    if (ecore_file_monitor_inotify_init())
      return 1;
@@ -48,7 +48,7 @@ ecore_file_monitor_shutdown(void)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
          break;
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
          ecore_file_monitor_inotify_shutdown();
          break;
@@ -101,7 +101,7 @@ ecore_file_monitor_add(const char           *path,
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
          return NULL;
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
          return ecore_file_monitor_inotify_add(path, func, data);
 #endif
@@ -138,7 +138,7 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
          break;
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
          ecore_file_monitor_inotify_del(em);
          break;

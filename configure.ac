@@ -468,11 +468,15 @@ netinet/in.h \
 siginfo.h \
 stdint.h \
 strings.h \
+sys/inotify.h \
 sys/types.h \
 sys/param.h \
 sys/mman.h \
 unistd.h \
 ])
+
+have_inotify="${ac_cv_header_sys_inotify_h}"
+AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 
 EFL_CHECK_PATH_MAX
 
@@ -2368,17 +2372,6 @@ AC_ARG_ENABLE([poll],
    ],
    [want_poll="yes"])
 
-AC_ARG_ENABLE([inotify],
-   [AC_HELP_STRING([--disable-inotify],
-      [disable inotify in the ecore_file module. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_inotify="yes"
-    else
-       want_inotify="no"
-    fi
-   ],
-   [want_inotify="yes"])
 
 AC_ARG_ENABLE([atfile-source],
    [AC_HELP_STRING([--disable-atfile-source],
@@ -2439,19 +2432,6 @@ fi
 requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file}"
 
 ### Checks for header files
-
-have_inotify="no"
-if test "x${want_inotify}" = "xyes" ; then
-   AC_CHECK_HEADER([sys/inotify.h],
-      [
-       AC_DEFINE([HAVE_INOTIFY], [1], [File monitoring with Inotify])
-       have_inotify="yes"
-      ],
-      [have_inotify="no"])
-fi
-
-AC_MSG_CHECKING([whether inotify is to be used for filemonitoring])
-AC_MSG_RESULT(${have_inotify})
 
 ### Checks for types
 
@@ -3954,12 +3934,8 @@ setxattr("/", "user.ethumb.md5", NULL, 0, 0);
 AC_MSG_RESULT([${have_xattr}])
 
 # Check for inotify specificity
-have_inotify="no"
 have_notify_win32="no"
-EIO_CHECK_INOTIFY([have_inotify="yes"], [have_inotify="no"])
 EIO_CHECK_NOTIFY_WIN32([have_notify_win32="yes"], [have_notify_win32="no"])
-
-AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x${have_notify_win32}" = "xyes"])
 
 #### End of Eio

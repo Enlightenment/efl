@@ -270,7 +270,7 @@ _eio_monitor_fallback_timer_cb(void *data)
  * @cond LOCAL
  */
 
-#if !defined HAVE_INOTIFY && !defined HAVE_NOTIFY_WIN32
+#if !defined HAVE_SYS_INOTIFY_H && !defined HAVE_NOTIFY_WIN32
 void eio_monitor_backend_init(void)
 {
 }

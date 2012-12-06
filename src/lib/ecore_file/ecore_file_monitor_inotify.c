@@ -20,7 +20,7 @@
  * - Listen to IN_IGNORED, emitted when the watch is removed
  */
 
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
 
 #include <sys/inotify.h>
 
@@ -328,4 +328,4 @@ _ecore_file_monitor_inotify_print(char *file, int mask)
      INF("Inotify unmount %s: %s", type, file);
 }
 #endif
-#endif /* HAVE_INOTIFY */
+#endif /* HAVE_SYS_INOTIFY_H */

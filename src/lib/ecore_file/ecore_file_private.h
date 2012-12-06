@@ -81,7 +81,7 @@ struct _Ecore_File_Monitor
    Ecore_File         *files;
 };
 
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY_H
 int                 ecore_file_monitor_inotify_init(void);
 int                 ecore_file_monitor_inotify_shutdown(void);
 Ecore_File_Monitor *ecore_file_monitor_inotify_add(const char *path,
