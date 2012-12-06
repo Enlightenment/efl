@@ -8032,7 +8032,8 @@ st_collections_group_programs_program_in(void)
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
         FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE,
         PHYSICS_IMPULSE, PHYSICS_TORQUE_IMPULSE, PHYSICS_FORCE, PHYSICS_TORQUE,
-        PHYSICS_FORCES_CLEAR
+        PHYSICS_FORCES_CLEAR, PHYSICS_VEL_SET, PHYSICS_ANG_VEL_SET,
+        PHYSICS_STOP
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP;\n
@@ -8051,6 +8052,9 @@ st_collections_group_programs_program_in(void)
            action: PHYSICS_FORCE -20.8 0 30.85;\n
            action: PHYSICS_TORQUE 0 0 4.8;\n
            action: PHYSICS_FORCES_CLEAR;\n
+           action: PHYSICS_VEL_SET 40.9 0 0;\n
+           action: PHYSICS_ANG_VEL_SET 12.4 0 0.66;\n
+           action: PHYSICS_STOP;\n
     @endproperty
 */
 static void
@@ -8083,6 +8087,10 @@ st_collections_group_programs_program_action(void)
                            "PHYSICS_TORQUE", EDJE_ACTION_TYPE_PHYSICS_TORQUE,
                            "PHYSICS_FORCES_CLEAR",
                            EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR,
+                           "PHYSICS_VEL_SET", EDJE_ACTION_TYPE_PHYSICS_VEL_SET,
+                           "PHYSICS_ANG_VEL_SET",
+                           EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET,
+                           "PHYSICS_STOP", EDJE_ACTION_TYPE_PHYSICS_STOP,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -8172,7 +8180,9 @@ st_collections_group_programs_program_action(void)
    else if ((ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE) ||
             (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE) ||
             (ep->action == EDJE_ACTION_TYPE_PHYSICS_FORCE) ||
-            (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE))
+            (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE) ||
+            (ep->action == EDJE_ACTION_TYPE_PHYSICS_VEL_SET) ||
+            (ep->action == EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET))
      {
         ep->physics.x = parse_float(1);
         ep->physics.y = parse_float(2);
@@ -8190,6 +8200,7 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       case EDJE_ACTION_TYPE_FOCUS_SET:
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+      case EDJE_ACTION_TYPE_PHYSICS_STOP:
         check_arg_count(1);
         break;
       case EDJE_ACTION_TYPE_PARAM_SET:
@@ -8197,6 +8208,8 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
       case EDJE_ACTION_TYPE_PHYSICS_FORCE:
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
+      case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
+      case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
         check_arg_count(4);
         break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
@@ -8401,6 +8414,9 @@ st_collections_group_programs_program_target(void)
            case EDJE_ACTION_TYPE_PHYSICS_FORCE:
            case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
            case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+           case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
+           case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
+           case EDJE_ACTION_TYPE_PHYSICS_STOP:
 #endif
               data_queue_part_lookup(pc, name, &(et->id));
               break;

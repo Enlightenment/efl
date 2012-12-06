@@ -231,12 +231,22 @@ native       play_tone        (tone_name[], Float:duration);
  * physics_force(PART:"logo", 0, 240, 0);
  * physics_torque(PART:"logo", 0, 0, 2.2);
  * physics_forces_clear(PART:"logo");
+ *
+ * physics_set_velocity(PART:"logo", 40.5, 0, 0);
+ * physics_set_ang_velocity(PART:"logo", 0, 0, -3);
+ * physics_stop(PART:"logo");
  */
-native       physics_impulse         (part_id, Float:x, Float:y, Float:z);
-native       physics_torque_impulse  (part_id, Float:x, Float:y, Float:z);
+native       physics_impulse          (part_id, Float:x, Float:y, Float:z);
+native       physics_torque_impulse   (part_id, Float:x, Float:y, Float:z);
 
-native       physics_torque          (part_id, Float:x, Float:y, Float:z);
-native       physics_torques_get     (part_id, &Float:x, &Float:y, &Float:z);
-native       physics_force           (part_id, Float:x, Float:y, Float:z);
-native       physics_forces_get      (part_id, &Float:x, &Float:y, &Float:z);
-native       physics_forces_clear    (part_id);
+native       physics_torque           (part_id, Float:x, Float:y, Float:z);
+native       physics_torques_get      (part_id, &Float:x, &Float:y, &Float:z);
+native       physics_force            (part_id, Float:x, Float:y, Float:z);
+native       physics_forces_get       (part_id, &Float:x, &Float:y, &Float:z);
+native       physics_forces_clear     (part_id);
+
+native       physics_set_velocity     (part_id, Float:x, Float:y, Float:z);
+native       physics_get_velocity     (part_id, &Float:x, &Float:y, &Float:z);
+native       physics_set_ang_velocity (part_id, Float:x, Float:y, Float:z);
+native       physics_get_ang_velocity (part_id, &Float:x, &Float:y, &Float:z);
+native       physics_stop             (part_id);

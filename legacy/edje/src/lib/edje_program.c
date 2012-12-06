@@ -991,6 +991,29 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                }
           }
         break;
+     case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_linear_velocity_set))
+          goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_angular_velocity_set))
+          goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_PHYSICS_STOP:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if ((rp) && (rp->body))
+                    ephysics_body_stop(rp->body);
+               }
+          }
+        break;
 #endif
      default:
         // _edje_emit(ed, "program,start", pr->name);

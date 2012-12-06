@@ -207,6 +207,11 @@
  * physics_forces_clear(part_id)
  * physics_forces_get(part_id, &Float:x, &Float:y, &Float:z)
  * physics_torques_get(part_id, &Float:x, &Float:y, &Float:z)
+ * physics_set_velocity(part_id, Float:x, Float:y, Float:z)
+ * physics_get_velocity(part_id, &Float:x, &Float:y, &Float:z)
+ * physics_set_ang_velocity(part_id, Float:x, Float:y, Float:z)
+ * physics_get_ang_velocity(part_id, &Float:x, &Float:y, &Float:z)
+ * physics_stop(part_id)
  *
  * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  *
@@ -3166,6 +3171,59 @@ _edje_embryo_fn_physics_torques_get(Embryo_Program *ep, Embryo_Cell *params)
    return _edje_embryo_fn_physics_components_get(
       ep, params, ephysics_body_torques_get);
 }
+
+/* physics_set_velocity(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_set_velocity(Embryo_Program *ep, Embryo_Cell *params)
+{
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_linear_velocity_set);
+}
+
+/* physics_get_velocity(part_id, &Float:x, &Float:y, &Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_get_velocity(Embryo_Program *ep, Embryo_Cell *params)
+{
+   return _edje_embryo_fn_physics_components_get(
+      ep, params, ephysics_body_linear_velocity_get);
+}
+
+/* physics_set_ang_velocity(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_set_ang_velocity(Embryo_Program *ep, Embryo_Cell *params)
+{
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_angular_velocity_set);
+}
+
+/* physics_get_ang_velocity(part_id, &Float:x, &Float:y, &Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_get_ang_velocity(Embryo_Program *ep, Embryo_Cell *params)
+{
+   return _edje_embryo_fn_physics_components_get(
+      ep, params, ephysics_body_angular_velocity_get);
+}
+
+/* physics_stop(part_id) */
+static Embryo_Cell
+_edje_embryo_fn_physics_stop(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(1);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if ((rp) && (rp->body))
+     ephysics_body_stop(rp->body);
+
+   return 0;
+}
 #endif
 
 void
@@ -3271,6 +3329,11 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "physics_forces_clear", _edje_embryo_fn_physics_forces_clear);
    embryo_program_native_call_add(ep, "physics_forces_get", _edje_embryo_fn_physics_forces_get);
    embryo_program_native_call_add(ep, "physics_torques_get", _edje_embryo_fn_physics_torques_get);
+   embryo_program_native_call_add(ep, "physics_set_velocity", _edje_embryo_fn_physics_set_velocity);
+   embryo_program_native_call_add(ep, "physics_get_velocity", _edje_embryo_fn_physics_get_velocity);
+   embryo_program_native_call_add(ep, "physics_set_ang_velocity", _edje_embryo_fn_physics_set_ang_velocity);
+   embryo_program_native_call_add(ep, "physics_get_ang_velocity", _edje_embryo_fn_physics_get_ang_velocity);
+   embryo_program_native_call_add(ep, "physics_stop", _edje_embryo_fn_physics_stop);
 #endif
 }
 
