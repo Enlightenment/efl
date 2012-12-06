@@ -14,4 +14,4 @@ EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text);
 
 EAPI char *
-elm_access_external_info_get(Evas_Object *obj);
+elm_access_external_info_get(const Evas_Object *obj);
