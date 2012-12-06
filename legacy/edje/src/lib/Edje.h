@@ -4140,23 +4140,24 @@ typedef enum _Edje_Tween_Mode
 
 typedef enum _Edje_Action_Type
 {
-   EDJE_ACTION_TYPE_NONE                = 0,
-   EDJE_ACTION_TYPE_STATE_SET           = 1,
-   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
-   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
-   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
-   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
-   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
-   EDJE_ACTION_TYPE_SCRIPT              = 7,
-   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
-   EDJE_ACTION_TYPE_RESERVED00          = 9,
-   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
-   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
-   EDJE_ACTION_TYPE_PARAM_SET           = 12,
-   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_PHYSICS_IMPULSE     = 15, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_LAST                = 16
+   EDJE_ACTION_TYPE_NONE                     = 0,
+   EDJE_ACTION_TYPE_STATE_SET                = 1,
+   EDJE_ACTION_TYPE_ACTION_STOP              = 2,
+   EDJE_ACTION_TYPE_SIGNAL_EMIT              = 3,
+   EDJE_ACTION_TYPE_DRAG_VAL_SET             = 4,
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP            = 5,
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE            = 6,
+   EDJE_ACTION_TYPE_SCRIPT                   = 7,
+   EDJE_ACTION_TYPE_FOCUS_SET                = 8,
+   EDJE_ACTION_TYPE_RESERVED00               = 9,
+   EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10,
+   EDJE_ACTION_TYPE_PARAM_COPY               = 11,
+   EDJE_ACTION_TYPE_PARAM_SET                = 12,
+   EDJE_ACTION_TYPE_SOUND_SAMPLE             = 13, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_SOUND_TONE               = 14, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_PHYSICS_IMPULSE          = 15, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE   = 16, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_LAST                     = 17
 } Edje_Action_Type;
 
 /**

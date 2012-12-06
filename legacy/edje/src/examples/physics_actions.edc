@@ -1,12 +1,19 @@
 /* It can be tested with edje_player slave mode
  * $ edje_player -S physics_actions.edj
+ *
  * signal up impulse   -> will throw both balls up
  * signal left impulse -> will throw blue ball to the left
+ * signal clockwise impulse -> will roll blue ball in clockwise
+ * signal counterclockwise impulse -> will roll blue ball in counterclockwise
+ *
  * message 1 FLOAT_SET 3 50 -100 0 -> apply an impulse on blue ball with
  *    x = 50, y = -100, z = 0, for example
+ * message 2 FLOAT_SET 3 0 0 8.2 -> apply a torque impulse on blue ball with
+ *    x = 4, y = 0, z = 0.8, for example
  */
 
 #define ID_IMPULSE (1)
+#define ID_TORQUE_IMPULSE (2)
 
 collections {
 
@@ -27,6 +34,15 @@ collections {
                y = getfarg(3);
                z = getfarg(4);
                physics_impulse(PART:"blue_circle", x, y, z);
+            }
+            else if ((id == ID_TORQUE_IMPULSE) && (type == MSG_FLOAT_SET)) {
+               new Float:x, Float:y, Float:z;
+               new n = numargs();
+               if (n < 5) return;
+               x = getfarg(2);
+               y = getfarg(3);
+               z = getfarg(4);
+               physics_torque_impulse(PART:"blue_circle", x, y, z);
             }
          }
       }
@@ -171,6 +187,22 @@ collections {
             source: "impulse";
             action: PHYSICS_IMPULSE 300 0 0;
             target: "red_circle";
+         }
+
+         program {
+            name: "impulse_clockwise";
+            signal: "clockwise";
+            source: "impulse";
+            action: PHYSICS_TORQUE_IMPULSE 0 0 4;
+            target: "blue_circle";
+         }
+
+         program {
+            name: "impulse_counterclockwise";
+            signal: "counterclockwise";
+            source: "impulse";
+            action: PHYSICS_TORQUE_IMPULSE 0 0 -4;
+            target: "blue_circle";
          }
 
       }

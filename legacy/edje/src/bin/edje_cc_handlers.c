@@ -8031,7 +8031,7 @@ st_collections_group_programs_program_in(void)
         Action to be performed by the program. Valid actions are: STATE_SET,
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
         FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE,
-        PHYSICS_IMPULSE
+        PHYSICS_IMPULSE, PHYSICS_TORQUE_IMPULSE
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP;\n
@@ -8046,6 +8046,7 @@ st_collections_group_programs_program_in(void)
            action: PLAY_SAMPLE "sample name";\n
            action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
            action: PHYSICS_IMPULSE 10 -23.4 0;\n
+           action: PHYSICS_TORQUE_IMPULSE 0 2.1 0.95;\n
     @endproperty
 */
 static void
@@ -8072,6 +8073,8 @@ st_collections_group_programs_program_action(void)
                            "PLAY_SAMPLE", EDJE_ACTION_TYPE_SOUND_SAMPLE,
                            "PLAY_TONE", EDJE_ACTION_TYPE_SOUND_TONE,
                            "PHYSICS_IMPULSE", EDJE_ACTION_TYPE_PHYSICS_IMPULSE,
+                           "PHYSICS_TORQUE_IMPULSE",
+                           EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -8164,6 +8167,12 @@ st_collections_group_programs_program_action(void)
         ep->physics.impulse.y = parse_float(2);
         ep->physics.impulse.z = parse_float(3);
      }
+   else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE)
+     {
+        ep->physics.impulse.x = parse_float(1);
+        ep->physics.impulse.y = parse_float(2);
+        ep->physics.impulse.z = parse_float(3);
+     }
 #endif
 
    switch (ep->action)
@@ -8192,6 +8201,7 @@ st_collections_group_programs_program_action(void)
         check_arg_count(3);
         break;
       case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
+      case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
         check_arg_count(4);
         break;
       default:
@@ -8392,6 +8402,8 @@ st_collections_group_programs_program_target(void)
 	  data_queue_part_lookup(pc, name, &(et->id));
 #ifdef HAVE_EPHYSICS
 	else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE)
+	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE)
 	  data_queue_part_lookup(pc, name, &(et->id));
 #endif
 	else

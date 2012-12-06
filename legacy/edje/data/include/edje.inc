@@ -226,5 +226,7 @@ native       play_tone        (tone_name[], Float:duration);
 /* Example:
  *
  * physics_impulse(PART:"logo", 0, 50.8, 0);
+ * physics_torque_impulse(PART:"logo", 0, 0, 3.4);
  */
 native       physics_impulse  (part_id, Float:x, Float:y, Float:z);
+native       physics_torque_impulse  (part_id, Float:x, Float:y, Float:z);
