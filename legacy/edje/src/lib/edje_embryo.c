@@ -3038,9 +3038,11 @@ _edje_embryo_fn_external_param_set_bool(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 #ifdef HAVE_EPHYSICS
-/* physics_impulse(part_id, Float:x, Float:y, Float:z) */
+/* Generic function to call ephysics functions that apply an action to
+ * a body using 3 double values.
+ * To be used by the other functions only avoiding code duplication. */
 static Embryo_Cell
-_edje_embryo_fn_physics_impulse(Embryo_Program *ep, Embryo_Cell *params)
+_edje_embryo_fn_physics_components_set(Embryo_Program *ep, Embryo_Cell *params, void (*func)(EPhysics_Body *body, double x, double y, double z))
 {
    Edje_Real_Part *rp;
    int part_id = 0;
@@ -3053,113 +3055,79 @@ _edje_embryo_fn_physics_impulse(Embryo_Program *ep, Embryo_Cell *params)
    if (part_id < 0) return 0;
 
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
+   if ((rp) && (rp->body))
      {
-        if (rp->body)
-          {
-             double x, y, z;
+        double x, y, z;
 
-             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
-             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
-             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
+        x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
+        y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
+        z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
 
-             ephysics_body_central_impulse_apply(rp->body, x, y, z);
-          }
+        func(rp->body, x, y, z);
      }
+
    return 0;
+}
+
+/* Generic function to call ephysics functions that get components related
+ * to actions from a body using 3 double values.
+ * To be used by the other functions only avoiding code duplication. */
+static Embryo_Cell
+_edje_embryo_fn_physics_components_get(Embryo_Program *ep, Embryo_Cell *params, void (*func)(const EPhysics_Body *body, double *x, double *y, double *z))
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(4);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if ((rp) && (rp->body))
+     {
+        double x, y, z;
+        func(rp->body, &x, &y, &z);
+        SETFLOAT(x, params[2]);
+        SETFLOAT(y, params[3]);
+        SETFLOAT(z, params[4]);
+     }
+
+   return 0;
+}
+
+/* physics_impulse(part_id, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_impulse(Embryo_Program *ep, Embryo_Cell *params)
+{
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_central_impulse_apply);
 }
 
 /* physics_torque_impulse(part_id, Float:x, Float:y, Float:z) */
 static Embryo_Cell
 _edje_embryo_fn_physics_torque_impulse(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Edje_Real_Part *rp;
-   int part_id = 0;
-   Edje *ed;
-
-   CHKPARAM(4);
-
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        if (rp->body)
-          {
-             double x, y, z;
-
-             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
-             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
-             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
-
-             ephysics_body_torque_impulse_apply(rp->body, x, y, z);
-          }
-     }
-   return 0;
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_torque_impulse_apply);
 }
 
 /* physics_force(part_id, Float:x, Float:y, Float:z) */
 static Embryo_Cell
 _edje_embryo_fn_physics_force(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Edje_Real_Part *rp;
-   int part_id = 0;
-   Edje *ed;
-
-   CHKPARAM(4);
-
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        if (rp->body)
-          {
-             double x, y, z;
-
-             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
-             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
-             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
-
-             ephysics_body_central_force_apply(rp->body, x, y, z);
-          }
-     }
-   return 0;
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_central_force_apply);
 }
 
 /* physics_torque(part_id, Float:x, Float:y, Float:z) */
 static Embryo_Cell
 _edje_embryo_fn_physics_torque(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Edje_Real_Part *rp;
-   int part_id = 0;
-   Edje *ed;
-
-   CHKPARAM(4);
-
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        if (rp->body)
-          {
-             double x, y, z;
-
-             x = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
-             y = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
-             z = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
-
-             ephysics_body_torque_apply(rp->body, x, y, z);
-          }
-     }
-   return 0;
+   return _edje_embryo_fn_physics_components_set(
+      ep, params, ephysics_body_torque_apply);
 }
 
 /* physics_forces_clear(part_id) */
@@ -3187,58 +3155,16 @@ _edje_embryo_fn_physics_forces_clear(Embryo_Program *ep, Embryo_Cell *params)
 static Embryo_Cell
 _edje_embryo_fn_physics_forces_get(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Edje_Real_Part *rp;
-   int part_id = 0;
-   Edje *ed;
-
-   CHKPARAM(4);
-
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        if (rp->body)
-          {
-             double x, y, z;
-             ephysics_body_forces_get(rp->body, &x, &y, &z);
-             SETFLOAT(x, params[2]);
-             SETFLOAT(y, params[3]);
-             SETFLOAT(z, params[4]);
-          }
-     }
-   return 0;
+   return _edje_embryo_fn_physics_components_get(
+      ep, params, ephysics_body_forces_get);
 }
 
 /* physics_torques_get(part_id, &Float:x, &Float:y, &Float:z) */
 static Embryo_Cell
 _edje_embryo_fn_physics_torques_get(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Edje_Real_Part *rp;
-   int part_id = 0;
-   Edje *ed;
-
-   CHKPARAM(4);
-
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        if (rp->body)
-          {
-             double x, y, z;
-             ephysics_body_torques_get(rp->body, &x, &y, &z);
-             SETFLOAT(x, params[2]);
-             SETFLOAT(y, params[3]);
-             SETFLOAT(z, params[4]);
-          }
-     }
-   return 0;
+   return _edje_embryo_fn_physics_components_get(
+      ep, params, ephysics_body_torques_get);
 }
 #endif
 

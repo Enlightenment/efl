@@ -538,6 +538,30 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    if (free_runp) free(runp);
 }
 
+#ifdef HAVE_EPHYSICS
+static Eina_Bool
+_edje_physics_action_set(Edje *ed, Edje_Program *pr, void (*func)(EPhysics_Body *body, double x, double y, double z))
+{
+   Edje_Program_Target *pt;
+   Edje_Real_Part *rp;
+   Eina_List *l;
+
+   if (_edje_block_break(ed)) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(pr->targets, l, pt)
+     {
+        if (pt->id >= 0)
+          {
+             rp = ed->table_parts[pt->id % ed->table_parts_size];
+             if ((rp) && (rp->body))
+               func(rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
+          }
+     }
+
+   return EINA_TRUE;
+}
+#endif
+
 void
 _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc)
 {
@@ -935,60 +959,24 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
         break;
 #ifdef HAVE_EPHYSICS
      case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
-        if (_edje_block_break(ed))
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_central_impulse_apply))
           goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
-          {
-             if (pt->id >= 0)
-               {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_central_impulse_apply(
-                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
-               }
-          }
         break;
      case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
-        if (_edje_block_break(ed))
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_torque_impulse_apply))
           goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
-          {
-             if (pt->id >= 0)
-               {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_torque_impulse_apply(
-                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
-               }
-          }
         break;
      case EDJE_ACTION_TYPE_PHYSICS_FORCE:
-        if (_edje_block_break(ed))
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_central_force_apply))
           goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
-          {
-             if (pt->id >= 0)
-               {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_central_force_apply(
-                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
-               }
-          }
         break;
      case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
-        if (_edje_block_break(ed))
+        if (!_edje_physics_action_set(
+              ed, pr, ephysics_body_torque_apply))
           goto break_prog;
-        EINA_LIST_FOREACH(pr->targets, l, pt)
-          {
-             if (pt->id >= 0)
-               {
-                  rp = ed->table_parts[pt->id % ed->table_parts_size];
-                  if ((rp) && (rp->body))
-                    ephysics_body_torque_apply(
-                       rp->body, pr->physics.x, pr->physics.y, pr->physics.z);
-               }
-          }
         break;
      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
         if (_edje_block_break(ed))
