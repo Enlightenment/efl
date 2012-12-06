@@ -120,6 +120,7 @@ elc_hoversel.h \
 elc_multibuttonentry.h \
 elc_naviframe.h \
 elc_popup.h \
+elm_access.h \
 elm_actionslider.h \
 elm_app.h \
 elm_authors.h \

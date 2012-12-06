@@ -1,10 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
-
-#define ELM_OBJ_ACCESS_CLASS elm_obj_access_class_get()
-
 #define MY_CLASS ELM_OBJ_ACCESS_CLASS
 
 #define MY_CLASS_NAME "elm_access"
@@ -119,6 +115,7 @@ _access_obj_over_timeout_cb(void *data)
         _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
         _elm_access_read(ac, ELM_ACCESS_INFO,   data, NULL);
         _elm_access_read(ac, ELM_ACCESS_STATE,  data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_EXTERNAL_INFO,   data, NULL);
         _elm_access_read(ac, ELM_ACCESS_DONE,   data, NULL);
      }
    ac->delay_timer = NULL;
@@ -785,6 +782,13 @@ static const Eo_Class_Description class_desc = {
      _class_constructor,
      NULL
 };
+
+EAPI void
+elm_access_external_info_set(Evas_Object *obj, const char *text)
+{
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_EXTERNAL_INFO, text);
+}
 
 EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
 

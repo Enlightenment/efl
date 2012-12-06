@@ -456,17 +456,18 @@ typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const cha
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 
-#define ELM_ACCESS_TYPE    0    /* when reading out widget or item
-                                 * this is read first */
-#define ELM_ACCESS_INFO    1    /* next read is info - this is
-                                 * normally label */
-#define ELM_ACCESS_STATE   2    /* if there is a state (eg checkbox)
-                                 * then read state out */
-#define ELM_ACCESS_CONTENT 3    /* read ful content - eg all of the
-                                 * label, not a shortened version */
+#define ELM_ACCESS_TYPE          0    /* when reading out widget or item
+                                       * this is read first */
+#define ELM_ACCESS_INFO          1    /* next read is info - this is
+                                       * normally label */
+#define ELM_ACCESS_STATE         2    /* if there is a state (eg checkbox)
+                                       * then read state out */
+#define ELM_ACCESS_CONTENT       3    /* read ful content - eg all of the
+                                       * label, not a shortened version */
+#define ELM_ACCESS_EXTERNAL_INFO 4    /* information set by application side */
 
-#define ELM_ACCESS_DONE    -1   /* sentence done - send done event here */
-#define ELM_ACCESS_CANCEL  -2   /* stop reading immediately */
+#define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
+#define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
 
 typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
