@@ -4094,7 +4094,6 @@ echo
 echo "Ecore_File:"
 echo "  Inotify....................: $have_inotify"
 echo "  Windows notification.......: $have_notify_win32"
-echo "  Poll.......................: $have_poll"
 echo "  CURL.......................: $have_curl"
 echo
 
