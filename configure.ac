@@ -3970,6 +3970,28 @@ case $host_cpu in
 esac
 cpu_summary="${cpu_summary})"
 
+sys_features=""
+if test "x${have_inotify}" = "xyes"; then
+   sys_features="${sys_features} +inotify"
+else
+   sys_features="${sys_features} -inotify"
+fi
+if test "x${have_notify_win32}" = "xyes"; then
+   sys_features="${sys_features} +notify_win32"
+else
+   sys_features="${sys_features} -notify_win32"
+fi
+if test "x${have_atfile_source}" = "xyes"; then
+   sys_features="${sys_features} +atfile"
+else
+   sys_features="${sys_features} -atfile"
+fi
+if test "x${have_ipv6}" = "xyes"; then
+   sys_features="${sys_features} +ipv6"
+else
+   sys_features="${sys_features} -ipv6"
+fi
+
 echo
 echo
 echo
@@ -3985,6 +4007,7 @@ if test "x${have_windows}" = "xyes" ; then
 fi
 echo "  Build Profile........: ${build_profile}"
 echo "  CPU Extensions.......: ${cpu_summary}"
+echo "  System Features......:${sys_features}"
 echo "  Threads Type.........: ${efl_have_threads}"
 echo "    spinlocks..........: ${efl_have_posix_threads_spinlock}"
 echo "    barrier............: ${efl_have_pthread_barrier}"
@@ -4059,7 +4082,6 @@ echo "  Gathering timer allocation.: $want_ecore_timer_dump"
 echo
 
 echo "Ecore_Con:"
-echo "  IPv6.......................: $have_ipv6"
 echo "  CURL.......................: $have_curl"
 echo "  Local Sockets..............: $want_ecore_con_local_sockets"
 if test "x$want_ecore_con_local_sockets" = "xyes" ; then
@@ -4075,8 +4097,6 @@ fi
 echo
 
 echo "Ecore_File:"
-echo "  Inotify....................: $have_inotify"
-echo "  Windows notification.......: $have_notify_win32"
 echo "  CURL.......................: $have_curl"
 echo
 
@@ -4164,10 +4184,6 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
-echo
-echo "Eio"
-echo "  Inotify..............: ${have_inotify}"
-echo "  Windows notification.: ${have_notify_win32}"
 echo
 echo "Tests..................: ${_efl_enable_tests}"
 if test "x${_efl_enable_tests}" = "xyes"; then
