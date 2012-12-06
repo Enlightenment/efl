@@ -69,9 +69,11 @@ _visible_change_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_launch_conformant_indicator_window_btn_cb(void *data, Evas_Object *obj, void *event_info)
+_launch_conformant_indicator_window_btn_cb(void *data __UNUSED__,
+                                           Evas_Object *obj __UNUSED__,
+                                           void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *conform, *bt, *bx;
+   Evas_Object *win, *conform, *bt, *bx;
    Evas_Object *plug_port = NULL, *plug_land = NULL;
    char *svr_name_port = "elm_indicator_portrait";
    char *svr_name_land = "elm_indicator_landscape";
@@ -210,7 +212,7 @@ _fill_portrait(Evas_Object *win)
    if (!btn)
      {
         printf("fail to elm_button_add() \n");
-        return NULL;
+        return;
      }
 
    elm_object_text_set(btn, "portrait");
@@ -238,7 +240,7 @@ _fill_landscape(Evas_Object *win)
    if (!btn)
      {
         printf("fail to elm_button_add() \n");
-        return NULL;
+        return;
      }
 
    elm_object_text_set(btn, "landscape");
