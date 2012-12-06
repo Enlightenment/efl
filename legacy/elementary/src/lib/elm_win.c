@@ -5026,7 +5026,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
    return ret;
 #else
    return NULL;
-#end
+#endif
 }
 
 #if HAVE_ELEMENTARY_WAYLAND
