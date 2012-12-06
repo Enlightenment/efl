@@ -1099,14 +1099,6 @@ AC_MSG_NOTICE([Evas checks])
 
 ### Additional options to configure
 
-# when used, that option makes configure script fails when
-# a requirement is selected, but not met.
-use_strict="no"
-AC_ARG_ENABLE([strict],
-   [AC_HELP_STRING([--enable-strict], [enable strict checking mode. @<:@default=disabled@:>@])],
-   [use_strict="yes"],
-   [use_strict="no"])
-
 # Simple X11 build/link
 AC_ARG_ENABLE([simple-x11],
    [AC_HELP_STRING([--enable-simple-x11],
@@ -1149,7 +1141,7 @@ AC_ARG_ENABLE([fribidi],
 # Harfbuzz
 AC_ARG_ENABLE([harfbuzz],
    [AC_HELP_STRING([--disable-harfbuzz],
-       [disable complex text shaping and layouting support. @<:@default=auto@:>@])],
+       [disable complex text shaping and layouting support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_harfbuzz="yes"
@@ -1157,7 +1149,7 @@ AC_ARG_ENABLE([harfbuzz],
        want_harfbuzz="no"
     fi
    ],
-   [want_harfbuzz="auto"])
+   [want_harfbuzz="yes"])
 
 # Pixman
 AC_ARG_ENABLE([pixman],
@@ -1499,39 +1491,25 @@ fi
 # harfbuzz support
 have_harfbuzz="no"
 have_harfbuzz_ft="no"
-if test "x${want_harfbuzz}" = "xyes" || test "x${want_harfbuzz}" = "xauto" ; then
+if test "x${want_harfbuzz}" = "xyes"; then
    PKG_CHECK_EXISTS([harfbuzz >= 0.9.0],
       [
        have_harfbuzz="yes"
        requirements_pc_evas="harfbuzz >= 0.9.0 ${requirements_pc_evas}"
        requirements_pc_deps_evas="harfbuzz >= 0.9.0 ${requirements_pc_deps_evas}"
-      ],
-      [
-       if test "x$want_harfbuzz" = "xyes" && test "x$use_strict" = "xyes" ; then
-          AC_MSG_ERROR([Harfbuzz not found (strict dependencies checking)])
-       fi
-      ])
-fi
-
-if test "x${have_harfbuzz}" = "xno"; then
-  HAS_HARFBUZZ=0
+      ], [AC_MSG_ERROR([pkg-config missing harfbuzz >= 0.9.0])])
 fi
 
 # Pixman
 have_pixman="no"
-if test "x${want_pixman}" = "xyes" || test "x${want_pixman}" = "xauto" ; then
+if test "x${want_pixman}" = "xyes"; then
    PKG_CHECK_EXISTS([pixman-1],
       [
        have_pixman="yes"
        AC_DEFINE([HAVE_PIXMAN], [1], [have pixman for rendering])
        requirements_pc_evas="pixman-1 ${requirements_pc_evas}"
        requirements_pc_deps_evas="pixman-1 ${requirements_pc_deps_evas}"
-      ],
-      [
-       if test "x${want_pixman}" = "xyes" -a "x${use_strict}" = "xyes" ; then
-          AC_MSG_ERROR([Pixman not found (strict dependencies checking)])
-       fi
-      ])
+      ], [AC_MSG_ERROR([pkg-config missing pixman-1])])
 fi
 
 if test "x${have_pixman}" = "xyes" ; then
@@ -1784,13 +1762,9 @@ if test "x$have_harfbuzz" = "xyes" ; then
        #Depend on harfbuzz ft for harfbuzz support
        AC_DEFINE([HAVE_HARFBUZZ], [1], [have harfbuzz support])
       ],
-      [
-       if test "x$want_harfbuzz" = "xyes" && test "x$use_strict" = "xyes" ; then
-          AC_MSG_ERROR([Harfbuzz-ft not found (strict dependencies checking)])
-       fi
-       have_harfbuzz="no"
-      ])
-  CPPFLAGS="$CPPFLAGS_SAVE"
+      [AC_MSG_ERROR([Harfbuzz-ft (hb-ft.h) not found])])
+
+   CPPFLAGS="$CPPFLAGS_SAVE"
 fi
 
 ### Checks for types
