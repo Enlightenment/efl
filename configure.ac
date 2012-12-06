@@ -479,11 +479,9 @@ have_inotify="${ac_cv_header_sys_inotify_h}"
 AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 
 have_notify_win32="${have_win32}"
-if test "x${have_notify_win32}" = "xyes" ; then
-  AC_DEFINE([HAVE_NOTIFY_WIN32], [1], [File monitoring with Windows notification])
-else
-  AC_DEFINE([HAVE_NOTIFY_WIN32], [], [File monitoring with Windows notification])
-fi
+AC_DEFINE_IF([HAVE_NOTIFY_WIN32],
+   [test "x${have_notify_win32}" = "xyes"], [1],
+   [File monitoring with Windows notification])
 AM_CONDITIONAL([HAVE_NOTIFY_WIN32], [test "x${have_notify_win32}" = "xyes"])
 
 
