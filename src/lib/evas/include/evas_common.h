@@ -222,6 +222,15 @@ extern EAPI int _evas_log_dom_global;
    ((((unsigned long long)w) * ((unsigned long long)h)) >= \
        ((1ULL << (29 * (sizeof(void *) / 4))) - 2048))
 
+/* not every converter supports no-dither or line-dither, then they will
+ * fallback to table version, in these cases default to small table.
+ */
+#if defined(BUILD_NO_DITHER_MASK) || defined(BUILD_LINE_DITHER_MASK)
+#ifndef BUILD_SMALL_DITHER_MASK
+#define BUILD_SMALL_DITHER_MASK 1
+#endif
+#endif
+
 #ifdef BUILD_SMALL_DITHER_MASK
 # define DM_TABLE     _evas_dither_44
 # define DM_SIZE      4

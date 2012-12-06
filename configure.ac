@@ -1842,12 +1842,30 @@ fi
 
 ## dither options
 
-# Small dither mask instead of big one (lower quality)
-EVAS_CHECK_DITHER([small-dither-mask], [small dither mask], [conv_small_dither="yes"], [conv_small_dither="no"])
-# Alternate Line dither mask instead of big one (lower quality - but fastest)
-EVAS_CHECK_DITHER([line-dither-mask], [line dither mask], [conv_line_dither="yes"], [conv_line_dither="no"])
-# No dither mask at all for 16bpp
-EVAS_CHECK_DITHER([no-dither-mask], [conversion to 16bpp without dither mask], [conv_no_dither="yes"], [conv_no_dither="no"])
+AC_ARG_WITH([evas-dither-mask],
+   [AC_HELP_STRING([--with-evas-dither-mask=TYPE],
+                   [use the specified dither mask to convert bitdepths in Evas, one of: big, small, line or none.
+                    @<:@default=big@:>@])],
+   [build_evas_dither_mask=${withval}],
+   [build_evas_dither_mask=big])
+
+case "${build_evas_dither_mask}" in
+   big)
+     AC_DEFINE([BUILD_BIG_DITHER_MASK], [1], [Use biggest dither mask while converting in Evas])
+     ;;
+   small)
+     AC_DEFINE([BUILD_SMALL_DITHER_MASK], [1], [Use smaller dither mask while converting in Evas])
+     ;;
+   line)
+     AC_DEFINE([BUILD_LINE_DITHER_MASK], [1], [Use simpler line-only dither mask while converting in Evas])
+     ;;
+   none)
+     AC_DEFINE([BUILD_NO_DITHER_MASK], [1], [Do not use dither masks while converting in Evas])
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown Evas dither mask --with-evas-dither-mask=${build_evas_dither_mask}])
+     ;;
+esac
 
 #### End of Evas
 
@@ -4067,9 +4085,7 @@ echo "    Pixman Images...........: $have_pixman_image"
 echo "    Pixman Image ScaleSample: $have_pixman_image_scale_sample"
 echo
 echo "  Conversion Options:"
-echo "    Smaller Dither Mask.....: $conv_small_dither"
-echo "    Line Dither Mask........: $conv_line_dither"
-echo "    No Dither Mask for 16bpp: $conv_no_dither"
+echo "    Dither Mask.............: $build_evas_dither_mask"
 echo "    Tiled 32BPP rotate......: $have_tile_rotate"
 echo
 
