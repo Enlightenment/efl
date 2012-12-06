@@ -8386,32 +8386,28 @@ st_collections_group_programs_program_target(void)
 
 	memcpy(copy, name, strlen(name) + 1);
 
-	if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP)
-	  data_queue_program_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_FOCUS_SET)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_FOCUS_OBJECT)
-	  data_queue_part_lookup(pc, name, &(et->id));
+        switch (ep->action)
+          {
+           case EDJE_ACTION_TYPE_ACTION_STOP:
+              data_queue_program_lookup(pc, name, &(et->id));
+              break;
+           case EDJE_ACTION_TYPE_STATE_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+           case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+           case EDJE_ACTION_TYPE_FOCUS_SET:
+           case EDJE_ACTION_TYPE_FOCUS_OBJECT:
 #ifdef HAVE_EPHYSICS
-	else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_IMPULSE)
-	  data_queue_part_lookup(pc, name, &(et->id));
-	else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE)
-	  data_queue_part_lookup(pc, name, &(et->id));
+           case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
+           case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
 #endif
-	else
-	  {
-	     ERR("parse error %s:%i. target may only be used after action",
-		 file_in, line - 1);
-	     exit(-1);
-	  }
+              data_queue_part_lookup(pc, name, &(et->id));
+              break;
+           default:
+              ERR("parse error %s:%i. target may only be used after action",
+                  file_in, line - 1);
+              exit(-1);
+          }
 	free(name);
      }
 }
