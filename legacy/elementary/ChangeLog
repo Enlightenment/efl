@@ -774,3 +774,7 @@
 	* Fix elm_conform buffer to always finish with at least one '\0';
 	* Fix forgotten break in elm_map that would have thrown error when the
 	action was properly taken in fact.
+
+2012-12-06 Daniel Juyung Seo (SeoZ)
+
+	* Fix wheel scroll direction with shift.
