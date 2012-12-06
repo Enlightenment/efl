@@ -6,8 +6,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_NOTIFY_WIN32
-
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
@@ -225,19 +223,19 @@ _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh)
 }
 
 int
-ecore_file_monitor_win32_init(void)
+ecore_file_monitor_backend_init(void)
 {
    return 1;
 }
 
 int
-ecore_file_monitor_win32_shutdown(void)
+ecore_file_monitor_backend_shutdown(void)
 {
    return 1;
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_win32_add(const char *path,
+ecore_file_monitor_backend_add(const char *path,
                              void (*func) (void *data, Ecore_File_Monitor *em,
                                            Ecore_File_Event event,
                                            const char *path),
@@ -293,7 +291,7 @@ ecore_file_monitor_win32_add(const char *path,
 }
 
 void
-ecore_file_monitor_win32_del(Ecore_File_Monitor *em)
+ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
 {
    Ecore_File_Monitor_Win32 *m;
 
@@ -306,5 +304,3 @@ ecore_file_monitor_win32_del(Ecore_File_Monitor *em)
    free(em->path);
    free(em);
 }
-
-#endif

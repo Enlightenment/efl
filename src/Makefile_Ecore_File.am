@@ -11,11 +11,21 @@ lib_ecore_file_libecore_file_la_SOURCES = \
 lib/ecore_file/ecore_file.c \
 lib/ecore_file/ecore_file_download.c \
 lib/ecore_file/ecore_file_monitor.c \
-lib/ecore_file/ecore_file_monitor_inotify.c \
-lib/ecore_file/ecore_file_monitor_poll.c \
-lib/ecore_file/ecore_file_monitor_win32.c \
 lib/ecore_file/ecore_file_path.c \
 lib/ecore_file/ecore_file_private.h
+
+if HAVE_INOTIFY
+lib_ecore_file_libecore_file_la_SOURCES += \
+lib/ecore_file/ecore_file_monitor_inotify.c
+else
+if HAVE_NOTIFY_WIN32
+lib_ecore_file_libecore_file_la_SOURCES += \
+lib/ecore_file/ecore_file_monitor_win32.c
+else
+lib_ecore_file_libecore_file_la_SOURCES += \
+lib/ecore_file/ecore_file_monitor_poll.c
+endif
+endif
 
 lib_ecore_file_libecore_file_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \

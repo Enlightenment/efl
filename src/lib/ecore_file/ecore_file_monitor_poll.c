@@ -8,8 +8,6 @@
 
 #include "ecore_file_private.h"
 
-#ifdef HAVE_POLL
-
 /*
  * TODO:
  * - Implement recursive as an option!
@@ -43,16 +41,16 @@ static void        _ecore_file_monitor_poll_check(Ecore_File_Monitor *em);
 static int         _ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name);
 
 int
-ecore_file_monitor_poll_init(void)
+ecore_file_monitor_backend_init(void)
 {
    return 1;
 }
 
 int
-ecore_file_monitor_poll_shutdown(void)
+ecore_file_monitor_backend_shutdown(void)
 {
    while(_monitors)
-        ecore_file_monitor_poll_del(_monitors);
+        ecore_file_monitor_backend_del(_monitors);
 
    if (_timer)
      {
@@ -63,7 +61,7 @@ ecore_file_monitor_poll_shutdown(void)
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_poll_add(const char *path,
+ecore_file_monitor_backend_add(const char *path,
                             void (*func) (void *data, Ecore_File_Monitor *em,
                                           Ecore_File_Event event,
                                           const char *path),
@@ -125,7 +123,7 @@ ecore_file_monitor_poll_add(const char *path,
      }
    else
      {
-        ecore_file_monitor_poll_del(em);
+        ecore_file_monitor_backend_del(em);
         return NULL;
      }
 
@@ -133,7 +131,7 @@ ecore_file_monitor_poll_add(const char *path,
 }
 
 void
-ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
+ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
 {
    Ecore_File *l;
 
@@ -337,4 +335,3 @@ _ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name)
      }
    return 0;
 }
-#endif

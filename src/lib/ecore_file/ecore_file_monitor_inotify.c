@@ -20,8 +20,6 @@
  * - Listen to IN_IGNORED, emitted when the watch is removed
  */
 
-#ifdef HAVE_SYS_INOTIFY_H
-
 #include <sys/inotify.h>
 
 
@@ -48,7 +46,7 @@ static void                _ecore_file_monitor_inotify_print(char *file, int mas
 #endif
 
 int
-ecore_file_monitor_inotify_init(void)
+ecore_file_monitor_backend_init(void)
 {
    int fd;
 
@@ -69,12 +67,12 @@ ecore_file_monitor_inotify_init(void)
 }
 
 int
-ecore_file_monitor_inotify_shutdown(void)
+ecore_file_monitor_backend_shutdown(void)
 {
    int fd;
 
    while(_monitors)
-        ecore_file_monitor_inotify_del(_monitors);
+        ecore_file_monitor_backend_del(_monitors);
 
    if (_fdh)
      {
@@ -87,7 +85,7 @@ ecore_file_monitor_inotify_shutdown(void)
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_inotify_add(const char *path,
+ecore_file_monitor_backend_add(const char *path,
                                void (*func) (void *data, Ecore_File_Monitor *em,
                                              Ecore_File_Event event,
                                              const char *path),
@@ -100,8 +98,8 @@ ecore_file_monitor_inotify_add(const char *path,
 
    if (_inotify_fd_pid != getpid())
      {
-        ecore_file_monitor_inotify_shutdown();
-        ecore_file_monitor_inotify_init();
+        ecore_file_monitor_backend_shutdown();
+        ecore_file_monitor_backend_init();
      }
 
    em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
@@ -124,7 +122,7 @@ ecore_file_monitor_inotify_add(const char *path,
 }
 
 void
-ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
+ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
 {
    int fd;
 
@@ -283,7 +281,7 @@ _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {
         INF("inotify_add_watch failed, file was deleted");
-        ecore_file_monitor_inotify_del(em);
+        ecore_file_monitor_backend_del(em);
         return 0;
      }
    return 1;
@@ -328,4 +326,3 @@ _ecore_file_monitor_inotify_print(char *file, int mask)
      INF("Inotify unmount %s: %s", type, file);
 }
 #endif
-#endif /* HAVE_SYS_INOTIFY_H */

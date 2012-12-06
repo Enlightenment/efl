@@ -478,6 +478,13 @@ unistd.h \
 have_inotify="${ac_cv_header_sys_inotify_h}"
 AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 
+have_notify_win32="${have_win32}"
+AC_DEFINE_IF([HAVE_NOTIFY_WIN32],
+   [test "x${have_notify_win32}" = "xyes"],
+   [File monitoring with Windows notification])
+AM_CONDITIONAL([HAVE_NOTIFY_WIN32], [test "x${have_notify_win32}" = "xyes"])
+
+
 EFL_CHECK_PATH_MAX
 
 
@@ -2392,17 +2399,6 @@ if test "x${want_poll}" = "xyes" ; then
    have_poll="yes"
 fi
 
-have_notify_win32="no"
-
-case "$host_os" in
-  mingw32ce*)
-    ;;
-  mingw32*)
-     have_notify_win32="yes"
-     AC_DEFINE([HAVE_NOTIFY_WIN32], [1], [File monitoring with Windows notification])
-    ;;
-esac
-
 if ! test "x${have_atfile_source}" = "xno" ; then
    AC_CHECK_FUNCS([mkdirat],
       [
@@ -3932,11 +3928,6 @@ setxattr("/", "user.ethumb.md5", NULL, 0, 0);
    [have_xattr="no"])
 
 AC_MSG_RESULT([${have_xattr}])
-
-# Check for inotify specificity
-have_notify_win32="no"
-EIO_CHECK_NOTIFY_WIN32([have_notify_win32="yes"], [have_notify_win32="no"])
-AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x${have_notify_win32}" = "xyes"])
 
 #### End of Eio
 

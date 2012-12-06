@@ -4,66 +4,18 @@
 
 #include "ecore_file_private.h"
 
-typedef enum {
-     ECORE_FILE_MONITOR_TYPE_NONE,
-#ifdef HAVE_SYS_INOTIFY_H
-     ECORE_FILE_MONITOR_TYPE_INOTIFY,
-#endif
-#ifdef HAVE_NOTIFY_WIN32
-     ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32,
-#endif
-#ifdef HAVE_POLL
-     ECORE_FILE_MONITOR_TYPE_POLL
-#endif
-} Ecore_File_Monitor_Type;
-
-static Ecore_File_Monitor_Type monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
-
 int
 ecore_file_monitor_init(void)
 {
-#ifdef HAVE_SYS_INOTIFY_H
-   monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
-   if (ecore_file_monitor_inotify_init())
+   if (ecore_file_monitor_backend_init())
      return 1;
-#endif
-#ifdef HAVE_NOTIFY_WIN32
-   monitor_type = ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32;
-   if (ecore_file_monitor_win32_init())
-     return 1;
-#endif
-#ifdef HAVE_POLL
-   monitor_type = ECORE_FILE_MONITOR_TYPE_POLL;
-   if (ecore_file_monitor_poll_init())
-     return 1;
-#endif
-   monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
    return 0;
 }
 
 void
 ecore_file_monitor_shutdown(void)
 {
-   switch (monitor_type)
-     {
-      case ECORE_FILE_MONITOR_TYPE_NONE:
-         break;
-#ifdef HAVE_SYS_INOTIFY_H
-      case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-         ecore_file_monitor_inotify_shutdown();
-         break;
-#endif
-#ifdef HAVE_NOTIFY_WIN32
-      case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-         ecore_file_monitor_win32_shutdown();
-         break;
-#endif
-#ifdef HAVE_POLL
-      case ECORE_FILE_MONITOR_TYPE_POLL:
-         ecore_file_monitor_poll_shutdown();
-         break;
-#endif
-     }
+   ecore_file_monitor_backend_shutdown();
 }
 
 /**
@@ -94,27 +46,11 @@ ecore_file_monitor_add(const char           *path,
                        Ecore_File_Monitor_Cb func,
                        void                 *data)
 {
-   if (!path || !*path)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(path[0] == '\0', NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
 
-   switch (monitor_type)
-     {
-      case ECORE_FILE_MONITOR_TYPE_NONE:
-         return NULL;
-#ifdef HAVE_SYS_INOTIFY_H
-      case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-         return ecore_file_monitor_inotify_add(path, func, data);
-#endif
-#ifdef HAVE_NOTIFY_WIN32
-      case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-         return ecore_file_monitor_win32_add(path, func, data);
-#endif
-#ifdef HAVE_POLL
-      case ECORE_FILE_MONITOR_TYPE_POLL:
-         return ecore_file_monitor_poll_add(path, func, data);
-#endif
-     }
-   return NULL;
+   return ecore_file_monitor_backend_add(path, func, data);
 }
 
 /**
@@ -131,29 +67,8 @@ ecore_file_monitor_add(const char           *path,
 EAPI void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
-   if (!em)
-     return;
-
-   switch (monitor_type)
-     {
-      case ECORE_FILE_MONITOR_TYPE_NONE:
-         break;
-#ifdef HAVE_SYS_INOTIFY_H
-      case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-         ecore_file_monitor_inotify_del(em);
-         break;
-#endif
-#ifdef HAVE_NOTIFY_WIN32
-      case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-         ecore_file_monitor_win32_del(em);
-         break;
-#endif
-#ifdef HAVE_POLL
-      case ECORE_FILE_MONITOR_TYPE_POLL:
-         ecore_file_monitor_poll_del(em);
-         break;
-#endif
-     }
+   EINA_SAFETY_ON_NULL_RETURN(em);
+   ecore_file_monitor_backend_del(em);
 }
 
 /**
@@ -170,8 +85,7 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
 EAPI const char *
 ecore_file_monitor_path_get(Ecore_File_Monitor *em)
 {
-   if (!em)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(em, NULL);
    return em->path;
 }
 
