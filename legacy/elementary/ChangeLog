@@ -771,3 +771,4 @@
 2012-12-06  Cedric Bail
 
 	* Fix possible segv in elm_quicklaunch infrastructure.
+	* Fix elm_conform buffer to always finish with at least one '\0';

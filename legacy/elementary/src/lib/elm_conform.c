@@ -64,6 +64,7 @@ _conformant_part_geometry_get_from_env(const char *part,
 
    /* strtok would modify env var if not copied to a buffer */
    strncpy(buf, env_val, sizeof(buf));
+   buf[PATH_MAX - 1] = '\0';
 
    token = strtok(buf, delimiters);
    if (!token) return EINA_FALSE;

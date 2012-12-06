@@ -77,6 +77,7 @@ Fixes:
    * Fix uninitialized data path in elm_flip, elm_gesture_layer, elm_interface_scrollable,
    els_scroller.
    * Fix possible segv in elm_quicklaunch infrastructure.
+   * Fix buffer to always have a final '\0' in elm_conform.
 
 Removals:
 
