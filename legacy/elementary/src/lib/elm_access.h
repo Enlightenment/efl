@@ -1,5 +1,5 @@
 /**
- * @defgroup Naviframe Naviframe
+ * @defgroup Access Access
  * @ingroup Elementary
  *
  * TODO: description
@@ -12,3 +12,6 @@ const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
 
 EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text);
+
+EAPI char *
+elm_access_external_info_get(Evas_Object *obj);

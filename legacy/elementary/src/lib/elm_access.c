@@ -790,5 +790,14 @@ elm_access_external_info_set(Evas_Object *obj, const char *text)
      (_elm_access_object_get(obj), ELM_ACCESS_EXTERNAL_INFO, text);
 }
 
+EAPI char *
+elm_access_external_info_get(Evas_Object *obj)
+{
+   Elm_Access_Info *ac;
+
+   ac = _elm_access_object_get(obj);
+   return _elm_access_text_get(ac, ELM_ACCESS_EXTERNAL_INFO, obj, NULL);
+}
+
 EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
 
