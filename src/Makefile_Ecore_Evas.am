@@ -69,7 +69,7 @@ ecoreevasenginebufferpkgdir = $(libdir)/ecore_evas/engines/buffer/$(MODULE_ARCH)
 ecoreevasenginebufferpkg_LTLIBRARIES = modules/ecore_evas/engines/buffer/module.la
 modules_ecore_evas_engines_buffer_module_la_SOURCES = $(BUFFERSOURCES)
 modules_ecore_evas_engines_buffer_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
-modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_evas/libecore_evas.la @EFL_LIBS@
+modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la @EFL_LIBS@
 modules_ecore_evas_engines_buffer_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
