@@ -399,13 +399,13 @@ _elm_slider_smart_activate(Eo *obj, void *_pd, va_list *list)
    if ((act == ELM_ACTIVATE_UP) ||
        (act == ELM_ACTIVATE_RIGHT))
      {
-        if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
    else if ((act == ELM_ACTIVATE_DOWN) ||
             (act == ELM_ACTIVATE_LEFT))
      {
-        if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
 
