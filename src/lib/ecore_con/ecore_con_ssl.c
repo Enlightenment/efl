@@ -28,11 +28,11 @@ void *alloca (size_t);
 # endif
 #endif
 
-#if USE_GNUTLS
+#if HAVE_GNUTLS
 # include <gnutls/gnutls.h>
 # include <gnutls/x509.h>
 # include <gcrypt.h>
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
 # include <openssl/ssl.h>
 # include <openssl/err.h>
 # include <openssl/dh.h>
@@ -51,7 +51,7 @@ EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
 
 static int _init_con_ssl_init_count = 0;
 
-#ifdef USE_GNUTLS
+#ifdef HAVE_GNUTLS
 # ifdef EINA_HAVE_THREADS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif
@@ -61,7 +61,7 @@ static int _client_connected = 0;
 # define SSL_SUFFIX(ssl_func) ssl_func ## _gnutls
 # define _ECORE_CON_SSL_AVAILABLE 1
 
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
 
 # define SSL_SUFFIX(ssl_func) ssl_func ## _openssl
 # define _ECORE_CON_SSL_AVAILABLE 2
@@ -72,7 +72,7 @@ static int _client_connected = 0;
 
 #endif
 
-#if USE_GNUTLS
+#if HAVE_GNUTLS
 static void
 _gnutls_print_errors(void *conn, int type, int ret)
 {
@@ -162,7 +162,7 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
    return NULL;
 }
 
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
 
 static void
 _openssl_print_verify_error(int error)
@@ -883,7 +883,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type ssl_type)
  * @}
  */
 
-#if USE_GNUTLS
+#if HAVE_GNUTLS
 
 /*
  * GnuTLS
@@ -1520,7 +1520,7 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl,
    return -1;
 }
 
-#elif USE_OPENSSL && !USE_GNUTLS
+#elif HAVE_OPENSSL && !HAVE_GNUTLS
 
 /*
  * OpenSSL

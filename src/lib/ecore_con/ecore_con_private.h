@@ -12,9 +12,9 @@
 #define ECORE_CON_SSL  0xf0
 #define ECORE_CON_SUPER_SSL  0xf00
 
-#if USE_GNUTLS
+#if HAVE_GNUTLS
 # include <gnutls/gnutls.h>
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
 # include <openssl/ssl.h>
 #endif
 #ifdef HAVE_CURL
@@ -113,10 +113,10 @@ struct _Ecore_Con_Client
    double start_time;
    Ecore_Timer *until_deletion;
    double disconnect_time;
-#if USE_GNUTLS
+#if HAVE_GNUTLS
    gnutls_datum_t session_ticket;
    gnutls_session_t session;
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
    SSL *ssl;
    int ssl_err;
 #endif
@@ -156,7 +156,7 @@ struct _Ecore_Con_Server
    int proxyport;
    /* endsocks */
    const char *verify_name;
-#if USE_GNUTLS
+#if HAVE_GNUTLS
    gnutls_session_t session;
    gnutls_anon_client_credentials_t anoncred_c;
    gnutls_anon_server_credentials_t anoncred_s;
@@ -165,7 +165,7 @@ struct _Ecore_Con_Server
    gnutls_certificate_credentials_t cert;
    char *cert_file;
    gnutls_dh_params_t dh_params;
-#elif USE_OPENSSL
+#elif HAVE_OPENSSL
    SSL_CTX *ssl_ctx;
    SSL *ssl;
    int ssl_err;

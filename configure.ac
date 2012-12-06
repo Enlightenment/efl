@@ -74,6 +74,22 @@ esac
 
 # TODO: add some build "profile" (server, full, etc...)
 
+AC_ARG_WITH([crypto],
+   [AC_HELP_STRING([--with-crypto=CRYPTO],
+                   [use the predefined build crypto, one of:
+                    openssl, gnutls or none.
+                    @<:@default=openssl@:>@])],
+   [build_crypto=${withval}],
+   [build_crypto=openssl])
+
+case "${build_crypto}" in
+   openssl|gnutls|none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build crypto option: --with-crypto=${build_crypto}])
+     ;;
+esac
+
 AC_ARG_ENABLE([coverage],
    [AC_HELP_STRING([--enable-coverage], [enable unit testing coverage. @<:@default=disabled@:>@])],
    [
@@ -87,6 +103,10 @@ AC_ARG_ENABLE([coverage],
 
 
 #### Default values
+
+requirements_pc_crypto=""
+requirements_pc_deps_crypto=""
+requirements_libs_crypto=""
 
 requirements_libs_evil=""
 requirements_libs_eina=""
@@ -407,6 +427,30 @@ PKG_CHECK_MODULES([CHECK],
 
 AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "x${_efl_enable_tests}" = "xyes"])
 
+
+# check for crypto/tls library to use
+case "$build_crypto" in
+   gnutls)
+      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11])
+      AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
+      requirements_pc_crypto="gnutls >= 2.11 ${requirements_pc_crypto}"
+      requirements_pc_deps_crypto="gnutls >= 2.11 ${requirements_pc_deps_crypto}"
+
+      # libgcrypt
+      AC_PATH_GENERIC([libgcrypt], [], [:],
+         [AC_MSG_ERROR([libgcrypt required but not found])])
+      requirements_libs_crypto="${LIBGCRYPT_LIBS} ${requirements_libs_crypto}"
+      ;;
+
+   openssl)
+      PKG_CHECK_EXISTS([openssl],
+         [
+          AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
+          requirements_pc_crypto="openssl ${requirements_pc_crypto}"
+          requirements_pc_deps_crypto="openssl ${requirements_pc_deps_crypto}"
+         ])
+      ;;
+esac
 
 #### Checks for header files
 
@@ -905,22 +949,6 @@ AC_MSG_NOTICE([Eet checks])
 
 ### Additional options to configure
 
-AC_ARG_WITH([crypto],
-   [AC_HELP_STRING([--with-crypto=CRYPTO],
-                   [use the predefined build crypto, one of:
-                    openssl, gnutls or none.
-                    @<:@default=openssl@:>@])],
-   [build_crypto=${withval}],
-   [build_crypto=openssl])
-
-case "${build_crypto}" in
-   openssl|gnutls|none)
-     ;;
-   *)
-     AC_MSG_ERROR([Unknown build crypto option: --with-crypto=${build_crypto}])
-     ;;
-esac
-
 ### Checks for programs
 
 ### Checks for libraries
@@ -937,28 +965,9 @@ esac
 
 ## Secure layer
 
-case "$build_crypto" in
-   gnutls)
-      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11])
-      AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
-      requirements_pc_eet="gnutls >= 2.11 ${requirements_pc_eet}"
-      requirements_pc_deps_eet="gnutls >= 2.11 ${requirements_pc_deps_eet}"
-
-      # libgcrypt
-      AC_PATH_GENERIC([libgcrypt], [], [:],
-         [AC_MSG_ERROR([libgcrypt required but not found])])
-      requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
-      ;;
-
-   openssl)
-      PKG_CHECK_EXISTS([openssl],
-         [
-          AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
-          requirements_pc_eet="openssl ${requirements_pc_eet}"
-          requirements_pc_deps_eet="openssl ${requirements_pc_deps_eet}"
-         ])
-      ;;
-esac
+requirements_pc_eet="${requirements_pc_crypto} ${requirements_pc_eet}"
+requirements_pc_deps_eet="${requirements_pc_deps_crypto} ${requirements_pc_deps_eet}"
+requirements_libs_eet="${requirements_libs_crypto} ${requirements_libs_eet}"
 
 # Cryptography support
 if test "$build_crypto" != "none" ; then
@@ -2161,21 +2170,6 @@ AC_ARG_ENABLE([curl],
    ],
    [want_curl="yes"])
 
-AC_ARG_WITH([tls],
-   [AC_HELP_STRING([--with-tls=TLS],
-                   [select Transport Layer Security, one of: gnutls, openssl, none.
-                    @<:@default=gnutls@:>@])],
-   [with_tls=${withval}],
-   [with_tls="gnutls"])
-
-case "${with_tls}" in
-   gnutls|openssl|none)
-     ;;
-   *)
-     AC_MSG_ERROR([Unknown Transport Layer Security --with-tls=${with_tls}])
-     ;;
-esac
-
 AC_ARG_ENABLE([local-sockets],
    [AC_HELP_STRING([--disable-local-sockets], [disable local sockets.])],
    [
@@ -2203,7 +2197,6 @@ AC_ARG_ENABLE([abstract-sockets],
 
 case "$host_os" in
    mingw32ce*)
-      with_tls="none"
       want_curl="no"
       want_cares="no"
       want_ecore_con_local_sockets="no"
@@ -2237,11 +2230,6 @@ fi
 
 ### Checks for programs
 
-have_gnutls="no"
-if test "x${with_tls}" = "xgnutls" ; then
-   AC_PATH_GENERIC([libgcrypt], [], [have_gnutls="yes"], [have_gnutls="no"])
-fi
-
 ### Checks for libraries
 
 # Evil library for compilation on Windows
@@ -2255,32 +2243,9 @@ esac
 
 requirements_pc_ecore_con="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eo >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_con}"
 
-# gnuTLS
-
-if test "x${have_gnutls}" = "xyes" ; then
-   PKG_CHECK_EXISTS([gnutls >= 2.11],
-      [
-       have_gnutls="yes"
-       AC_DEFINE([USE_GNUTLS], [1], [Use GnuTLS])
-       requirements_pc_ecore_con="gnutls >= 2.11 ${requirements_pc_ecore_con}"
-       requirements_pc_deps_ecore_con="gnutls >= 2.11 ${requirements_pc_deps_ecore_con}"
-      ],
-      [have_gnutls="no"])
-fi
-
-# openssl
-
-have_openssl="no"
-if test "x${with_tls}" = "xopenssl" ; then
-   PKG_CHECK_EXISTS([openssl],
-      [
-       have_openssl="yes"
-       AC_DEFINE([USE_OPENSSL], [1], [Use OpenSSL])
-       requirements_pc_ecore_con="openssl ${requirements_pc_ecore_con}"
-       requirements_pc_deps_ecore_con="openssl ${requirements_pc_deps_ecore_con}"
-      ],
-      [have_openssl="no"])
-fi
+requirements_pc_ecore_con="${requirements_pc_crypto} ${requirements_pc_ecore_con}"
+requirements_pc_deps_ecore_con="${requirements_pc_deps_crypto} ${requirements_pc_deps_ecore_con}"
+requirements_libs_ecore_con="${requirements_libs_crypto} ${requirements_libs_ecore_con}"
 
 # cURL
 
@@ -4241,11 +4206,7 @@ echo "  Gathering timer allocation.: $want_ecore_timer_dump"
 echo
 
 echo "Ecore_Con:"
-if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
-echo "  TLS........................: $with_tls"
-else
-echo "  TLS........................: no"
-fi
+echo "  TLS........................: $with_crypto"
 echo "  IPv6.......................: $have_ipv6"
 echo "  CURL.......................: $have_curl"
 echo "  Local Sockets..............: $want_ecore_con_local_sockets"
@@ -4262,7 +4223,7 @@ fi
 echo
 
 echo "Ecore_Ipc:"
-echo "  TLS........................: $with_tls"
+echo "  TLS........................: $with_crypto"
 echo
 
 echo "Ecore_File:"
