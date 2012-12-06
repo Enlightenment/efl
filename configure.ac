@@ -104,8 +104,6 @@ AC_ARG_ENABLE([coverage],
 
 #### Default values
 
-want_inotify="no"
-
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
@@ -278,11 +276,6 @@ case "$host_os" in
    cygwin*)
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".dll"
-   ;;
-   linux*)
-      want_inotify="yes"
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
-      MODULE_EXT=".so"
    ;;
    *)
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
@@ -480,17 +473,6 @@ sys/param.h \
 sys/mman.h \
 unistd.h \
 ])
-
-have_inotify="no"
-if test "x${want_inotify}" = "xyes" ; then
-   AC_CHECK_HEADER([sys/inotify.h],
-      [
-       AC_DEFINE([HAVE_INOTIFY], [1], [File monitoring with Inotify])
-       have_inotify="yes"
-      ],
-      [have_inotify="no"])
-fi
-AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 
 EFL_CHECK_PATH_MAX
 
@@ -1843,13 +1825,19 @@ fi
 
 # cserve2 only works on Linux so far.
 
-if test "x${efl_func_shm_open}" = "xno" -o "x${have_inotify}" = "xno"; then
+if test "x${efl_func_shm_open}" = "xno" ; then
    want_evas_cserve2="no"
 fi
 
-AC_DEFINE_IF([EVAS_CSERVE2],
-   [test "x${want_evas_cserve2}" = "xyes"],
-   [1], [Shared cache server.])
+if test "x${want_evas_cserve2}" = "xyes" ; then
+   AC_CHECK_HEADERS([sys/epoll.h sys/inotify.h sys/signalfd.h],
+      [],
+      [want_evas_cserve2="no"])
+fi
+
+if test "x${want_evas_cserve2}" = "xyes" ; then
+  AC_DEFINE([EVAS_CSERVE2], [1], [Shared cache server.])
+fi
 AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
 
 ### Configuration
@@ -2398,6 +2386,18 @@ AC_ARG_ENABLE([poll],
    ],
    [want_poll="yes"])
 
+AC_ARG_ENABLE([inotify],
+   [AC_HELP_STRING([--disable-inotify],
+      [disable inotify in the ecore_file module. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_inotify="yes"
+    else
+       want_inotify="no"
+    fi
+   ],
+   [want_inotify="yes"])
+
 AC_ARG_ENABLE([atfile-source],
    [AC_HELP_STRING([--disable-atfile-source],
        [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@])],
@@ -2457,6 +2457,19 @@ fi
 requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file}"
 
 ### Checks for header files
+
+have_inotify="no"
+if test "x${want_inotify}" = "xyes" ; then
+   AC_CHECK_HEADER([sys/inotify.h],
+      [
+       AC_DEFINE([HAVE_INOTIFY], [1], [File monitoring with Inotify])
+       have_inotify="yes"
+      ],
+      [have_inotify="no"])
+fi
+
+AC_MSG_CHECKING([whether inotify is to be used for filemonitoring])
+AC_MSG_RESULT(${have_inotify})
 
 ### Checks for types
 
@@ -3959,9 +3972,12 @@ setxattr("/", "user.ethumb.md5", NULL, 0, 0);
 AC_MSG_RESULT([${have_xattr}])
 
 # Check for inotify specificity
+have_inotify="no"
 have_notify_win32="no"
+EIO_CHECK_INOTIFY([have_inotify="yes"], [have_inotify="no"])
 EIO_CHECK_NOTIFY_WIN32([have_notify_win32="yes"], [have_notify_win32="no"])
 
+AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
 AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x${have_notify_win32}" = "xyes"])
 
 #### End of Eio

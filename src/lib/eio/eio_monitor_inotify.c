@@ -20,8 +20,11 @@
 #include "eio_private.h"
 #include "Eio.h"
 
-#ifdef HAVE_INOTIFY
+#ifdef HAVE_SYS_INOTIFY
 # include <sys/inotify.h>
+#else
+# include <asm/unistd.h>
+# include <linux/inotify.h>
 #endif
 
 /*============================================================================*
@@ -66,6 +69,26 @@ static const Eio_Inotify_Table match[] = {
   EIO_INOTIFY_LINE(IN_MOVE_SELF, SELF_DELETED, SELF_DELETED),
   EIO_INOTIFY_LINE(IN_UNMOUNT, SELF_DELETED, SELF_DELETED)
 };
+
+#ifndef HAVE_SYS_INOTIFY
+static inline int
+inotify_init(void)
+{
+   return syscall(__NR_inotify_init);
+}
+
+static inline int
+inotify_add_watch(int fd, const char *name, __u32 mask)
+{
+   return syscall(__NR_inotify_add_watch, fd, name, mask);
+}
+
+static inline int
+inotify_rm_watch(int fd, __u32 wd)
+{
+   return syscall(__NR_inotify_rm_watch, fd, wd);
+}
+#endif
 
 static void
 _eio_inotify_del(void *data)
