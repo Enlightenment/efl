@@ -5008,10 +5008,10 @@ _xwindow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = 0;
 }
 
-#if HAVE_ELEMENTARY_WAYLAND
 EAPI Ecore_Wl_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
+#if HAVE_ELEMENTARY_WAYLAND
    if (!obj) return NULL;
 
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
@@ -5024,8 +5024,12 @@ elm_win_wl_window_get(const Evas_Object *obj)
    Ecore_Wl_Window *ret = NULL;
    eo_do((Eo *) obj, elm_obj_win_wl_window_get(&ret));
    return ret;
+#else
+   return NULL;
+#end
 }
 
+#if HAVE_ELEMENTARY_WAYLAND
 static void
 _wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -5200,7 +5204,9 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), _focus_highlight_style_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN), _socket_listen),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET), _xwindow_get),
+#if HAVE_ELEMENTARY_WAYLAND
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), _wl_window_get),
+#endif
         EO_OP_FUNC_SENTINEL
    };
 
@@ -5297,7 +5303,9 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET, "Get the style set for the focus highlight object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN, "Create a socket to provide the service for Plug widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET, "Get the Ecore_X_Window of an Evas_Object."),
+#if HAVE_ELEMENTARY_WAYLAND
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET, "Get the Ecore_Wl_Window of and Evas_Object."),
+#endif
      EO_OP_DESCRIPTION_SENTINEL
 };
 

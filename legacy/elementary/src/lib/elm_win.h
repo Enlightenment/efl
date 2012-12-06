@@ -2651,7 +2651,6 @@ EAPI Eina_Bool             elm_win_socket_listen(Evas_Object *obj, const char *s
  */
 EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
 /* Wayland specific call - returns NULL on non-Wayland engines */
 /**
  * Get the Ecore_Wl_Window of and Evas_Object
@@ -2663,7 +2662,6 @@ EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
  * @ingroup Win
  */
 EAPI Ecore_Wl_Window *elm_win_wl_window_get(const Evas_Object *obj);
-#endif
 
 /**
  * @typedef Elm_Win_Trap
