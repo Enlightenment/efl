@@ -8182,37 +8182,25 @@ st_collections_group_programs_program_action(void)
 
    switch (ep->action)
      {
-      case EDJE_ACTION_TYPE_ACTION_STOP:
-	check_arg_count(1);
-	break;
       case EDJE_ACTION_TYPE_SCRIPT:
 	/* this is implicitly set by script {} so this is here just for
 	 * completeness */
 	break;
+      case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_FOCUS_OBJECT:
       case EDJE_ACTION_TYPE_FOCUS_SET:
-	check_arg_count(1);
-	break;
-      case EDJE_ACTION_TYPE_PARAM_COPY:
-        check_arg_count(5);
+      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+        check_arg_count(1);
         break;
       case EDJE_ACTION_TYPE_PARAM_SET:
-        check_arg_count(4);
-        break;
-      case EDJE_ACTION_TYPE_SOUND_SAMPLE:
-        check_arg_count(3);
-        break;
-      case EDJE_ACTION_TYPE_SOUND_TONE:
-        check_arg_count(3);
-        break;
       case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
       case EDJE_ACTION_TYPE_PHYSICS_FORCE:
       case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
         check_arg_count(4);
         break;
-      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
-        check_arg_count(1);
+      case EDJE_ACTION_TYPE_PARAM_COPY:
+        check_arg_count(5);
         break;
       default:
 	check_arg_count(3);
