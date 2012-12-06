@@ -114,19 +114,23 @@ handle_run(int fd, unsigned long bytes)
    
    argc = ((unsigned long *)(buf))[0];
    envnum = ((unsigned long *)(buf))[1];
+
+   if (argc <= 0)
+     {
+        CRITICAL("no executable specified");
+        close(fd);
+        return;
+     }
    
-   if (argc > 0) argv = alloca(argc * sizeof(char *));
+   argv = alloca(argc * sizeof(char *));
    if (envnum > 0) envir = alloca(envnum * sizeof(char *));
    off = ((unsigned long *)(buf))[2 + argc + envnum] - sizeof(unsigned long);
    cwd = (char *)(buf + off);
-   
-   if (argv)
+
+   for (i = 0; i < argc; i++)
      {
-        for (i = 0; i < argc; i++)
-          {
-             off = ((unsigned long *)(buf))[2 + i] - sizeof(unsigned long);
-             argv[i] = (char *)(buf + off);
-          }
+        off = ((unsigned long *)(buf))[2 + i] - sizeof(unsigned long);
+        argv[i] = (char *)(buf + off);
      }
 
 #ifdef HAVE_ENVIRON

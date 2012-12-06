@@ -692,11 +692,15 @@ static int (*qr_main)(int    argc,
                       char **argv) = NULL;
 
 EAPI Eina_Bool
-elm_quicklaunch_prepare(int argc __UNUSED__,
-                        char   **argv)
+elm_quicklaunch_prepare(int    argc,
+                        char **argv)
 {
 #ifdef HAVE_FORK
-   char *exe = elm_quicklaunch_exe_path_get(argv[0]);
+   char *exe;
+
+   if (argc <= 0 || argv == NULL) return EINA_FALSE;
+
+   exe = elm_quicklaunch_exe_path_get(argv[0]);
    if (!exe)
      {
         ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
