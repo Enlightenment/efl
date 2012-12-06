@@ -115,7 +115,7 @@ collections {
                getsarg(2, name, sizeof(name));
                pid = get_part_id(name);
                if (!pid) return;
-               physics_forces_clear(pid);
+               physics_clear_forces(pid);
             }
             else if ((id == ID_FORCES_GET) && (type == MSG_STRING)) {
                new Float:x, Float:y, Float:z;
@@ -123,7 +123,7 @@ collections {
                getsarg(2, name, sizeof(name));
                pid = get_part_id(name);
                if (!pid) return;
-               physics_forces_get(pid, x, y, z);
+               physics_get_forces(pid, x, y, z);
                send_message(MSG_FLOAT_SET, id, x, y, z);
             }
             else if ((id == ID_TORQUES_GET) && (type == MSG_STRING)) {
@@ -132,7 +132,7 @@ collections {
                getsarg(2, name, sizeof(name));
                pid = get_part_id(name);
                if (!pid) return;
-               physics_torques_get(pid, x, y, z);
+               physics_get_torques(pid, x, y, z);
                send_message(MSG_FLOAT_SET, id, x, y, z);
             }
             else if ((id == ID_VEL_SET) && (type == MSG_FLOAT_SET)) {
