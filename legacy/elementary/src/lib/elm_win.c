@@ -5008,6 +5008,7 @@ _xwindow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = 0;
 }
 
+#if HAVE_ELEMENTARY_WAYLAND
 EAPI Ecore_Wl_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
@@ -5029,7 +5030,6 @@ static void
 _wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Ecore_Wl_Window **ret = va_arg(*list, Ecore_Wl_Window **);
-#if HAVE_ELEMENTARY_WAYLAND
    Elm_Win_Smart_Data *sd = _pd;
    if (sd->wl.win)
      {
@@ -5041,9 +5041,9 @@ _wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
         *ret = elm_win_wl_window_get(sd->parent);
         return;
      }
-#endif
    *ret = NULL;
 }
+#endif
 
 EAPI Eina_Bool
 elm_win_trap_set(const Elm_Win_Trap *t)
