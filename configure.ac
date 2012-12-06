@@ -1953,20 +1953,6 @@ AC_ARG_ENABLE([g-main-loop],
    ],
    [want_g_main_loop="no"])
 
-# thread safety
-
-AC_ARG_ENABLE([thread-safety],
-   [AC_HELP_STRING([--enable-thread-safety],
-       [enable thread safety. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_thread_safety="yes"
-    else
-       want_thread_safety="no"
-    fi
-   ],
-   [want_thread_safety="no"])
-
 # epoll
 
 AC_ARG_ENABLE([epoll],
@@ -1992,10 +1978,6 @@ esac
 want_glib="no"
 if test "x${with_glib}" = "xyes" || test "x${with_glib}" = "xalways" ; then
    want_glib="yes"
-fi
-
-if test "x${want_thread_safety}" = "xyes" ; then
-   AC_DEFINE([HAVE_THREAD_SAFETY], [1], [Define to enable thread safety])
 fi
 
 want_ecore_timer_dump="no"
@@ -4164,7 +4146,6 @@ echo "    Tiled 32BPP rotate......: $have_tile_rotate"
 echo
 
 echo "Ecore:"
-echo "  Thread safety..............: $want_thread_safety"
 echo "  GLib support...............: $with_glib"
 echo "  Use g_main_loop............: $want_g_main_loop"
 echo "  Gathering memory statistic.: $ac_cv_func_mallinfo"

@@ -247,6 +247,25 @@ static inline void
 _ecore_lock(void)
 {
 #ifdef HAVE_THREAD_SAFETY
+   /* THIS IS BROKEN AND NEEDS FIXING
+    *
+    * the concept of lock to execute main-loop related functions is okay
+    * and the code below is correct per se, but with its usage in Ecore
+    * is leading to hard locks that must be investigated.
+    *
+    * One failure possibility is missing _ecore_unlock() that leaves
+    * the lock taken and on next take it will block.
+    *
+    * Another failure possibility is one function that takes the lock
+    * and calls some API function that also takes the lock, leading to
+    * block.
+    *
+    * When these are fixed, remove the HAVE_THREAD_SAFETY and leave it
+    * always on. To eliminate the lock overhead for non-threaded
+    * applications, have a global boolean that is set to TRUE by user
+    * if he uses this features, much like eina_log_threads_enable().
+    *  -- Gustavo, December 6th 2012.
+    */
    eina_lock_take(&_ecore_main_loop_lock);
 #else
    /* at least check we're not being called from a thread */
