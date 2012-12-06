@@ -1141,7 +1141,7 @@ AC_ARG_ENABLE([harfbuzz],
        want_harfbuzz="no"
     fi
    ],
-   [want_harfbuzz="yes"])
+   [want_harfbuzz="no"])
 
 # Pixman
 AC_ARG_ENABLE([pixman],
