@@ -128,7 +128,7 @@ _file_load(const char *file)
    f = eina_file_open(file, EINA_FALSE);
    if (!f) return NULL;
 
-   tmp = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+   tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!tmp) goto on_error;
 
    text = malloc(eina_file_size_get(f) + 1);
@@ -144,7 +144,7 @@ _file_load(const char *file)
      }
 
  on_error:
-   if (tmp) eina_file_map_free(tmp);
+   if (tmp) eina_file_map_free(f, tmp);
    eina_file_close(f);
 
    return text;
