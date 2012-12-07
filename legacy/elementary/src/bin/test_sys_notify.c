@@ -9,11 +9,47 @@
 
 static Evas_Object *s = NULL;
 static Evas_Object *b = NULL;
+static Evas_Object *l = NULL;
+static Evas_Object *n = NULL;
+
+static Eina_Bool
+_ev_handler(void *data __UNUSED__,
+            int type,
+            void *event)
+{
+   char msg[256];
+
+   Elm_Sys_Notify_Notification_Closed *closed;
+   Elm_Sys_Notify_Action_Invoked *action;
+
+   if (type == ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED)
+     {
+        closed = event;
+        sprintf(msg, "Notification Closed Event: %u %d.",
+               closed->id, closed->reason);
+     }
+   else if (type == ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED)
+     {
+        action = event;
+        sprintf(msg, "Notification Action Event: %u %s.",
+               action->id, action->action_key);
+     }
+   else
+     return ECORE_CALLBACK_PASS_ON;
+
+   elm_object_text_set(l, msg);
+   evas_object_show(n);
+
+   return ECORE_CALLBACK_DONE;
+}
 
 static void
-_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_clicked(void *data __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
 {
-   elm_sys_notify_simple_send("", elm_entry_entry_get(s), elm_entry_entry_get(b));
+   elm_sys_notify_simple_send
+      ("", elm_entry_entry_get(s), elm_entry_entry_get(b));
 }
 
 void
@@ -25,6 +61,12 @@ test_sys_notify(void *data __UNUSED__,
 
    elm_need_sys_notify();
 
+   ecore_event_handler_add(ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED,
+                           _ev_handler, NULL);
+
+   ecore_event_handler_add(ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED,
+                           _ev_handler, NULL);
+
    win = elm_win_add(NULL, "Sys Notify", ELM_WIN_BASIC);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_win_title_set(win, "System Notification");
@@ -35,6 +77,15 @@ test_sys_notify(void *data __UNUSED__,
    evas_object_size_hint_min_set(it, WIDTH, HEIGHT);
    evas_object_size_hint_max_set(it, WIDTH, HEIGHT);
    evas_object_show(it);
+
+   n = elm_notify_add(win);
+   evas_object_size_hint_weight_set(n, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(n, 0.5, 0.0);
+   elm_notify_timeout_set(n, 2.0);
+
+   l = elm_label_add(win);
+   elm_object_content_set(n, l);
+   evas_object_show(l);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

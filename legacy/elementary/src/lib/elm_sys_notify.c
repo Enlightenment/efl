@@ -5,6 +5,9 @@
 #define BUS       "org.freedesktop.Notifications"
 #define INTERFACE "org.freedesktop.Notifications"
 
+EAPI int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
+EAPI int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
+
 #ifdef ELM_EDBUS2
 static Eina_Bool _elm_need_sys_notify = EINA_FALSE;
 
@@ -213,6 +216,82 @@ error:
 
 #ifdef ELM_EDBUS2
 static void
+_on_notification_closed(void *data EINA_UNUSED,
+                        const EDBus_Message *msg)
+{
+   const char *errname;
+   const char *errmsg;
+   Elm_Sys_Notify_Notification_Closed *d;
+
+   if (edbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Edbus Error: %s %s", errname, errmsg);
+        return;
+     }
+
+   d = malloc(sizeof(*d));
+
+   if (!edbus_message_arguments_get(msg, "uu", &(d->id), &(d->reason)))
+     {
+        ERR("Error processing signal: "INTERFACE".NotificationClosed.");
+        goto cleanup;
+     }
+
+   if (!ecore_event_add(ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED, d,
+                        NULL, NULL)) goto cleanup;
+
+   return;
+
+cleanup:
+   free(d);
+}
+
+static void
+_ev_action_invoked_free(void *data EINA_UNUSED,
+                        void *ev_data)
+{
+   Elm_Sys_Notify_Action_Invoked *d = ev_data;
+
+   free(d->action_key);
+   free(d);
+}
+
+static void
+_on_action_invoked(void *data EINA_UNUSED,
+                   const EDBus_Message *msg)
+{
+   const char *errname;
+   const char *aux;
+
+   Elm_Sys_Notify_Action_Invoked *d;
+
+   if (edbus_message_error_get(msg, &errname, &aux))
+     {
+        ERR("Edbus Error: %s %s", errname, aux);
+        return;
+     }
+
+   d = malloc(sizeof(*d));
+
+   if (!edbus_message_arguments_get(msg, "us", &(d->id), &aux))
+     {
+        ERR("Error processing signal: "INTERFACE".ActionInvoked.");
+        goto cleanup;
+     }
+
+   d->action_key = strdup(aux);
+
+   if (!ecore_event_add(ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED, d,
+                        _ev_action_invoked_free, NULL)) goto cleanup;
+
+   return;
+
+cleanup:
+   free(d->action_key);
+   free(d);
+}
+
+static void
 _release(void)
 {
    if (_elm_sysnotif_proxy)
@@ -235,6 +314,12 @@ _update(void)
    _elm_sysnotif_obj = edbus_object_get(_elm_sysnotif_conn, BUS, OBJ);
    _elm_sysnotif_proxy = edbus_proxy_get(_elm_sysnotif_obj, INTERFACE);
    _elm_sys_notify_capabilities_get();
+
+   edbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "NotificationClosed",
+                                  _on_notification_closed, NULL);
+
+   edbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "ActionInvoked",
+                                  _on_action_invoked, NULL);
 }
 
 static void
@@ -270,6 +355,12 @@ elm_need_sys_notify(void)
    if (_elm_need_sys_notify) return EINA_TRUE;
 
    if (!elm_need_edbus()) return EINA_FALSE;
+
+   if (!ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED)
+     ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = ecore_event_type_new();
+
+   if (!ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED)
+     ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED = ecore_event_type_new();
 
    _elm_sysnotif_conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 

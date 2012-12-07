@@ -2,6 +2,19 @@
 #define ELM_SYS_NOTIFY_H
 
 /**
+ * The reason the notification was closed
+ *
+ * @since 1.8
+ */
+typedef enum _Elm_Sys_Notify_Closed_Reason
+{
+  ELM_SYS_NOTIFY_CLOSED_EXPIRED, /** The notification expired. */
+  ELM_SYS_NOTIFY_CLOSED_DISMISSED, /** The notification was dismissed by the user. */
+  ELM_SYS_NOTIFY_CLOSED_REQUESTED, /** The notification was closed by a call to CloseNotification method. */
+  ELM_SYS_NOTIFY_CLOSED_UNDEFINED /** Undefined/reserved reasons. */
+} Elm_Sys_Notify_Closed_Reason;
+
+/**
  * Urgency levels of a notification
  *
  * @see elm_sys_notify_send()
@@ -16,6 +29,39 @@ typedef enum _Elm_Sys_Notify_Urgency
 } Elm_Sys_Notify_Urgency;
 
 typedef void (*Elm_Sys_Notify_Send_Cb)(void *data, unsigned int id);
+
+/**
+ * Emitted when the signal NotificationClosed is received.
+ */
+EAPI extern int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED;
+
+/**
+ * Emitted when the signal ActionInvoked is received.
+ */
+EAPI extern int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED; /**< A Action has been invoked. */
+
+/**
+ * Data on event when Notification Closed is emitted.
+ *
+ * @since 1.8
+ */
+typedef struct _Elm_Sys_Notify_Notification_Closed
+{
+   unsigned int id; /**< ID of the notification. */
+   Elm_Sys_Notify_Closed_Reason reason; /**< The Reason the notification was closed. */
+} Elm_Sys_Notify_Notification_Closed;
+
+
+/**
+ * Data on event when Action Invoked is emitted.
+ *
+ * @since 1.8
+ */
+typedef struct _Elm_Sys_Notify_Action_Invoked
+{
+   unsigned int id; /**< ID of the notification. */
+   char *action_key; /**< The key of the action invoked. These match the keys sent over in the list of actions. */
+} Elm_Sys_Notify_Action_Invoked;
 
 /**
  * @def elm_sys_notify_simple_send
