@@ -7,6 +7,7 @@
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
+static Eina_Bool _ecore_wl_cb_idle_enterer(void *data);
 static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl);
 static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
@@ -138,10 +139,11 @@ ecore_wl_init(const char *name)
 
    _ecore_wl_disp->fd_hdl =
      ecore_main_fd_handler_add(_ecore_wl_disp->fd,
-                               ECORE_FD_READ | ECORE_FD_WRITE,
+                               ECORE_FD_READ,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
+   ecore_idle_enterer_add(_ecore_wl_cb_idle_enterer, _ecore_wl_disp);
    wl_list_init(&_ecore_wl_disp->inputs);
    wl_list_init(&_ecore_wl_disp->outputs);
 
@@ -397,9 +399,31 @@ _ecore_wl_shutdown(Eina_Bool close)
 }
 
 static Eina_Bool
+_ecore_wl_cb_idle_enterer(void *data)
+{
+   Ecore_Wl_Display *ewd;
+   int ret;
+
+   if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
+
+   ret = wl_display_flush(ewd->wl.display);
+   if (ret < 0 && errno == EAGAIN)
+     {
+        ecore_main_fd_handler_active_set(ewd->fd_hdl, ECORE_FD_READ | ECORE_FD_WRITE);
+     }
+   else if (ret < 0)
+     {
+      /* FIXME: need do error processing? */
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl_Display *ewd;
+   int ret;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
@@ -412,7 +436,15 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
      wl_display_dispatch(ewd->wl.display);
    else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
-     wl_display_flush(ewd->wl.display);
+     {
+        ret = wl_display_flush(ewd->wl.display);
+        if (ret == 0)
+          ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
+        else if (ret == -1 && errno != EAGAIN)
+          {
+            /* FIXME: need do error processing? */
+          }
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
