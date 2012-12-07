@@ -41,7 +41,6 @@ m4/eina_check.m4 \
 m4/eina_config.m4 \
 m4/evas_check_engine.m4 \
 m4/evas_check_loader.m4 \
-m4/evas_dither.m4 \
 m4/ecore_check_c_extension.m4 \
 m4/ecore_check_module.m4 \
 m4/eio_check_options.m4
