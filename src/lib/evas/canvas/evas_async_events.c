@@ -27,6 +27,26 @@ struct _Evas_Event_Async
    Evas_Callback_Type	     type;
 };
 
+Eina_Bool
+_evas_fd_close_on_exec(int fd)
+{
+#ifdef HAVE_EXECVP
+   int flags;
+
+   flags = fcntl(fd, F_GETFD);
+   if (flags == -1)
+     return EINA_FALSE;
+
+   flags |= FD_CLOEXEC;
+   if (fcntl(fd, F_SETFD, flags) == -1)
+     return EINA_FALSE;
+   return EINA_TRUE;
+#else
+   (void) fd;
+   return EINA_FALSE;
+#endif
+}
+
 int
 evas_async_events_init(void)
 {
@@ -42,6 +62,9 @@ evas_async_events_init(void)
 	_init_evas_event = 0;
 	return 0;
      }
+
+   _evas_fd_close_on_exec(filedes[0]);
+   _evas_fd_close_on_exec(filedes[1]);
 
    _fd_read = filedes[0];
    _fd_write = filedes[1];

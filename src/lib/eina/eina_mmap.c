@@ -156,9 +156,20 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         /* no zero page device - open it */
         if (_eina_mmap_zero_fd < 0)
           {
+#ifdef HAVE_EXECVP
+             int flags;
+#endif
+
              _eina_mmap_zero_fd = open("/dev/zero", O_RDWR);
              /* if we don;'t have one - fail to set up mmap safety */
              if (_eina_mmap_zero_fd < 0) return EINA_FALSE;
+
+#ifdef HAVE_EXECVP
+             flags = fcntl(_eina_mmap_zero_fd, F_GETFD);
+             flags |= FD_CLOEXEC;
+             fcntl(_eina_mmap_zero_fd, F_SETFD, flags);
+#endif
+	     
           }
         /* set up signal handler for SIGBUS */
         sa.sa_sigaction = _eina_mmap_safe_sigbus;

@@ -1,7 +1,11 @@
+2012-12-07  Cedric Bail
+
+	* Don't leak fd on exec.
+
 2012-12-07 Sung W. Park (sung_)
 
 	* Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
-          fiddling that was originally in the gl backend code. The offset 
+          fiddling that was originally in the gl backend code. The offset
           fiddling caused issues with some ARM target GPU drivers.
         * Fixed polygon rendering bug in GL backend when there are cutouts.
 
@@ -52,6 +56,10 @@
         * Fixed leak in textblock and text props in general that made
         textblock recalcs lead very badly. Required changed to textgrid
         though a sit relied on the leaky behavior.
+
+2012-11-20  ChunEon Park (Hermet)
+
+        * Fix the evas memory leak - eina_rectangles allocated internally.
 
 2012-11-16  Sung W. Park (sung_)
 
@@ -135,8 +143,3 @@
 
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
-
-2012-11-20  ChunEon Park (Hermet)
-
-        * Fix the evas memory leak - eina_rectangles allocated internally.
-

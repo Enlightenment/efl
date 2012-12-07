@@ -6,6 +6,7 @@
 
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #include <Eina.h>
@@ -86,6 +87,9 @@ _server_connect(void)
 {
    int s, len;
    struct sockaddr_un remote;
+#ifdef HAVE_EXECVP
+   int flags;
+#endif
 
    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
      {
@@ -93,12 +97,19 @@ _server_connect(void)
         return EINA_FALSE;
      }
 
+#ifdef HAVE_EXECVP
+   flags = fcntl(s, F_GETFD);
+   flags |= FD_CLOEXEC;
+   fcntl(s, F_SETFD, flags);
+#endif
+
    remote.sun_family = AF_UNIX;
    _socket_path_set(remote.sun_path);
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
    if (connect(s, (struct sockaddr *)&remote, len) == -1)
      {
         ERR("connect");
+	close(s);
         return EINA_FALSE;
      }
 

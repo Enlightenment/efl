@@ -205,6 +205,26 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
+Eina_Bool
+_ecore_fd_close_on_exec(int fd)
+{
+#ifdef HAVE_EXECVP
+   int flags;
+
+   flags = fcntl(fd, F_GETFD);
+   if (flags == -1)
+     return EINA_FALSE;
+
+   flags |= FD_CLOEXEC;
+   if (fcntl(fd, F_SETFD, flags) == -1)
+     return EINA_FALSE;
+   return EINA_TRUE;
+#else
+   (void) fd;
+   return EINA_FALSE;
+#endif
+}
+
 EAPI int
 ecore_con_info_get(Ecore_Con_Server *svr,
                    Ecore_Con_Info_Cb done_cb,
@@ -219,6 +239,9 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         ecore_con_event_server_error(svr, strerror(errno));
         return 0;
      }
+
+   _ecore_fd_close_on_exec(fd[0]);
+   _ecore_fd_close_on_exec(fd[1]);
 
    cbdata = calloc(1, sizeof(CB_Data));
    if (!cbdata)
