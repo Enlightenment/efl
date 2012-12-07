@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g image_example_01.c -o image_example_01 `pkg-config --cflags --libs elementary`
+//gcc -g -o icon_example_01 icon_example_01.c `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 
