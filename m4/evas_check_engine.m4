@@ -670,24 +670,10 @@ want_static_engine="no"
 have_engine="no"
 have_evas_engine_[]DOWN="no"
 
-AC_ARG_ENABLE([$1],
-   [AC_HELP_STRING([--enable-$1], [enable $4 rendering backend])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_engine="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          want_engine="static"
-       else
-          want_engine="no"
-       fi
-    fi
-   ])
-
 AC_MSG_CHECKING([whether to enable $4 rendering backend])
 AC_MSG_RESULT([${want_engine}])
 
-if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic" -o "x${want_engine}" = "xauto" ; then
+if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic"; then
    m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, ${want_engine}, [have_engine="yes"], [have_engine="no"])
 fi
 

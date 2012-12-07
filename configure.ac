@@ -1062,15 +1062,15 @@ AC_MSG_NOTICE([Evas checks])
 ### Additional options to configure
 
 # X11
-if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
-   with_x11="none"
-else
-   with_x11="xlib"
-fi
-
 AC_ARG_WITH([x11],
    [AC_HELP_STRING([--with-x11=xlib|xcb|none],
                    [X11 method to use: xlib, xcb or none])])
+
+if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
+   with_x11="none"
+elif test "x${with_x11}" = "x"; then
+   with_x11="xlib"
+fi
 
 want_x11_xlib="no"
 want_x11_xcb="no"
@@ -1094,15 +1094,15 @@ case "${with_x11}" in
 esac
 
 # OpenGL
-if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
-   with_opengl="none"
-else
-   with_opengl="full"
-fi
-
 AC_ARG_WITH([opengl],
    [AC_HELP_STRING([--with-opengl=full|es|none],
                    [OpenGL method to use: full, es or none])])
+
+if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
+   with_opengl="none"
+elif test "x${with_opengl}" = "x"; then
+   with_opengl="full"
+fi
 
 case "${with_opengl}" in
    full|es|none)
@@ -1410,7 +1410,7 @@ case "$host_os" in
       want_evas_engine_software_ddraw="yes"
       ;;
    darwin*)
-      want_evas_engine_gl_cocoa="auto"
+      want_evas_engine_gl_cocoa="yes"
       ;;
    *)
       ;;
@@ -1527,7 +1527,7 @@ if test "x${want_x11_xcb}" = "xno" ; then
    EVAS_CHECK_ENGINE([software-xlib], [${want_x11_xlib}], [no], [Software Xlib])
 else
    AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XLIB], [false])
-   AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [false])
+   AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_XLIB], [false])
 fi
 
 AC_MSG_CHECKING([whether to build Software Xlib Engine])
@@ -2611,106 +2611,21 @@ fi
 
 
 #### Ecore_X
-
+if test "${want_x11_any}" = "yes"; then
 AC_MSG_NOTICE([Ecore_X checks])
 
 ### Additional options to configure
 
-AC_ARG_ENABLE(ecore-x-composite,
-   [AC_HELP_STRING([--disable-ecore-x-composite],
-       [disable the ecore_x support for Xcomposite extension. @<:@default=detect@:>@])],
-   [want_ecore_x_composite=$enableval],
-   [want_ecore_x_composite="yes"])
-
-AC_ARG_ENABLE(ecore-x-cursor,
-   [AC_HELP_STRING([--disable-ecore-x-cursor],
-       [disable the ecore_x support for Xcursor library. @<:@default=detect@:>@])],
-   [want_ecore_x_cursor=$enableval],
-   [want_ecore_x_cursor="yes"])
-
-AC_ARG_ENABLE(ecore-x-damage,
-   [AC_HELP_STRING([--disable-ecore-x-damage],
-       [disable the ecore_x support for Xdamage extension. @<:@default=detect@:>@])],
-   [want_ecore_x_damage=$enableval],
-   [want_ecore_x_damage="yes"])
-
-AC_ARG_ENABLE(ecore-x-dpms,
-   [AC_HELP_STRING([--disable-ecore-x-dpms],
-       [disable the ecore_x support for Xdpms extension. @<:@default=detect@:>@])],
-   [want_ecore_x_dpms=$enableval],
-   [want_ecore_x_dpms="yes"])
-
-AC_ARG_ENABLE(ecore-x-dri,
-   [AC_HELP_STRING([--disable-ecore-x-dri],
-       [disable the ecore_x support for DRI extension. @<:@default=detect@:>@])],
-   [want_ecore_x_dri=$enableval],
-   [want_ecore_x_dri="yes"])
-
-AC_ARG_ENABLE(ecore-x-gesture,
-   [AC_HELP_STRING([--enable-ecore-x-gesture],
-       [enable the ecore_x support for Xgesture extension. @<:@default=detect@:>@])],
-   [want_ecore_x_gesture=$enableval],
-   [want_ecore_x_gesture="yes"])
-
-AC_ARG_ENABLE(ecore-x-input,
-   [AC_HELP_STRING([--disable-ecore-x-input],
-       [disable the ecore_x support for Xinput/Xinput2 extension. @<:@default=detect@:>@])],
-   [want_ecore_x_input=$enableval],
-   [want_ecore_x_input="yes"])
-
-AC_ARG_ENABLE(ecore-x-randr,
-   [AC_HELP_STRING([--disable-ecore-x-randr],
-       [disable the ecore_x support for Xrandr extension. @<:@default=detect@:>@])],
-   [want_ecore_x_randr=$enableval],
-   [want_ecore_x_randr="yes"])
-
-AC_ARG_ENABLE(ecore-x-render,
-   [AC_HELP_STRING([--disable-ecore-x-render],
-       [disable the ecore_x support for Xrender extension. @<:@default=detect@:>@])],
-   [want_ecore_x_render=$enableval],
-   [want_ecore_x_render="yes"])
-
-AC_ARG_ENABLE(ecore-x-screensaver,
-   [AC_HELP_STRING([--disable-ecore-x-screensaver],
-       [disable the ecore_x support for Xscreensaver extension. @<:@default=detect@:>@])],
-   [want_ecore_x_screensaver=$enableval],
-   [want_ecore_x_screensaver="yes"])
-
-AC_ARG_ENABLE(ecore-x-shape,
-   [AC_HELP_STRING([--disable-ecore-x-shape],
-       [disable the ecore_x support for Xshape extension. @<:@default=detect@:>@])],
-   [want_ecore_x_shape=$enableval],
-   [want_ecore_x_shape="yes"])
-
-AC_ARG_ENABLE(ecore-x-sync,
-   [AC_HELP_STRING([--disable-ecore-x-sync],
-       [disable the ecore_x support for Xsync extension. @<:@default=detect@:>@])],
-   [want_ecore_x_sync=$enableval],
-   [want_ecore_x_sync="yes"])
-
-AC_ARG_ENABLE(ecore-x-xfixes,
-   [AC_HELP_STRING([--disable-ecore-x-xfixes],
-       [disable the ecore_x support for Xfixes extension. @<:@default=detect@:>@])],
-   [want_ecore_x_xfixes=$enableval],
-   [want_ecore_x_xfixes="yes"])
-
-AC_ARG_ENABLE(ecore-x-xinerama,
-   [AC_HELP_STRING([--disable-ecore-x-xinerama],
-       [disable the ecore_x support for Xinerama extension. @<:@default=detect@:>@])],
-   [want_ecore_x_xinerama=$enableval],
-   [want_ecore_x_xinerama="yes"])
-
-AC_ARG_ENABLE(ecore-x-xprint,
-   [AC_HELP_STRING([--disable-ecore-x-xprint],
-       [disable the ecore_x support for Xprint extension. @<:@default=detect@:>@])],
-   [want_ecore_x_xprint=$enableval],
-   [want_ecore_x_xprint="yes"])
-
-AC_ARG_ENABLE(ecore-x-xtest,
-   [AC_HELP_STRING([--disable-ecore-x-xtest],
-       [disable the ecore_x support for Xtest extension. @<:@default=detect@:>@])],
-   [want_ecore_x_xtest=$enableval],
-   [want_ecore_x_xtest="yes"])
+AC_ARG_ENABLE([gesture],
+   [AC_HELP_STRING([--enable-gesture], [enable X11 Gestures and Input2.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gesture="yes"
+    else
+       want_gesture="no"
+    fi
+   ],
+   [want_gesture="no"])
 
 AC_ARG_ENABLE([xim],
    [AC_HELP_STRING([--disable-xim], [disable X Input Method.])],
@@ -2724,8 +2639,6 @@ AC_ARG_ENABLE([xim],
    [want_xim="yes"])
 
 ### Default values
-
-use_Xcursor="no"
 
 ### Checks for programs
 
@@ -2784,19 +2697,21 @@ int h = MAXHOSTNAMELEN;
 fi
 
 ## Xlib
+use_Xcursor="no"
 if test "x${want_x11_xlib}" = "xyes" ; then
-   if test "x$want_ecore_x_cursor" = "xyes"; then
-      CFLAGS_save="${CFLAGS}"
-      CFLAGS="$x_cflags $x_includes"
-      AC_CHECK_HEADER([X11/Xcursor/Xcursor.h],
-         [use_Xcursor="yes"],
-         [use_Xcursor="no"],
-         [#include <X11/Xlib.h>])
-      CFLAGS="$CFLAGS_save"
+   CFLAGS_save="${CFLAGS}"
+   CFLAGS="$x_cflags $x_includes"
+   AC_CHECK_HEADER([X11/Xcursor/Xcursor.h],
+      [use_Xcursor="yes"],
+      [use_Xcursor="no"],
+      [#include <X11/Xlib.h>])
+   CFLAGS="$CFLAGS_save"
+
+   if test "${use_Xcursor}" = "no"; then
+      AC_MSG_ERROR([Xcursor is missing])
    fi
 fi
 
-## XCB
 if test "x${want_x11_xcb}" = "xyes" ; then
    KEYSYMDEFDIR=`$PKG_CONFIG --variable=includedir xproto`/X11
    FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
@@ -2823,7 +2738,7 @@ fi
 ### Checks for library functions
 
 ## Xlib
-if test "x${want_x11_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes" ; then
+if test "x${want_x11_xlib}" = "xyes"; then
    AC_CHECK_LIB([Xcursor],
       [XcursorImageLoadCursor],
       [
@@ -2838,275 +2753,64 @@ if test "x${want_x11_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes" ; 
 fi
 
 if test "x${want_x11_xlib}" = "xyes" ; then
-   ECORE_CHECK_X_EXTENSION([Xkb], [XKB.h], [X11], [XkbSetDetectableAutoRepeat], [$want_ecore_x_xkb])
-   ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension], [$want_ecore_x_composite])
-   ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract], [$want_ecore_x_damage])
-   ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xdpms], [DPMSQueryExtension], [$want_ecore_x_dpms])
-   if test "x$use_xdpms" = "xno" ; then
-      ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension], [$want_ecore_x_dpms])
+   ECORE_CHECK_X_EXTENSION([Xkb], [XKB.h], [X11], [XkbSetDetectableAutoRepeat])
+   ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension])
+   ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract])
+   ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension])
+   ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion])
+   ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens])
+   ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
+   ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent])
+   ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
+   ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
+   ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
+
+   if test "${want_gesture}" = "yes"; then
+      ECORE_CHECK_X_EXTENSION([Xgesture], [gesture.h], [Xgesture], [XGestureQueryExtension])
+      ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice])
+      ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi], [XIGrabTouchBegin])
    fi
-   ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion], [$want_ecore_x_xfixes])
-   ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens], [$want_ecore_x_xinerama])
-   ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens], [$want_ecore_x_xprint])
-   ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent], [$want_ecore_x_randr])
-   ECORE_CHECK_X_EXTENSION([Xgesture], [gesture.h], [Xgesture], [XGestureQueryExtension], [$want_ecore_x_gesture])
-   ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat], [$want_ecore_x_render])
-   ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent], [$want_ecore_x_xtest])
-   ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput], [$want_ecore_x_screensaver])
-   ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice], [$want_ecore_x_input])
-   ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi], [XIGrabTouchBegin], [$want_ecore_x_input])
-   
+
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
 fi
 
 ## XCB
 
-if test "x${want_x11_xcb}" = "xyes" ; then
-   PKG_CHECK_EXISTS([x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8],
-      [
-       requirements_pc_ecore_x="${requirements_pc_ecore_x} x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8"
-       requirements_pc_deps_ecore_x="${requirements_pc_deps_ecore_x} x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8"
-      ],
-      [AC_MSG_ERROR([Ecore_X with XCB backend enabled but XCB not available. Exiting...])])
+if test "${want_x11_xcb}" = "yes"; then
+dnl note: added pixman-1 as ecore_xcb_region uses that
+   EFL_DEPEND_PKG([ecore_x], [ECORE_X_XCB],
+      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
 
-   if test "x${have_pixman}" = "xyes" ; then
-      requirements_pc_ecore_x="${requirements_pc_ecore_x} pixman-1"
-      requirements_pc_deps_ecore_x="${requirements_pc_deps_ecore_x} pixman-1"
-   fi
+dnl TODO: remove these ifdefs from code!
+   AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
+   AC_DEFINE([ECORE_XCB_DAMAGE], [1], [Build support for XCB damage])
+   AC_DEFINE([ECORE_XCB_DPMS], [1], [Build support for XCB dpms])
+   AC_DEFINE([ECORE_XCB_RANDR], [1], [Build support for XCB randr])
+   AC_DEFINE([ECORE_XCB_RENDER], [1], [Build support for XCB render])
+   AC_DEFINE([ECORE_XCB_SCREENSAVER], [1], [Build support for XCB screensaver])
+   AC_DEFINE([ECORE_XCB_SHAPE], [1], [Build support for XCB shape])
+   AC_DEFINE([ECORE_XCB_SYNC], [1], [Build support for XCB sync])
+   AC_DEFINE([ECORE_XCB_XFIXES], [1], [Build support for XCB xfixes])
+   AC_DEFINE([ECORE_XCB_XINERAMA], [1], [Build support for XCB xinerama])
+   AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
+   AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
+   AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
 
-   if test "x$want_ecore_x_composite" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-composite],
-         [
-          have_ecore_x_xcb_composite="yes"
-          requirements_pc_ecore_x="xcb-composite ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-composite ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
-         ],
-         [have_ecore_x_xcb_composite="no"])
-   else
-      have_ecore_x_xcb_composite="no"
-      AC_MSG_NOTICE([composite extension explicitly disabled])
-   fi
+   EFL_OPTIONAL_DEPEND_PKG([ecore_x], [${want_gesture}], [ECORE_XCB_GESTURE],
+      [xcb-gesture])
+   AC_DEFINE_IF([ECORE_XCB_XGESTURE], [test "${want_gesture}" = "yes"],
+      [1], [Build support for XCB xgesture])
 
-   if test "x$want_ecore_x_damage" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-damage],
-         [
-          have_ecore_x_xcb_damage="yes"
-          requirements_pc_ecore_x="xcb-damage ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-damage ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_DAMAGE], [1], [Build support for XCB damage])
-         ],
-         [have_ecore_x_xcb_damage="no"])
-   else
-      have_ecore_x_xcb_damage="no"
-      AC_MSG_NOTICE([damage extension explicitly disabled])
-   fi
+dnl input extension disabled currently in xcb as xcb-input has some issues
+dnl remember to add xcb-xinput to EFL_DEPEND_PKG()
+dnl AC_DEFINE([ECORE_XCB_XINPUT], [1], [Build support for XCB input])
 
-   if test "x$want_ecore_x_dpms" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-dpms],
-         [
-          have_ecore_x_xcb_dpms="yes"
-          requirements_pc_ecore_x="xcb-dpms ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-dpms ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_DPMS], [1], [Build support for XCB dpms])
-         ],
-         [have_ecore_x_xcb_dpms="no"])
-   else
-      have_ecore_x_xcb_dpms="no"
-      AC_MSG_NOTICE([dpms extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_randr" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-randr],
-         [
-          have_ecore_x_xcb_randr="yes"
-          requirements_pc_ecore_x="xcb-randr ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-randr ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_RANDR], [1], [Build support for XCB randr])
-         ],
-         [have_ecore_x_xcb_randr="no"])
-   else
-      have_ecore_x_xcb_randr="no"
-      AC_MSG_NOTICE([randr extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_render" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-render],
-         [
-          have_ecore_x_xcb_render="yes"
-          requirements_pc_ecore_x="xcb-render ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-render ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_RENDER], [1], [Build support for XCB render])
-         ],
-         [have_ecore_x_xcb_render="no"])
-   else
-      have_ecore_x_xcb_render="no"
-      AC_MSG_NOTICE([render extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_screensaver" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-screensaver],
-         [
-          have_ecore_x_xcb_screensaver="yes"
-          requirements_pc_ecore_x="xcb-screensaver ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-screensaver ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_SCREENSAVER], [1], [Build support for XCB screensaver])
-         ],
-         [have_ecore_x_xcb_screensaver="no"])
-   else
-      have_ecore_x_xcb_screensaver="no"
-      AC_MSG_NOTICE([screensaver extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_shape" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-shape],
-         [
-          have_ecore_x_xcb_shape="yes"
-          requirements_pc_ecore_x="xcb-shape ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-shape ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_SHAPE], [1], [Build support for XCB shape])
-         ],
-         [have_ecore_x_xcb_shape="no"])
-   else
-      have_ecore_x_xcb_shape="no"
-      AC_MSG_NOTICE([shape extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_gesture" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-gesture],
-         [
-          have_ecore_x_xcb_gesture="yes"
-          requirements_pc_ecore_x="xcb-gesture ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-gesture ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XGESTURE], [1], [Build support for XCB xgesture])
-         ],
-         [have_ecore_x_xcb_gesture="no"])
-   else
-      have_ecore_x_xcb_gesture="no"
-      AC_MSG_NOTICE([gesture extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_sync" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-sync],
-         [
-          have_ecore_x_xcb_sync="yes"
-          requirements_pc_ecore_x="xcb-sync ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-sync ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_SYNC], [1], [Build support for XCB sync])
-         ],
-         [have_ecore_x_xcb_sync="no"])
-   else
-      have_ecore_x_xcb_sync="no"
-      AC_MSG_NOTICE([sync extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_xfixes" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-xfixes],
-         [
-          have_ecore_x_xcb_xfixes="yes"
-          requirements_pc_ecore_x="xcb-xfixes ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-xfixes ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XFIXES], [1], [Build support for XCB xfixes])
-         ],
-         [have_ecore_x_xcb_xfixes="no"])
-   else
-      have_ecore_x_xcb_xfixes="no"
-      AC_MSG_NOTICE([xfixes extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_xinerama" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-xinerama],
-         [
-          have_ecore_x_xcb_xinerama="yes"
-          requirements_pc_ecore_x="xcb-xinerama ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-xinerama ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XINERAMA], [1], [Build support for XCB xinerama])
-         ],
-         [have_ecore_x_xcb_xinerama="no"])
-   else
-      have_ecore_x_xcb_xinerama="no"
-      AC_MSG_NOTICE([xinerama extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_xprint" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-xprint],
-         [
-          have_ecore_x_xcb_xprint="yes"
-          requirements_pc_ecore_x="xcb-xprint ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-xprint ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
-         ],
-         [have_ecore_x_xcb_xprint="no"])
-   else
-      have_ecore_x_xcb_xprint="no"
-      AC_MSG_NOTICE([xprint extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_xtest" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-xtest],
-         [
-          have_ecore_x_xcb_xtest="yes"
-          requirements_pc_ecore_x="xcb-xtest ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-xtest ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
-         ],
-         [have_ecore_x_xcb_xtest="no"])
-   else
-      have_ecore_x_xcb_xtest="no"
-      AC_MSG_NOTICE([xtest extension explicitly disabled])
-   fi
-
-# input extension disabled currently in xcb as xcb-input has some issues
-   want_ecore_x_input="no"
-   if test "x$want_ecore_x_input" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-xinput],
-         [
-          have_ecore_x_xcb_xinput="yes"
-          requirements_pc_ecore_x="xcb-xinput ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-xinput ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_XINPUT], [1], [Build support for XCB input])
-         ],
-         [have_ecore_x_xcb_xinput="no"])
-   else
-      have_ecore_x_xcb_xinput="no"
-      AC_MSG_NOTICE([input extension explicitly disabled])
-   fi
-
-   if test "x$want_ecore_x_cursor" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-render xcb-renderutil],
-         [
-          have_ecore_x_xcb_cursor="yes"
-          requirements_pc_ecore_x="xcb-render xcb-renderutil ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-render xcb-renderutil ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
-         ],
-         [have_ecore_x_xcb_cursor="no"])
-   else
-      have_ecore_x_xcb_cursor="no"
-      AC_MSG_NOTICE([cursor extension explicitly disabled])
-   fi
-
-# dri extension disabled currently in xcb
-   want_ecore_x_dri="no"
-   if test "x$want_ecore_x_dri" != "xno"; then
-      PKG_CHECK_EXISTS([xcb-dri2],
-         [
-          have_ecore_x_xcb_dri="yes"
-          requirements_pc_ecore_x="xcb-dri2 ${requirements_pc_ecore_x}"
-          requirements_pc_deps_ecore_x="xcb-dri2 ${requirements_pc_deps_ecore_x}"
-          AC_DEFINE([ECORE_XCB_DRI], [1], [Build support for XCB dri])
-         ],
-         [have_ecore_x_xcb_dri="no"])
-   else
-      have_ecore_x_xcb_dri="no"
-      AC_MSG_NOTICE([dri extension explicitly disabled])
-   fi
+dnl dri extension disabled currently in xcb
+dnl remember to add xcb-dri2 to EFL_DEPEND_PKG()
+dnl AC_DEFINE([ECORE_XCB_DRI], [1], [Build support for XCB dri])
 
    PKG_CHECK_MODULES([ECORE_X], [${requirements_pc_deps_ecore_x}])
    EFL_CHECK_FUNCS([ECORE_X], [dlopen iconv])
-   AC_DEFINE([HAVE_ECORE_X_XCB], [1], [Defined to 1 if XCB is enabled.])
-   have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
-   AC_SUBST([have_ecore_x_xcb_define])
 fi
 
 requirements_libs_ecore_x="${requirements_libs_ecore_x} ${ECORE_X_LIBS}"
@@ -3114,6 +2818,7 @@ requirements_libs_ecore_x="${requirements_libs_ecore_x} ${ECORE_X_LIBS}"
 AC_SUBST([ECORE_X_CFLAGS])
 AC_SUBST([ECORE_X_LIBS])
 
+fi
 AM_CONDITIONAL([HAVE_ECORE_X_XLIB], [test "${want_x11_xlib}" = "yes"])
 AM_CONDITIONAL([HAVE_ECORE_X_XCB], [test "${want_x11_xcb}" = "yes"])
 AM_CONDITIONAL([HAVE_ECORE_X], [test "${want_x11_any}" = "yes"])
@@ -3278,7 +2983,6 @@ ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
-# XXX TODO:
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
 
 ECORE_EVAS_MODULE([software-sdl], [${want_sdl}])
@@ -3362,11 +3066,7 @@ fi
 
 # XXX TODO: ecore_evas_opengl_x11
 
-ECORE_EVAS_CHECK_MODULE_FULL([opengl-x11],
-   [${have_evas_engine_gl_x11}],
-   [${want_x11_any_opengl}],
-   [OpenGL Xlib],
-   [${want_x11_any}])
+ECORE_EVAS_MODULE([opengl-x11], [${want_x11_any_opengl}])
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
@@ -3680,8 +3380,8 @@ echo
 echo "Evas:"
 echo
 echo "  Engines:"
-echo "    Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
-echo "    OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) (x11=${with_opengl})"
+echo "    Software X11...............: ${with_x11}"
+echo "    OpenGL X11.................: ${with_x11} (opengl=${with_opengl})"
 echo "    Software GDI...............: $have_evas_engine_software_gdi"
 echo "    Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "    OpenGL SDL.................: $have_evas_engine_gl_sdl (opengl=${with_opengl})"
@@ -3761,62 +3461,19 @@ echo
 echo "Ecore Graphic systems:"
 echo
 
-echo "  Ecore_X......................: ${with_x11}"
-if test "${want_x11_xcb}" = "yes" ; then
-    echo "    Xprint.....................: $have_ecore_x_xcb_xprint"
-    echo "    Xinerama...................: $have_ecore_x_xcb_xinerama"
-    echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
-    echo "    Xscreensaver...............: $have_ecore_x_xcb_screensaver"
-    echo "    Xshape.....................: $have_ecore_x_xcb_shape"
-    echo "    Xgesture...................: $have_ecore_x_xcb_gesture"
-    echo "    Xsync......................: $have_ecore_x_xcb_sync"
-    echo "    Xrender....................: $have_ecore_x_xcb_render"
-    echo "    Xcomposite.................: $have_ecore_x_xcb_composite"
-    echo "    Xfixes.....................: $have_ecore_x_xcb_xfixes"
-    echo "    Xdamage....................: $have_ecore_x_xcb_damage"
-    echo "    Xdpms......................: $have_ecore_x_xcb_dpms"
-    echo "    Xtest......................: $have_ecore_x_xcb_xtest"
-elif test "${want_x11_xlib}" = "yes" ; then
-    echo "    Xcursor....................: $use_Xcursor"
-    echo "    Xkb........................: $use_xkb"
-    echo "    Xprint.....................: $use_xprint"
-    echo "    Xinerama...................: $use_xinerama"
-    echo "    Xrandr.....................: $use_xrandr"
-    echo "    Xgesture...................: $use_xgesture"
-    echo "    Xscreensaver...............: $use_xss"
-    echo "    Xrender....................: $use_xrender"
-    echo "    Xcomposite.................: $use_xcomposite"
-    echo "    Xfixes.....................: $use_xfixes"
-    echo "    Xdamage....................: $use_xdamage"
-    echo "    Xdpms......................: $use_xdpms"
-    echo "    Xtest......................: $use_xtest"
-    echo "    XIM........................: $want_xim"
-    echo "    Xi2........................: $use_xi2"
-    echo "    Xi2.2......................: $use_xi2_2"
-fi
+echo "  Ecore_X....................: ${with_x11} (pixman=${want_pixman}) (gesture=${want_gesture})"
 echo "  Ecore_Win32................: $have_win32"
 echo "  Ecore_Cocoa................: $have_ecore_cocoa"
 echo "  Ecore_SDL..................: $want_sdl"
-echo "  Ecore_FB...................: $want_fb"
-if test "x${wantfb}" = "xyes" ; then
-  echo "    Touchscreen..............: $have_tslib"
-fi
+echo "  Ecore_FB...................: $want_fb (tslib=${have_tslib})"
 echo "  Ecore_WinCE................: $have_wince"
 echo "  Ecore_PSL1GHT..............: $have_ps3"
 echo "  Ecore_Wayland..............: $want_wayland"
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
-  if test "x${have_ecore_evas_software_x11}" = "xyes" ; then
-    echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib: ${have_ecore_evas_software_xlib}) (XCB: ${have_ecore_evas_software_xcb})"
-  else
-    echo "    Software X11...............: $have_ecore_evas_software_x11"
-  fi
-  if test "x${have_ecore_evas_opengl_x11}" = "xyes" ; then
-    echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11 (Xlib: ${have_ecore_evas_opengl_xlib}) (XCB: ${have_ecore_evas_opengl_xcb})"
-  else
-    echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
-  fi
+  echo "    Software X11...............: ${with_x11}"
+  echo "    OpenGL X11.................: ${with_x11} (opengl=${with_opengl})"
   echo "    Software GDI...............: $have_ecore_evas_software_gdi"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
