@@ -2205,15 +2205,8 @@ AC_MSG_NOTICE([Ecore_File checks])
 
 ### Checks for libraries
 
-# Escape library for compilation on PS3
-
-if test "x${have_ps3}" = "xyes" ; then
-   requirements_pc_ecore_file="${requirements_pc_ecore_file} escape >= ${PACKAGE_VERSION}"
-fi
-
-# Eina, Ecore, Ecore_Con
-
-requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file}"
+# Eina, Ecore, Ecore_Con, Escape
+requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file} ${platform_pc_escape}"
 
 ### Checks for header files
 
@@ -2351,15 +2344,6 @@ if test "${want_fb}" = "yes"; then
 AC_MSG_NOTICE([Ecore_FB checks])
 
 ### Additional options to configure
-want_tslib="no"
-case "$host_os" in
-   mingw*|darwin*)
-      ;;
-   *)
-      want_tslib="yes"
-      ;;
-esac
-
 AC_ARG_ENABLE([tslib],
    [AC_HELP_STRING([--disable-tslib],
        [disable tslib for touchscreen events.])],
@@ -2369,7 +2353,7 @@ AC_ARG_ENABLE([tslib],
     else
        want_tslib="no"
     fi
-   ], [])
+   ], [want_tslib="yes"])
 
 ### Default values
 
@@ -2464,11 +2448,10 @@ AC_MSG_NOTICE([Ecore_SDL checks])
 ### Checks for programs
 
 ### Checks for libraries
-requirements_pc_ecore_sdl="${requirements_pc_ecore_sdl} ${platform_pc}"
 
 ## Eina, Ecore
 
-requirements_pc_ecore_sdl="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_sdl}"
+requirements_pc_ecore_sdl="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_sdl} ${platform_pc}"
 
 ## SDL
 EFL_DEPEND_PKG([ecore_sdl], [SDL], [sdl >= 1.2.0])
@@ -2861,20 +2844,13 @@ esac
 
 ### Checks for libraries
 
-# Escape library for compilation on PS3
+## Eina, Ecore, Escape (ecore_imf)
 
-if test "x${have_ps3}" = "xyes" ; then
-   requirements_pc_ecore_imf="${requirements_pc_ecore_imf} escape >= ${PACKAGE_VERSION}"
-   requirements_pc_ecore_imf_evas="${requirements_pc_ecore_imf_evas} escape >= ${PACKAGE_VERSION}"
-fi
+requirements_pc_ecore_imf="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf} ${platform_pc_escape}"
 
-## Eina, Ecore (ecore_imf)
+## Eina, Evas, Ecore, Ecore_Imf, Escape (ecore_imf_evas)
 
-requirements_pc_ecore_imf="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf}"
-
-## Eina, Evas, Ecore, Ecore_Imf (ecore_imf_evas)
-
-requirements_pc_ecore_imf_evas="ecore_imf >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf_evas}"
+requirements_pc_ecore_imf_evas="ecore_imf >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf_evas}  ${platform_pc_escape}"
 
 ## modules
 
