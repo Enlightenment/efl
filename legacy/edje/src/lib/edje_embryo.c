@@ -2258,6 +2258,26 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
         GETINT(rp->custom->description->persp.focal, params[3]);
         
         break;
+#ifdef HAVE_EPHYSICS
+      case EDJE_STATE_PARAM_PHYSICS_MASS:
+	 CHKPARAM(3);
+
+	 GETFLOAT_T(rp->custom->description->physics.mass, params[3]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_RESTITUTION:
+	 CHKPARAM(3);
+
+	 GETFLOAT_T(rp->custom->description->physics.restitution, params[3]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_FRICTION:
+	 CHKPARAM(3);
+
+	 GETFLOAT_T(rp->custom->description->physics.friction, params[3]);
+
+	 break;
+#endif
       default:
 	 break;
      }
@@ -2641,6 +2661,26 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 SETINT(rp->custom->description->visible, params[3]);
 
 	 break;
+#ifdef HAVE_EPHYSICS
+      case EDJE_STATE_PARAM_PHYSICS_MASS:
+	 CHKPARAM(3);
+
+	 SETFLOAT_T(rp->custom->description->physics.mass, params[3]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_RESTITUTION:
+	 CHKPARAM(3);
+
+	 SETFLOAT_T(rp->custom->description->physics.restitution, params[3]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_FRICTION:
+	 CHKPARAM(3);
+
+	 SETFLOAT_T(rp->custom->description->physics.friction, params[3]);
+
+	 break;
+#endif
       default:
 	 break;
      }

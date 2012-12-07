@@ -451,6 +451,30 @@ collections {
             target: "blue_circle";
          }
 
+         program {
+            name: "customize";
+            signal: "custom";
+            script {
+               new Float: mass, Float:rest, Float:fric;
+
+               custom_state(PART:"red_circle", "default", 0.0);
+               set_state_val(PART:"red_circle", STATE_COLOR, 0, 0, 0, 255);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_MASS, 4.5);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_RESTITUTION, 0.1);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_FRICTION, 0.345);
+               set_state(PART:"red_circle", "custom", 0.0);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_MASS, mass);
+               get_state_val(PART:"red_circle", STATE_PHYSICS_RESTITUTION,
+                     rest);
+               get_state_val(PART:"red_circle", STATE_PHYSICS_FRICTION,
+                     fric);
+               send_message(MSG_STRING_FLOAT_SET, 1, "Mass", mass);
+               send_message(MSG_STRING_FLOAT_SET, 1, "Friction", fric);
+               send_message(MSG_STRING_FLOAT_SET, 1, "Restitution", rest);
+            }
+         }
+
       }
 
    }
