@@ -69,6 +69,7 @@ typedef struct _Elm_Multibuttonentry_Smart_Data
   Elm_Multibuttonentry_Smart_Data;
 struct _Elm_Multibuttonentry_Smart_Data
 {
+   Evas_Object                        *parent;
    Evas_Object                        *box;
    Evas_Object                        *entry;
    Evas_Object                        *label;
@@ -105,11 +106,8 @@ struct _Elm_Multibuttonentry_Smart_Data
  * @}
  */
 
-#define ELM_MULTIBUTTONENTRY_DATA_GET(o, sd) \
-  Elm_Multibuttonentry_Smart_Data * sd = eo_data_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS)
-
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(o, ptr) \
-  ELM_MULTIBUTTONENTRY_DATA_GET(o, ptr);                \
+  Elm_Multibuttonentry_Smart_Data *ptr = eo_data_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No widget data for object %p (%s)",    \
@@ -118,7 +116,7 @@ struct _Elm_Multibuttonentry_Smart_Data
     }
 
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_MULTIBUTTONENTRY_DATA_GET(o, ptr);                         \
+  Elm_Multibuttonentry_Smart_Data * ptr = eo_data_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (!ptr)                                                      \
     {                                                            \
        CRITICAL("No widget data for object %p (%s)",             \
