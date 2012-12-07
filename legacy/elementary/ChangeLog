@@ -775,11 +775,16 @@
 	* Fix forgotten break in elm_map that would have thrown error when the
 	action was properly taken in fact.
 
-2012-12-06 Daniel Juyung Seo (SeoZ)
+2012-12-06  Daniel Juyung Seo (SeoZ)
 
 	* Fix wheel scroll direction with shift.
 
-2012-12-06 ChunEon Park (Hermet)
+2012-12-06  ChunEon Park (Hermet)
 
 	* Fix the mapbuf to show the content always. Sometimes mapbuf couldn't show
 	the content properly.
+
+2012-12-07  Cedric Bail
+
+	* Safer call to mkstemp in elm_cnp.
+

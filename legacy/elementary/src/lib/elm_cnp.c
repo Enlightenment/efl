@@ -1872,6 +1872,7 @@ _tempfile_new(int size)
 #ifdef HAVE_MMAN_H
    Tmp_Info *info;
    const char *tmppath;
+   mode_t cur_umask;
    int len;
 
    info = malloc(sizeof(Tmp_Info));
@@ -1892,7 +1893,9 @@ _tempfile_new(int size)
         return NULL;
      }
    snprintf(info->filename,len,"%s/%sXXXXXX", tmppath, "elmcnpitem-");
+   cur_umask = umask(S_IRWXO | S_IRWXG);
    info->fd = mkstemp(info->filename);
+   umask(cur_umask);
 # ifdef __linux__
      {
         char *tmp;

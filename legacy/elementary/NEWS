@@ -83,6 +83,7 @@ Fixes:
    * Fix wheel scroll direction with shift.
    * Fix the mapbuf to show it's content properly, If the content doesn't
    have resized, it wouldn't be showed up.
+   * Safer call to mkstemp in elm_cnp.
 
 Removals:
 
