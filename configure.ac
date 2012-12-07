@@ -2332,13 +2332,11 @@ AM_CONDITIONAL([HAVE_ECORE_COCOA], [test "x${have_ecore_cocoa}" = "xyes"])
 
 
 #### Ecore_FB
+if test "${want_fb}" = "yes"; then
 
 AC_MSG_NOTICE([Ecore_FB checks])
 
 ### Additional options to configure
-
-### Default values
-
 want_tslib="no"
 case "$host_os" in
    mingw*|darwin*)
@@ -2347,6 +2345,19 @@ case "$host_os" in
       want_tslib="yes"
       ;;
 esac
+
+AC_ARG_ENABLE([tslib],
+   [AC_HELP_STRING([--enable-tslib],
+       [disable tslib for touchscreen events.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_tslib="yes"
+    else
+       want_tslib="no"
+    fi
+   ], [])
+
+### Default values
 
 ### Checks for programs
 
@@ -2357,50 +2368,7 @@ esac
 requirements_pc_ecore_fb="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_fb}"
 
 ## tslib
-
-PKG_CHECK_EXISTS([tslib-1.0],
-   [
-    have_tslib="yes"
-    AC_DEFINE([HAVE_TSLIB], [1], [Build Ecore_FB Touchscreen Code])
-    requirements_pc_ecore_fb="tslib-1.0 ${requirements_pc_ecore_fb}"
-    requirements_pc_deps_ecore_fb="tslib-1.0 ${requirements_pc_deps_ecore_fb}"
-   ],
-   [have_tslib="no"])
-
-if test "x${have_tslib}" = "xno" ; then
-   PKG_CHECK_EXISTS([tslib],
-      [
-       have_tslib="yes"
-       AC_DEFINE([HAVE_TSLIB], [1], [Build Ecore_FB Touchscreen Code])
-       requirements_pc_ecore_fb="tslib ${requirements_pc_ecore_fb}"
-       requirements_pc_deps_ecore_fb="tslib-1.0 ${requirements_pc_deps_ecore_fb}"
-      ],
-      [have_tslib="no"])
-fi
-
-if test "x${have_tslib}" = "xno" ; then
-   AC_CHECK_HEADER([tslib.h], [have_tslib="yes"], [have_tslib="no"])
-
-   if test "x${have_tslib}" = "xyes" ; then
-      AC_CHECK_LIB([ts], [ts_open],
-         [
-          have_tslib="yes"
-          AC_DEFINE([HAVE_TSLIB], [1], [Build Ecore_FB Touchscreen Code])
-          requirements_libs_ecore_fb="-lts ${requirements_libs_ecore_fb}"
-         ],
-         [have_tslib="no"])
-   fi
-
-   if test "x${have_tslib}" = "xno" ; then
-      AC_CHECK_LIB([tslib], [ts_open],
-         [
-          have_tslib="yes"
-          AC_DEFINE([HAVE_TSLIB], [1], [Build Ecore_FB Touchscreen Code])
-          requirements_libs_ecore_fb="-ltslib ${requirements_libs_ecore_fb}"
-         ],
-         [have_tslib="no"])
-   fi
-fi
+EFL_OPTIONAL_DEPEND_PKG([ecore_fb], [${want_tslib}], [TSLIB], [tslib])
 
 if test "x${requirements_pc_deps_ecore_fb}" = "x" ; then
    ECORE_FB_LIBS=${requirements_libs_ecore_fb}
@@ -2413,9 +2381,10 @@ fi
 
 have_ecore_fb="no"
 AC_CHECK_HEADER([linux/fb.h],
-   [AC_CHECK_HEADER([linux/input.h], [have_ecore_fb="yes"], [have_ecore_fb="no"])])
-
-AM_CONDITIONAL([HAVE_ECORE_FB], [test "x${have_ecore_fb}" = "xyes"])
+   [AC_CHECK_HEADER([linux/input.h], [have_ecore_fb="yes"])])
+if test "${have_ecore_fb}" = "no"; then
+   AC_MSG_ERROR([Missing linux/input.h or linux/fb.h])
+fi
 
 ### Checks for types
 
@@ -2427,6 +2396,8 @@ AM_CONDITIONAL([HAVE_ECORE_FB], [test "x${have_ecore_fb}" = "xyes"])
 
 ### Checks for library functions
 
+fi
+AM_CONDITIONAL([HAVE_ECORE_FB], [test "x${want_fb}" = "xyes"])
 #### End of Ecore_FB
 
 
@@ -2468,6 +2439,7 @@ fi
 
 
 #### Ecore_SDL
+if test "${want_sdl}" = "yes"; then
 
 AC_MSG_NOTICE([Ecore_SDL checks])
 
@@ -2478,44 +2450,19 @@ AC_MSG_NOTICE([Ecore_SDL checks])
 ### Checks for programs
 
 ### Checks for libraries
-
-# Escape library for compilation on PS3
-
-if test "x${have_ps3}" = "xyes" ; then
-   requirements_pc_ecore_sdl="${requirements_pc_ecore_sdl} escape >= ${PACKAGE_VERSION}"
-fi
+requirements_pc_ecore_sdl="${requirements_pc_ecore_sdl} ${platform_pc}"
 
 ## Eina, Ecore
 
 requirements_pc_ecore_sdl="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_sdl}"
 
 ## SDL
+EFL_DEPEND_PKG([ecore_sdl], [SDL], [sdl >= 1.2.0])
 
-PKG_CHECK_MODULES([ECORE_SDL],
-   [sdl >= 1.2.0],
-   [
-    have_ecore_sdl="yes"
-    requirements_pc_ecore_sdl="sdl >= 1.2.0 ${requirements_pc_ecore_sdl}"
-   ],
-   [have_ecore_sdl="no"])
+PKG_CHECK_EXISTS([sdl >= 1.3.0],
+   [AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL])])
 
-if test "x${have_ecore_sdl}" = "xno" ; then
-   AC_PATH_GENERIC([sdl], [],
-      [
-       have_ecore_sdl="yes"
-       requirements_libs_ecore_sdl="${SDL_LIBS} ${requirements_libs_ecore_sdl}"
-       ECORE_SDL_CFLAGS=${SDL_CFLAGS}
-       ECORE_SDL_LIBS=${SDL_LIBS}
-      ],
-      [have_ecore_sdl="no"])
-fi
-
-if test "x${have_ecore_sdl}" = "xyes" ; then
-   PKG_CHECK_EXISTS([sdl >= 1.3.0],
-      [AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL])])
-fi
-
-AM_CONDITIONAL([HAVE_ECORE_SDL], [test "x${have_ecore_sdl}" = "xyes"])
+PKG_CHECK_MODULES([ECORE_SDL], [${requirements_pc_deps_ecore_sdl}])
 
 ### Checks for header files
 
@@ -2529,6 +2476,8 @@ AM_CONDITIONAL([HAVE_ECORE_SDL], [test "x${have_ecore_sdl}" = "xyes"])
 
 ### Checks for library functions
 
+fi
+AM_CONDITIONAL([HAVE_ECORE_SDL], [test "x${want_sdl}" = "xyes"])
 #### End of Ecore_SDL
 
 
@@ -3897,9 +3846,9 @@ else
 fi
 echo "  Ecore_Win32................: $have_win32"
 echo "  Ecore_Cocoa................: $have_ecore_cocoa"
-echo "  Ecore_SDL..................: $have_ecore_sdl"
-echo "  Ecore_FB...................: $have_ecore_fb"
-if test "x${have_ecore_fb}" = "xyes" ; then
+echo "  Ecore_SDL..................: $want_sdl"
+echo "  Ecore_FB...................: $want_fb"
+if test "x${wantfb}" = "xyes" ; then
   echo "    Touchscreen..............: $have_tslib"
 fi
 echo "  Ecore_WinCE................: $have_wince"
