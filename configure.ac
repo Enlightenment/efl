@@ -1411,6 +1411,9 @@ requirements_pc_evas="eo >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >=
 EFL_DEPEND_PKG([evas], [FREETYPE], [freetype2 >= 9.3.0])
 
 ## optional dependencies
+# Valgrind
+EFL_OPTIONAL_DEPEND_PKG([evas], [${want_valgrind}],
+   [VALGRIND], [valgrind >= 2.4.0])
 
 # FontConfig
 EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fontconfig}],
