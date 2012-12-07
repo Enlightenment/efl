@@ -101,7 +101,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
    switch (engine)
      {
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
+#ifdef BUILD_ECORE_EVAS_BUFFER
         return EINA_TRUE;
 #else
         return EINA_FALSE;

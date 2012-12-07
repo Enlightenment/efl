@@ -1112,6 +1112,19 @@ AC_ARG_ENABLE([wayland],
    ],
    [want_wayland="no"])
 
+# Fb
+AC_ARG_ENABLE([fb],
+   [AC_HELP_STRING([--enable-fb],
+       [disable fraw Framebuffer access. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_fb="yes"
+    else
+       want_fb="no"
+    fi
+   ],
+   [want_fb="no"])
+
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AC_HELP_STRING([--disable-fontconfig],
@@ -1316,7 +1329,6 @@ AC_ARG_ENABLE([image-loader-webp],
 
 want_evas_cserve2="yes"
 
-want_evas_engine_buffer="yes"
 want_evas_engine_software_xlib="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_software_gdi="no"
@@ -1325,8 +1337,6 @@ want_evas_engine_gl_xlib="no"
 want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_sdl="no"
 want_evas_engine_gl_cocoa="no"
-want_evas_engine_fb="no"
-want_evas_engine_psl1ght="no"
 want_evas_engine_wayland_shm="no"
 want_evas_engine_wayland_egl="no"
 
@@ -1367,7 +1377,6 @@ case "$host_os" in
       want_evas_engine_gl_xlib="auto"
       want_evas_engine_software_xcb="no"
       want_evas_engine_gl_xcb="no"
-      want_evas_engine_fb="auto"
       want_evas_engine_wayland_shm="auto"
       want_evas_engine_wayland_egl="auto"
       ;;
@@ -1381,12 +1390,6 @@ if test "x${efl_func_dlsym}" = "xno" ; then
    want_evas_engine_gl_xcb="no"
    want_evas_engine_gl_sdl="no"
 fi
-
-case "$host_vendor" in
-  ps3*)
-      want_evas_engine_psl1ght="static"
-      ;;
-esac
 
 ### Checks for programs
 
@@ -1452,14 +1455,24 @@ fi
 
 ## Engines
 
-EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [yes], [Buffer])
-EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
+define([EVAS_ENGINE_DEP_CHECK_FB], [
+AC_CHECK_HEADER([linux/fb.h], [:], [AC_MSG_ERROR([Missing linux/fb.h])])
+])
+
+define([EVAS_ENGINE_DEP_CHECK_PSL1GHT], [
+AC_CHECK_HEADER([rsx/rsx.h], [:], [AC_MSG_ERROR([Missing rsx/rsx.h])])
+])
+
+EVAS_ENGINE([buffer], [static])
+EVAS_ENGINE([fb], [${want_fb}], [EVAS_ENGINE_DEP_CHECK_FB])
+EVAS_ENGINE([psl1ght], [${have_ps3}], [EVAS_ENGINE_DEP_CHECK_PSL1GHT])
+EVAS_ENGINE([wayland-shm], [${want_wayland}])
+
+# XXX TODO:
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
-EVAS_CHECK_ENGINE([psl1ght], [${want_evas_engine_psl1ght}], [no], [PSL1GHT])
 EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
-EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 
 # Software XCB
@@ -3302,7 +3315,6 @@ AC_MSG_NOTICE([Ecore_Evas checks])
 have_ecore_evas="yes"
 have_extn="yes"
 
-want_ecore_evas_software_buffer="yes"
 want_ecore_evas_software_x11="no"
 want_ecore_evas_opengl_x11="no"
 want_ecore_evas_software_xcb="no"
@@ -3356,32 +3368,26 @@ requirements_pc_ecore_evas="ecore-input-evas >= ${PACKAGE_VERSION} ecore-input >
 
 ## modules
 
-# ecore_evas_buffer
+ECORE_EVAS_MODULE([buffer], [static])
+ECORE_EVAS_MODULE([ews], [yes])
+ECORE_EVAS_MODULE([fb], [${want_fb}])
+ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
-ECORE_EVAS_CHECK_MODULE_FULL([software-buffer],
-   [${have_evas_engine_buffer}],
-   [${want_ecore_evas_software_buffer}],
-   [Software Buffer],
-   [yes])
+# XXX TODO:
+ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
+ECORE_EVAS_MODULE([software-sdl], [${want_ecore_evas_software_sdl}])
+ECORE_EVAS_MODULE([opengl-sdl], [${want_ecore_evas_gl_sdl}])
+ECORE_EVAS_MODULE([wayland-shm], [${want_ecore_evas_wayland_shm}])
+ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
+ECORE_EVAS_MODULE([software-gdi], [${want_ecore_evas_software_gdi}])
+ECORE_EVAS_MODULE([software-ddraw], [${want_ecore_evas_software_ddraw}])
 
-# ecore_evas_cocoa
+if test "x${have_ecore_evas_software_gdi}" = "xyes" || \
+   test "x${have_ecore_evas_software_ddraw}" = "xyes" ; then
+   AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
+fi
 
-ECORE_EVAS_CHECK_MODULE_FULL([opengl-cocoa],
-   [${have_evas_engine_gl_cocoa}],
-   [${want_ecore_evas_gl_cocoa}],
-   [OpenGL Cocoa],
-   [${have_ecore_cocoa}],
-   [requirements_pc_ecore_evas="ecore-cocoa >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
-
-# ecore_evas_ews
-
-ECORE_EVAS_CHECK_MODULE_FULL([ews],
-   [${have_evas_engine_buffer}],
-   [${want_ecore_evas_ews}],
-   [Ecore Evas Single Process Windowing System],
-   [yes], [])
-
-# ecore_evas_extn
+# XXX TODO: ecore_evas_extn
 
 if test "x${have_ecore_ipc}" = "xno" || \
    test "x${have_ecore_evas_software_buffer}" = "xno" || \
@@ -3397,90 +3403,12 @@ if test "x${want_ecore_evas_extn}" = "xyes" && \
    test "x${have_ecore_evas}" = "xyes"; then
    have_ecore_evas_extn="yes"
    AC_DEFINE([BUILD_ECORE_EVAS_EXTN], [1], [Support for Extn Engine in Ecore_Evas])
-   requirements_pc_ecore_evas="ecore-ipc >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
 fi
 
-# ecore_evas_fb
 
-ECORE_EVAS_CHECK_MODULE_FULL([fb],
-   [${have_evas_engine_fb}],
-   [${want_ecore_evas_fb}],
-   [Linux Framebuffer],
-   [${have_ecore_fb}],
-   [requirements_pc_ecore_evas="ecore-fb >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
+# XXX TODO: ecore_evas_x11
 
-# ecore_evas_psl1ght
-
-ECORE_EVAS_CHECK_MODULE_FULL([psl1ght],
-   [${have_evas_engine_psl1ght}],
-   [${want_ecore_evas_psl1ght}],
-   [PSL1GHT],
-   [${have_ecore_psl1ght}],
-   [requirements_pc_ecore_evas="ecore-psl1ght >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
-
-# ecore_evas_sdl
-
-ECORE_EVAS_CHECK_MODULE_FULL([software-sdl],
-   [${have_evas_engine_software_sdl}],
-   [${want_ecore_evas_software_sdl}],
-   [Software SDL],
-   [${have_ecore_sdl}],
-   [requirements_ecore_evas="ecore-sdl >= ${PACKAGE_VERSION} ${requirements_ecore_evas}"])
-
-ECORE_EVAS_CHECK_MODULE_FULL([opengl-sdl],
-   [${have_evas_engine_gl_sdl}],
-   [${want_ecore_evas_gl_sdl}],
-   [OpenGL SDL],
-   [${have_ecore_sdl}],
-   [requirements_ecore_evas="ecore-sdl >= ${PACKAGE_VERSION} ${requirements_ecore_evas}"])
-
-# ecore_evas_wayland
-
-ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm],
-   [${have_evas_engine_wayland_shm}],
-   [${want_ecore_evas_wayland_shm}],
-   [Wayland Shm],
-   [${have_ecore_wayland}],
-   [requirements_pc_ecore_evas="ecore-wayland >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"])
-
-ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl],
-   [${have_evas_engine_wayland_egl}],
-   [${want_ecore_evas_wayland_egl}],
-   [Wayland Egl],
-   [${have_ecore_wayland}],
-   [
-    PKG_CHECK_MODULES([WAYLAND_EGL], [wayland-egl], [have_wayland_egl="yes"], [have_wayland_egl="no"])
-    if test "x${have_wayland_egl}" = "xyes" ; then
-       requirements_pc_ecore_evas="wayland-egl egl >= 7.10 ecore-wayland >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
-    fi
-   ])
-
-# ecore_evas_win32
-ECORE_EVAS_CHECK_MODULE_FULL([software-gdi],
-   [${have_evas_engine_software_gdi}],
-   [${want_ecore_evas_software_gdi}],
-   [Software GDI],
-   [${have_win32}])
-
-ECORE_EVAS_CHECK_MODULE_FULL([software-ddraw],
-   [${have_evas_engine_software_ddraw}],
-   [${want_ecore_evas_software_ddraw}],
-   [Software DirectDraw],
-   [${have_win32}])
-
-if test "x${have_ecore_evas_software_gdi}" = "xyes" || \
-   test "x${have_ecore_evas_software_ddraw}" = "xyes" ; then
-   AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
-   requirements_pc_ecore_evas="ecore-win32 >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
-fi
-
-# ecore_evas_x11
-
-ECORE_EVAS_CHECK_MODULE_FULL([software-x11],
-   [${have_evas_engine_software_x11}],
-   [${want_ecore_evas_software_x11}],
-   [Software X11],
-   [${have_ecore_x}])
+ECORE_EVAS_MODULE([software-x11], [${want_ecore_evas_software_x11}])
 
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
@@ -3501,7 +3429,7 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    fi
 fi
 
-# ecore_evas_opengl_x11
+# XXX TODO: ecore_evas_opengl_x11
 
 ECORE_EVAS_CHECK_MODULE_FULL([opengl-x11],
    [${have_evas_engine_gl_x11}],
@@ -3542,7 +3470,6 @@ if test "x$have_ecore_evas_software_x11" = "xyes" || \
    test "x$have_ecore_evas_opengl_x11" = "xyes" || \
    test "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
-   requirements_pc_ecore_evas="ecore-x >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
 fi
 
 if test "x${requirements_pc_deps_ecore_evas}" = "x" ; then
@@ -3819,7 +3746,6 @@ echo
 echo "Evas:"
 echo
 echo "  Engines:"
-echo "    Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "    Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
 echo "    OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) (x11=${with_opengl})"
 echo "    Software GDI...............: $have_evas_engine_software_gdi"
@@ -3827,7 +3753,7 @@ echo "    Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "    OpenGL SDL.................: $have_evas_engine_gl_sdl (opengl=${with_opengl})"
 echo "    OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
 echo "    Software Framebuffer.......: $have_evas_engine_fb"
-echo "    PSL1GHT....................: $have_evas_engine_psl1ght"
+echo "    PSL1GHT....................: $have_ps3"
 echo "    Wayland Shm................: $have_evas_engine_wayland_shm"
 echo "    Wayland Egl................: $have_evas_engine_wayland_egl"
 echo
@@ -3952,7 +3878,6 @@ echo "  Ecore_Wayland..............: $have_ecore_wayland"
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
-  echo "    Software Memory Buffer.....: $have_ecore_evas_software_buffer"
   if test "x${have_ecore_evas_software_x11}" = "xyes" ; then
     echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib: ${have_ecore_evas_software_xlib}) (XCB: ${have_ecore_evas_software_xcb})"
   else
@@ -3968,7 +3893,7 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
-  echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
+  echo "    PSL1GHT....................: $have_ps3"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
   echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"

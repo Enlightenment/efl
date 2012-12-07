@@ -1,20 +1,4 @@
 
-dnl use: EVAS_CHECK_ENGINE_DEP_BUFFER(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_BUFFER],
-[
-
-have_dep="yes"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB],
@@ -581,60 +565,6 @@ AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_FB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_FB],
-[
-
-have_dep="no"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_CHECK_HEADER([linux/fb.h], [have_dep="yes"])
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
-
-dnl use: EVAS_CHECK_ENGINE_DEP_PSL1GHT(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_PSL1GHT],
-[
-
-have_dep="no"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_CHECK_HEADER([rsx/rsx.h], [have_dep="yes"])
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
-
-dnl use: EVAS_CHECK_ENGINE_DEP_WAYLAND_SHM(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_WAYLAND_SHM],
-[
-
-have_dep="yes"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
 
 dnl use: EVAS_CHECK_ENGINE_DEP_WAYLAND_EGL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
@@ -678,9 +608,57 @@ AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 ])
 
 
+dnl use: EVAS_ENGINE(name, want_engine, [DEPENDENCY-CHECK-CODE])
+dnl
+dnl defines BUILD_ENGINE_NAME if it should be built
+dnl defines BUILD_STATIC_BUILD_NAME if should be built statically
+dnl
+dnl will call DEPENDENCY-CHECK-CODE if it should be built,
+dnl if some dependency fail just call AC_MSG_ERROR() to abort.
+
+AC_DEFUN([EVAS_ENGINE],
+[
+m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
+m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
+
+want_engine="$2"
+want_static_engine="no"
+have_engine="no"
+have_evas_engine_[]DOWN="no"
+
+evas_engine_[]m4_defn([DOWN])[]_cflags=""
+evas_engine_[]m4_defn([DOWN])[]_libs=""
+
+if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic"; then
+   $3
+
+   have_engine="yes"
+   if test "x${want_engine}" = "xstatic" ; then
+      have_evas_engine_[]DOWN="static"
+      want_static_engine="yes"
+   else
+      have_evas_engine_[]DOWN="yes"
+   fi
+fi
+
+AC_DEFINE_IF(BUILD_ENGINE_[]UP, [test "${have_engine}" = "yes"],
+  [1], [Build $1 Evas engine])
+AM_CONDITIONAL(BUILD_ENGINE_[]UP, [test "${have_engine}" = "yes"])
+
+AC_DEFINE_IF(EVAS_STATIC_BUILD_[]UP, [test "${want_static_engine}" = "yes"],
+  [1], [Build $1 Evas engine inside libevas])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "${want_static_engine}" = "yes"])
+
+AC_SUBST([evas_engine_]m4_defn([DOWN])[_cflags])
+AC_SUBST([evas_engine_]m4_defn([DOWN])[_libs])
+
+m4_popdef([UP])
+m4_popdef([DOWN])
+])
+
+
+
 dnl use: EVAS_CHECK_ENGINE(engine, want_engine, simple, description)
-
-
 AC_DEFUN([EVAS_CHECK_ENGINE],
 [
 
