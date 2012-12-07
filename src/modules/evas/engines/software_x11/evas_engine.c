@@ -16,7 +16,9 @@
 # include "evas_xcb_xdefaults.h"
 #endif
 
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
 #include "evas_x_egl.h"
+#endif
 
 int _evas_engine_soft_x11_log_dom = -1;
 
@@ -638,7 +640,9 @@ eng_output_free(void *data)
         if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
         if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
         if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
         _output_egl_shutdown(re);
+#endif
         free(re);
      }
 

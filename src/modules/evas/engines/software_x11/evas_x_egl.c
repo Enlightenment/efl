@@ -7,7 +7,6 @@
 #endif
 #include "evas_common.h"
 #include "evas_macros.h"
-#include "evas_x_egl.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -16,6 +15,7 @@
 #endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
+#include "evas_x_egl.h"
 
 #define EGL_SURFACE_TYPE                0x3033
 #define EGL_WINDOW_BIT                  0x0004
@@ -128,6 +128,7 @@ _egl_x_disp_get(void *d)
    return egl.GetDisplay(d);
 #else
    return NULL;
+   (void)d;
 #endif
 }
 
@@ -137,6 +138,8 @@ _egl_x_disp_terminate(void *ed)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (!_egl_find()) return;
    egl.Terminate(ed);
+#else
+   (void)ed;
 #endif
 }
 
@@ -150,6 +153,7 @@ _egl_x_disp_init(void *ed)
    return 1;
 #else
    return 0;
+   (void)ed;
 #endif
 }
 
@@ -187,19 +191,18 @@ _egl_x_disp_choose_config(void *ed)
    return eglconfig;
 #else
    return NULL;
+   (void)ed;
 #endif
 }
 
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
 void *
 _egl_x_win_surf_new(void *ed, Window win, void *config)
 {
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (!_egl_find()) return NULL;
    return egl.CreateWindowSurface(ed, config, win, NULL);
-#else
-   return NULL;
-#endif
 }
+#endif
 
 void
 _egl_x_win_surf_free(void *ed, void *surf)
@@ -207,6 +210,9 @@ _egl_x_win_surf_free(void *ed, void *surf)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (!_egl_find()) return;
    egl.DestroySurface(ed, surf);
+#else
+   (void)ed;
+   (void)surf;
 #endif
 }
 
@@ -249,6 +255,9 @@ err:
    return NULL;
 #else
    return NULL;
+   (void)ed;
+   (void)surf;
+   (void)stride;
 #endif
 }
 
@@ -257,7 +266,10 @@ _egl_x_surf_unmap(void *ed, void *surf)
 {
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    egl.UnlockSurface(ed, surf);
-#endif   
+#else
+   (void)ed;
+   (void)surf;
+#endif
 }
 
 void
@@ -267,9 +279,14 @@ _egl_x_surf_swap(void *ed, void *surf, int vsync)
    if (vsync) egl.SwapInterval(ed, 1);
    else egl.SwapInterval(ed, 0);
    egl.SwapBuffers(ed, surf);
-#endif   
+#else
+   (void)ed;
+   (void)surf;
+   (void)vsync;
+#endif
 }
 
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
 Outbuf *
 evas_software_egl_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
                                  Display *disp, Drawable draw, Visual *vis,
@@ -293,3 +310,4 @@ evas_software_egl_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
    (void) vis;
    return NULL;
 }
+#endif
