@@ -1236,17 +1236,6 @@ AC_ARG_ENABLE([gl-xcb],
    ],
    [want_gl_xcb="no"])
 
-AC_ARG_ENABLE([static-software-generic],
-   [AC_HELP_STRING([--enable-static-software-generic], [Build software generic engine as part of libevas. @<:@default=disabled@:>@])],
-   [
-    if test "x$enableval" = "xyes" ; then
-       have_static_software_generic="yes"
-    else
-       have_static_software_generic="no"
-    fi
-   ],
-   [have_static_software_generic="no"])
-
 AC_ARG_ENABLE([gl-flavor-gles],
    [AC_HELP_STRING([--enable-gl-flavor-gles], [enable gles flavor of gl instead of standard. @<:@default=disabled@:>@])],
    [
@@ -1516,20 +1505,8 @@ AC_SUBST([have_evas_engine_software_xlib])
 AC_SUBST([have_evas_engine_software_xcb])
 
 # Software generic
-
-AC_MSG_CHECKING([Whether to build software generic engine as part of libevas])
-AC_MSG_RESULT([${have_static_software_generic}])
-
-if test "x${have_static_module}" = "xyes" && test "x${have_static_software_generic}" = "xno"; then
-   AC_MSG_WARN([Forcing --enable-static-software-generic as engines must be compiled statically])
-   have_static_software_generic="yes"
-fi
-
-if test "x${have_static_software_generic}" = "xyes"; then
-   AC_DEFINE([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [1], [Build software generic engine as part of libevas])
-fi
-
-AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [test "x${have_static_software_generic}" = "xyes"])
+AC_DEFINE([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [1], [Build software generic engine as part of libevas])
+AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [true])
 
 # OpenGL
 
