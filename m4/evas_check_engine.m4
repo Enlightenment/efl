@@ -189,8 +189,8 @@ if test "x${have_dep}" = "xyes" ; then
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
       PKG_CHECK_MODULES([XCB], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
+      evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
+      evas_engine_[]$1[]_libs="${XCB_LIBS}"
    fi
 fi
 
@@ -274,8 +274,8 @@ if test "x${have_dep}" = "xyes" ; then
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
       PKG_CHECK_MODULES([XCB_GL], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${XCB_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${XCB_LIBS}"
+      evas_engine_[]$1[]_cflags="${XCB_CFLAGS}"
+      evas_engine_[]$1[]_libs="${XCB_LIBS}"
    fi
 fi
 
@@ -489,8 +489,8 @@ if test "x${have_dep}" = "xyes" ; then
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
       PKG_CHECK_MODULES([SDL], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${SDL_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${SDL_LIBS}"
+      evas_engine_[]$1[]_cflags="${SDL_CFLAGS}"
+      evas_engine_[]$1[]_libs="${SDL_LIBS}"
    fi
 fi
 
