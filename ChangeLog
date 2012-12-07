@@ -1,3 +1,9 @@
+2012-12-07 Sung W. Park (sung_)
+
+	* Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
+          fiddling that was originally in the gl backend code. The offset 
+          fiddling caused issues with some ARM target GPU drivers.
+
 2012-12-05  Gustavo Sverzut Barbieri (k-s)
 
 	* Removed DirectFB support (both ecore_directfb, evas and ecore_evas).
