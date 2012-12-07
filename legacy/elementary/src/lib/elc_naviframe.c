@@ -1034,6 +1034,7 @@ _on_item_pop_finished(void *data,
 
    if (sd->preserve && it->content)
      elm_widget_tree_unfocusable_set(it->content, it->content_unfocusable);
+   sd->popping = eina_list_remove(sd->popping, it);
 
    elm_widget_item_del(data);
 }
@@ -1263,10 +1264,8 @@ _pop_transition_cb(void *data)
 {
    Elm_Naviframe_Item *prev_it, *it;
    it = (Elm_Naviframe_Item *)data;
-   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    it->animator = NULL;
-   sd->popping = eina_list_remove(sd->popping, it);
 
    prev_it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(WIDGET(it));
    if (prev_it)
@@ -1300,7 +1299,7 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    //All popping items which are not called yet by animator.
    EINA_LIST_FOREACH(sd->popping, l, it)
      {
-        ecore_animator_del(it->animator);
+        if (it->animator) ecore_animator_del(it->animator);
         elm_widget_item_del(it);
      }
    eina_list_free(sd->popping);
