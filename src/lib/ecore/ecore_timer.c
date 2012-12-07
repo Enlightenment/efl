@@ -532,12 +532,12 @@ ecore_timer_dump(void)
 #ifdef WANT_ECORE_TIMER_DUMP
    Eina_Strbuf *result;
    char *out;
-   Ecore_Timer *tm;
+   Ecore_Timer_Private_Data *tm;
    Eina_List *tmp = NULL;
    int living_timer = 0;
    int unknow_timer = 0;
 
-   EINA_MAIN_LOOP_CHECK_RETURN(NULL);
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    result = eina_strbuf_new();
 
@@ -960,8 +960,8 @@ static int
 _ecore_timer_cmp(const void *d1,
                  const void *d2)
 {
-   const Ecore_Timer *t1 = d1;
-   const Ecore_Timer *t2 = d2;
+   const Ecore_Timer_Private_Data *t1 = d1;
+   const Ecore_Timer_Private_Data *t2 = d2;
 
    return (int)((t1->in - t2->in) * 100);
 }
