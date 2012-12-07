@@ -1,4 +1,3 @@
-#include "edje_cc.h"  /* For struct Font */
 #include "edje_private.h"
 
 EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
@@ -953,21 +952,21 @@ _edje_edd_init(void)
 
 EAPI void
 _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd,
-      Eet_Data_Descriptor **_font_edd)
+			       Eet_Data_Descriptor **_font_edd)
 {  /* User have to free: _font_list_edd, _font_edd */
    Eet_Data_Descriptor_Class eddc;
 
    eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
-                                             "font", sizeof (Font));
+                                             "font", sizeof (Edje_Font));
    *_font_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Font,
+   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
                                  "file", file, EET_T_INLINED_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Font,
+   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
                                  "name", name, EET_T_INLINED_STRING);
 
    eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
-                                             "font_list", sizeof (Font_List));
+                                             "font_list", sizeof (Edje_Font_List));
    *_font_list_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_LIST(*_font_list_edd, Font_List,
+   EET_DATA_DESCRIPTOR_ADD_LIST(*_font_list_edd, Edje_Font_List,
                                 "list", list, *_font_edd);
 }

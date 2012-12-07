@@ -26,7 +26,7 @@ int compress_mode = EET_COMPRESSION_DEFAULT;
 
 Edje_File *edje_file = NULL;
 SrcFile_List *srcfiles = NULL;
-Font_List *fontlist = NULL;
+Edje_Font_List *fontlist = NULL;
 
 int line = 0;
 int build_sh = 1;

@@ -235,17 +235,17 @@ source_load(Eet_File *ef)
 int
 source_fontmap_save(Eet_File *ef, Eina_List *font_list)
 {
-   Font_List fl;
+   Edje_Font_List fl;
 
    fl.list = font_list;
    return eet_data_write(ef, _font_list_edd, "edje_source_fontmap", &fl,
                          compress_mode);
 }
 
-Font_List *
+Edje_Font_List *
 source_fontmap_load(Eet_File *ef)
 {
-   Font_List *fl;
+   Edje_Font_List *fl;
 
    fl = eet_data_read(ef, _font_list_edd, "edje_source_fontmap");
    return fl;

@@ -89,7 +89,7 @@ typedef struct _Edje_Pick_Tone Edje_Pick_Tone;
 
 struct _Edje_Pick_Font
 {
-   Font *f;
+   Edje_Font *f;
    Eina_Bool used;
 };
 typedef struct _Edje_Pick_Font Edje_Pick_Font;
@@ -246,7 +246,7 @@ _edje_pick_cleanup(Eina_List *ifs, Edje_File *out_file, Edje_Pick_Status s)
 
    EINA_LIST_FREE(context.fontlist, ft)
      {
-        Font *st = ft->f;
+        Edje_Font *st = ft->f;
 
         eina_stringshare_del(st->name);
         eina_stringshare_del(st->file);
@@ -836,9 +836,12 @@ _edje_pick_sounds_add(Edje_File *edf)
 static int
 _font_cmp(const void *d1, const void *d2)
 {
+   Edje_Font *f1 = d1;
+   Edje_Font *f2 = d2;
+
    /* Same font if (d1->name == d2->name) AND (d1->file == d2->file) */
-   return (strcmp(((Font *) d1)->name, ((Font *) d2)->name) |
-           strcmp(((Font *) d1)->file, ((Font *) d2)->file));
+   return (strcmp(f1->name, f2->name) |
+           strcmp(f1->file, f2->file));
 }
 
 static int
@@ -846,8 +849,8 @@ _Edje_Pick_Fonts_add(Edje_File *edf)
 {
    Eet_Data_Descriptor *_font_list_edd = NULL;
    Eet_Data_Descriptor *_font_edd;
-   Font_List *fl;
-   Font *f;
+   Edje_Font_List *fl;
+   Edje_Font *f;
    Eina_List *l;
 
    _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
@@ -860,7 +863,7 @@ _Edje_Pick_Fonts_add(Edje_File *edf)
           {
              /* Add only fonts that are NOT regestered in our list */
              Edje_Pick_Font *ft =  malloc(sizeof(*ft));
-             Font *st = malloc(sizeof(*st));
+             Edje_Font *st = malloc(sizeof(*st));
 
              st->name = (char *) eina_stringshare_add(f->name);
              st->file = (char *) eina_stringshare_add(f->file);
@@ -1161,7 +1164,7 @@ main(int argc, char **argv)
    Edje_Part_Collection *edc;
    Edje_Part_Collection_Directory_Entry *ce;
    Eet_File *ef;
-   Font_List *fl;
+   Edje_Font_List *fl;
    Eina_List *f, *l;
    char buf[1024];
    void *n;

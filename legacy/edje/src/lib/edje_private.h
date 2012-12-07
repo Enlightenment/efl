@@ -1691,6 +1691,20 @@ struct _Edje_User_Defined
    } u;
 };
 
+typedef struct _Edje_Font_List             Edje_Font_List;
+typedef struct _Edje_Font                  Edje_Font;
+
+struct _Edje_Font_List
+{
+   Eina_List *list;
+};
+
+struct _Edje_Font
+{
+   char *name;
+   char *file;
+};
+
 Edje_Patterns   *edje_match_collection_dir_init(const Eina_List *lst);
 Edje_Patterns   *edje_match_programs_signal_init(Edje_Program * const *array,
 						 unsigned int count);

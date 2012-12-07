@@ -147,7 +147,7 @@ struct _Head_Write
 struct _Fonts_Write
 {
    Eet_File *ef;
-   Font *fn;
+   Edje_Font *fn;
    char *errstr;
 };
 
@@ -532,7 +532,7 @@ static void
 data_write_fonts(Eet_File *ef, int *font_num)
 {
    Eina_Iterator *it;
-   Font *fn;
+   Edje_Font *fn;
 
    if (!edje_file->fonts) return;
 

@@ -1636,14 +1636,14 @@ st_images_set_image_size(void)
 static void
 st_fonts_font(void)
 {
-   Font *fn;
+   Edje_Font *fn;
 
    check_arg_count(2);
 
    if (!edje_file->fonts)
      edje_file->fonts = eina_hash_string_small_new(free);
 
-   fn = mem_alloc(SZ(Font));
+   fn = mem_alloc(SZ(Edje_Font));
    fn->file = parse_str(0);
    fn->name = parse_str(1);
 

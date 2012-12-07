@@ -45,8 +45,6 @@ typedef struct _New_Statement_Handler New_Statement_Handler;
 typedef struct _New_Nested_Handler    New_Nested_Handler;
 typedef struct _External_List         External_List;
 typedef struct _External              External;
-typedef struct _Font_List             Font_List;
-typedef struct _Font                  Font;
 typedef struct _Code                  Code;
 typedef struct _Code_Program          Code_Program;
 typedef struct _SrcFile               SrcFile;
@@ -84,17 +82,6 @@ struct _External_List
 struct _External
 {
     char *name;
-};
-
-struct _Font_List
-{
-   Eina_List *list;
-};
-
-struct _Font
-{
-   char *name;
-   char *file;
 };
 
 struct _Code
@@ -206,7 +193,7 @@ void    source_fetch(void);
 int     source_append(Eet_File *ef);
 SrcFile_List *source_load(Eet_File *ef);
 int     source_fontmap_save(Eet_File *ef, Eina_List *fonts);
-Font_List *source_fontmap_load(Eet_File *ef);
+Edje_Font_List *source_fontmap_load(Eet_File *ef);
 
 void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);

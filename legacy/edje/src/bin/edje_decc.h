@@ -29,21 +29,8 @@ extern int _edje_cc_log_dom ;
 #define DBG(...) EINA_LOG_DOM_DBG(_edje_cc_log_dom, __VA_ARGS__)
 
 /* types */
-typedef struct _Font                  Font;
-typedef struct _Font_List             Font_List;
 typedef struct _SrcFile               SrcFile;
 typedef struct _SrcFile_List          SrcFile_List;
-
-struct _Font
-{
-   char *file;
-   char *name;
-};
-
-struct _Font_List
-{
-   Eina_List *list;
-};
 
 struct _SrcFile
 {
@@ -61,7 +48,7 @@ void    source_fetch(void);
 int     source_append(Eet_File *ef);
 SrcFile_List *source_load(Eet_File *ef);
 int     source_fontmap_save(Eet_File *ef, Eina_List *fonts);
-Font_List *source_fontmap_load(Eet_File *ef);
+Edje_Font_List *source_fontmap_load(Eet_File *ef);
 
 void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);
