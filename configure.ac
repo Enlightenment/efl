@@ -109,6 +109,11 @@ platform_pc_evil=""
 platform_pc_escape=""
 platform_pc_exotic=""
 
+platform_libs=""
+platform_libs_evil=""
+platform_libs_escape=""
+platform_libs_exotic=""
+
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
@@ -725,6 +730,14 @@ AC_SUBST([EVIL_CXXFLAGS])
 
 platform_pc_evil="evil >= ${PACKAGE_VERSION}"
 platform_pc="${platform_pc} ${platform_pc_evil}"
+
+if test "x${have_wince}" = "xyes"; then
+   platform_libs_evil="-lws2"
+else
+   platform_libs_evil="-lws2_32"
+fi
+platform_libs="${platform_libs} ${platform_libs_evil}"
+
 fi
 
 #### End of Evil
@@ -975,15 +988,7 @@ requirements_pc_eet="eina >= ${PACKAGE_VERSION} ${requirements_pc_eet}"
 PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
 
 # Windows
-
-case "$host_os" in
-   mingw32ce*)
-      requirements_libs_eet="${requirements_libs_eet} -lws2"
-      ;;
-   mingw*)
-      requirements_libs_eet="${requirements_libs_eet} -lws2_32"
-      ;;
-esac
+requirements_libs_eet="${requirements_libs_eet} ${platform_libs}"
 
 EET_LIBS="${EET_LIBS} ${requirements_libs_eet}"
 
@@ -1912,14 +1917,7 @@ if ! test "x${requirements_pc_deps_ecore}" = "x" ; then
    PKG_CHECK_MODULES([ECORE], [${requirements_pc_deps_ecore}])
 fi
 
-case "$host_os" in
-   mingw32ce*)
-      requirements_libs_ecore="${requirements_libs_ecore} -lws2"
-      ;;
-   mingw*)
-      requirements_libs_ecore="${requirements_libs_ecore} -lws2_32"
-      ;;
-esac
+requirements_libs_ecore="${requirements_libs_ecore} ${platform_libs}"
 
 ### Checks for header files
 
@@ -2068,14 +2066,7 @@ if test "x${requirements_pc_deps_ecore_con}" != "x" ; then
    PKG_CHECK_MODULES([ECORE_CON], [${requirements_pc_deps_ecore_con}])
 fi
 
-case "$host_os" in
-   mingw32ce*)
-      requirements_libs_ecore_con="${requirements_libs_ecore_con} -lws2"
-      ;;
-   mingw*)
-      requirements_libs_ecore_con="${requirements_libs_ecore_con} -lws2_32"
-      ;;
-esac
+requirements_libs_ecore_con="${requirements_libs_ecore_con} ${platform_libs}"
 
 ECORE_CON_CFLAGS="${ECORE_CON_CFLAGS} ${LIBGCRYPT_CFLAGS}"
 ECORE_CON_LIBS="${ECORE_CON_LIBS} ${LIBGCRYPT_LIBS}"
