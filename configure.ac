@@ -1193,7 +1193,7 @@ AC_ARG_ENABLE([pixman],
        want_pixman="no"
     fi
    ],
-   [want_pixman="yes"])
+   [want_pixman="no"])
 
 AC_ARG_ENABLE([pixman-font],
    [AC_HELP_STRING([--enable-pixman-font],
