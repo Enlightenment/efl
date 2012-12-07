@@ -3584,14 +3584,14 @@ ECORE_EVAS_CHECK_MODULE_FULL([software-x11],
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" ; then
-   have_ecore_evas_software_xlib=`${PKG_CONFIG} --variable=Xlib evas-software-x11`
+   have_ecore_evas_software_xlib=${have_evas_engine_software_xlib}
    if test "x${have_ecore_evas_software_xlib}" = "xstatic"; then
       have_ecore_evas_software_xlib="yes"
    fi
    if test "x${have_ecore_evas_software_xlib}" = "xyes" && test "x${have_ecore_x_xlib}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XLIB], [1], [Evas Software Xlib Engine Support])
    fi
-   have_ecore_evas_software_xcb=`${PKG_CONFIG} --variable=XCB evas-software-x11`
+   have_ecore_evas_software_xcb=${have_evas_engine_software_xcb}
    if test "x$have_ecore_evas_software_xcb" = "xstatic"; then
       have_ecore_evas_software_xcb="yes"
    fi
@@ -3611,13 +3611,13 @@ ECORE_EVAS_CHECK_MODULE_FULL([opengl-x11],
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
 if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_opengl_x11}" = "xstatic" ; then
-   have_ecore_evas_opengl_xlib=`${PKG_CONFIG} --variable=Xlib evas-opengl-x11`
+   have_ecore_evas_opengl_xlib=${have_evas_engine_gl_xlib}
    if test "x${have_ecore_evas_opengl_xlib}" = "xyes" ; then
       AC_DEFINE([BUILD_ECORE_EVAS_OPENGL_XLIB], [1], [OpenGL Xlib rendering backend])
    fi
 
 # opengl does not work with xcb (yet)
-   have_ecore_evas_opengl_xcb=`${PKG_CONFIG} --variable=XCB evas-opengl-x11`
+   have_ecore_evas_opengl_xcb=${have_evas_engine_gl_xcb}
    if test "x${have_ecore_evas_opengl_xcb}" = "xstatic"; then
       have_ecore_evas_opengl_xcb="yes"
    fi
@@ -4063,12 +4063,12 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software Memory Buffer.....: $have_ecore_evas_software_buffer"
   if test "x${have_ecore_evas_software_x11}" = "xyes" ; then
-    echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib=${have_ecore_evas_software_xlib}) (XCB=${have_ecore_evas_software_xcb})"
+    echo "    Software X11...............: $have_ecore_evas_software_x11 (Xlib: ${have_ecore_evas_software_xlib}) (XCB: ${have_ecore_evas_software_xcb})"
   else
     echo "    Software X11...............: $have_ecore_evas_software_x11"
   fi
   if test "x${have_ecore_evas_opengl_x11}" = "xyes" ; then
-    echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11 (Xlib=${have_ecore_evas_opengl_xlib}) (XCB=${have_ecore_evas_opengl_xcb})"
+    echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11 (Xlib: ${have_ecore_evas_opengl_xlib}) (XCB: ${have_ecore_evas_opengl_xcb})"
   else
     echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11"
   fi
