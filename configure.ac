@@ -1112,6 +1112,10 @@ AC_ARG_ENABLE([wayland],
    ],
    [want_wayland="no"])
 
+if test "${want_wayland}" = "yes"; then
+   EFL_PKG_CHECK_STRICT([wayland-client])
+fi
+
 # Fb
 AC_ARG_ENABLE([fb],
    [AC_HELP_STRING([--enable-fb],
@@ -1358,7 +1362,6 @@ want_evas_engine_software_ddraw="no"
 want_evas_engine_gl_xlib="no"
 want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_cocoa="no"
-want_evas_engine_wayland_shm="no"
 want_evas_engine_wayland_egl="no"
 
 want_evas_image_loader_bmp="static"
@@ -2484,6 +2487,7 @@ AM_CONDITIONAL([HAVE_ECORE_SDL], [test "x${want_sdl}" = "xyes"])
 
 #### Ecore_Wayland
 
+if test "${want_wayland}" = "yes"; then
 AC_MSG_NOTICE([Ecore_Wayland checks])
 
 ### Additional options to configure
@@ -2499,16 +2503,10 @@ AC_MSG_NOTICE([Ecore_Wayland checks])
 requirements_pc_ecore_wayland="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
 
 ## Wayland
+EFL_DEPEND_PKG([ecore_wayland], [WAYLAND],
+   [wayland-client wayland-cursor xkbcommon])
 
-PKG_CHECK_MODULES([ECORE_WAYLAND],
-   [wayland-client wayland-cursor xkbcommon],
-   [
-    have_ecore_wayland="yes"
-    requirements_pc_ecore_wayland="wayland-client wayland-cursor xkbcommon ${requirements_pc_ecore_wayland}"
-   ],
-   [have_ecore_wayland="no"])
-
-AM_CONDITIONAL([HAVE_ECORE_WAYLAND], [test "x${have_ecore_wayland}" = "xyes"])
+PKG_CHECK_MODULES([ECORE_WAYLAND], [${requirements_pc_deps_ecore_wayland}])
 
 ### Checks for header files
 
@@ -2522,6 +2520,8 @@ AM_CONDITIONAL([HAVE_ECORE_WAYLAND], [test "x${have_ecore_wayland}" = "xyes"])
 
 ### Checks for library functions
 
+fi
+AM_CONDITIONAL([HAVE_ECORE_WAYLAND], [test "x${have_wayland}" = "xyes"])
 #### End of Ecore_Wayland
 
 
@@ -3854,7 +3854,7 @@ if test "x${wantfb}" = "xyes" ; then
 fi
 echo "  Ecore_WinCE................: $have_wince"
 echo "  Ecore_PSL1GHT..............: $have_ps3"
-echo "  Ecore_Wayland..............: $have_ecore_wayland"
+echo "  Ecore_Wayland..............: $want_wayland"
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
