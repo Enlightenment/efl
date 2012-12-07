@@ -60,7 +60,7 @@ lib_ecore_evas_libecore_evas_la_LDFLAGS = -no-undefined -version-info @version_i
 
 # Engines
 
-if BUILD_ENGINE_BUFFER
+if BUILD_ECORE_EVAS_BUFFER
 BUFFERSOURCES = \
 modules/ecore_evas/engines/buffer/ecore_evas_buffer.c \
 modules/ecore_evas/engines/buffer/ecore_evas_extn.c \
@@ -74,7 +74,7 @@ modules_ecore_evas_engines_buffer_module_la_LDFLAGS = -no-undefined -module -avo
 modules_ecore_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_ECORE_X
+if BUILD_ECORE_EVAS_X11
 XSOURCES = modules/ecore_evas/engines/x/ecore_evas_x.c
 ecoreevasenginexpkgdir = $(libdir)/ecore_evas/engines/x/$(MODULE_ARCH)
 ecoreevasenginexpkg_LTLIBRARIES = modules/ecore_evas/engines/x/module.la
@@ -94,7 +94,7 @@ modules_ecore_evas_engines_x_module_la_LDFLAGS = -no-undefined -module -avoid-ve
 modules_ecore_evas_engines_x_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_ECORE_COCOA
+if BUILD_ECORE_EVAS_OPENGL_COCOA
 COCOASOURCES = modules/ecore_evas/engines/cocoa/ecore_evas_cocoa.c
 ecoreevasenginecocoapkgdir = $(libdir)/ecore_evas/engines/cocoa/$(MODULE_ARCH)
 ecoreevasenginecocoapkg_LTLIBRARIES = modules/ecore_evas/engines/cocoa/module.la
@@ -112,7 +112,7 @@ modules_ecore_evas_engines_cocoa_module_la_LDFLAGS = -no-undefined -module -avoi
 modules_ecore_evas_engines_cocoa_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_ECORE_FB
+if BUILD_ECORE_EVAS_FB
 FBSOURCES = modules/ecore_evas/engines/fb/ecore_evas_fb.c
 ecoreevasenginefbpkgdir = $(libdir)/ecore_evas/engines/fb/$(MODULE_ARCH)
 ecoreevasenginefbpkg_LTLIBRARIES = modules/ecore_evas/engines/fb/module.la
@@ -130,7 +130,7 @@ modules_ecore_evas_engines_fb_module_la_LDFLAGS = -no-undefined -module -avoid-v
 modules_ecore_evas_engines_fb_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_PS3
+if BUILD_ECORE_EVAS_PSL1GHT
 PSL1GHTSOURCES = modules/ecore_evas/engines/psl1ght/ecore_evas_psl1ght.c
 ecoreevasenginepsl1ghtpkgdir = $(libdir)/ecore_evas/engines/psl1ght/$(MODULE_ARCH)
 ecoreevasenginepsl1ghtpkg_LTLIBRARIES = modules/ecore_evas/engines/psl1ght/module.la
@@ -148,7 +148,7 @@ modules_ecore_evas_engines_psl1ght_module_la_LDFLAGS = -no-undefined -module -av
 modules_ecore_evas_engines_psl1ght_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_ECORE_WAYLAND
+if BUILD_ECORE_EVAS_WAYLAND
 WAYLANDSOURCES = \
 modules/ecore_evas/engines/wayland/ecore_evas_wayland_common.c \
 modules/ecore_evas/engines/wayland/ecore_evas_wayland_shm.c \
@@ -173,7 +173,7 @@ modules_ecore_evas_engines_wayland_module_la_LDFLAGS = -no-undefined -module -av
 modules_ecore_evas_engines_wayland_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_ECORE_SDL
+if BUILD_ECORE_EVAS_SDL
 SDLSOURCES = \
 modules/ecore_evas/engines/sdl/ecore_evas_sdl.c
 ecoreevasenginesdlpkgdir = $(libdir)/ecore_evas/engines/sdl/$(MODULE_ARCH)
@@ -192,7 +192,7 @@ modules_ecore_evas_engines_sdl_module_la_LDFLAGS = -no-undefined -module -avoid-
 modules_ecore_evas_engines_sdl_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
-if HAVE_WIN32
+if BUILD_ECORE_EVAS_WIN32
 WIN32SOURCES = \
 modules/ecore_evas/engines/win32/ecore_evas_win32.c
 ecoreevasengineswin32pkgdir = $(libdir)/ecore_evas/engines/win32/$(MODULE_ARCH)

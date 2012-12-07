@@ -108,6 +108,8 @@ fi
 AC_MSG_CHECKING([whether ecore_evas $4 support is built])
 AC_MSG_RESULT([$have_ecore_evas_]m4_defn([DOWN]))
 
+AM_CONDITIONAL([BUILD_ECORE_EVAS_]UP, [test "x$have_ecore_evas_]m4_defn([DOWN])[" = "xyes"])
+
 AS_IF([test "x$have_ecore_evas_[]m4_defn([DOWN])" = "xyes"], [$6], [$7])
 
 m4_popdef([UP])

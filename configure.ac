@@ -1125,6 +1125,24 @@ AC_ARG_ENABLE([fb],
    ],
    [want_fb="no"])
 
+# SDL
+AC_ARG_ENABLE([sdl],
+   [AC_HELP_STRING([--enable-sdl],
+       [disable SDL support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_sdl="yes"
+    else
+       want_sdl="no"
+    fi
+   ],
+   [want_sdl="no"])
+
+want_gl_sdl="no"
+if test "${want_sdl}" = "yes" && test "${with_opengl}" != "none"; then
+   want_gl_sdl="yes"
+fi
+
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AC_HELP_STRING([--disable-fontconfig],
@@ -1335,7 +1353,6 @@ want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_gl_xlib="no"
 want_evas_engine_gl_xcb="no"
-want_evas_engine_gl_sdl="no"
 want_evas_engine_gl_cocoa="no"
 want_evas_engine_wayland_shm="no"
 want_evas_engine_wayland_egl="no"
@@ -1377,8 +1394,6 @@ case "$host_os" in
       want_evas_engine_gl_xlib="auto"
       want_evas_engine_software_xcb="no"
       want_evas_engine_gl_xcb="no"
-      want_evas_engine_wayland_shm="auto"
-      want_evas_engine_wayland_egl="auto"
       ;;
 esac
 
@@ -1388,7 +1403,7 @@ requirements_libs_evas="${requirements_libs_evas} ${DLSYM_LIBS}"
 if test "x${efl_func_dlsym}" = "xno" ; then
    want_evas_engine_gl_xlib="no"
    want_evas_engine_gl_xcb="no"
-   want_evas_engine_gl_sdl="no"
+   want_gl_sdl="no"
 fi
 
 ### Checks for programs
@@ -1470,7 +1485,7 @@ EVAS_ENGINE([wayland-shm], [${want_wayland}])
 
 # XXX TODO:
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
-EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
+EVAS_CHECK_ENGINE([gl-sdl], [${want_gl_sdl}], [no], [OpenGL SDL])
 EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
@@ -3320,13 +3335,8 @@ want_ecore_evas_opengl_x11="no"
 want_ecore_evas_software_xcb="no"
 want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
-want_ecore_evas_software_sdl="no"
-want_ecore_evas_gl_sdl="no"
 want_ecore_evas_gl_cocoa="no"
-want_ecore_evas_fb="no"
-want_ecore_evas_ews="yes"
 want_ecore_evas_extn="yes"
-want_ecore_evas_wayland_shm="no"
 want_ecore_evas_wayland_egl="no"
 
 case "$host_os" in
@@ -3336,25 +3346,16 @@ case "$host_os" in
    mingw*)
       want_ecore_evas_software_gdi="yes"
       want_ecore_evas_software_ddraw="yes"
-      want_ecore_evas_software_sdl="yes"
-      want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_extn="no"
       ;;
    darwin*)
-      want_ecore_evas_software_sdl="yes"
-      want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_gl_cocoa="yes"
       ;;
    *)
       want_ecore_evas_software_x11="yes"
       want_ecore_evas_opengl_x11="yes"
       want_ecore_evas_software_xcb="no"
-      want_ecore_evas_software_sdl="yes"
-      want_ecore_evas_gl_sdl="yes"
       want_ecore_evas_gl_cocoa="no"
-      want_ecore_evas_fb="yes"
-      want_ecore_evas_wayland_shm="yes"
-      want_ecore_evas_wayland_egl="yes"
       ;;
 esac
 
@@ -3375,17 +3376,43 @@ ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
 # XXX TODO:
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
-ECORE_EVAS_MODULE([software-sdl], [${want_ecore_evas_software_sdl}])
-ECORE_EVAS_MODULE([opengl-sdl], [${want_ecore_evas_gl_sdl}])
-ECORE_EVAS_MODULE([wayland-shm], [${want_ecore_evas_wayland_shm}])
+
+ECORE_EVAS_MODULE([software-sdl], [${want_sdl}])
+ECORE_EVAS_MODULE([opengl-sdl], [${want_gl_sdl}])
+
+build_ecore_evas_sdl="no"
+if test "x${have_ecore_evas_software_sdl}" = "xyes" || \
+   test "x${have_ecore_evas_opengl_sdl}" = "xyes" ; then
+   build_ecore_evas_sdl="yes"
+   AC_DEFINE(BUILD_ECORE_EVAS_SDL, 1, [Support for SDL Engine in Ecore_Evas])
+fi
+AM_CONDITIONAL([BUILD_ECORE_EVAS_SDL],
+   [test "${build_ecore_evas_sdl}" = "yes"])
+
+ECORE_EVAS_MODULE([wayland-shm], [${want_wayland}])
+# XXX TODO want_ecore_evas_wayland_egl
 ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
+
+build_ecore_evas_wayland="no"
+if test "x${have_ecore_evas_wayland_shm}" = "xyes" || \
+   test "x${have_ecore_evas_wayland_egl}" = "xyes" ; then
+   build_ecore_evas_wayland="yes"
+   AC_DEFINE(BUILD_ECORE_EVAS_WAYLAND, 1, [Support for Wayland Engine in Ecore_Evas])
+fi
+AM_CONDITIONAL([BUILD_ECORE_EVAS_WAYLAND],
+   [test "${build_ecore_evas_wayland}" = "yes"])
+
 ECORE_EVAS_MODULE([software-gdi], [${want_ecore_evas_software_gdi}])
 ECORE_EVAS_MODULE([software-ddraw], [${want_ecore_evas_software_ddraw}])
 
+build_ecore_evas_win32="no"
 if test "x${have_ecore_evas_software_gdi}" = "xyes" || \
    test "x${have_ecore_evas_software_ddraw}" = "xyes" ; then
+   build_ecore_evas_win32="yes"
    AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
 fi
+AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
+   [test "${build_ecore_evas_win32}" = "yes"])
 
 # XXX TODO: ecore_evas_extn
 
@@ -3466,11 +3493,14 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
     fi
 fi
 
+build_ecore_evas_x11="no"
 if test "x$have_ecore_evas_software_x11" = "xyes" || \
    test "x$have_ecore_evas_opengl_x11" = "xyes" || \
    test "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_X11], [1], [Support for X Window Engines in Ecore_Evas])
+   build_ecore_evas_x11="yes"
 fi
+AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
 
 if test "x${requirements_pc_deps_ecore_evas}" = "x" ; then
    ECORE_EVAS_CFLAGS=""
