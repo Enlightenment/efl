@@ -160,8 +160,7 @@ einampchainedpool_LTLIBRARIES = chained_pool_module.la
 chained_pool_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--DEFL_EINA_BUILD \
-@VALGRIND_CFLAGS@
+-DEFL_EINA_BUILD
 chained_pool_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 chained_pool_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
@@ -178,8 +177,7 @@ einamponebig_LTLIBRARIES = one_big_module.la
 one_big_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--DEFL_EINA_BUILD \
-@VALGRIND_CFLAGS@
+-DEFL_EINA_BUILD
 one_big_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 one_big_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 one_big_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
@@ -196,8 +194,7 @@ einamppassthrough_LTLIBRARIES = pass_through_module.la
 pass_through_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--DEFL_EINA_BUILD \
-@VALGRIND_CFLAGS@
+-DEFL_EINA_BUILD
 pass_through_module_la_CFLAGS = @EINA_CFLAGS@
 pass_through_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 pass_through_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
@@ -215,8 +212,7 @@ lib_eina_libeina_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EFL_PTHREAD_CFLAGS@ \
-@EINA_CFLAGS@ \
-@VALGRIND_CFLAGS@
+@EINA_CFLAGS@
 
 if HAVE_WINDOWS
 lib_eina_libeina_la_CPPFLAGS += \

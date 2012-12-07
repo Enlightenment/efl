@@ -841,15 +841,9 @@ requirements_pc_eina="${requirements_pc_eina} ${platform_pc}"
 
 # Valgrind
 
-if test "x${want_valgrind}" = "xyes" ; then
-   PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0],
-      [
-       have_valgrind="yes"
-       requirements_pc_eina="valgrind >= 2.4.0 ${requirements_pc_eina}"
-       requirements_pc_deps_eina="valgrind ${requirements_pc_deps_eina}"
-      ],
-      [AC_MSG_ERROR([Valgrind >= 2.4.0 is required])])
-else
+EFL_OPTIONAL_DEPEND_PKG([eina], [${want_valgrind}],
+   [VALGRIND], [valgrind >= 2.4.0])
+if test "x${have_valgrind}" = "xno"; then
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 fi
 
