@@ -442,8 +442,8 @@ if test "x${want_loader}" = "xyes" -o "x${want_loader}" = "xstatic" -o "x${want_
    m4_default([EVAS_CHECK_LOADER_DEP_]m4_defn([UP]))(DOWN, ${want_loader}, [have_loader="yes"], [have_loader="no"])
 fi
 
-if test "x${have_loader}" = "xno" -a "x${want_loader}" = "xyes" -a "x${use_strict}" = "xyes" ; then
-   AC_MSG_ERROR([$1 dependencies not found (strict dependencies checking)])
+if test "x${have_loader}" = "xno" -a "x${want_loader}" = "xyes"; then
+   AC_MSG_ERROR([$1 dependencies not found])
 fi
 
 AC_MSG_CHECKING([whether $1 image loader will be built])

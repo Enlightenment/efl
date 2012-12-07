@@ -691,8 +691,8 @@ if test "x${want_engine}" = "xyes" -o "x${want_engine}" = "xstatic" -o "x${want_
    m4_default([EVAS_CHECK_ENGINE_DEP_]m4_defn([UP]))(DOWN, $3, ${want_engine}, [have_engine="yes"], [have_engine="no"])
 fi
 
-if test "x${have_engine}" = "xno" -a "x${want_engine}" = "xyes" -a "x${use_strict}" = "xyes" ; then
-   AC_MSG_ERROR([$4 dependencies not found (strict dependencies checking)])
+if test "x${have_engine}" = "xno" -a "x${want_engine}" = "xyes"; then
+   AC_MSG_ERROR([$4 dependencies not found])
 fi
 
 AC_MSG_CHECKING([whether $4 rendering backend will be built])
