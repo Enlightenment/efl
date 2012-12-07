@@ -1061,10 +1061,18 @@ on_send_register(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending 
 
     if (edbus_message_error_get(msg, &errname, &errmsg))
     {
+        Efreet_Event_Cache_Update *ev = NULL;
+
         ERR("%s %s", errname, errmsg);
-        return;
+
+        ev = NEW(Efreet_Event_Cache_Update, 1);
+        if (ev)
+        {
+            ev->error = 1;
+            ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, ev, NULL, NULL);
+        }
     }
-    if (edbus_message_arguments_get(msg, "b", &exists) && exists)
+    else if (edbus_message_arguments_get(msg, "b", &exists) && exists)
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
 }
 
