@@ -1709,7 +1709,7 @@ _elm_scroll_wheel_event_cb(void *data,
 {
    Elm_Scrollable_Smart_Interface_Data *sid;
    Evas_Event_Mouse_Wheel *ev;
-   Evas_Coord x = 0, y = 0;
+   Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
    int direction = 0;
 
    sid = data;
@@ -1756,10 +1756,22 @@ _elm_scroll_wheel_event_cb(void *data,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
+   eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    if (!direction)
-     y += ev->z * sid->step.y;
+     {
+        if (ch > vh || cw <= vw)
+          y += ev->z * sid->step.y;
+        else
+          x += ev->z * sid->step.x;
+     }
    else if (direction == 1)
-     x += ev->z * sid->step.x;
+     {
+        if (cw > vw || ch <= vh)
+          x += ev->z * sid->step.x;
+        else
+          y += ev->z * sid->step.y;
+     }
 
    if ((!sid->hold) && (!sid->freeze))
      {
