@@ -486,14 +486,14 @@ _resize_job(void *data)
 
         if (sd->vertical)
           {
-             if (h > vh) _items_size_fit(obj, &h, vh);
+             if (h >= vh) _items_size_fit(obj, &h, vh);
              if (sd->item_count - sd->separator_count > 0)
                eo_do(obj, elm_scrollable_interface_paging_set
                      (0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count))));
           }
         else
           {
-             if (w > vw) _items_size_fit(obj, &w, vw);
+             if (w >= vw) _items_size_fit(obj, &w, vw);
              if (sd->item_count - sd->separator_count > 0)
                eo_do(obj, elm_scrollable_interface_paging_set
                      (0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0));
@@ -950,13 +950,13 @@ _sizing_eval(Evas_Object *obj)
         if (sd->vertical)
           {
              minw = minw_bx + (w - vw);
-             if (minh_bx <= vh) minh_bx = vh;
+             if (minh_bx < vh) minh_bx = vh;
              else _items_size_fit(obj, &minh_bx, vh);
           }
         else
           {
              minh = minh_bx + (h - vh);
-             if (minw_bx <= vw) minw_bx = vw;
+             if (minw_bx < vw) minw_bx = vw;
              else _items_size_fit(obj, &minw_bx, vw);
           }
      }
