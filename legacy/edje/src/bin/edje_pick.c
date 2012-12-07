@@ -836,8 +836,8 @@ _edje_pick_sounds_add(Edje_File *edf)
 static int
 _font_cmp(const void *d1, const void *d2)
 {
-   Edje_Font *f1 = d1;
-   Edje_Font *f2 = d2;
+   const Edje_Font *f1 = d1;
+   const Edje_Font *f2 = d2;
 
    /* Same font if (d1->name == d2->name) AND (d1->file == d2->file) */
    return (strcmp(f1->name, f2->name) |
