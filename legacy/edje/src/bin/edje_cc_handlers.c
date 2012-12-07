@@ -313,6 +313,8 @@ static void st_collections_group_parts_part_description_table_min(void);
 static void st_collections_group_parts_part_description_physics_mass(void);
 static void st_collections_group_parts_part_description_physics_restitution(void);
 static void st_collections_group_parts_part_description_physics_friction(void);
+static void st_collections_group_parts_part_description_physics_damping(void);
+static void st_collections_group_parts_part_description_physics_sleep(void);
 static void st_collections_group_parts_part_description_physics_ignore_part_position(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
@@ -599,6 +601,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
      {"collections.group.parts.part.description.physics.restitution", st_collections_group_parts_part_description_physics_restitution},
      {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
+     {"collections.group.parts.part.description.physics.damping", st_collections_group_parts_part_description_physics_damping},
+     {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
      {"collections.group.parts.part.description.physics.ignore_part_position", st_collections_group_parts_part_description_physics_ignore_part_position},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
@@ -1091,6 +1095,8 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 #ifdef HAVE_EPHYSICS
    result->physics.mass = FROM_DOUBLE(1.0);
    result->physics.friction = FROM_DOUBLE(0.5);
+   result->physics.sleep.linear = FROM_DOUBLE(24);
+   result->physics.sleep.angular = FROM_DOUBLE(57.29);
    result->physics.ignore_part_position = 1;
 #endif
 
@@ -7183,6 +7189,8 @@ st_collections_group_parts_part_description_table_min(void)
             mass: 5.31;
             friction: 0.5;
             restitution: 0.82;
+            damping: 0.4 0.24;
+            sleep: 32 18.9;
         }
         ..
     }
@@ -7295,6 +7303,65 @@ st_collections_group_parts_part_description_physics_ignore_part_position(void)
    check_arg_count(1);
 
    current_desc->physics.ignore_part_position = parse_bool(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        damping
+    @parameters
+        [linear damping] [angular damping]
+    @effect
+        Damping(linear and angular) values are applied to body's linear and
+        angular velocity.
+        By applying a bodies damping factor the user will face a velocity
+        reduction, with a force applied to it - "like" air resistance.
+        The force is applied to slow it down.
+        Values should be between 0.0 and 1.0, and are set to 0 by default.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_damping(void)
+{
+   check_arg_count(2);
+
+   current_desc->physics.damping.linear = parse_float_range(0, 0, 1.0);
+   current_desc->physics.damping.angular = parse_float_range(1, 0, 1.0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        sleep
+    @parameters
+        [linear sleeping threshold] [angular sleeping threshold]
+    @effect
+        Sleeping threshold factors are used to determine whenever a rigid body
+        is supposed to increment the sleeping time. Linear threshold is
+        measured in Evas coordinates per second and angular threshold is
+        measured in degrees per second.
+        After every tick the sleeping time is incremented, if the body's
+        linear and angular speed is less than the respective thresholds
+        the sleeping time is incremented by the current time step (delta time).
+        Reaching the max sleeping time the body is marked to sleep, that means
+        the rigid body is to be deactivated.
+        By default linear threshold is 24 pixels / second and angular is
+        57.29 degrees / sec (1 rad/sec).
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_sleep(void)
+{
+   check_arg_count(2);
+
+   current_desc->physics.sleep.linear = parse_float(0);
+   current_desc->physics.sleep.angular = parse_float(1);
 }
 #endif
 

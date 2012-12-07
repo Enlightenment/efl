@@ -2293,6 +2293,10 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.mass = desc->physics.mass;
    params->physics.restitution = desc->physics.restitution;
    params->physics.friction = desc->physics.friction;
+   params->physics.damping.linear = desc->physics.damping.linear;
+   params->physics.damping.angular = desc->physics.damping.angular;
+   params->physics.sleep.linear = desc->physics.sleep.linear;
+   params->physics.sleep.angular = desc->physics.sleep.angular;
    params->ignore_part_position = desc->physics.ignore_part_position;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
@@ -2466,6 +2470,10 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
 
    ephysics_body_restitution_set(ep->body, pf->physics.restitution);
    ephysics_body_friction_set(ep->body, pf->physics.friction);
+   ephysics_body_damping_set(ep->body, pf->physics.damping.linear,
+                             pf->physics.damping.angular);
+   ephysics_body_sleeping_threshold_set(ep->body, pf->physics.sleep.linear,
+                                        pf->physics.sleep.angular);
 }
 
 static void
@@ -2917,6 +2925,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                                   pos));
         p3->physics.friction = TO_DOUBLE(FINTP(p1->physics.friction,
                                                p2->physics.friction, pos));
+
+        p3->physics.damping.linear = TO_DOUBLE(FINTP(
+              p1->physics.damping.linear, p2->physics.damping.linear, pos));
+        p3->physics.damping.angular = TO_DOUBLE(FINTP(
+              p1->physics.damping.angular, p2->physics.damping.angular, pos));
+
+        p3->physics.sleep.linear = TO_DOUBLE(FINTP(
+              p1->physics.sleep.linear, p2->physics.sleep.linear, pos));
+        p3->physics.sleep.angular = TO_DOUBLE(FINTP(
+              p1->physics.sleep.angular, p2->physics.sleep.angular, pos));
+
         if ((p1->ignore_part_position) && (p2->ignore_part_position))
           p3->ignore_part_position = 1;
         else

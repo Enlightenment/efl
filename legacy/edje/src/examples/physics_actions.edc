@@ -456,12 +456,17 @@ collections {
             signal: "custom";
             script {
                new Float: mass, Float:rest, Float:fric;
+               new Float: linear, Float:angular;
 
                custom_state(PART:"red_circle", "default", 0.0);
                set_state_val(PART:"red_circle", STATE_COLOR, 0, 0, 0, 255);
                set_state_val(PART:"red_circle", STATE_PHYSICS_MASS, 4.5);
                set_state_val(PART:"red_circle", STATE_PHYSICS_RESTITUTION, 0.1);
                set_state_val(PART:"red_circle", STATE_PHYSICS_FRICTION, 0.345);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_DAMPING, 0.3,
+                       0.1);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_SLEEP, 34.1,
+                       12.83);
                set_state(PART:"red_circle", "custom", 0.0);
 
                get_state_val(PART:"red_circle", STATE_PHYSICS_MASS, mass);
@@ -472,6 +477,16 @@ collections {
                send_message(MSG_STRING_FLOAT_SET, 1, "Mass", mass);
                send_message(MSG_STRING_FLOAT_SET, 1, "Friction", fric);
                send_message(MSG_STRING_FLOAT_SET, 1, "Restitution", rest);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_DAMPING,
+                     linear, angular);
+               send_message(MSG_STRING_FLOAT_SET, 1, "Damping", linear,
+                       angular);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_SLEEP,
+                     linear, angular);
+               send_message(MSG_STRING_FLOAT_SET, 1, "Sleep", linear,
+                       angular);
             }
          }
 

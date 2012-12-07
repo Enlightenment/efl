@@ -2277,6 +2277,21 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETFLOAT_T(rp->custom->description->physics.friction, params[3]);
 
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DAMPING:
+	 CHKPARAM(4);
+
+	 GETFLOAT_T(rp->custom->description->physics.damping.linear, params[3]);
+	 GETFLOAT_T(rp->custom->description->physics.damping.angular,
+                    params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_SLEEP:
+	 CHKPARAM(4);
+
+	 GETFLOAT_T(rp->custom->description->physics.sleep.linear, params[3]);
+	 GETFLOAT_T(rp->custom->description->physics.sleep.angular, params[4]);
+
+	 break;
 #endif
       default:
 	 break;
@@ -2744,6 +2759,21 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 CHKPARAM(3);
 
 	 SETFLOAT_T(rp->custom->description->physics.friction, params[3]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DAMPING:
+	 CHKPARAM(4);
+
+	 SETFLOAT_T(rp->custom->description->physics.damping.linear, params[3]);
+	 SETFLOAT_T(rp->custom->description->physics.damping.angular,
+                    params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_SLEEP:
+	 CHKPARAM(4);
+
+	 SETFLOAT_T(rp->custom->description->physics.sleep.linear, params[3]);
+	 SETFLOAT_T(rp->custom->description->physics.sleep.angular, params[4]);
 
 	 break;
 #endif

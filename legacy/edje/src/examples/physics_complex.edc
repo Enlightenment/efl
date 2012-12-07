@@ -43,6 +43,8 @@ collections {
                physics {
                   mass: 30;
                   restitution: 0;
+                  damping: 0.4 0.2;
+                  sleep: 18 13.4;
                }
             }
          }
