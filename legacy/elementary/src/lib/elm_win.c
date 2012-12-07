@@ -2003,10 +2003,8 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
                {
                   /* there would be better way to read highlight object */
-                  int x, y;
-                  ecore_x_pointer_xy_get(sd->x.xwin, &x, &y);
-                  ecore_x_mouse_in_send(sd->x.xwin, x, y);
-                  ecore_x_mouse_move_send(sd->x.xwin, x, y);
+                  ecore_x_mouse_in_send(sd->x.xwin, e->data.l[2], e->data.l[3]);
+                  ecore_x_mouse_move_send(sd->x.xwin, e->data.l[2], e->data.l[3]);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_NEXT)
