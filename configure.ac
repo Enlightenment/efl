@@ -1102,7 +1102,7 @@ esac
 # Wayland
 AC_ARG_ENABLE([wayland],
    [AC_HELP_STRING([--enable-wayland],
-       [disable wayland display server. @<:@default=disabled@:>@])],
+       [enable wayland display server. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_wayland="yes"
@@ -1119,7 +1119,7 @@ fi
 # Fb
 AC_ARG_ENABLE([fb],
    [AC_HELP_STRING([--enable-fb],
-       [disable fraw Framebuffer access. @<:@default=disabled@:>@])],
+       [enable raw Framebuffer access. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_fb="yes"
@@ -1132,7 +1132,7 @@ AC_ARG_ENABLE([fb],
 # SDL
 AC_ARG_ENABLE([sdl],
    [AC_HELP_STRING([--enable-sdl],
-       [disable SDL support. @<:@default=disabled@:>@])],
+       [enable SDL support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_sdl="yes"
@@ -1179,8 +1179,8 @@ AC_ARG_ENABLE([fribidi],
 
 # Harfbuzz
 AC_ARG_ENABLE([harfbuzz],
-   [AC_HELP_STRING([--disable-harfbuzz],
-       [disable complex text shaping and layouting support. @<:@default=enabled@:>@])],
+   [AC_HELP_STRING([--enable-harfbuzz],
+       [enable complex text shaping and layouting support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_harfbuzz="yes"
@@ -2351,7 +2351,7 @@ case "$host_os" in
 esac
 
 AC_ARG_ENABLE([tslib],
-   [AC_HELP_STRING([--enable-tslib],
+   [AC_HELP_STRING([--disable-tslib],
        [disable tslib for touchscreen events.])],
    [
     if test "x${enableval}" = "xyes" ; then
