@@ -2607,13 +2607,7 @@ AC_MSG_NOTICE([Ecore_X checks])
 ### Additional options to configure
 
 # FIXME: recycle that with evas
-AC_ARG_WITH([ecore-x-backend],
-   [AC_HELP_STRING([--ecore-x-backend=BACKEND],
-                   [use the predefined x11 backends, one of: xlib, xcb and none. @<:@default=xlib@:>@])],
-   [ecore_x_backend=${withval}],
-   [ecore_x_backend="xlib"])
-
-case "${ecore_x_backend}" in
+case "${with_x11}" in
    xlib)
       have_ecore_x_xlib="yes"
       ;;
@@ -2625,7 +2619,7 @@ case "${ecore_x_backend}" in
       have_ecore_x_xlib="no"
       ;;
    *)
-     AC_MSG_ERROR([Unknown x11 backend --with-ecore-x-backend=${ecore_x_backend}])
+     AC_MSG_ERROR([Unknown x11 backend --with-x11=${with_x11}])
      ;;
 esac
 
@@ -2740,9 +2734,6 @@ AC_ARG_ENABLE([xim],
 
 have_ecore_x="no"
 use_Xcursor="no"
-
-AC_MSG_CHECKING([which X11 backend is to be built])
-AC_MSG_RESULT([${ecore_x_backend}])
 
 ### Checks for programs
 
