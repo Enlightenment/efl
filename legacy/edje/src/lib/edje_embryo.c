@@ -2204,7 +2204,7 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
         GETINT(rp->custom->description->map.id_persp, params[3]);
         
         break;
-      case EDJE_STATE_PARAM_MAP_LIGNT:
+      case EDJE_STATE_PARAM_MAP_LIGHT:
         CHKPARAM(3);
         
         GETINT(rp->custom->description->map.id_light, params[3]);
@@ -2661,6 +2661,72 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 SETINT(rp->custom->description->visible, params[3]);
 
 	 break;
+      case EDJE_STATE_PARAM_MAP_ON:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.on, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_PERSP:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.id_persp, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_LIGHT:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.id_light, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_CENTER:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.rot.id_center, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_X:
+        CHKPARAM(3);
+
+        SETFLOAT_T(rp->custom->description->map.rot.x, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_Y:
+        CHKPARAM(3);
+
+        SETFLOAT_T(rp->custom->description->map.rot.y, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_ROT_Z:
+        CHKPARAM(3);
+
+        SETFLOAT_T(rp->custom->description->map.rot.z, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_BACK_CULL:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.backcull, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_MAP_PERSP_ON:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->map.persp_on, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_PERSP_ZPLANE:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->persp.zplane, params[3]);
+
+        break;
+      case EDJE_STATE_PARAM_PERSP_FOCAL:
+        CHKPARAM(3);
+
+        SETINT(rp->custom->description->persp.focal, params[3]);
+
+        break;
 #ifdef HAVE_EPHYSICS
       case EDJE_STATE_PARAM_PHYSICS_MASS:
 	 CHKPARAM(3);

@@ -405,7 +405,7 @@ typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 #define EDJE_STATE_PARAM_VISIBLE        31
 #define EDJE_STATE_PARAM_MAP_ON         32
 #define EDJE_STATE_PARAM_MAP_PERSP      33
-#define EDJE_STATE_PARAM_MAP_LIGNT      34
+#define EDJE_STATE_PARAM_MAP_LIGHT      34
 #define EDJE_STATE_PARAM_MAP_ROT_CENTER 35
 #define EDJE_STATE_PARAM_MAP_ROT_X      36
 #define EDJE_STATE_PARAM_MAP_ROT_Y      37
