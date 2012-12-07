@@ -2560,7 +2560,7 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
         edje_object_part_text_set(sd->entry_edje, "elm.text", entry);
      }
 
-   if ((entry) && (entry[0]))
+   if (len > 0)
      _elm_entry_guide_update(obj, EINA_TRUE);
    else
      _elm_entry_guide_update(obj, EINA_FALSE);
