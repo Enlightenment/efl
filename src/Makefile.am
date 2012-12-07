@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 MAINTAINERCLEANFILES = Makefile.in
+BUILT_SOURCES =
 
 SUBDIRS = . benchmarks examples
 

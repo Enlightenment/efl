@@ -119,6 +119,19 @@ lib/eina/libeina.la \
 
 lib_ecore_x_libecore_x_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
+if HAVE_ECORE_X_XCB
+MAINTAINERCLEANFILES += \
+$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h \
+$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
+
+BUILT_SOURCES += \
+$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
+
+$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h: $(KEYSYMDEFS) $(top_builddir)/src/utils/ecore/makekeys$(EXEEXT)
+	$(top_builddir)/src/utils/ecore/makekeys $(KEYSYMDEFS) > $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
+	mv -f $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
+endif
+
 ### Utils
 
 noinst_PROGRAMS = utils/ecore/makekeys
