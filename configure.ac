@@ -1138,6 +1138,10 @@ AC_ARG_ENABLE([sdl],
    ],
    [want_sdl="no"])
 
+if test "${want_sdl}"; then
+   EFL_PKG_CHECK_STRICT([sdl >= 1.2.0])
+fi
+
 want_gl_sdl="no"
 if test "${want_sdl}" = "yes" && test "${with_opengl}" != "none"; then
    want_gl_sdl="yes"
