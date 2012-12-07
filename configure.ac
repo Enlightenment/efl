@@ -104,6 +104,11 @@ AC_ARG_ENABLE([coverage],
 
 #### Default values
 
+platform_pc=""
+platform_pc_evil=""
+platform_pc_escape=""
+platform_pc_exotic=""
+
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
@@ -718,6 +723,8 @@ AC_SUBST([EVIL_CXXFLAGS])
 
 ### Checks for library functions
 
+platform_pc_evil="evil >= ${PACKAGE_VERSION}"
+platform_pc="${platform_pc} ${platform_pc_evil}"
 fi
 
 #### End of Evil
@@ -754,9 +761,11 @@ AC_SUBST([ESCAPE_LIBS])
 
 ### Checks for library functions
 
+platform_pc_escape="escape >= ${PACKAGE_VERSION}"
+platform_pc="${platform_pc} ${platform_pc_escape}"
 fi
 
-#### End of Evil
+#### End of Escape
 
 
 #### Eina
@@ -813,38 +822,7 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 ### Checks for libraries
 
 ## Compatibility layers
-
-# Evil library for compilation on Windows
-
-case "$host_os" in
-   mingw*)
-      requirements_pc_eina="${requirements_pc_eina} evil >= ${PACKAGE_VERSION}"
-   ;;
-esac
-
-# Escape library for compilation on Playstation 3
-
-case "$host_vendor" in
-   ps3*)
-      AC_DEFINE([HAVE_ESCAPE], [1], [Set to 1 if Escape package is installed])
-      requirements_pc_eina="${requirements_pc_eina} escape >= ${PACKAGE_VERSION}"
-    ;;
-esac
-
-# Exotic library for compilation on Coyote
-
-# TODO: add back whenever exotic is merged into efl single tree
-#PKG_CHECK_EXISTS([exotic],
-#   [
-#    enable_exotic="yes"
-#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-#    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-#    requirements_pc_eina="exotic ${requirements_pc_eina}"
-#   ],
-#   [enable_exotic="no"])
-#
-#AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
-#AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
+requirements_pc_eina="${requirements_pc_eina} ${platform_pc}"
 
 ## Options
 
@@ -966,14 +944,7 @@ AC_MSG_NOTICE([Eet checks])
 ### Checks for libraries
 
 ## Compatibility layers
-
-# Evil library for compilation on Windows
-
-case "$host_os" in
-   mingw*)
-      requirements_pc_eet="evil >= ${PACKAGE_VERSION} ${requirements_pc_eet}"
-   ;;
-esac
+requirements_pc_eet="${requirements_pc_eet} ${platform_pc_evil}"
 
 ## Secure layer
 
@@ -1431,14 +1402,7 @@ esac
 ### Checks for libraries
 
 ## Compatibility layers
-
-# Evil library for compilation on Windows
-
-case "$host_os" in
-   mingw*)
-      requirements_pc_evas="${requirements_pc_evas} evil >= ${PACKAGE_VERSION}"
-   ;;
-esac
+requirements_pc_evas="${requirements_pc_evas} ${platform_pc}"
 
 # Eina, Eo and Eet libraries
 
@@ -1825,14 +1789,7 @@ AC_MSG_NOTICE([Embryo checks])
 ### Checks for libraries
 
 ## Compatibility layers
-
-# Evil library for compilation on Windows
-
-case "$host_os" in
-   mingw*)
-      requirements_pc_embryo="${requirements_pc_embryo} evil >= ${PACKAGE_VERSION}"
-   ;;
-esac
+requirements_pc_embryo="${requirements_pc_embryo} ${platform_pc}"
 
 # Eina library
 
@@ -1928,18 +1885,7 @@ fi
 ### Checks for libraries
 
 ## Compatibility layers
-
-# Evil library for compilation on Windows
-
-if test "x${have_windows}" = "xyes" ; then
-   requirements_pc_ecore="${requirements_pc_ecore} evil >= ${PACKAGE_VERSION}"
-fi
-
-# Escape library for compilation on PS3
-
-if test "x${have_ps3}" = "xyes" ; then
-   requirements_pc_ecore="${requirements_pc_ecore} escape >= ${PACKAGE_VERSION}"
-fi
+requirements_pc_ecore="${requirements_pc_ecore} ${platform_pc}"
 
 # Eina, Eo libraries
 
@@ -2099,13 +2045,7 @@ AC_DEFINE_IF([HAVE_ABSTRACT_SOCKETS],
 ### Checks for programs
 
 ### Checks for libraries
-
-# Evil library for compilation on Windows
-case "$host_os" in
-   mingw*)
-      requirements_pc_ecore_con="evil >= ${PACKAGE_VERSION} ${requirements_pc_ecore_con}"
-      ;;
-esac
+requirements_pc_ecore_con="${requirements_pc_ecore_con} ${platform_pc}"
 
 # Eina, Eo, Eet, Ecore
 
