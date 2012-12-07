@@ -268,7 +268,6 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
           }
         else
           {
-             evas_common_draw_context_clip_clip(gc->dc, x, y, w, h);
              /* our clip is 0 size.. abort */
              if ((gc->dc->clip.w > 0) && (gc->dc->clip.h > 0))
                {

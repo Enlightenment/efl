@@ -3,6 +3,7 @@
 	* Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
           fiddling that was originally in the gl backend code. The offset 
           fiddling caused issues with some ARM target GPU drivers.
+        * Fixed polygon rendering bug in GL backend when there are cutouts.
 
 2012-12-05  Gustavo Sverzut Barbieri (k-s)
 
