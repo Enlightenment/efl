@@ -1061,6 +1061,57 @@ AC_MSG_NOTICE([Evas checks])
 
 ### Additional options to configure
 
+# X11
+if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
+   with_x11="none"
+else
+   with_x11="xlib"
+fi
+
+AC_ARG_WITH([x11],
+   [AC_HELP_STRING([--with-x11=xlib|xcb|none],
+                   [X11 method to use: xlib, xcb or none])])
+
+case "${with_x11}" in
+   xlib|xcb|none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build x11 --with-x11=${with_x11}])
+     ;;
+esac
+
+# OpenGL
+if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
+   with_opengl="none"
+else
+   with_opengl="full"
+fi
+
+AC_ARG_WITH([opengl],
+   [AC_HELP_STRING([--with-opengl=full|es|none],
+                   [OpenGL method to use: full, es or none])])
+
+case "${with_opengl}" in
+   full|es|none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build opengl --with-opengl=${with_opengl}])
+     ;;
+esac
+
+# Wayland
+AC_ARG_ENABLE([wayland],
+   [AC_HELP_STRING([--enable-wayland],
+       [disable wayland display server. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_wayland="yes"
+    else
+       want_wayland="no"
+    fi
+   ],
+   [want_wayland="no"])
+
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AC_HELP_STRING([--disable-fontconfig],
@@ -1198,41 +1249,6 @@ AC_ARG_ENABLE([tile-rotate],
   ],
   [have_tile_rotate="no"])
 
-
-# Engines
-
-AC_ARG_ENABLE([software-xcb],
-   AC_HELP_STRING([--enable-software-xcb], [enable Software XCB Engine. @<:@default=disabled@:>@]),
-   [
-    if test "x$enableval" = "xyes" ; then
-       want_xcb="yes"
-    else
-       want_xcb="no"
-    fi
-   ],
-   [want_xcb="no"])
-
-AC_ARG_ENABLE([gl-xcb],
-   AC_HELP_STRING([--enable-gl-xcb], [enable OpenGL XCB Engine. @<:@default=disabled@:>@]),
-   [
-    if test "x$enableval" = "xyes" ; then
-       want_gl_xcb="yes"
-    else
-       want_gl_xcb="no"
-    fi
-   ],
-   [want_gl_xcb="no"])
-
-AC_ARG_ENABLE([gl-flavor-gles],
-   [AC_HELP_STRING([--enable-gl-flavor-gles], [enable gles flavor of gl instead of standard. @<:@default=disabled@:>@])],
-   [
-    if test "x$enableval" = "xyes" ; then
-       gl_flavor_gles="yes"
-    else
-       gl_flavor_gles="no"
-    fi
-   ],
-   [gl_flavor_gles="no"])
 
 # Loaders
 
@@ -1449,7 +1465,7 @@ EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayla
 # Software XCB
 
 have_evas_engine_software_xcb="no"
-if test "x${want_xcb}" = "xyes" ; then
+if test "${with_x11}" = "xcb" ; then
    EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
 else
    AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XCB], [false])
@@ -1497,17 +1513,14 @@ AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_GENERIC], [true])
 
 # OpenGL
 
-AC_MSG_CHECKING([whether to build GLES flavor of GL])
-AC_MSG_RESULT([${gl_flavor_gles}])
-
-if test "x${gl_flavor_gles}" = "xyes" ; then
+if test "${with_opengl}" = "es" ; then
    AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
 fi
 
 # OpenGL XCB
 
 have_evas_engine_gl_xcb="no"
-if test "x${want_gl_xcb}" = "xyes" ; then
+if test "${want_x11}" = "xcb" && test "${want_opengl}" != "none" ; then
    EVAS_CHECK_ENGINE([gl-xcb], [${want_evas_engine_gl_xcb}], [no], [OpenGL XCB])
 else
    AM_CONDITIONAL([BUILD_ENGINE_GL_XCB], [false])
@@ -1557,7 +1570,7 @@ if test "x$have_evas_engine_gl_sdl" = "xyes" || test "x$have_evas_engine_gl_sdl"
       [#include <SDL/SDL_video.h>])
 fi
 
-if test "x${gl_flavor_gles}" = "xyes"; then
+if test "${with_opengl}" = "es"; then
    AC_CHECK_DECL([SDL_OPENGLES],
       [AC_DEFINE([HAVE_SDL_FLAG_OPENGLES], [1], [SDL_OPENGLES flag is present])],,
       [#include <SDL/SDL_video.h>])
@@ -3808,20 +3821,10 @@ echo
 echo "  Engines:"
 echo "    Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "    Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
-echo $ECHO_N "    OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) $ECHO_C"
-if test "x$have_evas_engine_gl_x11" = "xyes"; then
-  echo "(GLES: $gl_flavor_gles)"
-else
-  echo
-fi
+echo "    OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) (x11=${with_opengl})"
 echo "    Software GDI...............: $have_evas_engine_software_gdi"
 echo "    Software DirectDraw........: $have_evas_engine_software_ddraw"
-echo $ECHO_N "    OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
-if test "x$have_evas_engine_gl_sdl" = "xyes"; then
-  echo "(GLES: $gl_flavor_gles)"
-else
-  echo
-fi
+echo "    OpenGL SDL.................: $have_evas_engine_gl_sdl (opengl=${with_opengl})"
 echo "    OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
 echo "    Software Framebuffer.......: $have_evas_engine_fb"
 echo "    PSL1GHT....................: $have_evas_engine_psl1ght"
