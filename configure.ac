@@ -1061,19 +1061,6 @@ AC_MSG_NOTICE([Evas checks])
 
 ### Additional options to configure
 
-# Simple X11 build/link
-AC_ARG_ENABLE([simple-x11],
-   [AC_HELP_STRING([--enable-simple-x11],
-       [enable simple x11 linking. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_simple_x11="yes"
-    else
-       want_evas_simple_x11="no"
-    fi
-   ],
-   [want_evas_simple_x11="no"])
-
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AC_HELP_STRING([--disable-fontconfig],
@@ -2826,13 +2813,9 @@ fi
 if test "x${have_ecore_x_xlib}" = "xyes" ; then
    AC_CHECK_HEADERS([X11/X.h],
       [
-       if test "x${want_evas_simple_x11}" = "xyes"; then
-          x_libs="${x_libs} -lX11 -lXext"
-       else
-          x_dir=${x_dir:-/usr/X11R6}
-          x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-          x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-       fi
+       x_dir=${x_dir:-/usr/X11R6}
+       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
        have_ecore_x_xlib="yes"
       ])
 
