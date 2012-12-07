@@ -1072,8 +1072,21 @@ AC_ARG_WITH([x11],
    [AC_HELP_STRING([--with-x11=xlib|xcb|none],
                    [X11 method to use: xlib, xcb or none])])
 
+want_x11_xlib="no"
+want_x11_xcb="no"
+want_x11_none="no"
+want_x11_any="no"
 case "${with_x11}" in
-   xlib|xcb|none)
+   xlib)
+     want_x11_xlib="yes"
+     want_x11_any="yes"
+     ;;
+   xcb)
+     want_x11_xcb="yes"
+     want_x11_any="yes"
+     ;;
+   none)
+     want_x11_none="yes"
      ;;
    *)
      AC_MSG_ERROR([Unknown build x11 --with-x11=${with_x11}])
@@ -1098,6 +1111,14 @@ case "${with_opengl}" in
      AC_MSG_ERROR([Unknown build opengl --with-opengl=${with_opengl}])
      ;;
 esac
+
+want_x11_xlib_opengl="no"
+want_x11_xcb_opengl="no"
+if test "${with_opengl}" != "none"; then
+   want_x11_xlib_opengl="${want_x11_xlib}"
+   want_x11_xcb_opengl="${want_x11_xcb}"
+   want_x11_any_opengl="${want_x11_any}"
+fi
 
 # Wayland
 AC_ARG_ENABLE([wayland],
@@ -1307,7 +1328,7 @@ AC_ARG_ENABLE([image-loader-gif],
    [want_evas_image_loader_gif="yes"])
 
 AC_ARG_ENABLE([image-loader-svg],
-   [AC_HELP_STRING([--enable-image-loader-svg], [enable SVG image loader. @<:@default=enabled@:>@])],
+   [AC_HELP_STRING([--enable-image-loader-svg], [enable SVG image loader. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_evas_image_loader_svg="yes"
@@ -1319,7 +1340,7 @@ AC_ARG_ENABLE([image-loader-svg],
        fi
     fi
    ],
-   [want_evas_image_loader_svg="yes"])
+   [want_evas_image_loader_svg="no"])
 
 AC_ARG_ENABLE([image-loader-tiff],
    [AC_HELP_STRING([--enable-image-loader-tiff], [enable Tiff image loader. @<:@default=enabled@:>@])],
@@ -1337,7 +1358,7 @@ AC_ARG_ENABLE([image-loader-tiff],
    [want_evas_image_loader_tiff="yes"])
 
 AC_ARG_ENABLE([image-loader-webp],
-   [AC_HELP_STRING([--enable-image-loader-webp], [enable WEBP image loader. @<:@default=enabled@:>@])],
+   [AC_HELP_STRING([--enable-image-loader-webp], [enable WEBP image loader. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_evas_image_loader_webp="yes"
@@ -1349,18 +1370,14 @@ AC_ARG_ENABLE([image-loader-webp],
        fi
     fi
    ],
-   [want_evas_image_loader_webp="yes"])
+   [want_evas_image_loader_webp="no"])
 
 ### Default values
 
 want_evas_cserve2="yes"
 
-want_evas_engine_software_xlib="no"
-want_evas_engine_software_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
-want_evas_engine_gl_xlib="no"
-want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_cocoa="no"
 want_evas_engine_wayland_egl="no"
 
@@ -1393,24 +1410,17 @@ case "$host_os" in
       want_evas_engine_software_ddraw="yes"
       ;;
    darwin*)
-      want_evas_engine_software_xlib="auto"
       want_evas_engine_gl_cocoa="auto"
       ;;
    *)
-      want_evas_engine_software_xlib="auto"
-      want_evas_engine_gl_xlib="auto"
-      want_evas_engine_software_xcb="no"
-      want_evas_engine_gl_xcb="no"
       ;;
 esac
 
 EFL_CHECK_FUNC([DLSYM], [dlsym])
 requirements_libs_evas="${requirements_libs_evas} ${DLSYM_LIBS}"
 
-if test "x${efl_func_dlsym}" = "xno" ; then
-   want_evas_engine_gl_xlib="no"
-   want_evas_engine_gl_xcb="no"
-   want_gl_sdl="no"
+if test "x${efl_func_dlsym}" = "xno" && test "${with_opengl}" != "none"; then
+   AC_MSG_ERROR([OpenGL cannot work without dlsym()])
 fi
 
 ### Checks for programs
@@ -1501,7 +1511,7 @@ EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayla
 
 have_evas_engine_software_xcb="no"
 if test "${with_x11}" = "xcb" ; then
-   EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
+   EVAS_CHECK_ENGINE([software-xcb], [${want_x11_xcb}], [no], [Software XCB])
 else
    AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XCB], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_XCB], [false])
@@ -1513,8 +1523,8 @@ AC_MSG_RESULT([${have_evas_engine_software_xcb}])
 # No Software XCB ? Then try Software Xlib
 
 have_evas_engine_software_xlib="no"
-if test "x${have_evas_engine_software_xcb}" = "xno" ; then
-   EVAS_CHECK_ENGINE([software-xlib], [${want_evas_engine_software_xlib}], [no], [Software Xlib])
+if test "x${want_x11_xcb}" = "xno" ; then
+   EVAS_CHECK_ENGINE([software-xlib], [${want_x11_xlib}], [no], [Software Xlib])
 else
    AM_CONDITIONAL([BUILD_ENGINE_SOFTWARE_XLIB], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_SOFTWARE_X11], [false])
@@ -1555,8 +1565,8 @@ fi
 # OpenGL XCB
 
 have_evas_engine_gl_xcb="no"
-if test "${want_x11}" = "xcb" && test "${want_opengl}" != "none" ; then
-   EVAS_CHECK_ENGINE([gl-xcb], [${want_evas_engine_gl_xcb}], [no], [OpenGL XCB])
+if test "${want_x11_xcb_opengl}" = "yes"; then
+   EVAS_CHECK_ENGINE([gl-xcb], [${want_x11_xcb_opengl}], [no], [OpenGL XCB])
 else
    AM_CONDITIONAL([BUILD_ENGINE_GL_XCB], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_XCB], [false])
@@ -1569,7 +1579,7 @@ AC_MSG_RESULT([${have_evas_engine_gl_xcb}])
 
 have_evas_engine_gl_xlib="no"
 if test "x${have_evas_engine_gl_xcb}" = "xno" ; then
-   EVAS_CHECK_ENGINE([gl-xlib], [${want_evas_engine_gl_xlib}], [no], [OpenGL XLib])
+   EVAS_CHECK_ENGINE([gl-xlib], [${want_x11_xlib_opengl}], [no], [OpenGL XLib])
 else
    AM_CONDITIONAL([BUILD_ENGINE_GL_XLIB], [false])
    AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_XLIB], [false])
@@ -2606,23 +2616,6 @@ AC_MSG_NOTICE([Ecore_X checks])
 
 ### Additional options to configure
 
-# FIXME: recycle that with evas
-case "${with_x11}" in
-   xlib)
-      have_ecore_x_xlib="yes"
-      ;;
-   xcb)
-      have_ecore_x_xcb="yes"
-      ;;
-   none)
-      have_ecore_x_xcb="no"
-      have_ecore_x_xlib="no"
-      ;;
-   *)
-     AC_MSG_ERROR([Unknown x11 backend --with-x11=${with_x11}])
-     ;;
-esac
-
 AC_ARG_ENABLE(ecore-x-composite,
    [AC_HELP_STRING([--disable-ecore-x-composite],
        [disable the ecore_x support for Xcomposite extension. @<:@default=detect@:>@])],
@@ -2732,7 +2725,6 @@ AC_ARG_ENABLE([xim],
 
 ### Default values
 
-have_ecore_x="no"
 use_Xcursor="no"
 
 ### Checks for programs
@@ -2744,7 +2736,7 @@ use_Xcursor="no"
 requirements_pc_ecore_x="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_x}"
 
 ## Xlib
-if test "x${have_ecore_x_xlib}" = "xyes" ; then
+if test "x${want_x11_xlib}" = "xyes" ; then
    AC_PATH_XTRA
 fi
 
@@ -2792,15 +2784,7 @@ int h = MAXHOSTNAMELEN;
 fi
 
 ## Xlib
-if test "x${have_ecore_x_xlib}" = "xyes" ; then
-   AC_CHECK_HEADERS([X11/X.h],
-      [
-       x_dir=${x_dir:-/usr/X11R6}
-       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-       have_ecore_x_xlib="yes"
-      ])
-
+if test "x${want_x11_xlib}" = "xyes" ; then
    if test "x$want_ecore_x_cursor" = "xyes"; then
       CFLAGS_save="${CFLAGS}"
       CFLAGS="$x_cflags $x_includes"
@@ -2813,7 +2797,7 @@ if test "x${have_ecore_x_xlib}" = "xyes" ; then
 fi
 
 ## XCB
-if test "x${have_ecore_x_xcb}" = "xyes" ; then
+if test "x${want_x11_xcb}" = "xyes" ; then
    KEYSYMDEFDIR=`$PKG_CONFIG --variable=includedir xproto`/X11
    FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
    for i in $FILES; do
@@ -2839,17 +2823,7 @@ fi
 ### Checks for library functions
 
 ## Xlib
-
-if test "x${have_ecore_x_xlib}" = "xyes" ; then
-   AC_CHECK_LIB([X11], [XCreateImage], [have_ecore_x_xlib="yes"], [have_ecore_x_xlib="no"])
-fi
-
-if test "x${have_ecore_x_xlib}" = "xyes" ; then
-   AC_CHECK_LIB([Xext], [XShmCreateImage], [have_ecore_x_xlib="yes"], [have_ecore_x_xlib="no"])
-   have_ecore_x="yes"
-fi
-
-if test "x${have_ecore_x_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes" ; then
+if test "x${want_x11_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes" ; then
    AC_CHECK_LIB([Xcursor],
       [XcursorImageLoadCursor],
       [
@@ -2863,7 +2837,7 @@ if test "x${have_ecore_x_xlib}" = "xyes" && test "x$want_ecore_x_cursor" = "xyes
    ECORE_X_LIBS="${ECORE_X_LIBS} ${Xcursor_libs}"
 fi
 
-if test "x${have_ecore_x_xlib}" = "xyes" ; then
+if test "x${want_x11_xlib}" = "xyes" ; then
    ECORE_CHECK_X_EXTENSION([Xkb], [XKB.h], [X11], [XkbSetDetectableAutoRepeat], [$want_ecore_x_xkb])
    ECORE_CHECK_X_EXTENSION([Xcomposite], [Xcomposite.h], [Xcomposite], [XCompositeQueryExtension], [$want_ecore_x_composite])
    ECORE_CHECK_X_EXTENSION([Xdamage], [Xdamage.h], [Xdamage], [XDamageSubtract], [$want_ecore_x_damage])
@@ -2887,19 +2861,14 @@ fi
 
 ## XCB
 
-if test "x${have_ecore_x_xcb}" = "xyes" ; then
-
+if test "x${want_x11_xcb}" = "xyes" ; then
    PKG_CHECK_EXISTS([x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8],
       [
-       have_ecore_x_xcb="yes"
-       have_ecore_x="yes"
        requirements_pc_ecore_x="${requirements_pc_ecore_x} x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8"
        requirements_pc_deps_ecore_x="${requirements_pc_deps_ecore_x} x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8"
       ],
       [AC_MSG_ERROR([Ecore_X with XCB backend enabled but XCB not available. Exiting...])])
-fi
 
-if test "x${have_ecore_x_xcb}" = "xyes" ; then
    if test "x${have_pixman}" = "xyes" ; then
       requirements_pc_ecore_x="${requirements_pc_ecore_x} pixman-1"
       requirements_pc_deps_ecore_x="${requirements_pc_deps_ecore_x} pixman-1"
@@ -3145,9 +3114,9 @@ requirements_libs_ecore_x="${requirements_libs_ecore_x} ${ECORE_X_LIBS}"
 AC_SUBST([ECORE_X_CFLAGS])
 AC_SUBST([ECORE_X_LIBS])
 
-AM_CONDITIONAL([HAVE_ECORE_X_XLIB], [test "x${have_ecore_x_xlib}" = "xyes"])
-AM_CONDITIONAL([HAVE_ECORE_X_XCB], [test "x${have_ecore_x_xcb}" = "xyes"])
-AM_CONDITIONAL([HAVE_ECORE_X], [test "x${have_ecore_x}" = "xyes"])
+AM_CONDITIONAL([HAVE_ECORE_X_XLIB], [test "${want_x11_xlib}" = "yes"])
+AM_CONDITIONAL([HAVE_ECORE_X_XCB], [test "${want_x11_xcb}" = "yes"])
+AM_CONDITIONAL([HAVE_ECORE_X], [test "${want_x11_any}" = "yes"])
 
 #### End of Ecore_X
 
@@ -3271,9 +3240,6 @@ AC_MSG_NOTICE([Ecore_Evas checks])
 have_ecore_evas="yes"
 have_extn="yes"
 
-want_ecore_evas_software_x11="no"
-want_ecore_evas_opengl_x11="no"
-want_ecore_evas_software_xcb="no"
 want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
 want_ecore_evas_gl_cocoa="no"
@@ -3293,9 +3259,6 @@ case "$host_os" in
       want_ecore_evas_gl_cocoa="yes"
       ;;
    *)
-      want_ecore_evas_software_x11="yes"
-      want_ecore_evas_opengl_x11="yes"
-      want_ecore_evas_software_xcb="no"
       want_ecore_evas_gl_cocoa="no"
       ;;
 esac
@@ -3376,7 +3339,7 @@ fi
 
 # XXX TODO: ecore_evas_x11
 
-ECORE_EVAS_MODULE([software-x11], [${want_ecore_evas_software_x11}])
+ECORE_EVAS_MODULE([software-x11], [${want_x11_any}])
 
 have_ecore_evas_software_xlib="no"
 have_ecore_evas_software_xcb="no"
@@ -3385,14 +3348,14 @@ if test "x$have_ecore_evas_software_x11" = "xyes" ; then
    if test "x${have_ecore_evas_software_xlib}" = "xstatic"; then
       have_ecore_evas_software_xlib="yes"
    fi
-   if test "x${have_ecore_evas_software_xlib}" = "xyes" && test "x${have_ecore_x_xlib}" = "xyes" ; then
+   if test "x${have_ecore_evas_software_xlib}" = "xyes"; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XLIB], [1], [Evas Software Xlib Engine Support])
    fi
    have_ecore_evas_software_xcb=${have_evas_engine_software_xcb}
    if test "x$have_ecore_evas_software_xcb" = "xstatic"; then
       have_ecore_evas_software_xcb="yes"
    fi
-   if test "x$have_ecore_evas_software_xcb" = "xyes" && test "x${have_ecore_x_xcb}" = "xyes" ; then
+   if test "x$have_ecore_evas_software_xcb" = "xyes"; then
       AC_DEFINE([BUILD_ECORE_EVAS_SOFTWARE_XCB], [1], [Evas Software XCB Engine Support])
    fi
 fi
@@ -3401,9 +3364,9 @@ fi
 
 ECORE_EVAS_CHECK_MODULE_FULL([opengl-x11],
    [${have_evas_engine_gl_x11}],
-   [${want_ecore_evas_opengl_x11}],
+   [${want_x11_any_opengl}],
    [OpenGL Xlib],
-   [${have_ecore_x}])
+   [${want_x11_any}])
 
 have_ecore_evas_opengl_xlib="no"
 have_ecore_evas_opengl_xcb="no"
@@ -3418,7 +3381,7 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
    if test "x${have_ecore_evas_opengl_xcb}" = "xstatic"; then
       have_ecore_evas_opengl_xcb="yes"
    fi
-   if test "x${have_ecore_evas_opengl_xcb}" = "xyes" && test "x${have_ecore_x_xcb}" = "xyes" ; then
+   if test "x${have_ecore_evas_opengl_xcb}" = "xyes"; then
       PKG_CHECK_MODULES([XCB_X11],
          [x11-xcb],
          [
@@ -3798,9 +3761,8 @@ echo
 echo "Ecore Graphic systems:"
 echo
 
-if test "x$have_ecore_x" = "xyes" ; then
-  if test "x$have_ecore_x_xcb" = "xyes" ; then
-    echo "  Ecore_X (XCB backend)........: $have_ecore_x_xcb"
+echo "  Ecore_X......................: ${with_x11}"
+if test "${want_x11_xcb}" = "yes" ; then
     echo "    Xprint.....................: $have_ecore_x_xcb_xprint"
     echo "    Xinerama...................: $have_ecore_x_xcb_xinerama"
     echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
@@ -3814,8 +3776,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xdamage....................: $have_ecore_x_xcb_damage"
     echo "    Xdpms......................: $have_ecore_x_xcb_dpms"
     echo "    Xtest......................: $have_ecore_x_xcb_xtest"
-  else
-    echo "  Ecore_X (Xlib backend).......: $have_ecore_x"
+elif test "${want_x11_xlib}" = "yes" ; then
     echo "    Xcursor....................: $use_Xcursor"
     echo "    Xkb........................: $use_xkb"
     echo "    Xprint.....................: $use_xprint"
@@ -3832,9 +3793,6 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    XIM........................: $want_xim"
     echo "    Xi2........................: $use_xi2"
     echo "    Xi2.2......................: $use_xi2_2"
-  fi
-else
-  echo "  Ecore_X....................: $have_ecore_x"
 fi
 echo "  Ecore_Win32................: $have_win32"
 echo "  Ecore_Cocoa................: $have_ecore_cocoa"
