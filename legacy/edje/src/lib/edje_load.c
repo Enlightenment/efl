@@ -450,9 +450,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	  {
 	     unsigned int i;
 
-#ifdef HAVE_EPHYSICS
-	     /* create physics world */
              if (ed->collection->physics_enabled)
+#ifdef HAVE_EPHYSICS
                {
                   ephysics_init();
                   ed->world = ephysics_world_new();
@@ -460,6 +459,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                      ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
                      _edje_physics_world_update_cb, ed);
                }
+#else
+               ERR("Edje compiled without support to physics.");
 #endif
 
 	     /* colorclass stuff */

@@ -834,9 +834,7 @@ struct _Edje_Part_Collection
 
    unsigned char    broadcast_signal;
 
-#ifdef HAVE_EPHYSICS
    unsigned char    physics_enabled; /* will be 1 if a body is declared */
-#endif
 
    unsigned char    checked : 1;
 };
