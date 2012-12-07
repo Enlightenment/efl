@@ -361,8 +361,8 @@ elm_prefs_data_new(const char *data_file,
           home = "/";
         prefs_data->data_file = eina_stringshare_printf
             ("%s/%s/%s", home, ".config", _elm_appname);
-     }
 #endif
+     }
 
    prefs_data->key = eina_stringshare_add(key ? key : "main");
 
