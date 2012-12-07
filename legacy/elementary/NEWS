@@ -85,6 +85,7 @@ Fixes:
    have resized, it wouldn't be showed up.
    * Safer call to mkstemp in elm_cnp.
    * Simplify test in elm_entry_text_set.
+   * Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
 
 Removals:
 

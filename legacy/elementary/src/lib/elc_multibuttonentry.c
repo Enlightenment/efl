@@ -884,7 +884,7 @@ _mouse_clicked_signal_cb(void *data,
 
    _view_update(sd);
 
-   if (sd->editable)
+   if (elm_widget_focus_get(data) && sd->editable)
      {
         elm_entry_input_panel_show(sd->entry);
         elm_object_focus_set(sd->entry, EINA_TRUE);
