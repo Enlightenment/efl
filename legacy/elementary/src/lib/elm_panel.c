@@ -26,7 +26,7 @@ _elm_panel_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Panel_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   if (sd->on_deletion) return;
+   if (sd->delete_me) return;
 
    evas_object_smart_calculate(sd->bx);
    edje_object_size_min_calc(wd->resize_obj, &mw, &mh);
@@ -355,7 +355,7 @@ _elm_panel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Panel_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   sd->on_deletion = EINA_TRUE;
+   sd->delete_me = EINA_TRUE;
 
    /* let's make our box object the *last* to be processed, since it
     * may (smart) parent other sub objects here */

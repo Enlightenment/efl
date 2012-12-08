@@ -443,7 +443,7 @@ _elm_prefs_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Prefs_Smart_Data *sd = _pd;
 
-   sd->on_deletion = EINA_TRUE;
+   sd->delete_me = EINA_TRUE;
 
    if (sd->saving_poller) ecore_poller_del(sd->saving_poller);
 
@@ -2046,7 +2046,7 @@ elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array)
 
 /*    ELM_PREFS_DATA_GET(page->prefs, sd); */
 
-/*    if (!sd->on_deletion) */
+/*    if (!sd->delete_me) */
 /*      { */
 /*          Eina_List *l; */
 /*          Elm_Prefs_Item_Node *it; */
@@ -2080,7 +2080,7 @@ _prefs_item_del_cb(void *data __UNUSED__,
 
    ELM_PREFS_DATA_GET(it->prefs, sd);
 
-   if (!sd->on_deletion)
+   if (!sd->delete_me)
      /* force writing back the value for it */
      _item_changed_cb(obj);
 

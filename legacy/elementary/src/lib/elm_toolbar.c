@@ -1001,7 +1001,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   if (sd->on_deletion)
+   if (sd->delete_me)
      {
         if (ret) *ret = EINA_TRUE;
         return;
@@ -1671,11 +1671,11 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    if (item != sd->more_item) /* more item does not get in the list */
      {
-        if (!sd->on_deletion)
+        if (!sd->delete_me)
           next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
         sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(item));
         sd->item_count--;
-        if (!sd->on_deletion)
+        if (!sd->delete_me)
           {
              if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
              if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
@@ -2238,7 +2238,7 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Toolbar_Smart_Data *sd = _pd;
 
-   sd->on_deletion = EINA_TRUE;
+   sd->delete_me = EINA_TRUE;
 
    if (sd->resize_job)
      ecore_job_del(sd->resize_job);
