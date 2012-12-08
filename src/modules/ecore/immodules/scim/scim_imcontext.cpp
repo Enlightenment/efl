@@ -2756,6 +2756,11 @@ static void
 slot_beep(IMEngineInstanceBase *si EINA_UNUSED)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
+
+   EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+
+   if (ic && ic->impl && _focused_ic == ic)
+     ecore_x_bell(0);
 }
 
 static void
