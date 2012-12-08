@@ -2637,6 +2637,11 @@ if test "x${want_x11_xlib}" = "xyes" ; then
 fi
 
 ## XCB
+have_ecore_x_xcb_define=""
+if test "${with_x11}" = "xcb" ; then
+   have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
+fi
+AC_SUBST(have_ecore_x_xcb_define)
 
 ### Checks for header files
 
