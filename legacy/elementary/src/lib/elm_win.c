@@ -1316,6 +1316,7 @@ static void
 _elm_win_focus_target_callbacks_add(Elm_Win_Smart_Data *sd)
 {
    Evas_Object *obj = sd->focus_highlight.cur.target;
+   if (!obj) return;
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd);
