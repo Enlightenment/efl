@@ -77,7 +77,7 @@ struct _Elm_Prefs_Smart_Data
 
    Eina_Bool             changing_from_ui : 1;
    Eina_Bool             values_fetching : 1;
-   Eina_Bool             on_deletion : 1;
+   Eina_Bool             delete_me : 1;
    Eina_Bool             autosave : 1;
    Eina_Bool             dirty : 1;
 };

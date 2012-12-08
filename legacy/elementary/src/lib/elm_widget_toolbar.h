@@ -45,7 +45,7 @@ struct _Elm_Toolbar_Smart_Data
    Eina_Bool                             vertical : 1;
    Eina_Bool                             long_press : 1;
    Eina_Bool                             homogeneous : 1;
-   Eina_Bool                             on_deletion : 1;
+   Eina_Bool                             delete_me : 1;
    Eina_Bool                             reorder_mode : 1;
    Eina_Bool                             transverse_expanded : 1;
 };

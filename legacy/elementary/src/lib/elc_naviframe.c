@@ -1284,7 +1284,6 @@ static void
 _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Naviframe_Item *it;
-   Eina_List *l;
 
    Elm_Naviframe_Smart_Data *sd = _pd;
 
@@ -1297,7 +1296,7 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    //All popping items which are not called yet by animator.
-   EINA_LIST_FREE(sd->popping, l, it)
+   EINA_LIST_FREE(sd->popping, it)
      {
         if (it->animator) ecore_animator_del(it->animator);
         elm_widget_item_del(it);

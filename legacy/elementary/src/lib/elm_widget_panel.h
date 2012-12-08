@@ -26,7 +26,7 @@ struct _Elm_Panel_Smart_Data
    Elm_Panel_Orient                      orient;
 
    Eina_Bool                             hidden : 1;
-   Eina_Bool                             on_deletion : 1;
+   Eina_Bool                             delete_me : 1;
 };
 
 /**
