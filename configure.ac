@@ -1410,7 +1410,7 @@ case "$host_os" in
       want_evas_engine_software_ddraw="yes"
       ;;
    darwin*)
-      want_evas_engine_gl_cocoa="yes"
+      want_evas_engine_gl_cocoa="no"
       ;;
    *)
       ;;
@@ -2269,7 +2269,7 @@ AC_MSG_NOTICE([Ecore_Cocoa checks])
 have_ecore_cocoa="no"
 case "$host_os" in
    darwin*)
-      have_ecore_cocoa="yes"
+      have_ecore_cocoa="no"
       ;;
 esac
 
