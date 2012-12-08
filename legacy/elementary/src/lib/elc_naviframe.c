@@ -1482,7 +1482,6 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
    it = _item_new(obj, prev_it,
                   title_label, prev_btn, next_btn, content, item_style);
    if (!it) return;
-   elm_widget_resize_object_set(obj, VIEW(it));
 
    sd->stack = eina_inlist_prepend_relative
        (sd->stack, EINA_INLIST_GET(it),
@@ -1529,7 +1528,6 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    it = _item_new(obj, (Elm_Naviframe_Item *)after,
                   title_label, prev_btn, next_btn, content, item_style);
    if (!it) return;
-   elm_widget_resize_object_set(obj, VIEW(it));
 
    if (elm_naviframe_top_item_get(obj) == after) top_inserted = EINA_TRUE;
 
@@ -1539,6 +1537,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
 
    if (top_inserted)
      {
+        elm_widget_resize_object_set(obj, VIEW(it));
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
      }
