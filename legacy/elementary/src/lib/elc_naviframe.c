@@ -182,9 +182,9 @@ _item_text_signals_emit(Elm_Naviframe_Item *it)
    char buf[1024];
 
    if ((it->title_label) && (it->title_label[0]))
-     edje_object_signal_emit(VIEW(it), "elm,state,title,show", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
    else
-     edje_object_signal_emit(VIEW(it), "elm,state,title,hide", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
 
    if ((it->subtitle_label) && (it->subtitle_label[0]))
      edje_object_signal_emit(VIEW(it), "elm,state,subtitle,show", "elm");
@@ -372,9 +372,9 @@ _item_text_set_hook(Elm_Object_Item *it,
         eina_stringshare_replace(&nit->title_label, label);
         snprintf(buf, sizeof(buf), "elm.text.title");
         if (label)
-          edje_object_signal_emit(VIEW(it), "elm,state,title,show", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
         else
-          edje_object_signal_emit(VIEW(it), "elm,state,title,hide", "elm");
+          edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
      }
    else if (!strcmp("subtitle", part))
      {
