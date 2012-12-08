@@ -46,7 +46,7 @@ void *alloca (size_t);
 #include "Ecore_Input.h"
 
 static Ecore_X_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Ecore_X_Version *elm_version = &_version;
+EAPI Ecore_X_Version *ecore_x_version = &_version;
 
 static Eina_Bool _ecore_x_fd_handler(void *data,
                                      Ecore_Fd_Handler *fd_handler);

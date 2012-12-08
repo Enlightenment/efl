@@ -16,7 +16,7 @@ static xcb_generic_event_t *_ecore_xcb_event_buffered = NULL;
 static Ecore_Idle_Enterer *_ecore_xcb_idle_enterer = NULL;
 
 static Ecore_X_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Ecore_X_Version *elm_version = &_version;
+EAPI Ecore_X_Version *ecore_x_version = &_version;
 
 /* external variables */
 int _ecore_xcb_log_dom = -1;
