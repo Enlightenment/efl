@@ -3319,9 +3319,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
              else
                {
-		  eo_do(mo,
-			evas_obj_map_set(map),
-			evas_obj_map_enable_set(1));
+                  if (mo)
+                    eo_do(mo,
+                          evas_obj_map_set(map),
+                          evas_obj_map_enable_set(1));
                }
           }
         else
@@ -3338,9 +3339,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   if (!ep->body)
                     {
 #endif
-		  eo_do(mo,
-			evas_obj_map_enable_set(0),
-			evas_obj_map_set(NULL));
+                       if (mo)
+                         eo_do(mo,
+                               evas_obj_map_enable_set(0),
+                               evas_obj_map_set(NULL));
 #ifdef HAVE_EPHYSICS
                     }
 #endif
