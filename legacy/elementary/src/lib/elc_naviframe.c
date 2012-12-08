@@ -507,6 +507,7 @@ _item_content_set(Elm_Naviframe_Item *it,
 
    evas_object_event_callback_add
      (content, EVAS_CALLBACK_DEL, _item_content_del_cb, it);
+   elm_widget_sub_object_add(WIDGET(it), content);
 }
 
 static void
@@ -569,6 +570,7 @@ _item_content_unset(Elm_Naviframe_Item *it)
    evas_object_event_callback_del
      (content, EVAS_CALLBACK_DEL, _item_content_del_cb);
 
+   elm_widget_sub_object_del(WIDGET(it), content);
    it->content = NULL;
    return content;
 }
