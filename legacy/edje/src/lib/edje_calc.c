@@ -676,8 +676,9 @@ _edje_recalc_do(Edje *ed)
 
         ed->recalc_hints = EINA_FALSE;
 
-        edje_object_size_min_calc(ed->obj, &w, &h);
-        evas_object_size_hint_min_set(ed->obj, w, h);
+	eo_do(ed->obj,
+	      edje_obj_size_min_get(&w, &h),
+	      evas_obj_size_hint_min_set(w, h));
      }
 
    if (!ed->collection) return ;
@@ -1230,9 +1231,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   tw = th = 0;
                   if (!chosen_desc->text.min_x)
                     {
-                       evas_object_resize(ep->object, params->w, params->h);
-                       evas_object_textblock_size_formatted_get(ep->object, &tw,
-                                                                &th);
+		       eo_do(ep->object,
+			     evas_obj_size_set(params->w, params->h),
+			     evas_obj_textblock_size_formatted_get(&tw, &th));
                     }
                   else
                     evas_object_textblock_size_native_get(ep->object, &tw, &th);
@@ -1257,8 +1258,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              tw = th = 0;
              if (!chosen_desc->text.max_x)
                {
-                  evas_object_resize(ep->object, params->w, params->h);
-                  evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+		  eo_do(ep->object,
+			evas_obj_size_set(params->w, params->h),
+			evas_obj_textblock_size_formatted_get(&tw, &th));
                }
              else
                evas_object_textblock_size_native_get(ep->object, &tw, &th);
@@ -1282,16 +1284,17 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              double s = 1.0;
 
              if (ep->part->scale) s = TO_DOUBLE(sc);
-             evas_object_scale_set(ep->object, s);
-             evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+	     eo_do(ep->object,
+		   evas_obj_scale_set(s),
+		   evas_obj_textblock_size_formatted_get(&tw, &th));
              if (chosen_desc->text.fit_x)
                {
                   if ((tw > 0) && (tw > params->w))
                     {
                        s = (s * params->w) / (double)tw;
-                       evas_object_scale_set(ep->object, s);
-                       evas_object_textblock_size_formatted_get(ep->object,
-                                                                &tw, &th);
+		       eo_do(ep->object,
+			     evas_obj_scale_set(s),
+			     evas_obj_textblock_size_formatted_get(&tw, &th));
                     }
                }
              if (chosen_desc->text.fit_y)
@@ -1299,9 +1302,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if ((th > 0) && (th > params->h))
                     {
                        s = (s * params->h) / (double)th;
-                       evas_object_scale_set(ep->object, s);
-                       evas_object_textblock_size_formatted_get(ep->object,
-                                                                &tw, &th);
+		       eo_do(ep->object,
+			     evas_obj_scale_set(s),
+			     evas_obj_textblock_size_formatted_get(&tw, &th));
                     }
                }
           }
@@ -1373,8 +1376,9 @@ _edje_part_recalc_single_text(FLOAT_T sc __UNUSED__,
         (!chosen_desc->text.max_x) && (!chosen_desc->text.max_y)))
      return;
 
-   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-   evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
+   eo_do(ep->object,
+	 evas_obj_size_get(&tw, &th),
+	 evas_obj_text_style_pad_get(&l, &r, &t, &b));
 
    mw = tw + l + r;
    mh = th + t + b;
@@ -1533,9 +1537,10 @@ _edje_part_recalc_single_text(FLOAT_T sc __UNUSED__,
                 [(ep->part->effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) >> 4];
              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(style, shadow);
 
-             evas_object_text_style_set(ep->object, style);
-             evas_object_text_text_set(ep->object, text);
-             evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	     eo_do(ep->object,
+		   evas_obj_text_style_set(style),
+		   evas_obj_text_text_set(text),
+		   evas_obj_size_get(&tw, &th));
              if (chosen_desc->text.max_x)
                {
                   int l, r;
@@ -2121,9 +2126,10 @@ _edje_part_recalc_single(Edje *ed,
      {
         Evas_Coord lminw = 0, lminh = 0;
 
-        evas_object_smart_need_recalculate_set(ep->object, 1);
-        evas_object_smart_calculate(ep->object);
-        evas_object_size_hint_min_get(ep->object, &lminw, &lminh);
+	eo_do(ep->object,
+	      evas_obj_smart_need_recalculate_set(1),
+	      evas_obj_smart_calculate(),
+	      evas_obj_size_hint_min_get(&lminw, &lminh));
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
           {
              if (lminw > minw) minw = lminw;
@@ -2139,9 +2145,10 @@ _edje_part_recalc_single(Edje *ed,
      {
         Evas_Coord lminw = 0, lminh = 0;
 
-        evas_object_smart_need_recalculate_set(ep->object, 1);
-        evas_object_smart_calculate(ep->object);
-        evas_object_size_hint_min_get(ep->object, &lminw, &lminh);
+	eo_do(ep->object,
+	      evas_obj_smart_need_recalculate_set(1),
+	      evas_obj_smart_calculate(),
+	      evas_obj_size_hint_min_get(&lminw, &lminh));
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
           {
              if (lminw > minw) minw = lminw;
@@ -2308,13 +2315,15 @@ _edje_table_recalc_apply(Edje *ed __UNUSED__,
                          Edje_Calc_Params *p3 __UNUSED__,
                          Edje_Part_Description_Table *chosen_desc)
 {
-   evas_object_table_homogeneous_set(ep->object, chosen_desc->table.homogeneous);
-   evas_object_table_align_set(ep->object, TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y));
-   evas_object_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
+   eo_do(ep->object,
+	 evas_obj_table_homogeneous_set(chosen_desc->table.homogeneous),
+	 evas_obj_table_align_set(TO_DOUBLE(chosen_desc->table.align.x), TO_DOUBLE(chosen_desc->table.align.y)),
+	 evas_obj_table_padding_set(chosen_desc->table.padding.x, chosen_desc->table.padding.y));
    if (evas_object_smart_need_recalculate_get(ep->object))
      {
-        evas_object_smart_need_recalculate_set(ep->object, 0);
-        evas_object_smart_calculate(ep->object);
+        eo_do(ep->object,
+	      evas_obj_smart_need_recalculate_set(0),
+	      evas_obj_smart_calculate());
      }
 }
 
@@ -2372,9 +2381,10 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
           }
      }
 
-   evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
-                              p3->type.common.fill.w, p3->type.common.fill.h);
-   evas_object_image_smooth_scale_set(ep->object, p3->smooth);
+   eo_do(ep->object,
+	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
+				 p3->type.common.fill.w, p3->type.common.fill.h),
+	 evas_obj_image_smooth_scale_set(p3->smooth));
 }
 
 static void
@@ -2384,9 +2394,10 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 
    sc = ed->scale;
    if (sc == 0.0) sc = _edje_scale;
-   evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
-                              p3->type.common.fill.w, p3->type.common.fill.h);
-   evas_object_image_smooth_scale_set(ep->object, p3->smooth);
+   eo_do(ep->object,
+	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
+				 p3->type.common.fill.w, p3->type.common.fill.h),
+	 evas_obj_image_smooth_scale_set(p3->smooth));
    if (chosen_desc->image.border.scale)
      {
         if (p3->type.common.spec.image.border_scale_by > FROM_DOUBLE(0.0))
@@ -3149,15 +3160,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 }
               else
 #endif
-              evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
-              evas_object_resize(ep->object, pf->w, pf->h);
+	      eo_do(ep->object, 
+		    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
+		    evas_obj_size_set(pf->w, pf->h));
              
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */
                    /* Not really needed but will improve the bounding box evaluation done by Evas */
-                   evas_object_move(ep->nested_smart,
-                                    ed->x + pf->x, ed->y + pf->y);
-                   evas_object_resize(ep->nested_smart, pf->w, pf->h);
+		   eo_do(ep->nested_smart,
+			 evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
+			 evas_obj_size_set(pf->w, pf->h));
                 }
               if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                 _edje_entry_real_part_configure(ep);
@@ -3225,9 +3237,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              //				   pf->color.a);
              if (pf->visible)
                {
-                  evas_object_move(ep->typedata.swallow->swallowed_object, ed->x + pf->x, ed->y + pf->y);
-                  evas_object_resize(ep->typedata.swallow->swallowed_object, pf->w, pf->h);
-                  evas_object_show(ep->typedata.swallow->swallowed_object);
+		  eo_do(ep->typedata.swallow->swallowed_object,
+			evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
+			evas_obj_size_set(pf->w, pf->h),
+			evas_obj_visibility_set(EINA_TRUE));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;
@@ -3300,21 +3313,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
              if (ep->nested_smart)
                {  /* Apply map to smart obj holding nested parts */
-                  evas_object_map_set(ep->nested_smart, map);
-                  evas_object_map_enable_set(ep->nested_smart, 1);
+		  eo_do(ep->nested_smart,
+			evas_obj_map_set(map),
+			evas_obj_map_enable_set(1));
                }
              else
                {
-                  evas_object_map_set(mo, map);
-                  evas_object_map_enable_set(mo, 1);
+		  eo_do(mo,
+			evas_obj_map_set(map),
+			evas_obj_map_enable_set(1));
                }
           }
         else
           {
              if (ep->nested_smart)
                {  /* Cancel map of smart obj holding nested parts */
-                  evas_object_map_enable_set(ep->nested_smart, 0);
-                  evas_object_map_set(ep->nested_smart, NULL);
+		  eo_do(ep->nested_smart,
+			evas_obj_map_enable_set(0),
+			evas_obj_map_set(NULL));
                }
              else
                {
@@ -3322,8 +3338,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   if (!ep->body)
                     {
 #endif
-                  evas_object_map_enable_set(mo, 0);
-                  evas_object_map_set(mo, NULL);
+		  eo_do(mo,
+			evas_obj_map_enable_set(0),
+			evas_obj_map_set(NULL));
 #ifdef HAVE_EPHYSICS
                     }
 #endif
