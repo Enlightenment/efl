@@ -15,6 +15,9 @@ static Ecore_Fd_Handler *_ecore_xcb_fd_handler = NULL;
 static xcb_generic_event_t *_ecore_xcb_event_buffered = NULL;
 static Ecore_Idle_Enterer *_ecore_xcb_idle_enterer = NULL;
 
+static Ecore_X_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Ecore_X_Version *elm_version = &_version;
+
 /* external variables */
 int _ecore_xcb_log_dom = -1;
 Ecore_X_Display *_ecore_xcb_display = NULL;

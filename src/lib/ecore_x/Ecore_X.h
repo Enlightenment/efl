@@ -25,6 +25,8 @@
 # endif // ifdef __GNUC__
 #endif // ifdef _MSC_VER
 
+#include "ecore_x_version.h"
+
 #include <sys/types.h>
 
 /**

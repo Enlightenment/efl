@@ -45,7 +45,9 @@ AC_DEFINE_UNQUOTED([VMIN], [v_min], [Minor version])
 AC_DEFINE_UNQUOTED([VMIC], [v_mic], [Micro version])
 AC_DEFINE_UNQUOTED([VREV], [v_rev], [Revison])
 VMAJ=v_maj
+VMIN=v_min
 AC_SUBST([VMAJ])
+AC_SUBST([VMIN])
 
 
 #### Additional options to configure
@@ -2637,11 +2639,6 @@ if test "x${want_x11_xlib}" = "xyes" ; then
 fi
 
 ## XCB
-have_ecore_x_xcb_define=""
-if test "${with_x11}" = "xcb" ; then
-   have_ecore_x_xcb_define="-DHAVE_ECORE_X_XCB"
-fi
-AC_SUBST(have_ecore_x_xcb_define)
 
 ### Checks for header files
 
@@ -2760,6 +2757,7 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    fi
 
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
+   HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XLIB"
 fi
 
 ## XCB
@@ -2799,10 +2797,13 @@ dnl AC_DEFINE([ECORE_XCB_DRI], [1], [Build support for XCB dri])
 
    PKG_CHECK_MODULES([ECORE_X], [${requirements_pc_deps_ecore_x}])
    EFL_CHECK_FUNCS([ECORE_X], [dlopen iconv])
+
+   HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XCB"
 fi
 
 requirements_libs_ecore_x="${requirements_libs_ecore_x} ${ECORE_X_LIBS}"
 
+AC_SUBST([HAVE_ECORE_X_BACKEND])
 AC_SUBST([ECORE_X_CFLAGS])
 AC_SUBST([ECORE_X_LIBS])
 
