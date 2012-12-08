@@ -259,22 +259,11 @@ AC_SUBST([requirements_pc_eio])
 AC_CANONICAL_HOST
 
 # TODO: move me to m4 file that setups module/so related variables
-have_wince="no"
-have_win32="no"
-have_windows="no"
-have_ps3="no"
 case "$host_os" in
    cegcc*)
       AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
    ;;
    mingw32ce*)
-      have_wince="yes"
-      have_windows="yes"
-      want_efreet="no"
-      want_e_dbus="no"
-      want_eeze="no"
-      want_emotion="no"
-      want_ethumb="no"
       MODULE_ARCH="$host_os-$host_cpu"
       MODULE_EXT=".dll"
    ;;
@@ -292,6 +281,30 @@ case "$host_os" in
    *)
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".so"
+   ;;
+esac
+
+have_wince="no"
+have_win32="no"
+have_windows="no"
+have_darwin="no"
+have_linux="no"
+have_ps3="no"
+case "$host_os" in
+   mingw32ce*)
+      have_wince="yes"
+      have_windows="yes"
+   ;;
+   mingw*|cygwin*)
+      # TODO: check cygwin* here
+      have_win32="yes"
+      have_windows="yes"
+   ;;
+   darwin*)
+      have_darwin="yes"
+   ;;
+   linux*)
+      have_linux="yes"
    ;;
 esac
 
@@ -686,16 +699,13 @@ EFL_SELECT_WINDOWS_VERSION
 # TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
 EVIL_LIBS=""
 EVIL_DLFCN_LIBS=""
-case "$host_os" in
-  mingw32ce*)
+if test "${have_wince}" = "xyes"; then
     EVIL_LIBS="-lws2"
     EVIL_DLFCN_LIBS="-ltoolhelp"
-    ;;
-  *)
+else
     EVIL_LIBS="-lole32 -lws2_32 -lsecur32 -luuid"
     EVIL_DLFCN_LIBS="-lpsapi"
-    ;;
-esac
+fi
 requirements_libs_evil="${EVIL_LIBS}"
 
 AC_SUBST([EVIL_LIBS])
@@ -1378,9 +1388,9 @@ AC_ARG_ENABLE([image-loader-webp],
 
 want_evas_cserve2="yes"
 
-want_evas_engine_software_gdi="no"
-want_evas_engine_software_ddraw="no"
-want_evas_engine_gl_cocoa="no"
+want_evas_engine_software_gdi="${have_win32}"
+want_evas_engine_software_ddraw="${have_win32}"
+want_evas_engine_gl_cocoa="no" # TODO: ${have_darwin}
 want_evas_engine_wayland_egl="no"
 
 want_evas_image_loader_bmp="static"
@@ -1399,24 +1409,13 @@ want_evas_image_loader_wbmp="static"
 #want_evas_image_loader_webp="yes"
 want_evas_image_loader_xpm="static"
 
-case "$host_os" in
-   mingw32ce*)
-      want_fontconfig="no"
-      want_evas_image_loader_gif="no"
-      want_evas_image_loader_svg="no"
-      want_evas_image_loader_tiff="no"
-      want_evas_image_loader_webp="no"
-      ;;
-   mingw*)
-      want_evas_engine_software_gdi="yes"
-      want_evas_engine_software_ddraw="yes"
-      ;;
-   darwin*)
-      want_evas_engine_gl_cocoa="no"
-      ;;
-   *)
-      ;;
-esac
+if test "${have_wince}" = "yes"; then
+   want_fontconfig="no"
+   want_evas_image_loader_gif="no"
+   want_evas_image_loader_svg="no"
+   want_evas_image_loader_tiff="no"
+   want_evas_image_loader_webp="no"
+fi
 
 EFL_CHECK_FUNC([DLSYM], [dlsym])
 requirements_libs_evas="${requirements_libs_evas} ${DLSYM_LIBS}"
@@ -1886,11 +1885,9 @@ AC_ARG_ENABLE([g-main-loop],
 
 ### Default values
 
-case "$host_os" in
-   mingw32*)
-      with_glib="no"
-      ;;
-esac
+if test "${have_windows}" = "yes"; then
+   with_glib="no"
+fi
 
 want_glib="no"
 if test "x${with_glib}" = "xyes" || test "x${with_glib}" = "xalways" ; then
@@ -2025,31 +2022,24 @@ AC_ARG_ENABLE([curl],
 want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
-case "$host_os" in
-   mingw32ce*)
-      want_curl="no"
-      want_cares="no"
-      want_ecore_con_local_sockets="no"
-      want_ecore_con_abstract_sockets="no"
-      ;;
-   mingw*)
-      want_cares="yes"
-      want_ecore_con_abstract_sockets="no"
-      ;;
-   darwin*)
-      want_ecore_con_abstract_sockets="no"
-      ;;
-   *)
-      want_cares="no"
-      ;;
-esac
-
-case "$host_vendor" in
-  ps3*)
-      want_ecore_con_local_sockets="no"
-      want_ecore_con_abstract_sockets="no"
-      ;;
-esac
+if test "${have_wince}" = "yes"; then
+   want_curl="no"
+   want_cares="no"
+   want_ecore_con_local_sockets="no"
+   want_ecore_con_abstract_sockets="no"
+elif test "${have_win32}" = "yes"; then
+   want_cares="yes"
+   want_ecore_con_abstract_sockets="no"
+elif test "${have_darwin}" = "yes"; then
+   want_cares="no"
+   want_ecore_con_abstract_sockets="no"
+elif test "${have_ps3}" = "yes"; then
+   want_cares="no"
+   want_ecore_con_local_sockets="no"
+   want_ecore_con_abstract_sockets="no"
+else
+   want_cares="no" # TODO: REVIEW
+fi
 
 AC_DEFINE_IF([HAVE_LOCAL_SOCKETS],
    [test "x${want_ecore_con_local_sockets}" = "xyes"],
@@ -2269,11 +2259,7 @@ AC_MSG_NOTICE([Ecore_Cocoa checks])
 ### Default values
 
 have_ecore_cocoa="no"
-case "$host_os" in
-   darwin*)
-      have_ecore_cocoa="no"
-      ;;
-esac
+# TODO: fix cocoa and: have_ecore_cocoa="${have_darwin}"
 
 ### Checks for programs
 
@@ -2841,23 +2827,18 @@ want_ecore_imf_xim="no"
 want_ecore_imf_scim="no"
 want_ecore_imf_ibus="no"
 
-case "$host_os" in
-   mingw32ce*)
-      want_ecore_imf="no"
-      ;;
-   mingw*)
-      want_ecore_imf="yes"
-      ;;
-   darwin*)
-      want_ecore_imf="yes"
-      ;;
-   *)
+if test "${have_wince}" = "yes"; then
+   want_ecore_imf="no"
+else
+   want_ecore_imf="yes"
+
+   if test "${have_windows}" = "no" && test "${have_darwin}" = "no"; then
       want_ecore_imf="yes"
       want_ecore_imf_xim="yes"
       want_ecore_imf_scim="yes"
       want_ecore_imf_ibus="yes"
-      ;;
-esac
+   fi
+fi
 
 ### Checks for programs
 
@@ -2940,28 +2921,15 @@ AC_MSG_NOTICE([Ecore_Evas checks])
 have_ecore_evas="yes"
 have_extn="yes"
 
-want_ecore_evas_software_gdi="no"
-want_ecore_evas_software_ddraw="no"
-want_ecore_evas_gl_cocoa="no"
+want_ecore_evas_software_gdi="${have_evas_engine_software_gdi}"
+want_ecore_evas_software_ddraw="${have_evas_engine_software_ddraw}"
+want_ecore_evas_gl_cocoa="${have_evas_engine_gl_cocoa}"
+want_ecore_evas_wayland_egl="${have_evas_engine_wayland_egl}"
 want_ecore_evas_extn="yes"
-want_ecore_evas_wayland_egl="no"
 
-case "$host_os" in
-   mingw32ce*)
-      want_ecore_evas_extn="no"
-      ;;
-   mingw*)
-      want_ecore_evas_software_gdi="yes"
-      want_ecore_evas_software_ddraw="yes"
-      want_ecore_evas_extn="no"
-      ;;
-   darwin*)
-      want_ecore_evas_gl_cocoa="yes"
-      ;;
-   *)
-      want_ecore_evas_gl_cocoa="no"
-      ;;
-esac
+if test "${have_windows}" = "yes"; then
+   want_ecore_evas_extn="no"
+fi
 
 ### Checks for programs
 
