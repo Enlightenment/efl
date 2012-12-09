@@ -3215,6 +3215,7 @@ src/examples/evas/Makefile
 src/examples/ecore/Makefile
 src/examples/eio/Makefile
 src/lib/eina/eina_config.h
+src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
 pc/evil.pc
 pc/escape.pc
