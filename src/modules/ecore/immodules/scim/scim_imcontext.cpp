@@ -2416,10 +2416,10 @@ static void _x_send_key_event(const KeyEvent &key)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    // Obtain the X11 display.
-   Display *display = XOpenDisplay(NULL);
+   Display *display = (Display *)ecore_x_display_get();
    if (display == NULL)
      {
-        std::cerr << "XOpenDisplay failed\n";
+        std::cerr << "ecore_x_display_get() failed\n";
         return;
      }
 
@@ -2448,8 +2448,6 @@ static void _x_send_key_event(const KeyEvent &key)
         event = createKeyEvent(display, winFocus, winRoot, false, key.code, modifier);
         XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
      }
-
-   XCloseDisplay(display);
 }
 
 static void
