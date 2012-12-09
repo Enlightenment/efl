@@ -2615,7 +2615,7 @@ _elm_scroll_hold_animator(void *data)
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
    if ((!sid->hold) && (!sid->freeze) &&
-       _elm_config->scroll_smooth_amount > 0.0)
+       _elm_config->scroll_smooth_time_interval > 0.0)
      {
         int src_index = 0, dst_index = 0, num = 0;
         Evas_Coord x = 0, y = 0;
