@@ -120,7 +120,7 @@ static void     initialize_modifier_bits                (Display *display);
 static unsigned int scim_x11_keymask_scim_to_x11        (Display *display, uint16 scimkeymask);
 static XKeyEvent createKeyEvent                         (Display *display, Window &win,
                                                          Window &winRoot, bool press,
-                                                         int keycode, int modifiers);
+                                                         int keysym, int modifiers);
 static void     _x_send_key_event                       (const KeyEvent &key);
 
 static void     attach_instance                         (const IMEngineInstancePointer &si);
@@ -2383,7 +2383,7 @@ static unsigned int scim_x11_keymask_scim_to_x11(Display *display, uint16 scimke
 
 static XKeyEvent createKeyEvent(Display *display, Window &win,
                                 Window &winRoot, bool press,
-                                int keycode, int modifiers)
+                                int keysym, int modifiers)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
@@ -2400,7 +2400,7 @@ static XKeyEvent createKeyEvent(Display *display, Window &win,
    event.y_root      = 1;
    event.same_screen = EINA_TRUE;
    event.state       = modifiers;
-   event.keycode     = XKeysymToKeycode(display, keycode);
+   event.keycode     = XKeysymToKeycode(display, keysym);
    if (press)
      event.type = KeyPress;
    else
