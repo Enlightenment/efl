@@ -60,6 +60,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/evas/modules/loaders/*/linux-gnu-*/*.so
 %{_libdir}/evas/modules/savers/*/linux-gnu-*/*.so
 %{_libexecdir}/*
+%{_datadir}/locale/*/LC_MESSAGES/efl.mo
 
 %files devel
 %defattr(-, root, root)
@@ -68,6 +69,10 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
+%{_libdir}/ecore/*/*.la
+%{_libdir}/ecore/*/*.so
+%{_libdir}/ecore_evas/*/*/*/*.la
+%{_libdir}/ecore_evas/*/*/*/*.so
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.la
 %{_libdir}/evas/modules/engines/*/linux-gnu-*/*.la
 %{_libdir}/evas/modules/loaders/*/linux-gnu-*/*.la
