@@ -11,8 +11,8 @@ Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-Requires: ecore, libudev, libmount, eject
-BuildRequires: ecore-devel, libudev-devel, libmount-devel
+Requires: libudev, libmount, eject
+BuildRequires: libudev-devel, libmount-devel
 URL: http://www.enlightenment.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -36,7 +36,7 @@ reduce the complexity of managing devices.
 Summary: Development files for Eeze
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: ecore-devel, libudev-devel
+Requires: libudev-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Eeze

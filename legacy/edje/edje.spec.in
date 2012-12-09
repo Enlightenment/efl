@@ -14,7 +14,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, vim-enhanced
-BuildRequires: efl-devel, ecore-devel, lua-devel
+BuildRequires: efl-devel, lua-devel
 Requires:  efl
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -38,7 +38,7 @@ configure parts of the display.
 Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}, %{name}-bin = %{version}
-Requires: efl-devel ecore-devel lua-devel
+Requires: efl-devel lua-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Edje
