@@ -796,3 +796,7 @@
 2012-12-08  ChunEon Park (Hermet)
 
 	* Fix the naviframe title_set problem that caused the title visible status reset.
+
+2012-12-10  Cedric Bail
+
+	* Make sure private data is not NULL in elm_interface_scrollable.
