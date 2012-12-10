@@ -375,13 +375,10 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 
 #define MY_SCROLLABLE_INTERFACE_NAME "elm_interface_scrollable"
 
-#define ELM_SCROLL_IFACE_DATA_GET(o, sid)     \
-  Elm_Scrollable_Smart_Interface_Data * sid = \
-    (!eo_isa(obj, MY_SCROLLABLE_INTERFACE) ? NULL : \
-     eo_data_get(o, MY_SCROLLABLE_INTERFACE));
-
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(o, ptr)     \
-  ELM_SCROLL_IFACE_DATA_GET(o, ptr);                    \
+  Elm_Scrollable_Smart_Interface_Data *ptr =		\
+    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	\
+     eo_data_get(o, MY_SCROLLABLE_INTERFACE));		\
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No interface data for object %p (%s)", \
@@ -390,7 +387,9 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
     }
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SCROLL_IFACE_DATA_GET(o, ptr);                         \
+  Elm_Scrollable_Smart_Interface_Data *ptr =		     \
+    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	     \
+     eo_data_get(o, MY_SCROLLABLE_INTERFACE));		     \
   if (!ptr)                                                  \
     {                                                        \
        CRITICAL("No interface data for object %p (%s)",      \
@@ -1531,7 +1530,7 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
    Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny,
               minx = 0, miny = 0, pw = 0, ph = 0, x = *_x, y = *_y;
 
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(obj, sid, EINA_FALSE);
 
    if (!sid->pan_obj) return EINA_FALSE;
 
@@ -1668,7 +1667,7 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
 {
    Evas_Coord ww, wh, wx;
 
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    wx = sid->wx;
 
@@ -3089,7 +3088,7 @@ _on_edje_resize(void *data,
 static void
 _scroll_edje_object_attach(Evas_Object *obj)
 {
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    evas_object_event_callback_add
      (sid->edje_obj, EVAS_CALLBACK_RESIZE, _on_edje_resize, sid);
@@ -3137,7 +3136,7 @@ _scroll_edje_object_attach(Evas_Object *obj)
 static void
 _scroll_event_object_attach(Evas_Object *obj)
 {
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    evas_object_event_callback_add
      (sid->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _elm_scroll_wheel_event_cb,
@@ -3156,7 +3155,7 @@ _scroll_event_object_attach(Evas_Object *obj)
 static void
 _scroll_edje_object_detach(Evas_Object *obj)
 {
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    evas_object_event_callback_del_full
      (sid->edje_obj, EVAS_CALLBACK_RESIZE, _on_edje_resize, sid);
@@ -3204,7 +3203,7 @@ _scroll_edje_object_detach(Evas_Object *obj)
 static void
 _scroll_event_object_detach(Evas_Object *obj)
 {
-   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    evas_object_event_callback_del_full
      (sid->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _elm_scroll_wheel_event_cb,
