@@ -692,10 +692,13 @@ ecore_exe_pipe_run(const char     *exe_cmd,
       Ecore_Exe_Event_Add *e;
 
       e = _ecore_exe_event_add_new();
-      e->exe = exe;
-      if (e) /* Send the event. */
-        ecore_event_add(ECORE_EXE_EVENT_ADD, e,
-                        _ecore_exe_event_add_free, NULL);
+      if (e)
+        {
+           e->exe = exe;
+           if (e) /* Send the event. */
+             ecore_event_add(ECORE_EXE_EVENT_ADD, e,
+                             _ecore_exe_event_add_free, NULL);
+        }
       /* INF("Running as %d for %s.\n", exe->pid, exe->cmd); */
    }
 
