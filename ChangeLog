@@ -1,3 +1,8 @@
+2012-12-10  Gustavo Sverzut Barbieri (k-s)
+
+	* Added ECORE_GETOPT_ACTION_BREAK to force breaking out of argument
+	parsing logic (will behabe same as GNU's "--", useful for xterm -e)
+
 2012-12-07  Cedric Bail
 
 	* Don't leak fd on exec.

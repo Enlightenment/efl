@@ -38,6 +38,7 @@ Additions:
      - Add window profile support.
     * ecore_evas_buffer:
      - Add window profile support.
+    * ecore_getopt: add ECORE_GETOPT_ACTION_BREAK
 
 Deprecations:
     * ecore_x:

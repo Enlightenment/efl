@@ -763,18 +763,25 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser,
                                       char              **argv)
 {
    char **nonargs;
-   int src, dst, used, base;
+   int src, dst, used, base, abreak;
 
    nonargs = alloca(sizeof(char *) * argc);
    src = 1;
    dst = 1;
    used = 0;
    base = 0;
+   abreak = 0;
    while (src < argc)
      {
         const Ecore_Getopt_Desc *desc;
         Ecore_Getopt_Desc_Arg_Requirement arg_req;
         char *arg = argv[src];
+
+        if (abreak)
+          {
+             base = 1;
+             break;
+          }
 
         if (arg[0] != '-')
           goto found_nonarg;
@@ -805,6 +812,11 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser,
              else
                goto found_nonarg;
           }
+
+                  
+
+        if (desc->action == ECORE_GETOPT_ACTION_BREAK)
+          abreak = 1;
 
         if (src != dst)
           argv[dst] = argv[src];
@@ -1408,6 +1420,18 @@ _ecore_getopt_parse_license(const Ecore_Getopt      *parser,
 }
 
 static Eina_Bool
+_ecore_getopt_parse_break(const Ecore_Getopt      *parser EINA_UNUSED,
+                          const Ecore_Getopt_Desc *desc EINA_UNUSED,
+                          Ecore_Getopt_Value      *val,
+                          const char              *arg_val EINA_UNUSED)
+{
+   if (val->boolp)
+     (*val->boolp) = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _ecore_getopt_desc_handle(const Ecore_Getopt      *parser,
                           const Ecore_Getopt_Desc *desc,
                           Ecore_Getopt_Value      *value,
@@ -1450,6 +1474,9 @@ _ecore_getopt_desc_handle(const Ecore_Getopt      *parser,
 
       case ECORE_GETOPT_ACTION_LICENSE:
         return _ecore_getopt_parse_license(parser, desc, value, arg_val);
+
+      case ECORE_GETOPT_ACTION_BREAK:
+        return _ecore_getopt_parse_break(parser, desc, value, arg_val);
 
       default:
         return EINA_FALSE;
