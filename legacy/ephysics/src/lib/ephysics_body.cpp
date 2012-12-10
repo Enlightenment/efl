@@ -4793,8 +4793,38 @@ _ephysics_body_cylinder_face_evas_object_unset(EPhysics_Body *body, EPhysics_Bod
 }
 
 static void
+_ephysics_body_soft_body_face_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   int w, h;
+   EPhysics_Body_Face_Obj *face;
+   EPhysics_Body_Face_Slice *face_slice = (EPhysics_Body_Face_Slice *)data;
+   EPhysics_Body *body = face_slice->body;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if ((w == body->size.w) && (h == body->size.h))
+     return;
+
+   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, w, h, body->size.d);
+
+   face = _ephysics_body_face_evas_object_get(body, face_slice->face);
+
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_resize(body, w, h, body->size.d);
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        _ephysics_body_soft_body_slices_clean(face_slice->slices);
+        _ephysics_body_soft_body_slices_init(body, face->obj,
+                                             face_slice->slices);
+     }
+
+   ephysics_world_lock_release(body->world);
+}
+
+static void
 _ephysics_body_cloth_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
+   EPhysics_Body_Face_Slice *face_slice;
    int obj_x, obj_y, obj_w, obj_h, bz, bd;
    double rate;
 
@@ -4806,12 +4836,14 @@ _ephysics_body_cloth_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Fac
      }
 
    _ephysics_body_face_evas_object_add(body, face, evas_obj,
-                                       _ephysics_body_evas_obj_resize_cb);
+                                       _ephysics_body_soft_body_face_resize_cb);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
                                   _ephysics_body_face_obj_del_cb, body);
 
    if (!use_obj_pos)
      return;
+
+   face_slice = _ephysics_body_face_slice_get(body, face);
 
    rate = ephysics_world_rate_get(body->world);
    evas_object_geometry_get(evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
@@ -4821,8 +4853,8 @@ _ephysics_body_cloth_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Fac
    _ephysics_body_geometry_set(body, obj_x, obj_y, bz, obj_w, obj_h, bd, rate);
    ephysics_world_lock_release(body->world);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
-                                  _ephysics_body_evas_obj_resize_cb,
-                                  body);
+                                  _ephysics_body_soft_body_face_resize_cb,
+                                  face_slice);
 }
 
 static Evas_Object *
@@ -4871,7 +4903,7 @@ _ephysics_body_cloth_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_F
           {
              Evas_Object *obj = face_obj->obj;
              _ephysics_body_face_obj_unset(
-                obj, _ephysics_body_evas_obj_resize_cb);
+                obj, _ephysics_body_soft_body_face_resize_cb);
              body->face_objs = eina_list_remove(body->face_objs, face_obj);
              free(face_obj);
              return obj;
@@ -4925,8 +4957,7 @@ _ephysics_body_ellipsoid_face_evas_object_clean(EPhysics_Body *body, EPhysics_Bo
    evas_object_map_enable_set(face_obj->obj, EINA_FALSE);
    evas_object_event_callback_del(face_obj->obj, EVAS_CALLBACK_DEL,
                                _ephysics_body_ellipsoid_face_evas_object_del_cb);
-   evas_object_event_callback_del(face_obj->obj, EVAS_CALLBACK_RESIZE,
-                                  _ephysics_body_evas_obj_resize_cb);
+
    evas_object_event_callback_del(face_obj->obj, EVAS_CALLBACK_RESTACK,
                                   _ephysics_body_soft_body_evas_restack_cb);
    _ephysics_body_soft_body_slices_clean(slices);
@@ -4974,6 +5005,9 @@ _ephysics_body_ellipsoid_face_evas_object_set(EPhysics_Body *body, EPhysics_Body
    if (face_obj)
         _ephysics_body_ellipsoid_face_evas_object_clean(body, face_obj,
                                                         face_slice->slices);
+
+   evas_object_geometry_get(evas_obj, NULL, NULL, &obj_w, &obj_h);
+   if (!obj_w && !obj_h) evas_object_resize(evas_obj, 1, 1);
 
    _ephysics_body_face_evas_object_add(body, face, evas_obj,
                                     _ephysics_body_ellipsoid_face_obj_resize_cb);
