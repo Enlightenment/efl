@@ -2588,7 +2588,7 @@ AC_MSG_NOTICE([Ecore_X checks])
 ### Additional options to configure
 
 AC_ARG_ENABLE([gesture],
-   [AC_HELP_STRING([--enable-gesture], [enable X11 Gestures and Input2.])],
+   [AC_HELP_STRING([--enable-gesture], [enable X11 Gesture extension support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gesture="yes"
@@ -2599,7 +2599,7 @@ AC_ARG_ENABLE([gesture],
    [want_gesture="no"])
 
 AC_ARG_ENABLE([xinput2],
-   [AC_HELP_STRING([--disable-xinput2], [disable X11 XInput2.h usage])],
+   [AC_HELP_STRING([--disable-xinput2], [disable X11 XInput v2.x support])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_xinput2="yes"
@@ -2608,6 +2608,17 @@ AC_ARG_ENABLE([xinput2],
     fi
    ],
    [want_xinput2="yes"])
+
+AC_ARG_ENABLE([xinput22],
+   [AC_HELP_STRING([--enable-xinput22], [enable X11 XInput v2.2+ support])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_xinput22="yes"
+    else
+       want_xinput22="no"
+    fi
+   ],
+   [want_xinput22="no"])
 
 AC_ARG_ENABLE([xim],
    [AC_HELP_STRING([--disable-xim], [disable X Input Method.])],
@@ -2752,7 +2763,9 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    fi
    if test "${want_xinput2}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice])
-      ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi], [XIGrabTouchBegin])
+   fi
+   if test "${want_xinput22}" = "yes"; then
+      ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi],[XIGrabTouchBegin])
    fi
 
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
@@ -3425,7 +3438,7 @@ echo
 echo "Ecore Graphic systems:"
 echo
 
-echo "  Ecore_X....................: ${with_x11} (pixman=${want_pixman}) (gesture=${want_gesture}) (xinput2=${want_xinput2})"
+echo "  Ecore_X....................: ${with_x11} (xgesture=${want_gesture}) (xi2=${want_xinput2}) (xi2.2=${want_xinput22})"
 echo "  Ecore_Win32................: $have_win32"
 echo "  Ecore_Cocoa................: $have_ecore_cocoa"
 echo "  Ecore_SDL..................: $want_sdl"
