@@ -2432,10 +2432,6 @@ static void _x_send_key_event(const KeyEvent &key)
 
    XGetInputFocus(display, &winFocus, &revert);
 
-   // Send a fake key press event to the window.
-   XSelectInput(display, winFocus, FocusChangeMask|KeyPressMask|KeyReleaseMask);
-   XMapWindow(display, winFocus);
-
    unsigned int modifier = scim_x11_keymask_scim_to_x11(display, key.mask);
    XKeyEvent event;
    if (key.is_key_press())
