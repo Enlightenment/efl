@@ -87,6 +87,7 @@ Fixes:
    * Simplify test in elm_entry_text_set.
    * Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
    * Make sure private data is not NULL in elm_interface_scrollable.
+   * Correctly handle failure case in _x11_notify_handler_image.
 
 Removals:
 
