@@ -105,7 +105,6 @@ _world_populate(Test_Data *test_data)
    elm_image_file_set(
       evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "green-flag");
    evas_object_move(evas_obj, 150 + 12, FLOOR_Y - 280 + 14);
-   evas_object_resize(evas_obj, 180, 126);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
@@ -120,6 +119,8 @@ _world_populate(Test_Data *test_data)
    test_data->bodies = eina_list_append(test_data->bodies, flag_body);
    ephysics_body_cloth_anchor_full_add(flag_body, pole_body,
                                        EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT);
+
+   evas_object_resize(evas_obj, 180, 126);
 
    dragging->body = flag_body;
    ephysics_body_data_set(flag_body, dragging);

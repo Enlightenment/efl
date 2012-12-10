@@ -60,6 +60,18 @@ struct _EPhysics_Body_Face_Obj {
 };
 
 static void
+_ephysics_body_cloth_anchor_mass_reset(EPhysics_Body *body)
+{
+   double anchor_mass;
+   anchor_mass = 1 / (body->soft_body->m_nodes.size() * 0.025);
+
+   for (int i = 0; i < body->soft_body->m_anchors.size(); i++)
+     body->soft_body->m_anchors[i].m_node->m_im = anchor_mass;
+
+   DBG("Cloth anchors mass reset.");
+}
+
+static void
 _ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Evas_Object *evas_obj, Eina_List *slices)
 {
    double rate;
@@ -994,10 +1006,13 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
      }
    else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      {
+        body->soft_body->setTotalMass(body->mass, true);
         body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
         body->soft_body->scale(body_scale);
         _ephysics_body_transform_set(body, trans);
         _ephysics_body_cloth_constraints_rebuild(body);
+        body->soft_body->setTotalMass(body->mass, false);
+        _ephysics_body_cloth_anchor_mass_reset(body);
      }
    else
      {
@@ -1023,6 +1038,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
+   Evas_Coord bx, by, bz;
    double rate, sx, sy, sz;
    btVector3 body_scale, center;
    btTransform trans;
@@ -1031,6 +1047,8 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    sx = w / rate;
    sy = h / rate;
    sz = d / rate;
+
+   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
 
    body_scale = btVector3(sx, sy, sz);
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
@@ -1047,9 +1065,9 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
      }
    else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      {
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
-        body->soft_body->scale(body_scale);
-        _ephysics_body_cloth_constraints_rebuild(body);
+        ephysics_body_geometry_get(body, &bx, &by, &bz, NULL, NULL, NULL);
+        _ephysics_body_geometry_set(body, bx, by, bz, w, h, d, rate);
+        return;
      }
    else
      {
@@ -1065,8 +1083,6 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body->scale = body_scale;
 
    ephysics_body_activate(body, EINA_TRUE);
-
-   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
 }
 
 static void
@@ -1122,6 +1138,14 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
 
    ephysics_world_lock_take(body->world);
    _ephysics_body_resize(body, w, h, body->size.d);
+
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        _ephysics_body_soft_body_slices_clean(body->default_face->slices);
+        _ephysics_body_soft_body_slices_init(body, body->evas_obj,
+                                             body->default_face->slices);
+     }
+
    ephysics_world_lock_release(body->world);
 }
 
@@ -2029,7 +2053,6 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
 {
    int rows;
    int columns;
-   double anchor_mass;
 
    if (!body1 || !body2)
      {
@@ -2052,48 +2075,38 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
 
    rows = body1->cloth_rows + 1;
    columns = body1->cloth_columns + 1;
-   anchor_mass = body1->soft_body->m_nodes.size() * 0.025;
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT)
      {
         for (int i = 0; i < rows; i++)
-          {
-             body1->soft_body->setMass(i, anchor_mass);
-             body1->soft_body->appendAnchor(i, body2->rigid_body);
-          }
-        return;
+          body1->soft_body->appendAnchor(i, body2->rigid_body);
+        goto mass_reset;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT)
      {
         for (int i = 1; i <= rows; i++)
-          {
-             body1->soft_body->setMass((rows * columns) - i, anchor_mass);
-             body1->soft_body->appendAnchor((rows * columns) - i,
-                                            body2->rigid_body);
-          }
-        return;
+          body1->soft_body->appendAnchor((rows * columns) - i,
+                                         body2->rigid_body);
+        goto mass_reset;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_BOTTOM)
      {
         for (int i = 0; i <= rows; i++)
-          {
-             body1->soft_body->setMass((i * rows), anchor_mass);
-             body1->soft_body->appendAnchor(i * rows, body2->rigid_body);
-          }
-        return;
+          body1->soft_body->appendAnchor(i * rows, body2->rigid_body);
+        goto mass_reset;
      }
 
    if (side == EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_TOP)
      {
         for (int i = 0; i < columns; i++)
-          {
-             body1->soft_body->setMass((rows - 1) + rows * i, anchor_mass);
-             body1->soft_body->appendAnchor((rows - 1) + rows * i,
-                                           body2->rigid_body);
-          }
+          body1->soft_body->appendAnchor((rows - 1) + rows * i,
+                                         body2->rigid_body);
      }
+
+ mass_reset:
+   _ephysics_body_cloth_anchor_mass_reset(body1);
 }
 
 EAPI void
@@ -2113,6 +2126,7 @@ ephysics_body_cloth_anchor_add(EPhysics_Body *body1, EPhysics_Body *body2, int n
      }
 
    body1->soft_body->appendAnchor(node, body2->rigid_body);
+   _ephysics_body_cloth_anchor_mass_reset(body1);
 }
 
 EAPI void
@@ -2131,6 +2145,7 @@ ephysics_body_cloth_anchor_del(EPhysics_Body *body)
      }
 
    body->soft_body->m_anchors.resize(0);
+   body->soft_body->setTotalMass(body->mass);
 }
 
 static Eina_List *
