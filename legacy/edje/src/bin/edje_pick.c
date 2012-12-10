@@ -1274,7 +1274,6 @@ main(int argc, char **argv)
    EINA_LIST_FOREACH(inp_files, f, context.current_file)
      {
         /* Write Scripts from ALL files */
-        Edje_File *edf;
         Edje_Pick_Data *s;
         Edje_Pick_Tone *tn;
         Eina_List *t;
@@ -1298,8 +1297,6 @@ main(int argc, char **argv)
                             buf, s->data, s->size));
              eet_write(out_file->ef, buf, s->data, s->size, comp_mode);
           }
-
-        edf = context.current_file->edf;
 
         EINA_LIST_FOREACH(context.current_file->imagelist, t, s)
           {
