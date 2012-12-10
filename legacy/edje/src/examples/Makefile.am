@@ -56,7 +56,8 @@ if ENABLE_EPHYSICS
 EDCS += \
 physics_actions.edc \
 physics_basic.edc \
-physics_complex.edc
+physics_complex.edc \
+physics_soft_bodies.edc
 endif
 
 .edc.edj:

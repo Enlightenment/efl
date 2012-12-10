@@ -528,6 +528,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", physics.sleep.angular, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", physics.material, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", physics.density, EET_T_DOUBLE); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", physics.hardness, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", physics.ignore_part_pos, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", physics.light_on, EET_T_UCHAR); \
    }
@@ -603,6 +604,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", Dec.physics.sleep.angular, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", Dec.physics.material, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", Dec.physics.density, EET_T_DOUBLE); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", Dec.physics.hardness, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", Dec.physics.ignore_part_pos, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", Dec.physics.light_on, EET_T_UCHAR); \
    }

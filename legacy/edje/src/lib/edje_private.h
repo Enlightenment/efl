@@ -423,7 +423,8 @@ typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 #define EDJE_STATE_PARAM_PHYSICS_DENSITY 49
 #define EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS 50
 #define EDJE_STATE_PARAM_PHYSICS_LIGHT_ON 51
-#define EDJE_STATE_PARAM_LAST           52
+#define EDJE_STATE_PARAM_PHYSICS_HARDNESS 52
+#define EDJE_STATE_PARAM_LAST           53
 
 #define EDJE_ENTRY_EDIT_MODE_NONE 0
 #define EDJE_ENTRY_EDIT_MODE_SELECTABLE 1
@@ -980,6 +981,7 @@ struct _Edje_Part_Description_Common
       double restitution;
       double friction;
       double density;
+      double hardness;
       struct {
          double linear;
          double angular;
@@ -1328,6 +1330,7 @@ struct _Edje_Calc_Params
       double restitution; // 8
       double friction; // 8
       double density; // 8
+      double hardness; // 8
       struct {
          double linear; //8
          double angular; //8
@@ -1339,7 +1342,7 @@ struct _Edje_Calc_Params
       unsigned char material; // 1
       unsigned char light_on; // 1
       unsigned char ignore_part_pos; //1
-   } physics; // 67
+   } physics; // 75
 #endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;

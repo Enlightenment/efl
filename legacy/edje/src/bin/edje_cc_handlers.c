@@ -317,6 +317,7 @@ static void st_collections_group_parts_part_description_physics_damping(void);
 static void st_collections_group_parts_part_description_physics_sleep(void);
 static void st_collections_group_parts_part_description_physics_material(void);
 static void st_collections_group_parts_part_description_physics_density(void);
+static void st_collections_group_parts_part_description_physics_hardness(void);
 static void st_collections_group_parts_part_description_physics_ignore_part_pos(void);
 static void st_collections_group_parts_part_description_physics_light_on(void);
 #endif
@@ -608,6 +609,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
      {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
      {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
+     {"collections.group.parts.part.description.physics.hardness", st_collections_group_parts_part_description_physics_hardness},
      {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
      {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
 #endif
@@ -1103,6 +1105,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
    result->physics.friction = FROM_DOUBLE(0.5);
    result->physics.sleep.linear = FROM_DOUBLE(24);
    result->physics.sleep.angular = FROM_DOUBLE(57.29);
+   result->physics.hardness = FROM_DOUBLE(1.0);
    result->physics.ignore_part_pos = 1;
 #endif
 
@@ -7201,6 +7204,7 @@ st_collections_group_parts_part_description_table_min(void)
             sleep: 32 18.9;
             material: IRON;
             density: 3.2;
+            hardness: 0.42;
             light_on: 1;
         }
         ..
@@ -7438,6 +7442,32 @@ st_collections_group_parts_part_description_physics_density(void)
    check_arg_count(1);
 
    current_desc->physics.density = parse_float(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        hardness
+    @parameters
+        [soft bodie or cloth hardness]
+    @effect
+        The hardness is set with a double value (0.0 - 1.0), defining
+        how the soft body is supposed to deform.
+        Its default is set to 1.0. The soft body mass will also interfere on
+        soft body deformation, so bare in mind that the bodies mass must also
+        be changed to have different deformation results.
+        Valid values vary from 0.0 to 1.0. Only works on soft bodies and cloths.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_hardness(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.hardness = parse_float_range(0, 0, 1.0);
 }
 #endif
 

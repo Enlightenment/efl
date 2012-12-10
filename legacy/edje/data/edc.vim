@@ -47,7 +47,7 @@ syn keyword	cLabel		external params size_range border_scale minmul
 
 syn keyword	cLabel		mass density material restitution friction
 syn keyword	cLabel		ignore_part_pos light_on damping sleep
-syn keyword	cLabel		physics_body
+syn keyword	cLabel		physics_body hardness
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do

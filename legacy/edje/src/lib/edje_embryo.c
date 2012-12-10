@@ -2302,6 +2302,11 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 GETFLOAT_T(rp->custom->description->physics.density, params[3]);
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_HARDNESS:
+	 CHKPARAM(3);
+
+	 GETFLOAT_T(rp->custom->description->physics.hardness, params[3]);
+	 break;
       case EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS:
 	 CHKPARAM(3);
 
@@ -2805,6 +2810,11 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 CHKPARAM(3);
 
 	 SETFLOAT_T(rp->custom->description->physics.density, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_HARDNESS:
+	 CHKPARAM(3);
+
+	 SETFLOAT_T(rp->custom->description->physics.hardness, params[3]);
 	 break;
       case EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS:
 	 CHKPARAM(3);

@@ -2305,6 +2305,7 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.sleep.angular = desc->physics.sleep.angular;
    params->physics.material = desc->physics.material;
    params->physics.density = desc->physics.density;
+   params->physics.hardness = desc->physics.hardness;
    params->physics.ignore_part_pos = desc->physics.ignore_part_pos;
    params->physics.light_on = desc->physics.light_on;
 #endif
@@ -2487,6 +2488,12 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
              else
                ephysics_body_mass_set(ep->body, pf->physics.mass);
           }
+
+        if ((ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_BOX) ||
+            (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE) ||
+            (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_CLOTH))
+          ephysics_body_soft_body_hardness_set(ep->body,
+                                               pf->physics.hardness * 100);
      }
 
    if (!pf->physics.material)
@@ -2953,6 +2960,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                                p2->physics.friction, pos));
         p3->physics.density = TO_DOUBLE(FINTP(p1->physics.density,
                                               p2->physics.density, pos));
+        p3->physics.hardness = TO_DOUBLE(FINTP(p1->physics.hardness,
+                                               p2->physics.hardness, pos));
 
         p3->physics.damping.linear = TO_DOUBLE(FINTP(
               p1->physics.damping.linear, p2->physics.damping.linear, pos));
