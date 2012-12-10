@@ -212,6 +212,8 @@
  * physics_set_ang_velocity(part_id, Float:x, Float:y, Float:z)
  * physics_get_ang_velocity(part_id, &Float:x, &Float:y, &Float:z)
  * physics_stop(part_id)
+ * physics_set_rotation(part_id, Float:w, Float:x, Float:y, Float:z)
+ * physics_get_rotation(part_id, &Float:w, &Float:x, &Float:y, &Float:z)
  *
  * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  *
@@ -3410,6 +3412,71 @@ _edje_embryo_fn_physics_stop(Embryo_Program *ep, Embryo_Cell *params)
 
    return 0;
 }
+
+/* physics_set_rotation(part_id, Float:w, Float:x, Float:y, Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_set_rotation(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(5);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if ((rp) && (rp->body))
+     {
+        EPhysics_Quaternion quat;
+        double w, x, y, z;
+
+        w = (double) EMBRYO_CELL_TO_FLOAT(params[2]);
+        x = (double) EMBRYO_CELL_TO_FLOAT(params[3]);
+        y = (double) EMBRYO_CELL_TO_FLOAT(params[4]);
+        z = (double) EMBRYO_CELL_TO_FLOAT(params[5]);
+
+        ephysics_quaternion_set(&quat, x, y, z, w);
+        ephysics_quaternion_normalize(&quat);
+        ephysics_body_rotation_set(rp->body, &quat);
+     }
+
+   return 0;
+}
+
+/* physics_get_rotation(part_id, &Float:w, &Float:x, &Float:y, &Float:z) */
+static Embryo_Cell
+_edje_embryo_fn_physics_get_rotation(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje_Real_Part *rp;
+   int part_id = 0;
+   Edje *ed;
+
+   CHKPARAM(5);
+
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if ((rp) && (rp->body))
+     {
+        EPhysics_Quaternion quat;
+        double w, x, y, z;
+
+        ephysics_body_rotation_get(rp->body, &quat);
+        ephysics_quaternion_get(&quat, &x, &y, &z, &w);
+
+        SETFLOAT(w, params[2]);
+        SETFLOAT(x, params[3]);
+        SETFLOAT(y, params[4]);
+        SETFLOAT(z, params[5]);
+     }
+
+   return 0;
+}
 #endif
 
 void
@@ -3520,6 +3587,8 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "physics_set_ang_velocity", _edje_embryo_fn_physics_set_ang_velocity);
    embryo_program_native_call_add(ep, "physics_get_ang_velocity", _edje_embryo_fn_physics_get_ang_velocity);
    embryo_program_native_call_add(ep, "physics_stop", _edje_embryo_fn_physics_stop);
+   embryo_program_native_call_add(ep, "physics_set_rotation", _edje_embryo_fn_physics_set_rotation);
+   embryo_program_native_call_add(ep, "physics_get_rotation", _edje_embryo_fn_physics_get_rotation);
 #endif
 }
 

@@ -245,6 +245,8 @@ native       play_tone        (tone_name[], Float:duration);
  * physics_set_velocity(PART:"logo", 40.5, 0, 0);
  * physics_set_ang_velocity(PART:"logo", 0, 0, -3);
  * physics_stop(PART:"logo");
+ *
+ * physics_set_rotation(PART:"logo", 0.707, 0, 0, 0.707);
  */
 native       physics_impulse          (part_id, Float:x, Float:y, Float:z);
 native       physics_torque_impulse   (part_id, Float:x, Float:y, Float:z);
@@ -260,3 +262,6 @@ native       physics_get_velocity     (part_id, &Float:x, &Float:y, &Float:z);
 native       physics_set_ang_velocity (part_id, Float:x, Float:y, Float:z);
 native       physics_get_ang_velocity (part_id, &Float:x, &Float:y, &Float:z);
 native       physics_stop             (part_id);
+
+native       physics_set_rotation     (part_id, Float:w, Float:x, Float:y, Float:z);
+native       physics_get_rotation     (part_id, &Float:w, &Float:x, &Float:y, &Float:z);

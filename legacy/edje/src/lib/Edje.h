@@ -4155,7 +4155,8 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_PHYSICS_VEL_SET          = 20, /**< @since 1.8 */
    EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET      = 21, /**< @since 1.8 */
    EDJE_ACTION_TYPE_PHYSICS_STOP             = 22, /**< @since 1.8 */
-   EDJE_ACTION_TYPE_LAST                     = 23
+   EDJE_ACTION_TYPE_PHYSICS_ROT_SET          = 23, /**< @since 1.8 */
+   EDJE_ACTION_TYPE_LAST                     = 24
 } Edje_Action_Type;
 
 /**

@@ -23,6 +23,9 @@
  * signal counterclockwise velocity -> will set a counterclockwise velocity
  *                                   in blue ball
  * signal stop velocity -> will stop the blue ball
+ * signal clockwise rotation -> will rotate blue ball 90o degrees clockwise
+ * signal counterclockwise rotation -> will rotate blue ball 90o degrees
+ *                                     counterclockwise
  *
  * message 1 FLOAT_SET 3 50 -100 0 -> apply an impulse on blue ball with
  *    x = 50, y = -100, z = 0, for example
@@ -48,6 +51,9 @@
  * message 11 STRING "blue_circle" -> return a message with part's angular
  *    velocity.
  * message 12 STRING "blue_circle" -> stop the part.
+ * message 13 FLOAT_SET 4 0.707 0 0 0.707 -> set blue ball rotation with
+ *    quaternion w = 0.707, x = 0, y = 0, z = 0.707
+ * message 14 STRING "blue_circle" -> return a message with part's rotation
  */
 
 #define ID_IMPULSE (1)
@@ -62,6 +68,8 @@
 #define ID_ANG_VEL_SET (10)
 #define ID_ANG_VEL_GET (11)
 #define ID_STOP (12)
+#define ID_ROT_SET (13)
+#define ID_ROT_GET (14)
 
 collections {
 
@@ -177,6 +185,25 @@ collections {
                pid = get_part_id(name);
                if (!pid) return;
                physics_stop(pid);
+            }
+            else if ((id == ID_ROT_SET) && (type == MSG_FLOAT_SET)) {
+               new Float:w, Float:x, Float:y, Float:z;
+               new n = numargs();
+               if (n < 6) return;
+               w = getfarg(2);
+               x = getfarg(3);
+               y = getfarg(4);
+               z = getfarg(5);
+               physics_set_rotation(PART:"blue_circle", w, x, y, z);
+            }
+            else if ((id == ID_ROT_GET) && (type == MSG_STRING)) {
+               new Float:w, Float:x, Float:y, Float:z;
+               new pid, name[1024];
+               getsarg(2, name, sizeof(name));
+               pid = get_part_id(name);
+               if (!pid) return;
+               physics_get_rotation(pid, w, x, y, z);
+               send_message(MSG_FLOAT_SET, id, w, x, y, z);
             }
          }
       }
@@ -448,6 +475,22 @@ collections {
             signal: "stop";
             source: "velocity";
             action: PHYSICS_STOP;
+            target: "blue_circle";
+         }
+
+         program {
+            name: "rotation_clockwise";
+            signal: "clockwise";
+            source: "rotation";
+            action: PHYSICS_ROT_SET 0.707 0 0 0.707;
+            target: "blue_circle";
+         }
+
+         program {
+            name: "rotation_counterclockwise";
+            signal: "counterclockwise";
+            source: "rotation";
+            action: PHYSICS_ROT_SET 0.707 0 0 -0.707;
             target: "blue_circle";
          }
 

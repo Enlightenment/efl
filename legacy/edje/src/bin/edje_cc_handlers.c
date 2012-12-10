@@ -8230,7 +8230,7 @@ st_collections_group_programs_program_in(void)
         FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE,
         PHYSICS_IMPULSE, PHYSICS_TORQUE_IMPULSE, PHYSICS_FORCE, PHYSICS_TORQUE,
         PHYSICS_FORCES_CLEAR, PHYSICS_VEL_SET, PHYSICS_ANG_VEL_SET,
-        PHYSICS_STOP
+        PHYSICS_STOP, PHYSICS_ROT_SET
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP;\n
@@ -8252,6 +8252,7 @@ st_collections_group_programs_program_in(void)
            action: PHYSICS_VEL_SET 40.9 0 0;\n
            action: PHYSICS_ANG_VEL_SET 12.4 0 0.66;\n
            action: PHYSICS_STOP;\n
+           action: PHYSICS_ROT_SET 0.707 0 0 0.707;\n
     @endproperty
 */
 static void
@@ -8288,6 +8289,7 @@ st_collections_group_programs_program_action(void)
                            "PHYSICS_ANG_VEL_SET",
                            EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET,
                            "PHYSICS_STOP", EDJE_ACTION_TYPE_PHYSICS_STOP,
+                           "PHYSICS_ROT_SET", EDJE_ACTION_TYPE_PHYSICS_ROT_SET,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -8385,6 +8387,13 @@ st_collections_group_programs_program_action(void)
         ep->physics.y = parse_float(2);
         ep->physics.z = parse_float(3);
      }
+   else if (ep->action == EDJE_ACTION_TYPE_PHYSICS_ROT_SET)
+     {
+        ep->physics.w = parse_float(1);
+        ep->physics.x = parse_float(2);
+        ep->physics.y = parse_float(3);
+        ep->physics.z = parse_float(4);
+     }
 #endif
 
    switch (ep->action)
@@ -8410,6 +8419,7 @@ st_collections_group_programs_program_action(void)
         check_arg_count(4);
         break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
+      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
         check_arg_count(5);
         break;
       default:
@@ -8612,6 +8622,7 @@ st_collections_group_programs_program_target(void)
            case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
            case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
            case EDJE_ACTION_TYPE_PHYSICS_STOP:
+           case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
 #endif
               data_queue_part_lookup(pc, name, &(et->id));
               break;

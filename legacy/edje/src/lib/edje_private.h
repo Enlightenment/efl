@@ -659,6 +659,7 @@ struct _Edje_Program /* a conditional program to be run */
 #ifdef HAVE_EPHYSICS
    /* used for actions related to physics, as physics impulses and forces */
    struct {
+      double w;
       double x;
       double y;
       double z;
