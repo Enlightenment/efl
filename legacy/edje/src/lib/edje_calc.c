@@ -3160,10 +3160,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 }
               else
 #endif
-	      eo_do(ep->object, 
-		    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
+	      eo_do(ep->object,
+		    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
+	      eo_do(ep->object,
 		    evas_obj_size_set(pf->w, pf->h));
-             
+
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */
                    /* Not really needed but will improve the bounding box evaluation done by Evas */
