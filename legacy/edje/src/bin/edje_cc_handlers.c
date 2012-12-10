@@ -8682,7 +8682,7 @@ edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new)
 {
    Edje_Cc_Handlers_Hierarchy_Info *item;
    Eina_Array_Iterator iterator;
-   unsigned int i;       
+   unsigned int i;
 
    EINA_ARRAY_ITER_NEXT(part_hierarchy, i, item, iterator)
      {
