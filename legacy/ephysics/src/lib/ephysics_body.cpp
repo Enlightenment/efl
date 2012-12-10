@@ -271,10 +271,12 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina
    Evas_Coord w, h;
    Eina_List *l;
    Evas *evas;
+   Evas_Object *parent;
 
    evas = evas_object_evas_get(obj);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
+   parent = evas_object_smart_parent_get(obj);
    EINA_LIST_FOREACH(slices, l, slice_data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *) slice_data;
@@ -289,6 +291,8 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj, Eina
         evas_object_event_callback_add(slice->evas_obj, EVAS_CALLBACK_DEL,
                                        _ephysics_body_soft_body_slice_del_cb,
                                        slice);
+
+        if (parent) evas_object_smart_member_add(slice->evas_obj, parent);
      }
 
    if (slice)
@@ -487,13 +491,10 @@ static void
 _ephysics_body_transform_set(EPhysics_Body *body, btTransform trans)
 {
    btTransform origin;
-   btTransform dest;
 
    if (body->type != EPHYSICS_BODY_TYPE_RIGID)
      {
         origin = _ephysics_body_transform_get(body);
-        dest.setIdentity();
-        dest.setOrigin(trans.getOrigin() / origin.getOrigin());
         body->soft_body->translate(trans.getOrigin() - origin.getOrigin());
         return;
      }
@@ -965,7 +966,6 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
 {
    double rate, sx, sy, sz;
    btVector3 body_scale, center;
-   btScalar radius;
    btTransform trans;
 
    rate = ephysics_world_rate_get(body->world);
@@ -976,12 +976,12 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body_scale = btVector3(sx, sy, sz);
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
+        trans = _ephysics_body_transform_get(body);
+
         body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
         body->soft_body->scale(body_scale);
 
-        body->soft_body->getCollisionShape()->getBoundingSphere(center, radius);
-        trans.setIdentity();
-        trans.setOrigin(center);
+        _ephysics_body_transform_set(body, trans);
         body->rigid_body->proceedToTransform(trans);
 
         _ephysics_body_soft_body_constraints_rebuild(body);
@@ -1032,6 +1032,12 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
 
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      _ephysics_body_transform_set(body, trans);
+   else if (body->type == EPHYSICS_BODY_TYPE_SOFT)
+     {
+        _ephysics_body_transform_set(body, trans);
+        body->rigid_body->proceedToTransform(trans);
+        body->rigid_body->getMotionState()->setWorldTransform(trans);
+     }
    else
      {
         body->rigid_body->proceedToTransform(trans);
@@ -1113,6 +1119,7 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
      return;
 
    DBG("Resizing body %p to w=%i, h=%i, d=%i", body, w, h, body->size.d);
+
    ephysics_world_lock_take(body->world);
    _ephysics_body_resize(body, w, h, body->size.d);
    ephysics_world_lock_release(body->world);
@@ -2432,7 +2439,7 @@ ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coo
              ny = node->m_x.y();
              nz = node->m_x.z();
 
-             if ((nz > zz || nz < dd) || (nx < xx || nx > xx + ww) ||
+             if ((nz < zz || nz > zz + dd) || (nx < xx || nx > xx + ww) ||
                  (ny > yy || ny < yy - hh))
                out++;
           }
@@ -3269,6 +3276,9 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
 
    if (body->soft_body)
      {
+        evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+        if (!obj_w && !obj_h) evas_object_resize(body->evas_obj, 1, 1);
+
         evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESTACK,
                                  _ephysics_body_soft_body_evas_restack_cb, body);
         _ephysics_body_soft_body_slices_init(body, body->evas_obj,

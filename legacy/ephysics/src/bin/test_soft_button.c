@@ -9,7 +9,7 @@ _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
 {
    EPhysics_Body *body = data;
    Evas_Event_Mouse_Down *mdown = event_info;
-   Evas_Coord w, h, x, y, z, zz, d;
+   Evas_Coord w, h, x, y, z, d;
    Eina_List *triangles;
    int *ldata;
 
@@ -19,10 +19,9 @@ _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
    h = 80;
    x = mdown->output.x - (w / 2);
    y = mdown->output.y - (h / 2);
-   zz = z + (d / 2);
    d = d / 2;
 
-   triangles = ephysics_body_soft_body_triangles_inside_get(body, x, y, zz,
+   triangles = ephysics_body_soft_body_triangles_inside_get(body, x, y, z,
                                                             w, h, d);
    ephysics_body_soft_body_triangle_list_impulse_apply(body, triangles, 0, 0,
                                                        200);
@@ -34,7 +33,7 @@ static void
 _soft_ellipsoid_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *back_face)
 {
    EPhysics_Body *body;
-   Evas_Coord w, h;
+   Evas_Coord x, y, w, h;
 
 
    body = ephysics_body_soft_ellipsoid_add(test_data->world, 500);
@@ -51,8 +50,8 @@ _soft_ellipsoid_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *
                                       EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK,
                                       back_face, EINA_TRUE);
 
-   ephysics_body_geometry_get(body, NULL, NULL, NULL, &w, &h, NULL);
-   ephysics_body_resize(body, w, h, h);
+   ephysics_body_geometry_get(body, &x, &y, NULL, &w, &h, NULL);
+   ephysics_body_geometry_set(body, x, y, 30, w, h, h);
 
    ephysics_body_linear_movement_enable_set(body, EINA_FALSE, EINA_FALSE,
                                             EINA_FALSE);
