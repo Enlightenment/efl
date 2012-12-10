@@ -126,10 +126,6 @@ $(top_builddir)/src/lib/ecore_x/ecore_x_version.h
 BUILT_SOURCES += \
 $(top_builddir)/src/lib/ecore_x/ecore_x_version.h
 
-$(top_builddir)/src/lib/ecore_x/ecore_x_version.h: $(top_srcdir)/src/lib/ecore_x/ecore_x_version.h.in $(top_builddir)/Makefile
-	$(SED) -e 's/[@]VMAJ[@]/$(VMAJ)/g;s/[@]VMIN[@]/$(VMIN)/g;s/[@]HAVE_ECORE_X_BACKEND[@]/$(HAVE_ECORE_X_BACKEND)/g' $< > $@
-
-
 if HAVE_ECORE_X_XCB
 MAINTAINERCLEANFILES += \
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h \
