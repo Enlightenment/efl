@@ -2308,6 +2308,13 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.hardness = desc->physics.hardness;
    params->physics.ignore_part_pos = desc->physics.ignore_part_pos;
    params->physics.light_on = desc->physics.light_on;
+   params->physics.mov_freedom.lin.x = desc->physics.mov_freedom.lin.x;
+   params->physics.mov_freedom.lin.y = desc->physics.mov_freedom.lin.y;
+   params->physics.mov_freedom.lin.z = desc->physics.mov_freedom.lin.z;
+   params->physics.mov_freedom.ang.x = desc->physics.mov_freedom.ang.x;
+   params->physics.mov_freedom.ang.y = desc->physics.mov_freedom.ang.y;
+   params->physics.mov_freedom.ang.z = desc->physics.mov_freedom.ang.z;
+   params->physics.backcull = desc->physics.backcull;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2464,6 +2471,14 @@ _edje_physics_world_geometry_check(EPhysics_World *world)
 static void
 _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_Bool pos_update)
 {
+   ephysics_body_linear_movement_enable_set(ep->body,
+                                            pf->physics.mov_freedom.lin.x,
+                                            pf->physics.mov_freedom.lin.y,
+                                            pf->physics.mov_freedom.lin.z);
+   ephysics_body_angular_movement_enable_set(ep->body,
+                                             pf->physics.mov_freedom.ang.x,
+                                             pf->physics.mov_freedom.ang.y,
+                                             pf->physics.mov_freedom.ang.z);
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
      {
@@ -2507,6 +2522,7 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
    ephysics_body_sleeping_threshold_set(ep->body, pf->physics.sleep.linear,
                                         pf->physics.sleep.angular);
    ephysics_body_light_set(ep->body, pf->physics.light_on);
+   ephysics_body_back_face_culling_set(ep->body, pf->physics.backcull);
 }
 
 static void
@@ -2984,6 +3000,20 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           p3->physics.material = EPHYSICS_BODY_MATERIAL_CUSTOM;
 
         p3->physics.light_on = p1->physics.light_on || p2->physics.light_on;
+        p3->physics.backcull = p1->physics.backcull || p2->physics.backcull;
+
+        p3->physics.mov_freedom.lin.x = p1->physics.mov_freedom.lin.x ||
+           p2->physics.mov_freedom.lin.x;
+        p3->physics.mov_freedom.lin.y = p1->physics.mov_freedom.lin.y ||
+           p2->physics.mov_freedom.lin.y;
+        p3->physics.mov_freedom.lin.z = p1->physics.mov_freedom.lin.z ||
+           p2->physics.mov_freedom.lin.z;
+        p3->physics.mov_freedom.ang.x = p1->physics.mov_freedom.ang.x ||
+           p2->physics.mov_freedom.ang.x;
+        p3->physics.mov_freedom.ang.y = p1->physics.mov_freedom.ang.y ||
+           p2->physics.mov_freedom.ang.y;
+        p3->physics.mov_freedom.ang.z = p1->physics.mov_freedom.ang.z ||
+           p2->physics.mov_freedom.ang.z;
 #endif
 
         switch (part_type)

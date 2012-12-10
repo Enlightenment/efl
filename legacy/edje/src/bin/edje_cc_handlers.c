@@ -320,6 +320,9 @@ static void st_collections_group_parts_part_description_physics_density(void);
 static void st_collections_group_parts_part_description_physics_hardness(void);
 static void st_collections_group_parts_part_description_physics_ignore_part_pos(void);
 static void st_collections_group_parts_part_description_physics_light_on(void);
+static void st_collections_group_parts_part_description_physics_movement_freedom_linear(void);
+static void st_collections_group_parts_part_description_physics_movement_freedom_angular(void);
+static void st_collections_group_parts_part_description_physics_backface_cull(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
@@ -610,8 +613,11 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
      {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
      {"collections.group.parts.part.description.physics.hardness", st_collections_group_parts_part_description_physics_hardness},
+     {"collections.group.parts.part.description.physics.movement_freedom.linear", st_collections_group_parts_part_description_physics_movement_freedom_linear},
+     {"collections.group.parts.part.description.physics.movement_freedom.angular", st_collections_group_parts_part_description_physics_movement_freedom_angular},
      {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
      {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
+     {"collections.group.parts.part.description.physics.backface_cull", st_collections_group_parts_part_description_physics_backface_cull},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
@@ -860,6 +866,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.table", NULL},
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics", NULL},
+     {"collections.group.parts.part.description.physics.movement_freedom", NULL},
 #endif
      {"collections.group.parts.part.description.map", NULL},
      {"collections.group.parts.part.description.map.rotation", NULL},
@@ -1107,6 +1114,9 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
    result->physics.sleep.angular = FROM_DOUBLE(57.29);
    result->physics.hardness = FROM_DOUBLE(1.0);
    result->physics.ignore_part_pos = 1;
+   result->physics.mov_freedom.lin.x = 1;
+   result->physics.mov_freedom.lin.y = 1;
+   result->physics.mov_freedom.ang.z = 1;
 #endif
 
    return result;
@@ -7206,6 +7216,10 @@ st_collections_group_parts_part_description_table_min(void)
             density: 3.2;
             hardness: 0.42;
             light_on: 1;
+            movement_freedom {
+                linear: 1 1 0;
+                angular: 0 0 1;
+            }
         }
         ..
     }
@@ -7494,6 +7508,100 @@ st_collections_group_parts_part_description_physics_light_on(void)
 }
 #endif
 
+/**
+    @page edcref
+    @property
+        backface_cull
+    @parameters
+        [1 or 0]
+    @effect
+        This enables backface culling (when the rotated part that normally faces
+        the camera is facing away after being rotated etc.).
+        This means that the object will be hidden when "backface culled".
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_backface_cull(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.backcull = parse_bool(0);
+}
+#endif
+
+/**
+    @page edcref
+    @block
+        movement_freedom
+    @context
+    description {
+        ..
+        physics {
+            ...
+            movement_freedom {
+                linear: 1 1 0;
+                angular: 0 0 1;
+            }
+        }
+        ..
+    }
+
+    @description
+        The "movement_freedom" block consists of two blocks to describe all
+        the allowed movements for a body.
+        It's set by default to allow just 2D movement (linear moves on
+        x and y axis and rotations on x-y plane).
+    @endblock
+
+    @property
+        linear
+    @parameters
+        [x-axis (1 or 0)] [y-axis (1 or 0)] [z-axis (1 or 0)]
+    @effect
+        Block "linear" can be used to allow linear movements in the three
+        axes. Allowed values are 0 or 1.
+        Axes x and y are enabled by default.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_movement_freedom_linear(void)
+{
+   check_arg_count(3);
+
+   current_desc->physics.mov_freedom.lin.x = parse_bool(0);
+   current_desc->physics.mov_freedom.lin.y = parse_bool(1);
+   current_desc->physics.mov_freedom.lin.z = parse_bool(2);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        angular
+    @parameters
+        [x-axis (1 or 0)] [y-axis (1 or 0)] [z-axis (1 or 0)]
+    @effect
+        Block "angular" can be used to allow angular movements around the three
+        axes. Allowed values are 0 or 1.
+        Z axis is enabled by default.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_movement_freedom_angular(void)
+{
+   check_arg_count(3);
+
+   current_desc->physics.mov_freedom.ang.x = parse_bool(0);
+   current_desc->physics.mov_freedom.ang.y = parse_bool(1);
+   current_desc->physics.mov_freedom.ang.z = parse_bool(2);
+}
+#endif
 
 /**
    @edcsubsection{collections_group_parts_description_map,Map}

@@ -424,7 +424,10 @@ typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 #define EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS 50
 #define EDJE_STATE_PARAM_PHYSICS_LIGHT_ON 51
 #define EDJE_STATE_PARAM_PHYSICS_HARDNESS 52
-#define EDJE_STATE_PARAM_LAST           53
+#define EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_LIN 53
+#define EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_ANG 54
+#define EDJE_STATE_PARAM_PHYSICS_BACK_CULL 55
+#define EDJE_STATE_PARAM_LAST           56
 
 #define EDJE_ENTRY_EDIT_MODE_NONE 0
 #define EDJE_ENTRY_EDIT_MODE_SELECTABLE 1
@@ -991,6 +994,19 @@ struct _Edje_Part_Description_Common
          double linear;
          double angular;
       } sleep;
+      struct {
+         struct {
+            unsigned char x;
+            unsigned char y;
+            unsigned char z;
+         } lin;
+         struct {
+            unsigned char x;
+            unsigned char y;
+            unsigned char z;
+         } ang;
+      } mov_freedom;
+      unsigned char backcull;
       unsigned char material; /* (custom, iron, wood, ...) */
       unsigned char light_on;
       unsigned char ignore_part_pos;
@@ -1340,10 +1356,23 @@ struct _Edje_Calc_Params
          double linear; //8
          double angular; //8
       } sleep; // 16
+      struct {
+         struct {
+            unsigned char x;
+            unsigned char y;
+            unsigned char z;
+         } lin; // 3
+         struct {
+            unsigned char x;
+            unsigned char y;
+            unsigned char z;
+         } ang; // 3
+      } mov_freedom; // 6
+      unsigned char backcull;
       unsigned char material; // 1
       unsigned char light_on; // 1
       unsigned char ignore_part_pos; //1
-   } physics; // 75
+   } physics;
 #endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;

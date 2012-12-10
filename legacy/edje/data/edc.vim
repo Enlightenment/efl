@@ -25,7 +25,7 @@ syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
 syn keyword	cStructure	spectra spectrum box
-syn keyword	cStructure	physics
+syn keyword	cStructure	physics movement_freedom
 syn match	cType		"+ + +;" contained
 
 syn keyword	cLabel		item name min max type effect
@@ -47,7 +47,8 @@ syn keyword	cLabel		external params size_range border_scale minmul
 
 syn keyword	cLabel		mass density material restitution friction
 syn keyword	cLabel		ignore_part_pos light_on damping sleep
-syn keyword	cLabel		physics_body hardness
+syn keyword	cLabel		physics_body hardness linear angular
+syn keyword	cLabel		backface_cull
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do

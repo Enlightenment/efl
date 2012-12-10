@@ -54,6 +54,7 @@ endif
 
 if ENABLE_EPHYSICS
 EDCS += \
+physics_3d.edc \
 physics_actions.edc \
 physics_basic.edc \
 physics_complex.edc \

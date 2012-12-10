@@ -532,6 +532,13 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", physics.hardness, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", physics.ignore_part_pos, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", physics.light_on, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", physics.backcull, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", physics.mov_freedom.lin.x, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", physics.mov_freedom.lin.y, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", physics.mov_freedom.lin.z, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", physics.mov_freedom.ang.x, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", physics.mov_freedom.ang.y, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", physics.mov_freedom.ang.z, EET_T_UCHAR); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)	\
@@ -608,6 +615,13 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", Dec.physics.hardness, EET_T_DOUBLE); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", Dec.physics.ignore_part_pos, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", Dec.physics.light_on, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", Dec.physics.backcull, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", Dec.physics.mov_freedom.lin.x, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", Dec.physics.mov_freedom.lin.y, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", Dec.physics.mov_freedom.lin.z, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", Dec.physics.mov_freedom.ang.x, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", Dec.physics.mov_freedom.ang.y, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", Dec.physics.mov_freedom.ang.z, EET_T_UCHAR); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)	 \

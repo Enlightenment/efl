@@ -2319,6 +2319,25 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 GETINT(rp->custom->description->physics.light_on, params[3]);
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_LIN:
+	 CHKPARAM(5);
+
+	 GETINT(rp->custom->description->physics.mov_freedom.lin.x, params[3]);
+	 GETINT(rp->custom->description->physics.mov_freedom.lin.y, params[4]);
+	 GETINT(rp->custom->description->physics.mov_freedom.lin.z, params[5]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_ANG:
+	 CHKPARAM(5);
+
+	 GETINT(rp->custom->description->physics.mov_freedom.ang.x, params[3]);
+	 GETINT(rp->custom->description->physics.mov_freedom.ang.y, params[4]);
+	 GETINT(rp->custom->description->physics.mov_freedom.ang.z, params[5]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_BACK_CULL:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.backcull, params[3]);
+	 break;
 #endif
       default:
 	 break;
@@ -2827,6 +2846,25 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 CHKPARAM(3);
 
 	 SETINT(rp->custom->description->physics.light_on, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_LIN:
+	 CHKPARAM(5);
+
+	 SETINT(rp->custom->description->physics.mov_freedom.lin.x, params[3]);
+	 SETINT(rp->custom->description->physics.mov_freedom.lin.y, params[4]);
+	 SETINT(rp->custom->description->physics.mov_freedom.lin.z, params[5]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_ANG:
+	 CHKPARAM(5);
+
+	 SETINT(rp->custom->description->physics.mov_freedom.ang.x, params[3]);
+	 SETINT(rp->custom->description->physics.mov_freedom.ang.y, params[4]);
+	 SETINT(rp->custom->description->physics.mov_freedom.ang.z, params[5]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_BACK_CULL:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.backcull, params[3]);
 	 break;
 #endif
       default:
