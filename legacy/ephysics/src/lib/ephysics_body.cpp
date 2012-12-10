@@ -962,6 +962,65 @@ _ephysics_body_mass_set(EPhysics_Body *body, double mass)
 }
 
 static void
+_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d, double rate)
+{
+   double mx, my, mz, sx, sy, sz;
+   btTransform trans;
+   int wy, height;
+   btVector3 body_scale;
+
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
+                                      NULL, &height, NULL);
+   height += wy;
+
+   mx = (x + w * body->cm.x) / rate;
+   my = (height - (y + h * body->cm.y)) / rate;
+   mz = (z + d * body->cm.z) / rate;
+   sx = (w <= 0) ? 1 : w / rate;
+   sy = (h <= 0) ? 1 : h / rate;
+   sz = (d <= 0) ? 1 : d / rate;
+
+   trans = _ephysics_body_transform_get(body);
+   trans.setOrigin(btVector3(mx, my, mz));
+   body_scale = btVector3(sx, sy, sz);
+
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT)
+     {
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(body_scale);
+        body->rigid_body->proceedToTransform(trans);
+        _ephysics_body_transform_set(body, trans);
+        _ephysics_body_soft_body_constraints_rebuild(body);
+     }
+   else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(body_scale);
+        _ephysics_body_transform_set(body, trans);
+        _ephysics_body_cloth_constraints_rebuild(body);
+     }
+   else
+     {
+        body->collision_shape->setLocalScaling(body_scale);
+        body->rigid_body->proceedToTransform(trans);
+
+        if (!body->rigid_body->isStaticObject())
+          _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+     }
+
+   _ephysics_body_transform_set(body, trans);
+   ephysics_body_activate(body, EINA_TRUE);
+
+   body->size.w = w;
+   body->size.h = h;
+   body->size.d = d;
+   body->scale = body_scale;
+
+   DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
+   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
+}
+
+static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    double rate, sx, sy, sz;
@@ -1047,65 +1106,6 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
    ephysics_body_activate(body, EINA_TRUE);
 
    DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
-}
-
-static void
-_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d, double rate)
-{
-   double mx, my, mz, sx, sy, sz;
-   btTransform trans;
-   int wy, height;
-   btVector3 body_scale;
-
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
-                                      NULL, &height, NULL);
-   height += wy;
-
-   mx = (x + w * body->cm.x) / rate;
-   my = (height - (y + h * body->cm.y)) / rate;
-   mz = (z + d * body->cm.z) / rate;
-   sx = (w <= 0) ? 1 : w / rate;
-   sy = (h <= 0) ? 1 : h / rate;
-   sz = (d <= 0) ? 1 : d / rate;
-
-   trans = _ephysics_body_transform_get(body);
-   trans.setOrigin(btVector3(mx, my, mz));
-   body_scale = btVector3(sx, sy, sz);
-
-   if (body->type == EPHYSICS_BODY_TYPE_SOFT)
-     {
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
-        body->soft_body->scale(body_scale);
-        body->rigid_body->proceedToTransform(trans);
-        _ephysics_body_transform_set(body, trans);
-        _ephysics_body_soft_body_constraints_rebuild(body);
-     }
-   else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
-     {
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
-        body->soft_body->scale(body_scale);
-        _ephysics_body_transform_set(body, trans);
-        _ephysics_body_cloth_constraints_rebuild(body);
-     }
-   else
-     {
-        body->collision_shape->setLocalScaling(body_scale);
-        body->rigid_body->proceedToTransform(trans);
-
-        if (!body->rigid_body->isStaticObject())
-          _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
-     }
-
-   _ephysics_body_transform_set(body, trans);
-   ephysics_body_activate(body, EINA_TRUE);
-
-   body->size.w = w;
-   body->size.h = h;
-   body->size.d = d;
-   body->scale = body_scale;
-
-   DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
-   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
 }
 
 static void
