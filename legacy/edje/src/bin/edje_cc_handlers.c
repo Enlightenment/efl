@@ -1208,9 +1208,11 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
    EINA_LIST_FOREACH(ep2->after, l, pa2)
      {
-        pa = mem_alloc(SZ(Edje_Program_After));
+        name = (char*) (pa2 + 1);
+        pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
         ep->after = eina_list_append(ep->after, pa);
-
+        copy = (char*) (pa + 1);
+        memcpy(copy, name, strlen(name) + 1);
         data_queue_copied_program_lookup(pc, &(pa2->id), &(pa->id));
      }
 
@@ -8461,9 +8463,7 @@ st_collections_group_programs_program_target(void)
 	et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
 	ep->targets = eina_list_append(ep->targets, et);
 	copy = (char*) (et + 1);
-
 	memcpy(copy, name, strlen(name) + 1);
-
         switch (ep->action)
           {
            case EDJE_ACTION_TYPE_ACTION_STOP:
@@ -8520,14 +8520,27 @@ st_collections_group_programs_program_after(void)
    ep = current_program;
      {
 	Edje_Program_After *pa;
+	Edje_Program_After *pa2;
+	Eina_List *l;
 	char *name;
+        char *copy;
 
 	name = parse_str(0);
 
-	pa = mem_alloc(SZ(Edje_Program_After));
+        EINA_LIST_FOREACH(ep->after, l, pa2)
+          {
+             if (!strcmp(name, (char*) (pa2 + 1)))
+               {
+                  free(name);
+                  return;
+               }
+          }
+
+	pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
 	pa->id = -1;
 	ep->after = eina_list_append(ep->after, pa);
-
+        copy = (char*)(pa + 1);
+        memcpy(copy, name, strlen(name) + 1);
 	data_queue_program_lookup(pc, name, &(pa->id));
 	free(name);
      }

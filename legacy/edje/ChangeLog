@@ -691,3 +691,8 @@
 2012-12-05  Robert David
 
 	* Fix Solaris 11 build.
+
+2012-12-05  Tae-Hwan Kim (Bluezery)
+
+	* Fix inheriting gorups with programs that have after programs where
+        after programs are duplicated in the list.
