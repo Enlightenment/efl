@@ -1223,6 +1223,19 @@ AC_ARG_ENABLE([harfbuzz],
    ],
    [want_harfbuzz="no"])
 
+# Egl
+AC_ARG_ENABLE([egl],
+   [AC_HELP_STRING([--enable-egl],
+       [enable EGL rendering. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_egl="yes"
+    else
+       want_egl="no"
+    fi
+   ],
+   [want_egl="no"])
+
 # Pixman
 AC_ARG_ENABLE([pixman],
    [AC_HELP_STRING([--enable-pixman],
@@ -1392,6 +1405,9 @@ want_evas_engine_software_gdi="${have_win32}"
 want_evas_engine_software_ddraw="${have_win32}"
 want_evas_engine_gl_cocoa="no" # TODO: ${have_darwin}
 want_evas_engine_wayland_egl="no"
+if test "${want_wayland}" = "yes" && test "${want_egl}" = "yes"; then
+   want_evas_engine_wayland_egl="yes"
+fi
 
 want_evas_image_loader_bmp="static"
 want_evas_image_loader_eet="static"
@@ -2974,7 +2990,6 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_SDL],
    [test "${build_ecore_evas_sdl}" = "yes"])
 
 ECORE_EVAS_MODULE([wayland-shm], [${want_wayland}])
-# XXX TODO want_ecore_evas_wayland_egl
 ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
 
 build_ecore_evas_wayland="no"
