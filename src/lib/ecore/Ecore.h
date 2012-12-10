@@ -162,8 +162,8 @@ sudo make install
  * enterers are usually a good place to update the program state. Proper idlers
  * are the appropriate place to do heavy computational tasks thereby using what
  * would otherwise be wasted CPU cycles. Exiters are the perfect place to do
- * anything your program should do just before processing events(also timers,
- * poolers, file descriptor handlers and animators)
+ * anything your program should do just before processing events (also timers,
+ * pollers, file descriptor handlers and animators)
  * @see Ecore_Idle_Group
  *
  * @subsection fd_handler File descriptor handlers
