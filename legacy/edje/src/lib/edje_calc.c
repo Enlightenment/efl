@@ -676,9 +676,8 @@ _edje_recalc_do(Edje *ed)
 
         ed->recalc_hints = EINA_FALSE;
 
-	eo_do(ed->obj,
-	      edje_obj_size_min_get(&w, &h),
-	      evas_obj_size_hint_min_set(w, h));
+	eo_do(ed->obj, edje_obj_size_min_calc(&w, &h));
+	eo_do(ed->obj, evas_obj_size_hint_min_set(w, h));
      }
 
    if (!ed->collection) return ;
@@ -3145,18 +3144,23 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                     (pf->color.g * pf->color.a) / 255,
                                     (pf->color.b * pf->color.a) / 255,
                                     pf->color.a);
+
+#ifdef HAVE_EPHYSICS
+/* body attributes should be updated for invisible objects */
               if (!pf->visible)
                 {
                    evas_object_hide(ep->object);
-#ifdef HAVE_EPHYSICS
-/* body attributes should be updated for invisible objects */
                 }
               else
+                evas_object_show(ep->object);
 #else
+              if (!pf->visible)
+                {
+                   evas_object_hide(ep->object);
                    break;
                 }
-#endif
               evas_object_show(ep->object);
+#endif
               /* move and resize are needed for all previous object => no break here. */
            case EDJE_PART_TYPE_SWALLOW:
            case EDJE_PART_TYPE_GROUP:
@@ -3181,8 +3185,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 }
               else
 #endif
-	      eo_do(ep->object,
-		    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
+              {
+                 eo_do(ep->object,
+                       evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
+              }
 	      eo_do(ep->object,
 		    evas_obj_size_set(pf->w, pf->h));
 
