@@ -2302,6 +2302,16 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 GETFLOAT_T(rp->custom->description->physics.density, params[3]);
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.ignore_part_pos, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_LIGHT_ON:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.light_on, params[3]);
+	 break;
 #endif
       default:
 	 break;
@@ -2795,6 +2805,16 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 CHKPARAM(3);
 
 	 SETFLOAT_T(rp->custom->description->physics.density, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_IGNORE_PART_POS:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.ignore_part_pos, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_LIGHT_ON:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.light_on, params[3]);
 	 break;
 #endif
       default:

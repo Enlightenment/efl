@@ -317,7 +317,8 @@ static void st_collections_group_parts_part_description_physics_damping(void);
 static void st_collections_group_parts_part_description_physics_sleep(void);
 static void st_collections_group_parts_part_description_physics_material(void);
 static void st_collections_group_parts_part_description_physics_density(void);
-static void st_collections_group_parts_part_description_physics_ignore_part_position(void);
+static void st_collections_group_parts_part_description_physics_ignore_part_pos(void);
+static void st_collections_group_parts_part_description_physics_light_on(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
@@ -607,7 +608,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
      {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
      {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
-     {"collections.group.parts.part.description.physics.ignore_part_position", st_collections_group_parts_part_description_physics_ignore_part_position},
+     {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
+     {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
@@ -1101,7 +1103,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
    result->physics.friction = FROM_DOUBLE(0.5);
    result->physics.sleep.linear = FROM_DOUBLE(24);
    result->physics.sleep.angular = FROM_DOUBLE(57.29);
-   result->physics.ignore_part_position = 1;
+   result->physics.ignore_part_pos = 1;
 #endif
 
    return result;
@@ -7191,7 +7193,7 @@ st_collections_group_parts_part_description_table_min(void)
     description {
         ..
         physics {
-            ignore_part_position: 1;
+            ignore_part_pos: 1;
             mass: 5.31;
             friction: 0.5;
             restitution: 0.82;
@@ -7199,6 +7201,7 @@ st_collections_group_parts_part_description_table_min(void)
             sleep: 32 18.9;
             material: IRON;
             density: 3.2;
+            light_on: 1;
         }
         ..
     }
@@ -7292,7 +7295,7 @@ st_collections_group_parts_part_description_physics_friction(void)
 /**
     @page edcref
     @property
-        ignore_part_position
+        ignore_part_pos
     @parameters
         [1 or 0]
     @effect
@@ -7306,11 +7309,11 @@ st_collections_group_parts_part_description_physics_friction(void)
 */
 #ifdef HAVE_EPHYSICS
 static void
-st_collections_group_parts_part_description_physics_ignore_part_position(void)
+st_collections_group_parts_part_description_physics_ignore_part_pos(void)
 {
    check_arg_count(1);
 
-   current_desc->physics.ignore_part_position = parse_bool(0);
+   current_desc->physics.ignore_part_pos = parse_bool(0);
 }
 #endif
 
@@ -7437,6 +7440,30 @@ st_collections_group_parts_part_description_physics_density(void)
    current_desc->physics.density = parse_float(0);
 }
 #endif
+
+/**
+    @page edcref
+    @property
+        light_on
+    @parameters
+        [1 or 0]
+    @effect
+        Set body to be affected by world's light or not.
+        It won't be respected if world's property "all_bodies" is enabled.
+        Disabled by default (0).
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_light_on(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.light_on = parse_bool(0);
+}
+#endif
+
 
 /**
    @edcsubsection{collections_group_parts_description_map,Map}

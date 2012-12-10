@@ -457,6 +457,7 @@ collections {
             script {
                new Float: mass, Float:rest, Float:fric;
                new Float: linear, Float:angular;
+               new val;
 
                custom_state(PART:"red_circle", "default", 0.0);
                set_state_val(PART:"red_circle", STATE_COLOR, 0, 0, 0, 255);
@@ -467,6 +468,9 @@ collections {
                        0.1);
                set_state_val(PART:"red_circle", STATE_PHYSICS_SLEEP, 34.1,
                        12.83);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_LIGHT_ON, 1);
+               set_state_val(PART:"red_circle",
+                       STATE_PHYSICS_IGNORE_PART_POS, 1);
                set_state(PART:"red_circle", "custom", 0.0);
 
                get_state_val(PART:"red_circle", STATE_PHYSICS_MASS, mass);
@@ -487,6 +491,13 @@ collections {
                      linear, angular);
                send_message(MSG_STRING_FLOAT_SET, 1, "Sleep", linear,
                        angular);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_LIGHT_ON, val);
+               send_message(MSG_STRING_INT, 1, "Light On", val);
+
+               get_state_val(PART:"red_circle",
+                       STATE_PHYSICS_IGNORE_PART_POS, val);
+               send_message(MSG_STRING_INT, 1, "Ignore Part Pos", val);
             }
          }
 

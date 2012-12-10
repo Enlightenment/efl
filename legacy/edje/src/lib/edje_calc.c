@@ -2305,7 +2305,8 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.sleep.angular = desc->physics.sleep.angular;
    params->physics.material = desc->physics.material;
    params->physics.density = desc->physics.density;
-   params->ignore_part_position = desc->physics.ignore_part_position;
+   params->physics.ignore_part_pos = desc->physics.ignore_part_pos;
+   params->physics.light_on = desc->physics.light_on;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2498,6 +2499,7 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
                              pf->physics.damping.angular);
    ephysics_body_sleeping_threshold_set(ep->body, pf->physics.sleep.linear,
                                         pf->physics.sleep.angular);
+   ephysics_body_light_set(ep->body, pf->physics.light_on);
 }
 
 static void
@@ -2962,15 +2964,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->physics.sleep.angular = TO_DOUBLE(FINTP(
               p1->physics.sleep.angular, p2->physics.sleep.angular, pos));
 
-        if ((p1->ignore_part_position) && (p2->ignore_part_position))
-          p3->ignore_part_position = 1;
+        if ((p1->physics.ignore_part_pos) && (p2->physics.ignore_part_pos))
+          p3->physics.ignore_part_pos = 1;
         else
-          p3->ignore_part_position = 0;
+          p3->physics.ignore_part_pos = 0;
 
         if ((p1->physics.material) && (p2->physics.material))
           p3->physics.material = p1->physics.material;
         else
           p3->physics.material = EPHYSICS_BODY_MATERIAL_CUSTOM;
+
+        p3->physics.light_on = p1->physics.light_on || p2->physics.light_on;
 #endif
 
         switch (part_type)
@@ -3180,8 +3184,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                    if (((ep->prev_description) &&
                         (chosen_desc != ep->prev_description)) ||
                        (pf != p1))
-                     _edje_physics_body_props_update(ep, pf,
-                                                     !pf->ignore_part_position);
+                     _edje_physics_body_props_update(
+                        ep, pf, !pf->physics.ignore_part_pos);
                 }
               else
 #endif

@@ -34,6 +34,7 @@ collections {
                   mass: 10.8;
                   restitution: 0.85;
                   friction: 1.0;
+                  light_on: 1;
                }
             }
             description {
@@ -79,7 +80,7 @@ collections {
                   normal: "bubble-blue.png";
                }
                physics {
-                  ignore_part_position: 0;
+                  ignore_part_pos: 0;
                   material: IRON;
                }
             }
