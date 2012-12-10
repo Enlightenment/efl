@@ -1311,6 +1311,8 @@ _ephysics_body_evas_obj_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Objec
              return;
           }
      }
+   else
+       evas_object_show(obj);
 
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
@@ -1574,6 +1576,8 @@ _ephysics_body_evas_object_update(EPhysics_Body *body, Evas_Object *evas_obj)
 
    if (body->type != EPHYSICS_BODY_TYPE_RIGID)
      {
+        if (!body->back_face_culling)
+          evas_object_show(body->evas_obj);
         _ephysics_body_soft_body_slices_apply(body, body->evas_obj,
                                               body->default_face->slices);
         return;
@@ -1626,6 +1630,11 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
           }
         else if (body->type == EPHYSICS_BODY_TYPE_SOFT)
           _ephysics_body_soft_body_update(body);
+
+        if (body->evas_obj)
+            evas_object_hide(body->evas_obj);
+
+        return;
      }
 
    if (!body->evas_obj)
