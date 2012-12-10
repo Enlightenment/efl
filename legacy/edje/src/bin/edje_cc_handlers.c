@@ -7225,6 +7225,12 @@ st_collections_group_parts_part_description_table_min(void)
     }
 
     @description
+        Physics block should be used to configure the body associated to the
+        part. The part's property physics_body needs to be set to something
+        different from NONE, otherwise the properties inside physics block
+        won't have any effect.
+        It's possible to set body's material, mass, restitution, friction,
+        allow / disallow movement in specific axes, etc.
     @endblock
 
     @property
