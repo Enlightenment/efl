@@ -2292,6 +2292,16 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETFLOAT_T(rp->custom->description->physics.sleep.angular, params[4]);
 
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MATERIAL:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.material, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DENSITY:
+	 CHKPARAM(3);
+
+	 GETFLOAT_T(rp->custom->description->physics.density, params[3]);
+	 break;
 #endif
       default:
 	 break;
@@ -2775,6 +2785,16 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 SETFLOAT_T(rp->custom->description->physics.sleep.linear, params[3]);
 	 SETFLOAT_T(rp->custom->description->physics.sleep.angular, params[4]);
 
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_MATERIAL:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.material, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DENSITY:
+	 CHKPARAM(3);
+
+	 SETFLOAT_T(rp->custom->description->physics.density, params[3]);
 	 break;
 #endif
       default:

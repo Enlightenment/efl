@@ -80,7 +80,7 @@ collections {
                }
                physics {
                   ignore_part_position: 0;
-                  restitution: 0.6;
+                  material: IRON;
                }
             }
             description {
@@ -88,6 +88,10 @@ collections {
                inherit: "default" 0.0;
                rel1.relative: 0 0.1;
                rel2.relative: 0.25 0.3;
+               physics {
+                  material: CUSTOM;
+                  density: 40;
+               }
             }
          }
 

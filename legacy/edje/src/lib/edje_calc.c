@@ -2304,6 +2304,8 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.damping.angular = desc->physics.damping.angular;
    params->physics.sleep.linear = desc->physics.sleep.linear;
    params->physics.sleep.angular = desc->physics.sleep.angular;
+   params->physics.material = desc->physics.material;
+   params->physics.density = desc->physics.density;
    params->ignore_part_position = desc->physics.ignore_part_position;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
@@ -2476,11 +2478,23 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
              ep->w = pf->w;
              ep->h = pf->h;
           }
-        ephysics_body_mass_set(ep->body, pf->physics.mass);
+
+        ephysics_body_material_set(ep->body, pf->physics.material);
+        if (!pf->physics.material)
+          {
+             if (pf->physics.density)
+               ephysics_body_density_set(ep->body, pf->physics.density);
+             else
+               ephysics_body_mass_set(ep->body, pf->physics.mass);
+          }
      }
 
-   ephysics_body_restitution_set(ep->body, pf->physics.restitution);
-   ephysics_body_friction_set(ep->body, pf->physics.friction);
+   if (!pf->physics.material)
+     {
+        ephysics_body_restitution_set(ep->body, pf->physics.restitution);
+        ephysics_body_friction_set(ep->body, pf->physics.friction);
+     }
+
    ephysics_body_damping_set(ep->body, pf->physics.damping.linear,
                              pf->physics.damping.angular);
    ephysics_body_sleeping_threshold_set(ep->body, pf->physics.sleep.linear,
@@ -2936,6 +2950,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                                   pos));
         p3->physics.friction = TO_DOUBLE(FINTP(p1->physics.friction,
                                                p2->physics.friction, pos));
+        p3->physics.density = TO_DOUBLE(FINTP(p1->physics.density,
+                                              p2->physics.density, pos));
 
         p3->physics.damping.linear = TO_DOUBLE(FINTP(
               p1->physics.damping.linear, p2->physics.damping.linear, pos));
@@ -2951,6 +2967,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           p3->ignore_part_position = 1;
         else
           p3->ignore_part_position = 0;
+
+        if ((p1->physics.material) && (p2->physics.material))
+          p3->physics.material = p1->physics.material;
+        else
+          p3->physics.material = EPHYSICS_BODY_MATERIAL_CUSTOM;
 #endif
 
         switch (part_type)

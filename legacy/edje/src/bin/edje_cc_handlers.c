@@ -315,6 +315,8 @@ static void st_collections_group_parts_part_description_physics_restitution(void
 static void st_collections_group_parts_part_description_physics_friction(void);
 static void st_collections_group_parts_part_description_physics_damping(void);
 static void st_collections_group_parts_part_description_physics_sleep(void);
+static void st_collections_group_parts_part_description_physics_material(void);
+static void st_collections_group_parts_part_description_physics_density(void);
 static void st_collections_group_parts_part_description_physics_ignore_part_position(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
@@ -603,6 +605,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.friction", st_collections_group_parts_part_description_physics_friction},
      {"collections.group.parts.part.description.physics.damping", st_collections_group_parts_part_description_physics_damping},
      {"collections.group.parts.part.description.physics.sleep", st_collections_group_parts_part_description_physics_sleep},
+     {"collections.group.parts.part.description.physics.material", st_collections_group_parts_part_description_physics_material},
+     {"collections.group.parts.part.description.physics.density", st_collections_group_parts_part_description_physics_density},
      {"collections.group.parts.part.description.physics.ignore_part_position", st_collections_group_parts_part_description_physics_ignore_part_position},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
@@ -7193,6 +7197,8 @@ st_collections_group_parts_part_description_table_min(void)
             restitution: 0.82;
             damping: 0.4 0.24;
             sleep: 32 18.9;
+            material: IRON;
+            density: 3.2;
         }
         ..
     }
@@ -7364,6 +7370,71 @@ st_collections_group_parts_part_description_physics_sleep(void)
 
    current_desc->physics.sleep.linear = parse_float(0);
    current_desc->physics.sleep.angular = parse_float(1);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        material
+    @parameters
+        [body's material]
+    @effect
+        Set the type (all caps) from among the available material types,
+        it's set to CUSTOM by default.
+        Each material has specific properties to be
+        applied on the body, as density, friction and restitution.
+        So if a material different of CUSTOM is set, the properties cited above
+        won't be considered.
+        Valid types:
+          * CUSTOM
+          * CONCRETE
+          * IRON
+          * PLASTIC
+          * POLYSTYRENE
+          * RUBBER
+          * WOOD
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_material(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.material = parse_enum(0,
+      "CUSTOM", EPHYSICS_BODY_MATERIAL_CUSTOM,
+      "CONCRETE", EPHYSICS_BODY_MATERIAL_CONCRETE,
+      "IRON", EPHYSICS_BODY_MATERIAL_IRON,
+      "PLASTIC", EPHYSICS_BODY_MATERIAL_PLASTIC,
+      "POLYSTYRENE", EPHYSICS_BODY_MATERIAL_POLYSTYRENE,
+      "RUBBER", EPHYSICS_BODY_MATERIAL_RUBBER,
+      "WOOD", EPHYSICS_BODY_MATERIAL_WOOD,
+      NULL);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        density
+    @parameters
+        [body's material density]
+    @effect
+        It will set the body mass considering its volume. While a density is
+        set, resizing a body will always recalculate its mass.
+        When a mass is explicitely set the density will be unset.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_density(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.density = parse_float(0);
 }
 #endif
 
