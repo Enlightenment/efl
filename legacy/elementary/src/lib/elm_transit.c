@@ -222,8 +222,9 @@ static void
 _transit_remove_dead_effects(Elm_Transit *transit)
 {
    Elm_Transit_Effect_Module *effect_module;
+   Eina_Inlist *ll;
 
-   EINA_INLIST_FOREACH(transit->effect_list, effect_module)
+   EINA_INLIST_FOREACH_SAFE(transit->effect_list, ll, effect_module)
      {
         if (effect_module->deleted)
           {

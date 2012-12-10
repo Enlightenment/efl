@@ -88,6 +88,7 @@ Fixes:
    * Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
    * Make sure private data is not NULL in elm_interface_scrollable.
    * Correctly handle failure case in _x11_notify_handler_image.
+   * Don't manipulate dead memory in Eina_Inlist in elm_transit.c.
 
 Removals:
 
