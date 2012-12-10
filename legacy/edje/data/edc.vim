@@ -25,6 +25,7 @@ syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
 syn keyword	cStructure	spectra spectrum box
+syn keyword	cStructure	physics
 syn match	cType		"+ + +;" contained
 
 syn keyword	cLabel		item name min max type effect
@@ -44,6 +45,10 @@ syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
 syn keyword	cLabel		external params size_range border_scale minmul
 
+syn keyword	cLabel		mass density material restitution friction
+syn keyword	cLabel		ignore_part_pos light_on damping sleep
+syn keyword	cLabel		physics_body
+
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
 syn keyword	cConstant	COMP RAW LOSSY USER
@@ -60,6 +65,14 @@ syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
 syn keyword	cConstant	VERTICAL HORIZONTAL ON_HOLD BOTH EDITABLE EXPLICIT
 syn keyword	cConstant	FOCUS_SET "default" NEITHER
 syn keyword	cConstant	DYNAMIC STATIC PASSWORD
+
+syn keyword	cConstant	RIGID_BOX RIGID_CIRCLE SOFT_BOX SOFT_CIRCLE
+syn keyword	cConstant	CLOTH BOUNDARY_TOP BOUNDARY_BOTTOM BOUNDARY_LEFT
+syn keyword	cConstant	BOUNDARY_RIGHT BOUNDARY_FRONT BOUNDARY_BACK
+syn keyword	cConstant	PHYSICS_IMPULSE PHYSICS_TORQUE_IMPULSE
+syn keyword	cConstant	PHYSICS_FORCE PHYSICS_TORQUE PHYSICS_STOP
+syn keyword	cConstant	PHYSICS_FORCES_CLEAR PHYSICS_VEL_SET
+syn keyword	cConstant	PHYSICS_ANG_VEL_SET
 
 syn keyword	cTodo		contained TODO FIXME XXX
 
