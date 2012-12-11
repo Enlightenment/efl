@@ -369,15 +369,6 @@ edbus_data_del_all(Eina_Inlist **p_list)
      }
 }
 
-static EDBus_Connection_Name *
-edbus_connection_name_new(const char *name)
-{
-   EDBus_Connection_Name *cn = calloc(1, sizeof(EDBus_Connection_Name));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cn, NULL);
-   cn->name = eina_stringshare_add(name);
-   return cn;
-}
-
 static void
 edbus_connection_name_free(void *data)
 {
@@ -444,11 +435,7 @@ edbus_connection_name_object_set(EDBus_Connection *conn, EDBus_Object *obj)
    };
 
    if (!cn)
-     {
-        cn = edbus_connection_name_new(obj->name);
-        EINA_SAFETY_ON_NULL_RETURN(cn);
-        eina_hash_direct_add(conn->names, cn->name, cn);
-     }
+     cn = edbus_connection_name_get(conn, obj->name);
    if (!cn->objects)
      {
         cn->objects = eina_hash_string_superfast_new(NULL);
@@ -560,8 +547,10 @@ edbus_connection_name_get(EDBus_Connection *conn, const char *name)
    cn = eina_hash_find(conn->names, name);
    if (cn) return cn;
 
-   cn = edbus_connection_name_new(name);
+   cn = calloc(1, sizeof(EDBus_Connection_Name));
    EINA_SAFETY_ON_NULL_RETURN_VAL(cn, NULL);
+   cn->name = eina_stringshare_add(name);
+
    eina_hash_direct_add(conn->names, cn->name, cn);
    return cn;
 }
@@ -1196,17 +1185,9 @@ edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, E
    EINA_SAFETY_ON_NULL_RETURN(bus);
    EINA_SAFETY_ON_NULL_RETURN(cb);
 
-   cn = eina_hash_find(conn->names, bus);
-   if (cn)
-     edbus_connection_name_owner_monitor(conn, cn, EINA_TRUE);
-   else
-     {
-        cn = edbus_connection_name_new(bus);
-        EINA_SAFETY_ON_NULL_RETURN(cn);
-
-        eina_hash_direct_add(conn->names, cn->name, cn);
-        edbus_connection_name_owner_monitor(conn, cn, EINA_TRUE);
-     }
+   cn = edbus_connection_name_get(conn, bus);
+   EINA_SAFETY_ON_NULL_RETURN(cn);
+   edbus_connection_name_owner_monitor(conn, cn, EINA_TRUE);
 
    ctx = calloc(1, sizeof(EDBus_Connection_Context_NOC_Cb));
    EINA_SAFETY_ON_NULL_GOTO(ctx, cleanup);
