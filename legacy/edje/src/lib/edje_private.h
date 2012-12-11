@@ -428,7 +428,9 @@ typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 #define EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_LIN 53
 #define EDJE_STATE_PARAM_PHYSICS_MOV_FREEDOM_ANG 54
 #define EDJE_STATE_PARAM_PHYSICS_BACK_CULL 55
-#define EDJE_STATE_PARAM_LAST           56
+#define EDJE_STATE_PARAM_PHYSICS_Z      56
+#define EDJE_STATE_PARAM_PHYSICS_DEPTH  57
+#define EDJE_STATE_PARAM_LAST           58
 
 #define EDJE_ENTRY_EDIT_MODE_NONE 0
 #define EDJE_ENTRY_EDIT_MODE_SELECTABLE 1
@@ -1016,6 +1018,8 @@ struct _Edje_Part_Description_Common
          double linear;
          double angular;
       } sleep;
+      int z;
+      int depth;
       Eina_List *faces; /* faces for 3d effects */
       struct {
          struct {
@@ -1379,6 +1383,8 @@ struct _Edje_Calc_Params
          double linear; //8
          double angular; //8
       } sleep; // 16
+      int z; // 4
+      int depth; // 4
       struct {
          struct {
             unsigned char x;

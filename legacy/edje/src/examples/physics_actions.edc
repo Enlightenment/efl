@@ -514,6 +514,8 @@ collections {
                set_state_val(PART:"red_circle", STATE_PHYSICS_LIGHT_ON, 1);
                set_state_val(PART:"red_circle",
                        STATE_PHYSICS_IGNORE_PART_POS, 1);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_Z, -40);
+               set_state_val(PART:"red_circle", STATE_PHYSICS_DEPTH, 80);
                set_state(PART:"red_circle", "custom", 0.0);
 
                get_state_val(PART:"red_circle", STATE_PHYSICS_MASS, mass);
@@ -541,6 +543,12 @@ collections {
                get_state_val(PART:"red_circle",
                        STATE_PHYSICS_IGNORE_PART_POS, val);
                send_message(MSG_STRING_INT, 1, "Ignore Part Pos", val);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_Z, val);
+               send_message(MSG_STRING_INT, 1, "Z", val);
+
+               get_state_val(PART:"red_circle", STATE_PHYSICS_DEPTH, val);
+               send_message(MSG_STRING_INT, 1, "Depth", val);
             }
          }
 

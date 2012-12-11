@@ -156,6 +156,8 @@ collections {
                aspect: 1 1;
                physics {
                   mass: 30;
+                  z: -24;
+                  depth: 48;
                   restitution: 0.85;
                   movement_freedom {
                      linear: 1 1 1;

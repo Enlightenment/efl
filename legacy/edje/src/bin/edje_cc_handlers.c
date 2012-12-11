@@ -328,6 +328,8 @@ static void st_collections_group_parts_part_description_physics_density(void);
 static void st_collections_group_parts_part_description_physics_hardness(void);
 static void st_collections_group_parts_part_description_physics_ignore_part_pos(void);
 static void st_collections_group_parts_part_description_physics_light_on(void);
+static void st_collections_group_parts_part_description_physics_z(void);
+static void st_collections_group_parts_part_description_physics_depth(void);
 static void st_collections_group_parts_part_description_physics_movement_freedom_linear(void);
 static void st_collections_group_parts_part_description_physics_movement_freedom_angular(void);
 static void st_collections_group_parts_part_description_physics_backface_cull(void);
@@ -635,6 +637,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.movement_freedom.angular", st_collections_group_parts_part_description_physics_movement_freedom_angular},
      {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
      {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
+     {"collections.group.parts.part.description.physics.z", st_collections_group_parts_part_description_physics_z},
+     {"collections.group.parts.part.description.physics.depth", st_collections_group_parts_part_description_physics_depth},
      {"collections.group.parts.part.description.physics.backface_cull", st_collections_group_parts_part_description_physics_backface_cull},
      {"collections.group.parts.part.description.physics.faces.face.type", st_collections_group_parts_part_description_physics_face_type},
      {"collections.group.parts.part.description.physics.faces.face.source", st_collections_group_parts_part_description_physics_face_source},
@@ -1149,6 +1153,8 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
    result->physics.mov_freedom.lin.x = 1;
    result->physics.mov_freedom.lin.y = 1;
    result->physics.mov_freedom.ang.z = 1;
+   result->physics.z = -15;
+   result->physics.depth = 30;
 #endif
 
    return result;
@@ -7265,6 +7271,8 @@ st_collections_group_parts_part_description_table_min(void)
             density: 3.2;
             hardness: 0.42;
             light_on: 1;
+            z: -15;
+            depth: 30;
             movement_freedom {
                 ..
             }
@@ -7562,6 +7570,48 @@ st_collections_group_parts_part_description_physics_light_on(void)
    check_arg_count(1);
 
    current_desc->physics.light_on = parse_bool(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        z
+    @parameters
+        [body position in z axis]
+    @effect
+        Defines body position in z axis. It's set to -15 by default.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_z(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.z = parse_int(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        depth
+    @parameters
+        [body's depth]
+    @effect
+        Defines body's depth (z axis). It's set to 30 by default.
+    @endproperty
+    @since 1.8.0
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_depth(void)
+{
+   check_arg_count(1);
+
+   current_desc->physics.depth = parse_int(0);
 }
 #endif
 

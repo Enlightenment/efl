@@ -2314,6 +2314,8 @@ _edje_part_recalc_single(Edje *ed,
    params->physics.mov_freedom.ang.y = desc->physics.mov_freedom.ang.y;
    params->physics.mov_freedom.ang.z = desc->physics.mov_freedom.ang.z;
    params->physics.backcull = desc->physics.backcull;
+   params->physics.z = desc->physics.z;
+   params->physics.depth = desc->physics.depth;
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2478,21 +2480,27 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
                                              pf->physics.mov_freedom.ang.x,
                                              pf->physics.mov_freedom.ang.y,
                                              pf->physics.mov_freedom.ang.z);
+
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
      {
+        Evas_Coord x, y, z, w, h, d;
+
         if (pos_update)
           {
-             Evas_Coord z;
-             ephysics_body_geometry_get(ep->body, NULL, NULL, &z,
-                                        NULL, NULL, NULL);
              ephysics_body_move(ep->body, ep->edje->x + pf->x,
-                                ep->edje->y + pf->y, z);
+                                ep->edje->y + pf->y, pf->physics.z);
              ep->x = pf->x;
              ep->y = pf->y;
              ep->w = pf->w;
              ep->h = pf->h;
           }
+
+        ephysics_body_geometry_get(ep->body, &x, &y, &z, &w, &h, &d);
+        if ((d) && (d != pf->physics.depth))
+          ephysics_body_resize(ep->body, w, h, pf->physics.depth);
+        if (z != pf->physics.z)
+          ephysics_body_move(ep->body, x, y, pf->physics.z);
 
         ephysics_body_material_set(ep->body, pf->physics.material);
         if (!pf->physics.material)
@@ -3008,6 +3016,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->physics.sleep.angular = TO_DOUBLE(FINTP(
               p1->physics.sleep.angular, p2->physics.sleep.angular, pos));
 
+        p3->physics.z = INTP(p1->physics.z, p2->physics.z, pos);
+        p3->physics.depth = INTP(p1->physics.depth, p2->physics.depth, pos);
+
         if ((p1->physics.ignore_part_pos) && (p2->physics.ignore_part_pos))
           p3->physics.ignore_part_pos = 1;
         else
@@ -3241,6 +3252,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_EXTERNAL:
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
+              eo_do(ep->object,
+                    evas_obj_size_set(pf->w, pf->h));
               if ((ep->part->physics_body) && (!ep->body))
                 {
                    if (_edje_physics_world_geometry_check(ep->edje->world))
@@ -3258,13 +3271,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                         ep, pf, !pf->physics.ignore_part_pos);
                 }
               else
-#endif
-              {
-                 eo_do(ep->object,
-                       evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
-              }
+                eo_do(ep->object,
+                      evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
+#else
 	      eo_do(ep->object,
+                    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
 		    evas_obj_size_set(pf->w, pf->h));
+#endif
 
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */

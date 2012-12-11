@@ -2338,6 +2338,16 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 GETINT(rp->custom->description->physics.backcull, params[3]);
 	 break;
+      case EDJE_STATE_PARAM_PHYSICS_Z:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.z, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DEPTH:
+	 CHKPARAM(3);
+
+	 GETINT(rp->custom->description->physics.depth, params[3]);
+	 break;
 #endif
       default:
 	 break;
@@ -2865,6 +2875,16 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 CHKPARAM(3);
 
 	 SETINT(rp->custom->description->physics.backcull, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_Z:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.z, params[3]);
+	 break;
+      case EDJE_STATE_PARAM_PHYSICS_DEPTH:
+	 CHKPARAM(3);
+
+	 SETINT(rp->custom->description->physics.depth, params[3]);
 	 break;
 #endif
       default:
