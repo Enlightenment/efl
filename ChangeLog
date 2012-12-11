@@ -1,3 +1,7 @@
+2012-12-11  Cedric Bail
+
+	* Fix leak eet_pbkdf2_sha1 with OpenSSL.
+
 2012-12-10  Gustavo Sverzut Barbieri (k-s)
 
 	* Added ECORE_GETOPT_ACTION_BREAK to force breaking out of argument

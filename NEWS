@@ -72,3 +72,4 @@ Fixes:
     * Fix build of Ecore_Evas_Extn on Solaris.
     * Don't leak fd on exec.
     * Fixed polygon rendering bug in GL backend when there are cutouts.
+    * Fix leak in eet_pbkdf2_sha1 with OpenSSL.

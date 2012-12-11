@@ -1324,12 +1324,12 @@ eet_pbkdf2_sha1(const char          *key,
              for (k = 0; k < tmp_len; k++)
                p[k] ^= digest[k];
           }
-     }
-
 # ifdef HAVE_GNUTLS
 # else
-   HMAC_cleanup(&hctx);
+	HMAC_cleanup(&hctx);
 # endif /* ifdef HAVE_GNUTLS */
+     }
+
    return 0;
 }
 
