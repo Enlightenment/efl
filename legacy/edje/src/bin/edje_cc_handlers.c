@@ -97,6 +97,10 @@
  *              </ul>
  *              <li>@ref sec_collections_group_parts_description_table "Table"</li>
  *              <li>@ref sec_collections_group_parts_description_physics "Physics"</li>
+ *              <ul>
+ *                  <li>@ref sec_collections_group_parts_description_physics_movement_freedom "Movement Freedom"</li>
+ *                  <li>@ref sec_collections_group_parts_description_physics_faces "Faces"</li>
+ *              </ul>
  *              <li>@ref sec_collections_group_parts_description_map "Map (3d/transformations)"</li>
  *              <ul>
  *                <li>@ref sec_collections_group_parts_description_map_rotation "Rotation"</li>
@@ -7547,6 +7551,10 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
 #endif
 
 /**
+   @edcsubsection{collections_group_parts_description_physics_movement_freedom,Movement Freedom}
+ */
+
+/**
     @page edcref
     @block
         movement_freedom
@@ -7617,6 +7625,10 @@ st_collections_group_parts_part_description_physics_movement_freedom_angular(voi
    current_desc->physics.mov_freedom.ang.z = parse_bool(2);
 }
 #endif
+
+/**
+   @edcsubsection{collections_group_parts_description_physics_faces,Faces}
+ */
 
 /**
     @page edcref
