@@ -87,6 +87,7 @@ _array_append(const char *type, const Eina_Value *value_array, EDBus_Message_Ite
                 edbus_message_iter_container_close(array, sub_array);
                 eina_value_flush(&inner_array);
              }
+           break;
         }
       case 'v':
         {
