@@ -370,40 +370,27 @@ edbus_data_del_all(Eina_Inlist **p_list)
 }
 
 static void
-edbus_connection_name_free(void *data)
-{
-   EDBus_Connection_Name *cn = data;
-
-   eina_stringshare_del(cn->name);
-   eina_stringshare_del(cn->unique_id);
-
-   if (cn->objects) eina_hash_free(cn->objects);
-
-   while (cn->event_handlers.list)
-     {
-        EDBus_Connection_Context_NOC_Cb *ctx;
-        ctx = EINA_INLIST_CONTAINER_GET(cn->event_handlers.list,
-                                        EDBus_Connection_Context_NOC_Cb);
-        cn->event_handlers.list = eina_inlist_remove(cn->event_handlers.list,
-                                                     cn->event_handlers.list);
-        free(ctx);
-     }
-   eina_list_free(cn->event_handlers.to_delete);
-
-   free(cn);
-}
-
-static void
 edbus_connection_name_gc(EDBus_Connection *conn, EDBus_Connection_Name *cn)
 {
-   Eina_Bool no_objs;
-   Eina_Bool no_event_handlers;
+   Eina_Bool have_obj;
+   Eina_Bool have_event_handlers;
 
-   no_objs = ((!cn->objects) || (eina_hash_population(cn->objects) == 0));
-   no_event_handlers = !!cn->event_handlers.list;
+   if (!cn->objects) have_obj = EINA_FALSE;
+   else have_obj = !!eina_hash_population(cn->objects);
+   have_event_handlers = cn->event_handlers.list != NULL;
 
-   if (no_objs && no_event_handlers && cn->refcount < 1)
-     eina_hash_del(conn->names, cn->name, cn);
+   if (have_obj || have_event_handlers || cn->refcount > 0)
+     return;
+
+   eina_hash_del(conn->names, cn->name, cn);
+   if (cn->name_owner_changed)
+     edbus_signal_handler_del(cn->name_owner_changed);
+   if (cn->objects)
+     eina_hash_free(cn->objects);
+   eina_stringshare_del(cn->name);
+   eina_stringshare_del(cn->unique_id);
+   eina_list_free(cn->event_handlers.to_delete);
+   free(cn);
 }
 
 void
@@ -427,33 +414,19 @@ edbus_connection_name_object_del(EDBus_Connection *conn, const EDBus_Object *obj
 void
 edbus_connection_name_object_set(EDBus_Connection *conn, EDBus_Object *obj)
 {
-   EDBus_Connection_Name *cn = eina_hash_find(conn->names, obj->name);
-   Eina_Bool had_connection_name = !!cn;
+   EDBus_Connection_Name *cn;
    const EDBus_Connection_Event_Object_Added ev = {
       obj->path,
       obj
    };
 
-   if (!cn)
-     cn = edbus_connection_name_get(conn, obj->name);
-   if (!cn->objects)
-     {
-        cn->objects = eina_hash_string_superfast_new(NULL);
-        EINA_SAFETY_ON_NULL_GOTO(cn->objects, cleanup);
-     }
+   cn = edbus_connection_name_get(conn, obj->name);
    eina_hash_add(cn->objects, obj->path, obj);
 
    _edbus_connection_event_callback_call
      (conn, EDBUS_CONNECTION_EVENT_OBJECT_ADDED, &ev);
 
    return;
-
-cleanup:
-   if (!had_connection_name)
-     {
-        eina_hash_del(conn->names, cn->name, cn);
-        edbus_connection_name_free(cn);
-     }
 }
 
 static void
@@ -468,8 +441,7 @@ on_name_owner_changed(void *data, const EDBus_Message *msg)
         return;
      }
 
-   eina_stringshare_del(cn->unique_id);
-   cn->unique_id = eina_stringshare_add(new_id);
+   eina_stringshare_replace(&cn->unique_id, new_id);
    edbus_dispatch_name_owner_change(cn, older_id);
 }
 
@@ -488,14 +460,15 @@ on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    edbus_dispatch_name_owner_change(cn, NULL);
 }
 
-static void
-_edbus_connection_name_ref(EDBus_Connection *conn, EDBus_Connection_Name *cn)
+void
+edbus_connection_name_ref(EDBus_Connection_Name *cn)
 {
+   EINA_SAFETY_ON_NULL_RETURN(cn);
    cn->refcount++;
 }
 
-static void
-_edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn)
+void
+edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn)
 {
    EDBUS_CONNECTION_CHECK(conn);
    EINA_SAFETY_ON_NULL_RETURN(cn);
@@ -503,39 +476,7 @@ _edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn)
    cn->refcount--;
 
    if (cn->refcount > 0) return;
-   if (cn->name_owner_changed)
-     edbus_signal_handler_del(cn->name_owner_changed);
-   cn->name_owner_changed = NULL;
    edbus_connection_name_gc(conn, cn);
-}
-
-void
-edbus_connection_name_owner_monitor(EDBus_Connection *conn, EDBus_Connection_Name *cn, Eina_Bool enable)
-{
-   EDBUS_CONNECTION_CHECK(conn);
-   EINA_SAFETY_ON_NULL_RETURN(cn);
-
-   if (!enable)
-     {
-        _edbus_connection_name_unref(conn, cn);
-        return;
-     }
-   if (cn->name_owner_changed)
-     {
-        _edbus_connection_name_ref(conn, cn);
-        return;
-     }
-
-   edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
-   _edbus_connection_name_ref(conn, cn);
-   cn->name_owner_changed = edbus_signal_handler_add(conn,
-                                              EDBUS_FDO_BUS,
-                                              EDBUS_FDO_PATH,
-                                              EDBUS_FDO_INTERFACE,
-                                              "NameOwnerChanged",
-                                              on_name_owner_changed, cn);
-   edbus_signal_handler_match_extra_set(cn->name_owner_changed, "arg0",
-                                        cn->name, NULL);
 }
 
 EDBus_Connection_Name *
@@ -550,7 +491,23 @@ edbus_connection_name_get(EDBus_Connection *conn, const char *name)
    cn = calloc(1, sizeof(EDBus_Connection_Name));
    EINA_SAFETY_ON_NULL_RETURN_VAL(cn, NULL);
    cn->name = eina_stringshare_add(name);
+   cn->objects = eina_hash_string_superfast_new(NULL);
 
+   if (name[0] == ':' || !strcmp(name, EDBUS_FDO_BUS))
+     {
+        cn->unique_id = eina_stringshare_add(name);
+        goto end;
+     }
+   edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
+   cn->name_owner_changed = edbus_signal_handler_add(conn, EDBUS_FDO_BUS,
+                                                     EDBUS_FDO_PATH,
+                                                     EDBUS_FDO_INTERFACE,
+                                                     "NameOwnerChanged",
+                                                     on_name_owner_changed, cn);
+   edbus_signal_handler_match_extra_set(cn->name_owner_changed, "arg0",
+                                        cn->name, NULL);
+
+end:
    eina_hash_direct_add(conn->names, cn->name, cn);
    return cn;
 }
@@ -1000,7 +957,7 @@ edbus_connection_get(EDBus_Connection_Type type)
    conn->refcount = 1;
    EINA_MAGIC_SET(conn, EDBUS_CONNECTION_MAGIC);
 
-   conn->names = eina_hash_string_superfast_new(edbus_connection_name_free);
+   conn->names = eina_hash_string_superfast_new(NULL);
 
    DBG("Returned new connection at %p", conn);
    return conn;
@@ -1024,9 +981,11 @@ _edbus_connection_unref(EDBus_Connection *conn)
    Eina_Inlist *list;
    EDBus_Signal_Handler *h;
    EDBus_Pending *p;
+   Eina_Iterator *iter;
+   EDBus_Connection_Name *cn;
 
    DBG("Connection %p: unref (currently at %d refs)",
-      conn, conn->refcount);
+       conn, conn->refcount);
 
    if (--conn->refcount > 0) return;
 
@@ -1047,6 +1006,24 @@ _edbus_connection_unref(EDBus_Connection *conn)
         h = EINA_INLIST_CONTAINER_GET(conn->signal_handlers, EDBus_Signal_Handler);
         edbus_signal_handler_del(h);
      }
+
+   iter = eina_hash_iterator_data_new(conn->names);
+   EINA_ITERATOR_FOREACH(iter, cn)
+     {
+        while (cn->event_handlers.list)
+          {
+             EDBus_Connection_Context_NOC_Cb *ctx;
+             ctx = EINA_INLIST_CONTAINER_GET(cn->event_handlers.list,
+                                             EDBus_Connection_Context_NOC_Cb);
+             cn->event_handlers.list = eina_inlist_remove(cn->event_handlers.list,
+                                                          cn->event_handlers.list);
+             free(ctx);
+           }
+        edbus_connection_name_gc(conn, cn);
+     }
+   eina_iterator_free(iter);
+   eina_hash_free(conn->names);
+
    conn->refcount = 0;
 
    /* after cbs_free dispatch these shouldn't exit, error if they do */
@@ -1054,7 +1031,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
    if (conn->pendings)
      {
         CRITICAL("Connection %p released with live pending calls!",
-                conn);
+                 conn);
         EINA_INLIST_FOREACH(conn->pendings, p)
           ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()",
               conn, p,
@@ -1077,8 +1054,6 @@ _edbus_connection_unref(EDBus_Connection *conn)
           }
         eina_list_free(ce->to_delete);
      }
-
-   eina_hash_free(conn->names);
 
    EINA_MAGIC_SET(conn, EINA_MAGIC_NONE);
    dbus_connection_close(conn->dbus_conn);
@@ -1193,8 +1168,6 @@ edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, E
 
    cn = edbus_connection_name_get(conn, bus);
    EINA_SAFETY_ON_NULL_RETURN(cn);
-   edbus_connection_name_owner_monitor(conn, cn, EINA_TRUE);
-
    ctx = calloc(1, sizeof(EDBus_Connection_Context_NOC_Cb));
    EINA_SAFETY_ON_NULL_GOTO(ctx, cleanup);
    ctx->cb = cb;
@@ -1215,7 +1188,7 @@ edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, E
    return;
 
 cleanup:
-   _edbus_connection_name_unref(conn, cn);
+   edbus_connection_name_gc(conn, cn);
 }
 
 EAPI void
@@ -1260,7 +1233,6 @@ edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, E
         free(data);
      }
    free(found);
-   edbus_connection_name_owner_monitor(conn, cn, EINA_FALSE);
 }
 
 EAPI void

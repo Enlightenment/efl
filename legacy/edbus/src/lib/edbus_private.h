@@ -75,6 +75,9 @@ EDBus_Pending         *_edbus_connection_send(EDBus_Connection *conn, EDBus_Mess
 EDBus_Message_Iter    *edbus_message_iter_sub_iter_get(EDBus_Message_Iter *iter);
 Eina_Value            *_message_iter_struct_to_eina_value(EDBus_Message_Iter *iter);
 
+void                   edbus_connection_name_ref(EDBus_Connection_Name *cn);
+void                   edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn);
+
 #ifdef HAVE_VA_LIST_AS_ARRAY
 #define MAKE_PTR_FROM_VA_LIST(arg) ((va_list *)(arg))
 #else

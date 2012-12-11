@@ -175,11 +175,11 @@ edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char 
    dbus_bus_add_match(conn->dbus_conn, eina_strbuf_string_get(match), &err);
    if (dbus_error_is_set(&err)) goto cleanup;
 
-   if (sender && sender[0] != ':' && strcmp(sender, EDBUS_FDO_BUS))
+   if (sender)
      {
         sh->bus = edbus_connection_name_get(conn, sender);
         if (!sh->bus) goto cleanup;
-        edbus_connection_name_owner_monitor(conn, sh->bus, EINA_TRUE);
+        edbus_connection_name_ref(sh->bus);
      }
 
    sh->cb = cb;
@@ -243,6 +243,9 @@ _edbus_signal_handler_del(EDBus_Signal_Handler *handler)
         free(arg);
      }
    eina_inlist_sorted_state_free(handler->state_args);
+
+   if (handler->bus)
+     edbus_connection_name_unref(handler->conn, handler->bus);
    free(handler);
 }
 
