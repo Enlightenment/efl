@@ -78,3 +78,11 @@ edbus_name_start(EDBus_Connection *conn, const char *name, unsigned int flags, E
    return edbus_proxy_call(get_freedesktop_proxy(conn), "StartServiceByName", cb,
                            cb_data, -1, "su", name, flags);
 }
+
+EAPI EDBus_Pending *
+edbus_object_managed_objects_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
+{
+   EDBus_Proxy *proxy;
+   proxy = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE_OBJECT_MANAGER);
+   return edbus_proxy_call(proxy, "GetManagedObjects", cb, data, -1, "");
+}

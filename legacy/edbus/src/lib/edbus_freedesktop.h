@@ -124,29 +124,11 @@ EAPI const Eina_Hash      *edbus_proxy_property_local_get_all(EDBus_Proxy *proxy
  */
 
 /**
- * @defgroup EDBus_FDO_ObjectManager org.freedesktop.DBus.ObjectManager
- *
- * Whenever edbus_object_managed_objects_monitor() is called on an
- * object it will start listening for children being added or
- * interfaces changing on the object itself. It will then emit
- * events with edbus_object_event_type being
- * #EDBUS_OBJECT_EVENT_IFACE_ADDED,
- * #EDBUS_OBJECT_EVENT_IFACE_REMOVED,
- * #EDBUS_OBJECT_EVENT_PROPERTY_CHANGED and
- * #EDBUS_OBJECT_EVENT_PROPERTY_REMOVED.
- *
- * One may manually query the managed objects with
- * edbus_object_managed_objects_get() and listen for changes with
- * edbus_object_interfaces_added_callback_add() and
- * edbus_object_interfaces_removed_callback_add().
- *
+ * @defgroup EDBus_FDO_ObjectManager org.freedesktop.DBus.ObjectManager *
  * @{
  */
-EAPI void                  edbus_object_properties_monitor(EDBus_Object *obj);
 
 EAPI EDBus_Pending        *edbus_object_managed_objects_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI EDBus_Signal_Handler *edbus_object_interfaces_added_callback_add(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI EDBus_Signal_Handler *edbus_object_interfaces_removed_callback_add(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 /**
  * @}
  */
