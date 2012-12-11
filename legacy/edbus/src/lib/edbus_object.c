@@ -399,10 +399,10 @@ edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type,
             if (obj->interfaces_added)
               break;
             obj->interfaces_added =
-                     edbus_signal_handler_add(obj->conn, obj->name, NULL,
-                                              EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
-                                              "InterfacesAdded",
-                                              _cb_interfaces_added, obj);
+                     _edbus_signal_handler_add(obj->conn, obj->name, NULL,
+                                               EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                               "InterfacesAdded",
+                                               _cb_interfaces_added, obj);
             EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_added);
             edbus_signal_handler_match_extra_set(obj->interfaces_added, "arg0",
                                                  obj->path, NULL);
@@ -413,10 +413,10 @@ edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type,
            if (obj->interfaces_removed)
              break;
            obj->interfaces_removed =
-                    edbus_signal_handler_add(obj->conn, obj->name, NULL,
-                                             EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
-                                             "InterfacesRemoved",
-                                             _cb_interfaces_removed, obj);
+                    _edbus_signal_handler_add(obj->conn, obj->name, NULL,
+                                              EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                              "InterfacesRemoved",
+                                              _cb_interfaces_removed, obj);
            EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_added);
            edbus_signal_handler_match_extra_set(obj->interfaces_removed,
                                                 "arg0", obj->path, NULL);
@@ -598,8 +598,8 @@ edbus_object_signal_handler_add(EDBus_Object *obj, const char *interface, const 
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
 
-   handler = edbus_signal_handler_add(obj->conn, obj->name, obj->path,
-                                      interface, member, cb, cb_data);
+   handler = _edbus_signal_handler_add(obj->conn, obj->name, obj->path,
+                                       interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(handler, NULL);
 
    edbus_signal_handler_cb_free_add(handler, _on_signal_handler_free, obj);

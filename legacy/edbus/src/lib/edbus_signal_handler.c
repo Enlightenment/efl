@@ -148,8 +148,36 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
    return ret;
 }
 
+static void _on_handler_of_conn_free(void *data, const void *dead_pointer);
+
+static void
+_on_connection_free(void *data, const void *dead_pointer)
+{
+   EDBus_Signal_Handler *sh = data;
+   edbus_signal_handler_cb_free_del(sh, _on_handler_of_conn_free, sh->conn);
+   edbus_signal_handler_del(sh);
+}
+
+static void
+_on_handler_of_conn_free(void *data, const void *dead_pointer)
+{
+   EDBus_Connection *conn = data;
+   edbus_connection_cb_free_del(conn, _on_connection_free, dead_pointer);
+}
+
 EAPI EDBus_Signal_Handler *
 edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, EDBus_Signal_Cb cb, const void *cb_data)
+{
+   EDBus_Signal_Handler *sh;
+   sh = _edbus_signal_handler_add(conn, sender, path, interface, member, cb, cb_data);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sh, NULL);
+   edbus_connection_cb_free_add(conn, _on_connection_free, sh);
+   edbus_signal_handler_cb_free_add(sh, _on_handler_of_conn_free, conn);
+   return sh;
+}
+
+EDBus_Signal_Handler *
+_edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, EDBus_Signal_Cb cb, const void *cb_data)
 {
    EDBus_Signal_Handler *sh;
    Eina_Strbuf *match;

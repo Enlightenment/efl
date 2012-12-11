@@ -605,8 +605,8 @@ edbus_proxy_signal_handler_add(EDBus_Proxy *proxy, const char *member, EDBus_Sig
    name = edbus_object_bus_name_get(proxy->obj);
    path = edbus_object_path_get(proxy->obj);
 
-   handler = edbus_signal_handler_add(proxy->obj->conn, name, path,
-                                      proxy->interface, member, cb, cb_data);
+   handler = _edbus_signal_handler_add(proxy->obj->conn, name, path,
+                                       proxy->interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(handler, NULL);
 
    edbus_signal_handler_cb_free_add(handler, _on_signal_handler_free, proxy);

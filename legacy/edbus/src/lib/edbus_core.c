@@ -499,11 +499,11 @@ edbus_connection_name_get(EDBus_Connection *conn, const char *name)
         goto end;
      }
    edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
-   cn->name_owner_changed = edbus_signal_handler_add(conn, EDBUS_FDO_BUS,
-                                                     EDBUS_FDO_PATH,
-                                                     EDBUS_FDO_INTERFACE,
-                                                     "NameOwnerChanged",
-                                                     on_name_owner_changed, cn);
+   cn->name_owner_changed = _edbus_signal_handler_add(conn, EDBUS_FDO_BUS,
+                                                      EDBUS_FDO_PATH,
+                                                      EDBUS_FDO_INTERFACE,
+                                                      "NameOwnerChanged",
+                                                      on_name_owner_changed, cn);
    edbus_signal_handler_match_extra_set(cn->name_owner_changed, "arg0",
                                         cn->name, NULL);
 
@@ -1000,13 +1000,6 @@ _edbus_connection_unref(EDBus_Connection *conn)
    EINA_INLIST_FOREACH_SAFE(conn->pendings, list, p)
      edbus_pending_cancel(p);
 
-   while (conn->signal_handlers)
-     {
-        list = conn->signal_handlers;
-        h = EINA_INLIST_CONTAINER_GET(conn->signal_handlers, EDBus_Signal_Handler);
-        edbus_signal_handler_del(h);
-     }
-
    iter = eina_hash_iterator_data_new(conn->names);
    EINA_ITERATOR_FOREACH(iter, cn)
      {
@@ -1033,12 +1026,19 @@ _edbus_connection_unref(EDBus_Connection *conn)
         CRITICAL("Connection %p released with live pending calls!",
                  conn);
         EINA_INLIST_FOREACH(conn->pendings, p)
-          ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()",
-              conn, p,
+          ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()", conn, p,
               edbus_pending_destination_get(p),
               edbus_pending_path_get(p),
               edbus_pending_interface_get(p),
               edbus_pending_method_get(p));
+     }
+
+   if (conn->signal_handlers)
+     {
+        CRITICAL("Connection %p released with live signal handlers!", conn);
+        EINA_INLIST_FOREACH(conn->signal_handlers, h)
+          ERR("conn=%p alive signal=%p %s.%s path=%s", conn, h, h->interface,
+              h->member, h->path);
      }
 
    for (i = 0; i < EDBUS_CONNECTION_EVENT_LAST; i++)
