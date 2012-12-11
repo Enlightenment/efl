@@ -332,7 +332,7 @@ _property_changed_iter(void *data, const void *key, EDBus_Message_Iter *var)
    event.name = skey;
    event.value = &stack_value;
    _edbus_object_event_callback_call(edbus_proxy_object_get(proxy),
-                                     EDBUS_OBJECT_EVENT_IFACE_REMOVED,
+                                     EDBUS_OBJECT_EVENT_PROPERTY_CHANGED,
                                      &event);
    eina_value_free(st_value);
    eina_value_flush(&stack_value);
