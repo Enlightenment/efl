@@ -947,7 +947,7 @@ _connection_get(EDBus_Connection_Type type)
    edbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL,
                             "Disconnected", _disconnected, conn);
    obj = edbus_object_get(conn, EDBUS_FDO_BUS, EDBUS_FDO_PATH);
-   conn->daemon = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE);
+   conn->fdo_proxy = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE);
 
    DBG("Returned new connection at %p", conn);
    return conn;
