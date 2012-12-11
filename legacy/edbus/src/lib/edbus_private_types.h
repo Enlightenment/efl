@@ -59,7 +59,6 @@ struct _EDBus_Connection
    Eina_Inlist                   *fd_handlers;
    Eina_Inlist                   *timeouts;
    Ecore_Idler                   *idler;
-   Eina_Bool                      running_signal;
    EDBus_Connection_Context_Event event_handlers[EDBUS_CONNECTION_EVENT_LAST];
    Eina_Inlist                   *root_objs;//service_object
 };

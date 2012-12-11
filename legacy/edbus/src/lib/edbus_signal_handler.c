@@ -206,14 +206,6 @@ cleanup_create_strbuf:
    return NULL;
 }
 
-static Eina_Bool
-signal_handler_deleter(void *data)
-{
-   EDBus_Signal_Handler *handler = data;
-   _edbus_signal_handler_del(handler);
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 _edbus_signal_handler_clean(EDBus_Signal_Handler *handler)
 {
@@ -221,10 +213,6 @@ _edbus_signal_handler_clean(EDBus_Signal_Handler *handler)
 
    if (handler->dangling) return;
 
-   edbus_connection_signal_handler_del(handler->conn, handler);
-   if (handler->bus)
-     edbus_connection_name_owner_monitor(handler->conn, handler->bus,
-                                         EINA_FALSE);
    dbus_error_init(&err);
    dbus_bus_remove_match(handler->conn->dbus_conn,
                          eina_strbuf_string_get(handler->match), &err);
@@ -239,6 +227,7 @@ _edbus_signal_handler_del(EDBus_Signal_Handler *handler)
    DBG("handler %p, refcount=%d, conn=%p %s",
        handler, handler->refcount, handler->conn, handler->sender);
    edbus_cbs_free_dispatch(&(handler->cbs_free), handler);
+   edbus_connection_signal_handler_del(handler->conn, handler);
    EINA_MAGIC_SET(handler, EINA_MAGIC_NONE);
 
    /* after cbs_free dispatch these shouldn't exit, error if they do */
@@ -277,11 +266,7 @@ edbus_signal_handler_unref(EDBus_Signal_Handler *handler)
    if (handler->refcount > 0) return;
 
    _edbus_signal_handler_clean(handler);
-
-   if (handler->conn->running_signal)
-     ecore_idler_add(signal_handler_deleter, handler);
-   else
-     _edbus_signal_handler_del(handler);
+   _edbus_signal_handler_del(handler);
 }
 
 EAPI void

@@ -824,6 +824,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
    char *arg_msg;
    EDBus_Message *edbus_msg;
    Signal_Argument *arg;
+   Eina_Inlist *safe_list;
 
    edbus_msg = edbus_message_new(EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN(edbus_msg);
@@ -831,10 +832,12 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
    edbus_msg->dbus_msg = dbus_message_ref(msg);
    dbus_message_iter_init(edbus_msg->dbus_msg,
                           &edbus_msg->iterator->dbus_iterator);
-   conn->running_signal = EINA_TRUE;
 
+   edbus_connection_ref(conn);
    EINA_INLIST_FOREACH(conn->signal_handlers, sh)
      {
+        sh->refcount++;
+        if (sh->dangling) continue;
         if (sh->sender)
           {
              if (sh->bus)
@@ -877,8 +880,11 @@ next_sh:
         type = 0;
      }
 
+   EINA_INLIST_FOREACH_SAFE(conn->signal_handlers, safe_list, sh)
+     edbus_signal_handler_unref(sh);
+
    edbus_message_unref(edbus_msg);
-   conn->running_signal = EINA_FALSE;
+   edbus_connection_unref(conn);
 }
 
 static DBusHandlerResult
