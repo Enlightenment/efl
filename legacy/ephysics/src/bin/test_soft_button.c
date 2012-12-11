@@ -30,24 +30,24 @@ _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 static void
-_soft_ellipsoid_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *back_face)
+_soft_sphere_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *back_face)
 {
    EPhysics_Body *body;
    Evas_Coord x, y, w, h;
 
 
-   body = ephysics_body_soft_ellipsoid_add(test_data->world, 500);
+   body = ephysics_body_soft_sphere_add(test_data->world, 500);
 
    ephysics_body_soft_body_position_iterations_set(body, 16);
    ephysics_body_soft_body_anchor_hardness_set(body, 0);
    ephysics_body_soft_body_hardness_set(body, 3);
 
    ephysics_body_face_evas_object_set(body,
-                                      EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT,
+                                      EPHYSICS_BODY_SPHERE_FACE_FRONT,
                                       front_face, EINA_TRUE);
 
    ephysics_body_face_evas_object_set(body,
-                                      EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK,
+                                      EPHYSICS_BODY_SPHERE_FACE_BACK,
                                       back_face, EINA_TRUE);
 
    ephysics_body_geometry_get(body, &x, &y, NULL, &w, &h, NULL);
@@ -90,7 +90,7 @@ _world_populate(Test_Data *test_data)
    evas_object_show(back_face);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, back_face);
 
-   _soft_ellipsoid_add(test_data, front_face, back_face);
+   _soft_sphere_add(test_data, front_face, back_face);
 }
 
 static void

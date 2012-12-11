@@ -621,7 +621,7 @@ EAPI Eina_Bool ephysics_shape_save(const EPhysics_Shape *shape, const char *file
  * @li @ref ephysics_body_cylinder_add()
  * @li @ref ephysics_body_box_add()
  * @li @ref ephysics_body_shape_add()
- * @li @ref ephysics_body_soft_circle_add()
+ * @li @ref ephysics_body_soft_cylinder_add()
  * @li @ref ephysics_body_soft_box_add()
  *
  * and it can be deleted with @ref ephysics_body_del().
@@ -1959,7 +1959,7 @@ EAPI Eina_Bool ephysics_world_stack_enable_get(const EPhysics_World *world);
  * Also they can be soft bodies, that won't act as rigid bodies. They will
  * deform its shape under certain circunstances, like under collisions.
  * Soft bodies can be created with:
- * @li @ref ephysics_body_soft_circle_add();
+ * @li @ref ephysics_body_soft_cylinder_add();
  * @li @ref ephysics_body_soft_box_add();
  *
  * They can collide and have customizable properties, like:
@@ -2173,6 +2173,8 @@ typedef enum _EPhysics_Body_Cloth_Anchor_Side
  * Define in wich body's face the evas object should be set.
  *
  * @see ephysics_body_face_evas_object_set()
+ * @see ephysics_body_face_evas_object_unset()
+ * @see ephysics_body_face_evas_object_get()
  *
  * @ingroup EPhysics_Body
  */
@@ -2187,32 +2189,17 @@ typedef enum _EPhysics_Body_Face
   EPHYSICS_BODY_BOX_FACE_TOP,
   EPHYSICS_BODY_BOX_FACE_BOTTOM,
 
+  EPHYSICS_BODY_CLOTH_FACE_FRONT,
+  EPHYSICS_BODY_CLOTH_FACE_BACK,
+
   EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
   EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
   EPHYSICS_BODY_CYLINDER_FACE_FRONT,
   EPHYSICS_BODY_CYLINDER_FACE_BACK,
   EPHYSICS_BODY_CYLINDER_FACE_CURVED,
 
-  EPHYSICS_BODY_CLOTH_FACE_FRONT,
-  EPHYSICS_BODY_CLOTH_FACE_BACK,
-
-  EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT,
-  EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK,
-
-  EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_FRONT,
-  EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_BACK,
-  EPHYSICS_BODY_SOFT_BOX_FACE_FRONT,
-  EPHYSICS_BODY_SOFT_BOX_FACE_BACK,
-  EPHYSICS_BODY_SOFT_BOX_FACE_LEFT,
-  EPHYSICS_BODY_SOFT_BOX_FACE_RIGHT,
-  EPHYSICS_BODY_SOFT_BOX_FACE_TOP,
-  EPHYSICS_BODY_SOFT_BOX_FACE_BOTTOM,
-
-  EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_FRONT,
-  EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_BACK,
-  EPHYSICS_BODY_SOFT_CIRCLE_FACE_FRONT,
-  EPHYSICS_BODY_SOFT_CIRCLE_FACE_BACK,
-  EPHYSICS_BODY_SOFT_CIRCLE_FACE_CURVED,
+  EPHYSICS_BODY_SPHERE_FACE_FRONT,
+  EPHYSICS_BODY_SPHERE_FACE_BACK,
 
   EPHYSICS_BODY_FACE_LAST,
 } EPhysics_Body_Face;
@@ -2494,15 +2481,15 @@ EAPI int ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Objec
 
 /**
  * @brief
- * Add a soft ellipsoid.
+ * Add a soft sphere.
  *
- * Add a new soft 3d ellipsoid to the simulation. The @p granularity defines how
+ * Add a new soft 3d sphere to the simulation. The @p granularity defines how
  * many triangles are to be added.
  *
  * @note if no @p granularity is informed(i.e @p granularity = 0) the soft body
  * will be created with a triangle mesh of 100.
  *
- * @param world The world the new soft ellipsoid is to be added.
+ * @param world The world the new soft sphere is to be added.
  * @param granularity How many triangles the soft body triangle mesh must have.
  * @return a new body or @c NULL on errors.
  *
@@ -2512,7 +2499,7 @@ EAPI int ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Objec
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity);
+EAPI EPhysics_Body *ephysics_body_soft_sphere_add(EPhysics_World *world, int granularity);
 
 /**
  * @brief
@@ -2679,7 +2666,7 @@ EAPI void ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, i
  * ephysics_body_evas_object_set(), and it will collid as a sphere(even if
  * you`ve associated an evas rectangle).
  *
- * For deformable sphere use @p ephysics_body_soft_ellipsoid_add() instead.
+ * For deformable sphere use @p ephysics_body_soft_sphere_add() instead.
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL, on errors.
@@ -2704,7 +2691,7 @@ EAPI EPhysics_Body *ephysics_body_sphere_add(EPhysics_World *world);
  * and it will collide as a cylinder (even if you have an evas rectangle).
  *
  * If a cylinder that could have its shape deformed is required, use
- * @ref ephysics_body_soft_circle_add().
+ * @ref ephysics_body_soft_cylinder_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -2719,14 +2706,14 @@ EAPI EPhysics_Body *ephysics_body_cylinder_add(EPhysics_World *world);
 
 /**
  * @brief
- * Create a new deformable circle physics body.
+ * Create a new deformable cylinder physics body.
  *
- * Its collision shape will be a circle of diameter 1. To change it's size
+ * Its collision shape will be a cylinder of diameter 1. To change it's size
  * @ref ephysics_body_geometry_set() should be used.
  *
  * Any evas object can be associated to it with
  * @ref ephysics_body_evas_object_set(),
- * and it will collide and deform as a circle (even if you have an evas
+ * and it will collide and deform as a cylinder (even if you have an evas
  * rectangle).
  *
  * Just like rotation, deformation will be applied on associated
@@ -2747,7 +2734,7 @@ EAPI EPhysics_Body *ephysics_body_cylinder_add(EPhysics_World *world);
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_soft_circle_add(EPhysics_World *world);
+EAPI EPhysics_Body *ephysics_body_soft_cylinder_add(EPhysics_World *world);
 
 /**
  * @brief
@@ -3073,7 +3060,7 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  * @see ephysics_body_box_add().
  * @see ephysics_body_soft_box_add().
  * @see ephysics_body_cylinder_add().
- * @see ephysics_body_soft_circle_add().
+ * @see ephysics_body_soft_cylinder_add().
  * @see ephysics_body_evas_object_unset().
  * @see ephysics_world_rate_set().
  *

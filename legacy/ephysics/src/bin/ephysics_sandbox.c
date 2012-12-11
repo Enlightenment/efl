@@ -139,7 +139,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    if (elm_radio_value_get(obj))
      {
-        body = ephysics_body_soft_circle_add(world);
+        body = ephysics_body_soft_cylinder_add(world);
         ephysics_body_soft_body_hardness_set(
            body, elm_slider_value_get(bd->controls.hardness));
         elm_object_disabled_set(bd->controls.hardness, EINA_FALSE);

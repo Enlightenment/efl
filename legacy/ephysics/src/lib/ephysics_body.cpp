@@ -2603,7 +2603,7 @@ ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Ev
 }
 
 static EPhysics_Body_Face_Slice *
-_ephysics_body_soft_ellipsoid_face_slices_add(EPhysics_Body *body, EPhysics_Body_Face face, btVector3 center)
+_ephysics_body_soft_sphere_face_slices_add(EPhysics_Body *body, EPhysics_Body_Face face, btVector3 center)
 {
    btSoftBody::Face *bt_face;
    btSoftBody::Node *node;
@@ -2623,9 +2623,9 @@ _ephysics_body_soft_ellipsoid_face_slices_add(EPhysics_Body *body, EPhysics_Body
         for (int n = 0; n < 3; n++)
           {
              node = bt_face->m_n[n];
-             if ((face == EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT &&
+             if ((face == EPHYSICS_BODY_SPHERE_FACE_FRONT &&
                   node->m_x.z() > depth_limit) ||
-                 (face == EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK &&
+                 (face == EPHYSICS_BODY_SPHERE_FACE_BACK &&
                   node->m_x.z() < depth_limit))
                out++;
           }
@@ -2677,7 +2677,7 @@ no_deform:
 }
 
 EAPI EPhysics_Body *
-ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity)
+ephysics_body_soft_sphere_add(EPhysics_World *world, int granularity)
 {
    EPhysics_Body *body;
    EPhysics_Body_Face_Slice *front_face, *back_face;
@@ -2690,7 +2690,7 @@ ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity)
 
    if (!world)
      {
-        ERR("Can't add circle, world is null.");
+        ERR("Can't add soft sphere, world is null.");
         return NULL;
      }
 
@@ -2721,8 +2721,8 @@ ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity)
 
    body->soft_body->setPose(false, true);
 
-   front_face = _ephysics_body_soft_ellipsoid_face_slices_add(body,
-                             EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT, center);
+   front_face = _ephysics_body_soft_sphere_face_slices_add(body,
+                             EPHYSICS_BODY_SPHERE_FACE_FRONT, center);
    if (!front_face)
      {
         ERR("Could not create points of deformation mapping for front face.");
@@ -2730,15 +2730,15 @@ ephysics_body_soft_ellipsoid_add(EPhysics_World *world, int granularity)
      }
    body->default_face = front_face;
 
-   back_face = _ephysics_body_soft_ellipsoid_face_slices_add(body,
-                              EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK, center);
+   back_face = _ephysics_body_soft_sphere_face_slices_add(body,
+                              EPHYSICS_BODY_SPHERE_FACE_BACK, center);
    if (!back_face)
      {
         ERR("Could not create points of deformation mapping for back face.");
         goto no_back_face;
      }
 
-   body->shape = EPHYSICS_BODY_SHAPE_ELLIPSOID;
+   body->shape = EPHYSICS_BODY_SHAPE_SPHERE;
    ephysics_world_lock_release(world);
    return body;
 
@@ -2756,7 +2756,7 @@ no_collision_shape:
 }
 
 EAPI EPhysics_Body *
-ephysics_body_soft_circle_add(EPhysics_World *world)
+ephysics_body_soft_cylinder_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
    EPhysics_Body_Face_Slice *face_slice;
@@ -2798,7 +2798,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    body->shape = EPHYSICS_BODY_SHAPE_CYLINDER;
 
    face_slice = _ephysics_body_face_slice_add(body,
-                                           EPHYSICS_BODY_SOFT_CIRCLE_FACE_FRONT);
+                                        EPHYSICS_BODY_CYLINDER_FACE_FRONT);
    if (!face_slice)
      {
         ERR("Could not allocate face slice data structure.");
@@ -2942,7 +2942,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    body->shape = EPHYSICS_BODY_SHAPE_BOX;
 
    face_slice = _ephysics_body_face_slice_add(body,
-                                              EPHYSICS_BODY_SOFT_BOX_FACE_FRONT);
+                                              EPHYSICS_BODY_BOX_FACE_FRONT);
    if (!face_slice)
      {
         ERR("Could not allocate face slice data structure.");
@@ -4973,7 +4973,7 @@ _ephysics_body_cloth_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_F
 }
 
 static void
-_ephysics_body_ellipsoid_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_soft_sphere_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
    Evas_Coord bd, w, h;
@@ -4986,7 +4986,7 @@ _ephysics_body_ellipsoid_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas
 }
 
 static void
-_ephysics_body_ellipsoid_face_evas_object_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ephysics_body_soft_sphere_face_evas_object_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Eina_List *l;
    void *ldata;
@@ -5004,36 +5004,37 @@ _ephysics_body_ellipsoid_face_evas_object_del_cb(void *data, Evas *evas __UNUSED
      }
 
    _ephysics_body_face_evas_object_del(body, face_obj,
-                                    _ephysics_body_ellipsoid_face_obj_resize_cb);
+                                  _ephysics_body_soft_sphere_face_obj_resize_cb);
    _ephysics_body_soft_body_slices_clean(face_slice->slices);
-   DBG("Ellipsoid's face cleaned up.");
+
+   DBG("Soft sphere's face cleaned up.");
 }
 
 static void
-_ephysics_body_ellipsoid_face_evas_object_clean(EPhysics_Body *body, EPhysics_Body_Face_Obj *face_obj, Eina_List *slices)
+_ephysics_body_soft_sphere_face_evas_object_clean(EPhysics_Body *body, EPhysics_Body_Face_Obj *face_obj, Eina_List *slices)
 {
    evas_object_map_enable_set(face_obj->obj, EINA_FALSE);
    evas_object_event_callback_del(face_obj->obj, EVAS_CALLBACK_DEL,
-                               _ephysics_body_ellipsoid_face_evas_object_del_cb);
+                             _ephysics_body_soft_sphere_face_evas_object_del_cb);
 
    evas_object_event_callback_del(face_obj->obj, EVAS_CALLBACK_RESTACK,
                                   _ephysics_body_soft_body_evas_restack_cb);
    _ephysics_body_soft_body_slices_clean(slices);
 
    _ephysics_body_face_evas_object_del(body, face_obj,
-                                    _ephysics_body_ellipsoid_face_obj_resize_cb);
+                                  _ephysics_body_soft_sphere_face_obj_resize_cb);
 }
 
 static void
-_ephysics_body_ellipsoid_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
+_ephysics_body_soft_sphere_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
    int obj_x, obj_y, obj_w, obj_h, bz, bd;
    double rate;
    EPhysics_Body_Face_Slice *face_slice = NULL;
    EPhysics_Body_Face_Obj *face_obj;
 
-   if ((face < EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT) ||
-       (face > EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK))
+   if ((face < EPHYSICS_BODY_SPHERE_FACE_FRONT) ||
+       (face > EPHYSICS_BODY_SPHERE_FACE_BACK))
      {
         ERR("Can't set evas object to body, face is invalid.");
         return;
@@ -5061,17 +5062,17 @@ _ephysics_body_ellipsoid_face_evas_object_set(EPhysics_Body *body, EPhysics_Body
    face_obj = _ephysics_body_face_evas_object_get(body, face);
 
    if (face_obj)
-        _ephysics_body_ellipsoid_face_evas_object_clean(body, face_obj,
-                                                        face_slice->slices);
+        _ephysics_body_soft_sphere_face_evas_object_clean(body, face_obj,
+                                                          face_slice->slices);
 
    evas_object_geometry_get(evas_obj, NULL, NULL, &obj_w, &obj_h);
    if (!obj_w && !obj_h) evas_object_resize(evas_obj, 1, 1);
 
    _ephysics_body_face_evas_object_add(body, face, evas_obj,
-                                    _ephysics_body_ellipsoid_face_obj_resize_cb);
+                                  _ephysics_body_soft_sphere_face_obj_resize_cb);
 
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
-                   _ephysics_body_ellipsoid_face_evas_object_del_cb, face_slice);
+                 _ephysics_body_soft_sphere_face_evas_object_del_cb, face_slice);
 
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESTACK,
                                   _ephysics_body_soft_body_evas_restack_cb,
@@ -5091,16 +5092,17 @@ _ephysics_body_ellipsoid_face_evas_object_set(EPhysics_Body *body, EPhysics_Body
    ephysics_world_lock_release(body->world);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
                                   _ephysics_body_evas_obj_resize_cb, body);
-   DBG("Ellipsoid face evas object set.");
+
+   DBG("Soft sphere's face evas object set.");
 }
 
 static Evas_Object *
-_ephysics_body_ellipsoid_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face face)
+_ephysics_body_soft_sphere_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face face)
 {
    EPhysics_Body_Face_Obj *face_obj = NULL;
 
-   if ((face < EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT) ||
-       (face > EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK))
+   if ((face < EPHYSICS_BODY_SPHERE_FACE_FRONT) ||
+       (face > EPHYSICS_BODY_SPHERE_FACE_BACK))
      {
         ERR("Can't get evas object from body, face is invalid.");
         return NULL;
@@ -5114,14 +5116,14 @@ _ephysics_body_ellipsoid_face_evas_object_get(const EPhysics_Body *body, EPhysic
 }
 
 static Evas_Object *
-_ephysics_body_ellipsoid_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face face)
+_ephysics_body_soft_sphere_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face face)
 {
    EPhysics_Body_Face_Slice *face_slice;
    EPhysics_Body_Face_Obj *face_obj = NULL;
    Evas_Object *obj;
 
-   if ((face < EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT) ||
-       (face > EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK))
+   if ((face < EPHYSICS_BODY_SPHERE_FACE_FRONT) ||
+       (face > EPHYSICS_BODY_SPHERE_FACE_BACK))
      {
         ERR("Can't unset evas object from body, face is invalid.");
         return NULL;
@@ -5133,7 +5135,7 @@ _ephysics_body_ellipsoid_face_evas_object_unset(EPhysics_Body *body, EPhysics_Bo
 
    obj = face_obj->obj;
    face_slice = _ephysics_body_face_slice_get(body, face);
-   _ephysics_body_ellipsoid_face_evas_object_clean(body, face_obj,
+   _ephysics_body_soft_sphere_face_evas_object_clean(body, face_obj,
                                                    face_slice->slices);
 
    DBG("EPhysics Body face unset.");
@@ -5158,15 +5160,18 @@ ephysics_body_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face,
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_set(body, face, evas_obj,
                                                       use_obj_pos);
-   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_set(body, face, evas_obj,
                                                          use_obj_pos);
-   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_set(body, face, evas_obj,
                                                     use_obj_pos);
-   if (body->shape == EPHYSICS_BODY_SHAPE_ELLIPSOID)
-     return _ephysics_body_ellipsoid_face_evas_object_set(body, face, evas_obj,
-                                                    use_obj_pos);
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT &&
+       body->shape == EPHYSICS_BODY_SHAPE_SPHERE)
+     return _ephysics_body_soft_sphere_face_evas_object_set(body, face, evas_obj,
+                                                            use_obj_pos);
 
    ERR("Can't handle body %p type.", body);
 }
@@ -5182,12 +5187,15 @@ ephysics_body_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face
 
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_get(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_get(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_get(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_ELLIPSOID)
-     return _ephysics_body_ellipsoid_face_evas_object_get(body, face);
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT &&
+       body->shape == EPHYSICS_BODY_SHAPE_SPHERE)
+     return _ephysics_body_soft_sphere_face_evas_object_get(body, face);
 
    ERR("Can't handle body %p type.", body);
    return NULL;
@@ -5204,12 +5212,15 @@ ephysics_body_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face fac
 
    if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      return _ephysics_body_cloth_face_evas_object_unset(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_CYLINDER)
      return _ephysics_body_cylinder_face_evas_object_unset(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_BOX)
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID &&
+       body->shape == EPHYSICS_BODY_SHAPE_BOX)
      return _ephysics_body_box_face_evas_object_unset(body, face);
-   if (body->shape == EPHYSICS_BODY_SHAPE_ELLIPSOID)
-     return _ephysics_body_ellipsoid_face_evas_object_unset(body, face);
+   if (body->type == EPHYSICS_BODY_TYPE_SOFT &&
+       body->shape == EPHYSICS_BODY_SHAPE_SPHERE)
+     return _ephysics_body_soft_sphere_face_evas_object_unset(body, face);
 
    ERR("Can't handle body %p type.", body);
    return NULL;

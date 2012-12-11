@@ -36,13 +36,13 @@ _soft_ellipsoid_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *
    Evas_Coord w, h;
 
 
-   body = ephysics_body_soft_ellipsoid_add(test_data->world, 100);
+   body = ephysics_body_soft_sphere_add(test_data->world, 100);
 
    ephysics_body_face_evas_object_set(body,
-                 EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT, front_face, EINA_TRUE);
+                 EPHYSICS_BODY_SPHERE_FACE_FRONT, front_face, EINA_TRUE);
 
    ephysics_body_face_evas_object_set(body,
-                   EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK, back_face, EINA_TRUE);
+                   EPHYSICS_BODY_SPHERE_FACE_BACK, back_face, EINA_TRUE);
 
    ephysics_body_geometry_get(body, NULL, NULL, NULL, &w, &h, NULL);
    ephysics_body_resize(body, w, h, h);
