@@ -111,6 +111,8 @@ EAPI EDBus_Pending        *edbus_object_send(EDBus_Object *obj, EDBus_Message *m
  * @param cb_data data that will be passed to callback
  */
 EAPI EDBus_Signal_Handler *edbus_object_signal_handler_add(EDBus_Object *obj, const char *interface, const char *member, EDBus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 4);
+
+EAPI EDBus_Message *edbus_object_method_call_new(EDBus_Object *obj, const char *interface, const char *member) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 /**
  * @}
  */

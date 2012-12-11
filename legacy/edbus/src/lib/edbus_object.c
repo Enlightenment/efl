@@ -608,6 +608,16 @@ edbus_object_signal_handler_add(EDBus_Object *obj, const char *interface, const 
    return handler;
 }
 
+EAPI EDBus_Message *
+edbus_object_method_call_new(EDBus_Object *obj, const char *interface, const char *member)
+{
+   EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(interface, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(member, NULL);
+
+   return edbus_message_method_call_new(obj->name, obj->path, interface, member);
+}
+
 Eina_Bool
 edbus_object_proxy_add(EDBus_Object *obj, EDBus_Proxy *proxy)
 {
