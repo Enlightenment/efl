@@ -16,24 +16,24 @@
 #define EDBUS_NAME_REQUEST_REPLY_EXISTS           3 /**< Service is already in the queue */
 #define EDBUS_NAME_REQUEST_REPLY_ALREADY_OWNER    4 /**< Service is already the primary owner */
 
-EAPI EDBus_Pending *edbus_name_request(EDBus_Connection *conn, const char *bus, unsigned int flags, EDBus_Message_Cb cb, const void *cb_data);
+EAPI EDBus_Pending *edbus_name_request(EDBus_Connection *conn, const char *bus, unsigned int flags, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /* Replies to releasing a name */
 #define EDBUS_NAME_RELEASE_REPLY_RELEASED     1    /**< Service was released from the given name */
 #define EDBUS_NAME_RELEASE_REPLY_NON_EXISTENT 2    /**< The given name does not exist on the bus */
 #define EDBUS_NAME_RELEASE_REPLY_NOT_OWNER    3    /**< Service is not an owner of the given name */
 
-EAPI EDBus_Pending *edbus_name_release(EDBus_Connection *conn, const char *bus, EDBus_Message_Cb cb, const void *cb_data);
-EAPI EDBus_Pending *edbus_name_owner_get(EDBus_Connection *conn, const char *bus, EDBus_Message_Cb cb, const void *cb_data);
+EAPI EDBus_Pending *edbus_name_release(EDBus_Connection *conn, const char *bus, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+EAPI EDBus_Pending *edbus_name_owner_get(EDBus_Connection *conn, const char *bus, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 EAPI EDBus_Pending *edbus_name_owner_has(EDBus_Connection *conn, const char *bus, EDBus_Message_Cb cb, const void *cb_data);
-EAPI EDBus_Pending *edbus_names_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const void *cb_data);
-EAPI EDBus_Pending *edbus_names_activatable_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const void *cb_data);
+EAPI EDBus_Pending *edbus_names_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+EAPI EDBus_Pending *edbus_names_activatable_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /* Replies to service starts */
 #define EDBUS_NAME_START_REPLY_SUCCESS         1 /**< Service was auto started */
 #define EDBUS_NAME_START_REPLY_ALREADY_RUNNING 2 /**< Service was already running */
 
-EAPI EDBus_Pending        *edbus_name_start(EDBus_Connection *conn, const char *bus, unsigned int flags, EDBus_Message_Cb cb, const void *cb_data);
+EAPI EDBus_Pending        *edbus_name_start(EDBus_Connection *conn, const char *bus, unsigned int flags, EDBus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 typedef void (*EDBus_Name_Owner_Changed_Cb)(void *data, const char *bus, const char *old_id, const char *new_id);
 
@@ -52,7 +52,7 @@ typedef void (*EDBus_Name_Owner_Changed_Cb)(void *data, const char *bus, const c
  * @param cb_data context data
  * @param allow_initial_call allow call callback with actual id of the bus
  */
-EAPI void                  edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call);
+EAPI void                  edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call) EINA_ARG_NONNULL(1, 2, 3);
 /**
  * Remove callback added with edbus_name_owner_changed_callback_add().
  *
@@ -61,14 +61,14 @@ EAPI void                  edbus_name_owner_changed_callback_add(EDBus_Connectio
  * @param cb callback
  * @param cb_data context data
  */
-EAPI void                  edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data);
+EAPI void                  edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @defgroup EDBus_FDO_Peer org.freedesktop.DBus.Peer
  *
  * @{
  */
-EAPI EDBus_Pending        *edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1);
+EAPI EDBus_Pending        *edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 EAPI EDBus_Pending        *edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 /**
  * @}
@@ -97,7 +97,7 @@ EAPI EDBus_Pending        *edbus_object_introspect(EDBus_Object *obj, EDBus_Mess
  *
  * @note After enable, it will asynchrony get the properties values.
  */
-EAPI void edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable);
+EAPI void edbus_proxy_properties_monitor(EDBus_Proxy *proxy, Eina_Bool enable) EINA_ARG_NONNULL(1);
 
 EAPI EDBus_Pending        *edbus_proxy_property_get(EDBus_Proxy *proxy, const char *name, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI EDBus_Pending        *edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const void *value, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 4);

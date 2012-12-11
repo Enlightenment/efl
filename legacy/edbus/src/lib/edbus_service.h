@@ -105,21 +105,21 @@ typedef struct _EDBus_Service_Interface_Desc
  *
  * @return Interface
  */
-EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection *conn, const char *path, const EDBus_Service_Interface_Desc *desc);
+EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection *conn, const char *path, const EDBus_Service_Interface_Desc *desc) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Unregister a interface.
  * If this is the last interface of the object path, the object path will be
  * removed too.
  */
-EAPI void edbus_service_interface_unregister(EDBus_Service_Interface *iface);
+EAPI void edbus_service_interface_unregister(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 /**
  * @brief Unregister all interfaces of the object path that this interface belongs
  * and the object path.
  */
-EAPI void edbus_service_object_unregister(EDBus_Service_Interface *iface);
-EAPI EDBus_Connection *edbus_service_connection_get(const EDBus_Service_Interface *iface);
-EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *iface);
+EAPI void edbus_service_object_unregister(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
+EAPI EDBus_Connection *edbus_service_connection_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
+EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Emit a signal handler of the interface with non-complex types.
@@ -140,7 +140,7 @@ EAPI Eina_Bool edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigne
  * @param iface interface of the signal
  * @param signal_id id of signal
  */
-EAPI EDBus_Message *edbus_service_signal_new(EDBus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1);
+EAPI EDBus_Message *edbus_service_signal_new(EDBus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Send a signal message.
  */
@@ -154,7 +154,7 @@ EAPI Eina_Bool edbus_service_signal_send(EDBus_Service_Interface *iface, EDBus_M
  * @param key to identify data
  * @param data
  */
-EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const char *key, const void *data);
+EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 /**
  * @brief Get data stored in object path.
  *
@@ -163,7 +163,7 @@ EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const ch
  *
  * @return pointer to data if found otherwise NULL
  */
-EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, const char *key);
+EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, const char *key) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Del data stored in object path.
  *
@@ -172,16 +172,16 @@ EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, c
  *
  * @return pointer to data if found otherwise NULL
  */
-EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const char *key);
+EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Add property to changed list. *
  * A PropertiesChanged signal will be send on next idler iteration with all
  * properties in changed list.
  */
-EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name);
+EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name) EINA_ARG_NONNULL(1, 2);
 
-EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate);
+EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Attach ObjectManager interface.
@@ -189,7 +189,7 @@ EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *if
  * @param iface ObjectManager will be attach in object path of this interface.
  * @return EINA_TRUE if success
  */
-EAPI Eina_Bool edbus_service_object_manager_attach(EDBus_Service_Interface *iface);
+EAPI Eina_Bool edbus_service_object_manager_attach(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 
 /**
  * Detach ObjectManager interface.
@@ -197,7 +197,7 @@ EAPI Eina_Bool edbus_service_object_manager_attach(EDBus_Service_Interface *ifac
  * @param iface ObjectManager of object path of this interface will be detach.
  * @return EINA_TRUE if success
  */
-EAPI Eina_Bool edbus_service_object_manager_detach(EDBus_Service_Interface *iface);
+EAPI Eina_Bool edbus_service_object_manager_detach(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 /**
  * @}
  */

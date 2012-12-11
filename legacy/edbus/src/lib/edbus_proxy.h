@@ -40,7 +40,7 @@ EAPI void                  edbus_proxy_cb_free_del(EDBus_Proxy *proxy, EDBus_Fre
 /**
  * @brief Constructs a new message to invoke a method on a remote interface.
  */
-EAPI EDBus_Message        *edbus_proxy_method_call_new(EDBus_Proxy *proxy, const char *member);
+EAPI EDBus_Message        *edbus_proxy_method_call_new(EDBus_Proxy *proxy, const char *member) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Send a message.

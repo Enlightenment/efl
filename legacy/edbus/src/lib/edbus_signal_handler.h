@@ -67,7 +67,7 @@ EAPI Eina_Bool             edbus_signal_handler_match_extra_set(EDBus_Signal_Han
  * @note To information:
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
  */
-EAPI Eina_Bool             edbus_signal_handler_match_extra_vset(EDBus_Signal_Handler *sh, va_list ap);
+EAPI Eina_Bool             edbus_signal_handler_match_extra_vset(EDBus_Signal_Handler *sh, va_list ap) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Add a callback function to be called when signal handler will be freed.
