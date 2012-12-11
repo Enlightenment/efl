@@ -846,6 +846,21 @@ struct _Edje_Part_Collection
    } prog_cache;
 #endif
 
+#ifdef HAVE_EPHYSICS
+   struct {
+      struct {
+         double rate;
+         Evas_Coord z;
+         Evas_Coord depth;
+         struct {
+              Evas_Coord x;
+              Evas_Coord y;
+              Evas_Coord z;
+         } gravity;
+      } world;
+   } physics;
+#endif
+
    Embryo_Program   *script; /* all the embryo script code for this group */
    const char       *part;
 

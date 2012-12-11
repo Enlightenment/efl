@@ -99,6 +99,15 @@ collections {
    group {
       name: "example_group";
 
+      physics {
+         world {
+            gravity: 0 80 0;
+            rate: 30;
+            z: -100;
+            depth: 200;
+         }
+      }
+
       script {
          public message(Msg_Type:type, id, ...) {
             if ((id == ID_IMPULSE) && (type == MSG_FLOAT_SET)) {

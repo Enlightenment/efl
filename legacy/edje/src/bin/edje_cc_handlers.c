@@ -114,6 +114,10 @@
  *        <ul>
  *          <li>@ref sec_collections_group_script "Script"</li>
  *        </ul>
+ *        <li>@ref sec_collections_group_physics "Physics"</li>
+ *        <ul>
+ *          <li>@ref sec_collections_group_physics_world "World"</li>
+ *        </ul>
  *      </ul>
  *    </ul>
  * </ul>
@@ -369,6 +373,13 @@ static void ob_collections_group_programs_program_script(void);
 static void st_collections_group_sound_sample_name(void);
 static void st_collections_group_sound_sample_source(void);
 static void st_collections_group_sound_tone(void);
+
+#ifdef HAVE_EPHYSICS
+static void st_collections_group_physics_world_gravity(void);
+static void st_collections_group_physics_world_rate(void);
+static void st_collections_group_physics_world_z(void);
+static void st_collections_group_physics_world_depth(void);
+#endif
 
 /*****/
 
@@ -745,6 +756,12 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.program.target", st_collections_group_programs_program_target}, /* dup */
      {"collections.group.parts.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.program.api", st_collections_group_programs_program_api}, /* dup */
+#ifdef HAVE_EPHYSICS
+     {"collections.group.physics.world.gravity", st_collections_group_physics_world_gravity},
+     {"collections.group.physics.world.rate", st_collections_group_physics_world_rate},
+     {"collections.group.physics.world.z", st_collections_group_physics_world_z},
+     {"collections.group.physics.world.depth", st_collections_group_physics_world_depth},
+#endif
      {"collections.group.program.name", st_collections_group_programs_program_name}, /* dup */
      {"collections.group.program.signal", st_collections_group_programs_program_signal}, /* dup */
      {"collections.group.program.source", st_collections_group_programs_program_source}, /* dup */
@@ -921,6 +938,10 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.programs.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.script", ob_collections_group_script}, /* dup */
+#ifdef HAVE_EPHYSICS
+     {"collections.group.physics", NULL},
+     {"collections.group.physics.world", NULL},
+#endif
      {"collections.group.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.programs", NULL},
@@ -2401,6 +2422,15 @@ ob_collections_group(void)
 
    cd = mem_alloc(SZ(Code));
    codes = eina_list_append(codes, cd);
+
+#ifdef HAVE_EPHYSICS
+   pc->physics.world.gravity.x = 0;
+   pc->physics.world.gravity.y = 294;
+   pc->physics.world.gravity.z = 0;
+   pc->physics.world.depth = 100;
+   pc->physics.world.z = -50;
+   pc->physics.world.rate = FROM_DOUBLE(30);
+#endif
 }
 
 /**
@@ -2569,6 +2599,15 @@ st_collections_group_inherit(void)
              eina_hash_direct_add(pc->aliased, key, aliased);
           }
      }
+
+#ifdef HAVE_EPHYSICS
+   pc->physics.world.gravity.x = pc2->physics.world.gravity.x;
+   pc->physics.world.gravity.y = pc2->physics.world.gravity.y;
+   pc->physics.world.gravity.z = pc2->physics.world.gravity.z;
+   pc->physics.world.depth = pc2->physics.world.depth;
+   pc->physics.world.z = pc2->physics.world.z;
+   pc->physics.world.rate = pc2->physics.world.rate;
+#endif
 
    pc->prop.min.w = pc2->prop.min.w;
    pc->prop.min.h = pc2->prop.min.h;
@@ -9073,6 +9112,162 @@ ob_collections_group_programs_program_script(void)
           }
      }
 }
+
+/**
+   @edcsubsection{collections_group_physics,Physics}
+ */
+
+/**
+    @page edcref
+    @block
+        physics
+    @context
+       group {
+           ..
+           physics {
+               world {
+                   ..
+               }
+           }
+           ..
+       }
+    @description
+        The "physics" block consists of blocks related to physics but
+        not to configure a body. By now, it only has a "world" block.
+    @endblock
+ */
+
+/**
+   @edcsubsection{collections_group_physics_world,World}
+ */
+
+/**
+    @page edcref
+    @block
+        world
+    @context
+        physics {
+            world {
+               gravity: 0 294 0;
+               rate: 30;
+               z: -50;
+               depth: 100;
+            }
+        }
+    @description
+        The "world" block configures the physics world. It's the
+        environment where the part's bodies will be simulated.
+        It can be used to customize gravity, rate, depth and others.
+    @endblock
+
+    @property
+        gravity
+    @parameters
+        [x-axis] [y-axis] [z-axis]
+    @effect
+        Three double values defining the gravity vector.
+        Each one is the component of this same vector over each axis.
+        Its unit is Evas Coordinates per second ^ 2.
+        The default value is 0, 294, 0, since we've a default rate of
+        30 pixels.
+    @endproperty
+    @since 1.8.0
+ */
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_physics_world_gravity(void)
+{
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   check_arg_count(3);
+
+   pc->physics.world.gravity.x = parse_int(0);
+   pc->physics.world.gravity.y = parse_int(1);
+   pc->physics.world.gravity.z = parse_int(2);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        rate
+    @parameters
+        [rate pixels / meter]
+    @effect
+        Set rate between pixels on evas canvas and meters on physics world.
+        It will be used by automatic updates of evas objects associated to
+        physics bodies.
+        By default rate is 30 pixels per meter.
+    @endproperty
+    @since 1.8.0
+ */
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_physics_world_rate(void)
+{
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   check_arg_count(1);
+
+   pc->physics.world.rate = parse_float(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        depth
+    @parameters
+        [depth in pixels]
+    @effect
+        World's depth, in pixels. It's only relevant if boundaries are used,
+        since their size depends on this.
+        By default world's depth is 100 pixels.
+    @endproperty
+    @since 1.8.0
+ */
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_physics_world_depth(void)
+{
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   check_arg_count(1);
+
+   pc->physics.world.depth = parse_int(0);
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        z
+    @parameters
+        [world's front border position]
+    @effect
+        Position in z axis, in pixels.
+        It's only relevant if boundaries are used, since their position
+        depends on this.
+        By default world's z is -50 pixels.
+    @endproperty
+    @since 1.8.0
+ */
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_physics_world_z(void)
+{
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   check_arg_count(1);
+
+   pc->physics.world.z = parse_int(0);
+}
+#endif
+
 /**
     @page edcref
     </table>

@@ -458,6 +458,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                   ephysics_world_event_callback_add(
                      ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
                      _edje_physics_world_update_cb, ed);
+                  ephysics_world_rate_set(ed->world,
+                                          ed->collection->physics.world.rate);
+                  ephysics_world_gravity_set(
+                     ed->world, ed->collection->physics.world.gravity.x,
+                     ed->collection->physics.world.gravity.y,
+                     ed->collection->physics.world.gravity.z);
                }
 #else
                ERR("Edje compiled without support to physics.");

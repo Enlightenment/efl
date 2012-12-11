@@ -227,8 +227,9 @@ _edje_smart_resize(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    ed->h = h;
 #ifdef HAVE_EPHYSICS
    if (ed->world)
-        ephysics_world_render_geometry_set(ed->world, ed->x, ed->y, -50,
-                                           ed->w, ed->h, 100);
+        ephysics_world_render_geometry_set(
+           ed->world, ed->x, ed->y, ed->collection->physics.world.z,
+           ed->w, ed->h, ed->collection->physics.world.depth);
 #endif
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
