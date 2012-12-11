@@ -2539,6 +2539,8 @@ static void
 _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
 {
    Eina_Bool resize = EINA_TRUE;
+   Edje_Physics_Face *pface;
+   Eina_List *l;
 
    switch (rp->part->physics_body)
      {
@@ -2584,6 +2586,24 @@ _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
       default:
          ERR("Invalid body: %i", rp->part->physics_body);
          return;
+     }
+
+   EINA_LIST_FOREACH(rp->part->default_desc->physics.faces, l, pface)
+     {
+        Evas_Object *edje_obj;
+        Evas *evas;
+
+        if (!pface->source) continue;
+
+        evas = evas_object_evas_get(rp->object);
+        edje_obj = edje_object_add(evas);
+        if (!edje_obj) continue;
+
+        edje_object_file_set(edje_obj, rp->edje->path, pface->source);
+        evas_object_resize(edje_obj, 1, 1);
+        ephysics_body_face_evas_object_set(rp->body, pface->type,
+                                           edje_obj, EINA_FALSE);
+        rp->body_faces = eina_list_append(rp->body_faces, edje_obj);
      }
 
    ephysics_body_evas_object_set(rp->body, rp->object, resize);
@@ -3190,12 +3210,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
 #ifdef HAVE_EPHYSICS
 /* body attributes should be updated for invisible objects */
-              if (!pf->visible)
+              if (!ep->part->physics_body)
                 {
+                   if (!pf->visible)
+                     {
+                        evas_object_hide(ep->object);
+                        break;
+                     }
+                   evas_object_show(ep->object);
+                }
+              else if (!pf->visible)
+                {
+                   Evas_Object *face_obj;
+                   Eina_List *l;
+
+                   EINA_LIST_FOREACH(ep->body_faces, l, face_obj)
+                      evas_object_hide(face_obj);
                    evas_object_hide(ep->object);
                 }
-              else
-                evas_object_show(ep->object);
 #else
               if (!pf->visible)
                 {

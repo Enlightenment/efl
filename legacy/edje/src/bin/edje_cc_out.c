@@ -195,6 +195,7 @@ static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
 
 static Eina_List *program_lookups = NULL;
 static Eina_List *group_lookups = NULL;
+static Eina_List *face_group_lookups = NULL;
 static Eina_List *image_lookups = NULL;
 static Eina_List *part_slave_lookups = NULL;
 static Eina_List *image_slave_lookups= NULL;
@@ -1774,6 +1775,17 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
 }
 
 void
+data_queue_face_group_lookup(const char *name)
+{
+   char *group_name;
+
+   if (!name || !name[0]) return;
+
+   group_name = mem_strdup(name);
+   face_group_lookups = eina_list_append(face_group_lookups, group_name);
+}
+
+void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    void *key[2];
@@ -2030,6 +2042,7 @@ data_process_lookups(void)
    Eina_List *l;
    Eina_Hash *images_in_use;
    void *data;
+   char *group_name;
    Eina_Bool is_lua = EINA_FALSE;
 
    /* remove all unreferenced Edje_Part_Collection */
@@ -2225,6 +2238,34 @@ data_process_lookups(void)
 free_group:
         free(group->name);
         free(group);
+     }
+
+   EINA_LIST_FREE(face_group_lookups, group_name)
+     {
+        Edje_Part_Collection_Directory_Entry *de;
+
+        de = eina_hash_find(edje_file->collection, group_name);
+
+        if (!de)
+          {
+             Eina_Bool found = EINA_FALSE;
+
+             EINA_LIST_FOREACH(aliases, l, de)
+               if (strcmp(de->entry, group_name) == 0)
+                 {
+                    found = EINA_TRUE;
+                    break;
+                 }
+             if (!found) de = NULL;
+          }
+
+        if (!de)
+          {
+             ERR("Unable to find group name \"%s\".", group_name);
+             exit(-1);
+          }
+
+        free(group_name);
      }
 
    images_in_use = eina_hash_string_superfast_new(NULL);

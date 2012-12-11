@@ -25,7 +25,7 @@ syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
 syn keyword	cStructure	spectra spectrum box
-syn keyword	cStructure	physics movement_freedom
+syn keyword	cStructure	physics movement_freedom faces face
 syn match	cType		"+ + +;" contained
 
 syn keyword	cLabel		item name min max type effect
@@ -73,7 +73,17 @@ syn keyword	cConstant	BOUNDARY_RIGHT BOUNDARY_FRONT BOUNDARY_BACK
 syn keyword	cConstant	PHYSICS_IMPULSE PHYSICS_TORQUE_IMPULSE
 syn keyword	cConstant	PHYSICS_FORCE PHYSICS_TORQUE PHYSICS_STOP
 syn keyword	cConstant	PHYSICS_FORCES_CLEAR PHYSICS_VEL_SET
-syn keyword	cConstant	PHYSICS_ANG_VEL_SET
+syn keyword	cConstant	PHYSICS_ANG_VEL_SET BOX_MIDDLE_FRONT
+syn keyword	cConstant	BOX_MIDDLE_BACK BOX_FRONT BOX_BACK BOX_LEFT
+syn keyword	cConstant	BOX_RIGHT BOX_TOP BOX_BOTTOM
+syn keyword	cConstant	CYLINDER_MIDDLE_FRONT CYLINDER_MIDDLE_BACK
+syn keyword	cConstant	CYLINDER_FRONT CYLINDER_BACK CYLINDER_CURVED
+syn keyword	cConstant	CLOTH_FRONT CLOTH_BACK SOFT_BOX_MIDDLE_FRONT
+syn keyword	cConstant	SOFT_BOX_MIDDLE_BACK SOFT_BOX_FRONT
+syn keyword	cConstant	SOFT_BOX_BACK SOFT_BOX_LEFT SOFT_BOX_RIGHT
+syn keyword	cConstant	SOFT_BOX_TOP SOFT_BOX_BOTTOM SOFT_CIRCLE_BACK
+syn keyword	cConstant	SOFT_CIRCLE_MIDDLE_FRONT SOFT_CIRCLE_FRONT
+syn keyword	cConstant	SOFT_CIRCLE_MIDDLE_BACK SOFT_CIRCLE_CURVED
 
 syn keyword	cTodo		contained TODO FIXME XXX
 

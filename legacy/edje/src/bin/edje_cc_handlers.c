@@ -323,6 +323,9 @@ static void st_collections_group_parts_part_description_physics_light_on(void);
 static void st_collections_group_parts_part_description_physics_movement_freedom_linear(void);
 static void st_collections_group_parts_part_description_physics_movement_freedom_angular(void);
 static void st_collections_group_parts_part_description_physics_backface_cull(void);
+static void st_collections_group_parts_part_description_physics_face(void);
+static void st_collections_group_parts_part_description_physics_face_type(void);
+static void st_collections_group_parts_part_description_physics_face_source(void);
 #endif
 static void st_collections_group_parts_part_description_map_perspective(void);
 static void st_collections_group_parts_part_description_map_light(void);
@@ -618,6 +621,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.physics.ignore_part_pos", st_collections_group_parts_part_description_physics_ignore_part_pos},
      {"collections.group.parts.part.description.physics.light_on", st_collections_group_parts_part_description_physics_light_on},
      {"collections.group.parts.part.description.physics.backface_cull", st_collections_group_parts_part_description_physics_backface_cull},
+     {"collections.group.parts.part.description.physics.faces.face.type", st_collections_group_parts_part_description_physics_face_type},
+     {"collections.group.parts.part.description.physics.faces.face.source", st_collections_group_parts_part_description_physics_face_source},
 #endif
      {"collections.group.parts.part.description.map.perspective", st_collections_group_parts_part_description_map_perspective},
      {"collections.group.parts.part.description.map.light", st_collections_group_parts_part_description_map_light},
@@ -867,6 +872,8 @@ New_Object_Handler object_handlers[] =
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics", NULL},
      {"collections.group.parts.part.description.physics.movement_freedom", NULL},
+     {"collections.group.parts.part.description.physics.faces", NULL},
+     {"collections.group.parts.part.description.physics.faces.face", st_collections_group_parts_part_description_physics_face},
 #endif
      {"collections.group.parts.part.description.map", NULL},
      {"collections.group.parts.part.description.map.rotation", NULL},
@@ -7217,8 +7224,10 @@ st_collections_group_parts_part_description_table_min(void)
             hardness: 0.42;
             light_on: 1;
             movement_freedom {
-                linear: 1 1 0;
-                angular: 0 0 1;
+                ..
+            }
+            faces {
+                ..
             }
         }
         ..
@@ -7606,6 +7615,158 @@ st_collections_group_parts_part_description_physics_movement_freedom_angular(voi
    current_desc->physics.mov_freedom.ang.x = parse_bool(0);
    current_desc->physics.mov_freedom.ang.y = parse_bool(1);
    current_desc->physics.mov_freedom.ang.z = parse_bool(2);
+}
+#endif
+
+/**
+    @page edcref
+    @block
+        faces
+    @context
+        faces {
+            face {
+                type: BOX_FRONT;
+                source:  "groupname";
+            }
+            ..
+        }
+    @description
+        The "faces" block contains a list of one or more "face" blocks.
+        The "faces" block is used to list the faces that compose the body.
+        Each face is described by a "face" block, that associates a part
+        to a specific face of the body's shape.
+        Only the "faces" block declared in the "default" description
+        will be considered.
+    @endblock
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_face(void)
+{
+   Edje_Physics_Face *pface;
+
+   pface = mem_alloc(SZ(Edje_Physics_Face));
+   current_desc->physics.faces = eina_list_append(current_desc->physics.faces,
+                                                  pface);
+   pface->type = 0;
+   pface->source = NULL;
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        type
+    @parameters
+        [FACE]
+    @effect
+        Set the face (all caps) from among the available body's shape faces.
+        Valid faces:
+            * BOX_MIDDLE_FRONT,
+            * BOX_MIDDLE_BACK,
+            * BOX_FRONT,
+            * BOX_BACK,
+            * BOX_LEFT,
+            * BOX_RIGHT,
+            * BOX_TOP,
+            * BOX_BOTTOM,
+            * CYLINDER_MIDDLE_FRONT,
+            * CYLINDER_MIDDLE_BACK,
+            * CYLINDER_FRONT,
+            * CYLINDER_BACK,
+            * CYLINDER_CURVED,
+            * CLOTH_FRONT,
+            * CLOTH_BACK
+            * SOFT_BOX_MIDDLE_FRONT,
+            * SOFT_BOX_MIDDLE_BACK,
+            * SOFT_BOX_FRONT,
+            * SOFT_BOX_BACK,
+            * SOFT_BOX_LEFT,
+            * SOFT_BOX_RIGHT,
+            * SOFT_BOX_TOP,
+            * SOFT_BOX_BOTTOM,
+            * SOFT_CIRCLE_MIDDLE_FRONT,
+            * SOFT_CIRCLE_MIDDLE_BACK,
+            * SOFT_CIRCLE_FRONT,
+            * SOFT_CIRCLE_BACK,
+            * SOFT_CIRCLE_CURVED,
+    @endproperty
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_face_type(void)
+{
+   Edje_Physics_Face *pface, *pface2;
+   Eina_List *l;
+
+   pface = eina_list_data_get(eina_list_last(current_desc->physics.faces));
+   pface->type = parse_enum(0,
+      "BOX_MIDDLE_FRONT", EPHYSICS_BODY_BOX_FACE_MIDDLE_FRONT,
+      "BOX_MIDDLE_BACK", EPHYSICS_BODY_BOX_FACE_MIDDLE_BACK,
+      "BOX_FRONT", EPHYSICS_BODY_BOX_FACE_FRONT,
+      "BOX_BACK", EPHYSICS_BODY_BOX_FACE_BACK,
+      "BOX_LEFT", EPHYSICS_BODY_BOX_FACE_LEFT,
+      "BOX_RIGHT", EPHYSICS_BODY_BOX_FACE_RIGHT,
+      "BOX_TOP", EPHYSICS_BODY_BOX_FACE_TOP,
+      "BOX_BOTTOM", EPHYSICS_BODY_BOX_FACE_BOTTOM,
+      "CYLINDER_MIDDLE_FRONT", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
+      "CYLINDER_MIDDLE_BACK", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
+      "CYLINDER_FRONT", EPHYSICS_BODY_CYLINDER_FACE_FRONT,
+      "CYLINDER_BACK", EPHYSICS_BODY_CYLINDER_FACE_BACK,
+      "CYLINDER_CURVED", EPHYSICS_BODY_CYLINDER_FACE_CURVED,
+      "CLOTH_FRONT", EPHYSICS_BODY_CLOTH_FACE_FRONT,
+      "CLOTH_BACK", EPHYSICS_BODY_CLOTH_FACE_BACK,
+      "SOFT_ELLIPSOID_FRONT", EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT,
+      "SOFT_ELLIPSOID_BACK", EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK,
+      "SOFT_BOX_MIDDLE_FRONT", EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_FRONT,
+      "SOFT_BOX_MIDDLE_BACK", EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_BACK,
+      "SOFT_BOX_FRONT", EPHYSICS_BODY_SOFT_BOX_FACE_FRONT,
+      "SOFT_BOX_BACK", EPHYSICS_BODY_SOFT_BOX_FACE_BACK,
+      "SOFT_BOX_LEFT", EPHYSICS_BODY_SOFT_BOX_FACE_LEFT,
+      "SOFT_BOX_RIGHT", EPHYSICS_BODY_SOFT_BOX_FACE_RIGHT,
+      "SOFT_BOX_TOP", EPHYSICS_BODY_SOFT_BOX_FACE_TOP,
+      "SOFT_BOX_BOTTOM", EPHYSICS_BODY_SOFT_BOX_FACE_BOTTOM,
+      "SOFT_CIRCLE_MIDDLE_FRONT", EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_FRONT,
+      "SOFT_CIRCLE_MIDDLE_BACK", EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_BACK,
+      "SOFT_CIRCLE_FRONT", EPHYSICS_BODY_SOFT_CIRCLE_FACE_FRONT,
+      "SOFT_CIRCLE_BACK", EPHYSICS_BODY_SOFT_CIRCLE_FACE_BACK,
+      "SOFT_CIRCLE_CURVES", EPHYSICS_BODY_SOFT_CIRCLE_FACE_CURVED,
+      NULL);
+
+   EINA_LIST_FOREACH(current_desc->physics.faces, l, pface2)
+     {
+	if ((pface != pface2) && (pface->type == pface2->type))
+	  {
+	     ERR("parse error %s:%i. There is already a face of type \"%i\"",
+		 file_in, line - 1, pface->type);
+	     exit(-1);
+	  }
+     }
+}
+#endif
+
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [another group's name]
+    @effect
+        This sets the group that is used as the object representing the physics
+        body face.
+    @endproperty
+*/
+#ifdef HAVE_EPHYSICS
+static void
+st_collections_group_parts_part_description_physics_face_source(void)
+{
+   Edje_Physics_Face *pface;
+
+   pface = eina_list_data_get(eina_list_last(current_desc->physics.faces));
+   check_arg_count(1);
+
+   pface->source = parse_str(0);
+   data_queue_face_group_lookup(pface->source);
 }
 #endif
 

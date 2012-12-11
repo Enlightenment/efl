@@ -1,100 +1,26 @@
 /* It can be tested with edje_player slave mode
- * $ edje_player -S -p -g example_group physics_3d.edj
+ * $ edje_player -S -p physics_backcull.edj
  *
- * message 1 FLOAT_SET 3 80 -100 0 -> apply an impulse on red box with
+ * signal on backcull -> allow movement in all axes, enable backface cull
+ * signal off backcull -> allow movement in all axes, disable backface cull
+ *
+ * message 1 FLOAT_SET 3 50 -100 0 -> apply an impulse on red box with
  *    x = 50, y = -100, z = 0, for example
- * message 2 FLOAT_SET 3 0 100 0 -> apply a torque impulse on red box with
+ * message 2 FLOAT_SET 3 0 0 8.2 -> apply a torque impulse on red box with
  *    x = 4, y = 0, z = 0.8, for example
+ * message 3 FLOAT_SET 3 0 1 0 -> allow linear movement on axes x, y, z
+ * message 4 FLOAT_SET 3 0 1 0 -> allow angular movement on axes x, y, z
+ * message 5 STRING "linear" -> return a message with part's movement freedom
+ *                              for "linear" or "angular.
  */
 
 #define ID_IMPULSE (1)
 #define ID_TORQUE_IMPULSE (2)
+#define ID_LIN_SET (3)
+#define ID_ANG_SET (4)
+#define ID_GET (5)
 
 collections {
-
-   group {
-      name: "right";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 0 0 255 255; /* blue */
-            }
-         }
-      }
-   }
-
-   group {
-      name: "left";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 0 255 0 255; /* green */
-            }
-         }
-      }
-   }
-
-   group {
-      name: "front";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 0 0 0 255; /* black */
-            }
-         }
-      }
-   }
-
-   group {
-      name: "back";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 120 120 120 255; /* gray */
-            }
-         }
-      }
-   }
-
-   group {
-      name: "top";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 255 0 255 255; /* purple */
-            }
-         }
-      }
-   }
-
-   group {
-      name: "bottom";
-      parts {
-         part {
-            name: "face";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 0 255 255 255; /* yellow */
-            }
-         }
-      }
-   }
 
    group {
       name: "example_group";
@@ -119,6 +45,47 @@ collections {
                z = getfarg(4);
                physics_torque_impulse(PART:"red_box", x, y, z);
             }
+            else if ((id == ID_LIN_SET) && (type == MSG_FLOAT_SET)) {
+               new Float:x, Float:y, Float:z;
+               new n = numargs();
+               if (n < 5) return;
+               x = getfarg(2);
+               y = getfarg(3);
+               z = getfarg(4);
+               custom_state(PART:"red_box", "default", 0.0);
+               set_state_val(PART:"red_box", STATE_PHYSICS_MOV_FREEDOM_LIN,
+                  x, y, z);
+               set_state(PART:"red_box", "custom", 0.0);
+            }
+            else if ((id == ID_ANG_SET) && (type == MSG_FLOAT_SET)) {
+               new Float:x, Float:y, Float:z;
+               new n = numargs();
+               if (n < 5) return;
+               x = getfarg(2);
+               y = getfarg(3);
+               z = getfarg(4);
+               custom_state(PART:"red_box", "default", 0.0);
+               set_state_val(PART:"red_box", STATE_PHYSICS_MOV_FREEDOM_ANG,
+                  x, y, z);
+               set_state(PART:"red_box", "custom", 0.0);
+            }
+            else if ((id == ID_GET) && (type == MSG_STRING)) {
+               new Float:x, Float:y, Float:z;
+               new name[1024];
+               getsarg(2, name, sizeof(name));
+               if (!strcmp(name, "linear"))
+               {
+                  get_state_val(PART:"red_box",
+                     STATE_PHYSICS_MOV_FREEDOM_LIN, x, y, z);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Linear", x, y, z);
+               }
+               else if (!strcmp(name, "angular"))
+               {
+                  get_state_val(PART:"red_box",
+                     STATE_PHYSICS_MOV_FREEDOM_ANG, x, y, z);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Angular", x, y, z);
+               }
+            }
          }
       }
 
@@ -142,8 +109,8 @@ collections {
             description {
                state: "default" 0.0;
                color: 255 0 0 255; /* light red */
-               rel1.relative: 0.4 0.1;
-               rel2.relative: 0.55 0.3;
+               rel1.relative: 0.45 0.1;
+               rel2.relative: 0.55 0.2;
                aspect: 1 1;
                physics {
                   mass: 30;
@@ -152,33 +119,12 @@ collections {
                      linear: 1 1 1;
                      angular: 1 1 1;
                   }
-                  faces {
-                     face {
-                        type: BOX_FRONT;
-                        source: "front";
-                     }
-                     face {
-                        type: BOX_BACK;
-                        source: "back";
-                     }
-                     face {
-                        type: BOX_TOP;
-                        source: "top";
-                     }
-                     face {
-                        type: BOX_BOTTOM;
-                        source: "bottom";
-                     }
-                     face {
-                        type: BOX_LEFT;
-                        source: "left";
-                     }
-                     face {
-                        type: BOX_RIGHT;
-                        source: "right";
-                     }
-                  }
                }
+            }
+            description {
+               state: "backface_culled" 0.0;
+               inherit: "default" 0.0;
+               physics.backface_cull: 1;
             }
          }
 
@@ -246,6 +192,25 @@ collections {
                }
             }
          }
+      }
+
+      programs {
+         program {
+            name: "backcull,on";
+            signal: "on";
+            source: "backcull";
+            action: STATE_SET "backface_culled" 0.0;
+            target: "red_box";
+         }
+
+         program {
+            name: "backcull,off";
+            signal: "off";
+            source: "backcull";
+            action: STATE_SET "default" 0.0;
+            target: "red_box";
+         }
+
       }
 
    }

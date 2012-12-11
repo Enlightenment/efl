@@ -56,6 +56,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_limit = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_physics_face = NULL;
 
 #define EMP(Type, Minus)				\
   EAPI Eina_Mempool *_emp_##Type = NULL;		\
@@ -220,6 +221,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_image_directory_set);
    FREED(_edje_edd_edje_image_directory_set_entry);
    FREED(_edje_edd_edje_part_limit);
+   FREED(_edje_edd_edje_physics_face);
 }
 
 #define EDJE_DEFINE_POINTER_TYPE(Type, Name)				\
@@ -458,6 +460,11 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "d", d, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_external_param, Edje_External_Param, "s", s, EET_T_STRING);
 
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Physics_Face);
+   _edje_edd_edje_physics_face = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_physics_face, Edje_Physics_Face, "type", type, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_physics_face, Edje_Physics_Face, "source", source, EET_T_STRING);
+
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", state.name, EET_T_STRING); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", state.value, EET_T_DOUBLE); \
@@ -539,6 +546,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", physics.mov_freedom.ang.x, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", physics.mov_freedom.ang.y, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", physics.mov_freedom.ang.z, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", physics.faces, _edje_edd_edje_physics_face); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)	\
@@ -622,6 +630,7 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", Dec.physics.mov_freedom.ang.x, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", Dec.physics.mov_freedom.ang.y, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", Dec.physics.mov_freedom.ang.z, EET_T_UCHAR); \
+      EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", Dec.physics.faces, _edje_edd_edje_physics_face); \
    }
 #else
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)	 \

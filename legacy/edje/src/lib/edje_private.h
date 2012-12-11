@@ -315,6 +315,7 @@ typedef struct _Edje_Part_Description_Spec_Proxy     Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
+typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
@@ -751,6 +752,12 @@ struct _Edje_Pack_Element
    unsigned short   colspan, rowspan;
 };
 
+struct _Edje_Physics_Face
+{
+   unsigned char    type; /* BOX_FRONT BOX_BACK BOX_RIGHT CYLINDER_BACK ... */
+   const char      *source; /* group name to use as source for this element */
+};
+
 typedef enum {
   EDJE_PART_LIMIT_UNKNOWN = 0,
   EDJE_PART_LIMIT_BELOW,
@@ -994,6 +1001,7 @@ struct _Edje_Part_Description_Common
          double linear;
          double angular;
       } sleep;
+      Eina_List *faces; /* faces for 3d effects */
       struct {
          struct {
             unsigned char x;
@@ -1487,6 +1495,7 @@ struct _Edje_Real_Part
 #ifdef HAVE_EPHYSICS
    Edje_Part_Description_Common *prev_description; // 4
    EPhysics_Body            *body; // 4
+   Eina_List                *body_faces; // 4
 #endif
    union {
       Edje_Real_Part_Text      *text;

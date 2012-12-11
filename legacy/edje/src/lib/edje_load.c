@@ -1300,8 +1300,17 @@ _edje_file_del(Edje *ed)
 	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *rp;
+#ifdef HAVE_EPHYSICS
+             Evas_Object *face_obj;
+#endif
 
 	     rp = ed->table_parts[i];
+
+#ifdef HAVE_EPHYSICS
+             EINA_LIST_FREE(rp->body_faces, face_obj)
+                evas_object_del(face_obj);
+#endif
+
 	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
 	       _edje_entry_real_part_shutdown(rp);
 	     if (rp->object)
