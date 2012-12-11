@@ -1,4 +1,19 @@
-/* It can be tested with edje_player slave mode
+/* This example demostrates physics actions, like applying impulses and forces
+ * to a body.
+ *
+ * There are two ways of interacting with bodies. One is using the wanted
+ * action in a program. E.g.:
+ *
+ * action: PHYSICS_VEL_SET 0 -200 0;
+ * target: "part_name";
+ *
+ * The other way is via script. The same action described above would be
+ * physics_set_velocity(PART:"part_name", 0, -200, 0);
+ *
+ * This a very extensive example, because it illustrate the usage of all
+ * the possible actions in the both ways.
+ *
+ * It can be tested with edje_player slave mode
  * $ edje_player -S -p physics_actions.edj
  *
  * signal up impulse   -> will throw both balls up

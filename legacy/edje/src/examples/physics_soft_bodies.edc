@@ -1,3 +1,20 @@
+/* This example shows how to use soft bodies.
+ *
+ * Soft bodies have an attribute to change how much it will
+ * deforms when colliding. It's called "hardness", and can
+ * be set to any value between 0.0 (soft) and 1.0 (hard).
+ * By default, all the soft bodies are hard (1.0).
+ *
+ * This example will make a box and a sphere collide
+ * many times against the floor and will be placed at
+ * top of the screen again. They will have their hardness
+ * modified each time, going from the default to a very
+ * soft state.
+ *
+ * It can be tested with edje_player
+ * $ edje_player physics_soft_bodies.edj
+ */
+
 collections {
 
    images {

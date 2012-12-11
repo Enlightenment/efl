@@ -1,3 +1,19 @@
+/* This example demonstrates the most basic usage of physics.
+ *
+ * To make a part behaves like a body in a physics simulation,
+ * all that is needed is to set its attribute part.physics_body
+ * to something different from NONE. For example, RIGID_BOX,
+ * or CLOTH. It will define the shape of the part, and how it
+ * will interact with the environment.
+ *
+ * The remaining body attributes should be set inside the physics
+ * block of description. In this example we are customizing
+ * the restitution, that is how much the body bounces, and friction.
+ *
+ * It can be tested with edje_player
+ * $ edje_player physics_basic.edj
+ */
+
 collections {
 
    images {

@@ -1,4 +1,15 @@
-/* It can be tested with edje_player slave mode
+/* This example demonstrates how to customize movement freedom and backface
+ * culling.
+ *
+ * By default, bodies only will move on x and y axis, and rotate only
+ * aroud the z axis. To modify it, the block "movement freedom" should be used.
+ * This block consists of the "linear" and "angular" attributes, each one
+ * receiving 3 booleans, to set if movement in each axis is allowed or not.
+ *
+ * When a body has backface culling activated, it will be hidden when
+ * it's not facing the camera. It's deactivated by default.
+ *
+ * It can be tested with edje_player slave mode
  * $ edje_player -S -p physics_backcull.edj
  *
  * signal on backcull -> allow movement in all axes, enable backface cull

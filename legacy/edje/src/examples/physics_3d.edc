@@ -1,4 +1,12 @@
-/* It can be tested with edje_player slave mode
+/* This example demonstrates the usage of physics faces.
+ *
+ * Faces references other groups of the collection. The same group
+ * can be used for many faces, but to illustrate it we are adding
+ * a rectangle of different color for each face of a cube.
+ * It will apply impulses on the cube when receiving messages, so
+ * it's possible to see the cube rotating and moving.
+ *
+ * It can be tested with edje_player slave mode
  * $ edje_player -S -p -g example_group physics_3d.edj
  *
  * message 1 FLOAT_SET 3 80 -100 0 -> apply an impulse on red box with
