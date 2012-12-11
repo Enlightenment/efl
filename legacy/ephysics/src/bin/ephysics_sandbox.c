@@ -146,7 +146,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
      }
    else
      {
-        body = ephysics_body_cylinder_add(world);
+        body = ephysics_body_sphere_add(world);
         elm_object_disabled_set(bd->controls.hardness, EINA_TRUE);
      }
 

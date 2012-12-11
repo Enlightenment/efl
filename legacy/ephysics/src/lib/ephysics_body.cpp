@@ -2841,6 +2841,33 @@ no_collision_shape:
 }
 
 EAPI EPhysics_Body *
+ephysics_body_sphere_add(EPhysics_World *world)
+{
+   btCollisionShape *collision_shape;
+   EPhysics_Body *body;
+
+   if (!world)
+     {
+        ERR("Can't add sphere, world is null.");
+        return NULL;
+     }
+
+   collision_shape = new btSphereShape(0.5);
+   if (!collision_shape)
+     {
+        ERR("Couldn't create a new sphere shape.");
+        return NULL;
+     }
+
+   ephysics_world_lock_take(world);
+   body = _ephysics_body_rigid_body_add(world, collision_shape, "sphere", 0.5,
+                                        0.5, 0.5);
+   body->shape = EPHYSICS_BODY_SHAPE_SPHERE;
+   ephysics_world_lock_release(world);
+   return body;
+}
+
+EAPI EPhysics_Body *
 ephysics_body_cylinder_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;

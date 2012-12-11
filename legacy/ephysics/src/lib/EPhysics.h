@@ -2670,6 +2670,30 @@ EAPI void ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, i
 
 /**
  * @brief
+ * Create a new sphere physics body.
+ *
+ * Its collision shape will be a sphere of diameter 1. To change its size @ref
+ * ephysics_body_geometry_set(), @p ephysics_body_resize() should be used.
+ *
+ * Any evas object can be associated to it with @p
+ * ephysics_body_evas_object_set(), and it will collid as a sphere(even if
+ * you`ve associated an evas rectangle).
+ *
+ * For deformable sphere use @p ephysics_body_soft_ellipsoid_add() instead.
+ *
+ * @param world The world this body will belong to.
+ * @return a new body or @c NULL, on errors.
+ *
+ * @see ephysics_body_del().
+ * @see ephysics_body_evas_object_set().
+ * @see ephysics_body_face_evas_object_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_sphere_add(EPhysics_World *world);
+
+/**
+ * @brief
  * Create a new cylinder physics body.
  *
  * Its collision shape will be a cylinder of diameter 1. To change it's size

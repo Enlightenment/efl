@@ -33,7 +33,7 @@ _ball_add(Test_Data *test_data, int x)
    evas_object_show(sphere);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, sphere);
 
-   ball = ephysics_body_cylinder_add(test_data->world);
+   ball = ephysics_body_sphere_add(test_data->world);
    ephysics_body_evas_object_set(ball, sphere, EINA_TRUE);
    ephysics_body_restitution_set(ball, 0.95);
    ephysics_body_friction_set(ball, 0.1);

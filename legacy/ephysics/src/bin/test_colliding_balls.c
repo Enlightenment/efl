@@ -36,13 +36,13 @@ _world_populate(Test_Data *test_data)
         evas_object_show(sphere);
         test_data->evas_objs = eina_list_append(test_data->evas_objs, sphere);
 
-        fall_body = ephysics_body_cylinder_add(test_data->world);
+        fall_body = ephysics_body_sphere_add(test_data->world);
         ephysics_body_evas_object_set(fall_body, sphere, EINA_TRUE);
         ephysics_body_event_callback_add(fall_body,
                                          EPHYSICS_CALLBACK_BODY_UPDATE,
                                          update_object_cb, shadow);
         ephysics_body_restitution_set(fall_body, 0.95);
-        ephysics_body_friction_set(fall_body, 0.1);
+        ephysics_body_friction_set(fall_body, 1);
         test_data->bodies = eina_list_append(test_data->bodies, fall_body);
      }
 }

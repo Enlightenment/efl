@@ -106,7 +106,7 @@ _world_populate(Velocity_Data *velocity_data)
    velocity_data->base.evas_objs = eina_list_append(
       velocity_data->base.evas_objs, sphere);
 
-   sphere_body = ephysics_body_cylinder_add(velocity_data->base.world);
+   sphere_body = ephysics_body_sphere_add(velocity_data->base.world);
    ephysics_body_evas_object_set(sphere_body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(sphere_body, 0.8);
    ephysics_body_friction_set(sphere_body, 1);

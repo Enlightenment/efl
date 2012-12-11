@@ -76,7 +76,7 @@ _world_populate(Test_Data *test_data)
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
-   fall_body = ephysics_body_cylinder_add(test_data->world);
+   fall_body = ephysics_body_sphere_add(test_data->world);
    ephysics_body_mass_set(fall_body, 2);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.95);

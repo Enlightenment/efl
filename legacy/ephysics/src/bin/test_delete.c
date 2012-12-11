@@ -75,7 +75,7 @@ _world_populate(Collision_Data *collision_data)
    collision_data->base.evas_objs = eina_list_append(
       collision_data->base.evas_objs, sphere1);
 
-   sphere_body1 = ephysics_body_cylinder_add(collision_data->base.world);
+   sphere_body1 = ephysics_body_sphere_add(collision_data->base.world);
    ephysics_body_evas_object_set(sphere_body1, sphere1, EINA_TRUE);
    ephysics_body_event_callback_add(sphere_body1,
                                     EPHYSICS_CALLBACK_BODY_UPDATE,
@@ -108,7 +108,7 @@ _world_populate(Collision_Data *collision_data)
    collision_data->base.evas_objs = eina_list_append(
       collision_data->base.evas_objs, sphere2);
 
-   sphere_body2 = ephysics_body_cylinder_add(collision_data->base.world);
+   sphere_body2 = ephysics_body_sphere_add(collision_data->base.world);
    ephysics_body_evas_object_set(sphere_body2, sphere2, EINA_TRUE);
    ephysics_body_event_callback_add(sphere_body2,
                                     EPHYSICS_CALLBACK_BODY_UPDATE,

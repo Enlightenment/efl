@@ -136,7 +136,7 @@ _world_populate(Test_Data *test_data)
    evas_object_show(sphere);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, sphere);
 
-   sphere_body = ephysics_body_cylinder_add(test_data->world);
+   sphere_body = ephysics_body_sphere_add(test_data->world);
    ephysics_body_evas_object_set(sphere_body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(sphere_body, 1.0);
    ephysics_body_event_callback_add(sphere_body, EPHYSICS_CALLBACK_BODY_UPDATE,

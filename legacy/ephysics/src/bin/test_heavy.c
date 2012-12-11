@@ -19,7 +19,7 @@ _add_sphere(Test_Data *test_data, int i)
    evas_object_show(sphere);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, sphere);
 
-   body = ephysics_body_cylinder_add(test_data->world);
+   body = ephysics_body_sphere_add(test_data->world);
    ephysics_body_restitution_set(body, 0.85);
    ephysics_body_evas_object_set(body, sphere, EINA_TRUE);
    test_data->bodies = eina_list_append(test_data->bodies, body);
