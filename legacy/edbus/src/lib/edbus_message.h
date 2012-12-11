@@ -74,7 +74,7 @@ EAPI Eina_Bool             edbus_message_error_get(const EDBus_Message *msg, con
 /**
  * @brief Get data from EDBus_Message. For each complete type we must have
  * a pointer to store its value. In case of complex type EDBus_Message_Iter
- * needs to be need.
+ * needs to be used.
  */
 EAPI Eina_Bool             edbus_message_arguments_get(const EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 /**
