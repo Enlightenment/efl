@@ -645,7 +645,7 @@ edbus_message_iter_fixed_array_get(EDBus_Message_Iter *iter, int signature, void
    EINA_SAFETY_ON_TRUE_RETURN_VAL(iter->writable, EINA_FALSE);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
-        (dbus_message_iter_get_element_type(&iter->dbus_iterator) == signature),
+        (dbus_message_iter_get_arg_type(&iter->dbus_iterator) == signature),
         EINA_FALSE);
    dbus_message_iter_get_fixed_array(&iter->dbus_iterator, value, n_elements);
    return EINA_TRUE;
