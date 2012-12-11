@@ -544,6 +544,11 @@ _ephysics_body_forces_update(EPhysics_Body *body)
    body->force.torque_y = body->rigid_body->getTotalTorque().getY();
    body->force.torque_z = body->rigid_body->getTotalTorque().getZ();
    body->rigid_body->clearForces();
+
+   DBG("forces updated: %lf, %lf, %lf", body->force.x, body->force.y,
+       body->force.z);
+   DBG("torque updated: %lf, %lf, %lf", body->force.torque_x,
+       body->force.torque_y, body->force.torque_z);
 }
 
 static inline void
@@ -1683,18 +1688,18 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
 void
 ephysics_body_forces_apply(EPhysics_Body *body)
 {
-   double rate;
-
    if (!((body->force.x) || (body->force.y) || (body->force.z) ||
          (body->force.torque_x) || (body->force.torque_y) ||
          (body->force.torque_z)))
-       return;
+     return;
 
-   rate = ephysics_world_rate_get(body->world);
+   DBG("body: %p, applying forces: %lf, %lf, %lf", body, body->force.x,
+       body->force.y, body->force.z);
+
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->applyCentralForce(btVector3(body->force.x / rate,
-                                                 body->force.y / rate,
-                                                 body->force.z / rate));
+   body->rigid_body->applyCentralForce(btVector3(body->force.x,
+                                                 body->force.y,
+                                                 body->force.z));
    body->rigid_body->applyTorque(btVector3(body->force.torque_x,
                                            body->force.torque_y,
                                            body->force.torque_z));
