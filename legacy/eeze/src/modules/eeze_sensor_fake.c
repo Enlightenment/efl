@@ -124,15 +124,6 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
         break;
 
-      case EEZE_SENSOR_TYPE_MOTION_SNAP:
-        break;
-
-      case EEZE_SENSOR_TYPE_MOTION_SHAKE:
-        break;
-
-      case EEZE_SENSOR_TYPE_MOTION_PANNING:
-        break;
-
       default:
         ERR("Not possible to set a callback for this sensor type.");
         return EINA_FALSE;
