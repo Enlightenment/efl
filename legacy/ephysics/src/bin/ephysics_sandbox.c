@@ -832,7 +832,7 @@ _menu_body_page_add(World_Data *wd, Body_Data *bd, const char *pg_label)
                                          evas_object_data_get(wd->nf, "world"),
                                          NULL, NULL, NULL, scbxbody, NULL);
    elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-   it = elm_toolbar_item_append(wd->tb, NULL, pg_label, _promote, it);
+   elm_toolbar_item_append(wd->tb, NULL, pg_label, _promote, it);
 }
 
 static void
@@ -869,7 +869,7 @@ _menu_world_page_add(World_Data *wd)
    it = elm_naviframe_item_push(wd->nf, NULL, NULL, NULL, scbx, NULL);
    evas_object_data_set(wd->nf, "world", it);
    elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-   it = elm_toolbar_item_append(wd->tb, NULL, "World", _promote, it);
+   elm_toolbar_item_append(wd->tb, NULL, "World", _promote, it);
 }
 
 static void
