@@ -666,7 +666,12 @@ edbus_message_iter_get_and_next(EDBus_Message_Iter *iter, char signature, ...)
 
    type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
    if (type == DBUS_TYPE_INVALID) return EINA_FALSE;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(type == signature, EINA_FALSE);
+   if (type != signature)
+     {
+        if (signature == '(') signature = 'r';
+        else if (signature == '{') signature = 'e';
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(type == signature, EINA_FALSE);
+     }
 
    if (dbus_type_is_basic(type))
      get_basic(type, &iter->dbus_iterator, &vl);
