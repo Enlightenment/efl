@@ -60,9 +60,9 @@ lcov-report:
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
 check-local:
-	@$(MAKE) lcov-reset
-	@./src/tests/eeze_suite
-	@$(MAKE) lcov-report
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
+	@EEZE_USE_IN_TREE_MODULES=1 ./src/tests/eeze_suite
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 
 else
 

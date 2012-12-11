@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = @EEZE_CFLAGS@ \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\"
 
 includes_HEADERS = Eeze.h Eeze_Net.h Eeze_Sensor.h

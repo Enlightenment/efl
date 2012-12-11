@@ -66,9 +66,14 @@ eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
 static void
 eeze_sensor_modules_load(void)
 {
-   /* Check for available runtime modules and load them */
-   g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eeze-sensor/", 0, NULL, NULL);
-   /* FIXME check for modules also in HOME and other locations */
+   /* Check for available runtime modules and load them. In some cases the
+    * un-installed modules to be used from the local build dir. Coverage check
+    * is one of these items. We do load the modules from the builddir if the
+    * environment is set. Normal case is to use installed modules from system */
+   if (getenv("EEZE_USE_IN_TREE_MODULES"))
+      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/.libs/", 0, NULL, NULL);
+   else
+      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eeze-sensor/", 0, NULL, NULL);
 
    if (!g_handle->modules_array)
      {
