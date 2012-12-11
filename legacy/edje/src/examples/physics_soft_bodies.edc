@@ -56,14 +56,14 @@ collections {
                state: "soft" 0.0;
                inherit: "default" 0.0;
                physics {
-                  hardness: 0.5;
+                  hardness: 0.8;
                }
             }
             description {
                state: "very_soft" 0.0;
                inherit: "default" 0.0;
                physics {
-                  hardness: 0.2;
+                  hardness: 0.4;
                }
             }
          }
@@ -71,7 +71,7 @@ collections {
          part {
             name: "blue_circle";
             type: IMAGE;
-            physics_body: SOFT_CIRCLE;
+            physics_body: SOFT_CYLINDER;
             description {
                state: "default" 0.0;
                rel1.relative: 0.25 0.1;
@@ -89,12 +89,12 @@ collections {
             description {
                state: "soft" 0.0;
                inherit: "default" 0.0;
-               physics.hardness: 0.5;
+               physics.hardness: 0.8;
             }
             description {
                state: "very_soft" 0.0;
                inherit: "default" 0.0;
-               physics.hardness: 0.2;
+               physics.hardness: 0.4;
             }
          }
 

@@ -55,7 +55,7 @@ collections {
          part {
             name: "blue_circle";
             type: IMAGE;
-            physics_body: RIGID_CIRCLE;
+            physics_body: RIGID_SPHERE;
             description {
                state: "default" 0.0;
                rel1.relative: 0.25 0.1;

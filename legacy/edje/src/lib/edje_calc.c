@@ -2512,7 +2512,8 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
           }
 
         if ((ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_BOX) ||
-            (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE) ||
+            (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_SPHERE) ||
+            (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_CLOTH))
           ephysics_body_soft_body_hardness_set(ep->body,
                                                pf->physics.hardness * 100);
@@ -2554,14 +2555,20 @@ _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
       case EDJE_PART_PHYSICS_BODY_RIGID_BOX:
          rp->body = ephysics_body_box_add(world);
          break;
-      case EDJE_PART_PHYSICS_BODY_RIGID_CIRCLE:
-         rp->body = ephysics_body_circle_add(world);
+      case EDJE_PART_PHYSICS_BODY_RIGID_SPHERE:
+         rp->body = ephysics_body_sphere_add(world);
+         break;
+      case EDJE_PART_PHYSICS_BODY_RIGID_CYLINDER:
+         rp->body = ephysics_body_cylinder_add(world);
          break;
       case EDJE_PART_PHYSICS_BODY_SOFT_BOX:
          rp->body = ephysics_body_soft_box_add(world);
          break;
-      case EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE:
-         rp->body = ephysics_body_soft_circle_add(world);
+      case EDJE_PART_PHYSICS_BODY_SOFT_SPHERE:
+         rp->body = ephysics_body_soft_sphere_add(world, 0);
+         break;
+      case EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER:
+         rp->body = ephysics_body_soft_cylinder_add(world);
          break;
       case EDJE_PART_PHYSICS_BODY_CLOTH:
          rp->body = ephysics_body_cloth_add(world, 0, 0);

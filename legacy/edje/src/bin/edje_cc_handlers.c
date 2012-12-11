@@ -3445,9 +3445,11 @@ st_collections_group_parts_part_type(void)
         Valid types:
             @li NONE
             @li RIGID_BOX
-            @li RIGID_CIRCLE
+            @li RIGID_SPHERE
+            @li RIGID_CYLINDER
             @li SOFT_BOX
-            @li SOFT_CIRCLE
+            @li SOFT_SPHERE
+            @li SOFT_CYLINDER
             @li CLOTH
             @li BOUNDARY_TOP
             @li BOUNDARY_BOTTOM
@@ -3469,9 +3471,11 @@ st_collections_group_parts_part_physics_body(void)
    body = parse_enum(0,
                      "NONE", EDJE_PART_PHYSICS_BODY_NONE,
                      "RIGID_BOX", EDJE_PART_PHYSICS_BODY_RIGID_BOX,
-                     "RIGID_CIRCLE", EDJE_PART_PHYSICS_BODY_RIGID_CIRCLE,
+                     "RIGID_SPHERE", EDJE_PART_PHYSICS_BODY_RIGID_SPHERE,
+                     "RIGID_CYLINDER", EDJE_PART_PHYSICS_BODY_RIGID_CYLINDER,
                      "SOFT_BOX", EDJE_PART_PHYSICS_BODY_SOFT_BOX,
-                     "SOFT_CIRCLE", EDJE_PART_PHYSICS_BODY_SOFT_CIRCLE,
+                     "SOFT_SPHERE", EDJE_PART_PHYSICS_BODY_SOFT_SPHERE,
+                     "SOFT_CYLINDER", EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER,
                      "CLOTH", EDJE_PART_PHYSICS_BODY_CLOTH,
                      "BOUNDARY_TOP", EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP,
                      "BOUNDARY_BOTTOM", EDJE_PART_PHYSICS_BODY_BOUNDARY_BOTTOM,
@@ -7762,34 +7766,23 @@ st_collections_group_parts_part_description_physics_face(void)
     @effect
         Set the face (all caps) from among the available body's shape faces.
         Valid faces:
-            * BOX_MIDDLE_FRONT,
-            * BOX_MIDDLE_BACK,
-            * BOX_FRONT,
-            * BOX_BACK,
-            * BOX_LEFT,
-            * BOX_RIGHT,
-            * BOX_TOP,
-            * BOX_BOTTOM,
-            * CYLINDER_MIDDLE_FRONT,
-            * CYLINDER_MIDDLE_BACK,
-            * CYLINDER_FRONT,
-            * CYLINDER_BACK,
-            * CYLINDER_CURVED,
-            * CLOTH_FRONT,
+            * BOX_MIDDLE_FRONT
+            * BOX_MIDDLE_BACK
+            * BOX_FRONT
+            * BOX_BACK
+            * BOX_LEFT
+            * BOX_RIGHT
+            * BOX_TOP
+            * BOX_BOTTOM
+            * CLOTH_FRONT
             * CLOTH_BACK
-            * SOFT_BOX_MIDDLE_FRONT,
-            * SOFT_BOX_MIDDLE_BACK,
-            * SOFT_BOX_FRONT,
-            * SOFT_BOX_BACK,
-            * SOFT_BOX_LEFT,
-            * SOFT_BOX_RIGHT,
-            * SOFT_BOX_TOP,
-            * SOFT_BOX_BOTTOM,
-            * SOFT_CIRCLE_MIDDLE_FRONT,
-            * SOFT_CIRCLE_MIDDLE_BACK,
-            * SOFT_CIRCLE_FRONT,
-            * SOFT_CIRCLE_BACK,
-            * SOFT_CIRCLE_CURVED,
+            * CYLINDER_MIDDLE_FRONT
+            * CYLINDER_MIDDLE_BACK
+            * CYLINDER_FRONT
+            * CYLINDER_BACK
+            * CYLINDER_CURVED
+            * SPHERE_FRONT
+            * SPHERE_BACK
     @endproperty
 */
 #ifdef HAVE_EPHYSICS
@@ -7809,28 +7802,15 @@ st_collections_group_parts_part_description_physics_face_type(void)
       "BOX_RIGHT", EPHYSICS_BODY_BOX_FACE_RIGHT,
       "BOX_TOP", EPHYSICS_BODY_BOX_FACE_TOP,
       "BOX_BOTTOM", EPHYSICS_BODY_BOX_FACE_BOTTOM,
+      "CLOTH_FRONT", EPHYSICS_BODY_CLOTH_FACE_FRONT,
+      "CLOTH_BACK", EPHYSICS_BODY_CLOTH_FACE_BACK,
       "CYLINDER_MIDDLE_FRONT", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,
       "CYLINDER_MIDDLE_BACK", EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_BACK,
       "CYLINDER_FRONT", EPHYSICS_BODY_CYLINDER_FACE_FRONT,
       "CYLINDER_BACK", EPHYSICS_BODY_CYLINDER_FACE_BACK,
       "CYLINDER_CURVED", EPHYSICS_BODY_CYLINDER_FACE_CURVED,
-      "CLOTH_FRONT", EPHYSICS_BODY_CLOTH_FACE_FRONT,
-      "CLOTH_BACK", EPHYSICS_BODY_CLOTH_FACE_BACK,
-      "SOFT_ELLIPSOID_FRONT", EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_FRONT,
-      "SOFT_ELLIPSOID_BACK", EPHYSICS_BODY_SOFT_ELLIPSOID_FACE_BACK,
-      "SOFT_BOX_MIDDLE_FRONT", EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_FRONT,
-      "SOFT_BOX_MIDDLE_BACK", EPHYSICS_BODY_SOFT_BOX_FACE_MIDDLE_BACK,
-      "SOFT_BOX_FRONT", EPHYSICS_BODY_SOFT_BOX_FACE_FRONT,
-      "SOFT_BOX_BACK", EPHYSICS_BODY_SOFT_BOX_FACE_BACK,
-      "SOFT_BOX_LEFT", EPHYSICS_BODY_SOFT_BOX_FACE_LEFT,
-      "SOFT_BOX_RIGHT", EPHYSICS_BODY_SOFT_BOX_FACE_RIGHT,
-      "SOFT_BOX_TOP", EPHYSICS_BODY_SOFT_BOX_FACE_TOP,
-      "SOFT_BOX_BOTTOM", EPHYSICS_BODY_SOFT_BOX_FACE_BOTTOM,
-      "SOFT_CIRCLE_MIDDLE_FRONT", EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_FRONT,
-      "SOFT_CIRCLE_MIDDLE_BACK", EPHYSICS_BODY_SOFT_CIRCLE_FACE_MIDDLE_BACK,
-      "SOFT_CIRCLE_FRONT", EPHYSICS_BODY_SOFT_CIRCLE_FACE_FRONT,
-      "SOFT_CIRCLE_BACK", EPHYSICS_BODY_SOFT_CIRCLE_FACE_BACK,
-      "SOFT_CIRCLE_CURVES", EPHYSICS_BODY_SOFT_CIRCLE_FACE_CURVED,
+      "SPHERE_FRONT", EPHYSICS_BODY_SPHERE_FACE_FRONT,
+      "SPHERE_BACK", EPHYSICS_BODY_SPHERE_FACE_BACK,
       NULL);
 
    EINA_LIST_FOREACH(current_desc->physics.faces, l, pface2)
