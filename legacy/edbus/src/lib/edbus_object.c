@@ -639,26 +639,23 @@ edbus_object_proxy_del(EDBus_Object *obj, EDBus_Proxy *proxy, const char *interf
    return eina_hash_del(obj->proxies, interface, proxy);
 }
 
-static EDBus_Proxy *
-get_peer_proxy(EDBus_Object *obj)
-{
-   return edbus_proxy_get(obj, "org.freedesktop.DBus.Peer");
-}
-
 EAPI EDBus_Pending *
 edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
+   EDBus_Message *msg;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
-   return edbus_proxy_call(get_peer_proxy(obj), "Ping", cb,
-                           data, -1, "");
+   msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER, "Ping");
+   return edbus_object_send(obj, msg, cb, data, -1);
 }
 
 EAPI EDBus_Pending *
 edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
+   EDBus_Message *msg;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
-   return edbus_proxy_call(get_peer_proxy(obj), "GetMachineId", cb,
-                           data, -1, "");
+   msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER,
+                                      "GetMachineId");
+   return edbus_object_send(obj, msg, cb, data, -1);
 }
 
 EAPI EDBus_Pending *
