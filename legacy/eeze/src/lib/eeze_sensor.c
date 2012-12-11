@@ -229,6 +229,8 @@ eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
 {
    Eeze_Sensor_Module *module = NULL;
 
+   if (!sens) return EINA_FALSE;
+
    module = _highest_priority_module_get();
    if (!module) return EINA_FALSE;
    if (module->async_read)
