@@ -211,6 +211,8 @@ edbus_object_get(EDBus_Connection *conn, const char *bus, const char *path)
    edbus_connection_name_object_set(conn, obj);
    edbus_connection_cb_free_add(obj->conn, _on_connection_free, obj);
 
+   obj->properties = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE_PROPERTIES);
+
    return obj;
 
 cleanup:

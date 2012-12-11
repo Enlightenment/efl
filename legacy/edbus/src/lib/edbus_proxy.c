@@ -88,7 +88,6 @@ edbus_proxy_shutdown(void)
 static void _edbus_proxy_event_callback_call(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, const void *event_info);
 static void _edbus_proxy_context_event_cb_del(EDBus_Proxy_Context_Event *ce, EDBus_Proxy_Context_Event_Cb *ctx);
 static void _on_signal_handler_free(void *data, const void *dead_pointer);
-static EDBus_Proxy *get_properties_proxy(EDBus_Proxy *proxy);
 
 static void
 _edbus_proxy_call_del(EDBus_Proxy *proxy)
@@ -615,18 +614,12 @@ edbus_proxy_signal_handler_add(EDBus_Proxy *proxy, const char *member, EDBus_Sig
    return handler;
 }
 
-static EDBus_Proxy *
-get_properties_proxy(EDBus_Proxy *proxy)
-{
-   return edbus_proxy_get(proxy->obj, EDBUS_FDO_INTERFACE_PROPERTIES);
-}
-
 EAPI EDBus_Pending *
 edbus_proxy_property_get(EDBus_Proxy *proxy, const char *name, EDBus_Message_Cb cb, const void *data)
 {
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
-   return edbus_proxy_call(get_properties_proxy(proxy), "Get", cb, data, -1,
+   return edbus_proxy_call(proxy->obj->properties, "Get", cb, data, -1,
                            "ss", proxy->interface, name);
 }
 
@@ -648,7 +641,7 @@ edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const 
 
    sig[0] = type;
    sig[1] = 0;
-   msg = edbus_proxy_method_call_new(get_properties_proxy(proxy), "Set");
+   msg = edbus_proxy_method_call_new(proxy->obj->properties, "Set");
    iter = edbus_message_iter_get(msg);
    edbus_message_iter_basic_append(iter, 's', proxy->interface);
    edbus_message_iter_basic_append(iter, 's', name);
@@ -656,7 +649,7 @@ edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const 
    edbus_message_iter_basic_append(variant, type, value);
    edbus_message_iter_container_close(iter, variant);
 
-   pending = edbus_proxy_send(get_properties_proxy(proxy), msg, cb, data, -1);
+   pending = edbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
    edbus_message_unref(msg);
 
    return pending;
@@ -666,7 +659,7 @@ EAPI EDBus_Pending *
 edbus_proxy_property_get_all(EDBus_Proxy *proxy, EDBus_Message_Cb cb, const void *data)
 {
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
-   return edbus_proxy_call(get_properties_proxy(proxy), "GetAll", cb, data, -1,
+   return edbus_proxy_call(proxy->obj->properties, "GetAll", cb, data, -1,
                            "s", proxy->interface);
 }
 
@@ -675,7 +668,7 @@ edbus_proxy_properties_changed_callback_add(EDBus_Proxy *proxy, EDBus_Signal_Cb 
 {
    EDBus_Signal_Handler *sh;
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
-   sh = edbus_proxy_signal_handler_add(get_properties_proxy(proxy),
+   sh = edbus_proxy_signal_handler_add(proxy->obj->properties,
                                        "PropertiesChanged", cb, data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sh, NULL);
    edbus_signal_handler_match_extra_set(sh, "arg0", proxy->interface, NULL);

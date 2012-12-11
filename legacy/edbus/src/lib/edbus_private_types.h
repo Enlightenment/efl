@@ -80,6 +80,7 @@ struct _EDBus_Object
    EDBus_Signal_Handler *interfaces_added;
    EDBus_Signal_Handler *interfaces_removed;
    EDBus_Signal_Handler *properties_changed;
+   EDBus_Proxy *properties;
 };
 
 struct _EDBus_Signal_Handler
