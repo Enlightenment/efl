@@ -921,6 +921,7 @@ _connection_get(EDBus_Connection_Type type)
 {
    EDBus_Connection *conn;
    DBusError err;
+   EDBus_Object *obj;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((type < EDBUS_CONNECTION_TYPE_LAST) &&
                                    (type > EDBUS_CONNECTION_TYPE_UNKNOWN), NULL);
@@ -945,6 +946,8 @@ _connection_get(EDBus_Connection_Type type)
 
    edbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL,
                             "Disconnected", _disconnected, conn);
+   obj = edbus_object_get(conn, EDBUS_FDO_BUS, EDBUS_FDO_PATH);
+   conn->daemon = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE);
 
    DBG("Returned new connection at %p", conn);
    return conn;

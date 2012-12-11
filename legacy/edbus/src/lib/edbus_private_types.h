@@ -61,6 +61,7 @@ struct _EDBus_Connection
    Ecore_Idler                   *idler;
    EDBus_Connection_Context_Event event_handlers[EDBUS_CONNECTION_EVENT_LAST];
    Eina_Inlist                   *root_objs;//service_object
+   EDBus_Proxy                   *daemon;
 };
 
 struct _EDBus_Object

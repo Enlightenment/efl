@@ -2,22 +2,13 @@
 #include "edbus_private_types.h"
 #include <dbus/dbus.h>
 
-static EDBus_Proxy *
-get_freedesktop_proxy(EDBus_Connection *conn)
-{
-   EDBus_Object *freedesktop_obj;
-
-   freedesktop_obj = edbus_object_get(conn, EDBUS_FDO_BUS, EDBUS_FDO_PATH);
-   return edbus_proxy_get(freedesktop_obj, EDBUS_FDO_INTERFACE);
-}
-
 EAPI EDBus_Pending *
 edbus_name_request(EDBus_Connection *conn, const char *name, unsigned int flags, EDBus_Message_Cb cb, const void *cb_data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "RequestName", cb,
+   return edbus_proxy_call(conn->daemon, "RequestName", cb,
                            cb_data, -1, "su", name, flags);
 }
 
@@ -27,7 +18,7 @@ edbus_name_release(EDBus_Connection *conn, const char *name, EDBus_Message_Cb cb
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "ReleaseName", cb,
+   return edbus_proxy_call(conn->daemon, "ReleaseName", cb,
                            cb_data, -1, "s", name);
 }
 
@@ -37,7 +28,7 @@ edbus_name_owner_get(EDBus_Connection *conn, const char *name, EDBus_Message_Cb 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "GetNameOwner", cb,
+   return edbus_proxy_call(conn->daemon, "GetNameOwner", cb,
                            cb_data, -1, "s", name);
 }
 
@@ -47,7 +38,7 @@ edbus_name_owner_has(EDBus_Connection *conn, const char *name, EDBus_Message_Cb 
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "NameHasOwner", cb,
+   return edbus_proxy_call(conn->daemon, "NameHasOwner", cb,
                            cb_data, -1, "s", name);
 }
 
@@ -56,7 +47,7 @@ edbus_names_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const void *cb_dat
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "ListNames", cb,
+   return edbus_proxy_call(conn->daemon, "ListNames", cb,
                            cb_data, -1, "");
 }
 
@@ -65,7 +56,7 @@ edbus_names_activatable_list(EDBus_Connection *conn, EDBus_Message_Cb cb, const 
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "ListActivatableNames", cb,
+   return edbus_proxy_call(conn->daemon, "ListActivatableNames", cb,
                            cb_data, -1, "");
 }
 
@@ -75,7 +66,7 @@ edbus_name_start(EDBus_Connection *conn, const char *name, unsigned int flags, E
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
-   return edbus_proxy_call(get_freedesktop_proxy(conn), "StartServiceByName", cb,
+   return edbus_proxy_call(conn->daemon, "StartServiceByName", cb,
                            cb_data, -1, "su", name, flags);
 }
 
