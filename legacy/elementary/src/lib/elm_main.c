@@ -411,6 +411,32 @@ _elm_unneed_edbus(void)
 #endif
 }
 
+#ifdef ELM_ELOCATION
+static Eina_Bool _elm_need_elocation = EINA_FALSE;
+#endif
+EAPI Eina_Bool
+elm_need_elocation(void)
+{
+#ifdef ELM_ELOCATION
+   if (_elm_need_elocation) return EINA_TRUE;
+   _elm_need_elocation = EINA_TRUE;
+   elocation_init();
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+static void
+_elm_unneed_elocation(void)
+{
+#ifdef ELM_ELOCATION
+   if (!_elm_need_elocation) return;
+   _elm_need_elocation = EINA_FALSE;
+   edbus_shutdown();
+#endif
+}
+
 #ifdef ELM_EFREET
 static Eina_Bool _elm_need_efreet = EINA_FALSE;
 #endif
@@ -627,6 +653,7 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
    _elm_unneed_edbus();
+   _elm_unneed_elocation();
    _elm_unneed_ethumb();
    _elm_unneed_web();
    ecore_file_shutdown();

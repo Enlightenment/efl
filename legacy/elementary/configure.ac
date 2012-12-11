@@ -525,6 +525,34 @@ if test "x$want_elementary_edbus2" = "xyes" -a "x$have_elementary_edbus2" = "xno
 fi
 AC_SUBST(ELM_EDBUS2_DEF)
 
+ELM_ELOCATION_DEF="#undef"
+have_elementary_elocation="no"
+want_elementary_elocation="auto"
+AC_ARG_ENABLE([elocation],
+   [AC_HELP_STRING([--disable-elocation], [disable elocation support. @<:@default=detect@:>@])],
+   [want_elementary_elocation=$enableval], [])
+
+if test "x$want_elementary_elocation" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_ELOCATION],
+       [
+        elocation >= 0.1.0
+       ],
+       [
+        AC_DEFINE(HAVE_ELEMENTARY_ELOCATION, 1, [Elocation support for Elementary])
+        have_elementary_elocation="yes"
+        ELM_ELOCATION_DEF="#define"
+        requirement_elm="elocation >= 1.7.99 ${requirement_elm}"
+       ],
+       [have_elementary_elocation="no"]
+    )
+else
+    have_elementary_elocation="no"
+fi
+if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" = "xno"; then
+    AC_MSG_ERROR([EDBus (v2) support requested, but no elocation found by pkg-config.])
+fi
+AC_SUBST(ELM_ELOCATION_DEF)
+
 ELM_EFREET_DEF="#undef"
 have_elementary_efreet="no"
 want_elementary_efreet="auto"
@@ -851,6 +879,7 @@ echo "    Web (WebKit)...........: ${elementary_web}"
 echo "    Quick Launch...........: ${have_fork}"
 echo "    EIO....................: ${have_eio}"
 echo "    Emotion................: ${have_emotion}"
+echo "    Elocation..............: ${have_elementary_elocation}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"

@@ -17,6 +17,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EDBUS2_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
+@ELEMENTARY_ELOCATION_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
@@ -107,6 +108,7 @@ layout_example_03.c \
 list_example_01.c \
 list_example_02.c \
 list_example_03.c \
+location_example_01.c \
 map_example_01.c \
 map_example_02.c \
 map_example_03.c \
@@ -244,6 +246,7 @@ layout_example_03 \
 list_example_01 \
 list_example_02 \
 list_example_03 \
+location_example_01 \
 map_example_01 \
 map_example_02 \
 map_example_03 \

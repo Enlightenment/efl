@@ -13,6 +13,7 @@
 @ELM_EDBUS_DEF@ ELM_EDBUS
 @ELM_EDBUS2_DEF@ ELM_EDBUS2
 @ELM_EFREET_DEF@ ELM_EFREET
+@ELM_ELOCATION_DEF@ ELM_ELOCATION
 @ELM_ETHUMB_DEF@ ELM_ETHUMB
 @ELM_WEB_DEF@ ELM_WEB
 @ELM_EMAP_DEF@ ELM_EMAP
@@ -85,6 +86,10 @@
 #include <Efreet.h>
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
+#endif
+
+#ifdef ELM_ELOCATION
+#include <Elocation.h>
 #endif
 
 #ifdef ELM_ETHUMB

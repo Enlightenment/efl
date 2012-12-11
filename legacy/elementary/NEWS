@@ -21,6 +21,7 @@ Additions:
    * Add elm_need_edbus() and EDBus.h support with ELM_EDBUS2 macro to integrate edbus (v2). Deprecated elm_need_e_dbus() (e_dbus, v1).
    * Add window profile set/get API in elm_win
    * Add elm_sys_notify.[ch]
+   * Add elm_need_elocation() and Elocation.h support with ELM_ELOCATION macro to integrate elocation.
 
 Improvements:
 
