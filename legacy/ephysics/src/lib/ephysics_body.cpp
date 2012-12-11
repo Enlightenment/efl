@@ -2841,14 +2841,14 @@ no_collision_shape:
 }
 
 EAPI EPhysics_Body *
-ephysics_body_circle_add(EPhysics_World *world)
+ephysics_body_cylinder_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
    EPhysics_Body *body;
 
    if (!world)
      {
-        ERR("Can't add circle, world is null.");
+        ERR("Can't add cylinder, world is null.");
         return NULL;
      }
 
@@ -2860,7 +2860,7 @@ ephysics_body_circle_add(EPhysics_World *world)
      }
 
    ephysics_world_lock_take(world);
-   body = _ephysics_body_rigid_body_add(world, collision_shape, "circle", 0.5,
+   body = _ephysics_body_rigid_body_add(world, collision_shape, "cylinder", 0.5,
                                         0.5, 0.5);
    body->shape = EPHYSICS_BODY_SHAPE_CYLINDER;
    ephysics_world_lock_release(world);

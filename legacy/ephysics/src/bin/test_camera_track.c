@@ -126,7 +126,7 @@ _world_populate(Track_Data *track_data)
    track_data->base.evas_objs = eina_list_append(track_data->base.evas_objs,
                                                  sphere);
 
-   body = ephysics_body_circle_add(track_data->base.world);
+   body = ephysics_body_cylinder_add(track_data->base.world);
    ephysics_body_evas_object_set(body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(body, 0.95);
    ephysics_body_friction_set(body, 1);

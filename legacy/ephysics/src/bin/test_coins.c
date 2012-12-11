@@ -37,7 +37,7 @@ _coin_add(Test_Data *test_data, Evas_Coord x, Evas_Coord y)
    front = _obj_face_add(test_data, "coin0", x, y);
    back = _obj_face_add(test_data, "coin1", x, y);
 
-   coin = ephysics_body_circle_add(test_data->world);
+   coin = ephysics_body_cylinder_add(test_data->world);
    ephysics_body_resize(coin, 1, 1, 1);
    ephysics_body_face_evas_object_set(coin,
                                       EPHYSICS_BODY_CYLINDER_FACE_MIDDLE_FRONT,

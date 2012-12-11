@@ -450,7 +450,7 @@ EAPI double ephysics_quaternion_length2_get(const EPhysics_Quaternion *quat);
  * @{
  *
  * Shapes are used to create bodies with shapes that differ from primitive
- * ones, like box and circle.
+ * ones, like box and cylinder.
  *
  * A shape consists in a group of points, the vertices of the body to be
  * created later with @ref ephysics_body_shape_add().
@@ -618,7 +618,7 @@ EAPI Eina_Bool ephysics_shape_save(const EPhysics_Shape *shape, const char *file
  * Body handle, represents an object on EPhysics world.
  *
  * Many types of bodies can be created:
- * @li @ref ephysics_body_circle_add()
+ * @li @ref ephysics_body_cylinder_add()
  * @li @ref ephysics_body_box_add()
  * @li @ref ephysics_body_shape_add()
  * @li @ref ephysics_body_soft_circle_add()
@@ -1291,7 +1291,7 @@ EAPI double ephysics_world_rate_get(const EPhysics_World *world);
  *
  * @note The list should be freed after usage.
  *
- * @see ephysics_body_circle_add().
+ * @see ephysics_body_cylinder_add().
  * @see ephysics_body_box_add().
  * @see ephysics_body_del().
  *
@@ -1952,7 +1952,7 @@ EAPI Eina_Bool ephysics_world_stack_enable_get(const EPhysics_World *world);
  * A body is a representation of an object inside a physics world.
  *
  * Bodies can have different shapes that can be created with:
- * @li @ref ephysics_body_circle_add();
+ * @li @ref ephysics_body_cylinder_add();
  * @li @ref ephysics_body_box_add();
  * @li or @ref ephysics_body_shape_add().
  *
@@ -2670,17 +2670,17 @@ EAPI void ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, i
 
 /**
  * @brief
- * Create a new circle physics body.
+ * Create a new cylinder physics body.
  *
- * Its collision shape will be a circle of diameter 1. To change it's size
+ * Its collision shape will be a cylinder of diameter 1. To change it's size
  * @ref ephysics_body_geometry_set() should be used.
  *
  * Any evas object can be associated to it with
  * @ref ephysics_body_evas_object_set(),
- * and it will collide as a circle (even if you have an evas rectangle).
+ * and it will collide as a cylinder (even if you have an evas rectangle).
  *
- * If a circle that could have its shape deformed is required, use
- * @ref ephysics_body_soft_box_add().
+ * If a cylinder that could have its shape deformed is required, use
+ * @ref ephysics_body_soft_circle_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -2691,7 +2691,7 @@ EAPI void ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, i
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
+EAPI EPhysics_Body *ephysics_body_cylinder_add(EPhysics_World *world);
 
 /**
  * @brief
@@ -2711,7 +2711,7 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  * @note When working with soft bodies it's importante to adjust the
  * simulation's fixed time step due its multi point nature.
  *
- * For a rigid circle, check @ref ephysics_body_circle_add().
+ * For a rigid cylinder, check @ref ephysics_body_cylinder_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -2759,7 +2759,7 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * @note When working with soft bodies it's importante to adjust the
  * simulation's fixed time step due its multi point nature.
  *
- * For a rigid circle, check @ref ephysics_body_circle_add().
+ * For a rigid cylinder, check @ref ephysics_body_cylinder_add().
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL on errors.
@@ -3003,7 +3003,7 @@ EAPI EPhysics_Body *ephysics_body_back_boundary_add(EPhysics_World *world);
  * @param body The body to be deleted.
  *
  * @see ephysics_body_box_add().
- * @see ephysics_body_circle_add().
+ * @see ephysics_body_cylinder_add().
  *
  * @ingroup EPhysics_Body
  */
@@ -3048,7 +3048,7 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  *
  * @see ephysics_body_box_add().
  * @see ephysics_body_soft_box_add().
- * @see ephysics_body_circle_add().
+ * @see ephysics_body_cylinder_add().
  * @see ephysics_body_soft_circle_add().
  * @see ephysics_body_evas_object_unset().
  * @see ephysics_world_rate_set().
@@ -3147,7 +3147,7 @@ EAPI Evas_Object *ephysics_body_face_evas_object_unset(EPhysics_Body *body, EPhy
  * @brief
  * Set physics body size.
  *
- * By default circles have diameter equal to 1 meter * rate, boxes have
+ * By default cylinders have diameter equal to 1 meter * rate, boxes have
  * dimensions 1 meter * rate on all the axes.
  *
  * There are three direct ways of modifying it's size:
@@ -3206,7 +3206,7 @@ EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Ev
  * Set physics body geometry.
  *
  * All the physics bodies are created centered on origin (0, 0) and with
- * canonical dimensions. Circles have diameter 1, boxes have dimensions 1
+ * canonical dimensions. Cylinder have diameter 1, boxes have dimensions 1
  * on all the axes.
  *
  * There are four direct ways of modifying this geometry:
@@ -4246,7 +4246,7 @@ EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
  * mass at x component = 20, y component = 10 and z = 10, it will return
  * @p x = 0.666, @p y = 0.5 and @p z = 0.5.
  *
- * For primitive shapes, like box and circle, the center of mass
+ * For primitive shapes, like box and cylinder, the center of mass
  * is (0.5, 0.5, 0.5).
  *
  * This function can be useful when updating evas objects for bodies

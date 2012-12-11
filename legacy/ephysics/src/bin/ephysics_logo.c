@@ -164,7 +164,7 @@ _letter_body_box_add(EPhysics_World *world, Evas_Object *image)
 static EPhysics_Body *
 _letter_body_circle_add(EPhysics_World *world, Evas_Object *image)
 {
-   EPhysics_Body *body = ephysics_body_circle_add(world);
+   EPhysics_Body *body = ephysics_body_cylinder_add(world);
 
    _letter_body_setup_common(body, image);
 

@@ -95,7 +95,7 @@ _world_populate(Camera_Data *camera_data)
    camera_data->base.evas_objs = eina_list_append(camera_data->base.evas_objs,
                                                   sphere);
 
-   fall_body = ephysics_body_circle_add(camera_data->base.world);
+   fall_body = ephysics_body_cylinder_add(camera_data->base.world);
    ephysics_body_evas_object_set(fall_body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.2);
    ephysics_body_friction_set(fall_body, 0.5);
@@ -123,7 +123,7 @@ _world_populate(Camera_Data *camera_data)
    camera_data->base.evas_objs = eina_list_append(camera_data->base.evas_objs,
                                                   sphere);
 
-   fall_body = ephysics_body_circle_add(camera_data->base.world);
+   fall_body = ephysics_body_cylinder_add(camera_data->base.world);
    ephysics_body_mass_set(fall_body, 3.7);
    ephysics_body_evas_object_set(fall_body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.12);

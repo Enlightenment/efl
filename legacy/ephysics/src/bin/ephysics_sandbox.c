@@ -146,7 +146,7 @@ _type_set_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
      }
    else
      {
-        body = ephysics_body_circle_add(world);
+        body = ephysics_body_cylinder_add(world);
         elm_object_disabled_set(bd->controls.hardness, EINA_TRUE);
      }
 
@@ -937,7 +937,7 @@ _body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
    evas_object_move(body_image, x, y);
    evas_object_show(body_image);
 
-   body = ephysics_body_circle_add(world);
+   body = ephysics_body_cylinder_add(world);
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, INITIAL_MASS);
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,

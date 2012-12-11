@@ -50,7 +50,7 @@ _world_populate(Speed_Data *speed_data)
    speed_data->base.evas_objs = eina_list_append(speed_data->base.evas_objs,
                                                  sphere);
 
-   ball = ephysics_body_circle_add(speed_data->base.world);
+   ball = ephysics_body_cylinder_add(speed_data->base.world);
    ephysics_body_evas_object_set(ball, sphere, EINA_TRUE);
    ephysics_body_restitution_set(ball, 0.8);
    ephysics_body_friction_set(ball, 0.2);
