@@ -30,7 +30,7 @@ _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 static void
-_soft_ellipsoid_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *back_face)
+_soft_sphere_add(Test_Data *test_data, Evas_Object *front_face, Evas_Object *back_face)
 {
    EPhysics_Body *body;
    Evas_Coord w, h;
@@ -81,7 +81,7 @@ _world_populate(Test_Data *test_data)
    evas_object_show(back_face);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, back_face);
 
-   _soft_ellipsoid_add(test_data, front_face, back_face);
+   _soft_sphere_add(test_data, front_face, back_face);
 }
 
 static void
@@ -95,7 +95,7 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 }
 
 void
-test_soft_ellipsoid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_soft_sphere(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    EPhysics_World *world;
    Test_Data *test_data;
@@ -104,7 +104,7 @@ test_soft_ellipsoid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
      return;
 
    test_data = test_data_new();
-   test_win_add(test_data, "Soft Ellipsoid", EINA_TRUE);
+   test_win_add(test_data, "Soft Sphere", EINA_TRUE);
 
    elm_layout_signal_callback_add(test_data->layout, "restart", "test-theme",
                                   _restart, test_data);
