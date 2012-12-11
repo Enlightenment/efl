@@ -148,6 +148,35 @@ on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
+receive_variant_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+{
+   Eina_Value *v, variant, array;
+   unsigned i;
+
+   printf("4 - receive a variant with an array of strings\n");
+   if (edbus_message_error_get(msg, NULL, NULL))
+     {
+        printf("Message error\n\n");
+        return;
+     }
+
+   v = edbus_message_to_eina_value(msg);
+
+   eina_value_struct_value_get(v, "arg0", &variant);
+   eina_value_struct_value_get(&variant, "arg0", &array);
+   for (i = 0; i < eina_value_array_count(&array); i++)
+     {
+        const char *txt;
+        eina_value_array_get(&array, i, &txt);
+        printf("\t%s\n", txt);
+     }
+
+   eina_value_flush(&array);
+   eina_value_flush(&variant);
+   eina_value_free(v);
+}
+
+static void
 _property_removed(void *data, EDBus_Proxy *proxy, void *event_info)
 {
    EDBus_Proxy_Event_Property_Removed *event = event_info;
@@ -279,6 +308,8 @@ main(void)
 
    edbus_proxy_properties_monitor(proxy, EINA_TRUE);
    ecore_timer_add(10, _read_cache, proxy);
+
+   edbus_proxy_call(proxy, "ReceiveVariantData", receive_variant_cb, NULL, -1, "");
 
    ecore_main_loop_begin();
 

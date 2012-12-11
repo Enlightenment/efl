@@ -64,6 +64,26 @@ _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, con
 }
 
 static EDBus_Message *
+_receive_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+{
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   EDBus_Message_Iter *var, *array, *main_iter;
+
+   main_iter = edbus_message_iter_get(reply);
+   var = edbus_message_iter_container_new(main_iter, 'v', "as");
+   edbus_message_iter_arguments_set(var, "as", &array);
+
+   edbus_message_iter_arguments_set(array, "s", "item1");
+   edbus_message_iter_arguments_set(array, "s", "item2");
+   edbus_message_iter_arguments_set(array, "s", "item3");
+
+   edbus_message_iter_container_close(var, array);
+   edbus_message_iter_container_close(main_iter, var);
+
+   return reply;
+}
+
+static EDBus_Message *
 _send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
@@ -261,6 +281,10 @@ static const EDBus_Method methods[] = {
       {
         "SendVariantData", EDBUS_ARGS({"v", "variant_data"}),
         NULL, _send_variant
+      },
+      {
+       "ReceiveVariantData", NULL, EDBUS_ARGS({"v", "variant_data"}),
+       _receive_variant
       },
       {
         "SendArrayInt", NULL,
