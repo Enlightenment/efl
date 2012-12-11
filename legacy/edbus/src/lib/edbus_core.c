@@ -493,12 +493,15 @@ edbus_connection_name_get(EDBus_Connection *conn, const char *name)
    cn->name = eina_stringshare_add(name);
    cn->objects = eina_hash_string_superfast_new(NULL);
 
-   if (name[0] == ':' || !strcmp(name, EDBUS_FDO_BUS))
+   if (!strcmp(name, EDBUS_FDO_BUS))
      {
         cn->unique_id = eina_stringshare_add(name);
         goto end;
      }
-   edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
+   else if (name[0] == ':')
+     cn->unique_id = eina_stringshare_add(name);
+   else
+     edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
    cn->name_owner_changed = _edbus_signal_handler_add(conn, EDBUS_FDO_BUS,
                                                       EDBUS_FDO_PATH,
                                                       EDBUS_FDO_INTERFACE,
