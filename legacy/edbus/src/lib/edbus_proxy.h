@@ -109,13 +109,14 @@ typedef enum
 typedef struct _EDBus_Proxy_Event_Property_Changed
 {
    const char       *name;
+   const EDBus_Proxy *proxy;
    const Eina_Value *value;
 } EDBus_Proxy_Event_Property_Changed;
 
 typedef struct _EDBus_Proxy_Event_Property_Removed
 {
    const char  *interface;
-   EDBus_Proxy *proxy;
+   const EDBus_Proxy *proxy;
    const char  *name;
 } EDBus_Proxy_Event_Property_Removed;
 

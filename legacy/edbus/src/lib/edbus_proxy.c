@@ -299,6 +299,7 @@ _property_changed_iter(void *data, const void *key, EDBus_Message_Iter *var)
 
    event.name = skey;
    event.value = value;
+   event.proxy = proxy;
    _edbus_proxy_event_callback_call(proxy, EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                     &event);
    eina_value_free(st_value);
