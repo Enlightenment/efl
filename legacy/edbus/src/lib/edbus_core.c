@@ -921,25 +921,14 @@ edbus_connection_setup(EDBus_Connection *conn)
                       conn);
 }
 
-EAPI EDBus_Connection *
-edbus_connection_get(EDBus_Connection_Type type)
+static EDBus_Connection *
+_connection_get(EDBus_Connection_Type type)
 {
    EDBus_Connection *conn;
    DBusError err;
 
-   DBG("Getting connection with type %d", type);
-
-   if ((type < EDBUS_CONNECTION_TYPE_SESSION) ||
-       (type > EDBUS_CONNECTION_TYPE_STARTER))
-     return NULL;
-
-   conn = shared_connections[type - 1];
-   if (conn)
-     {
-        DBG("Connection with type %d exists at %p; reffing and returning",
-           type, conn);
-        return edbus_connection_ref(conn);
-     }
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((type < EDBUS_CONNECTION_TYPE_LAST) &&
+                                   (type > EDBUS_CONNECTION_TYPE_UNKNOWN), NULL);
 
    conn = calloc(1, sizeof(EDBus_Connection));
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
@@ -952,17 +941,41 @@ edbus_connection_get(EDBus_Connection_Type type)
         ERR("Error connecting to bus: %s", err.message);
         return NULL;
      }
+
    edbus_connection_setup(conn);
-
    conn->type = type;
-   shared_connections[type - 1] = conn;
-
    conn->refcount = 1;
    EINA_MAGIC_SET(conn, EDBUS_CONNECTION_MAGIC);
-
    conn->names = eina_hash_string_superfast_new(NULL);
 
    DBG("Returned new connection at %p", conn);
+   return conn;
+}
+
+EAPI EDBus_Connection *
+edbus_private_connection_get(EDBus_Connection_Type type)
+{
+   return _connection_get(type);
+}
+
+EAPI EDBus_Connection *
+edbus_connection_get(EDBus_Connection_Type type)
+{
+   EDBus_Connection *conn;
+
+   DBG("Getting connection with type %d", type);
+   conn = shared_connections[type - 1];
+   if (conn)
+     {
+        DBG("Connection with type %d exists at %p; reffing and returning",
+            type, conn);
+        return edbus_connection_ref(conn);
+     }
+
+   conn = _connection_get(type);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
+   shared_connections[type - 1] = conn;
+
    return conn;
 }
 
@@ -1072,7 +1085,8 @@ _edbus_connection_unref(EDBus_Connection *conn)
    edbus_data_del_all(&conn->data);
 
    if (conn->idler) ecore_idler_del(conn->idler);
-   shared_connections[conn->type - 1] = NULL;
+   if (shared_connections[conn->type - 1] == conn)
+     shared_connections[conn->type - 1] = NULL;
 
    free(conn);
 }

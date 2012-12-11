@@ -18,8 +18,9 @@ typedef enum
 #define EDBUS_TIMEOUT_INFINITE ((int) 0x7fffffff)
 
 /**
- * @brief Establish a connection to bus and integrate it with the ecore main
- * loop.
+ * Establish a connection to bus and integrate it with the ecore main
+ * loop, if already exist a connection of given type return it and increase
+ * reference.
  *
  * @param type type of connection e.g EDBUS_CONNECTION_TYPE_SESSION,
  * EDBUS_CONNECTION_TYPE_SYSTEM or EDBUS_CONNECTION_TYPE_STARTER
@@ -27,6 +28,17 @@ typedef enum
  * @return connection with bus
  */
 EAPI EDBus_Connection *edbus_connection_get(EDBus_Connection_Type type);
+
+/**
+ * Always create and establish a new connection to bus and integrate it with
+ * the ecore main loop.
+ *
+ * @param type type of connection e.g EDBUS_CONNECTION_TYPE_SESSION,
+ * EDBUS_CONNECTION_TYPE_SYSTEM or EDBUS_CONNECTION_TYPE_STARTER
+ *
+ * @return connection with bus
+ */
+EAPI EDBus_Connection *edbus_private_connection_get(EDBus_Connection_Type type);
 
 /**
  * @brief Increment connection reference count.
