@@ -223,19 +223,12 @@ _properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBu
 }
 
 static EDBus_Message *
-_properties_set(const EDBus_Service_Interface *iface, const char *propname, const EDBus_Message *msg)
+_properties_set(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *msg)
 {
    EDBus_Message *reply;
-   char *interface, *property, *type, *txt;
-   EDBus_Message_Iter *variant;
+   char *type, *txt;
 
-   if (!edbus_message_arguments_get(msg, "ssv", &interface, &property, &variant))
-     {
-        printf("Error on edbus_message_arguments_get()\n");
-        return NULL;
-     }
-
-   type = edbus_message_iter_signature_get(variant);
+   type = edbus_message_iter_signature_get(iter);
    if (type[0] != 's')
      {
         reply = edbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidSignature",
@@ -245,7 +238,7 @@ _properties_set(const EDBus_Service_Interface *iface, const char *propname, cons
      }
 
    reply = edbus_message_method_return_new(msg);
-   edbus_message_iter_arguments_get(variant, "s", &txt);
+   edbus_message_iter_arguments_get(iter, "s", &txt);
    printf("Resp2 was set to: %s, previously was: %s\n", txt, resp2);
    free(type);
    free(resp2);

@@ -316,16 +316,11 @@ _cb_property_set(const EDBus_Service_Interface *piface, const EDBus_Message *msg
    EDBus_Service_Interface *iface;
    Property *prop;
    EDBus_Message *reply;
-   EDBus_Message_Iter *main_iter;
+   EDBus_Message_Iter *variant;
    EDBus_Property_Set_Cb setter = NULL;
 
-   main_iter = edbus_message_iter_get(msg);
-   if (!edbus_message_iter_get_and_next(main_iter, 's', &iface_name) ||
-       !edbus_message_iter_get_and_next(main_iter, 's', &propname))
+   if (!edbus_message_arguments_get(msg, "ssv", &iface_name, &propname, &variant))
      return NULL;
-
-   dbus_message_iter_init(msg->dbus_msg,
-                          &main_iter->dbus_iterator);
 
    iface = eina_hash_find(obj->interfaces, iface_name);
    if (!iface)
@@ -346,7 +341,7 @@ _cb_property_set(const EDBus_Service_Interface *piface, const EDBus_Message *msg
      return edbus_message_error_new(msg, DBUS_ERROR_PROPERTY_READ_ONLY,
                                     "This property is read only");
 
-   reply = setter(iface, propname, msg);
+   reply = setter(iface, propname, variant, msg);
    return reply;
 }
 

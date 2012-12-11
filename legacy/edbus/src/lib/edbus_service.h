@@ -59,7 +59,7 @@ typedef Eina_Bool (*EDBus_Property_Get_Cb)(const EDBus_Service_Interface *iface,
  *
  * @return Message of response, could be a simple method_return, error or NULL to send response later.
  */
-typedef EDBus_Message *(*EDBus_Property_Set_Cb)(const EDBus_Service_Interface *iface, const char *propname, const EDBus_Message *input_msg);
+typedef EDBus_Message *(*EDBus_Property_Set_Cb)(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *input_msg);
 
 typedef struct _EDBus_Method
 {
