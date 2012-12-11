@@ -404,7 +404,7 @@ START_TEST(eeze_test_sensor_read)
    rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
    fail_if(rc == EINA_FALSE);
 
-   /* Use gyro with xz here even if it offers xzy */
+   /* Use gyro with xy here even if it offers xzy */
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_GYROSCOPE);
    fail_if(sens == NULL);
    rc = eeze_sensor_read(sens);
@@ -439,9 +439,43 @@ START_TEST(eeze_test_sensor_read)
    fail_if(rc == EINA_FALSE);
 
    /* Call non existing type */
-   sens = eeze_sensor_new(42);
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LAST + 1);
+   fail_if(sens != NULL);
+
+   /* Give NULL as sensor object */
+   rc = eeze_sensor_read(NULL);
+   fail_if(rc != EINA_FALSE);
+
+   /* Change sensor type after creation but before read */
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
+   fail_if(sens == NULL);
+   sens->type = EEZE_SENSOR_TYPE_LAST + 1;
+   rc = eeze_sensor_read(sens);
+   fail_if(rc != EINA_FALSE);
+
+   /* Try to read from a type you can't read from */
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
+   fail_if(sens == NULL);
+   sens->type = EEZE_SENSOR_TYPE_LAST;
+   rc = eeze_sensor_read(sens);
+   fail_if(rc != EINA_FALSE);
+
+   /* Try all getter functions with a NULL sensor object */
+   rc = eeze_sensor_xyz_get(NULL, &x, &y, &z);
+   fail_if(rc != EINA_FALSE);
+   rc = eeze_sensor_xy_get(NULL, &x, &y);
+   fail_if(rc != EINA_FALSE);
+   rc = eeze_sensor_x_get(NULL, &x);
+   fail_if(rc != EINA_FALSE);
+   rc = eeze_sensor_accuracy_get(NULL, &acc);
+   fail_if(rc != EINA_FALSE);
+   rc = eeze_sensor_timestamp_get(NULL, &timestamp);
+   fail_if(rc != EINA_FALSE);
 
    eeze_sensor_free(sens);
+
+   /* Try free on NULL */
+   eeze_sensor_free(NULL);
 
    ret = eeze_shutdown();
    fail_if(ret != 0);
@@ -526,6 +560,28 @@ START_TEST(eeze_test_sensor_async_read)
    event = ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, sens, NULL, NULL);
    fail_if(event == NULL);
 
+   /* Error case */
+   event = ecore_event_add(42, sens, NULL, NULL);
+   fail_if(event != NULL);
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LAST + 1);
+   fail_if(sens != NULL);
+   rc = eeze_sensor_async_read(NULL, NULL);
+   fail_if(rc != EINA_FALSE);
+
+   /* Change sensor type after creation but before read */
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
+   fail_if(sens == NULL);
+   sens->type = EEZE_SENSOR_TYPE_LAST + 1;
+   rc = eeze_sensor_async_read(sens, NULL);
+   fail_if(rc != EINA_FALSE);
+
+   /* Try to read from a type you can't read from */
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
+   fail_if(sens == NULL);
+   sens->type = EEZE_SENSOR_TYPE_LAST;
+   rc = eeze_sensor_async_read(sens, NULL);
+   fail_if(rc != EINA_FALSE);
+
    ecore_main_loop_begin();
 
    ret = eeze_shutdown();
@@ -550,10 +606,11 @@ START_TEST(eeze_test_sensor_obj_get)
    obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ACCELEROMETER);
    fail_if(obj == obj_tmp);
 
-   /* Try to get non existing obj */
-   eeze_sensor_obj_get(42);
-
    free(obj);
+
+   /* Try to get non existing obj */
+   obj_tmp = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_LAST + 1);
+   fail_if(obj_tmp != NULL);
 
    ret = eeze_shutdown();
    fail_if(ret != 0);
