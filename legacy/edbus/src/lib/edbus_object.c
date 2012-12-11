@@ -195,10 +195,7 @@ edbus_object_get(EDBus_Connection *conn, const char *bus, const char *path)
 
    obj = edbus_connection_name_object_get(conn, bus, path);
    if (obj)
-     {
-        edbus_object_ref(obj);
-        return obj;
-     }
+     return edbus_object_ref(obj);
 
    obj = calloc(1, sizeof(EDBus_Object));
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);

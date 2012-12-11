@@ -205,10 +205,7 @@ edbus_proxy_get(EDBus_Object *obj, const char *interface)
 
    proxy = edbus_object_proxy_get(obj, interface);
    if (proxy)
-     {
-        edbus_proxy_ref(proxy);
-        return proxy;
-     }
+     return edbus_proxy_ref(proxy);
 
    proxy = calloc(1, sizeof(EDBus_Proxy));
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
