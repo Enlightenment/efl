@@ -186,7 +186,6 @@ _edje_textblock_style_all_update(Edje *ed)
 
 	/* No text classes , goto next style */
 	if (!found) continue;
-	found = 0;
 	if (!txt)
 	  txt = eina_strbuf_new();
 

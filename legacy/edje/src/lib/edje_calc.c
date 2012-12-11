@@ -21,7 +21,6 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
 
    fp_pos = pos;
 
-   npos = ZERO;
 #if 0 // old code - easy to enable for comparing float vs fixed point
    /* take linear pos along timescale and use interpolation method */
    switch (mode)

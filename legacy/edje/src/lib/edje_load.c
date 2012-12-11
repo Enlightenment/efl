@@ -1135,9 +1135,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    return 1;
 
  on_error:
-   textblocks = eina_list_free(textblocks);
-   externals = eina_list_free(externals);
-   sources = eina_list_free(sources);
+   eina_list_free(textblocks);
+   eina_list_free(externals);
+   eina_list_free(sources);
    eina_array_flush(&parts);
    _edje_thaw(ed);
    _edje_unblock(ed);

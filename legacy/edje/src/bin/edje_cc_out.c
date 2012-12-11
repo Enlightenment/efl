@@ -1621,7 +1621,7 @@ data_write(void)
    INF("sounds: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads--;
    if (pending_threads > 0) ecore_main_loop_begin();
-   INF("THREADS: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   INF("THREADS: %3.5f", ecore_time_get() - t);
 
    eet_close(ef);
 

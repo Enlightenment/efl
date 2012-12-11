@@ -226,7 +226,7 @@ _edje_smart_resize(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    ed->w = w;
    ed->h = h;
 #ifdef HAVE_EPHYSICS
-   if (ed->world)
+   if ((ed->collection) && (ed->world))
         ephysics_world_render_geometry_set(
            ed->world, ed->x, ed->y, ed->collection->physics.world.z,
            ed->w, ed->h, ed->collection->physics.world.depth);

@@ -3339,7 +3339,6 @@ st_collections_group_parts_part_name(void)
                        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
                        current_part = pc->parts[i];
                        edje_cc_handlers_hierarchy_rename(ep, current_part);
-                       ep = current_part;
                        epp->can_override = EINA_FALSE;
                        break;
                     }

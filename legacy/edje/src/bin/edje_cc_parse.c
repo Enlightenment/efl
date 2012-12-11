@@ -823,7 +823,6 @@ compile(void)
 	/*
 	 * Run the input through the C pre-processor.
 	 */
-        ret = -1;
         snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp" EPP_EXT, 
                  eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
