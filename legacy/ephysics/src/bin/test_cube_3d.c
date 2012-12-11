@@ -20,7 +20,7 @@ _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    ry = mmove->cur.output.x - mmove->prev.output.x;
 
    ephysics_body_rotation_get(body, &quat_prev);
-   ephysics_quaternion_euler_set(&quat_delta, -ry * 0.06, - rx * 0.04, 0);
+   ephysics_quaternion_euler_set(&quat_delta, -ry * 3.43, - rx * 2.29, 0);
    ephysics_quaternion_multiply(&quat_prev, &quat_delta, &quat);
    ephysics_body_rotation_set(body, &quat);
 }

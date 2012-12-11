@@ -80,7 +80,7 @@ ephysics_quaternion_axis_angle_get(const EPhysics_Quaternion *quat, double *nx, 
    if (nx) *nx = bt_quat.getAxis().getX();
    if (ny) *ny = bt_quat.getAxis().getY();
    if (nz) *nz = bt_quat.getAxis().getZ();
-   if (a) *a = bt_quat.getAngle();
+   if (a) *a = bt_quat.getAngle() * RAD_TO_DEG;
 }
 
 EAPI void
@@ -111,7 +111,7 @@ ephysics_quaternion_axis_angle_set(EPhysics_Quaternion *quat, double nx, double 
      }
 
    axis = btVector3(nx, ny, nz);
-   bt_quat = btQuaternion(axis, a);
+   bt_quat = btQuaternion(axis, a / RAD_TO_DEG);
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
@@ -127,7 +127,7 @@ ephysics_quaternion_euler_set(EPhysics_Quaternion *quat, double yaw, double pitc
      }
 
    bt_quat = btQuaternion();
-   bt_quat.setEuler(yaw, pitch, roll);
+   bt_quat.setEuler(yaw / RAD_TO_DEG, pitch / RAD_TO_DEG, roll / RAD_TO_DEG);
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
@@ -294,7 +294,7 @@ ephysics_quaternion_angle_get(const EPhysics_Quaternion *quat1, const EPhysics_Q
    bt_quat1 = btQuaternion(quat1->x, quat1->y, quat1->z, quat1->w);
    bt_quat2 = btQuaternion(quat2->x, quat2->y, quat2->z, quat2->w);
 
-   return bt_quat1.angle(bt_quat2);
+   return bt_quat1.angle(bt_quat2) * RAD_TO_DEG;
 }
 
 EAPI double
