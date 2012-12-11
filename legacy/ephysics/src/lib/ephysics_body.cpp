@@ -17,6 +17,15 @@
 extern "C" {
 #endif
 
+#define BODY_CLOTH_CHECK() \
+   do { \
+     if (body->type == EPHYSICS_BODY_TYPE_CLOTH) \
+       { \
+          WRN("Not supported for cloth"); \
+          return; \
+       } \
+   } while(0);
+
 typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 typedef struct _EPhysics_Body_Evas_Stacking EPhysics_Body_Evas_Stacking;
 typedef struct _EPhysics_Body_Soft_Body_Slice EPhysics_Body_Soft_Body_Slice;
@@ -3552,11 +3561,7 @@ ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, doub
         return;
      }
 
-   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
-     {
-        ERR("Can't set angular velocity, not implemented for cloth.");
-        return;
-     }
+   BODY_CLOTH_CHECK();
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
@@ -3577,11 +3582,7 @@ ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double 
         return;
      }
 
-   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
-     {
-        ERR("Can't get angular velocity, not implemented for cloth.");
-        return;
-     }
+   BODY_CLOTH_CHECK();
 
    if (x) *x = -body->rigid_body->getAngularVelocity().getX() * RAD_TO_DEG;
    if (y) *y = -body->rigid_body->getAngularVelocity().getY() * RAD_TO_DEG;
@@ -3596,6 +3597,8 @@ ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshol
         ERR("Can't set sleeping thresholds, body is null.");
         return;
      }
+
+   BODY_CLOTH_CHECK();
 
    ephysics_world_lock_take(body->world);
    _ephysics_body_sleeping_threshold_set(body, linear_threshold,
@@ -3614,6 +3617,8 @@ ephysics_body_sleeping_threshold_get(const EPhysics_Body *body, double *linear_t
         ERR("Can't get linear sleeping threshold, body is null.");
         return;
      }
+
+   BODY_CLOTH_CHECK();
 
    rate = ephysics_world_rate_get(body->world);
    if (linear_threshold)
@@ -3661,6 +3666,8 @@ ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double ang
         return;
      }
 
+   BODY_CLOTH_CHECK();
+
    ephysics_world_lock_take(body->world);
    body->rigid_body->setDamping(btScalar(linear_damping),
                                 btScalar(angular_damping));
@@ -3675,6 +3682,8 @@ ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, dou
         ERR("Can't get damping, body is null.");
         return;
      }
+
+   BODY_CLOTH_CHECK();
 
    if (linear_damping) *linear_damping = body->rigid_body->getLinearDamping();
    if (angular_damping) *angular_damping =
@@ -3953,6 +3962,8 @@ ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x
         return;
      }
 
+   BODY_CLOTH_CHECK();
+
    ephysics_world_lock_take(body->world);
    body->rigid_body->setLinearFactor(btVector3(!!enable_x, !!enable_y,
                                                !!enable_z));
@@ -3967,6 +3978,8 @@ ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *e
         ERR("Can't check if linear factor is enabled, body is null.");
         return;
      }
+
+   BODY_CLOTH_CHECK();
 
    if (enable_x) *enable_x = !!body->rigid_body->getLinearFactor().x();
    if (enable_y) *enable_y = !!body->rigid_body->getLinearFactor().y();
@@ -3997,6 +4010,8 @@ ephysics_body_angular_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_
         return;
      }
 
+   BODY_CLOTH_CHECK();
+
    ephysics_world_lock_take(body->world);
    body->rigid_body->setAngularFactor(btVector3(!!enable_x, !!enable_y,
                                                 !!enable_z));
@@ -4011,6 +4026,8 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
         ERR("Can't check if rotation is enabled, body is null.");
         return;
      }
+
+   BODY_CLOTH_CHECK();
 
    if (enable_x) *enable_x = !!body->rigid_body->getAngularFactor().x();
    if (enable_y) *enable_y = !!body->rigid_body->getAngularFactor().y();
