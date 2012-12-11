@@ -243,6 +243,7 @@ _properties_set(const EDBus_Service_Interface *iface, const char *propname, EDBu
    free(type);
    free(resp2);
    resp2 = strdup(txt);
+   edbus_service_property_changed(iface, propname);
 
    return reply;
 }
