@@ -4,10 +4,7 @@
 #define BUS "org.Enlightenment"
 #define PATH "/org/enlightenment"
 #define INTERFACE "org.enlightenment.Test"
-#define NTESTS 7
-
-static int i = 0;
-static EDBus_Signal_Handler *sh;
+#define NTESTS 8
 
 static void
 _on_alive(void *context, const EDBus_Message *msg)
@@ -16,19 +13,9 @@ _on_alive(void *context, const EDBus_Message *msg)
 }
 
 static void
-_on_alive2(void *context, const EDBus_Message *msg)
-{
-   printf("Alive2\n\n");
-   i++;
-   if (i == 2)
-     edbus_signal_handler_unref(sh);
-}
-
-static void
 _on_hello(void *context, const EDBus_Message *msg)
 {
-   char *txt;
-
+   const char *txt;
    if (edbus_message_arguments_get(msg, "s", &txt))
      printf("%s\n", txt);
 }
@@ -45,10 +32,11 @@ static void
 test(void)
 {
    static int n = 0;
-
    n++;
-   if (n == NTESTS)
+   if (n >= NTESTS)
     printf("Passed in all tests\n");
+   else
+    printf("Passed in %d/%d tests\n", n, NTESTS);
 }
 
 static void
@@ -216,12 +204,7 @@ _on_async_test(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
      }
 
    printf("%s\n", str);
-}
-
-static void
-on_name_owner_changed2(void *data, const char *bus, const char *old_id, const char *new_id)
-{
-   printf("2 - Bus=%s | old=%s | new=%s\n", bus, old_id, new_id);
+   test();
 }
 
 static void
@@ -231,12 +214,10 @@ on_name_owner_changed(void *data, const char *bus, const char *old_id, const cha
 }
 
 static Eina_Bool
-add_name_owner2(void *data)
+finish(void *data)
 {
-   EDBus_Connection *conn = data;
-   edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed2,
-					 NULL, EINA_TRUE);
-   return EINA_FALSE;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
 }
 
 int
@@ -254,7 +235,6 @@ main(void)
    obj = edbus_object_get(conn, BUS, PATH);
    proxy = edbus_proxy_get(obj, INTERFACE);
    edbus_proxy_signal_handler_add(proxy, "Alive", _on_alive, NULL);
-   sh = edbus_proxy_signal_handler_add(proxy, "Alive", _on_alive2, NULL);
    edbus_proxy_signal_handler_add(proxy, "Hello", _on_hello, NULL);
 
    edbus_proxy_call(proxy, "SendBool", _on_send_bool, NULL, -1, "b", bool_value);
@@ -268,13 +248,10 @@ main(void)
 
    edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
                                          conn, EINA_TRUE);
-   ecore_timer_add(3, add_name_owner2, conn);
+   ecore_timer_add(30, finish, NULL);
 
    ecore_main_loop_begin();
 
-   edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
-   edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed2,
-                                         NULL);
    edbus_connection_unref(conn);
 
    edbus_shutdown();

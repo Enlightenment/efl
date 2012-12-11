@@ -10,9 +10,9 @@ EDBus_Connection *conn;
 static Eina_Bool
 _timer1_cb(void *data)
 {
-   printf("\n## ecore_main_loop_quit()\n");
+   printf("\nFishing...\n");
    ecore_main_loop_quit();
-   return EINA_TRUE;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void

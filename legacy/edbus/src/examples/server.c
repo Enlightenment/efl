@@ -6,7 +6,7 @@
 #define PATH_TEST_SON "/org/enlightenment/son"
 #define INTERFACE "org.enlightenment.Test"
 
-EDBus_Connection *conn;
+static EDBus_Connection *conn;
 
 static EDBus_Message *
 _hello(const EDBus_Service_Interface *iface, const EDBus_Message *message)
@@ -117,7 +117,7 @@ static EDBus_Message *
 _send_string(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
-   char *txt;
+   const char *txt;
    if (!edbus_message_arguments_get(msg, "s", &txt))
      printf("edbus_message_arguments_get() error\n");
    edbus_message_arguments_set(reply, "s", txt);
@@ -140,7 +140,7 @@ _async_test(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    printf("Received a call to AsyncTest.\n");
    printf("Response will be send in 5 seconds.\n");
-   ecore_timer_add (5, _resp_async, reply);
+   ecore_timer_add(5, _resp_async, reply);
    return NULL;
 }
 
@@ -153,35 +153,35 @@ static const EDBus_Signal signals[] = {
 static const EDBus_Method methods[] = {
       {
         "Hello", NULL, EDBUS_ARGS({"s", "message"}),
-        _hello, 0
+        _hello
       },
       {
         "Quit", NULL, NULL,
         _quit, EDBUS_METHOD_FLAG_DEPRECATED
       },
       { "SendBool", EDBUS_ARGS({"b", "bool"}), EDBUS_ARGS({"b", "bool"}),
-        _send_bool, 0
+        _send_bool
       },
       { "SendByte", EDBUS_ARGS({"y", "byte"}), EDBUS_ARGS({"y", "byte"}),
-        _send_byte, 0
+        _send_byte
       },
       { "SendUint32", EDBUS_ARGS({"u", "uint32"}), EDBUS_ARGS({"u", "uint32"}),
-        _send_uint32, 0
+        _send_uint32
       },
       { "SendInt32", EDBUS_ARGS({"i", "int32"}), EDBUS_ARGS({"i", "int32"}),
-        _send_int32, 0
+        _send_int32
       },
       { "SendInt16", EDBUS_ARGS({"n", "int16"}), EDBUS_ARGS({"n", "int16"}),
-        _send_int16, 0
+        _send_int16
       },
       { "SendDouble", EDBUS_ARGS({"d", "double"}), EDBUS_ARGS({"d", "double"}),
-        _send_double, 0
+        _send_double
       },
       { "SendString", EDBUS_ARGS({"s", "string"}), EDBUS_ARGS({"s", "string"}),
-        _send_string, 0
+        _send_string
       },
       { "AsyncTest", NULL, EDBUS_ARGS({"s", "text"}),
-        _async_test, 0
+        _async_test
       },
       { }
 };

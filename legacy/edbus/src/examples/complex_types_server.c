@@ -15,9 +15,9 @@ _receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *array;
-   char *txt;
+   const char *txt;
 
-   printf("receiveArray\n");
+   printf("- receiveArray\n");
    if (!edbus_message_arguments_get(msg, "as", &array))
      {
         printf("Error on edbus_message_arguments_get()\n");
@@ -26,8 +26,7 @@ _receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 
    while (edbus_message_iter_get_and_next(array, 's', &txt))
      printf("%s\n", txt);
-
-   printf("\n");
+   printf("}\n\n");
 
    return reply;
 }
@@ -36,11 +35,10 @@ static EDBus_Message *
 _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
-   EDBus_Message_Iter *array;
-   EDBus_Message_Iter *struct_si;
+   EDBus_Message_Iter *array, *struct_si;
    int size, i = 0;
 
-   printf("receiveArrayOfStringIntWithSize\n");
+   printf("- receiveArrayOfStringIntWithSize\n{\n");
    if (!edbus_message_arguments_get(msg, "ia(si)", &size, &array))
      {
         printf("Error on edbus_message_arguments_get()\n");
@@ -49,9 +47,8 @@ _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, con
 
    while (edbus_message_iter_get_and_next(array, 'r', &struct_si))
      {
-        char *txt;
+        const char *txt;
         int num;
-
         if (!edbus_message_iter_arguments_get(struct_si, "si", &txt, &num))
           {
              printf("Error on edbus_message_arguments_get()\n");
@@ -61,7 +58,7 @@ _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, con
         i++;
      }
    printf("size in msg %d | size read %d\n", size, i);
-   printf("\n");
+   printf("}\n\n");
 
    return reply;
 }
@@ -73,7 +70,7 @@ _send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    EDBus_Message_Iter *variant;
    char *type;
 
-   printf("sendVariantData\n");
+   printf("- sendVariantData\n{\n");
    if (!edbus_message_arguments_get(msg, "v", &variant))
      {
         printf("Error on edbus_message_arguments_get()\n");
@@ -81,7 +78,7 @@ _send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
      }
 
    type = edbus_message_iter_signature_get(variant);
-   if (type[1] || type[0] == 'v')
+   if (type[1])
      {
         printf("It is a complex type, not handle yet.\n");
         free(type);
@@ -111,7 +108,7 @@ _send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
         }
      }
 
-   printf("\n");
+   printf("}\n\n");
 
    free(type);
    return reply;
@@ -124,7 +121,7 @@ _send_array_int(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    EDBus_Message_Iter *iter, *array;
    int i;
 
-   printf("sendArrayInt\n\n");
+   printf("- sendArrayInt\n\n");
 
    iter = edbus_message_iter_get(reply);
    array = edbus_message_iter_container_new(iter, 'a', "i");
@@ -160,7 +157,7 @@ _plus_one(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    int num;
 
-   printf("plusOne\n\n");
+   printf("- plusOne\n\n");
    if (!edbus_message_arguments_get(msg, "i", &num))
      {
         printf("Error on edbus_message_arguments_get()\n");
@@ -185,7 +182,7 @@ _double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg
         return NULL;
      }
 
-   printf("DoubleCountainer\nArray1:\n");
+   printf("DoubleCountainer\n{\nArray1:\n");
    while (edbus_message_iter_get_and_next(array1, 'r', &structure))
      {
         edbus_message_iter_arguments_get(structure, "ii", &num1, &num2);
@@ -198,7 +195,7 @@ _double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg
          edbus_message_iter_arguments_get(structure, "ii", &num1, &num2);
          printf("1 %d - 2 %d\n", num1, num2);
      }
-   printf("\n");
+   printf("}\n\n");
    return reply;
 }
 
@@ -242,7 +239,7 @@ _properties_set(const EDBus_Service_Interface *iface, const char *propname, cons
    if (type[0] != 's')
      {
         reply = edbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidSignature",
-                                         "Invalid type.");
+                                        "Invalid type.");
         free(type);
         return reply;
      }
@@ -260,7 +257,7 @@ _properties_set(const EDBus_Service_Interface *iface, const char *propname, cons
 static const EDBus_Method methods[] = {
       {
         "ReceiveArray", EDBUS_ARGS({"as", "array_of_strings"}),
-        NULL, _receive_array, 0
+        NULL, _receive_array
       },
       {
         "ReceiveArrayOfStringIntWithSize",
@@ -269,7 +266,7 @@ static const EDBus_Method methods[] = {
       },
       {
         "SendVariantData", EDBUS_ARGS({"v", "variant_data"}),
-        NULL, _send_variant, 0
+        NULL, _send_variant
       },
       {
         "SendArrayInt", NULL,
@@ -277,24 +274,24 @@ static const EDBus_Method methods[] = {
       },
       {
         "SendArray", NULL, EDBUS_ARGS({"as", "array_string"}),
-        _send_array, 0
+        _send_array
       },
       {
         "PlusOne", EDBUS_ARGS({"i", "integer"}),
-        EDBUS_ARGS({"i", "integer_plus_one"}), _plus_one, 0
+        EDBUS_ARGS({"i", "integer_plus_one"}), _plus_one
       },
       {
         "DoubleContainner", EDBUS_ARGS({"a(ii)", "array1"}, {"a(ii)", "array2"}),
-        NULL, _double_container, 0
+        NULL, _double_container
       },
       { }
 };
 
 static const EDBus_Property properties[] = {
       { "Resp2", "s", NULL, _properties_set },
-      { "text", "s", NULL, NULL },
-      { "int32", "i", NULL, NULL },
-      { "st", "(ss)", NULL, NULL},
+      { "text", "s" },
+      { "int32", "i" },
+      { "st", "(ss)" },
       { }
 };
 
@@ -307,7 +304,7 @@ static Eina_Bool _emit_changed(void *data)
    EDBus_Service_Interface *iface = data;
    edbus_service_property_changed(iface, "int32");
    edbus_service_property_invalidate_set(iface, "Resp2", EINA_TRUE);
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
