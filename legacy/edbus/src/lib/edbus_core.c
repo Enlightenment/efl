@@ -397,16 +397,10 @@ void
 edbus_connection_name_object_del(EDBus_Connection *conn, const EDBus_Object *obj)
 {
    EDBus_Connection_Name *cn = eina_hash_find(conn->names, obj->name);
-   const EDBus_Connection_Event_Object_Removed ev = {
-      obj->path
-   };
 
    if (!cn) return;
    if (!cn->objects) return;
    eina_hash_del(cn->objects, obj->path, obj);
-
-   _edbus_connection_event_callback_call
-     (conn, EDBUS_CONNECTION_EVENT_OBJECT_REMOVED, &ev);
 
    edbus_connection_name_gc(conn, cn);
 }
@@ -415,16 +409,9 @@ void
 edbus_connection_name_object_set(EDBus_Connection *conn, EDBus_Object *obj)
 {
    EDBus_Connection_Name *cn;
-   const EDBus_Connection_Event_Object_Added ev = {
-      obj->path,
-      obj
-   };
 
    cn = edbus_connection_name_get(conn, obj->name);
    eina_hash_add(cn->objects, obj->path, obj);
-
-   _edbus_connection_event_callback_call
-     (conn, EDBUS_CONNECTION_EVENT_OBJECT_ADDED, &ev);
 
    return;
 }

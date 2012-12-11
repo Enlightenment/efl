@@ -100,30 +100,9 @@ EAPI void             *edbus_connection_data_del(EDBus_Connection *conn, const c
 
 typedef enum
 {
-   EDBUS_CONNECTION_EVENT_OBJECT_ADDED = 0,
-   EDBUS_CONNECTION_EVENT_OBJECT_REMOVED,
-   //EDBUS_CONNECTION_EVENT_NAME_OWNER_CHANGED,
    EDBUS_CONNECTION_EVENT_DEL,
    EDBUS_CONNECTION_EVENT_LAST    /**< sentinel, not a real event type */
 } EDBus_Connection_Event_Type;
-
-typedef struct _EDBus_Connection_Event_Object_Added
-{
-   const char   *path;
-   EDBus_Object *object;
-} EDBus_Connection_Event_Object_Added;
-
-typedef struct _EDBus_Connection_Event_Object_Removed
-{
-   const char *path;
-} EDBus_Connection_Event_Object_Removed;
-
-typedef struct _EDBus_Connection_Event_Name_Owner_Changed
-{
-   const char *name;
-   const char *old_id;
-   const char *new_id;
-} EDBus_Connection_Event_Name_Owner_Changed;
 
 typedef void (*EDBus_Connection_Event_Cb)(void *data, EDBus_Connection *conn, void *event_info);
 
