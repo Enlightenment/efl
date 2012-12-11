@@ -130,7 +130,7 @@ EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *if
  * @param signal_id id of signal
  * @param ... values that will be send on signal
  */
-EAPI Eina_Bool edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigned int signal_id, ...) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool edbus_service_signal_emit(const EDBus_Service_Interface *iface, unsigned int signal_id, ...) EINA_ARG_NONNULL(1);
 /**
  * @brief Create signal message.
  * Each signal handler have a internal id, the first signal handler of
@@ -140,11 +140,11 @@ EAPI Eina_Bool edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigne
  * @param iface interface of the signal
  * @param signal_id id of signal
  */
-EAPI EDBus_Message *edbus_service_signal_new(EDBus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI EDBus_Message *edbus_service_signal_new(const EDBus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Send a signal message.
  */
-EAPI Eina_Bool edbus_service_signal_send(EDBus_Service_Interface *iface, EDBus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
 /**
  * @brief Store data at object path, this data can be obtained from all interfaces
  * of the same object.
@@ -179,9 +179,9 @@ EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const c
  * A PropertiesChanged signal will be send on next idler iteration with all
  * properties in changed list.
  */
-EAPI Eina_Bool edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool edbus_service_property_changed(const EDBus_Service_Interface *iface, const char *name) EINA_ARG_NONNULL(1, 2);
 
-EAPI Eina_Bool edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool edbus_service_property_invalidate_set(const EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Attach ObjectManager interface.

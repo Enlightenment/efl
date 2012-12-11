@@ -1208,7 +1208,7 @@ edbus_service_object_path_get(const EDBus_Service_Interface *iface)
 }
 
 EAPI EDBus_Message *
-edbus_service_signal_new(EDBus_Service_Interface *iface, unsigned int signal_id)
+edbus_service_signal_new(const EDBus_Service_Interface *iface, unsigned int signal_id)
 {
    unsigned size;
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
@@ -1220,7 +1220,7 @@ edbus_service_signal_new(EDBus_Service_Interface *iface, unsigned int signal_id)
 }
 
 EAPI Eina_Bool
-edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigned int signal_id, ...)
+edbus_service_signal_emit(const EDBus_Service_Interface *iface, unsigned int signal_id, ...)
 {
    EDBus_Message *sig;
    va_list ap;
@@ -1247,7 +1247,7 @@ edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigned int signal_id
 }
 
 EAPI Eina_Bool
-edbus_service_signal_send(EDBus_Service_Interface *iface, EDBus_Message *signal_msg)
+edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *signal_msg)
 {
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signal_msg, EINA_FALSE);
@@ -1377,9 +1377,10 @@ error:
 }
 
 EAPI Eina_Bool
-edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name)
+edbus_service_property_changed(const EDBus_Service_Interface *interface, const char *name)
 {
    Property *prop;
+   EDBus_Service_Interface *iface = (EDBus_Service_Interface *)interface;
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
 
@@ -1395,9 +1396,10 @@ edbus_service_property_changed(EDBus_Service_Interface *iface, const char *name)
 }
 
 EAPI Eina_Bool
-edbus_service_property_invalidate_set(EDBus_Service_Interface *iface, const char *name, Eina_Bool is_invalidate)
+edbus_service_property_invalidate_set(const EDBus_Service_Interface *interface, const char *name, Eina_Bool is_invalidate)
 {
    Property *prop;
+   EDBus_Service_Interface *iface = (EDBus_Service_Interface *) interface;
 
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
