@@ -908,6 +908,14 @@ edbus_connection_setup(EDBus_Connection *conn)
                       conn);
 }
 
+static void
+_disconnected(void *data, const EDBus_Message *msg)
+{
+   EDBus_Connection *conn = data;
+   _edbus_connection_event_callback_call(conn, EDBUS_CONNECTION_DISCONNECTED,
+                                         NULL);
+}
+
 static EDBus_Connection *
 _connection_get(EDBus_Connection_Type type)
 {
@@ -934,6 +942,9 @@ _connection_get(EDBus_Connection_Type type)
    conn->refcount = 1;
    EINA_MAGIC_SET(conn, EDBUS_CONNECTION_MAGIC);
    conn->names = eina_hash_string_superfast_new(NULL);
+
+   edbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL,
+                            "Disconnected", _disconnected, conn);
 
    DBG("Returned new connection at %p", conn);
    return conn;
