@@ -145,8 +145,6 @@ _edbus_proxy_clear(EDBus_Proxy *proxy)
    edbus_cbs_free_dispatch(&(proxy->cbs_free), proxy);
    if (proxy->props)
      eina_hash_free(proxy->props);
-   if (proxy->properties_changed)
-     edbus_signal_handler_del(proxy->properties_changed);
    proxy->refcount = 0;
 }
 
