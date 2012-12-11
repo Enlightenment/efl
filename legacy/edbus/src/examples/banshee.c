@@ -1,30 +1,33 @@
 #include "EDBus.h"
 #include <Ecore.h>
 
+#define BUS "org.bansheeproject.Banshee"
+#define ENGINE_PATH "/org/bansheeproject/Banshee/PlayerEngine"
+#define CONTROLLER_PATH "/org/bansheeproject/Banshee/PlaybackController"
+#define MPRIS_PATH "/org/mpris/MediaPlayer2"
+
+#define ENGINE_IFACE "org.bansheeproject.Banshee.PlayerEngine"
+#define CONTROLLER_IFACE "org.bansheeproject.Banshee.PlaybackController"
+#define MPRIS_IFACE "org.mpris.MediaPlayer2.Playlists"
+
+static EDBus_Signal_Handler *state_changed2;
+
 static Eina_Bool
-_timer1_cb(void *data)
+_timeout_application(void *data)
 {
    printf("\n## ecore_main_loop_quit()\n");
    ecore_main_loop_quit();
    return EINA_TRUE;
 }
 
-EDBus_Connection *conn;
-EDBus_Signal_Handler *sh, *sh2, *sh3, *sh4;
-
 static void
 on_get_playlists(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   const char *errname, *errmsg;
    EDBus_Message_Iter *array, *struct_entry;
-   char *path, *name, *image;
+   const char *path, *name, *image;
    int i = 0;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
-        return;
-     }
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
    if (!edbus_message_arguments_get(msg, "a(oss)", &array))
      {
@@ -34,7 +37,7 @@ on_get_playlists(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    printf("on_get_playlists() \n\n");
    while (edbus_message_iter_get_and_next(array, 'r', &struct_entry))
      {
-        if (! edbus_message_iter_arguments_get(struct_entry, "oss", &path, &name, &image))
+        if (!edbus_message_iter_arguments_get(struct_entry, "oss", &path, &name, &image))
           {
              printf("error on edbus_massage_iterator_arguments_get()");
              return;
@@ -72,14 +75,9 @@ iterate_dict(void *data, const void *key, EDBus_Message_Iter *var)
 static void
 playlist_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   const char *errname, *errmsg;
    EDBus_Message_Iter *array;
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
-        return;
-     }
    if (edbus_message_arguments_get(msg, "a{sv}", &array))
      edbus_message_iter_dict_iterate(array, "sv", iterate_dict, NULL);
 }
@@ -87,13 +85,9 @@ playlist_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending
 static void
 on_introspect(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   const char *errname, *errmsg, *string;
+   const char *string;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
-        return;
-     }
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
    if (!edbus_message_arguments_get(msg, "s", &string))
      {
@@ -105,40 +99,20 @@ on_introspect(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_next(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_next_or_pause(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   const char *errname, *errmsg;
+   const char *status = data;
 
-   printf("on_next()\n");
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
-     }
-}
-
-static void
-on_pause(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
-{
-   const char *errname, *errmsg;
-
-   printf("on_pause()\n");
-
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
-     }
+   printf("%s\n", status);
 }
 
 static void
 on_state_changed(void *data, const EDBus_Message *msg)
 {
-   char *status;
-   if (edbus_message_error_get(msg, NULL, NULL))
-     {
-        fprintf(stderr, "on_state_changed error\n");
-        return;
-     }
+   const char *status;
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
    if (!edbus_message_arguments_get(msg, "s", &status))
      {
@@ -152,12 +126,8 @@ on_state_changed(void *data, const EDBus_Message *msg)
 static void
 on_state_changed2(void *data, const EDBus_Message *msg)
 {
-   char *status;
-   if (edbus_message_error_get(msg, NULL, NULL))
-     {
-        fprintf(stderr, "on_state_changed error\n");
-        return;
-     }
+   const char *status;
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
 
    if (!edbus_message_arguments_get(msg, "s", &status))
      {
@@ -166,19 +136,21 @@ on_state_changed2(void *data, const EDBus_Message *msg)
      }
 
    printf("on_state_changed2 = %s\n", status);
-   edbus_signal_handler_unref(sh2);
-   sh2 = NULL;
+   edbus_signal_handler_unref(state_changed2);
+   state_changed2 = NULL;
 }
 
 static void
-on_name_owner_changed_by_id(void *data, const EDBus_Message *msg)
+on_banshee_startup(void *data, const EDBus_Message *msg)
 {
-   char *bus, *older_id, *new_id;
+   const char *bus, *older_id, *new_id;
 
-   if (edbus_message_error_get(msg, NULL, NULL))
-     return;
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
    if (!edbus_message_arguments_get(msg, "sss", &bus, &older_id, &new_id))
-     printf("Error getting arguments from NameOwnerChanged");
+     {
+        printf("Error getting arguments from NameOwnerChanged");
+        return;
+     }
 
    printf("banshee started on id=%s\n", new_id);
 }
@@ -186,13 +158,14 @@ on_name_owner_changed_by_id(void *data, const EDBus_Message *msg)
 static void
 on_name_owner_changed(void *data, const EDBus_Message *msg)
 {
-   char *bus, *older_id, *new_id;
-   const char *name, *text;
+   const char *bus, *older_id, *new_id;
 
-   if (edbus_message_error_get(msg, &name, &text))
-     printf("NameOwnerChanged name=%s text=%s", name, text);
+   EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
    if (!edbus_message_arguments_get(msg, "sss", &bus, &older_id, &new_id))
-     printf("Error getting arguments from NameOwnerChanged");
+     {
+        printf("Error getting arguments from NameOwnerChanged");
+        return;
+     }
 
    printf("bus = %s older=%s new=%s\n\n", bus, older_id, new_id);
 }
@@ -200,126 +173,63 @@ on_name_owner_changed(void *data, const EDBus_Message *msg)
 int
 main(void)
 {
-   EDBus_Object *player_engine_obj, *playback_controller_obj, *mediaplayer2_obj;
-   EDBus_Proxy *player_engine, *playback_controler, *introspectable, *playlists;
-   EDBus_Pending *pending;
-   unsigned int bool2 = 1;
-   unsigned int playlist_index = 0;
-   unsigned int playlist_max_count = 30;
-   unsigned int playlist_reverse_order = 0;
-   const char *playlist_order = "asc";
+   EDBus_Connection *conn;
+   EDBus_Object *engine_obj, *controller_obj, *mpris_obj;
+   EDBus_Proxy *engine, *controler, *playlists;
+   EDBus_Signal_Handler *sh;
 
    ecore_init();
    edbus_init();
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
-   player_engine_obj = edbus_object_get(conn, "org.bansheeproject.Banshee",
-                                        "/org/bansheeproject/Banshee/PlayerEngine");
-   if (!player_engine_obj)
-     {
-        fprintf(stderr, "Error: could not get object\n");
-        return EXIT_FAILURE;
-     }
+   engine_obj = edbus_object_get(conn, BUS, ENGINE_PATH);
+   controller_obj = edbus_object_get(conn, BUS, CONTROLLER_PATH);
+   mpris_obj = edbus_object_get(conn, BUS, MPRIS_PATH);
 
-   playback_controller_obj = edbus_object_get(conn, "org.bansheeproject.Banshee",
-                                              "/org/bansheeproject/Banshee/PlaybackController");
+   engine = edbus_proxy_get(engine_obj, ENGINE_IFACE);
+   EINA_SAFETY_ON_NULL_GOTO(engine, end);
+   controler = edbus_proxy_get(controller_obj, CONTROLLER_IFACE);
+   EINA_SAFETY_ON_NULL_GOTO(controler, end);
+   playlists = edbus_proxy_get(mpris_obj, MPRIS_IFACE);
+   EINA_SAFETY_ON_NULL_GOTO(playlists, end);
 
-   mediaplayer2_obj = edbus_object_get(conn, "org.bansheeproject.Banshee",
-                                       "/org/mpris/MediaPlayer2");
+   edbus_object_introspect(engine_obj, on_introspect, NULL);
 
-   player_engine = edbus_proxy_get(player_engine_obj,
-                                   "org.bansheeproject.Banshee.PlayerEngine");
-   if (!player_engine)
-     {
-        fprintf(stderr, "Error: could not get binding\n");
-        return EXIT_FAILURE;
-     }
+   edbus_proxy_signal_handler_add(engine, "StateChanged", on_state_changed, NULL);
+   edbus_proxy_call(engine, "Pause", on_next_or_pause, "Pause", -1, "");
 
-   introspectable = edbus_proxy_get(player_engine_obj,
-                                    "org.freedesktop.DBus.Introspectable");
-   if (!introspectable)
-     {
-        fprintf(stderr, "Error: could not get binding\n");
-        return EXIT_FAILURE;
-     }
-
-   playback_controler = edbus_proxy_get(playback_controller_obj,
-                             "org.bansheeproject.Banshee.PlaybackController");
-   if (!playback_controler)
-     {
-        fprintf(stderr, "Error: could not get binding\n");
-        return EXIT_FAILURE;
-     }
-   edbus_proxy_signal_handler_add(player_engine, "StateChanged", on_state_changed, NULL);
-
-   playlists = edbus_proxy_get(mediaplayer2_obj, "org.mpris.MediaPlayer2.Playlists");
+   edbus_proxy_call(controler, "Next", on_next_or_pause, "Next", -1, "b", EINA_TRUE);
 
    edbus_proxy_property_get_all(playlists, playlist_get_all_cb, NULL);
-
-   pending = edbus_proxy_call(introspectable, "Introspect", on_introspect, NULL, -1, "");
-   if (!pending)
-     {
-        fprintf(stderr, "Error: could not call\n");
-        return EXIT_FAILURE;
-     }
-
-   pending = edbus_proxy_call(player_engine, "Pause", on_pause, NULL, -1, "");
-   if (!pending)
-     {
-        fprintf(stderr, "Error: could not call\n");
-        return EXIT_FAILURE;
-     }
-
-   pending = edbus_proxy_call(playback_controler, "Next", on_next, NULL, -1, "b", bool2);
-   if (!pending)
-     {
-        fprintf(stderr, "Error: could not call\n");
-        return EXIT_FAILURE;
-     }
-
    edbus_proxy_call(playlists, "GetPlaylists", on_get_playlists, NULL, -1,
-                    "uusb", playlist_index, playlist_max_count,
-                    playlist_order, playlist_reverse_order);
+                    "uusb", (unsigned)0, (unsigned)30, "asc", EINA_FALSE);
 
-   sh = edbus_signal_handler_add(conn, "org.bansheeproject.Banshee",
-                            "/org/bansheeproject/Banshee/PlayerEngine",
-                            "org.bansheeproject.Banshee.PlayerEngine",
+   edbus_signal_handler_add(conn, BUS, ENGINE_PATH, ENGINE_IFACE,
                             "StateChanged", on_state_changed, NULL);
+   state_changed2 = edbus_signal_handler_add(conn, BUS, ENGINE_PATH, ENGINE_IFACE,
+                                             "StateChanged", on_state_changed2, NULL);
 
-   sh2 = edbus_signal_handler_add(conn, "org.bansheeproject.Banshee",
-                               "/org/bansheeproject/Banshee/PlayerEngine",
-                               "org.bansheeproject.Banshee.PlayerEngine",
-                               "StateChanged", on_state_changed2, NULL);
+   sh = edbus_signal_handler_add(conn, EDBUS_FDO_BUS, EDBUS_FDO_PATH,
+                                 EDBUS_FDO_INTERFACE, "NameOwnerChanged",
+                                 on_name_owner_changed, NULL);
+   edbus_signal_handler_match_extra_set(sh, "arg0", BUS, NULL);
 
-   sh3 = edbus_signal_handler_add(conn,
-                                  EDBUS_FDO_BUS,
-                                  EDBUS_FDO_PATH,
-                                  EDBUS_FDO_INTERFACE,
-                                  "NameOwnerChanged",
-                                  on_name_owner_changed,
-                                  NULL);
-   edbus_signal_handler_match_extra_set(sh3, "arg0", "org.bansheeproject.Banshee", NULL);
+   sh = edbus_signal_handler_add(conn, EDBUS_FDO_BUS, EDBUS_FDO_PATH,
+                                 EDBUS_FDO_INTERFACE, "NameOwnerChanged",
+                                 on_banshee_startup, NULL);
+   edbus_signal_handler_match_extra_set(sh, "arg0", BUS, "arg1", "", NULL);
 
-   sh4 = edbus_signal_handler_add(conn,
-                                  EDBUS_FDO_BUS,
-                                  EDBUS_FDO_PATH,
-                                  EDBUS_FDO_INTERFACE,
-                                  "NameOwnerChanged",
-                                  on_name_owner_changed_by_id,
-                                  NULL);
-   edbus_signal_handler_match_extra_set(sh4,
-                                        "arg0", "org.bansheeproject.Banshee",
-                                        "arg1", "", NULL);
-
-   ecore_timer_add(50, _timer1_cb, NULL);
+   ecore_timer_add(50, _timeout_application, NULL);
 
    ecore_main_loop_begin();
 
-   edbus_signal_handler_unref(sh);
-   edbus_proxy_unref(playback_controler);
-   edbus_proxy_unref(introspectable);
-   edbus_object_unref(player_engine_obj);
+end:
+   /**
+    *  It's not necessary unref all objecs, proxys and signal handlers
+    *  When a parent have ref = 0, it will unref all your childrens
+    *  before free it self.
+    **/
    edbus_connection_unref(conn);
 
    edbus_shutdown();
