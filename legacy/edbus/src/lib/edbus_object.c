@@ -661,9 +661,9 @@ edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const v
 EAPI EDBus_Pending *
 edbus_object_introspect(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
-   EDBus_Proxy *introspectable;
+   EDBus_Message *msg;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
-
-   introspectable = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE_INTROSPECTABLE);
-   return edbus_proxy_call(introspectable, "Introspect", cb, data, -1, "");
+   msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTERFACE_INTROSPECTABLE,
+                                      "Introspect");
+   return edbus_object_send(obj, msg, cb, data, -1);
 }
