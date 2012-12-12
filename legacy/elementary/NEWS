@@ -91,6 +91,7 @@ Fixes:
    * Correctly handle failure case in _x11_notify_handler_image.
    * Don't manipulate dead memory in Eina_Inlist in elm_transit.c.
    * Remove dummy object from elm_naviframe.
+	* Update mapbuf forcely whenever it's states are changed.
 
 Removals:
 

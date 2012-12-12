@@ -806,3 +806,7 @@
 2012-12-11  WooHyun Jung
 
 	* Remove dummy object from elm_naviframe.
+
+2012-12-12  ChunEon Park (Hermet)
+
+	* Update mapbuf forcely whenever it's states are changed.
