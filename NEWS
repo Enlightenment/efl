@@ -76,3 +76,4 @@ Fixes:
     * Fixed polygon rendering bug in GL backend when there are cutouts.
     * Fix leak in eet_pbkdf2_sha1 with OpenSSL.
     * Fix the gl line incorrect position drawing.
+    * Fix possible buffer overflow in functions relying on EET_T_LAST
