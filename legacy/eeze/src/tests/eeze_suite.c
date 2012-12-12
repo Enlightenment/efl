@@ -219,6 +219,7 @@ START_TEST(eeze_test_udev_attr)
 }
 END_TEST
 
+/*
 START_TEST(eeze_test_udev_device)
 {
    Eina_List *type, *l;
@@ -250,6 +251,7 @@ START_TEST(eeze_test_udev_device)
    eeze_shutdown();
 }
 END_TEST
+*/
 
 START_TEST(eeze_test_net_list)
 {
@@ -315,6 +317,7 @@ START_TEST(eeze_test_net_attr)
 }
 END_TEST
 
+/*
 #ifdef HAVE_IPV6
 START_TEST(eeze_test_net_attr_ipv6)
 {
@@ -346,6 +349,7 @@ START_TEST(eeze_test_net_attr_ipv6)
 }
 END_TEST
 #endif
+*/
 
 START_TEST(eeze_test_sensor_read)
 {
@@ -483,7 +487,7 @@ START_TEST(eeze_test_sensor_read)
 END_TEST
 
 static Eina_Bool
-event_cb(void *data EINA_UNUSED, int ev_type, void *event)
+event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Eeze_Sensor_Obj *sens = NULL;
    int acc;
@@ -634,7 +638,9 @@ eeze_suite(void)
    tcase_add_test(tc, eeze_test_udev_watch);
    tcase_add_test(tc, eeze_test_udev_syspath);
    tcase_add_test(tc, eeze_test_udev_attr);
-   tcase_add_test(tc, eeze_test_udev_device);
+   //FIXME  Tested functions here are hidden (not EAPI) and thus can not be tested like this with
+   //-fvisibility=hidden turned on.
+   //tcase_add_test(tc, eeze_test_udev_device);
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eeze_Net");
