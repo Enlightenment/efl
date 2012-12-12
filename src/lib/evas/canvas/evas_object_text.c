@@ -33,6 +33,7 @@ struct _Evas_Object_Text
       } outline, shadow, glow, glow2;
 
       unsigned char        style;
+      double               ellipsis;
    } cur, prev;
 
    float                       ascent, descent;
@@ -132,18 +133,21 @@ _evas_object_text_item_clean(Evas_Object_Text_Item *it)
 }
 
 static void
+_evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
+{
+   o->items = (Evas_Object_Text_Item *) eina_inlist_remove(
+         EINA_INLIST_GET(o->items),
+         EINA_INLIST_GET(it));
+   _evas_object_text_item_clean(it);
+   free(it);
+}
+
+static void
 _evas_object_text_items_clear(Evas_Object_Text *o)
 {
-   Evas_Object_Text_Item *it;
-
    while (o->items)
      {
-        it = o->items;
-        o->items = (Evas_Object_Text_Item *) eina_inlist_remove(
-              EINA_INLIST_GET(o->items),
-              EINA_INLIST_GET(it));
-        _evas_object_text_item_clean(it);
-        free(it);
+        _evas_object_text_item_del(o, o->items);
      }
 }
 
@@ -453,6 +457,16 @@ _text_font_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (size) *size = o->cur.size;
 }
 
+static void
+_evas_object_text_item_update_sizes(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Evas_Object_Text_Item *it)
+{
+   ENFN->font_string_size_get(ENDT,
+         o->font,
+         &it->text_props,
+         &it->w, &it->h);
+   it->adv = ENFN->font_h_advance_get(ENDT, o->font,
+         &it->text_props);
+}
 
 /**
  * @internal
@@ -463,11 +477,12 @@ _text_font_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
  * @param str the string to use.
  */
 static Evas_Object_Text_Item *
-_evas_object_text_item_new(Evas_Object *eo_obj, Evas_Object_Text *o,
-      Evas_Font_Instance *fi, const Eina_Unicode *str, Evas_Script_Type script,
-      size_t pos, size_t visual_pos, size_t len)
+_evas_object_text_item_new(Evas_Object_Protected_Data *obj,
+                           Evas_Object_Text *o,
+                           Evas_Font_Instance *fi, const Eina_Unicode *str,
+                           Evas_Script_Type script,
+                           size_t pos, size_t visual_pos, size_t len)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Text_Item *it;
 
    it = calloc(1, sizeof(Evas_Object_Text_Item));
@@ -482,13 +497,7 @@ _evas_object_text_item_new(Evas_Object *eo_obj, Evas_Object_Text *o,
         ENFN->font_text_props_info_create(ENDT,
               fi, str + pos, &it->text_props,
               o->bidi_par_props, it->text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
-
-        ENFN->font_string_size_get(ENDT,
-              o->font,
-              &it->text_props,
-              &it->w, &it->h);
-        it->adv = ENFN->font_h_advance_get(ENDT, o->font,
-              &it->text_props);
+        _evas_object_text_item_update_sizes(obj, o, it);
      }
    o->items = (Evas_Object_Text_Item *)
       eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(it));
@@ -549,6 +558,52 @@ _evas_object_text_item_order(Evas_Object *eo_obj, Evas_Object_Text *o)
 }
 
 /**
+ * Create ellipsis.
+ */
+static const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
+
+/* FIXME: We currently leak ellipsis items. */
+static Evas_Object_Text_Item *
+_layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Evas_Object_Text_Item *ti)
+{
+   Evas_Object_Text_Item *ellip_ti;
+   size_t len = 1; /* The length of _ellip_str */
+
+   ellip_ti = _evas_object_text_item_new(obj, o, ti->text_props.font_instance,
+         _ellip_str, ti->text_props.script, 0, 0, len);
+
+   return ellip_ti;
+}
+
+/* EINA_TRUE if this item is ok and should be included, false if should be
+ * discarded. */
+static Eina_Bool
+_layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Evas_Object_Text_Item *ti, int idx, Eina_Bool want_start)
+{
+   Evas_Text_Props new_text_props;
+   if (idx >= (int) ti->text_props.len)
+      return EINA_FALSE;
+
+   memset(&new_text_props, 0, sizeof (new_text_props));
+
+   evas_common_text_props_split(&ti->text_props, &new_text_props, idx);
+   if (want_start)
+     {
+        evas_common_text_props_content_unref(&new_text_props);
+     }
+   else
+     {
+        evas_common_text_props_content_unref(&ti->text_props);
+        memcpy(&ti->text_props, &new_text_props, sizeof(ti->text_props));
+        ti->text_pos += idx;
+        ti->visual_pos += idx;
+     }
+   _evas_object_text_item_update_sizes(obj, o, ti);
+
+   return EINA_TRUE;
+}
+
+/**
  * @internal
  * Populates o->items with the items of the text according to text
  *
@@ -561,6 +616,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    EvasBiDiStrIndex *v_to_l = NULL;
+   Evas_Coord advance = 0;
    size_t pos, visual_pos;
    int len = eina_unicode_strlen(text);
 #ifdef BIDI_SUPPORT
@@ -591,6 +647,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 
         while (script_len > 0)
           {
+             const Evas_Object_Text_Item *it;
              Evas_Font_Instance *cur_fi = NULL;
              int run_len = script_len;
              if (o->font)
@@ -605,12 +662,123 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 #else
              visual_pos = pos;
 #endif
-             _evas_object_text_item_new(eo_obj, o, cur_fi, text, script,
-                   pos, visual_pos, run_len);
+             it = _evas_object_text_item_new(obj, o, cur_fi, text, script,
+                                             pos, visual_pos, run_len);
 
+             advance += it->adv;
              pos += run_len;
              script_len -= run_len;
              len -= run_len;
+          }
+     }
+
+   /* Handle ellipsis */
+   if ((o->cur.ellipsis >= 0.0) && (advance > obj->cur.geometry.w) && (obj->cur.geometry.w > 0))
+     {
+        Evas_Coord ellip_frame = obj->cur.geometry.w;
+        Evas_Object_Text_Item *start_ellip_it = NULL, *end_ellip_it = NULL;
+        /* Account of the ellipsis item width. As long as ellipsis != 0
+         * we have a left ellipsis. And the same with 1 and right. */
+        if (o->cur.ellipsis != 0)
+          {
+             start_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+             ellip_frame -= start_ellip_it->adv;
+          }
+        if (o->cur.ellipsis != 1)
+          {
+             /* FIXME: Should take the last item's font and style and etc. *//* weird it's a text, should always have the same style/font */
+             end_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+             ellip_frame -= end_ellip_it->adv;
+          }
+
+        /* The point where we should start from, going for the full
+         * ellip frame. */
+        Evas_Coord ellipsis_coord = o->cur.ellipsis * (advance - ellip_frame);
+        if (start_ellip_it)
+          {
+             Evas_Object_Text_Item *itr = o->items;
+             advance = 0;
+
+             while (itr && (advance + itr->adv < ellipsis_coord))
+               {
+                  Eina_Inlist *itrn = EINA_INLIST_GET(itr)->next;
+                  if ((itr != start_ellip_it) && (itr != end_ellip_it))
+                    {
+                       advance += itr->adv;
+                       _evas_object_text_item_del(o, itr);
+                    }
+                  itr = (Evas_Object_Text_Item *) itrn;
+               }
+             if (itr && (itr != start_ellip_it))
+               {
+                  int cut = 1 + ENFN->font_char_at_coords_get(ENDT,
+                        o->font,
+                        &itr->text_props,
+                        ellipsis_coord - advance,
+                        0,
+                        NULL, NULL, NULL, NULL);
+                  if (cut > 0)
+                    {
+                       start_ellip_it->text_pos = itr->text_pos;
+                       start_ellip_it->visual_pos = itr->visual_pos;
+                       if (!_layout_text_item_trim(obj, o, itr, cut, EINA_FALSE))
+                         {
+                            _evas_object_text_item_del(o, itr);
+                         }
+                    }
+               }
+
+             o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+             o->items = (Evas_Object_Text_Item *) eina_inlist_prepend(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+          }
+
+        if (end_ellip_it)
+          {
+             Evas_Object_Text_Item *itr = o->items;
+             advance = 0;
+
+             while (itr)
+               {
+                  if (itr != end_ellip_it) /* was start_ellip_it */
+                    {
+                       if (advance + itr->adv >= ellip_frame)
+                         {
+                            break;
+                         }
+                       advance += itr->adv;
+                    }
+                  itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
+               }
+
+             if (itr == end_ellip_it)
+               {
+                  /* FIXME: We shouldn't do anything. */
+               }
+
+             int cut = ENFN->font_char_at_coords_get(ENDT,
+                   o->font,
+                   &itr->text_props,
+                   ellip_frame - advance,
+                   0,
+                   NULL, NULL, NULL, NULL);
+             if (cut >= 0)
+               {
+                  end_ellip_it->text_pos = itr->text_pos + cut;
+                  end_ellip_it->visual_pos = itr->visual_pos + cut;
+                  if (_layout_text_item_trim(obj, o, itr, cut, EINA_TRUE))
+                    {
+                       itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
+                    }
+               }
+
+             /* Remove the rest of the items */
+             while (itr)
+               {
+                  Eina_Inlist *itrn = EINA_INLIST_GET(itr)->next;
+                  if ((itr != start_ellip_it) && (itr != end_ellip_it))
+                     _evas_object_text_item_del(o, itr);
+                  itr = (Evas_Object_Text_Item *) itrn;
+               }
           }
      }
 
@@ -619,6 +787,65 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
    if (v_to_l) free(v_to_l);
 }
 
+EAPI void
+evas_object_text_ellipsis_set(Evas_Object *obj, double ellipsis)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(obj, evas_obj_text_ellipsis_set(ellipsis));
+}
+
+static void
+_text_resize(void *data EINA_UNUSED,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
+{
+   _evas_object_text_recalc(obj);
+}
+
+static void
+_text_ellipsis_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Text *o = _pd;
+   double ellipsis = va_arg(*list, double);
+
+   if (o->cur.ellipsis == ellipsis) return ;
+
+   o->cur.ellipsis = ellipsis;
+   o->changed = 1;
+   evas_object_change(eo_obj, obj);
+   evas_object_clip_dirty(eo_obj, obj);
+
+   evas_object_event_callback_del_full(eo_obj, EVAS_CALLBACK_RESIZE,
+                                       _text_resize, o);
+   evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
+                                  _text_resize, o);
+}
+
+EAPI double
+evas_object_text_ellipsis_get(const Evas_Object *obj)
+{
+   double r = 0;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+
+   eo_do((Eo*) obj, evas_obj_text_ellipsis_get(&r));
+   return r;
+}
+
+static void
+_text_ellipsis_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Evas_Object_Text *o = _pd;
+   double *r = va_arg(*list, double *);
+
+   *r = o->cur.ellipsis;
+}
 
 EAPI void
 evas_object_text_text_set(Evas_Object *eo_obj, const char *_text)
@@ -1072,10 +1299,13 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-   if (o->items)
-     obj->cur.geometry.w += (l - pl) + (r - pr);
-   else
-     obj->cur.geometry.w = 0;
+   if (o->cur.ellipsis >= 0)
+     {
+        if (o->items)
+          obj->cur.geometry.w += (l - pl) + (r - pr);
+        else
+          obj->cur.geometry.w = 0;
+     }
    obj->cur.geometry.h += (t - pt) + (b - pb);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -1540,6 +1770,7 @@ evas_object_text_init(Evas_Object *eo_obj)
 
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
    /* alloc obj private data */
+   o->cur.ellipsis = -1.0;
    o->prev = o->cur;
 #ifdef BIDI_SUPPORT
    o->bidi_par_props = evas_bidi_paragraph_props_new();
@@ -1823,7 +2054,6 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 {
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
    int is_v, was_v;
-
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = 1;
@@ -1838,6 +2068,14 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	if (obj->cur.cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
 	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
+     }
+   /* If object size changed and ellipsis is set */
+   if ((o->cur.ellipsis >= 0.0 ||
+        o->cur.ellipsis != o->prev.ellipsis) &&
+       ((obj->cur.geometry.w != obj->prev.geometry.w) ||
+        (obj->cur.geometry.h != obj->prev.geometry.h)))
+     {
+        _evas_object_text_recalc(eo_obj);
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
@@ -2063,7 +2301,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
         w = _evas_object_text_horiz_advance_get(eo_obj, o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-	obj->cur.geometry.w = w + l + r;
+        obj->cur.geometry.w = w + l + r;
         obj->cur.geometry.h = h + t + b;
 ////        obj->cur.cache.geometry.validity = 0;
      }
@@ -2072,7 +2310,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
 	int t = 0, b = 0;
 
 	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-	obj->cur.geometry.w = 0;
+        obj->cur.geometry.w = 0;
         obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
 ////        obj->cur.cache.geometry.validity = 0;
      }
@@ -2114,6 +2352,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET), _text_outline_color_set),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET), _text_outline_color_get),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET), _text_style_pad_get),
+        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET), _text_ellipsis_set),
+        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), _text_ellipsis_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -2149,6 +2389,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET, "Sets the outline color for the given text object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET, "Retrieves the outline color for the given text object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET, "Gets the text style pad of a text object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET, "Gets the ellipsis of a text object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET, "Sets the ellipsis of a text object."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

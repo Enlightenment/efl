@@ -9583,6 +9583,8 @@ enum
    EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET,
    EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET,
    EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET,
+   EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET,
+   EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET,
    EVAS_OBJ_TEXT_SUB_ID_LAST
 };
 
@@ -9978,6 +9980,36 @@ enum
  */
 #define evas_obj_text_style_pad_get(l, r, t, b) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET), EO_TYPECHECK(int *, l), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, t), EO_TYPECHECK(int *, b)
 
+
+/**
+ * @def evas_obj_text_ellipsis_set
+ * @since 1.8
+ *
+ * Sets the ellipsis to apply on the given text object.
+ * 0.0 -> means apply ellipsis on the right end of the text,
+ * 1.0 -> means apply ellipsis on the start left of the text.
+ *
+ * @param[in] ellipsis in
+ *
+ * @see evas_object_text_ellipsis_get
+ */
+#define evas_obj_text_ellipsis_set(ellipsis) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET), EO_TYPECHECK(double, ellipsis)
+
+/**
+ * @def evas_obj_text_ellipsis_get
+ * @since 1.8
+ *
+ * Sets the ellipsis to apply on the given text object.
+ * 0.0 -> means apply ellipsis on the right end of the text,
+ * 1.0 -> means apply ellipsis on the start left of the text.
+ * value below 0, means no ellipsis.
+ *
+ * @param[out] ellipsis out
+ *
+ * @see evas_object_text_ellipsis_set
+ */
+#define evas_obj_text_ellipsis_get(ellipsis) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), EO_TYPECHECK(double *, ellipsis)
+
 /**
  * Creates a new text object on the provided canvas.
  *
@@ -10101,6 +10133,32 @@ EAPI void                 evas_object_text_bidi_delimiters_set(Evas_Object *obj,
  * @since 1.1
  */
 EAPI const char          *evas_object_text_bidi_delimiters_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the ellipsis that should be used for the text object.
+ *
+ * This is a value between 0.0 and 1.0 indicating the position of the text
+ * to be shown. 0.0 means the start will be shown and the end trimmed, 1.0
+ * means the beginning will be trimmed and the end will be shown, and any value
+ * in between will cause ellipsis to be added in both end of the text and the
+ * requested part to be shown.
+ * -1.0 means ellipsis is turned off.
+ *
+ * @param obj The given text object.
+ * @param ellipsis the ellipsis.
+ * @since 1.8
+ */
+EAPI void                 evas_object_text_ellipsis_set(Evas_Object *obj, double ellipsis);
+
+/**
+ * @brief Gets the ellipsis currently set on the text object.
+ *
+ * @param obj The given text object.
+ * @return The ellipsis set on the text object.
+ * @see evas_object_text_ellipsis_set.
+ * @since 1.8
+ */
+EAPI double               evas_object_text_ellipsis_get(const Evas_Object *obj);
 
 EAPI Evas_Coord           evas_object_text_ascent_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Evas_Coord           evas_object_text_descent_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
