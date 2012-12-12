@@ -184,9 +184,9 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid,
            const char *edid_name;
 
            edid_name = (const char *)block + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
-           name = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
+           name = malloc(_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX + 1);
            if (!name) return NULL;
-           strncpy(name, edid_name, (_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX - 1));
+           strncpy(name, edid_name, _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
            name[_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX] = 0;
            for (p = name; *p; p++)
              {
@@ -288,9 +288,9 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid,
             * TODO: Two of these in a row, in the third and fourth slots,
             * seems to be specified by SPWG: http://www.spwg.org/
             */
-           ascii = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
+           ascii = malloc(_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX + 1);
            if (!ascii) return NULL;
-           strncpy(ascii, edid_ascii, (_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX - 1));
+           strncpy(ascii, edid_ascii, _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
            ascii[_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX] = 0;
            for (p = ascii; *p; p++)
              {
@@ -321,9 +321,9 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid,
             * TODO: Two of these in a row, in the third and fourth slots,
             * seems to be specified by SPWG: http://www.spwg.org/
             */
-           serial = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
+           serial = malloc(_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX + 1);
            if (!serial) return NULL;
-           strncpy(serial, edid_serial, (_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX - 1));
+           strncpy(serial, edid_serial, _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
            serial[_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX] = 0;
            for (p = serial; *p; p++)
              {

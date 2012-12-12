@@ -1,6 +1,7 @@
 2012-12-12  Daniel Willmann
 
 	* Fix possible buffer overflow in functions relying on EET_T_LAST.
+	* Fix possible memory corruption in xrandr EDID functions.
 
 2012-12-12  Cedric Bail
 

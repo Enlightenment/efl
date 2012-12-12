@@ -2761,12 +2761,11 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
              edid_name = (const char *)block + 
                _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              name = 
-               malloc(sizeof(char) * 
-                      _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
+               malloc(_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX + 1);
              if (!name) return NULL;
 
              strncpy(name, edid_name, 
-                     (_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX - 1));
+                     _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
              name[_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX] = 0;
              for (p = name; *p; p++)
                if ((*p < ' ') || (*p > '~')) *p = 0;
