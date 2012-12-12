@@ -197,6 +197,7 @@ evas_object_image_add(Evas *eo_e)
    return NULL;
    MAGIC_CHECK_END();
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e->engine.func, NULL);
    Evas_Object *eo_obj = eo_add(EVAS_OBJ_IMAGE_CLASS, eo_e);
    eo_unref(eo_obj);
