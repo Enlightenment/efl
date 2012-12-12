@@ -29,22 +29,15 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
    cw = gc->dc->clip.w; ch = gc->dc->clip.h;
 
    //Increment pixels since the gl line origin position is slightly different.
-   if (x1 == x2)
+   if ((gc->rot == 0) || (gc->rot == 90))
      {
-        if ((gc->rot == 0) ||(gc->rot == 90))
-          {
-             x1++;
-             x2++;
-          }
+        x1++;
+        x2++;
      }
-
-   if (y1 == y2)
+   if ((gc->rot == 90) || (gc->rot == 180))
      {
-        if ((gc->rot == 90) || (gc->rot == 180))
-          {
-             y1++;
-             y2++;
-          }
+        y1++;
+        y2++;
      }
 
    evas_gl_common_context_line_push(gc, x1, y1, x2, y2,
