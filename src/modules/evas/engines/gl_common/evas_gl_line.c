@@ -7,12 +7,6 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
    RGBA_Draw_Context *dc;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
-   static int offset_hack = -1;
-
-   if (offset_hack == -1) {
-        if (getenv("EVAS_GL_LINE_NO_OFFSET_HACK")) offset_hack = 0;
-        else offset_hack = 1;
-   }
 
    dc = gc->dc;
    if (dc->mul.use)
@@ -34,24 +28,23 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
    cx = gc->dc->clip.x; cy = gc->dc->clip.y;
    cw = gc->dc->clip.w; ch = gc->dc->clip.h;
 
-   if (offset_hack)
+   //Increment pixels since the gl line origin position is slightly different.
+   if (x1 == x2)
      {
-        /* Increment pixels since the gl line origin position is slightly different
-           on some platform.  Carsten did this hack.. doesn't remember exactly why but
-           it works most drivers. */
-        if (x1 == x2)
+        if ((gc->rot == 0) ||(gc->rot == 90))
           {
-             if (gc->rot == 0)
-                x1++;
+             x1++;
+             x2++;
           }
+     }
 
-        if (y1 == y2)
+   if (y1 == y2)
+     {
+        if ((gc->rot == 90) || (gc->rot == 180))
           {
-             if ((gc->rot == 90) || (gc->rot == 180))
-                y1++;
+             y1++;
+             y2++;
           }
-
-        x2++; y2++;
      }
 
    evas_gl_common_context_line_push(gc, x1, y1, x2, y2,

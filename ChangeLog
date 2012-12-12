@@ -152,3 +152,7 @@
 
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
+
+2012-12-12  ChunEon park <hermet@hermet.pe.kr>
+
+        * Fix the evas gl line incorrect position problem.

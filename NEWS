@@ -73,3 +73,4 @@ Fixes:
     * Don't leak fd on exec.
     * Fixed polygon rendering bug in GL backend when there are cutouts.
     * Fix leak in eet_pbkdf2_sha1 with OpenSSL.
+    * Fix the gl line incorrect position drawing.
