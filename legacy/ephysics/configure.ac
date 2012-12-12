@@ -188,18 +188,21 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-## Tests
+## Tests - disable by default. With edje requiring ephysics and tests requiring
+## edje we are in circular dependency hell here.
+build_tests="no"
 if test "x${build_docs_only}" = "xno" ; then
-PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.7.99], [build_tests="yes"], [build_tests="no"])
+PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.7.99], [req_tests="yes"], [req_tests="no"])
 AC_ARG_ENABLE([build-tests],
-   AC_HELP_STRING([--disable-build-tests],
-                  [Disable building tests. It is enabled by default unless
-                   required dependencies are not present. @<:@default==enabled@:>@]),
+   AC_HELP_STRING([--enable-build-tests],
+                  [Enable building tests. It is not built if the
+                   required dependencies are not present. @<:@default==disabled@:>@]),
    [
-    if test "x${enableval}" = "xno" ; then
-       build_tests="no"
-    else
-       requirement_ephysics="elementary >= 1.7.99 ${requirement_ephysics}"
+    if test "x${enableval}" = "xyes" ; then
+      if test "x${req_tests}" = "xyes" ; then
+        build_tests="yes"
+        requirement_ephysics="elementary >= 1.7.99 ${requirement_ephysics}"
+      fi
     fi
    ],
    [])
