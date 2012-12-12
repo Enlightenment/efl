@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 #
-#: src/lib/elm_config.c:2101
+#: src/lib/elm_config.c:2184
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-09-20 13:50+0900\n"
+"POT-Creation-Date: 2012-12-10 10:00+0900\n"
 "PO-Revision-Date: 2011-02-22 09:09-0800\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung@gmail.com>\n"
 "Language-Team: General\n"
@@ -17,175 +17,208 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:749
+#: src/lib/elc_fileselector.c:752
 msgid "Up"
 msgstr "위로"
 
-#: src/lib/elc_fileselector.c:764
+#: src/lib/elc_fileselector.c:767
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1254
+#: src/lib/elc_fileselector.c:1007 src/lib/elm_entry.c:1260
+#: src/lib/elm_entry.c:1285
 msgid "Cancel"
 msgstr "취소"
 
-#: src/lib/elc_fileselector.c:1001
+#: src/lib/elc_fileselector.c:1016
 msgid "OK"
 msgstr "확인"
 
-#: src/lib/elm_bubble.c:196
+#: src/lib/elm_bubble.c:213
 msgid "Bubble"
 msgstr ""
 
-#: src/lib/elm_button.c:55
+#: src/lib/elm_button.c:56
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:266 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1513
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:608
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1373 src/lib/elm_radio.c:261
+#: src/lib/elm_spinner.c:519 src/lib/elm_toolbar.c:1651
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:290
+#: src/lib/elm_button.c:310
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:132
+#: src/lib/elm_calendar.c:135
 msgid "%B %Y"
 msgstr "%Y년 %B"
 
-#: src/lib/elm_calendar.c:234
+#: src/lib/elm_calendar.c:237
 msgid "calendar item"
 msgstr ""
 
-#: src/lib/elm_calendar.c:261
+#: src/lib/elm_calendar.c:264
 msgid "calendar decrement button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:267
+#: src/lib/elm_calendar.c:270
 msgid "calendar increment button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:273
+#: src/lib/elm_calendar.c:276
 msgid "calendar month"
 msgstr ""
 
-#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
-#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
+#: src/lib/elm_check.c:45 src/lib/elm_check.c:230 src/lib/elm_radio.c:84
+#: src/lib/elm_radio.c:262
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
-#: src/lib/elm_radio.c:244
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:242 src/lib/elm_radio.c:264
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
+#: src/lib/elm_check.c:226 src/lib/elm_check.c:239
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:289
+#: src/lib/elm_check.c:307
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:895
+#: src/lib/elm_clock.c:295
+msgid "clock increment button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:303
+msgid "clock decrement button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:650
+msgid "State: Editable"
+msgstr ""
+
+#: src/lib/elm_clock.c:686
+msgid "Clock"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:1340
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2117
+#: src/lib/elm_config.c:2200
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_diskselector.c:630
+#: src/lib/elm_diskselector.c:632
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1246
+#: src/lib/elm_entry.c:1253
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1250
+#: src/lib/elm_entry.c:1257
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1266
+#: src/lib/elm_entry.c:1272
 msgid "Select"
 msgstr "선택"
 
-#: src/lib/elm_entry.c:1273
+#: src/lib/elm_entry.c:1279
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: src/lib/elm_entry.c:2921
+#: src/lib/elm_entry.c:2939
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:650
+#: src/lib/elm_gengrid.c:638
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_genlist.c:1315
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr ""
 
-#: src/lib/elm_index.c:99
+#: src/lib/elm_index.c:100
 msgid "Index Item"
 msgstr ""
 
-#: src/lib/elm_index.c:672
+#: src/lib/elm_index.c:682
 msgid "Index"
 msgstr ""
 
-#: src/lib/elm_label.c:348
+#: src/lib/elm_label.c:366
 msgid "Label"
 msgstr ""
 
-#: src/lib/elm_list.c:1393
+#: src/lib/elm_list.c:1450
 msgid "List Item"
 msgstr ""
 
-#: src/lib/elm_progressbar.c:260
+#: src/lib/elm_panel.c:44
+msgid "state: opened"
+msgstr ""
+
+#: src/lib/elm_panel.c:45
+msgid "state: closed"
+msgstr ""
+
+#: src/lib/elm_panel.c:93
+msgid "panel button"
+msgstr ""
+
+#: src/lib/elm_progressbar.c:273
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:271
+#: src/lib/elm_radio.c:292
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_slider.c:802
+#: src/lib/elm_slider.c:821
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:534
+#: src/lib/elm_spinner.c:608
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:542
+#: src/lib/elm_spinner.c:617
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:549
+#: src/lib/elm_spinner.c:625
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1149
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1711
 #, fuzzy
 msgid "Selected"
 msgstr "선택"
 
-#: src/lib/elm_toolbar.c:1511
+#: src/lib/elm_toolbar.c:1649
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1515
+#: src/lib/elm_toolbar.c:1653
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1517
+#: src/lib/elm_toolbar.c:1655
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1596
-msgid "Tool Item"
+#: src/lib/elm_toolbar.c:1706
+#, fuzzy
+msgid "Unselected"
+msgstr "선택"
+
+#: src/lib/elm_toolbar.c:1723
+msgid "Toolbar Item"
 msgstr ""
