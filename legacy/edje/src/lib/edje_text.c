@@ -77,52 +77,12 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
      }
 }
 
-static void
-_edje_text_fit_set(char *buf, const char *text, int c1, int c2)
-{
-   /* helper function called from _edje_text_fit_x().
-    * note that we can use strcpy()/strcat() safely, the buffer lengths
-    * are checked in the caller.
-    */
-
-   if (c1 >= 0)
-     {
-	strcpy(buf, _ELLIP_STR);
-
-	if (c2 >= 0)
-	  {
-	     strncat(buf, text + c1, c2 - c1);
-	     strcat(buf, _ELLIP_STR);
-	  }
-	else
-	  strcat(buf, text + c1);
-     }
-   else
-     {
-	if (c2 >= 0)
-	  {
-	     strncpy(buf, text, c2);
-	     buf[c2] = 0;
-	     strcat(buf, _ELLIP_STR);
-	  }
-	else
-	  strcpy(buf, text);
-     }
-}
-
 static const char *
 _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
                  Edje_Calc_Params *params,
                  const char *text, const char *font, int size,
-                 Evas_Coord sw, int *free_text)
+                 Evas_Coord sw, Evas_Coord sh, int *free_text)
 {
-   Evas_Coord tw = 0, th = 0, p;
-   int l, r;
-   int i;
-   char *buf;
-   int uc1 = -1, uc2 = -1, c1 = -1, c2 = -1;
-   int loop = 0, extra;
-   size_t orig_len;
    FLOAT_T sc;
 
    sc = ed->scale;
@@ -134,148 +94,12 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
    eo_do(ep->object,
-	 evas_obj_text_font_set(font, size),
+         evas_obj_text_ellipsis_set(params->type.text.elipsis),
+         evas_obj_text_font_set(font, size),
          evas_obj_text_text_set(text),
-         evas_obj_text_style_pad_get(&l, &r, NULL, NULL));
-   part_get_geometry(ep, &tw, &th);
+         evas_obj_size_set(sw, sh));
 
-   p = ((sw - tw) * params->type.text.elipsis);
-
-   /* chop chop */
-   if (tw > sw)
-     {
-	if (params->type.text.elipsis != 0.0)
-          /* should be the last in text! not the rightmost */
-          uc1 = evas_object_text_last_up_to_pos(ep->object,
-                -p + l, th / 2);
-	if (params->type.text.elipsis != 1.0)
-          {
-             /* should be the last in text! not the rightmost */
-             if ((-p + sw -r) < 0)
-                uc2 = evas_object_text_last_up_to_pos(ep->object, 0, th / 2);
-             else
-                uc2 = evas_object_text_last_up_to_pos(ep->object,
-                      -p + sw - r, th / 2);
-          }
-	if ((uc1 < 0) && (uc2 < 0))
-	  {
-	     uc1 = 0;
-	     uc2 = 0;
-	  }
-     }
-
-   if (!(((uc1 >= 0) || (uc2 >= 0)) && (tw > sw)))
-     return text;
-
-   if ((uc1 == 0) && (uc2 == 0))
-     return text;
-
-   orig_len = strlen(text);
-
-   /* don't overflow orig_len by adding extra
-    * FIXME: we might want to set a max string length somewhere...
-    */
-   extra = 1 + 3 + 3; /* terminator, leading and trailing ellipsis */
-   orig_len = MIN(orig_len, ((size_t) 8192 - extra));
-
-   if (!(buf = malloc(orig_len + extra)))
-     return text;
-
-   /* Convert uc1, uc2 -> c1, c2 */
-   i = 0;
-   if (uc1 >= 0)
-     {
-        c1 = 0;
-        for ( ; i < uc1 ; i++)
-          {
-             c1 = evas_string_char_next_get(text, c1, NULL);
-          }
-     }
-   if (uc2 >= 0)
-     {
-        if (c1 >= 0)
-          {
-             c2 = c1;
-          }
-        else
-          {
-             c2 = 0;
-          }
-        for ( ; i < uc2 ; i++)
-          {
-             c2 = evas_string_char_next_get(text, c2, NULL);
-          }
-     }
-
-   buf[0] = '\0';
-
-   while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
-     {
-	loop++;
-	if (sw <= 0.0)
-	  {
-	     buf[0] = 0;
-	     break;
-	  }
-	if ((c1 >= 0) && (c2 >= 0))
-	  {
-	     if ((loop & 0x1))
-	       {
-		  if (c1 >= 0)
-		    c1 = evas_string_char_next_get(text, c1, NULL);
-	       }
-	     else
-	       {
-		  if (c2 >= 0)
-		    {
-		       c2 = evas_string_char_prev_get(text, c2, NULL);
-		       if (c2 < 0)
-			 {
-			    buf[0] = 0;
-			    break;
-			 }
-		    }
-	       }
-	  }
-	else
-	  {
-	     if (c1 >= 0)
-	       c1 = evas_string_char_next_get(text, c1, NULL);
-	     else if (c2 >= 0)
-	       {
-		  c2 = evas_string_char_prev_get(text, c2, NULL);
-		  if (c2 < 0)
-		    {
-		       buf[0] = 0;
-		       break;
-		    }
-	       }
-	  }
-	if ((c1 >= 0) && (c2 >= 0))
-	  {
-	     if (c1 >= c2)
-	       {
-		  buf[0] = 0;
-		  break;
-	       }
-	  }
-	else if ((c1 > 0 && (size_t) c1 >= orig_len) || c2 == 0)
-	  {
-	     buf[0] = 0;
-	     break;
-	  }
-
-	buf[0] = 0;
-
-	_edje_text_fit_set(buf, text, c1, c2);
-
-	evas_object_text_text_set(ep->object, buf);
-	part_get_geometry(ep, &tw, &th);
-     }
-
-   *free_text = 1;
-
-   return buf;
+   return text;
 }
 
 static const char *
@@ -569,7 +393,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 
-	text = _edje_text_fit_x(ed, ep, params, text, font, size, sw, &free_text);
+	text = _edje_text_fit_x(ed, ep, params,
+				text, font, size,
+                                sw, sh, &free_text);
      }
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);

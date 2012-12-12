@@ -696,3 +696,7 @@
 
 	* Fix inheriting gorups with programs that have after programs where
         after programs are duplicated in the list.
+
+2012-12-12  Cedric Bail
+
+	* Use Evas to compute Ellipsis.
