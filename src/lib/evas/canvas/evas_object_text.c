@@ -44,6 +44,10 @@ struct _Evas_Object_Text
 
    Evas_Font_Set              *font;
 
+   struct {
+      Evas_Coord                w, h;
+   } last_computed;
+
    char                        changed : 1;
 };
 
@@ -622,6 +626,14 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 #ifdef BIDI_SUPPORT
    int par_len = len;
    int *segment_idxs = NULL;
+#endif
+
+   if (!memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
+       o->last_computed.w == obj->cur.geometry.w &&
+       o->last_computed.h == obj->cur.geometry.h)
+     return ;
+
+#ifdef BIDI_SUPPORT
    if (o->bidi_delimiters)
       segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
@@ -781,6 +793,9 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
                }
           }
      }
+   o->prev = o->cur;
+   o->last_computed.w = obj->cur.geometry.w;
+   o->last_computed.h = obj->cur.geometry.h;
 
    _evas_object_text_item_order(eo_obj, o);
 
@@ -2072,8 +2087,8 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* If object size changed and ellipsis is set */
    if ((o->cur.ellipsis >= 0.0 ||
         o->cur.ellipsis != o->prev.ellipsis) &&
-       ((obj->cur.geometry.w != obj->prev.geometry.w) ||
-        (obj->cur.geometry.h != obj->prev.geometry.h)))
+       ((obj->cur.geometry.w != o->last_computed.w) ||
+        (obj->cur.geometry.h != o->last_computed.h)))
      {
         _evas_object_text_recalc(eo_obj);
      }
