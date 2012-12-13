@@ -639,7 +639,8 @@ _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Eva
 
    memset(&new_text_props, 0, sizeof (new_text_props));
 
-   evas_common_text_props_split(&ti->text_props, &new_text_props, idx);
+   while (!evas_common_text_props_split(&ti->text_props, &new_text_props, idx))
+     idx--;
    if (want_start)
      {
         evas_common_text_props_content_unref(&new_text_props);

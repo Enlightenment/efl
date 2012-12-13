@@ -245,7 +245,7 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 /* Won't work in the middle of ligatures, assumes cutoff < len.
  * Also won't work in the middle of indic words, should handle that in a
  * smart way. */
-EAPI void
+EAPI Eina_Bool
 evas_common_text_props_split(Evas_Text_Props *base,
       Evas_Text_Props *ext, int _cutoff)
 {
@@ -262,7 +262,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
    else
      {
         ERR("Couldn't find the cutoff position. Is it inside a cluster?");
-        return;
+        return EINA_FALSE;
      }
 #else
    cutoff = (size_t) _cutoff;
@@ -299,6 +299,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
    base->text_len = (ext->text_offset - base->text_offset);
    PROPS_CHANGE(base);
    PROPS_CHANGE(ext);
+   return EINA_TRUE;
 }
 
 /* Won't work in the middle of ligatures */

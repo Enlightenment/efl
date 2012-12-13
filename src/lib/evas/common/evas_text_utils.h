@@ -95,7 +95,7 @@ evas_common_text_props_cluster_prev(const Evas_Text_Props *props, int pos);
 EAPI int
 evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff);
 
-EAPI void
+EAPI Eina_Bool
 evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,
       int cutoff);
 EAPI void
