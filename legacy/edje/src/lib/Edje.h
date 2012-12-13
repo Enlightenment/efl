@@ -2671,7 +2671,7 @@ enum
  *
  * @see edje_object_file_set
  */
-#define edje_obj_file_set(file, group, nested, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), EO_TYPECHECK(const char*, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Array *, nested), EO_TYPECHECK(Eina_Bool *, ret)
+#define edje_obj_file_set(file, group, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), EO_TYPECHECK(const char*, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def edje_obj_file_get

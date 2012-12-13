@@ -302,11 +302,14 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *file = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
-   Eina_Array *nested = va_arg(*list, Eina_Array *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Array *nested;
    if (ret) *ret = EINA_FALSE;
+
+   nested = eina_array_new(8);
    if (_edje_object_file_set_internal(obj, file, group, NULL, NULL, nested))
-      if (ret) *ret = EINA_TRUE;
+     if (ret) *ret = EINA_TRUE;
+   eina_array_free(nested);
 }
 
 static void

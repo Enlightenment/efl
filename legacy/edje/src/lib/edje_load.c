@@ -75,13 +75,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    if (!obj) return EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   Eina_Array *nested;
 
-   nested = eina_array_new(8);
-   eo_do(obj, edje_obj_file_set(file, group, nested, &ret));
-   eina_array_free(nested);
-   nested = NULL;
-
+   eo_do(obj, edje_obj_file_set(file, group, &ret));
    _edje_object_orientation_inform(obj);
    return ret;
 }

@@ -173,7 +173,6 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *file = va_arg(*list, const char *);
    const char *group= va_arg(*list, const char *);
-   Eina_Array *nested = va_arg(*list, Eina_Array *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Edje_Edit *eed = _pd;
    Eet_File *ef;
@@ -199,7 +198,7 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
     *    groups).
     */
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, edje_obj_file_set(file, group, nested, &int_ret));
+   eo_do_super(obj, edje_obj_file_set(file, group, &int_ret));
    if (!int_ret)
      return;
 
