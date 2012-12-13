@@ -4,7 +4,7 @@ AC_DEFUN([ECORE_CHECK_X_EXTENSION],
 pushdef([UP], translit([$1], [a-z], [A-Z]))dnl
 
   SAVE_CFLAGS=$CFLAGS
-  CFLAGS="$x_cflags $x_includes"
+  CFLAGS="$x_cflags ${x_includes:+-I${x_includes}}"
   AC_CHECK_HEADER(X11/extensions/$2,
     [
      AC_CHECK_LIB($3, $4,
