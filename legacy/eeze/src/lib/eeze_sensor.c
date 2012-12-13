@@ -11,10 +11,10 @@
 
 Eeze_Sensor *g_handle;
 
-/* Priority order for modules. The one with the highest order of the available ones will be used.
- * This in good enough for now as we only have two modules and one is a test harness anyway. If the
- * number of modules grows we might re-think the priority handling, but we should do this when the
- * need arise.
+/* Priority order for modules. The one with the highest order of the available
+ * ones will be used. This in good enough for now as we only have two modules
+ * and one is a test harness anyway. If the number of modules grows we might
+ * re-think the priority handling, but we should do this when the need arise.
  */
 static const char *_module_priority[] = {
    "tizen",
@@ -22,6 +22,9 @@ static const char *_module_priority[] = {
    NULL
 };
 
+/* Search through the list of loaded module and return the one with the highest
+ * priority.
+ */
 Eeze_Sensor_Module *
 _highest_priority_module_get(void)
 {
@@ -37,6 +40,9 @@ _highest_priority_module_get(void)
    return NULL;
 }
 
+/* Utility function to take the given sensor type and get the matching sensor
+ * object from the highest priority module.
+ */
 EAPI Eeze_Sensor_Obj *
 eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
 {
@@ -69,7 +75,8 @@ eeze_sensor_modules_load(void)
    /* Check for available runtime modules and load them. In some cases the
     * un-installed modules to be used from the local build dir. Coverage check
     * is one of these items. We do load the modules from the builddir if the
-    * environment is set. Normal case is to use installed modules from system */
+    * environment is set. Normal case is to use installed modules from system
+    */
    if (getenv("EEZE_USE_IN_TREE_MODULES"))
       g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/.libs/", 0, NULL, NULL);
    else
@@ -80,7 +87,6 @@ eeze_sensor_modules_load(void)
         ERR("No modules found!");
         return;
      }
-
    eina_module_list_load(g_handle->modules_array);
 }
 
@@ -94,6 +100,10 @@ eeze_sensor_modules_unload(void)
    g_handle->modules_array = NULL;
 }
 
+/* This function is offered to the modules to register itself after they have
+ * been loaded in initialized. They stay in the hash funtion until they
+ * unregister themself.
+ */
 Eina_Bool
 eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 {
@@ -114,6 +124,9 @@ eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
    return eina_hash_add(g_handle->modules, name, module);
 }
 
+/* This function is offered to the modules to unregsiter itself. When requested
+ * we remove them safely from the hash.
+ */
 Eina_Bool
 eeze_sensor_module_unregister(const char *name)
 {
@@ -128,6 +141,13 @@ eeze_sensor_module_unregister(const char *name)
    return eina_hash_del(g_handle->modules, name, NULL);
 }
 
+/* Create a new sensor object for a given sensor type. This functions allocates
+ * the needed memory and links it with the matching sensor from the loaded
+ * modules. It also does an initial synchronous read to fill the sensor object
+ * with values.
+ * Make sure to use the eeze_sensor_free function to remove this sensor object
+ * when it is no longer needed.
+ */
 EAPI Eeze_Sensor_Obj *
 eeze_sensor_new(Eeze_Sensor_Type type)
 {
@@ -145,14 +165,20 @@ eeze_sensor_new(Eeze_Sensor_Type type)
 
    if (!module->read) return NULL;
 
+   /* The read is asynchronous here as we want to make sure that the sensor
+    * object has valid data when created. As we give back cached values we
+    * have a race condition when we do a asynchronous read here and the
+    * application asks for cached data before the reply came in. This logic has
+    * the downside that the sensor creation takes longer. But that is only a
+    *initial cost.
+    */
    if (module->read(sens->type, sens))
-     {
-        return sens;
-     }
-   else
-      return NULL;
+      return sens;
+
+   return NULL;
 }
 
+/* Free sensor object created with eeze_sensor_new */
 EAPI void
 eeze_sensor_free(Eeze_Sensor_Obj *sens)
 {
@@ -160,6 +186,10 @@ eeze_sensor_free(Eeze_Sensor_Obj *sens)
    free(sens);
 }
 
+/* All of the below getter function do access the cached data from the last
+ * sensor read. It is way faster this way but also means that the timestamp
+ * should be checked to ensure recent data if needed.
+ */
 EAPI Eina_Bool
 eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy)
 {
@@ -208,6 +238,9 @@ eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long long *timestamp)
    return EINA_TRUE;
 }
 
+/* Synchronous read. Blocked until the data was readout from the hardware
+ * sensor
+ */
 EAPI Eina_Bool
 eeze_sensor_read(Eeze_Sensor_Obj *sens)
 {
@@ -224,6 +257,9 @@ eeze_sensor_read(Eeze_Sensor_Obj *sens)
    return EINA_FALSE;
 }
 
+/* Asynchronous read. Schedule a new read out that will update the cached values
+ * as soon as it arrives.
+ */
 EAPI Eina_Bool
 eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
 {
@@ -263,6 +299,7 @@ eeze_sensor_init(void)
    g_handle->modules = eina_hash_string_small_new(NULL);
    if (!g_handle->modules) return EINA_FALSE;
 
+   /* Make sure we create new ecore event types before using them */
    EEZE_SENSOR_EVENT_SNAP = ecore_event_type_new();
    EEZE_SENSOR_EVENT_SHAKE = ecore_event_type_new();
    EEZE_SENSOR_EVENT_DOUBLETAP = ecore_event_type_new();
@@ -270,8 +307,8 @@ eeze_sensor_init(void)
    EEZE_SENSOR_EVENT_FACEDOWN = ecore_event_type_new();
    EEZE_SENSOR_EVENT_ACCELEROMETER = ecore_event_type_new();
 
+   /* Core is ready so we can load the modules from disk now */
    eeze_sensor_modules_load();
 
    return EINA_TRUE;
 }
-

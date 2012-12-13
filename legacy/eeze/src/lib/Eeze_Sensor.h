@@ -52,7 +52,9 @@
  *
  * All sensor types known by Eeze Sensor. This list of types include real
  * physical types like proximity or light as well as "aggregated" types like
- * facedown or doubletap.
+ * facedown or doubletap. All types with MOTION in their name can be used as
+ * real events coming from the underlying system. This is not supported on all
+ * systems.
  *
  * @since 1.8
  */
@@ -81,7 +83,9 @@ typedef enum
  *
  * Event types used to register ecore_event_handler on. These events are used
  * for #eeze_sensor_async_read to deliver read out data. It is also used for
- * generated events like facedown or shake.
+ * generated events like facedown or shake. Subscribing to these events in your
+ * application allowsyou to react on these changes in an efficient way without
+ * polling for new updates and wasting power and computing cycles.
  *
  * @since 1.8
  * @{
@@ -142,6 +146,10 @@ extern "C" {
  * to do. Create the object from the type and everything else the operates on
  * this object.
  *
+ * This also takes into account what runtime modules are loaded and handles
+ * them in a given priority to pick up the best sensor source for your sensor
+ * object.
+ *
  * @since 1.8
  */
 EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
@@ -150,7 +158,8 @@ EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
  * @brief Free a sensor object.
  * @param sens Sensor object to operate on.
  *
- * Free an sensor object when it is no longer needed.
+ * Free an sensor object when it is no longer needed. Always use this function
+ * to cleanup unused sensor objects.
  *
  * @since 1.8
  */
@@ -239,7 +248,10 @@ EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long lo
  * This function reads sensor data from the device and fills the sensor object
  * with the data. This call is synchronous and blocks until the data is read out
  * and updated in the sensor object. For simple applications this is fine and
- * the easiest way to use the API.
+ * the easiest way to use the API. A more efficient way is to use
+ * #eeze_sensor_async_read which allows the sensor readout to happen in the
+ * background and the application would check the timestamp of the data to
+ * determine how recent the data is.
  *
  * @since 1.8
  */
@@ -253,8 +265,15 @@ EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
  *
  * This function reads sensor data from the device and fills the sensor object
  * with the data. The read is done asynchronously and thus does not block after
- * calling. Instead the given callback function is called once the read is
- * finished and the object filled.
+ * calling. Instead the given the application can determine how recent the
+ * values are from the timestamp value that can be accessed through
+ * #eeze_sensor_timestamp_get.
+ *
+ * This function is more efficient but needs a bit more work in the application.
+ * An easier way is to use the synchronous #eeze_sensor_read functions. The
+ * downside of it is that it blocks until the data was read out from the
+ * physical sensor. That might be a long time depending on the hardware and its
+ * interface.
  *
  * @since 1.8
  */

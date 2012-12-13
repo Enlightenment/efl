@@ -14,8 +14,13 @@
 #include "eeze_sensor_private.h"
 
 Eeze_Sensor_Module *esensor_module;
-sensor_h sensor_handle; // Tizen sensor handle
+/* Tizen sensor handle */
+sensor_h sensor_handle;
 
+/* The Tizen sensor type ENUM has shown to not be stable regarding its
+ * numbering scheme so we better translate between the Tizen types and the
+ * ones we use here.
+ */
 static sensor_type_e
 eeze_to_tizen(Eeze_Sensor_Type type)
 {
@@ -60,6 +65,15 @@ eeze_to_tizen(Eeze_Sensor_Type type)
      }
 }
 
+/* All following callback function work with the same scheme.
+ * They are callbacks coming in from the tizen system sensor library. With the
+ * data we receive we update the matching sensor object to always have the
+ * latest data available. That includes updating the timestamp to show when the
+ * data was measured from the underlying system.
+ * After that we send out an ecore event to let all interested parties now that
+ * new data is available and then stop the sensor server to safe power. It will be
+ * started again the next time data gets requested.
+ */
 void
 accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
@@ -151,7 +165,8 @@ light_cb(unsigned long long timestamp, float lux, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
-   obj->accuracy = 0;
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->data[0] = lux;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
@@ -169,7 +184,8 @@ proximity_cb(unsigned long long timestamp, float distance, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
-   obj->accuracy = 0;
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
@@ -187,6 +203,8 @@ snap_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->data[0] = snap;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
@@ -204,6 +222,8 @@ shake_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_d
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->data[0] = shake;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
@@ -221,6 +241,8 @@ panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = timestamp;
@@ -239,8 +261,13 @@ facedown_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
+   /* We are not stopping the sensor here because we want to keep it as a motion
+    * event coming in at any time.
+    */
 }
 
 void
@@ -254,8 +281,13 @@ doubletap_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
+   /* We are not stopping the sensor here because we want to keep it as a motion
+    * event coming in at any time.
+    */
 }
 
 void
@@ -359,6 +391,7 @@ light_read_cb(unsigned long long timestamp, float lux, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = lux;
    obj->timestamp = timestamp;
@@ -379,7 +412,8 @@ proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
-   obj->accuracy = -1;
+   /* We have to set this ourselves because we don't get it for this type */
+   bj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
@@ -399,6 +433,7 @@ snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = snap;
    obj->timestamp = timestamp;
@@ -419,6 +454,7 @@ shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *u
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = shake;
    obj->timestamp = timestamp;
@@ -439,6 +475,7 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
@@ -460,6 +497,8 @@ facedown_read_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
@@ -478,11 +517,18 @@ doubletap_read_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   /* We have to set this ourselves because we don't get it for this type */
+   obj->accuracy = -1;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
 
+/* Synchronous read function for sensor data. It uses the blocking calls to read
+ * out the data and returns after it finishes the readout. Be aware that this
+ * might take quite some time depending on the sensor and how it is connected to
+ * the system. Normally it is better to use the asynchronous reading functions.
+ */
 Eina_Bool
 eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
@@ -495,6 +541,9 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
    type = eeze_to_tizen(sensor_type);
 
+   /* Don't attempt to do anything if the sensor is not available on the system
+    * we are running on.
+    */
    sensor_is_supported(type, &supported);
    if (!supported)
      {
@@ -550,6 +599,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
       case SENSOR_LIGHT:
         sensor_light_read_data(sensor_handle, &lux);
+        /* As we do not get any accuracy value from the system we go with -1 */
         obj->accuracy = -1;
         obj->data[0] = lux;
         obj->timestamp = 0;
@@ -557,6 +607,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
       case SENSOR_PROXIMITY:
         sensor_proximity_read_data(sensor_handle, &distance);
+        /* As we do not get any accuracy value from the system we go with -1 */
         obj->accuracy = -1;
         obj->data[0] = distance;
         obj->timestamp = 0;
@@ -632,6 +683,12 @@ eeze_sensor_tizen_cb_set(Eeze_Sensor *handle, Eeze_Sensor_Type sensor_type, void
 }
 #endif
 
+/* For the asynchronous reads we only start the sensor her and trigger the
+ * readout. The callbacks above are actually taking care about putting the data
+ * into the matching sensor objects and informing all subscribers with an ecore
+ * event. The public API function does actually return right away with the cached
+ * data. This is handled in the core and not in the different modules though.
+ */
 Eina_Bool
 eeze_sensor_tizen_async_read(Eeze_Sensor_Type sensor_type, void *user_data)
 {
@@ -694,6 +751,10 @@ eeze_sensor_tizen_async_read(Eeze_Sensor_Type sensor_type, void *user_data)
    return EINA_TRUE;
 }
 
+/* Go through all potential Tizen sensor and test if they are available on the
+ * system we are running on. If yes, create a matching sensor object and put it
+ * the list of available sensor for the core.
+ */
 static void
 eeze_sensor_tizen_sensors_find(void)
 {
@@ -713,6 +774,7 @@ eeze_sensor_tizen_sensors_find(void)
      }
 }
 
+/* Cleanup when getting the shutdown callback from core */
 Eina_Bool
 eeze_sensor_tizen_shutdown(void)
 {
@@ -729,10 +791,12 @@ eeze_sensor_tizen_shutdown(void)
         ERR("Failing to destroy sensor handle.");
         return EINA_FALSE;
      }
-
    return EINA_TRUE;
 }
 
+/* Callback from core once we registered as a module. Create the Tizen sensor
+ * handle and find all available sensors.
+ */
 Eina_Bool
 eeze_sensor_tizen_init(void)
 {
@@ -754,6 +818,10 @@ eeze_sensor_tizen_init(void)
    return EINA_TRUE;
 }
 
+/* This function gets called when the module is loaded from the disk. Its the
+ * entry point to anything in this module. After setting ourself up we register
+ * into the core of eeze sensor to make our functionality available.
+ */
 Eina_Bool
 sensor_tizen_init(void)
 {
@@ -774,10 +842,12 @@ sensor_tizen_init(void)
         ERR("Failed to register tizen module");
         return EINA_FALSE;
      }
-
    return EINA_TRUE;
 }
 
+/* Cleanup when the module gets unloaded. Unregister ourself from the core to
+ * avoid calls into a not loaded module.
+ */
 void
 sensor_tizen_shutdown(void)
 {

@@ -13,7 +13,6 @@ extern int _eeze_sensor_log_dom;
 #ifdef CRI
 #undef CRI
 #endif
-
 #ifdef ERR
 #undef ERR
 #endif
@@ -62,6 +61,29 @@ typedef struct _Eeze_Sensor_Module
    Eina_List *sensor_list; /**< List of sensor objects attached to the module */
 } Eeze_Sensor_Module;
 
+/**
+ * @brief Register a module to eeze_sensor core.
+ * @param name Module name used for reference internally.
+ * @param mod Sensor module to be registered.
+ * @return EINA_TRUE is the module was successfully registered. EINA_FALSE is not.
+ *
+ * Private functions for modules to register itself to eeze sensor core to
+ * advertise their functionality. These registered modules will then be accessed
+ * based on a priority that is currently hardcoded in the code. Once more module
+ * are available we need to re-consider this approach.
+ *
+ * @since 1.8
+ */
 Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
+
+/**
+ * @brief Unregister a module from eeze_sensor core.
+ * @param name Module name used for reference internally.
+ * @return EINA_TRUE is the module was successfully unregistered. EINA_FALSE is not.
+ *
+ * Private functions for modules to unregister itself from eeze sensor core.
+ *
+ * @since 1.8
+ */
 Eina_Bool eeze_sensor_module_unregister(const char *name);
 #endif // EEZE_SENSOR_PRIVATE_H
