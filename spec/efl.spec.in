@@ -63,6 +63,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ecore_evas/*/*/*/*.so
 %{_libexecdir}/*
 %{_datadir}/locale/*/LC_MESSAGES/efl.mo
+%{_datadir}/eo/*
 
 %files devel
 %defattr(-, root, root)
