@@ -1,6 +1,6 @@
 Edje 1.8.0
 
-Changes since Edje 1.8.0:
+Changes since Edje 1.7.0:
 -------------------------
 
 Additions:
@@ -10,6 +10,8 @@ Additions:
     * Add edje_codegen - A code generator to working with edje files.
     * Add more tags(preedit_sub1~4) for a variety of preediting states.
     * Add embryo function get_image_id
+    * edje_player slave mode supports sending messages.
+    * Add support to physics.
 
 Improvements:
     * Change Edje to use Eo.
