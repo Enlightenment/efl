@@ -1,6 +1,7 @@
 2012-12-13  Cedric Bail
 
 	* Fix potential segv in software engine native_set code.
+	* Fix uninitialized data in Evas OpenGL engine.
 
 2012-12-12  Daniel Willmann
 

@@ -79,3 +79,4 @@ Fixes:
     * Fix possible buffer overflow in functions relying on EET_T_LAST
     * Fix possible memory corruption in xrandr EDID functions.
     * Fix potential segv in software engine native_set code.
+    * Fix uninitialized data in Evas OpenGL engine.

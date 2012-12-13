@@ -1868,7 +1868,7 @@ eng_image_native_set(void *data, void *image, void *native)
                       int pixmap_att[20], i;
                       int config_attrs[40], num = 0;
                       int tex_format = 0, tex_target = 0, yinvert = 0, mipmap = 0;
-                      unsigned int target;
+                      unsigned int target = 0;
                       GLXFBConfig *configs;
                       
                       i = 0;
