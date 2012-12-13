@@ -578,21 +578,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native EINA_UNUS
    Evas_Native_Surface *ns = native;
    Image_Entry *im = image, *im2 = NULL;
 
-   if (!im)
-     {
-        if ((ns) && (ns->data.x11.visual))
-          {
-             im = evas_cache_image_data(evas_common_image_cache_get(),
-                                        im->w, im->h,
-                                        ns->data.x11.visual, 1,
-                                        EVAS_COLORSPACE_ARGB8888);
-             return im;
-          }
-        else
-           return NULL;
-     }
-
-   if ((!ns) && (!im)) return im;
+   if (!im || !ns) return im;
 
    if (!ns) return im;
 
