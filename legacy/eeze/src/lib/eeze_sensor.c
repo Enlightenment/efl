@@ -154,16 +154,21 @@ eeze_sensor_new(Eeze_Sensor_Type type)
    Eeze_Sensor_Obj *sens;
    Eeze_Sensor_Module *module = NULL;
 
-   sens = calloc(1, sizeof(Eeze_Sensor_Obj));
-   if (!sens) return NULL;
-
    sens = eeze_sensor_obj_get(type);
    if (!sens) return NULL;
 
    module = _highest_priority_module_get();
-   if (!module) return EINA_FALSE;
+   if (!module)
+     {
+      free(sens);
+      return EINA_FALSE;
+     }
 
-   if (!module->read) return NULL;
+   if (!module->read)
+     {
+      free(sens);
+      return NULL;
+     }
 
    /* The read is asynchronous here as we want to make sure that the sensor
     * object has valid data when created. As we give back cached values we
@@ -175,6 +180,7 @@ eeze_sensor_new(Eeze_Sensor_Type type)
    if (module->read(sens->type, sens))
       return sens;
 
+   free(sens);
    return NULL;
 }
 
