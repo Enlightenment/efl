@@ -675,10 +675,10 @@ _title_content_set(Elm_Naviframe_Item *it,
                   eina_stringshare_del(pair->part);
                   it->content_list = eina_inlist_remove(it->content_list,
                                                         EINA_INLIST_GET(pair));
-                  free(pair);
                   evas_object_event_callback_del(pair->content,
                                                  EVAS_CALLBACK_DEL,
                                                  _title_content_del);
+                  free(pair);
                   break;
                }
           }
