@@ -46,6 +46,8 @@ struct _Evas_Object_Text
 
    struct {
       Evas_Coord                w, h;
+      Evas_Object_Text_Item    *ellipsis_start;
+      Evas_Object_Text_Item    *ellipsis_end;
    } last_computed;
 
    char                        changed : 1;
@@ -147,8 +149,55 @@ _evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
 }
 
 static void
+_evas_object_text_items_clean(Evas_Object_Text *o)
+{
+   /* FIXME: also preserve item */
+   if (o->cur.font == o->prev.font &&
+       o->cur.fdesc == o->prev.fdesc &&
+       o->cur.size == o->prev.size &&
+       !memcmp(&o->cur.outline, &o->prev.outline, sizeof (o->cur.outline)) &&
+       !memcmp(&o->cur.shadow, &o->prev.shadow, sizeof (o->cur.shadow)) &&
+       !memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow)) &&
+       !memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2)) &&
+       o->cur.style == o->prev.style)
+     {
+        if (o->last_computed.ellipsis_start &&
+            o->last_computed.ellipsis_start == o->items)
+          o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
+                                                                  EINA_INLIST_GET(o->items));
+        if (o->last_computed.ellipsis_end &&
+            EINA_INLIST_GET(o->last_computed.ellipsis_end) == EINA_INLIST_GET(o->items)->last)
+          o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
+                                                                  EINA_INLIST_GET(o->items)->last);
+     }
+   else
+     {
+        o->last_computed.ellipsis_start = NULL;
+        o->last_computed.ellipsis_end = NULL;
+     }
+   while (o->items)
+     {
+        _evas_object_text_item_del(o, o->items);
+     }
+}
+
+static void
 _evas_object_text_items_clear(Evas_Object_Text *o)
 {
+   if (o->last_computed.ellipsis_start &&
+       o->last_computed.ellipsis_start != o->items)
+     {
+        _evas_object_text_item_clean(o->last_computed.ellipsis_start);
+        free(o->last_computed.ellipsis_start);
+     }
+   o->last_computed.ellipsis_start = NULL;
+   if (o->last_computed.ellipsis_end &&
+       EINA_INLIST_GET(o->last_computed.ellipsis_end) != EINA_INLIST_GET(o->items)->last)
+     {
+        _evas_object_text_item_clean(o->last_computed.ellipsis_end);
+        free(o->last_computed.ellipsis_end);
+     }
+   o->last_computed.ellipsis_end = NULL;
    while (o->items)
      {
         _evas_object_text_item_del(o, o->items);
@@ -693,13 +742,33 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
          * we have a left ellipsis. And the same with 1 and right. */
         if (o->cur.ellipsis != 0)
           {
-             start_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+             if (o->last_computed.ellipsis_start)
+               {
+                  start_ellip_it = o->last_computed.ellipsis_start;
+                  o->items = (Evas_Object_Text_Item *)
+                    eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(start_ellip_it));
+               }
+             else
+               {
+                  start_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+               }
+             o->last_computed.ellipsis_start = start_ellip_it;
              ellip_frame -= start_ellip_it->adv;
           }
         if (o->cur.ellipsis != 1)
           {
              /* FIXME: Should take the last item's font and style and etc. *//* weird it's a text, should always have the same style/font */
-             end_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+             if (o->last_computed.ellipsis_end)
+               {
+                  end_ellip_it = o->last_computed.ellipsis_end;
+                  o->items = (Evas_Object_Text_Item *)
+                    eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(end_ellip_it));
+               }
+             else
+               {
+                  end_ellip_it = _layout_ellipsis_item_new(obj, o, o->items);
+               }
+             o->last_computed.ellipsis_end = end_ellip_it;
              ellip_frame -= end_ellip_it->adv;
           }
 
@@ -2297,7 +2366,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
    Eina_Unicode *text = NULL;
 
-   if (o->items) _evas_object_text_items_clear(o);
+   if (o->items) _evas_object_text_items_clean(o);
    if (o->cur.utf8_text)
      text = eina_unicode_utf8_to_unicode(o->cur.utf8_text,
            NULL);
