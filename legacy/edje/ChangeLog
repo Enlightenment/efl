@@ -700,3 +700,7 @@
 2012-12-12  Cedric Bail
 
 	* Use Evas to compute Ellipsis.
+
+2012-12-13  Jihoon Kim
+
+	* Return plain text in retrive surrounding text callback of entry

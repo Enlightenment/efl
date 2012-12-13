@@ -3587,6 +3587,7 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en = NULL;
    const char *str;
+   char *plain_text;
 
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -3600,7 +3601,11 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
    if (text)
      {
         str = _edje_entry_text_get(rp);
-        *text = str ? strdup(str) : strdup("");
+        if (str)
+          plain_text = evas_textblock_text_markup_to_utf8(NULL, str);
+        else
+          plain_text = strdup("");
+        *text = plain_text;
      }
 
    if (cursor_pos)
