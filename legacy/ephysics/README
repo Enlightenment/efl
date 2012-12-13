@@ -16,8 +16,6 @@ Must:
   ecore-evas (at least 1.2.99)
   evas (at least 1.2.99)
   bullet (at least 2.79)
-Optional:
-  elementary (at least 1.0.99, required to build ephysics_test)
 
 EPhysics is a library that manages Ecore, Evas and Bullet Physics into
 an easy to use way. It's a kind of wrapper, a glue, between these libraries.
@@ -35,35 +33,18 @@ COMPILING AND INSTALLING:
 (as root unless you are installing in your users directories):
   $ make install
 
-If elementary is installed, it will build and install a test application as
-well, that showcases EPhysics capabilites. Run
-
-  $ ephysics_test
-
-to see these examples.
-
 ------------------------------------------------------------------------------
 
 TESTS
 
-Tests require elementary to be build.
+There are a project with many tests for ephysics, including a logo example,
+and a sandbox util.
 
-List of test applications:
- * ephysics_test => List with many tests to exemplify specific features
- * ephysics_logo => Example of logo / loading screen made using ephysics
- * ephysics_sandbox => Application to set many different properties to bodies
-                       and see they interacting.
+It's called ephysics_test, and may be found at:
 
-ephysics_test supports to launch a specified test on command line, like
+http://svn.enlightenment.org/svn/e/trunk/ephysics_tests
 
- $ ephysics_test "Jumping Balls"
-
-Also, it can run only the test, avoiding the main menu, with parameter
---test-win-only or -to (it must to be passed before the test name):
-
- $ ephysics_test -to Camera
-
-The other programs don't accept parameters.
+Tests require the library Elementary to be build.
 
 ------------------------------------------------------------------------------
 

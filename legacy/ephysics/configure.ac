@@ -134,7 +134,7 @@ AC_SUBST(EFL_EPHYSICS_BUILD)
 build_docs_only="no"
 AC_ARG_ENABLE([build-docs-only],
    AC_HELP_STRING([--enable-build-docs-only],
-                  [Doesn't build library or tests, just build docs. @<:@default==disabled@:>@]),
+                  [Doesn't build library, just build docs. @<:@default==disabled@:>@]),
    [
     if test "x${enableval}" = "xyes" ; then
        build_docs_only="yes"
@@ -188,54 +188,16 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-## Tests - disable by default. With edje requiring ephysics and tests requiring
-## edje we are in circular dependency hell here.
-build_tests="no"
-if test "x${build_docs_only}" = "xno" ; then
-PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.7.99], [req_tests="yes"], [req_tests="no"])
-AC_ARG_ENABLE([build-tests],
-   AC_HELP_STRING([--enable-build-tests],
-                  [Enable building tests. It is not built if the
-                   required dependencies are not present. @<:@default==disabled@:>@]),
-   [
-    if test "x${enableval}" = "xyes" ; then
-      if test "x${req_tests}" = "xyes" ; then
-        build_tests="yes"
-        requirement_ephysics="elementary >= 1.7.99 ${requirement_ephysics}"
-      fi
-    fi
-   ],
-   [])
-else
-   build_tests="no"
-fi
-AM_CONDITIONAL([BUILD_TESTS], [test "x${build_tests}" = "xyes"])
-
-if test "x${build_tests}" = "xyes" && test "x${build_docs_only}" = "xno" ; then
-PKG_CHECK_MODULES([EPHYSICS_TEST],
-   [
-    eina >= 1.2.99
-    evas >= 1.7.99
-    ecore >= 1.2.99
-    elementary >= 1.0.99
-    bullet >= 2.80
-   ])
-fi
-
 AC_SUBST(requirement_ephysics)
 
 AC_OUTPUT([
 ephysics.pc
 ephysics.spec
 Makefile
-data/Makefile
-data/logo_images/Makefile
-data/themes/Makefile
 doc/Makefile
 doc/Doxyfile
 src/Makefile
 src/lib/Makefile
-src/bin/Makefile
 ])
 
 
@@ -252,7 +214,6 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Documentation........: ${build_doc} | docs-only: ${build_docs_only}"
-echo "  Tests................: ${build_tests}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
 if !BUILD_DOCS_ONLY
-SUBDIRS = src doc data
+SUBDIRS = src doc
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -30,7 +30,6 @@ bin_SCRIPTS =
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-COPYING_ARTS \
 autogen.sh \
 ephysics.pc.in \
 ephysics.spec \
