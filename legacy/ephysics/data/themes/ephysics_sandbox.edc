@@ -1,7 +1,0 @@
-externals {
-   external: "elm";
-}
-
-collections {
-#include "sandbox_misc.edc"
-}
