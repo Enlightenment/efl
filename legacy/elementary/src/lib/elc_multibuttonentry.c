@@ -2088,9 +2088,6 @@ _item_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   new_item_filter = _filter_new(func, data);
-   if (!new_item_filter) return;
-
    EINA_LIST_FOREACH(sd->filter_list, l, _item_filter)
      {
         if (_item_filter && ((_item_filter->callback_func == func)
@@ -2100,6 +2097,9 @@ _item_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
              return;
           }
      }
+   new_item_filter = _filter_new(func, data);
+   if (!new_item_filter) return;
+
    sd->filter_list = eina_list_append(sd->filter_list, new_item_filter);
 }
 
