@@ -29,6 +29,7 @@ missing
 stamp-h1
 edbus-*.tar.*
 edbus2.pc
+edbus.spec
 libedbus2.la
 src/examples/connman-list-services
 src/examples/ofono-dial
