@@ -810,3 +810,7 @@
 2012-12-12  WooHyun Jung
 
 	* Now, dummy object is always smart member of naviframe.
+
+2012-12-14  Jiyoun Park
+
+	* Fix naviframe's resize object problem when item was deleted.

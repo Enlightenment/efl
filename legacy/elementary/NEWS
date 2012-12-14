@@ -92,6 +92,7 @@ Fixes:
    * Don't manipulate dead memory in Eina_Inlist in elm_transit.c.
    * Update mapbuf forcely whenever it's states are changed.
    * Now, dummy object is always smart member of naviframe.
+   * Fix naviframe's resize object problem when item was deleted.
 
 Removals:
 
