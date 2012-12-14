@@ -81,6 +81,11 @@ ecore_audio_init(void)
    if (mod)
      ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
 #endif
+#ifdef HAVE_SNDFILE
+   mod = ecore_audio_sndfile_init();
+   if (mod)
+     ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
+#endif
 
    return _ecore_audio_init_count;
 }
@@ -96,6 +101,9 @@ ecore_audio_shutdown(void)
 
 #ifdef HAVE_PULSE
    ecore_audio_pulse_shutdown();
+#endif
+#ifdef HAVE_SNDFILE
+   ecore_audio_sndfile_shutdown();
 #endif
 
    eina_list_free(ecore_audio_modules);

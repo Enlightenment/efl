@@ -13,6 +13,10 @@
 #include <pulse/pulseaudio.h>
 #endif
 
+#ifdef HAVE_SNDFILE
+#include <sndfile.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -311,6 +315,27 @@ struct _Ecore_Audio_Pulse
 Ecore_Audio_Module *ecore_audio_pulse_init(void);
 void                ecore_audio_pulse_shutdown(void);
 #endif /* HAVE_PULSE */
+
+#ifdef HAVE_SNDFILE
+/* ecore_audio_sndfile */
+struct _Ecore_Audio_Sndfile_Private
+{
+   SF_VIRTUAL_IO vio_wrapper;
+};
+
+struct _Ecore_Audio_Sndfile
+{
+   const char *filename;
+   SNDFILE *handle;
+   SF_INFO  sfinfo;
+   Ecore_Audio_Vio *vio;
+   double volume;
+   Ecore_Timer *timer;
+};
+
+Ecore_Audio_Module *ecore_audio_sndfile_init(void);
+void                ecore_audio_sndfile_shutdown(void);
+#endif /* HAVE_SNDFILE */
 
 /**
  * @}

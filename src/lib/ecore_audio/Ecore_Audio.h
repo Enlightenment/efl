@@ -431,6 +431,16 @@ EAPI Ecore_Audio_Object *ecore_audio_input_output_get(Ecore_Audio_Object *input)
  */
 EAPI double              ecore_audio_input_remaining_get(Ecore_Audio_Object *input);
 
+/* libsndfile */
+
+EAPI void ecore_audio_input_sndfile_filename_set(Ecore_Audio_Object *input, const char *filename);
+EAPI void ecore_audio_input_sndfile_format_set(Ecore_Audio_Object *input, int format);
+EAPI void ecore_audio_input_sndfile_vio_set(Ecore_Audio_Object *input, Ecore_Audio_Vio *vio);
+
+EAPI void ecore_audio_output_sndfile_filename_set(Ecore_Audio_Object *output, const char *filename);
+EAPI void ecore_audio_output_sndfile_format_set(Ecore_Audio_Object *output, int format);
+EAPI void ecore_audio_output_sndfile_vio_set(Ecore_Audio_Object *output, Ecore_Audio_Vio *vio);
+
 /**
  * @}
  */
