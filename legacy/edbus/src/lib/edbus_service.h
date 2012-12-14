@@ -118,8 +118,8 @@ EAPI void edbus_service_interface_unregister(EDBus_Service_Interface *iface) EIN
  * and the object path.
  */
 EAPI void edbus_service_object_unregister(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
-EAPI EDBus_Connection *edbus_service_connection_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
-EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
+EAPI EDBus_Connection *edbus_service_connection_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Emit a signal handler of the interface with non-complex types.
