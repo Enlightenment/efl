@@ -683,11 +683,6 @@ _nodes_clear(const Evas_Object *eo_obj)
         o->format_nodes = _NODE_FORMAT(eina_inlist_remove(EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
         _evas_textblock_node_format_free(o, n);
      }
-
-   o->cursor->node = _evas_textblock_node_text_new();
-   o->text_nodes = _NODE_TEXT(eina_inlist_append(
-            EINA_INLIST_GET(o->text_nodes),
-            EINA_INLIST_GET(o->cursor->node)));
 }
 
 /**
@@ -5203,7 +5198,14 @@ _textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
         free(o->markup_text);
         o->markup_text = NULL;
      }
+
    _nodes_clear(eo_obj);
+
+   o->cursor->node = _evas_textblock_node_text_new();
+   o->text_nodes = _NODE_TEXT(eina_inlist_append(
+            EINA_INLIST_GET(o->text_nodes),
+            EINA_INLIST_GET(o->cursor->node)));
+
    if (!o->style && !o->style_user)
      {
         if (text != o->markup_text)
