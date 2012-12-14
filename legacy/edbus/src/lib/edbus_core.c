@@ -858,21 +858,13 @@ edbus_filter(DBusConnection *conn_dbus, DBusMessage *message, void *user_data)
       case DBUS_MESSAGE_TYPE_METHOD_CALL:
         DBG("  Signature: %s", dbus_message_get_signature(message));
         break;
-
       case DBUS_MESSAGE_TYPE_METHOD_RETURN:
-        DBG("  Reply serial: %d", dbus_message_get_reply_serial(message));
-        break;
-
       case DBUS_MESSAGE_TYPE_ERROR:
         DBG("  Reply serial: %d", dbus_message_get_reply_serial(message));
         break;
-
       case DBUS_MESSAGE_TYPE_SIGNAL:
         DBG("  Signature: %s", dbus_message_get_signature(message));
         cb_signal_dispatcher(conn, message);
-        break;
-
-      default:
         break;
      }
 
