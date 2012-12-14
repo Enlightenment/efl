@@ -476,7 +476,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
           {
              evas_object_freeze_events_set(VIEW(prev_it), EINA_FALSE);
           }
-
+        elm_widget_resize_object_set(WIDGET(prev_it), VIEW(prev_it));
         evas_object_show(VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
 
