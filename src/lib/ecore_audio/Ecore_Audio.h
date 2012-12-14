@@ -441,6 +441,10 @@ EAPI void ecore_audio_output_sndfile_filename_set(Ecore_Audio_Object *output, co
 EAPI void ecore_audio_output_sndfile_format_set(Ecore_Audio_Object *output, int format);
 EAPI void ecore_audio_output_sndfile_vio_set(Ecore_Audio_Object *output, Ecore_Audio_Vio *vio);
 
+/* tone */
+EAPI void ecore_audio_input_tone_frequency_set(Ecore_Audio_Object *input, int frequency);
+EAPI void ecore_audio_input_tone_duration_set(Ecore_Audio_Object *input, double duration);
+
 /**
  * @}
  */

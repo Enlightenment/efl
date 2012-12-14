@@ -87,6 +87,10 @@ ecore_audio_init(void)
      ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
 #endif
 
+   mod = ecore_audio_tone_init();
+   if (mod)
+     ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
+
    return _ecore_audio_init_count;
 }
 
@@ -105,6 +109,7 @@ ecore_audio_shutdown(void)
 #ifdef HAVE_SNDFILE
    ecore_audio_sndfile_shutdown();
 #endif
+   ecore_audio_tone_shutdown();
 
    eina_list_free(ecore_audio_modules);
 
