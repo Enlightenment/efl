@@ -388,18 +388,6 @@ _ephysics_body_evas_stacking_sort_cb(const void *d1, const void *d2)
    return 0;
 }
 
-static void
-_ephysics_body_evas_objects_restack_free(void *data)
-{
-   Eina_List *l, *stack_list = (Eina_List *)data;
-   void *ldata;
-
-   EINA_LIST_FOREACH(stack_list, l, ldata)
-     free(ldata);
-
-   eina_list_free(stack_list);
-}
-
 static EPhysics_Body_Evas_Stacking *
 _ephysics_body_evas_stacking_new(Evas_Object *obj, float index)
 {
@@ -432,13 +420,14 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
    Eina_Hash *hash;
    Eina_Iterator *it;
    int layer;
+   Eina_List *ll = NULL;
 
    bodies = ephysics_world_bodies_get(world);
 
    if (!eina_list_count(bodies))
      return;
 
-   hash = eina_hash_int32_new(_ephysics_body_evas_objects_restack_free);
+   hash = eina_hash_int32_new(NULL);
 
    EINA_LIST_FREE(bodies, data)
      {
@@ -488,6 +477,8 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
                                     _ephysics_body_evas_stacking_sort_cb);
         prev_obj = NULL;
 
+        ll = eina_list_append(ll, stack_list);
+
         EINA_LIST_FOREACH(stack_list, l, stack_data)
           {
              stacking = (EPhysics_Body_Evas_Stacking *)stack_data;
@@ -500,6 +491,15 @@ ephysics_body_evas_objects_restack(EPhysics_World *world)
      }
 
    eina_iterator_free(it);
+
+   EINA_LIST_FREE(ll, stack_data)
+     {
+        stack_list = (Eina_List *) stack_data;
+        eina_hash_del_by_data(hash, stack_list);
+        EINA_LIST_FREE(stack_list, slice_data)
+          free(slice_data);
+     }
+
    eina_hash_free(hash);
    return;
 
