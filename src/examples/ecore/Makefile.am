@@ -53,7 +53,11 @@ ecore_timer_example
 
 if HAVE_ECORE_AUDIO
 EXTRA_PROGRAMS += \
+ecore_audio_custom \
 ecore_audio_playback
+
+ecore_audio_custom_SOURCES = ecore_audio_custom.c
+ecore_audio_custom_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
 
 ecore_audio_playback_SOURCES = ecore_audio_playback.c
 ecore_audio_playback_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
