@@ -104,20 +104,30 @@ tests_ecore_ecore_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_audio \
 -I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_audio \
 -I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_file \
 -I$(top_builddir)/src/lib/ecore_x \
--DTESTS_SRC_DIR=\"$(top_srcdir)\" \
+-DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 @CHECK_CFLAGS@
 
 tests_ecore_ecore_suite_LDADD = \
 lib/ecore_con/libecore_con.la \
+lib/ecore_file/libecore_file.la \
 lib/ecore/libecore.la \
 lib/eina/libeina.la \
 @CHECK_LIBS@
+
+if HAVE_ECORE_AUDIO
+tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
+tests_ecore_ecore_suite_LDADD += lib/ecore_audio/libecore_audio.la
+endif
 
 endif
