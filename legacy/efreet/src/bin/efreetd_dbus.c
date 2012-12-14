@@ -11,9 +11,6 @@
 #define BUS "org.enlightenment.Efreet"
 #define PATH "/org/enlightenment/Efreet"
 #define INTERFACE "org.enlightenment.Efreet"
-/* TODO: Get from dbus include */
-#define DBUS_PATH_LOCAL "/org/freedesktop/DBus/Local"
-#define DBUS_INTERFACE_LOCAL "org.freedesktop.DBus.Local"
 
 /* internal */
 enum
@@ -36,7 +33,7 @@ do_shutdown(void *data __UNUSED__)
 }
 
 static void
-disconnected(void *context __UNUSED__, const EDBus_Message *msg __UNUSED__)
+disconnected(void *context __UNUSED__, EDBus_Connection *connection __UNUSED__, void *event_info __UNUSED__)
 {
    INF("disconnected");
    quit();
@@ -239,7 +236,8 @@ dbus_init(void)
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!conn) goto conn_error;
 
-   edbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL, "Disconnected", disconnected, NULL);
+   edbus_connection_event_callback_add(conn, EDBUS_CONNECTION_DISCONNECTED,
+                                       disconnected, NULL);
    iface = edbus_service_interface_register(conn, PATH, &desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                       on_name_request, NULL);
