@@ -348,6 +348,9 @@ struct _Ecore_Audio_Tone
 Ecore_Audio_Module *ecore_audio_tone_init(void);
 void                ecore_audio_tone_shutdown(void);
 
+Ecore_Audio_Module *ecore_audio_custom_init(void);
+void                ecore_audio_custom_shutdown(void);
+
 /**
  * @}
  */

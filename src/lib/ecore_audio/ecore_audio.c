@@ -91,6 +91,10 @@ ecore_audio_init(void)
    if (mod)
      ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
 
+   mod = ecore_audio_custom_init();
+   if (mod)
+     ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
+
    return _ecore_audio_init_count;
 }
 
@@ -110,6 +114,7 @@ ecore_audio_shutdown(void)
    ecore_audio_sndfile_shutdown();
 #endif
    ecore_audio_tone_shutdown();
+   ecore_audio_custom_shutdown();
 
    eina_list_free(ecore_audio_modules);
 
@@ -573,6 +578,17 @@ ecore_audio_input_remaining_get(Ecore_Audio_Object *input)
   Ecore_Audio_Module *inmod = input->module;
 
   return in->length - inmod->in_ops->input_seek(input, 0, SEEK_CUR);
+}
+
+/* XXX: Error checking!!! */
+EAPI void
+ecore_audio_input_callback_setup(Ecore_Audio_Object *input, Ecore_Audio_Read_Callback read_cb, void *data)
+{
+  EINA_SAFETY_ON_NULL_RETURN(input);
+  struct _Ecore_Audio_Callback *cb = input->module_data;
+
+  cb->read_cb = read_cb;
+  cb->data = data;
 }
 
 /**
