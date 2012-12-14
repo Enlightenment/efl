@@ -91,6 +91,7 @@ EAPI Eina_Bool             edbus_message_arguments_vget(const EDBus_Message *msg
  * edbus_message_iter_* functions.
  */
 EAPI Eina_Bool             edbus_message_arguments_set(EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Set data to EDBus_Message.
  *
@@ -122,6 +123,7 @@ EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, cons
  * @return the new iterator
  */
 EAPI EDBus_Message_Iter *edbus_message_iter_container_new(EDBus_Message_Iter *iter, int type, const char* contained_signature) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Append a basic type to EDBus_Iterator.
  */
@@ -145,6 +147,7 @@ EAPI Eina_Bool               edbus_message_iter_basic_append(EDBus_Message_Iter 
  * data and close it..
  */
 EAPI Eina_Bool               edbus_message_iter_arguments_set(EDBus_Message_Iter *iter, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Set data to EDBus_Message_Iter. For each complete in signature
  * you need pass the value, in case of complex type a pointer to be allocated a
@@ -164,6 +167,7 @@ EAPI Eina_Bool               edbus_message_iter_arguments_set(EDBus_Message_Iter
  * data and close it.
  */
 EAPI Eina_Bool               edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 3);
+
 /**
  * @brief Closes a container-typed value appended to the message.
  *
@@ -196,6 +200,7 @@ EAPI char                   *edbus_message_iter_signature_get(EDBus_Message_Iter
  * @return if iterator was reach to end return EINA_FALSE
  */
 EAPI Eina_Bool               edbus_message_iter_next(EDBus_Message_Iter *iter) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Get a complete type from EDBus_Message_Iter if is not at the end
  * of iterator and move to next field.
@@ -268,6 +273,7 @@ EAPI Eina_Bool               edbus_message_iter_arguments_vget(EDBus_Message_Ite
  * @param iter the iterator to be deleted.
  */
 EAPI void                  edbus_message_iter_del(EDBus_Message_Iter *iter) EINA_ARG_NONNULL(1);
+
 /**
  * @}
  */

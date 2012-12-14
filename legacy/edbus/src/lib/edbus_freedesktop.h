@@ -70,6 +70,7 @@ EAPI void                  edbus_name_owner_changed_callback_del(EDBus_Connectio
  */
 EAPI EDBus_Pending        *edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 EAPI EDBus_Pending        *edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @}
  */
@@ -119,6 +120,7 @@ EAPI Eina_Value           *edbus_proxy_property_local_get(EDBus_Proxy *proxy, co
  * EDBUS_PROXY_EVENT_PROPERTY_CHANGED.
  */
 EAPI const Eina_Hash      *edbus_proxy_property_local_get_all(EDBus_Proxy *proxy) EINA_ARG_NONNULL(1);
+
 /**
  * @}
  */
@@ -129,6 +131,7 @@ EAPI const Eina_Hash      *edbus_proxy_property_local_get_all(EDBus_Proxy *proxy
  */
 
 EAPI EDBus_Pending        *edbus_object_managed_objects_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @}
  */

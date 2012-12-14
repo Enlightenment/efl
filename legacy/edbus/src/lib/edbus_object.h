@@ -6,6 +6,7 @@
  *
  * @{
  */
+
 /**
  * @brief Get an object of the given bus and path.
  *
@@ -80,6 +81,7 @@ typedef void (*EDBus_Object_Event_Cb)(void *data, EDBus_Object *obj, void *event
  * type occurs.
  */
 EAPI void                  edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type, EDBus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+
 /**
  * @brief Remove callback registered in edbus_object_event_callback_add().
  */
@@ -113,6 +115,7 @@ EAPI EDBus_Pending        *edbus_object_send(EDBus_Object *obj, EDBus_Message *m
 EAPI EDBus_Signal_Handler *edbus_object_signal_handler_add(EDBus_Object *obj, const char *interface, const char *member, EDBus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 4);
 
 EAPI EDBus_Message *edbus_object_method_call_new(EDBus_Object *obj, const char *interface, const char *member) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @}
  */

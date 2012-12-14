@@ -6,6 +6,7 @@
  *
  * @{
  */
+
 /**
  * @brief Add a signal handler.
  *
@@ -28,6 +29,7 @@ EAPI EDBus_Signal_Handler *edbus_signal_handler_ref(EDBus_Signal_Handler *handle
  * If reference == 0 signal handler will be freed.
  */
 EAPI void                  edbus_signal_handler_unref(EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Decrease signal handler reference like edbus_signal_handler_unref()
  * but if reference > 0 this signal handler will stop listening to signals. In other
@@ -51,6 +53,7 @@ EAPI void                  edbus_signal_handler_del(EDBus_Signal_Handler *handle
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
  */
 EAPI Eina_Bool             edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...) EINA_ARG_NONNULL(1) EINA_SENTINEL;
+
 /**
  * @brief Add extra argument in match of signal handler to obtain specifics signals.
  *

@@ -162,6 +162,7 @@ typedef struct _EDBus_Message_Iter EDBus_Message_Iter;
  * destination.
  */
 typedef struct _EDBus_Pending        EDBus_Pending;
+
 /**
  * @typedef EDBus_Signal_Handler
  *

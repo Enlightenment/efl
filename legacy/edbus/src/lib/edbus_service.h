@@ -164,6 +164,7 @@ EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const ch
  * @return pointer to data if found otherwise NULL
  */
 EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, const char *key) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Del data stored in object path.
  *
@@ -201,6 +202,7 @@ EAPI Eina_Bool edbus_service_object_manager_attach(EDBus_Service_Interface *ifac
  * @return EINA_TRUE if success
  */
 EAPI Eina_Bool edbus_service_object_manager_detach(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
+
 /**
  * @}
  */

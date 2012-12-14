@@ -6,6 +6,7 @@
  *
  * @{
  */
+
 /**
  * @brief Get a proxy of the following interface name in a EDBus_Object.
  */
@@ -32,6 +33,7 @@ EAPI void                 *edbus_proxy_data_del(EDBus_Proxy *proxy, const char *
  * type passed.
  */
 EAPI void                  edbus_proxy_cb_free_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Remove callback registered in edbus_proxy_cb_free_add().
  */
@@ -53,6 +55,7 @@ EAPI EDBus_Message        *edbus_proxy_method_call_new(EDBus_Proxy *proxy, const
  * EDBUS_TIMEOUT_INFINITE for no timeout
  */
 EAPI EDBus_Pending        *edbus_proxy_send(EDBus_Proxy *proxy, EDBus_Message *msg, EDBus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Call a method in proxy.
  * Send a method call to interface that proxy belong with data.
@@ -88,6 +91,7 @@ EAPI EDBus_Pending        *edbus_proxy_call(EDBus_Proxy *proxy, const char *memb
  * edbus_message_iter_* functions.
  */
 EAPI EDBus_Pending        *edbus_proxy_vcall(EDBus_Proxy *proxy, const char *member, EDBus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 6);
+
 /**
  * @brief Add a signal handler.
  *
@@ -127,6 +131,7 @@ typedef void (*EDBus_Proxy_Event_Cb)(void *data, EDBus_Proxy *proxy, void *event
  * type passed.
  */
 EAPI void edbus_proxy_event_callback_add(EDBus_Proxy *proxy, EDBus_Proxy_Event_Type type, EDBus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+
 /**
  * @brief Remove callback registered in edbus_proxy_event_callback_add().
  */
