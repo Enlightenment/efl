@@ -54,7 +54,8 @@ ecore_timer_example
 if HAVE_ECORE_AUDIO
 EXTRA_PROGRAMS += \
 ecore_audio_custom \
-ecore_audio_playback
+ecore_audio_playback \
+ecore_audio_to_ogg
 
 ecore_audio_custom_SOURCES = ecore_audio_custom.c
 ecore_audio_custom_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
@@ -62,6 +63,8 @@ ecore_audio_custom_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la
 ecore_audio_playback_SOURCES = ecore_audio_playback.c
 ecore_audio_playback_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
 
+ecore_audio_to_ogg_SOURCES = ecore_audio_to_ogg.c
+ecore_audio_to_ogg_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
 endif
 
 ecore_animator_example_SOURCES = ecore_animator_example.c
@@ -153,7 +156,6 @@ ecore_timer_example_LDADD = $(top_builddir)/src/lib/ecore/libecore.la @ECORE_LIB
 
 SRCS = \
 ecore_animator_example \
-ecore_audio_playback \
 ecore_client_bench \
 ecore_con_client_simple_example \
 ecore_con_lookup_example \
@@ -182,6 +184,13 @@ ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example
+
+if HAVE_ECORE_AUDIO
+SRCS += \
+ecore_audio_custom \
+ecore_audio_playback \
+ecore_audio_to_ogg
+endif
 
 EXTRA_DIST = red.png
 
