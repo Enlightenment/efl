@@ -1,0 +1,41 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
+
+installed_ecoreaudiomainheadersdir = $(includedir)/ecore-@VMAJ@
+dist_installed_ecoreaudiomainheaders_DATA = \
+lib/ecore_audio/Ecore_Audio.h
+
+lib_ecore_audio_libecore_audio_la_SOURCES = \
+lib/ecore_audio/ecore_audio.c \
+lib/ecore_audio/ecore_audio_alsa.c \
+lib/ecore_audio/ecore_audio_pulse.c \
+lib/ecore_audio/ecore_audio_sndfile.c \
+lib/ecore_audio/ecore_audio_tone.c \
+lib/ecore_audio/ecore_audio_custom.c \
+lib/ecore_audio/ecore_audio_private.h
+
+lib_ecore_audio_libecore_audio_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_builddir)/src/lib/ecore \
+-DEFL_ECORE_AUDIO_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@ECORE_AUDIO_CFLAGS@
+
+lib_ecore_audio_libecore_audio_la_LIBADD = \
+lib/ecore/libecore.la \
+lib/eet/libeet.la \
+lib/eo/libeo.la \
+lib/eina/libeina.la
+
+lib_ecore_audio_libecore_audio_la_LIBADD += @ECORE_AUDIO_LIBS@ @EFL_COV_LIBS@ -lm
+
+lib_ecore_audio_libecore_audio_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

@@ -53,6 +53,9 @@ include Makefile_Ecore_X.am
 endif
 include Makefile_Ecore_Imf.am
 include Makefile_Ecore_Evas.am
+if HAVE_ECORE_AUDIO
+include Makefile_Ecore_Audio.am
+endif
 include Makefile_Embryo.am
 include Makefile_Eio.am
 

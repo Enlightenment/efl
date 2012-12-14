@@ -32,6 +32,7 @@
    @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
    @li @ref Ecore_Win32_Group
    @li @ref Ecore_WinCE_Group
+   @li @ref Ecore_Audio_Group
 
    For more info on Ecore usage, there are these @ref Examples.
 
@@ -123,6 +124,7 @@ sudo make install
    @author Jérémy Zurcher <jeremy@asynk.ch>
    @author Vikram Narayanan <vikram186@gmail.com>
    @author Gwanglim Lee <gl77.lee@samsung.com> <gwanglim@gmail.com>
+   @author Daniel Willmann <daniel@totalueberwachung.de>
 
    Please contact <enlightenment-devel@lists.sourceforge.net> to get in
    contact with the developers and maintainers.

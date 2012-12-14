@@ -139,6 +139,7 @@ requirements_libs_ecore_win32=""
 requirements_libs_ecore_wince=""
 requirements_libs_ecore_x=""
 requirements_libs_ecore_evas=""
+requirements_libs_ecore_audio=""
 requirements_libs_embryo=""
 requirements_libs_eio=""
 #requirements_libs_edje=""
@@ -168,6 +169,7 @@ requirements_pc_ecore_win32=""
 requirements_pc_ecore_wince=""
 requirements_pc_ecore_x=""
 requirements_pc_ecore_evas=""
+requirements_pc_ecore_audio=""
 requirements_pc_embryo=""
 requirements_pc_eio=""
 #requirements_pc_edje=""
@@ -216,6 +218,7 @@ AC_SUBST([requirements_libs_ecore_win32])
 AC_SUBST([requirements_libs_ecore_wince])
 AC_SUBST([requirements_libs_ecore_x])
 AC_SUBST([requirements_libs_ecore_evas])
+AC_SUBST([requirements_libs_ecore_audio])
 AC_SUBST([requirements_libs_embryo])
 AC_SUBST([requirements_libs_eio])
 #AC_SUBST([requirements_libs_edje])
@@ -245,6 +248,7 @@ AC_SUBST([requirements_pc_ecore_win32])
 AC_SUBST([requirements_pc_ecore_wince])
 AC_SUBST([requirements_pc_ecore_x])
 AC_SUBST([requirements_pc_ecore_evas])
+AC_SUBST([requirements_pc_ecore_audio])
 AC_SUBST([requirements_pc_embryo])
 AC_SUBST([requirements_pc_eio])
 #AC_SUBST([requirements_pc_edje])
@@ -3120,6 +3124,82 @@ fi
 
 #### End of Ecore_Evas
 
+#### Ecore_Audio
+AC_ARG_ENABLE([audio],
+   [AC_HELP_STRING([--enable-audio], [enable Ecore_Audio])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_audio="yes"
+    else
+       want_ecore_audio="no"
+    fi
+   ],
+   [want_ecore_audio="no"])
+
+if test "x${want_ecore_audio}" = "xyes" ; then
+
+AC_MSG_NOTICE([Ecore_Audio checks])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+
+# Eina, Eo, Eet, Ecore
+
+requirements_pc_ecore_audio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_audio}"
+
+use_alsa="no"
+# ALSA support is not really there yet...uncomment if you want to play around with it
+#PKG_CHECK_EXISTS([ALSA], [alsa], [
+#                    use_alsa="yes"
+#                    AC_DEFINE([HAVE_ALSA], [1], [Alsa library])
+#       requirements_pc_ecore_audio="alsa ${requirements_pc_ecore_audio}"
+#       requirements_pc_deps_ecore_audio="alsa ${requirements_pc_deps_ecore_audio}"
+#                    ], [use_alsa="no"])
+
+have_pulse="no"
+PKG_CHECK_EXISTS([libpulse],
+      [
+       use_pulse="yes"
+       AC_DEFINE([HAVE_PULSE], [1], [Pulseaudio library])
+       requirements_pc_ecore_audio="libpulse ${requirements_pc_ecore_audio}"
+       requirements_pc_deps_ecore_audio="libpulse ${requirements_pc_deps_ecore_audio}"
+                   ], [use_pulse="no"])
+
+use_sndfile="no"
+PKG_CHECK_EXISTS([sndfile], [
+                   use_sndfile="yes"
+                   AC_DEFINE([HAVE_SNDFILE], [1], [libsndfile library])
+       requirements_pc_ecore_audio="sndfile ${requirements_pc_ecore_audio}"
+       requirements_pc_deps_ecore_audio="sndfile ${requirements_pc_deps_ecore_audio}"
+                   ], [use_sndfile="no"])
+
+PKG_CHECK_MODULES([ECORE_AUDIO], [${requirements_pc_deps_ecore_audio}])
+
+ECORE_AUDIO_CFLAGS="${ECORE_AUDIO_CFLAGS}"
+ECORE_AUDIO_LIBS="${ECORE_AUDIO_LIBS}"
+requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+fi
+
+AM_CONDITIONAL([HAVE_ECORE_AUDIO], [test "x${want_ecore_audio}" = "xyes"])
+
 
 #### Eio
 
@@ -3280,6 +3360,7 @@ pc/ecore-x.pc
 pc/ecore-evas.pc
 pc/ecore-imf.pc
 pc/ecore-imf-evas.pc
+pc/ecore-audio.pc
 pc/embryo.pc
 pc/eio.pc
 $po_makefile_in
@@ -3478,6 +3559,15 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
+echo
+echo "Ecore Sound system:"
+echo
+echo "  Ecore_Audio..................: $want_ecore_audio"
+if test "x${want_ecore_audio}" = "xyes" ; then
+echo "    ALSA.......................: $use_alsa"
+echo "    PulseAudio.................: $use_pulse"
+echo "    SndFile....................: $use_sndfile"
+fi
 echo
 echo "Tests..................: ${_efl_enable_tests}"
 if test "x${_efl_enable_tests}" = "xyes"; then
