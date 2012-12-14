@@ -211,10 +211,13 @@ efreet_cache_shutdown(void)
     edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
     */
     if (conn)
-    {
-        edbus_proxy_call(proxy, "Unregister", NULL, NULL, -1, "");
-        edbus_connection_unref(conn);
-    }
+      {
+         EDBus_Object *obj = edbus_proxy_object_get(proxy);
+         edbus_proxy_call(proxy, "Unregister", NULL, NULL, -1, "");
+         edbus_proxy_unref(proxy);
+         edbus_object_unref(obj);
+         edbus_connection_unref(conn);
+      }
 
     edbus_shutdown();
 }
