@@ -1341,6 +1341,15 @@ _access_widget_item_register(Elm_Color_Item *it)
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
 }
 
+static void
+_item_resize(void *data __UNUSED__,
+             Evas *e __UNUSED__,
+             Evas_Object *obj,
+             void *event_info __UNUSED__)
+{
+   elm_layout_sizing_eval(obj);
+}
+
 static Elm_Color_Item *
 _item_new(Evas_Object *obj)
 {
@@ -1355,6 +1364,8 @@ _item_new(Evas_Object *obj)
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_event_callback_add
+     (VIEW(item), EVAS_CALLBACK_RESIZE, _item_resize, NULL);
 
    item->color_obj = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set
