@@ -39,6 +39,22 @@ disconnected(void *context __UNUSED__, EDBus_Connection *connection __UNUSED__, 
    quit();
 }
 
+static void
+client_name_owner_changed_cb(void *data, const char *bus, const char *old_id, const char *new_id)
+{
+   if (new_id[0])
+     return;
+   edbus_name_owner_changed_callback_del(conn, bus,
+                                         client_name_owner_changed_cb, NULL);
+   clients--;
+   if (clients <= 0)
+     {
+        clients = 0;
+        if (shutdown) ecore_timer_del(shutdown);
+        shutdown = ecore_timer_add(10.0, do_shutdown, NULL);
+     }
+}
+
 static EDBus_Message *
 do_register(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message)
 {
@@ -55,22 +71,14 @@ do_register(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *
    clients++;
    if (shutdown) ecore_timer_del(shutdown);
    shutdown = NULL;
+
+   edbus_name_owner_changed_callback_add(conn,
+                                         edbus_message_sender_get(message),
+                                         client_name_owner_changed_cb, NULL,
+                                         EINA_FALSE);
    reply = edbus_message_method_return_new(message);
    edbus_message_arguments_set(reply, "b", cache_desktop_exists());
    return reply;
-}
-
-static EDBus_Message *
-do_unregister(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *message __UNUSED__)
-{
-   clients--;
-   if (clients <= 0)
-     {
-        clients = 0;
-        if (shutdown) ecore_timer_del(shutdown);
-        shutdown = ecore_timer_add(10.0, do_shutdown, NULL);
-     }
-   return NULL;
 }
 
 static EDBus_Message *
@@ -159,10 +167,6 @@ static const EDBus_Method methods[] = {
        {
           "Register", EDBUS_ARGS({"s", "lang info"}), EDBUS_ARGS({"b", "cache exists"}),
           do_register, 0
-       },
-       {
-          "Unregister", NULL, NULL,
-          do_unregister, 0
        },
        {
           "AddDesktopDirs", EDBUS_ARGS({"as", "dirs"}), NULL,
