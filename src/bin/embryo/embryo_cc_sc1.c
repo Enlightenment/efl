@@ -651,7 +651,7 @@ setopt(int argc, char **argv, char *iname, char *oname,
 static void
 setconfig(char *root)
 {
-   char                path[PATH_MAX];
+   char                path[PATH_MAX - 1];
    char               *ptr;
    int                 len;
 
