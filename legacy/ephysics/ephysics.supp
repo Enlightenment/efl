@@ -13,3 +13,10 @@
    ...
    obj:*libfontconfig.so.*
 }
+
+{
+   bullet check
+   Memcheck:Cond
+   ...
+   fun:_ZN23btGeneric6DofConstraintC1ER11btRigidBodyS1_RK11btTransformS4_b
+}
