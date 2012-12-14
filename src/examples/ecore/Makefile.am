@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_audio \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
@@ -15,6 +16,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_audio \
 -DPACKAGE_EXAMPLES_DIR=\"$(datadir)/ecore/examples\" \
 @ECORE_CFLAGS@
 
@@ -48,6 +50,15 @@ ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example
+
+if HAVE_ECORE_AUDIO
+EXTRA_PROGRAMS += \
+ecore_audio_playback
+
+ecore_audio_playback_SOURCES = ecore_audio_playback.c
+ecore_audio_playback_LDADD = $(top_builddir)/src/lib/ecore_audio/libecore_audio.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/eina/libeina.la @ECORE_LIBS@
+
+endif
 
 ecore_animator_example_SOURCES = ecore_animator_example.c
 ecore_animator_example_LDADD = $(top_builddir)/src/lib/ecore_evas/libecore_evas.la $(top_builddir)/src/lib/ecore/libecore.la $(top_builddir)/src/lib/evas/libevas.la @ECORE_LIBS@
@@ -138,6 +149,7 @@ ecore_timer_example_LDADD = $(top_builddir)/src/lib/ecore/libecore.la @ECORE_LIB
 
 SRCS = \
 ecore_animator_example \
+ecore_audio_playback \
 ecore_client_bench \
 ecore_con_client_simple_example \
 ecore_con_lookup_example \
