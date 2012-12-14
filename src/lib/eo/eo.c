@@ -658,6 +658,7 @@ _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
           }
      }
 
+   eina_list_free(extn_pos);
 
    mro = _eo_class_mro_add(mro, klass->parent);
 
