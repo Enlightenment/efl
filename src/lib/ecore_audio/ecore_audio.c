@@ -76,6 +76,12 @@ ecore_audio_init(void)
    ECORE_AUDIO_OUTPUT_INPUT_ADDED = ecore_event_type_new();
    ECORE_AUDIO_OUTPUT_INPUT_REMOVED = ecore_event_type_new();
 
+#ifdef HAVE_PULSE
+   mod = ecore_audio_pulse_init();
+   if (mod)
+     ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
+#endif
+
    return _ecore_audio_init_count;
 }
 
@@ -87,6 +93,10 @@ ecore_audio_shutdown(void)
      return _ecore_audio_init_count;
 
    /* FIXME: Shutdown all the inputs and outputs first */
+
+#ifdef HAVE_PULSE
+   ecore_audio_pulse_shutdown();
+#endif
 
    eina_list_free(ecore_audio_modules);
 

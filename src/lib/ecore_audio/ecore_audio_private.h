@@ -9,6 +9,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_PULSE
+#include <pulse/pulseaudio.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -288,6 +292,25 @@ struct _Ecore_Audio_Callback {
 };
 
 extern Eina_List *ecore_audio_modules;
+
+#ifdef HAVE_PULSE
+/* PA mainloop integration */
+struct _Ecore_Audio_Pa_Private
+{
+   pa_mainloop_api    api;
+   pa_context        *context;
+   pa_context_state_t state;
+};
+
+/* ecore_audio_pulse */
+struct _Ecore_Audio_Pulse
+{
+   pa_stream *stream;
+};
+
+Ecore_Audio_Module *ecore_audio_pulse_init(void);
+void                ecore_audio_pulse_shutdown(void);
+#endif /* HAVE_PULSE */
 
 /**
  * @}
