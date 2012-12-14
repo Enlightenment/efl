@@ -4,12 +4,6 @@
 
 /* TODO: mempool of EDBus_Signal_Handler */
 
-#define SENDER_KEY "sender"
-#define PATH_KEY "path"
-#define INTERFACE_KEY "interface"
-#define MEMBER_KEY "member"
-#define ARG_X_KEY "arg%u"
-
 #define EDBUS_SIGNAL_HANDLER_CHECK(handler)                        \
   do                                                               \
     {                                                              \
@@ -64,8 +58,6 @@ _match_append(Eina_Strbuf *match, const char *key, const char *value)
    eina_strbuf_append_printf(match, ",%s='%s'", key, value);
 }
 
-#define ARGX "arg"
-
 static int
 _sort_arg(const void *d1, const void *d2)
 {
@@ -75,6 +67,7 @@ _sort_arg(const void *d1, const void *d2)
    return arg1->index - arg2->index;
 }
 
+#define ARGX "arg"
 EAPI Eina_Bool
 edbus_signal_handler_match_extra_vset(EDBus_Signal_Handler *sh, va_list ap)
 {
@@ -194,10 +187,10 @@ _edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char
    match = eina_strbuf_new();
    EINA_SAFETY_ON_NULL_GOTO(match, cleanup_create_strbuf);
    eina_strbuf_append(match, "type='signal'");
-   _match_append(match, SENDER_KEY, sender);
-   _match_append(match, PATH_KEY, path);
-   _match_append(match, INTERFACE_KEY, interface);
-   _match_append(match, MEMBER_KEY, member);
+   _match_append(match, "sender", sender);
+   _match_append(match, "path", path);
+   _match_append(match, "interface", interface);
+   _match_append(match, "member", member);
 
    dbus_error_init(&err);
    dbus_bus_add_match(conn->dbus_conn, eina_strbuf_string_get(match), &err);
