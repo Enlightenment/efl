@@ -9,6 +9,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ALSA
+#include <alsa/asoundlib.h>
+#endif
+
 #ifdef HAVE_PULSE
 #include <pulse/pulseaudio.h>
 #endif
@@ -296,6 +300,20 @@ struct _Ecore_Audio_Callback {
 };
 
 extern Eina_List *ecore_audio_modules;
+
+#ifdef HAVE_ALSA
+/* ecore_audio_alsa */
+struct _Ecore_Audio_Alsa
+{
+   ECORE_MAGIC;
+   snd_pcm_t   *handle;
+   unsigned int channels;
+   unsigned int samplerate;
+};
+
+Ecore_Audio_Module *ecore_audio_alsa_init(void);
+void                ecore_audio_alsa_shutdown(void);
+#endif /* HAVE_ALSA */
 
 #ifdef HAVE_PULSE
 /* PA mainloop integration */
