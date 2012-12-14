@@ -19,8 +19,8 @@ typedef enum
 
 /**
  * Establish a connection to bus and integrate it with the ecore main
- * loop, if already exist a connection of given type return it and increase
- * reference.
+ * loop. If a connection of given type was already created before, its
+ * reference counter is incremented and the connection is returned.
  *
  * @param type type of connection e.g EDBUS_CONNECTION_TYPE_SESSION,
  * EDBUS_CONNECTION_TYPE_SYSTEM or EDBUS_CONNECTION_TYPE_STARTER
@@ -31,7 +31,9 @@ EAPI EDBus_Connection *edbus_connection_get(EDBus_Connection_Type type);
 
 /**
  * Always create and establish a new connection to bus and integrate it with
- * the ecore main loop.
+ * the ecore main loop. Differently from edbus_connection_get(), this function
+ * guarantees to create a new connection to the D-Bus daemon and the connection
+ * is not shared by any means.
  *
  * @param type type of connection e.g EDBUS_CONNECTION_TYPE_SESSION,
  * EDBUS_CONNECTION_TYPE_SYSTEM or EDBUS_CONNECTION_TYPE_STARTER
