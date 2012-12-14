@@ -56,9 +56,6 @@ static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_objects_interface[] = "org.enlightenment.Ethumb.objects";
 static const char _ethumb_dbus_path[] = "/org/enlightenment/Ethumb";
-static const char fdo_interface[] = "org.freedesktop.DBus";
-static const char fdo_bus_name[] = "org.freedesktop.DBus";
-static const char fdo_path[] = "/org/freedesktop/DBus";
 
 static int _log_domain = -1;
 
