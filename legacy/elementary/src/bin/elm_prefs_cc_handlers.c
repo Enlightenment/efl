@@ -1091,6 +1091,7 @@ st_collection_page_items_item_date_default(void)
              current_item->spec.d.def.m = lt->tm_mon + 1;
              current_item->spec.d.def.d = lt->tm_mday;
           }
+        free(date);
      }
 }
 
@@ -1119,6 +1120,7 @@ st_collection_page_items_item_date_max(void)
              current_item->spec.d.max.m = lt->tm_mon + 1;
              current_item->spec.d.max.d = lt->tm_mday;
           }
+        free(date);
      }
 }
 
@@ -1147,6 +1149,7 @@ st_collection_page_items_item_date_min(void)
              current_item->spec.d.min.m = lt->tm_mon + 1;
              current_item->spec.d.min.d = lt->tm_mday;
           }
+        free(date);
      }
 }
 
