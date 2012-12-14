@@ -196,6 +196,7 @@ static void
 _ethumb_client_free(Ethumb_Client *client)
 {
    void *data;
+   EDBus_Object *obj;
 
    if (!client->connected)
      goto end_connection;
@@ -235,6 +236,9 @@ end_connection:
    edbus_name_owner_changed_callback_del(client->conn, _ethumb_dbus_bus_name,
                                          _ethumb_client_name_owner_changed,
                                          client);
+   obj = edbus_proxy_object_get(client->proxy);
+   edbus_proxy_unref(client->proxy);
+   edbus_object_unref(obj);
    edbus_connection_unref(client->conn);
 
    if (client->connect.free_data)
