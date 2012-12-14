@@ -54,10 +54,10 @@ typedef struct _Shmfile Shmfile;
 
 struct _Shmfile
 {
-   int fd;
+   void *addr, *addr2;
+   const char *file, *file2;
+   int fd, fd2;
    int size;
-   void *addr;
-   const char *file;
 };
 
 static int blank = 0x00000000;
@@ -68,58 +68,81 @@ static Shmfile *
 shmfile_new(const char *base, int id, int size, Eina_Bool sys)
 {
    Shmfile *sf;
-   char file[PATH_MAX];
+   char file[PATH_MAX], file2[PATH_MAX];
 
    sf = calloc(1, sizeof(Shmfile));
+   if (!sf) return NULL;
+   sf->fd = -1;
+   sf->fd2 = -1;
+   sf->addr = MAP_FAILED;
+   sf->addr = MAP_FAILED;
    do
      {
         mode_t mode;
+        int v1, v2, v3;
 
-        snprintf(file, sizeof(file), "/%s-%i-%i.%i.%i",
-                 base, id, (int)time(NULL), (int)getpid(), (int)rand());
+        v1 = (int)time(NULL);
+        v2 = (int)getpid();
+        v3 = (int)rand();
         mode = S_IRUSR | S_IWUSR;
         if (sys) mode |= S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+        snprintf(file, sizeof(file), "/%s-%i-%i.%i.%i", base, id, v1, v2, v3);
         sf->fd = shm_open(file, O_RDWR | O_CREAT | O_EXCL, mode);
+        if (sf->fd >= 0)
+          {
+             snprintf(file2, sizeof(file2), "/%s-%i-%i.%i.%i-b", base, id, v1, v2, v3);
+             sf->fd2 = shm_open(file2, O_RDWR | O_CREAT | O_EXCL, mode);
+             if (sf->fd2 < 0)
+               {
+                  close(sf->fd);
+                  sf->fd = -1;
+               }
+          }
      }
    while (sf->fd < 0);
 
    sf->file = eina_stringshare_add(file);
-   if (!sf->file)
-     {
-        close(sf->fd);
-        shm_unlink(sf->file);
-        eina_stringshare_del(sf->file);
-        free(sf);
-        return NULL;
-     }
+   if (!sf->file) goto err;
+   sf->file2 = eina_stringshare_add(file2);
+   if (!sf->file2) goto err;
    sf->size = size;
-   if (ftruncate(sf->fd, size) < 0)
-     {
-        close(sf->fd);
-        shm_unlink(sf->file);
-        eina_stringshare_del(sf->file);
-        free(sf);
-        return NULL;
-     }
+   if (ftruncate(sf->fd, size) < 0) goto err;
+   if (ftruncate(sf->fd2, size) < 0) goto err;
    sf->addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd, 0);
-   if (sf->addr == MAP_FAILED)
+   if (sf->addr == MAP_FAILED) goto err;
+   sf->addr2 = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd2, 0);
+   if (sf->addr2 == MAP_FAILED) goto err;
+   return sf;
+err:
+   if (sf->addr != MAP_FAILED) munmap(sf->addr, sf->size);
+   if (sf->addr2 != MAP_FAILED) munmap(sf->addr2, sf->size);
+   if (sf->fd >= 0)
      {
         close(sf->fd);
-        shm_unlink(sf->file);
-        eina_stringshare_del(sf->file);
-        free(sf);
-        return NULL;
+        shm_unlink(file);
      }
-   return sf;
+   if (sf->fd2 >= 0)
+     {
+        close(sf->fd2);
+        shm_unlink(file2);
+     }
+   if (sf->file) eina_stringshare_del(sf->file);
+   if (sf->file2) eina_stringshare_del(sf->file2);
+   free(sf);
+   return NULL;
 }
 
 void
 shmfile_free(Shmfile *sf)
 {
    munmap(sf->addr, sf->size);
+   munmap(sf->addr2, sf->size);
    close(sf->fd);
+   close(sf->fd2);
    shm_unlink(sf->file);
+   shm_unlink(sf->file2);
    eina_stringshare_del(sf->file);
+   eina_stringshare_del(sf->file2);
    free(sf);
 }
 
@@ -128,42 +151,57 @@ shmfile_open(const char *ref, int size, Eina_Bool sys)
 {
    Shmfile *sf;
    mode_t mode;
-
+   char *s;
+   int l;
+   
    sf = calloc(1, sizeof(Shmfile));
+   if (!sf) return NULL;
+   sf->fd = -1;
+   sf->fd2 = -1;
+   sf->addr = MAP_FAILED;
+   sf->addr = MAP_FAILED;
    mode = S_IRUSR | S_IWUSR;
    if (sys) mode |= S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
-   sf->fd = shm_open(ref, O_RDWR, mode);
-   if (sf->fd < 0)
-     {
-        free(sf);
-        return NULL;
-     }
+   l = strlen(ref);
+   s = alloca(l + 3);
+   strcpy(s, ref);
+   s[l] = '-';
+   s[l + 1] = 'b';
+   s[l + 2] = 0;
    sf->file = eina_stringshare_add(ref);
-   if (!sf->file)
-     {
-        close(sf->fd);
-        eina_stringshare_del(sf->file);
-        free(sf);
-        return NULL;
-     }
+   if (!sf->file) goto err;
+   sf->file2 = eina_stringshare_add(s);
+   if (!sf->file2) goto err;
+   sf->fd = shm_open(sf->file, O_RDWR, mode);
+   if (sf->fd < 0) goto err;
+   sf->fd2 = shm_open(sf->file2, O_RDWR, mode);
+   if (sf->fd2 < 0) goto err;
    sf->size = size;
    sf->addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd, 0);
-   if (sf->addr == MAP_FAILED)
-     {
-        close(sf->fd);
-        eina_stringshare_del(sf->file);
-        free(sf);
-        return NULL;
-     }
+   if (sf->addr == MAP_FAILED) goto err;
+   sf->addr2 = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd2, 0);
+   if (sf->addr2 == MAP_FAILED) goto err;
    return sf;
+err:
+   if (sf->addr != MAP_FAILED) munmap(sf->addr, sf->size);
+   if (sf->addr2 != MAP_FAILED) munmap(sf->addr2, sf->size);
+   if (sf->fd >= 0) close(sf->fd);
+   if (sf->fd2 >= 0) close(sf->fd2);
+   if (sf->file) eina_stringshare_del(sf->file);
+   if (sf->file2) eina_stringshare_del(sf->file2);
+   free(sf);
+   return NULL;
 }
 
 void
 shmfile_close(Shmfile *sf)
 {
    munmap(sf->addr, sf->size);
+   munmap(sf->addr2, sf->size);
    close(sf->fd);
+   close(sf->fd2);
    eina_stringshare_del(sf->file);
+   eina_stringshare_del(sf->file2);
    free(sf);
 }
 
@@ -194,7 +232,8 @@ enum // opcodes
    OP_EV_MULTI_MOVE,
    OP_EV_KEY_UP,
    OP_EV_KEY_DOWN,
-   OP_EV_HOLD
+   OP_EV_HOLD,
+   OP_LOCK_FILE2
 };
 
 enum
@@ -359,14 +398,16 @@ struct _Extn
         Eina_Bool   sys : 1;
    } svc;
    struct {
-        const char *lock;
-        int         lockfd;
+        const char *lock, *lock2;
+        int         lockfd, lockfd2;
         const char *shm;
         int         w, h;
         Shmfile    *shmfile;
         Eina_List  *updates;
         Eina_Bool   have_lock : 1;
         Eina_Bool   have_real_lock : 1;
+        Eina_Bool   have_lock2 : 1;
+        Eina_Bool   have_real_lock2 : 1;
    } file;
    struct {
         Eina_Bool   done : 1; /* need to send change done event to the client(plug) */
@@ -419,7 +460,7 @@ _ecore_evas_extn_event(Ecore_Evas *ee, int event)
 }
 
 static Eina_Bool
-_ecore_evas_lock_other_have(Ecore_Evas *ee)
+_ecore_evas_lock_other_have(Ecore_Evas *ee, int buf)
 {
    Eina_List *l;
    Ecore_Evas *ee2;
@@ -437,57 +478,98 @@ _ecore_evas_lock_other_have(Ecore_Evas *ee)
 	bdata2 = ee2->engine.data;
         extn2 = bdata2->data;
         if (!extn2) continue;
-        if ((extn->file.lock) && (extn2->file.lock) &&
-            (!strcmp(extn->file.lock, extn2->file.lock)) &&
-            (extn2->file.have_real_lock))
-          return EINA_TRUE;
+        if (buf == 0)
+          {
+             if ((extn->file.lock) && (extn2->file.lock) &&
+                 (!strcmp(extn->file.lock, extn2->file.lock)) &&
+                 (extn2->file.have_real_lock))
+               return EINA_TRUE;
+          }
+        else if (buf == 1)
+          {
+             if ((extn->file.lock2) && (extn2->file.lock2) &&
+                 (!strcmp(extn->file.lock2, extn2->file.lock2)) &&
+                 (extn2->file.have_real_lock2))
+               return EINA_TRUE;
+          }
      }
    return EINA_FALSE;
 }
 
 static void
-_ecore_evas_socket_lock(Ecore_Evas *ee)
+_ecore_evas_socket_lock(Ecore_Evas *ee, int buf)
 {
    Extn *extn;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
    extn = bdata->data;
    if (!extn) return;
-   if (extn->file.lockfd < 0) return;
-   if (extn->file.have_lock) return;
-   extn->file.have_lock = EINA_TRUE;
-   if (_ecore_evas_lock_other_have(ee)) return;
-   lockf(extn->file.lockfd, F_ULOCK, 0);
-   extn->file.have_real_lock = EINA_TRUE;
+   if (buf == 0)
+     {
+        if (extn->file.lockfd < 0) return;
+        if (extn->file.have_lock) return;
+        extn->file.have_lock = EINA_TRUE;
+        if (_ecore_evas_lock_other_have(ee, buf)) return;
+        if (lockf(extn->file.lockfd, F_ULOCK, 0) < 0)
+          {
+             extn->file.have_lock = EINA_FALSE;
+             return;
+          }
+        extn->file.have_real_lock = EINA_TRUE;
+     }
+   else if (buf == 1)
+     {
+        if (extn->file.lockfd2 < 0) return;
+        if (extn->file.have_lock2) return;
+        extn->file.have_lock2 = EINA_TRUE;
+        if (_ecore_evas_lock_other_have(ee, buf)) return;
+        if (lockf(extn->file.lockfd2, F_ULOCK, 0) < 0)
+          {
+             extn->file.have_lock2 = EINA_FALSE;
+             return;
+          }
+        extn->file.have_real_lock2 = EINA_TRUE;
+     }
 }
 
 static void
-_ecore_evas_socket_unlock(Ecore_Evas *ee)
+_ecore_evas_socket_unlock(Ecore_Evas *ee, int buf)
 {
    Extn *extn;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
    extn = bdata->data;
    if (!extn) return;
-   if (extn->file.lockfd < 0) return;
-   if (!extn->file.have_lock) return;
-   extn->file.have_lock = EINA_FALSE;
-   if (!extn->file.have_real_lock) return;
-   lockf(extn->file.lockfd, F_ULOCK, 0);
+   if (buf == 0)
+     {
+        if (extn->file.lockfd < 0) return;
+        if (!extn->file.have_lock) return;
+        extn->file.have_lock = EINA_FALSE;
+        if (!extn->file.have_real_lock) return;
+        if (lockf(extn->file.lockfd, F_ULOCK, 0) < 0) return;
+     }
+   else if (buf == 1)
+     {
+        if (extn->file.lockfd2 < 0) return;
+        if (!extn->file.have_lock2) return;
+        extn->file.have_lock2 = EINA_FALSE;
+        if (!extn->file.have_real_lock2) return;
+        if (lockf(extn->file.lockfd2, F_ULOCK, 0) < 0) return;
+     }
 }
 
 static void
 _ecore_evas_extn_plug_targer_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   if (ee) _ecore_evas_socket_lock(ee);
+   if (ee) _ecore_evas_socket_lock(ee, 0); // XXX choose right buffer to lock
 }
 
 static void
 _ecore_evas_extn_plug_targer_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   if (ee) _ecore_evas_socket_unlock(ee);
+   if (ee) _ecore_evas_socket_unlock(ee, 0); // XXX choose right buffer to lock
 }
 
 static void
@@ -548,14 +630,22 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
      {
         Ecore_Event_Handler *hdl;
 
-        if (extn->file.have_lock)
-          _ecore_evas_socket_unlock(ee);
-        if (extn->file.lockfd)
+        if (extn->file.have_lock) _ecore_evas_socket_unlock(ee, 0);
+        if (extn->file.have_lock2) _ecore_evas_socket_unlock(ee, 1);
+        if (extn->file.lockfd >= 0)
           {
              close(extn->file.lockfd);
              if (extn->ipc.am_server)
                {
                   if (extn->file.lock) unlink(extn->file.lock);
+               }
+          }
+        if (extn->file.lockfd2 >= 0)
+          {
+             close(extn->file.lockfd2);
+             if (extn->ipc.am_server)
+               {
+                  if (extn->file.lock2) unlink(extn->file.lock2);
                }
           }
         if (extn->svc.name) eina_stringshare_del(extn->svc.name);
@@ -566,6 +656,7 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
           }
         if (extn->ipc.server) ecore_ipc_server_del(extn->ipc.server);
         if (extn->file.lock) eina_stringshare_del(extn->file.lock);
+        if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
         if (extn->file.shm) eina_stringshare_del(extn->file.shm);
         if (extn->file.shmfile)
           {
@@ -1368,11 +1459,22 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
          if ((e->data) && (e->size > 0) &&
              (((unsigned char *)e->data)[e->size - 1] == 0))
            {
-              if (extn->file.have_lock) _ecore_evas_socket_unlock(ee);
+              if (extn->file.have_lock) _ecore_evas_socket_unlock(ee, 0);
               if (extn->file.lockfd) close(extn->file.lockfd);
               if (extn->file.lock) eina_stringshare_del(extn->file.lock);
               extn->file.lock = eina_stringshare_add(e->data);
               extn->file.lockfd = open(extn->file.lock, O_RDONLY);
+           }
+         break;
+      case OP_LOCK_FILE2:
+         if ((e->data) && (e->size > 0) &&
+             (((unsigned char *)e->data)[e->size - 1] == 0))
+           {
+              if (extn->file.have_lock2) _ecore_evas_socket_unlock(ee, 1);
+              if (extn->file.lockfd2 >= 0) close(extn->file.lockfd2);
+              if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
+              extn->file.lock2 = eina_stringshare_add(e->data);
+              extn->file.lockfd2 = open(extn->file.lock2, O_RDONLY);
            }
          break;
       case OP_SHM_REF:
@@ -1638,14 +1740,14 @@ static void
 _ecore_evas_extn_plug_object_data_lock(Ecore_Evas *ee)
 {
    if (!ee) return;
-   _ecore_evas_socket_lock(ee);
+   _ecore_evas_socket_lock(ee, 0); // XXX lock correct buffer
 }
 
 static void
 _ecore_evas_extn_plug_object_data_unlock(Ecore_Evas *ee)
 {
    if (!ee) return;
-   _ecore_evas_socket_unlock(ee);
+   _ecore_evas_socket_unlock(ee, 0); // XXX lock correct buffer
 }
 
 static void
@@ -1783,9 +1885,9 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
 
    if (bdata->pixels)
      {
-        _ecore_evas_socket_lock(ee);
+        _ecore_evas_socket_lock(ee, 0); // XXX lock correct buffer
         updates = evas_render_updates(ee->evas);
-        _ecore_evas_socket_unlock(ee);
+        _ecore_evas_socket_unlock(ee, 0); // XXX lock correct buffer
      }
    EINA_LIST_FOREACH(updates, l, r)
      {
@@ -1833,6 +1935,7 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
 
    extn->ipc.clients = eina_list_append(extn->ipc.clients, e->client);
    ecore_ipc_client_send(e->client, MAJOR, OP_LOCK_FILE, 0, 0, 0, extn->file.lock, strlen(extn->file.lock) + 1);
+   ecore_ipc_client_send(e->client, MAJOR, OP_LOCK_FILE2, 0, 0, 0, extn->file.lock2, strlen(extn->file.lock2) + 1);
 
    if (extn->file.shmfile)
      {
@@ -2395,7 +2498,7 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
           {
              if (extn->file.lockfd)
                {
-                  close(extn->file.lockfd);
+                  close(extn->file.lockfd >= 0);
                   unlink(buf);
                }
              eina_stringshare_del(extn->svc.name);
@@ -2405,6 +2508,30 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
              return EINA_FALSE;
           }
 
+        snprintf(buf, sizeof(buf), "/tmp/ee-lock-XXXXXX");
+        extn->file.lockfd2 = mkstemp(buf);
+        if (extn->file.lockfd2 >= 0)
+          extn->file.lock2 = eina_stringshare_add(buf);
+        if ((extn->file.lockfd2 < 0) || (!extn->file.lock2))
+          {
+             if (extn->file.lockfd >= 0)
+               {
+                  close(extn->file.lockfd);
+                  if (extn->file.lock) unlink(extn->file.lock);
+               }
+             if (extn->file.lockfd2 >= 0)
+               {
+                  close(extn->file.lockfd2);
+                  unlink(buf);
+               }
+             eina_stringshare_del(extn->svc.name);
+             if (extn->file.lock) eina_stringshare_del(extn->file.lock);
+             if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
+             free(extn);
+             ecore_ipc_shutdown();
+             return EINA_FALSE;
+          }
+        
         if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
         extn->ipc.am_server = EINA_TRUE;
         extn->ipc.server = ecore_ipc_server_add(ipctype,
@@ -2412,13 +2539,19 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
                                                 extn->svc.num, ee);
         if (!extn->ipc.server)
           {
-             if (extn->file.lockfd)
+             if (extn->file.lockfd >= 0)
                {
                   close(extn->file.lockfd);
                   if (extn->file.lock) unlink(extn->file.lock);
                }
+             if (extn->file.lockfd2 >= 0)
+               {
+                  close(extn->file.lockfd2);
+                  if (extn->file.lock2) unlink(extn->file.lock2);
+               }
              eina_stringshare_del(extn->svc.name);
              eina_stringshare_del(extn->file.lock);
+             eina_stringshare_del(extn->file.lock2);
              free(extn);
              ecore_ipc_shutdown();
              return EINA_FALSE;
