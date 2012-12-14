@@ -175,9 +175,12 @@ EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, c
 EAPI void *edbus_service_object_data_del(EDBus_Service_Interface *iface, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Add property to changed list. *
- * A PropertiesChanged signal will be send on next idler iteration with all
- * properties in changed list.
+ * @brief Add property to list of changed properties
+ * A DBus.PropertiesChanged signal will be sent in an idler with all properties
+ * that have changed.
+ *
+ * @param iface Interface containing the changed property
+ * @param name Property name
  */
 EAPI Eina_Bool edbus_service_property_changed(const EDBus_Service_Interface *iface, const char *name) EINA_ARG_NONNULL(1, 2);
 
