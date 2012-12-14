@@ -864,8 +864,6 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
           }
      }
    o->prev = o->cur;
-   o->last_computed.w = obj->cur.geometry.w;
-   o->last_computed.h = obj->cur.geometry.h;
 
    _evas_object_text_item_order(eo_obj, o);
 
@@ -2161,6 +2159,9 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
         (obj->cur.geometry.h != o->last_computed.h)))
      {
         _evas_object_text_recalc(eo_obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+					    eo_obj, obj);
+	goto done;
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
@@ -2225,31 +2226,9 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
      }
    if (o->changed)
      {
-	if ((o->cur.size != o->prev.size) ||
-	    ((o->cur.font != o->prev.font)) ||
-	    ((o->cur.utf8_text != o->prev.utf8_text)) ||
-	    ((o->cur.style != o->prev.style)) ||
-	    ((o->cur.shadow.r != o->prev.shadow.r)) ||
-	    ((o->cur.shadow.g != o->prev.shadow.g)) ||
-	    ((o->cur.shadow.b != o->prev.shadow.b)) ||
-	    ((o->cur.shadow.a != o->prev.shadow.a)) ||
-	    ((o->cur.outline.r != o->prev.outline.r)) ||
-	    ((o->cur.outline.g != o->prev.outline.g)) ||
-	    ((o->cur.outline.b != o->prev.outline.b)) ||
-	    ((o->cur.outline.a != o->prev.outline.a)) ||
-	    ((o->cur.glow.r != o->prev.glow.r)) ||
-	    ((o->cur.glow.g != o->prev.glow.g)) ||
-	    ((o->cur.glow.b != o->prev.glow.b)) ||
-	    ((o->cur.glow.a != o->prev.glow.a)) ||
-	    ((o->cur.glow2.r != o->prev.glow2.r)) ||
-	    ((o->cur.glow2.g != o->prev.glow2.g)) ||
-	    ((o->cur.glow2.b != o->prev.glow2.b)) ||
-	    ((o->cur.glow2.a != o->prev.glow2.a)))
-	  {
-	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-						 eo_obj, obj);
-	     goto done;
-	  }
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            eo_obj, obj);
+        goto done;
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, 
@@ -2399,6 +2378,8 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
         obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
 ////        obj->cur.cache.geometry.validity = 0;
      }
+   o->last_computed.w = obj->cur.geometry.w;
+   o->last_computed.h = obj->cur.geometry.h;
 }
 
 static void
