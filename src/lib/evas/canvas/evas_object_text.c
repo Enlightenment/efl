@@ -149,7 +149,7 @@ _evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
 }
 
 static void
-_evas_object_text_items_clean(Evas_Object_Text *o)
+_evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
 {
    /* FIXME: also preserve item */
    if (o->cur.font == o->prev.font &&
@@ -159,7 +159,8 @@ _evas_object_text_items_clean(Evas_Object_Text *o)
        !memcmp(&o->cur.shadow, &o->prev.shadow, sizeof (o->cur.shadow)) &&
        !memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow)) &&
        !memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2)) &&
-       o->cur.style == o->prev.style)
+       o->cur.style == o->prev.style &&
+       obj->cur.scale == obj->prev.scale)
      {
         if (o->last_computed.ellipsis_start &&
             o->last_computed.ellipsis_start == o->items)
@@ -679,6 +680,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 #endif
 
    if (!memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
+       obj->cur.scale == obj->prev.scale &&
        o->last_computed.w == obj->cur.geometry.w &&
        o->last_computed.h == obj->cur.geometry.h)
      return ;
@@ -1382,13 +1384,10 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-   if (o->cur.ellipsis >= 0)
-     {
-        if (o->items)
-          obj->cur.geometry.w += (l - pl) + (r - pr);
-        else
-          obj->cur.geometry.w = 0;
-     }
+   if (o->items)
+     obj->cur.geometry.w += (l - pl) + (r - pr);
+   else
+     obj->cur.geometry.w = 0;
    obj->cur.geometry.h += (t - pt) + (b - pb);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -2153,10 +2152,11 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
      }
    /* If object size changed and ellipsis is set */
-   if ((o->cur.ellipsis >= 0.0 ||
-        o->cur.ellipsis != o->prev.ellipsis) &&
-       ((obj->cur.geometry.w != o->last_computed.w) ||
-        (obj->cur.geometry.h != o->last_computed.h)))
+   if (((o->cur.ellipsis >= 0.0 ||
+	 o->cur.ellipsis != o->prev.ellipsis) &&
+	((obj->cur.geometry.w != o->last_computed.w) ||
+	 (obj->cur.geometry.h != o->last_computed.h))) ||
+       (obj->cur.scale != obj->prev.scale))
      {
         _evas_object_text_recalc(eo_obj);
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
@@ -2213,12 +2213,6 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	goto done;
      }
    if (obj->cur.render_op != obj->prev.render_op)
-     {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    eo_obj, obj);
-	goto done;
-     }
-   if (obj->cur.scale != obj->prev.scale)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
 					    eo_obj, obj);
@@ -2346,7 +2340,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
    Eina_Unicode *text = NULL;
 
-   if (o->items) _evas_object_text_items_clean(o);
+   if (o->items) _evas_object_text_items_clean(obj, o);
    if (o->cur.utf8_text)
      text = eina_unicode_utf8_to_unicode(o->cur.utf8_text,
            NULL);
