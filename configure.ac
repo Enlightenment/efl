@@ -3137,6 +3137,7 @@ AC_ARG_ENABLE([audio],
    [want_ecore_audio="no"])
 
 if test "x${want_ecore_audio}" = "xyes" ; then
+AC_DEFINE([HAVE_ECORE_AUDIO], [1], [build ecore_audio])
 
 AC_MSG_NOTICE([Ecore_Audio checks])
 
@@ -3199,7 +3200,6 @@ requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
 fi
 
 AM_CONDITIONAL([HAVE_ECORE_AUDIO], [test "x${want_ecore_audio}" = "xyes"])
-
 
 #### Eio
 
