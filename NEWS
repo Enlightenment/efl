@@ -41,6 +41,7 @@ Additions:
     * ecore_getopt: add ECORE_GETOPT_ACTION_BREAK
     * evas:
      - Add ellipsis support in Evas_Object_Text.
+     - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
 
 Deprecations:
     * ecore_x:
@@ -80,3 +81,4 @@ Fixes:
     * Fix possible memory corruption in xrandr EDID functions.
     * Fix potential segv in software engine native_set code.
     * Fix uninitialized data in Evas OpenGL engine.
+    * Fix the line drawing clipping problem on arm gl driver.

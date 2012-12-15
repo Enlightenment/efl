@@ -170,3 +170,8 @@
 
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
+
+2012-09-04  Roberto de Souza <zehortigoza@profusion.mobi>
+
+        * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
+        first item in the struct.
