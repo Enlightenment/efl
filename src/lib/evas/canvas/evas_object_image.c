@@ -1429,6 +1429,7 @@ _image_data_update_add(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Image *o = _pd;
    Eina_Rectangle *r;
+   int cnt;
 
    int x = va_arg(*list, int);
    int y = va_arg(*list, int);
@@ -1436,8 +1437,27 @@ _image_data_update_add(Eo *eo_obj, void *_pd, va_list *list)
    int h = va_arg(*list, int);
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur.image.w, o->cur.image.h);
    if ((w <= 0)  || (h <= 0)) return;
-   NEW_RECT(r, x, y, w, h);
-   if (r) o->pixel_updates = eina_list_append(o->pixel_updates, r);
+   cnt = eina_list_count(o->pixel_updates);
+   if (cnt == 1)
+     { // detect single blob case already there to do a nop
+        if ((r = o->pixel_updates->data))
+          { // already a single full rect there.
+             if ((r->x == 0) && (r->y == 0) && (r->w == w) && (r->h == h))
+               return;
+          }
+     }
+   if (cnt >= 512)
+     { // too many update rects - just make a single blob update
+        EINA_LIST_FREE(o->pixel_updates, r) eina_rectangle_free(r);
+        NEW_RECT(r, 0, 0, o->cur.image.w, o->cur.image.h);
+        if (r) o->pixel_updates = eina_list_append(o->pixel_updates, r);
+     }
+   else
+     {
+        NEW_RECT(r, x, y, w, h);
+        if (r) o->pixel_updates = eina_list_append(o->pixel_updates, r);
+     }
+   
    o->changed = EINA_TRUE;
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
