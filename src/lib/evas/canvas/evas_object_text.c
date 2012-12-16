@@ -2135,7 +2135,7 @@ static void
 evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
-   int is_v, was_v;
+   int is_v = 0, was_v = 0;
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = 1;
