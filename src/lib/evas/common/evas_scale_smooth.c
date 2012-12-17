@@ -91,16 +91,90 @@ scale_calc_a_points(int *p, int s, int d, int c, int cc)
 
 #ifdef BUILD_MMX
 # undef SCALE_FUNC
-# define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+# define SCALE_FUNC _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
 # undef SCALE_USING_MMX
 # define SCALE_USING_MMX
 # include "evas_scale_smooth_scaler.c"
 #endif
 
 #undef SCALE_FUNC
-#define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_c
+#define SCALE_FUNC _evas_common_scale_rgba_in_to_out_clip_smooth_c
 #undef SCALE_USING_MMX
 #include "evas_scale_smooth_scaler.c"
+
+#ifdef BUILD_MMX
+void
+evas_common_scale_rgba_in_to_out_clip_smooth_mmx(RGBA_Image *src, RGBA_Image *dst,
+                                                 RGBA_Draw_Context *dc,
+                                                 int src_region_x, int src_region_y,
+                                                 int src_region_w, int src_region_h,
+                                                 int dst_region_x, int dst_region_y,
+                                                 int dst_region_w, int dst_region_h)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = 0;
+	clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+     (src, dst,
+      clip_x, clip_y, clip_w, clip_h,
+      mul_col, dc->render_op,
+      src_region_x, src_region_y, src_region_w, src_region_h,
+      dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+}
+#endif
+
+void
+evas_common_scale_rgba_in_to_out_clip_smooth_c(RGBA_Image *src, RGBA_Image *dst,
+                                               RGBA_Draw_Context *dc,
+                                               int src_region_x, int src_region_y,
+                                               int src_region_w, int src_region_h,
+                                               int dst_region_x, int dst_region_y,
+                                               int dst_region_w, int dst_region_h)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = 0;
+	clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+     (src, dst,
+      clip_x, clip_y, clip_w, clip_h,
+      mul_col, dc->render_op,
+      src_region_x, src_region_y, src_region_w, src_region_h,
+      dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+}
 
 EAPI void
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
@@ -127,6 +201,30 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
                                             dst_region_x, dst_region_y,
                                             dst_region_w, dst_region_h,
                                             cb);
+}
+
+EAPI void
+evas_common_scale_rgba_smooth_draw(RGBA_Image *src, RGBA_Image *dst, int dst_clip_x, int dst_clip_y, int dst_clip_w, int dst_clip_h, DATA32 mul_col, int render_op, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+#ifdef BUILD_MMX
+   int mmx, sse, sse2;
+
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
+   if (mmx)
+     _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+       (src, dst,
+        dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+        mul_col, render_op,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+   else
+#endif
+     _evas_common_scale_rgba_in_to_out_clip_smooth_c
+       (src, dst,
+        dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+        mul_col, render_op,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
 }
 
 EAPI void

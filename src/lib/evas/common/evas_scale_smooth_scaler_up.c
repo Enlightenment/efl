@@ -19,11 +19,11 @@
    /* a scanline buffer */
    pdst = dst_ptr;  // it's been set at (dst_clip_x, dst_clip_y)
    pdst_end = pdst + (dst_clip_h * dst_w);
-   if (!dc->mul.use)
+   if (mul_col == 0xffffffff)
      {
-	if ((dc->render_op == _EVAS_RENDER_BLEND) && !src->cache_entry.flags.alpha)
+	if ((render_op == _EVAS_RENDER_BLEND) && !src->cache_entry.flags.alpha)
 	  { direct_scale = 1;  buf_step = dst->cache_entry.w; }
-	else if (dc->render_op == _EVAS_RENDER_COPY)
+	else if (render_op == _EVAS_RENDER_COPY)
 	  {
 	    direct_scale = 1;  buf_step = dst->cache_entry.w;
 	    if (src->cache_entry.flags.alpha)
@@ -33,10 +33,10 @@
    if (!direct_scale)
      {
 	buf = alloca(dst_clip_w * sizeof(DATA32));
-	if (dc->mul.use)
-	   func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
+	if (mul_col != 0xffffffff)
+	   func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, dst_clip_w, render_op);
 	else
-	   func  = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
+	   func  = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, render_op);
      }
    else
 	buf = pdst;
@@ -99,7 +99,7 @@
 		}
 	    /* * blend here [clip_w *] buf -> dptr * */
 	    if (!direct_scale)
-	      func(buf, NULL, dc->mul.col, pdst, dst_clip_w);
+	      func(buf, NULL, mul_col, pdst, dst_clip_w);
 
 	    pdst += dst_w;
 	    psrc += src_w;
@@ -149,7 +149,7 @@
 	      }
 	    /* * blend here [clip_w *] buf -> dptr * */
 	    if (!direct_scale)
-	      func(buf, NULL, dc->mul.col, pdst, dst_clip_w);
+	      func(buf, NULL, mul_col, pdst, dst_clip_w);
 	    pdst += dst_w;
 	    syy += dsyy;
 	    buf += buf_step;
@@ -223,7 +223,7 @@
 	      }
 	    /* * blend here [clip_w *] buf -> dptr * */
 	    if (!direct_scale)
-	      func(buf, NULL, dc->mul.col, pdst, dst_clip_w);
+	      func(buf, NULL, mul_col, pdst, dst_clip_w);
 
 	    pdst += dst_w;
 	    syy += dsyy;

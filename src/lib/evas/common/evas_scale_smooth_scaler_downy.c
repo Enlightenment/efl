@@ -82,8 +82,8 @@
 				    ((b + (1 << 3)) >> 4));
 		xp++;  xapp++;
 	      }
-	    
-	    func(buf, NULL, dc->mul.col, dptr, w);
+
+	    func(buf, NULL, mul_col, dptr, w);
 
 	    pbuf = buf;
 	    dptr += dst_w;  dst_clip_w = w;
@@ -97,7 +97,7 @@
 #ifdef DIRECT_SCALE
         if ((!src->cache_entry.flags.alpha) &&
 	    (!dst->cache_entry.flags.alpha) &&
-	    (!dc->mul.use))
+	    (mul_col == 0xffffffff))
 	  {
 	     while (dst_clip_h--)
 	       {
@@ -222,8 +222,8 @@
 					 ((b + (1 << 3)) >> 4));
 		     xp++;  xapp++;
 		   }
-		 
-		 func(buf, NULL, dc->mul.col, dptr, w);
+
+		 func(buf, NULL, mul_col, dptr, w);
 
 		 pbuf = buf;
 		 dptr += dst_w;  dst_clip_w = w;

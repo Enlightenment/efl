@@ -4,8 +4,8 @@
    int a, r, g, b, rx, gx, bx, ax;
    int xap, yap, pos;
    //int dyy, dxx;
-   
-   DATA32  **yp; 
+
+   DATA32  **yp;
    int *xp;
    int w = dst_clip_w;
 
@@ -28,16 +28,16 @@
 	  {
 	    Cy = *yapp >> 16;
 	    yap = *yapp & 0xffff;
-		  
+
 	    while (dst_clip_w--)
 	      {
 		Cx = *xapp >> 16;
 		xap = *xapp & 0xffff;
-		       
+
 		sptr = *yp + *xp + pos;
 		pix = sptr;
 		sptr += src_w;
-		       
+
 		ax = (A_VAL(pix) * xap) >> 9;
 		rx = (R_VAL(pix) * xap) >> 9;
 		gx = (G_VAL(pix) * xap) >> 9;
@@ -58,12 +58,12 @@
 		    gx += (G_VAL(pix) * i) >> 9;
 		    bx += (B_VAL(pix) * i) >> 9;
 		  }
-		       
+
 		a = (ax * yap) >> 14;
 		r = (rx * yap) >> 14;
 		g = (gx * yap) >> 14;
 		b = (bx * yap) >> 14;
-		       
+
 		for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 		  {
 		    pix = sptr;
@@ -118,20 +118,20 @@
 			gx += (G_VAL(pix) * i) >> 9;
 			bx += (B_VAL(pix) * i) >> 9;
 		      }
-		    
+
 		    a += (ax * j) >> 14;
 		    r += (rx * j) >> 14;
 		    g += (gx * j) >> 14;
 		    b += (bx * j) >> 14;
 		  }
-		*pbuf++ = ARGB_JOIN(((a + (1 << 4)) >> 5), 
-				    ((r + (1 << 4)) >> 5), 
-				    ((g + (1 << 4)) >> 5), 
+		*pbuf++ = ARGB_JOIN(((a + (1 << 4)) >> 5),
+				    ((r + (1 << 4)) >> 5),
+				    ((g + (1 << 4)) >> 5),
 				    ((b + (1 << 4)) >> 5));
 		xp++;  xapp++;
 	      }
-	    
-	    func(buf, NULL, dc->mul.col, dptr, w);
+
+	    func(buf, NULL, mul_col, dptr, w);
 
 	    pbuf = buf;
 	    dptr += dst_w;   dst_clip_w = w;
@@ -145,23 +145,23 @@
 #ifdef DIRECT_SCALE
         if ((!src->cache_entry.flags.alpha) &&
 	    (!dst->cache_entry.flags.alpha) &&
-	    (!dc->mul.use))
+	    (mul_col == 0xffffffff))
 	  {
 	     while (dst_clip_h--)
 	       {
 		 Cy = *yapp >> 16;
 		 yap = *yapp & 0xffff;
-		       
+
 		 pbuf = dptr;
 		 while (dst_clip_w--)
 		   {
 		     Cx = *xapp >> 16;
 		     xap = *xapp & 0xffff;
-		     
+
 		     sptr = *yp + *xp + pos;
 		     pix = sptr;
 		     sptr += src_w;
-			    
+
 		     rx = (R_VAL(pix) * xap) >> 9;
 		     gx = (G_VAL(pix) * xap) >> 9;
 		     bx = (B_VAL(pix) * xap) >> 9;
@@ -183,7 +183,7 @@
 		     r = (rx * yap) >> 14;
 		     g = (gx * yap) >> 14;
 		     b = (bx * yap) >> 14;
-    
+
 		     for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 		       {
 			 pix = sptr;
@@ -205,7 +205,7 @@
 			     gx += (G_VAL(pix) * i) >> 9;
 			     bx += (B_VAL(pix) * i) >> 9;
 			   }
-			 
+
 			 r += (rx * Cy) >> 14;
 			 g += (gx * Cy) >> 14;
 			 b += (bx * Cy) >> 14;
@@ -236,9 +236,9 @@
 			 g += (gx * j) >> 14;
 			 b += (bx * j) >> 14;
 		       }
-		     *pbuf++ = ARGB_JOIN(0xff, 
-					 ((r + (1 << 4)) >> 5), 
-					 ((g + (1 << 4)) >> 5), 
+		     *pbuf++ = ARGB_JOIN(0xff,
+					 ((r + (1 << 4)) >> 5),
+					 ((g + (1 << 4)) >> 5),
 					 ((b + (1 << 4)) >> 5));
 		     xp++;  xapp++;
 		   }
@@ -250,22 +250,22 @@
 	       }
 	  }
 	else
-#endif	  
+#endif
 	  {
 	     while (dst_clip_h--)
 	       {
 		 Cy = *yapp >> 16;
 		 yap = *yapp & 0xffff;
-		       
+
 		 while (dst_clip_w--)
 		   {
 		     Cx = *xapp >> 16;
 		     xap = *xapp & 0xffff;
-			    
+
 		     sptr = *yp + *xp + pos;
 		     pix = sptr;
 		     sptr += src_w;
-			    
+
 		     rx = (R_VAL(pix) * xap) >> 9;
 		     gx = (G_VAL(pix) * xap) >> 9;
 		     bx = (B_VAL(pix) * xap) >> 9;
@@ -287,7 +287,7 @@
 		     r = (rx * yap) >> 14;
 		     g = (gx * yap) >> 14;
 		     b = (bx * yap) >> 14;
-			    
+
 		     for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 		       {
 			 pix = sptr;
@@ -340,14 +340,14 @@
 			 g += (gx * j) >> 14;
 			 b += (bx * j) >> 14;
 		       }
-		     *pbuf++ = ARGB_JOIN(0xff, 
-					 ((r + (1 << 4)) >> 5), 
-					 ((g + (1 << 4)) >> 5), 
+		     *pbuf++ = ARGB_JOIN(0xff,
+					 ((r + (1 << 4)) >> 5),
+					 ((g + (1 << 4)) >> 5),
 					 ((b + (1 << 4)) >> 5));
 		     xp++;  xapp++;
 		   }
 
-		 func(buf, NULL, dc->mul.col, dptr, w);
+		 func(buf, NULL, mul_col, dptr, w);
 
 		 pbuf = buf;
 		 dptr += dst_w;   dst_clip_w = w;

@@ -58,13 +58,197 @@ evas_common_scale_rgba_in_to_out_clip_sample_do(const Cutout_Rects *reuse,
      }
 }
 
+EAPI void
+evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_clip_x, int dst_clip_y, int dst_clip_w, int dst_clip_h, DATA32 mul_col, int render_op, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   int      x, y;
+   int     *lin_ptr;
+   DATA32  *buf, *dptr;
+   DATA32 **row_ptr;
+   DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
+   int      src_w, src_h, dst_w, dst_h;
+   RGBA_Gfx_Func func;
+
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+                         0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
+   if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h,
+                         0, 0, src->cache_entry.w, src->cache_entry.h))) return;
+
+   src_w = src->cache_entry.w;
+   src_h = src->cache_entry.h;
+   dst_w = dst->cache_entry.w;
+   dst_h = dst->cache_entry.h;
+
+   src_data = src->image.data;
+   dst_data = dst->image.data;
+
+   if (dst_clip_x < 0)
+     {
+        dst_clip_w += dst_clip_x;
+        dst_clip_x = 0;
+     }
+   if (dst_clip_y < 0)
+     {
+        dst_clip_h += dst_clip_y;
+        dst_clip_y = 0;
+     }
+   if ((dst_clip_x + dst_clip_w) > dst_w)
+     dst_clip_w = dst_w - dst_clip_x;
+   if ((dst_clip_y + dst_clip_h) > dst_h)
+     dst_clip_h = dst_h - dst_clip_y;
+
+   if (dst_clip_x < dst_region_x)
+     {
+	dst_clip_w += dst_clip_x - dst_region_x;
+	dst_clip_x = dst_region_x;
+     }
+   if ((dst_clip_x + dst_clip_w) > (dst_region_x + dst_region_w))
+     dst_clip_w = dst_region_x + dst_region_w - dst_clip_x;
+   if (dst_clip_y < dst_region_y)
+     {
+	dst_clip_h += dst_clip_y - dst_region_y;
+	dst_clip_y = dst_region_y;
+     }
+   if ((dst_clip_y + dst_clip_h) > (dst_region_y + dst_region_h))
+     dst_clip_h = dst_region_y + dst_region_h - dst_clip_y;
+
+   if ((src_region_w <= 0) || (src_region_h <= 0) ||
+       (dst_region_w <= 0) || (dst_region_h <= 0) ||
+       (dst_clip_w <= 0) || (dst_clip_h <= 0))
+     return;
+
+   /* sanitise x */
+   if (src_region_x < 0)
+     {
+	dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
+	dst_region_w += (src_region_x * dst_region_w) / src_region_w;
+	src_region_w += src_region_x;
+	src_region_x = 0;
+     }
+   if (src_region_x >= src_w) return;
+   if ((src_region_x + src_region_w) > src_w)
+     {
+	dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
+	src_region_w = src_w - src_region_x;
+     }
+   if (dst_region_w <= 0) return;
+   if (src_region_w <= 0) return;
+   if (dst_clip_x < 0)
+     {
+	dst_clip_w += dst_clip_x;
+	dst_clip_x = 0;
+     }
+   if (dst_clip_w <= 0) return;
+   if (dst_clip_x >= dst_w) return;
+   if (dst_clip_x < dst_region_x)
+     {
+	dst_clip_w += (dst_clip_x - dst_region_x);
+	dst_clip_x = dst_region_x;
+     }
+   if ((dst_clip_x + dst_clip_w) > dst_w)
+     {
+	dst_clip_w = dst_w - dst_clip_x;
+     }
+   if (dst_clip_w <= 0) return;
+
+   /* sanitise y */
+   if (src_region_y < 0)
+     {
+	dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
+	dst_region_h += (src_region_y * dst_region_h) / src_region_h;
+	src_region_h += src_region_y;
+	src_region_y = 0;
+     }
+   if (src_region_y >= src_h) return;
+   if ((src_region_y + src_region_h) > src_h)
+     {
+	dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
+	src_region_h = src_h - src_region_y;
+     }
+   if (dst_region_h <= 0) return;
+   if (src_region_h <= 0) return;
+   if (dst_clip_y < 0)
+     {
+	dst_clip_h += dst_clip_y;
+	dst_clip_y = 0;
+     }
+   if (dst_clip_h <= 0) return;
+   if (dst_clip_y >= dst_h) return;
+   if (dst_clip_y < dst_region_y)
+     {
+	dst_clip_h += (dst_clip_y - dst_region_y);
+	dst_clip_y = dst_region_y;
+     }
+   if ((dst_clip_y + dst_clip_h) > dst_h)
+     {
+	dst_clip_h = dst_h - dst_clip_y;
+     }
+   if (dst_clip_h <= 0) return;
+
+   /* allocate scale lookup tables */
+   lin_ptr = alloca(dst_clip_w * sizeof(int));
+   row_ptr = alloca(dst_clip_h * sizeof(DATA32 *));
+
+   /* figure out dst jump */
+   //dst_jump = dst_w - dst_clip_w;
+
+   /* figure out dest start ptr */
+   dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
+
+   if (mul_col != 0xffffffff)
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, dst_clip_w, render_op);
+   else
+     func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, render_op);
+
+   if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
+     {
+        ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
+        for (y = 0; y < dst_clip_h; y++)
+          {
+             /* * blend here [clip_w *] ptr -> dst_ptr * */
+             func(ptr, NULL, mul_col, dst_ptr, dst_clip_w);
+
+             ptr += src_w;
+             dst_ptr += dst_w;
+          }
+     }
+   else
+     {
+        /* fill scale tables */
+	for (x = 0; x < dst_clip_w; x++)
+          lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
+	for (y = 0; y < dst_clip_h; y++)
+          row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
+                                    + src_region_y) * src_w);
+	/* scale to dst */
+	dptr = dst_ptr;
+
+        /* a scanline buffer */
+        buf = alloca(dst_clip_w * sizeof(DATA32));
+        for (y = 0; y < dst_clip_h; y++)
+          {
+             dst_ptr = buf;
+             for (x = 0; x < dst_clip_w; x++)
+               {
+                  ptr = row_ptr[y] + lin_ptr[x];
+                  *dst_ptr = *ptr;
+                  dst_ptr++;
+               }
+             /* * blend here [clip_w *] buf -> dptr * */
+             func(buf, NULL, mul_col, dptr, dst_clip_w);
+
+             dptr += dst_w;
+          }
+     }
+}
+
 static void
 scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
-					  RGBA_Draw_Context *dc,
-					  int src_region_x, int src_region_y,
-					  int src_region_w, int src_region_h,
-					  int dst_region_x, int dst_region_y,
-					  int dst_region_w, int dst_region_h)
+                                         RGBA_Draw_Context *dc,
+                                         int src_region_x, int src_region_y,
+                                         int src_region_w, int src_region_h,
+                                         int dst_region_x, int dst_region_y,
+                                         int dst_region_w, int dst_region_h)
 {
    int      x, y;
    int     *lin_ptr;
