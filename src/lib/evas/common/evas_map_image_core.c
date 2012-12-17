@@ -115,7 +115,7 @@
                          {
                             d = dst->image.data;
                             d += (y * dst->cache_entry.w) + x;
-                            func(buf, NULL, dc->mul.col, d, w);
+                            func(buf, NULL, mul_col, d, w);
                          }
                     }
                   else break;
@@ -216,7 +216,7 @@
                          {
                             d = dst->image.data;
                             d += (y * dst->cache_entry.w) + x;
-                            func(buf, NULL, dc->mul.col, d, w);
+                            func(buf, NULL, mul_col, d, w);
                          }
                     }
                   else break;

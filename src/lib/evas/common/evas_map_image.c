@@ -640,10 +640,66 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 
 #undef FUNC_NAME
 #undef FUNC_NAME_DO
-#define FUNC_NAME evas_common_map_rgba_internal
+#define FUNC_NAME _evas_common_map_rgba_internal
 #define FUNC_NAME_DO evas_common_map_rgba_internal_do
 #undef SCALE_USING_MMX
 #include "evas_map_image_internal.c"
+
+#ifdef BUILD_MMX
+void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_map_rgba_internal_mmx(src, dst,
+                                      clip_x, clip_y, clip_w, clip_h,
+                                      mul_col, dc->render_op,
+                                      p, smooth, level);
+}
+#endif
+
+void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_map_rgba_internal(src, dst,
+                                  clip_x, clip_y, clip_w, clip_h,
+                                  mul_col, dc->render_op,
+                                  p, smooth, level);
+}
 
 EAPI void
 evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
@@ -695,6 +751,56 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
 }
 
 EAPI void
+evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb)
+{
+   static Cutout_Rects *rects = NULL;
+   Cutout_Rect  *r;
+   int          c, cx, cy, cw, ch;
+   int          i;
+
+   if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_load_data(&src->cache_entry);
+        else
+#endif
+          evas_cache_image_load_data(&src->cache_entry);
+     }
+
+   evas_common_image_colorspace_normalize(src);
+
+   if (!src->image.data) return;
+
+   if ((!dc->cutout.rects) && (!dc->clip.use))
+     {
+        cb(src, dst, dc, map, smooth, level, offset);
+        return;
+     }
+
+   /* save out clip info */
+   c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
+   /* our clip is 0 size.. abort */
+   if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
+     {
+        dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+        return;
+     }
+
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
+   for (i = 0; i < rects->active; ++i)
+     {
+        r = rects->rects + i;
+        evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+        cb(src, dst, dc, map, smooth, level, offset);
+     }
+
+   /* restore clip info */
+   dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                      RGBA_Draw_Context *dc,
                      int npoints EINA_UNUSED, RGBA_Map_Point *p,
@@ -712,6 +818,26 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
      cb = evas_common_map_rgba_internal;
 
    evas_common_map_rgba_cb(src, dst, dc, npoints, p, smooth, level, cb);
+}
+
+EAPI void
+evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, int level)
+{
+#ifdef BUILD_MMX
+   int mmx, sse, sse2;
+
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
+   if (mmx)
+     _evas_common_map_rgba_internal_mmx(src, dst,
+                                        clip_x, clip_y, clip_w, clip_h,
+                                        mul_col, render_op,
+                                        p, smooth, level);
+   else
+#endif
+     _evas_common_map_rgba_internal(src, dst,
+                                    clip_x, clip_y, clip_w, clip_h,
+                                    mul_col, render_op,
+                                    p, smooth, level);
 }
 
 EAPI void

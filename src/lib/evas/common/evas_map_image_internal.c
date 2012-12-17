@@ -1,12 +1,13 @@
 // 66.74 % of time
 static void
 FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
-          RGBA_Draw_Context *dc,
-          RGBA_Map_Point *p, 
+          int clip_x, int clip_y, int clip_w, int clip_h,
+          DATA32 mul_col, int render_op,
+          RGBA_Map_Point *p,
           int smooth, int level EINA_UNUSED) // level unused for now - for future use
 {
    int i;
-   int c, cx, cy, cw, ch;
+   int cx, cy, cw, ch;
    int ytop, ybottom, ystart, yend, y, sw, shp, swp, direct;
    Line *spans;
    DATA32 *buf = NULL, *sp;
@@ -14,16 +15,11 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    int havea = 0;
    int havecol = 4;
 
-   // get the clip
-   c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
-   if (!c)
-     {
-        cx = 0;
-        cy = 0;
-        cw = dst->cache_entry.w;
-        ch = dst->cache_entry.h;
-     }
-   
+   cx = clip_x;
+   cy = clip_y;
+   cw = clip_w;
+   ch = clip_h;
+
    // find y yop line and y bottom line
    ytop = p[0].y;
    if ((p[0].col >> 24) < 0xff) havea = 1;
@@ -84,7 +80,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    // if operation is solid, bypass buf and draw func and draw direct to dst
    direct = 0;
    if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha) &&
-       (!dc->mul.use) && (!havea))
+       (mul_col == 0xffffffff) && (!havea))
      {
         direct = 1;
      }
@@ -95,10 +91,10 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         buf = alloca(cw * sizeof(DATA32));
         pa = src->cache_entry.flags.alpha;
         if (havea) src->cache_entry.flags.alpha = 1;
-        if (dc->mul.use)
-          func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, cw, dc->render_op);
+        if (mul_col != 0xffffffff)
+          func = evas_common_gfx_func_composite_pixel_color_span_get(src, mul_col, dst, cw, render_op);
         else
-          func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
+          func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, render_op);
         src->cache_entry.flags.alpha = pa;
      }
     
@@ -124,14 +120,17 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    DATA32 *buf = NULL, *sp;
    RGBA_Gfx_Func func = NULL;
    int cx, cy, cw, ch;
+   DATA32 mul_col;
    int ystart, yend, y, sw, shp, swp, direct;
    int havecol;
    int i;
-   
+
    cx = dc->clip.x;
    cy = dc->clip.y;
    cw = dc->clip.w;
    ch = dc->clip.h;
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
 
    if (ms->ystart < cy) ystart = cy;
    else ystart = ms->ystart;
