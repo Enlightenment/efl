@@ -297,7 +297,13 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
 
              user_itr = va_arg(ap, EDBus_Message_Iter **);
              sub = _message_iterator_new(EINA_TRUE);
-             EINA_SAFETY_ON_NULL_GOTO(sub, error);
+             if (!sub)
+               {
+                  ERR("Could not create sub iterator");
+                  r = EINA_FALSE;
+                  goto next;
+               }
+
              iter->iterators = eina_inlist_append(iter->iterators,
                                                   EINA_INLIST_GET(sub));
 
@@ -310,7 +316,8 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
                   ERR("variant not supported by \
                       edbus_message_iter_arguments_set(), \
                       try edbus_message_iter_container_new()");
-                  goto error;
+                  r = EINA_FALSE;
+                  goto next;
                }
              else
                {
@@ -326,14 +333,12 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
              *user_itr = sub;
           }
 
+next:
         dbus_free(type);
-        if (!r || !dbus_signature_iter_next(&signature_iter)) break;
-        continue;
-error:
-       r = EINA_FALSE;
-       dbus_free(type);
-       break;
+        if (!r || !dbus_signature_iter_next(&signature_iter))
+          break;
      }
+
    return r;
 }
 
