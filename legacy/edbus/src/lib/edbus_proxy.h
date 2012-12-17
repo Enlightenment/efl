@@ -11,10 +11,12 @@
  * @brief Get a proxy of the following interface name in a EDBus_Object.
  */
 EAPI EDBus_Proxy          *edbus_proxy_get(EDBus_Object *obj, const char *interface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Increase proxy reference.
  */
 EAPI EDBus_Proxy          *edbus_proxy_ref(EDBus_Proxy *proxy) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Decrease proxy reference.
  * If reference == 0 proxy will be freed and all your children.
@@ -74,6 +76,7 @@ EAPI EDBus_Pending        *edbus_proxy_send(EDBus_Proxy *proxy, EDBus_Message *m
  * edbus_message_iter_* functions.
  */
 EAPI EDBus_Pending        *edbus_proxy_call(EDBus_Proxy *proxy, const char *member, EDBus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, ...) EINA_ARG_NONNULL(1, 2, 6);
+
 /**
  * @brief Call a method in proxy.
  * Send a method call to interface that proxy belong with data.

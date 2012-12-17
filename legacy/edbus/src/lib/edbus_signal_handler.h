@@ -24,6 +24,7 @@ EAPI EDBus_Signal_Handler *edbus_signal_handler_add(EDBus_Connection *conn, cons
  * @brief Increase signal handler reference.
  */
 EAPI EDBus_Signal_Handler *edbus_signal_handler_ref(EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Decrease signal handler reference.
  * If reference == 0 signal handler will be freed.
@@ -36,6 +37,7 @@ EAPI void                  edbus_signal_handler_unref(EDBus_Signal_Handler *hand
  * words it will be canceled but memory will not be freed.
  */
 EAPI void                  edbus_signal_handler_del(EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Add extra argument in match of signal handler to obtain specifics signals.
  *
@@ -76,6 +78,7 @@ EAPI Eina_Bool             edbus_signal_handler_match_extra_vset(EDBus_Signal_Ha
  * @brief Add a callback function to be called when signal handler will be freed.
  */
 EAPI void                  edbus_signal_handler_cb_free_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Remove callback registered in edbus_signal_handler_cb_free_add().
  */

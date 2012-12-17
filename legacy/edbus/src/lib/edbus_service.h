@@ -113,6 +113,7 @@ EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection 
  * removed too.
  */
 EAPI void edbus_service_interface_unregister(EDBus_Service_Interface *iface) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Unregister all interfaces of the object path that this interface belongs
  * and the object path.
@@ -131,6 +132,7 @@ EAPI const char *edbus_service_object_path_get(const EDBus_Service_Interface *if
  * @param ... values that will be send on signal
  */
 EAPI Eina_Bool edbus_service_signal_emit(const EDBus_Service_Interface *iface, unsigned int signal_id, ...) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Create signal message.
  * Each signal handler have a internal id, the first signal handler of
@@ -141,10 +143,12 @@ EAPI Eina_Bool edbus_service_signal_emit(const EDBus_Service_Interface *iface, u
  * @param signal_id id of signal
  */
 EAPI EDBus_Message *edbus_service_signal_new(const EDBus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Send a signal message.
  */
 EAPI Eina_Bool edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Store data at object path, this data can be obtained from all interfaces
  * of the same object.
@@ -155,6 +159,7 @@ EAPI Eina_Bool edbus_service_signal_send(const EDBus_Service_Interface *iface, E
  * @param data
  */
 EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+
 /**
  * @brief Get data stored in object path.
  *

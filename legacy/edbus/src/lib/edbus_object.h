@@ -15,10 +15,12 @@
  * @param path object path of this object
  */
 EAPI EDBus_Object *edbus_object_get(EDBus_Connection *conn, const char *bus, const char *path) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Increase object reference.
  */
 EAPI EDBus_Object *edbus_object_ref(EDBus_Object *obj) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Decrease object reference.
  * If reference == 0 object will be freed and all its children.
@@ -33,6 +35,7 @@ EAPI void          edbus_object_unref(EDBus_Object *obj) EINA_ARG_NONNULL(1);
  * @param data passed to callback
  */
 EAPI void          edbus_object_cb_free_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Remove callback registered in edbus_object_cb_free_add().
  */
@@ -103,6 +106,7 @@ EAPI const char           *edbus_object_path_get(const EDBus_Object *obj) EINA_A
  * EDBUS_TIMEOUT_INFINITE for no timeout
  */
 EAPI EDBus_Pending        *edbus_object_send(EDBus_Object *obj, EDBus_Message *msg, EDBus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Add a signal handler.
  *

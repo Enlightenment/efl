@@ -23,6 +23,7 @@ EAPI EDBus_Message        *edbus_message_method_call_new(const char *dest, const
  * @brief Increase message reference.
  */
 EAPI EDBus_Message        *edbus_message_ref(EDBus_Message *msg) EINA_ARG_NONNULL(1);
+
 /**
  * @brief Decrease message reference.
  * If reference == 0 message will be freed and all its children.
@@ -46,6 +47,7 @@ EAPI const char           *edbus_message_signature_get(const EDBus_Message *msg)
  * @return new EDBus_Message, free with edbus_message_unref()
  */
 EAPI EDBus_Message        *edbus_message_error_new(const EDBus_Message *reply, const char *error_name, const char *error_msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Constructs a message that is a reply to a method call.
  *
@@ -54,6 +56,7 @@ EAPI EDBus_Message        *edbus_message_error_new(const EDBus_Message *reply, c
  * @return new EDBus_Message, free with edbus_message_unref()
  */
 EAPI EDBus_Message        *edbus_message_method_return_new(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Constructs a new message representing a signal emission.
  *
@@ -77,6 +80,7 @@ EAPI Eina_Bool             edbus_message_error_get(const EDBus_Message *msg, con
  * needs to be used.
  */
 EAPI Eina_Bool             edbus_message_arguments_get(const EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Get data from EDBus_Message. For each complete type we must have
  * a pointer to store its value, in case of complex type
@@ -104,6 +108,7 @@ EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, cons
  * @defgroup EDBus_Message_Iter Iterator
  * @{
  */
+
 /**
  * @brief Create and appends a typed iterator to another iterator.
  *
@@ -128,6 +133,7 @@ EAPI EDBus_Message_Iter *edbus_message_iter_container_new(EDBus_Message_Iter *it
  * @brief Append a basic type to EDBus_Iterator.
  */
 EAPI Eina_Bool               edbus_message_iter_basic_append(EDBus_Message_Iter *iter, int type, ...) EINA_ARG_NONNULL(1, 3);
+
 /**
  * @brief Set data to EDBus_Message_Iter. For each complete in signature
  * you need pass the value, in case of complex type a pointer to be allocated a
@@ -182,6 +188,7 @@ EAPI Eina_Bool               edbus_message_iter_container_close(EDBus_Message_It
  * @brief Get the main EDBus_Message_Iter from the EDBus_Message.
  */
 EAPI EDBus_Message_Iter *edbus_message_iter_get(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Get a basic type from EDBus_Iterator.
  */
@@ -193,6 +200,7 @@ EAPI void                    edbus_message_iter_basic_get(EDBus_Message_Iter *it
  * @note The returned string must be freed.
  */
 EAPI char                   *edbus_message_iter_signature_get(EDBus_Message_Iter *iter) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
 /**
  * @brief Moves the iterator to the next field, if any.
  * @param iter iterator
@@ -215,6 +223,7 @@ EAPI Eina_Bool               edbus_message_iter_next(EDBus_Message_Iter *iter) E
  *
  */
 EAPI Eina_Bool               edbus_message_iter_get_and_next(EDBus_Message_Iter *iter, char type, ...) EINA_ARG_NONNULL(1, 2, 3);
+
 /**
  * @brief Reads a block of fixed-length values from the message iterator.
  *
@@ -233,6 +242,7 @@ EAPI Eina_Bool               edbus_message_iter_get_and_next(EDBus_Message_Iter 
  * fast; it's much preferred over walking the entire array with an iterator.
  */
 EAPI Eina_Bool edbus_message_iter_fixed_array_get(EDBus_Message_Iter *iter, int signature, void *value, int *n_elements) EINA_ARG_NONNULL(1, 3, 4);
+
 /**
  * @brief Get data from EDBus_Message_Iter, for each complete type must have
  * a pointer to store his value, in case of complex type a
@@ -245,6 +255,7 @@ EAPI Eina_Bool edbus_message_iter_fixed_array_get(EDBus_Message_Iter *iter, int 
  * @return EINA_FALSE if signature different from signature in iterator
  */
 EAPI Eina_Bool               edbus_message_iter_arguments_get(EDBus_Message_Iter *iter, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Get data from EDBus_Message_Iter, for each complete type must have
  * a pointer to store his value, in case of complex type a
