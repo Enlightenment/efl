@@ -37,7 +37,6 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
 {
    memcpy(dst, src, sizeof(Evas_Text_Props));
    dst->glyphs = NULL;
-   dst->glyphs_length = 0;
    evas_common_text_props_content_ref(dst);
 }
 
@@ -68,9 +67,10 @@ evas_common_text_props_content_nofree_unref(Evas_Text_Props *props)
              props->font_instance = NULL;
           }
 
-        free(props->glyphs);
+        evas_common_font_glyphs_unref(props->glyphs);
+        /* After unreferencing the glyph array, a thread will still hold
+         * a reference, so this can be safely set to NULL. */
         props->glyphs = NULL;
-        props->glyphs_length = 0;
         
         if (props->info->glyph)
           free(props->info->glyph);
@@ -90,9 +90,10 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
    if (!props->info)
       return;
    
-   free(props->glyphs);
+   evas_common_font_glyphs_unref(props->glyphs);
+   /* After unreferencing the glyph array, a thread will still hold
+    * a reference, so this can be safely set to NULL. */
    props->glyphs = NULL;
-   props->glyphs_length = 0;
 
    if (--(props->info->refcount) == 0)
      {

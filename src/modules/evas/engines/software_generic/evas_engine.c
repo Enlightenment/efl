@@ -1260,8 +1260,8 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
 #endif   
      {
         evas_common_font_draw_prepare(text_props);
-	evas_common_font_draw(surface, context, x, y, text_props);
-	evas_common_cpu_end_opt();
+        evas_common_font_draw(surface, context, x, y, text_props->glyphs);
+        evas_common_cpu_end_opt();
      }
 }
 

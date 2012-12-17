@@ -19,6 +19,14 @@ typedef enum
 #define REPLACEMENT_CHAR 0xFFFD
 
 typedef struct _Evas_Glyph Evas_Glyph;
+typedef struct _Evas_Glyph_Array Evas_Glyph_Array;
+
+struct _Evas_Glyph_Array
+{
+   Eina_Inarray *array;
+   unsigned int refcount;
+   Eina_Lock lock;
+};
 
 struct _Evas_Text_Props
 {
@@ -33,8 +41,7 @@ struct _Evas_Text_Props
    Evas_Text_Props_Info *info;
    void *font_instance;
 
-   Evas_Glyph *glyphs;
-   int glyphs_length;
+   Evas_Glyph_Array *glyphs;
 
    int generation;
    Eina_Bool changed : 1;
@@ -60,6 +67,11 @@ struct _Evas_Font_Glyph_Info
    Evas_Coord width;
    Evas_Coord pen_after;
 };
+
+void
+evas_common_font_glyphs_ref(Evas_Glyph_Array *array);
+void
+evas_common_font_glyphs_unref(Evas_Glyph_Array *array);
 
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,

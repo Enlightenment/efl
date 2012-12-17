@@ -29,32 +29,29 @@ evas_common_font_draw_init(void)
  */
 static void
 evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
-                               const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w,
+                               Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w,
                                int ext_h, int im_w, int im_h EINA_UNUSED)
 {
    DATA32 *im;
-   Evas_Glyph *glyphs;
-   unsigned int length;
-   unsigned int it;
+   Evas_Glyph *glyph;
+
+   if (!glyphs) return;
+   if (!glyphs->array) return;
 
    im = dst->image.data;
 
-   if (!text_props->glyphs) return ;
-
-   glyphs = text_props->glyphs;
-   length = text_props->glyphs_length;
-   for (it = 0; it < length; ++it, ++glyphs)
+   EINA_INARRAY_FOREACH(glyphs->array, glyph)
      {
         RGBA_Font_Glyph *fg;
         int chr_x, chr_y;
 
-        fg = glyphs->fg;
+        fg = glyph->fg;
 
 	/* FIXME: Why was that moved out of prepare ? This increase cache miss. */
-        glyphs->coord.w = fg->glyph_out->bitmap.width;
-        glyphs->coord.h = fg->glyph_out->bitmap.rows;
-        glyphs->j = fg->glyph_out->bitmap.pitch;
-        glyphs->data = fg->glyph_out->bitmap.buffer;
+        glyph->coord.w = fg->glyph_out->bitmap.width;
+        glyph->coord.h = fg->glyph_out->bitmap.rows;
+        glyph->j = fg->glyph_out->bitmap.pitch;
+        glyph->data = fg->glyph_out->bitmap.buffer;
 
         if (dc->font_ext.func.gl_new)
           {
@@ -63,19 +60,19 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
 
-        chr_x = x + glyphs->coord.x/* EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR */;
-        chr_y = y + glyphs->coord.y/* EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR */;
+        chr_x = x + glyph->coord.x;
+        chr_y = y + glyph->coord.y;
 
         if (chr_x < (ext_x + ext_w))
           {
              DATA8 *data;
              int i, j, w, h;
 
-             data = glyphs->data;
-             j = glyphs->j;
-             w = glyphs->coord.w;
+             data = glyph->data;
+             j = glyph->j;
+             w = glyph->coord.w;
              if (j < w) j = w;
-             h = glyphs->coord.h;
+             h = glyph->coord.h;
 
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_FONT             
@@ -226,26 +223,196 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
 }
 
 EAPI void
+evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h EINA_UNUSED)
+{
+   DATA32 *im;
+   Evas_Glyph *glyph;
+
+   if (!glyphs) return;
+   if (!glyphs->array) return;
+
+   im = dst->image.data;
+
+   EINA_INARRAY_FOREACH(glyphs->array, glyph)
+     {
+        RGBA_Font_Glyph *fg;
+        int chr_x, chr_y;
+
+        fg = glyph->fg;
+
+	/* FIXME: Why was that moved out of prepare ? This increase cache miss. */
+        glyph->coord.w = fg->glyph_out->bitmap.width;
+        glyph->coord.h = fg->glyph_out->bitmap.rows;
+        glyph->j = fg->glyph_out->bitmap.pitch;
+        glyph->data = fg->glyph_out->bitmap.buffer;
+
+        if (dc->font_ext.func.gl_new)
+          {
+             /* extension calls */
+             fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
+             fg->ext_dat_free = dc->font_ext.func.gl_free;
+          }
+
+        chr_x = x + glyph->coord.x;
+        chr_y = y + glyph->coord.y;
+
+        if (chr_x < (ext_x + ext_w))
+          {
+             DATA8 *data;
+             int i, j, w, h;
+
+             data = glyph->data;
+             j = glyph->j;
+             w = glyph->coord.w;
+             if (j < w) j = w;
+             h = glyph->coord.h;
+
+             if ((j > 0) && (chr_x + w > ext_x))
+               {
+                  if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
+                    {
+                       /* ext glyph draw */
+                       dc->font_ext.func.gl_draw(dc->font_ext.data,
+                                                 (void *)dst,
+                                                 dc, fg, chr_x,
+                                                 y - (chr_y - y));
+                    }
+                  else
+                    {
+                       if ((fg->glyph_out->bitmap.num_grays == 256) &&
+                           (fg->glyph_out->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY))
+                         {
+                            for (i = 0; i < h; i++)
+                              {
+                                 int dx, dy;
+                                 int in_x, in_w;
+
+                                 in_x = 0;
+                                 in_w = 0;
+                                 dx = chr_x;
+                                 dy = y - (chr_y - i - y);
+
+                                 if ((dx < (ext_x + ext_w)) &&
+                                     (dy >= (ext_y)) &&
+                                     (dy < (ext_y + ext_h)))
+                                   {
+                                      if (dx + w > (ext_x + ext_w))
+                                        in_w += (dx + w) - (ext_x + ext_w);
+                                      if (dx < ext_x)
+                                        {
+                                           in_w += ext_x - dx;
+                                           in_x = ext_x - dx;
+                                           dx = ext_x;
+                                        }
+                                      if (in_w < w)
+                                        {
+                                           func(NULL, data + (i * j) + in_x, dc->col.col,
+                                                im + (dy * im_w) + dx, w - in_w);
+                                        }
+                                   }
+                              }
+                         }
+                       else
+                         {
+                            DATA8 *tmpbuf = NULL, *dp, *tp, bits;
+                            int bi, bj;
+                            const DATA8 bitrepl[2] = {0x0, 0xff};
+
+                            tmpbuf = alloca(w);
+                            for (i = 0; i < h; i++)
+                              {
+                                 int dx, dy;
+                                 int in_x, in_w, end;
+
+                                 in_x = 0;
+                                 in_w = 0;
+                                 dx = chr_x;
+                                 dy = y - (chr_y - i - y);
+
+                                 tp = tmpbuf;
+                                 dp = data + (i * fg->glyph_out->bitmap.pitch);
+                                 for (bi = 0; bi < w; bi += 8)
+                                   {
+                                      bits = *dp;
+                                      if ((w - bi) < 8) end = w - bi;
+                                      else end = 8;
+                                      for (bj = 0; bj < end; bj++)
+                                        {
+                                           *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+                                           tp++;
+                                        }
+                                      dp++;
+                                   }
+                                 if ((dx < (ext_x + ext_w)) &&
+                                     (dy >= (ext_y)) &&
+                                     (dy < (ext_y + ext_h)))
+                                   {
+                                      if (dx + w > (ext_x + ext_w))
+                                        in_w += (dx + w) - (ext_x + ext_w);
+                                      if (dx < ext_x)
+                                        {
+                                           in_w += ext_x - dx;
+                                           in_x = ext_x - dx;
+                                           dx = ext_x;
+                                        }
+                                      if (in_w < w)
+                                        {
+                                           func(NULL, tmpbuf + in_x, dc->col.col,
+                                                im + (dy * im_w) + dx, w - in_w);
+                                        }
+                                   }
+                              }
+                         }
+                    }
+               }
+          } else break;
+     }
+}
+
+void
+evas_common_font_glyphs_ref(Evas_Glyph_Array *array)
+{
+   if (!array) return;
+
+   eina_lock_take(&array->lock);
+   array->refcount++;
+   eina_lock_release(&array->lock);
+}
+
+void
+evas_common_font_glyphs_unref(Evas_Glyph_Array *array)
+{
+   if (!array) return;
+
+   eina_lock_take(&array->lock);
+   if (--array->refcount)
+     {
+        eina_lock_release(&array->lock);
+        return;
+     }
+
+   eina_lock_release(&array->lock);
+   eina_lock_free(&array->lock);
+
+   eina_inarray_free(array->array);
+   free(array);
+}
+
+EAPI void
 evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
    RGBA_Font_Glyph *fg;
-   Evas_Glyph *glyphs;
-   int glyphs_length;
-   int glyphs_max;
+   Eina_Inarray *glyphs;
    EVAS_FONT_WALK_TEXT_INIT();
 
    fi = text_props->font_instance;
    if (!fi) return;
 
    if (!text_props->changed && text_props->generation == fi->generation && text_props->glyphs)
-     return ;
+     return;
 
-   glyphs = text_props->glyphs;
-   glyphs_length = 0;
-   glyphs_max = text_props->glyphs_length;
-   text_props->glyphs_length = 0;
-
+   glyphs = eina_inarray_new(sizeof(Evas_Glyph), 32);
    evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
@@ -259,7 +426,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
    EVAS_FONT_WALK_TEXT_START()
      {
-        Evas_Glyph *glyph;
+        Evas_Glyph glyph;
         FT_UInt idx;
 
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
@@ -269,37 +436,43 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         if (!fg) continue;
         if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
 
-	if (glyphs_length + 1 >= glyphs_max)
-	  {
-             Evas_Glyph *tmp;
+        glyph.fg = fg;
+        glyph.idx = idx;
+        glyph.coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
+        glyph.coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
 
-             glyphs_max += 8;
-             tmp = realloc(glyphs, glyphs_max * sizeof (Evas_Glyph));
-             if (!tmp) return ;
-             glyphs = tmp;
-             text_props->glyphs = glyphs;
-	  }
-
-        glyph = glyphs + glyphs_length++;
-
-        glyph->fg = fg;
-        glyph->idx = idx;
-        glyph->coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
-        glyph->coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
+        if (eina_inarray_push(glyphs, &glyph) < 0) goto error;
      }
    EVAS_FONT_WALK_TEXT_END();
 
-   text_props->glyphs_length = glyphs_length;
-   text_props->glyphs = glyphs;
+   /*
+    * Clearing the reference to the glyph array is fine, since this
+    * reference is only used to use this from another thread, which is now
+    * holding the reference.
+    */
+   evas_common_font_glyphs_unref(text_props->glyphs);
+
+   text_props->glyphs = malloc(sizeof(*text_props->glyphs));
+   if (!text_props->glyphs) goto error;
+   text_props->glyphs->refcount = 1;
+   text_props->glyphs->array = glyphs;
+   if (!eina_lock_new(&text_props->glyphs->lock))
+     CRIT("Could not create glyph array lock");
+
    /* check if there's a request queue in fi, if so ask cserve2 to render
     * those glyphs
     */
 
    text_props->generation = fi->generation;
+
+   return;
+
+error:
+   eina_inarray_free(glyphs);
 }
 
 EAPI void
-evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props, Evas_Common_Font_Draw_Cb cb)
+evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, Evas_Common_Font_Draw_Cb cb)
 {
    static Cutout_Rects *rects = NULL;
    int ext_x, ext_y, ext_w, ext_h;
@@ -342,7 +515,7 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, c
 
    if (!dc->cutout.rects)
      {
-        cb(dst, dc, x, y, text_props,
+        cb(dst, dc, x, y, glyphs,
            func, ext_x, ext_y, ext_w, ext_h,
            im_w, im_h);
      }
@@ -358,7 +531,7 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, c
                {
                   r = rects->rects + i;
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-                  cb(dst, dc, x, y, text_props,
+                  cb(dst, dc, x, y, glyphs,
                      func, r->x, r->y, r->w, r->h,
                      im_w, im_h);
                }
@@ -368,9 +541,9 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, c
 }
 
 EAPI void
-evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props)
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs)
 {
-   evas_common_font_draw_cb(dst, dc, x, y, text_props,
+   evas_common_font_draw_cb(dst, dc, x, y, glyphs,
                             evas_common_font_draw_internal);
 }
 
@@ -392,7 +565,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
         evas_common_draw_context_clip_clip(dc,
                                            clip->x, clip->y,
                                            clip->w, clip->h);
-        evas_common_font_draw_internal(dst, dc, x, y, text_props,
+        evas_common_font_draw_internal(dst, dc, x, y, text_props->glyphs,
                                        func,
                                        dc->clip.x, dc->clip.y,
                                        dc->clip.w, dc->clip.h,
@@ -407,7 +580,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
         EINA_RECTANGLE_SET(&area, r->x, r->y, r->w - 1, r->h - 1);
         if (!eina_rectangle_intersection(&area, clip)) continue ;
         evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
-        evas_common_font_draw_internal(dst, dc, x, y, text_props,
+        evas_common_font_draw_internal(dst, dc, x, y, text_props->glyphs,
                                        func, area.x, area.y, area.w, area.h,
                                        im_w, im_h);
      }
