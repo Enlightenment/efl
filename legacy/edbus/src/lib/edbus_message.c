@@ -711,32 +711,28 @@ edbus_message_iter_arguments_get(EDBus_Message_Iter *iter, const char *signature
 EAPI Eina_Bool
 edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signature, va_list ap)
 {
-   int current_type;
-   DBusSignatureIter signature_iter;
+   int iter_type;
+   DBusSignatureIter sig_iter;
 
    EDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(iter->writable, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate(signature, NULL), EINA_FALSE);
 
-   dbus_signature_iter_init(&signature_iter, signature);
-   current_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
-   while (current_type != DBUS_TYPE_INVALID)
+   dbus_signature_iter_init(&sig_iter, signature);
+   iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
+   while (iter_type != DBUS_TYPE_INVALID)
      {
-        char *iter_sig = dbus_signature_iter_get_signature(&signature_iter);
-        int c = iter_sig[0];
+        int sig_type = dbus_signature_iter_get_current_type(&sig_iter);
 
-        dbus_free(iter_sig);
-        dbus_signature_iter_next(&signature_iter);
-
-        if ((c != current_type) && !(current_type == 'r' && c == '('))
+        if (sig_type != iter_type)
           {
              ERR("Type in iterator different of signature");
              return EINA_FALSE;
           }
 
-        if (dbus_type_is_basic(current_type))
-          get_basic(current_type, &iter->dbus_iterator, MAKE_PTR_FROM_VA_LIST(ap));
+        if (dbus_type_is_basic(iter_type))
+          get_basic(iter_type, &iter->dbus_iterator, MAKE_PTR_FROM_VA_LIST(ap));
         else
           {
              EDBus_Message_Iter **user_itr = va_arg(ap, EDBus_Message_Iter **);
@@ -750,8 +746,10 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
                                                   EINA_INLIST_GET(sub_itr));
              *user_itr = sub_itr;
           }
+
         dbus_message_iter_next(&iter->dbus_iterator);
-        current_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
+        dbus_signature_iter_next(&sig_iter);
+        iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
      }
    return EINA_TRUE;
 }
