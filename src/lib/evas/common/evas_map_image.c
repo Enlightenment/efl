@@ -631,7 +631,7 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 #ifdef BUILD_MMX
 # undef FUNC_NAME
 # undef FUNC_NAME_DO
-# define FUNC_NAME evas_common_map_rgba_internal_mmx
+# define FUNC_NAME _evas_common_map_rgba_internal_mmx
 # define FUNC_NAME_DO evas_common_map_rgba_internal_mmx_do
 # undef SCALE_USING_MMX
 # define SCALE_USING_MMX
