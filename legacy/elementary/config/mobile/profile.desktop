@@ -2,12 +2,14 @@
 Type=Link
 Name=Mobile
 Name[es]=Móvil
+Name[eo]=Portebla
 Name[fr]=Écran tactile
 Name[gl]=Móbil
 Name[pt]=Ecrã tátil
 Name[ko]=터치스크린
 Icon=icon.png
 Comment=Configuration set up to work best with touchscreen<br>phones, tablets and similar devices.
+Comment[eo]=Agordoj kongruas plej kun tuŝekranaj telefonoj,<br> tabulkomputiloj aŭ similaj aparatoj.
 Comment[es]=Configuración adaptada para el uso de pantallas táctiles<br>como la de los móviles, tablets y dispositivos similares.
 Comment[fr]=Configuration adaptée aux écrans tactiles<br>des téléphones, tablettes et apparentés.
 Comment[gl]=Configuración adaptada para o uso de pantallas táctiles<br>como a dos móbiles, tablets e dispositivos similares.
