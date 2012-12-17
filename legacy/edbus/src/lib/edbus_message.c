@@ -311,7 +311,7 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
                r = dbus_message_iter_open_container(&iter->dbus_iterator,
                                                     type[0], type+1,
                                                     &sub->dbus_iterator);
-             else if(type[1] == DBUS_TYPE_VARIANT)
+             else if (type[1] == DBUS_TYPE_VARIANT)
                {
                   ERR("variant not supported by \
                       edbus_message_iter_arguments_set(), \
