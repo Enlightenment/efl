@@ -421,7 +421,7 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
 {
    DBusSignatureIter signature_iter;
    EDBus_Message_Iter *iter;
-   char *type;
+   int type;
    Eina_Bool r = EINA_TRUE;
 
    if (!signature[0]) return EINA_TRUE;
@@ -432,21 +432,22 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
 
    dbus_signature_iter_init(&signature_iter, signature);
-   while ((type = dbus_signature_iter_get_signature(&signature_iter)))
+   while ((type = dbus_signature_iter_get_current_type(&signature_iter)))
      {
-        if (dbus_type_is_basic(type[0]))
-          r = append_basic(type[0], MAKE_PTR_FROM_VA_LIST(ap),
+        if (dbus_type_is_basic(type))
+          r = append_basic(type, MAKE_PTR_FROM_VA_LIST(ap),
                            &iter->dbus_iterator);
         else
           {
              ERR("sig = %s | edbus_message_arguments_set() and \
                   edbus_message_arguments_vset() only support basic types, \
-                  to complex types use edbus_message_iter_* functions", signature);
+                  to complex types use edbus_message_iter_* functions",
+                  signature);
              r = EINA_FALSE;
           }
 
-        dbus_free(type);
-        if (!r || !dbus_signature_iter_next(&signature_iter)) break;
+        if (!r || !dbus_signature_iter_next(&signature_iter))
+          break;
      }
 
    return r;
