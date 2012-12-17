@@ -310,3 +310,146 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 	  }
      }
 }
+
+EAPI void
+evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, int ext_h, DATA32 col, int render_op, RGBA_Polygon_Point *points, int x, int y)
+{
+   RGBA_Gfx_Func      func;
+   RGBA_Polygon_Point *pt;
+   RGBA_Vertex       *point;
+   RGBA_Edge         *edges;
+   Eina_Inlist  *spans;
+   int                num_active_edges;
+   int                n;
+   int                i, j, k;
+   int                yy0, yy1, yi;
+   int               *sorted_index;
+
+   if ((ext_w <= 0) || (ext_h <= 0)) return;
+
+   evas_common_cpu_end_opt();
+
+   n = 0; EINA_INLIST_FOREACH(points, pt) n++;
+   if (n < 3) return;
+   edges = malloc(sizeof(RGBA_Edge) * n);
+   if (!edges) return;
+   point = malloc(sizeof(RGBA_Vertex) * n);
+   if (!point)
+     {
+	free(edges);
+	return;
+     }
+   sorted_index = malloc(sizeof(int) * n);
+   if (!sorted_index)
+     {
+	free(edges);
+	free(point);
+	return;
+     }
+
+   k = 0;
+   EINA_INLIST_FOREACH(points, pt)
+     {
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
+	point[k].i = k;
+	k++;
+     }
+   qsort(point, n, sizeof(RGBA_Vertex), polygon_point_sorter);
+   for (k = 0; k < n; k++) sorted_index[k] = point[k].i;
+   k = 0;
+   EINA_INLIST_FOREACH(points, pt)
+     {
+	point[k].x = pt->x + x;
+	point[k].y = pt->y + y;
+	point[k].i = k;
+	k++;
+     }
+
+   yy0 = MAX(ext_y, ceil(point[sorted_index[0]].y - 0.5));
+   yy1 = MIN(ext_y + ext_h - 1, floor(point[sorted_index[n - 1]].y - 0.5));
+
+   k = 0;
+   num_active_edges = 0;
+   spans = NULL;
+
+   for (yi = yy0; yi <= yy1; yi++)
+     {
+	for (; (k < n) && (point[sorted_index[k]].y <= ((double)yi + 0.5)); k++)
+	  {
+	     i = sorted_index[k];
+
+	     if (i > 0) j = i - 1;
+	     else j = n - 1;
+	     if (point[j].y <= ((double)yi - 0.5))
+	       {
+		  POLY_EDGE_DEL(j)
+	       }
+	     else if (point[j].y > ((double)yi + 0.5))
+	       {
+		  POLY_EDGE_ADD(j, yi)
+	       }
+	     if (i < (n - 1)) j = i + 1;
+	     else j = 0;
+	     if (point[j].y <= ((double)yi - 0.5))
+	       {
+		  POLY_EDGE_DEL(i)
+	       }
+	     else if (point[j].y > ((double)yi + 0.5))
+	       {
+		  POLY_EDGE_ADD(i, yi)
+	       }
+	  }
+
+	qsort(edges, num_active_edges, sizeof(RGBA_Edge), polygon_edge_sorter);
+
+	for (j = 0; j < num_active_edges; j += 2)
+	  {
+	     int x0, x1;
+
+	     x0 = ceil(edges[j].x - 0.5);
+	     if (j < (num_active_edges - 1))
+	       x1 = floor(edges[j + 1].x - 0.5);
+	     else
+	       x1 = x0;
+	     if ((x1 >= ext_x) && (x0 < (ext_x + ext_w)) && (x0 <= x1))
+	       {
+		  RGBA_Span *span;
+
+		  if (x0 < ext_x) x0 = ext_x;
+		  if (x1 >= (ext_x + ext_w)) x1 = ext_x + ext_w - 1;
+		  span = malloc(sizeof(RGBA_Span));
+		  spans = eina_inlist_append(spans, EINA_INLIST_GET(span));
+		  span->y = yi;
+		  span->x = x0;
+		  span->w = (x1 - x0) + 1;
+	       }
+	     edges[j].x += edges[j].dx;
+	     edges[j + 1].x += edges[j + 1].dx;
+	  }
+     }
+
+   free(edges);
+   free(point);
+   free(sorted_index);
+
+   func = evas_common_gfx_func_composite_color_span_get(col, dst, 1, render_op);
+   if (spans)
+     {
+	RGBA_Span *span;
+
+	EINA_INLIST_FOREACH(spans, span)
+	  {
+	     DATA32 *ptr;
+
+             ptr = dst->image.data + (span->y * (dst->cache_entry.w)) + span->x;
+             func(NULL, NULL, col, ptr, span->w);
+          }
+	while (spans)
+	  {
+	     span = (RGBA_Span *)spans;
+	     spans = eina_inlist_remove(spans, spans);
+	     free(span);
+	  }
+     }
+}
