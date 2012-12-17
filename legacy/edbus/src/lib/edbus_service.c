@@ -1095,9 +1095,14 @@ EAPI void
 edbus_service_interface_unregister(EDBus_Service_Interface *iface)
 {
    EDBUS_SERVICE_INTERFACE_CHECK(iface);
+   if (!eina_hash_find(iface->obj->interfaces, objmanager->name))
+     {
+        //properties + introspectable + iface that user wants unregister
+        if (eina_hash_population(iface->obj->interfaces) < 4)
+          edbus_service_object_unregister(iface);
+        return;
+     }
    eina_hash_del(iface->obj->interfaces, NULL, iface);
-   if (eina_hash_population(iface->obj->interfaces) < 3)
-     edbus_service_object_unregister(iface);
    _interface_free(iface);
 }
 
