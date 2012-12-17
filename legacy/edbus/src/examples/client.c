@@ -6,6 +6,9 @@
 #define INTERFACE "org.enlightenment.Test"
 #define NTESTS 8
 
+static int _client_log_dom = -1;
+#define ERR(...)      EINA_LOG_DOM_ERR(_client_log_dom, __VA_ARGS__)
+
 static void
 _on_alive(void *context, const EDBus_Message *msg)
 {
@@ -20,13 +23,26 @@ _on_hello(void *context, const EDBus_Message *msg)
      printf("%s\n", txt);
 }
 
-#define bool_value EINA_TRUE
-#define byte_value 0xAA
-#define uint32_value 0xFFFFFFFF
-#define int32_value 0xFFFFFFFF
-#define int16_value 0x0000FFFF
-#define double_value 3.1415926
-#define string_value "test"
+#include <inttypes.h>
+
+static struct expected
+{
+   Eina_Bool b;
+   uint8_t y;
+   uint32_t u;
+   int32_t i;
+   int16_t n;
+   double d;
+   const char *s;
+} expected = {
+   .b = EINA_TRUE,
+   .y = 0xAA,
+   .u = 0xFFFFFFFF,
+   .i = 0xFFFFFFFF,
+   .n = 0xFFFF,
+   .d = 3.1415926,
+   .s = "test",
+};
 
 static void
 test(void)
@@ -44,104 +60,134 @@ _on_send_bool(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
    Eina_Bool b;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
    if (!edbus_message_arguments_get(msg, "b", &b))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (b != bool_value) printf("Error on bool\n");
-   else test();
+   if (b != expected.b)
+     {
+        ERR("Bool value doesn't match");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_send_byte(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   unsigned char byte;
+   uint8_t y;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "y", &byte))
+   if (!edbus_message_arguments_get(msg, "y", &y))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (byte != byte_value) printf("Error on byte\n");
-   else test();
+   if (y != expected.y)
+     {
+        ERR("Byte value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_send_uint32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   unsigned int uint32;
+   unsigned int u;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "u", &uint32))
+   if (!edbus_message_arguments_get(msg, "u", &u))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (uint32 != uint32_value) printf("Error on uint32\n");
-   else test();
+   if (u != expected.u)
+     {
+        ERR("Uint32 value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_send_int32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   int int32;
+   int32_t i;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "i", &int32))
+   if (!edbus_message_arguments_get(msg, "i", &i))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (int32 != (int)int32_value) printf("Error on int32\n");
-   else test();
+   if (i != expected.i)
+     {
+        ERR("Int32 value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_send_int16(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   short int int16;
+   int16_t n;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "n", &int16))
+   if (!edbus_message_arguments_get(msg, "n", &n))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (int16 != (short int)int16_value) printf("Error on int16\n");
-   else test();
+   if (n != expected.n)
+     {
+        ERR("Int16 value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
@@ -149,61 +195,66 @@ _on_send_double(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
    double d;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
    if (!edbus_message_arguments_get(msg, "d", &d))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (d != double_value) printf("Error on double\n");
-   else test();
+   if (d != expected.d)
+     {
+        ERR("Double value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_send_string(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   char *str;
+   char *s;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "s", &str))
+   if (!edbus_message_arguments_get(msg, "s", &s))
      {
-        fprintf(stderr, "Error: could not get entry contents\n");
+        ERR("Could not get entry contents");
         return;
      }
 
-   if (strcmp(str, string_value)) printf("Error on string\n");
-   else test();
+   if (strcmp(s, expected.s) != 0)
+     {
+        ERR("Uint32 value doesn't match expected value");
+        return;
+     }
+
+   test();
 }
 
 static void
 _on_async_test(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   char *str;
+
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        ERR("%s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "s", &str))
-     {
-        fprintf(stderr, "Error: could not get entry contents\n");
-        return;
-     }
-
-   printf("%s\n", str);
    test();
 }
 
@@ -227,6 +278,14 @@ main(void)
    EDBus_Object *obj;
    EDBus_Proxy *proxy;
 
+   eina_init();
+   _client_log_dom = eina_log_domain_register("client", EINA_COLOR_CYAN);
+   if (_client_log_dom < 0)
+     {
+        EINA_LOG_ERR("Unable to create 'client' log domain");
+        goto exit_eina;
+     }
+
    ecore_init();
    edbus_init();
 
@@ -237,13 +296,20 @@ main(void)
    edbus_proxy_signal_handler_add(proxy, "Alive", _on_alive, NULL);
    edbus_proxy_signal_handler_add(proxy, "Hello", _on_hello, NULL);
 
-   edbus_proxy_call(proxy, "SendBool", _on_send_bool, NULL, -1, "b", bool_value);
-   edbus_proxy_call(proxy, "SendByte", _on_send_byte, NULL, -1, "y", byte_value);
-   edbus_proxy_call(proxy, "SendUint32", _on_send_uint32, NULL, -1, "u", uint32_value);
-   edbus_proxy_call(proxy, "SendInt32", _on_send_int32, NULL, -1, "i", int32_value);
-   edbus_proxy_call(proxy, "SendInt16", _on_send_int16, NULL, -1, "n", int16_value);
-   edbus_proxy_call(proxy, "SendDouble", _on_send_double, NULL, -1, "d", double_value);
-   edbus_proxy_call(proxy, "SendString", _on_send_string, NULL, -1, "s", string_value);
+   edbus_proxy_call(proxy, "SendBool", _on_send_bool, NULL, -1, "b",
+                    expected.b);
+   edbus_proxy_call(proxy, "SendByte", _on_send_byte, NULL, -1, "y",
+                    expected.y);
+   edbus_proxy_call(proxy, "SendUint32", _on_send_uint32, NULL, -1, "u",
+                    expected.u);
+   edbus_proxy_call(proxy, "SendInt32", _on_send_int32, NULL, -1, "i",
+                    expected.i);
+   edbus_proxy_call(proxy, "SendInt16", _on_send_int16, NULL, -1, "n",
+                    expected.n);
+   edbus_proxy_call(proxy, "SendDouble", _on_send_double, NULL, -1, "d",
+                    expected.d);
+   edbus_proxy_call(proxy, "SendString", _on_send_string, NULL, -1, "s",
+                    expected.s);
    edbus_proxy_call(proxy, "AsyncTest", _on_async_test, NULL, -1, "");
 
    edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
@@ -256,5 +322,10 @@ main(void)
 
    edbus_shutdown();
    ecore_shutdown();
+
+   eina_log_domain_unregister(_client_log_dom);
+exit_eina:
+   eina_shutdown();
+
    return 0;
 }
