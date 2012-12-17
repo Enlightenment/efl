@@ -1,3 +1,11 @@
+2012-12-17  Leandro Pereira
+
+	* Get rid of unused `ref` field in RGBA_Image struct.
+	* Prepare soil to land threaded render.
+                * Use refcounted glyph arrays.
+		* Common code to draw lines, polygons, rectangles, maps,
+		and scaling.
+
 2012-12-13  Cedric Bail
 
 	* Fix potential segv in software engine native_set code.
