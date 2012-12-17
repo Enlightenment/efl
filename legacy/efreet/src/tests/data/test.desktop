@@ -1,7 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=Efreet Test Application
+Name[eo]=Provoversia aplikaĵo Efreet
 GenericName=Test Application
+GenericName[eo]=Provoversia aplikaĵo
 Exec=efreet_test %F %i
 Categories=Test;Enlightenment;
 Icon=TestIcon
