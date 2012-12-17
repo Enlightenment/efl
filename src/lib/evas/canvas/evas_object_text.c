@@ -34,6 +34,7 @@ struct _Evas_Object_Text
 
       unsigned char        style;
       double               ellipsis;
+      Eina_Unicode        *text;
    } cur, prev;
 
    float                       ascent, descent;
@@ -667,7 +668,7 @@ _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Eva
  * @param text the text to layout
  */
 static void
-_evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Unicode *text)
+_evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode *text)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    EvasBiDiStrIndex *v_to_l = NULL;
@@ -680,10 +681,13 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
 #endif
 
    if (!memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
+       o->cur.text == text &&
        obj->cur.scale == obj->prev.scale &&
        o->last_computed.w == obj->cur.geometry.w &&
        o->last_computed.h == obj->cur.geometry.h)
      return ;
+
+   if (o->items) _evas_object_text_items_clean(obj, o);
 
 #ifdef BIDI_SUPPORT
    if (o->bidi_delimiters)
@@ -865,6 +869,8 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, const Eina_Un
                }
           }
      }
+   if (o->prev.text != text) free(o->prev.text);
+   o->cur.text = text;
    o->prev = o->cur;
 
    _evas_object_text_item_order(eo_obj, o);
@@ -974,11 +980,6 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
      {
 	eina_stringshare_replace(&o->cur.utf8_text, NULL);
      }
-   if (text)
-     {
-        free(text);
-        text = NULL;
-     }
    _evas_object_text_recalc(eo_obj);
    o->changed = 1;
    evas_object_change(eo_obj, obj);
@@ -994,7 +995,6 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
 				obj->layer->evas->last_timestamp,
 				NULL);
    evas_object_inform_call_resize(eo_obj);
-   if (text) free(text);
 }
 
 EAPI void
@@ -2340,16 +2340,10 @@ _evas_object_text_recalc(Evas_Object *eo_obj)
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
    Eina_Unicode *text = NULL;
 
-   if (o->items) _evas_object_text_items_clean(obj, o);
-   if (o->cur.utf8_text)
-     text = eina_unicode_utf8_to_unicode(o->cur.utf8_text,
-           NULL);
-
+   text = o->cur.text;
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
 
    _evas_object_text_layout(eo_obj, o, text);
-
-   if (text) free(text);
 
    if ((o->font) && (o->items))
      {
