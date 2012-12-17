@@ -818,3 +818,7 @@
 2012-12-17  Chueon Park (Hermet)
 
 	* Fix the popup that returned invalid action buttons.
+
+2012-12-17  Chueon Park (Hermet)
+
+	* Makes naviframe safety even if someone deletes the naviframe in transition finished cb.

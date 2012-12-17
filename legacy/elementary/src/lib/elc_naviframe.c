@@ -1059,10 +1059,10 @@ _on_item_show_finished(void *data,
 
    elm_widget_tree_unfocusable_set(it->content, it->content_unfocusable);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_TRANSITION_FINISHED, data);
-
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_TRANSITION_FINISHED, data);
 }
 
 static void

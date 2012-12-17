@@ -94,6 +94,7 @@ Fixes:
    * Now, dummy object is always smart member of naviframe.
    * Fix naviframe's resize object problem when item was deleted.
    * Fix the popup that returned invalid action buttons.
+   * Fix the naviframe to not have crash even if user deletes the naviframe in the transition finished cb.
 
 Removals:
 
