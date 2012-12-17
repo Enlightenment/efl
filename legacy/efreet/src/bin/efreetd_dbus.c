@@ -240,8 +240,8 @@ dbus_init(void)
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!conn) goto conn_error;
 
-   edbus_connection_event_callback_add(conn, EDBUS_CONNECTION_DISCONNECTED,
-                                       disconnected, NULL);
+   edbus_connection_event_callback_add(conn,
+      EDBUS_CONNECTION_EVENT_DISCONNECTED, disconnected, NULL);
    iface = edbus_service_interface_register(conn, PATH, &desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                       on_name_request, NULL);
