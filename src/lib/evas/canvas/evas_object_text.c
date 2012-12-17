@@ -190,14 +190,12 @@ _evas_object_text_items_clear(Evas_Object_Text *o)
        o->last_computed.ellipsis_start != o->items)
      {
         _evas_object_text_item_clean(o->last_computed.ellipsis_start);
-        free(o->last_computed.ellipsis_start);
      }
    o->last_computed.ellipsis_start = NULL;
    if (o->last_computed.ellipsis_end &&
        EINA_INLIST_GET(o->last_computed.ellipsis_end) != EINA_INLIST_GET(o->items)->last)
      {
         _evas_object_text_item_clean(o->last_computed.ellipsis_end);
-        free(o->last_computed.ellipsis_end);
      }
    o->last_computed.ellipsis_end = NULL;
    while (o->items)
@@ -680,7 +678,8 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    int *segment_idxs = NULL;
 #endif
 
-   if (!memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
+   if (o->items &&
+       !memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
        o->cur.text == text &&
        obj->cur.scale == obj->prev.scale &&
        o->last_computed.w == obj->cur.geometry.w &&
@@ -869,7 +868,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                }
           }
      }
-   if (o->prev.text != text) free(o->prev.text);
+   if (o->cur.text != text) free(o->cur.text);
    o->cur.text = text;
    o->prev = o->cur;
 
@@ -1878,6 +1877,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur.font) eina_stringshare_del(o->cur.font);
    if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
+   if (o->cur.text) free(o->cur.text);
    if (o->font) evas_font_free(obj->layer->evas->evas, o->font);
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
@@ -2241,7 +2241,7 @@ evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
-   o->prev = o->cur;
+   /* o->prev = o->cur; */
    o->changed = 0;
 }
 
