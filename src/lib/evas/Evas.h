@@ -11956,8 +11956,8 @@ enum
  *
  * The retrieve color to the given palette at the given index of the given textgrid object.
  *
- * @param[out] pal
- * @param[out] idx
+ * @param[in] pal
+ * @param[in] idx
  * @param[out] r
  * @param[out] g
  * @param[out] b
