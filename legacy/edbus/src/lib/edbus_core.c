@@ -906,8 +906,8 @@ static void
 _disconnected(void *data, const EDBus_Message *msg)
 {
    EDBus_Connection *conn = data;
-   _edbus_connection_event_callback_call(conn, EDBUS_CONNECTION_DISCONNECTED,
-                                         NULL);
+   _edbus_connection_event_callback_call(
+      conn, EDBUS_CONNECTION_EVENT_DISCONNECTED, NULL);
 }
 
 static EDBus_Connection *

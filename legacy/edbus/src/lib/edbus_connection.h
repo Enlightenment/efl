@@ -103,7 +103,7 @@ EAPI void             *edbus_connection_data_del(EDBus_Connection *conn, const c
 typedef enum
 {
    EDBUS_CONNECTION_EVENT_DEL,
-   EDBUS_CONNECTION_DISCONNECTED,
+   EDBUS_CONNECTION_EVENT_DISCONNECTED,
    EDBUS_CONNECTION_EVENT_LAST    /**< sentinel, not a real event type */
 } EDBus_Connection_Event_Type;
 
