@@ -1111,14 +1111,13 @@ static Evas_Object *
 _action_button_get(const Evas_Object *obj,
                    unsigned int idx)
 {
-   unsigned int num = idx - 1;
    Evas_Object *button = NULL;
 
    ELM_POPUP_DATA_GET(obj, sd);
    if (!sd->button_count) return NULL;
 
-   if (sd->buttons[num])
-     button = sd->buttons[num]->btn;
+   if (sd->buttons[idx])
+     button = sd->buttons[idx]->btn;
 
    return button;
 }

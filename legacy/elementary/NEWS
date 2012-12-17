@@ -93,6 +93,7 @@ Fixes:
    * Update mapbuf forcely whenever it's states are changed.
    * Now, dummy object is always smart member of naviframe.
    * Fix naviframe's resize object problem when item was deleted.
+   * Fix the popup that returned invalid action buttons.
 
 Removals:
 
