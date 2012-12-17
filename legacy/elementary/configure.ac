@@ -541,7 +541,7 @@ if test "x$want_elementary_elocation" != "xno"; then
         AC_DEFINE(HAVE_ELEMENTARY_ELOCATION, 1, [Elocation support for Elementary])
         have_elementary_elocation="yes"
         ELM_ELOCATION_DEF="#define"
-        requirement_elm="elocation >= 1.7.99 ${requirement_elm}"
+        requirement_elm="elocation >= 0.1.0 ${requirement_elm}"
        ],
        [have_elementary_elocation="no"]
     )
