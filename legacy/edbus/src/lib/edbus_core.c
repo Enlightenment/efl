@@ -87,7 +87,7 @@ edbus_init(void)
 
    if (!eina_init())
      {
-        fputs("EDBus: Enable to initialize eina\n", stderr);
+        fputs("EDBus: Unable to initialize eina\n", stderr);
         return 0;
      }
 
