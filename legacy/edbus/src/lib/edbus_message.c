@@ -721,6 +721,7 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
 
    dbus_signature_iter_init(&sig_iter, signature);
    iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
+
    while (iter_type != DBUS_TYPE_INVALID)
      {
         int sig_type = dbus_signature_iter_get_current_type(&sig_iter);
@@ -751,7 +752,8 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
         dbus_signature_iter_next(&sig_iter);
         iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
      }
-   return EINA_TRUE;
+
+   return dbus_signature_iter_get_current_type(&sig_iter) == DBUS_TYPE_INVALID;
 }
 
 EAPI void
