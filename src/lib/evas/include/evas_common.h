@@ -785,7 +785,6 @@ struct _RGBA_Image
      } info;
 
    void                *extended_info;
-   int                  ref;
 
 /*    unsigned char        scale; */
 

@@ -173,7 +173,6 @@ _evas_common_rgba_image_new(void)
    im = calloc(1, sizeof(RGBA_Image));
    if (!im) return NULL;
    im->flags = RGBA_IMAGE_NOTHING;
-   im->ref = 1;
 
    evas_common_rgba_image_scalecache_init(&im->cache_entry);
 

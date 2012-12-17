@@ -237,7 +237,6 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
      }
 
    im->flags = RGBA_IMAGE_NOTHING;
-   im->ref = 1;
    evas_common_rgba_image_scalecache_init(&im->cache_entry);
 
    ie = &im->cache_entry;

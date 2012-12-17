@@ -22,7 +22,6 @@ _cserve2_rgba_image_set(RGBA_Image *im, void *data, int w, int h, int alpha)
 {
    memset(im, 0, sizeof *im);
 
-   im->ref = 1;
    im->cache_entry.w = w;
    im->cache_entry.h = h;
    im->cache_entry.space = EVAS_COLORSPACE_ARGB8888;
