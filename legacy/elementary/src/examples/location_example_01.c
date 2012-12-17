@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -o location_example_01 location_example_01.c -g `pkg-config --cflags --libs elementary`
+//gcc -o location_example_01 location_example_01.c -g `pkg-config --cflags --libs elementary elocation`
 
 #include <Elementary.h>
 #ifdef ELM_ELOCATION
