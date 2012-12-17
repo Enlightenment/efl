@@ -43,20 +43,20 @@ static void
 _on_send_bool(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg;
-   Eina_Bool bool;
+   Eina_Bool b;
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
         fprintf(stderr, "Error: %s %s\n", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "b", &bool))
+   if (!edbus_message_arguments_get(msg, "b", &b))
      {
         fprintf(stderr, "Error: could not get entry contents\n");
         return;
      }
 
-   if (bool != bool_value) printf("Error on bool\n");
+   if (b != bool_value) printf("Error on bool\n");
    else test();
 }
 
