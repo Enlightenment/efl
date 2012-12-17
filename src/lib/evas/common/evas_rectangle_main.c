@@ -141,3 +141,19 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
           }
      }
 }
+
+EAPI void
+evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, int x, int y, int w, int h)
+{
+   RGBA_Gfx_Func func;
+   DATA32 *ptr;
+   int yy;
+
+   func = evas_common_gfx_func_composite_color_span_get(color, dst, w, render_op);
+   ptr = dst->image.data + (y * dst->cache_entry.w) + x;
+   for (yy = 0; yy < h; yy++)
+     {
+        func(NULL, NULL, color, ptr, w);
+        ptr += dst->cache_entry.w;
+     }
+}
