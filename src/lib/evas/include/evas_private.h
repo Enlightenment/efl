@@ -371,6 +371,12 @@ struct _Evas_Public_Data
       int   info_magic;
    } engine;
 
+   struct {
+      Eina_List *updates;
+      Evas_Event_Cb updates_cb;
+      void *data;
+   } render;
+
    Eina_Array     delete_objects;
    Eina_Array     active_objects;
    Eina_Array     restack_objects;
@@ -414,6 +420,8 @@ struct _Evas_Public_Data
    unsigned char  cleanup : 1;
    unsigned char  focus : 1;
    Eina_Bool      is_frozen : 1;
+   Eina_Bool      rendering : 1;
+   Eina_Bool      requested_free : 1;
 
    Eina_List     *touch_points;
    Eina_List     *devices;
@@ -718,7 +726,7 @@ struct _Evas_Device
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
-   void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *output, void *context, void *surface, int x, int y);
+   void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
    void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
    void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
@@ -1127,6 +1135,7 @@ void _canvas_key_modifier_mask_get(Eo *e, void *_pd, va_list *list);
 void _canvas_damage_rectangle_add(Eo *obj, void *_pd, va_list *list);
 void _canvas_obscured_rectangle_add(Eo *obj, void *_pd, va_list *list);
 void _canvas_obscured_clear(Eo *obj, void *_pd, va_list *list);
+void _canvas_render_async(Eo *obj, void *_pd, va_list *list);
 void _canvas_render_updates(Eo *obj, void *_pd, va_list *list);
 void _canvas_render(Eo *e, void *_pd, va_list *list);
 void _canvas_norender(Eo *e, void *_pd, va_list *list);

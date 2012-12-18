@@ -105,33 +105,20 @@ evas_async_events_fd_get(void)
    return _fd_read;
 }
 
-EAPI int
-evas_async_events_process(void)
+static int
+_evas_async_events_process_single(void)
 {
    Evas_Event_Async *ev;
-   int check;
-   int count = 0;
+   int ret;
 
-   if (_fd_read == -1) return 0;
-
-   _evas_async_events_fork_handle();
-   
-   do
+   ret = read(_fd_read, &ev, sizeof(Evas_Event_Async *));
+   if (ret == sizeof(Evas_Event_Async *))
      {
-	check = read(_fd_read, &ev, sizeof (Evas_Event_Async *));
-
-	if (check == sizeof (Evas_Event_Async *))
-	  {
-             if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
-	     free(ev);
-	     count++;
-	  }
+        if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
+        free(ev);
+        return 1;
      }
-   while (check > 0);
-
-   evas_cache_image_wakeup();
-
-   if (check < 0)
+   else if (ret < 0)
      {
         switch (errno)
           {
@@ -139,11 +126,53 @@ evas_async_events_process(void)
            case EINVAL:
            case EIO:
            case EISDIR:
-             _fd_read = -1;
+              _fd_read = -1;
           }
      }
 
+   return ret;
+}
+
+EAPI int
+evas_async_events_process(void)
+{
+   int count = 0;
+
+   if (_fd_read == -1) return 0;
+
+   _evas_async_events_fork_handle();
+
+   while (_evas_async_events_process_single() > 0) count++;
+
+   evas_cache_image_wakeup();
+
    return count;
+}
+
+static void
+_evas_async_events_fd_blocking_set(Eina_Bool blocking)
+{
+   long flags = fcntl(_fd_read, F_GETFL);
+
+   if (blocking) flags &= ~O_NONBLOCK;
+   else flags |= O_NONBLOCK;
+
+   fcntl(_fd_read, F_SETFL, flags);
+}
+
+int
+evas_async_events_process_blocking(void)
+{
+   int ret;
+
+   _evas_async_events_fork_handle();
+
+   _evas_async_events_fd_blocking_set(EINA_TRUE);
+   ret = _evas_async_events_process_single();
+   evas_cache_image_wakeup(); /* FIXME: is this needed ? */
+   _evas_async_events_fd_blocking_set(EINA_FALSE);
+
+   return ret;
 }
 
 EAPI Eina_Bool

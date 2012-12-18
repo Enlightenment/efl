@@ -1671,6 +1671,31 @@ EAPI void              evas_obscured_rectangle_add(Evas *e, int x, int y, int w,
 EAPI void              evas_obscured_clear(Evas *e) EINA_ARG_NONNULL(1);
 
 /**
+ * Render the given Evas canvas asynchronously.
+ *
+ * @param e The canvas to render.
+ * @param func Optional function to call with the list of updated areas.
+ * @param data User data to pass to @p func.
+ *
+ * @return EINA_TRUE if the canvas will render, EINA_FALSE otherwise.
+ *
+ * This function only returns EINA_TRUE whne a frame will be rendered. If the
+ * previous frame is still rendering, EINA_FALSE will be returned so the users
+ * know not to wait for the updates callback and just return to their main
+ * loop.
+ *
+ * If a @p func callback is given, a list of updated areas will be generated
+ * and the function will be called from the main thread after the rendered
+ * frame is flushed to the screen. The resulting list should be freed with
+ * @f evas_render_updates_free().
+ * The list is given in the @p event_info parameter of the callback function.
+ *
+ * @ingroup Evas_Canvas
+ * @since 1.8
+ */
+EAPI Eina_Bool         evas_render_async(Evas *e, Evas_Event_Cb func, void *data) EINA_ARG_NONNULL(1);
+
+/**
  * Force immediate renderization of the given Evas canvas.
  *
  * @param e The given canvas pointer.
@@ -2425,6 +2450,7 @@ enum
    EVAS_CANVAS_SUB_ID_OBJECTS_IN_RECTANGLE_GET,
    EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE,
    EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET,
+   EVAS_CANVAS_SUB_ID_RENDER_ASYNC,
    EVAS_CANVAS_SUB_ID_LAST
 };
 
@@ -3692,6 +3718,19 @@ enum
  */
 #define evas_canvas_smart_objects_calculate_count_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET), EO_TYPECHECK(int *, ret)
 
+/**
+ * @def evas_canvas_render_async
+ * @since 1.8
+ *
+ * Render canvas asynchronously
+ *
+ * @param[in] func Callback function for list of updates
+ * @param[in] data User data pointer to pass to func
+ * @param[out] ret Whether or not a frame will get rendered after the call
+ *
+ * @see evas_render_async
+ */
+#define evas_canvas_render_async(func, data, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_ASYNC), EO_TYPECHECK(Evas_Event_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(Eina_Bool *, ret)
 
 
 

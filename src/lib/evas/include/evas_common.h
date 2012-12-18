@@ -1264,6 +1264,9 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 
 void              evas_font_dir_cache_free(void);
 
+int               evas_async_events_process_blocking(void);
+void		   evas_render_rendering_wait(Evas_Public_Data *evas);
+
 void              evas_thread_init(void);
 void              evas_thread_shutdown(void);
 EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data, size_t size);

@@ -1291,15 +1291,23 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
      }
 }
 
-static Eina_List *
+void
+evas_render_rendering_wait(Evas_Public_Data *evas)
+{
+   while (evas->rendering) evas_async_events_process_blocking();
+}
+
+static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
-                             unsigned char do_draw)
+                             unsigned char do_draw,
+                             Evas_Render_Done_Cb done_func,
+                             void *done_data,
+                             Eina_Bool do_async)
 {
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
    Evas_Public_Data *e;
-   Eina_List *updates = NULL;
    Eina_List *ll;
    void *surface;
    Eina_Bool clean_them = EINA_FALSE;
@@ -1312,11 +1320,16 @@ evas_render_updates_internal(Evas *eo_e,
    Eina_Bool haveup = 0;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
 
    e = eo_data_get(eo_e, EVAS_CLASS);
-   if (!e->changed) return NULL;
+   if (!e->changed) return EINA_FALSE;
+
+   if (e->rendering) return EINA_FALSE;
+   e->rendering = EINA_TRUE;
+
+   if (do_async) eo_ref(eo_e);
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -1537,15 +1550,25 @@ evas_render_updates_internal(Evas *eo_e,
                  &cx, &cy, &cw, &ch)))
           {
              int off_x, off_y;
+             Render_Updates *ru;
 
              RD("  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
-             if (make_updates)
+             if (do_async)
+               {
+                  ru = malloc(sizeof(*ru));
+                  ru->surface = surface;
+                  NEW_RECT(ru->area, ux, uy, uw, uh);
+                  e->render.updates = eina_list_append(e->render.updates, ru);
+                  evas_cache_image_ref(surface);
+               }
+             else if (make_updates)
                {
                   Eina_Rectangle *rect;
 
                   NEW_RECT(rect, ux, uy, uw, uh);
                   if (rect)
-                    updates = eina_list_append(updates, rect);
+                     e->render.updates = eina_list_append(e->render.updates,
+                                                          rect);
                }
              haveup = EINA_TRUE;
              off_x = cx - ux;
@@ -1647,30 +1670,41 @@ evas_render_updates_internal(Evas *eo_e,
 #ifdef REND_DBG
                                                              , 1
 #endif
-                                                            );
+                                                             , do_async);
                             e->engine.func->context_cutout_clear(e->engine.data.output,
                                                                  e->engine.data.context);
                          }
                     }
                }
-             /* punch rect out */
-             e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                             surface,
-                                                             ux, uy, uw, uh);
+
+             if (!do_async)
+                e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+                                                                surface,
+                                                                ux, uy, uw, uh);
+
              /* free obscuring objects list */
              eina_array_clean(&e->temporary_objects);
              RD("  ---]\n");
           }
-        /* flush redraws */
-        if (haveup)
+
+        if (do_async)
+          {
+             evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data, 0);
+          }
+        else if (haveup)
           {
              evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              e->engine.func->output_flush(e->engine.data.output);
              evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
           }
      }
-   /* clear redraws */
-   e->engine.func->output_redraws_clear(e->engine.data.output);
+
+   if (!do_async)
+     {
+        /* clear redraws */
+        e->engine.func->output_redraws_clear(e->engine.data.output);
+     }
+
    /* and do a post render pass */
    for (i = 0; i < e->active_objects.count; ++i)
      {
@@ -1753,11 +1787,85 @@ evas_render_updates_internal(Evas *eo_e,
 
    evas_module_clean();
 
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
+   if (!do_async)
+      evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
 
    RD("---]\n");
 
-   return updates;
+   return EINA_TRUE;
+}
+
+static void
+evas_render_wakeup(Evas *eo_e)
+{
+   Render_Updates *ru;
+   Eina_Bool haveup = EINA_FALSE;
+   Eina_List *ret_updates = NULL;
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+
+   if (e->requested_free)
+     {
+        EINA_LIST_FREE(e->render.updates, ru)
+          {
+             eina_rectangle_free(ru->area);
+             free(ru);
+          }
+        goto end;
+     }
+
+   EINA_LIST_FREE(e->render.updates, ru)
+     {
+        /* punch rect out */
+        e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+                                                        ru->surface,
+                                                        ru->area->x,
+                                                        ru->area->y,
+                                                        ru->area->w,
+                                                        ru->area->h);
+        if (e->render.updates_cb)
+           ret_updates = eina_list_append(ret_updates, ru->area);
+        else
+           eina_rectangle_free(ru->area);
+        evas_cache_image_drop(ru->surface);
+        free(ru);
+        haveup = EINA_TRUE;
+     }
+
+   /* flush redraws */
+   if (haveup)
+     {
+        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+        e->engine.func->output_flush(e->engine.data.output);
+        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+     }
+
+   /* clear redraws */
+   e->engine.func->output_redraws_clear(e->engine.data.output);
+
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
+
+   if (e->render.updates_cb)
+      e->render.updates_cb(e->render.data, eo_e, ret_updates);
+
+   e->rendering = EINA_FALSE;
+   e->render.updates_cb = NULL;
+   e->render.data = NULL;
+
+end:
+   eo_unref(eo_e);
+}
+
+static void
+evas_render_async_wakeup(void *target, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Public_Data *e = target;
+   evas_render_wakeup(e->evas);
+}
+
+static void
+evas_render_pipe_wakeup(void *data)
+{
+   evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
 }
 
 EAPI void
@@ -1769,6 +1877,30 @@ evas_render_updates_free(Eina_List *updates)
       eina_rectangle_free(r);
 }
 
+EAPI Eina_Bool
+evas_render_async(Evas *eo_e, Evas_Event_Cb func, void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(eo_e, evas_canvas_render_async(func, data, &ret));
+   return ret;
+}
+
+void
+_canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
+{
+   Evas_Event_Cb func = va_arg(*list, Evas_Event_Cb);
+   void *data = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Evas_Public_Data *e = _pd;
+
+   e->render.updates_cb = func;
+   e->render.data = data;
+   *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup, e, EINA_TRUE);
+}
+
 EAPI Eina_List *
 evas_render_updates(Evas *eo_e)
 {
@@ -1777,6 +1909,25 @@ evas_render_updates(Evas *eo_e)
    MAGIC_CHECK_END();
    Eina_List *ret = NULL;
    eo_do(eo_e, evas_canvas_render_updates(&ret));
+   return ret;
+}
+
+static Eina_List *
+evas_render_updates_internal_wait(Evas *eo_e,
+                                  unsigned char make_updates,
+                                  unsigned char do_draw)
+{
+   Eina_List *ret = NULL;
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+
+   if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL, NULL,
+                                     EINA_FALSE))
+      return NULL;
+
+   ret = e->render.updates;
+   e->render.updates = NULL;
+   e->rendering = EINA_FALSE;
+
    return ret;
 }
 
@@ -1792,7 +1943,7 @@ _canvas_render_updates(Eo *eo_e, void *_pd, va_list *list)
         *ret = NULL;
         return;
      }
-   *ret = evas_render_updates_internal(eo_e, 1, 1);
+   *ret = evas_render_updates_internal_wait(eo_e, 1, 1);
 }
 
 EAPI void
@@ -1810,7 +1961,7 @@ _canvas_render(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    Evas_Public_Data *e = _pd;
 
    if (!e->changed) return;
-   evas_render_updates_internal(eo_e, 0, 1);
+   evas_render_updates_internal_wait(eo_e, 0, 1);
 }
 
 EAPI void
@@ -1826,7 +1977,7 @@ void
 _canvas_norender(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    //   if (!e->changed) return;
-   evas_render_updates_internal(eo_e, 0, 0);
+   evas_render_updates_internal_wait(eo_e, 0, 0);
 }
 
 EAPI void
