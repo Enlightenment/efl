@@ -1780,6 +1780,8 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
 #endif
 
+   _edje_entry_imf_context_reset(rp);
+
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    en->select_mod_start = EINA_FALSE;
    en->select_mod_end = EINA_FALSE;

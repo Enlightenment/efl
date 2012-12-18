@@ -712,3 +712,7 @@
 2012-12-18  Jihoon Kim
 
 	* ecore_imf cursor infomation update is not necessary in focus-out event
+
+2012-12-18  WooHyun Jung
+
+	* Before cursor is moved by mouse_down, imf_context_reset should be called with current cursor position.

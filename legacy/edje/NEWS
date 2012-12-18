@@ -35,6 +35,7 @@ Fixes:
     * fix build on Solaris 11.
     * fix duplicate after programs in group inheritance.
     * fix return plain string in retrive surrounding text callback of entry
+    * Before cursor is moved by mouse_down, imf_context_reset should be called with current cursor position.
 
 Edje 1.7.0
 
