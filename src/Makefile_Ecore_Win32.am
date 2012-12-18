@@ -30,6 +30,12 @@ lib_ecore_win32_libecore_win32_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_win32 \
+-I$(top_builddir)/src/lib/evil \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_win32 \
 -DEFL_ECORE_WIN32_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@

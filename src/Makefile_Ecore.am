@@ -51,6 +51,9 @@ lib_ecore_libecore_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
 -DEFL_ECORE_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
@@ -58,12 +61,14 @@ lib_ecore_libecore_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_ecore_libecore_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 endif
 
 if HAVE_PS3
 lib_ecore_libecore_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/escape
+-I$(top_srcdir)/src/lib/escape \
+-I$(top_builddir)/src/lib/escape
 endif
 
 lib_ecore_libecore_la_LIBADD = \
@@ -103,6 +108,13 @@ tests_ecore_ecore_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_audio \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_file \
+-I$(top_builddir)/src/lib/ecore_x \
 -DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 @CHECK_CFLAGS@
 

@@ -17,6 +17,11 @@ lib_ecore_ipc_libecore_ipc_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_ipc \
 -DEFL_ECORE_IPC_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@

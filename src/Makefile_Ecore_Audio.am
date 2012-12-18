@@ -21,6 +21,10 @@ lib_ecore_audio_libecore_audio_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_builddir)/src/lib/ecore \
 -DEFL_ECORE_AUDIO_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \

@@ -96,6 +96,7 @@ endif
 
 lib_evil_libevil_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
 @EVIL_CPPFLAGS@
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
@@ -112,6 +113,7 @@ lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
 
 lib_evil_libdl_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
 @EVIL_DLFCN_CPPFLAGS@
 
 lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@

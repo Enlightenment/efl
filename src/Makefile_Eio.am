@@ -32,6 +32,11 @@ lib_eio_libeio_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/eio \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/eio \
 -DEFL_EIO_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@

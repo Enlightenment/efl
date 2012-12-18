@@ -20,6 +20,10 @@ lib_ecore_imf_libecore_imf_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_imf \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEFL_ECORE_IMF_BUILD \
 @EFL_CFLAGS@ \
@@ -46,6 +50,12 @@ lib_ecore_imf_libecore_imf_evas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_imf_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_imf_evas \
 -DEFL_ECORE_IMF_EVAS_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@
@@ -80,6 +90,13 @@ modules_ecore_immodules_ibus_ibus_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_evas \
 -DEFL_ECORE_IMF_EVAS_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
@@ -114,6 +131,13 @@ modules_ecore_immodules_scim_scim_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_imf \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_evas \
 -DEFL_ECORE_IMF_EVAS_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
@@ -144,6 +168,12 @@ modules_ecore_immodules_xim_xim_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_imf \
 -DEFL_ECORE_IMF_EVAS_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@

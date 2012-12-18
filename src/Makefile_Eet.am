@@ -26,6 +26,9 @@ lib_eet_libeet_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/static_libs/lz4 \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_builddir)/src/static_libs/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
@@ -36,7 +39,8 @@ lib_eet_libeet_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_eet_libeet_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 endif
 
 lib_eet_libeet_la_LIBADD = lib/eina/libeina.la
@@ -60,6 +64,8 @@ bin_eet_eet_SOURCES = bin/eet/eet_main.c
 bin_eet_eet_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
@@ -69,7 +75,8 @@ bin_eet_eet_CPPFLAGS = \
 
 if HAVE_WINDOWS
 bin_eet_eet_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 endif
 
 bin_eet_eet_LDADD = \
@@ -96,6 +103,8 @@ tests/eet/eet_suite.h
 tests_eet_eet_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
 -DTESTS_SRC_DIR=\"$(top_srcdir)\" \
 @CHECK_CFLAGS@ \
 @EET_CFLAGS@

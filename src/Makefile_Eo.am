@@ -14,6 +14,8 @@ lib/eo/eo_private.h
 lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 -DNDEBUG \
 -DEFL_EO_BUILD \
 @EFL_CFLAGS@ \
@@ -22,7 +24,8 @@ lib_eo_libeo_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_eo_libeo_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 endif
 
 lib_eo_libeo_la_LIBADD = lib/eina/libeina.la @EO_LIBS@ @EFL_COV_LIBS@
@@ -55,6 +58,8 @@ tests/eo/access/access_simple_protected.h
 tests_eo_test_access_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -72,6 +77,8 @@ tests/eo/composite_objects/composite_objects_simple.h
 tests_eo_test_composite_objects_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -101,6 +108,8 @@ tests/eo/constructors/constructors_simple7.h
 tests_eo_test_constructors_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -122,6 +131,8 @@ tests/eo/suite/eo_test_init.c
 tests_eo_eo_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 -DNDEBUG \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
@@ -147,6 +158,8 @@ tests/eo/function_overrides/function_overrides_simple.h
 tests_eo_test_function_overrides_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -166,6 +179,8 @@ tests/eo/interface/interface_simple.h
 tests_eo_test_interface_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -191,6 +206,8 @@ tests/eo/mixin/mixin_simple.h
 tests_eo_test_mixin_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 
@@ -206,6 +223,8 @@ tests/eo/signals/signals_simple.h
 tests_eo_test_signals_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 

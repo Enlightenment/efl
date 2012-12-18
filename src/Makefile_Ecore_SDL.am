@@ -18,6 +18,11 @@ lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_sdl \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_sdl \
 -DEFL_ECORE_SDL_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \

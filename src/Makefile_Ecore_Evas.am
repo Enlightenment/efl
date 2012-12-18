@@ -26,6 +26,15 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input_evas \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_input_evas \
+-I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/modules/evas/engines/buffer \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEFL_ECORE_EVAS_BUILD \
 @EFL_CFLAGS@ \
@@ -33,7 +42,8 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 endif
 
 lib_ecore_evas_libecore_evas_la_LIBADD = \
@@ -76,6 +86,9 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/modules/evas/engines/software_x11 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_x11 \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/modules/evas/engines/software_x11 \
+-I$(top_builddir)/src/modules/evas/engines/gl_x11
 modules_ecore_evas_engines_x_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
 lib/ecore_x/libecore_x.la
@@ -92,6 +105,8 @@ modules_ecore_evas_engines_cocoa_module_la_CPPFLAGS = \
 $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_cocoa \
 -I$(top_srcdir)/src/modules/evas/engines/gl_cocoa \
+-I$(top_builddir)/src/lib/ecore_cocoa \
+-I$(top_builddir)/src/modules/evas/engines/gl_cocoa
 modules_ecore_evas_engines_cocoa_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
 lib/ecore_cocoa/libecore_cocoa.la
@@ -108,6 +123,8 @@ modules_ecore_evas_engines_fb_module_la_CPPFLAGS = \
 $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_fb \
 -I$(top_srcdir)/src/modules/evas/engines/fb \
+-I$(top_builddir)/src/lib/ecore_fb \
+-I$(top_builddir)/src/modules/evas/engines/fb
 modules_ecore_evas_engines_fb_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
 lib/ecore_fb/libecore_fb.la
@@ -124,6 +141,8 @@ modules_ecore_evas_engines_psl1ght_module_la_CPPFLAGS = \
 $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_psl1ght \
 -I$(top_srcdir)/src/modules/evas/engines/psl1ght \
+-I$(top_builddir)/src/lib/ecore_psl1ght \
+-I$(top_builddir)/src/modules/evas/engines/psl1ght
 modules_ecore_evas_engines_psl1ght_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
 lib/ecore_psl1ght/libecore_psl1ght.la
@@ -145,6 +164,9 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_wayland \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_shm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
+-I$(top_builddir)/src/lib/ecore_wayland \
+-I$(top_builddir)/src/modules/evas/engines/wayland_shm \
+-I$(top_builddir)/src/modules/evas/engines/wayland_egl \
 @ECORE_WAYLAND_CFLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
@@ -163,6 +185,8 @@ modules_ecore_evas_engines_sdl_module_la_CPPFLAGS = \
 $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_sdl \
 -I$(top_srcdir)/src/modules/evas/engines/gl_sdl \
+-I$(top_builddir)/src/lib/ecore_sdl \
+-I$(top_builddir)/src/modules/evas/engines/gl_sdl
 modules_ecore_evas_engines_sdl_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
 lib/ecore_sdl/libecore_sdl.la
@@ -181,6 +205,9 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_win32 \
 -I$(top_srcdir)/src/modules/evas/engines/software_ddraw \
 -I$(top_srcdir)/src/modules/evas/engines/software_gdi \
+-I$(top_builddir)/src/lib/ecore_win32 \
+-I$(top_builddir)/src/modules/evas/engines/software_ddraw \
+-I$(top_builddir)/src/modules/evas/engines/software_gdi
 modules_ecore_evas_engines_win32_module_la_LIBADD = \
 lib/ecore/libeecore_evas.la @EFL_LIBS@ \
 lib/ecore_win32/libecore_win32.la
