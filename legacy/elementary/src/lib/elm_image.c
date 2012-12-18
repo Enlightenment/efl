@@ -28,13 +28,13 @@ _on_image_preloaded(void *data,
                     void *event __UNUSED__)
 {
    Elm_Image_Smart_Data *sd = data;
-
    sd->preloading = EINA_FALSE;
-
    if (sd->show) evas_object_show(obj);
-   if (sd->prev_img) evas_object_del(sd->prev_img);
-
-   sd->prev_img = NULL;
+   if (sd->prev_img)
+     {
+        evas_object_del(sd->prev_img);
+        sd->prev_img = NULL;
+     }
 }
 
 static void
@@ -715,15 +715,17 @@ _elm_image_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Image_Smart_Data *sd = _pd;
 
    sd->show = EINA_TRUE;
-   if (sd->preloading)
-     return;
+   if (sd->preloading) return;
 
    eo_do_super(obj, evas_obj_smart_show());
 
    evas_object_show(sd->img);
 
-   if (sd->prev_img) evas_object_del(sd->prev_img);
-   sd->prev_img = NULL;
+   if (sd->prev_img)
+     {
+        evas_object_del(sd->prev_img);
+        sd->prev_img = NULL;
+     }
 }
 
 static void
@@ -884,7 +886,6 @@ _elm_image_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
    sd->preloading = EINA_TRUE;
-   evas_object_hide(sd->img);
    evas_object_image_preload(sd->img, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
@@ -962,10 +963,20 @@ _elm_image_smart_preload_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *l
 
    Eina_Bool disable = va_arg(*list, int);
 
-   if (sd->edje) return;
+   if (sd->edje || !sd->preloading) return;
 
    evas_object_image_preload(sd->img, disable);
    sd->preloading = !disable;
+
+   if (disable)
+     {
+        if (sd->show && sd->img) evas_object_show(sd->img);
+        if (sd->prev_img)
+          {
+             evas_object_del(sd->prev_img);
+             sd->prev_img = NULL;
+          }
+     }
 }
 
 static void

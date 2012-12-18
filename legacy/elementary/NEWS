@@ -97,6 +97,7 @@ Fixes:
    * Fix the popup that returned invalid action buttons.
    * Fix the naviframe to not have crash even if user deletes the naviframe in the transition finished cb.
    * Fix Don't elm_transit image animation use the image preloading to avoid image flickering.
+   * Fix the image to show the image right now if the image preloading is disabled.
 
 Removals:
 

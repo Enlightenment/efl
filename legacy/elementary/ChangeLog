@@ -830,3 +830,7 @@
 2012-12-18  Chueon Park (Hermet)
 
 	* Don't Elm_transit image animation use image preloading to avoid image flickering.
+
+2012-12-18  Chueon Park (Hermet)
+
+	* Let image update right now if the image preloading is disabled.
