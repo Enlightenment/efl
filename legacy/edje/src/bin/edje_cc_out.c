@@ -1679,7 +1679,9 @@ reorder_parts(void)
                             if (ep2->reorder.linked_prev)
                               ERR("Unable to insert two or more parts in same part \"%s\".",
                                   pc->parts[j]->name);
-                            k = j - 1;
+                            /* Need it to be able to insert an element before the first */
+                            if (j == 0) k = 0;
+                            else k = j - 1;
 			    found = EINA_TRUE;
                             ep2->reorder.linked_prev += ep->reorder.linked_prev + 1;
                             ep->reorder.before = (Edje_Part_Parser *)pc->parts[j];
@@ -1728,10 +1730,10 @@ reorder_parts(void)
                          }
                        if (i > k)
                          {
-                            for (j = i - ep->reorder.linked_prev - 1 ; j >= k ; j--)
+                            for (j = i - ep->reorder.linked_prev ; j > k; j--)
                               {
-                                 pc->parts[j + amount] = pc->parts[j];
-                                 pc->parts[j + amount]->id = j + amount;
+                                 pc->parts[j + amount - 1] = pc->parts[j - 1];
+                                 pc->parts[j + amount - 1]->id = j + amount - 1;
                               }
                             for (j = 0 ; j < amount ; j++)
                               {
