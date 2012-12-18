@@ -24,7 +24,7 @@ extern "C" {
           WRN("Not supported for cloth"); \
           return; \
        } \
-   } while(0);
+   } while(0)
 
 typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 typedef struct _EPhysics_Body_Evas_Stacking EPhysics_Body_Evas_Stacking;
@@ -80,13 +80,67 @@ _ephysics_body_cloth_anchor_mass_reset(EPhysics_Body *body)
    DBG("Cloth anchors mass reset.");
 }
 
+EAPI void
+_ephysics_body_soft_body_light_apply(Evas_Map *m, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz, int lr, int lg, int lb, int ar, int ag, int ab, Evas_Coord bx, Evas_Coord by, Evas_Coord bz)
+{
+   double x, y, z, nx, ny, nz, ln, br;
+   Evas_Coord mx, my, mz, mr, mg, mb, ma;
+   int i;
+
+   for (i = 0; i < 4; i++)
+     {
+
+        evas_map_point_coord_get(m, i, &mx, &my, &mz);
+        evas_map_point_color_get(m, i, NULL, NULL, NULL, &ma);
+
+        x = mx;
+        y = my;
+        z = mz;
+
+        nx = sqrt(pow(bx - x, 2));
+        ny = sqrt(pow(by - y, 2));
+        nz = sqrt(pow(bz - z, 2));
+        ln = nx + ny + nz;
+
+        if (ln != 0.0)
+          {
+             nx /= ln;
+             ny /= ln;
+             nz /= ln;
+          }
+
+        x = lx - bx;
+        y = ly - by;
+        z = lz - bz;
+
+        ln = pow(x, 2) + pow(y, 2) + pow(z, 2);
+        ln = sqrt(ln);
+
+        if (ln != 0.0)
+          {
+             x /= ln;
+             y /= ln;
+             z /= ln;
+          }
+
+        br = (nx * x) + (ny * y) + (nz * z);
+        if (br < 0.0) br = 0.0;
+
+        mr = ar + ((lr - ar) * br);
+        mg = ag + ((lg - ag) * br);
+        mb = ab + ((lb - ab) * br);
+
+        evas_map_point_color_set(m, i, mr, mg, mb, ma);
+     }
+}
+
 static void
 _ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Evas_Object *evas_obj, Eina_List *slices)
 {
    double rate;
    void *list_data;
    Eina_List *l;
-   Evas_Coord wy, wh, y0, y1, y2, x0, x1, x2, z0, z1, z2, w, h;
+   Evas_Coord wy, wh, y0, y1, y2, x0, x1, x2, z0, z1, z2, w, h, bx, by, bz;
    Evas_Map *map;
    btVector3 p0, p1, p2;
    btSoftBody::tFaceArray faces;
@@ -95,6 +149,7 @@ _ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Evas_Object *evas_obj
    Evas_Coord lx, ly, lz;
    Eina_Bool light = EINA_FALSE;
    EPhysics_Camera *camera;
+
    int px, py, pz, foc;
    Eina_Bool perspective = EINA_FALSE;
 
@@ -103,6 +158,8 @@ _ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Evas_Object *evas_obj
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL, &wh,
                                       NULL);
    evas_object_geometry_get(evas_obj, NULL, NULL, &w, &h);
+
+   ephysics_body_geometry_get(body, &bx, &by, &bz, NULL, NULL, NULL);
 
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
@@ -174,7 +231,8 @@ _ephysics_body_soft_body_slices_apply(EPhysics_Body *body, Evas_Object *evas_obj
           }
 
         if (light)
-          evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
+          _ephysics_body_soft_body_light_apply(map, lx, ly, lz, lr, lg, lb, ar,
+                                               ag, ab, bx, by, bz);
 
         evas_object_map_set(slice->evas_obj, map);
         evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
