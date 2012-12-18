@@ -159,7 +159,6 @@ einampchainedpool_LTLIBRARIES = chained_pool_module.la
 
 chained_pool_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
 chained_pool_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
@@ -176,7 +175,6 @@ einamponebig_LTLIBRARIES = one_big_module.la
 
 one_big_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
 one_big_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
 one_big_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
@@ -193,7 +191,6 @@ einamppassthrough_LTLIBRARIES = pass_through_module.la
 
 pass_through_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
 pass_through_module_la_CFLAGS = @EINA_CFLAGS@
 pass_through_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
@@ -204,7 +201,6 @@ endif
 
 lib_eina_libeina_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
@@ -216,8 +212,7 @@ lib_eina_libeina_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_eina_libeina_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil
 endif
 
 lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@
@@ -284,7 +279,6 @@ tests/eina/eina_test_value.c
 
 tests_eina_eina_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
@@ -299,7 +293,6 @@ tests_eina_cxx_compile_test_SOURCES = tests/eina/cxx_compile_test.cxx
 
 tests_eina_cxx_compile_test_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 
@@ -315,7 +308,6 @@ tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
 
 tests_eina_module_dummy_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@ \
