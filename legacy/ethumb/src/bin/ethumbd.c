@@ -221,12 +221,14 @@ static const EDBus_Method _ethumb_dbus_objects_methods[] = {
   { }
 };
 
+enum
+{
+   ETHUMB_DBUS_OBJECTS_SIGNAL_GENERATED = 0,
+};
+
 static const EDBus_Signal _ethumb_dbus_objects_signals[] = {
-  {
-   "generated",
-   EDBUS_ARGS({"i", ""}, {"ay", "array"}, {"ay", "array"}, {"b", "bool"}),
-   0
-  },
+  [ETHUMB_DBUS_OBJECTS_SIGNAL_GENERATED] = { "generated",
+       EDBUS_ARGS({"i", ""}, {"ay", "array"}, {"ay", "array"}, {"b", "bool"}) },
   { }
 };
 
@@ -1583,17 +1585,14 @@ static void
 _ethumb_dbus_generated_signal(Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success)
 {
    EDBus_Message *sig;
-   int current;
-   const char *opath;
+   EDBus_Service_Interface *iface;
    EDBus_Message_Iter *iter, *iter_path, *iter_key;
    int id32;
 
    id32 = *id;
 
-   current = ed->queue.current;
-   opath = ed->queue.table[current].path;
-   sig = edbus_message_signal_new(opath, _ethumb_dbus_objects_interface,
-                                  "generated");
+   iface = ed->queue.table[ed->queue.current].iface;
+   sig = edbus_service_signal_new(iface, ETHUMB_DBUS_OBJECTS_SIGNAL_GENERATED);
 
    iter = edbus_message_iter_get(sig);
    edbus_message_iter_arguments_append(iter, "iay", id32, &iter_path);
@@ -1602,8 +1601,7 @@ _ethumb_dbus_generated_signal(Ethumbd *ed, int *id, const char *thumb_path, cons
    _ethumb_dbus_append_bytearray(iter, iter_key, thumb_key);
    edbus_message_iter_arguments_append(iter, "b", success);
 
-   edbus_connection_send(ed->conn, sig, NULL, NULL, -1);
-   edbus_message_unref(sig);
+   edbus_service_signal_send(iface, sig);
 }
 
 static const EDBus_Service_Interface_Desc server_desc = {
