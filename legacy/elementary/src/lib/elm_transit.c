@@ -2309,19 +2309,23 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Eina_List *elist;
    Evas_Object *obj;
-   const char *type;
+   const char *type, *type_deprecated;
    Elm_Transit_Effect_Image_Animation *image_animation = effect;
    unsigned int count = 0;
    int len;
 
-   type = eina_stringshare_add("elm_icon");
+   type = eina_stringshare_add("elm_image");
+   //FIXME: Remove later when elm_icon is cleared.
+   type_deprecated = eina_stringshare_add("elm_icon");
+
    len = eina_list_count(image_animation->images);
    if (len)
      {
         count = floor(progress * len);
         EINA_LIST_FOREACH(transit->objs, elist, obj)
           {
-             if (elm_widget_type_check(obj, type, __func__))
+             if (elm_widget_type_check(obj, type, __func__) ||
+                 elm_widget_type_check(obj, type_deprecated, __func__))
                elm_image_file_set(obj,
                                   eina_list_nth(image_animation->images, count),
                                   NULL);
@@ -2329,6 +2333,7 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
      }
 
    eina_stringshare_del(type);
+   eina_stringshare_del(type_deprecated);
 }
 
 static Elm_Transit_Effect *

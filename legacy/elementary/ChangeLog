@@ -822,3 +822,7 @@
 2012-12-17  Chueon Park (Hermet)
 
 	* Makes naviframe safety even if someone deletes the naviframe in transition finished cb.
+
+2012-12-18  Chueon Park (Hermet)
+
+	* Elm_transit image aniamtion effects supports elm_image object type.
