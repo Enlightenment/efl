@@ -3153,8 +3153,8 @@ ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, 
 
    ee = ecore_evas_object_ecore_evas_get(obj);
    iface = (Ecore_Evas_Interface_Extn *)_ecore_evas_interface_get(ee, "extn");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
 
-   if (!iface) return EINA_FALSE;
    return iface->connect(ee, svcname, svcnum, svcsys);
 }
 
