@@ -1,3 +1,8 @@
+2012-12-18  Leandro Pereira
+
+	* Add threaded renderer.
+	* Modify software_generic and gl_x11 to use threaded renderer.
+
 2012-12-17  Daniel Willmann
 	* Add EFL Audio API - ecore_audio
 
@@ -5,7 +10,7 @@
 
 	* Get rid of unused `ref` field in RGBA_Image struct.
 	* Prepare soil to land threaded render.
-                * Use refcounted glyph arrays.
+		* Use refcounted glyph arrays.
 		* Common code to draw lines, polygons, rectangles, maps,
 		and scaling.
 
