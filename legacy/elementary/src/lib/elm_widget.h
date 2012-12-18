@@ -740,7 +740,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr)        \
   Elm_Widget_Smart_Data *ptr;			     \
-  ptr = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ?	     \
+  ptr = (o ?	     \
 	 eo_data_get(o, ELM_OBJ_WIDGET_CLASS) :	     \
 	 NULL);					     \
   if (!ptr)					     \

@@ -9,14 +9,9 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_widget"
 
-#define ELM_WIDGET_DATA_GET_NO_INST(o, wd)     \
-  wd = (o && eo_isa(o, ELM_OBJ_WIDGET_CLASS) ? \
-        eo_data_get(o, ELM_OBJ_WIDGET_CLASS) : \
-        NULL)
-
 #define ELM_WIDGET_DATA_GET(o, wd)		\
   Elm_Widget_Smart_Data *wd;			\
-  ELM_WIDGET_DATA_GET_NO_INST(o, wd)
+  wd = eo_data_get(o, MY_CLASS)
 
 #define API_ENTRY                                    \
   ELM_WIDGET_DATA_GET(obj, sd);                      \
@@ -1019,7 +1014,7 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
              sdp->child_can_focus = EINA_TRUE;
              while (sdp->parent_obj)
                {
-                  ELM_WIDGET_DATA_GET_NO_INST(sdp->parent_obj, sdp);
+                  sdp = eo_data_get(sdp->parent_obj, MY_CLASS);
 
                   if (sdp->child_can_focus) break;
 
@@ -1756,7 +1751,7 @@ _elm_widget_event_propagate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           (!(event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))))
      {
         ELM_WIDGET_CHECK(parent);
-        Elm_Widget_Smart_Data *sd = eo_data_get(parent, ELM_OBJ_WIDGET_CLASS);
+        Elm_Widget_Smart_Data *sd = eo_data_get(parent, MY_CLASS);
 
         Eina_Bool int_ret = EINA_FALSE;
         eo_do(parent, elm_wdg_event(obj, type, event_info, &int_ret));
@@ -2969,7 +2964,7 @@ _elm_widget_focus_steal(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         o = elm_widget_parent_get(parent);
         if (!o) break;
-        ELM_WIDGET_DATA_GET_NO_INST(o, sd);
+        sd = eo_data_get(o, MY_CLASS);
         if (sd->disabled || sd->tree_unfocusable) return;
         if (sd->focused) break;
         parent = o;
@@ -2982,7 +2977,7 @@ _elm_widget_focus_steal(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         parent2 = elm_widget_parent_get(parent);
         if (!parent2) parent2 = elm_widget_parent2_get(parent);
         parent = parent2;
-        ELM_WIDGET_DATA_GET_NO_INST(parent, sd);
+        sd = eo_data_get(parent, MY_CLASS);
         if (sd)
           {
              if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
@@ -3132,7 +3127,7 @@ _elm_widget_show_region_set(Eo *obj, void *_pd, va_list *list)
         parent_obj = sd->parent_obj;
         child_obj = sd->obj;
         if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
-        ELM_WIDGET_DATA_GET_NO_INST(parent_obj, sd);
+        sd = eo_data_get(parent_obj, MY_CLASS);
         if (!sd) break;
 
         evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
