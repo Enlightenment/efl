@@ -58,6 +58,8 @@ evas_init(void)
 #endif
    _evas_preload_thread_init();
 
+   evas_thread_init();
+
    return _evas_init_count;
 
  shutdown_module:
@@ -84,6 +86,7 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
+   evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
    evas_font_dir_cache_free();

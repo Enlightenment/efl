@@ -435,6 +435,18 @@ typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst
 
 /*****************************************************************************/
 
+typedef void (*Evas_Thread_Command_Cb)(void *data);
+typedef struct _Evas_Thread_Command Evas_Thread_Command;
+
+struct _Evas_Thread_Command
+{
+   EINA_INLIST;
+   Evas_Thread_Command_Cb cb;
+   void *data;
+};
+
+/*****************************************************************************/
+
 typedef enum _RGBA_Image_Flags
 {
    RGBA_IMAGE_NOTHING       = (0),
@@ -1252,6 +1264,10 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 
 void              evas_font_dir_cache_free(void);
 
+void              evas_thread_init(void);
+void              evas_thread_shutdown(void);
+EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data, size_t size);
+EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data, size_t size);
 /****/
 
 /*****************************************************************************/
