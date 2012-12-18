@@ -248,7 +248,7 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_min_set(bx, 318, 318);
    evas_object_show(bx);
 
-   ic = elm_icon_add(win);
+   ic = elm_image_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_11.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -355,7 +355,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_util_standard_add("transit5", "Transit 5");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   ic = elm_icon_add(win);
+   ic = elm_image_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
@@ -367,7 +367,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
 
-   ic = elm_icon_add(win);
+   ic = elm_image_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
@@ -395,7 +395,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_util_standard_add("transit6","Transit 6");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   ic = elm_icon_add(win);
+   ic = elm_image_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
@@ -407,7 +407,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
 
-   ic = elm_icon_add(win);
+   ic = elm_image_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_max_set(ic, 50, 50);
