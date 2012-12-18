@@ -11,7 +11,7 @@
  * This widget emits the following signals:
  * @li "clicked": the user clicked the image (press/release). The @c
  *     event parameter of the callback will be @c NULL.
- * @li "image.deleted": the server side was deleted. The @c event
+ * @li "image,deleted": the server side was deleted. The @c event
  *     parameter of the callback will be @c NULL.
  * @li "image,resized": the server side was resized. The @c event parameter of
  *     the callback will be @c Evas_Coord_Size (two integers).

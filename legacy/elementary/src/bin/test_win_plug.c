@@ -169,7 +169,7 @@ test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         return;
      }
 
-   evas_object_smart_callback_add(plug, "image.deleted", cb_plug_disconnected, NULL);
+   evas_object_smart_callback_add(plug, "image,deleted", cb_plug_disconnected, NULL);
    evas_object_smart_callback_add(plug, "image,resized", cb_plug_resized, NULL);
 
    evas_object_resize(plug, 380, 500);

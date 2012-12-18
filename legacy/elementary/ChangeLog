@@ -834,3 +834,8 @@
 2012-12-18  Chueon Park (Hermet)
 
 	* Let image update right now if the image preloading is disabled.
+
+2012-12-18  Gustavo Sverzut Barbieri (k-s)
+
+	* elm_plug now emits "image,resized" on server-side changes.
+	* elm_plug typo fixed "image.deleted" to "image,deleted" ('.' -> ',')

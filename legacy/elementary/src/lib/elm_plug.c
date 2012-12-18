@@ -11,7 +11,7 @@ EAPI Eo_Op ELM_OBJ_PLUG_BASE_ID = EO_NOOP;
 static const char PLUG_KEY[] = "__Plug_Ecore_Evas";
 
 static const char SIG_CLICKED[] = "clicked";
-static const char SIG_IMAGE_DELETED[] = "image.deleted";
+static const char SIG_IMAGE_DELETED[] = "image,deleted";
 static const char SIG_IMAGE_RESIZED[] = "image,resized";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
@@ -34,12 +34,11 @@ _sizing_eval(Evas_Object *obj __UNUSED__)
 static void
 _elm_plug_disconnected(Ecore_Evas *ee)
 {
-   Evas_Object *plug = NULL;
-
-   if (!ee) return;
-   plug = ecore_evas_data_get(ee, PLUG_KEY);
-   if (!plug) return;
+   Evas_Object *plug = ecore_evas_data_get(ee, PLUG_KEY);
+   EINA_SAFETY_ON_NULL_RETURN(plug);
    evas_object_smart_callback_call(plug, SIG_IMAGE_DELETED, NULL);
+   /* TODO: was a typo. Deprecated, remove in future releases: */
+   evas_object_smart_callback_call(plug, "image.deleted", NULL);
 }
 
 static void
