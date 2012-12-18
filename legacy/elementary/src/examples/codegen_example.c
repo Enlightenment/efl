@@ -10,12 +10,12 @@
  * elementary_codegen --prefix <myapp_myobj> <input.edj> <a_group> <source.c> <header.h>
  *
  * In the case of this example:
- * elemtary_codegen --prefix=codegen_example codegen_example.edj \
+ * elementary_codegen --prefix=codegen_example codegen_example.edj \
  * elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
  *
  * @verbatim
  * edje_cc codegen_example.edc && elementary_codegen --prefix=codegen_example \
- * codegen_example.edj example_group codegen_example_generated.c \
+ * codegen_example.edj elm/example/mylayout/default codegen_example_generated.c \
  * codegen_example_generated.h
  * gcc -c codegen_example_generated.c `pkg-config --libs --cflags ecore-evas edje elementary`
  * gcc -o codegen_example codegen_example_generated.o \
