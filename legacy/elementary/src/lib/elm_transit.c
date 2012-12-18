@@ -2282,6 +2282,7 @@ typedef struct _Elm_Transit_Effect_Image_Animation Elm_Transit_Effect_Image_Anim
 struct _Elm_Transit_Effect_Image_Animation
 {
    Eina_List *images;
+   unsigned int prev_idx;
 };
 
 static void
@@ -2311,7 +2312,7 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    Evas_Object *obj;
    const char *type, *type_deprecated;
    Elm_Transit_Effect_Image_Animation *image_animation = effect;
-   unsigned int count = 0;
+   unsigned int idx = 0;
    int len;
 
    type = eina_stringshare_add("elm_image");
@@ -2321,18 +2322,23 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    len = eina_list_count(image_animation->images);
    if (len)
      {
-        count = floor(progress * len);
-        EINA_LIST_FOREACH(transit->objs, elist, obj)
+        idx = floor(progress * len);
+        if (image_animation->prev_idx != idx)
           {
-             if (elm_widget_type_check(obj, type, __func__) ||
-                 elm_widget_type_check(obj, type_deprecated, __func__))
+             EINA_LIST_FOREACH(transit->objs, elist, obj)
                {
-                  elm_image_file_set(obj,
-                                     eina_list_nth(image_animation->images, count),
-                                     NULL);
-                  elm_image_preload_disabled_set(obj, EINA_TRUE);
+                  if (elm_widget_type_check(obj, type, __func__) ||
+                      elm_widget_type_check(obj, type_deprecated, __func__))
+                    {
+                       const char *file = eina_list_nth(image_animation->images,
+                                                        idx);
+
+                       elm_image_file_set(obj, file, NULL);
+                       elm_image_preload_disabled_set(obj, EINA_TRUE);
+                    }
                }
           }
+        image_animation->prev_idx = idx;
      }
 
    eina_stringshare_del(type);
@@ -2347,6 +2353,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
 
    if (!image_animation) return NULL;
    image_animation->images = images;
+   image_animation->prev_idx = -1;
    return image_animation;
 }
 
