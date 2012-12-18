@@ -1,3 +1,7 @@
+2012-12-18  Gustavo Sverzut Barbieri (k-s)
+
+	* Fixed many memory problems with ecore_evas_extn
+
 2012-12-18  Leandro Pereira
 
 	* Add threaded renderer.

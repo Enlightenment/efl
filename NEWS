@@ -83,3 +83,4 @@ Fixes:
     * Fix potential segv in software engine native_set code.
     * Fix uninitialized data in Evas OpenGL engine.
     * Fix the line drawing clipping problem on arm gl driver.
+    * Fix many memory problems with ecore_evas_extn.
