@@ -741,6 +741,12 @@ on_stat_error:
 }
 
 EAPI void
+evas_cache_image_ref(Image_Entry *im)
+{
+   im->references++;
+}
+
+EAPI void
 evas_cache_image_drop(Image_Entry *im)
 {
    Evas_Cache_Image *cache;
