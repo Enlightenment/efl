@@ -30,25 +30,35 @@ extern "C"
 /**
  * @defgroup Ecore_Audio_Group Ecore_Audio - Convenience audio API
  *
- * @ref Ecore_Audio_Module_API_Group
+ * @since 1.8
  *
  * @{
  */
 
+  /** @since 1.8
+   */
 enum _Ecore_Audio_Type {
-    ECORE_AUDIO_TYPE_PULSE,
-    ECORE_AUDIO_TYPE_ALSA,
-    ECORE_AUDIO_TYPE_SNDFILE,
-    ECORE_AUDIO_TYPE_TONE,
-    ECORE_AUDIO_TYPE_CUSTOM,
-    ECORE_AUDIO_MODULE_LAST,
+    ECORE_AUDIO_TYPE_PULSE,   /**< Use Pulseaudio module */
+    ECORE_AUDIO_TYPE_ALSA,    /**< Use ALSA module*/
+    ECORE_AUDIO_TYPE_SNDFILE, /**< Use libsndfile module */
+    ECORE_AUDIO_TYPE_TONE,    /**< Use tone module */
+    ECORE_AUDIO_TYPE_CUSTOM,  /**< Use custom module */
+    ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
 };
 
 typedef enum _Ecore_Audio_Type Ecore_Audio_Type;
 
+  /** @since 1.8
+   */
 typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
 /**< The audio module */
+
+  /** @since 1.8
+   */
 typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
+
+  /** @since 1.8
+   */
 typedef struct _Ecore_Audio_Format Ecore_Audio_Format;
 /**< The format of the audio data */
 
@@ -62,7 +72,7 @@ struct _Ecore_Audio_Vio {
     int (*write)(Ecore_Audio_Object *out, const void *buffer, int length);
 };
 
-typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio; /** < Functions to implement IO virtually */
+typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio; /**< Functions to implement IO virtually */
 
 EAPI extern int ECORE_AUDIO_INPUT_STARTED; /**< Sound was started */
 EAPI extern int ECORE_AUDIO_INPUT_STOPPED; /**< Sound was stopped */
@@ -79,6 +89,8 @@ EAPI extern int ECORE_AUDIO_OUTPUT_INPUT_REMOVED; /**< Input removed from output
  *
  * @return 1 or greater on success, 0 on error.
  *
+ * @since 1.8
+ *
  * This function sets up Ecore_Audio and initializes the modules that
  * provide the in- and outputs to use. It returns 0 on failure, otherwise
  * it returns the number of times it has already been called.
@@ -94,6 +106,8 @@ EAPI int                 ecore_audio_init(void);
  * @return 0 when the library is completely shut down, 1 or
  * greater otherwise.
  *
+ * @since 1.8
+ *
  * This function shuts down the Ecore_Audio library. It returns 0 when it has
  * been called the same number of times than ecore_audio_init(). In that case
  * it shuts down all the services it uses.
@@ -108,6 +122,8 @@ EAPI int                 ecore_audio_shutdown(void);
  *
  * @param name the name of the output to create
  * @return a new instance or NULL on error
+ *
+ * @since 1.8
  */
 EAPI Ecore_Audio_Object *ecore_audio_output_add(Ecore_Audio_Type type);
 
@@ -116,6 +132,8 @@ EAPI Ecore_Audio_Object *ecore_audio_output_add(Ecore_Audio_Type type);
  *
  * @param output The output
  * @param name The name
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_output_name_set(Ecore_Audio_Object *output, const char *name);
 
@@ -125,6 +143,8 @@ EAPI void ecore_audio_output_name_set(Ecore_Audio_Object *output, const char *na
  * @param output the output
  *
  * @return the name of the output
+ *
+ * @since 1.8
  */
 EAPI const char *ecore_audio_output_name_get(Ecore_Audio_Object *output);
 
@@ -132,6 +152,8 @@ EAPI const char *ecore_audio_output_name_get(Ecore_Audio_Object *output);
  * @brief Free an @ref Ecore_Audio_Output instance
  *
  * @param out the output
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_output_del(Ecore_Audio_Object *output);
 
@@ -140,6 +162,8 @@ EAPI void                ecore_audio_output_del(Ecore_Audio_Object *output);
  *
  * @param output The output
  * @param data The pointer to set
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_output_userdata_set(Ecore_Audio_Object *output, void *data);
 
@@ -149,6 +173,8 @@ EAPI void ecore_audio_output_userdata_set(Ecore_Audio_Object *output, void *data
  * @param output The output
  *
  * @return The pointer to the user data
+ *
+ * @since 1.8
  */
 EAPI void *ecore_audio_output_userdata_get(Ecore_Audio_Object *output);
 
@@ -157,6 +183,8 @@ EAPI void *ecore_audio_output_userdata_get(Ecore_Audio_Object *output);
  *
  * @param out the output
  * @param volume the volume
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_output_volume_set(Ecore_Audio_Object *output, double volume);
 
@@ -166,6 +194,8 @@ EAPI void                ecore_audio_output_volume_set(Ecore_Audio_Object *outpu
  * @param out the output
  *
  * @return the volume
+ *
+ * @since 1.8
  */
 EAPI double              ecore_audio_output_volume_get(Ecore_Audio_Object *output);
 
@@ -174,6 +204,8 @@ EAPI double              ecore_audio_output_volume_get(Ecore_Audio_Object *outpu
  *
  * @param out the output
  * @param paused the paused state
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_output_paused_set(Ecore_Audio_Object *output, Eina_Bool paused);
 
@@ -183,6 +215,8 @@ EAPI void                ecore_audio_output_paused_set(Ecore_Audio_Object *outpu
  * @param out the output
  *
  * @return the paused state
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_output_paused_get(Ecore_Audio_Object *output);
 
@@ -193,6 +227,8 @@ EAPI Eina_Bool           ecore_audio_output_paused_get(Ecore_Audio_Object *outpu
  * @param in the input
  *
  * @return True if connecting was successful, False otherwise
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_output_input_add(Ecore_Audio_Object *output, Ecore_Audio_Object *input);
 
@@ -204,6 +240,8 @@ EAPI Eina_Bool           ecore_audio_output_input_add(Ecore_Audio_Object *output
  * @param in the input
  *
  * @return True if disconnecting was successful, False otherwise
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_output_input_del(Ecore_Audio_Object *output, Ecore_Audio_Object *input);
 
@@ -213,6 +251,8 @@ EAPI Eina_Bool           ecore_audio_output_input_del(Ecore_Audio_Object *output
  * @param out the output
  *
  * @return A list of Ecore_Audio_Input that are connected to the output
+ *
+ * @since 1.8
  */
 EAPI Eina_List          *ecore_audio_output_inputs_get(Ecore_Audio_Object *output);
 
@@ -224,6 +264,8 @@ EAPI Eina_List          *ecore_audio_output_inputs_get(Ecore_Audio_Object *outpu
  * @param in the input to chain
  *
  * @return True if chaining was successful, False otherwise
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_output_input_chain_after(Ecore_Audio_Object *output, Ecore_Audio_Object *input, Ecore_Audio_Object *after);
 
@@ -235,6 +277,8 @@ EAPI Eina_Bool           ecore_audio_output_input_chain_after(Ecore_Audio_Object
  *
  * @param name the name of the input to create
  * @return a new instance or NULL on error
+ *
+ * @since 1.8
  */
 EAPI Ecore_Audio_Object *ecore_audio_input_add(Ecore_Audio_Type type);
 
@@ -244,6 +288,8 @@ EAPI Ecore_Audio_Object *ecore_audio_input_add(Ecore_Audio_Type type);
  * @param input the input
  *
  * @return the name of the input
+ *
+ * @since 1.8
  */
 EAPI const char *ecore_audio_input_name_get(Ecore_Audio_Object *input);
 
@@ -252,6 +298,8 @@ EAPI const char *ecore_audio_input_name_get(Ecore_Audio_Object *input);
  *
  * @param input the input
  * @param name The name to set
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_input_name_set(Ecore_Audio_Object *input, const char *name);
 
@@ -259,6 +307,8 @@ EAPI void ecore_audio_input_name_set(Ecore_Audio_Object *input, const char *name
  * @brief Free an @ref Ecore_Audio_Input instance
  *
  * @param in the input
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_input_del(Ecore_Audio_Object *input);
 
@@ -267,6 +317,8 @@ EAPI void                ecore_audio_input_del(Ecore_Audio_Object *input);
  *
  * @param input The input
  * @param data The pointer to set
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_input_userdata_set(Ecore_Audio_Object *input, void *data);
 
@@ -276,6 +328,8 @@ EAPI void ecore_audio_input_userdata_set(Ecore_Audio_Object *input, void *data);
  * @param input The input
  *
  * @return The pointer to the user data
+ *
+ * @since 1.8
  */
 EAPI void *ecore_audio_input_userdata_get(Ecore_Audio_Object *input);
 
@@ -285,6 +339,8 @@ EAPI void *ecore_audio_input_userdata_get(Ecore_Audio_Object *input);
  * @param input The input
  *
  * @return The samplerate in Hz
+ *
+ * @since 1.8
  */
 EAPI int ecore_audio_input_samplerate_get(Ecore_Audio_Object *input);
 
@@ -293,6 +349,8 @@ EAPI int ecore_audio_input_samplerate_get(Ecore_Audio_Object *input);
  *
  * @param input The input
  * @param samplerate The sample rate in Hz
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_input_samplerate_set(Ecore_Audio_Object *input, int samplerate);
 
@@ -302,6 +360,8 @@ EAPI void ecore_audio_input_samplerate_set(Ecore_Audio_Object *input, int sample
  * @param input The input
  * 
  * @return The number of channels
+ *
+ * @since 1.8
  */
 EAPI int ecore_audio_input_channels_get(Ecore_Audio_Object *input);
 
@@ -310,6 +370,8 @@ EAPI int ecore_audio_input_channels_get(Ecore_Audio_Object *input);
  *
  * @param input The input
  * @param channels The number of channels to set
+ *
+ * @since 1.8
  */
 EAPI void ecore_audio_input_channels_set(Ecore_Audio_Object *input, int channels);
 
@@ -320,6 +382,8 @@ EAPI void ecore_audio_input_channels_set(Ecore_Audio_Object *input, int channels
  * @offset the offset in seconds
  * @mode seek mode (SEEK_SET, SEEK_END, or SEEK_CUR)
  * @return the current offset
+ *
+ * @since 1.8
  */
 EAPI double              ecore_audio_input_seek(Ecore_Audio_Object *input, double offset, int mode);
 
@@ -331,6 +395,8 @@ EAPI double              ecore_audio_input_seek(Ecore_Audio_Object *input, doubl
  * @param len the size of the buffer
  * 
  * @return the number of bytes that were read
+ *
+ * @since 1.8
  */
 EAPI int ecore_audio_input_read(Ecore_Audio_Object *input, void *data, int len);
 
@@ -339,6 +405,8 @@ EAPI int ecore_audio_input_read(Ecore_Audio_Object *input, void *data, int len);
  *
  * @param in the input
  * @return EINA_TRUE if the input is paused, EINA_FALSE otherwise
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_input_paused_get(Ecore_Audio_Object *input);
 
@@ -347,6 +415,8 @@ EAPI Eina_Bool           ecore_audio_input_paused_get(Ecore_Audio_Object *input)
  *
  * @param in the input
  * @param paused the paused state to set
+ *
+ * @since 1.8
  *
  * If paused is EINA_TRUE if the input is paused, if it is EINA_FALSE the
  * input plays normally.
@@ -358,6 +428,8 @@ EAPI void                ecore_audio_input_paused_set(Ecore_Audio_Object *input,
  *
  * @param in the input
  * @param volume the volume
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_input_volume_set(Ecore_Audio_Object *input, double volume);
 
@@ -367,6 +439,8 @@ EAPI void                ecore_audio_input_volume_set(Ecore_Audio_Object *input,
  * @param in the input
  *
  * @return the volume
+ *
+ * @since 1.8
  */
 EAPI double              ecore_audio_input_volume_get(Ecore_Audio_Object *input);
 
@@ -375,6 +449,8 @@ EAPI double              ecore_audio_input_volume_get(Ecore_Audio_Object *input)
  *
  * @param in the input
  * @param looped if the input should loop
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_input_looped_set(Ecore_Audio_Object *input, Eina_Bool looped);
 
@@ -384,6 +460,8 @@ EAPI void                ecore_audio_input_looped_set(Ecore_Audio_Object *input,
  * @param in the input
  *
  * @return if the input loops
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_input_looped_get(Ecore_Audio_Object *input);
 
@@ -393,6 +471,8 @@ EAPI Eina_Bool           ecore_audio_input_looped_get(Ecore_Audio_Object *input)
  * @param in the input
  *
  * @return the length in seconds
+ *
+ * @since 1.8
  */
 EAPI double              ecore_audio_input_length_get(Ecore_Audio_Object *input);
 
@@ -401,6 +481,8 @@ EAPI double              ecore_audio_input_length_get(Ecore_Audio_Object *input)
  *
  * @param in the input
  * @param preloaded if the input is preloaded
+ *
+ * @since 1.8
  */
 EAPI void                ecore_audio_input_preloaded_set(Ecore_Audio_Object *input, Eina_Bool preloaded);
 
@@ -410,6 +492,8 @@ EAPI void                ecore_audio_input_preloaded_set(Ecore_Audio_Object *inp
  * @param in the input
  *
  * @return EINA_TRUE if the input is preloaded, otherwise EINA_FALSE
+ *
+ * @since 1.8
  */
 EAPI Eina_Bool           ecore_audio_input_preloaded_get(Ecore_Audio_Object *input);
 
@@ -419,6 +503,8 @@ EAPI Eina_Bool           ecore_audio_input_preloaded_get(Ecore_Audio_Object *inp
  * @param in the input
  *
  * @return A list of outputs
+ *
+ * @since 1.8
  */
 EAPI Ecore_Audio_Object *ecore_audio_input_output_get(Ecore_Audio_Object *input);
 
@@ -428,6 +514,8 @@ EAPI Ecore_Audio_Object *ecore_audio_input_output_get(Ecore_Audio_Object *input)
  * @param in the input
  *
  * @return The remaining time in seconds
+ *
+ * @since 1.8
  */
 EAPI double              ecore_audio_input_remaining_get(Ecore_Audio_Object *input);
 

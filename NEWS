@@ -42,6 +42,7 @@ Additions:
     * evas:
      - Add ellipsis support in Evas_Object_Text.
      - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
+    * Add ecore_audio API
 
 Deprecations:
     * ecore_x:

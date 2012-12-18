@@ -1,3 +1,6 @@
+2012-12-17  Daniel Willmann
+	* Add EFL Audio API - ecore_audio
+
 2012-12-17  Leandro Pereira
 
 	* Get rid of unused `ref` field in RGBA_Image struct.
