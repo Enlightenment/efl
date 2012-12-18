@@ -57,7 +57,7 @@ struct _Render_Updates
 };
 
 static Eina_Bool
-evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
+evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Evas_Event_Cb updates_func, void *updates_data, Eina_Bool do_async);
 
 EAPI void
 evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
@@ -1312,6 +1312,7 @@ evas_render_updates_internal(Evas *eo_e,
                              unsigned char do_draw,
                              Evas_Render_Done_Cb done_func,
                              void *done_data,
+                             Evas_Event_Cb updates_func, void *updates_data,
                              Eina_Bool do_async)
 {
    Evas_Object *eo_obj;
@@ -1338,7 +1339,12 @@ evas_render_updates_internal(Evas *eo_e,
    if (e->rendering) return EINA_FALSE;
    e->rendering = EINA_TRUE;
 
-   if (do_async) eo_ref(eo_e);
+   if (do_async)
+     {
+        eo_ref(eo_e);
+        e->render.data = updates_data;
+        e->render.updates_cb = updates_func;
+     }
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -1905,9 +1911,8 @@ _canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Public_Data *e = _pd;
 
-   e->render.updates_cb = func;
-   e->render.data = data;
-   *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup, e, EINA_TRUE);
+   *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
+                                       e, func, data, EINA_TRUE);
 }
 
 EAPI Eina_List *
@@ -1929,8 +1934,8 @@ evas_render_updates_internal_wait(Evas *eo_e,
    Eina_List *ret = NULL;
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
-   if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL, NULL,
-                                     EINA_FALSE))
+   if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
+                                     NULL, NULL, NULL, EINA_FALSE))
       return NULL;
 
    ret = e->render.updates;
