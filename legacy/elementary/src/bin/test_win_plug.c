@@ -60,6 +60,15 @@ cb_plug_disconnected(void *data __UNUSED__,
 }
 
 static void
+cb_plug_resized(void *data __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info)
+{
+   Evas_Coord_Size *size = event_info;
+   printf("server image resized to %dx%d\n", size->w, size->h);
+}
+
+static void
 cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -161,6 +170,7 @@ test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
      }
 
    evas_object_smart_callback_add(plug, "image.deleted", cb_plug_disconnected, NULL);
+   evas_object_smart_callback_add(plug, "image,resized", cb_plug_resized, NULL);
 
    evas_object_resize(plug, 380, 500);
    evas_object_move(plug, 10, 10);

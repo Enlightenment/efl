@@ -12,9 +12,11 @@ static const char PLUG_KEY[] = "__Plug_Ecore_Evas";
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_IMAGE_DELETED[] = "image.deleted";
+static const char SIG_IMAGE_RESIZED[] = "image,resized";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
    {SIG_IMAGE_DELETED, ""},
+   {SIG_IMAGE_RESIZED, "ii"},
    {NULL, NULL}
 };
 
@@ -38,6 +40,17 @@ _elm_plug_disconnected(Ecore_Evas *ee)
    plug = ecore_evas_data_get(ee, PLUG_KEY);
    if (!plug) return;
    evas_object_smart_callback_call(plug, SIG_IMAGE_DELETED, NULL);
+}
+
+static void
+_elm_plug_resized(Ecore_Evas *ee)
+{
+   Evas_Coord_Size size = {0, 0};
+   Evas_Object *plug = ecore_evas_data_get(ee, PLUG_KEY);
+   EINA_SAFETY_ON_NULL_RETURN(plug);
+
+   ecore_evas_geometry_get(ee, NULL, NULL, &(size.w), &(size.h));
+   evas_object_smart_callback_call(plug, SIG_IMAGE_RESIZED, &size);
 }
 
 static void
@@ -170,6 +183,7 @@ _connect(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
         ecore_evas_data_set(ee, PLUG_KEY, obj);
         ecore_evas_callback_delete_request_set(ee, _elm_plug_disconnected);
+        ecore_evas_callback_resize_set(ee, _elm_plug_resized);
         if (ret) *ret = EINA_TRUE;
      }
 }
