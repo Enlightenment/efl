@@ -884,8 +884,6 @@ _elm_image_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
    sd->preloading = EINA_TRUE;
-   sd->show = EINA_TRUE;
-
    evas_object_hide(sd->img);
    evas_object_image_preload(sd->img, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
@@ -924,8 +922,6 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
    evas_object_image_file_set(sd->img, file, key);
 
    sd->preloading = EINA_TRUE;
-   sd->show = EINA_TRUE;
-
    evas_object_hide(sd->img);
 
    eo_do(obj, elm_obj_image_size_get(&w, &h));
