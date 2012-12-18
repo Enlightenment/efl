@@ -543,7 +543,7 @@ _edbus_proxy_vcall(EDBus_Proxy *proxy, const char *member, EDBus_Message_Cb cb, 
    EDBus_Message *msg = edbus_proxy_method_call_new(proxy, member);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
-   if (!edbus_message_arguments_vset(msg, signature, ap))
+   if (!edbus_message_arguments_vappend(msg, signature, ap))
      {
         edbus_message_unref(msg);
         ERR("Error setting arguments");

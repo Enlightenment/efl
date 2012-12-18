@@ -36,7 +36,7 @@ static void emit_properties(EDBus_Service_Interface *iface)
      {
         EDBus_Message_Iter *entry = edbus_message_iter_container_new(dict, 'e',
                                                                      NULL);
-        edbus_message_iter_arguments_set(entry, "ss", k->key, k->val);
+        edbus_message_iter_arguments_append(entry, "ss", k->key, k->val);
         edbus_message_iter_container_close(dict, entry);
      }
 

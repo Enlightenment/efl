@@ -12,7 +12,7 @@ static EDBus_Message *
 _hello(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
    EDBus_Message *reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "s", "Hello World");
+   edbus_message_arguments_append(reply, "s", "Hello World");
    printf("Hello\n");
    return reply;
 }
@@ -54,7 +54,7 @@ _send_bool(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    Eina_Bool bool;
    if (!edbus_message_arguments_get(msg, "b", &bool))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "b", bool);
+   edbus_message_arguments_append(reply, "b", bool);
    return reply;
 }
 
@@ -65,7 +65,7 @@ _send_byte(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    unsigned char byte;
    if (!edbus_message_arguments_get(msg, "y", &byte))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "y", byte);
+   edbus_message_arguments_append(reply, "y", byte);
    return reply;
 }
 
@@ -76,7 +76,7 @@ _send_uint32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    unsigned int uint32;
    if (!edbus_message_arguments_get(msg, "u", &uint32))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "u", uint32);
+   edbus_message_arguments_append(reply, "u", uint32);
    return reply;
 }
 
@@ -87,7 +87,7 @@ _send_int32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    int int32;
    if (!edbus_message_arguments_get(msg, "i", &int32))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "i", int32);
+   edbus_message_arguments_append(reply, "i", int32);
    return reply;
 }
 
@@ -98,7 +98,7 @@ _send_int16(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    short int int16;
    if (!edbus_message_arguments_get(msg, "n", &int16))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "n", int16);
+   edbus_message_arguments_append(reply, "n", int16);
    return reply;
 }
 
@@ -109,7 +109,7 @@ _send_double(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    double d;
    if (!edbus_message_arguments_get(msg, "d", &d))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "d", d);
+   edbus_message_arguments_append(reply, "d", d);
    return reply;
 }
 
@@ -120,7 +120,7 @@ _send_string(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    const char *txt;
    if (!edbus_message_arguments_get(msg, "s", &txt))
      printf("edbus_message_arguments_get() error\n");
-   edbus_message_arguments_set(reply, "s", txt);
+   edbus_message_arguments_append(reply, "s", txt);
    return reply;
 }
 
@@ -128,7 +128,7 @@ static Eina_Bool
 _resp_async(void *data)
 {
    EDBus_Message *msg = data;
-   edbus_message_arguments_set(msg, "s", "Async test ok");
+   edbus_message_arguments_append(msg, "s", "Async test ok");
    edbus_connection_send(conn, msg, NULL, NULL, -1);
    edbus_message_unref(msg);
    return ECORE_CALLBACK_CANCEL;

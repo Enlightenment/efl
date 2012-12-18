@@ -251,7 +251,7 @@ _props_getall(EDBus_Service_Interface *iface, Eina_Iterator *iterator, EDBus_Mes
         if (!getter || prop->is_invalidate)
           continue;
 
-        if (!edbus_message_iter_arguments_set(dict, "{sv}", &entry))
+        if (!edbus_message_iter_arguments_append(dict, "{sv}", &entry))
           continue;
 
         edbus_message_iter_basic_append(entry, 's', prop->property->name);
@@ -289,7 +289,7 @@ _cb_property_getall(const EDBus_Service_Interface *piface, const EDBus_Message *
    reply = edbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
    main_iter = edbus_message_iter_get(reply);
-   if (!edbus_message_iter_arguments_set(main_iter, "a{sv}", &dict))
+   if (!edbus_message_iter_arguments_append(main_iter, "a{sv}", &dict))
      {
         edbus_message_unref(reply);
         return NULL;
@@ -386,7 +386,7 @@ cb_introspect(const EDBus_Service_Interface *_iface, const EDBus_Message *messag
         obj->introspection_dirty = EINA_FALSE;
      }
 
-   edbus_message_arguments_set(reply, "s", eina_strbuf_string_get(obj->introspection_data));
+   edbus_message_arguments_append(reply, "s", eina_strbuf_string_get(obj->introspection_data));
    return reply;
 }
 
@@ -480,9 +480,9 @@ _propmgr_iface_props_append(EDBus_Service_Interface *iface, EDBus_Message_Iter *
    Eina_Iterator *iterator;
    EDBus_Message *error_msg;
 
-   edbus_message_iter_arguments_set(array, "{sa{sv}}", &iface_entry);
+   edbus_message_iter_arguments_append(array, "{sa{sv}}", &iface_entry);
 
-   edbus_message_iter_arguments_set(iface_entry, "sa{sv}", iface->name, &props_array);
+   edbus_message_iter_arguments_append(iface_entry, "sa{sv}", iface->name, &props_array);
    iterator = eina_hash_iterator_data_new(iface->properties);
    if (!_props_getall(iface, iterator, props_array, NULL, &error_msg))
      {
@@ -508,8 +508,8 @@ _managed_obj_append(EDBus_Service_Object *obj, EDBus_Message_Iter *array, Eina_B
    if (first) goto foreach;
    if (obj->has_objectmanager) return EINA_TRUE;
 
-   edbus_message_iter_arguments_set(array, "{oa{sa{sv}}}", &obj_entry);
-   edbus_message_iter_arguments_set(obj_entry, "oa{sa{sv}}", obj->path,
+   edbus_message_iter_arguments_append(array, "{oa{sa{sv}}}", &obj_entry);
+   edbus_message_iter_arguments_append(obj_entry, "oa{sa{sv}}", obj->path,
                                     &array_interface);
    iface_iter = eina_hash_iterator_data_new(obj->interfaces);
    EINA_ITERATOR_FOREACH(iface_iter, children_iface)
@@ -544,7 +544,7 @@ _cb_managed_objects(const EDBus_Service_Interface *iface, const EDBus_Message *m
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
    main_iter =  edbus_message_iter_get(reply);
-   edbus_message_iter_arguments_set(main_iter, "a{oa{sa{sv}}}", &array_path);
+   edbus_message_iter_arguments_append(main_iter, "a{oa{sa{sv}}}", &array_path);
 
    ret = _managed_obj_append(iface->obj, array_path, EINA_TRUE);
    if (!ret)
@@ -730,7 +730,7 @@ _iface_changed_send(void *data)
              continue;
           }
         main_iter = edbus_message_iter_get(msg);
-        edbus_message_iter_arguments_set(main_iter, "oa{sa{sv}}",
+        edbus_message_iter_arguments_append(main_iter, "oa{sa{sv}}",
                                          iface->obj->path, &array_iface);
         if (!_propmgr_iface_props_append(iface, array_iface))
           goto error;
@@ -769,7 +769,7 @@ error:
         EINA_SAFETY_ON_NULL_GOTO(msg, error2);
         main_iter = edbus_message_iter_get(msg);
 
-        edbus_message_iter_arguments_set(main_iter, "oas", iface_data->obj_path,
+        edbus_message_iter_arguments_append(main_iter, "oas", iface_data->obj_path,
                                          &array_iface);
         edbus_message_iter_basic_append(array_iface, 's', iface_data->iface);
 
@@ -1242,7 +1242,7 @@ edbus_service_signal_emit(const EDBus_Service_Interface *iface, unsigned int sig
 
    signature = eina_array_data_get(iface->sign_of_signals, signal_id);
    va_start(ap, signal_id);
-   r = edbus_message_arguments_vset(sig, signature, ap);
+   r = edbus_message_arguments_vappend(sig, signature, ap);
    va_end(ap);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(r, EINA_FALSE);
 
@@ -1302,7 +1302,7 @@ _idler_propschanged(void *data)
    EINA_SAFETY_ON_NULL_GOTO(msg, error);
 
    main_iter = edbus_message_iter_get(msg);
-   if (!edbus_message_iter_arguments_set(main_iter, "sa{sv}", iface->name, &dict))
+   if (!edbus_message_iter_arguments_append(main_iter, "sa{sv}", iface->name, &dict))
      {
         edbus_message_unref(msg);
         goto error;
@@ -1330,7 +1330,7 @@ _idler_propschanged(void *data)
           continue;
 
         EINA_SAFETY_ON_FALSE_GOTO(
-                edbus_message_iter_arguments_set(dict, "{sv}", &entry), error);
+                edbus_message_iter_arguments_append(dict, "{sv}", &entry), error);
 
         edbus_message_iter_basic_append(entry, 's', prop->property->name);
         var = edbus_message_iter_container_new(entry, 'v',
@@ -1355,7 +1355,7 @@ _idler_propschanged(void *data)
 invalidate:
    edbus_message_iter_container_close(main_iter, dict);
 
-   edbus_message_iter_arguments_set(main_iter, "as", &array_invalidate);
+   edbus_message_iter_arguments_append(main_iter, "as", &array_invalidate);
 
    if (!iface->prop_invalidated)
      goto end;

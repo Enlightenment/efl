@@ -94,7 +94,7 @@ EAPI Eina_Bool             edbus_message_arguments_vget(const EDBus_Message *msg
  * This function only supports basic type, for complex types use
  * edbus_message_iter_* functions.
  */
-EAPI Eina_Bool             edbus_message_arguments_set(EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool             edbus_message_arguments_append(EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set data to EDBus_Message.
@@ -102,7 +102,7 @@ EAPI Eina_Bool             edbus_message_arguments_set(EDBus_Message *msg, const
  * This function only supports basic types, for complex types use
  * edbus_message_iter_* functions.
  */
-EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool             edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @defgroup EDBus_Message_Iter Iterator
@@ -110,7 +110,7 @@ EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, cons
  */
 
 /**
- * @brief Create and appends a typed iterator to another iterator.
+ * @brief Create and append a typed iterator to another iterator.
  *
  * After append data to returned iterator it must be closed calling
  * edbus_message_iter_container_close().
@@ -130,29 +130,33 @@ EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, cons
 EAPI EDBus_Message_Iter *edbus_message_iter_container_new(EDBus_Message_Iter *iter, int type, const char* contained_signature) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Append a basic type to EDBus_Iterator.
+ * @brief Append a basic type into an EDBus_Iterator.
  */
 EAPI Eina_Bool               edbus_message_iter_basic_append(EDBus_Message_Iter *iter, int type, ...) EINA_ARG_NONNULL(1, 3);
 
 /**
- * @brief Set data to EDBus_Message_Iter. For each complete in signature
- * you need pass the value, in case of complex type a pointer to be allocated a
- * EDBus_Message_Iter that you need fill and close.
+ * @brief Append an argument into an EDBus_Message_Iter. For each complete type
+ * you need to provide the correspondent value. In case of complex types you
+ * need to provide an EDBus_Message_Iter** to be allocated and then filled in.
  *
- * It's not possible open two iterators at same Iterator. Example:
- * "aiai", to set this you need create and put the first array with
- * edbus_message_iter_container_new() fill array with data and close then
- * you could open the second array with edbus_message_iter_container_new().
+ * It's not possible to open two iterators at same iterator with this function.
+ * For example, to create a message with signature="aiai" you need to create the
+ * first container with edbus_message_iter_container_new(), fill the array,
+ * close it with edbus_message_iter_container_close() and then do the same for
+ * the second array.
  *
- * @param iter iterator
- * @param signature of data
- * @param ... values
+ * @param iter iterator in which data will be appended
+ * @param signature signature of the contained data
+ * @param ... values for each complete type
  *
- * @note This function don't support variant, use instead
- * edbus_message_iter_container_new() to create the variant fill
- * data and close it..
+ * @see edbus_message_iter_container_new()
+ * @see edbus_message_iter_container_close()
+ *
+ * @note This function doesn't support variant, use
+ * edbus_message_iter_container_new() instead to create the variant, fill
+ * with data and close it.
  */
-EAPI Eina_Bool               edbus_message_iter_arguments_set(EDBus_Message_Iter *iter, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool               edbus_message_iter_arguments_append(EDBus_Message_Iter *iter, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set data to EDBus_Message_Iter. For each complete in signature
@@ -172,7 +176,7 @@ EAPI Eina_Bool               edbus_message_iter_arguments_set(EDBus_Message_Iter
  * edbus_message_iter_container_new() to create the variant fill
  * data and close it.
  */
-EAPI Eina_Bool               edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool               edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Closes a container-typed value appended to the message.

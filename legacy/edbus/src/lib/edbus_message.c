@@ -274,7 +274,7 @@ edbus_message_arguments_vget(const EDBus_Message *msg, const char *signature, va
 }
 
 EAPI Eina_Bool
-edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signature, va_list ap)
+edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signature, va_list ap)
 {
    DBusSignatureIter signature_iter;
    Eina_Bool r = EINA_TRUE;
@@ -314,7 +314,7 @@ edbus_message_iter_arguments_vset(EDBus_Message_Iter *iter, const char *signatur
              else if (type[1] == DBUS_TYPE_VARIANT)
                {
                   ERR("variant not supported by \
-                      edbus_message_iter_arguments_set(), \
+                      edbus_message_iter_arguments_append(), \
                       try edbus_message_iter_container_new()");
                   r = EINA_FALSE;
                   goto next;
@@ -343,7 +343,7 @@ next:
 }
 
 EAPI Eina_Bool
-edbus_message_iter_arguments_set(EDBus_Message_Iter *iter, const char *signature, ...)
+edbus_message_iter_arguments_append(EDBus_Message_Iter *iter, const char *signature, ...)
 {
    Eina_Bool r;
    va_list ap;
@@ -351,7 +351,7 @@ edbus_message_iter_arguments_set(EDBus_Message_Iter *iter, const char *signature
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
 
    va_start(ap, signature);
-   r = edbus_message_iter_arguments_vset(iter, signature, ap);
+   r = edbus_message_iter_arguments_vappend(iter, signature, ap);
    va_end(ap);
    return r;
 }
@@ -422,7 +422,7 @@ append_basic(char type, va_list *vl, DBusMessageIter *iter)
 }
 
 static Eina_Bool
-_edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list ap)
+_edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap)
 {
    DBusSignatureIter signature_iter;
    EDBus_Message_Iter *iter;
@@ -444,8 +444,8 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
                            &iter->dbus_iterator);
         else
           {
-             ERR("sig = %s | edbus_message_arguments_set() and \
-                  edbus_message_arguments_vset() only support basic types, \
+             ERR("sig = %s | edbus_message_arguments_append() and \
+                  edbus_message_arguments_vappend() only support basic types, \
                   to complex types use edbus_message_iter_* functions",
                   signature);
              r = EINA_FALSE;
@@ -459,7 +459,7 @@ _edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list
 }
 
 EAPI Eina_Bool
-edbus_message_arguments_set(EDBus_Message *msg, const char *signature, ...)
+edbus_message_arguments_append(EDBus_Message *msg, const char *signature, ...)
 {
    Eina_Bool ret;
    va_list ap;
@@ -468,17 +468,17 @@ edbus_message_arguments_set(EDBus_Message *msg, const char *signature, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
 
    va_start(ap, signature);
-   ret = _edbus_message_arguments_vset(msg, signature, ap);
+   ret = _edbus_message_arguments_vappend(msg, signature, ap);
    va_end(ap);
    return ret;
 }
 
 EAPI Eina_Bool
-edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list ap)
+edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap)
 {
    EDBUS_MESSAGE_CHECK_RETVAL(msg, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
-   return _edbus_message_arguments_vset(msg, signature, ap);
+   return _edbus_message_arguments_vappend(msg, signature, ap);
 }
 
 EAPI EDBus_Message_Iter *

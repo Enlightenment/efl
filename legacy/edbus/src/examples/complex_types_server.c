@@ -71,11 +71,11 @@ _receive_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 
    main_iter = edbus_message_iter_get(reply);
    var = edbus_message_iter_container_new(main_iter, 'v', "as");
-   edbus_message_iter_arguments_set(var, "as", &array);
+   edbus_message_iter_arguments_append(var, "as", &array);
 
-   edbus_message_iter_arguments_set(array, "s", "item1");
-   edbus_message_iter_arguments_set(array, "s", "item2");
-   edbus_message_iter_arguments_set(array, "s", "item3");
+   edbus_message_iter_arguments_append(array, "s", "item1");
+   edbus_message_iter_arguments_append(array, "s", "item2");
+   edbus_message_iter_arguments_append(array, "s", "item3");
 
    edbus_message_iter_container_close(var, array);
    edbus_message_iter_container_close(main_iter, var);
@@ -146,7 +146,7 @@ _send_array_int(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    iter = edbus_message_iter_get(reply);
    array = edbus_message_iter_container_new(iter, 'a', "i");
    for (i = 0; i < 5; i++)
-     edbus_message_iter_arguments_set(array, "i", i);
+     edbus_message_iter_arguments_append(array, "i", i);
    edbus_message_iter_container_close(iter, array);
 
    return reply;
@@ -165,7 +165,7 @@ _send_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
    iter = edbus_message_iter_get(reply);
    array = edbus_message_iter_container_new(iter, 'a', "s");
    for (i = 0; i < 5; i++)
-     edbus_message_iter_arguments_set(array, "s", array_string[i]);
+     edbus_message_iter_arguments_append(array, "s", array_string[i]);
    edbus_message_iter_container_close(iter, array);
 
    return reply;
@@ -184,7 +184,7 @@ _plus_one(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
         return reply;
      }
    num++;
-   edbus_message_arguments_set(reply, "i", num);
+   edbus_message_arguments_append(reply, "i", num);
 
    return reply;
 }
@@ -229,14 +229,14 @@ _properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBu
      edbus_message_iter_basic_append(iter, 's', "lalalala");
    else if (!strcmp(propname, "int32"))
      {
-        edbus_message_iter_arguments_set(iter, "i", int32);
+        edbus_message_iter_arguments_append(iter, "i", int32);
         int32++;
      }
    else if (!strcmp(propname, "st"))
      {
         EDBus_Message_Iter *st;
-        edbus_message_iter_arguments_set(iter, "(ss)", &st);
-        edbus_message_iter_arguments_set(st, "ss", "string1", "string2");
+        edbus_message_iter_arguments_append(iter, "(ss)", &st);
+        edbus_message_iter_arguments_append(st, "ss", "string1", "string2");
         edbus_message_iter_container_close(iter, st);
      }
    return EINA_TRUE;

@@ -49,7 +49,7 @@ _array_append(const char *type, const Eina_Value *value_array, EDBus_Message_Ite
    EDBus_Message_Iter *array;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
-            edbus_message_iter_arguments_set(iter, type, &array), EINA_FALSE);
+            edbus_message_iter_arguments_append(iter, type, &array), EINA_FALSE);
    DBG("array of type %c", type[1]);
    switch (type[1])
      {
@@ -66,7 +66,7 @@ _array_append(const char *type, const Eina_Value *value_array, EDBus_Message_Ite
                 Eina_Value st;
                 EDBus_Message_Iter *entry;
                 eina_value_array_value_get(value_array, i, &st);
-                edbus_message_iter_arguments_set(array, type+1, &entry);
+                edbus_message_iter_arguments_append(array, type+1, &entry);
                 _message_iter_from_eina_value_struct(entry_sig, entry, &st);
                 edbus_message_iter_container_close(array, entry);
                 eina_value_flush(&st);
@@ -82,7 +82,7 @@ _array_append(const char *type, const Eina_Value *value_array, EDBus_Message_Ite
                 Eina_Value inner_array;
                 EDBus_Message_Iter *sub_array;
                 eina_value_array_value_get(value_array, i, &inner_array);
-                edbus_message_iter_arguments_set(array, type+1, &sub_array);
+                edbus_message_iter_arguments_append(array, type+1, &sub_array);
                 _array_append(type+1, &inner_array, sub_array);
                 edbus_message_iter_container_close(array, sub_array);
                 eina_value_flush(&inner_array);
@@ -333,7 +333,7 @@ _message_iter_from_eina_value_struct(const char *signature, EDBus_Message_Iter *
                          _compatible_type(type[0], st.desc->members[i].type),
                          EINA_FALSE);
              eina_value_struct_value_get(value, st.desc->members[i].name, &inner_st);
-             edbus_message_iter_arguments_set(iter, type, &sub_iter);
+             edbus_message_iter_arguments_append(iter, type, &sub_iter);
              r = _message_iter_from_eina_value_struct(sub_sig, sub_iter,
                                                       &inner_st);
              edbus_message_iter_container_close(iter, sub_iter);

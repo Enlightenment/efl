@@ -214,13 +214,13 @@ main(void)
 
    msg = edbus_proxy_method_call_new(test2_proxy, "ReceiveArrayOfStringIntWithSize");
    iter = edbus_message_iter_get(msg);
-   if (!edbus_message_iter_arguments_set(iter, "ia(si)", size_of_array, &array_of_string))
+   if (!edbus_message_iter_arguments_append(iter, "ia(si)", size_of_array, &array_of_string))
      printf("error on edbus_massage_iterator_arguments_set()\n\n");
    for (i = 0; i < size_of_array; i++)
      {
          EDBus_Message_Iter *struct_of_si;
-         edbus_message_iter_arguments_set(array_of_string, "(si)", &struct_of_si);
-         edbus_message_iter_arguments_set(struct_of_si, "si", array[i], i);
+         edbus_message_iter_arguments_append(array_of_string, "(si)", &struct_of_si);
+         edbus_message_iter_arguments_append(struct_of_si, "si", array[i], i);
          edbus_message_iter_container_close(array_of_string, struct_of_si);
      }
    edbus_message_iter_container_close(iter, array_of_string);
@@ -242,19 +242,19 @@ main(void)
     * this will cause a error, we could not open another container until
     * we close the first one
     */
-   edbus_message_iter_arguments_set(iter, "a(ii)", &array_itr);
+   edbus_message_iter_arguments_append(iter, "a(ii)", &array_itr);
    for (i = 0; i < 5; i++)
      {
-        edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
-        edbus_message_iter_arguments_set(structure, "ii", i, i*i);
+        edbus_message_iter_arguments_append(array_itr, "(ii)", &structure);
+        edbus_message_iter_arguments_append(structure, "ii", i, i*i);
         edbus_message_iter_container_close(array_itr, structure);
      }
    edbus_message_iter_container_close(iter, array_itr);
-   edbus_message_iter_arguments_set(iter, "a(ii)", &array_itr);
+   edbus_message_iter_arguments_append(iter, "a(ii)", &array_itr);
    for (i = 0; i < 7; i++)
      {
-        edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
-        edbus_message_iter_arguments_set(structure, "ii", i, i*i*i);
+        edbus_message_iter_arguments_append(array_itr, "(ii)", &structure);
+        edbus_message_iter_arguments_append(structure, "ii", i, i*i*i);
         edbus_message_iter_container_close(array_itr, structure);
      }
    edbus_message_iter_container_close(iter, array_itr);
