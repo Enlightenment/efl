@@ -116,7 +116,7 @@
 
    @section intro_example Introductory Examples
 
-   @ref Examples
+   @ref eet_examples
 
    @todo Document data format for images and data structures.
 

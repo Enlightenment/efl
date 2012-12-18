@@ -34,7 +34,7 @@
    @li @ref Ecore_WinCE_Group
    @li @ref Ecore_Audio_Group
 
-   For more info on Ecore usage, there are these @ref Examples.
+   For more info on Ecore usage, there are these @ref ecore_examples.
 
    @section compiling How to compile using Ecore?
    pkgconfig (.pc) files are installed for every ecore module.
