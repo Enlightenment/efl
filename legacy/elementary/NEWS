@@ -38,7 +38,7 @@ Improvements:
    * Handle COMPOUND_TEXT cnp
    * Conformant widget handles displaymode change related with keypad.
    * Conformant widget handles indicator service.
-   * Elm_Transit image animation effects supports elm_image object type. 
+   * Elm_Transit image animation effects supports elm_image object type.
 
 Fixes:
 
