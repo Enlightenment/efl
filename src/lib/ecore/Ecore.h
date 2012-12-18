@@ -13,7 +13,7 @@
 
    Please see the @ref authors page for contact details.
 
-   @section intro Introduction
+   @section ecore_main_intro Introduction
 
    Ecore is a library of convenience functions. A brief explanation of how to use
    it can be found in @ref Ecore_Main_Loop_Page.
@@ -36,7 +36,7 @@
 
    For more info on Ecore usage, there are these @ref ecore_examples.
 
-   @section compiling How to compile using Ecore?
+   @section ecore_main_compiling How to compile using Ecore?
    pkgconfig (.pc) files are installed for every ecore module.
    Thus, to compile using any of them, you can use something like the following:
 
@@ -44,7 +44,7 @@
 gcc *.c $(pkg-config ecore ecore-$x ecore-$y [...] --cflags --libs)
 @endverbatim
 
-   @section install How is it installed?
+   @section ecore_main_install How is it installed?
 
    Suggested configure options for ecore for a Linux desktop X display
    with OpenGL and Software support, communication (networking) and
@@ -71,7 +71,7 @@ sudo make install
 /**
  * @page Ecore_Main_Loop_Page The Ecore Main Loop
  *
- * @section intro What is Ecore?
+ * @section Ecore_Main_Loop_Page_intro What is Ecore?
  *
  * Ecore is a clean and tiny event loop library with many modules to do lots of
  * convenient things for a programmer, to save time and effort. It's small and
@@ -141,7 +141,7 @@ sudo make install
  *
  *
  *
- * @section work How does Ecore work?
+ * @section Ecore_Main_Loop_Page_work How does Ecore work?
  *
  * Ecore is very easy to learn and use. All the function calls are designed to
  * be easy to remember, explicit in describing what they do, and heavily

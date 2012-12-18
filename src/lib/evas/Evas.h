@@ -11,15 +11,15 @@
 
    @section toc Table of Contents
 
-   @li @ref intro
-   @li @ref work
-   @li @ref compiling
-   @li @ref install
-   @li @ref next_steps
-   @li @ref intro_example
+   @li @ref evas_main_intro
+   @li @ref evas_main_work
+   @li @ref evas_main_compiling
+   @li @ref evas_main_install
+   @li @ref evas_main_next_steps
+   @li @ref evas_main_intro_example
 
 
-   @section intro What is Evas?
+   @section evas_main_intro What is Evas?
 
    Evas is a clean display canvas API for several target display systems
    that can draw anti-aliased text, smooth super and sub-sampled scaled
@@ -42,7 +42,7 @@
    back-ends, letting it display on several display systems, making it
    portable for cross-device and cross-platform development.
 
-   @subsection intro_not_evas What Evas is not?
+   @subsection evas_main_intro_not_evas What Evas is not?
 
    Evas is not a widget set or widget toolkit, however it is their
    base. See Elementary (http://docs.enlightenment.org/auto/elementary/)
@@ -58,7 +58,7 @@
    Ecore_Evas (http://docs.enlightenment.org/auto/ecore/).
 
 
-   @section work How does Evas work?
+   @section evas_main_work How does Evas work?
 
    Evas is a canvas display library. This is markedly different from most
    display and windowing systems as a canvas is structural and is also a
@@ -184,7 +184,7 @@
    scrollbars, sliders, push buttons etc.
 
 
-   @section compiling How to compile using Evas ?
+   @section evas_main_compiling How to compile using Evas ?
 
    Evas is a library your application links to. The procedure for this is
    very simple. You simply have to compile your application with the
@@ -218,7 +218,7 @@
    example is only guaranteed to make Evas add it's own requirements.
 
 
-   @section install How is it installed?
+   @section evas_main_install How is it installed?
 
    Simple:
 
@@ -230,7 +230,7 @@
    make install
    @endverbatim
 
-   @section next_steps Next Steps
+   @section evas_main_next_steps Next Steps
 
    After you understood what Evas is and installed it in your system you
    should proceed understanding the programming interface for all
@@ -265,7 +265,7 @@
     ends to be a widget, providing some intelligence (thus the name)
     to Evas objects -- like a button or check box, for example.
 
-   @section intro_example Introductory Example
+   @section evas_main_intro_example Introductory Example
 
    @include evas-buffer-simple.c
  */

@@ -12,14 +12,14 @@
 
    @section toc Table of Contents
 
-   @li @ref intro
-   @li @ref example
-   @li @ref compiling
-   @li @ref install
-   @li @ref next_steps
-   @li @ref intro_example
+   @li @ref eet_main_intro
+   @li @ref eet_main_example
+   @li @ref eet_main_compiling
+   @li @ref eet_main_install
+   @li @ref eet_main_next_steps
+   @li @ref eet_main_intro_example
 
-   @section intro What is Eet?
+   @section eet_main_intro What is Eet?
 
    It is a tiny library designed to write an arbitrary set of chunks of data
    to a file and optionally compress each chunk (very much like a zip file)
@@ -40,7 +40,7 @@
    encoded in a platform independent way and can be written and read by any
    architecture.
 
-   @section example A simple example on using Eet
+   @section eet_main_example A simple example on using Eet
 
    Here is a simple example on how to use Eet to save a series of strings to a
    file and load them again. The advantage of using Eet over just
@@ -56,7 +56,7 @@
 
    @include eet-basic.c
 
-   @section compiling How to compile using Eet ?
+   @section eet_main_compiling How to compile using Eet ?
 
    Eet is a library your application links to. The procedure for this is very
    simple. You simply have to compile your application with the appropriate
@@ -87,7 +87,7 @@
    is only guaranteed to make Eet add it's own requirements.
 
 
-   @section install How is it installed?
+   @section eet_main_install How is it installed?
 
    Simple:
 
@@ -99,7 +99,7 @@
    make install
    @endverbatim
 
-   @section next_steps Next Steps
+   @section eet_main_next_steps Next Steps
 
    After you understood what Eet is and installed it in your system you
    should proceed understanding the programming interface. We'd recommend
@@ -114,7 +114,7 @@
     parse your data structures automatically. Just create your
     descriptors and let Eet do the work for you.
 
-   @section intro_example Introductory Examples
+   @section eet_main_intro_example Introductory Examples
 
    @ref eet_examples
 
