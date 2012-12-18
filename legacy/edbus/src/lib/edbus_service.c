@@ -1256,7 +1256,7 @@ edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *s
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signal_msg, EINA_FALSE);
    _edbus_connection_send(iface->obj->conn, signal_msg, NULL, NULL, -1);
-   edbus_message_unref(sig);
+   edbus_message_unref(signal_msg);
    return EINA_TRUE;
 }
 

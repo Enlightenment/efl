@@ -57,16 +57,6 @@ EAPI EDBus_Message        *edbus_message_error_new(const EDBus_Message *reply, c
  */
 EAPI EDBus_Message        *edbus_message_method_return_new(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
-/**
- * @brief Constructs a new message representing a signal emission.
- *
- * @param path of the object that was emiting the signal
- * @param interface
- * @param name
- *
- * @return new EDBus_Message, free with edbus_message_unref()
- */
-EAPI EDBus_Message        *edbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief If EDBus_Message is a message error return EINA_TRUE and fills

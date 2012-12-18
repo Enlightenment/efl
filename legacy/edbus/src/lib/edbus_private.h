@@ -79,6 +79,7 @@ void                   edbus_connection_name_ref(EDBus_Connection_Name *cn);
 void                   edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn);
 EDBus_Signal_Handler  *_edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, EDBus_Signal_Cb cb, const void *cb_data);
 
+EDBus_Message         *edbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
 #ifdef HAVE_VA_LIST_AS_ARRAY
 #define MAKE_PTR_FROM_VA_LIST(arg) ((va_list *)(arg))
