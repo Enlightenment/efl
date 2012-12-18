@@ -74,13 +74,17 @@ _ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
    Eina_List *l;
    Ecore_Evas_Interface *i;
 
-   if (!ee || !iname) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iname, NULL);
 
    EINA_LIST_FOREACH(ee->engine.ifaces, l, i)
      {
 	if (!strcmp(i->name, iname))
 	  return i;
      }
+
+   CRIT("Ecore_Evas %p (engine: %s) does not have interface '%s'",
+        ee, ee->driver, iname);
 
    return NULL;
 }
