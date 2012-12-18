@@ -146,6 +146,10 @@ EAPI EDBus_Message *edbus_service_signal_new(const EDBus_Service_Interface *ifac
 
 /**
  * @brief Send a signal message.
+ *
+ * On success this will call edbus_message_unref() on the @param signal_msg,
+ * which is the intended behavior in 99% of the cases. Remember to increment
+ * the refcount if you want to keep it alive.
  */
 EAPI Eina_Bool edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
 
