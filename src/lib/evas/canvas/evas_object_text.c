@@ -977,6 +977,7 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
     }
    else
      {
+        if (text) free(text);
 	eina_stringshare_replace(&o->cur.utf8_text, NULL);
      }
    _evas_object_text_recalc(eo_obj);
