@@ -1262,7 +1262,8 @@ typedef void      (*Evas_Object_Event_Cb)(void *data, Evas *e, Evas_Object *obj,
 typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type type, void *event_info);
 
 /**
- * @defgroup Evas_Group Top Level Functions
+ * @defgroup Evas_Main_Group Top Level Functions
+ * @ingroup Evas
  *
  * Functions that affect Evas as a whole.
  */
@@ -1298,7 +1299,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  * thus. Again, this wouldn't be on Evas common usage for most
  * developers. See the full @ref Example_Evas_Buffer_Simple "example".
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI int               evas_init(void);
 
@@ -1329,7 +1330,7 @@ EAPI int               evas_init(void);
  * in evas_init(). See the full @ref Example_Evas_Buffer_Simple
  * "example".
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI int               evas_shutdown(void);
 
@@ -1382,7 +1383,7 @@ EAPI int               evas_shutdown(void);
  *   }
  * @endcode
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI Evas_Alloc_Error  evas_alloc_error(void);
 
@@ -1407,7 +1408,7 @@ EAPI Evas_Alloc_Error  evas_alloc_error(void);
  * asynchronous events of the canvas. Naturally, other mainloops,
  * apart from ecore, may make use of it.
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI int               evas_async_events_fd_get(void) EINA_WARN_UNUSED_RESULT;
 
@@ -1422,7 +1423,7 @@ EAPI int               evas_async_events_fd_get(void) EINA_WARN_UNUSED_RESULT;
  * together with other event parameters, when queued, get called (with
  * those parameters), in that order.
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI int               evas_async_events_process(void);
 
@@ -1439,12 +1440,13 @@ EAPI int               evas_async_events_process(void);
  * whose call is to happen after evas_async_events_process() is
  * called.
  *
- * @ingroup Evas_Group
+ * @ingroup Evas_Main_Group
  */
 EAPI Eina_Bool         evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func) EINA_ARG_NONNULL(1, 4);
 
 /**
  * @defgroup Evas_Canvas Canvas Functions
+ * @ingroup Evas
  *
  * Low level Evas canvas functions. Sub groups will present more high
  * level ones, though.
@@ -4588,6 +4590,7 @@ EAPI const Eina_List        *evas_font_path_list(const Evas *e) EINA_WARN_UNUSED
 
 /**
  * @defgroup Evas_Object_Group Generic Object Functions
+ * @ingroup Evas
  *
  * Functions that manipulate generic Evas objects.
  *
@@ -7833,6 +7836,7 @@ EAPI void *evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, Evas_
 
 /**
  * @defgroup Evas_Object_Specific Specific Object Functions
+ * @ingroup Evas
  *
  * Functions that work on specific objects.
  *
@@ -12547,6 +12551,7 @@ EAPI Eina_Bool    evas_object_is_frame_object_get(Evas_Object *obj);
 
 /**
  * @defgroup Evas_Smart_Group Smart Functions
+ * @ingroup Evas
  *
  * Functions that deal with #Evas_Smart structs, creating definition
  * (classes) of objects that will have customized behavior for methods
@@ -13466,6 +13471,7 @@ EAPI int                               evas_smart_usage_get(const Evas_Smart *s)
 
 /**
  * @defgroup Evas_Smart_Object_Group Smart Object Functions
+ * @ingroup Evas
  *
  * Functions dealing with Evas smart objects (instances).
  *
@@ -16493,6 +16499,7 @@ EAPI Eina_List     *evas_object_grid_children_get(const Evas_Object *o) EINA_WAR
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
+ * @ingroup Evas
  *
  * Evas has an (optional) module which provides client-server
  * infrastructure to <b>share bitmaps across multiple processes</b>,
@@ -16644,6 +16651,7 @@ EAPI void        evas_cserve_disconnect(void);
 
 /**
  * @defgroup Evas_Utils General Utilities
+ * @ingroup Evas
  *
  * Some functions that are handy but are not specific of canvas or
  * objects.
