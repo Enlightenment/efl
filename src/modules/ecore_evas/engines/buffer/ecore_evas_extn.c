@@ -699,6 +699,7 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
              ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
           }
      }
+   free(bdata);
    extn_ee_list = eina_list_remove(extn_ee_list, ee);
 }
 
