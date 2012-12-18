@@ -77,7 +77,7 @@ do_register(const EDBus_Service_Interface *ifc __UNUSED__, const EDBus_Message *
                                          client_name_owner_changed_cb, NULL,
                                          EINA_FALSE);
    reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "b", cache_desktop_exists());
+   edbus_message_arguments_append(reply, "b", cache_desktop_exists());
    return reply;
 }
 
