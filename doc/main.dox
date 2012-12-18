@@ -118,3 +118,8 @@
  * @brief Evas
  */
 
+/**
+ * @defgroup Eet
+ *
+ * @brief Eet
+ */

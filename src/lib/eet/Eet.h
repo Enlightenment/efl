@@ -204,6 +204,7 @@ EAPI extern Eet_Version *eet_version;
 
 /**
  * @defgroup Eet_Group Top level functions
+ * @ingroup Eet
  * Functions that affect Eet as a whole.
  *
  * @{
@@ -242,6 +243,7 @@ typedef enum _Eet_Error
    
 /**
  * @defgroup Eet_Compression Eet Compression Levels
+ * @ingroup Eet
  * Compression modes/levels supported by Eet.
  *
  * @{
@@ -326,6 +328,7 @@ eet_clearcache(void);
 
 /**
  * @defgroup Eet_File_Group Eet File Main Functions
+ * @ingroup Eet
  *
  * Functions to create, destroy and do basic manipulation of
  * #Eet_File handles.
@@ -994,6 +997,7 @@ eet_write_cipher(Eet_File *ef,
 
 /**
  * @defgroup Eet_File_Image_Group Image Store and Load
+ * @ingroup Eet
  *
  * Eet efficiently stores and loads images, including alpha
  * channels and lossy compressions.
@@ -1783,6 +1787,7 @@ eet_data_image_encode_cipher(const void *data,
 
 /**
  * @defgroup Eet_Cipher_Group Cipher, Identity and Protection Mechanisms
+ * @ingroup Eet
  *
  * Eet allows one to protect entries of an #Eet_File
  * individually. This may be used to ensure data was not tampered or
@@ -1947,6 +1952,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
 
 /**
  * @defgroup Eet_Data_Group Eet Data Serialization
+ * @ingroup Eet
  *
  * Convenience functions to serialize and parse complex data
  * structures to binary blobs.
@@ -3770,6 +3776,7 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
 
 /**
  * @defgroup Eet_Node_Group Low-level Serialization Structures.
+ * @ingroup Eet
  *
  * Functions that create, destroy and manipulate serialization nodes
  * used by @ref Eet_Data_Group.
@@ -4141,6 +4148,7 @@ eet_node_walk(void *parent,
 
 /**
  * @defgroup Eet_Connection_Group Helper function to use eet over a network link
+ * @ingroup Eet
  *
  * Function that reconstruct and prepare packet of @ref Eet_Data_Group to be send.
  *
