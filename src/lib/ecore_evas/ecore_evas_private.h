@@ -312,6 +312,20 @@ struct _Ecore_Evas
    Ecore_Evas_Engine engine;
    Eina_List *sub_ecore_evas;
 
+   struct {
+      unsigned char avoid_damage;
+      unsigned char resize_shape : 1;
+      unsigned char shaped : 1;
+      unsigned char shaped_changed : 1;
+      unsigned char alpha : 1;
+      unsigned char alpha_changed : 1;
+      unsigned char transparent : 1;
+      unsigned char transparent_changed : 1;
+      int           rotation;
+      int           rotation_resize;
+      unsigned char rotation_changed : 1;
+   } delayed;
+
    int refcount;
 
    unsigned char ignore_events : 1;
@@ -322,6 +336,8 @@ struct _Ecore_Evas
    unsigned char deleted : 1;
    int           gl_sync_draw_done; // added by gl77.lee
    unsigned char profile_supported : 1;
+   unsigned char in_async_render : 1;
+   unsigned char can_async_render : 1;
 };
 
 EAPI void _ecore_evas_ref(Ecore_Evas *ee);
