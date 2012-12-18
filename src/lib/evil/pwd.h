@@ -6,6 +6,7 @@
  * @file pwd.h
  * @brief The file that provides functions ported from Unix in pwd.h.
  * @defgroup Evil_Pwd_Group Pwd.h functions
+ * @ingroup Evil
  *
  * This header provides functions ported from Unix in dirent.h.
  *

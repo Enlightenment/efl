@@ -37,6 +37,7 @@ extern "C" {
  * @file dlfcn.h
  * @brief The file that provides functions to manage dynamic-link libraries
  * @defgroup Dlfcn Functions that manage dynamic-link libraries.
+ * @ingroup Evil
  *
  * This header provides functions to load and unload dynamic-link
  * libaries, to get the address of a symbol, and to get diagnostic

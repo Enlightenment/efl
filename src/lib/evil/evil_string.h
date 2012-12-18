@@ -6,6 +6,7 @@
  * @file evil_string.h
  * @brief The file that provides functions ported from Unix in string.h.
  * @defgroup Evil_String_Group String.h functions.
+ * @ingroup Evil
  *
  * This header provides functions ported from Unix in string.h.
  *

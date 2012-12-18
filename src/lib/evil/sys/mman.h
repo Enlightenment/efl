@@ -65,6 +65,7 @@ extern "C" {
  * @file mman.h
  * @brief The file that provides the memory map functions
  * @defgroup Mman Functions that manage memory mappping.
+ * @ingroup Evil
  *
  * This header provides the meomry map functions mmap and munmap.
  *

@@ -6,6 +6,7 @@
  * @file evil_stdlib.h
  * @brief The file that provides functions ported from Unix in stdlib.h.
  * @defgroup Evil_Stdlib_Group Stdlib.h functions.
+ * @ingroup Evil
  *
  * This header provides functions ported from Unix in stdlib.h.
  *

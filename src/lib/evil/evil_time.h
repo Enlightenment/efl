@@ -6,6 +6,7 @@
  * @file evil_time.h
  * @brief The file that provides functions ported from Unix in time.h.
  * @defgroup Evil_Time_Group Time.h functions
+ * @ingroup Evil
  *
  * This header provides functions ported from Unix in time.h.
  *

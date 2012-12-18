@@ -6,6 +6,7 @@
  * @file evil_main.h
  * @brief The file that provides functions to initialize and shut down Evil.
  * @defgroup Evil_Main_Group Main
+ * @ingroup Evil
  *
  * This header provides functions to initialize and shut down the Evil
  * library.

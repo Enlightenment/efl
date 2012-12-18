@@ -22,6 +22,7 @@
  * @file dirent.h
  * @brief The file that provides functions ported from Unix in dirent.h.
  * @defgroup Evil_Dirent_Group Dirent.h functions
+ * @ingroup Evil
  *
  * This header provides functions ported from Unix in dirent.h.
  *
