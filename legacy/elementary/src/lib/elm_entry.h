@@ -2794,7 +2794,7 @@ enum
  *
  * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
  *
- * @param[out] return_key_type
+ * @param[in] return_key_type
  *
  * @see elm_entry_input_panel_return_key_type_set
  */

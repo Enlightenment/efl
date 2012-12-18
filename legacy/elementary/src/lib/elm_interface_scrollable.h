@@ -742,7 +742,7 @@ enum
  * @param[out] disabled
  *
  */
-#define elm_scrollable_interface_bounce_animator_disabled_get(disabled) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_GET), EO_TYPECHECK(Eina_Bool, disabled)
+#define elm_scrollable_interface_bounce_animator_disabled_get(disabled) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, disabled)
 
 /**
  * @def elm_scrollable_interface_wheel_disabled_get
