@@ -23,9 +23,7 @@
  * @endverbatim
  */
 
-
 #include "codegen_example_generated.h"
-
 
 static Eina_Bool _btn_large = EINA_FALSE;
 
@@ -36,17 +34,17 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 
    if (_btn_large == EINA_FALSE)
      {
-	_btn_large = EINA_TRUE;
-	codegen_example_swallow_grow_emit(layout);
-	elm_object_text_set(btn, "Reduce me!");
-	if (!codegen_example_table_clear(layout, EINA_TRUE))
-	  fprintf(stderr, "Could not remove the items from the table!\n");
+        _btn_large = EINA_TRUE;
+        codegen_example_swallow_grow_emit(layout);
+        elm_object_text_set(btn, "Reduce me!");
+        if (!codegen_example_table_clear(layout, EINA_TRUE))
+          fprintf(stderr, "Could not remove the items from the table!\n");
      }
    else
      {
-	_btn_large = EINA_FALSE;
-	codegen_example_swallow_shrink_emit(layout);
-	elm_object_text_set(btn, "Enlarge me!");
+        _btn_large = EINA_FALSE;
+        codegen_example_swallow_shrink_emit(layout);
+        elm_object_text_set(btn, "Enlarge me!");
      }
 }
 
@@ -79,9 +77,9 @@ _button_create(Evas_Object *parent, const char *label)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-    Evas_Object *win, *bg, *btn, *layout, *tbl_items[6];
-    const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};
-    int i;
+   Evas_Object *win, *bg, *btn, *layout, *tbl_items[6];
+   const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};
+   int i;
 
    elm_app_info_set(elm_main, "elementary", "examples/codegen_example.edj");
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
@@ -98,8 +96,8 @@ elm_main(int argc, char **argv)
    layout = codegen_example_layout_add(win, NULL, NULL);
    if (!layout)
      {
-	printf("Could not create the layout\n");
-	return -1;
+        printf("Could not create the layout\n");
+        return -1;
      }
 
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -112,8 +110,8 @@ elm_main(int argc, char **argv)
    const char *title = codegen_example_title_get(layout);
    if (title)
      {
-	elm_win_title_set(win, title);
-	codegen_example_title_set(layout, title);
+        elm_win_title_set(win, title);
+        codegen_example_title_set(layout, title);
      }
 
    btn = _button_create(win, "Enlarge me!");
@@ -122,19 +120,19 @@ elm_main(int argc, char **argv)
 
    for (i = 0; i < 6; i++)
      {
-	tbl_items[i] = _button_create(win, labels[i]);
-	if (i < 3)
-	  {
-	     if (!codegen_example_table_pack(layout, tbl_items[i], i, i, 1,1))
-	       fprintf(stderr, "Could not add the button to the table!\n");
-	  }
-	else
-	  {
-	     if (!codegen_example_box_append(layout, tbl_items[i]))
-	       fprintf(stderr, "Could not add the button to the box!\n");
-	  }
+        tbl_items[i] = _button_create(win, labels[i]);
+        if (i < 3)
+          {
+             if (!codegen_example_table_pack(layout, tbl_items[i], i, i, 1,1))
+               fprintf(stderr, "Could not add the button to the table!\n");
+          }
+        else
+          {
+             if (!codegen_example_box_append(layout, tbl_items[i]))
+               fprintf(stderr, "Could not add the button to the box!\n");
+          }
 
-	evas_object_show(tbl_items[i]);
+        evas_object_show(tbl_items[i]);
      }
 
    evas_object_resize(win, 500, 600);
