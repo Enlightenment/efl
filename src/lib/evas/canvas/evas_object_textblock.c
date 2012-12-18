@@ -506,7 +506,7 @@ struct _Evas_Object_Textblock
 
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *eo_obj);
-static void evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_textblock_free(Evas_Object *eo_obj);
 static void evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_textblock_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
@@ -9608,7 +9608,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
 
 
 static void
-evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Paragraph *par, *start = NULL;
    Evas_Object_Textblock_Line *ln;
@@ -9703,7 +9703,7 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
          obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
-         &ti->text_props);
+         &ti->text_props, do_async);
 
    /* backing */
 #define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa) \
@@ -9721,7 +9721,8 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
               obj->cur.geometry.x + ln->x + x + (ox), \
               obj->cur.geometry.y + ln->par->y + ln->y + y + (oy), \
               (ow), \
-              (oh)); \
+              (oh), \
+              do_async); \
      } \
    while (0)
 

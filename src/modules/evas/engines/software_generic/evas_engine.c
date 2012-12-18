@@ -1,5 +1,6 @@
 #include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_private.h"
+#include "evas_blend_private.h"
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
@@ -273,6 +274,83 @@ static void       (*_sym_glViewport)                            (GLint x, GLint 
 /* static void       (*_sym_glProgramParameteri)                   (GLuint a, GLuint b, GLint d) = NULL; */
 #endif
 
+// Threaded Render
+
+typedef struct _Evas_Thread_Command_Rect Evas_Thread_Command_Rect;
+typedef struct _Evas_Thread_Command_Line Evas_Thread_Command_Line;
+typedef struct _Evas_Thread_Command_Polygon Evas_Thread_Command_Polygon;
+typedef struct _Evas_Thread_Command_Image Evas_Thread_Command_Image;
+typedef struct _Evas_Thread_Command_Font Evas_Thread_Command_Font;
+typedef struct _Evas_Thread_Command_Map Evas_Thread_Command_Map;
+
+struct _Evas_Thread_Command_Rect
+{
+   void *surface;
+   DATA32 color;
+   int render_op;
+   int x, y, w, h;
+};
+
+struct _Evas_Thread_Command_Line
+{
+   void *surface;
+   Eina_Rectangle clip;
+   DATA32 color;
+   int render_op;
+   Eina_Bool anti_alias;
+   int x1, y1;
+   int x2, y2;
+};
+
+struct _Evas_Thread_Command_Polygon
+{
+   Eina_Rectangle ext;
+   DATA32 col;
+   int render_op;
+   void *surface;
+   RGBA_Polygon_Point *points;
+   int x, y;
+};
+
+struct _Evas_Thread_Command_Image
+{
+   void *surface;
+   void *image;
+   Eina_Rectangle src, dst, clip;
+   DATA32 mul_col;
+   int render_op;
+   int smooth;
+};
+
+struct _Evas_Thread_Command_Font
+{
+   RGBA_Image *dst;
+   int x;
+   int y;
+   Evas_Glyph_Array *glyphs;
+   RGBA_Gfx_Func func;
+   void *gl_new;
+   void *gl_free;
+   void *gl_draw;
+   void *font_ext_data;
+   DATA32 col;
+   Eina_Bool clip_use : 1;
+   Eina_Rectangle clip_rect, ext;
+   int im_w, im_h;
+};
+
+struct _Evas_Thread_Command_Map
+{
+   void *image;
+   RGBA_Draw_Context image_ctx;
+   void *surface;
+   Eina_Rectangle clip;
+   DATA32 mul_col;
+   int render_op;
+   RGBA_Map *map;
+   int smooth, level, offset;
+};
+
 /*
  *****
  **
@@ -416,33 +494,154 @@ eng_context_render_op_get(void *data EINA_UNUSED, void *context)
    return ((RGBA_Draw_Context *)context)->render_op;
 }
 
+static void
+_draw_thread_rectangle_draw(void *data)
+{
+    Evas_Thread_Command_Rect *rect = data;
 
+    evas_common_rectangle_rgba_draw(rect->surface,
+                                    rect->color, rect->render_op,
+                                    rect->x, rect->y, rect->w, rect->h);
+}
 
 static void
-eng_rectangle_draw(void *data EINA_UNUSED, void *context, void *surface, int x, int y, int w, int h)
+_draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
+   Evas_Thread_Command_Rect cr;
+
+   RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+   if ((w <= 0) || (h <= 0)) return;
+
+   cr.surface = dst;
+   cr.color = dc->col.col;
+   cr.render_op = dc->render_op;
+   cr.x = x;
+   cr.y = y;
+   cr.w = w;
+   cr.h = h;
+
+   evas_thread_cmd_enqueue(_draw_thread_rectangle_draw, &cr, sizeof(cr));
+}
+
+static void
+eng_rectangle_draw(void *data EINA_UNUSED, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async)
+{
+   if (do_async)
+     evas_common_rectangle_draw_cb(surface, context, x, y, w, h,
+                                   _draw_rectangle_thread_cmd);
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1))
+   else if ((cpunum > 1))
      evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
-   else
 #endif
+   else
      {
-	evas_common_rectangle_draw(surface, context, x, y, w, h);
-	evas_common_cpu_end_opt();
+        evas_common_rectangle_draw(surface, context, x, y, w, h);
+        evas_common_cpu_end_opt();
      }
 }
 
 static void
-eng_line_draw(void *data EINA_UNUSED, void *context, void *surface, int x1, int y1, int x2, int y2)
+_draw_thread_line_draw(void *data)
 {
-#ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1))
-    evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
-   else
-#endif   
+   Evas_Thread_Command_Line *line = data;
+   int clip_x, clip_y, clip_w, clip_h;
+
+   clip_x = line->clip.x;
+   clip_y = line->clip.y;
+   clip_w = line->clip.w;
+   clip_h = line->clip.h;
+
+   if ((line->x1 == line->x2) && (line->y1 == line->y2))
      {
-	evas_common_line_draw(surface, context, x1, y1, x2, y2);
-	evas_common_cpu_end_opt();
+        evas_common_line_point_draw(line->surface,
+                                    clip_x, clip_y, clip_w, clip_h,
+                                    line->color, line->render_op,
+                                    line->x1, line->y1);
+        return;
+     }
+
+   if (line->anti_alias)
+     evas_common_line_draw_line_aa
+       (line->surface,
+        clip_x, clip_y, clip_w, clip_h,
+        line->color, line->render_op,
+        line->x1, line->y1,
+        line->x2, line->y2);
+   else
+     evas_common_line_draw_line
+       (line->surface,
+        clip_x, clip_y, clip_w, clip_h,
+        line->color, line->render_op,
+        line->x1, line->y1,
+        line->x2, line->y2);
+}
+
+static void
+_line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
+{
+   Evas_Thread_Command_Line cl;
+   int clx, cly, clw, clh;
+   int cx, cy, cw, ch;
+   int x, y, w, h;
+
+   cl.surface = dst;
+
+   if ((x1 == x2) && (y1 == y2))
+     {
+        EINA_RECTANGLE_SET(&cl.clip,
+                           dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+        goto done;
+     }
+
+   clx = cly = 0;
+   clw = dst->cache_entry.w;
+   clh = dst->cache_entry.h;
+
+   cx = dc->clip.x;
+   cy = dc->clip.y;
+   cw = dc->clip.w;
+   ch = dc->clip.h;
+
+   if (dc->clip.use)
+     {
+	RECTS_CLIP_TO_RECT(clx, cly, clw, clh, cx, cy, cw, ch);
+	if ((clw < 1) || (clh < 1)) return;
+     }
+
+   x = MIN(x1, x2);
+   y = MIN(y1, y2);
+   w = MAX(x1, x2) - x + 1;
+   h = MAX(y1, y2) - y + 1;
+
+   RECTS_CLIP_TO_RECT(clx, cly, clw, clh, x, y, w, h);
+   if ((clw < 1) || (clh < 1)) return;
+
+   EINA_RECTANGLE_SET(&cl.clip, clx, cly, clw, clh);
+
+ done:
+   cl.color = dc->col.col;
+   cl.render_op = dc->render_op;
+   cl.anti_alias = dc->anti_alias;
+   cl.x1 = x1;
+   cl.y1 = y1;
+   cl.x2 = x2;
+   cl.y2 = y2;
+
+   evas_thread_cmd_enqueue(_draw_thread_line_draw, &cl, sizeof(cl));
+}
+
+static void
+eng_line_draw(void *data EINA_UNUSED, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async)
+{
+   if (do_async) _line_draw_thread_cmd(surface, context, x1, y1, x2, y2);
+#ifdef BUILD_PIPE_RENDER
+   else if ((cpunum > 1))
+     evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
+#endif
+   else
+     {
+        evas_common_line_draw(surface, context, x1, y1, x2, y2);
+        evas_common_cpu_end_opt();
      }
 }
 
@@ -459,13 +658,115 @@ eng_polygon_points_clear(void *data EINA_UNUSED, void *context EINA_UNUSED, void
 }
 
 static void
-eng_polygon_draw(void *data EINA_UNUSED, void *context, void *surface, void *polygon, int x, int y)
+_draw_thread_polygon_cleanup(Evas_Thread_Command_Polygon *poly)
 {
+   RGBA_Polygon_Point *points = poly->points;
+
+   while (points)
+     {
+        RGBA_Polygon_Point *p;
+
+        p = points;
+        points =
+          (RGBA_Polygon_Point *)eina_inlist_remove(EINA_INLIST_GET(points),
+                                                   EINA_INLIST_GET(points));
+        free(p);
+     }
+
+   poly->points = NULL;
+}
+
+static void
+_draw_thread_polygon_draw(void *data)
+{
+   Evas_Thread_Command_Polygon *poly = data;
+
+   evas_common_polygon_rgba_draw
+     (poly->surface,
+      poly->ext.x, poly->ext.y, poly->ext.w, poly->ext.h,
+      poly->col, poly->render_op,
+      poly->points, poly->x, poly->y);
+
+   _draw_thread_polygon_cleanup(poly);
+}
+
+static void
+_polygon_draw_thread_points_populate(Evas_Thread_Command_Polygon *cp, RGBA_Polygon_Point *points)
+{
+   RGBA_Polygon_Point *cur, *npoints = NULL;
+
+   if (!points) return;
+
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(points), cur)
+     {
+        RGBA_Polygon_Point *point;
+
+        point = malloc(sizeof *point);
+        point->x = cur->x;
+        point->y = cur->y;
+
+        npoints =
+          (RGBA_Polygon_Point *)eina_inlist_append(EINA_INLIST_GET(npoints),
+                                                   EINA_INLIST_GET(point));
+     }
+
+   cp->points = npoints;
+}
+
+static void
+_polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
+{
+   int ext_x, ext_y, ext_w, ext_h;
+   Evas_Thread_Command_Polygon cp;
+
+   ext_x = 0;
+   ext_y = 0;
+   ext_w = dst->cache_entry.w;
+   ext_h = dst->cache_entry.h;
+
+   if (dc->clip.use)
+     {
+	if (dc->clip.x > ext_x)
+	  {
+	     ext_w += ext_x - dc->clip.x;
+	     ext_x = dc->clip.x;
+	  }
+
+	if ((ext_x + ext_w) > (dc->clip.x + dc->clip.w))
+          ext_w = (dc->clip.x + dc->clip.w) - ext_x;
+
+	if (dc->clip.y > ext_y)
+	  {
+	     ext_h += ext_y - dc->clip.y;
+	     ext_y = dc->clip.y;
+	  }
+
+	if ((ext_y + ext_h) > (dc->clip.y + dc->clip.h))
+          ext_h = (dc->clip.y + dc->clip.h) - ext_y;
+     }
+
+   EINA_RECTANGLE_SET(&cp.ext, ext_x, ext_y, ext_w, ext_h);
+   cp.col = dc->col.col;
+   cp.render_op = dc->render_op;
+   cp.surface = dst;
+
+   _polygon_draw_thread_points_populate(&cp, points);
+
+   cp.x = x;
+   cp.y = y;
+
+   evas_thread_cmd_enqueue(_draw_thread_polygon_draw, &cp, sizeof(cp));
+}
+
+static void
+eng_polygon_draw(void *data EINA_UNUSED, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async)
+{
+   if (do_async) _polygon_draw_thread_cmd(surface, context, polygon, x, y);
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1))
+   else if ((cpunum > 1))
      evas_common_pipe_poly_draw(surface, context, polygon, x, y);
-   else
 #endif
+   else
      {
 	evas_common_polygon_draw(surface, context, polygon, x, y);
 	evas_common_cpu_end_opt();
@@ -825,14 +1126,132 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
 }
 
 static void
-eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+_drop_cache_ref(void *target, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_cache_image_drop((Image_Entry *)target);
+}
+
+static void
+draw_thread_image_draw(void *data)
+{
+   Evas_Thread_Command_Image *image = data;
+
+   if (image->smooth)
+     evas_common_scale_rgba_smooth_draw
+       (image->image, image->surface,
+        image->clip.x, image->clip.y, image->clip.w, image->clip.h,
+        image->mul_col, image->render_op,
+        image->src.x, image->src.y, image->src.w, image->src.h,
+        image->dst.x, image->dst.y, image->dst.w, image->dst.h);
+   else
+     evas_common_scale_rgba_sample_draw
+       (image->image, image->surface,
+        image->clip.x, image->clip.y, image->clip.w, image->clip.h,
+        image->mul_col, image->render_op,
+        image->src.x, image->src.y, image->src.w, image->src.h,
+        image->dst.x, image->dst.y, image->dst.w, image->dst.h);
+
+   evas_async_events_put(image->image, 0, NULL, _drop_cache_ref);
+}
+
+static void
+_image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
+{
+   Evas_Thread_Command_Image cr;
+   int clip_x, clip_y, clip_w, clip_h;
+
+   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+                         0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
+
+   evas_cache_image_ref((Image_Entry *)src);
+
+   cr.image = src;
+   cr.surface = dst;
+   EINA_RECTANGLE_SET(&cr.src, src_region_x, src_region_y, src_region_w, src_region_h);
+   EINA_RECTANGLE_SET(&cr.dst, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = 0;
+	clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   EINA_RECTANGLE_SET(&cr.clip, clip_x, clip_y, clip_w, clip_h);
+
+   cr.mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+   cr.render_op = dc->render_op;
+   cr.smooth = smooth;
+
+   evas_thread_cmd_enqueue(draw_thread_image_draw, &cr, sizeof(cr));
+}
+
+static void
+_image_draw_thread_cmd_smooth(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   _image_draw_thread_cmd
+     (src, dst, dc,
+      src_region_x, src_region_y, src_region_w, src_region_h,
+      dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+      1);
+}
+
+static void
+_image_draw_thread_cmd_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   _image_draw_thread_cmd
+     (src, dst, dc,
+      src_region_x, src_region_y, src_region_w, src_region_h,
+      dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+      0);
+}
+
+static void
+eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async)
 {
    RGBA_Image *im;
 
    if (!image) return;
    im = image;
+
+   if (do_async)
+     {
+        if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+          {
+#if EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_load_data(&im->cache_entry);
+             else
+#endif
+               evas_cache_image_load_data(&im->cache_entry);
+          }
+
+        evas_common_image_colorspace_normalize(im);
+
+        if (smooth)
+          evas_common_scale_rgba_in_to_out_clip_cb
+            (image, surface, context,
+             src_x, src_y, src_w, src_h,
+             dst_x, dst_y, dst_w, dst_h,
+             _image_draw_thread_cmd_smooth);
+        else
+          evas_common_scale_rgba_in_to_out_clip_cb
+            (image, surface, context,
+             src_x, src_y, src_w, src_h,
+             dst_x, dst_y, dst_w, dst_h,
+             _image_draw_thread_cmd_sample);
+     }
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1))
+   else if ((cpunum > 1))
      {
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
@@ -847,8 +1266,8 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
                                     src_x, src_y, src_w, src_h,
                                     dst_x, dst_y, dst_w, dst_h);
      }
-   else
 #endif
+   else
      {
 #if 0
 #ifdef EVAS_CSERVE2
@@ -901,7 +1320,185 @@ image_loaded:
 }
 
 static void
-evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
+_map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
+   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+                         0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   if (smooth)
+     evas_common_scale_rgba_smooth_draw
+       (src, dst,
+        clip_x, clip_y, clip_w, clip_h,
+        mul_col, dc->render_op,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+   else
+     evas_common_scale_rgba_sample_draw
+       (src, dst,
+        clip_x, clip_y, clip_w, clip_h,
+        mul_col, dc->render_op,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+}
+
+static void
+_map_image_sample_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   _map_image_draw(src, dst, dc,
+                   src_region_x, src_region_y, src_region_w, src_region_h,
+                   dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+                   0);
+}
+
+static void
+_map_image_smooth_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   _map_image_draw(src, dst, dc,
+                   src_region_x, src_region_y, src_region_w, src_region_h,
+                   dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+                   1);
+}
+
+static void
+_draw_thread_map_draw(void *data)
+{
+   Evas_Thread_Command_Map *map = data;
+   int offset = map->offset;
+   RGBA_Map *m = map->map;
+   RGBA_Image *im = map->image;
+   int dx, dy, dw, dh;
+
+   if (m->count - offset < 3) goto free_out;
+
+   do
+     {
+        if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
+            (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
+            (m->pts[0 + offset].y == m->pts[1 + offset].y) &&
+            (m->pts[3 + offset].y == m->pts[2 + offset].y) &&
+            (m->pts[0 + offset].x <= m->pts[1 + offset].x) &&
+            (m->pts[0 + offset].y <= m->pts[2 + offset].y) &&
+            (m->pts[0 + offset].u == 0) &&
+            (m->pts[0 + offset].v == 0) &&
+            (m->pts[1 + offset].u == (int)(im->cache_entry.w << FP)) &&
+            (m->pts[1 + offset].v == 0) &&
+            (m->pts[2 + offset].u == (int)(im->cache_entry.w << FP)) &&
+            (m->pts[2 + offset].v == (int)(im->cache_entry.h << FP)) &&
+            (m->pts[3 + offset].u == 0) &&
+            (m->pts[3 + offset].v == (int)(im->cache_entry.h << FP)) &&
+            (m->pts[0 + offset].col == 0xffffffff) &&
+            (m->pts[1 + offset].col == 0xffffffff) &&
+            (m->pts[2 + offset].col == 0xffffffff) &&
+            (m->pts[3 + offset].col == 0xffffffff))
+          {
+             dx = m->pts[0 + offset].x >> FP;
+             dy = m->pts[0 + offset].y >> FP;
+             dw = (m->pts[2 + offset].x >> FP) - dx;
+             dh = (m->pts[2 + offset].y >> FP) - dy;
+
+             if (map->smooth)
+               evas_common_scale_rgba_in_to_out_clip_cb
+                 (im, map->surface, &map->image_ctx,
+                  0, 0, im->cache_entry.w, im->cache_entry.h,
+                  dx, dy, dw, dh, _map_image_smooth_draw);
+             else
+               evas_common_scale_rgba_in_to_out_clip_cb
+                 (im, map->surface, &map->image_ctx,
+                  0, 0, im->cache_entry.w, im->cache_entry.h,
+                  dx, dy, dw, dh, _map_image_sample_draw);
+          }
+        else
+          {
+             evas_common_map_rgba_draw
+               (im, map->surface,
+                map->clip.x, map->clip.y, map->clip.w, map->clip.h,
+                map->mul_col, map->render_op, m->count - offset, &m->pts[offset],
+                map->smooth, map->level);
+          }
+
+        evas_common_cpu_end_opt();
+
+        offset += 2;
+     }
+   while ((m->count > 4) && (m->count - offset >= 3));
+
+ free_out:
+   free(m);
+   evas_async_events_put(map->image, 0, NULL, _drop_cache_ref);
+}
+
+static void
+_map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset)
+{
+   Evas_Thread_Command_Map cm;
+   int clip_x, clip_y, clip_w, clip_h;
+
+   evas_cache_image_ref((Image_Entry *)src);
+
+   cm.image = src;
+   memcpy(&cm.image_ctx, dc, sizeof(*dc));
+   cm.surface = dst;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   EINA_RECTANGLE_SET(&cm.clip, clip_x, clip_y, clip_w, clip_h);
+
+   cm.mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+   cm.render_op = dc->render_op;
+
+   cm.map = calloc(1, sizeof(RGBA_Map) +
+                   sizeof(RGBA_Map_Point) * map->count);
+   cm.map->engine_data = map->engine_data;
+   cm.map->image.w = map->image.w;
+   cm.map->image.h = map->image.h;
+   cm.map->uv.w = map->uv.w;
+   cm.map->uv.h = map->uv.h;
+   cm.map->x = map->x;
+   cm.map->y = map->y;
+   cm.map->count = map->count;
+   memcpy(&cm.map->pts[0], &map->pts[0], sizeof(RGBA_Map_Point) * map->count);
+
+   cm.smooth = smooth;
+   cm.level = level;
+   cm.offset = offset;
+
+   evas_thread_cmd_enqueue(_draw_thread_map_draw, &cm, sizeof(cm));
+}
+
+static void
+evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset, Eina_Bool do_async)
 {
    if (m->count - offset < 3) return;
 
@@ -933,7 +1530,8 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
         eng_image_draw
           (data, context, surface, im,
            0, 0, im->cache_entry.w, im->cache_entry.h,
-           dx, dy, dw, dh, smooth);
+           dx, dy, dw, dh, smooth,
+           do_async);
      }
    else
      {
@@ -953,17 +1551,22 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2);
+        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2, do_async);
      }
 }
 
 static void
-eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level)
+eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
    if (!image) return;
    if (m->count < 3) return;
 
-   evas_software_image_map_draw(data, context, surface, image, m, smooth, level, 0);
+   if (do_async)
+     evas_common_map_thread_rgba_cb(image, surface, context,
+                                    m, smooth, level, 0, _map_draw_thread_cmd);
+   else
+     evas_software_image_map_draw(data, context, surface, image, m,
+                                  smooth, level, 0, do_async);
 }
 
 static void
@@ -1251,13 +1854,71 @@ eng_font_run_font_end_get(void *data EINA_UNUSED, Evas_Font_Set *font, Evas_Font
 }
 
 static void
-eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *text_props)
+_draw_thread_font_draw(void *data)
 {
+   Evas_Thread_Command_Font *font = data;
+   RGBA_Draw_Context dc;
+
+   dc.font_ext.data = font->font_ext_data;
+   dc.font_ext.func.gl_new = font->gl_new;
+   dc.font_ext.func.gl_free = font->gl_free;
+   dc.font_ext.func.gl_draw = font->gl_draw;
+   dc.col.col = font->col;
+   dc.clip.use = font->clip_use;
+   dc.clip.x = font->clip_rect.x;
+   dc.clip.y = font->clip_rect.y;
+   dc.clip.w = font->clip_rect.w;
+   dc.clip.h = font->clip_rect.h;
+
+   evas_common_font_rgba_draw
+     (font->dst, &dc,
+      font->x, font->y, font->glyphs, font->func,
+      font->ext.x, font->ext.y, font->ext.w, font->ext.h,
+      font->im_w, font->im_h);
+
+   evas_common_font_glyphs_unref(font->glyphs);
+}
+
+static void
+_font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h)
+{
+   Evas_Thread_Command_Font cf;
+
+   cf.dst = dst;
+   cf.x = x;
+   cf.y = y;
+   cf.gl_new = dc->font_ext.func.gl_new;
+   cf.gl_free = dc->font_ext.func.gl_free;
+   cf.gl_draw = dc->font_ext.func.gl_draw;
+   cf.font_ext_data = dc->font_ext.data;
+   cf.col = dc->col.col;
+   cf.clip_use = dc->clip.use;
+   EINA_RECTANGLE_SET(&cf.clip_rect,
+                      dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+   cf.glyphs = glyphs;
+   cf.func = func;
+   EINA_RECTANGLE_SET(&cf.ext, ext_x, ext_y, ext_w, ext_h);
+   cf.im_w = im_w;
+   cf.im_h = im_h;
+
+   evas_common_font_glyphs_ref(glyphs);
+   evas_thread_cmd_enqueue(_draw_thread_font_draw, &cf, sizeof(cf));
+}
+
+static void
+eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *text_props, Eina_Bool do_async)
+{
+   if (do_async)
+     {
+        evas_common_font_draw_prepare(text_props);
+        evas_common_font_draw_cb(surface, context, x, y, text_props->glyphs,
+                                 _font_draw_thread_cmd);
+     }
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1))
+   else if ((cpunum > 1))
      evas_common_pipe_text_draw(surface, context, x, y, text_props);
-   else
 #endif   
+   else
      {
         evas_common_font_draw_prepare(text_props);
         evas_common_font_draw(surface, context, x, y, text_props->glyphs);

@@ -66,7 +66,7 @@ struct _Evas_Object_Text_Item
 
 /* private methods for text objects */
 static void evas_object_text_init(Evas_Object *eo_obj);
-static void evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
@@ -1886,7 +1886,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
-evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    int i, j;
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
@@ -1977,7 +1977,8 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 		     obj->cur.geometry.h, \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
-		     &it->text_props);
+		     &it->text_props, \
+		     do_async);
 
    /* shadows */
    shad_dst = shad_sz = dx = dy = haveshad = 0;

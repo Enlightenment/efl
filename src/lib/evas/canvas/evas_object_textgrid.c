@@ -114,7 +114,7 @@ struct _Evas_Object_Textgrid_Line
 
 /* private methods for textgrid objects */
 static void evas_object_textgrid_init(Evas_Object *eo_obj);
-static void evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
@@ -551,7 +551,7 @@ evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w
 }
 
 static void
-evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Textgrid_Cell *cells;
    Evas_Object_Textgrid_Color *c;
@@ -670,7 +670,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                      row->rects[xx].b, row->rects[xx].a); 
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->rects[xx].x, yp,
-                                  row->rects[xx].w, h);
+                                  row->rects[xx].w, h,
+                                  do_async);
           }
         for (xx = 0; xx < row->texts_num; xx++)
           {
@@ -680,7 +681,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
              ENFN->font_draw(output, context, surface, o->font,
                              xp + row->texts[xx].x, yp + o->max_ascent,
                              ww, hh, ww, hh,
-                             evas_object_textgrid_textprop_int_to(o, row->texts[xx].text_props));
+                             evas_object_textgrid_textprop_int_to(o, row->texts[xx].text_props),
+                             do_async);
           }
         for (xx = 0; xx < row->lines_num; xx++)
           {
@@ -689,7 +691,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                      row->lines[xx].b, row->lines[xx].a); 
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
-                                  row->lines[xx].w, 1);
+                                  row->lines[xx].w, 1,
+                                  do_async);
           }
         yp += h;
      }

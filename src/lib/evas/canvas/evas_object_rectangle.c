@@ -22,7 +22,7 @@ struct _Evas_Object_Rectangle
 
 /* private methods for rectangle objects */
 static void evas_object_rectangle_init(Evas_Object *eo_obj);
-static void evas_object_rectangle_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_rectangle_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
@@ -122,7 +122,7 @@ _destructor(Eo *eo_obj, void *_obj EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static void
-evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_color_set(output,
@@ -141,7 +141,8 @@ evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
 						 obj->cur.geometry.x + x,
 						 obj->cur.geometry.y + y,
 						 obj->cur.geometry.w,
-						 obj->cur.geometry.h);
+						 obj->cur.geometry.h,
+						 do_async);
 ////						 obj->cur.cache.geometry.x + x,
 ////						 obj->cur.cache.geometry.y + y,
 ////						 obj->cur.cache.geometry.w,

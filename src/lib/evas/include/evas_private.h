@@ -795,13 +795,13 @@ struct _Evas_Func
    void (*context_render_op_set)           (void *data, void *context, int render_op);
    int  (*context_render_op_get)           (void *data, void *context);
 
-   void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h);
+   void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async);
 
-   void (*line_draw)                       (void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
+   void (*line_draw)                       (void *data, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async);
 
    void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
-   void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y);
+   void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async);
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
@@ -819,7 +819,7 @@ struct _Evas_Func
    int  (*image_alpha_get)                 (void *data, void *image);
    void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
    void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
-   void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
+   void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);
    void (*image_colorspace_set)            (void *data, void *image, int cspace);
@@ -847,7 +847,7 @@ struct _Evas_Func
    int  (*font_v_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
    int  (*font_char_coords_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
    int  (*font_char_at_coords_get)         (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   void (*font_draw)                       (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props);
+   void (*font_draw)                       (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props, Eina_Bool do_async);
 
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);
@@ -864,7 +864,7 @@ struct _Evas_Func
    int  (*image_scale_hint_get)            (void *data, void *image);
    int  (*font_last_up_to_pos)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y);
 
-   void (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level);
+   void (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
    void (*image_map_surface_free)          (void *data, void *surface);
    void (*image_map_clean)                 (void *data, RGBA_Map *m);
@@ -1207,7 +1207,7 @@ Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
 #ifdef REND_DBG
                              , int level
 #endif
-                             );
+                             , Eina_Bool do_async);
 void evas_render_invalidate(Evas *e);
 void evas_render_object_recalc(Evas_Object *obj);
 

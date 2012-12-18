@@ -32,7 +32,7 @@ struct _Evas_Polygon_Point
 
 /* private methods for polygon objects */
 static void evas_object_polygon_init(Evas_Object *eo_obj);
-static void evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
@@ -297,7 +297,7 @@ evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
-evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
    Eina_List *l;
@@ -335,7 +335,8 @@ evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                                  context,
                                                  surface,
                                                  o->engine_data,
-                                                 o->offset.x + x, o->offset.y + y);
+                                                 o->offset.x + x, o->offset.y + y,
+                                                 do_async);
 }
 
 static void

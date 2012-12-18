@@ -428,6 +428,9 @@ typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
+
+typedef void (*Evas_Render_Done_Cb)(void *);
+
 #include "../cache/evas_cache.h"
 #ifdef EVAS_CSERVE2
 #include "../cache2/evas_cache2.h"

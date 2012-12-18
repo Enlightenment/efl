@@ -31,7 +31,7 @@ struct _Evas_Object_Line
 
 /* private methods for line objects */
 static void evas_object_line_init(Evas_Object *eo_obj);
-static void evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_line_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
@@ -253,7 +253,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static void
-evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
 
@@ -277,7 +277,8 @@ evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
                                             o->cur.cache.x1 + x,
                                             o->cur.cache.y1 + y,
                                             o->cur.cache.x2 + x,
-                                            o->cur.cache.y2 + y);
+                                            o->cur.cache.y2 + y,
+                                            do_async);
 }
 
 static void

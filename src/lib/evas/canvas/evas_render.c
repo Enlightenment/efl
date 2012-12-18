@@ -49,8 +49,15 @@ rend_dbg(const char *txt)
 #define RDI(x)
 #endif
 
-static Eina_List *
-evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw);
+typedef struct _Render_Updates Render_Updates;
+struct _Render_Updates
+{
+   void *surface;
+   Eina_Rectangle *area;
+};
+
+static Eina_Bool
+evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
 
 EAPI void
 evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
@@ -870,7 +877,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 #ifdef REND_DBG
                    , int level
 #endif
-                  )
+                   , Eina_Bool do_async)
 {
    void *ctx;
    Evas_Object_Protected_Data *obj2;
@@ -1007,7 +1014,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                  obj->map.surface,
                                                  0, 0,
                                                  obj->map.surface_w,
-                                                 obj->map.surface_h);
+                                                 obj->map.surface_h,
+                                                 EINA_FALSE);
                   e->engine.func->context_free(e->engine.data.output, ctx);
                }
              ctx = e->engine.func->context_new(e->engine.data.output);
@@ -1027,7 +1035,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 #ifdef REND_DBG
                                                            , level + 1
 #endif
-                                                          );
+                                                           , do_async);
                        }
                }
              else
@@ -1045,7 +1053,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
-                                    obj->map.surface, off_x2, off_y2);
+                                    obj->map.surface, off_x2, off_y2,
+                                    EINA_FALSE);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
              rendered = EINA_TRUE;
@@ -1107,7 +1116,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              obj->layer->evas->engine.func->image_map_draw
                (e->engine.data.output, context, surface,
                    obj->map.surface, obj->spans,
-                   obj->cur.map->smooth, 0);
+                   obj->cur.map->smooth, 0, do_async);
           }
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
@@ -1140,7 +1149,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 #ifdef REND_DBG
                                                            , level + 1
 #endif
-                                                          );
+                                                           , do_async);
                        }
                }
              else
@@ -1185,7 +1194,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                         ctx, x, y, w, h);
                     }
                   obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
-                                    surface, off_x, off_y);
+                                    surface, off_x, off_y, EINA_FALSE);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
           }
@@ -1217,7 +1226,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RDI(level);
              RD("        draw normal obj\n");
              obj->func->render(eo_obj, obj, e->engine.data.output, context, surface,
-                               off_x, off_y);
+                               off_x, off_y, do_async);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
      }
@@ -1607,7 +1616,7 @@ evas_render_updates_internal(Evas *eo_e,
                   e->engine.func->rectangle_draw(e->engine.data.output,
                                                  e->engine.data.context,
                                                  surface,
-                                                 cx, cy, cw, ch);
+                                                 cx, cy, cw, ch, do_async);
                   e->engine.func->context_cutout_clear(e->engine.data.output,
                                                        e->engine.data.context);
                   e->engine.func->context_clip_unset(e->engine.data.output,
