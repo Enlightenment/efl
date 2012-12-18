@@ -708,3 +708,7 @@
 2012-12-13  Bruno Dilly
 
         * Support physics.
+
+2012-12-18  Jihoon Kim
+
+	* ecore_imf cursor infomation update is not necessary in focus-out event

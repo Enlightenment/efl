@@ -128,7 +128,6 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emis
    if (!en || !en->imf_context) return;
 
    ecore_imf_context_reset(en->imf_context);
-   _edje_entry_imf_cursor_info_set(en);
    ecore_imf_context_focus_out(en->imf_context);
 }
 #endif
@@ -184,7 +183,6 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if (!en->imf_context) return;
 
    ecore_imf_context_reset(en->imf_context);
-   _edje_entry_imf_cursor_info_set(en);
    ecore_imf_context_focus_out(en->imf_context);
 #endif
 }
