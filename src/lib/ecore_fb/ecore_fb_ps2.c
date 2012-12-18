@@ -186,6 +186,7 @@ _ecore_fb_ps2_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EI
 }
 /**
  * @defgroup Ecore_FB_Click_Group Framebuffer Double Click Functions
+ * @ingroup Ecore
  *
  * Functions that deal with the double click time of the framebuffer.
  */

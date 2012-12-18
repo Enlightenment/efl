@@ -29,6 +29,7 @@ extern "C"
 
 /**
  * @defgroup Ecore_Audio_Group Ecore_Audio - Convenience audio API
+ * @ingroup Ecore
  *
  * @since 1.8
  *

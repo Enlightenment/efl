@@ -64,6 +64,7 @@ extern "C" {
 
 /**
  * @defgroup Ecore_Evas_Group Ecore_Evas wrapper/helper set of functions
+ * @ingroup Ecore
  *
  * Ecore evas is a set of functions that makes it easy to tie together ecore's
  * main loop and input handling to evas. As such it's a natural base for EFL
@@ -1929,6 +1930,7 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 
 /**
  * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.
+ * @ingroup Ecore
  *
  * These are global scope functions to manage the EWS to be used by
  * ecore_evas_ews_new().
@@ -2056,6 +2058,7 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
 
 /**
  * @defgroup Ecore_Evas_Extn External plug/socket infrastructure to remote canvases
+ * @ingroup Ecore
  *
  * These functions allow 1 process to create a "socket" was pluged into which another
  * process can create a "plug" remotely to plug into.

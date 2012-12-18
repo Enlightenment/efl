@@ -35,6 +35,7 @@ extern "C" {
 
 /**
  * @defgroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
+ * @ingroup Ecore
  *
  * Functions used to set up and shut down the Ecore_Framebuffer functions.
  *

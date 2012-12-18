@@ -49,6 +49,7 @@ _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
 
 /**
  * @defgroup Ecore_Sdl_Library_Group SDL Library Functions
+ * @ingroup Ecore
  *
  * Functions used to set up and shut down the Ecore_Sdl functions.
  */

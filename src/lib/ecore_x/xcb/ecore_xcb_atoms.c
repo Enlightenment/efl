@@ -48,6 +48,7 @@ _ecore_xcb_atoms_finalize(void)
 
 /**
  * @defgroup Ecore_X_Atom_Group XCB Atom Functions
+ * @ingroup Ecore
  *
  * Functions that operate on atoms
  */

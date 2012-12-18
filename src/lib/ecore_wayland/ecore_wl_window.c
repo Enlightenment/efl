@@ -47,6 +47,7 @@ _ecore_wl_window_shutdown(void)
 
 /**
  * @defgroup Ecore_Wl_Window_Group Wayland Library Init and Shutdown Functions
+ * @ingroup Ecore
  * 
  * Functions that can be used to create a Wayland window.
  */

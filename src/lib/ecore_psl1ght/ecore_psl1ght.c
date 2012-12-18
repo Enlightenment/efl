@@ -60,6 +60,7 @@ static void xmb_event_handler(u64 status, u64 param, void *user_data);
 
 /**
  * @defgroup Ecore_Psl1ght_Library_Group PSL1GHT Library Functions
+ * @ingroup Ecore
  *
  * Functions used to set up and shut down the Ecore_Psl1ght functions.
  */

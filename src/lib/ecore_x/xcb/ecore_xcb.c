@@ -28,6 +28,7 @@ double _ecore_xcb_double_click_time = 0.25;
 
 /**
  * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
+ * @ingroup Ecore
  *
  * Functions that start and shut down the Ecore X Library.
  */
@@ -320,6 +321,7 @@ ecore_x_disconnect(void)
 
 /**
  * @defgroup Ecore_X_Flush_Group X Synchronization Functions
+ * @ingroup Ecore
  *
  * Functions that ensure that all commands that have been issued by the
  * Ecore X library have been sent to the server.
@@ -1189,6 +1191,7 @@ ecore_x_dpi_get(void)
 
 /**
  * @defgroup Ecore_X_Display_Attr_Group X Display Attributes
+ * @ingroup Ecore
  *
  * Functions that set and retrieve X display attributes.
  */

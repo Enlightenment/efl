@@ -320,6 +320,7 @@ extern "C" {
 
 /**
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
+ * @ingroup Ecore
  *
  * @{
  */
@@ -332,6 +333,7 @@ EAPI int ecore_shutdown(void);
 
 /**
  * @defgroup Ecore_Main_Loop_Group Ecore main loop
+ * @ingroup Ecore
  *
  * This group discusses functions that are acting on Ecore's main loop itself or
  * on events and infrastructure directly linked to it. Most programs only need
@@ -1715,6 +1717,7 @@ EAPI void ecore_animator_custom_tick(void);
 
 /**
  * @defgroup Ecore_Time_Group Ecore time functions
+ * @ingroup Ecore
  *
  * These are function to retrieve time in a given format.
  *
@@ -2862,6 +2865,7 @@ EAPI void *ecore_job_del(Ecore_Job *job);
 
 /**
  * @defgroup Ecore_Application_Group Ecore Application functions
+ * @ingroup Ecore
  *
  * @{
  */

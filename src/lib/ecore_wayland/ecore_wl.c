@@ -41,6 +41,7 @@ EAPI int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
 
 /**
  * @defgroup Ecore_Wl_Init_Group Wayland Library Init and Shutdown Functions
+ * @ingroup Ecore
  *
  * Functions that start and shutdown the Ecore Wayland Library.
  */
@@ -190,6 +191,7 @@ ecore_wl_shutdown(void)
 
 /**
  * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
+ * @ingroup Ecore
  *
  * Functions that ensure that all commands which have been issued by the
  * Ecore Wayland library have been sent to the server.
@@ -226,6 +228,7 @@ ecore_wl_sync(void)
 
 /**
  * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
+ * @ingroup Ecore
  *
  * Functions that set and retrieve various information about the Wayland Display.
  */

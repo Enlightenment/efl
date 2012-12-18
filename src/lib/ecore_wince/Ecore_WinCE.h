@@ -45,6 +45,7 @@ extern "C" {
 
 /**
  * @defgroup Ecore_WinCE_Group Ecore_WinCE library
+ * @ingroup Ecore
  *
  * @{
  */

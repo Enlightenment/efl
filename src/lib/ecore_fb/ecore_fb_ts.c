@@ -149,6 +149,7 @@ ecore_fb_ts_event_window_get(void)
 
 /**
  * @defgroup Ecore_FB_Calibrate_Group Framebuffer Calibration Functions
+ * @ingroup Ecore
  *
  * Functions that calibrate the screen.
  */

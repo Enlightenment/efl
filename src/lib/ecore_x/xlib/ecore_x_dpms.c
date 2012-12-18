@@ -27,6 +27,7 @@ _ecore_x_dpms_init(void)
 
 /**
  * @defgroup Ecore_X_DPMS_Group X DPMS Extension Functions
+ * @ingroup Ecore
  *
  * Functions related to the X DPMS extension.
  */

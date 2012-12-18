@@ -5,6 +5,7 @@
 
 /**
  * @defgroup Ecore_X_Window_Shape X Window Shape Functions
+ * @ingroup Ecore
  *
  * These functions use the shape extension of the X server to change
  * shape of given windows.
