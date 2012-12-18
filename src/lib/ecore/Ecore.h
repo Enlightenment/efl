@@ -69,68 +69,6 @@ sudo make install
  */
 
 /**
-   @page authors Authors
-   @author Carsten Haitzler <raster@rasterman.com>
-   @author Tom Gilbert <tom@linuxbrit.co.uk>
-   @author Burra <burra@colorado.edu>
-   @author Chris Ross <chris@darkrock.co.uk>
-   @author Term <term@twistedpath.org>
-   @author Tilman Sauerbeck <tilman@code-monkey.de>
-   @author Ibukun Olumuyiwa <ibukun@computer.org>
-   @author Yuri <da2001@hotmail.ru>
-   @author Nicholas Curran <quasar@bigblue.net.au>
-   @author Howell Tam <pigeon@pigeond.net>
-   @author Nathan Ingersoll <rbdpngn@users.sourceforge.net>
-   @author Andrew Elcock <andy@elcock.org>
-   @author Kim Woelders <kim@woelders.dk>
-   @author Sebastian Dransfeld <sebastid@tango.flipp.net>
-   @author Simon Poole <simon.armlinux@themalago.net>
-   @author Jorge Luis Zapata Muga <jorgeluis.zapata@gmail.com>
-   @author dan sinclair <zero@everburning.com>
-   @author Michael 'Mickey' Lauer <mickey@tm.informatik.uni-frankfurt.de>
-   @author David 'onefang' Seikel <onefang@gmail.com>
-   @author Hisham 'CodeWarrior' Mardam Bey <hisham@hisham.cc>
-   @author Brian 'rephorm' Mattern <rephorm@rephorm.com>
-   @author Tim Horton <hortont424@gmail.com>
-   @author Arnaud de Turckheim 'quarium' <quarium@gmail.com>
-   @author Matt Barclay <mbarclay@gmail.com>
-   @author Peter Wehrfritz <peter.wehrfritz@web.de>
-   @author Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
-   @author Vincent Torri <vincent.torri@gmail.com>
-   @author Lars Munch <lars@segv.dk>
-   @author Andre Dieb <andre.dieb@gmail.com>
-   @author Mathieu Taillefumier <mathieu.taillefumier@free.fr>
-   @author Rui Miguel Silva Seabra <rms@1407.org>
-   @author Samsung Electronics
-   @author Samsung SAIT
-   @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
-   @author Brett Nash <nash@nash.id.au>
-   @author Mike Blumenkrantz <michael.blumenkrantz@gmail.com>
-   @author Leif Middelschulte <leif.middelschulte@gmail.com>
-   @author Mike McCormack <mj.mccormack@samsung.com>
-   @author Sangho Park <gouache95@gmail.com>
-   @author Jihoon Kim <jihoon48.kim@samsung.com> <imfine98@gmail.com>
-   @author PnB <Poor.NewBie@gmail.com>
-   @author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@samsung.com>
-   @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
-   @author ChunEon Park <hermet@hermet.pe.kr>
-   @author xlopez@igalia.com
-   @author Rafael Antognolli <antognolli@profusion.mobi>
-   @author Kim Yunhan <spbear@gmail.com>
-   @author Youness Alaoui <kakaroto@kakaroto.homelinux.net>
-   @author Bluezery <ohpowel@gmail.com>
-   @author Doyoun Kang <wayofmine@gmail.com> <doyoun.kang@samsung.com>
-   @author Haifeng Deng <haifeng.deng@samsung.com>
-   @author Jérémy Zurcher <jeremy@asynk.ch>
-   @author Vikram Narayanan <vikram186@gmail.com>
-   @author Gwanglim Lee <gl77.lee@samsung.com> <gwanglim@gmail.com>
-   @author Daniel Willmann <daniel@totalueberwachung.de>
-
-   Please contact <enlightenment-devel@lists.sourceforge.net> to get in
-   contact with the developers and maintainers.
- */
-
-/**
  * @page Ecore_Main_Loop_Page The Ecore Main Loop
  *
  * @section intro What is Ecore?

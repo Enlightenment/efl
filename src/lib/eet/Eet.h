@@ -122,26 +122,6 @@
 
  */
 
-/**
-   @page authors Authors
-   @author Carsten Haitzler <raster@@rasterman.com>
-   @author David Goodlad <dgoodlad@@gmail.com>
-   @author Cedric Bail <cedric.bail@@free.fr>
-   @author Arnaud de Turckheim <quarium@@gmail.com>
-   @author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
-   @author Chidambar Zinnoury <illogict@@online.fr>
-   @author Vincent Torri <vtorri@@univ-evry.fr>
-   @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
-   @author Raphael Kubo da Costa <kubo@@profusion.mobi>
-   @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
-   @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
-   @author Adam Simpkins <adam@@adamsimpkins.net>
-   @author Mike Blumenkrantz <michael.blumenkrantz@gmail.com>
-
-   Please contact <enlightenment-devel@lists.sourceforge.net> to get in
-   contact with the developers and maintainers.
- */
-
 #ifndef _EET_H
 #define _EET_H
 

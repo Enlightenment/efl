@@ -270,50 +270,6 @@
    @include evas-buffer-simple.c
  */
 
-/**
-   @page authors Authors
-   @author Carsten Haitzler <raster@@rasterman.com>
-   @author Till Adam <till@@adam-lilienthal.de>
-   @author Steve Ireland <sireland@@pobox.com>
-   @author Brett Nash <nash@@nash.id.au>
-   @author Tilman Sauerbeck <tilman@@code-monkey.de>
-   @author Corey Donohoe <atmos@@atmos.org>
-   @author Yuri Hudobin <glassy_ape@@users.sourceforge.net>
-   @author Nathan Ingersoll <ningerso@@d.umn.edu>
-   @author Willem Monsuwe <willem@@stack.nl>
-   @author Jose O Gonzalez <jose_ogp@@juno.com>
-   @author Bernhard Nemec <Bernhard.Nemec@@viasyshc.com>
-   @author Jorge Luis Zapata Muga <jorgeluis.zapata@@gmail.com>
-   @author Cedric Bail <cedric.bail@@free.fr>
-   @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
-   @author Vincent Torri <vtorri@@univ-evry.fr>
-   @author Tim Horton <hortont424@@gmail.com>
-   @author Tom Hacohen <tom@@stosb.com>
-   @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
-   @author Iván Briano <ivan@@profusion.mobi>
-   @author Gustavo Lima Chaves <glima@@profusion.mobi>
-   @author Samsung Electronics
-   @author Samsung SAIT
-   @author Sung W. Park <sungwoo@@gmail.com>
-   @author Jiyoun Park <jy0703.park@@samsung.com>
-   @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
-   @author Thierry el Borgi <thierry@@substantiel.fr>
-   @author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
-   @author ChunEon Park <hermet@@hermet.pe.kr>
-   @author Christopher 'devilhorns' Michael <cpmichael1@@comcast.net>
-   @author Seungsoo Woo <om101.woo@@samsung.com>
-   @author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
-   @author Jim Kukunas <james.t.kukunas@@linux.intel.com>
-   @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
-   @author Rafal Krypa <r.krypa@@samsung.com>
-   @author Hyoyoung Chang <hyoyoung@@gmail.com>
-   @author Jérôme Pinot <ngc891@@gmail.com>
-   @author Rafael Antognolli <antognolli@@profusion.mobi>
-
-   Please contact <enlightenment-devel@lists.sourceforge.net> to get in
-   contact with the developers and maintainers.
- */
-
 #ifndef _EVAS_H
 #define _EVAS_H
 
