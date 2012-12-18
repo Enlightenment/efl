@@ -426,6 +426,7 @@ extern "C" {
 
    /**
     * @defgroup Embryo_Library_Group Library Maintenance Functions
+    * @ingroup Embryo
     *
     * Functions that start up and shutdown the Embryo library.
     */
@@ -449,6 +450,7 @@ EAPI int              embryo_shutdown(void);
 
    /**
     * @defgroup Embryo_Program_Creation_Group Program Creation and Destruction Functions
+    * @ingroup Embryo
     *
     * Functions that set up programs, and destroy them.
     */
@@ -498,6 +500,7 @@ EAPI void             embryo_program_free(Embryo_Program *ep);
 
 /**
  * @defgroup Embryo_Func_Group Function Functions
+ * @ingroup Embryo
  *
  * Functions that deal with Embryo program functions.
  */
@@ -511,6 +514,7 @@ EAPI void             embryo_program_native_call_add(Embryo_Program *ep, const c
 
 /**
  * @defgroup Embryo_Program_VM_Group Virtual Machine Functions
+ * @ingroup Embryo
  *
  * Functions that deal with creating and destroying virtual machine sessions
  * for a given program.
@@ -560,6 +564,7 @@ EAPI void             embryo_program_vm_pop(Embryo_Program *ep);
 
 /**
  * @defgroup Embryo_Swap_Group Byte Swapping Functions
+ * @ingroup Embryo
  *
  * Functions that are used to ensure that integers passed to the
  * virtual machine are in small endian format.  These functions are
@@ -597,6 +602,7 @@ EAPI Embryo_Function  embryo_program_function_find(Embryo_Program *ep, const cha
 
 /**
  * @defgroup Embryo_Public_Variable_Group Public Variable Access Functions
+ * @ingroup Embryo
  *
  * In an Embryo program, a global variable can be declared public, as
  * described in @ref Small_Scope_Subsection.  The functions here allow
@@ -632,6 +638,7 @@ EAPI Embryo_Cell      embryo_program_variable_get(Embryo_Program *ep, int num);
 
 /**
  * @defgroup Embryo_Error_Group Error Functions
+ * @ingroup Embryo
  *
  * Functions that set and retrieve error codes in Embryo programs.
  */
@@ -654,6 +661,7 @@ EAPI Embryo_Error     embryo_program_error_get(Embryo_Program *ep);
 
 /**
  * @defgroup Embryo_Program_Data_Group Program Data Functions
+ * @ingroup Embryo
  *
  * Functions that set and retrieve data associated with the given
  * program.
@@ -686,6 +694,7 @@ EAPI const char      *embryo_error_string_get(Embryo_Error error);
 
 /**
  * @defgroup Embryo_Data_String_Group Embryo Data String Functions
+ * @ingroup Embryo
  *
  * Functions that operate on strings in the memory of a virtual machine.
  */
@@ -732,6 +741,7 @@ EAPI Embryo_Cell     *embryo_data_address_get(Embryo_Program *ep, Embryo_Cell ad
 
 /**
  * @defgroup Embryo_Heap_Group Heap Functions
+ * @ingroup Embryo
  *
  * The heap is an area of memory that can be allocated for program
  * use at runtime.  The heap functions here change the amount of heap
@@ -757,6 +767,7 @@ EAPI void             embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_
 
 /**
  * @defgroup Embryo_Run_Group Program Run Functions
+ * @ingroup Embryo
  *
  * Functions that are involved in actually running functions in an
  * Embryo program.
@@ -868,6 +879,7 @@ EAPI int              embryo_program_max_cycle_run_get(Embryo_Program *ep);
 
 /**
  * @defgroup Embryo_Parameter_Group Function Parameter Functions
+ * @ingroup Embryo
  *
  * Functions that set parameters for the next function that is called.
  */
