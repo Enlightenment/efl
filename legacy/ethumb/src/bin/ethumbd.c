@@ -228,7 +228,8 @@ enum
 
 static const EDBus_Signal _ethumb_dbus_objects_signals[] = {
   [ETHUMB_DBUS_OBJECTS_SIGNAL_GENERATED] = { "generated",
-       EDBUS_ARGS({"i", ""}, {"ay", "array"}, {"ay", "array"}, {"b", "bool"}) },
+       EDBUS_ARGS({ "i", "id" }, { "ay", "paths" }, { "ay", "keys" },
+                  { "b", "success" }) },
   { }
 };
 
