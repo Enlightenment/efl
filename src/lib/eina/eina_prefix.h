@@ -3,6 +3,7 @@
 
 /**
  * @addtogroup Eina_Prefix_Group Prefix Group
+ * @ingroup Eina
  *
  * @brief These functions provide the ability to determine the runtime
  * location of a software package

@@ -94,6 +94,7 @@
  * Please see the @ref authors page for contact details.
  *
  * @defgroup Eina_Data_Types_Group Data Types
+ * @ingroup Eina
  *
  * Eina provide easy to use and optimized data types and structures.
  *
@@ -147,6 +148,7 @@
  * should return properly populated @ref _Eina_Iterator and @ref _Eina_Accessor.
  *
  * @defgroup Eina_Tools_Group Tools
+ * @ingroup Eina
  *
  * Eina tools aims to help application development, providing ways to
  * make it safer, log errors, manage memory more efficiently and more.

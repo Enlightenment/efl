@@ -123,3 +123,9 @@
  *
  * @brief Eet
  */
+
+/**
+ * @defgroup Eina
+ *
+ * @brief Eina
+ */

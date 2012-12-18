@@ -25,6 +25,7 @@
 
 /**
  * @addtogroup Eina_Object Object
+ * @ingroup Eina
  *
  * @brief These functions manage object providing pointer checking
  * and memory repacking.

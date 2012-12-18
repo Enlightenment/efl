@@ -3,6 +3,7 @@
 
 /**
  * @addtogroup Eina_Mmap_Group Mmap Group
+ * @ingroup Eina
  *
  * @brief These functions provide helpers for safe mmap handling
  *
