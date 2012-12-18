@@ -2326,9 +2326,12 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
           {
              if (elm_widget_type_check(obj, type, __func__) ||
                  elm_widget_type_check(obj, type_deprecated, __func__))
-               elm_image_file_set(obj,
-                                  eina_list_nth(image_animation->images, count),
-                                  NULL);
+               {
+                  elm_image_file_set(obj,
+                                     eina_list_nth(image_animation->images, count),
+                                     NULL);
+                  elm_image_preload_disabled_set(obj, EINA_TRUE);
+               }
           }
      }
 
