@@ -2,7 +2,7 @@
 #define __EVIL_H__
 
 /**
- * @mainpage Evil
+ * @page evil_main Evil
  * @image html  e_big.png
  * @author Vincent Torri
  * @version 1.7.0

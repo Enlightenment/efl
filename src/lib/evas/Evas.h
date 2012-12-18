@@ -1,5 +1,5 @@
 /**
-   @mainpage Evas
+   @page evas_main Evas
 
    @version 1.7
    @date 2000-2012

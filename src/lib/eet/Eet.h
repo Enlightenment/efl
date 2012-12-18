@@ -3,7 +3,7 @@
 
    These routines are used for Eet Library interaction
 
-   @mainpage Eet Library Documentation
+   @page eet_main Eet Library Documentation
 
    @version 1.7.0
    @date 2000-2012

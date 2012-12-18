@@ -44,7 +44,7 @@
  */
 
 /**
- * @mainpage Eina
+ * @page eina_main Eina
  *
  * @version 1.7
  * @date 2008-2012

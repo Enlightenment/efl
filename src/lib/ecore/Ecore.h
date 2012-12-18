@@ -6,7 +6,7 @@
 
 /**
 
-   @mainpage Ecore
+   @page ecore_main Ecore
 
    @version 1.7
    @date 2000-2012

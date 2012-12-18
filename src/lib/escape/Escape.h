@@ -19,7 +19,7 @@
 #endif
 
 /**
- * @mainpage Escape
+ * @page escape_main Escape
  * @image html  e_big.png
  * @author Youness Alaoui
  * @date 2011

@@ -3,7 +3,7 @@
  
 These routines are used for Embryo.
 
-@mainpage Embryo Library Documentation
+@page embryo_main Embryo Library Documentation
 
 @image html  e_big.png
 

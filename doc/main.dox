@@ -1,0 +1,18 @@
+/**
+ * @mainpage EFL
+ *
+ * The Enlightenment Project covers more than simple window management. It
+ * also includes the EFL(Enlightenment Foundation Libraries), the EFL is a set
+ * of libraries each providing a great deal of functionality. Below you can
+ * find documentation auto-generated daily from SVN source for these
+ * libraries:
+ *
+ * @li @ref eina_main
+ * @li @ref evas_main
+ * @li @ref eet_main
+ * @li @ref embryo_main
+ * @li @ref ecore_main
+ * @li @ref escape_main
+ * @li @ref evil_main
+ *
+ */
