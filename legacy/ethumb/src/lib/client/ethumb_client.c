@@ -673,7 +673,7 @@ static EDBus_Message_Iter *
 _setup_iterator_open(EDBus_Message_Iter *array, EDBus_Message_Iter **config, const char *key, const char *type)
 {
    EDBus_Message_Iter *variant, *_struct;
-   edbus_message_iter_arguments_set(array, "{sv}", &_struct);
+   edbus_message_iter_arguments_append(array, "{sv}", &_struct);
    edbus_message_iter_basic_append(_struct, 's', key);
    variant = edbus_message_iter_container_new(_struct, 'v', type);
 
@@ -719,50 +719,50 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 
    msg = edbus_proxy_method_call_new(client->proxy, "ethumb_setup");
    main = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_set(main, "a{sv}", &array);
+   edbus_message_iter_arguments_append(main, "a{sv}", &array);
 
    /* starting array elements */
    variant = _setup_iterator_open(array, &config, "size", "(ii)");
-   edbus_message_iter_arguments_set(variant, "(ii)", &sub_struct);
+   edbus_message_iter_arguments_append(variant, "(ii)", &sub_struct);
    ethumb_thumb_size_get(e, &tw, &th);
-   edbus_message_iter_arguments_set(sub_struct, "ii", tw, th);
+   edbus_message_iter_arguments_append(sub_struct, "ii", tw, th);
    edbus_message_iter_container_close(sub_struct, variant);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "format", "i");
    format = ethumb_thumb_format_get(e);
-   edbus_message_iter_arguments_set(variant, "i", format);
+   edbus_message_iter_arguments_append(variant, "i", format);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "aspect", "i");
    aspect = ethumb_thumb_aspect_get(e);
-   edbus_message_iter_arguments_set(variant, "i", aspect);
+   edbus_message_iter_arguments_append(variant, "i", aspect);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "orientation", "i");
    orientation = ethumb_thumb_orientation_get(e);
-   edbus_message_iter_arguments_set(variant, "i", orientation);
+   edbus_message_iter_arguments_append(variant, "i", orientation);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "crop", "(dd)");
-   edbus_message_iter_arguments_set(variant, "(dd)", &sub_struct);
+   edbus_message_iter_arguments_append(variant, "(dd)", &sub_struct);
    ethumb_thumb_crop_align_get(e, &cx, &cy);
-   edbus_message_iter_arguments_set(sub_struct, "dd", (double)cx, (double)cy);
+   edbus_message_iter_arguments_append(sub_struct, "dd", (double)cx, (double)cy);
    edbus_message_iter_container_close(sub_struct, variant);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "quality", "i");
    quality = ethumb_thumb_quality_get(e);
-   edbus_message_iter_arguments_set(variant, "i", quality);
+   edbus_message_iter_arguments_append(variant, "i", quality);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "compress", "i");
    quality = ethumb_thumb_quality_get(e);
-   edbus_message_iter_arguments_set(variant, "i", compress);
+   edbus_message_iter_arguments_append(variant, "i", compress);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "frame", "(ayayay)");
-   edbus_message_iter_arguments_set(variant, "(ayayay)", &sub_struct);
+   edbus_message_iter_arguments_append(variant, "(ayayay)", &sub_struct);
    ethumb_frame_get(e, &theme_file, &group, &swallow);
    _ethumb_client_dbus_append_bytearray(sub_struct, theme_file);
    _ethumb_client_dbus_append_bytearray(sub_struct, group);
@@ -781,32 +781,32 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 
    variant = _setup_iterator_open(array, &config, "video_time", "d");
    video_time = ethumb_video_time_get(e);
-   edbus_message_iter_arguments_set(variant, "d", video_time);
+   edbus_message_iter_arguments_append(variant, "d", video_time);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "video_start", "d");
    video_start = ethumb_video_start_get(e);
-   edbus_message_iter_arguments_set(variant, "d", video_start);
+   edbus_message_iter_arguments_append(variant, "d", video_start);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "video_interval", "d");
    video_interval = ethumb_video_interval_get(e);
-   edbus_message_iter_arguments_set(variant, "d", video_interval);
+   edbus_message_iter_arguments_append(variant, "d", video_interval);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "video_ntimes", "u");
    video_ntimes = ethumb_video_ntimes_get(e);
-   edbus_message_iter_arguments_set(variant, "u", video_ntimes);
+   edbus_message_iter_arguments_append(variant, "u", video_ntimes);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "video_fps", "u");
    video_fps = ethumb_video_fps_get(e);
-   edbus_message_iter_arguments_set(variant, "u", video_fps);
+   edbus_message_iter_arguments_append(variant, "u", video_fps);
    _setup_iterator_close(array, config, variant);
 
    variant = _setup_iterator_open(array, &config, "document_page", "u");
    document_page = ethumb_document_page_get(e);
-   edbus_message_iter_arguments_set(variant, "u", document_page);
+   edbus_message_iter_arguments_append(variant, "u", document_page);
    _setup_iterator_close(array, config, variant);
 
    edbus_message_iter_container_close(main, array);

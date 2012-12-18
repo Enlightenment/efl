@@ -940,7 +940,7 @@ _ethumb_dbus_ethumb_new_cb(const EDBus_Service_Interface *interface, const EDBus
 
  end_new:
    reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_set(reply, "o", return_path);
+   edbus_message_arguments_append(reply, "o", return_path);
    return reply;
 }
 
@@ -1039,7 +1039,7 @@ _ethumb_dbus_queue_add_cb(const EDBus_Service_Interface *iface, const EDBus_Mess
 
 end:
    reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_set(reply, "i", id);
+   edbus_message_arguments_append(reply, "i", id);
    return reply;
 }
 
@@ -1094,7 +1094,7 @@ _ethumb_dbus_queue_remove_cb(const EDBus_Service_Interface *iface, const EDBus_M
 
  end:
    reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_set(reply, "b", r);
+   edbus_message_arguments_append(reply, "b", r);
    return reply;
 }
 
@@ -1575,7 +1575,7 @@ _ethumb_dbus_ethumb_setup_cb(const EDBus_Service_Interface *iface, const EDBus_M
 
 end:
    reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_set(reply, "b", r);
+   edbus_message_arguments_append(reply, "b", r);
    return reply;
 }
 
@@ -1596,11 +1596,11 @@ _ethumb_dbus_generated_signal(Ethumbd *ed, int *id, const char *thumb_path, cons
                                   "generated");
 
    iter = edbus_message_iter_get(sig);
-   edbus_message_iter_arguments_set(iter, "iay", id32, &iter_path);
+   edbus_message_iter_arguments_append(iter, "iay", id32, &iter_path);
    _ethumb_dbus_append_bytearray(iter, iter_path, thumb_path);
-   edbus_message_iter_arguments_set(iter, "ay", &iter_key);
+   edbus_message_iter_arguments_append(iter, "ay", &iter_key);
    _ethumb_dbus_append_bytearray(iter, iter_key, thumb_key);
-   edbus_message_iter_arguments_set(iter, "b", success);
+   edbus_message_iter_arguments_append(iter, "b", success);
 
    edbus_connection_send(ed->conn, sig, NULL, NULL, -1);
    edbus_message_unref(sig);
