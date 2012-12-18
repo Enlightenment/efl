@@ -1,0 +1,1692 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with some Ecore examples explained:
+ *
+ * @li @ref ecore_time_functions_example_c
+ * @li @ref ecore_timer_example_c
+ * @li @ref ecore_idler_example_c
+ * @li @ref ecore_job_example_c
+ * @li @ref ecore_event_example_01_c
+ * @li @ref ecore_event_example_02_c
+ * @li @ref ecore_fd_handler_example_c
+ * @li @ref ecore_poller_example_c
+ * @li @ref ecore_con_lookup_example_c
+ * @li @ref ecore_con_url_download_example_c
+ * @li @ref ecore_con_server_simple_example_c
+ * @li @ref ecore_con_client_simple_example_c
+ * @li @ref ecore_evas_callbacks_example_c
+ * @li @ref ecore_evas_object_example_c
+ * @li @ref ecore_evas_basics_example_c
+ * @li @ref Ecore_Evas_Window_Sizes_Example_c
+ * @li @ref Ecore_Evas_Buffer_Example_01_c
+ * @li @ref Ecore_Evas_Buffer_Example_02_c
+ * @li @ref Ecore_exe_simple_example_c
+ * @li @ref ecore_imf_example_c
+ */
+
+/**
+ * @page ecore_time_functions_example_c ecore_time - Differences between time functions
+ *
+ * This example shows the difference between calling ecore_time_get(),
+ * ecore_loop_time_get() and ecore_time_unix_get().
+ *
+ * It initializes ecore, then sets a timer with a callback that, when called,
+ * will retrieve the system time using these 3 different functions. After
+ * displaying the time, it sleeps for 1 second, then call display the time
+ * again using the 3 functions.
+ *
+ * Since everything occurs inside the same main loop iteration, the internal
+ * ecore time variable will not be updated, and calling ecore_loop_time_get()
+ * before and after the sleep() call will return the same result.
+ *
+ * The two other functions will return a difference of 1 second, as expected.
+ * But ecore_time_unix_get() returns the number of seconds since 00:00:00 1st
+ * January 1970, while ecore_time_get() will return the time since a
+ * unspecified point, but that never goes back in time, even when the timezone
+ * of the machine changes.
+ *
+ * @note The usage of ecore_loop_time_get() should be preferred against the
+ * two other functions, for most time calculations, since it won't produce a
+ * system call to get the current time. Use ecore_time_unix_get() when you need
+ * to know the current time and date, and ecore_time_get() when you need a
+ * monotonic and more precise time than ecore_loop_time_get().
+ *
+ * @include ecore_time_functions_example.c
+ */
+
+/**
+ * @page ecore_timer_example_c ecore timers - Scheduled events
+ * @dontinclude ecore_timer_example.c
+ *
+ * This example shows how to setup timer callbacks. It starts a timer that will
+ * tick (expire) every 1 second, and then setup other timers that will expire
+ * only once, but each of them will affect the first timer still executing with
+ * a different API, to demonstrate its usage. To see the full code for this
+ * example, click @ref ecore_timer_example.c "here".
+ *
+ * To demonstrate this, let's define some constants that will determine at which
+ * time each timer will expire:
+ *
+ * @until INTERVAL1
+ *
+ * These constants should tell by themselves what will be the behavior of the
+ * program, but I'll explain it anyway. The first timer is set to tick every 1
+ * second, but all the other timers until the 6th one will be started
+ * concurrently at the beginning of the program. Each of them will expire at the
+ * specified time in these constants:
+ *
+ * @li The timer2, after 3 seconds of the program being executed, will add a delay
+ * of 3 seconds to timer1;
+ * @li The timer3 will pause timer1 at 8.2 seconds;
+ * @li timer4 will resume timer1 at 11.0 seconds;
+ * @li timer5 will will change the interval of timer1 to 2 seconds;
+ * @li timer6 will stop timer1 and start timer7 and timer8, with 1.1 and 1.2
+ * seconds of interval, respectively; it also sets the precision to 0.2 seconds;
+ * @li timer7 and timer8 will just print their expiration time.
+ *
+ * @until ecore_time_get
+ * @until }
+ *
+ * As almost all the other examples, we create a context structure to pass to
+ * our callbacks, so they can have access to the other timers. We also store the
+ * time of the program start in @c _initial_time, and use the function
+ * @c _get_current_time to retrieve the current time relative to that time. This
+ * will help demonstrate what is going on.
+ *
+ * Now, the behavior and relationship between the timers that was described
+ * above is dictated by the following timer callbacks:
+ *
+ * @until _timer6_cb
+ * @until }
+ *
+ * It's possible to see the same behavior as other Ecore callbacks here,
+ * returning @ref ECORE_CALLBACK_RENEW when the timer needs to continue ticking,
+ * and @ref ECORE_CALLBACK_CANCEL when it needs to stop its execution. Also
+ * notice that later on our program we are checking for the timers pointers in
+ * the context to see if they are still executing before deleting them, so we
+ * need to set these timer pointers to @c NULL when we are returning @ref
+ * ECORE_CALLBACK_CANCEL. Otherwise the pointer would still be not @c NULL, but
+ * pointing to something that is invalid, since the timer would have already
+ * expired without renewing.
+ *
+ * Now the main code, which will start the timers:
+ *
+ * @until ecore_shutdown
+ * @until }
+ *
+ * This code is very simple. Just after starting the library, it will save the
+ * current time to @c _initial_time, start all timers from 1 to 6, and begin the
+ * main loop. Everything should be running right now, displaying the time which
+ * each timer is expiring, and what it is doing to affect the other timers.
+ *
+ * After returning from the main loop, every timer is checked to see if it's
+ * still alive and, in that case, deleted, before finalizing the library. This
+ * is not really necessary, since ecore_shutdown() will already delete them for
+ * you, but it's good practice if you have other things going on after this
+ * point that could restart the main loop.
+ *
+ */
+
+/**
+ * @page ecore_idler_example_c ecore idle state - Idlers, enterers and exiters
+ *
+ * This example demonstrates how to manage the idle state of the main loop. Once
+ * a program knows that the main loop is going to enter in idle state, it could
+ * start doing some processing until getting out of this state.
+ *
+ * To exemplify this, we also add events and a timer to this program, so we can
+ * see the idle exiter callback being called before processing the event and/or
+ * timer, the event/timer callback being called (processed), then the idle
+ * enterer being called before entering in idle state again. Once in idle, the
+ * main loop keeps calling the idler callback continuously until a new event or
+ * timer is received.
+ *
+ * First, we declare a struct that will be used as context to be passed to
+ * every callback. It's not useful everywhere, since this example is very
+ * simple and doesn't do anything other than printing messages, but using this
+ * context will make it a little bit more real. Our context will be used to
+ * delete the timer, idler, idle enterer and exiter, and the event handler, and
+ * also to count how many times the idler was called.
+ *
+ * Then we start declaring callbacks for the idle enterer, idle exiter and the
+ * idler itself. Idle enterer and exiter callbacks just print a message saying
+ * that they were called, while the idler, in addition to printing a message
+ * too, also sends an event every 10 times that it is called, incrementing the
+ * context count variable. This event will be used to make the main loop exit
+ * the idle state and call the event callback.
+ *
+ * These callbacks return @ref ECORE_CALLBACK_RENEW, since we want them to keep
+ * being called every time the main loop changes to/from idle state. Otherwise,
+ * if we didn't want them to be called again, they should return @ref
+ * ECORE_CALLBACK_CANCEL.
+ *
+ * The next function declared is the event callback @c _event_handler_cb. It
+ * will check if the idler was called more than 100 times already @c
+ * (ctxt->count > 100), and will delete the idler, idle enterer and exiter, the
+ * timer (if it still exists), and request that the main loop stop running. Then
+ * it returns @ref ECORE_CALLBACK_DONE to indicate that the event shouldn't be
+ * handled by any other callback.
+ *
+ * Finally, we add a callback to the timer, that will just print a message when
+ * it is called, and this will happen only once (@ref ECORE_CALLBACK_CANCEL is
+ * being returned). This timer callback is just here to show that the main loop
+ * gets out of idle state when processing timers too.
+ *
+ * The @b main function is simple, just creates a new type of event that we will
+ * use to demonstrate the event handling together with the idle state, adds the
+ * callbacks that we declared so far, fill the context struct, and starts
+ * running the main loop.
+ *
+ * @note We use timer and event callbacks to demonstrate the idle state
+ * changing, but it also happens for file descriptor handlers, pipe handlers,
+ * etc.
+ *
+ * @include ecore_idler_example.c
+ */
+
+/**
+ * @page ecore_job_example_c ecore_job - Queuing tasks
+ *
+ * This example shows how an @ref Ecore_Job can be added, how it can be
+ * deleted, and that they always execute in the added order.
+ *
+ * First, 2 callback functions are declared, one that prints strings passed to
+ * it in the @c data pointer, and another one that quits the main loop. In the
+ * @c main function, 3 jobs are added using the first callback, and another one
+ * is added using the second one.
+ *
+ * Then the second added job is deleted just to demonstrate the usage of
+ * ecore_job_del(), and the main loop is finally started. Run this example to
+ * see that @c job1, @c job3 and @c job_quit are ran, in this order.
+ *
+ * @include ecore_job_example.c
+ */
+
+/**
+ * @page ecore_event_example_01_c Handling events example
+ * This example shows the simplest possible way to register a handler for an
+ * ecore event, this way we can focus on the important aspects. The example will
+ * start the main loop and quit it when it receives the ECORE_EVENT_SIGNAL_EXIT
+ * event. This event is triggered by a SIGTERM(pressing ctrl+c).
+ *
+ * So let's start with the function we want called when we receive the event,
+ * instead of just stopping the main loop we'll also print a message, that's
+ * just so it's clear that it got called:
+ * @dontinclude ecore_event_example_01.c
+ * @skip static
+ * @until }
+ * @note We return ECORE_CALLBACK_DONE because we don't want any other handlers
+ * for this event to be called, the program is quitting after all.
+ *
+ * We then have our main function and the obligatory initialization of ecore:
+ * @until ecore_init
+ *
+ * We then get to the one line of our example that makes everything work, the
+ * registering of the callback:
+ * @until handler_add
+ * @note The @c NULL there is because there is no need to pass data to the
+ * callback.
+ *
+ * And the all that is left to do is start the main loop:
+ * @until }
+ *
+ * Full source code for this example: @ref ecore_event_example_01.c.
+ */
+
+/**
+ * @page ecore_event_example_02_c ecore events and handlers - Setup and use
+ * This example shows how to create a new type of event, setup some event
+ * handlers to it, fire the event and have the callbacks called. After
+ * finishing, we delete the event handlers so no memory will leak.
+ *
+ * See the full source code for this example @ref ecore_event_example_02.c
+ * "here".
+ *
+ * Let's start the example from the beginning:
+ *
+ * @dontinclude ecore_event_example_02.c
+ * @until _event_type
+ *
+ * First thing is to declare a struct that will be passed as context to the
+ * event handlers. In this structure we will store the event handler pointers,
+ * and two strings that will be used by the first event handler. We also will
+ * use a global integer to store the event type used for our event. It is
+ * initialized with 0 in the beginning because the event wasn't created yet.
+ * Later, in the main function we will use ecore_event_type_new() to associate
+ * another value to it. Now the event handler callbacks:
+ *
+ * @until }
+ *
+ * This is the first event handler callback. It prints the event data received
+ * by the event, and the data passed to this handler when it was added.  Notice
+ * that this callback already knows that the event data is an integer pointer,
+ * and that the handler data is a string. It knows about the first one because
+ * this is based on the type of event that is going to be handled, and the
+ * second because it was passed to the ecore_event_handler_add() function when
+ * registering the event handler.
+ *
+ * Another interesting point about this callback is that it returns @ref
+ * ECORE_CALLBACK_DONE (0) if the event data is even, swallowing the event and
+ * don't allowing any other callback to be called after this one for this event.
+ * Otherwise it returns @ref ECORE_CALLBACK_PASS_ON, allowing the event to be
+ * handled by other event handlers registered for this event. This makes the
+ * second event handler be called just for "odd" events.
+ *
+ * @until ECORE_CALLBACK_DONE
+ * @until }
+ *
+ * The second event handler will check if the event data is equal to 5, and if
+ * that's the case, it will change the event handler data of the first event
+ * handler to another string. Then it checks if the event data is higher than
+ * 10, and if so, it will request the main loop to quit.
+ *
+ * An interesting point of this example is that although the second event
+ * handler requests the main loop to finish after the 11th event being received,
+ * it will process all the events that were already fired, and call their
+ * respective event handlers, before the main loop stops. If we didn't want
+ * these event handlers to be called after the 11th event, we would need to
+ * unregister them with ecore_event_handler_del() at this point.
+ *
+ * Now some basic initialization of the context, and the Ecore library itself:
+ *
+ * @until type_new
+ *
+ * This last line is interesting. It creates a new type of event and returns a
+ * unique ID for this event inside Ecore. This ID can be used anywhere else in
+ * your program to reference this specific type of event, and to add callbacks
+ * to it.
+ *
+ * It's common if you are implementing a library that declares new types of
+ * events to export their respective types as extern in the header files. This
+ * way, when the library is initialized and the new type is created, it will be
+ * available through the header file to an application using it add some
+ * callbacks to it. Since our example is self-contained, we are just putting it
+ * as a global variable.
+ *
+ * Now we add some callbacks:
+ *
+ * @until ctxt);
+ *
+ * This is very simple. Just need to call ecore_event_handler_add() with the
+ * respective event type, the callback function to be called, and a data pointer
+ * that will be passed to the callback when it is called by the event.
+ *
+ * Then we start firing events:
+ *
+ * @until }
+ *
+ * This @c for will fire 16 events of this type. Notice that the events will be
+ * fired consecutively, but any callback will be called yet. They are just
+ * called by the main loop, and since it wasn't even started, nothing happens
+ * yet. For each event fired, we allocate an integer that will hold the number
+ * of the event (we are arbitrarily creating these numbers just for
+ * demonstration purposes). It's up to the event creator to decide which type of
+ * information it wants to give to the event handler, and the event handler must
+ * know what is the event info structure for that type of event.
+ *
+ * Since we are not allocating any complex structure, just a simple integer, we
+ * don't need to pass any special free function to ecore_event_add(), and it
+ * will use a simple @c free on our data. That's the default behavior.
+ *
+ * Now finishing our example:
+ *
+ * @until }
+ *
+ * We just start the main loop and watch things happen, waiting to shutdown
+ * Ecore when the main loop exits and return.
+ */
+
+/**
+ * @page ecore_fd_handler_example_c ecore fd handlers - Monitoring file descriptors
+ * @dontinclude ecore_fd_handler_example.c
+ *
+ * This is a very simple example where we will start monitoring the stdin of the
+ * program and, whenever there's something to be read, we call our callback that
+ * will read it.
+ *
+ * Check the full code for this example @ref ecore_fd_handler_example.c "here".
+ *
+ * This seems to be stupid, since a similar result could be achieved by the
+ * following code:
+ *
+ * @code
+ * while (nbytes = read(STDIN_FILENO, buf, sizeof(buf)))
+ *   {
+ *      buf[nbytes - 1] = '\0';
+ *      printf("Read %zd bytes from input: \"%s\"\n", nbytes - 1, buf);
+ *   }
+ * @endcode
+ *
+ * However, the above code is blocking, and won't allow you to do anything else
+ * other than reading the input. Of course there are other methods to do a
+ * non-blocking reading, like setting the file descriptor to non-blocking and
+ * keep looping always checking if there's something to be read, and do other
+ * things otherwise. Or use a @c select call to watch for more than one file
+ * descriptor at the same time.
+ *
+ * The advantage of using an @ref Ecore_Fd_Handler is that you can monitor a
+ * file descriptor, while still iterating on the Ecore main loop. It will allow
+ * you to have timers working and expiring, events still being processed when
+ * received, idlers doing its work when there's nothing happening, and whenever
+ * there's something to be read from the file descriptor, your callback will be
+ * called. And it's everything monitored in the same main loop, no threads are
+ * needed, thus reducing the complexity of the program and any overhead caused
+ * by the use of threads.
+ *
+ * Now let's start our program. First we just declare a context structure that
+ * will be passed to our callback, with pointers to our handler and to a timer
+ * that will be used later:
+ *
+ * @until };
+ *
+ * Then we will declare a prepare_callback that is called before any fd_handler
+ * set in the program, and before the main loop select function is called. Just
+ * use one if you really know that you need it. We are just putting it here to
+ * exemplify its usage:
+ *
+ * @until }
+ *
+ * Now, our fd handler. In its arguments, the @c data pointer will have any data
+ * passed to it when it was registered, and the @c handler pointer will contain
+ * the fd handler returned by the ecore_main_fd_handler_add() call. It can be
+ * used, for example, to retrieve which file descriptor triggered this callback,
+ * since it could be added to more than one file descriptor, or to check what
+ * type of activity there's in the file descriptor.
+ *
+ * The code is very simple: we first check if the type of activity was an error.
+ * It probably won't happen with the default input, but could be the case of a
+ * network socket detecting a disconnection. Next, we get the file descriptor
+ * from this handler (as said before, the callback could be added to more than
+ * one file descriptor), and read it since we know that it shouldn't block,
+ * because our fd handler told us that there's some activity on it. If the
+ * result of the read was 0 bytes, we know that it's an end of file (EOF), so we
+ * can finish reading the input. Otherwise we just print the content read from
+ * it:
+ *
+ * @until }
+ *
+ * Also notice that this callback returns @ref ECORE_CALLBACK_RENEW to keep
+ * being called, as almost all other Ecore callbacks, otherwise if it returns
+ * @ref ECORE_CALLBACK_CANCEL then the file handler would be deleted.
+ *
+ * Just to demonstrate that our program isn't blocking in the input read but
+ * still can process other Ecore events, we are going to setup an @ref
+ * Ecore_Timer. This is its callback:
+ *
+ * @until }
+ *
+ * Now in the main code we are going to initialize the library, and setup
+ * callbacks for the file descriptor, the prepare callback, and the timer:
+ *
+ * @until timer_add
+ *
+ * Notice that the use of ecore_main_fd_handler_add() specifies what kind of
+ * activity we are monitoring. In this case, we want to monitor for read (since
+ * it's the standard input) and for errors. This is done by the flags @ref
+ * ECORE_FD_READ and @ref ECORE_FD_ERROR. For the three callbacks we are also
+ * giving a pointer to our context structure, which has pointers to the handlers
+ * added.
+ *
+ * Then we can start the main loop and see everything happening:
+ *
+ * @until }
+ *
+ * In the end we are just deleting the fd handler and the timer to demonstrate
+ * the API usage, since Ecore would already do it for us on its shutdown.
+ */
+
+/**
+ * @page ecore_poller_example_c ecore poller - Repetitive polling tasks
+ * @dontinclude ecore_poller_example.c
+ *
+ * This example show how to setup, and explains how an @ref Ecore_Poller is
+ * called. You can @ref ecore_poller_example.c "see the full source code here".
+ *
+ * In this example we store the initial time of the program just to use as
+ * comparison to the time when the poller callbacks are called. It will be
+ * stored in @c _initial_time :
+ *
+ * @until initial_time
+ *
+ * Then next step is to define the poller callback. This callback assumes that a
+ * @c data pointer is passed to it on creation, and is a string just used to
+ * identify the poller. The callback prints this string and the time since the
+ * program started, and returns @ref ECORE_CALLBACK_RENEW to keep being called.
+ *
+ * @until }
+ *
+ * Now in the main function we initialize Ecore, and save the initial time of
+ * the program, so we can compare it later with the time that the pollers are
+ * being called:
+ *
+ * @until initial_time
+ *
+ * Then we change the poll interval to 0.3 seconds (the default is 0.125
+ * seconds) just to show the API usage.
+ *
+ * Finally, we create two pollers, one that will be called every 4 ticks, and
+ * another one that will be called every 8 ticks. This means the the first
+ * poller interval will be around 1.2 seconds, and the second one will be
+ * around 2.4 seconds. But the most important point is: since the second poller
+ * interval is a multiple of the first one, they will be always synchronized.
+ * Ecore calls pollers that are in the "same tick" together. It doesn't go back
+ * to the main loop and check if there's another poller to execute at this
+ * time, but instead it calls all the pollers registered to this "tick" at the
+ * same time.  See the description of ecore_poller_add() for more details. This
+ * is easy to see in the time printed by both of them.
+ *
+ * If instead of two synchronized pollers, we were using two different timers,
+ * one with interval of 1.2 seconds and another one with an interval of 2.4
+ * seconds, there would be no guarantee that they would be totally in sync. Some
+ * delay in the execution of another task, or even in the task called in the
+ * callback, could make them get out of sync, forcing Ecore's main loop to wake
+ * up more than necessary.
+ *
+ * Well, this is the code that create these two pollers and set the poll
+ * interval, then starts the main loop:
+ *
+ * @until ecore_main_loop_begin
+ *
+ * If you hit CTRL-C during the execution of the program, the main loop will
+ * quit, since there are some signal handlers already set by default to do this.
+ * So after the main loop begin call, we change the second poller's interval to
+ * 16 ticks, so it will happen each 4.8 seconds (or each 4 times that the first
+ * poller is called).
+ *
+ * This means: the program is started, the first poller is called each 4 ticks
+ * and the second is called each 8 ticks. After CTRL-C is used, the second
+ * poller will be called each 16 ticks.
+ *
+ * @until }
+ *
+ * The rest of the program is just deleting the pollers and shutting down the
+ * library.
+ */
+
+/**
+ * @page ecore_con_lookup_example_c Ecore_Con - DNS lookup
+ *
+ * This is a very simple example that shows how to make a simple DNS lookup
+ * using ecore_con_lookup().
+ *
+ * It's possible to see in the beginning of the main function that we are using
+ * the arguments passed via command line. This is the address that we are going
+ * to make the DNS lookup on.
+ *
+ * The next step is to initialize the libraries, and just call
+ * ecore_con_lookup(). This function will get the string that contains the
+ * address to be resolved as first parameter, then a callback that will be
+ * called when the resolve stage is done, and finally a data pointer that will
+ * be passed to the callback.
+ *
+ * This function is asynchronous, and the callback will be called only on
+ * success. If there was an error during the resolve stage, there's no way to
+ * know about that. It's only possible to know about errors when setting up the
+ * lookup, by looking at the return code of the ecore_con_lookup() function.
+ *
+ * The callback @c _lookup_done_cb passed as argument to ecore_con_lookup() just
+ * prints the resolved canonical name, IP, address of the sockaddr structure,
+ * and the length of the socket address (in bytes).
+ *
+ * Finally, we start the main loop, and after that we finalize the libraries and
+ * exit.
+ *
+ * This is the code for this simple example:
+ *
+ * @include ecore_con_lookup_example.c
+ */
+
+/**
+ * @page ecore_con_url_download_example_c Ecore_Con_Url - downloading a file
+ *
+ * This is a simple example that shows how to download a file using @ref
+ * Ecore_Con_Url. The full source code for this example can be found at @ref
+ * ecore_con_url_download_example.c.
+ *
+ * First we are setting some callbacks for events that will be sent when data
+ * arrives in our connection (the data is the content of the file being
+ * downloaded), and when the download is completed. The @c _url_progress_cb and
+ * @c _url_complete_cb are these callbacks:
+ *
+ * @dontinclude ecore_con_url_download_example.c
+ * @skip struct
+ * @until main_loop_quit
+ * @until }
+ *
+ * Notice that we also declared a struct that will hold how many bytes were
+ * downloaded through this object. It will be set in the @c main function using
+ * ecore_con_url_data_set().
+ *
+ * In the next step, on the @c main function, we open a file where we are going
+ * to save the content being downloaded:
+ *
+ * @until open(
+ * @until }
+ *
+ * With the file successfully open, let's create our @ref Ecore_Con_Url object.
+ * For this, we initialize the libraries and create the object:
+ *
+ * @until }
+ *
+ * Then we allocate and set the data struct to the connection object, and set a
+ * file descriptor from our previously open file to it. We also add the event
+ * handlers (callbacks) to the events that will be emitted on data being
+ * received and download complete:
+ *
+ * @until complete_cb
+ *
+ * Finally we start our request, and run the main loop:
+ *
+ * @until return 0
+ * @until }
+ *
+ * The rest of this code was just freeing resources, with some labels to be used
+ * for error handling.
+ */
+
+/**
+ * @page ecore_con_url_cookies_example_c Ecore_Con_Url - Managing cookies
+ *
+ * This example shows how to use an @ref Ecore_Con_Url and enable it to
+ * receive/send cookies. These cookies can be set by the server, saved to a
+ * file, loaded later from this file and sent again to the server. The complete
+ * example can be found at @ref ecore_con_url_cookies_example.c
+ * "ecore_con_url_cookies_example.c"
+ *
+ * First we are setting some callbacks for events that will be sent when data
+ * arrives in our connection (the data is the content of the file being
+ * downloaded), and when the download is completed. The @c _url_data_cb and
+ * @c _url_complete_cb are these callbacks:
+ *
+ * @dontinclude ecore_con_url_download_example.c
+ * @skip Eina_Bool
+ * @until main_loop_quit
+ * @until }
+ *
+ * In the @c main function we parse some parameter from the command line. These
+ * parameters are the url that we are connecting to, and cookie use policy.
+ *
+ * After that we initialize the libraries and create a handler to our request
+ * using the given url:
+ *
+ * @until goto end
+ * @until }
+ *
+ * We also set the event handlers for this request and add a header to it, that
+ * will inform our custom user agent:
+ *
+ * @until User-Agent
+ *
+ * Now we start playing with cookies. First, let's call
+ * ecore_con_url_cookies_init() to inform that we want cookies enabled. We also
+ * set a file from which we are loading previously set (old) cookies, in case
+ * that we don't want to clear old cookies or old session cookies.
+ *
+ * After that we set the file where we are going to save all valid cookies in
+ * the @ref Ecore_Con_Url object. This includes previously loaded cookies (that
+ * weren't cleared) and new cookies set by the response header "Set-Cookie" that
+ * comes with the response to our request:
+ *
+ * @until jar_file_set
+ *
+ * And finally, before performing the request, we check the command passed as
+ * argument in the command line and use it to choose between clearing old
+ * cookies, clearing just old session cookies, or ignoring old session cookies.
+ *
+ * After that we just finish our code as expected:
+ *
+ * @until return
+ * @until }
+ *
+ * Notice that in this code, if we want to clear old cookies, we also don't load
+ * them from the file. This is a bit confusing and the API isn't clear, but
+ * ecore_con_url_cookies_file_add() will load cookies from the specified files
+ * just when the operation is really performed (i.e. ecore_con_url_get() is
+ * called). So if ecore_con_url_cookies_clear() is called before
+ * ecore_con_url_get(), the old cookies may not have been loaded yet, so they
+ * are not cleared. To avoid having old cookies loaded, don't add any cookie
+ * file with ecore_con_url_cookies_file_add().
+ *
+ * The function ecore_con_url_cookies_clear() is just useful to clear cookies
+ * that are already loaded/valid in the @ref Ecore_Con_Url object (from a
+ * previous request, for example).
+ */
+
+/**
+ * @page ecore_con_url_headers_example_c Ecore_Con_Url - customizing a request
+ *
+ * This is a simple example that shows how to make a custom request using @ref
+ * Ecore_Con_Url. The full source code for this example can be found at @ref
+ * ecore_con_url_headers_example.c.
+ *
+ * The first part of the example is setting the callbacks to be called when an
+ * #ECORE_CON_EVENT_URL_DATA or #ECORE_CON_EVENT_URL_COMPLETE event is received.
+ * These are the callbacks that are going to be used with this:
+ *
+ * @dontinclude ecore_con_url_headers_example.c
+ * @skip static
+ * @until main_loop_quit
+ * @until }
+ *
+ * The @c main code is as simple as the @ref Ecore_Con_Url example. It contains
+ * some checks for the arguments to see if a GET or POST request is required:
+ *
+ * @until GET
+ * @until }
+ *
+ * Then we start our required libraries and configure a global option to use
+ * pipelined requests:
+ *
+ * @until pipeline_set
+ *
+ * Now we create our request object, but using ecore_con_url_custom_new() to use
+ * a POST or GET method depending on the command line arguments. And we also add
+ * the event handlers for our callbacks:
+ *
+ * @until complete_cb
+ *
+ * In order to demonstrate our API, some options are set to this request before
+ * actually performing it:
+ *
+ * @until url_time
+ *
+ * Depending on what kind of request was asked (GET or POST), we use one of the
+ * specific functions to perform it:
+ *
+ * @until url_post
+ *
+ * After that, we just check for errors, start the main loop, free resources and
+ * finally exit:
+ *
+ * @until return
+ * @until }
+ */
+
+/**
+ * @page ecore_con_server_simple_example_c Ecore_Con - Creating a server
+ *
+ * In this example we are going to create a server that listens for connections
+ * from clients through a TCP port. You can get the full source code at @ref
+ * ecore_con_server_simple_example.c.
+ *
+ * We begin our example in the main function, to demonstrate how to setup
+ * things, and then go to the callbacks that are needed for it to run properly.
+ *
+ * In the @c main function, after initializing the libraries, we use
+ * ecore_con_server_add() to startup the server. Look at the reference
+ * documentation of this function: it supports many types of server, and we are
+ * going to use #ECORE_CON_REMOTE_TCP (a TCP based server). Other arguments to
+ * this function are the address where we are listening on, the port, and a data
+ * pointer that will associate that data with the server:
+ *
+ * @dontinclude ecore_con_server_simple_example.c
+ * @skip main(void)
+ * @until exit
+ *
+ * Notice that we are listening only on 127.0.0.1, which is the internal
+ * loopback interface. If the server needs to listening on all of its ips, use
+ * 0.0.0.0 instead.
+ *
+ * We also need to set event handlers to be called when we receive any data from
+ * the clients, when a new client connects to our server, or when a client
+ * disconnects. These callbacks are:
+ *
+ * @until CLIENT_DATA
+ *
+ * More details about what these callbacks do will be given later.
+ *
+ * Now, before running the main loop, we also want to set some limits to our
+ * server. To avoid it to be overloaded with too many connections to handle, we
+ * are going to set a maximum of 3 clients connected at the same time. This
+ * number is used just to demonstrate the API. A good number to be used here
+ * would need to be determined by tests done on the server, to check the load
+ * supported by it.
+ *
+ * Any other client trying to connect to this server, after the limit is
+ * reached, will wait until one of the connected clients disconnect and the
+ * server accepts the new connection.
+ *
+ * Another important thing to do is setting a timeout, to avoid that a client
+ * hold a connection for too long without doing anything. This timeout will
+ * disconnect the idle client, allowing that other clients that may be waiting
+ * to connect finally can do it.
+ *
+ * Then we just start the main loop:
+ *
+ * @until main_loop_begin
+ *
+ * After exiting the main loop, we print the list of connected clients, and also
+ * free the data associated with each respective client. This data was
+ * previously associated using ecore_con_client_data_set():
+ *
+ * @until }
+ *
+ * Then before exiting we show the total uptime of the server:
+ *
+ * @until uptime
+ *
+ * Now let's go back to the used callbacks.
+ *
+ * The first callback, @c _add, is registered to the event
+ * #ECORE_CON_EVENT_CLIENT_ADD, which will be called whenever a client connects
+ * to the server.
+ *
+ * This callback will associate a data structure to this client, that will be
+ * used to count how many bytes were received from it. It also prints some info
+ * about the client, and send a welcome string to it. ecore_con_client_flush()
+ * is used to ensure that the string is sent immediately, instead of being
+ * buffered.
+ *
+ * A timeout for idle specific for this client is also set, to demonstrate that
+ * it is independent of the general timeout of the server.
+ *
+ * Before exiting, the callback will display a list of all clients still
+ * connected to this server. The code for this callback follows:
+ *
+ * @dontinclude ecore_con_server_simple_example.c
+ * @skip Eina_Bool
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The second callback is @c _del. It is associated with
+ * #ECORE_CON_EVENT_CLIENT_DEL, and is called whenever a client disconnects from
+ * this server.
+ *
+ * It will just print some information about the client, free the associated
+ * data structure, and call ecore_con_client_del() on it before exiting the
+ * callback. Here's its code:
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The last callback will print any data received by this server from its
+ * clients. It also increments the "bytes received" counter, sdata, in the
+ * data structure associated with this client. The callback code follows:
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The important parts of this example were described above. If you need to see
+ * the full source code for it, there's a link to the code in the beginning of
+ * this page.
+ *
+ * This example will start a server and start accepting connections from clients, as
+ * demonstrated in the following diagram:
+ * @htmlonly
+ * <img src="ecore_con-client-server-example.png" style="max-width: 400px"/>
+ * <a href="ecore_con-client-server-example.png">Full size</a>
+ * @endhtmlonly
+ *
+ * @image rtf ecore_con-client-server-example.png
+ * @image latex ecore_con-client-server-example.eps width=\textwidth
+ *
+ * @note This example contains a serious security flaw: it doesn't check for the
+ * size of data being received, thus allowing to the string to be exploited in
+ * some way. However, it is left like this to make the code simpler and just
+ * demonstrate the API usage.
+ */
+
+/**
+ * @page ecore_con_client_simple_example_c Ecore_Con - Creating a client
+ *
+ * Following the same idea as the @ref ecore_con_server_simple_example_c , this
+ * example will demonstrate how to create a client that connects to a specified
+ * server through a TCP port. You can see the full source code at @ref
+ * ecore_con_client_simple_example.c.
+ *
+ * Starting from the @c main function, after reading the command line argument
+ * list and initializing the libraries, we try to connect to the server:
+ *
+ * @dontinclude ecore_con_client_simple_example.c
+ * @skip main(
+ * @until exit(2)
+ * @until }
+ *
+ * After doing this, everything else in @c main is setting up callbacks for the
+ * client events, starting the main loop and shutting down the libraries after
+ * it.
+ *
+ * Now let's go to the callbacks. These callbacks are very similar to the server
+ * callbacks (our implementation for this example is very simple). On the
+ * @c _add callback, we just set a data structure to the server, print some
+ * information about the server, and send a welcome message to it:
+ *
+ * @dontinclude ecore_con_client_simple_example.c
+ * @skip Eina_Bool
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The @c _del callback is as simple as the previous one. We free the data
+ * associated with the server, print the uptime of this client, and quit the
+ * main loop (since there's nothing to do once we disconnect):
+ *
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * The @c _data callback is also similar to the server data callback. it will
+ * print any received data, and increase the data counter in the structure
+ * associated with this server:
+ *
+ * @skip Eina_Bool
+ * @until CALLBACK_RENEW
+ * @until }
+ *
+ * You can see the server counterpart functions of the ones used in this example
+ * in the @ref ecore_con_server_simple_example_c.
+ *
+ * This example will connect to the server and start comunicating with it, as
+ * demonstrated in the following diagram:
+ * @htmlonly
+ * <img src="ecore_con-client-server-example2.png" style="max-width: 400px"/>
+ * <a href="ecore_con-client-server-example2.png">Full size</a>
+ * @endhtmlonly
+ *
+ * @image rtf ecore_con-client-server-example2.png
+ * @image latex ecore_con-client-server-example2.eps width=\textwidth
+ *
+ * @note This example contains a serious security flaw: it doesn't check for the
+ * size of data being received, thus allowing to the string to be exploited in
+ * some way. However, it is left like this to make the code simpler and just
+ * demonstrate the API usage.
+ */
+
+/**
+ * @example ecore_idler_example.c
+ * This example shows when @ref Ecore_Idler, @ref Ecore_Idle_Enterer and @ref
+ * Ecore_Idle_Exiter are called. See
+ * @ref ecore_idler_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_job_example.c
+ * This example shows how to use an @ref Ecore_Job. See
+ * @ref ecore_job_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_time_functions_example.c
+ * Shows the difference between the three time functions. See @ref
+ * ecore_time_functions_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_timer_example.c
+ * This example show how to use timers to have timed events inside ecore.
+ * See @ref ecore_timer_example_c "the example explained".
+ */
+
+/**
+ * @example ecore_exe_example_child.c
+ * This is a child process used to receive messages and send it back
+ * to its father.
+ * Check the @ref Ecore_exe_simple_example_c "Full tutorial"
+ */
+
+/**
+ * @example ecore_exe_example.c
+ * This is a process that will send messages to a child and it will stop
+ * when it receives "quit".
+ * Check the @ref Ecore_exe_simple_example_c "Full tutorial"
+ */
+
+/**
+ * @example ecore_fd_handler_example.c
+ * This example shows how to setup and use an fd_handler. See
+ * @ref ecore_fd_handler_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_poller_example.c
+ * This example shows how to setup and use a poller. See
+ * @ref ecore_poller_example_c "the explanation here".
+ */
+
+/**
+ * @example ecore_event_example_01.c
+ * This example shows how to create an event handler. Explanation: @ref
+ * ecore_event_example_01_c
+ */
+
+/**
+ * @example ecore_event_example_02.c
+ * This example shows how to setup, change, and delete event handlers. See
+ * @ref ecore_event_example_02_c "the explanation here".
+ */
+
+/**
+ * @example ecore_fd_handler_gnutls_example.c
+ * Shows how to use fd handlers.
+ */
+
+/**
+ * @example ecore_con_lookup_example.c
+ * Shows how to make a simple DNS lookup. See the complete example description
+ * at @ref ecore_con_lookup_example_c
+ */
+
+/**
+ * @example ecore_con_url_download_example.c
+ * Shows how to download a file using an @ref Ecore_Con_Url object. See the
+ * complete example description at @ref ecore_con_url_download_example_c
+ */
+
+/**
+ * @example ecore_con_url_cookies_example.c
+ * Shows how to manage cookies on a @ref Ecore_Con_Url object. See the complete
+ * example description at @ref ecore_con_url_cookies_example_c.
+ */
+
+/**
+ * @example ecore_con_server_simple_example.c
+ * Shows how to setup a simple server that accepts client connections and sends
+ * a "hello" string to them. See the complete example description at @ref
+ * ecore_con_server_simple_example_c
+ */
+
+/**
+ * @example ecore_con_client_simple_example.c
+ * Shows how to setup a simple client that connects to a server and sends a
+ * "hello" string to it. See the complete example description at @ref
+ * ecore_con_client_simple_example_c
+ */
+
+/**
+ * @example ecore_con_url_headers_example.c
+ * Shows how to make GET or POST requests using an @ref Ecore_Con_Url object,
+ * and make use of most of its API.  See the complete example description at
+ * @ref ecore_con_url_headers_example_c
+ */
+
+/**
+ * @page tutorial_ecore_pipe_gstreamer_example
+ *
+ * Here is an example that uses the pipe wrapper with a Gstreamer
+ * pipeline. For each decoded frame in the Gstreamer thread, a handle
+ * is called in the ecore thread.
+ *
+ * @include ecore_pipe_gstreamer_example.c
+ * @example ecore_pipe_gstreamer_example.c
+ */
+
+/**
+ * @page tutorial_ecore_pipe_simple_example
+ * @dontinclude ecore_pipe_simple_example.c
+ *
+ * This example shows some simple usage of ecore_pipe. We are going to create a
+ * pipe, fork our process, and then the child is going to communicate to the
+ * parent the result of its processing through the pipe.
+ *
+ * As always we start with our includes, nothing special:
+ * @skip #include
+ * @until Ecore.h
+ *
+ * The first thing we are going to define in our example is the function we are
+ * going to run on the child process, which, as mentioned, will do some
+ * processing and then will write the result to the pipe:
+ * @until }
+ * @until }
+ * @note The sleep was added so the parent process would think the child process
+ * was doing something interesting...
+ *
+ * Next up is our function for handling data arriving in the pipe. It copies the
+ * data to another buffer, adds a terminating NULL and prints it. Also if it
+ * receives a certain string it stops the main loop(effectively ending the
+ * program):
+ * @until }
+ * @until }
+ *
+ * And now on to our main function, we start by declaring some variables and
+ * initializing ecore:
+ * @until ecore_init
+ *
+ * And since we are talking about pipes let's create one:
+ * @until pipe_add
+ *
+ * Now we are going to fork:
+ * @until fork
+ * @note duh...
+ *
+ * The child process is going to do the our fancy processing:
+ * @until }
+ * @note It's very important to call ecore_pipe_read_close() here so that the
+ * child process won't read what it is writing to the pipe itself.
+ *
+ * And the parent is going to run ecore's main loop waiting for some data:
+ * @until }
+ * @note Calling ecore_pipe_write_close() here isn't important but since we
+ * aren't going to write in the pipe it is good practice.
+ *
+ * And finally when done processing(the child) or done receiving(the parent) we
+ * delete the pipe and shutdown ecore:
+ * @until }
+ *
+ * @example ecore_pipe_simple_example.c
+ */
+
+/**
+ * @page tutorial_ecore_animator Ecore animator example
+ * @dontinclude ecore_animator_example.c
+ *
+ * For this example we are going to animate a rectangle growing, moving and
+ * changing color, and then move it back to it's initial state with a
+ * different animation. We are also going to have a second rectangle moving
+ * along the bottom of the screen. To do this we are going to use ecore_evas,
+ * but since that is not the focus here we won't going into detail about it.
+ *
+ * @skip #include
+ * @until evas_object_show
+ * @until evas_object_show
+ * All of this is just setup, not what we're interested in right now.
+ *
+ * Now we are going to set the frametime for our animation to one fiftieth of
+ * a second, this will make our program consume more resources but should make
+ * our animation extra smooth:
+ * @until frametime
+ *
+ * And now we get right to the business of creating our ecore_animator:
+ * @until timeline
+ * @note We are telling our animation to last 10 second and to call
+ * _advance_frame with rect as data.
+ *
+ * So far we setup the first and second animations, the third one however is a
+ * bit different, this time we won't use a timeline animation, that's because we
+ * don't want our animation to stop:
+ * @until animator_add
+ *
+ * Next we set a few timers to execute _start_second_anim, _freeze_third_anim
+ * and _thaw_thir_anim in 10, 5 and 10 seconds respectively:
+ * @until thaw
+ *
+ * And now we tell ecore to begin the main loop and free some resources once
+ * it leaves the main loop:
+ * @until }
+ *
+ * Here we have the callback function for our first animation, which first
+ * takes @p pos(where in the timeline we are), maps it to a SPRING curve that
+ * which will wobble 15 times and will decay by a factor of 1.2:
+ * @until pos_map
+ *
+ * Now that we have the frame we can adjust the rectangle to its appropriate
+ * state:
+ * @until }
+ *
+ * And now the callback that will run 10 seconds after the program starts(5
+ * seconds after the first animation finishes) and starts our second
+ * animation:
+ * @until }
+ * @note For this animation we made the frametime much larger which means our
+ * animation might get "jerky".
+ *
+ * The callback for our second animation, our savvy reader no doubt noted that
+ * it's very similar to the callback for the first animation. What we change for
+ * this one is the type of animation to BOUNCE and the number of times it will
+ * bounce to 50:
+ * @until }
+ *
+ * And for our last animation callback something simpler, we just move our
+ * rectangle right by one pixel until it reaches the end of the screen and then
+ * start at the beginning again:
+ * @until }
+ *
+ * Our next two functions respectively freezes and thaw our third animation, so
+ * that it won't happen for the 5 seconds after the first animation ends and the
+ * second animation begins:
+ * @until }
+ * @until }
+ *
+ * @example ecore_animator_example.c
+ */
+
+/**
+ * @page ecore_thread_example_c Ecore_Thread - API overview
+ *
+ * Working with threads is hard. Ecore helps to do so a bit easier, but as
+ * the example in @ref ecore_thread_example.c "ecore_thread_example.c" shows,
+ * there's a lot to consider even when doing the most simple things.
+ *
+ * We'll be going through this thorough example now, showing how the differents
+ * aspects of @ref Ecore_Thread are used, but users are encourage to avoid
+ * threads unless it's really the only option, as they always add more
+ * complexity than the program usually requires.
+ *
+ * Ecore Threads come in two flavors, short jobs and feedback jobs. Short jobs
+ * just run the given function and are more commonly used for small tasks
+ * where the main loop does not need to know how the work is going in between.
+ * The short job in our example is so short we had to artificially enlarge it
+ * with @c sleep(). Other than that, it also uses threads local data to keep
+ * the data we are working with persistent across different jobs ran by the
+ * same system thread. This data will be freed when the no more jobs are
+ * pending and the thread is terminated. If the data doesn't exist in the
+ * thread's storage, we create it and save it there for future jobs to find
+ * it. If creation fails, we cancel ourselves, so the main loop knows that
+ * we didn't just exit normally, meaning the job could not be done. The main
+ * part of the function checks in each iteration if it was canceled by the
+ * main loop, and if it was, it stops processing and clears the data from the
+ * storage (we assume @c cancel means no one else will need this, but this is
+ * really application dependent).
+ * @dontinclude ecore_thread_example.c
+ * @skip static void
+ * @until sleep(1)
+ * @until }
+ * @until }
+ *
+ * Feedback jobs, on the other hand, run tasks that will inform back to the
+ * main loop its progress, send partial data as is processed, just ping saying
+ * it's still alive and processing, or anything that needs the thread to talk
+ * back to the main loop.
+ * @skip static void
+ * @until the_end
+ * @until }
+ *
+ * Finally, one more feedback job, but this one will be running outside of
+ * Ecore's pool, so we can use the pool for real work and keep this very
+ * light function unchecked. All it does is check if some condition is met
+ * and send a message to the main loop telling it it's time to close.
+ * @skip static void
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Every now and then the program prints its status, counting threads running
+ * and pending jobs.
+ * @skip static void
+ * @until }
+ *
+ * In our main loop, we'll be receiving messages from our feedback jobs using
+ * the same callback for both of them.
+ * @skip static void
+ * @until char *str
+ *
+ * The light job running out of the pool will let us know when we can exit our
+ * program.
+ * @until }
+ *
+ * Next comes the handling of data sent from the actual worker threads, always
+ * remembering that the data belongs to us now, and not the thread, so it's
+ * our responsibility to free it.
+ * @until }
+ * @until }
+ *
+ * Last, the condition to exit is given by how many messages we want to handle,
+ * so we need to count them and inform the condition checking thread that the
+ * value changed.
+ * @until }
+ *
+ * When a thread finishes its job or gets canceled, the main loop is notified
+ * through the callbacks set when creating the task. In this case, we just
+ * print what happen and keep track of one of them used to exemplify canceling.
+ * Here we are pretending one of our short jobs has a timeout, so if it doesn't
+ * finish before a timer is triggered, it will be canceled.
+ * @skip static void
+ * @until _cancel_timer_cb
+ * @until }
+ *
+ * The main function does some setup that includes reading parameters from
+ * the command line to change its behaviour and test different results.
+ * These are:
+ * @li -t \<some_num\> maximum number of threads to run at the same time.
+ * @li -p \<some_path\> adds @c some_path to the list used by the feedback jobs.
+ * This parameter can be used multiple times.
+ * @li -m \<some_num\> the number of messages to process before the program is
+ * signalled to exit.
+ *
+ * Skipping some bits, we init Ecore and our application data.
+ * @skip ecore_init
+ * @until appdata.max_msgs
+ *
+ * If any paths for the feedback jobs were given, we use them, otherwise we
+ * fallback to some defaults. Always initializing the proper mutexes used by the
+ * threaded job.
+ * @skip path_list
+ * @until EINA_LIST_FREE
+ * @until }
+ * @until }
+ *
+ * Initialize the mutex needed for the condition checking thread
+ * @skip appdata.mutex
+ * @until appdata.condition
+ *
+ * And start our tasks.
+ * @until appdata.thread_3
+ * @until EINA_FALSE
+ *
+ * To finalize, set a timer to cancel one of the tasks if it doesn't end
+ * before the timeout, one more timer for status report and get into the main
+ * loop. Once we are out, destroy our mutexes and finish the program.
+ * @until _status_timer_cb
+ * @until }
+ *
+ * @example ecore_thread_example.c
+ */
+
+/**
+ * @page ecore_evas_callbacks_example_c Ecore Evas Callbacks
+ * @dontinclude ecore_evas_callbacks.c
+ *
+ * Our example is remarkably simple, all it does is create an Ecore_Evas and
+ * register a callback for a bunch of events. What's interesting here is
+ * knowing when each of these callbacks will be called, however since that
+ * depends on the underlying windowing system there are no guarantees that all
+ * of the callbacks will be called for your windowing system. To know which
+ * callbacks will be called for your windowing system run the example and
+ * redirect the output to a file, and take a look at it.
+ *
+ * @note Make sure you minimize, resize, give and remove focus to see more
+ * callbacks called.
+ *
+ * The example is constituted of two main parts, first is the implementation of
+ * callbacks that will be called for each event(all our callbacks do is print
+ * their own name) and the second is the main function where we register the
+ * event callbacks and run the main loop:
+ * @include ecore_evas_callbacks.c
+ * @example ecore_evas_callbacks.c
+ */
+
+/**
+ * @page Ecore_Evas_Window_Sizes_Example_c Ecore_Evas window size hints
+ *
+ * On this example, we show you how to deal with @c Ecore_Evas window
+ * size hints, which are implemented <b>per Evas engine</b>.
+ *
+ * We start by defining an initial size for our window and, after
+ * creating it, adding a background white rectangle and a text object
+ * to it, to be used to display the current window's sizes, at any
+ * given time:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip define WIDTH
+ * @until define
+ * @until define
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip evas_init
+ * @until show(bg)
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip text =
+ * @until main_loop_begin
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip to inform
+ * @until }
+ *
+ * The program has a command line interface, responding to the
+ * following keys:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip commands
+ * @until ;
+ *
+ * Use the @c 'm' key to impose a minimum size of half the initial
+ * ones on our window. Test it by trying to resize it to smaller sizes
+ * than that:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "m"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The @c 'x' key will, in turn, set a maximum size on our window --
+ * to two times our initial size. Test it by trying to resize the
+ * window to bigger sizes than that:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "x"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Window base sizes will override any minimum sizes set, so try it
+ * with the @c 'b' key. It will set a base size of two times the
+ * initial one:
+ * @dontinclude ecore_evas_window_sizes_example.c
+ * @skip keyname, "b"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Finally, there's a key to impose a "step size" on our window, of 40
+ * pixels.  With than on (@c 's' key), you'll see the window will
+ * always be bound to @b multiples of that size, for dimensions on
+ * both axis:
+ * @skip keyname, "s"
+ * @until }
+ * @until }
+ * @until }
+ *
+ * The full example follows.
+ *
+ * @include ecore_evas_window_sizes_example.c
+ * @example ecore_evas_window_sizes_example.c
+ */
+
+/**
+ * @page ecore_evas_object_example_c Ecore Evas Object example
+ * @dontinclude ecore_evas_object_example.c
+ *
+ * This example creates an Ecore_Evas(a window) and associates a background and
+ * a custom cursor for it.
+ *
+ * We'll start looking at the association, which is quite simple. We choose to
+ * associate using ECORE_EVAS_OBJECT_ASSOCIATE_BASE to have it be resized with
+ * the window, since for a background that is what's most useful:
+ * @skipline ecore_evas_object_associate
+ * @note If we didn't associate the background we'd need to listen to resize of
+ * Ecore_Evas and manually resize the background or have artifacts on our
+ * window.
+ *
+ * We then check that the association worked:
+ * @until printf
+ *
+ * Next we are going to set a custom cursor, for our cursor we are going to use
+ * a small green rectangle. Our cursor is going to be on layer 0(any lower and
+ * it would be below the background and thus invisible) and clicks will be
+ * computed as happening on pixel 1, 1 of the image:
+ * @until cursor_set
+ *
+ * We then check every one of those parameters:
+ * @until printf
+ *
+ * Here you have the full-source of the code:
+ * @include ecore_evas_object_example.c
+ * @example ecore_evas_object_example.c
+ */
+
+/**
+ * @page ecore_evas_basics_example_c Ecore Evas basics example
+ * @dontinclude ecore_evas_basics_example.c
+ *
+ * This example will illustrates the usage of some basic Ecore_Evas functions.
+ * This example will list the available evas engines, check which one we used to
+ * create our window and set some data on our Ecore_Evas. It also allows you to
+ * hide/show all windows in this process(we only have one, but if there were
+ * more they would be hidden), to hide the windows type 'h' and hit return, to
+ * show them, type 's' and hit return.
+ *
+ * The very first thing we'll do is initialize ecore_evas:
+ * @skipline evas_init
+ * @until return 1
+ *
+ * Once inited we query which engines are available:
+ * @until ecore_evas_engines_free
+ *
+ * We then create an Ecore_Evas(window) with the first available engine, on
+ * position 0,0 with size 200,200 and no especial flags, set it's title and show
+ * it:
+ * @until evas_show
+ *
+ * We now add some important data to our Ecore_Evas:
+ * @until data_set
+ *
+ * And since our data is dynamically allocated we'll need to free it when the
+ * Ecore_Evas dies:
+ * @until delete_request
+ * @dontinclude ecore_evas_basics_example.c
+ * @skip static void
+ * @until }
+ * @skip printf("Using
+ *
+ * We now print which Evas engine is being used for our example:
+ * @until printf
+ *
+ * We are going to add a background to our window but before we can do that
+ * we'll need to get the canvas(Evas) on which to draw it:
+ * @until canvas
+ *
+ * We then do a sanity check, verifying if the Ecore_Evas of the Evas is the
+ * Ecore_Evas from which we got the Evas:
+ * @until printf
+ *
+ * Now we can actually add the background:
+ * @until ecore_evas_object_associate
+ *
+ * To hide and show the windows of this process when the user presses 'h' and
+ * 's' respectively we need to know when the user types something, so we
+ * register a callback for when we can read something from @c stdin:
+ * @until )
+ *
+ * The callback that actually does the hiding and showing is pretty simple, it
+ * does a @c scanf(which we know won't block since there is something to read on
+ * @c stdin) and if the character is an 'h' we iterate over all windows calling
+ * @c ecore_evas_hide on them, if the character is an 's' we call @c
+ * ecore_evas_show instead:
+ * @dontinclude ecore_evas_basics_example.c
+ * @skip static Eina_Bool
+ * @until }
+ * @skip ecore_main_loop_begin
+ *
+ * Once all is done we run our main loop, and when that is done(application is
+ * exiting) we free our Ecore_Evas and shutdown the ecore_evas subsystem:
+ * @until shutdown
+ *
+ * Here you have the full-source of the code:
+ * @include ecore_evas_basics_example.c
+ * @example ecore_evas_basics_example.c
+ */
+
+/**
+ * @page Ecore_Evas_Buffer_Example_01_c Ecore_Evas buffer example
+ *
+ * Between the Evas examples, there is one in which one creates a
+ * canvas bound to the Evas @b buffer engine and uses its pixel
+ * contents to create an PPM image on disk. There, one does that by
+ * creating the canvas "by hand", with @c evas_new(), @c
+ * evas_engine_info_set(), etc.
+ *
+ * On this example, we accomplish the very same task, but by using the
+ * @c Ecore_Evas helper wrapper functions on a buffer engine
+ * canvas. If you compare both codes, you'll see how much code one is
+ * saved from by using the @c Ecore_Evas wrapper functions.
+ *
+ * The code is simple as it can be. After instantianting our canvas
+ * window, with ecore_evas_buffer_new(), we grab its canvas pointer
+ * and create the desired objects scene on it, which in this case is
+ * formed by 3 rectangles over the top left corner of a white
+ * background:
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip main(void)
+ * @until show(r3)
+ *
+ * Since it's a buffer canvas and we're using it to only save its
+ * contents on a file, we even needn't ecore_evas_show() it. We make
+ * it render itself, forcefully, without the aid of Ecore's main loop,
+ * with ecore_evas_manual_render():
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip manual_render
+ * @until manual_render
+ *
+ * And we're ready to save the window's shiny rendered contents as a
+ * simple PPM image. We do so by grabbing the pixels of the @c
+ * Ecore_Evas' internal canvas, with ecore_evas_buffer_pixels_get():
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip _scene_save
+ * @until }
+ * @dontinclude ecore_evas_buffer_example_01.c
+ * @skip support function
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Check that destination file for the result. The full example
+ * follows.
+ *
+ * @include ecore_evas_buffer_example_01.c
+ * @example ecore_evas_buffer_example_01.c
+ */
+
+/**
+ * @page Ecore_Evas_Buffer_Example_02_c Ecore_Evas (image) buffer example
+ *
+ * In this example, we'll demonstrate the use of
+ * ecore_evas_object_image_new().  The idea is to have the same scene
+ * created for @ref Ecore_Evas_Buffer_Example_01_c as the contents of
+ * an image object.
+ *
+ * The canvas receiving this image object will have a white
+ * background, a red border image to delimit this image's boundaries
+ * and the image itself.  After we create the special image, we set
+ * its "fill" property, place and resize it as we want. We have also
+ * to resize its underlying @c Ecore_Evas too, to the same dimensions:
+ * @dontinclude ecore_evas_buffer_example_02.c
+ * @skip object_image_new
+ * @until resize(sub_ee
+ *
+ * Now, we re-create the scene we cited, using the sub-canvas of our
+ * image to parent the objects in question. Because image objects are
+ * created with the alpha channel enabled, by default, we'll be seeing
+ * our white rectangle beneath the scene:
+ * @dontinclude ecore_evas_buffer_example_02.c
+ * @skip rectangle_add(sub_canvas
+ * @until loop_begin
+ *
+ * And that's all. The contents of our image could be updated as one
+ * wished, and they would always be mirrored in the image's area.
+ *
+ * Check that destination file for the result. The full example
+ * follows.
+ *
+ * @include ecore_evas_buffer_example_02.c
+ * @example ecore_evas_buffer_example_02.c
+ */
+
+/**
+ * @page Ecore_exe_simple_example_c Ecore_exe
+ * Creating a processes and IPC (Inter process communication)
+ *
+ * In this example we will show how to create a new process and communicate
+ * with it in a portable way using the Ecore_exe module.
+ *
+ * In this example we will have two process and both will communicate with each
+ * other using messages. A father process will start a child process and it will
+ * keep sending messages to the child until it receives a message to quit.
+ * To see the full source use the links:
+ * @li @ref ecore_exe_example.c "Father"
+ * @li @ref ecore_exe_example_child.c "Child"
+ *
+ * Let's start the tutorial. The implementation of the child it's pretty simple.
+ * We just read strings from stdin and write a message in the stdout. But you
+ * should be asking yourself right know. "If I'm receiving data from an other
+ * process why I'm reading and writing in stdin/stdout?". That's because, when
+ * you spawn a process using the Ecore_Exe module it will create a pipe between
+ * the father and the child process and the stdin/stdout of the child process
+ * will be redirected to the pipe. So when the child wants to receive or send
+ * data to the father, just use the stdin/stdout.
+ * However the steps to send data from the father to the child is quite
+ * different, but we will get there.
+ *
+ * The child will register a fd handler to monitor the stdin.
+ * So we start registering the ecore FD handler:
+ * @dontinclude ecore_exe_example_child.c
+ * @skip ecore_main_fd_handler_add
+ * @until ;
+ *
+ * If you don't remenber the parameters of @ref ecore_main_fd_handler_add,
+ * please check its documentation.
+ *
+ * Now that we have our handler registered we will start the ecore's main loop:
+ * @skipline ecore_main_loop_begin
+ *
+ * Now let's take a look in the callback function. Its a simple function
+ * that will read from stdin 3 times and at the third time will say
+ * to the father: "quit".
+ * @dontinclude ecore_exe_example_child.c
+ * @skip static Eina_Bool
+ * @until }
+ * @until }
+ * @until }
+ * @until }
+ *
+ * You may notice that we are sending the messages to stdout, and our father
+ * will receive it. Also our string must have a "\n" because the string will
+ * be buffered in the pipe until it finds EOF or a "newline" in our case we
+ * won't have a EOF unless we close the pipe, so we use the "\n" char.
+ *
+ * One more thing, we use fflush(stdout) because probably our message won't
+ * fill our entire buffer and the father would never receive the message. So we
+ * use this function to flush the buffer and the father can receive as fast as
+ * possible.
+ *
+ * Now that we have our child ready, let's start our work in the father's source
+ * code.
+ *
+ * We start creating the child process like this:
+ * @dontinclude ecore_exe_example.c
+ * @skip childHandle = ecore_exe_pipe_run
+ * @until ;
+ *
+ * With the command above we are creating our child process, the first
+ * parameter is the command to be executed, the second are the pipe flags and
+ * in our case we will write and read in the pipe so we must say what we are
+ * doing in the pipe. You may notice the flag ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+ * this means that reads are buffered until I find a newline. And the third
+ * parameter is data that we would like to send to the process in its creating.
+ * This case we are sending nothing, so just use NULL.
+ *
+ * Then we check if the process was created:
+ * @skip if
+ * @until }
+ *
+ * After this we get the PID of the child process and just print it in the screen.
+ * The PID stands for Process identification. This is just an internal
+ * identifier of your process:
+ *
+ * @skip childPid
+ * @until fprintf
+ * @until fprintf
+ *
+ * The way that Ecore_exe works is: when we want to read data sent from
+ * our child we must use an ecore event.
+ * So let's start register our event listener:
+ * @skipline ecore_event_handler_add
+ *
+ * Now to send messages to our child we will use a timer, so every 1 second we
+ * will send a message to the child.
+ * @skipline ecore_timer_add
+ *
+ * After all this we start the main loop. Now let's pass to the callback
+ * functions.
+ *
+ * Now we will see how we actually send the data and receive it.
+ * Let's start with _sendMessage:
+ * @dontinclude ecore_exe_example.c
+ * @skip _sendMessage(void *data)
+ * @until }
+ *
+ * We use ecore_exe_send to send data to the child process, it's pretty simple.
+ * To know what the parameters stands for, check the docs.
+ *
+ * @note The function @b ecore_exe_send will never block your program, also
+ * there is no partial send of the data. This means either the function will
+ * send all the data or it will fail.
+ *
+ * Now let's take a look in our event callback and see how we retrieve the
+ * messages.
+ * @dontinclude ecore_exe_example.c
+ * @skip static Eina_Bool
+ * @until }
+ * @until }
+ *
+ * It's just like an normal event, we get a reference to Ecore_Exe_Event_Data,
+ * extract the data and then show it in the screen.
+ *
+ * And that's it, after all it's not complicated to create a process and
+ * communicate with it.
+ *
+ */
+
+/**
+ * @page ecore_imf_example_c ecore_imf - How to handle preedit and commit string from Input Method Framework
+ *
+ * This example demonstrates how to connect input method framework and handle preedit and commit string from input method framework.
+ *
+ * To input Chinese, Japanese, Korean and other complex languages, the editor should be connected with input method framework.
+ * 
+ * How to initialize and shutdown ecore imf module
+ * @li ecore_imf_init() should be called to initialize and load immodule.
+ * @li ecore_imf_shutdown() is used for shutdowning and unloading immodule.
+ *
+ * How to create input context and register pre-edit and commit event handler
+ *
+ * Each entry should have each input context to connect with input service framework. 
+ * Key event is processed by input method engine. 
+ * The result is notified to application through ECORE_IMF_CALLBACK_PREEDIT_CHANGED and ECORE_IMF_CALLBACK_COMMIT event.
+ *
+ * The full example follows. 
+ *
+ * @include ecore_imf_example.c
+ */

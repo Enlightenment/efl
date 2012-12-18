@@ -1,0 +1,1073 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with examples.
+ *
+ * @ref Example_Evas_Buffer_Simple
+ *
+ * @ref Example_Evas_Init_Shutdown
+ *
+ * @ref Example_Evas_Text
+ *
+ * @ref Example_Evas_Images
+ *
+ * @ref Example_Evas_Images_2
+ *
+ * @ref Example_Evas_Events
+ *
+ * @ref Example_Evas_Object_Manipulation
+ *
+ * @ref Example_Evas_Aspect_Hints
+ *
+ * @ref Example_Evas_Size_Hints
+ *
+ * @ref Example_Evas_Stacking
+ *
+ * @ref Example_Evas_Smart_Objects
+ *
+ * @ref Example_Evas_Box Evas box
+ */
+
+/**
+ * @page Example_Evas_Buffer_Simple Simple Evas canvas example
+ *
+ * The canvas will here use the buffer engine.
+ *
+ * @include evas-buffer-simple.c
+ * @example evas-buffer-simple.c
+ */
+
+/**
+ * @page Example_Evas_Init_Shutdown Evas' init/shutdown routines example
+ *
+ * @include evas-init-shutdown.c
+ * @example evas-init-shutdown.c
+ */
+
+/**
+ * @page Example_Evas_Images Some image object functions examples
+ * @dontinclude evas-images.c
+ *
+ * In this example, we add two images to a canvas, each one having a
+ * quarter of the canvas' size, positioned on the top left and bottom
+ * right corners, respectively:
+ * @skip img1 = evas_object_image_add(d.evas);
+ * @until ecore_main_loop_begin
+ * See there is a border image around the top left one, <b>which is
+ * the one that should be displayed</b>. The other one will (on
+ * purpose) fail to load, because we set a wrong file path as image
+ * source on it:
+ * @dontinclude evas-images.c
+ * @skip valid_path
+ * @until bogus_path
+ * This is how one is supposed to test for success when binding source
+ * images to image objects: evas_object_image_load_error_get(),
+ * followed by evas_load_error_str(), if one wants to pretty print/log
+ * the error. We'll talk about the border image further.
+ *
+ * To interact with the program, there's a command line interface.
+ * A help string can be asked for with the 'h' key:
+ * @dontinclude evas-images.c
+ * @skip commands
+ * @until ;
+ * The first four commands will change the top left images's @b fill property
+ * values, which dictate how the source image (Enlightenment's logo)
+ * is to be displayed through the image object's area. Experiment with
+ * those switches until you get the idea of evas_object_fill_set().
+ *
+ * The 'f' command will toggle that image's "filled" property, which
+ * is whether it should track its size and set the fill one to fit the
+ * object's boundaries perfectly (stretching). Note that this command
+ * and the four above it will conflict: in real usage one would use
+ * one or other ways of setting an image object's viewport with regard
+ * to its image source.
+ *
+ * There are four commands which deal with the border image. This red
+ * frame is there to illustrate <b>image borders</b>. The image source
+ * for the border is a solid red rectangle, with a transparent @b
+ * rectangular area in its middle. See how we use it to get a 3 pixel
+ * wide frame with <code>evas_object_image_border_set(d.border, 3, 3,
+ * 3, 3)</code>. To finish the effect of showing it as a border, we
+ * issue <code>evas_object_image_border_center_fill_set(d.border,
+ * EVAS_BORDER_FILL_NONE)</code>.
+ *
+ * Use 't' to change the border's thickness. 'b' will change the
+ * border image's center region rendering schema: either a hole (no
+ * rendering), blending (see the original transparent area, in this
+ * case) or solid (the transparent area gets filled). Finally, 'c'
+ * will change the border's scaling factor.
+ *
+ * While you have the border in 'blending mode', test the command 'm':
+ * it will set whether to use or not smooth scaling on the border's
+ * source image. Since the image is small originally (30 x 30), we're
+ * obviously up-scaling it (except the border pixels, do you
+ * remember?). With this last switch, you'll either see the
+ * transparent shape in the middle flat (no smoothing) or blurry
+ * (smoothed).
+ *
+ * The full example follows.
+ *
+ * @include evas-images.c
+ * @example evas-images.c
+ */
+
+/**
+ * @page Example_Evas_Images_2 Some more image object functions examples (2nd block)
+ * @dontinclude evas-images2.c
+ *
+ * In this example, we have three images on the canvas, but one of
+ * them is special -- we're using it as a <b>proxy image
+ * object</b>. It will mirror the contents of the other two images
+ * (which are the ones on the top of the canvas), one at a time:
+ * @skip d.proxy_img = evas_object_image_filled_add(d.evas);
+ * @until evas_object_show(d.proxy_img);
+ * As in other examples, we have a command line interface on it.
+ * @dontinclude evas-images2.c
+ * @skip commands
+ * @until ;
+ * The 'p' one will change the source of the proxy image to one of the
+ * other two, as seem above.
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ * Note the top right image, the smaller one:
+ * @dontinclude evas-images2.c
+ * @skip noise_img =
+ * @until show
+ * Since we are creating the data for its pixel buffer ourselves, we
+ * have to set its size with evas_object_image_size_set(), first. We
+ * set our data with the function evas_object_image_data_set(), where
+ * the second argument is a buffer with random data. There's a last
+ * command to print it's @b stride value. Since its created with one
+ * quarter of the canvas's original width
+ * @dontinclude evas-images2.c
+ * @skip define WIDTH
+ * @until define HEIGHT
+ * you can check this value.
+ *
+ * The image on the top left also has a subtlety: it is @b pre-loaded
+ * on this example.
+ * @dontinclude evas-images2.c
+ * @skip d.logo =
+ * @until show
+ * On real use cases we wouldn't be just printing something like this
+ * @dontinclude evas-images2.c
+ * @skip static void
+ * @until }
+ * naturally.
+ *
+ * The 's' command will save one of the images on the disk, in the png
+ * format:
+ * @dontinclude evas-images2.c
+ * @skip if (strcmp(ev->keyname, "a") == 0)
+ * @until }
+ *
+ * The full example follows.
+ *
+ * @include evas-images2.c
+ * @example evas-images2.c
+ */
+
+/**
+ * @page Example_Evas_Events Evas events (canvas and object ones) and some canvas operations example
+ * @dontinclude evas-events.c
+ *
+ * In this example we illustrate how to interact with canvas' (and its
+ * objects') events, including the key input ones. We also demonstrate
+ * precise point collision on objects and canvas "obscured regions",
+ * here.
+ *
+ * The example application consists of a window with a white
+ * background and an image -- the Enlightenment logo. The application
+ * begins with this image switching back and forth into two sizes: the
+ * exact canvas' size and one quarter of it (when it's placed on the
+ * top left quadrant). Thus, we'll have an @b animation going on,
+ * with image states set to change each 2 elapsed seconds.
+ *
+ * There's a global variable to aid accessing our desired context
+ * variables from anywhere in the code:
+ * @dontinclude evas-events.c
+ * @skip test_data
+ * @until {0}
+ *
+ * What interests us there are the @c canvas pointer, our image handle
+ * -- @c img -- and the background one, @c bg.
+ *
+ * The first interesting thing on the example is the registration of a
+ * callback on each canvas resizing event, where we put our canvas'
+ * size and the background rectangle's one in synchrony, so that we
+ * don't get bogus content on rendering with canvas resizes:
+ * @dontinclude evas-events.c
+ * @skip resize_set
+ * @until resize_set
+ * @dontinclude evas-events.c
+ * @skip here to keep
+ * @until }
+ *
+ * Than, after grabbing our canvas pointer from the Ecore Evas helper
+ * infrastructure, we registrate an event callbacks on it:
+ * @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+ * @until two canvas event callbacks
+ * @dontinclude evas-events.c
+ * @skip render flush callback
+ * @until }
+ * It will be called whenever our canvas has to flush its rendering
+ * pipeline. In this example, two ways of observing that message
+ * which is printed in the cited callback are:
+ * - to resize the example's window (thus resizing the canvas' viewport)
+ * - let the animation run
+ *
+ * When one resizes the canvas, there's at least one operation it has
+ * to do which will require new calculation for rendering: the
+ * resizing of the background rectangle, in a callback we already
+ * shown you.
+ *
+ * The creation of our background rectangle is so that we give it a @b name,
+ * via evas_object_name_set() and we give it the canvas @b focus:
+ * @dontinclude evas-events.c
+ * @skip bg = evas_object_rectangle_add
+ * @until focus_set
+ *
+ * Still exemplifying events and callbacks, we register a callback on
+ * the canvas event of an object being focused:
+ * @dontinclude evas-events.c
+ * @skip add(d.canvas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS
+ * @until }
+ * @dontinclude evas-events.c
+ * @skip called when
+ * @until }
+ *
+ * In that call, @c event_info is going to be the focused object's
+ * handle, in this case our background rectangle. We print its name,
+ * so you can check it's the same. We check that pointer is the same
+ * reported by Evas' API with regard to the newest focused
+ * object. Finally, we check whether that object is really flagged as
+ * focused, now using an Evas object API function.
+ *
+ * The animation we talked about comes from a timer we register just
+ * before we start the example's main loop. As we said, the resizing
+ * of the image will also force the canvas to repaint itself, thus
+ * flushing the rendering pipeline whenever the timer ticks:
+ * @dontinclude evas-events.c
+ * @skip d.resize_timer = ecore
+ * @until d.resize_timer = ecore
+ * @dontinclude evas-events.c
+ * @skip put some action
+ * @until }
+ * When you start this example, this animation will be
+ * running, by default. To interact with the program, there's a
+ * command line interface. A help string can be asked for with the
+ * 'h' key:
+ * @dontinclude evas-events.c
+ * @skip static const char *commands
+ * @until ;
+ * These are the commands the example will accept at any time, except
+ * when one triggers the 'f' one. This command will exemplify
+ * evas_event_freeze(), which interrupts @b all input events
+ * processing for the canvas (in the example, just for 3 seconds). Try
+ * to issue events for it during that freeze time:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "f") == 0)
+ * @until }
+ * The 'd' command will unregister those two canvas callbacks for you,
+ * so you won't see the messages about the focused object and the
+ * rendering process anymore:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "d") == 0)
+ * @until }
+ * In this example, we start using a focused object to handle the input
+ * events -- the background rectangle. We register a callback on an key input
+ * event occurring on it, so that we can act on each key stroke:
+ * @skip object_event_callback_add
+ * @until }
+ * @dontinclude evas-events.c
+ * @skip examine the keys pressed
+ * @until key grab
+ * We do so by examining the @c ev->keyname string (remember the event
+ * information struct for key down events is the #Evas_Event_Key_Down
+ * one).  There's one more trick for grabbing input events on this
+ * example -- evas_object_key_grab(). The 'c' command will, when
+ * firstly used, @b unfocus the background rectangle. Unfocused
+ * objects on an Evas canvas will @b never receive key events. We
+ * grab, then, the keys we're interested at to the object forcefully:
+ * @skip if (d.focus)
+ * @until got here by key grabs
+ * This shows how one can handle input not depending on focus issues
+ * -- you can grab them globally. Switch back and forth focus and
+ * forced key grabbing with the 'c' key, and observe the messages
+ * printed about the focused object. Observe, also, that we register
+ * two more @b object callbacks, this time on the image object
+ * (Enlightenment logo), where we just print messages telling the mouse
+ * pointer has entered or exited it area:
+ * @skip evas_object_show(d.img);
+ * @until mouse_out, NULL
+ * @dontinclude evas-events.c
+ * @skip mouse enters the object's area
+ * @until mouse exits the object's area
+ * Experiment with moving the mouse pointer over the image, letting it
+ * enter and exit its area (stop the animation with 'a', for a better
+ * experience). When you start the example, Evas will consider this
+ * area by being the whole boundary rectangle around the picture. If
+ * you issue the 'p' command, though, you get a demonstration of Evas'
+ * precise point collision detection on objects. With
+ * evas_object_precise_is_inside_get(), one can make Evas consider the
+ * transparent areas of an object (the middle of the logo's E letter,
+ * in the case) as not belonging to it when calculating mouse
+ * in/out/up/down events:
+ * @dontinclude evas-events.c
+ * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @until }
+ * To finish the example, try the command bound to Control + 'o',
+ * which exemplifies Evas' <b>obscured regions</b>. When firstly
+ * pressed, you'll get the same contents, in a region in the middle of
+ * the canvas, at the time the key was pressed, until you toggle the
+ * effect off again (make sure the animation is running on to get the
+ * idea better). When you toggle this effect off, we also demonstrate
+ * the use of evas_render_updates(), which will force immediate
+ * updates on the canvas rendering, bringing back the obscured
+ * region's contents to normal.
+ * @skip mods = evas_key_modifier_get(evas);
+ * @until end of obscured region command
+ *
+ * What follows is the complete code for this example.
+ *
+ * @include evas-events.c
+ * @example evas-events.c
+ */
+
+/**
+ * @page Example_Evas_Object_Manipulation Evas objects basic manipulation example
+ *
+ * @include evas-object-manipulation.c
+ * @example evas-object-manipulation.c
+ */
+
+/**
+ * @page Example_Evas_Aspect_Hints Evas aspect hints example
+ *
+ * @include evas-aspect-hints.c
+ * @example evas-aspect-hints.c
+ */
+
+/**
+ * @page Example_Evas_Size_Hints Evas alignment, minimum size, maximum size, padding and weight hints example
+ *
+ * In this code, we place a (vertical) box with two rectangles as
+ * child elements. It has a command line interface with which to act
+ * on those rectangles' <b>size hints</b>:
+ * @dontinclude evas-hints.c
+ * @skip static const char commands
+ * @until ;
+ *
+ * That should be self explanatory. Change those values (possibly
+ * resizing the box, which will resize together with the example's
+ * window) to get how size hints are honored by a container object,
+ * which in this case is the Evas box.
+ *
+ * More on this smart object can be found on @ref Example_Evas_Box.
+ * The full code for this example follows.
+ *
+ * @include evas-hints.c
+ * @example evas-hints.c
+ */
+
+/**
+ * @page Example_Evas_Box Evas box example
+ *
+ * In this example, we demonstrate the use of Evas box objects. We
+ * cover changing boxes' layouts (with a custom layout, besides the
+ * ones provided by Evas), box padding and alignment influence on the
+ * layouts, insertion and removal of box items.
+ *
+ * The interesting part of the code starts, naturally, when we add a
+ * box object to the canvas. Just after it, we place five rectangles,
+ * with random colors, inside of it. Those rectangles get a minimum
+ * size hint of 50 pixels on each axis, which will be respected by
+ * most of the box's possible layouts:
+ * @dontinclude evas-box.c
+ * @skip evas_object_box_add
+ * @until }
+ * @until }
+ *
+ * Just like in other Evas examples, we have a white background on the
+ * canvas and a red border around the container object of interest,
+ * the box, to mark its boundaries. Resizing of the canvas will keep
+ * the box's proportion with regard to the whole canvas', so that you
+ * can experiment with different sizes of the box to accomodate its
+ * children:
+ * @dontinclude evas-box.c
+ * @skip adjust canvas' contents on resizes
+ * @until }
+ *
+ * Again, one interacts with this program by means of key commands:
+ * @dontinclude evas-box.c
+ * @skip static const char *commands
+ * @until ;
+ *
+ * Let's start with the @b numeric ones, each of which will impose a
+ * different layout on the box object.
+ *
+ * The initial layout the box starts at is the one triggered by the
+ * key @c '1' -- the horizontal layout. Thus, the initial appearance
+ * of this program, demonstrating this layout, is something like:
+ *
+ * @image html evas-box-example-00.png
+ * @image rtf evas-box-example-00.png
+ * @image latex evas-box-example-00.eps
+ *
+ * The vertical layout (@c '2' key) is very similar, but just
+ * disposing the items vertically:
+ *
+ * @image html evas-box-example-01.png
+ * @image rtf evas-box-example-01.png
+ * @image latex evas-box-example-01.eps
+ *
+ * Note the influence of the (default) @c 0.5 box alignment property,
+ * which will let the children line in the middle of the box's
+ * area. Also, because the space required by them extrapolates the
+ * box's height (we resized it to be smaller), they'll be drawn out if
+ * its bounds.
+ *
+ * Next, comes the horizontal @b homogeneous layout (@c '3' key). See
+ * how it reserves an equal amount of space for each child to take:
+ *
+ * @image html evas-box-example-02.png
+ * @image rtf evas-box-example-02.png
+ * @image latex evas-box-example-02.eps
+ *
+ * Its vertical equivalent can be triggered by the @c '4' key. The
+ * next different layout of interest is the horizontal maximum size
+ * homogeneous (@c '5' key). It will reserve cells to children sized
+ * equally to the dimensions of the child with bigger size (or minimum
+ * size hints). For this example, all cells would be just the size of
+ * our rectangles' minimum size hints and, to prove that, insert a new
+ * (smaller) rectangle at position 3, say, with @c Ctrl and @c 3 keys
+ * together:
+ *
+ * @image html evas-box-example-03.png
+ * @image rtf evas-box-example-03.png
+ * @image latex evas-box-example-03.eps
+ *
+ * The code for the commands inserting and deleting box items is:
+ * @dontinclude evas-box.c
+ * @skip mods, "Shift"
+ * @until }
+ * @until }
+ * @dontinclude evas-box.c
+ * @skip new rectangle to be put in the box
+ * @until }
+ * In that code, we exemplify evas_object_box_children_get(), to fetch
+ * a child element at an exact position. After the element removal
+ * from the box (leaving it unparented again), we delete it and free
+ * that list. The code inserting a new rectangle, there, is
+ * straightforward.
+ *
+ * Try the @c '6' key for the vertical equivalent of the last shown
+ * layout. Then, comes the @b flow layout, triggered by the @c '7'
+ * key. We make our box small to demonstrate the effect on the items
+ * layouting:
+ *
+ * @image html evas-box-example-04.png
+ * @image rtf evas-box-example-04.png
+ * @image latex evas-box-example-04.eps
+ *
+ * The next two numerical commands are for the vertical equivalent of
+ * the last and the stack one, respectively. Try them out to get their
+ * looks.
+ *
+ * The last numerical key, @c '0', shows the effect of a @b custom
+ * layout on the box. We wrote one that would split the width and
+ * height of the box equally and, then, place the items in the cells
+ * in the diagonal:
+ * @dontinclude evas-box.c
+ * @skip keyname, "0"
+ * @until }
+ * @dontinclude evas-box.c
+ * @skip custom 'diagonal' layout
+ * @until }
+ * @until }
+ *
+ * @image html evas-box-example-05.png
+ * @image rtf evas-box-example-05.png
+ * @image latex evas-box-example-05.eps
+ *
+ * Finally, the @c 'a' and @c 'p' commands will change the box's
+ * alignment and padding property values, respectively. For each of
+ * the layouts above, see the effects they make by setting different
+ * values on those properties.
+ *
+ * The full code for this example follows. For an exercise on <b>the
+ * effect of children box elements' size hints on a box layout</b>,
+ * try the @ref Example_Evas_Size_Hints.
+ *
+ * @include evas-box.c
+ * @example evas-box.c
+ */
+
+/**
+ * @page Example_Evas_Stacking Evas object stacking functions (and some event handling)
+ * @dontinclude evas-stacking.c
+ *
+ * In this example, we illustrate how to stack objects in a custom
+ * manner and how to deal with layers.
+ *
+ * We have three objects of interest in it -- white background, red
+ * rectangle, green rectangle and blue rectangle.
+ * @skip d.bg = evas_object_rectangle_add(d.canvas);
+ * @until evas_object_resize(d.bg, WIDTH, HEIGHT);
+ * @skip d.rects[2] = evas_object_rectangle_add(d.canvas);
+ * @until evas_object_show(d.rects[0]);
+ * @dontinclude evas-stacking.c
+ * Like in other Evas examples, one interacts with it by means of key
+ * commands:
+ * @skip static const char *commands
+ * @until ;
+ * At any given point, like seem above, you'll be operating one rectangle only.
+ * You may stacking it below an adjacent object with "b":
+ * @skip evas_object_stack_below(d.rects[d.cur_rect], neighbour);
+ * @until evas_object_stack_below(d.rects[d.cur_rect], neighbour);
+ * @dontinclude evas-stacking.c
+ * "a" will do the opposite:
+ * @skip evas_object_stack_above(d.rects[d.cur_rect], neighbour);
+ * @until evas_object_stack_above(d.rects[d.cur_rect], neighbour);
+ * To bring it directly to the top/bottom, use "t"/"m", respectively:
+ * @dontinclude evas-stacking.c
+ * @skip evas_object_raise(d.rects[d.cur_rect]);
+ * @until evas_object_raise(d.rects[d.cur_rect]);
+ * @skip evas_object_lower(d.rects[d.cur_rect]);
+ * @until evas_object_lower(d.rects[d.cur_rect]);
+ * At any time, use the "s" command to see the status of the
+ * ordering. It will show the background's ordering too. Note that it
+ * also shows the @b layer for this object. It starts at a @b
+ * different layer than the others. Use "l" to change its layer
+ * (higher layer numbers mean higher layers). If the background is on
+ * the same layer as the others (0), you'll see it interact with them
+ * on the ordering. If it's in the layer above, no matter what you do,
+ * you'll see nothing but the white rectangle: it covers the other
+ * layers. For the initial layer (-1), it will never mess nor occlude
+ * the others.
+ *
+ * Let's make some tests with those commands. The rectangle which starts
+ * selected and which will receive our commands is the @b red one. It
+ * starts stacked above all the others, like seem above:
+ *
+ * @image html evas-stacking-example-00.png
+ * @image rtf evas-stacking-example-00.png
+ * @image latex evas-stacking-example-00.eps
+ *
+ * Stack it one level below, with 'b', and you'll get:
+ *
+ * @image html evas-stacking-example-01.png
+ * @image rtf evas-stacking-example-01.png
+ * @image latex evas-stacking-example-01.eps
+ * Note how the rectangle which laid above it, the green one, is now
+ * on top of it. Now change the rectangle to operate on to the blue
+ * one, with two consecutive 'c' commands. Note that it's the lowest
+ * one on the stack of rectangles. Issue the 'a' command for it, thus
+ * re-stacking it one level above:
+ *
+ * @image html evas-stacking-example-02.png
+ * @image rtf evas-stacking-example-02.png
+ * @image latex evas-stacking-example-02.eps
+ * You can send it to the top of its layer directly with the 't' command:
+ *
+ * @image html evas-stacking-example-03.png
+ * @image rtf evas-stacking-example-03.png
+ * @image latex evas-stacking-example-03.eps
+ * Now put it back to the bottom of that layer with 'm':
+ *
+ * @image html evas-stacking-example-04.png
+ * @image rtf evas-stacking-example-04.png
+ * @image latex evas-stacking-example-04.eps
+ * Like said above, we have two layers used at the beginning of the
+ * example: the default one (0) and the one immediately below it (-1),
+ * for the white background. Let's change this setup by issuing the
+ * 'l' command, which will change the background's layer to 1, i.e., a
+ * layer @b above the one holding the other rectangles:
+ *
+ * @image html evas-stacking-example-05.png
+ * @image rtf evas-stacking-example-05.png
+ * @image latex evas-stacking-example-05.eps
+ * See how it now covers everything else. Press 'l' again, taking it
+ * now to layer 0. It's still covering everything because it lands the
+ * layer as the highest one on the objects stack. As we have the blue
+ * rectangle as the one receiving stacking commands, hit 't' and
+ * you'll see it again:
+ *
+ * @image html evas-stacking-example-06.png
+ * @image rtf evas-stacking-example-06.png
+ * @image latex evas-stacking-example-06.eps
+ * By bringing the background back to layer -1 ('l'), you'll get:
+ *
+ * @image html evas-stacking-example-07.png
+ * @image rtf evas-stacking-example-07.png
+ * @image latex evas-stacking-example-07.eps
+ *
+ * The last two commands available are "p" and "r", which will make
+ * the target rectangle to @b pass (ignore) and @b repeat the mouse
+ * events occurring on it (the commands will cycle through on and off
+ * states). This is demonstrated with the following
+ * #EVAS_CALLBACK_MOUSE_DOWN callback, registered on each of the
+ * colored rectangles:
+ * @dontinclude evas-stacking.c
+ * @skip static void
+ * @until }
+ * Try to change these properties on the three rectangles while
+ * experimenting with mouse clicks on their intersection region.
+ *
+ * The full example follows.
+ *
+ * @include evas-stacking.c
+ * @example evas-stacking.c
+ */
+
+/**
+ * @page Example_Evas_Map_Overview Evas Map - Overview
+ * @dontinclude evas-map-utils.c
+ *
+ * Down to the very bottom, Map is simple: it takes an object and transforms
+ * the way it will be shown on screen. But using it properly can be a bit
+ * troublesome.
+ *
+ * For the most common operations there are utility functions that help in
+ * setting up the map to achieve the desired effects. Now we'll go through
+ * an overview of the map API and some of the things that can be done with
+ * it.
+ *
+ * The full code can be found @ref evas-map-utils.c "here".
+ *
+ * To show how some functions work, this example listens to keys pressed to
+ * toggle several options.
+ * @skip typedef
+ * @until App_Data
+ * @until ;
+ *
+ * In this program, we divide the window in four quadrants, each holding an
+ * object that will have different map configurations applied to them in each
+ * call to an animator function.
+ * @skip static Eina_Bool
+ * @until evas_output_size_get
+ *
+ * Let's first create a map and set some of our options to it. Only four
+ * points maps are supported, so we'll stick to that magic number. We can
+ * set a color for each vertex or apply one for all of them at once
+ * @until evas_map_util_points_color_set
+ *
+ * For the first object, we'll have a plain rectangle. At its creation, this
+ * rectangle was set to be semi-transparent, but whether its own alpha is
+ * used will be defined by the map's alpha setting. If the map's alpha is
+ * disabled, then the object will be completely opaque. The map's own color,
+ * however, will use any alpha set to it.
+ *
+ * So we get our object, initialize our map geometry to match the rectangle
+ * and make it rotate around its own center, then apply the map to the
+ * object so it takes effect.
+ * @until evas_object_map_enable_set
+ *
+ * The second object is an image. Here we don't have any color set for the
+ * object, but the image itself contains an alpha channel that will not be
+ * affected by the map settings, so even with alpha set to be off, the image
+ * will still be transparent. Color applied to the map will tint it though.
+ * Since setting a map copies it into the object, we can reuse the same one
+ * we created before. We initialize it to the new object while all other
+ * options are kept the same. Notice that no rotation will be done here, as
+ * that's just an utility function that takes the coordinates set for each
+ * point of the map and transforms it accordingly.
+ * @until evas_map_util_points_populate_from_object_full
+ *
+ * This time the object is a bit farther into the screen, by using a @c z
+ * value higher than 0 to init the map. We also need to map the image used
+ * by the object, so Evas knows how to transform it properly. For this we
+ * use the evas_map_point_image_uv_set() to tell the map what coordinate
+ * within the image corresponds to each point of the map.
+ * @until evas_map_point_image_uv_set(m, 3
+ *
+ * This object will also be rotated, but in all three axis and around some
+ * other point, not its center, chosen mostly at random. If enabled, lighting
+ * will be applied to, from a light source at the center of the window.
+ * @until evas_object_map_enable_set
+ *
+ * For the third object we are doing, once more, a 3D rotation, but this time
+ * perspective will be applied to our map to make it look more realistic.
+ * The lighting source also follows the mouse cursor and it's possible to
+ * toggle backface culling, so that the object is hidden whenever we are
+ * not seeing its front face.
+ * @until evas_object_map_enable_set
+ *
+ * And we free this map, since since we messed too much with it and for the
+ * last object we want something cleaner.
+ * @until evas_map_free
+ *
+ * The last object is actually two. One image, with an image set to it, and
+ * one image proxying the first one with evas_object_image_source_set(). This
+ * way, the second object will show whatever content its source has.
+ * This time we'll be using a map more manually to simulate a simple reflection
+ * of the original image.
+ *
+ * We know that the reflection object is placed just like the original, so
+ * we take a shortcut by just getting the geometry of our to-be-mapped object.
+ * We also need to get the image size of the source.
+ * @until evas_object_image_size_get
+ *
+ * For this we'll create a map shaped so that it begins at the base of our
+ * image and it expands horizontally as it grows (downwards) in height.
+ * @until evas_map_point_coord_set(m, 3
+ *
+ * Since the reflection should show the image inverted, we need to map it
+ * this way. The first point of the map (top-left) will be mapped to the
+ * mapped to the first pixel of the last row. There's no horizontal reflection
+ * and we want the full width of the image, but as we map its upper side ww
+ * will only take two thirds of the image.
+ * @until evas_map_point_image_uv_set(m, 3
+ *
+ * Finally, to fade out our reflection we set the colors for each point in
+ * the map. The two at the top need to be visible, but we'll tone them down
+ * a bit and make them a bit translucent. The other two will go straight to
+ * full transparency. Evas interpolates the colors from one point to the next,
+ * so this will make them fade out.
+ * @until evas_object_map_enable_set
+ *
+ * Close up by freeing the map and do some other things needed to keep stuff
+ * moving in our animations and we are done.
+ * @until }
+ *
+ * The rest of the program is setup and listening to key events. Nothing that
+ * matters within the scope of this example, so we are going to skip it.
+ * Refer to it @ref evas-map-utils.c "here" however to see how everything
+ * fits together.
+ *
+ * @example evas-map-utils.c
+ */
+
+/**
+ * @page Example_Evas_Smart_Objects Evas object smart objects
+ * @dontinclude evas-smart-object.c
+ *
+ * In this example, we illustrate how to create and handle Evas smart objects.
+ *
+ * A smart object is one that provides custom functions to handle
+ * clipping, hiding, moving, resizing, color setting and more on @b
+ * child elements, automatically, for the smart object's user. They
+ * could be as simple as a group of objects that move together (see
+ * @ref Evas_Smart_Object_Clipped) or implementations of whole complex
+ * UI widgets, providing some intelligence (thus the name) and
+ * extension to simple Evas objects.
+ *
+ * Here, we create one as an example. What it does is to control (at
+ * maximum) 2 child objects, with regard to their geometries and
+ * colors. There can be a "left" child and a "right" one. The former
+ * will always occupy the top left quadrant of the smart object's
+ * area, while the latter will occupy the bottom right. The smart
+ * object will also contain an @b internal decorative border object,
+ * which will also be controlled by it, naturally.
+ *
+ * Here is where we add it to the canvas:
+ * @skip d.smt = evas_smart_example_add(d.evas);
+ * @until show
+ *
+ * The magic starts to happen in the @c evas_smart_example_add()
+ * function, which is one in the example smart object's defined @b
+ * interface. These should be the functions you would export to the
+ * users of your smart object. We made three for this one:
+ * - @c evas_smart_example_add(): add a new instance of the example
+ *   smart object to a canvas
+ * - @c evas_smart_example_remove(): remove a given child of the smart
+ *   object from it
+ * - @c evas_smart_example_set_left(): set the left child of the smart
+ *   object
+ * - @c evas_smart_example_set_right(): set the right child of the
+ *   smart object
+ *
+ * The object's creation takes place as:
+ * @dontinclude evas-smart-object.c
+ * @skip add a new example smart object to a canvas
+ * @until }
+ *
+ * Smart objects are defined by <b>smart classes</b>, which are structs
+ * defining their interfaces, or <b>smart functions</b> (see
+ * #Evas_Smart_Class, the base class for any smart object).  As you
+ * see, one has to use the evas_object_smart_add() function to
+ * instantiate smart objects. Its second parameter is what matters --
+ * an #Evas_Smart struct, which contains all the smart class
+ * definitions (smart functions, smart callbacks, and the like). Note,
+ * however, that @c _evas_smart_example_smart_class_new() seems not to
+ * be defined in our example's code. That's because it came from a very
+ * handy <b>helper macro</b>:
+ * @dontinclude evas-smart-object.c
+ * @skip EVAS_SMART_SUBCLASS_NEW
+ * @until _smart_callbacks
+ * What it does is to @b subclass a given existing smart class, thus
+ * specializing it. This is very common and useful in Evas. There is a
+ * built-in smart object, the "clipped smart object", which implements
+ * a behavior mostly desired by many other smart object implementors:
+ * it will clip its children to its area and move them along with it,
+ * on evas_object_move() calls. Then, our example smart object will
+ * get that behavior for free.
+ *
+ * The first argument to the macro,
+ * @dontinclude evas-smart-object.c
+ * @skip _evas_smart_example_type
+ * @until _evas_smart_example_type
+ * will define the new smart class' name. The second tells the macro
+ * what is the @b prefix of the function it will be declaring with a @c
+ * _smart_set_user() suffix. On this function, we may override/extend
+ * any desired method from our parent smart class:
+ * @dontinclude evas-smart-object.c
+ * @skip setting our smart interface
+ * @until }
+ *
+ * The first function pointer's code will take place at an example
+ * smart object's @b creation time:
+ * @dontinclude evas-smart-object.c
+ * @skip create and setup
+ * @until }
+ *
+ * The #EVAS_SMART_DATA_ALLOC macro will take care of allocating our
+ * smart object data, which will be available on other contexts for us
+ * (mainly in our interface functions):
+ * @dontinclude evas-smart-object.c
+ * @skip typedef struct _Evas_Smart_Example_Data
+ * @until };
+ *
+ * See that, as we're inheriting from the clipped smart object's
+ * class, we @b must have their data struct as our first member. Other
+ * data of interest for us is a child members array and the border
+ * object's handle. The latter is what is created in the last
+ * mentioned function. Note how to tell Evas the border will be
+ * managed by our smart object from that time on:
+ * <code>evas_object_smart_member_add(priv->border, o);</code>.
+ * The counterpart of this function is exemplified on the smart
+ * object's interface function to remove children:
+ * @skip remove a child element
+ * @until set to
+ *
+ * At the end of that function we make use of an constant defined by
+ * the #EVAS_SMART_SUBCLASS_NEW: @c _evas_smart_example_parent_sc. It
+ * has the same prefix we passed to the macro, as you can see, and it
+ * holds a pointer to our @b parent smart class. Then, we can call the
+ * specialized method, itself, after our code. The @c del, @c hide, @c
+ * show and @c resize specializations are straightforward, we let the
+ * reader take a look at them below to check their behavior. What's
+ * interesting is the @c calculate one:
+ * @dontinclude evas-smart-object.c
+ * @skip act on child objects' properties
+ * @until setting
+ *
+ * This code will take place whenever the smart object itself is
+ * flagged "dirty", i.e., must be recalculated for rendering (that
+ * could come from changes on its clipper, resizing, moving,
+ * etc). There, we make sure the decorative border lies on the edges of
+ * the smart object and the children, if any, lie on their respective
+ * quadrants.
+ *
+ * After instantiating our smart object, we do some checks to exemplify
+ * some of the API on smart objects:
+ * @dontinclude evas-smart-object.c
+ * @skip ret = evas_object_smart_type_check
+ * @until "no"
+ * The evas_object_smart_type_check() one will assure we have the
+ * string naming our smart class really set to the live object. The
+ * evas_object_smart_clipped_clipper_get() exemplifies usage of
+ * "static clippers" -- clipped smart objects have their global
+ * clippers flagged static.
+ *
+ * Other important things we also exemplify here are <b>smart
+ * callbacks</b> and smart callback @b introspection:
+ * @dontinclude evas-smart-object.c
+ * @skip EVT_CHILDREN_NUMBER_CHANGED
+ * @until ;
+ *
+ * Here we declare our array of smart callback descriptions, which has
+ * one element only, in this case. That callback will take place, as
+ * the name indicates, whenever the number of member objects in our
+ * smart object example instance changes. That global array variable
+ * must be the last argument to #EVAS_SMART_SUBCLASS_NEW, so that it's
+ * registered as the <b>smart class</b>'s callbacks description.
+ *
+ * After we instantiate the smart object, we take a look on those
+ * descriptions and register a callback on that unique smart event:
+ * @dontinclude evas-smart-object.c
+ * @skip for (;
+ * @until focus_set
+ *
+ * The code of the callback will just print how many member objects we
+ * have, which is an integer argument of the callback itself, as
+ * flagged by its description:
+ * @dontinclude evas-smart-object.c
+ * @skip callback on number of member objects changed
+ * @until }
+ *
+ * One of the points at which we issue that callback is inside the @c
+ * evas_smart_example_remove(), code that was already shown.
+ *
+ * As in other examples, to interact with this one there's a command
+ * line interface. A help string can be asked for with the 'h' key:
+ * @dontinclude evas-smart-object.c
+ * @skip static const char *commands =
+ * @until ;
+ * Use 'l' and 'r' keys, to create new rectangles and place them on
+ * the left (@c evas_smart_example_set_left()) or right (@c
+ * evas_smart_example_set_right()) spots of our smart object,
+ * respectively. The 'w' command will remove all member objects from
+ * the smart object and delete them. The keyboard arrows will move the
+ * smart object along the canvas. See how it takes any child objects
+ * with it during its movement. The 'd' and 'i' keys will increase or
+ * decrease the smart object's size -- see how it affects the
+ * children's sizes, too. Finally, 'c' will change the color of the
+ * smart object's clipper (which is the exact internal clipper coming
+ * from a clipped smart object):
+ * @dontinclude evas-smart-object.c
+ * @skip d.clipper =
+ * @until .a);
+ *
+ * "Real life" examples of smart objects are Edje and Emotion objects:
+ * they both have independent libraries implementing their
+ * behavior. The full example follows.
+ *
+ * @include evas-smart-object.c
+ * @example evas-smart-object.c
+ */
+
+/**
+ * @page Example_Evas_Smart_Interfaces Evas object smart interfaces
+ * @dontinclude evas-smart-interface.c
+ *
+ * In this example, we illustrate how to create and handle Evas smart
+ * @b interfaces. Note that we use the same code base of the @ref
+ * Example_Evas_Smart_Objects example, here. We just augment it with
+ * an interfaces demonstration.
+ *
+ * A smart interface is just a functions interface a given smart
+ * objcet is declaring to support and or use. In Evas, interfaces are
+ * very simple: no interface inheritance, no interface
+ * overriding. Their purpose is to extend an object's capabilities and
+ * behaviour beyound the sub-classing schema.
+ *
+ * Here, together with a custom smart object, we create and declare
+ * the object as using an Evas interface. It'll have a custom
+ * function, too, besides the @c add() and del() obligatory ones. To
+ * demonstrate interface data, which is bound to object @b instances,
+ * we'll have a string as this data.
+ *
+ * Here is where we declare our interface:
+ * @skip static const char iface1_data[]
+ * @until (Evas_Smart_Interface *)&iface1, NULL
+ * @until };
+ *
+ * Note that there's error checking for interfaces creation, by means of
+ * the @c add() method's return value (@c _iface1_add(), here).
+ *
+ * Now note that here we are filling in the interface's fields dinamically.
+ * Let's move on to that code region:
+ *
+ * @dontinclude evas-smart-interface.c
+ * @skip iface = (Evas_Smart_Example_Interface *)&iface1;
+ * @until d.smt = evas_smart_example_add(d.evas);
+ *
+ * As important as setting the function pointers, is declaring the @c
+ * private_size as to match exactly the size of the data blob we want
+ * to have allocated for us by Evas. This will happen automatically
+ * inside @c evas_smart_example_add().  Later, on this code, we deal
+ * exactly with that data blob, more specifically writing on it (as
+ * it's not done inside @c _iface1_add(), here:
+ *
+ * @dontinclude evas-smart-interface.c
+ * @skip iface = (Evas_Smart_Example_Interface *)evas_object_smart_interface_get
+ * @until }
+ *
+ * Before accessing the interface data, we exercise the interface
+ * fetching call evas_object_smart_interface_get(), with the name
+ * string we used to be interface's name. With that handle in hands,
+ * we issue evas_object_smart_interface_data_get() and write the
+ * string we want as data on that memory region. That will make up for
+ * the string you get on @c _iface1_del().
+ *
+ * The full example follows.
+ *
+ * @include evas-smart-interface.c
+ * @example evas-smart-interface.c
+ */
+
+/**
+ * @page Example_Evas_Text Evas text object example
+ *
+ * In this example, we illustrate how to use text objects in various
+ * manners.
+ *
+ * We place, in the canvas, a text object along with a border image to
+ * delimit its geometry.  After we instantiate the text object, we set
+ * lots of properties on it to the initial ones from a preset list,
+ * which has the following declaration:
+ * @dontinclude evas-text.c
+ * @skip init values
+ * @until };
+ *
+ * Then, we set the text string itself, on it, with
+ * evas_object_text_text_set(). We set an explicit size of 30 points
+ * for our font, as you could see, what we check back with the
+ * getter evas_object_text_font_get().
+ *
+ * Look at how it translates to code:
+ * @dontinclude evas-text.c
+ * @skip evas_object_text_add
+ * @until fprintf
+ *
+ * Like in other Evas examples, one interacts with it by means of key
+ * commands:
+ * @dontinclude evas-text.c
+ * @skip static const char *commands
+ * @until ;
+ *
+ * Use the 't' key to exercise the evas_object_text_style_set()
+ * function on the text -- it will cycle through all styles on
+ * #Evas_Text_Style_Type (note we start on #EVAS_TEXT_STYLE_PLAIN,
+ * thus with no effects on it) and, with other keys, you'll be able to
+ * set properties applicable to individual styles on the text object.
+ *
+ * The 'z' key will change the text's @b size, keeping the font family
+ * for it. Use 'f' to change the font, keeping the last size
+ * set. There are three font families the example will cycle through:
+ *
+ * The 'b' command shows us that evas_object_color_set(), on a given
+ * text object, will change the text's @b base color. Experiment with
+ * it, which will cycle through the colors in the <c>.text</c> list in
+ * @c init_data.
+ *
+ * The 's', 'o', 'w' and 'g' keys will make the text object to cycle
+ * to the preset values on colors for shadow, outline, glow and 'glow
+ * 2' effects, respectively. Naturally, they will only take effect on
+ * the text styles which resemble them.
+ *
+ * The full example follows.
+ *
+ * @include evas-text.c
+ * @example evas-text.c
+ */
+
+/**
+ * @page tutorial_table Table Smart Object example
+ *
+ * This example will arrange  rectangles of different sizes(and colors) in a
+ * table. While it's possible to create the same layout we are doing here by
+ * positioning each rectangle independently, using a table makes it a lot
+ * easier, since the table will control layout of all the objects, allowing you
+ * to move, resize or hide the entire table.
+ *
+ * We'll start with creating the table, setting it to
+ * EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE to have maximum flexibility and setting
+ * its padding to 0:
+ * @dontinclude evas-table.c
+ * @skip object_table
+ * @until show
+ *
+ * We then create each rectangle and add it to the table:
+ * @until table_pack
+ * @until table_pack
+ * @until table_pack
+ * @until table_pack
+ * @note Each rectangle has a different minimum size based on how many rows and
+ * columns it will occupy.
+ *
+ * The full source for this example follow:
+ * @include evas-table.c
+ * @example evas-table.c
+ */
