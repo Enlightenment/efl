@@ -3113,6 +3113,8 @@ ecore_evas_extn_plug_object_data_lock(Evas_Object *obj)
    Ecore_Evas *ee;
 
    ee = ecore_evas_object_ecore_evas_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(ee);
+
    iface = (Ecore_Evas_Interface_Extn *)_ecore_evas_interface_get(ee, "extn");
    EINA_SAFETY_ON_NULL_RETURN(iface);
 
@@ -3126,6 +3128,8 @@ ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj)
    Ecore_Evas *ee;
 
    ee = ecore_evas_object_ecore_evas_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(ee);
+
    iface = (Ecore_Evas_Interface_Extn *)_ecore_evas_interface_get(ee, "extn");
    EINA_SAFETY_ON_NULL_RETURN(iface);
 
@@ -3152,6 +3156,8 @@ ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, 
    Ecore_Evas *ee;
 
    ee = ecore_evas_object_ecore_evas_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(ee);
+
    iface = (Ecore_Evas_Interface_Extn *)_ecore_evas_interface_get(ee, "extn");
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
 
