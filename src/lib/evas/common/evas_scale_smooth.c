@@ -168,7 +168,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_c(RGBA_Image *src, RGBA_Image *dst,
 
    mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
 
-   _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+   _evas_common_scale_rgba_in_to_out_clip_smooth_c
      (src, dst,
       clip_x, clip_y, clip_w, clip_h,
       mul_col, dc->render_op,
