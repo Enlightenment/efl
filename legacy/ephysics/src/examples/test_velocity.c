@@ -128,6 +128,9 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 {
    Velocity_Data *velocity_data = data;
 
+   elm_object_event_callback_del(velocity_data->base.win, _on_keydown,
+                                 velocity_data->body);
+
    DBG("Restart pressed");
    test_clean((Test_Data *)velocity_data);
    _world_populate(velocity_data);
@@ -135,6 +138,9 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
    velocity_data->old_vy = 0;
    velocity_data->old_vaz = 0;
    velocity_data->last_time = 0;
+
+   elm_object_event_callback_add(velocity_data->base.win, _on_keydown,
+                                 velocity_data->body);
 }
 
 static void
