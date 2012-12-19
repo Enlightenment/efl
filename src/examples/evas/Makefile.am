@@ -41,6 +41,10 @@ evas_init_shutdown_LDADD = $(top_builddir)/src/lib/evas/libevas.la
 #evas_object_manipulation_SOURCES = evas-object-manipulation.c
 #evas_object_manipulation_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
 
+#EXTRA_PROGRAMS += evas_object_manipulation-eo
+#evas_object_manipulation_SOURCES = evas-object-manipulation-eo.c
+#evas_object_manipulation_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+
 #EXTRA_PROGRAMS += evas_hints
 #evas_hints_SOURCES = evas-hints.c
 #evas_hints_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
@@ -110,6 +114,7 @@ evas-images.c \
 evas-images2.c \
 evas-images3.c \
 evas-object-manipulation.c \
+evas-object-manipulation-eo.c \
 evas-events.c \
 evas-aspect-hints.c \
 evas-hints.c \
