@@ -1469,13 +1469,7 @@ EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fontconfig}],
 
 # fribidi support
 EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fribidi}],
-   [FRIBIDI], [fribidi >= 0.19.2],
-   [
-      CPPFLAGS_SAVE="$CPPFLAGS"
-      CPPFLAGS="$CPPFLAGS $FRIBIDI_CFLAGS"
-      AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
-      CPPFLAGS="$CPPFLAGS_SAVE"
-   ])
+   [FRIBIDI], [fribidi >= 0.19.2])
 
 # harfbuzz support
 have_harfbuzz_ft="no"
@@ -1738,6 +1732,14 @@ CPPFLAGS_SAVE="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS -Isrc/lib/eina"
 AC_CHECK_SIZEOF([Eina_Unicode], [], [#include <Eina.h>])
 CPPFLAGS="$CPPFLAGS_SAVE"
+
+
+if test "x$have_fribidi" = "xyes" ; then
+   CPPFLAGS_SAVE="$CPPFLAGS"
+   CPPFLAGS="$CPPFLAGS $EVAS_CFLAGS"
+   AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
+   CPPFLAGS="$CPPFLAGS_SAVE"
+fi
 
 ### Checks for structures
 
