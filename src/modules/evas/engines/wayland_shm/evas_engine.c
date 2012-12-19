@@ -41,8 +41,8 @@ static void eng_output_redraws_rect_add(void *data, int x, int y, int w, int h);
 static void eng_output_redraws_rect_del(void *data, int x, int y, int w, int h);
 static void eng_output_redraws_clear(void *data);
 static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
-static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
-static void eng_output_flush(void *data);
+static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
+static void eng_output_flush(void *data, Evas_Render_Mode render_mode);
 static void eng_output_idle_flush(void *data);
 static Eina_Bool eng_canvas_alpha_get(void *data, void *context EINA_UNUSED);
 
@@ -274,9 +274,11 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 }
 
 static void 
-eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h) 
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
 {
    Render_Engine *re = NULL;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if (!(re = (Render_Engine *)data)) return;
 #ifdef BUILD_PIPE_RENDER
@@ -291,10 +293,11 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 }
 
 static void 
-eng_output_flush(void *data) 
+eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re = NULL;
 
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
    if (!(re = (Render_Engine *)data)) return;
 }
 

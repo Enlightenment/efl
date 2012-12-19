@@ -282,9 +282,11 @@ eng_output_redraws_next_update_get(void *data,
 }
 
 static void
-eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine *)data;
 #ifdef BUILD_PIPE_RENDER
@@ -296,9 +298,11 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 }
 
 static void
-eng_output_flush(void *data)
+eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine *)data;
    evas_software_ddraw_outbuf_flush(re->ob);

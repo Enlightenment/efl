@@ -769,8 +769,8 @@ struct _Evas_Func
    void (*output_redraws_rect_del)         (void *data, int x, int y, int w, int h);
    void (*output_redraws_clear)            (void *data);
    void *(*output_redraws_next_update_get) (void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
-   void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h);
-   void (*output_flush)                    (void *data);
+   void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
+   void (*output_flush)                    (void *data, Evas_Render_Mode render_mode);
    void (*output_idle_flush)               (void *data);
    void (*output_dump)                     (void *data);
 

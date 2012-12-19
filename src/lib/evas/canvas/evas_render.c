@@ -1328,6 +1328,7 @@ evas_render_updates_internal(Evas *eo_e,
    unsigned int i, j;
    int redraw_all = 0;
    Eina_Bool haveup = 0;
+   Evas_Render_Mode render_mode = EVAS_RENDER_MODE_UNDEF;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -1692,10 +1693,13 @@ evas_render_updates_internal(Evas *eo_e,
                     }
                }
 
-             if (!do_async)
-                e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                                surface,
-                                                                ux, uy, uw, uh);
+             if (!do_async) render_mode = EVAS_RENDER_MODE_SYNC;
+             else render_mode = EVAS_RENDER_MODE_ASYNC_INIT;
+
+             e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+                                                             surface,
+                                                             ux, uy, uw, uh,
+                                                             render_mode);
 
              /* free obscuring objects list */
              eina_array_clean(&e->temporary_objects);
@@ -1709,7 +1713,8 @@ evas_render_updates_internal(Evas *eo_e,
         else if (haveup)
           {
              evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-             e->engine.func->output_flush(e->engine.data.output);
+             e->engine.func->output_flush(e->engine.data.output,
+                                          EVAS_RENDER_MODE_SYNC);
              evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
           }
      }
@@ -1831,12 +1836,11 @@ evas_render_wakeup(Evas *eo_e)
    EINA_LIST_FREE(e->render.updates, ru)
      {
         /* punch rect out */
-        e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                        ru->surface,
-                                                        ru->area->x,
-                                                        ru->area->y,
-                                                        ru->area->w,
-                                                        ru->area->h);
+        e->engine.func->output_redraws_next_update_push
+          (e->engine.data.output, ru->surface,
+           ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+           EVAS_RENDER_MODE_ASYNC_END);
+
         if (e->render.updates_cb)
            ret_updates = eina_list_append(ret_updates, ru->area);
         else
@@ -1850,7 +1854,8 @@ evas_render_wakeup(Evas *eo_e)
    if (haveup)
      {
         evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-        e->engine.func->output_flush(e->engine.data.output);
+        e->engine.func->output_flush(e->engine.data.output,
+                                     EVAS_RENDER_MODE_ASYNC_END);
         evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
      }
 

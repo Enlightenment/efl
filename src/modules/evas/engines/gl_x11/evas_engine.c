@@ -1124,9 +1124,11 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 static int safe_native = -1;
 
 static void
-eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine *)data;
    /* put back update surface.. in this case just unflag redraw */
@@ -1165,9 +1167,11 @@ eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x
 }
 
 static void
-eng_output_flush(void *data)
+eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    re = (Render_Engine *)data;
    if (!_re_wincheck(re)) return;

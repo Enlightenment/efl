@@ -59,9 +59,9 @@ static void
              eng_output_redraws_clear(void *data);
 static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
 static void
-             eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h);
+             eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
 static void
-             eng_output_flush(void *data);
+             eng_output_flush(void *data, Evas_Render_Mode render_mode);
 static void
              eng_output_idle_flush(void *data);
 
@@ -346,18 +346,20 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 }
 
 static void
-eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
+eng_output_redraws_next_update_push(void *data EINA_UNUSED, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    /* Don't do anything, we'll just coy the whole buffer when it's time to flush */
 }
 
 static void
-eng_output_flush(void *data)
+eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
    rsxBuffer *buffer;
    int width;
    int height;
+
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    //printf ("eng_output_flush called\n");
    re = (Render_Engine *)data;

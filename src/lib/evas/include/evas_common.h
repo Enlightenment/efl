@@ -1274,6 +1274,15 @@ void              evas_thread_init(void);
 void              evas_thread_shutdown(void);
 EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data, size_t size);
 EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data, size_t size);
+
+typedef enum _Evas_Render_Mode
+{
+   EVAS_RENDER_MODE_UNDEF,
+   EVAS_RENDER_MODE_SYNC,
+   EVAS_RENDER_MODE_ASYNC_INIT,
+   EVAS_RENDER_MODE_ASYNC_END,
+} Evas_Render_Mode;
+
 /****/
 
 /*****************************************************************************/
