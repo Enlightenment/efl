@@ -29,15 +29,11 @@ endif
 
 lib_ecore_file_libecore_file_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_file \
--I$(top_builddir)/src/lib/eina \
--I$(top_builddir)/src/lib/eo \
--I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_con \
--I$(top_builddir)/src/lib/ecore_file \
 -DEFL_ECORE_FILE_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@

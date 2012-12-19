@@ -216,8 +216,7 @@ lib_eina_libeina_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_eina_libeina_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil
 endif
 
 lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@

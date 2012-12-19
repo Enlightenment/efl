@@ -97,14 +97,11 @@ endif
 
 lib_ecore_x_libecore_x_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_x \
--I$(top_builddir)/src/lib/eina \
--I$(top_builddir)/src/lib/eo \
--I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_x \
 -DEFL_ECORE_X_BUILD \
 @EFL_CFLAGS@ \

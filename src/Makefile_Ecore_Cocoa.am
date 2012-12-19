@@ -15,15 +15,11 @@ lib/ecore_cocoa/ecore_cocoa_private.h
 
 lib_ecore_cocoa_libecore_cocoa_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_cocoa \
--I$(top_builddir)/src/lib/eina \
--I$(top_builddir)/src/lib/eo \
--I$(top_builddir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore_input \
--I$(top_builddir)/src/lib/ecore_cocoa \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@
 

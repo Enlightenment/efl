@@ -96,7 +96,6 @@ endif
 
 lib_evil_libevil_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil \
 @EVIL_CPPFLAGS@
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
@@ -113,7 +112,6 @@ lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
 
 lib_evil_libdl_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil \
 @EVIL_DLFCN_CPPFLAGS@
 
 lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@
@@ -160,14 +158,12 @@ endif
 
 bin_evil_evil_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil \
 @EFL_CFLAGS@ \
 @EVIL_CPPFLAGS@
 
 if HAVE_WINDOWS
 bin_evil_evil_suite_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil
 endif
 
 bin_evil_evil_suite_LDADD = \

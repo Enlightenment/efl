@@ -27,8 +27,7 @@ lib_embryo_libembryo_la_CPPFLAGS = \
 
 if HAVE_WINDOWS
 lib_embryo_libembryo_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil
 endif
 
 lib_embryo_libembryo_la_LIBADD = lib/eina/libeina.la
@@ -63,9 +62,8 @@ bin/embryo/embryo_cc_prefix.h
 
 bin_embryo_embryo_cc_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
--I$(top_srcdir)/src/lib/embryo \
 -I$(top_builddir)/src/lib/eina \
--I$(top_builddir)/src/lib/embryo \
+-I$(top_srcdir)/src/lib/embryo \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \
@@ -73,8 +71,7 @@ bin_embryo_embryo_cc_CPPFLAGS = \
 
 if HAVE_WINDOWS
 bin_embryo_embryo_cc_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_builddir)/src/lib/evil
+-I$(top_srcdir)/src/lib/evil
 endif
 
 bin_embryo_embryo_cc_LDADD = \
