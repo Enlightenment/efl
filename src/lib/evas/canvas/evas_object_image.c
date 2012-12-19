@@ -3998,143 +3998,401 @@ evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    return obj->prev.opaque;
 }
 
+static inline Eina_Bool
+_pixel_alpha_get(RGBA_Image *im, int x, int y, DATA8 *alpha,
+                 int src_region_x, int src_region_y, int src_region_w, int src_region_h,
+                 int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   int px, py, dx, dy, sx, sy, src_w, src_h;
+   double scale_w, scale_h;
+
+   if ((dst_region_x > x) || (x >= (dst_region_x + dst_region_w)) ||
+       (dst_region_y > y) || (y >= (dst_region_y + dst_region_h)))
+     {
+        *alpha = 0;
+        return EINA_FALSE;
+     }
+
+   src_w = im->cache_entry.w;
+   src_h = im->cache_entry.h;
+   if ((src_w == 0) || (src_h == 0))
+     {
+        *alpha = 0;
+        return EINA_TRUE;
+     }
+
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_x < 0, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_y < 0, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_x + src_region_w > src_w, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_y + src_region_h > src_h, error_oob);
+
+   scale_w = (double)dst_region_w / (double)src_region_w;
+   scale_h = (double)dst_region_h / (double)src_region_h;
+
+   /* point at destination */
+   dx = x - dst_region_x;
+   dy = y - dst_region_y;
+
+   /* point at source */
+   sx = dx / scale_w;
+   sy = dy / scale_h;
+
+   /* pixel point (translated) */
+   px = src_region_x + sx;
+   py = src_region_y + sy;
+   EINA_SAFETY_ON_TRUE_GOTO(px >= src_w, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(py >= src_h, error_oob);
+
+   switch (im->cache_entry.space)
+     {
+     case EVAS_COLORSPACE_ARGB8888:
+       {
+          DATA32 *pixel = im->image.data;
+          pixel += ((py * src_w) + px);
+          *alpha = ((*pixel) >> 24) & 0xff;
+       }
+       break;
+
+     default:
+        ERR("Colorspace %d not supported.", im->cache_entry.space);
+        *alpha = 0;
+     }
+
+   return EINA_TRUE;
+
+ error_oob:
+   ERR("Invalid region src=(%d, %d, %d, %d), dst=(%d, %d, %d, %d), image=%dx%d",
+       src_region_x, src_region_y, src_region_w, src_region_h,
+       dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+       src_w, src_h);
+   *alpha = 0;
+   return EINA_TRUE;
+}
+
 static int
-evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
+evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord px, Evas_Coord py)
 {
    Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
-   DATA32 *data;
-   int w, h, stride, iw, ih;
-   int a;
-   int return_value;
+   int imagew, imageh, uvw, uvh;
+   void *pixels;
+   int is_inside = 0;
 
-   x -= obj->cur.cache.clip.x;
-   y -= obj->cur.cache.clip.y;
-   w = obj->cur.cache.clip.w;
-   h = obj->cur.cache.clip.h;
-   iw = o->cur.image.w;
-   ih = o->cur.image.h;
-
-   if ((x < 0) || (y < 0) || (x >= w) || (y >= h)) return 0;
-   if (!o->cur.has_alpha) return 1;
-
-   // FIXME: proxy needs to be honored
-   if (obj->cur.map)
+   /* the following code is similar to evas_object_image_render(), but doesn't
+    * draw, just get the pixels so we can check the transparency.
+    */
+   Evas_Object_Protected_Data *source =
+      (o->cur.source ?
+       eo_data_get(o->cur.source, EVAS_OBJ_CLASS):
+       NULL);
+   if (!o->cur.source)
      {
-        x = obj->cur.map->mx;
-        y = obj->cur.map->my;
+        pixels = o->engine_data;
+        imagew = o->cur.image.w;
+        imageh = o->cur.image.h;
+        uvw = imagew;
+        uvh = imageh;
+     }
+   else if (source->proxy.surface && !source->proxy.redraw)
+     {
+        pixels = source->proxy.surface;
+        imagew = source->proxy.w;
+        imageh = source->proxy.h;
+        uvw = imagew;
+        uvh = imageh;
+     }
+   else if (source->type == o_type &&
+            ((Evas_Object_Image *)eo_data_get(o->cur.source, MY_CLASS))->engine_data)
+     {
+        Evas_Object_Image *oi;
+        oi = eo_data_get(o->cur.source, MY_CLASS);
+        pixels = oi->engine_data;
+        imagew = oi->cur.image.w;
+        imageh = oi->cur.image.h;
+        uvw = source->cur.geometry.w;
+        uvh = source->cur.geometry.h;
      }
    else
      {
-        int bl, br, bt, bb, bsl, bsr, bst, bsb;
+        o->proxyrendering = EINA_TRUE;
+        _proxy_subrender(obj->layer->evas->evas, o->cur.source, EINA_FALSE);
+        pixels = source->proxy.surface;
+        imagew = source->proxy.w;
+        imageh = source->proxy.h;
+        uvw = imagew;
+        uvh = imageh;
+        o->proxyrendering = EINA_FALSE;
+     }
 
-        bl = o->cur.border.l;
-        br = o->cur.border.r;
-        bt = o->cur.border.t;
-        bb = o->cur.border.b;
-        if ((bl + br) > iw)
-          {
-             bl = iw / 2;
-             br = iw - bl;
-          }
-        if ((bl + br) > iw)
-          {
-             bl = iw / 2;
-             br = iw - bl;
-          }
-        if ((bt + bb) > ih)
-          {
-             bt = ih / 2;
-             bb = ih - bt;
-          }
-        if ((bt + bb) > ih)
-          {
-             bt = ih / 2;
-             bb = ih - bt;
-          }
-        if (o->cur.border.scale != 1.0)
-          {
-             bsl = ((double)bl * o->cur.border.scale);
-             bsr = ((double)br * o->cur.border.scale);
-             bst = ((double)bt * o->cur.border.scale);
-             bsb = ((double)bb * o->cur.border.scale);
-          }
-        else
-          {
-             bsl = bl; bsr = br; bst = bt; bsb = bb;
-          }
+   if (pixels)
+     {
+        Evas_Coord idw, idh, idx, idy;
+        int ix, iy, iw, ih;
 
-        w = o->cur.fill.w;
-        h = o->cur.fill.h;
-        x -= o->cur.fill.x;
-        y -= o->cur.fill.y;
-        x %= w;
-        y %= h;
-
-        if (x < 0) x += w;
-        if (y < 0) y += h;
-
-        if (o->cur.border.fill != EVAS_BORDER_FILL_DEFAULT)
+        /* TODO: not handling o->dirty_pixels && o->func.get_pixels,
+         * should we handle it now or believe they were done in the last render?
+         */
+        if (o->dirty_pixels)
           {
-             if ((x > bsl) && (x < (w - bsr)) &&
-                 (y > bst) && (y < (h - bsb)))
+             if (o->func.get_pixels)
                {
-                  if (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) return 1;
-                  return 0;
+                  ERR("dirty_pixels && get_pixels not supported");
                }
           }
 
-        if (x < bsl) x = (x * bl) / bsl;
-        else if (x > (w - bsr)) x = iw - (((w - x) * br) / bsr);
-        else if ((bsl + bsr) < w) x = bl + (((x - bsl) * (iw - bl - br)) / (w - bsl - bsr));
-        else return 1;
+        /* TODO: not handling map, need to apply map to point */
+        if ((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap))
+          {
+             evas_object_map_update(eo_obj, 0, 0, imagew, imageh, uvw, uvh);
 
-        if (y < bst) y = (y * bt) / bst;
-        else if (y > (h - bsb)) y = ih - (((h - y) * bb) / bsb);
-        else if ((bst + bsb) < h) y = bt + (((y - bst) * (ih - bt - bb)) / (h - bst - bsb));
-        else return 1;
+             ERR("map not supported");
+          }
+        else
+          {
+             RGBA_Image *im;
+             DATA32 *data = NULL;
+             int err = 0;
+
+             im = obj->layer->evas->engine.func->image_data_get
+               (obj->layer->evas->engine.data.output, pixels, 0, &data, &err);
+             if ((!im) || (!data) || (err))
+               {
+                  ERR("Couldn't get image pixels RGBA_Image %p: im=%p, data=%p, err=%d", pixels, im, data, err);
+                  goto end;
+               }
+
+             idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur.fill.x, o->cur.fill.w, &idw);
+             idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur.fill.y, o->cur.fill.h, &idh);
+             if (idw < 1) idw = 1;
+             if (idh < 1) idh = 1;
+             if (idx > 0) idx -= idw;
+             if (idy > 0) idy -= idh;
+             while ((int)idx < obj->cur.geometry.w)
+               {
+                  Evas_Coord ydy;
+                  int dobreak_w = 0;
+                  ydy = idy;
+                  ix = idx;
+                  if ((o->cur.fill.w == obj->cur.geometry.w) &&
+                      (o->cur.fill.x == 0))
+                    {
+                       dobreak_w = 1;
+                       iw = obj->cur.geometry.w;
+                    }
+                  else
+                    iw = ((int)(idx + idw)) - ix;
+                  while ((int)idy < obj->cur.geometry.h)
+                    {
+                       int dobreak_h = 0;
+
+                       iy = idy;
+                       if ((o->cur.fill.h == obj->cur.geometry.h) &&
+                           (o->cur.fill.y == 0))
+                         {
+                            ih = obj->cur.geometry.h;
+                            dobreak_h = 1;
+                         }
+                       else
+                         ih = ((int)(idy + idh)) - iy;
+                       if ((o->cur.border.l == 0) &&
+                           (o->cur.border.r == 0) &&
+                           (o->cur.border.t == 0) &&
+                           (o->cur.border.b == 0) &&
+                           (o->cur.border.fill != 0))
+                         {
+                            /* NOTE: render handles cserve2 here,
+                             * we don't need to
+                             */
+                              {
+                                 DATA8 alpha = 0;
+                                 if (_pixel_alpha_get(pixels, px, py, &alpha, 0, 0, imagew, imageh, obj->cur.geometry.x + ix, obj->cur.geometry.y + iy, iw, ih))
+                                   {
+                                      is_inside = alpha > 0;
+                                      dobreak_h = 1;
+                                      dobreak_w = 1;
+                                      break;
+                                   }
+                              }
+                         }
+                       else
+                         {
+                            int inx, iny, inw, inh, outx, outy, outw, outh;
+                            int bl, br, bt, bb, bsl, bsr, bst, bsb;
+                            int imw, imh, ox, oy;
+                            DATA8 alpha = 0;
+
+                            ox = obj->cur.geometry.x + ix;
+                            oy = obj->cur.geometry.y + iy;
+                            imw = imagew;
+                            imh = imageh;
+                            bl = o->cur.border.l;
+                            br = o->cur.border.r;
+                            bt = o->cur.border.t;
+                            bb = o->cur.border.b;
+                            if ((bl + br) > iw)
+                              {
+                                 bl = iw / 2;
+                                 br = iw - bl;
+                              }
+                            if ((bl + br) > imw)
+                              {
+                                 bl = imw / 2;
+                                 br = imw - bl;
+                              }
+                            if ((bt + bb) > ih)
+                              {
+                                 bt = ih / 2;
+                                 bb = ih - bt;
+                              }
+                            if ((bt + bb) > imh)
+                              {
+                                 bt = imh / 2;
+                                 bb = imh - bt;
+                              }
+                            if (o->cur.border.scale != 1.0)
+                              {
+                                 bsl = ((double)bl * o->cur.border.scale);
+                                 bsr = ((double)br * o->cur.border.scale);
+                                 bst = ((double)bt * o->cur.border.scale);
+                                 bsb = ((double)bb * o->cur.border.scale);
+                              }
+                            else
+                              {
+                                  bsl = bl; bsr = br; bst = bt; bsb = bb;
+                              }
+                            // #--
+                            // |
+                            inx = 0; iny = 0;
+                            inw = bl; inh = bt;
+                            outx = ox; outy = oy;
+                            outw = bsl; outh = bst;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+
+                            // .##
+                            // |
+                            inx = bl; iny = 0;
+                            inw = imw - bl - br; inh = bt;
+                            outx = ox + bsl; outy = oy;
+                            outw = iw - bsl - bsr; outh = bst;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            // --#
+                            //   |
+                            inx = imw - br; iny = 0;
+                            inw = br; inh = bt;
+                            outx = ox + iw - bsr; outy = oy;
+                            outw = bsr; outh = bst;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            // .--
+                            // #  
+                            inx = 0; iny = bt;
+                            inw = bl; inh = imh - bt - bb;
+                            outx = ox; outy = oy + bst;
+                            outw = bsl; outh = ih - bst - bsb;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            // .--.
+                            // |##|
+                            if (o->cur.border.fill > EVAS_BORDER_FILL_NONE)
+                              {
+                                 inx = bl; iny = bt;
+                                 inw = imw - bl - br; inh = imh - bt - bb;
+                                 outx = ox + bsl; outy = oy + bst;
+                                 outw = iw - bsl - bsr; outh = ih - bst - bsb;
+                                 if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                                   {
+                                      is_inside = alpha > 0;
+                                      dobreak_h = 1;
+                                      dobreak_w = 1;
+                                      break;
+                                   }
+                              }
+                            // --.
+                            //   #
+                            inx = imw - br; iny = bt;
+                            inw = br; inh = imh - bt - bb;
+                            outx = ox + iw - bsr; outy = oy + bst;
+                            outw = bsr; outh = ih - bst - bsb;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            // |
+                            // #--
+                            inx = 0; iny = imh - bb;
+                            inw = bl; inh = bb;
+                            outx = ox; outy = oy + ih - bsb;
+                            outw = bsl; outh = bsb;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            // |
+                            // .## 
+                            inx = bl; iny = imh - bb;
+                            inw = imw - bl - br; inh = bb;
+                            outx = ox + bsl; outy = oy + ih - bsb;
+                            outw = iw - bsl - bsr; outh = bsb;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                            //   |
+                            // --#
+                            inx = imw - br; iny = imh - bb;
+                            inw = br; inh = bb;
+                            outx = ox + iw - bsr; outy = oy + ih - bsb;
+                            outw = bsr; outh = bsb;
+                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                              {
+                                 is_inside = alpha > 0;
+                                 dobreak_h = 1;
+                                 dobreak_w = 1;
+                                 break;
+                              }
+                         }
+                       idy += idh;
+                       if (dobreak_h) break;
+                    }
+                  idx += idw;
+                  idy = ydy;
+                  if (dobreak_w) break;
+               }
+          }
      }
 
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
-   if (x >= iw) x = iw - 1;
-   if (y >= ih) y = ih - 1;
-
-   stride = o->cur.image.stride;
-
-   o->engine_data = obj->layer->evas->engine.func->image_data_get
-      (obj->layer->evas->engine.data.output,
-       o->engine_data,
-          0,
-          &data,
-          &o->load_error);
-
-   if (!data)
-     {
-        return_value = 0;
-        goto finish;
-     }
-
-   switch (o->cur.cspace)
-     {
-     case EVAS_COLORSPACE_ARGB8888:
-        data = ((DATA32*)(data) + ((y * (stride >> 2)) + x));
-        a = (*((DATA32*)(data)) >> 24) & 0xff;
-        break;
-     case EVAS_COLORSPACE_RGB565_A5P:
-        data = (void*) ((DATA16*)(data) + (h * (stride >> 1)));
-        data = (void*) ((DATA8*)(data) + ((y * (stride >> 1)) + x));
-        a = (*((DATA8*)(data))) & 0x1f;
-        break;
-     default:
-        return_value = 1;
-        goto finish;
-        break;
-     }
-
-   return_value = (a != 0);
-
-finish:
-   return return_value;
+ end:
+   return is_inside;
 }
 
 static int

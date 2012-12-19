@@ -85,3 +85,4 @@ Fixes:
     * Fix the line drawing clipping problem on arm gl driver.
     * Fix many memory problems with ecore_evas_extn.
     * Fix Evas RGBA_Image->flags.loaded for copied images.
+    * Fix evas_object_image_is_inside()
