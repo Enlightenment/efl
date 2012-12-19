@@ -182,6 +182,7 @@ evas_bidi_segment_idxs_get(const Eina_Unicode *str, const char *delim)
                        if (!tmp_ret)
                          {
                             free(ret);
+                            free(udelim);
                             return NULL;
                          }
                        ret = tmp_ret;
