@@ -1,4 +1,8 @@
-2012-12-20  Carsten Haitzler (The Rasterman)
+2012-12-19  Gustavo Sverzut Barbieri (k-s)
+
+	* Fixed RGBA_Image->flags.loaded for copied images.
+
+2012-12-19  Carsten Haitzler (The Rasterman)
 
         * Fixed 24bpp issue with rendering in evas. It shows itself
         only under qemu/kvm with the cirruse driver that I have found.
@@ -6,7 +10,7 @@
         just never comes up on any vaguely modern gfx system.
         * Fixed 24bpp ximage convert back from 24bpp to 32bpp in
         ecore-x. Only shows itself in qemu/kvm.
-                
+
 2012-12-18  Gustavo Sverzut Barbieri (k-s)
 
 	* Fixed many memory problems with ecore_evas_extn

@@ -84,3 +84,4 @@ Fixes:
     * Fix uninitialized data in Evas OpenGL engine.
     * Fix the line drawing clipping problem on arm gl driver.
     * Fix many memory problems with ecore_evas_extn.
+    * Fix Evas RGBA_Image->flags.loaded for copied images.

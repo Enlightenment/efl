@@ -877,6 +877,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache,
         return NULL;
      }
    im->references = 1;
+   im->flags.loaded = EINA_TRUE;
    if (cache->func.debug) cache->func.debug("copied-data", im);
    return im;
 }
