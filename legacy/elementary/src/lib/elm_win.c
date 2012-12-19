@@ -47,6 +47,7 @@ static const Elm_Win_Trap *trap = NULL;
 
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : (_elm_config->engine ? _elm_config->engine : ""))
 #define ENGINE_COMPARE(name) (!strcmp(ENGINE_GET(), name))
+#define EE_ENGINE_COMPARE(ee, name) (!strcmp(ecore_evas_engine_name_get(ee), name))
 
 typedef struct _Elm_Win_Smart_Data Elm_Win_Smart_Data;
 
@@ -1629,31 +1630,31 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
    Ecore_X_Window xwin = 0;
 
    if (!ee) return 0;
-   if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
+   if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_X11))
      {
         if (ee) xwin = ecore_evas_software_x11_window_get(ee);
      }
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_SDL) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_16_SDL) ||
-            ENGINE_COMPARE(ELM_OPENGL_SDL) ||
-            ENGINE_COMPARE(ELM_OPENGL_COCOA))
+   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_FB) ||
+            EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_16_WINCE) ||
+            EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_SDL) ||
+            EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_16_SDL) ||
+            EE_ENGINE_COMPARE(ee, ELM_OPENGL_SDL) ||
+            EE_ENGINE_COMPARE(ee, ELM_OPENGL_COCOA))
      {
      }
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
+   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_16_X11))
      {
         if (ee) xwin = ecore_evas_software_x11_16_window_get(ee);
      }
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
+   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_8_X11))
      {
         if (ee) xwin = ecore_evas_software_x11_8_window_get(ee);
      }
-   else if (ENGINE_COMPARE(ELM_OPENGL_X11))
+   else if (EE_ENGINE_COMPARE(ee, ELM_OPENGL_X11))
      {
         if (ee) xwin = ecore_evas_gl_x11_window_get(ee);
      }
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
+   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_WIN32))
      {
         if (ee) xwin = (long)ecore_evas_win32_window_get(ee);
      }
@@ -3485,14 +3486,14 @@ _fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
         if (fullscreen)
           {
-             if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
-                 ENGINE_COMPARE(ELM_WAYLAND_EGL))
+             if (EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_SHM) ||
+                 EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
                _elm_win_frame_del(sd);
           }
         else
           {
-             if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
-                 ENGINE_COMPARE(ELM_WAYLAND_EGL))
+             if (EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_SHM) ||
+                 EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
                _elm_win_frame_add(sd, "default");
 
              evas_object_show(sd->frame_obj);
@@ -3520,8 +3521,8 @@ _fullscreen_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Win_Smart_Data *sd = _pd;
 
-   if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
-       ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
+   if (EE_ENGINE_COMPARE(sd->ee, ELM_SOFTWARE_FB) ||
+       EE_ENGINE_COMPARE(sd->ee, ELM_SOFTWARE_16_WINCE))
      {
         // these engines... can ONLY be fullscreen
         *ret = EINA_TRUE;
