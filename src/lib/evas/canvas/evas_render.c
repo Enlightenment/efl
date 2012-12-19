@@ -1823,16 +1823,6 @@ evas_render_wakeup(Evas *eo_e)
    Eina_List *ret_updates = NULL;
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
-   if (e->requested_free)
-     {
-        EINA_LIST_FREE(e->render.updates, ru)
-          {
-             eina_rectangle_free(ru->area);
-             free(ru);
-          }
-        goto end;
-     }
-
    EINA_LIST_FREE(e->render.updates, ru)
      {
         /* punch rect out */
@@ -2038,8 +2028,10 @@ evas_sync(Evas *eo_e)
 }
 
 void
-_canvas_sync(Eo *eo_e EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+_canvas_sync(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   evas_render_rendering_wait(e);
 }
 
 void

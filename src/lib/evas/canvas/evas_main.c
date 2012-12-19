@@ -152,8 +152,7 @@ evas_free(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
-   e->requested_free = EINA_TRUE;
+   evas_sync(eo_e);
    eo_unref(eo_e);
 }
 
@@ -1146,7 +1145,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_RENDER, "Force renderization of the given canvas."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_NORENDER, "Update the canvas internal objects but not triggering immediate."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_RENDER_IDLE_FLUSH, "Make the canvas discard internally cached data used for rendering."),
-     EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_SYNC, "? evas_sync"),
+     EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_SYNC, "Force evas render to be synchronized (in case it is asynchronous)."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_RENDER_DUMP, "Make the canvas discard as much data as possible used by the engine at"),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_OBJECT_BOTTOM_GET, "Get the lowest (stacked) Evas object on the canvas e."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_OBJECT_TOP_GET, "Get the highest (stacked) Evas object on the canvas e."),

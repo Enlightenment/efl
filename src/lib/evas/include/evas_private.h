@@ -421,7 +421,6 @@ struct _Evas_Public_Data
    unsigned char  focus : 1;
    Eina_Bool      is_frozen : 1;
    Eina_Bool      rendering : 1;
-   Eina_Bool      requested_free : 1;
 
    Eina_List     *touch_points;
    Eina_List     *devices;
