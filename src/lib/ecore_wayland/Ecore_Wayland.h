@@ -87,6 +87,7 @@ struct _Ecore_Wl_Display
    unsigned int mask;
    unsigned int serial;
    Ecore_Fd_Handler *fd_hdl;
+   Ecore_Idle_Enterer *idle_enterer;
 
    struct wl_list inputs;
    struct wl_list outputs;
