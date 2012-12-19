@@ -30,7 +30,7 @@ _elm_sys_notify_marshal_dict_byte(EDBus_Message_Iter *array,
 {
    EDBus_Message_Iter *var, *entry;
 
-   edbus_message_iter_arguments_set(array, "{sv}", &entry);
+   edbus_message_iter_arguments_append(array, "{sv}", &entry);
    edbus_message_iter_basic_append(entry, 's', key);
 
    var = edbus_message_iter_container_new(entry, 'v', "y");
@@ -46,7 +46,7 @@ _elm_sys_notify_marshal_dict_string(EDBus_Message_Iter *array,
 {
    EDBus_Message_Iter *var, *entry;
 
-   edbus_message_iter_arguments_set(array, "{sv}", &entry);
+   edbus_message_iter_arguments_append(array, "{sv}", &entry);
    edbus_message_iter_basic_append(entry, 's', key);
 
    var = edbus_message_iter_container_new(entry, 'v', "s");
@@ -175,13 +175,13 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
    msg = edbus_proxy_method_call_new(_elm_sysnotif_proxy, "Notify");
 
    iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_set(iter, "susssas", appname, replaces_id, icon,
-                                    summary, body, &actions);
+   edbus_message_iter_arguments_append(iter, "susssas", appname, replaces_id,
+                                       icon, summary, body, &actions);
    /* actions */
    edbus_message_iter_container_close(iter, actions);
 
    /* hints */
-   edbus_message_iter_arguments_set(iter, "a{sv}", &hints);
+   edbus_message_iter_arguments_append(iter, "a{sv}", &hints);
    _elm_sys_notify_marshal_dict_byte(hints, "urgency", (char) urgency);
 
    if (strcmp(deskentry, ""))
@@ -193,7 +193,7 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
    edbus_message_iter_container_close(iter, hints);
 
    /* timeout */
-   edbus_message_iter_arguments_set(iter, "i", timeout);
+   edbus_message_iter_arguments_append(iter, "i", timeout);
 
    edbus_proxy_send(_elm_sysnotif_proxy, msg, _notify_cb, data, -1);
 
