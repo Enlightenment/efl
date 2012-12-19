@@ -1370,7 +1370,6 @@ end:
    edbus_message_iter_container_close(main_iter, array_invalidate);
 
    edbus_service_signal_send(iface, msg);
-   edbus_message_unref(msg);
 error:
    if (added)
      eina_hash_free(added);
