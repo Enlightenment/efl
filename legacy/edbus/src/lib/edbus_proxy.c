@@ -156,7 +156,7 @@ _edbus_proxy_free(EDBus_Proxy *proxy)
    EINA_LIST_FREE(proxy->handlers, h)
      {
         if (h->dangling)
-	  edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, proxy);
+	  edbus_signal_handler_free_cb_del(h, _on_signal_handler_free, proxy);
         else
            ERR("proxy=%p alive handler=%p %s", proxy, h,
                edbus_signal_handler_match_get(h));
@@ -215,7 +215,7 @@ edbus_proxy_get(EDBus_Object *obj, const char *interface)
    EINA_MAGIC_SET(proxy, EDBUS_PROXY_MAGIC);
    if (!edbus_object_proxy_add(obj, proxy))
      goto cleanup;
-   edbus_object_cb_free_add(obj, _on_object_free, proxy);
+   edbus_object_free_cb_add(obj, _on_object_free, proxy);
 
    return proxy;
 
@@ -233,7 +233,7 @@ _edbus_proxy_unref(EDBus_Proxy *proxy)
    proxy->refcount--;
    if (proxy->refcount > 0) return;
 
-   edbus_object_cb_free_del(proxy->obj, _on_object_free, proxy);
+   edbus_object_free_cb_del(proxy->obj, _on_object_free, proxy);
    _edbus_proxy_clear(proxy);
    _edbus_proxy_free(proxy);
 }
@@ -258,7 +258,7 @@ edbus_proxy_unref(EDBus_Proxy *proxy)
 }
 
 EAPI void
-edbus_proxy_cb_free_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
+edbus_proxy_free_cb_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_PROXY_CHECK(proxy);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -266,7 +266,7 @@ edbus_proxy_cb_free_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
 }
 
 EAPI void
-edbus_proxy_cb_free_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
+edbus_proxy_free_cb_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_PROXY_CHECK(proxy);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -507,7 +507,7 @@ _edbus_proxy_send(EDBus_Proxy *proxy, EDBus_Message *msg, EDBus_Message_Cb cb, c
    if (!cb) return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
-   edbus_pending_cb_free_add(pending, _on_pending_free, proxy);
+   edbus_pending_free_cb_add(pending, _on_pending_free, proxy);
    proxy->pendings = eina_inlist_append(proxy->pendings,
                                         EINA_INLIST_GET(pending));
 
@@ -608,7 +608,7 @@ edbus_proxy_signal_handler_add(EDBus_Proxy *proxy, const char *member, EDBus_Sig
                                        proxy->interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(handler, NULL);
 
-   edbus_signal_handler_cb_free_add(handler, _on_signal_handler_free, proxy);
+   edbus_signal_handler_free_cb_add(handler, _on_signal_handler_free, proxy);
    proxy->handlers = eina_list_append(proxy->handlers, handler);
 
    return handler;

@@ -34,12 +34,12 @@ EAPI void                 *edbus_proxy_data_del(EDBus_Proxy *proxy, const char *
  * @brief Add a callback function to be called when occurs a event of the
  * type passed.
  */
-EAPI void                  edbus_proxy_cb_free_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  edbus_proxy_free_cb_add(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Remove callback registered in edbus_proxy_cb_free_add().
+ * @brief Remove callback registered in edbus_proxy_free_cb_add().
  */
-EAPI void                  edbus_proxy_cb_free_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  edbus_proxy_free_cb_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Constructs a new message to invoke a method on a remote interface.

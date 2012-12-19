@@ -1095,7 +1095,7 @@ edbus_connection_unref(EDBus_Connection *conn)
 }
 
 EAPI void
-edbus_connection_cb_free_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data)
+edbus_connection_free_cb_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_CONNECTION_CHECK(conn);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -1103,7 +1103,7 @@ edbus_connection_cb_free_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const voi
 }
 
 EAPI void
-edbus_connection_cb_free_del(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data)
+edbus_connection_free_cb_del(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_CONNECTION_CHECK(conn);
    EINA_SAFETY_ON_NULL_RETURN(cb);

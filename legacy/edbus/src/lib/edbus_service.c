@@ -656,7 +656,7 @@ _edbus_service_object_add(EDBus_Connection *conn, const char *path)
    obj->conn = conn;
    obj->path = eina_stringshare_add(path);
    obj->interfaces = eina_hash_string_superfast_new(NULL);
-   edbus_connection_cb_free_add(conn, _on_connection_free, obj);
+   edbus_connection_free_cb_add(conn, _on_connection_free, obj);
 
    eina_hash_add(obj->interfaces, introspectable->name, introspectable);
    eina_hash_add(obj->interfaces, properties_iface->name, properties_iface);
@@ -1114,7 +1114,7 @@ edbus_service_object_unregister(EDBus_Service_Interface *iface)
     * It will be freed when _object_unregister() is called
     * by libdbus.
     */
-   edbus_connection_cb_free_del(iface->obj->conn, _on_connection_free, iface->obj);
+   edbus_connection_free_cb_del(iface->obj->conn, _on_connection_free, iface->obj);
    dbus_connection_unregister_object_path(iface->obj->conn->dbus_conn, iface->obj->path);
 }
 

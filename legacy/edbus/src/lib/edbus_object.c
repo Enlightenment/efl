@@ -139,7 +139,7 @@ _edbus_object_free(EDBus_Object *obj)
    EINA_LIST_FREE(obj->signal_handlers, h)
      {
         if (h->dangling)
-          edbus_signal_handler_cb_free_del(h, _on_signal_handler_free, obj);
+          edbus_signal_handler_free_cb_del(h, _on_signal_handler_free, obj);
         else
           ERR("obj=%p alive handler=%p %s", obj, h,
               edbus_signal_handler_match_get(h));
@@ -209,7 +209,7 @@ edbus_object_get(EDBus_Connection *conn, const char *bus, const char *path)
    EINA_MAGIC_SET(obj, EDBUS_OBJECT_MAGIC);
 
    edbus_connection_name_object_set(conn, obj);
-   edbus_connection_cb_free_add(obj->conn, _on_connection_free, obj);
+   edbus_connection_free_cb_add(obj->conn, _on_connection_free, obj);
 
    obj->properties = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE_PROPERTIES);
 
@@ -231,7 +231,7 @@ _edbus_object_unref(EDBus_Object *obj)
    obj->refcount--;
    if (obj->refcount > 0) return;
 
-   edbus_connection_cb_free_del(obj->conn, _on_connection_free, obj);
+   edbus_connection_free_cb_del(obj->conn, _on_connection_free, obj);
    _edbus_object_clear(obj);
    _edbus_object_free(obj);
 }
@@ -256,7 +256,7 @@ edbus_object_unref(EDBus_Object *obj)
 }
 
 EAPI void
-edbus_object_cb_free_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
+edbus_object_free_cb_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_OBJECT_CHECK(obj);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -264,7 +264,7 @@ edbus_object_cb_free_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
 }
 
 EAPI void
-edbus_object_cb_free_del(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
+edbus_object_free_cb_del(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_OBJECT_CHECK(obj);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -579,7 +579,7 @@ edbus_object_send(EDBus_Object *obj, EDBus_Message *msg, EDBus_Message_Cb cb, co
    if (!cb) return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
-   edbus_pending_cb_free_add(pending, _on_pending_free, obj);
+   edbus_pending_free_cb_add(pending, _on_pending_free, obj);
    obj->pendings = eina_inlist_append(obj->pendings, EINA_INLIST_GET(pending));
 
    return pending;
@@ -605,7 +605,7 @@ edbus_object_signal_handler_add(EDBus_Object *obj, const char *interface, const 
                                        interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(handler, NULL);
 
-   edbus_signal_handler_cb_free_add(handler, _on_signal_handler_free, obj);
+   edbus_signal_handler_free_cb_add(handler, _on_signal_handler_free, obj);
    obj->signal_handlers = eina_list_append(obj->signal_handlers, handler);
 
    return handler;

@@ -77,12 +77,12 @@ EAPI Eina_Bool             edbus_signal_handler_match_extra_vset(EDBus_Signal_Ha
 /**
  * @brief Add a callback function to be called when signal handler will be freed.
  */
-EAPI void                  edbus_signal_handler_cb_free_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  edbus_signal_handler_free_cb_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Remove callback registered in edbus_signal_handler_cb_free_add().
+ * @brief Remove callback registered in edbus_signal_handler_free_cb_add().
  */
-EAPI void                  edbus_signal_handler_cb_free_del(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  edbus_signal_handler_free_cb_del(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 EAPI const char           *edbus_signal_handler_sender_get(const EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI const char           *edbus_signal_handler_path_get(const EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;

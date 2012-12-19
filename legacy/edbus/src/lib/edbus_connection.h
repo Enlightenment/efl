@@ -64,12 +64,12 @@ EAPI void              edbus_connection_unref(EDBus_Connection *conn) EINA_ARG_N
  * @param cb callback to be called
  * @param data data passed to callback
  */
-EAPI void              edbus_connection_cb_free_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void              edbus_connection_free_cb_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Remove callback registered in edbus_connection_cb_free_add().
+ * @brief Remove callback registered in edbus_connection_free_cb_add().
  */
-EAPI void              edbus_connection_cb_free_del(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void              edbus_connection_free_cb_del(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set an attached data pointer to an object with a given string key.

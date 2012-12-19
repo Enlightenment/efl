@@ -147,7 +147,7 @@ static void
 _on_connection_free(void *data, const void *dead_pointer)
 {
    EDBus_Signal_Handler *sh = data;
-   edbus_signal_handler_cb_free_del(sh, _on_handler_of_conn_free, sh->conn);
+   edbus_signal_handler_free_cb_del(sh, _on_handler_of_conn_free, sh->conn);
    edbus_signal_handler_del(sh);
 }
 
@@ -155,7 +155,7 @@ static void
 _on_handler_of_conn_free(void *data, const void *dead_pointer)
 {
    EDBus_Connection *conn = data;
-   edbus_connection_cb_free_del(conn, _on_connection_free, dead_pointer);
+   edbus_connection_free_cb_del(conn, _on_connection_free, dead_pointer);
 }
 
 EAPI EDBus_Signal_Handler *
@@ -164,8 +164,8 @@ edbus_signal_handler_add(EDBus_Connection *conn, const char *sender, const char 
    EDBus_Signal_Handler *sh;
    sh = _edbus_signal_handler_add(conn, sender, path, interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sh, NULL);
-   edbus_connection_cb_free_add(conn, _on_connection_free, sh);
-   edbus_signal_handler_cb_free_add(sh, _on_handler_of_conn_free, conn);
+   edbus_connection_free_cb_add(conn, _on_connection_free, sh);
+   edbus_signal_handler_free_cb_add(sh, _on_handler_of_conn_free, conn);
    return sh;
 }
 
@@ -302,7 +302,7 @@ edbus_signal_handler_del(EDBus_Signal_Handler *handler)
 }
 
 EAPI void
-edbus_signal_handler_cb_free_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data)
+edbus_signal_handler_free_cb_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_SIGNAL_HANDLER_CHECK(handler);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -310,7 +310,7 @@ edbus_signal_handler_cb_free_add(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb
 }
 
 EAPI void
-edbus_signal_handler_cb_free_del(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data)
+edbus_signal_handler_free_cb_del(EDBus_Signal_Handler *handler, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_SIGNAL_HANDLER_CHECK(handler);
    EINA_SAFETY_ON_NULL_RETURN(cb);

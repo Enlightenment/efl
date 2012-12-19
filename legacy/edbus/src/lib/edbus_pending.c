@@ -99,7 +99,7 @@ edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message_
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
    edbus_connection_pending_add(conn, pending);
-   edbus_pending_cb_free_add(pending, _on_pending_free, conn);
+   edbus_pending_free_cb_add(pending, _on_pending_free, conn);
    return pending;
 }
 
@@ -216,7 +216,7 @@ edbus_pending_cancel(EDBus_Pending *pending)
 }
 
 EAPI void
-edbus_pending_cb_free_add(EDBus_Pending *pending, EDBus_Free_Cb cb, const void *data)
+edbus_pending_free_cb_add(EDBus_Pending *pending, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_PENDING_CHECK(pending);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -224,7 +224,7 @@ edbus_pending_cb_free_add(EDBus_Pending *pending, EDBus_Free_Cb cb, const void *
 }
 
 EAPI void
-edbus_pending_cb_free_del(EDBus_Pending *pending, EDBus_Free_Cb cb, const void *data)
+edbus_pending_free_cb_del(EDBus_Pending *pending, EDBus_Free_Cb cb, const void *data)
 {
    EDBUS_PENDING_CHECK(pending);
    EINA_SAFETY_ON_NULL_RETURN(cb);

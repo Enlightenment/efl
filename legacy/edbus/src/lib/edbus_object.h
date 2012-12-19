@@ -34,12 +34,12 @@ EAPI void          edbus_object_unref(EDBus_Object *obj) EINA_ARG_NONNULL(1);
  * @param cb callback that will be executed
  * @param data passed to callback
  */
-EAPI void          edbus_object_cb_free_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void          edbus_object_free_cb_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Remove callback registered in edbus_object_cb_free_add().
+ * @brief Remove callback registered in edbus_object_free_cb_add().
  */
-EAPI void          edbus_object_cb_free_del(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void          edbus_object_free_cb_del(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 typedef enum
 {
