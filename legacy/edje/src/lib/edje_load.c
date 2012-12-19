@@ -1314,12 +1314,7 @@ _edje_file_del(Edje *ed)
 
 	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
 	       _edje_entry_real_part_shutdown(rp);
-	     if (rp->object)
-	       {
-		  _edje_callbacks_del(rp->object, ed);
-		  _edje_callbacks_focus_del(rp->object, ed);
-		  evas_object_del(rp->object);
-	       }
+
              if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
                  (rp->typedata.container))
                {
@@ -1367,6 +1362,13 @@ _edje_file_del(Edje *ed)
                     }
                   free(rp->typedata.swallow);
                }
+
+	     if (rp->object)
+	       {
+		  _edje_callbacks_del(rp->object, ed);
+		  _edje_callbacks_focus_del(rp->object, ed);
+		  evas_object_del(rp->object);
+	       }
 
 	     if (rp->custom)
                {
