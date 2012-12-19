@@ -414,9 +414,10 @@ _ecore_wl_cb_idle_enterer(void *data)
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
 
    ret = wl_display_flush(ewd->wl.display);
-   if (ret < 0 && errno == EAGAIN)
+   if ((ret < 0) && (errno == EAGAIN))
      {
-        ecore_main_fd_handler_active_set(ewd->fd_hdl, ECORE_FD_READ | ECORE_FD_WRITE);
+        ecore_main_fd_handler_active_set(ewd->fd_hdl, 
+                                         (ECORE_FD_READ | ECORE_FD_WRITE));
      }
    else if (ret < 0)
      {
@@ -447,7 +448,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
         ret = wl_display_flush(ewd->wl.display);
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
-        else if (ret == -1 && errno != EAGAIN)
+        else if ((ret == -1) && (errno != EAGAIN))
           {
             /* FIXME: need do error processing? */
           }
