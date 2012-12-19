@@ -2786,7 +2786,8 @@ _win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 #endif
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   sd->wl.win = ecore_evas_wayland_window_get(sd->ee);
+   if ((ENGINE_COMPARE(ELM_WAYLAND_SHM)) || (ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+     sd->wl.win = ecore_evas_wayland_window_get(sd->ee);
 #endif
 
    if ((_elm_config->bgpixmap)
@@ -5011,6 +5012,10 @@ EAPI Ecore_Wl_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
    if (!obj) return NULL;
+
+   if ((!ENGINE_COMPARE(ELM_WAYLAND_SHM)) || 
+       (!ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+     return NULL;
 
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
      {
