@@ -438,7 +438,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h EINA_UNUSED, int depth, D
 	  }
 	if (depth == 24)
 	  {
-	     if ((rmask == 0x00ff0000) && (gmask == 0x0000ff00) && (bmask == 0x000000ff))
+	     if ((rmask == 0x000000ff) && (gmask == 0x0000ff00) && (bmask == 0x00ff0000))
 	       {
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_24bpp_rgb_888;
@@ -448,7 +448,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h EINA_UNUSED, int depth, D
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_24bpp_rgb_666;
 	       }
-	     if ((rmask == 0x000000ff) && (gmask == 0x0000ff00) && (bmask == 0x00ff0000))
+	     if ((rmask == 0x00ff0000) && (gmask == 0x0000ff00) && (bmask == 0x000000ff))
 	       {
 		  if (rotation == 0)
 		    return evas_common_convert_rgba_to_24bpp_bgr_888;

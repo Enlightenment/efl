@@ -89,7 +89,7 @@ struct _Outbuf
                   Pixmap mask;
                   Visual *vis;
                   Colormap cmap;
-                  int depth, shm;
+                  int depth, imdepth, shm;
                   GC gc, gcm;
                   unsigned char swap : 1;
                   unsigned char bit_swap : 1;
@@ -104,7 +104,7 @@ struct _Outbuf
                   xcb_pixmap_t mask;
                   xcb_visualtype_t *visual;
                   xcb_colormap_t cmap;
-                  int depth, shm;
+                  int depth, imdepth, shm;
                   xcb_gcontext_t gc, gcm;
                   unsigned char swap : 1;
                   unsigned char bit_swap : 1;

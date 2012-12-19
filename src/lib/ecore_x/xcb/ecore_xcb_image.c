@@ -249,8 +249,10 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 
    if (((vis->_class == XCB_VISUAL_CLASS_TRUE_COLOR) ||
         (vis->_class == XCB_VISUAL_CLASS_DIRECT_COLOR)) &&
-       (im->depth >= 24) && (vis->red_mask == 0xff0000) &&
-       (vis->green_mask == 0x00ff00) && (vis->blue_mask == 0x0000ff))
+       (im->bpp == 4) &&
+       (vis->red_mask == 0xff0000) &&
+       (vis->green_mask == 0x00ff00) && 
+       (vis->blue_mask == 0x0000ff))
      {
 #ifdef WORDS_BIGENDIAN
         if (im->xim->byte_order == XCB_IMAGE_ORDER_MSB_FIRST) return EINA_TRUE;
@@ -287,6 +289,8 @@ ecore_x_image_to_argb_convert(void            *src,
       rgb565,
       bgr565,
       rgbx555,
+      rgb888,
+      bgr888,
       argbx888,
       abgrx888,
       rgba888x,
@@ -346,40 +350,56 @@ ecore_x_image_to_argb_convert(void            *src,
    else if ((vis->_class == XCB_VISUAL_CLASS_TRUE_COLOR) ||
             (vis->_class == XCB_VISUAL_CLASS_DIRECT_COLOR))
      {
-        if ((vis->red_mask == 0x00ff0000) &&
-            (vis->green_mask == 0x0000ff00) &&
-            (vis->blue_mask == 0x000000ff))
-          mode = argbx888;
-        else if ((vis->red_mask == 0x000000ff) &&
+        if (sbpp == 24)
+          {
+             if ((vis->red_mask == 0x00ff0000) &&
                  (vis->green_mask == 0x0000ff00) &&
-                 (vis->blue_mask == 0x00ff0000))
-          mode = abgrx888;
-        else if ((vis->red_mask == 0xff000000) &&
-                 (vis->green_mask == 0x00ff0000) &&
-                 (vis->blue_mask == 0x0000ff00))
-          mode = rgba888x;
-        else if ((vis->red_mask == 0x0000ff00) &&
-                 (vis->green_mask == 0x00ff0000) &&
-                 (vis->blue_mask == 0xff000000))
-          mode = bgra888x;
-        else if ((vis->red_mask == 0x0003f000) &&
-                 (vis->green_mask == 0x00000fc0) &&
-                 (vis->blue_mask == 0x0000003f))
-          mode = argbx666;
-        else if ((vis->red_mask == 0x0000f800) &&
-                 (vis->green_mask == 0x000007e0) &&
-                 (vis->blue_mask == 0x0000001f))
-          mode = rgb565;
-        else if ((vis->red_mask == 0x0000001f) &&
-                 (vis->green_mask == 0x000007e0) &&
-                 (vis->blue_mask == 0x0000f800))
-          mode = bgr565;
-        else if ((vis->red_mask == 0x00007c00) &&
-                 (vis->green_mask == 0x000003e0) &&
-                 (vis->blue_mask == 0x0000001f))
-          mode = rgbx555;
+                 (vis->blue_mask == 0x000000ff))
+               mode = rgb888;
+             else if ((vis->red_mask == 0x000000ff) &&
+                      (vis->green_mask == 0x0000ff00) &&
+                      (vis->blue_mask == 0x00ff0000))
+               mode = bgr888;
+             else
+               return EINA_FALSE;
+          }
         else
-          return EINA_FALSE;
+          {
+             if ((vis->red_mask == 0x00ff0000) &&
+                 (vis->green_mask == 0x0000ff00) &&
+                 (vis->blue_mask == 0x000000ff))
+               mode = argbx888;
+             else if ((vis->red_mask == 0x000000ff) &&
+                      (vis->green_mask == 0x0000ff00) &&
+                      (vis->blue_mask == 0x00ff0000))
+               mode = abgrx888;
+             else if ((vis->red_mask == 0xff000000) &&
+                      (vis->green_mask == 0x00ff0000) &&
+                      (vis->blue_mask == 0x0000ff00))
+               mode = rgba888x;
+             else if ((vis->red_mask == 0x0000ff00) &&
+                      (vis->green_mask == 0x00ff0000) &&
+                      (vis->blue_mask == 0xff000000))
+               mode = bgra888x;
+             else if ((vis->red_mask == 0x0003f000) &&
+                      (vis->green_mask == 0x00000fc0) &&
+                      (vis->blue_mask == 0x0000003f))
+               mode = argbx666;
+             else if ((vis->red_mask == 0x0000f800) &&
+                      (vis->green_mask == 0x000007e0) &&
+                      (vis->blue_mask == 0x0000001f))
+               mode = rgb565;
+             else if ((vis->red_mask == 0x0000001f) &&
+                      (vis->green_mask == 0x000007e0) &&
+                      (vis->blue_mask == 0x0000f800))
+               mode = bgr565;
+             else if ((vis->red_mask == 0x00007c00) &&
+                      (vis->green_mask == 0x000003e0) &&
+                      (vis->blue_mask == 0x0000001f))
+               mode = rgbx555;
+             else
+               return EINA_FALSE;
+          }
      }
    for (row = 0; row < h; row++)
      {
@@ -461,6 +481,29 @@ ecore_x_image_to_argb_convert(void            *src,
              break;
 
            case 24:
+            s8 = ((unsigned char *)(((unsigned char *)src) + ((y + row) * sbpl))) + (x * (sbpp / 8));
+             switch (mode)
+               {
+                case rgb888:
+                  while (dp < de)
+                    {
+                       *dp = 0xff000000 | (s8[2] << 16) | (s8[1] << 8) | s8[0];
+                       s8 += 3; dp++;
+                    }
+                  break;
+                case bgr888:
+                  while (dp < de)
+                    {
+                       *dp = 0xff000000 | (s8[0] << 16) | (s8[1] << 8) | s8[2];
+                       s8 += 3; dp++;
+                    }
+                  break;
+                default:
+                  return EINA_FALSE;
+                  break;
+               }
+             break;
+             
            case 32:
              s32 = ((unsigned int *)(((unsigned char *)src) +
                                      ((y + row) * sbpl))) + x;
@@ -522,7 +565,6 @@ ecore_x_image_to_argb_convert(void            *src,
                   return EINA_FALSE;
                   break;
                }
-             break;
              break;
 
            default:
