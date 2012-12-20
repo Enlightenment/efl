@@ -99,7 +99,7 @@ tests_eet_eet_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
--DTESTS_SRC_DIR=\"$(top_srcdir)\" \
+-DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 @CHECK_CFLAGS@ \
 @EET_CFLAGS@
 
