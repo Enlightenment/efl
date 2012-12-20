@@ -529,13 +529,6 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 #endif
    ]])
 
-# struct dirent
-
-AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
-   [[
-#include <dirent.h>
-   ]])
-
 
 #### Checks for structures
 
