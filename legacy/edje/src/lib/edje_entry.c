@@ -98,9 +98,9 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emiss
    Entry *en;
 
    rp = data;
-   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+   if ((!rp) || (rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
-   if (!rp || !rp->typedata.text->entry_data || !rp->edje || !rp->edje->obj) return;
+   if (!rp->typedata.text->entry_data || !rp->edje || !rp->edje->obj) return;
 
    en = rp->typedata.text->entry_data;
    if (!en || !en->imf_context) return;
@@ -120,9 +120,9 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emis
    Entry *en;
 
    rp = data;
-   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+   if ((!rp) || (rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
-   if (!rp || !rp->typedata.text->entry_data) return;
+   if (!rp->typedata.text->entry_data) return;
 
    en = rp->typedata.text->entry_data;
    if (!en || !en->imf_context) return;
