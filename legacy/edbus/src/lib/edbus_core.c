@@ -381,7 +381,10 @@ edbus_connection_name_gc(EDBus_Connection *conn, EDBus_Connection_Name *cn)
 
    eina_hash_del(conn->names, cn->name, cn);
    if (cn->name_owner_changed)
-     edbus_signal_handler_del(cn->name_owner_changed);
+     {
+        cn->name_owner_changed->bus = NULL;
+        edbus_signal_handler_del(cn->name_owner_changed);
+     }
    if (cn->objects)
      eina_hash_free(cn->objects);
    eina_stringshare_del(cn->name);
