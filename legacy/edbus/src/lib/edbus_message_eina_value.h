@@ -13,6 +13,15 @@
 EAPI Eina_Value *edbus_message_to_eina_value(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * Convert EDBus_Message_Iter of type variant, struct or dict entry to
+ * Eina_Value.
+ *
+ * @param iter Message iterator
+ * @return Eina_Value of type Eina_Value_Type_Struct
+ */
+EAPI Eina_Value *edbus_message_iter_struct_like_to_eina_value(const EDBus_Message_Iter *iter);
+
+/**
  * Convert Eina_Value to EDBus_Message
  *
  * @param signature dbus signature

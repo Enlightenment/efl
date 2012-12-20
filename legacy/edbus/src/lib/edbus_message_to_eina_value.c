@@ -441,3 +441,10 @@ edbus_message_to_eina_value(const EDBus_Message *msg)
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
    return _message_iter_struct_to_eina_value(iter);
 }
+
+EAPI Eina_Value *
+edbus_message_iter_struct_like_to_eina_value(const EDBus_Message_Iter *iter)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+   return _message_iter_struct_to_eina_value((EDBus_Message_Iter *)iter);
+}
