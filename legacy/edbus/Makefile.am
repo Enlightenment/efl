@@ -98,12 +98,11 @@ EXAMPLES = \
 	src/examples/simple-signal-emit \
 	src/examples/complex_types_client_eina_value
 
-EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@
+EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@ @EINA_LIBS@
 
 EXTRA_PROGRAMS = $(EXAMPLES)
 
-src_examples_connman_list_services_SOURCES = \
-	src/examples/connman-list-services.c
+src_examples_connman_list_services_SOURCES = src/examples/connman-list-services.c
 src_examples_connman_list_services_LDADD = $(EXAMPLES_LIBS)
 
 src_examples_ofono_dial_SOURCES = src/examples/ofono-dial.c
