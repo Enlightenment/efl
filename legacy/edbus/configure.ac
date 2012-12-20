@@ -105,6 +105,16 @@ VMIN=v_min
 AC_SUBST(VMAJ)
 AC_SUBST(VMIN)
 
+EFL_ENABLE_BIN([edbus-codegen], ["yes"])
+
+if test "x${have_edbus_codegen}" = "xyes" ; then
+	PKG_CHECK_MODULES([EDBUS_CODEGEN],
+		[eina >= 1.6.99],
+		[ecore >= 1.6.99],
+		[have_edbus_codegen="yes"],
+		[have_edbus_codegen="no"])
+fi
+
 AC_CONFIG_FILES([
 Makefile
 edbus.spec

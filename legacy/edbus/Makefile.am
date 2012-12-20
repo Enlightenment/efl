@@ -129,6 +129,18 @@ src_examples_simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
 src_examples_complex_types_client_eina_value_SOURCES = src/examples/complex_types_client_eina_value.c
 src_examples_complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 
+if BUILD_EDBUS_CODEGEN
+bin_PROGRAMS = edbus_client_codegen
+edbus_client_codegen_SOURCES = \
+	src/codegen/utils.c \
+	src/codegen/parser.c \
+	src/codegen/dbus.c \
+	src/codegen/source_client.c \
+	src/codegen/client.c
+edbus_client_codegen_CFLAGS = -I$(top_srcdir)/src/codegen @EDBUS_CODEGEN_CFLAGS@ @ECORE_CFLAGS@
+edbus_client_codegen_LDADD = @EDBUS_CODEGEN_LIBS@ @ECORE_LIBS@
+endif
+
 .PHONY: doc examples
 
 examples: $(EXAMPLES)
