@@ -55,12 +55,8 @@ lib_ecore_libecore_la_CPPFLAGS = \
 -DEFL_ECORE_BUILD \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
-@ECORE_CFLAGS@
-
-if HAVE_WINDOWS
-lib_ecore_libecore_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@ECORE_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 
 if HAVE_PS3
 lib_ecore_libecore_la_CPPFLAGS += \
@@ -69,11 +65,8 @@ endif
 
 lib_ecore_libecore_la_LIBADD = \
 lib/eo/libeo.la \
-lib/eina/libeina.la
-
-if HAVE_WINDOWS
-lib_ecore_libecore_la_LIBADD += lib/evil/libevil.la
-endif
+lib/eina/libeina.la \
+@USE_EVIL_LIBS@
 
 if HAVE_PS3
 lib_ecore_libecore_la_LIBADD += lib/escape/libescape.la

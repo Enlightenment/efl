@@ -30,12 +30,8 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEFL_ECORE_EVAS_BUILD \
 @EFL_CFLAGS@ \
-@EFL_COV_CFLAGS@
-
-if HAVE_WINDOWS
-lib_ecore_evas_libecore_evas_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EFL_COV_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 
 lib_ecore_evas_libecore_evas_la_LIBADD = \
 lib/ecore_input/libecore_input_evas.la \

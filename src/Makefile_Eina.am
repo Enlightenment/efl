@@ -212,22 +212,10 @@ lib_eina_libeina_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EFL_PTHREAD_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 
-if HAVE_WINDOWS
-lib_eina_libeina_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
-
-lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@
-
-if HAVE_WINDOWS
-lib_eina_libeina_la_LIBADD += \
-lib/evil/libevil.la \
-lib/evil/libdl.la
-endif
-
-lib_eina_libeina_la_LIBADD += -lm
+lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@ @USE_EVIL_LIBS@ @DL_LIBS@ -lm
 
 lib_eina_libeina_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
 

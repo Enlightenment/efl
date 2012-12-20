@@ -161,11 +161,6 @@ bin_evil_evil_suite_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EVIL_CPPFLAGS@
 
-if HAVE_WINDOWS
-bin_evil_evil_suite_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
-
 bin_evil_evil_suite_LDADD = \
 lib/evil/libevil.la \
 lib/evil/libdl.la \

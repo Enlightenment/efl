@@ -677,8 +677,13 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 
 ######################  EFL  ######################
 
+#### Platform-dependent
+DL_LIBS=""
 
 #### Evil
+
+USE_EVIL_CFLAGS=""
+USE_EVIL_LIBS=""
 
 if test "x${have_windows}" = "xyes" ; then
 
@@ -747,7 +752,13 @@ else
 fi
 platform_libs="${platform_libs} ${platform_libs_evil}"
 
+USE_EVIL_CFLAGS="-I\$(top_srcdir)/src/lib/evil"
+USE_EVIL_LIBS="lib/evil/libevil.la"
+DL_LIBS="lib/evil/libdl.la"
 fi
+
+AC_SUBST([USE_EVIL_CFLAGS])
+AC_SUBST([USE_EVIL_LIBS])
 
 #### End of Evil
 
@@ -788,6 +799,9 @@ platform_pc="${platform_pc} ${platform_pc_escape}"
 fi
 
 #### End of Escape
+
+AC_SUBST([DL_LIBS])
+#### End of Platform-dependent
 
 
 #### Eina

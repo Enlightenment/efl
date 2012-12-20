@@ -207,7 +207,8 @@ lib_evas_libevas_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EVAS_CFLAGS@ \
-@ALTIVEC_CFLAGS@
+@ALTIVEC_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 
 # SSE3
 noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la
@@ -221,11 +222,6 @@ $(lib_evas_libevas_la_CPPFLAGS) \
 @SSE3_CFLAGS@
 
 lib_evas_common_libevas_op_blend_sse3_la_LIBADD = @EFL_COV_LIBS@
-
-if HAVE_WINDOWS
-lib_evas_libevas_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
 
 lib_evas_libevas_la_CXXFLAGS =
 
@@ -409,11 +405,8 @@ modules_evas_engines_buffer_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -DEFL_EVAS_BUILD \
 @EFL_CFLAGS@ \
-@EVAS_CFLAGS@
-if HAVE_WINDOWS
-modules_evas_engines_buffer_module_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EVAS_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 modules_evas_engines_buffer_module_la_LIBADD = lib/evas/libevas.la @EFL_LIBS@
 modules_evas_engines_buffer_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -763,11 +756,8 @@ modules_evas_engines_software_ddraw_module_la_CPPFLAGS = \
 -DEFL_EVAS_BUILD \
 @evas_engine_software_ddraw_cflags@ \
 @EFL_CFLAGS@ \
-@EVAS_CFLAGS@
-if HAVE_WINDOWS
-modules_evas_engines_software_ddraw_module_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EVAS_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 modules_evas_engines_software_ddraw_module_la_CXXFLAGS = -fno-rtti -fno-exceptions
 modules_evas_engines_software_ddraw_module_la_LIBADD = \
 lib/evas/libevas.la \
@@ -804,11 +794,8 @@ modules_evas_engines_software_gdi_module_la_CPPFLAGS = \
 -DEFL_EVAS_BUILD \
 @evas_engine_software_gdi_cflags@ \
 @EFL_CFLAGS@ \
-@EVAS_CFLAGS@
-if HAVE_WINDOWS
-modules_evas_engines_software_gdi_module_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EVAS_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 modules_evas_engines_software_gdi_module_la_LIBADD = \
 lib/evas/libevas.la \
 @evas_engine_software_gdi_libs@ \
@@ -1325,11 +1312,8 @@ modules_evas_loaders_tiff_module_la_CPPFLAGS = \
 -DEFL_EVAS_BUILD \
 @evas_image_loader_tiff_cflags@ \
 @EFL_CFLAGS@ \
-@EVAS_CFLAGS@
-if HAVE_WINDOWS
-modules_evas_loaders_tiff_module_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EVAS_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 modules_evas_loaders_tiff_module_la_LIBADD = \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
@@ -1349,11 +1333,8 @@ modules_evas_savers_tiff_module_la_CPPFLAGS = \
 -DEFL_EVAS_BUILD \
 @evas_image_loader_tiff_cflags@ \
 @EFL_CFLAGS@ \
-@EVAS_CFLAGS@
-if HAVE_WINDOWS
-modules_evas_savers_tiff_module_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil
-endif
+@EVAS_CFLAGS@ \
+@USE_EVIL_CFLAGS@
 modules_evas_savers_tiff_module_la_LIBADD = \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
