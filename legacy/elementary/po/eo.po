@@ -3,21 +3,20 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#: src/lib/elm_config.c:2184
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-12-10 10:00+0900\n"
-"PO-Revision-Date: 2012-12-05 12:25+0000\n"
-"Last-Translator: Michael Moroni <michael.moroni@mailoo.org>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2012-12-07 09:55+0100\n"
+"PO-Revision-Date: 2012-12-14 08:24+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-12-08 05:09+0000\n"
-"X-Generator: Launchpad (build 16341)\n"
+"X-Launchpad-Export-Date: 2012-12-15 05:06+0000\n"
+"X-Generator: Launchpad (build 16372)\n"
+"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:752
 msgid "Up"
@@ -64,15 +63,15 @@ msgstr "kalendarero"
 
 #: src/lib/elm_calendar.c:264
 msgid "calendar decrement button"
-msgstr ""
+msgstr "dekrementa butono de kalendaro"
 
 #: src/lib/elm_calendar.c:270
 msgid "calendar increment button"
-msgstr ""
+msgstr "alkrementa butono de kalendaro"
 
 #: src/lib/elm_calendar.c:276
 msgid "calendar month"
-msgstr ""
+msgstr "monato de kalendaro"
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:230 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:262
@@ -93,11 +92,11 @@ msgstr "Kontroli"
 
 #: src/lib/elm_clock.c:295
 msgid "clock increment button for am,pm"
-msgstr ""
+msgstr "Alkrementa butono de ĥorloĝo por m,ptm"
 
 #: src/lib/elm_clock.c:303
 msgid "clock decrement button for am,pm"
-msgstr ""
+msgstr "Dekrementa butono de ĥorloĝo por m,ptm"
 
 #: src/lib/elm_clock.c:650
 msgid "State: Editable"
@@ -141,11 +140,11 @@ msgstr "Ero"
 
 #: src/lib/elm_gengrid.c:638
 msgid "Gengrid Item"
-msgstr ""
+msgstr "Ero de komuna krado"
 
 #: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
-msgstr ""
+msgstr "Ero de komuna listo"
 
 #: src/lib/elm_index.c:100
 msgid "Index Item"
@@ -189,15 +188,15 @@ msgstr "ŝovilo"
 
 #: src/lib/elm_spinner.c:608
 msgid "spinner increment button"
-msgstr ""
+msgstr "alkrementa sago-butono"
 
 #: src/lib/elm_spinner.c:617
 msgid "spinner decrement button"
-msgstr ""
+msgstr "dekrementa sago-butono"
 
 #: src/lib/elm_spinner.c:625
 msgid "spinner"
-msgstr ""
+msgstr "sago-butono"
 
 #: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1711
 msgid "Selected"
