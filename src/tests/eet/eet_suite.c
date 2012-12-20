@@ -24,7 +24,11 @@
 
 #include "eet_suite.h"
 
-#define CERT_DIR ((*TESTS_SRC_DIR == '/') ? TESTS_SRC_DIR"/src/tests/eet/" : "src/tests/eet/")
+static char _key_pem[PATH_MAX] = "";
+static char _cert_pem[PATH_MAX] = "";
+static char _key_enc[PATH_MAX] = "";
+static char _key_enc_pem[PATH_MAX] = "";
+static char _key_enc_none_pem[PATH_MAX] = "";
 
 START_TEST(eet_test_init)
 {
@@ -1642,7 +1646,6 @@ START_TEST(eet_identity_simple)
    eet_init();
 
    fail_if(!(file = tmpnam(file)));
-   fail_if(chdir(CERT_DIR));
    fail_if(!(noread = fopen("/dev/null", "w")));
 
    /* Sign an eet file. */
@@ -1651,7 +1654,7 @@ START_TEST(eet_identity_simple)
 
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
 
-   k = eet_identity_open("cert.pem", "key.pem", NULL);
+   k = eet_identity_open(_cert_pem, _key_pem, NULL);
    fail_if(!k);
 
    fail_if(eet_identity_set(ef, k) != EET_ERROR_NONE);
@@ -1709,9 +1712,7 @@ START_TEST(eet_identity_open_simple)
 
    eet_init();
 
-   fail_if(chdir(CERT_DIR));
-
-   k = eet_identity_open("cert.pem", "key.pem", NULL);
+   k = eet_identity_open(_cert_pem, _key_pem, NULL);
    fail_if(!k);
 
    if (k)
@@ -1727,9 +1728,7 @@ START_TEST(eet_identity_open_pkcs8)
 
    eet_init();
 
-   fail_if(chdir(CERT_DIR));
-
-   k = eet_identity_open("cert.pem", "key_enc_none.pem", NULL);
+   k = eet_identity_open(_cert_pem, _key_enc_none_pem, NULL);
    fail_if(!k);
 
    if (k)
@@ -1776,21 +1775,19 @@ START_TEST(eet_identity_open_pkcs8_enc)
 
    eet_init();
 
-   fail_if(chdir(CERT_DIR));
-
-   k = eet_identity_open("cert.pem", "key_enc.pem", NULL);
+   k = eet_identity_open(_cert_pem, _key_enc_pem, NULL);
    fail_if(k);
 
    if (k)
      eet_identity_close(k);
 
-   k = eet_identity_open("cert.pem", "key_enc.pem", &badpass_get);
+   k = eet_identity_open(_cert_pem, _key_enc_pem, &badpass_get);
    fail_if(k);
 
    if (k)
      eet_identity_close(k);
 
-   k = eet_identity_open("cert.pem", "key_enc.pem", &pass_get);
+   k = eet_identity_open(_cert_pem, _key_enc_pem, &pass_get);
    fail_if(!k);
 
    if (k)
@@ -1812,7 +1809,6 @@ START_TEST(eet_cipher_decipher_simple)
    eet_init();
 
    fail_if(!(file = tmpnam(file)));
-   fail_if(chdir(CERT_DIR));
 
    /* Crypt an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -2761,12 +2757,56 @@ eet_suite(void)
    return s;
 } /* eet_suite */
 
+static const char *_cert_dir_find(const char *argv0)
+{
+   static char base[PATH_MAX] = "";
+   char path[PATH_MAX];
+   struct stat st;
+
+   eina_strlcpy(base, TESTS_SRC_DIR, sizeof(base));
+   eina_str_join(path, sizeof(path), '/', base, "key.pem");
+   if (stat(path, &st) == 0)
+     return base;
+
+   if (base[0] != '/')
+     {
+        snprintf(base, sizeof(base), "%s/%s", TESTS_WD, TESTS_SRC_DIR);
+        eina_str_join(path, sizeof(path), '/', base, "key.pem");
+        if (stat(path, &st) == 0)
+          return base;
+     }
+
+   eina_strlcpy(base, argv0, sizeof(base));
+   do
+     {
+        char *p = strrchr(base, '/');
+        if (!p)
+          {
+             base[0] = '\0';
+             break;
+          }
+        *p = '\0';
+        eina_str_join(path, sizeof(path), '/', base, "key.pem");
+     }
+   while (stat(path, &st) != 0);
+
+   return base;
+}
+
 int
-main(void)
+main(int argc EINA_UNUSED, char *argv[])
 {
    Suite *s;
    SRunner *sr;
    int failed_count;
+   const char *base = _cert_dir_find(argv[0]);
+
+   eina_str_join(_key_pem, sizeof(_key_pem), '/', base, "key.pem");
+   eina_str_join(_cert_pem, sizeof(_cert_pem), '/', base,"cert.pem");
+   eina_str_join(_key_enc, sizeof(_key_enc), '/', base, "key.enc");
+   eina_str_join(_key_enc_pem, sizeof(_key_enc_pem), '/', base, "key_enc.pem");
+   eina_str_join(_key_enc_none_pem, sizeof(_key_enc_none_pem), '/',
+                 base, "key_enc_none.pem");
 
    s = eet_suite();
    sr = srunner_create(s);
