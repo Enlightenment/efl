@@ -1758,7 +1758,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Evas_Textblock_Cursor *tc = NULL;
    Eina_Bool dosel = EINA_FALSE;
    Eina_Bool shift;
-   if (!rp) return;
+   if ((!rp) || (!ev)) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -1990,7 +1990,7 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    Entry *en;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
-   if (ev->button != 1) return;
+   if ((!ev) || (ev->button != 1)) return;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK) return;
@@ -2101,7 +2101,7 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Entry *en;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
-   if (!rp) return;
+   if ((!rp) || (!ev)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
@@ -2197,6 +2197,7 @@ static void
 _evas_focus_in_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
+   if (!ed) return;
 
    if (evas_focus_get(e) == ed->obj)
      {
@@ -2208,6 +2209,7 @@ static void
 _evas_focus_out_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
+   if (!ed) return;
 
    if (evas_focus_get(e) == ed->obj)
      {
@@ -2236,7 +2238,7 @@ _edje_entry_init(Edje *ed)
 void
 _edje_entry_shutdown(Edje *ed)
 {
-   if (!ed->has_entries)
+   if ((!ed) || (!ed->has_entries))
      return;
    if (!ed->entries_inited)
      return;
