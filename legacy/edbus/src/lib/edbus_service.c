@@ -956,8 +956,10 @@ edbus_service_interface_register(EDBus_Connection *conn, const char *path, const
    if (!signatures)
      return NULL;
 
-   if (obj == NULL)
+   if (!obj)
      obj = _edbus_service_object_add(conn, path);
+   else
+     obj->introspection_dirty = EINA_TRUE;
    EINA_SAFETY_ON_NULL_GOTO(obj, fail);
 
    iface = _edbus_service_interface_add(obj, desc->interface);
@@ -1103,6 +1105,7 @@ edbus_service_interface_unregister(EDBus_Service_Interface *iface)
         return;
      }
    eina_hash_del(iface->obj->interfaces, NULL, iface);
+   iface->obj->introspection_dirty = EINA_TRUE;
    _interface_free(iface);
 }
 
