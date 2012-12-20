@@ -40,8 +40,8 @@ src/examples/server
 src/examples/simple-signal-emit
 src/examples/client
 src/examples/complex_types_client_eina_value
+src/codegen/edbus-codegen
 doc/Doxyfile
 doc/html/
 doc/latex/
 doc/man/
-edbus_client_codegen
