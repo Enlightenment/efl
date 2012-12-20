@@ -989,6 +989,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
    EDBus_Pending *p;
    Eina_Iterator *iter;
    EDBus_Connection_Name *cn;
+   Eina_Array *cns;
 
    DBG("Connection %p: unref (currently at %d refs)",
        conn, conn->refcount);
@@ -1006,6 +1007,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
    EINA_INLIST_FOREACH_SAFE(conn->pendings, list, p)
      edbus_pending_cancel(p);
 
+   cns = eina_array_new(eina_hash_population(conn->names));
    iter = eina_hash_iterator_data_new(conn->names);
    EINA_ITERATOR_FOREACH(iter, cn)
      {
@@ -1017,11 +1019,16 @@ _edbus_connection_unref(EDBus_Connection *conn)
              cn->event_handlers.list = eina_inlist_remove(cn->event_handlers.list,
                                                           cn->event_handlers.list);
              free(ctx);
-           }
-        edbus_connection_name_gc(conn, cn);
+          }
+        eina_array_push(cns, cn);
      }
    eina_iterator_free(iter);
+
+   while ((cn = eina_array_pop(cns)))
+     edbus_connection_name_gc(conn, cn);
+
    eina_hash_free(conn->names);
+   eina_array_free(cns);
 
    conn->refcount = 0;
 
