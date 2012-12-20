@@ -105,6 +105,7 @@ tests_ecore_ecore_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_x \
 -DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 @CHECK_CFLAGS@
 
