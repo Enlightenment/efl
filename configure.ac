@@ -1729,7 +1729,7 @@ fi
 ### Checks for types
 
 CPPFLAGS_SAVE="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS -Isrc/lib/eina"
+CPPFLAGS="$CPPFLAGS $EVAS_CFLAGS -Isrc/lib/eina"
 AC_CHECK_SIZEOF([Eina_Unicode], [], [#include <Eina.h>])
 CPPFLAGS="$CPPFLAGS_SAVE"
 
