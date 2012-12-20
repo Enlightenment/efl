@@ -372,14 +372,11 @@ edbus_data_del_all(Eina_Inlist **p_list)
 static void
 edbus_connection_name_gc(EDBus_Connection *conn, EDBus_Connection_Name *cn)
 {
-   Eina_Bool have_obj;
-   Eina_Bool have_event_handlers;
-
-   if (!cn->objects) have_obj = EINA_FALSE;
-   else have_obj = !!eina_hash_population(cn->objects);
-   have_event_handlers = cn->event_handlers.list != NULL;
-
-   if (have_obj || have_event_handlers || cn->refcount > 0)
+   if (cn->refcount > 0)
+     return;
+   if (cn->objects && eina_hash_population(cn->objects) > 0)
+     return;
+   if (cn->event_handlers.list != NULL)
      return;
 
    eina_hash_del(conn->names, cn->name, cn);
@@ -461,8 +458,6 @@ edbus_connection_name_unref(EDBus_Connection *conn, EDBus_Connection_Name *cn)
    EINA_SAFETY_ON_NULL_RETURN(cn);
 
    cn->refcount--;
-
-   if (cn->refcount > 0) return;
    edbus_connection_name_gc(conn, cn);
 }
 
