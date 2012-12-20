@@ -92,16 +92,29 @@ case "${build_crypto}" in
      ;;
 esac
 
-AC_ARG_ENABLE([coverage],
-   [AC_HELP_STRING([--enable-coverage], [enable unit testing coverage. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_coverage="yes"
-    else
-       want_coverage="no"
-    fi
-   ],
-   [want_coverage="no"])
+AC_ARG_WITH([tests],
+   [AC_HELP_STRING([--with-tests=none|regular|coverage],
+                   [choose testing method: regular, coverage or none.
+                    @<:@default=none@:>@])],
+   [build_tests=${withval}],
+   [build_tests=none])
+
+want_coverage="no"
+want_tests="no"
+case "${build_tests}" in
+   regular)
+     want_tests="yes"
+     ;;
+   coverage)
+     want_tests="yes"
+     want_coverage="yes"
+     ;;
+   none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build tests option: --with-tests=${build_tests}])
+     ;;
+esac
 
 
 #### Default values
@@ -422,8 +435,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 # lcov
 
-_efl_enable_coverage="no"
-if test "x${want_coverage}" = "xyes" ; then
+if test "${want_coverage}" = "yes" ; then
    AC_CHECK_PROG([have_lcov], [lcov], [yes], [no])
    if test "x${have_lcov}" = "xyes" ; then
       EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -fprofile-arcs -ftest-coverage"
@@ -433,13 +445,12 @@ if test "x${want_coverage}" = "xyes" ; then
       else
          EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -g -O0 -DDEBUG"
       fi
-      _efl_enable_coverage="yes"
    else
-      AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
+      AC_MSG_ERROR([lcov is not found])
    fi
 fi
 
-AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "x${_efl_enable_coverage}" = "xyes"])
+AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
 
 AC_SUBST([EFL_COV_CFLAGS])
 AC_SUBST([EFL_COV_LIBS])
@@ -449,12 +460,10 @@ AC_SUBST([EFL_COV_LIBS])
 
 # check unit testing library
 
-PKG_CHECK_MODULES([CHECK],
-   [check >= 0.9.5],
-   [_efl_enable_tests="yes"],
-   [_efl_enable_tests="no"])
-
-AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "x${_efl_enable_tests}" = "xyes"])
+if test "${want_tests}" = "yes"; then
+   PKG_CHECK_MODULES([CHECK], [check >= 0.9.5])
+fi
+AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 
 
 # check for crypto/tls library to use
@@ -3587,11 +3596,8 @@ echo "    PulseAudio.................: $use_pulse"
 echo "    SndFile....................: $use_sndfile"
 fi
 echo
-echo "Tests..................: ${_efl_enable_tests}"
-if test "x${_efl_enable_tests}" = "xyes"; then
-echo "    Coverage...........: ${_efl_enable_coverage}"
-echo "    Build and run......: make check"
-fi
+echo "Tests..................: ${with_tests}"
+
 echo "Examples...............: make examples"
 echo "    installation.......: make install-examples"
 if test "x${build_doc}" = "xyes"; then
