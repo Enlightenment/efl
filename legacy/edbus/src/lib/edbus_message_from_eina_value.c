@@ -1,8 +1,6 @@
 #include "edbus_private.h"
 #include "edbus_private_types.h"
 
-static Eina_Bool _message_iter_from_eina_value_struct(const char *signature, EDBus_Message_Iter *iter, const Eina_Value *value);
-
 static Eina_Bool
 _compatible_type(int dbus_type, const Eina_Value_Type *value_type)
 {
@@ -288,7 +286,7 @@ _basic_append(char type, const Eina_Value *value, const Eina_Value_Struct_Desc *
    return EINA_TRUE;
 }
 
-static Eina_Bool
+Eina_Bool
 _message_iter_from_eina_value_struct(const char *signature, EDBus_Message_Iter *iter, const Eina_Value *value)
 {
    unsigned i;
