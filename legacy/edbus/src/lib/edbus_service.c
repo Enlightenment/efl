@@ -1458,5 +1458,8 @@ edbus_service_object_manager_detach(EDBus_Service_Interface *iface)
    ret = eina_hash_del(obj->interfaces, objmanager->name, NULL);
    obj->has_objectmanager = EINA_FALSE;
    obj->introspection_dirty = EINA_TRUE;
+   //properties + introspectable
+   if (eina_hash_population(iface->obj->interfaces) < 3)
+     edbus_service_object_unregister(iface);
    return ret;
 }
