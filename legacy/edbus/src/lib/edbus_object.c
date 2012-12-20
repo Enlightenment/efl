@@ -285,15 +285,14 @@ _cb_interfaces_added(void *data, const EDBus_Message *msg)
      {
         const char *iface_name;
         EDBus_Object_Event_Interface_Added event;
-        EDBus_Proxy *proxy;
 
         edbus_message_iter_basic_get(entry_iface, &iface_name);
-        proxy = edbus_proxy_get(obj, iface_name);
-        EINA_SAFETY_ON_NULL_RETURN(proxy);
+        event.proxy = edbus_proxy_get(obj, iface_name);
+        EINA_SAFETY_ON_NULL_RETURN(event.proxy);
         event.interface = iface_name;
-        event.proxy = proxy;
         _edbus_object_event_callback_call(obj, EDBUS_OBJECT_EVENT_IFACE_ADDED,
                                           &event);
+        edbus_proxy_unref(event.proxy);
      }
 }
 
@@ -361,7 +360,7 @@ _cb_properties_changed(void *data, const EDBus_Message *msg)
                                      proxy);
 
    if (!obj->event_handlers[EDBUS_OBJECT_EVENT_PROPERTY_REMOVED].list)
-     return;
+     goto end;
 
    while (edbus_message_iter_get_and_next(invalidate, 's', &invalidate_prop))
      {
@@ -373,6 +372,8 @@ _cb_properties_changed(void *data, const EDBus_Message *msg)
                                           EDBUS_OBJECT_EVENT_PROPERTY_REMOVED,
                                           &event);
      }
+end:
+   edbus_proxy_unref(proxy);
 }
 
 EAPI void
