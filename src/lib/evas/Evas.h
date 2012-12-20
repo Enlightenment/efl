@@ -10504,6 +10504,8 @@ EAPI Evas_BiDi_Direction  evas_object_text_direction_get(const Evas_Object *obj)
  * additional format directives using "tags" that can be set in the style see
  * @ref evas_textblock_style_set .
  *
+ * For more details see @ref evas_textblock_style_page
+ *
  * Textblock supports the following formats:
  * @li font - Font description in fontconfig like format, e.g: "Sans:style=Italic:lang=hi". or "Serif:style=Bold".
  * @li font_weight - Overrides the weight defined in "font". E.g: "font_weight=Bold" is the same as "font=:style=Bold". Supported weights: "normal", "thin", "ultralight", "light", "book", "medium", "semibold", "bold", "ultrabold", "black", and "extrablack".

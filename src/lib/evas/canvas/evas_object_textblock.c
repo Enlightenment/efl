@@ -1,6 +1,6 @@
 /**
  * @internal
- * @section Evas_Object_Textblock_Internal Internal Textblock Object Tutorial
+ * @subsection Evas_Object_Textblock_Internal Internal Textblock Object Tutorial
  *
  * This explains the internal design of the Evas Textblock Object, it's assumed
  * that the reader of this section has already read @ref Evas_Object_Textblock_Tutorial "Textblock's usage docs.".
@@ -1100,6 +1100,12 @@ static const char *underline_dash_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
 
 /**
+ * @page evas_textblock_style_page Evas Textblock Style Options
+ *
+ * @brief This page describes how to style text in an Evas Text Block.
+ */
+
+/**
  * @internal
  * Init the format strings.
  */
@@ -1108,6 +1114,53 @@ _format_command_init(void)
 {
    if (format_refcount == 0)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @section evas_textblock_style_index Index
+         *
+         * The following styling commands are accepted:
+         * @li @ref evas_textblock_style_font
+         * @li @ref evas_textblock_style_font_fallback
+         * @li @ref evas_textblock_style_font_size
+         * @li @ref evas_textblock_style_font_source
+         * @li @ref evas_textblock_style_font_weight
+         * @li @ref evas_textblock_style_font_style
+         * @li @ref evas_textblock_style_font_width
+         * @li @ref evas_textblock_style_lang
+         * @li @ref evas_textblock_style_color
+         * @li @ref evas_textblock_style_underline_color
+         * @li @ref evas_textblock_style_underline2_color
+         * @li @ref evas_textblock_style_underline_dash_color
+         * @li @ref evas_textblock_style_outline_color
+         * @li @ref evas_textblock_style_shadow_color
+         * @li @ref evas_textblock_style_glow_color
+         * @li @ref evas_textblock_style_glow2_color
+         * @li @ref evas_textblock_style_backing_color
+         * @li @ref evas_textblock_style_strikethrough_color
+         * @li @ref evas_textblock_style_align
+         * @li @ref evas_textblock_style_valign
+         * @li @ref evas_textblock_style_wrap
+         * @li @ref evas_textblock_style_left_margin
+         * @li @ref evas_textblock_style_right_margin
+         * @li @ref evas_textblock_style_underline
+         * @li @ref evas_textblock_style_strikethrough
+         * @li @ref evas_textblock_style_backing
+         * @li @ref evas_textblock_style_style
+         * @li @ref evas_textblock_style_tabstops
+         * @li @ref evas_textblock_style_linesize
+         * @li @ref evas_textblock_style_linerelsize
+         * @li @ref evas_textblock_style_linegap
+         * @li @ref evas_textblock_style_linerelgap
+         * @li @ref evas_textblock_style_item
+         * @li @ref evas_textblock_style_linefill
+         * @li @ref evas_textblock_style_ellipsis
+         * @li @ref evas_textblock_style_password
+         * @li @ref evas_textblock_style_underline_dash_width
+         * @li @ref evas_textblock_style_underline_dash_gap
+         *
+         * @section evas_textblock_style_contents Contents
+         */
         fontstr = eina_stringshare_add("font");
         font_fallbacksstr = eina_stringshare_add("font_fallbacks");
         font_sizestr = eina_stringshare_add("font_size");
@@ -1261,14 +1314,45 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
 
    if (cmd == fontstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font Font
+         *
+         * This sets the name of the font to be used.
+         * @code
+         * font=<font name>
+         * @endcode
+         */
         evas_font_name_parse(fmt->font.fdesc, tmp_param);
      }
    else if (cmd == font_fallbacksstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_fallback Font fallback
+         *
+         * This sets the name of the fallback font to be used. This font will
+         * be used if the primary font is not available.
+         * @code
+         * font_fallbacks=<font name>
+         * @endcode
+         */
         eina_stringshare_replace(&(fmt->font.fdesc->fallbacks), tmp_param);
      }
    else if (cmd == font_sizestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_size Font size
+         *
+         * This sets the the size of font in points to be used.
+         * @code
+         * font_size=<size>
+         * @endcode
+         */
         int v;
 
         v = atoi(tmp_param);
@@ -1279,6 +1363,16 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == font_sourcestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_source Font source
+         *
+         * Specify an object from which to search for the font.
+         * @code
+         * font_source=<source>
+         * @endcode
+         */
         if ((!fmt->font.source) ||
               ((fmt->font.source) && (strcmp(fmt->font.source, tmp_param))))
           {
@@ -1288,65 +1382,295 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == font_weightstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_weight Font weight
+         *
+         * Sets the weight of the font. The value must be one of:
+         * @li "normal"
+         * @li "thin"
+         * @li "ultralight"
+         * @li "light"
+         * @li "book"
+         * @li "medium"
+         * @li "semibold"
+         * @li "bold"
+         * @li "ultrabold"
+         * @li "black"
+         * @li "extrablack"
+         * @code
+         * font_weight=<weight>
+         * @endcode
+         */
         fmt->font.fdesc->weight = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WEIGHT);
      }
    else if (cmd == font_stylestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_style Font style
+         *
+         * Sets the style of the font. The value must be one of:
+         * @li "normal"
+         * @li "oblique"
+         * @li "italic"
+         * @code
+         * font_style=<style>
+         * @endcode
+         */
         fmt->font.fdesc->slant = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_SLANT);
      }
    else if (cmd == font_widthstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_font_width Font width
+         *
+         * Sets the width of the font. The value must be one of:
+         * @li "normal"
+         * @li "ultracondensed"
+         * @li "extracondensed"
+         * @li "condensed"
+         * @li "semicondensed"
+         * @li "semiexpanded"
+         * @li "expanded"
+         * @li "extraexpanded"
+         * @li "ultraexpanded"
+         * @code
+         * font_width=<width>
+         * @endcode
+         */
         fmt->font.fdesc->width = evas_font_style_find(tmp_param,
               tmp_param + strlen(tmp_param), EVAS_FONT_STYLE_WIDTH);
      }
    else if (cmd == langstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_lang Language
+         *
+         * Sets the language of the text for FontConfig.
+         * @code
+         * lang=<language>
+         * @endcode
+         */
         eina_stringshare_replace(&(fmt->font.fdesc->lang), tmp_param);
      }
    else if (cmd == colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_color Color
+      *
+      * Sets the color of the text. The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.normal.r), &(fmt->color.normal.g),
            &(fmt->color.normal.b), &(fmt->color.normal.a));
    else if (cmd == underline_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_underline_color Underline Color
+      *
+      * Sets the color of the underline. The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * underline_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.underline.r), &(fmt->color.underline.g),
            &(fmt->color.underline.b), &(fmt->color.underline.a));
    else if (cmd == underline2_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_underline2_color Second Underline Color
+      *
+      * Sets the color of the second line of underline(when using underline
+      * mode "double"). The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * underline2_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.underline2.r), &(fmt->color.underline2.g),
            &(fmt->color.underline2.b), &(fmt->color.underline2.a));
    else if (cmd == underline_dash_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_underline_dash_color Underline Dash Color
+      *
+      * Sets the color of dashed underline. The following formats are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * underline_dash_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.underline_dash.r), &(fmt->color.underline_dash.g),
            &(fmt->color.underline_dash.b), &(fmt->color.underline_dash.a));
    else if (cmd == outline_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_outline_color Outline Color
+      *
+      * Sets the color of the outline of the text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * outline_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.outline.r), &(fmt->color.outline.g),
            &(fmt->color.outline.b), &(fmt->color.outline.a));
    else if (cmd == shadow_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_shadow_color Shadow Color
+      *
+      * Sets the color of the shadow of the text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * shadow_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.shadow.r), &(fmt->color.shadow.g),
            &(fmt->color.shadow.b), &(fmt->color.shadow.a));
    else if (cmd == glow_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_glow_color First Glow Color
+      *
+      * Sets the first color of the glow of text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * glow_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.glow.r), &(fmt->color.glow.g),
            &(fmt->color.glow.b), &(fmt->color.glow.a));
    else if (cmd == glow2_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_glow2_color Second Glow Color
+      *
+      * Sets the second color of the glow of text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * glow2_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.glow2.r), &(fmt->color.glow2.g),
            &(fmt->color.glow2.b), &(fmt->color.glow2.a));
    else if (cmd == backing_colorstr)
-     _format_color_parse(tmp_param,
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_backing_color Backing Color
+      *
+      * Sets a background color for text. The following formats are
+      * accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * backing_color=<color>
+      * @endcode
+      */
+     _format_color_parse(tmp_param,11
            &(fmt->color.backing.r), &(fmt->color.backing.g),
            &(fmt->color.backing.b), &(fmt->color.backing.a));
    else if (cmd == strikethrough_colorstr)
+     /**
+      * @page evas_textblock_style_page Evas Textblock Style Options
+      *
+      * @subsection evas_textblock_style_strikethrough_color Strikethrough Color
+      *
+      * Sets the color of text that is striked through. The following formats
+      * are accepted:
+      * @li "#RRGGBB"
+      * @li "#RRGGBBAA"
+      * @li "#RGB"
+      * @li "#RGBA"
+      * @code
+      * strikethrough_color=<color>
+      * @endcode
+      */
      _format_color_parse(tmp_param,
            &(fmt->color.strikethrough.r), &(fmt->color.strikethrough.g),
            &(fmt->color.strikethrough.b), &(fmt->color.strikethrough.a));
    else if (cmd == alignstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_align Horizontal Align
+         *
+         * Sets the horizontal alignment of the text. The value can either be
+         * a number, a percentage or one of several presets:
+         * @li "auto" - Respects LTR/RTL settings
+         * @li "center" - Centers the text in the line
+         * @li "middle" - Alias for "center"
+         * @li "left" - Puts the text at the left of the line
+         * @li "right" - Puts the text at the right of the line
+         * @li <number> - A number between 0.0 and 1.0 where 0.0 represents
+         * "left" and 1.0 represents "right"
+         * @li <number>% - A percentage between 0% and 100% where 0%
+         * represents "left" and 100% represents "right"
+         * @code
+         * align=<value or preset>
+         * @endcode
+         */
         if (!strcmp(tmp_param, "auto"))
           {
              fmt->halign_auto = EINA_TRUE;
@@ -1377,6 +1701,30 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == valignstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_valign Vertical Align
+         *
+         * Sets the vertical alignment of the text. The value can either be
+         * a number or one of the following presets:
+         * @li "top" - Puts text at the top of the line
+         * @li "center" - Centers the text in the line
+         * @li "middle" - Alias for "center"
+         * @li "bottom" - Puts the text at the bottom of the line
+         * @li "baseline" - Baseline
+         * @li "base" - Alias for "baseline"
+         * @li <number> - A number between 0.0 and 1.0 where 0.0 represents
+         * "top" and 1.0 represents "bottom"
+         * @li <number>% - A percentage between 0% and 100% where 0%
+         * represents "top" and 100% represents "bottom"
+         * @code
+         * valign=<value or preset>
+         * @endcode
+         *
+         * See explanation of baseline at:
+         * https://en.wikipedia.org/wiki/Baseline_%28typography%29
+         */
         if (!strcmp(tmp_param, "top")) fmt->valign = 0.0;
         else if (!strcmp(tmp_param, "middle")) fmt->valign = 0.5;
         else if (!strcmp(tmp_param, "center")) fmt->valign = 0.5;
@@ -1401,6 +1749,21 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == wrapstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_wrap Wrap
+         *
+         * Sets the wrap policy of the text. The value must be one of the
+         * following:
+         * @li "word" - Only wraps lines at word boundaries
+         * @li "char" - Wraps at any character
+         * @li "mixed" - Wrap at words if possible, if not at any character
+         * @li "" - Don't wrap
+         * @code
+         * wrap=<value or preset>
+         * @endcode
+         */
         if (!strcmp(tmp_param, "word"))
           {
              fmt->wrap_word = 1;
@@ -1423,6 +1786,21 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == left_marginstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_left_margin Left margin
+         *
+         * Sets the left margin of the text. The value can be a number, an
+         * increment, decrement or "reset":
+         * @li +<number> - Increments existing left margin by <number>
+         * @li -<number> - Decrements existing left margin by <number>
+         * @li <number> - Sets left margin to <number>
+         * @li "reset" - Sets left margin to 0
+         * @code
+         * left_margin=<value or reset>
+         * @endcode
+         */
         if (!strcmp(tmp_param, "reset"))
           fmt->margin.l = 0;
         else
@@ -1438,6 +1816,21 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == right_marginstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_right_margin Right margin
+         *
+         * Sets the right margin of the text. The value can be a number, an
+         * increment, decrement or "reset":
+         * @li +<number> - Increments existing right margin by <number>
+         * @li -<number> - Decrements existing right margin by <number>
+         * @li <number> - Sets left margin to <number>
+         * @li "reset" - Sets left margin to 0
+         * @code
+         * right_margin=<value or reset>
+         * @endcode
+         */
         if (!strcmp(tmp_param, "reset"))
           fmt->margin.r = 0;
         else
@@ -1453,6 +1846,22 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == underlinestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline Underline
+         *
+         * Sets if and how a text will be underlined. The value must be one of
+         * the following:
+         * @li "off" - No underlining
+         * @li "single" - A single line under the text
+         * @li "on" - Alias for "single"
+         * @li "double" - Two lines under the text
+         * @li "dashed" - A dashed line under the text
+         * @code
+         * underline=off/single/on/double/dashed
+         * @endcode
+         */
         if (!strcmp(tmp_param, "off"))
           {
              fmt->underline = 0;
@@ -1474,6 +1883,19 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == strikethroughstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_strikethrough Strikethrough
+         *
+         * Sets if the text will be striked through. The value must be one of
+         * the following:
+         * @li "off" - No strikethrough
+         * @li "on" - Strikethrough
+         * @code
+         * strikethrough=on/off
+         * @endcode
+         */
         if (!strcmp(tmp_param, "off"))
           fmt->strikethrough = 0;
         else if (!strcmp(tmp_param, "on"))
@@ -1481,6 +1903,19 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == backingstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_backing Backing
+         *
+         * Sets if the text will have backing. The value must be one of
+         * the following:
+         * @li "off" - No backing
+         * @li "on" - Backing
+         * @code
+         * backing=on/off
+         * @endcode
+         */
         if (!strcmp(tmp_param, "off"))
           fmt->backing = 0;
         else if (!strcmp(tmp_param, "on"))
@@ -1488,6 +1923,41 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == stylestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_style Style
+         *
+         * Sets the style of the text. The value must be a string composed of
+         * two comma separated parts. The first part of the value sets the
+         * appearance of the text, the second the position.
+         *
+         * The first part may be any of the following values:
+         * @li "plain"
+         * @li "off" - Alias for "plain"
+         * @li "none" - Alias for "plain"
+         * @li "shadow"
+         * @li "outline"
+         * @li "soft_outline"
+         * @li "outline_shadow"
+         * @li "outline_soft_shadow"
+         * @li "glow"
+         * @li "far_shadow"
+         * @li "soft_shadow"
+         * @li "far_soft_shadow"
+         * The second part may be any of the following values:
+         * @li "bottom_right"
+         * @li "bottom"
+         * @li "bottom_left"
+         * @li "left"
+         * @li "top_left"
+         * @li "top"
+         * @li "top_right"
+         * @li "right"
+         * @code
+         * style=<appearance>,<position>
+         * @endcode
+         */
         char *p1, *p2, *p, *pp;
 
         p1 = alloca(len + 1);
@@ -1545,16 +2015,50 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == tabstopsstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_tabstops Tabstops
+         *
+         * Sets the size of the tab character. The value must be a number
+         * greater than one.
+         * @code
+         * tabstops=<number>
+         * @endcode
+         */
         fmt->tabstops = atoi(tmp_param);
         if (fmt->tabstops < 1) fmt->tabstops = 1;
      }
    else if (cmd == linesizestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linesize Line size
+         *
+         * Sets the size of line of text. The value should be a number.
+         * @warning Setting this value sets linerelsize to 0%!
+         * @code
+         * linesize=<number>
+         * @endcode
+         */
         fmt->linesize = atoi(tmp_param);
         fmt->linerelsize = 0.0;
      }
    else if (cmd == linerelsizestr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linerelsize Relative line size
+         *
+         * Sets the relative size of line of text. The value must be a
+         * percentage.
+         * @warning Setting this value sets linesize to 0!
+         * @code
+         * linerelsize=<number>%
+         * @endcode
+         */
         char *endptr = NULL;
         double val = strtod(tmp_param, &endptr);
         if (endptr)
@@ -1571,11 +2075,35 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == linegapstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linegap Line gap
+         *
+         * Sets the size of the line gap in text. The value should be a
+         * number.
+         * @warning Setting this value sets linerelgap to 0%!
+         * @code
+         * linegap=<number>
+         * @endcode
+         */
         fmt->linegap = atoi(tmp_param);
         fmt->linerelgap = 0.0;
      }
    else if (cmd == linerelgapstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linerelgap Relative line gap
+         *
+         * Sets the relative size of the line gap in text. The value must be
+         * a percentage.
+         * @warning Setting this value sets linegap to 0!
+         * @code
+         * linerelgap=<number>%
+         * @endcode
+         */
         char *endptr = NULL;
         double val = strtod(tmp_param, &endptr);
         if (endptr)
@@ -1592,11 +2120,32 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == itemstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_item Item
+         *
+         * Not implemented! Does nothing!
+         * @code
+         * item=<anything>
+         * @endcode
+         */
         // itemstr == replacement object items in textblock - inline imges
         // for example
      }
    else if (cmd == linefillstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_linefill Line fill
+         *
+         * Sets the size of the line fill in text. The value must be a
+         * percentage.
+         * @code
+         * linefill=<number>%
+         * @endcode
+         */
         char *endptr = NULL;
         double val = strtod(tmp_param, &endptr);
         if (endptr)
@@ -1612,6 +2161,19 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == ellipsisstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_ellipsis Ellipsis
+         *
+         * Sets ellipsis mode. The value should be a number. Any value smaller
+         * than 0.0 or greater than 1.0 disables ellipsis.
+         * A value of 0 means ellipsizing the leftmost portion of the text
+         * first, 1 on the other hand the rightmost portion.
+         * @code
+         * ellipsis=<number>
+         * @endcode
+         */
         char *endptr = NULL;
         fmt->ellipsis = strtod(tmp_param, &endptr);
         if ((fmt->ellipsis < 0.0) || (fmt->ellipsis > 1.0))
@@ -1624,6 +2186,20 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == passwordstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_password Password
+         *
+         * Sets if the text is being used for passwords. Enabling this causes
+         * all characters to be substituted for '*'.
+         * Value must be one of the following:
+         * @li "on" - Enable
+         * @li "off" - Disable
+         * @code
+         * password=<number>
+         * @endcode
+         */
         if (!strcmp(tmp_param, "off"))
           fmt->password = 0;
         else if (!strcmp(tmp_param, "on"))
@@ -1631,11 +2207,31 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
    else if (cmd == underline_dash_widthstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline_dash_width Underline dash width
+         *
+         * Sets the width of the underline dash. The value should be a number.
+         * @code
+         * underline_dash_width=<number>
+         * @endcode
+         */
         fmt->underline_dash_width = atoi(tmp_param);
         if (fmt->underline_dash_width <= 0) fmt->underline_dash_width = 1;
      }
    else if (cmd == underline_dash_gapstr)
      {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline_dash_gap Underline dash gap
+         *
+         * Sets the gap of the underline dash. The value should be a number.
+         * @code
+         * underline_dash_gap=<number>
+         * @endcode
+         */
         fmt->underline_dash_gap = atoi(tmp_param);
         if (fmt->underline_dash_gap <= 0) fmt->underline_dash_gap = 1;
      }
