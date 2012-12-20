@@ -56,23 +56,17 @@ lib_ecore_libecore_la_CPPFLAGS = \
 @EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_CFLAGS@ \
-@USE_EVIL_CFLAGS@
-
-if HAVE_PS3
-lib_ecore_libecore_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/escape
-endif
+@USE_EVIL_CFLAGS@ \
+@USE_ESCAPE_CFLAGS@
 
 lib_ecore_libecore_la_LIBADD = \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
-@USE_EVIL_LIBS@
-
-if HAVE_PS3
-lib_ecore_libecore_la_LIBADD += lib/escape/libescape.la
-endif
-
-lib_ecore_libecore_la_LIBADD += @ECORE_LIBS@ @EFL_COV_LIBS@ -lm
+@USE_EVIL_LIBS@ \
+@USE_ESCAPE_LIBS@ \
+@ECORE_LIBS@ \
+@EFL_COV_LIBS@ \
+-lm
 
 lib_ecore_libecore_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 

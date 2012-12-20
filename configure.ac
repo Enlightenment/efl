@@ -765,6 +765,9 @@ AC_SUBST([USE_EVIL_LIBS])
 
 #### Escape
 
+USE_ESCAPE_CFLAGS=""
+USE_ESCAPE_LIBS=""
+
 if test "x${have_ps3}" = "xyes" ; then
 
 AC_MSG_NOTICE([Escape checks])
@@ -796,7 +799,13 @@ AC_SUBST([ESCAPE_LIBS])
 
 platform_pc_escape="escape >= ${PACKAGE_VERSION}"
 platform_pc="${platform_pc} ${platform_pc_escape}"
+
+USE_ESCAPE_CFLAGS="-I\$(top_srcdir)/src/lib/escape"
+USE_ESCAPE_LIBS="lib/escape/libescape.la"
 fi
+
+AC_SUBST([USE_ESCAPE_CFLAGS])
+AC_SUBST([USE_ESCAPE_LIBS])
 
 #### End of Escape
 
