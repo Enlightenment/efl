@@ -89,7 +89,8 @@ get_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    printf("resp2=%s\n", resp2);
    free(type);
 
-   edbus_proxy_property_set(proxy, "Resp2", 's', "lalala", set_property_resp2, NULL);
+   edbus_proxy_property_set(proxy, "Resp2", "s", &"lalala", set_property_resp2, NULL);
+   edbus_proxy_property_set(proxy, "int32", "i",  (void*)(intptr_t)99, set_property_resp2, NULL);
 }
 
 static void

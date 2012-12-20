@@ -245,27 +245,36 @@ _properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBu
 static EDBus_Message *
 _properties_set(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *msg)
 {
-   EDBus_Message *reply;
-   char *type, *txt;
+   char *type;
 
    type = edbus_message_iter_signature_get(iter);
-   if (type[0] != 's')
+
+   if (!strcmp(propname, "int32"))
      {
-        reply = edbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidSignature",
-                                        "Invalid type.");
-        free(type);
-        return reply;
+        int num;
+        if (type[0] != 'i')
+          goto invalid_signature;
+        edbus_message_iter_arguments_get(iter, "i", &num);
+        printf("int32 was set to: %d, previously was: %d\n", num, int32);
+        int32 = num;
      }
-
-   reply = edbus_message_method_return_new(msg);
-   edbus_message_iter_arguments_get(iter, "s", &txt);
-   printf("Resp2 was set to: %s, previously was: %s\n", txt, resp2);
+   else if (!strcmp(propname, "Resp2"))
+     {
+        const char *txt;
+        if (type[0] != 's')
+          goto invalid_signature;
+        edbus_message_iter_arguments_get(iter, "s", &txt);
+        printf("Resp2 was set to: %s, previously was: %s\n", txt, resp2);
+        free(resp2);
+        resp2 = strdup(txt);
+     }
    free(type);
-   free(resp2);
-   resp2 = strdup(txt);
-   edbus_service_property_changed(iface, propname);
+   return edbus_message_method_return_new(msg);
 
-   return reply;
+invalid_signature:
+   free(type);
+   return edbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidSignature",
+                                  "Invalid type.");
 }
 
 static const EDBus_Method methods[] = {
@@ -308,7 +317,7 @@ static const EDBus_Method methods[] = {
 static const EDBus_Property properties[] = {
       { "Resp2", "s", NULL, _properties_set },
       { "text", "s" },
-      { "int32", "i" },
+      { "int32", "i", NULL, _properties_set },
       { "st", "(ss)" },
       { }
 };
@@ -330,9 +339,6 @@ on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    unsigned int reply;
    EDBus_Service_Interface *iface = data;
-
-   resp2 = malloc(sizeof(char) * 5);
-   strcpy(resp2, "test");
 
    if (edbus_message_error_get(msg, NULL, NULL))
      {
@@ -366,6 +372,8 @@ main(void)
 
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
+   resp2 = malloc(sizeof(char) * 5);
+   strcpy(resp2, "test");
    iface = edbus_service_interface_register(conn, PATH, &iface_desc);
    edbus_name_request(conn, BUS, EDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                       on_name_request, iface);

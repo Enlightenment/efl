@@ -624,29 +624,33 @@ edbus_proxy_property_get(EDBus_Proxy *proxy, const char *name, EDBus_Message_Cb 
 }
 
 EAPI EDBus_Pending *
-edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, char type, const void *value, EDBus_Message_Cb cb, const void *data)
+edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, const char *sig, const void *value, EDBus_Message_Cb cb, const void *data)
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *iter, *variant;
    EDBus_Pending *pending;
-   char sig[2];
+
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sig, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate_single(sig, NULL), NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
 
-   if (!dbus_type_is_basic(type))
-     {
-        ERR("Only basic types may be set using edbus_proxy_property_set()");
-        return NULL;
-     }
-
-   sig[0] = type;
-   sig[1] = 0;
    msg = edbus_proxy_method_call_new(proxy->obj->properties, "Set");
    iter = edbus_message_iter_get(msg);
    edbus_message_iter_basic_append(iter, 's', proxy->interface);
    edbus_message_iter_basic_append(iter, 's', name);
    variant = edbus_message_iter_container_new(iter, 'v', sig);
-   edbus_message_iter_basic_append(variant, type, value);
+   if (dbus_type_is_basic(sig[0]))
+     dbus_message_iter_append_basic(&variant->dbus_iterator, sig[0], &value);
+   else
+     {
+        if (!_message_iter_from_eina_value_struct(sig, variant, value))
+          {
+             edbus_message_unref(msg);
+             return NULL;
+          }
+     }
    edbus_message_iter_container_close(iter, variant);
 
    pending = edbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
