@@ -965,6 +965,8 @@ _elm_image_smart_preload_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *l
 
    if (sd->edje || !sd->preloading) return;
 
+   //FIXME: Need to keep the disabled status for next image loading.
+
    evas_object_image_preload(sd->img, disable);
    sd->preloading = !disable;
 
