@@ -1175,6 +1175,8 @@ _image_data_set(Eo *eo_obj, void *_pd, va_list *list)
 
    void *data = va_arg(*list, void *);
 
+   evas_render_rendering_wait(obj->layer->evas);
+
    _evas_object_image_cleanup(eo_obj, obj, o);
    p_data = o->engine_data;
    if (data)
@@ -2214,6 +2216,8 @@ _image_native_surface_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
+
+   evas_render_rendering_wait(obj->layer->evas);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
    if (!obj->layer->evas->engine.func->image_native_set) return;
