@@ -364,7 +364,6 @@ genlist_example_02:genlist_example_02.png:0.1 \
 genlist_example_03:genlist_example_03.png:0.1 \
 genlist_example_04:genlist_example_04.png:0.1 \
 genlist_example_05:genlist_example_05.png:0.1 \
-glview_example_01:glview_example_01.png:0.0 \
 thumb_example_01:thumb_example_01.png:0.5 \
 entry_example:entry_example.png:0.0 \
 progressbar_example:progressbar_example.png:0.0 \
