@@ -132,6 +132,7 @@ src_examples_complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 if BUILD_EDBUS_CODEGEN
 bin_PROGRAMS = src/codegen/edbus-codegen
 src_codegen_edbus_codegen_SOURCES = \
+	src/codegen/codegen.h \
 	src/codegen/utils.c \
 	src/codegen/parser.c \
 	src/codegen/dbus.c \
