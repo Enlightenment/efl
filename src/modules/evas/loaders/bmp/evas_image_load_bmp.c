@@ -109,7 +109,7 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    char hasa = 0;
    int w = 0, h = 0, bit_count = 0, image_size = 0, comp = 0;
    unsigned int offset, head_size, amask = 0;
-   int fsize = 0;
+   size_t fsize;
    unsigned int bmpsize;
    unsigned short res1, res2;
 
@@ -393,7 +393,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      rmask = 0, gmask = 0, bmask = 0, amask = 0;
    int right_way_up = 0;
    unsigned char r, g, b, a;
-   int fsize = 0;
+   size_t fsize;
    unsigned int bmpsize;
    unsigned short res1, res2;
 
