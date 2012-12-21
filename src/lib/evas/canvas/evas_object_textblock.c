@@ -1627,7 +1627,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * backing_color=<color>
       * @endcode
       */
-     _format_color_parse(tmp_param,11
+     _format_color_parse(tmp_param,
            &(fmt->color.backing.r), &(fmt->color.backing.g),
            &(fmt->color.backing.b), &(fmt->color.backing.a));
    else if (cmd == strikethrough_colorstr)
