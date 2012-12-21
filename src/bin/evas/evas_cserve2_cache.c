@@ -388,12 +388,12 @@ _open_request_response(File_Data *e, Slave_Msg_Image_Opened *resp, int *size)
 static void
 _request_failed(Entry *e, Error_Type type EINA_UNUSED)
 {
-   Eina_List *l;
+   Eina_List *l, *l_next;
    Reference *ref;
 
    e->request = NULL;
 
-   EINA_LIST_FOREACH(e->references, l, ref)
+   EINA_LIST_FOREACH_SAFE(e->references, l, l_next, ref)
      {
         Eina_Hash *hash = NULL;
         if (e->type == CSERVE2_IMAGE_FILE)
