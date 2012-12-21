@@ -1127,7 +1127,12 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
 static void
 _drop_cache_ref(void *target, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   evas_cache_image_drop((Image_Entry *)target);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cache2_image_close((Image_Entry *)target);
+   else
+#endif
+     evas_cache_image_drop((Image_Entry *)target);
 }
 
 static void
@@ -1163,7 +1168,12 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
                          0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
 
-   evas_cache_image_ref((Image_Entry *)src);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cache2_image_ref((Image_Entry *)src);
+   else
+#endif
+     evas_cache_image_ref((Image_Entry *)src);
 
    cr.image = src;
    cr.surface = dst;
@@ -1452,7 +1462,12 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    Evas_Thread_Command_Map cm;
    int clip_x, clip_y, clip_w, clip_h;
 
-   evas_cache_image_ref((Image_Entry *)src);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cache2_image_ref((Image_Entry *)src);
+   else
+#endif
+     evas_cache_image_ref((Image_Entry *)src);
 
    cm.image = src;
    memcpy(&cm.image_ctx, dc, sizeof(*dc));

@@ -892,6 +892,12 @@ evas_cache2_image_scale_load(Image_Entry *im, int src_x, int src_y, int src_w, i
 }
 
 EAPI void
+evas_cache2_image_ref(Image_Entry *im)
+{
+   im->references++;
+}
+
+EAPI void
 evas_cache2_image_close(Image_Entry *im)
 {
    Evas_Cache2 *cache;
