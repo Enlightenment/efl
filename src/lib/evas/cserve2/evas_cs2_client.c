@@ -993,13 +993,29 @@ evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, 
    return fe;
 }
 
+static inline int
+_font_load_wait(Font_Entry *fe)
+{
+   _server_dispatch_until(fe->rid);
+
+   if (fe->failed) return CSERVE2_GENERIC;
+
+   return CSERVE2_NONE;
+}
+
 void
 evas_cserve2_font_free(Font_Entry *fe)
 {
+   int ret;
+
    if (!fe) return;
 
-   if (fe->failed)
-     return;
+   ret = _font_load_wait(fe);
+   if (ret == CSERVE2_GENERIC)
+     {
+        ERR("Failed to wait loading font '%s'.", fe->name);
+        return;
+     }
 
    _font_load_server_send(fe, CSERVE2_FONT_UNLOAD);
 

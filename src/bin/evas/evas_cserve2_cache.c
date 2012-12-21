@@ -991,10 +991,10 @@ _entry_free_cb(void *data)
 static void
 _font_entry_reference_del(Client *client, Font_Entry *fe)
 {
-   Eina_List *l;
+   Eina_List *l, *l_next;
    Reference *ref;
 
-   EINA_LIST_FOREACH(client->fonts.referencing, l, ref)
+   EINA_LIST_FOREACH_SAFE(client->fonts.referencing, l, l_next, ref)
      {
         if (ref->entry == (Entry *)fe)
           {
@@ -1203,12 +1203,12 @@ _font_load_request_response(Font_Entry *fe, Slave_Msg_Font_Loaded *msg, int *siz
 static void
 _font_load_request_failed(Font_Entry *fe, Error_Type error EINA_UNUSED)
 {
-   Eina_List *l;
+   Eina_List *l, *l_next;
    Reference *ref;
 
    if (fe->base.request) fe->base.request = NULL;
 
-   EINA_LIST_FOREACH(fe->base.references, l, ref)
+   EINA_LIST_FOREACH_SAFE(fe->base.references, l, l_next, ref)
      _font_entry_reference_del(ref->client, fe);
 }
 
