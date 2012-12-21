@@ -11,6 +11,7 @@ typedef struct _Entry Entry;
 typedef struct _Sel Sel;
 typedef struct _Anchor Anchor;
 
+static void _edje_entry_imf_cursor_location_set(Entry *en);
 static void _edje_entry_imf_cursor_info_set(Entry *en);
 
 struct _Entry
@@ -1743,7 +1744,7 @@ _edje_part_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-   _edje_entry_imf_cursor_info_set(en);
+   _edje_entry_imf_cursor_location_set(en);
 }
 
 static void
@@ -3565,17 +3566,28 @@ _edje_entry_imf_context_reset(Edje_Real_Part *rp)
 }
 
 static void
-_edje_entry_imf_cursor_info_set(Entry *en)
+_edje_entry_imf_cursor_location_set(Entry *en)
 {
 #ifdef HAVE_ECORE_IMF
    Evas_Coord cx, cy, cw, ch;
    if (!en || !en->rp || !en->imf_context) return;
 
    _edje_entry_cursor_geometry_get(en->rp, &cx, &cy, &cw, &ch);
+   ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
+#else
+   (void) en;
+#endif
+}
+
+static void
+_edje_entry_imf_cursor_info_set(Entry *en)
+{
+#ifdef HAVE_ECORE_IMF
+   if (!en || !en->rp || !en->imf_context) return;
 
    ecore_imf_context_cursor_position_set(en->imf_context,
                                          evas_textblock_cursor_pos_get(en->cursor));
-   ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
+   _edje_entry_imf_cursor_location_set(en);
 #else
    (void) en;
 #endif
