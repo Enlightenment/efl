@@ -1271,8 +1271,7 @@ _elm_prefs_data_set(Eo *obj, void *_pd, va_list *list)
         INF("resetting prefs to default values");
         _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 
-        *ret = EINA_TRUE;
-        return;
+        goto end;
      }
 
    elm_prefs_data_ref(sd->prefs_data);
@@ -1280,6 +1279,10 @@ _elm_prefs_data_set(Eo *obj, void *_pd, va_list *list)
    sd->values_fetching = EINA_TRUE;
    _elm_prefs_values_get_user(sd, sd->root);
    sd->values_fetching = EINA_FALSE;
+
+end:
+   evas_object_smart_callback_call
+     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
 
    *ret = EINA_TRUE;
 }

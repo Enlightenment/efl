@@ -399,15 +399,15 @@ enum
  * element modification by using elm_prefs_autosave_set().
  *
  * This widget emits the following signals:
- * - @c "page,changed": a given page has changed (event info is the
- *                      page's name)
  * - @c "page,saved": a given page has had its values saved back on
  *                    user config file (event info is the page's
  *                    name)
  * - @c "page,reset": a given page has had its values reset (event
  *                    info is the page's name)
- * - @c "page,loaded": a given page has been loaded (event info is
- *                     the page's name)
+ * - @c "page,changed": a given page has been loaded <b>with user
+ *                     (@c .cfg) values</b> (event info is the page's name)
+ * - @c "page,loaded": a given page has been loaded <b>with system
+ *                     (@c .epb) values</b> (event info is the page's name)
  * - @c "item,changed": a given page's item has changed (event info is
  *                      the item's full hierarchical name, in the form
  *                      @c "page:subpage:subsubpage:item")
