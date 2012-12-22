@@ -339,6 +339,7 @@ eio_monitor_stringshared_add(const char *path)
 EAPI void
 eio_monitor_del(Eio_Monitor *monitor)
 {
+   if (!monitor) return;
    EINA_REFCOUNT_UNREF(monitor)
      _eio_monitor_free(monitor);
 }
