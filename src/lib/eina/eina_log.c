@@ -1162,7 +1162,7 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
      }
 
    // Use an allocated slot
-             eina_log_domain_new(&_log_domains[i], name, color);
+   eina_log_domain_new(&_log_domains[i], name, color);
    _log_domains_count++;
 
 finish_register:
