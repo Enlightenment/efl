@@ -404,6 +404,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    RGBA_Font_Int *fi;
    RGBA_Font_Glyph *fg;
    Eina_Inarray *glyphs;
+   size_t unit = 32;
    EVAS_FONT_WALK_TEXT_INIT();
 
    fi = text_props->font_instance;
@@ -412,7 +413,8 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    if (!text_props->changed && text_props->generation == fi->generation && text_props->glyphs)
      return;
 
-   glyphs = eina_inarray_new(sizeof(Evas_Glyph), 32);
+   if (text_props->len < unit) unit = text_props->len;
+   glyphs = eina_inarray_new(sizeof(Evas_Glyph), unit);
    evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
