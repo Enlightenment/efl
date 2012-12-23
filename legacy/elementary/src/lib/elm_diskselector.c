@@ -548,9 +548,7 @@ _item_click_cb(void *data,
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Diskselector_Item *it = (Elm_Diskselector_Item *)data;
    const char *txt = NULL;

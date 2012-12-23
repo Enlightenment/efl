@@ -239,9 +239,7 @@ _radio_on_cb(void *data,
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -252,9 +250,7 @@ _access_info_cb(void *data __UNUSED__,
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__,
-                 Evas_Object *obj,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    ELM_RADIO_DATA_GET(obj, sd);
 

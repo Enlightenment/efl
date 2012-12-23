@@ -494,9 +494,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    const char *txt = NULL;
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
@@ -509,9 +507,7 @@ _access_info_cb(void *data,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);

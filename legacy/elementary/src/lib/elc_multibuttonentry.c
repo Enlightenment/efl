@@ -1470,9 +1470,7 @@ _elm_multibuttonentry_smart_text_get(Eo *obj, void *_pd, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;

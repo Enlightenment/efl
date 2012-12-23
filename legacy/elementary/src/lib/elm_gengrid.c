@@ -570,9 +570,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, NULL);
@@ -597,9 +595,7 @@ _access_info_cb(void *data,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, NULL);

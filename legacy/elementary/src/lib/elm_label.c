@@ -322,9 +322,7 @@ _elm_label_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 

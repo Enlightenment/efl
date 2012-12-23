@@ -150,9 +150,7 @@ _elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;

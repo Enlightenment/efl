@@ -111,12 +111,12 @@ _access_obj_over_timeout_cb(void *data)
      {
         if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
         _elm_access_object_hilight(data);
-        _elm_access_read(ac, ELM_ACCESS_CANCEL, data, NULL);
-        _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
-        _elm_access_read(ac, ELM_ACCESS_INFO,   data, NULL);
-        _elm_access_read(ac, ELM_ACCESS_STATE,  data, NULL);
-        _elm_access_read(ac, ELM_ACCESS_EXTERNAL_INFO,   data, NULL);
-        _elm_access_read(ac, ELM_ACCESS_DONE,   data, NULL);
+        _elm_access_read(ac, ELM_ACCESS_CANCEL, data);
+        _elm_access_read(ac, ELM_ACCESS_TYPE,   data);
+        _elm_access_read(ac, ELM_ACCESS_INFO,   data);
+        _elm_access_read(ac, ELM_ACCESS_STATE,  data);
+        _elm_access_read(ac, ELM_ACCESS_CONTEXT_INFO, data);
+        _elm_access_read(ac, ELM_ACCESS_DONE,   data);
      }
    ac->delay_timer = NULL;
    return EINA_FALSE;
@@ -331,7 +331,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 }
 
 EAPI char *
-_elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item)
+_elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj)
 {
    Elm_Access_Item *ai;
    Eina_List *l;
@@ -341,7 +341,7 @@ _elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_
      {
         if (ai->type == type)
           {
-             if (ai->func) return ai->func((void *)(ai->data), obj, item);
+             if (ai->func) return ai->func((void *)(ai->data), obj);
              else if (ai->data) return strdup(ai->data);
              return NULL;
           }
@@ -350,9 +350,9 @@ _elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_
 }
 
 EAPI void
-_elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item)
+_elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj)
 {
-   char *txt = _elm_access_text_get(ac, type, obj, item);
+   char *txt = _elm_access_text_get(ac, type, obj);
 
    _access_init();
    if (mapi)
@@ -406,7 +406,7 @@ _elm_access_object_get(const Evas_Object *obj)
 EAPI void
 _elm_access_object_hilight(Evas_Object *obj)
 {
-   Evas_Object *o;
+   Evas_Object *o, *parent_obj;
    Evas_Coord x, y, w, h;
 
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
@@ -433,7 +433,13 @@ _elm_access_object_hilight(Evas_Object *obj)
           }
      }
    evas_object_data_set(o, "_elm_access_target", obj);
-   elm_widget_theme_object_set(obj, o, "access", "base", "default");
+
+   parent_obj = obj;
+   if (!elm_widget_is(obj))
+      parent_obj = evas_object_data_get(obj, "_elm_access_parent");
+
+   elm_widget_theme_object_set(parent_obj, o, "access", "base", "default");
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _access_obj_hilight_del_cb, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
@@ -500,8 +506,7 @@ _content_move(void *data, Evas *e __UNUSED__, Evas_Object *obj,
 }
 
 static char *
-_part_access_info_cb(void *data, Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_part_access_info_cb(void *data, Evas_Object *obj)
 {
    Evas_Object *eobj = data;
    if (!eobj) return NULL;
@@ -784,10 +789,73 @@ static const Eo_Class_Description class_desc = {
 };
 
 EAPI void
+elm_access_text_set(Evas_Object *obj, int type, const char *text)
+{
+   _elm_access_text_set(_elm_access_object_get(obj), type, text);
+}
+
+EAPI char *
+elm_access_text_get(Evas_Object *obj, int type)
+{
+   return _elm_access_text_get(_elm_access_object_get(obj), type, obj);
+}
+
+EAPI void
+elm_access_cb_set(Evas_Object *obj, int type,
+                  Elm_Access_Content_Cb func, const void *data)
+{
+   _elm_access_callback_set(_elm_access_object_get(obj), type, func, data);
+}
+
+
+EAPI void
+elm_access_object_register(Evas_Object *parent, Evas_Object *target)
+{
+   Elm_Access_Info *ai;
+
+   if (!parent || !target) return;
+
+   evas_object_event_callback_add(target, EVAS_CALLBACK_MOUSE_IN,
+                                  _access_obj_mouse_in_cb, target);
+   evas_object_event_callback_add(target, EVAS_CALLBACK_MOUSE_OUT,
+                                  _access_obj_mouse_out_cb, target);
+   evas_object_event_callback_add(target, EVAS_CALLBACK_DEL,
+                                  _access_obj_del_cb, target);
+   ai = calloc(1, sizeof(Elm_Access_Info));
+   evas_object_data_set(target, "_elm_access", ai);
+
+   //TODO: evas_object_data_del(); parent should take care of children.
+   evas_object_data_set(target, "_elm_access_parent", parent);
+}
+
+EAPI void
+elm_access_object_unregister(Evas_Object *obj)
+{
+   Elm_Access_Info *ac;
+
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
+                                       _access_obj_mouse_in_cb, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_OUT,
+                                       _access_obj_mouse_out_cb, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _access_obj_del_cb, obj);
+
+   ac = evas_object_data_get(obj, "_elm_access");
+   evas_object_data_del(obj, "_elm_access");
+   if (ac)
+     {
+        _elm_access_clear(ac);
+        free(ac);
+     }
+
+   evas_object_data_del(obj, "_elm_access_parent");
+}
+
+EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text)
 {
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_EXTERNAL_INFO, text);
+     (_elm_access_object_get(obj), ELM_ACCESS_CONTEXT_INFO, text);
 }
 
 EAPI char *
@@ -796,7 +864,7 @@ elm_access_external_info_get(const Evas_Object *obj)
    Elm_Access_Info *ac;
 
    ac = _elm_access_object_get(obj);
-   return _elm_access_text_get(ac, ELM_ACCESS_EXTERNAL_INFO, obj, NULL);
+   return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, (Evas_Object *)obj);
 }
 
 EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);

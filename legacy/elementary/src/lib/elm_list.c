@@ -1347,9 +1347,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_List_Item *it = (Elm_List_Item *)data;
    const char *txt = NULL;
@@ -1362,9 +1360,7 @@ _access_info_cb(void *data,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_List_Item *it = (Elm_List_Item *)data;
    if (!it) return NULL;

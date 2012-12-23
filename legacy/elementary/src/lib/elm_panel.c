@@ -35,9 +35,7 @@ _elm_panel_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    ELM_PANEL_DATA_GET(data, sd);
 

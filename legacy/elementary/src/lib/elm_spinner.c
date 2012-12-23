@@ -496,9 +496,7 @@ _elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj)
 {
    Evas_Object *spinner;
    const char *txt = elm_widget_access_info_get(obj);
@@ -511,9 +509,7 @@ _access_info_cb(void *data,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    if (elm_widget_disabled_get(data))
      return strdup(E_("State: Disabled"));

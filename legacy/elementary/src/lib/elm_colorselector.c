@@ -1308,9 +1308,7 @@ _on_color_released(void *data,
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    char *ret;
    Eina_Strbuf *buf;

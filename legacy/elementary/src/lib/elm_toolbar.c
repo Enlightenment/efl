@@ -1625,9 +1625,7 @@ _layout(Evas_Object *o,
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
    const char *txt = ((Elm_Widget_Item *)it)->access_info;
@@ -1639,9 +1637,7 @@ _access_info_cb(void *data,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
 

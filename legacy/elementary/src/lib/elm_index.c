@@ -72,9 +72,7 @@ _index_box_clear(Evas_Object *obj,
 }
 
 static char *
-_access_info_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    const char *txt = NULL;
 

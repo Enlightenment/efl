@@ -193,9 +193,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -206,9 +204,7 @@ _access_info_cb(void *data __UNUSED__,
 }
 
 static char *
-_access_state_cb(void *data,
-                 Evas_Object *obj,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj)
 {
    Elm_Check_Smart_Data *sd = eo_data_get(data, MY_CLASS);
    const char *on_text, *off_text;

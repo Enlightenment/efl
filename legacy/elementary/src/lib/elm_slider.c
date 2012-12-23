@@ -711,9 +711,7 @@ _elm_slider_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
-                Evas_Object *obj,
-                Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -724,14 +722,12 @@ _access_info_cb(void *data __UNUSED__,
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__,
-                 Evas_Object *obj,
-                 Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf = eina_strbuf_new();
    const char *txt = elm_layout_text_get(obj, "elm.units");
-   
+
    if (txt) eina_strbuf_append(buf, txt);
 
    if (elm_widget_disabled_get(obj))
