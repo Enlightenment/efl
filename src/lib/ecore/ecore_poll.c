@@ -392,6 +392,7 @@ ecore_poller_del(Ecore_Poller *obj)
 {
    void *data;
 
+   if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Poller_Private_Data *poller = eo_data_get(obj, MY_CLASS);
    /* we are walking the poller list - a bad idea to remove from it while

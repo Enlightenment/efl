@@ -398,6 +398,7 @@ ecore_animator_del(Ecore_Animator *obj)
 {
    void *data = NULL;
 
+   if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Animator_Private_Data *animator = eo_data_get(obj, MY_CLASS);
    _ecore_lock();

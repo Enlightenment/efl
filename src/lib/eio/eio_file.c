@@ -846,6 +846,7 @@ eio_file_stat_ls(const char *dir,
 EAPI Eina_Bool
 eio_file_cancel(Eio_File *ls)
 {
+   if (!ls) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
    return ecore_thread_cancel(ls->thread);
 }

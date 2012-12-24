@@ -552,6 +552,7 @@ ecore_con_server_timeout_get(Ecore_Con_Server *svr)
 EAPI void *
 ecore_con_server_del(Ecore_Con_Server *svr)
 {
+   if (!svr) return NULL;
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_del");
@@ -854,6 +855,7 @@ ecore_con_client_timeout_get(Ecore_Con_Client *cl)
 EAPI void *
 ecore_con_client_del(Ecore_Con_Client *cl)
 {
+   if (!cl) return NULL;
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
         ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_del");

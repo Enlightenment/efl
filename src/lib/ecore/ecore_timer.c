@@ -272,6 +272,7 @@ ecore_timer_del(Ecore_Timer *timer)
 {
    void *data = NULL;
 
+   if (!timer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 

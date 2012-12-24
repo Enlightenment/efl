@@ -122,6 +122,7 @@ ecore_job_del(Ecore_Job *obj)
 {
    void *data;
 
+   if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Job_Private_Data *job = eo_data_get(obj, MY_CLASS);
    data = job->data;

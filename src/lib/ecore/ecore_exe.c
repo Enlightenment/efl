@@ -1068,6 +1068,7 @@ ecore_exe_free(Ecore_Exe *exe)
    int ok = 0;
    int result;
 
+   if (!exe) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {

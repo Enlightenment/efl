@@ -458,6 +458,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 {
    void *data;
 
+   if (!svr) return NULL;
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
@@ -874,6 +875,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
    void *data;
    Ecore_Ipc_Server *svr;
 
+   if (!cl) return NULL;
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
         ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_IPC_CLIENT,

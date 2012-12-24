@@ -67,6 +67,7 @@ ecore_file_monitor_add(const char           *path,
 EAPI void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
+   if (!em) return;
    EINA_SAFETY_ON_NULL_RETURN(em);
    ecore_file_monitor_backend_del(em);
 }

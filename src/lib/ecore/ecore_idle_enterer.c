@@ -157,6 +157,7 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
    void *data = NULL;
 
+   if (!idle_enterer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    _ecore_lock();

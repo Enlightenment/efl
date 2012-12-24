@@ -142,6 +142,7 @@ EAPI void *
 ecore_pipe_del(Ecore_Pipe *p)
 {
    void *r;
+   if (!p) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    r = _ecore_pipe_del(p);

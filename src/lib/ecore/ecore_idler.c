@@ -91,6 +91,7 @@ ecore_idler_del(Ecore_Idler *idler)
 {
    void *data = NULL;
 
+   if (!idler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    _ecore_lock();

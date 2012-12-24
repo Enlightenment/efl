@@ -128,6 +128,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
    void *data = NULL;
 
+   if (!event_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
@@ -215,6 +216,7 @@ ecore_event_del(Ecore_Event *event)
 {
    void *data = NULL;
 
+   if (!event) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
@@ -272,6 +274,7 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
    void *data = NULL;
 
+   if (!ef) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))

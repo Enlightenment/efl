@@ -63,6 +63,7 @@ Improvements:
       repeatedly calling malloc/free.
     * Display more information with eet -l -v.
     * eina_magic_fail() now throws error messages on NULL pointers instead of critical
+    * all efl object-freeing functions now take NULL without crashing or erroring
 
 Fixes:
     * Fix PPC (big endian) image codec bug.

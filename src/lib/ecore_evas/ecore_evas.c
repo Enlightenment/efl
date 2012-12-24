@@ -699,6 +699,7 @@ ecore_evas_ecore_evas_get(const Evas *e)
 EAPI void
 ecore_evas_free(Ecore_Evas *ee)
 {
+   if (!ee) return;
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,

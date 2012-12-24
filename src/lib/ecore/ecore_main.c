@@ -1174,6 +1174,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
    void *ret = NULL;
 
+   if (!fd_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
@@ -1193,6 +1194,7 @@ unlock:
 EAPI void *
 ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
 {
+   if (!win32_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(win32_handler, ECORE_MAGIC_WIN32_HANDLER))
      {

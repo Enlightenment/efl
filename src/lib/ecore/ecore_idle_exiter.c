@@ -110,6 +110,7 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
    void *data;
 
+   if (!idle_exiter) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    _ecore_lock();
