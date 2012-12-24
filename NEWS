@@ -88,3 +88,4 @@ Fixes:
     * Fix many memory problems with ecore_evas_extn.
     * Fix Evas RGBA_Image->flags.loaded for copied images.
     * Fix evas_object_image_is_inside()
+    * eio functions no longer crash when passed NULL and throw errors accordingly

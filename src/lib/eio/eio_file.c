@@ -870,6 +870,8 @@ eio_file_associate_add(Eio_File *ls,
                        const char *key,
                        const void *data, Eina_Free_Cb free_cb)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
    /* FIXME: Check if we are in the right worker thred */
    if (!ls->worker.associated)
      ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
@@ -884,6 +886,8 @@ eio_file_associate_direct_add(Eio_File *ls,
                               const char *key,
                               const void *data, Eina_Free_Cb free_cb)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
    /* FIXME: Check if we are in the right worker thred */
    if (!ls->worker.associated)
      ls->worker.associated = eina_hash_string_small_new(eio_associate_free);
@@ -898,6 +902,8 @@ eio_file_associate_find(Eio_File *ls, const char *key)
 {
    Eio_File_Associate *search;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
    if (!ls->main.associated)
      return NULL;
 

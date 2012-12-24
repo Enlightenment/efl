@@ -320,8 +320,10 @@ eio_file_xattr_get(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -341,8 +343,10 @@ eio_file_xattr_string_get(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -362,8 +366,10 @@ eio_file_xattr_double_get(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -383,8 +389,10 @@ eio_file_xattr_int_get(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -407,8 +415,12 @@ eio_file_xattr_set(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !xattr_data || !xattr_size || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(xattr_data, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(xattr_size, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr) + xattr_size);
    if (!async) return NULL;
@@ -433,8 +445,11 @@ eio_file_xattr_string_set(const char *path,
    Eio_File_Xattr *async;
    int length;
 
-   if (!path || !attribute || !done_cb || !xattr_string || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(xattr_string, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -464,8 +479,10 @@ eio_file_xattr_double_set(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
@@ -487,8 +504,10 @@ eio_file_xattr_int_set(const char *path,
 {
    Eio_File_Xattr *async;
 
-   if (!path || !attribute || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Xattr));
    if (!async) return NULL;
