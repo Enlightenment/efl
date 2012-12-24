@@ -597,6 +597,7 @@ INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/ecore_examples.dox \
                          @srcdir@/eet_examples.dox \
                          @srcdir@/evas_examples.dox \
+                         @srcdir@/eo_tutorial.dox \
                          @builddir@/eio.dox
 
 # This tag can be used to specify the character encoding of the source files
