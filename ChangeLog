@@ -1,3 +1,7 @@
+2012-12-24  Mike Blumenkrantz
+
+        * eina_magic_fail() now throws error messages on NULL pointers instead of critical
+
 2012-12-19  Gustavo Sverzut Barbieri (k-s)
 
 	* Fixed Evas RGBA_Image->flags.loaded for copied images.

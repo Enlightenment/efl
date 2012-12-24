@@ -274,7 +274,7 @@ eina_magic_fail(void *d,
 {
    eina_error_set(EINA_ERROR_MAGIC_FAILED);
    if (!d)
-      eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
+      eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_ERR,
                      file, fnc, line,
                      "*** Eina Magic Check Failed !!!\n"
                      "    Input handle pointer is NULL !\n"
