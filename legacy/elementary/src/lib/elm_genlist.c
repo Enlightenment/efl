@@ -585,7 +585,7 @@ _elm_genlist_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->mode == ELM_LIST_COMPRESS)
      {
-        Evas_Coord vw, vh;
+        Evas_Coord vw = 0, vh = 0;
 
         eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
         if ((vw != 0) && (vw != sd->prev_viewport_w))
