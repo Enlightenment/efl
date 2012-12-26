@@ -14,8 +14,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, vim-enhanced
-BuildRequires: efl-devel, ephysics-devel, lua-devel
-Requires:  efl, ephysics
+BuildRequires: eina-devel, eet-devel, evas-devel, ecore-devel, ephysics-devel, lua-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -34,43 +33,51 @@ elements. Anything more complex is likely the domain of an application
 or widget set that may use Edje as a conveneient way of being able to
 configure parts of the display.
 
+
 %package devel
 Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}, %{name}-bin = %{version}
-Requires: efl-devel lua-devel
+Requires: eina-devel, eet-devel, evas-devel, ecore-devel, ephysics-devel, lua-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Edje
+
 
 %package bin
 Summary: Edje file compiler/decompiler suite
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: efl
 
 %description bin
 Edje file compiler/decompiler suite
 
+
 %prep
 %setup -q
+
 
 %build
 %{configure} --prefix=%{_prefix}
 %{__make} %{?_smp_mflags} %{?mflags}
 
+
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
 test -x `which doxygen` && sh gendoc || :
 
+
 %post
 /sbin/ldconfig || :
+
 
 %postun
 /sbin/ldconfig || :
 
+
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
+
 
 %files
 %defattr(-, root, root)
@@ -101,5 +108,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/inkscape2edc
 %{_datadir}/edje/include/edje.inc
 %{_datadir}/mime/packages/edje.xml
+
 
 %changelog
