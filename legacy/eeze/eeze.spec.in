@@ -11,8 +11,8 @@ Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-Requires: libudev, libmount, eject
-BuildRequires: libudev-devel, libmount-devel
+Requires: libudev, eject
+BuildRequires: libudev-devel
 URL: http://www.enlightenment.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
