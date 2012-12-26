@@ -4,7 +4,7 @@
 Summary: emotion
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 0.%(date '+%Y%m%d')
+Release: %{_rel}
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
@@ -14,12 +14,13 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel XFree86-devel libX11-devel libxine1-devel xine-lib-devel
 #BuildSuggests: gstreamer-devel gstreamer-plugins-devel gstreamer-plugins-base-devel gstreamer-ffmpeg
-BuildRequires: efl-devel edje-devel edje-bin
-BuildRequires: /usr/bin/xine-config
+BuildRequires: eina-devel, evas-devel, ecore-devel, edje-devel, edje-bin
+BuildRequires: /usr/bin/xine-config gstreamer-plugins-base-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
 Emotion is a Media Library
+
 
 %package devel
 Summary: Emotion headers, static libraries, documentation and test programs
@@ -30,12 +31,15 @@ Requires: efl-devel edje-devel
 %description devel
 Headers, static libraries, test programs and documentation for Emotion
 
+
 %prep
 %setup -q
+
 
 %build
 %{configure} --prefix=%{_prefix} --enable-static --enable-shared
 %{__make} %{?_smp_mflags} %{?mflags}
+
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
@@ -44,14 +48,18 @@ test -x `which doxygen` && sh gendoc || :
 # Remove useless static modules
 %{__rm} -rf $RPM_BUILD_ROOT%{_libdir}/%{name}/*a
 
+
 %post
 /sbin/ldconfig || :
+
 
 %postun
 /sbin/ldconfig || :
 
+
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
+
 
 %files
 %defattr(-, root, root)
@@ -75,5 +83,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
 #%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
 %{_libdir}/pkgconfig/%{name}.pc
+
 
 %changelog
