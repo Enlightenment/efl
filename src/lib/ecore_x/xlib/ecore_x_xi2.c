@@ -75,6 +75,7 @@ _ecore_x_input_touch_info_clear(void)
      {
         info = EINA_INLIST_CONTAINER_GET(l, Ecore_X_Touch_Device_Info);
         l = eina_inlist_remove(l, l);
+        if (info->slot) free(info->slot);
         free(info);
      }
 
@@ -155,8 +156,8 @@ _ecore_x_input_touch_index_clear(int devid, int idx)
      }
 }
 
-static Ecore_X_Touch_Device_Info*
-_ecore_x_input_touch_info_get(XIDeviceInfo* dev)
+static Ecore_X_Touch_Device_Info *
+_ecore_x_input_touch_info_get(XIDeviceInfo *dev)
 {
    int k;
    int *slot = NULL;
@@ -168,11 +169,11 @@ _ecore_x_input_touch_info_get(XIDeviceInfo* dev)
 
    for (k = 0; k < dev->num_classes; k++)
      {
-        XIAnyClassInfo *class = dev->classes[k];
+        XIAnyClassInfo *clas = dev->classes[k];
 
-        if (class && (class->type == XITouchClass))
+        if (clas && (clas->type == XITouchClass))
           {
-             t = (XITouchClassInfo*)class;
+             t = (XITouchClassInfo *)clas;
              break;
           }
      }
@@ -182,7 +183,7 @@ _ecore_x_input_touch_info_get(XIDeviceInfo* dev)
         info = calloc(1, sizeof(Ecore_X_Touch_Device_Info));
         if (!info) return NULL;
 
-        slot = (int*)malloc(sizeof(int)*(t->num_touches + 1));
+        slot = malloc(sizeof(int) * (t->num_touches + 1));
         if (!slot)
           {
              free(info);
@@ -193,7 +194,7 @@ _ecore_x_input_touch_info_get(XIDeviceInfo* dev)
         info->max_touch = t->num_touches + 1;
         info->mode = t->mode;
         info->name = dev->name;
-        memset(slot, -1, sizeof(int)*info->max_touch);
+        memset(slot, -1, sizeof(int) * info->max_touch);
         info->slot = slot;
      }
 
