@@ -1861,7 +1861,6 @@ evas_render_wakeup(Evas *eo_e)
    e->render.updates_cb = NULL;
    e->render.data = NULL;
 
-end:
    eo_unref(eo_e);
 }
 
