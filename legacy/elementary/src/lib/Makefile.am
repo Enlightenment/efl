@@ -238,6 +238,7 @@ elm_conform.c \
 elm_container.c \
 elm_datetime.c \
 elm_dayselector.c \
+elm_dbus_menu.c \
 elm_diskselector.c \
 elm_entry.c \
 elm_flip.c \

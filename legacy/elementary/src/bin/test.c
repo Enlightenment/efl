@@ -153,6 +153,7 @@ void test_label2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
+void test_main_menu(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
 void test_floating(void *data, Evas_Object *obj, void *event_info);
 void test_launcher(void *data, Evas_Object *obj, void *event_info);
@@ -643,6 +644,8 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Radios", test_radio);
    ADD_TEST(NULL, "Selectors", "Flip Selector", test_flipselector);
    ADD_TEST(NULL, "Selectors", "Dayselector", test_dayselector);
+   ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
+
 
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);

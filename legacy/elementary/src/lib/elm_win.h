@@ -128,6 +128,7 @@ enum
      ELM_OBJ_WIN_SUB_ID_OVERRIDE_GET,
      ELM_OBJ_WIN_SUB_ID_FULLSCREEN_SET,
      ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET,
+     ELM_OBJ_WIN_SUB_ID_MAIN_MENU_GET,
      ELM_OBJ_WIN_SUB_ID_MAXIMIZED_SET,
      ELM_OBJ_WIN_SUB_ID_MAXIMIZED_GET,
      ELM_OBJ_WIN_SUB_ID_ICONIFIED_SET,
@@ -518,6 +519,20 @@ enum
  * @see elm_win_fullscreen_get
  */
 #define elm_obj_win_fullscreen_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_win_main_menu_get
+ * @since 1.8
+ *
+ * Get the Main Menu of a window.
+ *
+ * @param[out] ret Main menu.
+ *
+ * @see elm_win_main_menu_get
+ */
+#define elm_obj_win_main_menu_get(ret)                    \
+        ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAIN_MENU_GET), \
+        EO_TYPECHECK(Eo **, ret)
 
 /**
  * @def elm_obj_win_maximized_set
@@ -1848,6 +1863,16 @@ EAPI void                  elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fu
  * @ingroup Win
  */
 EAPI Eina_Bool             elm_win_fullscreen_get(const Evas_Object *obj);
+
+/**
+ * Get the Main Menu of a window.
+ *
+ * @param obj The window object
+ * @return The Main Menu of the window (NULL if error).
+ *
+ * @ingroup Win
+ */
+EAPI Evas_Object          *elm_win_main_menu_get(const Evas_Object *obj);
 
 /**
  * Set the maximized state of a window.

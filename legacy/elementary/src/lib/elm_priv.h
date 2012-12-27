@@ -234,6 +234,7 @@ struct _Elm_Config
    const char   *indicator_service_180;
    const char   *indicator_service_270;
    unsigned char selection_clear_enable;
+   unsigned char external_menu;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
@@ -396,6 +397,19 @@ void                 _elm_config_color_set(const char *palette_name,
                                            int b,
                                            int a);
 void                 _elm_config_colors_free(const char *palette_name);
+
+typedef struct _Elm_DBus_Menu Elm_DBus_Menu;
+
+const char          *_elm_dbus_menu_register(Eo *obj);
+void                 _elm_dbus_menu_unregister(Eo *obj);
+int                  _elm_dbus_menu_item_add(Elm_DBus_Menu *dbus_menu,
+                                             Elm_Object_Item *item);
+void                 _elm_dbus_menu_item_delete(Elm_DBus_Menu *dbus_menu,
+                                                int id);
+
+void                 _elm_dbus_menu_app_menu_register(Ecore_X_ID xid, Eo *obj);
+void                 _elm_dbus_menu_app_menu_unregister(Eo *obj);
+void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 
 /* DEPRECATED, will be removed on next release */
 void                 _elm_icon_signal_emit(Evas_Object *obj,

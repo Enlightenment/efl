@@ -24,6 +24,8 @@ struct _Elm_Menu_Smart_Data
 
    Eina_List            *items;
    Evas_Coord            xloc, yloc;
+   Elm_DBus_Menu        *dbus_menu;
+
 };
 
 typedef struct _Elm_Menu_Item       Elm_Menu_Item;
@@ -37,6 +39,7 @@ struct _Elm_Menu_Item
    const char    *label;
    Evas_Smart_Cb  func;
    unsigned int   idx;
+   int            dbus_idx;
 
    struct
    {

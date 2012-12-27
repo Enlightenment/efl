@@ -839,3 +839,9 @@
 
 	* elm_plug now emits "image,resized" on server-side changes.
 	* elm_plug typo fixed "image.deleted" to "image,deleted" ('.' -> ',')
+
+2012-12-20  Henrique Dante de Almeida (hdante)
+
+	* Add elm_dbus_menu to support D-Bus external menus.
+	* Add main menu to elm_win, which can be exported via D-Bus
+	* Add configuration: ELM_EXTERNAL_MENU, to switch between internal and external menus

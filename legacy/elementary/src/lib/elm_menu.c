@@ -372,6 +372,14 @@ _submenu_open_cb(void *data,
    _submenu_sizing_eval(item);
 }
 
+void
+_elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item)
+{
+  Elm_Menu_Item *item = (Elm_Menu_Item *)obj_item;
+
+  if (item->func) item->func((void *)(item->base.data), WIDGET(item), item);
+}
+
 static void
 _menu_item_select_cb(void *data,
                      Evas_Object *obj __UNUSED__,
@@ -548,6 +556,8 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Menu_Item *item;
    Elm_Menu_Smart_Data *sd = _pd;
+
+   _elm_dbus_menu_unregister(obj);
 
    evas_object_event_callback_del_full
      (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
@@ -779,6 +789,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
    Elm_Menu_Item *item = (Elm_Menu_Item *)it;
    Elm_Object_Item *_item;
 
+   ELM_MENU_DATA_GET(WIDGET(item), sd);
+
    EINA_LIST_FREE (item->submenu.items, _item)
      elm_object_item_del(_item);
    if (item->label) eina_stringshare_del(item->label);
@@ -790,10 +802,10 @@ _item_del_pre_hook(Elm_Object_Item *it)
      item->parent->submenu.items =
        eina_list_remove(item->parent->submenu.items, item);
    else
-     {
-        ELM_MENU_DATA_GET(WIDGET(item), sd);
-        sd->items = eina_list_remove(sd->items, item);
-     }
+     sd->items = eina_list_remove(sd->items, item);
+
+   if (sd->dbus_menu)
+     _elm_dbus_menu_item_delete(sd->dbus_menu, item->dbus_idx);
 
    return EINA_TRUE;
 }
@@ -860,6 +872,9 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    if (icon) elm_menu_item_icon_name_set((Elm_Object_Item *)subitem, icon);
 
    _elm_menu_item_add_helper(obj, (Elm_Menu_Item *)parent, subitem, sd);
+
+   if (sd->dbus_menu)
+     subitem->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, (Elm_Object_Item *)subitem);
 
    *ret = (Elm_Object_Item *)subitem;
 }

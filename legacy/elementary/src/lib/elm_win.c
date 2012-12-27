@@ -130,6 +130,8 @@ struct _Elm_Win_Smart_Data
    const char  *icon_name;
    const char  *role;
 
+   Evas_Object *main_menu;
+
    struct
    {
       const char  *name;
@@ -1479,6 +1481,8 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->role) eina_stringshare_del(sd->role);
    if (sd->icon) evas_object_del(sd->icon);
 
+   if (sd->main_menu) evas_object_del(sd->main_menu);
+
    _elm_win_profile_del(sd);
    _elm_win_available_profiles_del(sd);
 
@@ -2482,7 +2486,7 @@ elm_win_add(Evas_Object *parent,
 }
 
 static void
-_win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_win_constructor(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Win_Smart_Data *sd = _pd;
    sd->obj = obj; // in ctor
@@ -3531,6 +3535,43 @@ _fullscreen_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         *ret = sd->fullscreen;
      }
+}
+
+EAPI Evas_Object *
+elm_win_main_menu_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   Evas_Object *ret;
+   eo_do((Eo *) obj, elm_obj_win_main_menu_get(&ret));
+   return ret;
+}
+
+static void
+_main_menu_get(Eo *obj, void *_pd, va_list *list)
+{
+   Eo **ret = va_arg(*list, Eo **);
+   Elm_Win_Smart_Data *sd = _pd;
+
+   if (sd->main_menu) goto end;
+
+   sd->main_menu = elm_menu_add(obj);
+
+   if (_elm_config->external_menu)
+     {
+#ifdef HAVE_ELEMENTARY_X
+        if (sd->x.xwin)
+          {
+             _elm_dbus_menu_register(sd->main_menu);
+             _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu);
+          }
+#endif
+     }
+   else
+     {
+        //TODO: Local version.
+     }
+end:
+   *ret = sd->main_menu;
 }
 
 EAPI void
@@ -5143,6 +5184,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_OVERRIDE_GET), _override_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_SET), _fullscreen_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET), _fullscreen_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAIN_MENU_GET), _main_menu_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_SET), _maximized_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_GET), _maximized_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICONIFIED_SET), _iconified_set),
@@ -5240,6 +5282,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_OVERRIDE_GET, "Get the override state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_SET, "Set the fullscreen state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FULLSCREEN_GET, "Get the fullscreen state of a window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MAIN_MENU_GET, "Get the Main Menu of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_SET, "Set the maximized state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_MAXIMIZED_GET, "Get the maximized state of a window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICONIFIED_SET, "Set the iconified state of a window."),

@@ -23,6 +23,8 @@ Additions:
    * Add elm_sys_notify.[ch]
    * Add elm_need_elocation() and Elocation.h support with ELM_ELOCATION macro to integrate elocation.
    * Add elm_plug signals "image,deleted" (fixed typo) and "image,resized".
+   * Add elm_dbus_menu to support D-Bus external menus.
+   * Add configuration: ELM_EXTERNAL_MENU, to switch between internal and extenal menus
 
 Improvements:
 
@@ -40,6 +42,7 @@ Improvements:
    * Conformant widget handles displaymode change related with keypad.
    * Conformant widget handles indicator service.
    * Elm_Transit image animation effects supports elm_image object type.
+   * Include a main menu in elm_win, which can be exported via D-Bus.
 
 Fixes:
 
