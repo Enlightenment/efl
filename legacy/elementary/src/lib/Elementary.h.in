@@ -163,6 +163,7 @@ EAPI extern Elm_Version *elm_version;
 
 #include <elm_prefs_data.h>
 #include <elm_prefs.h>
+#include <elm_systray.h>
 #include <elm_sys_notify.h>
 
 /* special widgets - types used elsewhere */

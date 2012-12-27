@@ -12,6 +12,20 @@
 EAPI Eina_Bool elm_need_efreet(void);
 
 /**
+ * Request that your elementary application needs Elm_Systray
+ *
+ * This initializes the Elm_Systray when called and, if support exists,
+ * returns EINA_TRUE, otherwise returns EINA_FALSE. This must be called
+ * before any elm_systray calls.
+ *
+ * @return EINA_TRUE if support exists and initialization succeeded.
+ *
+ * @ingroup Elm_Systray
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_need_systray(void);
+
+/**
  * Request that your elementary application needs Elm_Sys_Notify
  *
  * This initializes the Elm_Sys_Notify when called and if support exists

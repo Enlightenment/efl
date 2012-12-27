@@ -25,6 +25,7 @@ Additions:
    * Add elm_plug signals "image,deleted" (fixed typo) and "image,resized".
    * Add elm_dbus_menu to support D-Bus external menus.
    * Add configuration: ELM_EXTERNAL_MENU, to switch between internal and extenal menus
+   * Add elm_systray.[ch]: Add support to D-Bus systray icons.
 
 Improvements:
 

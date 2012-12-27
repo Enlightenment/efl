@@ -124,6 +124,7 @@ test_slideshow.c \
 test_spinner.c \
 test_store.c \
 test_sys_notify.c \
+test_systray.c \
 test_table.c \
 test_thumb.c \
 test_toolbar.c \
