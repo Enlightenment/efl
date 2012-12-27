@@ -218,11 +218,12 @@ PKG_CHECK_MODULES([ELEMENTARY],
     eina >= 1.6.99
     eet >= 1.6.99
     evas >= 1.6.99
-    ecore >= 1.7.99
-    ecore-evas >= 1.7.99
-    ecore-file >= 1.7.99
-    ecore-input >= 1.7.99
+    ecore >= 1.6.99
+    ecore-evas >= 1.6.99
+    ecore-file >= 1.6.99
+    ecore-input >= 1.6.99
     edje >= 1.6.99
+    eo
    ]
 )
 
@@ -292,11 +293,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.7.99],
+      [ecore-x >= 1.6.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.6.99 ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -507,13 +508,13 @@ AC_ARG_ENABLE([edbus2],
 if test "x$want_elementary_edbus2" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EDBUS2],
        [
-        edbus2 >= 1.7.99
+        edbus2 >= 1.6.99
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EDBUS2, 1, [EDbus2 support for Elementary])
         have_elementary_edbus2="yes"
         ELM_EDBUS2_DEF="#define"
-        requirement_elm="edbus2 >= 1.7.99 ${requirement_elm}"
+        requirement_elm="edbus2 >= 1.6.99 ${requirement_elm}"
        ],
        [have_elementary_edbus2="no"]
     )
