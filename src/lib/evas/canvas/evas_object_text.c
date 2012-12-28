@@ -163,14 +163,12 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text 
        o->cur.style == o->prev.style &&
        obj->cur.scale == obj->prev.scale)
      {
-        if (o->last_computed.ellipsis_start &&
-            o->last_computed.ellipsis_start == o->items)
+        if (o->last_computed.ellipsis_start)
           o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
-                                                                  EINA_INLIST_GET(o->items));
-        if (o->last_computed.ellipsis_end &&
-            EINA_INLIST_GET(o->last_computed.ellipsis_end) == EINA_INLIST_GET(o->items)->last)
+                                                                  EINA_INLIST_GET(o->last_computed.ellipsis_start));
+        if (o->last_computed.ellipsis_end)
           o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
-                                                                  EINA_INLIST_GET(o->items)->last);
+                                                                  EINA_INLIST_GET(o->last_computed.ellipsis_end));
      }
    else
      {
