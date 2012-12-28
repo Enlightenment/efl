@@ -66,7 +66,10 @@ extern int _ecore_audio_log_dom;
 #define ECORE_MAGIC_AUDIO_INPUT  0xabba0003
 
 /**
- * @addtogroup Ecore_Audio_Module_API_Group Ecore_Audio_Module_API - API for modules
+ * @defgroup Ecore_Audio_Module_API_Group Ecore_Audio_Module_API - API for modules
+ * @ingroup Ecore_Audio_Group
+ *
+ * @internal These functions are internal
  *
  * @{
  */
