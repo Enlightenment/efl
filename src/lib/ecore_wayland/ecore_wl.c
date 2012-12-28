@@ -40,23 +40,6 @@ EAPI int ECORE_WL_EVENT_SELECTION_DATA_READY = 0;
 EAPI int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = 0;
 EAPI int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
 
-/**
- * @defgroup Ecore_Wl_Init_Group Wayland Library Init and Shutdown Functions
- * @ingroup Ecore
- *
- * Functions that start and shutdown the Ecore Wayland Library.
- */
-
-/**
- * Initialize the Wayland display connection to the given display.
- *
- * @param   name Display target name. if @c NULL, the default display is
- *          assumed.
- * @return  The number of times the library has been initialized without being
- *          shut down. 0 is returned if an error occurs.
- *
- * @ingroup Ecore_Wl_Init_Group
- */
 EAPI int
 ecore_wl_init(const char *name)
 {
@@ -174,17 +157,6 @@ ecore_wl_init(const char *name)
    return _ecore_wl_init_count;
 }
 
-/**
- * Shuts down the Ecore Wayland Library
- *
- * In shutting down the library, the Wayland display connection is terminated
- * and any event handlers for it are removed.
- *
- * @return  The number of times the library has been initialized without
- *          being shut down.
- *
- * @ingroup Ecore_Wl_Init_Group
- */
 EAPI int
 ecore_wl_shutdown(void)
 {
@@ -193,20 +165,6 @@ ecore_wl_shutdown(void)
    return _ecore_wl_shutdown(EINA_TRUE);
 }
 
-/**
- * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
- * @ingroup Ecore
- *
- * Functions that ensure that all commands which have been issued by the
- * Ecore Wayland library have been sent to the server.
- */
-
-/**
- * Sends all Wayland commands to the Wayland Display.
- *
- * @ingroup Ecore_Wl_Flush_Group
- * @since 1.2
- */
 EAPI void
 ecore_wl_flush(void)
 {
@@ -215,13 +173,6 @@ ecore_wl_flush(void)
    wl_display_flush(_ecore_wl_disp->wl.display);
 }
 
-/**
- * Flushes the command buffer and waits until all requests have been
- * processed by the server.
- *
- * @ingroup Ecore_Wl_Flush_Group
- * @since 1.2
- */
 EAPI void
 ecore_wl_sync(void)
 {
@@ -230,50 +181,18 @@ ecore_wl_sync(void)
    wl_display_sync(_ecore_wl_disp->wl.display);
 }
 
-/**
- * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
- * @ingroup Ecore
- *
- * Functions that set and retrieve various information about the Wayland Display.
- */
-
-/**
- * Retrieves the Wayland Shm Interface used for the current Wayland connection.
- *
- * @return The current wayland shm interface
- *
- * @ingroup Ecore_Wl_Display_Group
- * @since 1.2
- */
 EAPI struct wl_shm *
 ecore_wl_shm_get(void)
 {
    return _ecore_wl_disp->wl.shm;
 }
 
-/**
- * Retrieves the Wayland Display Interface used for the current Wayland connection.
- *
- * @return The current wayland display interface
- *
- * @ingroup Ecore_Wl_Display_Group
- * @since 1.2
- */
 EAPI struct wl_display *
 ecore_wl_display_get(void)
 {
    return _ecore_wl_disp->wl.display;
 }
 
-/**
- * Retrieves the size of the current screen.
- *
- * @param w where to return the width. May be NULL. Returns 0 on error.
- * @param h where to return the height. May be NULL. Returns 0 on error.
- *
- * @ingroup Ecore_Wl_Display_Group
- * @since 1.2
- */
 EAPI void
 ecore_wl_screen_size_get(int *w, int *h)
 {
@@ -297,17 +216,6 @@ ecore_wl_pointer_xy_get(int *x, int *y)
    _ecore_wl_input_pointer_xy_get(x, y);
 }
 
-/**
- * Return the screen DPI
- *
- * This is a simplistic call to get DPI. It does not account for differing
- * DPI in the x and y axes nor does it account for multihead or xinerama and
- * xrandr where different parts of the screen may have different DPI etc.
- *
- * @return the general screen DPI (dots/pixels per inch).
- *
- * @since 1.2
- */
 EAPI int
 ecore_wl_dpi_get(void)
 {
@@ -332,14 +240,6 @@ ecore_wl_display_iterate(void)
    wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
 
-/**
- * Retrieves the requested cursor from the cursor theme
- *
- * @param cursor_name The desired cursor name to be looked up in the theme
- * @return the cursor or NULL if the cursor cannot be found
- *
- * @since 1.2
- */
 EAPI struct wl_cursor *
 ecore_wl_cursor_get(const char *cursor_name)
 {

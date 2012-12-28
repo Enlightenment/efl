@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-/**
+/*
  * NB: Events that receive a 'serial' instead of timestamp
  * 
  * input_device_attach (for pointer image)

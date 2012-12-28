@@ -314,7 +314,10 @@ struct _Ecore_Wl_Event_Interfaces_Bound
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland window system
- * 
+ *
+ * @defgroup Ecore_Wl_Group Ecore_Wayland - Wayland integration
+ * @ingroup Ecore
+
  * Ecore_Wl provides a wrapper and convenience functions for using the 
  * Wayland window system. Function groups for this part of the library 
  * include the following:
@@ -340,16 +343,124 @@ EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.7 */
 EAPI extern int ECORE_WL_EVENT_SELECTION_DATA_READY; /** @since 1.7 */
 EAPI extern int ECORE_WL_EVENT_INTERFACES_BOUND;
 
+/**
+ * @defgroup Ecore_Wl_Init_Group Wayland Library Init and Shutdown Functions
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions that start and shutdown the Ecore Wayland Library.
+ */
+
+/**
+ * Initialize the Wayland display connection to the given display.
+ *
+ * @param   name Display target name. if @c NULL, the default display is
+ *          assumed.
+ * @return  The number of times the library has been initialized without being
+ *          shut down. 0 is returned if an error occurs.
+ *
+ * @ingroup Ecore_Wl_Init_Group
+ */
 EAPI int ecore_wl_init(const char *name);
+
+/**
+ * Shuts down the Ecore Wayland Library
+ *
+ * In shutting down the library, the Wayland display connection is terminated
+ * and any event handlers for it are removed.
+ *
+ * @return  The number of times the library has been initialized without
+ *          being shut down.
+ *
+ * @ingroup Ecore_Wl_Init_Group
+ */
 EAPI int ecore_wl_shutdown(void);
+
+/**
+ * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions that ensure that all commands which have been issued by the
+ * Ecore Wayland library have been sent to the server.
+ */
+
+/**
+ * Sends all Wayland commands to the Wayland Display.
+ *
+ * @ingroup Ecore_Wl_Flush_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_flush(void);
+
+/**
+ * Flushes the command buffer and waits until all requests have been
+ * processed by the server.
+ *
+ * @ingroup Ecore_Wl_Flush_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_sync(void);
+
+/**
+ * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions that set and retrieve various information about the Wayland Display.
+ */
+
+/**
+ * Retrieves the Wayland Shm Interface used for the current Wayland connection.
+ *
+ * @return The current wayland shm interface
+ *
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI struct wl_shm *ecore_wl_shm_get(void);
+
+/**
+ * Retrieves the Wayland Display Interface used for the current Wayland connection.
+ *
+ * @return The current wayland display interface
+ *
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI struct wl_display *ecore_wl_display_get(void);
+
+/**
+ * Retrieves the size of the current screen.
+ *
+ * @param w where to return the width. May be NULL. Returns 0 on error.
+ * @param h where to return the height. May be NULL. Returns 0 on error.
+ *
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_screen_size_get(int *w, int *h);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
+
+/**
+ * Return the screen DPI
+ *
+ * This is a simplistic call to get DPI. It does not account for differing
+ * DPI in the x and y axes nor does it account for multihead or xinerama and
+ * xrandr where different parts of the screen may have different DPI etc.
+ *
+ * @return the general screen DPI (dots/pixels per inch).
+ *
+ * @since 1.2
+ */
 EAPI int ecore_wl_dpi_get(void);
 EAPI void ecore_wl_display_iterate(void);
+
+/**
+ * Retrieves the requested cursor from the cursor theme
+ *
+ * @param cursor_name The desired cursor name to be looked up in the theme
+ * @return the cursor or NULL if the cursor cannot be found
+ *
+ * @since 1.2
+ */
 EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
@@ -360,14 +471,106 @@ EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
 
 EAPI struct wl_list ecore_wl_outputs_get(void);
 
+/**
+ * @defgroup Ecore_Wl_Window_Group Wayland Window functions.
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions that can be used to create a Wayland window.
+ */
+
+/**
+ * Creates a new window
+ * 
+ * @param parent The parent window to use. If @p parent is @c 0, the root window 
+ *               of the default display is used.
+ * @param x      X Position
+ * @param y      Y position
+ * @param w      Width
+ * @param h      Height
+ * @param buffer_type The type of the buffer to be used to create a new Ecore_Wl_Window.
+ * 
+ * @return The new window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
+
+/**
+ * Deletes the given window
+ * 
+ * @param win The given window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
+
+/**
+ * Signals for Wayland to initiate a window move.
+ * 
+ * The position requested (@p x, @p y) is not honored by Wayland because 
+ * Wayland does not allow specific window placement to be set.
+ * 
+ * @param win The window to move.
+ * @param x   X Position
+ * @param y   Y Position
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
+
+/**
+ * Signals for Wayland to initiate a window resize.
+ * 
+ * The size requested (@p w, @p h) is not honored by Wayland because 
+ * Wayland does not allow specific window sizes to be set.
+ * 
+ * @param win      The window to resize.
+ * @param w        Width
+ * @param h        Height
+ * @param location The edge of the window from where the resize should start.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location);
 EAPI void ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h);
 EAPI void ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y);
+
+/**
+ * Shows a window
+ * 
+ * Synonymous to "mapping" a window in Wayland System terminology.
+ * 
+ * @param win The window to show.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_show(Ecore_Wl_Window *win);
+
+/**
+ * Hides a window
+ * 
+ * Synonymous to "unmapping" a window in Wayland System terminology.
+ * 
+ * @param win The window to hide.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
+
+/**
+ * Raises a window
+ * 
+ * @param win The window to raise.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void ecore_wl_window_raise(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
 EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
