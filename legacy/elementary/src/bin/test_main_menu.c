@@ -66,16 +66,17 @@ test_main_menu(void *data __UNUSED__,
    menu = elm_win_main_menu_get(win);
 
    menu_it = elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
-   elm_menu_item_add(menu, menu_it, NULL, "first item", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "elementary", "first item", NULL, NULL);
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "submenu", NULL, NULL);
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);
-   elm_menu_item_add(menu, menu_it1, NULL, "second item", NULL, NULL);
+   elm_menu_item_add(menu, menu_it1, "gimp", "second item", NULL, NULL);
 
    menu_it = elm_menu_item_add(menu, NULL, NULL, "second item", NULL, NULL);
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "disabled item", NULL, NULL);
    elm_object_item_disabled_set(menu_it1, EINA_TRUE);
+   elm_menu_item_separator_add(menu, menu_it);
    elm_menu_item_add(menu, menu_it, NULL, "click me :-)", _click_me, NULL);
-   elm_menu_item_add(menu, menu_it, NULL, "third item", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "applications-email-panel", "third item", NULL, NULL);
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "sub menu", NULL, NULL);
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);
 
