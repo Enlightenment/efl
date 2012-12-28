@@ -8,10 +8,14 @@
 
    @page ecore_main Ecore
 
-   @version 1.7
-   @date 2000-2012
+   @date 2000 (created)
 
-   Please see the @ref authors page for contact details.
+   @section toc Table of Contents
+
+   @li @ref ecore_main_intro
+   @li @ref ecore_main_compiling
+   @li @ref ecore_main_next_steps
+   @li @ref ecore_main_intro_example
 
    @section ecore_main_intro Introduction
 
@@ -36,35 +40,49 @@
 
    For more info on Ecore usage, there are these @ref ecore_examples.
 
-   @section ecore_main_compiling How to compile using Ecore?
-   pkgconfig (.pc) files are installed for every ecore module.
-   Thus, to compile using any of them, you can use something like the following:
+   @section ecore_main_compiling How to compile
 
-@verbatim
-gcc *.c $(pkg-config ecore ecore-$x ecore-$y [...] --cflags --libs)
-@endverbatim
+   Ecore is a library your application links to. The procedure for
+   this is very simple. You simply have to compile your application
+   with the appropriate compiler flags that the @p pkg-config script
+   outputs. Note that each module is separate in pkg-config. For
+   example using @ref Ecore_Evas_Group:
 
-   @section ecore_main_install How is it installed?
+   Compiling C or C++ files into object files:
 
-   Suggested configure options for ecore for a Linux desktop X display
-   with OpenGL and Software support, communication (networking) and
-   IPC (inter process communication):
+   @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags ecore ecore-evas`
+   @endverbatim
 
-@verbatim
-./configure \
-    --enable-ecore-con \
-    --enable-ecore-ipc \
-    --enable-ecore-file \
-    --enable-ecore-input \
-    --enable-ecore-input-evas \
-    --enable-ecore-x \
-    --enable-ecore-evas \
-    --enable-ecore-evas-software-buffer \
-    --enable-ecore-evas-software-x11 \
-    --enable-ecore-evas-opengl-x11
-make
-sudo make install
-@endverbatim
+   Linking object files into a binary executable:
+
+   @verbatim
+   gcc -o my_application main.o `pkg-config --libs ecore ecore-evas`
+   @endverbatim
+
+   See @ref pkgconfig
+
+   @section ecore_main_next_steps Next Steps
+
+   After you understood what Ecore is and installed it in your system
+   you should proceed understanding the programming interface. We'd
+   recommend you to take a while to learn @ref Eina as it is very
+   convenient and optimized, and Ecore uses it extensively.
+
+   Recommended reading:
+
+   @li @ref Ecore_Timer_Group
+   @li @ref Ecore_Idle_Group
+   @li @ref Ecore_FD_Handler_Group
+   @li @ref Ecore_Event_Group
+   @li @ref Ecore_Exe_Group
+
+   @section ecore_main_intro_example Introductory Examples
+
+   @include ecore_timer_example.c
+
+   More examples can be found at @ref ecore_examples.
+
 
  */
 

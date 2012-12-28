@@ -594,11 +594,14 @@ WARN_LOGFILE           =
 
 INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/main.dox \
+                         @srcdir@/pkgconfig.dox \
+                         @srcdir@/eina_examples.dox \
                          @srcdir@/ecore_examples.dox \
                          @srcdir@/eet_examples.dox \
                          @srcdir@/evas_examples.dox \
                          @srcdir@/eo_tutorial.dox \
-                         @srcdir@/eio_examples.dox
+                         @srcdir@/eio_examples.dox \
+                         @srcdir@/edbus_examples.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -794,12 +797,16 @@ COLS_IN_ALPHA_INDEX    = 2
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          = eina_ \
-                         _eina_ \
-                         Eina_ \
-                         _Eina_ \
-                         EINA_ \
-                         _EINA_
+IGNORE_PREFIX          = eina_ _eina_ Eina_ _Eina_ EINA_ _EINA_ \
+eo_ _eo_ Eo_ _Eo_ EO_ _EO_ \
+embryo_ _embryo_ Embryo_ _Embryo_ EMBRYO_ _EMBRYO_ \
+escape_ _escape_ Escape_ _Escape_ ESCAPE_ _ESCAPE_ \
+evil_ _evil_ Evil_ _Evil_ EVIL_ _EVIL_ \
+evas_ _evas_ Evas_ _Evas_ EVAS_ _EVAS_ \
+eet_ _eet_ Eet_ _Eet_ EET_ _EET_ \
+ecore_ _ecore_ Ecore_ _Ecore_ ECORE_ _ECORE_ \
+eio_ _eio_ Eio_ _Eio_ EIO_ _EIO_ \
+edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output

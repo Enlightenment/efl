@@ -1,14 +1,23 @@
 /**
  * @page edbus_main EDBus
  *
- * @section edbus_intro_sec Introduction
+ * @date 2012 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref edbus_main_intro
+ * @li @ref edbus_main_compiling
+ * @li @ref edbus_main_next_steps
+ * @li @ref edbus_main_intro_example
+ *
+ * @section edbus_main_intro Introduction
  *
  * EDBus is a wrapper around the
  * <a href="http://www.freedesktop.org/wiki/Software/dbus">dbus</a>
  * library, which is a message bus system. It also implements a set of
  * specifications using dbus as interprocess communication.
  *
- * @section edbus_modules_sec Modules
+ * @subsection edbus_modules_sec Modules
  *
  * <ul>
  * <li> @ref EDBus_Core
@@ -27,50 +36,42 @@
  * <li> @ref EDBus_Basic
  * </ul>
  *
- * @section edbus_examples_sec Examples
+ * @section edbus_main_compiling How to compile
  *
- * Here some EDBus examples:
+ * EDBus is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
  *
- * @li @ref banshee.c
- * @li @ref client.c
- * @li @ref complex-types.c
- * @li @ref complex-types-client-eina-value.c
- * @li @ref complex-types-server.c
- * @li @ref connman-list-services.c
- * @li @ref ofono-dial.c
- * @li @ref server.c
- * @li @ref simple-signal-emit.c
+ * Compiling C or C++ files into object files:
  *
- * @example banshee.c
- * Access Banshee music player and send commands to it.
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags edbus2`
+   @endverbatim
  *
- * @example client.c
- * Client to test various call message types against a provided server
- * (@ref server.c)
+ * Linking object files into a binary executable:
  *
- * @example complex-types.c
- * Client to test complex types (arrays, structs, dicts) against a
- * provided server (@ref complex-types-server.c)
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs edbus2`
+   @endverbatim
  *
- * @example complex-types-client-eina-value.c
- * Client to test complex types (arrays, structs, dicts) against a
- * provided server (@ref complex-types-server.c) returning them as
- * @ref Eina_Value.
+ * See @ref pkgconfig
  *
- * @example complex-types-server.c
- * Server to test complex types (arrays, structs, dicts).
+ * @section edbus_main_next_steps Next Steps
  *
- * @example connman-list-services.c
- * Client to list networks/services from connman.
+ * After you understood what EDBus is and installed it in your system
+ * you should proceed understanding the programming interface.
  *
- * @example ofono-dial.c
- * Client to ask oFono to dial.
+ * Recommended reading:
+ * @li @ref EDBus_Core for library init, shutdown and getting a connection.
+ * @li @ref EDBus_Proxy to easily bind a client object to an interface.
+ * @li @ref EDBus_Object_Mapper to monitor server objects and properties.
  *
- * @example server.c
- * Server to reply to @ref client.c requests.
+ * @section edbus_main_intro_example Introductory Example
  *
- * @example simple-signal-emit.c
- * Server that registers a service interface and emits simple signals.
+ * @include ofono-dial.c
+ *
+ * More examples can be found at @ref edbus_examples.
  */
 #ifndef EDBUS_H
 #define EDBUS_H

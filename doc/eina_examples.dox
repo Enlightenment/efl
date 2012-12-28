@@ -1,0 +1,105 @@
+/**
+ * @page eina_examples Eina Examples
+ *
+ * Examples:
+ * @li @ref eina_accessor_01.c
+ * @li @ref eina_array_01.c
+ * @li @ref eina_array_02.c
+ * @li @ref eina_error_01.c
+ * @li @ref eina_file_01.c
+ * @li @ref eina_hash_01.c
+ * @li @ref eina_hash_02.c
+ * @li @ref eina_hash_03.c
+ * @li @ref eina_hash_04.c
+ * @li @ref eina_hash_05.c
+ * @li @ref eina_hash_06.c
+ * @li @ref eina_hash_07.c
+ * @li @ref eina_hash_08.c
+ * @li @ref eina_inarray_01.c
+ * @li @ref eina_inarray_02.c
+ * @li @ref eina_inlist_01.c
+ * @li @ref eina_inlist_02.c
+ * @li @ref eina_inlist_03.c
+ * @li @ref eina_iterator_01.c
+ * @li @ref eina_list_01.c
+ * @li @ref eina_list_02.c
+ * @li @ref eina_list_03.c
+ * @li @ref eina_list_04.c
+ * @li @ref eina_log_01.c
+ * @li @ref eina_log_02.c
+ * @li @ref eina_log_03.c
+ * @li @ref eina_magic_01.c
+ * @li @ref eina_model_01.c
+ * @li @ref eina_model_02.c
+ * @li @ref eina_model_03.c
+ * @li @ref eina_model_04_animal.c
+ * @li @ref eina_model_04_child.c
+ * @li @ref eina_model_04_human.c
+ * @li @ref eina_model_04_main.c
+ * @li @ref eina_model_04_parrot.c
+ * @li @ref eina_model_04_whistler.c
+ * @li @ref eina_simple_xml_parser_01.c
+ * @li @ref eina_str_01.c
+ * @li @ref eina_strbuf_01.c
+ * @li @ref eina_stringshare_01.c
+ * @li @ref eina_tiler_01.c
+ * @li @ref eina_value_01.c
+ * @li @ref eina_value_02.c
+ * @li @ref eina_value_03.c
+ *
+ * Tutorials:
+ * @li @ref tutorial_benchmark_page
+ * @li @ref tutorial_binshare_page
+ * @li @ref tutorial_eina_string
+ * @li @ref tutorial_error_page
+ * @li @ref tutorial_log_page
+ * @li @ref tutorial_matrixsparse_page
+ * @li @ref tutorial_quadtree_page
+ * @li @ref tutorial_strbuf
+ * @li @ref tutorial_ustringshare_page
+ *
+ * @example eina_accessor_01.c
+ * @example eina_array_01.c
+ * @example eina_array_02.c
+ * @example eina_error_01.c
+ * @example eina_file_01.c
+ * @example eina_hash_01.c
+ * @example eina_hash_02.c
+ * @example eina_hash_03.c
+ * @example eina_hash_04.c
+ * @example eina_hash_05.c
+ * @example eina_hash_06.c
+ * @example eina_hash_07.c
+ * @example eina_hash_08.c
+ * @example eina_inarray_01.c
+ * @example eina_inarray_02.c
+ * @example eina_inlist_01.c
+ * @example eina_inlist_02.c
+ * @example eina_inlist_03.c
+ * @example eina_iterator_01.c
+ * @example eina_list_01.c
+ * @example eina_list_02.c
+ * @example eina_list_03.c
+ * @example eina_list_04.c
+ * @example eina_log_01.c
+ * @example eina_log_02.c
+ * @example eina_log_03.c
+ * @example eina_magic_01.c
+ * @example eina_model_01.c
+ * @example eina_model_02.c
+ * @example eina_model_03.c
+ * @example eina_model_04_animal.c
+ * @example eina_model_04_child.c
+ * @example eina_model_04_human.c
+ * @example eina_model_04_main.c
+ * @example eina_model_04_parrot.c
+ * @example eina_model_04_whistler.c
+ * @example eina_simple_xml_parser_01.c
+ * @example eina_str_01.c
+ * @example eina_strbuf_01.c
+ * @example eina_stringshare_01.c
+ * @example eina_tiler_01.c
+ * @example eina_value_01.c
+ * @example eina_value_02.c
+ * @example eina_value_03.c
+ */

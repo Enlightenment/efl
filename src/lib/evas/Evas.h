@@ -1,25 +1,18 @@
 /**
    @page evas_main Evas
 
-   @version 1.7
-   @date 2000-2012
-
-   Please see the @ref authors page for contact details.
-   @link Evas.h Evas API @endlink
-
-   @link Evas.h Evas API @endlink
+   @date 2000 (created)
 
    @section toc Table of Contents
 
    @li @ref evas_main_intro
    @li @ref evas_main_work
    @li @ref evas_main_compiling
-   @li @ref evas_main_install
    @li @ref evas_main_next_steps
    @li @ref evas_main_intro_example
 
 
-   @section evas_main_intro What is Evas?
+   @section evas_main_intro Introduction
 
    Evas is a clean display canvas API for several target display systems
    that can draw anti-aliased text, smooth super and sub-sampled scaled
@@ -46,7 +39,7 @@
 
    Evas is not a widget set or widget toolkit, however it is their
    base. See Elementary (http://docs.enlightenment.org/auto/elementary/)
-   for a toolkit based on Evas, Edje, Ecore and other Enlightenment
+   for a toolkit based on Evas, Edje, @ref Ecore and other Enlightenment
    technologies.
 
    It is not dependent or aware of main loops, input or output
@@ -54,8 +47,8 @@
    Evas. Similarly, it will not create windows or report windows updates
    to your system, rather just drawing the pixels and reporting to the
    user the areas that were changed. Of course these operations are quite
-   common and thus they are ready to use in Ecore, particularly in
-   Ecore_Evas (http://docs.enlightenment.org/auto/ecore/).
+   common and thus they are ready to use in @ref Ecore, particularly in
+   @ref Ecore_Evas_Group.
 
 
    @section evas_main_work How does Evas work?
@@ -184,7 +177,7 @@
    scrollbars, sliders, push buttons etc.
 
 
-   @section evas_main_compiling How to compile using Evas ?
+   @section evas_main_compiling How to compile
 
    Evas is a library your application links to. The procedure for this is
    very simple. You simply have to compile your application with the
@@ -203,42 +196,17 @@
    gcc -o my_application main.o `pkg-config --libs evas`
    @endverbatim
 
-   You simply have to make sure that @c pkg-config is in your shell's @c
-   PATH (see the manual page for your appropriate shell) and @c evas.pc
-   in @c /usr/lib/pkgconfig or its path in the @c PKG_CONFIG_PATH
-   environment variable. It's that simple to link and use Evas once you
-   have written your code to use it.
-
-   Since the program is linked to Evas, it is now able to use any
-   advertised API calls to display graphics in a canvas managed by it, as
-   well as use the API calls provided to manage data.
-
-   You should make sure you add any extra compile and link flags to your
-   compile commands that your application may need as well. The above
-   example is only guaranteed to make Evas add it's own requirements.
-
-
-   @section evas_main_install How is it installed?
-
-   Simple:
-
-   @verbatim
-   ./configure
-   make
-   su -
-   ...
-   make install
-   @endverbatim
+   See @ref pkgconfig
 
    @section evas_main_next_steps Next Steps
 
-   After you understood what Evas is and installed it in your system you
-   should proceed understanding the programming interface for all
+   After you understood what Evas is and installed it in your system
+   you should proceed understanding the programming interface for all
    objects, then see the specific for the most used elements. We'd
-   recommend you to take a while to learn Ecore
-   (http://docs.enlightenment.org/auto/ecore/) and Edje
-   (http://docs.enlightenment.org/auto/edje/) as they will likely save
-   you tons of work compared to using just Evas directly.
+   recommend you to take a while to learn @ref Ecore, Edje
+   (http://docs.enlightenment.org/auto/edje/) and Elementary
+   (http://docs.enlightenment.org/auto/elementary/) as they will
+   likely save you tons of work compared to using just Evas directly.
 
    Recommended reading:
 
@@ -268,6 +236,9 @@
    @section evas_main_intro_example Introductory Example
 
    @include evas-buffer-simple.c
+
+   More examples can be found at @ref evas_examples.
+
  */
 
 #ifndef _EVAS_H

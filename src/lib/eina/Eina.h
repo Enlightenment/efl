@@ -46,10 +46,16 @@
 /**
  * @page eina_main Eina
  *
- * @version 1.7
- * @date 2008-2012
+ * @date 2008 (created)
  *
- * @section eina_intro_sec Introduction
+ * @section toc Table of Contents
+ *
+ * @li @ref eina_main_intro
+ * @li @ref eina_main_compiling
+ * @li @ref eina_main_next_steps
+ * @li @ref eina_main_intro_example
+ *
+ * @section eina_main_intro Introduction
  *
  * The Eina library is a library that implements an API for data types
  * in an efficient way. It also provides some useful tools like
@@ -90,8 +96,45 @@
  * @li @ref Eina_Rectangle_Group rectangle structure and standard manipulation methods.
  * @li @ref Eina_Safety_Checks_Group extra checks that will report unexpected conditions and can be disabled at compile time.
  * @li @ref Eina_String_Group a set of functions that manages C strings.
- * 
- * Please see the @ref authors page for contact details.
+ *
+ * @section eina_main_compiling How to compile
+ *
+ * Eina is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eina`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs eina`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section eina_main_next_steps Next Steps
+ *
+ * After you understood what Eina is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Eina_Data_Types_Group to find about implemented types and
+ *     how to use them.
+ * @li @ref Eina_Tools_Group to find about helper tools provided by eina.
+ *
+ * @section eina_main_intro_example Introductory Example
+ *
+ * @include eina_list_01.c
+ *
+ * More examples can be found at @ref eina_examples.
+ *
  *
  * @defgroup Eina_Data_Types_Group Data Types
  * @ingroup Eina

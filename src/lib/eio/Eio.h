@@ -87,7 +87,16 @@ extern "C" {
 /**
  * @page eio_main Eio
  *
- * @section eio_intro_sec Introduction
+ * @date 2012 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref eio_main_intro
+ * @li @ref eio_main_compiling
+ * @li @ref eio_main_next_steps
+ * @li @ref eio_main_intro_example
+ *
+ * @section eio_main_intro Introduction
  *
  * The Eio library is a library that implements an API for asynchronous
  * input/output operation. Most operation are done in a separated thread
@@ -101,9 +110,45 @@ extern "C" {
  * Linux, BSD, Opensolaris and Windows (XP and CE). It is heavily
  * based on @ref Ecore_Main_Loop_Group.
  *
- * @section eio_main_intro_example Introductory Examples
+ * @section eio_main_compiling How to compile
  *
- * @ref eio_examples
+ * Eio is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eio`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs eio`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section eio_main_next_steps Next Steps
+ *
+ * After you understood what Eio is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Eio_Helper for common functions and library initialization.
+ * @li @ref Eio_Map to manipulate files asynchronously (mmap).
+ * @li @ref Eio_Xattr to access file extended attributes (xattr).
+ * @li @ref Eio_Monitor to monitor for file changes (inotify).
+ * @li @ref Eio_Eet to access Eet files asynchronously.
+ *
+ * @section eio_main_intro_example Introductory Example
+ *
+ * @include eio_file_ls.c
+ *
+ * More examples can be found at @ref eio_examples.
  *
  * @{
  */

@@ -9,10 +9,16 @@
 /**
  * @page evil_main Evil
  * @author Vincent Torri
- * @version 1.7.0
- * @date 2008-2012
+ * @date 2008 (created)
  *
- * @section intro_sec Introduction
+ * @section toc Table of Contents
+ *
+ * @li @ref evil_main_intro
+ * @li @ref evil_main_ack
+ * @li @ref evil_main_compiling
+ * @li @ref evil_main_next_steps
+ *
+ * @section evil_main_intro Introduction
  *
  * The Evil library is an evil library that ports some evil Unix
  * functions to the Windows (XP or above, or Mobile) platform. The
@@ -28,7 +34,7 @@
  * cygwin. To compare the size of the DLL themselves, Evil is around
  * 33 KB and cygwin DLL is around 800 KB.
  *
- * @section acknowledgments_sec Acknowledgments
+ * @section evil_main_ack Acknowledgments
  *
  * This library has receive some from people interested in the EFL or
  * not. Among them, evil thanks to Lars Munch, Raoul Hecky, Nicolas
@@ -36,15 +42,46 @@
  * Vixie, Daniel Stenberg, who helped the author of the library in
  * different fields (code and tests).
  *
- * @section license_sec license
+ * @section evil_main_compiling How to compile
  *
- * The Evil library is distributes under a modified BSD license. See
- * the files COPYING and COPYING-PLAIN in the top level directory for
- * the full license text.
+ * Evil is a library your application links to. The procedure for
+ * this is very simple. You simply have to compile your application
+ * with the appropriate compiler flags that the @p pkg-config script
+ * outputs. For example:
  *
- * @section reference_sec Reference API
+ * Compiling C or C++ files into object files:
  *
- * Use the horizontal menu above to navigate into the reference API
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags evil`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs evil`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section evil_main_next_steps Next Steps
+ *
+ * After you understood what Evil is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Evil_Mman
+ * @li @ref Evil_Libgen_Group
+ * @li @ref Evil_Unistd_Group
+ * @li @ref Evil_Dlfcn
+ * @li @ref Evil_Pwd_Group
+ * @li @ref Evil_Stdio_Group
+ * @li @ref Evil_Main_Group
+ * @li @ref Evil_Inet_Group
+ * @li @ref Evil_Dirent_Group
+ * @li @ref Evil_String_Group
+ * @li @ref Evil_Stdlib_Group
+ * @li @ref Evil_Time_Group
  */
 
 /**

@@ -64,11 +64,62 @@ enum _Eo_Op_Type
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
 /**
- * @defgroup Eo Eo Generic Object System
+ * @page eo_main Eo
+ *
+ * @date 2012 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref eo_main_intro
+ * @li @ref eo_main_compiling
+ * @li @ref eo_main_next_steps
+ * @li @ref eo_main_intro_example
+ *
+ * @section eo_main_intro Introduction
  *
  * The Eo generic object system. It was designed to be the base object
  * system for the EFL.
+
+ * @section eo_main_compiling How to compile
  *
+ * Eo is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eo`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs eo`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section eo_main_next_steps Next Steps
+ *
+ * After you understood what Eo is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Eo_Class_Base
+ * @li @ref Eo_Class
+ * @li @ref Eo_Events
+ * @li @ref Eo_Composite_Objects
+ *
+ * @section eo_main_intro_example Introductory Example
+ *
+ * @ref Eo_Tutorial
+
+ *
+ *
+ * @addtogroup Eo
  * @{
  */
 

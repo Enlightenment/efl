@@ -3,23 +3,18 @@
 
    These routines are used for Eet Library interaction
 
-   @page eet_main Eet Library Documentation
+   @page eet_main Eet
 
-   @version 1.7.0
-   @date 2000-2012
-
-   Please see the @ref authors page for contact details.
+   @date 2000 (created)
 
    @section toc Table of Contents
 
    @li @ref eet_main_intro
-   @li @ref eet_main_example
    @li @ref eet_main_compiling
-   @li @ref eet_main_install
    @li @ref eet_main_next_steps
    @li @ref eet_main_intro_example
 
-   @section eet_main_intro What is Eet?
+   @section eet_main_intro Introduction
 
    It is a tiny library designed to write an arbitrary set of chunks of data
    to a file and optionally compress each chunk (very much like a zip file)
@@ -40,23 +35,7 @@
    encoded in a platform independent way and can be written and read by any
    architecture.
 
-   @section eet_main_example A simple example on using Eet
-
-   Here is a simple example on how to use Eet to save a series of strings to a
-   file and load them again. The advantage of using Eet over just
-   fprintf() and
-   fscanf() is that not only can these entries be strings, they need no special
-   parsing to handle delimiter characters or escaping, they can be binary data,
-   image data, data structures containing integers, strings, other data
-   structures, linked lists and much more, without the programmer having to
-   worry about parsing, and best of all, Eet is very fast.
-
-   This is just a very simple example that doesn't show all of the capabilities
-   of Eet, but it serves to illustrate its simplicity.
-
-   @include eet-basic.c
-
-   @section eet_main_compiling How to compile using Eet ?
+   @section eet_main_compiling How to compile
 
    Eet is a library your application links to. The procedure for this is very
    simple. You simply have to compile your application with the appropriate
@@ -74,38 +53,14 @@
    gcc -o my_application main.o `pkg-config --libs eet`
    @endverbatim
 
-   You simply have to make sure that pkg-config is in your shell's PATH (see
-   the manual page for your appropriate shell) and eet.pc in /usr/lib/pkgconfig
-   or its path is in the PKG_CONFIG_PATH environment variable. It's that simple
-   to link and use Eet once you have written your code to use it.
-
-   Since the program is linked to Eet, it is now able to use any advertised
-   API calls to serialize your data.
-
-   You should make sure you add any extra compile and link flags to your
-   compile commands that your application may need as well. The above example
-   is only guaranteed to make Eet add it's own requirements.
-
-
-   @section eet_main_install How is it installed?
-
-   Simple:
-
-   @verbatim
-   ./configure
-   make
-   su -
-   ...
-   make install
-   @endverbatim
+   See @ref pkgconfig
 
    @section eet_main_next_steps Next Steps
 
-   After you understood what Eet is and installed it in your system you
-   should proceed understanding the programming interface. We'd recommend
-   you to take a while to learn Eina
-   (http://docs.enlightenment.org/auto/eina/) as it is very convenient
-   and optimized, and Eet provides integration with it.
+   After you understood what Eet is and installed it in your system
+   you should proceed understanding the programming interface. We'd
+   recommend you to take a while to learn @ref Eina as it is very
+   convenient and optimized, and Eet provides integration with it.
 
    Recommended reading:
 
@@ -116,7 +71,21 @@
 
    @section eet_main_intro_example Introductory Examples
 
-   @ref eet_examples
+   Here is a simple example on how to use Eet to save a series of strings to a
+   file and load them again. The advantage of using Eet over just
+   fprintf() and
+   fscanf() is that not only can these entries be strings, they need no special
+   parsing to handle delimiter characters or escaping, they can be binary data,
+   image data, data structures containing integers, strings, other data
+   structures, linked lists and much more, without the programmer having to
+   worry about parsing, and best of all, Eet is very fast.
+
+   This is just a very simple example that doesn't show all of the capabilities
+   of Eet, but it serves to illustrate its simplicity.
+
+   @include eet-basic.c
+
+   More examples can be found at @ref eet_examples.
 
    @todo Document data format for images and data structures.
 

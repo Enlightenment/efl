@@ -3,16 +3,18 @@
  
 These routines are used for Embryo.
 
-@page embryo_main Embryo Library Documentation
+@page embryo_main Embryo
 
-@image html  e_big.png
+@date 2004 (created)
+@note based on Compuphase (http://www.compuphase.com) PAWN language.
 
-@version 1.7.0
-@author Carsten Haitzler <raster\@rasterman.com>
-@author Compuphase http://www.compuphase.com
-@date 2004-2012
+@section toc Table of Contents
 
-@section intro What is Embryo?
+@li @ref embryo_main_intro
+@li @ref embryo_main_compiling
+@li @ref embryo_main_next_steps
+
+@section embryo_main_intro Introduction
 
 Embryo is a tiny library designed to interpret limited Small programs
 compiled by the included compiler, @c embryo_cc.  It is mostly a cleaned
@@ -26,16 +28,40 @@ For more information about the Pawn language, see
 @latexonly http://www.compuphase.com/pawn/pawn.htm @endlatexonly
 For the basics about the Small language, see @ref Small_Page.
 
-@section How_to_Use How to Use Embryo?
+@section embryo_main_compiling How to compile
 
-To use Embryo in your code, you need to do at least the following:
+Embryo is a library your application links to. The procedure for this
+is very simple. You simply have to compile your application with the
+appropriate compiler flags that the @p pkg-config script outputs. For
+example:
 
-@li Include @ref Embryo.h.
-@li Load the Embryo program using one of the 
-    @ref Embryo_Program_Creation_Group.
-@li Set up the native calls with @ref embryo_program_native_call_add.
-@li Create a virtual machine with @ref embryo_program_vm_push.
-@li Then run the program with @ref embryo_program_run.
+Compiling C or C++ files into object files:
+
+@verbatim
+gcc -c -o main.o main.c `pkg-config --cflags embryo`
+@endverbatim
+
+Linking object files into a binary executable:
+
+@verbatim
+gcc -o my_application main.o `pkg-config --libs embryo`
+@endverbatim
+
+See @ref pkgconfig
+
+@section embryo_main_next_steps Next Steps
+
+After you understood what Embryo is and installed it in your system you
+should proceed understanding the programming interface.
+
+Recommended reading:
+
+@li @ref Embryo_Program_Creation_Group to create Embryo from memory or file.
+@li @ref Embryo_Func_Group to expose functions to Embryo.
+@li @ref Embryo_Program_VM_Group to push pop virtual machine.
+@li @ref Embryo_Run_Group to run it.
+
+
 
 @todo Clean up compiler code.
 @todo Proper overview of the operation of the interpreter, that is how

@@ -1,0 +1,61 @@
+/**
+   @page pkgconfig
+
+   @section pkgconfig_intro Introduction
+
+   pkg-config (http://pkgconfig.freedesktop.org/wiki/) is a helper
+   tool used when compiling applications and libraries. It helps you
+   insert the correct compiler options on the command line based on
+   installed software, instead of hard-coded values.
+
+   @section pkgconfig_usage Usage
+
+   Using pkg-config it is as simple as:
+   @verbatim
+   # compile:
+   gcc -c -o main.o main.c `pkg-config --cflags PKGNAME`
+
+   # link:
+   gcc -o my_application main.o `pkg-config --libs PKGNAME`
+
+   # compile + link in a single step:
+   gcc -o my_application main.c `pkg-config --cflags --libs PKGNAME`
+   @endverbatim
+
+   Where @b PKGNAME is your module, such as eina, eet, evas, ecore,
+   ecore-x, eio and so on.
+
+   One can do some queries such as the module version, other variables:
+   @verbatim
+   pkg-config --modversion PKGNAME
+   pkg-config --variable=prefix PKGNAME
+   @endverbatim
+
+   @section pkgconfig_troubleshooting Troubleshooting
+
+   Make sure @c pkg-config command is in your @c $PATH, otherwise
+   you'll end with:
+
+   @verbatim
+   pkg-config: command not found
+   @endverbatim
+
+   The @b PKGNAME it searched using pkg-config's build location,
+   usually @c /usr/lib/pkgconfig. This can be overwritten with @c
+   $PKG_CONFIG_LIBDIR (usually for cross compile) or extended with @c
+   $PKG_CONFIG_PATH. If you installed EFL to @c /opt/efl, then use:
+
+   @verbatim
+   export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/efl/lib/pkgconfig"
+   pkg-config --cflags --libs PKGNAME
+   @endverbatim
+
+   Otherwise you'll end with:
+   @verbatim
+   Package PKGNAME was not found in the pkg-config search path.
+   Perhaps you should add the directory containing `PKGNAME.pc'
+   to the PKG_CONFIG_PATH environment variable
+   No package 'PKGNAME' found
+   @endverbatim
+
+*/

@@ -7,15 +7,16 @@
  * find documentation auto-generated daily from SVN source for these
  * libraries:
  *
- * @li @ref eina_main
- * @li @ref evas_main
- * @li @ref eet_main
- * @li @ref embryo_main
- * @li @ref ecore_main
- * @li @ref escape_main
- * @li @ref evil_main
- * @li @ref eio_main
- * @li @ref edbus_main
+ * @li @ref eina_main data types and low-level/basic abstractions.
+ * @li @ref eo_main generic object system.
+ * @li @ref evas_main drawing canvas.
+ * @li @ref eet_main binary data parser and serializer.
+ * @li @ref embryo_main embedded script language.
+ * @li @ref ecore_main operating system abstraction and integration.
+ * @li @ref escape_main playstation3 portability layer.
+ * @li @ref evil_main microsoft windows portability layer.
+ * @li @ref eio_main asynchronous input/output
+ * @li @ref edbus_main d-bus integration.
  *
  */
 
@@ -118,55 +119,61 @@
  */
 
 /**
+ * @defgroup Eo
+ *
+ * @brief Generic object system.
+ */
+
+/**
  * @defgroup Evas
  *
- * @brief Evas
+ * @brief Drawing canvas.
  */
 
 /**
  * @defgroup Eet
  *
- * @brief Eet
+ * @brief Binary data parser and serializer.
  */
 
 /**
  * @defgroup Eina
  *
- * @brief Eina
+ * @brief Data types and low-level/basic abstractions.
  */
 
 /**
  * @defgroup Embryo
  *
- * @brief Embryo
+ * @brief Embedded script language.
  */
 
 /**
  * @defgroup Evil
  *
- * @brief Evil
+ * @brief Microsoft Windows portability layer.
  */
 
 /**
  * @defgroup Escape
  *
- * @brief Escape
+ * @brief PlayStation3 portability layer.
  */
 
 /**
  * @defgroup Ecore
  *
- * @brief Ecore
+ * @brief Operating System Abstraction and Integration.
  */
 
 /**
  * @defgroup Eio
  *
- * @brief Eio
+ * @brief Asynchronous input/output and file manipulation.
  */
 
 /**
  * @defgroup EDBus
  *
- * @brief EDBus
+ * @brief D-Bus integration with EFL (Ecore).
  */
