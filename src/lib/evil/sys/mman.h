@@ -64,7 +64,7 @@ extern "C" {
 /**
  * @file mman.h
  * @brief The file that provides the memory map functions
- * @defgroup Mman Functions that manage memory mappping.
+ * @defgroup Evil_Mman Functions that manage memory mappping.
  * @ingroup Evil
  *
  * This header provides the meomry map functions mmap and munmap.
@@ -108,7 +108,7 @@ extern "C" {
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Mman
+ * @ingroup Evil_Mman
  */
 EAPI void *mmap(void   *addr,
                 size_t len,
@@ -135,7 +135,7 @@ EAPI void *mmap(void   *addr,
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Mman
+ * @ingroup Evil_Mman
  */
 EAPI int   munmap(void  *addr,
                   size_t len);

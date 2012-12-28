@@ -36,7 +36,7 @@ extern "C" {
 /**
  * @file dlfcn.h
  * @brief The file that provides functions to manage dynamic-link libraries
- * @defgroup Dlfcn Functions that manage dynamic-link libraries.
+ * @defgroup Evil_Dlfcn Functions that manage dynamic-link libraries.
  * @ingroup Evil
  *
  * This header provides functions to load and unload dynamic-link
@@ -151,7 +151,7 @@ struct Dl_info
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Dlfcn
+ * @ingroup Evil_Dlfcn
  */
 EAPI void *dlopen(const char* path, int mode);
 
@@ -175,7 +175,7 @@ EAPI void *dlopen(const char* path, int mode);
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Dlfcn
+ * @ingroup Evil_Dlfcn
  */
 EAPI int   dlclose(void* handle);
 
@@ -199,7 +199,7 @@ EAPI int   dlclose(void* handle);
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Dlfcn
+ * @ingroup Evil_Dlfcn
  */
 EAPI void *dlsym(void* handle, const char* symbol);
 
@@ -223,7 +223,7 @@ EAPI void *dlsym(void* handle, const char* symbol);
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Dlfcn
+ * @ingroup Evil_Dlfcn
  */
 EAPI int dladdr (const void *addr, Dl_info *info);
 
@@ -246,7 +246,7 @@ EAPI int dladdr (const void *addr, Dl_info *info);
  * Supported OS: Windows Vista, Windows XP or Windows 2000
  * Professional.
  *
- * @ingroup Dlfcn
+ * @ingroup Evil_Dlfcn
  */
 EAPI char *dlerror (void);
 

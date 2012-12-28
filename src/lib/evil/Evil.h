@@ -2,8 +2,12 @@
 #define __EVIL_H__
 
 /**
+ * @file Evil.h
+ * @brief The file that provides miscellaneous functions ported from Unix.
+ */
+
+/**
  * @page evil_main Evil
- * @image html  e_big.png
  * @author Vincent Torri
  * @version 1.7.0
  * @date 2008-2012
@@ -41,16 +45,6 @@
  * @section reference_sec Reference API
  *
  * Use the horizontal menu above to navigate into the reference API
- */
-
-/**
- * @file Evil.h
- * @brief The file that provides miscellaneous functions ported from Unix.
- * @defgroup Evil Miscellaneous functions ported from Unix.
- *
- * This header provides miscellaneous functions that exist on Unix
- * but not on Windows platform. They try to follow the conformance of
- * the Unix versions.
  */
 
 /**
