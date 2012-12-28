@@ -1,47 +1,18 @@
-/* EIO - EFL data type library
- * Copyright (C) 2010 Enlightenment Developers:
- *           Cedric Bail <cedric.bail@free.fr>
- *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- *	     Stephen "okra" Houston <unixtitan@gmail.com>
- *           Gustavo Sverzut Barbieri <barbieri@gmail.com>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library;
- * if not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
- * @page eio_main Eio
- * @author Cedric Bail <cedric.bail@@free.fr>
- * @author Stephen "okra" Houston <unixtitan@@gmail.com>
- * @author Gustavo Sverzut Barbieri <barbieri@@gmail.com>
- * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- * @author Guillaume "kuri" Friloux <guillaume.friloux@@asp64.com>
- * @date 2010-2012
+ * @page eio_examples Eio Examples
  *
- * @section eio_intro_sec Introduction
- * @version @PACKAGE_VERSION@
+ * Here is a page with some Eio examples explained:
  *
- * The Eio library is a library that implements an API for asynchronous
- * input/output operation. Most operation are done in a separated thread
- * to prevent lock. See @ref Eio_Group. Some helper to work on data
- * received in Eio callback are also provided see @ref Eio_Helper.
- * It is also possible to work asynchronously on Eina_File with @ref Eio_Map
- * or on Eet_File with @ref Eio_Eet. It come with way to manipulate
- * eXtended attribute assynchronously with @ref Eio_Xattr.
+ * @li @ref eio_file_ls.c
  *
- * This library is cross-platform and can be compiled and used on
- * Linux, BSD, Opensolaris and Windows (XP and CE).
+ * Tutorials:
+ * @li @ref tutorial_dir_copy
+ * @li @ref tutorial_dir_stat_ls
+ * @li @ref tutorial_file_ls
+ * @li @ref tutorial_dir_direct_ls
+ * @li @ref tutorial_monitor_add
+ *
+ * @example eio_file_ls.c
  */
 
 /**

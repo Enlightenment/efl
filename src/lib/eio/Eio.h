@@ -78,16 +78,32 @@ extern "C" {
    EAPI extern Eio_Version *eio_version;
 
 /**
- * @defgroup Eio_Group Eio Reference API
+ * @file
+ * @brief Eio asynchronous input/output library
  *
- * @brief This is the core asynchronous input/output operation
+ * These routines are used for Eio.
+ */
+
+/**
+ * @page eio_main Eio
  *
- * All the functions in this group perform input/output operations
- * in a separate thread using the infrastructure provided by
- * Ecore_Thread and Eina, this means that all functions here are non-blocking.
+ * @section eio_intro_sec Introduction
  *
- * The functions displayed here are used to make basic file operations, like
- * listing the content of a directory, creating a new directory, etc.
+ * The Eio library is a library that implements an API for asynchronous
+ * input/output operation. Most operation are done in a separated thread
+ * to prevent lock. See @ref Eio_Group. Some helper to work on data
+ * received in Eio callback are also provided see @ref Eio_Helper.
+ * It is also possible to work asynchronously on Eina_File with @ref Eio_Map
+ * or on Eet_File with @ref Eio_Eet. It come with way to manipulate
+ * eXtended attribute assynchronously with @ref Eio_Xattr.
+ *
+ * This library is cross-platform and can be compiled and used on
+ * Linux, BSD, Opensolaris and Windows (XP and CE). It is heavily
+ * based on @ref Ecore_Main_Loop_Group.
+ *
+ * @section eio_main_intro_example Introductory Examples
+ *
+ * @ref eio_examples
  *
  * @{
  */
@@ -494,6 +510,7 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 
 /**
  * @defgroup Eio_Xattr Eio manipulation of eXtended attribute.
+ * @ingroup Eio
  *
  * @brief A set of function to manipulate data associated with a specific file
  *
@@ -678,6 +695,7 @@ EAPI Eio_File *eio_file_xattr_string_get(const char *path,
 
 /**
  * @defgroup Eio_Helper Eio Reference helper API
+ * @ingroup Eio
  *
  * @brief This are helper provided around core Eio API.
  *
@@ -820,6 +838,7 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
 
 /**
  * @defgroup Eio_Map Manipulate an Eina_File asynchronously
+ * @ingroup Eio
  *
  * @brief This function help manipulating file asynchronously.
  *
@@ -905,6 +924,7 @@ EAPI Eio_File *eio_file_map_new(Eina_File *f,
 
 /**
  * @defgroup Eio_Eet Eio asynchronous API for Eet file.
+ * @ingroup Eio
  *
  * @brief This set of functions help in the asynchronous use of Eet
  *
@@ -1096,6 +1116,7 @@ EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
 
 /**
  * @defgroup Eio_Monitor Eio file and directory monitoring API
+ * @ingroup Eio
  *
  * @brief These function monitor changes in directories and files
  *

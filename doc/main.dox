@@ -14,6 +14,7 @@
  * @li @ref ecore_main
  * @li @ref escape_main
  * @li @ref evil_main
+ * @li @ref eio_main
  * @li @ref edbus_main
  *
  */
@@ -156,6 +157,12 @@
  * @defgroup Ecore
  *
  * @brief Ecore
+ */
+
+/**
+ * @defgroup Eio
+ *
+ * @brief Eio
  */
 
 /**
