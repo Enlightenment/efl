@@ -18,7 +18,7 @@ int _ecore_imf_log_dom = -1;
 static int _ecore_imf_init_count = 0;
 
 /**
- * @defgroup Ecore_IMF_Lib_Group Ecore Input Method Library Functions
+ * @defgroup Ecore_IMF_Lib_Group Ecore_IMF - Ecore Input Method Library Functions
  * @ingroup Ecore
  *
  * Utility functions that set up and shut down the Ecore Input Method

@@ -9,7 +9,7 @@
 
 /**
  * @defgroup Ecore_IMF_Evas_Group Ecore Input Method Context Evas Helper Functions
- * @ingroup Ecore
+ * @ingroup Ecore_IMF_Lib_Group
  *
  * Helper functions to make it easy to use Evas with Ecore_IMF.
  * Converts each event from Evas to the corresponding event of Ecore_IMF.

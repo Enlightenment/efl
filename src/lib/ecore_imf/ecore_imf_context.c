@@ -14,7 +14,7 @@
 
 /**
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
- * @ingroup Ecore
+ * @ingroup Ecore_IMF_Lib_Group
  *
  * Functions that operate on Ecore Input Method Context objects.
 
@@ -900,7 +900,7 @@ ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type
 
 /**
  * @defgroup Ecore_IMF_Context_Module_Group Ecore Input Method Context Module Functions
- * @ingroup Ecore
+ * @ingroup Ecore_IMF_Lib_Group
  *
  * Functions that should be used by Ecore Input Method Context modules.
  */
