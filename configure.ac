@@ -155,9 +155,9 @@ requirements_libs_ecore_x=""
 requirements_libs_ecore_evas=""
 requirements_libs_embryo=""
 requirements_libs_eio=""
+requirements_libs_edbus=""
 #requirements_libs_edje=""
 #requirements_libs_efreet=""
-#requirements_libs_e_dbus=""
 #requirements_libs_eeze=""
 #requirements_libs_emotion=""
 #requirements_libs_ethumb=""
@@ -185,9 +185,9 @@ requirements_pc_ecore_x=""
 requirements_pc_ecore_evas=""
 requirements_pc_embryo=""
 requirements_pc_eio=""
+requirements_pc_edbus=""
 #requirements_pc_edje=""
 #requirements_pc_efreet=""
-#requirements_pc_e_dbus=""
 #requirements_pc_eeze=""
 #requirements_pc_emotion=""
 #requirements_pc_ethumb=""
@@ -204,9 +204,9 @@ requirements_pc_deps_ecore_sdl=""
 requirements_pc_deps_ecore_wayland=""
 requirements_pc_deps_ecore_evas=""
 requirements_pc_deps_embryo=""
+requirements_pc_deps_edbus=""
 #requirements_pc_deps_edje=""
 #requirements_pc_deps_efreet=""
-#requirements_pc_deps_e_dbus=""
 #requirements_pc_deps_eeze=""
 #requirements_pc_deps_emotion=""
 #requirements_pc_deps_ethumb=""
@@ -234,9 +234,9 @@ AC_SUBST([requirements_libs_ecore_x])
 AC_SUBST([requirements_libs_ecore_evas])
 AC_SUBST([requirements_libs_embryo])
 AC_SUBST([requirements_libs_eio])
+AC_SUBST([requirements_libs_edbus])
 #AC_SUBST([requirements_libs_edje])
 #AC_SUBST([requirements_libs_efreet])
-#AC_SUBST([requirements_libs_e_dbus])
 #AC_SUBST([requirements_libs_eeze])
 #AC_SUBST([requirements_libs_emotion])
 #AC_SUBST([requirements_libs_ethumb])
@@ -264,9 +264,9 @@ AC_SUBST([requirements_pc_ecore_x])
 AC_SUBST([requirements_pc_ecore_evas])
 AC_SUBST([requirements_pc_embryo])
 AC_SUBST([requirements_pc_eio])
+AC_SUBST([requirements_pc_edbus])
 #AC_SUBST([requirements_pc_edje])
 #AC_SUBST([requirements_pc_efreet])
-#AC_SUBST([requirements_pc_e_dbus])
 #AC_SUBST([requirements_pc_eeze])
 #AC_SUBST([requirements_pc_emotion])
 #AC_SUBST([requirements_pc_ethumb])
@@ -3344,6 +3344,42 @@ AC_MSG_RESULT([${have_xattr}])
 #### End of Eio
 
 
+#### EDBus
+
+AC_MSG_NOTICE([EDBus checks])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+
+## Eina, Ecore, Ecore_Input
+
+requirements_pc_edbus="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
+
+EFL_DEPEND_PKG([edbus], [DBUS], [dbus-1])
+
+PKG_CHECK_MODULES([EDBUS], [${requirements_pc_deps_edbus}])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+#### End of EDBus
+
+
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -3360,6 +3396,7 @@ src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/examples/ecore/Makefile
 src/examples/eio/Makefile
+src/examples/edbus/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
@@ -3401,6 +3438,7 @@ pc/ecore-imf-evas.pc
 pc/ecore-audio.pc
 pc/embryo.pc
 pc/eio.pc
+pc/edbus2.pc
 $po_makefile_in
 ])
 

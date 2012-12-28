@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Message Message
+ * @ingroup EDBus
  *
  * @{
  */

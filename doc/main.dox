@@ -14,98 +14,102 @@
  * @li @ref ecore_main
  * @li @ref escape_main
  * @li @ref evil_main
+ * @li @ref edbus_main
  *
  */
 
 /**
  * @page authors Authors
  *
- * @author Carsten Haitzler <raster@@@rasterman.com>
- * @author Tom Gilbert <tom@@linuxbrit.co.uk>
- * @author Burra <burra@@colorado.edu>
- * @author Chris Ross <chris@@darkrock.co.uk>
- * @author Term <term@@twistedpath.org>
- * @author Tilman Sauerbeck <tilman@@code-monkey.de>
- * @author Ibukun Olumuyiwa <ibukun@@computer.org>
- * @author Yuri <da2001@hotmail.ru>
- * @author Nicholas Curran <quasar@@bigblue.net.au>
- * @author Howell Tam <pigeon@@pigeond.net>
- * @author Nathan Ingersoll <rbdpngn@@users.sourceforge.net>
- * @author Andrew Elcock <andy@@elcock.org>
- * @author Kim Woelders <kim@@woelders.dk>
- * @author Sebastian Dransfeld <sebastid@@tango.flipp.net>
- * @author Simon Poole <simon.armlinux@@themalago.net>
- * @author Jorge Luis Zapata Muga <jorgeluis.zapata@@gmail.com>
- * @author dan sinclair <zero@@everburning.com>
- * @author Michael 'Mickey' Lauer <mickey@@tm.informatik.uni-frankfurt.de>
- * @author David 'onefang' Seikel <onefang@@gmail.com>
- * @author Hisham 'CodeWarrior' Mardam Bey <hisham@@hisham.cc>
- * @author Brian 'rephorm' Mattern <rephorm@@rephorm.com>
- * @author Tim Horton <hortont424@gmail.com>
- * @author Arnaud de Turckheim 'quarium' <quarium@@gmail.com>
- * @author Matt Barclay <mbarclay@@gmail.com>
- * @author Peter Wehrfritz <peter.wehrfritz@@web.de>
+ * @author Adam Simpkins <adam@@adamsimpkins.net>
  * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
- * @author Vincent Torri <vincent.torri@@gmail.com>
- * @author Lars Munch <lars@@segv.dk>
  * @author Andre Dieb <andre.dieb@@gmail.com>
+ * @author Andrew Elcock <andy@@elcock.org>
+ * @author Arnaud de Turckheim 'quarium' <quarium@@gmail.com>
+ * @author Bernhard Nemec <Bernhard.Nemec@@viasyshc.com>
+ * @author Bluezery <ohpowel@@gmail.com>
+ * @author Boris "billiob" Faure <billiob@@gmail.com>
+ * @author Brett Nash <nash@@nash.id.au>
+ * @author Brian 'rephorm' Mattern <rephorm@@rephorm.com>
+ * @author Burra <burra@@colorado.edu>
+ * @author Carsten Haitzler <raster@@@rasterman.com>
+ * @author Cedric Bail <cedric.bail@@free.fr>
+ * @author Chidambar Zinnoury <illogict@@online.fr>
+ * @author Chris Ross <chris@@darkrock.co.uk>
+ * @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
+ * @author ChunEon Park <hermet@@hermet.pe.kr>
+ * @author Corey "atmos" Donohoe <atmos@@atmos.org>
+ * @author dan sinclair <zero@@everburning.com>
+ * @author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@@samsung.com>
+ * @author Daniel Willmann <daniel@@totalueberwachung.de>
+ * @author David 'onefang' Seikel <onefang@@gmail.com>
+ * @author David Goodlad <dgoodlad@@gmail.com>
+ * @author Doyoun Kang <wayofmine@@gmail.com> <doyoun.kang@@samsung.com>
+ * @author Guillaume Friloux <guillaume.friloux@@asp64.com>
+ * @author Gustavo Chaves <glima@@profusion.mobi>
+ * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+ * @author Gwanglim Lee <gl77.lee@@samsung.com> <gwanglim@@gmail.com>
+ * @author Haifeng Deng <haifeng.deng@@samsung.com>
+ * @author Hisham 'CodeWarrior' Mardam Bey <hisham@@hisham.cc>
+ * @author Howell Tam <pigeon@@pigeond.net>
+ * @author Hyoyoung Chang <hyoyoung@@gmail.com>
+ * @author Ibukun Olumuyiwa <ibukun@@computer.org>
+ * @author Iván Briano <ivan@@profusion.mobi>
+ * @author Jihoon Kim <jihoon48.kim@@samsung.com> <imfine98@gmail.com>
+ * @author Jorge Luis Zapata Muga <jorgeluis.zapata@@gmail.com>
+ * @author Jose O Gonzalez <jose_ogp@@juno.com>
+ * @author José Roberto de Souza <zehortigoza@@profusion.mobi>
+ * @author Jérémy Zurcher <jeremy@@asynk.ch>
+ * @author Jérôme Pinot <ngc891@gmail.com>
+ * @author Kim Woelders <kim@@woelders.dk>
+ * @author Kim Yunhan <spbear@@gmail.com>
+ * @author Lars Munch <lars@@segv.dk>
+ * @author Leandro Pereira <leandro@@profusion.mobi>
+ * @author Leif Middelschulte <leif.middelschulte@@gmail.com>
+ * @author Lucas De Marchi <lucas.demarchi@@profusion.mobi>
+ * @author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
  * @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
+ * @author Matt Barclay <mbarclay@@gmail.com>
+ * @author Michael 'Mickey' Lauer <mickey@@tm.informatik.uni-frankfurt.de>
+ * @author Mike Blumenkrantz <michael.blumenkrantz@@gmail.com>
+ * @author Mike McCormack <mj.mccormack@@samsung.com>
+ * @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
+ * @author Myungjae Lee <mjae.lee@@samsung.com>
+ * @author Nathan Ingersoll <ningerso@@d.umn.edu>
+ * @author Nathan Ingersoll <rbdpngn@@users.sourceforge.net>
+ * @author Nicholas Curran <quasar@@bigblue.net.au>
+ * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
+ * @author Peter Wehrfritz <peter.wehrfritz@@web.de>
+ * @author PnB <Poor.NewBie@@gmail.com>
+ * @author Rafael Antognolli <antognolli@@profusion.mobi>
+ * @author Rafal Krypa <r.krypa@@samsung.com>
+ * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
  * @author Rui Miguel Silva Seabra <rms@@1407.org>
  * @author Samsung Electronics
  * @author Samsung SAIT
- * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
- * @author Brett Nash <nash@@nash.id.au>
- * @author Mike Blumenkrantz <michael.blumenkrantz@@gmail.com>
- * @author Leif Middelschulte <leif.middelschulte@@gmail.com>
- * @author Mike McCormack <mj.mccormack@@samsung.com>
  * @author Sangho Park <gouache95@gmail.com>
- * @author Jihoon Kim <jihoon48.kim@@samsung.com> <imfine98@gmail.com>
- * @author PnB <Poor.NewBie@@gmail.com>
- * @author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@@samsung.com>
- * @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
- * @author ChunEon Park <hermet@@hermet.pe.kr>
- * @author xlopez@@igalia.com
- * @author Rafael Antognolli <antognolli@@profusion.mobi>
- * @author Kim Yunhan <spbear@@gmail.com>
- * @author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
- * @author Bluezery <ohpowel@@gmail.com>
- * @author Doyoun Kang <wayofmine@@gmail.com> <doyoun.kang@@samsung.com>
- * @author Haifeng Deng <haifeng.deng@@samsung.com>
- * @author Jérémy Zurcher <jeremy@@asynk.ch>
- * @author Vikram Narayanan <vikram186@gmail.com>
- * @author Gwanglim Lee <gl77.lee@@samsung.com> <gwanglim@@gmail.com>
- * @author Daniel Willmann <daniel@@totalueberwachung.de>
- * @author David Goodlad <dgoodlad@@gmail.com>
- * @author Cedric Bail <cedric.bail@@free.fr>
- * @author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
- * @author Chidambar Zinnoury <illogict@@online.fr>
- * @author Vincent Torri <vtorri@@univ-evry.fr>
- * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
- * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
- * @author Adam Simpkins <adam@@adamsimpkins.net>
- * @author Corey "atmos" Donohoe <atmos@@atmos.org>
- * @author Gustavo Chaves <glima@@profusion.mobi>
- * @author Tom Hacohen <tom@@stosb.com>
  * @author Sebastian Dransfeld <sd@@tango.flipp.net>
- * @author Myungjae Lee <mjae.lee@@samsung.com>
- * @author Boris "billiob" Faure <billiob@@gmail.com>
- * @author Sung W. Park <sungwoo@@gmail.com>
- * @author Guillaume Friloux <guillaume.friloux@@asp64.com>
- * @author Till Adam <till@@adam-lilienthal.de>
- * @author Steve Ireland <sireland@@pobox.com>
- * @author Yuri Hudobin <glassy_ape@@users.sourceforge.net>
- * @author Nathan Ingersoll <ningerso@@d.umn.edu>
- * @author Willem Monsuwe <willem@@stack.nl>
- * @author Jose O Gonzalez <jose_ogp@@juno.com>
- * @author Bernhard Nemec <Bernhard.Nemec@@viasyshc.com>
- * @author Iván Briano <ivan@@profusion.mobi>
- * @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
- * @author Thierry el Borgi <thierry@@substantiel.fr>
- * @author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
+ * @author Sebastian Dransfeld <sebastid@@tango.flipp.net>
  * @author Seungsoo Woo <om101.woo@@samsung.com>
- * @author Rafal Krypa <r.krypa@@samsung.com>
- * @author Hyoyoung Chang <hyoyoung@@gmail.com>
- * @author Jérôme Pinot <ngc891@gmail.com>
+ * @author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
+ * @author Simon Poole <simon.armlinux@@themalago.net>
+ * @author Steve Ireland <sireland@@pobox.com>
+ * @author Sung W. Park <sungwoo@@gmail.com>
+ * @author Term <term@@twistedpath.org>
+ * @author Thierry el Borgi <thierry@@substantiel.fr>
+ * @author Till Adam <till@@adam-lilienthal.de>
+ * @author Tilman Sauerbeck <tilman@@code-monkey.de>
+ * @author Tim Horton <hortont424@gmail.com>
+ * @author Tom Gilbert <tom@@linuxbrit.co.uk>
+ * @author Tom Hacohen <tom@@stosb.com>
+ * @author Vikram Narayanan <vikram186@gmail.com>
+ * @author Vincent Torri <vincent.torri@@gmail.com>
+ * @author Vincent Torri <vtorri@@univ-evry.fr>
+ * @author Willem Monsuwe <willem@@stack.nl>
+ * @author xlopez@@igalia.com
+ * @author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
+ * @author Yuri <da2001@hotmail.ru>
+ * @author Yuri Hudobin <glassy_ape@@users.sourceforge.net>
  *
  * Please contact <enlightenment-devel@@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
@@ -146,4 +150,10 @@
  * @defgroup Ecore
  *
  * @brief Ecore
+ */
+
+/**
+ * @defgroup EDBus
+ *
+ * @brief EDBus
  */

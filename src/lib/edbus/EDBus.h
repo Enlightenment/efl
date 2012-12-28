@@ -1,5 +1,5 @@
 /**
- * @mainpage EDBus
+ * @page edbus_main EDBus
  *
  * @section edbus_intro_sec Introduction
  *
@@ -31,20 +31,46 @@
  *
  * Here some EDBus examples:
  *
- * @li @ref banshee
- * @li @ref simple_dbus_client
- * @li @ref simple_dbus_server
- * @li @ref complex_types
- * @li @ref complex_types_server
- * @li @ref eina_value
- * @li @ref signal_emmiter
- * @li @ref connman
- * @li @ref ofono
+ * @li @ref banshee.c
+ * @li @ref client.c
+ * @li @ref complex-types.c
+ * @li @ref complex-types-client-eina-value.c
+ * @li @ref complex-types-server.c
+ * @li @ref connman-list-services.c
+ * @li @ref ofono-dial.c
+ * @li @ref server.c
+ * @li @ref simple-signal-emit.c
  *
- * @author Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
- * @author José Roberto de Souza <zehortigoza@profusion.mobi>
- * @author Leandro Pereira <leandro@profusion.mobi>
- * @author Lucas De Marchi <lucas.demarchi@profusion.mobi>
+ * @example banshee.c
+ * Access Banshee music player and send commands to it.
+ *
+ * @example client.c
+ * Client to test various call message types against a provided server
+ * (@ref server.c)
+ *
+ * @example complex-types.c
+ * Client to test complex types (arrays, structs, dicts) against a
+ * provided server (@ref complex-types-server.c)
+ *
+ * @example complex-types-client-eina-value.c
+ * Client to test complex types (arrays, structs, dicts) against a
+ * provided server (@ref complex-types-server.c) returning them as
+ * @ref Eina_Value.
+ *
+ * @example complex-types-server.c
+ * Server to test complex types (arrays, structs, dicts).
+ *
+ * @example connman-list-services.c
+ * Client to list networks/services from connman.
+ *
+ * @example ofono-dial.c
+ * Client to ask oFono to dial.
+ *
+ * @example server.c
+ * Server to reply to @ref client.c requests.
+ *
+ * @example simple-signal-emit.c
+ * Server that registers a service interface and emits simple signals.
  */
 #ifndef EDBUS_H
 #define EDBUS_H
@@ -84,6 +110,7 @@ extern "C" {
 
 /**
  * @defgroup EDBus_Core Core
+ * @ingroup EDBus
  *
  * @{
  */

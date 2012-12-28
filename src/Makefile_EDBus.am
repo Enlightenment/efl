@@ -1,0 +1,85 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/edbus/libedbus2.la
+
+installed_edbusmainheadersdir = $(includedir)/edbus-@VMAJ@
+dist_installed_edbusmainheaders_DATA = \
+lib/edbus/EDBus.h \
+lib/edbus/edbus_connection.h \
+lib/edbus/edbus_freedesktop.h \
+lib/edbus/edbus_message.h \
+lib/edbus/edbus_object.h \
+lib/edbus/edbus_pending.h \
+lib/edbus/edbus_proxy.h \
+lib/edbus/edbus_service.h \
+lib/edbus/edbus_signal_handler.h \
+lib/edbus/edbus_message_helper.h \
+lib/edbus/edbus_message_eina_value.h
+
+lib_edbus_libedbus2_la_SOURCES = \
+lib/edbus/edbus_private.h \
+lib/edbus/edbus_private_types.h \
+lib/edbus/edbus_proxy.c \
+lib/edbus/edbus_core.c \
+lib/edbus/edbus_message.c \
+lib/edbus/edbus_object.c \
+lib/edbus/edbus_pending.c \
+lib/edbus/edbus_freedesktop.c \
+lib/edbus/edbus_service.c \
+lib/edbus/edbus_signal_handler.c \
+lib/edbus/edbus_message_helper.c \
+lib/edbus/edbus_message_to_eina_value.c \
+lib/edbus/edbus_message_from_eina_value.c
+
+lib_edbus_libedbus2_la_CPPFLAGS = \
+-include $(top_builddir)/config.h \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/edbus \
+-DEFL_EDBUS_BUILD \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@ \
+@EDBUS_CFLAGS@
+
+lib_edbus_libedbus2_la_LIBADD = \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+@EDBUS_LIBS@ \
+@EFL_COV_LIBS@
+
+lib_edbus_libedbus2_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+
+### Binary
+
+bin_PROGRAMS += bin/edbus/edbus-codegen
+
+bin_edbus_edbus_codegen_SOURCES = \
+bin/edbus/codegen.h \
+bin/edbus/utils.c \
+bin/edbus/parser.c \
+bin/edbus/dbus.c \
+bin/edbus/source_client.c \
+bin/edbus/client.c
+
+bin_edbus_edbus_codegen_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/edbus \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EFL_CFLAGS@ \
+@EFL_COV_CFLAGS@
+
+bin_edbus_edbus_codegen_LDADD = \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+lib/edbus/libedbus2.la \
+@EFL_COV_LIBS@

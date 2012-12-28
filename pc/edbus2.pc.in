@@ -5,7 +5,9 @@ includedir=@includedir@
 
 Name: edbus
 Description: D-Bus access from Ecore
-Requires.private: ecore dbus-1
+Requires.private: @requirements_pc_edbus@
 Version: @VERSION@
 Libs: -L${libdir} -ledbus2
-Cflags: -I${includedir}
+Libs.private: @requirements_libs_edbus@
+Cflags: -I${includedir}/edbus-@VMAJ@
+

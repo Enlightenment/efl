@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Conneciton Connection
+ * @ingroup EDBus
  *
  * @{
  */

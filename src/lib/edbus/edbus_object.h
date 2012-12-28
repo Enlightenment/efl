@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Object_Mapper Object Mapper
+ * @ingroup EDBus
  *
  * @{
  */

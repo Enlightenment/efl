@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Signal_Handler Signal Handler
+ * @ingroup EDBus
  *
  * @{
  */

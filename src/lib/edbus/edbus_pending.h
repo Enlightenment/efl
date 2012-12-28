@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Pending Pending
+ * @ingroup EDBus
  *
  * @{
  */

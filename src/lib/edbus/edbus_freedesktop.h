@@ -2,7 +2,8 @@
 #define EDBUS_FREEDESKTOP_H 1
 
 /**
- * @defgroup EDBus_Basic Basic Methods
+ * @defgroup EDBus_Basic Basic FreeDesktop.Org Methods
+ * @ingroup EDBus
  *
  * @{
  */

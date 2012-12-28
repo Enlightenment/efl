@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Service Service
+ * @ingroup EDBus
  *
  * @{
  */

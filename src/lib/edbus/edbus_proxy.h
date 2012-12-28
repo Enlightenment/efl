@@ -3,6 +3,7 @@
 
 /**
  * @defgroup EDBus_Proxy Proxy
+ * @ingroup EDBus
  *
  * @{
  */
