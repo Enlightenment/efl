@@ -96,14 +96,6 @@ AC_ARG_WITH(internal-maximum-log-level,
     fi
     ], [:])
 
-case "$host_os" in
-   mingw*)
-dnl      PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
-      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
-      requirement_ethumb="${requirement_ethumb} evil >= 1.6.99"
-   ;;
-esac
-
 PKG_CHECK_MODULES(EINA, [eina >= 1.6.99])
 PKG_CHECK_MODULES(EVAS, [evas >= 1.6.99])
 PKG_CHECK_MODULES(ECORE, [ecore >= 1.6.99])
@@ -112,6 +104,14 @@ PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.6.99 ])
 PKG_CHECK_MODULES(EDJE, [edje >= 1.6.99])
 PKG_CHECK_MODULES(EET, [eet >= 1.6.99])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+
+case "$host_os" in
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+      requirement_ethumb="${requirement_ethumb} evil >= 1.6.99"
+   ;;
+esac
 
 requirement_ethumb=" ${requirement_ethumb} eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 ecore-file >= 1.6.99 edje >= 1.6.99"
 requirement_ethumb_client="eina >= 1.6.99 ecore >= 1.6.99 edbus >= 1.6.99 ethumb >= 1.6.99"
