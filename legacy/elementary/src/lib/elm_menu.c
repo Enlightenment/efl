@@ -974,6 +974,10 @@ _item_separator_add(Eo *obj, void *_pd, va_list *list)
      }
 
    _sizing_eval(obj);
+
+   if (sd->dbus_menu)
+     subitem->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu,
+                                                 (Elm_Object_Item *)subitem);
    *ret = (Elm_Object_Item *)subitem;
 }
 

@@ -39,6 +39,7 @@ typedef enum _Elm_DBus_Property
    ELM_DBUS_PROPERTY_CHILDREN_DISPLAY,
    ELM_DBUS_PROPERTY_ENABLED,
    ELM_DBUS_PROPERTY_VISIBLE,
+   ELM_DBUS_PROPERTY_TYPE,
    ELM_DBUS_PROPERTY_UNKNOWN,
 } Elm_DBus_Property;
 
@@ -102,6 +103,8 @@ _str_to_property(const char *str)
      return ELM_DBUS_PROPERTY_ENABLED;
    else if (!strcmp(str, "visible"))
      return ELM_DBUS_PROPERTY_VISIBLE;
+   else if (!strcmp(str, "type"))
+     return ELM_DBUS_PROPERTY_TYPE;
 
    return ELM_DBUS_PROPERTY_UNKNOWN;
 }
@@ -146,6 +149,15 @@ _property_append(Elm_Menu_Item *item,
       case ELM_DBUS_PROPERTY_VISIBLE:
         variant = edbus_message_iter_container_new(iter, 'v', "b");
         edbus_message_iter_basic_append(variant, 'b', EINA_TRUE);
+        break;
+
+      case ELM_DBUS_PROPERTY_TYPE:
+        variant = edbus_message_iter_container_new(iter, 'v', "s");
+        if (item->separator)
+          t = "separator";
+        else
+          t = "standard";
+        edbus_message_iter_basic_append(variant, 's', t);
         break;
 
       case ELM_DBUS_PROPERTY_UNKNOWN:
@@ -200,8 +212,6 @@ _layout_build_recursive(Elm_Menu_Item *item,
      {
         EINA_LIST_FOREACH (item->submenu.items, l, subitem)
           {
-             if (subitem->separator) continue;
-
              variant = edbus_message_iter_container_new(array, 'v',
                                                         "(ia{sv}av)");
              _layout_build_recursive(subitem, property_list,
@@ -273,6 +283,7 @@ _empty_properties_handle(Eina_List *property_list)
         property_list = eina_list_append(property_list, "children-display");
         property_list = eina_list_append(property_list, "enabled");
         property_list = eina_list_append(property_list, "visible");
+        property_list = eina_list_append(property_list, "type");
      }
    return property_list;
 }
