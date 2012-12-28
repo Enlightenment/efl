@@ -36,5 +36,5 @@ install-examples:
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(datadir)/io/examples/$$f ; \
+	  rm -f $(datadir)/eio/examples/$$f ; \
 	done
