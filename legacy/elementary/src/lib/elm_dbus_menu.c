@@ -157,7 +157,12 @@ _property_append(Elm_Menu_Item *item,
       case ELM_DBUS_PROPERTY_LABEL:
         variant = edbus_message_iter_container_new(iter, 'v', "s");
         t = elm_object_item_part_text_get(item_obj, NULL);
-        if (!t) t = "";
+        if (!t)
+          {
+             t = elm_object_part_text_get(item->content, NULL);
+             if (!t) t = "";
+          }
+
         edbus_message_iter_basic_append(variant, 's', t);
         break;
 
