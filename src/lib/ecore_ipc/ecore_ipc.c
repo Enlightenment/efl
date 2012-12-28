@@ -246,7 +246,7 @@ static Eina_List           *servers = NULL;
 static Ecore_Event_Handler *handler[6];
 
 /**
- * @defgroup Ecore_IPC_Library_Group IPC Library Functions
+ * @defgroup Ecore_IPC_Library_Group Ecore_IPC - Inter Process Communication Library Functions
  * @ingroup Ecore
  *
  * Functions that set up and shut down the Ecore IPC Library.
@@ -327,7 +327,7 @@ ecore_ipc_shutdown(void)
 
 /**
  * @defgroup Ecore_IPC_Server_Group IPC Server Functions
- * @ingroup Ecore
+ * @ingroup Ecore_IPC_Library_Group
  *
  * Functions the deal with IPC server objects.
  */
@@ -779,7 +779,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
 
 /**
  * @defgroup Ecore_IPC_Client_Group IPC Client Functions
- * @ingroup Ecore
+ * @ingroup Ecore_IPC_Library_Group
  *
  * Functions that deal with IPC client objects.
  */
