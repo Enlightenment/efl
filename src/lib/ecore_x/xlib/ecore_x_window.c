@@ -16,7 +16,7 @@ static Ecore_X_Window *ignore_list = NULL;
 
 /**
  * @defgroup Ecore_X_Window_Create_Group X Window Creation Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that can be used to create an X window.
  */
@@ -214,7 +214,7 @@ ecore_x_window_input_new(Ecore_X_Window parent,
 
 /**
  * @defgroup Ecore_X_Window_Properties_Group X Window Property Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that set window properties.
  */
@@ -298,7 +298,7 @@ ecore_x_window_configure(Ecore_X_Window win,
 
 /**
  * @defgroup Ecore_X_Window_Destroy_Group X Window Destroy Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions to destroy X windows.
  */
@@ -422,7 +422,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
 
 /**
  * @defgroup Ecore_X_Window_Visibility_Group X Window Visibility Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions to access and change the visibility of X windows.
  */
@@ -488,7 +488,7 @@ ecore_x_window_hide(Ecore_X_Window win)
 
 /**
  * @defgroup Ecore_X_Window_Geometry_Group X Window Geometry Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that change or retrieve the geometry of X windows.
  */
@@ -563,7 +563,7 @@ ecore_x_window_move_resize(Ecore_X_Window win,
 
 /**
  * @defgroup Ecore_X_Window_Focus_Functions X Window Focus Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that give the focus to an X Window.
  */
@@ -621,7 +621,7 @@ ecore_x_window_focus_get(void)
 
 /**
  * @defgroup Ecore_X_Window_Z_Order_Group X Window Z Order Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that change the Z order of X windows.
  */
@@ -652,7 +652,7 @@ ecore_x_window_lower(Ecore_X_Window win)
 
 /**
  * @defgroup Ecore_X_Window_Parent_Group X Window Parent Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that retrieve or changes the parent window of a window.
  */

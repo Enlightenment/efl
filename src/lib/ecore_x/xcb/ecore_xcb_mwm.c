@@ -17,7 +17,7 @@ typedef struct _mwmhints
 
 /**
  * @defgroup Ecore_X_MWM_Group MWM related functions.
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions related to MWM.
  */

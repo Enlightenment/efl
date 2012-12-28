@@ -54,7 +54,7 @@ _ecore_xcb_damage_finalize(void)
 
 /**
  * @defgroup Ecore_X_Damage_Group X Damage Extension Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions related to the X Damage Extension.
  */

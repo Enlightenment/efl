@@ -108,7 +108,7 @@ _ecore_xcb_xfixes_avail_get(void)
 
 /**
  * @defgroup Ecore_X_Fixes_Group X Fixes Extension Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions related to the X Fixes extension.
  */

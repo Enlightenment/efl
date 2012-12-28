@@ -62,7 +62,7 @@ _ecore_xcb_composite_finalize(void)
 
 /**
  * @defgroup Ecore_X_Composite_Group X Composite Extension Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions related to the X Composite Extension
  */

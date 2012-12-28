@@ -2,7 +2,7 @@
 
 /**
  * @defgroup Ecore_X_Drawable_Group X Drawable Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that operate on drawables.
  */

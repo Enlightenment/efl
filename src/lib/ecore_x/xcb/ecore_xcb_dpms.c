@@ -49,7 +49,7 @@ _ecore_xcb_dpms_finalize(void)
 
 /**
  * @defgroup Ecore_X_DPMS_Group X DPMS Extension Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions related to the X DPMS Extension
  */

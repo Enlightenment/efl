@@ -33,12 +33,27 @@
  * @file
  * @brief Ecore functions for dealing with the X Windows System
  *
+ * @defgroup Ecore_X_Group Ecore_X - X11 Integration
+ * @ingroup Ecore
+ *
  * Ecore_X provides a wrapper and convenience functions for using the
  * X Windows System.  Function groups for this part of the library
  * include the following:
  * @li @ref Ecore_X_Init_Group
  * @li @ref Ecore_X_Display_Attr_Group
  * @li @ref Ecore_X_Flush_Group
+ * @li @ref Ecore_X_DPMS_Group
+ * @li @ref Ecore_X_Drawable_Group
+ * @li @ref Ecore_X_Pixmap_Group
+ * @li @ref Ecore_X_Window_Create_Group
+ * @li @ref Ecore_X_Window_Properties_Group
+ * @li @ref Ecore_X_Window_Destroy_Group
+ * @li @ref Ecore_X_Window_Visibility_Group
+ * @li @ref Ecore_X_Window_Geometry_Group
+ * @li @ref Ecore_X_Window_Focus_Functions
+ * @li @ref Ecore_X_Window_Z_Order_Group
+ * @li @ref Ecore_X_Window_Parent_Group
+ * @li @ref Ecore_X_Window_Shape
  */
 
 typedef unsigned int   Ecore_X_ID;

@@ -8,7 +8,7 @@
 
 /**
  * @defgroup Ecore_X_Pixmap_Group X Pixmap Functions
- * @ingroup Ecore
+ * @ingroup Ecore_X_Group
  *
  * Functions that operate on pixmaps.
  */
