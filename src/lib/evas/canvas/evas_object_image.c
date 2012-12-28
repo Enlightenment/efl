@@ -2846,11 +2846,10 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
      {
         source->proxy.surface = e->engine.func->image_map_surface_new
            (e->engine.data.output, w, h, 1);
+        if (!source->proxy.surface) return;
         source->proxy.w = w;
         source->proxy.h = h;
      }
-
-   if (!source->proxy.surface) return;
 
    ctx = e->engine.func->context_new(e->engine.data.output);
    e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
