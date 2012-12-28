@@ -148,11 +148,11 @@ requirements_libs_ecore_fb=""
 requirements_libs_ecore_psl1ght=""
 requirements_libs_ecore_sdl=""
 requirements_libs_ecore_wayland=""
+requirements_libs_ecore_audio=""
 requirements_libs_ecore_win32=""
 requirements_libs_ecore_wince=""
 requirements_libs_ecore_x=""
 requirements_libs_ecore_evas=""
-requirements_libs_ecore_audio=""
 requirements_libs_embryo=""
 requirements_libs_eio=""
 #requirements_libs_edje=""
@@ -178,11 +178,11 @@ requirements_pc_ecore_fb=""
 requirements_pc_ecore_psl1ght=""
 requirements_pc_ecore_sdl=""
 requirements_pc_ecore_wayland=""
+requirements_pc_ecore_audio=""
 requirements_pc_ecore_win32=""
 requirements_pc_ecore_wince=""
 requirements_pc_ecore_x=""
 requirements_pc_ecore_evas=""
-requirements_pc_ecore_audio=""
 requirements_pc_embryo=""
 requirements_pc_eio=""
 #requirements_pc_edje=""
@@ -227,11 +227,11 @@ AC_SUBST([requirements_libs_ecore_fb])
 AC_SUBST([requirements_libs_ecore_psl1ght])
 AC_SUBST([requirements_libs_ecore_sdl])
 AC_SUBST([requirements_libs_ecore_wayland])
+AC_SUBST([requirements_libs_ecore_audio])
 AC_SUBST([requirements_libs_ecore_win32])
 AC_SUBST([requirements_libs_ecore_wince])
 AC_SUBST([requirements_libs_ecore_x])
 AC_SUBST([requirements_libs_ecore_evas])
-AC_SUBST([requirements_libs_ecore_audio])
 AC_SUBST([requirements_libs_embryo])
 AC_SUBST([requirements_libs_eio])
 #AC_SUBST([requirements_libs_edje])
@@ -257,11 +257,11 @@ AC_SUBST([requirements_pc_ecore_fb])
 AC_SUBST([requirements_pc_ecore_psl1ght])
 AC_SUBST([requirements_pc_ecore_sdl])
 AC_SUBST([requirements_pc_ecore_wayland])
+AC_SUBST([requirements_pc_ecore_audio])
 AC_SUBST([requirements_pc_ecore_win32])
 AC_SUBST([requirements_pc_ecore_wince])
 AC_SUBST([requirements_pc_ecore_x])
 AC_SUBST([requirements_pc_ecore_evas])
-AC_SUBST([requirements_pc_ecore_audio])
 AC_SUBST([requirements_pc_embryo])
 AC_SUBST([requirements_pc_eio])
 #AC_SUBST([requirements_pc_edje])
@@ -2557,6 +2557,90 @@ AM_CONDITIONAL([HAVE_ECORE_WAYLAND], [test "x${have_wayland}" = "xyes"])
 #### End of Ecore_Wayland
 
 
+#### Ecore_Audio
+
+AC_ARG_ENABLE([audio],
+   [AC_HELP_STRING([--disable-audio],
+       [disable audio support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_audio="yes"
+    else
+       want_audio="no"
+    fi
+   ],
+   [want_audio="yes"])
+
+if test "${want_audio}" = "yes"; then
+AC_MSG_NOTICE([Ecore_Audio checks])
+
+AC_DEFINE([HAVE_ECORE_AUDIO], [1], [build ecore_audio])
+
+### Additional options to configure
+
+# ALSA support is still not there, thus no option for it yet.
+want_alsa="no"
+
+# sndfile is mandatory otherwise it won't read from/write to files.
+# TODO: if confirmed sndfile is mandatory, remove this variable
+# TODO: and the EFL_OPTIONAL_DEPEND_PKG(), use EFL_DEPEND_PKG()
+want_sndfile="yes"
+
+AC_ARG_ENABLE([pulseaudio],
+   [AC_HELP_STRING([--disable-pulseaudio],
+       [disable pulseaudio sound support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_pulseaudio="yes"
+    else
+       want_pulseaudio="no"
+    fi
+   ],
+   [want_pulseaudio="yes"])
+
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+
+# Eina, Eo, Eet, Ecore
+
+requirements_pc_ecore_audio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_audio}"
+
+EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_alsa}], [ALSA], [alsa])
+EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_pulseaudio}], [PULSE], [libpulse])
+EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_sndfile}], [SNDFILE], [sndfile])
+
+if test "x${requirements_pc_deps_ecore_audio}" = "x" ; then
+   ECORE_AUDIO_CFLAGS=""
+   ECORE_AUDIO_LIBS=""
+   AC_SUBST([ECORE_AUDIO_CFLAGS])
+   AC_SUBST([ECORE_AUDIO_LIBS])
+else
+   PKG_CHECK_MODULES([ECORE_AUDIO], [${requirements_pc_deps_ecore_audio}])
+fi
+
+ECORE_AUDIO_CFLAGS="${ECORE_AUDIO_CFLAGS}"
+ECORE_AUDIO_LIBS="${ECORE_AUDIO_LIBS}"
+requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+fi
+AM_CONDITIONAL([HAVE_ECORE_AUDIO], [test "${want_audio}" = "yes"])
+
 #### Ecore_Win32
 
 if test "x${have_win32}" = "xyes" ; then
@@ -3155,83 +3239,6 @@ fi
 
 #### End of Ecore_Evas
 
-#### Ecore_Audio
-AC_ARG_ENABLE([audio],
-   [AC_HELP_STRING([--enable-audio], [enable Ecore_Audio])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_ecore_audio="yes"
-    else
-       want_ecore_audio="no"
-    fi
-   ],
-   [want_ecore_audio="no"])
-
-if test "x${want_ecore_audio}" = "xyes" ; then
-AC_DEFINE([HAVE_ECORE_AUDIO], [1], [build ecore_audio])
-
-AC_MSG_NOTICE([Ecore_Audio checks])
-
-### Additional options to configure
-
-### Default values
-
-### Checks for programs
-
-### Checks for libraries
-
-# Eina, Eo, Eet, Ecore
-
-requirements_pc_ecore_audio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_audio}"
-
-use_alsa="no"
-# ALSA support is not really there yet...uncomment if you want to play around with it
-#PKG_CHECK_EXISTS([ALSA], [alsa], [
-#                    use_alsa="yes"
-#                    AC_DEFINE([HAVE_ALSA], [1], [Alsa library])
-#       requirements_pc_ecore_audio="alsa ${requirements_pc_ecore_audio}"
-#       requirements_pc_deps_ecore_audio="alsa ${requirements_pc_deps_ecore_audio}"
-#                    ], [use_alsa="no"])
-
-have_pulse="no"
-PKG_CHECK_EXISTS([libpulse],
-      [
-       use_pulse="yes"
-       AC_DEFINE([HAVE_PULSE], [1], [Pulseaudio library])
-       requirements_pc_ecore_audio="libpulse ${requirements_pc_ecore_audio}"
-       requirements_pc_deps_ecore_audio="libpulse ${requirements_pc_deps_ecore_audio}"
-                   ], [use_pulse="no"])
-
-use_sndfile="no"
-PKG_CHECK_EXISTS([sndfile], [
-                   use_sndfile="yes"
-                   AC_DEFINE([HAVE_SNDFILE], [1], [libsndfile library])
-       requirements_pc_ecore_audio="sndfile ${requirements_pc_ecore_audio}"
-       requirements_pc_deps_ecore_audio="sndfile ${requirements_pc_deps_ecore_audio}"
-                   ], [use_sndfile="no"])
-
-PKG_CHECK_MODULES([ECORE_AUDIO], [${requirements_pc_deps_ecore_audio}])
-
-ECORE_AUDIO_CFLAGS="${ECORE_AUDIO_CFLAGS}"
-ECORE_AUDIO_LIBS="${ECORE_AUDIO_LIBS}"
-requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-fi
-
-AM_CONDITIONAL([HAVE_ECORE_AUDIO], [test "x${want_ecore_audio}" = "xyes"])
-
 #### Eio
 
 AC_MSG_NOTICE([Eio checks])
@@ -3573,6 +3580,11 @@ echo "  Ecore_FB...................: $want_fb (tslib=${have_tslib})"
 echo "  Ecore_WinCE................: $have_wince"
 echo "  Ecore_PSL1GHT..............: $have_ps3"
 echo "  Ecore_Wayland..............: $want_wayland"
+if test "${want_audio}" = "yes"; then
+  echo "  Ecore_Audio................: yes (alsa=${have_alsa}, pulseaudio=${have_pulse}, sndfile=${have_sndfile})"
+else
+  echo "  Ecore_Audio................: no"
+fi
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
@@ -3590,15 +3602,6 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
-echo
-echo "Ecore Sound system:"
-echo
-echo "  Ecore_Audio..................: $want_ecore_audio"
-if test "x${want_ecore_audio}" = "xyes" ; then
-echo "    ALSA.......................: $use_alsa"
-echo "    PulseAudio.................: $use_pulse"
-echo "    SndFile....................: $use_sndfile"
-fi
 echo
 echo "Tests..................: ${with_tests}"
 
