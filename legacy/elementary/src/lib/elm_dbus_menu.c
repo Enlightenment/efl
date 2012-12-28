@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
+#include "elm_widget_icon.h"
 
 #ifdef ELM_EDBUS2
 
@@ -39,6 +40,7 @@ typedef enum _Elm_DBus_Property
    ELM_DBUS_PROPERTY_CHILDREN_DISPLAY,
    ELM_DBUS_PROPERTY_ENABLED,
    ELM_DBUS_PROPERTY_TYPE,
+   ELM_DBUS_PROPERTY_ICON_NAME,
    ELM_DBUS_PROPERTY_UNKNOWN,
 } Elm_DBus_Property;
 
@@ -102,8 +104,25 @@ _str_to_property(const char *str)
      return ELM_DBUS_PROPERTY_ENABLED;
    else if (!strcmp(str, "type"))
      return ELM_DBUS_PROPERTY_TYPE;
+   else if (!strcmp(str, "icon-name"))
+     return ELM_DBUS_PROPERTY_ICON_NAME;
 
    return ELM_DBUS_PROPERTY_UNKNOWN;
+}
+
+static Eina_Bool
+_freedesktop_icon_exists(Elm_Menu_Item *item)
+{
+   if (!item->icon_str) return EINA_FALSE;
+
+#ifdef ELM_EFREET
+   ELM_ICON_CHECK(item->content) EINA_FALSE;
+
+   ELM_ICON_DATA_GET(item->content, sd);
+   if (sd->freedesktop.use) return EINA_TRUE;
+#endif
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -131,6 +150,9 @@ _property_exists(Elm_Menu_Item *item,
       case ELM_DBUS_PROPERTY_ENABLED:
         item_obj = (Elm_Object_Item *)item;
         return elm_object_item_disabled_get(item_obj);
+
+      case ELM_DBUS_PROPERTY_ICON_NAME:
+        return _freedesktop_icon_exists(item);
 
       case ELM_DBUS_PROPERTY_TYPE:
       case ELM_DBUS_PROPERTY_UNKNOWN:
@@ -179,6 +201,11 @@ _property_append(Elm_Menu_Item *item,
       case ELM_DBUS_PROPERTY_TYPE:
         variant = edbus_message_iter_container_new(iter, 'v', "s");
         edbus_message_iter_basic_append(variant, 's', "separator");
+        break;
+
+      case ELM_DBUS_PROPERTY_ICON_NAME:
+        variant = edbus_message_iter_container_new(iter, 'v', "s");
+        edbus_message_iter_basic_append(variant, 's', item->icon_str);
         break;
 
       case ELM_DBUS_PROPERTY_UNKNOWN:
@@ -305,6 +332,7 @@ _empty_properties_handle(Eina_List *property_list)
         property_list = eina_list_append(property_list, "children-display");
         property_list = eina_list_append(property_list, "enabled");
         property_list = eina_list_append(property_list, "type");
+        property_list = eina_list_append(property_list, "icon-name");
      }
    return property_list;
 }
