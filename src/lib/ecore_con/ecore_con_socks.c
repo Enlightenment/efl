@@ -626,7 +626,7 @@ ecore_con_socks_init(void)
 
 /**
  * @defgroup Ecore_Con_Socks_Group Ecore Connection SOCKS functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  * @{
  */
 

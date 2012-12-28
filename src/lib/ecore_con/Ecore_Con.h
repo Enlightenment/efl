@@ -70,7 +70,7 @@
 
 /**
  * @defgroup Ecore_Con_Events_Group Ecore Connection Events Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an
  * @c Ecore_Con_Server, an event of this type is emitted, allowing the
@@ -109,7 +109,7 @@
 
 /**
  * @defgroup Ecore_Con_Buffer Ecore Connection Buffering
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  * 
  * As Ecore_Con works on an event driven design, as data arrives, events will
  * be produced containing the data that arrived. It is up to the user of
@@ -590,7 +590,7 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
 
 /**
  * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * Utility functions that set up and shut down the Ecore Connection
  * library.
@@ -712,7 +712,7 @@ EAPI Eina_Bool         ecore_con_lookup(const char *name,
 
 /**
  * @defgroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * @{
  */
@@ -749,7 +749,7 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
 
 /**
  * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * This group of functions is applied to an @ref Ecore_Con_Server object. It
  * doesn't mean that they should be used in the server application, but on the
@@ -1103,7 +1103,7 @@ EAPI int               ecore_con_client_fd_get(Ecore_Con_Client *cl);
 
 /**
  * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * Functions to communicate with and/or set options on a client.
  *
@@ -1261,7 +1261,7 @@ EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
 
 /**
  * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
- * @ingroup Ecore
+ * @ingroup Ecore_Con_Group
  *
  * Utility functions that set up, use and shut down the Ecore URL
  * Connection library.
