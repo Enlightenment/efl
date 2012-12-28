@@ -5,6 +5,7 @@
  * @file escape_libgen.h
  * @brief The file that provides functions ported from Unix in libgen.h.
  * @defgroup Escape_Libgen_Group Libgen.h functions.
+ * @ingroup Escape
  *
  * This header provides functions ported from Unix in libgen.h.
  *

@@ -5,6 +5,7 @@
  * @file escape_unistd.h
  * @brief The file that provides functions ported from Unix in unistd.h.
  * @defgroup Escape_Unistd_Group Unistd.h functions
+ * @ingroup Escape
  *
  * This header provides functions ported from Unix in unistd.h.
  *

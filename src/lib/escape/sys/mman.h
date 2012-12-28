@@ -61,7 +61,8 @@ extern "C" {
 /**
  * @file mman.h
  * @brief The file that provides the memory map functions
- * @defgroup Mman Functions that manage memory mappping.
+ * @defgroup Escape_Mman Functions that manage memory mappping.
+ * @ingroup Escape
  *
  * This header provides the meomry map functions mmap and munmap.
  *
@@ -101,7 +102,7 @@ extern "C" {
  *
  * Conformity: None.
  *
- * @ingroup Mman
+ * @ingroup Escape_Mman
  */
 EAPI void *mmap(void *addr,
                 size_t len,
@@ -125,7 +126,7 @@ EAPI void *mmap(void *addr,
  *
  * Conformity: None.
  *
- * @ingroup Mman
+ * @ingroup Escape_Mman
  */
 EAPI int
 munmap(void *addr,
@@ -164,7 +165,7 @@ munmap(void *addr,
 
  * Conformity: None.
  *
- * @ingroup Mman
+ * @ingroup Escape_Mman
  */
 EAPI int
 madvise(void *addr,
