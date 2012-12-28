@@ -1485,7 +1485,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    if (err != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
-	    if (ret) *ret = err;
+        if (ret) *ret = err;
         return;
      }
    evas_object_image_size_get(sd->img, &w, &h);
@@ -1514,7 +1514,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    if (err != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
-	    if (ret) *ret = err;
+        if (ret) *ret = err;
         return;
      }
 
