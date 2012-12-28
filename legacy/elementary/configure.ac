@@ -116,6 +116,8 @@ else
 fi
 AC_SUBST(LOCALE_DIR)
 #================================================
+elementary_icon_dir="${datadir}/icons"
+AC_SUBST(elementary_icon_dir)
 
 lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"

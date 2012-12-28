@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DLOCALE_DIR=\"@LOCALE_DIR@\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DICON_DIR=\"$(elementary_icon_dir)\" \
 @ELEMENTARY_CFLAGS@ \
 @ELEMENTARY_X_CFLAGS@ \
 @ELEMENTARY_FB_CFLAGS@ \

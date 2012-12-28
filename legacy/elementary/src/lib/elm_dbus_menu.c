@@ -743,6 +743,7 @@ _prop_icon_theme_path_get(const EDBus_Service_Interface *iface EINA_UNUSED,
 {
    EDBus_Message_Iter *actions;
    edbus_message_iter_arguments_append(iter, "as", &actions);
+   edbus_message_iter_arguments_append(actions, "s", ICON_DIR);
    edbus_message_iter_container_close(iter, actions);
 
    return EINA_TRUE;
