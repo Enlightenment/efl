@@ -1930,7 +1930,7 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 
 /**
  * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.
- * @ingroup Ecore
+ * @ingroup Ecore_Evas_Group
  *
  * These are global scope functions to manage the EWS to be used by
  * ecore_evas_ews_new().
@@ -2058,7 +2058,7 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
 
 /**
  * @defgroup Ecore_Evas_Extn External plug/socket infrastructure to remote canvases
- * @ingroup Ecore
+ * @ingroup Ecore_Evas_Group
  *
  * These functions allow 1 process to create a "socket" was pluged into which another
  * process can create a "plug" remotely to plug into.
