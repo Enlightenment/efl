@@ -1337,15 +1337,7 @@ evas_render_updates_internal(Evas *eo_e,
    e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e->changed) return EINA_FALSE;
 
-   if (e->rendering) return EINA_FALSE;
-   e->rendering = EINA_TRUE;
-
-   if (do_async)
-     {
-        eo_ref(eo_e);
-        e->render.data = updates_data;
-        e->render.updates_cb = updates_func;
-     }
+   if (do_async && e->rendering) return EINA_FALSE;
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -1708,6 +1700,11 @@ evas_render_updates_internal(Evas *eo_e,
 
         if (do_async)
           {
+             eo_ref(eo_e);
+             e->rendering = EINA_TRUE;
+             e->render.data = updates_data;
+             e->render.updates_cb = updates_func;
+
              evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data, 0);
           }
         else if (haveup)
@@ -1934,7 +1931,6 @@ evas_render_updates_internal_wait(Evas *eo_e,
 
    ret = e->render.updates;
    e->render.updates = NULL;
-   e->rendering = EINA_FALSE;
 
    return ret;
 }
