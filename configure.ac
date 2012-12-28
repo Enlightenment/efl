@@ -838,7 +838,7 @@ case "${build_profile}" in
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
      want_debug_malloc="no"
      want_debug_threads="no"
-     want_pass_through="no"
+     want_default_mempool="no"
      ;;
 
    debug)
@@ -847,7 +847,7 @@ case "${build_profile}" in
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
      want_debug_malloc="yes"
      want_debug_threads="yes"
-     want_pass_through="yes"
+     want_default_mempool="yes"
      ;;
 
    release)
@@ -856,13 +856,13 @@ case "${build_profile}" in
      want_valgrind="no"
      want_debug_malloc="no"
      want_debug_threads="no"
-     want_pass_through="no"
+     want_default_mempool="no"
      ;;
 esac
 
 EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 EINA_CONFIG([SAFETY_CHECKS], [test "x${have_safety_checks}" = "xyes"])
-EINA_CONFIG([DEFAULT_MEMPOOL], [test "x${want_pass_through}" = "xyes"])
+EINA_CONFIG([DEFAULT_MEMPOOL], [test "x${want_default_mempool}" = "xyes"])
 
 if test -n "${with_max_log_level}"; then
    AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${with_max_log_level}])
