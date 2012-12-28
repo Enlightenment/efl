@@ -767,7 +767,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
 {
    EDBus_Signal_Handler *sh;
    DBusMessageIter iter;
-   int type, counter;
+   int counter;
    char *arg_msg;
    EDBus_Message *edbus_msg;
    Signal_Argument *arg;
@@ -781,9 +781,10 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
                           &edbus_msg->iterator->dbus_iterator);
 
    edbus_connection_ref(conn);
-   EINA_INLIST_FOREACH(conn->signal_handlers, sh)
+   EINA_INLIST_FOREACH_SAFE(conn->signal_handlers, safe_list, sh)
      {
-        sh->refcount++;
+        int type = 0;
+
         if (sh->dangling) continue;
         if (sh->sender)
           {
@@ -806,29 +807,25 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
           {
              type = dbus_message_iter_get_arg_type(&iter);
              if (counter != arg->index || !(type == 's' || type == 'o'))
-               goto next_sh;
+               continue;
 
              dbus_message_iter_get_basic(&iter, &arg_msg);
              if (strcmp(arg_msg, arg->value))
-               goto next_sh;
+               continue;
 
              dbus_message_iter_next(&iter);
              counter++;
           }
+        edbus_signal_handler_ref(sh);
         sh->cb((void *)sh->cb_data, edbus_msg);
         /*
          * Rewind iterator so another signal handler matching the same signal
          * can iterate over it.
          */
+        edbus_signal_handler_unref(sh);
         dbus_message_iter_init(edbus_msg->dbus_msg,
                                &edbus_msg->iterator->dbus_iterator);
-
-next_sh:
-        type = 0;
      }
-
-   EINA_INLIST_FOREACH_SAFE(conn->signal_handlers, safe_list, sh)
-     edbus_signal_handler_unref(sh);
 
    edbus_message_unref(edbus_msg);
    edbus_connection_unref(conn);
