@@ -38,7 +38,6 @@ typedef enum _Elm_DBus_Property
    ELM_DBUS_PROPERTY_LABEL,
    ELM_DBUS_PROPERTY_CHILDREN_DISPLAY,
    ELM_DBUS_PROPERTY_ENABLED,
-   ELM_DBUS_PROPERTY_VISIBLE,
    ELM_DBUS_PROPERTY_TYPE,
    ELM_DBUS_PROPERTY_UNKNOWN,
 } Elm_DBus_Property;
@@ -101,8 +100,6 @@ _str_to_property(const char *str)
      return ELM_DBUS_PROPERTY_CHILDREN_DISPLAY;
    else if (!strcmp(str, "enabled"))
      return ELM_DBUS_PROPERTY_ENABLED;
-   else if (!strcmp(str, "visible"))
-     return ELM_DBUS_PROPERTY_VISIBLE;
    else if (!strcmp(str, "type"))
      return ELM_DBUS_PROPERTY_TYPE;
 
@@ -144,11 +141,6 @@ _property_append(Elm_Menu_Item *item,
         variant = edbus_message_iter_container_new(iter, 'v', "b");
         b = !elm_object_item_disabled_get(item_obj);
         edbus_message_iter_basic_append(variant, 'b', b);
-        break;
-
-      case ELM_DBUS_PROPERTY_VISIBLE:
-        variant = edbus_message_iter_container_new(iter, 'v', "b");
-        edbus_message_iter_basic_append(variant, 'b', EINA_TRUE);
         break;
 
       case ELM_DBUS_PROPERTY_TYPE:
@@ -282,7 +274,6 @@ _empty_properties_handle(Eina_List *property_list)
         property_list = eina_list_append(property_list, "label");
         property_list = eina_list_append(property_list, "children-display");
         property_list = eina_list_append(property_list, "enabled");
-        property_list = eina_list_append(property_list, "visible");
         property_list = eina_list_append(property_list, "type");
      }
    return property_list;
