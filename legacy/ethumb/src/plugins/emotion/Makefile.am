@@ -14,9 +14,9 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/plugins/emotion \
 -DPLUGINSDIR=\"$(pluginsdir)\" \
+-DEFL_ETHUMB_BUILD \
 @ECORE_EVAS_CFLAGS@ \
 @EET_CFLAGS@ \
-@EFL_ETHUMB_BUILD@ \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EMOTION_CFLAGS@ \

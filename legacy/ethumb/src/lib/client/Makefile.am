@@ -2,9 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir) \
--I$(top_builddir) \
 -I$(top_srcdir)/src/lib \
-@EFL_ETHUMB_CLIENT_BUILD@ \
+-DEFL_ETHUMB_CLIENT_BUILD \
 @ECORE_CFLAGS@ \
 @EDBUS_CFLAGS@ \
 @EINA_CFLAGS@
@@ -20,4 +19,4 @@ $(top_builddir)/src/lib/libethumb.la \
 @ECORE_LIBS@ \
 @EDBUS_LIBS@ \
 @EINA_LIBS@
-libethumb_client_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libethumb_client_la_LDFLAGS = -no-undefined -version-info @version_info@

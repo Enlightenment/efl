@@ -8,9 +8,9 @@ endif
 
 AM_CPPFLAGS = \
 -I$(top_srcdir) \
--I$(top_builddir) \
--DPLUGINSDIR=\"$(libdir)/ethumb/plugins\" \
-@EFL_ETHUMB_BUILD@ \
+-DPLUGINSDIR=\"$(pkglibdir)/plugins\" \
+-DEFL_ETHUMB_BUILD \
+@EVIL_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @ECORE_CFLAGS@ \
@@ -37,10 +37,11 @@ libethumb_la_LIBADD = \
 @ECORE_EVAS_LIBS@ \
 @ECORE_LIBS@ \
 @EVAS_LIBS@ \
-@EINA_LIBS@
+@EINA_LIBS@ \
+@EVIL_LIBS@
 
 if HAVE_LIBEXIF
 libethumb_la_LIBADD += @LIBEXIF_LIBS@
 endif
 
-libethumb_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libethumb_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

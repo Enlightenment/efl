@@ -25,7 +25,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AC_ISC_POSIX
 
 AC_CONFIG_HEADERS([config.h])
 AH_TOP([
@@ -61,12 +60,8 @@ dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
 AC_PROG_CC
-AC_PROG_CC_STDC
 AM_PROG_CC_C_O
-AC_HEADER_STDC
 AC_C___ATTRIBUTE__
-dnl AC_C_CONST is bogus, its tests fails on -Wall -O1 ( uninitialized values)
-dnl AC_C_CONST
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])
@@ -101,19 +96,13 @@ AC_ARG_WITH(internal-maximum-log-level,
     fi
     ], [:])
 
-EFL_ETHUMB_BUILD=""
-EFL_ETHUMB_CLIENT_BUILD=""
-lt_enable_auto_import=""
 case "$host_os" in
-   mingw* | cegcc*)
-      EFL_ETHUMB_BUILD="-DEFL_ETHUMB_BUILD"
-      EFL_ETHUMB_CLIENT_BUILD="-DEFL_ETHUMB_CLIENT_BUILD"
-      lt_enable_auto_import="-Wl,--enable-auto-import"
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+      requirement_ethumb="${requirement_ethumb} evil >= 1.6.99"
    ;;
 esac
-AC_SUBST(EFL_ETHUMB_BUILD)
-AC_SUBST(EFL_ETHUMB_CLIENT_BUILD)
-AC_SUBST(lt_enable_auto_import)
 
 PKG_CHECK_MODULES(EINA, [eina >= 1.6.99])
 PKG_CHECK_MODULES(EVAS, [evas >= 1.6.99])
@@ -124,8 +113,8 @@ PKG_CHECK_MODULES(EDJE, [edje >= 1.6.99])
 PKG_CHECK_MODULES(EET, [eet >= 1.6.99])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
-requirement_ethumb="eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 ecore-file >= 1.6.99 edje >= 1.6.99"
-requirement_ethumb_client=""
+requirement_ethumb=" ${requirement_ethumb} eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 ecore-file >= 1.6.99 edje >= 1.6.99"
+requirement_ethumb_client="eina >= 1.6.99 ecore >= 1.6.99 edbus >= 1.6.99 ethumb >= 1.6.99"
 
 AM_CONDITIONAL(HAVE_EMOTION, false)
 define([CHECK_MODULE_EMOTION],

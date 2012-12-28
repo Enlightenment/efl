@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/plugins/epdf \
-@EFL_ETHUMB_BUILD@ \
+-DEFL_ETHUMB_BUILD \
 @EINA_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @EPDF_CFLAGS@
