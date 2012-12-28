@@ -96,6 +96,8 @@ AC_ARG_WITH(internal-maximum-log-level,
     fi
     ], [:])
 
+PKG_PROG_PKG_CONFIG
+
 PKG_CHECK_MODULES(EINA, [eina >= 1.6.99])
 PKG_CHECK_MODULES(EVAS, [evas >= 1.6.99])
 PKG_CHECK_MODULES(ECORE, [ecore >= 1.6.99])
