@@ -1464,6 +1464,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
 {
    int w, h;
    double tz;
+   Evas_Load_Error err;
 
    const char *file = va_arg(*list, const char *);
    Evas_Load_Error *ret = va_arg(*list, Evas_Load_Error *);
@@ -1480,6 +1481,13 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 0);
    evas_object_image_file_set(sd->img, sd->file, NULL);
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+	    if (ret) *ret = err;
+        return;
+     }
    evas_object_image_size_get(sd->img, &w, &h);
 
    sd->do_region = evas_object_image_region_support_get(sd->img);
@@ -1502,6 +1510,14 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 8);
    evas_object_image_file_set(sd->img, sd->file, NULL);
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+	    if (ret) *ret = err;
+        return;
+     }
+
    evas_object_image_preload(sd->img, 0);
    sd->main_load_pending = EINA_TRUE;
 

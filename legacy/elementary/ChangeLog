@@ -849,3 +849,7 @@
 2012-12-20  Murilo Pinoti Belluzzo (mbelluzzo)
 
 	* Add elm_systray to set a Status Notifier Item in the System Tray (D-Bus).
+
+2012-12-27  Jiyoun Park (jypark)
+
+	* elm_photocam returns file_set error properly.

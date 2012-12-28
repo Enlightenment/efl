@@ -104,6 +104,7 @@ Fixes:
    * Fix Don't elm_transit image animation use the image preloading to avoid image flickering.
    * Fix the image to show the image right now if the image preloading is disabled.
    * Fix typo from elm_plug signal "image.deleted", should be "image,deleted".
+   * Fix photocam returns file set error correctly.
 
 Removals:
 
