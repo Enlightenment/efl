@@ -774,6 +774,13 @@ test_entry_style_user(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    evas_object_show(win);
 }
 
+static void
+_entry_activated_cb(void *data __UNUSED__, Evas_Object *obj,
+                    void *event_info __UNUSED__)
+{
+   printf("entry is activated: %s\n", elm_entry_entry_get(obj));
+}
+
 void
 test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -795,6 +802,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "This is a single line");
    elm_entry_single_line_set(en, EINA_TRUE);
+   evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
 
