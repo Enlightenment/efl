@@ -106,7 +106,43 @@ _str_to_property(const char *str)
    return ELM_DBUS_PROPERTY_UNKNOWN;
 }
 
+static Eina_Bool
+_property_exists(Elm_Menu_Item *item,
+                 Elm_DBus_Property property)
+{
+   Elm_Object_Item *item_obj;
+
+   if (item->separator)
+     {
+        if (property == ELM_DBUS_PROPERTY_TYPE) return EINA_TRUE;
+        return EINA_FALSE;
+     }
+
+   switch (property)
+     {
+      case ELM_DBUS_PROPERTY_LABEL:
+        // Allow _property_append to handle the label
+        return EINA_TRUE;
+
+      case ELM_DBUS_PROPERTY_CHILDREN_DISPLAY:
+        if (eina_list_count(item->submenu.items)) return EINA_TRUE;
+        return EINA_FALSE;
+
+      case ELM_DBUS_PROPERTY_ENABLED:
+        item_obj = (Elm_Object_Item *)item;
+        return elm_object_item_disabled_get(item_obj);
+
+      case ELM_DBUS_PROPERTY_TYPE:
+      case ELM_DBUS_PROPERTY_UNKNOWN:
+        return EINA_FALSE;
+     }
+
+   ERR("Invalid code path");
+   return EINA_FALSE;
+}
+
 // Ad-hoc dbusmenu property dictionary subset implementation
+// Depends on _property_exists results
 static void
 _property_append(Elm_Menu_Item *item,
                  Elm_DBus_Property property,
@@ -115,7 +151,6 @@ _property_append(Elm_Menu_Item *item,
    EDBus_Message_Iter *variant = NULL;
    Elm_Object_Item *item_obj = (Elm_Object_Item *)item;
    const char *t;
-   Eina_Bool b;
 
    switch (property)
      {
@@ -128,28 +163,17 @@ _property_append(Elm_Menu_Item *item,
 
       case ELM_DBUS_PROPERTY_CHILDREN_DISPLAY:
         variant = edbus_message_iter_container_new(iter, 'v', "s");
-
-        if (eina_list_count(item->submenu.items))
-          t = "submenu";
-        else
-          t = "";
-
-        edbus_message_iter_basic_append(variant, 's', t);
+        edbus_message_iter_basic_append(variant, 's', "submenu");
         break;
 
       case ELM_DBUS_PROPERTY_ENABLED:
         variant = edbus_message_iter_container_new(iter, 'v', "b");
-        b = !elm_object_item_disabled_get(item_obj);
-        edbus_message_iter_basic_append(variant, 'b', b);
+        edbus_message_iter_basic_append(variant, 'b', EINA_FALSE);
         break;
 
       case ELM_DBUS_PROPERTY_TYPE:
         variant = edbus_message_iter_container_new(iter, 'v', "s");
-        if (item->separator)
-          t = "separator";
-        else
-          t = "standard";
-        edbus_message_iter_basic_append(variant, 's', t);
+        edbus_message_iter_basic_append(variant, 's', "separator");
         break;
 
       case ELM_DBUS_PROPERTY_UNKNOWN:
@@ -176,6 +200,7 @@ _property_dict_build(Elm_Menu_Item *item,
         property = _str_to_property(propstr);
 
         if (property == ELM_DBUS_PROPERTY_UNKNOWN) continue;
+        if (!_property_exists(item, property)) continue;
 
         pair = edbus_message_iter_container_new(array, 'e', NULL);
         edbus_message_iter_basic_append(pair, 's', propstr);
@@ -525,6 +550,13 @@ _method_property_get(const EDBus_Service_Interface *iface,
      {
         reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                         "Invalid menu identifier");
+        return reply;
+     }
+
+   if (!_property_exists(item, property))
+     {
+        reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+                                        "Property not found");
         return reply;
      }
 
