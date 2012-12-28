@@ -765,13 +765,12 @@ cb_dispatch_status(DBusConnection *dbus_conn, DBusDispatchStatus new_status, voi
 static void
 cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
 {
-   EDBus_Signal_Handler *sh;
    DBusMessageIter iter;
    int counter;
    char *arg_msg;
    EDBus_Message *edbus_msg;
    Signal_Argument *arg;
-   Eina_Inlist *safe_list;
+   Eina_Inlist *next;
 
    edbus_msg = edbus_message_new(EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN(edbus_msg);
@@ -781,9 +780,19 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
                           &edbus_msg->iterator->dbus_iterator);
 
    edbus_connection_ref(conn);
-   EINA_INLIST_FOREACH_SAFE(conn->signal_handlers, safe_list, sh)
+   /*
+    * Do the walking open-coded so we don't crash if a callback
+    * removes other signal handlers from the list and we don't own
+    * yet a reference to them.
+    */
+   next = conn->signal_handlers;
+   while (next != NULL)
      {
+        EDBus_Signal_Handler *sh;
         int type = 0;
+
+        sh = EINA_INLIST_CONTAINER_GET(next, EDBus_Signal_Handler);
+        next = next->next;
 
         if (sh->dangling) continue;
         if (sh->sender)
@@ -818,11 +827,14 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
           }
         edbus_signal_handler_ref(sh);
         sh->cb((void *)sh->cb_data, edbus_msg);
+        /* update next signal handler because the list may have changed */
+        next = EINA_INLIST_GET(sh)->next;
+        edbus_signal_handler_unref(sh);
+
         /*
          * Rewind iterator so another signal handler matching the same signal
          * can iterate over it.
          */
-        edbus_signal_handler_unref(sh);
         dbus_message_iter_init(edbus_msg->dbus_msg,
                                &edbus_msg->iterator->dbus_iterator);
      }
