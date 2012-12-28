@@ -105,6 +105,7 @@ Fixes:
    * Fix the image to show the image right now if the image preloading is disabled.
    * Fix typo from elm_plug signal "image.deleted", should be "image,deleted".
    * Fix photocam returns file set error correctly.
+   * Fix bug where genlist would delete items added during selection callback if a clear was queued
 
 Removals:
 

@@ -853,3 +853,7 @@
 2012-12-27  Jiyoun Park (jypark)
 
 	* elm_photocam returns file_set error properly.
+
+2012-12-28  Mike Blumenkrantz
+
+        * Fix bug where genlist would delete items added during selection callback if a clear was queued

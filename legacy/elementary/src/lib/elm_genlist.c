@@ -4854,13 +4854,15 @@ _elm_genlist_clear(Evas_Object *obj,
      }
    sd->clear_me = EINA_FALSE;
    sd->pan_changed = EINA_TRUE;
-   if (sd->calc_job)
+   if (!sd->queue)
      {
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = NULL;
+        if (sd->calc_job)
+          {
+             ecore_job_del(sd->calc_job);
+             sd->calc_job = NULL;
+          }
+        _clear(sd);
      }
-   if (sd->selected) sd->selected = eina_list_free(sd->selected);
-   _clear(sd);
    sd->pan_x = 0;
    sd->pan_y = 0;
    sd->minw = 0;
