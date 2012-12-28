@@ -96,10 +96,18 @@
  * @defgroup Eina_Data_Types_Group Data Types
  * @ingroup Eina
  *
- * Eina provide easy to use and optimized data types and structures.
+ * Eina provides an easy to use and optimized data types and structures.
  *
+ * @defgroup Eina_Content_Access_Group Content Access
+ * @ingroup Eina_Data_Types_Group
+ *
+ * Eina provides an uniform way to access elements of a container,
+ * either sequential or indexed.
  *
  * @defgroup Eina_Containers_Group Containers
+ * @ingroup Eina_Data_Types_Group
+ *
+ * Data types that contains other types. Examples: list, array and hash.
  *
  * @section eina_main_Intro Introduction
  * Containers are data types that hold data and allow iteration over
