@@ -147,6 +147,12 @@
  */
 
 /**
+ * @defgroup Escape
+ *
+ * @brief Escape
+ */
+
+/**
  * @defgroup Ecore
  *
  * @brief Ecore
