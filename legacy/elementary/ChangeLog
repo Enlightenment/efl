@@ -857,3 +857,8 @@
 2012-12-28  Mike Blumenkrantz
 
         * Fix bug where genlist would delete items added during selection callback if a clear was queued
+
+2012-12-27  Henrique Dante de Almeida (hdante)
+	* Support item separators in D-Bus menu
+	* Support freedesktop icons in D-Bus menu
+	* Reduce D-Bus communication (omit default values)
