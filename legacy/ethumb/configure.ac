@@ -98,7 +98,7 @@ AC_ARG_WITH(internal-maximum-log-level,
 
 case "$host_os" in
    mingw*)
-      PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
+dnl      PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirement_ethumb="${requirement_ethumb} evil >= 1.6.99"
    ;;
