@@ -4675,6 +4675,7 @@ _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->decorate_all_mode)
      elm_genlist_decorate_mode_set(sd->obj, EINA_FALSE);
+   sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
    eo_unref(sd->pan_obj);
    evas_object_del(sd->pan_obj);
