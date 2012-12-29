@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: ecore-imf
 Description: E core library, IMF module
 Version: @VERSION@
-Requires.private: @requirements_ecore_imf@
+Requires.private: @requirements_pc_ecore_imf@
 Libs: -L${libdir} -lecore_imf
 Cflags: -I${includedir}/ecore-@VMAJ@
