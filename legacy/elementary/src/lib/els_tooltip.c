@@ -131,7 +131,7 @@ _elm_tooltip_show(Elm_Tooltip *tt)
      }
    if (tt->free_size)
      {
-        tt->tt_win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
+        tt->tt_win = elm_win_add(NULL, "tooltip", ELM_WIN_TOOLTIP);
         elm_win_override_set(tt->tt_win, EINA_TRUE);
         tt->tt_evas = evas_object_evas_get(tt->tt_win);
         tt->tooltip = edje_object_add(tt->tt_evas);

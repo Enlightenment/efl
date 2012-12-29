@@ -862,3 +862,7 @@
 	* Support item separators in D-Bus menu
 	* Support freedesktop icons in D-Bus menu
 	* Reduce D-Bus communication (omit default values)
+
+2012-12-29  Mike Blumenkrantz
+
+        * Tooltips now correctly set NETWM tooltip window type
