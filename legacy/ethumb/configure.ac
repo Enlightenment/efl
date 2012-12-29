@@ -116,7 +116,7 @@ case "$host_os" in
 esac
 
 requirement_ethumb=" ${requirement_ethumb} eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 ecore-file >= 1.6.99 edje >= 1.6.99"
-requirement_ethumb_client="eina >= 1.6.99 ecore >= 1.6.99 edbus >= 1.6.99 ethumb >= 1.6.99"
+requirement_ethumb_client="eina >= 1.6.99 ecore >= 1.6.99 edbus2 >= 1.6.99 ethumb >= 1.6.99"
 
 AM_CONDITIONAL(HAVE_EMOTION, false)
 define([CHECK_MODULE_EMOTION],
