@@ -75,12 +75,16 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        homedir = getenv("HOME");
+        homedir = getenv("XDG_RUNTIME_DIR");
         if (!homedir)
-          homedir = getenv("TMP");
-
-        if (!homedir)
-          homedir = "/tmp";
+          {
+             homedir = getenv("HOME");
+             if (!homedir)
+               {
+                  homedir = getenv("TMP");
+                  if (!homedir) homedir = "/tmp";
+               }
+          }
 
         snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
                  svr->port);
@@ -196,12 +200,16 @@ ecore_con_local_listen(
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        homedir = getenv("HOME");
+        homedir = getenv("XDG_RUNTIME_DIR");
         if (!homedir)
-          homedir = getenv("TMP");
-
-        if (!homedir)
-          homedir = "/tmp";
+          {
+             homedir = getenv("HOME");
+             if (!homedir)
+               {
+                  homedir = getenv("TMP");
+                  if (!homedir) homedir = "/tmp";
+               }
+          }
 
         mask = S_IRUSR | S_IWUSR | S_IXUSR;
         snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
