@@ -474,9 +474,9 @@ fi
 
 ELM_EDBUS_DEF="#undef"
 have_elementary_edbus="no"
-want_elementary_edbus="auto"
+want_elementary_edbus="no"
 AC_ARG_ENABLE([edbus],
-   [AC_HELP_STRING([--disable-edbus], [disable edbus support. @<:@default=detect@:>@])],
+   [AC_HELP_STRING([--enable-edbus], [enable edbus (v1) support. @<:@default=no@:>@])],
    [want_elementary_edbus=$enableval], [])
 
 if test "x$want_elementary_edbus" != "xno"; then
