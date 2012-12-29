@@ -17,6 +17,7 @@
  * @li @ref evil_main microsoft windows portability layer.
  * @li @ref eio_main asynchronous input/output
  * @li @ref edbus_main d-bus integration.
+ * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  *
  */
 
@@ -77,8 +78,8 @@
  * @author Mike McCormack <mj.mccormack@@samsung.com>
  * @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
  * @author Myungjae Lee <mjae.lee@@samsung.com>
- * @author Nathan Ingersoll <ningerso@@d.umn.edu>
- * @author Nathan Ingersoll <rbdpngn@@users.sourceforge.net>
+ * @author Nathan 'RbdPngn' Ingersoll <ningerso@@d.umn.edu>
+ * @author Nicholas 'Mekius' Hughart
  * @author Nicholas Curran <quasar@@bigblue.net.au>
  * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
  * @author Peter Wehrfritz <peter.wehrfritz@@web.de>
@@ -91,7 +92,6 @@
  * @author Samsung SAIT
  * @author Sangho Park <gouache95@gmail.com>
  * @author Sebastian Dransfeld <sd@@tango.flipp.net>
- * @author Sebastian Dransfeld <sebastid@@tango.flipp.net>
  * @author Seungsoo Woo <om101.woo@@samsung.com>
  * @author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
  * @author Simon Poole <simon.armlinux@@themalago.net>
@@ -176,4 +176,10 @@
  * @defgroup EDBus
  *
  * @brief D-Bus integration with EFL (Ecore).
+ */
+
+/**
+ * @defgroup Efreet
+ *
+ * @brief FreeDesktop.Org (XDG) menu and desktop integration.
  */

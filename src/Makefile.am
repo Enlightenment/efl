@@ -7,6 +7,7 @@ SUBDIRS = . benchmarks examples
 
 lib_LTLIBRARIES =
 bin_PROGRAMS =
+noinst_PROGRAMS =
 check_PROGRAMS =
 EXTRA_DIST =
 
@@ -59,6 +60,7 @@ endif
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_EDBus.am
+include Makefile_Efreet.am
 
 .PHONY: benchmark examples
 
@@ -75,6 +77,7 @@ install-examples:
 
 clean-local:
 	rm -rf bin/eet/*.gcno
+	rm -rf bin/efreet/*.gcno
 	rm -rf lib/evil/*.gcno
 	rm -rf lib/eina/*.gcno
 	rm -rf lib/eo/*.gcno
@@ -90,6 +93,7 @@ clean-local:
 	rm -rf lib/evas/file/*.gcno
 	rm -rf lib/embryo/*.gcno
 	rm -rf lib/edbus/*.gcno
+	rm -rf lib/efreet/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno

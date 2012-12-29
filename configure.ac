@@ -116,6 +116,13 @@ case "${build_tests}" in
      ;;
 esac
 
+dbusservicedir="${datadir}/dbus-1/services"
+AC_ARG_WITH([dbus-services],
+   [AC_HELP_STRING([--with-dbus-services=DBUS_SERVICES],
+      [specify a directory to store dbus service files.])],
+   [dbusservicedir=$withval])
+AC_SUBST(dbusservicedir)
+
 
 #### Default values
 
@@ -156,8 +163,8 @@ requirements_libs_ecore_evas=""
 requirements_libs_embryo=""
 requirements_libs_eio=""
 requirements_libs_edbus=""
+requirements_libs_efreet=""
 #requirements_libs_edje=""
-#requirements_libs_efreet=""
 #requirements_libs_eeze=""
 #requirements_libs_emotion=""
 #requirements_libs_ethumb=""
@@ -186,8 +193,8 @@ requirements_pc_ecore_evas=""
 requirements_pc_embryo=""
 requirements_pc_eio=""
 requirements_pc_edbus=""
+requirements_pc_efreet=""
 #requirements_pc_edje=""
-#requirements_pc_efreet=""
 #requirements_pc_eeze=""
 #requirements_pc_emotion=""
 #requirements_pc_ethumb=""
@@ -205,8 +212,8 @@ requirements_pc_deps_ecore_wayland=""
 requirements_pc_deps_ecore_evas=""
 requirements_pc_deps_embryo=""
 requirements_pc_deps_edbus=""
+requirements_pc_deps_efreet=""
 #requirements_pc_deps_edje=""
-#requirements_pc_deps_efreet=""
 #requirements_pc_deps_eeze=""
 #requirements_pc_deps_emotion=""
 #requirements_pc_deps_ethumb=""
@@ -235,8 +242,8 @@ AC_SUBST([requirements_libs_ecore_evas])
 AC_SUBST([requirements_libs_embryo])
 AC_SUBST([requirements_libs_eio])
 AC_SUBST([requirements_libs_edbus])
+AC_SUBST([requirements_libs_efreet])
 #AC_SUBST([requirements_libs_edje])
-#AC_SUBST([requirements_libs_efreet])
 #AC_SUBST([requirements_libs_eeze])
 #AC_SUBST([requirements_libs_emotion])
 #AC_SUBST([requirements_libs_ethumb])
@@ -267,8 +274,8 @@ AC_SUBST([requirements_pc_ecore_evas])
 AC_SUBST([requirements_pc_embryo])
 AC_SUBST([requirements_pc_eio])
 AC_SUBST([requirements_pc_edbus])
+AC_SUBST([requirements_pc_efreet])
 #AC_SUBST([requirements_pc_edje])
-#AC_SUBST([requirements_pc_efreet])
 #AC_SUBST([requirements_pc_eeze])
 #AC_SUBST([requirements_pc_emotion])
 #AC_SUBST([requirements_pc_ethumb])
@@ -370,6 +377,8 @@ have_po="yes"
 have_po="no"
 ])
 AC_SUBST([LTLIBINTL])
+LOCALE_DIR="${localedir}"
+AC_SUBST(LOCALE_DIR)
 
 if test "x${POSUB}" = "x" ; then
    have_po="no"
@@ -666,6 +675,7 @@ AC_SUBST([SSE3_CFLAGS])
 AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
+clearenv \
 execvp \
 dirfd \
 fpathconf \
@@ -3360,7 +3370,7 @@ AC_MSG_NOTICE([EDBus checks])
 
 ### Checks for libraries
 
-## Eina, Ecore, Ecore_Input
+## Eina, Ecore
 
 requirements_pc_edbus="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
 
@@ -3381,6 +3391,44 @@ PKG_CHECK_MODULES([EDBUS], [${requirements_pc_deps_edbus}])
 ### Checks for library functions
 
 #### End of EDBus
+
+
+#### Efreet
+
+AC_MSG_NOTICE([Efreet checks])
+
+### Additional options to configure
+
+### Default values
+
+AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
+
+### Checks for programs
+
+### Checks for libraries
+
+## Eet, Ecore, Ecore_File, EDBus, Eina, Evil
+
+requirements_pc_efreet="eet >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} ecore-file >= ${PACKAGE_VERSION} edbus2 >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${platform_pc_evil}"
+
+AC_ARG_VAR([EFREET_CFLAGS], [preprocessor flags for Efreet])
+AC_SUBST([EFREET_CFLAGS])
+AC_ARG_VAR([EFREET_LIBS], [linker flags for Efreet])
+AC_SUBST([EFREET_LIBS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+#### End of Efreet
 
 
 
@@ -3443,6 +3491,10 @@ pc/ecore-audio.pc
 pc/embryo.pc
 pc/eio.pc
 pc/edbus2.pc
+pc/efreet.pc
+pc/efreet-mime.pc
+pc/efreet-trash.pc
+dbus-services/org.enlightenment.Efreet.service
 $po_makefile_in
 ])
 

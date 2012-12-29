@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: efreet-mime
+Description: Freedesktop Shared Mime Info standard implementation for the EFL
+Version: @VERSION@
+Requires.private: @requirement_efreet@
+Libs: -L${libdir} -lefreet_mime
+Cflags: -I${includedir}/efreet-@VMAJ@

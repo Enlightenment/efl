@@ -806,7 +806,9 @@ evas_ _evas_ Evas_ _Evas_ EVAS_ _EVAS_ \
 eet_ _eet_ Eet_ _Eet_ EET_ _EET_ \
 ecore_ _ecore_ Ecore_ _Ecore_ ECORE_ _ECORE_ \
 eio_ _eio_ Eio_ _Eio_ EIO_ _EIO_ \
-edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_
+edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_ \
+efreet_ _efreet_ Efreet_ _Efreet_ EFREET_ _EFREET_
+
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -914,13 +916,13 @@ DOCSET_FEEDNAME        = "Doxygen generated docs"
 # reverse domain-name style string, e.g. com.mycompany.MyDocSet. Doxygen
 # will append .docset to the name.
 
-DOCSET_BUNDLE_ID       = org.enlightenment.Eina
+DOCSET_BUNDLE_ID       = org.enlightenment.Efl
 
 # When GENERATE_PUBLISHER_ID tag specifies a string that should uniquely identify
 # the documentation publisher. This should be a reverse domain-name style
 # string, e.g. com.mycompany.MyDocSet.documentation.
 
-DOCSET_PUBLISHER_ID    = org.enlightenment.Eina
+DOCSET_PUBLISHER_ID    = org.enlightenment.Ef;
 
 # The GENERATE_PUBLISHER_NAME tag identifies the documentation publisher.
 
@@ -987,7 +989,7 @@ QCH_FILE               =
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#namespace
 
-QHP_NAMESPACE          = org.enlightenment.Eina
+QHP_NAMESPACE          = org.enlightenment.Efl
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see
@@ -1038,7 +1040,7 @@ GENERATE_ECLIPSEHELP   = NO
 # the directory name containing the HTML and XML files should also have
 # this name.
 
-ECLIPSE_DOC_ID         = org.enlightenment.Eina
+ECLIPSE_DOC_ID         = org.enlightenment.Efl
 
 # The DISABLE_INDEX tag can be used to turn on/off the condensed index at
 # top of each HTML page. The value NO (the default) enables the index and
@@ -1422,7 +1424,8 @@ PREDEFINED             = EINA_MAGIC_DEBUG \
                          EINA_WARN_UNUSED_RESULT= \
                          EAPI= \
                          EINA_PURE= \
-                         EINA_CONST=
+                         EINA_CONST= \
+                         EINA_UNUSED=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.
