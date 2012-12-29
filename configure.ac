@@ -550,7 +550,7 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 
 AC_C_BIGENDIAN
 AC_C_INLINE
-EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith])
+EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers])
 case "${build_profile}" in
    dev)
      EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
