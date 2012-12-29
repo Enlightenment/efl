@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ecore-imf-evas
 Description: E core library, IMF Evas module
-@pkgconfig_requires_private@: @requirements_ecore_imf_evas@
 Version: @VERSION@
+Requires.private: @requirements_ecore_imf_evas@
 Libs: -L${libdir} -lecore_imf_evas
 Cflags: -I${includedir}/ecore-@VMAJ@
