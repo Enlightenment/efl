@@ -562,7 +562,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL  // screen_dpi_get
  };
 
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
 {
    Evas_Engine_Info_FB *einfo;
