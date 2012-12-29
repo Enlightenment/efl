@@ -3002,7 +3002,7 @@ requirements_pc_ecore_imf="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION
 
 ## Eina, Evas, Ecore, Ecore_Imf, Escape (ecore_imf_evas)
 
-requirements_pc_ecore_imf_evas="ecore_imf >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf_evas}  ${platform_pc_escape}"
+requirements_pc_ecore_imf_evas="ecore-imf >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf_evas}  ${platform_pc_escape}"
 
 ## modules
 
