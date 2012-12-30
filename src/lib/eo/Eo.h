@@ -962,19 +962,51 @@ enum {
 #define eo_wref_del(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), EO_TYPECHECK(Eo **, wref)
 
 /**
+ * @def eo_weak_ref
+ * @brief Reference a pointer to an Eo object
+ * @param wref the pointer to use for the weak ref
+ *
+ * Same as eo_wref_add() with the difference that it call eo_do() itself. Checking
+ * for *wref NULL and making sure that you pass the right pointer to both side of
+ * eo_do().
+ *
+ * @see eo_weak_unref
+ * @see eo_wref_add
+ */
+#define eo_weak_ref(wref)			\
+  do {						\
+    if (*wref) eo_do(*wref, eo_wref_add(wref));	\
+  } while (0);
+
+/**
+ * @def eo_weak_unref
+ * @brief Unreference a pointer to an Eo object
+ * @param wref the pointer to use for the weak unref
+ *
+ * Same as eo_wref_del() with the difference that it call eo_do() itself. Checking
+ * for *wref NULL and making sure that you pass the right pointer to both side of
+ * eo_do().
+ *
+ * @see eo_weak_ref
+ * @see eo_wref_del
+ * @see eo_wref_del_safe
+ */
+#define eo_weak_unref(wref)			\
+  do {						\
+    if (*wref) eo_do(*wref, eo_wref_del(wref));	\
+  } while (0);
+
+/**
  * @def eo_wref_del_safe
  * @brief Delete the weak reference passed.
  * @param wref the weak reference to free.
  *
- * Same as eo_wref_del(), with the different that it's not called from eobj_do()
+ * Same as eo_wref_del(), with the different that it's not called from eo_do()
  * so you don't need to check if *wref is not NULL.
  *
  * @see #eo_wref_del
  */
-#define eo_wref_del_safe(wref) \
-   do { \
-        if (*wref) eo_do(*wref, eo_wref_del(wref)); \
-   } while (0)
+#define eo_wref_del_safe(wref) eo_weak_unref(wref)
 
 /**
  * @def eo_constructor
