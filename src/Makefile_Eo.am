@@ -23,8 +23,7 @@ lib_eo_libeo_la_CPPFLAGS = \
 @USE_EVIL_CFLAGS@
 
 lib_eo_libeo_la_LIBADD = lib/eina/libeina.la @EO_LIBS@ @EFL_COV_LIBS@
-
-lib_eo_libeo_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests
 

@@ -45,7 +45,7 @@ lib/eina/libeina.la \
 @EFL_COV_LIBS@
 
 lib_ecore_evas_libecore_evas_la_LIBADD += @EFL_COV_LIBS@
-lib_ecore_evas_libecore_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+lib_ecore_evas_libecore_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # Engines
 

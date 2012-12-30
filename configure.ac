@@ -10,6 +10,7 @@ m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 
+m4_define([v_rel], [])
 ##--   When doing snapshots - change soname. remove dnl on below line
 dnl m4_define([relname], [ver-pre-svn-07])
 dnl m4_define([v_rel], [-release relname])
@@ -223,10 +224,8 @@ if test "x${have_windows}" = "xyes" ; then
    lt_cv_deplibs_check_method='pass_all'
 fi
 LT_INIT([win32-dll disable-static disable-fast-install pic-only])
-version_info="lt_cur:lt_rev:lt_age"
-AC_SUBST([version_info])
-release_info="v_rel"
-AC_SUBST([release_info])
+EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
+AC_SUBST(EFL_LTLIBRARY_FLAGS)
 
 ### gettext
 

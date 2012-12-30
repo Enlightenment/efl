@@ -32,7 +32,7 @@ lib/eina/libeina.la \
 @EFL_COV_LIBS@
 
 lib_ecore_input_libecore_input_la_LIBADD += @EFL_COV_LIBS@
-lib_ecore_input_libecore_input_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+lib_ecore_input_libecore_input_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 installed_ecoreinputevasmainheadersdir = $(includedir)/ecore-@VMAJ@
 dist_installed_ecoreinputevasmainheaders_DATA = \
@@ -62,4 +62,4 @@ lib/eo/libeo.la \
 lib/eina/libeina.la \
 @EFL_COV_LIBS@
 
-lib_ecore_input_libecore_input_evas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
+lib_ecore_input_libecore_input_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
