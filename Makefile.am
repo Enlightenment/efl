@@ -209,6 +209,14 @@ pkgconfig_DATA += pc/ecore-x.pc
 endif
 
 
+# D-Bus services:
+
+servicedir = @dbusservicedir@
+service_DATA = \
+dbus-services/org.enlightenment.Efreet.service
+
+
+
 .PHONY: doc benchmark examples install-examples
 
 # Documentation
