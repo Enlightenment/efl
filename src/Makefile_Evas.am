@@ -1432,7 +1432,8 @@ endif
 
 if EVAS_CSERVE2
 
-libexec_PROGRAMS = \
+evascserve2internal_bindir=$(libdir)/evas/cserve2/bin
+evascserve2internal_bin_PROGRAMS = \
 bin/evas/evas_cserve2 \
 bin/evas/evas_cserve2_slave \
 bin/evas/dummy_slave
@@ -1465,7 +1466,7 @@ bin_evas_evas_cserve2_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/eet \
--DPACKAGE_LIBEXEC_DIR=\"$(libexecdir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
 @EVAS_CFLAGS@ \
 @EFL_CFLAGS@
 
