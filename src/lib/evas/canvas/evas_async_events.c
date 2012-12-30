@@ -15,6 +15,9 @@ static int _fd_write = -1;
 static int _fd_read = -1;
 static pid_t _fd_pid = 0;
 
+static Eina_Lock async_lock;
+static Eina_Inarray async_queue;
+
 static int _init_evas_event = 0;
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;
@@ -71,6 +74,9 @@ evas_async_events_init(void)
 
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
 
+   eina_lock_new(&async_lock);
+   eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
+
    return _init_evas_event;
 }
 
@@ -84,6 +90,9 @@ evas_async_events_shutdown(void)
    close(_fd_write);
    _fd_read = -1;
    _fd_write = -1;
+
+   eina_lock_free(&async_lock);
+   eina_inarray_flush(&async_queue);
 
    return _init_evas_event;
 }
@@ -108,15 +117,40 @@ evas_async_events_fd_get(void)
 static int
 _evas_async_events_process_single(void)
 {
-   Evas_Event_Async *ev;
+   int wakeup;
    int ret;
 
-   ret = read(_fd_read, &ev, sizeof(Evas_Event_Async *));
-   if (ret == sizeof(Evas_Event_Async *))
+   ret = read(_fd_read, &wakeup, sizeof(int));
+   if (ret == sizeof(int))
      {
-        if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
-        free(ev);
-        return 1;
+        static Evas_Event_Async *memory = NULL;
+        static unsigned int memory_max = 0;
+        Evas_Event_Async *ev;
+        unsigned int len;
+        unsigned int max;
+
+        eina_lock_take(&async_lock);
+
+        ev = async_queue.members;
+        async_queue.members = memory;
+        memory = ev;
+
+        max = async_queue.max;
+        async_queue.max = memory_max;
+        memory_max = max;
+
+        len = async_queue.len;
+        async_queue.len = 0;
+
+        eina_lock_release(&async_lock);
+        
+        while (len > 0)
+          {
+             if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
+             ev++;
+             len--;
+          }
+        ret = 1;
      }
    else if (ret < 0)
      {
@@ -179,32 +213,44 @@ EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
    Evas_Event_Async *ev;
-   ssize_t check;
+   ssize_t check = sizeof (int);
    Eina_Bool result = EINA_FALSE;
+   int count;
 
    if (!func) return 0;
    if (_fd_write == -1) return 0;
 
    _evas_async_events_fork_handle();
-   
-   ev = calloc(1, sizeof (Evas_Event_Async));
-   if (!ev) return 0;
 
-   ev->func = func;
-   ev->target = target;
-   ev->type = type;
-   ev->event_info = event_info;
+   eina_lock_take(&async_lock);
 
-   do
+   count = async_queue.len;
+   ev = eina_inarray_add(&async_queue);
+   if (ev)
      {
-        check = write(_fd_write, &ev, sizeof (Evas_Event_Async*));
+        ev->func = func;
+        ev->target = target;
+        ev->type = type;
+        ev->event_info = event_info;
      }
-   while ((check != sizeof (Evas_Event_Async*)) &&
-          ((errno == EINTR) || (errno == EAGAIN)));
+
+   eina_lock_release(&async_lock);
+
+   if (count == 0 && ev)
+     {
+       int wakeup = 1;
+
+       do
+	 {
+	   check = write(_fd_write, &wakeup, sizeof (int));
+	 }
+       while ((check != sizeof (int)) &&
+	      ((errno == EINTR) || (errno == EAGAIN)));
+     }
 
    evas_cache_image_wakeup();
 
-   if (check == sizeof (Evas_Event_Async*))
+   if (check == sizeof (int))
      result = EINA_TRUE;
    else
      {

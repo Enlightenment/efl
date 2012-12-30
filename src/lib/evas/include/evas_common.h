@@ -443,7 +443,6 @@ typedef struct _Evas_Thread_Command Evas_Thread_Command;
 
 struct _Evas_Thread_Command
 {
-   EINA_INLIST;
    Evas_Thread_Command_Cb cb;
    void *data;
 };
@@ -1272,8 +1271,8 @@ void		   evas_render_rendering_wait(Evas_Public_Data *evas);
 
 void              evas_thread_init(void);
 void              evas_thread_shutdown(void);
-EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data, size_t size);
-EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data, size_t size);
+EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
+EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
 
 typedef enum _Evas_Render_Mode
 {

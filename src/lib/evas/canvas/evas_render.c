@@ -1705,7 +1705,7 @@ evas_render_updates_internal(Evas *eo_e,
              e->render.data = updates_data;
              e->render.updates_cb = updates_func;
 
-             evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data, 0);
+             evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
           }
         else if (haveup)
           {

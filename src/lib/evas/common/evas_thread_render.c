@@ -6,67 +6,61 @@ static Eina_Thread evas_thread_worker;
 static Eina_Condition evas_thread_queue_condition;
 static Eina_Lock evas_thread_queue_lock;
 static Eina_Bool evas_thread_queue_ready = EINA_FALSE;
-static Eina_Inlist *evas_thread_queue = NULL;
+static Eina_Inarray evas_thread_queue;
+
+static Evas_Thread_Command *evas_thread_queue_cache = NULL;
+static int evas_thread_queue_cache_max = 0;
+
 static volatile int evas_thread_exited = 0;
 static Eina_Bool exit_thread = EINA_FALSE;
 static int init_count = 0;
 
-static Evas_Thread_Command *
-evas_thread_cmd_new(Evas_Thread_Command_Cb cb, void *data, size_t size)
-{
-    Evas_Thread_Command *cmd = malloc(sizeof(*cmd) + size);
-    if (!cmd)
-      {
-         ERR("Out of memory allocating thread command.");
-         return NULL;
-      }
-
-    cmd->cb = cb;
-    if (size)
-      {
-         cmd->data = cmd + 1;
-         memcpy(cmd->data, data, size);
-      }
-    else
-      cmd->data = data;
-
-    return cmd;
-}
-
 static void
-evas_thread_queue_append(Evas_Thread_Command *cmd, Eina_Bool do_flush)
+evas_thread_queue_append(Evas_Thread_Command_Cb cb, void *data, Eina_Bool do_flush)
 {
-    eina_lock_take(&evas_thread_queue_lock);
+   Evas_Thread_Command *cmd;
 
-    evas_thread_queue = eina_inlist_append(evas_thread_queue, EINA_INLIST_GET(cmd));
+   eina_lock_take(&evas_thread_queue_lock);
 
-    if (do_flush)
-      {
-         evas_thread_queue_ready = EINA_TRUE;
-         eina_condition_signal(&evas_thread_queue_condition);
-      }
+   if (evas_thread_queue.members == NULL)
+     {
+        evas_thread_queue.members = evas_thread_queue_cache;
+        evas_thread_queue.len = 0;
+        evas_thread_queue.max = evas_thread_queue_cache_max;
+        evas_thread_queue_cache = NULL;
+        evas_thread_queue_cache_max = 0;
+     }
 
-    eina_lock_release(&evas_thread_queue_lock);
+   cmd = eina_inarray_add(&evas_thread_queue);
+   if (cmd)
+     {
+        cmd->cb = cb;
+        cmd->data = data;
+     }
+   else
+     {
+        ERR("Out of memory allocating thread command.");
+     }
+
+   if (do_flush)
+     {
+        evas_thread_queue_ready = EINA_TRUE;
+        eina_condition_signal(&evas_thread_queue_condition);
+     }
+
+   eina_lock_release(&evas_thread_queue_lock);
 }
 
 EAPI void
-evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data, size_t size)
+evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data)
 {
-    Evas_Thread_Command *cmd = evas_thread_cmd_new(cb, data, size);
-    if (!cmd)
-      return;
-
-    evas_thread_queue_append(cmd, EINA_FALSE);
+    evas_thread_queue_append(cb, data, EINA_FALSE);
 }
 
 EAPI void
-evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data, size_t size)
+evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data)
 {
-    Evas_Thread_Command *cmd = evas_thread_cmd_new(cb, data, size);
-    if (!cmd)
-      return;
-
-    evas_thread_queue_append(cmd, EINA_TRUE);
+    evas_thread_queue_append(cb, data, EINA_TRUE);
 }
 
 static void*
@@ -74,8 +68,10 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
     while (1)
       {
+         Evas_Thread_Command *head;
          Evas_Thread_Command *cmd;
-         Eina_Inlist *queue;
+         int len;
+         int max;
 
          eina_lock_take(&evas_thread_queue_lock);
 
@@ -89,31 +85,35 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
               eina_condition_wait(&evas_thread_queue_condition);
            }
 
-         if (!evas_thread_queue)
+         if (!eina_inarray_count(&evas_thread_queue))
            {
               ERR("Signaled to find an empty queue. BUG!");
               eina_lock_release(&evas_thread_queue_lock);
               continue;
            }
 
-         queue = evas_thread_queue;
-         evas_thread_queue = NULL;
+         head = evas_thread_queue.members;
+         evas_thread_queue.members = NULL;
+         max = evas_thread_queue.max; evas_thread_queue.max = 0;
+         len = evas_thread_queue.len; evas_thread_queue.len = 0;
+         
          evas_thread_queue_ready = EINA_FALSE;
 
          eina_lock_release(&evas_thread_queue_lock);
 
-         while (queue)
+         cmd = head;
+         while (len)
            {
-              cmd = EINA_INLIST_CONTAINER_GET(queue, Evas_Thread_Command);
-
-              assert(cmd);
               assert(cmd->cb);
 
               cmd->cb(cmd->data);
 
-              queue = eina_inlist_remove(queue, queue);
-              free(cmd);
+              cmd++;
+              len--;
            }
+
+         evas_thread_queue_cache = head;
+         evas_thread_queue_cache_max = max;
       }
 
 out:
@@ -128,6 +128,8 @@ evas_thread_init(void)
     if (init_count++) return;
 
     eina_threads_init();
+
+    eina_inarray_step_set(&evas_thread_queue, sizeof (Eina_Inarray), sizeof (Evas_Thread_Command), 128);
 
     if (!eina_lock_new(&evas_thread_queue_lock))
       CRIT("Could not create draw thread lock");
@@ -159,6 +161,8 @@ evas_thread_shutdown(void)
     eina_thread_join(evas_thread_worker);
     eina_lock_free(&evas_thread_queue_lock);
     eina_condition_free(&evas_thread_queue_condition);
+
+    eina_inarray_flush(&evas_thread_queue);
 
     eina_threads_shutdown();
 }
