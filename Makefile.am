@@ -95,7 +95,10 @@ pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
 pc/embryo.pc \
 pc/eio.pc \
-pc/edbus2.pc
+pc/edbus2.pc \
+pc/efreet.pc \
+pc/efreet-mime.pc \
+pc/efreet-trash.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -124,7 +127,10 @@ pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
 pc/embryo.pc \
 pc/eio.pc \
-pc/edbus2.pc
+pc/edbus2.pc \
+pc/efreet.pc \
+pc/efreet-mime.pc \
+pc/efreet-trash.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
