@@ -442,7 +442,7 @@ esac
 EFL_ATTRIBUTE_VECTOR
 EFL_ATTRIBUTE_ALWAYS_INLINE
 
-EFL_LIBS=
+EFL_LIBS=""
 AC_SUBST([EFL_LIBS])
 
 ## CPU architecture specific assembly
@@ -661,7 +661,7 @@ EFL_LIB_START_OPTIONAL([Escape], [test "${have_ps3}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
-EFL_ADD_LIBS([ESCAPE], [-llv2])
+EFL_ADD_LIBS([ESCAPE], [-llv2 -lm -lnet -lsysmodule -liberty])
 
 ### Checks for header files
 
@@ -747,9 +747,9 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 ### Checks for programs
 
 ### Checks for libraries
-
-## Compatibility layers
 EFL_PLATFORM_DEPEND([EINA], [all])
+
+EFL_ADD_LIBS([EINA], [-lm])
 
 ## Options
 
@@ -856,6 +856,8 @@ EFL_LIB_START([Eet])
 ## Compatibility layers
 EFL_PLATFORM_DEPEND([EET], [evil])
 EFL_CRYPTO_DEPEND([EET])
+
+EFL_ADD_LIBS([EET], [-lm])
 
 # Cryptography support
 if test "$build_crypto" != "none" ; then
@@ -1290,8 +1292,7 @@ if test "${have_wince}" = "yes"; then
    want_evas_image_loader_webp="no"
 fi
 
-EFL_CHECK_FUNC([DLSYM], [dlsym])
-EFL_ADD_LIBS([EVAS], [${DLSYM_LIBS}])
+EFL_CHECK_FUNC([EVAS], [dlsym])
 
 if test "x${efl_func_dlsym}" = "xno" && test "${with_opengl}" != "none"; then
    AC_MSG_ERROR([OpenGL cannot work without dlsym()])
@@ -1306,6 +1307,8 @@ EFL_PLATFORM_DEPEND([EVAS], [all])
 EFL_INTERNAL_DEPEND_PKG([EVAS], [eo])
 EFL_INTERNAL_DEPEND_PKG([EVAS], [eet])
 EFL_INTERNAL_DEPEND_PKG([EVAS], [eina])
+
+EFL_ADD_LIBS([EVAS], [-lm])
 
 # Freetype
 EFL_DEPEND_PKG([EVAS], [FREETYPE], [freetype2 >= 9.3.0])
@@ -1678,6 +1681,8 @@ EFL_LIB_START([Embryo])
 EFL_PLATFORM_DEPEND([EMBRYO], [all])
 EFL_INTERNAL_DEPEND_PKG([EMBRYO], [eina])
 
+EFL_ADD_LIBS([EMBRYO], [-lm])
+
 ### Checks for header files
 
 ### Checks for types
@@ -1763,6 +1768,8 @@ fi
 EFL_PLATFORM_DEPEND([ECORE], [all])
 EFL_INTERNAL_DEPEND_PKG([ECORE], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE], [eina])
+
+EFL_ADD_LIBS([ECORE], [-lm])
 
 # glib
 
@@ -1910,6 +1917,8 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eet])
 EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eina])
 EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [ecore])
 
+EFL_ADD_LIBS([ECORE_CON], [-lm])
+
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_curl}], [CURL], [libcurl])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_cares}],
@@ -2003,6 +2012,8 @@ EFL_LIB_START([Ecore_Ipc])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [eina])
+
+EFL_ADD_LIBS([ECORE_IPC], [-lm])
 
 ### Checks for header files
 
@@ -2391,6 +2402,8 @@ AC_ARG_ENABLE([pulseaudio],
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eet])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eina])
+
+EFL_ADD_LIBS([ECORE_AUDIO], [-lm])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_alsa}], [ALSA], [alsa])
 EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_pulseaudio}], [PULSE], [libpulse])
@@ -3185,6 +3198,7 @@ EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 EFL_LIB_END([Efreet])
 #### End of Efreet
 
+EFL_LIBS="${EFL_LIBS} ${requirements_libs_efl}"
 
 
 AC_CONFIG_FILES([

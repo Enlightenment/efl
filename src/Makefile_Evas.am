@@ -232,8 +232,7 @@ lib/eina/libeina.la \
 lib/eet/libeet.la \
 lib/eo/libeo.la \
 @EVAS_LIBS@ \
-@EFL_COV_LIBS@ \
--lm
+@EFL_COV_LIBS@
 
 lib_evas_libevas_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
@@ -964,8 +963,7 @@ modules_evas_loaders_bmp_module_la_CPPFLAGS = \
 modules_evas_loaders_bmp_module_la_LIBADD = \
 lib/evas/libevas.la \
 @EFL_LIBS@ \
-@evas_image_loader_bmp_libs@ \
--lm
+@evas_image_loader_bmp_libs@
 modules_evas_loaders_bmp_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_evas_loaders_bmp_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -1582,7 +1580,7 @@ bin_evas_loaders_bmp_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/evas \
 @EFL_CFLAGS@ \
 @EVAS_CFLAGS@
-bin_evas_loaders_bmp_module_la_LIBADD = @EFL_LIBS@ -lm
+bin_evas_loaders_bmp_module_la_LIBADD = @EFL_LIBS@
 bin_evas_loaders_bmp_module_la_LDFLAGS = -no-undefined -module -avoid-version
 bin_evas_loaders_bmp_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif

@@ -8,5 +8,5 @@ Description: Ecore event abstraction library
 Requires.private: @requirements_pc_ecore@
 Version: @VERSION@
 Libs: -L${libdir} -lecore
-Libs.private: @requirements_libs_ecore@ -lm
+Libs.private: @requirements_libs_ecore@
 Cflags: -I${includedir}/ecore-@VMAJ@

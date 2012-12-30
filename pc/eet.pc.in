@@ -8,5 +8,5 @@ Description: Library for speedy data storage, retrieval, and compression
 Version: @VERSION@
 Requires.private: @requirements_pc_eet@
 Libs: -L${libdir} -leet
-Libs.private: @requirements_libs_eet@ -lm
+Libs.private: @requirements_libs_eet@
 Cflags: -I${includedir}/eet-@VMAJ@

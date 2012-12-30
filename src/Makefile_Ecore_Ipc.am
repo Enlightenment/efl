@@ -20,14 +20,15 @@ lib_ecore_ipc_libecore_ipc_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -DEFL_ECORE_IPC_BUILD \
 @EFL_CFLAGS@ \
-@EFL_COV_CFLAGS@
+@EFL_COV_CFLAGS@ \
+@ECORE_IPC_CFLAGS@
 
 lib_ecore_ipc_libecore_ipc_la_LIBADD = \
 lib/ecore_con/libecore_con.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
-lib/eina/libeina.la
-
-lib_ecore_ipc_libecore_ipc_la_LIBADD += @EFL_COV_LIBS@ -lm
+lib/eina/libeina.la \
+@EFL_COV_LIBS@ \
+@ECORE_IPC_LIBS@
 
 lib_ecore_ipc_libecore_ipc_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@

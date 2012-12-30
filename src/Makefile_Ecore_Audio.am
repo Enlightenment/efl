@@ -31,8 +31,8 @@ lib_ecore_audio_libecore_audio_la_LIBADD = \
 lib/ecore/libecore.la \
 lib/eet/libeet.la \
 lib/eo/libeo.la \
-lib/eina/libeina.la
-
-lib_ecore_audio_libecore_audio_la_LIBADD += @ECORE_AUDIO_LIBS@ @EFL_COV_LIBS@ -lm
+lib/eina/libeina.la \
+@ECORE_AUDIO_LIBS@ \
+@EFL_COV_LIBS@
 
 lib_ecore_audio_libecore_audio_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
