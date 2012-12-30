@@ -1601,11 +1601,7 @@ AC_CHECK_TYPES([struct sigaction], [], [],
 
 AC_CHECK_FUNCS([siglongjmp])
 
-res=no
-AC_CHECK_LIB([m], [lround], [res=yes], [res=no])
-if test "x${res}" = "xyes" ; then
-  AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])
-fi
+AC_CHECK_LIB([m], [lround], [AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])])
 
 if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
    EFL_CHECK_FUNC([EVAS], [shm_open])
