@@ -358,7 +358,7 @@ AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 if test "x${have_windows}" = "xyes" ; then
    lt_cv_deplibs_check_method='pass_all'
 fi
-LT_INIT([win32-dll])
+LT_INIT([win32-dll disable-static])
 version_info="lt_cur:lt_rev:lt_age"
 AC_SUBST([version_info])
 release_info="v_rel"
