@@ -140,148 +140,6 @@ requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
 
-requirements_libs_evil=""
-requirements_libs_eina=""
-requirements_libs_eo=""
-requirements_libs_eet=""
-requirements_libs_evas=""
-requirements_libs_ecore=""
-requirements_libs_ecore_con=""
-requirements_libs_ecore_ipc=""
-requirements_libs_ecore_file=""
-requirements_libs_ecore_input=""
-requirements_libs_ecore_cocoa=""
-requirements_libs_ecore_fb=""
-requirements_libs_ecore_psl1ght=""
-requirements_libs_ecore_sdl=""
-requirements_libs_ecore_wayland=""
-requirements_libs_ecore_audio=""
-requirements_libs_ecore_win32=""
-requirements_libs_ecore_wince=""
-requirements_libs_ecore_x=""
-requirements_libs_ecore_evas=""
-requirements_libs_embryo=""
-requirements_libs_eio=""
-requirements_libs_edbus=""
-requirements_libs_efreet=""
-#requirements_libs_edje=""
-#requirements_libs_eeze=""
-#requirements_libs_emotion=""
-#requirements_libs_ethumb=""
-#requirements_libs_elementary=""
-
-requirements_pc_eina=""
-requirements_pc_eo=""
-requirements_pc_eet=""
-requirements_pc_evas=""
-requirements_pc_ecore=""
-requirements_pc_ecore_con=""
-requirements_pc_ecore_ipc=""
-requirements_pc_ecore_file=""
-requirements_pc_ecore_input=""
-requirements_pc_ecore_input_evas=""
-requirements_pc_ecore_cocoa=""
-requirements_pc_ecore_fb=""
-requirements_pc_ecore_psl1ght=""
-requirements_pc_ecore_sdl=""
-requirements_pc_ecore_wayland=""
-requirements_pc_ecore_audio=""
-requirements_pc_ecore_win32=""
-requirements_pc_ecore_wince=""
-requirements_pc_ecore_x=""
-requirements_pc_ecore_evas=""
-requirements_pc_embryo=""
-requirements_pc_eio=""
-requirements_pc_edbus=""
-requirements_pc_efreet=""
-#requirements_pc_edje=""
-#requirements_pc_eeze=""
-#requirements_pc_emotion=""
-#requirements_pc_ethumb=""
-#requirements_pc_elementary=""
-
-requirements_pc_deps_eina=""
-requirements_pc_deps_eo=""
-requirements_pc_deps_eet=""
-requirements_pc_deps_evas=""
-requirements_pc_deps_ecore=""
-requirements_pc_deps_ecore_con=""
-requirements_pc_deps_ecore_fb=""
-requirements_pc_deps_ecore_sdl=""
-requirements_pc_deps_ecore_wayland=""
-requirements_pc_deps_ecore_evas=""
-requirements_pc_deps_embryo=""
-requirements_pc_deps_edbus=""
-requirements_pc_deps_efreet=""
-#requirements_pc_deps_edje=""
-#requirements_pc_deps_eeze=""
-#requirements_pc_deps_emotion=""
-#requirements_pc_deps_ethumb=""
-#requirements_pc_deps_elementary=""
-
-AC_SUBST([requirements_libs_evil])
-AC_SUBST([requirements_libs_eina])
-AC_SUBST([requirements_libs_eo])
-AC_SUBST([requirements_libs_eet])
-AC_SUBST([requirements_libs_evas])
-AC_SUBST([requirements_libs_ecore])
-AC_SUBST([requirements_libs_ecore_con])
-AC_SUBST([requirements_libs_ecore_ipc])
-AC_SUBST([requirements_libs_ecore_file])
-AC_SUBST([requirements_libs_ecore_input])
-AC_SUBST([requirements_libs_ecore_cocoa])
-AC_SUBST([requirements_libs_ecore_fb])
-AC_SUBST([requirements_libs_ecore_psl1ght])
-AC_SUBST([requirements_libs_ecore_sdl])
-AC_SUBST([requirements_libs_ecore_wayland])
-AC_SUBST([requirements_libs_ecore_audio])
-AC_SUBST([requirements_libs_ecore_win32])
-AC_SUBST([requirements_libs_ecore_wince])
-AC_SUBST([requirements_libs_ecore_x])
-AC_SUBST([requirements_libs_ecore_evas])
-AC_SUBST([requirements_libs_embryo])
-AC_SUBST([requirements_libs_eio])
-AC_SUBST([requirements_libs_edbus])
-AC_SUBST([requirements_libs_efreet])
-#AC_SUBST([requirements_libs_edje])
-#AC_SUBST([requirements_libs_eeze])
-#AC_SUBST([requirements_libs_emotion])
-#AC_SUBST([requirements_libs_ethumb])
-#AC_SUBST([requirements_libs_elementary])
-
-AC_SUBST([requirements_pc_eina])
-AC_SUBST([requirements_pc_eo])
-AC_SUBST([requirements_pc_eet])
-AC_SUBST([requirements_pc_evas])
-AC_SUBST([requirements_pc_ecore])
-AC_SUBST([requirements_pc_ecore_con])
-AC_SUBST([requirements_pc_ecore_ipc])
-AC_SUBST([requirements_pc_ecore_file])
-AC_SUBST([requirements_pc_ecore_input])
-AC_SUBST([requirements_pc_ecore_input_evas])
-AC_SUBST([requirements_pc_ecore_imf])
-AC_SUBST([requirements_pc_ecore_imf_evas])
-AC_SUBST([requirements_pc_ecore_cocoa])
-AC_SUBST([requirements_pc_ecore_fb])
-AC_SUBST([requirements_pc_ecore_psl1ght])
-AC_SUBST([requirements_pc_ecore_sdl])
-AC_SUBST([requirements_pc_ecore_wayland])
-AC_SUBST([requirements_pc_ecore_audio])
-AC_SUBST([requirements_pc_ecore_win32])
-AC_SUBST([requirements_pc_ecore_wince])
-AC_SUBST([requirements_pc_ecore_x])
-AC_SUBST([requirements_pc_ecore_evas])
-AC_SUBST([requirements_pc_embryo])
-AC_SUBST([requirements_pc_eio])
-AC_SUBST([requirements_pc_edbus])
-AC_SUBST([requirements_pc_efreet])
-#AC_SUBST([requirements_pc_edje])
-#AC_SUBST([requirements_pc_eeze])
-#AC_SUBST([requirements_pc_emotion])
-#AC_SUBST([requirements_pc_ethumb])
-#AC_SUBST([requirements_pc_elementary])
-
-
 AC_CANONICAL_HOST
 
 # TODO: move me to m4 file that setups module/so related variables
@@ -708,9 +566,7 @@ DL_LIBS=""
 USE_EVIL_CFLAGS=""
 USE_EVIL_LIBS=""
 
-if test "x${have_windows}" = "xyes" ; then
-
-AC_MSG_NOTICE([Evil checks])
+EFL_LIB_START_OPTIONAL([Evil], [test "${have_windows}" = "yes"])
 
 ### Default values
 
@@ -735,8 +591,6 @@ requirements_libs_evil="${EVIL_LIBS}"
 
 AC_SUBST([EVIL_LIBS])
 AC_SUBST([EVIL_DLFCN_LIBS])
-
-AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
 
 ### Checks for header files
 
@@ -778,7 +632,8 @@ platform_libs="${platform_libs} ${platform_libs_evil}"
 USE_EVIL_CFLAGS="-I\$(top_srcdir)/src/lib/evil"
 USE_EVIL_LIBS="lib/evil/libevil.la"
 DL_LIBS="lib/evil/libdl.la"
-fi
+
+EFL_LIB_END_OPTIONAL([Evil])
 
 AC_SUBST([USE_EVIL_CFLAGS])
 AC_SUBST([USE_EVIL_LIBS])
@@ -791,9 +646,7 @@ AC_SUBST([USE_EVIL_LIBS])
 USE_ESCAPE_CFLAGS=""
 USE_ESCAPE_LIBS=""
 
-if test "x${have_ps3}" = "xyes" ; then
-
-AC_MSG_NOTICE([Escape checks])
+EFL_LIB_START_OPTIONAL([Escape], [test "${have_ps3}" = "yes"])
 
 ### Additional options to configure
 
@@ -825,11 +678,11 @@ platform_pc="${platform_pc} ${platform_pc_escape}"
 
 USE_ESCAPE_CFLAGS="-I\$(top_srcdir)/src/lib/escape"
 USE_ESCAPE_LIBS="lib/escape/libescape.la"
-fi
+
+EFL_LIB_END_OPTIONAL([Escape])
 
 AC_SUBST([USE_ESCAPE_CFLAGS])
 AC_SUBST([USE_ESCAPE_LIBS])
-
 #### End of Escape
 
 AC_SUBST([DL_LIBS])
@@ -838,7 +691,7 @@ AC_SUBST([DL_LIBS])
 
 #### Eina
 
-AC_MSG_NOTICE([Eina checks])
+EFL_LIB_START([Eina])
 
 ### Default values
 
@@ -993,13 +846,13 @@ EINA_CHECK_MODULE([chained-pool], [static], [chained pool])
 EINA_CHECK_MODULE([pass-through], [static], [pass through])
 EINA_CHECK_MODULE([one-big],      [static], [one big])
 
-
+EFL_LIB_END([Eina])
 #### End of Eina
 
 
 #### Eet
 
-AC_MSG_NOTICE([Eet checks])
+EFL_LIB_START([Eet])
 
 ### Default values
 
@@ -1067,12 +920,13 @@ esac
 
 ### Check availability
 
+EFL_LIB_END([Eet])
 #### End of Eet
 
 
 #### Eo
 
-AC_MSG_NOTICE([Eo checks])
+EFL_LIB_START([Eo])
 
 ### Default values
 
@@ -1111,12 +965,13 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 
 ### Check availability
 
+EFL_LIB_END([Eo])
 #### End of Eo
 
 
 #### Evas
 
-AC_MSG_NOTICE([Evas checks])
+EFL_LIB_START([Evas])
 
 ### Additional options to configure
 
@@ -1857,12 +1712,13 @@ case "${build_evas_dither_mask}" in
      ;;
 esac
 
+EFL_LIB_END([Evas])
 #### End of Evas
 
 
 #### Embryo
 
-AC_MSG_NOTICE([Embryo checks])
+EFL_LIB_START([Embryo])
 
 ### Default values
 
@@ -1906,12 +1762,13 @@ fi
 
 ### Check availability
 
+EFL_LIB_END([Embryo])
 #### End of Embryo
 
 
 #### Ecore
 
-AC_MSG_NOTICE([Ecore checks])
+EFL_LIB_START([Ecore])
 
 ### Additional options to configure
 
@@ -2059,12 +1916,13 @@ ECORE_LIBS="${ECORE_LIBS} ${LTLIBINTL} ${requirements_libs_ecore}"
 
 ### Check availability
 
+EFL_LIB_END([Ecore])
 #### End of Ecore
 
 
 #### Ecore_Con
 
-AC_MSG_NOTICE([Ecore_Con checks])
+EFL_LIB_START([Ecore_Con])
 
 ### Additional options to configure
 
@@ -2211,12 +2069,13 @@ EFL_CHECK_COMPILER_FLAGS([ECORE_CON], [-Wno-override-init -Wno-initializer-overr
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Con])
 #### End of Ecore_Con
 
 
 #### Ecore_Ipc
 
-AC_MSG_NOTICE([Ecore_Ipc checks])
+EFL_LIB_START([Ecore_Ipc])
 
 ### Default values
 
@@ -2244,12 +2103,13 @@ AC_CHECK_HEADERS([winsock2.h])
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Ipc])
 #### End of Ecore_Ipc
 
 
 #### Ecore_File
 
-AC_MSG_NOTICE([Ecore_File checks])
+EFL_LIB_START([Ecore_File])
 
 ### Additional options to configure
 
@@ -2274,12 +2134,13 @@ requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_V
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_File])
 #### End of Ecore_File
 
 
 #### Ecore_Input
 
-AC_MSG_NOTICE([Ecore_Input checks])
+EFL_LIB_START([Ecore_Input])
 
 ### Additional options to configure
 
@@ -2309,12 +2170,13 @@ requirements_pc_ecore_input_evas="ecore-input >= ${PACKAGE_VERSION} ecore >= ${P
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Input])
 #### End of Ecore_Input
 
 
 #### Ecore_Cocoa
 
-AC_MSG_NOTICE([Ecore_Cocoa checks])
+EFL_LIB_START([Ecore_Cocoa])
 
 ### Additional options to configure
 
@@ -2383,15 +2245,14 @@ AM_CONDITIONAL([HAVE_ECORE_COCOA], [test "x${have_ecore_cocoa}" = "xyes"])
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Cocoa])
 #### End of Ecore_Cocoa
 
 
 
 
 #### Ecore_FB
-if test "${want_fb}" = "yes"; then
-
-AC_MSG_NOTICE([Ecore_FB checks])
+EFL_LIB_START_OPTIONAL([Ecore_FB], [test "${want_fb}" = "yes"])
 
 ### Additional options to configure
 AC_ARG_ENABLE([tslib],
@@ -2444,16 +2305,12 @@ fi
 
 ### Checks for library functions
 
-fi
-AM_CONDITIONAL([HAVE_ECORE_FB], [test "x${want_fb}" = "xyes"])
+EFL_LIB_END_OPTIONAL([Ecore_FB])
 #### End of Ecore_FB
 
 
 #### Ecore_Psl1ght
-
-if test "x${have_ps3}" = "xyes" ; then
-
-AC_MSG_NOTICE([Ecore_Psl1ght checks])
+EFL_LIB_START_OPTIONAL([Ecore_Psl1ght], [test "${have_ps3}" = "yes"])
 
 ### Additional options to configure
 
@@ -2481,15 +2338,12 @@ requirements_libs_ecore_psl1ght="-lio -lsysutil -lgem -lcamera -lspurs"
 
 ### Checks for library functions
 
-fi
-
+EFL_LIB_END_OPTIONAL([Ecore_Psl1ght])
 #### End of Ecore_Psl1ght
 
 
 #### Ecore_SDL
-if test "${want_sdl}" = "yes"; then
-
-AC_MSG_NOTICE([Ecore_SDL checks])
+EFL_LIB_START_OPTIONAL([Ecore_SDL], [test "${want_sdl}" = "yes"])
 
 ### Additional options to configure
 
@@ -2523,15 +2377,12 @@ PKG_CHECK_MODULES([ECORE_SDL], [${requirements_pc_deps_ecore_sdl}])
 
 ### Checks for library functions
 
-fi
-AM_CONDITIONAL([HAVE_ECORE_SDL], [test "x${want_sdl}" = "xyes"])
+EFL_LIB_END_OPTIONAL([Ecore_SDL])
 #### End of Ecore_SDL
 
 
 #### Ecore_Wayland
-
-if test "${want_wayland}" = "yes"; then
-AC_MSG_NOTICE([Ecore_Wayland checks])
+EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_wayland}" = "yes"])
 
 ### Additional options to configure
 
@@ -2562,9 +2413,7 @@ PKG_CHECK_MODULES([ECORE_WAYLAND], [${requirements_pc_deps_ecore_wayland}])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-
-fi
-AM_CONDITIONAL([HAVE_ECORE_WAYLAND], [test "x${have_wayland}" = "xyes"])
+EFL_LIB_END_OPTIONAL([Ecore_Wayland])
 #### End of Ecore_Wayland
 
 
@@ -2582,10 +2431,7 @@ AC_ARG_ENABLE([audio],
    ],
    [want_audio="yes"])
 
-if test "${want_audio}" = "yes"; then
-AC_MSG_NOTICE([Ecore_Audio checks])
-
-AC_DEFINE([HAVE_ECORE_AUDIO], [1], [build ecore_audio])
+EFL_LIB_START_OPTIONAL([Ecore_Audio], [test "${want_audio}" = "yes"])
 
 ### Additional options to configure
 
@@ -2649,14 +2495,11 @@ requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
 
 ### Checks for library functions
 
-fi
-AM_CONDITIONAL([HAVE_ECORE_AUDIO], [test "${want_audio}" = "yes"])
+EFL_LIB_END_OPTIONAL([Ecore_Audio])
+#### End of Ecore_Audio
 
 #### Ecore_Win32
-
-if test "x${have_win32}" = "xyes" ; then
-
-AC_MSG_NOTICE([Ecore_Win32 checks])
+EFL_LIB_START_OPTIONAL([Ecore_Win32], [test "${have_win32}" = "yes"])
 
 ### Additional options to configure
 
@@ -2686,16 +2529,12 @@ AC_SUBST([ECORE_WIN32_LIBS])
 
 ### Checks for library functions
 
-fi
-
+EFL_LIB_END_OPTIONAL([Ecore_Win32])
 #### End of Ecore_Win32
 
 
 #### Ecore_WinCE
-
-if test "x${have_wince}" = "xyes" ; then
-
-AC_MSG_NOTICE([Ecore_WinCE checks])
+EFL_LIB_START_OPTIONAL([Ecore_WinCE], [test "${have_wince}" = "yes"])
 
 ### Additional options to configure
 
@@ -2722,14 +2561,12 @@ requirements_pc_ecore_wince="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAG
 
 ### Checks for library functions
 
-fi
-
+EFL_LIB_END_OPTIONAL([Ecore_WinCE])
 #### End of Ecore_WinCE
 
 
 #### Ecore_X
-if test "${want_x11_any}" = "yes"; then
-AC_MSG_NOTICE([Ecore_X checks])
+EFL_LIB_START_OPTIONAL([Ecore_X], [test "${want_x11_any}" = "yes"])
 
 ### Additional options to configure
 
@@ -2965,17 +2802,15 @@ AC_SUBST([HAVE_ECORE_X_BACKEND])
 AC_SUBST([ECORE_X_CFLAGS])
 AC_SUBST([ECORE_X_LIBS])
 
-fi
+EFL_LIB_END_OPTIONAL([Ecore_X])
+
 AM_CONDITIONAL([HAVE_ECORE_X_XLIB], [test "${want_x11_xlib}" = "yes"])
 AM_CONDITIONAL([HAVE_ECORE_X_XCB], [test "${want_x11_xcb}" = "yes"])
-AM_CONDITIONAL([HAVE_ECORE_X], [test "${want_x11_any}" = "yes"])
-
 #### End of Ecore_X
 
 
 #### Ecore_Imf
-
-AC_MSG_NOTICE([Ecore_Imf checks])
+EFL_LIB_START([Ecore_Imf])
 
 ### Additional options to configure
 
@@ -3066,12 +2901,12 @@ AM_CONDITIONAL([BUILD_ECORE_IMF_XIM], [test "x${have_ecore_imf_xim}" = "xyes"])
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Imf])
 #### End of Ecore_Imf
 
 
 #### Ecore_Evas
-
-AC_MSG_NOTICE([Ecore_Evas checks])
+EFL_LIB_START([Ecore_Evas])
 
 ### Additional options to configure
 
@@ -3248,11 +3083,11 @@ fi
 
 ### Checks for library functions
 
+EFL_LIB_END([Ecore_Evas])
 #### End of Ecore_Evas
 
 #### Eio
-
-AC_MSG_NOTICE([Eio checks])
+EFL_LIB_START([Eio])
 
 ### Additional options to configure
 
@@ -3352,12 +3187,12 @@ setxattr("/", "user.ethumb.md5", NULL, 0, 0);
 
 AC_MSG_RESULT([${have_xattr}])
 
+EFL_LIB_END([Eio])
 #### End of Eio
 
 
 #### EDBus
-
-AC_MSG_NOTICE([EDBus checks])
+EFL_LIB_START([EDBus])
 
 ### Additional options to configure
 
@@ -3387,12 +3222,12 @@ PKG_CHECK_MODULES([EDBUS], [${requirements_pc_deps_edbus}])
 
 ### Checks for library functions
 
+EFL_LIB_END([EDBus])
 #### End of EDBus
 
 
 #### Efreet
-
-AC_MSG_NOTICE([Efreet checks])
+EFL_LIB_START([Efreet])
 
 ### Additional options to configure
 
@@ -3425,6 +3260,7 @@ AC_SUBST([EFREET_LIBS])
 
 ### Checks for library functions
 
+EFL_LIB_END([Efreet])
 #### End of Efreet
 
 
