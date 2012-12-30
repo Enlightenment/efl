@@ -161,7 +161,7 @@ chained_pool_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
-chained_pool_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
+chained_pool_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@ @VALGRIND_CFLAGS@
 chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 chained_pool_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
 chained_pool_module_la_LDFLAGS = -no-undefined -module -avoid-version @EFL_PTHREAD_LIBS@
@@ -178,7 +178,7 @@ one_big_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
-one_big_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@
+one_big_module_la_CFLAGS = @EINA_CFLAGS@ @EFL_PTHREAD_CFLAGS@ @VALGRIND_CFLAGS@
 one_big_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 one_big_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
 one_big_module_la_LDFLAGS = -no-undefined -module -avoid-version @EFL_PTHREAD_LIBS@
@@ -195,7 +195,7 @@ pass_through_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -DEFL_EINA_BUILD
-pass_through_module_la_CFLAGS = @EINA_CFLAGS@
+pass_through_module_la_CFLAGS = @EINA_CFLAGS@ @VALGRIND_CFLAGS@
 pass_through_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 pass_through_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
 pass_through_module_la_LDFLAGS = -no-undefined -module -avoid-version
@@ -213,6 +213,7 @@ lib_eina_libeina_la_CPPFLAGS = \
 @EFL_COV_CFLAGS@ \
 @EFL_PTHREAD_CFLAGS@ \
 @EINA_CFLAGS@ \
+@VALGRIND_CFLAGS@ \
 @USE_EVIL_CFLAGS@
 
 lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @EFL_COV_LIBS@ @USE_EVIL_LIBS@ @DL_LIBS@ -lm

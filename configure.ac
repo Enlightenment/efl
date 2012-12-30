@@ -849,7 +849,7 @@ case "${build_profile}" in
    dev)
      with_max_log_level=""
      have_stringshare_usage="no"
-     want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
+     want_valgrind="yes"
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
@@ -858,7 +858,7 @@ case "${build_profile}" in
    debug)
      with_max_log_level=""
      have_stringshare_usage="yes"
-     want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
+     want_valgrind="yes"
      want_debug_malloc="yes"
      want_debug_threads="yes"
      want_default_mempool="yes"
@@ -899,11 +899,11 @@ requirements_pc_eina="${requirements_pc_eina} ${platform_pc}"
 ## Options
 
 # Valgrind
-
-EFL_OPTIONAL_DEPEND_PKG([eina], [${want_valgrind}],
-   [VALGRIND], [valgrind >= 2.4.0])
 if test "x${have_valgrind}" = "xno"; then
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
+else
+    PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0])
+    AC_DEFINE([HAVE_VALGRIND], [1], [Valgrind support enabled])
 fi
 
 AC_DEFINE_IF([EINA_DEBUG_MALLOC],
@@ -1502,9 +1502,6 @@ requirements_pc_evas="eo >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >=
 EFL_DEPEND_PKG([evas], [FREETYPE], [freetype2 >= 9.3.0])
 
 ## optional dependencies
-# Valgrind
-EFL_OPTIONAL_DEPEND_PKG([evas], [${want_valgrind}],
-   [VALGRIND], [valgrind >= 2.4.0])
 
 # FontConfig
 EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fontconfig}],
