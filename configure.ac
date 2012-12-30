@@ -425,6 +425,7 @@ AC_CHECK_TYPES([siginfo_t], [], [],
 AC_C_BIGENDIAN
 AC_C_INLINE
 EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers])
+EFL_CHECK_LINKER_FLAGS([EFL], [-fno-strict-aliasing -Wl,--as-needed])
 case "${build_profile}" in
    dev)
      EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
@@ -807,16 +808,7 @@ AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
 
 ### Checks for compiler characteristics
 
-m4_ifdef([v_ver],
-   [
-    EFL_CHECK_COMPILER_FLAGS([EINA], [-Wall -Wextra])
-   ])
-
-EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow -Wpointer-arith])
-
 ### Checks for linker characteristics
-
-EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
 
@@ -892,14 +884,6 @@ EFL_EVAL_PKGS([EET])
 ### Checks for compiler characteristics
 
 ### Checks for linker characteristics
-
-case "${host_os}" in
-   openbsd*)
-   ;;
-   *)
-      EFL_CHECK_LINKER_FLAGS([EET], [-Wl,--as-needed])
-   ;;
-esac
 
 ### Checks for library functions
 
@@ -2006,8 +1990,6 @@ AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
 ### Checks for structures
 
 ### Checks for compiler characteristics
-
-EFL_CHECK_COMPILER_FLAGS([ECORE_CON], [-Wno-override-init -Wno-initializer-overrides])
 
 ### Checks for linker characteristics
 
