@@ -136,9 +136,15 @@ platform_libs_evil=""
 platform_libs_escape=""
 platform_libs_exotic=""
 
+platform_cflags=""
+platform_cflags_evil=""
+platform_cflags_escape=""
+platform_cflags_exotic=""
+
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
+requirements_cflags_crypto=""
 
 AC_CANONICAL_HOST
 
@@ -346,6 +352,7 @@ case "$build_crypto" in
       AC_PATH_GENERIC([libgcrypt], [], [:],
          [AC_MSG_ERROR([libgcrypt required but not found])])
       requirements_libs_crypto="${LIBGCRYPT_LIBS} ${requirements_libs_crypto}"
+      requirements_cflags_crypto="${LIBGCRYPT_CFLAGS} ${requirements_cflags_crypto}"
       ;;
 
    openssl)
@@ -587,9 +594,8 @@ else
     EVIL_LIBS="-lole32 -lws2_32 -lsecur32 -luuid"
     EVIL_DLFCN_LIBS="-lpsapi"
 fi
-requirements_libs_evil="${EVIL_LIBS}"
+EFL_ADD_LIBS([EVIL], [${EVIL_LIBS}])
 
-AC_SUBST([EVIL_LIBS])
 AC_SUBST([EVIL_DLFCN_LIBS])
 
 ### Checks for header files
@@ -612,7 +618,6 @@ fi
 
 AC_SUBST([EVIL_CPPFLAGS])
 AC_SUBST([EVIL_DLFCN_CPPFLAGS])
-AC_SUBST([EVIL_CFLAGS])
 AC_SUBST([EVIL_CXXFLAGS])
 
 ### Checks for linker characteristics
@@ -637,7 +642,6 @@ EFL_LIB_END_OPTIONAL([Evil])
 
 AC_SUBST([USE_EVIL_CFLAGS])
 AC_SUBST([USE_EVIL_LIBS])
-
 #### End of Evil
 
 
@@ -655,11 +659,7 @@ EFL_LIB_START_OPTIONAL([Escape], [test "${have_ps3}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
-
-ESCAPE_LIBS="-llv2"
-requirements_libs_escape="${ESCAPE_LIBS}"
-
-AC_SUBST([ESCAPE_LIBS])
+EFL_ADD_LIBS([ESCAPE], [-llv2])
 
 ### Checks for header files
 
@@ -747,7 +747,7 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
 ### Checks for libraries
 
 ## Compatibility layers
-requirements_pc_eina="${requirements_pc_eina} ${platform_pc}"
+EFL_PLATFORM_DEPEND([EINA], [all])
 
 ## Options
 
@@ -763,9 +763,7 @@ AC_DEFINE_IF([EINA_DEBUG_MALLOC],
    [test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"],
    [1], [Turn on debugging overhead in mempool])
 
-if ! test "x${requirements_pc_deps_eina}" = "x" ; then
-   PKG_CHECK_MODULES([EINA], [${requirements_pc_deps_eina}])
-fi
+EFL_EVAL_PKGS([EINA])
 
 ## Examples
 
@@ -863,13 +861,8 @@ EFL_LIB_START([Eet])
 ### Checks for libraries
 
 ## Compatibility layers
-requirements_pc_eet="${requirements_pc_eet} ${platform_pc_evil}"
-
-## Secure layer
-
-requirements_pc_eet="${requirements_pc_crypto} ${requirements_pc_eet}"
-requirements_pc_deps_eet="${requirements_pc_deps_crypto} ${requirements_pc_deps_eet}"
-requirements_libs_eet="${requirements_libs_crypto} ${requirements_libs_eet}"
+EFL_PLATFORM_DEPEND([EET], [evil])
+EFL_CRYPTO_DEPEND([EET])
 
 # Cryptography support
 if test "$build_crypto" != "none" ; then
@@ -886,17 +879,9 @@ if test "x${efl_lib_zlib}" != "xyes" || test "x${efl_lib_libjpeg}" != "xyes" ; t
    AC_MSG_ERROR([Required EET libraries were not found.])
 fi
 
+EFL_INTERNAL_DEPEND_PKG([EET], [eina])
 
-# Eina library
-
-requirements_pc_eet="eina >= ${PACKAGE_VERSION} ${requirements_pc_eet}"
-
-PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
-
-# Windows
-requirements_libs_eet="${requirements_libs_eet} ${platform_libs}"
-
-EET_LIBS="${EET_LIBS} ${requirements_libs_eet}"
+EFL_EVAL_PKGS([EET])
 
 ### Checks for header files
 
@@ -935,15 +920,7 @@ EFL_LIB_START([Eo])
 ### Checks for programs
 
 ### Checks for libraries
-
-# Eina library
-
-requirements_pc_eo="eina >= ${PACKAGE_VERSION}"
-
-AC_ARG_VAR([EO_CFLAGS], [preprocessor flags for Eo])
-AC_SUBST([EO_CFLAGS])
-AC_ARG_VAR([EO_LIBS], [linker flags for Eo])
-AC_SUBST([EO_LIBS])
+EFL_INTERNAL_DEPEND_PKG([EO], [eina])
 
 # Example (evas one)
 
@@ -1336,7 +1313,7 @@ if test "${have_wince}" = "yes"; then
 fi
 
 EFL_CHECK_FUNC([DLSYM], [dlsym])
-requirements_libs_evas="${requirements_libs_evas} ${DLSYM_LIBS}"
+EFL_ADD_LIBS([EVAS], [${DLSYM_LIBS}])
 
 if test "x${efl_func_dlsym}" = "xno" && test "${with_opengl}" != "none"; then
    AC_MSG_ERROR([OpenGL cannot work without dlsym()])
@@ -1347,32 +1324,31 @@ fi
 ### Checks for libraries
 
 ## Compatibility layers
-requirements_pc_evas="${requirements_pc_evas} ${platform_pc}"
-
-# Eina, Eo and Eet libraries
-
-requirements_pc_evas="eo >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_evas}"
+EFL_PLATFORM_DEPEND([EVAS], [all])
+EFL_INTERNAL_DEPEND_PKG([EVAS], [eo])
+EFL_INTERNAL_DEPEND_PKG([EVAS], [eet])
+EFL_INTERNAL_DEPEND_PKG([EVAS], [eina])
 
 # Freetype
-EFL_DEPEND_PKG([evas], [FREETYPE], [freetype2 >= 9.3.0])
+EFL_DEPEND_PKG([EVAS], [FREETYPE], [freetype2 >= 9.3.0])
 
 ## optional dependencies
 
 # FontConfig
-EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fontconfig}],
+EFL_OPTIONAL_DEPEND_PKG([EVAS], [${want_fontconfig}],
    [FONTCONFIG], [fontconfig >= 2.5.0])
 
 # fribidi support
-EFL_OPTIONAL_DEPEND_PKG([evas], [${want_fribidi}],
+EFL_OPTIONAL_DEPEND_PKG([EVAS], [${want_fribidi}],
    [FRIBIDI], [fribidi >= 0.19.2])
 
 # harfbuzz support
 have_harfbuzz_ft="no"
-EFL_OPTIONAL_DEPEND_PKG([evas], [${want_harfbuzz}],
+EFL_OPTIONAL_DEPEND_PKG([EVAS], [${want_harfbuzz}],
    [HARFBUZZ], [harfbuzz >= 0.9.0])
 
 # Pixman
-EFL_OPTIONAL_DEPEND_PKG([evas], [${want_pixman}], [PIXMAN], [pixman-1])
+EFL_OPTIONAL_DEPEND_PKG([EVAS], [${want_pixman}], [PIXMAN], [pixman-1])
 
 if test "x${have_pixman}" = "xyes" ; then
    if test "x${have_pixman_font}" = "xyes" ; then
@@ -1598,9 +1574,7 @@ fi
 
 AM_CONDITIONAL([BUILD_SAVER_JPEG], [test "x${have_evas_image_saver_jpeg}" = "xyes"])
 
-PKG_CHECK_MODULES([EVAS], [${requirements_pc_deps_evas}])
-
-EVAS_LIBS="${EVAS_LIBS} ${requirements_libs_evas}"
+EFL_EVAL_PKGS([EVAS])
 
 ### Checks for header files
 
@@ -1727,18 +1701,8 @@ EFL_LIB_START([Embryo])
 ### Checks for programs
 
 ### Checks for libraries
-
-## Compatibility layers
-requirements_pc_embryo="${requirements_pc_embryo} ${platform_pc}"
-
-# Eina library
-
-requirements_pc_embryo="eina >= ${PACKAGE_VERSION} ${requirements_pc_embryo}"
-
-AC_ARG_VAR([EMBRYO_CFLAGS], [preprocessor flags for Embryo])
-AC_SUBST([EMBRYO_CFLAGS])
-AC_ARG_VAR([EMBRYO_LIBS], [linker flags for Embryo])
-AC_SUBST([EMBRYO_LIBS])
+EFL_PLATFORM_DEPEND([EMBRYO], [all])
+EFL_INTERNAL_DEPEND_PKG([EMBRYO], [eina])
 
 ### Checks for header files
 
@@ -1822,17 +1786,13 @@ fi
 ### Checks for programs
 
 ### Checks for libraries
-
-## Compatibility layers
-requirements_pc_ecore="${requirements_pc_ecore} ${platform_pc}"
-
-# Eina, Eo libraries
-
-requirements_pc_ecore="eo >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore}"
+EFL_PLATFORM_DEPEND([ECORE], [all])
+EFL_INTERNAL_DEPEND_PKG([ECORE], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE], [eina])
 
 # glib
 
-EFL_OPTIONAL_DEPEND_PKG([ecore], [${want_glib}], [GLIB], [glib-2.0])
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0])
 if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
@@ -1847,11 +1807,9 @@ if test "x${want_g_main_loop}" = "xyes" ; then
   AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
 fi
 
-if ! test "x${requirements_pc_deps_ecore}" = "x" ; then
-   PKG_CHECK_MODULES([ECORE], [${requirements_pc_deps_ecore}])
-fi
+EFL_EVAL_PKGS([ECORE])
 
-requirements_libs_ecore="${requirements_libs_ecore} ${platform_libs}"
+EFL_ADD_LIBS([ECORE], [${platform_libs}])
 
 ### Checks for header files
 
@@ -1907,12 +1865,12 @@ AC_CHECK_FUNCS_ONCE([mallinfo timerfd_create clock_gettime])
 if ! test "x${ac_cv_func_clock_gettime}" = "xyes" ; then
    AC_CHECK_LIB([rt], [clock_gettime],
       [
-        requirements_libs_ecore="${requirements_libs_ecore} -lrt"
+        EFL_ADD_LIBS([ECORE], [-lrt])
         AC_DEFINE([HAVE_CLOCK_GETTIME], [1], [Have clock_gettime()])
        ])
 fi
 
-ECORE_LIBS="${ECORE_LIBS} ${LTLIBINTL} ${requirements_libs_ecore}"
+EFL_ADD_LIBS([ECORE], [${LTLIBINTL}])
 
 ### Check availability
 
@@ -1971,34 +1929,20 @@ AC_DEFINE_IF([HAVE_ABSTRACT_SOCKETS],
 ### Checks for programs
 
 ### Checks for libraries
-requirements_pc_ecore_con="${requirements_pc_ecore_con} ${platform_pc}"
+EFL_PLATFORM_DEPEND([ECORE_CON], [all])
+EFL_CRYPTO_DEPEND([ECORE_CON])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eet])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [ecore])
 
-# Eina, Eo, Eet, Ecore
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_curl}], [CURL], [libcurl])
 
-requirements_pc_ecore_con="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eo >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_con}"
-
-requirements_pc_ecore_con="${requirements_pc_crypto} ${requirements_pc_ecore_con}"
-requirements_pc_deps_ecore_con="${requirements_pc_deps_crypto} ${requirements_pc_deps_ecore_con}"
-requirements_libs_ecore_con="${requirements_libs_crypto} ${requirements_libs_ecore_con}"
-
-# cURL
-EFL_OPTIONAL_DEPEND_PKG([ecore_con], [${want_curl}], [CURL], [libcurl])
-
-# c-ares
-
-EFL_OPTIONAL_DEPEND_PKG([ecore_con], [${want_cares}],
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_cares}],
    [CARES], [libcares >= 1.6.1])
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
-if test "x${requirements_pc_deps_ecore_con}" != "x" ; then
-   PKG_CHECK_MODULES([ECORE_CON], [${requirements_pc_deps_ecore_con}])
-fi
-
-requirements_libs_ecore_con="${requirements_libs_ecore_con} ${platform_libs}"
-
-ECORE_CON_CFLAGS="${ECORE_CON_CFLAGS} ${LIBGCRYPT_CFLAGS}"
-ECORE_CON_LIBS="${ECORE_CON_LIBS} ${LIBGCRYPT_LIBS}"
-requirements_libs_ecore_con="${requirements_libs_ecore_con} ${LIBGCRYPT_LIBS}"
+EFL_EVAL_PKGS([ECORE_CON])
 
 ### Checks for header files
 
@@ -2084,10 +2028,9 @@ EFL_LIB_START([Ecore_Ipc])
 ### Checks for programs
 
 ### Checks for libraries
-
-# Eina, Ecore, Ecore_Con
-
-requirements_pc_ecore_ipc="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_ipc}"
+EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore-con])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [eina])
 
 ### Checks for header files
 
@@ -2118,9 +2061,10 @@ EFL_LIB_START([Ecore_File])
 ### Checks for programs
 
 ### Checks for libraries
-
-# Eina, Ecore, Ecore_Con, Escape
-requirements_pc_ecore_file="ecore-con >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_file} ${platform_pc_escape}"
+EFL_PLATFORM_DEPEND([ECORE_FILE], [escape])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [ecore-con])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [eina])
 
 ### Checks for header files
 
@@ -2139,7 +2083,6 @@ EFL_LIB_END([Ecore_File])
 
 
 #### Ecore_Input
-
 EFL_LIB_START([Ecore_Input])
 
 ### Additional options to configure
@@ -2149,14 +2092,8 @@ EFL_LIB_START([Ecore_Input])
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eina, Ecore (ecore_input)
-
-requirements_pc_ecore_input="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_input}"
-
-## Eina, Evas, Ecore, Ecore_Input (ecore_input_evas)
-
-requirements_pc_ecore_input_evas="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_input_evas}"
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 
 ### Checks for header files
 
@@ -2174,6 +2111,37 @@ EFL_LIB_END([Ecore_Input])
 #### End of Ecore_Input
 
 
+#### Ecore_Input_Evas
+EFL_LIB_START([Ecore_Input_Evas])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [eina])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Ecore_Input_Evas])
+#### End of Ecore_Input_Evas
+
+
 #### Ecore_Cocoa
 
 EFL_LIB_START([Ecore_Cocoa])
@@ -2188,10 +2156,9 @@ have_ecore_cocoa="no"
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_cocoa="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_cocoa}"
+EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eina])
 
 ### Checks for header files
 
@@ -2220,8 +2187,7 @@ window = [[NSWindow alloc]
                  ]])],
              [
               have_ecore_cocoa="yes"
-              ECORE_COCOA_LIBS="-framework Cocoa"
-              requirements_libs_ecore_cocoa="-framework Cocoa"
+              EFL_ADD_LIBS([ECORE_COCOA], [-framework Cocoa])
              ],
              [have_ecore_cocoa="no"])
           LIBS="$LIBS_save"
@@ -2271,20 +2237,12 @@ AC_ARG_ENABLE([tslib],
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [eina])
 
-## Eina, Ecore
+EFL_OPTIONAL_DEPEND_PKG([ECORE_FB], [${want_tslib}], [TSLIB], [tslib])
 
-requirements_pc_ecore_fb="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_fb}"
-
-## tslib
-EFL_OPTIONAL_DEPEND_PKG([ecore_fb], [${want_tslib}], [TSLIB], [tslib])
-
-if test "x${requirements_pc_deps_ecore_fb}" = "x" ; then
-   ECORE_FB_LIBS=${requirements_libs_ecore_fb}
-   AC_SUBST([ECORE_FB_LIBS])
-else
-   PKG_CHECK_MODULES([ECORE_FB], [${requirements_pc_deps_ecore_fb}])
-fi
+EFL_EVAL_PKGS([ECORE_FB])
 
 ### Checks for header files
 
@@ -2319,12 +2277,12 @@ EFL_LIB_START_OPTIONAL([Ecore_Psl1ght], [test "${have_ps3}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [escape])
 
-## Escape, Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_psl1ght="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} escape >= ${PACKAGE_VERSION} ${requirements_pc_ecore_psl1ght}"
-
-requirements_libs_ecore_psl1ght="-lio -lsysutil -lgem -lcamera -lspurs"
+EFL_ADD_LIBS([ECORE_PSL1GHT], [-lio -lsysutil -lgem -lcamera -lspurs])
 
 ### Checks for header files
 
@@ -2352,18 +2310,17 @@ EFL_LIB_START_OPTIONAL([Ecore_SDL], [test "${want_sdl}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_PLATFORM_DEPEND([ECORE_SDL], [all])
+EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [eina])
 
-## Eina, Ecore
-
-requirements_pc_ecore_sdl="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_sdl} ${platform_pc}"
-
-## SDL
-EFL_DEPEND_PKG([ecore_sdl], [SDL], [sdl >= 1.2.0])
+EFL_DEPEND_PKG([ECORE_SDL], [SDL], [sdl >= 1.2.0])
 
 PKG_CHECK_EXISTS([sdl >= 1.3.0],
    [AC_DEFINE(BUILD_ECORE_EVAS_SDL_130, 1, [Support for SVN SDL])])
 
-PKG_CHECK_MODULES([ECORE_SDL], [${requirements_pc_deps_ecore_sdl}])
+EFL_EVAL_PKGS([ECORE_SDL])
 
 ### Checks for header files
 
@@ -2391,16 +2348,14 @@ EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_wayland}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eina])
 
-## Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_wayland="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
-
-## Wayland
-EFL_DEPEND_PKG([ecore_wayland], [WAYLAND],
+EFL_DEPEND_PKG([ECORE_WAYLAND], [WAYLAND],
    [wayland-client wayland-cursor xkbcommon])
 
-PKG_CHECK_MODULES([ECORE_WAYLAND], [${requirements_pc_deps_ecore_wayland}])
+EFL_EVAL_PKGS([ECORE_WAYLAND])
 
 ### Checks for header files
 
@@ -2461,27 +2416,15 @@ AC_ARG_ENABLE([pulseaudio],
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eet])
+EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eina])
 
-# Eina, Eo, Eet, Ecore
+EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_alsa}], [ALSA], [alsa])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_pulseaudio}], [PULSE], [libpulse])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_sndfile}], [SNDFILE], [sndfile])
 
-requirements_pc_ecore_audio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_audio}"
-
-EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_alsa}], [ALSA], [alsa])
-EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_pulseaudio}], [PULSE], [libpulse])
-EFL_OPTIONAL_DEPEND_PKG([ecore_audio], [${want_sndfile}], [SNDFILE], [sndfile])
-
-if test "x${requirements_pc_deps_ecore_audio}" = "x" ; then
-   ECORE_AUDIO_CFLAGS=""
-   ECORE_AUDIO_LIBS=""
-   AC_SUBST([ECORE_AUDIO_CFLAGS])
-   AC_SUBST([ECORE_AUDIO_LIBS])
-else
-   PKG_CHECK_MODULES([ECORE_AUDIO], [${requirements_pc_deps_ecore_audio}])
-fi
-
-ECORE_AUDIO_CFLAGS="${ECORE_AUDIO_CFLAGS}"
-ECORE_AUDIO_LIBS="${ECORE_AUDIO_LIBS}"
-requirements_libs_ecore_audio="${requirements_libs_ecore_audio}"
+EFL_EVAL_PKGS([ECORE_AUDIO])
 
 ### Checks for header files
 
@@ -2508,13 +2451,12 @@ EFL_LIB_START_OPTIONAL([Ecore_Win32], [test "${have_win32}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_PLATFORM_DEPEND([ECORE_WIN32], [evil])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [eina])
 
-## Evil, Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_win32="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} evil >= ${PACKAGE_VERSION} ${requirements_pc_ecore_win32}"
-
-ECORE_WIN32_LIBS="-lole32 -lgdi32"
-requirements_libs_ecore_win32="-lole32 -lgdi32 ${requirements_libs_ecore_win32}"
+EFL_ADD_LIBS([ECORE_WIN32], [-lole32 -lgdi32])
 AC_SUBST([ECORE_WIN32_LIBS])
 
 ### Checks for header files
@@ -2543,11 +2485,10 @@ EFL_LIB_START_OPTIONAL([Ecore_WinCE], [test "${have_wince}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
-
-## Evil, Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_wince="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} evil >= ${PACKAGE_VERSION} ${requirements_pc_ecore_wince}"
-
+EFL_PLATFORM_DEPEND([ECORE_WINCE], [evil])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [eina])
 
 ### Checks for header files
 
@@ -2619,10 +2560,9 @@ AC_ARG_ENABLE([xim],
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eina, Ecore, Ecore_Input
-
-requirements_pc_ecore_x="ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_x}"
+EFL_INTERNAL_DEPEND_PKG([ECORE_X], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_X], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_X], [eina])
 
 ## Xlib
 if test "x${want_x11_xlib}" = "xyes" ; then
@@ -2724,8 +2664,8 @@ if test "x${want_x11_xlib}" = "xyes"; then
       ],
       [use_Xcursor="no"],
       [$x_libs -lXrender])
-   ECORE_X_CFLAGS="${ECORE_X_CFLAGS} $x_cflags $x_includes"
-   ECORE_X_LIBS="${ECORE_X_LIBS} ${Xcursor_libs}"
+   EFL_ADD_LIBS([ECORE_X], [${Xcursor_libs}])
+   EFL_ADD_CFLAGS([ECORE_X], [$x_cflags $x_includes])
 fi
 
 if test "x${want_x11_xlib}" = "xyes" ; then
@@ -2759,7 +2699,7 @@ fi
 
 if test "${want_x11_xcb}" = "yes"; then
 dnl note: added pixman-1 as ecore_xcb_region uses that
-   EFL_DEPEND_PKG([ecore_x], [ECORE_X_XCB],
+   EFL_DEPEND_PKG([ECORE_X], [ECORE_X_XCB],
       [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
 
 dnl TODO: remove these ifdefs from code!
@@ -2777,7 +2717,7 @@ dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
    AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
 
-   EFL_OPTIONAL_DEPEND_PKG([ecore_x], [${want_gesture}], [ECORE_XCB_GESTURE],
+   EFL_OPTIONAL_DEPEND_PKG([ECORE_X], [${want_gesture}], [ECORE_XCB_GESTURE],
       [xcb-gesture])
    AC_DEFINE_IF([ECORE_XCB_XGESTURE], [test "${want_gesture}" = "yes"],
       [1], [Build support for XCB xgesture])
@@ -2790,17 +2730,15 @@ dnl dri extension disabled currently in xcb
 dnl remember to add xcb-dri2 to EFL_DEPEND_PKG()
 dnl AC_DEFINE([ECORE_XCB_DRI], [1], [Build support for XCB dri])
 
-   PKG_CHECK_MODULES([ECORE_X], [${requirements_pc_deps_ecore_x}])
+   EFL_EVAL_PKGS([ECORE_X])
    EFL_CHECK_FUNCS([ECORE_X], [dlopen iconv])
 
    HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XCB"
 fi
 
-requirements_libs_ecore_x="${requirements_libs_ecore_x} ${ECORE_X_LIBS}"
+EFL_ADD_LIBS([ECORE_X], [${ECORE_X_LIBS}])
 
 AC_SUBST([HAVE_ECORE_X_BACKEND])
-AC_SUBST([ECORE_X_CFLAGS])
-AC_SUBST([ECORE_X_LIBS])
 
 EFL_LIB_END_OPTIONAL([Ecore_X])
 
@@ -2837,14 +2775,9 @@ fi
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eina, Ecore, Escape (ecore_imf)
-
-requirements_pc_ecore_imf="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf} ${platform_pc_escape}"
-
-## Eina, Evas, Ecore, Ecore_Imf, Escape (ecore_imf_evas)
-
-requirements_pc_ecore_imf_evas="ecore-imf >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_imf_evas}  ${platform_pc_escape}"
+EFL_PLATFORM_DEPEND([ECORE_IMF], [escape])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [eina])
 
 ## modules
 
@@ -2853,14 +2786,12 @@ requirements_pc_ecore_imf_evas="ecore-imf >= ${PACKAGE_VERSION} ecore >= ${PACKA
 have_ecore_imf_ibus="no"
 if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; then
    PKG_CHECK_MODULES([IBUS],
-      [ibus-1.0 >= 1.4],
+      [ibus-1.0 >= 1.4 glib-2.0],
       [
        have_ecore_imf_ibus="yes"
        AC_DEFINE([BUILD_ECORE_IMF_IBUS], [1], [Ecore Imf IBUS Support])
       ],
       [have_ecore_imf_ibus="no"])
-   IBUS_CFLAGS="${GLIB_CFLAGS} ${IBUS_CFLAGS}"
-   IBUS_LIBS="${GLIB_LIBS} ${IBUS_LIBS}"
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_IBUS], [test "x${have_ecore_imf_ibus}" = "xyes"])
@@ -2905,6 +2836,38 @@ EFL_LIB_END([Ecore_Imf])
 #### End of Ecore_Imf
 
 
+#### Ecore_Imf_Evas
+EFL_LIB_START([Ecore_Imf_Evas])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([ECORE_IMF_EVAS], [escape])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [ecore-imf])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [eina])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Ecore_Imf_Evas])
+#### End of Ecore_Imf_Evas
+
+
 #### Ecore_Evas
 EFL_LIB_START([Ecore_Evas])
 
@@ -2928,10 +2891,11 @@ fi
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eina, Evas, Ecore, Ecore_Input
-
-requirements_pc_ecore_evas="ecore-input-evas >= ${PACKAGE_VERSION} ecore-input >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} evas >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_ecore_evas}"
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-input-evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [eina])
 
 ## modules
 
@@ -3062,14 +3026,7 @@ if test "x$have_ecore_evas_software_x11" = "xyes" || \
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
 
-if test "x${requirements_pc_deps_ecore_evas}" = "x" ; then
-   ECORE_EVAS_CFLAGS=""
-   ECORE_EVAS_LIBS=""
-   AC_SUBST([ECORE_EVAS_CFLAGS])
-   AC_SUBST([ECORE_EVAS_LIBS])
-else
-   PKG_CHECK_MODULES([ECORE_EVAS], [${requirements_pc_deps_ecore_evas}])
-fi
+EFL_EVAL_PKGS([ECORE_EVAS])
 
 ### Checks for header files
 
@@ -3096,12 +3053,11 @@ EFL_LIB_START([Eio])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EIO], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EIO], [eet])
+EFL_INTERNAL_DEPEND_PKG([EIO], [eina])
 
-requirements_pc_eio="ecore >= ${PACKAGE_VERSION} eet >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${requirements_pc_eio}"
-
-requirements_libs_eio="${requirements_libs_eio} -lm"
-EIO_LIBS=${requirements_libs_eio}
-AC_SUBST([EIO_LIBS])
+EFL_ADD_LIBS([EIO], [-lm])
 
 ### Checks for header files
 
@@ -3201,14 +3157,12 @@ EFL_LIB_START([EDBus])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EDBUS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EDBUS], [eina])
 
-## Eina, Ecore
+EFL_DEPEND_PKG([EDBUS], [DBUS], [dbus-1])
 
-requirements_pc_edbus="ecore >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION}"
-
-EFL_DEPEND_PKG([edbus], [DBUS], [dbus-1])
-
-PKG_CHECK_MODULES([EDBUS], [${requirements_pc_deps_edbus}])
+EFL_EVAL_PKGS([EDBUS])
 
 ### Checks for header files
 
@@ -3238,15 +3192,11 @@ AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
 ### Checks for programs
 
 ### Checks for libraries
-
-## Eet, Ecore, Ecore_File, EDBus, Eina, Evil
-
-requirements_pc_efreet="eet >= ${PACKAGE_VERSION} ecore >= ${PACKAGE_VERSION} ecore-file >= ${PACKAGE_VERSION} edbus2 >= ${PACKAGE_VERSION} eina >= ${PACKAGE_VERSION} ${platform_pc_evil}"
-
-AC_ARG_VAR([EFREET_CFLAGS], [preprocessor flags for Efreet])
-AC_SUBST([EFREET_CFLAGS])
-AC_ARG_VAR([EFREET_LIBS], [linker flags for Efreet])
-AC_SUBST([EFREET_LIBS])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [eet])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [edbus2])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 
 ### Checks for header files
 

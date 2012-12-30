@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: ecore-sdl
 Description: E core library, SDL module
 Version: @VERSION@
-Requires.private: @requirements_ecore_sdl@
+Requires.private: @requirements_pc_ecore_sdl@
 Libs: -L${libdir} -lecore_sdl
 Cflags: -I${includedir}/ecore-@VMAJ@
