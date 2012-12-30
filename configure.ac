@@ -863,14 +863,7 @@ if test "$build_crypto" != "none" ; then
    AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
 fi
 
-# libjpeg and zlib
-
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
-
-# TODO: better way to force those instead of is secondary check
-if test "x${efl_lib_zlib}" != "xyes" || test "x${efl_lib_libjpeg}" != "xyes" ; then
-   AC_MSG_ERROR([Required EET libraries were not found.])
-fi
 
 EFL_INTERNAL_DEPEND_PKG([EET], [eina])
 
