@@ -11,13 +11,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-
 #include "config.h"
 #else
-
 #define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
-
 #endif
 
 #include <Ecore.h>
@@ -56,7 +52,7 @@ struct test_data
 static struct test_data d = {0};
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_destroy(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -92,9 +88,9 @@ _border_fill_mode_to_str(Evas_Border_Fill_Mode mode)
 }
 
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
-            Evas_Object *o __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
+            Evas        *evas EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;

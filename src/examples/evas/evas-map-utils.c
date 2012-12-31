@@ -4,7 +4,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define __UNUSED__
+#define PACKAGE_EXAMPLES_DIR "."
 #endif
 
 #include <Ecore.h>
@@ -222,13 +222,13 @@ _objs_fit(Evas *e)
 }
 
 static void
-_on_resize(void *data __UNUSED__, Evas *e, Evas_Object *o __UNUSED__, void *event __UNUSED__)
+_on_resize(void *data EINA_UNUSED, Evas *e, Evas_Object *o EINA_UNUSED, void *event EINA_UNUSED)
 {
    _objs_fit(e);
 }
 
 static void
-_on_free(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event __UNUSED__)
+_on_free(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

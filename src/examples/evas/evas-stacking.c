@@ -14,9 +14,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-
-#define __UNUSED__
-
+#define PACKAGE_EXAMPLES_DIR "."
 #endif
 
 #include <Ecore.h>
@@ -55,10 +53,10 @@ static const char *commands = \
   "\th - print help\n";
 
 static void
-_on_mouse_down(void        *data __UNUSED__,
-               Evas        *evas __UNUSED__,
+_on_mouse_down(void        *data EINA_UNUSED,
+               Evas        *evas EINA_UNUSED,
                Evas_Object *o,
-               void        *einfo __UNUSED__)
+               void        *einfo EINA_UNUSED)
 {
    fprintf(stdout, "Mouse down on rectangle %s!\n", evas_object_name_get(o));
 }
@@ -77,9 +75,9 @@ _canvas_resize_cb(Ecore_Evas *ee)
 /* use the following commands to interact with this example - 'h' is
  * the key for help */
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
-            Evas_Object *o __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
+            Evas        *evas EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
@@ -241,7 +239,7 @@ _on_keydown(void        *data __UNUSED__,
 }
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_destroy(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

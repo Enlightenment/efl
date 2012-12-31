@@ -17,7 +17,6 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_audio \
--DPACKAGE_EXAMPLES_DIR=\"$(datadir)/ecore/examples\" \
 @ECORE_CFLAGS@
 
 EXTRA_PROGRAMS = \

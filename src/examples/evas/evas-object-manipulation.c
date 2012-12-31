@@ -11,13 +11,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-
 #include "config.h"
 #else
-
 #define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
-
 #endif
 
 #include <Ecore.h>
@@ -52,9 +48,9 @@ _canvas_resize_cb(Ecore_Evas *ee)
 }
 
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
-            Evas_Object *o __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
+            Evas        *evas EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;

@@ -26,56 +26,90 @@ EXTRA_PROGRAMS += evas_init_shutdown
 evas_init_shutdown_SOURCES = evas-init-shutdown.c
 evas_init_shutdown_LDADD = $(top_builddir)/src/lib/evas/libevas.la @EVAS_LDFLAGS@
 
-#the ones using ecore_evas follow
-#AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
+ECORE_EVAS_COMMON_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_evas \
+-DPACKAGE_EXAMPLES_DIR=\".\" \
+@EVAS_CFLAGS@
 
-#EXTRA_PROGRAMS += evas_images
-#evas_images_SOURCES = evas-images.c
-#evas_images_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+ECORE_EVAS_COMMON_LDADD = \
+$(top_builddir)/src/lib/eina/libeina.la \
+$(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
+$(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
+$(top_builddir)/src/lib/evas/libevas.la \
+@EVAS_LDFLAGS@
 
-#EXTRA_PROGRAMS += evas_events
-#evas_events_SOURCES = evas-events.c
-#evas_events_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_images
+evas_images_SOURCES = evas-images.c
+evas_images_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_images_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_object_manipulation
-#evas_object_manipulation_SOURCES = evas-object-manipulation.c
-#evas_object_manipulation_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_events
+evas_events_SOURCES = evas-events.c
+evas_events_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_events_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_object_manipulation-eo
-#evas_object_manipulation_SOURCES = evas-object-manipulation-eo.c
-#evas_object_manipulation_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_object_manipulation
+evas_object_manipulation_SOURCES = evas-object-manipulation.c
+evas_object_manipulation_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_object_manipulation_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_hints
-#evas_hints_SOURCES = evas-hints.c
-#evas_hints_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_object_manipulation-eo
+evas_object_manipulation_eo_SOURCES = evas-object-manipulation-eo.c
+evas_object_manipulation_eo_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_object_manipulation_eo_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_stacking
-#evas_stacking_SOURCES = evas-stacking.c
-#evas_stacking_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_hints
+evas_hints_SOURCES = evas-hints.c
+evas_hints_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_hints_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_images2
-#evas_images2_SOURCES = evas-images2.c
-#evas_images2_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_stacking
+evas_stacking_SOURCES = evas-stacking.c
+evas_stacking_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_stacking_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_images3
-#evas_images3_SOURCES = evas-images3.c
-#evas_images3_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_images2
+evas_images2_SOURCES = evas-images2.c
+evas_images2_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_images2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_text
-#evas_text_SOURCES = evas-text.c
-#evas_text_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_images3
+evas_images3_SOURCES = evas-images3.c
+evas_images3_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_images3_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_smart_object
-#evas_smart_object_SOURCES = evas-smart-object.c
-#evas_smart_object_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_text
+evas_text_SOURCES = evas-text.c
+evas_text_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_text_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_smart_interface
-#evas_smart_interface_SOURCES = evas-smart-interface.c
-#evas_smart_interface_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@
+EXTRA_PROGRAMS += evas_smart_object
+evas_smart_object_SOURCES = evas-smart-object.c
+evas_smart_object_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_smart_object_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-#EXTRA_PROGRAMS += evas_box
-#evas_box_SOURCES = evas-box.c
-#evas_box_LDADD = $(top_builddir)/src/lib/evas/libevas.la @ECORE_EVAS_LIBS@ @EVAS_GENERAL_LIBS@
+EXTRA_PROGRAMS += evas_smart_interface
+evas_smart_interface_SOURCES = evas-smart-interface.c
+evas_smart_interface_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_smart_interface_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
+EXTRA_PROGRAMS += evas_box
+evas_box_SOURCES = evas-box.c
+evas_box_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_box_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 #the ones using ecore_evas and edje follow
 #AM_CPPFLAGS += @EDJE_CFLAGS@

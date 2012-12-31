@@ -1898,7 +1898,7 @@ elif test "${have_ps3}" = "yes"; then
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
 else
-   want_cares="no" # TODO: REVIEW
+   want_cares="no"
 fi
 
 AC_DEFINE_IF([HAVE_LOCAL_SOCKETS],

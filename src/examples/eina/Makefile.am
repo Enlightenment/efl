@@ -41,8 +41,8 @@ eina_value_01.c \
 eina_value_02.c \
 eina_value_03.c \
 eina_inarray_01.c \
-eina_inarray_02.c
-#eina_magic_01.c \
+eina_inarray_02.c \
+eina_magic_01.c
 #eina_model_01.c \
 #eina_model_02.c \
 #eina_model_03.c
@@ -100,12 +100,31 @@ eina_inarray_02
 #eina_model_04_parrot.h \
 #eina_model_04_whistler.h
 
-# TODO: use ecore_evas from single tree
-#if BUILD_TILER_EXAMPLE
-#AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
-#EXTRA_PROGRAMS += eina_tiler_01
-#eina_tiler_01_LDADD = $(top_builddir)/src/lib/eina/libeina.la @ECORE_EVAS_LDFLAGS@
-#endif
+EXTRA_PROGRAMS += eina_tiler_01
+
+eina_tiler_01_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_evas \
+@EINA_CFLAGS@
+
+eina_tiler_01_LDADD = \
+$(top_builddir)/src/lib/eina/libeina.la \
+$(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
+$(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
+$(top_builddir)/src/lib/evas/libevas.la \
+@EINA_LDFLAGS@
 
 examples: $(EXTRA_PROGRAMS)
 

@@ -13,10 +13,7 @@
 
 #include "config.h"
 #else
-
 #define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
-
 #endif
 
 #include <Ecore.h>
@@ -141,7 +138,7 @@ EVAS_SMART_SUBCLASS_NEW(_evas_smart_example_type, _evas_smart_example,
                         evas_object_smart_clipped_class_get, _smart_callbacks);
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_destroy(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -159,9 +156,9 @@ _canvas_resize_cb(Ecore_Evas *ee)
 
 static void
 _on_child_del(void *data,
-              Evas *evas __UNUSED__,
+              Evas *evas EINA_UNUSED,
               Evas_Object *o,
-              void *einfo __UNUSED__)
+              void *einfo EINA_UNUSED)
 {
    Evas_Object *example_smart = data;
    long idx;
@@ -461,9 +458,9 @@ _map_update(void)
 }
 
 static void
-_on_keydown(void *data __UNUSED__,
-            Evas *evas __UNUSED__,
-            Evas_Object *o __UNUSED__,
+_on_keydown(void *data EINA_UNUSED,
+            Evas *evas EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED,
             void *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
@@ -659,8 +656,8 @@ _on_keydown(void *data __UNUSED__,
 
 static void
 /* callback on number of member objects changed */
-_on_example_smart_object_child_num_change(void *data __UNUSED__,
-                                          Evas_Object *obj __UNUSED__,
+_on_example_smart_object_child_num_change(void *data EINA_UNUSED,
+                                          Evas_Object *obj EINA_UNUSED,
                                           void *event_info)
 {
    fprintf(stdout, "Number of child members on our example smart"

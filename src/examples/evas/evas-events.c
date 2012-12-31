@@ -15,10 +15,7 @@
 
 #include "config.h"
 #else
-
 #define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
-
 #endif
 
 #include <Ecore.h>
@@ -65,7 +62,7 @@ _canvas_resize_cb(Ecore_Evas *ee)
 
 /* called when our rectangle gets focus */
 static void
-_object_focus_in_cb(void *data __UNUSED__,
+_object_focus_in_cb(void *data EINA_UNUSED,
                     Evas *e,
                     void *event_info)
 {
@@ -81,16 +78,16 @@ _object_focus_in_cb(void *data __UNUSED__,
 
 /* render flush callback */
 static void
-_render_flush_cb(void *data __UNUSED__,
-                 Evas *e __UNUSED__,
-                 void *event_info __UNUSED__)
+_render_flush_cb(void *data EINA_UNUSED,
+                 Evas *e EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    fprintf(stdout, "Canvas is about to flush its rendering pipeline!\n");
 }
 
 /* put some action in the canvas */
 static Eina_Bool
-_resize_cb(void *data __UNUSED__)
+_resize_cb(void *data EINA_UNUSED)
 {
    int w, h, cw, ch;
 
@@ -107,7 +104,7 @@ _resize_cb(void *data __UNUSED__)
 
 /* let's have our events back */
 static Eina_Bool
-_thaw_cb(void *data __UNUSED__)
+_thaw_cb(void *data EINA_UNUSED)
 {
    fprintf(stdout, "Canvas was frozen %d times, now thawing.\n",
            evas_event_freeze_get(d.canvas));
@@ -117,28 +114,28 @@ _thaw_cb(void *data __UNUSED__)
 
 /* mouse enters the object's area */
 static void
-_on_mouse_in(void        *data __UNUSED__,
-             Evas        *evas __UNUSED__,
-             Evas_Object *o __UNUSED__,
-             void        *einfo __UNUSED__)
+_on_mouse_in(void        *data EINA_UNUSED,
+             Evas        *evas EINA_UNUSED,
+             Evas_Object *o EINA_UNUSED,
+             void        *einfo EINA_UNUSED)
 {
    fprintf(stdout, "Enlightenment logo has had the mouse in.\n");
 }
 
 static void
-_on_mouse_out(void        *data __UNUSED__,
-              Evas        *evas __UNUSED__,
-              Evas_Object *o __UNUSED__,
-              void        *einfo __UNUSED__)
+_on_mouse_out(void        *data EINA_UNUSED,
+              Evas        *evas EINA_UNUSED,
+              Evas_Object *o EINA_UNUSED,
+              void        *einfo EINA_UNUSED)
 {
    fprintf(stdout, "Enlightenment logo has had the mouse out.\n");
 } /* mouse exits the object's area */
 
 /* examine the keys pressed */
 static void
-_on_keydown(void        *data __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
             Evas        *evas,
-            Evas_Object *o __UNUSED__,
+            Evas_Object *o EINA_UNUSED,
             void        *einfo)
 {
    const Evas_Modifier *mods;

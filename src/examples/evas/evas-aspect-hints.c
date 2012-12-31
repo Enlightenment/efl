@@ -14,8 +14,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-
 #include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
 #endif
 
 #include <Ecore.h>
@@ -76,8 +77,8 @@ _get_aspect_name(Evas_Aspect_Control aspect)
 }
 
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
+            Evas        *evas EINA_UNUSED,
             Evas_Object *o,
             void        *einfo)
 {

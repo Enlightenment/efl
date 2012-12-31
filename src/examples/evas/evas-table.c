@@ -11,8 +11,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#else
-#define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -33,7 +31,7 @@ struct test_data
 static struct test_data d = {0};
 
 static void
-_on_destroy(Ecore_Evas *ee __UNUSED__)
+_on_destroy(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

@@ -10,11 +10,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -59,7 +57,7 @@ static struct exemple_data d;
 static void /* custom 'diagonal' layout */
 _custom_layout(Evas_Object          *o,
                Evas_Object_Box_Data *p,
-               void                 *data __UNUSED__)
+               void                 *data EINA_UNUSED)
 {
    int x, y, w, h;
    int xx, yy, ww, hh;
@@ -100,9 +98,9 @@ _new_rectangle_add(Evas *e)
 /* use the following commands to interact with this example - 'h' is
  * the key for help */
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
-            Evas_Object *o __UNUSED__,
+_on_keydown(void        *data EINA_UNUSED,
+            Evas        *evas EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
@@ -284,7 +282,7 @@ list_free:
 }
 
 static void
-_on_delete(Ecore_Evas *ee __UNUSED__)
+_on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
