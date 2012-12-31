@@ -42,7 +42,10 @@ eina_value_02.c \
 eina_value_03.c \
 eina_inarray_01.c \
 eina_inarray_02.c \
-eina_magic_01.c
+eina_magic_01.c \
+eina_xattr_01.c \
+eina_xattr_02.c
+
 #eina_model_01.c \
 #eina_model_02.c \
 #eina_model_03.c
@@ -81,7 +84,10 @@ eina_value_01 \
 eina_value_02 \
 eina_value_03 \
 eina_inarray_01 \
-eina_inarray_02
+eina_inarray_02 \
+eina_xattr_01 \
+eina_xattr_02
+
 #eina_model_01 \
 #eina_model_02 \
 #eina_model_03 \

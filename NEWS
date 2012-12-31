@@ -43,6 +43,9 @@ Additions:
      - Add ellipsis support in Evas_Object_Text.
      - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
     * Add ecore_audio API
+    * Added eina_xattr_fd_get(), eina_xattr_fd_set(),
+      eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
+      eina_xattr_fd_copy()
 
 Deprecations:
     * ecore_x:
@@ -89,3 +92,4 @@ Fixes:
     * Fix Evas RGBA_Image->flags.loaded for copied images.
     * Fix evas_object_image_is_inside()
     * eio functions no longer crash when passed NULL and throw errors accordingly
+    * Fix eina_xattr_value_ls() and eina_xattr_value_fd_ls()

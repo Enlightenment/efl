@@ -352,7 +352,7 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(size, NULL);
 
    *size = getxattr(file, attribute, NULL, 0);
    /* Size should be less than 2MB (already huge in my opinion) */
@@ -378,6 +378,44 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
    *size = 0;
    return NULL;
    (void)file;
+   (void)attribute;
+#endif
+}
+
+EAPI void *
+eina_xattr_fd_get(int fd, const char *attribute, ssize_t *size)
+{
+#ifdef HAVE_XATTR
+   char *ret = NULL;
+   ssize_t tmp;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(size, NULL);
+
+   *size = fgetxattr(fd, attribute, NULL, 0);
+   /* Size should be less than 2MB (already huge in my opinion) */
+   if (!(*size > 0 && *size < 2 * 1024 * 1024))
+     goto on_error;
+
+   ret = malloc(*size + 1);
+   if (!ret) goto on_error;
+
+   tmp = fgetxattr(fd, attribute, ret, *size);
+   if (tmp != *size)
+     goto on_error;
+   ret[tmp] = '\0';
+
+   return ret;
+
+ on_error:
+   free(ret);
+   *size = 0;
+   return NULL;
+#else
+   EINA_SAFETY_ON_NULL_RETURN_VAL(size, NULL);
+   *size = 0;
+   return NULL;
+   (void)fd;
    (void)attribute;
 #endif
 }
@@ -412,6 +450,65 @@ eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_
    (void)data;
    (void)length;
    (void)flags;
+#endif
+}
+
+EAPI Eina_Bool
+eina_xattr_fd_set(int fd, const char *attribute, const void *data, ssize_t length, Eina_Xattr_Flags flags)
+{
+#ifdef HAVE_XATTR
+   int iflags;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!(length > 0 && length < 2 * 1024 * 1024), EINA_FALSE);
+
+   switch (flags)
+     {
+     case EINA_XATTR_INSERT: iflags = 0; break;
+     case EINA_XATTR_REPLACE: iflags = XATTR_REPLACE; break;
+     case EINA_XATTR_CREATED: iflags = XATTR_CREATE; break;
+     default:
+       return EINA_FALSE;
+     }
+
+   if (fsetxattr(fd, attribute, data, length, iflags))
+     return EINA_FALSE;
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+   (void)fd;
+   (void)attribute;
+   (void)data;
+   (void)length;
+   (void)flags;
+#endif
+}
+
+EAPI Eina_Bool
+eina_xattr_del(const char *file, const char *attribute)
+{
+#ifdef HAVE_XATTR
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);
+   return removexattr(file, attribute) == 0;
+#else
+   return EINA_FALSE;
+   (void)file;
+   (void)attribute;
+#endif
+}
+
+EAPI Eina_Bool
+eina_xattr_fd_del(int fd, const char *attribute)
+{
+#ifdef HAVE_XATTR
+   EINA_SAFETY_ON_NULL_RETURN_VAL(attribute, EINA_FALSE);
+   return fremovexattr(fd, attribute) == 0;
+#else
+   return EINA_FALSE;
+   (void)fd;
+   (void)attribute;
 #endif
 }
 
@@ -500,4 +597,89 @@ eina_xattr_int_get(const char *file, const char *attribute, int *value)
    free(tmp);
 
    return result;
+}
+
+EAPI Eina_Bool
+eina_xattr_copy(const char *src, const char *dst)
+{
+#ifdef HAVE_XATTR
+   int sfd, dfd;
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+
+   sfd = open(src, O_RDONLY);
+   EINA_SAFETY_ON_TRUE_GOTO(sfd < 0, s_end);
+
+   dfd = open(dst, O_RDWR);
+   EINA_SAFETY_ON_TRUE_GOTO(dfd < 0, d_end);
+
+   ret = eina_xattr_fd_copy(sfd, dfd);
+
+   close(dfd);
+ d_end:
+   close(sfd);
+ s_end:
+   return ret;
+
+#else
+   return EINA_FALSE;
+   (void)src;
+   (void)dst;
+#endif
+}
+
+EAPI Eina_Bool
+eina_xattr_fd_copy(int src, int dst)
+{
+#ifdef HAVE_XATTR
+   char *buf, *attr;
+   ssize_t i, length;
+   Eina_Bool ret;
+
+   length = flistxattr(src, NULL, 0);
+   if (length == 0) return EINA_TRUE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(length < 0, EINA_FALSE);
+
+   buf = malloc(length);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, EINA_FALSE);
+
+   attr = buf;
+   length = flistxattr(src, attr, length);
+   ret = EINA_TRUE;
+   for (i = 0; i < length; i += strlen(attr) + 1, attr += strlen(attr) + 1)
+     {
+        ssize_t attr_length;
+        void *value;
+
+        attr_length = fgetxattr(src, attr, NULL, 0);
+        EINA_SAFETY_ON_TRUE_GOTO(attr_length < 0, attr_error);
+
+        if (attr_length == 0)
+          value = NULL;
+        else
+          {
+             value = malloc(attr_length);
+             EINA_SAFETY_ON_NULL_GOTO(value, attr_error);
+
+             attr_length = fgetxattr(src, attr, value, attr_length);
+          }
+
+        fsetxattr(dst, attr, value, attr_length, 0);
+        free(value);
+        continue;
+
+     attr_error:
+        ret = EINA_FALSE;
+     }
+
+   free(buf);
+   return ret;
+
+#else
+   return EINA_FALSE;
+   (void)src;
+   (void)dst;
+#endif
 }
