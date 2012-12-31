@@ -23,19 +23,33 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
+#include "eina_error.h"
 #include "eina_thread.h"
 #include "eina_sched.h"
+#ifdef _WIN32
+# include "eina_list.h"
+#endif
 
-#ifdef EINA_HAVE_THREADS
-# ifdef _WIN32_WCE
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+#include "eina_thread.h"
 
-# elif defined(_WIN32)
+EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED = 0;
+EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES = 0;
+EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS = 0;
+EAPI Eina_Error EINA_ERROR_THREAD_JOIN_DEADLOCK = 0;
+EAPI Eina_Error EINA_ERROR_THREAD_JOIN_INVALID = 0;
 
-#  include "eina_list.h"
+static const char EINA_ERROR_THREAD_CREATION_FAILED_STR[] = "Generic error creating thread";
+static const char EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES_STR[] = "No resources to create thread";
+static const char EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS_STR[] = "No permissions to create thread";
+static const char EINA_ERROR_THREAD_JOIN_DEADLOCK_STR[] = "Deadlock detected";
+static const char EINA_ERROR_THREAD_JOIN_INVALID_STR[] = "Invalid thread to join";
 
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-#  undef WIN32_LEAN_AND_MEAN
+#ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 
 typedef struct _Eina_Thread_Win32 Eina_Thread_Win32;
 struct _Eina_Thread_Win32
@@ -66,8 +80,8 @@ _eina_thread_win32_find(Eina_Thread index)
    return NULL;
 }
 
-static Eina_Thread
-_eina_thread_win32_self(void)
+static inline Eina_Thread
+_eina_thread_self(void)
 {
    HANDLE t;
    Eina_Thread_Win32 *tw;
@@ -82,8 +96,8 @@ _eina_thread_win32_self(void)
    return 0;
 }
 
-static Eina_Bool
-_eina_thread_win32_equal(Eina_Thread t1, Eina_Thread t2)
+static inline Eina_Bool
+_eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
    if (t1 == t2) return EINA_TRUE;
    return EINA_FALSE;
@@ -99,8 +113,8 @@ _eina_thread_win32_cb(LPVOID lpParam)
    return 0;
 }
 
-static Eina_Bool
-_eina_thread_win32_create(Eina_Thread *t,
+static inline Eina_Bool
+_eina_thread_create(Eina_Thread *t,
                           int affinity,
                           void *(*func)(void *data),
                           const void *data)
@@ -127,7 +141,8 @@ _eina_thread_win32_create(Eina_Thread *t,
    if (!tw->thread) goto on_error;
 
    /* affinity is an hint, if we fail, we continue without */
-   SetThreadAffinityMask(tw->thread, 1 << affinity);
+   if (affinity >= 0)
+     SetThreadAffinityMask(tw->thread, 1 << affinity);
 
    _thread_running = eina_list_append(_thread_running, tw);
 
@@ -139,14 +154,18 @@ _eina_thread_win32_create(Eina_Thread *t,
    return EINA_FALSE;
 }
 
-static void *
-_eina_thread_win32_join(Eina_Thread t)
+static inline void *
+_eina_thread_join(Eina_Thread t)
 {
    Eina_Thread_Win32 *tw;
    void *ret;
 
    tw = _eina_thread_win32_find(t);
-   if (!tw) return NULL;
+   if (!tw)
+     {
+        eina_error_set(EINA_ERROR_THREAD_JOIN_INVALID);
+        return NULL;
+     }
 
    WaitForSingleObject(tw->thread, INFINITE);
    CloseHandle(tw->thread);
@@ -164,69 +183,75 @@ _eina_thread_win32_join(Eina_Thread t)
    return ret;
 }
 
-#  define PHE(x, y)       _eina_thread_win32_equal(x, y)
-#  define PHS()           _eina_thread_win32_self()
-#  define PHC(x, a, f, d) _eina_thread_win32_create(x, a, f, d)
-#  define PHJ(x)          _eina_thread_win32_join(x)
-#  define PHA(a)
+#elif defined(EFL_HAVE_POSIX_THREADS)
+# include <pthread.h>
+# include <errno.h>
 
-# else
-#  include <pthread.h>
-
-#  ifdef __linux__
-#   include <sched.h>
-#   include <sys/resource.h>
-#   include <unistd.h>
-#   include <sys/syscall.h>
-#   include <errno.h>
-#  endif
-
-static void *
+static inline void *
 _eina_thread_join(Eina_Thread t)
 {
    void *ret = NULL;
+   int err = pthread_join(t, &ret);
 
-   if (!pthread_join(t, &ret))
+   if (err == 0)
      return ret;
+   else if (err == EDEADLK)
+     eina_error_set(EINA_ERROR_THREAD_JOIN_DEADLOCK);
+   else
+     eina_error_set(EINA_ERROR_THREAD_JOIN_INVALID);
+
    return NULL;
 }
 
-static Eina_Bool
+static inline Eina_Bool
 _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), void *data)
 {
-   Eina_Bool r;
+   int err;
    pthread_attr_t attr;
-#ifdef EINA_HAVE_PTHREAD_AFFINITY
-   cpu_set_t cpu;
-   int cpunum;
-#endif
 
    pthread_attr_init(&attr);
-#ifdef EINA_HAVE_PTHREAD_AFFINITY
    if (affinity >= 0)
      {
+#ifdef EINA_HAVE_PTHREAD_AFFINITY
+        cpu_set_t cpu;
+        int cpunum;
+
         cpunum = eina_cpu_count();
 
         CPU_ZERO(&cpu);
         CPU_SET(affinity % cpunum, &cpu);
         pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-     }
-#else
-   (void) affinity;
 #endif
+     }
+
    /* setup initial locks */
-   r = pthread_create(t, &attr, func, data) == 0;
+   err = pthread_create(t, &attr, func, data);
    pthread_attr_destroy(&attr);
 
-   return r;
+   if (err == 0)
+     return EINA_TRUE;
+   else if (err == EAGAIN)
+     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES);
+   else if (err == EPERM)
+     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS);
+   else
+     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED);
+
+   return EINA_FALSE;
 }
 
-#  define PHE(x, y)       pthread_equal(x, y)
-#  define PHS()           pthread_self()
-#  define PHC(x, a, f, d) _eina_thread_create(x, a, f, d)
-#  define PHJ(x)          _eina_thread_join(x)
+static inline Eina_Bool
+_eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
+{
+   return pthread_equal(t1, t2);
+}
 
-# endif
+static inline Eina_Thread
+_eina_thread_self(void)
+{
+   return pthread_self();
+}
+
 #else
 # error "Not supported any more"
 #endif
@@ -240,8 +265,6 @@ struct _Eina_Thread_Call
    Eina_Thread_Priority prio;
    int affinity;
 };
-
-#include "eina_thread.h"
 
 static void *
 _eina_internal_call(void *context)
@@ -264,13 +287,13 @@ _eina_internal_call(void *context)
 EAPI Eina_Thread
 eina_thread_self(void)
 {
-   return PHS();
+   return _eina_thread_self();
 }
 
 EAPI Eina_Bool
 eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
-   return !!(PHE(t1, t2));
+   return !!_eina_thread_equal(t1, t2);
 }
 
 EAPI Eina_Bool
@@ -280,18 +303,29 @@ eina_thread_create(Eina_Thread *t,
 {
    Eina_Thread_Call *c;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(t, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
+
+   eina_error_set(0);
+
    c = malloc(sizeof (Eina_Thread_Call));
-   if (!c) return EINA_FALSE;
+   if (!c)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return EINA_FALSE;
+     }
 
    c->func = func;
    c->data = data;
    c->prio = prio;
    c->affinity = affinity;
 
-   if (PHC(t, affinity, _eina_internal_call, c))
+   if (_eina_thread_create(t, affinity, _eina_internal_call, c))
      return EINA_TRUE;
 
    free(c);
+   if (eina_error_get() == 0)
+     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED);
 
    return EINA_FALSE;
 }
@@ -299,12 +333,19 @@ eina_thread_create(Eina_Thread *t,
 EAPI void *
 eina_thread_join(Eina_Thread t)
 {
-   return PHJ(t);
+   eina_error_set(0);
+   return _eina_thread_join(t);
 }
 
 Eina_Bool
 eina_thread_init(void)
 {
+   EINA_ERROR_THREAD_CREATION_FAILED = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_STR);
+   EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES_STR);
+   EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS_STR);
+   EINA_ERROR_THREAD_JOIN_DEADLOCK = eina_error_msg_static_register(EINA_ERROR_THREAD_JOIN_DEADLOCK_STR);
+   EINA_ERROR_THREAD_JOIN_INVALID = eina_error_msg_static_register(EINA_ERROR_THREAD_JOIN_INVALID_STR);
+
    return EINA_TRUE;
 }
 
