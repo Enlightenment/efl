@@ -29,6 +29,11 @@
 # include <sys/xattr.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#include <fcntl.h>
+
 #include "eina_config.h"
 #include "eina_private.h"
 
@@ -36,6 +41,7 @@
 #include "eina_xattr.h"
 #include "eina_convert.h"
 #include "eina_stringshare.h"
+
 
 /*============================================================================*
  *                                  Local                                     *
@@ -73,11 +79,12 @@ _eina_xattr_value_ls_fd_iterator_next(Eina_Xattr_Iterator *it, void **data)
 
    *data = it->attr;
    it->attr->name = it->xattr + it->offset;
+   it->offset += strlen(it->attr->name) + 1;
 
    it->attr->length = fgetxattr(it->fd, it->attr->name, NULL, 0);
    if (it->attr->length)
      {
-        tmp = realloc((void*) it->attr->value, it->attr->length);
+        tmp = realloc((void*) it->attr->value, it->attr->length + 1);
         if (!tmp)
           {
              free((void*) it->attr->value);
@@ -86,9 +93,11 @@ _eina_xattr_value_ls_fd_iterator_next(Eina_Xattr_Iterator *it, void **data)
           }
         else
           {
+             it->attr->value = tmp;
              it->attr->length = fgetxattr(it->fd, it->attr->name,
                                           (void *) it->attr->value,
                                           it->attr->length);
+             tmp[it->attr->length] = '\0';
           }
      }
 
@@ -105,6 +114,7 @@ _eina_xattr_value_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
 
    *data = it->attr;
    it->attr->name = it->xattr + it->offset;
+   it->offset += strlen(it->attr->name) + 1;
 
    it->attr->length = getxattr(it->file, it->attr->name, NULL, 0);
    if (it->attr->length)
@@ -118,9 +128,11 @@ _eina_xattr_value_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
           }
         else
           {
+             it->attr->value = tmp;
              it->attr->length = getxattr(it->file, it->attr->name,
                                          (void*) it->attr->value,
                                          it->attr->length);
+             tmp[it->attr->length] = '\0';
           }
      }
 
@@ -301,6 +313,13 @@ eina_xattr_value_ls(const char *file)
    it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
    if (!it) return NULL;
 
+   it->attr = calloc(1, sizeof (Eina_Xattr));
+   if (!it->attr)
+     {
+        free(it);
+        return NULL;
+     }
+
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
    it->length = listxattr(file, it->xattr, length);
@@ -328,7 +347,7 @@ EAPI void *
 eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
 {
 #ifdef HAVE_XATTR
-   void *ret = NULL;
+   char *ret = NULL;
    ssize_t tmp;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
@@ -340,12 +359,13 @@ eina_xattr_get(const char *file, const char *attribute, ssize_t *size)
    if (!(*size > 0 && *size < 2 * 1024 * 1024))
      goto on_error;
 
-   ret = malloc(*size);
-   if (!ret) return NULL;
+   ret = malloc(*size + 1);
+   if (!ret) goto on_error;
 
    tmp = getxattr(file, attribute, ret, *size);
    if (tmp != *size)
      goto on_error;
+   ret[tmp] = '\0';
 
    return ret;
 
