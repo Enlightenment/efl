@@ -34,7 +34,7 @@ lib_eio_libeio_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/eio \
 -DEFL_EIO_BUILD \
-@EFL_CFLAGS@ \
+@EIO_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 lib_eio_libeio_la_LIBADD = \

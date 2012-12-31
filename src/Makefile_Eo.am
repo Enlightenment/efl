@@ -17,7 +17,6 @@ lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -DNDEBUG \
 -DEFL_EO_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EO_CFLAGS@ \
 @USE_EVIL_CFLAGS@
@@ -57,7 +56,7 @@ tests_eo_test_access_CPPFLAGS = \
 
 tests_eo_test_access_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 tests_eo_test_composite_objects_SOURCES = \
 tests/eo/composite_objects/composite_objects_comp.c \
@@ -75,7 +74,7 @@ tests_eo_test_composite_objects_CPPFLAGS = \
 
 tests_eo_test_composite_objects_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 tests_eo_test_constructors_SOURCES = \
 tests/eo/constructors/constructors_main.c \
@@ -105,7 +104,7 @@ tests_eo_test_constructors_CPPFLAGS = \
 
 tests_eo_test_constructors_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 if EFL_ENABLE_TESTS
 
@@ -129,7 +128,7 @@ tests_eo_eo_suite_CPPFLAGS = \
 tests_eo_eo_suite_LDADD = \
 lib/eo/libeo.la \
 @CHECK_LIBS@ \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 endif
 
@@ -153,7 +152,7 @@ tests_eo_test_function_overrides_CPPFLAGS = \
 
 tests_eo_test_function_overrides_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 tests_eo_test_interface_SOURCES = \
 tests/eo/interface/interface_interface.c \
@@ -173,7 +172,7 @@ tests_eo_test_interface_CPPFLAGS = \
 
 tests_eo_test_interface_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 tests_eo_test_mixin_SOURCES = \
 tests/eo/mixin/mixin_inherit.c \
@@ -199,7 +198,7 @@ tests_eo_test_mixin_CPPFLAGS = \
 
 tests_eo_test_mixin_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 tests_eo_test_signals_SOURCES = \
 tests/eo/signals/signals_main.c \
@@ -215,6 +214,6 @@ tests_eo_test_signals_CPPFLAGS = \
 
 tests_eo_test_signals_LDADD = \
 lib/eo/libeo.la \
-@EO_LIBS@
+@EO_LDFLAGS@
 
 EXTRA_DIST += tests/eo/eunit_tests.h

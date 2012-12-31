@@ -22,7 +22,7 @@ lib_ecore_psl1ght_libecore_psl1ght_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_psl1ght \
 -DEFL_ECORE_PSL1GHT_BUILD \
-@EFL_CFLAGS@ \
+@ECORE_PSL1GHT_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 lib_ecore_psl1ght_libecore_psl1ght_la_LIBADD = \

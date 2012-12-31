@@ -40,7 +40,6 @@ lib_edbus_libedbus2_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/edbus \
 -DEFL_EDBUS_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EDBUS_CFLAGS@
 
@@ -74,7 +73,7 @@ bin_edbus_edbus_codegen_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EFL_CFLAGS@ \
+@EDBUS_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 bin_edbus_edbus_codegen_LDADD = \
@@ -82,4 +81,5 @@ lib/eina/libeina.la \
 lib/eo/libeo.la \
 lib/ecore/libecore.la \
 lib/edbus/libedbus2.la \
+@EDBUS_LDFLAGS@ \
 @EFL_COV_LIBS@

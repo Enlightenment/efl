@@ -142,6 +142,11 @@ platform_cflags_evil=""
 platform_cflags_escape=""
 platform_cflags_exotic=""
 
+requirements_pc_efl=""
+requirements_pc_deps_efl=""
+requirements_libs_efl=""
+requirements_cflags_efl=""
+
 requirements_pc_crypto=""
 requirements_pc_deps_crypto=""
 requirements_libs_crypto=""
@@ -441,8 +446,8 @@ esac
 EFL_ATTRIBUTE_VECTOR
 EFL_ATTRIBUTE_ALWAYS_INLINE
 
-EFL_LIBS=""
-AC_SUBST([EFL_LIBS])
+EFL_LIBS="${EFL_LIBS}"
+EFL_CFLAGS="${EFL_CFLAGS}"
 
 ## CPU architecture specific assembly
 
@@ -825,6 +830,9 @@ AC_MSG_RESULT([${enable_log}])
 EINA_CONFIG([ENABLE_LOG], [test "x${enable_log}" = "xyes"])
 
 EFL_CHECK_THREADS
+
+EFL_ADD_LIBS([EINA], [${EFL_PTHREAD_LIBS}])
+EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
 
 EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes"])
 EINA_CONFIG([HAVE_PTHREAD_AFFINITY], [test "x${efl_have_setaffinity}" = "xyes"])
@@ -3197,9 +3205,6 @@ EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 EFL_LIB_END([Efreet])
 #### End of Efreet
 
-EFL_LIBS="${EFL_LIBS} ${requirements_libs_efl}"
-
-
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -3465,7 +3470,7 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
 echo
-echo "Tests..................: ${with_tests}"
+echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"
 echo "    installation.......: make install-examples"

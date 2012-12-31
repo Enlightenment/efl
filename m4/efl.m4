@@ -138,12 +138,14 @@ requirements_pc_[]m4_defn([DOWN])=""
 requirements_pc_deps_[]m4_defn([DOWN])=""
 
 m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS}"
+m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS}"
 m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS}"
 
 AC_SUBST([requirements_libs_]m4_defn([DOWN]))
 AC_SUBST([requirements_cflags_]m4_defn([DOWN]))
 AC_SUBST([requirements_pc_]m4_defn([DOWN]))
 AC_SUBST(m4_defn([UP])[_LIBS])
+AC_SUBST(m4_defn([UP])[_LDFLAGS])
 AC_SUBST(m4_defn([UP])[_CFLAGS])
 
 AC_MSG_NOTICE([Start $1 checks])
@@ -159,8 +161,11 @@ AC_DEFUN([EFL_LIB_END],
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 
-m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${requirements_libs_[]m4_defn([DOWN])}"
-m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS} ${requirements_cflags_[]m4_defn([DOWN])}"
+m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS}  ${EFL_LDFLAGS}"
+m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_LIBS} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
+m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS} ${EFL_CFLAGS} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl}"
+requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
+requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
 
 AC_MSG_NOTICE([Finished $1 checks])
 m4_popdef([UP])

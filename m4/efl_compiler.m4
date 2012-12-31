@@ -56,7 +56,7 @@ m4_foreach_w([flag], [$2], [EFL_CHECK_COMPILER_FLAG([$1], m4_defn([flag]))])
 dnl Macro that checks for a linker flag availability
 dnl
 dnl EFL_CHECK_LINKER_FLAG(EFL, FLAG[, ACTION-IF-FOUND[ ,ACTION-IF-NOT-FOUND]])
-dnl AC_SUBST : EFL_LIBS (EFL being replaced by its value)
+dnl AC_SUBST : EFL_LDFLAGS (EFL being replaced by its value)
 
 AC_DEFUN([EFL_CHECK_LINKER_FLAG],
 [
@@ -79,10 +79,9 @@ LDFLAGS="${LDFLAGS_save}"
 AC_LANG_POP([C])
 
 if test "x${have_flag}" = "xyes" ; then
-   UPEFL[_LIBS]="${UPEFL[_LIBS]} [$2]"
+   UPEFL[_LDFLAGS]="${UPEFL[_LDFLAGS]} [$2]"
 fi
-AC_ARG_VAR(UPEFL[_LIBS], [preprocessor flags for $2])
-AC_SUBST(UPEFL[_LIBS])
+AC_SUBST(UPEFL[_LDFLAGS])
 
 m4_popdef([UP])
 m4_popdef([UPEFL])

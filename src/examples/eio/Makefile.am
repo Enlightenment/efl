@@ -17,10 +17,11 @@ EXTRA_PROGRAMS = eio_file_ls
 eio_file_ls_SOURCES = eio_file_ls.c
 eio_file_ls_LDADD = \
 $(top_builddir)/src/lib/eio/libeio.la \
+$(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eet/libeet.la \
 $(top_builddir)/src/lib/eina/libeina.la \
-@EIO_LIBS@
+@EIO_LDFLAGS@
 
 SRCS = \
 eio_file_ls

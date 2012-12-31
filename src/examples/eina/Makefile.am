@@ -5,7 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina
 
-LDADD = $(top_builddir)/src/lib/eina/libeina.la
+LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@
 
 SRCS = \
 eina_accessor_01.c \
@@ -100,11 +100,12 @@ eina_inarray_02
 #eina_model_04_parrot.h \
 #eina_model_04_whistler.h
 
-if BUILD_TILER_EXAMPLE
-AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
-EXTRA_PROGRAMS += eina_tiler_01
-eina_tiler_01_LDADD = $(top_builddir)/src/lib/eina/libeina.la @ECORE_EVAS_LIBS@
-endif
+# TODO: use ecore_evas from single tree
+#if BUILD_TILER_EXAMPLE
+#AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
+#EXTRA_PROGRAMS += eina_tiler_01
+#eina_tiler_01_LDADD = $(top_builddir)/src/lib/eina/libeina.la @ECORE_EVAS_LDFLAGS@
+#endif
 
 examples: $(EXTRA_PROGRAMS)
 

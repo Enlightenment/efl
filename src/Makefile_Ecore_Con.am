@@ -41,7 +41,6 @@ lib_ecore_con_libecore_con_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
 -DEFL_ECORE_CON_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_CON_CFLAGS@ \
 @USE_EVIL_CFLAGS@

@@ -20,7 +20,6 @@ lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_sdl \
 -DEFL_ECORE_SDL_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_SDL_CFLAGS@
 

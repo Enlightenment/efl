@@ -25,7 +25,6 @@ lib_ecore_fb_libecore_fb_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_fb \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_FB_CFLAGS@
 

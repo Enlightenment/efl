@@ -25,7 +25,6 @@ EFREET_COMMON_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)\" \
 -DLOCALE_DIR=\"@LOCALE_DIR@\" \
 -DEFL_EFREET_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EFREET_CFLAGS@ \
 @USE_EVIL_CFLAGS@
@@ -42,6 +41,18 @@ lib/edbus/libedbus2.la \
 @EFL_COV_LIBS@
 
 EFREET_COMMON_USER_LIBADD = $(EFREET_COMMON_LIBADD) lib/efreet/libefreet.la
+
+EFREET_COMMON_USER_LDADD = \
+lib/efreet/libefreet.la \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+lib/ecore_file/libecore_file.la \
+lib/eet/libeet.la \
+lib/edbus/libedbus2.la \
+@USE_EVIL_LIBS@ \
+@EFREET_LDFLAGS@ \
+@EFL_COV_LIBS@
 
 installed_efreetmainheadersdir = $(includedir)/efreet-@VMAJ@
 dist_installed_efreetmainheaders_DATA = \
@@ -104,7 +115,7 @@ bin/efreet/efreetd_cache.h \
 bin/efreet/efreetd_cache.c
 
 bin_efreet_efreetd_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreetd_LDADD = $(EFREET_COMMON_USER_LIBADD)
+bin_efreet_efreetd_LDADD = $(EFREET_COMMON_USER_LDADD)
 
 efreetinternal_bindir=$(libdir)/efreet
 efreetinternal_bin_PROGRAMS = \
@@ -112,12 +123,12 @@ bin/efreet/efreet_desktop_cache_create \
 bin/efreet/efreet_icon_cache_create
 
 bin_efreet_efreet_desktop_cache_create_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreet_desktop_cache_create_LDADD = $(EFREET_COMMON_USER_LIBADD)
+bin_efreet_efreet_desktop_cache_create_LDADD = $(EFREET_COMMON_USER_LDADD)
 bin_efreet_efreet_desktop_cache_create_SOURCES = \
 bin/efreet/efreet_desktop_cache_create.c
 
 bin_efreet_efreet_icon_cache_create_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreet_icon_cache_create_LDADD = $(EFREET_COMMON_USER_LIBADD)
+bin_efreet_efreet_icon_cache_create_LDADD = $(EFREET_COMMON_USER_LDADD)
 bin_efreet_efreet_icon_cache_create_SOURCES = \
 bin/efreet/efreet_icon_cache_create.c
 
@@ -138,7 +149,7 @@ tests/efreet/compare/efreet_menu_alloc
 # efreet_test
 tests_efreet_efreet_test_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
 tests_efreet_efreet_test_LDADD = \
-$(EFREET_COMMON_USER_LIBADD) \
+$(EFREET_COMMON_USER_LDADD) \
 lib/efreet/libefreet_mime.la
 
 tests_efreet_efreet_test_SOURCES = \
@@ -154,38 +165,38 @@ tests/efreet/main.c
 
 # efreet_spec_test
 tests_efreet_efreet_spec_test_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_efreet_spec_test_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_efreet_spec_test_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_efreet_spec_test_SOURCES = \
 tests/efreet/efreet_spec_test.c
 
 # efreet_cache_test
 tests_efreet_efreet_cache_test_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_efreet_cache_test_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_efreet_cache_test_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_efreet_cache_test_SOURCES = \
 tests/efreet/ef_cache.c
 
 # efreet_icon_cache_dump
 tests_efreet_efreet_icon_cache_dump_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_efreet_icon_cache_dump_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_efreet_icon_cache_dump_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_efreet_icon_cache_dump_SOURCES = \
 tests/efreet/efreet_icon_cache_dump.c
 
 # efreet_user_dir
 tests_efreet_efreet_user_dir_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_efreet_user_dir_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_efreet_user_dir_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_efreet_user_dir_SOURCES = \
 tests/efreet/efreet_user_dir.c
 
 # efreet_alloc
 tests_efreet_compare_efreet_alloc_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_compare_efreet_alloc_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_compare_efreet_alloc_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_compare_efreet_alloc_SOURCES = \
 tests/efreet/compare/efreet_alloc.c \
 tests/efreet/compare/comp.h
 
 # efreet_menu_alloc
 tests_efreet_compare_efreet_menu_alloc_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-tests_efreet_compare_efreet_menu_alloc_LDADD = $(EFREET_COMMON_USER_LIBADD)
+tests_efreet_compare_efreet_menu_alloc_LDADD = $(EFREET_COMMON_USER_LDADD)
 tests_efreet_compare_efreet_menu_alloc_SOURCES = \
 tests/efreet/compare/efreet_menu_alloc.c \
 tests/efreet/compare/comp.h
@@ -215,6 +226,6 @@ tests/efreet/efreet_test_efreet.c \
 tests/efreet/efreet_test_efreet_cache.c
 
 tests_efreet_efreet_suite_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@
-tests_efreet_efreet_suite_LDADD = $(EFREET_COMMON_USER_LIBADD) @CHECK_LIBS@
+tests_efreet_efreet_suite_LDADD = $(EFREET_COMMON_USER_LDADD) @CHECK_LIBS@
 
 endif

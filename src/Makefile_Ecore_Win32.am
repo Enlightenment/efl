@@ -32,7 +32,7 @@ lib_ecore_win32_libecore_win32_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_win32 \
 -DEFL_ECORE_WIN32_BUILD \
-@EFL_CFLAGS@ \
+@ECORE_WIN32_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 lib_ecore_win32_libecore_win32_la_LIBADD = \

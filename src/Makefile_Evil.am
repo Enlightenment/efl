@@ -157,14 +157,17 @@ endif
 
 bin_evil_evil_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evil \
-@EFL_CFLAGS@ \
+@EVIL_CFLAGS@ \
 @EVIL_CPPFLAGS@
 
 bin_evil_evil_suite_LDADD = \
 lib/evil/libevil.la \
 lib/evil/libdl.la \
+@EVIL_LDFLAGS@ \
 -lm
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 
-bin_evil_test_evil_LDADD = lib/evil/libevil.la
+bin_evil_test_evil_LDADD = \
+lib/evil/libevil.la \
+@EVIL_LDFLAGS@

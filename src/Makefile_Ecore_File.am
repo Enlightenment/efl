@@ -35,7 +35,7 @@ lib_ecore_file_libecore_file_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_file \
 -DEFL_ECORE_FILE_BUILD \
-@EFL_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 lib_ecore_file_libecore_file_la_LIBADD = \

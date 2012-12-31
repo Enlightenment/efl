@@ -31,7 +31,6 @@ lib_eet_libeet_la_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
 -DEFL_EET_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EET_CFLAGS@ \
 @USE_EVIL_CFLAGS@
@@ -59,7 +58,6 @@ bin_eet_eet_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @EET_CFLAGS@ \
 @USE_EVIL_CFLAGS@
@@ -68,7 +66,7 @@ bin_eet_eet_LDADD = \
 lib/eet/libeet.la \
 lib/eina/libeina.la \
 @USE_EVIL_LIBS@ \
-@EET_LIBS@ \
+@EET_LDFLAGS@ \
 @EFL_COV_LIBS@
 
 ### Unit tests
@@ -95,7 +93,7 @@ tests_eet_eet_suite_LDADD = \
 lib/eet/libeet.la \
 lib/eina/libeina.la \
 @CHECK_LIBS@ \
-@EET_LIBS@
+@EET_LDFLAGS@
 
 endif
 

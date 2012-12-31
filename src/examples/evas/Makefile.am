@@ -19,12 +19,12 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/modules/evas/engines/buffer
 
 EXTRA_PROGRAMS += evas_buffer_simple
 evas_buffer_simple_SOURCES = evas-buffer-simple.c
-evas_buffer_simple_LDADD = $(top_builddir)/src/lib/evas/libevas.la
+evas_buffer_simple_LDADD = $(top_builddir)/src/lib/evas/libevas.la @EVAS_LDFLAGS@
 endif
 
 EXTRA_PROGRAMS += evas_init_shutdown
 evas_init_shutdown_SOURCES = evas-init-shutdown.c
-evas_init_shutdown_LDADD = $(top_builddir)/src/lib/evas/libevas.la
+evas_init_shutdown_LDADD = $(top_builddir)/src/lib/evas/libevas.la @EVAS_LDFLAGS@
 
 #the ones using ecore_evas follow
 #AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@

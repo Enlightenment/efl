@@ -42,7 +42,11 @@ EXTRA_LTLIBRARIES = libcity.la
 libcity_la_SOURCES = city.cc
 
 nodist_EXTRA_eina_bench_SOURCES = dummy.cc
-eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/eina/libeina.la libcity.la @EINA_LIBS@
+eina_bench_LDADD = \
+$(top_builddir)/src/lib/eina/libeina.la \
+libcity.la \
+@GLIB_LIBS@ \
+@EINA_LDFLAGS@
 
 EXTRA_DIST = strlog
 

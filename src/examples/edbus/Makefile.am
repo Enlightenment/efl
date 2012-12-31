@@ -12,9 +12,11 @@ AM_CPPFLAGS = \
 @EDBUS_CFLAGS@
 
 EXAMPLES_LIBS = \
+$(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eina/libeina.la \
-$(top_builddir)/src/lib/edbus/libedbus2.la
+$(top_builddir)/src/lib/edbus/libedbus2.la \
+@EDBUS_LDFLAGS@
 
 EXTRA_PROGRAMS = \
 connman-list-services \

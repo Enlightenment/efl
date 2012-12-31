@@ -29,7 +29,7 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEFL_ECORE_EVAS_BUILD \
-@EFL_CFLAGS@ \
+@ECORE_EVAS_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @USE_EVIL_CFLAGS@
 
@@ -58,7 +58,7 @@ ecoreevasenginebufferpkgdir = $(libdir)/ecore_evas/engines/buffer/$(MODULE_ARCH)
 ecoreevasenginebufferpkg_LTLIBRARIES = modules/ecore_evas/engines/buffer/module.la
 modules_ecore_evas_engines_buffer_module_la_SOURCES = $(BUFFERSOURCES)
 modules_ecore_evas_engines_buffer_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
-modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la @EFL_LIBS@
+modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la
 modules_ecore_evas_engines_buffer_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -75,7 +75,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/modules/evas/engines/software_x11 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_x11
 modules_ecore_evas_engines_x_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_x/libecore_x.la
 modules_ecore_evas_engines_x_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_x_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -91,7 +91,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_cocoa \
 -I$(top_srcdir)/src/modules/evas/engines/gl_cocoa
 modules_ecore_evas_engines_cocoa_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_cocoa/libecore_cocoa.la
 modules_ecore_evas_engines_cocoa_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_cocoa_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -107,7 +107,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_fb \
 -I$(top_srcdir)/src/modules/evas/engines/fb
 modules_ecore_evas_engines_fb_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_fb/libecore_fb.la
 modules_ecore_evas_engines_fb_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_fb_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -123,7 +123,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_psl1ght \
 -I$(top_srcdir)/src/modules/evas/engines/psl1ght
 modules_ecore_evas_engines_psl1ght_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_psl1ght/libecore_psl1ght.la
 modules_ecore_evas_engines_psl1ght_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_psl1ght_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -145,7 +145,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
 @ECORE_WAYLAND_CFLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_wayland/libecore_wayland.la
 modules_ecore_evas_engines_wayland_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_wayland_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -162,7 +162,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/lib/ecore_sdl \
 -I$(top_srcdir)/src/modules/evas/engines/gl_sdl
 modules_ecore_evas_engines_sdl_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la @EFL_LIBS@ \
+lib/ecore_evas/libecore_evas.la \
 lib/ecore_sdl/libecore_sdl.la
 modules_ecore_evas_engines_sdl_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_sdl_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -180,7 +180,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 -I$(top_srcdir)/src/modules/evas/engines/software_ddraw \
 -I$(top_srcdir)/src/modules/evas/engines/software_gdi
 modules_ecore_evas_engines_win32_module_la_LIBADD = \
-lib/ecore/libecore_evas.la @EFL_LIBS@ \
+lib/ecore/libecore_evas.la \
 lib/ecore_win32/libecore_win32.la
 modules_ecore_evas_engines_win32_module_la_LDFLAGS = -no-undefined -module -avoid-version
 modules_ecore_evas_engines_win32_module_la_LIBTOOLFLAGS = --tag=disable-static

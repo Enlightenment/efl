@@ -53,7 +53,6 @@ lib_ecore_libecore_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -DEFL_ECORE_BUILD \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @USE_EVIL_CFLAGS@ \
@@ -100,6 +99,7 @@ lib/ecore_con/libecore_con.la \
 lib/ecore_file/libecore_file.la \
 lib/ecore/libecore.la \
 lib/eina/libeina.la \
+@ECORE_LDFLAGS@ \
 @CHECK_LIBS@
 
 if HAVE_ECORE_AUDIO

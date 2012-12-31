@@ -20,7 +20,7 @@ lib_ecore_cocoa_libecore_cocoa_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_cocoa \
-@EFL_CFLAGS@ \
+@ECORE_COCOA_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
 lib_ecore_cocoa_libecore_cocoa_la_LIBADD = \

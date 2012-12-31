@@ -22,7 +22,6 @@ lib_ecore_wayland_libecore_wayland_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_wayland \
-@EFL_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @ECORE_WAYLAND_CFLAGS@
 
