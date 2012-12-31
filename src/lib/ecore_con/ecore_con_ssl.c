@@ -52,9 +52,7 @@ EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
 static int _init_con_ssl_init_count = 0;
 
 #ifdef HAVE_GNUTLS
-# ifdef EINA_HAVE_THREADS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
-# endif
 
 static int _client_connected = 0;
 
@@ -892,10 +890,8 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type ssl_type)
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_init_gnutls(void)
 {
-#ifdef EINA_HAVE_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
      WRN("YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
-#endif
    if (gnutls_global_init())
      return ECORE_CON_SSL_ERROR_INIT_FAILED;
 

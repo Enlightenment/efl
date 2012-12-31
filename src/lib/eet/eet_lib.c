@@ -57,11 +57,9 @@ void *alloca(size_t);
 # include <openssl/evp.h>
 #endif /* ifdef HAVE_OPENSSL */
 
-#ifdef EINA_HAVE_THREADS
-# ifdef HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
-# endif /* ifdef HAVE_GNUTLS */
-#endif /* ifdef EINA_HAVE_THREADS */
+#endif /* ifdef HAVE_GNUTLS */
 
 #include "Eet.h"
 #include "Eet_private.h"
@@ -599,12 +597,10 @@ eet_init(void)
             "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
 
-# ifdef EINA_HAVE_THREADS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
      WRN(
        "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
-# endif /* ifdef EINA_HAVE_THREADS */
    if (gnutls_global_init())
      goto shutdown_eet;
 
