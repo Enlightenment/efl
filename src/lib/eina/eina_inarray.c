@@ -414,17 +414,18 @@ eina_inarray_push(Eina_Inarray *array, const void *data)
 }
 
 EAPI void *
-eina_inarray_add(Eina_Inarray *array)
+eina_inarray_grow(Eina_Inarray *array, unsigned int size)
 {
    void *p;
 
    EINA_MAGIC_CHECK_INARRAY(array, NULL);
+   if (!size) return NULL;
 
-   if (!_eina_inarray_resize(array, array->len + 1))
+   if (!_eina_inarray_resize(array, array->len + size))
      return NULL;
 
    p = _eina_inarray_get(array, array->len);
-   array->len++;
+   array->len += size;
 
    return p;
 }

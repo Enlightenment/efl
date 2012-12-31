@@ -31,7 +31,7 @@ evas_thread_queue_append(Evas_Thread_Command_Cb cb, void *data, Eina_Bool do_flu
         evas_thread_queue_cache_max = 0;
      }
 
-   cmd = eina_inarray_add(&evas_thread_queue);
+   cmd = eina_inarray_grow(&evas_thread_queue, 1);
    if (cmd)
      {
         cmd->cb = cb;

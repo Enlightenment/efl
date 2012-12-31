@@ -225,7 +225,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    eina_lock_take(&async_lock);
 
    count = async_queue.len;
-   ev = eina_inarray_add(&async_queue);
+   ev = eina_inarray_grow(&async_queue, 1);
    if (ev)
      {
         ev->func = func;

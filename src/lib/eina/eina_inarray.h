@@ -292,15 +292,16 @@ EAPI int eina_inarray_push(Eina_Inarray *array,
                            const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Allocate a new item at the end of the array.
+ * @brief Allocate new item at the end of the array.
  * @param array array object
+ * @param size number of new item to allocate
  *
  * The returned pointer is only valid until you use any other eina_inarray
  * function.
  *
  * @since 1.8
  */
-EAPI void *eina_inarray_add(Eina_Inarray *array);
+EAPI void *eina_inarray_grow(Eina_Inarray *array, unsigned int size);
 
 /**
  * @brief Copy the data to array at position found by comparison function
