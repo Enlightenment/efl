@@ -46,6 +46,7 @@ Additions:
     * Added eina_xattr_fd_get(), eina_xattr_fd_set(),
       eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
       eina_xattr_fd_copy()
+    * Added eina_file_copy()
 
 Deprecations:
     * ecore_x:

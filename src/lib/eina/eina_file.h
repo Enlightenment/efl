@@ -369,6 +369,46 @@ EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT
  */
 EAPI char *eina_file_path_sanitize(const char *path);
 
+
+/**
+ * @typedef Eina_File_Copy_Progress
+ * used to report progress during eina_file_copy(), where @c done
+ * is the bytes already copied and @c size is the total file size.
+ *
+ * If returns #EINA_FALSE, it will stop the copy.
+ */
+typedef Eina_Bool (*Eina_File_Copy_Progress)(void *data, unsigned long long done, unsigned long long total);
+
+/**
+ * @typedef Eina_File_Copy_Flags
+ * what to copy from file.
+ */
+typedef enum {
+  EINA_FILE_COPY_DATA       = 0,
+  EINA_FILE_COPY_PERMISSION = (1 << 0),
+  EINA_FILE_COPY_XATTR      = (1 << 1)
+} Eina_File_Copy_Flags;
+
+/**
+ * Copy one file to another using the fastest possible way, report progress.
+ *
+ * This function will try  splice if it is available. It
+ * will block until the whole file is copied or it fails.
+ *
+ * During the progress it may call back @a cb with the progress summary.
+ *
+ * @param src the source file.
+ * @param dst the destination file.
+ * @param flags controls what is copied (data is always copied).
+ * @param cb if provided will be called with file copy progress information.
+ * @param cb_data context data to provide to @a cb during copy.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise (and @a dst
+ *         will be deleted)
+ */
+EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+
+
+
 /**
  * @brief Get a read-only handler to a file.
  *
