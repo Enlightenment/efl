@@ -436,7 +436,6 @@ EFL_CHECK_LINKER_FLAGS([EFL], [-fvisibility=hidden -fdata-sections -ffunction-se
 case "${build_profile}" in
    dev)
      EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
-     EFL_CHECK_LINKER_FLAGS([EFL], [-Wl,--print-gc-sections])
      ;;
 
    debug)
