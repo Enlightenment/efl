@@ -79,7 +79,7 @@ static int evas_object_text_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected
 static int evas_object_text_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 static void evas_object_text_scale_update(Evas_Object *eo_obj);
-static void _evas_object_text_recalc(Evas_Object *eo_obj);
+static void _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text);
 
 static const Evas_Object_Func object_func =
 {
@@ -462,7 +462,7 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
         o->max_ascent = 0;
         o->max_descent = 0;
      }
-   _evas_object_text_recalc(eo_obj);
+   _evas_object_text_recalc(eo_obj, o->cur.text);
    o->changed = 1;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -885,12 +885,14 @@ evas_object_text_ellipsis_set(Evas_Object *obj, double ellipsis)
 }
 
 static void
-_text_resize(void *data EINA_UNUSED,
+_text_resize(void *data,
              Evas *e EINA_UNUSED,
-             Evas_Object *obj EINA_UNUSED,
+             Evas_Object *obj,
              void *event_info EINA_UNUSED)
 {
-   _evas_object_text_recalc(obj);
+   Evas_Object_Text *o = data;
+
+   _evas_object_text_recalc(obj, o->cur.text);
 }
 
 static void
@@ -967,18 +969,10 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (o->items) _evas_object_text_items_clear(o);
 
-   if ((text) && (*text))
-     {
-        _evas_object_text_layout(eo_obj, o, text);
-	eina_stringshare_replace(&o->cur.utf8_text, _text);
-        o->prev.utf8_text = NULL;
-    }
-   else
-     {
-        if (text) free(text);
-	eina_stringshare_replace(&o->cur.utf8_text, NULL);
-     }
-   _evas_object_text_recalc(eo_obj);
+   _evas_object_text_recalc(eo_obj, text);
+   eina_stringshare_replace(&o->cur.utf8_text, _text);
+   o->prev.utf8_text = NULL;
+
    o->changed = 1;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -2158,7 +2152,7 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	 (obj->cur.geometry.h != o->last_computed.h))) ||
        (obj->cur.scale != obj->prev.scale))
      {
-        _evas_object_text_recalc(eo_obj);
+       _evas_object_text_recalc(eo_obj, o->cur.text);
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
 	goto done;
@@ -2316,7 +2310,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
-   _evas_object_text_recalc(eo_obj);
+   _evas_object_text_recalc(eo_obj, o->cur.text);
    o->changed = 1;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -2334,13 +2328,11 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
 }
 
 static void
-_evas_object_text_recalc(Evas_Object *eo_obj)
+_evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
-   Eina_Unicode *text = NULL;
 
-   text = o->cur.text;
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
 
    _evas_object_text_layout(eo_obj, o, text);
