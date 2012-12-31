@@ -232,6 +232,9 @@ LT_INIT([win32-dll disable-static disable-fast-install pic-only])
 EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
 AC_SUBST(EFL_LTLIBRARY_FLAGS)
 
+EFL_LTMODULE_FLAGS="-no-undefined -module -avoid-version"
+AC_SUBST([EFL_LTMODULE_FLAGS])
+
 ### gettext
 
 AM_GNU_GETTEXT_VERSION([0.17])
