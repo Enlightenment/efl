@@ -63,10 +63,6 @@
 #include <string.h>
 #include <stddef.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-#endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif

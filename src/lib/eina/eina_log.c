@@ -37,10 +37,6 @@
 # include <unistd.h>
 #endif
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-#endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -48,6 +44,8 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_inlist.h"
+#include "eina_lock.h"
+#include "eina_thread.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -109,32 +107,26 @@ static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 static int _backtrace_level = -1;
 #endif
 
-#ifdef EFL_HAVE_THREADS
-
 static Eina_Bool _threads_enabled = EINA_FALSE;
 static Eina_Bool _threads_inited = EINA_FALSE;
 
-# ifdef EFL_HAVE_POSIX_THREADS
+static Eina_Thread _main_thread;
 
-typedef pthread_t Thread;
-
-static pthread_t _main_thread;
-
-#  define SELF() pthread_self()
-#  define IS_MAIN(t)  pthread_equal(t, _main_thread)
+#  define SELF() eina_thread_self()
+#  define IS_MAIN(t)  eina_thread_equal(t, _main_thread)
 #  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
 #  define CHECK_MAIN(...)                                         \
    do {                                                           \
-      if (!IS_MAIN(pthread_self())) {                             \
+      if (!IS_MAIN(eina_thread_self())) {                         \
          fprintf(stderr,                                          \
                  "ERR: not main thread! current=%lu, main=%lu\n", \
-                 (unsigned long)pthread_self(),                   \
+                 (unsigned long)eina_thread_self(),               \
                  (unsigned long)_main_thread);                    \
          return __VA_ARGS__;                                      \
       }                                                           \
    } while (0)
 
-#  ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
+#ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
 
 static pthread_spinlock_t _log_lock;
 
@@ -154,7 +146,7 @@ static Eina_Bool _eina_log_spinlock_init(void)
          do {                                                          \
             if (0) {                                                   \
                fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",     \
-                       __FUNCTION__, (unsigned long)pthread_self()); } \
+                       __FUNCTION__, (unsigned long)eina_thread_self()); } \
             if (EINA_UNLIKELY(_threads_enabled)) {                     \
                pthread_spin_lock(&_log_lock); }                        \
          } while (0)
@@ -166,60 +158,20 @@ static Eina_Bool _eina_log_spinlock_init(void)
             if (0) {                                                   \
                fprintf(stderr,                                         \
                        "---LOG LOG_UNLOCKED! [%s, %lu]\n",             \
-                       __FUNCTION__, (unsigned long)pthread_self()); } \
+                       __FUNCTION__, (unsigned long)eina_thread_self()); } \
          } while (0)
 #   define INIT() _eina_log_spinlock_init()
 #   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
 
-#  else /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
+#else /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
 
-static pthread_mutex_t _log_mutex = PTHREAD_MUTEX_INITIALIZER;
-#   define LOG_LOCK() if(_threads_enabled) {pthread_mutex_lock(&_log_mutex); }
-#   define LOG_UNLOCK() if(_threads_enabled) {pthread_mutex_unlock(&_log_mutex); }
-#   define INIT() (1)
-#   define SHUTDOWN() do {} while (0)
+static Eina_Lock _log_mutex;
+#   define LOG_LOCK() if(_threads_enabled) {eina_lock_take(&_log_mutex); }
+#   define LOG_UNLOCK() if(_threads_enabled) {eina_lock_release(&_log_mutex); }
+#   define INIT() eina_lock_new(&_log_mutex)
+#   define SHUTDOWN() eina_lock_free(&_log_mutex)
 
-#  endif /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
-
-# else /* EFL_HAVE_WIN32_THREADS */
-
-typedef DWORD Thread;
-
-static DWORD _main_thread;
-
-#  define SELF() GetCurrentThreadId()
-#  define IS_MAIN(t)  (t == _main_thread)
-#  define IS_OTHER(t) EINA_UNLIKELY(!IS_MAIN(t))
-#  define CHECK_MAIN(...)                                         \
-   do {                                                           \
-      if (!IS_MAIN(GetCurrentThreadId())) {                       \
-         fprintf(stderr,                                          \
-                 "ERR: not main thread! current=%lu, main=%lu\n", \
-                 GetCurrentThreadId(), _main_thread);             \
-         return __VA_ARGS__;                                      \
-      }                                                           \
-   } while (0)
-
-static HANDLE _log_mutex = NULL;
-
-#  define LOG_LOCK() if(_threads_enabled) WaitForSingleObject(_log_mutex, INFINITE)
-#  define LOG_UNLOCK() if(_threads_enabled) ReleaseMutex(_log_mutex)
-#  define INIT() ((_log_mutex = CreateMutex(NULL, FALSE, NULL)) ? 1 : 0)
-#  define SHUTDOWN()  if (_log_mutex) CloseHandle(_log_mutex)
-
-# endif /* EFL_HAVE_WIN32_THREADS */
-
-#else /* ! EFL_HAVE_THREADS */
-
-# define LOG_LOCK() do {} while (0)
-# define LOG_UNLOCK() do {} while (0)
-# define IS_MAIN(t)  (1)
-# define IS_OTHER(t) (0)
-# define CHECK_MAIN(...) do {} while (0)
-# define INIT() (1)
-# define SHUTDOWN() do {} while (0)
-
-#endif /* ! EFL_HAVE_THREADS */
+#endif /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
 
 
 // List of domains registered
@@ -602,7 +554,6 @@ eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp,
 }
 
 /** threads, No color */
-#ifdef EFL_HAVE_THREADS
 static void
 eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp,
                                                 const Eina_Log_Domain *d,
@@ -611,7 +562,7 @@ eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp,
                                                 const char *fnc,
                                                 int line)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME(level);
    cur = SELF();
@@ -634,7 +585,7 @@ eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp,
                                                   const char *fnc,
                                                   int line EINA_UNUSED)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME(level);
    cur = SELF();
@@ -657,7 +608,7 @@ eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp,
                                                   const char *fnc EINA_UNUSED,
                                                   int line)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME(level);
    cur = SELF();
@@ -682,7 +633,7 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp,
                                               const char *fnc,
                                               int line)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME_COLOR(level);
    cur = SELF();
@@ -756,7 +707,7 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp,
                                                 const char *fnc,
                                                 int line EINA_UNUSED)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME_COLOR(level);
    cur = SELF();
@@ -825,7 +776,7 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp,
                                                 const char *fnc EINA_UNUSED,
                                                 int line)
 {
-   Thread cur;
+   Eina_Thread cur;
 
    DECLARE_LEVEL_NAME_COLOR(level);
    cur = SELF();
@@ -878,7 +829,6 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp,
            color, name, d->domain_str, file, line);
 # endif
 }
-#endif /* EFL_HAVE_THREADS */
 
 static void (*_eina_log_print_prefix)(FILE *fp, const Eina_Log_Domain *d,
                                       Eina_Log_Level level, const char *file,
@@ -903,7 +853,6 @@ eina_log_print_prefix_update(void)
       NOfile \
       ## file_ ## NOfunc ## func
 
-#ifdef EFL_HAVE_THREADS
    if (_threads_enabled)
      {
         if (_disable_color)
@@ -927,8 +876,6 @@ eina_log_print_prefix_update(void)
 
         return;
      }
-
-#endif
 
    if (_disable_color)
      {
@@ -1500,8 +1447,6 @@ eina_log_shutdown(void)
    return EINA_TRUE;
 }
 
-#ifdef EFL_HAVE_THREADS
-
 /**
  * @internal
  * @brief Activate the log mutex.
@@ -1543,8 +1488,6 @@ eina_log_threads_shutdown(void)
 #endif
 }
 
-#endif
-
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
@@ -1562,7 +1505,7 @@ EAPI int EINA_LOG_DOMAIN_GLOBAL = 0;
 EAPI void
 eina_log_threads_enable(void)
 {
-#if defined (EFL_HAVE_THREADS) && defined (EINA_ENABLE_LOG)
+#ifdef EINA_ENABLE_LOG
    if (_threads_enabled) return;
    if (!_threads_inited) eina_log_threads_init();
    _threads_enabled = EINA_TRUE;
@@ -1611,7 +1554,7 @@ eina_log_level_get(void)
 EAPI Eina_Bool
 eina_log_main_thread_check(void)
 {
-#if defined (EFL_HAVE_THREADS) && defined (EINA_ENABLE_LOG)
+#ifdef EINA_ENABLE_LOG
    return ((!_threads_enabled) || IS_MAIN(SELF()));
 #else
    return EINA_TRUE;
@@ -1947,10 +1890,9 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
 #ifdef EINA_ENABLE_LOG
    EINA_SAFETY_ON_NULL_RETURN(data);
    FILE *f = data;
-#ifdef EFL_HAVE_THREADS
    if (_threads_enabled)
      {
-        Thread cur;
+        Eina_Thread cur;
 
         cur = SELF();
         if (IS_OTHER(cur))
@@ -1961,13 +1903,11 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
           }
      }
 
-#endif
    fprintf(f, "%s<%u> %s:%d %s() ", d->name, eina_log_pid_get(), 
            file, line, fnc);
    DISPLAY_BACKTRACE(f, level);
-#ifdef EFL_HAVE_THREADS
+
 end:
-#endif
    vfprintf(f, fmt, args);
    putc('\n', f);
 #else

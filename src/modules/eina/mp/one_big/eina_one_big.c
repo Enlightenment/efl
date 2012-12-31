@@ -23,17 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-#endif
-
 #include <assert.h>
-
-#ifdef EFL_HAVE_WIN32_THREADS
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
 
 #include "eina_config.h"
 #include "eina_mempool.h"
@@ -78,7 +68,7 @@ struct _One_Big
    Eina_Inlist *over_list;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_t self;
+   Eina_Thread self;
 #endif
    Eina_Lock mutex;
 };
@@ -92,7 +82,7 @@ eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 
@@ -160,7 +150,7 @@ eina_one_big_free(void *data, void *ptr)
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 
@@ -233,7 +223,7 @@ eina_one_big_init(const char *context,
      }
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pool->self = pthread_self();
+   pool->self = eina_thread_self();
 #endif
    eina_lock_new(&pool->mutex);
 
@@ -253,7 +243,7 @@ eina_one_big_shutdown(void *data)
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 

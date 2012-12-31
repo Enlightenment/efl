@@ -20,8 +20,7 @@
 # include "config.h"
 #endif
 
-#if defined(EFL_HAVE_THREADS) && defined __linux__
-#include <pthread.h>
+#ifdef __linux__
 #include <errno.h>
 #include <sys/resource.h>
 #endif
@@ -29,7 +28,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-#if defined(EFL_HAVE_THREADS) && defined __linux__
+#ifdef __linux__
 
 /*
  * TODO: Test if RT priorities are right. However, make check should be run as
@@ -37,7 +36,7 @@
  */
 
 static void *
-_thread_run(void *arg EINA_UNUSED)
+_thread_run(void *arg EINA_UNUSED, Eina_Thread tid EINA_UNUSED)
 {
     int niceval = getpriority(PRIO_PROCESS, 0);
     int niceval2;
@@ -53,17 +52,17 @@ START_TEST(eina_test_sched_prio_drop)
 {
     int niceval = getpriority(PRIO_PROCESS, 0);
     int niceval2;
-    pthread_t tid;
+    Eina_Thread tid;
 
     eina_init();
 
-    pthread_create(&tid, NULL, _thread_run, NULL);
+    eina_thread_create(&tid, EINA_THREAD_NORMAL, -1, _thread_run, NULL);
 
     niceval2 = getpriority(PRIO_PROCESS, 0);
     /* niceness of main thread should not have changed */
     fail_if(niceval2 != niceval);
 
-    pthread_join(tid, NULL);
+    eina_thread_join(tid);
     /* niceness of main thread should not have changed */
     fail_if(niceval2 != niceval);
 

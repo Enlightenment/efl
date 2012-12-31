@@ -18,8 +18,6 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#ifdef EFL_HAVE_THREADS
-
 # define LK(x) Eina_Lock x
 # define LKI(x) eina_lock_new(&(x))
 # define LKD(x) eina_lock_free(&(x))
@@ -44,26 +42,6 @@
 # define PHS()        eina_thread_self()
 # define PHC(x, f, d) eina_thread_create(&(x), EINA_THREAD_BACKGROUND, -1, (void *)f, d)
 # define PHJ(x)       eina_thread_join(x)
-
-# ifdef EFL_HAVE_POSIX_THREADS
-#  include <pthread.h>
-#  ifdef __linux__
-#   include <sched.h>
-#   include <sys/resource.h>
-#   include <unistd.h>
-#   include <sys/syscall.h>
-#   include <errno.h>
-#  endif
-
-# else /* EFL_HAVE_WIN32_THREADS */
-
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-#  undef WIN32_LEAN_AND_MEAN
-
-# endif
-
-#endif
 
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
 typedef struct _Ecore_Pthread        Ecore_Pthread;
@@ -108,20 +86,16 @@ struct _Ecore_Pthread_Worker
 
    Ecore_Thread_Cb func_cancel;
    Ecore_Thread_Cb func_end;
-#ifdef EFL_HAVE_THREADS
                    PH(self);
    Eina_Hash      *hash;
                    CD(cond);
                    LK(mutex);
-#endif
 
    const void     *data;
 
    int cancel;
 
-#ifdef EFL_HAVE_THREADS
    LK(cancel_mutex);
-#endif
 
    Eina_Bool message_run : 1;
    Eina_Bool feedback_run : 1;
@@ -130,7 +104,6 @@ struct _Ecore_Pthread_Worker
    Eina_Bool no_queue : 1;
 };
 
-#ifdef EFL_HAVE_THREADS
 typedef struct _Ecore_Pthread_Notify Ecore_Pthread_Notify;
 struct _Ecore_Pthread_Notify
 {
@@ -156,11 +129,7 @@ struct _Ecore_Pthread_Message
    Eina_Bool sync : 1;
 };
 
-#endif
-
 static int _ecore_thread_count_max = 0;
-
-#ifdef EFL_HAVE_THREADS
 
 static void _ecore_thread_handler(void *data);
 
@@ -498,12 +467,9 @@ restart:
    return NULL;
 }
 
-#endif
-
 static Ecore_Pthread_Worker *
 _ecore_thread_worker_new(void)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *result;
 
    result = eina_trash_pop(&_ecore_thread_worker_trash);
@@ -519,9 +485,6 @@ _ecore_thread_worker_new(void)
    CDI(result->cond, result->mutex);
 
    return result;
-#else
-   return malloc(sizeof (Ecore_Pthread_Worker));
-#endif
 }
 
 void
@@ -531,20 +494,17 @@ _ecore_thread_init(void)
    if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
 
-#ifdef EFL_HAVE_THREADS
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
    LKI(_ecore_running_job_mutex);
    CDI(_ecore_thread_global_hash_cond, _ecore_thread_global_hash_mutex);
-#endif
 }
 
 void
 _ecore_thread_shutdown(void)
 {
    /* FIXME: If function are still running in the background, should we kill them ? */
-#ifdef EFL_HAVE_THREADS
     Ecore_Pthread_Worker *work;
     Eina_List *l;
     Eina_Bool test;
@@ -610,7 +570,6 @@ _ecore_thread_shutdown(void)
     LKD(_ecore_thread_global_hash_mutex);
     LKD(_ecore_running_job_mutex);
     CDD(_ecore_thread_global_hash_cond);
-#endif
 }
 
 EAPI Ecore_Thread *
@@ -621,12 +580,10 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 {
    Ecore_Pthread_Worker *work;
    Eina_Bool tried = EINA_FALSE;
-#ifdef EFL_HAVE_THREADS
    PH(thread);
-#endif
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   
+
    if (!func_blocking) return NULL;
 
    work = _ecore_thread_worker_new();
@@ -648,7 +605,6 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->no_queue = EINA_FALSE;
    work->data = data;
 
-#ifdef EFL_HAVE_THREADS
    work->self = 0;
    work->hash = NULL;
 
@@ -697,33 +653,11 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    eina_threads_shutdown();
 
    return (Ecore_Thread *)work;
-#else
-   /*
-      If no thread and as we don't want to break app that rely on this
-      facility, we will lock the interface until we are done.
-    */
-   do {
-        /* Handle reschedule by forcing it here. That would mean locking the app,
-         * would be better with an idler, but really to complex for a case where
-         * thread should really exist.
-         */
-          work->reschedule = EINA_FALSE;
-
-          func_blocking((void *)data, (Ecore_Thread *)work);
-          if (work->cancel == EINA_FALSE) func_end((void *)data, (Ecore_Thread *)work);
-          else func_cancel((void *)data, (Ecore_Thread *)work);
-     } while (work->reschedule == EINA_TRUE);
-
-   free(work);
-
-   return NULL;
-#endif
 }
 
 EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *volatile work = (Ecore_Pthread_Worker *)thread;
    Eina_List *l;
    int cancel;
@@ -794,10 +728,6 @@ ecore_thread_cancel(Ecore_Thread *thread)
    LKU(work->cancel_mutex);
 
    return EINA_FALSE;
-#else
-   (void) thread;
-   return EINA_TRUE;
-#endif
 }
 
 EAPI Eina_Bool
@@ -807,18 +737,15 @@ ecore_thread_check(Ecore_Thread *thread)
    int cancel;
 
    if (!worker) return EINA_TRUE;
-#ifdef EFL_HAVE_THREADS
    LKL(worker->cancel_mutex);
-#endif
+
    cancel = worker->cancel;
    /* FIXME: there is an insane bug driving me nuts here. I don't know if
     it's a race condition, some cache issue or some alien attack on our software.
     But ecore_thread_check will only work correctly with a printf, all the volatile,
     lock and even usleep don't help here... */
    /* fprintf(stderr, "wc: %i\n", cancel); */
-#ifdef EFL_HAVE_THREADS
    LKU(worker->cancel_mutex);
-#endif
    return cancel;
 }
 
@@ -830,13 +757,12 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
                           const void            *data,
                           Eina_Bool              try_no_queue)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker;
    Eina_Bool tried = EINA_FALSE;
    PH(thread);
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   
+
    if (!func_heavy) return NULL;
 
    worker = _ecore_thread_worker_new();
@@ -942,38 +868,6 @@ on_error:
    LKU(_ecore_pending_job_threads_mutex);
 
    return (Ecore_Thread *)worker;
-#else
-   Ecore_Pthread_Worker worker;
-
-   (void)try_no_queue;
-
-   /*
-      If no thread and as we don't want to break app that rely on this
-      facility, we will lock the interface until we are done.
-    */
-   worker.u.feedback_run.func_heavy = func_heavy;
-   worker.u.feedback_run.func_notify = func_notify;
-   worker.u.feedback_run.send = 0;
-   worker.u.feedback_run.received = 0;
-   worker.func_cancel = func_cancel;
-   worker.func_end = func_end;
-   worker.data = data;
-   worker.cancel = EINA_FALSE;
-   worker.feedback_run = EINA_TRUE;
-   worker.message_run = EINA_FALSE;
-   worker.kill = EINA_FALSE;
-
-   do {
-        worker.reschedule = EINA_FALSE;
-
-        func_heavy((void *)data, (Ecore_Thread *)&worker);
-
-        if (worker.cancel) func_cancel((void *)data, (Ecore_Thread *)&worker);
-        else func_end((void *)data, (Ecore_Thread *)&worker);
-     } while (worker.reschedule == EINA_TRUE);
-
-   return NULL;
-#endif
 }
 
 EAPI Eina_Bool
@@ -984,7 +878,6 @@ ecore_thread_feedback(Ecore_Thread *thread,
 
    if (!worker) return EINA_FALSE;
 
-#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    if (worker->feedback_run)
@@ -1027,11 +920,6 @@ ecore_thread_feedback(Ecore_Thread *thread,
      return EINA_FALSE;
 
    return EINA_TRUE;
-#else
-   worker->u.feedback_run.func_notify((void *)worker->data, thread, (void *)data);
-
-   return EINA_TRUE;
-#endif
 }
 
 #if 0
@@ -1042,7 +930,6 @@ ecore_thread_message_run(Ecore_Thread_Cb func_main,
 			 Ecore_Thread_Cb func_cancel,
 			 const void *data)
 {
-#ifdef EFL_HAVE_THREADS
   Ecore_Pthread_Worker *worker;
   PH(t);
 
@@ -1087,11 +974,6 @@ ecore_thread_message_run(Ecore_Thread_Cb func_main,
 
   CDD(worker->cond);
   LKD(worker->mutex);
-#else
-  /* Note: This type of thread can't and never will work without thread support */
-  WRN("ecore_thread_message_run called, but threads disable in Ecore, things will go wrong. Starting now !");
-# warning "You disabled threads support in ecore, I hope you know what you are doing !"
-#endif
 
   func_cancel((void *) data, NULL);
 
@@ -1106,9 +988,7 @@ ecore_thread_reschedule(Ecore_Thread *thread)
 
    if (!worker) return EINA_FALSE;
 
-#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
-#endif
 
    worker->reschedule = EINA_TRUE;
    return EINA_TRUE;
@@ -1117,18 +997,13 @@ ecore_thread_reschedule(Ecore_Thread *thread)
 EAPI int
 ecore_thread_active_get(void)
 {
-#ifdef EFL_HAVE_THREADS
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return _ecore_thread_count;
-#else
-   return 0;
-#endif
 }
 
 EAPI int
 ecore_thread_pending_get(void)
 {
-#ifdef EFL_HAVE_THREADS
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
@@ -1136,15 +1011,11 @@ ecore_thread_pending_get(void)
    ret = eina_list_count(_ecore_pending_job_threads);
    LKU(_ecore_pending_job_threads_mutex);
    return ret;
-#else
-   return 0;
-#endif
 }
 
 EAPI int
 ecore_thread_pending_feedback_get(void)
 {
-#ifdef EFL_HAVE_THREADS
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
@@ -1152,15 +1023,11 @@ ecore_thread_pending_feedback_get(void)
    ret = eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
    return ret;
-#else
-   return 0;
-#endif
 }
 
 EAPI int
 ecore_thread_pending_total_get(void)
 {
-#ifdef EFL_HAVE_THREADS
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
@@ -1168,9 +1035,6 @@ ecore_thread_pending_total_get(void)
    ret = eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
    return ret;
-#else
-   return 0;
-#endif
 }
 
 EAPI int
@@ -1201,16 +1065,12 @@ ecore_thread_max_reset(void)
 EAPI int
 ecore_thread_available_get(void)
 {
-#ifdef EFL_HAVE_THREADS
    int ret;
 
    LKL(_ecore_pending_job_threads_mutex);
    ret = _ecore_thread_count_max - _ecore_thread_count;
    LKU(_ecore_pending_job_threads_mutex);
    return ret;
-#else
-   return 0;
-#endif
 }
 
 EAPI Eina_Bool
@@ -1220,15 +1080,13 @@ ecore_thread_local_data_add(Ecore_Thread *thread,
                             Eina_Free_Cb  cb,
                             Eina_Bool     direct)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)thread;
    Ecore_Thread_Data *d;
    Eina_Bool ret;
-#endif
 
    if ((!thread) || (!key) || (!value))
      return EINA_FALSE;
-#ifdef EFL_HAVE_THREADS
+
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    if (!worker->hash)
@@ -1249,11 +1107,6 @@ ecore_thread_local_data_add(Ecore_Thread *thread,
      ret = eina_hash_add(worker->hash, key, d);
    CDB(worker->cond);
    return ret;
-#else
-   (void) cb;
-   (void) direct;
-   return EINA_FALSE;
-#endif
 }
 
 EAPI void *
@@ -1262,15 +1115,13 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
                             void         *value,
                             Eina_Free_Cb  cb)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)thread;
    Ecore_Thread_Data *d, *r;
    void *ret;
-#endif
 
    if ((!thread) || (!key) || (!value))
      return NULL;
-#ifdef EFL_HAVE_THREADS
+
    if (!PHE(worker->self, PHS())) return NULL;
 
    if (!worker->hash)
@@ -1290,24 +1141,18 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
    ret = r->data;
    free(r);
    return ret;
-#else
-   (void) cb;
-   return NULL;
-#endif
 }
 
 EAPI void *
 ecore_thread_local_data_find(Ecore_Thread *thread,
                              const char   *key)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)thread;
    Ecore_Thread_Data *d;
-#endif
 
    if ((!thread) || (!key))
      return NULL;
-#ifdef EFL_HAVE_THREADS
+
    if (!PHE(worker->self, PHS())) return NULL;
 
    if (!worker->hash)
@@ -1317,30 +1162,22 @@ ecore_thread_local_data_find(Ecore_Thread *thread,
    if (d)
      return d->data;
    return NULL;
-#else
-   return NULL;
-#endif
 }
 
 EAPI Eina_Bool
 ecore_thread_local_data_del(Ecore_Thread *thread,
                             const char   *key)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)thread;
-#endif
 
    if ((!thread) || (!key))
      return EINA_FALSE;
-#ifdef EFL_HAVE_THREADS
+
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    if (!worker->hash)
      return EINA_FALSE;
    return eina_hash_del_by_key(worker->hash, key);
-#else
-   return EINA_TRUE;
-#endif
 }
 
 EAPI Eina_Bool
@@ -1349,14 +1186,12 @@ ecore_thread_global_data_add(const char  *key,
                              Eina_Free_Cb cb,
                              Eina_Bool    direct)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Thread_Data *d;
    Eina_Bool ret;
-#endif
 
    if ((!key) || (!value))
      return EINA_FALSE;
-#ifdef EFL_HAVE_THREADS
+
    LRWKWL(_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
      _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -1378,11 +1213,6 @@ ecore_thread_global_data_add(const char  *key,
    LRWKU(_ecore_thread_global_hash_lock);
    CDB(_ecore_thread_global_hash_cond);
    return ret;
-#else
-   (void) cb;
-   (void) direct;
-   return EINA_TRUE;
-#endif
 }
 
 EAPI void *
@@ -1390,14 +1220,12 @@ ecore_thread_global_data_set(const char  *key,
                              void        *value,
                              Eina_Free_Cb cb)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Thread_Data *d, *r;
    void *ret;
-#endif
 
    if ((!key) || (!value))
      return NULL;
-#ifdef EFL_HAVE_THREADS
+
    LRWKWL(_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
      _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -1420,22 +1248,16 @@ ecore_thread_global_data_set(const char  *key,
    ret = r->data;
    free(r);
    return ret;
-#else
-   (void) cb;
-   return NULL;
-#endif
 }
 
 EAPI void *
 ecore_thread_global_data_find(const char *key)
 {
-#ifdef EFL_HAVE_THREADS
    Ecore_Thread_Data *ret;
-#endif
 
    if (!key)
      return NULL;
-#ifdef EFL_HAVE_THREADS
+
    if (!_ecore_thread_global_hash) return NULL;
 
    LRWKRL(_ecore_thread_global_hash_lock);
@@ -1444,21 +1266,16 @@ ecore_thread_global_data_find(const char *key)
    if (ret)
      return ret->data;
    return NULL;
-#else
-   return NULL;
-#endif
 }
 
 EAPI Eina_Bool
 ecore_thread_global_data_del(const char *key)
 {
-#ifdef EFL_HAVE_THREADS
    Eina_Bool ret;
-#endif
 
    if (!key)
      return EINA_FALSE;
-#ifdef EFL_HAVE_THREADS
+
    if (!_ecore_thread_global_hash)
      return EINA_FALSE;
 
@@ -1466,23 +1283,18 @@ ecore_thread_global_data_del(const char *key)
    ret = eina_hash_del_by_key(_ecore_thread_global_hash, key);
    LRWKU(_ecore_thread_global_hash_lock);
    return ret;
-#else
-   return EINA_TRUE;
-#endif
 }
 
 EAPI void *
 ecore_thread_global_data_wait(const char *key,
                               double      seconds)
 {
-#ifdef EFL_HAVE_THREADS
    double tm = 0;
    Ecore_Thread_Data *ret = NULL;
-#endif
 
    if (!key)
      return NULL;
-#ifdef EFL_HAVE_THREADS
+
    if (!_ecore_thread_global_hash)
      return NULL;
    if (seconds > 0)
@@ -1501,9 +1313,4 @@ ecore_thread_global_data_wait(const char *key,
      }
    if (ret) return ret->data;
    return NULL;
-#else
-   (void) seconds;
-   return NULL;
-#endif
 }
-

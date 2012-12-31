@@ -23,22 +23,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS
-#include <pthread.h>
-
-# ifdef EINA_HAVE_DEBUG_THREADS
-#  include <assert.h>
-# endif
+#ifdef EINA_HAVE_DEBUG_THREADS
+# include <assert.h>
 #endif
 
 #ifdef EINA_DEBUG_MALLOC
 # include <malloc.h>
-#endif
-
-#ifdef EFL_HAVE_WIN32_THREADS
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
 #endif
 
 #include "eina_config.h"
@@ -83,7 +73,7 @@ struct _Chained_Mempool
    int minimal_size;
 #endif
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_t self;
+   Eina_Tthread self;
 #endif
    Eina_Lock mutex;
 };
@@ -266,7 +256,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 
@@ -316,7 +306,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 
@@ -361,7 +351,7 @@ eina_chained_mempool_repack(void *data,
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(pthread_equal(pool->self, pthread_self()));
+        assert(eina_threadequal(pool->self, eina_threadself()));
 #endif
      }
 
@@ -479,7 +469,7 @@ eina_chained_mempool_init(const char *context,
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   mp->self = pthread_self();
+   mp->self = eina_threadself();
 #endif
 
    eina_lock_new(&mp->mutex);
@@ -523,7 +513,7 @@ eina_chained_mempool_shutdown(void *data)
    eina_lock_free(&mp->mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   assert(pthread_equal(mp->self, pthread_self()));
+   assert(eina_threadequal(mp->self, eina_threadself()));
 #endif
 
    free(mp);
