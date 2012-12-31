@@ -1654,8 +1654,6 @@ _eina_file_copy_splice_internal(int s, int d, off_t total, Eina_File_Copy_Progre
         else
           todo = total - done;
 
-        printf("loop done=%lld, total=%lld, todo=%zd\n", done, total, todo);
-
         ret = _eina_file_copy_read_splice_internal(s, pipefd[1], todo, &r);
         if (!ret) break;
 
