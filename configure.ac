@@ -810,7 +810,7 @@ AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
 
 ### Checks for library functions
 
-EFL_CHECK_FUNCS([EINA], [dlopen dladdr iconv shm_open setxattr])
+EFL_CHECK_FUNCS([EINA], [dlopen dladdr iconv shm_open splice setxattr])
 
 enable_log="no"
 if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then
@@ -3055,7 +3055,6 @@ EFL_ADD_LIBS([EIO], [-lm])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-EFL_CHECK_FUNCS([EIO], [splice setxattr])
 
 EFL_LIB_END([Eio])
 #### End of Eio

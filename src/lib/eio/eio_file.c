@@ -22,10 +22,6 @@
 #include "eio_private.h"
 #include "Eio.h"
 
-#ifdef HAVE_XATTR
-# include <sys/xattr.h>
-#endif
-
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -244,168 +240,8 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_
      }
 }
 
-static void
-_eio_eina_file_copy_xattr(Ecore_Thread *thread EINA_UNUSED,
-			  Eio_File_Progress *op EINA_UNUSED,
-			  Eina_File *f, int out)
-{
-   Eina_Iterator *it;
-   Eina_Xattr *attr;
-
-   it = eina_file_xattr_value_get(f);
-   EINA_ITERATOR_FOREACH(it, attr)
-     {
-#ifdef HAVE_XATTR
-        fsetxattr(out, attr->name, attr->value, attr->length, 0);
-#endif
-     }
-   eina_iterator_free(it);
-}
-
-#ifdef HAVE_XATTR
-static void
-_eio_file_copy_xattr(Ecore_Thread *thread EINA_UNUSED,
-                     Eio_File_Progress *op EINA_UNUSED,
-                     int in, int out)
-{
-   char *tmp;
-   ssize_t length;
-   ssize_t i;
-
-   length = flistxattr(in, NULL, 0);
-
-   if (length <= 0) return ;
-
-   tmp = alloca(length);
-   length = flistxattr(in, tmp, length);
-
-   for (i = 0; i < length; i += strlen(tmp) + 1)
-     {
-        ssize_t attr_length;
-        void *value;
-
-        attr_length = fgetxattr(in, tmp, NULL, 0);
-        if (!attr_length) continue ;
-
-        value = malloc(attr_length);
-        if (!value) continue ;
-        attr_length = fgetxattr(in, tmp, value, attr_length);
-
-        if (attr_length > 0)
-          fsetxattr(out, tmp, value, attr_length, 0);
-
-        free(value);
-     }
-}
-#endif
-
-static Eina_Bool
-_eio_file_write(int fd, void *mem, ssize_t length)
-{
-   ssize_t count;
-
-   if (length == 0) return EINA_TRUE;
-
-   count = write(fd, mem, length);
-   if (count != length) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
 #ifndef MAP_HUGETLB
 # define MAP_HUGETLB 0
-#endif
-
-static Eina_Bool
-_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, Eina_File *f, int out)
-{
-   char *m = MAP_FAILED;
-   long long i;
-   long long size;
-
-   size = eina_file_size_get(f);
-
-   for (i = 0; i < size; i += EIO_PACKET_SIZE * EIO_PACKET_COUNT)
-     {
-	int j;
-	int k;
-	int c;
-
-        m = eina_file_map_new(f, EINA_FILE_SEQUENTIAL,
-                              i, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
-	if (!m)
-	  goto on_error;
-
-	c = size - i;
-	if (c - EIO_PACKET_SIZE * EIO_PACKET_COUNT > 0)
-	  c = EIO_PACKET_SIZE * EIO_PACKET_COUNT;
-	else
-	  c = size - i;
-
-	for (j = EIO_PACKET_SIZE, k = 0; j < c; k = j, j += EIO_PACKET_SIZE)
-	  {
-	     if (!_eio_file_write(out, m + k, EIO_PACKET_SIZE))
-	       goto on_error;
-
-	     eio_progress_send(thread, op, i + j, size);
-	  }
-
-	if (!_eio_file_write(out, m + k, c - k))
-	  goto on_error;
-
-        if (eina_file_map_faulted(f, m))
-          goto on_error;
-
-	eio_progress_send(thread, op, i + c, size);
-
-        eina_file_map_free(f, m);
-	m = NULL;
-
-	if (ecore_thread_check(thread))
-          goto on_error;
-     }
-
-   return EINA_TRUE;
-
- on_error:
-   if (m != NULL) eina_file_map_free(f, m);
-   return EINA_FALSE;
-}
-
-#ifdef HAVE_SPLICE
-static int
-_eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, long long size)
-{
-   int result = 0;
-   long long count;
-   long long i;
-   int pipefd[2];
-
-   if (pipe(pipefd) < 0)
-     return -1;
-
-   for (i = 0; i < size; i += count)
-     {
-	count = splice(in, 0, pipefd[1], NULL, EIO_PACKET_SIZE * EIO_PACKET_COUNT, SPLICE_F_MORE | SPLICE_F_MOVE);
-	if (count < 0) goto on_error;
-
-	count = splice(pipefd[0], NULL, out, 0, count, SPLICE_F_MORE | SPLICE_F_MOVE);
-	if (count < 0) goto on_error;
-
-	eio_progress_send(thread, op, i, size);
-
-	if (ecore_thread_check(thread))
-          goto on_error;
-     }
-
-   result = 1;
-
- on_error:
-   if (result != 1 && (errno == EBADF || errno == EINVAL)) result = -1;
-   close(pipefd[0]);
-   close(pipefd[1]);
-
-   return result;
-}
 #endif
 
 static void
@@ -600,106 +436,35 @@ eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
    eio_progress_free(progress);
 }
 
+static Eina_Bool
+_eio_file_copy_progress(void *data, unsigned long long done, unsigned long long total)
+{
+   void **ctx = data;
+   Ecore_Thread *thread = ctx[0];
+   Eio_File_Progress *copy = ctx[1];
+
+   eio_progress_send(thread, copy, done, total);
+
+   return !ecore_thread_check(thread);
+}
+
 Eina_Bool
 eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 {
-   Eina_File *f;
-#ifdef HAVE_SPLICE
-   struct stat buf;
-   int in = -1;
-#endif
-   mode_t md;
-   int result = -1;
-   int out = -1;
+   void *ctx[2] = {thread, copy};
+   Eina_Bool ret = eina_file_copy(copy->source, copy->dest,
+                                  (EINA_FILE_COPY_PERMISSION |
+                                   EINA_FILE_COPY_XATTR),
+                                  _eio_file_copy_progress,
+                                  ctx);
 
-#ifdef HAVE_SPLICE
-   in = open(copy->source, O_RDONLY);
-   if (in < 0)
+   if (!ret)
      {
-	eio_file_thread_error(&copy->common, thread);
-	return EINA_FALSE;
+        eio_file_thread_error(&copy->common, thread);
+        return EINA_FALSE;
      }
-
-   /*
-     As we need file size for progression information and both copy method
-     call fstat (better than stat as it avoid race condition).
-    */
-   if (fstat(in, &buf) < 0)
-     goto on_error;
-
-   md = buf.st_mode;
-#endif
-
-   /* open write */
-   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-   if (out < 0)
-     goto on_error;
-
-#ifdef HAVE_SPLICE
-   /* fast file copy code using Linux splice API */
-   result = _eio_file_copy_splice(thread, copy, in, out, buf.st_size);
-   if (result == 0)
-     goto on_error;
-#endif
-
-   /* classic copy method using mmap and write */
-   if (result == -1)
-     {
-#ifndef HAVE_SPLICE
-        struct stat buf;
-
-        if (stat(copy->source, &buf) < 0)
-          goto on_error;
-
-        md = buf.st_mode;
-#endif
-
-        f = eina_file_open(copy->source, 0);
-        if (!f) goto on_error;
-
-        if (!_eio_file_copy_mmap(thread, copy, f, out))
-          {
-             eina_file_close(f);
-             goto on_error;
-          }
-
-        _eio_eina_file_copy_xattr(thread, copy, f, out);
-
-        eina_file_close(f);
-     }
-   else
-     {
-#if defined HAVE_XATTR && defined HAVE_SPLICE
-       _eio_file_copy_xattr(thread, copy, in, out);
-#endif
-     }
-
-   /* change access right to match source */
-#ifdef HAVE_FCHMOD
-   if (fchmod(out, md) != 0)
-     goto on_error;
-#else
-   if (chmod(copy->dest, md) != 0)
-     goto on_error;
-#endif
-
-   close(out);
-#ifdef HAVE_SPLICE
-   close(in);
-#endif
 
    return EINA_TRUE;
-
- on_error:
-   eio_file_thread_error(&copy->common, thread);
-
-#ifdef HAVE_SPLICE
-   if (in >= 0) close(in);
-#endif
-   if (out >= 0) close(out);
-   if (out >= 0)
-     unlink(copy->dest);
-   return EINA_FALSE;
 }
 
 void
