@@ -413,6 +413,22 @@ eina_inarray_push(Eina_Inarray *array, const void *data)
    return array->len - 1;
 }
 
+EAPI void *
+eina_inarray_add(Eina_Inarray *array)
+{
+   void *p;
+
+   EINA_MAGIC_CHECK_INARRAY(array, NULL);
+
+   if (!_eina_inarray_resize(array, array->len + 1))
+     return NULL;
+
+   p = _eina_inarray_get(array, array->len);
+   array->len++;
+
+   return p;
+}
+
 EAPI int
 eina_inarray_insert(Eina_Inarray *array, const void *data, Eina_Compare_Cb compare)
 {
@@ -507,7 +523,7 @@ eina_inarray_pop(Eina_Inarray *array)
    if (!_eina_inarray_resize(array, array->len - 1))
      return NULL;
    array->len--;
-   return _eina_inarray_get(array, array->len + 1);
+   return _eina_inarray_get(array, array->len);
 }
 
 EAPI void *
