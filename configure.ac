@@ -3055,74 +3055,7 @@ EFL_ADD_LIBS([EIO], [-lm])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-
-# Check for splice system call
-
-AC_MSG_CHECKING([whether to use splice for file copy])
-AC_TRY_LINK(
-   [
-#if defined(HAVE_UNISTD_H)
-# include <unistd.h>
-#endif
-#include <fcntl.h>
-   ],
-   [
-long ret = splice(0,0,1,0,400,0);
-   ],
-   [have_splice="yes"],
-   [have_splice="no"])
-AC_MSG_RESULT([${have_splice}])
-
-if test "x${have_splice}" = "xyes" ; then
-   AC_DEFINE([HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
-fi
-
-# Check for lstat
-
-AC_MSG_CHECKING([whether lstat is available])
-AC_TRY_LINK(
-   [
-#include <sys/types.h>
-#include <sys/stat.h>
-#if defined(HAVE_UNISTD_H)
-# include <unistd.h>
-#endif
-   ],
-   [
-struct stat st;
-lstat("/tmp", &st);
-   ],
-   [have_lstat="yes"],
-   [have_lstat="no"])
-AC_MSG_RESULT([${have_lstat}])
-
-if test "x${have_lstat}" = "xyes" ; then
-   AC_DEFINE([HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
-fi
-
-# extended attribute
-
-AC_MSG_CHECKING([for extended attributes])
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/xattr.h>
-       ]],
-       [[
-size_t tmp = listxattr("/", NULL, 0);
-tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
-setxattr("/", "user.ethumb.md5", NULL, 0, 0);
-       ]])],
-   [
-    AC_DEFINE([HAVE_XATTR], [1], [Define to 1 if you have the `listxattr', `setxattr' and `getxattr' functions.])
-    have_xattr="yes"
-   ],
-   [have_xattr="no"])
-
-AC_MSG_RESULT([${have_xattr}])
+EFL_CHECK_FUNCS([EIO], [splice setxattr])
 
 EFL_LIB_END([Eio])
 #### End of Eio

@@ -675,7 +675,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
      }
 
    /* change access right to match source */
-#ifdef HAVE_CHMOD
+#ifdef HAVE_FCHMOD
    if (fchmod(out, md) != 0)
      goto on_error;
 #else

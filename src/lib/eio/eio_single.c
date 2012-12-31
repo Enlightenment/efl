@@ -151,7 +151,6 @@ _eio_file_stat(void *data, Ecore_Thread *thread)
    _eio_file_struct_2_eina(&s->buffer, &buf);
 }
 
-#ifdef HAVE_LSTAT
 static void
 _eio_file_lstat(void *data, Ecore_Thread *thread)
 {
@@ -163,7 +162,6 @@ _eio_file_lstat(void *data, Ecore_Thread *thread)
 
    _eio_file_struct_2_eina(&s->buffer, &buf);
 }
-#endif
 
 static void
 _eio_stat_free(Eio_File_Stat *s)
@@ -447,7 +445,6 @@ eio_file_direct_lstat(const char *path,
 		      Eio_Error_Cb error_cb,
 		      const void *data)
 {
-#ifdef HAVE_LSTAT
    Eio_File_Stat *s = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
@@ -470,9 +467,6 @@ eio_file_direct_lstat(const char *path,
      return NULL;
 
    return &s->common;
-#else
-   return eio_file_direct_stat(path, done_cb, error_cb, data);
-#endif
 }
 
 EAPI Eio_File *
