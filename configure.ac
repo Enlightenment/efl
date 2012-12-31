@@ -232,7 +232,7 @@ LT_INIT([win32-dll disable-static disable-fast-install pic-only])
 EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
 AC_SUBST(EFL_LTLIBRARY_FLAGS)
 
-EFL_LTMODULE_FLAGS="-no-undefined -module -avoid-version"
+EFL_LTMODULE_FLAGS="-no-undefined -avoid-version"
 AC_SUBST([EFL_LTMODULE_FLAGS])
 
 ### gettext
@@ -593,7 +593,6 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
 EVIL_LIBS=""
 EVIL_DLFCN_LIBS=""
 if test "${have_wince}" = "xyes"; then
@@ -775,14 +774,6 @@ AC_DEFINE_IF([EINA_DEBUG_MALLOC],
 EFL_EVAL_PKGS([EINA])
 
 ## Examples
-
-# TODO: add once ecore-evas is merged:
-#PKG_CHECK_MODULES([ECORE_EVAS],
-#   [ecore-evas ecore evas],
-#   [build_tiler_example="yes"],
-#   [build_tiler_example="no"])
-
-AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 ## Benchmarks
 

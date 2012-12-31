@@ -95,7 +95,7 @@ lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
 @IBUS_LIBS@
-modules_ecore_immodules_ibus_ibus_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_immodules_ibus_ibus_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_ibus_ibus_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -130,7 +130,7 @@ lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
 @SCIM_LIBS@
-modules_ecore_immodules_scim_scim_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_immodules_scim_scim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_scim_scim_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -158,6 +158,6 @@ lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la
-modules_ecore_immodules_xim_xim_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_immodules_xim_xim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_xim_xim_la_LIBTOOLFLAGS = --tag=disable-static
 endif

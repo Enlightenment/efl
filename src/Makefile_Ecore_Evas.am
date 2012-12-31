@@ -59,7 +59,7 @@ ecoreevasenginebufferpkg_LTLIBRARIES = modules/ecore_evas/engines/buffer/module.
 modules_ecore_evas_engines_buffer_module_la_SOURCES = $(BUFFERSOURCES)
 modules_ecore_evas_engines_buffer_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
 modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la
-modules_ecore_evas_engines_buffer_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_buffer_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -77,7 +77,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_x_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_x/libecore_x.la
-modules_ecore_evas_engines_x_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_x_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_x_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -93,7 +93,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_cocoa_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_cocoa/libecore_cocoa.la
-modules_ecore_evas_engines_cocoa_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_cocoa_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_cocoa_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -109,7 +109,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_fb_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_fb/libecore_fb.la
-modules_ecore_evas_engines_fb_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_fb_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_fb_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -125,7 +125,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_psl1ght_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_psl1ght/libecore_psl1ght.la
-modules_ecore_evas_engines_psl1ght_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_psl1ght_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_psl1ght_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -147,7 +147,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_wayland_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_wayland/libecore_wayland.la
-modules_ecore_evas_engines_wayland_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_wayland_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -164,7 +164,7 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_sdl_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_sdl/libecore_sdl.la
-modules_ecore_evas_engines_sdl_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_sdl_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_sdl_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -182,6 +182,6 @@ $(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
 modules_ecore_evas_engines_win32_module_la_LIBADD = \
 lib/ecore/libecore_evas.la \
 lib/ecore_win32/libecore_win32.la
-modules_ecore_evas_engines_win32_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_win32_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_win32_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif

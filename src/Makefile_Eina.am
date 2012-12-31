@@ -164,7 +164,7 @@ chained_pool_module_la_CPPFLAGS = \
 chained_pool_module_la_CFLAGS = @EINA_CFLAGS@ @VALGRIND_CFLAGS@
 chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 chained_pool_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
-chained_pool_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+chained_pool_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 chained_pool_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -181,7 +181,7 @@ one_big_module_la_CPPFLAGS = \
 one_big_module_la_CFLAGS = @EINA_CFLAGS@ @VALGRIND_CFLAGS@
 one_big_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 one_big_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
-one_big_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+one_big_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 one_big_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -198,7 +198,7 @@ pass_through_module_la_CPPFLAGS = \
 pass_through_module_la_CFLAGS = @EINA_CFLAGS@ @VALGRIND_CFLAGS@
 pass_through_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 pass_through_module_la_LIBADD = lib/eina/libeina.la @EINA_LIBS@
-pass_through_module_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+pass_through_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 pass_through_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
@@ -313,7 +313,7 @@ tests_eina_module_dummy_la_LIBADD = \
 lib/eina/libeina.la \
 @EINA_LIBS@
 
-tests_eina_module_dummy_la_LDFLAGS = @EFL_LTMODULE_FLAGS@
+tests_eina_module_dummy_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 
 tests_eina_module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 
