@@ -759,7 +759,7 @@ EFL_ADD_LIBS([EINA], [-lm])
 ## Options
 
 # Valgrind
-if test "x${have_valgrind}" = "xno"; then
+if test "${want_valgrind}" = "no"; then
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 else
     PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0])
