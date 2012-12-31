@@ -351,6 +351,13 @@ struct _Evas_Thread_Command_Map
    int smooth, level, offset;
 };
 
+Eina_Mempool *_mp_command_rect = NULL;
+Eina_Mempool *_mp_command_line = NULL;
+Eina_Mempool *_mp_command_polygon = NULL;
+Eina_Mempool *_mp_command_image = NULL;
+Eina_Mempool *_mp_command_font = NULL;
+Eina_Mempool *_mp_command_map = NULL;
+
 /*
  *****
  **
@@ -502,25 +509,30 @@ _draw_thread_rectangle_draw(void *data)
     evas_common_rectangle_rgba_draw(rect->surface,
                                     rect->color, rect->render_op,
                                     rect->x, rect->y, rect->w, rect->h);
+
+    eina_mempool_free(_mp_command_rect, rect);
 }
 
 static void
 _draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
-   Evas_Thread_Command_Rect cr;
+   Evas_Thread_Command_Rect *cr;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
    if ((w <= 0) || (h <= 0)) return;
 
-   cr.surface = dst;
-   cr.color = dc->col.col;
-   cr.render_op = dc->render_op;
-   cr.x = x;
-   cr.y = y;
-   cr.w = w;
-   cr.h = h;
+   cr = eina_mempool_malloc(_mp_command_rect, sizeof (Evas_Thread_Command_Rect));
+   if (!cr) return ;
 
-   evas_thread_cmd_enqueue(_draw_thread_rectangle_draw, &cr, sizeof(cr));
+   cr->surface = dst;
+   cr->color = dc->col.col;
+   cr->render_op = dc->render_op;
+   cr->x = x;
+   cr->y = y;
+   cr->w = w;
+   cr->h = h;
+
+   evas_thread_cmd_enqueue(_draw_thread_rectangle_draw, cr);
 }
 
 static void
@@ -574,21 +586,26 @@ _draw_thread_line_draw(void *data)
         line->color, line->render_op,
         line->x1, line->y1,
         line->x2, line->y2);
+
+   eina_mempool_free(_mp_command_line, line);
 }
 
 static void
 _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
 {
-   Evas_Thread_Command_Line cl;
+   Evas_Thread_Command_Line *cl;
    int clx, cly, clw, clh;
    int cx, cy, cw, ch;
    int x, y, w, h;
 
-   cl.surface = dst;
+   cl = eina_mempool_malloc(_mp_command_line, sizeof (Evas_Thread_Command_Line));
+   if (!cl) return ;
+
+   cl->surface = dst;
 
    if ((x1 == x2) && (y1 == y2))
      {
-        EINA_RECTANGLE_SET(&cl.clip,
+        EINA_RECTANGLE_SET(&cl->clip,
                            dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
         goto done;
      }
@@ -605,7 +622,11 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    if (dc->clip.use)
      {
 	RECTS_CLIP_TO_RECT(clx, cly, clw, clh, cx, cy, cw, ch);
-	if ((clw < 1) || (clh < 1)) return;
+	if ((clw < 1) || (clh < 1))
+          {
+             eina_mempool_free(_mp_command_line, cl);
+             return;
+          }
      }
 
    x = MIN(x1, x2);
@@ -614,20 +635,24 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    h = MAX(y1, y2) - y + 1;
 
    RECTS_CLIP_TO_RECT(clx, cly, clw, clh, x, y, w, h);
-   if ((clw < 1) || (clh < 1)) return;
+   if ((clw < 1) || (clh < 1))
+     {
+        eina_mempool_free(_mp_command_line, cl);
+        return;
+     }
 
-   EINA_RECTANGLE_SET(&cl.clip, clx, cly, clw, clh);
+   EINA_RECTANGLE_SET(&cl->clip, clx, cly, clw, clh);
 
  done:
-   cl.color = dc->col.col;
-   cl.render_op = dc->render_op;
-   cl.anti_alias = dc->anti_alias;
-   cl.x1 = x1;
-   cl.y1 = y1;
-   cl.x2 = x2;
-   cl.y2 = y2;
+   cl->color = dc->col.col;
+   cl->render_op = dc->render_op;
+   cl->anti_alias = dc->anti_alias;
+   cl->x1 = x1;
+   cl->y1 = y1;
+   cl->x2 = x2;
+   cl->y2 = y2;
 
-   evas_thread_cmd_enqueue(_draw_thread_line_draw, &cl, sizeof(cl));
+   evas_thread_cmd_enqueue(_draw_thread_line_draw, cl);
 }
 
 static void
@@ -688,6 +713,7 @@ _draw_thread_polygon_draw(void *data)
       poly->points, poly->x, poly->y);
 
    _draw_thread_polygon_cleanup(poly);
+   eina_mempool_free(_mp_command_polygon, poly);
 }
 
 static void
@@ -717,7 +743,7 @@ static void
 _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points, int x, int y)
 {
    int ext_x, ext_y, ext_w, ext_h;
-   Evas_Thread_Command_Polygon cp;
+   Evas_Thread_Command_Polygon *cp;
 
    ext_x = 0;
    ext_y = 0;
@@ -745,17 +771,20 @@ _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
           ext_h = (dc->clip.y + dc->clip.h) - ext_y;
      }
 
-   EINA_RECTANGLE_SET(&cp.ext, ext_x, ext_y, ext_w, ext_h);
-   cp.col = dc->col.col;
-   cp.render_op = dc->render_op;
-   cp.surface = dst;
+   cp = eina_mempool_malloc(_mp_command_polygon, sizeof (Evas_Thread_Command_Polygon));
+   if (!cp) return ;
 
-   _polygon_draw_thread_points_populate(&cp, points);
+   EINA_RECTANGLE_SET(&cp->ext, ext_x, ext_y, ext_w, ext_h);
+   cp->col = dc->col.col;
+   cp->render_op = dc->render_op;
+   cp->surface = dst;
 
-   cp.x = x;
-   cp.y = y;
+   _polygon_draw_thread_points_populate(cp, points);
 
-   evas_thread_cmd_enqueue(_draw_thread_polygon_draw, &cp, sizeof(cp));
+   cp->x = x;
+   cp->y = y;
+
+   evas_thread_cmd_enqueue(_draw_thread_polygon_draw, cp);
 }
 
 static void
@@ -1156,12 +1185,13 @@ draw_thread_image_draw(void *data)
         image->dst.x, image->dst.y, image->dst.w, image->dst.h);
 
    evas_async_events_put(image->image, 0, NULL, _drop_cache_ref);
+   eina_mempool_free(_mp_command_image, image);
 }
 
 static void
 _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
 {
-   Evas_Thread_Command_Image cr;
+   Evas_Thread_Command_Image *cr;
    int clip_x, clip_y, clip_w, clip_h;
 
    if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
@@ -1175,10 +1205,13 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
 #endif
      evas_cache_image_ref((Image_Entry *)src);
 
-   cr.image = src;
-   cr.surface = dst;
-   EINA_RECTANGLE_SET(&cr.src, src_region_x, src_region_y, src_region_w, src_region_h);
-   EINA_RECTANGLE_SET(&cr.dst, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+   cr = eina_mempool_malloc(_mp_command_image, sizeof (Evas_Thread_Command_Image));
+   if (!cr) return ;
+
+   cr->image = src;
+   cr->surface = dst;
+   EINA_RECTANGLE_SET(&cr->src, src_region_x, src_region_y, src_region_w, src_region_h);
+   EINA_RECTANGLE_SET(&cr->dst, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
 
    if (dc->clip.use)
      {
@@ -1195,13 +1228,13 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
 	clip_h = dst->cache_entry.h;
      }
 
-   EINA_RECTANGLE_SET(&cr.clip, clip_x, clip_y, clip_w, clip_h);
+   EINA_RECTANGLE_SET(&cr->clip, clip_x, clip_y, clip_w, clip_h);
 
-   cr.mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
-   cr.render_op = dc->render_op;
-   cr.smooth = smooth;
+   cr->mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+   cr->render_op = dc->render_op;
+   cr->smooth = smooth;
 
-   evas_thread_cmd_enqueue(draw_thread_image_draw, &cr, sizeof(cr));
+   evas_thread_cmd_enqueue(draw_thread_image_draw, cr);
 }
 
 static void
@@ -1452,14 +1485,15 @@ _draw_thread_map_draw(void *data)
    while ((m->count > 4) && (m->count - offset >= 3));
 
  free_out:
-   free(m);
+   free(m); // FIXME: allocating and destroying map do have perf impact... ref counting would be better
    evas_async_events_put(map->image, 0, NULL, _drop_cache_ref);
+   eina_mempool_free(_mp_command_map, map);
 }
 
 static void
 _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset)
 {
-   Evas_Thread_Command_Map cm;
+   Evas_Thread_Command_Map *cm;
    int clip_x, clip_y, clip_w, clip_h;
 
 #ifdef EVAS_CSERVE2
@@ -1469,9 +1503,12 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 #endif
      evas_cache_image_ref((Image_Entry *)src);
 
-   cm.image = src;
-   memcpy(&cm.image_ctx, dc, sizeof(*dc));
-   cm.surface = dst;
+   cm = eina_mempool_malloc(_mp_command_map, sizeof (Evas_Thread_Command_Map));
+   if (!cm) return ;
+
+   cm->image = src;
+   memcpy(&cm->image_ctx, dc, sizeof(*dc));
+   cm->surface = dst;
 
    if (dc->clip.use)
      {
@@ -1487,28 +1524,28 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 	clip_h = dst->cache_entry.h;
      }
 
-   EINA_RECTANGLE_SET(&cm.clip, clip_x, clip_y, clip_w, clip_h);
+   EINA_RECTANGLE_SET(&cm->clip, clip_x, clip_y, clip_w, clip_h);
 
-   cm.mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
-   cm.render_op = dc->render_op;
+   cm->mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+   cm->render_op = dc->render_op;
 
-   cm.map = calloc(1, sizeof(RGBA_Map) +
-                   sizeof(RGBA_Map_Point) * map->count);
-   cm.map->engine_data = map->engine_data;
-   cm.map->image.w = map->image.w;
-   cm.map->image.h = map->image.h;
-   cm.map->uv.w = map->uv.w;
-   cm.map->uv.h = map->uv.h;
-   cm.map->x = map->x;
-   cm.map->y = map->y;
-   cm.map->count = map->count;
-   memcpy(&cm.map->pts[0], &map->pts[0], sizeof(RGBA_Map_Point) * map->count);
+   cm->map = calloc(1, sizeof(RGBA_Map) +
+                    sizeof(RGBA_Map_Point) * map->count);
+   cm->map->engine_data = map->engine_data;
+   cm->map->image.w = map->image.w;
+   cm->map->image.h = map->image.h;
+   cm->map->uv.w = map->uv.w;
+   cm->map->uv.h = map->uv.h;
+   cm->map->x = map->x;
+   cm->map->y = map->y;
+   cm->map->count = map->count;
+   memcpy(&cm->map->pts[0], &map->pts[0], sizeof(RGBA_Map_Point) * map->count);
 
-   cm.smooth = smooth;
-   cm.level = level;
-   cm.offset = offset;
+   cm->smooth = smooth;
+   cm->level = level;
+   cm->offset = offset;
 
-   evas_thread_cmd_enqueue(_draw_thread_map_draw, &cm, sizeof(cm));
+   evas_thread_cmd_enqueue(_draw_thread_map_draw, cm);
 }
 
 static void
@@ -1891,32 +1928,36 @@ _draw_thread_font_draw(void *data)
       font->im_w, font->im_h);
 
    evas_common_font_glyphs_unref(font->glyphs);
+   eina_mempool_free(_mp_command_font, font);
 }
 
 static void
 _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h)
 {
-   Evas_Thread_Command_Font cf;
+   Evas_Thread_Command_Font *cf;
 
-   cf.dst = dst;
-   cf.x = x;
-   cf.y = y;
-   cf.gl_new = dc->font_ext.func.gl_new;
-   cf.gl_free = dc->font_ext.func.gl_free;
-   cf.gl_draw = dc->font_ext.func.gl_draw;
-   cf.font_ext_data = dc->font_ext.data;
-   cf.col = dc->col.col;
-   cf.clip_use = dc->clip.use;
-   EINA_RECTANGLE_SET(&cf.clip_rect,
+   cf = eina_mempool_malloc(_mp_command_font, sizeof (Evas_Thread_Command_Font));
+   if (!cf) return ;
+
+   cf->dst = dst;
+   cf->x = x;
+   cf->y = y;
+   cf->gl_new = dc->font_ext.func.gl_new;
+   cf->gl_free = dc->font_ext.func.gl_free;
+   cf->gl_draw = dc->font_ext.func.gl_draw;
+   cf->font_ext_data = dc->font_ext.data;
+   cf->col = dc->col.col;
+   cf->clip_use = dc->clip.use;
+   EINA_RECTANGLE_SET(&cf->clip_rect,
                       dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
-   cf.glyphs = glyphs;
-   cf.func = func;
-   EINA_RECTANGLE_SET(&cf.ext, ext_x, ext_y, ext_w, ext_h);
-   cf.im_w = im_w;
-   cf.im_h = im_h;
+   cf->glyphs = glyphs;
+   cf->func = func;
+   EINA_RECTANGLE_SET(&cf->ext, ext_x, ext_y, ext_w, ext_h);
+   cf->im_w = im_w;
+   cf->im_h = im_h;
 
    evas_common_font_glyphs_ref(glyphs);
-   evas_thread_cmd_enqueue(_draw_thread_font_draw, &cf, sizeof(cf));
+   evas_thread_cmd_enqueue(_draw_thread_font_draw, cf);
 }
 
 static void
@@ -3434,6 +3475,25 @@ module_open(Evas_Module *em)
         return 0;
      }
 
+   _mp_command_rect = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Rect", NULL,
+                                       sizeof (Evas_Thread_Command_Rect), 128);
+   _mp_command_line = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Line", NULL,
+                                       sizeof (Evas_Thread_Command_Line), 32);
+   _mp_command_polygon = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Polygon", NULL,
+                                       sizeof (Evas_Thread_Command_Polygon), 32);
+   _mp_command_image = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Image", NULL,
+                                       sizeof (Evas_Thread_Command_Image), 128);
+   _mp_command_font = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Font", NULL,
+                                       sizeof (Evas_Thread_Command_Font), 128);
+   _mp_command_map = eina_mempool_add("chained_mempool",
+                                       "Evas_Thread_Command_Map", NULL,
+                                       sizeof (Evas_Thread_Command_Map), 64);
+
    init_gl();
    evas_common_pipe_init();
 
@@ -3445,7 +3505,13 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-  eina_log_domain_unregister(_evas_soft_gen_log_dom);
+   eina_mempool_del(_mp_command_rect);
+   eina_mempool_del(_mp_command_line);
+   eina_mempool_del(_mp_command_polygon);
+   eina_mempool_del(_mp_command_image);
+   eina_mempool_del(_mp_command_font);
+   eina_mempool_del(_mp_command_map);
+   eina_log_domain_unregister(_evas_soft_gen_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
