@@ -70,18 +70,6 @@ void *alloca (size_t);
 # include <libgen.h>
 #endif
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-#endif
-
-#ifdef EFL_HAVE_WIN32_THREADS
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif

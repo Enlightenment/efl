@@ -30,24 +30,6 @@ EAPI Eio_Version *eio_version = &_version;
  * @cond LOCAL
  */
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# define EIO_MUTEX_TYPE         pthread_mutex_t
-# define EIO_MUTEX_INITIALIZER  PTHREAD_MUTEX_INITIALIZER
-# define EIO_MUTEX_INIT(Pool)
-# define EIO_MUTEX_LOCK(Pool)   pthread_mutex_lock(&Pool->lock)
-# define EIO_MUTEX_UNLOCK(Pool) pthread_mutex_unlock(&Pool->lock)
-# define EIO_MUTEX_DESTROY(Pool)
-#endif
-
-#ifdef EFL_HAVE_WIN32_THREADS
-# define EIO_MUTEX_TYPE          HANDLE
-# define EIO_MUTEX_INITIALIZER   NULL
-# define EIO_MUTEX_INIT(Pool)    Pool.lock = CreateMutex(NULL, FALSE, NULL)
-# define EIO_MUTEX_LOCK(Pool)    WaitForSingleObject(Pool->lock, INFINITE)
-# define EIO_MUTEX_UNLOCK(Pool)  ReleaseMutex(Pool->lock)
-# define EIO_MUTEX_DESTROY(Pool) CloseHandle(Pool.lock)
-#endif
-
 /* Progress pool */
 typedef struct _Eio_Alloc_Pool Eio_Alloc_Pool;
 
@@ -56,16 +38,16 @@ struct _Eio_Alloc_Pool
    int count;
    Eina_Trash *trash;
 
-   EIO_MUTEX_TYPE lock;
+   Eina_Lock lock;
 };
 
 static int _eio_init_count = 0;
 int _eio_log_dom_global = -1;
 
-static Eio_Alloc_Pool progress_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
-static Eio_Alloc_Pool direct_info_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
-static Eio_Alloc_Pool char_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
-static Eio_Alloc_Pool associate_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
+static Eio_Alloc_Pool progress_pool;
+static Eio_Alloc_Pool direct_info_pool;
+static Eio_Alloc_Pool char_pool;
+static Eio_Alloc_Pool associate_pool;
 
 static void *
 _eio_pool_malloc(Eio_Alloc_Pool *pool, size_t sz)
@@ -74,10 +56,10 @@ _eio_pool_malloc(Eio_Alloc_Pool *pool, size_t sz)
 
    if (pool->count)
      {
-        EIO_MUTEX_LOCK(pool);
+        eina_lock_take(&(pool->lock));
         result = eina_trash_pop(&pool->trash);
         if (result) pool->count--;
-        EIO_MUTEX_UNLOCK(pool);
+        eina_lock_release(&(pool->lock));
      }
 
    if (!result) result = malloc(sz);
@@ -93,10 +75,10 @@ _eio_pool_free(Eio_Alloc_Pool *pool, void *data)
      }
    else
      {
-        EIO_MUTEX_LOCK(pool);
+        eina_lock_take(&(pool->lock));
         eina_trash_push(&pool->trash, data);
         pool->count++;
-        EIO_MUTEX_UNLOCK(pool);
+        eina_lock_release(&(pool->lock));
      }
 }
 
@@ -234,10 +216,15 @@ eio_init(void)
         goto unregister_log_domain;
      }
 
-   EIO_MUTEX_INIT(progress_pool);
-   EIO_MUTEX_INIT(direct_info_pool);
-   EIO_MUTEX_INIT(char_pool);
-   EIO_MUTEX_INIT(associate_pool);
+   memset(&progress_pool, 0, sizeof(progress_pool));
+   memset(&direct_info_pool, 0, sizeof(direct_info_pool));
+   memset(&char_pool, 0, sizeof(char_pool));
+   memset(&associate_pool, 0, sizeof(associate_pool));
+
+   eina_lock_new(&(progress_pool.lock));
+   eina_lock_new(&(direct_info_pool.lock));
+   eina_lock_new(&(char_pool.lock));
+   eina_lock_new(&(associate_pool.lock));
 
    eio_monitor_init();
 
@@ -269,10 +256,10 @@ eio_shutdown(void)
 
    eio_monitor_shutdown();
 
-   EIO_MUTEX_DESTROY(direct_info_pool);
-   EIO_MUTEX_DESTROY(progress_pool);
-   EIO_MUTEX_DESTROY(char_pool);
-   EIO_MUTEX_DESTROY(associate_pool);
+   eina_lock_free(&(direct_info_pool.lock));
+   eina_lock_free(&(progress_pool.lock));
+   eina_lock_free(&(char_pool.lock));
+   eina_lock_free(&(associate_pool.lock));
 
    /* Cleanup pool */
    EINA_TRASH_CLEAN(&progress_pool.trash, pg)
