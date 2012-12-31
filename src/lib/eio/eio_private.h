@@ -58,10 +58,6 @@ void *alloca (size_t);
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#ifdef HAVE_PWD_H
-# include <pwd.h>
-#endif
-
 #ifdef HAVE_FEATURES_H
 # include <features.h>
 #endif
@@ -72,10 +68,6 @@ void *alloca (size_t);
 
 #ifdef HAVE_LIBGEN_H
 # include <libgen.h>
-#endif
-
-#ifdef HAVE_GRP_H
-# include <grp.h>
 #endif
 
 #ifdef EFL_HAVE_POSIX_THREADS
@@ -106,6 +98,9 @@ typedef struct __stat64 _eio_stat_t;
 typedef struct stat _eio_stat_t;
 #define _eio_stat(p, b) stat(p, b)
 #define _eio_lstat(p, b) lstat(p, b)
+
+# include <grp.h>
+# include <pwd.h>
 #endif
 
 /* Keeping 32 Eio_File_Progress alive should be enought */

@@ -3046,8 +3046,6 @@ EFL_ADD_LIBS([EIO], [-lm])
 
 ### Checks for header files
 
-AC_CHECK_HEADERS([grp.h pwd.h])
-
 ### Checks for types
 
 ### Checks for structures
@@ -3057,8 +3055,6 @@ AC_CHECK_HEADERS([grp.h pwd.h])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-
-AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
 
 # Check for splice system call
 
