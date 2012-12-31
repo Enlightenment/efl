@@ -973,6 +973,8 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
    eina_stringshare_replace(&o->cur.utf8_text, _text);
    o->prev.utf8_text = NULL;
 
+   if (o->cur.text != text) free(text);
+
    o->changed = 1;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
