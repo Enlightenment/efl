@@ -228,7 +228,7 @@ AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 if test "x${have_windows}" = "xyes" ; then
    lt_cv_deplibs_check_method='pass_all'
 fi
-LT_INIT([win32-dll disable-static disable-fast-install pic-only])
+LT_INIT([win32-dll disable-static pic-only])
 EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
 AC_SUBST(EFL_LTLIBRARY_FLAGS)
 
