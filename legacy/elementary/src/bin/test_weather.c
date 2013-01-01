@@ -145,6 +145,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_object_text_set(en, "Paris");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(en, "activated", _apply_cb, NULL);
    elm_box_pack_end(bx0, en);
    evas_object_show(en);
 
