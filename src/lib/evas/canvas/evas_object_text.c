@@ -153,20 +153,22 @@ static void
 _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
 {
    /* FIXME: also preserve item */
-   if (o->cur.font == o->prev.font &&
-       o->cur.fdesc == o->prev.fdesc &&
-       o->cur.size == o->prev.size &&
-       !memcmp(&o->cur.outline, &o->prev.outline, sizeof (o->cur.outline)) &&
-       !memcmp(&o->cur.shadow, &o->prev.shadow, sizeof (o->cur.shadow)) &&
-       !memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow)) &&
-       !memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2)) &&
-       o->cur.style == o->prev.style &&
-       obj->cur.scale == obj->prev.scale)
+   if ((o->cur.font == o->prev.font) &&
+       (o->cur.fdesc == o->prev.fdesc) &&
+       (o->cur.size == o->prev.size) &&
+       (!memcmp(&o->cur.outline, &o->prev.outline, sizeof (o->cur.outline))) &&
+       (!memcmp(&o->cur.shadow, &o->prev.shadow, sizeof (o->cur.shadow))) &&
+       (!memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow))) &&
+       (!memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2))) &&
+       (o->cur.style == o->prev.style) &&
+       (obj->cur.scale == obj->prev.scale))
      {
-        if (o->last_computed.ellipsis_start)
+        if ((o->last_computed.ellipsis_start) &&
+            (o->last_computed.ellipsis_start == o->items))
           o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
                                                                   EINA_INLIST_GET(o->last_computed.ellipsis_start));
-        if (o->last_computed.ellipsis_end)
+        if ((o->last_computed.ellipsis_end) &&
+            (EINA_INLIST_GET(o->last_computed.ellipsis_end) == EINA_INLIST_GET(o->items)->last))
           o->items = (Evas_Object_Text_Item *) eina_inlist_remove(EINA_INLIST_GET(o->items),
                                                                   EINA_INLIST_GET(o->last_computed.ellipsis_end));
      }
@@ -184,14 +186,14 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text 
 static void
 _evas_object_text_items_clear(Evas_Object_Text *o)
 {
-   if (o->last_computed.ellipsis_start &&
-       o->last_computed.ellipsis_start != o->items)
+   if ((o->last_computed.ellipsis_start) &&
+       (o->last_computed.ellipsis_start != o->items))
      {
         _evas_object_text_item_clean(o->last_computed.ellipsis_start);
      }
    o->last_computed.ellipsis_start = NULL;
-   if (o->last_computed.ellipsis_end &&
-       EINA_INLIST_GET(o->last_computed.ellipsis_end) != EINA_INLIST_GET(o->items)->last)
+   if ((o->last_computed.ellipsis_end) &&
+       (EINA_INLIST_GET(o->last_computed.ellipsis_end) != EINA_INLIST_GET(o->items)->last))
      {
         _evas_object_text_item_clean(o->last_computed.ellipsis_end);
      }
