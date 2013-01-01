@@ -85,7 +85,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    module[0] = NULL;
    weather[0] = eweather_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(weather[0], EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(weather[0], -1.0, -1.0);
+   evas_object_size_hint_align_set(weather[0], EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(fl, "front", weather[0]);
    evas_object_show(weather[0]);
 
@@ -93,7 +93,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    weather[1] = eweather_object_add(evas_object_evas_get(win));
    eweather = eweather_object_eweather_get(weather[1]);
    evas_object_size_hint_weight_set(weather[1], EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(weather[1], -1.0, -1.0);
+   evas_object_size_hint_align_set(weather[1], EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(fl, "back", weather[1]);
    evas_object_show(weather[1]);
 
@@ -102,7 +102,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    //
    bx0 = elm_box_add(win);
    elm_box_horizontal_set(bx0, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx0, 1.0, 0.0);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bx0);
    evas_object_show(bx0);
 
@@ -122,7 +122,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    //
    bx0 = elm_box_add(win);
    elm_box_horizontal_set(bx0, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx0, 1.0, 0.0);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bx0);
    evas_object_show(bx0);
 

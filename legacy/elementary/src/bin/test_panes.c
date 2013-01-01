@@ -69,8 +69,8 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    //
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Left");
-   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
-   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
    elm_object_part_content_set(panes, "left", bt);
    //
