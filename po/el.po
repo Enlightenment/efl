@@ -1,16 +1,14 @@
-# Greek translation for Ecore.
+# Greek translation for Efreet.
+# Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
-# ragecryx <ragecryx@yahoo.gr>, 2009.
-# George Rizopoulos <george.rizopoulos.1@gmail.com> 20 11
-# Alex-P. Natsios <drakevr@linuxteam.teilar.gr> 2012
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Ecore\n"
+"Project-Id-Version: Efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-12-18 11:18-0200\n"
-"PO-Revision-Date: 2012-12-01 18:25+0200\n"
+"POT-Creation-Date: 2013-01-01 10:30+0100\n"
+"PO-Revision-Date: 2012-12-01 18:26+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
 "Language: \n"
@@ -176,6 +174,38 @@ msgstr "ΣΦΑΛΜΑ: μη έγκυρη γεωμετρική τιμή '%s'\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ΣΦΑΛΜΑ: μη έγκυρη τιμή μεγέθους '%s'\n"
+
+#: src/lib/efreet/efreet_base.c:131
+msgid "Desktop"
+msgstr "Επιφάνεια εργασίας"
+
+#: src/lib/efreet/efreet_base.c:139
+msgid "Downloads"
+msgstr "Λήψεις"
+
+#: src/lib/efreet/efreet_base.c:148
+msgid "Templates"
+msgstr "Πρότυπα"
+
+#: src/lib/efreet/efreet_base.c:157
+msgid "Public"
+msgstr "Δημόσια"
+
+#: src/lib/efreet/efreet_base.c:166
+msgid "Documents"
+msgstr "Λήψεις"
+
+#: src/lib/efreet/efreet_base.c:174
+msgid "Music"
+msgstr "Μουσική"
+
+#: src/lib/efreet/efreet_base.c:182
+msgid "Pictures"
+msgstr "Εικόνες"
+
+#: src/lib/efreet/efreet_base.c:190
+msgid "Videos"
+msgstr "Βίντεο"
 
 #~ msgid ""
 #~ "\n"

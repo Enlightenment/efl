@@ -1,13 +1,13 @@
-# Galician translation of ecore
+# Galician translation of efreet
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecore\n"
+"Project-Id-Version: efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-12-18 11:18-0200\n"
-"PO-Revision-Date: 2012-10-16 09:53+0200\n"
+"POT-Creation-Date: 2013-01-01 10:30+0100\n"
+"PO-Revision-Date: 2012-11-07 22:52+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -171,3 +171,35 @@ msgstr "ERRO: valor xeométrico incorrecto '%s'\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERRO: valor do tamaño incorrecto '%s'\n"
+
+#: src/lib/efreet/efreet_base.c:131
+msgid "Desktop"
+msgstr "Escritorio"
+
+#: src/lib/efreet/efreet_base.c:139
+msgid "Downloads"
+msgstr "Descargas"
+
+#: src/lib/efreet/efreet_base.c:148
+msgid "Templates"
+msgstr "Modelos"
+
+#: src/lib/efreet/efreet_base.c:157
+msgid "Public"
+msgstr "Público"
+
+#: src/lib/efreet/efreet_base.c:166
+msgid "Documents"
+msgstr "Documentos"
+
+#: src/lib/efreet/efreet_base.c:174
+msgid "Music"
+msgstr "Música"
+
+#: src/lib/efreet/efreet_base.c:182
+msgid "Pictures"
+msgstr "Imaxes"
+
+#: src/lib/efreet/efreet_base.c:190
+msgid "Videos"
+msgstr "Vídeos"
