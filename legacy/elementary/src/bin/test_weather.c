@@ -37,7 +37,8 @@ static void _apply_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *ev
    if (module[current])
      eweather_plugin_set(eweather, module[current]);
    eweather_code_set(eweather, elm_object_text_get(en));
-   printf("CURRENT %d %p %p\n", current, module[current], eweather);
+   printf("CURRENT %d, module[current] %p, eweather %p, city : %s\n",
+          current, module[current], eweather, elm_object_text_get(en));
 }
 
 static void
