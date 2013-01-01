@@ -1,14 +1,16 @@
 # Korean translation for Efreet.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
+# Jerome Pinot <ngc891@gmail.com>
+# Daniel Juyung Seo <seojuyung2@gmail.com>, 2011-2013
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-01 10:30+0100\n"
-"PO-Revision-Date: 2012-06-24 17:10+0900\n"
-"Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
+"PO-Revision-Date: 2013-01-02 07:33+0900\n"
+"Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -66,19 +68,25 @@ msgstr "오류: 알 수 없는 옵션 -%c 입니다.\n"
 msgid "ERROR: "
 msgstr "오류: "
 
-#: src/lib/ecore/ecore_getopt.c:952 src/lib/ecore/ecore_getopt.c:1089
-#: src/lib/ecore/ecore_getopt.c:1105 src/lib/ecore/ecore_getopt.c:1120
-#: src/lib/ecore/ecore_getopt.c:1137 src/lib/ecore/ecore_getopt.c:1184
-#: src/lib/ecore/ecore_getopt.c:1304 src/lib/ecore/ecore_getopt.c:1345
+#: src/lib/ecore/ecore_getopt.c:952
+#: src/lib/ecore/ecore_getopt.c:1089
+#: src/lib/ecore/ecore_getopt.c:1105
+#: src/lib/ecore/ecore_getopt.c:1120
+#: src/lib/ecore/ecore_getopt.c:1137
+#: src/lib/ecore/ecore_getopt.c:1184
+#: src/lib/ecore/ecore_getopt.c:1304
+#: src/lib/ecore/ecore_getopt.c:1345
 msgid "value has no pointer set.\n"
 msgstr "값에 포인터 집합이 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:984 src/lib/ecore/ecore_getopt.c:1204
+#: src/lib/ecore/ecore_getopt.c:984
+#: src/lib/ecore/ecore_getopt.c:1204
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "알 수 없는 부울린 값 %s 입니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1035 src/lib/ecore/ecore_getopt.c:1292
+#: src/lib/ecore/ecore_getopt.c:1035
+#: src/lib/ecore/ecore_getopt.c:1292
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "잘못된 숫자 형식 %s 입니다\n"
@@ -174,32 +182,33 @@ msgstr "오류: '%s' 값의 크기가 올바르지 않습니다\n"
 
 #: src/lib/efreet/efreet_base.c:131
 msgid "Desktop"
-msgstr "바탕화면"
+msgstr "데스크톱"
 
 #: src/lib/efreet/efreet_base.c:139
 msgid "Downloads"
-msgstr ""
+msgstr "다운로드"
 
 #: src/lib/efreet/efreet_base.c:148
 msgid "Templates"
-msgstr ""
+msgstr "템플릿"
 
 #: src/lib/efreet/efreet_base.c:157
 msgid "Public"
-msgstr ""
+msgstr "공개"
 
 #: src/lib/efreet/efreet_base.c:166
 msgid "Documents"
-msgstr ""
+msgstr "문서"
 
 #: src/lib/efreet/efreet_base.c:174
 msgid "Music"
-msgstr ""
+msgstr "음악"
 
 #: src/lib/efreet/efreet_base.c:182
 msgid "Pictures"
-msgstr ""
+msgstr "사진"
 
 #: src/lib/efreet/efreet_base.c:190
 msgid "Videos"
-msgstr ""
+msgstr "영상"
+
