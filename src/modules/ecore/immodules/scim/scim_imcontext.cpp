@@ -2747,7 +2747,7 @@ slot_update_property(IMEngineInstanceBase *si,
 }
 
 static void
-slot_beep(IMEngineInstanceBase *si EINA_UNUSED)
+slot_beep(IMEngineInstanceBase *si)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
