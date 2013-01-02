@@ -1259,6 +1259,7 @@ edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, E
         free(data);
      }
    free(found);
+   edbus_connection_name_gc(conn, cn);
 }
 
 EAPI void
