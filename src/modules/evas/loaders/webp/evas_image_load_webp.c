@@ -25,36 +25,19 @@ static Evas_Image_Load_Func evas_image_load_webp_func =
   EINA_FALSE
 };
 
-
 static Eina_Bool
-evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_check(Eina_File *f, void *map, Image_Entry *ie, int *error)
 {
    WebPDecoderConfig config;
-   FILE *f;
-   size_t header_size = 30;
-   uint8_t header[30];
 
-   // XXX: use eina_file to mmap things
-   f = fopen(file, "rb");
-   if (!f)
-   {
-      *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-      return EINA_FALSE;
-   }
-   if (fread(header, header_size, 1, f) != 1)
-   {
-      fclose(f);
-      *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-      return EINA_FALSE;
-   }
-   fclose(f);
+   if (eina_file_size_get(f) < 30) return EINA_FALSE;
 
    if (!WebPInitDecoderConfig(&config))
    {
       *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
       return EINA_FALSE;
    }
-   if (WebPGetFeatures(header, header_size, &config.input) != VP8_STATUS_OK)
+   if (WebPGetFeatures(map, 30, &config.input) != VP8_STATUS_OK)
    {
       *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
       return EINA_FALSE;
@@ -64,82 +47,84 @@ evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *ke
    ie->h = config.input.height;
    ie->flags.alpha = config.input.has_alpha;
 
-   *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 }
 
 static Eina_Bool
-evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
 {
-   FILE *f;
-   size_t file_size;
-   void *data, *decoded, *surface;
-   int width, height;
+   Eina_File *f;
+   Eina_Bool r;
+   void *data;
 
    // XXX: use eina_file to mmap things
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
    {
       *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
       return EINA_FALSE;
    }
 
-   if (fseek(f, 0, SEEK_END) != 0)
-   {
-      *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-      goto close_file;
-   }
-   file_size = ftell(f);
+   *error = EVAS_LOAD_ERROR_NONE;
 
-   if (fseek(f, 0, SEEK_SET) != 0)
-   {
-      *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-      goto close_file;
-   }
+   data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
 
-   data = malloc(file_size);
-   if (!data)
-   {
-      *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-      goto close_file;
-   }
-   if (fread(data, file_size, 1, f) != 1)
-   {
-      *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-      goto free_data;
-   }
+   r = evas_image_load_file_check(f, data, ie, error);
+
+   if (data) eina_file_map_free(f, data);
+   eina_file_close(f);
+
+   return r;
+}
+
+static Eina_Bool
+evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+{
+   Eina_File *f;
+   void *data = NULL;
+   void *decoded = NULL;
+   void *surface = NULL;
+   int width, height;
+
+   // XXX: use eina_file to mmap things
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+
+   data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+
+   if (!evas_image_load_file_check(f, data, ie, error))
+     goto free_data;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
    if (!surface)
-   {
-      *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-      goto free_data;
-   }
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto free_data;
+     }
 
-   decoded = WebPDecodeBGRA(data, file_size, &width, &height);
+   decoded = WebPDecodeBGRA(data, eina_file_size_get(f), &width, &height);
    if (!decoded)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto free_data;
      }
+   *error = EVAS_LOAD_ERROR_NONE;
+
    // XXX: this copy of the surface is inefficient
    memcpy(surface, decoded, width * height * 4);
-   evas_common_image_premul(ie);  
+   evas_common_image_premul(ie);
 
+ free_data:
+   if (data) eina_file_map_free(f, data);
+   eina_file_close(f);
    free(decoded);
-   free(data);
-   fclose(f);
 
-   *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
-
-free_data:
-   free(data);
-
-close_file:
-   fclose(f);
-   return EINA_FALSE;
 }
 
 static int
