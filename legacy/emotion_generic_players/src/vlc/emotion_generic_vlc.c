@@ -37,6 +37,7 @@ struct _App {
      libvlc_event_manager_t *event_mgr;
      libvlc_event_manager_t *mevent_mgr;
      char *filename;
+     char *subtitle_path;
      char *shmname;
      void *tmpbuffer;
      int w, h;
@@ -313,6 +314,10 @@ _play(struct _App *app)
 	libvlc_time_t new_time = pos * 1000;
 	libvlc_media_player_set_time(app->mp, new_time);
         libvlc_media_player_play(app->mp);
+
+        if (app->subtitle_path)
+          libvlc_video_set_subtitle_file(app->mp, app->subtitle_path);
+
 	app->playing = 1;
      }
 }
@@ -375,6 +380,12 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 	 write(app->fd_write, &thread_event, sizeof(thread_event));
 	 break;
    }
+}
+
+static void
+_subtitle_set(struct _App *app)
+{
+   _em_str_read(app->em_read, &app->subtitle_path);
 }
 
 static void
@@ -585,6 +596,9 @@ _process_emotion_commands(struct _App *app)
       case EM_CMD_FILE_SET_DONE:
 	 _file_set_done(app);
 	 break;
+      case EM_CMD_SUBTITLE_SET:
+         _subtitle_set(app);
+         break;
       case EM_CMD_FILE_CLOSE:
 	 _file_close(app);
 	 break;
@@ -805,6 +819,7 @@ main(int argc, const char *argv[])
    app.libvlc = libvlc_new(vlc_argc, vlc_argv);
    app.mp = NULL;
    app.filename = NULL;
+   app.subtitle_path = NULL;
    app.w = 0;
    app.h = 0;
    app.size_sent = 0;
