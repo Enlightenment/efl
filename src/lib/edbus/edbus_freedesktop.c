@@ -74,7 +74,10 @@ EAPI EDBus_Pending *
 edbus_object_managed_objects_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
    EDBus_Message *msg;
+   EDBus_Pending *p;
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
                                       "GetManagedObjects");
-   return edbus_object_send(obj, msg, cb, data, -1);
+   p = edbus_object_send(obj, msg, cb, data, -1);
+   edbus_message_unref(msg);
+   return p;
 }

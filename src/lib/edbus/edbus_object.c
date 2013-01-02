@@ -644,27 +644,36 @@ EAPI EDBus_Pending *
 edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
    EDBus_Message *msg;
+   EDBus_Pending *p;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER, "Ping");
-   return edbus_object_send(obj, msg, cb, data, -1);
+   p = edbus_object_send(obj, msg, cb, data, -1);
+   edbus_message_unref(msg);
+   return p;
 }
 
 EAPI EDBus_Pending *
 edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
    EDBus_Message *msg;
+   EDBus_Pending *p;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER,
                                       "GetMachineId");
-   return edbus_object_send(obj, msg, cb, data, -1);
+   p = edbus_object_send(obj, msg, cb, data, -1);
+   edbus_message_unref(msg);
+   return p;
 }
 
 EAPI EDBus_Pending *
 edbus_object_introspect(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
 {
    EDBus_Message *msg;
+   EDBus_Pending *p;
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTERFACE_INTROSPECTABLE,
                                       "Introspect");
-   return edbus_object_send(obj, msg, cb, data, -1);
+   p = edbus_object_send(obj, msg, cb, data, -1);
+   edbus_message_unref(msg);
+   return p;
 }
