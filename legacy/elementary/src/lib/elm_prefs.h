@@ -528,7 +528,7 @@ EAPI Eina_Bool          elm_prefs_file_get(const Evas_Object *o,
  * but you should still unreference it by yourself, after the widget
  * is gone.
  *
- * @see elm_prefs_data_set()
+ * @see elm_prefs_data_get()
  *
  * @since 1.8
  */
@@ -540,7 +540,8 @@ EAPI Eina_Bool          elm_prefs_data_set(Evas_Object *obj,
  *
  * @param obj A prefs widget handle
  * @param prefs_data A valid prefs_data handle
- * @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
+ * @return A pointer to the user data of a given prefs widget on success.
+ *         @c NULL otherwise.
  *
  * @see elm_prefs_data_set() for more details
  *
