@@ -273,8 +273,8 @@ edbus_message_arguments_vget(const EDBus_Message *msg, const char *signature, va
    return _edbus_message_arguments_vget((EDBus_Message *)msg, signature, ap);
 }
 
-EAPI Eina_Bool
-edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signature, va_list ap)
+static Eina_Bool
+_edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signature, va_list *aq)
 {
    DBusSignatureIter signature_iter;
    Eina_Bool r = EINA_TRUE;
@@ -288,14 +288,13 @@ edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signa
    while ((type = dbus_signature_iter_get_signature(&signature_iter)))
      {
         if (type[0] != DBUS_TYPE_VARIANT && !type[1])
-          r = append_basic(type[0], MAKE_PTR_FROM_VA_LIST(ap),
-                           &iter->dbus_iterator);
+          r = append_basic(type[0], aq, &iter->dbus_iterator);
         else
           {
              EDBus_Message_Iter **user_itr;
              EDBus_Message_Iter *sub;
 
-             user_itr = va_arg(ap, EDBus_Message_Iter **);
+             user_itr = va_arg(*aq, EDBus_Message_Iter **);
              sub = _message_iterator_new(EINA_TRUE);
              if (!sub)
                {
@@ -340,6 +339,20 @@ next:
      }
 
    return r;
+
+}
+
+EAPI Eina_Bool
+edbus_message_iter_arguments_vappend(EDBus_Message_Iter *iter, const char *signature, va_list ap)
+{
+   va_list aq;
+   Eina_Bool ret;
+
+   va_copy(aq, ap);
+   ret = _edbus_message_iter_arguments_vappend(iter, signature, &aq);
+   va_end(aq);
+
+   return ret;
 }
 
 EAPI Eina_Bool
@@ -422,7 +435,7 @@ append_basic(char type, va_list *vl, DBusMessageIter *iter)
 }
 
 static Eina_Bool
-_edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap)
+_edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list *aq)
 {
    DBusSignatureIter signature_iter;
    EDBus_Message_Iter *iter;
@@ -440,8 +453,7 @@ _edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_l
    while ((type = dbus_signature_iter_get_current_type(&signature_iter)))
      {
         if (dbus_type_is_basic(type))
-          r = append_basic(type, MAKE_PTR_FROM_VA_LIST(ap),
-                           &iter->dbus_iterator);
+          r = append_basic(type, aq, &iter->dbus_iterator);
         else
           {
              ERR("sig = %s | edbus_message_arguments_append() and \
@@ -468,7 +480,7 @@ edbus_message_arguments_append(EDBus_Message *msg, const char *signature, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
 
    va_start(ap, signature);
-   ret = _edbus_message_arguments_vappend(msg, signature, ap);
+   ret = _edbus_message_arguments_vappend(msg, signature, &ap);
    va_end(ap);
    return ret;
 }
@@ -476,9 +488,17 @@ edbus_message_arguments_append(EDBus_Message *msg, const char *signature, ...)
 EAPI Eina_Bool
 edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap)
 {
+   va_list aq;
+   Eina_Bool ret;
+
    EDBUS_MESSAGE_CHECK_RETVAL(msg, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signature, EINA_FALSE);
-   return _edbus_message_arguments_vappend(msg, signature, ap);
+
+   va_copy(aq, ap);
+   ret = _edbus_message_arguments_vappend(msg, signature, &aq);
+   va_end(aq);
+
+   return ret;
 }
 
 EAPI EDBus_Message_Iter *
@@ -701,21 +721,8 @@ edbus_message_iter_get_and_next(EDBus_Message_Iter *iter, char signature, ...)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edbus_message_iter_arguments_get(EDBus_Message_Iter *iter, const char *signature, ...)
-{
-   va_list ap;
-   Eina_Bool ret;
-
-   va_start(ap, signature);
-   ret = edbus_message_iter_arguments_vget(iter, signature, ap);
-   va_end(ap);
-
-   return ret;
-}
-
-EAPI Eina_Bool
-edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signature, va_list ap)
+static Eina_Bool
+_edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signature, va_list *aq)
 {
    int iter_type;
    DBusSignatureIter sig_iter;
@@ -739,10 +746,10 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
           }
 
         if (dbus_type_is_basic(iter_type))
-          get_basic(iter_type, &iter->dbus_iterator, MAKE_PTR_FROM_VA_LIST(ap));
+          get_basic(iter_type, &iter->dbus_iterator, aq);
         else
           {
-             EDBus_Message_Iter **user_itr = va_arg(ap, EDBus_Message_Iter **);
+             EDBus_Message_Iter **user_itr = va_arg(*aq, EDBus_Message_Iter **);
              EDBus_Message_Iter *sub_itr;
 
              sub_itr = _message_iterator_new(EINA_FALSE);
@@ -760,6 +767,33 @@ edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signatur
      }
 
    return dbus_signature_iter_get_current_type(&sig_iter) == DBUS_TYPE_INVALID;
+
+}
+
+EAPI Eina_Bool
+edbus_message_iter_arguments_get(EDBus_Message_Iter *iter, const char *signature, ...)
+{
+   va_list ap;
+   Eina_Bool ret;
+
+   va_start(ap, signature);
+   ret = _edbus_message_iter_arguments_vget(iter, signature, &ap);
+   va_end(ap);
+
+   return ret;
+}
+
+EAPI Eina_Bool
+edbus_message_iter_arguments_vget(EDBus_Message_Iter *iter, const char *signature, va_list ap)
+{
+   va_list aq;
+   Eina_Bool ret;
+
+   va_copy(aq, ap);
+   ret = _edbus_message_iter_arguments_vget(iter, signature, &aq);
+   va_end(aq);
+
+   return ret;
 }
 
 EAPI void

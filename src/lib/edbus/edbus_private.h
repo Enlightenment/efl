@@ -82,10 +82,4 @@ EDBus_Signal_Handler  *_edbus_signal_handler_add(EDBus_Connection *conn, const c
 
 EDBus_Message         *edbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
-#ifdef HAVE_VA_LIST_AS_ARRAY
-#define MAKE_PTR_FROM_VA_LIST(arg) ((va_list *)(arg))
-#else
-#define MAKE_PTR_FROM_VA_LIST(arg) (&(arg))
-#endif
-
 #endif

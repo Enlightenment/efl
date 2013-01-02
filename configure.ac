@@ -291,8 +291,6 @@ AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
-AC_C_VA_LIST_AS_ARRAY
-
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([ecore requires a c99-capable compiler])
 fi
