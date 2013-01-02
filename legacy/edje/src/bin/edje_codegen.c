@@ -846,7 +846,6 @@ _parse_parts(Evas_Object *ed)
 	free(ei);
      }
 
-   free(apiname);
    return ret;
 }
 
