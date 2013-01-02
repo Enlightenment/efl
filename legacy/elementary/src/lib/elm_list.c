@@ -781,7 +781,7 @@ _elm_list_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         edje_object_scale_set
           (VIEW(it), elm_widget_scale_get(obj) * elm_config_scale_get());
-        it->fixed = 0;
+        it->fixed = EINA_FALSE;
      }
 
    _items_fix(obj);
