@@ -1346,7 +1346,7 @@ eet_internal_close(Eet_File *ef,
    if (ef->sha1)
      free(ef->sha1);
 
-   if (ef->readfp)
+   if (ef->readfp && ef->readfp_owned)
      {
         if (ef->data)
           eina_file_map_free(ef->readfp, (void *)ef->data);
@@ -1396,6 +1396,7 @@ eet_memopen_read(const void *data,
    ef->data_size = size;
    ef->sha1 = NULL;
    ef->sha1_length = 0;
+   ef->readfp_owned = EINA_FALSE;
 
    /* eet_internal_read expects the cache lock to be held when it is called */
    LOCK_CACHE;
@@ -1409,6 +1410,67 @@ eet_file_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef)) return NULL;
    return ef->path;
+}
+
+EAPI Eet_File *
+eet_map(Eina_File *file)
+{
+   Eet_File *ef = NULL;
+   const char *path;
+
+   path = eina_file_filename_get(file);
+
+   LOCK_CACHE;
+   ef = eet_cache_find(path, eet_writers, eet_writers_num);
+   if (ef)
+     {
+        eet_sync(ef);
+        ef->references++;
+        ef->delete_me_now = 1;
+        eet_internal_close(ef, EINA_TRUE);
+     }
+
+   ef = eet_cache_find(path, eet_readers, eet_readers_num);
+   if (ef->readfp == file) goto done;
+
+   /* Allocate struct for eet file and have it zero'd out */
+   ef = eet_file_malloc(1);
+   if (!ef) return NULL;
+
+   /* fill some of the members */
+   INIT_FILE(ef);
+   ef->key = NULL;
+   ef->readfp = file;
+   ef->path = eina_stringshare_add(path);
+   ef->magic = EET_MAGIC_FILE;
+   ef->references = 1;
+   ef->mode = EET_FILE_MODE_READ;
+   ef->header = NULL;
+   ef->writes_pending = 0;
+   ef->delete_me_now = 0;
+   ef->data = NULL;
+   ef->data_size = 0;
+   ef->sha1 = NULL;
+   ef->sha1_length = 0;
+   ef->readfp_owned = EINA_FALSE;
+
+   ef->data_size = eina_file_size_get(file);
+   ef->data = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+   if (eet_test_close((ef->data == NULL), ef))
+     goto on_error;
+
+   ef = eet_internal_read(ef);
+   if (!ef)
+     goto on_error;
+
+ done:
+   ef->references++;
+   UNLOCK_CACHE;
+   return ef;
+
+ on_error:
+   UNLOCK_CACHE;
+   return NULL;
 }
 
 EAPI Eet_File *
@@ -1535,6 +1597,7 @@ open_error:
    ef->data_size = 0;
    ef->sha1 = NULL;
    ef->sha1_length = 0;
+   ef->readfp_owned = EINA_TRUE;
 
    ef->ed = (mode == EET_FILE_MODE_WRITE)
      || (!ef->readfp && mode == EET_FILE_MODE_READ_WRITE) ?

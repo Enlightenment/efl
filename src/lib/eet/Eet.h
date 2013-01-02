@@ -558,6 +558,31 @@ eet_open(const char *file,
          Eet_File_Mode mode);
 
 /**
+ * Open an eet file on disk from an Eina_File handle, and returns a handle to it.
+ * @param file The Eina_File handle to map to an eet file.
+ * @return An opened eet file handle.
+ * @ingroup Eet_File_Group
+ *
+ * This function will open an exiting eet file for reading, and build
+ * the directory table in memory and return a handle to the file, if it
+ * exists and can be read, and no memory errors occur on the way, otherwise
+ * NULL will be returned.
+ *
+ * This function can't open file for writing only read only mode is supported for now.
+ *
+ * If the same file is opened multiple times, then the same file handle will
+ * be returned as eet maintains an internal list of all currently open
+ * files. That means opening a file for read only looks in the read only set,
+ * and returns a handle to that file handle and increments its reference count.
+ * You need to close an eet file handle as many times as it has been opened to
+ * maintain correct reference counts.
+ *
+ * @since 1.8.0
+ */
+EAPI Eet_File *
+eet_map(Eina_File *file);
+
+/**
  * Open an eet file directly from a memory location. The data is not copied,
  * so you must keep it around as long as the eet file is open. There is
  * currently no cache for this kind of Eet_File, so it's reopened every time

@@ -20,13 +20,13 @@ Evas_Image_Load_Func evas_image_load_eet_func =
   EINA_FALSE
 };
 
-
 static Eina_Bool
 evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    int                  alpha, compression, quality, lossy;
    unsigned int         w, h;
-   Eet_File            *ef;
+   Eina_File           *f = NULL;
+   Eet_File            *ef = NULL;
    int                  ok;
    Eina_Bool		res = EINA_FALSE;
 
@@ -36,11 +36,18 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
 	return EINA_FALSE;
      }
 
-   ef = eet_open((char *)file, EET_FILE_MODE_READ);
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+
+   ef = eet_map(f);
    if (!ef)
      {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+	goto on_error;
      }
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
@@ -61,7 +68,8 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
    *error = EVAS_LOAD_ERROR_NONE;
 
  on_error:
-   eet_close(ef);
+   if (ef) eet_close(ef);
+   eina_file_close(f);
    return res;
 }
 
@@ -70,6 +78,7 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
 {
    unsigned int         w, h;
    int                  alpha, compression, quality, lossy, ok;
+   Eina_File           *f;
    Eet_File            *ef;
    DATA32              *body, *p, *end, *data;
    DATA32               nas = 0;
@@ -85,11 +94,17 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
 	*error = EVAS_LOAD_ERROR_NONE;
 	return EINA_TRUE;
      }
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+   ef = eet_map(f);
    if (!ef)
      {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto on_error;
      }
    ok = eet_data_image_header_read(ef, key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
@@ -148,7 +163,8 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
    res = EINA_TRUE;
 
  on_error:
-   eet_close(ef);
+   if (ef) eet_close(ef);
+   eina_file_close(f);
    return res;
 }
 

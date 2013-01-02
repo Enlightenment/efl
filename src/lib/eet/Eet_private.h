@@ -97,6 +97,7 @@ struct _Eet_File
 
    unsigned char        writes_pending : 1;
    unsigned char        delete_me_now : 1;
+   unsigned char        readfp_owned : 1;
 };
 
 struct _Eet_File_Header
