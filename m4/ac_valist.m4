@@ -1,45 +1,36 @@
-dnl That code is public domain and can be freely used or copied.
-dnl Originally snatched from somewhere...
+dnl Copyright (C)  2013  ProFUSION embedded systems
+dnl This code is public domain and can be freely used or copied.
 
 dnl Macro for checking if va_list is an array
 
 dnl Usage: AC_C_VA_LIST_AS_ARRAY
-dnl call AC_DEFINE for HAVE_VA_LIST_AS_ARRAY
-dnl if for this architecture va_list is defined as an array
+dnl call AC_DEFINE for HAVE_VA_LIST_AS_ARRAY if for this architecture
+dnl va_list is defined as an array
 
 AC_DEFUN([AC_C_VA_LIST_AS_ARRAY],
 [
-
 AC_MSG_CHECKING([whether va_list is defined as an array])
-
-AC_CACHE_VAL([ac_cv_valistasarray],
-   [AC_TRY_RUN(
-       [
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+      [[
 #include <stdlib.h>
 #include <stdarg.h>
-void foo(int i, ...)
-{
-	va_list ap1, ap2;
-	va_start(ap1, i);
-	ap2 = ap1;
-	if (va_arg(ap2, int) != 123 || va_arg(ap1, int) != 123)
-		exit(1);
-	va_end(ap1);
-}
-int main(void)
-{
-	foo(0, 123);
-	return(0);
-}
-       ],
-       [ac_cv_valistasarray="no"],
-       [ac_cv_valistasarray="yes"],
-       [ac_cv_valistasarray="no"]
-    )])
 
-AC_MSG_RESULT($ac_cv_valistasarray)
+#define BUILD_ASSERT(cond) \
+      do { (void) sizeof(char [1 - 2*!(cond)]); } while(0)
+      ]],
+      [[
+va_list ap;
+BUILD_ASSERT(__builtin_types_compatible_p(typeof(ap),
+            typeof(&(ap)[0])));
+return 0;
+      ]])],
+       [have_va_list_as_array="no"],
+       [have_va_list_as_array="yes"])
 
-if test "x${ac_cv_valistasarray}" = "xyes" ; then
+AC_MSG_RESULT([${have_va_list_as_array}])
+
+if test "x${have_va_list_as_array}" = "xyes" ; then
    AC_DEFINE([HAVE_VA_LIST_AS_ARRAY], [1], [Define to 1 if va_list is an array])
 fi
 
