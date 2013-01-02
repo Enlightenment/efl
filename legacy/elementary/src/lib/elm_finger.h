@@ -27,7 +27,7 @@
  * This takes width and height sizes (in pixels) as input and a
  * size multiple (which is how many fingers you want to place
  * within the area, being "finger" the size set by
- * elm_finger_size_set()), and adjusts the size to be large enough
+ * elm_config_finger_size_set()), and adjusts the size to be large enough
  * to accommodate the resulting size -- if it doesn't already
  * accommodate it. On return the @p w and @p h sizes pointed to by
  * these parameters will be modified, on those conditions.

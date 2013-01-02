@@ -191,7 +191,7 @@ EINA_DEPRECATED EAPI const char *elm_engine_current_get(void);
  *
  * @param size The finger size
  * @ingroup Fingers
- * @deprecated Use elm_finger_size_set() and elm_config_all_flush()
+ * @deprecated Use elm_config_finger_size_set() and elm_config_all_flush()
  */
 EINA_DEPRECATED EAPI void       elm_finger_size_all_set(Evas_Coord size);
 
