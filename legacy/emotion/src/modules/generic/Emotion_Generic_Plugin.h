@@ -35,6 +35,7 @@ enum _Emotion_Generic_Cmd
    EM_CMD_AUDIO_TRACK_SET, // param: track id (int)
    EM_CMD_VIDEO_TRACK_SET, // param: track id (int)
    EM_CMD_SPU_TRACK_SET, // param: track id (int)
+   EM_CMD_SUBTITLE_SET, // param: subtitle filename (string)
    EM_CMD_LAST
 };
 

@@ -49,8 +49,14 @@ src/edje_external/Makefile.in
 src/edje_external/module.la
 src/edje_external/module_la-emotion.lo
 src/examples/.deps/
+src/examples/.libs/
 src/examples/Makefile
 src/examples/Makefile.in
+src/examples/emotion_basic_example
+src/examples/emotion_border_example
+src/examples/emotion_generic_example
+src/examples/emotion_generic_subtitle_example
+src/examples/emotion_signals_example
 src/generic_players/Makefile
 src/generic_players/Makefile.in
 src/generic_players/vlc/.deps/

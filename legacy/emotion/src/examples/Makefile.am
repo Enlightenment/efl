@@ -17,6 +17,7 @@ LDADD = \
 SRCS = \
 	emotion_basic_example.c \
 	emotion_generic_example.c \
+	emotion_generic_subtitle_example.c \
 	emotion_border_example.c \
 	emotion_signals_example.c
 
@@ -33,6 +34,7 @@ if EFL_BUILD_EXAMPLES
 examples_PROGRAMS += \
 	emotion_basic_example \
 	emotion_generic_example \
+	emotion_generic_subtitle_example \
 	emotion_border_example \
 	emotion_signals_example
 endif

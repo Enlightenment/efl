@@ -1,4 +1,10 @@
-Emotion 1.7.1
+Emotion 1.7.2
+
+Changes since Emotion 1.7.1:
+-------------------------
+
+Additions:
+	- Add video subtitle file API.
 
 Changes since Emotion 1.7.0:
 -------------------------

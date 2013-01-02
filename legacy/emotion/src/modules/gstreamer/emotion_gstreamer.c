@@ -132,6 +132,11 @@ static void           em_video_channel_set        (void             *video,
 
 static int            em_video_channel_get        (void             *video);
 
+static void           em_video_subtitle_file_set (void             *video,
+                                                   const char *filepath);
+
+static const char    *em_video_subtitle_file_get  (void              *video);
+
 static const char    *em_video_channel_name_get   (void             *video,
                                                    int               channel);
 
@@ -241,6 +246,8 @@ static Emotion_Video_Module em_module =
    em_video_channel_count, /* video_channel_count */
    em_video_channel_set, /* video_channel_set */
    em_video_channel_get, /* video_channel_get */
+   em_video_subtitle_file_set, /* video_subtitle_file_set */
+   em_video_subtitle_file_get, /* video_subtitle_file_get */
    em_video_channel_name_get, /* video_channel_name_get */
    em_video_channel_mute_set, /* video_channel_mute_set */
    em_video_channel_mute_get, /* video_channel_mute_get */
@@ -1026,6 +1033,20 @@ em_video_channel_get(void *video)
    _emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE);
 
    return ev->video_stream_nbr;
+}
+
+static void
+em_video_subtitle_file_set(void *video __UNUSED__,
+                           const char *filepath __UNUSED__)
+{
+   DBG("video_subtitle_file_set not implemented for gstreamer yet.");
+}
+
+static const char *
+em_video_subtitle_file_get(void *video __UNUSED__)
+{
+   DBG("video_subtitle_file_get not implemented for gstreamer yet.");
+   return NULL;
 }
 
 static const char *

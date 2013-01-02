@@ -999,6 +999,29 @@ emotion_object_video_mute_get(const Evas_Object *obj)
    return sd->module->video_channel_mute_get(sd->video_data);
 }
 
+EAPI void
+emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("subtitle=%s", filepath);
+   if (!sd->module) return;
+   if (!sd->video_data) return;
+   sd->module->video_subtitle_file_set(sd->video_data, filepath);
+}
+
+EAPI const char *
+emotion_object_video_subtitle_file_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return EINA_FALSE;
+   if (!sd->video_data) return EINA_FALSE;
+   return sd->module->video_subtitle_file_get(sd->video_data);
+}
+
 EAPI int
 emotion_object_video_channel_count(const Evas_Object *obj)
 {

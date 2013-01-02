@@ -58,3 +58,7 @@
 2012-10-11  Sohyun Kim
 
 	* Fix to call correct render function based on the format.
+
+2013-01-02  Leandro Dorileo (dorileo)
+
+	* Add subtitle file API.

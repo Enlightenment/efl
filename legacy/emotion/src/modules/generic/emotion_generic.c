@@ -1129,6 +1129,7 @@ em_file_close(void *data)
    INF("file close: %s", ev->filename);
 
    eina_stringshare_replace(&ev->filename, NULL);
+   eina_stringshare_replace(&ev->subtitle_path, NULL);
 
    ev->file_ready = EINA_FALSE;
    _audio_channels_free(ev);
@@ -1175,8 +1176,15 @@ em_play(void *data, double pos)
 
    if (ev->ready)
      {
+        if (ev->subtitle_path)
+          {
+             _player_send_cmd(ev, EM_CMD_SUBTITLE_SET);
+             _player_send_str(ev, ev->subtitle_path, EINA_TRUE);
+          }
+
 	_player_send_cmd(ev, EM_CMD_PLAY);
 	_player_send_float(ev, ev->pos);
+
 	return;
      }
 
@@ -1390,6 +1398,20 @@ em_video_channel_get(void *data)
 {
    Emotion_Generic_Video *ev = data;
    return ev->video_channel_current;
+}
+
+static void
+em_video_subtitle_file_set(void *data, const char *filepath)
+{
+   Emotion_Generic_Video *ev = data;
+   eina_stringshare_replace(&ev->subtitle_path, filepath);
+}
+
+static const char *
+em_video_subtitle_file_get(void *data)
+{
+   Emotion_Generic_Video *ev = data;
+   return ev->subtitle_path;
 }
 
 static const char *
@@ -1694,6 +1716,8 @@ static Emotion_Video_Module em_module =
    em_video_channel_count, /* video_channel_count */
    em_video_channel_set, /* video_channel_set */
    em_video_channel_get, /* video_channel_get */
+   em_video_subtitle_file_set, /* video_subtitle_file_set */
+   em_video_subtitle_file_get, /* video_subtitle_file_get */
    em_video_channel_name_get, /* video_channel_name_get */
    em_video_channel_mute_set, /* video_channel_mute_set */
    em_video_channel_mute_get, /* video_channel_mute_get */

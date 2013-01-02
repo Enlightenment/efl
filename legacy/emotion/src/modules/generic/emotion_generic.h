@@ -106,6 +106,7 @@ struct _Emotion_Generic_Video
    int			     spu_channel_current;
    Emotion_Generic_Channel  *spu_channels;
    Emotion_Generic_Meta	     meta;
+  const char                 *subtitle_path;
 };
 
 #endif

@@ -980,6 +980,38 @@ EAPI void         emotion_object_video_mute_set        (Evas_Object *obj, Eina_B
 EAPI Eina_Bool    emotion_object_video_mute_get        (const Evas_Object *obj);
 
 /**
+ * @brief Set the video's subtitle file path.
+ *
+ * @param obj  The object which we are setting a subtitle file path.
+ * @param filepath The subtitle file path.
+ *
+ * This function sets a video's subtitle file path(i.e an .srt file) for
+ * supported subtitle formats consult the backend's documentation.
+ *
+ * @see emotion_object_video_subtitle_file_get().
+ *
+ * @ingroup Emotion_Video
+ * @since 1.7.2
+ */
+EAPI void         emotion_object_video_subtitle_file_set (Evas_Object *obj, const char *filepath);
+
+/**
+ * @brief Get the video's subtitle file path.
+ *
+ * @param obj The object which we are retrieving the subtitle file path from.
+ * @return The video's subtitle file path previously set, NULL otherwise.
+ *
+ * This function returns the video's subtitle file path, if not previously set
+ * or in error NULL is returned.
+ *
+ * @see emotion_object_video_subtitle_file_set().
+ *
+ * @ingroup Emotion_Video
+ * @since 1.7.2
+ */
+EAPI const char   *emotion_object_video_subtitle_file_get (const Evas_Object *obj);
+
+/**
  * @brief Get the number of available video channel
  *
  * @param obj The object which we are retrieving the channel count from

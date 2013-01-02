@@ -74,6 +74,8 @@ struct _Emotion_Video_Module
    int            (*video_channel_count) (void *ef);
    void           (*video_channel_set) (void *ef, int channel);
    int            (*video_channel_get) (void *ef);
+   void           (*video_subtitle_file_set) (void *ef, const char *filepath);
+   const char *   (*video_subtitle_file_get) (void *ef);
    const char *   (*video_channel_name_get) (void *ef, int channel);
    void           (*video_channel_mute_set) (void *ef, int mute);
    int            (*video_channel_mute_get) (void *ef);
