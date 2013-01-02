@@ -422,7 +422,7 @@ int dns_rr_cmp(struct dns_rr *, struct dns_packet *, struct dns_rr *, struct dns
 size_t dns_rr_print(void *, size_t, struct dns_rr *, struct dns_packet *, int *);
 
 
-#define dns_rr_i_new(P, ...)		dns_rr_i_init(&(struct dns_rr_i){ 0, __VA_ARGS__ }, (P))
+#define dns_rr_i_new(P, ...)		dns_rr_i_init(&(struct dns_rr_i){ .data = 0, __VA_ARGS__ }, (P))
 
 struct dns_rr_i {
 	enum dns_section section;
