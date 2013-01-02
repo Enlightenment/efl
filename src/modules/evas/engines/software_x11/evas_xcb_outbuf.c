@@ -1118,13 +1118,14 @@ _find_xcbob(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int
      return evas_software_xcb_output_buffer_new(conn, vis, depth, w, h, 
                                                 shm, data);
 
-   lbytes = (((w + 63) / 64) * 4);
    if (depth > 1) 
      {
         bpp = (depth / 8);
         if (bpp == 3) bpp = 4;
         lbytes = ((((w * bpp) + 3) / 4) * 4);
      }
+   else
+     lbytes = (((w + 63) / 64) * 4);
 
    sz = (lbytes * h);
    SHMPOOL_LOCK();

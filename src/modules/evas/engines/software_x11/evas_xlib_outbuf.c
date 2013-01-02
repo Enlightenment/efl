@@ -52,7 +52,7 @@ _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 	lbytes = (((w * bpp) + 3) / 4) * 4;
      }
    else
-     lbytes = ((w + 63) / 64) * 4;
+     lbytes = ((w + 63) / 64) * 8;
    sz = lbytes * h;
    SHMPOOL_LOCK();
    EINA_LIST_FOREACH(shmpool, l, xob2)

@@ -1,3 +1,8 @@
+2013-01-02  Carsten Haitzler (The Rasterman)
+
+        * Fixed evas_software_xlib_x_write_mask_line() issue - it was
+        finding a segment in the shm cache of the wrong size for masks!
+
 2013-01-02  Cedric Bail
 
 	* Use Eina_File for evas webp, gif, tiff and eet loader.
