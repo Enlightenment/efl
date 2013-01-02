@@ -10702,7 +10702,6 @@ evas_object_textblock_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Dat
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
 /*   o->prev = o->cur; */
-/*   o->changed = 0; */
 }
 
 static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj)

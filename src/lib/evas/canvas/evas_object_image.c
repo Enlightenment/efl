@@ -3817,7 +3817,6 @@ evas_object_image_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *o
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
    o->prev = o->cur;
-   o->changed = EINA_FALSE;
    /* FIXME: copy strings across */
 }
 

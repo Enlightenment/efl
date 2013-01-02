@@ -378,7 +378,6 @@ evas_object_line_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
    o->prev = o->cur;
-   o->changed = EINA_FALSE;
 }
 
 static unsigned int evas_object_line_id_get(Evas_Object *eo_obj)

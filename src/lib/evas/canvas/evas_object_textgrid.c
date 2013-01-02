@@ -835,7 +835,6 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
    o->prev = o->cur;
-   o->changed = 0;
 
    while (eina_array_count(&o->glyphs_cleanup) > 0)
      {

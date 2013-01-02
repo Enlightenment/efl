@@ -441,7 +441,6 @@ evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
-   o->changed = 0;
 }
 
 static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj)

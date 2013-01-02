@@ -2240,7 +2240,6 @@ evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
    /* o->prev = o->cur; */
-   o->changed = 0;
 }
 
 static unsigned int 
