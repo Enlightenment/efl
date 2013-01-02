@@ -991,7 +991,7 @@ EAPI Eina_Bool    emotion_object_video_mute_get        (const Evas_Object *obj);
  * @see emotion_object_video_subtitle_file_get().
  *
  * @ingroup Emotion_Video
- * @since 1.7.2
+ * @since 1.7.5
  */
 EAPI void         emotion_object_video_subtitle_file_set (Evas_Object *obj, const char *filepath);
 
@@ -1007,7 +1007,7 @@ EAPI void         emotion_object_video_subtitle_file_set (Evas_Object *obj, cons
  * @see emotion_object_video_subtitle_file_set().
  *
  * @ingroup Emotion_Video
- * @since 1.7.2
+ * @since 1.7.5
  */
 EAPI const char   *emotion_object_video_subtitle_file_get (const Evas_Object *obj);
 

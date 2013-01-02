@@ -1,16 +1,11 @@
-Emotion 1.7.2
-
-Changes since Emotion 1.7.1:
--------------------------
-
-Additions:
-	- Add video subtitle file API.
+Emotion 1.8.0
 
 Changes since Emotion 1.7.0:
 -------------------------
 
 Additions:
 	- Add fimcconvert and capsfilter element for device
+	- Add video subtitle file API.
 
 Fixes:
 	- fix to call correct render function.
