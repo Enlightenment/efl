@@ -69,7 +69,7 @@ Improvements:
     * Display more information with eet -l -v.
     * eina_magic_fail() now throws error messages on NULL pointers instead of critical
     * all efl object-freeing functions now take NULL without crashing or erroring
-    * use Eina_File in webp and eet loader
+    * use Eina_File in webp, gif and eet loader
 
 Fixes:
     * Fix PPC (big endian) image codec bug.
