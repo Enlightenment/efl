@@ -1431,7 +1431,7 @@ eet_map(Eina_File *file)
      }
 
    ef = eet_cache_find(path, eet_readers, eet_readers_num);
-   if (ef->readfp == file) goto done;
+   if (ef && ef->readfp == file) goto done;
 
    /* Allocate struct for eet file and have it zero'd out */
    ef = eet_file_malloc(1);
