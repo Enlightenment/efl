@@ -48,65 +48,111 @@ struct TIFFRGBAImage_Extra {
    uint32              py;
 };
 
+static tsize_t
+_evas_tiff_RWProc(thandle_t handle EINA_UNUSED,
+                  tdata_t data EINA_UNUSED,
+                  tsize_t size EINA_UNUSED)
+{
+   return 0;
+}
+
+static toff_t
+_evas_tiff_SeekProc(thandle_t handle EINA_UNUSED,
+                    toff_t size EINA_UNUSED,
+                    int origin EINA_UNUSED)
+{
+   return 0;
+}
+
+static int
+_evas_tiff_CloseProc(thandle_t handle EINA_UNUSED)
+{
+   return 0;
+}
+
+static toff_t
+_evas_tiff_SizeProc(thandle_t handle)
+{
+   Eina_File *f = (Eina_File *) handle;
+
+   return eina_file_size_get(f);
+}
+
+static int
+_evas_tiff_MapProc(thandle_t handle, tdata_t *mem, toff_t *size)
+{
+   Eina_File *f = (Eina_File *) handle;
+
+   *mem = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   *size = eina_file_size_get(f);
+
+   return 1;
+}
+
+static void
+_evas_tiff_UnmapProc(thandle_t handle, tdata_t data, toff_t size EINA_UNUSED)
+{
+   Eina_File *f = (Eina_File *) handle;
+
+   eina_file_map_free(f, data);
+}
+
 static Eina_Bool
 evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
 {
    char                txt[1024];
    TIFFRGBAImage       tiff_image;
    TIFF               *tif = NULL;
-   FILE               *ffile;
-   int                 fd;
+   Eina_File          *f;
+   unsigned char      *map;
    uint16              magic_number;
+   Eina_Bool           r = EINA_FALSE;
 
-   ffile = fopen(file, "rb");
-   if (!ffile)
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
 
-   if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map || eina_file_size_get(f) < 3)
      {
-        fclose(ffile);
-	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-	return EINA_FALSE;
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto on_error;
      }
-   /* Apparently rewind(f) isn't sufficient */
-   fseek(ffile, 0, SEEK_SET);
+
+   magic_number = *((uint16*) map);
 
    if ((magic_number != TIFF_BIGENDIAN) /* Checks if actually tiff file */
        && (magic_number != TIFF_LITTLEENDIAN))
      {
-        fclose(ffile);
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-	return EINA_FALSE;
+        goto on_error;
      }
 
-   fd = fileno(ffile);
-   fd = dup(fd);
-   lseek(fd, (long)0, SEEK_SET);
-   fclose(ffile);
-
-   tif = TIFFFdOpen(fd, file, "r");
+   tif = TIFFClientOpen("evas", "rM", f,
+                        _evas_tiff_RWProc, _evas_tiff_RWProc,
+                        _evas_tiff_SeekProc, _evas_tiff_CloseProc,
+                        _evas_tiff_SizeProc,
+                        _evas_tiff_MapProc, _evas_tiff_UnmapProc);
    if (!tif)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
 
    strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
    strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin(& tiff_image, tif, 1, txt))
      {
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
 
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
@@ -115,20 +161,25 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
        (tiff_image.width > IMG_MAX_SIZE) || (tiff_image.height > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(tiff_image.width, tiff_image.height))
      {
-	TIFFClose(tif);
 	if (IMG_TOO_BIG(tiff_image.width, tiff_image.height))
 	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	else
 	  *error = EVAS_LOAD_ERROR_GENERIC;
-	return EINA_FALSE;
+        goto on_error_end;
      }
    ie->w = tiff_image.width;
    ie->h = tiff_image.height;
 
-   TIFFRGBAImageEnd(&tiff_image);
-   TIFFClose(tif);
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
+
+ on_error_end:
+   TIFFRGBAImageEnd(&tiff_image);
+ on_error:
+   if (tif) TIFFClose(tif);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
+   return r;
 }
 
 static Eina_Bool
@@ -137,61 +188,59 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
    TIFF               *tif = NULL;
-   FILE               *ffile;
+   Eina_File          *f;
+   unsigned char      *map;
    uint32             *rast = NULL;
    uint32              num_pixels;
-   int                 fd, x, y;
+   int                 x, y;
    uint16              magic_number;
+   Eina_Bool           res = EINA_FALSE;
 
-   ffile = fopen(file, "rb");
-   if (!ffile)
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
      {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
 
-   if (fread(&magic_number, sizeof(uint16), 1, ffile) != 1)
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map || eina_file_size_get(f) < 3)
      {
-        fclose(ffile);
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto on_error;
      }
-   /* Apparently rewind(f) isn't sufficient */
-   fseek(ffile, (long)0, SEEK_SET);
+
+   magic_number = *((uint16*) map);
 
    if ((magic_number != TIFF_BIGENDIAN) /* Checks if actually tiff file */
        && (magic_number != TIFF_LITTLEENDIAN))
      {
-        fclose(ffile);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
 
-   fd = fileno(ffile);
-   fd = dup(fd);
-   lseek(fd, (long)0, SEEK_SET);
-   fclose(ffile);
-
-   tif = TIFFFdOpen(fd, file, "r");
+   tif = TIFFClientOpen("evas", "rM", f,
+                        _evas_tiff_RWProc, _evas_tiff_RWProc,
+                        _evas_tiff_SeekProc, _evas_tiff_CloseProc,
+                        _evas_tiff_SizeProc,
+                        _evas_tiff_MapProc, _evas_tiff_UnmapProc);
    if (!tif)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
 
    strcpy(txt, "Evas Tiff loader: cannot be processed by libtiff");
    if (!TIFFRGBAImageOK(tif, txt))
      {
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
    strcpy(txt, "Evas Tiff loader: cannot begin reading tiff");
    if (!TIFFRGBAImageBegin((TIFFRGBAImage *) & rgba_image, tif, 0, txt))
      {
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        goto on_error;
      }
    rgba_image.image = ie;
 
@@ -200,18 +249,15 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    if ((rgba_image.rgba.width != ie->w) ||
        (rgba_image.rgba.height != ie->h))
      {
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return EINA_FALSE;
+        goto on_error_end;
      }
 
    evas_cache_image_surface_alloc(ie, rgba_image.rgba.width, rgba_image.rgba.height);
    if (!evas_cache_image_pixels(ie))
      {
-        TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-        TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return EINA_FALSE;
+        goto on_error_end;
      }
 
    rgba_image.num_pixels = num_pixels = ie->w * ie->h;
@@ -221,12 +267,10 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 
    if (!rast)
      {
-       ERR("Evas Tiff loader: out of memory");
+        ERR("Evas Tiff loader: out of memory");
 
-       TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-       TIFFClose(tif);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return EINA_FALSE;
+	goto on_error_end;
      }
    if (rgba_image.rgba.bitspersample == 8)
      {
@@ -234,10 +278,8 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
                               rgba_image.rgba.width, rgba_image.rgba.height))
           {
              _TIFFfree(rast);
-             TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-             TIFFClose(tif);
 	     *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	     return EINA_FALSE;
+             goto on_error_end;
           }
      }
    else
@@ -277,13 +319,17 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 
    _TIFFfree(rast);
 
-   TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-
-   TIFFClose(tif);
-
    evas_common_image_set_alpha_sparse(ie);
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   res = EINA_TRUE;
+
+ on_error_end:
+   TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
+ on_error:
+   if (tif) TIFFClose(tif);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
+   return res;
 }
 
 static int
