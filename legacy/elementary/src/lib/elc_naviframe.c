@@ -370,28 +370,25 @@ _item_text_set_hook(Elm_Object_Item *it,
        (!strcmp(part, "elm.text.title")))
      {
         eina_stringshare_replace(&nit->title_label, label);
-        snprintf(buf, sizeof(buf), "elm.text.title");
         if (label)
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
-        edje_object_part_text_set(VIEW(it), buf, label);
+        edje_object_part_text_set(VIEW(it), "elm.text.title", label);
      }
    else if (!strcmp("subtitle", part))
      {
         eina_stringshare_replace(&nit->subtitle_label, label);
-        snprintf(buf, sizeof(buf), "elm.text.subtitle");
         if (label)
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,hide", "elm");
-        edje_object_part_text_set(VIEW(it), buf, label);
+        edje_object_part_text_set(VIEW(it), "elm.text.subtitle", label);
      }
    else
      {
-        snprintf(buf, sizeof(buf), "%s", part);
         EINA_INLIST_FOREACH(nit->text_list, pair)
-          if (!strcmp(buf, pair->part)) break;
+          if (!strcmp(part, pair->part)) break;
 
         if (!pair)
           {
@@ -402,7 +399,7 @@ _item_text_set_hook(Elm_Object_Item *it,
                   WIDGET(it));
                   return;
                }
-             eina_stringshare_replace(&pair->part, buf);
+             eina_stringshare_replace(&pair->part, part);
              nit->text_list = eina_inlist_append(nit->text_list,
                                                  EINA_INLIST_GET(pair));
              if (label)
