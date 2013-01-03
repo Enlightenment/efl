@@ -780,6 +780,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
                           &edbus_msg->iterator->dbus_iterator);
 
    edbus_connection_ref(conn);
+   edbus_init();
    /*
     * Do the walking open-coded so we don't crash if a callback
     * removes other signal handlers from the list and we don't own
@@ -841,6 +842,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
 
    edbus_message_unref(edbus_msg);
    edbus_connection_unref(conn);
+   edbus_shutdown();
 }
 
 static DBusHandlerResult
