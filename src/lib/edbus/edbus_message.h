@@ -9,25 +9,15 @@
  */
 
 /**
- * @brief Constructs a new message to invoke a method on a remote object.
- *
- * @param dest bus name or unique id of the remote applications
- * @param path object path
- * @param iface interface name
- * @param method name of method that will be called
- *
- * @return a new EDBus_Message, free with edbus_message_unref()
- */
-EAPI EDBus_Message        *edbus_message_method_call_new(const char *dest, const char *path, const char *iface, const char *method) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
-
-/**
  * @brief Increase message reference.
  */
 EAPI EDBus_Message        *edbus_message_ref(EDBus_Message *msg) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Decrease message reference.
- * If reference == 0 message will be freed and all its children.
+ *
+ * When refcount reaches zero the message and all its resources will be
+ * freed.
  */
 EAPI void                  edbus_message_unref(EDBus_Message *msg) EINA_ARG_NONNULL(1);
 
@@ -39,18 +29,30 @@ EAPI const char           *edbus_message_sender_get(const EDBus_Message *msg) EI
 EAPI const char           *edbus_message_signature_get(const EDBus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates a new message that is an error reply to another message.
+ * @brief Create a new message to invoke a method on a remote object.
  *
- * @param reply the message we're replying to
+ * @param dest bus name or unique id of the remote application
+ * @param path object path
+ * @param iface interface name
+ * @param method name of the method to be called
+ *
+ * @return a new EDBus_Message, free with edbus_message_unref()
+ */
+EAPI EDBus_Message        *edbus_message_method_call_new(const char *dest, const char *path, const char *iface, const char *method) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
+/**
+ * @brief Create a new message that is an error reply to another message.
+ *
+ * @param msg the message we're replying to
  * @param error_name the error name
  * @param error_msg the error message string
  *
- * @return new EDBus_Message, free with edbus_message_unref()
+ * @return a new EDBus_Message, free with edbus_message_unref()
  */
-EAPI EDBus_Message        *edbus_message_error_new(const EDBus_Message *reply, const char *error_name, const char *error_msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI EDBus_Message        *edbus_message_error_new(const EDBus_Message *msg, const char *error_name, const char *error_msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Constructs a message that is a reply to a method call.
+ * @brief Create a message that is a reply to a method call.
  *
  * @param msg the message we're replying to
  *
@@ -60,38 +62,80 @@ EAPI EDBus_Message        *edbus_message_method_return_new(const EDBus_Message *
 
 
 /**
- * @brief If EDBus_Message is a message error return EINA_TRUE and fills
- * name and text if their pointers is not null.
+ * @brief Get the error text and name from a EDBus_Message.
+ *
+ * If @param msg is an error message return EINA_TRUE and fill in the name and
+ * text of the error.
+ *
+ * @param msg The message containing the error
+ * @param name Variable in which to store the error name or @c NULL if it's not
+ * desired.
+ * @param text Variable in which to store the error text or @c NULL if it's not
+ * desired.
  */
 EAPI Eina_Bool             edbus_message_error_get(const EDBus_Message *msg, const char **name, const char **text) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get data from EDBus_Message. For each complete type we must have
- * a pointer to store its value. In case of complex type EDBus_Message_Iter
- * needs to be used.
+ * @brief Get the arguments from an EDBus_Message
+ *
+ * Get the arguments of an EDBus_Message storing them in the locations pointed
+ * to by the pointer arguments that follow @param signature. Each pointer
+ * argument must be of a type that is appropriate for the correspondent complete
+ * type in @param signature. For complex types such as arrays, structs,
+ * dictionaries or variants, a pointer to EDBus_Message_Iter* must be provided.
+ *
+ * @param msg The message to get the arguments from.
+ * @param signature The signature of the arguments user is expecting to read
+ * from @param msg
+ * @param ... The pointers in which to store the message arguments
+ *
+ * @return EINA_TRUE if the arguments were read succesfully and stored in the
+ * respective pointer arguments.
  */
 EAPI Eina_Bool             edbus_message_arguments_get(const EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get data from EDBus_Message. For each complete type we must have
- * a pointer to store its value, in case of complex type
- * EDBus_Message_Iter needs to be used.
+ * @brief Get the arguments from an EDBus_Message using a va_list.
+ *
+ * @param msg The message to get the arguments from.
+ * @param signature The signature user is expecting to read from @param msg.
+ * @param ap The va_list containing the pointer arguments.
+ *
+ * @see edbus_message_arguments_get()
+ *
+ * @return EINA_TRUE if the arguments were read succesfully and stored in the
+ * respective pointer arguments.
  */
 EAPI Eina_Bool             edbus_message_arguments_vget(const EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set data to EDBus_Message.
+ * @brief Append arguments into an EDBus_Message
  *
- * This function only supports basic type, for complex types use
- * edbus_message_iter_* functions.
+ * Append arguments into an EDBus_Message according to the @param signature
+ * provided. For each complete type in @param signature, a value of the
+ * corresponding type must be provided.
+ *
+ * This function supports only basic types. For complex types use
+ * edbus_message_iter_* family of functions.
+ *
+ * @param msg The message in which arguments are being appended.
+ * @param signature Signature of the arguments that are being appended.
+ * @param ... Values of each argument to append in @param msg.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool             edbus_message_arguments_append(EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Set data to EDBus_Message.
+ * @brief Append arguments into an EDBus_Message using a va_list.
  *
- * This function only supports basic types, for complex types use
- * edbus_message_iter_* functions.
+ * @param msg The message in which arguments are being appended.
+ * @param signature Signature of the arguments that are being appended.
+ * @param ap The va_list containing the arguments to append.
+ *
+ * @see edbus_message_arguments_append().
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool             edbus_message_arguments_vappend(EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2);
 

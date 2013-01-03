@@ -803,9 +803,6 @@ edbus_message_iter_del(EDBus_Message_Iter *iter)
    _message_iterator_free(iter);
 }
 
-/* TODO: proper doc
- * Return the *reply* to @msg, i.e. @msg is the message we are replying to.
- */
 EAPI EDBus_Message *
 edbus_message_error_new(const EDBus_Message *msg, const char *error_name, const char *error_msg)
 {
