@@ -9043,7 +9043,7 @@ EAPI Evas_Native_Surface          *evas_object_image_native_surface_get(const Ev
  * @param surf The new video surface.
  * @since 1.1
  *
- * This function link a video surface to a given canvas image.
+ * This function links a video surface to a given canvas image.
  *
  */
 EAPI void                          evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf) EINA_ARG_NONNULL(1);
