@@ -44,6 +44,9 @@ Improvements:
    * Conformant widget handles indicator service.
    * Elm_Transit image animation effects supports elm_image object type.
    * Include a main menu in elm_win, which can be exported via D-Bus.
+   * Merged the file_entry and the path_entry in the fileselector and allowing typing the path.
+   * Setting the same font size of the others widgets for the dayselector.
+   * Added a separated spinner for year on calendar.
 
 Fixes:
 
@@ -110,6 +113,8 @@ Fixes:
    * Fix the naviframe item part text to be set properly.
    * Fix list separator size bug.
    * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
+   * Fix the usage of the checks in the fileselector test 2.
+   * Added the min_year and max_year in the standard profile config.
 
 Removals:
 
