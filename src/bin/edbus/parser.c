@@ -46,7 +46,7 @@ obj_attributes_parser(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-iface_attributes_parser(void *data, const char *key, const char *value)
+iface_attributes_parser(void *data EINA_UNUSED, const char *key, const char *value)
 {
    if (!strcmp(key, NAME_ATTR))
      iface->name = strdup(value);
@@ -55,7 +55,7 @@ iface_attributes_parser(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-signal_attributes_parser(void *data, const char *key, const char *value)
+signal_attributes_parser(void *data EINA_UNUSED, const char *key, const char *value)
 {
    if (!strcmp(key, NAME_ATTR))
      d_signal->name = strdup(value);
@@ -64,7 +64,7 @@ signal_attributes_parser(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-arg_attributes_parser(void *data, const char *key, const char *value)
+arg_attributes_parser(void *data EINA_UNUSED, const char *key, const char *value)
 {
    DBus_Arg *arg = data;
    if (!strcmp(key, NAME_ATTR))
@@ -78,7 +78,7 @@ arg_attributes_parser(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-method_attributes_parser(void *data, const char *key, const char *value)
+method_attributes_parser(void *data EINA_UNUSED, const char *key, const char *value)
 {
    if (!strcmp(key, NAME_ATTR))
      method->name = strdup(value);
@@ -87,7 +87,7 @@ method_attributes_parser(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-property_attributes_parser(void *data, const char *key, const char *value)
+property_attributes_parser(void *data EINA_UNUSED, const char *key, const char *value)
 {
    if (!strcmp(key, NAME_ATTR))
      property->name = strdup(value);
@@ -433,7 +433,7 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
 }
 
 static Eina_Bool
-close_tag(const char *content, unsigned length)
+close_tag(const char *content)
 {
    if (!strncmp(content, INTERFACE_TAG, INTERFACE_TAG_LENGHT))
      interface_close();
@@ -448,7 +448,7 @@ close_tag(const char *content, unsigned length)
 }
 
 Eina_Bool
-parser(void *data, Eina_Simple_XML_Type type, const char *content, unsigned offset, unsigned length)
+parser(void *data, Eina_Simple_XML_Type type, const char *content, unsigned offset EINA_UNUSED, unsigned length)
 {
    Eina_Bool r = EINA_TRUE;
    DBus_Object **obj = data;
@@ -464,7 +464,7 @@ parser(void *data, Eina_Simple_XML_Type type, const char *content, unsigned offs
         }
       case EINA_SIMPLE_XML_CLOSE:
         {
-           r = close_tag(content, length);
+           r = close_tag(content);
            break;
         }
       default:
