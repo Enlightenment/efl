@@ -1585,7 +1585,7 @@ CPPFLAGS="$CPPFLAGS_SAVE"
 if test "x$have_fribidi" = "xyes" ; then
    CPPFLAGS_SAVE="$CPPFLAGS"
    CPPFLAGS="$CPPFLAGS $EVAS_CFLAGS"
-   AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi/fribidi.h>])
+   AC_CHECK_SIZEOF([FriBidiChar], [], [#include <fribidi.h>])
    CPPFLAGS="$CPPFLAGS_SAVE"
 fi
 
