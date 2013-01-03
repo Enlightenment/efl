@@ -1035,7 +1035,7 @@ update:
 			goto error;
 
 		count = ntohs(dns_header(P)->arcount) + 1;
-		dns_header(P)->arcount = ntohs(dns_header(P)->arcount) + 1;
+		dns_header(P)->arcount = htons(count);
 
 		P->ar.end = P->end;
 
