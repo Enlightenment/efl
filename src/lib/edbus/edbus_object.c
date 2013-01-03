@@ -176,7 +176,7 @@ _edbus_object_free(EDBus_Object *obj)
 }
 
 static void
-_on_connection_free(void *data, const void *dead_pointer)
+_on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
 {
    EDBus_Object *obj = data;
    EDBUS_OBJECT_CHECK(obj);

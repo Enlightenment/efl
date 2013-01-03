@@ -433,7 +433,7 @@ on_name_owner_changed(void *data, const EDBus_Message *msg)
 }
 
 static void
-on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *unique_id = "";
    EDBus_Connection_Name *cn = data;
@@ -608,7 +608,7 @@ cb_watch_add(DBusWatch *watch, void *data)
 }
 
 static void
-cb_watch_del(DBusWatch *watch, void *data)
+cb_watch_del(DBusWatch *watch, void *data EINA_UNUSED)
 {
    DBG("cb_watch_del");
    /* will trigger edbus_handler_data_free() */
@@ -616,7 +616,7 @@ cb_watch_del(DBusWatch *watch, void *data)
 }
 
 static void
-cb_watch_toggle(DBusWatch *watch, void *data)
+cb_watch_toggle(DBusWatch *watch, void *data EINA_UNUSED)
 {
    EDBus_Handler_Data *hd;
    hd = dbus_watch_get_data(watch);
@@ -683,7 +683,7 @@ cb_timeout_add(DBusTimeout *timeout, void *data)
 }
 
 static void
-cb_timeout_del(DBusTimeout *timeout, void *data)
+cb_timeout_del(DBusTimeout *timeout, void *data EINA_UNUSED)
 {
    DBG("timeout del!");
    /* will trigger edbus_timeout_data_free() */
@@ -691,7 +691,7 @@ cb_timeout_del(DBusTimeout *timeout, void *data)
 }
 
 static void
-cb_timeout_toggle(DBusTimeout *timeout, void *data)
+cb_timeout_toggle(DBusTimeout *timeout, void *data EINA_UNUSED)
 {
    EDBus_Timeout_Data *td;
 
@@ -740,7 +740,7 @@ edbus_idler(void *data)
 }
 
 static void
-cb_dispatch_status(DBusConnection *dbus_conn, DBusDispatchStatus new_status, void *data)
+cb_dispatch_status(DBusConnection *dbus_conn EINA_UNUSED, DBusDispatchStatus new_status, void *data)
 {
    EDBus_Connection *conn = data;
 
@@ -846,7 +846,7 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
 }
 
 static DBusHandlerResult
-edbus_filter(DBusConnection *conn_dbus, DBusMessage *message, void *user_data)
+edbus_filter(DBusConnection *conn_dbus EINA_UNUSED, DBusMessage *message, void *user_data)
 {
    EDBus_Connection *conn = user_data;
 
@@ -912,7 +912,7 @@ edbus_connection_setup(EDBus_Connection *conn)
 }
 
 static void
-_disconnected(void *data, const EDBus_Message *msg)
+_disconnected(void *data, const EDBus_Message *msg EINA_UNUSED)
 {
    EDBus_Connection *conn = data;
    _edbus_connection_event_callback_call(

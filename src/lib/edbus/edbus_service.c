@@ -1087,7 +1087,7 @@ _object_free(EDBus_Service_Object *obj)
 }
 
 static void
-_on_connection_free(void *data, const void *dead_pointer)
+_on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
 {
    EDBus_Service_Object *obj = data;
    dbus_connection_unregister_object_path(obj->conn->dbus_conn, obj->path);
@@ -1122,14 +1122,14 @@ edbus_service_object_unregister(EDBus_Service_Interface *iface)
 }
 
 static void
-_object_unregister(DBusConnection *conn, void *user_data)
+_object_unregister(DBusConnection *conn EINA_UNUSED, void *user_data)
 {
    EDBus_Service_Object *obj = user_data;
    _object_free(obj);
 }
 
 static DBusHandlerResult
-_object_handler(DBusConnection *conn, DBusMessage *msg, void *user_data)
+_object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_data)
 {
    EDBus_Service_Object *obj;
    EDBus_Service_Interface *iface;

@@ -184,7 +184,7 @@ _edbus_proxy_free(EDBus_Proxy *proxy)
 }
 
 static void
-_on_object_free(void *data, const void *dead_pointer)
+_on_object_free(void *data, const void *dead_pointer EINA_UNUSED)
 {
    EDBus_Proxy *proxy = data;
    EDBUS_PROXY_CHECK(proxy);
@@ -703,7 +703,7 @@ _property_iter(void *data, const void *key, EDBus_Message_Iter *var)
 }
 
 static void
-_props_get_all(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_props_get_all(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Proxy *proxy = data;
    EDBus_Message_Iter *dict;
