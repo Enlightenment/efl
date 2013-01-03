@@ -1928,7 +1928,6 @@ embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
    pr->string = NULL;
    pr->cell_array = NULL;
    pr->cell_array_size = 0;
-   pr->cell = 0;
    pr->cell = cell;
    return 1;
 }
@@ -1956,11 +1955,10 @@ embryo_parameter_string_push(Embryo_Program *ep, const char *str)
 	ep->params = pr;
      }
    pr = &(ep->params[ep->params_size - 1]);
-   pr->string = NULL;
+   pr->string = str_dup;
    pr->cell_array = NULL;
    pr->cell_array_size = 0;
    pr->cell = 0;
-   pr->string = str_dup;
    return 1;
 }
 
@@ -1987,8 +1985,6 @@ embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num
      }
    pr = &(ep->params[ep->params_size - 1]);
    pr->string = NULL;
-   pr->cell_array = NULL;
-   pr->cell_array_size = 0;
    pr->cell = 0;
    pr->cell_array = cell_array;
    pr->cell_array_size = num;
