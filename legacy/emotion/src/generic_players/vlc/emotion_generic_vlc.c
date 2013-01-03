@@ -20,6 +20,14 @@
 #include <vlc/vlc.h>
 
 #include <Emotion_Generic_Plugin.h>
+#include <Eina.h>
+
+static int _em_vlc_log_dom = -1;
+#define ERR(...) EINA_LOG_DOM_ERR(_em_vlc_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_em_vlc_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_em_vlc_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_em_vlc_log_dom, __VA_ARGS__)
+#define CRIT(...) EINA_LOG_DOM_CRIT(_em_vlc_log_dom, __VA_ARGS__)
 
 enum _Thread_Events {
      EM_THREAD_POSITION_CHANGED,
@@ -80,8 +88,7 @@ _em_read_safe(int fd, void *buf, ssize_t size)
                continue;
              else
                {
-		  fprintf(stderr, "could not read from fd %d: %s",
-			  fd, strerror(errno));
+                  ERR("could not read from fd %d: %s", fd, strerror(errno));
                   return 0;
                }
           }
@@ -117,8 +124,7 @@ _em_write_safe(int fd, const void *buf, ssize_t size)
                continue;
              else
                {
-		  fprintf(stderr, "could not write to fd %d: %s",
-			  fd, strerror(errno));
+		  ERR("could not write to fd %d: %s", fd, strerror(errno));
 		  return 0;
                }
           }
@@ -403,14 +409,14 @@ _file_set(struct _App *app)
    app->m = libvlc_media_new_path(app->libvlc, app->filename);
    if (!app->m)
      {
-	fprintf(stderr, "could not open path: \"%s\"\n", app->filename);
+	ERR("could not open path: \"%s\"", app->filename);
 	return;
      }
 
    app->mp = libvlc_media_player_new_from_media(app->m);
    if (!app->mp)
      {
-	fprintf(stderr, "could not create new player from media.\n");
+	ERR("could not create new player from media.");
 	return;
      }
 
@@ -748,8 +754,8 @@ _process_thread_events(struct _App *app)
    size = read(app->fd_read, &event, sizeof(event));
    if (size != sizeof(event))
      {
-	fprintf(stderr, "player: problem when reading thread event. size = %zd\n", size);
-	return;
+        ERR("player: problem when reading thread event. size = %zd", size);
+        return;
      }
 
    switch (event) {
@@ -774,6 +780,24 @@ main(int argc, const char *argv[])
    int tpipe[2]; // pipe for comunicating events from threads
    char cwidth[64], cheight[64], cpitch[64], chroma[64];
    char buf[64];
+
+   if (!eina_init())
+     {
+        EINA_LOG_CRIT("Can't initialize generic vlc player, eina failed.");
+        return -1;
+     }
+
+   _em_vlc_log_dom = eina_log_domain_register("emotion_generic_vlc",
+                                              EINA_COLOR_CYAN);
+   if (_em_vlc_log_dom < 0)
+     {
+        EINA_LOG_CRIT("Unable to register emotion_generic_vlc log domain.");
+        goto error;
+     }
+
+   if (!eina_log_domain_level_check(_em_vlc_log_dom, EINA_LOG_LEVEL_WARN))
+     eina_log_domain_level_set("emotion_generic_vlc", EINA_LOG_LEVEL_WARN);
+
    const char *vlc_argv[] =
      {
         "--quiet",
@@ -791,9 +815,9 @@ main(int argc, const char *argv[])
 
    if (argc < 3)
      {
-	fprintf(stderr, "player: missing paramters.\n");
-	fprintf(stderr, "syntax:\n\t%s <fd read> <fd write>\n", argv[0]);
-	return -1;
+        ERR("missing parameters.");
+        ERR("syntax:\n\t%s <fd read> <fd write>", argv[0]);
+        goto error;
      }
 
    app.em_read = atoi(argv[1]);
@@ -829,8 +853,8 @@ main(int argc, const char *argv[])
 
    if (_em_cmd_read(&app) != EM_CMD_INIT)
      {
-	fprintf(stderr, "player: wrong init command!\n");
-	return -1;
+        ERR("wrong init command!");
+        goto error;
      }
 
    int size;
@@ -859,22 +883,18 @@ main(int argc, const char *argv[])
 	  continue;
 	else if (r < 0)
 	  {
-	     fprintf(stderr,
-                     "emotion_generic_vlc: an error ocurred on poll(): %s\n",
-                     strerror(errno));
-	     break;
+             ERR("an error ocurred on poll(): %s", strerror(errno));
+             break;
 	  }
 
         if (fds[0].revents & (POLLERR | POLLHUP | POLLNVAL))
           {
-             fputs("emotion_generic_vlc: error communicating with stdin\n",
-                   stderr);
+             ERR("error communicating with stdin", stderr);
              break;
           }
         if (fds[1].revents & (POLLERR | POLLHUP | POLLNVAL))
           {
-             fputs("emotion_generic_vlc: error communicating with thread\n",
-                   stderr);
+             ERR("error communicating with thread", stderr);
              break;
           }
 
@@ -887,8 +907,10 @@ main(int argc, const char *argv[])
      }
 
    libvlc_release(app.libvlc);
-
-
    return 0;
+
+ error:
+   eina_shutdown();
+   return -1;
 }
 #undef SEND_CMD_PARAM
