@@ -37,6 +37,8 @@ struct _Elm_Gengrid_Smart_Data
                                                      * being
                                                      * repositioned */
    Elm_Object_Item                      *last_selected_item;
+   Elm_Gen_Item                         *show_it;
+   Elm_Gen_Item                         *bring_in_it;
 
    Ecore_Job                            *calc_job;
    int                                   walking;
@@ -99,6 +101,8 @@ struct _Elm_Gengrid_Smart_Data
    Eina_Bool                             multi : 1; /* a flag for item
                                                      * multi
                                                      * selection */
+   Eina_Bool                             show_region : 1;
+   Eina_Bool                             bring_in : 1;
 };
 
 struct Elm_Gen_Item_Type
