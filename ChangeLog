@@ -1,3 +1,7 @@
+2013-01-03  Cedric Bail
+
+	* Use Eina_File for evas png loader.
+
 2013-01-03  Carsten Haitzler (The Rasterman)
 
         * Fixed ecore_con case where freeing server double-frees clients

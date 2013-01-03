@@ -10,22 +10,10 @@
 # include <Evil.h>
 #endif
 
-#ifdef _WIN32_WCE
-# define E_FOPEN(file, mode) evil_fopen_native((file), (mode))
-# define E_FREAD(buffer, size, count, stream) evil_fread_native(buffer, size, count, stream)
-# define E_FCLOSE(stream) evil_fclose_native(stream)
-#else
-# define E_FOPEN(file, mode) fopen((file), (mode))
-# define E_FREAD(buffer, size, count, stream) fread(buffer, size, count, stream)
-# define E_FCLOSE(stream) fclose(stream)
-#endif
-
 #include "evas_common.h"
 #include "evas_private.h"
 
-
 #define PNG_BYTES_TO_CHECK 4
-
 
 static Eina_Bool evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 static Eina_Bool evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
@@ -39,34 +27,63 @@ static Evas_Image_Load_Func evas_image_load_png_func =
   EINA_FALSE
 };
 
+typedef struct _Evas_PNG_Info Evas_PNG_Info;
+struct _Evas_PNG_Info
+{
+   unsigned char *map;
+   size_t length;
+   size_t position;
+};
+
+static void
+_evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
+{
+   Evas_PNG_Info *epi = png_ptr->io_ptr;
+
+   if (!epi) return ;
+   if (epi->position == epi->length) return ;
+
+   if (epi->position + count > epi->length) count = epi->length - epi->position;
+   memcpy(out, epi->map + epi->position, count);
+   epi->position += count;
+}
+
 static Eina_Bool
 evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
 {
-   png_uint_32 w32, h32;
-   FILE *f;
+   Eina_File *f;
+   Evas_PNG_Info epi;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
+   png_uint_32 w32, h32;
    int bit_depth, color_type, interlace_type;
-   unsigned char buf[PNG_BYTES_TO_CHECK];
    char hasa;
+   Eina_Bool r = EINA_FALSE;
 
    hasa = 0;
-   f = E_FOPEN(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
-        ERR("File: '%s' does not exist\n", file);
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
 
-   /* if we havent read the header before, set the header data */
-   if (E_FREAD(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
+   epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!epi.map)
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto close_file;
+     }
+   epi.length = eina_file_size_get(f);
+   epi.position = 0;
+
+   if (epi.length < PNG_BYTES_TO_CHECK)
      {
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	goto close_file;
      }
 
-   if (png_sig_cmp(buf, 0, PNG_BYTES_TO_CHECK))
+   if (png_sig_cmp(epi.map, 0, PNG_BYTES_TO_CHECK))
      {
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	goto close_file;
@@ -82,18 +99,18 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    info_ptr = png_create_info_struct(png_ptr);
    if (!info_ptr)
      {
-	png_destroy_read_struct(&png_ptr, NULL, NULL);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
+
+   png_set_read_fn(png_ptr, &epi, _evas_image_png_read);
+
    if (setjmp(png_jmpbuf(png_ptr)))
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	goto close_file;
      }
-   png_init_io(png_ptr, f);
-   png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
+
    png_read_info(png_ptr, info_ptr);
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
@@ -101,7 +118,6 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    if ((w32 < 1) || (h32 < 1) || (w32 > IMG_MAX_SIZE) || (h32 > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w32, h32))
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	if (IMG_TOO_BIG(w32, h32))
 	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	else
@@ -127,52 +143,66 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
    if (hasa) ie->flags.alpha = 1;
-   png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-   E_FCLOSE(f);
 
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
  close_file:
-   E_FCLOSE(f);
-   return EINA_FALSE;
+   if (png_ptr) png_destroy_read_struct(&png_ptr,
+                                        info_ptr ? &info_ptr : NULL,
+                                        NULL);
+   if (epi.map) eina_file_map_free(f, epi. map);
+   eina_file_close(f);
+
+   return r;
 }
 
 static Eina_Bool
 evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
 {
+   Eina_File *f;
    unsigned char *surface;
-   png_uint_32 w32, h32;
-   int w, h;
-   FILE *f;
+   unsigned char **lines;
+   unsigned char *tmp_line;
+   DATA32 *src_ptr, *dst_ptr;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
+   Evas_PNG_Info epi;
+   png_uint_32 w32, h32;
+   int w, h;
    int bit_depth, color_type, interlace_type;
-   unsigned char buf[PNG_BYTES_TO_CHECK];
-   unsigned char **lines;
    char hasa;
    int i, j;
    int scale_ratio = 1, image_w = 0;
-   unsigned char *tmp_line;
-   DATA32 *src_ptr, *dst_ptr;
+   Eina_Bool r = EINA_FALSE;
 
    hasa = 0;
-   f = E_FOPEN(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
 
-   /* if we havent read the header before, set the header data */
-   if (E_FREAD(buf, PNG_BYTES_TO_CHECK, 1, f) != 1)
+   epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!epi.map)
      {
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         goto close_file;
      }
-   if (png_sig_cmp(buf, 0, PNG_BYTES_TO_CHECK))
+   epi.length = eina_file_size_get(f);
+   epi.position = 0;
+
+   if (epi.length < PNG_BYTES_TO_CHECK)
      {
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto close_file;
+     }
+
+   /* if we havent read the header before, set the header data */
+   if (png_sig_cmp(epi.map, 0, PNG_BYTES_TO_CHECK))
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	goto close_file;
      }
    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -189,14 +219,16 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
+
+   png_set_read_fn(png_ptr, &epi, _evas_image_png_read);
+
    if (setjmp(png_jmpbuf(png_ptr)))
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	goto close_file;
      }
-   png_init_io(png_ptr, f);
-   png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
+
    png_read_info(png_ptr, info_ptr);
    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *) (&w32),
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
@@ -212,13 +244,11 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    surface = (unsigned char *) evas_cache_image_pixels(ie);
    if (!surface)
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto close_file;
      }
    if ((w32 != ie->w) || (h32 != ie->h))
      {
-	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
@@ -286,16 +316,18 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
           }
      }
 
-   png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-   E_FCLOSE(f);
    evas_common_image_premul(ie);
 
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
  close_file:
-   E_FCLOSE(f);
-   return EINA_FALSE;
+   if (png_ptr) png_destroy_read_struct(&png_ptr,
+                                        info_ptr ? &info_ptr : NULL,
+                                        NULL);
+   if (epi.map) eina_file_map_free(f, epi.map);
+   eina_file_close(f);
+   return r;
 }
 
 static int
