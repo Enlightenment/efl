@@ -1,8 +1,7 @@
 /**
- * @page Examples Examples
+ * @page ephysics_examples EPhysics Examples
  *
- * Here is a page with examples.
- *
+ * Examples:
  * @li @ref tutorial_ephysics_bouncing_ball
  * @li @ref tutorial_ephysics_bouncing_text
  * @li @ref tutorial_ephysics_camera

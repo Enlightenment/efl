@@ -19,6 +19,7 @@
  * @li @ref edbus_main d-bus integration.
  * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  * @li @ref eeze_main hardware device manipulation and notification.
+ * @li @ref ephysics_main physics simulation integration and visual effects.
  *
  */
 
@@ -35,6 +36,7 @@
  * @author Boris "billiob" Faure <billiob@@gmail.com>
  * @author Brett Nash <nash@@nash.id.au>
  * @author Brian 'rephorm' Mattern <rephorm@@rephorm.com>
+ * @author Bruno Dilly <bdilly@@profusion.mobi>
  * @author Burra <burra@@colorado.edu>
  * @author Carsten Haitzler <raster@@@rasterman.com>
  * @author Cedric Bail <cedric.bail@@free.fr>
@@ -69,6 +71,7 @@
  * @author Kim Woelders <kim@@woelders.dk>
  * @author Kim Yunhan <spbear@@gmail.com>
  * @author Lars Munch <lars@@segv.dk>
+ * @author Leandro Dorileo <dorileo@@profusion.mobi>
  * @author Leandro Pereira <leandro@@profusion.mobi>
  * @author Leif Middelschulte <leif.middelschulte@@gmail.com>
  * @author Lucas De Marchi <lucas.demarchi@@profusion.mobi>
@@ -90,6 +93,7 @@
  * @author Rafael Antognolli <antognolli@@profusion.mobi>
  * @author Rafal Krypa <r.krypa@@samsung.com>
  * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
+ * @author Ricardo de Almeida Gonzaga <ricardo@@profusion.mobi>
  * @author Rui Miguel Silva Seabra <rms@@1407.org>
  * @author Samsung Electronics
  * @author Samsung SAIT
@@ -186,7 +190,6 @@
  *
  * @brief FreeDesktop.Org (XDG) menu and desktop integration.
  */
-
 
 /**
  * @defgroup Eeze

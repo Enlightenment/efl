@@ -2,12 +2,18 @@
 #define EPHYSICS_H
 
 /**
- * @mainpage EPhysics Library Documentation
+ * @page ephysics_main EPhysics
  *
- * @version 0.1.0
- * @date 2012
+ * @date 2012 (created)
  *
- * @section intro What is EPhysics ?
+ * @section toc Table of Contents
+ *
+ * @li @ref ephysics_main_intro
+ * @li @ref ephysics_main_compiling
+ * @li @ref ephysics_main_next_steps
+ * @li @ref ephysics_main_intro_example
+ *
+ * @section ephysics_main_intro Introduction
  *
  * EPhysics is a library that makes it easy to use Ecore, Evas and Bullet
  * Physics together. It's a kind of wrapper, a glue, between these libraries.
@@ -16,7 +22,33 @@
  * @image html diagram_ephysics.png
  * @image latex diagram_ephysics.eps
  *
- * For a better reference, check the following groups:
+ * @section ephysics_main_compiling How to compile
+ *
+ * Ephysics is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags ephysics`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs ephysics`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section ephysics_main_next_steps Next Steps
+ *
+ * After you understood what EPhysics is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
  * @li @ref EPhysics
  * @li @ref EPhysics_World
  * @li @ref EPhysics_Body
@@ -25,20 +57,11 @@
  * @li @ref EPhysics_Quaternion
  * @li @ref EPhysics_Shape
  *
- * Please see the @ref authors page for contact details.
- */
-
-/**
+ * @section ephysics_main_intro_example Introductory Example
  *
- * @page authors Authors
+ * @include test_bouncing_ball.c
  *
- * @author Bruno Dilly <bdilly@@profusion.mobi>
- * @author Leandro Dorileo <dorileo@@profusion.mobi>
- * @author Ricardo de Almeida Gonzaga <ricardo@@profusion.mobi>
- *
- * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
- * contact with the developers and maintainers.
- *
+ * More examples can be found at @ref ephysics_examples.
  */
 
 #include <Evas.h>
@@ -82,8 +105,8 @@ extern "C" {
  */
 
 /**
- * @brief How to initialize EPhysics.
- * @defgroup EPhysics Top Level API available to add physics effects.
+ * @brief Physics simulation integration and visual effects.
+ * @defgroup EPhysics EPhysics
  *
  * @{
  *

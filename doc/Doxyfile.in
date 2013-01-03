@@ -601,7 +601,8 @@ INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/evas_examples.dox \
                          @srcdir@/eo_tutorial.dox \
                          @srcdir@/eio_examples.dox \
-                         @srcdir@/edbus_examples.dox
+                         @srcdir@/edbus_examples.dox \
+                         @srcdir@/ephysics_examples.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -808,7 +809,8 @@ ecore_ _ecore_ Ecore_ _Ecore_ ECORE_ _ECORE_ \
 eio_ _eio_ Eio_ _Eio_ EIO_ _EIO_ \
 edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_ \
 efreet_ _efreet_ Efreet_ _Efreet_ EFREET_ _EFREET_ \
-eeze_ _eeze_ Eeze_ _Eeze_ EEZE_ _EEZE_
+eeze_ _eeze_ Eeze_ _Eeze_ EEZE_ _EEZE_ \
+ephysics_ _ephysics_ EPhysics_ _EPhysics_ EPHYSICS_ _EPHYSICS_
 
 
 #---------------------------------------------------------------------------

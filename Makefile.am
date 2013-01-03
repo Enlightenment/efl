@@ -99,7 +99,8 @@ pc/edbus2.pc \
 pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
-pc/eeze.pc
+pc/eeze.pc \
+pc/ephysics.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -211,6 +212,10 @@ endif
 
 if HAVE_EEZE
 pkgconfig_DATA += pc/eeze.pc
+endif
+
+if HAVE_EPHYSICS
+pkgconfig_DATA += pc/ephysics.pc
 endif
 
 

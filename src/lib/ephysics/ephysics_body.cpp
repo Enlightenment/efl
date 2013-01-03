@@ -333,7 +333,7 @@ ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Object *slice)
 }
 
 static void
-_ephysics_body_soft_body_slice_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_soft_body_slice_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body_Soft_Body_Slice *slice = (EPhysics_Body_Soft_Body_Slice *)data;
    slice->evas_obj = NULL;
@@ -882,7 +882,7 @@ err_body:
 }
 
 static void
-_ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ephysics_body_evas_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
 
@@ -1197,7 +1197,7 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
 }
 
 static void
-_ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_evas_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
    int w, h;
@@ -1222,7 +1222,7 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
 }
 
  static void
-_ephysics_body_soft_body_evas_restack_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_soft_body_evas_restack_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *)data;
    Eina_List *slices;
@@ -1404,7 +1404,7 @@ _ephysics_body_evas_obj_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Objec
 }
 
 static void
-_ephysics_cloth_face_objs_update(EPhysics_Body *body __UNUSED__)
+_ephysics_cloth_face_objs_update(EPhysics_Body *body EINA_UNUSED)
 {
 
 }
@@ -4506,7 +4506,7 @@ ephysics_body_clockwise_get(const EPhysics_Body *body)
 }
 
 static void
-_ephysics_body_face_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_face_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
    EPhysics_Body_Face_Obj *face_obj;
@@ -4574,7 +4574,7 @@ _ephysics_body_face_evas_object_add(EPhysics_Body *body, EPhysics_Body_Face face
 }
 
 static void
-_ephysics_body_box_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_box_face_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body_Face face = EPHYSICS_BODY_FACE_LAST;
    EPhysics_Body *body = (EPhysics_Body *) data;
@@ -4748,7 +4748,7 @@ _ephysics_body_box_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Fac
 }
 
 static void
-_ephysics_body_cylinder_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_cylinder_face_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body_Face face = EPHYSICS_BODY_FACE_LAST;
    EPhysics_Body *body = (EPhysics_Body *) data;
@@ -4909,7 +4909,7 @@ _ephysics_body_cylinder_face_evas_object_unset(EPhysics_Body *body, EPhysics_Bod
 }
 
 static void
-_ephysics_body_soft_body_face_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_soft_body_face_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int w, h;
    EPhysics_Body_Face_Obj *face;
@@ -5031,7 +5031,7 @@ _ephysics_body_cloth_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_F
 }
 
 static void
-_ephysics_body_soft_sphere_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ephysics_body_soft_sphere_face_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
    Evas_Coord bd, w, h;
@@ -5044,7 +5044,7 @@ _ephysics_body_soft_sphere_face_obj_resize_cb(void *data, Evas *e __UNUSED__, Ev
 }
 
 static void
-_ephysics_body_soft_sphere_face_evas_object_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ephysics_body_soft_sphere_face_evas_object_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eina_List *l;
    void *ldata;

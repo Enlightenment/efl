@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = eina eo eet evas ecore eio edbus
+SUBDIRS = eina eo eet evas ecore eio edbus ephysics
 
 examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C eina examples
@@ -10,6 +10,7 @@ examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C ecore examples
 	@$(MAKE) $(AM_MAKEFLAGS) -C eio examples
 	@$(MAKE) $(AM_MAKEFLAGS) -C edbus examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C ephysics examples
 
 install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C eina install-examples
@@ -19,3 +20,4 @@ install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C ecore install-examples
 	@$(MAKE) $(AM_MAKEFLAGS) -C eio install-examples
 	@$(MAKE) $(AM_MAKEFLAGS) -C edbus install-examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C ephysics install-examples

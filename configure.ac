@@ -3217,6 +3217,55 @@ AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
 EFL_LIB_END_OPTIONAL([Eeze])
 #### End of Eeze
 
+
+#### EPhysics
+AC_ARG_ENABLE([physics],
+   [AC_HELP_STRING([--disable-physics],
+       [disable physics effects and support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_physics="yes"
+    else
+       want_physics="no"
+    fi
+   ],
+   [want_physics="yes"])
+
+EFL_LIB_START_OPTIONAL([EPhysics], [test "${want_physics}" = "yes"])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([EPHYSICS], [evil])
+
+EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [eina])
+EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [evas])
+EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [ecore])
+
+EFL_DEPEND_PKG([EPHYSICS], [BULLET], [bullet >= 2.80])
+
+EFL_EVAL_PKGS([EPHYSICS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([EPhysics])
+#### End of EPhysics
+
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -3234,6 +3283,7 @@ src/examples/evas/Makefile
 src/examples/ecore/Makefile
 src/examples/eio/Makefile
 src/examples/edbus/Makefile
+src/examples/ephysics/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
@@ -3280,6 +3330,7 @@ pc/efreet.pc
 pc/efreet-mime.pc
 pc/efreet-trash.pc
 pc/eeze.pc
+pc/ephysics.pc
 dbus-services/org.enlightenment.Efreet.service
 $po_makefile_in
 ])
@@ -3485,6 +3536,7 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
 echo
 
 echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
+echo "EPhysics...............: ${efl_lib_optional_ephysics}"
 echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"

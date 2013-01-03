@@ -27,7 +27,7 @@ struct _EPhysics_Camera {
 };
 
 static void
-_ephysics_camera_target_del_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
+_ephysics_camera_target_del_cb(void *data, EPhysics_Body *body, void *event_info EINA_UNUSED)
 {
    EPhysics_Camera *camera = (EPhysics_Camera *) data;
 

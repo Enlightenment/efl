@@ -95,7 +95,7 @@ ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y, double z)
 
 /* TODO: load points from file */
 EAPI EPhysics_Shape *
-ephysics_shape_load(const char *filename __UNUSED__)
+ephysics_shape_load(const char *filename EINA_UNUSED)
 {
    EPhysics_Shape *shape;
 
@@ -108,7 +108,7 @@ ephysics_shape_load(const char *filename __UNUSED__)
 
 /* TODO: save points to file */
 EAPI Eina_Bool
-ephysics_shape_save(const EPhysics_Shape *shape __UNUSED__, const char *filename __UNUSED__)
+ephysics_shape_save(const EPhysics_Shape *shape EINA_UNUSED, const char *filename EINA_UNUSED)
 {
    return EINA_TRUE;
 }

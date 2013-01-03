@@ -301,7 +301,7 @@ _ephysics_world_tick_dispatch(EPhysics_World *world)
 }
 
 static void
-_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
+_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep EINA_UNUSED)
 {
    EPhysics_World *world;
    world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
@@ -413,7 +413,7 @@ _ephysics_world_free(EPhysics_World *world)
 }
 
 static Eina_Bool
-_simulate_worlds(void *data __UNUSED__)
+_simulate_worlds(void *data EINA_UNUSED)
 {
    EPhysics_World *world;
    void *wrld;
@@ -635,7 +635,7 @@ _th_simulate(void *data, Ecore_Thread *th)
 }
 
 static void
-_th_msg_cb(void *data, Ecore_Thread *th __UNUSED__, void *msg_data)
+_th_msg_cb(void *data, Ecore_Thread *th EINA_UNUSED, void *msg_data)
 {
    EPhysics_World *world = (EPhysics_World *) data;
    Simulation_Msg *msg = (Simulation_Msg *) msg_data;

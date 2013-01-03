@@ -64,6 +64,9 @@ include Makefile_Efreet.am
 if HAVE_EEZE
 include Makefile_Eeze.am
 endif
+if HAVE_EPHYSICS
+include Makefile_EPhysics.am
+endif
 
 .PHONY: benchmark examples
 
@@ -99,6 +102,7 @@ clean-local:
 	rm -rf lib/edbus/*.gcno
 	rm -rf lib/efreet/*.gcno
 	rm -rf lib/eeze/*.gcno
+	rm -rf lib/ephysics/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno
