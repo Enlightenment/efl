@@ -136,6 +136,24 @@ _format_month_year(struct tm *selected_time)
    return strdup(buf);
 }
 
+static char *
+_format_month(struct tm *selected_time)
+{
+   char buf[32];
+
+   if (!strftime(buf, sizeof(buf), E_("%B"), selected_time)) return NULL;
+   return strdup(buf);
+}
+
+static char *
+_format_year(struct tm *selected_time)
+{
+   char buf[32];
+
+   if (!strftime(buf, sizeof(buf), E_("%Y"), selected_time)) return NULL;
+   return strdup(buf);
+}
+
 static inline void
 _cit_mark(Evas_Object *cal,
           int cit,
@@ -187,14 +205,21 @@ _set_month_year(Elm_Calendar_Smart_Data *sd)
 {
    char *buf;
 
-   /* Set selected month */
-   buf = sd->format_func(&sd->shown_time);
+   buf = _format_month(&sd->shown_time);
    if (buf)
      {
-        elm_layout_text_set(sd->obj, "month_text", buf);
+        elm_layout_text_set(sd->obj, "text_month", buf);
         free(buf);
      }
-   else elm_layout_text_set(sd->obj, "month_text", "");
+   else elm_layout_text_set(sd->obj, "text_month", "");
+
+   buf = _format_year(&sd->shown_time);
+   if (buf)
+     {
+        elm_layout_text_set(sd->obj, "text_year", buf);
+        free(buf);
+     }
+   else elm_layout_text_set(sd->obj, "text_year", "");
 }
 
 static char *
@@ -255,28 +280,43 @@ _access_calendar_spinner_register(Evas_Object *obj)
    Elm_Access_Info *ai;
    ELM_CALENDAR_DATA_GET(obj, sd);
 
-   // decrement button
-   sd->dec_btn_access = _elm_access_edje_object_part_object_register
-                            (obj, elm_layout_edje_get(obj), "left_bt");
-   ai = _elm_access_object_get(sd->dec_btn_access);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement button"));
+   sd->dec_btn_month_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "left_bt_month");
+   ai = _elm_access_object_get(sd->dec_btn_month_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement month button"));
 
-   // increment button
-   sd->inc_btn_access = _elm_access_edje_object_part_object_register
-                            (obj, elm_layout_edje_get(obj), "right_bt");
-   ai = _elm_access_object_get(sd->inc_btn_access);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment button"));
+   sd->dec_btn_year_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "left_bt_year");
+   ai = _elm_access_object_get(sd->dec_btn_year_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement year button"));
 
-   // month text
+   sd->inc_btn_month_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "right_bt_month");
+   ai = _elm_access_object_get(sd->inc_btn_month_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment month button"));
+
+   sd->inc_btn_year_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "right_bt_year");
+   ai = _elm_access_object_get(sd->inc_btn_year_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment year button"));
+
    sd->month_access = _elm_access_edje_object_part_object_register
-                          (obj, elm_layout_edje_get(obj), "month_text");
+                          (obj, elm_layout_edje_get(obj), "text_month");
    ai = _elm_access_object_get(sd->month_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar month"));
 
+   sd->year_access = _elm_access_edje_object_part_object_register
+                          (obj, elm_layout_edje_get(obj), "text_year");
+   ai = _elm_access_object_get(sd->year_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar year"));
+
    po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(obj), "month_text");
+          (elm_layout_edje_get(obj), "text_month");
    evas_object_pass_events_set(po, EINA_FALSE);
 
+   po = (Evas_Object *)edje_object_part_object_get
+          (elm_layout_edje_get(obj), "text_year");
+   evas_object_pass_events_set(po, EINA_FALSE);
 }
 
 static void
@@ -517,7 +557,7 @@ _fix_selected_time(Elm_Calendar_Smart_Data *sd)
 }
 
 static Eina_Bool
-_update_month(Evas_Object *obj,
+_update_data(Evas_Object *obj, Eina_Bool month,
               int delta)
 {
    struct tm time_check;
@@ -527,30 +567,40 @@ _update_month(Evas_Object *obj,
 
    /* check if it's a valid time. for 32 bits, year greater than 2037 is not */
    time_check = sd->shown_time;
-   time_check.tm_mon += delta;
+   if (month)
+       time_check.tm_mon += delta;
+   else
+       time_check.tm_year += delta;
    if (mktime(&time_check) == -1)
      return EINA_FALSE;
 
-   sd->shown_time.tm_mon += delta;
-   if (sd->shown_time.tm_mon < 0)
+   if (month)
      {
-        if (sd->shown_time.tm_year == sd->year_min)
-          {
-             sd->shown_time.tm_mon++;
-             return EINA_FALSE;
-          }
-        sd->shown_time.tm_mon = 11;
-        sd->shown_time.tm_year--;
+	sd->shown_time.tm_mon += delta;
+	if (sd->shown_time.tm_mon < 0)
+	  {
+	     if (sd->shown_time.tm_year == sd->year_min)
+	       {
+		  sd->shown_time.tm_mon++;
+		  return EINA_FALSE;
+	       }
+	     sd->shown_time.tm_mon = 11;
+	     sd->shown_time.tm_year--;
+	  }
+	else if (sd->shown_time.tm_mon > 11)
+	  {
+	     if (sd->shown_time.tm_year == sd->year_max)
+	       {
+		  sd->shown_time.tm_mon--;
+		  return EINA_FALSE;
+	       }
+	     sd->shown_time.tm_mon = 0;
+	     sd->shown_time.tm_year++;
+	  }
      }
-   else if (sd->shown_time.tm_mon > 11)
+   else
      {
-        if (sd->shown_time.tm_year == sd->year_max)
-          {
-             sd->shown_time.tm_mon--;
-             return EINA_FALSE;
-          }
-        sd->shown_time.tm_mon = 0;
-        sd->shown_time.tm_year++;
+	sd->shown_time.tm_year += delta;
      }
 
    if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
@@ -569,21 +619,35 @@ _update_month(Evas_Object *obj,
 }
 
 static Eina_Bool
-_spin_value(void *data)
+_spin_month_value(void *data)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
-   if (_update_month(data, sd->spin_speed))
+   if (_update_data(data, EINA_TRUE, sd->spin_speed))
      evas_object_smart_changed(data);
 
    sd->interval = sd->interval / 1.05;
-   ecore_timer_interval_set(sd->spin, sd->interval);
+   ecore_timer_interval_set(sd->spin_month, sd->interval);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_spin_year_value(void *data)
+{
+   ELM_CALENDAR_DATA_GET(data, sd);
+
+   if (_update_data(data, EINA_FALSE, sd->spin_speed))
+     evas_object_smart_changed(data);
+
+   sd->interval = sd->interval / 1.05;
+   ecore_timer_interval_set(sd->spin_year, sd->interval);
 
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-_button_inc_start(void *data,
+_button_month_inc_start(void *data,
                   Evas_Object *obj __UNUSED__,
                   const char *emission __UNUSED__,
                   const char *source __UNUSED__)
@@ -592,14 +656,14 @@ _button_inc_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 1;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = ecore_timer_add(sd->interval, _spin_value, data);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
+   sd->spin_month = ecore_timer_add(sd->interval, _spin_month_value, data);
 
-   _spin_value(data);
+   _spin_month_value(data);
 }
 
 static void
-_button_dec_start(void *data,
+_button_month_dec_start(void *data,
                   Evas_Object *obj __UNUSED__,
                   const char *emission __UNUSED__,
                   const char *source __UNUSED__)
@@ -608,23 +672,68 @@ _button_dec_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -1;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = ecore_timer_add(sd->interval, _spin_value, data);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
+   sd->spin_month = ecore_timer_add(sd->interval, _spin_month_value, data);
 
-   _spin_value(data);
+   _spin_month_value(data);
 }
 
 static void
-_button_stop(void *data,
-             Evas_Object *obj __UNUSED__,
-             const char *emission __UNUSED__,
-             const char *source __UNUSED__)
+_button_month_stop(void *data,
+		   Evas_Object *obj __UNUSED__,
+		   const char *emission __UNUSED__,
+		   const char *source __UNUSED__)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
    sd->interval = sd->first_interval;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
+   sd->spin_month = NULL;
+}
+
+static void
+_button_year_inc_start(void *data,
+		       Evas_Object *obj __UNUSED__,
+		       const char *emission __UNUSED__,
+		       const char *source __UNUSED__)
+{
+   ELM_CALENDAR_DATA_GET(data, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = 1;
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
+   sd->spin_year = ecore_timer_add(sd->interval, _spin_year_value, data);
+
+   _spin_year_value(data);
+}
+
+static void
+_button_year_dec_start(void *data,
+                  Evas_Object *obj __UNUSED__,
+                  const char *emission __UNUSED__,
+                  const char *source __UNUSED__)
+{
+   ELM_CALENDAR_DATA_GET(data, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = -1;
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
+   sd->spin_year = ecore_timer_add(sd->interval, _spin_year_value, data);
+
+   _spin_year_value(data);
+}
+
+static void
+_button_year_stop(void *data,
+		  Evas_Object *obj __UNUSED__,
+		  const char *emission __UNUSED__,
+		  const char *source __UNUSED__)
+{
+   ELM_CALENDAR_DATA_GET(data, sd);
+
+   sd->interval = sd->first_interval;
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
+   sd->spin_year = NULL;
 }
 
 static int
@@ -735,12 +844,12 @@ _elm_calendar_smart_event(Eo *obj, void *_pd, va_list *list)
    if ((!strcmp(ev->keyname, "Prior")) ||
        ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
      {
-        if (_update_month(obj, -1)) _populate(obj);
+        if (_update_data(obj, EINA_TRUE, -1)) _populate(obj);
      }
    else if ((!strcmp(ev->keyname, "Next")) ||
             ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
      {
-        if (_update_month(obj, 1)) _populate(obj);
+        if (_update_data(obj, EINA_TRUE, 1)) _populate(obj);
      }
    else if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE)
             && ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
@@ -819,14 +928,23 @@ _elm_calendar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->selectable = (~(ELM_CALENDAR_SELECTABLE_NONE));
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,increment,start", "*",
-     _button_inc_start, obj);
+     (wd->resize_obj, "elm,action,increment,month,start", "*",
+     _button_month_inc_start, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,decrement,start", "*",
-     _button_dec_start, obj);
+     (wd->resize_obj, "elm,action,decrement,month,start", "*",
+      _button_month_dec_start, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,stop", "*",
-     _button_stop, obj);
+     (wd->resize_obj, "elm,action,increment,year,start", "*",
+     _button_year_inc_start, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,decrement,year,start", "*",
+     _button_year_dec_start, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,month,stop", "*",
+     _button_month_stop, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,year,stop", "*",
+     _button_year_stop, obj);
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,selected", "*",
      _day_selected, obj);
@@ -875,7 +993,8 @@ _elm_calendar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Calendar_Mark *mark;
    Elm_Calendar_Smart_Data *sd = _pd;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
    if (sd->update_timer) ecore_timer_del(sd->update_timer);
 
    if (sd->marks)
@@ -925,8 +1044,12 @@ _elm_calendar_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Elm_Calendar_Smart_Data *sd = _pd;
 
    items = eina_list_append(items, sd->month_access);
-   items = eina_list_append(items, sd->dec_btn_access);
-   items = eina_list_append(items, sd->inc_btn_access);
+   items = eina_list_append(items, sd->dec_btn_month_access);
+   items = eina_list_append(items, sd->inc_btn_month_access);
+
+   items = eina_list_append(items, sd->year_access);
+   items = eina_list_append(items, sd->dec_btn_year_access);
+   items = eina_list_append(items, sd->inc_btn_year_access);
 
    day = 0;
    maxdays = _maxdays_get(&sd->shown_time);
@@ -976,15 +1099,25 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
                }
           }
 
-        if (sd->dec_btn_access)
+        if (sd->dec_btn_month_access)
           _elm_access_edje_object_part_object_unregister
-            (obj, elm_layout_edje_get(obj), "left_bt");
-        if (sd->inc_btn_access)
+            (obj, elm_layout_edje_get(obj), "left_bt_month");
+        if (sd->inc_btn_month_access)
           _elm_access_edje_object_part_object_unregister
-            (obj, elm_layout_edje_get(obj), "right_bt");
+            (obj, elm_layout_edje_get(obj), "right_bt_month");
         if (sd->month_access)
           _elm_access_edje_object_part_object_unregister
-            (obj, elm_layout_edje_get(obj), "month_text");
+            (obj, elm_layout_edje_get(obj), "text_month");
+
+        if (sd->dec_btn_year_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "left_bt_year");
+        if (sd->inc_btn_year_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "right_bt_year");
+        if (sd->year_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "text_year");
      }
 }
 
@@ -1238,7 +1371,7 @@ _selected_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = EINA_TRUE;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_calendar_format_function_set(Evas_Object *obj,
                                  Elm_Calendar_Format_Cb format_function)
 {
@@ -1253,7 +1386,6 @@ _format_function_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Calendar_Smart_Data *sd = _pd;
 
    sd->format_func = format_function;
-   _set_month_year(sd);
 }
 
 EAPI Elm_Calendar_Mark *

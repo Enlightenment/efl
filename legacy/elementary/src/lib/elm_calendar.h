@@ -640,7 +640,7 @@ EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj,
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, Elm_Calendar_Format_Cb format_func);
+EINA_DEPRECATED EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, Elm_Calendar_Format_Cb format_func);
 
 /**
  * Add a new mark to the calendar
