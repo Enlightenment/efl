@@ -996,7 +996,7 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
      {
         ELM_WIDGET_DATA_GET(sobj, sdc);
 
-        if (sdc->parent_obj == obj) goto end;;
+        if (sdc->parent_obj == obj) goto end;
         if (sdc->parent_obj)
           {
              if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
