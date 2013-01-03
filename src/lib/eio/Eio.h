@@ -1018,7 +1018,7 @@ EAPI Eio_File *eio_eet_close(Eet_File *ef,
  * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
- * This function will call eet_flush() from another thread. As long as the done_cb or
+ * This function will call eet_sync() from another thread. As long as the done_cb or
  * error_cb haven't be called, you must keep @p ef open.
  */
 EAPI Eio_File *eio_eet_sync(Eet_File *ef,

@@ -48,6 +48,7 @@ Additions:
       eina_xattr_fd_copy()
     * Added eina_file_copy()
     * Add eet_map.
+    * Add eio_eet_sync symbols.
 
 Deprecations:
     * ecore_x:
