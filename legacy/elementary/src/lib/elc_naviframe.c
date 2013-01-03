@@ -96,7 +96,6 @@ _item_free(Elm_Naviframe_Item *it)
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   //FIXME: ... EHHH? these are shared strings?
    eina_stringshare_del(it->style);
    eina_stringshare_del(it->title_label);
    eina_stringshare_del(it->subtitle_label);
@@ -1043,9 +1042,6 @@ _on_item_show_finished(void *data,
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   //FIXME: WHAT are u sending here?
-   elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
-
    elm_widget_tree_unfocusable_set(it->content, it->content_unfocusable);
 
    if (sd->freeze_events)
@@ -1225,8 +1221,6 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (content_pair->content)
           l = eina_list_append(l, content_pair->content);
      }
-   //FIXME: need?
-   l = eina_list_append(l, VIEW(top_it));
 
    int_ret = elm_widget_focus_list_next_get(obj, l, list_data_get, dir, next);
    if (ret) *ret = int_ret;
@@ -1242,6 +1236,8 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, evas_obj_smart_add());
 
    priv->dummy_edje = wd->resize_obj;
+   evas_object_smart_member_add(priv->dummy_edje, obj);
+
    priv->auto_pushed = EINA_TRUE;
    priv->freeze_events = EINA_TRUE;
 
@@ -1294,8 +1290,6 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    sd->on_deletion = EINA_FALSE;
-
-   evas_object_del(sd->dummy_edje);
 
    eo_do_super(obj, evas_obj_smart_del());
 }
@@ -1392,13 +1386,9 @@ _item_push(Eo *obj, void *_pd, va_list *list)
 
    evas_object_show(VIEW(it));
    elm_widget_resize_object_set(obj, VIEW(it));
-   evas_object_smart_member_add(sd->dummy_edje, obj);
 
    if (prev_it)
      {
-        /* re-add as smart member */
-        evas_object_smart_member_add(VIEW(prev_it), obj);
-
         if (sd->freeze_events)
           {
              evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
@@ -1421,9 +1411,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
      }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
-
-   //FIXME: required?
-   evas_object_raise(VIEW(it));
 
    /* access */
    if (_elm_config->access_mode) _access_focus_set(it);
@@ -1528,7 +1515,6 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    if (top_inserted)
      {
         elm_widget_resize_object_set(obj, VIEW(it));
-        evas_object_smart_member_add(sd->dummy_edje, obj);
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
      }
@@ -1591,7 +1577,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
           }
 
         elm_widget_resize_object_set(obj, VIEW(prev_it));
-        evas_object_smart_member_add(sd->dummy_edje, obj);
         evas_object_raise(VIEW(prev_it));
 
         /* access */
@@ -1669,15 +1654,10 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    sd->stack = eina_inlist_demote(sd->stack, EINA_INLIST_GET(nit));
 
    elm_widget_resize_object_set(WIDGET(it), VIEW(nit));
-   evas_object_smart_member_add(sd->dummy_edje, WIDGET(it));
 
    /* this was the previous top one */
    prev_it = EINA_INLIST_CONTAINER_GET
        (sd->stack->last->prev, Elm_Naviframe_Item);
-
-   /* re-add as smart member */
-   //FIXME: why?
-   evas_object_smart_member_add(VIEW(prev_it), WIDGET(it));
 
    if (prev_it->content)
      {
