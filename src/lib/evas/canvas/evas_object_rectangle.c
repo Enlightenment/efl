@@ -156,7 +156,7 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
-   obj->pre_render_done = 1;
+   obj->pre_render_done = EINA_TRUE;
    /* pre-render phase. this does anything an object needs to do just before */
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
