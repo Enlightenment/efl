@@ -38,7 +38,7 @@ struct _Evas_PNG_Info
 static void
 _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 {
-   Evas_PNG_Info *epi = png_ptr->io_ptr;
+   Evas_PNG_Info *epi = png_get_io_ptr(png_ptr);
 
    if (!epi) return ;
    if (epi->position == epi->length) return ;
