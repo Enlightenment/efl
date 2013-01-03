@@ -381,10 +381,7 @@ edbus_connection_name_gc(EDBus_Connection *conn, EDBus_Connection_Name *cn)
 
    eina_hash_del(conn->names, cn->name, cn);
    if (cn->name_owner_changed)
-     {
-        cn->name_owner_changed->bus = NULL;
-        edbus_signal_handler_del(cn->name_owner_changed);
-     }
+     edbus_signal_handler_del(cn->name_owner_changed);
    if (cn->objects)
      eina_hash_free(cn->objects);
    eina_stringshare_del(cn->name);
@@ -1004,6 +1001,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
    Eina_Iterator *iter;
    EDBus_Connection_Name *cn;
    Eina_Array *cns;
+   const char *name;
 
    DBG("Connection %p: unref (currently at %d refs)",
        conn, conn->refcount);
@@ -1034,12 +1032,16 @@ _edbus_connection_unref(EDBus_Connection *conn)
                                                           cn->event_handlers.list);
              free(ctx);
           }
-        eina_array_push(cns, cn);
+        eina_array_push(cns, eina_stringshare_add(cn->name));
      }
    eina_iterator_free(iter);
 
-   while ((cn = eina_array_pop(cns)))
-     edbus_connection_name_gc(conn, cn);
+   while ((name = eina_array_pop(cns)))
+     {
+        cn = eina_hash_find(conn->names, name);
+        if (cn) edbus_connection_name_gc(conn, cn);
+        eina_stringshare_del(name);
+     }
 
    eina_hash_free(conn->names);
    eina_array_free(cns);
