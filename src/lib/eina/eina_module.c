@@ -20,23 +20,6 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -64,6 +47,7 @@ void *alloca (size_t);
 
 #include "eina_config.h"
 #include "eina_private.h"
+#include "eina_alloca.h"
 #include "eina_error.h"
 #include "eina_file.h"
 #include "eina_log.h"

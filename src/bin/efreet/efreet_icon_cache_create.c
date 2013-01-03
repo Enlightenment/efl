@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include "efreet_alloca.h"
-
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>

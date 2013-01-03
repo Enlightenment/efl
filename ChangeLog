@@ -1,3 +1,7 @@
+2013-01-03  Gustavo Sverzut Barbieri (k-s)
+
+	* Add eina_alloc.h to Eina.h to define alloca()
+
 2013-01-03  Cedric Bail
 
 	* Use Eina_File for evas png loader.

@@ -216,6 +216,7 @@ extern "C" {
 
 #include "eina_config.h"
 #include "eina_types.h"
+#include "eina_alloca.h"
 #include "eina_main.h"
 #include "eina_fp.h"
 #include "eina_rectangle.h"

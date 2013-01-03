@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include "efreet_alloca.h"
-
 #include <Ecore_File.h>
 
 /* define macros and variable for using the eina logging system  */

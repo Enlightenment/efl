@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include "efreet_alloca.h"
-
 #include <ctype.h>
 
 #include <Ecore_File.h>

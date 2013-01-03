@@ -71,6 +71,7 @@ Improvements:
     * eina_magic_fail() now throws error messages on NULL pointers instead of critical
     * all efl object-freeing functions now take NULL without crashing or erroring
     * use Eina_File in webp, gif, tiff, png and eet loader
+    * Eina.h includes eina_alloca.h/alloca.h to define alloca()
 
 Fixes:
     * Fix PPC (big endian) image codec bug.

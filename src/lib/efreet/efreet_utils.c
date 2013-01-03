@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include "efreet_alloca.h"
-
 /* TODO: add no_display check, as we might want only displayable items */
 
 #include <fnmatch.h>

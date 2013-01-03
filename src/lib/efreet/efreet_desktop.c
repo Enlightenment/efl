@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include "efreet_alloca.h"
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
