@@ -98,3 +98,4 @@ Fixes:
     * eio functions no longer crash when passed NULL and throw errors accordingly
     * Fix eina_xattr_value_ls() and eina_xattr_value_fd_ls()
     * Fix mask write lines to not choose too small segments
+    * Fix ecore_con case where freeing server double-frees clients
