@@ -155,24 +155,12 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-   mouse = _walk_parents_test_attr(device, "bInterfaceProtocol", "02");
 
-   if (!mouse)
-     {
-        test = udev_device_get_property_value(device, "ID_CLASS");
-
-        if ((test) && (!strcmp(test, "mouse")))
-          mouse = EINA_TRUE;
-     }
-
-#else
    test = udev_device_get_property_value(device, "ID_INPUT_MOUSE");
 
    if (test && (test[0] == '1'))
      mouse = EINA_TRUE;
 
-#endif
    udev_device_unref(device);
    return mouse;
 }
@@ -189,24 +177,12 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-   kbd = _walk_parents_test_attr(device, "bInterfaceProtocol", "01");
 
-   if (!kbd)
-     {
-        test = udev_device_get_property_value(device, "ID_CLASS");
-
-        if ((test) && (!strcmp(test, "kbd")))
-          kbd = EINA_TRUE;
-     }
-
-#else
    test = udev_device_get_property_value(device, "ID_INPUT_KEYBOARD");
 
    if (test && (test[0] == '1'))
      kbd = EINA_TRUE;
 
-#endif
    udev_device_unref(device);
    return kbd;
 }
@@ -216,22 +192,19 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 {
    _udev_device *device = NULL;
    Eina_Bool touchpad = EINA_FALSE;
+   const char *test;
 
    if (!syspath)
      return EINA_FALSE;
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-   touchpad = _walk_parents_test_attr(device, "resolution", NULL);
-#else
-   const char *test;
+
    test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");
 
    if (test && (test[0] == '1'))
      touchpad = EINA_TRUE;
 
-#endif
    udev_device_unref(device);
    return touchpad;
 }
@@ -248,18 +221,12 @@ eeze_udev_syspath_is_joystick(const char *syspath)
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-   test = udev_device_get_property_value(device, "ID_CLASS");
 
-   if ((test) && (!strcmp(test, "joystick")))
-     joystick = EINA_TRUE;
-#else
    test = udev_device_get_property_value(device, "ID_INPUT_JOYSTICK");
 
    if (test && (test[0] == '1'))
      joystick = EINA_TRUE;
 
-#endif
    udev_device_unref(device);
    return joystick;
 }

@@ -111,19 +111,6 @@ _get_syspath_from_watch(void             *data,
    switch (store->type)
      {
       case EEZE_UDEV_TYPE_KEYBOARD:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "input")))
-          goto error;
-
-        test = udev_device_get_property_value(device, "ID_CLASS");
-
-        if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "01"))
-            || ((test) && (!strcmp(test, "kbd"))))
-          break;
-
-        goto error;
-#endif
         if ((!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD")) &&
             (!udev_device_get_property_value(device, "ID_INPUT_KEY")))
           goto error;
@@ -131,65 +118,24 @@ _get_syspath_from_watch(void             *data,
         break;
 
       case EEZE_UDEV_TYPE_MOUSE:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "input")))
-          goto error;
-
-        test = udev_device_get_property_value(device, "ID_CLASS");
-
-        if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "02"))
-            || ((test) && (!strcmp(test, "mouse"))))
-          break;
-
-        goto error;
-#endif
-
         if (!udev_device_get_property_value(device, "ID_INPUT_MOUSE"))
           goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_TOUCHPAD:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "input")))
-          goto error;
-
-        if (_walk_parents_test_attr(device, "resolution", NULL))
-          break;
-
-        goto error;
-#endif
         if (!udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD"))
           goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_JOYSTICK:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "input")))
-          goto error;
-
-        test = udev_device_get_property_value(device, "ID_CLASS");
-
-        if ((test) && (!strcmp(test, "joystick")))
-          break;
-
-        goto error;
-#endif
         if (!udev_device_get_property_value(device, "ID_INPUT_JOYSTICK"))
           goto error;
 
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "block")))
-          goto error;
-#endif
         if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
             (strcmp("filesystem", test)))
         {
@@ -237,31 +183,16 @@ _get_syspath_from_watch(void             *data,
         break;
 
       case EEZE_UDEV_TYPE_POWER_AC:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "power_supply")))
-          goto error;
-#endif
         test = udev_device_get_property_value(device, "POWER_SUPPLY_ONLINE");
         if (!test) goto error;
         break;
 
       case EEZE_UDEV_TYPE_POWER_BAT:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "power_supply")))
-          goto error;
-#endif
         test = udev_device_get_property_value(device, "POWER_SUPPLY_PRESENT");
         if ((!test) || (strcmp(test, "1"))) goto error;
         break;
 
       case EEZE_UDEV_TYPE_NET:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "net")))
-          goto error;
-#endif
         break;
 
       case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
@@ -269,11 +200,6 @@ _get_syspath_from_watch(void             *data,
         Eina_Bool one, two;
         const char *t;
 
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-        if ((!(test = udev_device_get_subsystem(device)))
-            || (strcmp(test, "hwmon")))
-          goto error;
-#endif /* have to do stuff up here since we need info from the parent */
         one = _walk_parents_test_attr(device, "temp1_input", NULL);
         two = _walk_parents_test_attr(device, "temp2_input", NULL);
         if ((!one) && (!two)) goto error;
@@ -341,8 +267,6 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
    if (!(mon = udev_monitor_new_from_netlink(udev, "udev")))
      goto error;
 
-#ifndef OLD_UDEV_RRRRRRRRRRRRRR
-
    switch (type)
      {
       case EEZE_UDEV_TYPE_JOYSTICK:
@@ -394,8 +318,6 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
       default:
         break;
      }
-
-#endif
 
    if (udev_monitor_enable_receiving(mon))
      goto error;

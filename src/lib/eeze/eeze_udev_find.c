@@ -165,34 +165,22 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
 
       case EEZE_UDEV_TYPE_KEYBOARD:
         udev_enumerate_add_match_subsystem(en, "input");
-#ifndef OLD_UDEV_RRRRRRRRRRRRRR
         udev_enumerate_add_match_property(en, "ID_INPUT_KEYBOARD", "1");
-#else
-        udev_enumerate_add_match_property(en, "ID_CLASS", "kbd");
-#endif
         break;
 
       case EEZE_UDEV_TYPE_MOUSE:
         udev_enumerate_add_match_subsystem(en, "input");
-#ifndef OLD_UDEV_RRRRRRRRRRRRRR
         udev_enumerate_add_match_property(en, "ID_INPUT_MOUSE", "1");
-#else
-        udev_enumerate_add_match_property(en, "ID_CLASS", "mouse");
-#endif
         break;
 
       case EEZE_UDEV_TYPE_TOUCHPAD:
         udev_enumerate_add_match_subsystem(en, "input");
-#ifndef OLD_UDEV_RRRRRRRRRRRRRR
         udev_enumerate_add_match_property(en, "ID_INPUT_TOUCHPAD", "1");
-#endif
         break;
 
       case EEZE_UDEV_TYPE_JOYSTICK:
         udev_enumerate_add_match_subsystem(en, "input");
-#ifndef OLD_UDEV_RRRRRRRRRRRRRR
         udev_enumerate_add_match_property(en, "ID_INPUT_JOYSTICK", "1");
-#endif
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
