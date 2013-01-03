@@ -418,8 +418,10 @@ _elm_layout_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Object *sobj = va_arg(*list, Evas_Object *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-
    Eina_Bool int_ret = EINA_FALSE;
+
+   if (evas_object_data_get(sobj, "elm-parent") == obj)
+     goto end;
 
    eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
    if (!int_ret) return;
@@ -432,6 +434,7 @@ _elm_layout_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
          _on_sub_object_size_hint_change, obj);
 
+end:
    if (ret) *ret = EINA_TRUE;
 }
 

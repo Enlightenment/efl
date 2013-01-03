@@ -144,6 +144,9 @@ _elm_flip_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret;
    if (ret) *ret = EINA_FALSE;
 
+   if (evas_object_data_get(sobj, "elm-parent") == obj)
+     goto end;
+
    eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
    if (!int_ret) return;
 
@@ -152,6 +155,7 @@ _elm_flip_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
 
+end:
    if (ret) *ret = EINA_TRUE;
 }
 

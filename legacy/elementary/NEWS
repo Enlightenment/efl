@@ -109,6 +109,7 @@ Fixes:
    * Tooltips now correctly set NETWM tooltip window type
    * Fix the naviframe item part text to be set properly.
    * Fix list separator size bug.
+   * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
 
 Removals:
 

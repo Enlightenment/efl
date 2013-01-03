@@ -874,3 +874,7 @@
 2013-01-03  Thiep Ha
 
         * Fix list separator size bug.
+
+2013-01-03  Jaehwan Kim
+
+        * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.

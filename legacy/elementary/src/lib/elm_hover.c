@@ -331,6 +331,9 @@ _elm_hover_smart_sub_object_add(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
    Elm_Hover_Smart_Data *sd = _pd;
 
+   if (evas_object_data_get(sobj, "elm-parent") == obj)
+     goto end;
+
    eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
    if (!int_ret) return;
 
@@ -338,6 +341,7 @@ _elm_hover_smart_sub_object_add(Eo *obj, void *_pd, va_list *list)
      evas_object_event_callback_add
        (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_smt_sub_changed, obj);
 
+end:
    if (ret) *ret = EINA_TRUE;
 }
 
