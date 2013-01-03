@@ -1690,7 +1690,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 static void
 _access_activate_cb(void *data __UNUSED__,
                     Evas_Object *part_obj __UNUSED__,
-                    Elm_Widget_Item *item)
+                    Elm_Object_Item *item)
 {
    Elm_Toolbar_Item *it;
    it = (Elm_Toolbar_Item *)item;

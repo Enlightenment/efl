@@ -460,7 +460,6 @@ typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
-typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Widget_Item *item);
 
 struct _Elm_Access_Item
 {

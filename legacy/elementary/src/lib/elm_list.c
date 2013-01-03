@@ -1390,7 +1390,7 @@ _access_on_highlight_cb(void *data)
 static void
 _access_activate_cb(void *data __UNUSED__,
                     Evas_Object *part_obj __UNUSED__,
-                    Elm_Widget_Item *item)
+                    Elm_Object_Item *item)
 {
    Elm_List_Item *it;
    Evas_Object *obj;

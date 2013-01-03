@@ -520,7 +520,7 @@ _access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 static void
 _access_activate_cb(void *data,
                     Evas_Object *part_obj,
-                    Elm_Widget_Item *item __UNUSED__)
+                    Elm_Object_Item *item __UNUSED__)
 {
    char *text;
    Eina_Strbuf *buf;

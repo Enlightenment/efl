@@ -28,7 +28,8 @@ _elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!ac) return;
 
    if (ac->activate)
-     ac->activate(ac->activate_data, ac->part_object, ac->widget_item);
+     ac->activate(ac->activate_data, ac->part_object,
+                  (Elm_Object_Item *)ac->widget_item);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -308,11 +309,23 @@ EAPI void
 _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 {
    Evas_Object *highlight;
+   Elm_Access_Info *ac;
 
    highlight = _access_highlight_object_get(obj);
    if (!highlight) return;
 
-   elm_widget_activate(highlight, act);
+   if (elm_widget_is(highlight))
+     {
+        elm_widget_activate(highlight, act);
+        return;
+     }
+
+   ac = evas_object_data_get(highlight, "_elm_access");
+   if (!ac) return;
+
+   if (ac->activate)
+     ac->activate(ac->activate_data, highlight,
+                  (Elm_Object_Item *)ac->widget_item);
 }
 
 EAPI void
@@ -801,14 +814,6 @@ elm_access_text_get(Evas_Object *obj, int type)
 }
 
 EAPI void
-elm_access_cb_set(Evas_Object *obj, int type,
-                  Elm_Access_Content_Cb func, const void *data)
-{
-   _elm_access_callback_set(_elm_access_object_get(obj), type, func, data);
-}
-
-
-EAPI void
 elm_access_object_register(Evas_Object *parent, Evas_Object *target)
 {
    Elm_Access_Info *ai;
@@ -849,6 +854,26 @@ elm_access_object_unregister(Evas_Object *obj)
      }
 
    evas_object_data_del(obj, "_elm_access_parent");
+}
+
+EAPI void
+elm_access_content_cb_set(Evas_Object *obj, int type,
+                          Elm_Access_Content_Cb func, const void *data)
+{
+   _elm_access_callback_set(_elm_access_object_get(obj), type, func, data);
+}
+
+EAPI void
+elm_access_activate_cb_set(Evas_Object *obj,
+                                 Elm_Access_Activate_Cb  func, void *data)
+{
+   Elm_Access_Info *ac;
+
+   ac = _elm_access_object_get(obj);
+   if (!ac) return;
+
+   ac->activate = func;
+   ac->activate_data = data;
 }
 
 EAPI void

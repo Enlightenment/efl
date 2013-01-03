@@ -176,7 +176,7 @@ _on_clock_val_change_stop(void *data,
 static void
 _access_activate_cb(void *data,
                     Evas_Object *part_obj,
-                    Elm_Widget_Item *item __UNUSED__)
+                    Elm_Object_Item *item __UNUSED__)
 {
    Evas_Object *digit, *inc_btn;
    ELM_CLOCK_DATA_GET(data, sd);
