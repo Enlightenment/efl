@@ -61,6 +61,8 @@ group "Elm_Config" struct {
   value "week_start" int: 1;
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
+  value "year_min" int: 2;
+  value "year_max" int: 137;
   value "softcursor_mode" uchar: 0;
   value "auto_norender_withdrawn" uchar: 1;
   value "auto_norender_iconified_same_as_withdrawn" uchar: 0;
