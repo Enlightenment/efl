@@ -8,6 +8,7 @@ EAPI Eo_Op ELM_OBJ_SLIDER_BASE_ID = EO_NOOP;
 #define MY_CLASS ELM_OBJ_SLIDER_CLASS
 
 #define MY_CLASS_NAME "elm_slider"
+#define SLIDER_DELAY_CHANGED_INTERVAL 0.2
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -71,7 +72,7 @@ _val_fetch(Evas_Object *obj)
         sd->val = val;
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
         if (sd->delay) ecore_timer_del(sd->delay);
-        sd->delay = ecore_timer_add(0.2, _delay_change, obj);
+        sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
      }
 }
 
