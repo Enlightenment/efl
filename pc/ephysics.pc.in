@@ -6,7 +6,7 @@ vmaj=@VMAJ@
 
 Name: ephysics
 Description: EPhysics is a wrapper for physics engine.
-@pkgconfig_requires_private@: @requirement_ephysics@
+Requires.private: @requirements_pc_ephysics@
 Version: @VERSION@
 Libs: -L${libdir} -lephysics
 Cflags: -I${includedir}/ephysics-@VMAJ@
