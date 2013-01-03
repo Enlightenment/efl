@@ -201,7 +201,7 @@ open_signal(const char *content, unsigned length, Eina_Bool is_open_empty)
         eina_strbuf_append_char(buf, toupper(d_signal->name[i]));
      }
    eina_strbuf_append(buf, "_EVENT");
-   d_signal->signal_event = strdup(eina_strbuf_string_get(buf));
+   d_signal->signal_event = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
 
    return r;

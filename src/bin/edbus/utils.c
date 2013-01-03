@@ -20,7 +20,7 @@ file_read(const char *file_name, char **buffer)
      eina_strbuf_append_char(buf, data);
 
    fclose(xml_handler);
-   *buffer = strdup(eina_strbuf_string_get(buf));
+   *buffer = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
 
    return EINA_TRUE;
@@ -62,8 +62,7 @@ dbus_name_to_c(const char *dbus)
    while ((pch = strtok(NULL, "/.")))
      eina_strbuf_append_printf(buffer, "_%s",pch);
 
-   ret = strdup(eina_strbuf_string_get(buffer));
-   eina_strbuf_reset(buffer);
+   ret = eina_strbuf_string_steal(buffer);
    for (i = 0; ret[i]; i++)
      {
         if (i > 0 && ret[i-1] != '_' && ret[i] > '@' && ret[i] < '[')//upper case
@@ -72,7 +71,7 @@ dbus_name_to_c(const char *dbus)
           eina_strbuf_append_char(buffer, tolower(ret[i]));
      }
    free(ret);
-   ret = strdup(eina_strbuf_string_get(buffer));
+   ret = eina_strbuf_string_steal(buffer);
 end:
    free(str_cpy);
    eina_strbuf_free(buffer);
@@ -93,7 +92,7 @@ replace_string(const char *string, const char *substr, const char *replacement)
    while ((pch = strtok(NULL, substr)))
      eina_strbuf_append_printf(buffer, "%s%s", replacement, pch);
 
-   ret = strdup(eina_strbuf_string_get(buffer));
+   ret = eina_strbuf_string_steal(buffer);
    free(str_cpy);
    eina_strbuf_free(buffer);
    return ret;
@@ -126,7 +125,7 @@ string_build(const char *fmt, ...)
    eina_strbuf_prepend_vprintf(buffer, fmt, ap);
    va_end(ap);
 
-   ret = strdup(eina_strbuf_string_get(buffer));
+   ret = eina_strbuf_string_steal(buffer);
    eina_strbuf_free(buffer);
 
    return ret;
