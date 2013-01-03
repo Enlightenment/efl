@@ -1226,4 +1226,114 @@ test_list7(void        *data __UNUSED__,
    evas_object_show(win);
 }
 
+void
+test_list_separator(void        *data __UNUSED__,
+                    Evas_Object *obj __UNUSED__,
+                    void        *event_info __UNUSED__)
+{
+   Evas_Object *win, *li, *ic, *ic2, *bx, *bxx;
+   char buf[PATH_MAX];
+   Elm_Object_Item *list_it_sep;
+
+   win = elm_win_util_standard_add("list", "List Separator");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bxx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_show(bxx);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bxx, li);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 1, 1);
+   elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   ic = elm_icon_add(win);
+   elm_icon_standard_set(ic, "edit");
+   elm_image_resizable_set(ic, 0, 0);
+   elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   ic = elm_icon_add(win);
+   elm_icon_standard_set(ic, "delete");
+   elm_image_resizable_set(ic, 0, 0);
+   ic2 = elm_icon_add(win);
+   elm_icon_standard_set(ic2, "clock");
+   elm_image_resizable_set(ic2, 0, 0);
+   elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.5);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.5, 0.0);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, ic);
+   evas_object_show(ic);
+   elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+
+   list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
+   elm_list_item_separator_set(list_it_sep, EINA_TRUE);
+
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
+
+   elm_list_go(li);
+
+   evas_object_show(li);
+
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
+}
+
 #endif

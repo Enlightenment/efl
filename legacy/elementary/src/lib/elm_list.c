@@ -584,7 +584,6 @@ _items_fix(Evas_Object *obj)
           {
              const char *stacking;
 
-             /* FIXME: separators' themes seem to be b0rked */
              if (it->is_separator)
                elm_widget_theme_object_set
                  (obj, VIEW(it), "separator", sd->h_mode ?
@@ -615,36 +614,40 @@ _items_fix(Evas_Object *obj)
                   else if (!strcmp(stacking, "above"))
                     evas_object_raise(VIEW(it));
                }
-             edje_object_part_text_escaped_set
-               (VIEW(it), "elm.text", it->label);
 
-             if ((!it->icon) && (minh[0] > 0))
+             if (!it->is_separator)
                {
-                  it->icon = evas_object_rectangle_add
-                      (evas_object_evas_get(VIEW(it)));
-                  evas_object_color_set(it->icon, 0, 0, 0, 0);
-                  it->dummy_icon = EINA_TRUE;
-               }
-             if ((!it->end) && (minh[1] > 0))
-               {
-                  it->end = evas_object_rectangle_add
-                      (evas_object_evas_get(VIEW(it)));
-                  evas_object_color_set(it->end, 0, 0, 0, 0);
-                  it->dummy_end = EINA_TRUE;
-               }
-             if (it->icon)
-               {
-                  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-                  evas_object_size_hint_max_set(it->icon, 99999, 99999);
-                  edje_object_part_swallow
-                    (VIEW(it), "elm.swallow.icon", it->icon);
-               }
-             if (it->end)
-               {
-                  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-                  evas_object_size_hint_max_set(it->end, 99999, 99999);
-                  edje_object_part_swallow
-                    (VIEW(it), "elm.swallow.end", it->end);
+                  edje_object_part_text_escaped_set
+                     (VIEW(it), "elm.text", it->label);
+
+                  if ((!it->icon) && (minh[0] > 0))
+                    {
+                       it->icon = evas_object_rectangle_add
+                          (evas_object_evas_get(VIEW(it)));
+                       evas_object_color_set(it->icon, 0, 0, 0, 0);
+                       it->dummy_icon = EINA_TRUE;
+                    }
+                  if ((!it->end) && (minh[1] > 0))
+                    {
+                       it->end = evas_object_rectangle_add
+                          (evas_object_evas_get(VIEW(it)));
+                       evas_object_color_set(it->end, 0, 0, 0, 0);
+                       it->dummy_end = EINA_TRUE;
+                    }
+                  if (it->icon)
+                    {
+                       evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
+                       evas_object_size_hint_max_set(it->icon, 99999, 99999);
+                       edje_object_part_swallow
+                          (VIEW(it), "elm.swallow.icon", it->icon);
+                    }
+                  if (it->end)
+                    {
+                       evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
+                       evas_object_size_hint_max_set(it->end, 99999, 99999);
+                       edje_object_part_swallow
+                          (VIEW(it), "elm.swallow.end", it->end);
+                    }
                }
              if (!it->fixed)
                {
@@ -655,10 +658,12 @@ _items_fix(Evas_Object *obj)
                   if (it->deleted)
                     continue;
                   mw = mh = -1;
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+                  if (!it->is_separator)
+                    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   edje_object_size_min_restricted_calc
                     (VIEW(it), &mw, &mh, mw, mh);
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+                  if (!it->is_separator)
+                    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
                   evas_object_show(VIEW(it));
                }
@@ -684,7 +689,9 @@ _items_fix(Evas_Object *obj)
              it->fixed = EINA_TRUE;
              it->is_even = it->even;
           }
-        i++;
+
+        if (!it->is_separator)
+          i++;
      }
 
    _elm_list_mode_set_internal(obj);
@@ -1613,7 +1620,6 @@ _elm_list_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_bounce_allow_set(EINA_FALSE, _elm_config->thumbscroll_bounce_enable));
 
    priv->box = elm_box_add(obj);
-   elm_box_homogeneous_set(priv->box, EINA_TRUE);
    evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
 

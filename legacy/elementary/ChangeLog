@@ -870,3 +870,7 @@
 2013-01-03  JaeHyun Jo (jae_hyun@cho@naver.com)
 
         * Fix the naviframe item part text to be set properly.
+
+2013-01-03  Thiep Ha
+
+        * Fix list separator size bug.
