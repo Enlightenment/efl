@@ -7,7 +7,7 @@ lib/eeze/libeeze.la
 EEZE_COMMON_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eco \
+-I$(top_srcdir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
