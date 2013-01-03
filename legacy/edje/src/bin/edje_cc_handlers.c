@@ -2464,6 +2464,9 @@ st_collections_group_name(void)
 
    current_pc = eina_list_data_get(eina_list_last(edje_collections));
 
+   if (current_de->entry)
+     goto double_named_group;
+
    current_de->entry = parse_str(0);
    current_pc->part = current_de->entry;
 
@@ -2486,6 +2489,10 @@ st_collections_group_name(void)
           break;
        }
 
+double_named_group:
+   ERR("Invalid group, only a single name statement is valid for group, use "
+       "alias instead.");
+   exit(-1);
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
