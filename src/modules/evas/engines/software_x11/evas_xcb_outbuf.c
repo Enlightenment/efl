@@ -1125,7 +1125,7 @@ _find_xcbob(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int
         lbytes = ((((w * bpp) + 3) / 4) * 4);
      }
    else
-     lbytes = (((w + 63) / 64) * 4);
+     lbytes = (((w + 63) / 64) * 8);
 
    sz = (lbytes * h);
    SHMPOOL_LOCK();
