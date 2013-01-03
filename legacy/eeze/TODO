@@ -1,9 +1,0 @@
-udev: 	switch enum to bitmasks with categories probably
-	documentation for all types
-	more functions or something?
-
-TO BE ADDED
-automounter
-libdevinfo for solaris
-???
-Profit
