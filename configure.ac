@@ -166,7 +166,6 @@ case "$host_os" in
    mingw*)
       have_win32="yes"
       have_windows="yes"
-      want_eeze="no"
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".dll"
    ;;
