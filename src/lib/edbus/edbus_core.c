@@ -1165,6 +1165,13 @@ edbus_dispatch_name_owner_change(EDBus_Connection_Name *cn, const char *old_id)
         ctx->cb((void *)ctx->cb_data, cn->name, previous_id, cn->unique_id);
      }
    cn->event_handlers.walking--;
+   EINA_LIST_FREE(cn->event_handlers.to_delete, ctx)
+     {
+        cn->event_handlers.list = eina_inlist_remove(cn->event_handlers.list,
+                                                     EINA_INLIST_GET(ctx));
+        free(ctx);
+     }
+   edbus_connection_name_gc(cn->name_owner_changed->conn, cn);
 }
 
 typedef struct _dispach_name_owner_data
