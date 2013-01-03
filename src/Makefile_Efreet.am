@@ -82,8 +82,7 @@ lib/efreet/efreet_uri.c \
 lib/efreet/efreet_cache.c \
 lib/efreet/efreet_private.h \
 lib/efreet/efreet_xml.h \
-lib/efreet/efreet_cache_private.h \
-lib/efreet/efreet_alloca.h
+lib/efreet/efreet_cache_private.h
 
 lib_efreet_libefreet_la_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
 lib_efreet_libefreet_la_LIBADD = $(EFREET_COMMON_LIBADD)
