@@ -107,6 +107,7 @@ Fixes:
    * Fix photocam returns file set error correctly.
    * Fix bug where genlist would delete items added during selection callback if a clear was queued
    * Tooltips now correctly set NETWM tooltip window type
+   * Fix the naviframe item part text to be set properly.
 
 Removals:
 

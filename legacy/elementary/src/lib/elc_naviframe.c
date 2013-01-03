@@ -375,6 +375,7 @@ _item_text_set_hook(Elm_Object_Item *it,
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
+        edje_object_part_text_set(VIEW(it), buf, label);
      }
    else if (!strcmp("subtitle", part))
      {
@@ -384,6 +385,7 @@ _item_text_set_hook(Elm_Object_Item *it,
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,show", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,subtitle,hide", "elm");
+        edje_object_part_text_set(VIEW(it), buf, label);
      }
    else
      {
@@ -409,9 +411,8 @@ _item_text_set_hook(Elm_Object_Item *it,
                snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
              edje_object_signal_emit(VIEW(it), buf, "elm");
           }
+        edje_object_part_text_set(VIEW(it), part, label);
      }
-
-   edje_object_part_text_set(VIEW(nit), buf, label);
 
    /* access */
    if (_elm_config->access_mode)
