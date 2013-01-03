@@ -401,11 +401,11 @@ eio_eet_flush(Eet_File *ef,
 
 EAPI Eio_File *
 eio_eet_sync(Eet_File *ef,
-	     Eio_Done_Cb done_cb,
-	     Eio_Eet_Error_Cb error_cb,
-	     const void *data)
+             Eio_Done_Cb done_cb,
+             Eio_Eet_Error_Cb error_cb,
+             const void *data)
 {
-  return eio_eet_flush(ef,done_cb,error_cb,data);
+   return eio_eet_flush(ef, done_cb, error_cb, data);
 }
 
 EAPI Eio_File *
