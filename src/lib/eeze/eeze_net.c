@@ -27,7 +27,9 @@ eeze_net_shutdown(void)
    eeze_nets = NULL;
 }
 
-/** @addtogroup net Net
+/**
+ * @addtogroup Eeze_Net Net
+ * @ingroup Eeze
  * @{
  */
 

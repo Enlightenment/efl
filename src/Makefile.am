@@ -61,6 +61,9 @@ include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_EDBus.am
 include Makefile_Efreet.am
+if HAVE_EEZE
+include Makefile_Eeze.am
+endif
 
 .PHONY: benchmark examples
 
@@ -78,6 +81,7 @@ install-examples:
 clean-local:
 	rm -rf bin/eet/*.gcno
 	rm -rf bin/efreet/*.gcno
+	rm -rf bin/eeze/*.gcno
 	rm -rf lib/evil/*.gcno
 	rm -rf lib/eina/*.gcno
 	rm -rf lib/eo/*.gcno
@@ -94,6 +98,7 @@ clean-local:
 	rm -rf lib/embryo/*.gcno
 	rm -rf lib/edbus/*.gcno
 	rm -rf lib/efreet/*.gcno
+	rm -rf lib/eeze/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno

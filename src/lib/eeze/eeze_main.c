@@ -14,7 +14,7 @@ _udev *udev;
 
 int _eeze_udev_log_dom = -1;
 int _eeze_net_log_dom = -1;
-int _eeze_sensor_log_dom = -1;
+EAPI int _eeze_sensor_log_dom = -1;
 int _eeze_init_count = 0;
 
 static Eeze_Version _version = { VMAJ, VMIN, VMIC, VREV };

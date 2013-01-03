@@ -18,6 +18,7 @@
  * @li @ref eio_main asynchronous input/output
  * @li @ref edbus_main d-bus integration.
  * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
+ * @li @ref eeze_main hardware device manipulation and notification.
  *
  */
 
@@ -39,6 +40,7 @@
  * @author Cedric Bail <cedric.bail@@free.fr>
  * @author Chidambar Zinnoury <illogict@@online.fr>
  * @author Chris Ross <chris@@darkrock.co.uk>
+ * @author Christophe Dumez <christophe.dumez@@intel.com>
  * @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
  * @author ChunEon Park <hermet@@hermet.pe.kr>
  * @author Corey "atmos" Donohoe <atmos@@atmos.org>
@@ -74,6 +76,7 @@
  * @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
  * @author Matt Barclay <mbarclay@@gmail.com>
  * @author Michael 'Mickey' Lauer <mickey@@tm.informatik.uni-frankfurt.de>
+ * @author Mikael Sans <sans.mikael@@gmail.com>
  * @author Mike Blumenkrantz <michael.blumenkrantz@@gmail.com>
  * @author Mike McCormack <mj.mccormack@@samsung.com>
  * @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
@@ -182,4 +185,11 @@
  * @defgroup Efreet
  *
  * @brief FreeDesktop.Org (XDG) menu and desktop integration.
+ */
+
+
+/**
+ * @defgroup Eeze
+ *
+ * @brief Hardware device manipulation and notification, wraps UDev and similar.
  */

@@ -43,7 +43,11 @@
  *
  * @since 1.8
  *
- * @addtogroup sensor Sensor
+ * @addtogroup Eeze_Sensor Sensor
+ * Gather sensor information from different sources. Works based on plugins,
+ * with a Tizen plugin being available.
+ *
+ * @ingroup Eeze
  * @{
  */
 
@@ -78,8 +82,9 @@ typedef enum
 }  Eeze_Sensor_Type;
 
 /**
- * @defgroup Sensor_Events Available eeze sensor events
+ * @defgroup Eeze_Sensor_Events Available eeze sensor events
  * @brief Sensor events that are emitted from the library as ecore events
+ * @ingroup Eeze
  *
  * Event types used to register ecore_event_handler on. These events are used
  * for #eeze_sensor_async_read to deliver read out data. It is also used for

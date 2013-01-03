@@ -61,7 +61,7 @@ event_write(const void *data, size_t size, Ecore_Con_Client *cl)
 }
 
 static Eina_Bool
-disk_mount(void *data __UNUSED__, int type __UNUSED__, Eeze_Disk *disk)
+disk_mount(void *data EINA_UNUSED, int type EINA_UNUSED, Eeze_Disk *disk)
 {
    Eina_List *l;
    Eeze_Scanner_Device *d;
@@ -79,7 +79,7 @@ disk_mount(void *data __UNUSED__, int type __UNUSED__, Eeze_Disk *disk)
 }
 
 static void
-cl_setup(Ecore_Con_Client *cl __UNUSED__, Eet_Connection *ec)
+cl_setup(Ecore_Con_Client *cl EINA_UNUSED, Eet_Connection *ec)
 {
    Eina_List *l;
    Eeze_Scanner_Device *dev;
@@ -118,13 +118,13 @@ cl_setup(Ecore_Con_Client *cl __UNUSED__, Eet_Connection *ec)
 }
 
 static Eina_Bool
-es_read(const void *eet_data __UNUSED__, size_t size __UNUSED__, void *user_data __UNUSED__)
+es_read(const void *eet_data EINA_UNUSED, size_t size EINA_UNUSED, void *user_data EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cl_add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *ev)
+cl_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add *ev)
 {
    Eet_Connection *ec;
    INF("Added client");
@@ -143,7 +143,7 @@ cl_add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *e
 }
 
 static Eina_Bool
-cl_del(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Del *ev)
+cl_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *ev)
 {
    Eet_Connection *ec;
    Eina_Bool d;
@@ -288,7 +288,7 @@ storage_setup(void)
 }
 
 static void
-cb_vol_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_Udev_Watch *watch __UNUSED__)
+cb_vol_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    Eina_List *l;
    Eeze_Scanner_Device *dev;
@@ -331,7 +331,7 @@ cb_vol_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_U
 }
 
 static void
-cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_Udev_Watch *watch __UNUSED__)
+cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    Eina_List *l;
    Eeze_Scanner_Device *dev = NULL;

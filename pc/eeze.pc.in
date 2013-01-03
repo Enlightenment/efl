@@ -5,7 +5,8 @@ includedir=@includedir@
 
 Name: eeze
 Description: device convenience library for efl
-@pkgconfig_requires_private@: @requirement_eeze@
+Requires.private: @requirements_pc_eeze@
 Version: @VERSION@
 Libs: -L${libdir} -leeze
 Cflags: -I${includedir}/eeze-@VMAJ@
+Libs: -L${libdir} -leet

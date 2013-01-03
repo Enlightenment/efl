@@ -24,7 +24,10 @@
  *
  * Eeze net functions allow you to gather information about network objects
  *
- * @addtogroup net Net
+ * @defgroup Eeze_Net Net
+ * Gather information about network devices.
+ *
+ * @ingroup Eeze
  * @{
  */
 

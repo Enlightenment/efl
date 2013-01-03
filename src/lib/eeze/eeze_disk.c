@@ -5,6 +5,7 @@
 #include <Ecore.h>
 #include <Eeze.h>
 #include <Eeze_Disk.h>
+#include <unistd.h>
 
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
@@ -460,17 +461,23 @@ eeze_disk_removable_get(Eeze_Disk *disk)
 EAPI Eina_Bool
 eeze_disk_can_mount(void)
 {
-   return MOUNTABLE;
+   if (sizeof(EEZE_MOUNT_BIN) == sizeof(""))
+     return EINA_FALSE;
+   return access(EEZE_MOUNT_BIN, X_OK | R_OK) == 0;
 }
 
 EAPI Eina_Bool
 eeze_disk_can_unmount(void)
 {
-   return UNMOUNTABLE;
+   if (sizeof(EEZE_UNMOUNT_BIN) == sizeof(""))
+     return EINA_FALSE;
+   return access(EEZE_UNMOUNT_BIN, X_OK | R_OK) == 0;
 }
 
 EAPI Eina_Bool
 eeze_disk_can_eject(void)
 {
-   return EJECTABLE;
+   if (sizeof(EEZE_EJECT_BIN) == sizeof(""))
+     return EINA_FALSE;
+   return access(EEZE_EJECT_BIN, X_OK | R_OK) == 0;
 }

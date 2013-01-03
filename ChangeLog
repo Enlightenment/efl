@@ -1,6 +1,7 @@
 2013-01-03  Gustavo Sverzut Barbieri (k-s)
 
 	* Add eina_alloc.h to Eina.h to define alloca()
+	* Eeze: deprecated support for udev<148 and libmount<2.18
 
 2013-01-03  Cedric Bail
 

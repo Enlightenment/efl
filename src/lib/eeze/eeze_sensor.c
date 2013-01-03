@@ -80,7 +80,7 @@ eeze_sensor_modules_load(void)
    if (getenv("EEZE_USE_IN_TREE_MODULES"))
       g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/.libs/", 0, NULL, NULL);
    else
-      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eeze-sensor/", 0, NULL, NULL);
+      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eeze/sensor/", 0, NULL, NULL);
 
    if (!g_handle->modules_array)
      {

@@ -807,7 +807,8 @@ eet_ _eet_ Eet_ _Eet_ EET_ _EET_ \
 ecore_ _ecore_ Ecore_ _Ecore_ ECORE_ _ECORE_ \
 eio_ _eio_ Eio_ _Eio_ EIO_ _EIO_ \
 edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_ \
-efreet_ _efreet_ Efreet_ _Efreet_ EFREET_ _EFREET_
+efreet_ _efreet_ Efreet_ _Efreet_ EFREET_ _EFREET_ \
+eeze_ _eeze_ Eeze_ _Eeze_ EEZE_ _EEZE_
 
 
 #---------------------------------------------------------------------------

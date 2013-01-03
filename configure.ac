@@ -3125,6 +3125,99 @@ EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 EFL_LIB_END([Efreet])
 #### End of Efreet
 
+#### Eeze
+EFL_LIB_START_OPTIONAL([Eeze], [test "${have_linux}" = "yes"])
+
+### Additional options to configure
+AC_ARG_ENABLE([tizen],
+   [AC_HELP_STRING([--enable-tizen],
+       [enable tizen support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_tizen="yes"
+    else
+       want_tizen="no"
+    fi
+   ],
+   [want_tizen="no"])
+
+AC_ARG_ENABLE([mount],
+   [AC_HELP_STRING([--disable-mount],
+       [disable mount support (libmount). @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_mount="yes"
+    else
+       want_mount="no"
+    fi
+   ],
+   [want_mount="yes"])
+
+AC_ARG_WITH([mount],
+  [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])],
+  [with_eeze_mount=$withval], [with_eeze_mount="detect"])
+AC_ARG_WITH([umount],
+  [AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@])],
+  [with_eeze_umount=$withval], [with_eeze_umount="detect"])
+AC_ARG_WITH([eject],
+  [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])],
+  [with_eeze_eject=$withval], [with_eeze_eject="detect"])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-file])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-con])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${wantx_mount}], [eet])
+
+EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
+EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_mount}], [EEZE_MOUNT], [mount >= 2.19.0])
+
+## modules
+if test "${want_tizen}"  = "yes"; then
+  PKG_CHECK_MODULES([TIZEN_SENSOR], [capi-system-sensor])
+fi
+
+EFL_EVAL_PKGS([EEZE])
+
+AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "${want_mount}" = "yes"])
+AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "${want_tizen}" = "yes"])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Checks for binaries
+if test "x$with_eeze_mount" = "xdetect"; then
+  AC_PATH_PROG([with_eeze_mount], [mount], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_MOUNT_BIN], ["$with_eeze_mount"], [mount bin to use])
+
+if test "x$with_eeze_umount" = "xdetect";then
+  AC_PATH_PROG([with_eeze_umount], [umount], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_eeze_umount"], [umount bin to use])
+
+if test "x$with_eeze_eject" = "xdetect";then
+  AC_PATH_PROG([with_eeze_eject], [eject], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
+
+EFL_LIB_END_OPTIONAL([Eeze])
+#### End of Eeze
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -3187,6 +3280,7 @@ pc/edbus2.pc
 pc/efreet.pc
 pc/efreet-mime.pc
 pc/efreet-trash.pc
+pc/eeze.pc
 dbus-services/org.enlightenment.Efreet.service
 $po_makefile_in
 ])
@@ -3390,6 +3484,8 @@ echo "  Ecore_Evas...................: $have_ecore_evas"
   echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 #fi
 echo
+
+echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
 echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"

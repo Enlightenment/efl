@@ -628,7 +628,7 @@ eeze_suite(void)
    TCase *tc;
 
    s = suite_create("Eeze");
-
+#if 0
    tc = tcase_create("Eeze_Init");
    tcase_add_test(tc, eeze_test_init);
    suite_add_tcase(s, tc);
@@ -651,7 +651,7 @@ eeze_suite(void)
    //tcase_add_test(tc, eeze_test_net_attr_ipv6);
 #endif
    suite_add_tcase(s, tc);
-
+#endif
    tc = tcase_create("Eeze Sensor");
    tcase_add_test(tc, eeze_test_sensor_read);
    tcase_add_test(tc, eeze_test_sensor_async_read);

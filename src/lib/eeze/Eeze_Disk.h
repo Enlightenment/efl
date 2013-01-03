@@ -26,7 +26,11 @@
  * Eeze disk functions allow you to quickly and efficiently manipulate disks
  * through simple function calls.
  *
- * @addtogroup disk Disk
+ * @defgroup Eeze_Disk Disk
+ * Scan and query information about disks. Manipulate them with moun,
+ * unmount and eject.
+ *
+ * @ingroup Eeze
  * @{
  */
 

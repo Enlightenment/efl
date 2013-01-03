@@ -98,7 +98,8 @@ pc/eio.pc \
 pc/edbus2.pc \
 pc/efreet.pc \
 pc/efreet-mime.pc \
-pc/efreet-trash.pc
+pc/efreet-trash.pc \
+pc/eeze.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -206,6 +207,10 @@ endif
 
 if HAVE_ECORE_X
 pkgconfig_DATA += pc/ecore-x.pc
+endif
+
+if HAVE_EEZE
+pkgconfig_DATA += pc/eeze.pc
 endif
 
 

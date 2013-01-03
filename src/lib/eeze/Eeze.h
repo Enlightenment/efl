@@ -1,39 +1,73 @@
 /**
- @brief Eeze Device Library
- *
- @mainpage Eeze
- @image html  eeze.png
- @version 1.7.0
- @author Mike Blumenkrantz (zmike/discomfitor) <michael.blumenkrantz@@gmail.com>
- @date 2010-2012
 
- @section intro What is Eeze?
+   @brief Eeze Device Library
 
- Eeze is a library for manipulating devices through udev with a simple and fast
- api. It interfaces directly with libudev, avoiding such middleman daemons as
- udisks/upower or hal, to immediately gather device information the instant it
- becomes known to the system.  This can be used to determine such things as:
- @li If a cdrom has a disk inserted
- @li The temperature of a cpu core
- @li The remaining power left in a battery
- @li The current power consumption of various parts
- @li Monitor in realtime the status of peripheral devices
+   @page eeze_main Eeze
 
- Each of the above examples can be performed by using only a single eeze
- function, as one of the primary focuses of the library is to reduce the
- complexity of managing devices.
+   @date 2010 (created)
 
- @li @link Eeze.h Eeze functions @endlink
- @li @ref udev UDEV functions
-         @li @ref watch Functions that watch for events
-         @li @ref syspath Functions that accept a device /sys/ path
-         @li @ref find Functions which find types of devices
- @li @ref disk Disk functions
- @li @ref net Net functions
- @li @ref sensor Sensor functions
- @verbatim
- Pants
- @endverbatim
+   @section toc Table of Contents
+
+   @li @ref eeze_main_intro
+   @li @ref eeze_main_compiling
+   @li @ref eeze_main_next_steps
+
+   @section eeze_main_intro Introduction
+
+   Eeze is a library for manipulating devices through udev with a
+   simple and fast api. It interfaces directly with libudev, avoiding
+   such middleman daemons as udisks/upower or hal, to immediately
+   gather device information the instant it becomes known to the
+   system.  This can be used to determine such things as:
+
+   @li If a cdrom has a disk inserted
+   @li The temperature of a cpu core
+   @li The remaining power left in a battery
+   @li The current power consumption of various parts
+   @li Monitor in realtime the status of peripheral devices
+
+   Each of the above examples can be performed by using only a single eeze
+   function, as one of the primary focuses of the library is to reduce the
+   complexity of managing devices.
+
+   @section eeze_main_compiling How to compile
+
+   Eeze is a library your application links to. The procedure for this is very
+   simple. You simply have to compile your application with the appropriate
+   compiler flags that the @p pkg-config script outputs. For example:
+
+   Compiling C or C++ files into object files:
+
+   @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags eeze`
+   @endverbatim
+
+   Linking object files into a binary executable:
+
+   @verbatim
+   gcc -o my_application main.o `pkg-config --libs eeze`
+   @endverbatim
+
+   See @ref pkgconfig
+
+   @section eeze_main_next_steps Next Steps
+
+   After you understood what Eeze is and installed it in your system
+   you should proceed understanding the programming interface. We'd
+   recommend you to take a while to learn @ref Eina and @ref Ecore as
+   they convenient and Eeze provides integration with it.
+
+   Recommended reading:
+
+   @li @link Eeze.h Eeze functions @endlink
+   @li @ref Eeze_Udev UDEV functions
+   @li @ref Eeze_Watch Functions that watch for events
+   @li @ref Eeze_Syspath Functions that accept a device /sys/ path
+   @li @ref Eeze_Find Functions which find types of devices
+   @li @ref Eeze_Disk Disk functions
+   @li @ref Eeze_Net Net functions
+   @li @ref Eeze_Sensor Sensor functions
+
  */
 #ifndef EEZE_UDEV_H
 #define EEZE_UDEV_H
@@ -76,19 +110,21 @@
  */
 
 /**
- * @defgroup main main
+ * @defgroup Eeze_Main main
+ * @ingroup Eeze
  *
  * These are general eeze functions which include init and shutdown.
  */
 
 /**
- * @defgroup udev udev
+ * @defgroup Eeze_Udev udev
+ * @ingroup Eeze_Main
  *
  * These are functions which interact directly with udev.
  */
 
 /**
- * @addtogroup udev
+ * @addtogroup Eeze_Udev
  *
  * These are the device subsystems of udev:
  * @li ac97
@@ -150,7 +186,7 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup udev
+ * @addtogroup Eeze_Udev
  * @typedef Eeze_Udev_Event
  * @enum Eeze_Udev_Event
  * @brief Flags for watch events
@@ -177,7 +213,7 @@ typedef enum
 /** @} */
 
 /**
- * @addtogroup udev udev
+ * @addtogroup Eeze_Udev udev
  * @typedef Eeze_Udev_Type Eeze_Udev_Type
  * @enum Eeze_Udev_Type
  * @brief Convenience types to simplify udev access.
@@ -228,7 +264,7 @@ typedef enum
 struct Eeze_Udev_Watch;
 
 /**
- * @addtogroup watch
+ * @addtogroup Eeze_Watch
  * @typedef Eeze_Udev_Watch Eeze_Udev_Watch
  * @brief Opaque structure to hold data for a udev watch
  */
@@ -248,7 +284,7 @@ typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
    EAPI extern Eeze_Version *eeze_version;
 
 /**
- * @addtogroup watch
+ * @addtogroup Eeze_Watch
  * @typedef Eeze_Udev_Watch_Cb Eeze_Udev_Watch_Cb
  * @brief Callback type for use with #Eeze_Udev_Watch
  */
@@ -262,7 +298,7 @@ typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Ud
  * This function should be called prior to using any eeze functions, and MUST
  * be called prior to using any udev functions to avoid a segv.
  *
- * @ingroup main
+ * @ingroup Eeze_Main
  */
 EAPI int             eeze_init(void);
 
@@ -273,16 +309,16 @@ EAPI int             eeze_init(void);
  *
  * This function should be called when no further eeze functions will be called.
  *
- * @ingroup main
+ * @ingroup Eeze_Main
  */
 EAPI int             eeze_shutdown(void);
 
    /**
-    * @addtogroup find Find
+    * @addtogroup Eeze_Find Find
     *
     * These are functions which find/supplement lists of devices.
     *
-    * @ingroup udev
+    * @ingroup Eeze_Udev
     *
     * @{
     */
@@ -319,7 +355,7 @@ EAPI Eina_List       *eeze_udev_find_unlisted_similar(Eina_List *list);
  *
  * @return A stringshared list of the devices found with the attribute
  *
- * @ingroup find
+ * @ingroup Eeze_Find
  */
 EAPI Eina_List       *eeze_udev_find_by_sysattr(const char *sysattr, const char *value);
 
@@ -351,12 +387,12 @@ EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char
     */
 
    /**
-    * @addtogroup syspath Syspath
+    * @addtogroup Eeze_Syspath Syspath
     *
     * These are functions which interact with the syspath (/sys/$PATH) of
     * a device.
     *
-    * @ingroup udev
+    * @ingroup Eeze_Udev
     *
     * @{
     */
@@ -475,11 +511,11 @@ EAPI Eina_Bool        eeze_udev_syspath_is_joystick(const char *syspath);
     */
 
    /**
-    * @addtogroup walks Walks
+    * @addtogroup Eeze_Walks Walks
     *
     * These are functions which walk up the device chain.
     *
-    * @ingroup udev
+    * @ingroup Eeze_Udev
     *
     * @{
     */
@@ -511,7 +547,7 @@ EAPI const char      *eeze_udev_walk_get_sysattr(const char *syspath, const char
     */
 
    /**
-    * @addtogroup watch Watch
+    * @addtogroup Eeze_Watch Watch
     *
     * @brief These are functions which monitor udev for events.
     *
@@ -520,7 +556,7 @@ EAPI const char      *eeze_udev_walk_get_sysattr(const char *syspath, const char
     * syspath of the triggering device and the event that happened to the device, along with the data you associated with the watch and
     * the watch object itself in case you want to stop the watch easily in a callback.
     *
-    * @ingroup udev
+    * @ingroup Eeze_Udev
     *
     * @{
     */

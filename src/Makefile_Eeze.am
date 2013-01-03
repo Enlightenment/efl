@@ -1,0 +1,166 @@
+
+### Library
+
+lib_LTLIBRARIES += \
+lib/eeze/libeeze.la
+
+EEZE_COMMON_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eco \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_file \
+-I$(top_builddir)/src/lib/ecore_file \
+-I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/eeze \
+-I$(top_builddir)/src/lib/eeze \
+@EFL_COV_CFLAGS@ \
+@EEZE_CFLAGS@
+
+EEZE_COMMON_LDADD = \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+@EFL_COV_LIBS@
+
+installed_eezemainheadersdir = $(includedir)/eeze-@VMAJ@
+dist_installed_eezemainheaders_DATA = \
+lib/eeze/Eeze.h \
+lib/eeze/Eeze_Net.h \
+lib/eeze/Eeze_Sensor.h
+
+# libeeze.la
+lib_eeze_libeeze_la_SOURCES = \
+lib/eeze/eeze_main.c \
+lib/eeze/eeze_net.c \
+lib/eeze/eeze_net_private.h \
+lib/eeze/eeze_udev_find.c \
+lib/eeze/eeze_udev_private.h \
+lib/eeze/eeze_udev_private.c \
+lib/eeze/eeze_udev_syspath.c \
+lib/eeze/eeze_udev_walk.c \
+lib/eeze/eeze_udev_watch.c \
+lib/eeze/eeze_sensor_private.h \
+lib/eeze/eeze_sensor.c
+
+if HAVE_EEZE_MOUNT
+dist_installed_eezemainheaders_DATA += lib/eeze/Eeze_Disk.h
+lib_eeze_libeeze_la_SOURCES += \
+lib/eeze/eeze_disk.c \
+lib/eeze/eeze_disk_udev.c \
+lib/eeze/eeze_disk_mount.c \
+lib/eeze/eeze_disk_private.h \
+lib/eeze/eeze_disk_libmount_new.c
+
+EEZE_COMMON_LDADD += \
+lib/ecore_file/libecore_file.la \
+lib/ecore_con/libecore_con.la \
+lib/eet/libeet.la
+endif
+
+EEZE_COMMON_LIBADD = $(EEZE_COMMON_LDADD) @EEZE_LIBS@
+EEZE_COMMON_LDADD  += @EEZE_LDFLAGS@
+EEZE_COMMON_USER_LIBADD = $(EEZE_COMMON_LIBADD) lib/eeze/libeeze.la
+EEZE_COMMON_USER_LDADD  = $(EEZE_COMMON_LDADD) lib/eeze/libeeze.la
+
+lib_eeze_libeeze_la_CPPFLAGS = \
+$(EEZE_COMMON_CPPFLAGS) \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_EEZE_BUILD
+
+lib_eeze_libeeze_la_LIBADD = $(EEZE_COMMON_LIBADD)
+lib_eeze_libeeze_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+eezemodulesensordir = $(libdir)/eeze/sensor
+eezemodulesensor_LTLIBRARIES =
+
+if HAVE_EEZE_TIZEN
+eezemodulesensor_LTLIBRARIES += \
+modules/eeze/eeze-sensor-tizen.la
+modules_eeze_eeze_sensor_tizen_la_SOURCES = \
+modules/eeze/eeze_sensor_tizen.c
+modules_eeze_eeze_sensor_tizen_la_CPPFLAGS = \
+$(EEZE_COMMON_CPPFLAGS) \
+@TIZEN_SENSOR_CFLAGS@
+modules_eeze_eeze_sensor_tizen_la_LIBADD = \
+$(EEZE_COMMON_USER_LIBADD) \
+@TIZEN_SENSOR_LIBS@
+modules_eeze_eeze_sensor_tizen_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_eeze_eeze_sensor_tizen_la_LIBTOOLFLAGS = --tag=disable-static
+else
+
+eezemodulesensor_LTLIBRARIES += \
+modules/eeze/eeze-sensor-fake.la
+modules_eeze_eeze_sensor_fake_la_SOURCES = \
+modules/eeze/eeze_sensor_fake.c
+modules_eeze_eeze_sensor_fake_la_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+modules_eeze_eeze_sensor_fake_la_LIBADD = $(EEZE_COMMON_USER_LIBADD)
+modules_eeze_eeze_sensor_fake_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_eeze_eeze_sensor_fake_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+
+### Binary
+
+noinst_PROGRAMS += \
+bin/eeze/eeze_udev_test \
+bin/eeze/eeze_sensor_test
+
+bin_eeze_eeze_udev_test_SOURCES = bin/eeze/eeze_udev_test.c
+bin_eeze_eeze_udev_test_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_udev_test_LDADD = $(EEZE_COMMON_USER_LDADD)
+
+bin_eeze_eeze_sensor_test_SOURCES = bin/eeze/eeze_sensor_test.c
+bin_eeze_eeze_sensor_test_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_sensor_test_LDADD = $(EEZE_COMMON_USER_LDADD)
+
+if HAVE_EEZE_MOUNT
+bin_PROGRAMS += \
+bin/eeze/eeze_mount \
+bin/eeze/eeze_umount \
+bin/eeze/eeze_disk_ls \
+bin/eeze/eeze_scanner
+
+bin_eeze_eeze_mount_SOURCES = bin/eeze/eeze_mount.c
+bin_eeze_eeze_mount_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_mount_LDADD = $(EEZE_COMMON_USER_LDADD)
+
+bin_eeze_eeze_umount_SOURCES = bin/eeze/eeze_umount.c
+bin_eeze_eeze_umount_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_umount_LDADD = $(EEZE_COMMON_USER_LDADD)
+
+bin_eeze_eeze_disk_ls_SOURCES = bin/eeze/eeze_disk_ls.c
+bin_eeze_eeze_disk_ls_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_disk_ls_LDADD = $(EEZE_COMMON_USER_LDADD)
+
+bin_eeze_eeze_scanner_SOURCES = \
+bin/eeze/eeze_scanner.c \
+bin/eeze/eeze_scanner.h
+bin_eeze_eeze_scanner_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+bin_eeze_eeze_scanner_LDADD = $(EEZE_COMMON_USER_LDADD)
+endif
+
+setuid_root_mode = a=rx,u+xs
+install-data-hook::
+	@chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true
+
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eeze/eeze_suite
+
+tests_eeze_eeze_suite_SOURCES = tests/eeze/eeze_suite.c
+tests_eeze_eeze_suite_CPPFLAGS = \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eeze\" \
+$(EEZE_COMMON_CPPFLAGS) \
+@CHECK_CFLAGS@
+tests_eeze_eeze_suite_LDADD = $(EEZE_COMMON_USER_LDADD) @CHECK_LIBS@
+
+endif

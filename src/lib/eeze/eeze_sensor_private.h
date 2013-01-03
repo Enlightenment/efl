@@ -74,7 +74,7 @@ typedef struct _Eeze_Sensor_Module
  *
  * @since 1.8
  */
-Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
+EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
 
 /**
  * @brief Unregister a module from eeze_sensor core.
@@ -85,5 +85,5 @@ Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
  *
  * @since 1.8
  */
-Eina_Bool eeze_sensor_module_unregister(const char *name);
+EAPI Eina_Bool eeze_sensor_module_unregister(const char *name);
 #endif // EEZE_SENSOR_PRIVATE_H

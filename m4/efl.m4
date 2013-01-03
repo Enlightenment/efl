@@ -105,6 +105,19 @@ m4_pushdef([DOWN], m4_translit([$3], [-A-Z], [_a-z]))dnl
 m4_popdef([DOWN])
 ])
 
+dnl EFL_OPTIONAL_INTERNAL_DEPEND_PKG(EFL, VARIABLE, NAME)
+AC_DEFUN([EFL_OPTIONAL_INTERNAL_DEPEND_PKG],
+[
+m4_pushdef([DOWN], m4_translit([$3], [-A-Z], [_a-z]))dnl
+
+   have_[]m4_defn([DOWN])="no"
+   if test "x$2" = "xyes"; then
+      EFL_INTERNAL_DEPEND_PKG([$1], [$3])
+   fi
+
+m4_popdef([DOWN])
+])
+
 dnl EFL_ADD_LIBS(PKG, LIBS)
 dnl Add libraries that the EFL library will depend on
 dnl See EFL_DEPEND_PKG() for pkg-config version.

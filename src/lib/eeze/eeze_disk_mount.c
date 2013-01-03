@@ -30,7 +30,7 @@ Eina_List *eeze_events = NULL;
  */
 
 static void
-_eeze_disk_mount_error_free(void *data __UNUSED__, Eeze_Event_Disk_Error *de)
+_eeze_disk_mount_error_free(void *data EINA_UNUSED, Eeze_Event_Disk_Error *de)
 {
    if (!de)
      return;
@@ -55,7 +55,7 @@ _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
 }
 
 static Eina_Bool
-_eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
+_eeze_disk_mount_result_handler(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Del *ev)
 {
    Eeze_Disk *disk;
    Eina_List *l;
@@ -221,10 +221,6 @@ EAPI unsigned long
 eeze_disk_mountopts_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, 0);
-#ifndef OLD_LIBMOUNT
-   if (!disk->mount_opts)
-     disk->mount_opts = eeze_disk_libmount_opts_get(disk);
-#endif
    return disk->mount_opts;
 }
 
