@@ -135,6 +135,15 @@ open_object(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_
    return r;
 }
 
+static void
+interface_close(void)
+{
+   //its not necessary generate code to FreeDesktop interfaces
+   if (!strncmp(iface->name, DBUS_INTERFACE, strlen(DBUS_INTERFACE)))
+     interface_free(iface);
+   iface = NULL;
+}
+
 static Eina_Bool
 open_interface(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Object *obj)
 {
@@ -156,7 +165,25 @@ open_interface(const char *content, unsigned length, Eina_Bool is_open_empty, DB
    iface->c_name = dbus_name_to_c(tmp_name);
    free(tmp_name);
 
+   if (is_open_empty)
+     interface_close();
+
    return r;
+}
+
+static void
+signal_close(void)
+{
+   DBus_Arg *arg;
+   EINA_INLIST_FOREACH(d_signal->args, arg)
+     {
+        if ((arg->type[1]) || (arg->type[0] == 'v'))
+          {
+             d_signal->complex = EINA_TRUE;
+             break;
+          }
+     }
+   d_signal = NULL;
 }
 
 static Eina_Bool
@@ -203,6 +230,9 @@ open_signal(const char *content, unsigned length, Eina_Bool is_open_empty)
    eina_strbuf_append(buf, "_EVENT");
    d_signal->signal_event = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
+
+   if (is_open_empty)
+     signal_close();
 
    return r;
 }
@@ -288,8 +318,30 @@ open_arg(const char *content, unsigned length)
    return r;
 }
 
+static void
+method_close(void)
+{
+   DBus_Arg *arg;
+   EINA_INLIST_FOREACH(method->args, arg)
+     {
+        if ((arg->type[1]) || (arg->type[0] == 'v'))
+          {
+             if (arg->direction == 'o')
+               method->out_complex = EINA_TRUE;
+             else
+               method->in_complex = EINA_TRUE;
+          }
+     }
+   if (method->no_reply)
+     {
+        free(method->cb_name);
+        method->cb_name = strdup("NULL");
+     }
+   method = NULL;
+}
+
 static Eina_Bool
-open_method(const char *content, unsigned lenght)
+open_method(const char *content, unsigned lenght, Eina_Bool is_open_empty)
 {
    Eina_Bool r;
    char *tmp;
@@ -319,11 +371,14 @@ open_method(const char *content, unsigned lenght)
            method->function_cb[i+1] = toupper(method->function_cb[i+1]);
      }
 
+   if (is_open_empty)
+     method_close();
+
    return r;
 }
 
 static Eina_Bool
-open_property(const char *content, unsigned length, Eina_Bool is_open_empty)
+open_property(const char *content, unsigned length)
 {
    Eina_Bool r;
    char *tmp;
@@ -363,9 +418,9 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
    else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGHT) && iface)
      return open_annotation(content, length);
    else if (!strncmp(content, METHOD_TAG, METHOD_TAG_LENGHT) && iface)
-     return open_method(content, length);
+     return open_method(content, length, is_open_empty);
    else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGHT) && iface)
-     return open_property(content, length, is_open_empty);
+     return open_property(content, length);
    else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGHT) && iface)
      return EINA_TRUE;
 
@@ -375,52 +430,6 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
    printf("\n\n");
 
    return EINA_TRUE;
-}
-
-static void
-interface_close(void)
-{
-   //its not necessary generate code to FreeDesktop interfaces
-   if (!strncmp(iface->name, DBUS_INTERFACE, strlen(DBUS_INTERFACE)))
-     interface_free(iface);
-   iface = NULL;
-}
-
-static void
-signal_close(void)
-{
-   DBus_Arg *arg;
-   EINA_INLIST_FOREACH(d_signal->args, arg)
-     {
-        if ((arg->type[1]) || (arg->type[0] == 'v'))
-          {
-             d_signal->complex = EINA_TRUE;
-             break;
-          }
-     }
-   d_signal = NULL;
-}
-
-static void
-method_close(void)
-{
-   DBus_Arg *arg;
-   EINA_INLIST_FOREACH(method->args, arg)
-     {
-        if ((arg->type[1]) || (arg->type[0] == 'v'))
-          {
-             if (arg->direction == 'o')
-               method->out_complex = EINA_TRUE;
-             else
-               method->in_complex = EINA_TRUE;
-          }
-     }
-   if (method->no_reply)
-     {
-        free(method->cb_name);
-        method->cb_name = strdup("NULL");
-     }
-   method = NULL;
 }
 
 static Eina_Bool
