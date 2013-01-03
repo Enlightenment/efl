@@ -254,7 +254,7 @@ _emotion_check_device(Emotion_Webcam *ew)
 
  on_error:
 #endif
-   fprintf(stderr, "'%s' is not a webcam ['%s']\n", ew->name, strerror(errno));
+   EINA_LOG_ERR("'%s' is not a webcam ['%s']", ew->name, strerror(errno));
    eina_stringshare_del(ew->syspath);
    eina_stringshare_del(ew->device);
    eina_stringshare_del(ew->name);

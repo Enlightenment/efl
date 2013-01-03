@@ -444,7 +444,7 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
        ev->src_height = 0;
 
 #ifdef HAVE_ECORE_X
-       fprintf(stderr, "destroying window: %i\n", ev->win);
+       INF("destroying window: %i", ev->win);
        if (ev->win) ecore_x_window_free(ev->win);
        ev->win = 0;
 #endif
@@ -1337,7 +1337,7 @@ _ecore_event_x_destroy(void *data __UNUSED__, int type __UNUSED__, void *event _
 {
    Ecore_X_Event_Window_Destroy *ev = event;
 
-   fprintf(stderr, "killed window: %x (%x)\n", ev->win, ev->event_win);
+   INF("killed window: %x (%x).", ev->win, ev->event_win);
 
    return EINA_TRUE;
 }

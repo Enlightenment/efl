@@ -230,7 +230,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
         for (i = 0; colorspace_fourcc_convertion[i].name != NULL; ++i)
           if (fourcc == colorspace_fourcc_convertion[i].fourcc)
             {
-               fprintf(stderr, "Found '%s'\n", colorspace_fourcc_convertion[i].name);
+               DBG("Found '%s'", colorspace_fourcc_convertion[i].name);
                priv->eformat = colorspace_fourcc_convertion[i].eformat;
                priv->func = colorspace_fourcc_convertion[i].func;
                if (colorspace_fourcc_convertion[i].force_height)
@@ -244,7 +244,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
 
         if (fourcc == GST_MAKE_FOURCC('S', 'T', '1', '2'))
           {
-             fprintf(stderr, "Found '%s'\n", "ST12");
+             DBG("Found '%s'", "ST12");
              priv->eformat = EVAS_COLORSPACE_YCBCR420TM12601_PL;
              priv->samsung = EINA_TRUE;
              priv->func = NULL;
@@ -269,7 +269,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    for (i = 0; colorspace_format_convertion[i].name != NULL; ++i)
      if (format == colorspace_format_convertion[i].format)
        {
-          fprintf(stderr, "Found '%s'\n", colorspace_format_convertion[i].name);
+          DBG("Found '%s'", colorspace_format_convertion[i].name);
           priv->eformat = colorspace_format_convertion[i].eformat;
           priv->func = colorspace_format_convertion[i].func;
           if (priv->ev)
@@ -881,7 +881,7 @@ _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface 
    Emotion_Gstreamer_Video *ev = data;
 
    ecore_x_window_resize(ev->win, w, h);
-   fprintf(stderr, "resize: %i, %i\n", w, h);
+   DBG("resize: %i, %i", w, h);
 #endif
 }
 
@@ -893,7 +893,7 @@ _video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
    Emotion_Gstreamer_Video *ev = data;
    unsigned int pos[2];
 
-   fprintf(stderr, "move: %i, %i\n", x, y);
+   DBG("move: %i, %i", x, y);
    pos[0] = x; pos[1] = y;
    ecore_x_window_prop_card32_set(ev->win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
 #endif
@@ -939,7 +939,7 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 #ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
 
-   fprintf(stderr, "show xv\n");
+   DBG("show xv");
    ecore_x_window_show(ev->win);
 #endif
    /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_link_cb, ev); */
@@ -951,7 +951,7 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 #ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
 
-   fprintf(stderr, "hide xv\n");
+   DBG("hide xv");
    ecore_x_window_hide(ev->win);
 #endif
    /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_unlink_cb, ev); */
@@ -1214,10 +1214,10 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
 	   /* Here we really need to have the help of the window manager, this code will change when we update E17. */
 	   parent = (Ecore_X_Window) ecore_evas_window_get(ee);
-	   fprintf(stderr, "parent: %x\n", parent);
+	   DBG("parent: %x", parent);
 
 	   win = ecore_x_window_new(0, x, y, w, h);
-	   fprintf(stderr, "creating window: %x [%i, %i, %i, %i]\n", win, x, y, w, h);
+	   DBG("creating window: %x [%i, %i, %i, %i]", win, x, y, w, h);
 	   if (win)
 	     {
 	       Ecore_X_Window_State state[] = { ECORE_X_WINDOW_STATE_SKIP_TASKBAR, ECORE_X_WINDOW_STATE_SKIP_PAGER };
@@ -1243,7 +1243,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 		 }
 	       else
 		 {
-		   fprintf(stderr, "destroying win: %x\n", win);
+		   DBG("destroying win: %x", win);
 		   ecore_x_window_free(win);
 		 }
 	     }

@@ -1298,13 +1298,13 @@ em_ratio_get(void *data)
 
 static int em_video_handled(void *ef __UNUSED__)
 {
-   fprintf(stderr, "video handled!\n");
+   DBG("video handled!");
    return 1;
 }
 
 static int em_audio_handled(void *ef __UNUSED__)
 {
-   fprintf(stderr, "audio handled!\n");
+   DBG("audio handled!");
    return 1;
 }
 
