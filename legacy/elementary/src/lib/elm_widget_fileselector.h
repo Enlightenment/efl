@@ -23,7 +23,6 @@ struct _Elm_Fileselector_Smart_Data
    EINA_REFCOUNT;
 
    Evas_Object          *obj;
-   Evas_Object          *filename_entry;
    Evas_Object          *path_entry;
    Evas_Object          *files_list;
    Evas_Object          *files_grid;

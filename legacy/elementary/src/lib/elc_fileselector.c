@@ -121,7 +121,6 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
         else evas_object_hide(sd->files_grid);
      }
 
-   SWALLOW("elm.swallow.filename", sd->filename_entry);
    SWALLOW("elm.swallow.path", sd->path_entry);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
@@ -328,9 +327,6 @@ _signal_first(Listing_Request *lreq)
         _anchors_do(lreq->obj, lreq->path);
      }
 
-   if (lreq->sd->filename_entry)
-     elm_object_text_set(lreq->sd->filename_entry, "");
-
    lreq->first = EINA_FALSE;
 }
 
@@ -443,7 +439,6 @@ _populate(Evas_Object *obj,
         _anchors_do(obj, path);
      }
 
-   if (sd->filename_entry) elm_object_text_set(sd->filename_entry, "");
    EINA_ITERATOR_FOREACH(it, file)
      {
         const char *filename;
@@ -574,7 +569,6 @@ _sel_do(void *data)
         if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
           {
              _anchors_do(sdata->fs, path);
-             elm_object_text_set(sd->filename_entry, "");
           }
         else
           {
@@ -587,8 +581,6 @@ _sel_do(void *data)
      }
    else /* navigating through folders only or file is not a dir. */
      {
-        char *s;
-
         if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
           _anchors_do(sdata->fs, path);
         else if (sd->only_folder)
@@ -598,14 +590,6 @@ _sel_do(void *data)
              _populate(sdata->fs, p, NULL);
              eina_stringshare_del(p);
           }
-
-        s = elm_entry_utf8_to_markup(ecore_file_file_get(path));
-        if (s)
-          {
-             elm_object_text_set(sd->filename_entry, s);
-             free(s);
-          }
-        else elm_object_text_set(sd->filename_entry, "");
      }
 
    evas_object_smart_callback_call(sdata->fs, SIG_SELECTED, (void *)path);
@@ -707,8 +691,45 @@ _canc(void *data,
 }
 
 static void
+_on_text_clicked(void *data __UNUSED__,
+                 Evas_Object *obj,
+                 void *event_info __UNUSED__)
+{
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   elm_entry_entry_set(obj, sd->path);
+   elm_entry_cursor_pos_set(obj, strlen(sd->path));
+}
+
+static void
+_on_text_activated(void *data,
+		   Evas_Object *obj,
+		   void *event_info __UNUSED__)
+{
+   Evas_Object *fs = data;
+   const char *p;
+
+   // keep a ref to path 'couse it will be destroyed by _populate
+   p = eina_stringshare_add(elm_object_text_get(obj));
+   if (ecore_file_is_dir(p))
+     _populate(fs, p, NULL);
+   else
+     evas_object_smart_callback_call(data, SIG_SELECTED, (void *)p);
+
+   eina_stringshare_del(p);
+}
+
+static void
+_on_text_unfocused(void *data __UNUSED__,
+		   Evas_Object *obj,
+		   void *event_info __UNUSED__)
+{
+   _anchors_do(obj, elm_object_text_get(obj));
+}
+
+static void
 _anchor_clicked(void *data,
-                Evas_Object *obj __UNUSED__,
+                Evas_Object *obj,
                 void *event_info)
 {
    Elm_Entry_Anchor_Info *info = event_info;
@@ -830,29 +851,18 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_entry_editable_set(en, EINA_FALSE);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    evas_object_smart_callback_add(en, "anchor,clicked", _anchor_clicked, obj);
+   evas_object_smart_callback_add(en, "clicked", _on_text_clicked, obj);
+   evas_object_smart_callback_add(en, "unfocused", _on_text_unfocused, obj);
+   evas_object_smart_callback_add(en, "activated", _on_text_activated, obj);
 
    elm_widget_sub_object_add(obj, en);
    priv->path_entry = en;
-
-   // filename entry
-   en = elm_entry_add(obj);
-   elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_entry_editable_set(en, EINA_TRUE);
-   elm_entry_single_line_set(en, EINA_TRUE);
-   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   elm_widget_sub_object_add(obj, en);
-   priv->filename_entry = en;
 
    elm_fileselector_buttons_ok_cancel_set(obj, EINA_TRUE);
    elm_fileselector_is_save_set(obj, EINA_FALSE);
@@ -922,7 +932,7 @@ _is_save_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool is_save = va_arg(*list, int);
    Elm_Fileselector_Smart_Data *sd = _pd;
 
-   elm_object_disabled_set(sd->filename_entry, !is_save);
+   elm_object_disabled_set(sd->path_entry, !is_save);
 
    if (is_save) elm_layout_signal_emit(obj, "elm,state,save,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,save,off", "elm");
@@ -942,7 +952,7 @@ _is_save_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = !elm_object_disabled_get(sd->filename_entry);
+   *ret = !elm_object_disabled_get(sd->path_entry);
 }
 
 EAPI void
@@ -1176,38 +1186,18 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 static void
 _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   const char *fp;
    const char **ret = va_arg(*list, const char **);
    *ret = NULL;
    Elm_Fileselector_Smart_Data *sd = _pd;
 
    if (!sd->path) return;
 
-   if (sd->filename_entry)
+   fp = elm_object_text_get(sd->path_entry);
+   if (ecore_file_exists(fp))
      {
-        char buf[PATH_MAX];
-        const char *name;
-        char *dir, *s;
+	eina_stringshare_replace(&sd->selection, fp);
 
-        if (ecore_file_is_dir(sd->path))
-          dir = strdup(sd->path);
-        else
-          dir = ecore_file_dir_get(sd->path);
-        name = elm_object_text_get(sd->filename_entry);
-        if (name)
-          {
-             s = elm_entry_markup_to_utf8(name);
-             if (s)
-               {
-                  snprintf(buf, sizeof(buf), "%s/%s", dir, s);
-                  free(s);
-               }
-             else snprintf(buf, sizeof(buf), "%s", dir);
-          }
-        else snprintf(buf, sizeof(buf), "%s", dir);
-
-        eina_stringshare_replace(&sd->selection, buf);
-
-        if (dir) free(dir);
         *ret = sd->selection;
         return;
      }
@@ -1262,20 +1252,7 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
           }
 
         _populate(obj, ecore_file_dir_get(path), NULL);
-        if (sd->filename_entry)
-          {
-             char *s;
-
-             s = elm_entry_utf8_to_markup(ecore_file_file_get(path));
-             if (s)
-               {
-                  elm_object_text_set(sd->filename_entry, s);
-                  free(s);
-               }
-             else elm_object_text_set(sd->filename_entry, "");
-
-             eina_stringshare_replace(&sd->selection, path);
-          }
+	eina_stringshare_replace(&sd->selection, path);
      }
 
 clean_up:
