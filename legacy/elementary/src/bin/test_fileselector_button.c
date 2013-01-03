@@ -112,36 +112,36 @@ _inwin_mode_toggle(void            *data,
 
 static void
 _current_sel_toggle(void            *data,
-                    Evas_Object *obj __UNUSED__,
+                    Evas_Object *obj,
                     void *event_info __UNUSED__)
 {
    Evas_Object *fs_bt = data;
-   Eina_Bool value = elm_fileselector_button_is_save_get(fs_bt);
-   elm_fileselector_button_is_save_set(fs_bt, !value);
+   Eina_Bool value = elm_check_state_get(obj);
+   elm_fileselector_button_is_save_set(fs_bt, value);
    printf("Current selection editable entry set to: %s\n",
-          value ? "false" : "true");
+          value ? "true" : "false");
 }
 
 static void
 _folder_only_toggle(void            *data,
-                    Evas_Object *obj __UNUSED__,
+                    Evas_Object *obj,
                     void *event_info __UNUSED__)
 {
    Evas_Object *fs_bt = data;
-   Eina_Bool value = elm_fileselector_button_folder_only_get(fs_bt);
-   elm_fileselector_button_folder_only_set(fs_bt, !value);
-   printf("Folder only flag set to: %s\n", value ? "false" : "true");
+   Eina_Bool value = elm_check_state_get(obj);
+   elm_fileselector_button_folder_only_set(fs_bt, value);
+   printf("Folder only flag set to: %s\n", value ? "true" : "false");
 }
 
 static void
 _expandable_toggle(void            *data,
-                   Evas_Object *obj __UNUSED__,
+                   Evas_Object *obj,
                    void *event_info __UNUSED__)
 {
    Evas_Object *fs_bt = data;
-   Eina_Bool value = elm_fileselector_button_expandable_get(fs_bt);
-   elm_fileselector_button_expandable_set(fs_bt, !value);
-   printf("Expandable flag set to: %s\n", value ? "false" : "true");
+   Eina_Bool value = elm_check_state_get(obj);
+   elm_fileselector_button_expandable_set(fs_bt, value);
+   printf("Expandable flag set to: %s\n", value ? "true" : "false");
 }
 
 static void
