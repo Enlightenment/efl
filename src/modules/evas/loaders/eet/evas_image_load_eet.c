@@ -43,7 +43,7 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   ef = eet_map(f);
+   ef = eet_mmap(f);
    if (!ef)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -100,7 +100,7 @@ evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return EINA_FALSE;
      }
-   ef = eet_map(f);
+   ef = eet_mmap(f);
    if (!ef)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;

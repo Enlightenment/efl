@@ -18,7 +18,7 @@
 2013-01-02  Cedric Bail
 
 	* Use Eina_File for evas webp, gif, tiff and eet loader.
-	* Add eet_map to open an Eet file from an Eina_File.
+	* Add eet_mmap to open an Eet file from an Eina_File.
 
 2012-12-31  Gustavo Sverzut Barbieri (k-s)
 

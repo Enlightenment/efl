@@ -47,7 +47,7 @@ Additions:
       eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
       eina_xattr_fd_copy()
     * Added eina_file_copy()
-    * Add eet_map.
+    * Add eet_mmap.
     * Add eio_eet_sync symbols.
 
 Deprecations:
