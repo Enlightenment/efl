@@ -39,7 +39,7 @@ Evas_Data.h \
 evas_mempool.h
 
 EXTRA_LTLIBRARIES = libcity.la
-libcity_la_SOURCES = city.cc
+libcity_la_SOURCES = city.cc city.h
 
 nodist_EXTRA_eina_bench_SOURCES = dummy.cc
 eina_bench_LDADD = \
