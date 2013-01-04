@@ -4,8 +4,14 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 #include <LinearMath/btGeometryUtil.h>
+
+#pragma GCC diagnostic pop
 
 #include <math.h>
 
