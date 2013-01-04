@@ -3,7 +3,7 @@
 
 static int nbr = 0;
 
-static GstElement *_buid_pipeline(gchar *filename, Ecore_Pipe *pipe);
+static GstElement *_build_pipeline(gchar *filename, Ecore_Pipe *pipe);
 
 static void        new_decoded_pad_cb(GstElement *demuxer,
                                       GstPad *new_pad,
@@ -48,7 +48,7 @@ main(int argc, char *argv[])
         return 0;
      }
 
-   pipe = ecore_pipe_add(handler);
+   pipe = ecore_pipe_add(handler, NULL);
    if (!pipe)
      {
         ecore_shutdown();
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
      }
    filename = argv[1];
 
-   pipeline = _buid_pipeline(filename, pipe);
+   pipeline = _build_pipeline(filename, pipe);
    if (!pipeline)
      {
         g_print("Error during the pipeline building\n");
@@ -115,8 +115,8 @@ new_decoded_pad_cb(GstElement *demuxer,
    gst_caps_unref(caps);
 }
 
-static GstElement
-_buid_pipeline(gchar *filename, Ecore_Pipe *pipe)
+static GstElement *
+_build_pipeline(gchar *filename, Ecore_Pipe *pipe)
 {
    GstElement *pipeline;
    GstElement *filesrc;

@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>
@@ -6,12 +10,15 @@
  * 2010 Mike Blumenkrantz
  */
 
-/* comment if not using gnutls */
+#ifdef HAVE_GNUTLS
+#include <gnutls/gnutls.h>
+
 static void
 tls_log_func(int level, const char *str)
 {
    fprintf(stderr, "|<%d>| %s", level, str);
 }
+#endif
 
 Eina_Bool
 _add(void *data, int type, Ecore_Con_Event_Server_Add *ev)
@@ -58,9 +65,10 @@ main()
    ecore_init();
    ecore_con_init();
 
-/* comment if not using gnutls */
+#ifdef HAVE_GNUTLS
    gnutls_global_set_log_level(9);
    gnutls_global_set_log_function(tls_log_func);
+#endif
 
    if (!(it = eina_file_ls("/etc/ssl/certs")))
      exit(1);

@@ -363,6 +363,8 @@ case "$build_crypto" in
       EFL_DEPEND_PKG([crypto], [OPENSSL], [openssl])
       ;;
 esac
+AM_CONDITIONAL([HAVE_CRYPTO_GNUTLS], [test "${build_crypto}" = "gnutls"])
+AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 
 #### Checks for header files
 
@@ -1743,6 +1745,22 @@ AC_ARG_ENABLE([g-main-loop],
    ],
    [want_g_main_loop="no"])
 
+AC_ARG_ENABLE([gstreamer],
+   [AC_HELP_STRING([--disable-gstreamer],
+                   [disable gstreamer support. @<:@default=enabled@:>@])],
+   [
+    if test "x${withval}" = "xyes" ; then
+       want_gstreamer="yes"
+    else
+       if test "x${withval}" = "xalways" ; then
+          want_gstreamer="always"
+       else
+          want_gstreamer="no"
+       fi
+    fi
+   ],
+   [want_gstreamer="yes"])
+
 ### Default values
 
 if test "${have_windows}" = "yes"; then
@@ -1785,6 +1803,12 @@ fi
 if test "x${want_g_main_loop}" = "xyes" ; then
   AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
 fi
+
+# not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
+if test "${want_gstreamer}" = "yes"; then
+  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
+fi
+AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes"])
 
 EFL_EVAL_PKGS([ECORE])
 

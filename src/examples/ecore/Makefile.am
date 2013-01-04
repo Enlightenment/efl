@@ -13,7 +13,9 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_file \
 -I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_imf \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_audio \
@@ -44,7 +46,6 @@ ecore_event_example_02 \
 ecore_exe_example \
 ecore_exe_example_child \
 ecore_fd_handler_example \
-ecore_fd_handler_gnutls_example \
 ecore_file_download_example \
 ecore_idler_example \
 ecore_imf_example \
@@ -161,23 +162,35 @@ ecore_exe_example_child_LDADD = $(ECORE_COMMON_LDADD)
 ecore_fd_handler_example_SOURCES = ecore_fd_handler_example.c
 ecore_fd_handler_example_LDADD = $(ECORE_COMMON_LDADD)
 
+if HAVE_CRYPTO_GNUTLS
+EXTRA_PROGRAMS += ecore_fd_handler_gnutls_example
 ecore_fd_handler_gnutls_example_SOURCES = ecore_fd_handler_gnutls_example.c
-ecore_fd_handler_gnutls_example_LDADD = $(ECORE_COMMON_LDADD)
+ecore_fd_handler_gnutls_example_LDADD = $(ECORE_COMMON_LDADD) @ECORE_CON_LIBS@
+ecore_fd_handler_gnutls_example_CFLAGS = @ECORE_CON_CFLAGS@
+endif
 
 ecore_file_download_example_SOURCES = ecore_file_download_example.c
-ecore_file_download_example_LDADD = $(ECORE_COMMON_LDADD)
+ecore_file_download_example_LDADD = $(ECORE_COMMON_LDADD) \
+$(top_builddir)/src/lib/ecore_file/libecore_file.la
 
 ecore_idler_example_SOURCES = ecore_idler_example.c
 ecore_idler_example_LDADD = $(ECORE_COMMON_LDADD)
 
 ecore_imf_example_SOURCES = ecore_imf_example.c
-ecore_imf_example_LDADD = $(ECORE_COMMON_LDADD)
+ecore_imf_example_LDADD = $(ECORE_COMMON_LDADD) \
+$(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
+$(top_builddir)/src/lib/ecore_imf/libecore_imf_evas.la \
+$(top_builddir)/src/lib/ecore_evas/libecore_evas.la
+
 
 ecore_job_example_SOURCES = ecore_job_example.c
 ecore_job_example_LDADD = $(ECORE_COMMON_LDADD)
 
+if HAVE_GSTREAMER
 ecore_pipe_gstreamer_example_SOURCES = ecore_pipe_gstreamer_example.c
-ecore_pipe_gstreamer_example_LDADD = $(ECORE_COMMON_LDADD)
+ecore_pipe_gstreamer_example_LDADD = $(ECORE_COMMON_LDADD) @GSTREAMER_LIBS@
+ecore_pipe_gstreamer_example_CFLAGS = @GSTREAMER_CFLAGS@
+endif
 
 ecore_pipe_simple_example_SOURCES = ecore_pipe_simple_example.c
 ecore_pipe_simple_example_LDADD = $(ECORE_COMMON_LDADD)
