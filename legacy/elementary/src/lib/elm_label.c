@@ -86,7 +86,7 @@ _label_slide_change(Evas_Object *obj)
    // too short to slide label
    if (plainlen < 1)
      {
-        sd->slide = EINA_TRUE;
+        sd->slide = EINA_FALSE;
         return;
      }
 
