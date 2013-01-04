@@ -11,6 +11,43 @@ EFL is a collection of libraries for handling many common tasks a
 developer man have such as data structures, communication, rendering,
 widgets and more.
 
+BULLET PHYSICS DEPENDENCY:
+------------------------------------------------------------------------------
+EFL comes with EPhysics(a physics wrapper library) enabled by default, to
+build it the user must have BulletPhysics engine installed.
+
+More informations about BulletPhysics can be obtained in the upstream project
+web site at: http://bulletphysics.org.
+
+We have received many reports about BulletPhysics installation and distros
+packages in bad shape, some without even a package. If your distro doesn't
+ship a BulletPhysics package or you want to build it from source code follow the
+instructions below:
+
+* Required Packages:
+You should have cmake installed. Bullet comes with autotools and cmake build
+systems, do not use the autotools alternative, it's unstable, bogus and hasn't
+been maintained for quite some time.
+
+* Download the tarball from:
+http://code.google.com/p/bullet/downloads/list
+
+NOTE: the current supported version is 2.80 or greater.
+
+* Compiling and Installing:
+Uncompress it to(say) ~/bullet and:
+
+$ cd ~/bullet/build
+$ cmake .. -DBUILD_CPU_DEMOS=OFF -DBUILD_DEMOS=OFF -DBUILD_SHARED_LIBS=ON
+$ make
+$ sudo make install
+
+* Ubuntu Users:
+Alternatively ubuntu users have the option to install the BulletPhysics from
+our oficial EFL PPA:
+
+https://launchpad.net/~efl/+archive/trunk
+
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
 
