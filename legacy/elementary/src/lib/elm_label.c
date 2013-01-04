@@ -71,7 +71,7 @@ _label_sliding_change(Evas_Object *obj)
    // doesn't support multiline sliding effect
    if (sd->linewrap)
      {
-        sd->slidingmode = EINA_FALSE;
+        sd->slide = EINA_FALSE;
         return;
      }
 
@@ -86,18 +86,18 @@ _label_sliding_change(Evas_Object *obj)
    // too short to slide label
    if (plainlen < 1)
      {
-        sd->slidingmode = EINA_TRUE;
+        sd->slide = EINA_TRUE;
         return;
      }
 
-   if (sd->slidingmode)
+   if (sd->slide)
      {
         Edje_Message_Float_Set *msg =
           alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
 
         if (sd->ellipsis)
           {
-             sd->slidingellipsis = EINA_TRUE;
+             sd->slide_ellipsis = EINA_TRUE;
              elm_label_ellipsis_set(obj, EINA_FALSE);
           }
 
@@ -113,9 +113,9 @@ _label_sliding_change(Evas_Object *obj)
      {
         edje_object_signal_emit
           (wd->resize_obj, "elm,state,slide,stop", "elm");
-        if (sd->slidingellipsis)
+        if (sd->slide_ellipsis)
           {
-             sd->slidingellipsis = EINA_FALSE;
+             sd->slide_ellipsis = EINA_FALSE;
              elm_label_ellipsis_set(obj, EINA_TRUE);
           }
      }
@@ -342,8 +342,8 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->linewrap = ELM_WRAP_NONE;
    priv->ellipsis = EINA_FALSE;
-   priv->slidingmode = EINA_FALSE;
-   priv->slidingellipsis = EINA_FALSE;
+   priv->slide = EINA_FALSE;
+   priv->slide_ellipsis = EINA_FALSE;
    priv->wrap_w = -1;
    priv->slide_duration = 10;
 
@@ -576,8 +576,8 @@ _slide_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool slide = va_arg(*list, int);
    Elm_Label_Smart_Data *sd = _pd;
 
-   if (sd->slidingmode == slide) return;
-   sd->slidingmode = slide;
+   if (sd->slide == slide) return;
+   sd->slide = slide;
 
    _label_sliding_change(obj);
    elm_layout_sizing_eval(obj);
@@ -597,7 +597,7 @@ _slide_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->slidingmode;
+   *ret = sd->slide;
 }
 
 EAPI void

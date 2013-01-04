@@ -20,8 +20,8 @@ struct _Elm_Label_Smart_Data
    Elm_Wrap_Type         linewrap;
 
    Eina_Bool             ellipsis : 1;
-   Eina_Bool             slidingmode : 1;
-   Eina_Bool             slidingellipsis : 1;
+   Eina_Bool             slide : 1;
+   Eina_Bool             slide_ellipsis : 1;
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \
