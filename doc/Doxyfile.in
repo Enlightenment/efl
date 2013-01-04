@@ -603,7 +603,8 @@ INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/eio_examples.dox \
                          @srcdir@/edbus_examples.dox \
                          @srcdir@/ephysics_examples.dox \
-                         @srcdir@/edje_examples.dox
+                         @srcdir@/edje_examples.dox \
+                         @top_srcdir@/src/bin/edje/edje_cc_handlers.c
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -1696,3 +1697,24 @@ GENERATE_LEGEND        = YES
 # the various graphs.
 
 DOT_CLEANUP            = YES
+
+# Aliases used by edcref
+ALIASES                = block="<tr><td class=\"block\"><b>"
+ALIASES               += context="</b></td><td class=\"context\" colspan=2>\code"
+ALIASES               += description="\endcode</td></tr><tr><td>&nbsp;</td><td class=\"description\" colspan=2>"
+ALIASES               += endblock="</td></tr>"
+ALIASES               += property="<tr><td>&nbsp;</td><td><table class=\"edcref\" border=\"0\"><tr><td class=\"property\"><tt>"
+ALIASES               += parameters="</tt></td><td class=\"parameters\"><tt>"
+ALIASES               += effect="</tt></td></tr><tr><td>&nbsp;</td><td class=\"effect\">"
+ALIASES               += endproperty="</td></tr></table></td></tr>"
+ALIASES               += edcsection{2}="<tr class=\"section\"><td class=\"section\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+ALIASES               += edcsubsection{2}="<tr class=\"subsection\"><td class=\"subsection\" colspan=\"2\">\anchor sec_\1 \ref sec_quickaccess \"\2\"</td></tr>"
+
+# Aliases used by luaref
+ALIASES               += luaclass{2}="\anchor \1 \n<div class=\"luaclass\">\2</div>"
+ALIASES               += attributes="<div class=\"luaattrib\">Attributes:</div>"
+ALIASES               += methods="<div class=\"luaattrib\">Methods:</div>"
+ALIASES               += events="<div class=\"luaattrib\">Events:</div>"
+ALIASES               += setters="<div class=\"luaattrib\">Setters:</div>"
+ALIASES               += seealso{2}="<b>See also:</b> <a href='\2'>\1</a>\n"
+ALIASES               += seealso{1}="<b>See also:</b> \1\n"

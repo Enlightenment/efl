@@ -20,6 +20,7 @@
  * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  * @li @ref eeze_main hardware device manipulation and notification.
  * @li @ref ephysics_main physics simulation integration and visual effects.
+ * @li @ref edje_main layout and theme library with super powers.
  *
  */
 
@@ -27,33 +28,44 @@
  * @page authors Authors
  *
  * @author Adam Simpkins <adam@@adamsimpkins.net>
+ * @author Aharon Hillel <a.hillel@@partner.samsung.com>
  * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
  * @author Andre Dieb <andre.dieb@@gmail.com>
  * @author Andrew Elcock <andy@@elcock.org>
  * @author Arnaud de Turckheim 'quarium' <quarium@@gmail.com>
  * @author Bernhard Nemec <Bernhard.Nemec@@viasyshc.com>
+ * @author billiob (Boris Faure) <billiob@@gmail.com>
  * @author Bluezery <ohpowel@@gmail.com>
  * @author Boris "billiob" Faure <billiob@@gmail.com>
  * @author Brett Nash <nash@@nash.id.au>
  * @author Brian 'rephorm' Mattern <rephorm@@rephorm.com>
+ * @author Brian Mattern <rephorm@@rephorm.com>
  * @author Bruno Dilly <bdilly@@profusion.mobi>
  * @author Burra <burra@@colorado.edu>
  * @author Carsten Haitzler <raster@@@rasterman.com>
- * @author Cedric Bail <cedric.bail@@free.fr>
+ * @author Cedric BAIL <cedric.bail@@free.fr>
  * @author Chidambar Zinnoury <illogict@@online.fr>
  * @author Chris Ross <chris@@darkrock.co.uk>
  * @author Christophe Dumez <christophe.dumez@@intel.com>
  * @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
- * @author ChunEon Park <hermet@@hermet.pe.kr>
+ * @author ChunEon Park (Hermet) <hermet@@hermet.pe.kr>
  * @author Corey "atmos" Donohoe <atmos@@atmos.org>
  * @author dan sinclair <zero@@everburning.com>
  * @author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@@samsung.com>
- * @author Daniel Willmann <daniel@@totalueberwachung.de>
+ * @author Daniel Willmann <d.willmann@@samsung.com>
+ * @author Daniel Zaoui <daniel.zaoui@@yahoo.com>
  * @author David 'onefang' Seikel <onefang@@gmail.com>
  * @author David Goodlad <dgoodlad@@gmail.com>
+ * @author David Seikel <onefang at gmail.com>
+ * @author Davide Andreoli <dave@@gurumeditation.it>
  * @author Doyoun Kang <wayofmine@@gmail.com> <doyoun.kang@@samsung.com>
+ * @author Fabiano Fidêncio <fidencio@@profusion.mobi>
+ * @author Flavio Ceolin <flavio.ceolin@@profusion.mobi>
+ * @author Govindaraju SM <govi.sm@@samsung.com> <govism@@gmail.com>
+ * @author Guilherme Silveira <xguiga@@gmail.com>
  * @author Guillaume Friloux <guillaume.friloux@@asp64.com>
  * @author Gustavo Chaves <glima@@profusion.mobi>
+ * @author Gustavo Lima Chaves <glima@@profusion.mobi>
  * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
  * @author Gwanglim Lee <gl77.lee@@samsung.com> <gwanglim@@gmail.com>
  * @author Haifeng Deng <haifeng.deng@@samsung.com>
@@ -62,12 +74,14 @@
  * @author Hyoyoung Chang <hyoyoung@@gmail.com>
  * @author Ibukun Olumuyiwa <ibukun@@computer.org>
  * @author Iván Briano <ivan@@profusion.mobi>
+ * @author Jaehwan Kim <jae.hwan.kim@@samsung.com>
  * @author Jihoon Kim <jihoon48.kim@@samsung.com> <imfine98@gmail.com>
  * @author Jorge Luis Zapata Muga <jorgeluis.zapata@@gmail.com>
  * @author Jose O Gonzalez <jose_ogp@@juno.com>
  * @author José Roberto de Souza <zehortigoza@@profusion.mobi>
  * @author Jérémy Zurcher <jeremy@@asynk.ch>
- * @author Jérôme Pinot <ngc891@gmail.com>
+ * @author Jérôme Pinot <ngc891@@gmail.com>
+ * @author Kim Shinwoo <kimcinoo.efl@@gmail.com>
  * @author Kim Woelders <kim@@woelders.dk>
  * @author Kim Yunhan <spbear@@gmail.com>
  * @author Lars Munch <lars@@segv.dk>
@@ -79,8 +93,9 @@
  * @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
  * @author Matt Barclay <mbarclay@@gmail.com>
  * @author Michael 'Mickey' Lauer <mickey@@tm.informatik.uni-frankfurt.de>
+ * @author Michael Bouchaud (yoz) <michael.bouchaud@@gmail.com>
  * @author Mikael Sans <sans.mikael@@gmail.com>
- * @author Mike Blumenkrantz <michael.blumenkrantz@@gmail.com>
+ * @author Mike Blumenkrantz <michael.blumenkrantz@@gmail.com
  * @author Mike McCormack <mj.mccormack@@samsung.com>
  * @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
  * @author Myungjae Lee <mjae.lee@@samsung.com>
@@ -90,10 +105,13 @@
  * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
  * @author Peter Wehrfritz <peter.wehrfritz@@web.de>
  * @author PnB <Poor.NewBie@@gmail.com>
+ * @author Prince Kumar Dubey <prince.dubey@@samsung.com> <prince.dubey@@gmail.com>
  * @author Rafael Antognolli <antognolli@@profusion.mobi>
  * @author Rafal Krypa <r.krypa@@samsung.com>
+ * @author Rajeev Ranjan (Rajeev) <rajeev.r@@samsung.com> <rajeev.jnnce@@gmail.com>
  * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
  * @author Ricardo de Almeida Gonzaga <ricardo@@profusion.mobi>
+ * @author Robert David <robert.david.public@@gmail.com>
  * @author Rui Miguel Silva Seabra <rms@@1407.org>
  * @author Samsung Electronics
  * @author Samsung SAIT
@@ -106,19 +124,22 @@
  * @author Sung W. Park <sungwoo@@gmail.com>
  * @author Term <term@@twistedpath.org>
  * @author Thierry el Borgi <thierry@@substantiel.fr>
+ * @author Tiago Falcão <tiago@@profusion.mobi>
  * @author Till Adam <till@@adam-lilienthal.de>
  * @author Tilman Sauerbeck <tilman@@code-monkey.de>
  * @author Tim Horton <hortont424@gmail.com>
  * @author Tom Gilbert <tom@@linuxbrit.co.uk>
  * @author Tom Hacohen <tom@@stosb.com>
+ * @author Tristan <blunderer@@gmail.com>
  * @author Vikram Narayanan <vikram186@gmail.com>
  * @author Vincent Torri <vincent.torri@@gmail.com>
- * @author Vincent Torri <vtorri@@univ-evry.fr>
  * @author Willem Monsuwe <willem@@stack.nl>
+ * @author WooHyun Jung (woohyun) <woohyun0705@@gmail.com>
  * @author xlopez@@igalia.com
  * @author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
  * @author Yuri <da2001@hotmail.ru>
  * @author Yuri Hudobin <glassy_ape@@users.sourceforge.net>
+ * @author ZigsMcKenzie <zigsmckenzie@@gmail.com>
  *
  * Please contact <enlightenment-devel@@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
@@ -195,4 +216,10 @@
  * @defgroup Eeze
  *
  * @brief Hardware device manipulation and notification, wraps UDev and similar.
+ */
+
+/**
+ * @defgroup Edje
+ *
+ * @brief Layout and theme library with super-powers.
  */

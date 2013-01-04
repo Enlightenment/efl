@@ -3,13 +3,19 @@
 
 These routines are used for Edje.
 
-@mainpage Edje Library Documentation
-@version 1.7
-@date 2003-2012
+@page edje_main Edje
 
-Please see the @ref authors page for contact details.
+@date 2003 (created)
 
-@section intro What is Edje?
+@section toc Table of Contents
+
+@li @ref edje_main_intro
+@li @ref edje_main_work
+@li @ref edje_main_compiling
+@li @ref edje_main_next_steps
+@li @ref edje_main_intro_example
+
+@section edje_main_intro Introduction
 
 Edje is a complex graphical design & layout library.
 
@@ -45,54 +51,9 @@ almost any look and feel one could want for basic visual elements. Anything
 more complex is likely the domain of an application or widget set that may
 use Edje as a convenient way of being able to configure parts of the display.
 
-For details of Edje's history, see the \ref history section.
+For details of Edje's history, see the @ref edje_history section.
 
-
-@section requirements What does Edje require?
-
-Edje requires fairly little on your system. to use the Edje runtime library
-you need:
-
-  - Evas (library)
-  - Ecore (library)
-  - Eet (library)
-  - Embryo (library)
-  - Eina (library)
-  - Lua 5.1 (library)
-
-Evas needs to be build with the JPEG, PNG and EET image loaders enabled at a
-minimum. You will also need the buffer engine (which requires the
-software_generic engine) as well.
-
-Ecore (library) needs the ECORE and ECORE_EVAS modules built at a minimum.
-It's suggested to build all the Ecore modules. You will beed the Buffer
-engine support built into Ecore_Evas for edje_cc to function.
-
-
-@section compiling How to compile and test Edje
-
-Now you need to compile and install Edje.
-
-@verbatim
-  ./configure
-  make
-  sudo make install
-@endverbatim
-
-You now have it installed and ready to go, but you need input
-data. There are lots of examples in SVN, the best one is
-Enlightenment's own theme file.
-
-You may use different tools to edit and view the generated ".edj"
-files, for instance:
-
-  - edje_player (provided by Edje)
-  - edje_codegen (provided by Edje) @since 1.8.0
-  - editje (http://trac.enlightenment.org/e/wiki/Editje)
-  - edje_viewer (http://trac.enlightenment.org/e/wiki/Edje_Viewer)
-
-
-@section details So how does this all work?
+@subsection edje_main_work So how does this all work?
 
 Edje internally holds a geometry state machine and state graph of what is
 visible, not, where, at what size, with what colors etc. This is described
@@ -105,20 +66,7 @@ The application using Edje will then create an object in its Evas
 canvas and set the bundle file to use, specifying the @b group name to
 use. Edje will load such information and create all the required
 children objects with the specified properties as defined in each @b
-part of the given group. See the following example:
-@include edje_example.c
-
-The above example requires the following annotated source Edje file:
-@include edje_example.edc
-
-
-One should save these files as edje_example.c and edje_example.edc then:
-@verbatim
-gcc -o edje_example edje_example.c `pkg-config --cflags --libs eina evas ecore ecore-evas edje`
-edje_cc edje_example.edc
-
-./edje_example "some text"
-@endverbatim
+part of the given group. See the example at @ref edje_main_intro_example.
 
 Although simple, this example illustrates that animations and state
 changes can be done from the Edje file itself without any requirement
@@ -127,8 +75,7 @@ in the C application.
 Before digging into changing or creating your own Edje source (edc)
 files, read the @ref edcref.
 
-
-@section history Edje History
+@subsection edje_history Edje History
 
 It's a sequel to "Ebits" which has serviced the needs of Enlightenment
 development for early version 0.17. The original design parameters under
@@ -148,62 +95,58 @@ basic GUI constructor.
 
 Unlike Ebits, Edje separates the layout and behavior logic.
 
+@section edje_main_compiling How to compile
 
-@section Edje_Examples Examples on Edje's usage
+Edje is a library your application links to. The procedure for this is
+very simple. You simply have to compile your application with the
+appropriate compiler flags that the @c pkg-config script outputs. For
+example:
+
+Compiling C or C++ files into object files:
+
+@verbatim
+gcc -c -o main.o main.c `pkg-config --cflags edje`
+@endverbatim
+
+Linking object files into a binary executable:
+
+@verbatim
+gcc -o my_application main.o `pkg-config --libs edje`
+@endverbatim
+
+See @ref pkgconfig
+
+@section edje_main_next_steps Next Steps
+
+After you understood what Edje is and installed it in your system you
+should proceed understanding the programming interface for all
+objects, then see the specific for the most used elements. We'd
+recommend you to take a while to learn @ref Ecore, @ref Evas, @ref Eo
+and @ref Eina as they are the building blocks for Edje. There is a
+widget set built on top of Edje providing high level elements such as
+buttons, lists and selectors called Elementary
+(http://docs.enlightenment.org/auto/elementary/) as they will likely
+save you tons of work compared to using just Evas directly.
+
+Recommended reading:
+@li @ref edcref
+@li @ref Edje_General_Group
+@li @ref Edje_Object_Group
+@li @ref Edje_External_Group
+
+@section edje_main_intro_example Introductory Example
 
 What follows is a list with various commented examples, covering a great
 part of Edje's API:
 
-@note The example files are located at /Where/Enlightenment/is/installed/share/edje/examples
+@include edje_example.c
 
-- @ref Example_Edje_Basics
-- @ref tutorial_edje_basic2
-- @ref tutorial_edje_swallow
-- @ref tutorial_edje_swallow2
-- @ref tutorial_edje_table
-- @ref tutorial_edje_box
-- @ref tutorial_edje_box2
-- @ref tutorial_edje_color_class
-- @ref tutorial_edje_animations
-- @ref tutorial_edje_animations_2
-- @ref Example_Edje_Signals_Messages
-- @ref tutorial_edje_signals_2
-- @ref tutorial_edje_text
-- @ref tutorial_edje_drag
-- @ref tutorial_edje_perspective
+The above example requires the following annotated source Edje file:
+@include edje_example.edc
+
+
+More examples can be found at @ref edje_examples.
 */
-
-/**
-@page authors Authors
-@author Carsten Haitzler <raster@@rasterman.com>
-@author Tilman Sauerbeck (tilman at code-monkey de)
-@author ZigsMcKenzie <zigsmckenzie@@gmail.com>
-@author Cedric BAIL <cedric.bail@@free.fr>
-@author Brian Mattern <rephorm@@rephorm.com>
-@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
-@author Tristan <blunderer@@gmail.com>
-@author Gustavo Lima Chaves <glima@@profusion.mobi>
-@author Bruno Dilly <bdilly@@profusion.mobi>
-@author Fabiano Fidêncio <fidencio@@profusion.mobi>
-@author Jihoon Kim <jihoon48.kim@@samsung.com>
-@author Tiago Falcão <tiago@@profusion.mobi>
-@author Davide Andreoli <dave@@gurumeditation.it>
-@author Sebastian Dransfeld <sd@@tango.flipp.net>
-@author Tom Hacohen <tom@@stosb.com>
-@author Aharon Hillel <a.hillel@@samsung.com>
-@author Shilpa Singh <shilpa.singh@samsung.com> <shilpasingh.o@gmail.com>
-@author Mike Blumenkrantz <michael.blumenkrantz@gmail.com
-@author Jaehwan Kim <jae.hwan.kim@samsung.com>
-@author billiob (Boris Faure) <billiob@gmail.com>
-@author Govindaraju SM <govi.sm@samsung.com> <govism@gmail.com>
-@author Prince Kumar Dubey <prince.dubey@samsung.com> <prince.dubey@gmail.com>
-@author David Seikel <onefang at gmail.com>
-@author Guilherme Íscaro <iscaro@profusion.mobi>
-
-Please contact <enlightenment-devel@lists.sourceforge.net> to get in
-contact with the developers and maintainers.
-*/
-
 
 /**
 
@@ -260,6 +203,7 @@ param in edje programs
 
 /**
  * @defgroup Edje_General_Group Edje General
+ * @ingroup Edje
  *
  * @brief This group discusses functions that have general purposes or affect Edje as a whole.
  *
@@ -524,6 +468,7 @@ EAPI void         edje_collection_cache_flush     (void);
 
 /**
  * @defgroup Edje_External_Group Edje External
+ * @ingroup Edje
  *
  * @brief This group discusses functions of the external section of Edje.
  *
@@ -3253,6 +3198,7 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
 
 /**
  * @defgroup Edje_Object_Group Edje Object
+ * @ingroup Edje
  *
  * @brief This group discusses functions that deal with Edje layouts and its components
  *
