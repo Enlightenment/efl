@@ -641,20 +641,11 @@ elm_label_slide_duration_set(Evas_Object *obj, double duration)
 }
 
 static void
-_slide_duration_set(Eo *obj, void *_pd, va_list *list)
+_slide_duration_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
    double duration = va_arg(*list, double);
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-
-   Edje_Message_Float_Set *msg =
-     alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
-
    sd->slide_duration = duration;
-   msg->count = 1;
-   msg->val[0] = sd->slide_duration;
-   edje_object_message_send
-     (wd->resize_obj, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 }
 
 EAPI double
@@ -676,6 +667,12 @@ elm_label_slide_go(Evas_Object *obj)
 static void
 _slide_go(Eo *obj, void *_pd __UNUSED__, va_list *list __UNUSED__)
 {
+   Elm_Label_Smart_Data *sd = _pd;
+   //FIXME: work around code. somthing need to be reset effect here.
+   Elm_Label_Slide_Mode mode = sd->slide_mode;
+   sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
+   _label_slide_change(obj);
+   sd->slide_mode = mode;
    _label_slide_change(obj);
    elm_layout_sizing_eval(obj);
 }
