@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-03 12:46+0900\n"
+"POT-Creation-Date: 2013-01-04 10:58+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@samsung.com>\n"
 "Language-Team: General\n"
@@ -17,20 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:752
+#: src/lib/elc_fileselector.c:773
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:767
+#: src/lib/elc_fileselector.c:788
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1007 src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "בטל"
 
-#: src/lib/elc_fileselector.c:1016
+#: src/lib/elc_fileselector.c:1026
 msgid "OK"
 msgstr "אשר"
 
@@ -42,8 +42,8 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:604
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1369 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
+#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr ""
@@ -56,20 +56,40 @@ msgstr ""
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:235
+#: src/lib/elm_calendar.c:144
+msgid "%B"
+msgstr ""
+
+#: src/lib/elm_calendar.c:153
+msgid "%Y"
+msgstr ""
+
+#: src/lib/elm_calendar.c:260
 msgid "calendar item"
 msgstr ""
 
-#: src/lib/elm_calendar.c:262
-msgid "calendar decrement button"
+#: src/lib/elm_calendar.c:286
+msgid "calendar decrement month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:268
-msgid "calendar increment button"
+#: src/lib/elm_calendar.c:291
+msgid "calendar decrement year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:274
+#: src/lib/elm_calendar.c:296
+msgid "calendar increment month button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:301
+msgid "calendar increment year button"
+msgstr ""
+
+#: src/lib/elm_calendar.c:306
 msgid "calendar month"
+msgstr ""
+
+#: src/lib/elm_calendar.c:311
+msgid "calendar year"
 msgstr ""
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
@@ -137,7 +157,7 @@ msgstr "הדבק"
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:634
+#: src/lib/elm_gengrid.c:705
 msgid "Gengrid Item"
 msgstr ""
 
@@ -157,7 +177,7 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: src/lib/elm_list.c:1446
+#: src/lib/elm_list.c:1453
 msgid "List Item"
 msgstr ""
 
@@ -181,7 +201,7 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_slider.c:817
+#: src/lib/elm_slider.c:818
 msgid "slider"
 msgstr ""
 

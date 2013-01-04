@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-03 12:46+0900\n"
+"POT-Creation-Date: 2013-01-04 10:58+0900\n"
 "PO-Revision-Date: 2012-11-16 21:51+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -16,20 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:752
+#: src/lib/elc_fileselector.c:773
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elc_fileselector.c:767
+#: src/lib/elc_fileselector.c:788
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elc_fileselector.c:1007 src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1016
+#: src/lib/elc_fileselector.c:1026
 msgid "OK"
 msgstr "Aceptar"
 
@@ -41,8 +41,8 @@ msgstr "Burbulla"
 msgid "Clicked"
 msgstr "Premido"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:604
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1369 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
+#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
@@ -55,21 +55,46 @@ msgstr "Botón"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:235
+#: src/lib/elm_calendar.c:144
+msgid "%B"
+msgstr ""
+
+#: src/lib/elm_calendar.c:153
+msgid "%Y"
+msgstr ""
+
+#: src/lib/elm_calendar.c:260
 msgid "calendar item"
 msgstr "calendario"
 
-#: src/lib/elm_calendar.c:262
-msgid "calendar decrement button"
+#: src/lib/elm_calendar.c:286
+#, fuzzy
+msgid "calendar decrement month button"
 msgstr "Botón de diminución do calendario"
 
-#: src/lib/elm_calendar.c:268
-msgid "calendar increment button"
+#: src/lib/elm_calendar.c:291
+#, fuzzy
+msgid "calendar decrement year button"
+msgstr "Botón de diminución do calendario"
+
+#: src/lib/elm_calendar.c:296
+#, fuzzy
+msgid "calendar increment month button"
 msgstr "Botón de aumento do calendario"
 
-#: src/lib/elm_calendar.c:274
+#: src/lib/elm_calendar.c:301
+#, fuzzy
+msgid "calendar increment year button"
+msgstr "Botón de aumento do calendario"
+
+#: src/lib/elm_calendar.c:306
 msgid "calendar month"
 msgstr "mes do calendario"
+
+#: src/lib/elm_calendar.c:311
+#, fuzzy
+msgid "calendar year"
+msgstr "calendario"
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
@@ -136,7 +161,7 @@ msgstr "Pegar"
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:634
+#: src/lib/elm_gengrid.c:705
 msgid "Gengrid Item"
 msgstr "Grella xenérica"
 
@@ -156,7 +181,7 @@ msgstr "Índice"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elm_list.c:1446
+#: src/lib/elm_list.c:1453
 msgid "List Item"
 msgstr "Lista"
 
@@ -180,7 +205,7 @@ msgstr "barra de progreso"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_slider.c:817
+#: src/lib/elm_slider.c:818
 msgid "slider"
 msgstr "Barra de desprazamento"
 

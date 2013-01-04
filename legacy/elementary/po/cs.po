@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-03 12:46+0900\n"
+"POT-Creation-Date: 2013-01-04 10:58+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -18,20 +18,20 @@ msgstr ""
 "X-Generator: Lokalize 1.4\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: src/lib/elc_fileselector.c:752
+#: src/lib/elc_fileselector.c:773
 msgid "Up"
 msgstr "Nahoru"
 
-#: src/lib/elc_fileselector.c:767
+#: src/lib/elc_fileselector.c:788
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1007 src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/lib/elc_fileselector.c:1016
+#: src/lib/elc_fileselector.c:1026
 msgid "OK"
 msgstr "OK"
 
@@ -43,8 +43,8 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:604
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1369 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
+#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
@@ -57,21 +57,46 @@ msgstr "Tlačítko"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:235
+#: src/lib/elm_calendar.c:144
+msgid "%B"
+msgstr ""
+
+#: src/lib/elm_calendar.c:153
+msgid "%Y"
+msgstr ""
+
+#: src/lib/elm_calendar.c:260
 msgid "calendar item"
 msgstr "položka kalendáře"
 
-#: src/lib/elm_calendar.c:262
-msgid "calendar decrement button"
+#: src/lib/elm_calendar.c:286
+#, fuzzy
+msgid "calendar decrement month button"
 msgstr "odečítací tlačítko kalendáře"
 
-#: src/lib/elm_calendar.c:268
-msgid "calendar increment button"
+#: src/lib/elm_calendar.c:291
+#, fuzzy
+msgid "calendar decrement year button"
+msgstr "odečítací tlačítko kalendáře"
+
+#: src/lib/elm_calendar.c:296
+#, fuzzy
+msgid "calendar increment month button"
 msgstr "přičítací tlačítko kalendáře"
 
-#: src/lib/elm_calendar.c:274
+#: src/lib/elm_calendar.c:301
+#, fuzzy
+msgid "calendar increment year button"
+msgstr "přičítací tlačítko kalendáře"
+
+#: src/lib/elm_calendar.c:306
 msgid "calendar month"
 msgstr "kalendářní měsíc"
+
+#: src/lib/elm_calendar.c:311
+#, fuzzy
+msgid "calendar year"
+msgstr "položka kalendáře"
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
@@ -138,7 +163,7 @@ msgstr "Vložit"
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:634
+#: src/lib/elm_gengrid.c:705
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -158,7 +183,7 @@ msgstr "Index"
 msgid "Label"
 msgstr "Popisek"
 
-#: src/lib/elm_list.c:1446
+#: src/lib/elm_list.c:1453
 msgid "List Item"
 msgstr "položka seznamu"
 
@@ -182,7 +207,7 @@ msgstr "ukazatel průběhu"
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_slider.c:817
+#: src/lib/elm_slider.c:818
 msgid "slider"
 msgstr "šoupátko"
 
