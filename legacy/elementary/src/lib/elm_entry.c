@@ -2174,29 +2174,6 @@ _item_get(void *data,
 }
 
 static void
-_text_filter_cb(void *data,
-                Evas_Object *edje __UNUSED__,
-                const char *part __UNUSED__,
-                Edje_Text_Filter_Type type,
-                char **text)
-{
-   Eina_List *l;
-   Elm_Entry_Markup_Filter *tf;
-
-   ELM_ENTRY_DATA_GET(data, sd);
-
-   if (type == EDJE_TEXT_FILTER_FORMAT)
-     return;
-
-   EINA_LIST_FOREACH(sd->text_filters, l, tf)
-     {
-        tf->func(tf->data, data, text);
-        if (!*text)
-          break;
-     }
-}
-
-static void
 _markup_filter_cb(void *data,
                   Evas_Object *edje __UNUSED__,
                   const char *part __UNUSED__,
@@ -2812,8 +2789,6 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    edje_object_item_provider_set(priv->entry_edje, _item_get, obj);
 
-   edje_object_text_insert_filter_callback_add
-     (priv->entry_edje, "elm.text", _text_filter_cb, obj);
    edje_object_text_markup_filter_callback_add
      (priv->entry_edje, "elm.text", _markup_filter_cb, obj);
 
@@ -2998,10 +2973,6 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE (sd->item_providers, ip)
      {
         free(ip);
-     }
-   EINA_LIST_FREE (sd->text_filters, tf)
-     {
-        _filter_free(tf);
      }
    EINA_LIST_FREE (sd->markup_filters, tf)
      {

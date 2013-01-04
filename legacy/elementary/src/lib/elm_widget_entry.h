@@ -45,7 +45,6 @@ struct _Elm_Entry_Smart_Data
    Evas_Coord                            downx, downy;
    Eina_List                            *items;
    Eina_List                            *item_providers;
-   Eina_List                            *text_filters;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;
    Mod_Api                              *api; // module api if supplied
