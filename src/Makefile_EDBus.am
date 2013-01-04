@@ -72,7 +72,7 @@ bin_edbus_edbus_codegen_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/edbus \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/edbus\" \
 @EDBUS_CFLAGS@ \
 @EFL_COV_CFLAGS@
 
