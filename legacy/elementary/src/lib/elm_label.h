@@ -285,6 +285,8 @@ EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
  *
  * @warning This only works with the themes "slide_short", "slide_long" and
  * "slide_bounce".
+ * @warning This doesn't work if the line wrap(elm_label_line_wrap_set()) or
+ * ellipsis(elm_label_ellipsis_set()) is set.
  *
  * @ingroup Label
  */

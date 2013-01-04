@@ -72,6 +72,7 @@ _label_slide_change(Evas_Object *obj)
    if (sd->linewrap)
      {
         sd->slide = EINA_FALSE;
+        WRN("Doesn't support slide effect for multiline! : label=%p", obj);
         return;
      }
 
