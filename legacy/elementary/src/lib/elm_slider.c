@@ -755,8 +755,6 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->horizontal = EINA_TRUE;
    priv->indicator_show = EINA_TRUE;
-   priv->val = 0.0;
-   priv->val_min = 0.0;
    priv->val_max = 1.0;
 
    elm_layout_theme_set

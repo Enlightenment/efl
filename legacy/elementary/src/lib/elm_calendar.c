@@ -924,7 +924,6 @@ _elm_calendar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->selected_it = -1;
    priv->first_day_it = -1;
    priv->format_func = _format_month_year;
-   priv->marks = NULL;
    priv->selectable = (~(ELM_CALENDAR_SELECTABLE_NONE));
 
    edje_object_signal_callback_add

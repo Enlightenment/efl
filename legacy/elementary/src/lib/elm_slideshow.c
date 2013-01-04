@@ -312,9 +312,6 @@ _elm_slideshow_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Slideshow_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   priv->current = NULL;
-   priv->previous = NULL;
-
    priv->count_item_pre_before = 2;
    priv->count_item_pre_after = 2;
 

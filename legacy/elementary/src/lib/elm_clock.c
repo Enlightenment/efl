@@ -662,7 +662,6 @@ _elm_clock_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->cur.edit = EINA_TRUE;
    priv->cur.digedit = ELM_CLOCK_EDIT_DEFAULT;
    priv->first_interval = DEFAULT_FIRST_INTERVAL;
-   priv->timediff = 0;
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 

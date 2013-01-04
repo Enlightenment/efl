@@ -1520,12 +1520,7 @@ _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   priv->view_state = MULTIBUTTONENTRY_VIEW_NONE;
    priv->last_btn_select = EINA_TRUE;
-   priv->n_str = 0;
-   priv->rect_for_end = NULL;
-   priv->add_callback = NULL;
-   priv->add_callback_data = NULL;
    priv->editable = EINA_TRUE;
    priv->parent = obj;
 

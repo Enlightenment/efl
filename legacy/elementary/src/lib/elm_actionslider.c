@@ -392,7 +392,6 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   priv->mouse_down = EINA_FALSE;
    priv->enabled_position = ELM_ACTIONSLIDER_ALL;
 
    priv->drag_button_base =

@@ -241,9 +241,6 @@ _elm_progressbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, evas_obj_smart_add());
 
    priv->horizontal = EINA_TRUE;
-   priv->inverted = EINA_FALSE;
-   priv->pulse = EINA_FALSE;
-   priv->pulse_state = EINA_FALSE;
    priv->units = eina_stringshare_add("%.0f %%");
    priv->val = MIN_RATIO_LVL;
 

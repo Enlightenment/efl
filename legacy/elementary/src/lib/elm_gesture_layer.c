@@ -3590,7 +3590,6 @@ _elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Gesture_Layer_Smart_Data *priv = _pd;
 
-   priv->target = NULL;
    priv->line_min_length =
      _elm_config->glayer_line_min_length * elm_config_finger_size_get();
    priv->zoom_distance_tolerance = _elm_config->glayer_zoom_distance_tolerance

@@ -328,8 +328,6 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   priv->hidden = EINA_FALSE;
-
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_size_hint_align_set(priv->bx, 0.5, 0.5);
    evas_object_box_layout_set(priv->bx, _box_layout_cb, priv, NULL);

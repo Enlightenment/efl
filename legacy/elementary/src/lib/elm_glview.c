@@ -213,22 +213,12 @@ _elm_glview_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->config->color_format = EVAS_GL_RGB_888;
 
    // Initialize variables
-   priv->mode = 0;
    priv->scale_policy = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
    priv->render_policy = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
-   priv->surface = NULL;
 
    // Initialize it to (64,64)  (It's an arbitrary value)
    priv->w = 64;
    priv->h = 64;
-
-   // Initialize the rest of the values
-   priv->init_func = NULL;
-   priv->del_func = NULL;
-   priv->render_func = NULL;
-   priv->render_idle_enterer = NULL;
-   priv->initialized = EINA_FALSE;
-   priv->resized = EINA_FALSE;
 
    // Create Context
    priv->context = evas_gl_context_create(priv->evasgl, NULL);

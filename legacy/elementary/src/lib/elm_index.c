@@ -691,10 +691,6 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   priv->indicator_disabled = EINA_FALSE;
-   priv->horizontal = EINA_FALSE;
-   priv->autohide_disabled = EINA_FALSE;
-
    elm_layout_theme_set
      (obj, "index", "base/vertical", elm_widget_style_get(obj));
 

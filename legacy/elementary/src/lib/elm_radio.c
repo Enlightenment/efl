@@ -277,7 +277,6 @@ _elm_radio_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->group = calloc(1, sizeof(Group));
    priv->group->radios = eina_list_append(priv->group->radios, obj);
-   priv->state = EINA_FALSE;
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 

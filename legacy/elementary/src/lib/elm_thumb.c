@@ -544,18 +544,7 @@ _elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (wd->resize_obj, "thumb", "base",
      elm_widget_style_get(obj));
 
-   priv->view = NULL;
-   priv->file = NULL;
-   priv->key = NULL;
-   priv->eeh = NULL;
-   priv->on_hold = EINA_FALSE;
-   priv->is_video = EINA_FALSE;
-   priv->was_video = EINA_FALSE;
-
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   priv->thumb.thumb_path = NULL;
-   priv->thumb.thumb_key = NULL;
-   priv->thumb.request = NULL;
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, priv);
    evas_object_event_callback_add

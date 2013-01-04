@@ -1164,7 +1164,6 @@ _elm_web_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (wd->resize_obj, "view,resized",
      _ewk_view_resized_cb, priv);
 
-   priv->tab_propagate = EINA_FALSE;
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
    priv->zoom.min =
      ewk_view_zoom_range_min_get(wd->resize_obj);

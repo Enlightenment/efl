@@ -1245,11 +1245,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do(obj, elm_scrollable_interface_objects_set(wd->resize_obj, priv->hit_rect));
 
-   priv->item_count = 0;
-   priv->round = EINA_FALSE;
-   priv->init = EINA_FALSE;
    priv->len_side = 3;
-   priv->display_item_num_by_api = EINA_FALSE;
 
    eo_do(obj, elm_wdg_theme(NULL));
 

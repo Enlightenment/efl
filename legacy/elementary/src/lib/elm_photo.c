@@ -275,8 +275,6 @@ _elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_sub_object_add(obj, priv->icon);
 
-   priv->long_press_timer = NULL;
-
    _elm_photo_internal_image_follow(obj);
 
    _sizing_eval(obj);

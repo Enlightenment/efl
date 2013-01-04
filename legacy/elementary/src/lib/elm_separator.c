@@ -43,13 +43,10 @@ _elm_separator_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list E
 }
 
 static void
-_elm_separator_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_separator_smart_add(Eo *obj, void *_pd __UNUSED__,
+                         va_list *list EINA_UNUSED)
 {
-   Elm_Separator_Smart_Data *priv = _pd;
-
    eo_do_super(obj, evas_obj_smart_add());
-
-   priv->horizontal = EINA_FALSE;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 

@@ -1334,7 +1334,6 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
 
-   priv->zoom_g_layer = EINA_FALSE;
    priv->g_layer_start = 1.0;
    priv->zoom = 1;
    priv->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;

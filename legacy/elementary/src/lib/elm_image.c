@@ -641,7 +641,6 @@ _elm_image_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    /* starts as an Evas image. may switch to an Edje object */
    priv->img = _img_new(obj);
-   priv->prev_img = NULL;
 
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;

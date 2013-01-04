@@ -201,15 +201,12 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static void
-_elm_hoversel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_hoversel_smart_add(Eo *obj, void *_pd __UNUSED__,
+                        va_list *list EINA_UNUSED)
 {
-   Elm_Hoversel_Smart_Data *priv = _pd;
-
    eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
-
-   priv->expanded = EINA_FALSE;
 
    evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 

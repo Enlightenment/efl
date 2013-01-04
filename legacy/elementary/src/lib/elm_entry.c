@@ -2765,13 +2765,8 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->cnp_mode = ELM_CNP_MODE_MARKUP;
    priv->line_wrap = ELM_WRAP_WORD;
    priv->context_menu = EINA_TRUE;
-   priv->disabled = EINA_FALSE;
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
-   priv->scroll = EINA_FALSE;
-   priv->text = NULL;
-
-   priv->input_panel_imdata = NULL;
 
    elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj));
 

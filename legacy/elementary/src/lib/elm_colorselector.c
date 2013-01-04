@@ -1522,9 +1522,6 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->grab.x = -1;
    priv->grab.y = -1;
    priv->grab.xroot = -1;
-   priv->grab.mouse_motion = NULL;
-   priv->grab.mouse_up = NULL;
-   priv->grab.key_up = NULL;
    priv->grab.in = EINA_TRUE;
 
    _hsl_to_rgb(priv);

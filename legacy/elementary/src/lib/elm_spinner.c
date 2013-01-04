@@ -631,14 +631,9 @@ _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   priv->val = 0.0;
-   priv->val_min = 0.0;
    priv->val_max = 100.0;
-   priv->wrap = 0;
    priv->step = 1.0;
    priv->first_interval = 0.85;
-   priv->entry_visible = EINA_FALSE;
-   priv->editable = EINA_TRUE;
 
    elm_layout_theme_set(obj, "spinner", "base", elm_widget_style_get(obj));
    elm_layout_signal_callback_add(obj, "drag", "*", _drag_cb, obj);

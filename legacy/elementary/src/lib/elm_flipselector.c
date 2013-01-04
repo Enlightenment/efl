@@ -568,7 +568,6 @@ _elm_flipselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, "elm,action,down,stop", "", _signal_val_change_stop, obj);
 
    priv->first_interval = FLIP_FIRST_INTERVAL;
-   priv->evaluating = EINA_FALSE;
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 

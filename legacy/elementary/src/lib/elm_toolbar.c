@@ -2156,8 +2156,6 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do(obj, elm_scrollable_interface_objects_set(wd->resize_obj, priv->hit_rect));
 
-   priv->more_item = NULL;
-   priv->selected_item = NULL;
    priv->standard_priority = -99999;
 
    eo_do(obj,
@@ -2181,10 +2179,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      _elm_toolbar_action_down_cb, obj);
 
    priv->shrink_mode = ELM_TOOLBAR_SHRINK_NONE;
-   priv->priv_icon_size = 0; // unset
    priv->theme_icon_size = _elm_toolbar_icon_size_get(obj);
-   if (priv->priv_icon_size) priv->icon_size = priv->priv_icon_size;
-   else priv->icon_size = priv->theme_icon_size;
 
    priv->homogeneous = EINA_TRUE;
    priv->align = 0.5;

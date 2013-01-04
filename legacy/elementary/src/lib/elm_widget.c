@@ -169,7 +169,6 @@ _elm_widget_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Widget_Smart_Data *priv = _pd;
 
    priv->obj = obj;
-   priv->x = priv->y = priv->w = priv->h = 0;
    priv->mirrored_auto_mode = EINA_TRUE; /* will follow system locale
                                           * settings */
    elm_widget_can_focus_set(obj, EINA_TRUE);

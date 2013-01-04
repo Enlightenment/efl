@@ -66,13 +66,6 @@ _elm_pan_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, evas_obj_smart_add());
 
    priv->self = obj;
-
-   priv->x = 0;
-   priv->y = 0;
-   priv->w = 0;
-   priv->h = 0;
-   priv->gravity_x = 0.0;
-   priv->gravity_y = 0.0;
 }
 
 static void
