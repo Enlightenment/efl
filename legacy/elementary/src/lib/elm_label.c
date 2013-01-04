@@ -341,9 +341,6 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, evas_obj_smart_add());
 
    priv->linewrap = ELM_WRAP_NONE;
-   priv->ellipsis = EINA_FALSE;
-   priv->slide = EINA_FALSE;
-   priv->slide_ellipsis = EINA_FALSE;
    priv->wrap_w = -1;
    priv->slide_duration = 10;
 
