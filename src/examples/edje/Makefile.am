@@ -16,8 +16,6 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 
-examplesdir = $(datadir)/edje/examples
-
 if ENABLE_MULTISENSE
 SND_DIR = -sd $(srcdir)
 endif
@@ -76,15 +74,15 @@ endif
 
 EDJS = $(EDCS:%.edc=%.edj)
 
-filesdir = $(datadir)/edje/examples
-files_DATA = \
-$(EDCS) \
+DATA_FILES = \
 bubble.png \
 bubble-blue.png \
 red.png \
 test.png \
 Vera.ttf \
-duck.wav \
+duck.wav
+
+SRCS = \
 edje-codegen-example.c \
 edje_example.c \
 edje-basic.c \
@@ -102,13 +100,10 @@ sigtest.c \
 animations2.c \
 edje-basic2.c \
 signals2.c \
-edje-swallow2.c
+edje-swallow2.c \
+edje-multisense.c
 
-if ENABLE_MULTISENSE
-files_DATA += edje-multisense.c
-endif
-
-EXTRA_DIST = $(files_DATA)
+EXTRA_DIST = $(EDCS) $(DATA_FILES)
 
 AM_CPPFLAGS = \
 -I. \
@@ -150,9 +145,7 @@ nodist_edje_codegen_example_SOURCES = \
 codegen_example_generated.c \
 codegen_example_generated.h
 
-files_DATA += $(EDJS)
-
-examples_PROGRAMS = \
+EXTRA_PROGRAMS = \
 edje-animations \
 edje-basic \
 edje-box \
@@ -172,7 +165,7 @@ signals2 \
 edje-swallow2
 
 if ENABLE_MULTISENSE
-examples_PROGRAMS += edje-multisense
+EXTRA_PROGRAMS += edje-multisense
 endif
 
 LDADD = \
@@ -194,5 +187,16 @@ if HAVE_EPHYSICS
 LDADD += $(top_builddir)/src/lib/ephysics/libephysics.la
 endif
 
+examples: $(EXTRA_PROGRAMS) $(EDJS)
+
 clean-local:
-	rm -f *.edj
+	rm -f $(EXTRA_PROGRAMS) $(EDJS)
+
+install-examples:
+	mkdir -p $(datadir)/edje/examples
+	$(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/edje/examples
+
+uninstall-local:
+	for f in $(SRCS) $(EDCS) $(DATA_FILES); do \
+	  rm -f $(datadir)/edje/examples/$$f ; \
+	done
