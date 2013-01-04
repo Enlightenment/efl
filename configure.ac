@@ -3307,6 +3307,7 @@ AM_CONDITIONAL([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"])
 AC_DEFINE_IF([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"],
   [1], [Use Multisense])
 AC_SUBST([want_multisense])
+AC_SUBST([want_physics])
 
 ### Checks for header files
 
