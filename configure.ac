@@ -3229,7 +3229,7 @@ AC_ARG_ENABLE([physics],
        want_physics="no"
     fi
    ],
-   [want_physics="yes"])
+   [want_physics="no"])
 
 EFL_LIB_START_OPTIONAL([EPhysics], [test "${want_physics}" = "yes"])
 
