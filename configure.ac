@@ -3266,6 +3266,63 @@ EFL_LIB_END_OPTIONAL([EPhysics])
 #### End of EPhysics
 
 
+#### Edje
+EFL_LIB_START([Edje])
+
+### Additional options to configure
+
+### Default values
+want_multisense="no" # TODO: move to ecore_audio and enable
+want_edje_program_cache="no"
+want_edje_calc_cache="yes"
+want_fixed_point="no"
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([EDJE], [evil])
+
+EFL_INTERNAL_DEPEND_PKG([EDJE], [eina])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [eo])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [eet])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [evas])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-imf])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-imf-evas])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [embryo])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [eio])
+
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
+#EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
+
+EFL_CHECK_LUA_5_1([EDJE])
+EFL_ADD_LIBS([EDJE], [-lm])
+
+EFL_EVAL_PKGS([EDJE])
+
+AM_CONDITIONAL([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"])
+AC_DEFINE_IF([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"],
+  [1], [Use Multisense])
+AC_SUBST([want_multisense])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Edje])
+#### End of Edje
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -3284,6 +3341,7 @@ src/examples/ecore/Makefile
 src/examples/eio/Makefile
 src/examples/edbus/Makefile
 src/examples/ephysics/Makefile
+src/examples/edje/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
@@ -3331,6 +3389,7 @@ pc/efreet-mime.pc
 pc/efreet-trash.pc
 pc/eeze.pc
 pc/ephysics.pc
+pc/edje.pc
 dbus-services/org.enlightenment.Efreet.service
 $po_makefile_in
 ])
@@ -3537,6 +3596,7 @@ echo
 
 echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
 echo "EPhysics...............: ${efl_lib_optional_ephysics}"
+echo "Edje...................: yes (physics=${efl_lib_optional_ephysics}, multisense=${want_multisense})"
 echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"

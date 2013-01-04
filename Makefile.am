@@ -100,7 +100,8 @@ pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
 pc/eeze.pc \
-pc/ephysics.pc
+pc/ephysics.pc \
+pc/edje.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -132,7 +133,8 @@ pc/eio.pc \
 pc/edbus2.pc \
 pc/efreet.pc \
 pc/efreet-mime.pc \
-pc/efreet-trash.pc
+pc/efreet-trash.pc \
+pc/edje.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc

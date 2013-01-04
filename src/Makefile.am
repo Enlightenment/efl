@@ -67,6 +67,7 @@ endif
 if HAVE_EPHYSICS
 include Makefile_EPhysics.am
 endif
+include Makefile_Edje.am
 
 .PHONY: benchmark examples
 
@@ -85,6 +86,7 @@ clean-local:
 	rm -rf bin/eet/*.gcno
 	rm -rf bin/efreet/*.gcno
 	rm -rf bin/eeze/*.gcno
+	rm -rf bin/edje/*.gcno
 	rm -rf lib/evil/*.gcno
 	rm -rf lib/eina/*.gcno
 	rm -rf lib/eo/*.gcno
@@ -103,6 +105,7 @@ clean-local:
 	rm -rf lib/efreet/*.gcno
 	rm -rf lib/eeze/*.gcno
 	rm -rf lib/ephysics/*.gcno
+	rm -rf lib/edje/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno
@@ -139,5 +142,8 @@ clean-local:
 	rm -rf modules/evas/savers/jpeg/*.gcno
 	rm -rf modules/evas/savers/png/*.gcno
 	rm -rf modules/evas/savers/tiff/*.gcno
+	rm -rf modules/edje/alsa_snd_player/*.gcno
+	rm -rf modules/edje/eet_snd_reader/*.gcno
+	rm -rf modules/edje/multisense_factory/*.gcno
 	rm -rf static_libs/liblinebreak/*.gcno
 	rm -rf static_libs/lz4/*.gcno

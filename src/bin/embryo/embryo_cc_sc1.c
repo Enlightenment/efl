@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -581,8 +582,19 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
    int i, stack_size;
    size_t len;
 
+   str[0] = '\0';
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        snprintf(str, sizeof(str), "%s/data/embryo/", PACKAGE_BUILD_DIR);
+        if (stat(str, &st) != 0)
+          str[0] = '\0';
+     }
+
+   if (str[0] == '\0')
+     snprintf(str, sizeof(str), "%s/include/", e_prefix_data_get());
+
    /* use embryo include dir always */
-   snprintf(str, sizeof(str), "%s/include/", e_prefix_data_get());
    insert_path(str);
    insert_path("./");
 

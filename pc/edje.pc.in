@@ -1,0 +1,17 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+modules=@libdir@/edje/modules
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@/edje
+vmaj=@VMAJ@
+multisense=@want_multisense@
+
+Name: edje
+Description: Enlightened graphical design and layout engine.
+Requires.private: @requirements_pc_edje@
+Version: @VERSION@
+Libs: -L${libdir} -ledje
+Libs.private: @requirements_libs_edje@
+Cflags: -I${includedir}/edje-@VMAJ@
