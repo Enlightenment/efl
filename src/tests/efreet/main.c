@@ -20,9 +20,7 @@ int ef_cb_efreet_icon_match(void);
 int ef_cb_ini_parse(void);
 int ef_cb_ini_long_line(void);
 int ef_cb_ini_garbage(void);
-#if DEFAULT_VISIBILITY
 int ef_cb_locale(void);
-#endif
 int ef_cb_desktop_parse(void);
 int ef_cb_desktop_save(void);
 int ef_cb_desktop_command_get(void);
@@ -58,9 +56,7 @@ static Efreet_Test tests[] = {
     {"INI Parsing", ef_cb_ini_parse},
     {"INI Long Line Parsing", ef_cb_ini_long_line},
     {"INI Garbage Parsing", ef_cb_ini_garbage},
-#if DEFAULT_VISIBILITY
     {"Locale Parsing", ef_cb_locale},
-#endif
     {"Desktop Parsing", ef_cb_desktop_parse},
     {"Desktop Type Parsing", ef_cb_desktop_type_parse},
     {"Desktop Save", ef_cb_desktop_save},

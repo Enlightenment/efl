@@ -153,14 +153,15 @@ $(EFREET_COMMON_USER_LDADD) \
 lib/efreet/libefreet_mime.la
 
 tests_efreet_efreet_test_SOURCES = \
-tests/efreet/ef_test.h \
 tests/efreet/ef_data_dirs.c \
+tests/efreet/ef_desktop.c \
 tests/efreet/ef_icon_theme.c \
 tests/efreet/ef_ini.c \
-tests/efreet/ef_utils.c \
-tests/efreet/ef_desktop.c \
+tests/efreet/ef_locale.c \
 tests/efreet/ef_menu.c \
 tests/efreet/ef_mime.c \
+tests/efreet/ef_test.h \
+tests/efreet/ef_utils.c \
 tests/efreet/main.c
 
 # efreet_spec_test
@@ -222,6 +223,7 @@ check_PROGRAMS += tests/efreet/efreet_suite
 
 tests_efreet_efreet_suite_SOURCES = \
 tests/efreet/efreet_suite.c \
+tests/efreet/efreet_suite.h \
 tests/efreet/efreet_test_efreet.c \
 tests/efreet/efreet_test_efreet_cache.c
 
