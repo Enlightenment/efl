@@ -578,13 +578,18 @@ eina_stringshare_del(Eina_Stringshare *str)
      slen = 4;  /* handled later */
 
    if (slen < 2)
-     return;
+     {
+        eina_share_common_population_del(stringshare_share, slen);
+
+        return;
+     }
    else if (slen < 4)
      {
         eina_share_common_population_del(stringshare_share, slen);
         eina_lock_take(&_mutex_small);
         _eina_stringshare_small_del(str, slen);
         eina_lock_release(&_mutex_small);
+
         return;
      }
 
@@ -598,16 +603,26 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
    if (!str)
      return NULL;
    else if (slen == 0)
-     return "";
+     {
+        eina_share_common_population_add(stringshare_share, slen);
+
+        return "";
+     }
    else if (slen == 1)
-     return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
+     {
+        eina_share_common_population_add(stringshare_share, slen);
+
+        return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
+     }
    else if (slen < 4)
      {
         const char *s;
 
+        eina_share_common_population_add(stringshare_share, slen);
         eina_lock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
         eina_lock_release(&_mutex_small);
+
         return s;
      }
 
@@ -712,7 +727,7 @@ eina_stringshare_ref(Eina_Stringshare *str)
    int slen;
 
    if (!str)
-     return eina_share_common_ref(stringshare_share, str);
+     return NULL;
 
    /* special cases */
    if      (str[0] == '\0')
@@ -735,8 +750,8 @@ eina_stringshare_ref(Eina_Stringshare *str)
    else if (slen < 4)
      {
         const char *s;
-        eina_share_common_population_add(stringshare_share, slen);
 
+        eina_share_common_population_add(stringshare_share, slen);
         eina_lock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
         eina_lock_release(&_mutex_small);

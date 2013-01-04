@@ -88,6 +88,8 @@
 
 #define EINA_SHARE_COMMON_BUCKETS 256
 #define EINA_SHARE_COMMON_MASK 0xFF
+#define EINA_SHARE_COMMON_BUCKET_IDX(h) ((h >> 8) & EINA_SHARE_COMMON_MASK)
+#define EINA_SHARE_COMMON_NODE_HASH(h) (h & EINA_SHARE_COMMON_MASK)
 
 static const char EINA_MAGIC_SHARE_STR[] = "Eina Share";
 static const char EINA_MAGIC_SHARE_HEAD_STR[] = "Eina Share Head";
@@ -113,8 +115,13 @@ static int _eina_share_common_count = 0;
           }                                                           \
      } while (0)
 
-#ifdef EINA_SHARE_USAGE
+#ifdef EINA_STRINGSHARE_USAGE
 typedef struct _Eina_Share_Common_Population Eina_Share_Common_Population;
+struct _Eina_Share_Common_Population
+{
+   int count;
+   int max;
+};
 #endif
 
 typedef struct _Eina_Share_Common Eina_Share_Common;
@@ -125,8 +132,9 @@ struct _Eina_Share
 {
    Eina_Share_Common *share;
    Eina_Magic node_magic;
-#ifdef EINA_SHARE_COMMON_USAGE
+#ifdef EINA_STRINGSHARE_USAGE
    Eina_Share_Common_Population population;
+   Eina_Share_Common_Population population_group[4];
    int max_node_population;
 #endif
 };
@@ -156,7 +164,7 @@ struct _Eina_Share_Common_Head
 
    int hash;
 
-#ifdef EINA_SHARE_COMMON_USAGE
+#ifdef EINA_STRINGSHARE_USAGE
    int population;
 #endif
 
@@ -168,22 +176,7 @@ Eina_Bool _share_common_threads_activated = EINA_FALSE;
 
 static Eina_Lock _mutex_big;
 
-#ifdef EINA_SHARE_COMMON_USAGE
-struct _Eina_Share_Common_Population
-{
-   int count;
-   int max;
-};
-
-static Eina_Share_Common_Population population = { 0, 0 };
-
-static Eina_Share_Common_Population population_group[4] =
-{
-   { 0, 0 },
-   { 0, 0 },
-   { 0, 0 },
-   { 0, 0 }
-};
+#ifdef EINA_STRINGSHARE_USAGE
 
 static void
 _eina_share_common_population_init(Eina_Share *share)
@@ -277,7 +270,7 @@ eina_share_common_population_del(Eina_Share *share, int slen)
 }
 
 static void
-_eina_share_common_population_head_init(Eina_Share *share,
+_eina_share_common_population_head_init(EINA_UNUSED Eina_Share *share,
                                         Eina_Share_Common_Head *head)
 {
    head->population = 1;
@@ -293,13 +286,13 @@ _eina_share_common_population_head_add(Eina_Share *share,
 }
 
 static void
-_eina_share_common_population_head_del(Eina_Share *share,
+_eina_share_common_population_head_del(EINA_UNUSED Eina_Share *share,
                                        Eina_Share_Common_Head *head)
 {
    head->population--;
 }
 
-#else /* EINA_SHARE_COMMON_USAGE undefined */
+#else /* EINA_STRINGSHARE_USAGE undefined */
 
 static void _eina_share_common_population_init(EINA_UNUSED Eina_Share *share) {
 }
@@ -338,7 +331,7 @@ _eina_share_common_cmp(const Eina_Share_Common_Head *ed,
 {
    EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, , 0);
 
-   return ed->hash - *hash;
+   return EINA_SHARE_COMMON_NODE_HASH(ed->hash) - *hash;
 }
 
 static Eina_Rbtree_Direction
@@ -349,7 +342,7 @@ _eina_share_common_node(const Eina_Share_Common_Head *left,
    EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(left,  , 0);
    EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(right, , 0);
 
-   if (left->hash - right->hash < 0)
+   if (EINA_SHARE_COMMON_NODE_HASH(left->hash) - EINA_SHARE_COMMON_NODE_HASH(right->hash) < 0)
       return EINA_RBTREE_LEFT;
 
    return EINA_RBTREE_RIGHT;
@@ -473,10 +466,13 @@ _eina_share_common_head_find(Eina_Share_Common_Head *head,
    for (; node; prev = node, node = node->next)
       if (_eina_share_common_node_eq(node, str, slen))
         {
-           /* promote node, make hot items be at the beginning */
-           prev->next = node->next;
-           node->next = head->head;
-           head->head = node;
+           /* promote node except builtin_node, make hot items be at the beginning */
+           if (node->next)
+             {
+                prev->next = node->next;
+                node->next = head->head;
+                head->head = node;
+             }
            return node;
         }
 
@@ -513,6 +509,20 @@ _eina_share_common_find_hash(Eina_Share_Common_Head *bucket, int hash)
    return (Eina_Share_Common_Head *)eina_rbtree_inline_lookup
              (EINA_RBTREE_GET(bucket), &hash, 0,
              EINA_RBTREE_CMP_KEY_CB(_eina_share_common_cmp), NULL);
+}
+
+static Eina_Share_Common_Head *
+_eina_share_common_head_from_node(Eina_Share_Common_Node *node)
+{
+   Eina_Share_Common_Head *head;
+   const size_t offset = offsetof(Eina_Share_Common_Head, builtin_node);
+
+   while (node->next)
+     node = node->next;
+   head = (Eina_Share_Common_Head *)((char*)node - offset);
+   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(head, , 0);
+
+   return head;
 }
 
 static Eina_Share_Common_Node *
@@ -716,7 +726,7 @@ eina_share_common_add_length(Eina_Share *share,
 {
    Eina_Share_Common_Head **p_bucket, *ed;
    Eina_Share_Common_Node *el;
-   int hash_num, hash;
+   int hash;
 
    if (!str)
       return NULL;
@@ -727,13 +737,11 @@ eina_share_common_add_length(Eina_Share *share,
       return NULL;
 
    hash = eina_hash_superfast(str, slen);
-   hash_num = hash & 0xFF;
-   hash = (hash >> 8) & EINA_SHARE_COMMON_MASK;
 
    eina_lock_take(&_mutex_big);
-   p_bucket = share->share->buckets + hash_num;
+   p_bucket = share->share->buckets + EINA_SHARE_COMMON_BUCKET_IDX(hash);
 
-   ed = _eina_share_common_find_hash(*p_bucket, hash);
+   ed = _eina_share_common_find_hash(*p_bucket, EINA_SHARE_COMMON_NODE_HASH(hash));
    if (!ed)
      {
         const char *s = _eina_share_common_add_head(share,
@@ -808,7 +816,6 @@ eina_share_common_del(Eina_Share *share, const char *str)
    Eina_Share_Common_Head *ed;
    Eina_Share_Common_Head **p_bucket;
    Eina_Share_Common_Node *node;
-   int hash_num, hash;
 
    if (!str)
       return EINA_TRUE;
@@ -830,25 +837,24 @@ eina_share_common_del(Eina_Share *share, const char *str)
 
    node->references = 0;
 
-   hash = eina_hash_superfast(str, slen);
-   hash_num = hash & 0xFF;
-   hash = (hash >> 8) & EINA_SHARE_COMMON_MASK;
-
-   p_bucket = share->share->buckets + hash_num;
-   ed = _eina_share_common_find_hash(*p_bucket, hash);
+   ed = _eina_share_common_head_from_node(node);
    if (!ed)
       goto on_error;
 
    EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_lock_release(&_mutex_big), EINA_FALSE);
 
-   if (!_eina_share_common_head_remove_node(ed, node))
-      goto on_error;
-
    if (node != &ed->builtin_node)
-      MAGIC_FREE(node);
+     {
+        if (!_eina_share_common_head_remove_node(ed, node))
+          goto on_error;
+        MAGIC_FREE(node);
+     }
 
-   if (!ed->head)
-      _eina_share_common_del_head(p_bucket, ed);
+   if (!ed->head || ed->head->references == 0)
+     {
+        p_bucket = share->share->buckets + EINA_SHARE_COMMON_BUCKET_IDX(ed->hash);
+        _eina_share_common_del_head(p_bucket, ed);
+     }
    else
       _eina_share_common_population_head_del(share, ed);
 
@@ -911,7 +917,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    if (additional_dump)
       additional_dump(&di);
 
-#ifdef EINA_SHARE_COMMON_USAGE
+#ifdef EINA_STRINGSHARE_USAGE
    /* One character strings are not counted in the hash. */
    di.saved += share->population_group[0].count * sizeof(char);
    di.saved += share->population_group[1].count * sizeof(char) * 2;
@@ -922,9 +928,10 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    printf("DDD: unique: %d, duplicates: %d (%3.0f%%)\n",
           di.unique, di.dups, di.unique ? (di.dups * 100.0 / di.unique) : 0.0);
 
-#ifdef EINA_SHARE_COMMON_USAGE
+#ifdef EINA_STRINGSHARE_USAGE
    printf("DDD: Allocated strings: %i\n",     share->population.count);
    printf("DDD: Max allocated strings: %i\n", share->population.max);
+   printf("DDD: Max shared strings per node : %i\n", share->max_node_population);
 
    for (i = 0;
         i < sizeof (share->population_group) /

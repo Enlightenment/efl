@@ -1,3 +1,7 @@
+2013-01-04  Jérémy Zurcher
+
+	* Improve eina_share string del speed by a maybe 5-15%.
+
 2013-01-03  Gustavo Sverzut Barbieri (k-s)
 
 	* Add eina_alloc.h to Eina.h to define alloca()
