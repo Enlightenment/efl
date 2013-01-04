@@ -1030,6 +1030,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
+   Evas_Object      *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse button release event */
@@ -1047,6 +1048,7 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
+   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -1062,6 +1064,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -1077,6 +1080,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse move event */
@@ -1092,6 +1096,7 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */

@@ -200,6 +200,8 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 
    _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
 
+   ev->event_src = eo_obj;
+
    if (src->proxy.src_event_in)
      src->proxy.src_event_in = eina_list_free(src->proxy.src_event_in);
 
@@ -269,6 +271,8 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
    _transform_to_src_space(obj, src, &ev->cur.canvas.x, &ev->cur.canvas.y);
+
+   ev->event_src = eo_obj;
 
    //FIXME: transform previous coords also.
    Eina_List *l;
@@ -446,6 +450,8 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
   _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
+
+  ev->event_src = eo_obj;
 
    Eina_List *l;
    Evas_Object *eo_child;
@@ -771,6 +777,8 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,  Evas_Event_
 
   _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
 
+  ev->event_src = eo_obj;
+
    Eina_List *ins = NULL;
    if (src->is_smart)
      {
@@ -824,6 +832,8 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
   _transform_to_src_space(obj, src, &ev->canvas.x, &ev->canvas.y);
+
+  ev->event_src = eo_obj;
 
    Eina_List *l;
    Evas_Object *eo_child;
