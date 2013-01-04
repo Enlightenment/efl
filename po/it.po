@@ -1,16 +1,16 @@
-# Italian translation for Efreet.
+# Italian translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Efreet\n"
+"Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 16:21-0200\n"
+"POT-Creation-Date: 2013-01-04 22:46+0100\n"
 "PO-Revision-Date: 2012-10-11 00:06+0200\n"
-"Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
-"Language-Team: Enlightenment Team\n"
-"Language: \n"
+"Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
+"Language-Team: none\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -203,34 +203,3 @@ msgstr "Immagini"
 #: src/lib/efreet/efreet_base.c:188
 msgid "Videos"
 msgstr "Video"
-
-#~ msgid ""
-#~ "\n"
-#~ "   "
-#~ msgstr ""
-#~ "\n"
-#~ "   "
-
-#~ msgid "true"
-#~ msgstr "vero"
-
-#~ msgid "false"
-#~ msgstr "falso"
-
-#~ msgid "f"
-#~ msgstr "f"
-
-#~ msgid "no"
-#~ msgstr "no"
-
-#~ msgid "off"
-#~ msgstr "off"
-
-#~ msgid "t"
-#~ msgstr "t"
-
-#~ msgid "yes"
-#~ msgstr "sì"
-
-#~ msgid "on"
-#~ msgstr "on"
