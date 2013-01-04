@@ -9,4 +9,3 @@ Requires.private: @requirements_pc_eeze@
 Version: @VERSION@
 Libs: -L${libdir} -leeze
 Cflags: -I${includedir}/eeze-@VMAJ@
-Libs: -L${libdir} -leet
