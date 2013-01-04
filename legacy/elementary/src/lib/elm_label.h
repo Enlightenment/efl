@@ -57,6 +57,7 @@ enum
    ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET,
+   ELM_OBJ_LABEL_SUB_ID_SLIDE_GO,
    ELM_OBJ_LABEL_SUB_ID_LAST
 };
 
@@ -182,6 +183,17 @@ enum
  * @see elm_label_slide_duration_get
  */
 #define elm_obj_label_slide_duration_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), EO_TYPECHECK(double *, ret)
+
+/**
+ * @def elm_obj_label_slide_go
+ * @since 1.8
+ *
+ * @brief Start slide effect
+ *
+ * @see elm_label_slide_mode_set
+ */
+#define elm_obj_label_slide_go() ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO)
+
 
 typedef enum
 {
@@ -347,11 +359,22 @@ EAPI void                        elm_label_slide_mode_set(Evas_Object *obj, Elm_
  * @param obj The label object
  * @return The slide mode
  *
- * @see elm_label_slide_set()
+ * @see elm_label_slide_mode_set()
  *
  * @ingroup Label
  */
 EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj);
+
+/**
+ * @brief Start slide effect.
+ *
+ * @param obj The label object
+ *
+ * @see elm_label_slide_mode_set()
+ *
+ * @ingroup Label
+ */
+EAPI void                        elm_label_slide_go(Evas_Object *obj);
 
 /**
  * @}

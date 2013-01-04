@@ -885,4 +885,4 @@
 
 2012-01-04  ChunEon Park <hermet@hermet.pe.kr>
 
-        * Deprecate elm_label_slide_set()/get() and added elm_label_slide_mode_set()/get() instead.
+        * Deprecate elm_label_slide_set()/get() and added elm_label_slide_mode_set()/get() instead and elm_label_slide_go().

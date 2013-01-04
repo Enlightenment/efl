@@ -585,18 +585,15 @@ elm_label_slide_mode_set(Evas_Object *obj, Elm_Label_Slide_Mode mode)
 {
    ELM_LABEL_CHECK(obj);
    eo_do(obj, elm_obj_label_slide_mode_set(mode));
-
 }
 
 static void
-_slide_mode_set(Eo *obj, void *_pd, va_list *list)
+_slide_mode_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
    Elm_Label_Slide_Mode mode = va_arg(*list, Elm_Label_Slide_Mode);
    Elm_Label_Smart_Data *sd = _pd;
    if (sd->slide_mode == mode) return;
    sd->slide_mode = mode;
-   _label_slide_change(obj);
-   elm_layout_sizing_eval(obj);
 }
 
 EAPI Elm_Label_Slide_Mode
@@ -669,6 +666,20 @@ elm_label_slide_duration_get(const Evas_Object *obj)
    return ret;
 }
 
+EAPI void
+elm_label_slide_go(Evas_Object *obj)
+{
+   ELM_LABEL_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_label_slide_go());
+}
+
+static void
+_slide_go(Eo *obj, void *_pd __UNUSED__, va_list *list __UNUSED__)
+{
+   _label_slide_change(obj);
+   elm_layout_sizing_eval(obj);
+}
+
 static void
 _slide_duration_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
@@ -725,6 +736,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET), _slide_mode_get),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET), _slide_duration_set),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), _slide_duration_get),
+        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO), _slide_go),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -740,6 +752,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET, "Get current slide effect mode."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration (speed) of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration(speed) of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO, "Start slide effect."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

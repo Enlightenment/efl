@@ -27,6 +27,7 @@ Additions:
    * Add configuration: ELM_EXTERNAL_MENU, to switch between internal and extenal menus
    * Add elm_systray.[ch]: Add support to D-Bus systray icons.
    * Add elm_label_slide_mode_set(), elm_label_slide_mode_get()
+   * Add elm_label_slide_go()
 
 Improvements:
 
