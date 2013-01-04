@@ -337,7 +337,8 @@ _slave_proc_path_get(const char *name)
    if (!access(buf, X_OK))
      return eina_stringshare_add(buf);
 
-   snprintf(buf, sizeof(buf), PACKAGE_LIB_DIR"/evas/cserve2/bin/%s", name);
+   snprintf(buf, sizeof(buf), "%s/evas/cserve2/bin/%s",
+            eina_prefix_lib_get(_evas_cserve2_pfx), name);
    if (!access(buf, X_OK))
      return eina_stringshare_add(buf);
 

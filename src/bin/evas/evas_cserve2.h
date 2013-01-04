@@ -25,6 +25,8 @@
 
 extern int _evas_cserve2_bin_log_dom;
 
+extern Eina_Prefix *_evas_cserve2_pfx;
+
 typedef struct _Slave Slave;
 typedef struct _Slave_Thread_Data Slave_Thread_Data;
 typedef struct _Shm_Handle Shm_Handle;

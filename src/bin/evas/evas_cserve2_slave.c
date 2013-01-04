@@ -15,6 +15,7 @@
 
 static Eina_Hash *loaders = NULL;
 static Eina_List *modules = NULL;
+static Eina_Prefix *pfx = NULL;
 
 struct ext_loader_s
 {
@@ -86,7 +87,8 @@ loader_module_find(const char *type)
    if (l) return l;
 
    /* FIXME: Look in every possible path, but what will those be? */
-   snprintf(buf, sizeof(buf), PACKAGE_LIB_DIR "/evas/cserve2/loaders/%s/%s/%s",
+   snprintf(buf, sizeof(buf), "%s/evas/cserve2/loaders/%s/%s/%s",
+            eina_prefix_lib_get(pfx),
             type, MODULE_ARCH, EVAS_MODULE_NAME_IMAGE_LOADER);
 
    em = eina_module_new(buf);
@@ -442,6 +444,12 @@ int main(int c, char **v)
      return 1;
 
    eina_init();
+   pfx =  eina_prefix_new(v[0], main,
+                          "EVAS", "evas", "checkme",
+                          PACKAGE_BIN_DIR,
+                          PACKAGE_LIB_DIR,
+                          PACKAGE_DATA_DIR,
+                          PACKAGE_DATA_DIR);
 
    loaders = eina_hash_string_superfast_new(NULL);
 
@@ -476,6 +484,7 @@ int main(int c, char **v)
    EINA_LIST_FREE(modules, m)
       eina_module_free(m);
 
+   eina_prefix_free(pfx);
    eina_shutdown();
 
    return 0;

@@ -13,6 +13,7 @@
 #endif
 #define CSERVE2_BIN_DEFAULT_COLOR EINA_COLOR_BLUE
 
+Eina_Prefix *_evas_cserve2_pfx = NULL;
 int _evas_cserve2_bin_log_dom = -1;
 static unsigned int _client_id = 0;
 static Eina_Hash *client_list = NULL;
@@ -316,15 +317,23 @@ _clients_finish(void)
 }
 
 int
-main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
+main(int argc EINA_UNUSED, const char *argv[])
 {
    eina_init();
+
+   _evas_cserve2_pfx = eina_prefix_new(argv[0], main,
+                                       "EVAS", "evas", "checkme",
+                                       PACKAGE_BIN_DIR,
+                                       PACKAGE_LIB_DIR,
+                                       PACKAGE_DATA_DIR,
+                                       PACKAGE_DATA_DIR);
 
    _evas_cserve2_bin_log_dom = eina_log_domain_register
       ("evas_cserve2_bin", CSERVE2_BIN_DEFAULT_COLOR);
    if (_evas_cserve2_bin_log_dom < 0)
      {
         EINA_LOG_ERR("impossible to create a log domain.");
+        eina_prefix_free(_evas_cserve2_pfx);
         eina_shutdown();
         exit(1);
      }
@@ -367,11 +376,14 @@ main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
 
    cserve2_main_loop_finish();
 
+   eina_prefix_free(_evas_cserve2_pfx);
+
    eina_log_domain_unregister(_evas_cserve2_bin_log_dom);
    eina_shutdown();
    return 0;
 
 error:
+   eina_prefix_free(_evas_cserve2_pfx);
    eina_log_domain_unregister(_evas_cserve2_bin_log_dom);
    eina_shutdown();
    exit(1);

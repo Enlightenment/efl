@@ -1407,7 +1407,9 @@ bin_evas_evas_cserve2_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/eet \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 @EVAS_CFLAGS@
 
 bin_evas_evas_cserve2_LDADD = \
@@ -1471,7 +1473,9 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 @EVAS_CFLAGS@
 
 bin_evas_evas_cserve2_slave_LDADD = \
