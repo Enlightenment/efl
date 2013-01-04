@@ -67,7 +67,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <limits.h>
 #include <string.h>
 #include <unistd.h>
@@ -254,8 +253,8 @@ _ethumb_async_delete(void *data)
 {
    Ethumb_Async_Exists *async = data;
 
-   assert(async->callbacks == NULL);
-   assert(async->thread == NULL);
+   EINA_SAFETY_ON_FALSE_RETURN(async->callbacks == NULL);
+   EINA_SAFETY_ON_FALSE_RETURN(async->thread == NULL);
 
    ethumb_free(async->dup);
    eina_stringshare_del(async->path);
@@ -2058,7 +2057,7 @@ _ethumb_client_thumb_finish(void *data,
 {
    Ethumb_Client_Async *async = data;
 
-   assert(async->id == id);
+   EINA_SAFETY_ON_FALSE_RETURN(async->id == id);
 
    if (success)
      {
@@ -2118,7 +2117,7 @@ _ethumb_client_thumb_exists(void *data, Ethumb_Client *client, Ethumb_Exists *re
    if (request == NULL)
      return;
 
-   assert(async->exists == request);
+   EINA_SAFETY_ON_FALSE_RETURN(async->exists == request);
 
    async->exists = NULL;
    pending = eina_list_remove(pending, async);
