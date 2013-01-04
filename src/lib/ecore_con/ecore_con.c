@@ -1189,7 +1189,7 @@ _ecore_con_event_server_error(Ecore_Con_Server *svr, char *error, Eina_Bool dupl
 
    e->server = svr;
    e->error = duplicate ? strdup(error) : error;
-   ERR("%s", error);
+   DBG("%s", error);
    svr->event_count = eina_list_append(svr->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, e, (Ecore_End_Cb)_ecore_con_event_server_error_free, NULL);
    _ecore_con_event_count++;
@@ -1205,8 +1205,7 @@ ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error)
 
    e->client = cl;
    e->error = strdup(error);
-// givving errors like this is not a good thing - MAYBET his belongs in debug... but not err.   
-//   ERR("%s", error);
+   DBG("%s", error);
    cl->event_count = eina_list_append(cl->event_count, e);
    cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, e, (Ecore_End_Cb)_ecore_con_event_client_error_free, cl->host_server);
