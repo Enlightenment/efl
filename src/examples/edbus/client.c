@@ -10,13 +10,13 @@ static int _client_log_dom = -1;
 #define ERR(...)      EINA_LOG_DOM_ERR(_client_log_dom, __VA_ARGS__)
 
 static void
-_on_alive(void *context, const EDBus_Message *msg)
+_on_alive(void *context EINA_UNUSED, const EDBus_Message *msg EINA_UNUSED)
 {
    printf("Alive\n\n");
 }
 
 static void
-_on_hello(void *context, const EDBus_Message *msg)
+_on_hello(void *context EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *txt;
    if (edbus_message_arguments_get(msg, "s", &txt))
@@ -56,7 +56,7 @@ test(void)
 }
 
 static void
-_on_send_bool(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_bool(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    Eina_Bool b;
@@ -83,7 +83,7 @@ _on_send_bool(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_byte(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_byte(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    uint8_t y;
@@ -110,7 +110,7 @@ _on_send_byte(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_uint32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_uint32(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    unsigned int u;
@@ -137,7 +137,7 @@ _on_send_uint32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_int32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_int32(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    int32_t i;
@@ -164,7 +164,7 @@ _on_send_int32(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_int16(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_int16(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    int16_t n;
@@ -191,7 +191,7 @@ _on_send_int16(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_double(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_double(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    double d;
@@ -218,7 +218,7 @@ _on_send_double(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_send_string(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_send_string(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    char *s;
@@ -245,7 +245,7 @@ _on_send_string(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_async_test(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_async_test(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
 
@@ -259,13 +259,13 @@ _on_async_test(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_name_owner_changed(void *data, const char *bus, const char *old_id, const char *new_id)
+on_name_owner_changed(void *data EINA_UNUSED, const char *bus, const char *old_id, const char *new_id EINA_UNUSED)
 {
    printf("Bus=%s | old=%s | new=%s\n", bus, old_id, new_id);
 }
 
 static Eina_Bool
-finish(void *data)
+finish(void *data EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;

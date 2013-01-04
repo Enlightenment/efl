@@ -90,7 +90,7 @@ _fill_receive_array_of_string_int_with_size(EDBus_Message *msg, int size, const 
 }
 
 static void
-on_send_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_send_array(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    Eina_Value *v, array;
    const char *txt;
@@ -116,7 +116,7 @@ on_send_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_receive_array_with_size(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_receive_array_with_size(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname;
    const char *errmsg;
@@ -129,7 +129,7 @@ on_receive_array_with_size(void *data, const EDBus_Message *msg, EDBus_Pending *
 }
 
 static void
-on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_plus_one(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    Eina_Value *v;
    int num2;
@@ -148,7 +148,7 @@ on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-receive_variant_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+receive_variant_cb(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    Eina_Value *v, variant, array;
    unsigned i;
@@ -177,7 +177,7 @@ receive_variant_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_property_removed(void *data, EDBus_Proxy *proxy, void *event_info)
+_property_removed(void *data EINA_UNUSED, EDBus_Proxy *proxy EINA_UNUSED, void *event_info)
 {
    EDBus_Proxy_Event_Property_Removed *event = event_info;
 
@@ -185,7 +185,7 @@ _property_removed(void *data, EDBus_Proxy *proxy, void *event_info)
 }
 
 static void
-_property_changed(void *data, EDBus_Proxy *proxy, void *event_info)
+_property_changed(void *data EINA_UNUSED, EDBus_Proxy *proxy EINA_UNUSED, void *event_info)
 {
    EDBus_Proxy_Event_Property_Changed *event = event_info;
    const char *name;

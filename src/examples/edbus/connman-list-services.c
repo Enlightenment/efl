@@ -2,7 +2,7 @@
 #include <Ecore.h>
 
 static void
-on_services_get(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_services_get(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Message_Iter *array, *entry;
    const char *errname, *errmsg;

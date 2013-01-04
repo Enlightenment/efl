@@ -9,7 +9,7 @@
 static EDBus_Connection *conn;
 
 static EDBus_Message *
-_hello(const EDBus_Service_Interface *iface, const EDBus_Message *message)
+_hello(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *message)
 {
    EDBus_Message *reply = edbus_message_method_return_new(message);
    edbus_message_arguments_append(reply, "s", "Hello World");
@@ -18,7 +18,7 @@ _hello(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 }
 
 static EDBus_Message *
-_quit(const EDBus_Service_Interface *iface, const EDBus_Message *message)
+_quit(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *message)
 {
    printf("Quit\n");
    ecore_main_loop_quit();
@@ -48,7 +48,7 @@ send_signal_hello(void *data)
 }
 
 static EDBus_Message *
-_send_bool(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_bool(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    Eina_Bool bool;
@@ -59,7 +59,7 @@ _send_bool(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_byte(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_byte(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    unsigned char byte;
@@ -70,7 +70,7 @@ _send_byte(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_uint32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_uint32(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    unsigned int uint32;
@@ -81,7 +81,7 @@ _send_uint32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_int32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_int32(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    int int32;
@@ -92,7 +92,7 @@ _send_int32(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_int16(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_int16(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    short int int16;
@@ -103,7 +103,7 @@ _send_int16(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_double(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_double(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    double d;
@@ -114,7 +114,7 @@ _send_double(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_string(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_string(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    const char *txt;
@@ -135,7 +135,7 @@ _resp_async(void *data)
 }
 
 static EDBus_Message *
-_async_test(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_async_test(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    printf("Received a call to AsyncTest.\n");
@@ -191,7 +191,7 @@ static const EDBus_Service_Interface_Desc iface_desc = {
 };
 
 static void
-on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Service_Interface *iface;
    unsigned int reply;

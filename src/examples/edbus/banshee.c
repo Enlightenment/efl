@@ -13,7 +13,7 @@
 static EDBus_Signal_Handler *state_changed2;
 
 static Eina_Bool
-_timeout_application(void *data)
+_timeout_application(void *data EINA_UNUSED)
 {
    printf("\n## ecore_main_loop_quit()\n");
    ecore_main_loop_quit();
@@ -21,7 +21,7 @@ _timeout_application(void *data)
 }
 
 static void
-on_get_playlists(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_get_playlists(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Message_Iter *array, *struct_entry;
    const char *path, *name, *image;
@@ -49,7 +49,7 @@ on_get_playlists(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-iterate_dict(void *data, const void *key, EDBus_Message_Iter *var)
+iterate_dict(void *data EINA_UNUSED, const void *key, EDBus_Message_Iter *var)
 {
    const char *skey = key;
 
@@ -73,7 +73,7 @@ iterate_dict(void *data, const void *key, EDBus_Message_Iter *var)
 }
 
 static void
-playlist_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+playlist_get_all_cb(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Message_Iter *array;
    EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
@@ -83,7 +83,7 @@ playlist_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending
 }
 
 static void
-on_introspect(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_introspect(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *string;
 
@@ -99,7 +99,7 @@ on_introspect(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_next_or_pause(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_next_or_pause(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *status = data;
 
@@ -109,7 +109,7 @@ on_next_or_pause(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_state_changed(void *data, const EDBus_Message *msg)
+on_state_changed(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *status;
    EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
@@ -124,7 +124,7 @@ on_state_changed(void *data, const EDBus_Message *msg)
 }
 
 static void
-on_state_changed2(void *data, const EDBus_Message *msg)
+on_state_changed2(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *status;
    EINA_SAFETY_ON_TRUE_RETURN(edbus_message_error_get(msg, NULL, NULL));
@@ -141,7 +141,7 @@ on_state_changed2(void *data, const EDBus_Message *msg)
 }
 
 static void
-on_banshee_startup(void *data, const EDBus_Message *msg)
+on_banshee_startup(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *bus, *older_id, *new_id;
 
@@ -156,7 +156,7 @@ on_banshee_startup(void *data, const EDBus_Message *msg)
 }
 
 static void
-on_name_owner_changed(void *data, const EDBus_Message *msg)
+on_name_owner_changed(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *bus, *older_id, *new_id;
 
@@ -236,4 +236,3 @@ end:
    ecore_shutdown();
    return 0;
 }
-

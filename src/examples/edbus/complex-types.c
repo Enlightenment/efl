@@ -8,7 +8,7 @@
 EDBus_Connection *conn;
 
 static Eina_Bool
-_timer1_cb(void *data)
+_timer1_cb(void *data EINA_UNUSED)
 {
    printf("\nFishing...\n");
    ecore_main_loop_quit();
@@ -16,7 +16,7 @@ _timer1_cb(void *data)
 }
 
 static void
-on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_plus_one(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    int num2 = 0;
 
@@ -35,7 +35,7 @@ on_plus_one(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-set_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+set_property_resp2(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname;
    const char *errmsg;
@@ -49,7 +49,7 @@ set_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-get_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+get_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Proxy *proxy = data;
    EDBus_Message_Iter *variant = NULL;
@@ -94,7 +94,7 @@ get_property_resp2(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_send_array_int(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_send_array_int(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Message_Iter *array = NULL;
    int num;
@@ -118,7 +118,7 @@ on_send_array_int(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_send_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_send_array(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Message_Iter *array = NULL;
    char *txt = NULL;
@@ -149,7 +149,7 @@ on_send_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-on_receive_array_with_size(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_receive_array_with_size(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname;
    const char *errmsg;
@@ -162,13 +162,13 @@ on_receive_array_with_size(void *data, const EDBus_Message *msg, EDBus_Pending *
 }
 
 static void
-on_send_variant(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_send_variant(void *data EINA_UNUSED, const EDBus_Message *msg EINA_UNUSED, EDBus_Pending *pending EINA_UNUSED)
 {
    printf("on_send_variant()\n\n");
 }
 
 static void
-on_receive_array(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_receive_array(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname;
    const char *errmsg;

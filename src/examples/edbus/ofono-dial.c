@@ -2,7 +2,7 @@
 #include <Ecore.h>
 
 static void
-on_dial(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_dial(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    const char *call_path;

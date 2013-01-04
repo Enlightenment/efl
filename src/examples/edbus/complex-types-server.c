@@ -11,7 +11,7 @@ static int int32 = 35;
 static Ecore_Timer *timer;
 
 static EDBus_Message *
-_receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_receive_array(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *array;
@@ -32,7 +32,7 @@ _receive_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *array, *struct_si;
@@ -64,7 +64,7 @@ _receive_array_of_string_int_with_size(const EDBus_Service_Interface *iface, con
 }
 
 static EDBus_Message *
-_receive_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_receive_variant(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *var, *array, *main_iter;
@@ -84,7 +84,7 @@ _receive_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_variant(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *variant;
@@ -135,7 +135,7 @@ _send_variant(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_array_int(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_array_int(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *iter, *array;
@@ -153,7 +153,7 @@ _send_array_int(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_send_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_send_array(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    EDBus_Message_Iter *iter, *array;
@@ -172,7 +172,7 @@ _send_array(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_plus_one(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_plus_one(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message *reply = edbus_message_method_return_new(msg);
    int num;
@@ -190,7 +190,7 @@ _plus_one(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
-_double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+_double_container(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
 {
    EDBus_Message_Iter *array1, *array2, *structure;
    int num1, num2;
@@ -220,7 +220,7 @@ _double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg
 }
 
 static Eina_Bool
-_properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *request_msg, EDBus_Message **error)
+_properties_get(const EDBus_Service_Interface *iface EINA_UNUSED, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *request_msg EINA_UNUSED, EDBus_Message **error EINA_UNUSED)
 {
    printf("Properties_get - %s\n", propname);
    if (!strcmp(propname, "Resp2"))
@@ -243,7 +243,7 @@ _properties_get(const EDBus_Service_Interface *iface, const char *propname, EDBu
 }
 
 static EDBus_Message *
-_properties_set(const EDBus_Service_Interface *iface, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *msg)
+_properties_set(const EDBus_Service_Interface *iface EINA_UNUSED, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *msg)
 {
    char *type;
 
@@ -335,7 +335,7 @@ static Eina_Bool _emit_changed(void *data)
 }
 
 static void
-on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+on_name_request(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    unsigned int reply;
    EDBus_Service_Interface *iface = data;
