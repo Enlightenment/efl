@@ -68,6 +68,14 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_NONE;
    
+   /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
+    * gets fixed. Currently it is incorrectly detecting wl_display and
+    * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
+    *
+    * See ticket #1972 for more info.
+    */
+   setenv("EGL_PLATFORM", "wayland", 1);
+
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
