@@ -21,6 +21,7 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore", ecore_test_ecore },
   { "Ecore_Con", ecore_test_ecore_con },
   { "Ecore_X", ecore_test_ecore_x },
+  { "Ecore_Imf", ecore_test_ecore_imf },
 #if HAVE_ECORE_AUDIO
   { "Ecore Audio", ecore_test_ecore_audio},
 #endif
@@ -94,6 +95,8 @@ main(int argc, char **argv)
 	  _list_tests();
 	  return 0;
        }
+
+   putenv("EFL_RUN_IN_TREE=1");
 
    s = ecore_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);

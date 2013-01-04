@@ -5,10 +5,7 @@ Eina_List *_modules_paths = NULL;
 
 Eina_List *_modules_found = NULL;
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-# define EDJE_MODULE_NAME "edje_%s.dll"
-# define EDJE_EXTRA_MODULE_NAME 1
-#elif _WIN32
+#if _WIN32
 # define EDJE_MODULE_NAME "module.dll"
 #else
 # define EDJE_MODULE_NAME "module.so"
@@ -27,21 +24,32 @@ _edje_module_handle_load(const char *module)
    const char *path;
    Eina_List *l;
    Eina_Module *em = NULL;
+   Eina_Bool run_in_tree;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(module, NULL);
 
    em =  (Eina_Module *)eina_hash_find(_registered_modules, module);
    if (em) return em;
 
+   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+
    EINA_LIST_FOREACH(_modules_paths, l, path)
      {
-        char tmp[PATH_MAX];
+        char tmp[PATH_MAX] = "";
 
-        snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH
-#ifdef EDJE_EXTRA_MODULE_NAME
-                 , module
-#endif
-                );
+        if (run_in_tree)
+          {
+             struct stat st;
+             snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
+                      path, module, EDJE_MODULE_NAME);
+             if (stat(tmp, &st) != 0)
+               tmp[0] = '\0';
+          }
+
+        if (tmp[0] == '\0')
+          snprintf(tmp, sizeof(tmp), "%s/%s/%s/%s",
+                   path, module, MODULE_ARCH, EDJE_MODULE_NAME);
+
         em = eina_module_new(tmp);
         if (!em) continue;
 
@@ -65,6 +73,17 @@ _edje_module_init(void)
    unsigned int j;
 
    _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
+
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        const char mp[] = PACKAGE_BUILD_DIR"/src/modules/edje";
+        if (stat(mp, &st) == 0)
+          {
+             _modules_paths = eina_list_append(_modules_paths, strdup(mp));
+             return;
+          }
+     }
 
    /* 1. ~/.edje/modules/ */
    paths[0] = eina_module_environment_path_get("HOME", "/.edje/modules");

@@ -204,6 +204,7 @@ lib_evas_libevas_la_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 @EFL_COV_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
@@ -1741,6 +1742,7 @@ tests/evas/evas_test_init.c \
 tests/evas/evas_test_textblock.c \
 tests/evas/evas_test_text.c \
 tests/evas/evas_test_callbacks.c \
+tests/evas/evas_test_render_engines.c \
 tests/evas/evas_tests_helpers.h \
 tests/evas/evas_suite.h
 

@@ -24,13 +24,57 @@ typedef struct _Ecore_IMF_Selector
 
 static Eina_Hash *modules = NULL;
 static Eina_Array *module_list = NULL;
+static Eina_Prefix *pfx = NULL;
 
 void
 ecore_imf_module_init(void)
 {
    char *homedir;
+   char buf[PATH_MAX] = "";
 
-   module_list = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/ecore/immodules", 0, NULL, NULL);
+   pfx = eina_prefix_new(NULL, ecore_imf_init,
+                         "ECORE_IMF", "ecore_imf", "checkme",
+                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        snprintf(buf, sizeof(buf), "%s/src/modules/ecore/immodules",
+                 PACKAGE_BUILD_DIR);
+        if (stat(buf, &st) == 0)
+          {
+             const char *built_modules[] = {
+#ifdef ENABLE_XIM
+               "xim",
+#endif
+#ifdef BUILD_ECORE_IMF_IBUS
+               "ibus",
+#endif
+#ifdef BUILD_ECORE_IMF_SCIM
+               "scim",
+#endif
+               NULL
+             };
+             const char **itr;
+             for (itr = built_modules; *itr != NULL; itr++)
+               {
+                  snprintf(buf, sizeof(buf),
+                           "%s/src/modules/ecore/immodules/%s/.libs",
+                           PACKAGE_BUILD_DIR, *itr);
+                  module_list = eina_module_list_get(module_list, buf,
+                                                     EINA_FALSE, NULL, NULL);
+               }
+
+             if (module_list)
+               eina_module_list_load(module_list);
+             return;
+          }
+     }
+
+   snprintf(buf, sizeof(buf), "%s/ecore/immodules", eina_prefix_lib_get(pfx));
+
+   module_list = eina_module_list_get(NULL, buf, 0, NULL, NULL);
    homedir = eina_module_environment_path_get("HOME", "/.ecore/immodules");
    if (homedir)
      {
@@ -54,6 +98,9 @@ ecore_imf_module_shutdown(void)
         eina_array_free(module_list);
         module_list = NULL;
      }
+
+   eina_prefix_free(pfx);
+   pfx = NULL;
 }
 
 static Eina_Bool

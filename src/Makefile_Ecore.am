@@ -79,6 +79,7 @@ tests/ecore/ecore_suite.c \
 tests/ecore/ecore_test_ecore.c \
 tests/ecore/ecore_test_ecore_con.c \
 tests/ecore/ecore_test_ecore_x.c \
+tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = \
@@ -91,10 +92,13 @@ tests_ecore_ecore_suite_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_builddir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_imf \
 -DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 @CHECK_CFLAGS@
 
 tests_ecore_ecore_suite_LDADD = \
+lib/ecore_imf/libecore_imf.la \
 lib/ecore_con/libecore_con.la \
 lib/ecore_file/libecore_file.la \
 lib/ecore/libecore.la \

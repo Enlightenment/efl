@@ -9,7 +9,8 @@
 #include <Eeze_Sensor.h>
 #include "eeze_sensor_private.h"
 
-Eeze_Sensor *g_handle;
+static Eeze_Sensor *g_handle;
+static Eina_Prefix *pfx;
 
 /* Priority order for modules. The one with the highest order of the available
  * ones will be used. This in good enough for now as we only have two modules
@@ -77,10 +78,14 @@ eeze_sensor_modules_load(void)
     * is one of these items. We do load the modules from the builddir if the
     * environment is set. Normal case is to use installed modules from system
     */
-   if (getenv("EEZE_USE_IN_TREE_MODULES"))
-      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/.libs/", 0, NULL, NULL);
+   if (getenv("EFL_RUN_IN_TREE"))
+      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/eeze/.libs/", 0, NULL, NULL);
    else
-      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/eeze/sensor/", 0, NULL, NULL);
+     {
+        char buf[PATH_MAX];
+        snprintf(buf, sizeof(buf), "%s/eeze/sensor/", eina_prefix_lib_get(pfx));
+        g_handle->modules_array = eina_module_list_get(NULL, buf, 0, NULL, NULL);
+     }
 
    if (!g_handle->modules_array)
      {
@@ -104,7 +109,7 @@ eeze_sensor_modules_unload(void)
  * been loaded in initialized. They stay in the hash funtion until they
  * unregister themself.
  */
-Eina_Bool
+EAPI Eina_Bool
 eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 {
    Eeze_Sensor_Module *module = NULL;
@@ -127,7 +132,7 @@ eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 /* This function is offered to the modules to unregsiter itself. When requested
  * we remove them safely from the hash.
  */
-Eina_Bool
+EAPI Eina_Bool
 eeze_sensor_module_unregister(const char *name)
 {
    DBG("Unregister module %s", name);
@@ -290,6 +295,9 @@ eeze_sensor_shutdown(void)
    free(g_handle);
    g_handle = NULL;
 
+   eina_prefix_free(pfx);
+   pfx = NULL;
+
    eina_shutdown();
 }
 
@@ -297,6 +305,10 @@ EAPI Eina_Bool
 eeze_sensor_init(void)
 {
    if (!eina_init()) return EINA_FALSE;
+
+   pfx = eina_prefix_new(NULL, eeze_sensor_init, "EEZE", "eeze", "checkme",
+                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
 
    g_handle = calloc(1, sizeof(Eeze_Sensor));
    if (!g_handle) return EINA_FALSE;

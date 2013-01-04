@@ -22,6 +22,7 @@ static const Evas_Test_Case etc[] = {
   { "Object Textblock", evas_test_textblock },
   { "Object Text", evas_test_text },
   { "Callbacks", evas_test_callbacks },
+  { "Render Engines", evas_test_render_engines },
   { NULL, NULL }
 };
 
@@ -92,6 +93,8 @@ main(int argc, char **argv)
 	  _list_tests();
 	  return 0;
        }
+
+   putenv("EFL_RUN_IN_TREE=1");
 
    evas_init();
    s = evas_suite_build(argc - 1, (const char **)argv + 1);

@@ -13,6 +13,16 @@ evasfilesdir = $(datadir)/evas
 evasfiles_DATA = evas/checkme
 
 ########################################################################
+# Eeze
+eezefilesdir = $(datadir)/eeze
+eezefiles_DATA = eeze/checkme
+
+########################################################################
+# Ecore_Imf
+ecoreimffilesdir = $(datadir)/ecore_imf
+ecoreimffiles_DATA = ecore_imf/checkme
+
+########################################################################
 # Eo
 eofilesdir = $(datadir)/eo
 eofiles_DATA = eo/eo_step.py

@@ -668,6 +668,8 @@ main(void)
    SRunner *sr;
    int failed_count;
 
+   putenv("EFL_RUN_IN_TREE=1");
+
    s = eeze_suite();
    sr = srunner_create(s);
    srunner_run_all(sr, CK_ENV);

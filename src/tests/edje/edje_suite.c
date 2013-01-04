@@ -90,6 +90,8 @@ main(int argc, char **argv)
 	  return 0;
        }
 
+   putenv("EFL_RUN_IN_TREE=1");
+
    s = edje_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 

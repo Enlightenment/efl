@@ -44,6 +44,17 @@ evas_module_paths_init(void)
 {
    char *libdir, *path;
 
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        const char mp[] = PACKAGE_BUILD_DIR"/src/modules/evas";
+        if (stat(mp, &st) == 0)
+          {
+             evas_module_paths = _evas_module_append(evas_module_paths, strdup(mp));
+             return;
+          }
+     }
+
    /* 1. ~/.evas/modules/ */
    path = eina_module_environment_path_get("HOME", "/.evas/modules");
    evas_module_paths = _evas_module_append(evas_module_paths, path);
@@ -271,7 +282,10 @@ evas_module_engine_list(void)
    Eina_Iterator *it, *it2;
    unsigned int i;
    const char *s, *s2;
-   char buf[4096];
+   char buf[PATH_MAX];
+   Eina_Bool run_in_tree;
+
+   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
 
    EINA_LIST_FOREACH(evas_module_paths, l, s)
      {
@@ -284,8 +298,20 @@ evas_module_engine_list(void)
              EINA_ITERATOR_FOREACH(it, fi)
                {
                   const char *fname = fi->path + fi->name_start;
-                  snprintf(buf, sizeof(buf), "%s/engines/%s/%s", 
-                           s, fname, MODULE_ARCH);
+
+                  buf[0] = '\0';
+                  if (run_in_tree)
+                    {
+                       snprintf(buf, sizeof(buf), "%s/engines/%s/.libs",
+                                s, fname);
+                       if (!evas_file_path_exists(buf))
+                         buf[0] = '\0';
+                    }
+
+                  if (buf[0] == '\0')
+                    snprintf(buf, sizeof(buf), "%s/engines/%s/%s",
+                             s, fname, MODULE_ARCH);
+
                   it2 = eina_file_ls(buf);
                   if (it2)
                     {
@@ -335,50 +361,54 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
    return EINA_TRUE;
 }
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-# define EVAS_MODULE_NAME_IMAGE_SAVER "saver_%s.dll"
-# define EVAS_MODULE_NAME_IMAGE_LOADER "loader_%s.dll"
-# define EVAS_MODULE_NAME_ENGINE "engine_%s.dll"
-# define EVAS_MODULE_NAME_OBJECT "object_%s.dll"
-#elif defined(_WIN32) || defined(__CYGWIN__)
-# define EVAS_MODULE_NAME_IMAGE_SAVER "module.dll"
-# define EVAS_MODULE_NAME_IMAGE_LOADER "module.dll"
-# define EVAS_MODULE_NAME_ENGINE "module.dll"
-# define EVAS_MODULE_NAME_OBJECT "module.dll"
+#if defined(_WIN32) || defined(__CYGWIN__)
+# define EVAS_MODULE_NAME "module.dll"
 #else
-# define EVAS_MODULE_NAME_IMAGE_SAVER "module.so"
-# define EVAS_MODULE_NAME_IMAGE_LOADER "module.so"
-# define EVAS_MODULE_NAME_ENGINE "module.so"
-# define EVAS_MODULE_NAME_OBJECT "module.so"
+# define EVAS_MODULE_NAME "module.so"
 #endif
 
 Evas_Module *
 evas_module_find_type(Evas_Module_Type type, const char *name)
 {
    const char *path;
-   const char *format = NULL;
-   char buffer[4096];
+   char buffer[PATH_MAX];
    Evas_Module *em;
    Eina_Module *en;
    Eina_List *l;
+   Eina_Bool run_in_tree;
 
    if ((unsigned int)type > 3) return NULL;
 
    em = eina_hash_find(evas_modules[type], name);
    if (em) return em;
 
+   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+
    EINA_LIST_FOREACH(evas_module_paths, l, path)
      {
-	switch (type)
-	  {
-	   case EVAS_MODULE_TYPE_ENGINE: format = "%s/engines/%s/%s/" EVAS_MODULE_NAME_ENGINE; break;
-	   case EVAS_MODULE_TYPE_IMAGE_LOADER: format = "%s/loaders/%s/%s/" EVAS_MODULE_NAME_IMAGE_LOADER; break;
-	   case EVAS_MODULE_TYPE_IMAGE_SAVER: format = "%s/savers/%s/%s/" EVAS_MODULE_NAME_IMAGE_SAVER; break;
-	   case EVAS_MODULE_TYPE_OBJECT: format = "%s/object/%s/%s/" EVAS_MODULE_NAME_OBJECT; break;
-	  }
+        const char *type_str = "unknown";
+        switch (type)
+          {
+           case EVAS_MODULE_TYPE_ENGINE: type_str = "engines"; break;
+           case EVAS_MODULE_TYPE_IMAGE_LOADER: type_str = "loaders"; break;
+           case EVAS_MODULE_TYPE_IMAGE_SAVER: type_str = "savers"; break;
+           case EVAS_MODULE_TYPE_OBJECT: type_str = "object"; break;
+          }
 
-	snprintf(buffer, sizeof (buffer), format, path, name, MODULE_ARCH, name);
-	if (!evas_file_path_is_file(buffer)) continue;
+        buffer[0] = '\0';
+        if (run_in_tree)
+          {
+             snprintf(buffer, sizeof(buffer), "%s/%s/%s/.libs/%s",
+                      path, type_str, name, EVAS_MODULE_NAME);
+             if (!evas_file_path_exists(buffer))
+               buffer[0] = '\0';
+          }
+
+        if (buffer[0] == '\0')
+          snprintf(buffer, sizeof(buffer), "%s/%s/%s/%s/%s",
+                   path, type_str, name, MODULE_ARCH, EVAS_MODULE_NAME);
+
+        if (!evas_file_path_is_file(buffer)) continue;
 
 	en = eina_module_new(buffer);
 	if (!en) continue;

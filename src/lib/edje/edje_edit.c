@@ -6353,12 +6353,15 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    const char *tmp_dir;
    char tmp_in[PATH_MAX];
    char tmp_out[PATH_MAX];
+   char embryo_cc_path[PATH_MAX] = "";
+   char inc_path[PATH_MAX] = "";
    char buf[4096];
    Eina_Iterator *it;
    Program_Script *ps;
    Edje_Part_Collection *edc;
    Eina_Bool success = EINA_TRUE; /* we are optimists! */
    Edje_Edit_Script_Error *se;
+   Eina_Prefix *pfx;
 
    EINA_LIST_FREE(eed->errors, se)
      {
@@ -6372,6 +6375,45 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
    tmp_dir = "/tmp";
 #endif
+
+   pfx = eina_prefix_new(NULL,               /* argv[0] value (optional) */
+                         edje_init,          /* an optional symbol to check path of */
+                         "EDJE",             /* env var prefix to use (XXX_PREFIX, XXX_BIN_DIR etc. */
+                         "edje",             /* dir to add after "share" (PREFIX/share/DIRNAME) */
+                         "include/edje.inc", /* a magic file to check for in PREFIX/share/DIRNAME for success */
+                         PACKAGE_BIN_DIR,    /* package bin dir @ compile time */
+                         PACKAGE_LIB_DIR,    /* package lib dir @ compile time */
+                         PACKAGE_DATA_DIR,   /* package data dir @ compile time */
+                         PACKAGE_DATA_DIR    /* if locale needed  use LOCALE_DIR */
+                         );
+#ifdef _WIN32
+# define BIN_EXT ".exe"
+#else
+# define BIN_EXT
+#endif
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        snprintf(embryo_cc_path, sizeof(embryo_cc_path),
+                 "%s/src/bin/embryo/embryo_cc" BIN_EXT,
+                 PACKAGE_BUILD_DIR);
+        snprintf(inc_path, sizeof(inc_path),
+                 "%s/data/edje/include", PACKAGE_BUILD_DIR);
+        if (!ecore_file_exists(embryo_cc_path))
+          embryo_cc_path[0] = '\0';
+     }
+
+   if (embryo_cc_path[0] == '\0')
+     {
+        snprintf(embryo_cc_path, sizeof(embryo_cc_path),
+                 "%s/embryo_cc" BIN_EXT,
+                 eina_prefix_bin_get(pfx));
+        snprintf(inc_path, sizeof(inc_path),
+                 "%s/include",
+                 eina_prefix_data_get(pfx));
+     }
+#undef BIN_EXT
+
+   eina_prefix_free(pfx);
 
    snprintf(tmp_in, sizeof(tmp_in), "%s/edje_edit.sma-tmp-XXXXXX", tmp_dir);
    snprintf(tmp_out, sizeof(tmp_out), "%s/edje_edit.amx-tmp-XXXXXX", tmp_dir);
@@ -6457,8 +6499,8 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
         goto almost_out;
      }
 
-   snprintf(buf, sizeof(buf), "embryo_cc -i %s/include -o %s %s",
-            PACKAGE_DATA_DIR, tmp_out, tmp_in);
+   snprintf(buf, sizeof(buf), "%s -i %s -o %s %s",
+     embryo_cc_path, inc_path, tmp_out, tmp_in);
    ret = system(buf);
 
    if ((ret < 0) || (ret > 1))

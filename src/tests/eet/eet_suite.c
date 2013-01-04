@@ -2749,6 +2749,8 @@ main(int argc EINA_UNUSED, char *argv[])
    int failed_count;
    const char *base = _cert_dir_find(argv[0]);
 
+   putenv("EFL_RUN_IN_TREE=1");
+
    eina_str_join(_key_pem, sizeof(_key_pem), '/', base, "key.pem");
    eina_str_join(_cert_pem, sizeof(_cert_pem), '/', base,"cert.pem");
    eina_str_join(_key_enc, sizeof(_key_enc), '/', base, "key.enc");
