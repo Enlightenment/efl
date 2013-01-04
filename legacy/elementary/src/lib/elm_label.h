@@ -139,7 +139,7 @@ enum
  * @def elm_obj_label_slide_set
  * @since 1.8
  *
- * @brief Set sliding effect of label widget.
+ * @brief Set slide effect of label widget.
  *
  * @param[in] slide
  *
@@ -151,7 +151,7 @@ enum
  * @def elm_obj_label_slide_get
  * @since 1.8
  *
- * @brief Get whether sliding effect is shown or not.
+ * @brief Get whether slide effect is shown or not.
  *
  * @param[out] ret
  *
@@ -275,10 +275,10 @@ EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_B
 EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
 
 /**
- * @brief Set sliding effect of label widget.
+ * @brief Set slide effect of label widget.
  *
  * @param obj The label object
- * @param slide If true, sliding effect will be shown
+ * @param slide If true, slide effect will be shown
  *
  * If set to true, the text of the label will slide/scroll through the length of
  * label.
@@ -291,10 +291,10 @@ EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
 EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
 
 /**
- * @brief Get whether sliding effect is shown or not.
+ * @brief Get whether slide effect is shown or not.
  *
  * @param obj The label object
- * @return If true, sliding effect is shown.
+ * @return If true, slide effect is shown.
  *
  * @see elm_label_slide_set()
  *

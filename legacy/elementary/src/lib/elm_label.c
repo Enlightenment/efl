@@ -60,7 +60,7 @@ _label_format_set(Evas_Object *obj,
 }
 
 static void
-_label_sliding_change(Evas_Object *obj)
+_label_slide_change(Evas_Object *obj)
 {
    char *plaintxt;
    int plainlen = 0;
@@ -68,7 +68,7 @@ _label_sliding_change(Evas_Object *obj)
    ELM_LABEL_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   // doesn't support multiline sliding effect
+   // doesn't support multiline slide effect
    if (sd->linewrap)
      {
         sd->slide = EINA_FALSE;
@@ -136,7 +136,7 @@ _elm_label_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (!int_ret) goto end;
 
    _label_format_set(wd->resize_obj, sd->format);
-   _label_sliding_change(obj);
+   _label_slide_change(obj);
 
 end:
    evas_event_thaw(evas_object_evas_get(obj));
@@ -576,7 +576,7 @@ _slide_set(Eo *obj, void *_pd, va_list *list)
    if (sd->slide == slide) return;
    sd->slide = slide;
 
-   _label_sliding_change(obj);
+   _label_slide_change(obj);
    elm_layout_sizing_eval(obj);
 }
 
@@ -697,8 +697,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_GET, "Get wrap width of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_SET, "Set the ellipsis behavior of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET, "Get the ellipsis behavior of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SET, "Set sliding effect of label widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GET, "Get whether sliding effect is shown or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SET, "Set slide effect of label widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GET, "Get whether slide effect is shown or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration (speed) of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration(speed) of the label."),
      EO_OP_DESCRIPTION_SENTINEL
