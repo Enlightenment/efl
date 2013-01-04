@@ -729,7 +729,7 @@ _on_text_unfocused(void *data __UNUSED__,
 
 static void
 _anchor_clicked(void *data,
-                Evas_Object *obj,
+                Evas_Object *obj __UNUSED__,
                 void *event_info)
 {
    Elm_Entry_Anchor_Info *info = event_info;
