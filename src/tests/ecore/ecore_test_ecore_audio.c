@@ -3,6 +3,7 @@
 #endif
 
 #include <Ecore_Audio.h>
+#include <Ecore_File.h>
 
 #include "ecore_suite.h"
 
