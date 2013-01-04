@@ -2490,8 +2490,8 @@ st_collections_group_name(void)
        }
 
 double_named_group:
-   ERR("Invalid group, only a single name statement is valid for group, use "
-       "alias instead.");
+   ERR("Invalid group '%s', only a single name statement is valid for group,"
+       "use alias instead.", current_de->entry);
    exit(-1);
 }
 
