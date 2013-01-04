@@ -51,26 +51,26 @@ EXTRA_PROGRAMS =
 # NOTE: neither ephysics_test or ephysics_logo won't be built as they needs Elementary
 # TODO: convert these to bare ecore_evas, at least a reduced set to have compile-able examples
 
-ephysics_test_SOURCES = \
-ephysics_test.h \
-test_bouncing_ball.c \
-test_bouncing_text.c \
-test.c \
-test_camera.c \
-test_camera_track.c \
-test_colliding_balls.c \
-test_collision_detection.c \
-test_collision_filter.c \
-test_constraint.c \
-test_delete.c \
-test_forces.c \
-test_growing_balls.c \
-test_no_gravity.c \
-test_rotating_forever.c \
-test_shapes.c \
-test_sleeping_threshold.c \
-test_slider.c \
-test_velocity.c
+# ephysics_test_SOURCES = \
+# ephysics_test.h \
+# test_bouncing_ball.c \
+# test_bouncing_text.c \
+# test.c \
+# test_camera.c \
+# test_camera_track.c \
+# test_colliding_balls.c \
+# test_collision_detection.c \
+# test_collision_filter.c \
+# test_constraint.c \
+# test_delete.c \
+# test_forces.c \
+# test_growing_balls.c \
+# test_no_gravity.c \
+# test_rotating_forever.c \
+# test_shapes.c \
+# test_sleeping_threshold.c \
+# test_slider.c \
+# test_velocity.c
 
 examples: $(EXTRA_PROGRAMS)
 
