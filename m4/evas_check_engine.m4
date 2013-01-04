@@ -576,7 +576,7 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-if test "x${gl_flavor_gles}" = "xyes" ; then
+if test "x${with_opengl}" = "xes" ; then
     gl_library="glesv2"
 else
     gl_library="gl"
