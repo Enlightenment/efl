@@ -53,8 +53,8 @@ enum
    ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_GET,
    ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_SET,
    ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET,
-   ELM_OBJ_LABEL_SUB_ID_SLIDE_SET,
-   ELM_OBJ_LABEL_SUB_ID_SLIDE_GET,
+   ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET,
+   ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET,
    ELM_OBJ_LABEL_SUB_ID_LAST
@@ -136,28 +136,28 @@ enum
 #define elm_obj_label_ellipsis_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
- * @def elm_obj_label_slide_set
+ * @def elm_obj_label_slide_mode_set
  * @since 1.8
  *
- * @brief Set slide effect of label widget.
+ * @brief Set slide effect mode of label widget.
  *
- * @param[in] slide
+ * @param[in] mode
  *
- * @see elm_label_slide_set
+ * @see elm_label_slide_mode_set
  */
-#define elm_obj_label_slide_set(slide) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SET), EO_TYPECHECK(Eina_Bool, slide)
+#define elm_obj_label_slide_mode_set(mode) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET), EO_TYPECHECK(Elm_Label_Slide_Mode, mode)
 
 /**
- * @def elm_obj_label_slide_get
+ * @def elm_obj_label_slide_mode_get
  * @since 1.8
  *
- * @brief Get whether slide effect is shown or not.
+ * @brief Get current slide effect mode.
  *
  * @param[out] ret
  *
- * @see elm_label_slide_get
+ * @see elm_label_slide_mode_get
  */
-#define elm_obj_label_slide_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_obj_label_slide_mode_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET), EO_TYPECHECK(Elm_Label_Slide_Mode *, ret)
 
 /**
  * @def elm_obj_label_slide_duration_set
@@ -182,6 +182,14 @@ enum
  * @see elm_label_slide_duration_get
  */
 #define elm_obj_label_slide_duration_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), EO_TYPECHECK(double *, ret)
+
+typedef enum
+{
+   ELM_LABEL_SLIDE_MODE_NONE = 0, /**< no slide effect */
+   ELM_LABEL_SLIDE_MODE_AUTO, /**< slide only if the label area is bigger than the text width length */
+   ELM_LABEL_SLIDE_MODE_ALWAYS /**< slide always */
+} Elm_Label_Slide_Mode;
+
 /**
  * @brief Add a new label to the parent
  *
@@ -275,36 +283,6 @@ EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_B
 EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
 
 /**
- * @brief Set slide effect of label widget.
- *
- * @param obj The label object
- * @param slide If true, slide effect will be shown
- *
- * If set to true, the text of the label will slide/scroll through the length of
- * label.
- *
- * @warning This only works with the themes "slide_short", "slide_long" and
- * "slide_bounce".
- * @warning This doesn't work if the line wrap(elm_label_line_wrap_set()) or
- * ellipsis(elm_label_ellipsis_set()) is set.
- *
- * @ingroup Label
- */
-EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
-
-/**
- * @brief Get whether slide effect is shown or not.
- *
- * @param obj The label object
- * @return If true, slide effect is shown.
- *
- * @see elm_label_slide_set()
- *
- * @ingroup Label
- */
-EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
-
-/**
  * @brief Set the slide duration (speed) of the label
  *
  * @param obj The label object
@@ -326,6 +304,54 @@ EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, 
  * @ingroup Label
  */
 EAPI double                      elm_label_slide_duration_get(const Evas_Object *obj);
+
+/**
+ * @brief Slide only if the 
+ *
+ * @param obj The label object
+ * @param duration The duration in seconds in moving text from slide begin position
+ * to slide end position
+ *
+ * @ingroup Label
+ */
+EAPI void                        elm_label_slide_area_limit_set(Evas_Object *obj, Eina_Bool limit);
+
+/**
+ * @brief Set the slide mode of the label widget.
+ *
+ * @param obj The label object
+ * @param mode The slide mode
+ *
+ * elm_label_slide_mode_set() changes label slide mode.
+ * By default, slide mode is none. Possible values for @p mode are:
+ * @li ELM_LABEL_SLIDE_MODE_NONE - no slide effect
+ * @li ELM_LABEL_SLIDE_MODE_AUTO - slide only if the label area is bigger than
+ * the text width length
+ * @li ELM_LABEL_SLIDE_MODE_ALWAYS -slide always
+ *
+ * @warning ELM_LABEL_SLIDE_MODE_AUTO, ELM_LABEL_SLIDE_MODE_ALWAYS only work
+ * with the themes "slide_short", "slide_long" and "slide_bounce".
+ * @warning ELM_LABEL_SLIDE_MODE_AUTO, ELM_LABEL_SLIDE_MODE_ALWAYS don't work
+ * if the line wrap(elm_label_line_wrap_set()) or
+ * ellipsis(elm_label_ellipsis_set()) is set.
+ *
+ * @see elm_label_slide_mode_get().
+ *
+ * @ingroup Label
+ */
+EAPI void                        elm_label_slide_mode_set(Evas_Object *obj, Elm_Label_Slide_Mode mode);
+
+/**
+ * @brief Get the slide mode of the label widget.
+ *
+ * @param obj The label object
+ * @return The slide mode
+ *
+ * @see elm_label_slide_set()
+ *
+ * @ingroup Label
+ */
+EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj);
 
 /**
  * @}

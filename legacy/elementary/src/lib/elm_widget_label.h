@@ -18,9 +18,9 @@ struct _Elm_Label_Smart_Data
    Evas_Coord            lastw;
    Evas_Coord            wrap_w;
    Elm_Wrap_Type         linewrap;
+   Elm_Label_Slide_Mode  slide_mode;
 
    Eina_Bool             ellipsis : 1;
-   Eina_Bool             slide : 1;
    Eina_Bool             slide_ellipsis : 1;
 };
 

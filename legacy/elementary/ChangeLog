@@ -882,3 +882,7 @@
 2012-01-03  Prince Dubey Kumar <prince.dubey@samsung.com>
 
         * Fix gengrid region_show/bring_in and add test
+
+2012-01-04  ChunEon Park <hermet@hermet.pe.kr>
+
+        * Deprecate elm_label_slide_set()/get() and added elm_label_slide_mode_set()/get() instead.

@@ -453,3 +453,37 @@ EINA_DEPRECATED EAPI void                         elm_notify_orient_set(Evas_Obj
  * @deprecated Use elm_notify_align_get instead.
  */
 EINA_DEPRECATED EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
+
+/**
+ * @brief Set slide effect of label widget.
+ *
+ * @param obj The label object
+ * @param slide If true, slide effect will be shown
+ *
+ * If set to true, the text of the label will slide/scroll through the length of
+ * label.
+ *
+ * @warning This only works with the themes "slide_short", "slide_long" and
+ * "slide_bounce".
+ * @warning This doesn't work if the line wrap(elm_label_line_wrap_set()) or
+ * ellipsis(elm_label_ellipsis_set()) is set.
+ *
+ * @deprecated see elm_label_slide_mode_set() instead.
+ *
+ * @ingroup Label
+ */
+EINA_DEPRECATED EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
+
+/**
+ * @brief Get whether slide effect is shown or not.
+ *
+ * @param obj The label object
+ * @return If true, slide effect is shown.
+ *
+ * @see elm_label_slide_set()
+ *
+ * @deprecated see elm_label_slide_mode_get() instead.
+ *
+ * @ingroup Label
+ */
+EINA_DEPRECATED EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
