@@ -1,0 +1,38 @@
+Efreet 1.7.99
+
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+  
+******************************************************************************
+  
+Requirements:
+-------------
+
+Must:
+  libc
+  eina (at least 1.1.0)
+  ecore (at least 1.1.0)
+  ecore-file (at least 1.1.0)
+  eet (at least 1.5.0)
+
+An implementation of several specifications from freedesktop.org intended for
+use in Enlightenment DR17 (e17) and other applications using the Enlightenment
+Foundation Libraries (EFL). Currently, the following specifications are
+included:
+  * Base Directory
+  * Desktop Entry
+  * Icon Theme
+  * Menu
+  * Trash
+  * Mime
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(as root unless you are installing in your users directories):
+  make install
+      
