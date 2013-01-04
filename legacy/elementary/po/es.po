@@ -2,19 +2,19 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-#: src/lib/elm_config.c:2200
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-04 10:58+0900\n"
-"PO-Revision-Date: 2012-11-16 21:53+0100\n"
-"Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
+"PO-Revision-Date: 2013-01-04 14:42+0100\n"
+"Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: src/lib/elc_fileselector.c:773
 msgid "Up"
@@ -39,7 +39,7 @@ msgstr "Burbuja"
 
 #: src/lib/elm_button.c:56
 msgid "Clicked"
-msgstr "Clicado"
+msgstr "Clickado"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
 #: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
@@ -57,44 +57,39 @@ msgstr "%B %Y"
 
 #: src/lib/elm_calendar.c:144
 msgid "%B"
-msgstr ""
+msgstr "%B"
 
 #: src/lib/elm_calendar.c:153
 msgid "%Y"
-msgstr ""
+msgstr "%Y"
 
 #: src/lib/elm_calendar.c:260
 msgid "calendar item"
-msgstr "calendario"
+msgstr "elemento de calendario"
 
 #: src/lib/elm_calendar.c:286
-#, fuzzy
 msgid "calendar decrement month button"
-msgstr "Botón de disminución del calendario"
+msgstr "Botón de decremento del mes"
 
 #: src/lib/elm_calendar.c:291
-#, fuzzy
 msgid "calendar decrement year button"
-msgstr "Botón de disminución del calendario"
+msgstr "Botón de decremento del año"
 
 #: src/lib/elm_calendar.c:296
-#, fuzzy
 msgid "calendar increment month button"
-msgstr "Botón de aumento del calendario"
+msgstr "Botón de incremento del mes"
 
 #: src/lib/elm_calendar.c:301
-#, fuzzy
 msgid "calendar increment year button"
-msgstr "Botón de aumento del calendario"
+msgstr "Botón de incremento del año"
 
 #: src/lib/elm_calendar.c:306
 msgid "calendar month"
 msgstr "mes del calendario"
 
 #: src/lib/elm_calendar.c:311
-#, fuzzy
 msgid "calendar year"
-msgstr "calendario"
+msgstr "año del calendario"
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
@@ -119,7 +114,7 @@ msgstr "Botón de aumento del reloj para am,pm"
 
 #: src/lib/elm_clock.c:303
 msgid "clock decrement button for am,pm"
-msgstr "Botón de disminución del reloj para am,pm"
+msgstr "Botón de decremento del reloj para am,pm"
 
 #: src/lib/elm_clock.c:646
 msgid "State: Editable"
@@ -155,7 +150,7 @@ msgstr "Seleccionar"
 
 #: src/lib/elm_entry.c:1282
 msgid "Paste"
-msgstr "PEgar"
+msgstr "Pegar"
 
 #: src/lib/elm_entry.c:2938
 msgid "Entry"
@@ -211,15 +206,15 @@ msgstr "barra de desplazamiento"
 
 #: src/lib/elm_spinner.c:604
 msgid "spinner increment button"
-msgstr "botón de aumento"
+msgstr "botón de incremento del spinner"
 
 #: src/lib/elm_spinner.c:613
 msgid "spinner decrement button"
-msgstr "botón de disminución"
+msgstr "botón de decremento del spinner"
 
 #: src/lib/elm_spinner.c:621
 msgid "spinner"
-msgstr "botón de spinner"
+msgstr "spinner"
 
 #: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
 msgid "Selected"
