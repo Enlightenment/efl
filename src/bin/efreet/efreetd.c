@@ -18,7 +18,7 @@ quit(void)
 }
 
 int
-main(void)
+main(int argc, char *argv[])
 {
    if (!eina_init()) return 1;
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
@@ -28,6 +28,7 @@ main(void)
         goto ecore_error;
      }
    if (!ecore_init()) goto ecore_error;
+   ecore_app_args_set(argc, (const char **)argv);
    if (!ecore_file_init()) goto ecore_file_error;
 
    if (!dbus_init()) goto dbus_error;

@@ -21,6 +21,7 @@ EFREET_COMMON_CPPFLAGS = \
 -I$(top_builddir)/src/lib/edbus \
 -I$(top_srcdir)/src/lib/efreet \
 -I$(top_builddir)/src/lib/efreet \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)\" \
 -DLOCALE_DIR=\"@LOCALE_DIR@\" \

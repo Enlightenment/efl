@@ -23,6 +23,11 @@ ecoreimffilesdir = $(datadir)/ecore_imf
 ecoreimffiles_DATA = ecore_imf/checkme
 
 ########################################################################
+# Efreet
+efreetfilesdir = $(datadir)/efreet
+efreetfiles_DATA = efreet/checkme
+
+########################################################################
 # Eo
 eofilesdir = $(datadir)/eo
 eofiles_DATA = eo/eo_step.py

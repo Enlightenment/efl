@@ -22,6 +22,7 @@ static Ecore_Exe           *icon_cache_exe = NULL;
 static Ecore_Exe           *desktop_cache_exe = NULL;
 static Ecore_Timer         *icon_cache_timer = NULL;
 static Ecore_Timer         *desktop_cache_timer = NULL;
+static Eina_Prefix         *pfx = NULL;
 
 static Eina_Bool  desktop_exists = EINA_FALSE;
 
@@ -56,8 +57,9 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    /* TODO: Queue if already running */
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
-   // XXX: use eina_prefix, not hard-coded prefixes
-   eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", sizeof(file));
+
+   snprintf(file, sizeof(file), "%s/efreet/efreet_icon_cache_create",
+            eina_prefix_lib_get(pfx));
    if (icon_extra_dirs)
      {
         Eina_List *ll;
@@ -118,8 +120,9 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
    desktop_queue = EINA_FALSE;
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
-   // XXX: use eina_prefix, not hard-coded prefixes
-   eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", sizeof(file));
+
+   snprintf(file, sizeof(file), "%s/efreet/efreet/efreet_desktop_cache_create",
+            eina_prefix_lib_get(pfx));
    if (desktop_extra_dirs)
      {
         Eina_List *ll;
@@ -497,7 +500,17 @@ cache_desktop_exists(void)
 Eina_Bool
 cache_init(void)
 {
+   char **argv;
    char buf[PATH_MAX];
+
+   ecore_app_args_get(NULL, &argv);
+
+   pfx = eina_prefix_new(argv[0], cache_init,
+                         "EFREET", "efreet", "checkme",
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
 
    snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
    if (!ecore_file_mkpath(buf))
@@ -552,6 +565,9 @@ Eina_Bool
 cache_shutdown(void)
 {
    const char *data;
+
+   eina_prefix_free(pfx);
+   pfx = NULL;
 
    efreet_shutdown();
 
