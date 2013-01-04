@@ -1,3 +1,4 @@
+if HAVE_ECORE_WAYLAND
 
 ### Library
 
@@ -33,3 +34,4 @@ lib/eina/libeina.la \
 @ECORE_WAYLAND_LIBS@
 
 lib_ecore_wayland_libecore_wayland_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+endif

@@ -7,17 +7,13 @@ SUBDIRS = . benchmarks examples
 
 lib_LTLIBRARIES =
 bin_PROGRAMS =
+bin_SCRIPTS =
 noinst_PROGRAMS =
 check_PROGRAMS =
 EXTRA_DIST =
 
-if HAVE_WINDOWS
 include Makefile_Evil.am
-endif
-
-if HAVE_PS3
 include Makefile_Escape.am
-endif
 
 include Makefile_Eina.am
 include Makefile_Eo.am
@@ -28,45 +24,23 @@ include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am
 include Makefile_Ecore_Input.am
-if HAVE_ECORE_COCOA
 include Makefile_Ecore_Cocoa.am
-endif
-if HAVE_ECORE_FB
 include Makefile_Ecore_FB.am
-endif
-if HAVE_PS3
 include Makefile_Ecore_Psl1ght.am
-endif
-if HAVE_ECORE_SDL
 include Makefile_Ecore_SDL.am
-endif
-if HAVE_ECORE_WAYLAND
 include Makefile_Ecore_Wayland.am
-endif
-if HAVE_WIN32
 include Makefile_Ecore_Win32.am
-endif
-if HAVE_WINCE
 include Makefile_Ecore_WinCE.am
-endif
-if HAVE_ECORE_X
 include Makefile_Ecore_X.am
-endif
 include Makefile_Ecore_Imf.am
 include Makefile_Ecore_Evas.am
-if HAVE_ECORE_AUDIO
 include Makefile_Ecore_Audio.am
-endif
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_EDBus.am
 include Makefile_Efreet.am
-if HAVE_EEZE
 include Makefile_Eeze.am
-endif
-if HAVE_EPHYSICS
 include Makefile_EPhysics.am
-endif
 include Makefile_Edje.am
 
 .PHONY: benchmark examples
@@ -75,7 +49,7 @@ benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS)
 	@$(MAKE) $(AM_MAKEFLAGS) -C benchmarks benchmark
 
-examples:
+examples: $(lib_LTLIBRARIES) $(bin_PROGRAMS)
 	@make
 	@$(MAKE) $(AM_MAKEFLAGS) -C examples examples
 

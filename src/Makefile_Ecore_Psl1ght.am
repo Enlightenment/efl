@@ -1,3 +1,4 @@
+if HAVE_PS3
 
 ### Library
 
@@ -10,7 +11,9 @@ lib/ecore_psl1ght/Ecore_Psl1ght.h
 lib_ecore_psl1ght_libecore_psl1ght_la_SOURCES = \
 lib/ecore_psl1ght/ecore_psl1ght.c \
 lib/ecore_psl1ght/moveutil.c \
+lib/ecore_psl1ght/moveutil.h \
 lib/ecore_psl1ght/spursutil.c \
+lib/ecore_psl1ght/spursutil.h \
 lib/ecore_psl1ght/Ecore_Psl1ght_Keys.h \
 lib/ecore_psl1ght/ecore_psl1ght_private.h
 
@@ -32,3 +35,9 @@ lib/eo/libeo.la \
 lib/eina/libeina.la
 
 lib_ecore_psl1ght_libecore_psl1ght_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+endif
+
+# TODO: what are they used for?
+EXTRA_DIST += \
+lib/ecore_psl1ght/gemutil.c \
+lib/ecore_psl1ght/gemutil.h

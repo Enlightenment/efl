@@ -33,8 +33,19 @@ doc:
 endif
 
 EXTRA_DIST = \
-$(srcdir)/Doxyfile.in \
 $(wildcard $(srcdir)/img/*.*) \
-$(srcdir)/e.css \
-$(srcdir)/head.html \
-$(srcdir)/foot.html
+Doxyfile.in \
+e.css \
+head.html \
+foot.html \
+ecore_examples.dox \
+edbus_examples.dox \
+edje_examples.dox \
+eet_examples.dox \
+eina_examples.dox \
+eio_examples.dox \
+eo_tutorial.dox \
+ephysics_examples.dox \
+evas_examples.dox \
+main.dox \
+pkgconfig.dox

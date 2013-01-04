@@ -228,7 +228,7 @@ lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Script
 
-bin_SCRIPTS = scripts/eina/eina-bench-cmp
+bin_SCRIPTS += scripts/eina/eina-bench-cmp
 
 ### Unit tests
 
@@ -325,7 +325,7 @@ tests_eina_module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 EXTRA_DIST += \
-lib/eina/eina_config.h.in \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
+tests/eina/sample.gpx \
 $(bin_SCRIPTS)

@@ -231,7 +231,11 @@ $(CWARNFLAGS) \
 EXTRA_DIST += \
 bin/edje/edje_convert.h \
 bin/edje/edje_convert.c \
-bin/edje/edje_data_convert.c
+bin/edje/edje_data_convert.c \
+bin/edje/edje_convert_main.c \
+lib/edje/edje_convert.c
+
+bin_SCRIPTS += bin/edje/edje_recc
 
 ### Unit tests
 

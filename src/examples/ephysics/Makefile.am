@@ -47,9 +47,11 @@ test_slider.c \
 test_velocity.c
 
 EXTRA_PROGRAMS =
-
 # NOTE: neither ephysics_test or ephysics_logo won't be built as they needs Elementary
 # TODO: convert these to bare ecore_evas, at least a reduced set to have compile-able examples
+
+# TODO: when EXTRA_PROGRAMS is populated, remove SRCS from here
+EXTRA_DIST = $(SRCS)
 
 # ephysics_test_SOURCES = \
 # ephysics_test.h \

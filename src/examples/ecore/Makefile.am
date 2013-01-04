@@ -23,8 +23,10 @@ AM_CPPFLAGS = \
 EXTRA_PROGRAMS = \
 ecore_animator_example \
 ecore_client_bench \
+ecore_con_client_example \
 ecore_con_client_simple_example \
 ecore_con_lookup_example \
+ecore_con_server_example \
 ecore_con_server_http_example \
 ecore_con_server_simple_example \
 ecore_con_url_cookies_example \
@@ -42,8 +44,12 @@ ecore_event_example_02 \
 ecore_exe_example \
 ecore_exe_example_child \
 ecore_fd_handler_example \
+ecore_fd_handler_gnutls_example \
+ecore_file_download_example \
 ecore_idler_example \
+ecore_imf_example \
 ecore_job_example \
+ecore_pipe_gstreamer_example \
 ecore_pipe_simple_example \
 ecore_poller_example \
 ecore_server_bench \
@@ -92,11 +98,17 @@ ecore_animator_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 ecore_client_bench_SOURCES = ecore_client_bench.c
 ecore_client_bench_LDADD = $(ECORE_CON_COMMON_LDADD)
 
+ecore_con_client_example_SOURCES = ecore_con_client_example.c
+ecore_con_client_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 ecore_con_client_simple_example_SOURCES = ecore_con_client_simple_example.c
 ecore_con_client_simple_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_con_lookup_example_SOURCES = ecore_con_lookup_example.c
 ecore_con_lookup_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+ecore_con_server_example_SOURCES = ecore_con_server_example.c
+ecore_con_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 ecore_con_server_http_example_SOURCES = ecore_con_server_http_example.c
 ecore_con_server_http_example_LDADD = $(ECORE_CON_COMMON_LDADD)
@@ -149,11 +161,23 @@ ecore_exe_example_child_LDADD = $(ECORE_COMMON_LDADD)
 ecore_fd_handler_example_SOURCES = ecore_fd_handler_example.c
 ecore_fd_handler_example_LDADD = $(ECORE_COMMON_LDADD)
 
+ecore_fd_handler_gnutls_example_SOURCES = ecore_fd_handler_gnutls_example.c
+ecore_fd_handler_gnutls_example_LDADD = $(ECORE_COMMON_LDADD)
+
+ecore_file_download_example_SOURCES = ecore_file_download_example.c
+ecore_file_download_example_LDADD = $(ECORE_COMMON_LDADD)
+
 ecore_idler_example_SOURCES = ecore_idler_example.c
 ecore_idler_example_LDADD = $(ECORE_COMMON_LDADD)
 
+ecore_imf_example_SOURCES = ecore_imf_example.c
+ecore_imf_example_LDADD = $(ECORE_COMMON_LDADD)
+
 ecore_job_example_SOURCES = ecore_job_example.c
 ecore_job_example_LDADD = $(ECORE_COMMON_LDADD)
+
+ecore_pipe_gstreamer_example_SOURCES = ecore_pipe_gstreamer_example.c
+ecore_pipe_gstreamer_example_LDADD = $(ECORE_COMMON_LDADD)
 
 ecore_pipe_simple_example_SOURCES = ecore_pipe_simple_example.c
 ecore_pipe_simple_example_LDADD = $(ECORE_COMMON_LDADD)
@@ -174,44 +198,48 @@ ecore_timer_example_SOURCES = ecore_timer_example.c
 ecore_timer_example_LDADD = $(ECORE_COMMON_LDADD)
 
 SRCS = \
-ecore_animator_example \
-ecore_client_bench \
-ecore_con_client_simple_example \
-ecore_con_lookup_example \
-ecore_con_server_http_example \
-ecore_con_server_simple_example \
-ecore_con_url_cookies_example \
-ecore_con_url_download_example \
-ecore_con_url_headers_example \
-ecore_evas_basics_example \
-ecore_evas_buffer_example_01 \
-ecore_evas_buffer_example_02 \
-ecore_evas_callbacks \
-ecore_evas_ews_example \
-ecore_evas_object_example \
-ecore_evas_window_sizes_example \
-ecore_event_example_01 \
-ecore_event_example_02 \
-ecore_exe_example \
-ecore_exe_example_child \
-ecore_fd_handler_example \
-ecore_idler_example \
-ecore_job_example \
-ecore_pipe_simple_example \
-ecore_poller_example \
-ecore_server_bench \
-ecore_thread_example \
-ecore_time_functions_example \
-ecore_timer_example
+ecore_animator_example.c \
+ecore_audio_custom.c \
+ecore_audio_playback.c \
+ecore_audio_to_ogg.c \
+ecore_client_bench.c \
+ecore_con_client_example.c \
+ecore_con_client_simple_example.c \
+ecore_con_lookup_example.c \
+ecore_con_server_example.c \
+ecore_con_server_http_example.c \
+ecore_con_server_simple_example.c \
+ecore_con_url_cookies_example.c \
+ecore_con_url_download_example.c \
+ecore_con_url_headers_example.c \
+ecore_evas_basics_example.c \
+ecore_evas_buffer_example_01.c \
+ecore_evas_buffer_example_02.c \
+ecore_evas_callbacks.c \
+ecore_evas_ews_example.c \
+ecore_evas_object_example.c \
+ecore_evas_window_sizes_example.c \
+ecore_event_example_01.c \
+ecore_event_example_02.c \
+ecore_exe_example.c \
+ecore_exe_example_child.c \
+ecore_fd_handler_example.c \
+ecore_fd_handler_gnutls_example.c \
+ecore_file_download_example.c \
+ecore_idler_example.c \
+ecore_imf_example.c \
+ecore_job_example.c \
+ecore_pipe_gstreamer_example.c \
+ecore_pipe_simple_example.c \
+ecore_poller_example.c \
+ecore_server_bench.c \
+ecore_thread_example.c \
+ecore_time_functions_example.c \
+ecore_timer_example.c
 
-if HAVE_ECORE_AUDIO
-SRCS += \
-ecore_audio_custom \
-ecore_audio_playback \
-ecore_audio_to_ogg
-endif
+DATA_FILES = red.png
 
-EXTRA_DIST = red.png
+EXTRA_DIST = $(DATA_FILES)
 
 examples: $(EXTRA_PROGRAMS)
 
@@ -220,11 +248,9 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/ecore/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/ecore/examples
-	$(install_sh_DATA) -c  red.png $(datadir)/ecore/examples
+	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/ecore/examples
 
 uninstall-local:
-	rm -f $(datadir)/ecore/examples/red.png
-	for f in $(SRCS) ; do \
+	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/ecore/examples/$$f ; \
 	done

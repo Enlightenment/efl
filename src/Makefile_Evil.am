@@ -1,4 +1,5 @@
 
+if HAVE_WINDOWS
 ### Library
 
 lib_LTLIBRARIES += lib/evil/libevil.la lib/evil/libdl.la
@@ -119,8 +120,6 @@ lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@
 lib_evil_libdl_la_LIBADD = lib/evil/libevil.la @EVIL_DLFCN_LIBS@
 lib_evil_libdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-EXTRA_DIST += lib/evil/gdtoa/README lib/evil/gdtoa/README.mingw
-
 ### Binary
 
 bin_PROGRAMS += bin/evil/evil_suite bin/evil/test_evil
@@ -152,7 +151,7 @@ bin/evil/evil_test_util.h
 if HAVE_WINCE
 bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
 #else
-#suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S
+#suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
 endif
 
 bin_evil_evil_suite_CPPFLAGS = \
@@ -171,3 +170,9 @@ bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 bin_evil_test_evil_LDADD = \
 lib/evil/libevil.la \
 @EVIL_LDFLAGS@
+
+endif
+EXTRA_DIST += \
+lib/evil/gdtoa/README \
+lib/evil/gdtoa/README.mingw \
+bin/evil/memcpy_glibc_i686.S

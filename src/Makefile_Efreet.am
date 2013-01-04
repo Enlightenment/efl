@@ -231,3 +231,18 @@ tests_efreet_efreet_suite_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@
 tests_efreet_efreet_suite_LDADD = $(EFREET_COMMON_USER_LDADD) @CHECK_LIBS@
 
 endif
+
+EXTRA_DIST += \
+tests/efreet/data/entry \
+tests/efreet/data/entry.png \
+tests/efreet/data/long.ini \
+tests/efreet/data/preferences.menu \
+tests/efreet/data/sub/Makefile.am \
+tests/efreet/data/sub/test.desktop \
+tests/efreet/data/test.desktop \
+tests/efreet/data/test_garbage \
+tests/efreet/data/test.ini \
+tests/efreet/data/test.menu \
+tests/efreet/data/test_menu_bad_comment.menu \
+tests/efreet/data/test_menu_slash_bad.menu \
+tests/efreet/data/test_type.desktop

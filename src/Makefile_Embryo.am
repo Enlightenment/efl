@@ -39,6 +39,7 @@ bin_PROGRAMS += bin/embryo/embryo_cc
 
 bin_embryo_embryo_cc_SOURCES = \
 bin/embryo/embryo_cc_amx.h \
+bin/embryo/embryo_cc_osdefs.h \
 bin/embryo/embryo_cc_sc.h \
 bin/embryo/embryo_cc_sc1.c \
 bin/embryo/embryo_cc_sc2.c \

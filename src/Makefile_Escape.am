@@ -1,3 +1,4 @@
+if HAVE_PS3
 
 ### Library
 
@@ -22,3 +23,5 @@ lib_escape_libescape_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/escape
 lib_escape_libescape_la_LIBADD = @ESCAPE_LIBS@
 lib_escape_libescape_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+endif

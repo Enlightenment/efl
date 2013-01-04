@@ -6,38 +6,56 @@ EXTRA_DIST =
 # Embryo
 embryofilesdir = $(datadir)/embryo/include
 embryofiles_DATA = embryo/default.inc
+EXTRA_DIST += $(embryofiles_DATA)
 
 ########################################################################
 # Evas
 evasfilesdir = $(datadir)/evas
 evasfiles_DATA = evas/checkme
+EXTRA_DIST += $(evasfiles_DATA)
 
 ########################################################################
 # Eeze
 eezefilesdir = $(datadir)/eeze
 eezefiles_DATA = eeze/checkme
+EXTRA_DIST += $(eezefiles_DATA)
 
 ########################################################################
 # Ecore_Imf
 ecoreimffilesdir = $(datadir)/ecore_imf
 ecoreimffiles_DATA = ecore_imf/checkme
+EXTRA_DIST += $(ecoreimffiles_DATA)
 
 ########################################################################
 # Efreet
 efreetfilesdir = $(datadir)/efreet
 efreetfiles_DATA = efreet/checkme
+EXTRA_DIST += $(efreetfiles_DATA)
 
 ########################################################################
 # Eo
 eofilesdir = $(datadir)/eo
 eofiles_DATA = eo/eo_step.py
+EXTRA_DIST += $(eofiles_DATA)
 
 ########################################################################
 # Edje
 edjefilesdir = $(datadir)/edje/include
 edjefiles_DATA = edje/include/edje.inc
+EXTRA_DIST += $(edjefiles_DATA)
 
 mimedir = $(datadir)/mime/packages
 mime_DATA = edje/edje.xml
+EXTRA_DIST += $(mime_DATA)
 
-EXTRA_DIST += edje/edc.vim edje/edje-mode.el
+EXTRA_DIST += \
+edje/edje-mode.el \
+edje/edc.vim \
+edje/vim/autoload/edccomplete.vim \
+edje/vim/ftplugin/edc.vim \
+edje/vim/indent/edc.vim \
+edje/vim/ftdetect/edc.vim \
+edje/vim/plugin-info.txt \
+edje/vim/snippets/edc.snippets \
+edje/vim/syntax/edc.vim \
+edje/vim/syntax/embryo.vim

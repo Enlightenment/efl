@@ -54,19 +54,25 @@ table.edc \
 text.edc \
 toggle_using_filter.edc
 
-if ENABLE_MULTISENSE
-EDCS += multisense.edc
-endif
+DIST_EDCS = $(EDCS)
 
-if HAVE_EPHYSICS
-EDCS += \
+MULTISENSE_EDCS = multisense.edc
+if ENABLE_MULTISENSE
+EDCS += $(MULTISENSE_EDCS)
+endif
+DIST_EDCS += $(MULTISENSE_EDCS)
+
+PHYSICS_EDCS = \
 physics_3d.edc \
 physics_actions.edc \
 physics_backcull.edc \
 physics_basic.edc \
 physics_complex.edc \
 physics_soft_bodies.edc
+if HAVE_EPHYSICS
+EDCS += $(PHYSICS_EDCS)
 endif
+DIST_EDCS += $(PHYSICS_EDCS)
 
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $< $(builddir)/$(@F)
@@ -103,7 +109,7 @@ signals2.c \
 edje-swallow2.c \
 edje-multisense.c
 
-EXTRA_DIST = $(EDCS) $(DATA_FILES)
+EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
 AM_CPPFLAGS = \
 -I. \
@@ -146,6 +152,7 @@ codegen_example_generated.c \
 codegen_example_generated.h
 
 EXTRA_PROGRAMS = \
+edje_example \
 edje-animations \
 edje-basic \
 edje-box \
@@ -194,9 +201,9 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/edje/examples
-	$(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/edje/examples
+	$(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
 
 uninstall-local:
-	for f in $(SRCS) $(EDCS) $(DATA_FILES); do \
+	for f in $(SRCS) $(DIST_EDCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/edje/examples/$$f ; \
 	done

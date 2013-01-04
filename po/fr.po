@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-01 10:30+0100\n"
+"POT-Creation-Date: 2013-01-04 16:21-0200\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -15,192 +15,192 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/ecore/ecore_getopt.c:104
+#: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
 msgstr "Version :"
 
-#: src/lib/ecore/ecore_getopt.c:113
+#: src/lib/ecore/ecore_getopt.c:96
 msgid "Usage:"
 msgstr "Usage :"
 
-#: src/lib/ecore/ecore_getopt.c:118
+#: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]\n"
 msgstr "%s [options]\n"
 
-#: src/lib/ecore/ecore_getopt.c:273
+#: src/lib/ecore/ecore_getopt.c:256
 msgid "Copyright:"
 msgstr "Copyright :"
 
-#: src/lib/ecore/ecore_getopt.c:285
+#: src/lib/ecore/ecore_getopt.c:268
 msgid "License:"
 msgstr "Licence :"
 
-#: src/lib/ecore/ecore_getopt.c:466
+#: src/lib/ecore/ecore_getopt.c:449
 msgid "Type: "
 msgstr "Type : "
 
-#: src/lib/ecore/ecore_getopt.c:542
+#: src/lib/ecore/ecore_getopt.c:525
 msgid "Default: "
 msgstr "Par défaut :"
 
-#: src/lib/ecore/ecore_getopt.c:569
+#: src/lib/ecore/ecore_getopt.c:552
 msgid "Choices: "
 msgstr "Choix :"
 
-#: src/lib/ecore/ecore_getopt.c:670
+#: src/lib/ecore/ecore_getopt.c:653
 msgid "Options:\n"
 msgstr "Options :\n"
 
-#: src/lib/ecore/ecore_getopt.c:804
+#: src/lib/ecore/ecore_getopt.c:787
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "ERREUR : option inconnue --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:806
+#: src/lib/ecore/ecore_getopt.c:789
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "ERREUR : option inconnue -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:869
+#: src/lib/ecore/ecore_getopt.c:852
 msgid "ERROR: "
 msgstr "ERREUR :"
 
-#: src/lib/ecore/ecore_getopt.c:952 src/lib/ecore/ecore_getopt.c:1089
-#: src/lib/ecore/ecore_getopt.c:1105 src/lib/ecore/ecore_getopt.c:1120
-#: src/lib/ecore/ecore_getopt.c:1137 src/lib/ecore/ecore_getopt.c:1184
-#: src/lib/ecore/ecore_getopt.c:1304 src/lib/ecore/ecore_getopt.c:1345
+#: src/lib/ecore/ecore_getopt.c:935 src/lib/ecore/ecore_getopt.c:1072
+#: src/lib/ecore/ecore_getopt.c:1088 src/lib/ecore/ecore_getopt.c:1103
+#: src/lib/ecore/ecore_getopt.c:1120 src/lib/ecore/ecore_getopt.c:1167
+#: src/lib/ecore/ecore_getopt.c:1287 src/lib/ecore/ecore_getopt.c:1328
 msgid "value has no pointer set.\n"
 msgstr "la valeur n'a aucun pointeur défini.\n"
 
-#: src/lib/ecore/ecore_getopt.c:984 src/lib/ecore/ecore_getopt.c:1204
+#: src/lib/ecore/ecore_getopt.c:967 src/lib/ecore/ecore_getopt.c:1187
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valeur booléenne inconnue %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1035 src/lib/ecore/ecore_getopt.c:1292
+#: src/lib/ecore/ecore_getopt.c:1018 src/lib/ecore/ecore_getopt.c:1275
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "format du nombre non valide %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1150
+#: src/lib/ecore/ecore_getopt.c:1133
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "choix non valide « %s ». Les valeurs valides sont : "
 
-#: src/lib/ecore/ecore_getopt.c:1178
+#: src/lib/ecore/ecore_getopt.c:1161
 msgid "missing parameter to append.\n"
 msgstr "paramètre manquant à ajouter.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1282
+#: src/lib/ecore/ecore_getopt.c:1265
 msgid "could not parse value.\n"
 msgstr "analyse de la valeur impossible.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1339
+#: src/lib/ecore/ecore_getopt.c:1322
 msgid "missing parameter.\n"
 msgstr "paramètre manquant.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1352
+#: src/lib/ecore/ecore_getopt.c:1335
 msgid "missing callback function!\n"
 msgstr "fonction de rappel manquante !\n"
 
-#: src/lib/ecore/ecore_getopt.c:1381
+#: src/lib/ecore/ecore_getopt.c:1364
 msgid "no version was defined.\n"
 msgstr "aucune version n'est définie.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1398
+#: src/lib/ecore/ecore_getopt.c:1381
 msgid "no copyright was defined.\n"
 msgstr "aucun copyright n'est défini.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1415
+#: src/lib/ecore/ecore_getopt.c:1398
 msgid "no license was defined.\n"
 msgstr "aucune licence n'est définie.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1505
+#: src/lib/ecore/ecore_getopt.c:1488
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "ERREUR : option inconnue --%s, non prise en compte.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1538
+#: src/lib/ecore/ecore_getopt.c:1521
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "ERREUR : l'option --%s requiert un argument !\n"
 
-#: src/lib/ecore/ecore_getopt.c:1580
+#: src/lib/ecore/ecore_getopt.c:1563
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "ERREUR : option inconnue -%c, non prise en compte.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1618
+#: src/lib/ecore/ecore_getopt.c:1601
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ERREUR : l'option -%c requiert un argument !\n"
 
-#: src/lib/ecore/ecore_getopt.c:1829
+#: src/lib/ecore/ecore_getopt.c:1812
 msgid "ERROR: no parser provided.\n"
 msgstr "ERREUR : aucun analyseur n'est fourni.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1834
+#: src/lib/ecore/ecore_getopt.c:1817
 msgid "ERROR: no values provided.\n"
 msgstr "ERREUR : aucune valeur n'est fournie.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1843
+#: src/lib/ecore/ecore_getopt.c:1826
 msgid "ERROR: no arguments provided.\n"
 msgstr "ERREUR : aucun argument n'est fourni.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1869
+#: src/lib/ecore/ecore_getopt.c:1852
 msgid "ERROR: invalid options found."
 msgstr "ERREUR : options non valides détectées."
 
-#: src/lib/ecore/ecore_getopt.c:1875
+#: src/lib/ecore/ecore_getopt.c:1858
 #, c-format
 msgid " See --%s.\n"
 msgstr " Voir --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1877
+#: src/lib/ecore/ecore_getopt.c:1860
 #, c-format
 msgid " See -%c.\n"
 msgstr " Voir -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1923
+#: src/lib/ecore/ecore_getopt.c:1906
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "ERREUR : valeur géométrique incorrecte « %s »\n"
 
-#: src/lib/ecore/ecore_getopt.c:1955
+#: src/lib/ecore/ecore_getopt.c:1938
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERREUR : valeur de taille incorrecte « %s »\n"
 
-#: src/lib/efreet/efreet_base.c:131
+#: src/lib/efreet/efreet_base.c:129
 msgid "Desktop"
 msgstr "Bureau"
 
-#: src/lib/efreet/efreet_base.c:139
+#: src/lib/efreet/efreet_base.c:137
 msgid "Downloads"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:148
+#: src/lib/efreet/efreet_base.c:146
 msgid "Templates"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:157
+#: src/lib/efreet/efreet_base.c:155
 msgid "Public"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:166
+#: src/lib/efreet/efreet_base.c:164
 msgid "Documents"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:174
+#: src/lib/efreet/efreet_base.c:172
 msgid "Music"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:182
+#: src/lib/efreet/efreet_base.c:180
 msgid "Pictures"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:190
+#: src/lib/efreet/efreet_base.c:188
 msgid "Videos"
 msgstr ""
 

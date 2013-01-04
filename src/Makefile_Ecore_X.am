@@ -1,3 +1,4 @@
+if HAVE_ECORE_X
 
 ### Library
 
@@ -141,5 +142,6 @@ noinst_PROGRAMS += utils/ecore/makekeys
 
 utils_ecore_makekeys_SOURCES = utils/ecore/makekeys.c
 
+endif
 EXTRA_DIST += utils/ecore/mkks.sh
 

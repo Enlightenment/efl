@@ -1,3 +1,4 @@
+if HAVE_EEZE
 
 ### Library
 
@@ -165,4 +166,5 @@ $(EEZE_COMMON_CPPFLAGS) \
 @CHECK_CFLAGS@
 tests_eeze_eeze_suite_LDADD = $(EEZE_COMMON_USER_LDADD) @CHECK_LIBS@
 
+endif
 endif
