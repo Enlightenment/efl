@@ -432,8 +432,6 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *
 static void
 evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
-
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */

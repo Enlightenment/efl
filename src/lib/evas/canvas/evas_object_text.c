@@ -2230,8 +2230,6 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 static void
 evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   Evas_Object_Text *o = eo_data_get(eo_obj, MY_CLASS);
-
    /* this moves the current data to the previous state parts of the object
     in whatever way is safest for the object. also if we don't need object
     data anymore we can free it if the object deems this is a good idea */
@@ -2239,7 +2237,6 @@ evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
-   /* o->prev = o->cur; */
 }
 
 static unsigned int 
