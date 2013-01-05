@@ -3849,7 +3849,7 @@ _ecore_evas_x_interface_gl_x11_new(void)
    iface->window_get = _ecore_evas_gl_x11_window_get;
    iface->resize_set = _ecore_evas_gl_x11_direct_resize_set;
    iface->resize_get = _ecore_evas_gl_x11_direct_resize_get;
-   iface->extra_event_window_add = _ecore_evas_software_x11_extra_event_window_add;
+   iface->extra_event_window_add = _ecore_evas_gl_x11_extra_event_window_add;
    iface->pre_post_swap_callback_set = _ecore_evas_gl_x11_pre_post_swap_callback_set;
 
    return iface;

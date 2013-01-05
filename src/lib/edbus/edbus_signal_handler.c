@@ -144,7 +144,7 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
 static void _on_handler_of_conn_free(void *data, const void *dead_pointer);
 
 static void
-_on_connection_free(void *data, const void *dead_pointer)
+_on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
 {
    EDBus_Signal_Handler *sh = data;
    edbus_signal_handler_free_cb_del(sh, _on_handler_of_conn_free, sh->conn);
