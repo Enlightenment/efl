@@ -9,6 +9,15 @@ EAPI Eo_Op ELM_OBJ_LABEL_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_label"
 
+static const char SIG_SLIDE_END[] = "slide,end";
+static const char SIG_LANGUAGE_CHANGED[] = "language,changed";
+
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   {SIG_LANGUAGE_CHANGED, ""},
+   {SIG_SLIDE_END, ""},
+   {NULL, NULL}
+};
+
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
    {"default", "elm.text"},
@@ -337,7 +346,7 @@ static void
 _elm_label_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, "language,changed", NULL);
+   evas_object_smart_callback_call(obj, SIG_LANGUAGE_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -351,6 +360,13 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
    if (txt) return strdup(txt);
 
    return NULL;
+}
+
+static void
+_on_slide_end(void *data, Evas_Object *obj __UNUSED__,
+              const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SLIDE_END, NULL);
 }
 
 static void
@@ -372,6 +388,9 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,
      _on_label_resize, obj);
 
+   edje_object_signal_callback_add(wd->resize_obj, "elm,state,slide,end", "",
+                                   _on_slide_end, obj);
+
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
@@ -382,7 +401,7 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Label"));
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
-   
+
    elm_layout_sizing_eval(obj);
 }
 
@@ -400,7 +419,8 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME));
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
    Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))

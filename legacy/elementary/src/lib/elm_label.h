@@ -34,6 +34,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "language,changed": The program's language changed.
+ * @li @c "slide,end": The slide is end.
  *
  * See @ref tutorial_label for a demonstration of how to use a label widget.
  * @{
