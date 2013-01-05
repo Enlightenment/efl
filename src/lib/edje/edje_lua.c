@@ -5018,7 +5018,7 @@ _edje_lua_open(lua_State *L)
 static lua_State *Ledje = NULL;
 
 lua_State *
-_edje_lua_state_get ()
+_edje_lua_state_get(void)
 {
    return Ledje;
 }
@@ -5054,7 +5054,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 }
 
 void
-_edje_lua_init()
+_edje_lua_init(void)
 {
    if (Ledje != NULL) return;
    /*
@@ -5140,7 +5140,7 @@ _edje_lua_init()
 }
 
 void
-_edje_lua_shutdown()
+_edje_lua_shutdown(void)
 {
    if (Ledje == NULL) return;
    lua_close(Ledje);

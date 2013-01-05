@@ -419,7 +419,7 @@ edje_external_type_get(const char *type_name)
 }
 
 void
-_edje_external_init()
+_edje_external_init(void)
 {
    if (!type_registry)
      type_registry = eina_hash_string_superfast_new(NULL);
@@ -428,7 +428,7 @@ _edje_external_init()
 }
 
 void
-_edje_external_shutdown()
+_edje_external_shutdown(void)
 {
    if (--init_count == 0)
      {

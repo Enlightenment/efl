@@ -2157,7 +2157,7 @@ void _edje_script_only_message(Edje *ed, Edje_Message *em);
 extern jmp_buf _edje_lua_panic_jmp;
 #define _edje_lua_panic_here() setjmp(_edje_lua_panic_jmp)
 
-lua_State *_edje_lua_state_get();
+lua_State *_edje_lua_state_get(void);
 lua_State *_edje_lua_new_thread(Edje *ed, lua_State *L);
 void _edje_lua_free_thread(Edje *ed, lua_State *L);
 void _edje_lua_new_reg(lua_State *L, int index, void *ptr);
@@ -2165,8 +2165,8 @@ void _edje_lua_get_reg(lua_State *L, void *ptr);
 void _edje_lua_free_reg(lua_State *L, void *ptr);
 void _edje_lua_script_fn_new(Edje *ed);
 void _edje_lua_group_fn_new(Edje *ed);
-void _edje_lua_init();
-void _edje_lua_shutdown();
+void _edje_lua_init(void);
+void _edje_lua_shutdown(void);
 
 void __edje_lua_error(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua_error(L, err_code)					\
@@ -2242,8 +2242,8 @@ Edje_Input_Panel_Return_Key_Type _edje_entry_input_panel_return_key_type_get(Edj
 void _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled);
 Eina_Bool _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp);
 
-void _edje_external_init();
-void _edje_external_shutdown();
+void _edje_external_init(void);
+void _edje_external_shutdown(void);
 Evas_Object *_edje_external_type_add(const char *type_name, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name);
 void _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 Eina_Bool _edje_external_param_set(Evas_Object *obj, Edje_Real_Part *rp, const Edje_External_Param *param) EINA_ARG_NONNULL(2);
@@ -2257,8 +2257,8 @@ void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
 void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 
 Eina_Module *_edje_module_handle_load(const char *module);
-void _edje_module_init();
-void _edje_module_shutdown();
+void _edje_module_init(void);
+void _edje_module_shutdown(void);
 
 static inline Eina_Bool
 edje_program_is_strncmp(const char *str)
