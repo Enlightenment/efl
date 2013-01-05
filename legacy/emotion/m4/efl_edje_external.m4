@@ -42,7 +42,7 @@ if test "x${_efl_want_edje_external}" = "xyes" && test "x${_efl_enable_edje_exte
 fi
 
 if test "x${_efl_enable_edje_external}" = "xyes" ; then
-   EDJE_VERSION=`${PKG_CONFIG} edje --modversion | awk -F . '{printf("%s.0.0", $[]1);}'`
+   EDJE_VERSION=`${PKG_CONFIG} edje --modversion | awk -F . '{printf("%s.%s.%s", $[]1, $[]2, $[]3);}'`
    MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
    AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 fi
