@@ -140,10 +140,12 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
 @EDJE_CFLAGS@
 
+CODEGEN_GENERATED = \
+codegen_example_generated.c \
+codegen_example_generated.h
+
 codegen_example_generated.c codegen_example_generated.h: codegen.edj
 	$(AM_V_GEN)$(EDJE_CODEGEN) $(EDJE_CODEGEN_FLAGS) codegen.edj example_group $(builddir)/codegen_example_generated.c $(builddir)/codegen_example_generated.h
-
-BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
 
 edje_codegen_example_SOURCES = \
 edje-codegen-example.c
@@ -197,7 +199,7 @@ endif
 examples: $(EXTRA_PROGRAMS) $(EDJS)
 
 clean-local:
-	rm -f $(EXTRA_PROGRAMS) $(EDJS)
+	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
 
 install-examples:
 	mkdir -p $(datadir)/edje/examples
