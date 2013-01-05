@@ -28,7 +28,7 @@
 #include <Eina.h>
 
 #ifdef USE_FRIBIDI
-# include <fribidi/fribidi.h>
+# include <fribidi.h>
 #endif
 
 /* abstract fribidi - we statically define sizes here because otherwise we would

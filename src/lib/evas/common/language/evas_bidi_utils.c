@@ -11,7 +11,7 @@
 #include "evas_font_private.h"
 
 #ifdef BIDI_SUPPORT
-#include <fribidi/fribidi.h>
+#include <fribidi.h>
 /**
  * @internal
  * @addtogroup Evas_Utils
