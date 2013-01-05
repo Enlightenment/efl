@@ -62,3 +62,7 @@
 2013-01-02  Leandro Dorileo (dorileo)
 
 	* Add subtitle file API.
+
+2013-01-05   Jérémy Zurcher
+
+        * fix type in emotion_suspend_get()
