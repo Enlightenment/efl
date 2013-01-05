@@ -609,7 +609,6 @@ _slide_mode_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
    Elm_Label_Slide_Mode mode = va_arg(*list, Elm_Label_Slide_Mode);
    Elm_Label_Smart_Data *sd = _pd;
-   if (sd->slide_mode == mode) return;
    sd->slide_mode = mode;
 }
 
