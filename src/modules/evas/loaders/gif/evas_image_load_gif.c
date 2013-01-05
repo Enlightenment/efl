@@ -687,7 +687,7 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
 {
    Evas_GIF_Info  egi;
    GifRecordType  rec;
-   GifFileType   *gif;
+   GifFileType   *gif = NULL;
    Eina_File     *f;
    int            w;
    int            h;
@@ -839,7 +839,7 @@ evas_image_load_specific_frame(Image_Entry *ie, const char *file, int frame_inde
 {
    Evas_GIF_Info      egi;
    Eina_File         *f;
-   GifFileType       *gif;
+   GifFileType       *gif = NULL;
    Image_Entry_Frame *frame = NULL;
    Gif_Frame         *gif_frame = NULL;
    Eina_Bool          r = EINA_FALSE;
