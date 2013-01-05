@@ -643,7 +643,6 @@ elm_label_slide_set(Evas_Object *obj,
 EINA_DEPRECATED EAPI Eina_Bool
 elm_label_slide_get(const Evas_Object *obj)
 {
-   ELM_LABEL_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
    if (elm_label_slide_mode_get(obj) == ELM_LABEL_SLIDE_MODE_ALWAYS)
      ret = EINA_TRUE;
