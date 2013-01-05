@@ -69,7 +69,9 @@ _label_slide_change(Evas_Object *obj)
    ELM_LABEL_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   // doesn't support multiline slide effect
+   edje_object_signal_emit(wd->resize_obj, "elm,state,slide,stop", "elm");
+
+   //doesn't support multiline slide effect
    if (sd->linewrap)
      {
         sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
@@ -77,21 +79,21 @@ _label_slide_change(Evas_Object *obj)
         return;
      }
 
+   //stop if the text is none.
    plaintxt = _elm_util_mkup_to_text
-       (edje_object_part_text_get
-         (wd->resize_obj, "elm.text"));
-   if (plaintxt != NULL)
+      (edje_object_part_text_get(wd->resize_obj, "elm.text"));
+   if (plaintxt)
      {
         plainlen = strlen(plaintxt);
         free(plaintxt);
      }
-   // too short to slide label
    if (plainlen < 1)
      {
         sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
         return;
      }
 
+   //has slide effect.
    if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE)
      {
         //slide only if the slide area is smaller than text width size.
@@ -126,14 +128,12 @@ _label_slide_change(Evas_Object *obj)
         msg->val[0] = sd->slide_duration;
 
         edje_object_message_send
-          (wd->resize_obj, EDJE_MESSAGE_FLOAT_SET, 0, msg);
-        edje_object_signal_emit
-          (wd->resize_obj, "elm,state,slide,start", "elm");
+           (wd->resize_obj, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_signal_emit(wd->resize_obj, "elm,state,slide,start", "elm");
      }
+   //no slide effect.
    else
      {
-        edje_object_signal_emit
-          (wd->resize_obj, "elm,state,slide,stop", "elm");
         if (sd->slide_ellipsis)
           {
              sd->slide_ellipsis = EINA_FALSE;
@@ -667,12 +667,6 @@ elm_label_slide_go(Evas_Object *obj)
 static void
 _slide_go(Eo *obj, void *_pd __UNUSED__, va_list *list __UNUSED__)
 {
-   Elm_Label_Smart_Data *sd = _pd;
-   //FIXME: work around code. somthing need to be reset effect here.
-   Elm_Label_Slide_Mode mode = sd->slide_mode;
-   sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
-   _label_slide_change(obj);
-   sd->slide_mode = mode;
    _label_slide_change(obj);
    elm_layout_sizing_eval(obj);
 }
