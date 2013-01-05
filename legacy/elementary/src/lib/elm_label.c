@@ -195,10 +195,7 @@ _elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
    else
      {
         evas_event_freeze(evas_object_evas_get(obj));
-        evas_object_geometry_get
-          (wd->resize_obj, NULL, NULL, &resw, &resh);
-        edje_object_size_min_calc
-          (wd->resize_obj, &minw, &minh);
+        edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
         if (sd->wrap_w > 0 && minw > sd->wrap_w) minw = sd->wrap_w;
         evas_object_size_hint_min_set(obj, minw, minh);
         evas_event_thaw(evas_object_evas_get(obj));
