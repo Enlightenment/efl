@@ -110,6 +110,11 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
 
    _evas_object_smart_members_all_del(eo_obj);
 
+// BIG BIG BIG WARNING! withint this cso - anyone using the smart_clipped
+// interface is leaking unless they are using eo! this here is an abi break!
+// we NEED this free back, but there is a lot of surgery to do to make it
+// able to go back in! mailing list discussion!
+//   free(cso);
    evas_object_smart_data_set(eo_obj, NULL);
 }
 
