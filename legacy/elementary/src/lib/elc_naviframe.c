@@ -13,6 +13,8 @@ static const char CONTENT_PART[] = "elm.swallow.content";
 static const char PREV_BTN_PART[] = "elm.swallow.prev_btn";
 static const char NEXT_BTN_PART[] = "elm.swallow.next_btn";
 static const char ICON_PART[] = "elm.swallow.icon";
+static const char TITLE_PART[] = "elm.text.title";
+static const char SUBTITLE_PART[] = "elm.text.subtitle";
 
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
@@ -219,7 +221,7 @@ _access_focus_set(Elm_Naviframe_Item *it)
         return;
      }
 
-   ao =_access_object_get(it, "elm.text.title");
+   ao =_access_object_get(it, TITLE_PART);
    if (ao) elm_object_focus_set(ao, EINA_TRUE);
    else if ((it->title_icon) &&
             (elm_widget_can_focus_get(it->title_icon) ||
@@ -306,18 +308,18 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
 
    if (is_access)
      {
-        if (!_access_object_get(it, "elm.text.title"))
+        if (!_access_object_get(it, TITLE_PART))
           {
              ao =_elm_access_edje_object_part_object_register
-                     (WIDGET(it), VIEW(it), "elm.text.title");
+                     (WIDGET(it), VIEW(it), TITLE_PART);
             _elm_access_text_set(_elm_access_object_get(ao),
                                 ELM_ACCESS_TYPE, E_("title"));
          }
 
-        if (!_access_object_get(it, "elm.text.subtitle"))
+        if (!_access_object_get(it, SUBTITLE_PART))
           {
              ao =_elm_access_edje_object_part_object_register
-                  (WIDGET(it), VIEW(it), "elm.text.subtitle");
+                  (WIDGET(it), VIEW(it), SUBTITLE_PART);
              _elm_access_text_set(_elm_access_object_get(ao),
                              ELM_ACCESS_TYPE, E_("sub title"));
           }
@@ -337,11 +339,11 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
      {
         if (it->title_label)
           _elm_access_edje_object_part_object_unregister
-                (WIDGET(it), VIEW(it), "elm.text.title");
+                (WIDGET(it), VIEW(it), TITLE_PART);
 
         if (it->subtitle_label)
           _elm_access_edje_object_part_object_unregister
-             (WIDGET(it), VIEW(it), "elm.text.subtitle");
+             (WIDGET(it), VIEW(it), SUBTITLE_PART);
 
         EINA_INLIST_FOREACH(it->text_list, pair)
           _elm_access_edje_object_part_object_unregister
@@ -359,14 +361,14 @@ _item_text_set_hook(Elm_Object_Item *it,
    char buf[1024];
 
    if ((!part) || (!strcmp(part, "default")) ||
-       (!strcmp(part, "elm.text.title")))
+       (!strcmp(part, TITLE_PART)))
      {
         eina_stringshare_replace(&nit->title_label, label);
         if (label)
           elm_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
         else
           elm_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
-        elm_object_part_text_set(VIEW(it), "elm.text.title", label);
+        elm_object_part_text_set(VIEW(it), TITLE_PART, label);
      }
    else if (!strcmp("subtitle", part))
      {
@@ -375,7 +377,7 @@ _item_text_set_hook(Elm_Object_Item *it,
           elm_object_signal_emit(VIEW(it), "elm,state,subtitle,show", "elm");
         else
           elm_object_signal_emit(VIEW(it), "elm,state,subtitle,hide", "elm");
-        elm_object_part_text_set(VIEW(it), "elm.text.subtitle", label);
+        elm_object_part_text_set(VIEW(it), SUBTITLE_PART, label);
      }
    else
      {
@@ -417,9 +419,9 @@ _item_text_get_hook(const Elm_Object_Item *it,
    char buf[1024];
 
    if (!part || !strcmp(part, "default"))
-     snprintf(buf, sizeof(buf), "elm.text.title");
+     snprintf(buf, sizeof(buf), TITLE_PART);
    else if (!strcmp("subtitle", part))
-     snprintf(buf, sizeof(buf), "elm.text.subtitle");
+     snprintf(buf, sizeof(buf), SUBTITLE_PART);
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
@@ -1107,7 +1109,7 @@ _item_new(Evas_Object *obj,
    _item_style_set(it, item_style);
 
    if (title_label)
-     _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
+     _item_text_set_hook((Elm_Object_Item *)it, TITLE_PART, title_label);
 
    //title buttons
    if ((!prev_btn) && sd->auto_pushed && prev_it)
@@ -1190,10 +1192,10 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    /* access */
    if (_elm_config->access_mode)
      {
-        ao = _access_object_get(top_it, "elm.text.title");
+        ao = _access_object_get(top_it, TITLE_PART);
         if (ao) l = eina_list_append(l, ao);
 
-        ao = _access_object_get(top_it, "elm.text.subtitle");
+        ao = _access_object_get(top_it, SUBTITLE_PART);
         if (ao) l = eina_list_append(l, ao);
 
 
