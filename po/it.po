@@ -1,6 +1,7 @@
 # Italian translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
+# Massimo Maiurana <maiurana@gmail.com>, 2013
 #
 msgid ""
 msgstr ""

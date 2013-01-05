@@ -1,12 +1,12 @@
-# Chinese translations for efreet package
+# Chinese translations for Efl package
 # efreet 软件包的简体中文翻译.
 # Copyright (C) 2012 Enlightenment development team
-# This file is distributed under the same license as the efreet package.
+# This file is distributed under the same license as the Efl package.
 # Aron Xu <happyaron.xu@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: efreet 1.7.99.77644\n"
+"Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-04 16:21-0200\n"
 "PO-Revision-Date: 2012-12-22 03:45+0800\n"

@@ -1,19 +1,22 @@
-# Spanish translation for Efreet.
+# Spanish translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
+# Adrián Arévalo <adri58@gmail.com>, 2012.
+
 msgid ""
 msgstr ""
-"Project-Id-Version: efreet\n"
+"Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 16:21-0200\n"
-"PO-Revision-Date: 2012-11-08 02:06+0100\n"
-"Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
+"POT-Creation-Date: 2013-01-04 23:28+0100\n"
+"PO-Revision-Date: 2013-01-04 23:53+0100\n"
+"Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
@@ -90,7 +93,7 @@ msgstr "Elección inválida \"%s\". Los valores válidos son:"
 
 #: src/lib/ecore/ecore_getopt.c:1161
 msgid "missing parameter to append.\n"
-msgstr "faltan los parámetros a anexar.\n"
+msgstr "falta parámetro a añadir.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1265
 msgid "could not parse value.\n"
@@ -98,11 +101,11 @@ msgstr "incapaz de procesar el valor.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1322
 msgid "missing parameter.\n"
-msgstr "parámetro ausente.\n"
+msgstr "parámetro faltante.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1335
 msgid "missing callback function!\n"
-msgstr "¡función de invocación desaparecida!\n"
+msgstr "función de invocación faltante!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1364
 msgid "no version was defined.\n"
@@ -124,7 +127,7 @@ msgstr "ERROR: opción desconocida --%s, ignorada.\n"
 #: src/lib/ecore/ecore_getopt.c:1521
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr "ERROR: opción --%s ¡requiere un argumento!\n"
+msgstr "ERROR: La opción --%s requiere un argumento!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1563
 #, c-format
@@ -134,11 +137,11 @@ msgstr "ERROR: opción desconocida -%c, ignorada.\n"
 #: src/lib/ecore/ecore_getopt.c:1601
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr "ERROR: opción -%c ¡requiere un argumento!\n"
+msgstr "ERROR: La opción -%c requiere un argumento!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1812
 msgid "ERROR: no parser provided.\n"
-msgstr "ERROR: no se proporcionó ningún procesador.\n"
+msgstr "ERROR: no se proporcionó ningún parser.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1817
 msgid "ERROR: no values provided.\n"
@@ -150,7 +153,7 @@ msgstr "ERROR: no se proporcionó ningún argumento.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1852
 msgid "ERROR: invalid options found."
-msgstr "ERROR: encontradas opciones inválidas."
+msgstr "ERROR: opciones inválidas."
 
 #: src/lib/ecore/ecore_getopt.c:1858
 #, c-format
@@ -170,7 +173,7 @@ msgstr "ERROR: valor geométrico incorrecto '%s'\n"
 #: src/lib/ecore/ecore_getopt.c:1938
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr "ERROR: valor del tamaño incorrecto '%s'\n"
+msgstr "ERROR: tamaño incorrecto '%s'\n"
 
 #: src/lib/efreet/efreet_base.c:129
 msgid "Desktop"

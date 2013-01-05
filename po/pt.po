@@ -1,10 +1,11 @@
-# Portuguese translation for Efreet.
+# Portuguese translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
+# Sérgio Marques <smarquespt@gmail.com>, 2010
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Efreet\n"
+"Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-04 16:21-0200\n"
 "PO-Revision-Date: 2012-10-10 00:21+0100\n"

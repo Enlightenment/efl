@@ -1,12 +1,13 @@
-# Korean translation for Efreet.
+# Korean translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
 # Jerome Pinot <ngc891@gmail.com>
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011-2013
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Efreet\n"
+"Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-04 16:21-0200\n"
 "PO-Revision-Date: 2013-01-02 07:33+0900\n"
