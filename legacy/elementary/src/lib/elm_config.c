@@ -61,7 +61,7 @@ static const Elm_Text_Class _elm_text_classes[] = {
 static void        _desc_init(void);
 static void        _desc_shutdown(void);
 static void        _profile_fetch_from_conf(void);
-static void        _config_free(void);
+static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
 static Elm_Config *_config_user_load(void);
 static Elm_Config *_config_system_load(void);
@@ -179,7 +179,8 @@ _prop_config_get(void)
     * cases or we only check for equality above? */
 
    _elm_config_font_overlays_cancel();
-   _config_free();
+   _config_free(_elm_config);
+   _elm_config = NULL;
    _elm_config = config_data;
    _env_get();
    _config_apply();
@@ -891,35 +892,38 @@ _profile_fetch_from_conf(void)
 }
 
 static void
-_config_free(void)
+_config_free(Elm_Config *cfg)
 {
    Elm_Font_Overlay *fo;
    const char *fontdir;
    Elm_Custom_Palette *palette;
    Elm_Color_RGBA *color;
 
-   if (!_elm_config) return;
-   EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
+   if (!cfg) return;
+   EINA_LIST_FREE(cfg->font_dirs, fontdir)
      {
         eina_stringshare_del(fontdir);
      }
-   if (_elm_config->engine) eina_stringshare_del(_elm_config->engine);
-   EINA_LIST_FREE(_elm_config->font_overlays, fo)
+   if (cfg->engine) eina_stringshare_del(cfg->engine);
+   EINA_LIST_FREE(cfg->font_overlays, fo)
      {
         if (fo->text_class) eina_stringshare_del(fo->text_class);
         if (fo->font) eina_stringshare_del(fo->font);
         free(fo);
      }
-   EINA_LIST_FREE(_elm_config->color_palette, palette)
+   EINA_LIST_FREE(cfg->color_palette, palette)
      {
         if (palette->palette_name) eina_stringshare_del(palette->palette_name);
         EINA_LIST_FREE(palette->color_list, color) free(color);
         free(palette);
      }
-   if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
-   if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
-   free(_elm_config);
-   _elm_config = NULL;
+   if (cfg->theme) eina_stringshare_del(cfg->theme);
+   if (cfg->modules) eina_stringshare_del(cfg->modules);
+   if (cfg->indicator_service_0) eina_stringshare_del(cfg->indicator_service_0);
+   if (cfg->indicator_service_90) eina_stringshare_del(cfg->indicator_service_90);
+   if (cfg->indicator_service_180) eina_stringshare_del(cfg->indicator_service_180);
+   if (cfg->indicator_service_270) eina_stringshare_del(cfg->indicator_service_270);
+   free(cfg);
 }
 
 static void
@@ -1313,6 +1317,7 @@ static void
 _config_update(void)
 {
    Elm_Config *tcfg;
+   const char *s = NULL;
 
    tcfg = _config_system_load();
    if (!tcfg)
@@ -1337,25 +1342,20 @@ _config_update(void)
      IFCFGEND;
 
      IFCFG(0x0004);
-
 #define PREFS_IFACE_MODULE_STR "prefs>prefs_iface"
-
-     const char *new = NULL;
      if (!_elm_config->modules)
-       new = eina_stringshare_add(PREFS_IFACE_MODULE_STR);
+       s = eina_stringshare_add(PREFS_IFACE_MODULE_STR);
      else
        {
           if (!strstr(_elm_config->modules, PREFS_IFACE_MODULE_STR))
-            new = eina_stringshare_printf
-                ("%s:%s", _elm_config->modules, PREFS_IFACE_MODULE_STR);
+            s = eina_stringshare_printf
+            ("%s:%s", _elm_config->modules, PREFS_IFACE_MODULE_STR);
        }
-
-     if (new)
+     if (s)
        {
-          eina_stringshare_del(_elm_config->modules);
-          _elm_config->modules = new;
+          if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
+          _elm_config->modules = s;
        }
-
      IFCFGEND;
 
 #undef COPYSTR
@@ -1365,7 +1365,10 @@ _config_update(void)
 #undef IFCFGELSE
 #undef IFCFG
 
-     /* after updating user config, we must save */
+   _elm_config->config_version = ELM_CONFIG_VERSION;
+   /* after updating user config, we must save */
+   _config_free(tcfg);
+   _elm_config_save();
 }
 
 static void
@@ -2307,7 +2310,8 @@ _elm_config_sub_init(void)
 void
 _elm_config_reload(void)
 {
-   _config_free();
+   _config_free(_elm_config);
+   _elm_config = NULL;
    _config_load();
    _config_apply();
    _elm_config_font_overlay_apply();
@@ -2377,7 +2381,8 @@ _elm_config_profile_set(const char *profile)
 
    if (changed)
      {
-        _config_free();
+        _config_free(_elm_config);
+        _elm_config = NULL;
         _config_load();
         _config_apply();
         _elm_config_font_overlay_apply();
@@ -2412,7 +2417,8 @@ _elm_config_shutdown(void)
         _prop_change_handler = NULL;
 #endif
      }
-   _config_free();
+   _config_free(_elm_config);
+   _elm_config = NULL;
    if (_elm_preferred_engine)
      {
         eina_stringshare_del(_elm_preferred_engine);
