@@ -7,14 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 22:46+0100\n"
-"PO-Revision-Date: 2012-10-11 00:06+0200\n"
+"POT-Creation-Date: 2013-01-05 20:49+0100\n"
+"PO-Revision-Date: 2013-01-05 20:49+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/modules/ecore/immodules/xim/ecore_imf_xim.c:772
+msgid "X input method"
+msgstr "Metodo di input di X"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
