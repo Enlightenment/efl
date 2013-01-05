@@ -392,7 +392,7 @@
  * canvas and a red border around the container object of interest,
  * the box, to mark its boundaries. Resizing of the canvas will keep
  * the box's proportion with regard to the whole canvas', so that you
- * can experiment with different sizes of the box to accomodate its
+ * can experiment with different sizes of the box to accommodate its
  * children:
  * @dontinclude evas-box.c
  * @skip adjust canvas' contents on resizes
@@ -937,10 +937,10 @@
  * an interfaces demonstration.
  *
  * A smart interface is just a functions interface a given smart
- * objcet is declaring to support and or use. In Evas, interfaces are
+ * object is declaring to support and or use. In Evas, interfaces are
  * very simple: no interface inheritance, no interface
  * overriding. Their purpose is to extend an object's capabilities and
- * behaviour beyound the sub-classing schema.
+ * behavior beyond the sub-classing schema.
  *
  * Here, together with a custom smart object, we create and declare
  * the object as using an Evas interface. It'll have a custom
@@ -956,7 +956,7 @@
  * Note that there's error checking for interfaces creation, by means of
  * the @c add() method's return value (@c _iface1_add(), here).
  *
- * Now note that here we are filling in the interface's fields dinamically.
+ * Now note that here we are filling in the interface's fields dynamically.
  * Let's move on to that code region:
  *
  * @dontinclude evas-smart-interface.c

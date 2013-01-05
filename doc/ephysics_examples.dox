@@ -171,7 +171,7 @@
  * sphere EPhysics_Body previously created.
  *
  * We mainly use the ephysics_body_central_impulse_apply() function. This
- * function applies an inpulse on the center of a body.
+ * function applies an impulse on the center of a body.
  *
  * Once pressed \<Up> key it applies a central impulse of 0 kilos on X axis,
  * 10 kilos on Y and 0 kilos on Z - so the ball is forced up.
@@ -907,7 +907,7 @@
  * last parameters are responsible to set a relative position to apply the
  * force.In other words, the force applied with an offset will make the body
  * rotates. Otherwise (0, 0, 0) the force would be applied on the center of the
- * body, in this case its recomended use the
+ * body, in this case its recommended use the
  * ephysics_body_central_force_apply();
  *
  * @skipline ephysics_body_force_apply(box_body1
@@ -980,7 +980,7 @@
  *
  * In this callback, we'll pass through a list with 3 balls and apply the
  * growth and the shrink between the limit we'll set. Note that the variable
- * i recieves different values on each iteration (-1, 0, 1). For the first
+ * i receives different values on each iteration (-1, 0, 1). For the first
  * iteration it will decrease the size variable, the second will keep the
  * same value, and the last one will increase the size variable.
  *
@@ -1465,7 +1465,7 @@
  *
  * We need to handle the velocity using delta time to have the acceleration
  * on every tick. Check if its the first time to return before shows
- * informations about the velocity because we dont have the old aceletations
+ * informations about the velocity because we don't have the old aceletations
  * and then the calculation of this informations will be wrong.
  *
  * Here we calculate the aceletarions using this formula:
