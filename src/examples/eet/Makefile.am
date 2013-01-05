@@ -52,3 +52,7 @@ uninstall-local:
 	for f in $(SRCS) ; do \
 	  rm -f $(datadir)/eet/examples/$$f ; \
 	done
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+endif

@@ -3348,6 +3348,20 @@ AC_SUBST([want_physics])
 EFL_LIB_END([Edje])
 #### End of Edje
 
+AC_ARG_ENABLE([always-build-examples],
+   [AC_HELP_STRING([--enable-always-build-examples],
+       [always build examples. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_always_build_examples="yes"
+    else
+       want_always_build_examples="no"
+    fi
+   ],
+   [want_always_build_examples="no"])
+AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
+
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile

@@ -267,3 +267,7 @@ uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/ecore/examples/$$f ; \
 	done
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+endif

@@ -149,3 +149,7 @@ uninstall-local:
 	done
 
 EXTRA_DIST = addr_book.txt chat.xml
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+endif

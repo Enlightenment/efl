@@ -209,3 +209,8 @@ uninstall-local:
 	for f in $(SRCS) $(DIST_EDCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/edje/examples/$$f ; \
 	done
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+nodist_pkgdata_DATA = $(EDJS)
+endif

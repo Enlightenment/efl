@@ -87,3 +87,7 @@ uninstall-local:
 	for f in $(SRCS) ; do \
 	  rm -f $(datadir)/ephysics/examples/$$f ; \
 	done
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+endif

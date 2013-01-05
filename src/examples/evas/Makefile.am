@@ -220,3 +220,8 @@ uninstall-local:
 	done
 
 EXTRA_DIST = $(EDCS) $(DATA_FILES)
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+nodist_pkgdata_DATA = $(EDJS)
+endif
