@@ -16,10 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/modules/ecore/immodules/xim/ecore_imf_xim.c:772
-msgid "X input method"
-msgstr "Metodo di input di X"
-
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
 msgstr "Versione:"

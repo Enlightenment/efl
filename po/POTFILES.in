@@ -1,3 +1,2 @@
-src/modules/ecore/immodules/xim/ecore_imf_xim.c
 src/lib/ecore/ecore_getopt.c
 src/lib/efreet/efreet_base.c
