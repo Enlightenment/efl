@@ -75,7 +75,7 @@ AC_SUBST(VMIN)
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
-EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
+EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.%s.%s", $1, $2, $3);}'`
 
 case "$host_os" in
   mingw32ce* | cegcc*)
