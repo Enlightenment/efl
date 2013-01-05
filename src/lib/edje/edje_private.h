@@ -2260,6 +2260,8 @@ Eina_Module *_edje_module_handle_load(const char *module);
 void _edje_module_init(void);
 void _edje_module_shutdown(void);
 
+void _edje_need_imf(void);
+
 static inline Eina_Bool
 edje_program_is_strncmp(const char *str)
 {

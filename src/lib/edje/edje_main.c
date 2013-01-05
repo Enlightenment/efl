@@ -7,6 +7,7 @@ static int _edje_init_count = 0;
 int _edje_default_log_dom = -1;
 Eina_Mempool *_edje_real_part_mp = NULL;
 Eina_Mempool *_edje_real_part_state_mp = NULL;
+static Eina_Bool _need_imf = EINA_FALSE;
 
 /*============================================================================*
  *                                   API                                      *
@@ -141,6 +142,11 @@ _edje_shutdown_core(void)
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
    _edje_edd_shutdown();
+
+#ifdef HAVE_ECORE_IMF
+   if (_need_imf)
+     ecore_imf_shutdown();
+#endif
 
 #ifdef HAVE_EIO
    eio_shutdown();
@@ -292,4 +298,14 @@ _edje_unref(Edje *ed)
 {
    ed->references--;
    if (ed->references == 0) _edje_del(ed);
+}
+
+void
+_edje_need_imf(void)
+{
+   if (_need_imf) return;
+#ifdef HAVE_ECORE_IMF
+   _need_imf = EINA_TRUE;
+   ecore_imf_init();
+#endif
 }

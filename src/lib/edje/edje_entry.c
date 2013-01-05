@@ -2318,7 +2318,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
         en->input_panel_enable = EINA_TRUE;
 
 #ifdef HAVE_ECORE_IMF
-        ecore_imf_init();
+        _edje_need_imf();
 
         edje_object_signal_callback_add(rp->edje->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb, rp);
         edje_object_signal_callback_add(rp->edje->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb, rp);
@@ -2410,7 +2410,6 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
 
         edje_object_signal_callback_del(rp->edje->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb);
         edje_object_signal_callback_del(rp->edje->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb);
-        ecore_imf_shutdown();
      }
 #endif
    _compose_seq_reset(en);
