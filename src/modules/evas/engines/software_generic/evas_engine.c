@@ -223,7 +223,7 @@ static void       (*_sym_glRenderbufferStorage)                 (GLenum target, 
 static void       (*_sym_glSampleCoverage)                      (GLclampf value, GLboolean invert) = NULL;
 static void       (*_sym_glScissor)                             (GLint x, GLint y, GLsizei width, GLsizei height) = NULL;
 static void       (*_sym_glShaderBinary)                        (GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length) = NULL;
-static void       (*_sym_glShaderSource)                        (GLuint shader, GLsizei count, const char** string, const GLint* length) = NULL;
+static void       (*_sym_glShaderSource)                        (GLuint shader, GLsizei count, const char* const* string, const GLint* length) = NULL;
 static void       (*_sym_glStencilFunc)                         (GLenum func, GLint ref, GLuint mask) = NULL;
 static void       (*_sym_glStencilFuncSeparate)                 (GLenum face, GLenum func, GLint ref, GLuint mask) = NULL;
 static void       (*_sym_glStencilMask)                         (GLuint mask) = NULL;
@@ -3150,7 +3150,7 @@ patch_gles_shader(const char *source, int length, int *patched_len)
 }
 
 static void
-evgl_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
+evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, const GLint* length)
 {
    int i = 0, len = 0;
 

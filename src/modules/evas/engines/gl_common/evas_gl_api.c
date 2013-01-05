@@ -1497,7 +1497,7 @@ _evgld_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, con
 }
 
 void
-_evgld_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
+_evgld_glShaderSource(GLuint shader, GLsizei count, const char* const * string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
    glShaderSource(shader, count, string, length);
@@ -2093,7 +2093,7 @@ shadersrc_gles_to_gl(GLsizei count, const char** string, char **s, const GLint* 
 
 
 void
-_evgld_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
+_evgld_glShaderSource(GLuint shader, GLsizei count, const char* const* string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
 

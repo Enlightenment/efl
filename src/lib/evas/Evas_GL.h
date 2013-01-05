@@ -1393,7 +1393,7 @@ struct _Evas_GL_API
    void         (*glSampleCoverage) (GLclampf value, GLboolean invert);
    void         (*glScissor) (GLint x, GLint y, GLsizei width, GLsizei height);
    void         (*glShaderBinary) (GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length);
-   void         (*glShaderSource) (GLuint shader, GLsizei count, const char** string, const GLint* length);
+   void         (*glShaderSource) (GLuint shader, GLsizei count, const char* const * string, const GLint* length);
    void         (*glStencilFunc) (GLenum func, GLint ref, GLuint mask);
    void         (*glStencilFuncSeparate) (GLenum face, GLenum func, GLint ref, GLuint mask);
    void         (*glStencilMask) (GLuint mask);
