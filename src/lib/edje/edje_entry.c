@@ -2882,6 +2882,7 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
 void *
 _edje_entry_imf_context_get(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -2889,16 +2890,17 @@ _edje_entry_imf_context_get(Edje_Real_Part *rp)
    en = rp->typedata.text->entry_data;
    if (!en) return NULL;
 
-#ifdef HAVE_ECORE_IMF
    return en->imf_context;
 #else
    return NULL;
+   (void)rp;
 #endif
 }
 
 void
 _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -2909,15 +2911,18 @@ _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type 
    if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
      autocapital_type = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_autocapital_type_set(en->imf_context, autocapital_type);
+#else
+   (void)rp;
+   (void)autocapital_type;
 #endif
 }
 
 Edje_Text_Autocapital_Type
 _edje_entry_autocapital_type_get(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -2925,12 +2930,13 @@ _edje_entry_autocapital_type_get(Edje_Real_Part *rp)
    en = rp->typedata.text->entry_data;
    if (!en) return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return ecore_imf_context_autocapital_type_get(en->imf_context);
-#endif
-
    return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+#else
+   return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+   (void)rp;
+#endif
 }
 
 void
@@ -2992,30 +2998,34 @@ _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp)
 void
 _edje_entry_input_panel_show(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_show(en->imf_context);
+#else
+   (void)rp;
 #endif
 }
 
 void
 _edje_entry_input_panel_hide(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_hide(en->imf_context);
+#else
+   (void)rp;
 #endif
 }
 
@@ -3047,116 +3057,116 @@ _edje_entry_input_panel_language_get(Edje_Real_Part *rp)
    return en->input_panel_lang;
 }
 
-#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data, int len)
-#else
-void
-_edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data EINA_UNUSED, int len EINA_UNUSED)
-#endif
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_imdata_set(en->imf_context, data, len);
+#else
+   (void)rp;
+   (void)data;
+   (void)len;
 #endif
 }
 
-#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len)
-#else
-void
-_edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data EINA_UNUSED, int *len EINA_UNUSED)
-#endif
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_imdata_get(en->imf_context, data, len);
+#else
+   (void)rp;
+   (void)data;
+   (void)len;
 #endif
 }
 
-#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type)
-#else
-void
-_edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type EINA_UNUSED)
-#endif
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_return_key_type_set(en->imf_context, return_key_type);
+#else
+   (void)rp;
+   (void)return_key_type;
 #endif
 }
 
 Edje_Input_Panel_Return_Key_Type
 _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
    en = rp->typedata.text->entry_data;
    if (!en) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return ecore_imf_context_input_panel_return_key_type_get(en->imf_context);
-#endif
    return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+#else
+   return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+   (void)rp;
+#endif
 }
 
-#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled)
-#else
-void
-_edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled EINA_UNUSED)
-#endif
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, disabled);
+#else
+   (void)rp;
+   (void)disabled;
 #endif
 }
 
 Eina_Bool
 _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_FALSE;
    en = rp->typedata.text->entry_data;
    if (!en) return EINA_FALSE;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return ecore_imf_context_input_panel_return_key_disabled_get(en->imf_context);
-#endif
    return EINA_FALSE;
+#else
+   return EINA_FALSE;
+   (void)rp;
+#endif
 }
 
 static Evas_Textblock_Cursor *
@@ -3519,16 +3529,17 @@ _edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur)
 void
 _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_layout_set(en->imf_context, layout);
 #else
+   (void) rp;
    (void) layout;
 #endif
 }
@@ -3536,32 +3547,36 @@ _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout l
 Edje_Input_Panel_Layout
 _edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
    en = rp->typedata.text->entry_data;
    if (!en) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return ecore_imf_context_input_panel_layout_get(en->imf_context);
-#endif
-
    return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+#else
+   return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+   (void)rp;
+#endif
 }
 
 void
 _edje_entry_imf_context_reset(Edje_Real_Part *rp)
 {
+#ifdef HAVE_ECORE_IMF
    Entry *en;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-#ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_reset(en->imf_context);
+#else
+   (void)rp;
 #endif
 }
 
