@@ -1529,7 +1529,7 @@ emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
 }
 
 EAPI Emotion_Suspend
-motion_object_suspend_get(Evas_Object *obj)
+emotion_object_suspend_get(Evas_Object *obj)
 {
    Smart_Data *sd;
 
