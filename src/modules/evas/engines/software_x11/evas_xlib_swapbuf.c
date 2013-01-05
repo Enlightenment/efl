@@ -48,7 +48,8 @@ Outbuf *
 evas_software_xlib_swapbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
                                   Display *disp, Drawable draw, Visual *vis,
                                   Colormap cmap, int x_depth,
-                                  int grayscale, int max_colors, Pixmap mask,
+                                  int grayscale, int max_colors,
+                                  Pixmap mask EINA_UNUSED,
                                   int shape_dither, int destination_alpha)
 {
    Outbuf             *buf;
@@ -396,10 +397,9 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
 }
 
 void
-evas_software_xlib_swapbuf_idle_flush(Outbuf *buf)
+evas_software_xlib_swapbuf_idle_flush(Outbuf *buf EINA_UNUSED)
 {
    return;
-   buf = NULL;
 }
 
 void

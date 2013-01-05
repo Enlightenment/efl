@@ -378,7 +378,7 @@ _pulse_output_write_cb(pa_stream *stream, size_t len, void *data)
    Ecore_Audio_Input *in = (Ecore_Audio_Input *)data;
 
    void *buf;
-   int bread;
+   size_t bread;
 
    buf = malloc(len);
 
@@ -422,7 +422,7 @@ _pulse_output_add_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
 }
 
 static void
-_pulse_drain_cb(pa_stream *stream, int success, void *data)
+_pulse_drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EINA_UNUSED)
 {
    // XXX: Check success?
    pa_stream_disconnect(stream);
@@ -430,7 +430,7 @@ _pulse_drain_cb(pa_stream *stream, int success, void *data)
 }
 
 static Eina_Bool
-_pulse_output_del_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
+_pulse_output_del_input(Ecore_Audio_Object *output EINA_UNUSED, Ecore_Audio_Object *input)
 {
    Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
 
@@ -444,7 +444,7 @@ _pulse_output_del_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
 }
 
 static void
-_pulse_output_update_input_format(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
+_pulse_output_update_input_format(Ecore_Audio_Object *output EINA_UNUSED, Ecore_Audio_Object *input)
 {
   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
   pa_stream *stream = (pa_stream *)in->obj_data;
@@ -453,10 +453,10 @@ _pulse_output_update_input_format(Ecore_Audio_Object *output, Ecore_Audio_Object
 }
 
 static int
-_pulse_input_read(Ecore_Audio_Object *input, void *data, int len)
+_pulse_input_read(Ecore_Audio_Object *input EINA_UNUSED, void *data EINA_UNUSED, int len EINA_UNUSED)
 {
   // XXX: Implement
-   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
+   //Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
 
    return 0;
 }

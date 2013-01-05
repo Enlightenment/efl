@@ -310,6 +310,7 @@ _sndfile_output_write_cb(void *data)
 
    // XXX: Check for errors
    written = sf_write_float(sndfile->handle, buf, bread/4)*4;
+   DBG("written: %i", written);
 
    return EINA_TRUE;
 }
@@ -360,7 +361,7 @@ _sndfile_output_del_input(Ecore_Audio_Object *out EINA_UNUSED, Ecore_Audio_Objec
 }
 
 static void
-_sndfile_output_update_input_format(Ecore_Audio_Object *out, Ecore_Audio_Object *in)
+_sndfile_output_update_input_format(Ecore_Audio_Object *out EINA_UNUSED, Ecore_Audio_Object *in EINA_UNUSED)
 {
 }
 

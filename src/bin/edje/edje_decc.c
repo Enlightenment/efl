@@ -43,7 +43,7 @@ _edje_cc_log_cb(const Eina_Log_Domain *d,
                 Eina_Log_Level level,
                 const char *file,
                 const char *fnc,
-                int line,
+                int cur_line,
                 const char *fmt,
                 EINA_UNUSED void *data,
                 va_list args)
@@ -115,7 +115,7 @@ _edje_cc_log_cb(const Eina_Log_Domain *d,
         putc('\n', stderr);
      }
    else
-     eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+     eina_log_print_cb_stderr(d, level, file, fnc, cur_line, fmt, NULL, args);
 }
 
 static void

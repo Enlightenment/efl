@@ -40,7 +40,7 @@ disconnected(void *context EINA_UNUSED, EDBus_Connection *connection EINA_UNUSED
 }
 
 static void
-client_name_owner_changed_cb(void *data, const char *bus, const char *old_id, const char *new_id)
+client_name_owner_changed_cb(void *data EINA_UNUSED, const char *bus, const char *old_id EINA_UNUSED, const char *new_id)
 {
    if (new_id[0])
      return;
