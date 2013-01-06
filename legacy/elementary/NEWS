@@ -118,6 +118,7 @@ Fixes:
    * Fix the bug which the callbacks of the sub-object are added even if the sub-object is added the parent object.
    * Fix the usage of the checks in the fileselector test 2.
    * Added the min_year and max_year in the standard profile config.
+   * Fix omitting signal emission when customized text parts change the text.
 
 Removals:
 

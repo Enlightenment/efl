@@ -396,12 +396,12 @@ _item_text_set_hook(Elm_Object_Item *it,
              eina_stringshare_replace(&pair->part, part);
              nit->text_list = eina_inlist_append(nit->text_list,
                                                  EINA_INLIST_GET(pair));
-             if (label)
-               snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
-             else
-               snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
-             elm_object_signal_emit(VIEW(it), buf, "elm");
           }
+        if (label)
+          snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
+        else
+          snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
+        elm_object_signal_emit(VIEW(it), buf, "elm");
         elm_object_part_text_set(VIEW(it), part, label);
      }
 
