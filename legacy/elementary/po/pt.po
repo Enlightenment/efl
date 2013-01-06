@@ -1,13 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2200
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
-"PO-Revision-Date: 2012-12-07 16:34-0000\n"
+"POT-Creation-Date: 2013-01-04 22:05+0100\n"
+"PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: Portuguese\n"
@@ -25,7 +24,8 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017
+#: src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "Cancelar"
@@ -42,9 +42,14 @@ msgstr "Balão"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:281
+#: src/lib/elm_check.c:213
+#: src/lib/elm_gengrid.c:675
+#: src/lib/elm_genlist.c:1273
+#: src/lib/elm_list.c:1376
+#: src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515
+#: src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -58,55 +63,55 @@ msgstr "%B %Y"
 
 #: src/lib/elm_calendar.c:144
 msgid "%B"
-msgstr ""
+msgstr "%B"
 
 #: src/lib/elm_calendar.c:153
 msgid "%Y"
-msgstr ""
+msgstr "%Y"
 
 #: src/lib/elm_calendar.c:260
 msgid "calendar item"
 msgstr "item do calendário"
 
 #: src/lib/elm_calendar.c:286
-#, fuzzy
 msgid "calendar decrement month button"
-msgstr "botão de diminuição do calendário"
+msgstr "botão de redução do mês de calendário"
 
 #: src/lib/elm_calendar.c:291
-#, fuzzy
 msgid "calendar decrement year button"
-msgstr "botão de diminuição do calendário"
+msgstr "botão de redução do ano de calendário"
 
 #: src/lib/elm_calendar.c:296
-#, fuzzy
 msgid "calendar increment month button"
-msgstr "botão de aumento do calendário"
+msgstr "botão de aumento do mês de calendário"
 
 #: src/lib/elm_calendar.c:301
-#, fuzzy
 msgid "calendar increment year button"
-msgstr "botão de aumento do calendário"
+msgstr "botão de aumento do ano de calendário"
 
 #: src/lib/elm_calendar.c:306
 msgid "calendar month"
 msgstr "mês do calendário"
 
 #: src/lib/elm_calendar.c:311
-#, fuzzy
 msgid "calendar year"
-msgstr "item do calendário"
+msgstr "ano do calendário"
 
-#: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
+#: src/lib/elm_check.c:45
+#: src/lib/elm_check.c:226
+#: src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
 msgid "State: On"
 msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:51 src/lib/elm_check.c:238 src/lib/elm_radio.c:260
+#: src/lib/elm_check.c:51
+#: src/lib/elm_check.c:238
+#: src/lib/elm_radio.c:260
 msgid "State: Off"
 msgstr "Estado: desligado"
 
-#: src/lib/elm_check.c:222 src/lib/elm_check.c:235
+#: src/lib/elm_check.c:222
+#: src/lib/elm_check.c:235
 msgid "State"
 msgstr "Estado"
 
@@ -120,13 +125,13 @@ msgstr "botão de aumento do relógio para am, pm"
 
 #: src/lib/elm_clock.c:303
 msgid "clock decrement button for am,pm"
-msgstr "botão de diminuição do relógio para am, pm"
+msgstr "botão de redução do relógio para am, pm"
 
 #: src/lib/elm_clock.c:646
 msgid "State: Editable"
 msgstr "Estado: editável"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr "Relógio"
 
@@ -158,7 +163,7 @@ msgstr "Selecionar"
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2908
 msgid "Entry"
 msgstr "Entrada"
 
@@ -178,7 +183,7 @@ msgstr "Item do índice"
 msgid "Index"
 msgstr "Índice"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:382
 msgid "Label"
 msgstr "Texto"
 
@@ -198,15 +203,15 @@ msgstr "estado: fechado"
 msgid "panel button"
 msgstr "botão do painel"
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "barra de progresso"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Opção"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "barra deslizante"
 
@@ -222,7 +227,8 @@ msgstr "botão de diminuição do spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286
+#: src/lib/elm_toolbar.c:1707
 msgid "Selected"
 msgstr "Selecionado"
 
