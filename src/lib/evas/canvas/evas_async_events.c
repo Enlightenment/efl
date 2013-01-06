@@ -11,15 +11,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static int _fd_write = -1;
-static int _fd_read = -1;
-static pid_t _fd_pid = 0;
-
-static Eina_Lock async_lock;
-static Eina_Inarray async_queue;
-
-static int _init_evas_event = 0;
-
 typedef struct _Evas_Event_Async	Evas_Event_Async;
 
 struct _Evas_Event_Async
@@ -29,6 +20,17 @@ struct _Evas_Event_Async
    Evas_Async_Events_Put_Cb  func;
    Evas_Callback_Type	     type;
 };
+
+static int _fd_write = -1;
+static int _fd_read = -1;
+static pid_t _fd_pid = 0;
+
+static Eina_Lock async_lock;
+static Eina_Inarray async_queue;
+static Evas_Event_Async *async_queue_cache = NULL;
+static unsigned int async_queue_cache_max = 0;
+
+static int _init_evas_event = 0;
 
 Eina_Bool
 _evas_fd_close_on_exec(int fd)
@@ -59,7 +61,7 @@ evas_async_events_init(void)
    if (_init_evas_event > 1) return _init_evas_event;
 
    _fd_pid = getpid();
-   
+
    if (pipe(filedes) == -1)
      {
 	_init_evas_event = 0;
@@ -86,13 +88,14 @@ evas_async_events_shutdown(void)
    _init_evas_event--;
    if (_init_evas_event > 0) return _init_evas_event;
 
+   eina_lock_free(&async_lock);
+   eina_inarray_flush(&async_queue);
+   free(async_queue_cache);
+
    close(_fd_read);
    close(_fd_write);
    _fd_read = -1;
    _fd_write = -1;
-
-   eina_lock_free(&async_lock);
-   eina_inarray_flush(&async_queue);
 
    return _init_evas_event;
 }
@@ -101,7 +104,7 @@ static void
 _evas_async_events_fork_handle(void)
 {
    int i, count = _init_evas_event;
-   
+
    if (getpid() == _fd_pid) return;
    for (i = 0; i < count; i++) evas_async_events_shutdown();
    for (i = 0; i < count; i++) evas_async_events_init();
@@ -117,42 +120,42 @@ evas_async_events_fd_get(void)
 static int
 _evas_async_events_process_single(void)
 {
-   int wakeup;
-   int ret;
+   int ret, wakeup;
 
    ret = read(_fd_read, &wakeup, sizeof(int));
    if (ret == sizeof(int))
      {
-        static Evas_Event_Async *memory = NULL;
-        static unsigned int memory_max = 0;
         Evas_Event_Async *ev;
-        unsigned int len;
-        unsigned int max;
+        unsigned int len, max;
 
         eina_lock_take(&async_lock);
 
         ev = async_queue.members;
-        async_queue.members = memory;
-        memory = ev;
+        async_queue.members = async_queue_cache;
+        async_queue_cache = ev;
 
         max = async_queue.max;
-        async_queue.max = memory_max;
-        memory_max = max;
+        async_queue.max = async_queue_cache_max;
+        async_queue_cache_max = max;
 
         len = async_queue.len;
         async_queue.len = 0;
 
         eina_lock_release(&async_lock);
-        
+
+        DBG("Evas async events queue length: %u", len);
+
         while (len > 0)
           {
              if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
              ev++;
              len--;
           }
-        ret = 1;
+
+        return 1;
      }
-   else if (ret < 0)
+
+   if (ret < 0)
      {
         switch (errno)
           {
@@ -213,12 +216,11 @@ EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
    Evas_Event_Async *ev;
-   ssize_t check = sizeof (int);
-   Eina_Bool result = EINA_FALSE;
+   ssize_t check;
    int count;
 
-   if (!func) return 0;
-   if (_fd_write == -1) return 0;
+   if (!func) return EINA_FALSE;
+   if (_fd_write == -1) return EINA_FALSE;
 
    _evas_async_events_fork_handle();
 
@@ -226,43 +228,44 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    count = async_queue.len;
    ev = eina_inarray_grow(&async_queue, 1);
-   if (ev)
+   if (!ev)
      {
-        ev->func = func;
-        ev->target = target;
-        ev->type = type;
-        ev->event_info = event_info;
+        eina_lock_release(&async_lock);
+        return EINA_FALSE;
      }
+
+   ev->func = func;
+   ev->target = target;
+   ev->type = type;
+   ev->event_info = event_info;
 
    eina_lock_release(&async_lock);
 
-   if (count == 0 && ev)
+   if (count == 0)
      {
-       int wakeup = 1;
+        int wakeup = 1;
 
-       do
-	 {
-	   check = write(_fd_write, &wakeup, sizeof (int));
-	 }
-       while ((check != sizeof (int)) &&
-	      ((errno == EINTR) || (errno == EAGAIN)));
+        do
+          {
+             check = write(_fd_write, &wakeup, sizeof (int));
+          }
+        while ((check != sizeof (int)) &&
+               ((errno == EINTR) || (errno == EAGAIN)));
      }
 
    evas_cache_image_wakeup();
 
-   if (check == sizeof (int))
-     result = EINA_TRUE;
-   else
+   if ((count > 0) || (check == sizeof (int)))
+      return EINA_TRUE;
+
+   switch (errno)
      {
-        switch (errno)
-          {
-           case EBADF:
-           case EINVAL:
-           case EIO:
-           case EPIPE:
-             _fd_write = -1;
-          }
+      case EBADF:
+      case EINVAL:
+      case EIO:
+      case EPIPE:
+         _fd_write = -1;
      }
 
-   return result;
+   return EINA_FALSE;
 }
