@@ -683,7 +683,7 @@ static const struct luaL_Reg _elua_edje_funcs [] =
 
 /**
 @page luaref
-@subsubsection edje_echo edje:echo(text)
+@subsubsection edje_echo edje.echo(text)
 
 Make lua a bit shelly.  Prints a string to the console
 
@@ -700,7 +700,7 @@ _elua_echo(lua_State *L)                         // Stack usage [-0, +0, v]
 //-------------
 /**
 @page luaref
-@subsubsection edje_date edje:date()
+@subsubsection edje_date edje.date()
 
 Retrieves the current time and date.
 
@@ -753,15 +753,15 @@ _elua_date(lua_State *L)  // Stack usage [-16, +17, em]
 
 /**
 @page luaref
-@subsubsection edje_looptime edje:looptime()
+@subsubsection edje_looptime edje.looptime()
 
 Retrieves the time at which the last loop stopped waiting for timeouts or events.
 
 This gets the time that the main loop ceased waiting for timouts and/or events
 to come in or for signals or any other interrupt source. This should be
 considered a reference point for all time based activity that should calculate
-its timepoint from the return of edje:looptime(). Use this UNLESS you absolutely
-must get the current actual timepoint - then use edje:seconds(). Note that this
+its timepoint from the return of edje.looptime(). Use this UNLESS you absolutely
+must get the current actual timepoint - then use edje.seconds(). Note that this
 time is meant to be used as relative to other times obtained on this run.
 
 Wraps ecore_loop_time_get().
@@ -778,7 +778,7 @@ _elua_looptime(lua_State *L)  // Stack usage [-0, +1, -]
 
 /**
 @page luaref
-@subsubsection edje_seconds edje:seconds()
+@subsubsection edje_seconds edje.seconds()
 
 Retrieves the current system time as a floating point value in seconds.
 
@@ -800,7 +800,7 @@ _elua_seconds(lua_State *L)  // Stack usage [-0, +1, -]
 
 /**
 @page luaref
-@subsubsection edje_version edje:version()
+@subsubsection edje_version edje.version()
 
 Retrieves the current edje version number.
 
@@ -820,7 +820,7 @@ _elua_version(lua_State *L)                                                // St
 //-------------
 /**
 @page luaref
-@subsubsection edje_geom edje:geom()
+@subsubsection edje_geom edje.geom()
 
 Retrieves the position and size of the edje object that this lua group is in.
 
@@ -840,7 +840,7 @@ _elua_objgeom(lua_State *L)                                  // Stack usage [-10
 
 /**
 @page luaref
-@subsubsection edje_pos edje:pos()
+@subsubsection edje_pos edje.pos()
 
 
 Retrieves the position of the edje object that this lua group is in.
@@ -859,7 +859,7 @@ _elua_objpos(lua_State *L)                                   // Stack usage [-6,
 
 /**
 @page luaref
-@subsubsection edje_size edje:size()
+@subsubsection edje_size edje.size()
 
 
 Retrieves the size of the edje object that this lua group is in.
@@ -879,7 +879,7 @@ _elua_objsize(lua_State *L)                                  // Stack usage [-6,
 //-------------
 /**
 @page luaref
-@subsubsection edje_emit edje:emit(signal, source)
+@subsubsection edje_emit edje.emit(signal, source)
 
 Emit a signal.
 
@@ -912,7 +912,7 @@ _elua_emit(lua_State *L)                                     // Stack usage [-2,
 
 /**
 @page luaref
-@subsubsection edje_message_send edje:messagesend(id, type, ...)
+@subsubsection edje_message_send edje.messagesend(id, type, ...)
 
 Send a message to this edje, and all it's child objects.
 
@@ -1164,7 +1164,7 @@ _elua_animator_free(void *obj)                               // Stack usage [-0,
 
 /**
 @page luaref
-@subsubsection edje_animator edje:animator(func)
+@subsubsection edje_animator edje.animator(func)
 
 This function adds an animator and returns its handle on success and NULL on
 failure. The function func will be called every frame tick.  Note that setting
@@ -1251,7 +1251,7 @@ _elua_timer_free(void *obj)                                  // Stack usage [-0,
 
 /**
 @page luaref
-@subsubsection edje_timer edje:timer(tick, func)
+@subsubsection edje_timer edje.timer(tick, func)
 
 This function adds a timer and returns its handle on success and NULL on failure.
 The function func will be called every tick seconds.
@@ -1343,9 +1343,9 @@ _elua_transition_free(void *obj)                             // Stack usage [-0,
 
 /**
 @page luaref
-@subsubsection edje_transition edje:transition(div, func)
+@subsubsection edje_transition edje.transition(div, func)
 
-Just like edje:animator(), except that the callback function gets called with an
+Just like edje.animator(), except that the callback function gets called with an
 argument.  The argument is the amount of time since the transition was created,
 divided by the div parameter.
 
@@ -1380,7 +1380,7 @@ _elua_transition(lua_State *L)                               // Stack usage [-8,
 //-------------
 /**
 @page luaref
-@subsubsection edje_colour_class edje:color_class(class, r, g, b, a)
+@subsubsection edje_colour_class edje.color_class(class, r, g, b, a)
 
 Gets, (and optionally sets) the colours for a color class.
 
@@ -1436,7 +1436,7 @@ _elua_color_class(lua_State *L)                              // Stack usage [-(1
 
 /**
 @page luaref
-@subsubsection edje_text_class edje:text_class(class, font, size)
+@subsubsection edje_text_class edje.text_class(class, font, size)
 
 Gets, (and optionally sets) the details for a text class.
 
@@ -1514,7 +1514,7 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
 
 /**
 @page luaref
-@subsubsection edje_edje edje:edje()
+@subsubsection edje_edje edje.edje()
 
 Create an edje object, and add it to the edje.
 
@@ -1537,7 +1537,7 @@ _elua_edje(lua_State *L)                                     // Stack usage [-7,
 
 /**
 @page luaref
-@subsubsection edje_image edje:image()
+@subsubsection edje_image edje.image()
 
 Create an evas image, and add it to the edje.
 
@@ -1559,7 +1559,7 @@ _elua_image(lua_State *L)                                    // Stack usage [-7,
 
 /**
 @page luaref
-@subsubsection edje_line edje:line()
+@subsubsection edje_line edje.line()
 
 Create an evas line, and add it to the edje.
 
@@ -1590,7 +1590,7 @@ _elua_map_free(void *obj)
 
 /**
 @page luaref
-@subsubsection edje_map edje:map()
+@subsubsection edje_map edje.map()
 
 Create an evas map.
 
@@ -1611,7 +1611,7 @@ _elua_map(lua_State *L)                                      // Stack usage [-7,
 
 /**
 @page luaref
-@subsubsection edje_polygon edje:polygon()
+@subsubsection edje_polygon edje.polygon()
 
 Create an evas polygon, and add it to the edje.
 
@@ -1633,7 +1633,7 @@ _elua_polygon(lua_State *L)                                 // Stack usage [-7, 
 
 /**
 @page luaref
-@subsubsection edje_rect edje:rect()
+@subsubsection edje_rect edje.rect()
 
 Create an evas rectangle, and add it to the edje.
 
@@ -1653,7 +1653,7 @@ _elua_rect(lua_State *L)                                    // Stack usage [-7, 
 
 /**
 @page luaref
-@subsubsection edje_text edje:text()
+@subsubsection edje_text edje.text()
 
 Create an evas text object, and add it to the edje.
 
@@ -1692,7 +1692,7 @@ _elua_textblock(lua_State *L)                               // Stack usage [-7, 
 @subsection evas Evas class.
 
 The lua evas class includes functions for dealing with evas objects.  The evas
-objects must have been previously created by lua using one of the lua ezas
+objects must have been previously created by lua using one of the lua evas
 object creation functions from the lua edje class.
 
 In the following, "evas_object" is a place holder for any lua variable that
@@ -2518,7 +2518,7 @@ _elua_obj_map_enable(lua_State *L)                              // Stack usage [
 
 The lua ecore animator class includes functions for dealing with ecore animator objects.
 The ecore animator objects must have been previously created by lua using the lua
-edje object creation function edje:animator() or edje:transition().
+edje object creation function edje.animator() or edje.transition().
 
 In the following, "animator_object" is a place holder for any lua variable that
 holds a reference to an ecore animator object.
@@ -2537,7 +2537,7 @@ static const struct luaL_Reg _elua_ecore_animator_funcs [] =
 
 The lua ecore timer class includes functions for dealing with ecore timer objects.
 The ecore timer objects must have been previously created by lua using the lua
-edje object creation function edje:timer().
+edje object creation function edje.timer().
 
 In the following, "timer_object" is a place holder for any lua variable that
 holds a reference to an ecore timer object.
@@ -2557,7 +2557,7 @@ static const struct luaL_Reg _elua_ecore_timer_funcs [] =
 
 The lua evas edje class includes functions for dealing with evas edje objects.
 The evas edje objects must have been previously created by lua using the lua
-edje object creation function edje:edje().
+edje object creation function edje.edje().
 
 In the following, "edje_object" is a place holder for any lua variable that
 holds a reference to an evas edje object.  NOT the edje class specified earlier
@@ -2655,7 +2655,7 @@ _elua_edje_file(lua_State *L)                                   // Stack usage [
 
 The lua evas image class includes functions for dealing with evas image objects.
 The evas image objects must have been previously created by lua using the lua
-image object creation function edje:image().
+image object creation function edje.image().
 
 In the following, "image_object" is a place holder for any lua variable that
 holds a reference to an evas image object.
@@ -2859,7 +2859,7 @@ _elua_image_image(lua_State *L)                                 // Stack usage [
 
 The lua evas line class includes functions for dealing with evas line objects.
 The evas line objects must have been previously created by lua using the lua
-line object creation function edje:line().
+line object creation function edje.line().
 
 In the following, "line_object" is a place holder for any lua variable that
 holds a reference to an evas line object.
@@ -2929,7 +2929,7 @@ static int _elua_line_xy(lua_State *L)                          // Stack usage [
 
 The lua evas map class includes functions for dealing with evas map objects.
 The evas map objects must have been previously created by lua using the lua
-map object creation function edje:map().  The evas map system is complex, rather
+map object creation function edje.map().  The evas map system is complex, rather
 than repeat the copious documentation here, please refer to the evas map
 documentation.  It has pictures and everything.  B-)
 
@@ -3503,7 +3503,7 @@ _elua_map_zoom(lua_State *L)                                    // Stack usage [
 
 The lua evas polygon class includes functions for dealing with evas polygon objects.
 The evas polygon objects must have been previously created by lua using the lua
-polygon object creation function edje:polygon().
+polygon object creation function edje.polygon().
 
 In the following, "polygon_object" is a place holder for any lua variable that
 holds a reference to an evas polygon object.
@@ -3583,7 +3583,7 @@ _elua_polygon_point(lua_State *L)                               // Stack usage [
 
 The lua evas text class includes functions for dealing with evas text objects.
 The evas text objects must have been previously created by lua using the lua
-text object creation function edje:text().
+text object creation function edje.text().
 
 In the following, "text_object" is a place holder for any lua variable that
 holds a reference to an evas text object.
@@ -4229,7 +4229,7 @@ _edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-3, +3, e] or [-1, +1, 
 
 If a function called "message" exists in a lua edje group, then it is called when
 that edje gets gets a message sent to it, with the message details passed to it.
-See edje:messagesend() for details of what each type means.  The arrays are
+See edje.messagesend() for details of what each type means.  The arrays are
 passed as a table.
 */
 void
