@@ -1,3 +1,9 @@
+2013-04-04  Yakov Goldberg
+
+        * Evas font: char position, returned by
+          evas_common_font_query_char_at_coords(),
+          depends on left/right half of char and its direction.
+
 2013-03-04  Cedric Bail
 
         * Evas: fix crash with Buffer engine with non alpha output.

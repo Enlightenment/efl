@@ -117,7 +117,10 @@ START_TEST(evas_text_geometries)
         fail_if(x <= px);
         px = x;
         /* Get back the coords */
-        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 4),
+                 y + (h / 2), &x, &y, &w, &h));
+        /* Get back cursor position, if click on right half of char. */
+        fail_if((i + 1) != evas_object_text_char_coords_get(to, x + ((3 * w) / 4),
                  y + (h / 2), &x, &y, &w, &h));
      }
 
@@ -427,7 +430,20 @@ START_TEST(evas_text_bidi)
         fail_if(x >= px);
         px = x;
         /* Get back the coords */
-        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+        fail_if(i != evas_object_text_char_coords_get(to, x + ((3 * w) / 4),
+                 y + (h / 2), &x, &y, &w, &h));
+     }
+
+   /* Get back cursor position, if click on left half of char.  */
+   evas_object_text_text_set(to, "שלום...");
+   x = 0;
+   px = 200;
+   for (i = 0 ; i < eina_unicode_utf8_get_len("שלום...") ; i++)
+     {
+        fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
+        fail_if(x >= px);
+        px = x;
+        fail_if((i + 1) != evas_object_text_char_coords_get(to, x + (w / 4),
                  y + (h / 2), &x, &y, &w, &h));
      }
 
@@ -449,7 +465,7 @@ START_TEST(evas_text_bidi)
    fail_if(!evas_object_text_char_pos_get(to, i, &x, &y, &w, &h));
    fail_if(x <= px);
    px = x;
-   fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+   fail_if(i != evas_object_text_char_coords_get(to, x + ((3 * w) / 4),
             y + (h / 2), &x, &y, &w, &h));
    i++;
    for ( ; i < eina_unicode_utf8_get_len("Test - נסיון") ; i++)
@@ -486,7 +502,13 @@ START_TEST(evas_text_bidi)
         fail_if(x >= px);
         px = x;
         /* Get back the coords */
-        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+        if (w == 0)
+          {
+             int cx;
+             fail_if(!evas_object_text_char_pos_get(to, i - 1, &cx, NULL, NULL, NULL));
+             w = cx - x;
+          }
+        fail_if(i != evas_object_text_char_coords_get(to, x + (3 * w /4),
                  y + (h / 2), &x, &y, &w, &h));
      }
 

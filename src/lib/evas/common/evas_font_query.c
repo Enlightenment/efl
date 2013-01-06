@@ -721,6 +721,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
    if (found)
      {
         int item_pos;
+        Evas_Coord cx_it, cw_it, cmid;
         Evas_Coord cluster_adv;
         cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
 
@@ -736,12 +737,34 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
              part = cluster_adv / items;
              item_pos = items - ((int) ((x - cluster_start) / part)) - 1;
           }
-        if (cx) *cx = EVAS_FONT_WALK_PEN_X +
-          ((cluster_adv / items) * (item_pos - 1));
+
+        cx_it = EVAS_FONT_WALK_PEN_X + ((cluster_adv / items) * (item_pos - 1));
+        cw_it = (cluster_adv / items);
+
+        if (cx) *cx = cx_it;
         if (cy) *cy = -asc;
-        if (cw) *cw = (cluster_adv / items);
+        if (cw) *cw = cw_it;
         if (ch) *ch = asc + desc;
         ret_val = prev_cluster + item_pos;
+
+        /* Check, if x coord points to RIGHT half part of LTR char
+         * or to LEFT half char of RTL char. If so, increment found position */
+        cmid = cx_it + (cw_it / 2);
+        if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_LTR)
+          {
+             if (x > cmid)
+               {
+                  ret_val++;
+               }
+          }
+        else
+          {
+             if (x < cmid)
+               {
+                  ret_val++;
+               }
+          }
+
         goto end;
      }
 end:
