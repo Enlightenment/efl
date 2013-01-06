@@ -133,6 +133,7 @@ Recommended reading:
 @li @ref Edje_General_Group
 @li @ref Edje_Object_Group
 @li @ref Edje_External_Group
+@li @ref luaref
 
 @section edje_main_intro_example Introductory Example
 
