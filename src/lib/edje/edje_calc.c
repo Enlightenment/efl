@@ -2823,7 +2823,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (ep->part->type == EDJE_PART_TYPE_PROXY)
      {
-        Edje_Real_Part *pp;
         int part_id = -1;
 
         if (pos >= FROM_DOUBLE(0.5))
@@ -2831,9 +2830,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         else
           part_id = ((Edje_Part_Description_Proxy*) chosen_desc)->proxy.id;
 
-        pp = _edje_real_part_state_get(ed, ep, flags, part_id, NULL);
 #ifdef EDJE_CALC_CACHE
+        Edje_Real_Part *pp;
+        pp = _edje_real_part_state_get(ed, ep, flags, part_id, NULL);
         if (pp && pp->invalidate) proxy_invalidate = EINA_TRUE;
+#else
+        _edje_real_part_state_get(ed, ep, flags, part_id, NULL);
 #endif
      }
 
