@@ -11,6 +11,24 @@ EFL is a collection of libraries for handling many common tasks a
 developer man have such as data structures, communication, rendering,
 widgets and more.
 
+VALGRIND DEPENDENCY:
+------------------------------------------------------------------------------
+EFL uses the concept of memory pools (mempool) and this will confuse
+valgrind memcheck tool. By using memory pool, the memory is still
+owned by EFL, then valgrind won't alert on memory leaks or use of
+unused memory. EFL will use memcheck.h from valgrind to declare its
+memory pools to valgrind, producing better debugging results.
+
+However valgrind is only available to limited platforms, making us
+hard to declare it a mandatory requirement. Based on
+--with-profile={dev,debug} valgrind will be used if available or will
+be issued a warning. You can force valgrind with --enable-valgrind, or
+disable it and the warning with --disable-valgrind.
+
+EFL does NOT link to valgrind libraries. Then there is NO runtime
+dependency on valgrind.
+
+
 BULLET PHYSICS DEPENDENCY:
 ------------------------------------------------------------------------------
 EFL comes with EPhysics(a physics wrapper library) enabled by default, to

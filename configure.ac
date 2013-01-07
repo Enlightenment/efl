@@ -708,7 +708,7 @@ case "${build_profile}" in
    dev)
      with_max_log_level=""
      have_stringshare_usage="no"
-     want_valgrind="no"
+     want_valgrind="auto"
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
@@ -717,7 +717,7 @@ case "${build_profile}" in
    debug)
      with_max_log_level=""
      have_stringshare_usage="yes"
-     want_valgrind="no"
+     want_valgrind="auto"
      want_debug_malloc="yes"
      want_debug_threads="yes"
      want_default_mempool="yes"
@@ -759,6 +759,23 @@ EFL_ADD_LIBS([EINA], [-lm])
 ## Options
 
 # Valgrind
+AC_ARG_ENABLE([valgrind],
+   [AC_HELP_STRING([--disable-valgrind],
+       [enable valgrind mempool declaration. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_valgrind="yes"
+    else
+       want_valgrind="no"
+    fi
+   ])
+
+if test "${want_valgrind}" = "auto"; then
+   PKG_CHECK_EXISTS([valgrind >= 2.4.0], [want_valgrind="yes"],
+      [want_valgrind="no"
+       AC_MSG_WARN([valgrind support desired by --with-profile=${build_profile} but not found. If your platform supports it, install valgrind.])])
+fi
+
 if test "${want_valgrind}" = "no"; then
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 else
