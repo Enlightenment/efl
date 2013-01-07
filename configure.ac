@@ -708,7 +708,7 @@ case "${build_profile}" in
    dev)
      with_max_log_level=""
      have_stringshare_usage="no"
-     want_valgrind="yes"
+     want_valgrind="no"
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
@@ -717,7 +717,7 @@ case "${build_profile}" in
    debug)
      with_max_log_level=""
      have_stringshare_usage="yes"
-     want_valgrind="yes"
+     want_valgrind="no"
      want_debug_malloc="yes"
      want_debug_threads="yes"
      want_default_mempool="yes"
