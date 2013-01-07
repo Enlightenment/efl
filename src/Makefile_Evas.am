@@ -448,6 +448,7 @@ GL_COMMON_SOURCES = \
 modules/evas/engines/gl_common/evas_gl_private.h \
 modules/evas/engines/gl_common/evas_gl_common.h \
 modules/evas/engines/gl_common/evas_gl_context.c \
+modules/evas/engines/gl_common/evas_gl_file_cache.c \
 modules/evas/engines/gl_common/evas_gl_shader.c \
 modules/evas/engines/gl_common/evas_gl_rectangle.c \
 modules/evas/engines/gl_common/evas_gl_texture.c \

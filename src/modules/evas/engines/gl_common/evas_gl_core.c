@@ -16,7 +16,7 @@ int _evas_gl_log_dom = -1;
 static void _surface_cap_print(EVGL_Engine *ee, int error);
 
 //---------------------------------------------------------------//
-// Internal Resources: 
+// Internal Resources:
 //  - Surface and Context used for internal buffer creation
 //---------------------------------------------------------------//
 static int
@@ -262,7 +262,7 @@ _internal_resource_make_current(EVGL_Engine *ee, EVGL_Context *ctx)
 }
 
 //---------------------------------------------------------------//
-// Surface Related Functions 
+// Surface Related Functions
 //  - Texture/ Renderbuffer Creation/ Attachment to FBO
 //  - Surface capability check
 //  - Internal config choose function
@@ -364,7 +364,7 @@ _renderbuffer_attach(GLuint buf, GLenum attach)
 
 // Check whether the given FBO surface config is supported by the driver
 static int
-_fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt, 
+_fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
                       GLenum depth_fmt, GLenum stencil_fmt, int mult_samples)
 {
    GLuint fbo = 0;
@@ -456,10 +456,10 @@ _surface_cap_test(EVGL_Surface_Format *fmt, GL_Format *color,
    if ( (depth->bit == DEPTH_STENCIL) && (stencil->bit != STENCIL_BIT_8))
       return 0;
 
-   ret = _fbo_surface_cap_test((GLint)color->fmt, 
+   ret = _fbo_surface_cap_test((GLint)color->fmt,
                                color->fmt,
-                               depth->fmt, 
-                               stencil->fmt, samples); 
+                               depth->fmt,
+                               stencil->fmt, samples);
    if (ret)
      {
         fmt->color_bit  = color->bit;
@@ -478,7 +478,7 @@ _surface_cap_test(EVGL_Surface_Format *fmt, GL_Format *color,
           }
         else
           {
-             fmt->depth_stencil_fmt = 0;  
+             fmt->depth_stencil_fmt = 0;
              fmt->depth_bit = depth->bit;
              fmt->depth_fmt = depth->fmt;
              fmt->stencil_bit = stencil->bit;
@@ -503,16 +503,16 @@ _surface_cap_check(EVGL_Engine *ee)
                          };
 
 #ifdef GL_GLES
-   GL_Format depth[]   = { 
+   GL_Format depth[]   = {
                            { DEPTH_NONE,   0 },
-                           { DEPTH_STENCIL, GL_DEPTH_STENCIL_OES }, 
+                           { DEPTH_STENCIL, GL_DEPTH_STENCIL_OES },
                            { DEPTH_BIT_8,   GL_DEPTH_COMPONENT },
                            { DEPTH_BIT_16,  GL_DEPTH_COMPONENT16 },
                            { DEPTH_BIT_24,  GL_DEPTH_COMPONENT24_OES },
                            { DEPTH_BIT_32,  GL_DEPTH_COMPONENT32_OES },
                            { -1, -1 },
-                         }; 
-   GL_Format stencil[] = { 
+                         };
+   GL_Format stencil[] = {
                            { STENCIL_NONE, 0 },
                            { STENCIL_BIT_1, GL_STENCIL_INDEX1_OES },
                            { STENCIL_BIT_4, GL_STENCIL_INDEX4_OES },
@@ -520,7 +520,7 @@ _surface_cap_check(EVGL_Engine *ee)
                            { -1, -1 },
                          };
 #else
-   GL_Format depth[]   = { 
+   GL_Format depth[]   = {
                            { DEPTH_NONE,   0 },
                            { DEPTH_STENCIL, GL_DEPTH24_STENCIL8 },
                            { DEPTH_BIT_8,   GL_DEPTH_COMPONENT },
@@ -528,7 +528,7 @@ _surface_cap_check(EVGL_Engine *ee)
                            { DEPTH_BIT_24,  GL_DEPTH_COMPONENT24 },
                            { DEPTH_BIT_32,  GL_DEPTH_COMPONENT32 },
                            { -1, -1 },
-                         }; 
+                         };
    GL_Format stencil[] = {
                            { STENCIL_NONE, 0 },
                            { STENCIL_BIT_1, GL_STENCIL_INDEX1 },
@@ -563,10 +563,10 @@ _surface_cap_check(EVGL_Engine *ee)
         // Color Formats
         i = 0;
         while ( color[i].bit >= 0 )
-          { 
+          {
              j = 0;
              // Depth Formats
-             while ( depth[j].bit >= 0 ) 
+             while ( depth[j].bit >= 0 )
                {
                   k = 0;
                   // Stencil Formats
@@ -584,6 +584,156 @@ _surface_cap_check(EVGL_Engine *ee)
      }
 
    return num_fmts;
+}
+
+static int
+_surface_cap_load(EVGL_Engine *ee, Eet_File *ef)
+{
+   int res = 0, i = 0, length = 0;
+   char tag[80];
+   void *data = 0;
+
+   data = eet_read(ef, "num_fbo_fmts", &length);
+   if ((!data) || (length <= 0)) goto finish;
+   ee->caps.num_fbo_fmts = atoi(data);
+   free(data);
+   data = 0;
+
+   // !!!FIXME 
+   // Should use eet functionality instead of just reading using sscanfs...
+   for (i = 0; i < ee->caps.num_fbo_fmts; ++i)
+     {
+        EVGL_Surface_Format *fmt = &ee->caps.fbo_fmts[i];
+
+        snprintf(tag, sizeof(tag), "fbo_%d", i);
+        data = eet_read(ef, tag, &length);
+        if ((!data) || (length <= 0)) goto finish;
+        sscanf(data, "%d%d%d%d%d%d%d%d%d%d",
+               &(fmt->index),
+               (int*)(&(fmt->color_bit)), &(fmt->color_ifmt), &(fmt->color_fmt),
+               (int*)(&(fmt->depth_bit)), &(fmt->depth_fmt),
+               (int*)(&(fmt->stencil_bit)), &(fmt->stencil_fmt),
+               &(fmt->depth_stencil_fmt),
+               &(fmt->samples));
+        free(data);
+        data = 0;
+     }
+
+   res = 1;
+   goto finish;
+
+finish:
+   if (data) free(data);
+   return res;
+}
+
+static int
+_surface_cap_save(EVGL_Engine *ee, Eet_File *ef)
+{
+   int i = 0;
+   char tag[80], data[80];;
+
+   snprintf(data, sizeof(data), "%d", ee->caps.num_fbo_fmts);
+   if (eet_write(ef, "num_fbo_fmts", data, sizeof(data), 1) < 0)
+      return 0;
+
+   // !!!FIXME 
+   // Should use eet functionality instead of just writing out using snprintfs...
+   for (i = 0; i < ee->caps.num_fbo_fmts; ++i)
+     {
+        EVGL_Surface_Format *fmt = &ee->caps.fbo_fmts[i];
+
+        snprintf(tag, sizeof(tag), "fbo_%d", i);
+        snprintf(data, sizeof(data), "%d %d %d %d %d %d %d %d %d %d",
+                 fmt->index,
+                 fmt->color_bit, fmt->color_ifmt, fmt->color_fmt,
+                 fmt->depth_bit, fmt->depth_fmt,
+                 fmt->stencil_bit, fmt->stencil_fmt,
+                 fmt->depth_stencil_fmt,
+                 fmt->samples);
+        if (eet_write(ef, tag, data, sizeof(data), 1) < 0) return 0;
+     }
+
+   return 1;
+}
+
+static int
+_surface_cap_cache_load(EVGL_Engine *ee)
+{
+   /* check eet */
+   Eet_File *et = NULL;
+   char cap_dir_path[PATH_MAX];
+   char cap_file_path[PATH_MAX];
+
+   if (!evas_gl_common_file_cache_dir_check(cap_dir_path, sizeof(cap_dir_path)))
+      return 0;
+
+   if (!evas_gl_common_file_cache_file_check(cap_dir_path, "surface_cap",
+                                             cap_file_path, sizeof(cap_dir_path)))
+      return 0;
+
+   /* use eet */
+   if (!eet_init()) return 0;
+   et = eet_open(cap_file_path, EET_FILE_MODE_READ);
+   if (!et) goto error;
+
+   if (!_surface_cap_load(ee, et))
+      goto error;
+
+   if (et) eet_close(et);
+   eet_shutdown();
+   return 1;
+
+error:
+   if (et) eet_close(et);
+   eet_shutdown();
+   return 0;
+}
+
+static int
+_surface_cap_cache_save(EVGL_Engine *ee)
+{
+   /* check eet */
+   Eet_File *et = NULL; //check eet file
+   int tmpfd;
+   int res = 0;
+   char cap_dir_path[PATH_MAX];
+   char cap_file_path[PATH_MAX];
+   char tmp_file[PATH_MAX];
+
+   if (!evas_gl_common_file_cache_dir_check(cap_dir_path, sizeof(cap_dir_path)))
+     {
+        res = evas_gl_common_file_cache_mkpath(cap_dir_path);
+        if (!res) return 0; /* we can't make directory */
+     }
+
+   evas_gl_common_file_cache_file_check(cap_dir_path, "surface_cap", cap_file_path,
+                                        sizeof(cap_dir_path));
+
+   /* use mkstemp for writing */
+   snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX", cap_file_path);
+   tmpfd = mkstemp(tmp_file);
+   if (tmpfd < 0) goto error;
+   close(tmpfd);
+
+   /* use eet */
+   if (!eet_init()) goto error;
+
+   et = eet_open(tmp_file, EET_FILE_MODE_WRITE);
+   if (!et) goto error;
+
+   if (!_surface_cap_save(ee, et)) goto error;
+
+   if (eet_close(et) != EET_ERROR_NONE) goto error;
+   if (rename(tmp_file,cap_file_path) < 0) goto error;
+   eet_shutdown();
+   return 1;
+
+error:
+   if (et) eet_close(et);
+   if (evas_gl_common_file_cache_file_exists(tmp_file)) unlink(tmp_file);
+   eet_shutdown();
+   return 0;
 }
 
 static int
@@ -623,16 +773,23 @@ _surface_cap_init(EVGL_Engine *ee)
      }
 #endif
 
-   int num_fmts = 0;
-
-   // Check Surface Cap
-   num_fmts = _surface_cap_check(ee);
-
-   if (num_fmts)
+   // Load Surface Cap
+   if (!_surface_cap_cache_load(ee))
      {
-        ee->caps.num_fbo_fmts = num_fmts;
+        // Check Surface Cap
+        ee->caps.num_fbo_fmts = _surface_cap_check(ee);
+        _surface_cap_cache_save(ee);
+        DBG("Ran Evas GL Surface Cap and Cached the existing values.");
+     }
+   else
+     {
+        DBG("Loaded cached Evas GL Surface Cap values.");
+     }
+
+   if (ee->caps.num_fbo_fmts)
+     {
         _surface_cap_print(ee, 0);
-        DBG("Number of supported surface formats: %d", num_fmts);
+        DBG("Number of supported surface formats: %d", ee->caps.num_fbo_fmts);
         return 1;
      }
    else
@@ -885,7 +1042,7 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
    color_bit = (1 << cfg->color_format);
    if (cfg->depth_bits) depth_bit = (1 << (cfg->depth_bits-1));
    if (cfg->stencil_bits) stencil_bit = (1 << (cfg->stencil_bits-1));
-   if (cfg->multisample_bits) 
+   if (cfg->multisample_bits)
       msaa_samples = ee->caps.msaa_samples[cfg->multisample_bits-1];
 
    // Run through all the available formats and choose the first match
@@ -1160,7 +1317,7 @@ int evgl_engine_destroy(EVGL_Engine *ee)
    if (_evas_gl_log_dom >= 0) return 0;
    eina_log_domain_unregister(_evas_gl_log_dom);
    _evas_gl_log_dom = -1;
-  
+
    // Destroy internal resources
    _internal_resources_destroy(ee);
 
@@ -1240,7 +1397,7 @@ evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
         ERR("Unable Create Specificed Surfaces.  Unsupported format!");
         goto error;
      };
-   
+
    return sfc;
 
 error:
@@ -1413,7 +1570,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
         ERR("Invalid Inputs. Engine: %p  Surface: %p   Context: %p!", ee, sfc, ctx);
         return 0;
      }
-   
+
    // Get TLS Resources
    if (!(rsc = _evgl_tls_resource_get(ee))) return 0;
 

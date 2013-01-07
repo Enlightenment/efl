@@ -1,3 +1,12 @@
+2013-01-07 Sung W. Park (sung_)
+
+	* Pulled out evas gl backend binary shader file caching code from 
+        evas_gl_shader.c file and made an internal generic caching api in 
+        evas_gl_common.h for use in evas_gl code.
+        * Implemented evas_gl surface cap. caching code in gl backend to
+        accelerate the engine creation. 
+
+
 2013-01-07  Thomas Petazzoni
 
 	* Fix build of Evas XCB backend.

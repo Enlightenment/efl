@@ -555,6 +555,15 @@ int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
 
+Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);
+Eina_Bool         evas_gl_common_file_cache_mkdir(const char *dir);
+Eina_Bool         evas_gl_common_file_cache_file_exists(const char *file);
+Eina_Bool         evas_gl_common_file_cache_mkpath_if_not_exists(const char *path);
+Eina_Bool         evas_gl_common_file_cache_mkpath(const char *path);
+int               evas_gl_common_file_cache_dir_check(char *cache_dir, int num);
+int               evas_gl_common_file_cache_file_check(const char *cache_dir, const char *cache_name, char *cache_file, int dir_num);
+int               evas_gl_common_file_cache_save(Evas_GL_Shared *shared);
+
 void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt);

@@ -321,117 +321,6 @@ gl_compile_link_error(GLuint target, const char *action)
      }
 }
 
-static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-
-static Eina_Bool
-_evas_gl_shader_file_is_dir(const char *file)
-{
-   struct stat st;
-
-   if (stat(file, &st) < 0) return EINA_FALSE;
-   if (S_ISDIR(st.st_mode)) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_evas_gl_shader_file_mkdir(const char *dir)
-{
-   /* evas gl shader only call this function when the dir is not exist */
-   if (mkdir(dir, default_mode) < 0) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_evas_gl_shader_file_exists(const char *file)
-{
-   struct stat st;
-   if (!file) return EINA_FALSE;
-   if (stat(file, &st) < 0) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-_evas_gl_shader_file_mkpath_if_not_exists(const char *path)
-{
-   struct stat st;
-
-   if (stat(path, &st) < 0)
-     return _evas_gl_shader_file_mkdir(path);
-   else if (!S_ISDIR(st.st_mode))
-     return EINA_FALSE;
-   else
-     return EINA_TRUE;
-}
-
-static Eina_Bool
-_evas_gl_shader_file_mkpath(const char *path)
-{
-   char ss[PATH_MAX];
-   unsigned int i;
-
-   if (_evas_gl_shader_file_is_dir(path)) return EINA_TRUE;
-
-   for (i = 0; path[i]; ss[i] = path[i], i++)
-     {
-        if (i == sizeof(ss) - 1) return EINA_FALSE;
-        if ((path[i] == '/') && (i > 0))
-          {
-             ss[i] = 0;
-             if (!_evas_gl_shader_file_mkpath_if_not_exists(ss))
-               return EINA_FALSE;
-          }
-     }
-   ss[i] = 0;
-   return _evas_gl_shader_file_mkpath_if_not_exists(ss);
-}
-
-static int
-_evas_gl_shader_dir_check(char *bin_shader_dir, int num)
-{
-   char *home = NULL;
-   char *subdir = ".cache/evas_gl_common_shaders";
-
-   home = getenv("HOME");
-   if ((!home) || (!home[0])) return 0;
-
-   snprintf(bin_shader_dir, num, "%s/%s", home, subdir);
-   return _evas_gl_shader_file_exists(bin_shader_dir);
-}
-
-static int
-_evas_gl_shader_file_check(const char *bin_shader_dir, char *bin_shader_file, int dir_num)
-{
-   char before_name[PATH_MAX];
-   char after_name[PATH_MAX];
-   int new_path_len = 0;
-   int i = 0, j = 0;
-
-   char *vendor = NULL;
-   char *driver = NULL;
-   char *version = NULL;
-
-   vendor = (char *)glGetString(GL_VENDOR);
-   driver = (char *)glGetString(GL_RENDERER);
-   version = (char *)glGetString(GL_VERSION);
-
-   new_path_len = snprintf(before_name, sizeof(before_name), "%s::%s::%s::%s::binary_shader.eet", vendor, version, driver, MODULE_ARCH);
-
-   /* remove '/' from file name */
-   for (i = 0; i < new_path_len; i++)
-     {
-        if (before_name[i] != '/')
-          {
-             after_name[j] = before_name[i];
-             j++;
-          }
-     }
-   after_name[j] = 0;
-
-   snprintf(bin_shader_file, dir_num, "%s/%s", bin_shader_dir, after_name);
-
-   return _evas_gl_shader_file_exists(bin_shader_file);
-}
-
 static int
 _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
                                            const char *pname,
@@ -459,8 +348,8 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    p->prog = glCreateProgram();
 
 #if 1
-   // TODO: invalid rendering error occurs when attempting to use a 
-   // glProgramBinary. in order to render correctly we should create a dummy 
+   // TODO: invalid rendering error occurs when attempting to use a
+   // glProgramBinary. in order to render correctly we should create a dummy
    // vertex shader.
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    glAttachShader(p->prog, p->vert);
@@ -544,7 +433,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
-   
+
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -573,7 +462,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
         ERR("Abort compile of shader frag (%s): %s", name, frag->src);
         return 0;
      }
-   
+
    p->prog = glCreateProgram();
 #ifdef GL_GLES
 #else
@@ -667,10 +556,10 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
    char bin_file_path[PATH_MAX];
    unsigned int i;
 
-   if (!_evas_gl_shader_dir_check(bin_dir_path, sizeof(bin_dir_path)))
+   if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
       return 0;
 
-   if (!_evas_gl_shader_file_check(bin_dir_path, bin_file_path,
+   if (!evas_gl_common_file_cache_file_check(bin_dir_path, "binary_shader", bin_file_path,
                                    sizeof(bin_dir_path)))
       return 0;
 
@@ -707,13 +596,13 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    char tmp_file[PATH_MAX];
    unsigned int i;
 
-   if (!_evas_gl_shader_dir_check(bin_dir_path, sizeof(bin_dir_path)))
+   if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
      {
-        res = _evas_gl_shader_file_mkpath(bin_dir_path);
+        res = evas_gl_common_file_cache_mkpath(bin_dir_path);
         if (!res) return 0; /* we can't make directory */
      }
 
-   _evas_gl_shader_file_check(bin_dir_path, bin_file_path,
+   evas_gl_common_file_cache_file_check(bin_dir_path, "binary_shader", bin_file_path,
                               sizeof(bin_dir_path));
 
    /* use mkstemp for writing */
@@ -741,7 +630,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 
 error:
    if (et) eet_close(et);
-   if (_evas_gl_shader_file_exists(tmp_file)) unlink(tmp_file);
+   if (evas_gl_common_file_cache_file_exists(tmp_file)) unlink(tmp_file);
    eet_shutdown();
    return 0;
 }
