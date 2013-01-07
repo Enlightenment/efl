@@ -255,7 +255,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    evas_cache_image_wakeup();
 
-   if ((count > 0) || (check == sizeof (int)))
+   if ((count != 0) || (check == sizeof (int)))
       return EINA_TRUE;
 
    switch (errno)
