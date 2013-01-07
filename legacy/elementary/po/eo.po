@@ -3,21 +3,20 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#: src/lib/elm_config.c:2200
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
-"PO-Revision-Date: 2012-12-14 08:24+0000\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-01-05 11:32+0100\n"
+"PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-12-15 05:06+0000\n"
-"X-Generator: Launchpad (build 16372)\n"
+"X-Launchpad-Export-Date: 2013-01-06 04:54+0000\n"
+"X-Generator: Launchpad (build 16393)\n"
+"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:773
 msgid "Up"
@@ -60,44 +59,39 @@ msgstr "%B %Y"
 
 #: src/lib/elm_calendar.c:144
 msgid "%B"
-msgstr ""
+msgstr "%B"
 
 #: src/lib/elm_calendar.c:153
 msgid "%Y"
-msgstr ""
+msgstr "%V"
 
 #: src/lib/elm_calendar.c:260
 msgid "calendar item"
 msgstr "kalendarero"
 
 #: src/lib/elm_calendar.c:286
-#, fuzzy
 msgid "calendar decrement month button"
-msgstr "dekrementa butono de kalendaro"
+msgstr "Dekrementa butono de monata kalendaro"
 
 #: src/lib/elm_calendar.c:291
-#, fuzzy
 msgid "calendar decrement year button"
-msgstr "dekrementa butono de kalendaro"
+msgstr "Dekrementa butono de jara kalendaro"
 
 #: src/lib/elm_calendar.c:296
-#, fuzzy
 msgid "calendar increment month button"
-msgstr "alkrementa butono de kalendaro"
+msgstr "Alkrementa butono de monata kalendaro"
 
 #: src/lib/elm_calendar.c:301
-#, fuzzy
 msgid "calendar increment year button"
-msgstr "alkrementa butono de kalendaro"
+msgstr "Alkrementa butono de jara kalendaro"
 
 #: src/lib/elm_calendar.c:306
 msgid "calendar month"
 msgstr "monato de kalendaro"
 
 #: src/lib/elm_calendar.c:311
-#, fuzzy
 msgid "calendar year"
-msgstr "kalendarero"
+msgstr "jara kalendaro"
 
 #: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
@@ -128,7 +122,7 @@ msgstr "Dekrementa butono de ĥorloĝo por m,ptm"
 msgid "State: Editable"
 msgstr "Stato: redaktebla"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr "Horloĝo"
 
@@ -136,7 +130,7 @@ msgstr "Horloĝo"
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -160,7 +154,7 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2908
 msgid "Entry"
 msgstr "Ero"
 
@@ -180,7 +174,7 @@ msgstr "Indeksero"
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:398
 msgid "Label"
 msgstr "Etikedo"
 
@@ -200,15 +194,15 @@ msgstr "stato: fermita"
 msgid "panel button"
 msgstr "butono de panelo"
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "progresbreto"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Radiobutono"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "ŝovilo"
 
