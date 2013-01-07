@@ -1,3 +1,7 @@
+2013-01-07  Thomas Petazzoni
+
+	* Fix build of Evas XCB backend.
+
 2013-01-04  Jérémy Zurcher
 
 	* Improve eina_share string del speed by a maybe 5-15%.

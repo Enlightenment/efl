@@ -874,7 +874,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
           }
         else
           {
-             int pixelb = evas_software_xcb_output_buffer_depth(obr->xob) / 8;
+             int pixelb = evas_software_xcb_output_buffer_depth(obr->xcbob) / 8;
              int run;
              int dstjump;
              
