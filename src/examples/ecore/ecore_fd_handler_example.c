@@ -1,3 +1,7 @@
+/*
+ * gcc -o ecore_fd_handler_example ecore_fd_handler_example.c `pkg-config --cflags --libs ecore`
+ */
+
 #include <Ecore.h>
 #include <unistd.h>
 
