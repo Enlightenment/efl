@@ -6573,7 +6573,7 @@ EAPI Evas_Map       *evas_map_dup(const Evas_Map *m);
 /**
  * Free a previously allocated map.
  *
- * This frees a givem map @p m and all memory associated with it. You must NOT
+ * This frees a given map @p m and all memory associated with it. You must NOT
  * free a map returned by evas_object_map_get() as this is internal.
  *
  * @param m map to free.
