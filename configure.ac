@@ -3327,6 +3327,7 @@ EFL_ADD_LIBS([EDJE], [-lm])
 
 EFL_EVAL_PKGS([EDJE])
 
+AC_DEFINE([EDJE_PROGRAM_CACHE], [1], [Cache result of program glob matches - this uses up extra ram with the gain of faster program matching])
 AM_CONDITIONAL([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"])
 AC_DEFINE_IF([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"],
   [1], [Use Multisense])
