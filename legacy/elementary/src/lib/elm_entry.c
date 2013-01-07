@@ -2293,6 +2293,7 @@ _chars_add_till_limit(Evas_Object *obj,
 
    if (!*text) return;
    if (unit >= LENGTH_UNIT_LAST) return;
+   if (strstr(*text, "<preedit")) return;
 
    new_text = *text;
    current_len = strlen(*text);
