@@ -759,14 +759,40 @@ cb_dispatch_status(DBusConnection *dbus_conn EINA_UNUSED, DBusDispatchStatus new
      }
 }
 
+static inline Eina_Bool
+extra_arguments_check(DBusMessage *msg, EDBus_Signal_Handler *sh)
+{
+   DBusMessageIter iter;
+   Signal_Argument *arg;
+   unsigned int arg_index = 0;
+
+   dbus_message_iter_init(msg, &iter);
+   EINA_INLIST_FOREACH(sh->args, arg)
+     {
+        const char *arg_msg;
+        int type = 0;
+
+        while((arg->index > arg_index) && dbus_message_iter_next(&iter))
+          arg_index++;
+
+        if (arg_index != arg->index)
+          return EINA_FALSE;
+
+        type = dbus_message_iter_get_arg_type(&iter);
+        if (!(type == 's' || type == 'o'))
+          return EINA_FALSE;
+
+        dbus_message_iter_get_basic(&iter, &arg_msg);
+        if (strcmp(arg_msg, arg->value))
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static void
 cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
 {
-   DBusMessageIter iter;
-   int counter;
-   char *arg_msg;
    EDBus_Message *edbus_msg;
-   Signal_Argument *arg;
    Eina_Inlist *next;
 
    edbus_msg = edbus_message_new(EINA_FALSE);
@@ -787,7 +813,6 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
    while (next != NULL)
      {
         EDBus_Signal_Handler *sh;
-        int type = 0;
 
         sh = EINA_INLIST_CONTAINER_GET(next, EDBus_Signal_Handler);
         next = next->next;
@@ -803,26 +828,12 @@ cb_signal_dispatcher(EDBus_Connection *conn, DBusMessage *msg)
                     continue;
                }
              else
-                if (!dbus_message_has_sender(msg, sh->sender)) continue;
+               if (!dbus_message_has_sender(msg, sh->sender)) continue;
           }
         if (sh->path && !dbus_message_has_path(msg, sh->path)) continue;
         if (sh->member && !dbus_message_has_member(msg, sh->member)) continue;
+        if (!extra_arguments_check(msg, sh)) continue;
 
-        dbus_message_iter_init(msg, &iter);
-        counter = 0;
-        EINA_INLIST_FOREACH(sh->args, arg)
-          {
-             type = dbus_message_iter_get_arg_type(&iter);
-             if (counter != arg->index || !(type == 's' || type == 'o'))
-               continue;
-
-             dbus_message_iter_get_basic(&iter, &arg_msg);
-             if (strcmp(arg_msg, arg->value))
-               continue;
-
-             dbus_message_iter_next(&iter);
-             counter++;
-          }
         edbus_signal_handler_ref(sh);
         sh->cb((void *)sh->cb_data, edbus_msg);
         /* update next signal handler because the list may have changed */
