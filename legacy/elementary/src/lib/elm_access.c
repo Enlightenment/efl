@@ -558,7 +558,7 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 
    // create access object
    ao = _elm_access_add(obj);
-   if (!ao) return;
+   if (!ao) return NULL;
 
    evas_object_event_callback_add(po, EVAS_CALLBACK_RESIZE,
                                   _content_resize, ao);
