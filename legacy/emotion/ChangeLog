@@ -66,3 +66,7 @@
 2013-01-05   Jérémy Zurcher
 
         * fix type in emotion_suspend_get()
+
+2013-01-05   Gustavo Sverzut Barbieri (k-s)
+
+        * xine module exports 22 (VIDEO_OUT_XINE_API_VERSION) as well.
