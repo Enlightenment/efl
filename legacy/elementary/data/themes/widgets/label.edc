@@ -136,7 +136,7 @@ group { name: "elm/label/base/slide_long";
             align: 0.0 0.0;
             text {
                style: "textblock_style";
-               min: 1 1;
+               min: 0 1;
             }
          }
          description { state: "slide_end" 0.0;
@@ -144,12 +144,20 @@ group { name: "elm/label/base/slide_long";
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 1.0;
             align: 1.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 1.0;
             align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
       }
    }
@@ -252,7 +260,7 @@ group { name: "elm/label/base/slide_short";
             align: 0.0 0.0;
             text {
                style: "textblock_style";
-               min: 1 1;
+               min: 0 1;
             }
          }
          description { state: "slide_end" 0.0;
@@ -260,12 +268,20 @@ group { name: "elm/label/base/slide_short";
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 1.0;
             align: 1.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
       }
    }
@@ -379,7 +395,7 @@ group { name: "elm/label/base/slide_bounce";
             align: 0.0 0.0;
             text {
                style: "textblock_style";
-               min: 1 1;
+               min: 0 1;
             }
          }
          description { state: "slide_end" 0.0;
@@ -387,12 +403,20 @@ group { name: "elm/label/base/slide_bounce";
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 1.0;
             align: 1.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.0;
+            text {
+               style: "textblock_style";
+               min: 1 1;
+            }
          }
       }
    }

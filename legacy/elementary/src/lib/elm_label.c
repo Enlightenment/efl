@@ -83,7 +83,6 @@ _label_slide_change(Evas_Object *obj)
    //doesn't support multiline slide effect
    if (sd->linewrap)
      {
-        sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
         WRN("Doesn't support slide effect for multiline! : label=%p", obj);
         return;
      }
@@ -96,11 +95,7 @@ _label_slide_change(Evas_Object *obj)
         plainlen = strlen(plaintxt);
         free(plaintxt);
      }
-   if (plainlen < 1)
-     {
-        sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
-        return;
-     }
+   if (plainlen < 1) return;
 
    //has slide effect.
    if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE)
@@ -117,11 +112,7 @@ _label_slide_change(Evas_Object *obj)
                   evas_object_textblock_size_formatted_get(tb, &tb_w, NULL);
                   evas_object_geometry_get(wd->resize_obj,
                                            NULL, NULL, &w, NULL);
-                  if ((tb_w > 0) && (tb_w < w))
-                    {
-                       sd->slide_mode = ELM_LABEL_SLIDE_MODE_NONE;
-                       return;
-                    }
+                  if ((tb_w > 0) && (tb_w < w)) return;
                }
           }
         Edje_Message_Float_Set *msg =
@@ -363,6 +354,11 @@ static void
 _on_slide_end(void *data, Evas_Object *obj __UNUSED__,
               const char *emission __UNUSED__, const char *source __UNUSED__)
 {
+   ELM_LABEL_DATA_GET(data, sd);
+
+   if (sd->slide_ellipsis)
+     eo_do(data, elm_obj_label_ellipsis_set(EINA_TRUE));
+
    evas_object_smart_callback_call(data, SIG_SLIDE_END, NULL);
 }
 
