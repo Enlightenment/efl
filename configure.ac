@@ -548,15 +548,16 @@ AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
 clearenv \
-execvp \
 dirfd \
+execvp \
 fpathconf \
 fstatat \
 malloc_usable_size \
 mkdirat \
 mtrace \
 openat \
-strlcpy \
+realpath \
+strlcpy
 ])
 
 AC_FUNC_ALLOCA
