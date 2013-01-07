@@ -43,6 +43,7 @@ struct _Entry
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool have_preedit : 1;
+   Eina_Bool commit_cancel : 1; // For skipping useless commit
    Ecore_IMF_Context *imf_context;
 #endif
 };
@@ -202,6 +203,11 @@ _text_filter_markup_prepend_internal(Entry *en, Evas_Textblock_Cursor *c, char *
              if (!text) break;
           }
      }
+#ifdef HAVE_ECORE_IMF
+   // For skipping useless commit
+   if (en->have_preedit && (!text || !strcmp(text, "")))
+      en->commit_cancel = EINA_TRUE;
+#endif
    if (text)
      {
         evas_object_textblock_text_markup_prepend(c, text);
@@ -2320,6 +2326,8 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 #ifdef HAVE_ECORE_IMF
         _edje_need_imf();
 
+        en->commit_cancel = EINA_FALSE;
+
         edje_object_signal_callback_add(rp->edje->obj, "focus,part,in", rp->part->name, _edje_entry_focus_in_cb, rp);
         edje_object_signal_callback_add(rp->edje->obj, "focus,part,out", rp->part->name, _edje_entry_focus_out_cb, rp);
 
@@ -3574,6 +3582,8 @@ _edje_entry_imf_context_reset(Edje_Real_Part *rp)
    if (!en) return;
    if (en->imf_context)
      ecore_imf_context_reset(en->imf_context);
+   if (en->commit_cancel)
+      en->commit_cancel = EINA_FALSE;
 #else
    (void)rp;
 #endif
@@ -3672,11 +3682,16 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
 
    start_pos = evas_textblock_cursor_pos_get(en->cursor);
 
-#ifdef HAVE_ECORE_IMF
    /* delete preedit characters */
    _preedit_del(en);
    _preedit_clear(en);
-#endif
+
+   // Skipping commit process when it is useless
+   if (en->commit_cancel)
+     {
+        en->commit_cancel = EINA_FALSE;
+        return;
+     }
 
    if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
        _edje_password_show_last)
@@ -3824,6 +3839,11 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
           {
              eina_strbuf_append(buf, preedit_string);
           }
+
+        // For skipping useless commit
+        if (!preedit_end_state)
+           en->have_preedit = EINA_TRUE;
+
         if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
             _edje_password_show_last)
           {
