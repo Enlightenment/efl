@@ -561,7 +561,7 @@ _update_data(Evas_Object *obj, Eina_Bool month,
               int delta)
 {
    struct tm time_check;
-   int maxdays;
+   int maxdays, years;
 
    ELM_CALENDAR_DATA_GET(obj, sd);
 
@@ -600,7 +600,12 @@ _update_data(Evas_Object *obj, Eina_Bool month,
      }
    else
      {
-	sd->shown_time.tm_year += delta;
+	years = sd->shown_time.tm_year + delta;
+	if (((years > sd->year_max) && (sd->year_max != -1)) ||
+	    years < sd->year_min)
+	   return EINA_FALSE;
+
+	sd->shown_time.tm_year = years;
      }
 
    if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
