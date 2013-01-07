@@ -536,7 +536,7 @@ EAPI void                 elm_calendar_min_max_year_set(Evas_Object *obj, int mi
  *
  * Default values are 1902 and -1.
  *
- * @see elm_calendar_min_max_year_get() for more details.
+ * @see elm_calendar_min_max_year_set() for more details.
  *
  * @ref calendar_example_05
  *
@@ -760,13 +760,13 @@ EAPI void                 elm_calendar_marks_draw(Evas_Object *obj);
 
 /**
  * Set the interval on time updates for an user mouse button hold
- * on calendar widgets' month selection.
+ * on calendar widgets' month/year selection.
  *
  * @param obj The calendar object
  * @param interval The (first) interval value in seconds
  *
  * This interval value is @b decreased while the user holds the
- * mouse pointer either selecting next or previous month.
+ * mouse pointer either selecting next or previous month/year.
  *
  * This helps the user to get to a given month distant from the
  * current one easier/faster, as it will start to change quicker and
@@ -787,7 +787,7 @@ EAPI void                 elm_calendar_interval_set(Evas_Object *obj, double int
 
 /**
  * Get the interval on time updates for an user mouse button hold
- * on calendar widgets' month selection.
+ * on calendar widgets' month/year selection.
  *
  * @param obj The calendar object
  * @return The (first) interval value, in seconds, set on it
