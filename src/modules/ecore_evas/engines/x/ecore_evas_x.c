@@ -22,15 +22,6 @@
 # include <Evas_Engine_GL_X11.h>
 #endif
 
-#ifdef HAVE_ECORE_X_XCB
-# include <xcb/xcb.h>
-#endif
-
-#ifdef HAVE_ECORE_X_XLIB
-# include <X11/Xlib.h>
-# include <X11/Xutil.h>
-#endif
-
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[13];
