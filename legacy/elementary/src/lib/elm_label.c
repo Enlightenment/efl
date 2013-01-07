@@ -100,6 +100,12 @@ _label_slide_change(Evas_Object *obj)
    //has slide effect.
    if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE)
      {
+        if (sd->ellipsis)
+          {
+             sd->slide_ellipsis = EINA_TRUE;
+             elm_label_ellipsis_set(obj, EINA_FALSE);
+          }
+
         //slide only if the slide area is smaller than text width size.
         if (sd->slide_mode == ELM_LABEL_SLIDE_MODE_AUTO)
           {
@@ -112,17 +118,19 @@ _label_slide_change(Evas_Object *obj)
                   evas_object_textblock_size_formatted_get(tb, &tb_w, NULL);
                   evas_object_geometry_get(wd->resize_obj,
                                            NULL, NULL, &w, NULL);
-                  if ((tb_w > 0) && (tb_w < w)) return;
+                  if ((tb_w > 0) && (tb_w < w))
+                    {
+                       if (sd->slide_ellipsis)
+                         {
+                            sd->slide_ellipsis = EINA_FALSE;
+                            elm_label_ellipsis_set(obj, EINA_TRUE);
+                         }
+                       return;
+                    }
                }
           }
         Edje_Message_Float_Set *msg =
           alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
-
-        if (sd->ellipsis)
-          {
-             sd->slide_ellipsis = EINA_TRUE;
-             elm_label_ellipsis_set(obj, EINA_FALSE);
-          }
 
         msg->count = 1;
         msg->val[0] = sd->slide_duration;
