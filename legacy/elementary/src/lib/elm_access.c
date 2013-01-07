@@ -558,6 +558,8 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 
    // create access object
    ao = _elm_access_add(obj);
+   if (!ao) return;
+
    evas_object_event_callback_add(po, EVAS_CALLBACK_RESIZE,
                                   _content_resize, ao);
    evas_object_event_callback_add(po, EVAS_CALLBACK_MOVE,
@@ -693,6 +695,8 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
    // create access object
    ho = item->view;
    ao = _elm_access_add(item->widget);
+   if (!ao) return;
+
    evas_object_event_callback_add(ho, EVAS_CALLBACK_RESIZE,
                                   _content_resize, ao);
    evas_object_event_callback_add(ho, EVAS_CALLBACK_MOVE,
