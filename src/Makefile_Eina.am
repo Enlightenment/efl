@@ -77,7 +77,8 @@ lib/eina/eina_value.h \
 lib/eina/eina_inline_value.x \
 lib/eina/eina_inline_lock_barrier.x \
 lib/eina/eina_tmpstr.h \
-lib/eina/eina_alloca.h
+lib/eina/eina_alloca.h \
+lib/eina/eina_cow.h
 
 # Will be back for developper after 1.2.
 # lib/eina/eina_model.h
@@ -140,7 +141,8 @@ lib/eina/eina_xattr.c \
 lib/eina/eina_share_common.h \
 lib/eina/eina_private.h \
 lib/eina/eina_strbuf_common.h \
-lib/eina/eina_tmpstr.c
+lib/eina/eina_tmpstr.c \
+lib/eina/eina_cow.c
 
 # Will be back for developper after 1.2
 # lib/eina/eina_model.c \
@@ -273,7 +275,8 @@ tests/eina/eina_test_strbuf.c \
 tests/eina/eina_test_str.c \
 tests/eina/eina_test_quadtree.c \
 tests/eina/eina_test_simple_xml_parser.c \
-tests/eina/eina_test_value.c
+tests/eina/eina_test_value.c \
+tests/eina/eina_test_cow.c
 # tests/eina/eina_test_model.c
 
 tests_eina_eina_suite_CPPFLAGS = \

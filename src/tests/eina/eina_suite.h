@@ -57,5 +57,6 @@ void eina_test_sched(TCase *tc);
 void eina_test_simple_xml_parser(TCase *tc);
 void eina_test_value(TCase *tc);
 void eina_test_model(TCase *tc);
+void eina_test_cow(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

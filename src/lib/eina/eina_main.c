@@ -158,6 +158,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(value);
    S(tmpstr);
    S(thread);
+   S(cow);
 /* no model for now
    S(model);
  */
@@ -199,7 +200,8 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(prefix),
    S(value),
    S(tmpstr),
-   S(thread)
+   S(thread),
+   S(cow)
 /* no model for now
    S(model)
  */

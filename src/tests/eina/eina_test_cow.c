@@ -1,0 +1,85 @@
+/* EINA - EFL data type library
+ * Copyright (C) 2012 Cedric Bail
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library;
+ * if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "eina_suite.h"
+#include "Eina.h"
+
+typedef struct _Eina_Cow_Test Eina_Cow_Test;
+struct _Eina_Cow_Test
+{
+   unsigned char c;
+   int i;
+   void *d;
+};
+
+START_TEST(eina_cow)
+{
+   const Eina_Cow_Test *prev;
+   const Eina_Cow_Test *cur;
+   Eina_Cow_Test *write;
+   Eina_Cow *cow;
+   Eina_Cow_Test default_value = { 42, 0, NULL };
+
+   cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value);
+   fail_if(cow == NULL);
+
+   prev = eina_cow_alloc(cow);
+   cur = eina_cow_alloc(cow);
+   fail_if(prev == NULL || cur == NULL);
+
+   write = eina_cow_write(cow, &cur);
+   fail_if(write == NULL || write == &default_value);
+
+   write->i = 7;
+   eina_cow_commit(cow, &cur, write);
+   fail_if(cur->i != 7 || prev->i != 0);
+
+   eina_cow_memcpy(cow, &prev, cur);
+   fail_if(cur->i != 7 || prev->i != 7);
+   fail_if(default_value.i != 0);
+
+   write = eina_cow_write(cow, &cur);
+   fail_if(write == NULL || write == &default_value);
+
+   write->i = 42; write->c = 5;
+   eina_cow_commit(cow, &cur, write);
+   fail_if(cur->i != 42 || cur->c != 5 ||
+           prev->i != 7 || prev->c != 42 ||
+           default_value.c != 42 || default_value.i != 0);
+
+   fail_if(eina_cow_gc(cow) == EINA_FALSE);
+   fail_if(eina_cow_gc(cow) == EINA_FALSE);
+
+   write = eina_cow_write(cow, &cur);
+   write->i = 7; write->c = 42;
+   eina_cow_commit(cow, &cur, write);
+
+   fail_if(eina_cow_gc(cow) == EINA_FALSE);
+   fail_if(cur != prev);
+}
+END_TEST
+
+void
+eina_test_cow(TCase *tc)
+{
+   tcase_add_test(tc, eina_cow);
+}
