@@ -58,10 +58,8 @@ efreet_ini_new(const char *file)
     ini = NEW(Efreet_Ini, 1);
     if (!ini) return NULL;
 
-    /* This can validly be NULL at the moment as _parse() will return NULL
-     * if the input file doesn't exist. Should we change _parse() to create
-     * the hash and only return NULL on failed parse? */
-    ini->data = efreet_ini_parse(file);
+    if (file)
+      ini->data = efreet_ini_parse(file);
 
     return ini;
 }
@@ -81,6 +79,7 @@ efreet_ini_parse(const char *file)
     Eina_File_Line *line;
     Eina_File *f;
 
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
     f = eina_file_open(file, EINA_FALSE);
     if (!f)
       return NULL;
@@ -259,7 +258,8 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
     free(dir);
     f = fopen(file, "wb");
     if (!f) return 0;
-    eina_hash_foreach(ini->data, efreet_ini_section_save, f);
+    if (ini->data)
+      eina_hash_foreach(ini->data, efreet_ini_section_save, f);
     fclose(f);
 
     return 1;

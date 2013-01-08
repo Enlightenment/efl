@@ -19,10 +19,10 @@ ef_mime_cb_get(void)
         char *file;
         char *mime;
     } files[] = {
-        {PACKAGE_DATA_DIR"/test/test_type.desktop", "application/x-desktop"},
-        {PACKAGE_DATA_DIR"/test/entry.png", "image/png"},
-        {PACKAGE_DATA_DIR"/test/entry", "image/png"},
-        {PACKAGE_DATA_DIR"/test/sub", "inode/directory"},
+        {"test_type.desktop", "application/x-desktop"},
+        {"entry.png", "image/png"},
+        {"entry", "image/png"},
+        {"sub", "inode/directory"},
         {NULL, NULL}
     };
     double start;
@@ -35,7 +35,7 @@ ef_mime_cb_get(void)
 
     for (i = 0; files[i].file; ++i)
     {
-        mime = efreet_mime_type_get(files[i].file);
+        mime = efreet_mime_type_get(ef_test_path_get(files[i].file));
         if (!mime)
         {
             printf("Got %s as null instead of %s\n", files[i].file, files[i].mime);

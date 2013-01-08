@@ -78,6 +78,32 @@ static Efreet_Test tests[] = {
 extern char **environ;
 static Eina_List *environment = NULL;
 
+const char *ef_test_path_get(const char *component)
+{
+   static int is_local = -1;
+   static char buf[PATH_MAX];
+
+   if (is_local == -1)
+     {
+        struct stat st;
+        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/efreet/data/test.desktop", &st) == 0);
+     }
+
+   if (is_local)
+     {
+        eina_str_join(buf, sizeof(buf), '/',
+                      PACKAGE_BUILD_DIR"/src/tests/efreet/data",
+                      component);
+     }
+   else
+     {
+        eina_str_join(buf, sizeof(buf), '/', PACKAGE_DATA_DIR "/tests",
+                      component);
+     }
+
+   return buf;
+}
+
 void
 environment_store(void)
 {

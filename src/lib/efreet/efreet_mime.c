@@ -834,6 +834,7 @@ efreet_mime_mime_types_load(const char *file)
    const char *word_start;
    const char *mimetype;
 
+   EINA_SAFETY_ON_NULL_RETURN(file);
    f = eina_file_open(file, 0);
    if (!f) return ;
 
