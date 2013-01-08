@@ -103,3 +103,4 @@ Fixes:
     * Fix mask write lines to not choose too small segments
     * Fix ecore_con case where freeing server double-frees clients
     * Fix build of Evas XCB backend
+    * Fix efreet desktop command parsing of https
