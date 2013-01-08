@@ -16,7 +16,28 @@
 #include <langinfo.h>
 #include <assert.h>
 
-#define CLAMP(x, low, high) (x > high) ? high : (x < low) ? low : x
+static int _ecore_imf_xim_log_dom = -1;
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_ecore_imf_xim_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_imf_xim_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_imf_xim_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_imf_xim_log_dom, __VA_ARGS__)
+
 
 static Eina_List *open_ims = NULL;
 
@@ -125,11 +146,8 @@ _ecore_imf_xim_utf8_offset_to_index(const char *str, int offset)
 static void
 _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Context_Data *imf_context_data = NULL;
-
-   EINA_LOG_DBG("in");
-
-   imf_context_data = _ecore_imf_xim_context_data_new();
+   Ecore_IMF_Context_Data *imf_context_data = _ecore_imf_xim_context_data_new();
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    imf_context_data->use_preedit = EINA_TRUE;
@@ -143,10 +161,8 @@ _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
 static void
 _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
-
-   EINA_LOG_DBG("in");
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    imf_context_data->finalizing = EINA_TRUE;
@@ -181,7 +197,7 @@ static void
 _ecore_imf_context_xim_client_window_set(Ecore_IMF_Context *ctx,
                                          void *window)
 {
-   EINA_LOG_DBG("in");
+   DBG("ctx=%p, window=%p", ctx, window);
    _ecore_imf_xim_ic_client_window_set(ctx, (Ecore_X_Window)((Ecore_Window)window));
 }
 
@@ -190,13 +206,12 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
                                           char **str,
                                           int *cursor_pos)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    char *utf8;
    int len;
 
-   EINA_LOG_DBG("in");
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p, str=%p, cursor_pos=%p",
+       ctx, imf_context_data, str, cursor_pos);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->preedit_chars)
@@ -228,7 +243,8 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
 {
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
 
-   EINA_LOG_DBG("in");
+   DBG("ctx=%p, imf_context_data=%p, str=%p, attrs=%p, cursor_pos=%p",
+       ctx, imf_context_data, str, attrs, cursor_pos);
 
    _ecore_imf_context_xim_preedit_string_get(ctx, str, cursor_pos);
 
@@ -260,12 +276,10 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
 static void
 _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
 {
+   Ecore_IMF_Context_Data *imf_context_data  = ecore_imf_context_data_get(ctx);
    XIC ic;
-   Ecore_IMF_Context_Data *imf_context_data;
 
-   EINA_LOG_DBG("in");
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ic = imf_context_data->ic;
@@ -292,12 +306,10 @@ _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
 static void
 _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
 {
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    XIC ic;
-   Ecore_IMF_Context_Data *imf_context_data;
 
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->has_focus == EINA_TRUE)
@@ -315,18 +327,15 @@ _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
 static void
 _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
 {
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    XIC ic;
-   Ecore_IMF_Context_Data *imf_context_data;
    char *result;
-
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-
    /* restore conversion state after resetting ic later */
    XIMPreeditState preedit_state = XIMPreeditUnKnown;
    XVaNestedList preedit_attr;
    Eina_Bool have_preedit_state = EINA_FALSE;
 
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ic = imf_context_data->ic;
@@ -392,11 +401,9 @@ static void
 _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
                                        Eina_Bool use_preedit)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
 
-   EINA_LOG_DBG("in");
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p, use_preedit=%hhu", ctx, imf_context_data, use_preedit);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    use_preedit = use_preedit != EINA_FALSE;
@@ -442,14 +449,14 @@ static void
 _ecore_imf_context_xim_cursor_location_set(Ecore_IMF_Context *ctx,
                                            int x, int y, int w, int h)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    XIC ic;
    XVaNestedList preedit_attr;
    XPoint spot;
 
-   EINA_LOG_DBG("%s in", __FUNCTION__);
+   DBG("ctx=%p, imf_context_data=%p, location=(%d, %d, %d, %d)",
+       ctx, imf_context_data, x, y, w, h);
 
-   imf_context_data = ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
    ic = imf_context_data->ic;
    if (!ic)
@@ -466,17 +473,13 @@ _ecore_imf_context_xim_cursor_location_set(Ecore_IMF_Context *ctx,
                 NULL);
 
    XFree(preedit_attr);
-   (void)(w); // yes w is unused, but only a bi-product of the algorithm
 }
 
 static void
 _ecore_imf_context_xim_input_panel_show(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
-
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ecore_x_e_virtual_keyboard_state_set
@@ -486,11 +489,8 @@ _ecore_imf_context_xim_input_panel_show(Ecore_IMF_Context *ctx)
 static void
 _ecore_imf_context_xim_input_panel_hide(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
-
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ecore_x_e_virtual_keyboard_state_set
@@ -544,12 +544,12 @@ _ecore_x_event_reverse_locks(unsigned int state)
 }
 
 static KeyCode
-_keycode_get(Ecore_X_Display *dsp,
-             const char *keyname)
+_ecore_imf_xim_keycode_get(Ecore_X_Display *dsp,
+                           const char *keyname)
 {
    KeyCode keycode;
 
-   // EINA_LOG_DBG("keyname:%s keysym:%lu", keyname, XStringToKeysym(keyname));
+   //DBG("keyname=%s keysym=%lu", keyname, XStringToKeysym(keyname));
    if (strcmp(keyname, "Keycode-0") == 0)
      keycode = 0;
    else
@@ -563,9 +563,8 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
                                     Ecore_IMF_Event_Type type,
                                     Ecore_IMF_Event *event)
 {
-   Ecore_IMF_Context_Data *imf_context_data;
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    XIC ic;
-
    Ecore_X_Display *dsp;
    Ecore_X_Window win;
 
@@ -576,10 +575,9 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
    char *tmp = NULL;
    Eina_Bool result = EINA_FALSE;
 
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-
-   imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return EINA_FALSE;
+   DBG("ctx=%p, imf_context_data=%p, type=%d, event=%p",
+       ctx, imf_context_data, type, event);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, EINA_FALSE);
    ic = imf_context_data->ic;
    if (!ic)
      ic = _ecore_imf_xim_ic_get(ctx);
@@ -588,7 +586,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
      {
         XKeyPressedEvent xev;
         Ecore_IMF_Event_Key_Down *ev = (Ecore_IMF_Event_Key_Down *)event;
-        EINA_LOG_DBG("ECORE_IMF_EVENT_KEY_DOWN");
+        DBG("ECORE_IMF_EVENT_KEY_DOWN");
 
         dsp = ecore_x_display_get();
         win = imf_context_data->win;
@@ -606,7 +604,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
         xev.state = 0;
         xev.state |= _ecore_x_event_reverse_modifiers(ev->modifiers);
         xev.state |= _ecore_x_event_reverse_locks(ev->locks);
-        xev.keycode = _keycode_get(dsp, ev->keyname);
+        xev.keycode = _ecore_imf_xim_keycode_get(dsp, ev->keyname);
         xev.same_screen = True;
 
         if (ic)
@@ -742,31 +740,32 @@ static Ecore_IMF_Context_Class xim_class = {
 static Ecore_IMF_Context *
 xim_imf_module_create(void)
 {
-   EINA_LOG_DBG("%s in", __FUNCTION__);
-   Ecore_IMF_Context *ctx = NULL;
-
-   ctx = ecore_imf_context_new(&xim_class);
-   if (!ctx)
-     goto error;
-
+   Ecore_IMF_Context *ctx = ecore_imf_context_new(&xim_class);
+   DBG("ctx=%p", ctx);
    return ctx;
-
-error:
-   free(ctx);
-   return NULL;
 }
 
 static Ecore_IMF_Context *
 xim_imf_module_exit(void)
 {
+   DBG(" ");
    return NULL;
 }
 
 static Eina_Bool
 _ecore_imf_xim_init(void)
 {
-   EINA_LOG_DBG("%s in", __FUNCTION__);
    eina_init();
+
+   _ecore_imf_xim_log_dom = eina_log_domain_register("ecore_imf_xim", NULL);
+   if (_ecore_imf_xim_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: ecore_imf_xim");
+        return EINA_FALSE;
+     }
+
+   DBG(" ");
+
    ecore_x_init(NULL);
    ecore_imf_module_register(&xim_info,
                              xim_imf_module_create,
@@ -787,6 +786,13 @@ _ecore_imf_xim_shutdown(void)
      }
 
    ecore_x_shutdown();
+
+   if (_ecore_imf_xim_log_dom > 0)
+     {
+        eina_log_domain_unregister(_ecore_imf_xim_log_dom);
+        _ecore_imf_xim_log_dom = -1;
+     }
+
    eina_shutdown();
 }
 
@@ -845,11 +851,11 @@ _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
                                  XPointer client_data,
                                  XPointer call_data EINA_UNUSED)
 {
-   EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
-   Ecore_IMF_Context_Data *imf_context_data;
-   imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return -1;
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, -1);
 
    if (imf_context_data->finalizing == EINA_FALSE)
      {
@@ -864,10 +870,10 @@ _ecore_imf_xim_preedit_done_call(XIC xic EINA_UNUSED,
                                 XPointer client_data,
                                 XPointer call_data EINA_UNUSED)
 {
-   EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
-   Ecore_IMF_Context_Data *imf_context_data;
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->preedit_length)
@@ -899,7 +905,7 @@ _ecore_imf_xim_text_to_utf8(Ecore_IMF_Context *ctx EINA_UNUSED,
      {
         if (xim_text->encoding_is_wchar)
           {
-             EINA_LOG_WARN("Wide character return from Xlib not currently supported");
+             WRN("Wide character return from Xlib not currently supported");
              *text = NULL;
              return 0;
           }
@@ -911,12 +917,13 @@ _ecore_imf_xim_text_to_utf8(Ecore_IMF_Context *ctx EINA_UNUSED,
              text_length = eina_unicode_utf8_get_len(result);
              if (text_length != xim_text->length)
                {
-                  EINA_LOG_WARN("Size mismatch when converting text from input method: supplied length = %d\n, result length = %d", xim_text->length, text_length);
+                  WRN("Size mismatch when converting text from input method: supplied length = %d, result length = %d",
+                      xim_text->length, text_length);
                }
           }
         else
           {
-             EINA_LOG_WARN("Error converting text from IM to UCS-4");
+             WRN("Error converting text from IM to UCS-4");
              *text = NULL;
              return 0;
           }
@@ -936,7 +943,6 @@ _ecore_imf_xim_preedit_draw_call(XIC xic EINA_UNUSED,
                                 XPointer client_data,
                                 XIMPreeditDrawCallbackStruct *call_data)
 {
-   EINA_LOG_DBG("in");
    Eina_Bool ret = EINA_FALSE;
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
@@ -947,6 +953,7 @@ _ecore_imf_xim_preedit_draw_call(XIC xic EINA_UNUSED,
    int new_text_length;
    int i = 0;
 
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    preedit_bufs = eina_ustrbuf_new();
@@ -1027,10 +1034,10 @@ _ecore_imf_xim_preedit_caret_call(XIC xic EINA_UNUSED,
                                  XPointer client_data,
                                  XIMPreeditCaretCallbackStruct *call_data)
 {
-   EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
-   Ecore_IMF_Context_Data *imf_context_data;
-   imf_context_data = ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (call_data->direction == XIMAbsolutePosition)
@@ -1094,7 +1101,7 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
 
         if (!im_info)
           {
-             EINA_LOG_WARN("Doesn't open XIM.");
+             WRN("Could not open XIM.");
              return NULL;
           }
 
@@ -1170,8 +1177,8 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
 
         if (!im_info->xim_styles)
           {
-             EINA_LOG_WARN("No XIM styles supported! Wanted %#llx",
-                           (unsigned long long)im_style);
+             WRN("No XIM styles supported! Wanted %#llx",
+                 (unsigned long long)im_style);
              im_style = 0;
           }
         else
@@ -1193,17 +1200,15 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
                {
                   if (fallback)
                     {
-                       EINA_LOG_WARN("Wanted XIM style %#llx not found, "
-                                     "using fallback %#llx instead.",
-                                     (unsigned long long)im_style,
-                                     (unsigned long long)fallback);
+                       WRN("Wanted XIM style %#llx not found, using fallback %#llx instead.",
+                           (unsigned long long)im_style,
+                           (unsigned long long)fallback);
                        im_style = fallback;
                     }
                   else
                     {
-                       EINA_LOG_WARN("Wanted XIM style %#llx not found, "
-                                     "no fallback supported.",
-                                     (unsigned long long)im_style);
+                       WRN("Wanted XIM style %#llx not found, no fallback supported.",
+                           (unsigned long long)im_style);
                        im_style = 0;
                     }
                }
@@ -1259,19 +1264,19 @@ _ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx)
 
 static void
 _ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
-                     Ecore_X_Window window)
+                                    Ecore_X_Window window)
 {
-   EINA_LOG_DBG("in");
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    Ecore_X_Window old_win;
 
+   DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    /* reinitialize IC */
    _ecore_imf_xim_ic_reinitialize(ctx);
 
    old_win = imf_context_data->win;
-   EINA_LOG_DBG("old_win:%d window:%d ", old_win, window);
+   DBG("old_win=%#x, window=%#x", old_win, window);
    if (old_win != 0 && old_win != window)   /* XXX how do check window... */
      {
         XIM_Im_Info *info;
@@ -1301,11 +1306,11 @@ static XIM_Im_Info *
 _ecore_imf_xim_im_get(Ecore_X_Window window,
                      char *locale)
 {
-   EINA_LOG_DBG("in");
-
    Eina_List *l;
    XIM_Im_Info *im_info = NULL;
    XIM_Im_Info *info = NULL;
+
+   DBG(" ");
    EINA_LIST_FOREACH (open_ims, l, im_info)
      {
         if (strcmp(im_info->locale, locale) == 0)
@@ -1349,7 +1354,7 @@ _ecore_imf_xim_info_im_init(XIM_Im_Info *info)
    if (XSupportsLocale())
      {
         if (!XSetLocaleModifiers(""))
-          EINA_LOG_WARN("Unable to set locale modifiers with XSetLocaleModifiers()");
+          WRN("Unable to set locale modifiers with XSetLocaleModifiers()");
         dsp = ecore_x_display_get();
         info->im = XOpenIM(dsp, NULL, NULL, NULL);
         if (!info->im)
