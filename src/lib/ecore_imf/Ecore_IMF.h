@@ -511,7 +511,20 @@ struct _Ecore_IMF_Context_Info
  * @}
  */
 
+/**
+ * Initialises the Ecore_IMF library.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_IMF_Lib_Group
+ */
 EAPI int                           ecore_imf_init(void);
+
+/**
+ * Shuts down the Ecore_IMF library.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_IMF_Lib_Group
+ */
 EAPI int                           ecore_imf_shutdown(void);
 
 EAPI void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));

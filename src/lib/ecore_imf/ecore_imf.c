@@ -17,20 +17,6 @@ EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
 int _ecore_imf_log_dom = -1;
 static int _ecore_imf_init_count = 0;
 
-/**
- * @defgroup Ecore_IMF_Lib_Group Ecore_IMF - Ecore Input Method Library Functions
- * @ingroup Ecore
- *
- * Utility functions that set up and shut down the Ecore Input Method
- * library.
- */
-
-/**
- * Initialises the Ecore_IMF library.
- * @return  Number of times the library has been initialised without being
- *          shut down.
- * @ingroup Ecore_IMF_Lib_Group
- */
 EAPI int
 ecore_imf_init(void)
 {
@@ -56,12 +42,6 @@ ecore_imf_init(void)
    return _ecore_imf_init_count;
 }
 
-/**
- * Shuts down the Ecore_IMF library.
- * @return  Number of times the library has been initialised without being
- *          shut down.
- * @ingroup Ecore_IMF_Lib_Group
- */
 EAPI int
 ecore_imf_shutdown(void)
 {
