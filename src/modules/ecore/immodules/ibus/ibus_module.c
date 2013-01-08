@@ -81,7 +81,7 @@ im_module_exit(void)
 }
 
 static Ecore_IMF_Context *
-im_module_create()
+im_module_create(void)
 {
     Ecore_IMF_Context *ctx = NULL;
     IBusIMContext *ctxd = NULL;

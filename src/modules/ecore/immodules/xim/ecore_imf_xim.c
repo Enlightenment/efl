@@ -198,7 +198,7 @@ _ecore_imf_context_xim_client_window_set(Ecore_IMF_Context *ctx,
                                          void *window)
 {
    DBG("ctx=%p, window=%p", ctx, window);
-   _ecore_imf_xim_ic_client_window_set(ctx, (Ecore_X_Window)((Ecore_Window)window));
+   _ecore_imf_xim_ic_client_window_set(ctx, (Ecore_X_Window)((unsigned long)window));
 }
 
 static void
@@ -422,18 +422,19 @@ _ecore_imf_xim_feedback_attr_add(Eina_List **attrs,
                                 int start_pos,
                                 int end_pos)
 {
-   Ecore_IMF_Preedit_Attr *attr = NULL;
-
+   Ecore_IMF_Preedit_Attr *attr;
    unsigned int start_index = _ecore_imf_xim_utf8_offset_to_index(str, start_pos);
    unsigned int end_index = _ecore_imf_xim_utf8_offset_to_index(str, end_pos);
 
    if (feedback & FEEDBACK_MASK)
      {
-        attr = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+        attr = calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
         attr->start_index = start_index;
         attr->end_index = end_index;
-        *attrs = eina_list_append(*attrs, (void *)attr);
+        *attrs = eina_list_append(*attrs, attr);
      }
+   else
+     return;
 
    if (feedback & XIMUnderline)
      attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB1;
@@ -967,7 +968,7 @@ _ecore_imf_xim_preedit_draw_call(XIC xic EINA_UNUSED,
    if (tmp)
      {
         int tmp_len;
-        new_text = eina_unicode_utf8_to_unicode((const char *)tmp, &tmp_len);
+        new_text = eina_unicode_utf8_to_unicode(tmp, &tmp_len);
         free(tmp);
      }
 
@@ -1407,15 +1408,8 @@ _ecore_imf_xim_instantiate_cb(Display *display,
                              XPointer call_data EINA_UNUSED)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
-   XIM im = NULL;
-
-   im = XOpenIM(display, NULL, NULL, NULL);
-
-   if (!im)
-     {
-        fprintf(stderr, "Failed to connect to IM\n");
-        return;
-     }
+   XIM im = XOpenIM(display, NULL, NULL, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(im);
 
    info->im = im;
    _ecore_imf_xim_im_setup(info);
