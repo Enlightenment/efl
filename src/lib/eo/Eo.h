@@ -234,7 +234,7 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * @param class_get_func_name the name of the wanted class_get function name.
  * @param class_desc the class description.
  * @param parent_class The parent class for the function. Look at eo_class_new() for more information.
- * @param ... List of etxensions. Look at eo_class_new() for more information.
+ * @param ... List of extensions. Look at eo_class_new() for more information.
  *
  * You must use this macro if you want thread safety in class creation.
  */
