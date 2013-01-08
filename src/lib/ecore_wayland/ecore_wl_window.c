@@ -241,8 +241,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
         return;
      }
 
-   if (!win->surface)
-      return;
+   if (!win->surface) return;
 
    if (win->region.input)
      {
@@ -425,7 +424,7 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    win->allocation.w = w;
    win->allocation.h = h;
 
-   if (!win->transparent || !win->alpha)
+   if ((!win->transparent) || (!win->alpha))
      {
         if (win->region.opaque) wl_region_destroy(win->region.opaque);
         win->region.opaque = 
