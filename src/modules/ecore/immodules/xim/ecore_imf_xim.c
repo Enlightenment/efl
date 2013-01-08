@@ -1043,7 +1043,6 @@ _ecore_imf_xim_preedit_caret_call(XIC xic EINA_UNUSED,
 
    if (call_data->direction == XIMAbsolutePosition)
      {
-        // printf("call_data->position:%d\n", call_data->position);
         imf_context_data->preedit_cursor = call_data->position;
         if (imf_context_data->finalizing == EINA_FALSE)
           {
@@ -1107,35 +1106,6 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
           }
 
         // supported styles
-#if 0
-        int i;
-        if (im_info->xim_styles)
-          {
-             for (i = 0; i < im_info->xim_styles->count_styles; i++)
-               {
-                  printf("%i: ", i);
-                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditCallbacks)
-                    printf("XIMPreeditCallbacks | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditPosition)
-                    printf("XIMPreeditPosition | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditArea)
-                    printf("XIMPreeditArea | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditNothing)
-                    printf("XIMPreeditNothing | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMPreeditNone)
-                    printf("XIMPreeditNone | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMStatusArea)
-                    printf("XIMStatusArea | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMStatusCallbacks)
-                    printf("XIMStatusCallbacks | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMStatusNothing)
-                    printf("XIMStatusNothing | ");
-                  if (im_info->xim_styles->supported_styles[i] & XIMStatusNone)
-                    printf("XIMStatusNone | ");
-                  printf("\n");
-               }
-          }
-#endif
         // "OverTheSpot" = XIMPreeditPosition | XIMStatusNothing
         // "OffTheSpot" = XIMPreeditArea | XIMStatusArea
         // "Root" = XIMPreeditNothing | XIMStatusNothing
@@ -1453,14 +1423,7 @@ _ecore_imf_xim_im_setup(XIM_Im_Info *info)
                          XNCursor))
                info->supports_cursor = EINA_TRUE;
           }
-#if 0
-        printf("values........\n");
-        for (i = 0; i < ic_values->count_values; i++)
-          printf("%s\n", ic_values->supported_values[i]);
-        printf("styles........\n");
-        for (i = 0; i < info->xim_styles->count_styles; i++)
-          printf("%lx\n", info->xim_styles->supported_styles[i]);
-#endif
+
         XFree(ic_values);
      }
 }
