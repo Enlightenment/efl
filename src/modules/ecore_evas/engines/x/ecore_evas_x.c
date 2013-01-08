@@ -3438,7 +3438,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   if (parent == 0) parent = DefaultRootWindow(ecore_x_display_get());
+   if (parent == 0) parent = ecore_x_window_root_first_get();
    edata->win_root = parent;
 
    if (edata->win_root != 0)

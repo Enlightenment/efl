@@ -34,6 +34,7 @@ typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef RGBA_Image_Loadopts                 Evas_Image_Load_Opts;
+typedef struct _Evas_Opset                  Evas_Opset;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
@@ -753,6 +754,42 @@ struct _Evas_Object_Func
    int (*get_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
    int (*can_map) (Evas_Object *obj);
+   
+   int (*opset_get) (Evas_Object *obj);
+};
+
+typedef enum _Evas_Optype
+{
+     EVAS_OP_FILL_COLOR,
+     EVAS_OP_BLEND_COLOR,
+     EVAS_OP_COPY_PIXELS,
+     EVAS_OP_BLEND_PIXELS,
+     EVAS_OP_BLEND_ALPHA_MUL_PIXELS,
+     EVAS_OP_BLEND_COLOR_MUL_PIXELS,
+     EVAS_OP_SCALE_NEAREST_COPY_PIXELS,
+     EVAS_OP_BLEND_NEAREST_COPY_PIXELS,
+     EVAS_OP_SCALE_NEAREST_COPY_ALPHA_MUL_PIXELS,
+     EVAS_OP_BLEND_NEAREST_COPY_COLOR_MUL_PIXELS,
+     EVAS_OP_SCALE_SMOOTH_COPY_PIXELS,
+     EVAS_OP_BLEND_SMOOTH_COPY_PIXELS,
+     EVAS_OP_SCALE_SMOOTH_COPY_ALPHA_MUL_PIXELS,
+     EVAS_OP_BLEND_SMOOTH_COPY_COLOR_MUL_PIXELS,
+     EVAS_OP_BLEND_COLOR_ALPHA_MASK,
+     EVAS_OP_MAP_COPY_PIXELS,
+     EVAS_OP_MAP_BLEND_PIXELS,
+     EVAS_OP_MAP_COPY_ALPHA_MUL_PIXELS,
+     EVAS_OP_MAP_BLEND_COLOR_MUL_PIXELS,
+     EVAS_OP_MAP_90MUL_COPY_PIXELS,
+     EVAS_OP_MAP_90MUL_BLEND_PIXELS,
+     EVAS_OP_MAP_90MUL_COPY_ALPHA_MUL_PIXELS,
+     EVAS_OP_MAP_90MUL_BLEND_COLOR_MUL_PIXELS,
+     EVAS_OP_COUNT // marker for last one
+     // XXX: line? poly? or just made up of strips of the above?
+} Evas_Optype;
+
+struct _Evas_Opset
+{
+   Eina_Bool ops[EVAS_OP_COUNT];
 };
 
 struct _Evas_Func
@@ -899,6 +936,9 @@ struct _Evas_Func
 
    /* max size query */
    void (*image_max_size_get)            (void *data, int *maxw, int *maxh);
+   
+   /* pre-seed the engine with the kind of ops it will need */
+   void (*opset_eval)                    (void *data, Evas_Opset *ops);
 };
 
 struct _Evas_Image_Load_Func
