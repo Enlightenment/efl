@@ -1,8 +1,12 @@
-2013-01-08 Mike Blumenkrantz
+2013-01-08  Gustavo Sverzut Barbieri (k-s)
+
+	* Fix eina_prefix_new() with debian multilib without magic check file.
+
+2013-01-08  Mike Blumenkrantz
 
         * Fix efreet desktop command parsing of https
 
-2013-01-07 Sung W. Park (sung_)
+2013-01-07  Sung W. Park (sung_)
 
 	* Pulled out evas gl backend binary shader file caching code from 
         evas_gl_shader.c file and made an internal generic caching api in 

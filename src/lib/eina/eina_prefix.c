@@ -376,6 +376,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    const char *libdir = "lib";
    const char *datadir = "share";
    const char *localedir = "share";
+   Eina_Bool from_lib = EINA_FALSE, from_bin = EINA_FALSE;
 
    DBG("EINA PREFIX: argv0=%s, symbol=%p, magicsharefile=%s, envprefix=%s",
        argv0, symbol, magicsharefile, envprefix);
@@ -524,6 +525,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                     {
                        INF("Dlsym gave full path = %s", info_dl.dli_fname);
                        STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+                       from_lib = EINA_TRUE;
                     }
                }
           }
@@ -542,6 +544,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                             envprefix);
                   return pfx;
                }
+             from_bin = EINA_TRUE;
 #ifndef _WIN32
           }
 #endif
@@ -579,6 +582,9 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 		  pfx->prefix_path = malloc(p - pfx->exe_path + 1);
 		  if (pfx->prefix_path)
 		    {
+                       Eina_Bool magic_found = EINA_FALSE;
+                       int checks_passed = 0;
+
 		       strncpy(pfx->prefix_path, pfx->exe_path,
                                p - pfx->exe_path);
 		       pfx->prefix_path[p - pfx->exe_path] = 0;
@@ -589,55 +595,70 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                                 pfx->prefix_path, bindir);
                        STRDUP_REP(pfx->prefix_path_bin, buf);
                        DBG("Have bin = %s", pfx->prefix_path_bin);
+                       if ((!from_bin) && (stat(buf, &st) == 0))
+                         checks_passed++;
+
 		       /* lib */
 		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, libdir);
                        STRDUP_REP(pfx->prefix_path_lib, buf);
                        DBG("Have lib = %s", pfx->prefix_path_lib);
+                       if ((!from_lib) && (stat(buf, &st) == 0))
+                         checks_passed++;
+
 		       /* locale */
 		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, localedir);
                        STRDUP_REP(pfx->prefix_path_locale, buf);
                        DBG("Have locale = %s", pfx->prefix_path_locale);
+                       if (stat(buf, &st) == 0)
+                         checks_passed++;
+
 		       /* check if magic file is there - then our guess is right */
-                       if (magic)
+                       if (!magic)
+                         DBG("No magic file");
+                       else
                          {
                             DBG("Magic = %s", magic);
                             snprintf(buf, sizeof(buf),
                                      "%s" DSEP_S "%s" DSEP_S "%s",
                                      pfx->prefix_path, datadir, magic);
                             DBG("Check in %s", buf);
-                         }
-		       if ((!magic) || (stat(buf, &st) == 0))
-			 {
-                            if (buf[0])
-                               DBG("Magic path %s stat passed", buf);
+
+                            if (stat(buf, &st) == 0)
+                              {
+                                 checks_passed++;
+                                 magic_found = EINA_TRUE;
+                                 DBG("Magic path %s stat passed", buf);
+                              }
                             else
-                               DBG("No magic file");
+                              WRN("Missing magic path %s", buf);
+                         }
+
+		       if (((!magic) && (checks_passed > 0)) ||
+                           ((magic) && (magic_found)))
+			 {
 			    snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                      pfx->prefix_path, datadir);
                             STRDUP_REP(pfx->prefix_path_data, buf);
 			 }
-		       /* magic file not there. time to start hunting! */
 		       else
                          {
-                            if (buf[0])
+                            for (;p > pfx->exe_path; p--)
                               {
-                                 for (;p > pfx->exe_path; p--)
+                                 if (*p == DSEP_C)
                                    {
-                                      if (*p == DSEP_C)
-                                        {
-                                           p--;
-                                           break;
-                                        }
-                                   }
-                                 if (p > pfx->exe_path)
-                                   {
-                                      continue;
-                                      DBG("Go back one directory");
+                                      p--;
+                                      break;
                                    }
                               }
-                            WRN("Magic failed");
+                            if (p > pfx->exe_path)
+                              {
+                                 int newlen = p - pfx->exe_path;
+                                 DBG("Go back one directory (%.*s)", newlen, pfx->exe_path);
+                                 continue;
+                              }
+                            WRN("No Prefix path (exhausted search depth)");
                             _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
                                       pkg_locale, envprefix);
                          }
