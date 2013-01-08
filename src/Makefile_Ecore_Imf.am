@@ -33,7 +33,8 @@ lib_ecore_imf_libecore_imf_la_CPPFLAGS = \
 lib_ecore_imf_libecore_imf_la_LIBADD = \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
-lib/eina/libeina.la
+lib/eina/libeina.la \
+@EFL_COV_LIBS@
 
 lib_ecore_imf_libecore_imf_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
@@ -61,7 +62,8 @@ lib/ecore_imf/libecore_imf.la \
 lib/ecore/libecore.la \
 lib/evas/libevas.la \
 lib/eo/libeo.la \
-lib/eina/libeina.la
+lib/eina/libeina.la \
+@EFL_COV_LIBS@
 
 lib_ecore_imf_libecore_imf_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
@@ -98,7 +100,8 @@ lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
-@IBUS_LIBS@
+@IBUS_LIBS@ \
+@EFL_COV_LIBS@
 modules_ecore_immodules_ibus_ibus_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_ibus_ibus_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -133,7 +136,8 @@ lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
-@SCIM_LIBS@
+@SCIM_LIBS@ \
+@EFL_COV_LIBS@
 modules_ecore_immodules_scim_scim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_scim_scim_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -161,7 +165,8 @@ lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
-lib/eina/libeina.la
+lib/eina/libeina.la \
+@EFL_COV_LIBS@
 modules_ecore_immodules_xim_xim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_immodules_xim_xim_la_LIBTOOLFLAGS = --tag=disable-static
 endif
