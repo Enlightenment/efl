@@ -595,7 +595,7 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
    gw->surf = 1;
 }
 
-Visual *
+void *
 eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
 {
    if (!einfo) return NULL;

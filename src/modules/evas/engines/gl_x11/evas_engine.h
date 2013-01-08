@@ -100,7 +100,7 @@ void      eng_window_use(Evas_GL_X11_Window *gw);
 void      eng_window_unsurf(Evas_GL_X11_Window *gw);
 void      eng_window_resurf(Evas_GL_X11_Window *gw);
 
-Visual   *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);
+void     *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);
 Colormap  eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo);
 int       eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo);
 
