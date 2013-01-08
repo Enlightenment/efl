@@ -2804,6 +2804,10 @@ EFL_PLATFORM_DEPEND([ECORE_IMF], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [eina])
 
+if test "x${want_ecore_imf}" = "xyes" ; then
+   AC_DEFINE([HAVE_ECORE_IMF], [1], [Ecore IMF Support])
+fi
+
 ## modules
 
 # ibus
@@ -3610,11 +3614,10 @@ echo "Ecore_File:"
 echo "  CURL.......................: $have_curl"
 echo
 
-echo "Ecore_IMF....................: $have_ecore_imf"
+echo "Ecore_IMF....................: $want_ecore_imf"
 echo "  XIM........................: $have_ecore_imf_xim"
 echo "  SCIM.......................: $have_ecore_imf_scim"
 echo "  IBUS.......................: $have_ecore_imf_ibus"
-echo "Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo
 
 echo "Ecore Graphic systems:"
