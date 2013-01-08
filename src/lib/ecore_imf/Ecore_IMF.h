@@ -44,6 +44,7 @@ extern "C" {
  * (based on edje_entry) to map from key events to Unicode character strings.
  *
  * The default input method can be set through setting the ECORE_IMF_MODULE environment variable.
+ * eg) export ECORE_IMF_MODULE=xim (or scim or ibus)
  *
  * An input method may consume multiple key events in sequence and finally output the composed result. 
  * This is called preediting, and an input method may provide feedback about 
