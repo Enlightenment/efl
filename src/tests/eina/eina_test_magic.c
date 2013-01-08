@@ -80,7 +80,7 @@ _eina_test_magic_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const 
 {
    struct log_ctx *ctx = data;
 
-   ck_assert_int_eq(level, EINA_LOG_LEVEL_CRITICAL);
+   ck_assert_int_eq(level, EINA_LOG_LEVEL_ERR); /* Level ERR is triggered for access to NULL instead of level CRITICAL */
    ck_assert_str_eq(ctx->msg, fmt);
    ck_assert_str_eq(ctx->fnc, fnc);
    ctx->did = EINA_TRUE;
