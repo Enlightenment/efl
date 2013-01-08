@@ -248,6 +248,7 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
+#	@./src/tests/eina/eina_suite$(EXEEXT)
 	@./src/tests/eet/eet_suite$(EXEEXT)
 	@./src/tests/eo/eo_suite$(EXEEXT)
 	@./src/tests/evas/evas_suite$(EXEEXT)
