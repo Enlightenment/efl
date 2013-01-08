@@ -71,6 +71,7 @@ static const Eina_Test_Case etc[] = {
    { "COW", eina_test_cow },
    // Disabling Eina_Model test
    //   { "Model", eina_test_model },
+   { "Barrier", eina_test_barrier },
    { NULL, NULL }
 };
 
@@ -111,11 +112,10 @@ eina_build_suite(int argc, const char **argv)
            continue;
 
         tc = tcase_create(etc[i].test_case);
+        tcase_set_timeout(tc, 0);
 
         etc[i].build(tc);
-
         suite_add_tcase(s, tc);
-        tcase_set_timeout(tc, 0);
      }
 
    return s;

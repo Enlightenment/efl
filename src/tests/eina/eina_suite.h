@@ -58,5 +58,6 @@ void eina_test_simple_xml_parser(TCase *tc);
 void eina_test_value(TCase *tc);
 void eina_test_model(TCase *tc);
 void eina_test_cow(TCase *tc);
+void eina_test_barrier(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */
