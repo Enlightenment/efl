@@ -169,7 +169,7 @@ ef_cb_efreet_data_dirs(void)
     unsigned int ok;
     char dirs[128], *val;
     char *vals[] = {"/var/tmp/a", "/tmp/b", "/usr/local/share", "/etc", NULL};
-    char *def_vals[] = {PACKAGE_DATA_DIR, "/usr/share", "/usr/local/share", NULL};
+    char *def_vals[] = {DATA_DIR, "/usr/share", "/usr/local/share", NULL};
 
     dirs[0] = '\0';
     for (i = 0; vals[i]; i++)
