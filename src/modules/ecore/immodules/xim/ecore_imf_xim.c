@@ -64,51 +64,53 @@ struct _Ecore_IMF_Context_Data
 };
 
 /* prototype */
-Ecore_IMF_Context_Data *imf_context_data_new(void);
-void                    imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data);
+static Ecore_IMF_Context_Data *_ecore_imf_xim_context_data_new(void);
+static void                    _ecore_imf_xim_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data);
 
-static void          add_feedback_attr(Eina_List **attrs,
-                                       const char *str,
-                                       XIMFeedback feedback,
-                                       int start_pos,
-                                       int end_pos);
+static void          _ecore_imf_xim_feedback_attr_add(Eina_List **attrs,
+                                                     const char *str,
+                                                     XIMFeedback feedback,
+                                                     int start_pos,
+                                                     int end_pos);
 
-static void          reinitialize_ic(Ecore_IMF_Context *ctx);
-static void          set_ic_client_window(Ecore_IMF_Context *ctx,
-                                          Ecore_X_Window window);
-static int           preedit_start_callback(XIC xic,
-                                            XPointer client_data,
-                                            XPointer call_data);
-static void          preedit_done_callback(XIC xic,
-                                           XPointer client_data,
-                                           XPointer call_data);
-static int           xim_text_to_utf8(Ecore_IMF_Context *ctx,
-                                      XIMText *xim_text,
-                                      char **text);
-static void          preedit_draw_callback(XIC xic,
-                                           XPointer client_data,
-                                           XIMPreeditDrawCallbackStruct *call_data);
-static void          preedit_caret_callback(XIC xic,
-                                            XPointer client_data,
-                                            XIMPreeditCaretCallbackStruct *call_data);
-static XVaNestedList preedit_callback_set(Ecore_IMF_Context *ctx);
-static XIC           get_ic(Ecore_IMF_Context *ctx);
-static XIM_Im_Info  *get_im(Ecore_X_Window window,
-                            char *locale);
-static void          xim_info_try_im(XIM_Im_Info *info);
-static void          xim_info_display_closed(Ecore_X_Display *display,
+static void          _ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx);
+static void          _ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
+                                                        Ecore_X_Window window);
+static int           _ecore_imf_xim_preedit_start_call(XIC xic,
+                                                      XPointer client_data,
+                                                      XPointer call_data);
+static void          _ecore_imf_xim_preedit_done_call(XIC xic,
+                                                     XPointer client_data,
+                                                     XPointer call_data);
+static void          _ecore_imf_xim_preedit_draw_call(XIC xic,
+                                                     XPointer client_data,
+                                                     XIMPreeditDrawCallbackStruct *call_data);
+static void          _ecore_imf_xim_preedit_caret_call(XIC xic,
+                                                      XPointer client_data,
+                                                      XIMPreeditCaretCallbackStruct *call_data);
+
+static int           _ecore_imf_xim_text_to_utf8(Ecore_IMF_Context *ctx,
+                                                XIMText *xim_text,
+                                                char **text);
+
+static XVaNestedList _ecore_imf_xim_preedit_callback_set(Ecore_IMF_Context *ctx);
+static XIC           _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx);
+static XIM_Im_Info  *_ecore_imf_xim_im_get(Ecore_X_Window window,
+                                          char *locale);
+static void          _ecore_imf_xim_info_im_init(XIM_Im_Info *info);
+static void          _ecore_imf_xim_info_im_shutdown(Ecore_X_Display *display,
                                              int is_error,
                                              XIM_Im_Info *info);
-static void          xim_instantiate_callback(Display *display,
+static void          _ecore_imf_xim_instantiate_cb(Display *display,
+                                                  XPointer client_data,
+                                                  XPointer call_data);
+static void          _ecore_imf_xim_destroy_cb(XIM xim,
                                               XPointer client_data,
                                               XPointer call_data);
-static void          setup_im(XIM_Im_Info *info);
-static void          xim_destroy_callback(XIM xim,
-                                          XPointer client_data,
-                                          XPointer call_data);
+static void          _ecore_imf_xim_im_setup(XIM_Im_Info *info);
 
 static unsigned int
-utf8_offset_to_index(const char *str, int offset)
+_ecore_imf_xim_utf8_offset_to_index(const char *str, int offset)
 {
    int idx = 0;
    int i;
@@ -127,7 +129,7 @@ _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DBG("in");
 
-   imf_context_data = imf_context_data_new();
+   imf_context_data = _ecore_imf_xim_context_data_new();
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    imf_context_data->use_preedit = EINA_TRUE;
@@ -156,7 +158,7 @@ _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
              dsp = ecore_x_display_get();
              XUnregisterIMInstantiateCallback(dsp,
                                               NULL, NULL, NULL,
-                                              xim_instantiate_callback,
+                                              _ecore_imf_xim_instantiate_cb,
                                               (XPointer)imf_context_data->im_info);
           }
         else if (imf_context_data->im_info->im)
@@ -170,9 +172,9 @@ _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
           }
      }
 
-   set_ic_client_window(ctx, 0);
+   _ecore_imf_xim_ic_client_window_set(ctx, 0);
 
-   imf_context_data_destroy(imf_context_data);
+   _ecore_imf_xim_context_data_destroy(imf_context_data);
 }
 
 static void
@@ -180,7 +182,7 @@ _ecore_imf_context_xim_client_window_set(Ecore_IMF_Context *ctx,
                                          void *window)
 {
    EINA_LOG_DBG("in");
-   set_ic_client_window(ctx, (Ecore_X_Window)((Ecore_Window)window));
+   _ecore_imf_xim_ic_client_window_set(ctx, (Ecore_X_Window)((Ecore_Window)window));
 }
 
 static void
@@ -244,7 +246,7 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
         if (new_feedback != last_feedback)
           {
              if (start >= 0)
-               add_feedback_attr(attrs, *str, last_feedback, start, i);
+               _ecore_imf_xim_feedback_attr_add(attrs, *str, last_feedback, start, i);
 
              last_feedback = new_feedback;
              start = i;
@@ -252,7 +254,7 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
      }
 
    if (start >= 0)
-     add_feedback_attr(attrs, *str, last_feedback, start, i);
+     _ecore_imf_xim_feedback_attr_add(attrs, *str, last_feedback, start, i);
 }
 
 static void
@@ -402,21 +404,21 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
    if (imf_context_data->use_preedit != use_preedit)
      {
         imf_context_data->use_preedit = use_preedit;
-        reinitialize_ic(ctx);
+        _ecore_imf_xim_ic_reinitialize(ctx);
      }
 }
 
 static void
-add_feedback_attr(Eina_List **attrs,
-                  const char *str,
-                  XIMFeedback feedback,
-                  int start_pos,
-                  int end_pos)
+_ecore_imf_xim_feedback_attr_add(Eina_List **attrs,
+                                const char *str,
+                                XIMFeedback feedback,
+                                int start_pos,
+                                int end_pos)
 {
    Ecore_IMF_Preedit_Attr *attr = NULL;
 
-   unsigned int start_index = utf8_offset_to_index(str, start_pos);
-   unsigned int end_index = utf8_offset_to_index(str, end_pos);
+   unsigned int start_index = _ecore_imf_xim_utf8_offset_to_index(str, start_pos);
+   unsigned int end_index = _ecore_imf_xim_utf8_offset_to_index(str, end_pos);
 
    if (feedback & FEEDBACK_MASK)
      {
@@ -580,7 +582,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
    if (!imf_context_data) return EINA_FALSE;
    ic = imf_context_data->ic;
    if (!ic)
-     ic = get_ic(ctx);
+     ic = _ecore_imf_xim_ic_get(ctx);
 
    if (type == ECORE_IMF_EVENT_KEY_DOWN)
      {
@@ -760,8 +762,8 @@ xim_imf_module_exit(void)
    return NULL;
 }
 
-Eina_Bool
-ecore_imf_xim_init(void)
+static Eina_Bool
+_ecore_imf_xim_init(void)
 {
    EINA_LOG_DBG("%s in", __FUNCTION__);
    eina_init();
@@ -773,29 +775,29 @@ ecore_imf_xim_init(void)
    return EINA_TRUE;
 }
 
-void
-ecore_imf_xim_shutdown(void)
+static void
+_ecore_imf_xim_shutdown(void)
 {
    while (open_ims)
      {
         XIM_Im_Info *info = open_ims->data;
         Ecore_X_Display *display = ecore_x_display_get();
 
-        xim_info_display_closed(display, EINA_FALSE, info);
+        _ecore_imf_xim_info_im_shutdown(display, EINA_FALSE, info);
      }
 
    ecore_x_shutdown();
    eina_shutdown();
 }
 
-EINA_MODULE_INIT(ecore_imf_xim_init);
-EINA_MODULE_SHUTDOWN(ecore_imf_xim_shutdown);
+EINA_MODULE_INIT(_ecore_imf_xim_init);
+EINA_MODULE_SHUTDOWN(_ecore_imf_xim_shutdown);
 
 /*
  * internal functions
  */
-Ecore_IMF_Context_Data *
-imf_context_data_new(void)
+static Ecore_IMF_Context_Data *
+_ecore_imf_xim_context_data_new(void)
 {
    Ecore_IMF_Context_Data *imf_context_data = NULL;
    char *locale;
@@ -813,12 +815,12 @@ imf_context_data_new(void)
 
    return imf_context_data;
 error:
-   imf_context_data_destroy(imf_context_data);
+   _ecore_imf_xim_context_data_destroy(imf_context_data);
    return NULL;
 }
 
-void
-imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
+static void
+_ecore_imf_xim_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
 {
    if (!imf_context_data)
      return;
@@ -839,9 +841,9 @@ imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
 }
 
 static int
-preedit_start_callback(XIC xic EINA_UNUSED,
-                       XPointer client_data,
-                       XPointer call_data EINA_UNUSED)
+_ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
+                                 XPointer client_data,
+                                 XPointer call_data EINA_UNUSED)
 {
    EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
@@ -858,9 +860,9 @@ preedit_start_callback(XIC xic EINA_UNUSED,
 }
 
 static void
-preedit_done_callback(XIC xic EINA_UNUSED,
-                      XPointer client_data,
-                      XPointer call_data EINA_UNUSED)
+_ecore_imf_xim_preedit_done_call(XIC xic EINA_UNUSED,
+                                XPointer client_data,
+                                XPointer call_data EINA_UNUSED)
 {
    EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
@@ -886,9 +888,9 @@ preedit_done_callback(XIC xic EINA_UNUSED,
 
 /* FIXME */
 static int
-xim_text_to_utf8(Ecore_IMF_Context *ctx EINA_UNUSED,
-                 XIMText *xim_text,
-                 char **text)
+_ecore_imf_xim_text_to_utf8(Ecore_IMF_Context *ctx EINA_UNUSED,
+                           XIMText *xim_text,
+                           char **text)
 {
    int text_length = 0;
    char *result = NULL;
@@ -930,9 +932,9 @@ xim_text_to_utf8(Ecore_IMF_Context *ctx EINA_UNUSED,
 }
 
 static void
-preedit_draw_callback(XIC xic EINA_UNUSED,
-                      XPointer client_data,
-                      XIMPreeditDrawCallbackStruct *call_data)
+_ecore_imf_xim_preedit_draw_call(XIC xic EINA_UNUSED,
+                                XPointer client_data,
+                                XIMPreeditDrawCallbackStruct *call_data)
 {
    EINA_LOG_DBG("in");
    Eina_Bool ret = EINA_FALSE;
@@ -954,7 +956,7 @@ preedit_draw_callback(XIC xic EINA_UNUSED,
         if (ret == EINA_FALSE) goto done;
      }
 
-   new_text_length = xim_text_to_utf8(ctx, t, &tmp);
+   new_text_length = _ecore_imf_xim_text_to_utf8(ctx, t, &tmp);
    if (tmp)
      {
         int tmp_len;
@@ -1021,9 +1023,9 @@ done:
 }
 
 static void
-preedit_caret_callback(XIC xic EINA_UNUSED,
-                       XPointer client_data,
-                       XIMPreeditCaretCallbackStruct *call_data)
+_ecore_imf_xim_preedit_caret_call(XIC xic EINA_UNUSED,
+                                 XPointer client_data,
+                                 XIMPreeditCaretCallbackStruct *call_data)
 {
    EINA_LOG_DBG("in");
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
@@ -1044,22 +1046,22 @@ preedit_caret_callback(XIC xic EINA_UNUSED,
 }
 
 static XVaNestedList
-preedit_callback_set(Ecore_IMF_Context *ctx)
+_ecore_imf_xim_preedit_callback_set(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
 
    imf_context_data->preedit_start_cb.client_data = (XPointer)ctx;
-   imf_context_data->preedit_start_cb.callback = (XIMProc)preedit_start_callback;
+   imf_context_data->preedit_start_cb.callback = (XIMProc)_ecore_imf_xim_preedit_start_call;
 
    imf_context_data->preedit_done_cb.client_data = (XPointer)ctx;
-   imf_context_data->preedit_done_cb.callback = (XIMProc)preedit_done_callback;
+   imf_context_data->preedit_done_cb.callback = (XIMProc)_ecore_imf_xim_preedit_done_call;
 
    imf_context_data->preedit_draw_cb.client_data = (XPointer)ctx;
-   imf_context_data->preedit_draw_cb.callback = (XIMProc)preedit_draw_callback;
+   imf_context_data->preedit_draw_cb.callback = (XIMProc)_ecore_imf_xim_preedit_draw_call;
 
    imf_context_data->preedit_caret_cb.client_data = (XPointer)ctx;
-   imf_context_data->preedit_caret_cb.callback = (XIMProc)preedit_caret_callback;
+   imf_context_data->preedit_caret_cb.callback = (XIMProc)_ecore_imf_xim_preedit_caret_call;
 
    return XVaCreateNestedList(0,
                               XNPreeditStartCallback,
@@ -1074,7 +1076,7 @@ preedit_callback_set(Ecore_IMF_Context *ctx)
 }
 
 static XIC
-get_ic(Ecore_IMF_Context *ctx)
+_ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Context_Data *imf_context_data;
    XIC ic;
@@ -1156,7 +1158,7 @@ get_ic(Ecore_IMF_Context *ctx)
                {
                   im_style |= XIMPreeditCallbacks;
                   im_style |= XIMStatusNothing;
-                  preedit_attr = preedit_callback_set(ctx);
+                  preedit_attr = _ecore_imf_xim_preedit_callback_set(ctx);
                }
              name = XNPreeditAttributes;
           }
@@ -1234,7 +1236,7 @@ get_ic(Ecore_IMF_Context *ctx)
 }
 
 static void
-reinitialize_ic(Ecore_IMF_Context *ctx)
+_ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
@@ -1256,7 +1258,7 @@ reinitialize_ic(Ecore_IMF_Context *ctx)
 }
 
 static void
-set_ic_client_window(Ecore_IMF_Context *ctx,
+_ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
                      Ecore_X_Window window)
 {
    EINA_LOG_DBG("in");
@@ -1266,7 +1268,7 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    /* reinitialize IC */
-   reinitialize_ic(ctx);
+   _ecore_imf_xim_ic_reinitialize(ctx);
 
    old_win = imf_context_data->win;
    EINA_LOG_DBG("old_win:%d window:%d ", old_win, window);
@@ -1285,7 +1287,7 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
    if (window) /* XXX */
      {
         XIM_Im_Info *info = NULL;
-        info = get_im(window, imf_context_data->locale);
+        info = _ecore_imf_xim_im_get(window, imf_context_data->locale);
         imf_context_data->im_info = info;
         imf_context_data->im_info->ics =
           eina_list_prepend(imf_context_data->im_info->ics,
@@ -1296,8 +1298,8 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
 }
 
 static XIM_Im_Info *
-get_im(Ecore_X_Window window,
-       char *locale)
+_ecore_imf_xim_im_get(Ecore_X_Window window,
+                     char *locale)
 {
    EINA_LOG_DBG("in");
 
@@ -1330,13 +1332,13 @@ get_im(Ecore_X_Window window,
         info->reconnecting = EINA_FALSE;
      }
 
-   xim_info_try_im(info);
+   _ecore_imf_xim_info_im_init(info);
    return info;
 }
 
 /* initialize info->im */
 static void
-xim_info_try_im(XIM_Im_Info *info)
+_ecore_imf_xim_info_im_init(XIM_Im_Info *info)
 {
    Ecore_X_Display *dsp;
 
@@ -1354,19 +1356,19 @@ xim_info_try_im(XIM_Im_Info *info)
           {
              XRegisterIMInstantiateCallback(dsp,
                                             NULL, NULL, NULL,
-                                            xim_instantiate_callback,
+                                            _ecore_imf_xim_instantiate_cb,
                                             (XPointer)info);
              info->reconnecting = EINA_TRUE;
              return;
           }
-        setup_im(info);
+        _ecore_imf_xim_im_setup(info);
      }
 }
 
 static void
-xim_info_display_closed(Ecore_X_Display *display EINA_UNUSED,
-                        int is_error EINA_UNUSED,
-                        XIM_Im_Info *info)
+_ecore_imf_xim_info_im_shutdown(Ecore_X_Display *display EINA_UNUSED,
+                               int is_error EINA_UNUSED,
+                               XIM_Im_Info *info)
 {
    Eina_List *ics, *tmp_list;
    Ecore_IMF_Context *ctx;
@@ -1377,13 +1379,13 @@ xim_info_display_closed(Ecore_X_Display *display EINA_UNUSED,
    info->ics = NULL;
 
    EINA_LIST_FOREACH (ics, tmp_list, ctx)
-     set_ic_client_window(ctx, 0);
+     _ecore_imf_xim_ic_client_window_set(ctx, 0);
 
    EINA_LIST_FREE (ics, ctx)
      {
         Ecore_IMF_Context_Data *imf_context_data;
         imf_context_data = ecore_imf_context_data_get(ctx);
-        imf_context_data_destroy(imf_context_data);
+        _ecore_imf_xim_context_data_destroy(imf_context_data);
      }
 
    free(info->locale);
@@ -1395,9 +1397,9 @@ xim_info_display_closed(Ecore_X_Display *display EINA_UNUSED,
 }
 
 static void
-xim_instantiate_callback(Display *display,
-                         XPointer client_data,
-                         XPointer call_data EINA_UNUSED)
+_ecore_imf_xim_instantiate_cb(Display *display,
+                             XPointer client_data,
+                             XPointer call_data EINA_UNUSED)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
    XIM im = NULL;
@@ -1411,16 +1413,16 @@ xim_instantiate_callback(Display *display,
      }
 
    info->im = im;
-   setup_im(info);
+   _ecore_imf_xim_im_setup(info);
 
    XUnregisterIMInstantiateCallback(display, NULL, NULL, NULL,
-                                    xim_instantiate_callback,
+                                    _ecore_imf_xim_instantiate_cb,
                                     (XPointer)info);
    info->reconnecting = EINA_FALSE;
 }
 
 static void
-setup_im(XIM_Im_Info *info)
+_ecore_imf_xim_im_setup(XIM_Im_Info *info)
 {
    XIMValuesList *ic_values = NULL;
    XIMCallback im_destroy_callback;
@@ -1429,7 +1431,7 @@ setup_im(XIM_Im_Info *info)
      return;
 
    im_destroy_callback.client_data = (XPointer)info;
-   im_destroy_callback.callback = (XIMProc)xim_destroy_callback;
+   im_destroy_callback.callback = (XIMProc)_ecore_imf_xim_destroy_cb;
    XSetIMValues(info->im,
                 XNDestroyCallback, &im_destroy_callback,
                 NULL);
@@ -1465,16 +1467,16 @@ setup_im(XIM_Im_Info *info)
 }
 
 static void
-xim_destroy_callback(XIM xim EINA_UNUSED,
-                     XPointer client_data,
-                     XPointer call_data EINA_UNUSED)
+_ecore_imf_xim_destroy_cb(XIM xim EINA_UNUSED,
+                         XPointer client_data,
+                         XPointer call_data EINA_UNUSED)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
 
    if (info->user) info->user->ic = NULL;
    info->im = NULL;
-//   reinitialize_ic(ctx);
-   xim_info_try_im(info);
+//   _ecore_imf_xim_ic_reinitialize(ctx);
+   _ecore_imf_xim_info_im_init(info);
 
    return;
 }
