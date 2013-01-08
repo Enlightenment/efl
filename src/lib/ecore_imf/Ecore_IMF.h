@@ -78,8 +78,7 @@ typedef enum
 {
    ECORE_IMF_INPUT_PANEL_STATE_SHOW,        /**< Notification after the display of the input panel @since 1.7 */
    ECORE_IMF_INPUT_PANEL_STATE_HIDE,        /**< Notification prior to the dismissal of the input panel @since 1.7 */
-   ECORE_IMF_INPUT_PANEL_STATE_WILL_SHOW,   /**< Notification prior to the display of the input panel @since 1.7 */
-   ECORE_IMF_INPUT_PANEL_STATE_WILL_HIDE    /**< Notification prior to the dismissal of the input panel @since 1.8 */
+   ECORE_IMF_INPUT_PANEL_STATE_WILL_SHOW    /**< Notification prior to the display of the input panel @since 1.7 */
 } Ecore_IMF_Input_Panel_State;
 
 typedef enum
