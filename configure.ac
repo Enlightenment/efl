@@ -98,11 +98,16 @@ AC_ARG_WITH([tests],
                    [choose testing method: regular, coverage or none.
                     @<:@default=none@:>@])],
    [build_tests=${withval}],
-   [build_tests=none])
+   [build_tests=auto])
 
 want_coverage="no"
 want_tests="no"
 case "${build_tests}" in
+   auto)
+     if test "${build_profile}" = "dev"; then
+        want_tests="yes"
+     fi
+     ;;
    regular)
      want_tests="yes"
      ;;
