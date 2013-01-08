@@ -58,8 +58,6 @@ struct _Render_Updates
 
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Evas_Event_Cb updates_func, void *updates_data, Eina_Bool do_async);
-static void
-_evas_render_mode_eval(Evas_Public_Data *e);
 
 EAPI void
 evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
@@ -1553,7 +1551,6 @@ evas_render_updates_internal(Evas *eo_e,
      {
         unsigned int offset = 0;
 
-        _evas_render_mode_eval(e);
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
                 (e->engine.data.output,
@@ -2121,27 +2118,6 @@ evas_render_object_recalc(Evas_Object *eo_obj)
        eina_array_push(&e->pending_objects, obj);
        obj->changed = EINA_TRUE;
      }
-}
-
-static void
-_evas_render_mode_eval(Evas_Public_Data *e) // eo
-{
-   Evas_Opset opset;
-   int i;
-
-   if (!e->engine.func) return;
-   if (!e->engine.func->opset_eval) return;
-   
-   // XXX1: walk thru active objects - figure out render ops
-   for (i = 0; i < e->active_objects.count; ++i)
-     {
-        Evas_Object_Protected_Data *obj = eina_array_data_get(&e->active_objects, i); // eo
-        Evas_Object *eo_obj; // eo
-        
-        if (!obj) continue;
-        eo_obj = obj->object; // eo
-     }
-   e->engine.func->opset_eval(e->engine.data.output, &opset);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
