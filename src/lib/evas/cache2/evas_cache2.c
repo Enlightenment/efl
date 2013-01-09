@@ -419,13 +419,13 @@ evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA3
    im->w = w;
    im->h = h;
    im->flags.alpha = alpha;
-   im->flags.loaded = 1;
    if (cache->func.data(im, w, h, image_data, alpha, cspace) != 0)
      {
         _evas_cache_image_entry_delete(cache, im);
         return NULL;
      }
    im->references = 1;
+   im->flags.loaded = EINA_TRUE;
    if (cache->func.debug) cache->func.debug("data", im);
    return im;
 }
@@ -470,6 +470,7 @@ evas_cache2_image_size_set(Image_Entry *im, unsigned int w, unsigned h)
    if (error != 0) goto on_error;
 
    im2->references = 1;
+   im2->flags.loaded = EINA_TRUE;
 
    evas_cache2_image_close(im);
    return im2;
