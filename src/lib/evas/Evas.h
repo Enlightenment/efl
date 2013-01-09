@@ -203,10 +203,10 @@
    After you understood what Evas is and installed it in your system
    you should proceed understanding the programming interface for all
    objects, then see the specific for the most used elements. We'd
-   recommend you to take a while to learn @ref Ecore, Edje
-   (http://docs.enlightenment.org/auto/edje/) and Elementary
-   (http://docs.enlightenment.org/auto/elementary/) as they will
-   likely save you tons of work compared to using just Evas directly.
+   recommend you to take a while to learn @ref Ecore, @ref Edje and
+   Elementary (http://docs.enlightenment.org/auto/elementary/) as they
+   will likely save you tons of work compared to using just Evas
+   directly.
 
    Recommended reading:
 
@@ -1257,7 +1257,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  * Most EFL users wouldn't be using this function directly, because
  * they wouldn't access Evas directly by themselves. Instead, they
  * would be using higher level helpers, like @c ecore_evas_init().
- * See http://docs.enlightenment.org/auto/ecore/.
+ * See @ref Ecore.
  *
  * You should be using this if your use is something like the
  * following. The buffer engine is just one of the many ones Evas
@@ -1460,8 +1460,8 @@ EAPI Eina_Bool         evas_async_events_put(const void *target, Evas_Callback_T
  *
  * @note this function is very low level. Instead of using it
  *       directly, consider using the high level functions in
- *       Ecore_Evas such as @c ecore_evas_new(). See
- *       http://docs.enlightenment.org/auto/ecore/.
+ *       @ref Ecore_Evas_Group such as @c ecore_evas_new(). See
+ *       @ref Ecore.
  *
  * @attention it is recommended that one calls evas_init() before
  *       creating new canvas.
