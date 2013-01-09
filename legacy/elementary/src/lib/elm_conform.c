@@ -299,7 +299,8 @@ _land_indicator_connect_cb(void *data)
    Elm_Conformant_Smart_Data *sd = data;
    int rot;
 
-   if (!sd || (sd->indmode != ELM_WIN_INDICATOR_SHOW))
+   if (!sd) return ECORE_CALLBACK_CANCEL;
+   if (sd->indmode != ELM_WIN_INDICATOR_SHOW)
      {
         sd->land_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
