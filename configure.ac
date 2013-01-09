@@ -2595,9 +2595,6 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_X], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_X], [eina])
 
 ## Xlib
-if test "x${want_x11_xlib}" = "xyes" ; then
-   AC_PATH_XTRA
-fi
 
 ## XCB
 
@@ -2643,21 +2640,6 @@ int h = MAXHOSTNAMELEN;
 fi
 
 ## Xlib
-use_Xcursor="no"
-if test "x${want_x11_xlib}" = "xyes" ; then
-   CFLAGS_save="${CFLAGS}"
-   CFLAGS="$x_cflags $x_includes"
-   AC_CHECK_HEADER([X11/Xcursor/Xcursor.h],
-      [use_Xcursor="yes"],
-      [use_Xcursor="no"],
-      [#include <X11/Xlib.h>])
-   CFLAGS="$CFLAGS_save"
-
-   if test "${use_Xcursor}" = "no"; then
-      AC_MSG_ERROR([Xcursor is missing])
-   fi
-fi
-
 if test "x${want_x11_xcb}" = "xyes" ; then
    KEYSYMDEFDIR=`$PKG_CONFIG --variable=includedir xproto`/X11
    FILES="keysymdef.h XF86keysym.h Sunkeysym.h DECkeysym.h HPkeysym.h"
@@ -2685,17 +2667,17 @@ fi
 
 ## Xlib
 if test "x${want_x11_xlib}" = "xyes"; then
-   AC_CHECK_LIB([Xcursor],
-      [XcursorImageLoadCursor],
-      [
+   EFL_FIND_X(ECORE_X_XLIB,
+     [X11/Xlib.h X11/Xcursor/Xcursor.h],
+     [X11 XOpenDisplay Xcursor XcursorImageLoadCursor],
+     [
        use_Xcursor="yes"
        AC_DEFINE([ECORE_XCURSOR], 1, [Build support for Xcursor])
-       Xcursor_libs="-lXcursor"
-      ],
-      [use_Xcursor="no"],
-      [$x_libs -lXrender])
-   EFL_ADD_LIBS([ECORE_X], [${Xcursor_libs}])
-   EFL_ADD_CFLAGS([ECORE_X], [$x_cflags $x_includes])
+       EFL_ADD_LIBS([ECORE_X], [$ECORE_X_XLIB_libs])
+       EFL_ADD_CFLAGS([ECORE_X], [$ECORE_X_XLIB_cflags])
+     ],[
+       AC_MSG_ERROR([Xcursor is missing])
+     ])
 fi
 
 if test "x${want_x11_xlib}" = "xyes" ; then
@@ -2848,8 +2830,14 @@ AM_CONDITIONAL([BUILD_ECORE_IMF_SCIM], [test "x${have_ecore_imf_scim}" = "xyes"]
 
 have_ecore_imf_xim="no"
 if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
-   have_ecore_imf_xim="yes"
-   AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+
+ EFL_FIND_X(ecore_imf_xim,
+   [X11/Xlib.h],
+   [X11 XOpenIM],
+   [
+     have_ecore_imf_xim=yes
+     AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+   ])
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_XIM], [test "x${have_ecore_imf_xim}" = "xyes"])

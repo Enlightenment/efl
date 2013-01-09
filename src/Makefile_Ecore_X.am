@@ -131,7 +131,7 @@ $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
 BUILT_SOURCES += \
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 
-$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h: $(KEYSYMDEFS) $(top_builddir)/src/utils/ecore/makekeys$(EXEEXT)
+$(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h: $(KEYSYMDEFS) utils/ecore/makekeys$(EXEEXT)
 	$(top_builddir)/src/utils/ecore/makekeys $(KEYSYMDEFS) > $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
 	mv -f $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 endif
@@ -141,6 +141,7 @@ endif
 noinst_PROGRAMS += utils/ecore/makekeys
 
 utils_ecore_makekeys_SOURCES = utils/ecore/makekeys.c
+utils_ecore_makekeys_CFLAGS = @ECORE_X_CFLAGS@
 
 endif
 EXTRA_DIST += utils/ecore/mkks.sh

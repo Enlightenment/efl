@@ -159,6 +159,7 @@ modules_ecore_imf_xim_xim_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/lib/ecore_imf \
 @ECORE_IMF_CFLAGS@ \
+@ecore_imf_xim_cflags@ \
 @EFL_COV_CFLAGS@
 modules_ecore_imf_xim_xim_la_LIBADD = \
 lib/ecore_imf/libecore_imf.la \
@@ -166,6 +167,7 @@ lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
 lib/eo/libeo.la \
 lib/eina/libeina.la \
+@ecore_imf_xim_libs@ \
 @EFL_COV_LIBS@
 modules_ecore_imf_xim_xim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_imf_xim_xim_la_LIBTOOLFLAGS = --tag=disable-static
