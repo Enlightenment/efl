@@ -5166,8 +5166,8 @@ elm_widget_tree_dump(const Evas_Object *top)
      return;
    _sub_obj_tree_dump(top, 0);
 #else
-   return;
    (void)top;
+   return;
 #endif
 }
 
@@ -5182,9 +5182,9 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
    _sub_obj_tree_dot_dump(top, output);
    fprintf(output, "}\n");
 #else
-   return;
    (void)top;
    (void)output;
+   return;
 #endif
 }
 
