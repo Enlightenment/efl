@@ -427,6 +427,23 @@ _get_env_vars(Eina_Prefix *pfx,
    return ret;
 }
 
+static int
+_common_prefix_find(const char *bin, const char *lib, const char *data, const char *locale)
+{
+   const char *b = bin;
+   const char *i = lib;
+   const char *d = data;
+   const char *o = locale;
+
+   for (; (*b) && (*i) && (*d) && (*o); b++, i++, d++, o++)
+     {
+        if (*b != *i) break;
+        if (*b != *d) break;
+        if (*b != *o) break;
+     }
+   return b - bin;
+}
+
 /**
  * @endcond
  */
@@ -451,11 +468,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    Eina_Prefix *pfx;
    char *p, buf[4096], *tmp, *magic = NULL;
    struct stat st;
-   const char *p1, *p2;
-   const char *pkg_bin_p = NULL;
-   const char *pkg_lib_p = NULL;
-   const char *pkg_data_p = NULL;
-   const char *pkg_locale_p = NULL;
+   int prefixlen;
    const char *bindir = "bin";
    const char *libdir = "lib";
    const char *datadir = "share";
@@ -521,47 +534,15 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     *   libdir = lib/x86_64-linux-gnu
     * all with a common prefix that can be relocated
     */
-   /* 1. check last common char in bin and lib strings */
-   for (p1 = pkg_bin, p2 = pkg_lib; *p1 && *p2; p1++, p2++)
+   prefixlen = _common_prefix_find(pkg_bin, pkg_lib, pkg_data, pkg_locale);
+   if (prefixlen > 0)
      {
-        if (*p1 != *p2)
-          {
-             pkg_bin_p = p1;
-             pkg_lib_p = p2;
-             break;
-          }
-     }
-   /* 1. check last common char in bin and data strings */
-   for (p1 = pkg_bin, p2 = pkg_data; *p1 && *p2; p1++, p2++)
-     {
-        if (*p1 != *p2)
-          {
-             pkg_data_p = p2;
-             break;
-          }
-     }
-   /* 1. check last common char in bin and locale strings */
-   for (p1 = pkg_bin, p2 = pkg_locale; *p1 && *p2; p1++, p2++)
-     {
-        if (*p1 != *p2)
-          {
-             pkg_locale_p = p2;
-             break;
-          }
-     }
-   /* 2. if all the common string offsets match we compiled with a common prefix */
-   if (((pkg_bin_p - pkg_bin) == (pkg_lib_p - pkg_lib))
-       && ((pkg_bin_p - pkg_bin) == (pkg_data_p - pkg_data))
-       && ((pkg_bin_p - pkg_bin) == (pkg_locale_p - pkg_locale))
-      )
-     {
-        bindir = pkg_bin_p;
-        libdir = pkg_lib_p;
-        datadir = pkg_data_p;
-        localedir = pkg_locale_p;
+        bindir = pkg_bin + prefixlen;
+        libdir = pkg_lib + prefixlen;
+        datadir = pkg_data + prefixlen;
+        localedir = pkg_locale + prefixlen;
         DBG("Prefix common=%.*s, bin=%s, lib=%s, data=%s, locale=%s",
-            (int)(pkg_bin_p - pkg_bin), pkg_bin,
-            bindir, libdir, datadir, localedir);
+            prefixlen, pkg_bin, bindir, libdir, datadir, localedir);
      }
    /* 3. some galoot thought it awesome not to give us a common prefix at compile time
     * so fall back to the compile time directories. we are no longer relocatable */
