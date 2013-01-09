@@ -1380,7 +1380,7 @@ endif
 
 if EVAS_CSERVE2
 
-evascserve2internal_bindir=$(libdir)/evas/cserve2/bin
+evascserve2internal_bindir=$(libdir)/evas/cserve2/bin/$(MODULE_ARCH)
 evascserve2internal_bin_PROGRAMS = \
 bin/evas/evas_cserve2 \
 bin/evas/evas_cserve2_slave
