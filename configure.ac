@@ -3210,7 +3210,7 @@ EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
 EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-file])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-con])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${wantx_mount}], [eet])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [eet])
 
 EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
 EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_mount}], [EEZE_MOUNT], [mount >= 2.20.0])
