@@ -1259,15 +1259,15 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
                p_it->base.data = it->base.data;
              _item_free(it);
              elm_widget_item_del(it);
-			 it = NULL;
+             it = NULL;
           }
      }
    _index_box_clear(obj, sd->bx[sd->level], sd->level);
 
    if (!it)
-	   *ret = NULL;
+     *ret = NULL;
    else
-	   *ret = (Elm_Object_Item *)it;
+     *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
