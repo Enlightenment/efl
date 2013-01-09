@@ -35,8 +35,8 @@ edje_init(void)
 
    if (!ecore_init())
      {
-	ERR("Ecore init failed");
-	goto unregister_log_domain;
+        ERR("Ecore init failed");
+        goto unregister_log_domain;
      }
 
    if (!embryo_init())
