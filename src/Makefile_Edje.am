@@ -190,7 +190,7 @@ bin_edje_edje_watch_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_watch_LDADD = $(EDJE_COMMON_USER_LDADD)
 
 # EPP (Edje's CPP)
-eppdir = $(libdir)/edje/utils
+eppdir = $(libdir)/edje/utils/$(MODULE_ARCH)
 epp_PROGRAMS = bin/edje/epp/epp
 bin_edje_epp_epp_SOURCES = \
 bin/edje/epp/cpplib.h \

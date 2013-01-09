@@ -817,7 +817,7 @@ compile(void)
           }
 
         if (buf2[0] == '\0')
-          snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp" EPP_EXT,
+          snprintf(buf2, sizeof(buf2), "%s/edje/utils/" MODULE_ARCH "/epp" EPP_EXT,
                    eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
