@@ -2127,6 +2127,7 @@ _item_filter_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                              && (_item_filter->data == data)))
           {
              INF("Already Registered this item filter!!!!\n");
+             _filter_free(new_item_filter);
              return;
           }
      }
