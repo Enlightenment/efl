@@ -29,8 +29,8 @@ edje_init(void)
      ("edje", EDJE_DEFAULT_LOG_COLOR);
    if (_edje_default_log_dom < 0)
      {
-	EINA_LOG_ERR("Edje Can not create a general log domain.");
-	goto shutdown_eina;
+        EINA_LOG_ERR("Edje Can not create a general log domain.");
+        goto shutdown_eina;
      }
 
    if (!ecore_init())
