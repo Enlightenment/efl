@@ -374,7 +374,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
    if (eminw && (ominw < eminw)) ominw = eminw;
-   if (eminw && (ominh < eminh)) ominh = eminh;
+   if (eminh && (ominh < eminh)) ominh = eminh;
 
    if (ominw < 1) ominw = 10; /* at least it is noticeable */
    if (ominh < 1) ominh = 10; /* at least it is noticeable */
