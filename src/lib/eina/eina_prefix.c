@@ -227,10 +227,10 @@ _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
    return 1;
 }
 
-#ifndef _WIN32
 static int
 _try_proc(Eina_Prefix *pfx, void *symbol)
 {
+#ifndef _WIN32
    FILE *f;
    char buf[4096];
 
@@ -284,8 +284,12 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
    fclose(f);
    WRN("Couldn't find symbol %p in a file in /proc/self/maps", symbol);
    return 0;
-}
+#else
+   return 0;
+   (void)pfx;
+   (void)symbol;
 #endif
+}
 
 static int
 _try_argv(Eina_Prefix *pfx, const char *argv0)
@@ -565,9 +569,9 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
         return pfx;
      }
 
-#ifdef HAVE_DLADDR
    if (symbol)
      {
+#ifdef HAVE_DLADDR
         Dl_info info_dl;
 
         if (dladdr(symbol, &info_dl))
@@ -588,27 +592,27 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
           }
         else
           WRN("no dladdr for symbol=%p", symbol);
-     }
 #endif
-   /* no env var - examine process and possible argv0 */
-   if ((argv0) && (!pfx->exe_path) && (symbol))
+
+        if (!pfx->exe_path)
+          _try_proc(pfx, symbol);
+        /* no from_lib/from_bin as we're not sure it came from lib or bin! */
+     }
+
+   /* no env var or symbol - examine process and possible argv0 */
+   if ((argv0) && (!pfx->exe_path))
      {
-#ifndef _WIN32
-        if (!_try_proc(pfx, symbol))
+        if (!_try_argv(pfx, argv0))
           {
-#endif
-             if (!_try_argv(pfx, argv0))
-               {
-                  WRN("Fallback - couldn't resolve based on argv0=%s", argv0);
-                  _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
-                            envprefix);
-                  return pfx;
-               }
-             from_bin = EINA_TRUE;
-#ifndef _WIN32
+             WRN("Fallback - couldn't resolve based on argv0=%s", argv0);
+             _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
+                       envprefix);
+             return pfx;
           }
-#endif
+
+        from_bin = EINA_TRUE;
      }
+
    if (!pfx->exe_path)
      {
         WRN("Fallback - no variables, symbol or argv0 could be used.");
