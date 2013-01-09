@@ -241,7 +241,10 @@ _scale_cb(const Evas_Object *obj __UNUSED__,
           double lat,
           int zoom)
 {
-   if (zoom < 0 || zoom >= (int)(sizeof(_osm_scale_meter)/sizeof(_osm_scale_meter[0]))) return 0;
+   if ((zoom < 0) ||
+       (zoom >= (int)(sizeof(_osm_scale_meter) / sizeof(_osm_scale_meter[0])))
+      )
+     return 0;
    return _osm_scale_meter[zoom] / cos(lat * ELM_PI / 180.0);
 }
 
