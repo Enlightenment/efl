@@ -151,7 +151,7 @@ EAPI Eina_Prefix *
 eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                 const char *sharedir, const char *magicsharefile,
                 const char *pkg_bin, const char *pkg_lib,
-                const char *pkg_data, const char *pkg_locale);
+                const char *pkg_data, const char *pkg_locale) EINA_ARG_NONNULL(6, 7, 8, 9) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Free the prefix object and all its contents
@@ -164,7 +164,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
  * @since 1.1.0
  */
 EAPI void
-eina_prefix_free(Eina_Prefix *pfx);
+eina_prefix_free(Eina_Prefix *pfx) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the prefix base directory
@@ -176,7 +176,7 @@ eina_prefix_free(Eina_Prefix *pfx);
  * @since 1.1.0
  */
 EAPI const char *
-eina_prefix_get(Eina_Prefix *pfx);
+eina_prefix_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Get the binary installation directory
@@ -188,7 +188,7 @@ eina_prefix_get(Eina_Prefix *pfx);
  * @since 1.1.0
  */
 EAPI const char *
-eina_prefix_bin_get(Eina_Prefix *pfx);
+eina_prefix_bin_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Get the library installation directory
@@ -200,7 +200,7 @@ eina_prefix_bin_get(Eina_Prefix *pfx);
  * @since 1.1.0
  */
 EAPI const char *
-eina_prefix_lib_get(Eina_Prefix *pfx);
+eina_prefix_lib_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Get the data installation directory
@@ -212,7 +212,7 @@ eina_prefix_lib_get(Eina_Prefix *pfx);
  * @since 1.1.0
  */
 EAPI const char *
-eina_prefix_data_get(Eina_Prefix *pfx);
+eina_prefix_data_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Get the locale installation directory
@@ -224,7 +224,7 @@ eina_prefix_data_get(Eina_Prefix *pfx);
  * @since 1.1.0
  */
 EAPI const char *
-eina_prefix_locale_get(Eina_Prefix *pfx);
+eina_prefix_locale_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @}

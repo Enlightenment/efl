@@ -466,6 +466,12 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
        argv0, symbol, magicsharefile, envprefix);
    DBG("EINA PREFIX: share=%s, bin=%s, lib=%s, data=%s, locale=%s",
        sharedir, pkg_bin, pkg_lib, pkg_data, pkg_locale);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pkg_bin, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pkg_lib, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pkg_data, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pkg_locale, NULL);
+
    pfx = calloc(1, sizeof(Eina_Prefix));
    if (!pfx) return NULL;
 
@@ -752,7 +758,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 EAPI void
 eina_prefix_free(Eina_Prefix *pfx)
 {
-   if (!pfx) return;
+   EINA_SAFETY_ON_NULL_RETURN(pfx);
 
    IF_FREE_NULL(pfx->exe_path);
    IF_FREE_NULL(pfx->prefix_path);
@@ -766,35 +772,35 @@ eina_prefix_free(Eina_Prefix *pfx)
 EAPI const char *
 eina_prefix_get(Eina_Prefix *pfx)
 {
-   if (!pfx) return "";
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path;
 }
 
 EAPI const char *
 eina_prefix_bin_get(Eina_Prefix *pfx)
 {
-   if (!pfx) return "";
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_bin;
 }
 
 EAPI const char *
 eina_prefix_lib_get(Eina_Prefix *pfx)
 {
-   if (!pfx) return "";
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_lib;
 }
 
 EAPI const char *
 eina_prefix_data_get(Eina_Prefix *pfx)
 {
-   if (!pfx) return "";
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_data;
 }
 
 EAPI const char *
 eina_prefix_locale_get(Eina_Prefix *pfx)
 {
-   if (!pfx) return "";
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_locale;
 }
 
