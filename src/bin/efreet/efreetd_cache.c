@@ -58,7 +58,8 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
 
-   snprintf(file, sizeof(file), "%s/efreet/efreet_icon_cache_create",
+   snprintf(file, sizeof(file),
+            "%s/efreet/" MODULE_ARCH "/efreet_icon_cache_create",
             eina_prefix_lib_get(pfx));
    if (icon_extra_dirs)
      {
@@ -121,7 +122,8 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
    prio = ecore_exe_run_priority_get();
    ecore_exe_run_priority_set(19);
 
-   snprintf(file, sizeof(file), "%s/efreet/efreet/efreet_desktop_cache_create",
+   snprintf(file, sizeof(file),
+            "%s/efreet/" MODULE_ARCH "/efreet_desktop_cache_create",
             eina_prefix_lib_get(pfx));
    if (desktop_extra_dirs)
      {

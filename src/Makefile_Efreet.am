@@ -119,7 +119,7 @@ bin/efreet/efreetd_cache.c
 bin_efreet_efreetd_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
 bin_efreet_efreetd_LDADD = $(EFREET_COMMON_USER_LDADD)
 
-efreetinternal_bindir=$(libdir)/efreet
+efreetinternal_bindir=$(libdir)/efreet/$(MODULE_ARCH)
 efreetinternal_bin_PROGRAMS = \
 bin/efreet/efreet_desktop_cache_create \
 bin/efreet/efreet_icon_cache_create
