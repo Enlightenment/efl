@@ -216,8 +216,8 @@ EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
    Evas_Event_Async *ev;
-   ssize_t check;
-   int count;
+   unsigned int count;
+   Eina_Bool ret;
 
    if (!func) return EINA_FALSE;
    if (_fd_write == -1) return EINA_FALSE;
@@ -244,6 +244,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    if (count == 0)
      {
         int wakeup = 1;
+        ssize_t check;
 
         do
           {
@@ -251,21 +252,25 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
           }
         while ((check != sizeof (int)) &&
                ((errno == EINTR) || (errno == EAGAIN)));
+
+        if (check == sizeof (int)) ret = EINA_TRUE;
+        else
+          {
+             ret = EINA_FALSE;
+
+             switch (errno)
+               {
+                case EBADF:
+                case EINVAL:
+                case EIO:
+                case EPIPE:
+                   _fd_write = -1;
+               }
+          }
      }
+   else ret = EINA_TRUE;
 
    evas_cache_image_wakeup();
 
-   if ((count != 0) || (check == sizeof (int)))
-      return EINA_TRUE;
-
-   switch (errno)
-     {
-      case EBADF:
-      case EINVAL:
-      case EIO:
-      case EPIPE:
-         _fd_write = -1;
-     }
-
-   return EINA_FALSE;
+   return ret;
 }
