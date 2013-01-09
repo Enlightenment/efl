@@ -339,6 +339,7 @@ _transit_animate_cb(void *data)
          transit->progress = ecore_animator_pos_map(transit->progress,
                                                     ECORE_POS_MAP_LINEAR,
                                                     0, 0);
+         break;
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
          transit->progress = ecore_animator_pos_map(transit->progress,
                                                     ECORE_POS_MAP_ACCELERATE,
