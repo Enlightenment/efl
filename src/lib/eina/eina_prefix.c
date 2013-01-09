@@ -243,43 +243,43 @@ _try_proc(Eina_Prefix *pfx, void *symbol)
    DBG("Check /proc/self/maps for symbol=%p", symbol);
    while (fgets(buf, sizeof(buf), f))
      {
-	int len;
-	char *p, mode[5] = "";
-	unsigned long ptr1 = 0, ptr2 = 0;
+        int len;
+        char *p, mode[5] = "";
+        unsigned long ptr1 = 0, ptr2 = 0;
 
-	len = strlen(buf);
-	if (buf[len - 1] == '\n')
-	  {
-	     buf[len - 1] = 0;
-	     len--;
-	  }
-	if (sscanf(buf, "%lx-%lx %4s", &ptr1, &ptr2, mode) == 3)
-	  {
-	     if (!strcmp(mode, "r-xp"))
-	       {
-		  if (((void *)ptr1 <= symbol) && (symbol < (void *)ptr2))
-		    {
-		       p = strchr(buf, '/');
-		       if (p)
-			 {
-			    if (len > 10)
-			      {
-				 if (!strcmp(buf + len - 10, " (deleted)"))
-                                    buf[len - 10] = 0;
-			      }
+        len = strlen(buf);
+        if (buf[len - 1] == '\n')
+          {
+             buf[len - 1] = 0;
+             len--;
+          }
+        if (sscanf(buf, "%lx-%lx %4s", &ptr1, &ptr2, mode) == 3)
+          {
+             if (!strcmp(mode, "r-xp"))
+               {
+                  if (((void *)ptr1 <= symbol) && (symbol < (void *)ptr2))
+                    {
+                       p = strchr(buf, '/');
+                       if (p)
+                         {
+                            if (len > 10)
+                              {
+                                 if (!strcmp(buf + len - 10, " (deleted)"))
+                                   buf[len - 10] = 0;
+                              }
                             STRDUP_REP(pfx->exe_path, p);
                             INF("Found %p in /proc/self/maps: %s (%s)", symbol, pfx->exe_path, buf);
-			    fclose(f);
-			    return 1;
-			 }
-		       else
+                            fclose(f);
+                            return 1;
+                         }
+                       else
                          {
                             DBG("Found %p in /proc/self/maps but not a file (%s)", symbol, buf);
                             break;
                          }
-		    }
-	       }
-	  }
+                    }
+               }
+          }
      }
    fclose(f);
    WRN("Couldn't find symbol %p in a file in /proc/self/maps", symbol);
@@ -629,7 +629,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     * bin_dir    = /blah/whatever/bin
     * data_dir   = /blah/whatever/share/enlightenment
     * lib_dir    = /blah/whatever/lib
-    * 
+    *
     * new case - debian multiarch goop.
     * exe        = /blah/whatever/lib/arch/libexe.so
     */
@@ -637,45 +637,45 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    p = strrchr(pfx->exe_path, DSEP_C);
    if (p)
      {
-	p--;
-	while (p >= pfx->exe_path)
-	  {
-	     if (*p == DSEP_C)
-	       {
+        p--;
+        while (p >= pfx->exe_path)
+          {
+             if (*p == DSEP_C)
+               {
                   if (pfx->prefix_path) free(pfx->prefix_path);
-		  pfx->prefix_path = malloc(p - pfx->exe_path + 1);
-		  if (pfx->prefix_path)
-		    {
+                  pfx->prefix_path = malloc(p - pfx->exe_path + 1);
+                  if (pfx->prefix_path)
+                    {
                        Eina_Bool magic_found = EINA_FALSE;
                        int checks_passed = 0;
 
-		       strncpy(pfx->prefix_path, pfx->exe_path,
+                       strncpy(pfx->prefix_path, pfx->exe_path,
                                p - pfx->exe_path);
-		       pfx->prefix_path[p - pfx->exe_path] = 0;
+                       pfx->prefix_path[p - pfx->exe_path] = 0;
                        DBG("Have prefix = %s", pfx->prefix_path);
 
-		       /* bin */
+                       /* bin */
                        _path_join(buf, sizeof(buf), pfx->prefix_path, bindir);
                        STRDUP_REP(pfx->prefix_path_bin, buf);
                        DBG("Have bin = %s", pfx->prefix_path_bin);
                        if ((!from_bin) && (stat(buf, &st) == 0))
                          checks_passed++;
 
-		       /* lib */
+                       /* lib */
                        _path_join(buf, sizeof(buf), pfx->prefix_path, libdir);
                        STRDUP_REP(pfx->prefix_path_lib, buf);
                        DBG("Have lib = %s", pfx->prefix_path_lib);
                        if ((!from_lib) && (stat(buf, &st) == 0))
                          checks_passed++;
 
-		       /* locale */
+                       /* locale */
                        _path_join(buf, sizeof(buf), pfx->prefix_path, localedir);
                        STRDUP_REP(pfx->prefix_path_locale, buf);
                        DBG("Have locale = %s", pfx->prefix_path_locale);
                        if (stat(buf, &st) == 0)
                          checks_passed++;
 
-		       /* check if magic file is there - then our guess is right */
+                       /* check if magic file is there - then our guess is right */
                        if (!magic)
                          DBG("No magic file");
                        else
@@ -697,13 +697,13 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                               WRN("Missing magic path %s", buf);
                          }
 
-		       if (((!magic) && (checks_passed > 0)) ||
+                       if (((!magic) && (checks_passed > 0)) ||
                            ((magic) && (magic_found)))
-			 {
+                         {
                             _path_join(buf, sizeof(buf), pfx->prefix_path, datadir);
                             STRDUP_REP(pfx->prefix_path_data, buf);
-			 }
-		       else
+                         }
+                       else
                          {
                             for (;p > pfx->exe_path; p--)
                               {
@@ -723,17 +723,17 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                             _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
                                       pkg_locale, envprefix);
                          }
-		    }
-		  else
+                    }
+                  else
                     {
                        WRN("No Prefix path (alloc fail)");
                        _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
                                  envprefix);
                     }
                   return pfx;
-	       }
-	     p--;
-	  }
+               }
+             p--;
+          }
      }
    WRN("Final fallback");
    _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale, envprefix);
