@@ -47,8 +47,12 @@ _elm_font_properties_get(Eina_Hash **font_hash,
         if (!efp)
           {
              efp = calloc(1, sizeof(Elm_Font_Properties));
-             if (!efp) return NULL;
-             
+             if (!efp)
+               {
+                  free(name);
+                  return NULL;
+               }
+
              efp->name = eina_stringshare_add(name);
              if (font_hash)
                {
