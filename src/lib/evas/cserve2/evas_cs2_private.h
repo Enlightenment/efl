@@ -35,6 +35,7 @@ void evas_cserve2_dispatch(void);
 void *evas_cserve2_image_data_get(Image_Entry *ie);
 
 Font_Entry *evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, Font_Rend_Flags wanted_rend);
+EAPI int evas_cserve2_font_load_wait(Font_Entry *fe);
 void evas_cserve2_font_free(Font_Entry *fe);
 Eina_Bool evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
 Eina_Bool evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);

@@ -347,8 +347,12 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
    evas_common_font_int_load_complete(fi);
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
-     fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi,
-                                              wanted_rend);
+     {
+        fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi,
+                                                 wanted_rend);
+        if (fi->cs2_handler)
+          evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler);
+     }
 #endif
    free(fake_name);
    return fi;
@@ -379,8 +383,12 @@ evas_common_font_int_load(const char *name, int size,
    fi = evas_common_font_int_load_init(fi);
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
-     fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi,
-                                              wanted_rend);
+     {
+        fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi,
+                                                 wanted_rend);
+        if (fi->cs2_handler)
+          evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler);
+     }
 #endif
 //   evas_common_font_int_load_complete(fi);
    return fi;
