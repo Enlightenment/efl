@@ -475,7 +475,7 @@ _item_content_get_hook(const Elm_Object_Item *it,
    Elm_Segment_Item *item;
    item = (Elm_Segment_Item *)it;
 
-   if (!part && !strcmp(part, "icon"))
+   if (part && !strcmp(part, "icon"))
      return item->icon;
    else
      return edje_object_part_swallow_get(VIEW(item), part);
