@@ -209,9 +209,9 @@ _nominatim_url_cb(const Evas_Object *obj,
                  "%s/search?q=%s&format=xml&polygon=0&addressdetails=0",
                  NAME_NOMINATIM_URL, search_url);
 
-        if (str && str[0])
+        if (str)
           {
-             free(str[0]);
+             if (str[0]) free(str[0]);
              free(str);
           }
      }
@@ -2898,8 +2898,8 @@ _name_parse(Elm_Map_Name *n)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_cb, &dump);
-                       free(buf);
                     }
+                  free(buf);
                }
           }
         fclose(f);
