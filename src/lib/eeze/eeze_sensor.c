@@ -73,18 +73,33 @@ eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
 static void
 eeze_sensor_modules_load(void)
 {
+   char buf[PATH_MAX];
+
    /* Check for available runtime modules and load them. In some cases the
     * un-installed modules to be used from the local build dir. Coverage check
     * is one of these items. We do load the modules from the builddir if the
     * environment is set. Normal case is to use installed modules from system
     */
    if (getenv("EFL_RUN_IN_TREE"))
-      g_handle->modules_array = eina_module_list_get(NULL, PACKAGE_BUILD_DIR "/src/modules/eeze/.libs/", 0, NULL, NULL);
+     {
+        const char *modules[] = { "tizen", "fake", NULL };
+        const char **itr;
+
+        for (itr = modules; *itr != NULL; itr++)
+          {
+             snprintf(buf, sizeof(buf),
+                      PACKAGE_BUILD_DIR "/src/modules/eeze/sensor/%s/.libs",
+                      *itr);
+             g_handle->modules_array = eina_module_list_get(
+                g_handle->modules_array, buf, EINA_FALSE, NULL, NULL);
+          }
+     }
    else
      {
-        char buf[PATH_MAX];
-        snprintf(buf, sizeof(buf), "%s/eeze/sensor/", eina_prefix_lib_get(pfx));
-        g_handle->modules_array = eina_module_list_get(NULL, buf, 0, NULL, NULL);
+        snprintf(buf, sizeof(buf), "%s/eeze/modules/sensor",
+                 eina_prefix_lib_get(pfx));
+        g_handle->modules_array = eina_module_arch_list_get(NULL, buf,
+                                                            MODULE_ARCH);
      }
 
    if (!g_handle->modules_array)

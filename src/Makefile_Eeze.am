@@ -80,32 +80,28 @@ $(EEZE_COMMON_CPPFLAGS) \
 lib_eeze_libeeze_la_LIBADD = $(EEZE_COMMON_LIBADD)
 lib_eeze_libeeze_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-eezemodulesensordir = $(libdir)/eeze/sensor
-eezemodulesensor_LTLIBRARIES =
-
 if HAVE_EEZE_TIZEN
-eezemodulesensor_LTLIBRARIES += \
-modules/eeze/eeze-sensor-tizen.la
-modules_eeze_eeze_sensor_tizen_la_SOURCES = \
+eezemodulesensortizendir = $(libdir)/eeze/modules/sensor/tizen/$(MODULE_ARCH)
+eezemodulesensortizen_LTLIBRARIES = modules/eeze/sensor/tizen/module.la
+modules_eeze_sensor_tizen_module_la_SOURCES = \
 modules/eeze/eeze_sensor_tizen.c
-modules_eeze_eeze_sensor_tizen_la_CPPFLAGS = \
+modules_eeze_sensor_tizen_module_la_CPPFLAGS = \
 $(EEZE_COMMON_CPPFLAGS) \
 @TIZEN_SENSOR_CFLAGS@
-modules_eeze_eeze_sensor_tizen_la_LIBADD = \
+modules_eeze_sensor_tizen_module_la_LIBADD = \
 $(EEZE_COMMON_USER_LIBADD) \
 @TIZEN_SENSOR_LIBS@
-modules_eeze_eeze_sensor_tizen_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_eeze_eeze_sensor_tizen_la_LIBTOOLFLAGS = --tag=disable-static
+modules_eeze_sensor_tizen_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_eeze_sensor_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
 else
-
-eezemodulesensor_LTLIBRARIES += \
-modules/eeze/eeze-sensor-fake.la
-modules_eeze_eeze_sensor_fake_la_SOURCES = \
+eezemodulesensorfakedir = $(libdir)/eeze/modules/sensor/fake/$(MODULE_ARCH)
+eezemodulesensorfake_LTLIBRARIES = modules/eeze/sensor/fake/module.la
+modules_eeze_sensor_fake_module_la_SOURCES = \
 modules/eeze/eeze_sensor_fake.c
-modules_eeze_eeze_sensor_fake_la_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
-modules_eeze_eeze_sensor_fake_la_LIBADD = $(EEZE_COMMON_USER_LIBADD)
-modules_eeze_eeze_sensor_fake_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_eeze_eeze_sensor_fake_la_LIBTOOLFLAGS = --tag=disable-static
+modules_eeze_sensor_fake_module_la_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
+modules_eeze_sensor_fake_module_la_LIBADD = $(EEZE_COMMON_USER_LIBADD)
+modules_eeze_sensor_fake_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_eeze_sensor_fake_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 ### Binary
