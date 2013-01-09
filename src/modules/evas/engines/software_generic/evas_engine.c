@@ -1275,6 +1275,8 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
              else
 #endif
                evas_cache_image_load_data(&im->cache_entry);
+
+             if (!im->cache_entry.flags.loaded) return;
           }
 
         evas_common_image_colorspace_normalize(im);
@@ -1609,14 +1611,35 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
 static void
 eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
-   if (!image) return;
+   RGBA_Image *im = image;
+
+   if (!im) return;
    if (m->count < 3) return;
 
    if (do_async)
-     evas_common_map_thread_rgba_cb(image, surface, context,
-                                    m, smooth, level, 0, _map_draw_thread_cmd);
+     {
+        /* Since the thread that'll draw the map won't call eng_image_draw()
+         * (which sends the load request of source image to Cserve2) - we need
+         * to send the load request here before enqueueing thread command.
+         */
+        if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+          {
+#if EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_load_data(&im->cache_entry);
+             else
+#endif
+               evas_cache_image_load_data(&im->cache_entry);
+
+             if (!im->cache_entry.flags.loaded) return;
+          }
+
+        evas_common_map_thread_rgba_cb(im, surface, context,
+                                       m, smooth, level, 0,
+                                       _map_draw_thread_cmd);
+     }
    else
-     evas_software_image_map_draw(data, context, surface, image, m,
+     evas_software_image_map_draw(data, context, surface, im, m,
                                   smooth, level, 0, do_async);
 }
 
