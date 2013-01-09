@@ -6366,6 +6366,7 @@ _edje_object_part_swallow_changed_hints_cb(void *data, EINA_UNUSED Evas *e, EINA
    _edje_real_part_swallow_hints_update(rp);
    rp->edje->dirty = EINA_TRUE;
    rp->edje->recalc_call = EINA_TRUE;
+   rp->edje->recalc_hints = EINA_TRUE;
    _edje_recalc(rp->edje);
    return;
 }
