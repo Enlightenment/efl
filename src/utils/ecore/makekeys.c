@@ -44,11 +44,6 @@ static struct _Info
 static int _parseline(const char *buf, char *key, long unsigned int *val, char *prefix);
 
 /* local variables */
-static char tab[TBLNUM];
-static unsigned short offsets[TBLNUM];
-static unsigned short indexes[TBLNUM];
-static long unsigned int values[TBLNUM];
-static char buf[1024];
 static int ksnum = 0;
 
 int 
@@ -63,6 +58,11 @@ main(int argc, char **argv)
    int best_max_rehash = 0, best_z = 0;
    long unsigned int val;
    char key[128], prefix[128];
+   char tab[TBLNUM];
+   unsigned short offsets[TBLNUM];
+   unsigned short indexes[TBLNUM];
+   long unsigned int values[TBLNUM];
+   char buf[1024];
 
    for (l = 1; l < argc; l++) 
      {
