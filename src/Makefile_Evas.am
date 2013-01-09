@@ -1383,7 +1383,9 @@ if EVAS_CSERVE2
 evascserve2internal_bindir=$(libdir)/evas/cserve2/bin
 evascserve2internal_bin_PROGRAMS = \
 bin/evas/evas_cserve2 \
-bin/evas/evas_cserve2_slave \
+bin/evas/evas_cserve2_slave
+
+noinst_PROGRAMS += \
 bin/evas/dummy_slave
 
 bin_PROGRAMS += \
