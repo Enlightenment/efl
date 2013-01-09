@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <Ecore.h>
+#include "ef_test.h"
 
 #define THEME "Tango"
 #define SIZE 128

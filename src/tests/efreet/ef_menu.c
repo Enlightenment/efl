@@ -2,6 +2,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <unistd.h>
+#include "ef_test.h"
 
 #if 0
 static void

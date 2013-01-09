@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ef_test.h"
 
 int
 ef_cb_ini_parse(void)
