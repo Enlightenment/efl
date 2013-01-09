@@ -369,6 +369,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
         ev->root.x = ev->x;
         ev->root.y = ev->y;
         ev->timestamp = ecore_loop_time_get() * 1000.0;
+        ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
      }
    else if (dev->mouse.event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
      {
