@@ -825,6 +825,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
    _evas_cache_image_activ_add(ret);
 
  found:
+   ret->references++;
+
    evas_cache2_image_load_data(ret);
 
    return ret;
