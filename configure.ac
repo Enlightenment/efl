@@ -3356,7 +3356,7 @@ EFL_ADD_LIBS([EDJE], [-lm])
 
 EFL_EVAL_PKGS([EDJE])
 
-AC_DEFINE_IF([EDJE_PROGRAM_CACHE], [test "${want_edje_program_cache}" = "yes"],
+AC_DEFINE_IF([EDJE_PROGRAM_CACHE], [test "${want_edje_program_cache}" = "no"],
    [1], [Cache result of program glob matches])
 AC_DEFINE_IF([EDJE_CALC_CACHE], [test "${want_edje_calc_cache}" = "yes"],
    [1], [Cache result of calc glob matches])
