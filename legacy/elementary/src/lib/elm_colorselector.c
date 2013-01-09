@@ -2040,15 +2040,13 @@ _palette_name_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *palette_name = va_arg(*list, const char *);
    Elm_Colorselector_Smart_Data *sd = _pd;
+   EINA_SAFETY_ON_NULL_RETURN(palette_name);
 
    if (!strcmp(sd->palette_name, palette_name)) return;
 
-   if (palette_name)
-     {
-        _colors_remove(obj);
-        eina_stringshare_replace(&sd->palette_name, palette_name);
-        _palette_colors_load(obj);
-     }
+   _colors_remove(obj);
+   eina_stringshare_replace(&sd->palette_name, palette_name);
+   _palette_colors_load(obj);
 }
 
 EAPI const char *
