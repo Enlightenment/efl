@@ -3326,7 +3326,7 @@ EFL_LIB_START([Edje])
 want_multisense="no" # TODO: move to ecore_audio and enable
 
 # TODO: should we keep or remove these?
-want_edje_program_cache="yes"
+want_edje_program_cache="no"
 want_edje_calc_cache="yes"
 want_fixed_point="no"
 
@@ -3356,7 +3356,7 @@ EFL_ADD_LIBS([EDJE], [-lm])
 
 EFL_EVAL_PKGS([EDJE])
 
-AC_DEFINE_IF([EDJE_PROGRAM_CACHE], [test "${want_edje_program_cache}" = "no"],
+AC_DEFINE_IF([EDJE_PROGRAM_CACHE], [test "${want_edje_program_cache}" = "yes"],
    [1], [Cache result of program glob matches])
 AC_DEFINE_IF([EDJE_CALC_CACHE], [test "${want_edje_calc_cache}" = "yes"],
    [1], [Cache result of calc glob matches])
