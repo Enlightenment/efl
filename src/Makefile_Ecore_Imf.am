@@ -72,13 +72,13 @@ lib_ecore_imf_libecore_imf_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 # Ibus
 
 if BUILD_ECORE_IMF_IBUS
-ecoreimfibuspkgdir = $(libdir)/ecore_imf
-ecoreimfibuspkg_LTLIBRARIES = modules/ecore_imf/ibus/ibus.la
-modules_ecore_imf_ibus_ibus_la_SOURCES = \
+ecoreimfibuspkgdir = $(libdir)/ecore_imf/modules/ibus/$(MODULE_ARCH)
+ecoreimfibuspkg_LTLIBRARIES = modules/ecore_imf/ibus/module.la
+modules_ecore_imf_ibus_module_la_SOURCES = \
 modules/ecore_imf/ibus/ibus_module.c \
 modules/ecore_imf/ibus/ibus_imcontext.c \
 modules/ecore_imf/ibus/ibus_imcontext.h
-modules_ecore_imf_ibus_ibus_la_CPPFLAGS = \
+modules_ecore_imf_ibus_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
@@ -92,7 +92,7 @@ modules_ecore_imf_ibus_ibus_la_CPPFLAGS = \
 @ECORE_IMF_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @IBUS_CFLAGS@
-modules_ecore_imf_ibus_ibus_la_LIBADD = \
+modules_ecore_imf_ibus_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
@@ -101,20 +101,20 @@ lib/eo/libeo.la \
 lib/eina/libeina.la \
 @IBUS_LIBS@ \
 @EFL_COV_LIBS@
-modules_ecore_imf_ibus_ibus_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_ecore_imf_ibus_ibus_la_LIBTOOLFLAGS = --tag=disable-static
+modules_ecore_imf_ibus_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_imf_ibus_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 # Scim
 
 if BUILD_ECORE_IMF_SCIM
-ecoreimfscimpkgdir = $(libdir)/ecore_imf
-ecoreimfscimpkg_LTLIBRARIES = modules/ecore_imf/scim/scim.la
-modules_ecore_imf_scim_scim_la_SOURCES = \
+ecoreimfscimpkgdir = $(libdir)/ecore_imf/modules/scim/$(MODULE_ARCH)
+ecoreimfscimpkg_LTLIBRARIES = modules/ecore_imf/scim/module.la
+modules_ecore_imf_scim_module_la_SOURCES = \
 modules/ecore_imf/scim/scim_module.cpp \
 modules/ecore_imf/scim/scim_imcontext.cpp \
 modules/ecore_imf/scim/scim_imcontext.h
-modules_ecore_imf_scim_scim_la_CPPFLAGS = \
+modules_ecore_imf_scim_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
@@ -128,7 +128,7 @@ modules_ecore_imf_scim_scim_la_CPPFLAGS = \
 @ECORE_IMF_CFLAGS@ \
 @EFL_COV_CFLAGS@ \
 @SCIM_CFLAGS@
-modules_ecore_imf_scim_scim_la_LIBADD = \
+modules_ecore_imf_scim_module_la_LIBADD = \
 lib/ecore_evas/libecore_evas.la \
 lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
@@ -137,18 +137,18 @@ lib/eo/libeo.la \
 lib/eina/libeina.la \
 @SCIM_LIBS@ \
 @EFL_COV_LIBS@
-modules_ecore_imf_scim_scim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_ecore_imf_scim_scim_la_LIBTOOLFLAGS = --tag=disable-static
+modules_ecore_imf_scim_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_imf_scim_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 # Xim
 
 if BUILD_ECORE_IMF_XIM
-ecoreimfximpkgdir = $(libdir)/ecore_imf
-ecoreimfximpkg_LTLIBRARIES = modules/ecore_imf/xim/xim.la
-modules_ecore_imf_xim_xim_la_SOURCES = \
+ecoreimfximpkgdir = $(libdir)/ecore_imf/modules/xim/$(MODULE_ARCH)
+ecoreimfximpkg_LTLIBRARIES = modules/ecore_imf/xim/module.la
+modules_ecore_imf_xim_module_la_SOURCES = \
 modules/ecore_imf/xim/ecore_imf_xim.c
-modules_ecore_imf_xim_xim_la_CPPFLAGS = \
+modules_ecore_imf_xim_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
@@ -160,7 +160,7 @@ modules_ecore_imf_xim_xim_la_CPPFLAGS = \
 @ECORE_IMF_CFLAGS@ \
 @ecore_imf_xim_cflags@ \
 @EFL_COV_CFLAGS@
-modules_ecore_imf_xim_xim_la_LIBADD = \
+modules_ecore_imf_xim_module_la_LIBADD = \
 lib/ecore_imf/libecore_imf.la \
 lib/ecore_x/libecore_x.la \
 lib/ecore/libecore.la \
@@ -168,6 +168,6 @@ lib/eo/libeo.la \
 lib/eina/libeina.la \
 @ecore_imf_xim_libs@ \
 @EFL_COV_LIBS@
-modules_ecore_imf_xim_xim_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_ecore_imf_xim_xim_la_LIBTOOLFLAGS = --tag=disable-static
+modules_ecore_imf_xim_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_imf_xim_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif

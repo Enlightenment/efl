@@ -72,13 +72,13 @@ ecore_imf_module_init(void)
           }
      }
 
-   snprintf(buf, sizeof(buf), "%s/ecore_imf", eina_prefix_lib_get(pfx));
+   snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
 
-   module_list = eina_module_list_get(NULL, buf, 0, NULL, NULL);
+   module_list = eina_module_arch_list_get(NULL, buf, MODULE_ARCH);
    homedir = eina_module_environment_path_get("HOME", "/.ecore_imf");
    if (homedir)
      {
-        module_list = eina_module_list_get(module_list, homedir, 0, NULL, NULL);
+        module_list = eina_module_arch_list_get(module_list, homedir, MODULE_ARCH);
         free(homedir);
      }
    eina_module_list_load(module_list);
