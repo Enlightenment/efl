@@ -40,7 +40,7 @@ ecore_imf_module_init(void)
    if (getenv("EFL_RUN_IN_TREE"))
      {
         struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/ecore/immodules",
+        snprintf(buf, sizeof(buf), "%s/src/modules/ecore_imf",
                  PACKAGE_BUILD_DIR);
         if (stat(buf, &st) == 0)
           {
@@ -60,7 +60,7 @@ ecore_imf_module_init(void)
              for (itr = built_modules; *itr != NULL; itr++)
                {
                   snprintf(buf, sizeof(buf),
-                           "%s/src/modules/ecore/immodules/%s/.libs",
+                           "%s/src/modules/ecore_imf/%s/.libs",
                            PACKAGE_BUILD_DIR, *itr);
                   module_list = eina_module_list_get(module_list, buf,
                                                      EINA_FALSE, NULL, NULL);
@@ -72,10 +72,10 @@ ecore_imf_module_init(void)
           }
      }
 
-   snprintf(buf, sizeof(buf), "%s/ecore/immodules", eina_prefix_lib_get(pfx));
+   snprintf(buf, sizeof(buf), "%s/ecore_imf", eina_prefix_lib_get(pfx));
 
    module_list = eina_module_list_get(NULL, buf, 0, NULL, NULL);
-   homedir = eina_module_environment_path_get("HOME", "/.ecore/immodules");
+   homedir = eina_module_environment_path_get("HOME", "/.ecore_imf");
    if (homedir)
      {
         module_list = eina_module_list_get(module_list, homedir, 0, NULL, NULL);
