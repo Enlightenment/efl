@@ -1775,11 +1775,7 @@ AC_ARG_ENABLE([gstreamer],
     if test "x${withval}" = "xyes" ; then
        want_gstreamer="yes"
     else
-       if test "x${withval}" = "xalways" ; then
-          want_gstreamer="always"
-       else
-          want_gstreamer="no"
-       fi
+       want_gstreamer="no"
     fi
    ],
    [want_gstreamer="yes"])
