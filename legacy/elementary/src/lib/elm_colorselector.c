@@ -1312,7 +1312,6 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    char *ret;
    Eina_Strbuf *buf;
-   buf = eina_strbuf_new();
    int r = 0, g = 0, b = 0 ,a = 0;
 
    Elm_Color_Item *it = data;
@@ -1320,6 +1319,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 
    elm_colorselector_palette_item_color_get((Elm_Object_Item *)it, &r, &g, &b, &a);
 
+   buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, "red %d, green %d, blue %d, alpha %d", r, g, b, a);
    ret = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
