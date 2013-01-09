@@ -41,8 +41,8 @@ edje_init(void)
 
    if (!embryo_init())
      {
-	ERR("Embryo init failed");
-	goto shutdown_ecore;
+        ERR("Embryo init failed");
+        goto shutdown_ecore;
      }
 
    if (!eet_init())
