@@ -2,6 +2,9 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+modules=@libdir@/emotion/modules
+generic_players=@libdir@/emotion/generic_players
+module_arch=@MODULE_ARCH@
 
 Name: emotion
 Description: Emotion evas based multimedia library
