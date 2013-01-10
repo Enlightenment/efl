@@ -231,10 +231,6 @@ param in edje programs
 # undef EAPI
 #endif
 
-#ifdef HAVE_ECORE_IMF
-#include <Ecore_IMF.h>
-#endif
-
 #ifdef _WIN32
 # ifdef EFL_EDJE_BUILD
 #  ifdef DLL_EXPORT
