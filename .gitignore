@@ -263,3 +263,4 @@ Makefile.in
 /src/tests/efreet/efreet_spec_test
 /src/tests/efreet/efreet_test
 /src/tests/efreet/efreet_user_dir
+/src/tests/emotion/emotion_test
