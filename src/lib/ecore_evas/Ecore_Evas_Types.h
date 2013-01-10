@@ -1,6 +1,12 @@
 #ifndef _ECORE_EVAS_TYPES_H_
 #define _ECORE_EVAS_TYPES_H_
 
+#ifdef _WIN32
+# include <stddef.h>
+#else
+# include <inttypes.h>
+#endif
+
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
@@ -34,5 +40,22 @@ typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee); /**< Callback used for s
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 #endif
 
+#ifndef _ECORE_GETOPT_PREDEF
+typedef struct _Ecore_Getopt Ecore_Getopt;
+#define _ECORE_GETOPT_PREDEF 1
+#endif
+#ifndef _ECORE_GETOPT_DESC_PREDEF
+typedef struct _Ecore_Getopt_Desc Ecore_Getopt_Desc;
+#define _ECORE_GETOPT_DESC_PREDEF 1
+#endif
+#ifndef _ECORE_GETOPT_VALUE_PREDEF
+typedef union _Ecore_Getopt_Value Ecore_Getopt_Value;
+#define _ECORE_GETOPT_VALUE_PREDEF 1
+#endif
+
+#ifndef _ECORE_WINDOW_PREDEF
+typedef uintptr_t Ecore_Window;
+#define _ECORE_WINDOW_PREDEF 1
+#endif
 
 #endif /* _ECORE_EVAS_TYPES_H_ */

@@ -86,12 +86,21 @@ typedef enum {
    ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL = 3
 } Ecore_Getopt_Desc_Arg_Requirement;
 
-typedef union _Ecore_Getopt_Value          Ecore_Getopt_Value;
-
 typedef struct _Ecore_Getopt_Desc_Store    Ecore_Getopt_Desc_Store;
 typedef struct _Ecore_Getopt_Desc_Callback Ecore_Getopt_Desc_Callback;
-typedef struct _Ecore_Getopt_Desc          Ecore_Getopt_Desc;
-typedef struct _Ecore_Getopt               Ecore_Getopt;
+
+#ifndef _ECORE_GETOPT_PREDEF
+typedef struct _Ecore_Getopt Ecore_Getopt;
+#define _ECORE_GETOPT_PREDEF 1
+#endif
+#ifndef _ECORE_GETOPT_DESC_PREDEF
+typedef struct _Ecore_Getopt_Desc Ecore_Getopt_Desc;
+#define _ECORE_GETOPT_DESC_PREDEF 1
+#endif
+#ifndef _ECORE_GETOPT_VALUE_PREDEF
+typedef union _Ecore_Getopt_Value Ecore_Getopt_Value;
+#define _ECORE_GETOPT_VALUE_PREDEF 1
+#endif
 
 union _Ecore_Getopt_Value
 {

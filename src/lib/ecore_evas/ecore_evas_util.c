@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <Ecore.h>
+#include <Ecore_Getopt.h>
 #include "ecore_private.h"
 
 #include "ecore_evas_private.h"

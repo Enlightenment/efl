@@ -61,7 +61,11 @@ extern "C" {
 #define ECORE_EVENT_LOCK_SHIFT          0x0300
 #define ECORE_EVENT_MODIFIER_ALTGR      0x0400 /**< @since 1.7 */
 
+#ifndef _ECORE_WINDOW_PREDEF
    typedef uintptr_t                        Ecore_Window;
+#define _ECORE_WINDOW_PREDEF 1
+#endif
+
    typedef struct _Ecore_Event_Key          Ecore_Event_Key;
    typedef struct _Ecore_Event_Mouse_Button Ecore_Event_Mouse_Button;
    typedef struct _Ecore_Event_Mouse_Wheel  Ecore_Event_Mouse_Wheel;

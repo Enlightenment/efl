@@ -4,8 +4,6 @@
 #include "Ecore_Evas_Types.h"
 
 #include <Evas.h>
-#include <Ecore_Getopt.h>
-#include <Ecore_Input.h>
 
 #ifdef EAPI
 # undef EAPI
