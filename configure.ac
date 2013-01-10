@@ -1820,8 +1820,6 @@ AC_HEADER_SYS_WAIT
 
 AC_CHECK_HEADERS([ \
 features.h \
-langinfo.h \
-locale.h \
 sys/time.h \
 sys/prctl.h \
 sys/resource.h \

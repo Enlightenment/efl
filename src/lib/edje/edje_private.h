@@ -14,17 +14,15 @@
 # endif
 #endif
 
+#include <locale.h>
+#include <libgen.h>
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <sys/time.h>
 #include <errno.h>
-
-#ifndef _MSC_VER
-# include <libgen.h>
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include <fcntl.h>
 
@@ -32,10 +30,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <setjmp.h>
-
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>

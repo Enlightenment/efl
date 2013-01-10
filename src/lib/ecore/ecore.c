@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <locale.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -10,13 +11,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
-
-#ifdef HAVE_LANGINFO_H
-# include <langinfo.h>
-#endif
+#include <langinfo.h>
 
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
@@ -140,9 +135,7 @@ ecore_init(void)
 
    eo_init();
 
-#ifdef HAVE_LOCALE_H
    setlocale(LC_CTYPE, "");
-#endif
    /*
       if (strcmp(nl_langinfo(CODESET), "UTF-8"))
       {
