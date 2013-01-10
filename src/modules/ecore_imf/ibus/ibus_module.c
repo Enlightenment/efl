@@ -20,35 +20,35 @@ static const Ecore_IMF_Context_Info ibus_im_info = {
 };
 
 static Ecore_IMF_Context_Class ibus_imf_class = {
-    ibus_im_context_add,                    /* add */
-    ibus_im_context_del,                    /* del */
-    ibus_im_context_client_window_set,      /* client_window_set */
-    ibus_im_context_client_canvas_set,      /* client_canvas_set */
-    NULL,                                   /* input_panel_show */
-    NULL,                                   /* input_panel_hide */
-    ibus_im_context_preedit_string_get,     /* get_preedit_string */
-    ibus_im_context_focus_in,               /* focus_in */
-    ibus_im_context_focus_out,              /* focus_out */
-    ibus_im_context_reset,                  /* reset */
-    NULL,                                   /* cursor_position_set */
-    ibus_im_context_use_preedit_set,        /* use_preedit_set */
-    NULL,                                   /* input_mode_set */
-    ibus_im_context_filter_event,           /* filter_event */
-    ibus_im_context_preedit_string_with_attributes_get,  /* preedit_string_with_attribute_get */
-    NULL,                                   /* prediction_allow_set */
-    NULL,                                   /* autocapital_type_set */
-    NULL,                                   /* control panel show */
-    NULL,                                   /* control panel hide */
-    NULL,                                   /* input_panel_layout_set */
-    NULL,                                   /* ibus_im_context_input_panel_layout_get, */
-    NULL,                                   /* ibus_im_context_input_panel_language_set, */
-    NULL,                                   /* ibus_im_context_input_panel_language_get, */
-    ibus_im_context_cursor_location_set,    /* cursor_location_set */
-    NULL,                                   /* input_panel_imdata_set */
-    NULL,                                   /* input_panel_imdata_get */
-    NULL,                                   /* input_panel_return_key_type_set */
-    NULL,                                   /* input_panel_return_key_disabled_set */
-    NULL,                                   /* input_panel_caps_lock_mode_set */
+    ecore_imf_context_ibus_add,                    /* add */
+    ecore_imf_context_ibus_del,                    /* del */
+    ecore_imf_context_ibus_client_window_set,      /* client_window_set */
+    ecore_imf_context_ibus_client_canvas_set,      /* client_canvas_set */
+    NULL,                                          /* input_panel_show */
+    NULL,                                          /* input_panel_hide */
+    ecore_imf_context_ibus_preedit_string_get,     /* get_preedit_string */
+    ecore_imf_context_ibus_focus_in,               /* focus_in */
+    ecore_imf_context_ibus_focus_out,              /* focus_out */
+    ecore_imf_context_ibus_reset,                  /* reset */
+    NULL,                                          /* cursor_position_set */
+    ecore_imf_context_ibus_use_preedit_set,        /* use_preedit_set */
+    NULL,                                          /* input_mode_set */
+    ecore_imf_context_ibus_filter_event,           /* filter_event */
+    ecore_imf_context_ibus_preedit_string_with_attributes_get,  /* preedit_string_with_attribute_get */
+    NULL,                                          /* prediction_allow_set */
+    NULL,                                          /* autocapital_type_set */
+    NULL,                                          /* control panel show */
+    NULL,                                          /* control panel hide */
+    NULL,                                          /* input_panel_layout_set */
+    NULL,                                          /* ecore_imf_context_ibus_input_panel_layout_get, */
+    NULL,                                          /* ecore_imf_context_ibus_input_panel_language_set, */
+    NULL,                                          /* ecore_imf_context_ibus_input_panel_language_get, */
+    ecore_imf_context_ibus_cursor_location_set,    /* cursor_location_set */
+    NULL,                                          /* input_panel_imdata_set */
+    NULL,                                          /* input_panel_imdata_get */
+    NULL,                                          /* input_panel_return_key_type_set */
+    NULL,                                          /* input_panel_return_key_disabled_set */
+    NULL,                                          /* input_panel_caps_lock_mode_set */
     NULL,
     NULL,
     NULL,
@@ -86,7 +86,7 @@ im_module_create(void)
     Ecore_IMF_Context *ctx = NULL;
     IBusIMContext *ctxd = NULL;
 
-    ctxd = ibus_im_context_new();
+    ctxd = ecore_imf_context_ibus_new();
     if (!ctxd)
       {
          return NULL;
