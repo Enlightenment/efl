@@ -84,7 +84,7 @@ if HAVE_EEZE_TIZEN
 eezemodulesensortizendir = $(libdir)/eeze/modules/sensor/tizen/$(MODULE_ARCH)
 eezemodulesensortizen_LTLIBRARIES = modules/eeze/sensor/tizen/module.la
 modules_eeze_sensor_tizen_module_la_SOURCES = \
-modules/eeze/eeze_sensor_tizen.c
+modules/eeze/sensor/tizen/tizen.c
 modules_eeze_sensor_tizen_module_la_CPPFLAGS = \
 $(EEZE_COMMON_CPPFLAGS) \
 @TIZEN_SENSOR_CFLAGS@
@@ -97,7 +97,7 @@ else
 eezemodulesensorfakedir = $(libdir)/eeze/modules/sensor/fake/$(MODULE_ARCH)
 eezemodulesensorfake_LTLIBRARIES = modules/eeze/sensor/fake/module.la
 modules_eeze_sensor_fake_module_la_SOURCES = \
-modules/eeze/eeze_sensor_fake.c
+modules/eeze/sensor/fake/fake.c
 modules_eeze_sensor_fake_module_la_CPPFLAGS = $(EEZE_COMMON_CPPFLAGS)
 modules_eeze_sensor_fake_module_la_LIBADD = $(EEZE_COMMON_USER_LIBADD)
 modules_eeze_sensor_fake_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
