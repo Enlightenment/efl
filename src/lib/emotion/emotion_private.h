@@ -10,6 +10,14 @@
 #define META_TRACK_DISCID 7
 #define META_TRACK_COUNT 8
 
+#include <Evas.h>
+#include <Eet.h>
+#include "Emotion.h"
+
+Eina_Bool emotion_webcam_init(void);
+void emotion_webcam_shutdown(void);
+Eina_Bool emotion_webcam_config_load(Eet_File *ef);
+
 typedef enum _Emotion_Format Emotion_Format;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
 typedef struct _Emotion_Module_Options Emotion_Module_Options;

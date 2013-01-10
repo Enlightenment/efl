@@ -49,6 +49,7 @@ dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h
 lib_emotion_libemotion_la_SOURCES = \
 lib/emotion/emotion_private.h \
 lib/emotion/emotion_smart.c \
+lib/emotion/emotion_webcam.c \
 lib/emotion/emotion_main.c
 
 EMOTION_COMMON_LIBADD = $(EMOTION_COMMON_LDADD) @EMOTION_LIBS@
