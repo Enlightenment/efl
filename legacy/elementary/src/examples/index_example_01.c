@@ -166,6 +166,7 @@ elm_main(int argc,
    evas_object_smart_callback_add(d.index, "delay,changed", _index_changed,
                                   NULL);
    evas_object_smart_callback_add(d.index, "selected", _index_selected, NULL);
+   elm_index_level_go(d.index, 0);
 
    /* attribute setting knobs */
    sep = elm_separator_add(win);

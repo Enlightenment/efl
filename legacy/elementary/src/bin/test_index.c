@@ -293,6 +293,7 @@ test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
                                          NULL, test_index2_cmp);
    elm_index_item_sorted_insert(gui->id, letter, NULL, list_it, test_index2_icmp,
                                 test_index2_cmp);
+   elm_index_level_go(gui->id, 0);
    elm_list_go(gui->lst);
    /* FIXME it's not showing the recently added item */
    elm_list_item_show(list_it);
