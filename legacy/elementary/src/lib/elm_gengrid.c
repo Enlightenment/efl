@@ -735,6 +735,9 @@ _item_realize(Elm_Gen_Item *it)
    evas_object_size_hint_min_set(it->spacer, 2 * elm_config_scale_get(), 1);
    edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
 
+   /* access */
+   if (_elm_config->access_mode) _access_widget_item_register(it);
+
    if (it->itc->func.text_get)
      {
         const Eina_List *l;
@@ -852,10 +855,6 @@ _item_realize(Elm_Gen_Item *it)
 
    it->realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
-
-   // ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     _access_widget_item_register(it);
 }
 
 static Eina_Bool

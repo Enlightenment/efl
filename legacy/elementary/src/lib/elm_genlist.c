@@ -1380,9 +1380,8 @@ _item_realize(Elm_Gen_Item *it,
           (VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
      }
 
-   // ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     _access_widget_item_register(it);
+   /* access */
+   if (_elm_config->access_mode) _access_widget_item_register(it);
 
    _item_order_update(EINA_INLIST_GET(it), in);
 

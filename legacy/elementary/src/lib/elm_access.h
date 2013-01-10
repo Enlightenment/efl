@@ -22,25 +22,68 @@ typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj);
 typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Object_Item *item);
 
 /**
- * @brief Register evas object as an accessible object.
+ * @brief Register object item as an accessible object.
  * @since 1.8
  *
- * @param parent Accessibility parent object. this should be one of widget.
- * @param target Evas object to register as an accessible object.
+ * @param item The elementary object item
  *
  * @ingroup Access
  */
-EAPI void elm_access_object_register(Evas_Object *parent, Evas_Object *target);
+EAPI Evas_Object * elm_access_object_item_register(Elm_Object_Item *item);
+
+/**
+ * @brief Unregister accessible object of the object item.
+ * @since 1.8
+ *
+ * @param item The elementary object item
+ *
+ * @ingroup Access
+ */
+EAPI void elm_access_object_item_unregister(Elm_Object_Item *item);
+
+/**
+ * @brief Get an accessible object of the object item.
+ * @since 1.8
+ *
+ * @param item The elementary object item
+ * @return Accessible object of the object item or NULL for any error
+ *
+ * @ingroup Access
+ */
+EAPI Evas_Object * elm_access_object_item_access_get(Elm_Object_Item *item);
+
+/**
+ * @brief Register evas object as an accessible object.
+ * @since 1.8
+ *
+ * @param obj The evas object to register as an accessible object.
+ * @param parent The elementary object which is used for creating
+ * accessible object.
+ *
+ * @ingroup Access
+ */
+EAPI Evas_Object * elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Unregister accessible object.
  * @since 1.8
  *
- * @param obj Accessible object.
+ * @param obj The Evas object to unregister accessible object.
  *
  * @ingroup Access
  */
-EAPI void elm_access_object_unregister(Evas_Object *target);
+EAPI void elm_access_object_unregister(Evas_Object *obj);
+
+/**
+ * @brief Get an accessible object of the evas object.
+ * @since 1.8
+ *
+ * @param obj The evas object.
+ * @return Accessible object of the evas object or NULL for any error
+ *
+ * @ingroup Access
+ */
+EAPI Evas_Object * elm_access_object_access_get(Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.
