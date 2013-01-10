@@ -322,13 +322,13 @@ _emotion_eeze_events(const char *syspath,
 EAPI Eina_Bool
 emotion_init(void)
 {
-   char buffer[4096];
+   char buffer[PATH_MAX];
 
    if (_emotion_webcams_count++) return EINA_TRUE;
 
    ecore_init();
 
-   snprintf(buffer, 4096, "%s/emotion.cfg", PACKAGE_DATA_DIR);
+   snprintf(buffer, sizeof(buffer), "%s/emotion.cfg", PACKAGE_DATA_DIR);
    _emotion_webcams_file = eet_open(buffer, EET_FILE_MODE_READ);
    if (_emotion_webcams_file)
      {
