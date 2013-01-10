@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g index_example.c -o index_example `pkg-config --cflags --libs elementary`
+ * gcc -g index_example_01.c -o index_example_01 `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
