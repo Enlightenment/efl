@@ -50,7 +50,7 @@ EAPI void elm_access_object_item_unregister(Elm_Object_Item *item);
  *
  * @ingroup Access
  */
-EAPI Evas_Object *elm_access_object_item_access_get(Elm_Object_Item *item);
+EAPI Evas_Object *elm_access_object_item_access_get(const Elm_Object_Item *item);
 
 /**
  * @brief Register evas object as an accessible object.
@@ -83,7 +83,7 @@ EAPI void elm_access_object_unregister(Evas_Object *obj);
  *
  * @ingroup Access
  */
-EAPI Evas_Object *elm_access_object_access_get(Evas_Object *obj);
+EAPI Evas_Object *elm_access_object_access_get(const Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.
@@ -108,7 +108,7 @@ EAPI void elm_access_text_set(Evas_Object *obj, int type, const char *text);
  * @see elm_access_content_cb_set
  * @ingroup Access
  */
-EAPI char *elm_access_text_get(Evas_Object *obj, int type);
+EAPI char *elm_access_text_get(const Evas_Object *obj, int type);
 
 /**
  * @brief Set content callback to give information for specific type.

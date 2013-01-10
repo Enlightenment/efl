@@ -344,7 +344,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 }
 
 EAPI char *
-_elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj)
+_elm_access_text_get(const Elm_Access_Info *ac, int type, const Evas_Object *obj)
 {
    Elm_Access_Item *ai;
    Eina_List *l;
@@ -354,7 +354,7 @@ _elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj)
      {
         if (ai->type == type)
           {
-             if (ai->func) return ai->func((void *)(ai->data), obj);
+             if (ai->func) return ai->func((void *)(ai->data), (Evas_Object *)obj);
              else if (ai->data) return strdup(ai->data);
              return NULL;
           }
@@ -363,7 +363,7 @@ _elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj)
 }
 
 EAPI void
-_elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj)
+_elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj)
 {
    char *txt = _elm_access_text_get(ac, type, obj);
 
@@ -787,7 +787,7 @@ elm_access_object_item_unregister(Elm_Object_Item *item)
 }
 
 EAPI Evas_Object *
-elm_access_object_item_access_get(Elm_Object_Item *item)
+elm_access_object_item_access_get(const Elm_Object_Item *item)
 {
    if (!item) return NULL;
 
@@ -807,7 +807,7 @@ elm_access_object_unregister(Evas_Object *obj)
 }
 
 EAPI Evas_Object *
-elm_access_object_access_get(Evas_Object *obj)
+elm_access_object_access_get(const Evas_Object *obj)
 {
    return evas_object_data_get(obj, "_part_access_obj");
 }
@@ -819,7 +819,7 @@ elm_access_text_set(Evas_Object *obj, int type, const char *text)
 }
 
 EAPI char *
-elm_access_text_get(Evas_Object *obj, int type)
+elm_access_text_get(const Evas_Object *obj, int type)
 {
    return _elm_access_text_get(_elm_access_object_get(obj), type, obj);
 }
@@ -857,7 +857,7 @@ elm_access_external_info_get(const Evas_Object *obj)
    Elm_Access_Info *ac;
 
    ac = _elm_access_object_get(obj);
-   return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, (Evas_Object *)obj);
+   return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, obj);
 }
 
 static void

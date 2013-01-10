@@ -489,8 +489,8 @@ struct _Elm_Access_Info
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb func, const void *data);
-EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj); /* this is ok it actually returns a strduped string - it's meant to! */
-EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj);
+EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, const Evas_Object *obj); /* this is ok it actually returns a strduped string - it's meant to! */
+EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj);
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
 EAPI void             _elm_access_object_hilight(Evas_Object *obj);
