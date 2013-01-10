@@ -837,7 +837,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
    else if (e->atom == ECORE_X_ATOM_WM_STATE)
      {
         Ecore_X_Window_State_Hint state;
-        
+
         // handle WM_STATE changes
         state = ecore_x_icccm_state_get(e->win);
         switch (state)
@@ -2499,6 +2499,7 @@ _ecore_evas_x_activate(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
+   ecore_evas_show(ee);
    ecore_x_netwm_client_active_request(edata->win_root,
                                        ee->prop.window, 2, 0);
 }
@@ -2673,6 +2674,10 @@ _ecore_evas_x_withdrawn_set(Ecore_Evas *ee, int withdrawn)
    if (ee->prop.withdrawn == withdrawn) return;
    ee->prop.withdrawn = withdrawn;
    _ecore_evas_x_hints_update(ee);
+   if (withdrawn)
+     ecore_evas_hide(ee);
+   else
+     ecore_evas_show(ee);
 }
 
 static void
