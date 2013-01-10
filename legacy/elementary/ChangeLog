@@ -894,3 +894,8 @@
 2013-01-06  Jaehyun Cho <jae_hyun_cho@naver.com>
 
         * Fix omitting signal emission when customized text parts change the text.
+
+2013-01-10  Cedric Bail
+
+	* Don't link anymore with E_DBus at build time.
+

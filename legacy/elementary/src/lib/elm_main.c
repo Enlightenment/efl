@@ -359,30 +359,38 @@ elm_app_locale_dir_get(void)
    return app_locale_dir;
 }
 
-#ifdef ELM_EDBUS
 static Eina_Bool _elm_need_e_dbus = EINA_FALSE;
-#endif
+static void *e_dbus_handle = NULL;
+
 EAPI Eina_Bool
 elm_need_e_dbus(void)
 {
-#ifdef ELM_EDBUS
+   int (*init_func)(void) = NULL;
+
    if (_elm_need_e_dbus) return EINA_TRUE;
+   /* FIXME: Maybe we should use RTLD_NOLOAD */
+   if (!e_dbus_handle) dlopen("libedbus.so", RTLD_LAZY | RTLD_GLOBAL);
+   if (!e_dbus_handle) return EINA_FALSE;
+   init_func = dlsym(e_dbus_handle, "e_dbus_init");
+   if (!init_func) return EINA_FALSE;
    _elm_need_e_dbus = EINA_TRUE;
-   e_dbus_init();
+   init_func();
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 static void
 _elm_unneed_e_dbus(void)
 {
-#ifdef ELM_EDBUS
+   int (*shutdown_func)(void) = NULL;
+
    if (!_elm_need_e_dbus) return;
+   shutdown_func = dlsym(e_dbus_handle, "e_dbus_shutdown");
+   if (!shutdown_func) return;
    _elm_need_e_dbus = EINA_FALSE;
-   e_dbus_shutdown();
-#endif
+   shutdown_func();
+
+   dlclose(e_dbus_handle);
+   e_dbus_handle = NULL;
 }
 
 #ifdef ELM_EDBUS2

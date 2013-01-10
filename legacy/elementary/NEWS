@@ -50,6 +50,7 @@ Improvements:
    * Merged the file_entry and the path_entry in the fileselector and allowing typing the path.
    * Setting the same font size of the others widgets for the dayselector.
    * Added a separated spinner for year on calendar.
+   * Don't link anymore with E_DBus at build time.
 
 Fixes:
 
