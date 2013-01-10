@@ -2528,12 +2528,12 @@ _elm_genlist_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 /* FIXME: take off later. maybe this show region coords belong in the
  * interface (new api functions, set/get)? */
 static void
-_show_region_hook(void *data,
+_show_region_hook(void *data EINA_UNUSED,
                   Evas_Object *obj)
 {
    Evas_Coord x, y, w, h;
 
-   ELM_GENLIST_DATA_GET(data, sd);
+   ELM_GENLIST_DATA_GET_OR_RETURN(obj, sd);
 
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
    //x & y are screen coordinates, Add with pan coordinates
@@ -4624,7 +4624,7 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
+   elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
 
    priv->generation = 1;
 
