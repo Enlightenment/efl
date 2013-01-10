@@ -384,7 +384,6 @@ inttypes.h \
 libgen.h \
 mcheck.h \
 netinet/in.h \
-siginfo.h \
 stdint.h \
 sys/epoll.h \
 sys/inotify.h \
@@ -416,15 +415,6 @@ AC_SUBST([EINA_SIZEOF_WCHAR_T])
 
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
-
-AC_CHECK_TYPES([siginfo_t], [], [],
-   [[
-#include <signal.h>
-#if HAVE_SIGINFO_H
-# include <siginfo.h>
-#endif
-   ]])
-
 
 #### Checks for structures
 

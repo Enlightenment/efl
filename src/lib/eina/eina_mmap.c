@@ -20,8 +20,6 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_SIGINFO_T
-
 #ifdef STDC_HEADERS
 # include <stdlib.h>
 # include <stddef.h>
@@ -43,12 +41,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#if HAVE_SIGINFO_H
-# include <siginfo.h>
-#endif
-
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"
@@ -59,7 +51,6 @@
  *============================================================================*/
 
 static Eina_Bool mmap_safe = EINA_FALSE;
-#ifdef HAVE_SIGINFO_T
 
 static int _eina_mmap_log_dom = -1;
 static int _eina_mmap_zero_fd = -1;
@@ -115,7 +106,6 @@ _eina_mmap_safe_sigbus(int sig EINA_UNUSED,
    /* restore previous errno */
    errno = perrno;
 }
-#endif
 
 /*============================================================================*
  *                                   API                                      *
@@ -124,10 +114,6 @@ _eina_mmap_safe_sigbus(int sig EINA_UNUSED,
 EAPI Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled)
 {
-#ifndef HAVE_SIGINFO_T
-   (void) enabled;
-   return EINA_FALSE;
-#else
    if (_eina_mmap_log_dom < 0)
      {
         _eina_mmap_log_dom = eina_log_domain_register("eina_mmap",
@@ -169,7 +155,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
              flags |= FD_CLOEXEC;
              fcntl(_eina_mmap_zero_fd, F_SETFD, flags);
 #endif
-	     
+
           }
         /* set up signal handler for SIGBUS */
         sa.sa_sigaction = _eina_mmap_safe_sigbus;
@@ -194,7 +180,6 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
 done:   
    mmap_safe = enabled;
    return mmap_safe;
-#endif
 }
 
 EAPI Eina_Bool
