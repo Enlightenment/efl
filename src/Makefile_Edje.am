@@ -259,7 +259,7 @@ $(EDJE_COMMON_USER_LDADD) \
 endif
 
 # Useful to other modules that generate EDJ
-EDJE_CC = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_cc
+EDJE_CC = EFL_RUN_IN_TREE=1 $(builddir)/bin/edje/edje_cc
 EDJE_CC_FLAGS_VERBOSE_0 =
 EDJE_CC_FLAGS_VERBOSE_1 = -v
 EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE_$(V)) -id $(srcdir) -fd $(srcdir)
