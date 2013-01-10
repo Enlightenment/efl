@@ -767,33 +767,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
      ERR("could not add %p as sub object of %p", obj, parent);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_access_smart_add),
-
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_access_smart_on_focus),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_access_smart_activate),
-
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _class_constructor,
-     NULL
-};
-
 EAPI Evas_Object *
 elm_access_object_item_register(Elm_Object_Item *item)
 {
@@ -860,7 +833,7 @@ elm_access_content_cb_set(Evas_Object *obj, int type,
 
 EAPI void
 elm_access_activate_cb_set(Evas_Object *obj,
-                                 Elm_Access_Activate_Cb  func, void *data)
+                           Elm_Access_Activate_Cb  func, void *data)
 {
    Elm_Access_Info *ac;
 
@@ -887,5 +860,31 @@ elm_access_external_info_get(const Evas_Object *obj)
    return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, (Evas_Object *)obj);
 }
 
-EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
 
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_access_smart_add),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_access_smart_on_focus),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_access_smart_activate),
+
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     0,
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
