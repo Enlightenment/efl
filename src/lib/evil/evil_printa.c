@@ -1,5 +1,6 @@
 #define __CRT__NO_INLINE
 
+#include <errno.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdarg.h>
@@ -11,10 +12,6 @@
 #include <ctype.h>
 #include <wctype.h>
 #include <locale.h>
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif /* HAVE_ERRNO_H */
 
 #include "evil_pformat.h"
 #include "evil_print.h"
@@ -300,9 +297,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 
   if (!s || s->fp == NULL || !format)
     {
-#ifdef HAVE_ERRNO_H
       errno = EINVAL;
-#endif /* HAVE_ERRNO_H */
       return EOF;
     }
 
@@ -485,10 +480,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 	  do
 	    {
 	      if ((c == EOF || (c = in_ch (s, &read_in)) == EOF)
-#ifdef HAVE_ERRNO_H
-	          && errno == EINTR
-#endif /* HAVE_ERRNO_H */
-                  )
+	          && errno == EINTR)
 		return cleanup_return ((!rval ? EOF : rval), &gcollect, pstr, &wbuf);
 	    }
 	  while (isspace (c));
@@ -678,9 +670,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 		    {
 		      if ((c = in_ch (s, &read_in)) == EOF)
 			{
-#ifdef HAVE_ERRNO_H
 			  errno = EILSEQ;
-#endif /* HAVE_ERRNO_H */
 			  return cleanup_return (rval, &gcollect, pstr, &wbuf);
 			}
 
@@ -690,9 +680,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 
 		  if (n != 1)
 		    {
-#ifdef HAVE_ERRNO_H
 			errno = EILSEQ;
-#endif /* HAVE_ERRNO_H */
 			return cleanup_return (rval, &gcollect, pstr, &wbuf);
 		    }
 		  break;
@@ -842,9 +830,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 		    {
 		      if ((c = in_ch (s, &read_in)) == EOF)
 			{
-#ifdef HAVE_ERRNO_H
 			  errno = EILSEQ;
-#endif /* HAVE_ERRNO_H */
 			  return cleanup_return (rval, &gcollect, pstr, &wbuf);
 			}
 
@@ -854,9 +840,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 
 		  if (n != 1)
 		    {
-#ifdef HAVE_ERRNO_H
 		      errno = EILSEQ;
-#endif /* HAVE_ERRNO_H */
 		      return cleanup_return (rval, &gcollect, pstr, &wbuf);
 		    }
 
@@ -1485,9 +1469,7 @@ _evil_sformat (_IFP *s, const char *format, va_list argp)
 
 	      if (cnt != 0)
 		{
-#ifdef HAVE_ERRNO_H
 		  errno = EILSEQ;
-#endif /* HAVE_ERRNO_H */
 		  return cleanup_return (rval, &gcollect, pstr, &wbuf);
 		}
 

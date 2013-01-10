@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -9,10 +10,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
 
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>

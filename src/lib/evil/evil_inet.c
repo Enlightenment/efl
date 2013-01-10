@@ -26,12 +26,9 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif /* HAVE_ERRNO_H */
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN

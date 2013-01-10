@@ -8,9 +8,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif /* HAVE_ERRNO_H */
+#include <errno.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
@@ -147,9 +145,7 @@ setenv(const char *name,
    /* if '=' is found, return EINVAL */
    if (strchr (name, '='))
      {
-#ifdef HAVE_ERRNO_H
         errno = EINVAL;
-#endif /* HAVE_ERRNO_H */
         return -1;
      }
 
@@ -163,9 +159,7 @@ setenv(const char *name,
    str = (char *)malloc(length);
    if (!str)
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-#endif /* HAVE_ERRNO_H */
         return -1;
      }
    if (!value)
@@ -292,9 +286,7 @@ mkstemp(char *__template)
    if ((length < 6) ||
        (strncmp (__template + length - 6, "XXXXXX", 6)))
      {
-#ifdef HAVE_ERRNO_H
         errno = EINVAL;
-#endif /* HAVE_ERRNO_H */
         return -1;
      }
 
@@ -337,9 +329,7 @@ mkstemp(char *__template)
            free(wtemplate);
            if (!f)
              {
-# ifdef HAVE_ERRNO_H
                 errno = EEXIST;
-# endif /* HAVE_ERRNO_H */
                 return -1;
              }
            fd = (int)_fileno(f);
@@ -351,9 +341,7 @@ mkstemp(char *__template)
         val += 7777;
      }
 
-#ifdef HAVE_ERRNO_H
    errno = EEXIST;
-#endif /* HAVE_ERRNO_H */
    return -1;
 }
 

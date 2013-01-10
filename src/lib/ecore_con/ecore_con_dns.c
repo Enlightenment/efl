@@ -11,10 +11,7 @@
 
 #include <string.h>
 #include <sys/types.h>
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h> /* for EAGAIN */
-#endif
+#include <errno.h> /* for EAGAIN */
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
@@ -22,10 +19,6 @@
 
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
 #endif
 
 #include "dns.h"

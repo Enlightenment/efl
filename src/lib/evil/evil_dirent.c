@@ -3,10 +3,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <dirent.h>
-
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
+#include <errno.h>
 
 #include "Evil.h"
 
@@ -34,9 +31,7 @@ DIR *opendir(char const *name)
    /* valid name */
    if (!name || !*name)
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOENT;
-#endif
         return NULL;
      }
 
@@ -44,9 +39,7 @@ DIR *opendir(char const *name)
    wname = evil_char_to_wchar(name);
    if (!wname)
      {
-# ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-# endif
         return NULL;
      }
 
@@ -55,9 +48,7 @@ DIR *opendir(char const *name)
    if((attr = GetFileAttributes(name)) == 0xFFFFFFFF)
 #endif
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOENT;
-#endif
         return NULL;
      }
 
@@ -68,18 +59,14 @@ DIR *opendir(char const *name)
    /* directory */
    if (!(attr & FILE_ATTRIBUTE_DIRECTORY))
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOTDIR;
-#endif
         return NULL;
      }
 
    dir = (DIR *)malloc(sizeof(DIR));
    if (!dir)
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-#endif
         return NULL;
      }
 
@@ -87,9 +74,7 @@ DIR *opendir(char const *name)
    tmp1 = (char *)malloc(sizeof(char) * l + 5);
    if (!tmp1)
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-#endif
         return NULL;
      }
 
@@ -107,9 +92,7 @@ DIR *opendir(char const *name)
    wname = evil_char_to_wchar(tmp1);
    if (!wname)
      {
-#ifdef HAVE_ERRNO_H
         errno = ENOMEM;
-#endif
         free(tmp1);
 
         return NULL;
@@ -149,9 +132,7 @@ int closedir(DIR *dir)
 {
    if (!dir)
      {
-#ifdef HAVE_ERRNO_H
         errno = EBADF;
-#endif
         return -1;
      }
 
@@ -170,9 +151,7 @@ struct dirent *readdir(DIR *dir)
 
    if (!dir)
      {
-#ifdef HAVE_ERRNO_H
         errno = EBADF;
-#endif
         return NULL;
      }
 

@@ -2,9 +2,7 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif /* HAVE_ERRNO_H */
 
 #include <shlobj.h>
 #include <objidl.h>
