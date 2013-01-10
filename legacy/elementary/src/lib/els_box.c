@@ -73,10 +73,12 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
                        maxw = -1;
                        max = EINA_FALSE;
                     }
-                  if (max)
+                  if (max) maxw += mnw;
+
+                  if (mnh >= 0)
                     {
-                       if (maxh > mnh) maxh = mnh;
-                       maxw += mnw;
+                       if (maxh == -1) maxh = mnh;
+                       else if (maxh > mnh) maxh = mnh;
                     }
                }
              else
@@ -86,10 +88,12 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
                        maxh = -1;
                        max = EINA_FALSE;
                     }
-                  if (max)
+                  if (max) maxh += mnh;
+
+                  if (mnw >= 0)
                     {
-                       if (maxw > mnw) maxw = mnw;
-                       maxh += mnh;
+                       if (maxw == -1) maxw = mnw;
+                       else if (maxw > mnw) maxw = mnw;
                     }
                }
           }
