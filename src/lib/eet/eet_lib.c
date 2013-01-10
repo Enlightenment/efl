@@ -12,13 +12,10 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 #include <fnmatch.h>
 #include <fcntl.h>
 #include <zlib.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif /* ifdef HAVE_UNISTD_H */
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>

@@ -12,14 +12,11 @@
 #include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #ifdef HAVE_EVIL

@@ -211,9 +211,7 @@ dnl _EFL_CHECK_FUNC_SPLICE is for internal use
 dnl _EFL_CHECK_FUNC_SPLICE(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_SPLICE],
 [EFL_FIND_LIB_FOR_CODE([$1], [], [$2], [[
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 #include <fcntl.h>
 ]], [[
 long ret = splice(0, 0, 1, 0, 400, 0);

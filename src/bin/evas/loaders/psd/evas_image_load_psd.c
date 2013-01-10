@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <errno.h>
 
 #include <math.h>
@@ -16,10 +17,6 @@
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #ifdef HAVE_EVIL

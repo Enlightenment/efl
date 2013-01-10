@@ -392,7 +392,6 @@ sys/signalfd.h \
 sys/types.h \
 sys/param.h \
 sys/mman.h \
-unistd.h \
 ])
 
 have_inotify="${ac_cv_header_sys_inotify_h}"

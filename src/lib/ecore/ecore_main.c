@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <math.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -25,10 +26,6 @@
 
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #ifdef _MSC_VER

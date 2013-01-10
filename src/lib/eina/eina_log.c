@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <fnmatch.h>
 #include <assert.h>
 #include <errno.h>
@@ -31,10 +32,6 @@
 #if defined HAVE_EXECINFO_H && defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
 # include <execinfo.h>
 # define EINA_LOG_BACKTRACE
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #ifdef HAVE_EVIL

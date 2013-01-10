@@ -6,10 +6,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif /* ifdef HAVE_UNISTD_H */
+#include <unistd.h>
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>

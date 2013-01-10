@@ -3,10 +3,7 @@
 #endif
 
 #include <stdlib.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #ifdef _MSC_VER
 # include <process.h>

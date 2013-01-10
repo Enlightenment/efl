@@ -23,15 +23,13 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
+#include <unistd.h>
 #include <math.h>
 
 #ifdef HAVE_XATTR
 # include <sys/xattr.h>
 #endif
 
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include <fcntl.h>
 
 #include "eina_config.h"

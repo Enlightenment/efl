@@ -3,10 +3,7 @@
 #endif
 
 #include <stdlib.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

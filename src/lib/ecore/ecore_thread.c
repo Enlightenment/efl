@@ -6,10 +6,7 @@
 #include <sys/time.h>
 #include <assert.h>
 #include <sys/types.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
