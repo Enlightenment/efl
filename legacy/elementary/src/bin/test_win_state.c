@@ -29,6 +29,41 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    elm_win_alpha_set(win, EINA_FALSE);
 }
 
+static Eina_Bool
+_unic(void *data)
+{
+   printf("activate\n");
+   elm_win_activate(data);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_unwith(void *data)
+{
+   printf("show\n");
+   evas_object_show(data);
+   elm_win_activate(data);
+   return EINA_FALSE;
+}
+
+static void
+my_bt_38_iconify(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   printf("iconify, current %i\n", elm_win_iconified_get(win));
+   elm_win_iconified_set(win, EINA_TRUE);
+   ecore_timer_add(10.0, _unic, win);
+}
+
+static void
+my_bt_38_withdraw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   printf("withdraw, current %i\n", elm_win_withdrawn_get(win));
+   elm_win_withdrawn_set(win, EINA_TRUE);
+   ecore_timer_add(10.0, _unwith, win);
+}
+
 static void
 my_ck_38_resize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -151,6 +186,22 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Alpha Off");
    evas_object_smart_callback_add(bt, "clicked", my_bt_38_alpha_off, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Iconify");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_38_iconify, win);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Withdraw");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_38_withdraw, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
