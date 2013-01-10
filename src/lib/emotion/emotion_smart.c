@@ -43,12 +43,6 @@
       if (strcmp(_e_smart_str, type)) return ret; \
    }
 
-#define DBG(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
-
 #define E_OBJ_NAME "emotion_object"
 
 typedef struct _Smart_Data Smart_Data;
@@ -141,9 +135,6 @@ static void _smart_clip_unset(Evas_Object * obj);
 /* Globals for the E Video Object */
 /**********************************/
 static Evas_Smart  *smart = NULL;
-static Eina_Hash *_backends = NULL;
-static Eina_Array *_modules = NULL;
-static int _log_domain = -1;
 
 static const char *_backend_priority[] = {
   "gstreamer",
@@ -242,7 +233,8 @@ _smart_data_free(Smart_Data *sd)
    free(sd->ref.file);
    free(sd);
 
-   ecore_shutdown();
+   /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
+   emotion_shutdown();
 }
 
 EAPI Eina_Bool
@@ -251,18 +243,20 @@ _emotion_module_register(const char *name, Emotion_Module_Open mod_open, Emotion
    Eina_Emotion_Plugins *plugin;
 
    plugin = malloc(sizeof (Eina_Emotion_Plugins));
-   if (!plugin) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin, EINA_FALSE);
 
    plugin->open = mod_open;
    plugin->close = mod_close;
 
-   return eina_hash_add(_backends, name, plugin);
+   INF("register module=%s, open=%p, close=%p", name, mod_open, mod_close);
+   return eina_hash_add(_emotion_backends, name, plugin);
 }
 
 EAPI Eina_Bool
 _emotion_module_unregister(const char *name)
 {
-   return eina_hash_del(_backends, name, NULL);
+   INF("unregister module=%s", name);
+   return eina_hash_del_by_key(_emotion_backends, name);
 }
 
 static const char *
@@ -273,21 +267,25 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    unsigned int i = 0;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!_backends)
+   if (!_emotion_backends)
      {
         ERR("No backend loaded");
-	return NULL;
+        return NULL;
      }
 
    if (!name && getenv("EMOTION_ENGINE"))
-     name = getenv("EMOTION_ENGINE");
+     {
+        name = getenv("EMOTION_ENGINE");
+        DBG("using EMOTION_ENGINE=%s", name);
+     }
 
    /* FIXME: Always look for a working backend. */
  retry:
    if (!name || i > 0)
      name = _backend_priority[i++];
 
-   plugin = eina_hash_find(_backends, name);
+   plugin = eina_hash_find(_emotion_backends, name);
+   DBG("try engine=%s, plugin=%p", name, plugin);
    if (!plugin)
      {
 	if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
@@ -299,6 +297,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 
    if (plugin->open(obj, (const Emotion_Video_Module **) mod, video, &(sd->module_options)))
      {
+        INF("opened %s, mod=%p, video=%p", name, mod, video);
 	if (*mod)
 	  {
 	     (*mod)->plugin = plugin;
@@ -1909,85 +1908,29 @@ _pixels_get(void *data, Evas_Object *obj)
 /*******************************************/
 /* Internal smart object required routines */
 /*******************************************/
-#ifdef EMOTION_STATIC_BUILD_XINE
-Eina_Bool xine_module_init(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-Eina_Bool gstreamer_module_init(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-Eina_Bool generic_module_init(void);
-#endif
 
 static void
 _smart_init(void)
 {
-   char *path;
+   static Evas_Smart_Class sc =
+     EVAS_SMART_CLASS_INIT_NAME_VERSION(E_OBJ_NAME);
 
    if (smart) return;
+
+   if (!sc.add)
      {
-	eina_init();
-
-        _log_domain = eina_log_domain_register("emotion", EINA_COLOR_LIGHTCYAN);
-        if (_log_domain < 0)
-          {
-             EINA_LOG_CRIT("Could not register log domain 'emotion'");
-             eina_shutdown();
-             return;
-          }
-
-	_backends = eina_hash_string_small_new(free);
-
-	_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/emotion/", 0, NULL, NULL);
-
-	path = eina_module_environment_path_get("HOME", "/.emotion/");
-	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
-	if (path) free(path);
-
-	path = eina_module_environment_path_get("EMOTION_MODULES_DIR", "/emotion/");
-	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
-	if (path) free(path);
-
-	path = eina_module_symbol_path_get(emotion_object_add, "/emotion/");
-	_modules = eina_module_list_get(_modules, path, 0, NULL, NULL);
-	if (path) free(path);
-
-	if (!_modules)
-	  {
-	     ERR("No module found!");
-	     return;
-	  }
-
-	eina_module_list_load(_modules);
-
-	/* Init static module */
-#ifdef EMOTION_STATIC_BUILD_XINE
-	xine_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-	gstreamer_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-	generic_module_init();
-#endif
-
-	static Evas_Smart_Class sc =
-	  EVAS_SMART_CLASS_INIT_NAME_VERSION(E_OBJ_NAME);
-	if (!sc.add)
-	  {
-	     sc.add = _smart_add;
-	     sc.del = _smart_del;
-	     sc.move = _smart_move;
-	     sc.resize = _smart_resize;
-	     sc.show = _smart_show;
-	     sc.hide = _smart_hide;
-	     sc.color_set = _smart_color_set;
-	     sc.clip_set = _smart_clip_set;
-	     sc.clip_unset = _smart_clip_unset;
-	     sc.callbacks = _smart_callbacks;
-	  }
-        smart = evas_smart_class_new(&sc);
+        sc.add = _smart_add;
+        sc.del = _smart_del;
+        sc.move = _smart_move;
+        sc.resize = _smart_resize;
+        sc.show = _smart_show;
+        sc.hide = _smart_hide;
+        sc.color_set = _smart_color_set;
+        sc.clip_set = _smart_clip_set;
+        sc.clip_unset = _smart_clip_unset;
+        sc.callbacks = _smart_callbacks;
      }
+   smart = evas_smart_class_new(&sc);
 }
 
 static void
@@ -1998,6 +1941,10 @@ _smart_add(Evas_Object * obj)
 
    sd = calloc(1, sizeof(Smart_Data));
    if (!sd) return;
+
+   /* TODO: remove legacy: emotion used to have no init, call automatically */
+   emotion_init();
+
    EINA_REFCOUNT_INIT(sd);
    sd->state = EMOTION_WAKEUP;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
@@ -2021,8 +1968,6 @@ _smart_add(Evas_Object * obj)
 	evas_object_image_data_set(obj, pixel);
      }
    evas_object_smart_data_set(obj, sd);
-
-   ecore_init();
 }
 
 static void

@@ -134,4 +134,14 @@ EAPI const char *emotion_webcam_custom_get(const char *device);
 EAPI void _emotion_pending_object_ref(void);
 EAPI void _emotion_pending_object_unref(void);
 
+extern Eina_Hash *_emotion_backends;
+extern Eina_Array *_emotion_modules;
+extern int _emotion_log_domain;
+
+#define DBG(...) EINA_LOG_DOM_DBG(_emotion_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_emotion_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_emotion_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_emotion_log_domain, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_log_domain, __VA_ARGS__)
+
 #endif
