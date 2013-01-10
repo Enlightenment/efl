@@ -568,7 +568,8 @@ _ecore_imf_context_ibus_commit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED
                              IBusText         *text,
                              IBusIMContext    *ibusimcontext)
 {
-   if (!ibusimcontext || !text) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   EINA_SAFETY_ON_NULL_RETURN(text);
    char *commit_str = text->text ? text->text : "";
 
    EINA_LOG_DBG("commit string : %s", commit_str);
@@ -625,7 +626,8 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
                                      gboolean           visible,
                                      IBusIMContext     *ibusimcontext)
 {
-   if (!ibusimcontext || !text) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   EINA_SAFETY_ON_NULL_RETURN(text);
 
    const char *str;
    gboolean flag;
