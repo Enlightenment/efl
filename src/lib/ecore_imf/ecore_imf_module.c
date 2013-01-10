@@ -29,8 +29,8 @@ static Eina_Prefix *pfx = NULL;
 void
 ecore_imf_module_init(void)
 {
-   char *homedir;
    char buf[PATH_MAX] = "";
+   char *path;
 
    pfx = eina_prefix_new(NULL, ecore_imf_init,
                          "ECORE_IMF", "ecore_imf", "checkme",
@@ -72,15 +72,24 @@ ecore_imf_module_init(void)
           }
      }
 
-   snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
-
-   module_list = eina_module_arch_list_get(NULL, buf, MODULE_ARCH);
-   homedir = eina_module_environment_path_get("HOME", "/.ecore_imf");
-   if (homedir)
+   path = eina_module_environment_path_get("ECORE_IMF_MODULES_DIR",
+                                           "/ecore_imf/modules");
+   if (path)
      {
-        module_list = eina_module_arch_list_get(module_list, homedir, MODULE_ARCH);
-        free(homedir);
+        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
+        free(path);
      }
+
+   path = eina_module_environment_path_get("HOME", "/.ecore_imf");
+   if (path)
+     {
+        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
+        free(path);
+     }
+
+   snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
+   module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
+
    eina_module_list_load(module_list);
 }
 
