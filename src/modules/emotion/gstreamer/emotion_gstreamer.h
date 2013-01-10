@@ -191,10 +191,30 @@ extern Eina_Bool window_manager_video;
 extern Eina_Bool debug_fps;
 extern int _emotion_gstreamer_log_domain;
 extern Eina_Bool _ecore_x_available;
+
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_gstreamer_log_domain, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_gstreamer_log_domain, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_gstreamer_log_domain, __VA_ARGS__)
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_gstreamer_log_domain, __VA_ARGS__)
 
 #define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
