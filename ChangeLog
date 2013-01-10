@@ -1,3 +1,7 @@
+2013-01-09  Jiyoun Park (jypark)
+
+	* Fix evas bmp loader code which deal with image size.
+
 2013-01-08  Gustavo Sverzut Barbieri (k-s)
 
 	* Fix eina_prefix_new() with debian multilib without magic check file.

@@ -105,3 +105,4 @@ Fixes:
     * Fix build of Evas XCB backend
     * Fix efreet desktop command parsing of https
     * Fix eina_prefix_new() with debian multilib without magic check file.
+    * Fix evas bmp loader code which deal with image size.

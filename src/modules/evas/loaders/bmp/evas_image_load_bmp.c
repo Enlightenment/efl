@@ -625,6 +625,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      }
 
    row_size = ceil((double)(image_w * bit_count) / 32) * 4;
+   if (image_size != row_size * h)
+     image_size = row_size * h;
 
    if (bit_count < 16)
      {
