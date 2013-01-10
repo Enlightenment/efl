@@ -32,6 +32,7 @@
 # endif
 #endif
 
+#include <libgen.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -44,10 +45,6 @@
 
 #ifdef HAVE_FEATURES_H
 # include <features.h>
-#endif
-
-#ifdef HAVE_LIBGEN_H
-# include <libgen.h>
 #endif
 
 #ifdef HAVE_EVIL

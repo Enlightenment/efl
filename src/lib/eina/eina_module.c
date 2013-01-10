@@ -24,10 +24,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
-
-#ifdef HAVE_LIBGEN_H
-# include <libgen.h>
-#endif
+#include <libgen.h>
 
 #ifdef HAVE_DLOPEN
 # include <dlfcn.h>

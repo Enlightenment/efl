@@ -379,7 +379,6 @@ AC_HEADER_TIME
 
 AC_CHECK_HEADERS([ \
 execinfo.h \
-libgen.h \
 mcheck.h \
 netinet/in.h \
 sys/epoll.h \
