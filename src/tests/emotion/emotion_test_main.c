@@ -99,13 +99,45 @@ main_delete_request(Ecore_Evas *ee EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
+static const char *
+theme_get(void)
+{
+   static int is_local = -1;
+   if (is_local == -1)
+     {
+        struct stat st;
+        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj", &st) == 0);
+     }
+
+   if (is_local)
+     return PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj";
+   else
+     return PACKAGE_DATA_DIR"/data/theme.edj";
+}
+
+static const char *
+fonts_dir_get(void)
+{
+   static int is_local = -1;
+   if (is_local == -1)
+     {
+        struct stat st;
+        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/fonts", &st) == 0);
+     }
+
+   if (is_local)
+     return PACKAGE_BUILD_DIR"/src/tests/emotion/data/fonts";
+   else
+     return PACKAGE_DATA_DIR"/data/fonts";
+}
+
 void
 bg_setup(void)
 {
    Evas_Object *o;
 
    o = edje_object_add(evas);
-   edje_object_file_set(o, PACKAGE_DATA_DIR"/data/theme.edj", "background");
+   edje_object_file_set(o, theme_get(), "background");
    evas_object_move(o, 0, 0);
    evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
@@ -587,9 +619,9 @@ init_video_object(const char *module_filename, const char *filename)
    oe = edje_object_add(evas);
    evas_object_data_set(oe, "frame_data", fd);
    if (reflex)
-     edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller/reflex");
+     edje_object_file_set(oe, theme_get(), "video_controller/reflex");
    else
-     edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller");
+     edje_object_file_set(oe, theme_get(), "video_controller");
    edje_extern_object_min_size_set(o, w, h);
    edje_object_part_swallow(oe, "video_swallow", o);
    edje_object_size_min_calc(oe, &w, &h);
@@ -717,7 +749,7 @@ main(int argc, char **argv)
    evas = ecore_evas_get(ecore_evas);
    evas_image_cache_set(evas, 8 * 1024 * 1024);
    evas_font_cache_set(evas, 1 * 1024 * 1024);
-   evas_font_path_append(evas, PACKAGE_DATA_DIR"/data/fonts");
+   evas_font_path_append(evas, fonts_dir_get());
 
    emotion_init();
 
