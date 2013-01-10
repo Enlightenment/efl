@@ -908,6 +908,20 @@ em_video_channel_get(void *ef)
    return xine_get_param(ev->stream, XINE_PARAM_VIDEO_CHANNEL);
 }
 
+static void
+em_video_subtitle_file_set(void *video EINA_UNUSED,
+                           const char *filepath EINA_UNUSED)
+{
+   DBG("video_subtitle_file_set not implemented for xine yet.");
+}
+
+static const char *
+em_video_subtitle_file_get(void *video EINA_UNUSED)
+{
+   DBG("video_subtitle_file_get not implemented for xine yet.");
+   return NULL;
+}
+
 static const char *
 em_video_channel_name_get(void *ef EINA_UNUSED, int channel EINA_UNUSED)
 {
@@ -1554,6 +1568,8 @@ static Emotion_Video_Module em_module =
      em_video_channel_count, /* video_channel_count */
      em_video_channel_set, /* video_channel_set */
      em_video_channel_get, /* video_channel_get */
+     em_video_subtitle_file_set, /* video_subtitle_file_set */
+     em_video_subtitle_file_get, /* video_subtitle_file_get */
      em_video_channel_name_get, /* video_channel_name_get */
      em_video_channel_mute_set, /* video_channel_mute_set */
      em_video_channel_mute_get, /* video_channel_mute_get */
