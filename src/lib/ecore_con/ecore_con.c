@@ -9,26 +9,11 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-
-#ifdef HAVE_NETINET_TCP_H
-# include <netinet/tcp.h>
-#endif
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-
-#ifdef HAVE_SYS_UN_H
-# include <sys/un.h>
-#endif
+#include <sys/socket.h>
+#include <netinet/tcp.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/un.h>
 
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
@@ -1454,12 +1439,10 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
-#ifdef HAVE_NETINET_TCP_H
         int flag = 1;
 
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
                        sizeof(int)) < 0)
-#endif
           {
              goto error;
           }
@@ -1598,11 +1581,9 @@ _ecore_con_cb_tcp_connect(void           *data,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
-#ifdef HAVE_NETINET_TCP_H
         int flag = 1;
 
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0)
-#endif
           {
              goto error;
           }

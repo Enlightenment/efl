@@ -2,12 +2,10 @@
 # include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
-#ifdef HAVE_NETINET_IN_H
-# ifdef __OpenBSD__
-#  include <sys/types.h>
-# endif /* ifdef __OpenBSD__ */
-# include <netinet/in.h>
-#endif /* ifdef HAVE_NETINET_IN_H */
+#ifdef __OpenBSD__
+# include <sys/types.h>
+#endif /* ifdef __OpenBSD__ */
+#include <netinet/in.h>
 
 #ifdef _WIN32
 # include <winsock2.h>

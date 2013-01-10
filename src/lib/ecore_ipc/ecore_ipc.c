@@ -3,11 +3,8 @@
 #endif
 
 #include <string.h>
-
-#ifdef HAVE_NETINET_IN_H
-# include <sys/types.h>
-# include <netinet/in.h>
-#endif
+#include <sys/types.h>
+#include <netinet/in.h>
 
 #ifdef HAVE_WINSOCK2_H
 # include <winsock2.h>

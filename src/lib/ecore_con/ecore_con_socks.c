@@ -10,39 +10,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-
-#ifdef HAVE_NETINET_TCP_H
-# include <netinet/tcp.h>
-#endif
-
-#ifdef HAVE_NET_IF_H
-# include <net/if.h>
-#endif
-
-/* if net/if.h is not found or if an older versions of net/if.h is provided
-   which does not define IF_NAMESIZE. We must define it ourselves */
-#ifndef IF_NAMESIZE
-#  ifdef IFNAMSIZ
-#    define IF_NAMESIZE IFNAMSIZ
-#  else
-#    define IF_NAMESIZE 16
-#  endif
-#endif
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_SYS_UN_H
-# include <sys/un.h>
-#endif
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <sys/un.h>
+#include <sys/socket.h>
 
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>

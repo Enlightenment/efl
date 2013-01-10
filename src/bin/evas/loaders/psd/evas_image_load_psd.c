@@ -14,10 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
+#include <netinet/in.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>

@@ -4,10 +4,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif /* ifdef HAVE_NETINET_IN_H */
+#include <netinet/in.h>
 
 #ifdef _WIN32
 # include <winsock2.h>

@@ -380,7 +380,6 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS([ \
 execinfo.h \
 mcheck.h \
-netinet/in.h \
 sys/epoll.h \
 sys/inotify.h \
 sys/signalfd.h \
@@ -1945,38 +1944,7 @@ EFL_EVAL_PKGS([ECORE_CON])
 
 ### Checks for header files
 
-AC_CHECK_HEADERS([sys/socket.h])
-AC_CHECK_HEADERS([net/if.h], [], [],
-[
-#include <stdio.h>
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else
-# ifdef HAVE_STDLIB_H
-#  include <stdlib.h>
-# endif
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-])
-AC_CHECK_HEADERS([sys/un.h], [], [],
-[
-#include <stdio.h>
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else
-# ifdef HAVE_STDLIB_H
-#  include <stdlib.h>
-# endif
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-])
-AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h ws2tcpip.h netdb.h])
+AC_CHECK_HEADERS([ws2tcpip.h netdb.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xno" && test "x${have_windows}" = "xno"; then
    AC_MSG_ERROR([netdb.h is requested to have Ecore_Con. Exiting...])
@@ -1989,9 +1957,7 @@ AC_CHECK_TYPES([struct ipv6_mreq],
    [have_ipv6="yes"],
    [have_ipv6="no"],
    [[
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
+#include <netinet/in.h>
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
