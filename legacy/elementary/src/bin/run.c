@@ -54,6 +54,7 @@ main(int argc, char **argv)
      }
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   socket_unix.sun_path[(int)(sizeof(socket_unix.sun_path)/sizeof(socket_unix.sun_path[0])) - 1] = '\0';
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (connect(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {

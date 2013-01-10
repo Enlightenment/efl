@@ -310,6 +310,7 @@ _reload_format(Evas_Object *obj)
 #else
      strncpy(sd->format, "", ELM_DATETIME_MAX_FORMAT_LEN);
 #endif
+   sd->format[ELM_DATETIME_MAX_FORMAT_LEN - 1] = '\0';
 
    dt_fmt = (char *)malloc(ELM_DATETIME_MAX_FORMAT_LEN);
    if (!dt_fmt) return;
@@ -886,6 +887,7 @@ _format_set(Eo *obj, void *_pd, va_list *list)
    if (fmt)
      {
         strncpy(sd->format, fmt, ELM_DATETIME_MAX_FORMAT_LEN);
+        sd->format[ELM_DATETIME_MAX_FORMAT_LEN - 1] = '\0';
         sd->user_format = EINA_TRUE;
      }
    else sd->user_format = EINA_FALSE;
