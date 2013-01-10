@@ -4494,7 +4494,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         else
            eo_do(obj, elm_scrollable_interface_policy_set(sd->policy_h, sd->policy_v));
         eo_do(obj, elm_scrollable_interface_content_set(sd->entry_edje));
-        elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
+        elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
      }
    else
      {
