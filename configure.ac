@@ -1839,7 +1839,6 @@ AC_CHECK_HEADERS([ \
 features.h \
 langinfo.h \
 locale.h \
-signal.h \
 sys/time.h \
 sys/prctl.h \
 sys/resource.h \
