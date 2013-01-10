@@ -562,7 +562,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
              free(tgt_str);
              if (r)
                {
-                  *data_ret = data;
+                  if (data_ret) *data_ret = data;
                   return r;
                }
              else
