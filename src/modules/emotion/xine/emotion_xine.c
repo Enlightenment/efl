@@ -459,7 +459,7 @@ em_shutdown(void *ef)
 }
 
 static unsigned char
-em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *ef)
+em_file_open(const char *file, Evas_Object *obj EINA_UNUSED, void *ef)
 {
    Emotion_Xine_Video *ev;
 
@@ -554,7 +554,7 @@ em_fps_num_get(void *ef)
 }
 
 static int
-em_fps_den_get(void *ef __UNUSED__)
+em_fps_den_get(void *ef EINA_UNUSED)
 {
    return 10000;
 }
@@ -599,7 +599,7 @@ em_vis_get(void *ef)
 }
 
 static Eina_Bool
-em_vis_supported(void *ef __UNUSED__, Emotion_Vis vis __UNUSED__)
+em_vis_supported(void *ef EINA_UNUSED, Emotion_Vis vis EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -691,7 +691,7 @@ em_video_data_size_get(void *ef, int *w, int *h)
 }
 
 static int
-em_yuv_rows_get(void *ef, int w __UNUSED__, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows)
+em_yuv_rows_get(void *ef, int w EINA_UNUSED, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows)
 {
    Emotion_Xine_Video *ev;
    volatile Emotion_Xine_Video_Frame *fr;
@@ -834,7 +834,7 @@ em_event_feed(void *ef, int event)
 }
 
 static void
-em_event_mouse_button_feed(void *ef, int button __UNUSED__, int x, int y)
+em_event_mouse_button_feed(void *ef, int button EINA_UNUSED, int x, int y)
 {
    Emotion_Xine_Video *ev;
    xine_event_t xine_event;
@@ -909,7 +909,7 @@ em_video_channel_get(void *ef)
 }
 
 static const char *
-em_video_channel_name_get(void *ef __UNUSED__, int channel __UNUSED__)
+em_video_channel_name_get(void *ef EINA_UNUSED, int channel EINA_UNUSED)
 {
    return NULL;
 }
@@ -1095,29 +1095,29 @@ em_chapter_count(void *ef)
 }
 
 static void
-em_chapter_set(void *ef __UNUSED__, int chapter __UNUSED__)
+em_chapter_set(void *ef EINA_UNUSED, int chapter EINA_UNUSED)
 {
 }
 
 static int
-em_chapter_get(void *ef __UNUSED__)
+em_chapter_get(void *ef EINA_UNUSED)
 {
    return 0;
 }
 
 static const char *
-em_chapter_name_get(void *ef __UNUSED__, int chapter __UNUSED__)
+em_chapter_name_get(void *ef EINA_UNUSED, int chapter EINA_UNUSED)
 {
    return NULL;
 }
 
 static void
-em_speed_set(void *ef __UNUSED__, double speed __UNUSED__)
+em_speed_set(void *ef EINA_UNUSED, double speed EINA_UNUSED)
 {
 }
 
 static double
-em_speed_get(void *ef __UNUSED__)
+em_speed_get(void *ef EINA_UNUSED)
 {
    return 1.0;
 }
@@ -1259,7 +1259,7 @@ _em_audio_only_poller(void *data)
 }
 
 static Eina_Bool
-_em_fd_ev_active(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
+_em_fd_ev_active(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 {
    int fd, len;
    void *buf[2];
@@ -1611,7 +1611,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
 }
 
 static void
-module_close(Emotion_Video_Module *module __UNUSED__, void *video)
+module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
 {
    em_module.shutdown(video);
 }

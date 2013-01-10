@@ -1389,7 +1389,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
 }
 
 static void
-_eio_load_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
+_eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
    Smart_Data *sd = data;
 
@@ -1460,7 +1460,7 @@ _eio_save_xattr_done(void *data, Eio_File *handler)
 }
 
 static void
-_eio_save_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
+_eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
    Smart_Data *sd = data;
 
@@ -1792,7 +1792,7 @@ _emotion_frame_refill(Evas_Object *obj, double w, double h)
 /****************************/
 
 static void
-_mouse_move(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *e;
    Smart_Data *sd;
@@ -1812,7 +1812,7 @@ _mouse_move(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-_mouse_down(void *data, Evas *ev __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_down(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *e;
    Smart_Data *sd;

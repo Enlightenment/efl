@@ -10,17 +10,24 @@
 
 /**
  *
- * @mainpage Emotion Library Documentation
+ * @page emotion_main Emotion
  *
- * @version 1.7.0
- * @date 2003-2012
+ * @date 2003 (created)
  *
- * @section intro What is Emotion?
+ * @section toc Table of Contents
+ *
+ * @li @ref emotion_main_intro
+ * @li @ref emotion_main_work
+ * @li @ref emotion_main_compiling
+ * @li @ref emotion_main_next_steps
+ * @li @ref emotion_main_intro_example
+ *
+ * @section emotion_main_intro Introduction
  *
  * A media object library for Evas and Ecore.
  *
  * Emotion is a library that allows playing audio and video files, using one of
- * its backends (gstreamer or xine).
+ * its backends (gstreamer, xine or generic shm player).
  *
  * It is integrated into Ecore through its mainloop, and is transparent to the
  * user of the library how the decoding of audio and video is being done. Once
@@ -32,7 +39,7 @@
  * default Evas object functions. Callbacks can be added to the signals emitted
  * by this object with evas_object_smart_callback_add().
  *
- * @section work How does Emotion work?
+ * @section emotion_main_work How does Emotion work?
  *
  * The Emotion library uses Evas smart objects to allow you to manipulate the
  * created object as any other Evas object, and to connect to its signals,
@@ -40,40 +47,48 @@
  * inside Edje themes, and expect it to behave as a normal image or rectangle
  * when regarding to its dimensions.
  *
- * To instantiate an Emotion object, the simple code below is enough:
+ * @section emotion_main_compiling How to compile
  *
- * @code
- * em = emotion_object_add(e);
- * emotion_object_init(em, NULL);
+ * Emotion is a library your application links to. The procedure for this is
+ * very simple. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script outputs. For
+ * example:
  *
- * emotion_object_file_set(em, file_path);
+ * Compiling C or C++ files into object files:
  *
- * evas_object_move(em, 0, 0);
- * evas_object_resize(em, WIDTH, HEIGHT);
- * evas_object_show(em);
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags emotion`
+   @endverbatim
  *
- * emotion_object_play_set(em, EINA_TRUE);
- * @endcode
+ * Linking object files into a binary executable:
  *
- * See the @ref Emotion_API for a better reference.
- * 
- * Please see the @ref authors page for contact details.
- * 
- */
-
-/**
- * 
- * @page authors Authors
- * 
- * @author Carsten Haitzler <raster@rasterman.com>
- * @author Vincent Torri <torri@maths.univ-evry.fr>
- * @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
- * @author Sebastian Dransfeld <sd@tango.flipp.net>
- * @author Cedric Bail <cedric.bail@free.fr>
- * 
- * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
- * contact with the developers and maintainers.
- * 
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs emotion`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section emotion_main_next_steps Next Steps
+ *
+ * After you understood what Emotion is and installed it in your
+ * system you should proceed understanding the programming
+ * interface. We'd recommend you to take a while to learn @ref Ecore and
+ * @ref Evas to get started.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Emotion_Init to initialize the library.
+ * @li @ref Emotion_Video to control video parameters.
+ * @li @ref Emotion_Audio to control audio parameters.
+ * @li @ref Emotion_Play to control playback.
+ * @li @ref Emotion_Webcam to show cameras.
+ * @li @ref Emotion_API for general programming interface.
+ *
+ * @section emotion_main_intro_example Introductory Example
+ *
+ * @include emotion_basic_example.c
+ *
+ * More examples can be found at @ref emotion_examples.
  */
 
 #include <Evas.h>
@@ -266,6 +281,7 @@ extern "C" {
  * @brief How to create, initialize, manipulate and connect to signals of an
  * Emotion object.
  * @defgroup Emotion_API API available for manipulating Emotion object.
+ * @ingroup Emotion
  *
  * @{
  *
@@ -604,6 +620,7 @@ EAPI Eina_Bool    emotion_object_file_set              (Evas_Object *obj, const 
 EAPI const char  *emotion_object_file_get              (const Evas_Object *obj);
 /**
  * @defgroup Emotion_Play Play control functions
+ * @ingroup Emotion
  *
  * @{
  */
@@ -1265,6 +1282,7 @@ EAPI Evas_Object *emotion_object_image_get(const Evas_Object *obj);
 
 /**
  * @defgroup Emotion_Webcam API available for accessing webcam
+ * @ingroup Emotion
  */
 
 typedef struct _Emotion_Webcam Emotion_Webcam; /**< Webcam description */

@@ -123,7 +123,7 @@ plugin_info_t emotion_xine_plugin_info[] =
 
 /***************************************************************************/
 static void *
-_emotion_class_init(xine_t *xine, void *visual __UNUSED__)
+_emotion_class_init(xine_t *xine, void *visual EINA_UNUSED)
 {
    Emotion_Class *cl;
    
@@ -155,13 +155,13 @@ _emotion_class_dispose(video_driver_class_t *driver_class)
 }
 
 static char *
-_emotion_class_identifier_get(video_driver_class_t *driver_class __UNUSED__)
+_emotion_class_identifier_get(video_driver_class_t *driver_class EINA_UNUSED)
 {
    return "emotion";
 }
 
 static char *
-_emotion_class_description_get(video_driver_class_t *driver_class __UNUSED__)
+_emotion_class_description_get(video_driver_class_t *driver_class EINA_UNUSED)
 {
    return "Emotion xine video output plugin";
 }
@@ -214,7 +214,7 @@ _emotion_dispose(vo_driver_t *vo_driver)
 
 /***************************************************************************/
 static int
-_emotion_redraw(vo_driver_t *vo_driver __UNUSED__)
+_emotion_redraw(vo_driver_t *vo_driver EINA_UNUSED)
 {
 //   DBG("");
    return 0;
@@ -222,7 +222,7 @@ _emotion_redraw(vo_driver_t *vo_driver __UNUSED__)
 
 /***************************************************************************/
 static uint32_t
-_emotion_capabilities_get(vo_driver_t *vo_driver __UNUSED__)
+_emotion_capabilities_get(vo_driver_t *vo_driver EINA_UNUSED)
 {
 //   DBG("");
    return VO_CAP_YV12 | VO_CAP_YUY2;
@@ -230,7 +230,7 @@ _emotion_capabilities_get(vo_driver_t *vo_driver __UNUSED__)
 
 /***************************************************************************/
 static int
-_emotion_gui_data_exchange(vo_driver_t *vo_driver __UNUSED__, int data_type, void *data __UNUSED__)
+_emotion_gui_data_exchange(vo_driver_t *vo_driver EINA_UNUSED, int data_type, void *data EINA_UNUSED)
 {
 //   DBG("");
    switch (data_type)
@@ -294,7 +294,7 @@ _emotion_property_get(vo_driver_t *vo_driver, int property)
 }
 
 static void
-_emotion_property_min_max_get(vo_driver_t *vo_driver __UNUSED__, int property __UNUSED__, int *min, int *max)
+_emotion_property_min_max_get(vo_driver_t *vo_driver EINA_UNUSED, int property EINA_UNUSED, int *min, int *max)
 {
 //   DBG("");
    *min = 0;
@@ -303,7 +303,7 @@ _emotion_property_min_max_get(vo_driver_t *vo_driver __UNUSED__, int property __
 
 /***************************************************************************/
 static vo_frame_t *
-_emotion_frame_alloc(vo_driver_t *vo_driver __UNUSED__)
+_emotion_frame_alloc(vo_driver_t *vo_driver EINA_UNUSED)
 {
    Emotion_Frame *fr;
    
@@ -336,7 +336,7 @@ _emotion_frame_dispose(vo_frame_t *vo_frame)
 }
 
 static void
-_emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint32_t width, uint32_t height, double ratio, int format, int flags __UNUSED__)
+_emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint32_t width, uint32_t height, double ratio, int format, int flags EINA_UNUSED)
 {
    Emotion_Driver *dv;
    Emotion_Frame *fr;
@@ -463,7 +463,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 }
 
 static void
-_emotion_frame_field(vo_frame_t *vo_frame __UNUSED__, int which_field __UNUSED__)
+_emotion_frame_field(vo_frame_t *vo_frame EINA_UNUSED, int which_field EINA_UNUSED)
 {
 //   DBG("");
 }
@@ -502,19 +502,19 @@ _emotion_frame_data_unlock(Emotion_Frame *fr)
 
 /***************************************************************************/
 static void
-_emotion_overlay_begin(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame __UNUSED__, int changed __UNUSED__)
+_emotion_overlay_begin(vo_driver_t *vo_driver EINA_UNUSED, vo_frame_t *vo_frame EINA_UNUSED, int changed EINA_UNUSED)
 {
 //   DBG("");
 }
 
 static void
-_emotion_overlay_end(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame __UNUSED__)
+_emotion_overlay_end(vo_driver_t *vo_driver EINA_UNUSED, vo_frame_t *vo_frame EINA_UNUSED)
 {
 //   DBG("");
 }
 
 static void
-_emotion_overlay_blend(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame, vo_overlay_t *vo_overlay __UNUSED__)
+_emotion_overlay_blend(vo_driver_t *vo_driver EINA_UNUSED, vo_frame_t *vo_frame, vo_overlay_t *vo_overlay EINA_UNUSED)
 {
    Emotion_Frame *fr;
    

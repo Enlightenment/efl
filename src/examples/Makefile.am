@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = eina eo eet evas ecore eio edbus ephysics edje
+SUBDIRS = eina eo eet evas ecore eio edbus ephysics edje emotion
 
 .PHONY: examples install-examples
 

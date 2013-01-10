@@ -60,6 +60,7 @@ old/ChangeLog.efreet \
 old/ChangeLog.eina \
 old/ChangeLog.eio \
 old/ChangeLog.embryo \
+old/ChangeLog.emotion \
 old/ChangeLog.escape \
 old/ChangeLog.evas \
 old/ChangeLog.evil \
@@ -72,6 +73,7 @@ old/NEWS.efreet \
 old/NEWS.eina \
 old/NEWS.eio \
 old/NEWS.embryo \
+old/NEWS.emotion \
 old/NEWS.escape \
 old/NEWS.evas \
 old/NEWS.evil \
@@ -84,6 +86,7 @@ old/README.efreet \
 old/README.eina \
 old/README.eio \
 old/README.embryo \
+old/README.emotion \
 old/README.ephysics \
 old/README.escape \
 old/README.evas \
@@ -121,7 +124,8 @@ pc/edbus2.pc \
 pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
-pc/edje.pc
+pc/edje.pc \
+pc/emotion.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc

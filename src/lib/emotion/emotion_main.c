@@ -10,32 +10,15 @@
 #  include <stdlib.h>
 # endif
 #endif
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif !defined alloca
-# ifdef __GNUC__
-#  define alloca __builtin_alloca
-# elif defined _AIX
-#  define alloca __alloca
-# elif defined _MSC_VER
-#  include <malloc.h>
-#  define alloca _alloca
-# elif !defined HAVE_ALLOCA
-#  ifdef  __cplusplus
-extern "C"
-#  endif
-void *alloca (size_t);
-# endif
-#endif
 
 #include <stdio.h>
 
-#ifdef EMOTION_HAVE_EEZE
+#ifdef HAVE_EEZE
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-# include <sys/ioctl.h>
 # ifdef HAVE_V4L2
+#  include <sys/ioctl.h>
 #  include <linux/videodev2.h>
 # endif
 # include <Eeze.h>
@@ -114,7 +97,7 @@ static const struct ext_match_s matchs[] =
 };
 
 Eina_Bool
-_emotion_object_extension_can_play_generic_get(const void *data __UNUSED__, const char *file)
+_emotion_object_extension_can_play_generic_get(const void *data EINA_UNUSED, const char *file)
 {
    unsigned int length;
    unsigned int i;
@@ -213,7 +196,7 @@ emotion_webcam_destroy(Emotion_Webcam *ew)
    free(ew);
 }
 
-#ifdef EMOTION_HAVE_EEZE
+#ifdef HAVE_EEZE
 static Eeze_Udev_Watch *eeze_watcher = NULL;
 
 static void
@@ -307,8 +290,8 @@ _emotion_enumerate_all_webcams(void)
 static void
 _emotion_eeze_events(const char *syspath,
                      Eeze_Udev_Event ev,
-                     void *data __UNUSED__,
-                     Eeze_Udev_Watch *watcher __UNUSED__)
+                     void *data EINA_UNUSED,
+                     Eeze_Udev_Watch *watcher EINA_UNUSED)
 {
    if (ev == EEZE_UDEV_EVENT_REMOVE)
      {
@@ -365,7 +348,7 @@ emotion_init(void)
         if (!_emotion_webcams) return EINA_FALSE;
      }
 
-#ifdef EMOTION_HAVE_EEZE
+#ifdef HAVE_EEZE
    EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
 
    eeze_init();
@@ -409,7 +392,7 @@ emotion_shutdown(void)
         _emotion_webcams_file = NULL;
      }
 
-#ifdef EMOTION_HAVE_EEZE
+#ifdef HAVE_EEZE
    eeze_udev_watch_del(eeze_watcher);
    eeze_watcher = NULL;
 

@@ -3090,6 +3090,8 @@ EFL_ADD_LIBS([EIO], [-lm])
 ### Checks for library functions
 
 EFL_LIB_END([Eio])
+dnl TODO: remove these ifdefs from code!
+AC_DEFINE([HAVE_EIO], [1], [Have eio library])
 #### End of Eio
 
 
@@ -3368,6 +3370,88 @@ AC_SUBST([want_physics])
 EFL_LIB_END([Edje])
 #### End of Edje
 
+#### Emotion
+EFL_LIB_START([Emotion])
+
+### Default values
+if test "${efl_func_shm_open}" = "yes"; then
+   want_emotion_generic="static"
+else
+   want_emotion_generic="no"
+fi
+
+### Additional options to configure
+AC_ARG_ENABLE([xine],
+   [AC_HELP_STRING([--enable-xine],
+                   [enable xine support. @<:@default=disabled@:>@])],
+   [
+    if test "x${withval}" = "xyes" ; then
+       want_xine="yes"
+    else
+       want_xine="no"
+    fi
+   ],
+   [want_xine="no"])
+
+AC_ARG_ENABLE([v4l2],
+   [AC_HELP_STRING([--enable-v4l2], [enable v4l2 support.])],
+   [
+    if test "x${withval}" = "xyes" ; then
+       want_v4l2="yes"
+    else
+       want_v4l2="no"
+    fi
+   ],
+   [want_v4l2="${efl_lib_optional_eeze}"])
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [eina])
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [eo])
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [eet])
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [evas])
+EFL_INTERNAL_DEPEND_PKG([EMOTION], [eio])
+
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EMOTION], [${want_v4l2}], [eeze])
+AM_CONDITIONAL([EMOTION_HAVE_V4L2], [test "${want_v4l2}" = "yes"])
+
+## modules
+
+have_gst_xoverlay="no"
+
+EMOTION_MODULE([xine], [${want_xine}])
+EMOTION_MODULE([gstreamer], [${want_gstreamer}])
+EMOTION_MODULE([generic], [${want_emotion_generic}])
+
+EFL_EVAL_PKGS([EMOTION])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+if test "${want_v4l2}" = "yes"; then
+   AC_CHECK_DECL([V4L2_CAP_VIDEO_CAPTURE],
+      [AC_DEFINE([HAVE_V4L2], [1], [Define to 1 if you have Video4Linux 2 available])],
+      [AC_MSG_ERROR([Video4Linux 2 desired but not found. See --disable-v4l2.])],
+      [#include <linux/videodev2.h>])
+fi
+
+### Check availability
+
+EFL_LIB_END([Emotion])
+#### End of Emotion
+
+
 AC_ARG_ENABLE([always-build-examples],
    [AC_HELP_STRING([--enable-always-build-examples],
        [always build examples. @<:@default=disabled@:>@])],
@@ -3401,6 +3485,7 @@ src/examples/eio/Makefile
 src/examples/edbus/Makefile
 src/examples/ephysics/Makefile
 src/examples/edje/Makefile
+src/examples/emotion/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
@@ -3449,6 +3534,7 @@ pc/efreet-trash.pc
 pc/eeze.pc
 pc/ephysics.pc
 pc/edje.pc
+pc/emotion.pc
 dbus-services/org.enlightenment.Efreet.service
 $po_makefile_in
 ])
@@ -3655,6 +3741,7 @@ echo
 echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
 echo "EPhysics...............: ${efl_lib_optional_ephysics}"
 echo "Edje...................: yes (physics=${efl_lib_optional_ephysics}, multisense=${want_multisense})"
+echo "Emotion................: yes (gstreamer=${have_emotion_module_gstreamer} (xoverlay=${have_gst_xoverlay}), xine=${have_emotion_module_xine}, generic=${have_emotion_module_generic}, v4l2=${want_v4l2})"
 echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"

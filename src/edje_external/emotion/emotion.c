@@ -75,14 +75,14 @@ static const char _external_emotion_engine_def[] =
 #endif
 
 static void
-_external_emotion_signal_proxy_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_external_emotion_signal_proxy_free_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    External_Emotion_Signals_Proxy_Context *ctxt = data;
    free(ctxt);
 }
 
 static void
-_external_emotion_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_external_emotion_signal_proxy_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    External_Emotion_Signals_Proxy_Context *ctxt = data;
    // TODO: Is it worth to check Evas_Smart_Cb_Description and do something
@@ -91,7 +91,7 @@ _external_emotion_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void 
 }
 
 static Evas_Object *
-_external_emotion_add(void *data __UNUSED__, Evas *evas, Evas_Object *edje __UNUSED__, const Eina_List *params, const char *part_name)
+_external_emotion_add(void *data EINA_UNUSED, Evas *evas, Evas_Object *edje EINA_UNUSED, const Eina_List *params, const char *part_name)
 {
    const Evas_Smart_Cb_Description **cls_descs, **inst_descs;
    unsigned int cls_count, inst_count, total;
@@ -145,13 +145,13 @@ _external_emotion_add(void *data __UNUSED__, Evas *evas, Evas_Object *edje __UNU
 }
 
 static void
-_external_emotion_signal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *signal, const char *source)
+_external_emotion_signal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *signal, const char *source)
 {
    DBG("External Signal received: '%s' '%s'", signal, source);
 }
 
 static void
-_external_emotion_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+_external_emotion_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const External_Emotion_Params *p;
 
@@ -187,7 +187,7 @@ _external_emotion_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
 }
 
 static Eina_Bool
-_external_emotion_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+_external_emotion_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "engine"))
      {
@@ -265,7 +265,7 @@ _external_emotion_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
 }
 
 static Eina_Bool
-_external_emotion_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+_external_emotion_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
 #define _STR(M)						\
    else if (!strcmp(param->name, #M))				\
@@ -332,7 +332,7 @@ _external_emotion_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
 }
 
 static void *
-_external_emotion_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+_external_emotion_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    const Edje_External_Param *param;
    const Eina_List *l;
@@ -418,13 +418,13 @@ _external_emotion_params_free(void *params)
 }
 
 static const char *
-_external_emotion_label_get(void *data __UNUSED__)
+_external_emotion_label_get(void *data EINA_UNUSED)
 {
     return "Emotion";
 }
 
 static Evas_Object *
-_external_emotion_icon_add(void *data __UNUSED__, Evas *e)
+_external_emotion_icon_add(void *data EINA_UNUSED, Evas *e)
 {
    Evas_Object *ic;
    int w = 0, h = 0;
@@ -441,7 +441,7 @@ _external_emotion_icon_add(void *data __UNUSED__, Evas *e)
 }
 
 static const char *
-_external_emotion_translate(void *data __UNUSED__, const char *orig)
+_external_emotion_translate(void *data EINA_UNUSED, const char *orig)
 {
    // in future, mark all params as translatable and use dgettext()
    // with "emotion" text domain here.

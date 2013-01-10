@@ -21,7 +21,6 @@
 
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
-# include <Ecore_Evas.h>
 # ifdef HAVE_XOVERLAY_H
 #  include <gst/interfaces/xoverlay.h>
 # endif
@@ -350,7 +349,7 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
 static unsigned char
 em_init(Evas_Object            *obj,
         void                  **emotion_video,
-        Emotion_Module_Options *opt __UNUSED__)
+        Emotion_Module_Options *opt EINA_UNUSED)
 {
    Emotion_Gstreamer_Video *ev;
    GError                  *error;
@@ -584,7 +583,7 @@ em_file_close(void *video)
 
 static void
 em_play(void   *video,
-        double  pos __UNUSED__)
+        double  pos EINA_UNUSED)
 {
    Emotion_Gstreamer_Video *ev;
 
@@ -836,7 +835,7 @@ em_vis_get(void *video)
 }
 
 static Eina_Bool
-em_vis_supported(void *ef __UNUSED__, Emotion_Vis vis)
+em_vis_supported(void *ef EINA_UNUSED, Emotion_Vis vis)
 {
    const char *name;
    GstElementFactory *factory;
@@ -897,13 +896,13 @@ em_audio_handled(void *video)
 }
 
 static int
-em_seekable(void *video __UNUSED__)
+em_seekable(void *video EINA_UNUSED)
 {
    return 1;
 }
 
 static void
-em_frame_done(void *video __UNUSED__)
+em_frame_done(void *video EINA_UNUSED)
 {
 }
 
@@ -965,34 +964,34 @@ em_video_data_size_get(void *video, int *w, int *h)
 }
 
 static int
-em_yuv_rows_get(void           *video __UNUSED__,
-                int             w __UNUSED__,
-                int             h __UNUSED__,
-                unsigned char **yrows __UNUSED__,
-                unsigned char **urows __UNUSED__,
-                unsigned char **vrows __UNUSED__)
+em_yuv_rows_get(void           *video EINA_UNUSED,
+                int             w EINA_UNUSED,
+                int             h EINA_UNUSED,
+                unsigned char **yrows EINA_UNUSED,
+                unsigned char **urows EINA_UNUSED,
+                unsigned char **vrows EINA_UNUSED)
 {
    return 0;
 }
 
 static int
-em_bgra_data_get(void *video __UNUSED__, unsigned char **bgra_data __UNUSED__)
+em_bgra_data_get(void *video EINA_UNUSED, unsigned char **bgra_data EINA_UNUSED)
 {
    return 0;
 }
 
 static void
-em_event_feed(void *video __UNUSED__, int event __UNUSED__)
+em_event_feed(void *video EINA_UNUSED, int event EINA_UNUSED)
 {
 }
 
 static void
-em_event_mouse_button_feed(void *video __UNUSED__, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_button_feed(void *video EINA_UNUSED, int button EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
 }
 
 static void
-em_event_mouse_move_feed(void *video __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_move_feed(void *video EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
 }
 
@@ -1010,8 +1009,8 @@ em_video_channel_count(void *video)
 }
 
 static void
-em_video_channel_set(void *video __UNUSED__,
-                     int   channel __UNUSED__)
+em_video_channel_set(void *video EINA_UNUSED,
+                     int   channel EINA_UNUSED)
 {
 #if 0
    Emotion_Gstreamer_Video *ev;
@@ -1036,22 +1035,22 @@ em_video_channel_get(void *video)
 }
 
 static void
-em_video_subtitle_file_set(void *video __UNUSED__,
-                           const char *filepath __UNUSED__)
+em_video_subtitle_file_set(void *video EINA_UNUSED,
+                           const char *filepath EINA_UNUSED)
 {
    DBG("video_subtitle_file_set not implemented for gstreamer yet.");
 }
 
 static const char *
-em_video_subtitle_file_get(void *video __UNUSED__)
+em_video_subtitle_file_get(void *video EINA_UNUSED)
 {
    DBG("video_subtitle_file_get not implemented for gstreamer yet.");
    return NULL;
 }
 
 static const char *
-em_video_channel_name_get(void *video __UNUSED__,
-                          int   channel __UNUSED__)
+em_video_channel_name_get(void *video EINA_UNUSED,
+                          int   channel EINA_UNUSED)
 {
    return NULL;
 }
@@ -1092,8 +1091,8 @@ em_audio_channel_count(void *video)
 }
 
 static void
-em_audio_channel_set(void *video __UNUSED__,
-                     int   channel __UNUSED__)
+em_audio_channel_set(void *video EINA_UNUSED,
+                     int   channel EINA_UNUSED)
 {
 #if 0
    Emotion_Gstreamer_Video *ev;
@@ -1118,8 +1117,8 @@ em_audio_channel_get(void *video)
 }
 
 static const char *
-em_audio_channel_name_get(void *video __UNUSED__,
-                          int   channel __UNUSED__)
+em_audio_channel_name_get(void *video EINA_UNUSED,
+                          int   channel EINA_UNUSED)
 {
    return NULL;
 }
@@ -1187,75 +1186,75 @@ em_audio_channel_volume_get(void *video)
 /* spu stuff */
 
 static int
-em_spu_channel_count(void *video __UNUSED__)
+em_spu_channel_count(void *video EINA_UNUSED)
 {
    return 0;
 }
 
 static void
-em_spu_channel_set(void *video __UNUSED__, int channel __UNUSED__)
+em_spu_channel_set(void *video EINA_UNUSED, int channel EINA_UNUSED)
 {
 }
 
 static int
-em_spu_channel_get(void *video __UNUSED__)
+em_spu_channel_get(void *video EINA_UNUSED)
 {
    return 1;
 }
 
 static const char *
-em_spu_channel_name_get(void *video __UNUSED__, int channel __UNUSED__)
+em_spu_channel_name_get(void *video EINA_UNUSED, int channel EINA_UNUSED)
 {
    return NULL;
 }
 
 static void
-em_spu_channel_mute_set(void *video __UNUSED__, int mute __UNUSED__)
+em_spu_channel_mute_set(void *video EINA_UNUSED, int mute EINA_UNUSED)
 {
 }
 
 static int
-em_spu_channel_mute_get(void *video __UNUSED__)
+em_spu_channel_mute_get(void *video EINA_UNUSED)
 {
    return 0;
 }
 
 static int
-em_chapter_count(void *video __UNUSED__)
+em_chapter_count(void *video EINA_UNUSED)
 {
    return 0;
 }
 
 static void
-em_chapter_set(void *video __UNUSED__, int chapter __UNUSED__)
+em_chapter_set(void *video EINA_UNUSED, int chapter EINA_UNUSED)
 {
 }
 
 static int
-em_chapter_get(void *video __UNUSED__)
+em_chapter_get(void *video EINA_UNUSED)
 {
    return 0;
 }
 
 static const char *
-em_chapter_name_get(void *video __UNUSED__, int chapter __UNUSED__)
+em_chapter_name_get(void *video EINA_UNUSED, int chapter EINA_UNUSED)
 {
    return NULL;
 }
 
 static void
-em_speed_set(void *video __UNUSED__, double speed __UNUSED__)
+em_speed_set(void *video EINA_UNUSED, double speed EINA_UNUSED)
 {
 }
 
 static double
-em_speed_get(void *video __UNUSED__)
+em_speed_get(void *video EINA_UNUSED)
 {
    return 1.0;
 }
 
 static int
-em_eject(void *video __UNUSED__)
+em_eject(void *video EINA_UNUSED)
 {
    return 1;
 }
@@ -1333,7 +1332,7 @@ em_priority_get(void *video)
 
 #ifdef HAVE_ECORE_X
 static Eina_Bool
-_ecore_event_x_destroy(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_ecore_event_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_X_Event_Window_Destroy *ev = event;
 
@@ -1439,7 +1438,7 @@ module_open(Evas_Object           *obj,
 }
 
 static void
-module_close(Emotion_Video_Module *module __UNUSED__,
+module_close(Emotion_Video_Module *module EINA_UNUSED,
              void                 *video)
 {
    em_module.shutdown(video);
@@ -1790,7 +1789,7 @@ _eos_main_fct(void *data)
 }
 
 static GstBusSyncReply
-_eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
+_eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
 {
    Emotion_Gstreamer_Video *ev = data;
    Emotion_Gstreamer_Message *send;

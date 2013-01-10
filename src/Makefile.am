@@ -42,6 +42,7 @@ include Makefile_Efreet.am
 include Makefile_Eeze.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
+include Makefile_Emotion.am
 
 .PHONY: benchmark examples
 
@@ -80,6 +81,7 @@ clean-local:
 	rm -rf lib/eeze/*.gcno
 	rm -rf lib/ephysics/*.gcno
 	rm -rf lib/edje/*.gcno
+	rm -rf lib/emotion/*.gcno
 	rm -rf modules/eina/mp/pass_through/*.gcno
 	rm -rf modules/eina/mp/one_big/*.gcno
 	rm -rf modules/eina/mp/chained_pool/*.gcno
@@ -119,5 +121,8 @@ clean-local:
 	rm -rf modules/edje/alsa_snd_player/*.gcno
 	rm -rf modules/edje/eet_snd_reader/*.gcno
 	rm -rf modules/edje/multisense_factory/*.gcno
+	rm -rf modules/emotion/xine/*.gcno
+	rm -rf modules/emotion/gstreamer/*.gcno
+	rm -rf modules/emotion/generic/*.gcno
 	rm -rf static_libs/liblinebreak/*.gcno
 	rm -rf static_libs/lz4/*.gcno

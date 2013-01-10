@@ -324,7 +324,7 @@ struct _SCMN_IMGB
    int      data[16];
 };
 
-void _evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height __UNUSED__);
-void _evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w __UNUSED__, unsigned int h, unsigned int output_height __UNUSED__);
+void _evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height EINA_UNUSED);
+void _evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h, unsigned int output_height EINA_UNUSED);
 
 #endif /* __EMOTION_GSTREAMER_H__ */

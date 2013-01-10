@@ -21,6 +21,7 @@
  * @li @ref eeze_main hardware device manipulation and notification.
  * @li @ref ephysics_main physics simulation integration and visual effects.
  * @li @ref edje_main layout and theme library with super powers.
+ * @li @ref emotion_main to play music and videos.
  *
  */
 
@@ -42,7 +43,7 @@
  * @author Brian Mattern <rephorm@@rephorm.com>
  * @author Bruno Dilly <bdilly@@profusion.mobi>
  * @author Burra <burra@@colorado.edu>
- * @author Carsten Haitzler <raster@@@rasterman.com>
+ * @author Carsten Haitzler <raster@@rasterman.com>
  * @author Cedric BAIL <cedric.bail@@free.fr>
  * @author Chidambar Zinnoury <illogict@@online.fr>
  * @author Chris Ross <chris@@darkrock.co.uk>
@@ -70,6 +71,7 @@
  * @author Haifeng Deng <haifeng.deng@@samsung.com>
  * @author Hisham 'CodeWarrior' Mardam Bey <hisham@@hisham.cc>
  * @author Howell Tam <pigeon@@pigeond.net>
+ * @author Hugo Camboulive <hugo.camboulive@@zodiacaerospace.com>
  * @author Hyoyoung Chang <hyoyoung@@gmail.com>
  * @author Ibukun Olumuyiwa <ibukun@@computer.org>
  * @author Iván Briano <ivan@@profusion.mobi>
@@ -103,6 +105,7 @@
  * @author Nicholas Curran <quasar@@bigblue.net.au>
  * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
  * @author Peter Wehrfritz <peter.wehrfritz@@web.de>
+ * @author Pierre Le Magourou <pierre.lemagourou@@openwide.fr>
  * @author PnB <Poor.NewBie@@gmail.com>
  * @author Prince Kumar Dubey <prince.dubey@@samsung.com> <prince.dubey@@gmail.com>
  * @author Rafael Antognolli <antognolli@@profusion.mobi>
@@ -119,6 +122,7 @@
  * @author Seungsoo Woo <om101.woo@@samsung.com>
  * @author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
  * @author Simon Poole <simon.armlinux@@themalago.net>
+ * @author Sohyun Kim <anna1014.kim@@samsung.com>
  * @author Steve Ireland <sireland@@pobox.com>
  * @author Sung W. Park <sungwoo@@gmail.com>
  * @author Term <term@@twistedpath.org>
@@ -221,4 +225,10 @@
  * @defgroup Edje
  *
  * @brief Layout and theme library with super-powers.
+ */
+
+/**
+ * @defgroup Emotion
+ *
+ * @brief Plays music and videos.
  */

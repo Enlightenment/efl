@@ -80,7 +80,7 @@ evas_video_sink_base_init(gpointer g_class)
 }
 
 static void
-evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
+evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass EINA_UNUSED)
 {
    EvasVideoSinkPrivate* priv;
 
@@ -99,7 +99,7 @@ evas_video_sink_init(EvasVideoSink* sink, EvasVideoSinkClass* klass __UNUSED__)
 
 /**** Object methods ****/
 static void
-_cleanup_priv(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_cleanup_priv(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EvasVideoSinkPrivate* priv;
 
@@ -735,9 +735,9 @@ unlock_buffer_mutex(EvasVideoSinkPrivate* priv)
 }
 
 static void
-marshal_VOID__MINIOBJECT(GClosure * closure, GValue * return_value __UNUSED__,
+marshal_VOID__MINIOBJECT(GClosure * closure, GValue * return_value EINA_UNUSED,
                          guint n_param_values, const GValue * param_values,
-                         gpointer invocation_hint __UNUSED__, gpointer marshal_data)
+                         gpointer invocation_hint EINA_UNUSED, gpointer marshal_data)
 {
    typedef void (*marshalfunc_VOID__MINIOBJECT) (gpointer obj, gpointer arg1, gpointer data2);
    marshalfunc_VOID__MINIOBJECT callback;
@@ -874,7 +874,7 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 }
 
 static void
-_video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
+_video_resize(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *surface EINA_UNUSED,
               Evas_Coord w, Evas_Coord h)
 {
 #ifdef HAVE_ECORE_X
@@ -886,7 +886,7 @@ _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface 
 }
 
 static void
-_video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
+_video_move(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *surface EINA_UNUSED,
             Evas_Coord x, Evas_Coord y)
 {
 #ifdef HAVE_ECORE_X
@@ -934,7 +934,7 @@ _block_pad_link_cb(GstPad *pad, gboolean blocked, gpointer user_data)
 #endif
 
 static void
-_video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
+_video_show(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *surface EINA_UNUSED)
 {
 #ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
@@ -946,7 +946,7 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 }
 
 static void
-_video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
+_video_hide(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *surface EINA_UNUSED)
 {
 #ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
@@ -958,7 +958,7 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 }
 
 static void
-_video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
+_video_update_pixels(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *surface EINA_UNUSED)
 {
    Emotion_Gstreamer_Video *ev = data;
    Emotion_Gstreamer_Buffer *send;
@@ -978,7 +978,7 @@ _video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_S
 }
 
 static void
-_image_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_image_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Emotion_Gstreamer_Video *ev = data;
    Evas_Coord width, height;

@@ -862,7 +862,7 @@ _player_cmd_handler_cb(void *data, Ecore_Fd_Handler *fd_handler)
 }
 
 static Eina_Bool
-_player_data_cb(void *data, int type __UNUSED__, void *event)
+_player_data_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Data *ev = event;
    Emotion_Generic_Video *evideo = data;
@@ -881,7 +881,7 @@ _player_data_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_player_add_cb(void *data, int type __UNUSED__, void *event)
+_player_add_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Add *event_add = event;
    Ecore_Exe *player = event_add->exe;
@@ -900,7 +900,7 @@ _player_add_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+_player_del_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Exe_Event_Del *event_del = event;
    Ecore_Exe *player = event_del->exe;
@@ -1090,7 +1090,7 @@ em_shutdown(void *data)
 }
 
 static unsigned char
-em_file_open(const char *file, Evas_Object *obj __UNUSED__, void *data)
+em_file_open(const char *file, Evas_Object *obj EINA_UNUSED, void *data)
 {
    Emotion_Generic_Video *ev = data;
    INF("file set: %s", file);
@@ -1145,7 +1145,7 @@ em_file_close(void *data)
 }
 
 static Emotion_Format
-em_format_get(void *ef __UNUSED__)
+em_format_get(void *ef EINA_UNUSED)
 {
    return EMOTION_FORMAT_BGRA;
 }
@@ -1239,7 +1239,7 @@ em_len_get(void *data)
 }
 
 static double
-em_buffer_size_get(void *data __UNUSED__)
+em_buffer_size_get(void *data EINA_UNUSED)
 {
    return 1.0;
 }
@@ -1252,7 +1252,7 @@ em_fps_num_get(void *data)
 }
 
 static int
-em_fps_den_get(void *ef __UNUSED__)
+em_fps_den_get(void *ef EINA_UNUSED)
 {
    return 1000;
 }
@@ -1272,7 +1272,7 @@ em_pos_get(void *data)
 }
 
 static void
-em_vis_set(void *ef __UNUSED__, Emotion_Vis vis __UNUSED__)
+em_vis_set(void *ef EINA_UNUSED, Emotion_Vis vis EINA_UNUSED)
 {
 }
 
@@ -1284,7 +1284,7 @@ em_vis_get(void *data)
 }
 
 static Eina_Bool
-em_vis_supported(void *ef __UNUSED__, Emotion_Vis vis __UNUSED__)
+em_vis_supported(void *ef EINA_UNUSED, Emotion_Vis vis EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -1296,13 +1296,13 @@ em_ratio_get(void *data)
    return ev->ratio;
 }
 
-static int em_video_handled(void *ef __UNUSED__)
+static int em_video_handled(void *ef EINA_UNUSED)
 {
    DBG("video handled!");
    return 1;
 }
 
-static int em_audio_handled(void *ef __UNUSED__)
+static int em_audio_handled(void *ef EINA_UNUSED)
 {
    DBG("audio handled!");
    return 1;
@@ -1314,12 +1314,12 @@ static int em_seekable(void *data)
    return ev->seekable;
 }
 
-static void em_frame_done(void *ef __UNUSED__)
+static void em_frame_done(void *ef EINA_UNUSED)
 {
 }
 
 static int
-em_yuv_rows_get(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, unsigned char **yrows __UNUSED__, unsigned char **urows __UNUSED__, unsigned char **vrows __UNUSED__)
+em_yuv_rows_get(void *data EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, unsigned char **yrows EINA_UNUSED, unsigned char **urows EINA_UNUSED, unsigned char **vrows EINA_UNUSED)
 {
    return 0;
 }
@@ -1356,17 +1356,17 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
 }
 
 static void
-em_event_feed(void *ef __UNUSED__, int event __UNUSED__)
+em_event_feed(void *ef EINA_UNUSED, int event EINA_UNUSED)
 {
 }
 
 static void
-em_event_mouse_button_feed(void *ef __UNUSED__, int button __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_button_feed(void *ef EINA_UNUSED, int button EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
 }
 
 static void
-em_event_mouse_move_feed(void *ef __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+em_event_mouse_move_feed(void *ef EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
 }
 
@@ -1604,26 +1604,26 @@ em_spu_channel_mute_get(void *data)
 }
 
 static int
-em_chapter_count(void *ef __UNUSED__)
+em_chapter_count(void *ef EINA_UNUSED)
 {
    int num = 0;
    return num;
 }
 
 static void
-em_chapter_set(void *ef __UNUSED__, int chapter __UNUSED__)
+em_chapter_set(void *ef EINA_UNUSED, int chapter EINA_UNUSED)
 {
 }
 
 static int
-em_chapter_get(void *ef __UNUSED__)
+em_chapter_get(void *ef EINA_UNUSED)
 {
    int num = 0;
    return num;
 }
 
 static const char *
-em_chapter_name_get(void *ef __UNUSED__, int chapter __UNUSED__)
+em_chapter_name_get(void *ef EINA_UNUSED, int chapter EINA_UNUSED)
 {
    return NULL;
 }
@@ -1650,7 +1650,7 @@ em_speed_get(void *data)
 }
 
 static int
-em_eject(void *ef __UNUSED__)
+em_eject(void *ef EINA_UNUSED)
 {
    return 1;
 }
@@ -1778,7 +1778,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
    return EINA_TRUE;
 }
 
-static void module_close(Emotion_Video_Module *module __UNUSED__, void *video)
+static void module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
 {
 	em_module.shutdown(video);
 }

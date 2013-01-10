@@ -13,7 +13,6 @@
 
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
-# include <Ecore_Evas.h>
 # ifdef HAVE_XOVERLAY_H
 #  include <gst/interfaces/xoverlay.h>
 # endif

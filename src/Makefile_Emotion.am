@@ -1,0 +1,235 @@
+### Library
+
+lib_LTLIBRARIES += \
+lib/emotion/libemotion.la
+
+EMOTION_COMMON_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/eio \
+-I$(top_builddir)/src/lib/eio \
+-I$(top_srcdir)/src/lib/eeze \
+-I$(top_builddir)/src/lib/eeze \
+-I$(top_srcdir)/src/lib/emotion \
+-I$(top_builddir)/src/lib/emotion \
+@EFL_COV_CFLAGS@ \
+@EMOTION_CFLAGS@
+
+EMOTION_COMMON_LDADD = \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+lib/eet/libeet.la \
+lib/evas/libevas.la \
+lib/eio/libeio.la \
+@EFL_COV_LIBS@
+
+if EMOTION_HAVE_V4L2
+EMOTION_COMMON_LDADD += lib/eeze/libeeze.la
+endif
+
+installed_emotionmainheadersdir = $(includedir)/emotion-@VMAJ@
+dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h
+
+# libemotion.la
+lib_emotion_libemotion_la_SOURCES = \
+lib/emotion/emotion_private.h \
+lib/emotion/emotion_smart.c \
+lib/emotion/emotion_main.c
+
+EMOTION_COMMON_LIBADD = $(EMOTION_COMMON_LDADD) @EMOTION_LIBS@
+EMOTION_COMMON_LDADD  += @EMOTION_LDFLAGS@
+EMOTION_COMMON_USER_LIBADD = $(EMOTION_COMMON_LIBADD) lib/emotion/libemotion.la
+EMOTION_COMMON_USER_LDADD  = $(EMOTION_COMMON_LDADD) lib/emotion/libemotion.la
+
+lib_emotion_libemotion_la_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS) \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DEFL_EMOTION_BUILD
+
+lib_emotion_libemotion_la_LIBADD = $(EMOTION_COMMON_LIBADD)
+lib_emotion_libemotion_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+## Modules
+
+# Xine
+EMOTION_XINE_SOURCES = \
+modules/emotion/xine/emotion_xine.h \
+modules/emotion/xine/emotion_xine.c \
+modules/emotion/xine/emotion_xine_vo_out.c
+
+if EMOTION_STATIC_BUILD_XINE
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_XINE_SOURCES)
+else
+if EMOTION_BUILD_XINE
+emotionmodulexinedir = $(libdir)/emotion/modules/xine/$(MODULE_ARCH)
+emotionmodulexine_LTLIBRARIES = modules/emotion/xine/module.la
+modules_emotion_xine_module_la_SOURCES = $(EMOTION_XINE_SOURCES)
+modules_emotion_xine_module_la_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS) \
+@EMOTION_MODULE_XINE_CFLAGS@
+modules_emotion_xine_module_la_LIBADD = \
+$(EMOTION_COMMON_USER_LIBADD) \
+@EMOTION_MODULE_XINE_LIBS@
+modules_emotion_xine_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_xine_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+# Gstreamer
+EMOTION_GSTREAMER_SOURCES = \
+modules/emotion/gstreamer/emotion_gstreamer.h \
+modules/emotion/gstreamer/emotion_gstreamer.c \
+modules/emotion/gstreamer/emotion_alloc.c \
+modules/emotion/gstreamer/emotion_convert.c \
+modules/emotion/gstreamer/emotion_fakeeos.c \
+modules/emotion/gstreamer/emotion_sink.c
+
+if EMOTION_STATIC_BUILD_GSTREAMER
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GSTREAMER_SOURCES)
+if HAVE_ECORE_X
+EMOTION_COMMON_LDADD += \
+lib/ecore_evas/libecore_evas.la \
+lib/ecore_x/libecore_x.la
+endif
+else
+if EMOTION_BUILD_GSTREAMER
+emotionmodulegstreamerdir = $(libdir)/emotion/modules/gstreamer/$(MODULE_ARCH)
+emotionmodulegstreamer_LTLIBRARIES = modules/emotion/gstreamer/module.la
+modules_emotion_gstreamer_module_la_SOURCES = $(EMOTION_GSTREAMER_SOURCES)
+modules_emotion_gstreamer_module_la_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS) \
+@EMOTION_MODULE_GSTREAMER_CFLAGS@
+modules_emotion_gstreamer_module_la_LIBADD = \
+$(EMOTION_COMMON_USER_LIBADD) \
+@EMOTION_MODULE_GSTREAMER_LIBS@
+modules_emotion_gstreamer_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_gstreamer_module_la_LIBTOOLFLAGS = --tag=disable-static
+if HAVE_ECORE_X
+modules_emotion_gstreamer_module_la_LIBADD += \
+lib/ecore_evas/libecore_evas.la \
+lib/ecore_x/libecore_x.la
+endif
+endif
+endif
+
+# Generic
+EMOTION_GENERIC_SOURCES = \
+modules/emotion/generic/emotion_generic.h \
+modules/emotion/generic/emotion_generic.c
+
+if EMOTION_STATIC_BUILD_GENERIC
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GENERIC_SOURCES)
+else
+if EMOTION_BUILD_GENERIC
+emotionmodulegenericdir = $(libdir)/emotion/modules/generic/$(MODULE_ARCH)
+emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
+modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
+modules_emotion_generic_module_la_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS)
+modules_emotion_generic_module_la_LIBADD = \
+$(EMOTION_COMMON_USER_LIBADD)
+modules_emotion_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_generic_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+if EMOTION_BUILD_GENERIC
+dist_installed_emotionmainheaders_DATA += \
+modules/emotion/generic/Emotion_Generic_Plugin.h
+endif
+
+
+# Edje_External
+emotionedjeexternaldir = $(libdir)/edje/modules/emotion/$(MODULE_ARCH)
+emotionedjeexternal_LTLIBRARIES = edje_external/emotion/module.la
+
+edje_external_emotion_module_la_SOURCES = \
+edje_external/emotion/emotion.c
+edje_external_emotion_module_la_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS) \
+$(EDJE_COMMON_CPPFLAGS)
+edje_external_emotion_module_la_LIBADD = \
+$(EMOTION_COMMON_USER_LIBADD) \
+$(EDJE_COMMON_USER_LIBADD)
+edje_external_emotion_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+edje_external_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+### Binary
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+bin_PROGRAMS += tests/emotion/emotion_test
+
+tests_emotion_emotion_test_SOURCES = \
+tests/emotion/emotion_test_main.c
+
+tests_emotion_emotion_test_CPPFLAGS = \
+$(EMOTION_COMMON_CPPFLAGS) \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\"
+
+tests_emotion_emotion_test_LDADD = \
+$(EMOTION_COMMON_USER_LDADD) \
+lib/edje/libedje.la
+
+tests/emotion/data/theme.edj: tests/emotion/data/theme.edc
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/emotion/data $< $@
+
+EMOTION_DATA_FILES = \
+tests/emotion/data/bpause.png \
+tests/emotion/data/bplay.png \
+tests/emotion/data/bstop.png \
+tests/emotion/data/e_logo.png \
+tests/emotion/data/fr1.png \
+tests/emotion/data/fr2.png \
+tests/emotion/data/fr3.png \
+tests/emotion/data/fr4.png \
+tests/emotion/data/fr5.png \
+tests/emotion/data/fr6.png \
+tests/emotion/data/fr7.png \
+tests/emotion/data/h_slider.png \
+tests/emotion/data/icon.edc \
+tests/emotion/data/knob.png \
+tests/emotion/data/orb.png \
+tests/emotion/data/pnl.png \
+tests/emotion/data/sl.png \
+tests/emotion/data/theme.edc \
+tests/emotion/data/tiles.png \
+tests/emotion/data/video_frame_bottom.png \
+tests/emotion/data/video_frame_left.png \
+tests/emotion/data/video_frame_right.png \
+tests/emotion/data/video_frame_top.png \
+tests/emotion/data/whb.png \
+tests/emotion/data/window_inner_shadow.png
+
+emotiondatafilesdir = $(datadir)/emotion/data
+emotiondatafiles_DATA = tests/emotion/data/theme.edj
+endif
+
+EXTRA_DIST += \
+$(EMOTION_DATA_FILES) \
+modules/emotion/generic/README

@@ -12,7 +12,6 @@
 
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
-# include <Ecore_Evas.h>
 # ifdef HAVE_XOVERLAY_H
 #  include <gst/interfaces/xoverlay.h>
 # endif
@@ -51,7 +50,7 @@ fakeeos_bin_handle_message(GstBin * bin, GstMessage * message)
 }
 
 static void
-fakeeos_bin_base_init(gpointer g_class __UNUSED__)
+fakeeos_bin_base_init(gpointer g_class EINA_UNUSED)
 {
 }
 
@@ -65,7 +64,7 @@ fakeeos_bin_class_init(FakeEOSBinClass * klass)
 }
 
 static void
-fakeeos_bin_init(FakeEOSBin *src __UNUSED__,
-                 FakeEOSBinClass *klass __UNUSED__)
+fakeeos_bin_init(FakeEOSBin *src EINA_UNUSED,
+                 FakeEOSBinClass *klass EINA_UNUSED)
 {
 }

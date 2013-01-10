@@ -12,7 +12,6 @@
 
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
-# include <Ecore_Evas.h>
 # ifdef HAVE_XOVERLAY_H
 #  include <gst/interfaces/xoverlay.h>
 # endif
@@ -23,7 +22,7 @@
 
 static inline void
 _evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
-                      unsigned int w, unsigned int h __UNUSED__, unsigned int output_height, unsigned int step)
+                      unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, unsigned int step)
 {
    unsigned int x;
    unsigned int y;
@@ -55,7 +54,7 @@ _evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
+_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
 {
    unsigned int x;
    unsigned int y;
@@ -132,7 +131,7 @@ _evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
+_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i;
@@ -147,7 +146,7 @@ _evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
+_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
@@ -165,7 +164,7 @@ _evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_mt12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height __UNUSED__)
+_evas_video_mt12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height EINA_UNUSED)
 {
    const unsigned char **rows;
    unsigned int i;
@@ -187,7 +186,7 @@ _evas_video_mt12(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 void
-_evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height __UNUSED__)
+_evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height EINA_UNUSED)
 {
    const GstMultiPlaneImageBuffer *mp_buf = (const GstMultiPlaneImageBuffer *) gst_data;
    const unsigned char **rows;
@@ -213,7 +212,7 @@ _evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_d
 }
 
 void
-_evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w __UNUSED__, unsigned int h, unsigned int output_height __UNUSED__)
+_evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h, unsigned int output_height EINA_UNUSED)
 {
    const SCMN_IMGB *imgb = (const SCMN_IMGB *) gst_data;
    const unsigned char **rows;

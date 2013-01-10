@@ -44,6 +44,7 @@ edje_examples.dox \
 eet_examples.dox \
 eina_examples.dox \
 eio_examples.dox \
+emotion_examples.dox \
 eo_tutorial.dox \
 ephysics_examples.dox \
 evas_examples.dox \
