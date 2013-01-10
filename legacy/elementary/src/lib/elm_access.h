@@ -29,7 +29,7 @@ typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Ob
  *
  * @ingroup Access
  */
-EAPI Evas_Object * elm_access_object_item_register(Elm_Object_Item *item);
+EAPI Evas_Object *elm_access_object_item_register(Elm_Object_Item *item);
 
 /**
  * @brief Unregister accessible object of the object item.
@@ -50,7 +50,7 @@ EAPI void elm_access_object_item_unregister(Elm_Object_Item *item);
  *
  * @ingroup Access
  */
-EAPI Evas_Object * elm_access_object_item_access_get(Elm_Object_Item *item);
+EAPI Evas_Object *elm_access_object_item_access_get(Elm_Object_Item *item);
 
 /**
  * @brief Register evas object as an accessible object.
@@ -62,7 +62,7 @@ EAPI Evas_Object * elm_access_object_item_access_get(Elm_Object_Item *item);
  *
  * @ingroup Access
  */
-EAPI Evas_Object * elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
+EAPI Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Unregister accessible object.
@@ -83,7 +83,7 @@ EAPI void elm_access_object_unregister(Evas_Object *obj);
  *
  * @ingroup Access
  */
-EAPI Evas_Object * elm_access_object_access_get(Evas_Object *obj);
+EAPI Evas_Object *elm_access_object_access_get(Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.
@@ -108,7 +108,7 @@ EAPI void elm_access_text_set(Evas_Object *obj, int type, const char *text);
  * @see elm_access_content_cb_set
  * @ingroup Access
  */
-EAPI char * elm_access_text_get(Evas_Object *obj, int type);
+EAPI char *elm_access_text_get(Evas_Object *obj, int type);
 
 /**
  * @brief Set content callback to give information for specific type.
@@ -145,4 +145,4 @@ EAPI void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb fu
 
 //TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
 EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);
-EINA_DEPRECATED EAPI char * elm_access_external_info_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI char *elm_access_external_info_get(const Evas_Object *obj);
