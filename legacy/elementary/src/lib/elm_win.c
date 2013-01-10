@@ -265,12 +265,10 @@ _elm_win_state_eval(void *data __UNUSED__)
                {
                   ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
                   _elm_win_auto_throttled = EINA_FALSE;
-                  printf("throttle off\n");
                }
           }
         else
           {
-             printf("%i %i %i\n", _elm_win_count_iconified, _elm_win_count_withdrawn, _elm_win_count_shown);
              if ((_elm_win_count_iconified + _elm_win_count_withdrawn) 
                  >= _elm_win_count_shown)
                {
@@ -278,7 +276,6 @@ _elm_win_state_eval(void *data __UNUSED__)
                     {
                        ecore_throttle_adjust(_elm_config->auto_throttle_amount);
                        _elm_win_auto_throttled = EINA_TRUE;
-                       printf("throttle on\n");
                     }
                }
              else
@@ -287,7 +284,6 @@ _elm_win_state_eval(void *data __UNUSED__)
                     {
                        ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
                        _elm_win_auto_throttled = EINA_FALSE;
-                       printf("throttle off\n");
                     }
                }
           }
@@ -982,7 +978,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    if (sd->withdrawn) _elm_win_count_withdrawn++;
    if (sd->iconified) _elm_win_count_iconified++;
-   printf("win with: %i = %i\n", sd->withdrawn, _elm_win_count_withdrawn);
+   
    _elm_win_state_eval_queue();
 
    if ((ch_withdrawn) || (ch_iconified))
