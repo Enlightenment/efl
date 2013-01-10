@@ -28,17 +28,10 @@
 #if EINA_SIZEOF_WCHAR_T >= 4
 # include <wchar.h>
 typedef wchar_t Eina_Unicode;
-#elif defined(EINA_HAVE_INTTYPES_H)
+#else
 # include <inttypes.h>
 typedef uint32_t Eina_Unicode;
-#elif defined(EINA_HAVE_STDINT_H)
-# include <stdint.h>
-typedef uint32_t Eina_Unicode;
-#else
-/* Hope that int is big enough */
-typedef unsigned int Eina_Unicode;
 #endif
-
 
 /**
  * @brief Same as the standard strlen just with Eina_Unicode instead of char.

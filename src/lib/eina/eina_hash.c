@@ -23,11 +23,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
-
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
 
 #ifdef _MSC_VER
 # include <Evil.h>

@@ -380,11 +380,9 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS([ \
 execinfo.h \
 errno.h \
-inttypes.h \
 libgen.h \
 mcheck.h \
 netinet/in.h \
-stdint.h \
 sys/epoll.h \
 sys/inotify.h \
 sys/signalfd.h \
@@ -803,9 +801,6 @@ CFLAGS_save="${CFLAGS}"
 CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
 AC_CHECK_HEADERS([sys/mman.h])
 CFLAGS="${CFLAGS_save}"
-
-EINA_CONFIG([HAVE_INTTYPES_H], [test "x${ac_cv_header_inttypes_h}" = "xyes"])
-EINA_CONFIG([HAVE_STDINT_H], [test "x${ac_cv_header_stdint_h}" = "xyes"])
 
 ### Checks for types
 
