@@ -9,5 +9,5 @@ Name: elementary
 Description: Mobile device touchscreen widget library
 @pkgconfig_requires_private@: @requirement_elm@
 Version: @VERSION@
-Libs: -L${libdir} -lelementary @my_libs@ @ELEMENTARY_LIBS@ @EVIL_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_ETHUMB_LIBS@ @ELEMENTARY_WEB_LIBS@ @ELEMENTARY_EMAP_LIBS@ @ELEMENTARY_ECORE_IMF_LIBS@ @ELEMENTARY_ECORE_CON_LIBS@
+Libs: -L${libdir} -lelementary @my_libs@ @ELEMENTARY_LIBS@ @EVIL_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_ETHUMB_LIBS@ @ELEMENTARY_WEB_LIBS@ @ELEMENTARY_EMAP_LIBS@ @ELEMENTARY_ECORE_IMF_LIBS@ @ELEMENTARY_ECORE_CON_LIBS@
 Cflags: -I${includedir}/elementary-@VMAJ@
