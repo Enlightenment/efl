@@ -70,6 +70,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
+#include <Ecore_Input.h>
 @ELEMENTARY_ECORE_IMF_INC@
 @ELEMENTARY_ECORE_CON_INC@
 #include <Edje.h>
