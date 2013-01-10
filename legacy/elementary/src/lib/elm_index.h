@@ -551,10 +551,14 @@ EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *dat
 EAPI void                  elm_index_item_clear(Evas_Object *obj);
 
 /**
- * Go to a given items level on a index widget
+ * Flush the changes made to the index items so they work correctly
+ * 
+ * This flushes any changes made to items indicating the object is ready to
+ * "go. You should call this before any changes you expect to work. This
+ * is similar to elm_list_go().
  *
  * @param obj The index object
- * @param level The index level (one of @c 0 or @c 1)
+ * @param level The index level (one of @c 0 or @c 1) where changes were made
  *
  * @ingroup Index
  */
