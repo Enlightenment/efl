@@ -21,10 +21,29 @@
 static Eina_Prefix *pfx = NULL;
 
 static int _emotion_generic_log_domain = -1;
+#ifdef DBG
+#undef DBG
+#endif
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_generic_log_domain, __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_generic_log_domain, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_generic_log_domain, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_generic_log_domain, __VA_ARGS__)
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
 
 
@@ -83,7 +102,7 @@ _get_player(const char *name)
         if (selected_name[0] == '/') cmd = selected_name;
         else
           {
-             snprintf(buf, sizeof(buf), "%s/emotion/utils/%s",
+             snprintf(buf, sizeof(buf), "%s/emotion/utils/" MODULE_ARCH "/%s",
                       libdir, selected_name);
              cmd = buf;
           }
@@ -98,7 +117,7 @@ _get_player(const char *name)
 
    for (i = 0; players[i].name; i++)
      {
-        snprintf(buf, sizeof(buf), "%s/emotion/utils/%s",
+        snprintf(buf, sizeof(buf), "%s/emotion/utils/" MODULE_ARCH "/%s",
                  libdir, players[i].cmdline);
         DBG("Try generic player '%s'", buf);
         if (access(buf, R_OK | X_OK) == 0)
@@ -1787,27 +1806,24 @@ static void module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
 Eina_Bool
 generic_module_init(void)
 {
-   if (!pfx)
-     {
-        pfx = eina_prefix_new(NULL, emotion_object_add,
-                              "EMOTION", "emotion", NULL,
-                              PACKAGE_BIN_DIR,
-                              PACKAGE_LIB_DIR,
-                              PACKAGE_DATA_DIR,
-                              "");
-        if (!pfx) return EINA_FALSE;
-     }
+   if (pfx) return EINA_TRUE;
+
+   pfx = eina_prefix_new(NULL, emotion_init,
+                         "EMOTION", "emotion", "checkme",
+                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!pfx) return EINA_FALSE;
    return _emotion_module_register("generic", module_open, module_close);
 }
 
-static void
+void
 generic_module_shutdown(void)
 {
-   if (pfx)
-     {
-        eina_prefix_free(pfx);
-        pfx = NULL;
-     }
+   if (!pfx) return;
+
+   eina_prefix_free(pfx);
+   pfx = NULL;
+
    _emotion_module_unregister("generic");
 }
 
@@ -1817,4 +1833,3 @@ EINA_MODULE_INIT(generic_module_init);
 EINA_MODULE_SHUTDOWN(generic_module_shutdown);
 
 #endif
-

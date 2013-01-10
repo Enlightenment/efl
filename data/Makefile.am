@@ -59,3 +59,10 @@ edje/vim/plugin-info.txt \
 edje/vim/snippets/edc.snippets \
 edje/vim/syntax/edc.vim \
 edje/vim/syntax/embryo.vim
+
+
+########################################################################
+# Emotion
+emotionfilesdir = $(datadir)/emotion
+emotionfiles_DATA = emotion/checkme
+EXTRA_DIST += $(emotionfiles_DATA)
