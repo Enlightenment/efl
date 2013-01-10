@@ -519,6 +519,12 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("DRI2 query version failed");
         goto err;
      }
+   if (dri2_minor < 99)
+     {
+        if (swap_debug) ERR("Not supported by DRI2 version(%i.%i)",
+                            dri2_major, dri2_minor);
+        goto err;
+     }
    if (!sym_DRI2Connect(disp, RootWindow(disp, scr), &drv_name, &dev_name))
      {
         if (swap_debug) ERR("DRI2 connect failed on screen %i", scr);
