@@ -237,28 +237,6 @@ _smart_data_free(Smart_Data *sd)
    emotion_shutdown();
 }
 
-EAPI Eina_Bool
-_emotion_module_register(const char *name, Emotion_Module_Open mod_open, Emotion_Module_Close mod_close)
-{
-   Eina_Emotion_Plugins *plugin;
-
-   plugin = malloc(sizeof (Eina_Emotion_Plugins));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin, EINA_FALSE);
-
-   plugin->open = mod_open;
-   plugin->close = mod_close;
-
-   INF("register module=%s, open=%p, close=%p", name, mod_open, mod_close);
-   return eina_hash_add(_emotion_backends, name, plugin);
-}
-
-EAPI Eina_Bool
-_emotion_module_unregister(const char *name)
-{
-   INF("unregister module=%s", name);
-   return eina_hash_del_by_key(_emotion_backends, name);
-}
-
 static const char *
 _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
 {
