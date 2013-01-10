@@ -265,17 +265,20 @@ _elm_win_state_eval(void *data __UNUSED__)
                {
                   ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
                   _elm_win_auto_throttled = EINA_FALSE;
+                  printf("throttle off\n");
                }
           }
         else
           {
-             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) >=
-                 _elm_win_count_shown)
+             printf("%i %i %i\n", _elm_win_count_iconified, _elm_win_count_withdrawn, _elm_win_count_shown);
+             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) 
+                 >= _elm_win_count_shown)
                {
                   if (!_elm_win_auto_throttled)
                     {
                        ecore_throttle_adjust(_elm_config->auto_throttle_amount);
                        _elm_win_auto_throttled = EINA_TRUE;
+                       printf("throttle on\n");
                     }
                }
              else
@@ -284,6 +287,7 @@ _elm_win_state_eval(void *data __UNUSED__)
                     {
                        ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
                        _elm_win_auto_throttled = EINA_FALSE;
+                       printf("throttle off\n");
                     }
                }
           }
@@ -972,11 +976,13 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_maximized = EINA_TRUE;
      }
 
+   
    profile = ecore_evas_window_profile_get(sd->ee);
    ch_profile = _elm_win_profile_set(sd, profile);
 
    if (sd->withdrawn) _elm_win_count_withdrawn++;
    if (sd->iconified) _elm_win_count_iconified++;
+   printf("win with: %i = %i\n", sd->withdrawn, _elm_win_count_withdrawn);
    _elm_win_state_eval_queue();
 
    if ((ch_withdrawn) || (ch_iconified))
@@ -2221,7 +2227,7 @@ _elm_win_frame_cb_minimize(void *data,
    Elm_Win_Smart_Data *sd;
 
    if (!(sd = data)) return;
-   sd->iconified = EINA_TRUE;
+//   sd->iconified = EINA_TRUE;
    TRAP(sd, iconified_set, EINA_TRUE);
 }
 
@@ -2483,6 +2489,24 @@ elm_win_add(Evas_Object *parent,
    Evas_Object *obj = eo_add_custom(MY_CLASS, parent, elm_obj_win_constructor(name, type));
    eo_unref(obj);
    return obj;
+}
+
+static void
+_elm_win_cb_hide(void *data __UNUSED__,
+                 Evas *e __UNUSED__,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   _elm_win_state_eval_queue();
+}
+
+static void
+_elm_win_cb_show(void *data __UNUSED__,
+                 Evas *e __UNUSED__,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   _elm_win_state_eval_queue();
 }
 
 static void
@@ -2854,6 +2878,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, sd);
 
    evas_image_cache_set(sd->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(sd->evas, (_elm_config->font_cache * 1024));
@@ -3486,7 +3512,7 @@ _fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
    else
      {
-        sd->fullscreen = fullscreen;
+//        sd->fullscreen = fullscreen;
 
         if (fullscreen)
           {
@@ -3588,7 +3614,7 @@ _maximized_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool maximized = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
 
-   sd->maximized = maximized;
+//   sd->maximized = maximized;
    // YYY: handle if sd->img_obj
    TRAP(sd, maximized_set, maximized);
 #ifdef HAVE_ELEMENTARY_X
@@ -3627,7 +3653,7 @@ _iconified_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool iconified = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
 
-   sd->iconified = iconified;
+//   sd->iconified = iconified;
    TRAP(sd, iconified_set, iconified);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -3665,7 +3691,7 @@ _withdrawn_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool withdrawn = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
 
-   sd->withdrawn = withdrawn;
+//   sd->withdrawn = withdrawn;
    TRAP(sd, withdrawn_set, withdrawn);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -4249,7 +4275,7 @@ _sticky_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool sticky = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
 
-   sd->sticky = sticky;
+//   sd->sticky = sticky;
    TRAP(sd, sticky_set, sticky);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
