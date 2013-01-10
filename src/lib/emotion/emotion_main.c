@@ -17,26 +17,11 @@
 
 #include "emotion_private.h"
 
-#ifdef EMOTION_STATIC_BUILD_XINE
-Eina_Bool xine_module_init(void);
-void      xine_module_shutdown(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-Eina_Bool gstreamer_module_init(void);
-void      gstreamer_module_shutdown(void);
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-Eina_Bool generic_module_init(void);
-void      generic_module_shutdown(void);
-#endif
-
 static Emotion_Version _version = { VMAJ, VMIN, VMIC, VREV };
 static int emotion_pending_objects = 0;
 EAPI Emotion_Version *emotion_version = &_version;
 
-static Eina_Prefix *pfx = NULL;
-Eina_Hash *_emotion_backends = NULL;
-Eina_Array *_emotion_modules = NULL;
+Eina_Prefix *_emotion_pfx = NULL;
 int _emotion_log_domain = -1;
 
 static Eet_File *_emotion_config_file = NULL;
@@ -146,66 +131,10 @@ emotion_object_extension_may_play_get(const char *file)
 static int _emotion_init_count = 0;
 
 
-static void
-_emotion_modules_init(void)
-{
-   char buf[PATH_MAX];
-   char *path;
-
-   if (getenv("EFL_RUN_IN_TREE"))
-     {
-        struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/emotion",
-                 PACKAGE_BUILD_DIR);
-        if (stat(buf, &st) == 0)
-          {
-             const char *built_modules[] = {
-#ifdef EMOTION_BUILD_GSTREAMER
-               "gstreamer",
-#endif
-#ifdef EMOTION_BUILD_XINE
-               "xine",
-#endif
-               NULL
-             };
-             const char **itr;
-             for (itr = built_modules; *itr != NULL; itr++)
-               {
-                  snprintf(buf, sizeof(buf),
-                           "%s/src/modules/emotion/%s/.libs",
-                           PACKAGE_BUILD_DIR, *itr);
-                  _emotion_modules = eina_module_list_get(_emotion_modules, buf,
-                                                          EINA_FALSE, NULL, NULL);
-               }
-
-             return;
-          }
-     }
-
-   path = eina_module_environment_path_get("EMOTION_MODULES_DIR",
-                                           "/emotion/modules");
-   if (path)
-     {
-        _emotion_modules = eina_module_arch_list_get(_emotion_modules, path, MODULE_ARCH);
-        free(path);
-     }
-
-   path = eina_module_environment_path_get("HOME", "/.emotion");
-   if (path)
-     {
-        _emotion_modules = eina_module_arch_list_get(_emotion_modules, path, MODULE_ARCH);
-        free(path);
-     }
-
-   snprintf(buf, sizeof(buf), "%s/emotion/modules", eina_prefix_lib_get(pfx));
-   _emotion_modules = eina_module_arch_list_get(_emotion_modules, buf, MODULE_ARCH);
-}
-
 EAPI Eina_Bool
 emotion_init(void)
 {
    char buffer[PATH_MAX];
-   int static_modules = 0;
 
    if (_emotion_init_count > 0)
      {
@@ -223,68 +152,33 @@ emotion_init(void)
         return EINA_FALSE;
      }
 
-   pfx = eina_prefix_new(NULL, emotion_init,
-                         "EMOTION", "emotion", "checkme",
-                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-   EINA_SAFETY_ON_NULL_GOTO(pfx, error);
+   _emotion_pfx = eina_prefix_new(NULL, emotion_init,
+                                  "EMOTION", "emotion", "checkme",
+                                  PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                                  PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   EINA_SAFETY_ON_NULL_GOTO(_emotion_pfx, error);
 
    _emotion_backends = eina_hash_string_small_new(free);
    EINA_SAFETY_ON_NULL_GOTO(_emotion_backends, error_hash);
 
-   _emotion_modules_init();
-
-   /* Init static module */
-#ifdef EMOTION_STATIC_BUILD_XINE
-   static_modules += xine_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-   static_modules += gstreamer_module_init();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-   static_modules += generic_module_init();
-#endif
-
-   if ((!_emotion_modules) && (!static_modules))
-     WRN("No emotion modules found!");
-   else if (_emotion_modules)
-     eina_module_list_load(_emotion_modules);
-
    ecore_init();
    eet_init();
 
-   snprintf(buffer, sizeof(buffer), "%s/emotion.cfg", eina_prefix_data_get(pfx));
+   snprintf(buffer, sizeof(buffer), "%s/emotion.cfg",
+            eina_prefix_data_get(_emotion_pfx));
    _emotion_config_file = eet_open(buffer, EET_FILE_MODE_READ);
 
    emotion_webcam_init();
    emotion_webcam_config_load(_emotion_config_file);
 
+   emotion_modules_init();
+
    _emotion_init_count = 1;
    return EINA_TRUE;
 
-#ifdef EMOTION_STATIC_BUILD_XINE
-   xine_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-   gstreamer_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-   generic_module_shutdown();
-#endif
-
-   if (_emotion_modules)
-     {
-        eina_module_list_free(_emotion_modules);
-        eina_array_free(_emotion_modules);
-        _emotion_modules = NULL;
-     }
-
-   eina_hash_free(_emotion_backends);
-   _emotion_backends = NULL;
-
  error_hash:
-   eina_prefix_free(pfx);
-   pfx = NULL;
+   eina_prefix_free(_emotion_pfx);
+   _emotion_pfx = NULL;
 
  error:
    eina_log_domain_unregister(_emotion_log_domain);
@@ -306,8 +200,9 @@ emotion_shutdown(void)
      }
    if (--_emotion_init_count) return EINA_TRUE;
 
-   emotion_webcam_shutdown();
+   emotion_modules_shutdown();
 
+   emotion_webcam_shutdown();
 
    if (_emotion_config_file)
      {
@@ -328,28 +223,8 @@ emotion_shutdown(void)
    eet_shutdown();
    ecore_shutdown();
 
-#ifdef EMOTION_STATIC_BUILD_XINE
-   xine_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GSTREAMER
-   gstreamer_module_shutdown();
-#endif
-#ifdef EMOTION_STATIC_BUILD_GENERIC
-   generic_module_shutdown();
-#endif
-
-   if (_emotion_modules)
-     {
-        eina_module_list_free(_emotion_modules);
-        eina_array_free(_emotion_modules);
-        _emotion_modules = NULL;
-     }
-
-   eina_hash_free(_emotion_backends);
-   _emotion_backends = NULL;
-
-   eina_prefix_free(pfx);
-   pfx = NULL;
+   eina_prefix_free(_emotion_pfx);
+   _emotion_pfx = NULL;
 
    eina_log_domain_unregister(_emotion_log_domain);
    _emotion_log_domain = -1;

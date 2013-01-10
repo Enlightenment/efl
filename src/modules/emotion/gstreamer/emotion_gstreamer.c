@@ -24,8 +24,7 @@
 # endif
 #endif
 
-#include "Emotion.h"
-#include "emotion_private.h"
+#include "Emotion_Module.h"
 #include "emotion_gstreamer.h"
 
 Eina_Bool window_manager_video = EINA_FALSE;

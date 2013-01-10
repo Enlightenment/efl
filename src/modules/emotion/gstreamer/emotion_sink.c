@@ -22,8 +22,7 @@
 # endif
 #endif
 
-#include "Emotion.h"
-#include "emotion_private.h"
+#include "Emotion_Module.h"
 #include "emotion_gstreamer.h"
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",

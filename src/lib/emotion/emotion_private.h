@@ -1,15 +1,6 @@
 #ifndef EMOTION_PRIVATE_H
 #define EMOTION_PRIVATE_H
 
-#define META_TRACK_TITLE 1
-#define META_TRACK_ARTIST 2
-#define META_TRACK_GENRE 3
-#define META_TRACK_COMMENT 4
-#define META_TRACK_ALBUM 5
-#define META_TRACK_YEAR 6
-#define META_TRACK_DISCID 7
-#define META_TRACK_COUNT 8
-
 #include <Evas.h>
 #include <Eet.h>
 #include "Emotion.h"
@@ -18,138 +9,20 @@ Eina_Bool emotion_webcam_init(void);
 void emotion_webcam_shutdown(void);
 Eina_Bool emotion_webcam_config_load(Eet_File *ef);
 
-typedef enum _Emotion_Format Emotion_Format;
-typedef struct _Emotion_Video_Module Emotion_Video_Module;
-typedef struct _Emotion_Module_Options Emotion_Module_Options;
-typedef struct _Eina_Emotion_Plugins Eina_Emotion_Plugins;
-
-typedef Eina_Bool (*Emotion_Module_Open)(Evas_Object *, const Emotion_Video_Module **, void **, Emotion_Module_Options *);
-typedef void (*Emotion_Module_Close)(Emotion_Video_Module *module, void *);
-
-enum _Emotion_Format
-{
-   EMOTION_FORMAT_NONE,
-   EMOTION_FORMAT_I420,
-   EMOTION_FORMAT_YV12,
-   EMOTION_FORMAT_YUY2,     /* unused for now since evas does not support yuy2 format */
-   EMOTION_FORMAT_BGRA
-};
-
-struct _Emotion_Module_Options
-{
-   const char *player;
-   Eina_Bool no_video : 1;
-   Eina_Bool no_audio : 1;
-};
-
-struct _Eina_Emotion_Plugins
-{
-   Emotion_Module_Open open;
-   Emotion_Module_Close close;
-};
-
-struct _Emotion_Video_Module
-{
-   unsigned char  (*init) (Evas_Object *obj, void **video, Emotion_Module_Options *opt);
-   int            (*shutdown) (void *video);
-   unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
-   void           (*file_close) (void *ef);
-   void           (*play) (void *ef, double pos);
-   void           (*stop) (void *ef);
-   void           (*size_get) (void *ef, int *w, int *h);
-   void           (*pos_set) (void *ef, double pos);
-   double         (*len_get) (void *ef);
-   double         (*buffer_size_get) (void *ef);
-   int            (*fps_num_get) (void *ef);
-   int            (*fps_den_get) (void *ef);
-   double         (*fps_get) (void *ef);
-   double         (*pos_get) (void *ef);
-   void           (*vis_set) (void *ef, Emotion_Vis vis);
-   Emotion_Vis    (*vis_get) (void *ef);
-   Eina_Bool      (*vis_supported) (void *ef, Emotion_Vis vis);
-   double         (*ratio_get) (void *ef);
-   int            (*video_handled) (void *ef);
-   int            (*audio_handled) (void *ef);
-   int            (*seekable) (void *ef);
-   void           (*frame_done) (void *ef);
-   Emotion_Format (*format_get) (void *ef);
-   void           (*video_data_size_get) (void *ef, int *w, int *h);
-   int            (*yuv_rows_get) (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
-   int            (*bgra_data_get) (void *ef, unsigned char **bgra_data);
-   void           (*event_feed) (void *ef, int event);
-   void           (*event_mouse_button_feed) (void *ef, int button, int x, int y);
-   void           (*event_mouse_move_feed) (void *ef, int x, int y);
-   int            (*video_channel_count) (void *ef);
-   void           (*video_channel_set) (void *ef, int channel);
-   int            (*video_channel_get) (void *ef);
-   void           (*video_subtitle_file_set) (void *ef, const char *filepath);
-   const char *   (*video_subtitle_file_get) (void *ef);
-   const char *   (*video_channel_name_get) (void *ef, int channel);
-   void           (*video_channel_mute_set) (void *ef, int mute);
-   int            (*video_channel_mute_get) (void *ef);
-   int            (*audio_channel_count) (void *ef);
-   void           (*audio_channel_set) (void *ef, int channel);
-   int            (*audio_channel_get) (void *ef);
-   const char *   (*audio_channel_name_get) (void *ef, int channel);
-   void           (*audio_channel_mute_set) (void *ef, int mute);
-   int            (*audio_channel_mute_get) (void *ef);
-   void           (*audio_channel_volume_set) (void *ef, double vol);
-   double         (*audio_channel_volume_get) (void *ef);
-   int            (*spu_channel_count) (void *ef);
-   void           (*spu_channel_set) (void *ef, int channel);
-   int            (*spu_channel_get) (void *ef);
-   const char *   (*spu_channel_name_get) (void *ef, int channel);
-   void           (*spu_channel_mute_set) (void *ef, int mute);
-   int            (*spu_channel_mute_get) (void *ef);
-   int            (*chapter_count) (void *ef);
-   void           (*chapter_set) (void *ef, int chapter);
-   int            (*chapter_get) (void *ef);
-   const char *   (*chapter_name_get) (void *ef, int chapter);
-   void           (*speed_set) (void *ef, double speed);
-   double         (*speed_get) (void *ef);
-   int            (*eject) (void *ef);
-   const char *   (*meta_get) (void *ef, int meta);
-   void           (*priority_set) (void *ef, Eina_Bool priority);
-   Eina_Bool      (*priority_get) (void *ef);
-
-   Eina_Emotion_Plugins *plugin;
-};
-
-EAPI void *_emotion_video_get(const Evas_Object *obj);
-EAPI void  _emotion_frame_new(Evas_Object *obj);
-EAPI void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
-EAPI void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
-EAPI void  _emotion_frame_refill(Evas_Object *obj, double w, double h);
-EAPI void  _emotion_decode_stop(Evas_Object *obj);
-EAPI void  _emotion_open_done(Evas_Object *obj);
-EAPI void  _emotion_playback_started(Evas_Object *obj);
-EAPI void  _emotion_playback_finished(Evas_Object *obj);
-EAPI void  _emotion_audio_level_change(Evas_Object *obj);
-EAPI void  _emotion_channels_change(Evas_Object *obj);
-EAPI void  _emotion_title_set(Evas_Object *obj, char *title);
-EAPI void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
-EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
-EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
-EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
-EAPI void  _emotion_seek_done(Evas_Object *obj);
-EAPI void  _emotion_image_reset(Evas_Object *obj);
-
-EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
-EAPI Eina_Bool _emotion_module_unregister(const char *name);
-
-EAPI const char *emotion_webcam_custom_get(const char *device);
-
-EAPI void _emotion_pending_object_ref(void);
-EAPI void _emotion_pending_object_unref(void);
+Eina_Bool emotion_modules_init(void);
+void emotion_modules_shutdown(void);
 
 extern Eina_Hash *_emotion_backends;
 extern Eina_Array *_emotion_modules;
 extern int _emotion_log_domain;
+extern Eina_Prefix *_emotion_pfx;
 
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_log_domain, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_log_domain, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_log_domain, __VA_ARGS__)
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_log_domain, __VA_ARGS__)
+
+#include "Emotion_Module.h"
 
 #endif
