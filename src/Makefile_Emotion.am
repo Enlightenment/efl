@@ -194,6 +194,7 @@ $(EMOTION_COMMON_CPPFLAGS) \
 
 tests_emotion_emotion_test_LDADD = \
 $(EMOTION_COMMON_USER_LDADD) \
+lib/ecore_evas/libecore_evas.la \
 lib/edje/libedje.la
 
 tests/emotion/data/theme.edj: tests/emotion/data/theme.edc bin/edje/edje_cc
