@@ -386,7 +386,6 @@ mcheck.h \
 netinet/in.h \
 siginfo.h \
 stdint.h \
-strings.h \
 sys/epoll.h \
 sys/inotify.h \
 sys/signalfd.h \

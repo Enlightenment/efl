@@ -21,10 +21,7 @@
 # include "config.h"
 #endif
 
-
-#ifdef HAVE_STRINGS_H
-# include <strings.h>
-#endif
+#include <strings.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
