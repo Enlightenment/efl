@@ -23,10 +23,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
-
-#ifdef HAVE_SYS_TIME_H
-# include <sys/time.h>
-#endif
+#include <sys/time.h>
 
 #ifdef _MSC_VER
 # include <float.h>
@@ -238,9 +235,7 @@ static Eina_Bool win32_handlers_delete_me = EINA_FALSE;
 Ecore_Select_Function main_loop_select = _ecore_main_win32_select;
 #else
 # if !defined EXOTIC_NO_SELECT
-#  ifdef HAVE_SYS_SELECT_H
 #   include <sys/select.h>
-#  endif
 Ecore_Select_Function main_loop_select = select;
 # else
 Ecore_Select_Function main_loop_select = NULL;
