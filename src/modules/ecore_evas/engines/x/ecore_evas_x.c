@@ -2672,7 +2672,7 @@ static void
 _ecore_evas_x_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 {
    if (ee->prop.withdrawn == withdrawn) return;
-   ee->prop.withdrawn = withdrawn;
+//   ee->prop.withdrawn = withdrawn;
    _ecore_evas_x_hints_update(ee);
    if (withdrawn)
      ecore_evas_hide(ee);
@@ -2692,7 +2692,7 @@ _ecore_evas_x_sticky_set(Ecore_Evas *ee, int sticky)
     * property change event.
     * ee->prop.sticky = sticky;
     */
-   edata->state.sticky = sticky;
+//   edata->state.sticky = sticky;
    if (ee->should_be_visible)
      ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
                                       ECORE_X_WINDOW_STATE_STICKY, -1, sticky);
@@ -2762,7 +2762,7 @@ _ecore_evas_x_maximized_set(Ecore_Evas *ee, int on)
    if (ee->prop.maximized == on) return;
    edata->state.maximized_h = 1;
    edata->state.maximized_v = 1;
-   ee->prop.maximized = on;
+//   ee->prop.maximized = on;
    if (ee->should_be_visible)
      {
         ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
