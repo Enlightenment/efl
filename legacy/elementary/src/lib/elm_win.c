@@ -582,10 +582,6 @@ _elm_win_resize_job(void *data)
    if (sd->frame_obj)
      evas_object_resize(sd->frame_obj, w, h);
 
-   /* if (sd->img_obj) */
-   /*   { */
-   /*   } */
-
    evas_object_resize(sd->obj, w, h);
    EINA_LIST_FOREACH(sd->resize_objs, l, obj)
      {
