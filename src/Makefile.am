@@ -124,5 +124,5 @@ clean-local:
 	rm -rf modules/emotion/xine/*.gcno
 	rm -rf modules/emotion/gstreamer/*.gcno
 	rm -rf modules/emotion/generic/*.gcno
-	rm -rf static_libs/liblinebreak/*.gcno
+	rm -rf static_libs/libunibreak/*.gcno
 	rm -rf static_libs/lz4/*.gcno

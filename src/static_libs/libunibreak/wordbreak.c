@@ -4,7 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2011-2011 Tom Hacohen <tom@stosb.com>
+ * Copyright (C) 2012 Tom Hacohen <tom@stosb.com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -40,10 +40,9 @@
  * Implementation of the word breaking algorithm as described in Unicode
  * Standard Annex 29.
  *
- * @version	2.0, 2011/12/12
+ * @version	2.2, 2012/02/04
  * @author	Tom Hacohen
  */
-
 
 #include <assert.h>
 #include <stddef.h>
@@ -52,15 +51,16 @@
 #include "linebreakdef.h"
 
 #include "wordbreak.h"
-#include "wordbreakdata.x"
+#include "wordbreakdata.c"
 
 #define ARRAY_LEN(x) (sizeof(x) / sizeof(x[0]))
 
-/* Init the wordbreak internals. */
+/**
+ * Initializes the wordbreak internals.  It currently does nothing, but
+ * it may in the future.
+ */
 void init_wordbreak(void)
 {
-	/* Currently does nothing, may be needed in the future. */
-	return;
 }
 
 /**
@@ -68,7 +68,7 @@ void init_wordbreak(void)
  *
  * @param ch	character to check
  * @param wbp	pointer to the wbp breaking properties array
- * @param len	the size of the wbp array in number of items.
+ * @param len	size of the wbp array in number of items
  * @return		the word breaking class if found; \c WBP_Any otherwise
  */
 static enum WordBreakClass get_char_wb_class(
@@ -97,21 +97,22 @@ static enum WordBreakClass get_char_wb_class(
 }
 
 /**
- * Sets the break types in brks starting from posLast up to posStop.
+ * Sets the word break types to a specific value in a range.
  *
- * It sets the inside chars to #WORDBREAK_INSIDECHAR and the rest to brkType.
- * Assumes brks is initialized - all the cells with #WORDBREAK_NOBREAK are
+ * It sets the inside chars to #WORDBREAK_INSIDEACHAR and the rest to brkType.
+ * Assumes \a brks is initialized - all the cells with #WORDBREAK_NOBREAK are
  * cells that we really don't want to break after.
  *
- * @param s				the string
- * @param brks[out]		the breaks array to fill.
- * @param posStart		the start position
- * @param posEnd		the end position
- * @param len			the length of the string
- * @param brkType		the breaks type to use
- * @param get_next_char	function to get the next UTF-32 character
+ * @param[in]  s			input string
+ * @param[out] brks			breaks array to fill
+ * @param[in]  posStart		start position
+ * @param[in]  posEnd		end position (exclusive)
+ * @param[in]  len			length of the string
+ * @param[in]  brkType		breaks type to use
+ * @param[in] get_next_char	function to get the next UTF-32 character
  */
-static void set_brks_to(const void *s,
+static void set_brks_to(
+		const void *s,
 		char *brks,
 		size_t posStart,
 		size_t posEnd,
@@ -119,26 +120,26 @@ static void set_brks_to(const void *s,
 		char brkType,
 		get_next_char_t get_next_char)
 {
-	size_t posCur = posStart;
-	while (posCur < posEnd)
+	size_t posNext = posStart;
+	while (posNext < posEnd)
 	{
-		get_next_char(s, len, &posCur);
-		for ( ; posStart < posCur - 1; ++posStart)
-		{
-			brks[posStart] = WORDBREAK_INSIDECHAR;
-		}
-		assert(posStart == posCur - 1);
+		utf32_t ch;
+		ch = get_next_char(s, len, &posNext);
+		assert(ch != EOS);
+		for (; posStart < posNext - 1; ++posStart)
+			brks[posStart] = WORDBREAK_INSIDEACHAR;
+		assert(posStart == posNext - 1);
 
 		/* Only set it if we haven't set it not to break before. */
 		if (brks[posStart] != WORDBREAK_NOBREAK)
 			brks[posStart] = brkType;
-		posStart = posCur;
+		posStart = posNext;
 	}
 }
 
-/* Checks to see if newline, cr, or lf. for WB3a and b */
+/* Checks to see if the class is newline, CR, or LF (rules WB3a and b). */
 #define IS_WB3ab(cls) ((cls == WBP_Newline) || (cls == WBP_CR) || \
-		(cls == WBP_LF))
+					   (cls == WBP_LF))
 
 /**
  * Sets the word breaking information for a generic input string.
@@ -158,204 +159,205 @@ static void set_wordbreaks(
 		char *brks,
 		get_next_char_t get_next_char)
 {
-	/* Previous class */
-	enum WordBreakClass p_cls = WBP_Undefined;
-	/* Strong previous class. */
-	enum WordBreakClass sp_cls = WBP_Undefined;
+	enum WordBreakClass wbcLast = WBP_Undefined;
+	/* wbcSeqStart is the class that started the current sequence.
+	 * WBP_Undefined is a special case that means "sot".
+	 * This value is the class that is at the start of the current rule
+	 * matching sequence. For example, in case of Numeric+MidNum+Numeric
+	 * it'll be Numeric all the way.
+	 */
+	enum WordBreakClass wbcSeqStart = WBP_Undefined;
 	utf32_t ch;
+	size_t posNext = 0;
 	size_t posCur = 0;
-	size_t posCurSt = 0;
 	size_t posLast = 0;
 
-	/* FIXME: unused atm. */
+	/* TODO: Language-specific specialization. */
 	(void) lang;
 
-
-	/* Init brks */
+	/* Init brks. */
 	memset(brks, WORDBREAK_BREAK, len);
 
-	ch = get_next_char(s, len, &posCur);
+	ch = get_next_char(s, len, &posNext);
 
-	/* WB3a, WB3b are implied. */
-	for ( ; ch != EOS ; )
+	while (ch != EOS)
 	{
-		/* Current class */
-		enum WordBreakClass c_cls;
-		c_cls = get_char_wb_class(ch, wb_prop_default,
-				ARRAY_LEN(wb_prop_default));
+		enum WordBreakClass wbcCur;
+		wbcCur = get_char_wb_class(ch, wb_prop_default,
+								   ARRAY_LEN(wb_prop_default));
 
-		switch (c_cls)
+		switch (wbcCur)
 		{
 	    case WBP_CR:
-			set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-					get_next_char);
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			/* WB3b */
+			set_brks_to(s, brks, posLast, posCur, len,
+						WORDBREAK_BREAK, get_next_char);
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    case WBP_LF:
-			if (sp_cls == WBP_CR) /* WB3 */
+			if (wbcSeqStart == WBP_CR) /* WB3 */
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_NOBREAK,
-						get_next_char);
-				sp_cls = c_cls;
-				posLast = posCurSt;
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_NOBREAK, get_next_char);
+				wbcSeqStart = wbcCur;
+				posLast = posCur;
+				break;
 			}
-			sp_cls = c_cls;
-			posLast = posCurSt;
-			break;
+			/* Fall off */
 
 	    case WBP_Newline:
-			/* WB3a, WB3b */
-			set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-					get_next_char);
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			/* WB3a,3b */
+			set_brks_to(s, brks, posLast, posCur, len,
+						WORDBREAK_BREAK, get_next_char);
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    case WBP_Extend:
 	    case WBP_Format:
-			/* WB4 - If not the first char/after a newline (W3ab),
-			 * skip this class, set it to be the same as the prev, and mark
+			/* WB4 - If not the first char/after a newline (WB3a,3b), skip
+			 * this class, set it to be the same as the prev, and mark
 			 * brks not to break before them. */
-			if ((sp_cls == WBP_Undefined) || IS_WB3ab(sp_cls))
+			if ((wbcSeqStart == WBP_Undefined) || IS_WB3ab(wbcSeqStart))
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
-				sp_cls = c_cls;
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
+				wbcSeqStart = wbcCur;
 			}
 			else
 			{
 				/* It's surely not the first */
-				brks[posCurSt - 1] = WORDBREAK_NOBREAK;
+				brks[posCur - 1] = WORDBREAK_NOBREAK;
 				/* "inherit" the previous class. */
-				c_cls = p_cls;
+				wbcCur = wbcLast;
 			}
 			break;
 
 	    case WBP_Katakana:
-			if ((sp_cls == WBP_Katakana) || /* WB13 */
-					(sp_cls == WBP_ExtendNumLet)) /* WB13b */
+			if ((wbcSeqStart == WBP_Katakana) || /* WB13 */
+					(wbcSeqStart == WBP_ExtendNumLet)) /* WB13b */
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_NOBREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_NOBREAK, get_next_char);
 			}
 			/* No rule found, reset */
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
 			}
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    case WBP_ALetter:
-			if ((sp_cls == WBP_ALetter) || /* WB5,6,7 */
-					((sp_cls == WBP_Numeric) && (p_cls == WBP_Numeric)) || /* WB10 */
-					(sp_cls == WBP_ExtendNumLet)) /* WB13b */
+			if ((wbcSeqStart == WBP_ALetter) || /* WB5,6,7 */
+					(wbcLast == WBP_Numeric) || /* WB10 */
+					(wbcSeqStart == WBP_ExtendNumLet)) /* WB13b */
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_NOBREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_NOBREAK, get_next_char);
 			}
 			/* No rule found, reset */
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
 			}
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    case WBP_MidNumLet:
-			if ((p_cls == WBP_ALetter) || /* WBP6,7 */
-					(p_cls == WBP_Numeric)) /* WBP11,12 */
+			if ((wbcLast == WBP_ALetter) || /* WB6,7 */
+					(wbcLast == WBP_Numeric)) /* WB11,12 */
 			{
 				/* Go on */
 			}
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
-				sp_cls = c_cls;
-				posLast = posCurSt;
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
+				wbcSeqStart = wbcCur;
+				posLast = posCur;
 			}
 			break;
 
 	    case WBP_MidLetter:
-			if (p_cls == WBP_ALetter) /* WBP6,7 */
+			if (wbcLast == WBP_ALetter) /* WB6,7 */
 			{
 				/* Go on */
 			}
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
-				sp_cls = c_cls;
-				posLast = posCurSt;
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
+				wbcSeqStart = wbcCur;
+				posLast = posCur;
 			}
 			break;
 
 	    case WBP_MidNum:
-			if (p_cls == WBP_Numeric) /* WBP11,12 */
+			if (wbcLast == WBP_Numeric) /* WB11,12 */
 			{
 				/* Go on */
 			}
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
-				sp_cls = c_cls;
-				posLast = posCurSt;
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
+				wbcSeqStart = wbcCur;
+				posLast = posCur;
 			}
 			break;
 
 	    case WBP_Numeric:
-			if ((sp_cls == WBP_Numeric) || /* WB8,11,12 */
-					((sp_cls == WBP_ALetter) && (p_cls == WBP_ALetter)) || /* WB9 */
-					(sp_cls == WBP_ExtendNumLet)) /* WB13b */
+			if ((wbcSeqStart == WBP_Numeric) || /* WB8,11,12 */
+					(wbcLast == WBP_ALetter) || /* WB9 */
+					(wbcSeqStart == WBP_ExtendNumLet)) /* WB13b */
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_NOBREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_NOBREAK, get_next_char);
 			}
 			/* No rule found, reset */
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
 			}
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    case WBP_ExtendNumLet:
 			/* WB13a,13b */
-			if ((sp_cls == p_cls) &&
-				((p_cls == WBP_ALetter) ||
-				 (p_cls == WBP_Numeric) ||
-				 (p_cls == WBP_Katakana) ||
-				 (p_cls == WBP_ExtendNumLet)))
+			if ((wbcSeqStart == wbcLast) &&
+				((wbcLast == WBP_ALetter) ||
+				 (wbcLast == WBP_Numeric) ||
+				 (wbcLast == WBP_Katakana) ||
+				 (wbcLast == WBP_ExtendNumLet)))
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_NOBREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_NOBREAK, get_next_char);
 			}
 			/* No rule found, reset */
 			else
 			{
-				set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-						get_next_char);
+				set_brks_to(s, brks, posLast, posCur, len,
+							WORDBREAK_BREAK, get_next_char);
 			}
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 		 case WBP_Any:
 			/* Allow breaks and reset */
-			set_brks_to(s, brks, posLast, posCurSt, len, WORDBREAK_BREAK,
-					get_next_char);
-			sp_cls = c_cls;
-			posLast = posCurSt;
+			set_brks_to(s, brks, posLast, posCur, len,
+						WORDBREAK_BREAK, get_next_char);
+			wbcSeqStart = wbcCur;
+			posLast = posCur;
 			break;
 
 	    default:
@@ -364,14 +366,14 @@ static void set_wordbreaks(
 			break;
 		}
 
-		p_cls = c_cls;
-		posCurSt = posCur;
-		ch = get_next_char(s, len, &posCur);
+		wbcLast = wbcCur;
+		posCur = posNext;
+		ch = get_next_char(s, len, &posNext);
     }
 
 	/* WB2 */
-	set_brks_to(s, brks, posLast, posCur, len, WORDBREAK_BREAK,
-			get_next_char);
+	set_brks_to(s, brks, posLast, posNext, len,
+				WORDBREAK_BREAK, get_next_char);
 }
 
 /**

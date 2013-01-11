@@ -4,7 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2011-2011 Tom Hacohen <tom@stosb.com>
+ * Copyright (C) 2012 Tom Hacohen <tom@stosb.com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -40,7 +40,7 @@
  * Definitions of internal data structures, declarations of global
  * variables, and function prototypes for the word breaking algorithm.
  *
- * @version	2.0, 2011/12/12
+ * @version	2.1, 2012/01/18
  * @author	Tom Hacohen
  */
 
@@ -51,8 +51,6 @@
 enum WordBreakClass
 {
    WBP_Undefined,
-
-	/* The following break classes are treated in the pair table. */
    WBP_CR,
    WBP_LF,
    WBP_Newline,

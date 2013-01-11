@@ -1,3 +1,7 @@
+2013-01-11  Tom Hacohen (TAsn)
+
+	* Static libs: Updated liblinebreak to libunibreak's latest version.
+
 2013-01-11  Cedric Bail
 
 	* Fix not up to date clip cache for Evas_Object_Text.

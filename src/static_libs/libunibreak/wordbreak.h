@@ -4,7 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2011-2011 Tom Hacohen <tom@stosb.com>
+ * Copyright (C) 2012 Tom Hacohen <tom@stosb.com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -39,7 +39,7 @@
  *
  * Header file for the word breaking (segmentation) algorithm.
  *
- * @version	2.0, 2011/12/12
+ * @version	2.2, 2012/02/04
  * @author	Tom Hacohen
  */
 
@@ -47,15 +47,15 @@
 #define WORDBREAK_H
 
 #include <stddef.h>
-#include <linebreak.h>
+#include "linebreak.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define WORDBREAK_BREAK 0 /* Break found */
-#define WORDBREAK_NOBREAK 1 /**< Break not found */
-#define WORDBREAK_INSIDECHAR 2 /**< A UTF-8/16 sequence is unfinished */
+#define WORDBREAK_BREAK			0	/**< Break is allowed */
+#define WORDBREAK_NOBREAK		1	/**< No break is allowed */
+#define WORDBREAK_INSIDEACHAR	2	/**< A UTF-8/16 sequence is unfinished */
 
 void init_wordbreak(void);
 void set_wordbreaks_utf8(

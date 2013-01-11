@@ -1,20 +1,17 @@
-NOTICE: This is the original version, that was adapted a bit (mostly
-              build related) in order to work nicely with Evas.
-
-
-                        L I B L I N E B R E A K
-                        =======================
+                         L I B U N I B R E A K
+                         =====================
 
 Overview
 --------
 
-This is the README file for liblinebreak, an implementation of the line
-breaking algorithm as described in Unicode 5.2.0 Standard Annex 14,
-Revision 24, available at
-         <URL:http://www.unicode.org/reports/tr14/tr14-24.html>
+This is the README file for libunibreak, an implementation of the line
+breaking and word breaking algorithms as described in Unicode
+Standard Annex 14 and Unicode Standard Annex 30, available at
+         <URL:http://www.unicode.org/reports/tr14/tr14-30.html>
+         <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
 
 Check this URL for up-to-date information:
-         <URL:http://vimgadgets.sourceforge.net/liblinebreak/>
+             <URL:https://github.com/adah1972/libunibreak>
 
 
 Licence
@@ -49,9 +46,12 @@ There are three ways to build the library:
    - type `make doc' to generate the doxygen documentation; or
    - type `make linebreakdata' to regenerate linebreakdata.c from
      LineBreak.txt.
+   - type `make wordbreakdata' to regenerate wordbreakdata.c from
+     WordBreakProperty.txt.
 
 2) On systems where GCC and Binutils are supported, one can type
 
+     cd src
      cp -p Makefile.gcc Makefile
      make
 
@@ -62,25 +62,27 @@ There are three ways to build the library:
    - type `make doc' to generate the doxygen documentation; or
    - type `make linebreakdata' to regenerate linebreakdata.c from
      LineBreak.txt.
+   - type `make wordbreakdata' to regenerate wordbreakdata.c from
+     WordBreakProperty.txt.
 
 3) On Windows, apart from using method 1 (Cygwin/MSYS) and method 2
    (MinGW), MSVC can also be used.  Type
 
+     cd src
      nmake -f Makefile.msvc
 
    to build the static library.  By default the debug release is built.
    To build the release version
 
-     nmake -f Makefile.msvc CFG="linebreak - Win32 Release"
+     nmake -f Makefile.msvc CFG="libunibreak - Win32 Release"
 
 
 Documentation
 -------------
 
-Check the generated document doc/html/linebreak_8h.html for the public
+Check the generated document doc/html/linebreak_8h.html and
+doc/html/wordbreak_8h.html in the downloaded file for the public
 interfaces exposed to applications.
 
-
-$Id: README,v 1.6 2009/11/29 08:09:13 adah Exp $
 
 vim:autoindent:expandtab:formatoptions=tcqlmn:textwidth=72:

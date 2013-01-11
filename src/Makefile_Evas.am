@@ -19,18 +19,18 @@ lib/evas/include/evas_blend_ops.h
 # Linebreak
 
 noinst_HEADERS += \
-static_libs/liblinebreak/linebreak.h \
-static_libs/liblinebreak/linebreakdef.h \
-static_libs/liblinebreak/wordbreakdef.h \
-static_libs/liblinebreak/wordbreak.h
+static_libs/libunibreak/linebreak.h \
+static_libs/libunibreak/linebreakdef.h \
+static_libs/libunibreak/wordbreakdef.h \
+static_libs/libunibreak/wordbreak.h
 
 # Linebreak
 lib_evas_libevas_la_SOURCES = \
-static_libs/liblinebreak/linebreak.c \
-static_libs/liblinebreak/linebreakdata.c \
-static_libs/liblinebreak/linebreakdef.c \
-static_libs/liblinebreak/wordbreak.c \
-static_libs/liblinebreak/wordbreakdata.x
+static_libs/libunibreak/linebreak.c \
+static_libs/libunibreak/linebreakdata.c \
+static_libs/libunibreak/linebreakdef.c \
+static_libs/libunibreak/wordbreak.c \
+static_libs/libunibreak/wordbreakdata.c
 
 # Main
 lib_evas_libevas_la_SOURCES += \
@@ -194,7 +194,7 @@ lib_evas_libevas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/file \
--I$(top_srcdir)/src/static_libs/liblinebreak \
+-I$(top_srcdir)/src/static_libs/libunibreak \
 -I$(top_srcdir)/src/lib/evas/common \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
@@ -239,11 +239,11 @@ lib_evas_libevas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 # Linebreak
 
 EXTRA_DIST += \
-static_libs/liblinebreak/LICENCE \
-static_libs/liblinebreak/AUTHORS \
-static_libs/liblinebreak/NEWS \
-static_libs/liblinebreak/README \
-static_libs/liblinebreak/ChangeLog
+static_libs/libunibreak/LICENCE \
+static_libs/libunibreak/AUTHORS \
+static_libs/libunibreak/NEWS \
+static_libs/libunibreak/README \
+static_libs/libunibreak/ChangeLog
 
 # Engines
 
