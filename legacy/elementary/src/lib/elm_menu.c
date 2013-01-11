@@ -68,8 +68,6 @@ _item_sizing_eval(Elm_Menu_Item *item)
 
    if (!item->separator) elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(VIEW(item), &minw, &minh, minw, minh);
-
-   if (!item->separator) elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(VIEW(item), minw, minh);
    evas_object_size_hint_max_set(VIEW(item), maxw, maxh);
 }
