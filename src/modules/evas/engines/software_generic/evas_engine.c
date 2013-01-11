@@ -1950,7 +1950,8 @@ _draw_thread_font_draw(void *data)
       font->ext.x, font->ext.y, font->ext.w, font->ext.h,
       font->im_w, font->im_h);
 
-   evas_common_font_glyphs_unref(font->glyphs);
+   evas_async_events_put(font->glyphs, 0, NULL,
+     (Evas_Async_Events_Put_Cb)evas_common_font_glyphs_unref);
    eina_mempool_free(_mp_command_font, font);
 }
 

@@ -25,7 +25,6 @@ struct _Evas_Glyph_Array
 {
    Eina_Inarray *array;
    unsigned int refcount;
-   Eina_Lock lock;
 };
 
 struct _Evas_Text_Props
