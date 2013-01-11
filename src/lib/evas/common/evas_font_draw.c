@@ -225,8 +225,6 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 void
 evas_common_font_glyphs_ref(Evas_Glyph_Array *array)
 {
-   if (!array) return;
-
    eina_lock_take(&array->lock);
    array->refcount++;
    eina_lock_release(&array->lock);
@@ -235,8 +233,6 @@ evas_common_font_glyphs_ref(Evas_Glyph_Array *array)
 void
 evas_common_font_glyphs_unref(Evas_Glyph_Array *array)
 {
-   if (!array) return;
-
    eina_lock_take(&array->lock);
    if (--array->refcount)
      {
@@ -305,7 +301,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
     * reference is only used to use this from another thread, which is now
     * holding the reference.
     */
-   evas_common_font_glyphs_unref(text_props->glyphs);
+   if (text_props->glyphs) evas_common_font_glyphs_unref(text_props->glyphs);
 
    text_props->glyphs = malloc(sizeof(*text_props->glyphs));
    if (!text_props->glyphs) goto error;

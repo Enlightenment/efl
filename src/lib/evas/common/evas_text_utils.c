@@ -89,8 +89,8 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
    /* No content in this case */
    if (!props->info)
       return;
-   
-   evas_common_font_glyphs_unref(props->glyphs);
+
+   if (props->glyphs) evas_common_font_glyphs_unref(props->glyphs);
    /* After unreferencing the glyph array, a thread will still hold
     * a reference, so this can be safely set to NULL. */
    props->glyphs = NULL;
