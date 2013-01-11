@@ -50,10 +50,7 @@ typedef struct _Smart_Data Smart_Data;
 struct _Smart_Data
 {
    EINA_REFCOUNT;
-   Emotion_Video_Module  *module;
-   void                  *video_data;
-
-   char                  *module_name;
+   Emotion_Engine_Instance *engine_instance;
 
    const char    *file;
    Evas_Object   *obj;
@@ -136,12 +133,6 @@ static void _smart_clip_unset(Evas_Object * obj);
 /**********************************/
 static Evas_Smart  *smart = NULL;
 
-static const char *_backend_priority[] = {
-  "gstreamer",
-  "xine",
-  "generic"
-};
-
 static const char SIG_FRAME_DECODE[] = "frame_decode";
 static const char SIG_POSITION_UPDATE[] = "position_update";
 static const char SIG_LENGTH_CHANGE[] = "length_change";
@@ -205,28 +196,17 @@ _emotion_image_data_zero(Evas_Object *img)
 }
 
 static void
-_emotion_module_close(Emotion_Video_Module *mod, void *video)
-{
-   if (!mod) return;
-   if (mod->plugin->close && video)
-     mod->plugin->close(mod, video);
-   /* FIXME: we can't go dlclosing here as a thread still may be running from
-    * the module - this in theory will leak- but it shouldn't be too bad and
-    * mean that once a module is dlopened() it can't be closed - its refcount
-    * will just keep going up
-    */
-}
-
-static void
 _smart_data_free(Smart_Data *sd)
 {
-   if (sd->video_data) sd->module->file_close(sd->video_data);
-   _emotion_module_close(sd->module, sd->video_data);
+   if (sd->engine_instance)
+     {
+        emotion_engine_instance_file_close(sd->engine_instance);
+        emotion_engine_instance_del(sd->engine_instance);
+     }
    evas_object_del(sd->obj);
    evas_object_del(sd->crop.clipper);
    evas_object_del(sd->bg);
    eina_stringshare_del(sd->file);
-   free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
    if (sd->anim) ecore_animator_del(sd->anim);
    free(sd->progress.info);
@@ -235,60 +215,6 @@ _smart_data_free(Smart_Data *sd)
 
    /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
    emotion_shutdown();
-}
-
-static const char *
-_emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
-{
-   Eina_Emotion_Plugins *plugin;
-   Smart_Data *sd;
-   unsigned int i = 0;
-
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!_emotion_backends)
-     {
-        ERR("No backend loaded");
-        return NULL;
-     }
-
-   if (!name && getenv("EMOTION_ENGINE"))
-     {
-        name = getenv("EMOTION_ENGINE");
-        DBG("using EMOTION_ENGINE=%s", name);
-     }
-
-   /* FIXME: Always look for a working backend. */
- retry:
-   if (!name || i > 0)
-     name = _backend_priority[i++];
-
-   plugin = eina_hash_find(_emotion_backends, name);
-   DBG("try engine=%s, plugin=%p", name, plugin);
-   if (!plugin)
-     {
-	if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
-	  goto retry;
-
-	ERR("No backend loaded");
-	return EINA_FALSE;
-     }
-
-   if (plugin->open(obj, (const Emotion_Video_Module **) mod, video, &(sd->module_options)))
-     {
-        INF("opened %s, mod=%p, video=%p", name, mod, video);
-	if (*mod)
-	  {
-	     (*mod)->plugin = plugin;
-	     return name;
-	  }
-     }
-
-   if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
-     goto retry;
-
-   ERR("Unable to load module: %s", name);
-
-   return NULL;
 }
 
 static void
@@ -354,6 +280,7 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if ((!opt) || (!val)) return;
 
+   // TODO remove me
    if (!strcmp(opt, "player"))
      eina_stringshare_replace(&sd->module_options.player, val);
 }
@@ -366,10 +293,11 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
-   if ((sd->module_name) && module_filename && (!strcmp(sd->module_name, module_filename)))
-     return EINA_TRUE;
-   free(sd->module_name);
-   sd->module_name = NULL;
+   if (emotion_engine_instance_name_equal(sd->engine_instance, module_filename))
+     {
+        DBG("no need to reset engine, already set: %s", module_filename);
+        return EINA_TRUE;
+     }
 
    file = sd->file;
    sd->file = NULL;
@@ -394,20 +322,18 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    if (sd->anim) ecore_animator_del(sd->anim);
    sd->anim = NULL;
 
-   _emotion_module_close(sd->module, sd->video_data);
-   sd->module = NULL;
-   sd->video_data = NULL;
-
-   module_filename = _emotion_module_open(module_filename, obj, &sd->module, &sd->video_data);
-   if (!module_filename)
-     return EINA_FALSE;
-
-   sd->module_name = strdup(module_filename);
+   if (sd->engine_instance) emotion_engine_instance_del(sd->engine_instance);
+   sd->engine_instance = emotion_engine_instance_new(module_filename, obj, &(sd->module_options));
+   if (!sd->engine_instance)
+     {
+        sd->file = file;
+        return EINA_FALSE;
+     }
 
    if (file)
      {
-	emotion_object_file_set(obj, file);
-	eina_stringshare_del(file);
+        emotion_object_file_set(obj, file);
+        eina_stringshare_del(file);
      }
 
    return EINA_TRUE;
@@ -421,34 +347,41 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
 
    DBG("file=%s", file);
-   if (!sd->module) return EINA_FALSE;
+
+   if (!eina_stringshare_replace(&sd->file, file))
+     return EINA_TRUE;
+
+   if (!sd->engine_instance)
+     {
+        WRN("No engine choosen. Call emotion_object_init()?");
+        return EINA_FALSE;
+     }
 
    sd->video.w = 0;
    sd->video.h = 0;
-   if ((file) && (sd->file) &&
-       ((file == sd->file) || (!strcmp(file, sd->file)))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
-	eina_stringshare_replace(&sd->file, file);
-	sd->module->file_close(sd->video_data);
+        eina_stringshare_replace(&sd->file, file);
+        emotion_engine_instance_file_close(sd->engine_instance);
         evas_object_image_data_set(sd->obj, NULL);
-	evas_object_image_size_set(sd->obj, 1, 1);
+        evas_object_image_size_set(sd->obj, 1, 1);
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
-	if (!sd->module->file_open(sd->file, obj, sd->video_data))
-	  return EINA_FALSE;
-	sd->pos = 0.0;
-	if (sd->play) sd->module->play(sd->video_data, 0.0);
+        if (!emotion_engine_instance_file_open(sd->engine_instance, sd->file))
+          {
+             WRN("Couldn't open file=%s", sd->file);
+             return EINA_FALSE;
+          }
+        DBG("successfully opened file=%s", sd->file);
+        sd->pos = 0.0;
+        if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);
      }
    else
      {
-        if (sd->video_data && sd->module)
-	  {
-	     sd->module->file_close(sd->video_data);
-             evas_object_image_data_set(sd->obj, NULL);
-	     evas_object_image_size_set(sd->obj, 1, 1);
-             _emotion_image_data_zero(sd->obj);
-	  }
+        emotion_engine_instance_file_close(sd->engine_instance);
+        evas_object_image_data_set(sd->obj, NULL);
+        evas_object_image_size_set(sd->obj, 1, 1);
+        _emotion_image_data_zero(sd->obj);
         eina_stringshare_replace(&sd->file, NULL);
      }
 
@@ -690,8 +623,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("play=" FMT_UCHAR ", was=" FMT_UCHAR, play, sd->play);
    if (play == sd->play) return;
-   if (!sd->module) return;
-   if (!sd->video_data) return;
+   if (!sd->engine_instance) return;
    if (!sd->open)
      {
         sd->remember_play = play;
@@ -700,8 +632,8 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    sd->play = play;
    sd->remember_play = play;
    if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
-   if (sd->play) sd->module->play(sd->video_data, sd->pos);
-   else sd->module->stop(sd->video_data);
+   if (sd->play) emotion_engine_instance_play(sd->engine_instance, sd->pos);
+   else emotion_engine_instance_stop(sd->engine_instance);
 }
 
 EAPI Eina_Bool
@@ -710,7 +642,7 @@ emotion_object_play_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->video_data) return EINA_FALSE;
+   if (!sd->engine_instance) return EINA_FALSE;
 
    return sd->play;
 }
@@ -722,8 +654,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("sec=%f", sec);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
+   if (!sd->engine_instance) return;
    if (!sd->open)
      {
         sd->remember_jump = sec;
@@ -743,10 +674,7 @@ emotion_object_position_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
-   if (!sd->module) return 0.0;
-   if (!sd->video_data) return 0.0;
-   if (!sd->module->pos_get) return 0.0;
-   sd->pos = sd->module->pos_get(sd->video_data);
+   sd->pos = emotion_engine_instance_pos_get(sd->engine_instance);
    return sd->pos;
 }
 
@@ -756,10 +684,7 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
-   if (!sd->module) return 1.0;
-   if (!sd->video_data) return 1.0;
-   if (!sd->module->buffer_size_get) return 1.0;
-   return sd->module->buffer_size_get(sd->video_data);
+   return emotion_engine_instance_buffer_size_get(sd->engine_instance);
 }
 
 EAPI Eina_Bool
@@ -768,9 +693,7 @@ emotion_object_seekable_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->seekable(sd->video_data);
+   return emotion_engine_instance_seekable(sd->engine_instance);
 }
 
 EAPI Eina_Bool
@@ -779,9 +702,7 @@ emotion_object_video_handled_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->video_handled(sd->video_data);
+   return emotion_engine_instance_video_handled(sd->engine_instance);
 }
 
 EAPI Eina_Bool
@@ -790,9 +711,7 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->audio_handled(sd->video_data);
+   return emotion_engine_instance_audio_handled(sd->engine_instance);
 }
 
 EAPI double
@@ -801,9 +720,7 @@ emotion_object_play_length_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
-   if (!sd->module) return 0.0;
-   if (!sd->video_data) return 0.0;
-   sd->len = sd->module->len_get(sd->video_data);
+   sd->len = emotion_engine_instance_len_get(sd->engine_instance);
    return sd->len;
 }
 
@@ -843,8 +760,7 @@ emotion_object_ratio_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
-   if (!sd->module) return 0.0;
-   if (!sd->video_data) return 0.0;
+   if (!sd->engine_instance) return 0.0;
    return sd->ratio;
 }
 
@@ -857,9 +773,7 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->event_feed(sd->video_data, ev);
+   emotion_engine_instance_event_feed(sd->engine_instance, ev);
 }
 
 EAPI void
@@ -869,9 +783,7 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("vol=%f", vol);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->audio_channel_volume_set(sd->video_data, vol);
+   emotion_engine_instance_audio_channel_volume_set(sd->engine_instance, vol);
 }
 
 EAPI double
@@ -880,9 +792,7 @@ emotion_object_audio_volume_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
-   if (!sd->module) return 0.0;
-   if (!sd->video_data) return 0.0;
-   return sd->module->audio_channel_volume_get(sd->video_data);
+   return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
 }
 
 EAPI void
@@ -892,9 +802,7 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->audio_channel_mute_set(sd->video_data, mute);
+   emotion_engine_instance_audio_channel_mute_set(sd->engine_instance, mute);
 }
 
 EAPI Eina_Bool
@@ -903,9 +811,7 @@ emotion_object_audio_mute_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->audio_channel_mute_get(sd->video_data);
+   return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
 }
 
 EAPI int
@@ -914,9 +820,7 @@ emotion_object_audio_channel_count(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->audio_channel_count(sd->video_data);
+   return emotion_engine_instance_audio_channel_count(sd->engine_instance);
 }
 
 EAPI const char *
@@ -925,9 +829,7 @@ emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   if (!sd->module) return NULL;
-   if (!sd->video_data) return NULL;
-   return sd->module->audio_channel_name_get(sd->video_data, channel);
+   return emotion_engine_instance_audio_channel_name_get(sd->engine_instance, channel);
 }
 
 EAPI void
@@ -937,9 +839,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->audio_channel_set(sd->video_data, channel);
+   emotion_engine_instance_audio_channel_set(sd->engine_instance, channel);
 }
 
 EAPI int
@@ -948,9 +848,7 @@ emotion_object_audio_channel_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->audio_channel_get(sd->video_data);
+   return emotion_engine_instance_audio_channel_get(sd->engine_instance);
 }
 
 EAPI void
@@ -960,9 +858,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->video_channel_mute_set(sd->video_data, mute);
+   emotion_engine_instance_video_channel_mute_set(sd->engine_instance, mute);
 }
 
 EAPI Eina_Bool
@@ -971,9 +867,7 @@ emotion_object_video_mute_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->video_channel_mute_get(sd->video_data);
+   return emotion_engine_instance_video_channel_mute_get(sd->engine_instance);
 }
 
 EAPI void
@@ -983,9 +877,7 @@ emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("subtitle=%s", filepath);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->video_subtitle_file_set(sd->video_data, filepath);
+   emotion_engine_instance_video_subtitle_file_set(sd->engine_instance, filepath);
 }
 
 EAPI const char *
@@ -994,9 +886,7 @@ emotion_object_video_subtitle_file_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->video_subtitle_file_get(sd->video_data);
+   return emotion_engine_instance_video_subtitle_file_get(sd->engine_instance);
 }
 
 EAPI int
@@ -1005,9 +895,7 @@ emotion_object_video_channel_count(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->video_channel_count(sd->video_data);
+   return emotion_engine_instance_video_channel_count(sd->engine_instance);
 }
 
 EAPI const char *
@@ -1016,9 +904,7 @@ emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   if (!sd->module) return NULL;
-   if (!sd->video_data) return NULL;
-   return sd->module->video_channel_name_get(sd->video_data, channel);
+   return emotion_engine_instance_video_channel_name_get(sd->engine_instance, channel);
 }
 
 EAPI void
@@ -1028,9 +914,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->video_channel_set(sd->video_data, channel);
+   emotion_engine_instance_video_channel_set(sd->engine_instance, channel);
 }
 
 EAPI int
@@ -1039,9 +923,7 @@ emotion_object_video_channel_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->video_channel_get(sd->video_data);
+   return emotion_engine_instance_video_channel_get(sd->engine_instance);
 }
 
 EAPI void
@@ -1051,9 +933,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("mute=" FMT_UCHAR, mute);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->spu_channel_mute_set(sd->video_data, mute);
+   emotion_engine_instance_spu_channel_mute_set(sd->engine_instance, mute);
 }
 
 EAPI Eina_Bool
@@ -1062,9 +942,7 @@ emotion_object_spu_mute_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   return sd->module->spu_channel_mute_get(sd->video_data);
+   return emotion_engine_instance_spu_channel_mute_get(sd->engine_instance);
 }
 
 EAPI int
@@ -1073,9 +951,7 @@ emotion_object_spu_channel_count(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->spu_channel_count(sd->video_data);
+   return emotion_engine_instance_spu_channel_count(sd->engine_instance);
 }
 
 EAPI const char *
@@ -1084,9 +960,7 @@ emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   if (!sd->module) return NULL;
-   if (!sd->video_data) return NULL;
-   return sd->module->spu_channel_name_get(sd->video_data, channel);
+   return emotion_engine_instance_spu_channel_name_get(sd->engine_instance, channel);
 }
 
 EAPI void
@@ -1096,9 +970,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("channel=%d", channel);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->spu_channel_set(sd->video_data, channel);
+   emotion_engine_instance_spu_channel_set(sd->engine_instance, channel);
 }
 
 EAPI int
@@ -1107,9 +979,7 @@ emotion_object_spu_channel_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->spu_channel_get(sd->video_data);
+   return emotion_engine_instance_spu_channel_get(sd->engine_instance);
 }
 
 EAPI int
@@ -1118,9 +988,7 @@ emotion_object_chapter_count(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->chapter_count(sd->video_data);
+   return emotion_engine_instance_chapter_count(sd->engine_instance);
 }
 
 EAPI void
@@ -1130,9 +998,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("chapter=%d", chapter);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->chapter_set(sd->video_data, chapter);
+   emotion_engine_instance_chapter_set(sd->engine_instance, chapter);
 }
 
 EAPI int
@@ -1141,9 +1007,7 @@ emotion_object_chapter_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return 0;
-   if (!sd->video_data) return 0;
-   return sd->module->chapter_get(sd->video_data);
+   return emotion_engine_instance_chapter_get(sd->engine_instance);
 }
 
 EAPI const char *
@@ -1152,9 +1016,7 @@ emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   if (!sd->module) return NULL;
-   if (!sd->video_data) return NULL;
-   return sd->module->chapter_name_get(sd->video_data, chapter);
+   return emotion_engine_instance_chapter_name_get(sd->engine_instance, chapter);
 }
 
 EAPI void
@@ -1164,9 +1026,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("speed=%f", speed);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->speed_set(sd->video_data, speed);
+   emotion_engine_instance_speed_set(sd->engine_instance, speed);
 }
 
 EAPI double
@@ -1175,9 +1035,7 @@ emotion_object_play_speed_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
-   if (!sd->module) return 0.0;
-   if (!sd->video_data) return 0.0;
-   return sd->module->speed_get(sd->video_data);
+   return emotion_engine_instance_speed_get(sd->engine_instance);
 }
 
 EAPI void
@@ -1186,9 +1044,7 @@ emotion_object_eject(Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   sd->module->eject(sd->video_data);
+   emotion_engine_instance_eject(sd->engine_instance);
 }
 
 EAPI const char *
@@ -1258,30 +1114,37 @@ EAPI const char *
 emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 {
    Smart_Data *sd;
+   int id;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   if (!sd->module) return NULL;
-   if (!sd->video_data) return NULL;
    switch (meta)
      {
       case EMOTION_META_INFO_TRACK_TITLE:
-	return sd->module->meta_get(sd->video_data, META_TRACK_TITLE);
+         id = META_TRACK_TITLE;
+         break;
       case EMOTION_META_INFO_TRACK_ARTIST:
-	return sd->module->meta_get(sd->video_data, META_TRACK_ARTIST);
+         id = META_TRACK_ARTIST;
+         break;
       case EMOTION_META_INFO_TRACK_ALBUM:
-	return sd->module->meta_get(sd->video_data, META_TRACK_ALBUM);
+         id = META_TRACK_ALBUM;
+         break;
       case EMOTION_META_INFO_TRACK_YEAR:
-	return sd->module->meta_get(sd->video_data, META_TRACK_YEAR);
+         id = META_TRACK_YEAR;
+         break;
       case EMOTION_META_INFO_TRACK_GENRE:
-	return sd->module->meta_get(sd->video_data, META_TRACK_GENRE);
+         id = META_TRACK_GENRE;
+         break;
       case EMOTION_META_INFO_TRACK_COMMENT:
-	return sd->module->meta_get(sd->video_data, META_TRACK_COMMENT);
+         id = META_TRACK_COMMENT;
+         break;
       case EMOTION_META_INFO_TRACK_DISC_ID:
-	return sd->module->meta_get(sd->video_data, META_TRACK_DISCID);
+         id = META_TRACK_DISCID;
       default:
-	break;
+         ERR("Unknown meta info id: %d", meta);
+         return NULL;
      }
-   return NULL;
+
+   return emotion_engine_instance_meta_get(sd->engine_instance, id);
 }
 
 EAPI void
@@ -1291,10 +1154,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("visualization=%d", visualization);
-   if (!sd->module) return;
-   if (!sd->video_data) return;
-   if (!sd->module->vis_set) return;
-   sd->module->vis_set(sd->video_data, visualization);
+   emotion_engine_instance_vis_set(sd->engine_instance, visualization);
 }
 
 EAPI Emotion_Vis
@@ -1303,10 +1163,7 @@ emotion_object_vis_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EMOTION_VIS_NONE);
-   if (!sd->module) return EMOTION_VIS_NONE;
-   if (!sd->video_data) return EMOTION_VIS_NONE;
-   if (!sd->module->vis_get) return EMOTION_VIS_NONE;
-   return sd->module->vis_get(sd->video_data);
+   return emotion_engine_instance_vis_get(sd->engine_instance);
 }
 
 EAPI Eina_Bool
@@ -1315,10 +1172,7 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   if (!sd->module->vis_supported) return EINA_FALSE;
-   return sd->module->vis_supported(sd->video_data, visualization);
+   return emotion_engine_instance_vis_supported(sd->engine_instance, visualization);
 }
 
 EAPI void
@@ -1327,10 +1181,7 @@ emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->module) return ;
-   if (!sd->video_data) return ;
-   if (!sd->module->priority_set) return ;
-   sd->module->priority_set(sd->video_data, priority);
+   emotion_engine_instance_priority_set(sd->engine_instance, priority);
 }
 
 EAPI Eina_Bool
@@ -1339,10 +1190,7 @@ emotion_object_priority_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->module) return EINA_FALSE;
-   if (!sd->video_data) return EINA_FALSE;
-   if (!sd->module->priority_get) return EINA_FALSE;
-   return sd->module->priority_get(sd->video_data);
+   return emotion_engine_instance_priority_get(sd->engine_instance);
 }
 
 #ifdef HAVE_EIO
@@ -1524,7 +1372,7 @@ _emotion_video_get(const Evas_Object *obj)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
-   return sd->video_data;
+   return emotion_engine_instance_data_get(sd->engine_instance);
 }
 
 static Eina_Bool
@@ -1778,14 +1626,12 @@ _mouse_move(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info
 
    e = event_info;
    sd = data;
-   if (!sd->module) return;
-   if (!sd->video_data) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
    x = (((int)e->cur.canvas.x - ox) * iw) / ow;
    y = (((int)e->cur.canvas.y - oy) * ih) / oh;
-   sd->module->event_mouse_move_feed(sd->video_data, x, y);
+   emotion_engine_instance_event_mouse_move_feed(sd->engine_instance, x, y);
 }
 
 static void
@@ -1798,14 +1644,12 @@ _mouse_down(void *data, Evas *ev EINA_UNUSED, Evas_Object *obj, void *event_info
 
    e = event_info;
    sd = data;
-   if (!sd->module) return;
-   if (!sd->video_data) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
    x = (((int)e->canvas.x - ox) * iw) / ow;
    y = (((int)e->canvas.y - oy) * ih) / oh;
-   sd->module->event_mouse_button_feed(sd->video_data, 1, x, y);
+   emotion_engine_instance_event_mouse_button_feed(sd->engine_instance, 1, x, y);
 }
 
 static void
@@ -1821,7 +1665,7 @@ _pos_set_job(void *data)
    if (sd->seek)
      {
         sd->seeking = 1;
-	sd->module->pos_set(sd->video_data, sd->seek_pos);
+	emotion_engine_instance_pos_set(sd->engine_instance, sd->seek_pos);
 	sd->seek = 0;
      }
 }
@@ -1836,7 +1680,7 @@ _pixels_get(void *data, Evas_Object *obj)
    unsigned char *bgra_data;
 
    sd = data;
-   sd->module->video_data_size_get(sd->video_data, &w, &h);
+   emotion_engine_instance_video_data_size_get(sd->engine_instance, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
 
@@ -1853,7 +1697,7 @@ _pixels_get(void *data, Evas_Object *obj)
      }
    else
      {
-	format = sd->module->format_get(sd->video_data);
+	format = emotion_engine_instance_format_get(sd->engine_instance);
 	if ((format == EMOTION_FORMAT_YV12) || (format == EMOTION_FORMAT_I420))
 	  {
 	     unsigned char **rows;
@@ -1862,10 +1706,10 @@ _pixels_get(void *data, Evas_Object *obj)
 	     rows = evas_object_image_data_get(obj, 1);
 	     if (rows)
 	       {
-		  if (sd->module->yuv_rows_get(sd->video_data, iw, ih,
-					       rows,
-					       &rows[ih],
-					       &rows[ih + (ih / 2)]))
+		  if (emotion_engine_instance_yuv_rows_get(sd->engine_instance, iw, ih,
+                                                           rows,
+                                                           &rows[ih],
+                                                           &rows[ih + (ih / 2)]))
 		    evas_object_image_data_update_add(obj, 0, 0, iw, ih);
 	       }
 	     evas_object_image_data_set(obj, rows);
@@ -1874,7 +1718,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	else if (format == EMOTION_FORMAT_BGRA)
 	  {
 	     evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_ARGB8888);
-	     if (sd->module->bgra_data_get(sd->video_data, &bgra_data))
+	     if (emotion_engine_instance_bgra_data_get(sd->engine_instance, &bgra_data))
 	       {
 		  evas_object_image_data_set(obj, bgra_data);
 		  evas_object_image_pixels_dirty_set(obj, 0);

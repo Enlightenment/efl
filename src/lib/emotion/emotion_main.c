@@ -158,9 +158,6 @@ emotion_init(void)
                                   PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
    EINA_SAFETY_ON_NULL_GOTO(_emotion_pfx, error);
 
-   _emotion_backends = eina_hash_string_small_new(free);
-   EINA_SAFETY_ON_NULL_GOTO(_emotion_backends, error_hash);
-
    ecore_init();
    eet_init();
 
@@ -168,15 +165,18 @@ emotion_init(void)
             eina_prefix_data_get(_emotion_pfx));
    _emotion_config_file = eet_open(buffer, EET_FILE_MODE_READ);
 
-   emotion_webcam_init();
+   if (!emotion_webcam_init()) goto error_webcam;
    emotion_webcam_config_load(_emotion_config_file);
 
-   emotion_modules_init();
+   if (!emotion_modules_init()) goto error_modules;
 
    _emotion_init_count = 1;
    return EINA_TRUE;
 
- error_hash:
+ error_modules:
+   emotion_webcam_shutdown();
+
+ error_webcam:
    eina_prefix_free(_emotion_pfx);
    _emotion_pfx = NULL;
 
