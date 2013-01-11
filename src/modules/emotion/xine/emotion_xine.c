@@ -1533,7 +1533,7 @@ _em_get_pos_len(Emotion_Xine_Video *ev)
    pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 }
 
-static Emotion_Video_Module em_module =
+static const Emotion_Video_Module em_module =
 {
    em_init, /* init */
      em_shutdown, /* shutdown */

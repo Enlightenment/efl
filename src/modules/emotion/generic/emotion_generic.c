@@ -1700,7 +1700,7 @@ em_meta_get(void *data, int meta)
    return NULL;
 }
 
-static Emotion_Video_Module em_module =
+static const Emotion_Video_Module em_module =
 {
    em_init, /* init */
    em_shutdown, /* shutdown */

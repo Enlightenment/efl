@@ -208,7 +208,7 @@ static Eina_Bool _em_restart_stream(void *data);
 
 /* Module interface */
 
-static Emotion_Video_Module em_module =
+static const Emotion_Video_Module em_module =
 {
    em_init, /* init */
    em_shutdown, /* shutdown */
