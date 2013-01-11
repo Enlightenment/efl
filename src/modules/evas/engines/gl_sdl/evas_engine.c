@@ -830,7 +830,7 @@ eng_image_scale_hint_set(void *data EINA_UNUSED, void *image, int hint)
    if (image) evas_gl_common_image_scale_hint_set(image, hint);
 }
 
-static void
+static Eina_Bool
 eng_image_map_draw(void *data EINA_UNUSED, void *context, void *surface, void *image,  RGBA_Map *m, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
@@ -877,6 +877,8 @@ eng_image_map_draw(void *data EINA_UNUSED, void *context, void *surface, void *i
         evas_gl_common_image_map_draw(re->gl_context, image, m->count, &m->pts[0],
                                       smooth, level);
      }
+
+   return EINA_FALSE;
 }
 
 static void *

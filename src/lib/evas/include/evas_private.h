@@ -864,7 +864,7 @@ struct _Evas_Func
    int  (*image_scale_hint_get)            (void *data, void *image);
    int  (*font_last_up_to_pos)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y);
 
-   void (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
+   Eina_Bool (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
    void (*image_map_surface_free)          (void *data, void *surface);
    void (*image_map_clean)                 (void *data, RGBA_Map *m);
@@ -1052,6 +1052,10 @@ void _evas_object_textblock_rehint(Evas_Object *obj);
 void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
 
+void evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
+                                     void *data, void *context, void *surface,
+                                     void *image, RGBA_Map *m, int smooth,
+                                     int level, Eina_Bool do_async);
 void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
                                 void *data, void *context, void *surface,
                                 Evas_Font_Set *font,

@@ -1113,10 +1113,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              obj->layer->evas->engine.func->context_multiplier_unset
                (e->engine.data.output, context);
-             obj->layer->evas->engine.func->image_map_draw
-               (e->engine.data.output, context, surface,
-                   obj->map.surface, obj->spans,
-                   obj->cur.map->smooth, 0, do_async);
+             evas_draw_image_map_async_check
+               (obj, e->engine.data.output, context, surface,
+                obj->map.surface, obj->spans,
+                obj->cur.map->smooth, 0, do_async);
           }
         // FIXME: needs to cache these maps and
         // keep them only rendering updates

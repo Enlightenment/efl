@@ -1923,14 +1923,14 @@ eng_image_scale_hint_get(void *data EINA_UNUSED, void *image)
    return gim->scale_hint;
 }
 
-static void
+static Eina_Bool
 eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   if (!image) return;
+   if (!image) return EINA_FALSE;
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
@@ -1972,6 +1972,8 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
         evas_gl_common_image_map_draw(re->win->gl_context, image, m->count, 
                                       &m->pts[0], smooth, level);
      }
+
+   return EINA_FALSE;
 }
 
 static void *

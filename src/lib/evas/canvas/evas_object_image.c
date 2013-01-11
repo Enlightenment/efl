@@ -3164,6 +3164,31 @@ _draw_image(Evas_Object_Protected_Data *obj,
      }
 }
 
+void
+evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
+                                void *data, void *context, void *surface,
+                                void *image, RGBA_Map *m, int smooth, int level,
+                                Eina_Bool do_async)
+{
+   Eina_Bool async_unref;
+
+   async_unref = obj->layer->evas->engine.func->image_map_draw(data, context,
+                                                               surface, image, m,
+                                                               smooth, level,
+                                                               do_async);
+   if (do_async && async_unref)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_ref((Image_Entry *)image);
+        else
+#endif
+          evas_cache_image_ref((Image_Entry *)image);
+
+        evas_unref_queue_image_put(obj->layer->evas, image);
+     }
+}
+
 static void
 evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
@@ -3312,10 +3337,9 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
           {
              evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
 
-             obj->layer->evas->engine.func->image_map_draw
-                (output, context, surface, pixels, obj->spans,
-                 o->cur.smooth_scale | obj->cur.map->smooth, 0,
-                 do_async);
+             evas_draw_image_map_async_check(
+                 obj, output, context, surface, pixels, obj->spans,
+                 o->cur.smooth_scale | obj->cur.map->smooth, 0, do_async);
           }
         else
           {

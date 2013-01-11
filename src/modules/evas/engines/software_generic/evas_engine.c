@@ -1473,7 +1473,6 @@ _draw_thread_map_draw(void *data)
 
  free_out:
    free(m); // FIXME: allocating and destroying map do have perf impact... ref counting would be better
-   evas_async_events_put(map->image, 0, NULL, _drop_cache_ref);
    eina_mempool_free(_mp_command_map, map);
 }
 
@@ -1483,15 +1482,8 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    Evas_Thread_Command_Map *cm;
    int clip_x, clip_y, clip_w, clip_h;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cache2_image_ref((Image_Entry *)src);
-   else
-#endif
-     evas_cache_image_ref((Image_Entry *)src);
-
    cm = eina_mempool_malloc(_mp_command_map, sizeof (Evas_Thread_Command_Map));
-   if (!cm) return ;
+   if (!cm) return;
 
    cm->image = src;
    memcpy(&cm->image_ctx, dc, sizeof(*dc));
@@ -1536,7 +1528,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 }
 
 static void
-evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset, Eina_Bool do_async)
+evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
    if (m->count - offset < 3) return;
 
@@ -1569,7 +1561,7 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
           (data, context, surface, im,
            0, 0, im->cache_entry.w, im->cache_entry.h,
            dx, dy, dw, dh, smooth,
-           do_async);
+           EINA_FALSE);
      }
    else
      {
@@ -1589,17 +1581,17 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2, do_async);
+        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2);
      }
 }
 
-static void
+static Eina_Bool
 eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
    RGBA_Image *im = image;
 
-   if (!im) return;
-   if (m->count < 3) return;
+   if (!im) return EINA_FALSE;
+   if (m->count < 3) return EINA_FALSE;
 
    if (do_async)
      {
@@ -1616,16 +1608,20 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
 #endif
                evas_cache_image_load_data(&im->cache_entry);
 
-             if (!im->cache_entry.flags.loaded) return;
+             if (!im->cache_entry.flags.loaded) return EINA_FALSE;
           }
 
         evas_common_map_thread_rgba_cb(im, surface, context,
                                        m, smooth, level, 0,
                                        _map_draw_thread_cmd);
+
+        return EINA_TRUE;
      }
    else
      evas_software_image_map_draw(data, context, surface, im, m,
-                                  smooth, level, 0, do_async);
+                                  smooth, level, 0);
+
+   return EINA_FALSE;
 }
 
 static void
