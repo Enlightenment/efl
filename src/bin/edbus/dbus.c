@@ -62,30 +62,30 @@ arg_free(DBus_Arg *arg)
 DBus_Signal *
 signal_new(DBus_Interface *iface)
 {
-   DBus_Signal *signal = calloc(1, sizeof(DBus_Signal));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(signal, NULL);
-   iface->signals = eina_inlist_append(iface->signals, EINA_INLIST_GET(signal));
-   signal->iface = iface;
-   return signal;
+   DBus_Signal *sig = calloc(1, sizeof(DBus_Signal));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sig, NULL);
+   iface->signals = eina_inlist_append(iface->signals, EINA_INLIST_GET(sig));
+   sig->iface = iface;
+   return sig;
 }
 
 void
-signal_free(DBus_Signal *signal)
+signal_free(DBus_Signal *sig)
 {
    DBus_Arg *arg;
    Eina_Inlist *inlist;
 
-   EINA_INLIST_FOREACH_SAFE(signal->args, inlist, arg)
+   EINA_INLIST_FOREACH_SAFE(sig->args, inlist, arg)
      arg_free(arg);
-   signal->iface->signals = eina_inlist_remove(signal->iface->signals,
-                                               EINA_INLIST_GET(signal));
-   free(signal->c_name);
-   free(signal->struct_name);
-   free(signal->free_function);
-   free(signal->cb_name);
-   free(signal->name);
-   free(signal->signal_event);
-   free(signal);
+   sig->iface->signals = eina_inlist_remove(sig->iface->signals,
+                                               EINA_INLIST_GET(sig));
+   free(sig->c_name);
+   free(sig->struct_name);
+   free(sig->free_function);
+   free(sig->cb_name);
+   free(sig->name);
+   free(sig->signal_event);
+   free(sig);
 }
 
 DBus_Interface *
@@ -103,9 +103,9 @@ interface_free(DBus_Interface *iface)
 {
    while (iface->signals)
      {
-        DBus_Signal *signal = EINA_INLIST_CONTAINER_GET(iface->signals,
+        DBus_Signal *sig = EINA_INLIST_CONTAINER_GET(iface->signals,
                                                         DBus_Signal);
-        signal_free(signal);
+        signal_free(sig);
      }
    while (iface->methods)
      {
