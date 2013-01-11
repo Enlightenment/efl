@@ -1752,7 +1752,7 @@ AC_ARG_ENABLE([gstreamer],
    [AC_HELP_STRING([--disable-gstreamer],
                    [disable gstreamer support. @<:@default=enabled@:>@])],
    [
-    if test "x${withval}" = "xyes" ; then
+    if test "x${enableval}" = "xyes" ; then
        want_gstreamer="yes"
     else
        want_gstreamer="no"
