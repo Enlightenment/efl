@@ -366,8 +366,11 @@ elm_need_e_dbus(void)
    int (*init_func)(void) = NULL;
 
    if (_elm_need_e_dbus) return EINA_TRUE;
-   /* FIXME: Maybe we should use RTLD_NOLOAD */
-   if (!e_dbus_handle) dlopen("libedbus.so", RTLD_LAZY | RTLD_GLOBAL);
+   /* We use RTLD_NOLOAD when available, so we are sure to use the 'libedbus' that was linked to the binary */
+#ifndef RTLD_NOLOAD
+# define RTLD_NOLOAD RTLD_GLOBAL
+#endif
+   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so", RTLD_LAZY | RTLD_NOLOAD);
    if (!e_dbus_handle) return EINA_FALSE;
    init_func = dlsym(e_dbus_handle, "e_dbus_init");
    if (!init_func) return EINA_FALSE;
