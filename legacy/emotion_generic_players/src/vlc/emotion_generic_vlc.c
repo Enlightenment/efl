@@ -181,7 +181,7 @@ _send_cmd_start(struct _App *app, int cmd)
 }
 
 static void
-_send_cmd_finish(struct _App *app __UNUSED__)
+_send_cmd_finish(struct _App *app EINA_UNUSED)
 {
    pthread_mutex_unlock(&_mutex_fd);
 }
@@ -263,12 +263,12 @@ _lock(void *data, void **pixels)
 }
 
 static void
-_unlock(void *data __UNUSED__, void *id __UNUSED__, void *const *pixels __UNUSED__)
+_unlock(void *data EINA_UNUSED, void *id EINA_UNUSED, void *const *pixels EINA_UNUSED)
 {
 }
 
 static void
-_display(void *data, void *id __UNUSED__)
+_display(void *data, void *id EINA_UNUSED)
 {
    struct _App *app = data;
    if (!app->playing)
@@ -292,12 +292,12 @@ _tmp_lock(void *data, void **pixels)
 }
 
 static void
-_tmp_unlock(void *data __UNUSED__, void *id __UNUSED__, void *const *pixels __UNUSED__)
+_tmp_unlock(void *data EINA_UNUSED, void *id EINA_UNUSED, void *const *pixels EINA_UNUSED)
 {
 }
 
 static void
-_tmp_display(void *data __UNUSED__, void *id __UNUSED__)
+_tmp_display(void *data EINA_UNUSED, void *id EINA_UNUSED)
 {
 }
 
@@ -889,12 +889,12 @@ main(int argc, const char *argv[])
 
         if (fds[0].revents & (POLLERR | POLLHUP | POLLNVAL))
           {
-             ERR("error communicating with stdin", stderr);
+             ERR("error communicating with stdin");
              break;
           }
         if (fds[1].revents & (POLLERR | POLLHUP | POLLNVAL))
           {
-             ERR("error communicating with thread", stderr);
+             ERR("error communicating with thread");
              break;
           }
 

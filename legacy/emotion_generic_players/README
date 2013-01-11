@@ -1,0 +1,24 @@
+Players for Emotion using "generic" module.
+
+EMOTION GENERIC PLAYERS
+=======================
+
+Emotion support multiple modules provided as shared-objects under
+${prefix}/lib/emotion/modules, making it extensible. However these
+live in the same process as the application, thus problems handling
+the media may crash or halt the application. Unfortunately media
+handling is very error prone due multiple sources, sinks, decoders et
+al, each with their own level of stability.
+
+To solve this emotion ships with a "generic" module that will be a
+layer to talk to another process, the "player", using pipes and shared
+memory (shm). If this external process dies, the main application
+remains working (without any media, of course). Thus it is safer and
+have some nice qualities as avoiding bringing in many libraries to
+decode media, saving memory in the application process, etc.
+
+A secondary benefit is that the generic player is a separate process
+and does not link with the user application code or EFL, avoiding
+license conflicts. Many decoding libraries or elements exist in
+conflicting licenses with GPL, LGPL or even proprietary code.
+

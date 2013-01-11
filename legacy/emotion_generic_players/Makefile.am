@@ -1,0 +1,40 @@
+AUTOMAKE_OPTIONS = subdir-objects
+ACLOCAL_AMFLAGS = -I m4
+
+AM_MAKEFLAGS = --no-print-directory
+AM_CFLAGS = \
+@EFL_CFLAGS@ \
+@EMOTION_CFLAGS@
+
+AM_LDFLAGS = \
+@EFL_LDFLAGS@
+
+EXTRA_DIST = \
+README \
+AUTHORS \
+COPYING \
+m4/efl_compiler_flag.m4
+
+MAINTAINERCLEANFILES = \
+aclocal.m4 \
+compile \
+config.guess \
+config.h.in \
+config.sub \
+configure \
+depcomp \
+install-sh \
+ltmain.sh \
+Makefile.in \
+missing \
+mkinstalldirs
+
+emotiongenericplayersdir = $(EMOTION_GENERIC_PLAYERS_DIR)
+emotiongenericplayers_PROGRAMS =
+
+if HAVE_VLC
+emotiongenericplayers_PROGRAMS += src/vlc/vlc
+src_vlc_vlc_SOURCES = src/vlc/emotion_generic_vlc.c
+src_vlc_vlc_CPPFLAGS = @VLC_CFLAGS@
+src_vlc_vlc_LDADD = @VLC_LIBS@
+endif
