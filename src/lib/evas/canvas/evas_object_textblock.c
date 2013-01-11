@@ -4043,7 +4043,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                }
 
 
-             if ((wrap < len) && (wrap > line_start))
+             if ((wrap < len) && (wrap >= line_start))
                {
                   MOVE_NEXT_UNTIL(len, wrap);
                   return wrap;
@@ -4454,10 +4454,13 @@ _layout_par(Ctxt *c)
                                     item_pos as the line_start, because
                                     there's already no cut before*/
                                  wrap = -1;
+                                 adv_line = 0;
                               }
-                        }
+                         }
                        else
-                          wrap -= it->text_pos; /* Cut here */
+                         {
+                            wrap -= it->text_pos; /* Cut here */
+                         }
                     }
 
                   if (wrap > 0)

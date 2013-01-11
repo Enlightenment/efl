@@ -1,6 +1,7 @@
 2013-01-11  Tom Hacohen (TAsn)
 
 	* Static libs: Updated liblinebreak to libunibreak's latest version.
+	* Evas texblock: Fixed a bug with breaking after format items.
 
 2013-01-11  Cedric Bail
 
