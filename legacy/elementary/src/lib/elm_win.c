@@ -1873,7 +1873,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if ((maxw >= 0) && (w > maxw)) w = maxw;
    if ((maxh >= 0) && (h > maxh)) h = maxh;
    evas_object_move(obj, 0, 0);
-   evas_object_resize(obj, w + sd->fw, h + sd->fh);
+   evas_object_resize(obj, w, h);
 }
 
 static void
