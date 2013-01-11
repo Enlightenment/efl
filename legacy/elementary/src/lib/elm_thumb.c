@@ -549,6 +549,8 @@ _elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, priv);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, priv);
+#else
+   (void) priv;
 #endif
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
