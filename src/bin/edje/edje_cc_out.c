@@ -1570,6 +1570,7 @@ void
 data_write(void)
 {
    Eet_File *ef;
+   Eet_Error err;
    int image_num = 0;
    int sound_num = 0;
    int font_num = 0;
@@ -1633,7 +1634,12 @@ data_write(void)
    if (pending_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
 
-   eet_close(ef);
+   err = eet_close(ef);
+   if (err)
+     {
+        ERR("Couldn't write file: \"%s\"", file_out);
+        exit(-1);
+     }
 
    if (eina_log_domain_level_check(_edje_cc_log_dom, EINA_LOG_LEVEL_INFO))
      {
