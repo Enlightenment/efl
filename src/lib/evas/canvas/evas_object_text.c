@@ -2360,6 +2360,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
      }
    o->last_computed.w = obj->cur.geometry.w;
    o->last_computed.h = obj->cur.geometry.h;
+   evas_object_clip_dirty(eo_obj, obj);
 }
 
 static void
