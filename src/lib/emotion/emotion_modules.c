@@ -25,6 +25,7 @@ typedef struct _Emotion_Engine_Registry_Entry
 
 static Eina_List *_emotion_engine_registry = NULL;
 static Eina_Array *_emotion_modules = NULL;
+static Eina_Bool _emotion_modules_loaded = EINA_FALSE;
 
 static void
 _emotion_engine_registry_entry_free(Emotion_Engine_Registry_Entry *re)
@@ -49,7 +50,7 @@ _emotion_engine_registry_entry_cmp(const void *pa, const void *pb)
 }
 
 static void
-_emotion_modules_load(void)
+_emotion_modules_find(void)
 {
    char buf[PATH_MAX];
    char *path;
@@ -103,12 +104,25 @@ _emotion_modules_load(void)
    _emotion_modules = eina_module_arch_list_get(_emotion_modules, buf, MODULE_ARCH);
 }
 
+static void
+_emotion_modules_load(void)
+{
+   if (_emotion_modules_loaded) return;
+   _emotion_modules_loaded = EINA_TRUE;
+
+   if (_emotion_modules)
+     eina_module_list_load(_emotion_modules);
+
+   if (!_emotion_engine_registry)
+     ERR("Couldn't find any emotion engine.");
+}
+
 Eina_Bool
 emotion_modules_init(void)
 {
    int static_modules = 0;
 
-   _emotion_modules_load();
+   _emotion_modules_find();
 
    /* Init static module */
 #ifdef EMOTION_STATIC_BUILD_XINE
@@ -123,11 +137,6 @@ emotion_modules_init(void)
 
    if ((!_emotion_modules) && (!static_modules))
      WRN("No emotion modules found!");
-   else if (_emotion_modules)
-     eina_module_list_load(_emotion_modules);
-
-   if (!_emotion_engine_registry)
-     ERR("Couldn't find any emotion engine.");
 
    return EINA_TRUE;
 }
@@ -156,6 +165,8 @@ emotion_modules_shutdown(void)
         eina_array_free(_emotion_modules);
         _emotion_modules = NULL;
      }
+
+   _emotion_modules_loaded = EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -295,6 +306,8 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
    const Emotion_Engine_Registry_Entry *re;
    const Emotion_Engine *engine;
    void *data;
+
+   _emotion_modules_load();
 
    if ((!name) && getenv("EMOTION_ENGINE"))
      {
