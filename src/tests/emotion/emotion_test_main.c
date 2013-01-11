@@ -109,7 +109,6 @@ theme_get(void)
         is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj", &st) == 0);
      }
 
-   printf("\nis_local=%d %s\n\n", is_local, PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj");
    if (is_local)
      return PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj";
    else
