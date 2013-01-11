@@ -244,6 +244,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    RGBA_Font_Glyph *fg;
    Eina_Inarray *glyphs;
    size_t unit = 32;
+   Eina_Bool reused_glyphs;
    EVAS_FONT_WALK_TEXT_INIT();
 
    fi = text_props->font_instance;
@@ -253,7 +254,17 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
      return;
 
    if (text_props->len < unit) unit = text_props->len;
-   glyphs = eina_inarray_new(sizeof(Evas_Glyph), unit);
+   if (text_props->glyphs && text_props->glyphs->refcount == 1)
+     {
+        glyphs = text_props->glyphs->array;
+        glyphs->len = 0;
+        reused_glyphs = EINA_TRUE;
+     }
+   else
+     {
+        glyphs = eina_inarray_new(sizeof(Evas_Glyph), unit);
+        reused_glyphs = EINA_FALSE;
+     }
    evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
@@ -286,18 +297,21 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
      }
    EVAS_FONT_WALK_TEXT_END();
 
-   /*
-    * Clearing the reference to the glyph array is fine, since this
-    * reference is only used to use this from another thread, which is now
-    * holding the reference.
-    */
-   if (text_props->glyphs)
-     evas_common_font_glyphs_unref(text_props->glyphs);
+   if (!reused_glyphs)
+     {
+        /*
+         * Clearing the reference to the glyph array is fine, since this
+         * reference is only used to use this from another thread, which is now
+         * holding the reference.
+         */
+        if (text_props->glyphs)
+          evas_common_font_glyphs_unref(text_props->glyphs);
 
-   text_props->glyphs = malloc(sizeof(*text_props->glyphs));
-   if (!text_props->glyphs) goto error;
-   text_props->glyphs->refcount = 1;
-   text_props->glyphs->array = glyphs;
+        text_props->glyphs = malloc(sizeof(*text_props->glyphs));
+        if (!text_props->glyphs) goto error;
+        text_props->glyphs->refcount = 1;
+        text_props->glyphs->array = glyphs;
+     }
 
    /* check if there's a request queue in fi, if so ask cserve2 to render
     * those glyphs
