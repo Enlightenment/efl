@@ -10,63 +10,7 @@
 #include "emotion_xine.h"
 
 int _emotion_xine_log_domain = -1;
-
-/* module api */
-static unsigned char  em_init                    (Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt);
-static int            em_shutdown                (void *ef);
-static unsigned char  em_file_open               (const char *file, Evas_Object *obj, void *ef);
-static void           em_file_close              (void *ef);
-static void           em_play                    (void *ef, double pos);
-static void           em_stop                    (void *ef);
-static void           em_size_get                (void *ef, int *w, int *h);
-static void           em_pos_set                 (void *ef, double pos);
-static double         em_buffer_size_get         (void *ef);
-static double         em_len_get                 (void *ef);
-static int            em_fps_num_get             (void *ef);
-static int            em_fps_den_get             (void *ef);
-static double         em_fps_get                 (void *ef);
-static double         em_pos_get                 (void *ef);
-static void           em_vis_set                 (void *ef, Emotion_Vis vis);
-static Emotion_Vis    em_vis_get                 (void *ef);
-static Eina_Bool      em_vis_supported           (void *ef, Emotion_Vis vis);
-static double         em_ratio_get               (void *ef);
-static int            em_seekable                (void *ef);
-static void           em_frame_done              (void *ef);
-static Emotion_Format em_format_get              (void *ef);
-static void           em_video_data_size_get     (void *ef, int *w, int *h);
-static int            em_yuv_rows_get            (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
-static int            em_bgra_data_get           (void *ef, unsigned char **bgra_data);
-static void           em_event_feed              (void *ef, int event);
-static void           em_event_mouse_button_feed (void *ef, int button, int x, int y);
-static void           em_event_mouse_move_feed   (void *ef, int x, int y);
-static int            em_video_channel_count     (void *ef);
-static void           em_video_channel_set       (void *ef, int channel);
-static int            em_video_channel_get       (void *ef);
-static const char    *em_video_channel_name_get  (void *ef, int channel);
-static void           em_video_channel_mute_set  (void *ef, int mute);
-static int            em_video_channel_mute_get  (void *ef);
-static int            em_audio_channel_count     (void *ef);
-static void           em_audio_channel_set       (void *ef, int channel);
-static int            em_audio_channel_get       (void *ef);
-static const char    *em_audio_channel_name_get  (void *ef, int channel);
-static void           em_audio_channel_mute_set  (void *ef, int mute);
-static int            em_audio_channel_mute_get  (void *ef);
-static void           em_audio_channel_volume_set(void *ef, double vol);
-static double         em_audio_channel_volume_get(void *ef);
-static int            em_spu_channel_count       (void *ef);
-static void           em_spu_channel_set         (void *ef, int channel);
-static int            em_spu_channel_get         (void *ef);
-static const char    *em_spu_channel_name_get    (void *ef, int channel);
-static void           em_spu_channel_mute_set    (void *ef, int mute);
-static int            em_spu_channel_mute_get    (void *ef);
-static int            em_chapter_count           (void *ef);
-static void           em_chapter_set             (void *ef, int chapter);
-static int            em_chapter_get             (void *ef);
-static const char    *em_chapter_name_get        (void *ef, int chapter);
-static void           em_speed_set               (void *ef, double speed);
-static double         em_speed_get               (void *ef);
-static int            em_eject                   (void *ef);
-static const char    *em_meta_get                (void *ef, int meta);
+static int _emotion_init_count = 0;
 
 /* internal util calls */
 static void *_em_slave         (void *par);
@@ -80,6 +24,8 @@ static void *_em_get_pos_len_th(void *par);
 static void  _em_get_pos_len   (Emotion_Xine_Video *ev);
 
 extern plugin_info_t emotion_xine_plugin_info[];
+
+static void em_frame_done(void *ef);
 
 /* this is a slave controller thread for the xine module - libxine loves
  * to deadlock, internally stall and otherwise have unpredictable behavior
@@ -369,18 +315,18 @@ _em_slave_event(void *data, int type, void *arg)
    if (write(ev->fd_slave_write, buf, sizeof(buf)) < 0) perror("write");
 }
 
-static unsigned char
-em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
+static void *
+em_add(const Emotion_Engine *api EINA_UNUSED,
+       Evas_Object *obj,
+       const Emotion_Module_Options *opt)
 {
    Emotion_Xine_Video *ev;
    int fds[2];
-   
-   if (!emotion_video) return 0;
-   
+
    ev = calloc(1, sizeof(Emotion_Xine_Video));
-   if (!ev) return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
    ev->obj = obj;
-   
+
    if (pipe(fds) == 0)
      {
 	ev->fd_read = fds[0];
@@ -427,17 +373,15 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    _em_slave_event(ev, 1, NULL);
 
    ev->buffer = 1.0;
-   
-   *emotion_video = ev;
-   return 1;
+
+   return ev;
 }
 
-static int
-em_shutdown(void *ef)
+static void
+em_del(void *ef)
 {
-   Emotion_Xine_Video *ev;
-   
-   ev = (Emotion_Xine_Video *)ef;
+   Emotion_Xine_Video *ev = ef;
+
    ev->closing = 1;
    ev->delete_me = 1;
    DBG("del fds %p", ev);
@@ -450,22 +394,18 @@ em_shutdown(void *ef)
         ecore_animator_del(ev->anim);
         ev->anim = NULL;
      }
-   
+
    ev->closing = 1;
    _em_slave_event(ev, 3, NULL);
    DBG("done %p", ev);
-   return 1;
 }
 
-static unsigned char
-em_file_open(const char *file, Evas_Object *obj EINA_UNUSED, void *ef)
+static Eina_Bool
+em_file_open(void *ef, const char *file)
 {
-   Emotion_Xine_Video *ev;
-
-   ev = (Emotion_Xine_Video *)ef;
-   if (!ev) return 0;
+   Emotion_Xine_Video *ev = ef;
    _em_slave_event(ev, 2, strdup(file));
-   return 1;
+   return EINA_TRUE;
 }
 
 static void
@@ -1533,8 +1473,13 @@ _em_get_pos_len(Emotion_Xine_Video *ev)
    pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 }
 
-static const Emotion_Video_Module em_module =
+static const Emotion_Engine em_engine =
 {
+     EMOTION_ENGINE_API_VERSION,
+     EMOTION_ENGINE_PRIORITY_DEFAULT,
+     "xine",
+     em_add, /* add */
+     em_del, /* del */
      em_file_open, /* file_open */
      em_file_close, /* file_close */
      em_play, /* play */
@@ -1596,48 +1541,56 @@ static const Emotion_Video_Module em_module =
      NULL /* priority_get */
 };
 
-static Eina_Bool
-module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
-{
-   if (!module)
-      return EINA_FALSE;
-
-   if (_emotion_xine_log_domain < 0)
-     {
-        eina_threads_init();
-        eina_log_threads_enable();
-        _emotion_xine_log_domain = eina_log_domain_register
-          ("emotion-xine", EINA_COLOR_LIGHTCYAN);
-        if (_emotion_xine_log_domain < 0)
-          {
-             EINA_LOG_CRIT("Could not register log domain 'emotion-xine'");
-             return EINA_FALSE;
-          }
-     }
-
-   if (!em_init(obj, video, opt))
-      return EINA_FALSE;
-
-   *module = &em_module;
-   return EINA_TRUE;
-}
-
-static void
-module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
-{
-   em_shutdown(video);
-}
-
 Eina_Bool
 xine_module_init(void)
 {
-   return _emotion_module_register("xine", module_open, module_close);
+   if (_emotion_init_count > 0)
+     {
+        _emotion_init_count++;
+        return EINA_TRUE;
+     }
+
+   eina_threads_init();
+   eina_log_threads_enable();
+   _emotion_xine_log_domain = eina_log_domain_register
+     ("emotion-xine", EINA_COLOR_LIGHTCYAN);
+   if (_emotion_xine_log_domain < 0)
+     {
+        EINA_LOG_CRIT("Could not register log domain 'emotion-xine'");
+        return EINA_FALSE;
+     }
+
+   if (!_emotion_module_register(&em_engine))
+     {
+        CRITICAL("Could not register module %p", &em_engine);
+        eina_log_domain_unregister(_emotion_xine_log_domain);
+        _emotion_xine_log_domain = -1;
+        return EINA_FALSE;
+     }
+
+   _emotion_init_count = 1;
+   return EINA_TRUE;
 }
 
 void
 xine_module_shutdown(void)
 {
-   _emotion_module_unregister("xine");
+   if (_emotion_init_count > 1)
+     {
+        _emotion_init_count--;
+        return;
+     }
+   else if (_emotion_init_count == 0)
+     {
+        EINA_LOG_ERR("too many xine_module_shutdown()");
+        return;
+     }
+   _emotion_init_count = 0;
+
+   _emotion_module_unregister(&em_engine);
+
+   eina_log_domain_unregister(_emotion_xine_log_domain);
+   _emotion_xine_log_domain = -1;
 }
 
 #ifndef EMOTION_STATIC_BUILD_XINE

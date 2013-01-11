@@ -17,8 +17,36 @@ Eina_Bool generic_module_init(void);
 void      generic_module_shutdown(void);
 #endif
 
-static Eina_Hash *_emotion_backends = NULL;
+typedef struct _Emotion_Engine_Registry_Entry
+{
+   const Emotion_Engine *engine;
+   int priority;
+} Emotion_Engine_Registry_Entry;
+
+static Eina_List *_emotion_engine_registry = NULL;
 static Eina_Array *_emotion_modules = NULL;
+
+static void
+_emotion_engine_registry_entry_free(Emotion_Engine_Registry_Entry *re)
+{
+   free(re);
+}
+
+static int
+_emotion_engine_registry_entry_cmp(const void *pa, const void *pb)
+{
+   const Emotion_Engine_Registry_Entry *a = pa, *b = pb;
+   int r = a->priority - b->priority;
+
+   if (r == 0)
+     r = a->engine->priority - b->engine->priority;
+
+   if (r == 0)
+     /* guarantee some order to ease debug */
+     r = strcmp(a->engine->name, b->engine->name);
+
+   return r;
+}
 
 static void
 _emotion_modules_load(void)
@@ -80,9 +108,6 @@ emotion_modules_init(void)
 {
    int static_modules = 0;
 
-   _emotion_backends = eina_hash_string_small_new(free);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_emotion_backends, EINA_FALSE);
-
    _emotion_modules_load();
 
    /* Init static module */
@@ -101,12 +126,20 @@ emotion_modules_init(void)
    else if (_emotion_modules)
      eina_module_list_load(_emotion_modules);
 
+   if (!_emotion_engine_registry)
+     ERR("Couldn't find any emotion engine.");
+
    return EINA_TRUE;
 }
 
 void
 emotion_modules_shutdown(void)
 {
+   Emotion_Engine_Registry_Entry *re;
+
+   EINA_LIST_FREE(_emotion_engine_registry, re)
+     _emotion_engine_registry_entry_free(re);
+
 #ifdef EMOTION_STATIC_BUILD_XINE
    xine_module_shutdown();
 #endif
@@ -123,39 +156,74 @@ emotion_modules_shutdown(void)
         eina_array_free(_emotion_modules);
         _emotion_modules = NULL;
      }
-
-   eina_hash_free(_emotion_backends);
-   _emotion_backends = NULL;
 }
 
 EAPI Eina_Bool
-_emotion_module_register(const char *name, Emotion_Module_Open mod_open, Emotion_Module_Close mod_close)
+_emotion_module_register(const Emotion_Engine *api)
 {
-   Eina_Emotion_Plugins *plugin;
+   Emotion_Engine_Registry_Entry *re;
 
-   plugin = malloc(sizeof (Eina_Emotion_Plugins));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(api, EINA_FALSE);
 
-   plugin->open = mod_open;
-   plugin->close = mod_close;
+   if (api->version != EMOTION_ENGINE_API_VERSION)
+     {
+        ERR("Module '%p' uses api version=%u while %u was expected",
+            api, api->version, EMOTION_ENGINE_API_VERSION);
+        return EINA_FALSE;
+     }
 
-   INF("register module=%s, open=%p, close=%p", name, mod_open, mod_close);
-   return eina_hash_add(_emotion_backends, name, plugin);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(api->name, EINA_FALSE);
+
+   INF("register name=%s, version=%u, priority=%d, api=%p",
+       api->name, api->version, api->priority, api);
+
+   re = calloc(1, sizeof(Emotion_Engine_Registry_Entry));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(re, EINA_FALSE);
+
+   re->engine = api;
+   re->priority = api->priority; // TODO: use user-priority from file as weel.
+
+   _emotion_engine_registry = eina_list_sorted_insert
+     (_emotion_engine_registry, _emotion_engine_registry_entry_cmp, re);
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-_emotion_module_unregister(const char *name)
+_emotion_module_unregister(const Emotion_Engine *api)
 {
-   INF("unregister module=%s", name);
-   return eina_hash_del_by_key(_emotion_backends, name);
+   Eina_List *n;
+   Emotion_Engine_Registry_Entry *re;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(api, EINA_FALSE);
+   if (api->version != EMOTION_ENGINE_API_VERSION)
+     {
+        ERR("Module '%p' uses api version=%u while %u was expected",
+            api, api->version, EMOTION_ENGINE_API_VERSION);
+        return EINA_FALSE;
+     }
+
+   INF("unregister name=%s, api=%p", api->name, api);
+
+   EINA_LIST_FOREACH(_emotion_engine_registry, n, re)
+     {
+        if (re->engine == api)
+          {
+             _emotion_engine_registry_entry_free(re);
+             _emotion_engine_registry = eina_list_remove_list
+               (_emotion_engine_registry, n);
+             return EINA_TRUE;
+          }
+     }
+
+   ERR("module not registered name=%s, api=%p", api->name, api);
+   return EINA_FALSE;
 }
 
 struct _Emotion_Engine_Instance
 {
-   Eina_Emotion_Plugins *plugin;
-   Emotion_Video_Module *api;
+   const Emotion_Engine *api;
    Evas_Object *obj;
-   char *name;
    void *data;
 };
 
@@ -192,66 +260,81 @@ struct _Emotion_Engine_Instance
   while (0)
 
 
-static const char *_backend_priority[] = {
-  "gstreamer",
-  "xine",
-  "generic"
-};
+static const Emotion_Engine *
+_emotion_engine_registry_find(const char *name)
+{
+   const Eina_List *n;
+   const Emotion_Engine_Registry_Entry *re;
+   EINA_LIST_FOREACH(_emotion_engine_registry, n, re)
+     {
+        if (strcmp(re->engine->name, name) == 0)
+          return re->engine;
+     }
+   return NULL;
+}
+
+static Emotion_Engine_Instance *
+_emotion_engine_instance_new(const Emotion_Engine *engine, Evas_Object *obj, void *data)
+{
+   Emotion_Engine_Instance *inst = calloc(1, sizeof(Emotion_Engine_Instance));
+   EINA_SAFETY_ON_NULL_GOTO(inst, error);
+   inst->api = engine;
+   inst->obj = obj;
+   inst->data = data;
+   return inst;
+
+ error:
+   engine->del(data);
+   return NULL;
+}
 
 Emotion_Engine_Instance *
 emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_Options *opts)
 {
-   // TODO: rewrite
-   Eina_Emotion_Plugins *plugin;
-   unsigned int i = 0;
-   Emotion_Video_Module *mod = NULL;
-   void *data = NULL;
+   const Eina_List *n;
+   const Emotion_Engine_Registry_Entry *re;
+   const Emotion_Engine *engine;
+   void *data;
 
-   if (!_emotion_backends)
-     {
-        ERR("No backend loaded");
-        return NULL;
-     }
-
-   if (!name && getenv("EMOTION_ENGINE"))
+   if ((!name) && getenv("EMOTION_ENGINE"))
      {
         name = getenv("EMOTION_ENGINE");
         DBG("using EMOTION_ENGINE=%s", name);
      }
 
-   /* FIXME: Always look for a working backend. */
- retry:
-   if (!name || i > 0)
-     name = _backend_priority[i++];
-
-   plugin = eina_hash_find(_emotion_backends, name);
-   DBG("try engine=%s, plugin=%p", name, plugin);
-   if (!plugin)
+   if (name)
      {
-        if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
-          goto retry;
+        engine = _emotion_engine_registry_find(name);
+        if (!engine)
+          ERR("Couldn't find requested engine: %s. Try fallback", name);
+        else
+          {
+             data = engine->add(engine, obj, opts);
+             if (data)
+               {
+                  INF("Using requested engine %s, data=%p", name, data);
+                  return _emotion_engine_instance_new(engine, obj, data);
+               }
 
-        ERR("No backend loaded");
-        return NULL;
+             ERR("Requested engine '%s' could not be used. Try fallback", name);
+          }
      }
 
-   if (plugin->open(obj, (const Emotion_Video_Module **) &mod, &data, opts))
+   EINA_LIST_FOREACH(_emotion_engine_registry, n, re)
      {
-        Emotion_Engine_Instance *inst = calloc(1, sizeof(Emotion_Engine_Instance));
-        INF("opened %s, mod=%p, video=%p", name, mod, data);
-        inst->plugin = plugin;
-        inst->api = mod;
-        inst->obj = obj;
-        inst->data = data;
-        inst->name = strdup(name);
-        return inst;
+        engine = re->engine;
+        DBG("Trying engine %s, priority=%d (%d)",
+            engine->name, re->priority, engine->priority);
+
+        data = engine->add(engine, obj, opts);
+        if (data)
+          {
+             INF("Using fallback engine %s, data=%p", engine->name, data);
+             return _emotion_engine_instance_new(engine, obj, data);
+          }
      }
 
-   if (i != 0 && i < (sizeof (_backend_priority) / sizeof (char*)))
-     goto retry;
-
-   ERR("Unable to load module: %s", name);
-
+   ERR("No engine worked");
    return NULL;
 }
 
@@ -259,7 +342,7 @@ void
 emotion_engine_instance_del(Emotion_Engine_Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN(inst);
-   inst->plugin->close(inst->api, inst->data); // TODO: weird api
+   inst->api->del(inst->data);
 }
 
 Eina_Bool
@@ -268,7 +351,7 @@ emotion_engine_instance_name_equal(const Emotion_Engine_Instance *inst, const ch
    /* these are valid, no safety macros here */
    if (!name) return EINA_FALSE;
    if (!inst) return EINA_FALSE;
-   return strcmp(name, inst->name) == 0;
+   return strcmp(name, inst->api->name) == 0;
 }
 
 void *
@@ -278,11 +361,11 @@ emotion_engine_instance_data_get(const Emotion_Engine_Instance *inst)
    return inst->data;
 }
 
-unsigned char
+Eina_Bool
 emotion_engine_instance_file_open(Emotion_Engine_Instance *inst, const char *file)
 {
    EMOTION_ENGINE_INSTANCE_CHECK(inst, file_open, EINA_FALSE);
-   return inst->api->file_open(file, inst->obj, inst->data); // TODO: weird api
+   return inst->api->file_open(inst->data, file);
 }
 
 void

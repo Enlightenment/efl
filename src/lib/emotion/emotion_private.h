@@ -30,7 +30,7 @@ void                     emotion_engine_instance_del(Emotion_Engine_Instance *in
 Eina_Bool                emotion_engine_instance_name_equal(const Emotion_Engine_Instance *inst, const char *name);
 void                    *emotion_engine_instance_data_get(const Emotion_Engine_Instance *inst);
 
-unsigned char  emotion_engine_instance_file_open(Emotion_Engine_Instance *inst, const char *file);
+Eina_Bool      emotion_engine_instance_file_open(Emotion_Engine_Instance *inst, const char *file);
 void           emotion_engine_instance_file_close(Emotion_Engine_Instance *inst);
 void           emotion_engine_instance_play(Emotion_Engine_Instance *inst, double pos);
 void           emotion_engine_instance_stop(Emotion_Engine_Instance *inst);

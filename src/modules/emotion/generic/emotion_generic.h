@@ -58,10 +58,16 @@ struct _Emotion_Generic_Cmd_Buffer
    } param;
 };
 
+typedef struct _Emotion_Engine_Generic
+{
+   Emotion_Engine engine;
+   char *path;
+} Emotion_Engine_Generic;
+
 /* emotion/generic main structure */
 struct _Emotion_Generic_Video
 {
-   const char		     *cmdline;
+   const Emotion_Engine_Generic *engine;
    const char		     *shmname;
 
    Emotion_Generic_Player    player;

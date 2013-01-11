@@ -848,7 +848,7 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
    if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
    if (ev->in == ev->out && ev->delete_me)
-     em_shutdown(ev);
+     ev->api->del(ev);
 }
 
 static void
@@ -867,7 +867,7 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
    if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
 
    if (ev->in == ev->out && ev->delete_me)
-     em_shutdown(ev);
+     ev->api->del(ev);
    else
      _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
 }

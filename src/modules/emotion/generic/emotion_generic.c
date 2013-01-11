@@ -18,6 +18,8 @@
 #include "emotion_generic.h"
 
 static Eina_Prefix *pfx = NULL;
+static Eina_List *_generic_players = NULL;
+static int _emotion_init_count = 0;
 
 static int _emotion_generic_log_domain = -1;
 #ifdef DBG
@@ -46,18 +48,6 @@ static int _emotion_generic_log_domain = -1;
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
 
 
-struct _default_players {
-   const char *name;
-   const char *cmdline;
-};
-
-static struct _default_players players[] = {
-#ifdef EMOTION_BUILD_GENERIC_VLC
-       { "vlc", "em_generic_vlc" },
-#endif
-       { NULL, NULL }
-};
-
 static Eina_Bool _fork_and_exec(Emotion_Generic_Video *ev);
 static void em_partial_shutdown(Emotion_Generic_Video *ev);
 
@@ -69,65 +59,6 @@ _player_restart(void *data)
    _fork_and_exec(ev);
    ev->player_restart = NULL;
    return EINA_FALSE;
-}
-
-static const char *
-_get_player(const char *name)
-{
-   const char *selected_name = NULL;
-   const char *libdir = eina_prefix_lib_get(pfx);
-   static char buf[PATH_MAX];
-   int i;
-
-   if (name)
-     {
-        for (i = 0; players[i].name; i++)
-          {
-             if (!strcmp(players[i].name, name))
-               {
-                  selected_name = players[i].cmdline;
-                  break;
-               }
-          }
-     }
-
-   if ((!selected_name) && (name))
-     selected_name = name;
-
-   if (selected_name)
-     {
-        const char *cmd;
-
-        if (selected_name[0] == '/') cmd = selected_name;
-        else
-          {
-             snprintf(buf, sizeof(buf), "%s/emotion/utils/" MODULE_ARCH "/%s",
-                      libdir, selected_name);
-             cmd = buf;
-          }
-
-        DBG("Try generic player '%s'", cmd);
-        if (access(cmd, R_OK | X_OK) == 0)
-          {
-             INF("Using generic player '%s'", cmd);
-             return cmd;
-          }
-     }
-
-   for (i = 0; players[i].name; i++)
-     {
-        snprintf(buf, sizeof(buf), "%s/emotion/utils/" MODULE_ARCH "/%s",
-                 libdir, players[i].cmdline);
-        DBG("Try generic player '%s'", buf);
-        if (access(buf, R_OK | X_OK) == 0)
-          {
-             INF("Using fallback player '%s'", buf);
-             return buf;
-          }
-     }
-
-   ERR("no generic player found, given name='%s'", name ? name : "");
-   return NULL;
 }
 
 static void
@@ -966,7 +897,7 @@ _player_exec(Emotion_Generic_Video *ev)
 	return EINA_FALSE;
      }
 
-   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->cmdline, pipe_out[0], pipe_in[1]);
+   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->engine->path, pipe_out[0], pipe_in[1]);
 
    ev->player.exe = ecore_exe_pipe_run(
       buf,
@@ -1027,18 +958,13 @@ _fork_and_exec(Emotion_Generic_Video *ev)
    return EINA_TRUE;
 }
 
-static unsigned char
-em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
+static void *
+em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options *opt EINA_UNUSED)
 {
    Emotion_Generic_Video *ev;
-   const char *player;
 
-   if (!emotion_video) return 0;
-   player = _get_player(opt ? opt->player : NULL);
-   if (!player) return 0;
-
-   ev = (Emotion_Generic_Video *)calloc(1, sizeof(*ev));
-   if (!ev) return 0;
+   ev = calloc(1, sizeof(*ev));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
 
    ev->fd_read = -1;
    ev->fd_write = -1;
@@ -1048,10 +974,15 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->cmd.type = -1;
 
    ev->obj = obj;
-   ev->cmdline = eina_stringshare_add(player);
-   *emotion_video = ev;
+   ev->engine = (Emotion_Engine_Generic *)api;
 
-   return _fork_and_exec(ev);
+   if (!_fork_and_exec(ev))
+     {
+        free(ev);
+        return NULL;
+     }
+
+   return ev;
 }
 
 static void
@@ -1092,23 +1023,18 @@ em_partial_shutdown(Emotion_Generic_Video *ev)
    ev->player_restart = NULL;
 }
 
-static int
-em_shutdown(void *data)
+static void
+em_del(void *data)
 {
    Emotion_Generic_Video *ev = data;
 
-   if (!ev) return 0;
-
-   eina_stringshare_del(ev->cmdline);
    eina_stringshare_del(ev->shmname);
 
    em_partial_shutdown(ev);
-
-   return 1;
 }
 
 static unsigned char
-em_file_open(const char *file, Evas_Object *obj EINA_UNUSED, void *data)
+em_file_open(void *data, const char *file)
 {
    Emotion_Generic_Video *ev = data;
    INF("file set: %s", file);
@@ -1700,8 +1626,13 @@ em_meta_get(void *data, int meta)
    return NULL;
 }
 
-static const Emotion_Video_Module em_module =
+static const Emotion_Engine em_template_engine =
 {
+   EMOTION_ENGINE_API_VERSION,
+   EMOTION_ENGINE_PRIORITY_DEFAULT,
+   "generic",
+   em_add, /* add */
+   em_del, /* del */
    em_file_open, /* file_open */
    em_file_close, /* file_close */
    em_play, /* play */
@@ -1763,64 +1694,181 @@ static const Emotion_Video_Module em_module =
    NULL /* priority_get */
 };
 
-static Eina_Bool
-module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video, Emotion_Module_Options *opt)
+static void
+_player_entry_add(const Eina_File_Direct_Info *info)
 {
-   if (!module)	{
-	return EINA_FALSE;
-   }
+   Emotion_Engine_Generic *eg;
+   const char *name;
+   char *endptr;
+   int priority;
 
-   if (_emotion_generic_log_domain < 0)
+   name = info->path + info->name_start;
+
+   priority = strtol(name, &endptr, 10);
+   if (endptr == name)
+     priority = EMOTION_ENGINE_PRIORITY_DEFAULT;
+   else
      {
-        eina_threads_init();
-        eina_log_threads_enable();
-        _emotion_generic_log_domain = eina_log_domain_register
-          ("emotion-generic", EINA_COLOR_LIGHTCYAN);
-        if (_emotion_generic_log_domain < 0)
-          {
-             EINA_LOG_CRIT("Could not register log domain 'emotion-generic'");
-             return EINA_FALSE;
-          }
+        if ((*endptr == '-') || (*endptr == '_'))
+          endptr++;
+        name = endptr;
      }
 
+   if (*name == '\0')
+     {
+        ERR("Invalid generic player: %s", info->path);
+        return;
+     }
 
-   if (!em_init(obj, video, opt))	{
-	return EINA_FALSE;
-   }
+   eg = malloc(sizeof(Emotion_Engine_Generic));
+   EINA_SAFETY_ON_NULL_RETURN(eg);
 
-   *module = &em_module;
+   /* inherit template */
+   memcpy(&(eg->engine), &em_template_engine, sizeof(em_template_engine));
 
-   return EINA_TRUE;
+   eg->path = strdup(info->path);
+   EINA_SAFETY_ON_NULL_GOTO(eg->path, error_path);
+
+   eg->engine.name = strdup(name);
+   EINA_SAFETY_ON_NULL_GOTO(eg->engine.name, error_name);
+
+   eg->engine.priority = priority;
+
+   DBG("Add player name=%s, priority=%d, path=%s",
+       eg->engine.name, eg->engine.priority, eg->path);
+   _generic_players = eina_list_append(_generic_players, eg);
+
+   return;
+
+ error_name:
+   free(eg->path);
+ error_path:
+   free(eg);
 }
 
-static void module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
+static void
+_player_entry_free(Emotion_Engine_Generic *eg)
 {
-   em_shutdown(video);
+   free(eg->path);
+   free((void *)eg->engine.name);
+   free(eg);
 }
 
+static void _players_all_from(const char *path)
+{
+   const Eina_File_Direct_Info *info;
+   int count = 0;
+   Eina_Iterator *itr = eina_file_direct_ls(path);
+   if (!itr) goto end;;
+   EINA_ITERATOR_FOREACH(itr, info)
+     {
+        if (access(info->path, R_OK | X_OK) == 0)
+          {
+             _player_entry_add(info);
+             count++;
+          }
+     }
+   eina_iterator_free(itr);
+
+ end:
+   if (count == 0)
+     DBG("No generic players at %s", path);
+}
+
+static void
+_players_load(void)
+{
+   char buf[PATH_MAX];
+   const char *homedir = getenv("HOME");
+
+   if (homedir)
+     {
+        eina_str_join(buf, sizeof(buf), '/',
+                      homedir,
+                      ".emotion/generic_players/" MODULE_ARCH);
+        _players_all_from(buf);
+     }
+
+   eina_str_join(buf, sizeof(buf), '/',
+                 eina_prefix_lib_get(pfx),
+                 "emotion/generic_players/" MODULE_ARCH);
+   _players_all_from(buf);
+
+   if (!_generic_players)
+     ERR("no generic players available");
+   else
+     {
+        const Eina_List *n;
+        const Emotion_Engine_Generic *eg;
+        INF("Found %d generic players", eina_list_count(_generic_players));
+        EINA_LIST_FOREACH(_generic_players, n, eg)
+          _emotion_module_register(&(eg->engine));
+     }
+}
 
 Eina_Bool
 generic_module_init(void)
 {
-   if (pfx) return EINA_TRUE;
+   if (_emotion_init_count > 0)
+     {
+        _emotion_init_count++;
+        return EINA_TRUE;
+     }
+
+   _emotion_generic_log_domain = eina_log_domain_register
+     ("emotion-generic", EINA_COLOR_LIGHTCYAN);
+   if (_emotion_generic_log_domain < 0)
+     {
+        EINA_LOG_CRIT("Could not register log domain 'emotion-generic'");
+        return EINA_FALSE;
+     }
 
    pfx = eina_prefix_new(NULL, emotion_init,
                          "EMOTION", "emotion", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-   if (!pfx) return EINA_FALSE;
-   return _emotion_module_register("generic", module_open, module_close);
+   if (!pfx)
+     {
+        CRITICAL("Could not get prefix for emotion");
+        eina_log_domain_unregister(_emotion_generic_log_domain);
+        _emotion_generic_log_domain = -1;
+        return EINA_FALSE;
+     }
+
+   _players_load();
+
+   _emotion_init_count = 1;
+   return EINA_TRUE;
 }
 
 void
 generic_module_shutdown(void)
 {
-   if (!pfx) return;
+   Emotion_Engine_Generic *eg;
+
+   if (_emotion_init_count > 1)
+     {
+        _emotion_init_count--;
+        return;
+     }
+   else if (_emotion_init_count == 0)
+     {
+        EINA_LOG_ERR("too many generic_module_shutdown()");
+        return;
+     }
+   _emotion_init_count = 0;
+
+   EINA_LIST_FREE(_generic_players, eg)
+     {
+        _emotion_module_unregister(&(eg->engine));
+        _player_entry_free(eg);
+     }
+
+   eina_log_domain_unregister(_emotion_generic_log_domain);
+   _emotion_generic_log_domain = -1;
 
    eina_prefix_free(pfx);
    pfx = NULL;
-
-   _emotion_module_unregister("generic");
 }
 
 #ifndef EMOTION_STATIC_BUILD_GENERIC

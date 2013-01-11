@@ -1,6 +1,8 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
+#include "Emotion_Module.h"
+
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,
                                       unsigned int w,
@@ -49,6 +51,8 @@ struct _Emotion_Gstreamer_Metadata
 
 struct _Emotion_Gstreamer_Video
 {
+   const Emotion_Engine *api;
+
    /* Gstreamer elements */
    GstElement       *pipeline;
    GstElement       *sink;
@@ -259,8 +263,6 @@ Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer_Vid
 void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
 Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
                                                   Eina_Bool force);
-
-int em_shutdown(void *video);
 
 typedef struct _ColorSpace_FourCC_Convertion ColorSpace_FourCC_Convertion;
 typedef struct _ColorSpace_Format_Convertion ColorSpace_Format_Convertion;

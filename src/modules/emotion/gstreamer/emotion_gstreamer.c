@@ -33,172 +33,11 @@ Eina_Bool debug_fps = EINA_FALSE;
 Eina_Bool _ecore_x_available = EINA_FALSE;
 
 static Ecore_Idler *restart_idler;
+static int _emotion_init_count = 0;
 
 /* Callbacks to get the eos */
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
-
-/* Interface */
-
-static unsigned char  em_init                     (Evas_Object     *obj,
-                                                   void           **emotion_video,
-                                                   Emotion_Module_Options *opt);
-
-static unsigned char  em_file_open                (const char     *file,
-                                                   Evas_Object     *obj,
-                                                   void            *video);
-
-static void           em_file_close               (void            *video);
-
-static void           em_play                     (void            *video,
-                                                   double           pos);
-
-static void           em_stop                     (void            *video);
-
-static void           em_size_get                 (void            *video,
-                                                   int             *width,
-                                                   int             *height);
-
-static void           em_pos_set                  (void            *video,
-                                                   double           pos);
-
-
-static double         em_len_get                  (void            *video);
-
-static double         em_buffer_size_get          (void            *video);
-
-static int            em_fps_num_get              (void            *video);
-
-static int            em_fps_den_get              (void            *video);
-
-static double         em_fps_get                  (void            *video);
-
-static double         em_pos_get                  (void            *video);
-
-static void           em_vis_set                  (void            *video,
-                                                   Emotion_Vis      vis);
-
-static Emotion_Vis    em_vis_get                  (void            *video);
-
-static Eina_Bool      em_vis_supported            (void            *video,
-                                                   Emotion_Vis      vis);
-
-static double         em_ratio_get                (void            *video);
-
-static int            em_video_handled            (void            *video);
-
-static int            em_audio_handled            (void            *video);
-
-static int            em_seekable                 (void            *video);
-
-static void           em_frame_done               (void            *video);
-
-static Emotion_Format em_format_get               (void            *video);
-
-static void           em_video_data_size_get      (void            *video,
-                                                   int             *w,
-                                                   int             *h);
-
-static int            em_yuv_rows_get             (void            *video,
-                                                   int              w,
-                                                   int              h,
-                                                   unsigned char  **yrows,
-                                                   unsigned char  **urows,
-                                                   unsigned char  **vrows);
-
-static int            em_bgra_data_get            (void            *video,
-                                                   unsigned char  **bgra_data);
-
-static void           em_event_feed               (void            *video,
-                                                   int              event);
-
-static void           em_event_mouse_button_feed  (void            *video,
-                                                   int              button,
-                                                   int              x,
-                                                   int              y);
-
-static void           em_event_mouse_move_feed    (void            *video,
-                                                   int              x,
-                                                   int              y);
-
-static int            em_video_channel_count      (void             *video);
-
-static void           em_video_channel_set        (void             *video,
-                                                   int               channel);
-
-static int            em_video_channel_get        (void             *video);
-
-static void           em_video_subtitle_file_set (void             *video,
-                                                   const char *filepath);
-
-static const char    *em_video_subtitle_file_get  (void              *video);
-
-static const char    *em_video_channel_name_get   (void             *video,
-                                                   int               channel);
-
-static void           em_video_channel_mute_set   (void             *video,
-                                                   int               mute);
-
-static int            em_video_channel_mute_get   (void             *video);
-
-static int            em_audio_channel_count      (void             *video);
-
-static void           em_audio_channel_set        (void             *video,
-                                                   int               channel);
-
-static int            em_audio_channel_get        (void             *video);
-
-static const char    *em_audio_channel_name_get   (void             *video,
-                                                   int               channel);
-
-static void           em_audio_channel_mute_set   (void             *video,
-                                                   int               mute);
-
-static int            em_audio_channel_mute_get   (void             *video);
-
-static void           em_audio_channel_volume_set (void             *video,
-                                                   double             vol);
-
-static double         em_audio_channel_volume_get (void             *video);
-
-static int            em_spu_channel_count        (void             *video);
-
-static void           em_spu_channel_set          (void             *video,
-                                                   int               channel);
-
-static int            em_spu_channel_get          (void             *video);
-
-static const char    *em_spu_channel_name_get     (void             *video,
-                                                   int               channel);
-
-static void           em_spu_channel_mute_set     (void             *video,
-                                                   int               mute);
-
-static int            em_spu_channel_mute_get     (void             *video);
-
-static int            em_chapter_count            (void             *video);
-
-static void           em_chapter_set              (void             *video,
-                                                   int               chapter);
-
-static int            em_chapter_get              (void             *video);
-
-static const char    *em_chapter_name_get         (void             *video,
-                                                   int               chapter);
-
-static void           em_speed_set                (void             *video,
-                                                   double            speed);
-
-static double         em_speed_get                (void             *video);
-
-static int            em_eject                    (void             *video);
-
-static const char    *em_meta_get                 (void             *video,
-                                                   int               meta);
-
-static void           em_priority_set             (void             *video,
-						   Eina_Bool         pri);
-static Eina_Bool      em_priority_get             (void             *video);
 
 static GstBusSyncReply _eos_sync_fct(GstBus *bus,
 				     GstMessage *message,
@@ -208,68 +47,6 @@ static Eina_Bool _em_restart_stream(void *data);
 
 /* Module interface */
 
-static const Emotion_Video_Module em_module =
-{
-   em_file_open, /* file_open */
-   em_file_close, /* file_close */
-   em_play, /* play */
-   em_stop, /* stop */
-   em_size_get, /* size_get */
-   em_pos_set, /* pos_set */
-   em_len_get, /* len_get */
-   em_buffer_size_get, /* buffer_size_get */
-   em_fps_num_get, /* fps_num_get */
-   em_fps_den_get, /* fps_den_get */
-   em_fps_get, /* fps_get */
-   em_pos_get, /* pos_get */
-   em_vis_set, /* vis_set */
-   em_vis_get, /* vis_get */
-   em_vis_supported, /* vis_supported */
-   em_ratio_get, /* ratio_get */
-   em_video_handled, /* video_handled */
-   em_audio_handled, /* audio_handled */
-   em_seekable, /* seekable */
-   em_frame_done, /* frame_done */
-   em_format_get, /* format_get */
-   em_video_data_size_get, /* video_data_size_get */
-   em_yuv_rows_get, /* yuv_rows_get */
-   em_bgra_data_get, /* bgra_data_get */
-   em_event_feed, /* event_feed */
-   em_event_mouse_button_feed, /* event_mouse_button_feed */
-   em_event_mouse_move_feed, /* event_mouse_move_feed */
-   em_video_channel_count, /* video_channel_count */
-   em_video_channel_set, /* video_channel_set */
-   em_video_channel_get, /* video_channel_get */
-   em_video_subtitle_file_set, /* video_subtitle_file_set */
-   em_video_subtitle_file_get, /* video_subtitle_file_get */
-   em_video_channel_name_get, /* video_channel_name_get */
-   em_video_channel_mute_set, /* video_channel_mute_set */
-   em_video_channel_mute_get, /* video_channel_mute_get */
-   em_audio_channel_count, /* audio_channel_count */
-   em_audio_channel_set, /* audio_channel_set */
-   em_audio_channel_get, /* audio_channel_get */
-   em_audio_channel_name_get, /* audio_channel_name_get */
-   em_audio_channel_mute_set, /* audio_channel_mute_set */
-   em_audio_channel_mute_get, /* audio_channel_mute_get */
-   em_audio_channel_volume_set, /* audio_channel_volume_set */
-   em_audio_channel_volume_get, /* audio_channel_volume_get */
-   em_spu_channel_count, /* spu_channel_count */
-   em_spu_channel_set, /* spu_channel_set */
-   em_spu_channel_get, /* spu_channel_get */
-   em_spu_channel_name_get, /* spu_channel_name_get */
-   em_spu_channel_mute_set, /* spu_channel_mute_set */
-   em_spu_channel_mute_get, /* spu_channel_mute_get */
-   em_chapter_count, /* chapter_count */
-   em_chapter_set, /* chapter_set */
-   em_chapter_get, /* chapter_get */
-   em_chapter_name_get, /* chapter_name_get */
-   em_speed_set, /* speed_set */
-   em_speed_get, /* speed_get */
-   em_eject, /* eject */
-   em_meta_get, /* meta_get */
-   em_priority_set, /* priority_set */
-   em_priority_get /* priority_get */
-};
 
 static int priority_overide = 0;
 
@@ -338,44 +115,6 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
       default:
          return "goom";
      }
-}
-
-static unsigned char
-em_init(Evas_Object            *obj,
-        void                  **emotion_video,
-        Emotion_Module_Options *opt EINA_UNUSED)
-{
-   Emotion_Gstreamer_Video *ev;
-   GError                  *error;
-
-   if (!emotion_video)
-     return 0;
-
-   ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
-   if (!ev) return 0;
-
-   ev->obj = obj;
-
-   /* Initialization of gstreamer */
-   if (!gst_init_check(NULL, NULL, &error))
-     goto failure;
-
-   /* Default values */
-   ev->ratio = 1.0;
-   ev->vis = EMOTION_VIS_NONE;
-   ev->volume = 0.8;
-   ev->play_started = 0;
-   ev->delete_me = EINA_FALSE;
-   ev->threads = NULL;
-
-   *emotion_video = ev;
-
-   return 1;
-
-failure:
-   free(ev);
-
-   return 0;
 }
 
 static void
@@ -455,14 +194,10 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
      free(vstream);
 }
 
-int
-em_shutdown(void *video)
+static void
+em_del(void *video)
 {
-   Emotion_Gstreamer_Video *ev;
-
-   ev = (Emotion_Gstreamer_Video *)video;
-   if (!ev)
-     return 0;
+   Emotion_Gstreamer_Video *ev = video;
 
    if (ev->threads)
      {
@@ -472,33 +207,27 @@ em_shutdown(void *video)
           ecore_thread_cancel(t);
 
         ev->delete_me = EINA_TRUE;
-        return EINA_FALSE;
+        return;
      }
 
    if (ev->in != ev->out)
      {
         ev->delete_me = EINA_TRUE;
-        return EINA_FALSE;
+        return;
      }
 
    em_cleanup(ev);
 
    free(ev);
-
-   return 1;
 }
 
-
-static unsigned char
-em_file_open(const char   *file,
-             Evas_Object  *obj,
-             void         *video)
+static Eina_Bool
+em_file_open(void *video,
+             const char   *file)
 {
-   Emotion_Gstreamer_Video *ev;
+   Emotion_Gstreamer_Video *ev = video;
    Eina_Strbuf *sbuf = NULL;
    const char *uri;
-
-   ev = (Emotion_Gstreamer_Video *)video;
 
    if (!file) return EINA_FALSE;
    if (strstr(file, "://") == NULL)
@@ -529,7 +258,7 @@ em_file_open(const char   *file,
 
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
-   ev->pipeline = gstreamer_video_sink_new(ev, obj, uri);
+   ev->pipeline = gstreamer_video_sink_new(ev, ev->obj, uri);
    if (sbuf) eina_strbuf_free(sbuf);
 
    if (!ev->pipeline)
@@ -543,9 +272,6 @@ em_file_open(const char   *file,
      }
 
    gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev);
-
-   /* Evas Object */
-   ev->obj = obj;
 
    ev->position = 0.0;
 
@@ -1334,54 +1060,17 @@ _ecore_event_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 
    return EINA_TRUE;
 }
-#endif
 
-static Eina_Bool
-module_open(Evas_Object           *obj,
-            const Emotion_Video_Module **module,
-            void                 **video,
-            Emotion_Module_Options *opt)
+static void
+gstreamer_ecore_x_check(void)
 {
-#ifdef HAVE_ECORE_X
    Ecore_X_Window *roots;
    int num;
-#endif
 
-   if (!module)
-     return EINA_FALSE;
-
-   if (_emotion_gstreamer_log_domain < 0)
-     {
-        eina_threads_init();
-        eina_log_threads_enable();
-        _emotion_gstreamer_log_domain = eina_log_domain_register
-          ("emotion-gstreamer", EINA_COLOR_LIGHTCYAN);
-        if (_emotion_gstreamer_log_domain < 0)
-          {
-             EINA_LOG_CRIT("Could not register log domain 'emotion-gstreamer'");
-             return EINA_FALSE;
-          }
-     }
-
-   if (!em_init(obj, video, opt))
-     return EINA_FALSE;
-
-#ifdef HAVE_ECORE_X
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_event_x_destroy, NULL);
-#endif
-
-   if (getenv("EMOTION_FPS_DEBUG")) debug_fps = EINA_TRUE;
-
-   eina_threads_init();
-
-#ifdef HAVE_ECORE_X
-   if (ecore_x_init(NULL) > 0)
-     {
-        _ecore_x_available = EINA_TRUE;
-     }
 
    /* Check if the window manager is able to handle our special Xv window. */
-   roots = _ecore_x_available ? ecore_x_window_root_list(&num) : NULL;
+   roots = ecore_x_window_root_list(&num);
    if (roots && num > 0)
      {
         Ecore_X_Window  win, twin;
@@ -1425,38 +1114,137 @@ module_open(Evas_Object           *obj,
           }
      }
    free(roots);
+}
 #endif
 
-   *module = &em_module;
-   return EINA_TRUE;
-}
-
-static void
-module_close(Emotion_Video_Module *module EINA_UNUSED,
-             void                 *video)
+static void *
+em_add(const Emotion_Engine *api,
+       Evas_Object *obj,
+       const Emotion_Module_Options *opt EINA_UNUSED)
 {
-   em_shutdown(video);
+   Emotion_Gstreamer_Video *ev;
 
-#ifdef HAVE_ECORE_X
-   if (_ecore_x_available)
-     {
-        ecore_x_shutdown();
-     }
-#endif
+   ev = calloc(1, sizeof(Emotion_Gstreamer_Video));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
 
-   eina_threads_shutdown();
+   ev->api = api;
+   ev->obj = obj;
+
+   /* Default values */
+   ev->ratio = 1.0;
+   ev->vis = EMOTION_VIS_NONE;
+   ev->volume = 0.8;
+   ev->play_started = 0;
+   ev->delete_me = EINA_FALSE;
+   ev->threads = NULL;
+
+   return ev;
 }
+
+static const Emotion_Engine em_engine =
+{
+   EMOTION_ENGINE_API_VERSION,
+   EMOTION_ENGINE_PRIORITY_DEFAULT,
+   "gstreamer",
+   em_add, /* add */
+   em_del, /* del */
+   em_file_open, /* file_open */
+   em_file_close, /* file_close */
+   em_play, /* play */
+   em_stop, /* stop */
+   em_size_get, /* size_get */
+   em_pos_set, /* pos_set */
+   em_len_get, /* len_get */
+   em_buffer_size_get, /* buffer_size_get */
+   em_fps_num_get, /* fps_num_get */
+   em_fps_den_get, /* fps_den_get */
+   em_fps_get, /* fps_get */
+   em_pos_get, /* pos_get */
+   em_vis_set, /* vis_set */
+   em_vis_get, /* vis_get */
+   em_vis_supported, /* vis_supported */
+   em_ratio_get, /* ratio_get */
+   em_video_handled, /* video_handled */
+   em_audio_handled, /* audio_handled */
+   em_seekable, /* seekable */
+   em_frame_done, /* frame_done */
+   em_format_get, /* format_get */
+   em_video_data_size_get, /* video_data_size_get */
+   em_yuv_rows_get, /* yuv_rows_get */
+   em_bgra_data_get, /* bgra_data_get */
+   em_event_feed, /* event_feed */
+   em_event_mouse_button_feed, /* event_mouse_button_feed */
+   em_event_mouse_move_feed, /* event_mouse_move_feed */
+   em_video_channel_count, /* video_channel_count */
+   em_video_channel_set, /* video_channel_set */
+   em_video_channel_get, /* video_channel_get */
+   em_video_subtitle_file_set, /* video_subtitle_file_set */
+   em_video_subtitle_file_get, /* video_subtitle_file_get */
+   em_video_channel_name_get, /* video_channel_name_get */
+   em_video_channel_mute_set, /* video_channel_mute_set */
+   em_video_channel_mute_get, /* video_channel_mute_get */
+   em_audio_channel_count, /* audio_channel_count */
+   em_audio_channel_set, /* audio_channel_set */
+   em_audio_channel_get, /* audio_channel_get */
+   em_audio_channel_name_get, /* audio_channel_name_get */
+   em_audio_channel_mute_set, /* audio_channel_mute_set */
+   em_audio_channel_mute_get, /* audio_channel_mute_get */
+   em_audio_channel_volume_set, /* audio_channel_volume_set */
+   em_audio_channel_volume_get, /* audio_channel_volume_get */
+   em_spu_channel_count, /* spu_channel_count */
+   em_spu_channel_set, /* spu_channel_set */
+   em_spu_channel_get, /* spu_channel_get */
+   em_spu_channel_name_get, /* spu_channel_name_get */
+   em_spu_channel_mute_set, /* spu_channel_mute_set */
+   em_spu_channel_mute_get, /* spu_channel_mute_get */
+   em_chapter_count, /* chapter_count */
+   em_chapter_set, /* chapter_set */
+   em_chapter_get, /* chapter_get */
+   em_chapter_name_get, /* chapter_name_get */
+   em_speed_set, /* speed_set */
+   em_speed_get, /* speed_get */
+   em_eject, /* eject */
+   em_meta_get, /* meta_get */
+   em_priority_set, /* priority_set */
+   em_priority_get /* priority_get */
+};
 
 Eina_Bool
 gstreamer_module_init(void)
 {
    GError *error;
 
+   if (_emotion_init_count > 0)
+     {
+        _emotion_init_count++;
+        return EINA_TRUE;
+     }
+
+   if (getenv("EMOTION_FPS_DEBUG")) debug_fps = EINA_TRUE;
+
+   eina_threads_init();
+   eina_log_threads_enable();
+   _emotion_gstreamer_log_domain = eina_log_domain_register
+     ("emotion-gstreamer", EINA_COLOR_LIGHTCYAN);
+   if (_emotion_gstreamer_log_domain < 0)
+     {
+        EINA_LOG_CRIT("Could not register log domain 'emotion-gstreamer'");
+        return EINA_FALSE;
+     }
+
    if (!gst_init_check(0, NULL, &error))
      {
         EINA_LOG_CRIT("Could not init GStreamer");
-        return EINA_FALSE;
+        goto error_gst_init;
      }
+
+#ifdef HAVE_ECORE_X
+   if (ecore_x_init(NULL) > 0)
+     {
+        _ecore_x_available = EINA_TRUE;
+        gstreamer_ecore_x_check();
+     }
+#endif
 
    if (gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
                                   "emotion-sink",
@@ -1469,16 +1257,66 @@ gstreamer_module_init(void)
                                   "http://www.enlightenment.org/") == FALSE)
      {
         EINA_LOG_CRIT("Could not load static gstreamer video sink for Emotion.");
-        return EINA_FALSE;
+        goto error_gst_plugin;
      }
 
-   return _emotion_module_register("gstreamer", module_open, module_close);
+   if (!_emotion_module_register(&em_engine))
+     {
+        ERR("Could not register module %p", &em_engine);
+        goto error_register;
+     }
+
+   _emotion_init_count = 1;
+   return EINA_TRUE;
+
+ error_register:
+ error_gst_plugin:
+#ifdef HAVE_ECORE_X
+   if (_ecore_x_available)
+     {
+        ecore_x_shutdown();
+        _ecore_x_available = EINA_FALSE;
+        window_manager_video = EINA_FALSE;
+     }
+#endif
+
+   gst_deinit();
+
+ error_gst_init:
+   eina_log_domain_unregister(_emotion_gstreamer_log_domain);
+   _emotion_gstreamer_log_domain = -1;
+
+   return EINA_FALSE;
 }
 
 void
 gstreamer_module_shutdown(void)
 {
-   _emotion_module_unregister("gstreamer");
+   if (_emotion_init_count > 1)
+     {
+        _emotion_init_count--;
+        return;
+     }
+   else if (_emotion_init_count == 0)
+     {
+        EINA_LOG_ERR("too many gstreamer_module_shutdown()");
+        return;
+     }
+   _emotion_init_count = 0;
+
+   _emotion_module_unregister(&em_engine);
+
+#ifdef HAVE_ECORE_X
+   if (_ecore_x_available)
+     {
+        ecore_x_shutdown();
+        _ecore_x_available = EINA_FALSE;
+        window_manager_video = EINA_FALSE;
+     }
+#endif
+
+   eina_log_domain_unregister(_emotion_gstreamer_log_domain);
+   _emotion_gstreamer_log_domain = -1;
 
    gst_deinit();
 }

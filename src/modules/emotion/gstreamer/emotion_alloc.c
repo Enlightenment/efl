@@ -51,7 +51,7 @@ emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send)
    if (send->ev->in == send->ev->out
        && send->ev->threads == NULL
        && send->ev->delete_me)
-     em_shutdown(send->ev);
+     send->ev->api->del(send->ev);
 
    gst_buffer_unref(send->frame);
    free(send);
@@ -83,7 +83,7 @@ emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send)
    if (send->ev->in == send->ev->out
        && send->ev->threads == NULL
        && send->ev->delete_me)
-     em_shutdown(send->ev);
+     send->ev->api->del(send->ev);
 
    gst_message_unref(send->msg);
    free(send);

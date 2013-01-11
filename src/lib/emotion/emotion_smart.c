@@ -280,9 +280,30 @@ emotion_object_module_option_set(Evas_Object *obj, const char *opt, const char *
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if ((!opt) || (!val)) return;
 
-   // TODO remove me
-   if (!strcmp(opt, "player"))
-     eina_stringshare_replace(&sd->module_options.player, val);
+   if (strcmp(opt, "video") == 0)
+     {
+        if (strcmp(val, "off") == 0)
+          sd->module_options.no_video = EINA_TRUE;
+        else if (strcmp(val, "on") == 0)
+          sd->module_options.no_video = EINA_FALSE;
+        else
+          sd->module_options.no_video = !!atoi(val);
+
+        ERR("Deprecated. Use emotion_object_video_mute_set()");
+     }
+   else if (strcmp(opt, "audio") == 0)
+     {
+        if (strcmp(val, "off") == 0)
+          sd->module_options.no_audio = EINA_TRUE;
+        else if (strcmp(val, "on") == 0)
+          sd->module_options.no_audio = EINA_FALSE;
+        else
+          sd->module_options.no_audio = !!atoi(val);
+
+        ERR("Deprecated. Use emotion_object_audio_mute_set()");
+     }
+   else
+     ERR("Unsupported %s=%s", opt, val);
 }
 
 EAPI Eina_Bool

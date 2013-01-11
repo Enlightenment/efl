@@ -13,12 +13,9 @@
 #define META_TRACK_COUNT 8
 
 typedef enum _Emotion_Format Emotion_Format;
-typedef struct _Emotion_Video_Module Emotion_Video_Module;
+typedef struct _Emotion_Engine Emotion_Engine;
 typedef struct _Emotion_Module_Options Emotion_Module_Options;
 typedef struct _Eina_Emotion_Plugins Eina_Emotion_Plugins;
-
-typedef Eina_Bool (*Emotion_Module_Open)(Evas_Object *, const Emotion_Video_Module **, void **, Emotion_Module_Options *);
-typedef void (*Emotion_Module_Close)(Emotion_Video_Module *module, void *);
 
 enum _Emotion_Format
 {
@@ -31,20 +28,23 @@ enum _Emotion_Format
 
 struct _Emotion_Module_Options
 {
-   const char *player;
    Eina_Bool no_video : 1;
    Eina_Bool no_audio : 1;
 };
 
-struct _Eina_Emotion_Plugins
+struct _Emotion_Engine
 {
-   Emotion_Module_Open open;
-   Emotion_Module_Close close;
-};
+#define EMOTION_ENGINE_API_VERSION (1U)
+   unsigned       version;
 
-struct _Emotion_Video_Module
-{
-   unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
+#define EMOTION_ENGINE_PRIORITY_DEFAULT (50)
+   int            priority; /* default priority, may be overwritten by user. Try to keep from 0-100. */
+
+   const char    *name;
+   void          *(*add)(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options *opts);
+   void           (*del)(void *ef);
+
+   Eina_Bool      (*file_open) (void *ef, const char *file);
    void           (*file_close) (void *ef);
    void           (*play) (void *ef, double pos);
    void           (*stop) (void *ef);
@@ -129,7 +129,7 @@ EAPI void _emotion_pending_object_unref(void);
 
 EAPI const char *emotion_webcam_custom_get(const char *device);
 
-EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
-EAPI Eina_Bool _emotion_module_unregister(const char *name);
+EAPI Eina_Bool _emotion_module_register(const Emotion_Engine *api);
+EAPI Eina_Bool _emotion_module_unregister(const Emotion_Engine *api);
 
 #endif
