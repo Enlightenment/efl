@@ -45,6 +45,9 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
    double t1 = 0.0;
    double t2 = 0.0;
    int rend = 0;
+#ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
+   double now = ecore_loop_time_get();
+#endif
 
    if (!ecore_evases) return ECORE_CALLBACK_RENEW;
    if (_ecore_evas_fps_debug)
@@ -53,11 +56,51 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+#ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
+        if ((ee->in_async_render) && (now - ee->async_render_start > 2.0))
+          {
+             ERR("stuck async render: time=%f, ee=%p, engine=%s, geometry=(%d, %d, %d, %d), visible=%hhu, shaped=%hhu, alpha=%hhu, transparent=%hhu",
+                 now - ee->async_render_start, ee, ee->driver, ee->x, ee->y, ee->w, ee->h, ee->visible, ee->shaped, ee->alpha, ee->transparent);
+
+             ERR("delayed.avoid_damage=%hhu", ee->delayed.avoid_damage);
+             ERR("delayed.resize_shape=%hhu", ee->delayed.resize_shape);
+             ERR("delayed.shaped=%hhu", ee->delayed.shaped);
+             ERR("delayed.shaped_changed=%hhu", ee->delayed.shaped_changed);
+             ERR("delayed.alpha=%hhu", ee->delayed.alpha);
+             ERR("delayed.alpha_changed=%hhu", ee->delayed.alpha_changed);
+             ERR("delayed.transparent=%hhu", ee->delayed.transparent);
+             ERR("delayed.transparent_changed=%hhu", ee->delayed.transparent_changed);
+             ERR("delayed.rotation=%d", ee->delayed.rotation);
+             ERR("delayed.rotation_resize=%d", ee->delayed.rotation_resize);
+             ERR("delayed.rotation_changed=%d", ee->delayed.rotation_changed);
+
+             ERR("reset in_async_render of ee=%p", ee);
+             ee->in_async_render = EINA_FALSE;
+             ee->async_render_start = 0.0;
+
+          }
+        else if ((!ee->in_async_render) && (ee->async_render_start > 0.0))
+          {
+             DBG("--- async render %f ee=%p [%s] (%d, %d, %d, %d) visible=%hhu shaped=%hhu alpha=%hhu transparent=%hhu",
+                 now, ee, ee->driver, ee->x, ee->y, ee->w, ee->h, ee->visible, ee->shaped, ee->alpha, ee->transparent);
+             ee->async_render_start = 0.0;
+          }
+#endif
+
         if (!ee->manual_render)
           {
              if (ee->engine.func->fn_render)
                rend |= ee->engine.func->fn_render(ee);
           }
+
+#ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
+        if ((ee->in_async_render) && (ee->async_render_start <= 0.0))
+          {
+             DBG("+++ async render %f ee=%p [%s] (%d, %d, %d, %d) visible=%hhu shaped=%hhu alpha=%hhu transparent=%hhu",
+                 now, ee, ee->driver, ee->x, ee->y, ee->w, ee->h, ee->visible, ee->shaped, ee->alpha, ee->transparent);
+             ee->async_render_start = now;
+          }
+#endif
      }
    if (_ecore_evas_fps_debug)
      {

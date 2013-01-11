@@ -319,6 +319,10 @@ struct _Ecore_Evas
    } delayed;
 
    int refcount;
+#define ECORE_EVAS_ASYNC_RENDER_DEBUG 1 /* TODO: remove me */
+#ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
+   double async_render_start;
+#endif
 
    unsigned char ignore_events : 1;
    unsigned char manual_render : 1;
