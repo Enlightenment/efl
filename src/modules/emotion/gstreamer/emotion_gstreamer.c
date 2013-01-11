@@ -210,8 +210,6 @@ static Eina_Bool _em_restart_stream(void *data);
 
 static const Emotion_Video_Module em_module =
 {
-   em_init, /* init */
-   em_shutdown, /* shutdown */
    em_file_open, /* file_open */
    em_file_close, /* file_close */
    em_play, /* play */
@@ -1365,7 +1363,7 @@ module_open(Evas_Object           *obj,
           }
      }
 
-   if (!em_module.init(obj, video, opt))
+   if (!em_init(obj, video, opt))
      return EINA_FALSE;
 
 #ifdef HAVE_ECORE_X
@@ -1437,7 +1435,7 @@ static void
 module_close(Emotion_Video_Module *module EINA_UNUSED,
              void                 *video)
 {
-   em_module.shutdown(video);
+   em_shutdown(video);
 
 #ifdef HAVE_ECORE_X
    if (_ecore_x_available)

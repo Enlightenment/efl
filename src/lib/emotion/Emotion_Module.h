@@ -44,8 +44,6 @@ struct _Eina_Emotion_Plugins
 
 struct _Emotion_Video_Module
 {
-   unsigned char  (*init) (Evas_Object *obj, void **video, Emotion_Module_Options *opt);
-   int            (*shutdown) (void *video);
    unsigned char  (*file_open) (const char *file, Evas_Object *obj, void *video);
    void           (*file_close) (void *ef);
    void           (*play) (void *ef, double pos);

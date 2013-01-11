@@ -1702,8 +1702,6 @@ em_meta_get(void *data, int meta)
 
 static const Emotion_Video_Module em_module =
 {
-   em_init, /* init */
-   em_shutdown, /* shutdown */
    em_file_open, /* file_open */
    em_file_close, /* file_close */
    em_play, /* play */
@@ -1786,7 +1784,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
      }
 
 
-   if (!em_module.init(obj, video, opt))	{
+   if (!em_init(obj, video, opt))	{
 	return EINA_FALSE;
    }
 
@@ -1797,7 +1795,7 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
 
 static void module_close(Emotion_Video_Module *module EINA_UNUSED, void *video)
 {
-	em_module.shutdown(video);
+   em_shutdown(video);
 }
 
 
