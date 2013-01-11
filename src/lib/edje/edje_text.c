@@ -396,8 +396,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	text = _edje_text_fit_x(ed, ep, params,
 				text, font, size,
                                 sw, sh, &free_text);
-        eo_do(ep->object,
-              evas_obj_size_get(NULL, &sh));
      }
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
