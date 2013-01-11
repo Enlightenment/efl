@@ -48,7 +48,6 @@ struct _EcoreIMFContextISFImpl
     bool                     preedit_started;
     bool                     preedit_updating;
     bool                     need_commit_preedit;
-    bool                     uppercase;
     bool                     prediction_allow;
 
     EcoreIMFContextISFImpl  *next;
@@ -282,7 +281,6 @@ new_ic_impl(EcoreIMFContextISF *parent)
           return NULL;
      }
 
-   impl->uppercase = false;
    impl->autocapital_type = ECORE_IMF_AUTOCAPITAL_TYPE_NONE;
    impl->next = _used_ic_impl_list;
    _used_ic_impl_list = impl;
