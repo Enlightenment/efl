@@ -57,7 +57,6 @@ typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
 
 /* Engines interfaces */
-typedef struct _Ecore_Evas_Interface_Buffer Ecore_Evas_Interface_Buffer;
 typedef struct _Ecore_Evas_Interface_Extn Ecore_Evas_Interface_Extn;
 typedef struct _Ecore_Evas_Interface_X11 Ecore_Evas_Interface_X11;
 typedef struct _Ecore_Evas_Interface_Software_X11 Ecore_Evas_Interface_Software_X11;
@@ -134,13 +133,6 @@ struct _Ecore_Evas_Interface
 {
     const char *name;
     unsigned int version;
-};
-
-struct _Ecore_Evas_Interface_Buffer {
-   Ecore_Evas_Interface base;
-
-   const void*    (*pixels_get)(Ecore_Evas *ee);
-   int            (*render)(Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface_X11 {

@@ -10,11 +10,13 @@ lib/ecore_evas/Ecore_Evas.h
 
 lib_ecore_evas_libecore_evas_la_SOURCES = \
 lib/ecore_evas/ecore_evas.c \
+lib/ecore_evas/ecore_evas_buffer.c \
+lib/ecore_evas/ecore_evas_buffer.h \
 lib/ecore_evas/ecore_evas_deprecated.c \
 lib/ecore_evas/ecore_evas_ews.c \
-lib/ecore_evas/ecore_evas_util.c \
 lib/ecore_evas/ecore_evas_module.c \
-lib/ecore_evas/ecore_evas_private.h
+lib/ecore_evas/ecore_evas_private.h \
+lib/ecore_evas/ecore_evas_util.c
 
 lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
@@ -37,7 +39,6 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
 lib_ecore_evas_libecore_evas_la_LIBADD = \
 lib/ecore_input/libecore_input_evas.la \
 lib/ecore_input/libecore_input.la \
-lib/ecore_ipc/libecore_ipc.la \
 lib/ecore/libecore.la \
 lib/evas/libevas.la \
 lib/eo/libeo.la \
@@ -50,18 +51,16 @@ lib_ecore_evas_libecore_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # Engines
 
-if BUILD_ECORE_EVAS_BUFFER
-BUFFERSOURCES = \
-modules/ecore_evas/engines/buffer/ecore_evas_buffer.c \
-modules/ecore_evas/engines/buffer/ecore_evas_extn.c \
-modules/ecore_evas/engines/buffer/ecore_evas_buffer_private.h
-ecoreevasenginebufferpkgdir = $(libdir)/ecore_evas/engines/buffer/$(MODULE_ARCH)
-ecoreevasenginebufferpkg_LTLIBRARIES = modules/ecore_evas/engines/buffer/module.la
-modules_ecore_evas_engines_buffer_module_la_SOURCES = $(BUFFERSOURCES)
-modules_ecore_evas_engines_buffer_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
-modules_ecore_evas_engines_buffer_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la
-modules_ecore_evas_engines_buffer_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_ecore_evas_engines_buffer_module_la_LIBTOOLFLAGS = --tag=disable-static
+if BUILD_ECORE_EVAS_EXTN
+EXTNSOURCES = \
+modules/ecore_evas/engines/extn/ecore_evas_extn.c
+ecoreevasengineextnpkgdir = $(libdir)/ecore_evas/engines/extn/$(MODULE_ARCH)
+ecoreevasengineextnpkg_LTLIBRARIES = modules/ecore_evas/engines/extn/module.la
+modules_ecore_evas_engines_extn_module_la_SOURCES = $(EXTNSOURCES)
+modules_ecore_evas_engines_extn_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
+modules_ecore_evas_engines_extn_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la
+modules_ecore_evas_engines_extn_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_evas_engines_extn_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 if BUILD_ECORE_EVAS_X11

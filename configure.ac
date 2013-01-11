@@ -2835,7 +2835,6 @@ EFL_LIB_START([Ecore_Evas])
 ### Default values
 
 have_ecore_evas="yes"
-have_extn="yes"
 
 want_ecore_evas_software_gdi="${have_evas_engine_software_gdi}"
 want_ecore_evas_software_ddraw="${have_evas_engine_software_ddraw}"
@@ -2843,7 +2842,9 @@ want_ecore_evas_gl_cocoa="${have_evas_engine_gl_cocoa}"
 want_ecore_evas_wayland_egl="${have_evas_engine_wayland_egl}"
 want_ecore_evas_extn="yes"
 
-if test "${have_windows}" = "yes"; then
+if test "x${have_ecore_ipc}" = "xno" || \
+   test "x${efl_func_shm_open}" = "xno" || \
+   test "x${have_windows}" = "xyes" ; then
    want_ecore_evas_extn="no"
 fi
 
@@ -2857,8 +2858,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [evas])
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [eina])
 
 ## modules
-
-ECORE_EVAS_MODULE([buffer], [static])
+ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
@@ -2900,24 +2900,6 @@ if test "x${have_ecore_evas_software_gdi}" = "xyes" || \
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_WIN32],
    [test "${build_ecore_evas_win32}" = "yes"])
-
-# XXX TODO: ecore_evas_extn
-
-if test "x${have_ecore_ipc}" = "xno" || \
-   test "x${have_ecore_evas_software_buffer}" = "xno" || \
-   test "x${have_shm_open}" = "xno" || \
-   test "x${have_windows}" = "xyes" ; then
-   have_extn="no"
-fi
-
-dnl THIS IS SPECIAL - dont use normal ECORE_EVAS_CHECK_MODULE
-have_ecore_evas_extn="no"
-if test "x${want_ecore_evas_extn}" = "xyes" && \
-   test "x${have_extn}" = "xyes" && \
-   test "x${have_ecore_evas}" = "xyes"; then
-   have_ecore_evas_extn="yes"
-   AC_DEFINE([BUILD_ECORE_EVAS_EXTN], [1], [Support for Extn Engine in Ecore_Evas])
-fi
 
 
 # XXX TODO: ecore_evas_x11
@@ -3663,14 +3645,14 @@ fi
 
 echo "  Ecore_Evas...................: $have_ecore_evas"
 #if test "x${have_ecore_evas}" = "xyes" ; then
-  echo "    Software X11...............: ${with_x11}"
-  echo "    OpenGL X11.................: ${with_x11} (opengl=${with_opengl})"
+  echo "    Software X11...............: $have_ecore_evas_software_x11"
+  echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11 (opengl=${with_opengl})"
   echo "    Software GDI...............: $have_ecore_evas_software_gdi"
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
-  echo "    PSL1GHT....................: $have_ps3"
+  echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
   echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"

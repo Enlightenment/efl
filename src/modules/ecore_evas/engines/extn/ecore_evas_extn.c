@@ -27,7 +27,7 @@
 
 #include <Ecore_Ipc.h>
 
-#include "ecore_evas_buffer_private.h"
+#include "ecore_evas_buffer.h"
 
 
 static const char *interface_extn_name = "extn";

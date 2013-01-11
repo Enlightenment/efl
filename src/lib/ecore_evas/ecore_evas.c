@@ -105,11 +105,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
    switch (engine)
      {
       case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
-#ifdef BUILD_ECORE_EVAS_BUFFER
         return EINA_TRUE;
-#else
-        return EINA_FALSE;
-#endif
+
       case ECORE_EVAS_ENGINE_SOFTWARE_XLIB:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
         return EINA_TRUE;
@@ -2669,22 +2666,6 @@ _ecore_evas_window_available_profiles_free(Ecore_Evas *ee)
      }
 }
 
-EAPI int
-ecore_evas_buffer_render(Ecore_Evas *ee)
-{
-   Ecore_Evas_Interface_Buffer *iface;
-   iface = (Ecore_Evas_Interface_Buffer *)_ecore_evas_interface_get(ee, "buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
-
-   return iface->render(ee);
-}
-
-
-
-
-
-
-
 EAPI Eina_List *
 ecore_evas_ecore_evas_list_get(void)
 {
@@ -3050,49 +3031,10 @@ ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
 }
 
 EAPI Ecore_Evas *
-ecore_evas_buffer_new(int w, int h)
-{
-   Ecore_Evas *(*new)(int, int);
-   Eina_Module *m = _ecore_evas_engine_load("buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-
-   new = eina_module_symbol_get(m, "ecore_evas_buffer_new_internal");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
-
-   return new(w, h);
-}
-
-EAPI const void *
-ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
-{
-   Ecore_Evas_Interface_Buffer *iface;
-   iface = (Ecore_Evas_Interface_Buffer *)_ecore_evas_interface_get(ee, "buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
-
-   return iface->pixels_get(ee);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_buffer_allocfunc_new(int w, int h,
-				void *(*alloc_func) (void *data, int size),
-				void (*free_func) (void *data, void *pix),
-				const void *data)
-{
-   Ecore_Evas *(*new)(int, int, void*(*)(void *, int), void(*)(void *, void *), const void *);
-   Eina_Module *m = _ecore_evas_engine_load("buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-
-   new = eina_module_symbol_get(m, "ecore_evas_buffer_allocfunc_new_internal");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
-
-   return new(w, h, alloc_func, free_func, data);
-}
-
-EAPI Ecore_Evas *
 ecore_evas_extn_socket_new(int w, int h)
 {
    Ecore_Evas *(*new)(int, int);
-   Eina_Module *m = _ecore_evas_engine_load("buffer");
+   Eina_Module *m = _ecore_evas_engine_load("extn");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
    new = eina_module_symbol_get(m, "ecore_evas_extn_socket_new_internal");
@@ -3145,7 +3087,7 @@ EAPI Evas_Object *
 ecore_evas_extn_plug_new(Ecore_Evas *ee_target)
 {
    Evas_Object *(*new)(Ecore_Evas *);
-   Eina_Module *m = _ecore_evas_engine_load("buffer");
+   Eina_Module *m = _ecore_evas_engine_load("extn");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
    new = eina_module_symbol_get(m, "ecore_evas_extn_plug_new_internal");
@@ -3167,19 +3109,6 @@ ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, 
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, EINA_FALSE);
 
    return iface->connect(ee, svcname, svcnum, svcsys);
-}
-
-EAPI Evas_Object *
-ecore_evas_object_image_new(Ecore_Evas *ee_target)
-{
-   Evas_Object *(*new)(Ecore_Evas *ee_target);
-   Eina_Module *m = _ecore_evas_engine_load("buffer");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-
-   new = eina_module_symbol_get(m, "ecore_evas_object_image_new_internal");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
-
-   return new(ee_target);
 }
 
 EAPI Ecore_Evas *

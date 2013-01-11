@@ -2,30 +2,7 @@
 # include <config.h>
 #endif
 
-#include "ecore_evas_buffer_private.h"
-
-static int _ecore_evas_init_count = 0;
-
-static const char *interface_buffer_name = "buffer";
-static const int   interface_buffer_version = 1;
-
-
-static Ecore_Evas_Interface_Buffer *_ecore_evas_buffer_interface_new(void);
-
-static int
-_ecore_evas_buffer_init(void)
-{
-   _ecore_evas_init_count++;
-   return _ecore_evas_init_count;
-}
-
-static int
-_ecore_evas_buffer_shutdown(void)
-{
-   _ecore_evas_init_count--;
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
-   return _ecore_evas_init_count;
-}
+#include "ecore_evas_buffer.h"
 
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
@@ -47,7 +24,6 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
 
    free(bdata);
-   _ecore_evas_buffer_shutdown();
 }
 
 static void
@@ -128,10 +104,11 @@ static int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
    Eina_List *updates = NULL, *l, *ll;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   Ecore_Evas_Engine_Buffer_Data *bdata;
    Ecore_Evas *ee2;
    int rend = 0;
 
+   bdata = ee->engine.data;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -168,6 +145,13 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
      }
 
    return updates ? 1 : rend;
+}
+
+EAPI int
+ecore_evas_buffer_render(Ecore_Evas *ee)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, 0);
+   return _ecore_evas_buffer_render(ee);
 }
 
 // NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
@@ -565,19 +549,25 @@ _ecore_evas_buffer_pix_free(void *data EINA_UNUSED, void *pix)
 }
 
 EAPI Ecore_Evas *
-ecore_evas_buffer_allocfunc_new_internal(int w, int h, void *(*alloc_func) (void *data, int size), void (*free_func) (void *data, void *pix), const void *data)
+ecore_evas_buffer_allocfunc_new(int w, int h,
+                                void *(*alloc_func) (void *data, int size),
+                                void (*free_func) (void *data, void *pix),
+                                const void *data)
 {
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas_Engine_Buffer_Data *bdata;
-   Ecore_Evas_Interface_Buffer *iface;
    Ecore_Evas *ee;
    int rmethod;
 
-   if ((!alloc_func) || (!free_func)) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(alloc_func, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(free_func, NULL);
+
    rmethod = evas_render_method_lookup("buffer");
-   if (!rmethod) return NULL;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(rmethod == 0, NULL);
+
    ee = calloc(1, sizeof(Ecore_Evas));
-   if (!ee) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+
    bdata = calloc(1, sizeof(Ecore_Evas_Engine_Buffer_Data));
    if (!bdata)
      {
@@ -587,16 +577,11 @@ ecore_evas_buffer_allocfunc_new_internal(int w, int h, void *(*alloc_func) (void
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   _ecore_evas_buffer_init();
-
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_buffer_engine_func;
    ee->engine.data = bdata;
    bdata->alloc_func = alloc_func;
    bdata->free_func = free_func;
    bdata->data = (void *)data;
-
-   iface = _ecore_evas_buffer_interface_new();
-   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    ee->driver = "buffer";
 
@@ -673,43 +658,42 @@ ecore_evas_buffer_allocfunc_new_internal(int w, int h, void *(*alloc_func) (void
 }
 
 EAPI Ecore_Evas *
-ecore_evas_buffer_new_internal(int w, int h)
+ecore_evas_buffer_new(int w, int h)
 {
-    return ecore_evas_buffer_allocfunc_new_internal
+    return ecore_evas_buffer_allocfunc_new
      (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
 }
 
-const void *
-_ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
+EAPI const void *
+ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   Ecore_Evas_Engine_Buffer_Data *bdata;
 
-   if (!ee)
-     {
-        CRIT("Ecore_Evas is missing");
-        return NULL;
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+
+   bdata = ee->engine.data;
    _ecore_evas_buffer_render(ee);
    return bdata->pixels;
 }
 
 EAPI Evas_Object *
-ecore_evas_object_image_new_internal(Ecore_Evas *ee_target)
+ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
    Evas_Object *o;
    Ecore_Evas_Engine_Buffer_Data *bdata;
    Evas_Engine_Info_Buffer *einfo;
-   Ecore_Evas_Interface_Buffer *iface;
    Ecore_Evas *ee;
    int rmethod;
    int w = 1, h = 1;
 
-   if (!ee_target) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee_target, NULL);
 
    rmethod = evas_render_method_lookup("buffer");
-   if (!rmethod) return NULL;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(rmethod == 0, NULL);
+
    ee = calloc(1, sizeof(Ecore_Evas));
-   if (!ee) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+
    bdata = calloc(1, sizeof(Ecore_Evas_Engine_Buffer_Data));
    if (!bdata)
      {
@@ -718,8 +702,6 @@ ecore_evas_object_image_new_internal(Ecore_Evas *ee_target)
      }
 
    ee->engine.data = bdata;
-   iface = _ecore_evas_buffer_interface_new();
-   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    o = evas_object_image_add(ee_target->evas);
    evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
@@ -728,8 +710,6 @@ ecore_evas_object_image_new_internal(Ecore_Evas *ee_target)
    evas_object_image_size_set(o, w, h);
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
-
-   _ecore_evas_buffer_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_buffer_engine_func;
 
@@ -850,21 +830,4 @@ ecore_evas_object_image_new_internal(Ecore_Evas *ee_target)
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
 
    return o;
-}
-
-static Ecore_Evas_Interface_Buffer *
-_ecore_evas_buffer_interface_new(void)
-{
-   Ecore_Evas_Interface_Buffer *iface;
-
-   iface = calloc(1, sizeof(Ecore_Evas_Interface_Buffer));
-   if (!iface) return NULL;
-
-   iface->base.name = interface_buffer_name;
-   iface->base.version = interface_buffer_version;
-
-   iface->pixels_get = _ecore_evas_buffer_pixels_get;
-   iface->render = _ecore_evas_buffer_render;
-
-   return iface;
 }
