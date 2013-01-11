@@ -340,36 +340,36 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
 
-   ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
-   if (dc->clip.use)
-     {
-	ext_x = dc->clip.x;
-	ext_y = dc->clip.y;
-	ext_w = dc->clip.w;
-	ext_h = dc->clip.h;
-	if (ext_x < 0)
-	  {
-	     ext_w += ext_x;
-	     ext_x = 0;
-	  }
-	if (ext_y < 0)
-	  {
-	     ext_h += ext_y;
-	     ext_y = 0;
-	  }
-	if ((ext_x + ext_w) > im_w)
-	  ext_w = im_w - ext_x;
-	if ((ext_y + ext_h) > im_h)
-	  ext_h = im_h - ext_y;
-     }
-   if (ext_w <= 0) return;
-   if (ext_h <= 0) return;
-
 //   evas_common_font_size_use(fn);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
 
    if (!dc->cutout.rects)
      {
+        ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
+        if (dc->clip.use)
+          {
+             ext_x = dc->clip.x;
+             ext_y = dc->clip.y;
+             ext_w = dc->clip.w;
+             ext_h = dc->clip.h;
+             if (ext_x < 0)
+               {
+                  ext_w += ext_x;
+                  ext_x = 0;
+               }
+             if (ext_y < 0)
+               {
+                  ext_h += ext_y;
+                  ext_y = 0;
+               }
+             if ((ext_x + ext_w) > im_w)
+               ext_w = im_w - ext_x;
+             if ((ext_y + ext_h) > im_h)
+               ext_h = im_h - ext_y;
+          }
+        if (ext_w <= 0) return;
+        if (ext_h <= 0) return;
+
         cb(dst, dc, x, y, glyphs,
            func, ext_x, ext_y, ext_w, ext_h,
            im_w, im_h);
