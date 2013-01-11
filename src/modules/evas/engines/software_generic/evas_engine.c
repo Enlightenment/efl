@@ -1154,7 +1154,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
 }
 
 static void
-draw_thread_image_draw(void *data)
+_draw_thread_image_draw(void *data)
 {
    Evas_Thread_Command_Image *image = data;
 
@@ -1176,18 +1176,18 @@ draw_thread_image_draw(void *data)
    eina_mempool_free(_mp_command_image, image);
 }
 
-static void
+static Eina_Bool
 _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
 {
    Evas_Thread_Command_Image *cr;
    int clip_x, clip_y, clip_w, clip_h;
 
-   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
+   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return EINA_FALSE;
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-                         0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
+                         0, 0, dst->cache_entry.w, dst->cache_entry.h))) return EINA_FALSE;
 
    cr = eina_mempool_malloc(_mp_command_image, sizeof (Evas_Thread_Command_Image));
-   if (!cr) return;
+   if (!cr) return EINA_FALSE;
 
    cr->image = src;
    cr->surface = dst;
@@ -1215,27 +1215,29 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
    cr->render_op = dc->render_op;
    cr->smooth = smooth;
 
-   evas_thread_cmd_enqueue(draw_thread_image_draw, cr);
+   evas_thread_cmd_enqueue(_draw_thread_image_draw, cr);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _image_draw_thread_cmd_smooth(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
 {
-   _image_draw_thread_cmd
-     (src, dst, dc,
-      src_region_x, src_region_y, src_region_w, src_region_h,
-      dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-      1);
+   return _image_draw_thread_cmd
+       (src, dst, dc,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+        1);
 }
 
-static void
+static Eina_Bool
 _image_draw_thread_cmd_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
 {
-   _image_draw_thread_cmd
-     (src, dst, dc,
-      src_region_x, src_region_y, src_region_w, src_region_h,
-      dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-      0);
+   return _image_draw_thread_cmd
+       (src, dst, dc,
+        src_region_x, src_region_y, src_region_w, src_region_h,
+        dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+        0);
 }
 
 static Eina_Bool
@@ -1263,19 +1265,17 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
         evas_common_image_colorspace_normalize(im);
 
         if (smooth)
-          evas_common_scale_rgba_in_to_out_clip_cb
-            (image, surface, context,
-             src_x, src_y, src_w, src_h,
-             dst_x, dst_y, dst_w, dst_h,
-             _image_draw_thread_cmd_smooth);
+          return evas_common_scale_rgba_in_to_out_clip_cb
+              (image, surface, context,
+               src_x, src_y, src_w, src_h,
+               dst_x, dst_y, dst_w, dst_h,
+               _image_draw_thread_cmd_smooth);
         else
-          evas_common_scale_rgba_in_to_out_clip_cb
-            (image, surface, context,
-             src_x, src_y, src_w, src_h,
-             dst_x, dst_y, dst_w, dst_h,
-             _image_draw_thread_cmd_sample);
-
-        return EINA_TRUE;
+          return evas_common_scale_rgba_in_to_out_clip_cb
+              (image, surface, context,
+               src_x, src_y, src_w, src_h,
+               dst_x, dst_y, dst_w, dst_h,
+               _image_draw_thread_cmd_sample);
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
@@ -1390,22 +1390,24 @@ _map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src
         dst_region_x, dst_region_y, dst_region_w, dst_region_h);
 }
 
-static void
+static Eina_Bool
 _map_image_sample_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
 {
    _map_image_draw(src, dst, dc,
                    src_region_x, src_region_y, src_region_w, src_region_h,
                    dst_region_x, dst_region_y, dst_region_w, dst_region_h,
                    0);
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _map_image_smooth_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
 {
    _map_image_draw(src, dst, dc,
                    src_region_x, src_region_y, src_region_w, src_region_h,
                    dst_region_x, dst_region_y, dst_region_w, dst_region_h,
                    1);
+   return EINA_TRUE;
 }
 
 static void
@@ -1476,14 +1478,14 @@ _draw_thread_map_draw(void *data)
    eina_mempool_free(_mp_command_map, map);
 }
 
-static void
+static Eina_Bool
 _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset)
 {
    Evas_Thread_Command_Map *cm;
    int clip_x, clip_y, clip_w, clip_h;
 
    cm = eina_mempool_malloc(_mp_command_map, sizeof (Evas_Thread_Command_Map));
-   if (!cm) return;
+   if (!cm) return EINA_FALSE;
 
    cm->image = src;
    memcpy(&cm->image_ctx, dc, sizeof(*dc));
@@ -1525,6 +1527,8 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    cm->offset = offset;
 
    evas_thread_cmd_enqueue(_draw_thread_map_draw, cm);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1611,11 +1615,9 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
              if (!im->cache_entry.flags.loaded) return EINA_FALSE;
           }
 
-        evas_common_map_thread_rgba_cb(im, surface, context,
-                                       m, smooth, level, 0,
-                                       _map_draw_thread_cmd);
-
-        return EINA_TRUE;
+        return evas_common_map_thread_rgba_cb(im, surface, context,
+                                              m, smooth, level, 0,
+                                              _map_draw_thread_cmd);
      }
    else
      evas_software_image_map_draw(data, context, surface, im, m,
@@ -1934,13 +1936,13 @@ _draw_thread_font_draw(void *data)
    eina_mempool_free(_mp_command_font, font);
 }
 
-static void
+static Eina_Bool
 _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h)
 {
    Evas_Thread_Command_Font *cf;
 
    cf = eina_mempool_malloc(_mp_command_font, sizeof (Evas_Thread_Command_Font));
-   if (!cf) return ;
+   if (!cf) return EINA_FALSE;
 
    cf->dst = dst;
    cf->x = x;
@@ -1960,6 +1962,8 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
    cf->im_h = im_h;
 
    evas_thread_cmd_enqueue(_draw_thread_font_draw, cf);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1970,9 +1974,8 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
         evas_common_font_draw_prepare(text_props);
         if (!text_props->glyphs) return EINA_FALSE;
 
-        evas_common_font_draw_cb(surface, context, x, y, text_props->glyphs,
-                                 _font_draw_thread_cmd);
-        return EINA_TRUE;
+        return evas_common_font_draw_cb(surface, context, x, y, text_props->glyphs,
+                                        _font_draw_thread_cmd);
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))

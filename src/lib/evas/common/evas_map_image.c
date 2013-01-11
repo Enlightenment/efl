@@ -712,7 +712,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
-   
+
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
      {
 #ifdef EVAS_CSERVE2
@@ -722,6 +722,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
 #endif
           evas_cache_image_load_data(&src->cache_entry);
      }
+
    evas_common_image_colorspace_normalize(src);
    if (!src->image.data) return;
 
@@ -750,13 +751,14 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
 
-EAPI void
+EAPI Eina_Bool
 evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb)
 {
    static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
+   Eina_Bool ret = EINA_FALSE;
 
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
      {
@@ -770,12 +772,11 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
 
    evas_common_image_colorspace_normalize(src);
 
-   if (!src->image.data) return;
+   if (!src->image.data) return EINA_FALSE;
 
    if ((!dc->cutout.rects) && (!dc->clip.use))
      {
-        cb(src, dst, dc, map, smooth, level, offset);
-        return;
+        return cb(src, dst, dc, map, smooth, level, offset);
      }
 
    /* save out clip info */
@@ -785,7 +786,7 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      {
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
-        return;
+        return EINA_FALSE;
      }
 
    rects = evas_common_draw_context_apply_cutouts(dc, rects);
@@ -793,11 +794,13 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
      {
         r = rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-        cb(src, dst, dc, map, smooth, level, offset);
+        ret |= cb(src, dst, dc, map, smooth, level, offset);
      }
 
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+
+   return ret;
 }
 
 EAPI void

@@ -27,7 +27,7 @@ evas_common_font_draw_init(void)
  * and then for kerning we have to switch the order of the kerning query (as the prev
  * is on the right, and not on the left).
  */
-EAPI void
+EAPI Eina_Bool
 evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                            Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w,
                            int ext_h, int im_w, int im_h EINA_UNUSED)
@@ -35,8 +35,8 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    DATA32 *im;
    Evas_Glyph *glyph;
 
-   if (!glyphs) return;
-   if (!glyphs->array) return;
+   if (!glyphs) return EINA_FALSE;
+   if (!glyphs->array) return EINA_FALSE;
 
    im = dst->image.data;
 
@@ -88,7 +88,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                                                         font_alpha_buffer, 
                                                         w * sizeof(DATA32));
 
-             if (!font_mask_image)  return;
+             if (!font_mask_image) return EINA_FALSE;
 # endif
 #endif
 
@@ -220,6 +220,8 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
         else
           break;
      }
+
+   return EINA_TRUE;
 }
 
 void
@@ -319,7 +321,7 @@ error:
    eina_inarray_free(glyphs);
 }
 
-EAPI void
+EAPI Eina_Bool
 evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, Evas_Common_Font_Draw_Cb cb)
 {
    static Cutout_Rects *rects = NULL;
@@ -330,7 +332,7 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
    int c, cx, cy, cw, ch;
    int i;
 
-   if (!glyphs) return;
+   if (!glyphs) return EINA_FALSE;
 
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
@@ -362,15 +364,16 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
              if ((ext_y + ext_h) > im_h)
                ext_h = im_h - ext_y;
           }
-        if (ext_w <= 0) return;
-        if (ext_h <= 0) return;
+        if (ext_w <= 0) return EINA_FALSE;
+        if (ext_h <= 0) return EINA_FALSE;
 
-        cb(dst, dc, x, y, glyphs,
-           func, ext_x, ext_y, ext_w, ext_h,
-           im_w, im_h);
+        return cb(dst, dc, x, y, glyphs,
+                  func, ext_x, ext_y, ext_w, ext_h,
+                  im_w, im_h);
      }
    else
      {
+        Eina_Bool ret = EINA_FALSE;
         c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
         evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
         /* our clip is 0 size.. abort */
@@ -381,12 +384,14 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
                {
                   r = rects->rects + i;
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-                  cb(dst, dc, x, y, glyphs,
-                     func, r->x, r->y, r->w, r->h,
-                     im_w, im_h);
+                  ret |= cb(dst, dc, x, y, glyphs,
+                            func, r->x, r->y, r->w, r->h,
+                            im_w, im_h);
                }
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+
+        return ret;
      }
 }
 

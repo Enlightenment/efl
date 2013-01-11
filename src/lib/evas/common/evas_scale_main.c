@@ -31,7 +31,7 @@ evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects *reuse, const RGBA_Im
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
                                          RGBA_Draw_Context *dc,
                                          int src_region_x, int src_region_y,
@@ -44,19 +44,19 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
-   /* handle cutouts here! */
+   Eina_Bool ret = EINA_FALSE;
 
-   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
+   /* handle cutouts here! */
+   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return EINA_FALSE;
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
-     return;
+     return EINA_FALSE;
 
    /* no cutouts - cut right to the chase */
    if (!dc->cutout.rects)
      {
-        cb(src, dst, dc,
-           src_region_x, src_region_y, src_region_w, src_region_h,
-           dst_region_x, dst_region_y, dst_region_w, dst_region_h);
-	return;
+        return cb(src, dst, dc,
+                  src_region_x, src_region_y, src_region_w, src_region_h,
+                  dst_region_x, dst_region_y, dst_region_w, dst_region_h);
      }
 
    /* save out clip info */
@@ -68,7 +68,7 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      {
 	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
-	return;
+	return EINA_FALSE;
      }
 
    rects = evas_common_draw_context_apply_cutouts(dc, rects);
@@ -76,11 +76,13 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
      {
 	r = rects->rects + i;
 	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-        cb(src, dst, dc,
-           src_region_x, src_region_y, src_region_w, src_region_h,
-           dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+        ret |= cb(src, dst, dc,
+                  src_region_x, src_region_y, src_region_w, src_region_h,
+                  dst_region_x, dst_region_y, dst_region_w, dst_region_h);
      }
 
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+
+   return ret;
 }

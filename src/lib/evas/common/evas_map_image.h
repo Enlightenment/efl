@@ -2,7 +2,7 @@
 #define _EVAS_MAP_H
 
 typedef void (*Evas_Common_Map_RGBA_Cb)            (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level);
-typedef void (*Evas_Common_Map_Thread_RGBA_Cb)     (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset);
+typedef Eina_Bool (*Evas_Common_Map_Thread_RGBA_Cb)     (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset);
 
 EAPI void
 evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
@@ -11,7 +11,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
                         int smooth, int level,
                         Evas_Common_Map_RGBA_Cb cb);
 
-EAPI void evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb);
+EAPI Eina_Bool evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb);
 
 EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
