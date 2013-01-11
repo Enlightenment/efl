@@ -1096,10 +1096,14 @@ ecore_evas_ews_new(int x, int y, int w, int h)
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
    int rmethod;
+   static Eina_Bool creating = EINA_FALSE;
 
    if (_ecore_evas_ews_init() < 1) return NULL;
 
+   if (creating) return NULL; /* avoid recursive ecore_evas_new() with ews */
+   creating = EINA_TRUE;
    if (!_ews_ee) _ews_ee = _ecore_evas_ews_ee_new();
+   creating = EINA_FALSE;
    if (!_ews_ee)
      {
         ERR("Could not create EWS backing store");
