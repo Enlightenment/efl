@@ -1294,7 +1294,7 @@ data_write_scripts(Eet_File *ef)
                    "%s/src/bin/embryo/embryo_cc" BIN_EXT,
                    PACKAGE_BUILD_DIR);
           snprintf(inc_path, sizeof(inc_path),
-                   "%s/data/edje/include", PACKAGE_BUILD_DIR);
+                   "%s/data/edje/include", PACKAGE_SRC_DIR);
           if (!ecore_file_exists(embryo_cc_path))
             embryo_cc_path[0] = '\0';
        }

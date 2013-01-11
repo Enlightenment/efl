@@ -113,6 +113,7 @@ EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
 AM_CPPFLAGS = \
 -I. \
+-I$(builddir) \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
@@ -146,6 +147,8 @@ codegen_example_generated.h
 
 codegen_example_generated.c codegen_example_generated.h: codegen.edj
 	$(AM_V_GEN)$(EDJE_CODEGEN) $(EDJE_CODEGEN_FLAGS) codegen.edj example_group $(builddir)/codegen_example_generated.c $(builddir)/codegen_example_generated.h
+
+edje-codegen-example.$(OBJEXT): $(CODEGEN_GENERATED)
 
 edje_codegen_example_SOURCES = \
 edje-codegen-example.c

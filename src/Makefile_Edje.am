@@ -35,6 +35,7 @@ EDJE_COMMON_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
 -DEFL_EDJE_BUILD \
 @EFL_COV_CFLAGS@ \
 @EDJE_CFLAGS@ \
