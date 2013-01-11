@@ -1751,13 +1751,14 @@ _box_layout_stack(Eo *o, void *_pd, va_list *list EINA_UNUSED)
         evas_object_geometry_get(child, NULL, NULL, &child_w, &child_h);
         new_w = child_w;
         new_h = child_h;
-        if (new_w > top_w) top_w = new_w;
-        if (new_h > top_h) top_h = new_h;
 
         _layout_set_offset_and_change_dimension_min_max_cell_bounded
            (child_w, &new_w, min_w, max_w, ow, &off_x, align_x, pad_l, pad_r);
         _layout_set_offset_and_change_dimension_min_max_cell_bounded
            (child_h, &new_h, min_h, max_h, oh, &off_y, align_y, pad_t, pad_b);
+
+        if (new_w > top_w) top_w = new_w;
+        if (new_h > top_h) top_h = new_h;
 
         if ((new_w != child_w) || (new_h != child_h))
           evas_object_resize(child, new_w, new_h);
