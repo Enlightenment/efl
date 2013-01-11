@@ -2433,7 +2433,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
    evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
-static void
+static Eina_Bool
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
@@ -2441,7 +2441,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    Evas_GL_Image *im = image;
    Native *n;
 
-   if (!im) return;
+   if (!im) return EINA_FALSE;
    n = im->native.data;
 
    if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) &&
@@ -2461,6 +2461,8 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                                   dst_x, dst_y, dst_w, dst_h,
                                   smooth);
      }
+
+   return EINA_FALSE;
 }
 
 static void

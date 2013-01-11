@@ -1307,6 +1307,19 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
 }
 
 static Eina_Bool
+_drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cache2_image_close((Image_Entry *)data);
+   else
+#endif
+     evas_cache_image_drop((Image_Entry *)data);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
                              unsigned char do_draw,
@@ -1855,6 +1868,10 @@ evas_render_wakeup(Evas *eo_e)
    /* clear redraws */
    e->engine.func->output_redraws_clear(e->engine.data.output);
 
+   /* unref queue */
+   eina_array_foreach(&e->image_unref_queue, _drop_image_cache_ref, NULL);
+   eina_array_clean(&e->image_unref_queue);
+
    evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
 
    if (e->render.updates_cb)
@@ -2124,6 +2141,12 @@ evas_render_object_recalc(Evas_Object *eo_obj)
        eina_array_push(&e->pending_objects, obj);
        obj->changed = EINA_TRUE;
      }
+}
+
+void
+evas_unref_queue_image_put(Evas_Public_Data *pd, void *image)
+{
+   eina_array_push(&pd->image_unref_queue, image);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

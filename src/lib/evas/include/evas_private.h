@@ -386,6 +386,7 @@ struct _Evas_Public_Data
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
+   Eina_Array     image_unref_queue;
 
    Eina_Clist     calc_list;
    Eina_Clist     calc_done;
@@ -818,7 +819,7 @@ struct _Evas_Func
    int  (*image_alpha_get)                 (void *data, void *image);
    void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
    void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
-   void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
+   Eina_Bool (*image_draw)                 (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);
    void (*image_colorspace_set)            (void *data, void *image, int cspace);
@@ -1048,6 +1049,7 @@ void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t,
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
+void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 
 void _freeze_events_set(Eo *obj, void *_pd, va_list *list);
 void _freeze_events_get(Eo *obj, void *_pd, va_list *list);

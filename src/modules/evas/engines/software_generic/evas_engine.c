@@ -1154,17 +1154,6 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
 }
 
 static void
-_drop_cache_ref(void *target, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cache2_image_close((Image_Entry *)target);
-   else
-#endif
-     evas_cache_image_drop((Image_Entry *)target);
-}
-
-static void
 draw_thread_image_draw(void *data)
 {
    Evas_Thread_Command_Image *image = data;
@@ -1184,7 +1173,6 @@ draw_thread_image_draw(void *data)
         image->src.x, image->src.y, image->src.w, image->src.h,
         image->dst.x, image->dst.y, image->dst.w, image->dst.h);
 
-   evas_async_events_put(image->image, 0, NULL, _drop_cache_ref);
    eina_mempool_free(_mp_command_image, image);
 }
 
@@ -1198,15 +1186,8 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
                          0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cache2_image_ref((Image_Entry *)src);
-   else
-#endif
-     evas_cache_image_ref((Image_Entry *)src);
-
    cr = eina_mempool_malloc(_mp_command_image, sizeof (Evas_Thread_Command_Image));
-   if (!cr) return ;
+   if (!cr) return;
 
    cr->image = src;
    cr->surface = dst;
@@ -1257,12 +1238,12 @@ _image_draw_thread_cmd_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Contex
       0);
 }
 
-static void
+static Eina_Bool
 eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async)
 {
    RGBA_Image *im;
 
-   if (!image) return;
+   if (!image) return EINA_FALSE;
    im = image;
 
    if (do_async)
@@ -1276,7 +1257,7 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
 #endif
                evas_cache_image_load_data(&im->cache_entry);
 
-             if (!im->cache_entry.flags.loaded) return;
+             if (!im->cache_entry.flags.loaded) return EINA_FALSE;
           }
 
         evas_common_image_colorspace_normalize(im);
@@ -1293,6 +1274,8 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
              src_x, src_y, src_w, src_h,
              dst_x, dst_y, dst_w, dst_h,
              _image_draw_thread_cmd_sample);
+
+        return EINA_TRUE;
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
@@ -1361,6 +1344,8 @@ image_loaded:
 
 	evas_common_cpu_end_opt();
      }
+
+   return EINA_FALSE;
 }
 
 static void

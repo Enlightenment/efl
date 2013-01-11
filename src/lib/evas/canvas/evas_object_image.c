@@ -3138,6 +3138,33 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
+_draw_image(Evas_Object_Protected_Data *obj,
+            void *data, void *context, void *surface, void *image,
+            int src_x, int src_y, int src_w, int src_h, int dst_x,
+            int dst_y, int dst_w, int dst_h, int smooth,
+            Eina_Bool do_async)
+{
+   Eina_Bool async_unref;
+
+   async_unref = obj->layer->evas->engine.func->image_draw(data, context, surface,
+                                                           image, src_x, src_y,
+                                                           src_w, src_h, dst_x,
+                                                           dst_y, dst_w, dst_h,
+                                                           smooth, do_async);
+   if (do_async && async_unref)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_ref((Image_Entry *)image);
+        else
+#endif
+          evas_cache_image_ref((Image_Entry *)image);
+
+        evas_unref_queue_image_put(obj->layer->evas, image);
+     }
+}
+
+static void
 evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
@@ -3360,8 +3387,8 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                       h = ih;
                                    }
 
-                                 obj->layer->evas->engine.func->image_draw
-                                   (output, context, surface, data,
+                                 _draw_image
+                                   (obj, output, context, surface, data,
                                     0, 0,
                                     w, h,
                                     obj->cur.geometry.x + ix + x,
@@ -3373,8 +3400,8 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             else
 #endif
                               {
-                                 obj->layer->evas->engine.func->image_draw
-                                   (output, context, surface, pixels,
+                                 _draw_image
+                                   (obj, output, context, surface, pixels,
                                     0, 0,
                                     imagew, imageh,
                                     obj->cur.geometry.x + ix + x,
@@ -3435,28 +3462,28 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             inw = bl; inh = bt;
                             outx = ox; outy = oy;
                             outw = bsl; outh = bst;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // .##
                             // |
                             inx = bl; iny = 0;
                             inw = imw - bl - br; inh = bt;
                             outx = ox + bsl; outy = oy;
                             outw = iw - bsl - bsr; outh = bst;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // --#
                             //   |
                             inx = imw - br; iny = 0;
                             inw = br; inh = bt;
                             outx = ox + iw - bsr; outy = oy;
                             outw = bsr; outh = bst;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // .--
                             // #  
                             inx = 0; iny = bt;
                             inw = bl; inh = imh - bt - bb;
                             outx = ox; outy = oy + bst;
                             outw = bsl; outh = ih - bst - bsb;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // .--.
                             // |##|
                             if (o->cur.border.fill > EVAS_BORDER_FILL_NONE)
@@ -3471,12 +3498,12 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                    {
                                       obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                                                            EVAS_RENDER_COPY);
-                                      obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                                      _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                                       obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                                                            obj->cur.render_op);
                                    }
                                  else
-                                   obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                                   _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                               }
                             // --.
                             //   #
@@ -3484,28 +3511,28 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             inw = br; inh = imh - bt - bb;
                             outx = ox + iw - bsr; outy = oy + bst;
                             outw = bsr; outh = ih - bst - bsb;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // |
                             // #--
                             inx = 0; iny = imh - bb;
                             inw = bl; inh = bb;
                             outx = ox; outy = oy + ih - bsb;
                             outw = bsl; outh = bsb;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             // |
                             // .## 
                             inx = bl; iny = imh - bb;
                             inw = imw - bl - br; inh = bb;
                             outx = ox + bsl; outy = oy + ih - bsb;
                             outw = iw - bsl - bsr; outh = bsb;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                             //   |
                             // --#
                             inx = imw - br; iny = imh - bb;
                             inw = br; inh = bb;
                             outx = ox + iw - bsr; outy = oy + ih - bsb;
                             outw = bsr; outh = bsb;
-                            obj->layer->evas->engine.func->image_draw(output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
+                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale, do_async);
                          }
                        idy += idh;
                        if (dobreak_h) break;

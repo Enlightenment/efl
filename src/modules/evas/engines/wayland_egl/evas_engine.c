@@ -1885,13 +1885,13 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
    evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
-static void
+static Eina_Bool
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   if (!image) return;
+   if (!image) return EINA_FALSE;
 
    if ((gl_direct_img_obj) && (gl_direct_enabled))
      evas_object_image_pixels_dirty_set(gl_direct_img_obj, EINA_TRUE);
@@ -1905,6 +1905,8 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                                   dst_x, dst_y, dst_w, dst_h,
                                   smooth);
      }
+
+   return EINA_FALSE;
 }
 
 static void

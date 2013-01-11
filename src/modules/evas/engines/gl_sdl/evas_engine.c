@@ -808,19 +808,20 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
    evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
-static void
+static Eina_Bool
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   if (!image) return;
+   if (!image) return EINA_FALSE;
    evas_gl_common_context_target_surface_set(re->gl_context, surface);
    re->gl_context->dc = context;
    evas_gl_common_image_draw(re->gl_context, image,
                              src_x, src_y, src_w, src_h,
                              dst_x, dst_y, dst_w, dst_h,
                              smooth);
+   return EINA_FALSE;
 }
 
 static void
