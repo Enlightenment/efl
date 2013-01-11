@@ -1337,7 +1337,13 @@ evas_render_updates_internal(Evas *eo_e,
    e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e->changed) return EINA_FALSE;
 
-   if (do_async && e->rendering) return EINA_FALSE;
+   if (e->rendering)
+     {
+        if (!do_async)
+          ERR("Cannot render sync as already doing async render! e=%p [%s]",
+              e, e->engine.module->definition->name);
+        return EINA_FALSE;
+     }
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
