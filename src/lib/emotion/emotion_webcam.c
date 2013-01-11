@@ -215,6 +215,12 @@ Eina_Bool emotion_webcam_init(void)
    eet_init();
    _emotion_webcams_edds_new();
 
+   if (!_emotion_webcams)
+     {
+        _emotion_webcams = calloc(1, sizeof (Emotion_Webcams));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(_emotion_webcams, EINA_FALSE);
+     }
+
 #ifdef HAVE_EEZE
    eeze_init();
 
@@ -256,10 +262,24 @@ emotion_webcam_shutdown(void)
 Eina_Bool
 emotion_webcam_config_load(Eet_File *ef)
 {
+   Emotion_Webcams *emotion_webcams = NULL;
+
    if (ef)
      {
-        _emotion_webcams = eet_data_read(ef, _webcams_edd, "config");
+        emotion_webcams = eet_data_read(ef, _webcams_edd, "config");
         INF("Loaded config %p from eet %s", _emotion_webcams, eet_file_get(ef));
+     }
+
+   if (emotion_webcams)
+     {
+        if (_emotion_webcams)
+          {
+             emotion_webcam_shutdown();
+             _emotion_webcams = emotion_webcams;
+             emotion_webcam_init();
+          }
+        else
+          _emotion_webcams = emotion_webcams;
      }
 
    if (!_emotion_webcams)
