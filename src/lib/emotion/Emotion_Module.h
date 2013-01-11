@@ -105,8 +105,6 @@ struct _Emotion_Video_Module
    const char *   (*meta_get) (void *ef, int meta);
    void           (*priority_set) (void *ef, Eina_Bool priority);
    Eina_Bool      (*priority_get) (void *ef);
-
-   Eina_Emotion_Plugins *plugin;
 };
 
 EAPI void *_emotion_video_get(const Evas_Object *obj);

@@ -1762,8 +1762,7 @@ static Emotion_Video_Module em_module =
    em_eject, /* eject */
    em_meta_get, /* meta_get */
    NULL, /* priority_set */
-   NULL, /* priority_get */
-   NULL /* handle */
+   NULL /* priority_get */
 };
 
 static Eina_Bool

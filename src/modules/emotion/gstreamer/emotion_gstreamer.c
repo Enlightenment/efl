@@ -270,8 +270,7 @@ static Emotion_Video_Module em_module =
    em_eject, /* eject */
    em_meta_get, /* meta_get */
    em_priority_set, /* priority_set */
-   em_priority_get, /* priority_get */
-   NULL /* handle */
+   em_priority_get /* priority_get */
 };
 
 static int priority_overide = 0;

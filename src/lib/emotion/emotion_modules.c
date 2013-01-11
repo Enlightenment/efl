@@ -152,6 +152,7 @@ _emotion_module_unregister(const char *name)
 
 struct _Emotion_Engine_Instance
 {
+   Eina_Emotion_Plugins *plugin;
    Emotion_Video_Module *api;
    Evas_Object *obj;
    char *name;
@@ -238,7 +239,7 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
      {
         Emotion_Engine_Instance *inst = calloc(1, sizeof(Emotion_Engine_Instance));
         INF("opened %s, mod=%p, video=%p", name, mod, data);
-        mod->plugin = plugin;
+        inst->plugin = plugin;
         inst->api = mod;
         inst->obj = obj;
         inst->data = data;
@@ -258,7 +259,7 @@ void
 emotion_engine_instance_del(Emotion_Engine_Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN(inst);
-   inst->api->plugin->close(inst->api, inst->data); // TODO: weird api
+   inst->plugin->close(inst->api, inst->data); // TODO: weird api
 }
 
 Eina_Bool
