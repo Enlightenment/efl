@@ -760,7 +760,7 @@ group { name: "elm/hover/base/submenu";
             rel2.relative: 1.0 1.0;
          }
       }
-      //here we do non catch events like the hover hover does
+      //here we don't catch events like the hover does
       part { name: "base";
          type: RECT;
          mouse_events: 1;
