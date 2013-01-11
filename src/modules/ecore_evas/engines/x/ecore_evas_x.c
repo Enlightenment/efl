@@ -22,6 +22,10 @@
 # include <Evas_Engine_GL_X11.h>
 #endif
 
+#define EDBG(...)                                                       \
+  EINA_LOG(_ecore_evas_log_dom, EINA_LOG_LEVEL_DBG + 1, __VA_ARGS__);
+
+
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[13];
@@ -575,9 +579,11 @@ _ecore_evas_x_render_updates(void *data, Evas *e EINA_UNUSED, void *event_info)
    Ecore_Evas *ee = data;
    Eina_List *updates = event_info;
 
-   _render_updates_process(ee, updates);
+   EDBG("ee=%p finished asynchronous render.", ee);
 
    ee->in_async_render = EINA_FALSE;
+
+   _render_updates_process(ee, updates);
 
    if (ee->delayed.resize_shape)
      {
@@ -621,6 +627,12 @@ _ecore_evas_x_render(Ecore_Evas *ee)
        (!edata->sync_cancel))
      return 0;
 
+   if (ee->in_async_render)
+     {
+        EDBG("ee=%p is rendering asynchronously, skip.", ee);
+        return 0;
+     }
+
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -630,19 +642,18 @@ _ecore_evas_x_render(Ecore_Evas *ee)
      }
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (ee->can_async_render)
+   if (!ee->can_async_render)
      {
-        ee->in_async_render |= evas_render_async(ee->evas,
-                                                 _ecore_evas_x_render_updates,
-                                                 ee);
-        rend |= ee->in_async_render;
-     }
-   else
-     {
-        Eina_List *updates;
-        updates = evas_render_updates(ee->evas);
+        Eina_List *updates = evas_render_updates(ee->evas);
         rend = _render_updates_process(ee, updates);
      }
+   else if (evas_render_async(ee->evas, _ecore_evas_x_render_updates, ee))
+     {
+        EDBG("ee=%p started asynchronous render.", ee);
+        ee->in_async_render = EINA_TRUE;
+        rend = 1;
+     }
+
    return rend;
 }
 
