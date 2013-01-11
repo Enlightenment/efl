@@ -1367,8 +1367,6 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
    _edje_text_recalc_apply(ed, ep, params, chosen_desc);
 
-   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-
    if ((!chosen_desc) ||
        ((!chosen_desc->text.min_x) && (!chosen_desc->text.min_y) &&
         (!chosen_desc->text.max_x) && (!chosen_desc->text.max_y)))
