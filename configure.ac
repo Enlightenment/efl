@@ -3143,9 +3143,6 @@ fi
 
 EFL_EVAL_PKGS([EEZE])
 
-AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "${want_mount}" = "yes"])
-AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "${want_tizen}" = "yes"])
-
 ### Checks for header files
 
 ### Checks for types
@@ -3175,6 +3172,9 @@ fi
 AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
 
 EFL_LIB_END_OPTIONAL([Eeze])
+
+AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${want_mount}" = "xyes"])
+AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
 #### End of Eeze
 
 
