@@ -902,7 +902,7 @@ eng_image_scale_hint_get(void *data EINA_UNUSED, void *image)
    return gim->scale_hint;
 }
 
-static void
+static Eina_Bool
 eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props)
 {
    Render_Engine *re;
@@ -931,6 +931,8 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int
 					      NULL,
 					      NULL);
      }
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool

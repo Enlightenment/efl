@@ -678,11 +678,11 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
              ENFN->context_color_set(output, context,
                                      row->texts[xx].r, row->texts[xx].g,
                                      row->texts[xx].b, row->texts[xx].a); 
-             ENFN->font_draw(output, context, surface, o->font,
-                             xp + row->texts[xx].x, yp + o->max_ascent,
-                             ww, hh, ww, hh,
-                             evas_object_textgrid_textprop_int_to(o, row->texts[xx].text_props),
-                             do_async);
+             evas_font_draw_async_check(obj, output, context, surface, o->font,
+                                        xp + row->texts[xx].x, yp + o->max_ascent,
+                                        ww, hh, ww, hh,
+                                        evas_object_textgrid_textprop_int_to(o, row->texts[xx].text_props),
+                                        do_async);
           }
         for (xx = 0; xx < row->lines_num; xx++)
           {

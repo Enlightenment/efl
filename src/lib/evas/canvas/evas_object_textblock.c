@@ -10297,12 +10297,14 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
          (obj->cur.cache.clip.g * ti->parent.format->color.col.g * (amul)) / 65025, \
          (obj->cur.cache.clip.b * ti->parent.format->color.col.b * (amul)) / 65025, \
          (obj->cur.cache.clip.a * ti->parent.format->color.col.a * (amul)) / 65025);
-#define DRAW_TEXT(ox, oy) \
-   if (ti->parent.format->font.font) ENFN->font_draw(output, context, surface, ti->parent.format->font.font, \
-         obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox), \
-         obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
-         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
-         &ti->text_props, do_async);
+#define DRAW_TEXT(ox, oy)                                               \
+   if (ti->parent.format->font.font)                                    \
+     evas_font_draw_async_check(obj, output, context, surface,          \
+        ti->parent.format->font.font,                                   \
+        obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox),          \
+        obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy),     \
+        ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h,         \
+        &ti->text_props, do_async);
 
    /* backing */
 #define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa) \

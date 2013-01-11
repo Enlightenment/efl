@@ -387,6 +387,7 @@ struct _Evas_Public_Data
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
    Eina_Array     image_unref_queue;
+   Eina_Array     glyph_unref_queue;
 
    Eina_Clist     calc_list;
    Eina_Clist     calc_done;
@@ -847,8 +848,7 @@ struct _Evas_Func
    int  (*font_v_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
    int  (*font_char_coords_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
    int  (*font_char_at_coords_get)         (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   void (*font_draw)                       (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props, Eina_Bool do_async);
-
+   Eina_Bool (*font_draw)                  (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props, Eina_Bool do_async);
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);
    int  (*font_cache_get)                  (void *data);
@@ -1050,6 +1050,13 @@ void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
 void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
+void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
+
+void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
+                                void *data, void *context, void *surface,
+                                Evas_Font_Set *font,
+                                int x, int y, int w, int h, int ow, int oh,
+                                Evas_Text_Props *intl_props, Eina_Bool do_async);
 
 void _freeze_events_set(Eo *obj, void *_pd, va_list *list);
 void _freeze_events_get(Eo *obj, void *_pd, va_list *list);

@@ -1886,6 +1886,25 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 #endif
 }
 
+void
+evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
+                           void *data, void *context, void *surface,
+                           Evas_Font_Set *font,
+                           int x, int y, int w, int h, int ow, int oh,
+                           Evas_Text_Props *intl_props, Eina_Bool do_async)
+{
+   Eina_Bool async_unref;
+
+   async_unref = obj->layer->evas->engine.func->font_draw(data, context, surface,
+                                                          font, x, y, w, h, ow, oh,
+                                                          intl_props, do_async);
+   if (do_async && async_unref)
+     {
+        evas_common_font_glyphs_ref(intl_props->glyphs);
+        evas_unref_queue_glyph_put(obj->layer->evas, intl_props->glyphs);
+     }
+}
+
 static void
 evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
@@ -1964,22 +1983,22 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 				(((int)object->sub.col.b) * (amul)) / 255, \
 				(((int)object->sub.col.a) * (amul)) / 255);
 
-#define DRAW_TEXT(ox, oy) \
-   if ((o->font) && (it->text_props.len > 0)) \
-     ENFN->font_draw(output, \
-		     context, \
-		     surface, \
-		     o->font, \
-		     obj->cur.geometry.x + x + sl + ox + it->x, \
-		     obj->cur.geometry.y + y + st + oy + \
-		     (int) \
-		     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
-		     obj->cur.geometry.w, \
-		     obj->cur.geometry.h, \
-		     obj->cur.geometry.w, \
-		     obj->cur.geometry.h, \
-		     &it->text_props, \
-		     do_async);
+#define DRAW_TEXT(ox, oy)                                               \
+   if ((o->font) && (it->text_props.len > 0))                           \
+     evas_font_draw_async_check(obj, output,                            \
+                                context,                                \
+                                surface,                                \
+                                o->font,                                \
+                                obj->cur.geometry.x + x + sl + ox + it->x, \
+                                obj->cur.geometry.y + y + st + oy +     \
+                                (int)                                   \
+                                (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
+                                obj->cur.geometry.w,                    \
+                                obj->cur.geometry.h,                    \
+                                obj->cur.geometry.w,                    \
+                                obj->cur.geometry.h,                    \
+                                &it->text_props,                        \
+                                do_async);
 
    /* shadows */
    shad_dst = shad_sz = dx = dy = haveshad = 0;

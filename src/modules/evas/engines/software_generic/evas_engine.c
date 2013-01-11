@@ -1935,8 +1935,6 @@ _draw_thread_font_draw(void *data)
       font->ext.x, font->ext.y, font->ext.w, font->ext.h,
       font->im_w, font->im_h);
 
-   evas_async_events_put(font->glyphs, 0, NULL,
-     (Evas_Async_Events_Put_Cb)evas_common_font_glyphs_unref);
    eina_mempool_free(_mp_command_font, font);
 }
 
@@ -1965,11 +1963,10 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
    cf->im_w = im_w;
    cf->im_h = im_h;
 
-   evas_common_font_glyphs_ref(glyphs);
    evas_thread_cmd_enqueue(_draw_thread_font_draw, cf);
 }
 
-static void
+static Eina_Bool
 eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *text_props, Eina_Bool do_async)
 {
    if (do_async)
@@ -1977,6 +1974,7 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
         evas_common_font_draw_prepare(text_props);
         evas_common_font_draw_cb(surface, context, x, y, text_props->glyphs,
                                  _font_draw_thread_cmd);
+        return EINA_TRUE;
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
@@ -1988,6 +1986,8 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
         evas_common_font_draw(surface, context, x, y, text_props->glyphs);
         evas_common_cpu_end_opt();
      }
+
+   return EINA_FALSE;
 }
 
 static void

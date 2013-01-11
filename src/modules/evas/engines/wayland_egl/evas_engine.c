@@ -2048,7 +2048,7 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
      *stride = im->w * 4;
 }
 
-static void
+static Eina_Bool
 eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props)
 {
    Render_Engine *re;
@@ -2074,6 +2074,8 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
         evas_common_font_draw(im, context, x, y, intl_props->glyphs);
         evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
      }
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
