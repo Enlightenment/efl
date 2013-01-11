@@ -175,8 +175,6 @@ static void     reload_config_callback                  (const ConfigPointer    
 static void     fallback_commit_string_cb               (IMEngineInstanceBase   *si,
                                                          const WideString       &str);
 
-static void     caps_mode_check                         (Ecore_IMF_Context *ctx, Eina_Bool force);
-
 /* Local variables declaration */
 static String                                           _language;
 static EcoreIMFContextISFImpl                          *_used_ic_impl_list          = 0;
@@ -356,133 +354,6 @@ find_ic(int id)
      }
 
    return 0;
-}
-
-static Eina_Bool
-analyze_surrounding_text(Ecore_IMF_Context *ctx)
-{
-   char *plain_str = NULL;
-   char *markup_str = NULL;
-   const char *puncs[] = {". ", "! ", "? "};
-   Eina_Bool ret = EINA_FALSE;
-   int cursor_pos = 0;
-   int i = 0;
-   Eina_Unicode *tail = NULL;
-   Eina_Unicode *ustr = NULL;
-   const int punc_num = sizeof(puncs) / sizeof(puncs[0]);
-   Eina_Unicode *uni_puncs[punc_num];
-   EcoreIMFContextISF *context_scim;
-
-   if (!ctx) return EINA_FALSE;
-   context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
-   if (!context_scim || !context_scim->impl) return EINA_FALSE;
-
-   switch (context_scim->impl->autocapital_type)
-     {
-      case ECORE_IMF_AUTOCAPITAL_TYPE_NONE:
-         return EINA_FALSE;
-      case ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER:
-         return EINA_TRUE;
-      default:
-         break;
-     }
-
-   for (i = 0; i < punc_num; i++)
-     uni_puncs[i] = eina_unicode_utf8_to_unicode(puncs[i], NULL);
-
-   ecore_imf_context_surrounding_get(ctx, &markup_str, &cursor_pos);
-   if (!markup_str) goto done;
-
-   if (cursor_pos == 0)
-     {
-        ret = EINA_TRUE;
-        goto done;
-     }
-
-   // Convert into plain string
-   plain_str = evas_textblock_text_markup_to_utf8(NULL, markup_str);
-   if (!plain_str) goto done;
-
-   // Convert string from UTF-8 to unicode
-   ustr = eina_unicode_utf8_to_unicode(plain_str, NULL);
-   if (!ustr) goto done;
-
-   if (cursor_pos >= 1)
-     {
-        if (context_scim->impl->autocapital_type == ECORE_IMF_AUTOCAPITAL_TYPE_WORD)
-          {
-             if (ustr[cursor_pos-1] == ' ')
-               {
-                  ret = EINA_TRUE;
-                  goto done;
-               }
-          }
-
-        // Check paragraph separator <PS> and carriage return  <br>
-        if ((ustr[cursor_pos-1] == 0x2029) || (ustr[cursor_pos-1] == '\n'))
-          {
-             ret = EINA_TRUE;
-             goto done;
-          }
-     }
-
-   // check punctuation
-   if (cursor_pos >= 2)
-     {
-        tail = eina_unicode_strndup(ustr+cursor_pos-2, 2);
-
-        if (tail)
-          {
-             for (i = 0; i < punc_num; i++)
-               {
-                  if (!eina_unicode_strcmp(tail, uni_puncs[i]))
-                    {
-                       ret = EINA_TRUE;
-                       break;
-                    }
-               }
-             free(tail);
-             tail = NULL;
-          }
-     }
-
-done:
-   if (ustr) free(ustr);
-   if (markup_str) free(markup_str);
-   if (plain_str) free(plain_str);
-
-   for (i = 0; i < punc_num; i++)
-     if (uni_puncs[i]) free(uni_puncs[i]);
-
-   return ret;
-}
-
-static void
-caps_mode_check(Ecore_IMF_Context *ctx, Eina_Bool force)
-{
-   Eina_Bool uppercase;
-   EcoreIMFContextISF *context_scim;
-
-   if (!ctx) return;
-   context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
-
-   if (autocap_allow == EINA_FALSE)
-     return;
-
-   // Check autocapital type
-   if (!context_scim || !context_scim->impl)
-     return;
-
-   if (analyze_surrounding_text(ctx))
-     uppercase = EINA_TRUE;
-   else
-     uppercase = EINA_FALSE;
-
-   if (force)
-     context_scim->impl->uppercase = uppercase;
-   else
-     if (context_scim->impl->uppercase != uppercase)
-       context_scim->impl->uppercase = uppercase;
 }
 
 static void
@@ -1296,10 +1167,7 @@ isf_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
           return;
 
         if (context_scim->impl->cursor_pos != cursor_pos)
-          {
-             context_scim->impl->cursor_pos = cursor_pos;
-             caps_mode_check(ctx, EINA_FALSE);
-          }
+          context_scim->impl->cursor_pos = cursor_pos;
      }
 }
 
