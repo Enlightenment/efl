@@ -108,7 +108,9 @@ main(int argc, char **argv)
 {
    int i;
    struct stat st;
+#ifdef HAVE_REALPATH
    char rpath[PATH_MAX], rpath2[PATH_MAX];
+#endif
 
    setlocale(LC_NUMERIC, "C");
 
