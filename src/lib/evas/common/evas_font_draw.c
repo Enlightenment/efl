@@ -336,6 +336,8 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
    int c, cx, cy, cw, ch;
    int i;
 
+   if (!glyphs) return;
+
    im_w = dst->cache_entry.w;
    im_h = dst->cache_entry.h;
 

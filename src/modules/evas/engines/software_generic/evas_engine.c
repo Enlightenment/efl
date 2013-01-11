@@ -1968,6 +1968,8 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
    if (do_async)
      {
         evas_common_font_draw_prepare(text_props);
+        if (!text_props->glyphs) return EINA_FALSE;
+
         evas_common_font_draw_cb(surface, context, x, y, text_props->glyphs,
                                  _font_draw_thread_cmd);
         return EINA_TRUE;
@@ -1975,7 +1977,7 @@ eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Se
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
      evas_common_pipe_text_draw(surface, context, x, y, text_props);
-#endif   
+#endif
    else
      {
         evas_common_font_draw_prepare(text_props);
