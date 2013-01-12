@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
+AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = --with-tests=regular --enable-always-build-examples
 
 SUBDIRS = src data doc
