@@ -33,7 +33,6 @@ doc:
 endif
 
 EXTRA_DIST = \
-$(wildcard $(srcdir)/img/*.*) \
 Doxyfile.in \
 e.css \
 head.html \
@@ -50,3 +49,17 @@ ephysics_examples.dox \
 evas_examples.dox \
 main.dox \
 pkgconfig.dox
+
+include images.mk
+
+all-local:
+	@rm -f images.tmp; \
+	echo $(ECHO_N) 'EXTRA_DIST += ' > images.tmp; \
+	(cd $(srcdir) && find ./img -type f -print | cut -d/ -f2- | sort | tr '\n' ' ') >> images.tmp && \
+	echo >> images.tmp && \
+	if ! cmp "$(srcdir)/images.mk" images.tmp >/dev/null; then \
+	   echo "warning: new images added to '$(srcdir)/images.mk'"; \
+	   mv images.tmp "$(srcdir)/images.mk"; \
+	else \
+	   rm images.tmp; \
+	fi
