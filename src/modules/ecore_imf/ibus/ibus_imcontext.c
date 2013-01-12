@@ -61,7 +61,7 @@ static IBusBus           *_bus = NULL;
 /* functions prototype */
 /* static methods*/
 static void     _ecore_imf_context_ibus_create       (IBusIMContext      *context);
-static void     _ecore_imf_context_ibus_cursor_location_internal_set(Ecore_IMF_Context  *ctx);
+static void     _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context  *ctx);
 static void     _ecore_imf_context_ibus_bus_connected_cb           (IBusBus            *bus,
                                              IBusIMContext      *context);
 static XKeyEvent _ecore_imf_ibus_x_key_event_generate (Window win, Eina_Bool press, int keysym, int modifiers);
