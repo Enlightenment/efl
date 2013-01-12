@@ -1,12 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EDJE_CC = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_cc
-EDJE_CC_FLAGS_VERBOSE_0 =
+EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
+EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
 EDJE_CC_FLAGS_VERBOSE_1 = -v
-EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE_$(V)) -id $(srcdir) -fd $(srcdir)
+EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE) -id $(srcdir) -fd $(srcdir)
 
-AM_V_EDJ = $(am__v_EDJ_$(V))
-am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
+AM_V_EDJ = $(am__v_EDJ_@AM_V@)
+am__v_EDJ_ = $(am__v_EDJ_@AM_DEFAULT_V@)
 am__v_EDJ_0 = @echo "  EDJ   " $@;
 
 AM_CPPFLAGS = \

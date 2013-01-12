@@ -1,20 +1,17 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EDJE_CC = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_cc
-EDJE_CC_FLAGS_VERBOSE_0 =
+EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
+EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
 EDJE_CC_FLAGS_VERBOSE_1 = -v
-EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE_$(V)) -id $(srcdir) -fd $(srcdir)
+EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE) -id $(srcdir) -fd $(srcdir)
 
-AM_V_EDJ = $(am__v_EDJ_$(V))
-am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
+AM_V_EDJ = $(am__v_EDJ_@AM_V@)
+am__v_EDJ_ = $(am__v_EDJ_@AM_DEFAULT_V@)
 am__v_EDJ_0 = @echo "  EDJ   " $@;
 
 EDJE_CODEGEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_codegen
 EDJE_CODEGEN_FLAGS = --prefix=codegen_example
-
-AM_V_GEN = $(am__v_GEN_$(V))
-am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
-am__v_GEN_0 = @echo "  GEN   " $@;
 
 if ENABLE_MULTISENSE
 SND_DIR = -sd $(srcdir)

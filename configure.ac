@@ -22,7 +22,7 @@ m4_define([lt_rev], v_mic)
 m4_define([lt_age], v_min)
 
 AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
-AC_PREREQ([2.59])
+AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -37,7 +37,7 @@ AH_BOTTOM([
 
 AC_USE_SYSTEM_EXTENSIONS
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2])
+AM_INIT_AUTOMAKE([1.6 dist-bzip2 -Wall])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
@@ -232,6 +232,7 @@ AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 if test "x${have_windows}" = "xyes" ; then
    lt_cv_deplibs_check_method='pass_all'
 fi
+AM_PROG_AR
 LT_INIT([win32-dll disable-static pic-only])
 EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
 AC_SUBST(EFL_LTLIBRARY_FLAGS)
@@ -296,7 +297,7 @@ AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
-   AC_MSG_ERROR([ecore requires a c99-capable compiler])
+   AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi
 
 have_gnu_objc=${ac_cv_objc_compiler_gnu}
