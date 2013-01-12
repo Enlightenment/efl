@@ -462,8 +462,7 @@ isf_imf_context_add(Ecore_IMF_Context *ctx)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
-
-   if (!context_scim) return;
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
 
    context_scim->impl = NULL;
 
@@ -545,68 +544,58 @@ isf_imf_context_del(Ecore_IMF_Context *ctx)
    if (!_ic_list) return;
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim)
+   if (context_scim->id != _ic_list->id)
      {
-        if (context_scim->id != _ic_list->id)
+        EcoreIMFContextISF *pre = _ic_list;
+        EcoreIMFContextISF *cur = _ic_list->next;
+        while (cur != NULL)
           {
-             EcoreIMFContextISF * pre = _ic_list;
-             EcoreIMFContextISF * cur = _ic_list->next;
-             while (cur != NULL)
+             if (cur->id == context_scim->id)
                {
-                  if (cur->id == context_scim->id)
-                    {
-                       pre->next = cur->next;
-                       break;
-                    }
-                  pre = cur;
-                  cur = cur->next;
+                  pre->next = cur->next;
+                  break;
                }
+             pre = cur;
+             cur = cur->next;
           }
-        else
-          _ic_list = _ic_list->next;
      }
+   else
+     _ic_list = _ic_list->next;
 
-   if (context_scim && context_scim->impl)
+   _panel_client.prepare(context_scim->id);
+
+   if (context_scim == _focused_ic)
+     context_scim->impl->si->focus_out();
+
+   // Delete the instance.
+   EcoreIMFContextISF *old_focused = _focused_ic;
+   _focused_ic = context_scim;
+   context_scim->impl->si.reset();
+   _focused_ic = old_focused;
+
+   if (context_scim == _focused_ic)
      {
-        _panel_client.prepare(context_scim->id);
-
-        if (context_scim == _focused_ic)
-          context_scim->impl->si->focus_out();
-
-        // Delete the instance.
-        EcoreIMFContextISF *old_focused = _focused_ic;
-        _focused_ic = context_scim;
-        context_scim->impl->si.reset();
-        _focused_ic = old_focused;
-
-        if (context_scim == _focused_ic)
-          {
-             _panel_client.turn_off(context_scim->id);
-             _panel_client.focus_out(context_scim->id);
-          }
-
-        _panel_client.remove_input_context(context_scim->id);
-        _panel_client.send();
-
-        if (context_scim->impl->client_window)
-          isf_imf_context_client_window_set(ctx, NULL);
-
-        if (context_scim->impl)
-          {
-             delete_ic_impl(context_scim->impl);
-             context_scim->impl = 0;
-          }
+        _panel_client.turn_off(context_scim->id);
+        _panel_client.focus_out(context_scim->id);
      }
+
+   _panel_client.remove_input_context(context_scim->id);
+   _panel_client.send();
+
+   if (context_scim->impl->client_window)
+     isf_imf_context_client_window_set(ctx, NULL);
+
+   delete_ic_impl(context_scim->impl);
+   context_scim->impl = 0;
 
    if (context_scim == _focused_ic)
      _focused_ic = 0;
 
-   if (context_scim)
-     {
-        delete context_scim;
-        context_scim = 0;
-     }
+   delete context_scim;
+   context_scim = 0;
 }
 
 /**
@@ -630,8 +619,10 @@ isf_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->client_canvas != (Evas*) canvas)
+   if (context_scim->impl->client_canvas != (Evas*) canvas)
      context_scim->impl->client_canvas = (Evas*)canvas;
 }
 
@@ -654,8 +645,10 @@ isf_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->client_window != (Ecore_X_Window)((Ecore_Window)window))
+   if (context_scim->impl->client_window != (Ecore_X_Window)((Ecore_Window)window))
      {
         context_scim->impl->client_window = (Ecore_X_Window)((Ecore_Window)window);
 
@@ -681,25 +674,27 @@ isf_imf_context_reset(Ecore_IMF_Context *ctx)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim == _focused_ic)
+   if (context_scim != _focused_ic)
+     return;
+
+   WideString wstr = context_scim->impl->preedit_string;
+
+   _panel_client.prepare(context_scim->id);
+   context_scim->impl->si->reset();
+   _panel_client.send();
+
+   if (context_scim->impl->need_commit_preedit)
      {
-        WideString wstr = context_scim->impl->preedit_string;
-
-        _panel_client.prepare(context_scim->id);
-        context_scim->impl->si->reset();
-        _panel_client.send();
-
-        if (context_scim->impl->need_commit_preedit)
+        if (wstr.length())
           {
-             if (wstr.length())
-               {
-                  ecore_imf_context_commit_event_add(context_scim->ctx, utf8_wcstombs(wstr).c_str());
-                  ecore_imf_context_event_callback_call(context_scim->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
-               }
-             _panel_client.prepare(context_scim->id);
-             _panel_client.send();
+             ecore_imf_context_commit_event_add(context_scim->ctx, utf8_wcstombs(wstr).c_str());
+             ecore_imf_context_event_callback_call(context_scim->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
           }
+        _panel_client.prepare(context_scim->id);
+        _panel_client.send();
      }
 }
 
@@ -715,9 +710,8 @@ EAPI void
 isf_imf_context_focus_in(Ecore_IMF_Context *ctx)
 {
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
-
-   if (!context_scim)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__<< "(" << context_scim->id << ")...\n";
 
@@ -737,82 +731,79 @@ isf_imf_context_focus_in(Ecore_IMF_Context *ctx)
    bool need_reset = false;
    bool need_reg   = false;
 
-   if (context_scim && context_scim->impl)
+   _focused_ic = context_scim;
+   _panel_client.prepare(context_scim->id);
+
+   // Handle the "Shared Input Method" mode.
+   if (_shared_input_method)
      {
-        _focused_ic = context_scim;
-        _panel_client.prepare(context_scim->id);
-
-        // Handle the "Shared Input Method" mode.
-        if (_shared_input_method)
+        SCIM_DEBUG_FRONTEND(2) << "shared input method.\n";
+        IMEngineFactoryPointer factory = _backend->get_default_factory(_language, "UTF-8");
+        if (!factory.null())
           {
-             SCIM_DEBUG_FRONTEND(2) << "shared input method.\n";
-             IMEngineFactoryPointer factory = _backend->get_default_factory(_language, "UTF-8");
-             if (!factory.null())
+             if (_default_instance.null() || _default_instance->get_factory_uuid() != factory->get_uuid())
                {
-                  if (_default_instance.null() || _default_instance->get_factory_uuid() != factory->get_uuid())
-                    {
-                       _default_instance = factory->create_instance("UTF-8", _default_instance.null() ? _instance_count++ : _default_instance->get_id());
-                       attach_instance(_default_instance);
-                       SCIM_DEBUG_FRONTEND(2) << "create new default instance: " << _default_instance->get_id() << " " << _default_instance->get_factory_uuid() << "\n";
-                    }
-
-                  context_scim->impl->shared_si = true;
-                  context_scim->impl->si = _default_instance;
-
-                  context_scim->impl->is_on = _config->read(String(SCIM_CONFIG_FRONTEND_IM_OPENED_BY_DEFAULT), context_scim->impl->is_on);
-                  context_scim->impl->preedit_string.clear();
-                  context_scim->impl->preedit_attrlist.clear();
-                  context_scim->impl->preedit_caret = 0;
-                  context_scim->impl->preedit_started = false;
-                  need_cap = true;
-                  need_reset = true;
-                  need_reg = true;
+                  _default_instance = factory->create_instance("UTF-8", _default_instance.null() ? _instance_count++ : _default_instance->get_id());
+                  attach_instance(_default_instance);
+                  SCIM_DEBUG_FRONTEND(2) << "create new default instance: " << _default_instance->get_id() << " " << _default_instance->get_factory_uuid() << "\n";
                }
+
+             context_scim->impl->shared_si = true;
+             context_scim->impl->si = _default_instance;
+
+             context_scim->impl->is_on = _config->read(String(SCIM_CONFIG_FRONTEND_IM_OPENED_BY_DEFAULT), context_scim->impl->is_on);
+             context_scim->impl->preedit_string.clear();
+             context_scim->impl->preedit_attrlist.clear();
+             context_scim->impl->preedit_caret = 0;
+             context_scim->impl->preedit_started = false;
+             need_cap = true;
+             need_reset = true;
+             need_reg = true;
           }
-        else if (context_scim->impl->shared_si)
-          {
-             SCIM_DEBUG_FRONTEND(2) << "exit shared input method.\n";
-             IMEngineFactoryPointer factory = _backend->get_default_factory(_language, "UTF-8");
-             if (!factory.null())
-               {
-                  context_scim->impl->si = factory->create_instance("UTF-8", _instance_count++);
-                  context_scim->impl->preedit_string.clear();
-                  context_scim->impl->preedit_attrlist.clear();
-                  context_scim->impl->preedit_caret = 0;
-                  context_scim->impl->preedit_started = false;
-                  attach_instance(context_scim->impl->si);
-                  need_cap = true;
-                  need_reg = true;
-                  context_scim->impl->shared_si = false;
-                  SCIM_DEBUG_FRONTEND(2) << "create new instance: " << context_scim->impl->si->get_id() << " " << context_scim->impl->si->get_factory_uuid() << "\n";
-               }
-          }
-
-        context_scim->impl->si->set_frontend_data(static_cast <void*>(context_scim));
-
-        if (need_reg) _panel_client.register_input_context(context_scim->id, context_scim->impl->si->get_factory_uuid());
-        if (need_cap) set_ic_capabilities(context_scim);
-        if (need_reset) context_scim->impl->si->reset();
-
-        panel_req_focus_in(context_scim);
-        panel_req_update_spot_location(context_scim);
-        panel_req_update_factory_info(context_scim);
-
-        if (context_scim->impl->is_on)
-          {
-             _panel_client.turn_on(context_scim->id);
-             _panel_client.hide_preedit_string(context_scim->id);
-             _panel_client.hide_aux_string(context_scim->id);
-             _panel_client.hide_lookup_table(context_scim->id);
-             context_scim->impl->si->focus_in();
-          }
-        else
-          {
-             _panel_client.turn_off(context_scim->id);
-          }
-
-        _panel_client.send();
      }
+   else if (context_scim->impl->shared_si)
+     {
+        SCIM_DEBUG_FRONTEND(2) << "exit shared input method.\n";
+        IMEngineFactoryPointer factory = _backend->get_default_factory(_language, "UTF-8");
+        if (!factory.null())
+          {
+             context_scim->impl->si = factory->create_instance("UTF-8", _instance_count++);
+             context_scim->impl->preedit_string.clear();
+             context_scim->impl->preedit_attrlist.clear();
+             context_scim->impl->preedit_caret = 0;
+             context_scim->impl->preedit_started = false;
+             attach_instance(context_scim->impl->si);
+             need_cap = true;
+             need_reg = true;
+             context_scim->impl->shared_si = false;
+             SCIM_DEBUG_FRONTEND(2) << "create new instance: " << context_scim->impl->si->get_id() << " " << context_scim->impl->si->get_factory_uuid() << "\n";
+          }
+     }
+
+   context_scim->impl->si->set_frontend_data(static_cast <void*>(context_scim));
+
+   if (need_reg) _panel_client.register_input_context(context_scim->id, context_scim->impl->si->get_factory_uuid());
+   if (need_cap) set_ic_capabilities(context_scim);
+   if (need_reset) context_scim->impl->si->reset();
+
+   panel_req_focus_in(context_scim);
+   panel_req_update_spot_location(context_scim);
+   panel_req_update_factory_info(context_scim);
+
+   if (context_scim->impl->is_on)
+     {
+        _panel_client.turn_on(context_scim->id);
+        _panel_client.hide_preedit_string(context_scim->id);
+        _panel_client.hide_aux_string(context_scim->id);
+        _panel_client.hide_lookup_table(context_scim->id);
+        context_scim->impl->si->focus_in();
+     }
+   else
+     {
+        _panel_client.turn_off(context_scim->id);
+     }
+
+   _panel_client.send();
 
    if (ecore_imf_context_input_panel_enabled_get(ctx))
      ecore_imf_context_input_panel_show(ctx);
@@ -830,12 +821,12 @@ EAPI void
 isf_imf_context_focus_out(Ecore_IMF_Context *ctx)
 {
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
-
-   if (!context_scim) return;
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "(" << context_scim->id << ")...\n";
 
-   if (context_scim && context_scim->impl && context_scim == _focused_ic)
+   if (context_scim == _focused_ic)
      {
         WideString wstr = context_scim->impl->preedit_string;
 
@@ -881,6 +872,9 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
+
    Ecore_Evas *ee;
    int canvas_x, canvas_y;
    int new_cursor_x, new_cursor_y;
@@ -888,39 +882,39 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
    if (cw == 0 && ch == 0)
      return;
 
-   if (context_scim && context_scim->impl && context_scim == _focused_ic)
+   if (context_scim != _focused_ic)
+     return;
+
+   if (context_scim->impl->client_canvas)
      {
-        if (context_scim->impl->client_canvas)
-          {
-             ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
-             if (!ee) return;
+        ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
+        if (!ee) return;
 
-             ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
-          }
+        ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
+     }
+   else
+     {
+        if (context_scim->impl->client_window)
+          window_to_screen_geometry_get(context_scim->impl->client_window, &canvas_x, &canvas_y);
         else
-          {
-             if (context_scim->impl->client_window)
-               window_to_screen_geometry_get(context_scim->impl->client_window, &canvas_x, &canvas_y);
-             else
-               return;
-          }
-
-        new_cursor_x = canvas_x + cx;
-        new_cursor_y = canvas_y + cy + ch;
-
-        // Don't update spot location while updating preedit string.
-        if (context_scim->impl->preedit_updating && (context_scim->impl->cursor_y == new_cursor_y))
           return;
+     }
 
-        if (context_scim->impl->cursor_x != new_cursor_x || context_scim->impl->cursor_y != new_cursor_y)
-          {
-             context_scim->impl->cursor_x     = new_cursor_x;
-             context_scim->impl->cursor_y     = new_cursor_y;
-             _panel_client.prepare(context_scim->id);
-             panel_req_update_spot_location(context_scim);
-             _panel_client.send();
-             SCIM_DEBUG_FRONTEND(2) << "new cursor location = " << context_scim->impl->cursor_x << "," << context_scim->impl->cursor_y << "\n";
-          }
+   new_cursor_x = canvas_x + cx;
+   new_cursor_y = canvas_y + cy + ch;
+
+   // Don't update spot location while updating preedit string.
+   if (context_scim->impl->preedit_updating && (context_scim->impl->cursor_y == new_cursor_y))
+     return;
+
+   if (context_scim->impl->cursor_x != new_cursor_x || context_scim->impl->cursor_y != new_cursor_y)
+     {
+        context_scim->impl->cursor_x     = new_cursor_x;
+        context_scim->impl->cursor_y     = new_cursor_y;
+        _panel_client.prepare(context_scim->id);
+        panel_req_update_spot_location(context_scim);
+        _panel_client.send();
+        SCIM_DEBUG_FRONTEND(2) << "new cursor location = " << context_scim->impl->cursor_x << "," << context_scim->impl->cursor_y << "\n";
      }
 }
 
@@ -941,25 +935,24 @@ isf_imf_context_use_preedit_set(Ecore_IMF_Context* ctx, Eina_Bool use_preedit)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << (use_preedit ? "true" : "false") << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
    if (!_on_the_spot) return;
 
-   if (context_scim && context_scim->impl)
+   bool old = context_scim->impl->use_preedit;
+   context_scim->impl->use_preedit = use_preedit;
+   if (context_scim == _focused_ic)
      {
-        bool old = context_scim->impl->use_preedit;
-        context_scim->impl->use_preedit = use_preedit;
-        if (context_scim == _focused_ic)
-          {
-             _panel_client.prepare(context_scim->id);
+        _panel_client.prepare(context_scim->id);
 
-             if (old != use_preedit)
-               set_ic_capabilities(context_scim);
+        if (old != use_preedit)
+          set_ic_capabilities(context_scim);
 
-             if (context_scim->impl->preedit_string.length())
-               slot_show_preedit_string(context_scim->impl->si);
+        if (context_scim->impl->preedit_string.length())
+          slot_show_preedit_string(context_scim->impl->si);
 
-             _panel_client.send();
-          }
+        _panel_client.send();
      }
 }
 
@@ -969,8 +962,10 @@ isf_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char*
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->is_on)
+   if (context_scim->impl->is_on)
      {
         String mbs = utf8_wcstombs(context_scim->impl->preedit_string);
 
@@ -1116,8 +1111,10 @@ isf_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char** str, int *curs
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->is_on)
+   if (context_scim->impl->is_on)
      {
         String mbs = utf8_wcstombs(context_scim->impl->preedit_string);
 
@@ -1157,16 +1154,18 @@ isf_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim == _focused_ic)
-     {
-        // Don't update spot location while updating preedit string.
-        if (context_scim->impl->preedit_updating)
-          return;
+   if (context_scim != _focused_ic)
+     return;
 
-        if (context_scim->impl->cursor_pos != cursor_pos)
-          context_scim->impl->cursor_pos = cursor_pos;
-     }
+   // Don't update spot location while updating preedit string.
+   if (context_scim->impl->preedit_updating)
+     return;
+
+   if (context_scim->impl->cursor_pos != cursor_pos)
+     context_scim->impl->cursor_pos = cursor_pos;
 }
 
 /**
@@ -1185,8 +1184,10 @@ isf_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode inpu
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
-   if (context_scim && context_scim->impl)
-     context_scim->impl->input_mode = input_mode;
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
+
+   context_scim->impl->input_mode = input_mode;
 }
 
 /**
@@ -1204,8 +1205,10 @@ isf_imf_context_prediction_allow_set(Ecore_IMF_Context* ctx, Eina_Bool predictio
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << (prediction ? "true" : "false") << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->prediction_allow != prediction)
+   if (context_scim->impl->prediction_allow != prediction)
      context_scim->impl->prediction_allow = prediction;
 }
 
@@ -1215,8 +1218,10 @@ isf_imf_context_autocapital_type_set(Ecore_IMF_Context* ctx, Ecore_IMF_Autocapit
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << autocapital_type << "...\n";
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
-   if (context_scim && context_scim->impl && context_scim->impl->autocapital_type != autocapital_type)
+   if (context_scim->impl->autocapital_type != autocapital_type)
      context_scim->impl->autocapital_type = autocapital_type;
 }
 
@@ -1241,11 +1246,10 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ic, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ic->impl, EINA_FALSE);
+
    Eina_Bool ret = EINA_FALSE;
-
-   if (ic == NULL || ic->impl == NULL)
-     return ret;
-
    KeyEvent key;
 
    if (type == ECORE_IMF_EVENT_KEY_DOWN)
@@ -1298,12 +1302,12 @@ isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   EcoreIMFContextISF *ic = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
-   if (ic == NULL || ic->impl == NULL)
-     return;
+   EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
    ecore_x_e_virtual_keyboard_state_set
-        (ic->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
+        (context_scim->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
 }
 
 EAPI void
@@ -1311,12 +1315,12 @@ isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   EcoreIMFContextISF *ic = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
-   if (ic == NULL || ic->impl == NULL)
-     return;
+   EcoreIMFContextISF *context_scim = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim);
+   EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
    ecore_x_e_virtual_keyboard_state_set
-        (ic->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
+        (context_scim->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
 }
 
 /* Panel Slot functions */
@@ -1339,62 +1343,70 @@ static void
 panel_slot_update_lookup_table_page_size(int context, int page_size)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " page_size=" << page_size << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->update_lookup_table_page_size(page_size);
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->update_lookup_table_page_size(page_size);
+   _panel_client.send();
 }
 
 static void
 panel_slot_lookup_table_page_up(int context)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->lookup_table_page_up();
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->lookup_table_page_up();
+   _panel_client.send();
 }
 
 static void
 panel_slot_lookup_table_page_down(int context)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->lookup_table_page_down();
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->lookup_table_page_down();
+   _panel_client.send();
 }
 
 static void
 panel_slot_trigger_property(int context, const String &property)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " property=" << property << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->trigger_property(property);
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->trigger_property(property);
+   _panel_client.send();
 }
 
 static void
 panel_slot_process_helper_event(int context, const String &target_uuid, const String &helper_uuid, const Transaction &trans)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " target=" << target_uuid
       << " helper=" << helper_uuid << " ic=" << ic << " ic->impl=" << (ic ? ic->impl : 0) << " ic-uuid="
       << ((ic && ic->impl) ? ic->impl->si->get_factory_uuid() : "" ) << "\n";
-   if (ic && ic->impl && ic->impl->si->get_factory_uuid() == target_uuid)
+
+   if (ic->impl->si->get_factory_uuid() == target_uuid)
      {
         _panel_client.prepare(ic->id);
         SCIM_DEBUG_FRONTEND(2) << "call process_helper_event\n";
@@ -1407,26 +1419,28 @@ static void
 panel_slot_move_preedit_caret(int context, int caret_pos)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " caret=" << caret_pos << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->move_preedit_caret(caret_pos);
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->move_preedit_caret(caret_pos);
+   _panel_client.send();
 }
 
 static void
 panel_slot_select_candidate(int context, int cand_index)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " candidate=" << cand_index << " ic=" << ic << "\n";
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        ic->impl->si->select_candidate(cand_index);
-        _panel_client.send();
-     }
+
+   _panel_client.prepare(ic->id);
+   ic->impl->si->select_candidate(cand_index);
+   _panel_client.send();
 }
 
 static void
@@ -1443,25 +1457,27 @@ static void
 panel_slot_commit_string(int context, const WideString &wstr)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " str=" << utf8_wcstombs(wstr) << " ic=" << ic << "\n";
 
-   if (ic && ic->impl)
-     {
-        if (_focused_ic != ic)
-          return;
+   if (_focused_ic != ic)
+     return;
 
-        ecore_imf_context_commit_event_add(ic->ctx, utf8_wcstombs(wstr).c_str());
-        ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
-     }
+   ecore_imf_context_commit_event_add(ic->ctx, utf8_wcstombs(wstr).c_str());
+   ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
 }
 
 static void
 panel_slot_forward_key_event(int context, const KeyEvent &key)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " key=" << key.get_key_string() << " ic=" << ic << "\n";
 
-   if (ic && ic->impl && ic->impl->client_canvas)
+   if (ic->impl->client_canvas)
      feed_key_event(ic->impl->client_canvas, key.get_key_string().c_str(), EINA_TRUE);
 }
 
@@ -1469,43 +1485,41 @@ static void
 panel_slot_request_help(int context)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " ic=" << ic << "\n";
 
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        panel_req_show_help(ic);
-        _panel_client.send();
-     }
+   _panel_client.prepare(ic->id);
+   panel_req_show_help(ic);
+   _panel_client.send();
 }
 
 static void
 panel_slot_request_factory_menu(int context)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " ic=" << ic << "\n";
 
-   if (ic && ic->impl)
-     {
-        _panel_client.prepare(ic->id);
-        panel_req_show_factory_menu(ic);
-        _panel_client.send();
-     }
+   _panel_client.prepare(ic->id);
+   panel_req_show_factory_menu(ic);
+   _panel_client.send();
 }
 
 static void
 panel_slot_change_factory(int context, const String &uuid)
 {
    EcoreIMFContextISF *ic = find_ic(context);
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " factory=" << uuid << " ic=" << ic << "\n";
 
-   if (ic && ic->impl)
-     {
-        ic->impl->si->reset();
-        _panel_client.prepare(ic->id);
-        open_specific_factory(ic, uuid);
-        _panel_client.send();
-     }
+   ic->impl->si->reset();
+   _panel_client.prepare(ic->id);
+   open_specific_factory(ic, uuid);
+   _panel_client.send();
 }
 
 /* Panel Requestion functions. */
@@ -1514,27 +1528,27 @@ panel_req_show_help(EcoreIMFContextISF *ic)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
    String help;
 
    help =  String("Smart Common Input Method platform ") +
       //String(SCIM_VERSION) +
       String("\n(C) 2002-2005 James Su <suzhe@tsinghua.org.cn>\n\n");
 
-   if (ic && ic->impl)
+   IMEngineFactoryPointer sf = _backend->get_factory(ic->impl->si->get_factory_uuid());
+   if (sf)
      {
-        IMEngineFactoryPointer sf = _backend->get_factory(ic->impl->si->get_factory_uuid());
-        if (sf)
-          {
-             help += utf8_wcstombs(sf->get_name());
-             help += String(":\n\n");
+        help += utf8_wcstombs(sf->get_name());
+        help += String(":\n\n");
 
-             help += utf8_wcstombs(sf->get_help());
-             help += String("\n\n");
+        help += utf8_wcstombs(sf->get_help());
+        help += String("\n\n");
 
-             help += utf8_wcstombs(sf->get_credits());
-          }
-        _panel_client.show_help(ic->id, help);
+        help += utf8_wcstombs(sf->get_credits());
      }
+   _panel_client.show_help(ic->id, help);
 }
 
 static void
@@ -1565,21 +1579,24 @@ panel_req_update_factory_info(EcoreIMFContextISF *ic)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   if (ic && ic->impl && ic == _focused_ic)
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
+   if (ic != _focused_ic)
+     return;
+
+   PanelFactoryInfo info;
+   if (ic->impl->is_on)
      {
-        PanelFactoryInfo info;
-        if (ic->impl->is_on)
-          {
-             IMEngineFactoryPointer sf = _backend->get_factory(ic->impl->si->get_factory_uuid());
-             if (sf)
-               info = PanelFactoryInfo(sf->get_uuid(), utf8_wcstombs(sf->get_name()), sf->get_language(), sf->get_icon_file());
-          }
-        else
-          {
-             info = PanelFactoryInfo(String(""), String("English/Keyboard"), String("C"), "");
-          }
-        _panel_client.update_factory_info(ic->id, info);
+        IMEngineFactoryPointer sf = _backend->get_factory(ic->impl->si->get_factory_uuid());
+        if (sf)
+          info = PanelFactoryInfo(sf->get_uuid(), utf8_wcstombs(sf->get_name()), sf->get_language(), sf->get_icon_file());
      }
+   else
+     {
+        info = PanelFactoryInfo(String(""), String("English/Keyboard"), String("C"), "");
+     }
+   _panel_client.update_factory_info(ic->id, info);
 }
 
 static void
@@ -1674,7 +1691,7 @@ panel_initialize(void)
         SCIM_DEBUG_FRONTEND(2) << " Panel FD= " << fd << "\n";
 
         return true;
-   }
+     }
    std::cerr << "panel_initialize() failed!!!\n";
    return false;
 }
@@ -1727,7 +1744,10 @@ turn_on_ic(EcoreIMFContextISF *ic)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   if (ic && ic->impl && !ic->impl->is_on)
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
+   if (!ic->impl->is_on)
      {
         ic->impl->is_on = true;
 
@@ -1763,7 +1783,10 @@ turn_off_ic(EcoreIMFContextISF *ic)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   if (ic && ic->impl && ic->impl->is_on)
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
+
+   if (ic->impl->is_on)
      {
         ic->impl->is_on = false;
 
@@ -1795,15 +1818,15 @@ set_ic_capabilities(EcoreIMFContextISF *ic)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   if (ic && ic->impl)
-     {
-        unsigned int cap = SCIM_CLIENT_CAP_ALL_CAPABILITIES;
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
-        if (!_on_the_spot || !ic->impl->use_preedit)
-          cap -= SCIM_CLIENT_CAP_ONTHESPOT_PREEDIT;
+   unsigned int cap = SCIM_CLIENT_CAP_ALL_CAPABILITIES;
 
-        ic->impl->si->update_client_capabilities(cap);
-     }
+   if (!_on_the_spot || !ic->impl->use_preedit)
+     cap -= SCIM_CLIENT_CAP_ONTHESPOT_PREEDIT;
+
+   ic->impl->si->update_client_capabilities(cap);
 }
 
 static bool
@@ -2032,8 +2055,8 @@ open_next_factory(EcoreIMFContextISF *ic)
 static void
 open_previous_factory(EcoreIMFContextISF *ic)
 {
-   if (ic == NULL)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(2) << __FUNCTION__ << " context=" << ic->id << "\n";
    IMEngineFactoryPointer sf = _backend->get_previous_factory("", "UTF-8", ic->impl->si->get_factory_uuid());
@@ -2063,8 +2086,8 @@ static void
 open_specific_factory(EcoreIMFContextISF *ic,
                        const String     &uuid)
 {
-   if (ic == NULL)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(2) << __FUNCTION__ << " context=" << ic->id << "\n";
 
@@ -2283,11 +2306,7 @@ static void _x_send_key_event(const KeyEvent &key)
 
    // Obtain the X11 display.
    Display *display = (Display *)ecore_x_display_get();
-   if (display == NULL)
-     {
-        std::cerr << "ecore_x_display_get() failed\n";
-        return;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(display);
 
    // Get the root window for the current display.
    Window winRoot = 0;
@@ -2376,21 +2395,23 @@ slot_show_preedit_string(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic != ic)
+     return;
+
+   if (ic->impl->use_preedit)
      {
-        if (ic->impl->use_preedit)
+        if (!ic->impl->preedit_started)
           {
-             if (!ic->impl->preedit_started)
-               {
-                  ecore_imf_context_preedit_start_event_add(_focused_ic->ctx);
-                  ecore_imf_context_event_callback_call(_focused_ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
-                  ic->impl->preedit_started = true;
-               }
+             ecore_imf_context_preedit_start_event_add(_focused_ic->ctx);
+             ecore_imf_context_event_callback_call(_focused_ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
+             ic->impl->preedit_started = true;
           }
-        else
-          _panel_client.show_preedit_string(ic->id);
      }
+   else
+     _panel_client.show_preedit_string(ic->id);
 }
 
 static void
@@ -2399,8 +2420,9 @@ slot_show_aux_string(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.show_aux_string(ic->id);
 }
 
@@ -2410,8 +2432,9 @@ slot_show_lookup_table(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.show_lookup_table(ic->id);
 }
 
@@ -2421,34 +2444,36 @@ slot_hide_preedit_string(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic != ic)
+     return;
+
+   bool emit = false;
+   if (ic->impl->preedit_string.length())
      {
-        bool emit = false;
-        if (ic->impl->preedit_string.length())
-          {
-             ic->impl->preedit_string = WideString();
-             ic->impl->preedit_caret = 0;
-             ic->impl->preedit_attrlist.clear();
-             emit = true;
-          }
-        if (ic->impl->use_preedit)
-          {
-             if (emit)
-               {
-                  ecore_imf_context_preedit_changed_event_add(ic->ctx);
-                  ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
-               }
-             if (ic->impl->preedit_started)
-               {
-                  ecore_imf_context_preedit_end_event_add(ic->ctx);
-                  ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
-                  ic->impl->preedit_started = false;
-               }
-          }
-        else
-          _panel_client.hide_preedit_string(ic->id);
+        ic->impl->preedit_string = WideString();
+        ic->impl->preedit_caret = 0;
+        ic->impl->preedit_attrlist.clear();
+        emit = true;
      }
+   if (ic->impl->use_preedit)
+     {
+        if (emit)
+          {
+             ecore_imf_context_preedit_changed_event_add(ic->ctx);
+             ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+          }
+        if (ic->impl->preedit_started)
+          {
+             ecore_imf_context_preedit_end_event_add(ic->ctx);
+             ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+             ic->impl->preedit_started = false;
+          }
+     }
+   else
+     _panel_client.hide_preedit_string(ic->id);
 }
 
 static void
@@ -2457,8 +2482,9 @@ slot_hide_aux_string(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.hide_aux_string(ic->id);
 }
 
@@ -2468,8 +2494,9 @@ slot_hide_lookup_table(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.hide_lookup_table(ic->id);
 }
 
@@ -2479,8 +2506,10 @@ slot_update_preedit_caret(IMEngineInstanceBase *si, int caret)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
-   if (ic && ic->impl && _focused_ic == ic && ic->impl->preedit_caret != caret)
+   if (_focused_ic == ic && ic->impl->preedit_caret != caret)
      {
         ic->impl->preedit_caret = caret;
         if (ic->impl->use_preedit)
@@ -2507,8 +2536,10 @@ slot_update_preedit_string(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
-   if (ic && ic->impl && _focused_ic == ic && (ic->impl->preedit_string != str || str.length()))
+   if (_focused_ic == ic && (ic->impl->preedit_string != str || str.length()))
      {
         ic->impl->preedit_string   = str;
         ic->impl->preedit_attrlist = attrs;
@@ -2541,8 +2572,9 @@ slot_update_aux_string(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.update_aux_string(ic->id, str, attrs);
 }
 
@@ -2553,12 +2585,11 @@ slot_commit_string(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->ctx);
 
-   if (ic && ic->ctx)
-     {
-        ecore_imf_context_commit_event_add(ic->ctx, utf8_wcstombs(str).c_str());
-        ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(str).c_str());
-     }
+   ecore_imf_context_commit_event_add(ic->ctx, utf8_wcstombs(str).c_str());
+   ecore_imf_context_event_callback_call(ic->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(str).c_str());
 }
 
 static void
@@ -2568,8 +2599,9 @@ slot_forward_key_event(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && _focused_ic == ic)
+   if (_focused_ic == ic)
      {
         if (!_fallback_instance->process_key_event(key))
           _x_send_key_event(key);
@@ -2583,8 +2615,9 @@ slot_update_lookup_table(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.update_lookup_table(ic->id, table);
 }
 
@@ -2595,8 +2628,9 @@ slot_register_properties(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.register_properties(ic->id, properties);
 }
 
@@ -2607,8 +2641,9 @@ slot_update_property(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      _panel_client.update_property(ic->id, property);
 }
 
@@ -2618,8 +2653,9 @@ slot_beep(IMEngineInstanceBase *si)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic == ic)
      ecore_x_bell(0);
 }
 
@@ -2628,13 +2664,14 @@ slot_start_helper(IMEngineInstanceBase *si,
                   const String &helper_uuid)
 {
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context="
       << (ic ? ic->id : -1) << " ic=" << ic
       << " ic-uuid=" << ((ic ) ? ic->impl->si->get_factory_uuid() : "") << "...\n";
 
-   if (ic && ic->impl)
-     _panel_client.start_helper(ic->id, helper_uuid);
+   _panel_client.start_helper(ic->id, helper_uuid);
 }
 
 static void
@@ -2642,11 +2679,11 @@ slot_stop_helper(IMEngineInstanceBase *si,
                  const String &helper_uuid)
 {
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context=" << (ic ? ic->id : -1) << " ic=" << ic << "...\n";
 
-   if (ic && ic->impl)
-     _panel_client.stop_helper(ic->id, helper_uuid);
+   _panel_client.stop_helper(ic->id, helper_uuid);
 }
 
 static void
@@ -2655,13 +2692,14 @@ slot_send_helper_event(IMEngineInstanceBase *si,
                        const Transaction &trans)
 {
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN(ic);
+   EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context="
       << (ic ? ic->id : -1) << " ic=" << ic
       << " ic-uuid=" << ((ic) ? ic->impl->si->get_factory_uuid() : "") << "...\n";
 
-   if (ic && ic->impl)
-     _panel_client.send_helper_event(ic->id, helper_uuid, trans);
+   _panel_client.send_helper_event(ic->id, helper_uuid, trans);
 }
 
 static bool
@@ -2674,28 +2712,31 @@ slot_get_surrounding_text(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ic, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ic->impl, false);
 
-   if (ic && ic->impl && _focused_ic == ic)
+   if (_focused_ic != ic)
+     return false;
+
+   char *surrounding = NULL;
+   int   cursor_index;
+   if (ecore_imf_context_surrounding_get(_focused_ic->ctx, &surrounding, &cursor_index))
      {
-        char *surrounding = NULL;
-        int   cursor_index;
-        if (ecore_imf_context_surrounding_get(_focused_ic->ctx, &surrounding, &cursor_index))
-          {
-             SCIM_DEBUG_FRONTEND(2) << "Surrounding text: " << surrounding <<"\n";
-             SCIM_DEBUG_FRONTEND(2) << "Cursor Index    : " << cursor_index <<"\n";
-             WideString before(utf8_mbstowcs(String(surrounding, surrounding + cursor_index)));
-             WideString after(utf8_mbstowcs(String(surrounding + cursor_index)));
-             if (maxlen_before > 0 && ((unsigned int)maxlen_before) < before.length())
-               before = WideString(before.begin() + (before.length() - maxlen_before), before.end());
-             else if (maxlen_before == 0) before = WideString();
-             if (maxlen_after > 0 && ((unsigned int)maxlen_after) < after.length())
-               after = WideString(after.begin(), after.begin() + maxlen_after);
-             else if (maxlen_after == 0) after = WideString();
-             text = before + after;
-             cursor = before.length();
-             return true;
-          }
+        SCIM_DEBUG_FRONTEND(2) << "Surrounding text: " << surrounding <<"\n";
+        SCIM_DEBUG_FRONTEND(2) << "Cursor Index    : " << cursor_index <<"\n";
+        WideString before(utf8_mbstowcs(String(surrounding, surrounding + cursor_index)));
+        WideString after(utf8_mbstowcs(String(surrounding + cursor_index)));
+        if (maxlen_before > 0 && ((unsigned int)maxlen_before) < before.length())
+          before = WideString(before.begin() + (before.length() - maxlen_before), before.end());
+        else if (maxlen_before == 0) before = WideString();
+        if (maxlen_after > 0 && ((unsigned int)maxlen_after) < after.length())
+          after = WideString(after.begin(), after.begin() + maxlen_after);
+        else if (maxlen_after == 0) after = WideString();
+        text = before + after;
+        cursor = before.length();
+        return true;
      }
+
    return false;
 }
 
@@ -2707,18 +2748,19 @@ slot_delete_surrounding_text(IMEngineInstanceBase *si,
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ic, false);
 
-   if (ic && ic->impl && _focused_ic == ic)
-     {
-        Ecore_IMF_Event_Delete_Surrounding ev;
-        ev.ctx = _focused_ic->ctx;
-        ev.n_chars = len;
-        ev.offset = offset;
-        ecore_imf_context_delete_surrounding_event_add(_focused_ic->ctx, offset, len);
-        ecore_imf_context_event_callback_call(_focused_ic->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
-        return true;
-     }
-   return false;
+   if (_focused_ic != ic)
+     return false;
+
+   Ecore_IMF_Event_Delete_Surrounding ev;
+   ev.ctx = _focused_ic->ctx;
+   ev.n_chars = len;
+   ev.offset = offset;
+   ecore_imf_context_delete_surrounding_event_add(_focused_ic->ctx, offset, len);
+   ecore_imf_context_event_callback_call(_focused_ic->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
+
+   return true;
 }
 
 static void
@@ -2756,7 +2798,7 @@ fallback_commit_string_cb(IMEngineInstanceBase  *si EINA_UNUSED,
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
-   if (_focused_ic && _focused_ic->impl)
+   if (_focused_ic)
      {
         ecore_imf_context_commit_event_add(_focused_ic->ctx, utf8_wcstombs(str).c_str());
         ecore_imf_context_event_callback_call(_focused_ic->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(str).c_str());
