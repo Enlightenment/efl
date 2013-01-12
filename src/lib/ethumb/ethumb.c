@@ -212,9 +212,12 @@ _ethumb_plugins_load(void)
 static void
 _ethumb_plugins_unload(void)
 {
-   eina_module_list_free(_plugins);
-   eina_array_free(_plugins);
-   _plugins = NULL;
+   if (_plugins)
+     {
+        eina_module_list_free(_plugins);
+        eina_array_free(_plugins);
+        _plugins = NULL;
+     }
 
    eina_hash_free(_plugins_ext);
    _plugins_ext = NULL;
