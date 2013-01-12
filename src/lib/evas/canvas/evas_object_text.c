@@ -1071,7 +1071,7 @@ _text_direction_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_BiDi_Direction *bidi_dir = va_arg(*list, Evas_BiDi_Direction *);
    const Evas_Object_Text *o = _pd;
-   *bidi_dir = o->items ? o->items->text_props.bidi.dir : EVAS_BIDI_DIRECTION_NEUTRAL;
+   *bidi_dir = o->items ? o->items->text_props.bidi_dir : EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 
 EAPI Evas_Coord

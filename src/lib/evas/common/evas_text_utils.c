@@ -12,14 +12,14 @@ evas_common_text_props_bidi_set(Evas_Text_Props *props,
       Evas_BiDi_Paragraph_Props *bidi_par_props, size_t start)
 {
 #ifdef BIDI_SUPPORT
-   props->bidi.dir = (evas_bidi_is_rtl_char(
+   props->bidi_dir = (evas_bidi_is_rtl_char(
             bidi_par_props,
             0,
             start)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
 #else
    (void) start;
    (void) bidi_par_props;
-   props->bidi.dir = EVAS_BIDI_DIRECTION_LTR;
+   props->bidi_dir = EVAS_BIDI_DIRECTION_LTR;
 #endif
    PROPS_CHANGE(props);
 }
@@ -142,7 +142,7 @@ evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos)
 {
    Eina_Bool right;
    /* Move right if we are in a non-rtl text */
-   right = (props->bidi.dir != EVAS_BIDI_DIRECTION_RTL);
+   right = (props->bidi_dir != EVAS_BIDI_DIRECTION_RTL);
    return _evas_common_text_props_cluster_move(props, pos, right);
 }
 
@@ -151,7 +151,7 @@ evas_common_text_props_cluster_prev(const Evas_Text_Props *props, int pos)
 {
    Eina_Bool right;
    /* Move right if we are in an rtl text */
-   right = (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL);
+   right = (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL);
    return _evas_common_text_props_cluster_move(props, pos, right);
 }
 
@@ -173,7 +173,7 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
    else
       mid = (min + max) / 2;
 
-   if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         /* Monotonic in a descending order */
         do
@@ -211,7 +211,7 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
       return -1;
 
    ot_info += mid;
-   if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         /* Walk to the last one of the same cluster */
         for ( ; mid < (int) props->len ; mid++, ot_info++)
@@ -266,7 +266,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
 #endif
 
    evas_common_text_props_content_copy_and_ref(ext, base);
-   if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (base->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         ext->start = base->start;
         ext->len = cutoff + 1;
@@ -309,7 +309,7 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
         ERR("tried merge back items that weren't together in the first place.");
         return;
      }
-   if (item1->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (item1->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         item1->start = item2->start;
      }
@@ -406,7 +406,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
    Eina_Unicode *base_str = NULL;
    if (mode == EVAS_TEXT_PROPS_MODE_SHAPE)
      {
-        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
           {
              text = base_str = eina_unicode_strndup(text, len);
              evas_bidi_shape_string(base_str, par_props, par_pos, len);
@@ -427,7 +427,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
    text_props->info->glyph = calloc(len,
                                     sizeof(Evas_Font_Glyph_Info));
 
-   if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         text += len - 1;
         adv_d = -1;

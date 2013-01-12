@@ -77,18 +77,18 @@
 # define EVAS_FONT_WALK_X_OFF 0
 # define EVAS_FONT_WALK_Y_OFF 0
 # define EVAS_FONT_WALK_POS \
-              ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
+              ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) ? \
                (text_props->len - char_index - 1) : \
                (char_index))
 # define EVAS_FONT_WALK_POS_NEXT \
              ((!EVAS_FONT_WALK_IS_LAST) ? \
-              ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
+              ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) ? \
                text_props->len - char_index - 2 \
                : (char_index + 1)) : \
               EVAS_FONT_WALK_POS)
 # define EVAS_FONT_WALK_POS_PREV \
              ((char_index > 0) ? \
-              ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
+              ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) ? \
                text_props->len - char_index \
                : (char_index - 1)) : \
               EVAS_FONT_WALK_POS)

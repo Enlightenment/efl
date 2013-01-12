@@ -392,7 +392,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_pr
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cx) *cx = 0;
              if (ch) *ch = asc + desc;
@@ -433,7 +433,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_pr
         last_end = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF +
            EVAS_FONT_WALK_X_BEAR + EVAS_FONT_WALK_WIDTH;
         /* we need to see if the char at the visual position is the char wanted */
-        if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
+        if ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_LTR) &&
               (EVAS_FONT_WALK_POS <= (size_t) position) &&
               ((((size_t) position) < EVAS_FONT_WALK_POS_NEXT) ||
                (EVAS_FONT_WALK_IS_LAST)))
@@ -445,7 +445,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_pr
 #endif
              item_pos = position - EVAS_FONT_WALK_POS + 1;
           }
-        else if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
+        else if ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) &&
               ((EVAS_FONT_WALK_POS_PREV > (size_t) position) ||
                (EVAS_FONT_WALK_IS_FIRST)) &&
               (((size_t) position) >= EVAS_FONT_WALK_POS))
@@ -528,7 +528,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_pro
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cpen_x) *cpen_x = 0;
              if (ch) *ch = asc + desc;
@@ -564,7 +564,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_pro
           }
         last_is_visible = EVAS_FONT_WALK_IS_VISIBLE;
 
-        if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
+        if ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_LTR) &&
               (EVAS_FONT_WALK_POS <= (size_t) position) &&
               ((((size_t) position) < EVAS_FONT_WALK_POS_NEXT) ||
                (EVAS_FONT_WALK_IS_LAST)))
@@ -576,7 +576,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_pro
 #endif
              item_pos = position - EVAS_FONT_WALK_POS + 1;
           }
-        else if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
+        else if ((text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) &&
               ((EVAS_FONT_WALK_POS_PREV > (size_t) position) ||
                (EVAS_FONT_WALK_IS_FIRST)) &&
               (((size_t) position) >= EVAS_FONT_WALK_POS))
@@ -686,7 +686,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
         Evas_Coord cluster_adv;
         cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
 
-        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR)
+        if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_LTR)
           {
              double part;
              part = cluster_adv / items;
@@ -734,7 +734,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
    desc = evas_common_font_max_descent_get(fn);
 
 #ifdef BIDI_SUPPORT
-   if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         Evas_Font_Glyph_Info *gli = NULL;
         Evas_Coord full_adv = 0, pen_x = 0, start_pen = 0;

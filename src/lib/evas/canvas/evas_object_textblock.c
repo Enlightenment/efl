@@ -8957,7 +8957,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
                        Evas_Object_Textblock_Item *it;
                        _find_layout_item_match(dir_cur, &ln, &it);
                        if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                             (_ITEM_TEXT(it)->text_props.bidi.dir ==
+                             (_ITEM_TEXT(it)->text_props.bidi_dir ==
                               EVAS_BIDI_DIRECTION_RTL))
                           is_rtl = EINA_TRUE;
                        else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
@@ -8987,7 +8987,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
                   Evas_Object_Textblock_Item *it;
                   _find_layout_item_match(dir_cur, &ln, &it);
                   if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                        (_ITEM_TEXT(it)->text_props.bidi.dir ==
+                        (_ITEM_TEXT(it)->text_props.bidi_dir ==
                          EVAS_BIDI_DIRECTION_RTL))
                      is_rtl = EINA_TRUE;
                   else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
@@ -9028,7 +9028,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              Evas_Object_Textblock_Item *it;
              _find_layout_item_match(dir_cur, &ln, &it);
              if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                   (_ITEM_TEXT(it)->text_props.bidi.dir ==
+                   (_ITEM_TEXT(it)->text_props.bidi_dir ==
                     EVAS_BIDI_DIRECTION_RTL))
                 is_rtl = EINA_TRUE;
              else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
@@ -9435,7 +9435,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
      {
 #ifdef BIDI_SUPPORT
         if (((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-            _ITEM_TEXT(it)->text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+            _ITEM_TEXT(it)->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
             ||
             ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
              _ITEM_FORMAT(it)->bidi_dir == EVAS_BIDI_DIRECTION_RTL))
@@ -9453,7 +9453,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
      {
 #ifdef BIDI_SUPPORT
         if (((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-            _ITEM_TEXT(it)->text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+            _ITEM_TEXT(it)->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
             ||
             ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
              _ITEM_FORMAT(it)->bidi_dir == EVAS_BIDI_DIRECTION_RTL))
@@ -9589,7 +9589,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
 
 #ifdef BIDI_SUPPORT
-        if (ti->text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL)
           {
              x = x1 + w1;
              w = x2 + w2 - x;
