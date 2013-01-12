@@ -211,8 +211,6 @@ static Ecore_X_Window                                  _client_window           
 static bool                                             _on_the_spot                = true;
 static bool                                             _shared_input_method        = false;
 
-static Eina_Bool                                        autocap_allow = EINA_FALSE;
-
 static Display *__current_display      = 0;
 static int      __current_alt_mask     = Mod1Mask;
 static int      __current_meta_mask    = 0;
@@ -414,7 +412,6 @@ EAPI EcoreIMFContextISF *
 isf_imf_context_new(void)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
-   char *env;
 
    EcoreIMFContextISF *context_scim = new EcoreIMFContextISF;
    if (context_scim == NULL)
@@ -430,10 +427,6 @@ isf_imf_context_new(void)
         initialize();
         _scim_initialized = true;
      }
-
-   env = getenv("ECORE_IMF_AUTOCAPITAL_ALLOW");
-   if (env)
-     autocap_allow = !!atoi(env);
 
    return context_scim;
 }
