@@ -146,9 +146,6 @@ emotion_modules_shutdown(void)
 {
    Emotion_Engine_Registry_Entry *re;
 
-   EINA_LIST_FREE(_emotion_engine_registry, re)
-     _emotion_engine_registry_entry_free(re);
-
 #ifdef EMOTION_STATIC_BUILD_XINE
    xine_module_shutdown();
 #endif
@@ -164,6 +161,12 @@ emotion_modules_shutdown(void)
         eina_module_list_free(_emotion_modules);
         eina_array_free(_emotion_modules);
         _emotion_modules = NULL;
+     }
+
+   EINA_LIST_FREE(_emotion_engine_registry, re)
+     {
+        WRN("Engine was not unregistered: %p", re->engine);
+        _emotion_engine_registry_entry_free(re);
      }
 
    _emotion_modules_loaded = EINA_FALSE;
