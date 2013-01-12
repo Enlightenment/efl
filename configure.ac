@@ -3471,10 +3471,8 @@ data/Makefile
 doc/Makefile
 doc/Doxyfile
 src/Makefile
-src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
-src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
 src/examples/eo/Makefile

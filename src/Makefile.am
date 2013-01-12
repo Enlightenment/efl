@@ -3,7 +3,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 BUILT_SOURCES =
 
-SUBDIRS = . benchmarks examples
+DIST_SUBDIRS =
+SUBDIRS =
 
 lib_LTLIBRARIES =
 bin_PROGRAMS =
@@ -47,16 +48,46 @@ include Makefile_Ethumb.am
 
 .PHONY: benchmark examples
 
-benchmark:
-	@$(MAKE) $(AM_MAKEFLAGS)
-	@$(MAKE) $(AM_MAKEFLAGS) -C benchmarks benchmark
+BENCHMARK_SUBDIRS = \
+benchmarks/eina \
+benchmarks/eo
+DIST_SUBDIRS += $(BENCHMARK_SUBDIRS)
 
-examples: $(lib_LTLIBRARIES) $(bin_PROGRAMS)
-	@make
-	@$(MAKE) $(AM_MAKEFLAGS) -C examples examples
+benchmark: all-am
+	@for d in $(BENCHMARK_SUBDIRS); do \
+	   echo "Making benchmark in $$d"; \
+	   $(MAKE) $(AM_MAKEFLAGS) -C $$d benchmark; \
+	done
+
+EXAMPLES_SUBDIRS = \
+examples/eina \
+examples/eo \
+examples/eet \
+examples/evas \
+examples/ecore \
+examples/eio \
+examples/edbus \
+examples/ephysics \
+examples/edje \
+examples/emotion \
+examples/ethumb
+if ALWAYS_BUILD_EXAMPLES
+SUBDIRS += $(EXAMPLES_SUBDIRS)
+else
+DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
+endif
+
+examples: all-am
+	@for d in $(EXAMPLES_SUBDIRS); do \
+	   echo "Making examples in $$d"; \
+	   $(MAKE) $(AM_MAKEFLAGS) -C $$d examples; \
+	done
 
 install-examples:
-	@$(MAKE) $(AM_MAKEFLAGS) -C examples install-examples
+	@for d in $(EXAMPLES_SUBDIRS); do \
+	   echo "Making install-examples in $$d"; \
+	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples; \
+	done
 
 clean-local:
 	rm -rf bin/eet/*.gcno
