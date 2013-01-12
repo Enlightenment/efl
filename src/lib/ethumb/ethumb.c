@@ -1240,11 +1240,9 @@ ethumb_plugin_image_resize(Ethumb *e, int w, int h)
 
    if (e->frame)
      {
-        edje_extern_object_min_size_set(img, w, h);
-        edje_extern_object_max_size_set(img, w, h);
-        edje_object_calc_force(e->frame->edje);
         evas_object_move(e->frame->edje, 0, 0);
         evas_object_resize(e->frame->edje, w, h);
+        edje_object_calc_force(e->frame->edje);
      }
    else
      {
@@ -1514,11 +1512,9 @@ _ethumb_image_load(Ethumb *e)
 
    if (e->frame)
      {
-        edje_extern_object_min_size_set(img, ww, hh);
-        edje_extern_object_max_size_set(img, ww, hh);
-        edje_object_calc_force(e->frame->edje);
         evas_object_move(e->frame->edje, 0, 0);
         evas_object_resize(e->frame->edje, ww, hh);
+        edje_object_calc_force(e->frame->edje);
      }
    else
      {
