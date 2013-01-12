@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: ethumb_client
 Description: Thumbnail Client Library
-Requires: @requirement_ethumb_client@
 Version: @VERSION@
+Requires.private: @requirements_pc_ethumb_client@
 Libs: -L${libdir} -lethumb_client
 Cflags: -I${includedir}/ethumb-@VMAJ@

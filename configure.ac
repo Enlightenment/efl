@@ -3375,6 +3375,81 @@ EFL_LIB_END([Emotion])
 #### End of Emotion
 
 
+#### Ethumb
+EFL_LIB_START([Ethumb])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([EINA], [evil])
+
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [eina])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [evas])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [edje])
+
+## modules
+
+EFL_EVAL_PKGS([ETHUMB])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Ethumb])
+#### End of Ethumb
+
+#### Ethumb_Client
+EFL_LIB_START([Ethumb_Client])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eina])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [edbus])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ethumb])
+
+EFL_EVAL_PKGS([ETHUMB_CLIENT])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Ethumb_Client])
+#### End of Ethumb_Client
+
+
 AC_ARG_ENABLE([always-build-examples],
    [AC_HELP_STRING([--enable-always-build-examples],
        [always build examples. @<:@default=disabled@:>@])],
@@ -3458,7 +3533,10 @@ pc/eeze.pc
 pc/ephysics.pc
 pc/edje.pc
 pc/emotion.pc
+pc/ethumb.pc
+pc/ethumb_client.pc
 dbus-services/org.enlightenment.Efreet.service
+dbus-services/org.enlightenment.Ethumb.service
 $po_makefile_in
 ])
 
@@ -3665,6 +3743,8 @@ echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
 echo "EPhysics...............: ${efl_lib_optional_ephysics}"
 echo "Edje...................: yes (physics=${efl_lib_optional_ephysics}, multisense=${want_multisense})"
 echo "Emotion................: yes (gstreamer=${have_emotion_module_gstreamer} (xoverlay=${have_gst_xoverlay}), xine=${have_emotion_module_xine}, generic=${have_emotion_module_generic}, v4l2=${want_v4l2})"
+echo "Ethumb.................: yes"
+echo "Ethumb_Client..........: yes"
 echo "Tests..................: ${build_tests}"
 
 echo "Examples...............: make examples"

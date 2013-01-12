@@ -34,13 +34,13 @@
 #include <Ecore.h>
 
 static void
-_on_server_die_cb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__)
+_on_server_die_cb(void *data EINA_UNUSED, Ethumb_Client *client EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
 
 static void
-_queue_add_cb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__, int id, const char *file, const char *key __UNUSED__, const char *thumb_path, const char *thumb_key __UNUSED__, Eina_Bool success)
+_queue_add_cb(void *data EINA_UNUSED, Ethumb_Client *client EINA_UNUSED, int id, const char *file, const char *key EINA_UNUSED, const char *thumb_path, const char *thumb_key EINA_UNUSED, Eina_Bool success)
 {
    fprintf(stderr, ">>> %hhu file ready: %s; thumb ready: %s; id = %d\n", success, file, thumb_path, id);
 }

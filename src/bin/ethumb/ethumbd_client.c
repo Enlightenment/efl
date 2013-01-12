@@ -60,7 +60,7 @@ struct options
 };
 
 static unsigned char
-_ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
+_ethumb_getopt_callback_frame_parse(const Ecore_Getopt *parser EINA_UNUSED, const Ecore_Getopt_Desc *desc EINA_UNUSED, const char *str, void *data EINA_UNUSED, Ecore_Getopt_Value *storage)
 {
    struct frame *f = (struct frame *)storage->ptrp;
    const char *tfile, *tgroup, *tswallow, *base, *sep;
@@ -151,7 +151,7 @@ _thumb_report(const char *mode, const char *src_path, const char *src_key, const
 }
 
 static void
-_finished_thumb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__, int id __UNUSED__, const char *src_path, const char *src_key, const char *thumb_path, const char *thumb_key, Eina_Bool success)
+_finished_thumb(void *data EINA_UNUSED, Ethumb_Client *client EINA_UNUSED, int id EINA_UNUSED, const char *src_path, const char *src_key, const char *thumb_path, const char *thumb_key, Eina_Bool success)
 {
    const char *mode = success ? "GENERATED" : "FAILED";
    _thumb_report(mode, src_path, src_key, thumb_path, thumb_key);
@@ -159,7 +159,7 @@ _finished_thumb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__, int id 
 }
 
 static void
-_exists(void *data, Ethumb_Client *c, __UNUSED__ Ethumb_Exists *thread, Eina_Bool exists)
+_exists(void *data, Ethumb_Client *c, EINA_UNUSED Ethumb_Exists *thread, Eina_Bool exists)
 {
    struct options *opts = data;
    const char *thumb_path, *thumb_key;

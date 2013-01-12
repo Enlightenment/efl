@@ -126,7 +126,7 @@ _ec_write_safe(int fd, const void *buf, ssize_t size)
 }
 
 static int
-_ec_pipe_str_read(struct _Ethumbd_Child *ec __UNUSED__, char **str)
+_ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 {
    int size;
    int r;
@@ -215,7 +215,7 @@ _ec_op_del(struct _Ethumbd_Child *ec)
 }
 
 static void
-_ec_op_generated_cb(void *data __UNUSED__, Ethumb *e, Eina_Bool success)
+_ec_op_generated_cb(void *data EINA_UNUSED, Ethumb *e, Eina_Bool success)
 {
    const char *thumb_path, *thumb_key;
    int size_path, size_key, size_cmd;
@@ -291,7 +291,7 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
 }
 
 static int
-_ec_fdo_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_fdo_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -306,7 +306,7 @@ _ec_fdo_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_size_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_size_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int w, h;
@@ -328,7 +328,7 @@ _ec_size_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_format_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_format_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -343,7 +343,7 @@ _ec_format_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_aspect_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_aspect_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -358,7 +358,7 @@ _ec_aspect_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_orientation_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_orientation_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -373,7 +373,7 @@ _ec_orientation_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_crop_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_crop_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    float x, y;
@@ -395,7 +395,7 @@ _ec_crop_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_quality_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_quality_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -410,7 +410,7 @@ _ec_quality_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_compress_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_compress_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -488,7 +488,7 @@ _ec_category_set(struct _Ethumbd_Child *ec, Ethumb *e)
 }
 
 static int
-_ec_video_time_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_video_time_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    float value;
@@ -503,7 +503,7 @@ _ec_video_time_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_video_start_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_video_start_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    float value;
@@ -518,7 +518,7 @@ _ec_video_start_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_video_interval_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_video_interval_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    float value;
@@ -533,7 +533,7 @@ _ec_video_interval_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_video_ntimes_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_video_ntimes_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -548,7 +548,7 @@ _ec_video_ntimes_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_video_fps_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_video_fps_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -563,7 +563,7 @@ _ec_video_fps_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
 }
 
 static int
-_ec_document_page_set(struct _Ethumbd_Child *ec __UNUSED__, Ethumb *e)
+_ec_document_page_set(struct _Ethumbd_Child *ec EINA_UNUSED, Ethumb *e)
 {
    int r;
    int value;
@@ -731,7 +731,7 @@ _ec_setup(struct _Ethumbd_Child *ec)
 }
 
 int
-main(int argc __UNUSED__, const char *argv[] __UNUSED__)
+main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
 {
    struct _Ethumbd_Child *ec;
 

@@ -60,9 +60,38 @@ edje/vim/snippets/edc.snippets \
 edje/vim/syntax/edc.vim \
 edje/vim/syntax/embryo.vim
 
+# Helper for people using EDJ
+EDJE_CC = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_cc
+EDJE_CC_FLAGS_VERBOSE_0 =
+EDJE_CC_FLAGS_VERBOSE_1 = -v
+EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE_$(V))
+
+AM_V_EDJ = $(am__v_EDJ_$(V))
+am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
+am__v_EDJ_0 = @echo "  EDJ   " $@;
+
 
 ########################################################################
 # Emotion
 emotionfilesdir = $(datadir)/emotion
 emotionfiles_DATA = emotion/checkme
 EXTRA_DIST += $(emotionfiles_DATA)
+
+########################################################################
+# Ethumb
+ethumbfilesdir = $(datadir)/ethumb
+ethumbfiles_DATA = ethumb/checkme
+EXTRA_DIST += $(ethumbfiles_DATA)
+
+ethumbframesdir = $(datadir)/ethumb/frames
+ethumbframes_DATA = \
+ethumb/frames/default.edj
+
+ethumb/frames/default.edj: ethumb/frames/default.edc
+	@$(MKDIR_P) ethumb/frames/
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/ethumb/frames/ $< $@
+
+
+EXTRA_DIST += \
+ethumb/frames/default.edc \
+ethumb/frames/border-0.jpg

@@ -4749,7 +4749,8 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
    if ((unsigned int) id >= ed->file->image_dir->entries_count) return EINA_FALSE;
 
    de = ed->file->image_dir->entries + id;
-   eina_stringshare_replace(&de->entry, name);
+   _edje_if_string_free(ed, de->entry);
+   de->entry = eina_stringshare_add(name);
    de->source_type = 1;
    de->source_param = 1;
 

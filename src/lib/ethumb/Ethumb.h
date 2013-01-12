@@ -43,9 +43,74 @@ extern "C" {
         int micro;
         int revision;
      } Ethumb_Version;
-   
+
    EAPI extern Ethumb_Version *ethumb_version;
-   
+
+/**
+ * @page ethumb_main Ethumb
+ *
+ * @date 2009 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref ethumb_main_intro
+ * @li @ref ethumb_main_compiling
+ * @li @ref ethumb_main_next_steps
+ *
+ * @section ethumb_main_intro Introduction
+ *
+ * Ethumb will use @ref Evas to generate thumbnail images of given
+ * files. The API allows great customization of the generated files
+ * and also helps compling to FreeDesktop.Org Thumbnail Specification
+ * (http://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html)
+ *
+ * However, thumbnailing can be an expensive process that will impact
+ * your application experience, blocking animations and user
+ * interaction during the generation. Another problem is that one
+ * should try to cache the thumbnails in a place that other
+ * applications can benefit from the file.
+ *
+ * @ref Ethumb_Client exists to solve this. It will communicate with a
+ * server using standard D-Bus protocol. The server will use @ref
+ * Ethumb itself to generate the thumbnail images and cache them using
+ * FreeDesktop.Org standard. It is recommended that most applications
+ * use @ref Ethumb_Client instead of @ref Ethumb directly.
+ *
+ * @section ethumb_main_compiling How to compile
+ *
+ * Ethumb is a library your application links to. The procedure for
+ * this is very simple. Note that usually you want the D-Bus client
+ * library. You simply have to compile your application with the
+ * appropriate compiler flags that the @c pkg-config script
+ * outputs. For example:
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags ethumb_client`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs ethumb_client`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section ethumb_main_next_steps Next Steps
+ *
+ * After you understood what Ethumb is and installed it in your system
+ * you should proceed understanding the programming interface.
+ *
+ * Recommended reading:
+ *
+ * @li @ref Ethumb_Client to generate thumbnails using a server
+ *     (recommended).
+ * @li @ref Ethumb to generate thumbnails in the local process.
+ *
+ */
+
 /**
  * @defgroup Ethumb Ethumb
  *

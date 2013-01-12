@@ -22,6 +22,7 @@
  * @li @ref ephysics_main physics simulation integration and visual effects.
  * @li @ref edje_main layout and theme library with super powers.
  * @li @ref emotion_main to play music and videos.
+ * @li @ref ethumb_main to generate thumbnail images of files.
  *
  */
 
@@ -231,4 +232,10 @@
  * @defgroup Emotion
  *
  * @brief Plays music and videos.
+ */
+
+/**
+ * @defgroup Ethumb
+ *
+ * @brief Generates thumbnail images of files.
  */

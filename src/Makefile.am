@@ -43,6 +43,7 @@ include Makefile_Eeze.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
+include Makefile_Ethumb.am
 
 .PHONY: benchmark examples
 

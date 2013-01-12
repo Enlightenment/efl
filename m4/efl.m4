@@ -16,7 +16,18 @@ dnl Adds a pkg-config dependency on another EFL.
 AC_DEFUN([EFL_INTERNAL_DEPEND_PKG],
 [dnl
 m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
-requirements_pc_[]m4_defn([DOWNEFL])="$2 >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
+dnl TODO: we need to fix the package config names for 2.0
+dnl TODO: and make them uniform in scheme.
+depname="$2"
+case "${depname}" in
+   edbus)
+      depname="edbus2"
+      ;;
+   ethumb-client)
+      depname="ethumb_client"
+      ;;
+esac
+requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 m4_popdef([DOWNEFL])dnl
 ])
 

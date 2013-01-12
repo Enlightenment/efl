@@ -57,6 +57,7 @@ static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_objects_interface[] = "org.enlightenment.Ethumb.objects";
 static const char _ethumb_dbus_path[] = "/org/enlightenment/Ethumb";
 
+static Eina_Prefix *_pfx = NULL;
 static int _log_domain = -1;
 
 typedef struct _Ethumbd_Setup Ethumbd_Setup;
@@ -453,7 +454,7 @@ _ethumbd_slave_alloc_cmd(Ethumbd *ed, int ssize, char *sdata)
 }
 
 static Eina_Bool
-_ethumbd_slave_data_read_cb(void *data, int type __UNUSED__, void *event)
+_ethumbd_slave_data_read_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ethumbd *ed = data;
    Ecore_Exe_Event_Data *ev = event;
@@ -499,7 +500,7 @@ _ethumbd_slave_data_read_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_ethumbd_slave_del_cb(void *data, int type __UNUSED__, void *event)
+_ethumbd_slave_del_cb(void *data, int type EINA_UNUSED, void *event)
 {
    Ethumbd *ed = data;
    Ecore_Exe_Event_Del *ev = event;
@@ -885,7 +886,6 @@ _name_owner_changed_cb(void *context, const char *bus, const char *old_id, const
 {
    Ethumbd_Object_Data *odata = context;
    Ethumbd *ed = odata->ed;
-   Ethumbd_Queue *q = &ed->queue;
 
    DBG("NameOwnerChanged: name = %s, from = %s, to = %s", bus, old_id, new_id);
    if (new_id[0])
@@ -963,7 +963,8 @@ _ethumb_dbus_get_bytearray(EDBus_Message_Iter *iter)
    if (!edbus_message_iter_fixed_array_get(iter, 'y', &result,
                                            &length))
      {
-        ERR("not an byte array element.");
+        ERR("not byte array element. Signature: %s",
+            edbus_message_iter_signature_get(iter));
         return NULL;
      }
 
@@ -981,7 +982,7 @@ _ethumb_dbus_append_bytearray(EDBus_Message_Iter *parent, EDBus_Message_Iter *ar
    if (!string)
      string = "";
 
-   size = strlen(string);
+   size = strlen(string) + 1;
    for (i = 0; i < size; i++)
      edbus_message_iter_basic_append(array, 'y', string[i]);
    edbus_message_iter_container_close(parent, array);
@@ -1012,6 +1013,9 @@ _ethumb_dbus_queue_add_cb(const EDBus_Service_Interface *iface, const EDBus_Mess
 
    if (!file)
      {
+        eina_stringshare_del(key);
+        eina_stringshare_del(thumb);
+        eina_stringshare_del(thumb_key);
 	ERR("no filename given.");
 	goto end;
      }
@@ -1019,6 +1023,10 @@ _ethumb_dbus_queue_add_cb(const EDBus_Service_Interface *iface, const EDBus_Mess
    odata = edbus_service_object_data_get(iface, ODATA);
    if (!odata)
      {
+        eina_stringshare_del(file);
+        eina_stringshare_del(key);
+        eina_stringshare_del(thumb);
+        eina_stringshare_del(thumb_key);
 	ERR("could not get dbus_object data.");
 	goto end;
      }
@@ -1159,7 +1167,7 @@ _ethumb_dbus_delete_cb(const EDBus_Service_Interface *iface, const EDBus_Message
 }
 
 static int
-_ethumb_dbus_fdo_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_fdo_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int fdo;
 
@@ -1177,7 +1185,7 @@ _ethumb_dbus_fdo_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *var
 }
 
 static int
-_ethumb_dbus_size_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_size_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    EDBus_Message_Iter *st;
    int w, h;
@@ -1198,7 +1206,7 @@ _ethumb_dbus_size_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *va
 }
 
 static int
-_ethumb_dbus_format_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_format_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int format;
 
@@ -1216,7 +1224,7 @@ _ethumb_dbus_format_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *
 }
 
 static int
-_ethumb_dbus_aspect_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_aspect_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int aspect;
 
@@ -1234,7 +1242,7 @@ _ethumb_dbus_aspect_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *
 }
 
 static int
-_ethumb_dbus_orientation_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_orientation_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int orientation;
 
@@ -1252,7 +1260,7 @@ _ethumb_dbus_orientation_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_I
 }
 
 static int
-_ethumb_dbus_crop_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_crop_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    EDBus_Message_Iter *st;
    double x, y;
@@ -1273,7 +1281,7 @@ _ethumb_dbus_crop_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *va
 }
 
 static int
-_ethumb_dbus_quality_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_quality_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int quality;
 
@@ -1292,7 +1300,7 @@ _ethumb_dbus_quality_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter 
 
 
 static int
-_ethumb_dbus_compress_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_compress_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    int compress;
 
@@ -1310,7 +1318,7 @@ _ethumb_dbus_compress_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter
 }
 
 static int
-_ethumb_dbus_frame_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_frame_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    EDBus_Message_Iter *_struct, *file_iter, *group_iter, *swallow_iter;
    const char *file, *group, *swallow;
@@ -1328,15 +1336,15 @@ _ethumb_dbus_frame_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *v
    swallow = _ethumb_dbus_get_bytearray(swallow_iter);
    DBG("setting frame to \"%s:%s:%s\"", file, group, swallow);
    request->setup.flags.frame = 1;
-   request->setup.theme_file = eina_stringshare_add(file);
-   request->setup.group = eina_stringshare_add(group);
-   request->setup.swallow = eina_stringshare_add(swallow);
+   request->setup.theme_file = file;
+   request->setup.group = group;
+   request->setup.swallow = swallow;
 
    return 1;
 }
 
 static int
-_ethumb_dbus_directory_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_directory_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    const char *directory;
    EDBus_Message_Iter *array;
@@ -1350,13 +1358,13 @@ _ethumb_dbus_directory_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Ite
    directory = _ethumb_dbus_get_bytearray(array);
    DBG("setting directory to: %s", directory);
    request->setup.flags.directory = 1;
-   request->setup.directory = eina_stringshare_add(directory);
+   request->setup.directory = directory;
 
    return 1;
 }
 
 static int
-_ethumb_dbus_category_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_category_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    const char *category;
    EDBus_Message_Iter *array;
@@ -1370,13 +1378,13 @@ _ethumb_dbus_category_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter
    category = _ethumb_dbus_get_bytearray(array);
    DBG("setting category to: %s", category);
    request->setup.flags.category = 1;
-   request->setup.category = eina_stringshare_add(category);
+   request->setup.category = category;
 
    return 1;
 }
 
 static int
-_ethumb_dbus_video_time_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_video_time_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    double video_time;
 
@@ -1394,7 +1402,7 @@ _ethumb_dbus_video_time_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_It
 }
 
 static int
-_ethumb_dbus_video_start_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_video_start_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    double video_start;
 
@@ -1412,7 +1420,7 @@ _ethumb_dbus_video_start_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_I
 }
 
 static int
-_ethumb_dbus_video_interval_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_video_interval_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    double video_interval;
 
@@ -1429,7 +1437,7 @@ _ethumb_dbus_video_interval_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Messag
 }
 
 static int
-_ethumb_dbus_video_ntimes_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_video_ntimes_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    unsigned int video_ntimes;
 
@@ -1447,7 +1455,7 @@ _ethumb_dbus_video_ntimes_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_
 }
 
 static int
-_ethumb_dbus_video_fps_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_video_fps_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    unsigned int video_fps;
 
@@ -1465,7 +1473,7 @@ _ethumb_dbus_video_fps_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Ite
 }
 
 static int
-_ethumb_dbus_document_page_set(Ethumbd_Object *eobject __UNUSED__, EDBus_Message_Iter *variant, Ethumbd_Request *request)
+_ethumb_dbus_document_page_set(Ethumbd_Object *eobject EINA_UNUSED, EDBus_Message_Iter *variant, Ethumbd_Request *request)
 {
    unsigned int document_page;
 
@@ -1542,7 +1550,6 @@ _ethumb_dbus_ethumb_setup_cb(const EDBus_Service_Interface *iface, const EDBus_M
    Ethumbd_Object *eobject;
    Ethumbd_Request *request;
    Eina_Bool r = EINA_FALSE;
-   int atype;
    EDBus_Message_Iter *array;
    EDBus_Message_Iter *data;
 
@@ -1568,7 +1575,7 @@ _ethumb_dbus_ethumb_setup_cb(const EDBus_Service_Interface *iface, const EDBus_M
    r = EINA_TRUE;
    while (edbus_message_iter_get_and_next(array, 'r', &data) && r)
      {
-        if (!_ethumb_dbus_ethumb_setup_parse_element(eobject, data, request));
+        if (!_ethumb_dbus_ethumb_setup_parse_element(eobject, data, request))
           r = EINA_FALSE;
      }
 
@@ -1610,12 +1617,11 @@ static const EDBus_Service_Interface_Desc server_desc = {
 };
 
 static void
-_ethumb_dbus_request_name_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_ethumb_dbus_request_name_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
    EDBus_Service_Interface *iface;
    const char *errname, *errmsg;
    Ethumbd *ed = data;
-   int r;
 
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -1654,11 +1660,15 @@ _ethumb_dbus_finish(Ethumbd *ed)
 static Eina_Bool
 _ethumbd_slave_spawn(Ethumbd_Slave *slave, Ethumbd *ed)
 {
+   char buf[PATH_MAX];
+
    slave->bufcmd = NULL;
    slave->scmd = 0;
 
-   slave->exe = ecore_exe_pipe_run(
-      ETHUMB_LIBEXEC_DIR"/ethumbd_slave",
+   snprintf(buf, sizeof(buf), "%s/ethumb/utils/"MODULE_ARCH"/ethumbd_slave",
+            eina_prefix_lib_get(_pfx));
+
+   slave->exe = ecore_exe_pipe_run(buf,
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, ed);
    if (!slave->exe)
      {
@@ -1691,9 +1701,20 @@ main(int argc, char *argv[])
 	if (_log_domain < 0)
 	  {
 	     EINA_LOG_CRIT("could not register log domain 'ethumbd'");
-	     exit_value = -7;
+	     exit_value = -8;
 	     goto finish;
 	  }
+     }
+
+   _pfx = eina_prefix_new(argv[0], ethumb_init,
+                          "ETHUMB", "ethumb", "checkme",
+                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!_pfx)
+     {
+        ERR("Could not get ethumb installation prefix.");
+        exit_value = -7;
+        goto finish;
      }
 
    ed.data_cb = ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
@@ -1773,6 +1794,8 @@ main(int argc, char *argv[])
  finish:
    if (ed.slave.exe)
      ecore_exe_quit(ed.slave.exe);
+
+   if (_pfx) eina_prefix_free(_pfx);
    ethumb_shutdown();
    eina_init();
    ecore_shutdown();

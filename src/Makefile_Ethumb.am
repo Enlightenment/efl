@@ -1,0 +1,171 @@
+### Library
+
+lib_LTLIBRARIES += \
+lib/ethumb/libethumb.la \
+lib/ethumb/client/libethumb_client.la
+
+ETHUMB_COMMON_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_file \
+-I$(top_builddir)/src/lib/ecore_file \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
+-I$(top_srcdir)/src/lib/ethumb \
+-I$(top_builddir)/src/lib/ethumb \
+@EFL_COV_CFLAGS@ \
+@ETHUMB_CFLAGS@ \
+@USE_EVIL_CFLAGS@
+
+ETHUMB_COMMON_LDADD = \
+lib/eina/libeina.la \
+lib/eo/libeo.la \
+lib/ecore/libecore.la \
+lib/ecore_evas/libecore_evas.la \
+lib/ecore_file/libecore_file.la \
+lib/evas/libevas.la \
+lib/edje/libedje.la \
+@EFL_COV_LIBS@ \
+@USE_EVIL_LIBS@
+
+installed_ethumbmainheadersdir = $(includedir)/ethumb-@VMAJ@
+dist_installed_ethumbmainheaders_DATA = \
+lib/ethumb/Ethumb.h \
+lib/ethumb/client/Ethumb_Client.h
+
+# libethumb.la
+lib_ethumb_libethumb_la_SOURCES = \
+lib/ethumb/Ethumb_Plugin.h \
+lib/ethumb/ethumb_private.h \
+lib/ethumb/md5.h \
+lib/ethumb/ethumb.c \
+lib/ethumb/md5.c
+
+ETHUMB_COMMON_LIBADD = $(ETHUMB_COMMON_LDADD) @ETHUMB_LIBS@
+ETHUMB_COMMON_LDADD  += @ETHUMB_LDFLAGS@
+ETHUMB_COMMON_USER_LIBADD = $(ETHUMB_COMMON_LIBADD) lib/ethumb/libethumb.la
+ETHUMB_COMMON_USER_LDADD  = $(ETHUMB_COMMON_LDADD) lib/ethumb/libethumb.la
+
+lib_ethumb_libethumb_la_CPPFLAGS = \
+$(ETHUMB_COMMON_CPPFLAGS) \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
+-DEFL_ETHUMB_BUILD
+
+lib_ethumb_libethumb_la_LIBADD = $(ETHUMB_COMMON_LIBADD)
+lib_ethumb_libethumb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+
+# libethumb_client.la
+lib_ethumb_client_libethumb_client_la_SOURCES = \
+lib/ethumb/client/ethumb_client.c
+
+lib_ethumb_client_libethumb_client_la_CPPFLAGS = \
+$(ETHUMB_COMMON_CPPFLAGS) \
+-I$(top_srcdir)/src/lib/edbus \
+-I$(top_builddir)/src/lib/edbus \
+-I$(top_srcdir)/src/lib/ethumb/client \
+-I$(top_builddir)/src/lib/ethumb/client \
+-DEFL_ETHUMB_BUILD
+
+lib_ethumb_client_libethumb_client_la_LIBADD = \
+$(ETHUMB_COMMON_USER_LIBADD) \
+lib/edbus/libedbus2.la
+lib_ethumb_client_libethumb_client_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+## Modules
+
+# Emotion
+ethumbmoduleemotiondir = $(libdir)/ethumb/modules/emotion/$(MODULE_ARCH)
+ethumbmoduleemotion_LTLIBRARIES = modules/ethumb/emotion/module.la
+modules_ethumb_emotion_module_la_SOURCES = \
+modules/ethumb/emotion/emotion.c
+modules_ethumb_emotion_module_la_CPPFLAGS = \
+$(ETHUMB_COMMON_CPPFLAGS) \
+-I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/emotion \
+-I$(top_builddir)/src/lib/emotion \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\"
+
+modules_ethumb_emotion_module_la_LIBADD = \
+$(ETHUMB_COMMON_USER_LIBADD) \
+lib/eet/libeet.la \
+lib/emotion/libemotion.la
+
+modules_ethumb_emotion_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ethumb_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+modules/ethumb/emotion/template.edj: modules/ethumb/emotion/template.edc modules/ethumb/emotion/placeholder.png bin/edje/edje_cc
+	@$(MKDIR_P) modules/ethumb/emotion
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/modules/ethumb/emotion $< $@
+
+ethumbmoduleemotion_DATA = modules/ethumb/emotion/template.edj
+
+EXTRA_DIST += \
+modules/ethumb/emotion/template.edc \
+modules/ethumb/emotion/placeholder.png
+
+
+### Binary
+
+bin_PROGRAMS += \
+bin/ethumb/ethumb \
+bin/ethumb/ethumbd \
+bin/ethumb/ethumbd_client
+
+ethumbinternal_bindir=$(libdir)/ethumb/utils/$(MODULE_ARCH)
+ethumbinternal_bin_PROGRAMS = \
+bin/ethumb/ethumbd_slave
+
+bin_ethumb_ethumb_SOURCES = bin/ethumb/ethumb.c
+bin_ethumb_ethumb_CPPFLAGS = $(ETHUMB_COMMON_CPPFLAGS)
+bin_ethumb_ethumb_LDADD = $(ETHUMB_COMMON_USER_LDADD)
+
+# TODO: review why ethumd (master) links to libethumb! shouldn't
+bin_ethumb_ethumbd_SOURCES = \
+bin/ethumb/ethumbd_private.h \
+bin/ethumb/ethumbd.c
+bin_ethumb_ethumbd_CPPFLAGS = \
+$(ETHUMB_COMMON_CPPFLAGS) \
+-I$(top_srcdir)/src/lib/edbus \
+-I$(top_builddir)/src/lib/edbus \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\"
+bin_ethumb_ethumbd_LDADD = \
+$(ETHUMB_COMMON_USER_LDADD) \
+lib/edbus/libedbus2.la
+
+bin_ethumb_ethumbd_client_SOURCES = \
+bin/ethumb/ethumbd_client.c
+bin_ethumb_ethumbd_client_CPPFLAGS = \
+$(ETHUMB_COMMON_CPPFLAGS) \
+-I$(top_srcdir)/src/lib/edbus \
+-I$(top_builddir)/src/lib/edbus \
+-I$(top_srcdir)/src/lib/ethumb/client \
+-I$(top_builddir)/src/lib/ethumb/client
+bin_ethumb_ethumbd_client_LDADD = \
+$(ETHUMB_COMMON_USER_LDADD) \
+lib/ethumb/client/libethumb_client.la \
+lib/edbus/libedbus2.la
+
+bin_ethumb_ethumbd_slave_SOURCES = \
+bin/ethumb/ethumbd_private.h \
+bin/ethumb/ethumbd_slave.c
+bin_ethumb_ethumbd_slave_CPPFLAGS = $(ETHUMB_COMMON_CPPFLAGS)
+bin_ethumb_ethumbd_slave_LDADD = $(ETHUMB_COMMON_USER_LDADD)

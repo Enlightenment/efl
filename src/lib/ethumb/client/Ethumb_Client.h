@@ -35,6 +35,7 @@ extern "C" {
 
 /**
  * @defgroup Ethumb_Client Ethumb Client
+ * @ingroup Ethumb
  *
  * @{
  */

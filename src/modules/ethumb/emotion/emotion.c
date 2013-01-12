@@ -18,6 +18,8 @@
 #include <Edje_Edit.h>
 #include <Emotion.h>
 
+static Eina_Prefix *_pfx = NULL;
+static int _init_count = 0;
 static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
@@ -65,7 +67,7 @@ _resize_movie(struct _emotion_plugin *_plugin)
 }
 
 static void
-_frame_decode_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_frame_decode_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -76,13 +78,13 @@ _frame_decode_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_frame_resized_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_frame_resized_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _resize_movie(data);
 }
 
 static void
-_video_stopped_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_video_stopped_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -129,23 +131,24 @@ _setup_thumbnail(struct _emotion_plugin *_plugin)
 
    if (!edje_file_group_exists(thumb_path, "movie/thumb"))
      {
-	fprintf(stderr, "ERROR: no group 'movie/thumb' found.\n");
-	goto exit_error;
+        ERR("no group 'movie/thumb' found in file=%s", thumb_path);
+        goto exit_error;
      }
 
    edje = edje_edit_object_add(evas);
    edje_object_file_set(edje, thumb_path, "movie/thumb");
    if (!edje_object_part_exists(edje, "image"))
      {
-	fprintf(stderr, "ERROR: no 'image' part found.\n");
-	evas_object_del(edje);
-	goto exit_error;
+        ERR("no 'image' part found in file=%s, group=movie/thumb", thumb_path);
+        evas_object_del(edje);
+        goto exit_error;
      }
    if (!edje_edit_program_exist(edje, "animate"))
      {
-	fprintf(stderr, "ERROR: no 'animate' program found.\n");
-	evas_object_del(edje);
-	goto exit_error;
+        ERR("no 'animate' program found in file=%s, group=movie/thumb",
+            thumb_path);
+        evas_object_del(edje);
+        goto exit_error;
      }
 
    for (i = 0; i < _plugin->frnum; i++)
@@ -177,23 +180,43 @@ exit_error:
 }
 
 static void
+_finish_thumb_obj(void *data)
+{
+   struct _emotion_plugin *_plugin = data;
+   evas_object_del(_plugin->video);
+   free(_plugin);
+}
+
+static void
 _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
 {
    int r = 0;
+
    evas_object_smart_callback_del(_plugin->video, "frame_resize",
-				  _frame_resized_cb);
+                                  _frame_resized_cb);
    evas_object_smart_callback_del(_plugin->video, "frame_decode",
-				  _frame_decode_cb);
+                                  _frame_decode_cb);
+   evas_object_smart_callback_del(_plugin->video, "decode_stop",
+                                  _video_stopped_cb);
+
    emotion_object_play_set(_plugin->video, 0);
-   evas_object_del(_plugin->video);
+
    if (_plugin->ef)
-     eet_close(_plugin->ef);
+     {
+        Eet_Error err = eet_close(_plugin->ef);
+        if (err != EET_ERROR_NONE)
+          {
+             ERR("Error writing Eet thumbnail file: %d", err);
+             success = EINA_FALSE;
+          }
+     }
 
    if (success)
      r = _setup_thumbnail(_plugin);
 
-   free(_plugin);
    ethumb_finished_callback_call(_plugin->e, r);
+
+   ecore_job_add(_finish_thumb_obj, _plugin);
 }
 
 static Eina_Bool
@@ -298,17 +321,25 @@ _generate_animated_thumb(struct _emotion_plugin *_plugin)
    char buf[4096];
    Ethumb *e = _plugin->e;
 
-   snprintf(buf, sizeof(buf), "%s/data/emotion_template.edj", PLUGINSDIR);
+   snprintf(buf, sizeof(buf),
+            "%s/ethumb/modules/emotion/" MODULE_ARCH "/template.edj",
+            eina_prefix_lib_get(_pfx));
    ethumb_thumb_path_get(e, &thumb_path, NULL);
    thumb_dir = ecore_file_dir_get(thumb_path);
    ecore_file_mkpath(thumb_dir);
    free(thumb_dir);
-   ecore_file_cp(buf, thumb_path);
+   if (!eina_file_copy(buf, thumb_path, 0, NULL, NULL))
+     {
+        ERR("Couldn't copy file '%s' to '%s'", buf, thumb_path);
+        ERR("could not open '%s'", thumb_path);
+        _finish_thumb_generation(_plugin, 0);
+        return;
+     }
    _plugin->ef = eet_open(thumb_path, EET_FILE_MODE_READ_WRITE);
    if (!_plugin->ef)
      {
-	fprintf(stderr, "ERROR: could not open '%s'\n", thumb_path);
-	_finish_thumb_generation(_plugin, 0);
+        ERR("could not open '%s'", thumb_path);
+        _finish_thumb_generation(_plugin, 0);
      }
 }
 
@@ -325,8 +356,7 @@ _thumb_generate(Ethumb *e)
    r = emotion_object_init(o, NULL);
    if (!r)
      {
-	fprintf(stderr, "ERROR: could not start emotion using gstreamer"
-		" plugin.\n");
+        ERR("Could not initialize emotion object.");
 	evas_object_del(o);
 	ethumb_finished_callback_call(e, 0);
 	free(_plugin);
@@ -368,7 +398,7 @@ _thumb_generate(Ethumb *e)
 }
 
 static void
-_thumb_cancel(Ethumb *e __UNUSED__, void *data)
+_thumb_cancel(Ethumb *e EINA_UNUSED, void *data)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -389,20 +419,65 @@ ethumb_plugin_get(void)
 	_thumb_cancel
      };
 
-   _log_dom = eina_log_domain_register("ethumb_emotion", EINA_COLOR_GREEN);
-
    return &plugin;
 }
 
 static Eina_Bool
 _module_init(void)
 {
+   if (_init_count > 0)
+     {
+        _init_count++;
+        return EINA_TRUE;
+     }
+
+   _log_dom = eina_log_domain_register("ethumb_emotion", EINA_COLOR_GREEN);
+   if (_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: ethumb_emotion");
+        goto error_log;
+     }
+
+   _pfx = eina_prefix_new(NULL, ethumb_init,
+                          "ETHUMB", "ethumb", "checkme",
+                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!_pfx)
+     {
+        ERR("Could not get ethumb installation prefix.");
+        goto error_pfx;
+     }
+
+   emotion_init();
+
+   _init_count = 1;
    return EINA_TRUE;
+
+ error_pfx:
+   eina_log_domain_unregister(_log_dom);
+   _log_dom = -1;
+
+ error_log:
+   return EINA_FALSE;
 }
 
 static void
 _module_shutdown(void)
 {
+   if (_init_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return;
+     }
+   _init_count--;
+   if (_init_count > 0) return;
+
+   emotion_shutdown();
+
+   eina_prefix_free(_pfx);
+   _pfx = NULL;
+   eina_log_domain_unregister(_log_dom);
+   _log_dom = -1;
 }
 
 EINA_MODULE_INIT(_module_init);

@@ -31,23 +31,6 @@
 #  include <stdlib.h>
 # endif
 #endif
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif !defined alloca
-# ifdef __GNUC__
-#  define alloca __builtin_alloca
-# elif defined _AIX
-#  define alloca __alloca
-# elif defined _MSC_VER
-#  include <malloc.h>
-#  define alloca _alloca
-# elif !defined HAVE_ALLOCA
-#  ifdef  __cplusplus
-extern "C"
-#  endif
-void *alloca (size_t);
-# endif
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,9 +92,10 @@ static const int THUMB_SIZE_LARGE = 256;
 
 static Eina_Hash *_plugins_ext = NULL;
 static Eina_Array *_plugins = NULL;
+static Eina_Prefix *_pfx = NULL;
 
 static Eina_Bool
-_ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
+_ethumb_plugin_list_cb(Eina_Module *m, void *data EINA_UNUSED)
 {
    const char *file;
    const char **ext;
@@ -156,10 +140,13 @@ _ethumb_plugin_list_cb(Eina_Module *m, void *data __UNUSED__)
 static void
 _ethumb_plugins_load(void)
 {
+   char buf[PATH_MAX];
+
    _plugins_ext = eina_hash_string_small_new(NULL);
    EINA_SAFETY_ON_NULL_RETURN(_plugins_ext);
 
-   _plugins = eina_module_list_get(_plugins, PLUGINSDIR, 1,
+   snprintf(buf, sizeof(buf), "%s/ethumb/modules", eina_prefix_lib_get(_pfx));
+   _plugins = eina_module_list_get(_plugins, buf, 1,
                                    &_ethumb_plugin_list_cb, NULL);
 }
 
@@ -192,8 +179,17 @@ ethumb_init(void)
    if (_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: ethumb");
-        eina_shutdown();
-        return 0;
+        goto error_log;
+     }
+
+   _pfx = eina_prefix_new(NULL, ethumb_init,
+                          "ETHUMB", "ethumb", "checkme",
+                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!_pfx)
+     {
+        ERR("Could not get ethumb installation prefix.");
+        goto error_pfx;
      }
 
    evas_init();
@@ -210,6 +206,14 @@ ethumb_init(void)
 
    _ethumb_plugins_load();
    return ++initcount;
+
+ error_pfx:
+   eina_log_domain_unregister(_log_dom);
+   _log_dom = -1;
+
+ error_log:
+   eina_shutdown();
+   return 0;
 }
 
 EAPI int
@@ -231,6 +235,8 @@ ethumb_shutdown(void)
         ecore_shutdown();
         ecore_evas_shutdown();
         edje_shutdown();
+        eina_prefix_free(_pfx);
+        _pfx = NULL;
         eina_log_domain_unregister(_log_dom);
         _log_dom = -1;
         eina_shutdown();
@@ -1453,6 +1459,7 @@ _ethumb_image_load(Ethumb *e)
 
    if (e->orientation == ETHUMB_THUMB_ORIENT_ORIGINAL)
      {
+        /* TODO: rewrite to not need libexif just to get this */
 #ifdef HAVE_LIBEXIF
         ExifData  *exif = exif_data_new_from_file(e->src_path);
         ExifEntry *entry = NULL;
@@ -1595,7 +1602,7 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
      }
 
    r = _ethumb_plugin_generate(e);
-   fprintf(stderr, "ethumb generate: %i: %p\n", r, e->pdata);
+   DBG("ethumb plugin generate: %i: %p\n", r, e->pdata);
    if (r)
      {
         return EINA_TRUE;
@@ -1603,7 +1610,8 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 
    if (!_ethumb_image_load(e))
      {
-        ERR("could not load input image.");
+        ERR("could not load input image: file=%s, key=%s",
+            e->src_path, e->src_key);
         ethumb_finished_callback_call(e, 0);
         return EINA_FALSE;
      }
@@ -1771,7 +1779,7 @@ ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
 }
 
 EAPI unsigned int
-ethumb_length(__UNUSED__ const void *key)
+ethumb_length(EINA_UNUSED const void *key)
 {
    return sizeof (Ethumb);
 }
@@ -1781,8 +1789,8 @@ ethumb_length(__UNUSED__ const void *key)
     return e1->Param - e2->Param;
 
 EAPI int
-ethumb_key_cmp(const void *key1, __UNUSED__ int key1_length,
-               const void *key2, __UNUSED__ int key2_length)
+ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
+               const void *key2, EINA_UNUSED int key2_length)
 {
    const Ethumb *e1 = key1;
    const Ethumb *e2 = key2;
@@ -1824,7 +1832,7 @@ ethumb_key_cmp(const void *key1, __UNUSED__ int key1_length,
 #define HASH_PARAM_F(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 
 EAPI int
-ethumb_hash(const void *key, int key_length __UNUSED__)
+ethumb_hash(const void *key, int key_length EINA_UNUSED)
 {
    const Ethumb *e = key;
    int r = 0;

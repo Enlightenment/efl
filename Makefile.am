@@ -62,6 +62,7 @@ old/ChangeLog.eio \
 old/ChangeLog.embryo \
 old/ChangeLog.emotion \
 old/ChangeLog.escape \
+old/ChangeLog.ethumb \
 old/ChangeLog.evas \
 old/ChangeLog.evil \
 old/ChangeLog.evil.0 \
@@ -75,6 +76,7 @@ old/NEWS.eio \
 old/NEWS.embryo \
 old/NEWS.emotion \
 old/NEWS.escape \
+old/NEWS.ethumb \
 old/NEWS.evas \
 old/NEWS.evil \
 old/README.ecore \
@@ -89,6 +91,7 @@ old/README.embryo \
 old/README.emotion \
 old/README.ephysics \
 old/README.escape \
+old/README.ethumb \
 old/README.evas \
 old/README.evil \
 spec/efl.spec
@@ -125,7 +128,9 @@ pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
 pc/edje.pc \
-pc/emotion.pc
+pc/emotion.pc \
+pc/ethumb.pc \
+pc/ethumb_client.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
@@ -216,7 +221,8 @@ endif
 
 servicedir = @dbusservicedir@
 service_DATA = \
-dbus-services/org.enlightenment.Efreet.service
+dbus-services/org.enlightenment.Efreet.service \
+dbus-services/org.enlightenment.Ethumb.service
 
 
 
