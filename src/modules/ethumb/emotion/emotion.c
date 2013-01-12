@@ -407,20 +407,64 @@ _thumb_cancel(Ethumb *e EINA_UNUSED, void *data)
    free(_plugin);
 }
 
-EAPI Ethumb_Plugin *
-ethumb_plugin_get(void)
-{
-   static const char *extensions[] = { "avi", "mp4", "ogv", "mov", "mpg", "wmv",
-				       NULL };
-   static Ethumb_Plugin plugin =
-     {
-	extensions,
-	_thumb_generate,
-	_thumb_cancel
-     };
-
-   return &plugin;
-}
+static const char *extensions[] = { /* based on emotion's list */
+  "264",
+  "3g2",
+  "3gp",
+  "3gp2",
+  "3gpp",
+  "3gpp2",
+  "3p2",
+  "asf",
+  "avi",
+  "bdm",
+  "bdmv",
+  "clpi",
+  "clp",
+  "fla",
+  "flv",
+  "m1v",
+  "m2v",
+  "m2t",
+  "m4v",
+  "mkv",
+  "mov",
+  "mp2",
+  "mp2ts",
+  "mp4",
+  "mpe",
+  "mpeg",
+  "mpg",
+  "mpl",
+  "mpls",
+  "mts",
+  "mxf",
+  "nut",
+  "nuv",
+  "ogg",
+  "ogm",
+  "ogv",
+  "rm",
+  "rmj",
+  "rmm",
+  "rms",
+  "rmx",
+  "rmvb",
+  "swf",
+  "ts",
+  "weba",
+  "webm",
+  "wmv",
+  NULL
+};
+static const Ethumb_Plugin plugin =
+  {
+    ETHUMB_PLUGIN_API_VERSION,
+    "emotion",
+    extensions,
+    _thumb_generate,
+    _thumb_cancel
+};
 
 static Eina_Bool
 _module_init(void)
@@ -450,6 +494,8 @@ _module_init(void)
 
    emotion_init();
 
+   ethumb_plugin_register(&plugin);
+
    _init_count = 1;
    return EINA_TRUE;
 
@@ -471,6 +517,8 @@ _module_shutdown(void)
      }
    _init_count--;
    if (_init_count > 0) return;
+
+   ethumb_plugin_unregister(&plugin);
 
    emotion_shutdown();
 

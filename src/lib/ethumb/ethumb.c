@@ -83,6 +83,7 @@ static int _log_dom = -1;
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 
 static int initcount = 0;
+static Eina_Bool _plugins_loaded = EINA_FALSE;
 static const char *_home_thumb_dir = NULL;
 static const char *_thumb_category_normal = NULL;
 static const char *_thumb_category_large = NULL;
@@ -94,71 +95,131 @@ static Eina_Hash *_plugins_ext = NULL;
 static Eina_Array *_plugins = NULL;
 static Eina_Prefix *_pfx = NULL;
 
-static Eina_Bool
-_ethumb_plugin_list_cb(Eina_Module *m, void *data EINA_UNUSED)
+EAPI Eina_Bool
+ethumb_plugin_register(const Ethumb_Plugin *plugin)
 {
-   const char *file;
-   const char **ext;
-   Ethumb_Plugin *plugin;
-   Ethumb_Plugin *(*plugin_get)(void);
+   const char * const *ext;
 
-   file = eina_module_file_get(m);
-   if (!eina_module_load(m))
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin, EINA_FALSE);
+
+   if (plugin->version != ETHUMB_PLUGIN_API_VERSION)
      {
-        ERR("could not load module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
+        ERR("Plugin '%p' uses api version=%u while %u was expected",
+            plugin, plugin->version, ETHUMB_PLUGIN_API_VERSION);
         return EINA_FALSE;
      }
 
-   plugin_get = eina_module_symbol_get(m, "ethumb_plugin_get");
-   if (!plugin_get)
-     {
-        ERR("could not find ethumb_plugin_get() in module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
-        eina_module_unload(m);
-        return EINA_FALSE;
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin->name, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin->extensions, EINA_FALSE);
 
-   plugin = plugin_get();
-   if (!plugin)
-     {
-        ERR("plugin \"%s\" failed to init.", file);
-        eina_module_unload(m);
-        return EINA_FALSE;
-     }
-
-   DBG("loaded plugin \"%s\" (%p) with extensions:", file, plugin);
+   DBG("registered plugin '%s' (%p) with extensions:", plugin->name, plugin);
    for (ext = plugin->extensions; *ext; ext++)
      {
-        DBG("   extension \"%s\"", *ext);
-        eina_hash_add(_plugins_ext, *ext, plugin);
+        Eina_Bool r = eina_hash_add(_plugins_ext, *ext, plugin);
+        DBG("   extension \"%s\": %hhu", *ext, r);
      }
 
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+ethumb_plugin_unregister(const Ethumb_Plugin *plugin)
+{
+   const char * const *ext;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin, EINA_FALSE);
+
+   if (plugin->version != ETHUMB_PLUGIN_API_VERSION)
+     {
+        ERR("Plugin '%p' uses api version=%u while %u was expected",
+            plugin, plugin->version, ETHUMB_PLUGIN_API_VERSION);
+        return EINA_FALSE;
+     }
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin->name, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plugin->extensions, EINA_FALSE);
+
+   DBG("unregister plugin '%s' (%p) with extensions:", plugin->name, plugin);
+   for (ext = plugin->extensions; *ext; ext++)
+     {
+        Eina_Bool r = eina_hash_del(_plugins_ext, *ext, plugin);
+        DBG("   extension \"%s\": %hhu", *ext, r);
+     }
+
+   return EINA_TRUE;
+}
+
+
 static void
 _ethumb_plugins_load(void)
 {
    char buf[PATH_MAX];
+   char *path;
 
-   _plugins_ext = eina_hash_string_small_new(NULL);
-   EINA_SAFETY_ON_NULL_RETURN(_plugins_ext);
+   if (_plugins_loaded) return;
+   _plugins_loaded = EINA_TRUE;
+
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        snprintf(buf, sizeof(buf), "%s/src/modules/ethumb",
+                 PACKAGE_BUILD_DIR);
+        if (stat(buf, &st) == 0)
+          {
+             const char *built_modules[] = {
+               "emotion",
+               NULL
+             };
+             const char **itr;
+             for (itr = built_modules; *itr != NULL; itr++)
+               {
+                  snprintf(buf, sizeof(buf),
+                           "%s/src/modules/ethumb/%s/.libs",
+                           PACKAGE_BUILD_DIR, *itr);
+                  _plugins = eina_module_list_get(_plugins, buf,
+                                                          EINA_FALSE, NULL, NULL);
+               }
+             goto load;
+          }
+     }
+
+   path = eina_module_environment_path_get("ETHUMB_MODULES_DIR",
+                                           "/ethumb/modules");
+   if (path)
+     {
+        _plugins = eina_module_arch_list_get(_plugins, path, MODULE_ARCH);
+        free(path);
+     }
+
+   path = eina_module_environment_path_get("HOME", "/.ethumb");
+   if (path)
+     {
+        _plugins = eina_module_arch_list_get(_plugins, path, MODULE_ARCH);
+        free(path);
+     }
 
    snprintf(buf, sizeof(buf), "%s/ethumb/modules", eina_prefix_lib_get(_pfx));
-   _plugins = eina_module_list_get(_plugins, buf, 1,
-                                   &_ethumb_plugin_list_cb, NULL);
+   _plugins = eina_module_arch_list_get(_plugins, buf, MODULE_ARCH);
+
+ load:
+   if (_plugins)
+     eina_module_list_load(_plugins);
+
+   if (!eina_hash_population(_plugins_ext))
+     ERR("Couldn't find any ethumb plugin.");
 }
 
 static void
 _ethumb_plugins_unload(void)
 {
-   eina_hash_free(_plugins_ext);
-   _plugins_ext = NULL;
-   eina_module_list_unload(_plugins);
    eina_module_list_free(_plugins);
    eina_array_free(_plugins);
    _plugins = NULL;
+
+   eina_hash_free(_plugins_ext);
+   _plugins_ext = NULL;
+
+   _plugins_loaded = EINA_FALSE;
 }
 
 EAPI int
@@ -192,6 +253,9 @@ ethumb_init(void)
         goto error_pfx;
      }
 
+   _plugins_ext = eina_hash_string_small_new(NULL);
+   EINA_SAFETY_ON_NULL_GOTO(_plugins_ext, error_plugins_ext);
+
    evas_init();
    ecore_init();
    ecore_evas_init();
@@ -204,8 +268,11 @@ ethumb_init(void)
    _thumb_category_normal = eina_stringshare_add("normal");
    _thumb_category_large = eina_stringshare_add("large");
 
-   _ethumb_plugins_load();
    return ++initcount;
+
+ error_plugins_ext:
+   eina_prefix_free(_pfx);
+   _pfx = NULL;
 
  error_pfx:
    eina_log_domain_unregister(_log_dom);
@@ -1210,6 +1277,8 @@ _ethumb_plugin_generate(Ethumb *e)
 
    for (i = 0; extp[i] != '\0'; i++)
      ext[i] = tolower(extp[i + 1]);
+
+   _ethumb_plugins_load();
 
    plugin = eina_hash_find(_plugins_ext, ext);
    if (!plugin)
