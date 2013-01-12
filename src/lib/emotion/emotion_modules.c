@@ -50,10 +50,13 @@ _emotion_engine_registry_entry_cmp(const void *pa, const void *pb)
 }
 
 static void
-_emotion_modules_find(void)
+_emotion_modules_load(void)
 {
    char buf[PATH_MAX];
    char *path;
+
+   if (_emotion_modules_loaded) return;
+   _emotion_modules_loaded = EINA_TRUE;
 
    if (getenv("EFL_RUN_IN_TREE"))
      {
@@ -81,7 +84,7 @@ _emotion_modules_find(void)
                                                           EINA_FALSE, NULL, NULL);
                }
 
-             return;
+             goto load;
           }
      }
 
@@ -102,14 +105,8 @@ _emotion_modules_find(void)
 
    snprintf(buf, sizeof(buf), "%s/emotion/modules", eina_prefix_lib_get(_emotion_pfx));
    _emotion_modules = eina_module_arch_list_get(_emotion_modules, buf, MODULE_ARCH);
-}
 
-static void
-_emotion_modules_load(void)
-{
-   if (_emotion_modules_loaded) return;
-   _emotion_modules_loaded = EINA_TRUE;
-
+ load:
    if (_emotion_modules)
      eina_module_list_load(_emotion_modules);
 
@@ -120,23 +117,15 @@ _emotion_modules_load(void)
 Eina_Bool
 emotion_modules_init(void)
 {
-   int static_modules = 0;
-
-   _emotion_modules_find();
-
-   /* Init static module */
 #ifdef EMOTION_STATIC_BUILD_XINE
-   static_modules += xine_module_init();
+   xine_module_init();
 #endif
 #ifdef EMOTION_STATIC_BUILD_GSTREAMER
-   static_modules += gstreamer_module_init();
+   gstreamer_module_init();
 #endif
 #ifdef EMOTION_STATIC_BUILD_GENERIC
-   static_modules += generic_module_init();
+   generic_module_init();
 #endif
-
-   if ((!_emotion_modules) && (!static_modules))
-     WRN("No emotion modules found!");
 
    return EINA_TRUE;
 }
