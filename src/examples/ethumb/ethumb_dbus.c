@@ -33,6 +33,8 @@
 #include <Ecore_Getopt.h>
 #include <Ecore.h>
 
+static int _waiting_count = 0;
+
 static void
 _on_server_die_cb(void *data EINA_UNUSED, Ethumb_Client *client EINA_UNUSED)
 {
@@ -43,18 +45,20 @@ static void
 _queue_add_cb(void *data EINA_UNUSED, Ethumb_Client *client EINA_UNUSED, int id, const char *file, const char *key EINA_UNUSED, const char *thumb_path, const char *thumb_key EINA_UNUSED, Eina_Bool success)
 {
    fprintf(stderr, ">>> %hhu file ready: %s; thumb ready: %s; id = %d\n", success, file, thumb_path, id);
+   _waiting_count--;
+   if (_waiting_count == 0)
+     ecore_main_loop_quit();
 }
 
 static void
 _request_thumbnails(Ethumb_Client *client, void *data)
 {
    const char *path = data;
-   DIR *dir;
-   struct dirent *de;
-   char buf[PATH_MAX];
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *itr;
 
-   dir = opendir(path);
-   if (!dir)
+   itr = eina_file_stat_ls(path);
+   if (!itr)
      {
 	fprintf(stderr, "ERROR: could not open directory: %s\n", path);
 	return;
@@ -66,16 +70,16 @@ _request_thumbnails(Ethumb_Client *client, void *data)
    ethumb_client_size_set(client, 192, 192);
    ethumb_client_category_set(client, "custom");
 
-   while ((de = readdir(dir)))
+   EINA_ITERATOR_FOREACH(itr, info)
      {
-	if (de->d_type != DT_REG)
+	if (info->type != EINA_FILE_REG)
 	  continue;
-	snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
-	ethumb_client_file_set(client, buf, NULL);
+	ethumb_client_file_set(client, info->path, NULL);
+        printf("request: %s\n", info->path);
 	ethumb_client_generate(client, _queue_add_cb, NULL, NULL);
+        _waiting_count++;
      }
-
-   closedir(dir);
+   eina_iterator_free(itr);
 }
 
 static void

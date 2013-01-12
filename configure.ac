@@ -3484,6 +3484,7 @@ src/examples/edbus/Makefile
 src/examples/ephysics/Makefile
 src/examples/edje/Makefile
 src/examples/emotion/Makefile
+src/examples/ethumb/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
