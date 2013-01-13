@@ -1077,10 +1077,6 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
 }
 
 /**
- * @endcond
- */
-
-/**
  * Ask server to cancel generation of all thumbnails.
  *
  * @param client client instance. Must @b not be @c NULL and client
