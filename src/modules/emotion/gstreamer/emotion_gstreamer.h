@@ -307,9 +307,9 @@ struct _GstMultiPlaneImageBuffer
    /* elevation of each image plane */
    gint      elevation[MPLANE_IMGB_MAX_COUNT];
    /* user space address of each image plane */
-   gpointer uaddr[MPLANE_IMGB_MAX_COUNT];
+   guchar   *uaddr[MPLANE_IMGB_MAX_COUNT];
    /* Index of real address of each image plane, if needs */
-   gpointer index[MPLANE_IMGB_MAX_COUNT];
+   guchar   *index[MPLANE_IMGB_MAX_COUNT];
    /* left postion, if needs */
    gint      x;
    /* top position, if needs */
@@ -331,9 +331,9 @@ struct _SCMN_IMGB
    /* elevation of each image plane */
    int      elevation[SCMN_IMGB_MAX_PLANE];
    /* user space address of each image plane */
-   void   * uaddr[SCMN_IMGB_MAX_PLANE];
+   guchar  *uaddr[SCMN_IMGB_MAX_PLANE];
    /* physical address of each image plane, if needs */
-   void   * p[SCMN_IMGB_MAX_PLANE];
+   guchar  *p[SCMN_IMGB_MAX_PLANE];
    /* color space type of image */
    int      cs;
    /* left postion, if needs */
