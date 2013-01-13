@@ -1490,7 +1490,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = \
 bin_evas_evas_cserve2_slave_LDADD = \
 lib/eina/libeina.la \
 @EVAS_LDFLAGS@ \
-@EVAS_LIBS@
+@EVAS_CSERVE2_SLAVE_LIBS@
 
 bin_evas_evas_cserve2_slave_LDFLAGS = -export-dynamic
 
@@ -1507,7 +1507,8 @@ bin_evas_dummy_slave_CPPFLAGS = \
 @EVAS_CFLAGS@
 
 bin_evas_dummy_slave_LDADD = \
-@EVAS_LIBS@
+@EVAS_LDFLAGS@ \
+@EVAS_CSERVE2_SLAVE_LIBS@
 
 ### Cserve2 loaders
 

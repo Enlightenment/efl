@@ -1623,6 +1623,10 @@ fi
 if test "x${want_evas_cserve2}" = "xyes"; then
    if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
       want_evas_cserve2="no"
+   else
+      EFL_CHECK_FUNC([EVAS_CSERVE2_SLAVE], [shm_open])
+      EVAS_CSERVE2_SLAVE_LIBS="${requirements_libs_evas_cserve2_slave}"
+      AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
    fi
 fi
 
