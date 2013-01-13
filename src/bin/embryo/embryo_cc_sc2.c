@@ -157,12 +157,12 @@ plungefile(char *name, int try_currentpath, int try_includepaths)
 }
 
 static void
-check_empty(char *lptr)
+check_empty(const char *sptr)
 {
    /* verifies that the string contains only whitespace */
-   while (*lptr <= ' ' && *lptr != '\0')
-      lptr++;
-   if (*lptr != '\0')
+   while (*sptr <= ' ' && *sptr != '\0')
+      sptr++;
+   if (*sptr != '\0')
       error(38);		/* extra characters on line */
 }
 
@@ -235,7 +235,6 @@ static void
 readline(char *line)
 {
    int                 i, num, cont;
-   char               *ptr;
 
    if (lptr == term_expr)
       return;
@@ -285,15 +284,16 @@ readline(char *line)
 	  }
 	else
 	  {
+             char *ptr;
 	     /* check whether to erase leading spaces */
 	     if (cont)
 	       {
-		  char               *ptr = line;
+		  char *sptr = line;
 
-		  while (*ptr == ' ' || *ptr == '\t')
-		     ptr++;
-		  if (ptr != line)
-		     memmove(line, ptr, strlen(ptr) + 1);
+		  while (*sptr == ' ' || *sptr == '\t')
+		     sptr++;
+		  if (sptr != line)
+		     memmove(line, sptr, strlen(sptr) + 1);
 	       }		/* if */
 	     cont = FALSE;
 	     /* check whether a full line was read */
@@ -694,13 +694,13 @@ static int
 number(cell * val, char *curptr)
 {
    int                 i;
-   cell                value;
+   cell                curval;
 
-   if ((i = btoi(&value, curptr)) != 0	/* binary? */
-       || (i = htoi(&value, curptr)) != 0	/* hexadecimal? */
-       || (i = dtoi(&value, curptr)) != 0)	/* decimal? */
+   if ((i = btoi(&curval, curptr)) != 0	/* binary? */
+       || (i = htoi(&curval, curptr)) != 0	/* hexadecimal? */
+       || (i = dtoi(&curval, curptr)) != 0)	/* decimal? */
      {
-	*val = value;
+	*val = curval;
 	return i;
      }
    else
@@ -983,10 +983,10 @@ command(void)
 		    }
 		  else if (strcmp(str, "compress") == 0)
 		    {
-		       cell                val;
+		       cell                compval;
 
-		       preproc_expr(&val, NULL);
-		       sc_compress = (int)val;	/* switch code packing on/off */
+		       preproc_expr(&compval, NULL);
+		       sc_compress = (int)compval;	/* switch code packing on/off */
 		    }
 		  else if (strcmp(str, "dynamic") == 0)
 		    {
@@ -1029,10 +1029,10 @@ command(void)
 		    }
 		  else if (strcmp(str, "pack") == 0)
 		    {
-		       cell                val;
+		       cell                packval;
 
-		       preproc_expr(&val, NULL);	/* default = packed/unpacked */
-		       sc_packstr = (int)val;
+		       preproc_expr(&packval, NULL);	/* default = packed/unpacked */
+		       sc_packstr = (int)packval;
 		    }
 		  else if (strcmp(str, "rational") == 0)
 		    {
@@ -1080,17 +1080,17 @@ command(void)
 		    }
 		  else if (strcmp(str, "semicolon") == 0)
 		    {
-		       cell                val;
+		       cell                semicolval;
 
-		       preproc_expr(&val, NULL);
-		       sc_needsemicolon = (int)val;
+		       preproc_expr(&semicolval, NULL);
+		       sc_needsemicolon = (int)semicolval;
 		    }
 		  else if (strcmp(str, "tabsize") == 0)
 		    {
-		       cell                val;
+		       cell                tabsizeval;
 
-		       preproc_expr(&val, NULL);
-		       sc_tabsize = (int)val;
+		       preproc_expr(&tabsizeval, NULL);
+		       sc_tabsize = (int)tabsizeval;
 		    }
 		  else if (strcmp(str, "align") == 0)
 		    {
@@ -1479,7 +1479,7 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
 {
    int                 prefixlen;
    char               *p, *s, *e, *args[10];
-   int                 match, arg, len;
+   int                 is_match, arg, len;
 
    memset(args, 0, sizeof args);
 
@@ -1495,8 +1495,8 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
     */
    s = line + prefixlen;
    p = pattern + prefixlen;
-   match = TRUE;		/* so far, pattern matches */
-   while (match && *s != '\0' && *p != '\0')
+   is_match = TRUE;		/* so far, pattern matches */
+   while (is_match && *s != '\0' && *p != '\0')
      {
 	if (*p == '%')
 	  {
@@ -1543,14 +1543,14 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
 		  else
 		    {
 		       assert(*e == '\0' || *e == '\n');
-		       match = FALSE;
+		       is_match = FALSE;
 		       s = e;
 		    }		/* if */
 		  p++;
 	       }
 	     else
 	       {
-		  match = FALSE;
+		  is_match = FALSE;
 	       }		/* if */
 	  }
 	else if (*p == ';' && *(p + 1) == '\0' && !sc_needsemicolon)
@@ -1559,7 +1559,7 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
 	     while (*s <= ' ' && *s != '\0')
 		s++;		/* skip white space */
 	     if (*s != ';' && *s != '\0')
-		match = FALSE;
+		is_match = FALSE;
 	     p++;		/* skip the semicolon in the pattern */
 	  }
 	else
@@ -1575,23 +1575,23 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
 		   s++;		/* skip white space */
 	     ch = litchar(&p, FALSE);	/* this increments "p" */
 	     if (*s != ch)
-		match = FALSE;
+		is_match = FALSE;
 	     else
 		s++;		/* this character matches */
 	  }			/* if */
      }				/* while */
 
-   if (match && *p == '\0')
+   if (is_match && *p == '\0')
      {
 	/* if the last character to match is an alphanumeric character, the
 	 * current character in the source may not be alphanumeric
 	 */
 	assert(p > pattern);
 	if (alphanum(*(p - 1)) && alphanum(*s))
-	   match = FALSE;
+	   is_match = FALSE;
      }				/* if */
 
-   if (match)
+   if (is_match)
      {
 	/* calculate the length of the substituted string */
 	for (e = substitution, len = 0; *e != '\0'; e++)
@@ -1644,7 +1644,7 @@ substpattern(char *line, size_t buffersize, char *pattern, char *substitution)
       if (args[arg])
 	 free(args[arg]);
 
-   return match;
+   return is_match;
 }
 
 static void
@@ -1742,63 +1742,63 @@ preprocess(void)
 }
 
 static char        *
-unpackedstring(char *lptr, int rawstring)
+unpackedstring(char *sptr, int rawstring)
 {
-   while (*lptr != '\0')
+   while (*sptr != '\0')
      {
 	/* check for doublequotes indicating the end of the string */
-	if (*lptr == '\"')
+	if (*sptr == '\"')
 	{
 	   /* check whether there's another pair of quotes following.
 	    * If so, paste the two strings together, thus
 	    * "pants""off" becomes "pantsoff"
 	    */
-	   if (*(lptr + 1) == '\"')
-	      lptr += 2;
+	   if (*(sptr + 1) == '\"')
+	      sptr += 2;
 	   else
 	      break;
 	}
 
-	if (*lptr == '\a')
+	if (*sptr == '\a')
 	  {			/* ignore '\a' (which was inserted at a line concatenation) */
-	     lptr++;
+	     sptr++;
 	     continue;
 	  }			/* if */
-	stowlit(litchar(&lptr, rawstring));	/* litchar() alters "lptr" */
+	stowlit(litchar(&sptr, rawstring));	/* litchar() alters "lptr" */
      }				/* while */
    stowlit(0);			/* terminate string */
-   return lptr;
+   return sptr;
 }
 
 static char        *
-packedstring(char *lptr, int rawstring)
+packedstring(char *sptr, int rawstring)
 {
    int                 i;
    ucell               val, c;
 
    i = sizeof(ucell) - (charbits / 8);	/* start at most significant byte */
    val = 0;
-   while (*lptr != '\0')
+   while (*sptr != '\0')
      {
 	/* check for doublequotes indicating the end of the string */
-	if (*lptr == '\"')
+	if (*sptr == '\"')
 	{
 	   /* check whether there's another pair of quotes following.
 	    * If so, paste the two strings together, thus
 	    * "pants""off" becomes "pantsoff"
 	    */
-	   if (*(lptr + 1) == '\"')
-	      lptr += 2;
+	   if (*(sptr + 1) == '\"')
+	      sptr += 2;
 	   else
 	      break;
 	}
 
-	if (*lptr == '\a')
+	if (*sptr == '\a')
 	  {			/* ignore '\a' (which was inserted at a line concatenation) */
-	     lptr++;
+	     sptr++;
 	     continue;
 	  }			/* if */
-	c = litchar(&lptr, rawstring);	/* litchar() alters "lptr" */
+	c = litchar(&sptr, rawstring);	/* litchar() alters "sptr" */
 	if (c >= (ucell) (1 << charbits))
 	   error(43);		/* character constant exceeds range */
 	val |= (c << 8 * i);
@@ -1814,7 +1814,7 @@ packedstring(char *lptr, int rawstring)
       stowlit(val);		/* at least one zero character in "val" */
    else
       stowlit(0);		/* add full cell of zeros */
-   return lptr;
+   return sptr;
 }
 
 /*  lex(lexvalue,lexsym)        Lexical Analysis
@@ -2230,7 +2230,7 @@ match(char *st, int end)
  *                     litq    (altered)
  */
 void
-stowlit(cell value)
+stowlit(cell val)
 {
    if (litidx >= litmax)
      {
@@ -2243,7 +2243,7 @@ stowlit(cell value)
 	litq = p;
      }				/* if */
    assert(litidx < litmax);
-   litq[litidx++] = value;
+   litq[litidx++] = val;
 }
 
 /*  litchar
@@ -2256,12 +2256,12 @@ stowlit(cell value)
  *        but ddd must be decimal!
  */
 static cell
-litchar(char **lptr, int rawmode)
+litchar(char **p_str, int rawmode)
 {
    cell                c = 0;
    unsigned char      *cptr;
 
-   cptr = (unsigned char *)*lptr;
+   cptr = (unsigned char *)*p_str;
    if (rawmode || *cptr != sc_ctrlchar)
      {				/* no escape character */
 	c = *cptr;
@@ -2333,7 +2333,7 @@ litchar(char **lptr, int rawmode)
 	       }		/* switch */
 	  }			/* if */
      }				/* if */
-   *lptr = (char *)cptr;
+   *p_str = (char *)cptr;
    assert(c >= 0 && c < 256);
    return c;
 }
@@ -2502,7 +2502,7 @@ namehash(char *name)
 }
 
 static symbol      *
-find_symbol(symbol * root, char *name, int fnumber)
+find_symbol(symbol * root, char *name, int fnum)
 {
    symbol             *ptr = root->next;
    unsigned long       hash = namehash(name);
@@ -2511,7 +2511,7 @@ find_symbol(symbol * root, char *name, int fnumber)
      {
 	if (hash == ptr->hash && strcmp(name, ptr->name) == 0
 	    && !ptr->parent && (ptr->fnumber < 0
-				       || ptr->fnumber == fnumber))
+				       || ptr->fnumber == fnum))
 	   return ptr;
 	ptr = ptr->next;
      }				/* while */

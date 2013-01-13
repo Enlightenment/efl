@@ -524,7 +524,7 @@ static char        *
 replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 		int *repl_length)
 {
-   char               *lptr;
+   char               *sptr;
    int                 var;
    char               *buffer;
 
@@ -535,15 +535,15 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
     */
    assert(repl_length != NULL);
    *repl_length = 0;
-   lptr = pattern;
-   while (*lptr)
+   sptr = pattern;
+   while (*sptr)
      {
-	switch (*lptr)
+	switch (*sptr)
 	  {
 	  case '%':
-	     lptr++;		/* skip '%' */
-	     assert(sc_isdigit(*lptr));
-	     var = atoi(lptr) - 1;
+	     sptr++;		/* skip '%' */
+	     assert(sc_isdigit(*sptr));
+	     var = atoi(sptr) - 1;
 	     assert(var >= 0 && var < _maxoptvars);
 	     assert(symbols[var][0] != '\0');	/* variable should be defined */
 	     *repl_length += strlen(symbols[var]);
@@ -554,7 +554,7 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 	  default:
 	     *repl_length += 1;
 	  }			/* switch */
-	lptr++;
+	sptr++;
      }				/* while */
 
    /* allocate a buffer to replace the sequence in */
@@ -565,11 +565,11 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
      }
 
    /* replace the pattern into this temporary buffer */
-   lptr = buffer;
-   *lptr++ = '\t';		/* the "replace" patterns do not have tabs */
+   sptr = buffer;
+   *sptr++ = '\t';		/* the "replace" patterns do not have tabs */
    while (*pattern)
      {
-	assert((int)(lptr - buffer) < *repl_length);
+	assert((int)(sptr - buffer) < *repl_length);
 	switch (*pattern)
 	  {
 	  case '%':
@@ -579,23 +579,23 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 	     var = atoi(pattern) - 1;
 	     assert(var >= 0 && var < _maxoptvars);
 	     assert(symbols[var][0] != '\0');	/* variable should be defined */
-	     strcpy(lptr, symbols[var]);
-	     lptr += strlen(symbols[var]);
+	     strcpy(sptr, symbols[var]);
+	     sptr += strlen(symbols[var]);
 	     break;
 	  case '!':
 	     /* finish the line, optionally start the next line with an indent */
-	     *lptr++ = '\n';
-	     *lptr++ = '\0';
+	     *sptr++ = '\n';
+	     *sptr++ = '\0';
 	     if (*(pattern + 1) != '\0')
-		*lptr++ = '\t';
+		*sptr++ = '\t';
 	     break;
 	  default:
-	     *lptr++ = *pattern;
+	     *sptr++ = *pattern;
 	  }			/* switch */
 	pattern++;
      }				/* while */
 
-   assert((int)(lptr - buffer) == *repl_length);
+   assert((int)(sptr - buffer) == *repl_length);
    return buffer;
 }
 

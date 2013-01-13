@@ -449,11 +449,11 @@ sc_compile(int argc, char *argv[])
 }
 
 int
-sc_addconstant(char *name, cell value, int tag)
+sc_addconstant(char *name, cell val, int tag)
 {
    errorset(sFORCESET);		/* make sure error engine is silenced */
    sc_status = statIDLE;
-   add_constant(name, value, sGLOBAL, tag);
+   add_constant(name, val, sGLOBAL, tag);
    return 1;
 }
 
@@ -1585,7 +1585,7 @@ static void
 decl_enum(int vclass)
 {
    char                enumname[sNAMEMAX + 1], constname[sNAMEMAX + 1];
-   cell                val, value, size;
+   cell                lexval, enumvalue, size;
    char               *str;
    int                 tok, tag, explicittag;
    cell                increment, multiplier;
@@ -1594,7 +1594,7 @@ decl_enum(int vclass)
     * explicit tag was passed, even if that explicit tag was "_:", so we
     * cannot call sc_addtag() here
     */
-   if (lex(&val, &str) == tLABEL)
+   if (lex(&lexval, &str) == tLABEL)
      {
 	tag = sc_addtag(str);
 	explicittag = TRUE;
@@ -1608,7 +1608,7 @@ decl_enum(int vclass)
 
    /* get optional enum name (also serves as a tag if no explicit
     * tag was set) */
-   if (lex(&val, &str) == tSYMBOL)
+   if (lex(&lexval, &str) == tSYMBOL)
      {				/* read in (new) token */
 	strcpy(enumname, str);	/* save enum name (last constant) */
 	if (!explicittag)
@@ -1635,8 +1635,8 @@ decl_enum(int vclass)
 	  }
 	else if (matchtoken(taSHL))
 	  {
-	     constexpr(&val, NULL);
-	     while (val-- > 0)
+	     constexpr(&lexval, NULL);
+	     while (lexval-- > 0)
 		multiplier *= 2;
 	  }			/* if */
 	needtoken(')');
@@ -1644,7 +1644,7 @@ decl_enum(int vclass)
 
    needtoken('{');
    /* go through all constants */
-   value = 0;			/* default starting value */
+   enumvalue = 0;			/* default starting value */
    do
      {
 	if (matchtoken('}'))
@@ -1652,7 +1652,7 @@ decl_enum(int vclass)
 	     lexpush();
 	     break;
 	  }			/* if */
-	tok = lex(&val, &str);	/* read in (new) token */
+	tok = lex(&lexval, &str);	/* read in (new) token */
 	if (tok != tSYMBOL && tok != tLABEL)
 	   error(20, str);	/* invalid symbol name */
 	strcpy(constname, str);	/* save symbol name */
@@ -1660,14 +1660,14 @@ decl_enum(int vclass)
 	if (tok == tLABEL || matchtoken(':'))
 	   constexpr(&size, NULL);	/* get size */
 	if (matchtoken('='))
-	   constexpr(&value, NULL);	/* get value */
+	   constexpr(&enumvalue, NULL);	/* get value */
 	/* add_constant() checks whether a variable (global or local) or
 	 * a constant with the same name already exists */
-	add_constant(constname, value, vclass, tag);
+	add_constant(constname, enumvalue, vclass, tag);
 	if (multiplier == 1)
-	   value += size;
+	   enumvalue += size;
 	else
-	   value *= size * multiplier;
+	   enumvalue *= size * multiplier;
      }
    while (matchtoken(','));
    needtoken('}');		/* terminates the constant list */
@@ -1675,7 +1675,7 @@ decl_enum(int vclass)
 
    /* set the enum name to the last value plus one */
    if (enumname[0] != '\0')
-      add_constant(enumname, value, vclass, tag);
+      add_constant(enumname, enumvalue, vclass, tag);
 }
 
 /*
@@ -2728,11 +2728,11 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 		  if (needtoken(tSYMBOL))
 		    {
 		       /* save the name of the argument whose size id to take */
-		       char               *name;
+		       char               *argname;
 		       cell                val;
 
-		       tokeninfo(&val, &name);
-		       if (!(arg->defvalue.size.symname = strdup(name)))
+		       tokeninfo(&val, &argname);
+		       if (!(arg->defvalue.size.symname = strdup(argname)))
 			  error(103);	/* insufficient memory */
 		       arg->defvalue.size.level = 0;
 		       if (size_tag_token == uSIZEOF)
@@ -3406,7 +3406,7 @@ constexpr(cell * val, int *tag)
  *  Global references: intest   (altered, but restored upon termination)
  */
 static void
-test(int label, int parens, int invert)
+test(int label, int parens, int inv)
 {
    int                 idx, tok;
    cell                cidx;
@@ -3469,8 +3469,8 @@ test(int label, int parens, int invert)
      }				/* if */
    if (lval.tag != 0 && lval.tag != sc_addtag("bool"))
       if (check_userop(lneg, lval.tag, 0, 1, NULL, &lval.tag))
-	 invert = !invert;	/* user-defined ! operator inverted result */
-   if (invert)
+	 inv = !inv;	/* user-defined ! operator inverted result */
+   if (inv)
       jmp_ne0(label);		/* jump to label if true (different from 0) */
    else
       jmp_eq0(label);		/* jump to label if false (equal to 0) */

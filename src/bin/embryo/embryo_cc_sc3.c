@@ -759,7 +759,7 @@ calc(cell left, void (*oper) (), cell right, char *boolresult)
 }
 
 int
-expression(int *constant, cell * val, int *tag, int chkfuncresult)
+expression(int *is_constant, cell * val, int *tag, int chkfuncresult)
 {
    value               lval = { NULL, 0, 0, 0, 0, NULL };
 
@@ -767,12 +767,12 @@ expression(int *constant, cell * val, int *tag, int chkfuncresult)
       rvalue(&lval);
    if (lval.ident == iCONSTEXPR)
      {				/* constant expression */
-	*constant = TRUE;
+	*is_constant = TRUE;
 	*val = lval.constval;
      }
    else
      {
-	*constant = FALSE;
+	*is_constant = FALSE;
 	*val = 0;
      }				/* if */
    if (tag)
@@ -1013,7 +1013,7 @@ hier14(value * lval1)
 	     /* check the sizes of all sublevels too */
 	     symbol             *sym1 = lval3.sym;
 	     symbol             *sym2 = lval2.sym;
-	     int                 i;
+	     int                 clvl;
 
 	     assert(sym1 != NULL && sym2 != NULL);
 	     /* ^^^ sym2 must be valid, because only variables can be
@@ -1021,7 +1021,7 @@ hier14(value * lval1)
 	      *     sym1 must be valid because it must be an lvalue
 	      */
 	     assert(exactmatch);
-	     for (i = 0; i < level; i++)
+	     for (clvl = 0; clvl < level; clvl++)
 	       {
 		  sym1 = finddepend(sym1);
 		  sym2 = finddepend(sym2);
@@ -2118,37 +2118,37 @@ callfunction(symbol * sym)
 			 }
 		       else
 			 {
-			    symbol             *sym = lval.sym;
+			    symbol             *lsym = lval.sym;
 			    short               level = 0;
 
-			    assert(sym != NULL);
-			    if (sym->dim.array.level + 1 != arg[argidx].numdim)
+			    assert(lsym != NULL);
+			    if (lsym->dim.array.level + 1 != arg[argidx].numdim)
 			       error(48);	/* array dimensions must match */
 			    /* the lengths for all dimensions must match, unless the dimension
 			     * length was defined at zero (which means "undefined")
 			     */
-			    while (sym->dim.array.level > 0)
+			    while (lsym->dim.array.level > 0)
 			      {
 				 assert(level < sDIMEN_MAX);
 				 if (arg[argidx].dim[level] != 0
-				     && sym->dim.array.length !=
+				     && lsym->dim.array.length !=
 				     arg[argidx].dim[level])
 				    error(47);	/* array sizes must match */
 				 append_constval(&arrayszlst, arg[argidx].name,
-						 sym->dim.array.length, level);
-				 sym = finddepend(sym);
-				 assert(sym != NULL);
+						 lsym->dim.array.length, level);
+				 lsym = finddepend(lsym);
+				 assert(lsym != NULL);
 				 level++;
 			      }	/* if */
 			    /* the last dimension is checked too, again, unless it is zero */
 			    assert(level < sDIMEN_MAX);
-			    assert(sym != NULL);
+			    assert(lsym != NULL);
 			    if (arg[argidx].dim[level] != 0
-				&& sym->dim.array.length !=
+				&& lsym->dim.array.length !=
 				arg[argidx].dim[level])
 			       error(47);	/* array sizes must match */
 			    append_constval(&arrayszlst, arg[argidx].name,
-					    sym->dim.array.length, level);
+					    lsym->dim.array.length, level);
 			 }	/* if */
 		       /* address already in PRI */
 		       if (!checktag
@@ -2280,13 +2280,13 @@ callfunction(symbol * sym)
 	  }
 	else
 	  {
-	     symbol             *sym;
+	     symbol             *lsym;
 
 	     assert((arg[argidx].hasdefault & uTAGOF) != 0);
-	     sym = findloc(arg[argidx].defvalue.size.symname);
-	     if (!sym)
-		sym = findglb(arg[argidx].defvalue.size.symname);
-	     array_sz = (sym) ? sym->tag : 0;
+	     lsym = findloc(arg[argidx].defvalue.size.symname);
+	     if (!lsym)
+		lsym = findglb(arg[argidx].defvalue.size.symname);
+	     array_sz = (lsym) ? lsym->tag : 0;
 	     exporttag(array_sz);
 	  }			/* if */
 	const1(array_sz);
@@ -2365,7 +2365,7 @@ commutative(void    (*oper) ())
 static int
 constant(value * lval)
 {
-   int                 tok, idx, constant;
+   int                 tok, idx, is_constant;
    cell                val, item, cidx;
    char               *st;
    symbol             *sym;
@@ -2414,9 +2414,9 @@ constant(value * lval)
 	      * on at this point */
 	     assert(staging);
 	     stgget(&idx, &cidx);	/* mark position in code generator */
-	     expression(&constant, &item, &tag, FALSE);
+	     expression(&is_constant, &item, &tag, FALSE);
 	     stgdel(idx, cidx);	/* scratch generated code */
-	     if (constant == 0)
+	     if (is_constant == 0)
 		error(8);	/* must be constant expression */
 	     if (lasttag < 0)
 		lasttag = tag;

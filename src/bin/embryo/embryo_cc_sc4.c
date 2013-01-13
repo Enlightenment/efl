@@ -132,10 +132,10 @@ begdseg(void)
 }
 
 void
-setactivefile(int fnumber)
+setactivefile(int fnum)
 {
    stgwrite("curfile ");
-   outval(fnumber, TRUE);
+   outval(fnum, TRUE);
 }
 
 cell
