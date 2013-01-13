@@ -1489,7 +1489,8 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = \
 
 bin_evas_evas_cserve2_slave_LDADD = \
 lib/eina/libeina.la \
-@EVAS_LDFLAGS@
+@EVAS_LDFLAGS@ \
+@EVAS_LIBS@
 
 bin_evas_evas_cserve2_slave_LDFLAGS = -export-dynamic
 
