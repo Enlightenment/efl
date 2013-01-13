@@ -153,7 +153,7 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
      {
         items = 1;
      }
-   else if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   else if (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
      {
         if (left_bound < 0)
           {
@@ -300,7 +300,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
             evas_common_language_from_locale_get(), -1));
    hb_buffer_set_script(buffer, _evas_script_to_harfbuzz[props->script]);
    hb_buffer_set_direction(buffer,
-         (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ?
+         (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) ?
          HB_DIRECTION_RTL : HB_DIRECTION_LTR);
    /* FIXME: add run-time conversions if needed, which is very unlikely */
    hb_buffer_add_utf32(buffer, (const uint32_t *) text, slen, 0, slen);
