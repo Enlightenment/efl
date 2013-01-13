@@ -1,3 +1,9 @@
+2013-01-13  Boris Faure (billiob)
+
+	* Fixed condition based on uninitialized value in ecore_x_selection
+	(both xlib and xcb).
+	* Fixed a leaked when no selection converter matches.
+
 2013-01-11  Tom Hacohen (TAsn)
 
 	* Static libs: Updated liblinebreak to libunibreak's latest version.
