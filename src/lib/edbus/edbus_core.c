@@ -188,7 +188,6 @@ print_live_connection(EDBus_Connection *conn)
 EAPI int
 edbus_shutdown(void)
 {
-fprintf(stderr, "SHUTDOWN");
    if (_edbus_init_count <= 0)
      {
         ERR("Init count not greater than 0 in shutdown.");
