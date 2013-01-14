@@ -1,4 +1,4 @@
-/* EINA - EFL data type library
+/* Eina - EFL data type library
  * Copyright (C) 2013 Cedric Bail
  *
  * This library is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@
 #endif
 
 #include "eina_config.h"
+#include "eina_private.h"
+#include "eina_log.h"
 #include "eina_mempool.h"
 #include "eina_types.h"
 #include "eina_safety_checks.h"
@@ -38,13 +40,13 @@ struct _Eina_Cow_Ptr
 {
    int refcount;
 
-   Eina_Bool hashed;
-   Eina_Bool togc;
+   Eina_Bool hashed : 1;
+   Eina_Bool togc : 1;
+   Eina_Bool writing : 1;
 };
 
 struct _Eina_Cow_GC
 {
-   Eina_List *togc;
    Eina_Cow_Ptr *ref;
    const void * const *dst;
 };
@@ -69,6 +71,27 @@ typedef int (*Eina_Cow_Hash)(const void *, int);
      if (!EINA_MAGIC_CHECK((d), EINA_COW_MAGIC))        \
        EINA_MAGIC_FAIL((d), EINA_COW_MAGIC);            \
   } while (0);
+
+#define EINA_COW_PTR_SIZE                       \
+  (sizeof (Eina_Cow_Ptr) < sizeof (void*) ? sizeof (void*) : sizeof (Eina_Cow_Ptr))
+
+#define EINA_COW_PTR_GET(d)				\
+  (Eina_Cow_Ptr*) (((unsigned char *)d) - EINA_COW_PTR_SIZE)
+
+#define EINA_COW_DATA_GET(d)                    \
+  (((unsigned char *)d) + EINA_COW_PTR_SIZE)
+
+static int _eina_cow_log_dom = -1;
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_cow_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_cow_log_dom, __VA_ARGS__)
 
 static Eina_Mempool *gc_pool = NULL;
   
@@ -113,8 +136,7 @@ static unsigned int
 _eina_cow_length(const void *key EINA_UNUSED)
 {
    /* nasty hack, has only gc need to access the hash, he will be in charge
-      of that global. access to the hash should be considered global. so a
-      lock will be needed to make multiple gc run at the same safely.
+      of that global. access to the hash should be considered global.
     */
    return current_cow_size;
 }
@@ -131,38 +153,44 @@ _eina_cow_hash_del(Eina_Cow *cow,
                    const void *data,
                    Eina_Cow_Ptr *ref)
 {
-   /* if eina_cow_gc is supposed to be thread safe, lock the cow here */
-   if (ref->hashed)
-     {
-        current_cow_size = cow->struct_size;
-        eina_hash_del(cow->match, data, ref);
-        ref->hashed = EINA_FALSE;
-     }
+   /* eina_cow_gc is not supposed to be thread safe */
+   if (!ref->hashed) return ;
+
+   current_cow_size = cow->struct_size;
+   eina_hash_del(cow->match, data, ref);
+   ref->hashed = EINA_FALSE;
 }
 
 static void
 _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
 {
-   /* if eina_cow_gc is supposed to be thread safe, lock the cow here */
-   if (ref->togc)
-     {
-        Eina_Cow_GC *gc;
-        Eina_List *l;
+   Eina_Cow_GC *gc;
+   Eina_List *l;
 
-        EINA_LIST_FOREACH(cow->togc, l, gc)
-          if (gc->ref == ref)
-            {
-               cow->togc = eina_list_remove_list(cow->togc, l);
-               break;
-            }
-        ref->togc = EINA_FALSE;
-     }
+   /* eina_cow_gc is not supposed to be thread safe */
+   if (!ref->togc) return ;
+
+   EINA_LIST_FOREACH(cow->togc, l, gc)
+     if (gc->ref == ref)
+       {
+          cow->togc = eina_list_remove_list(cow->togc, l);
+          eina_mempool_free(gc_pool, gc);
+          break;
+       }
+   ref->togc = EINA_FALSE;
 }
 
 Eina_Bool
 eina_cow_init(void)
 {
    const char *choice, *tmp;
+
+   _eina_cow_log_dom = eina_log_domain_register("eina_cow", EINA_LOG_COLOR_DEFAULT);
+   if (_eina_cow_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: eina_cow");
+        return EINA_FALSE;
+     }
 
 #ifdef EINA_DEFAULT_MEMPOOL
    choice = "pass_through";
@@ -176,7 +204,7 @@ eina_cow_init(void)
    gc_pool = eina_mempool_add(choice, "gc", NULL, sizeof (Eina_Cow_GC), 32);
    if (!gc_pool)
      {
-        /* ERR("ERROR: Mempool for cow '%s' cannot be allocated in eina_cow_new.", name); */
+        ERR("Mempool for cow gc cannot be allocated.");
         return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -213,10 +241,10 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
 
    cow->pool = eina_mempool_add(choice, name,
                                 NULL,
-                                struct_size + sizeof (Eina_Cow_Ptr), step);
+                                struct_size + EINA_COW_PTR_SIZE, step);
    if (!cow->pool)
      {
-        /* ERR("ERROR: Mempool for cow '%s' cannot be allocated in eina_cow_new.", name); */
+        ERR("Mempool for cow '%s' cannot be allocated.", name);
         goto on_error;
      }
 
@@ -279,7 +307,7 @@ eina_cow_free(Eina_Cow *cow, const void *data)
    if (!data) return ;
    if (cow->default_value == data) return ;
 
-   ref = (Eina_Cow_Ptr*)(((unsigned char*) data) + cow->struct_size);
+   ref = EINA_COW_PTR_GET(data);
    ref->refcount--;
 
    if (ref->refcount > 0) return ;
@@ -293,65 +321,67 @@ EAPI void *
 eina_cow_write(Eina_Cow *cow, const void * const *data)
 {
    Eina_Cow_Ptr *ref;
-   const void *src;
    void *r;
 
    EINA_COW_MAGIC_CHECK(cow);
 
    if (!*data) return NULL; /* cow pointer is always != NULL */
    if (*data == cow->default_value)
-     {
-        src = cow->default_value;
-        goto allocate;
-     }
+     goto allocate;
 
-   ref = (Eina_Cow_Ptr*)(((unsigned char*) *data) + cow->struct_size);
+   ref = EINA_COW_PTR_GET(*data);
 
    if (ref->refcount == 1)
      {
+        if (ref->writing)
+          {
+             ERR("Request writing on an pointer that is already in a writing process %p\n", data);
+             return NULL;
+          }
+
         _eina_cow_hash_del(cow, *data, ref);
-        return (void *) *data;
+        goto end;
      }
 
-   src = *data;
-
  allocate:
-   r = eina_mempool_malloc(cow->pool,
-                           cow->struct_size + sizeof (Eina_Cow_Ptr));
-   memcpy(r, src, cow->struct_size);
-
-   ref = (Eina_Cow_Ptr*)(((unsigned char*) r) + cow->struct_size);
+   ref = eina_mempool_malloc(cow->pool,
+                             cow->struct_size + EINA_COW_PTR_SIZE);
    ref->refcount = 1;
    ref->hashed = EINA_FALSE;
    ref->togc = EINA_FALSE;
 
+   r = EINA_COW_DATA_GET(ref);
+   memcpy(r, *data, cow->struct_size);
    *((void**) data) = r;
 
-   return r;
+ end:
+   ref->writing = EINA_TRUE;
+   return (void *) *data;
 }
 
 EAPI void
-eina_cow_commit(Eina_Cow *cow, const void * const * dst, const void *data)
+eina_cow_done(Eina_Cow *cow, const void * const * dst, const void *data)
 {
    Eina_Cow_Ptr *ref;
+   Eina_Cow_GC *gc;
 
    EINA_COW_MAGIC_CHECK(cow);
 
-   ref = (Eina_Cow_Ptr*)(((unsigned char*) data) + cow->struct_size);
+   ref = EINA_COW_PTR_GET(data);
+   if (!ref->writing)
+     ERR("Pointer %p is not in a writable state !", dst);
+   ref->writing = EINA_FALSE;
 
    /* needed if we want to make cow gc safe */
-   if (!ref->togc)
-     {
-        Eina_Cow_GC *gc;
+   if (ref->togc) return ;
 
-        gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
-        if (!gc) return ; /* That one will not get gced this time */
+   gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
+   if (!gc) return ; /* That one will not get gced this time */
 
-        gc->ref = ref;
-        gc->dst = dst;
-        cow->togc = gc->togc = eina_list_prepend(cow->togc, gc);
-        ref->togc = EINA_TRUE;
-     }
+   gc->ref = ref;
+   gc->dst = dst;
+   cow->togc = eina_list_prepend(cow->togc, gc);
+   ref->togc = EINA_TRUE;
 }
 
 EAPI void
@@ -363,7 +393,7 @@ eina_cow_memcpy(Eina_Cow *cow, const void * const *dst, const void *src)
 
    eina_cow_free(cow, *dst);
 
-   ref = (Eina_Cow_Ptr*)(((unsigned char*) src) + cow->struct_size);
+   ref = EINA_COW_PTR_GET(src);
    ref->refcount++;
 
    *((const void**)dst) = src;
@@ -384,7 +414,7 @@ eina_cow_gc(Eina_Cow *cow)
    /* Do handle hash and all funky merge think here */
    gc = eina_list_data_get(eina_list_last(cow->togc));
 
-   data = ((unsigned char*) gc->ref) - cow->struct_size;
+   data = EINA_COW_DATA_GET(gc->ref);
 
    gc->ref->togc = EINA_FALSE;
    cow->togc = eina_list_remove_list(cow->togc, eina_list_last(cow->togc));
@@ -395,7 +425,7 @@ eina_cow_gc(Eina_Cow *cow)
      {
         eina_cow_free(cow, data);
 
-        ref = (Eina_Cow_Ptr*)(((unsigned char*) match) + cow->struct_size);
+        ref = EINA_COW_PTR_GET(match);
         *((void**)gc->dst) = match;
         ref->refcount++;
      }
