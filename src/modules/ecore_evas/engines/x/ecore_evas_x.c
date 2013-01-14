@@ -2661,7 +2661,8 @@ _ecore_evas_x_iconified_set(Ecore_Evas *ee, int on)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
    if (ee->prop.iconified == on) return;
-   ee->prop.iconified = on;
+   if (((ee->should_be_visible) && (!ee->visible)) || (!ee->visible))
+     ee->prop.iconified = on;
    _ecore_evas_x_hints_update(ee);
    if (on)
      ecore_x_icccm_iconic_request_send(ee->prop.window, edata->win_root);
