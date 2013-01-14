@@ -1556,6 +1556,7 @@ _eina_file_copy_read_internal(int fd, char *buf, off_t bufsize, ssize_t *readsiz
      }
 }
 
+#ifdef HAVE_SPLICE
 static Eina_Bool
 _eina_file_copy_write_splice_internal(int fd, int pipefd, size_t size)
 {
@@ -1612,6 +1613,7 @@ _eina_file_copy_read_splice_internal(int fd, int pipefd, off_t bufsize, ssize_t 
           }
      }
 }
+#endif
 
 static Eina_Bool
 _eina_file_copy_splice_internal(int s, int d, off_t total, Eina_File_Copy_Progress cb, const void *cb_data, Eina_Bool *splice_unsupported)
