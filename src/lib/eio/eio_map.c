@@ -295,7 +295,7 @@ eio_file_map_new(Eina_File *f,
    map = malloc(sizeof (Eio_File_Map_Rule));
    EINA_SAFETY_ON_NULL_RETURN_VAL(map, NULL);
 
-   map->common.container = f;
+   map->file = f;
    map->filter_cb = filter_cb;
    map->map_cb = map_cb;
    map->rule = rule;

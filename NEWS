@@ -110,3 +110,4 @@ Fixes:
     * Fix not up to date clip cache for Evas_Object_Text.
     * Evas texblock: Fixed a bug with breaking after format items.
     * Fix endianess issue in Eet_Image.
+    * Fix bug in eio_file_map_new container set.
