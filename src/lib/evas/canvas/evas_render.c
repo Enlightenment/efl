@@ -1352,10 +1352,15 @@ evas_render_updates_internal(Evas *eo_e,
 
    if (e->rendering)
      {
-        if (!do_async)
-          ERR("Cannot render sync as already doing async render! e=%p [%s]",
-              e, e->engine.module->definition->name);
-        return EINA_FALSE;
+        if (do_async)
+          return EINA_FALSE;
+        else
+          {
+              WRN("Mixing render sync as already doing async "
+                  "render! Syncing! e=%p [%s]", e,
+                  e->engine.module->definition->name);
+              evas_render_rendering_wait(e);
+          }
      }
 
 #ifdef EVAS_CSERVE2
@@ -1845,6 +1850,8 @@ evas_render_wakeup(Evas *eo_e)
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Event_Cb up_cb;
+   void *up_data;
 
    EINA_LIST_FREE(e->render.updates, ru)
      {
@@ -1881,14 +1888,15 @@ evas_render_wakeup(Evas *eo_e)
    eina_array_foreach(&e->glyph_unref_queue, _drop_glyph_ref, NULL);
    eina_array_clean(&e->glyph_unref_queue);
 
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
-
-   if (e->render.updates_cb)
-      e->render.updates_cb(e->render.data, eo_e, ret_updates);
-
-   e->rendering = EINA_FALSE;
+   up_cb = e->render.updates_cb;
+   up_data = e->render.data;
    e->render.updates_cb = NULL;
    e->render.data = NULL;
+   e->rendering = EINA_FALSE;
+
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
+
+   if (up_cb) up_cb(up_data, eo_e, ret_updates);
 
    eo_unref(eo_e);
 }
