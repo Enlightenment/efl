@@ -40,39 +40,39 @@ int ef_mime_cb_get(void);
 typedef struct Efreet_Test Efreet_Test;
 struct Efreet_Test
 {
-    char *name;
-    int (*cb)(void);
+   char *name;
+   int (*cb)(void);
 };
 
 static Efreet_Test tests[] = {
-    {"Data Home", ef_cb_efreet_data_home},
-    {"Config Home", ef_cb_efreet_config_home},
-    {"Cache Home", ef_cb_efreet_cache_home},
-    {"Data Directories", ef_cb_efreet_data_dirs},
-    {"Config Directories", ef_cb_efreet_config_dirs},
-    {"Icon Theme Basic", ef_cb_efreet_icon_theme},
-    {"Icon Theme List", ef_cb_efreet_icon_theme_list},
-    {"Icon Matching", ef_cb_efreet_icon_match},
-    {"INI Parsing", ef_cb_ini_parse},
-    {"INI Long Line Parsing", ef_cb_ini_long_line},
-    {"INI Garbage Parsing", ef_cb_ini_garbage},
-    {"Locale Parsing", ef_cb_locale},
-    {"Desktop Parsing", ef_cb_desktop_parse},
-    {"Desktop Type Parsing", ef_cb_desktop_type_parse},
-    {"Desktop Save", ef_cb_desktop_save},
-    {"Desktop Command", ef_cb_desktop_command_get},
+   {"Data Home", ef_cb_efreet_data_home},
+   {"Config Home", ef_cb_efreet_config_home},
+   {"Cache Home", ef_cb_efreet_cache_home},
+   {"Data Directories", ef_cb_efreet_data_dirs},
+   {"Config Directories", ef_cb_efreet_config_dirs},
+   {"Icon Theme Basic", ef_cb_efreet_icon_theme},
+   {"Icon Theme List", ef_cb_efreet_icon_theme_list},
+   {"Icon Matching", ef_cb_efreet_icon_match},
+   {"INI Parsing", ef_cb_ini_parse},
+   {"INI Long Line Parsing", ef_cb_ini_long_line},
+   {"INI Garbage Parsing", ef_cb_ini_garbage},
+   {"Locale Parsing", ef_cb_locale},
+   {"Desktop Parsing", ef_cb_desktop_parse},
+   {"Desktop Type Parsing", ef_cb_desktop_type_parse},
+   {"Desktop Save", ef_cb_desktop_save},
+   {"Desktop Command", ef_cb_desktop_command_get},
 #if 0
-    {"Desktop File ID", ef_cb_desktop_file_id},
+   {"Desktop File ID", ef_cb_desktop_file_id},
 #endif
-    {"Menu Parsing", ef_cb_menu_get},
-    {"Menu Incorrect Names", ef_cb_menu_with_slashes},
-    {"Menu Save", ef_cb_menu_save},
+   {"Menu Parsing", ef_cb_menu_get},
+   {"Menu Incorrect Names", ef_cb_menu_with_slashes},
+   {"Menu Save", ef_cb_menu_save},
 #if 0
-    {"Menu Edit", ef_cb_menu_edit},
+   {"Menu Edit", ef_cb_menu_edit},
 #endif
-    {"Utils", ef_cb_utils},
-    {"Mime", ef_mime_cb_get},
-    { }
+   {"Utils", ef_cb_utils},
+   {"Mime", ef_mime_cb_get},
+   { }
 };
 
 extern char **environ;
@@ -106,47 +106,45 @@ const char *ef_test_path_get(const char *component)
 int
 main(int argc, char ** argv)
 {
-    int i, passed = 0, num_tests = 0;
-    Eina_List *run = NULL;
-    double total;
+   int i, passed = 0, num_tests = 0;
+   Eina_List *run = NULL;
+   double total;
 
-    eina_init();
-    ecore_init();
+   eina_init();
+   ecore_init();
 
-    total = ecore_time_get();
-    if (argc > 1)
-    {
+   total = ecore_time_get();
+   if (argc > 1)
+     {
         for (i = 1; i < argc; i++)
-        {
-            if ((!strcmp(argv[i], "-h")) ||
-                (!strcmp(argv[i], "--help")))
-            {
-                for (i = 0; tests[i].name; i++)
-                {
+          {
+             if ((!strcmp(argv[i], "-h")) ||
+                 (!strcmp(argv[i], "--help")))
+               {
+                  for (i = 0; tests[i].name; i++)
                     printf("%s\n", tests[i].name);
-                }
-                return 1;
-            }
-            run = eina_list_append(run, argv[i]);
-        }
-    }
+                  return 1;
+               }
+             run = eina_list_append(run, argv[i]);
+          }
+     }
 
-    efreet_cache_update = 0;
-    for (i = 0; tests[i].name; i++)
-    {
+   efreet_cache_update = 0;
+   for (i = 0; tests[i].name; i++)
+     {
         int ret;
         double start;
 
         /* we've been given specific tests and it isn't in the list */
         if (run && !eina_list_search_unsorted(run, EINA_COMPARE_CB(strcasecmp),
-                                                        tests[i].name))
-            continue;
+                                              tests[i].name))
+          continue;
 
         if (!efreet_init())
-        {
-            printf("Error initializing Efreet\n");
-            continue;
-        }
+          {
+             printf("Error initializing Efreet\n");
+             continue;
+          }
 
         num_tests ++;
 
@@ -158,21 +156,21 @@ main(int argc, char ** argv)
         ret = tests[i].cb();
 
         printf("%s in %.3f seconds\n", (ret ? "PASSED" : "FAILED"),
-                                            ecore_time_get() - start);
+               ecore_time_get() - start);
         passed += ret;
 
         efreet_shutdown();
-    }
+     }
 
-    printf("\n-----------------\n");
-    printf("Passed %d of %d tests.\n", passed, num_tests);
+   printf("\n-----------------\n");
+   printf("Passed %d of %d tests.\n", passed, num_tests);
 
-    while (run)
-        run = eina_list_remove_list(run, run);
+   while (run)
+     run = eina_list_remove_list(run, run);
 
-    printf("Total run: %.3f seconds\n", ecore_time_get() - total);
+   printf("Total run: %.3f seconds\n", ecore_time_get() - total);
 
-    ecore_shutdown();
-    eina_shutdown();
-    return 0;
+   ecore_shutdown();
+   eina_shutdown();
+   return 0;
 }
