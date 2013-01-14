@@ -57,6 +57,8 @@ static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
 static const char SIG_MOVED[] = "moved";
 static const char SIG_INDEX_UPDATE[] = "index,update";
+static const char SIG_HIGHLIGHTED[] = "highlighted";
+static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
@@ -82,6 +84,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EDGE_LEFT, ""},
    {SIG_EDGE_RIGHT, ""},
    {SIG_MOVED, ""},
+   {SIG_HIGHLIGHTED, ""},
+   {SIG_UNHIGHLIGHTED, ""},
    {NULL, NULL}
 };
 
@@ -260,6 +264,7 @@ _item_unselect(Elm_Gen_Item *it)
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
+   evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, it);
    it->highlighted = EINA_FALSE;
    if (it->selected)
      {
@@ -445,6 +450,7 @@ _item_highlight(Elm_Gen_Item *it)
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
+   evas_object_smart_callback_call(WIDGET(it), SIG_HIGHLIGHTED, it);
    it->highlighted = EINA_TRUE;
 }
 

@@ -350,6 +350,10 @@
  * - @c "language,changed" - This is called when the program's language is
  *   changed.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
+ * - @c "highlighted" - an item in the list is pressed and highlighted.
+ *   The %c event_info parameter is the item that was highlighted.
+ * - @c "unhighlighted" - an item in the list is unpressed and unhighlighted.
+ *   The %c event_info parameter is the item that was unhighlighted.
  *
  *
  * Supported elm_object_item common APIs

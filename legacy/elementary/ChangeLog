@@ -899,3 +899,6 @@
 
 	* Don't link anymore with E_DBus at build time.
 
+2013-01-13  Daniel Juyung Seo (SeoZ)
+
+        * Added "highlighted" and "unhighlighted" signals to list, genlist, and gengrid.

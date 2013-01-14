@@ -20,6 +20,8 @@ static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 static const char SIG_SWIPE[] = "swipe";
+static const char SIG_HIGHLIGHTED[] = "highlighted";
+static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
@@ -32,6 +34,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EDGE_RIGHT, ""},
    {SIG_LANG_CHANGED, ""},
    {SIG_SWIPE, ""},
+   {SIG_HIGHLIGHTED, ""},
+   {SIG_UNHIGHLIGHTED, ""},
    {NULL, NULL}
 };
 
@@ -873,6 +877,7 @@ _item_highlight(Elm_List_Item *it)
    _elm_list_walk(sd);
 
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
+   evas_object_smart_callback_call(obj, SIG_HIGHLIGHTED, it);
    select_raise = edje_object_data_get(VIEW(it), "selectraise");
    if ((select_raise) && (!strcmp(select_raise, "on")))
      evas_object_raise(VIEW(it));
@@ -927,6 +932,7 @@ _item_unselect(Elm_List_Item *it)
    _elm_list_walk(sd);
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
+   evas_object_smart_callback_call(obj, SIG_UNHIGHLIGHTED, it);
    stacking = edje_object_data_get(VIEW(it), "stacking");
    select_raise = edje_object_data_get(VIEW(it), "selectraise");
    if ((select_raise) && (!strcmp(select_raise, "on")))

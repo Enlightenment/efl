@@ -29,6 +29,7 @@ Additions:
    * Add elm_label_slide_mode_set(), elm_label_slide_mode_get()
    * Add elm_label_slide_go()
    * Add a label signal callback "slide,end"
+   * Add "highlighted" and "unhighlighted" callbacks to list, genlist, and gengrid.
 
 Improvements:
 

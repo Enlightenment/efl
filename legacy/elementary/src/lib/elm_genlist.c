@@ -66,6 +66,8 @@ static const char SIG_MOVED_AFTER[] = "moved,after";
 static const char SIG_MOVED_BEFORE[] = "moved,before";
 static const char SIG_INDEX_UPDATE[] = "index,update";
 static const char SIG_TREE_EFFECT_FINISHED [] = "tree,effect,finished";
+static const char SIG_HIGHLIGHTED[] = "highlighted";
+static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED_DOUBLE, ""},
@@ -104,6 +106,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_MOVED_AFTER, ""},
    {SIG_MOVED_BEFORE, ""},
    {SIG_TREE_EFFECT_FINISHED, ""},
+   {SIG_HIGHLIGHTED, ""},
+   {SIG_UNHIGHLIGHTED, ""},
    {NULL, NULL}
 };
 
@@ -2568,6 +2572,7 @@ _item_highlight(Elm_Gen_Item *it)
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    if (it->deco_all_view)
      edje_object_signal_emit(it->deco_all_view, "elm,state,selected", "elm");
+   evas_object_smart_callback_call(WIDGET(it), SIG_HIGHLIGHTED, it);
 
    selectraise = edje_object_data_get(VIEW(it), "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
@@ -2587,6 +2592,7 @@ _item_unhighlight(Elm_Gen_Item *it)
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
+   evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, it);
    if (it->deco_all_view)
      edje_object_signal_emit
        (it->deco_all_view, "elm,state,unselected", "elm");
