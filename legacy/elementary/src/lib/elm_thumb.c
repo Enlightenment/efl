@@ -754,6 +754,8 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->anim_setting = setting;
 
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
         if (setting == ELM_THUMB_ANIMATION_LOOP)
@@ -763,6 +765,7 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         else if (setting == ELM_THUMB_ANIMATION_STOP)
           edje_object_signal_emit(sd->view, "animate_stop", "");
      }
+#endif
 }
 
 EAPI Elm_Thumb_Animation_Setting
