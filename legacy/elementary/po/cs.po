@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:2200
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -43,8 +43,8 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
@@ -127,7 +127,7 @@ msgstr "odečítací tlačítko hodin pro am,pm"
 msgid "State: Editable"
 msgstr "Stav: Upravitelný"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr "Hodiny"
 
@@ -135,7 +135,7 @@ msgstr "Hodiny"
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -159,15 +159,15 @@ msgstr "Vybrat"
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr "položka seznamu (genlist)"
 
@@ -179,11 +179,11 @@ msgstr "Položka indexu"
 msgid "Index"
 msgstr "Index"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Popisek"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "položka seznamu"
 
@@ -199,15 +199,15 @@ msgstr "stav: zavřeno"
 msgid "panel button"
 msgstr "tlačítko panelu"
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "ukazatel průběhu"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "šoupátko"
 

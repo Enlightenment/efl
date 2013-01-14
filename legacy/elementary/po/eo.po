@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2013-01-05 11:32+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
+"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-01-06 04:54+0000\n"
 "X-Generator: Launchpad (build 16393)\n"
-"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:773
 msgid "Up"
@@ -43,8 +44,8 @@ msgstr "Veziko"
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
@@ -154,15 +155,15 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2908
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "Ero"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr "Ero de komuna listo"
 
@@ -174,11 +175,11 @@ msgstr "Indeksero"
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_label.c:398
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Etikedo"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "Listero"
 

@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2200
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -46,8 +46,8 @@ msgstr ""
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "État : désactivé"
@@ -126,7 +126,7 @@ msgstr ""
 msgid "State: Editable"
 msgstr "État : désactivé"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -158,15 +158,15 @@ msgstr "Sélectionner"
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr ""
 
@@ -178,11 +178,11 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr ""
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr ""
 
@@ -200,15 +200,15 @@ msgstr "État : désactivé"
 msgid "panel button"
 msgstr ""
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr ""
 

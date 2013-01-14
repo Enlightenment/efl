@@ -3,12 +3,12 @@
 # This file is put in the public domain.
 # Aron Xu <happyaron.xu@gmail.com>, 2012.
 #
-#: src/lib/elm_config.c:2200
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -42,8 +42,8 @@ msgstr "气泡"
 msgid "Clicked"
 msgstr "点击"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "状态：已禁用"
@@ -126,7 +126,7 @@ msgstr "上下午的时钟减量按钮"
 msgid "State: Editable"
 msgstr "状态：可编辑"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr "时钟"
 
@@ -135,7 +135,7 @@ msgid "color selector palette item"
 msgstr "色彩选择器项目"
 
 # Don't change it!
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -159,15 +159,15 @@ msgstr "选择"
 msgid "Paste"
 msgstr "粘贴"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "条目"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr ""
 
@@ -179,11 +179,11 @@ msgstr "索引条目"
 msgid "Index"
 msgstr "索引"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "标签"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "列表条目"
 
@@ -199,15 +199,15 @@ msgstr "状态：已关闭"
 msgid "panel button"
 msgstr "面板按钮"
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "进度条"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "无线电"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "滑块"
 

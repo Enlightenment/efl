@@ -1,11 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 22:05+0100\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -24,8 +25,7 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1017
-#: src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "Cancelar"
@@ -42,14 +42,9 @@ msgstr "Balão"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:281
-#: src/lib/elm_check.c:213
-#: src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273
-#: src/lib/elm_list.c:1376
-#: src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515
-#: src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -97,21 +92,16 @@ msgstr "mês do calendário"
 msgid "calendar year"
 msgstr "ano do calendário"
 
-#: src/lib/elm_check.c:45
-#: src/lib/elm_check.c:226
-#: src/lib/elm_radio.c:84
+#: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
 msgid "State: On"
 msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:51
-#: src/lib/elm_check.c:238
-#: src/lib/elm_radio.c:260
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:238 src/lib/elm_radio.c:260
 msgid "State: Off"
 msgstr "Estado: desligado"
 
-#: src/lib/elm_check.c:222
-#: src/lib/elm_check.c:235
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:235
 msgid "State"
 msgstr "Estado"
 
@@ -139,7 +129,7 @@ msgstr "Relógio"
 msgid "color selector palette item"
 msgstr "item do seletor de cor"
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
@@ -163,15 +153,15 @@ msgstr "Selecionar"
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:2908
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Item da grelha genérica"
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr "Item da lista genérica"
 
@@ -183,11 +173,11 @@ msgstr "Item do índice"
 msgid "Index"
 msgstr "Índice"
 
-#: src/lib/elm_label.c:382
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Texto"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "Item da lista"
 
@@ -227,8 +217,7 @@ msgstr "botão de diminuição do spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1286
-#: src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
 msgid "Selected"
 msgstr "Selecionado"
 

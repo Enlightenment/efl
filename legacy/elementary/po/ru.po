@@ -5,12 +5,12 @@
 # Automatically generated, 2012.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 #
-#: src/lib/elm_config.c:2200
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -46,8 +46,8 @@ msgstr ""
 msgid "Clicked"
 msgstr "Нажато"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
@@ -133,7 +133,7 @@ msgstr "кнопка уменьшения календаря"
 msgid "State: Editable"
 msgstr "Состояние: Отключено"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -165,15 +165,15 @@ msgstr "Выбрать"
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "Запись"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr "Элемент списка"
 
@@ -185,11 +185,11 @@ msgstr "Элемент алфавитного указателя"
 msgid "Index"
 msgstr "Алфавитный указатель"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Метка"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "Пункт списка"
 
@@ -207,15 +207,15 @@ msgstr "Состояние: Отключено"
 msgid "panel button"
 msgstr ""
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "индикатор прогресса"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "бегунок"
 

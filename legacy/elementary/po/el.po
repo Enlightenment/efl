@@ -4,12 +4,12 @@
 # Alex-P. Natsios <drakevr@linuxteam.teilar.gr> 2012.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
 #
-#: src/lib/elm_config.c:2200
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 10:58+0900\n"
+"POT-Creation-Date: 2013-01-13 18:26+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -46,8 +46,8 @@ msgstr "Πλαίσιο"
 msgid "Clicked"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:675
-#: src/lib/elm_genlist.c:1273 src/lib/elm_list.c:1376 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
@@ -132,7 +132,7 @@ msgstr "προηγούμενο κουμπί ρολογιού για πμ,μμ"
 msgid "State: Editable"
 msgstr "Κατάσταση: Επεξεργάσιμο"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:681
 msgid "Clock"
 msgstr "Ρολοι"
 
@@ -140,7 +140,7 @@ msgstr "Ρολοι"
 msgid "color selector palette item"
 msgstr "παλέτα επιλογής χρώματος"
 
-#: src/lib/elm_config.c:2216
+#: src/lib/elm_config.c:2219
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -164,15 +164,15 @@ msgstr "Επιλογή"
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: src/lib/elm_entry.c:2938
+#: src/lib/elm_entry.c:2909
 msgid "Entry"
 msgstr "Καταχώριση"
 
-#: src/lib/elm_gengrid.c:705
+#: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Αντικείμενο Gengrid"
 
-#: src/lib/elm_genlist.c:1305
+#: src/lib/elm_genlist.c:1309
 msgid "Genlist Item"
 msgstr "Αντικείμενο Genlist"
 
@@ -184,11 +184,11 @@ msgstr "Αντικείμενο Καταλόγου"
 msgid "Index"
 msgstr "Κατάλογος"
 
-#: src/lib/elm_label.c:364
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/lib/elm_list.c:1453
+#: src/lib/elm_list.c:1459
 msgid "List Item"
 msgstr "Αντικείμενο Λίστας"
 
@@ -204,15 +204,15 @@ msgstr "Κατάσταση: Κλειστό"
 msgid "panel button"
 msgstr "κουμπί πινακα"
 
-#: src/lib/elm_progressbar.c:269
+#: src/lib/elm_progressbar.c:266
 msgid "progressbar"
 msgstr "Μπάρα Προόδου"
 
-#: src/lib/elm_radio.c:288
+#: src/lib/elm_radio.c:287
 msgid "Radio"
 msgstr "Επιλογή"
 
-#: src/lib/elm_slider.c:818
+#: src/lib/elm_slider.c:816
 msgid "slider"
 msgstr "μπάρα κύλισης"
 
