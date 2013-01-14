@@ -4300,6 +4300,7 @@ _layout_par(Ctxt *c)
     * inside the list and then walk them on the next iteration. */
    for (i = c->par->logical_items ; i ; )
      {
+        Evas_Coord prevdescent = 0, prevascent = 0;
         int adv_line = 0;
         int redo_item = 0;
         it = _ITEM(eina_list_data_get(i));
@@ -4321,6 +4322,8 @@ _layout_par(Ctxt *c)
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (fi->formatme)
                {
+                  prevdescent = c->maxdescent;
+                  prevascent = c->maxascent;
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
                   if (c->maxascent + c->maxdescent == 0)
@@ -4474,6 +4477,12 @@ _layout_par(Ctxt *c)
                   else if (wrap == 0)
                     {
                        /* Should wrap before the item */
+
+                       /* We didn't end up using the item, so revert the ascent
+                        * and descent changes. */
+                       c->maxdescent = prevdescent;
+                       c->maxascent = prevascent;
+
                        adv_line = 0;
                        redo_item = 1;
                        _layout_line_advance(c, it->format);

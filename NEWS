@@ -111,3 +111,4 @@ Fixes:
     * Evas texblock: Fixed a bug with breaking after format items.
     * Fix endianess issue in Eet_Image.
     * Fix bug in eio_file_map_new container set.
+    * Evas textblock: Fixed issue with line height when breaking on a format.
