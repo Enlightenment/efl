@@ -72,11 +72,10 @@ static Efreet_Test tests[] = {
 #endif
     {"Utils", ef_cb_utils},
     {"Mime", ef_mime_cb_get},
-    {NULL, NULL}
+    { }
 };
 
 extern char **environ;
-static Eina_List *environment = NULL;
 
 const char *ef_test_path_get(const char *component)
 {
@@ -104,39 +103,12 @@ const char *ef_test_path_get(const char *component)
    return buf;
 }
 
-void
-environment_store(void)
-{
-    char *env;
-    char **e;
-#ifdef HAVE_CLEARENV
-    EINA_LIST_FREE(environment, env)
-        free(env);
-    for (e = environ; *e; e++)
-        environment = eina_list_append(environment, strdup(*e));
-#endif   
-}
-
-void
-environment_restore(void)
-{
-    Eina_List *l;
-    char *e;
-    if (!environment) return;
-#ifdef HAVE_CLEARENV
-    clearenv();
-    EINA_LIST_FOREACH(environment, l, e)
-        putenv(e);
-#endif
-}
-
 int
 main(int argc, char ** argv)
 {
     int i, passed = 0, num_tests = 0;
     Eina_List *run = NULL;
     double total;
-    char *env;
 
     eina_init();
     ecore_init();
@@ -160,7 +132,6 @@ main(int argc, char ** argv)
     }
 
     efreet_cache_update = 0;
-    environment_store();
     for (i = 0; tests[i].name; i++)
     {
         int ret;
@@ -182,21 +153,18 @@ main(int argc, char ** argv)
         printf("%s:\t\t", tests[i].name);
         fflush(stdout);
         start = ecore_time_get();
+
+        environ = NULL;
         ret = tests[i].cb();
+
         printf("%s in %.3f seconds\n", (ret ? "PASSED" : "FAILED"),
                                             ecore_time_get() - start);
         passed += ret;
 
         efreet_shutdown();
-        environment_restore();
     }
 
     printf("\n-----------------\n");
-#ifdef HAVE_CLEARENV
-    clearenv();
-    EINA_LIST_FREE(environment, env)
-        free(env);
-#endif    
     printf("Passed %d of %d tests.\n", passed, num_tests);
 
     while (run)

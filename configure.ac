@@ -536,7 +536,6 @@ AC_SUBST([SSE3_CFLAGS])
 AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
-clearenv \
 execvp \
 fpathconf \
 fstatat \
