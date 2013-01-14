@@ -149,16 +149,15 @@ main(int argc, char ** argv)
 
         num_tests ++;
 
-        printf("%s:\t\t", tests[i].name);
-        fflush(stdout);
+        printf("Starting \'%s\':\n", tests[i].name);
         start = ecore_time_get();
 
         environ = NULL;
         ret = tests[i].cb();
 
-        printf("%s in %.3f seconds\n", (ret ? "PASSED" : "FAILED"),
-               ecore_time_get() - start);
-        passed += ret;
+        printf("FINISHED \'%s\': %s in %.3f seconds\n", tests[i].name,
+               (ret ? "PASSED" : "FAILED"), ecore_time_get() - start);
+        passed += !!ret;
 
         efreet_shutdown();
      }
