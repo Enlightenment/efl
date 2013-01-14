@@ -1,3 +1,7 @@
+2013-01-14  Daniel Willmann
+
+	* edje_embryo: Fix off-by-one error
+
 2013-01-14  Tom Hacohen (TAsn)
 
 	* Evas textblock: Fixed issue with line height when breaking on a
