@@ -123,10 +123,25 @@ _evas_async_events_process_single(void)
    int ret, wakeup;
 
    ret = read(_fd_read, &wakeup, sizeof(int));
+   if (ret < 0)
+     {
+        switch (errno)
+          {
+           case EBADF:
+           case EINVAL:
+           case EIO:
+           case EISDIR:
+              _fd_read = -1;
+          }
+
+        return ret;
+     }
+
    if (ret == sizeof(int))
      {
         Evas_Event_Async *ev;
         unsigned int len, max;
+        int nr;
 
         eina_lock_take(&async_lock);
 
@@ -144,6 +159,7 @@ _evas_async_events_process_single(void)
         eina_lock_release(&async_lock);
 
         DBG("Evas async events queue length: %u", len);
+        nr = len;
 
         while (len > 0)
           {
@@ -152,22 +168,10 @@ _evas_async_events_process_single(void)
              len--;
           }
 
-        return 1;
+        return nr;
      }
 
-   if (ret < 0)
-     {
-        switch (errno)
-          {
-           case EBADF:
-           case EINVAL:
-           case EIO:
-           case EISDIR:
-              _fd_read = -1;
-          }
-     }
-
-   return ret;
+   return 0;
 }
 
 EAPI int
