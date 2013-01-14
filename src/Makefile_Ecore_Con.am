@@ -33,24 +33,7 @@ lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_info.c
 endif
 endif
 
-lib_ecore_con_libecore_con_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/eet \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_con \
--DEFL_ECORE_CON_BUILD \
-@EFL_COV_CFLAGS@ \
-@ECORE_CON_CFLAGS@ \
-@USE_EVIL_CFLAGS@
-
-lib_ecore_con_libecore_con_la_LIBADD = \
-lib/ecore/libecore.la \
-lib/eet/libeet.la \
-lib/eo/libeo.la \
-lib/eina/libeina.la \
-@USE_EVIL_LIBS@
-
-lib_ecore_con_libecore_con_la_LIBADD += @ECORE_CON_LIBS@ @EFL_COV_LIBS@
+lib_ecore_con_libecore_con_la_CPPFLAGS = @ECORE_CON_CFLAGS@
+lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@
+lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

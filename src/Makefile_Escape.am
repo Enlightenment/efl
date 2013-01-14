@@ -19,9 +19,9 @@ lib/escape/escape_libgen.c \
 lib/escape/escape_mman.c \
 lib/escape/escape_unistd.c
 
-lib_escape_libescape_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/escape
+lib_escape_libescape_la_CPPFLAGS = @ESCAPE_CFLAGS@
 lib_escape_libescape_la_LIBADD = @ESCAPE_LIBS@
+lib_escape_libescape_la_DEPENDENCIES = @ESCAPE_INTERNAL_LIBS@
 lib_escape_libescape_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 endif

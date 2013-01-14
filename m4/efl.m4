@@ -16,18 +16,32 @@ dnl Adds a pkg-config dependency on another EFL.
 AC_DEFUN([EFL_INTERNAL_DEPEND_PKG],
 [dnl
 m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
+m4_pushdef([DOWNOTHER], m4_translit([$2], [-A-Z], [_a-z]))dnl
 dnl TODO: we need to fix the package config names for 2.0
 dnl TODO: and make them uniform in scheme.
 depname="$2"
-case "${depname}" in
+libdirname="m4_defn([DOWNOTHER])"
+libname="m4_defn([DOWNOTHER])"
+case "m4_defn([DOWNOTHER])" in
    edbus)
       depname="edbus2"
+      libname="edbus2"
       ;;
-   ethumb-client)
+   ethumb_client)
       depname="ethumb_client"
+      libdirname="ethumb/client"
+      ;;
+   ecore_input_evas)
+      libdirname="ecore_input"
+      ;;
+   ecore_imf_evas)
+      libdirname="ecore_imf"
       ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
+requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
+requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
+m4_popdef([DOWNOTHER])dnl
 m4_popdef([DOWNEFL])dnl
 ])
 
@@ -35,32 +49,24 @@ dnl EFL_PLATFORM_DEPEND(EFL, PLATFORM)
 dnl PLATFORM is one of: all, evil, escape, exotic
 AC_DEFUN([EFL_PLATFORM_DEPEND],
 [dnl
-m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
-case "$2" in
+m4_pushdef([DOWNOTHER], m4_translit([$2], [-A-Z], [_a-z]))dnl
+case "m4_defn([DOWNOTHER])" in
   all)
-    requirements_pc_[]m4_defn([DOWNEFL])="${platform_pc} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-    requirements_libs_[]m4_defn([DOWNEFL])="${platform_libs} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-    requirements_cflags_[]m4_defn([DOWNEFL])="${platform_cflags} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
-    ;;
-  evil)
-    requirements_pc_[]m4_defn([DOWNEFL])="${platform_pc_evil} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-    requirements_libs_[]m4_defn([DOWNEFL])="${platform_libs_evil} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-    requirements_cflags_[]m4_defn([DOWNEFL])="${platform_cflags_evil} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
-    ;;
-  escape)
-    requirements_pc_[]m4_defn([DOWNEFL])="${platform_pc_escape} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-    requirements_libs_[]m4_defn([DOWNEFL])="${platform_libs_escape} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-    requirements_cflags_[]m4_defn([DOWNEFL])="${platform_cflags_escape} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
-    ;;
-  exotic)
-    requirements_pc_[]m4_defn([DOWNEFL])="${platform_pc_exotic} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-    requirements_libs_[]m4_defn([DOWNEFL])="${platform_libs_exotic} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-    requirements_cflags_[]m4_defn([DOWNEFL])="${platform_cflags_exotic} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
+    if test "x${efl_lib_optional_evil}" = "xyes"; then
+       EFL_INTERNAL_DEPEND_PKG([$1], [evil])
+    elif test "x${efl_lib_optional_escape}" = "xyes"; then
+       EFL_INTERNAL_DEPEND_PKG([$1], [escape])
+    elif test "x${efl_lib_optional_exotic}" = "xyes"; then
+       EFL_INTERNAL_DEPEND_PKG([$1], [exotic])
+    fi
     ;;
   *)
-    AC_MSG_ERROR([Unknown platform: $2])
+    if test "x${efl_lib_optional_[]m4_defn([DOWNOTHER])}" = "xyes"; then
+       EFL_INTERNAL_DEPEND_PKG([$1], [$2])
+    fi
+    ;;
 esac
-m4_popdef([DOWNEFL])dnl
+m4_popdef([DOWNOTHER])dnl
 ])
 
 dnl EFL_CRYPTO_DEPEND(EFL)
@@ -156,12 +162,16 @@ AC_DEFUN([EFL_LIB_START],
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 
+requirements_internal_libs_[]m4_defn([DOWN])=""
 requirements_libs_[]m4_defn([DOWN])=""
 requirements_cflags_[]m4_defn([DOWN])=""
 requirements_pc_[]m4_defn([DOWN])=""
 requirements_pc_deps_[]m4_defn([DOWN])=""
 
 m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS}"
+m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS}"
+USE_[]m4_defn([UP])_LIBS="${USE_[]m4_defn([UP])_LIBS}"
+USE_[]m4_defn([UP])_INTERNAL_LIBS="${USE_[]m4_defn([UP])_INTERNAL_LIBS}"
 m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS}"
 m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS}"
 
@@ -169,6 +179,9 @@ AC_SUBST([requirements_libs_]m4_defn([DOWN]))
 AC_SUBST([requirements_cflags_]m4_defn([DOWN]))
 AC_SUBST([requirements_pc_]m4_defn([DOWN]))
 AC_SUBST(m4_defn([UP])[_LIBS])
+AC_SUBST(m4_defn([UP])[_INTERNAL_LIBS])
+AC_SUBST([USE_]m4_defn([UP])[_LIBS])
+AC_SUBST([USE_]m4_defn([UP])[_INTERNAL_LIBS])
 AC_SUBST(m4_defn([UP])[_LDFLAGS])
 AC_SUBST(m4_defn([UP])[_CFLAGS])
 
@@ -185,9 +198,29 @@ AC_DEFUN([EFL_LIB_END],
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 
-m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS}  ${EFL_LDFLAGS}"
-m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_LIBS} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
-m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS} ${EFL_CFLAGS} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl}"
+libdirname="m4_defn([DOWN])"
+libname="m4_defn([DOWN])"
+case "m4_defn([DOWN])" in
+   edbus)
+      libname="edbus2"
+      ;;
+   ethumb_client)
+      libdirname="ethumb/client"
+      ;;
+   ecore_input_evas)
+      libdirname="ecore_input"
+      ;;
+   ecore_imf_evas)
+      libdirname="ecore_imf"
+      ;;
+esac
+
+m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS} ${EFL_COV_CFLAGS} ${EFL_LDFLAGS}"
+m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
+m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
+USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
+USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la"
+m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS} ${EFL_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
 requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
 requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
 

@@ -95,12 +95,10 @@ else
 lib_evil_libevil_la_SOURCES += lib/evil/evil_link_xp.cpp
 endif
 
-lib_evil_libevil_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/evil \
-@EVIL_CPPFLAGS@
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
+lib_evil_libevil_la_DEPENDENCIES = @EVIL_INTERNAL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 if HAVE_WINCE
@@ -112,12 +110,12 @@ endif
 lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
 
 lib_evil_libdl_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/evil \
+@EVIL_CFLAGS@ \
 @EVIL_DLFCN_CPPFLAGS@
-
-lib_evil_libdl_la_CFLAGS = @EVIL_CFLAGS@
-
-lib_evil_libdl_la_LIBADD = lib/evil/libevil.la @EVIL_DLFCN_LIBS@
+lib_evil_libdl_la_LIBADD = \
+@USE_EVIL_LIBS@ \
+@EVIL_DLFCN_LIBS@
+lib_evil_libdl_la_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 lib_evil_libdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binary
@@ -154,22 +152,13 @@ bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
 #suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
 endif
 
-bin_evil_evil_suite_CPPFLAGS = \
--I$(top_srcdir)/src/lib/evil \
-@EVIL_CFLAGS@ \
-@EVIL_CPPFLAGS@
-
-bin_evil_evil_suite_LDADD = \
-lib/evil/libevil.la \
-lib/evil/libdl.la \
-@EVIL_LDFLAGS@ \
--lm
+bin_evil_evil_suite_CPPFLAGS = @EVIL_CFLAGS@
+bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
+bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_LIBS@
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
-
-bin_evil_test_evil_LDADD = \
-lib/evil/libevil.la \
-@EVIL_LDFLAGS@
+bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
+bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_LIBS@
 
 endif
 EXTRA_DIST += \

@@ -154,18 +154,9 @@ else
 lib_eina_libeina_la_SOURCES += lib/eina/eina_file.c
 endif
 
-EINA_MODULE_COMMON_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--DEFL_EINA_BUILD
-
 EINA_MODULE_COMMON_CFLAGS = \
 @EINA_CFLAGS@ \
 @VALGRIND_CFLAGS@
-
-EINA_MODULE_COMMON_LIBADD = \
-lib/eina/libeina.la \
-@EINA_LIBS@
 
 if EINA_STATIC_BUILD_CHAINED_POOL
 lib_eina_libeina_la_SOURCES += modules/eina/mp/chained_pool/eina_chained_mempool.c
@@ -173,9 +164,9 @@ else
 einampchainedpooldir = $(libdir)/eina/modules/mp/chained_pool/$(MODULE_ARCH)
 einampchainedpool_LTLIBRARIES = modules/eina/mp/chained_pool/chained_pool_module.la
 
-modules_eina_mp_chained_pool_chained_pool_module_la_CPPFLAGS = $(EINA_MODULE_COMMON_CPPFLAGS)
 modules_eina_mp_chained_pool_chained_pool_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
-modules_eina_mp_chained_pool_chained_pool_module_la_LIBADD = $(EINA_MODULE_COMMON_LIBADD)
+modules_eina_mp_chained_pool_chained_pool_module_la_LIBADD = @USE_EINA_LIBS@
+modules_eina_mp_chained_pool_chained_pool_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_chained_pool_chained_pool_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_eina_mp_chained_pool_chained_pool_module_la_LIBTOOLFLAGS = --tag=disable-static
 modules_eina_mp_chained_pool_chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
@@ -187,9 +178,9 @@ else
 einamponebigdir = $(libdir)/eina/modules/mp/one_big/$(MODULE_ARCH)
 einamponebig_LTLIBRARIES = modules/eina/mp/one_big/one_big_module.la
 
-modules_eina_mp_one_big_one_big_module_la_CPPFLAGS = $(EINA_MODULE_COMMON_CPPFLAGS)
 modules_eina_mp_one_big_one_big_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
-modules_eina_mp_one_big_one_big_module_la_LIBADD = $(EINA_MODULE_COMMON_LIBADD)
+modules_eina_mp_one_big_one_big_module_la_LIBADD = @USE_EINA_LIBS@
+modules_eina_mp_one_big_one_big_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_one_big_one_big_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_eina_mp_one_big_one_big_module_la_LIBTOOLFLAGS = --tag=disable-static
 modules_eina_mp_one_big_one_big_module_la_SOURCES = modules/eina/mp/one_big/eina_one_big.c
@@ -201,31 +192,23 @@ else
 einamppassthroughdir = $(libdir)/eina/modules/mp/pass_through/$(MODULE_ARCH)
 einamppassthrough_LTLIBRARIES = modules/eina/mp/pass_through/pass_through_module.la
 
-modules_eina_mp_pass_through_pass_through_module_la_CPPFLAGS = $(EINA_MODULE_COMMON_CPPFLAGS)
 modules_eina_mp_pass_through_pass_through_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
-modules_eina_mp_pass_through_pass_through_module_la_LIBADD = $(EINA_MODULE_COMMON_LIBADD)
+modules_eina_mp_pass_through_pass_through_module_la_LIBADD = @USE_EINA_LIBS@
+modules_eina_mp_pass_through_pass_through_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_pass_through_pass_through_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_eina_mp_pass_through_pass_through_module_la_LIBTOOLFLAGS = --tag=disable-static
 modules_eina_mp_pass_through_pass_through_module_la_SOURCES = modules/eina/mp/pass_through/eina_pass_through.c
 endif
 
 lib_eina_libeina_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
+@EINA_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
--DEFL_EINA_BUILD \
-@EFL_COV_CFLAGS@ \
-@EINA_CFLAGS@ \
-@VALGRIND_CFLAGS@ \
-@USE_EVIL_CFLAGS@
+@VALGRIND_CFLAGS@
 
-lib_eina_libeina_la_LIBADD = \
-@EINA_LIBS@ \
-@EFL_COV_LIBS@ \
-@USE_EVIL_LIBS@ \
-@DL_LIBS@
+lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @DL_LIBS@
+lib_eina_libeina_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Script
@@ -281,28 +264,16 @@ tests/eina/eina_test_barrier.c
 # tests/eina/eina_test_model.c
 
 tests_eina_eina_suite_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
-
-tests_eina_eina_suite_LDADD = \
-lib/eina/libeina.la \
-@CHECK_LIBS@ \
-@EINA_LDFLAGS@
+tests_eina_eina_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
+tests_eina_eina_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 tests_eina_cxx_compile_test_SOURCES = tests/eina/cxx_compile_test.cxx
-
-tests_eina_cxx_compile_test_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
-@CHECK_CFLAGS@ \
-@EINA_CFLAGS@
-
-tests_eina_cxx_compile_test_LDADD = \
-lib/eina/libeina.la \
-@EINA_LDFLAGS@
+tests_eina_cxx_compile_test_CPPFLAGS = @EINA_CFLAGS@
+tests_eina_cxx_compile_test_LDADD = @USE_EINA_LIBS@
+tests_eina_cxx_compile_test_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 EXTRA_LTLIBRARIES = tests/eina/module_dummy.la
 
@@ -311,19 +282,12 @@ check-local: tests/eina/module_dummy.la
 tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
 
 tests_eina_module_dummy_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
 @CHECK_CFLAGS@ \
-@EINA_CFLAGS@ \
--DEFL_EINA_BUILD
-
-tests_eina_module_dummy_la_LIBADD = \
-lib/eina/libeina.la \
-@EINA_LIBS@
-
+@EINA_CFLAGS@
+tests_eina_module_dummy_la_LIBADD = @USE_EINA_LIBS@
+tests_eina_module_dummy_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 tests_eina_module_dummy_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-
 tests_eina_module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif

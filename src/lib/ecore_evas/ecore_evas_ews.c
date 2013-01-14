@@ -9,6 +9,8 @@
 #include <Eina.h>
 #include <Ecore.h>
 #include "ecore_private.h"
+#include <Evas.h>
+#include <Evas_Engine_Buffer.h>
 #include <Ecore_Input.h>
 
 #include "ecore_evas_private.h"

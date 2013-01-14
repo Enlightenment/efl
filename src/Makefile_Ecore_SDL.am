@@ -13,23 +13,8 @@ lib/ecore_sdl/ecore_sdl.c \
 lib/ecore_sdl/Ecore_Sdl_Keys.h \
 lib/ecore_sdl/ecore_sdl_private.h
 
-lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_input \
--I$(top_srcdir)/src/lib/ecore_sdl \
--DEFL_ECORE_SDL_BUILD \
-@EFL_COV_CFLAGS@ \
-@ECORE_SDL_CFLAGS@
-
-lib_ecore_sdl_libecore_sdl_la_LIBADD = \
-lib/ecore_input/libecore_input.la \
-lib/ecore/libecore.la \
-lib/eo/libeo.la \
-lib/eina/libeina.la \
-@ECORE_SDL_LIBS@
-
+lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = @ECORE_SDL_CFLAGS@
+lib_ecore_sdl_libecore_sdl_la_LIBADD = @ECORE_SDL_LIBS@
+lib_ecore_sdl_libecore_sdl_la_DEPENDENCIES = @ECORE_SDL_INTERNAL_LIBS@
 lib_ecore_sdl_libecore_sdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 endif

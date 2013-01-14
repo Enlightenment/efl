@@ -11,10 +11,6 @@
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
-#if defined(BUILD_ECORE_EVAS_BUFFER) || defined(BUILD_ECORE_EVAS_EWS)
-# include <Evas_Engine_Buffer.h>
-#endif
-
 /** Log domain macros and variables **/
 
 EAPI extern int _ecore_evas_log_dom;

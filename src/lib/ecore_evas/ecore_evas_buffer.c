@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_evas_buffer.h"
+#include <Evas_Engine_Buffer.h>
 
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)

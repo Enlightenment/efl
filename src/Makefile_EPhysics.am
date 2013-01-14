@@ -21,31 +21,9 @@ lib/ephysics/ephysics_quaternion.cpp \
 lib/ephysics/ephysics_shape.cpp \
 lib/ephysics/ephysics_world.cpp
 
-lib_ephysics_libephysics_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_builddir)/src/lib/eo \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/evas \
--I$(top_builddir)/src/lib/evas \
--I$(top_srcdir)/src/lib/ephysics \
--I$(top_builddir)/src/lib/ephysics \
-@EFL_COV_CFLAGS@ \
-@EPHYSICS_CFLAGS@ \
-@USE_EVIL_CFLAGS@ \
--DEFL_EPHYSICS_BUILD
-
-lib_ephysics_libephysics_la_LIBADD = \
-lib/eina/libeina.la \
-lib/eo/libeo.la \
-lib/ecore/libecore.la \
-lib/evas/libevas.la \
-@EFL_COV_LIBS@ \
-@USE_EVIL_LIBS@ \
-@EPHYSICS_LIBS@
-
+lib_ephysics_libephysics_la_CPPFLAGS = @EPHYSICS_CFLAGS@
+lib_ephysics_libephysics_la_LIBADD = @EPHYSICS_LIBS@
+lib_ephysics_libephysics_la_DEPENDENCIES = @EPHYSICS_INTERNAL_LIBS@
 lib_ephysics_libephysics_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 endif

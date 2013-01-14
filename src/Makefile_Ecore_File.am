@@ -27,21 +27,7 @@ lib/ecore_file/ecore_file_monitor_poll.c
 endif
 endif
 
-lib_ecore_file_libecore_file_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_con \
--I$(top_srcdir)/src/lib/ecore_file \
--DEFL_ECORE_FILE_BUILD \
-@ECORE_FILE_CFLAGS@ \
-@EFL_COV_CFLAGS@
-
-lib_ecore_file_libecore_file_la_LIBADD = \
-lib/ecore_con/libecore_con.la \
-lib/ecore/libecore.la \
-lib/eo/libeo.la \
-lib/eina/libeina.la \
-@EFL_COV_LIBS@
+lib_ecore_file_libecore_file_la_CPPFLAGS = @ECORE_FILE_CFLAGS@
+lib_ecore_file_libecore_file_la_LIBADD = @ECORE_FILE_LIBS@
+lib_ecore_file_libecore_file_la_DEPENDENCIES = @ECORE_FILE_INTERNAL_LIBS@
 lib_ecore_file_libecore_file_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

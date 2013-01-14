@@ -23,24 +23,13 @@ static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
 
 lib_eet_libeet_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/static_libs/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
--DEFL_EET_BUILD \
-@EFL_COV_CFLAGS@ \
-@EET_CFLAGS@ \
-@USE_EVIL_CFLAGS@
-
-lib_eet_libeet_la_LIBADD = \
-lib/eina/libeina.la \
-@USE_EVIL_LIBS@ \
-@EET_LIBS@ \
-@EFL_COV_LIBS@
-
+@EET_CFLAGS@
+lib_eet_libeet_la_LIBADD = @EET_LIBS@
+lib_eet_libeet_la_DEPENDENCIES = @EET_INTERNAL_LIBS@
 lib_eet_libeet_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 EXTRA_DIST += static_libs/lz4/README
@@ -52,22 +41,13 @@ bin_PROGRAMS += bin/eet/eet
 bin_eet_eet_SOURCES = bin/eet/eet_main.c
 
 bin_eet_eet_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eet \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
-@EFL_COV_CFLAGS@ \
-@EET_CFLAGS@ \
-@USE_EVIL_CFLAGS@
+@EET_CFLAGS@
 
-bin_eet_eet_LDADD = \
-lib/eet/libeet.la \
-lib/eina/libeina.la \
-@USE_EVIL_LIBS@ \
-@EET_LDFLAGS@ \
-@EFL_COV_LIBS@
+bin_eet_eet_LDADD = @USE_EET_LIBS@
+bin_eet_eet_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 
 ### Unit tests
 
@@ -81,20 +61,12 @@ tests/eet/eet_data_suite.c \
 tests/eet/eet_suite.h
 
 tests_eet_eet_suite_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eet \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet\" \
 @CHECK_CFLAGS@ \
 @EET_CFLAGS@
-
-tests_eet_eet_suite_LDADD = \
-lib/eet/libeet.la \
-lib/eina/libeina.la \
-@CHECK_LIBS@ \
-@EET_LDFLAGS@
-
+tests_eet_eet_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
+tests_eet_eet_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \

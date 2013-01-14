@@ -26,23 +26,7 @@ lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_win32.c
 endif
 endif
 
-lib_eio_libeio_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/eet \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/eio \
--DEFL_EIO_BUILD \
-@EIO_CFLAGS@ \
-@EFL_COV_CFLAGS@
-
-lib_eio_libeio_la_LIBADD = \
-lib/eina/libeina.la \
-lib/eo/libeo.la \
-lib/eet/libeet.la \
-lib/ecore/libecore.la \
-@EIO_LIBS@ \
-@EFL_COV_LIBS@
-
+lib_eio_libeio_la_CPPFLAGS = @EIO_CFLAGS@
+lib_eio_libeio_la_LIBADD = @EIO_LIBS@
+lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

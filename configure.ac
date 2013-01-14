@@ -132,21 +132,6 @@ AC_SUBST(dbusservicedir)
 
 #### Default values
 
-platform_pc=""
-platform_pc_evil=""
-platform_pc_escape=""
-platform_pc_exotic=""
-
-platform_libs=""
-platform_libs_evil=""
-platform_libs_escape=""
-platform_libs_exotic=""
-
-platform_cflags=""
-platform_cflags_evil=""
-platform_cflags_escape=""
-platform_cflags_exotic=""
-
 requirements_pc_efl=""
 requirements_pc_deps_efl=""
 requirements_libs_efl=""
@@ -338,10 +323,6 @@ if test "${want_coverage}" = "yes" ; then
 fi
 
 AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
-
-AC_SUBST([EFL_COV_CFLAGS])
-AC_SUBST([EFL_COV_LIBS])
-
 
 #### Checks for libraries
 
@@ -561,12 +542,9 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 
 #### Platform-dependent
 DL_LIBS=""
+DL_INTERNAL_LIBS=""
 
 #### Evil
-
-USE_EVIL_CFLAGS=""
-USE_EVIL_LIBS=""
-
 EFL_LIB_START_OPTIONAL([Evil], [test "${have_windows}" = "yes"])
 
 ### Default values
@@ -578,16 +556,14 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EVIL_LIBS=""
 EVIL_DLFCN_LIBS=""
 if test "${have_wince}" = "xyes"; then
-    EVIL_LIBS="-lws2"
-    EVIL_DLFCN_LIBS="-ltoolhelp"
+   EFL_ADD_LIBS([EVIL], [-lws2])
+   EVIL_DLFCN_LIBS="-ltoolhelp"
 else
-    EVIL_LIBS="-lole32 -lws2_32 -lsecur32 -luuid"
-    EVIL_DLFCN_LIBS="-lpsapi"
+   EFL_ADD_LIBS([EVIL], [-lole32 -lws2_32 -lsecur32 -luuid])
+   EVIL_DLFCN_LIBS="-lpsapi"
 fi
-EFL_ADD_LIBS([EVIL], [${EVIL_LIBS}])
 
 AC_SUBST([EVIL_DLFCN_LIBS])
 
@@ -599,17 +575,16 @@ AC_SUBST([EVIL_DLFCN_LIBS])
 
 ### Checks for compiler characteristics
 
-EVIL_CPPFLAGS="-DEFL_EVIL_BUILD"
 EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
-EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith"
-EVIL_CXXFLAGS=""
+# TODO: should we have these at EFL (global?)
+EVIL_CFLAGS="-Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls ${EVIL_CFLAGS}"
+EVIL_CXXFLAGS="${EVIL_CXXFLAGS}"
 
 if test "x${have_win32}" = "xyes" ; then
-   EVIL_CXXFLAGS="-fno-rtti -fno-exceptions"
-   EVIL_CPPFLAGS="${EVIL_CPPFLAGS} -DSECURITY_WIN32"
+   EVIL_CFLAGS="-DSECURITY_WIN32 ${EVIL_CFLAGS}"
+   EVIL_CXXFLAGS="-fno-rtti -fno-exceptions -DSECURITY_WIN32 ${EVIL_CXXFLAGS}"
 fi
 
-AC_SUBST([EVIL_CPPFLAGS])
 AC_SUBST([EVIL_DLFCN_CPPFLAGS])
 AC_SUBST([EVIL_CXXFLAGS])
 
@@ -617,19 +592,8 @@ AC_SUBST([EVIL_CXXFLAGS])
 
 ### Checks for library functions
 
-platform_pc_evil="evil >= ${PACKAGE_VERSION}"
-platform_pc="${platform_pc} ${platform_pc_evil}"
-
-if test "x${have_wince}" = "xyes"; then
-   platform_libs_evil="-lws2"
-else
-   platform_libs_evil="-lws2_32"
-fi
-platform_libs="${platform_libs} ${platform_libs_evil}"
-
-USE_EVIL_CFLAGS="-I\$(top_srcdir)/src/lib/evil"
-USE_EVIL_LIBS="lib/evil/libevil.la"
 DL_LIBS="lib/evil/libdl.la"
+DL_INTERNAL_LIBS="lib/evil/libdl.la"
 
 EFL_LIB_END_OPTIONAL([Evil])
 
@@ -639,10 +603,6 @@ AC_SUBST([USE_EVIL_LIBS])
 
 
 #### Escape
-
-USE_ESCAPE_CFLAGS=""
-USE_ESCAPE_LIBS=""
-
 EFL_LIB_START_OPTIONAL([Escape], [test "${have_ps3}" = "yes"])
 
 ### Additional options to configure
@@ -666,19 +626,11 @@ EFL_ADD_LIBS([ESCAPE], [-llv2 -lm -lnet -lsysmodule -liberty])
 
 ### Checks for library functions
 
-platform_pc_escape="escape >= ${PACKAGE_VERSION}"
-platform_pc="${platform_pc} ${platform_pc_escape}"
-
-USE_ESCAPE_CFLAGS="-I\$(top_srcdir)/src/lib/escape"
-USE_ESCAPE_LIBS="lib/escape/libescape.la"
-
 EFL_LIB_END_OPTIONAL([Escape])
-
-AC_SUBST([USE_ESCAPE_CFLAGS])
-AC_SUBST([USE_ESCAPE_LIBS])
 #### End of Escape
 
 AC_SUBST([DL_LIBS])
+AC_SUBST([DL_INTERNAL_LIBS])
 #### End of Platform-dependent
 
 
@@ -1813,8 +1765,6 @@ AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes"])
 
 EFL_EVAL_PKGS([ECORE])
 
-EFL_ADD_LIBS([ECORE], [${platform_libs}])
-
 ### Checks for header files
 
 AC_HEADER_SYS_WAIT
@@ -1995,6 +1945,7 @@ EFL_LIB_START([Ecore_Ipc])
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [eina])
 
 EFL_ADD_LIBS([ECORE_IPC], [-lm])
@@ -2031,6 +1982,7 @@ EFL_LIB_START([Ecore_File])
 EFL_PLATFORM_DEPEND([ECORE_FILE], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [eina])
 
 ### Checks for header files
@@ -2060,6 +2012,7 @@ EFL_LIB_START([Ecore_Input])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
 
 ### Checks for header files
@@ -2091,6 +2044,7 @@ EFL_LIB_START([Ecore_Input_Evas])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [eina])
 
 ### Checks for header files
@@ -2125,6 +2079,7 @@ have_ecore_cocoa="no"
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eina])
 
 ### Checks for header files
@@ -2205,6 +2160,8 @@ AC_ARG_ENABLE([tslib],
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [eina])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_FB], [${want_tslib}], [TSLIB], [tslib])
@@ -2244,10 +2201,12 @@ EFL_LIB_START_OPTIONAL([Ecore_Psl1ght], [test "${have_ps3}" = "yes"])
 ### Checks for programs
 
 ### Checks for libraries
+EFL_PLATFORM_DEPEND([ECORE_PSL1GHT], [escape])
+
 EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [eina])
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [escape])
 
 EFL_ADD_LIBS([ECORE_PSL1GHT], [-lio -lsysutil -lgem -lcamera -lspurs])
 
@@ -2280,6 +2239,7 @@ EFL_LIB_START_OPTIONAL([Ecore_SDL], [test "${want_sdl}" = "yes"])
 EFL_PLATFORM_DEPEND([ECORE_SDL], [all])
 EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_SDL], [eina])
 
 EFL_DEPEND_PKG([ECORE_SDL], [SDL], [sdl >= 1.2.0])
@@ -2317,6 +2277,7 @@ EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_wayland}" = "yes"])
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eina])
 
 EFL_DEPEND_PKG([ECORE_WAYLAND], [WAYLAND],
@@ -2385,6 +2346,7 @@ AC_ARG_ENABLE([pulseaudio],
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eet])
+EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [eina])
 
 EFL_ADD_LIBS([ECORE_AUDIO], [-lm])
@@ -2423,6 +2385,7 @@ EFL_LIB_START_OPTIONAL([Ecore_Win32], [test "${have_win32}" = "yes"])
 EFL_PLATFORM_DEPEND([ECORE_WIN32], [evil])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WIN32], [eina])
 
 EFL_ADD_LIBS([ECORE_WIN32], [-lole32 -lgdi32])
@@ -2457,6 +2420,7 @@ EFL_LIB_START_OPTIONAL([Ecore_WinCE], [test "${have_wince}" = "yes"])
 EFL_PLATFORM_DEPEND([ECORE_WINCE], [evil])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WINCE], [eina])
 
 ### Checks for header files
@@ -2531,6 +2495,7 @@ AC_ARG_ENABLE([xim],
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_X], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_X], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_X], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_X], [eina])
 
 ## Xlib
@@ -2728,6 +2693,8 @@ fi
 ### Checks for libraries
 EFL_PLATFORM_DEPEND([ECORE_IMF], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [eina])
 
 if test "x${want_ecore_imf}" = "xyes" ; then
@@ -2811,6 +2778,7 @@ EFL_PLATFORM_DEPEND([ECORE_IMF_EVAS], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [ecore-imf])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [eina])
 
 ### Checks for header files
@@ -2857,6 +2825,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-input-evas])
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [evas])
+EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [eina])
 
 ## modules
@@ -2998,6 +2967,7 @@ EFL_LIB_START([Eio])
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EIO], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EIO], [eet])
+EFL_INTERNAL_DEPEND_PKG([EIO], [eo])
 EFL_INTERNAL_DEPEND_PKG([EIO], [eina])
 
 EFL_ADD_LIBS([EIO], [-lm])
@@ -3031,6 +3001,7 @@ EFL_LIB_START([EDBus])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EDBUS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EDBUS], [eo])
 EFL_INTERNAL_DEPEND_PKG([EDBUS], [eina])
 
 EFL_DEPEND_PKG([EDBUS], [DBUS], [dbus-1])
@@ -3068,7 +3039,8 @@ AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eet])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-file])
-EFL_INTERNAL_DEPEND_PKG([EFREET], [edbus2])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [edbus])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [eo])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 
 ### Checks for header files
@@ -3131,6 +3103,7 @@ AC_ARG_WITH([eject],
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
 EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eo])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-file])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-con])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [eet])
@@ -3207,6 +3180,7 @@ EFL_PLATFORM_DEPEND([EPHYSICS], [evil])
 EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [eina])
 EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [evas])
 EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EPHYSICS], [eo])
 
 EFL_DEPEND_PKG([EPHYSICS], [BULLET], [bullet >= 2.80])
 
@@ -3391,6 +3365,7 @@ EFL_PLATFORM_DEPEND([EINA], [evil])
 
 EFL_INTERNAL_DEPEND_PKG([ETHUMB], [eina])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB], [evas])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB], [eo])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore-evas])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB], [ecore-file])
@@ -3428,6 +3403,7 @@ EFL_LIB_START([Ethumb_Client])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eina])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [edbus])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ethumb])

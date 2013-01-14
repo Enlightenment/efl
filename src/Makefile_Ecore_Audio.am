@@ -17,24 +17,9 @@ lib/ecore_audio/ecore_audio_tone.c \
 lib/ecore_audio/ecore_audio_custom.c \
 lib/ecore_audio/ecore_audio_private.h
 
-lib_ecore_audio_libecore_audio_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/eet \
--I$(top_srcdir)/src/lib/ecore \
--DEFL_ECORE_AUDIO_BUILD \
-@EFL_COV_CFLAGS@ \
-@ECORE_AUDIO_CFLAGS@
-
-lib_ecore_audio_libecore_audio_la_LIBADD = \
-lib/ecore/libecore.la \
-lib/eet/libeet.la \
-lib/eo/libeo.la \
-lib/eina/libeina.la \
-@ECORE_AUDIO_LIBS@ \
-@EFL_COV_LIBS@
-
+lib_ecore_audio_libecore_audio_la_CPPFLAGS = @ECORE_AUDIO_CFLAGS@
+lib_ecore_audio_libecore_audio_la_LIBADD = @ECORE_AUDIO_LIBS@
+lib_ecore_audio_libecore_audio_la_DEPENDENCIES = @ECORE_AUDIO_INTERNAL_LIBS@
 lib_ecore_audio_libecore_audio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 endif

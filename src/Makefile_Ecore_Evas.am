@@ -19,34 +19,12 @@ lib/ecore_evas/ecore_evas_private.h \
 lib/ecore_evas/ecore_evas_util.c
 
 lib_ecore_evas_libecore_evas_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/evas \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_ipc \
--I$(top_srcdir)/src/lib/ecore_input \
--I$(top_srcdir)/src/lib/ecore_input_evas \
--I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
--DEFL_ECORE_EVAS_BUILD \
-@ECORE_EVAS_CFLAGS@ \
-@EFL_COV_CFLAGS@ \
-@USE_EVIL_CFLAGS@
-
-lib_ecore_evas_libecore_evas_la_LIBADD = \
-lib/ecore_input/libecore_input_evas.la \
-lib/ecore_input/libecore_input.la \
-lib/ecore/libecore.la \
-lib/evas/libevas.la \
-lib/eo/libeo.la \
-lib/eina/libeina.la \
-@ECORE_EVAS_LIBS@ \
-@EFL_COV_LIBS@
-
-lib_ecore_evas_libecore_evas_la_LIBADD += @EFL_COV_LIBS@
+@ECORE_EVAS_CFLAGS@
+lib_ecore_evas_libecore_evas_la_LIBADD = @ECORE_EVAS_LIBS@
+lib_ecore_evas_libecore_evas_la_DEPENDENCIES = @ECORE_EVAS_INTERNAL_LIBS@
 lib_ecore_evas_libecore_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # Engines
@@ -57,8 +35,16 @@ modules/ecore_evas/engines/extn/ecore_evas_extn.c
 ecoreevasengineextnpkgdir = $(libdir)/ecore_evas/engines/extn/$(MODULE_ARCH)
 ecoreevasengineextnpkg_LTLIBRARIES = modules/ecore_evas/engines/extn/module.la
 modules_ecore_evas_engines_extn_module_la_SOURCES = $(EXTNSOURCES)
-modules_ecore_evas_engines_extn_module_la_CPPFLAGS = $(lib_ecore_evas_libecore_evas_la_CPPFLAGS)
-modules_ecore_evas_engines_extn_module_la_LIBADD = lib/ecore_ipc/libecore_ipc.la  lib/ecore_evas/libecore_evas.la
+modules_ecore_evas_engines_extn_module_la_CPPFLAGS = \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_IPC_CFLAGS@ \
+-I$(top_srcdir)/src/modules/evas/engines/buffer
+modules_ecore_evas_engines_extn_module_la_LIBADD = \
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_IPC_LIBS@
+modules_ecore_evas_engines_extn_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_IPC_INTERNAL_LIBS@
 modules_ecore_evas_engines_extn_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_extn_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -69,14 +55,16 @@ ecoreevasenginexpkgdir = $(libdir)/ecore_evas/engines/x/$(MODULE_ARCH)
 ecoreevasenginexpkg_LTLIBRARIES = modules/ecore_evas/engines/x/module.la
 modules_ecore_evas_engines_x_module_la_SOURCES = $(XSOURCES)
 modules_ecore_evas_engines_x_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_x \
--I$(top_builddir)/src/lib/ecore_x \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/software_x11 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_x11
 modules_ecore_evas_engines_x_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_x/libecore_x.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_X_LIBS@
+modules_ecore_evas_engines_x_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@
 modules_ecore_evas_engines_x_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_x_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -87,12 +75,15 @@ ecoreevasenginecocoapkgdir = $(libdir)/ecore_evas/engines/cocoa/$(MODULE_ARCH)
 ecoreevasenginecocoapkg_LTLIBRARIES = modules/ecore_evas/engines/cocoa/module.la
 modules_ecore_evas_engines_cocoa_module_la_SOURCES = $(COCOASOURCES)
 modules_ecore_evas_engines_cocoa_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_cocoa \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_COCOA_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/gl_cocoa
 modules_ecore_evas_engines_cocoa_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_cocoa/libecore_cocoa.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_COCOA_LIBS@
+modules_ecore_evas_engines_cocoa_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_COCOA_INTERNAL_LIBS@
 modules_ecore_evas_engines_cocoa_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_cocoa_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -103,12 +94,15 @@ ecoreevasenginefbpkgdir = $(libdir)/ecore_evas/engines/fb/$(MODULE_ARCH)
 ecoreevasenginefbpkg_LTLIBRARIES = modules/ecore_evas/engines/fb/module.la
 modules_ecore_evas_engines_fb_module_la_SOURCES = $(FBSOURCES)
 modules_ecore_evas_engines_fb_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_fb \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_FB_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/fb
 modules_ecore_evas_engines_fb_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_fb/libecore_fb.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_FB_LIBS@
+modules_ecore_evas_engines_fb_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_FB_INTERNAL_LIBS@
 modules_ecore_evas_engines_fb_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_fb_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -119,12 +113,15 @@ ecoreevasenginepsl1ghtpkgdir = $(libdir)/ecore_evas/engines/psl1ght/$(MODULE_ARC
 ecoreevasenginepsl1ghtpkg_LTLIBRARIES = modules/ecore_evas/engines/psl1ght/module.la
 modules_ecore_evas_engines_psl1ght_module_la_SOURCES = $(PSL1GHTSOURCES)
 modules_ecore_evas_engines_psl1ght_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_psl1ght \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_PSL1GHT_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/psl1ght
 modules_ecore_evas_engines_psl1ght_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_psl1ght/libecore_psl1ght.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_PSL1GHT_LIBS@
+modules_ecore_evas_engines_psl1ght_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_PSL1GHT_INTERNAL_LIBS@
 modules_ecore_evas_engines_psl1ght_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_psl1ght_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -139,14 +136,17 @@ ecoreevasenginewaylandpkgdir = $(libdir)/ecore_evas/engines/wayland/$(MODULE_ARC
 ecoreevasenginewaylandpkg_LTLIBRARIES = modules/ecore_evas/engines/wayland/module.la
 modules_ecore_evas_engines_wayland_module_la_SOURCES = $(WAYLANDSOURCES)
 modules_ecore_evas_engines_wayland_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_wayland \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_WAYLAND_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_shm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
 @ECORE_WAYLAND_CFLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_wayland/libecore_wayland.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_WAYLAND_LIBS@
+modules_ecore_evas_engines_wayland_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_WAYLAND_INTERNAL_LIBS@
 modules_ecore_evas_engines_wayland_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_wayland_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -158,12 +158,15 @@ ecoreevasenginesdlpkgdir = $(libdir)/ecore_evas/engines/sdl/$(MODULE_ARCH)
 ecoreevasenginesdlpkg_LTLIBRARIES = modules/ecore_evas/engines/sdl/module.la
 modules_ecore_evas_engines_sdl_module_la_SOURCES = $(SDLSOURCES)
 modules_ecore_evas_engines_sdl_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_sdl \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_SDL_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/gl_sdl
 modules_ecore_evas_engines_sdl_module_la_LIBADD = \
-lib/ecore_evas/libecore_evas.la \
-lib/ecore_sdl/libecore_sdl.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_SDL_LIBS@
+modules_ecore_evas_engines_sdl_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_SDL_INTERNAL_LIBS@
 modules_ecore_evas_engines_sdl_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_sdl_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -175,13 +178,16 @@ ecoreevasengineswin32pkgdir = $(libdir)/ecore_evas/engines/win32/$(MODULE_ARCH)
 ecoreevasengineswin32pkg_LTLIBRARIES = modules/ecore_evas/engines/win32/module.la
 modules_ecore_evas_engines_win32_module_la_SOURCES = $(WIN32SOURCES)
 modules_ecore_evas_engines_win32_module_la_CPPFLAGS = \
-$(lib_ecore_evas_libecore_evas_la_CPPFLAGS) \
--I$(top_srcdir)/src/lib/ecore_win32 \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_WIN32_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/software_ddraw \
 -I$(top_srcdir)/src/modules/evas/engines/software_gdi
 modules_ecore_evas_engines_win32_module_la_LIBADD = \
-lib/ecore/libecore_evas.la \
-lib/ecore_win32/libecore_win32.la
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_WIN32_LIBS@
+modules_ecore_evas_engines_win32_module_la_DEPENDENCIES = \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_WIN32_INTERNAL_LIBS@
 modules_ecore_evas_engines_win32_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_evas_engines_win32_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
