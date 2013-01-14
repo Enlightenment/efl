@@ -203,9 +203,6 @@ Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
 
 static int _elm_win_count = 0;
-static int _elm_win_count_shown = 0;
-static int _elm_win_count_iconified = 0;
-static int _elm_win_count_withdrawn = 0;
 
 static Eina_Bool _elm_win_auto_throttled = EINA_FALSE;
 
@@ -216,6 +213,9 @@ _elm_win_state_eval(void *data __UNUSED__)
 {
    Eina_List *l;
    Evas_Object *obj;
+   int _elm_win_count_shown = 0;
+   int _elm_win_count_iconified = 0;
+   int _elm_win_count_withdrawn = 0;
 
    _elm_win_state_eval_job = NULL;
 
@@ -269,8 +269,16 @@ _elm_win_state_eval(void *data __UNUSED__)
           }
         else
           {
-             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) 
-                 >= _elm_win_count_shown)
+             EINA_LIST_FOREACH(_elm_win_list, l, obj)
+               {
+                  if (elm_win_withdrawn_get(obj))
+                    _elm_win_count_withdrawn++;
+                  else if (elm_win_iconified_get(obj))
+                    _elm_win_count_iconified++;
+                  else if (evas_object_visible_get(obj))
+                    _elm_win_count_shown++;
+               }
+             if (_elm_win_count_shown <= 0)
                {
                   if (!_elm_win_auto_throttled)
                     {
@@ -939,9 +947,6 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    obj = sd->obj;
 
-   if (sd->withdrawn) _elm_win_count_withdrawn--;
-   if (sd->iconified) _elm_win_count_iconified--;
-
    if (sd->withdrawn != ecore_evas_withdrawn_get(sd->ee))
      {
         sd->withdrawn = ecore_evas_withdrawn_get(sd->ee);
@@ -972,9 +977,6 @@ _elm_win_state_change(Ecore_Evas *ee)
    profile = ecore_evas_window_profile_get(sd->ee);
    ch_profile = _elm_win_profile_set(sd, profile);
 
-   if (sd->withdrawn) _elm_win_count_withdrawn++;
-   if (sd->iconified) _elm_win_count_iconified++;
-   
    _elm_win_state_eval_queue();
 
    if ((ch_withdrawn) || (ch_iconified))
@@ -1197,10 +1199,7 @@ _elm_win_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Win_Smart_Data *sd = _pd;
 
    if (!evas_object_visible_get(obj))
-     {
-        _elm_win_count_shown++;
-        _elm_win_state_eval_queue();
-     }
+     _elm_win_state_eval_queue();
    eo_do_super(obj, evas_obj_smart_show());
 
    TRAP(sd, show);
@@ -1215,10 +1214,7 @@ _elm_win_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Win_Smart_Data *sd = _pd;
 
    if (evas_object_visible_get(obj))
-     {
-        _elm_win_count_shown--;
-        _elm_win_state_eval_queue();
-     }
+     _elm_win_state_eval_queue();
    eo_do_super(obj, evas_obj_smart_hide());
 
    TRAP(sd, hide);
@@ -1433,9 +1429,6 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->autodel_clear) *(sd->autodel_clear) = -1;
 
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
-   if (sd->withdrawn) _elm_win_count_withdrawn--;
-   if (sd->iconified) _elm_win_count_iconified--;
-   if (evas_object_visible_get(obj)) _elm_win_count_shown--;
    _elm_win_count--;
    _elm_win_state_eval_queue();
 
