@@ -188,6 +188,7 @@ print_live_connection(EDBus_Connection *conn)
 EAPI int
 edbus_shutdown(void)
 {
+fprintf(stderr, "SHUTDOWN");
    if (_edbus_init_count <= 0)
      {
         ERR("Init count not greater than 0 in shutdown.");
@@ -436,9 +437,15 @@ on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending E
    EDBus_Connection_Name *cn = data;
 
    if (edbus_message_error_get(msg, NULL, NULL))
-     DBG("GetNameOwner returned an error");
+     {
+        DBG("GetNameOwner returned an error");
+        return;
+     }
    else if (!edbus_message_arguments_get(msg, "s", &unique_id))
-     ERR("Error getting arguments from GetNameOwner");
+     {
+        ERR("Error getting arguments from GetNameOwner");
+        return;
+     }
 
    cn->unique_id = eina_stringshare_add(unique_id);
    edbus_dispatch_name_owner_change(cn, NULL);
