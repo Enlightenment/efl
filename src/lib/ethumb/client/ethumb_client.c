@@ -301,6 +301,11 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
         return;
      }
 
+   if (success)
+     INF("Success connecting to Ethumb server.");
+   else
+     ERR("Could not connect to Ethumb server.");
+
    client->connect.cb(client->connect.data, client, success);
    if (client->connect.free_data)
      {
@@ -322,6 +327,7 @@ _ethumb_client_new_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
+        _ethumb_client_report_connect(client, 0);
         return;
      }
 
@@ -625,7 +631,7 @@ _ethumb_client_ethumb_setup_cb(void *data EINA_UNUSED, const EDBus_Message *msg,
 
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        ERR("Error: %s %s\n", errname, errmsg);
+        ERR("Error: %s %s", errname, errmsg);
         return;
      }
 
@@ -888,10 +894,9 @@ _ethumb_client_queue_add_cb(void *data, const EDBus_Message *msg, EDBus_Pending 
 
    client->pending_add = eina_list_remove(client->pending_add, pending);
 
-   //in case of error or when user cancel
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        ERR("Error: %s %s\n", errname, errmsg);
+        ERR("Error: %s %s", errname, errmsg);
         goto end;
      }
 
@@ -965,7 +970,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
 static void
 _ethumb_client_queue_remove_cb(void *data, const EDBus_Message *msg, EDBus_Pending *edbus_pending EINA_UNUSED)
 {
-   Eina_Bool success;
+   Eina_Bool success = EINA_FALSE;
    struct _ethumb_pending_remove *pending = data;
    Ethumb_Client *client = pending->client;
    const char *errname, *errmsg;
@@ -974,7 +979,7 @@ _ethumb_client_queue_remove_cb(void *data, const EDBus_Message *msg, EDBus_Pendi
 
    if (edbus_message_error_get(msg, &errname, &errmsg))
      {
-        ERR("Error: %s %s\n", errname, errmsg);
+        ERR("Error: %s %s", errname, errmsg);
         goto end;
      }
 
