@@ -3099,7 +3099,7 @@ _edje_embryo_fn_external_param_get_str(Embryo_Program *ep, Embryo_Cell *params)
      {
 	char *tmp = alloca(dst_len);
 	memcpy(tmp, eep.s, dst_len - 1);
-	tmp[dst_len] = '\0';
+	tmp[dst_len-1] = '\0';
 	SETSTR(tmp, params[3]);
      }
    return 1;
