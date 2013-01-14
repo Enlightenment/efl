@@ -75,7 +75,6 @@ group { name: "elm/fileselector/base/default";
          description { state: "default" 0.0;
             align: 1.0 0.0;
             min: 10 10;
-            fixed: 1 1;
             rel1 {
                to_y: "elm.swallow.home";
                relative: 0.0 1.0;
