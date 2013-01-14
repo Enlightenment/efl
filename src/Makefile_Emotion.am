@@ -146,7 +146,10 @@ emotionmodulegenericdir = $(libdir)/emotion/modules/generic/$(MODULE_ARCH)
 emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
 modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
 modules_emotion_generic_module_la_CPPFLAGS = \
-$(EMOTION_COMMON_CPPFLAGS)
+$(EMOTION_COMMON_CPPFLAGS) \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"
 modules_emotion_generic_module_la_LIBADD = \
 $(EMOTION_COMMON_USER_LIBADD)
 modules_emotion_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
