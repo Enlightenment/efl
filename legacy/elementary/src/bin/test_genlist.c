@@ -2470,7 +2470,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
    Testitem *tit = data;
    char buf[PATH_MAX];
 
-   // "edit_default" EDC layout is like below. each part is swallow part.
+   // "edit" EDC layout is like below. each part is swallow part.
    // the existing item is swllowed to elm.swallow.edit.content part.
    // --------------------------------------------------------------------
    // | elm.edit.icon.1 | elm.swallow.decorate.content | elm.edit.icon,2 |
