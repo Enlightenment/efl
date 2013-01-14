@@ -727,7 +727,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
    {
       unsigned char *d, *comp;
-      int *header, *bigend_data, ret, ok = 1;
+      int *header, *bigend_data = NULL, ret, ok = 1;
       uLongf buflen = 0;
 
       buflen = (((w * h * 101) / 100) + 3) * 4;
@@ -736,7 +736,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
       if (_eet_image_words_bigendian)
         {
-           int i;
+           unsigned int i;
 
            bigend_data = (int *) malloc(w * h * 4);
            if (!bigend_data) return NULL;
