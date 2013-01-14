@@ -273,10 +273,11 @@ _ethumb_client_name_owner_changed(void *context, const char *bus EINA_UNUSED, co
           return;
 
         client->connected = EINA_TRUE;
+        INF("Server connected");
         _ethumb_client_call_new(client);
         return;
      }
-   ERR("server exit!!!");
+   INF("Server disconnected");
    client->connected = EINA_FALSE;
    if (client->die.cb)
      {
