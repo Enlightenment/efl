@@ -8950,6 +8950,100 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
    return EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(text[cur->pos]);
 }
 
+EAPI Eina_Bool
+evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype)
+{
+   const Evas_Textblock_Cursor *dir_cur;
+   Evas_Textblock_Cursor cur2;
+   if (!cur) return EINA_FALSE;
+   Evas_Object_Textblock *o = eo_data_get(cur->obj, MY_CLASS);
+   if (!o->formatted.valid) _relayout(cur->obj);
+
+   dir_cur = cur;
+   if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
+     {
+        evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
+        return EINA_FALSE;
+     }
+   else
+     {
+        Evas_Object_Textblock_Line *ln = NULL;
+        Evas_Object_Textblock_Item *it = NULL;
+        _find_layout_item_match(cur, &ln, &it);
+        if (ln && it)
+          {
+             if (cw) *cw = 0;
+             if (cw2) *cw2 = 0;
+             /* If we are at the start or the end of the item there's a chance
+              * we'll want a split cursor.
+              * FIXME: Handle the last char of the last paragraph.
+              * FIXME: Handle multiple items of the same direction.
+              * FIXME: Handle items across different lines.. */
+             if (cur->pos == it->text_pos)
+               {
+                  Evas_BiDi_Direction itdir = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                     _ITEM_TEXT(it)->text_props.bidi_dir : _ITEM_FORMAT(it)->bidi_dir;
+                  Evas_Object_Textblock_Item *previt = NULL;
+                  Evas_BiDi_Direction previtdir = EVAS_BIDI_DIRECTION_NEUTRAL;
+                  /* Get the logically previous item. */
+                    {
+                       Eina_List *itr;
+                       Evas_Object_Textblock_Item *ititr;
+                       EINA_LIST_FOREACH(ln->par->logical_items, itr, ititr)
+                         {
+                            if (ititr == it)
+                               break;
+                            previt = ititr;
+                         }
+
+                       if (previt)
+                         {
+                            previtdir = (previt->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                               _ITEM_TEXT(previt)->text_props.bidi_dir : _ITEM_FORMAT(previt)->bidi_dir;
+                         }
+                    }
+
+                  if (previt && (itdir != previtdir))
+                    {
+                       Evas_Object_Textblock_Item *curit = NULL;
+                       /* If the current dir is different than the paragraph dir
+                        * this is our item. */
+                       if (itdir != ln->par->direction)
+                         {
+                            curit = it;
+                         }
+                       else
+                         {
+                            curit = previt;
+                         }
+
+                       if (((curit == it) && (ln->par->direction == EVAS_BIDI_DIRECTION_LTR)) ||
+                          ((curit == previt) && (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)))
+                         {
+                            if (cx) *cx = ln->x + curit->x;
+                            if (cx2) *cx2 = ln->x + curit->x + curit->w;
+                         }
+                       else
+                         {
+                            if (cx) *cx = ln->x + curit->x + curit->w;
+                            if (cx2) *cx2 = ln->x + curit->x;
+                         }
+
+                       if (cy) *cy = ln->par->y + ln->y;
+                       if (ch) *ch = curit->h;
+
+                       if (cy2) *cy2 = ln->par->y + ln->y;
+                       if (ch2) *ch2 = curit->h;
+                       return EINA_TRUE;
+                    }
+               }
+          }
+     }
+
+   evas_textblock_cursor_geometry_get(cur, cx, cy, cw, ch, NULL, ctype);
+   return EINA_FALSE;
+}
+
 EAPI int
 evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {

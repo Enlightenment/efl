@@ -11628,6 +11628,11 @@ EAPI char                                    *evas_textblock_cursor_range_text_g
  */
 EAPI char                                    *evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/** FIXME: doc.
+ * The cw2 and etc are not valid if false is returned. */
+EAPI Eina_Bool
+evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype);
+
 /**
  * Returns the geometry of the cursor. Depends on the type of cursor requested.
  * This should be used instead of char_geometry_get because there are weird
