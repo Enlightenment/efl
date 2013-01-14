@@ -655,9 +655,13 @@ eet_identity_check(const void   *data_base,
      return NULL;
 
    /* Get the header */
-   magic = ntohl(header[0]);
-   sign_len = ntohl(header[1]);
-   cert_len = ntohl(header[2]);
+   memcpy(&magic,    header, sizeof(int));
+   memcpy(&sign_len, header+1, sizeof(int));
+   memcpy(&cert_len, header+2, sizeof(int));
+
+   magic = ntohl(magic);
+   sign_len = ntohl(sign_len);
+   cert_len = ntohl(cert_len);
 
    /* Verify the header */
    if (magic != EET_MAGIC_SIGN)

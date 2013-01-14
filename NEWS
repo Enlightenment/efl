@@ -109,3 +109,4 @@ Fixes:
     * Fix evas bmp loader code which deal with image size.
     * Fix not up to date clip cache for Evas_Object_Text.
     * Evas texblock: Fixed a bug with breaking after format items.
+    * Fix endianess issue in Eet_Image.

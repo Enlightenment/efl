@@ -1,3 +1,7 @@
+2013-01-14  Albin Tonerre
+
+	* Fix endianess issue in Eet_Image.
+
 2013-01-13  Boris Faure (billiob)
 
 	* Fixed condition based on uninitialized value in ecore_x_selection

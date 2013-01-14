@@ -727,13 +727,26 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
    {
       unsigned char *d, *comp;
-      int *header, ret, ok = 1;
+      int *header, *bigend_data, ret, ok = 1;
       uLongf buflen = 0;
 
       buflen = (((w * h * 101) / 100) + 3) * 4;
       ret = LZ4_compressBound((w * h * 4));
       if ((ret > 0) && ((uLongf)ret > buflen)) buflen = ret;
-      
+
+      if (_eet_image_words_bigendian)
+        {
+           int i;
+
+           bigend_data = (int *) malloc(w * h * 4);
+           if (!bigend_data) return NULL;
+
+           memcpy(bigend_data, data, w * h * 4);
+           for (i = 0; i < w * h; i++) SWAP32(bigend_data[i]);
+
+           data = (const char *) bigend_data;
+        }
+
       comp = malloc(buflen);
       if (!comp) return NULL;
 
@@ -784,6 +797,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
            unsigned int i;
            
            for (i = 0; i < 8; i++) SWAP32(header[i]);
+           free(bigend_data);
         }
 
       memcpy(d + (8 * sizeof(int)), comp, buflen);
