@@ -543,7 +543,6 @@ fstatat \
 malloc_usable_size \
 mkdirat \
 mtrace \
-openat \
 realpath \
 strlcpy
 ])
