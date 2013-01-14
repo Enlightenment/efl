@@ -537,7 +537,6 @@ AC_CHECK_FUNCS([\
 backtrace \
 backtrace_symbols \
 clearenv \
-dirfd \
 execvp \
 fpathconf \
 fstatat \
@@ -551,7 +550,7 @@ strlcpy
 
 AC_FUNC_ALLOCA
 
-EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday])
+EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday dirfd])
 
 have_atfile_source="${ac_cv_func_fstatat}"
 AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
