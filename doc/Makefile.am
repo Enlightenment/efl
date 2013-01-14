@@ -59,7 +59,7 @@ all-local:
 	echo >> images.tmp && \
 	if ! cmp "$(srcdir)/images.mk" images.tmp >/dev/null; then \
 	   echo "warning: new images added to '$(srcdir)/images.mk'"; \
-	   mv images.tmp "$(srcdir)/images.mk"; \
+	   mv -f images.tmp "$(srcdir)/images.mk"; \
 	else \
 	   rm images.tmp; \
 	fi
