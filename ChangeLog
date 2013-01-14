@@ -1,6 +1,6 @@
 2013-01-14  Daniel Willmann
 
-	* edje_embryo: Fix off-by-one error
+	* edje: Fix off-by-one errors when using alloca in various functions
 
 2013-01-14  Tom Hacohen (TAsn)
 

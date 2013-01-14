@@ -1139,7 +1139,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
                {
                   char *tmp;
 
-                  tmp = alloca(end - idx - 1);
+                  tmp = alloca(end - idx);
                   memcpy(tmp, idx + 1, end - idx - 1);
                   tmp[end - idx - 1] = '\0';
                   *idx = '\0';
