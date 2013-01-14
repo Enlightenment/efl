@@ -91,15 +91,22 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
 
    Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
-   evas_object_image_size_get(sd->view, &aw, &ah);
-   evas_object_size_hint_aspect_set
-     (sd->view, EVAS_ASPECT_CONTROL_BOTH, aw, ah);
+   if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
+     {
+        edje_object_size_min_get(sd->view, &mw, &mh);
+        edje_object_size_min_restricted_calc
+          (sd->view, &mw, &mh, mw, mh);
+        evas_object_size_hint_min_set(sd->view, mw, mh);
+     }
+   else
+     {
+        evas_object_image_size_get(sd->view, &aw, &ah);
+        evas_object_size_hint_aspect_set
+          (sd->view, EVAS_ASPECT_CONTROL_BOTH, aw, ah);
+     }
+
    elm_layout_content_set
      (wd->resize_obj, "elm.swallow.content", sd->view);
-   edje_object_size_min_get(wd->resize_obj, &mw, &mh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &mw, &mh, mw, mh);
-   evas_object_size_hint_min_set(sd->obj, mw, mh);
    eina_stringshare_replace(&(sd->thumb.file), thumb_path);
    eina_stringshare_replace(&(sd->thumb.key), thumb_key);
    elm_layout_signal_emit
@@ -746,12 +753,16 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    EINA_SAFETY_ON_TRUE_RETURN(setting >= ELM_THUMB_ANIMATION_LAST);
 
    sd->anim_setting = setting;
-   if (setting == ELM_THUMB_ANIMATION_LOOP)
-     edje_object_signal_emit(sd->view, "animate_loop", "");
-   else if (setting == ELM_THUMB_ANIMATION_START)
-     edje_object_signal_emit(sd->view, "animate", "");
-   else if (setting == ELM_THUMB_ANIMATION_STOP)
-     edje_object_signal_emit(sd->view, "animate_stop", "");
+
+   if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
+     {
+        if (setting == ELM_THUMB_ANIMATION_LOOP)
+          edje_object_signal_emit(sd->view, "animate_loop", "");
+        else if (setting == ELM_THUMB_ANIMATION_START)
+          edje_object_signal_emit(sd->view, "animate", "");
+        else if (setting == ELM_THUMB_ANIMATION_STOP)
+          edje_object_signal_emit(sd->view, "animate_stop", "");
+     }
 }
 
 EAPI Elm_Thumb_Animation_Setting
