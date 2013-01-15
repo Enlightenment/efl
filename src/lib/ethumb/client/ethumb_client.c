@@ -353,7 +353,6 @@ _ethumb_client_call_new(Ethumb_Client *client)
                                        _ethumb_dbus_path,
                                        _ethumb_dbus_interface, "new");
    edbus_connection_send(client->conn, msg, _ethumb_client_new_cb, client, -1);
-   edbus_message_unref(msg);
 }
 
 static void
@@ -822,7 +821,6 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 
    edbus_proxy_send(client->proxy, msg, _ethumb_client_ethumb_setup_cb,
                     client, -1);
-   edbus_message_unref(msg);
 }
 
 /**
@@ -962,7 +960,6 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
                                             _ethumb_client_queue_add_cb,
                                             pending, -1);
    client->pending_add = eina_list_append(client->pending_add, pending);
-   edbus_message_unref(msg);
 
    return pending->id;
 }

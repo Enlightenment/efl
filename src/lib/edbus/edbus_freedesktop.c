@@ -78,6 +78,5 @@ edbus_object_managed_objects_get(EDBus_Object *obj, EDBus_Message_Cb cb, const v
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
                                       "GetManagedObjects");
    p = edbus_object_send(obj, msg, cb, data, -1);
-   edbus_message_unref(msg);
    return p;
 }

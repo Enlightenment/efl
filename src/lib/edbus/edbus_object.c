@@ -648,7 +648,6 @@ edbus_object_peer_ping(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data)
    EDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER, "Ping");
    p = edbus_object_send(obj, msg, cb, data, -1);
-   edbus_message_unref(msg);
    return p;
 }
 
@@ -661,7 +660,6 @@ edbus_object_peer_machine_id_get(EDBus_Object *obj, EDBus_Message_Cb cb, const v
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTEFACE_PEER,
                                       "GetMachineId");
    p = edbus_object_send(obj, msg, cb, data, -1);
-   edbus_message_unref(msg);
    return p;
 }
 
@@ -674,6 +672,5 @@ edbus_object_introspect(EDBus_Object *obj, EDBus_Message_Cb cb, const void *data
    msg = edbus_object_method_call_new(obj, EDBUS_FDO_INTERFACE_INTROSPECTABLE,
                                       "Introspect");
    p = edbus_object_send(obj, msg, cb, data, -1);
-   edbus_message_unref(msg);
    return p;
 }

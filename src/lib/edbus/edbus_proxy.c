@@ -539,7 +539,6 @@ edbus_proxy_method_call_new(EDBus_Proxy *proxy, const char *member)
 static EDBus_Pending *
 _edbus_proxy_vcall(EDBus_Proxy *proxy, const char *member, EDBus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, va_list ap)
 {
-   EDBus_Pending *pending;
    EDBus_Message *msg = edbus_proxy_method_call_new(proxy, member);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
@@ -550,9 +549,7 @@ _edbus_proxy_vcall(EDBus_Proxy *proxy, const char *member, EDBus_Message_Cb cb, 
         return NULL;
      }
 
-   pending = _edbus_proxy_send(proxy, msg, cb, cb_data, timeout);
-   edbus_message_unref(msg);
-   return pending;
+   return _edbus_proxy_send(proxy, msg, cb, cb_data, timeout);
 }
 
 EAPI EDBus_Pending *
@@ -628,7 +625,6 @@ edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, const char *sig, 
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *iter, *variant;
-   EDBus_Pending *pending;
 
    EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
@@ -653,10 +649,7 @@ edbus_proxy_property_set(EDBus_Proxy *proxy, const char *name, const char *sig, 
      }
    edbus_message_iter_container_close(iter, variant);
 
-   pending = edbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
-   edbus_message_unref(msg);
-
-   return pending;
+   return edbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
 }
 
 EAPI EDBus_Pending *

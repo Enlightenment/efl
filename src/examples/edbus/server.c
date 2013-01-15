@@ -130,7 +130,6 @@ _resp_async(void *data)
    EDBus_Message *msg = data;
    edbus_message_arguments_append(msg, "s", "Async test ok");
    edbus_connection_send(conn, msg, NULL, NULL, -1);
-   edbus_message_unref(msg);
    return ECORE_CALLBACK_CANCEL;
 }
 

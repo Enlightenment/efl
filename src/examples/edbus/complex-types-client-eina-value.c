@@ -291,14 +291,12 @@ main(void)
    msg = edbus_proxy_method_call_new(proxy, "ReceiveArrayOfStringIntWithSize");
    _fill_receive_array_of_string_int_with_size(msg, size_of_array, array_string);
    edbus_proxy_send(proxy, msg, on_receive_array_with_size, NULL, -1);
-   edbus_message_unref(msg);
 
    edbus_proxy_call(proxy, "SendArray", on_send_array, NULL, -1 , "");
 
    msg = edbus_proxy_method_call_new(proxy, "PlusOne");
    _fill_plus_one(msg, 14);
    edbus_proxy_send(proxy, msg, on_plus_one, NULL, -1);
-   edbus_message_unref(msg);
 
    edbus_proxy_event_callback_add(proxy,
                                   EDBUS_PROXY_EVENT_PROPERTY_CHANGED,

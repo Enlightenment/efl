@@ -729,11 +729,13 @@ _iface_changed_send(void *data)
              ERR("msg == NULL");
              continue;
           }
+
         main_iter = edbus_message_iter_get(msg);
         edbus_message_iter_arguments_append(main_iter, "oa{sa{sv}}",
-                                         iface->obj->path, &array_iface);
+                                            iface->obj->path, &array_iface);
         if (!_propmgr_iface_props_append(iface, array_iface))
           goto error;
+
         EINA_LIST_FOREACH_SAFE(parent->iface_added, l, l2, next_iface)
           {
              if (iface->obj->path != next_iface->obj->path)
@@ -747,6 +749,7 @@ _iface_changed_send(void *data)
         edbus_message_iter_container_close(main_iter, array_iface);
         edbus_connection_send(parent->conn, msg, NULL, NULL, -1);
         continue;
+
 error:
         ERR("Error appending InterfacesAdded to msg.");
         edbus_message_unref(msg);
@@ -770,7 +773,7 @@ error:
         main_iter = edbus_message_iter_get(msg);
 
         edbus_message_iter_arguments_append(main_iter, "oas", iface_data->obj_path,
-                                         &array_iface);
+                                            &array_iface);
         edbus_message_iter_basic_append(array_iface, 's', iface_data->iface);
 
         EINA_LIST_FOREACH_SAFE(parent->iface_removed, l, l2, iface_data_next)
@@ -1196,7 +1199,6 @@ _object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_d
    if (!reply) return DBUS_HANDLER_RESULT_HANDLED;
 
    _edbus_connection_send(obj->conn, reply, NULL, NULL, -1);
-   edbus_message_unref(reply);
 
    return DBUS_HANDLER_RESULT_HANDLED;
 }
@@ -1259,7 +1261,6 @@ edbus_service_signal_send(const EDBus_Service_Interface *iface, EDBus_Message *s
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(signal_msg, EINA_FALSE);
    _edbus_connection_send(iface->obj->conn, signal_msg, NULL, NULL, -1);
-   edbus_message_unref(signal_msg);
    return EINA_TRUE;
 }
 

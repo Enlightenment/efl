@@ -878,7 +878,6 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
     edbus_message_iter_basic_append(array_of_string, 's', path);
     edbus_message_iter_container_close(iter, array_of_string);
     edbus_proxy_send(proxy, msg, NULL, NULL, -1);
-    edbus_message_unref(msg);
     free(path);
 }
 
@@ -898,7 +897,6 @@ efreet_cache_icon_exts_add(Eina_List *exts)
         edbus_message_iter_basic_append(array_of_string, 's', ext);
     edbus_message_iter_container_close(iter, array_of_string);
     edbus_proxy_send(proxy, msg, NULL, NULL, -1);
-    edbus_message_unref(msg);
 }
 
 void
@@ -917,7 +915,6 @@ efreet_cache_icon_dirs_add(Eina_List *dirs)
         edbus_message_iter_basic_append(array_of_string, 's', dir);
     edbus_message_iter_container_close(iter, array_of_string);
     edbus_proxy_send(proxy, msg, NULL, NULL, -1);
-    edbus_message_unref(msg);
 }
 
 void

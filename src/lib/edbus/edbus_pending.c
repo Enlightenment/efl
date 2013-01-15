@@ -103,17 +103,22 @@ edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message_
    return pending;
 }
 
+/*
+ * On success @param msg is unref'd or its ref is stolen by the returned
+ * EDBus_Pending.
+ */
 EDBus_Pending *
 _edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message_Cb cb, const void *cb_data, double timeout)
 {
    EDBus_Pending *pending;
    EDBus_Message *error_msg;
    DBG("conn=%p, msg=%p, cb=%p, cb_data=%p, timeout=%f",
-          conn, msg, cb, cb_data, timeout);
+       conn, msg, cb, cb_data, timeout);
 
    if (!cb)
      {
         dbus_connection_send(conn->dbus_conn, msg->dbus_msg, NULL);
+        edbus_message_unref(msg);
         return NULL;
      }
 
@@ -127,7 +132,10 @@ _edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message
    pending->interface = eina_stringshare_add(dbus_message_get_interface(msg->dbus_msg));
    pending->method = eina_stringshare_add(dbus_message_get_member(msg->dbus_msg));
    pending->path = eina_stringshare_add(dbus_message_get_path(msg->dbus_msg));
-   pending->msg_sent = edbus_message_ref(msg);
+
+   /* Steal the reference */
+   pending->msg_sent = msg;
+
    EINA_MAGIC_SET(pending, EDBUS_PENDING_MAGIC);
 
    if (!dbus_connection_send_with_reply(conn->dbus_conn,

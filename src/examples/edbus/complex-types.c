@@ -211,7 +211,6 @@ main(void)
    edbus_message_iter_container_close(iter, array_of_string);
    pending = edbus_proxy_send(test2_proxy, msg, on_receive_array, NULL, -1);
    if (!pending) printf("Error in edbus_proxy_send()\n\n");
-   edbus_message_unref(msg);
 
    msg = edbus_proxy_method_call_new(test2_proxy, "ReceiveArrayOfStringIntWithSize");
    iter = edbus_message_iter_get(msg);
@@ -226,7 +225,6 @@ main(void)
      }
    edbus_message_iter_container_close(iter, array_of_string);
    pending = edbus_proxy_send(test2_proxy, msg, on_receive_array_with_size, NULL, -1);
-   edbus_message_unref(msg);
 
    msg = edbus_proxy_method_call_new(test2_proxy, "SendVariantData");
    iter = edbus_message_iter_get(msg);
@@ -234,7 +232,6 @@ main(void)
    edbus_message_iter_basic_append(variant, 's', "test");
    edbus_message_iter_container_close(iter, variant);
    pending = edbus_proxy_send(test2_proxy, msg, on_send_variant, NULL, -1);
-   edbus_message_unref(msg);
 
    msg = edbus_proxy_method_call_new(test2_proxy, "DoubleContainner");
    iter = edbus_message_iter_get(msg);
@@ -260,7 +257,6 @@ main(void)
      }
    edbus_message_iter_container_close(iter, array_itr);
    edbus_proxy_send(test2_proxy, msg, NULL, NULL, -1);
-   edbus_message_unref(msg);
 
    pending = edbus_proxy_call(test2_proxy, "SendArrayInt", on_send_array_int, NULL,
                                  -1 , "");
