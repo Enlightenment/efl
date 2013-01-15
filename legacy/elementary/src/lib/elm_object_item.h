@@ -109,6 +109,38 @@ EAPI const char                  *elm_object_item_part_text_get(const Elm_Object
 EAPI void                         elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt);
 
 /**
+ * @brief Register object item as an accessible object.
+ * @since 1.8
+ *
+ * @param item The elementary object item
+ * @return Accessible object of the object item or NULL for any error
+ *
+ * @ingroup General
+ */
+EAPI Evas_Object                 *elm_object_item_access_register(Elm_Object_Item *item);
+
+/**
+ * @brief Unregister accessible object of the object item.
+ * @since 1.8
+ *
+ * @param item The elementary object item
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_access_unregister(Elm_Object_Item *item);
+
+/**
+ * @brief Get an accessible object of the object item.
+ * @since 1.8
+ *
+ * @param item The elementary object item
+ * @return Accessible object of the object item or NULL for any error
+ *
+ * @ingroup General
+ */
+EAPI Evas_Object                 *elm_object_item_access_object_get(const Elm_Object_Item *item);
+
+/**
  * Get the data associated with an object item
  * @param it The Elementary object item
  * @return The data associated with @p it

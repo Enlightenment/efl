@@ -1534,6 +1534,33 @@ elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
    _elm_widget_item_access_info_set((Elm_Widget_Item *)it, txt);
 }
 
+EAPI Evas_Object *
+elm_object_item_access_register(Elm_Object_Item *item)
+{
+   Elm_Widget_Item *it;
+
+   it = (Elm_Widget_Item *)item;
+
+   _elm_access_widget_item_register(it);
+
+   if (it) return it->access_obj;
+   return NULL;
+}
+
+EAPI void
+elm_object_item_access_unregister(Elm_Object_Item *item)
+{
+   _elm_access_widget_item_unregister((Elm_Widget_Item *)item);
+}
+
+EAPI Evas_Object *
+elm_object_item_access_object_get(const Elm_Object_Item *item)
+{
+   if (!item) return NULL;
+
+   return ((Elm_Widget_Item *)item)->access_obj;
+}
+
 EAPI void *
 elm_object_item_data_get(const Elm_Object_Item *it)
 {

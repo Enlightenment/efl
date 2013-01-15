@@ -277,7 +277,7 @@ _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text)
 }
 
 EAPI void
-_elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb func, const void *data)
+_elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data)
 {
    Elm_Access_Item *ai = _access_add_set(ac, type);
    if (!ai) return;
@@ -768,33 +768,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 EAPI Evas_Object *
-elm_access_object_item_register(Elm_Object_Item *item)
-{
-   Elm_Widget_Item *it;
-
-   it = (Elm_Widget_Item *)item;
-
-   _elm_access_widget_item_register(it);
-
-   if (it) return it->access_obj;
-   return NULL;
-}
-
-EAPI void
-elm_access_object_item_unregister(Elm_Object_Item *item)
-{
-   _elm_access_widget_item_unregister((Elm_Widget_Item *)item);
-}
-
-EAPI Evas_Object *
-elm_access_object_item_access_get(const Elm_Object_Item *item)
-{
-   if (!item) return NULL;
-
-   return ((Elm_Widget_Item *)item)->access_obj;
-}
-
-EAPI Evas_Object *
 elm_access_object_register(Evas_Object *obj, Evas_Object *parent)
 {
    return _access_object_register(obj, parent);
@@ -813,20 +786,20 @@ elm_access_object_access_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_access_text_set(Evas_Object *obj, int type, const char *text)
+elm_access_info_set(Evas_Object *obj, int type, const char *text)
 {
    _elm_access_text_set(_elm_access_object_get(obj), type, text);
 }
 
 EAPI char *
-elm_access_text_get(const Evas_Object *obj, int type)
+elm_access_info_get(const Evas_Object *obj, int type)
 {
    return _elm_access_text_get(_elm_access_object_get(obj), type, obj);
 }
 
 EAPI void
-elm_access_content_cb_set(Evas_Object *obj, int type,
-                          Elm_Access_Content_Cb func, const void *data)
+elm_access_info_cb_set(Evas_Object *obj, int type,
+                          Elm_Access_Info_Cb func, const void *data)
 {
    _elm_access_callback_set(_elm_access_object_get(obj), type, func, data);
 }
