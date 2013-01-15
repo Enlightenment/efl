@@ -1227,7 +1227,7 @@ evas_object_map_update(Evas_Object *eo_obj,
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;
    pt = pts;
-             
+
    pts[0].px = obj->cur.map->persp.px << FP;
    pts[0].py = obj->cur.map->persp.py << FP;
    pts[0].foc = obj->cur.map->persp.foc << FP;
@@ -1241,8 +1241,10 @@ evas_object_map_update(Evas_Object *eo_obj,
         pt->fx = p->px;
         pt->fy = p->py;
         pt->fz = p->z;
-        pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
-        pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
+        if (uvw == 0) pt->u = 0;
+        else pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
+        if (uvh == 0) pt->v = 0;
+        else pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
         if      (pt->u < 0) pt->u = 0;
         else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
         if      (pt->v < 0) pt->v = 0;
