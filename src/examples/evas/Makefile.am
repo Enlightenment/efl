@@ -95,7 +95,7 @@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/ecore_file/libecore_file.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
-$(top_builddir)/src/lib/ecore_imf/libecore_imf_evas.la \
+$(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
 $(top_builddir)/src/lib/embryo/libembryo.la \
 $(top_builddir)/src/lib/edje/libedje.la \
 @EVAS_LDFLAGS@

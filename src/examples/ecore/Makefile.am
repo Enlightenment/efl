@@ -6,8 +6,10 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
+-I$(top_srcdir)/src/lib/ecore_input_evas \
 -I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_imf \
+-I$(top_srcdir)/src/lib/ecore_imf_evas \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_audio \
@@ -17,7 +19,9 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_file \
 -I$(top_builddir)/src/lib/ecore_input \
+-I$(top_builddir)/src/lib/ecore_input_evas \
 -I$(top_builddir)/src/lib/ecore_imf \
+-I$(top_builddir)/src/lib/ecore_imf_evas \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_audio \
@@ -181,7 +185,7 @@ ecore_idler_example_LDADD = $(ECORE_COMMON_LDADD)
 ecore_imf_example_SOURCES = ecore_imf_example.c
 ecore_imf_example_LDADD = $(ECORE_COMMON_LDADD) \
 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
-$(top_builddir)/src/lib/ecore_imf/libecore_imf_evas.la \
+$(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 
 
