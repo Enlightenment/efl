@@ -196,8 +196,6 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
    edbus_message_iter_arguments_append(iter, "i", timeout);
 
    edbus_proxy_send(_elm_sysnotif_proxy, msg, _notify_cb, data, -1);
-
-   edbus_message_unref(msg);
    free(desk_free);
    free(body_free);
    return;

@@ -895,7 +895,6 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj)
    edbus_message_arguments_append(msg, "uo", (unsigned)xid,
                                   obj_path);
    edbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
-   edbus_message_unref(msg);
    sd->dbus_menu->xid = xid;
 }
 
@@ -919,7 +918,6 @@ _elm_dbus_menu_app_menu_unregister(Eo *obj)
                                        REGISTRAR_INTERFACE, "UnregisterWindow");
    edbus_message_arguments_append(msg, "u", (unsigned)sd->dbus_menu->xid);
    edbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
-   edbus_message_unref(msg);
    sd->dbus_menu->xid = 0;
 }
 
