@@ -274,7 +274,7 @@ _port_indicator_connect_cb(void *data)
         sd->port_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-   rot = (int) evas_object_data_get(sd->portrait_indicator, CONFORMANT_KEY);
+   rot = (intptr_t) evas_object_data_get(sd->portrait_indicator, CONFORMANT_KEY);
    indicator_serv_name = elm_config_indicator_service_get(rot);
    if (!indicator_serv_name)
      {
@@ -305,7 +305,7 @@ _land_indicator_connect_cb(void *data)
         sd->land_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-   rot = (int) evas_object_data_get(sd->landscape_indicator, CONFORMANT_KEY);
+   rot = (intptr_t) evas_object_data_get(sd->landscape_indicator, CONFORMANT_KEY);
    indicator_serv_name = elm_config_indicator_service_get(rot);
    if (!indicator_serv_name)
      {
@@ -532,7 +532,7 @@ _on_rotation_changed(void *data,
         if (!sd->landscape_indicator) return;
 
         evas_object_show(sd->landscape_indicator);
-        evas_object_data_set(sd->landscape_indicator, CONFORMANT_KEY, (void *) rot);
+        evas_object_data_set(sd->landscape_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
         elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
      }
    else
@@ -543,7 +543,7 @@ _on_rotation_changed(void *data,
         if (!sd->portrait_indicator) return;
 
         evas_object_show(sd->portrait_indicator);
-        evas_object_data_set(sd->portrait_indicator, CONFORMANT_KEY, (void *) rot);
+        evas_object_data_set(sd->portrait_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
         elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
      }
 }
