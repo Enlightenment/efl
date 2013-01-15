@@ -177,13 +177,13 @@ _evas_async_events_process_single(void)
 EAPI int
 evas_async_events_process(void)
 {
-   int count = 0;
+   int nr, count = 0;
 
    if (_fd_read == -1) return 0;
 
    _evas_async_events_fork_handle();
 
-   while (_evas_async_events_process_single() > 0) count++;
+   while ((nr = _evas_async_events_process_single()) > 0) count += nr;
 
    evas_cache_image_wakeup();
 
