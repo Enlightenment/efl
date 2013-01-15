@@ -22,15 +22,15 @@ noinst_HEADERS += \
 static_libs/libunibreak/linebreak.h \
 static_libs/libunibreak/linebreakdef.h \
 static_libs/libunibreak/wordbreakdef.h \
-static_libs/libunibreak/wordbreak.h
+static_libs/libunibreak/wordbreak.h \
+static_libs/libunibreak/wordbreakdata.c
 
 # Linebreak
 lib_evas_libevas_la_SOURCES = \
 static_libs/libunibreak/linebreak.c \
 static_libs/libunibreak/linebreakdata.c \
 static_libs/libunibreak/linebreakdef.c \
-static_libs/libunibreak/wordbreak.c \
-static_libs/libunibreak/wordbreakdata.c
+static_libs/libunibreak/wordbreak.c
 
 # Main
 lib_evas_libevas_la_SOURCES += \
