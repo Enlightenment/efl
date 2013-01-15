@@ -277,6 +277,8 @@ Makefile.in
 /src/tests/emotion/emotion_test
 /src/tests/ecore/ecore_suite
 /src/tests/edbus/edbus_suite
+/src/tests/edbus/edbus_suite.log
+/src/tests/edbus/edbus_suite.trs
 /src/tests/edje/edje_suite
 /src/tests/eet/eet_suite
 /src/tests/eeze/eeze_suite
