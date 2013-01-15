@@ -2250,7 +2250,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do(o, evas_obj_box_option_property_vset(opt, property, &args, &ret));
+   eo_do(o, evas_obj_box_option_property_vset(opt, property, (va_list *) &args, &ret));
    return ret;
 }
 
@@ -2281,7 +2281,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)o, evas_obj_box_option_property_vget(opt, property, &args, &ret));
+   eo_do((Eo *)o, evas_obj_box_option_property_vget(opt, property, (va_list *) &args, &ret));
    return ret;
 }
 
