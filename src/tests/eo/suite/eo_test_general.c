@@ -501,7 +501,7 @@ START_TEST(eo_generic_data)
 
    eo_do(obj, eo_base_data_set("test1", (void *) 1, NULL));
    eo_do(obj, eo_base_data_get("test1", &data));
-   fail_if(1 != (int) data);
+   fail_if(1 != (intptr_t) data);
    eo_do(obj, eo_base_data_del("test1"));
    eo_do(obj, eo_base_data_get("test1", &data));
    fail_if(data);
@@ -509,18 +509,18 @@ START_TEST(eo_generic_data)
    eo_do(obj, eo_base_data_set("test1", (void *) 1, NULL));
    eo_do(obj, eo_base_data_set("test2", (void *) 2, NULL));
    eo_do(obj, eo_base_data_get("test1", &data));
-   fail_if(1 != (int) data);
+   fail_if(1 != (intptr_t) data);
    eo_do(obj, eo_base_data_get("test2", &data));
-   fail_if(2 != (int) data);
+   fail_if(2 != (intptr_t) data);
 
    eo_do(obj, eo_base_data_get("test2", &data));
-   fail_if(2 != (int) data);
+   fail_if(2 != (intptr_t) data);
    eo_do(obj, eo_base_data_del("test2"));
    eo_do(obj, eo_base_data_get("test2", &data));
    fail_if(data);
 
    eo_do(obj, eo_base_data_get("test1", &data));
-   fail_if(1 != (int) data);
+   fail_if(1 != (intptr_t) data);
    eo_do(obj, eo_base_data_del("test1"));
    eo_do(obj, eo_base_data_get("test1", &data));
    fail_if(data);
