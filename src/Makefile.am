@@ -75,7 +75,7 @@ examples/edje \
 examples/emotion \
 examples/ethumb_client
 if ALWAYS_BUILD_EXAMPLES
-SUBDIRS += $(EXAMPLES_SUBDIRS)
+SUBDIRS += . $(EXAMPLES_SUBDIRS)
 else
 DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 endif
