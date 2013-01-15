@@ -2708,7 +2708,7 @@ fi
 have_ecore_imf_ibus="no"
 if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; then
    PKG_CHECK_MODULES([IBUS],
-      [ibus-1.0 >= 1.4 glib-2.0 evas ecore-x ecore-evas],
+      [ibus-1.0 >= 1.4 glib-2.0],
       [
        have_ecore_imf_ibus="yes"
        AC_DEFINE([BUILD_ECORE_IMF_IBUS], [1], [Ecore Imf IBUS Support])
@@ -2722,7 +2722,7 @@ AM_CONDITIONAL([BUILD_ECORE_IMF_IBUS], [test "x${have_ecore_imf_ibus}" = "xyes"]
 
 if test "x${want_ecore_imf_scim}" = "xyes" ; then
    PKG_CHECK_MODULES([SCIM],
-      [scim ecore-x ecore-evas],
+      [scim],
       [
        have_ecore_imf_scim="yes"
        AC_DEFINE([BUILD_ECORE_IMF_SCIM], [1], [Ecore Imf SCIM Support])

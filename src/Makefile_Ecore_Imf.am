@@ -49,11 +49,18 @@ modules/ecore_imf/ibus/ibus_imcontext.c \
 modules/ecore_imf/ibus/ibus_imcontext.h
 modules_ecore_imf_ibus_module_la_CPPFLAGS = \
 @ECORE_IMF_CFLAGS@ \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
 @IBUS_CFLAGS@
 modules_ecore_imf_ibus_module_la_LIBADD = \
 @USE_ECORE_IMF_LIBS@ \
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_X_LIBS@ \
 @IBUS_LIBS@
-modules_ecore_imf_ibus_module_la_DEPENDENCIES = @USE_ECORE_IMF_INTERNAL_LIBS@
+modules_ecore_imf_ibus_module_la_DEPENDENCIES = \
+@USE_ECORE_IMF_INTERNAL_LIBS@ \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@
 modules_ecore_imf_ibus_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_imf_ibus_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -69,11 +76,18 @@ modules/ecore_imf/scim/scim_imcontext.cpp \
 modules/ecore_imf/scim/scim_imcontext.h
 modules_ecore_imf_scim_module_la_CPPFLAGS = \
 @ECORE_IMF_CFLAGS@ \
+@ECORE_EVAS_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
 @SCIM_CFLAGS@
 modules_ecore_imf_scim_module_la_LIBADD = \
 @USE_ECORE_IMF_LIBS@ \
+@USE_ECORE_EVAS_LIBS@ \
+@USE_ECORE_X_LIBS@ \
 @SCIM_LIBS@
-modules_ecore_imf_scim_module_la_DEPENDENCIES = @USE_ECORE_IMF_INTERNAL_LIBS@
+modules_ecore_imf_scim_module_la_DEPENDENCIES = \
+@USE_ECORE_IMF_INTERNAL_LIBS@ \
+@USE_ECORE_EVAS_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@
 modules_ecore_imf_scim_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_imf_scim_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
