@@ -1,3 +1,8 @@
+2013-01-15  Paulo Alcantara (pcacjr)
+
+	* Evas engines: Introduce multi_font_draw() function
+	* Evas textgrid: Change render to support multi_font_draw()
+
 2013-01-15  Tom Hacohen (TAsn)
 
 	* Evas textblock: Fixed issue and simplified cursor_geometry_get.

@@ -239,6 +239,21 @@ evas_common_font_glyphs_unref(Evas_Glyph_Array *array)
    free(array);
 }
 
+void
+evas_common_font_fonts_ref(Evas_Font_Array *array)
+{
+   array->refcount++;
+}
+
+void
+evas_common_font_fonts_unref(Evas_Font_Array *array)
+{
+   if (--array->refcount) return;
+
+   eina_inarray_free(array->array);
+   free(array);
+}
+
 EAPI void
 evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {

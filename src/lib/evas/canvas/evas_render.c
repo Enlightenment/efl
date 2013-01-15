@@ -1843,6 +1843,14 @@ _drop_glyph_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_drop_texts_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+   evas_common_font_fonts_unref(data);
+
+   return EINA_TRUE;
+}
+
 static void
 evas_render_wakeup(Evas *eo_e)
 {
@@ -1887,6 +1895,8 @@ evas_render_wakeup(Evas *eo_e)
    eina_array_clean(&e->image_unref_queue);
    eina_array_foreach(&e->glyph_unref_queue, _drop_glyph_ref, NULL);
    eina_array_clean(&e->glyph_unref_queue);
+   eina_array_foreach(&e->texts_unref_queue, _drop_texts_ref, NULL);
+   eina_array_clean(&e->texts_unref_queue);
 
    up_cb = e->render.updates_cb;
    up_data = e->render.data;
@@ -2170,6 +2180,12 @@ void
 evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph)
 {
    eina_array_push(&pd->glyph_unref_queue, glyph);
+}
+
+void
+evas_unref_queue_texts_put(Evas_Public_Data *pd, void *texts)
+{
+   eina_array_push(&pd->texts_unref_queue, texts);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

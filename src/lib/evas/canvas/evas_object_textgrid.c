@@ -23,8 +23,8 @@ typedef struct _Evas_Object_Textgrid_Row   Evas_Object_Textgrid_Row;
 typedef struct _Evas_Object_Textgrid_Rect  Evas_Object_Textgrid_Rect;
 typedef struct _Evas_Object_Textgrid_Text  Evas_Object_Textgrid_Text;
 typedef struct _Evas_Object_Textgrid_Line  Evas_Object_Textgrid_Line;
-typedef struct _Evas_Textgrid_Hash_Master Evas_Textgrid_Hash_Master;
-typedef struct _Evas_Textgrid_Hash_Glyphs Evas_Textgrid_Hash_Glyphs;
+typedef struct _Evas_Textgrid_Hash_Master  Evas_Textgrid_Hash_Master;
+typedef struct _Evas_Textgrid_Hash_Glyphs  Evas_Textgrid_Hash_Glyphs;
 
 struct _Evas_Textgrid_Hash_Master
 {
@@ -370,7 +370,7 @@ static void
 evas_object_textgrid_row_clear(Evas_Object_Textgrid *o, Evas_Object_Textgrid_Row *r)
 {
    int i;
-   
+
    if (r->rects)
      {
         free(r->rects);
@@ -480,7 +480,7 @@ evas_object_textgrid_row_rect_append(Evas_Object_Textgrid_Row *row, int x, int w
    if (row->rects_num > row->rects_alloc)
      {
         Evas_Object_Textgrid_Rect *t;
-        
+
         row->rects_alloc += 8; // dont expect many rects per line
         t = realloc(row->rects, sizeof(Evas_Object_Textgrid_Rect) * row->rects_alloc);
         if (!t)
@@ -501,11 +501,13 @@ evas_object_textgrid_row_rect_append(Evas_Object_Textgrid_Row *row, int x, int w
 static void
 evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row, Evas_Object *eo_obj, Evas_Object_Textgrid *o, int x, Eina_Unicode codepoint, int r, int g, int b, int a)
 {
+   unsigned int text_props_index;
+
    row->texts_num++;
    if (row->texts_num > row->texts_alloc)
      {
         Evas_Object_Textgrid_Text *t;
-        
+
         row->texts_alloc += 32; // expect more text per line
         t = realloc(row->texts, sizeof(Evas_Object_Textgrid_Text) * row->texts_alloc);
         if (!t)
@@ -516,7 +518,9 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row, Evas_Object 
         row->texts = t;
      }
 
-   row->texts[row->texts_num - 1].text_props = evas_object_textgrid_textprop_ref(eo_obj, o, codepoint);
+   text_props_index = evas_object_textgrid_textprop_ref(eo_obj, o, codepoint);
+
+   row->texts[row->texts_num - 1].text_props = text_props_index;
    row->texts[row->texts_num - 1].x = x;
    row->texts[row->texts_num - 1].r = r;
    row->texts[row->texts_num - 1].g = g;
@@ -531,7 +535,7 @@ evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w
    if (row->lines_num > row->lines_alloc)
      {
         Evas_Object_Textgrid_Line *t;
-        
+
         row->lines_alloc += 8; // dont expect many lines per line
         t = realloc(row->lines, sizeof(Evas_Object_Textgrid_Line) * row->lines_alloc);
         if (!t)
@@ -550,6 +554,18 @@ evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w
    row->lines[row->lines_num - 1].a = a;
 }
 
+static Eina_Bool
+_drop_glyphs_ref(const void *container EINA_UNUSED, void *data, void *fdata)
+{
+   Evas_Font_Array_Data *fad = data;
+   Evas_Public_Data     *pd = fdata;
+
+   evas_common_font_glyphs_unref(fad->glyphs);
+   eina_array_pop(&pd->glyph_unref_queue);
+
+   return EINA_TRUE;
+}
+
 static void
 evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
@@ -559,13 +575,13 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    int xx, yy, xp, yp, w, h, ww, hh;
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
 
-   /* render object to surface with context, and offxet by x,y */
+   /* render object to surface with context, and offset by x,y */
    Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_render_op_set(output, context, obj->cur.render_op);
 
    if (!(o->font) || (!o->cur.cells)) return;
-   
+
    w = o->cur.char_width;
    h = o->cur.char_height;
    ww = obj->cur.geometry.w;
@@ -575,7 +591,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
      {
         Evas_Object_Textgrid_Row *row = &(o->cur.rows[yy]);
-        
+
         if (row->ch1 < 0)
           {
              cells += o->cur.w;
@@ -661,34 +677,104 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
      {
         Evas_Object_Textgrid_Row *row = &(o->cur.rows[yy]);
+        Evas_Font_Array          *texts;
 
         xp = obj->cur.geometry.x + x;
         for (xx = 0; xx < row->rects_num; xx++)
           {
              ENFN->context_color_set(output, context,
                                      row->rects[xx].r, row->rects[xx].g,
-                                     row->rects[xx].b, row->rects[xx].a); 
+                                     row->rects[xx].b, row->rects[xx].a);
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->rects[xx].x, yp,
                                   row->rects[xx].w, h,
                                   do_async);
           }
-        for (xx = 0; xx < row->texts_num; xx++)
+
+        if (row->texts_num)
           {
-             ENFN->context_color_set(output, context,
-                                     row->texts[xx].r, row->texts[xx].g,
-                                     row->texts[xx].b, row->texts[xx].a); 
-             evas_font_draw_async_check(obj, output, context, surface, o->font,
-                                        xp + row->texts[xx].x, yp + o->max_ascent,
-                                        ww, hh, ww, hh,
-                                        evas_object_textgrid_textprop_int_to(o, row->texts[xx].text_props),
-                                        do_async);
+             if ((do_async) && (ENFN->multi_font_draw))
+               {
+                  Eina_Bool async_unref;
+
+                  texts = malloc(sizeof(*texts));
+                  texts->array = eina_inarray_new(sizeof(Evas_Font_Array_Data),
+                                                  32);
+                  texts->refcount = 1;
+
+                  for (xx = 0; xx < row->texts_num; xx++)
+                    {
+                       Evas_Text_Props     *props;
+                       Evas_Font_Array_Data fad;
+
+                       props =
+                         evas_object_textgrid_textprop_int_to
+                         (o, row->texts[xx].text_props);
+
+                       evas_common_font_draw_prepare(props);
+
+                       evas_common_font_glyphs_ref(props->glyphs);
+                       evas_unref_queue_glyph_put(obj->layer->evas,
+                                                  props->glyphs);
+
+                       fad.color.r = row->texts[xx].r;
+                       fad.color.g = row->texts[xx].g;
+                       fad.color.b = row->texts[xx].b;
+                       fad.color.a = row->texts[xx].a;
+                       fad.x = row->texts[xx].x;
+                       fad.glyphs = props->glyphs;
+
+                       if (eina_inarray_push(texts->array, &fad) < 0)
+                         ERR("Failed to push text onto texts array %p",
+                             texts->array);
+                    }
+
+                  async_unref =
+                    ENFN->multi_font_draw(output, context, surface,
+                                          o->font, xp, yp + o->max_ascent,
+                                          ww, hh, ww, hh, texts, do_async);
+                  if (async_unref)
+                    evas_unref_queue_texts_put(obj->layer->evas, texts);
+                  else
+                    {
+                       eina_inarray_foreach(texts->array, _drop_glyphs_ref,
+                                            obj->layer->evas);
+                       eina_inarray_free(texts->array);
+                       free(texts);
+                    }
+               }
+             else
+               {
+                  for (xx = 0; xx < row->texts_num; xx++)
+                    {
+                       Evas_Text_Props *props;
+                       unsigned int     r, g, b, a;
+                       int              tx = xp + row->texts[xx].x;
+                       int              ty = yp + o->max_ascent;
+
+                       props =
+                         evas_object_textgrid_textprop_int_to
+                         (o, row->texts[xx].text_props);
+
+                       r = row->texts[xx].r;
+                       g = row->texts[xx].g;
+                       b = row->texts[xx].b;
+                       a = row->texts[xx].a;
+
+                       ENFN->context_color_set(output, context,
+                                               r, g, b, a);
+                       evas_font_draw_async_check(obj, output, context, surface,
+                                                  o->font, tx, ty, ww, hh,
+                                                  ww, hh, props, do_async);
+                    }
+               }
           }
+
         for (xx = 0; xx < row->lines_num; xx++)
           {
              ENFN->context_color_set(output, context,
                                      row->lines[xx].r, row->lines[xx].g,
-                                     row->lines[xx].b, row->lines[xx].a); 
+                                     row->lines[xx].b, row->lines[xx].a);
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
                                   row->lines[xx].w, 1,

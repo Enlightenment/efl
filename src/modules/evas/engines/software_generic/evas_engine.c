@@ -282,6 +282,7 @@ typedef struct _Evas_Thread_Command_Polygon Evas_Thread_Command_Polygon;
 typedef struct _Evas_Thread_Command_Image Evas_Thread_Command_Image;
 typedef struct _Evas_Thread_Command_Font Evas_Thread_Command_Font;
 typedef struct _Evas_Thread_Command_Map Evas_Thread_Command_Map;
+typedef struct _Evas_Thread_Command_Multi_Font Evas_Thread_Command_Multi_Font;
 
 struct _Evas_Thread_Command_Rect
 {
@@ -351,12 +352,21 @@ struct _Evas_Thread_Command_Map
    int smooth, level, offset;
 };
 
+struct _Evas_Thread_Command_Multi_Font
+{
+   RGBA_Draw_Context context;
+   void *surface;
+   int x, y;
+   Evas_Font_Array *texts;
+};
+
 Eina_Mempool *_mp_command_rect = NULL;
 Eina_Mempool *_mp_command_line = NULL;
 Eina_Mempool *_mp_command_polygon = NULL;
 Eina_Mempool *_mp_command_image = NULL;
 Eina_Mempool *_mp_command_font = NULL;
 Eina_Mempool *_mp_command_map = NULL;
+Eina_Mempool *_mp_command_multi_font = NULL;
 
 /*
  *****
@@ -1754,6 +1764,66 @@ eng_image_animated_frame_set(void *data EINA_UNUSED, void *image, int frame_inde
 }
 
 static void
+_draw_thread_multi_font_draw(void *data)
+{
+   Evas_Thread_Command_Multi_Font *mf = data;
+   Evas_Font_Array_Data           *itr;
+
+   EINA_INARRAY_FOREACH(mf->texts->array, itr)
+     {
+        unsigned int r, g, b, a;
+        int x = mf->x + itr->x, y = mf->y;
+
+        r = itr->color.r;
+        g = itr->color.g;
+        b = itr->color.b;
+        a = itr->color.a;
+
+        eng_context_color_set(NULL, &mf->context, r, g, b, a);
+        evas_common_font_draw(mf->surface, &mf->context, x, y, itr->glyphs);
+        evas_common_cpu_end_opt();
+     }
+
+   eina_mempool_free(_mp_command_multi_font, mf);
+}
+
+static Eina_Bool
+_multi_font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Font_Array *texts)
+{
+   Evas_Thread_Command_Multi_Font *mf;
+
+   mf = eina_mempool_malloc(_mp_command_multi_font,
+                            sizeof(Evas_Thread_Command_Multi_Font));
+   if (!mf)
+     {
+        ERR("Failed to allocate memory on mempool for multiple text_props "
+            "commands.");
+        return EINA_FALSE;
+     }
+
+   memcpy(&mf->context, dc, sizeof(*dc));
+   mf->surface = dst;
+   mf->x = x;
+   mf->y = y;
+   mf->texts = texts;
+
+   evas_thread_cmd_enqueue(_draw_thread_multi_font_draw, mf);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eng_multi_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Font_Array *texts, Eina_Bool do_async)
+{
+   if (!texts) return EINA_FALSE;
+
+   if (do_async)
+     return _multi_font_draw_thread_cmd(surface, context, x, y, texts);
+
+   return EINA_FALSE;
+}
+
+static void
 eng_image_cache_flush(void *data EINA_UNUSED)
 {
    int tmp_size;
@@ -2485,7 +2555,8 @@ static Evas_Func func =
      eng_image_animated_loop_count_get,
      eng_image_animated_frame_duration_get,
      eng_image_animated_frame_set,
-     NULL
+     NULL,
+     eng_multi_font_draw,
    /* FUTURE software generic calls go here */
 };
 
@@ -3503,6 +3574,9 @@ module_open(Evas_Module *em)
    _mp_command_map = eina_mempool_add("chained_mempool",
                                        "Evas_Thread_Command_Map", NULL,
                                        sizeof (Evas_Thread_Command_Map), 64);
+   _mp_command_multi_font =
+     eina_mempool_add("chained_mempool", "Evas_Thread_Command_Multi_Font",
+                      NULL, sizeof(Evas_Thread_Command_Multi_Font), 128);
 
    init_gl();
    evas_common_pipe_init();

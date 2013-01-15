@@ -388,6 +388,7 @@ struct _Evas_Public_Data
    Eina_Array     clip_changes;
    Eina_Array     image_unref_queue;
    Eina_Array     glyph_unref_queue;
+   Eina_Array     texts_unref_queue;
 
    Eina_Clist     calc_list;
    Eina_Clist     calc_done;
@@ -900,6 +901,9 @@ struct _Evas_Func
 
    /* max size query */
    void (*image_max_size_get)            (void *data, int *maxw, int *maxh);
+
+   /* multiple font draws */
+   Eina_Bool (*multi_font_draw)          (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Font_Array *texts, Eina_Bool do_async);
 };
 
 struct _Evas_Image_Load_Func
@@ -1051,6 +1055,7 @@ void _evas_object_textblock_rehint(Evas_Object *obj);
 
 void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
+void evas_unref_queue_texts_put(Evas_Public_Data *pd, void *glyph);
 
 void evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
                                      void *data, void *context, void *surface,

@@ -144,6 +144,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    EVAS_ARRAY_SET(e, clip_changes);
    EVAS_ARRAY_SET(e, image_unref_queue);
    EVAS_ARRAY_SET(e, glyph_unref_queue);
+   EVAS_ARRAY_SET(e, texts_unref_queue);
 
 #undef EVAS_ARRAY_SET
 }
@@ -251,6 +252,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    eina_array_flush(&e->clip_changes);
    eina_array_flush(&e->image_unref_queue);
    eina_array_flush(&e->glyph_unref_queue);
+   eina_array_flush(&e->texts_unref_queue);
 
    EINA_LIST_FREE(e->touch_points, touch_point)
      free(touch_point);

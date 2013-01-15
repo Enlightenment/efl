@@ -6,6 +6,7 @@ Changes since 1.7.0:
 --------------------
 
 Additions:
+    * Add multiple font draws support to engines
     * Add DOCTYPE children parsing in eina_simple_xml
     * Add eina_barrier thread API
     * Add eina_tmpstr_add() and eina_tmpstr_del()
@@ -65,6 +66,7 @@ Removed:
     * Removed XRender, WinCE, X11-16 and X11-8 ecore_evas support.
 
 Improvements:
+    * Reduced number of enqueued font commands when rendering textgrid objects
     * Single EFL tree covering all EFL library components.
     * Speedup Eina Rbtree Iterator by recycling memory instead of
       repeatedly calling malloc/free.

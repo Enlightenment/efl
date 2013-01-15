@@ -1,12 +1,13 @@
 #ifndef _EVAS_TEXT_UTILS_H
 # define _EVAS_TEXT_UTILS_H
 
-
-typedef struct _Evas_Text_Props Evas_Text_Props;
+typedef struct _Evas_Text_Props      Evas_Text_Props;
 // special case props
-typedef struct _Evas_Text_Props_One Evas_Text_Props_One;
+typedef struct _Evas_Text_Props_One  Evas_Text_Props_One;
 
 typedef struct _Evas_Text_Props_Info Evas_Text_Props_Info;
+typedef struct _Evas_Font_Array_Data Evas_Font_Array_Data;
+typedef struct _Evas_Font_Array      Evas_Font_Array;
 typedef struct _Evas_Font_Glyph_Info Evas_Font_Glyph_Info;
 
 typedef enum
@@ -100,6 +101,21 @@ struct _Evas_Text_Props_Info
    unsigned int refcount; // 4
 };
 
+struct _Evas_Font_Array_Data
+{
+   struct {
+      unsigned char r, g, b, a;
+   } color;
+   int x;
+   Evas_Glyph_Array *glyphs;
+};
+
+struct _Evas_Font_Array
+{
+   Eina_Inarray *array;
+   unsigned int refcount;
+};
+
 /* Sorted in visual order when created */
 struct _Evas_Font_Glyph_Info
 {
@@ -123,6 +139,11 @@ void
 evas_common_font_glyphs_ref(Evas_Glyph_Array *array);
 void
 evas_common_font_glyphs_unref(Evas_Glyph_Array *array);
+
+void
+evas_common_font_fonts_ref(Evas_Font_Array *array);
+void
+evas_common_font_fonts_unref(Evas_Font_Array *array);
 
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
