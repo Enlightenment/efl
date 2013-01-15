@@ -7,6 +7,7 @@
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
+# include <hb-font.h>
 #endif
 
 #include "evas_common.h"
