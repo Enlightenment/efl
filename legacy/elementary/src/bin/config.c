@@ -702,6 +702,7 @@ _flip_to(Evas_Object *win,
    Evas_Object *wid, *naviframe;
    wid = evas_object_data_get(win, name);
    naviframe = evas_object_data_get(win, "naviframe");
+   if (!naviframe) return;
    elm_naviframe_item_simple_promote(naviframe, wid);
 }
 
