@@ -234,8 +234,14 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 
    return mid;
 #else
-   return _cutoff;
-   (void) props;
+   if (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        return props->len - _cutoff - 1;
+     }
+   else
+     {
+        return _cutoff;
+     }
 #endif
 }
 
@@ -249,7 +255,6 @@ evas_common_text_props_split(Evas_Text_Props *base,
    size_t cutoff;
 
    /* Translate text cutoff pos to string object cutoff point */
-#ifdef OT_SUPPORT
    _cutoff = evas_common_text_props_index_find(base, _cutoff);
 
    if (_cutoff >= 0)
@@ -261,9 +266,6 @@ evas_common_text_props_split(Evas_Text_Props *base,
         ERR("Couldn't find the cutoff position. Is it inside a cluster?");
         return EINA_FALSE;
      }
-#else
-   cutoff = (size_t) _cutoff;
-#endif
 
    evas_common_text_props_content_copy_and_ref(ext, base);
    if (base->bidi_dir == EVAS_BIDI_DIRECTION_RTL)

@@ -115,3 +115,4 @@ Fixes:
     * Fix SIGFPE in evas map update if image is 0.
     * Evas textblock: Fixed issue and simplified cursor_geometry_get.
     * Evas text: Fixed issue with horiz advance.
+    * Evas text utils: Fixed issue with no-harfbuzz bidi.

@@ -2,6 +2,7 @@
 
 	* Evas textblock: Fixed issue and simplified cursor_geometry_get.
 	* Evas text: Fixed issue with horiz advance.
+	* Evas text utils: Fixed issue with no-harfbuzz bidi.
 
 2013-01-14  Daniel Willmann
 
