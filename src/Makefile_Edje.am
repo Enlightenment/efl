@@ -103,7 +103,9 @@ bin/edje/edje_cc_sources.c \
 bin/edje/edje_multisense_convert.c
 bin_edje_edje_cc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_cc_LDADD = @USE_EDJE_LIBS@
-bin_edje_edje_cc_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
+bin_edje_edje_cc_DEPENDENCIES = \
+@USE_EDJE_INTERNAL_LIBS@ \
+bin/edje/epp/epp # epp is an artificial dependency because edje_cc will use it at runtime, so we be sure if we depend on edje_cc we get epp.
 
 bin_edje_edje_decc_SOURCES = \
 bin/edje/edje_decc.c \
