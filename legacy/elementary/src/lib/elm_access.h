@@ -52,7 +52,7 @@ EAPI void elm_access_object_unregister(Evas_Object *obj);
  *
  * @ingroup Access
  */
-EAPI Evas_Object *elm_access_object_access_get(const Evas_Object *obj);
+EAPI Evas_Object *elm_access_object_get(const Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.

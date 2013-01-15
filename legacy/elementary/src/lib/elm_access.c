@@ -780,7 +780,7 @@ elm_access_object_unregister(Evas_Object *obj)
 }
 
 EAPI Evas_Object *
-elm_access_object_access_get(const Evas_Object *obj)
+elm_access_object_get(const Evas_Object *obj)
 {
    return evas_object_data_get(obj, "_part_access_obj");
 }
