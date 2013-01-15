@@ -10815,7 +10815,7 @@ EO_DEFINE_CLASS(evas_object_textblock_class_get, &class_desc, EVAS_OBJ_CLASS, NU
 
 #if 0
 /* Good for debugging */
-void
+EAPI void
 pfnode(Evas_Object_Textblock_Node_Format *n)
 {
    printf("Format Node: %p\n", n);
@@ -10824,7 +10824,7 @@ pfnode(Evas_Object_Textblock_Node_Format *n)
    printf("'%s'\n", eina_strbuf_string_get(n->format));
 }
 
-void
+EAPI void
 ptnode(Evas_Object_Textblock_Node_Text *n)
 {
    printf("Text Node: %p\n", n);
@@ -10833,7 +10833,7 @@ ptnode(Evas_Object_Textblock_Node_Text *n)
    printf("'%ls'\n", eina_ustrbuf_string_get(n->unicode));
 }
 
-void
+EAPI void
 pitem(Evas_Object_Textblock_Item *it)
 {
    Evas_Object_Textblock_Text_Item *ti;
@@ -10862,7 +10862,7 @@ pitem(Evas_Object_Textblock_Item *it)
      }
 }
 
-void
+EAPI void
 ppar(Evas_Object_Textblock_Paragraph *par)
 {
    Evas_Object_Textblock_Item *it;
