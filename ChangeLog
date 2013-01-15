@@ -1,3 +1,7 @@
+2013-01-15  Tom Hacohen (TAsn)
+
+	* Evas textblock: Fixed issue and simplified cursor_geometry_get.
+
 2013-01-14  Daniel Willmann
 
 	* edje: Fix off-by-one errors when using alloca in various functions

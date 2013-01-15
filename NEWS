@@ -113,3 +113,4 @@ Fixes:
     * Fix bug in eio_file_map_new container set.
     * Evas textblock: Fixed issue with line height when breaking on a format.
     * Fix SIGFPE in evas map update if image is 0.
+    * Evas textblock: Fixed issue and simplified cursor_geometry_get.

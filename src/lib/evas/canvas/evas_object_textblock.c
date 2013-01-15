@@ -8908,13 +8908,10 @@ EAPI int
 evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {
    int ret = -1;
-   const Evas_Textblock_Cursor *dir_cur;
-   Evas_Textblock_Cursor cur2;
    if (!cur) return -1;
    Evas_Object_Textblock *o = eo_data_get(cur->obj, MY_CLASS);
    if (!o->formatted.valid) _relayout(cur->obj);
 
-   dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
         ret = evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
@@ -8924,142 +8921,31 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
         /* In the case of a "before cursor", we should get the coordinates
          * of just after the previous char (which in bidi text may not be
          * just before the current char). */
-        Evas_Coord x, y, h, w;
-        Evas_Object_Textblock_Node_Format *fmt;
+        Evas_Coord x, y, w, h;
 
-        /* If it's at the end of the line, we want to get the position, not
-         * the position of the previous */
-        if ((cur->pos > 0) && !_evas_textblock_cursor_is_at_the_end(cur))
-          {
-#ifdef BIDI_SUPPORT
-             Eina_Bool before_char = EINA_FALSE;
-#endif
-             cur2.obj = cur->obj;
-             evas_textblock_cursor_copy(cur, &cur2);
-             evas_textblock_cursor_char_prev(&cur2);
+        Evas_Object_Textblock_Line *ln;
+        Evas_Object_Textblock_Item *it;
 
-             fmt = _evas_textblock_cursor_node_format_at_pos_get(&cur2);
-
-             if (!fmt || !_IS_LINE_SEPARATOR(fmt->format))
-               {
-                  dir_cur = &cur2;
-#ifdef BIDI_SUPPORT
-                  before_char = EINA_FALSE;
-#endif
-               }
-#ifdef BIDI_SUPPORT
-             else
-               {
-                  before_char = EINA_TRUE;
-               }
-#endif
-             ret = evas_textblock_cursor_pen_geometry_get(
-                   dir_cur, &x, &y, &w, &h);
-#ifdef BIDI_SUPPORT
-             /* Adjust if the char is an rtl char */
-             if (ret >= 0)
-               {
-                  Eina_Bool is_rtl = EINA_FALSE;
-                  if (dir_cur->node->par->is_bidi)
-                    {
-                       Evas_Object_Textblock_Line *ln;
-                       Evas_Object_Textblock_Item *it;
-                       _find_layout_item_match(dir_cur, &ln, &it);
-                       if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                             (_ITEM_TEXT(it)->text_props.bidi_dir ==
-                              EVAS_BIDI_DIRECTION_RTL))
-                          is_rtl = EINA_TRUE;
-                       else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
-                             (_ITEM_FORMAT(it)->bidi_dir ==
-                              EVAS_BIDI_DIRECTION_RTL))
-                          is_rtl = EINA_TRUE;
-                    }
-
-                  if ((!before_char && is_rtl) ||
-                        (before_char && !is_rtl))
-                    {
-                       /* Just don't advance the width */
-                       w = 0;
-                    }
-               }
-#endif
-          }
-        else if (cur->pos == 0)
-          {
-             ret = evas_textblock_cursor_pen_geometry_get(
-                   dir_cur, &x, &y, &w, &h);
-#ifdef BIDI_SUPPORT
-             Eina_Bool is_rtl = EINA_FALSE;
-             if (dir_cur->node && dir_cur->node->par->is_bidi)
-               {
-                  Evas_Object_Textblock_Line *ln;
-                  Evas_Object_Textblock_Item *it;
-                  _find_layout_item_match(dir_cur, &ln, &it);
-                  if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                        (_ITEM_TEXT(it)->text_props.bidi_dir ==
-                         EVAS_BIDI_DIRECTION_RTL))
-                     is_rtl = EINA_TRUE;
-                  else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
-                        (_ITEM_FORMAT(it)->bidi_dir ==
-                         EVAS_BIDI_DIRECTION_RTL))
-                     is_rtl = EINA_TRUE;
-               }
-
-             /* Adjust if the char is an rtl char */
-             if ((ret >= 0) && (!is_rtl))
-               {
-                  /* Just don't advance the width */
-                  w = 0;
-               }
-#endif
-          }
-        else
-          {
-             ret = evas_textblock_cursor_pen_geometry_get(
-                   dir_cur, &x, &y, &w, &h);
-          }
+        ret = evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        _find_layout_item_match(cur, &ln, &it);
         if (ret >= 0)
           {
-             if (cx) *cx = x + w;
+             Evas_BiDi_Direction itdir =
+                (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                _ITEM_TEXT(it)->text_props.bidi_dir :
+                _ITEM_FORMAT(it)->bidi_dir;
+             if (itdir == EVAS_BIDI_DIRECTION_RTL)
+               {
+                  if (cx) *cx = x + w;
+               }
+             else
+               {
+                  if (cx) *cx = x;
+               }
              if (cy) *cy = y;
              if (cw) *cw = 0;
              if (ch) *ch = h;
-          }
-     }
-
-   if (dir && dir_cur && dir_cur->node)
-     {
-#ifdef BIDI_SUPPORT
-        Eina_Bool is_rtl = EINA_FALSE;
-        if (dir_cur->node->par->is_bidi)
-          {
-             Evas_Object_Textblock_Line *ln;
-             Evas_Object_Textblock_Item *it;
-             _find_layout_item_match(dir_cur, &ln, &it);
-             if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                   (_ITEM_TEXT(it)->text_props.bidi_dir ==
-                    EVAS_BIDI_DIRECTION_RTL))
-                is_rtl = EINA_TRUE;
-             else if ((it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) &&
-                   (_ITEM_FORMAT(it)->bidi_dir ==
-                    EVAS_BIDI_DIRECTION_RTL))
-                is_rtl = EINA_TRUE;
-          }
-
-        if (_evas_textblock_cursor_is_at_the_end(dir_cur) && (dir_cur->pos > 0))
-          {
-             *dir = (is_rtl) ?
-                EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-          }
-        else if (dir_cur->pos > 0)
-          {
-             *dir = (is_rtl) ?
-                EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-          }
-        else
-#endif
-          {
-             *dir = EVAS_BIDI_DIRECTION_LTR;
+             if (dir) *dir = itdir;
           }
      }
    return ret;
