@@ -30,9 +30,6 @@ case "m4_defn([DOWNOTHER])" in
    ethumb_client)
       depname="ethumb_client"
       ;;
-   ecore_imf_evas)
-      libdirname="ecore_imf"
-      ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
@@ -199,9 +196,6 @@ libname="m4_defn([DOWN])"
 case "m4_defn([DOWN])" in
    edbus)
       libname="edbus2"
-      ;;
-   ecore_imf_evas)
-      libdirname="ecore_imf"
       ;;
 esac
 

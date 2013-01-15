@@ -1,0 +1,15 @@
+
+### Library
+
+installed_ecoreimfevasmainheadersdir = $(includedir)/ecore-imf-evas-@VMAJ@
+dist_installed_ecoreimfevasmainheaders_DATA = \
+lib/ecore_imf_evas/Ecore_IMF_Evas.h
+
+lib_LTLIBRARIES += \
+lib/ecore_imf_evas/libecore_imf_evas.la
+
+lib_ecore_imf_evas_libecore_imf_evas_la_SOURCES = lib/ecore_imf_evas/ecore_imf_evas.c
+lib_ecore_imf_evas_libecore_imf_evas_la_CPPFLAGS = @ECORE_IMF_EVAS_CFLAGS@
+lib_ecore_imf_evas_libecore_imf_evas_la_LIBADD = @ECORE_IMF_EVAS_LIBS@
+lib_ecore_imf_evas_libecore_imf_evas_la_DEPENDENCIES = @ECORE_IMF_EVAS_INTERNAL_LIBS@
+lib_ecore_imf_evas_libecore_imf_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

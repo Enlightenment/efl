@@ -34,7 +34,8 @@ include Makefile_Ecore_Wayland.am
 include Makefile_Ecore_Win32.am
 include Makefile_Ecore_WinCE.am
 include Makefile_Ecore_X.am
-include Makefile_Ecore_Imf.am
+include Makefile_Ecore_IMF.am
+include Makefile_Ecore_IMF_Evas.am
 include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Embryo.am

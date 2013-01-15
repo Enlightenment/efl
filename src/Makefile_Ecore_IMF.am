@@ -1,13 +1,12 @@
 
 ### Library
 
-lib_LTLIBRARIES += \
-lib/ecore_imf/libecore_imf.la \
-lib/ecore_imf/libecore_imf_evas.la
-
-installed_ecoreimfmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecoreimfmainheadersdir = $(includedir)/ecore-imf-@VMAJ@
 dist_installed_ecoreimfmainheaders_DATA = \
 lib/ecore_imf/Ecore_IMF.h
+
+lib_LTLIBRARIES += \
+lib/ecore_imf/libecore_imf.la
 
 lib_ecore_imf_libecore_imf_la_SOURCES = \
 lib/ecore_imf/ecore_imf.c \
@@ -24,17 +23,6 @@ lib_ecore_imf_libecore_imf_la_CPPFLAGS = \
 lib_ecore_imf_libecore_imf_la_LIBADD = @ECORE_IMF_LIBS@
 lib_ecore_imf_libecore_imf_la_DEPENDENCIES = @ECORE_IMF_INTERNAL_LIBS@
 lib_ecore_imf_libecore_imf_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
-installed_ecoreimfevasmainheadersdir = $(includedir)/ecore-@VMAJ@
-dist_installed_ecoreimfevasmainheaders_DATA = \
-lib/ecore_imf/Ecore_IMF_Evas.h
-
-lib_ecore_imf_libecore_imf_evas_la_SOURCES = lib/ecore_imf/ecore_imf_evas.c
-lib_ecore_imf_libecore_imf_evas_la_CPPFLAGS = @ECORE_IMF_EVAS_CFLAGS@
-lib_ecore_imf_libecore_imf_evas_la_LIBADD = @ECORE_IMF_EVAS_LIBS@
-lib_ecore_imf_libecore_imf_evas_la_DEPENDENCIES = @ECORE_IMF_EVAS_INTERNAL_LIBS@
-lib_ecore_imf_libecore_imf_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
 
 ### Modules
 
