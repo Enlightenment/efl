@@ -54,6 +54,7 @@ bin_eet_eet_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/eet/eet_suite
+TESTS += tests/eet/eet_suite
 
 tests_eet_eet_suite_SOURCES = \
 tests/eet/eet_suite.c \

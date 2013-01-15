@@ -220,6 +220,7 @@ bin_SCRIPTS += scripts/eina/eina-bench-cmp
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/eina/eina_suite tests/eina/cxx_compile_test
+#TESTS += tests/eina/eina_suite
 
 tests_eina_eina_suite_SOURCES = \
 tests/eina/eina_suite.c \

@@ -1546,6 +1546,7 @@ endif
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/evas/evas_suite
+TESTS += tests/evas/evas_suite
 
 tests_evas_evas_suite_SOURCES = \
 tests/evas/evas_suite.c \

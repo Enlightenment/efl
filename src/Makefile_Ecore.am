@@ -58,6 +58,7 @@ lib_ecore_libecore_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/ecore/ecore_suite
+TESTS += tests/ecore/ecore_suite
 
 tests_ecore_ecore_suite_SOURCES = \
 tests/ecore/ecore_suite.c \

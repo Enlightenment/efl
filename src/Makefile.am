@@ -11,6 +11,7 @@ bin_PROGRAMS =
 bin_SCRIPTS =
 noinst_PROGRAMS =
 check_PROGRAMS =
+TESTS =
 EXTRA_DIST =
 
 include Makefile_Evil.am

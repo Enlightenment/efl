@@ -37,7 +37,7 @@ AH_BOTTOM([
 
 AC_USE_SYSTEM_EXTENSIONS
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2 -Wall])
+AM_INIT_AUTOMAKE([1.6 dist-bzip2 -Wall color-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 m4_ifdef([v_rev], , [m4_define([v_rev], [0])])

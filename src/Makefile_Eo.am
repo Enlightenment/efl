@@ -29,6 +29,7 @@ tests/eo/test_signals
 
 if EFL_ENABLE_TESTS
 check_PROGRAMS += tests/eo/eo_suite
+TESTS += tests/eo/eo_suite
 endif
 
 tests_eo_test_access_SOURCES = \

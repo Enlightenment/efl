@@ -31,6 +31,7 @@ Makefile.in
 /libtool
 /ltmain.sh
 /compile
+/test-driver
 /m4/libtool.m4
 /m4/ltoptions.m4
 /m4/ltsugar.m4
@@ -262,6 +263,10 @@ Makefile.in
 /src/examples/evas/evas_smart_object
 /src/examples/evas/evas_stacking
 /src/examples/evas/evas_text
+/src/tests/ecore/ecore_suite.log
+/src/tests/ecore/ecore_suite.trs
+/src/tests/eet/eet_suite.log
+/src/tests/eet/eet_suite.trs
 /src/tests/efreet/compare/efreet_alloc
 /src/tests/efreet/compare/efreet_menu_alloc
 /src/tests/efreet/efreet_cache_test
@@ -271,6 +276,7 @@ Makefile.in
 /src/tests/efreet/efreet_user_dir
 /src/tests/emotion/emotion_test
 /src/tests/ecore/ecore_suite
+/src/tests/edbus/edbus_suite
 /src/tests/edje/edje_suite
 /src/tests/eet/eet_suite
 /src/tests/eeze/eeze_suite
@@ -278,6 +284,8 @@ Makefile.in
 /src/tests/eina/cxx_compile_test
 /src/tests/eina/eina_suite
 /src/tests/eo/eo_suite
+/src/tests/eo/eo_suite.log
+/src/tests/eo/eo_suite.trs
 /src/tests/eo/test_access
 /src/tests/eo/test_composite_objects
 /src/tests/eo/test_constructors
@@ -286,3 +294,6 @@ Makefile.in
 /src/tests/eo/test_mixin
 /src/tests/eo/test_signals
 /src/tests/evas/evas_suite
+/src/tests/evas/evas_suite.log
+/src/tests/evas/evas_suite.trs
+/src/test-suite.log
