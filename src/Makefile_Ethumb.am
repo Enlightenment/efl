@@ -1,15 +1,12 @@
 ### Library
 
 lib_LTLIBRARIES += \
-lib/ethumb/libethumb.la \
-lib/ethumb/client/libethumb_client.la
+lib/ethumb/libethumb.la
 
 installed_ethumbmainheadersdir = $(includedir)/ethumb-@VMAJ@
 dist_installed_ethumbmainheaders_DATA = \
-lib/ethumb/Ethumb.h \
-lib/ethumb/client/Ethumb_Client.h
+lib/ethumb/Ethumb.h
 
-# libethumb.la
 lib_ethumb_libethumb_la_SOURCES = \
 lib/ethumb/Ethumb_Plugin.h \
 lib/ethumb/ethumb_private.h \
@@ -26,14 +23,6 @@ lib_ethumb_libethumb_la_CPPFLAGS = \
 lib_ethumb_libethumb_la_LIBADD = @ETHUMB_LIBS@
 lib_ethumb_libethumb_la_DEPENDENCIES = @ETHUMB_INTERNAL_LIBS@
 lib_ethumb_libethumb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
-# TODO: fix directory!
-# libethumb_client.la
-lib_ethumb_client_libethumb_client_la_SOURCES = lib/ethumb/client/ethumb_client.c
-lib_ethumb_client_libethumb_client_la_CPPFLAGS = @ETHUMB_CLIENT_CFLAGS@
-lib_ethumb_client_libethumb_client_la_LIBADD = @ETHUMB_CLIENT_LIBS@
-lib_ethumb_client_libethumb_client_la_DEPENDENCIES = @ETHUMB_CLIENT_INTERNAL_LIBS@
-lib_ethumb_client_libethumb_client_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ## Modules
 
@@ -72,42 +61,9 @@ modules/ethumb/emotion/placeholder.png
 ### Binary
 
 bin_PROGRAMS += \
-bin/ethumb/ethumb \
-bin/ethumb/ethumbd \
-bin/ethumb/ethumbd_client
-
-ethumbinternal_bindir=$(libdir)/ethumb/utils/$(MODULE_ARCH)
-ethumbinternal_bin_PROGRAMS = \
-bin/ethumb/ethumbd_slave
+bin/ethumb/ethumb
 
 bin_ethumb_ethumb_SOURCES = bin/ethumb/ethumb.c
 bin_ethumb_ethumb_CPPFLAGS = @ETHUMB_CFLAGS@
 bin_ethumb_ethumb_LDADD = @USE_ETHUMB_LIBS@
 bin_ethumb_ethumb_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@
-
-# TODO: review why ethumd (master) links to libethumb! shouldn't
-bin_ethumb_ethumbd_SOURCES = \
-bin/ethumb/ethumbd_private.h \
-bin/ethumb/ethumbd.c
-bin_ethumb_ethumbd_CPPFLAGS = \
--DPACKAGE_BIN_DIR=\"$(bindir)\" \
--DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
--DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
-@ETHUMB_CLIENT_CFLAGS@
-bin_ethumb_ethumbd_LDADD = @USE_ETHUMB_CLIENT_LIBS@
-bin_ethumb_ethumbd_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
-
-bin_ethumb_ethumbd_client_SOURCES = bin/ethumb/ethumbd_client.c
-bin_ethumb_ethumbd_client_CPPFLAGS = @ETHUMB_CLIENT_CFLAGS@
-bin_ethumb_ethumbd_client_LDADD = @USE_ETHUMB_CLIENT_LIBS@
-bin_ethumb_ethumbd_client_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
-
-# slave does not use dbus, it's a simple ethumb application
-bin_ethumb_ethumbd_slave_SOURCES = \
-bin/ethumb/ethumbd_private.h \
-bin/ethumb/ethumbd_slave.c
-bin_ethumb_ethumbd_slave_CPPFLAGS = @ETHUMB_CFLAGS@
-bin_ethumb_ethumbd_slave_LDADD = @USE_ETHUMB_LIBS@
-bin_ethumb_ethumbd_slave_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@
-

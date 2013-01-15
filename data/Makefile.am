@@ -96,3 +96,9 @@ ethumb/frames/default.edj: ethumb/frames/default.edc
 EXTRA_DIST += \
 ethumb/frames/default.edc \
 ethumb/frames/border-0.jpg
+
+########################################################################
+# Ethumb_Client
+ethumb_clientfilesdir = $(datadir)/ethumb_client
+ethumb_clientfiles_DATA = ethumb_client/checkme
+EXTRA_DIST += $(ethumb_clientfiles_DATA)

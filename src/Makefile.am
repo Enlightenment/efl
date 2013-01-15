@@ -45,6 +45,7 @@ include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
 include Makefile_Ethumb.am
+include Makefile_Ethumb_Client.am
 
 .PHONY: benchmark examples
 
@@ -70,7 +71,7 @@ examples/edbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
-examples/ethumb
+examples/ethumb_client
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += $(EXAMPLES_SUBDIRS)
 else

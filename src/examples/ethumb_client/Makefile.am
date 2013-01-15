@@ -17,9 +17,9 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/edje \
 -I$(top_srcdir)/src/lib/ethumb \
 -I$(top_builddir)/src/lib/ethumb \
--I$(top_srcdir)/src/lib/ethumb/client \
--I$(top_builddir)/src/lib/ethumb/client \
-@ETHUMB_CFLAGS@
+-I$(top_srcdir)/src/lib/ethumb_client \
+-I$(top_builddir)/src/lib/ethumb_client \
+@ETHUMB_CLIENT_CFLAGS@
 
 LDADD = \
 $(top_builddir)/src/lib/eina/libeina.la \
@@ -30,8 +30,8 @@ $(top_builddir)/src/lib/ecore_file/libecore_file.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 $(top_builddir)/src/lib/edje/libedje.la \
 $(top_builddir)/src/lib/ethumb/libethumb.la \
-$(top_builddir)/src/lib/ethumb/client/libethumb_client.la \
-@ETHUMB_LDFLAGS@
+$(top_builddir)/src/lib/ethumb_client/libethumb_client.la \
+@ETHUMB_CLIENT_LDFLAGS@
 
 EXTRA_PROGRAMS = \
 ethumb_dbus
@@ -45,12 +45,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/ethumb/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/ethumb/examples
+	mkdir -p $(datadir)/ethumb_client/examples
+	$(install_sh_DATA) -c $(SRCS) $(datadir)/ethumb_client/examples
 
 uninstall-local:
 	for f in $(SRCS); do \
-	  rm -f $(datadir)/ethumb/examples/$$f ; \
+	  rm -f $(datadir)/ethumb_client/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

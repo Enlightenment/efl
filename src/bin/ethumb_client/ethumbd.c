@@ -35,6 +35,7 @@
 #include <Ecore.h>
 #include <EDBus.h>
 #include <Ethumb.h>
+#include <Ethumb_Client.h>
 
 #include "ethumbd_private.h"
 
@@ -1665,7 +1666,8 @@ _ethumbd_slave_spawn(Ethumbd_Slave *slave, Ethumbd *ed)
    slave->bufcmd = NULL;
    slave->scmd = 0;
 
-   snprintf(buf, sizeof(buf), "%s/ethumb/utils/"MODULE_ARCH"/ethumbd_slave",
+   snprintf(buf, sizeof(buf),
+            "%s/ethumb_client/utils/"MODULE_ARCH"/ethumbd_slave",
             eina_prefix_lib_get(_pfx));
 
    slave->exe = ecore_exe_pipe_run(buf,
@@ -1706,13 +1708,13 @@ main(int argc, char *argv[])
 	  }
      }
 
-   _pfx = eina_prefix_new(argv[0], ethumb_init,
-                          "ETHUMB", "ethumb", "checkme",
+   _pfx = eina_prefix_new(argv[0], ethumb_client_init,
+                          "ETHUMB_CLIENT", "ethumb_client", "checkme",
                           PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
                           PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
    if (!_pfx)
      {
-        ERR("Could not get ethumb installation prefix.");
+        ERR("Could not get ethumb_client installation prefix.");
         exit_value = -7;
         goto finish;
      }
