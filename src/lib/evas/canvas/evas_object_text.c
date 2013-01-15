@@ -306,7 +306,7 @@ static Evas_Coord
 _evas_object_text_horiz_advance_get(const Evas_Object *eo_obj,
       const Evas_Object_Text *o)
 {
-   Evas_Object_Text_Item *it, *last_it = NULL;
+   Evas_Object_Text_Item *it;
    Evas_Coord adv;
    (void) eo_obj;
 
@@ -314,11 +314,8 @@ _evas_object_text_horiz_advance_get(const Evas_Object *eo_obj,
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
         adv += it->adv;
-        last_it = it;
      }
 
-   if (last_it && (last_it->w > last_it->adv))
-      adv += last_it->w - last_it->adv;
    return adv;
 }
 

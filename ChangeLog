@@ -1,6 +1,7 @@
 2013-01-15  Tom Hacohen (TAsn)
 
 	* Evas textblock: Fixed issue and simplified cursor_geometry_get.
+	* Evas text: Fixed issue with horiz advance.
 
 2013-01-14  Daniel Willmann
 
