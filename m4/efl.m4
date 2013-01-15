@@ -30,9 +30,6 @@ case "m4_defn([DOWNOTHER])" in
    ethumb_client)
       depname="ethumb_client"
       ;;
-   ecore_input_evas)
-      libdirname="ecore_input"
-      ;;
    ecore_imf_evas)
       libdirname="ecore_imf"
       ;;
@@ -202,9 +199,6 @@ libname="m4_defn([DOWN])"
 case "m4_defn([DOWN])" in
    edbus)
       libname="edbus2"
-      ;;
-   ecore_input_evas)
-      libdirname="ecore_input"
       ;;
    ecore_imf_evas)
       libdirname="ecore_imf"

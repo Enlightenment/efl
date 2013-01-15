@@ -25,6 +25,7 @@ include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am
 include Makefile_Ecore_Input.am
+include Makefile_Ecore_Input_Evas.am
 include Makefile_Ecore_Cocoa.am
 include Makefile_Ecore_FB.am
 include Makefile_Ecore_Psl1ght.am
