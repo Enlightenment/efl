@@ -306,3 +306,7 @@
 
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
+
+2013-01-15  ChunEon Park (Hermet) <hermet@hermet.pe.kr>
+
+        * Fix SIGFPE in evas map update if image size is 0.
