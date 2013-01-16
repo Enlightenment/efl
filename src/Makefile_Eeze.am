@@ -9,31 +9,27 @@ installed_eezemainheadersdir = $(includedir)/eeze-@VMAJ@
 dist_installed_eezemainheaders_DATA = \
 lib/eeze/Eeze.h \
 lib/eeze/Eeze_Net.h \
-lib/eeze/Eeze_Sensor.h
+lib/eeze/Eeze_Sensor.h \
+lib/eeze/Eeze_Disk.h
 
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
+lib/eeze/eeze_disk.c \
+lib/eeze/eeze_disk_libmount_new.c \
+lib/eeze/eeze_disk_mount.c \
+lib/eeze/eeze_disk_private.h \
+lib/eeze/eeze_disk_udev.c \
 lib/eeze/eeze_main.c \
 lib/eeze/eeze_net.c \
 lib/eeze/eeze_net_private.h \
+lib/eeze/eeze_sensor.c \
+lib/eeze/eeze_sensor_private.h \
 lib/eeze/eeze_udev_find.c \
-lib/eeze/eeze_udev_private.h \
 lib/eeze/eeze_udev_private.c \
+lib/eeze/eeze_udev_private.h \
 lib/eeze/eeze_udev_syspath.c \
 lib/eeze/eeze_udev_walk.c \
-lib/eeze/eeze_udev_watch.c \
-lib/eeze/eeze_sensor_private.h \
-lib/eeze/eeze_sensor.c
-
-if HAVE_EEZE_MOUNT
-dist_installed_eezemainheaders_DATA += lib/eeze/Eeze_Disk.h
-lib_eeze_libeeze_la_SOURCES += \
-lib/eeze/eeze_disk.c \
-lib/eeze/eeze_disk_udev.c \
-lib/eeze/eeze_disk_mount.c \
-lib/eeze/eeze_disk_private.h \
-lib/eeze/eeze_disk_libmount_new.c
-endif
+lib/eeze/eeze_udev_watch.c
 
 lib_eeze_libeeze_la_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -86,7 +82,6 @@ bin_eeze_eeze_sensor_test_CPPFLAGS = @EEZE_CFLAGS@
 bin_eeze_eeze_sensor_test_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_sensor_test_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-if HAVE_EEZE_MOUNT
 bin_PROGRAMS += \
 bin/eeze/eeze_mount \
 bin/eeze/eeze_umount \
@@ -114,7 +109,6 @@ bin/eeze/eeze_scanner.h
 bin_eeze_eeze_scanner_CPPFLAGS = @EEZE_CFLAGS@
 bin_eeze_eeze_scanner_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
-endif
 
 setuid_root_mode = a=rx,u+xs
 install-data-hook::

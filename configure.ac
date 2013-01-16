@@ -2987,18 +2987,6 @@ AC_ARG_ENABLE([tizen],
    ],
    [want_tizen="no"])
 
-AC_ARG_ENABLE([mount],
-   [AC_HELP_STRING([--disable-mount],
-       [disable mount support (libmount). @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_mount="yes"
-    else
-       want_mount="no"
-    fi
-   ],
-   [want_mount="yes"])
-
 AC_ARG_WITH([mount],
   [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])],
   [with_eeze_mount=$withval], [with_eeze_mount="detect"])
@@ -3017,12 +3005,12 @@ AC_ARG_WITH([eject],
 EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
 EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EEZE], [eo])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-file])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [ecore-con])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EEZE], [${want_mount}], [eet])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-con])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eet])
 
 EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
-EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_mount}], [EEZE_MOUNT], [mount >= 2.20.0])
+EFL_DEPEND_PKG([EEZE], [EEZE_MOUNT], [mount >= 2.20.0])
 
 ## modules
 if test "${want_tizen}"  = "yes"; then
@@ -3061,7 +3049,6 @@ AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
 
 EFL_LIB_END_OPTIONAL([Eeze])
 
-AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${want_mount}" = "xyes"])
 AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
 #### End of Eeze
 
