@@ -275,7 +275,7 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
           im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         if (!im)
           {
-             free(rect);
+             eina_rectangle_free(rect);
              return NULL;
           }
         im->cache_entry.flags.alpha |= buf->priv.destination_alpha ? 1 : 0;
@@ -313,7 +313,7 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
         Eina_Array_Iterator it;
         unsigned int n, i;
         RGBA_Image *im;
-     
+
         n = eina_array_count_get(&buf->priv.onebuf_regions);
         if (n == 0) return;
         rects = alloca(n * sizeof(Eina_Rectangle));
@@ -351,7 +351,6 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
              int x, y, w, h;
              
              x = rect->x; y = rect->y; w = rect->w; h = rect->h;
-             rects[i] = *rect;
              if (buf->rot == 0)
                {
                   rects[i].x = x;
@@ -382,13 +381,14 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
                   rects[i].w = h;
                   rects[i].h = w;
                }
-             free(rect);
+             eina_rectangle_free(rect);
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                evas_cache2_image_close(&im->cache_entry);
              else
 #endif
                evas_cache_image_drop(&im->cache_entry);
+             i++;
           }
         evas_xlib_swapper_buffer_unmap(buf->priv.swapper);
         evas_xlib_swapper_swap(buf->priv.swapper, rects, n);

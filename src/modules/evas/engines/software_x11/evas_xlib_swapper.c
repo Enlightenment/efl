@@ -222,6 +222,7 @@ evas_xlib_swapper_free(X_Swapper *swp)
      {
         _buf_free(swp, &(swp->buf[i]));
      }
+   XFreeGC(swp->disp, swp->gc);
    free(swp);
 }
 
