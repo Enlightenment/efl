@@ -10,6 +10,11 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
+#if 0
+/* TODO: this test is broken as it starts a server, but not a client.
+ * There should be two threads, one with server, another with client,
+ * they should communicate and then exit with failure or success.
+ */
 Eina_Bool
 _add(void *data, int type EINA_UNUSED, void *ev)
 {
@@ -238,6 +243,7 @@ START_TEST(ecore_test_ecore_con_server)
    fail_if(ret != 0);
 }
 END_TEST
+#endif
 
 START_TEST(ecore_test_ecore_con_init)
 {
@@ -254,5 +260,7 @@ END_TEST
 void ecore_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
+#if 0
    tcase_add_test(tc, ecore_test_ecore_con_server);
+#endif
 }
