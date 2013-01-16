@@ -118,3 +118,4 @@ Fixes:
     * Evas textblock: Fixed issue and simplified cursor_geometry_get.
     * Evas text: Fixed issue with horiz advance.
     * Evas text utils: Fixed issue with no-harfbuzz bidi.
+    * Fixed pixman surface alloc where allocated and image size differ.

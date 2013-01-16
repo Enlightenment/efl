@@ -1,3 +1,8 @@
+2013-01-16  Carsten Haitzler (The Rasterman)
+
+        * Fixed pixman image wrapping to handle allocated size instead
+        of image size (unless allocated is 0/wrong).
+
 2013-01-15  Paulo Alcantara (pcacjr)
 
 	* Evas engines: Introduce multi_font_draw() function

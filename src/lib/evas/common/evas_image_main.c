@@ -313,8 +313,16 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_IMAGE   
    RGBA_Image *im = (RGBA_Image *)ie;
-
+   int w, h;
+   
    if (im->pixman.im) pixman_image_unref(im->pixman.im);
+   w = ie->allocated.w;
+   h = ie->allocated.h;
+   if ((w <= 0) || (h <= 0))
+     {
+        w = im->cache_entry.w;
+        h = im->cache_entry.h;
+     }
    if (im->cache_entry.flags.alpha)
      {
         im->pixman.im = pixman_image_create_bits
@@ -322,10 +330,7 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
 // FIXME: endianess determines this
             PIXMAN_a8r8g8b8,
 //            PIXMAN_b8g8r8a8,
-            im->cache_entry.w, im->cache_entry.h,
-            im->image.data,
-            im->cache_entry.w * 4
-        );
+            w, h, im->image.data, w * 4);
      }
    else
      {
@@ -334,10 +339,7 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
 // FIXME: endianess determines this
             PIXMAN_x8r8g8b8,
 //            PIXMAN_b8g8r8x8,
-            im->cache_entry.w, im->cache_entry.h,
-            im->image.data,
-            im->cache_entry.w * 4
-        );
+            w, h, im->image.data, w * 4);
      }
 # else
    (void)ie;
