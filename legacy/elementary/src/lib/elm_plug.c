@@ -89,8 +89,6 @@ _elm_plug_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-
    eo_do_super(obj, evas_obj_smart_add());
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
@@ -105,6 +103,7 @@ _elm_plug_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
      (wd->resize_obj, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up,
      obj);
 
+   elm_widget_can_focus_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
