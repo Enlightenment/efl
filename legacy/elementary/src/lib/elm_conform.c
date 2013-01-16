@@ -456,7 +456,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
    Elm_Widget_Smart_Data *wd;
 
    ELM_CONFORMANT_DATA_GET(conformant, sd);
-   wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   wd = eo_data_get(conformant, ELM_OBJ_WIDGET_CLASS);
 
    sd->indmode = indmode;
 
