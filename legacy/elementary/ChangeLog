@@ -902,3 +902,7 @@
 2013-01-13  Daniel Juyung Seo (SeoZ)
 
         * Added "highlighted" and "unhighlighted" signals to list, genlist, and gengrid.
+
+2013-01-16  Shilpa Singh <shilpa.singh@samsung.com>, Rajeev Ranjan <rajeev.r@samsung.com>
+
+        * Fix "changed" signal being sent twice in case of toggle style when check is clicked.

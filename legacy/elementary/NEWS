@@ -121,6 +121,7 @@ Fixes:
    * Fix the usage of the checks in the fileselector test 2.
    * Added the min_year and max_year in the standard profile config.
    * Fix omitting signal emission when customized text parts change the text.
+   * Fix "changed" signal being sent twice in case of toggle style when check is clicked.
 
 Removals:
 
