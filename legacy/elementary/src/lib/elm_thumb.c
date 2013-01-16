@@ -520,6 +520,24 @@ _elm_thumb_dnd_cb(void *data __UNUSED__,
    return EINA_TRUE;
 }
 
+static void
+_elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
+
+   elm_layout_theme_set
+     (wd->resize_obj, "thumb", "base",
+     elm_widget_style_get(obj));
+
+   if (ret) *ret = EINA_TRUE;
+}
+
 EAPI Eina_Bool
 elm_need_ethumb(void)
 {
@@ -847,6 +865,8 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_thumb_smart_theme),
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_thumb_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_thumb_smart_del),

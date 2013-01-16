@@ -920,3 +920,6 @@
 
         * allocate conformant part dummy objects only when the swallow parts are existed actually. since these parts are really dependent on the platform, in most case they don't need all parts at the same time.
 
+2013-01-16  Daniel Juyung Seo (SeoZ)
+
+	    * Fix thumb theme hook.

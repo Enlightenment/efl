@@ -125,6 +125,7 @@ Fixes:
    * Fix omitting signal emission when customized text parts change the text.
    * Fix "changed" signal being sent twice in case of toggle style when check is clicked.
    * Fix index refill bug when autohide disabled.
+   * Fix thumb theme hook.
 
 Removals:
 
