@@ -1876,7 +1876,7 @@ _tempfile_new(int size)
    mode_t cur_umask;
    int len;
 
-   info = malloc(sizeof(Tmp_Info));
+   info = calloc(1, sizeof(Tmp_Info));
    if (!info) return NULL;
    tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
