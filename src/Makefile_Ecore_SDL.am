@@ -4,7 +4,7 @@ if HAVE_ECORE_SDL
 
 lib_LTLIBRARIES += lib/ecore_sdl/libecore_sdl.la
 
-installed_ecoresdlmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecoresdlmainheadersdir = $(includedir)/ecore-sdl-@VMAJ@
 dist_installed_ecoresdlmainheaders_DATA = \
 lib/ecore_sdl/Ecore_Sdl.h
 

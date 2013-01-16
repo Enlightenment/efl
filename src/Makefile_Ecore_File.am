@@ -3,7 +3,7 @@
 
 lib_LTLIBRARIES += lib/ecore_file/libecore_file.la
 
-installed_ecorefilemainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorefilemainheadersdir = $(includedir)/ecore-file-@VMAJ@
 dist_installed_ecorefilemainheaders_DATA = \
 lib/ecore_file/Ecore_File.h
 

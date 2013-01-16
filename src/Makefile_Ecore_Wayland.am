@@ -4,7 +4,7 @@ if HAVE_ECORE_WAYLAND
 
 lib_LTLIBRARIES += lib/ecore_wayland/libecore_wayland.la
 
-installed_ecorewaylandmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorewaylandmainheadersdir = $(includedir)/ecore-wayland-@VMAJ@
 dist_installed_ecorewaylandmainheaders_DATA = \
 lib/ecore_wayland/Ecore_Wayland.h
 

@@ -4,7 +4,7 @@ if HAVE_ECORE_COCOA
 
 lib_LTLIBRARIES += lib/ecore_cocoa/libecore_cocoa.la
 
-installed_ecorecocoamainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorecocoamainheadersdir = $(includedir)/ecore-cocoa-@VMAJ@
 dist_installed_ecorecocoamainheaders_DATA = \
 lib/ecore_cocoa/Ecore_Cocoa.h \
 lib/ecore_cocoa/Ecore_Cocoa_Keys.h

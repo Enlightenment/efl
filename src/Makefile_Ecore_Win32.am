@@ -4,7 +4,7 @@ if HAVE_WIN32
 
 lib_LTLIBRARIES += lib/ecore_win32/libecore_win32.la
 
-installed_ecorewin32mainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorewin32mainheadersdir = $(includedir)/ecore-win32-@VMAJ@
 dist_installed_ecorewin32mainheaders_DATA = \
 lib/ecore_win32/Ecore_Win32.h
 

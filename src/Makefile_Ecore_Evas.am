@@ -3,7 +3,7 @@
 
 lib_LTLIBRARIES += lib/ecore_evas/libecore_evas.la
 
-installed_ecoreevasmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecoreevasmainheadersdir = $(includedir)/ecore-evas-@VMAJ@
 dist_installed_ecoreevasmainheaders_DATA = \
 lib/ecore_evas/Ecore_Evas_Types.h \
 lib/ecore_evas/Ecore_Evas.h

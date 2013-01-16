@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_cocoa@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_cocoa
 Libs.private: @requirements_libs_ecore_cocoa@
-Cflags: -I${includedir}/ecore-@VMAJ@
+Cflags: -I${includedir}/ecore-cocoa-@VMAJ@

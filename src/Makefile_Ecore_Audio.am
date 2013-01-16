@@ -4,7 +4,7 @@ if HAVE_ECORE_AUDIO
 
 lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
 
-installed_ecoreaudiomainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecoreaudiomainheadersdir = $(includedir)/ecore-audio-@VMAJ@
 dist_installed_ecoreaudiomainheaders_DATA = \
 lib/ecore_audio/Ecore_Audio.h
 

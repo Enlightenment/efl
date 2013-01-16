@@ -4,7 +4,7 @@ if HAVE_WINCE
 
 lib_LTLIBRARIES += lib/ecore_wince/libecore_wince.la
 
-installed_ecorewincemainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorewincemainheadersdir = $(includedir)/ecore-wince-@VMAJ@
 dist_installed_ecorewincemainheaders_DATA = \
 lib/ecore_wince/Ecore_WinCE.h
 

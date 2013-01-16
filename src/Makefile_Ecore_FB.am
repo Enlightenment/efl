@@ -4,7 +4,7 @@ if HAVE_ECORE_FB
 
 lib_LTLIBRARIES += lib/ecore_fb/libecore_fb.la
 
-installed_ecorefbmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorefbmainheadersdir = $(includedir)/ecore-fb-@VMAJ@
 dist_installed_ecorefbmainheaders_DATA = \
 lib/ecore_fb/Ecore_Fb.h
 

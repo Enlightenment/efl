@@ -4,7 +4,7 @@ if HAVE_PS3
 
 lib_LTLIBRARIES += lib/ecore_psl1ght/libecore_psl1ght.la
 
-installed_ecorepsl1ghtmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorepsl1ghtmainheadersdir = $(includedir)/ecore-psl1ght-@VMAJ@
 dist_installed_ecorepsl1ghtmainheaders_DATA = \
 lib/ecore_psl1ght/Ecore_Psl1ght.h
 

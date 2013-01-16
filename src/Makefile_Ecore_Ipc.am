@@ -3,7 +3,7 @@
 
 lib_LTLIBRARIES += lib/ecore_ipc/libecore_ipc.la
 
-installed_ecoreipcmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecoreipcmainheadersdir = $(includedir)/ecore-ipc-@VMAJ@
 dist_installed_ecoreipcmainheaders_DATA = \
 lib/ecore_ipc/Ecore_Ipc.h
 

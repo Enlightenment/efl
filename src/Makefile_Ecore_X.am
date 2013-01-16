@@ -4,7 +4,7 @@ if HAVE_ECORE_X
 
 lib_LTLIBRARIES += lib/ecore_x/libecore_x.la
 
-installed_ecorexmainheadersdir = $(includedir)/ecore-@VMAJ@
+installed_ecorexmainheadersdir = $(includedir)/ecore-x-@VMAJ@
 dist_installed_ecorexmainheaders_DATA = \
 lib/ecore_x/Ecore_X.h \
 lib/ecore_x/ecore_x_version.h \
