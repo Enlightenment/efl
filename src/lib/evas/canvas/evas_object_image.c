@@ -2584,6 +2584,7 @@ void
 _canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = _pd;
+   evas_render_rendering_wait(e);
    e->engine.func->image_cache_flush(e->engine.data.output);
 }
 
@@ -2647,6 +2648,7 @@ _canvas_image_cache_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    int size = va_arg(*list, int);
    Evas_Public_Data *e = _pd;
    if (size < 0) size = 0;
+   evas_render_rendering_wait(e);
    e->engine.func->image_cache_set(e->engine.data.output, size);
 }
 
@@ -3159,6 +3161,8 @@ _draw_image(Evas_Object_Protected_Data *obj,
         else
 #endif
           evas_cache_image_ref((Image_Entry *)image);
+
+        evas_common_rgba_image_scalecache_items_ref(image);
 
         evas_unref_queue_image_put(obj->layer->evas, image);
      }

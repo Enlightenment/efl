@@ -184,6 +184,8 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 {
    RGBA_Image *im = (RGBA_Image *)ie;
 
+   if (ie->references > 0) return;
+
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
 #endif
@@ -400,14 +402,16 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
+   if (ie->references > 0) return;
+
 #ifdef HAVE_PIXMAN
-# ifdef PIXMAN_IMAGE   
+# ifdef PIXMAN_IMAGE
    if (im->pixman.im)
      {
         pixman_image_unref(im->pixman.im);
         im->pixman.im = NULL;
      }
-# endif   
+# endif
 #endif
    if (ie->file)
      DBG("unload: [%p] %s %s", ie, ie->file, ie->key);
@@ -429,7 +433,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
         free(im->image.data);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
-#endif        
+#endif
      }
 // #ifdef EVAS_CSERVE2
 //    else if (ie->data1)
@@ -445,7 +449,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
    evas_common_rgba_image_scalecache_dirty(&im->cache_entry);
 #ifdef SURFDBG
    surf_debug();
-#endif   
+#endif
 }
 
 static void

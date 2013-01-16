@@ -1309,6 +1309,8 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
 static Eina_Bool
 _drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
+   evas_common_rgba_image_scalecache_items_unref(data);
+
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      evas_cache2_image_close((Image_Entry *)data);
@@ -1893,8 +1895,11 @@ evas_render_wakeup(Evas *eo_e)
    /* unref queues */
    eina_array_foreach(&e->image_unref_queue, _drop_image_cache_ref, NULL);
    eina_array_clean(&e->image_unref_queue);
+   evas_common_rgba_image_scalecache_prune();
+
    eina_array_foreach(&e->glyph_unref_queue, _drop_glyph_ref, NULL);
    eina_array_clean(&e->glyph_unref_queue);
+
    eina_array_foreach(&e->texts_unref_queue, _drop_texts_ref, NULL);
    eina_array_clean(&e->texts_unref_queue);
 
@@ -2111,9 +2116,11 @@ evas_render_dump(Evas *eo_e)
 void
 _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
+   Evas_Public_Data *e = _pd;
    Evas_Layer *lay;
 
-   Evas_Public_Data *e = _pd;
+   evas_render_rendering_wait(e);
+
    EINA_INLIST_FOREACH(e->layers, lay)
      {
         Evas_Object_Protected_Data *obj;

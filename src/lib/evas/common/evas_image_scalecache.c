@@ -178,6 +178,46 @@ evas_common_rgba_image_scalecache_usage_get(Image_Entry *ie)
 #endif
 }
 
+void
+evas_common_rgba_image_scalecache_items_ref(Image_Entry *ie)
+{
+#ifdef SCALECACHE
+   RGBA_Image *im = (RGBA_Image *)ie;
+   Eina_List *l;
+   Scaleitem *sci;
+   LKL(im->cache.lock);
+   EINA_LIST_FOREACH(im->cache.list, l, sci)
+     {
+        if (sci->im)
+          {
+             Image_Entry *scie = (Image_Entry *)sci->im;
+             scie->references++;
+          }
+     }
+   LKU(im->cache.lock);
+#endif
+}
+
+void
+evas_common_rgba_image_scalecache_items_unref(Image_Entry *ie)
+{
+#ifdef SCALECACHE
+   RGBA_Image *im = (RGBA_Image *)ie;
+   Eina_List *l;
+   Scaleitem *sci;
+   LKL(im->cache.lock);
+   EINA_LIST_FOREACH(im->cache.list, l, sci)
+     {
+        if (sci->im)
+          {
+             Image_Entry *scie = (Image_Entry *)sci->im;
+             scie->references--;
+          }
+     }
+   LKU(im->cache.lock);
+#endif
+}
+
 #ifdef SCALECACHE
 static void
 _sci_fix_newest(RGBA_Image *im)
@@ -278,8 +318,10 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
    Scaleitem *sci;
    while (cache_size > max_cache_size)
      {
+        Image_Entry *scie;
         if (!cache_list) break;
         sci = (Scaleitem *)(cache_list);
+repeat:
         if (copies_only)
           {
              while ((sci) && (!sci->parent_im->image.data))
@@ -287,8 +329,15 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
              if (!sci) return;
           }
         if (sci == notsci) return;
+
+        scie = (Image_Entry *)sci->im;
         if (sci->im)
           {
+             if (scie->references > 0)
+               {
+                  sci = (Scaleitem *)(((Eina_Inlist *)sci)->next);
+                  goto repeat;
+               }
              evas_common_rgba_image_free(&sci->im->cache_entry);
              sci->im = NULL;
              sci->usage = 0;
@@ -333,6 +382,16 @@ evas_common_rgba_image_scalecache_size_get(void)
 #else
    return 0;
 #endif   
+}
+
+EAPI void
+evas_common_rgba_image_scalecache_prune(void)
+{
+#ifdef SCALECACHE
+   LKL(cache_lock);
+   _cache_prune(NULL, 0);
+   LKU(cache_lock);
+#endif
 }
 
 EAPI void
@@ -711,7 +770,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 //                    sci->dst_w * sci->dst_h * 4, sci->flop,
 //                    sci->dst_w, sci->dst_h);
              cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
-             _cache_prune(sci, 0);
              LKU(cache_lock);
              didpop = 1;
           }
@@ -858,4 +916,5 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      dst_region_x, dst_region_y, dst_region_w, dst_region_h,
      evas_common_scale_rgba_in_to_out_clip_sample,
      evas_common_scale_rgba_in_to_out_clip_smooth);
+   evas_common_rgba_image_scalecache_prune();
 }
