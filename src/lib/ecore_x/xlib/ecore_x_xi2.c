@@ -20,6 +20,10 @@ int _ecore_x_xi2_opcode = -1;
 
 #ifdef ECORE_XI2
 #ifdef ECORE_XI2_2
+#ifndef XITouchEmulatingPointer
+#define XITouchEmulatingPointer (1 << 17)
+#endif
+
 typedef struct _Ecore_X_Touch_Device_Info
 {
    EINA_INLIST;
@@ -307,6 +311,7 @@ _ecore_x_input_handler(XEvent *xevent)
       case XI_TouchUpdate:
 #ifdef ECORE_XI2_2
         i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchUpdate);
+        if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
         _ecore_mouse_move
           (evd->time,
@@ -333,6 +338,7 @@ _ecore_x_input_handler(XEvent *xevent)
       case XI_TouchBegin:
 #ifdef ECORE_XI2_2
         i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchBegin);
+        if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
 #endif /* #ifdef ECORE_XI2_2 */
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_DOWN,
@@ -361,6 +367,11 @@ _ecore_x_input_handler(XEvent *xevent)
       case XI_TouchEnd:
 #ifdef ECORE_XI2_2
         i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
+        if ((i == 0) && (evd->flags & XITouchEmulatingPointer))
+          {
+             _ecore_x_input_touch_index_clear(devid,  i);
+             return;
+          }
 #endif /* #ifdef ECORE_XI2_2 */
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_UP,
