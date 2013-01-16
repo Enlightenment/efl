@@ -706,7 +706,7 @@ struct iface_remove_data {
 };
 
 static Eina_Bool
-_iface_changed_send(void *data)
+_object_manager_changes_process(void *data)
 {
    EDBus_Service_Object *parent = data;
 
@@ -801,13 +801,13 @@ error2:
 }
 
 static EDBus_Service_Object *
-_find_object_manager_parent(EDBus_Service_Object *obj)
+_object_manager_parent_find(EDBus_Service_Object *obj)
 {
    if (!obj->parent)
      return NULL;
    if (obj->parent->has_objectmanager)
      return obj->parent;
-   return _find_object_manager_parent(obj->parent);
+   return _object_manager_parent_find(obj->parent);
 }
 
 static EDBus_Service_Interface *
@@ -829,12 +829,12 @@ _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
    iface->obj = obj;
    eina_hash_add(obj->interfaces, iface->name, iface);
 
-   parent = _find_object_manager_parent(obj);
+   parent = _object_manager_parent_find(obj);
    if (parent)
      {
         if (!parent->idler_iface_changed)
-          parent->idler_iface_changed = ecore_idler_add(_iface_changed_send,
-                                                        parent);
+          parent->idler_iface_changed = ecore_idler_add(
+             _object_manager_changes_process, parent);
         parent->iface_added = eina_list_append(parent->iface_added, iface);
      }
    return iface;
@@ -1013,7 +1013,7 @@ _interface_free(EDBus_Service_Interface *interface)
    if (interface->prop_invalidated)
      eina_array_free(interface->prop_invalidated);
 
-   parent = _find_object_manager_parent(interface->obj);
+   parent = _object_manager_parent_find(interface->obj);
    if (parent)
      {
         struct iface_remove_data *data;
@@ -1024,8 +1024,10 @@ _interface_free(EDBus_Service_Interface *interface)
         data->iface = eina_stringshare_add(interface->name);
 
         if (!parent->idler_iface_changed)
-          parent->idler_iface_changed = ecore_idler_add(_iface_changed_send,
-                                                        parent);
+          {
+             parent->idler_iface_changed = ecore_idler_add(
+                _object_manager_changes_process, parent);
+          }
         parent->iface_removed = eina_list_append(parent->iface_removed, data);
         parent->iface_added = eina_list_remove(parent->iface_added, interface);
      }
