@@ -974,6 +974,7 @@ _interface_free(EDBus_Service_Interface *interface)
 {
    const char *sig;
    EDBus_Service_Object *obj;
+   Eina_List *l;
 
    if (interface == introspectable || interface == properties_iface ||
        interface == objmanager)
@@ -992,18 +993,26 @@ _interface_free(EDBus_Service_Interface *interface)
      eina_array_free(interface->prop_invalidated);
 
    obj = interface->obj;
-   if (!obj->idler_iface_changed)
-     obj->idler_iface_changed = ecore_idler_add(_object_manager_changes_process,
-                                                obj);
-   obj->iface_removed = eina_list_append(obj->iface_removed,
-                                         eina_stringshare_ref(interface->name));
-   /*
-    * TODO: properly fix the case in which the interface appears in both
-    * iface_added and iface_removed list. If we only remove it like below we
-    * will end up sending InterfacesRemoved signal for an interface that never
-    * generated an InterfacesAdded signal. In this case it's better not to send
-    * the signal but we are sending both.
-    */
+   l = eina_list_data_find(obj->iface_added, interface);
+   if (l)
+     {
+        /* Adding and removing the interface in the same main loop iteration.
+         * Let's not send any signal */
+        obj->iface_added = eina_list_remove_list(obj->iface_added, l);
+        if (!obj->iface_added && !obj->iface_removed && obj->idler_iface_changed)
+          obj->idler_iface_changed = ecore_idler_del(obj->idler_iface_changed);
+     }
+   else
+     {
+        if (!obj->idler_iface_changed)
+          {
+             obj->idler_iface_changed = ecore_idler_add(
+                _object_manager_changes_process, obj);
+          }
+
+        obj->iface_removed = eina_list_append(
+           obj->iface_removed, eina_stringshare_ref(interface->name));
+     }
 
    eina_stringshare_del(interface->name);
    free(interface);
