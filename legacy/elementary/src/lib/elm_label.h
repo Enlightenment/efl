@@ -349,6 +349,7 @@ EAPI void                        elm_label_slide_area_limit_set(Evas_Object *obj
  * ellipsis(elm_label_ellipsis_set()) is set.
  *
  * @see elm_label_slide_mode_get().
+ * @since 1.8
  *
  * @ingroup Label
  */
@@ -361,6 +362,7 @@ EAPI void                        elm_label_slide_mode_set(Evas_Object *obj, Elm_
  * @return The slide mode
  *
  * @see elm_label_slide_mode_set()
+ * @since 1.8
  *
  * @ingroup Label
  */
@@ -372,6 +374,7 @@ EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj
  * @param obj The label object
  *
  * @see elm_label_slide_mode_set()
+ * @since 1.8
  *
  * @ingroup Label
  */
