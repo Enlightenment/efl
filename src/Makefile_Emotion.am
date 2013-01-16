@@ -189,6 +189,7 @@ tests/emotion/data/window_inner_shadow.png
 
 emotiondatafilesdir = $(datadir)/emotion/data
 emotiondatafiles_DATA = tests/emotion/data/theme.edj
+CLEANFILES += tests/emotion/data/theme.edj
 endif
 
 EXTRA_DIST += \

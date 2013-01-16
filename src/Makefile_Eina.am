@@ -276,12 +276,9 @@ tests_eina_cxx_compile_test_CPPFLAGS = @EINA_CFLAGS@
 tests_eina_cxx_compile_test_LDADD = @USE_EINA_LIBS@
 tests_eina_cxx_compile_test_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
-EXTRA_LTLIBRARIES = tests/eina/module_dummy.la
-
-check-local: tests/eina/module_dummy.la
+check_LTLIBRARIES = tests/eina/module_dummy.la
 
 tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
-
 tests_eina_module_dummy_la_CPPFLAGS = \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/tests/eina\" \
 @CHECK_CFLAGS@ \

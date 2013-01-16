@@ -84,3 +84,7 @@ uninstall-local:
 	for f in $(simple_SOURCES) ; do \
 	  rm -f $(datadir)/eo/examples/simple/$$f ; \
 	done
+
+if ALWAYS_BUILD_EXAMPLES
+noinst_PROGRAMS = $(EXTRA_PROGRAMS)
+endif

@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =
+CLEANFILES =
 
 ########################################################################
 # Embryo
@@ -85,8 +86,8 @@ ethumbfiles_DATA = ethumb/checkme
 EXTRA_DIST += $(ethumbfiles_DATA)
 
 ethumbframesdir = $(datadir)/ethumb/frames
-ethumbframes_DATA = \
-ethumb/frames/default.edj
+ethumbframes_DATA = ethumb/frames/default.edj
+CLEANFILES += ethumb/frames/default.edj
 
 ethumb/frames/default.edj: ethumb/frames/default.edc
 	@$(MKDIR_P) ethumb/frames/
