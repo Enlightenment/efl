@@ -211,54 +211,78 @@ static void
 _conformant_parts_swallow(Evas_Object *obj)
 {
    Evas *e;
+   Elm_Widget_Smart_Data *wd;
 
    ELM_CONFORMANT_DATA_GET(obj, sd);
 
+   wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
    e = evas_object_evas_get(obj);
 
    sd->scroller = NULL;
 
-   //Indicator
-   //Indicator swallow can occur Only indicator show or rotation change
-
    //Virtual Keyboard
-   if (!sd->virtualkeypad)
+   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.virtualkeypad"))
      {
-        sd->virtualkeypad = evas_object_rectangle_add(e);
-        elm_widget_sub_object_add(obj, sd->virtualkeypad);
-        evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
-     }
-   else
-     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
+        if (!sd->virtualkeypad)
+          {
+             sd->virtualkeypad = evas_object_rectangle_add(e);
+             elm_widget_sub_object_add(obj, sd->virtualkeypad);
+             evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
+          }
+        else
+          _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
 
-   evas_object_color_set(sd->virtualkeypad, 0, 0, 0, 0);
-   elm_layout_content_set(obj, "elm.swallow.virtualkeypad", sd->virtualkeypad);
+        evas_object_color_set(sd->virtualkeypad, 0, 0, 0, 0);
+        elm_layout_content_set(obj, "elm.swallow.virtualkeypad",
+                               sd->virtualkeypad);
+     }
+   else if (sd->virtualkeypad)
+     {
+        evas_object_del(sd->virtualkeypad);
+        sd->virtualkeypad = NULL;
+     }
 
    //Clipboard
-   if (!sd->clipboard)
+   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.clipboard"))
      {
-        sd->clipboard = evas_object_rectangle_add(e);
-        evas_object_size_hint_min_set(sd->clipboard, -1, 0);
-        evas_object_size_hint_max_set(sd->clipboard, -1, 0);
-     }
-   else
-     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_CLIPBOARD_PART);
+        if (!sd->clipboard)
+          {
+             sd->clipboard = evas_object_rectangle_add(e);
+             evas_object_size_hint_min_set(sd->clipboard, -1, 0);
+             evas_object_size_hint_max_set(sd->clipboard, -1, 0);
+          }
+        else
+          _conformant_part_sizing_eval(obj, ELM_CONFORMANT_CLIPBOARD_PART);
 
-   evas_object_color_set(sd->clipboard, 0, 0, 0, 0);
-   elm_layout_content_set(obj, "elm.swallow.clipboard", sd->clipboard);
+        evas_object_color_set(sd->clipboard, 0, 0, 0, 0);
+        elm_layout_content_set(obj, "elm.swallow.clipboard", sd->clipboard);
+     }
+   else if (sd->clipboard)
+     {
+        evas_object_del(sd->clipboard);
+        sd->clipboard = NULL;
+     }
 
    //Softkey
-   if (!sd->softkey)
+   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.softkey"))
      {
-        sd->softkey = evas_object_rectangle_add(e);
-        evas_object_size_hint_min_set(sd->softkey, -1, 0);
-        evas_object_size_hint_max_set(sd->softkey, -1, 0);
-     }
-   else
-     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_SOFTKEY_PART);
+        if (!sd->softkey)
+          {
+             sd->softkey = evas_object_rectangle_add(e);
+             evas_object_size_hint_min_set(sd->softkey, -1, 0);
+             evas_object_size_hint_max_set(sd->softkey, -1, 0);
+          }
+        else
+          _conformant_part_sizing_eval(obj, ELM_CONFORMANT_SOFTKEY_PART);
 
-   evas_object_color_set(sd->softkey, 0, 0, 0, 0);
-   elm_layout_content_set(obj, "elm.swallow.softkey", sd->softkey);
+        evas_object_color_set(sd->softkey, 0, 0, 0, 0);
+        elm_layout_content_set(obj, "elm.swallow.softkey", sd->softkey);
+     }
+   else if (sd->softkey)
+     {
+        evas_object_del(sd->softkey);
+        sd->softkey = NULL;
+     }
 }
 
 static Eina_Bool
@@ -424,8 +448,15 @@ static void
 _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
 {
    Evas_Object *old_indi = NULL;
+   Elm_Widget_Smart_Data *wd;
+
    ELM_CONFORMANT_DATA_GET(conformant, sd);
+   wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+
    sd->indmode = indmode;
+
+   if (!edje_object_part_exists(wd->resize_obj, "elm.swallow.indicator"))
+     return;
 
    if (indmode == ELM_WIN_INDICATOR_SHOW)
      {

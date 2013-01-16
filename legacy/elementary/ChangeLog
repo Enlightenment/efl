@@ -915,3 +915,8 @@
 2013-01-16  Jaeun Choi
 
         * Fix bug where index is not re-filled if autohide disabled
+
+2013-01-16  ChunEon Park (Hermet)
+
+        * allocate conformant part dummy objects only when the swallow parts are existed actually. since these parts are really dependent on the platform, in most case they don't need all parts at the same time.
+
