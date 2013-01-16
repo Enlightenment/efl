@@ -10,7 +10,7 @@ lib/ecore_input_evas/Ecore_Input_Evas.h
 
 lib_ecore_input_evas_libecore_input_evas_la_SOURCES = \
 lib/ecore_input_evas/ecore_input_evas.c \
-lib/ecore_input_evas/ecore_input_evas_private.h
+lib/ecore_input/ecore_input_evas_private.h
 
 lib_ecore_input_evas_libecore_input_evas_la_CPPFLAGS = @ECORE_INPUT_EVAS_CFLAGS@
 lib_ecore_input_evas_libecore_input_evas_la_LIBADD = @ECORE_INPUT_EVAS_LIBS@
