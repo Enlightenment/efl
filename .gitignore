@@ -137,9 +137,9 @@ Makefile.in
 /src/bin/eeze/eeze_udev_test
 /src/bin/eeze/eeze_umount
 /src/bin/ethumb/ethumb
-/src/bin/ethumb/ethumbd
-/src/bin/ethumb/ethumbd_client
-/src/bin/ethumb/ethumbd_slave
+/src/bin/ethumb_client/ethumbd
+/src/bin/ethumb_client/ethumbd_client
+/src/bin/ethumb_client/ethumbd_slave
 /src/examples/edje/animations2
 /src/examples/edje/codegen_example_generated.c
 /src/examples/edje/codegen_example_generated.h
