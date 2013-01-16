@@ -512,6 +512,12 @@ _managed_obj_append(EDBus_Service_Object *obj, EDBus_Message_Iter *array, Eina_B
    edbus_message_iter_arguments_append(obj_entry, "oa{sa{sv}}", obj->path,
                                     &array_interface);
    iface_iter = eina_hash_iterator_data_new(obj->interfaces);
+
+   /*
+    * FIXME: we shouldn't reply with an interface that is still in iface_added,
+    * otherwise after calling this method the user will still receive the signal
+    * that the interface was created
+    */
    EINA_ITERATOR_FOREACH(iface_iter, children_iface)
      {
         Eina_Bool ret;
@@ -700,104 +706,60 @@ _props_free(void *data)
    free(p);
 }
 
-struct iface_remove_data {
-   const char *obj_path;
-   const char *iface;
-};
-
-static Eina_Bool
-_object_manager_changes_process(void *data)
+static void
+_object_manager_iface_added_emit(EDBus_Service_Object *obj,
+                                 EDBus_Service_Object *parent)
 {
-   EDBus_Service_Object *parent = data;
+   Eina_List *l;
+   EDBus_Service_Interface *iface;
+   EDBus_Message_Iter *iter, *array;
+   EDBus_Message *sig = edbus_message_signal_new(parent->path,
+                                                 EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                                 "InterfacesAdded");
+   EINA_SAFETY_ON_NULL_RETURN(sig);
+   iter = edbus_message_iter_get(sig);
+   edbus_message_iter_arguments_append(iter, "oa{sa{sv}}", obj->path,
+                                       &array);
 
-   while (parent->iface_added)
+   EINA_LIST_FOREACH(obj->iface_added, l, iface)
      {
-        EDBus_Service_Interface *iface, *next_iface;
-        EDBus_Message *msg;
-        EDBus_Message_Iter *array_iface, *main_iter;
-        Eina_List *l, *l2;
-
-        iface = eina_list_data_get(parent->iface_added);
-        parent->iface_added = eina_list_remove_list(parent->iface_added,
-                                                    parent->iface_added);
-
-        msg = edbus_message_signal_new(parent->path,
-                                       EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
-                                       "InterfacesAdded");
-        if (!msg)
+        if (!_propmgr_iface_props_append(iface, array))
           {
-             ERR("msg == NULL");
-             continue;
+             ERR("Could not append properties to InterfacesAdded signal");
+             edbus_message_unref(sig);
+             goto done;
           }
-
-        main_iter = edbus_message_iter_get(msg);
-        edbus_message_iter_arguments_append(main_iter, "oa{sa{sv}}",
-                                            iface->obj->path, &array_iface);
-        if (!_propmgr_iface_props_append(iface, array_iface))
-          goto error;
-
-        EINA_LIST_FOREACH_SAFE(parent->iface_added, l, l2, next_iface)
-          {
-             if (iface->obj->path != next_iface->obj->path)
-               continue;
-             parent->iface_added = eina_list_remove(parent->iface_added,
-                                                    next_iface);
-             if (!_propmgr_iface_props_append(next_iface, array_iface))
-               goto error;
-          }
-
-        edbus_message_iter_container_close(main_iter, array_iface);
-        edbus_connection_send(parent->conn, msg, NULL, NULL, -1);
-        continue;
-
-error:
-        ERR("Error appending InterfacesAdded to msg.");
-        edbus_message_unref(msg);
      }
+   edbus_message_iter_container_close(iter, array);
+   edbus_connection_send(parent->conn, sig, NULL, NULL, -1);
 
-   while (parent->iface_removed)
+done:
+   obj->iface_added = eina_list_free(obj->iface_added);
+}
+
+static void
+_object_manager_iface_removed_emit(EDBus_Service_Object *obj,
+                                   EDBus_Service_Object *parent)
+{
+   Eina_List *l;
+   const char *name;
+   EDBus_Message_Iter *iter, *array;
+   EDBus_Message *sig = edbus_message_signal_new(parent->path,
+                                                 EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                                 "InterfacesRemoved");
+   EINA_SAFETY_ON_NULL_RETURN(sig);
+
+   iter = edbus_message_iter_get(sig);
+   edbus_message_iter_arguments_append(iter, "oas", obj->path, &array);
+
+   EINA_LIST_FOREACH(obj->iface_removed, l, name)
      {
-        EDBus_Message *msg;
-        EDBus_Message_Iter *array_iface, *main_iter;
-        struct iface_remove_data *iface_data, *iface_data_next;
-        Eina_List *l, *l2;
-
-        iface_data = eina_list_data_get(parent->iface_removed);
-        parent->iface_removed = eina_list_remove_list(parent->iface_removed,
-                                                      parent->iface_removed);
-
-        msg = edbus_message_signal_new(parent->path,
-                                       EDBUS_FDO_INTERFACE_OBJECT_MANAGER,
-                                       "InterfacesRemoved");
-        EINA_SAFETY_ON_NULL_GOTO(msg, error2);
-        main_iter = edbus_message_iter_get(msg);
-
-        edbus_message_iter_arguments_append(main_iter, "oas", iface_data->obj_path,
-                                            &array_iface);
-        edbus_message_iter_basic_append(array_iface, 's', iface_data->iface);
-
-        EINA_LIST_FOREACH_SAFE(parent->iface_removed, l, l2, iface_data_next)
-          {
-             if (iface_data->obj_path != iface_data_next->obj_path)
-               continue;
-             parent->iface_removed = eina_list_remove(parent->iface_removed,
-                                                      iface_data_next);
-             edbus_message_iter_basic_append(array_iface, 's',
-                                             iface_data_next->iface);
-             eina_stringshare_del(iface_data_next->iface);
-             eina_stringshare_del(iface_data_next->obj_path);
-             free(iface_data_next);
-          }
-        edbus_message_iter_container_close(main_iter, array_iface);
-        edbus_connection_send(parent->conn, msg, NULL, NULL, -1);
-error2:
-        eina_stringshare_del(iface_data->iface);
-        eina_stringshare_del(iface_data->obj_path);
-        free(iface_data);
+        edbus_message_iter_arguments_append(array, name);
+        eina_stringshare_del(name);
      }
-
-   parent->idler_iface_changed = NULL;
-   return EINA_FALSE;
+   edbus_message_iter_container_close(iter, array);
+   edbus_connection_send(parent->conn, sig, NULL, NULL, -1);
+   obj->iface_removed = eina_list_free(obj->iface_removed);
 }
 
 static EDBus_Service_Object *
@@ -810,11 +772,29 @@ _object_manager_parent_find(EDBus_Service_Object *obj)
    return _object_manager_parent_find(obj->parent);
 }
 
+static Eina_Bool
+_object_manager_changes_process(void *data)
+{
+   EDBus_Service_Object *obj = data;
+   EDBus_Service_Object *parent = _object_manager_parent_find(obj);
+
+   obj->idler_iface_changed = NULL;
+
+   if (!parent)
+     return EINA_FALSE;
+
+   if (obj->iface_added)
+     _object_manager_iface_added_emit(obj, parent);
+   if (obj->iface_removed)
+     _object_manager_iface_removed_emit(obj, parent);
+
+   return EINA_FALSE;
+}
+
 static EDBus_Service_Interface *
 _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
 {
    EDBus_Service_Interface *iface;
-   EDBus_Service_Object *parent;
 
    iface = eina_hash_find(obj->interfaces, interface);
    if (iface) return iface;
@@ -829,14 +809,11 @@ _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
    iface->obj = obj;
    eina_hash_add(obj->interfaces, iface->name, iface);
 
-   parent = _object_manager_parent_find(obj);
-   if (parent)
-     {
-        if (!parent->idler_iface_changed)
-          parent->idler_iface_changed = ecore_idler_add(
-             _object_manager_changes_process, parent);
-        parent->iface_added = eina_list_append(parent->iface_added, iface);
-     }
+   if (!obj->idler_iface_changed)
+     obj->idler_iface_changed = ecore_idler_add(_object_manager_changes_process,
+                                                obj);
+   obj->iface_added = eina_list_append(obj->iface_added, iface);
+
    return iface;
 }
 
@@ -996,7 +973,8 @@ static void
 _interface_free(EDBus_Service_Interface *interface)
 {
    const char *sig;
-   EDBus_Service_Object *parent;
+   EDBus_Service_Object *obj;
+
    if (interface == introspectable || interface == properties_iface ||
        interface == objmanager)
      return;
@@ -1013,25 +991,20 @@ _interface_free(EDBus_Service_Interface *interface)
    if (interface->prop_invalidated)
      eina_array_free(interface->prop_invalidated);
 
-   parent = _object_manager_parent_find(interface->obj);
-   if (parent)
-     {
-        struct iface_remove_data *data;
+   obj = interface->obj;
+   if (!obj->idler_iface_changed)
+     obj->idler_iface_changed = ecore_idler_add(_object_manager_changes_process,
+                                                obj);
+   obj->iface_removed = eina_list_append(obj->iface_removed,
+                                         eina_stringshare_ref(interface->name));
+   /*
+    * TODO: properly fix the case in which the interface appears in both
+    * iface_added and iface_removed list. If we only remove it like below we
+    * will end up sending InterfacesRemoved signal for an interface that never
+    * generated an InterfacesAdded signal. In this case it's better not to send
+    * the signal but we are sending both.
+    */
 
-        data = malloc(sizeof(struct iface_remove_data));
-        EINA_SAFETY_ON_NULL_GOTO(data, end);
-        data->obj_path = eina_stringshare_add(interface->obj->path);
-        data->iface = eina_stringshare_add(interface->name);
-
-        if (!parent->idler_iface_changed)
-          {
-             parent->idler_iface_changed = ecore_idler_add(
-                _object_manager_changes_process, parent);
-          }
-        parent->iface_removed = eina_list_append(parent->iface_removed, data);
-        parent->iface_added = eina_list_remove(parent->iface_added, interface);
-     }
-end:
    eina_stringshare_del(interface->name);
    free(interface);
 }
@@ -1041,7 +1014,11 @@ _object_free(EDBus_Service_Object *obj)
 {
    Eina_Iterator *iterator;
    EDBus_Service_Interface *iface;
-   struct iface_remove_data *data;
+
+   /* Flush ObjectManager interface before the entire object goes away */
+   if (obj->idler_iface_changed)
+     ecore_idler_del(obj->idler_iface_changed);
+   _object_manager_changes_process(obj);
 
    iterator = eina_hash_iterator_data_new(obj->interfaces);
    EINA_ITERATOR_FOREACH(iterator, iface)
@@ -1074,15 +1051,6 @@ _object_free(EDBus_Service_Object *obj)
 
    edbus_data_del_all(&obj->data);
 
-   EINA_LIST_FREE(obj->iface_removed, data)
-     {
-        eina_stringshare_del(data->iface);
-        eina_stringshare_del(data->obj_path);
-        free(data);
-     }
-   eina_list_free(obj->iface_added);
-   if (obj->idler_iface_changed)
-     ecore_idler_del(obj->idler_iface_changed);
    eina_hash_free(obj->interfaces);
    eina_iterator_free(iterator);
    if (obj->introspection_data)
@@ -1444,9 +1412,26 @@ edbus_service_object_manager_attach(EDBus_Service_Interface *iface)
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
 
    obj = iface->obj;
+
+   /*
+    * FIXME: if the user registered an ObjectManager interface himself, this is
+    * utterly wrong since edbus would think it would have to send the signals,
+    * when the user is expected to so, since he registered the interface.
+    */
    if (!eina_hash_find(obj->interfaces, objmanager->name))
-     if (!eina_hash_add(obj->interfaces, objmanager->name, objmanager))
-       return EINA_FALSE;
+     {
+        if (!eina_hash_add(obj->interfaces, objmanager->name, objmanager))
+          return EINA_FALSE;
+
+        /*
+         * Flush the iface_added and iface_removed, otherwise it could be sent
+         * with path equal to our path rather than from the previous
+         * ObjectManager
+         */
+        if (obj->idler_iface_changed)
+          ecore_idler_del(obj->idler_iface_changed);
+        _object_manager_changes_process(obj);
+     }
 
    obj->has_objectmanager = EINA_TRUE;
    obj->introspection_dirty = EINA_TRUE;
@@ -1461,6 +1446,12 @@ edbus_service_object_manager_detach(EDBus_Service_Interface *iface)
 
    EDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    obj = iface->obj;
+
+   /* Flush our iface_added/iface_removed before our ObjectManager goes away */
+   if (obj->idler_iface_changed)
+     ecore_idler_del(obj->idler_iface_changed);
+   _object_manager_changes_process(obj);
+
    ret = eina_hash_del(obj->interfaces, objmanager->name, NULL);
    obj->has_objectmanager = EINA_FALSE;
    obj->introspection_dirty = EINA_TRUE;
