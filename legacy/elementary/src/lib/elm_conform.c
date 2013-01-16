@@ -515,8 +515,8 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
 
 static void
 _on_indicator_mode_changed(void *data,
-                    Evas_Object *obj,
-                    void *event_info __UNUSED__)
+                           Evas_Object *obj,
+                           void *event_info __UNUSED__)
 {
    Evas_Object *conformant = data;
    Evas_Object *win = obj;
@@ -540,8 +540,8 @@ _on_indicator_mode_changed(void *data,
 
 static void
 _on_rotation_changed(void *data,
-              Evas_Object *obj,
-              void *event_info __UNUSED__)
+                     Evas_Object *obj,
+                     void *event_info __UNUSED__)
 {
    int rot = 0;
    Evas_Object *win = obj;
