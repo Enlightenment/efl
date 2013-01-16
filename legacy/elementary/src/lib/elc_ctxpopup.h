@@ -24,7 +24,8 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * - @c "dismissed" - the ctxpopup was dismissed
+ * - @c "dismissed" - this is called when the outside of ctxpopup was clicked
+ * and ctxpopup is dismissed.
  *
  * Default content parts of the ctxpopup widget that you can use for are:
  * @li "default" - A content of the ctxpopup
@@ -351,7 +352,7 @@ EAPI Elm_Ctxpopup_Direction       elm_ctxpopup_direction_get(const Evas_Object *
  * @brief Dismiss a ctxpopup object
  *
  * @param obj The ctxpopup object
- * Use this function to simulate clicking outside the ctxpopup to dismiss it.
+ * Use this function to simulate clicking outside of the ctxpopup to dismiss it.
  * In this way, the ctxpopup will be hidden and the "clicked" signal will be
  * emitted.
  */
