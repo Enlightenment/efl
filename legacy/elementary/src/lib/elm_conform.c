@@ -24,6 +24,12 @@ static char CONFORMANT_KEY[] = "_elm_conform_key";
 static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
 #endif
 
+
+static const char INDICATOR_PART[] = "elm.swallow.indicator";
+static const char VIRTUALKEYPAD_PART[] = "elm.swallow.viertualkeypad";
+static const char CLIPBOARD_PART[] = "elm.swallow.clipboard";
+static const char SOFTKEY_PART[] = "elm.swallow.softkey";
+
 static const char SIG_VIRTUALKEYPAD_STATE_ON[] = "virtualkeypad,state,on";
 static const char SIG_VIRTUALKEYPAD_STATE_OFF[] = "virtualkeypad,state,off";
 static const char SIG_CLIPBOARD_STATE_ON[] = "clipboard,state,on";
@@ -221,7 +227,7 @@ _conformant_parts_swallow(Evas_Object *obj)
    sd->scroller = NULL;
 
    //Virtual Keyboard
-   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.virtualkeypad"))
+   if (edje_object_part_exists(wd->resize_obj, VIRTUALKEYPAD_PART))
      {
         if (!sd->virtualkeypad)
           {
@@ -233,8 +239,7 @@ _conformant_parts_swallow(Evas_Object *obj)
           _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
 
         evas_object_color_set(sd->virtualkeypad, 0, 0, 0, 0);
-        elm_layout_content_set(obj, "elm.swallow.virtualkeypad",
-                               sd->virtualkeypad);
+        elm_layout_content_set(obj, VIRTUALKEYPAD_PART, sd->virtualkeypad);
      }
    else if (sd->virtualkeypad)
      {
@@ -243,7 +248,7 @@ _conformant_parts_swallow(Evas_Object *obj)
      }
 
    //Clipboard
-   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.clipboard"))
+   if (edje_object_part_exists(wd->resize_obj, CLIPBOARD_PART))
      {
         if (!sd->clipboard)
           {
@@ -255,7 +260,7 @@ _conformant_parts_swallow(Evas_Object *obj)
           _conformant_part_sizing_eval(obj, ELM_CONFORMANT_CLIPBOARD_PART);
 
         evas_object_color_set(sd->clipboard, 0, 0, 0, 0);
-        elm_layout_content_set(obj, "elm.swallow.clipboard", sd->clipboard);
+        elm_layout_content_set(obj, CLIPBOARD_PART, sd->clipboard);
      }
    else if (sd->clipboard)
      {
@@ -264,7 +269,7 @@ _conformant_parts_swallow(Evas_Object *obj)
      }
 
    //Softkey
-   if (edje_object_part_exists(wd->resize_obj, "elm.swallow.softkey"))
+   if (edje_object_part_exists(wd->resize_obj, SOFTKEY_PART))
      {
         if (!sd->softkey)
           {
@@ -276,7 +281,7 @@ _conformant_parts_swallow(Evas_Object *obj)
           _conformant_part_sizing_eval(obj, ELM_CONFORMANT_SOFTKEY_PART);
 
         evas_object_color_set(sd->softkey, 0, 0, 0, 0);
-        elm_layout_content_set(obj, "elm.swallow.softkey", sd->softkey);
+        elm_layout_content_set(obj, SOFTKEY_PART, sd->softkey);
      }
    else if (sd->softkey)
      {
@@ -455,12 +460,12 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
 
    sd->indmode = indmode;
 
-   if (!edje_object_part_exists(wd->resize_obj, "elm.swallow.indicator"))
+   if (!edje_object_part_exists(wd->resize_obj, INDICATOR_PART))
      return;
 
    if (indmode == ELM_WIN_INDICATOR_SHOW)
      {
-        old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+        old_indi = elm_layout_content_get(conformant, INDICATOR_PART);
 
         //create new indicator
         if (!old_indi)
@@ -473,7 +478,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
                   if (!sd->landscape_indicator) return;
 
                   evas_object_show(sd->landscape_indicator);
-                  elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
+                  elm_layout_content_set(conformant, INDICATOR_PART, sd->landscape_indicator);
                }
              else
                {
@@ -483,7 +488,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
                   if (!sd->portrait_indicator) return;
 
                   evas_object_show(sd->portrait_indicator);
-                  elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
+                  elm_layout_content_set(conformant, INDICATOR_PART, sd->portrait_indicator);
                }
 
           }
@@ -491,7 +496,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
      }
    else
      {
-        old_indi = elm_layout_content_get(conformant, "elm.swallow.indicator");
+        old_indi = elm_layout_content_get(conformant, INDICATOR_PART);
         if (old_indi)
           {
              evas_object_hide(old_indi);
@@ -550,7 +555,7 @@ _on_rotation_changed(void *data,
    if (rot == sd->rot) return;
 
    sd->rot = rot;
-   old_indi = elm_layout_content_unset(conformant, "elm.swallow.indicator");
+   old_indi = elm_layout_content_unset(conformant, INDICATOR_PART);
    /* this means ELM_WIN_INDICATOR_SHOW never be set.we don't need to change indicator type*/
    if (!old_indi) return;
    evas_object_hide(old_indi);
@@ -564,7 +569,7 @@ _on_rotation_changed(void *data,
 
         evas_object_show(sd->landscape_indicator);
         evas_object_data_set(sd->landscape_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
-        elm_layout_content_set(conformant, "elm.swallow.indicator", sd->landscape_indicator);
+        elm_layout_content_set(conformant, INDICATOR_PART, sd->landscape_indicator);
      }
    else
      {
@@ -575,7 +580,7 @@ _on_rotation_changed(void *data,
 
         evas_object_show(sd->portrait_indicator);
         evas_object_data_set(sd->portrait_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
-        elm_layout_content_set(conformant, "elm.swallow.indicator", sd->portrait_indicator);
+        elm_layout_content_set(conformant, INDICATOR_PART, sd->portrait_indicator);
      }
 }
 
