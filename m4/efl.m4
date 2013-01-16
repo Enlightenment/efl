@@ -1,5 +1,79 @@
 dnl file to manage modules in efl
 
+dnl EFL_VERSION(major, minor, micro, release)
+dnl This setup EFL version information and should be called BEFORE AC_INIT().
+dnl
+dnl release parameter is 'dev' to use from SVN or libtool -release field.
+dnl It may be empty if not dev (svn/live build) and no -release is to be used.
+dnl
+dnl Examples:
+dnl     EFL_VERSION(1, 7, 99, dev)
+dnl     EFL_VERSION(1, 7, 99, ver-1234)
+dnl This will define couple of m4 symbols:
+dnl     v_maj = given major number (first parameter)
+dnl     v_min = given minor number (second parameter)
+dnl     v_mic = given micro number (third parameter)
+dnl     v_rev = if release, it's 0, otherwise it's dev_version.
+dnl     v_rel = if release, it's -release followed by fourth parameter,
+dnl             otherwise it's empty. (mostly for libtool)
+dnl     efl_version = if release, it's major.minor.micro, otherwise it's
+dnl             major.minor.micro.dev_version
+dnl     dev_version = development version (svn revision).
+dnl     def_build_profile = dev or release based on 'dev' release parameter.
+AC_DEFUN([EFL_VERSION],
+[dnl
+m4_define([v_maj], [$1])dnl
+m4_define([v_min], [$2])dnl
+m4_define([v_mic], [$3])dnl
+m4_define([dev_version], m4_esyscmd([(LC_ALL=C svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | cut -d: -f2 | tr -d ' :MSP\n']))dnl
+m4_if(dev_version, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])dnl
+m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
+m4_define([v_rel], m4_if($4, dev, [], m4_ifblank($4, [], [-release $4])))dnl
+m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
+m4_define([efl_version], m4_if($4, dev, [v_maj.v_min.v_mic.v_rev], [v_maj.v_min.v_mic]))dnl
+])
+
+dnl EFL_INIT()
+dnl Will AC_DEFINE() the following:
+dnl     VMAJ = v_maj
+dnl     VMIN = v_min
+dnl     VMIC = v_mic
+dnl     VREV = v_rev
+dnl Will AC_SUBST() the following:
+dnl     VMAJ = v_maj
+dnl     VMIN = v_min
+dnl     EFL_LTLIBRARY_FLAGS="-no-undefined -version-info ..."
+dnl     EFL_LTMODULE_FLAGS="-no-undefined -avoid-version"
+dnl Will define the following m4:
+dnl     lt_cur = libtool 'current' field of libtool's -version-info
+dnl     lt_rev = libtool 'revision' field of libtool's -version-info
+dnl     lt_age = libtool 'age' field of libtool's -version-info
+AC_DEFUN([EFL_INIT],
+[dnl
+AC_DEFINE_UNQUOTED([VMAJ], [v_maj], [Major version])dnl
+AC_DEFINE_UNQUOTED([VMIN], [v_min], [Minor version])dnl
+AC_DEFINE_UNQUOTED([VMIC], [v_mic], [Micro version])dnl
+AC_DEFINE_UNQUOTED([VREV], [v_rev], [Revison])dnl
+VMAJ=v_maj
+VMIN=v_min
+AC_SUBST([VMAJ])dnl
+AC_SUBST([VMIN])dnl
+dnl
+dnl TODO: warning - lt_cur:
+dnl the previous code assumed v_maj + v_min, but this will be a problem when
+dnl we bump v_maj and reset v_min. 1 + 7 == 7 + 1, so if v_maj is bumped
+dnl we multiply it by 100.
+m4_define([lt_cur], m4_if(m4_cmp(v_maj, 1), 0, m4_eval(v_maj + v_min), m4_eval(v_maj * 100 + v_min)))dnl
+m4_define([lt_rev], v_mic)dnl
+m4_define([lt_age], v_min)dnl
+dnl
+EFL_LTLIBRARY_FLAGS="-no-undefined -version-info lt_cur:lt_rev:lt_age v_rel"
+AC_SUBST(EFL_LTLIBRARY_FLAGS)dnl
+EFL_LTMODULE_FLAGS="-no-undefined -avoid-version"
+AC_SUBST([EFL_LTMODULE_FLAGS])dnl
+AC_MSG_NOTICE([Initialized AC_PACKAGE_NAME (AC_PACKAGE_VERSION) development=dev_version v_rel])
+])
+
 dnl EFL_EVAL_PKGS(EFL)
 dnl does PKG_CHECK_MODULES() for given EFL
 AC_DEFUN([EFL_EVAL_PKGS],
