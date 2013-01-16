@@ -910,3 +910,7 @@
 2013-01-16  WooHyun Jung
 
         * elm_plug should call elm_widget_can_focus_set after adding parent class.
+
+2013-01-16  WooHyun Jung
+
+        * Now, widget itself is the object which gets mouse_up event for stealing focus from another object. By this change, a widget with scroller interface can change its focus state before mouse_up of hit_rect.

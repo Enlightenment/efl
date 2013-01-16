@@ -485,10 +485,10 @@ _elm_widget_focus_direction_manager_is(const Evas_Object *obj)
 }
 
 static void
-_sub_obj_mouse_down(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info)
+_obj_mouse_down(void *data,
+                Evas *e __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info)
 {
    Elm_Widget_Smart_Data *sd = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -497,10 +497,10 @@ _sub_obj_mouse_down(void *data,
 }
 
 static void
-_sub_obj_mouse_move(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj,
-                    void *event_info)
+_obj_mouse_move(void *data,
+                Evas *e __UNUSED__,
+                Evas_Object *obj,
+                void *event_info)
 {
    Elm_Widget_Smart_Data *sd = data;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -520,10 +520,10 @@ _sub_obj_mouse_move(void *data,
 }
 
 static void
-_sub_obj_mouse_up(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj,
-                  void *event_info __UNUSED__)
+_obj_mouse_up(void *data,
+              Evas *e __UNUSED__,
+              Evas_Object *obj,
+              void *event_info __UNUSED__)
 {
    Elm_Widget_Smart_Data *sd = data;
    if (sd->still_in)
@@ -1181,16 +1181,6 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
    if (sd->resize_obj)
      {
         evas_object_clip_unset(sd->resize_obj);
-
-        evas_object_event_callback_del_full(sd->resize_obj,
-                                            EVAS_CALLBACK_MOUSE_DOWN,
-                                            _sub_obj_mouse_down, sd);
-        evas_object_event_callback_del_full(sd->resize_obj,
-                                            EVAS_CALLBACK_MOUSE_MOVE,
-                                            _sub_obj_mouse_move, sd);
-        evas_object_event_callback_del_full(sd->resize_obj,
-                                            EVAS_CALLBACK_MOUSE_UP,
-                                            _sub_obj_mouse_up, sd);
         evas_object_smart_member_del(sd->resize_obj);
 
         if (_elm_widget_is(sd->resize_obj))
@@ -1202,7 +1192,19 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
      }
 
    sd->resize_obj = sobj;
-   if (!sobj) return;
+   if (!sobj)
+     {
+        evas_object_event_callback_del_full(obj,
+                                            EVAS_CALLBACK_MOUSE_DOWN,
+                                            _obj_mouse_down, sd);
+        evas_object_event_callback_del_full(obj,
+                                            EVAS_CALLBACK_MOUSE_MOVE,
+                                            _obj_mouse_move, sd);
+        evas_object_event_callback_del_full(obj,
+                                            EVAS_CALLBACK_MOUSE_UP,
+                                            _obj_mouse_up, sd);
+        return;
+     }
 
    // orphan new resize obj
    parent = evas_object_data_get(sobj, "elm-parent");
@@ -1224,12 +1226,12 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
 
    evas_object_smart_member_add(sobj, obj);
 
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _sub_obj_mouse_down, sd);
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _sub_obj_mouse_move, sd);
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_UP,
-                                  _sub_obj_mouse_up, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _obj_mouse_down, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _obj_mouse_move, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _obj_mouse_up, sd);
    _smart_reconfigure(sd);
 }
 
