@@ -2763,10 +2763,10 @@ _xml_name_dump_list_cb(void *data,
    Elm_Map_Name *name;
    Name_Dump dump = {0, NULL, 0.0, 0.0};
    _xml_name_dump_cb(&dump, type, value, offset, length);
-   name = calloc(1, sizeof(Elm_Map_Name));
-   if (!name) return EINA_FALSE;
    if (dump.address)
      {
+        name = calloc(1, sizeof(Elm_Map_Name));
+        if (!name) return EINA_FALSE;
         name->address = strdup(dump.address);
         name->lon = dump.lon;
         name->lat = dump.lat;
