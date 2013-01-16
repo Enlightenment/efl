@@ -223,11 +223,9 @@ AM_PROG_CC_C_O
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi
-
-#echo $ac_cv_prog_CXX
-#if test "x${ac_cv_prog_CXX}" = "x" ; then
-#   AC_MSG_ERROR([C++ compiler needed. Exiting...])
-#fi
+if test "x${ac_cv_prog_ac_ct_CXX}" = "x" ; then
+   AC_MSG_ERROR([efl requires a C++ compiler])
+fi
 
 AC_SYS_LARGEFILE
 
