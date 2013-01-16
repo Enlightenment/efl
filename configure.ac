@@ -213,34 +213,9 @@ AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 ### compilers
 
-# rw_PROG_OBJC_WORKS
-# Check whether the Objective C compiler works.
-AC_DEFUN([rw_PROG_OBJC_WORKS],
-[m4_ifdef([AC_PROG_OBJC], [AC_REQUIRE([AC_PROG_OBJC])dnl
-AC_CACHE_CHECK([whether the Objective C compiler works],
-               [rw_cv_prog_objc_works],
-               [AC_LANG_PUSH([Objective C])
-                AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])],
-                               [rw_cv_prog_objc_works=yes],
-                               [rw_cv_prog_objc_works=no])
-                AC_LANG_POP([Objective C])])], [rw_cv_prog_objc_works=no])
-])
-
-m4_ifdef([AC_PROG_OBJC],
-   [
-    AC_PROG_OBJC
-    _AM_DEPENDENCIES(OBJC)
-   ],
-   [
-    dnl#AC_CHECK_TOOL([OBJC], [gcc])
-    dnl#AC_SUBST([OBJC])
-    dnl#AC_SUBST([OBJCFLAGS])
-   ])
-
-rw_PROG_OBJC_WORKS
-
 AM_PROG_AS
 AC_PROG_CXX
+AC_PROG_OBJC
 AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
@@ -248,8 +223,6 @@ AM_PROG_CC_C_O
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi
-
-have_gnu_objc=${ac_cv_objc_compiler_gnu}
 
 #echo $ac_cv_prog_CXX
 #if test "x${ac_cv_prog_CXX}" = "x" ; then
@@ -960,6 +933,25 @@ if test "${want_sdl}" = "yes" && test "${with_opengl}" != "none"; then
    want_gl_sdl="yes"
 fi
 
+# Cocoa
+dnl AC_ARG_ENABLE([cocoa],
+dnl    [AC_HELP_STRING([--enable-cocoa],
+dnl        [enable MacOS X Cocoa . @<:@default=disabled@:>@])],
+dnl    [
+dnl     if test "x${enableval}" = "xyes" ; then
+dnl        want_cocoa="yes"
+dnl     else
+dnl        want_cocoa="no"
+dnl     fi
+dnl    ],
+dnl    [want_cocoa="no"])
+dnl
+dnl if test "${want_cocoa}" = "yes"; then
+dnl    test cocoa requirements (objc and Cocoa/Cocoa.h)
+dnl fi
+want_cocoa="no"
+
+
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
    [AC_HELP_STRING([--disable-fontconfig],
@@ -1179,7 +1171,7 @@ want_evas_cserve2="yes"
 
 want_evas_engine_software_gdi="${have_win32}"
 want_evas_engine_software_ddraw="${have_win32}"
-want_evas_engine_gl_cocoa="no" # TODO: ${have_darwin}
+want_evas_engine_gl_cocoa="${want_cocoa}"
 want_evas_engine_wayland_egl="no"
 if test "${want_wayland}" = "yes" && test "${want_egl}" = "yes"; then
    want_evas_engine_wayland_egl="yes"
@@ -2028,15 +2020,11 @@ EFL_LIB_END([Ecore_Input_Evas])
 
 
 #### Ecore_Cocoa
-
-EFL_LIB_START([Ecore_Cocoa])
+EFL_LIB_START_OPTIONAL([Ecore_Cocoa], [test "${want_cocoa}" = "yes"])
 
 ### Additional options to configure
 
 ### Default values
-
-have_ecore_cocoa="no"
-# TODO: fix cocoa and: have_ecore_cocoa="${have_darwin}"
 
 ### Checks for programs
 
@@ -2048,44 +2036,9 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eina])
 
 ### Checks for header files
 
-ECORE_COCOA_LIBS=""
-if test "x${have_ecore_cocoa}" = "xyes" ; then
-   m4_ifdef([AC_PROG_OBJC],
-      [
-       if test "x${have_gnu_objc}" = "xyes" ; then
-          AC_LANG_PUSH([Objective C])
-          LIBS_save="$LIBS"
-          LIBS="$LIBS -framework Cocoa"
-          AC_LINK_IFELSE(
-             [AC_LANG_PROGRAM(
-                 [[
-#include <Cocoa/Cocoa.h>
-                 ]],
-                 [[
-NSWindow *window;
-window = [[NSWindow alloc]
-           initWithContentRect:NSMakeRect(0, 0, 1, 1)
-           styleMask:(NSTitledWindowMask)
-           backing:NSBackingStoreBuffered
-           defer:NO
-           screen:nil
-         ];
-                 ]])],
-             [
-              have_ecore_cocoa="yes"
-              EFL_ADD_LIBS([ECORE_COCOA], [-framework Cocoa])
-             ],
-             [have_ecore_cocoa="no"])
-          LIBS="$LIBS_save"
-          AC_MSG_CHECKING([whether Cocoa framework is supported])
-          AC_MSG_RESULT([${have_ecore_cocoa}])
-          AC_LANG_POP([Objective C])
-       fi
-   ])
-fi
-AC_SUBST([ECORE_COCOA_LIBS])
-
-AM_CONDITIONAL([HAVE_ECORE_COCOA], [test "x${have_ecore_cocoa}" = "xyes"])
+dnl TODO: once cocoa is fixed and test-able, add required libs here
+dnl to ECORE_COCOA_LIBS and ECORE_COCOA_CFLAGS.
+dnl Evas already tests for ObjC and Cocoa/Cocoa.h
 
 ### Checks for types
 
@@ -2097,10 +2050,8 @@ AM_CONDITIONAL([HAVE_ECORE_COCOA], [test "x${have_ecore_cocoa}" = "xyes"])
 
 ### Checks for library functions
 
-EFL_LIB_END([Ecore_Cocoa])
+EFL_LIB_END_OPTIONAL([Ecore_Cocoa])
 #### End of Ecore_Cocoa
-
-
 
 
 #### Ecore_FB
@@ -3650,7 +3601,7 @@ echo
 
 echo "  Ecore_X....................: ${with_x11} (xgesture=${want_gesture}) (xi2=${want_xinput2}) (xi2.2=${want_xinput22})"
 echo "  Ecore_Win32................: $have_win32"
-echo "  Ecore_Cocoa................: $have_ecore_cocoa"
+echo "  Ecore_Cocoa................: $efl_lib_optional_ecore_cocoa"
 echo "  Ecore_SDL..................: $want_sdl"
 echo "  Ecore_FB...................: $want_fb (tslib=${have_tslib})"
 echo "  Ecore_WinCE................: $have_wince"
