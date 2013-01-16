@@ -149,8 +149,9 @@ struct _EDBus_Service_Object
    Eina_Inlist *data;
    EDBus_Service_Object *parent;
    Eina_Inlist *children;
+
    //ObjectManager data
-   Eina_Bool has_objectmanager:1;
+   EDBus_Service_Interface *objmanager;
    Eina_List *iface_added;
    Eina_List *iface_removed;
    Ecore_Idler *idler_iface_changed;

@@ -506,7 +506,7 @@ _managed_obj_append(EDBus_Service_Object *obj, EDBus_Message_Iter *array, Eina_B
    EDBus_Service_Object *children;
 
    if (first) goto foreach;
-   if (obj->has_objectmanager) return EINA_TRUE;
+   if (obj->objmanager) return EINA_TRUE;
 
    edbus_message_iter_arguments_append(array, "{oa{sa{sv}}}", &obj_entry);
    edbus_message_iter_arguments_append(obj_entry, "oa{sa{sv}}", obj->path,
@@ -767,7 +767,7 @@ _object_manager_parent_find(EDBus_Service_Object *obj)
 {
    if (!obj->parent)
      return NULL;
-   if (obj->parent->has_objectmanager)
+   if (obj->parent->objmanager)
      return obj->parent;
    return _object_manager_parent_find(obj->parent);
 }
@@ -1413,27 +1413,27 @@ edbus_service_object_manager_attach(EDBus_Service_Interface *iface)
 
    obj = iface->obj;
 
+   /* We already have it and we registered it ourselves */
+   if (obj->objmanager)
+     return EINA_TRUE;
+
+   /* Ugh. User already registered the ObjectManager interface himself? */
+   if (eina_hash_find(obj->interfaces, obj->objmanager->name))
+     return EINA_FALSE;
+
+   if (!eina_hash_add(obj->interfaces, objmanager->name, objmanager))
+     return EINA_FALSE;
+
    /*
-    * FIXME: if the user registered an ObjectManager interface himself, this is
-    * utterly wrong since edbus would think it would have to send the signals,
-    * when the user is expected to so, since he registered the interface.
+    * Flush the iface_added and iface_removed, otherwise it could be sent
+    * with path equal to our path rather than from the previous
+    * ObjectManager
     */
-   if (!eina_hash_find(obj->interfaces, objmanager->name))
-     {
-        if (!eina_hash_add(obj->interfaces, objmanager->name, objmanager))
-          return EINA_FALSE;
+   if (obj->idler_iface_changed)
+     ecore_idler_del(obj->idler_iface_changed);
+   _object_manager_changes_process(obj);
 
-        /*
-         * Flush the iface_added and iface_removed, otherwise it could be sent
-         * with path equal to our path rather than from the previous
-         * ObjectManager
-         */
-        if (obj->idler_iface_changed)
-          ecore_idler_del(obj->idler_iface_changed);
-        _object_manager_changes_process(obj);
-     }
-
-   obj->has_objectmanager = EINA_TRUE;
+   obj->objmanager = objmanager;
    obj->introspection_dirty = EINA_TRUE;
    return EINA_TRUE;
 }
@@ -1453,7 +1453,7 @@ edbus_service_object_manager_detach(EDBus_Service_Interface *iface)
    _object_manager_changes_process(obj);
 
    ret = eina_hash_del(obj->interfaces, objmanager->name, NULL);
-   obj->has_objectmanager = EINA_FALSE;
+   obj->objmanager = NULL;
    obj->introspection_dirty = EINA_TRUE;
    //properties + introspectable
    if (eina_hash_population(iface->obj->interfaces) < 3)
