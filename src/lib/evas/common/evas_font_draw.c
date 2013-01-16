@@ -295,7 +295,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
    EVAS_FONT_WALK_TEXT_START()
      {
-        Evas_Glyph glyph;
+        Evas_Glyph *glyph;
         FT_UInt idx;
 
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
@@ -304,13 +304,14 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
         if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
+	
+	glyph = eina_inarray_grow(glyphs, 1);
+	if (!glyph) goto error;
 
-        glyph.fg = fg;
-        glyph.idx = idx;
-        glyph.coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
-        glyph.coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
-
-        if (eina_inarray_push(glyphs, &glyph) < 0) goto error;
+        glyph->fg = fg;
+        glyph->idx = idx;
+        glyph->coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
+        glyph->coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
      }
    EVAS_FONT_WALK_TEXT_END();
 
