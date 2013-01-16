@@ -160,6 +160,7 @@ modules_ecore_evas_engines_sdl_module_la_SOURCES = $(SDLSOURCES)
 modules_ecore_evas_engines_sdl_module_la_CPPFLAGS = \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_SDL_CFLAGS@ \
+-I$(top_srcdir)/src/modules/evas/engines/buffer \
 -I$(top_srcdir)/src/modules/evas/engines/gl_sdl
 modules_ecore_evas_engines_sdl_module_la_LIBADD = \
 @USE_ECORE_EVAS_LIBS@ \

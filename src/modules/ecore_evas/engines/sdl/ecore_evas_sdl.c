@@ -11,6 +11,7 @@
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Sdl.h>
+#include <Evas_Engine_Buffer.h>
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
 #  include <Evas_Engine_GL_SDL.h>
 #endif
