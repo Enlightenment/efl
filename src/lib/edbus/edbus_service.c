@@ -502,7 +502,7 @@ _managed_obj_append(EDBus_Service_Object *obj, EDBus_Message_Iter *array, Eina_B
 {
    EDBus_Message_Iter *obj_entry, *array_interface;
    Eina_Iterator *iface_iter;
-   EDBus_Service_Interface *children_iface;
+   EDBus_Service_Interface *iface;
    EDBus_Service_Object *children;
 
    if (first) goto foreach;
@@ -510,19 +510,19 @@ _managed_obj_append(EDBus_Service_Object *obj, EDBus_Message_Iter *array, Eina_B
 
    edbus_message_iter_arguments_append(array, "{oa{sa{sv}}}", &obj_entry);
    edbus_message_iter_arguments_append(obj_entry, "oa{sa{sv}}", obj->path,
-                                    &array_interface);
+                                       &array_interface);
    iface_iter = eina_hash_iterator_data_new(obj->interfaces);
 
-   /*
-    * FIXME: we shouldn't reply with an interface that is still in iface_added,
-    * otherwise after calling this method the user will still receive the signal
-    * that the interface was created
-    */
-   EINA_ITERATOR_FOREACH(iface_iter, children_iface)
+   EINA_ITERATOR_FOREACH(iface_iter, iface)
      {
         Eina_Bool ret;
-        ret = _propmgr_iface_props_append(children_iface, array_interface);
-        if (ret) continue;
+
+        if (eina_list_data_find(obj->iface_added, iface))
+          continue;
+
+        ret = _propmgr_iface_props_append(iface, array_interface);
+        if (ret)
+          continue;
 
         eina_iterator_free(iface_iter);
         return EINA_FALSE;
