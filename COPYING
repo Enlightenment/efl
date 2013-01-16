@@ -1,11 +1,23 @@
-EFL comes with several licences. Listed are the library/probject
+EFL comes with several licences. Listed are the library/project
 name and the license file covering it.
 
 evil:            licenses/COPYING.BSD
-escape:          licenses/COPYING.GPL
-eet:             licenses/COPYING.BSD
+escape:          licenses/COPYING.GPL (used in PlayStation native)
 eina:            licenses/COPYING.LGPL
+eet:             licenses/COPYING.BSD
 eo:              licenses/COPYING.BSD
 evas:            licenses/COPYING.BSD
-ecore:           licenses/COPYING.BSD
 embryo:          licenses/COPYING.SMALL
+ecore:           licenses/COPYING.BSD
+eio:             licenses/COPYING.LGPL
+edbus:           licenses/COPYING.LGPL
+efreet:          licenses/COPYING.BSD
+eeze:            licenses/COPYING.BSD
+ephysics:        licenses/COPYING.BSD
+edje:            licenses/COPYING.BSD
+edje/epp:        licenses/COPYING.GPL (separate binary/executable)
+emotion:         licenses/COPYING.BSD
+ethumb:          licenses/COPYING.LGPL
+
+NOTE: If linked together, the result will be LGPL (or GPL is Escape is
+used) due that license characteristics.
