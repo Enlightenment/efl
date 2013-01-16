@@ -180,7 +180,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_c(RGBA_Image *src, RGBA_Image *dst,
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
                                              RGBA_Draw_Context *dc,
                                              int src_region_x, int src_region_y,
@@ -199,12 +199,12 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 #endif
      cb = evas_common_scale_rgba_in_to_out_clip_smooth_c;
 
-   evas_common_scale_rgba_in_to_out_clip_cb(src, dst, dc,
-                                            src_region_x, src_region_y,
-                                            src_region_w, src_region_h,
-                                            dst_region_x, dst_region_y,
-                                            dst_region_w, dst_region_h,
-                                            cb);
+   return evas_common_scale_rgba_in_to_out_clip_cb(src, dst, dc,
+                                                   src_region_x, src_region_y,
+                                                   src_region_w, src_region_h,
+                                                   dst_region_x, dst_region_y,
+                                                   dst_region_w, dst_region_h,
+                                                   cb);
 }
 
 EAPI void

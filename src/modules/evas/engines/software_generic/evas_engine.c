@@ -1187,13 +1187,13 @@ _draw_thread_image_draw(void *data)
 }
 
 static Eina_Bool
-_image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
+_image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Evas_Thread_Command_Image *cr;
    int clip_x, clip_y, clip_w, clip_h;
 
-   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return EINA_FALSE;
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+   if ((dst_w <= 0) || (dst_h <= 0)) return EINA_FALSE;
+   if (!(RECTS_INTERSECT(dst_x, dst_y, dst_w, dst_h,
                          0, 0, dst->cache_entry.w, dst->cache_entry.h))) return EINA_FALSE;
 
    cr = eina_mempool_malloc(_mp_command_image, sizeof (Evas_Thread_Command_Image));
@@ -1201,8 +1201,8 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
 
    cr->image = src;
    cr->surface = dst;
-   EINA_RECTANGLE_SET(&cr->src, src_region_x, src_region_y, src_region_w, src_region_h);
-   EINA_RECTANGLE_SET(&cr->dst, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+   EINA_RECTANGLE_SET(&cr->src, src_x, src_y, src_w, src_h);
+   EINA_RECTANGLE_SET(&cr->dst, dst_x, dst_y, dst_w, dst_h);
 
    if (dc->clip.use)
      {
@@ -1231,23 +1231,39 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
 }
 
 static Eina_Bool
-_image_draw_thread_cmd_smooth(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+_image_draw_thread_cmd_smooth(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
 {
-   return _image_draw_thread_cmd
-       (src, dst, dc,
-        src_region_x, src_region_y, src_region_w, src_region_h,
-        dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-        1);
+   return _image_draw_thread_cmd(src, dst, dc,
+                                 src_x, src_y, src_w, src_h,
+                                 dst_x, dst_y, dst_w, dst_h,
+                                 1);
 }
 
 static Eina_Bool
-_image_draw_thread_cmd_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+_image_draw_thread_cmd_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
 {
-   return _image_draw_thread_cmd
-       (src, dst, dc,
-        src_region_x, src_region_y, src_region_w, src_region_h,
-        dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-        0);
+   return _image_draw_thread_cmd(src, dst, dc,
+                                 src_x, src_y, src_w, src_h,
+                                 dst_x, dst_y, dst_w, dst_h,
+                                 0);
+}
+
+static Eina_Bool
+_image_thr_cb_smooth(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
+{
+   return evas_common_scale_rgba_in_to_out_clip_cb(src, dst, dc,
+                                                   src_x, src_y, src_w, src_h,
+                                                   dst_x, dst_y, dst_w, dst_h,
+                                                   _image_draw_thread_cmd_smooth);
+}
+
+static Eina_Bool
+_image_thr_cb_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
+{
+   return evas_common_scale_rgba_in_to_out_clip_cb(src, dst, dc,
+                                                   src_x, src_y, src_w, src_h,
+                                                   dst_x, dst_y, dst_w, dst_h,
+                                                   _image_draw_thread_cmd_sample);
 }
 
 static Eina_Bool
@@ -1272,20 +1288,16 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
              if (!im->cache_entry.flags.loaded) return EINA_FALSE;
           }
 
-        evas_common_image_colorspace_normalize(im);
+        evas_common_rgba_image_scalecache_prepare(image, surface, context, smooth,
+                                                  src_x, src_y, src_w, src_h,
+                                                  dst_x, dst_y, dst_w, dst_h);
 
-        if (smooth)
-          return evas_common_scale_rgba_in_to_out_clip_cb
-              (image, surface, context,
-               src_x, src_y, src_w, src_h,
-               dst_x, dst_y, dst_w, dst_h,
-               _image_draw_thread_cmd_smooth);
-        else
-          return evas_common_scale_rgba_in_to_out_clip_cb
-              (image, surface, context,
-               src_x, src_y, src_w, src_h,
-               dst_x, dst_y, dst_w, dst_h,
-               _image_draw_thread_cmd_sample);
+        return evas_common_rgba_image_scalecache_do_cbs(image, surface,
+                                                        context, smooth,
+                                                        src_x, src_y, src_w, src_h,
+                                                        dst_x, dst_y, dst_w, dst_h,
+                                                        _image_thr_cb_sample,
+                                                        _image_thr_cb_smooth);
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
@@ -1294,11 +1306,11 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
         if (evas_cserve2_use_get())
           evas_cache2_image_load_data(&im->cache_entry);
 #endif
-        evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im), 
+        evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im),
                                                   surface, context, smooth,
                                                   src_x, src_y, src_w, src_h,
                                                   dst_x, dst_y, dst_w, dst_h);
-        
+
         evas_common_pipe_image_draw(im, surface, context, smooth,
                                     src_x, src_y, src_w, src_h,
                                     dst_x, dst_y, dst_w, dst_h);
@@ -1359,13 +1371,13 @@ image_loaded:
 }
 
 static void
-_map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, int smooth)
+_map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    int clip_x, clip_y, clip_w, clip_h;
    DATA32 mul_col;
 
-   if ((dst_region_w <= 0) || (dst_region_h <= 0)) return;
-   if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+   if ((dst_w <= 0) || (dst_h <= 0)) return;
+   if (!(RECTS_INTERSECT(dst_x, dst_y, dst_w, dst_h,
                          0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
 
    if (dc->clip.use)
@@ -1385,38 +1397,34 @@ _map_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src
    mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
 
    if (smooth)
-     evas_common_scale_rgba_smooth_draw
-       (src, dst,
-        clip_x, clip_y, clip_w, clip_h,
-        mul_col, dc->render_op,
-        src_region_x, src_region_y, src_region_w, src_region_h,
-        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+     evas_common_scale_rgba_smooth_draw(src, dst,
+                                        clip_x, clip_y, clip_w, clip_h,
+                                        mul_col, dc->render_op,
+                                        src_x, src_y, src_w, src_h,
+                                        dst_x, dst_y, dst_w, dst_h);
    else
-     evas_common_scale_rgba_sample_draw
-       (src, dst,
-        clip_x, clip_y, clip_w, clip_h,
-        mul_col, dc->render_op,
-        src_region_x, src_region_y, src_region_w, src_region_h,
-        dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+     evas_common_scale_rgba_sample_draw(src, dst,
+                                        clip_x, clip_y, clip_w, clip_h,
+                                        mul_col, dc->render_op,
+                                        src_x, src_y, src_w, src_h,
+                                        dst_x, dst_y, dst_w, dst_h);
 }
 
 static Eina_Bool
-_map_image_sample_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+_map_image_sample_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
 {
    _map_image_draw(src, dst, dc,
-                   src_region_x, src_region_y, src_region_w, src_region_h,
-                   dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-                   0);
+                   src_x, src_y, src_w, src_h,
+                   dst_x, dst_y, dst_w, dst_h, 0);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_map_image_smooth_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+_map_image_smooth_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h)
 {
    _map_image_draw(src, dst, dc,
-                   src_region_x, src_region_y, src_region_w, src_region_h,
-                   dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-                   1);
+                   src_x, src_y, src_w, src_h,
+                   dst_x, dst_y, dst_w, dst_h, 1);
    return EINA_TRUE;
 }
 
@@ -1484,7 +1492,7 @@ _draw_thread_map_draw(void *data)
    while ((m->count > 4) && (m->count - offset >= 3));
 
  free_out:
-   free(m); // FIXME: allocating and destroying map do have perf impact... ref counting would be better
+   free(m);
    eina_mempool_free(_mp_command_map, map);
 }
 

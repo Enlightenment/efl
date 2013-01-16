@@ -495,19 +495,22 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
 //static int noscales = 0;
 #endif
 
-EAPI void
-evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
-                                     RGBA_Draw_Context *dc, int smooth,
-                                     int src_region_x, int src_region_y,
-                                     int src_region_w, int src_region_h,
-                                     int dst_region_x, int dst_region_y,
-                                     int dst_region_w, int dst_region_h)
+EAPI Eina_Bool
+evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
+                                         RGBA_Draw_Context *dc, int smooth,
+                                         int src_region_x, int src_region_y,
+                                         int src_region_w, int src_region_h,
+                                         int dst_region_x, int dst_region_y,
+                                         int dst_region_w, int dst_region_h,
+                                         Evas_Common_Scale_In_To_Out_Clip_Cb cb_sample,
+                                         Evas_Common_Scale_In_To_Out_Clip_Cb cb_smooth)
 {
 #ifdef SCALECACHE
    RGBA_Image *im = (RGBA_Image *)ie;
    Scaleitem *sci;
    int didpop = 0;
    int dounload = 0;
+   Eina_Bool ret = EINA_FALSE;
 /*
    static int i = 0;
 
@@ -520,7 +523,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      }
  */
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
-       (src_region_w == 0) || (src_region_h == 0)) return;
+       (src_region_w == 0) || (src_region_h == 0)) return EINA_FALSE;
    LKL(im->cache.lock);
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
@@ -539,13 +542,13 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         LKU(im->cache.lock);
         if (im->image.data)
           {
-             evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
-                                                          src_region_x, src_region_y, 
-                                                          src_region_w, src_region_h,
-                                                          dst_region_x, dst_region_y, 
-                                                          dst_region_w, dst_region_h);
+             return cb_sample(im, dst, dc,
+                              src_region_x, src_region_y,
+                              src_region_w, src_region_h,
+                              dst_region_x, dst_region_y,
+                              dst_region_w, dst_region_h);
           }
-        return;
+        return EINA_FALSE;
      }
    LKL(cache_lock);
    sci = _sci_find(im, dc, smooth,
@@ -570,24 +573,24 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (im->image.data)
           {
              if (smooth)
-               evas_common_scale_rgba_in_to_out_clip_smooth(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
+               return cb_smooth(im, dst, dc,
+                                src_region_x, src_region_y,
+                                src_region_w, src_region_h,
+                                dst_region_x, dst_region_y,
+                                dst_region_w, dst_region_h);
              else
-               evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
+               return cb_sample(im, dst, dc,
+                                src_region_x, src_region_y,
+                                src_region_w, src_region_h,
+                                dst_region_x, dst_region_y,
+                                dst_region_w, dst_region_h);
           }
-        return;
+        return EINA_FALSE;
      }
    if (sci->populate_me)
      {
         int size, osize, used;
-        
+
         size = dst_region_w * dst_region_h;
         if (((((dst_region_w > 640) || (dst_region_h > 640)) &&
              (size > (480 * 480))) ||
@@ -596,7 +599,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           {
              Eina_List *l;
              Scaleitem *sci2;
-             
+
              dounload = 1;
              osize = sci->parent_im->cache_entry.w * sci->parent_im->cache_entry.h;
              used = 0;
@@ -611,7 +614,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                   osize -= used;
                   if (osize < 0) osize = 0;
                   size -= osize;
-                  sci->size_adjust = size * 4; 
+                  sci->size_adjust = size * 4;
                }
           }
         else
@@ -632,7 +635,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (sci->im)
           {
              static RGBA_Draw_Context *ct = NULL;
-        
+
              LKL(cache_lock);
              im->cache.orig_usage++;
              im->cache.usage_count = use_counter;
@@ -658,29 +661,27 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
              if (im->image.data)
                {
                   if (smooth)
-                    evas_common_scale_rgba_in_to_out_clip_smooth
-                    (im, sci->im, ct,
-                     src_region_x, src_region_y, 
-                     src_region_w, src_region_h,
-                     0, 0,
-                     dst_region_w, dst_region_h);
+                    ret = cb_smooth(im, sci->im, ct,
+                                    src_region_x, src_region_y,
+                                    src_region_w, src_region_h,
+                                    0, 0,
+                                    dst_region_w, dst_region_h);
                   else
-                    evas_common_scale_rgba_in_to_out_clip_sample
-                    (im, sci->im, ct,
-                     src_region_x, src_region_y, 
-                     src_region_w, src_region_h,
-                     0, 0,
-                     dst_region_w, dst_region_h);
+                    ret = cb_sample(im, sci->im, ct,
+                                    src_region_x, src_region_y,
+                                    src_region_w, src_region_h,
+                                    0, 0,
+                                    dst_region_w, dst_region_h);
                   sci->populate_me = 0;
-#if 0 // visual debug of cached images                  
+#if 0 // visual debug of cached images
                     {
                        int xx, yy;
                        DATA32 *pp;
-                       
+
                        pp = sci->im->image.data;
                        for (yy = 0; yy < dst_region_h; yy++)
                          {
-                            
+
                             for (xx = 0; xx < dst_region_w; xx++)
                               {
                                  if (yy & 0x1)
@@ -688,14 +689,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                                       if (xx & 0x1) *pp = 0x882288ff;
                                    }
                                  else
-                                   { 
+                                   {
                                       if (!(xx & 0x1)) *pp = 0x882288ff;
-                                  }
+                                   }
                                  pp++;
                               }
                          }
                     }
-#endif                  
+#endif
                }
              if (dounload)
                {
@@ -706,8 +707,8 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                {
                   cache_size += sci->dst_w * sci->dst_h * 4;
                }
-//             INF(" + %i @ flop: %i (%ix%i)", 
-//                    sci->dst_w * sci->dst_h * 4, sci->flop, 
+//             INF(" + %i @ flop: %i (%ix%i)",
+//                    sci->dst_w * sci->dst_h * 4, sci->flop,
 //                    sci->dst_w, sci->dst_h);
              cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
              _cache_prune(sci, 0);
@@ -730,39 +731,38 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
           }
 //        INF("use cached!");
         LKU(im->cache.lock);
-        evas_common_scale_rgba_in_to_out_clip_sample
-          (sci->im, dst, dc,
-           0, 0,
-           dst_region_w, dst_region_h,
-           dst_region_x, dst_region_y, 
-           dst_region_w, dst_region_h);
+        ret |= cb_sample(sci->im, dst, dc,
+                         0, 0,
+                         dst_region_w, dst_region_h,
+                         dst_region_x, dst_region_y,
+                         dst_region_w, dst_region_h);
 //        hits++;
-//        INF("check %p %i < %i", 
+//        INF("check %p %i < %i",
 //               im,
-//               (int)im->cache.orig_usage, 
+//               (int)im->cache.orig_usage,
 //               (int)im->cache.newest_usage);
         /* while framequeuing is applied,
-         * original image data is loaded by the main thread 
+         * original image data is loaded by the main thread
          * just before enqueuing the rendering op into the pipe.
-         * so unloading the original image data here 
+         * so unloading the original image data here
          * causes only speed-down side-effect and no memory usage gain;
          * it will be loaded again for the very next rendering for this image.
          */
         if (ie->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC)
           {
-             if ((dounload) || 
-                 ((im->cache_entry.flags.loaded) && 
-                     ((!im->cs.no_free) 
-#ifdef EVAS_CSERVE             
+             if ((dounload) ||
+                 ((im->cache_entry.flags.loaded) &&
+                     ((!im->cs.no_free)
+#ifdef EVAS_CSERVE
                       || (ie->data1)
-#endif             
+#endif
 #ifdef EVAS_CSERVE2
                       || (ie->data1)
 #endif
                      )  &&
                      (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)))
                {
-                  if ((dounload) || (im->cache.orig_usage < 
+                  if ((dounload) || (im->cache.orig_usage <
                                      (im->cache.newest_usage / 20)))
                     {
                        //FIXME: imagedataunload - inform owners
@@ -793,21 +793,26 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         if (im->image.data)
           {
              if (smooth)
-               evas_common_scale_rgba_in_to_out_clip_smooth(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
+               ret |= cb_smooth(im, dst, dc,
+                                src_region_x, src_region_y,
+                                src_region_w, src_region_h,
+                                dst_region_x, dst_region_y,
+                                dst_region_w, dst_region_h);
              else
-               evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
+               ret |= cb_sample(im, dst, dc,
+                               src_region_x, src_region_y,
+                               src_region_w, src_region_h,
+                               dst_region_x, dst_region_y,
+                               dst_region_w, dst_region_h);
           }
      }
-#else   
+
+   return ret;
+
+#else
+
    RGBA_Image *im = (RGBA_Image *)ie;
+
    if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
      {
 #ifdef EVAS_CSERVE2
@@ -821,17 +826,36 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
    if (im->image.data)
      {
         if (smooth)
-          evas_common_scale_rgba_in_to_out_clip_smooth(im, dst, dc,
-                                                       src_region_x, src_region_y, 
-                                                       src_region_w, src_region_h,
-                                                       dst_region_x, dst_region_y, 
-                                                       dst_region_w, dst_region_h);
+          return cb_smooth(im, dst, dc,
+                           src_region_x, src_region_y,
+                           src_region_w, src_region_h,
+                           dst_region_x, dst_region_y,
+                           dst_region_w, dst_region_h);
         else
-          evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
-                                                       src_region_x, src_region_y, 
-                                                       src_region_w, src_region_h,
-                                                       dst_region_x, dst_region_y, 
-                                                       dst_region_w, dst_region_h);
+          return cb_sample(im, dst, dc,
+                           src_region_x, src_region_y,
+                           src_region_w, src_region_h,
+                           dst_region_x, dst_region_y,
+                           dst_region_w, dst_region_h);
      }
+
+   return EINA_FALSE;
 #endif
+}
+
+
+EAPI void
+evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
+                                     RGBA_Draw_Context *dc, int smooth,
+                                     int src_region_x, int src_region_y,
+                                     int src_region_w, int src_region_h,
+                                     int dst_region_x, int dst_region_y,
+                                     int dst_region_w, int dst_region_h)
+{
+   evas_common_rgba_image_scalecache_do_cbs(
+     ie, dst, dc, smooth,
+     src_region_x, src_region_y, src_region_w, src_region_h,
+     dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+     evas_common_scale_rgba_in_to_out_clip_sample,
+     evas_common_scale_rgba_in_to_out_clip_smooth);
 }

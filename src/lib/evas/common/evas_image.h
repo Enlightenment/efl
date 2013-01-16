@@ -55,6 +55,15 @@ EAPI void
                                        int src_region_w, int src_region_h,
                                        int dst_region_x, int dst_region_y,
                                        int dst_region_w, int dst_region_h);
+EAPI Eina_Bool
+  evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
+                                           RGBA_Draw_Context *dc, int smooth,
+                                           int src_region_x, int src_region_y,
+                                           int src_region_w, int src_region_h,
+                                           int dst_region_x, int dst_region_y,
+                                           int dst_region_w, int dst_region_h,
+                                           Evas_Common_Scale_In_To_Out_Clip_Cb cb_sample,
+                                           Evas_Common_Scale_In_To_Out_Clip_Cb cb_smooth);
 
 
 EAPI int evas_common_load_rgba_image_module_from_file (Image_Entry *im);
