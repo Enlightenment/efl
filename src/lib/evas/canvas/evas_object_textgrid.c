@@ -696,16 +696,22 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
              if ((do_async) && (ENFN->multi_font_draw))
                {
                   Eina_Bool async_unref;
+		  Evas_Font_Array_Data *fad;
 
                   texts = malloc(sizeof(*texts));
-                  texts->array = eina_inarray_new(sizeof(Evas_Font_Array_Data),
-                                                  32);
+                  texts->array = eina_inarray_new(sizeof(Evas_Font_Array_Data), 1); /* FIXME: Wasting 1 int here */
                   texts->refcount = 1;
+
+		  fad = eina_inarray_grow(texts->array, row->texts_num);
+		  if (!fad)
+		    {
+                       ERR("Failed to allocate Evas_Font_Array_Data.");
+                       return ;
+		    }
 
                   for (xx = 0; xx < row->texts_num; xx++)
                     {
                        Evas_Text_Props     *props;
-                       Evas_Font_Array_Data fad;
 
                        props =
                          evas_object_textgrid_textprop_int_to
@@ -717,16 +723,14 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                        evas_unref_queue_glyph_put(obj->layer->evas,
                                                   props->glyphs);
 
-                       fad.color.r = row->texts[xx].r;
-                       fad.color.g = row->texts[xx].g;
-                       fad.color.b = row->texts[xx].b;
-                       fad.color.a = row->texts[xx].a;
-                       fad.x = row->texts[xx].x;
-                       fad.glyphs = props->glyphs;
+                       fad->color.r = row->texts[xx].r;
+                       fad->color.g = row->texts[xx].g;
+                       fad->color.b = row->texts[xx].b;
+                       fad->color.a = row->texts[xx].a;
+                       fad->x = row->texts[xx].x;
+                       fad->glyphs = props->glyphs;
 
-                       if (eina_inarray_push(texts->array, &fad) < 0)
-                         ERR("Failed to push text onto texts array %p",
-                             texts->array);
+		       fad++;
                     }
 
                   async_unref =
