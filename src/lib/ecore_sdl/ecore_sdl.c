@@ -137,7 +137,7 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
    ev->key = NULL;
    ev->compose = NULL;
 
-   for (i = 0; i < sizeof(keystable) / sizeof(struct _ecore_sdl_keys_s); ++i)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(keystable); ++i)
      if (keystable[i].code == event->key.keysym.sym)
        {
           ev->keyname = keystable[i].name;

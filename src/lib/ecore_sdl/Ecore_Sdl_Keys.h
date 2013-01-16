@@ -3,7 +3,7 @@
 
 struct _ecore_sdl_keys_s
 {
-   int          code;
+   unsigned int code;
    const char*  name;
    const char*  compose;
 };
