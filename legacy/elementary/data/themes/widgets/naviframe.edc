@@ -147,7 +147,16 @@ group { name: "elm/naviframe/item/basic/default";
             }
          }
       }
-
+      part { name: "access.title";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "title_base";
+            rel2.to: "title_base";
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elements_area";
          type: RECT;
          mouse_events: 0;
@@ -524,6 +533,7 @@ group { name: "elm/naviframe/item/overlap/default";
             min: 1 55;
             align: 0.0 0.0;
             fixed: 0 1;
+color: 255 0 0 125;
             rel1 { relative: 0.0 0.0; }
             rel2 { relative: 1.0 0.0; }
          }
@@ -592,7 +602,16 @@ group { name: "elm/naviframe/item/overlap/default";
             }
          }
       }
-
+      part { name: "access.title";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "title_base";
+            rel2.to: "title_base";
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elements_area";
          type: RECT;
          mouse_events: 0;

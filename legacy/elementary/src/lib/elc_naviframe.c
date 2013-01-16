@@ -15,7 +15,7 @@ static const char NEXT_BTN_PART[] = "elm.swallow.next_btn";
 static const char ICON_PART[] = "elm.swallow.icon";
 static const char TITLE_PART[] = "elm.text.title";
 static const char SUBTITLE_PART[] = "elm.text.subtitle";
-static const char TITLE_ACCESS_PART[] = "title_base";
+static const char TITLE_ACCESS_PART[] = "access.title";
 
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
