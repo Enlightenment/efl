@@ -330,6 +330,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
     */
 
    text_props->generation = fi->generation;
+   text_props->changed = EINA_FALSE;
 
    return;
 
