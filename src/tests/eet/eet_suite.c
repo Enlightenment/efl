@@ -1871,6 +1871,7 @@ START_TEST(eet_cache_concurrency)
    void *thread_ret;
    unsigned int n;
    Eina_Thread thread;
+   Eina_Bool r;
 
    eet_init();
    eina_threads_init();
@@ -1883,7 +1884,8 @@ START_TEST(eet_cache_concurrency)
 
    /* start a thread that repeatedly opens and closes a file */
    open_worker_stop = 0;
-   eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, open_close_worker, file);
+   r = eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, open_close_worker, file);
+   fail_unless(r);
 
    /* clear the cache repeatedly in this thread */
    for (n = 0; n < 20000; ++n)
