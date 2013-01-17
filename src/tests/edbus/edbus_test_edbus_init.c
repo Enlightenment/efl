@@ -52,6 +52,13 @@ START_TEST(edbus_test_edbus_main_loop)
 }
 END_TEST
 
+#if 0
+/* TODO: This test assumes an existing dbus-daemon running. It
+ * shouldn't do this, instead we should launch dbus-daemon ourselves
+ * and create our private instance, use it and then kill it
+ * afterwards.
+ */
+
 START_TEST(edbus_test_edbus_conn)
 {
    EDBus_Connection *conn;
@@ -109,12 +116,14 @@ START_TEST(edbus_test_edbus_conn_object)
 
 }
 END_TEST
-
+#endif
 
 void edbus_test_edbus_init(TCase *tc)
 {
    tcase_add_test(tc, edbus_test_edbus);
    tcase_add_test(tc, edbus_test_edbus_main_loop);
+#if 0
    tcase_add_test(tc, edbus_test_edbus_conn);
    tcase_add_test(tc, edbus_test_edbus_conn_object);
+#endif
 }
