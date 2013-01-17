@@ -443,18 +443,18 @@ START_TEST(eina_value_test_string)
    fail_unless(value != NULL);
    fail_unless(eina_value_set(value, "hello world!"));
    fail_unless(eina_value_get(value, &s));
-   fail_unless(strcmp(s, "hello world!") == 0);
+   ck_assert_str_eq(s, "hello world!");
 
    fail_unless(eina_value_set(value, "eina-value"));
    fail_unless(eina_value_get(value, &s));
-   fail_unless(strcmp(s, "eina-value") == 0);
+   ck_assert_str_eq(s, "eina-value");
 
    eina_value_flush(value);
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_STRING));
 
    fail_unless(eina_value_set(value, "profusion"));
    fail_unless(eina_value_get(value, &s));
-   fail_unless(strcmp(s, "profusion") == 0);
+   ck_assert_str_eq(s, "profusion");
 
    eina_value_free(value);
    eina_shutdown();
@@ -572,12 +572,12 @@ START_TEST(eina_value_test_pvariant)
    in_str = "hello world!";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "hello world!") == 0);
+   ck_assert_str_eq(str, "hello world!");
 
    in_str = "eina-value";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "eina-value") == 0);
+   ck_assert_str_eq(str, "eina-value");
 
    eina_value_flush(value);
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_STRING));
@@ -585,7 +585,7 @@ START_TEST(eina_value_test_pvariant)
    in_str = "profusion";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "profusion") == 0);
+   ck_assert_str_eq(str, "profusion");
 
    eina_value_free(value);
    eina_shutdown();
@@ -622,7 +622,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%hhd", in_c);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -634,7 +634,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%hd", in_s);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -646,7 +646,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%d", in_i);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -658,7 +658,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%ld", in_l);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -670,7 +670,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%"PRId64, in_i64);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -684,7 +684,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%hhu", in_uc);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -696,7 +696,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%hu", in_us);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -708,7 +708,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%u", in_ui);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -720,7 +720,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%lu", in_ul);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -732,7 +732,7 @@ START_TEST(eina_value_test_to_string)
    snprintf(buf, sizeof(buf), "%"PRIu64, in_u64);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(buf, out) == 0);
+   ck_assert_str_eq(buf, out);
    free(out);
    eina_value_flush(value);
 
@@ -765,19 +765,19 @@ START_TEST(eina_value_test_to_string)
    in_str = "hello world!";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "hello world!") == 0);
+   ck_assert_str_eq(str, "hello world!");
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(in_str, out) == 0);
+   ck_assert_str_eq(in_str, out);
    free(out);
 
    in_str = "eina-value";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "eina-value") == 0);
+   ck_assert_str_eq(str, "eina-value");
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(in_str, out) == 0);
+   ck_assert_str_eq(in_str, out);
    free(out);
 
    eina_value_flush(value);
@@ -786,10 +786,10 @@ START_TEST(eina_value_test_to_string)
    in_str = "profusion";
    fail_unless(eina_value_pset(value, &in_str));
    fail_unless(eina_value_pget(value, &str));
-   fail_unless(strcmp(str, "profusion") == 0);
+   ck_assert_str_eq(str, "profusion");
    out = eina_value_to_string(value);
    fail_unless(out != NULL);
-   fail_unless(strcmp(in_str, out) == 0);
+   ck_assert_str_eq(in_str, out);
    free(out);
 
    eina_value_free(value);
@@ -897,7 +897,7 @@ START_TEST(eina_value_test_convert_char)
    fail_unless(eina_value_convert(value, &conv));
    fail_unless(eina_value_get(&conv, &str));
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "123") == 0);
+   ck_assert_str_eq(str, "123");
    eina_value_flush(&conv);
 
    /* negative tests */
@@ -1028,7 +1028,7 @@ START_TEST(eina_value_test_convert_uchar)
    fail_unless(eina_value_convert(value, &conv));
    fail_unless(eina_value_get(&conv, &str));
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "31") == 0);
+   ck_assert_str_eq(str, "31");
    eina_value_flush(&conv);
 
    /* negative tests */
@@ -1094,7 +1094,7 @@ START_TEST(eina_value_test_array)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, buf) == 0);
+   ck_assert_str_eq(str, buf);
    free(str);
 
    eina_value_flush(value);
@@ -1108,7 +1108,7 @@ START_TEST(eina_value_test_array)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]") == 0);
+   ck_assert_str_eq(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]");
    free(str);
 
    eina_value_flush(value);
@@ -1122,7 +1122,7 @@ START_TEST(eina_value_test_array)
    fail_unless(eina_value_convert(&other, value));
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "[100]") == 0);
+   ck_assert_str_eq(str, "[100]");
    free(str);
 
    fail_unless(eina_value_array_set(value, 0, 33));
@@ -1206,7 +1206,7 @@ START_TEST(eina_value_test_list)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, buf) == 0);
+   ck_assert_str_eq(str, buf);
    free(str);
 
    eina_value_flush(value);
@@ -1220,7 +1220,7 @@ START_TEST(eina_value_test_list)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]") == 0);
+   ck_assert_str_eq(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]");
    free(str);
 
    eina_value_flush(value);
@@ -1234,7 +1234,7 @@ START_TEST(eina_value_test_list)
    fail_unless(eina_value_convert(&other, value));
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "[100]") == 0);
+   ck_assert_str_eq(str, "[100]");
    free(str);
 
    fail_unless(eina_value_list_set(value, 0, 33));
@@ -1253,13 +1253,13 @@ START_TEST(eina_value_test_list)
 
    fail_unless(eina_value_list_get(value, 0, &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "hello") == 0);
+   ck_assert_str_eq(s, "hello");
    fail_unless(eina_value_list_get(value, 1, &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "world") == 0);
+   ck_assert_str_eq(s, "world");
    fail_unless(eina_value_list_get(value, 2, &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "eina") == 0);
+   ck_assert_str_eq(s, "eina");
 
    eina_value_free(value);
    eina_shutdown();
@@ -1300,19 +1300,18 @@ START_TEST(eina_value_test_hash)
    fail_unless(eina_value_hash_get(value, "third", &c));
    fail_unless(c == 's');
 
-   puts("testing hash to string -- may fail due hash algorithm changes!");
-
-   /* watchout, this is the order I got -- hash algorithm changes may change
-    * the order!
-    */
-   snprintf(buf, sizeof(buf), "{first: %hhd, second: %hhd, third: %hhd}",
-            '!', '-', 's');
-
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   printf("want: %s\n", buf);
-   printf("got.: %s\n", str);
-   fail_unless(strcmp(str, buf) == 0);
+
+   snprintf(buf, sizeof(buf), "first: %hhd", '!');
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   snprintf(buf, sizeof(buf), "second: %hhd", '-');
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   snprintf(buf, sizeof(buf), "third: %hhd", 's');
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
    free(str);
 
    eina_value_flush(value);
@@ -1324,16 +1323,24 @@ START_TEST(eina_value_test_hash)
    fail_unless(eina_value_hash_set(value, "d", "on!!!"));
    fail_unless(eina_value_hash_set(value, "e", "k-s"));
 
-   /* watchout, this is the order I got -- hash algorithm changes may change
-    * the order!
-    */
-   strcpy(buf, "{e: k-s, d: on!!!, a: Enlightenment.org, b: X11, c: Pants}");
-
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   printf("want: %s\n", buf);
-   printf("got.: %s\n", str);
-   fail_unless(strcmp(str, buf) == 0);
+
+   eina_strlcpy(buf, "a: Enlightenment.org", sizeof(buf));
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   eina_strlcpy(buf, "b: X11", sizeof(buf));
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   eina_strlcpy(buf, "c: Pants", sizeof(buf));
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   eina_strlcpy(buf, "d: on!!!", sizeof(buf));
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
+   eina_strlcpy(buf, "e: k-s", sizeof(buf));
+   fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+
    free(str);
 
    eina_value_flush(value);
@@ -1368,11 +1375,11 @@ START_TEST(eina_value_test_hash)
 
    fail_unless(eina_value_hash_get(value, "hi", &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "there") == 0);
+   ck_assert_str_eq(s, "there");
 
    fail_unless(eina_value_hash_get(value, "x", &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "y") == 0);
+   ck_assert_str_eq(s, "y");
 
    eina_value_free(value);
    eina_shutdown();
@@ -1417,7 +1424,7 @@ START_TEST(eina_value_test_timeval)
    fail_unless(eina_value_set(value, itv));
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "12345.006789") == 0);
+   ck_assert_str_eq(str, "1970-01-01 00:25:45");
    free(str);
 
    fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_TIMEVAL));
@@ -1481,7 +1488,7 @@ START_TEST(eina_value_test_blob)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "BLOB(10, [01 02 03 04 05 06 07 08 09 0a])") == 0);
+   ck_assert_str_eq(str, "BLOB(10, [01 02 03 04 05 06 07 08 09 0a])");
    free(str);
 
    fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_INT));
@@ -1501,11 +1508,11 @@ START_TEST(eina_value_test_blob)
    fail_unless(eina_value_get(value, &out));
    fail_unless(out.memory != NULL);
    fail_unless(out.size == sizeof("hi there!"));
-   fail_unless(strcmp(out.memory, "hi there!") == 0);
+   ck_assert_str_eq(out.memory, "hi there!");
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "BLOB(10, [68 69 20 74 68 65 72 65 21 00])") == 0);
+   ck_assert_str_eq(str, "BLOB(10, [68 69 20 74 68 65 72 65 21 00])");
    free(str);
 
    eina_value_flush(&other);
@@ -1521,7 +1528,7 @@ START_TEST(eina_value_test_blob)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "BLOB(3, [0a 0b 0c])") == 0);
+   ck_assert_str_eq(str, "BLOB(3, [0a 0b 0c])");
    free(str);
 
    eina_value_flush(&other);
@@ -1535,7 +1542,7 @@ START_TEST(eina_value_test_blob)
 
    str = eina_value_to_string(&other);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "BLOB(3, [0a 0b 0c])") == 0);
+   ck_assert_str_eq(str, "BLOB(3, [0a 0b 0c])");
    free(str);
 
    eina_value_flush(&other);
@@ -1629,7 +1636,7 @@ START_TEST(eina_value_test_struct)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "{i: 5678, c: 15}") == 0);
+   ck_assert_str_eq(str, "{i: 5678, c: 15}");
    free(str);
 
    fail_if(eina_value_struct_get(value, "x", 1234));
@@ -1643,7 +1650,7 @@ START_TEST(eina_value_test_struct)
    fail_unless(eina_value_copy(value, &other));
    str = eina_value_to_string(&other);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "{i: 287454020, c: 15}") == 0);
+   ck_assert_str_eq(str, "{i: 287454020, c: 15}");
    free(str);
 
    eina_value_flush(&other);
@@ -1722,7 +1729,7 @@ START_TEST(eina_value_test_struct)
 
    str = eina_value_to_string(&other);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "{a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10, k: 12, l: 13, m: 14, n: 15, o: 16, p: 17, q: 18, r: 19, s: 20, t: 21, u: 22, v: 23, x: 24}") == 0);
+   ck_assert_str_eq(str, "{a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10, k: 12, l: 13, m: 14, n: 15, o: 16, p: 17, q: 18, r: 19, s: 20, t: 21, u: 22, v: 23, x: 24}");
    free(str);
 
    eina_value_flush(&other);
@@ -1778,7 +1785,7 @@ START_TEST(eina_value_test_array_of_struct)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "["
+   ck_assert_str_eq(str, "["
                       "{a: 0, b: 0, c: 0, s: item00}, "
                       "{a: 1, b: 10, c: 100, s: item01}, "
                       "{a: 2, b: 20, c: 200, s: item02}, "
@@ -1789,7 +1796,7 @@ START_TEST(eina_value_test_array_of_struct)
                       "{a: 7, b: 70, c: 700, s: item07}, "
                       "{a: 8, b: 80, c: 800, s: item08}, "
                       "{a: 9, b: 90, c: 900, s: item09}"
-                      "]") == 0);
+                      "]");
    free(str);
 
    eina_value_array_value_get(value, 2, &array_item);
@@ -1840,7 +1847,7 @@ START_TEST(eina_value_test_model)
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   fail_unless(strcmp(str, "Eina_Model_Type_Generic({i: 1234}, [])") == 0);
+   ck_assert_str_eq(str, "Eina_Model_Type_Generic({i: 1234}, [])");
    free(str);
 
    eina_value_free(value);
