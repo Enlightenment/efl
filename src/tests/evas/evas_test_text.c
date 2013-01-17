@@ -175,11 +175,11 @@ START_TEST(evas_text_unrelated)
 
    pos = 0;
    fail_if(2 != evas_string_char_next_get(buf, pos, &value));
-   fail_if(value != L'נ');
+   fail_if(value != 1504);
 
    pos = 2;
    fail_if(0 != evas_string_char_prev_get(buf, pos, &value));
-   fail_if(value != L'ס');
+   fail_if(value != 1505);
 
    END_TEXT_TEST();
 }
