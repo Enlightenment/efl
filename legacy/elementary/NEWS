@@ -133,6 +133,7 @@ Removals:
      to deprecation. Thus, people using that (unstable) API will have
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
+   * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
 
 Changes since Elementary 1.0.0:
 -------------------------

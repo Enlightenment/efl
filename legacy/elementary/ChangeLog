@@ -923,3 +923,9 @@
 2013-01-16  Daniel Juyung Seo (SeoZ)
 
 	    * Fix thumb theme hook.
+
+2013-01-17  Bora Hwang (bora1.hwang@samsung.com)
+
+        * when parent of ctxpopup is resized, ctxpopup calls dismissed signal
+
+
