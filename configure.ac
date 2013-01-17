@@ -275,10 +275,10 @@ case "$build_crypto" in
       EFL_DEPEND_PKG([crypto], [GNUTLS], [gnutls >= 2.11])
 
       # libgcrypt
-      AC_PATH_GENERIC([libgcrypt], [], [:],
-         [AC_MSG_ERROR([libgcrypt required but not found])])
-      requirements_libs_crypto="${LIBGCRYPT_LIBS} ${requirements_libs_crypto}"
-      requirements_cflags_crypto="${LIBGCRYPT_CFLAGS} ${requirements_cflags_crypto}"
+#      AC_PATH_GENERIC([libgcrypt], [], [:],
+#         [AC_MSG_ERROR([libgcrypt required but not found])])
+#      requirements_libs_crypto="${LIBGCRYPT_LIBS} ${requirements_libs_crypto}"
+#      requirements_cflags_crypto="${LIBGCRYPT_CFLAGS} ${requirements_cflags_crypto}"
       ;;
 
    openssl)
