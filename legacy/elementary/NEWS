@@ -126,6 +126,7 @@ Fixes:
    * Fix "changed" signal being sent twice in case of toggle style when check is clicked.
    * Fix index refill bug when autohide disabled.
    * Fix thumb theme hook.
+   * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
 
 Removals:
 
@@ -133,7 +134,6 @@ Removals:
      to deprecation. Thus, people using that (unstable) API will have
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
-   * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
 
 Changes since Elementary 1.0.0:
 -------------------------
