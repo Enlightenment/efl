@@ -77,6 +77,7 @@ Improvements:
     * Eina.h includes eina_alloca.h/alloca.h to define alloca()
     * Improved eina share del speed.
     * Upgrade liblinebreak to latest version of libunibreak.
+    * edje entry: cursor position and location will be passed when it's really changed in case of mouse down, move, and up event.
 
 Fixes:
     * Fix PPC (big endian) image codec bug.

@@ -1975,10 +1975,10 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
      {
         _edje_emit(rp->edje, "cursor,changed", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+
+        _edje_entry_imf_cursor_info_set(en);
      }
    evas_textblock_cursor_free(tc);
-
-   _edje_entry_imf_cursor_info_set(en);
 
    _edje_entry_real_part_configure(rp);
    if (ev->button == 2)
@@ -2092,10 +2092,11 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      {
         _edje_emit(rp->edje, "cursor,changed", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+
+        _edje_entry_imf_cursor_info_set(en);
      }
    evas_textblock_cursor_free(tc);
 
-   _edje_entry_imf_cursor_info_set(en);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2190,11 +2191,11 @@ _edje_part_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
           {
              _edje_emit(rp->edje, "cursor,changed", rp->part->name);
              _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+
+             _edje_entry_imf_context_reset(rp);
+             _edje_entry_imf_cursor_info_set(en);
           }
         evas_textblock_cursor_free(tc);
-
-        _edje_entry_imf_context_reset(rp);
-        _edje_entry_imf_cursor_info_set(en);
 
         _edje_entry_real_part_configure(rp);
      }

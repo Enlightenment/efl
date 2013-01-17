@@ -1,3 +1,8 @@
+2013-01-17  Jihoon Kim (jihoon)
+
+	* Edje : cursor position and location will be passed when it's really changed
+	in case of mouse down, move, and up event
+
 2013-01-16  Carsten Haitzler (The Rasterman)
 
         * Fixed pixman image wrapping to handle allocated size instead
