@@ -43,7 +43,6 @@ test_main_menu(void *data __UNUSED__,
                               "desktop environment to display the application menu");
    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, label);
    elm_box_pack_end(bx, label);
    evas_object_show(label);
 
@@ -58,7 +57,6 @@ test_main_menu(void *data __UNUSED__,
                                    "set. Test won't display it)");
         evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
-        elm_win_resize_object_add(win, label);
         elm_box_pack_end(bx, label);
         evas_object_show(label);
      }
