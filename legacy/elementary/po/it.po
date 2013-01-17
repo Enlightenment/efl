@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-13 18:26+0900\n"
+"POT-Creation-Date: 2013-01-17 12:51+0900\n"
 "PO-Revision-Date: 2013-01-04 22:08+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -167,7 +167,7 @@ msgstr "Voce dell'elenco generico"
 msgid "Index Item"
 msgstr "Voce dell'indice"
 
-#: src/lib/elm_index.c:680
+#: src/lib/elm_index.c:668
 msgid "Index"
 msgstr "Indice"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-13 18:26+0900\n"
+"POT-Creation-Date: 2013-01-17 12:51+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Index Item"
 msgstr ""
 
-#: src/lib/elm_index.c:680
+#: src/lib/elm_index.c:668
 msgid "Index"
 msgstr ""
 
