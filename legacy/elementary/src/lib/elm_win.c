@@ -57,6 +57,8 @@ struct _Elm_Win_Smart_Data
    Evas                 *evas;
    Evas_Object          *parent; /* parent *window* object*/
    Evas_Object          *img_obj, *frame_obj;
+   Eo                   *layout;
+   Eo                   *box;
    Evas_Coord           fx, fy, fw, fh;
    Eina_List            *resize_objs; /* a window may have
                                        * *multiple* resize
@@ -207,6 +209,12 @@ static int _elm_win_count = 0;
 static Eina_Bool _elm_win_auto_throttled = EINA_FALSE;
 
 static Ecore_Job *_elm_win_state_eval_job = NULL;
+
+static void
+_elm_win_on_resize_obj_changed_size_hints(void *data,
+                                          Evas *e,
+                                          Evas_Object *obj,
+                                          void *event_info);
 
 static void
 _elm_win_state_eval(void *data __UNUSED__)
@@ -1414,6 +1422,13 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd = _pd;
 
+   evas_object_event_callback_del_full(sd->layout,
+				       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _elm_win_on_resize_obj_changed_size_hints,
+				       obj);
+   evas_object_del(sd->box);
+   evas_object_del(sd->layout);
+
    /* NB: child deletion handled by parent's smart del */
 
    if ((trap) && (trap->del))
@@ -2504,6 +2519,48 @@ _elm_win_cb_show(void *data __UNUSED__,
 }
 
 static void
+_window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   Evas_Object_Box_Option *opt;
+   Evas_Coord x, y, w, h;
+   double wx, wy;
+   Evas_Coord minw = -1, minh = -1;
+   double weight_x = EVAS_HINT_EXPAND;
+   double weight_y = EVAS_HINT_EXPAND;
+
+   EINA_LIST_FOREACH(p->children, l, opt)
+     {
+        child = opt->obj;
+        evas_object_size_hint_weight_get(child, &wx, &wy);
+        if (wx == 0.0) weight_x = 0;
+        if (wy == 0.0) weight_y = 0;
+
+        evas_object_size_hint_min_get(child, &w, &h);
+        if (w > minw) minw = w;
+        if (h > minh) minh = h;
+     }
+
+   evas_object_size_hint_min_set(o, minw, minh);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
+   evas_object_resize(o, w, h);
+
+   EINA_LIST_FOREACH(p->children, l, opt)
+     {
+        child = opt->obj;
+        evas_object_move(child, x, y);
+        evas_object_resize(child, w, h);
+     }
+
+   ELM_WIN_DATA_GET(data, sd);
+   evas_object_size_hint_weight_set(sd->layout, weight_x, weight_y);
+   evas_object_smart_changed(sd->layout);
+}
+
+static void
 _win_constructor(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Win_Smart_Data *sd = _pd;
@@ -2942,6 +2999,18 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
      {
         // do nothing
      }
+
+   sd->layout = edje_object_add(sd->evas);
+   _elm_theme_object_set(obj, sd->layout, "win", "base", "default");
+   sd->box = evas_object_box_add(sd->evas);
+   evas_object_box_layout_set(sd->box, _window_layout_stack, obj, NULL);
+   edje_object_part_swallow(sd->layout, "elm.swallow.contents", sd->box);
+   evas_object_move(sd->layout, 0, 0);
+   evas_object_resize(sd->layout, 1, 1);
+   edje_object_update_hints_set(sd->layout, EINA_TRUE);
+   evas_object_event_callback_add(sd->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _elm_win_on_resize_obj_changed_size_hints, obj);
+   evas_object_show(sd->layout);
 }
 
 static void
