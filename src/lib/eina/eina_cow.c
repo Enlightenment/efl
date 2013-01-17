@@ -289,7 +289,7 @@ eina_cow_del(Eina_Cow *cow)
    free(cow);
 }
 
-EAPI const void *
+EAPI const Eina_Cow_Data *
 eina_cow_alloc(Eina_Cow *cow)
 {
    EINA_COW_MAGIC_CHECK(cow);
@@ -298,7 +298,7 @@ eina_cow_alloc(Eina_Cow *cow)
 }
 
 EAPI void
-eina_cow_free(Eina_Cow *cow, const void *data)
+eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 {
    Eina_Cow_Ptr *ref;
 
@@ -318,7 +318,8 @@ eina_cow_free(Eina_Cow *cow, const void *data)
 }
 
 EAPI void *
-eina_cow_write(Eina_Cow *cow, const void * const *data)
+eina_cow_write(Eina_Cow *cow,
+	       const Eina_Cow_Data * const *data)
 {
    Eina_Cow_Ptr *ref;
    void *r;
@@ -360,7 +361,9 @@ eina_cow_write(Eina_Cow *cow, const void * const *data)
 }
 
 EAPI void
-eina_cow_done(Eina_Cow *cow, const void * const * dst, const void *data)
+eina_cow_done(Eina_Cow *cow,
+	      const Eina_Cow_Data * const * dst,
+	      const void *data)
 {
    Eina_Cow_Ptr *ref;
    Eina_Cow_GC *gc;
@@ -385,7 +388,9 @@ eina_cow_done(Eina_Cow *cow, const void * const * dst, const void *data)
 }
 
 EAPI void
-eina_cow_memcpy(Eina_Cow *cow, const void * const *dst, const void *src)
+eina_cow_memcpy(Eina_Cow *cow,
+		const Eina_Cow_Data * const *dst,
+		const Eina_Cow_Data *src)
 {
    Eina_Cow_Ptr *ref;
 
