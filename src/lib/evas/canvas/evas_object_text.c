@@ -1672,8 +1672,11 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
 {
    int p, d;
 
-   if (decoded) *decoded = 0;
-   if ((!str) || (pos < 0)) return 0;
+   if ((!str) || (pos < 0))
+     {
+        if (decoded) *decoded = 0;
+        return 0;
+     }
    p = pos;
    d = eina_unicode_utf8_get_next(str, &p);
    if (decoded) *decoded = d;
