@@ -60,9 +60,6 @@ struct _Elm_Win_Smart_Data
    Eo                   *layout;
    Eo                   *box;
    Evas_Coord           fx, fy, fw, fh;
-   Eina_List            *resize_objs; /* a window may have
-                                       * *multiple* resize
-                                       * objects */
    Evas_Object          *obj; /* The object itself */
 #ifdef HAVE_ELEMENTARY_X
    struct
@@ -581,8 +578,6 @@ static void
 _elm_win_resize_job(void *data)
 {
    Elm_Win_Smart_Data *sd = data;
-   const Eina_List *l;
-   Evas_Object *obj;
    int w, h;
 
    sd->deferred_resize_job = NULL;
@@ -599,11 +594,7 @@ _elm_win_resize_job(void *data)
      evas_object_resize(sd->frame_obj, w, h);
 
    evas_object_resize(sd->obj, w, h);
-   EINA_LIST_FOREACH(sd->resize_objs, l, obj)
-     {
-        evas_object_move(obj, sd->fx, sd->fy);
-        evas_object_resize(obj, w - sd->fw, h - sd->fy);
-     }
+   evas_object_resize(sd->layout, w, h);
 }
 
 static void
@@ -1835,62 +1826,29 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
 static void
 _elm_win_resize_objects_eval(Evas_Object *obj)
 {
-   const Eina_List *l;
-   const Evas_Object *child;
-
    ELM_WIN_DATA_GET(obj, sd);
-   Evas_Coord w, h, minw = -1, minh = -1, maxw = -1, maxh = -1;
-   int xx = 1, xy = 1;
+   Evas_Coord w, h, minw, minh, maxw, maxh;
    double wx, wy;
 
-   EINA_LIST_FOREACH(sd->resize_objs, l, child)
-     {
-        evas_object_size_hint_weight_get(child, &wx, &wy);
-        if (wx == 0.0) xx = 0;
-        if (wy == 0.0) xy = 0;
+   evas_object_size_hint_min_get(sd->layout, &minw, &minh);
+   if (minw < 1) minw = 1;
+   if (minh < 1) minh = 1;
 
-        evas_object_size_hint_min_get(child, &w, &h);
-        if (w < 1) w = 1;
-        if (h < 1) h = 1;
-        if (w > minw) minw = w;
-        if (h > minh) minh = h;
-
-        evas_object_size_hint_max_get(child, &w, &h);
-        if (w < 1) w = -1;
-        if (h < 1) h = -1;
-        if (maxw == -1) maxw = w;
-        else if ((w > 0) && (w < maxw))
-          maxw = w;
-        if (maxh == -1) maxh = h;
-        else if ((h > 0) && (h < maxh))
-          maxh = h;
-     }
-   if (!xx) maxw = minw;
+   evas_object_size_hint_weight_get(sd->layout, &wx, &wy);
+   if (!wx) maxw = minw;
    else maxw = 32767;
-   if (!xy) maxh = minh;
+   if (!wy) maxh = minh;
    else maxh = 32767;
+
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
-   if ((maxw >= 0) && (w > maxw)) w = maxw;
-   if ((maxh >= 0) && (h > maxh)) h = maxh;
+   if (w > maxw) w = maxw;
+   if (h > maxh) h = maxh;
    evas_object_move(obj, 0, 0);
    evas_object_resize(obj, w, h);
-}
-
-static void
-_elm_win_on_resize_obj_del(void *data,
-                           Evas *e __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
-{
-   ELM_WIN_DATA_GET(data, sd);
-
-   sd->resize_objs = eina_list_remove(sd->resize_objs, obj);
-
-   _elm_win_resize_objects_eval(data);
 }
 
 static void
@@ -3055,28 +3013,14 @@ static void
 _resize_object_add(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   Evas_Coord w, h;
 
    Elm_Win_Smart_Data *sd = _pd;
-
-   if (eina_list_data_find(sd->resize_objs, subobj)) return;
 
    if (!elm_widget_sub_object_add(obj, subobj))
      ERR("could not add %p as sub object of %p", subobj, obj);
 
-   sd->resize_objs = eina_list_append(sd->resize_objs, subobj);
-
-   evas_object_event_callback_add
-     (subobj, EVAS_CALLBACK_DEL, _elm_win_on_resize_obj_del, obj);
-   evas_object_event_callback_add
-     (subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _elm_win_on_resize_obj_changed_size_hints, obj);
-
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_move(subobj, sd->fx, sd->fy);
-   evas_object_resize(subobj, w - sd->fw, h - sd->fh);
-
-   _elm_win_resize_objects_eval(obj);
+   if (!evas_object_box_append(sd->box, subobj))
+     ERR("could not append %p to box", subobj);
 }
 
 EAPI void
@@ -3096,15 +3040,7 @@ _resize_object_del(Eo *obj, void *_pd, va_list *list)
    if (!elm_widget_sub_object_del(obj, subobj))
      ERR("could not remove sub object %p from %p", subobj, obj);
 
-   sd->resize_objs = eina_list_remove(sd->resize_objs, subobj);
-
-   evas_object_event_callback_del_full
-     (subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _elm_win_on_resize_obj_changed_size_hints, obj);
-   evas_object_event_callback_del_full
-     (subobj, EVAS_CALLBACK_DEL, _elm_win_on_resize_obj_del, obj);
-
-   _elm_win_resize_objects_eval(obj);
+   evas_object_box_remove(sd->box, subobj);
 }
 
 EAPI void
