@@ -102,7 +102,8 @@ END_TEST
 START_TEST(eeze_test_udev_syspath)
 {
    Eina_List *type, *l;
-   const char *name, *check;
+   const char *name;
+   Eina_Bool r;
 
    eeze_init();
 
@@ -110,7 +111,7 @@ START_TEST(eeze_test_udev_syspath)
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {
-         check = eeze_udev_syspath_get_devpath(name);
+         eeze_udev_syspath_get_devpath(name);
          eeze_udev_find_similar_from_syspath(name);
          eeze_udev_find_similar_from_syspath(NULL);
          eeze_udev_syspath_get_parent(name);
@@ -138,23 +139,27 @@ START_TEST(eeze_test_udev_syspath)
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {
-         eeze_udev_syspath_is_mouse(name);
-         eeze_udev_syspath_is_touchpad(name);
-         eeze_udev_syspath_is_joystick(name);
+        r = eeze_udev_syspath_is_mouse(name);
+        fail_unless(r);
+
+        eeze_udev_syspath_is_touchpad(name);
+        eeze_udev_syspath_is_joystick(name);
      }
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_TOUCHPAD, NULL);
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {
-         eeze_udev_syspath_is_touchpad(name);
+        r = eeze_udev_syspath_is_touchpad(name);
+        fail_unless(r);
      }
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_JOYSTICK, NULL);
    type = eeze_udev_find_unlisted_similar(type);
    EINA_LIST_FOREACH(type, l, name)
      {
-         eeze_udev_syspath_is_joystick(name);
+        r = eeze_udev_syspath_is_joystick(name);
+        fail_unless(r);
      }
 
    eeze_udev_devpath_get_syspath("/dev/null");
