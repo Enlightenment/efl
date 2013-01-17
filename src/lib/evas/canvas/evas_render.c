@@ -2070,6 +2070,8 @@ _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = _pd;
 
+   evas_render_rendering_wait(e);
+   
    evas_fonts_zero_presure(eo_e);
 
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&

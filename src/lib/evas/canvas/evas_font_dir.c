@@ -1389,6 +1389,7 @@ void
 _canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = _pd;
+   evas_render_rendering_wait(e);
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
@@ -1407,6 +1408,7 @@ _canvas_font_cache_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    int size = va_arg(*list, int);
    Evas_Public_Data *e = _pd;
    if (size < 0) size = 0;
+   evas_render_rendering_wait(e);
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }
 
