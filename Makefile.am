@@ -37,20 +37,21 @@ m4/ltversion.m4
 
 EXTRA_DIST =  \
 m4/ac_path_generic.m4 \
+m4/ecore_check_c_extension.m4 \
+m4/ecore_check_module.m4 \
 m4/efl_attribute.m4 \
 m4/efl_check_funcs.m4 \
 m4/efl_compiler.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
 m4/efl_threads.m4 \
-m4/evil_windows.m4 \
 m4/eina_check.m4 \
 m4/eina_config.m4 \
+m4/eio_check_options.m4 \
 m4/evas_check_engine.m4 \
 m4/evas_check_loader.m4 \
-m4/ecore_check_c_extension.m4 \
-m4/ecore_check_module.m4 \
-m4/eio_check_options.m4
+m4/evil_windows.m4 \
+m4/libgcrypt.m4
 
 EXTRA_DIST += \
 autogen.sh \
