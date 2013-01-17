@@ -5,6 +5,10 @@
 #include "evas_cs2_private.h"
 #endif
 
+#ifdef EVAS_RENDER_DEBUG_TIMING
+#include <sys/time.h>
+#endif
+
 /* debug rendering
  * NOTE: Define REND_DBG 1 in evas_private.h to enable debugging. Don't define
  * it here since the flag is used on other places too. */
@@ -58,6 +62,59 @@ struct _Render_Updates
 
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Evas_Event_Cb updates_func, void *updates_data, Eina_Bool do_async);
+
+#ifdef EVAS_RENDER_DEBUG_TIMING
+static double
+_time_get()
+{
+   struct timeval tv;
+
+   gettimeofday(&tv, NULL);
+
+   return (tv.tv_sec + tv.tv_usec / 1000000.0) * 1000.0;
+}
+
+struct accumulator {
+   double total, min, max;
+   int samples;
+   const char *what;
+};
+
+static struct accumulator async_accumulator = {
+   .total = 0,
+   .min = 1000000,
+   .max = 0,
+   .samples = 0,
+   .what = "async render"
+};
+static struct accumulator sync_accumulator = {
+   .total = 0,
+   .min = 1000000,
+   .max = 0,
+   .samples = 0,
+   .what = "sync render"
+};
+
+static void
+_accumulate_time(double before, struct accumulator *acc)
+{
+   double diff = _time_get() - before;
+
+   acc->total += diff;
+   if (diff > acc->max) acc->max = diff;
+   if (diff < acc->min) acc->min = diff;
+
+   acc->samples++;
+   if (acc->samples % 100 == 0)
+     {
+        fprintf(stderr, "*** %s: avg %fms min %fms max %fms\n",
+                acc->what, acc->total / 100.0, acc->min, acc->max);
+        acc->total = 0.0;
+        acc->max = 0.0;
+        acc->min = 1000000;
+     }
+}
+#endif
 
 EAPI void
 evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
@@ -1361,6 +1418,9 @@ evas_render_updates_internal(Evas *eo_e,
    int redraw_all = 0;
    Eina_Bool haveup = 0;
    Evas_Render_Mode render_mode = EVAS_RENDER_MODE_UNDEF;
+#ifdef EVAS_RENDER_DEBUG_TIMING
+   double start_time = _time_get();
+#endif
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -1851,6 +1911,10 @@ evas_render_updates_internal(Evas *eo_e,
       evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
 
    RD("---]\n");
+
+#ifdef EVAS_RENDER_DEBUG_TIMING
+   _accumulate_time(start_time, do_async ? &async_accumulator : &sync_accumulator);
+#endif
 
    return EINA_TRUE;
 }

@@ -3178,7 +3178,11 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
    edata->state.sticky = 0;
-   ee->can_async_render = 1;
+
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
 
    /* init evas here */
    ee->evas = evas_new();
