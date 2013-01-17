@@ -24,15 +24,31 @@ get_layer_objects(Evas_Layer *l)
 }
 
 /* evas internal stuff */
+static const Evas_Object_Proxy_Data default_proxy = {
+  NULL, NULL, 0, 0, NULL, 0, 0, 0, 0
+};
+
+Eina_Cow *evas_object_proxy_cow = NULL;
+
 static void
 _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   Evas_Object_Protected_Data *obj;
+
    eo_do_super(eo_obj, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
-   Evas_Object_Protected_Data *obj = _pd;
+   obj = _pd;
    if (!obj)
+     {
+        eo_error_set(eo_obj);
+        return;
+     }
+
+   if (!evas_object_proxy_cow)
+     evas_object_proxy_cow = eina_cow_add("Evas Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy);
+   if (!evas_object_proxy_cow)
      {
         eo_error_set(eo_obj);
         return;
@@ -42,6 +58,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->prev.scale = 1.0;
    obj->is_frame = EINA_FALSE;
    obj->object = eo_obj;
+   obj->proxy = eina_cow_alloc(evas_object_proxy_cow);
 }
 
 void
@@ -133,6 +150,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
      {
        EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
      }
+   eina_cow_free(evas_object_proxy_cow, obj->proxy);
    eo_manual_free(eo_obj);
 }
 
@@ -166,7 +184,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
              evas_object_change(eo_obj2, obj2);
           }
      }
-   EINA_LIST_FOREACH(obj->proxy.proxies, l, eo_obj2)
+   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
      {
         Evas_Object_Protected_Data *obj2 = eo_data_get(eo_obj2, MY_CLASS);
         if (!obj2) continue;
@@ -557,8 +575,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_grabs_cleanup(eo_obj, obj);
    while (obj->clip.clipees)
      evas_object_clip_unset(obj->clip.clipees->data);
-   while (obj->proxy.proxies)
-     evas_object_image_source_unset(obj->proxy.proxies->data);
+   while (obj->proxy->proxies)
+     evas_object_image_source_unset(obj->proxy->proxies->data);
    if (obj->cur.clipper) evas_object_clip_unset(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);

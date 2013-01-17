@@ -217,10 +217,19 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           {
              /* Flag need redraw on proxy too */
              evas_object_clip_recalc(eo_obj, obj);
-             EINA_LIST_FOREACH(obj->proxy.proxies, l, eo_proxy)
+             EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                {
-                  Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
-                  proxy->proxy.redraw = EINA_TRUE;
+		 Evas_Object_Protected_Data *proxy;
+		 Evas_Object_Proxy_Data *proxy_write;
+
+		 proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
+
+		 proxy_write = eina_cow_write(evas_object_proxy_cow,
+					      ((const Eina_Cow_Data**)&proxy->proxy));
+		 proxy_write->redraw = EINA_TRUE;
+		 eina_cow_done(evas_object_proxy_cow,
+			       ((const Eina_Cow_Data**)&proxy->proxy),
+			       proxy_write);
                }
           }
      }
@@ -236,12 +245,20 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              /* Flag need redraw on proxy too */
              evas_object_clip_recalc(eo_obj, obj);
              obj->func->render_pre(eo_obj, obj);
-             if (obj->proxy.redraw)
+             if (obj->proxy->redraw)
                _evas_render_prev_cur_clip_cache_add(e, obj);
-             if (obj->proxy.proxies)
+             if (obj->proxy->proxies)
                {
-                  obj->proxy.redraw = EINA_TRUE;
-                  EINA_LIST_FOREACH(obj->proxy.proxies, l, eo_proxy)
+                  Evas_Object_Proxy_Data *proxy_write;
+
+                  proxy_write = eina_cow_write(evas_object_proxy_cow,
+                                               ((const Eina_Cow_Data**)&obj->proxy));
+                  proxy_write->redraw = EINA_TRUE;
+                  eina_cow_done(evas_object_proxy_cow,
+                                ((const Eina_Cow_Data**)&obj->proxy),
+                                proxy_write);
+
+                  EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                     {
                        Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
                        proxy->func->render_pre(eo_proxy, proxy);

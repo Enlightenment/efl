@@ -86,6 +86,9 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
+   eina_cow_del(evas_object_proxy_cow);
+   evas_object_proxy_cow = NULL;
+
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();

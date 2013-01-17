@@ -47,6 +47,7 @@ typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Smart_Interfaces_Array Evas_Smart_Interfaces_Array;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
+typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 
 enum _Evas_Font_Style
 {
@@ -497,6 +498,18 @@ struct _Evas_Map
    Evas_Map_Point        points[]; // actual points
 };
 
+struct _Evas_Object_Proxy_Data
+{
+   Eina_List               *proxies;
+   void                    *surface;
+   int                      w,h;
+   Eina_List               *src_event_in;
+   Eina_Bool                redraw : 1;
+   Eina_Bool                is_proxy : 1;
+   Eina_Bool                src_invisible : 1;
+   Eina_Bool                src_events: 1;
+};
+
 struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
@@ -568,16 +581,7 @@ struct _Evas_Object_Protected_Data
       Evas_Object             *parent;
    } smart;
 
-   struct {
-      Eina_List               *proxies;
-      void                    *surface;
-      int                      w,h;
-      Eina_List               *src_event_in;
-      Eina_Bool                redraw : 1;
-      Eina_Bool                is_proxy : 1;
-      Eina_Bool                src_invisible : 1;
-      Eina_Bool                src_events: 1;
-   } proxy;
+   const Evas_Object_Proxy_Data *proxy;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -1244,6 +1248,8 @@ Evas_Device *_evas_device_top_get(const Evas *e);
 void _evas_device_ref(Evas_Device *dev);
 void _evas_device_unref(Evas_Device *dev);
        
+extern Eina_Cow *evas_object_proxy_cow;
+
 /****************************************************************************/
 /*****************************************/
 /********************/
