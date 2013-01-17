@@ -50,6 +50,11 @@ enum
    ELM_DBUS_SIGNAL_ITEM_ACTIVATION_REQUESTED,
 };
 
+typedef struct _Callback_Data {
+  void (*result_cb)(Eina_Bool, void *);
+  void *data;
+} Callback_Data;
+
 static Eina_Bool
 _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
 {
@@ -70,6 +75,16 @@ _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
      }
 
    return EINA_TRUE;
+}
+
+static void
+_app_register_cb(void *data, const EDBus_Message *msg,
+		 EDBus_Pending *pending EINA_UNUSED)
+{
+  Callback_Data *cd = data;
+
+  cd->result_cb(!edbus_message_error_get(msg, NULL, NULL), cd->data);
+  free(cd);
 }
 
 static Eina_Bool
@@ -875,10 +890,12 @@ _elm_dbus_menu_unregister(Eo *obj)
 }
 
 void
-_elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj)
+_elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
+				 void (*result_cb)(Eina_Bool, void *), void *data)
 {
    EDBus_Message *msg;
    const char *obj_path;
+   Callback_Data *cd;
 
    ELM_MENU_CHECK(obj);
    ELM_MENU_DATA_GET(obj, sd);
@@ -891,10 +908,14 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj)
 
    msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
                                        REGISTRAR_INTERFACE, "RegisterWindow");
+   cd = malloc(sizeof(Callback_Data));
+   cd->result_cb = result_cb;
+   cd->data = data;
    obj_path = edbus_service_object_path_get(sd->dbus_menu->iface);
    edbus_message_arguments_append(msg, "uo", (unsigned)xid,
                                   obj_path);
-   edbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
+   edbus_connection_send(sd->dbus_menu->bus, msg, _app_register_cb,
+			 cd, -1);
    sd->dbus_menu->xid = xid;
 }
 

@@ -408,7 +408,9 @@ int                  _elm_dbus_menu_item_add(Elm_DBus_Menu *dbus_menu,
 void                 _elm_dbus_menu_item_delete(Elm_DBus_Menu *dbus_menu,
                                                 int id);
 
-void                 _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj);
+void                 _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
+                                                      void (*result_cb)(Eina_Bool, void *),
+                                                      void *data);
 void                 _elm_dbus_menu_app_menu_unregister(Eo *obj);
 void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 
