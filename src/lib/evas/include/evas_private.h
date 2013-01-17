@@ -387,6 +387,7 @@ struct _Evas_Public_Data
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
    Eina_Array     clip_changes;
+   Eina_Array     scie_unref_queue;
    Eina_Array     image_unref_queue;
    Eina_Array     glyph_unref_queue;
    Eina_Array     texts_unref_queue;

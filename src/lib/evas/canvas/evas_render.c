@@ -1381,10 +1381,15 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
 }
 
 static Eina_Bool
+_drop_scie_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+   evas_common_rgba_image_scalecache_item_unref(data);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
-   evas_common_rgba_image_scalecache_items_unref(data);
-
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      evas_cache2_image_close((Image_Entry *)data);
@@ -1974,9 +1979,12 @@ evas_render_wakeup(Evas *eo_e)
    e->engine.func->output_redraws_clear(e->engine.data.output);
 
    /* unref queues */
+   eina_array_foreach(&e->scie_unref_queue, _drop_scie_ref, NULL);
+   eina_array_clean(&e->scie_unref_queue);
+   evas_common_rgba_image_scalecache_prune();
+
    eina_array_foreach(&e->image_unref_queue, _drop_image_cache_ref, NULL);
    eina_array_clean(&e->image_unref_queue);
-   evas_common_rgba_image_scalecache_prune();
 
    eina_array_foreach(&e->glyph_unref_queue, _drop_glyph_ref, NULL);
    eina_array_clean(&e->glyph_unref_queue);
@@ -1984,6 +1992,7 @@ evas_render_wakeup(Evas *eo_e)
    eina_array_foreach(&e->texts_unref_queue, _drop_texts_ref, NULL);
    eina_array_clean(&e->texts_unref_queue);
 
+   /* post rendering */
    up_cb = e->render.updates_cb;
    up_data = e->render.data;
    e->render.updates_cb = NULL;
@@ -2264,6 +2273,7 @@ void
 evas_unref_queue_image_put(Evas_Public_Data *pd, void *image)
 {
    eina_array_push(&pd->image_unref_queue, image);
+   evas_common_rgba_image_scalecache_items_ref(image, &pd->scie_unref_queue);
 }
 
 void

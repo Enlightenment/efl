@@ -3222,8 +3222,6 @@ _draw_image(Evas_Object_Protected_Data *obj,
 #endif
           evas_cache_image_ref((Image_Entry *)image);
 
-        evas_common_rgba_image_scalecache_items_ref(image);
-
         evas_unref_queue_image_put(obj->layer->evas, image);
      }
 }

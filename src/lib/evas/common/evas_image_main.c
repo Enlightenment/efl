@@ -184,8 +184,6 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 {
    RGBA_Image *im = (RGBA_Image *)ie;
 
-   if (ie->references > 0) return;
-
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
 #endif
@@ -225,6 +223,8 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 EAPI void
 evas_common_rgba_image_free(Image_Entry *ie)
 {
+   if (ie->references > 0) return;
+
    _evas_common_rgba_image_surface_delete(ie);
    _evas_common_rgba_image_delete(ie);
 }
@@ -401,8 +401,6 @@ static void
 _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
-
-   if (ie->references > 0) return;
 
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_IMAGE
