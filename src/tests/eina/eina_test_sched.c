@@ -43,7 +43,10 @@ _thread_run(void *arg EINA_UNUSED, Eina_Thread tid EINA_UNUSED)
     eina_sched_prio_drop();
 
     niceval2 = getpriority(PRIO_PROCESS, 0);
-    fail_if((niceval2 != 19) && (niceval2 != niceval+5));
+    if (niceval + 5 >= 19)
+      ck_assert_int_eq(niceval2, 19);
+    else
+      ck_assert_int_eq(niceval2, (niceval + 5));
 
     return NULL;
 }
@@ -53,18 +56,20 @@ START_TEST(eina_test_sched_prio_drop)
     int niceval = getpriority(PRIO_PROCESS, 0);
     int niceval2;
     Eina_Thread tid;
+    Eina_Bool r;
 
     eina_init();
 
-    eina_thread_create(&tid, EINA_THREAD_NORMAL, -1, _thread_run, NULL);
+    r = eina_thread_create(&tid, EINA_THREAD_NORMAL, -1, _thread_run, NULL);
+    fail_unless(r);
 
     niceval2 = getpriority(PRIO_PROCESS, 0);
     /* niceness of main thread should not have changed */
-    fail_if(niceval2 != niceval);
+    ck_assert_int_eq(niceval2, niceval);
 
     eina_thread_join(tid);
     /* niceness of main thread should not have changed */
-    fail_if(niceval2 != niceval);
+    ck_assert_int_eq(niceval2, niceval);
 
     eina_shutdown();
 }

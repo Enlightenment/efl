@@ -61,23 +61,49 @@ wk3_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 
 START_TEST(eina_barrier_test_simple)
 {
-    eina_init();
-    eina_threads_init();
+    Eina_Bool r;
+    int i;
 
-    eina_barrier_new(&barrier, 6);
-    eina_thread_create(&wk1, EINA_THREAD_NORMAL, 0, wk_func, NULL);
-    eina_thread_create(&wk2, EINA_THREAD_NORMAL, 0, wk_func, NULL);
-    eina_thread_create(&wk3, EINA_THREAD_NORMAL, 0, wk1_func, NULL);
-    eina_thread_create(&wk4, EINA_THREAD_NORMAL, 0, wk2_func, NULL);
-    eina_thread_create(&wk5, EINA_THREAD_NORMAL, 0, wk3_func, NULL);
+    i = eina_init();
+    ck_assert_int_ge(i, 1);
+
+    i = eina_threads_init();
+    ck_assert_int_ge(i, 1);
+
+    r = eina_barrier_new(&barrier, 6);
+    fail_unless(r);
+
+    r = eina_thread_create(&wk1, EINA_THREAD_NORMAL, 0, wk_func, NULL);
+    fail_unless(r);
+
+    r = eina_thread_create(&wk2, EINA_THREAD_NORMAL, 0, wk_func, NULL);
+    fail_unless(r);
+
+    r = eina_thread_create(&wk3, EINA_THREAD_NORMAL, 0, wk1_func, NULL);
+    fail_unless(r);
+
+    r = eina_thread_create(&wk4, EINA_THREAD_NORMAL, 0, wk2_func, NULL);
+    fail_unless(r);
+
+    r = eina_thread_create(&wk5, EINA_THREAD_NORMAL, 0, wk3_func, NULL);
+    fail_unless(r);
 
     eina_barrier_wait(&barrier);
 
     eina_thread_join(wk1);
+    ck_assert_int_eq(eina_error_get(), 0);
+
     eina_thread_join(wk2);
+    ck_assert_int_eq(eina_error_get(), 0);
+
     eina_thread_join(wk3);
+    ck_assert_int_eq(eina_error_get(), 0);
+
     eina_thread_join(wk4);
+    ck_assert_int_eq(eina_error_get(), 0);
+
     eina_thread_join(wk5);
+    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_barrier_free(&barrier);
 
