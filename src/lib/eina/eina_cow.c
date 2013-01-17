@@ -280,6 +280,8 @@ eina_cow_del(Eina_Cow *cow)
 {
    Eina_Cow_GC *gc;
 
+   if (!cow) return ;
+
    EINA_COW_MAGIC_CHECK(cow);
 
    eina_mempool_del(cow->pool);
