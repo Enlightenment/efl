@@ -357,10 +357,10 @@ void setup(void)
    int ret;
 
    ret = eina_init();
-   ck_assert_int_ge(ret, 1);
+   ck_assert_int_eq(ret, 1);
 
    ret = ecore_init();
-   ck_assert_int_ge(ret, 1);
+   ck_assert_int_eq(ret, 1);
 
    ret = ecore_audio_init();
    ck_assert_int_eq(ret, 1);
