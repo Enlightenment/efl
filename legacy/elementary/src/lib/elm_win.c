@@ -2000,8 +2000,17 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
                {
                   /* there would be better way to read highlight object */
-                  ecore_x_mouse_in_send(sd->x.xwin, e->data.l[2], e->data.l[3]);
-                  ecore_x_mouse_move_send(sd->x.xwin, e->data.l[2], e->data.l[3]);
+                  Evas *evas;
+                  evas = evas_object_evas_get(sd->obj);
+                  if (!evas) return ECORE_CALLBACK_PASS_ON;
+
+                  _elm_access_mouse_event_enabled_set(EINA_TRUE);
+
+                  evas_event_feed_mouse_in(evas, 0, NULL);
+                  evas_event_feed_mouse_move
+                    (evas, e->data.l[2], e->data.l[3], 0, NULL);
+
+                  _elm_access_mouse_event_enabled_set(EINA_FALSE);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_NEXT)

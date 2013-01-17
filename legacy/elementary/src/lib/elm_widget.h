@@ -486,6 +486,7 @@ struct _Elm_Access_Info
    Evas_Object               *part_object;
 };
 
+void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data);

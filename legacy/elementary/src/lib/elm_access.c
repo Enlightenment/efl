@@ -5,6 +5,8 @@
 
 #define MY_CLASS_NAME "elm_access"
 
+static Eina_Bool mouse_event_enable = EINA_TRUE;
+
 static Evas_Object * _elm_access_add(Evas_Object *parent);
 
 static void
@@ -126,7 +128,10 @@ _access_obj_over_timeout_cb(void *data)
 static void
 _access_obj_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
 {
-   Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
+   Elm_Access_Info *ac;
+   if (!mouse_event_enable) return;
+
+    ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
 
    if (ac->delay_timer)
@@ -141,8 +146,12 @@ _access_obj_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 static void
 _access_obj_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
+   Elm_Access_Info *ac;
+   if (!mouse_event_enable) return;
+
+   ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
+
    _elm_access_object_unhilight(data);
    if (ac->delay_timer)
      {
@@ -238,6 +247,13 @@ _access_highlight_object_get(Evas_Object *obj)
    ho = evas_object_data_get(o, "_elm_access_target");
 
    return ho;
+}
+
+void _elm_access_mouse_event_enabled_set(Eina_Bool enabled)
+{
+   enabled = !!enabled;
+   if (mouse_event_enable == enabled) return;
+   mouse_event_enable = enabled;
 }
 
 //-------------------------------------------------------------------------//
