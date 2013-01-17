@@ -1267,6 +1267,9 @@ typedef enum _Evas_Render_Mode
 
 /****/
 
+void evas_common_rgba_image_scalecache_items_ref(Image_Entry *ie);
+void evas_common_rgba_image_scalecache_items_unref(Image_Entry *ie);
+
 /*****************************************************************************/
 
 #ifdef __cplusplus
