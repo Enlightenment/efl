@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
+#include "elm_widget_menu.h"
 
 EAPI Eo_Op ELM_OBJ_WIN_BASE_ID = EO_NOOP;
 
@@ -3593,7 +3594,9 @@ _main_menu_get(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        //TODO: Local version.
+        edje_object_part_swallow(sd->layout, "elm.swallow.menu", sd->main_menu);
+        edje_object_signal_emit(sd->layout, "elm,action,show_menu", "elm");
+        _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
      }
 end:
    *ret = sd->main_menu;
