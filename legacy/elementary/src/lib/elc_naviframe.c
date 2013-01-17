@@ -1120,10 +1120,22 @@ _item_new(Evas_Object *obj,
      }
 
    if (prev_btn)
-     _item_content_set_hook((Elm_Object_Item *)it, PREV_BTN_PART, prev_btn);
+     {
+        _item_content_set_hook((Elm_Object_Item *)it, PREV_BTN_PART, prev_btn);
+
+        if (!elm_layout_text_get(prev_btn, NULL))
+          _elm_access_text_set
+            (_elm_access_object_get(prev_btn), ELM_ACCESS_INFO, E_("Back"));
+     }
 
    if (next_btn)
-     _item_content_set_hook((Elm_Object_Item *)it, NEXT_BTN_PART, next_btn);
+     {
+        _item_content_set_hook((Elm_Object_Item *)it, NEXT_BTN_PART, next_btn);
+
+        if (!elm_layout_text_get(next_btn, NULL))
+          _elm_access_text_set
+            (_elm_access_object_get(next_btn), ELM_ACCESS_INFO, E_("Next"));
+     }
 
    _item_content_set(it, content);
    it->title_visible = EINA_TRUE;
