@@ -90,8 +90,16 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(sd->parent, &px, &py, &pw, &ph);
 
-   x_p = x2 + w2;
-   y_p = y2;
+   if (sd->menu_bar && !parent_it->parent)
+     {
+        x_p = x2;
+        y_p = y2 + h2;
+     }
+   else
+     {
+        x_p = x2 + w2;
+        y_p = y2;
+     }
 
    /* If it overflows on the right, adjust the x */
    if ((x_p + bw > px + pw) || elm_widget_mirrored_get(WIDGET(parent_it)))
@@ -126,7 +134,8 @@ _sizing_eval(Evas_Object *obj)
 {
    Eina_List *l;
    Elm_Menu_Item *item;
-   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh;
+   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh, bx, by;
+   Elm_Widget_Smart_Data *hover;
 
    ELM_MENU_DATA_GET(obj, sd);
 
@@ -156,6 +165,11 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
+   hover = eo_data_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
+   edje_object_part_geometry_get(hover->resize_obj, "bottom", &bx, &by, &bw, &bh);
+   evas_object_size_hint_min_set(obj, bw, bh);
+
+
    EINA_LIST_FOREACH(sd->items, l, item)
      if (item->submenu.open) _submenu_sizing_eval(item);
 }
@@ -170,6 +184,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Menu_Item *item;
+   const char *s;
 
    eo_do_super(obj, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -187,8 +202,11 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
                  elm_widget_style_get(obj));
              else if (item->submenu.bx)
                {
+                  if (sd->menu_bar && !item->parent) s = "main_menu_submenu";
+                  else s = "item_with_submenu";
+
                   elm_widget_theme_object_set
-                    (obj, VIEW(item), "menu", "item_with_submenu",
+                    (obj, VIEW(item), "menu", s,
                     elm_widget_style_get(obj));
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
@@ -339,8 +357,11 @@ _menu_hide(void *data,
 
    ELM_MENU_DATA_GET(data, sd);
 
-   evas_object_hide(sd->hv);
-   evas_object_hide(data);
+   if (!sd->menu_bar)
+     {
+        evas_object_hide(sd->hv);
+        evas_object_hide(data);
+     }
 
    EINA_LIST_FOREACH(sd->items, l, item2)
      {
@@ -492,7 +513,15 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    elm_widget_mirrored_set(item->submenu.hv, EINA_FALSE);
    elm_hover_target_set(item->submenu.hv, item->submenu.location);
    elm_hover_parent_set(item->submenu.hv, sd->parent);
-   elm_object_style_set(item->submenu.hv, "submenu");
+
+   if (sd->menu_bar && !item->parent)
+     {
+        elm_object_style_set(item->submenu.hv, "main_menu_submenu");
+        evas_object_smart_callback_add(item->submenu.hv, "clicked",
+                                       _hover_clicked_cb, WIDGET(item));
+     }
+   else
+     elm_object_style_set(item->submenu.hv, "submenu");
 
    item->submenu.bx = elm_box_add(sd->bx);
    elm_widget_mirrored_set(item->submenu.bx, EINA_FALSE);
@@ -504,9 +533,16 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
        (item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
 
    edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
-   elm_widget_theme_object_set
-     (WIDGET(item), VIEW(item), "menu", "item_with_submenu",
-     elm_widget_style_get(WIDGET(item)));
+
+   if (sd->menu_bar && !item->parent)
+     elm_widget_theme_object_set(WIDGET(item), VIEW(item), "menu",
+                                 "main_menu_submenu",
+                                 elm_widget_style_get(WIDGET(item)));
+   else
+     elm_widget_theme_object_set(WIDGET(item), VIEW(item), "menu",
+                                 "item_with_submenu",
+                                 elm_widget_style_get(WIDGET(item)));
+
    elm_object_item_text_set((Elm_Object_Item *)item, item->label);
 
    if (item->icon_str)
@@ -572,6 +608,46 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->location) evas_object_del(sd->location);
 
    eo_do_super(obj, evas_obj_smart_del());
+}
+
+void
+_elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
+{
+   Eina_List *l;
+   Elm_Menu_Item *item;
+
+   ELM_MENU_DATA_GET_OR_RETURN(obj, sd);
+
+   if (menu_bar == sd->menu_bar) return;
+
+   elm_box_horizontal_set(sd->bx, menu_bar);
+   elm_box_homogeneous_set(sd->bx, !menu_bar);
+   sd->menu_bar = menu_bar;
+
+   if (menu_bar)
+     elm_object_style_set(sd->hv, "main_menu");
+   else
+     elm_object_style_set(sd->hv, "menu");
+
+   EINA_LIST_FOREACH(sd->items, l, item)
+     {
+        if (!item->submenu.bx) continue;
+
+        if (menu_bar)
+          {
+             evas_object_smart_callback_add(item->submenu.hv, "clicked",
+                                            _hover_clicked_cb, WIDGET(item));
+             elm_object_style_set(item->submenu.hv, "main_menu_submenu");
+          }
+        else
+          {
+             evas_object_smart_callback_del_full(item->submenu.hv, "clicked",
+                                                 _hover_clicked_cb, WIDGET(item));
+             elm_object_style_set(item->submenu.hv, "submenu");
+          }
+     }
+
+   eo_do(obj, elm_wdg_theme(NULL));
 }
 
 EAPI Evas_Object *

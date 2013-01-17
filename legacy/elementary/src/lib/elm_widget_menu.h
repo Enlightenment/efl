@@ -26,6 +26,7 @@ struct _Elm_Menu_Smart_Data
    Evas_Coord            xloc, yloc;
    Elm_DBus_Menu        *dbus_menu;
 
+   Eina_Bool             menu_bar : 1;
 };
 
 typedef struct _Elm_Menu_Item       Elm_Menu_Item;
