@@ -1393,6 +1393,7 @@ START_TEST(eina_value_test_timeval)
    struct timeval itv, otv;
    char c;
    char *str;
+   char buf[64];
 
    eina_init();
 
@@ -1424,7 +1425,9 @@ START_TEST(eina_value_test_timeval)
    fail_unless(eina_value_set(value, itv));
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
-   ck_assert_str_eq(str, "1970-01-01 00:25:45");
+
+   strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&(itv.tv_sec)));
+   ck_assert_str_eq(str, buf);
    free(str);
 
    fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_TIMEVAL));
