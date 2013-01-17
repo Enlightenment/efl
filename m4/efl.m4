@@ -108,7 +108,7 @@ esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
 requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
-requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
+requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_public_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
 m4_popdef([DOWNOTHER])dnl
 m4_popdef([DOWNEFL])dnl
 ])
@@ -208,6 +208,21 @@ requirements_libs_[]m4_defn([DOWN])="${requirements_libs_[]m4_defn([DOWN])} $2"
 m4_popdef([DOWN])dnl
 ])
 
+dnl EFL_ADD_PUBLIC_LIBS(PKG, PUBLIC_LIBS)
+dnl Add libraries that the EFL library will depend on when used.
+dnl
+dnl Unlike EFL_ADD_LIBS(), that is only used when generating PKG,
+dnl this one is used when linking PKG to other libraries or applications.
+dnl
+dnl For instance if you use some other library in your header that user
+dnl inclues.
+AC_DEFUN([EFL_ADD_PUBLIC_LIBS],
+[dnl
+m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
+requirements_public_libs_[]m4_defn([DOWN])="${requirements_public_libs_[]m4_defn([DOWN])} $2"
+m4_popdef([DOWN])dnl
+])
+
 dnl EFL_ADD_CFLAGS(PKG, CFLAGS)
 dnl Add CFLAGS that the EFL library will use
 dnl See EFL_DEPEND_PKG() for pkg-config version.
@@ -220,6 +235,44 @@ m4_popdef([DOWN])dnl
 
 dnl EFL_LIB_START(PKG)
 dnl start the setup of an EFL library, defines variables and prints a notice
+dnl
+dnl Exports (AC_SUBST)
+dnl     PKG_CFLAGS: what to use for CFLAGS
+dnl
+dnl     PKG_LDFLAGS: what to use for LDFLAGS
+dnl
+dnl     PKG_LIBS: what to use in automake's _LIBADD or _LDADD. Includes
+dnl             everything else.
+dnl
+dnl     PKG_INTERNAL_LIBS: all other EFL as lib/name/libname.la that this
+dnl             package depend. Used in automake's _DEPENDENCIES.
+dnl
+dnl     USE_PKG_LIBS: what to use in automake's _LIBADD or _LDADD when using
+dnl             this PKG (PKG_LIBS + libpkg.la)
+dnl
+dnl     USE_PKG_INTERNAL_LIBS: extends PKG_INTERNAL_LIBS with lib/pkg/libpkg.la
+dnl
+dnl     requirements_pc_pkg: all pkg-config (pc) files used by this pkg,
+dnl             includes internal EFL (used in 'Requires.private' in pkg.pc)
+dnl
+dnl     requirements_libs_pkg: external libraries this package needs when
+dnl             linking (used in 'Libs.private' in pkg.pc)
+dnl
+dnl     requirements_public_libs_pkg: external libraries other packages need
+dnl             when using this (used in 'Libs' in pkg.pc)
+dnl
+dnl     requirements_cflags_pkg: what to use for CFLAGS (same as PKG_CFLAGS).
+dnl
+dnl Variables:
+dnl     requirements_pc_deps_pkg: external pkg-config (pc) files used by this
+dnl             pkg (used in EFL_EVAL_PKGS())
+dnl
+dnl     requirements_internal_libs_pkg: all other EFL as lib/name/libname.la
+dnl             that this package depend.
+dnl
+dnl     requirements_internal_deps_libs_pkg: external libraries that are public
+dnl             dependencies (due internal libs).
+dnl
 AC_DEFUN([EFL_LIB_START],
 [
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
@@ -228,6 +281,7 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 requirements_internal_libs_[]m4_defn([DOWN])=""
 requirements_internal_deps_libs_[]m4_defn([DOWN])=""
 requirements_libs_[]m4_defn([DOWN])=""
+requirements_public_libs_[]m4_defn([DOWN])=""
 requirements_cflags_[]m4_defn([DOWN])=""
 requirements_pc_[]m4_defn([DOWN])=""
 requirements_pc_deps_[]m4_defn([DOWN])=""
@@ -240,6 +294,7 @@ m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS}"
 m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS}"
 
 AC_SUBST([requirements_libs_]m4_defn([DOWN]))
+AC_SUBST([requirements_public_libs_]m4_defn([DOWN]))
 AC_SUBST([requirements_cflags_]m4_defn([DOWN]))
 AC_SUBST([requirements_pc_]m4_defn([DOWN]))
 AC_SUBST(m4_defn([UP])[_LIBS])
@@ -271,7 +326,7 @@ case "m4_defn([DOWN])" in
 esac
 
 m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS} ${EFL_COV_CFLAGS} ${EFL_LDFLAGS}"
-m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
+m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
 m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
 USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
 USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la ${requirements_internal_deps_libs_[]m4_defn([DOWN])}"

@@ -711,7 +711,7 @@ EINA_CONFIG([ENABLE_LOG], [test "x${enable_log}" = "xyes"])
 
 EFL_CHECK_THREADS
 
-EFL_ADD_LIBS([EINA], [${EFL_PTHREAD_LIBS}])
+EFL_ADD_PUBLIC_LIBS([EINA], [${EFL_PTHREAD_LIBS}])
 EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
 
 EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes"])
