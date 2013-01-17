@@ -993,7 +993,7 @@ _interface_free(EDBus_Service_Interface *interface)
      eina_array_free(interface->prop_invalidated);
 
    obj = interface->obj;
-   l = eina_list_data_find(obj->iface_added, interface);
+   l = eina_list_data_find_list(obj->iface_added, interface);
    if (l)
      {
         /* Adding and removing the interface in the same main loop iteration.
