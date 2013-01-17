@@ -44,6 +44,7 @@ struct log_ctx {
    const char *msg;
    const char *fnc;
    Eina_Bool did;
+   int expected_level;
 };
 
 /* tests should not output on success, just uncomment this for debugging */
@@ -60,7 +61,7 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
    str = va_arg(cp_args, const char *);
    va_end(cp_args);
 
-   ck_assert_int_eq(level, EINA_LOG_LEVEL_ERR);
+   ck_assert_int_eq(level, ctx->expected_level);
    ck_assert_str_eq(fmt, "%s");
    ck_assert_str_eq(ctx->msg, str);
    ck_assert_str_eq(ctx->fnc, fnc);
@@ -80,7 +81,7 @@ _eina_test_magic_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const 
 {
    struct log_ctx *ctx = data;
 
-   ck_assert_int_eq(level, EINA_LOG_LEVEL_ERR); /* Level ERR is triggered for access to NULL instead of level CRITICAL */
+   ck_assert_int_eq(level, ctx->expected_level);
    ck_assert_str_eq(ctx->msg, fmt);
    ck_assert_str_eq(ctx->fnc, fnc);
    ctx->did = EINA_TRUE;
@@ -98,7 +99,8 @@ _eina_test_magic_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const 
 #define TEST_MAGIC_SAFETY(fn, _msg)              \
   ctx.msg = _msg;                                \
   ctx.fnc = fn;                                  \
-  ctx.did = EINA_FALSE
+  ctx.did = EINA_FALSE;                          \
+  ctx.expected_level = EINA_LOG_LEVEL_ERR
 #endif
 
 START_TEST(eina_magic_simple)
@@ -173,6 +175,7 @@ START_TEST(eina_magic_simple)
                      "*** SPANK SPANK SPANK!!!\n"
                      "*** Now go fix your code. Tut tut tut!\n"
                      "\n");
+   ctx.expected_level = EINA_LOG_LEVEL_CRITICAL;
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
    fail_unless(ctx.did);
 
@@ -189,6 +192,7 @@ START_TEST(eina_magic_simple)
                      "*** SPANK SPANK SPANK!!!\n"
                      "*** Now go fix your code. Tut tut tut!\n"
                      "\n");
+   ctx.expected_level = EINA_LOG_LEVEL_CRITICAL;
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
    fail_unless(ctx.did);
 #endif
