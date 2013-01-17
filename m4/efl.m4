@@ -108,6 +108,7 @@ esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
 requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
+requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
 m4_popdef([DOWNOTHER])dnl
 m4_popdef([DOWNEFL])dnl
 ])
@@ -191,15 +192,10 @@ m4_popdef([DOWN])
 
 dnl EFL_OPTIONAL_INTERNAL_DEPEND_PKG(EFL, VARIABLE, NAME)
 AC_DEFUN([EFL_OPTIONAL_INTERNAL_DEPEND_PKG],
-[
-m4_pushdef([DOWN], m4_translit([$3], [-A-Z], [_a-z]))dnl
-
-   have_[]m4_defn([DOWN])="no"
+[dnl
    if test "x$2" = "xyes"; then
       EFL_INTERNAL_DEPEND_PKG([$1], [$3])
    fi
-
-m4_popdef([DOWN])
 ])
 
 dnl EFL_ADD_LIBS(PKG, LIBS)
@@ -230,6 +226,7 @@ m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 
 requirements_internal_libs_[]m4_defn([DOWN])=""
+requirements_internal_deps_libs_[]m4_defn([DOWN])=""
 requirements_libs_[]m4_defn([DOWN])=""
 requirements_cflags_[]m4_defn([DOWN])=""
 requirements_pc_[]m4_defn([DOWN])=""
@@ -274,10 +271,10 @@ case "m4_defn([DOWN])" in
 esac
 
 m4_defn([UP])_LDFLAGS="${m4_defn([UP])_LDFLAGS} ${EFL_COV_CFLAGS} ${EFL_LDFLAGS}"
-m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
+m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
 m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
 USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
-USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la"
+USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la ${requirements_internal_deps_libs_[]m4_defn([DOWN])}"
 m4_defn([UP])_CFLAGS="${m4_defn([UP])_CFLAGS} ${EFL_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
 requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
 requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
