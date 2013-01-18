@@ -95,3 +95,4 @@ install-examples:
 
 clean-local:
 	find . -type f -name '*.gcno' -delete
+	find . -type f -name '*.gcda' -delete
