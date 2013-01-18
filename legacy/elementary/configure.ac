@@ -75,23 +75,34 @@ AC_SUBST(VMIN)
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
-EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.%s.%s", $1, $2, $3);}'`
+
+MODULE_EDJE=`pkg-config --variable=module_arch edje`
+if test -z "$MODULE_EDJE"; then
+   # Backward compatibility -- TODO: remove when EFL 1.8 is released.
+   EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.%s.%s", $1, $2, $3);}'`
+   case "$host_os" in
+     mingw32ce* | cegcc*)
+       MODULE_EDJE="$host_os-$host_cpu"
+       ;;
+     *)
+       MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
+       ;;
+   esac
+fi
+AC_SUBST(MODULE_EDJE)
+AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
 case "$host_os" in
   mingw32ce* | cegcc*)
     MODULE_ARCH="$host_os-$host_cpu"
-    MODULE_EDJE="$host_os-$host_cpu"
     ;;
   *)
     MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
-    MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
     ;;
 esac
 AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
-AC_SUBST(MODULE_EDJE)
-AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
 EFL_SHARED_EXTENSION="${shrext_cmds}"
 AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
