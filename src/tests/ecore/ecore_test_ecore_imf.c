@@ -61,7 +61,6 @@ END_TEST
 
 START_TEST(ecore_test_ecore_imf_modules_load)
 {
-   Eina_List *modules;
    const char **itr;
 
    ecore_imf_init();
