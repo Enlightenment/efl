@@ -65,10 +65,10 @@ START_TEST(eina_barrier_test_simple)
     int i;
 
     i = eina_init();
-    ck_assert_int_ge(i, 1);
+    _ck_assert_int(i, >=, 1);
 
     i = eina_threads_init();
-    ck_assert_int_ge(i, 1);
+    _ck_assert_int(i, >=, 1);
 
     r = eina_barrier_new(&barrier, 6);
     fail_unless(r);
