@@ -11,7 +11,7 @@ lib/eo/eo.c \
 lib/eo/eo_base_class.c \
 lib/eo/eo_private.h
 
-lib_eo_libeo_la_CPPFLAGS = -DNDEBUG @EO_CFLAGS@
+lib_eo_libeo_la_CPPFLAGS = @EO_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
 lib_eo_libeo_la_DEPENDENCIES = @EO_INTERNAL_LIBS@
 lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -85,7 +85,6 @@ tests/eo/suite/eo_test_class_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_init.c
 tests_eo_eo_suite_CPPFLAGS = \
--DNDEBUG \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 TESTS += tests/eo/eo_suite
@@ -103,8 +102,7 @@ tests/eo/function_overrides/function_overrides_inherit3.h \
 tests/eo/function_overrides/function_overrides_main.c \
 tests/eo/function_overrides/function_overrides_simple.c \
 tests/eo/function_overrides/function_overrides_simple.h
-tests_eo_test_function_overrides_CPPFLAGS = @EO_CFLAGS@ \
--DNDEBUG
+tests_eo_test_function_overrides_CPPFLAGS = @EO_CFLAGS@
 tests_eo_test_function_overrides_LDADD = @USE_EO_LIBS@
 tests_eo_test_function_overrides_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_function_overrides

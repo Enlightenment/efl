@@ -39,7 +39,7 @@ struct _Eo {
      Eina_Inlist *children;
      const Eo_Class *klass;
      int refcount;
-#ifndef NDEBUG
+#ifdef EO_DEBUG
      Eina_Inlist *xrefs;
 #endif
 
@@ -341,7 +341,7 @@ _eo_kls_itr_func_get(Eo_Kls_Itr *mro_itr, Eo_Op op)
 static Eina_Bool
 _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
    if (op_desc)
@@ -468,7 +468,7 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
 static Eina_Bool
 _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
 {
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
    if (op_desc)
@@ -582,7 +582,7 @@ _eo_class_base_op_init(Eo_Class *klass)
    klass->chain = calloc(klass->chain_size, sizeof(*klass->chain));
 }
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
 static Eina_Bool
 _eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
 {
@@ -1185,7 +1185,7 @@ eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line)
 
    _eo_ref(obj);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
    xref->ref_obj = ref_obj;
    xref->file = file;
@@ -1205,7 +1205,7 @@ EAPI void
 eo_xunref(Eo *obj, const Eo *ref_obj)
 {
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->xrefs, xref)
      {
@@ -1309,7 +1309,7 @@ _eo_unref(Eo *obj)
 
         _eo_del_internal(obj);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
         /* If for some reason it's not empty, clear it. */
         while (obj->xrefs)
           {
@@ -1430,7 +1430,7 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    if (!_eo_class_mro_has(obj->klass, klass))
      {
         ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
@@ -1440,7 +1440,7 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
 
    ret = _eo_data_get(obj, klass);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
      {
         ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
@@ -1481,7 +1481,7 @@ eo_init(void)
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
          EO_CLASS_EINA_MAGIC_STR);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    /* Call it just for coverage purposes. Ugly I know, but I like it better than
     * casting everywhere else. */
    _eo_class_isa_func(NULL, NULL, NULL);

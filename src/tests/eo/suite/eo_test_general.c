@@ -45,7 +45,7 @@ START_TEST(eo_data_fetch)
 
    Eo *obj = eo_add(klass, NULL);
    fail_if(!obj);
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    fail_if(eo_data_get(obj, SIMPLE_CLASS));
 #endif
    eo_unref(obj);
@@ -292,7 +292,7 @@ START_TEST(eo_refs)
    eo_xunref(obj, obj3);
    fail_if(eo_ref_get(obj) != 1);
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    eo_xunref(obj, obj3);
    fail_if(eo_ref_get(obj) != 1);
 

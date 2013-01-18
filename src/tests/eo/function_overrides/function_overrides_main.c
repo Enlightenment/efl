@@ -43,7 +43,7 @@ main(int argc, char *argv[])
 
    fail_if(eo_do_super(obj, simple_a_print()));
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    fail_if(eo_do(obj, simple_class_print()));
 #endif
 
@@ -52,7 +52,7 @@ main(int argc, char *argv[])
    fail_if(!eo_class_do(INHERIT2_CLASS, simple_class_print()));
    fail_if(!eo_class_do(INHERIT3_CLASS, simple_class_print()));
 
-#ifndef NDEBUG
+#ifdef EO_DEBUG
    fail_if(eo_class_do(SIMPLE_CLASS, simple_a_print()));
 #endif
 
