@@ -42,6 +42,7 @@ dnl     VREV = v_rev
 dnl Will AC_SUBST() the following:
 dnl     VMAJ = v_maj
 dnl     VMIN = v_min
+dnl     VMIC = v_mic
 dnl     EFL_LTLIBRARY_FLAGS="-no-undefined -version-info ..."
 dnl     EFL_LTMODULE_FLAGS="-no-undefined -avoid-version"
 dnl Will define the following m4:
@@ -56,8 +57,10 @@ AC_DEFINE_UNQUOTED([VMIC], [v_mic], [Micro version])dnl
 AC_DEFINE_UNQUOTED([VREV], [v_rev], [Revison])dnl
 VMAJ=v_maj
 VMIN=v_min
+VMIC=v_mic
 AC_SUBST([VMAJ])dnl
 AC_SUBST([VMIN])dnl
+AC_SUBST([VMIC])dnl
 dnl
 dnl TODO: warning - lt_cur:
 dnl the previous code assumed v_maj + v_min, but this will be a problem when

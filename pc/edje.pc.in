@@ -6,6 +6,8 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/edje
 vmaj=@VMAJ@
+vmin=@VMIN@
+vmic=@VMIC@
 multisense=@want_multisense@
 physics=@want_physics@
 
