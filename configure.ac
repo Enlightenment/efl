@@ -1539,7 +1539,7 @@ if test "x${want_evas_cserve2}" = "xyes"; then
       want_evas_cserve2="no"
    else
       EFL_CHECK_FUNC([EVAS_CSERVE2_SLAVE], [shm_open])
-      EVAS_CSERVE2_SLAVE_LIBS="${requirements_libs_evas_cserve2_slave}"
+      EVAS_CSERVE2_SLAVE_LIBS="${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_evas_cserve2_slave}"
       AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
    fi
 fi
