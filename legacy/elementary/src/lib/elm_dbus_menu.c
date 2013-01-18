@@ -50,9 +50,10 @@ enum
    ELM_DBUS_SIGNAL_ITEM_ACTIVATION_REQUESTED,
 };
 
-typedef struct _Callback_Data {
-  void (*result_cb)(Eina_Bool, void *);
-  void *data;
+typedef struct _Callback_Data
+{
+   void (*result_cb)(Eina_Bool, void *);
+   void *data;
 } Callback_Data;
 
 static Eina_Bool
@@ -79,12 +80,12 @@ _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
 
 static void
 _app_register_cb(void *data, const EDBus_Message *msg,
-		 EDBus_Pending *pending EINA_UNUSED)
+                 EDBus_Pending *pending EINA_UNUSED)
 {
-  Callback_Data *cd = data;
+   Callback_Data *cd = data;
 
-  cd->result_cb(!edbus_message_error_get(msg, NULL, NULL), cd->data);
-  free(cd);
+   cd->result_cb(!edbus_message_error_get(msg, NULL, NULL), cd->data);
+   free(cd);
 }
 
 static Eina_Bool
@@ -891,7 +892,7 @@ _elm_dbus_menu_unregister(Eo *obj)
 
 void
 _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
-				 void (*result_cb)(Eina_Bool, void *), void *data)
+                                 void (*result_cb)(Eina_Bool, void *), void *data)
 {
    EDBus_Message *msg;
    const char *obj_path;
@@ -915,7 +916,7 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
    edbus_message_arguments_append(msg, "uo", (unsigned)xid,
                                   obj_path);
    edbus_connection_send(sd->dbus_menu->bus, msg, _app_register_cb,
-			 cd, -1);
+                         cd, -1);
    sd->dbus_menu->xid = xid;
 }
 

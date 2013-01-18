@@ -134,7 +134,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Eina_List *l;
    Elm_Menu_Item *item;
-   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh, bx, by;
+   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh;
    Elm_Widget_Smart_Data *hover;
 
    ELM_MENU_DATA_GET(obj, sd);
@@ -166,9 +166,9 @@ _sizing_eval(Evas_Object *obj)
    elm_hover_target_set(sd->hv, sd->location);
 
    hover = eo_data_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
-   edje_object_part_geometry_get(hover->resize_obj, "bottom", &bx, &by, &bw, &bh);
+   edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
+				 NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
-
 
    EINA_LIST_FOREACH(sd->items, l, item)
      if (item->submenu.open) _submenu_sizing_eval(item);

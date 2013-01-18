@@ -254,14 +254,12 @@ group { name: "elm/win/base/default";
             align: 0.5 0;
             fixed: 1 1;
          }
-
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             fixed: 0 1;
          }
       }
-
       part { type: SWALLOW; name: "elm.swallow.contents";
          description { state: "default" 0.0;
             rel1 {

@@ -773,8 +773,8 @@ group { name: "elm/menu/main_menu_submenu/default";
             image {
                normal: "bt_base2.png";
                border: 7 7 7 7;
+               middle: SOLID;
             }
-            image.middle: SOLID;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -783,8 +783,10 @@ group { name: "elm/menu/main_menu_submenu/default";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             inherit: "visible" 0.0;
-            image.normal: "bt_base1.png";
-            image.middle: SOLID;
+            image {
+               normal: "bt_base1.png";
+               middle: SOLID;
+            }
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;
@@ -797,8 +799,8 @@ group { name: "elm/menu/main_menu_submenu/default";
             image {
                normal: "bt_dis_base.png";
                border: 4 4 4 4;
+               middle: SOLID;
             }
-            image.middle: SOLID;
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;

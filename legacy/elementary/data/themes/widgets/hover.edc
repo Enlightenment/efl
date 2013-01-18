@@ -899,7 +899,7 @@ group { name: "elm/hover/base/main_menu";
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 1;
-        }
+         }
       }
       part { name: "elm.swallow.size";
          type: SWALLOW;
@@ -1005,8 +1005,8 @@ group { name: "elm/hover/base/main_menu_submenu";
             image {
                normal: "bt_dis_base.png";
                border: 4 4 4 4;
+               middle: SOLID;
             }
-            image.middle: SOLID;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;

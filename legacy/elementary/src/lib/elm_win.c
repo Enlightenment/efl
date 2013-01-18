@@ -1415,9 +1415,9 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Win_Smart_Data *sd = _pd;
 
    evas_object_event_callback_del_full(sd->layout,
-				       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _elm_win_on_resize_obj_changed_size_hints,
-				       obj);
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _elm_win_on_resize_obj_changed_size_hints,
+                                       obj);
    evas_object_del(sd->box);
    evas_object_del(sd->layout);
 
