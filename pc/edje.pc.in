@@ -2,6 +2,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 modules=@libdir@/edje/modules
+module_arch=@MODULE_ARCH@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/edje
