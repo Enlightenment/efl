@@ -659,7 +659,7 @@ EAPI Elm_Object_Item *
 elm_flipselector_item_append(Evas_Object *obj,
                              const char *label,
                              void (*func)(void *, Evas_Object *, void *),
-                             void *data)
+                             const void *data)
 {
    Elm_Flipselector_Item *ret = NULL;
    ELM_FLIPSELECTOR_CHECK(obj) NULL;

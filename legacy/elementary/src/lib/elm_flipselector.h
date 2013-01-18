@@ -111,7 +111,7 @@ enum
  *
  * @see elm_flipselector_item_append
  */
-#define elm_obj_flipselector_item_append(label, func, data, ret) ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(flipselector_func_type, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(Elm_Flipselector_Item **, ret)
+#define elm_obj_flipselector_item_append(label, func, data, ret) ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(flipselector_func_type, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Flipselector_Item **, ret)
 
 /**
  * @def elm_obj_flipselector_item_prepend
@@ -269,7 +269,7 @@ EAPI void                        elm_flipselector_flip_prev(Evas_Object *obj);
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
+EAPI Elm_Object_Item            *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Prepend a (text) item to a flip selector widget
