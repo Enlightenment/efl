@@ -289,8 +289,7 @@ _ctxpopup_item_disable_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
    printf("ctxpopup item selected: %s\n",
           elm_object_item_text_get(event_info));
 
-   Elm_Object_Item *it = (Elm_Object_Item *)event_info;
-   elm_object_item_disabled_set(it, EINA_TRUE);
+   elm_object_item_disabled_set(event_info, EINA_TRUE);
 }
 
 static void
