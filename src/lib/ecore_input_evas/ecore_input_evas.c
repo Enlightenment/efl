@@ -25,9 +25,182 @@ struct _Ecore_Input_Window
    int ignore_event;
 };
 
+typedef enum _Ecore_Input_State {
+  ECORE_INPUT_NONE = 0,
+  ECORE_INPUT_DOWN,
+  ECORE_INPUT_MOVE,
+  ECORE_INPUT_UP
+} Ecore_Input_State;
+
+typedef struct _Ecore_Input_Last Ecore_Event_Last;
+struct _Ecore_Input_Last
+{
+   Ecore_Event_Mouse_Button *ev;
+   Ecore_Timer *timer;
+
+   unsigned int buttons;
+   Ecore_Input_State state;
+
+   Eina_Bool faked : 1;
+};
+
 static int _ecore_event_evas_init_count = 0;
 static Ecore_Event_Handler *ecore_event_evas_handlers[8];
 static Eina_Hash *_window_hash = NULL;
+
+static Eina_List *_last_events = NULL;
+static double _last_events_timeout = 0.5;
+static Eina_Bool _last_events_enable = EINA_FALSE;
+
+static Eina_Bool _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e,
+                                                Ecore_Event_Press press,
+                                                Eina_Bool faked);
+
+static Ecore_Event_Last *
+_ecore_event_evas_lookup(unsigned int buttons)
+{
+   Ecore_Event_Last *eel;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_last_events, l, eel)
+     if (eel->buttons == buttons)
+       return eel;
+
+   eel = malloc(sizeof (Ecore_Event_Last));
+   if (!eel) return NULL;
+
+   eel->timer = NULL;
+   eel->ev = NULL;
+   eel->buttons = buttons;
+   eel->state = ECORE_INPUT_NONE;
+   eel->faked = EINA_FALSE;
+
+   _last_events = eina_list_append(_last_events, eel);
+   return eel;
+}
+
+static Eina_Bool
+_ecore_event_evas_push_fake(void *data)
+{
+   Ecore_Event_Last *eel = data;
+
+   switch (eel->state)
+     {
+      case ECORE_INPUT_NONE:
+      case ECORE_INPUT_UP:
+         /* should not happen */
+         break;
+      case ECORE_INPUT_DOWN:
+         /* use the saved Ecore_Event */
+         /* No up event since timeout started ... */
+      case ECORE_INPUT_MOVE:
+         /* No up event since timeout started ... */
+         _ecore_event_evas_mouse_button(eel->ev, ECORE_UP, EINA_TRUE);
+         eel->faked = EINA_TRUE;
+         break;
+     }
+
+   free(eel->ev);
+   eel->ev = NULL;
+   eel->timer = NULL;
+   return EINA_FALSE;
+}
+
+static void
+_ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press)
+{
+   Ecore_Event_Last *eel;
+
+   if (!_last_events_enable) return ;
+
+   eel = _ecore_event_evas_lookup(e->buttons);
+   if (!eel) return ;
+
+   switch (eel->state)
+     {
+      case ECORE_INPUT_NONE:
+         goto fine;
+      case ECORE_INPUT_DOWN:
+         if (press == ECORE_UP)
+           goto fine;
+
+         /* press == ECORE_DOWN => emit a faked UP then */
+         _ecore_event_evas_mouse_button(e, ECORE_UP, EINA_TRUE);
+         break;
+      case ECORE_INPUT_MOVE:
+         if (press == ECORE_UP)
+           goto fine;
+
+         /* FIXME: handle fake button up and push for more delay here */
+
+         /* press == ECORE_DOWN */
+         _ecore_event_evas_mouse_button(e, ECORE_DOWN, EINA_TRUE);
+         break;
+      case ECORE_INPUT_UP:
+         if (press == ECORE_DOWN)
+           goto fine;
+
+         /* press == ECORE_UP */
+         _ecore_event_evas_mouse_button(e, ECORE_UP, EINA_TRUE);
+         break;
+     }
+
+ fine:
+   eel->state = (press == ECORE_DOWN) ? ECORE_INPUT_DOWN : ECORE_INPUT_UP;
+   if (_last_events_timeout)
+     {
+        if (eel->timer) ecore_timer_del(eel->timer);
+        eel->timer = NULL;
+        if (press == ECORE_DOWN)
+          {
+             /* Save the Ecore_Event somehow */
+             if (!eel->ev) eel->ev = malloc(sizeof (Ecore_Event_Mouse_Button));
+             if (!eel->ev) return ;
+             memcpy(eel->ev, e, sizeof (Ecore_Event_Mouse_Button));
+             eel->timer = ecore_timer_add(_last_events_timeout, _ecore_event_evas_push_fake, eel);
+          }
+        else
+          {
+             free(eel->ev);
+             eel->ev = NULL;
+          }
+     }
+}
+
+static void
+_ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
+{
+   Ecore_Event_Last *eel;
+   Eina_List *l;
+
+   if (!_last_events_enable) return ;
+
+   EINA_LIST_FOREACH(_last_events, l, eel)
+     switch (eel->state)
+       {
+        case ECORE_INPUT_NONE:
+        case ECORE_INPUT_UP:
+           /* none or up and moving, sounds fine to me */
+           break;
+        case ECORE_INPUT_DOWN:
+        case ECORE_INPUT_MOVE:
+           /* Down and moving, let's see */
+           if (eel->ev)
+             {
+                /* Add some delay to the timer */
+                ecore_timer_reset(eel->timer);
+                /* Update position */
+                eel->ev->x = e->x;
+                eel->ev->y = e->y;
+                eel->ev->root.x = e->root.x;
+                eel->ev->root.y = e->root.y;
+                eel->state = ECORE_INPUT_MOVE;
+                break;
+             }
+           /* FIXME: Timer did expire, do something maybe */
+           break;
+       }
+}
 
 EAPI void
 ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
@@ -163,7 +336,7 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 }
 
 static Eina_Bool
-_ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press)
+_ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press, Eina_Bool faked)
 {
    Ecore_Input_Window *lookup;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
@@ -174,6 +347,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    if (e->multi.device == 0)
      {
+        if (!faked) _ecore_event_evas_push_mouse_button(e, press);
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (press == ECORE_DOWN)
           evas_event_feed_mouse_down(lookup->evas, e->buttons, flags,
@@ -233,6 +407,7 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    if (e->multi.device == 0)
      {
+        _ecore_event_evas_push_mouse_move(e);
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (lookup->move_mouse)
            lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
@@ -262,13 +437,13 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
 EAPI Eina_Bool
 ecore_event_evas_mouse_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_DOWN);
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_DOWN, EINA_FALSE);
 }
 
 EAPI Eina_Bool
 ecore_event_evas_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP);
+   return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -383,6 +558,17 @@ ecore_event_evas_init(void)
                                                           NULL);
 
    _window_hash = eina_hash_pointer_new(free);
+
+   if (getenv("ECORE_INPUT_FIX"))
+     {
+        const char *tmp;
+
+        _last_events_enable = EINA_TRUE;
+
+        tmp = getenv("ECORE_INPUT_TIMEOUT_FIX");
+        if (tmp)
+          _last_events_timeout = ((double) atoi(tmp)) / 60;
+     }
 
    return _ecore_event_evas_init_count;
 

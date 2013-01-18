@@ -50,6 +50,7 @@ Additions:
     * Added eina_file_copy()
     * Add eet_mmap.
     * Add eio_eet_sync symbols.
+    * Add infrastructure to handle buggy touchscreen in Ecore_Input_Evas.
 
 Deprecations:
     * ecore_x:
