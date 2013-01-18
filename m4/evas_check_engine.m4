@@ -560,7 +560,7 @@ dnl will call DEPENDENCY-CHECK-CODE if it should be built,
 dnl if some dependency fail just call AC_MSG_ERROR() to abort.
 
 AC_DEFUN([EVAS_ENGINE],
-[
+[dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 
@@ -595,16 +595,16 @@ AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "${want_static_engine}" = "yes"])
 AC_SUBST([evas_engine_]m4_defn([DOWN])[_cflags])
 AC_SUBST([evas_engine_]m4_defn([DOWN])[_libs])
 
-m4_popdef([UP])
-m4_popdef([DOWN])
+EFL_ADD_FEATURE([EVAS_ENGINE], [$1], [${have_evas_engine_]DOWN[}])dnl
+m4_popdef([UP])dnl
+m4_popdef([DOWN])dnl
 ])
 
 
 
 dnl use: EVAS_CHECK_ENGINE(engine, want_engine, simple, description)
 AC_DEFUN([EVAS_CHECK_ENGINE],
-[
-
+[dnl
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 
@@ -647,9 +647,8 @@ if test "x${want_static_engine}" = "xyes" ; then
    have_static_module="yes"
 fi
 
-AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_engine}" = "xyes"])
-
-m4_popdef([UP])
-m4_popdef([DOWN])
-
+EFL_ADD_FEATURE([EVAS_ENGINE], [$1], [${have_evas_engine_]DOWN[}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_engine}" = "xyes"])dnl
+m4_popdef([UP])dnl
+m4_popdef([DOWN])dnl
 ])

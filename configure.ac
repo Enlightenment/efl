@@ -1241,21 +1241,32 @@ if test "x${have_pixman}" = "xyes" ; then
    if test "x${have_pixman_font}" = "xyes" ; then
       AC_DEFINE(PIXMAN_FONT, 1, [Allow pixman to render fonts])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [font], [${have_pixman_font}])
+
    if test "x${have_pixman_rect}" = "xyes" ; then
       AC_DEFINE(PIXMAN_RECT, 1, [Allow pixman to render rects])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [rect], [${have_pixman_rect}])
+
    if test "x${have_pixman_line}" = "xyes" ; then
       AC_DEFINE(PIXMAN_LINE, 1, [Allow pixman to render lines])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [line], [${have_pixman_line}])
+
    if test "x${have_pixman_poly}" = "xyes" ; then
       AC_DEFINE(PIXMAN_POLY, 1, [Allow pixman to render polys])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [poly], [${have_pixman_poly}])
+
    if test "x${have_pixman_image}" = "xyes" ; then
       AC_DEFINE(PIXMAN_IMAGE, 1, [Allow pixman to render images])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [image], [${have_pixman_image}])
+
    if test "x${have_pixman_image_scale_sample}" = "xyes" ; then
       AC_DEFINE(PIXMAN_IMAGE_SCALE_SAMPLE, 1, [Allow pixman to render image sampled scaling])
    fi
+   EFL_ADD_FEATURE([EVAS_PIXMAN], [scale_sample], [${have_pixman_scale_sample}])
 fi
 
 ## Engines
@@ -1430,6 +1441,7 @@ fi
 
 AM_CONDITIONAL([EVAS_STATIC_BUILD_GL_COMMON], [test "x${have_static_evas_engine_gl_common}" = "xyes"])
 
+
 ## Image Loaders
 
 EVAS_CHECK_IMAGE_LOADER([BMP],     [${want_evas_image_loader_bmp}])
@@ -1572,6 +1584,12 @@ case "${build_evas_dither_mask}" in
      AC_MSG_ERROR([Unknown Evas dither mask --with-evas-dither-mask=${build_evas_dither_mask}])
      ;;
 esac
+EFL_ADD_FEATURE([EVAS], [fontconfig])
+EFL_ADD_FEATURE([EVAS], [fribidi])
+EFL_ADD_FEATURE([EVAS], [harfbuzz])
+EFL_ADD_FEATURE([EVAS], [cserve], [${want_evas_cserve2}])
+EFL_ADD_FEATURE([EVAS], [tile-rotate])
+EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 
 EFL_LIB_END([Evas])
 #### End of Evas
@@ -1699,6 +1717,9 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0])
 if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
+
+EFL_ADD_FEATURE([ECORE], [glib])
+EFL_ADD_FEATURE([ECORE], [g-main-loop])
 
 want_glib_integration_always=no
 if test "x${with_glib}" = "xalways" ; then
@@ -1844,6 +1865,20 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_curl}], [CURL], [libcurl])
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_cares}],
    [CARES], [libcares >= 1.6.1])
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
+
+if test "x$have_cares" = "xyes" ; then
+   ecore_con_resolver="cares"
+elif test "x$have_ipv6" = "xyes" ; then
+   ecore_con_resolver="dns.c"
+else
+   ecore_con_resolver="fork"
+fi
+
+EFL_ADD_FEATURE([ECORE_CON], [curl])
+EFL_ADD_FEATURE([ECORE_CON], [cares])
+EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
+EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
+EFL_ADD_FEATURE([ECORE_CON], [resolver], [${ecore_con_resolver}])
 
 EFL_EVAL_PKGS([ECORE_CON])
 
@@ -2077,6 +2112,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FB], [eina])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_FB], [${want_tslib}], [TSLIB], [tslib])
+EFL_ADD_FEATURE([ECORE_FB], [tslib])
 
 EFL_EVAL_PKGS([ECORE_FB])
 
@@ -2268,6 +2304,10 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_pulseaudio}], [PULSE], [libpulse]
 EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_sndfile}], [SNDFILE], [sndfile])
 
 EFL_EVAL_PKGS([ECORE_AUDIO])
+
+EFL_ADD_FEATURE([ECORE_AUDIO], [alsa])
+EFL_ADD_FEATURE([ECORE_AUDIO], [pulseaudio])
+EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
 
 ### Checks for header files
 
@@ -2512,12 +2552,17 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    if test "${want_gesture}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xgesture], [gesture.h], [Xgesture], [XGestureQueryExtension])
    fi
+   EFL_ADD_FEATURE([ECORE_X], [gesture])
+
    if test "${want_xinput2}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice])
    fi
+   EFL_ADD_FEATURE([ECORE_X], [xinput2])
+
    if test "${want_xinput22}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xi2_2], [XInput2.h], [Xi],[XIGrabTouchBegin])
    fi
+   EFL_ADD_FEATURE([ECORE_X], [xinput22])
 
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
    HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XLIB"
@@ -2549,6 +2594,8 @@ dnl TODO: remove these ifdefs from code!
       [xcb-gesture])
    AC_DEFINE_IF([ECORE_XCB_XGESTURE], [test "${want_gesture}" = "yes"],
       [1], [Build support for XCB xgesture])
+
+   EFL_ADD_FEATURE([ECORE_X], [gesture])
 
 dnl input extension disabled currently in xcb as xcb-input has some issues
 dnl remember to add xcb-xinput to EFL_DEPEND_PKG()
@@ -2629,6 +2676,7 @@ if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; th
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_IBUS], [test "x${have_ecore_imf_ibus}" = "xyes"])
+EFL_ADD_FEATURE([ECORE_IMF], [ibus], [${want_ecore_imf_ibus}])
 
 # scim
 
@@ -2643,6 +2691,7 @@ if test "x${want_ecore_imf_scim}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_SCIM], [test "x${have_ecore_imf_scim}" = "xyes"])
+EFL_ADD_FEATURE([ECORE_IMF], [scim], [${want_ecore_imf_scim}])
 
 # xim
 
@@ -2659,6 +2708,7 @@ if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_XIM], [test "x${have_ecore_imf_xim}" = "xyes"])
+EFL_ADD_FEATURE([ECORE_IMF], [xim])
 
 ### Checks for header files
 
@@ -2715,8 +2765,6 @@ EFL_LIB_START([Ecore_Evas])
 ### Additional options to configure
 
 ### Default values
-
-have_ecore_evas="yes"
 
 want_ecore_evas_software_gdi="${have_evas_engine_software_gdi}"
 want_ecore_evas_software_ddraw="${have_evas_engine_software_ddraw}"
@@ -3015,6 +3063,7 @@ EFL_DEPEND_PKG([EEZE], [EEZE_MOUNT], [mount >= 2.20.0])
 if test "${want_tizen}"  = "yes"; then
   PKG_CHECK_MODULES([TIZEN_SENSOR], [capi-system-sensor])
 fi
+EFL_ADD_FEATURE([EEZE], [tizen])
 
 EFL_EVAL_PKGS([EEZE])
 
@@ -3135,6 +3184,9 @@ EFL_INTERNAL_DEPEND_PKG([EDJE], [eio])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
 #EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
 
+EFL_ADD_FEATURE([EDJE], [physics])
+EFL_ADD_FEATURE([EDJE], [multisense])
+
 EFL_CHECK_LUA_5_1([EDJE])
 EFL_ADD_LIBS([EDJE], [-lm])
 
@@ -3213,6 +3265,7 @@ EFL_INTERNAL_DEPEND_PKG([EMOTION], [evas])
 EFL_INTERNAL_DEPEND_PKG([EMOTION], [eio])
 
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EMOTION], [${want_v4l2}], [eeze])
+EFL_ADD_FEATURE([EMOTION], [v4l2])
 AM_CONDITIONAL([EMOTION_HAVE_V4L2], [test "${want_v4l2}" = "yes"])
 
 ## modules
@@ -3222,6 +3275,10 @@ have_gst_xoverlay="no"
 EMOTION_MODULE([xine], [${want_xine}])
 EMOTION_MODULE([gstreamer], [${want_gstreamer}])
 EMOTION_MODULE([generic], [${want_emotion_generic}])
+
+EFL_ADD_FEATURE([EMOTION], [xine])
+EFL_ADD_FEATURE([EMOTION], [gstreamer])
+EFL_ADD_FEATURE([EMOTION], [generic], [${want_emotion_generic}])
 
 EFL_EVAL_PKGS([EMOTION])
 
@@ -3421,61 +3478,30 @@ AC_OUTPUT
 
 #### Info
 
-cpu_summary="$host_cpu ("
 case $host_cpu in
   i*86|x86_64|amd64)
-    if test "x${build_cpu_mmx}" = "xyes"; then
-       cpu_summary="${cpu_summary}+mmx"
-    else
-       cpu_summary="${cpu_summary}-mmx"
-    fi
-
-    cpu_summary="${cpu_summary} "
-
-    if test "x${build_cpu_sse3}" = "xyes"; then
-       cpu_summary="${cpu_summary}+sse3"
-    else
-       cpu_summary="${cpu_summary}-sse3"
-    fi
+    EFL_ADD_FEATURE([cpu], [mmx], [${build_cpu_mmx}])
+    EFL_ADD_FEATURE([cpu], [sse3], [${build_cpu_sse3}])
     ;;
   *power* | *ppc*)
-    if test "x${build_cpu_altivec}" = "xyes"; then
-       cpu_summary="${cpu_summary}+altivec"
-    else
-       cpu_summary="${cpu_summary}-altivec"
-    fi
+    EFL_ADD_FEATURE([cpu], [altivec], [${build_cpu_altivec}])
     ;;
   arm*)
-    if test "x${build_cpu_neon}" = "xyes"; then
-       cpu_summary="${cpu_summary}+neon"
-    else
-       cpu_summary="${cpu_summary}-neon"
-    fi
+    EFL_ADD_FEATURE([cpu], [neon], [${build_cpu_neon}])
     ;;
 esac
-cpu_summary="${cpu_summary})"
 
-sys_features=""
-if test "x${have_inotify}" = "xyes"; then
-   sys_features="${sys_features} +inotify"
-else
-   sys_features="${sys_features} -inotify"
+if test "${have_linux}" = "yes"; then
+   EFL_ADD_FEATURE([system], [inotify])
+   EFL_ADD_FEATURE([system], [atfile_source])
+elif test "${have_windows}" = "yes"; then
+   EFL_ADD_FEATURE([system], [notify_win32])
 fi
-if test "x${have_notify_win32}" = "xyes"; then
-   sys_features="${sys_features} +notify_win32"
-else
-   sys_features="${sys_features} -notify_win32"
-fi
-if test "x${have_atfile_source}" = "xyes"; then
-   sys_features="${sys_features} +atfile"
-else
-   sys_features="${sys_features} -atfile"
-fi
-if test "x${have_ipv6}" = "xyes"; then
-   sys_features="${sys_features} +ipv6"
-else
-   sys_features="${sys_features} -ipv6"
-fi
+EFL_ADD_FEATURE([system], [ipv6])
+
+EFL_ADD_FEATURE([thread], [spinlocks], [${efl_have_posix_threads_spinlock}])
+EFL_ADD_FEATURE([thread], [barrier], [${efl_have_pthread_barrier}])
+EFL_ADD_FEATURE([thread], [affinity], [${efl_have_setaffinity}])
 
 echo
 echo
@@ -3484,159 +3510,68 @@ echo "------------------------------------------------------------------------"
 echo "$PACKAGE_NAME $PACKAGE_VERSION"
 echo "------------------------------------------------------------------------"
 echo
-echo "Configuration Options Summary:"
-echo
-echo "  OS...................: ${host_os}"
+
 if test "x${have_windows}" = "xyes" ; then
-   echo "  Windows version......: ${_efl_windows_version}"
-fi
-echo "  Build Profile........: ${build_profile}"
-echo "  CPU Extensions.......: ${cpu_summary}"
-echo "  System Features......:${sys_features}"
-echo "  Threads Type.........: ${efl_have_threads}"
-echo "    spinlocks..........: ${efl_have_posix_threads_spinlock}"
-echo "    barrier............: ${efl_have_pthread_barrier}"
-echo "    affinity...........: ${efl_have_setaffinity}"
-echo "  Cryptographic System.: ${build_crypto}"
-echo
-
-echo "Evas:"
-echo
-echo "  Engines:"
-echo "    Software X11...............: ${with_x11}"
-echo "    OpenGL X11.................: ${with_x11} (opengl=${with_opengl})"
-echo "    Software GDI...............: $have_evas_engine_software_gdi"
-echo "    Software DirectDraw........: $have_evas_engine_software_ddraw"
-echo "    OpenGL SDL.................: $have_evas_engine_gl_sdl (opengl=${with_opengl})"
-echo "    OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
-echo "    Software Framebuffer.......: $have_evas_engine_fb"
-echo "    PSL1GHT....................: $have_ps3"
-echo "    Wayland Shm................: $have_evas_engine_wayland_shm"
-echo "    Wayland Egl................: $have_evas_engine_wayland_egl"
-echo
-echo "  Image Loaders:"
-echo "    JPEG region decode......: $have_jpeg_region"
-echo "    WEBP....................: $have_evas_image_loader_webp"
-echo "    GIF.....................: $have_evas_image_loader_gif"
-echo "    TIFF....................: $have_evas_image_loader_tiff"
-echo "    SVG.....................: $have_evas_image_loader_svg"
-echo
-echo "  Font Searching Systems:"
-echo "    Fontconfig..............: $have_fontconfig"
-echo
-echo "  Font Rendering Helpers:"
-echo "    Fribidi.................: $have_fribidi"
-echo "    Harfbuzz................: $have_harfbuzz"
-# FIXME: add non freetype2 font engine support
-# FIXME: make freetype2 optional
-echo
-echo
-echo "  Features:"
-echo "    Cache Server 2..........: $want_evas_cserve2"
-echo
-echo "  Optional pixman rendering path:"
-echo "    Pixman..................: $have_pixman"
-echo "    Pixman Fonts............: $have_pixman_font"
-echo "    Pixman Rects............: $have_pixman_rect"
-echo "    Pixman Lines............: $have_pixman_line"
-echo "    Pixman Polygons.........: $have_pixman_poly"
-echo "    Pixman Images...........: $have_pixman_image"
-echo "    Pixman Image ScaleSample: $have_pixman_image_scale_sample"
-echo
-echo "  Conversion Options:"
-echo "    Dither Mask.............: $build_evas_dither_mask"
-echo "    Tiled 32BPP rotate......: $have_tile_rotate"
-echo
-
-echo "Ecore:"
-echo "  GLib support...............: $with_glib"
-echo "  Use g_main_loop............: $want_g_main_loop"
-echo "  Gathering memory statistic.: $ac_cv_func_mallinfo"
-echo "  Gathering timer allocation.: $want_ecore_timer_dump"
-echo
-
-echo "Ecore_Con:"
-echo "  CURL.......................: $have_curl"
-echo "  Local Sockets..............: $want_ecore_con_local_sockets"
-if test "x$want_ecore_con_local_sockets" = "xyes" ; then
-echo "  Abstract Sockets...........: $want_ecore_con_abstract_sockets"
-fi
-if test "x$have_cares" = "xyes" ; then
-echo "  Resolver...................: c-ares"
-elif test "x$have_ipv6" = "xyes" ; then
-echo "  Resolver...................: dns.c"
+   osname="${host_os}(${_efl_windows_version})"
 else
-echo "  Resolver...................: fork"
+   osname="${host_os}"
 fi
-echo
 
-echo "Ecore_File:"
-echo "  CURL.......................: $have_curl"
-echo
-
-echo "Ecore_IMF....................: $want_ecore_imf"
-echo "  XIM........................: $have_ecore_imf_xim"
-echo "  SCIM.......................: $have_ecore_imf_scim"
-echo "  IBUS.......................: $have_ecore_imf_ibus"
-echo
-
-echo "Ecore Graphic systems:"
-echo
-
-echo "  Ecore_X....................: ${with_x11} (xgesture=${want_gesture}) (xi2=${want_xinput2}) (xi2.2=${want_xinput22})"
-echo "  Ecore_Win32................: $have_win32"
-echo "  Ecore_Cocoa................: $efl_lib_optional_ecore_cocoa"
-echo "  Ecore_SDL..................: $want_sdl"
-echo "  Ecore_FB...................: $want_fb (tslib=${have_tslib})"
-echo "  Ecore_WinCE................: $have_wince"
-echo "  Ecore_PSL1GHT..............: $have_ps3"
-echo "  Ecore_Wayland..............: $want_wayland"
-if test "${want_audio}" = "yes"; then
-  echo "  Ecore_Audio................: yes (alsa=${have_alsa}, pulseaudio=${have_pulse}, sndfile=${have_sndfile})"
+echo "Configuration...: ${COLOR_OTHER}profile=${build_profile} os=${osname}${COLOR_RESET}"
+echo "  CPU Extensions: ${host_cpu} (${features_cpu})"
+echo "  System Feature: ${features_system}"
+echo "  Threads.......: ${efl_have_threads} (${features_thread})"
+echo "  Cryptography..: ${build_crypto}"
+echo "  X11...........: ${with_x11}"
+echo "  OpenGL........: ${with_opengl}"
+echo "Evas............: yes (${features_evas})"
+echo "  Engines.......: ${features_evas_engine}"
+echo "  Image Loaders.: ${features_evas_loader}"
+if test "x${have_pixman}" = "xyes" ; then
+echo "  Pixman........: ${features_evas_pixman}"
+fi
+echo "Ecore...........: yes (${features_ecore})"
+echo "Ecore_Con.......: yes (${features_ecore_con})"
+echo "Ecore_File......: yes"
+echo "Ecore_IMF.......: yes (${features_ecore_imf})"
+echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
+echo "Ecore_SDL.......: $want_sdl"
+echo "Ecore_Wayland...: $want_wayland"
+if test "${have_linux}" = "yes"; then
+echo "Ecore_FB........: $want_fb (${features_ecore_fb})"
+elif test "${have_ps3}" = "yes"; then
+echo "Ecore_PSL1GHT...: $have_ps3"
+elif test "${have_darwin}" = "yes"; then
+echo "Ecore_Cocoa.....: $efl_lib_optional_ecore_cocoa"
+elif test "${have_windows}" = "yes"; then
+echo "Ecore_Win32.....: $have_win32"
+echo "Ecore_WinCE.....: $have_wince"
+fi
+echo "Ecore_Audio.....: ${efl_lib_optional_ecore_audio} (${features_ecore_audio})"
+echo "Ecore_Evas......: yes (${features_ecore_evas})"
+echo "Eeze............: ${efl_lib_optional_eeze} (${features_eeze})"
+echo "EPhysics........: ${efl_lib_optional_ephysics}"
+echo "Edje............: yes (${features_edje})"
+echo "Emotion.........: yes (${features_emotion})"
+echo "Ethumb..........: yes"
+echo "Ethumb_Client...: yes"
+if test "x${build_tests}" = "none"; then
+echo "Tests...........: no"
 else
-  echo "  Ecore_Audio................: no"
+echo "Tests...........: make check"
 fi
-
-echo "  Ecore_Evas...................: $have_ecore_evas"
-#if test "x${have_ecore_evas}" = "xyes" ; then
-  echo "    Software X11...............: $have_ecore_evas_software_x11"
-  echo "    OpenGL X11.................: $have_ecore_evas_opengl_x11 (opengl=${with_opengl})"
-  echo "    Software GDI...............: $have_ecore_evas_software_gdi"
-  echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
-  echo "    Software SDL...............: $have_ecore_evas_software_sdl"
-  echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
-  echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
-  echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
-  echo "    Software Framebuffer.......: $have_ecore_evas_fb"
-  echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
-  echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"
-  echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
-  echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
-#fi
-echo
-
-echo "Eeze...................: ${efl_lib_optional_eeze} (tizen: ${want_tizen})"
-echo "EPhysics...............: ${efl_lib_optional_ephysics}"
-echo "Edje...................: yes (physics=${efl_lib_optional_ephysics}, multisense=${want_multisense})"
-echo "Emotion................: yes (gstreamer=${have_emotion_module_gstreamer} (xoverlay=${have_gst_xoverlay}), xine=${have_emotion_module_xine}, generic=${have_emotion_module_generic}, v4l2=${want_v4l2})"
-echo "Ethumb.................: yes"
-echo "Ethumb_Client..........: yes"
-echo "Tests..................: ${build_tests}"
-
-echo "Examples...............: make examples"
-echo "    installation.......: make install-examples"
+echo "Tests...........: ${build_tests}"
+echo "Examples........: make examples (make install-examples)"
 if test "x${build_doc}" = "xyes"; then
-echo "Documentation..........: make doc"
+echo "Documentation...: make doc"
 else
-echo "Documentation..........: no"
+echo "Documentation...: no"
 fi
-echo
-echo "Compilation............: make (or gmake)"
-echo "  CPPFLAGS.............: $CPPFLAGS"
-echo "  CFLAGS...............: $CFLAGS"
-echo "  CXXFLAGS.............: $CXXFLAGS"
-echo "  LDFLAGS..............: $LDFLAGS"
-echo
-echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
-echo "  prefix...............: $prefix"
+echo "Compilation.....: make (or gmake)"
+echo "  CPPFLAGS......: $CPPFLAGS"
+echo "  CFLAGS........: $CFLAGS"
+echo "  CXXFLAGS......: $CXXFLAGS"
+echo "  LDFLAGS.......: $LDFLAGS"
+echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix........: $prefix"
 echo

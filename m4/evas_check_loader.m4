@@ -422,13 +422,10 @@ AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
 ])
 
 dnl use: EVAS_CHECK_IMAGE_LOADER(loader, want_loader, macro)
-
-
 AC_DEFUN([EVAS_CHECK_IMAGE_LOADER],
-[
-
-m4_pushdef([UP], m4_toupper([$1]))
-m4_pushdef([DOWN], m4_tolower([$1]))
+[dnl
+m4_pushdef([UP], m4_toupper([$1]))dnl
+m4_pushdef([DOWN], m4_tolower([$1]))dnl
 
 want_loader="$2"
 want_static_loader="no"
@@ -469,9 +466,8 @@ if test "x${want_static_loader}" = "xyes" ; then
    have_static_module="yes"
 fi
 
-AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_loader}" = "xyes"])
-
-m4_popdef([UP])
-m4_popdef([DOWN])
-
+EFL_ADD_FEATURE([EVAS_LOADER], DOWN, [${have_evas_image_loader_]DOWN[}])dnl
+AM_CONDITIONAL(EVAS_STATIC_BUILD_[]UP, [test "x${want_static_loader}" = "xyes"])dnl
+m4_popdef([UP])dnl
+m4_popdef([DOWN])dnl
 ])
