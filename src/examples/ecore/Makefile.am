@@ -183,10 +183,9 @@ ecore_idler_example_SOURCES = ecore_idler_example.c
 ecore_idler_example_LDADD = $(ECORE_COMMON_LDADD)
 
 ecore_imf_example_SOURCES = ecore_imf_example.c
-ecore_imf_example_LDADD = $(ECORE_COMMON_LDADD) \
+ecore_imf_example_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
-$(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
-$(top_builddir)/src/lib/ecore_evas/libecore_evas.la
+$(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la
 
 
 ecore_job_example_SOURCES = ecore_job_example.c
