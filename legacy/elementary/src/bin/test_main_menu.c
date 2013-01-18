@@ -39,7 +39,7 @@ test_main_menu(void *data __UNUSED__,
    evas_object_show(bx);
 
    label = elm_label_add(win);
-   elm_object_text_set(label, "Note: this example requires support from the "
+   elm_object_text_set(label, "Note: the D-Bus menu example requires support from the "
                               "desktop environment to display the application menu");
    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
@@ -54,7 +54,7 @@ test_main_menu(void *data __UNUSED__,
      {
         label = elm_label_add(win);
         elm_object_text_set(label, "(ELM_EXTERNAL_MENU environment variable not "
-                                   "set. Test won't display it)");
+                                   "set. Using local menu instead)");
         evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(bx, label);
