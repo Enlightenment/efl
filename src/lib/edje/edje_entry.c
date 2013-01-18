@@ -2021,8 +2021,6 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      }
 #endif
 
-   _edje_entry_imf_context_reset(rp);
-
    tc = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_copy(en->cursor, tc);
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);

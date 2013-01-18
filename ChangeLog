@@ -1,3 +1,7 @@
+2013-01-18  Jihoon Kim (jihoon)
+
+	* edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
+
 2013-01-18  Cedric Bail
 
 	* Ecore_Input_Evas: add infrastructure to handle buggy touchscreen by using
