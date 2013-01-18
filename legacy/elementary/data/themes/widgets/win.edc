@@ -247,13 +247,6 @@ group { name: "elm/win/inwin/minimal_vertical";
 
 group { name: "elm/win/base/default";
    parts {
-      part { type: RECT; name: "dbg";
-         description { state: "default" 0.0;
-            color: 242 242 242 255;
-            align: 0.5 0;
-         }
-      }
-
       part { type: SWALLOW; name: "elm.swallow.menu";
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
