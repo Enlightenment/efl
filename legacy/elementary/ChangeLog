@@ -571,17 +571,17 @@
 
 2012-10-04  Igor Murzov
 
-	* fix copy&paste error in elm_flip.
-	* fix possible invalid memory access in elm_access.
+        * fix copy&paste error in elm_flip.
+        * fix possible invalid memory access in elm_access.
 
 2012-10-04  Cedric Bail
 
-	* Add a color picker to elm_colorselector.
+        * Add a color picker to elm_colorselector.
 
 2012-10-04  Sebastian Dransfeld
 
-	* Use ecore_x_selection_converter_text to convert text data so we can
-	  support COMPOUND_TEXT
+        * Use ecore_x_selection_converter_text to convert text data so we can
+        support COMPOUND_TEXT
 
 2012-10-08  Bruno Dilly
 
@@ -609,7 +609,7 @@
 2012-10-14  Jiyoun Park (jypark)
 
         * Add display mode change feature related with keypad state change
-	to elm conformant and naviframe.
+        to elm conformant and naviframe.
 
 2012-10-15  Shinwoo Kim (kimcinoo)
 
@@ -668,7 +668,7 @@
 2012-11-12  ChunEon Park (Hermet)
 
         * Support virtualkeypad, clipbard state shange signals from
-		  conformant
+        conformant
 
 2012-11-12  Jaehwan Kim
 
@@ -741,18 +741,18 @@
 
 2012-12-03 Gustavo Sverzut Barbieri (k-s)
 
-	* Add elm_need_edbus(), deprecate elm_need_e_dbus(), integrating
-	edbus (v2).
+        * Add elm_need_edbus(), deprecate elm_need_e_dbus(), integrating
+        edbus (v2).
 
 2012-12-04  Cedric Bail
 
-	* Fix a possible divide by zero in els_scroller animator.
+        * Fix a possible divide by zero in els_scroller animator.
 
 2012-12-04  Murilo Pinoti Belluzzo (mbelluzzo)
 
-	* Add elm_app_name_set/get(): Formal application name string.
-	* Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
-	* Add elm_sys_notify to expose System Notifications (D-Bus atm).
+        * Add elm_app_name_set/get(): Formal application name string.
+        * Add elm_app_destkop_entry_set/get(): Path to '.desktop' file.
+        * Add elm_sys_notify to expose System Notifications (D-Bus atm).
 
 2012-12-04  Gwanglim Lee
 
@@ -760,108 +760,109 @@
 
 2012-12-05  Cedric Bail
 
-	* Fix uninitialized data path in elm_flip, elm_gesture_layer,
-	elm_interface_scrollable, els_scroller.
+        * Fix uninitialized data path in elm_flip, elm_gesture_layer,
+        elm_interface_scrollable, els_scroller.
 
 2012-12-05  Shilpa Onkar Singh (shilpa.singh@samsung.com)
 
-	* Fix naviframe to not send hide signals even before item doens't created
-  	yet.
+        * Fix naviframe to not send hide signals even before item doens't created
+        yet.
 
 2012-12-06  Cedric Bail
 
-	* Fix possible segv in elm_quicklaunch infrastructure.
-	* Fix elm_conform buffer to always finish with at least one '\0';
-	* Fix forgotten break in elm_map that would have thrown error when the
-	action was properly taken in fact.
+        * Fix possible segv in elm_quicklaunch infrastructure.
+        * Fix elm_conform buffer to always finish with at least one '\0';
+        * Fix forgotten break in elm_map that would have thrown error when the
+        action was properly taken in fact.
 
 2012-12-06  Daniel Juyung Seo (SeoZ)
 
-	* Fix wheel scroll direction with shift.
+        * Fix wheel scroll direction with shift.
 
 2012-12-06  ChunEon Park (Hermet)
 
-	* Fix the mapbuf to show the content always. Sometimes mapbuf couldn't show
-	the content properly.
+        * Fix the mapbuf to show the content always. Sometimes mapbuf couldn't show
+        the content properly.
 
 2012-12-07  Cedric Bail
 
-	* Safer call to mkstemp in elm_cnp.
-	* Simplify test in elm_entry_text_set.
+        * Safer call to mkstemp in elm_cnp.
+        * Simplify test in elm_entry_text_set.
 
 2012-12-07  WooHyun Jung
 
-	* Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
+        * Fix focus problem in multibuttonentry. Entry can get focus only when multibuttonentry is focused.
 
 2012-12-08  ChunEon Park (Hermet)
 
-	* Fix the naviframe title_set problem that caused the title visible status reset.
+        * Fix the naviframe title_set problem that caused the title visible status reset.
 
 2012-12-10  Cedric Bail
 
-	* Make sure private data is not NULL in elm_interface_scrollable.
-	* Correctly handle failure case in _x11_notify_handler_image.
-	* Fix missuse of EINA_INLIST_FOREACH in elm_transit.c.
+        * Make sure private data is not NULL in elm_interface_scrollable.
+        * Correctly handle failure case in _x11_notify_handler_image.
+        * Fix missuse of EINA_INLIST_FOREACH in elm_transit.c.
 
 2012-12-12  ChunEon Park (Hermet)
 
-	* Update mapbuf forcely whenever it's states are changed.
+        * Update mapbuf forcely whenever it's states are changed.
 
 2012-12-12  WooHyun Jung
 
-	* Now, dummy object is always smart member of naviframe.
+        * Now, dummy object is always smart member of naviframe.
 
 2012-12-14  Jiyoun Park
 
-	* Fix naviframe's resize object problem when item was deleted.
+        * Fix naviframe's resize object problem when item was deleted.
 
 2012-12-17  Chueon Park (Hermet)
 
-	* Fix the popup that returned invalid action buttons.
+        * Fix the popup that returned invalid action buttons.
 
 2012-12-17  Chueon Park (Hermet)
 
-	* Makes naviframe safety even if someone deletes the naviframe in transition finished cb.
+        * Makes naviframe safety even if someone deletes the naviframe in transition finished cb.
 
 2012-12-18  Chueon Park (Hermet)
 
-	* Elm_transit image aniamtion effects supports elm_image object type.
+        * Elm_transit image aniamtion effects supports elm_image object type.
 
 2012-12-18  Chueon Park (Hermet)
 
-	* Don't Elm_transit image animation use image preloading to avoid image flickering.
+        * Don't Elm_transit image animation use image preloading to avoid image flickering.
 
 2012-12-18  Chueon Park (Hermet)
 
-	* Let image update right now if the image preloading is disabled.
+        * Let image update right now if the image preloading is disabled.
 
 2012-12-18  Gustavo Sverzut Barbieri (k-s)
 
-	* elm_plug now emits "image,resized" on server-side changes.
-	* elm_plug typo fixed "image.deleted" to "image,deleted" ('.' -> ',')
+        * elm_plug now emits "image,resized" on server-side changes.
+        * elm_plug typo fixed "image.deleted" to "image,deleted" ('.' -> ',')
 
 2012-12-20  Henrique Dante de Almeida (hdante)
 
-	* Add elm_dbus_menu to support D-Bus external menus.
-	* Add main menu to elm_win, which can be exported via D-Bus
-	* Add configuration: ELM_EXTERNAL_MENU, to switch between internal and external menus
+        * Add elm_dbus_menu to support D-Bus external menus.
+        * Add main menu to elm_win, which can be exported via D-Bus
+        * Add configuration: ELM_EXTERNAL_MENU, to switch between internal and external menus
 
 2012-12-20  Murilo Pinoti Belluzzo (mbelluzzo)
 
-	* Add elm_systray to set a Status Notifier Item in the System Tray (D-Bus).
+        * Add elm_systray to set a Status Notifier Item in the System Tray (D-Bus).
 
 2012-12-27  Jiyoun Park (jypark)
 
-	* elm_photocam returns file_set error properly.
+        * elm_photocam returns file_set error properly.
 
 2012-12-28  Mike Blumenkrantz
 
         * Fix bug where genlist would delete items added during selection callback if a clear was queued
 
 2012-12-27  Henrique Dante de Almeida (hdante)
-	* Support item separators in D-Bus menu
-	* Support freedesktop icons in D-Bus menu
-	* Reduce D-Bus communication (omit default values)
+
+        * Support item separators in D-Bus menu
+        * Support freedesktop icons in D-Bus menu
+        * Reduce D-Bus communication (omit default values)
 
 2012-12-29  Mike Blumenkrantz
 
@@ -897,7 +898,7 @@
 
 2013-01-10  Cedric Bail
 
-	* Don't link anymore with E_DBus at build time.
+        * Don't link anymore with E_DBus at build time.
 
 2013-01-13  Daniel Juyung Seo (SeoZ)
 
@@ -922,7 +923,7 @@
 
 2013-01-16  Daniel Juyung Seo (SeoZ)
 
-	    * Fix thumb theme hook.
+        * Fix thumb theme hook.
 
 2013-01-17  Bora Hwang (bora1.hwang@samsung.com)
 
@@ -931,6 +932,3 @@
 2013-01-18  Thiep Ha (thiep.ha@samsung.com)
 
         * Fix memory leak of the ctxpopup and callback function to be a ctxpoup obj is delivered to.
-
-
-
