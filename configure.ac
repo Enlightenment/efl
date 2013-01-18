@@ -3555,12 +3555,13 @@ echo "Edje............: yes (${features_edje})"
 echo "Emotion.........: yes (${features_emotion})"
 echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
-if test "x${build_tests}" = "none"; then
+if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
-else
+elif test "${build_tests}" = "regular"; then
 echo "Tests...........: make check"
+elif test "${build_tests}" = "coverage"; then
+echo "Tests...........: make lcov-check"
 fi
-echo "Tests...........: ${build_tests}"
 echo "Examples........: make examples (make install-examples)"
 if test "x${build_doc}" = "xyes"; then
 echo "Documentation...: make doc"
