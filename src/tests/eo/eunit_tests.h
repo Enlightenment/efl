@@ -7,7 +7,7 @@
    do { \
         if (x) \
           { \
-             fprintf(stderr, "%s:%d - Failure '%s' is TRUE.", \
+             fprintf(stderr, "%s:%d - Failure '%s' is TRUE.\n", \
                    __FILE__, __LINE__, # x); \
              exit(_EUNIT_EXIT_CODE); \
           } \

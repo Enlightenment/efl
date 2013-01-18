@@ -43,14 +43,18 @@ main(int argc, char *argv[])
 
    fail_if(eo_do_super(obj, simple_a_print()));
 
+#ifndef NDEBUG
    fail_if(eo_do(obj, simple_class_print()));
+#endif
 
    fail_if(!eo_class_do(SIMPLE_CLASS, simple_class_print()));
    fail_if(!eo_class_do(INHERIT_CLASS, simple_class_print()));
    fail_if(!eo_class_do(INHERIT2_CLASS, simple_class_print()));
    fail_if(!eo_class_do(INHERIT3_CLASS, simple_class_print()));
 
+#ifndef NDEBUG
    fail_if(eo_class_do(SIMPLE_CLASS, simple_a_print()));
+#endif
 
    eo_do_super(obj, eo_constructor());
    eo_do_super(obj, eo_destructor());

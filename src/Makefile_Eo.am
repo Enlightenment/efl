@@ -105,7 +105,8 @@ tests/eo/function_overrides/function_overrides_inherit3.h \
 tests/eo/function_overrides/function_overrides_main.c \
 tests/eo/function_overrides/function_overrides_simple.c \
 tests/eo/function_overrides/function_overrides_simple.h
-tests_eo_test_function_overrides_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_function_overrides_CPPFLAGS = @EO_CFLAGS@ \
+-DNDEBUG
 tests_eo_test_function_overrides_LDADD = @USE_EO_LIBS@
 tests_eo_test_function_overrides_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 
