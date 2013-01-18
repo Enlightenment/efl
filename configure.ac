@@ -335,7 +335,7 @@ AC_CHECK_SIZEOF(long, 4)
 AC_C_BIGENDIAN
 AC_C_INLINE
 EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith -Wno-missing-field-initializers -fvisibility=hidden -fdata-sections -ffunction-sections])
-EFL_CHECK_LINKER_FLAGS([EFL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed])
+EFL_CHECK_LINKER_FLAGS([EFL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
 case "${build_profile}" in
    dev)
      EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
