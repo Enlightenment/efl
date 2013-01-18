@@ -9,7 +9,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#include "evas_cserve2.h"
+#include "evas_cs2.h"
 
 static unsigned int _rid_count = 0;
 
