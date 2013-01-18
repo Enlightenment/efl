@@ -283,6 +283,48 @@ _list_item_cb6(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked, ctxpopup);
 }
 
+static void
+_ctxpopup_item_disable_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   printf("ctxpopup item selected: %s\n",
+          elm_object_item_text_get(event_info));
+
+   Elm_Object_Item *it = (Elm_Object_Item *)event_info;
+   elm_object_item_disabled_set(it, EINA_TRUE);
+}
+
+static void
+_ctxpopup_item_delete_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   printf("ctxpopup item selected: %s\n",
+          elm_object_item_text_get(event_info));
+
+   evas_object_del(obj);
+}
+
+static void
+_list_item_cb7(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *ctxpopup;
+   Evas_Coord x,y;
+
+   ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup,
+                                  "dismissed",
+                                  _dismissed,
+                                  NULL);
+
+   elm_ctxpopup_item_append(ctxpopup, "Disable this item", NULL, _ctxpopup_item_disable_cb, ctxpopup);
+   elm_ctxpopup_item_append(ctxpopup, "Delete this ctxpopup", NULL, _ctxpopup_item_delete_cb, ctxpopup);
+   elm_ctxpopup_item_append(ctxpopup, "Another item", NULL, _ctxpopup_item_cb, NULL);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_object_size_hint_max_set(ctxpopup, 240, 240);
+   evas_object_move(ctxpopup, x, y);
+   evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
+}
+
 static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
@@ -315,6 +357,8 @@ test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                         _list_item_cb5, NULL);
    elm_list_item_append(list, "Ctxpopup with restacking", NULL, NULL,
                         _list_item_cb6, NULL);
+   elm_list_item_append(list, "Ctxpopup with callback function", NULL, NULL,
+                        _list_item_cb7, NULL);
    evas_object_show(list);
    elm_list_go(list);
 

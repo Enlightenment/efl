@@ -928,4 +928,9 @@
 
         * when parent of ctxpopup is resized, ctxpopup calls dismissed signal
 
+2013-01-18  Thiep Ha (thiep.ha@samsung.com)
+
+        * Fix memory leak of the ctxpopup and callback function to be a ctxpoup obj is delivered to.
+
+
 

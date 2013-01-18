@@ -127,6 +127,7 @@ Fixes:
    * Fix index refill bug when autohide disabled.
    * Fix thumb theme hook.
    * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
+   * Fix memory leak of the ctxpopup and callback function to be ctxpopup obj is delivered to.
 
 Removals:
 

@@ -25,6 +25,13 @@ struct _Elm_Ctxpopup_Item
    ELM_WIDGET_ITEM;
 
    Elm_Object_Item *list_item;
+
+   struct
+     {
+        Evas_Smart_Cb org_func_cb;
+        const void    *org_data;
+        Evas_Object   *cobj;
+     } wcb;
 };
 
 struct _Elm_Ctxpopup_Smart_Data
@@ -32,6 +39,7 @@ struct _Elm_Ctxpopup_Smart_Data
    Evas_Object           *parent;
    Evas_Object           *list;
    Evas_Object           *box;
+   Eina_List             *items;
 
    Evas_Object           *arrow;
    Evas_Object           *bg;

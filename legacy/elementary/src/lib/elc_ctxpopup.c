@@ -1003,12 +1003,14 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (eina_list_count(elm_list_items_get(list)) < 2)
      {
         elm_object_item_del(ctxpopup_it->list_item);
+        sd->items = eina_list_remove(sd->items, ctxpopup_it);
         evas_object_hide(WIDGET(ctxpopup_it));
 
         return EINA_TRUE;
      }
 
    elm_object_item_del(ctxpopup_it->list_item);
+   sd->items = eina_list_remove(sd->items, ctxpopup_it);
    if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
 
    return EINA_TRUE;
@@ -1086,6 +1088,7 @@ static void
 _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Ctxpopup_Smart_Data *sd = _pd;
+   Elm_Ctxpopup_Item *it;
 
    evas_object_event_callback_del_full
      (sd->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
@@ -1097,6 +1100,9 @@ _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_del(sd->bg);
    sd->bg = NULL;
+
+   EINA_LIST_FREE (sd->items, it)
+     elm_widget_item_free(it);
 
    eo_do_super(obj, evas_obj_smart_del());
 }
@@ -1258,6 +1264,13 @@ elm_ctxpopup_item_append(Evas_Object *obj,
 }
 
 static void
+_item_wrap_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Ctxpopup_Item *item = data;
+   item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, item);
+}
+
+static void
 _item_append(Eo *obj, void *_pd, va_list *list)
 {
    const char *label = va_arg(*list, const char *);
@@ -1293,8 +1306,12 @@ _item_append(Eo *obj, void *_pd, va_list *list)
         elm_layout_content_set(obj, "default", sd->list);
      }
 
+   item->wcb.org_func_cb = func;
+   item->wcb.org_data = data;
+   item->wcb.cobj = obj;
    item->list_item =
-     elm_list_item_append(sd->list, label, icon, NULL, func, data);
+     elm_list_item_append(sd->list, label, icon, NULL, _item_wrap_cb, item);
+   sd->items = eina_list_append(sd->items, item);
 
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
