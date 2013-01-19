@@ -1463,10 +1463,7 @@ _entry_changed_handle(void *data,
    evas_event_thaw_eval(evas_object_evas_get(data));
    if ((sd->auto_save) && (sd->file))
      sd->delay_write = ecore_timer_add(2.0, _delay_write, data);
-   /* callback - this could call callbacks that delete the
-    * entry... thus... any access to sd after this could be
-    * invalid */
-   evas_object_smart_callback_call(data, event, NULL);
+
    _return_key_enabled_check(data);
    text = edje_object_part_text_get(sd->entry_edje, "elm.text");
    if (text)
@@ -1476,6 +1473,10 @@ _entry_changed_handle(void *data,
         else
           _elm_entry_guide_update(data, EINA_FALSE);
      }
+   /* callback - this could call callbacks that delete the
+    * entry... thus... any access to sd after this could be
+    * invalid */
+   evas_object_smart_callback_call(data, event, NULL);
 }
 
 static void
