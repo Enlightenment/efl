@@ -547,7 +547,7 @@ main(int argc, char *argv[])
    evas = ecore_evas_get(ee);
    if (!evas)
      {
-        fprintf(stderr, "failed to ccall ecore_evas_get\n");
+        fprintf(stderr, "failed to call ecore_evas_get\n");
         return EXIT_FAILURE;
      }
 
