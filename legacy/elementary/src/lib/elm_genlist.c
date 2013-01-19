@@ -1464,6 +1464,10 @@ _item_realize(Elm_Gen_Item *it,
                  &it->item->flip_content_objs);
           }
 
+        /* access: unregister item which have no text and content */
+        if (_elm_config->access_mode && !it->texts && !it->contents)
+          _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+
         if (!it->item->mincalcd)
           {
              Evas_Coord mw = -1, mh = -1;
