@@ -1245,8 +1245,13 @@ _item_content_realize(Elm_Gen_Item *it,
 static char *
 _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
+   char *ret;
+   Eina_Strbuf *buf;
+
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, NULL);
+
+   buf = eina_strbuf_new();
 
    if (it->itc->func.text_get)
      {
@@ -1260,11 +1265,19 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
           {
              char *s = it->itc->func.text_get
                 ((void *)it->base.data, WIDGET(it), key);
-             return s;
+
+             if (s)
+               {
+                  if (eina_strbuf_length_get(buf) > 0) eina_strbuf_append(buf, ", ");
+                  eina_strbuf_append(buf, s);
+                  free(s);
+               }
           }
      }
 
-   return NULL;
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
 }
 
 static char *
