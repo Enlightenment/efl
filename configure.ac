@@ -3266,7 +3266,6 @@ EFL_INTERNAL_DEPEND_PKG([EMOTION], [eio])
 
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EMOTION], [${want_v4l2}], [eeze])
 EFL_ADD_FEATURE([EMOTION], [v4l2])
-AM_CONDITIONAL([EMOTION_HAVE_V4L2], [test "${want_v4l2}" = "yes"])
 
 ## modules
 
