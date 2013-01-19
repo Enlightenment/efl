@@ -223,7 +223,7 @@ AM_PROG_CC_C_O
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi
-if test "x${ac_cv_prog_ac_ct_CXX:-${ac_cv_prog_CXX}}" = "x" ; then
+if test "x${CXX}" = "x"; then
    AC_MSG_ERROR([efl requires a C++ compiler])
 fi
 
