@@ -1456,7 +1456,6 @@ _access_widget_item_register(Elm_List_Item *it, Eina_Bool is_access)
 
         ai = _elm_access_object_get(it->base.access_obj);
 
-        _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("List Item"));
         _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
         _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
         _elm_access_on_highlight_hook_set(ai, _access_on_highlight_cb, it);
