@@ -47,7 +47,17 @@ AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GSTREAMER],
 
 dnl use: EMOTION_MODULE_DEP_CHECK_GENERIC(want_static)
 dnl where want_engine = yes or static
-AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GENERIC], [])
+AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GENERIC],
+[dnl
+   if test "$1" = "static"; then
+      EFL_ADD_LIBS([EMOTION], [${requirements_libs_shm}])
+   else
+      EMOTION_MODULE_GENERIC_CFLAGS=""
+      EMOTION_MODULE_GENERIC_LIBS="${requirements_libs_shm}"
+      AC_SUBST([EMOTION_MODULE_GENERIC_CFLAGS])
+      AC_SUBST([EMOTION_MODULE_GENERIC_LIBS])
+   fi
+])
 
 dnl use: EMOTION_MODULE(name, want_engine)
 dnl

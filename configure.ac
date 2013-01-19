@@ -563,6 +563,10 @@ EFL_ADD_LIBS([ESCAPE], [-llv2 -lm -lnet -lsysmodule -liberty])
 EFL_LIB_END_OPTIONAL([Escape])
 #### End of Escape
 
+EFL_CHECK_FUNC([SHM], [shm_open])
+SHM_LIBS="${requirements_libs_shm}"
+AC_SUBST([SHM_LIBS])
+
 AC_SUBST([DL_LIBS])
 AC_SUBST([DL_INTERNAL_LIBS])
 #### End of Platform-dependent
@@ -1525,7 +1529,7 @@ AC_CHECK_FUNCS([siglongjmp])
 AC_CHECK_LIB([m], [lround], [AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])])
 
 if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
-   EFL_CHECK_FUNC([EVAS], [shm_open])
+   EFL_ADD_LIBS([EVAS], [${requirements_libs_shm}])
 fi
 
 # cserve2 only works on Linux so far.
@@ -1538,8 +1542,7 @@ if test "x${want_evas_cserve2}" = "xyes"; then
    if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
       want_evas_cserve2="no"
    else
-      EFL_CHECK_FUNC([EVAS_CSERVE2_SLAVE], [shm_open])
-      EVAS_CSERVE2_SLAVE_LIBS="${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_evas_cserve2_slave}"
+      EVAS_CSERVE2_SLAVE_LIBS="${EFL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_shm}"
       AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
    fi
 fi

@@ -99,10 +99,13 @@ emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
 modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
 modules_emotion_generic_module_la_CPPFLAGS = \
 @EMOTION_CFLAGS@ \
+@EMOTION_MODULE_GENERIC_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"
-modules_emotion_generic_module_la_LIBADD = @USE_EMOTION_LIBS@
+modules_emotion_generic_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_GENERIC_LIBS@
 modules_emotion_generic_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
 modules_emotion_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_emotion_generic_module_la_LIBTOOLFLAGS = --tag=disable-static
