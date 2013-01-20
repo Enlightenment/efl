@@ -285,6 +285,7 @@ eina_cow_del(Eina_Cow *cow)
    EINA_COW_MAGIC_CHECK(cow);
 
    eina_mempool_del(cow->pool);
+   eina_hash_free(cow->match);
 
    EINA_LIST_FREE(cow->togc, gc)
      eina_mempool_free(gc_pool, gc);
