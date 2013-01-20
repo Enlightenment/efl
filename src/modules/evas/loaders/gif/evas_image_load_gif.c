@@ -356,6 +356,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    bg_val =  ARGB_JOIN(0xff, r, g, b);
 
    per_inc = 100.0 / (((double)w) * h);
+   per = 0.0;
    cur_h = scale_h;
    cur_w = scale_w;
 
