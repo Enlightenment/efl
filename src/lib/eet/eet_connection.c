@@ -139,13 +139,15 @@ _eet_connection_raw_send(Eet_Connection *conn,
 
    /* Message should always be under MAX_MSG_SIZE */
    if (data_size > MAX_MSG_SIZE) return EINA_FALSE;
-   message = alloca(data_size + (sizeof(int) * 2));
+   message = malloc(data_size + (sizeof(int) * 2));
    message[0] = htonl(MAGIC_EET_DATA_PACKET);
    message[1] = htonl(data_size);
    memcpy(message + 2, data, data_size);
    conn->eet_write_cb(message,
                       data_size + (sizeof(int) * 2),
                       conn->user_data);
+
+   free(message);
    return EINA_TRUE;
 }
 
