@@ -76,7 +76,7 @@ pthread_create(NULL, NULL, NULL, NULL);
       LIBS="$LIBS_save"
     fi
 
-    if test "x${gl_flavor_gles}" = "xyes" ; then
+    if test "x${with_opengl}" = "xes" ; then
       have_dep=no
     fi
 
@@ -234,7 +234,7 @@ if test "x${have_dep}" = "xyes" ; then
   fi
 fi
 
-if test "x$gl_flavor_gles" = "xyes" ; then
+if test "x${with_opengl}" = "xes" ; then
   have_dep=no
 fi
 
@@ -470,7 +470,7 @@ AC_CHECK_HEADER([GL/gl.h],
 #include <GL/glext.h>
    ])
 
-if test "x$gl_flavor_gles" = "xyes" ; then
+if test "x${with_opengl}" = "xes" ; then
   have_dep=no
 fi
 
