@@ -2918,7 +2918,7 @@ _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type 
      autocapital_type = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 
    if (en->imf_context)
-     ecore_imf_context_autocapital_type_set(en->imf_context, autocapital_type);
+     ecore_imf_context_autocapital_type_set(en->imf_context, (Ecore_IMF_Autocapital_Type)autocapital_type);
 #else
    (void)rp;
    (void)autocapital_type;
@@ -2937,7 +2937,7 @@ _edje_entry_autocapital_type_get(Edje_Real_Part *rp)
    if (!en) return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 
    if (en->imf_context)
-     return ecore_imf_context_autocapital_type_get(en->imf_context);
+     return (Edje_Text_Autocapital_Type)ecore_imf_context_autocapital_type_get(en->imf_context);
    return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 #else
    return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
@@ -3047,7 +3047,7 @@ _edje_entry_input_panel_language_set(Edje_Real_Part *rp, Edje_Input_Panel_Lang l
    en->input_panel_lang = lang;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     ecore_imf_context_input_panel_language_set(en->imf_context, lang);
+     ecore_imf_context_input_panel_language_set(en->imf_context, (Ecore_IMF_Input_Panel_Lang)lang);
 #endif
 }
 
@@ -3112,7 +3112,7 @@ _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel
    en = rp->typedata.text->entry_data;
    if (!en) return;
    if (en->imf_context)
-     ecore_imf_context_input_panel_return_key_type_set(en->imf_context, return_key_type);
+     ecore_imf_context_input_panel_return_key_type_set(en->imf_context, (Ecore_IMF_Input_Panel_Return_Key_Type)return_key_type);
 #else
    (void)rp;
    (void)return_key_type;
@@ -3130,7 +3130,7 @@ _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
    en = rp->typedata.text->entry_data;
    if (!en) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
    if (en->imf_context)
-     return ecore_imf_context_input_panel_return_key_type_get(en->imf_context);
+     return (Edje_Input_Panel_Return_Key_Type)ecore_imf_context_input_panel_return_key_type_get(en->imf_context);
    return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
 #else
    return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
@@ -3543,7 +3543,7 @@ _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout l
    en = rp->typedata.text->entry_data;
    if (!en) return;
    if (en->imf_context)
-     ecore_imf_context_input_panel_layout_set(en->imf_context, layout);
+     ecore_imf_context_input_panel_layout_set(en->imf_context, (Ecore_IMF_Input_Panel_Layout)layout);
 #else
    (void) rp;
    (void) layout;
@@ -3561,7 +3561,7 @@ _edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
    en = rp->typedata.text->entry_data;
    if (!en) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
    if (en->imf_context)
-     return ecore_imf_context_input_panel_layout_get(en->imf_context);
+     return (Edje_Input_Panel_Layout)ecore_imf_context_input_panel_layout_get(en->imf_context);
    return EDJE_INPUT_PANEL_LAYOUT_INVALID;
 #else
    return EDJE_INPUT_PANEL_LAYOUT_INVALID;
