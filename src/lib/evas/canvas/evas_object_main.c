@@ -79,20 +79,21 @@ evas_object_cur_prev(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
-   if (!obj->prev.valid_map)
+   if (!obj->map.prev.valid_map)
      {
-        if (obj->prev.map != obj->cur.map)
-          evas_map_free(obj->prev.map);
-        if (obj->map.cache_map == obj->prev.map)
+        if (obj->map.prev.map != obj->map.cur.map)
+          evas_map_free(obj->map.prev.map);
+        if (obj->map.cache_map == obj->map.prev.map)
           obj->map.cache_map = NULL;
-        obj->prev.map = NULL;
+        obj->map.prev.map = NULL;
      }
 
-   if (obj->cur.map != obj->prev.map)
+   if (obj->map.cur.map != obj->map.prev.map)
      {
         if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
-        obj->map.cache_map = obj->prev.map;
+        obj->map.cache_map = obj->map.prev.map;
      }
+   obj->map.prev = obj->map.cur;
    obj->prev = obj->cur;
 }
 
@@ -107,7 +108,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
 
    if (!strcmp(obj->type, "image")) evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_map_set(eo_obj, NULL);
-   if (obj->prev.map) evas_map_free(obj->prev.map);
+   if (obj->map.prev.map) evas_map_free(obj->map.prev.map);
    if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
    if (obj->map.surface)
      {
@@ -418,7 +419,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
 int
 evas_object_was_in_output_rect(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, int x, int y, int w, int h)
 {
-   if (obj->is_smart && !obj->prev.map && !obj->prev.usemap) return 0;
+   if (obj->is_smart && !obj->map.prev.map && !obj->map.prev.usemap) return 0;
    /* assumes coords have been recalced */
    if ((RECTS_INTERSECT(x, y, w, h,
                         obj->prev.cache.clip.x,
@@ -1487,7 +1488,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if ((!obj->is_smart) ||
-                 ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
+                 ((obj->map.cur.map) && (obj->map.cur.map->count == 4) && (obj->map.cur.usemap)))
                {
                   if (!obj->mouse_grabbed)
                     {

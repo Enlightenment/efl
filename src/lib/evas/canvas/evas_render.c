@@ -198,8 +198,8 @@ _evas_clip_changes_free(const void *container EINA_UNUSED, void *data, void *fda
 static Eina_Bool
 _evas_render_had_map(Evas_Object_Protected_Data *obj)
 {
-   return ((obj->prev.map) && (obj->prev.usemap));
-   //   return ((!obj->cur.map) && (obj->prev.usemap));
+   return ((obj->map.prev.map) && (obj->map.prev.usemap));
+   //   return ((!obj->map.cur.map) && (obj->prev.usemap));
 }
 
 static Eina_Bool
@@ -317,8 +317,8 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
                 evas_object_smart_members_get_direct(eo_obj),
-                obj->cur.map, obj->cur.usemap,
-                obj->prev.map, obj->prev.usemap,
+                obj->map.cur.map, obj->map.cur.usemap,
+                obj->map.prev.map, obj->prev.usemap,
                 _evas_render_has_map(eo_obj, obj),
                 _evas_render_had_map(obj));
              if ((obj->is_smart) &&
@@ -460,7 +460,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              if (!map)
                {
-                  if ((obj->cur.map) && (obj->cur.usemap)) map = EINA_TRUE;
+                  if ((obj->map.cur.map) && (obj->map.cur.usemap)) map = EINA_TRUE;
                }
              if (map != hmap)
                {
@@ -978,7 +978,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    obj->pre_render_done = EINA_TRUE;
    RD("          Hasmap: %p (%d) %p %d -> %d\n",obj->func->can_map,
       obj->func->can_map ? obj->func->can_map(eo_obj): -1,
-      obj->cur.map, obj->cur.usemap,
+      obj->map.cur.map, obj->map.cur.usemap,
       _evas_render_has_map(eo_obj, obj));
    if (_evas_render_has_map(eo_obj, obj))
      {
@@ -1020,7 +1020,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                 obj->layer->evas->engine.func->image_map_surface_new
                 (e->engine.data.output, obj->map.surface_w,
                  obj->map.surface_h,
-                 obj->cur.map->alpha);
+                 obj->map.cur.map->alpha);
              RDI(level);
              RD("        fisrt surf: %ix%i\n", sw, sh);
              changed = EINA_TRUE;
@@ -1055,8 +1055,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         /* mark the old map as invalid, so later we don't reuse it as a
          * cache. */
-        if (changed && obj->prev.map)
-           obj->prev.valid_map = EINA_FALSE;
+        if (changed && obj->map.prev.map)
+           obj->map.prev.valid_map = EINA_FALSE;
 
         // clear surface before re-render
         if ((changed) && (obj->map.surface))
@@ -1067,7 +1067,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RD("        children redraw\n");
              // FIXME: calculate "changes" within map surface and only clear
              // and re-render those
-             if (obj->cur.map->alpha)
+             if (obj->map.cur.map->alpha)
                {
                   ctx = e->engine.func->context_new(e->engine.data.output);
                   e->engine.func->context_color_set
@@ -1133,7 +1133,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              obj->map.surface = e->engine.func->image_dirty_region
                 (e->engine.data.output, obj->map.surface,
                  0, 0, obj->map.surface_w, obj->map.surface_h);
-             obj->cur.valid_map = EINA_TRUE;
+             obj->map.cur.valid_map = EINA_TRUE;
           }
         e->engine.func->context_clip_unset(e->engine.data.output,
                                            context);
@@ -1154,9 +1154,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        Evas_Object *tobj;
 
                        obj->cur.cache.clip.dirty = EINA_TRUE;
-                       tobj = obj->cur.map_parent;
-                       obj->cur.map_parent = obj->cur.clipper->cur.map_parent;
-                       obj->cur.map_parent = tobj;
+                       tobj = obj->map.cur.map_parent;
+                       obj->map.cur.map_parent = obj->cur.clipper->map.cur.map_parent;
+                       obj->map.cur.map_parent = tobj;
                     }
 
                   RECTS_CLIP_TO_RECT(x, y, w, h,
@@ -1181,7 +1181,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              evas_draw_image_map_async_check
                (obj, e->engine.data.output, context, surface,
                 obj->map.surface, obj->map.spans,
-                obj->cur.map->smooth, 0, do_async);
+                obj->map.cur.map->smooth, 0, do_async);
           }
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
@@ -1315,7 +1315,7 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
         coy = obj->cur.cache.clip.y;
         cow = obj->cur.cache.clip.w;
         coh = obj->cur.cache.clip.h;
-        if ((obj->cur.map) && (obj->cur.usemap))
+        if ((obj->map.cur.map) && (obj->map.cur.usemap))
           {
              Evas_Object *eo_oo;
              Evas_Object_Protected_Data *oo;
@@ -1324,9 +1324,9 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
              oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
              while (oo->cur.clipper)
                {
-                  if ((oo->cur.clipper->cur.map_parent
-                       != oo->cur.map_parent) &&
-                      (!((oo->cur.map) && (oo->cur.usemap))))
+                  if ((oo->cur.clipper->map.cur.map_parent
+                       != oo->map.cur.map_parent) &&
+                      (!((oo->map.cur.map) && (oo->map.cur.usemap))))
                     break;
                   RECTS_CLIP_TO_RECT(cox, coy, cow, coh,
                                      oo->cur.geometry.x,
@@ -2171,7 +2171,7 @@ void
 _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   if ((obj->cur.map) && obj->map.surface)
+   if ((obj->map.cur.map) && obj->map.surface)
      {
         obj->layer->evas->engine.func->image_map_surface_free
            (obj->layer->evas->engine.data.output, obj->map.surface);

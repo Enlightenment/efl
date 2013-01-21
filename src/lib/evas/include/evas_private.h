@@ -519,10 +519,8 @@ struct _Evas_Object_Protected_Data
    Evas_Layer              *layer;
 
    struct {
-      Evas_Map             *map;
       Evas_Object_Protected_Data *clipper;
       Evas_Object          *eo_clipper;
-      Evas_Object          *map_parent;
       double                scale;
       Evas_Coord_Rectangle  geometry;
       Evas_Coord_Rectangle  bounding_box;
@@ -538,13 +536,12 @@ struct _Evas_Object_Protected_Data
       struct {
          unsigned char      r, g, b, a;
       } color;
-      Eina_Bool             usemap : 1;
-      Eina_Bool             valid_map : 1;
+
+      Evas_Render_Op        render_op : 4;
+
       Eina_Bool             visible : 1;
       Eina_Bool             have_clipees : 1;
       Eina_Bool             anti_alias : 1;
-      Evas_Render_Op        render_op : 4;
-
       Eina_Bool             valid_bounding_box : 1;
       Eina_Bool             cached_surface : 1;
       Eina_Bool             parent_cached_surface : 1;
@@ -553,6 +550,13 @@ struct _Evas_Object_Protected_Data
    } cur, prev;
 
    struct {
+      struct { 
+         Evas_Map             *map;
+         Evas_Object          *map_parent;
+        
+         Eina_Bool             usemap : 1;
+         Eina_Bool             valid_map : 1;
+      } cur, prev;
       void                 *surface; // surface holding map if needed
       int                   surface_w, surface_h; // current surface w & h alloc
 

@@ -5,8 +5,8 @@ static inline Eina_Bool
 _evas_render_has_map(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return ((!((obj->func->can_map) && (obj->func->can_map(eo_obj)))) &&
-           ((obj->cur.map) && (obj->cur.usemap)));
-   //   return ((obj->cur.map) && (obj->cur.usemap));
+           ((obj->map.cur.map) && (obj->map.cur.usemap)));
+   //   return ((obj->map.cur.map) && (obj->map.cur.usemap));
 }
 
 static inline void
@@ -171,7 +171,7 @@ evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         if (obj->is_smart)
           {
              int mapsmt = 0;
-             if (obj->cur.map && obj->cur.usemap) mapsmt = 1;
+             if (obj->map.cur.map && obj->map.cur.usemap) mapsmt = 1;
              if (!mapsmt) return 1;
              if (evas_object_is_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
                                                obj->layer->evas->output.h) ||
@@ -231,12 +231,12 @@ evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    evas_object_coords_recalc(eo_obj, obj);
 
-   if ((obj->cur.map) && (obj->cur.usemap))
+   if ((obj->map.cur.map) && (obj->map.cur.usemap))
      {
-        cx = obj->cur.map->normal_geometry.x;
-        cy = obj->cur.map->normal_geometry.y;
-        cw = obj->cur.map->normal_geometry.w;
-        ch = obj->cur.map->normal_geometry.h;
+        cx = obj->map.cur.map->normal_geometry.x;
+        cy = obj->map.cur.map->normal_geometry.y;
+        cw = obj->map.cur.map->normal_geometry.w;
+        ch = obj->map.cur.map->normal_geometry.h;
      }
    else
      {
@@ -262,7 +262,7 @@ evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
         // breaks cliping of mapped images!!!
-        if (clipper->cur.map_parent == obj->cur.map_parent)
+        if (clipper->map.cur.map_parent == obj->map.cur.map_parent)
           {
              nx = clipper->cur.cache.clip.x;
              ny = clipper->cur.cache.clip.y;

@@ -88,9 +88,9 @@ static void
 evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *map_obj, Eina_Bool force)
 {
 #ifdef MAP_ACROSS
-   if ((obj->cur.map_parent != map_obj) || force)
+   if ((obj->map.cur.map_parent != map_obj) || force)
      {
-        obj->cur.map_parent = map_obj;
+        obj->map.cur.map_parent = map_obj;
         obj->cur.cache.clip.dirty = 1;
         evas_object_clip_recalc(eo_obj, obj);
         if (obj->is_smart)
@@ -100,7 +100,7 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
              EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
                {
                   // if obj has its own map - skip it. already done
-                  if ((obj2->cur.map) && (obj2->cur.usemap)) continue;
+                  if ((obj2->map.cur.map) && (obj2->map.cur.usemap)) continue;
                   Evas_Object *eo_obj2 = obj2->object;
                   evas_object_child_map_across_mark(eo_obj2, obj2, map_obj, force);
                }
@@ -125,8 +125,8 @@ evas_object_clip_across_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *o
 {
 #ifdef MAP_ACROSS
    if (!obj->cur.clipper) return;
-   if (obj->cur.clipper->cur.map_parent != obj->cur.map_parent)
-      evas_object_child_map_across_mark(eo_obj, obj, obj->cur.map_parent, 1);
+   if (obj->cur.clipper->map.cur.map_parent != obj->map.cur.map_parent)
+      evas_object_child_map_across_mark(eo_obj, obj, obj->map.cur.map_parent, 1);
 #endif
 }
 
@@ -139,9 +139,9 @@ evas_object_clip_across_clippees_check(Evas_Object *eo_obj, Evas_Object_Protecte
 
    if (!obj->clip.clipees) return;
 // schloooooooooooow:
-//   evas_object_child_map_across_mark(eo_obj, obj->cur.map_parent, 1);
+//   evas_object_child_map_across_mark(eo_obj, obj->map.cur.map_parent, 1);
 // buggy:
-   evas_object_child_map_across_mark(eo_obj, obj, obj->cur.map_parent, 0);
+   evas_object_child_map_across_mark(eo_obj, obj, obj->map.cur.map_parent, 0);
    if (obj->cur.cache.clip.dirty)
      {
 	EINA_LIST_FOREACH(obj->clip.clipees, l, eo_obj2)
@@ -161,7 +161,7 @@ void
 evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
 #ifdef MAP_ACROSS
-   if ((obj->cur.map) && (obj->cur.usemap))
+   if ((obj->map.cur.map) && (obj->map.cur.usemap))
       evas_object_child_map_across_mark(eo_obj, obj, eo_obj, 0);
    else
      {
@@ -170,7 +170,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
              Evas_Object_Protected_Data *smart_parent_obj =
                 eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
              evas_object_child_map_across_mark
-                (eo_obj, obj, smart_parent_obj->cur.map_parent, 0);
+                (eo_obj, obj, smart_parent_obj->map.cur.map_parent, 0);
           }
         else
            evas_object_child_map_across_mark(eo_obj, obj, NULL, 0);
@@ -300,7 +300,7 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(eo_obj, obj);
    if ((!obj->is_smart) &&
-       (!((obj->cur.map) && (obj->cur.usemap))))
+       (!((obj->map.cur.map) && (obj->map.cur.usemap))))
      {
         if (evas_object_is_in_output_rect(eo_obj, obj,
                                           obj->layer->evas->pointer.x,
@@ -375,7 +375,7 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(eo_obj, obj);
    if ((!obj->is_smart) &&
-       (!((obj->cur.map) && (obj->cur.usemap))))
+       (!((obj->map.cur.map) && (obj->map.cur.usemap))))
      {
         if (evas_object_is_in_output_rect(eo_obj, obj,
                                           obj->layer->evas->pointer.x,
