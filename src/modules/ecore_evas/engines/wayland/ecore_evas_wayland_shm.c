@@ -104,6 +104,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    Ecore_Evas_Interface_Wayland *iface;
    Ecore_Evas *ee;
    int method = 0, count = 0;
+   int fx, fy, fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -167,15 +168,21 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 
+   /* frame offset and size */
+   fx = 4;
+   fy = 18;
+   fw = 8;
+   fh = 22;
+
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, method);
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
+   evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
 
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)
-     evas_output_framespace_set(ee->evas, 4, 18, 8, 22);
+     evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
 
    if (parent)
      p = ecore_wl_window_find(parent);
@@ -244,6 +251,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   int orig_w, orig_h;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -253,6 +261,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    ee->req.w = w;
    ee->req.h = h;
+   orig_w = w;
+   orig_h = h;
 
    wdata = ee->engine.data;
 
@@ -265,6 +275,9 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (ee->prop.min.h > h) h = ee->prop.min.h;
         else if (h > ee->prop.max.h) h = ee->prop.max.h;
 
+        orig_w = w;
+        orig_h = h;
+
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         w += fw;
         h += fh;
@@ -272,8 +285,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    if ((ee->w != w) || (ee->h != h))
      {
-        ee->w = w;
-        ee->h = h;
+        ee->w = orig_w;
+        ee->h = orig_h;
 
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
@@ -338,12 +351,14 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((!ee) || (ee->visible)) return;
 
-   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
    wdata = ee->engine.data;
 
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
@@ -359,7 +374,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if (wdata->win)
      {
         ecore_wl_window_show(wdata->win);
-        ecore_wl_window_update_size(wdata->win, ee->w, ee->h);
+        ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
         ecore_wl_window_buffer_attach(wdata->win, 
                                       wdata->buffer, 0, 0);
 
@@ -374,7 +389,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if (wdata->frame)
      {
         evas_object_show(wdata->frame);
-        evas_object_resize(wdata->frame, ee->w, ee->h);
+        evas_object_resize(wdata->frame, ee->w + fw, ee->h + fh);
      }
 
    ee->visible = 1;
@@ -418,6 +433,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl_Window *win = NULL;
+   int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -435,7 +451,8 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    /* if (wdata->win) */
    /*   ecore_wl_window_transparent_set(wdata->win, alpha); */
 
-   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
@@ -443,12 +460,12 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
         einfo->info.dest = wdata->pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
 
    if (win)
      {
-        ecore_wl_window_update_size(win, ee->w, ee->h);
+        ecore_wl_window_update_size(win, ee->w + fw, ee->h + fh);
         ecore_wl_window_buffer_attach(win, wdata->buffer, 0, 0);
      }
 }
@@ -458,6 +475,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -469,7 +487,8 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
    if (wdata->win)
      ecore_wl_window_transparent_set(wdata->win, transparent);
 
-   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
@@ -477,12 +496,12 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
         einfo->info.dest = wdata->pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
 
    if (wdata->win)
      {
-        ecore_wl_window_update_size(wdata->win, ee->w, ee->h);
+        ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
         ecore_wl_window_buffer_attach(wdata->win, 
                                       wdata->buffer, 0, 0);
      }
@@ -656,8 +675,11 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
    wdata = ee->engine.data;
    if (wdata->win) 
      {
+        int fw, fh;
         wdata->win->resizing = EINA_TRUE;
-        ecore_wl_window_resize(wdata->win, ee->w, ee->h, location);
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
      }
 }
 #endif
