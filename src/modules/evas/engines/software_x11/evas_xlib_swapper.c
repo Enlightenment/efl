@@ -648,6 +648,10 @@ evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
         free(swp);
         return NULL;
      }
+   if (swp->depth == 24)
+     { // need to adjust to 32bpp?? have to check
+        swp->depth = 32;
+     }
    if (swap_debug) printf("Swapper allocated OK\n");
    return swp;
 }
