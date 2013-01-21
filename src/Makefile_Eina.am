@@ -78,7 +78,8 @@ lib/eina/eina_inline_value.x \
 lib/eina/eina_inline_lock_barrier.x \
 lib/eina/eina_tmpstr.h \
 lib/eina/eina_alloca.h \
-lib/eina/eina_cow.h
+lib/eina/eina_cow.h \
+lib/eina/eina_inline_unicode.x
 
 # Will be back for developper after 1.2.
 # lib/eina/eina_model.h
@@ -142,7 +143,8 @@ lib/eina/eina_share_common.h \
 lib/eina/eina_private.h \
 lib/eina/eina_strbuf_common.h \
 lib/eina/eina_tmpstr.c \
-lib/eina/eina_cow.c
+lib/eina/eina_cow.c \
+lib/eina/eina_abi.c
 
 # Will be back for developper after 1.2
 # lib/eina/eina_model.c \

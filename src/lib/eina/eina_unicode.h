@@ -124,7 +124,7 @@ EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL
  * @return the codepoint found, 0 if @p buf or @p iindex are NULL
  * @since 1.1.0
  */
-EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
+static inline Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
@@ -171,6 +171,8 @@ EAPI Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA
  * @since 1.1.0
  */
 EAPI char * eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+#include "eina_inline_unicode.x"
 
 /**
  * @}
