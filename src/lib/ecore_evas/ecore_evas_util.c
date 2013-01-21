@@ -120,12 +120,9 @@ static void
 _ecore_evas_obj_callback_resize(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   Evas_Coord ow, oh, fw, fh;
+   Evas_Coord ow, oh;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   evas_output_framespace_get(e, NULL, NULL, &fw, &fh);
-   ow += fw;
-   oh += fh;
    ecore_evas_resize(ee, ow, oh);
 }
 
