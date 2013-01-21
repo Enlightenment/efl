@@ -230,6 +230,8 @@ ecore_x_image_get(Ecore_X_Image *im,
           return 0;
 
         _ecore_x_image_err = 0;
+        
+        ecore_x_sync();
         // optimised path
         ph = XSetErrorHandler((XErrorHandler)_ecore_x_image_error_handler);
         if ((sx == 0) && (w == im->w))

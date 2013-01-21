@@ -1,3 +1,8 @@
+2013-01-21  Carsten Haitzler (The Rasterman)
+
+        * Fix xsync problem in ecore_x_image_get() where prior errors
+        can get caught.
+
 2013-01-18  Jihoon Kim (jihoon)
 
 	* edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
