@@ -589,17 +589,13 @@ _image_source_events_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object_Image *o = _pd;
    Eina_Bool source_events = va_arg(*list, int);
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Proxy_Data *proxy_write;
 
    source_events = !!source_events;
    if (obj->proxy->src_events == source_events) return;
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-				((const Eina_Cow_Data**)&obj->proxy));
-   proxy_write->src_events = source_events;
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&obj->proxy),
-		 proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->src_events = source_events;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
 
    if (!o->cur.source) return;
    if ((obj->proxy->src_invisible) || (!source_events)) return;
@@ -644,7 +640,6 @@ _image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object_Protected_Data *src_obj;
    Evas_Object_Image *o = _pd;
    Eina_Bool visible = va_arg(*list, int);
-   Evas_Object_Proxy_Data *proxy_write;
 
    if (!o->cur.source) return;
 
@@ -652,13 +647,9 @@ _image_source_visible_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    src_obj = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
    if (src_obj->proxy->src_invisible == !visible) return;
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-				((const Eina_Cow_Data**)&src_obj->proxy));
-
-   proxy_write->src_invisible = !visible;
-
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&src_obj->proxy), proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src_obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->src_invisible = !visible;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src_obj->proxy, proxy_write);
 
    src_obj->changed_src_visible = EINA_TRUE;
    evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
@@ -2725,30 +2716,27 @@ _proxy_unset(Evas_Object *proxy)
    Evas_Object_Image *o = eo_data_get(proxy, MY_CLASS);
    Evas_Object_Protected_Data *cur_source;
    Evas_Object_Protected_Data *cur_proxy;
-   Evas_Object_Proxy_Data *proxy_source_write;
-   Evas_Object_Proxy_Data *proxy_write;
 
    if (!o->cur.source) return;
 
    cur_source = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
    cur_proxy = eo_data_get(proxy, EVAS_OBJ_CLASS);
 
-   proxy_source_write = eina_cow_write(evas_object_proxy_cow,
-				((const Eina_Cow_Data**)&cur_source->proxy));
-   proxy_source_write->proxies = eina_list_remove(proxy_source_write->proxies,
-						  proxy);
-
-   if (proxy_source_write->src_invisible)
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_source_write)
      {
-        proxy_source_write->src_invisible = EINA_FALSE;
-        cur_source->changed_src_visible = EINA_TRUE;
-        evas_object_change(o->cur.source, cur_source);
-        evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
-                                                  EINA_FALSE, EINA_TRUE);
+       proxy_source_write->proxies = eina_list_remove(proxy_source_write->proxies,
+						      proxy);
+       
+       if (proxy_source_write->src_invisible)
+	 {
+	   proxy_source_write->src_invisible = EINA_FALSE;
+	   cur_source->changed_src_visible = EINA_TRUE;
+	   evas_object_change(o->cur.source, cur_source);
+	   evas_object_smart_member_cache_invalidate(o->cur.source, EINA_FALSE,
+						     EINA_FALSE, EINA_TRUE);
+	 }
      }
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&cur_source->proxy),
-		 proxy_source_write);
+   EINA_COW_WRITE_END(evas_object_proxy_cow, cur_source->proxy, proxy_source_write);
 
    o->cur.source = NULL;
 
@@ -2758,12 +2746,9 @@ _proxy_unset(Evas_Object *proxy)
         o->cur.defmap = NULL;
      }
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-				((const Eina_Cow_Data**)&cur_proxy->proxy));
-   proxy_write->is_proxy = EINA_FALSE;
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&cur_proxy->proxy),
-		 proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->is_proxy = EINA_FALSE;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, cur_proxy->proxy, proxy_write);
 }
 
 static void
@@ -2772,31 +2757,23 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
    Evas_Object_Protected_Data *src = eo_data_get(eo_src, EVAS_OBJ_CLASS);
    Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = eo_data_get(eo_proxy, MY_CLASS);
-   Evas_Object_Proxy_Data *proxy_write;
-   Evas_Object_Proxy_Data *proxy_src_write;
 
    evas_object_image_file_set(eo_proxy, NULL, NULL);
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-				((const Eina_Cow_Data**)&proxy->proxy));
-   proxy_write->is_proxy = EINA_TRUE;
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&proxy->proxy),
-		 proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->is_proxy = EINA_TRUE;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy, proxy_write);
 
    o->cur.source = eo_src;
    o->load_error = EVAS_LOAD_ERROR_NONE;
 
-   proxy_src_write = eina_cow_write(evas_object_proxy_cow,
-			       ((const Eina_Cow_Data**)&src->proxy));
-
-   proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies,
-					       eo_proxy);
-   proxy_src_write->redraw = EINA_TRUE;
-
-   eina_cow_done(evas_object_proxy_cow,
-		 ((const Eina_Cow_Data**)&src->proxy),
-		 proxy_src_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)
+     {
+        proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies,
+                                                    eo_proxy);
+        proxy_src_write->redraw = EINA_TRUE;
+     }
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_src_write);
 }
 
 /* Some moron just set a proxy on a proxy.
@@ -2873,7 +2850,6 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
 {
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Object_Protected_Data *source;
-   Evas_Object_Proxy_Data *proxy_write;
    void *ctx;
 /*   Evas_Object *eo_obj2, *clip;*/
    int w, h;
@@ -2884,52 +2860,51 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
    w = source->cur.geometry.w;
    h = source->cur.geometry.h;
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-				(const Eina_Cow_Data**)&source->proxy);
-   
-   proxy_write->redraw = EINA_FALSE;
-
-   /* We need to redraw surface then */
-   if ((proxy_write->surface) &&
-       ((proxy_write->w != w) || (proxy_write->h != h)))
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_write)
      {
-        e->engine.func->image_map_surface_free(e->engine.data.output,
-                                               proxy_write->surface);
-        proxy_write->surface = NULL;
-     }
+        proxy_write->redraw = EINA_FALSE;
 
-   /* FIXME: Hardcoded alpha 'on' */
-   /* FIXME (cont): Should see if the object has alpha */
-   if (!proxy_write->surface)
-     {
-        proxy_write->surface = e->engine.func->image_map_surface_new
-           (e->engine.data.output, w, h, 1);
-        if (!proxy_write->surface) goto end;
-        proxy_write->w = w;
-        proxy_write->h = h;
-     }
+        /* We need to redraw surface then */
+        if ((proxy_write->surface) &&
+            ((proxy_write->w != w) || (proxy_write->h != h)))
+          {
+             e->engine.func->image_map_surface_free(e->engine.data.output,
+                                                    proxy_write->surface);
+             proxy_write->surface = NULL;
+          }
 
-   ctx = e->engine.func->context_new(e->engine.data.output);
-   e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
-   e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
-   e->engine.func->rectangle_draw(e->engine.data.output, ctx,
-                                  proxy_write->surface, 0, 0, w, h,
-                                  do_async);
-   e->engine.func->context_free(e->engine.data.output, ctx);
+        /* FIXME: Hardcoded alpha 'on' */
+        /* FIXME (cont): Should see if the object has alpha */
+        if (!proxy_write->surface)
+          {
+             proxy_write->surface = e->engine.func->image_map_surface_new
+               (e->engine.data.output, w, h, 1);
+             if (!proxy_write->surface) goto end;
+             proxy_write->w = w;
+             proxy_write->h = h;
+          }
 
-   ctx = e->engine.func->context_new(e->engine.data.output);
-   evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
-                      -source->cur.geometry.x,
-                      -source->cur.geometry.y,
-                      1, 0, 0, e->output.w, e->output.h, EINA_TRUE
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
+        e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
+        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+                                       proxy_write->surface, 0, 0, w, h,
+                                       do_async);
+        e->engine.func->context_free(e->engine.data.output, ctx);
+
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
+                           -source->cur.geometry.x,
+                           -source->cur.geometry.y,
+                           1, 0, 0, e->output.w, e->output.h, EINA_TRUE
 #ifdef REND_DBG
-                      , 1
+                           , 1
 #endif
-                      , do_async);
+                           , do_async);
 
-   e->engine.func->context_free(e->engine.data.output, ctx);
-   proxy_write->surface = e->engine.func->image_dirty_region
-      (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
+        e->engine.func->context_free(e->engine.data.output, ctx);
+        proxy_write->surface = e->engine.func->image_dirty_region
+          (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
 /*   
    ctx = e->engine.func->context_new(e->engine.data.output);
    if (eo_isa(source, EVAS_OBJ_SMART_CLASS))
@@ -2957,11 +2932,10 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
    e->engine.func->context_free(e->engine.data.output, ctx);
    proxy_write->surface = e->engine.func->image_dirty_region
       (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
- */
+*/
+     }
  end:
-   eina_cow_done(evas_object_proxy_cow,
-		 (const Eina_Cow_Data**)&source->proxy,
-		 proxy_write);
+   EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
 }
 
 static void

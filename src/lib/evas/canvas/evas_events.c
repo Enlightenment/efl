@@ -195,7 +195,6 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
    Evas_Object_Protected_Data *src = eo_data_get(eo_src, EVAS_OBJ_CLASS);
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Coord_Point canvas = ev->canvas;
-   Evas_Object_Proxy_Data *proxy_write;
    Evas_Object_Protected_Data *child;
    Evas_Object *eo_child;
    Eina_List *l;
@@ -210,24 +209,22 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
 
    ev->event_src = eo_obj;
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                ((const Eina_Cow_Data**)&src->proxy));
-
-   if (proxy_write->src_event_in)
-     proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
-
-   if (src->is_smart)
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
      {
-        proxy_write->src_event_in = _evas_event_object_list_raw_in_get(eo_e,
-								     proxy_write->src_event_in,
-								     evas_object_smart_members_get_direct(eo_src),
-								     NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
-     }
-   else
-     proxy_write->src_event_in = eina_list_append(proxy_write->src_event_in, eo_src);
+       if (proxy_write->src_event_in)
+	 proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
 
-   eina_cow_done(evas_object_proxy_cow,
-                 ((const Eina_Cow_Data**)&src->proxy), proxy_write);
+       if (src->is_smart)
+	 {
+	   proxy_write->src_event_in = _evas_event_object_list_raw_in_get(eo_e,
+									  proxy_write->src_event_in,
+									  evas_object_smart_members_get_direct(eo_src),
+									  NULL, ev->canvas.x, ev->canvas.y, &no_rep, EINA_TRUE);
+	 }
+       else
+	 proxy_write->src_event_in = eina_list_append(proxy_write->src_event_in, eo_src);
+     }
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
    if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
 
@@ -331,8 +328,6 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
              child = eo_data_get(eo_child, EVAS_OBJ_CLASS);
              if ((child->mouse_grabbed == 0) && (!e->delete_me))
                {
-                  Evas_Object_Proxy_Data *proxy_write;
-
                   if (child->mouse_in) continue;
                   child->mouse_in = 0;
                   if (child->delete_me || e->is_frozen) continue;
@@ -343,13 +338,9 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
                                              &ev->cur.canvas.y,
                                              child->mouse_grabbed);
 
-                  proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                               ((const Eina_Cow_Data**) &src->proxy));
-                  proxy_write->src_event_in =
-                     eina_list_remove(proxy_write->src_event_in, eo_child);
-                  eina_cow_done(evas_object_proxy_cow,
-                                ((const Eina_Cow_Data**)&src->proxy),
-                                proxy_write);
+		  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+		    proxy_write->src_event_in = eina_list_remove(proxy_write->src_event_in, eo_child);
+		  EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
                   evas_object_event_callback_call(eo_child, child,
                                                   EVAS_CALLBACK_MOUSE_OUT,
@@ -446,17 +437,12 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
           }
         if (e->pointer.mouse_grabbed == 0)
           {
-             Evas_Object_Proxy_Data *proxy_write;
-
-             proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                          ((const Eina_Cow_Data**)&src->proxy));
-
-             eina_list_free(proxy_write->src_event_in);
-             proxy_write->src_event_in = ins;
-
-             eina_cow_done(evas_object_proxy_cow,
-                           ((const Eina_Cow_Data**)&src->proxy),
-                           proxy_write);
+	     EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+	       {
+		 eina_list_free(proxy_write->src_event_in);
+		 proxy_write->src_event_in = ins;
+	       }
+	     EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
           }
         else
           {
@@ -782,17 +768,12 @@ _evas_event_source_multi_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
         eina_list_free(copy);
         if (e->pointer.mouse_grabbed == 0)
           {
-             Evas_Object_Proxy_Data *proxy_write;
-
-             proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                          ((const Eina_Cow_Data**)&src->proxy));
-
-             eina_list_free(proxy_write->src_event_in);
-             proxy_write->src_event_in = ins;
-
-             eina_cow_done(evas_object_proxy_cow,
-                           ((const Eina_Cow_Data**)&src->proxy),
-                           proxy_write);
+	     EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+	       {
+		 eina_list_free(proxy_write->src_event_in);
+		 proxy_write->src_event_in = ins;
+	       }
+	     EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
           }
         else
           eina_list_free(ins);
@@ -812,7 +793,6 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,  Evas_Event_
    Evas_Object *eo_child;
    Eina_List *ins = NULL;
    Eina_List *l;
-   Evas_Object_Proxy_Data *proxy_write;
    Evas_Coord_Point point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
@@ -854,15 +834,12 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,  Evas_Event_
           }
      }
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                ((const Eina_Cow_Data**)&src->proxy));
-
-   eina_list_free(proxy_write->src_event_in);
-   proxy_write->src_event_in = ins;
-
-   eina_cow_done(evas_object_proxy_cow,
-                 ((const Eina_Cow_Data**)&src->proxy),
-                 proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+     {
+       eina_list_free(proxy_write->src_event_in);
+       proxy_write->src_event_in = ins;
+     }
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
    ev->canvas = canvas;
 }
@@ -878,7 +855,6 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_
    Evas_Object *eo_child;
    Eina_List *l;
    Eina_List *copy;
-   Evas_Object_Proxy_Data *proxy_write;
    Evas_Coord_Point point;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
@@ -911,14 +887,9 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_
 
    eina_list_free(copy);
 
-   proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                ((const Eina_Cow_Data**)&src->proxy));
-
-   proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
-
-   eina_cow_done(evas_object_proxy_cow,
-                 ((const Eina_Cow_Data**)&src->proxy),
-                 proxy_write);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
    ev->canvas = canvas;
 }

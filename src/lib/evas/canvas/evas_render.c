@@ -277,16 +277,12 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                {
 		 Evas_Object_Protected_Data *proxy;
-		 Evas_Object_Proxy_Data *proxy_write;
 
 		 proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
 
-		 proxy_write = eina_cow_write(evas_object_proxy_cow,
-					      ((const Eina_Cow_Data**)&proxy->proxy));
-		 proxy_write->redraw = EINA_TRUE;
-		 eina_cow_done(evas_object_proxy_cow,
-			       ((const Eina_Cow_Data**)&proxy->proxy),
-			       proxy_write);
+		 EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
+		   proxy_write->redraw = EINA_TRUE;
+		 EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy, proxy_write);
                }
           }
      }
@@ -306,14 +302,9 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy->proxies)
                {
-                  Evas_Object_Proxy_Data *proxy_write;
-
-                  proxy_write = eina_cow_write(evas_object_proxy_cow,
-                                               ((const Eina_Cow_Data**)&obj->proxy));
-                  proxy_write->redraw = EINA_TRUE;
-                  eina_cow_done(evas_object_proxy_cow,
-                                ((const Eina_Cow_Data**)&obj->proxy),
-                                proxy_write);
+		  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+		    proxy_write->redraw = EINA_TRUE;
+		  EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
 
                   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                     {
