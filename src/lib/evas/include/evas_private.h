@@ -555,16 +555,14 @@ struct _Evas_Object_Protected_Data
    struct {
       void                 *surface; // surface holding map if needed
       int                   surface_w, surface_h; // current surface w & h alloc
+
+      Evas_Map             *cache_map;
+      RGBA_Map             *spans;
    } map;
 
-   Evas_Map                   *cache_map;
    char                       *name;
 
    Evas_Intercept_Func        *interceptors;
-
-   struct {
-      Eina_List               *elements;
-   } data;
 
    Eina_List                  *grabs;
 
@@ -588,8 +586,6 @@ struct _Evas_Object_Protected_Data
    Evas_Object                *object;
 
    Evas_Size_Hints            *size_hints;
-
-   RGBA_Map                   *spans;
 
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;

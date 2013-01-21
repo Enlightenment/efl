@@ -58,8 +58,8 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
                     ch = EINA_TRUE;
                   if (!ch)
                     {
-                       if (obj->cache_map) evas_map_free(obj->cache_map); 
-                       obj->cache_map = obj->cur.map;
+                       if (obj->map.cache_map) evas_map_free(obj->map.cache_map); 
+                       obj->map.cache_map = obj->cur.map;
                        obj->cur.map = obj->prev.map;
                     }
                }
@@ -170,11 +170,11 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
    if (eo_obj)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-        if ((obj) && (obj->spans))
+        if ((obj) && (obj->map.spans))
           {
-             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->spans);
-             free(obj->spans);
-             obj->spans = NULL;
+             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->map.spans);
+             free(obj->map.spans);
+             obj->map.spans = NULL;
           }      
      }
    m->magic = 0;
@@ -537,9 +537,9 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
 
              if (obj->prev.map == obj->cur.map)
                obj->cur.map = NULL;
-             else if (!obj->cache_map)
+             else if (!obj->map.cache_map)
                {
-                  obj->cache_map = obj->cur.map;
+                  obj->map.cache_map = obj->cur.map;
                   obj->cur.map = NULL;
                }
              else
@@ -567,8 +567,8 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (!obj->cur.map)
      {
-        obj->cur.map = obj->cache_map;
-        obj->cache_map = NULL;
+        obj->cur.map = obj->map.cache_map;
+        obj->map.cache_map = NULL;
      }
 
    // We do have the same exact count of point in this map, so just copy it
@@ -1184,11 +1184,11 @@ evas_object_map_update(Evas_Object *eo_obj,
    RGBA_Map_Point *pts, *pt;
 
    if (!obj) return;
-   if (obj->spans)
+   if (obj->map.spans)
      {
-        if (obj->spans->x != x || obj->spans->y != y ||
-            obj->spans->image.w != imagew || obj->spans->image.h != imageh ||
-            obj->spans->uv.w != uvw || obj->spans->uv.h != uvh)
+        if (obj->map.spans->x != x || obj->map.spans->y != y ||
+            obj->map.spans->image.w != imagew || obj->map.spans->image.h != imageh ||
+            obj->map.spans->uv.w != uvw || obj->map.spans->uv.h != uvh)
           obj->changed_map = EINA_TRUE;
      }
    else
@@ -1198,31 +1198,31 @@ evas_object_map_update(Evas_Object *eo_obj,
 
    if (!obj->changed_map) return ;
 
-   if (obj->cur.map && obj->spans && obj->cur.map->count != obj->spans->count)
+   if (obj->cur.map && obj->map.spans && obj->cur.map->count != obj->map.spans->count)
      {
-        if (obj->spans)
+        if (obj->map.spans)
           {
              // Destroy engine side spans
-             free(obj->spans);
+             free(obj->map.spans);
           }
-        obj->spans = NULL;
+        obj->map.spans = NULL;
      }
 
-   if (!obj->spans)
-     obj->spans = calloc(1, sizeof (RGBA_Map) +
+   if (!obj->map.spans)
+     obj->map.spans = calloc(1, sizeof (RGBA_Map) +
                          sizeof (RGBA_Map_Point) * (obj->cur.map->count - 1));
 
-   if (!obj->spans) return ;
+   if (!obj->map.spans) return ;
 
-   obj->spans->count = obj->cur.map->count;
-   obj->spans->x = x;
-   obj->spans->y = y;
-   obj->spans->uv.w = uvw;
-   obj->spans->uv.h = uvh;
-   obj->spans->image.w = imagew;
-   obj->spans->image.h = imageh;
+   obj->map.spans->count = obj->cur.map->count;
+   obj->map.spans->x = x;
+   obj->map.spans->y = y;
+   obj->map.spans->uv.w = uvw;
+   obj->map.spans->uv.h = uvh;
+   obj->map.spans->image.w = imagew;
+   obj->map.spans->image.h = imageh;
 
-   pts = obj->spans->pts;
+   pts = obj->map.spans->pts;
 
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;

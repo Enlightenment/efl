@@ -3374,7 +3374,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
              evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
 
              evas_draw_image_map_async_check(
-                 obj, output, context, surface, pixels, obj->spans,
+                 obj, output, context, surface, pixels, obj->map.spans,
                  o->cur.smooth_scale | obj->cur.map->smooth, 0, do_async);
           }
         else

@@ -83,15 +83,15 @@ evas_object_cur_prev(Evas_Object *eo_obj)
      {
         if (obj->prev.map != obj->cur.map)
           evas_map_free(obj->prev.map);
-        if (obj->cache_map == obj->prev.map)
-          obj->cache_map = NULL;
+        if (obj->map.cache_map == obj->prev.map)
+          obj->map.cache_map = NULL;
         obj->prev.map = NULL;
      }
 
    if (obj->cur.map != obj->prev.map)
      {
-        if (obj->cache_map) evas_map_free(obj->cache_map);
-        obj->cache_map = obj->prev.map;
+        if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
+        obj->map.cache_map = obj->prev.map;
      }
    obj->prev = obj->cur;
 }
@@ -108,7 +108,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    if (!strcmp(obj->type, "image")) evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_map_set(eo_obj, NULL);
    if (obj->prev.map) evas_map_free(obj->prev.map);
-   if (obj->cache_map) evas_map_free(obj->cache_map);
+   if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
    if (obj->map.surface)
      {
         if (obj->layer)
@@ -133,18 +133,10 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    evas_object_clip_changes_clean(eo_obj);
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
-   if (obj->spans)
+   if (obj->map.spans)
      {
-        free(obj->spans);
-        obj->spans = NULL;
-     }
-   while (obj->data.elements)
-     {
-        Evas_Data_Node *node;
-
-        node = obj->data.elements->data;
-        obj->data.elements = eina_list_remove(obj->data.elements, node);
-        free(node);
+        free(obj->map.spans);
+        obj->map.spans = NULL;
      }
    if (obj->size_hints)
      {

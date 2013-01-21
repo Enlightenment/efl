@@ -1180,7 +1180,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                (e->engine.data.output, context);
              evas_draw_image_map_async_check
                (obj, e->engine.data.output, context, surface,
-                obj->map.surface, obj->spans,
+                obj->map.surface, obj->map.spans,
                 obj->cur.map->smooth, 0, do_async);
           }
         // FIXME: needs to cache these maps and
