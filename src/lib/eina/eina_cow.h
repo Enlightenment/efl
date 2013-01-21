@@ -39,4 +39,16 @@ EAPI void eina_cow_memcpy(Eina_Cow *cow,
 
 EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
 
+#define EINA_COW_WRITE_BEGIN(Cow, Read, Write_Type, Write)		\
+  do									\
+    {									\
+      Write_Type *Write;						\
+      									\
+      Write = eina_cow_write(Cow, ((const Eina_Cow_Data**)&(Read)));
+
+#define EINA_COW_WRITE_END(Cow, Read, Write)				\
+      eina_cow_done(Cow, ((const Eina_Cow_Data**)&(Read)), Write);	\
+    }									\
+  while (0);
+
 #endif
