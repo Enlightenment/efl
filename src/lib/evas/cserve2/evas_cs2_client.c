@@ -42,8 +42,8 @@ static unsigned int _data_id = 0;
 
 static Eina_List *_requests = NULL;
 
-static struct sockaddr_un socksize;
 #ifndef UNIX_PATH_MAX
+static struct sockaddr_un socksize;
 #define UNIX_PATH_MAX sizeof(socksize.sun_path)
 #endif
 

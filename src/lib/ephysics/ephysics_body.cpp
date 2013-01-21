@@ -4787,7 +4787,7 @@ _ephysics_body_cylinder_face_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas
          bd = body->size.d;
          break;
       case EPHYSICS_BODY_CYLINDER_FACE_CURVED:
-         if ((h == body->size.d))
+         if (h == body->size.d)
            return;
          bw = body->size.w;
          bh = body->size.h;

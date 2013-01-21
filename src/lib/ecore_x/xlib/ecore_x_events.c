@@ -1834,8 +1834,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         ecore_event_add(ECORE_X_EVENT_DESKTOP_CHANGE, e, NULL, NULL);
      }
-   else if ((xevent->xclient.message_type ==
-             ECORE_X_ATOM_NET_REQUEST_FRAME_EXTENTS))
+   else if (xevent->xclient.message_type ==
+            ECORE_X_ATOM_NET_REQUEST_FRAME_EXTENTS)
      {
         Ecore_X_Event_Frame_Extents_Request *e;
 

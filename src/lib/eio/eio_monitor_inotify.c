@@ -96,8 +96,11 @@ _eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
    tmp_length = eina_stringshare_strlen(backend->parent->path) + length + 2;
    tmp = alloca(sizeof (char) * tmp_length);
 
-   snprintf(tmp, tmp_length, length ? "%s/%s" : "%s",
-	    backend->parent->path, file);
+   if (length > 0)
+     snprintf(tmp, tmp_length, "%s/%s", backend->parent->path, file);
+   else
+     snprintf(tmp, tmp_length, "%s", backend->parent->path);
+
 
    is_dir = !!(mask & IN_ISDIR);
 

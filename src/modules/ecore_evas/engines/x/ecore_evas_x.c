@@ -967,7 +967,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
         edata->netwm_sync_val_hi = (int)e->data.l[3];
         edata->netwm_sync_set = 1;
      }
-   else if ((e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST))
+   else if (e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_REQUEST)
      {
         ee = ecore_event_window_match(e->win);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
@@ -2054,7 +2054,7 @@ _shaped_do(Ecore_Evas *ee, int shaped)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Evas_Engine_Info_Software_X11 *einfo;
 
-   if ((ee->shaped == shaped)) return;
+   if (ee->shaped == shaped) return;
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
    ee->shaped = shaped;
    if (einfo)
@@ -2122,7 +2122,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if ((ee->alpha == alpha)) return;
+   if (ee->alpha == alpha) return;
 
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
@@ -2227,7 +2227,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    else if (!strcmp(ee->driver, "opengl_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-        if ((ee->alpha == alpha)) return;
+        if (ee->alpha == alpha) return;
 
         Evas_Engine_Info_GL_X11 *einfo;
 
@@ -2353,7 +2353,7 @@ static void
 _transparent_do(Ecore_Evas *ee, int transparent)
 {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
-   if ((ee->transparent == transparent)) return;
+   if (ee->transparent == transparent) return;
 
    Evas_Engine_Info_Software_X11 *einfo;
 

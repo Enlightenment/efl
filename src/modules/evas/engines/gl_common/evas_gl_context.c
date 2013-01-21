@@ -445,7 +445,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         if (vy < 0)
           {
              vh = h - (2 * vy);
-             if      ((rot == 0  ))                                 ay = 0;
+             if      (rot == 0) ay = 0;
              else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
              vy = -vy;
           }

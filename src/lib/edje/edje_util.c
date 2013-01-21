@@ -4011,7 +4011,7 @@ _size_min_restricted_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                {
                   if (!ep->chosen_description->fixed.w)
                     {
-                       if ((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
                          {
                             Evas_Coord tb_mw;
                             evas_object_textblock_size_formatted_get(ep->object,

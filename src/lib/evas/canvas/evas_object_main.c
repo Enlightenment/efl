@@ -1182,7 +1182,7 @@ evas_object_size_hint_aspect_get(const Evas_Object *eo_obj, Evas_Aspect_Control 
 static void
 _size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   const const Evas_Object_Protected_Data *obj = _pd;
+   const Evas_Object_Protected_Data *obj = _pd;
 
    Evas_Aspect_Control *aspect = va_arg(*list, Evas_Aspect_Control*);
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
