@@ -36,7 +36,7 @@ struct _Elm_Diskselector_Smart_Data
    Eina_List                            *under_items;
    Eina_List                            *left_blanks;
    Eina_List                            *right_blanks;
-   Ecore_Idle_Enterer                   *idler;
+   Ecore_Idle_Enterer                   *scroller_move_idle_enterer; // idle enterer for scroller move
    Ecore_Idle_Enterer                   *check_idler;
 
    int                                   item_count, len_threshold, len_side,

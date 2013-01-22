@@ -242,7 +242,7 @@ _scroller_move(void *data)
    _string_check(obj);
 
 end:
-   sd->idler = NULL;
+   sd->scroller_move_idle_enterer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -279,8 +279,8 @@ _resize_cb(void *data __UNUSED__,
 
    eo_do(obj, elm_scrollable_interface_paging_set(0, 0, (int)(w / sd->display_item_num), 0));
 
-   if (!sd->idler)
-     sd->idler = ecore_idle_enterer_before_add(_scroller_move, obj);
+   if (!sd->scroller_move_idle_enterer)
+     sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
 }
 
 static void
@@ -967,8 +967,8 @@ _elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
    if (it)
      {
         sd->selected_item = it;
-        if (!sd->idler)
-          sd->idler = ecore_idle_enterer_before_add(_scroller_move, obj);
+        if (!sd->scroller_move_idle_enterer)
+          sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
      }
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1041,7 +1041,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
-   if (sd->idler) return;
+   if (sd->scroller_move_idle_enterer) return;
 
    if (!sd->round)
      list = sd->items;
@@ -1230,6 +1230,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Diskselector_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
    Evas *evas;
+   Evas_Object *blank;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
@@ -1287,7 +1288,6 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_content_set(priv->main_box));
 
    /* left blank */
-   Evas_Object *blank;
    blank = _blank_add(obj);
    elm_box_pack_start(priv->main_box, blank);
    evas_object_show(blank);
@@ -1300,7 +1300,6 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->right_blanks = eina_list_append(priv->right_blanks, blank);
 
    _theme_data_get(obj);
-
    _sizing_eval(obj);
 
    evas_event_thaw(evas);
@@ -1379,10 +1378,10 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
    eina_list_free(sd->r_items);
 
-   if (sd->idler)
+   if (sd->scroller_move_idle_enterer)
      {
-        ecore_idle_enterer_del(sd->idler);
-        sd->idler = NULL;
+        ecore_idle_enterer_del(sd->scroller_move_idle_enterer);
+        sd->scroller_move_idle_enterer = NULL;
      }
 
    if (sd->check_idler)
@@ -1783,8 +1782,8 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (!sd->selected_item)
      sd->selected_item = it;
 
-   if (!sd->idler)
-     sd->idler = ecore_idle_enterer_before_add(_scroller_move, obj);
+   if (!sd->scroller_move_idle_enterer)
+     sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
 
    _sizing_eval(obj);
 
@@ -1832,8 +1831,8 @@ elm_diskselector_item_selected_set(Elm_Object_Item *it,
         _selected_item_indicate(sd->selected_item);
      }
 
-   if (!sd->idler)
-     sd->idler = ecore_idle_enterer_before_add(_scroller_move, WIDGET(item));
+   if (!sd->scroller_move_idle_enterer)
+     sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, WIDGET(item));
 }
 
 EAPI Eina_Bool
