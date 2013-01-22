@@ -919,12 +919,11 @@ _elm_calendar_smart_calculate(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 
 static void
 _style_changed(void *data,
-	       Evas_Object *obj,
+	       Evas_Object *obj __UNUSED__,
 	       const char *emission __UNUSED__,
 	       const char *source __UNUSED__)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!strcmp("double_spinners", elm_object_style_get(sd->obj)))
       sd->double_spinners = EINA_TRUE;
