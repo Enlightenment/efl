@@ -749,11 +749,15 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
+   Evas *evas;
 
    Elm_Diskselector_Smart_Data *sd = _pd;
 
    eo_do_super(obj, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
+
+   evas = evas_object_evas_get(obj);
+   evas_event_freeze(evas);
 
    if (sd->round)
      {
@@ -792,6 +796,9 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    _theme_data_get(obj);
    _sizing_eval(obj);
+
+   evas_event_thaw(evas);
+   evas_event_thaw_eval(evas);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -1222,6 +1229,10 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Diskselector_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas *evas;
+
+   evas = evas_object_evas_get(obj);
+   evas_event_freeze(evas);
 
    wd->resize_obj =
      edje_object_add(evas_object_evas_get(obj));
@@ -1291,6 +1302,9 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _theme_data_get(obj);
 
    _sizing_eval(obj);
+
+   evas_event_thaw(evas);
+   evas_event_thaw_eval(evas);
 }
 
 static void
@@ -1724,6 +1738,10 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    const void *data = va_arg(*list, const void *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_Diskselector_Smart_Data *sd = _pd;
+   Evas *evas;
+
+   evas = evas_object_evas_get(obj);
+   evas_event_freeze(evas);
 
    it = _item_new(obj, icon, label, func, data);
    sd->items = eina_list_append(sd->items, it);
@@ -1769,6 +1787,10 @@ _item_append(Eo *obj, void *_pd, va_list *list)
      sd->idler = ecore_idle_enterer_before_add(_scroller_move, obj);
 
    _sizing_eval(obj);
+
+   evas_event_thaw(evas);
+   evas_event_thaw_eval(evas);
+
    *ret = (Elm_Object_Item *)it;
 }
 
