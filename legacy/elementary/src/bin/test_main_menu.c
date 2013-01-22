@@ -19,7 +19,7 @@ test_main_menu(void *data __UNUSED__,
    Evas_Object *win, *bg, *menu, *label, *bx;
    Elm_Object_Item *menu_it, *menu_it1;
    char *s;
-   Eina_Bool enabled = EINA_FALSE;
+   Eina_Bool enabled = EINA_TRUE;
 
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
@@ -46,15 +46,15 @@ test_main_menu(void *data __UNUSED__,
    elm_box_pack_end(bx, label);
    evas_object_show(label);
 
-   s = getenv("ELM_EXTERNAL_MENU");
+   s = getenv("ELM_DISABLE_EXTERNAL_MENU");
    if (s)
-     enabled = !!atoi(s);
+     enabled = !atoi(s);
 
    if (!enabled)
      {
         label = elm_label_add(win);
-        elm_object_text_set(label, "(ELM_EXTERNAL_MENU environment variable not "
-                                   "set. Using local menu instead)");
+        elm_object_text_set(label, "(ELM_DISABLE_EXTERNAL_MENU environment "
+			    "variable is set. Using local menu instead)");
         evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(bx, label);

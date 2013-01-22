@@ -425,7 +425,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, indicator_service_90, T_STRING);
    ELM_CONFIG_VAL(D, T, indicator_service_180, T_STRING);
    ELM_CONFIG_VAL(D, T, indicator_service_270, T_STRING);
-   ELM_CONFIG_VAL(D, T, external_menu, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, disable_external_menu, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1128,7 +1128,7 @@ _config_load(void)
    _elm_config->indicator_service_90 = eina_stringshare_add("elm_indicator_landscape");
    _elm_config->indicator_service_180 = eina_stringshare_add("elm_indicator_portrait");
    _elm_config->indicator_service_270 = eina_stringshare_add("elm_indicator_landscape");
-   _elm_config->external_menu = EINA_FALSE;
+   _elm_config->disable_external_menu = EINA_FALSE;
 }
 
 static const char *
@@ -1659,8 +1659,8 @@ _env_get(void)
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_180, s);
    s = getenv("ELM_INDICATOR_SERVICE_270");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_270, s);
-   s = getenv("ELM_EXTERNAL_MENU");
-   if (s) _elm_config->external_menu = !!atoi(s);
+   s = getenv("ELM_DISABLE_EXTERNAL_MENU");
+   if (s) _elm_config->disable_external_menu = !!atoi(s);
 }
 
 EAPI Eina_Bool
@@ -2175,15 +2175,15 @@ elm_config_softcursor_mode_get(void)
 }
 
 EAPI Eina_Bool
-elm_config_external_menu_get(void)
+elm_config_disable_external_menu_get(void)
 {
-   return _elm_config->external_menu;
+   return _elm_config->disable_external_menu;
 }
 
 EAPI void
-elm_config_external_menu_set(Eina_Bool enable)
+elm_config_disable_external_menu_set(Eina_Bool disable)
 {
-   _elm_config->external_menu = !!enable;
+   _elm_config->disable_external_menu = !!disable;
 }
 
 EAPI void

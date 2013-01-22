@@ -234,7 +234,7 @@ struct _Elm_Config
    const char   *indicator_service_180;
    const char   *indicator_service_270;
    unsigned char selection_clear_enable;
-   unsigned char external_menu;
+   unsigned char disable_external_menu;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

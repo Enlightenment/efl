@@ -3606,7 +3606,7 @@ _main_menu_get(Eo *obj, void *_pd, va_list *list)
    _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (_elm_config->external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
+   if (!_elm_config->disable_external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
 #endif
 
    if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
