@@ -285,7 +285,7 @@ eina_unicode_utf8_get_prev(const char *buf, int *iindex)
 
    ind = *iindex;
    /* First obtain the codepoint at iindex */
-   r = eina_unicode_utf8_get_next(buf, &ind);
+   r = eina_unicode_utf8_next_get(buf, &ind);
 
    /* although when ind == 0 there's no previous char, we still want to get
     * the current char */
@@ -310,7 +310,7 @@ eina_unicode_utf8_get_len(const char *buf)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
 
-   while (eina_unicode_utf8_get_next(buf, &i))
+   while (eina_unicode_utf8_next_get(buf, &i))
         len++;
 
    return len;
@@ -334,7 +334,7 @@ eina_unicode_utf8_to_unicode(const char *utf, int *_len)
 
    for (i = 0, ind = 0, uind = buf ; i < len ; i++, uind++)
      {
-        *uind = eina_unicode_utf8_get_next(utf, &ind);
+        *uind = eina_unicode_utf8_next_get(utf, &ind);
      }
 
    return buf;

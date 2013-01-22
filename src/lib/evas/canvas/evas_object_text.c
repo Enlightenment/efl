@@ -1678,7 +1678,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
         return 0;
      }
    p = pos;
-   d = eina_unicode_utf8_get_next(str, &p);
+   d = eina_unicode_utf8_next_get(str, &p);
    if (decoded) *decoded = d;
    return p;
 }
