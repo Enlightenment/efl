@@ -351,6 +351,7 @@ test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    elm_entry_editable_set(en, EINA_FALSE);
    cal = elm_calendar_add(win);
+   elm_object_style_set(cal, "double_spinners");
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_THURSDAY);
    elm_calendar_select_mode_set(cal, ELM_CALENDAR_SELECT_MODE_ONDEMAND);
    elm_calendar_selectable_set(cal,

@@ -1,5 +1,5 @@
-#define CAL_SPIN(_sufix, _relative)\
-      part { name: "left_bt_"#_sufix;\
+#define CAL_SPIN(_sufix, _signal_sufix, _text, _relative)\
+      part { name: "left_bt"#_sufix;\
          mouse_events:  1;\
          description { state: "default" 0.0;\
             rel1 { to: #_relative;\
@@ -24,11 +24,11 @@
             image.middle: SOLID;\
          }\
       }\
-      part { name: "left_bt_"#_sufix"_over1";\
+      part { name: "left_bt"#_sufix"_over1";\
          mouse_events: 0;\
          description { state: "default" 0.0;\
-            rel1.to: "left_bt_"#_sufix;\
-            rel2 { to: "left_bt_"#_sufix;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2 { to: "left_bt"#_sufix;\
                relative: 1.0 0.5;\
             }\
             image {\
@@ -37,25 +37,25 @@
             }\
          }\
       }\
-      part { name: "left_bt_"#_sufix"_over2";\
+      part { name: "left_bt"#_sufix"_over2";\
          mouse_events: 1;\
          repeat_events: 1;\
          description { state: "default" 0.0;\
-            rel1.to: "left_bt_"#_sufix;\
-            rel2.to: "left_bt_"#_sufix;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
             image {\
                normal: "bt_shine.png";\
                border: 7 7 7 7;\
             }\
          }\
       }\
-      part { name: "left_bt_"#_sufix"_over3";\
+      part { name: "left_bt"#_sufix"_over3";\
          mouse_events: 1;\
          repeat_events: 1;\
          description { state: "default" 0.0;\
             color: 255 255 255 0;\
-            rel1.to: "left_bt_"#_sufix;\
-            rel2.to: "left_bt_"#_sufix;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
             image {\
                normal: "bt_glow.png";\
                border: 12 12 12 12;\
@@ -68,11 +68,11 @@
             color: 255 255 255 255;\
          }\
       } \
-      part { name: "left_bt_"#_sufix"_icon";\
+      part { name: "left_bt"#_sufix"_icon";\
          repeat_events: 1;\
          description { state: "default" 0.0;\
-            rel1.to: "left_bt_"#_sufix;\
-            rel2.to: "left_bt_"#_sufix;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
             align: 0.5 0.5;\
             min: 16 16;\
             max: 16 16;\
@@ -83,7 +83,7 @@
             image.normal: "sp_bt_r.png";\
          }\
       }\
-      part { name: "right_bt_"#_sufix;\
+      part { name: "right_bt"#_sufix;\
          mouse_events:  1;\
          description { state: "default" 0.0;\
             rel1 { to: #_relative;\
@@ -108,11 +108,11 @@
             image.middle: SOLID;\
          }\
       }\
-      part { name: "right_bt_"#_sufix"_over1";\
+      part { name: "right_bt"#_sufix"_over1";\
          mouse_events: 0;\
          description { state: "default" 0.0;\
-            rel1.to: "right_bt_"#_sufix;\
-            rel2 { to: "right_bt_"#_sufix;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2 { to: "right_bt"#_sufix;\
                relative: 1.0 0.5;\
             }\
             image {\
@@ -121,25 +121,25 @@
             }\
          }\
       }\
-      part { name: "right_bt_"#_sufix"_over2";\
+      part { name: "right_bt"#_sufix"_over2";\
          mouse_events: 1;\
          repeat_events: 1;\
          description { state: "default" 0.0;\
-            rel1.to: "right_bt_"#_sufix;\
-            rel2.to: "right_bt_"#_sufix;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
             image {\
                normal: "bt_shine.png";\
                border: 7 7 7 7;\
             }\
          }\
       }\
-      part { name: "right_bt_"#_sufix"_over3";\
+      part { name: "right_bt"#_sufix"_over3";\
          mouse_events: 1;\
          repeat_events: 1;\
          description { state: "default" 0.0;\
             color: 255 255 255 0;\
-            rel1.to: "right_bt_"#_sufix;\
-            rel2.to: "right_bt_"#_sufix;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
             image {\
                normal: "bt_glow.png";\
                border: 12 12 12 12;\
@@ -152,11 +152,11 @@
             color: 255 255 255 255;\
          }\
       }\
-      part { name: "right_bt_"#_sufix"_icon";\
+      part { name: "right_bt"#_sufix"_icon";\
          repeat_events: 1;\
          description { state: "default" 0.0;\
-            rel1.to: "right_bt_"#_sufix;\
-            rel2.to: "right_bt_"#_sufix;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
             align: 0.5 0.5;\
             min: 16 16;\
             max: 16 16;\
@@ -167,7 +167,7 @@
             image.normal: "sp_bt_l.png";\
          }\
       }\
-      part { name: "text_"#_sufix;\
+      part { name: #_text;\
          type: TEXT;\
          mouse_events: 0;\
          scale: 1;\
@@ -176,12 +176,12 @@
             fixed: 1 1;\
             rel1 { relative: 1.0 0.0;\
                offset: 3 2;\
-               to: "left_bt_"#_sufix;\
+               to: "left_bt"#_sufix;\
                to_y: #_relative;\
             }\
             rel2 { relative: 0.0 1.0;\
                offset: -3 -2;\
-               to_x: "right_bt_"#_sufix;\
+               to_x: "right_bt"#_sufix;\
                to_y: #_relative;\
             }\
             color: 0 0 0 255;\
@@ -196,95 +196,95 @@
       programs {\
           program { name: "dec_"#_sufix"_start";\
              signal: "mouse,down,1";\
-             source: "left_bt_"#_sufix;\
-             action: SIGNAL_EMIT "elm,action,decrement,"#_sufix",start" "";\
+             source: "left_bt"#_sufix;\
+             action: SIGNAL_EMIT "elm,action,decrement,start"#_signal_sufix "";\
          }\
          program { name: "dec_"#_sufix"_stop";\
             signal: "mouse,up,1";\
-            source: "left_bt_"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,"#_sufix",stop" ""; \
+            source: "left_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix ""; \
          }\
          program {\
-            name:   "left_bt_"#_sufix"_click";\
+            name:   "left_bt"#_sufix"_click";\
             signal: "mouse,down,1";\
-            source: "left_bt_"#_sufix"_over2";\
+            source: "left_bt"#_sufix"_over2";\
             action: STATE_SET "clicked" 0.0;\
-            target: "left_bt_"#_sufix;\
+            target: "left_bt"#_sufix;\
          }\
          program {\
-            name:   "left_bt_"#_sufix"_unclick";\
+            name:   "left_bt"#_sufix"_unclick";\
             signal: "mouse,up,1";\
-            source: "left_bt_"#_sufix"over2";\
+            source: "left_bt"#_sufix"over2";\
             action: STATE_SET "default" 0.0;\
-            target: "left_bt_"#_sufix;\
+            target: "left_bt"#_sufix;\
          }\
          program {\
-            name:   "left_bt_"#_sufix"_click2";\
+            name:   "left_bt"#_sufix"_click2";\
             signal: "mouse,down,1";\
-            source: "left_bt_"#_sufix"_over3";\
+            source: "left_bt"#_sufix"_over3";\
             action: STATE_SET "clicked" 0.0;\
-            target: "left_bt_"#_sufix"_over3";\
+            target: "left_bt"#_sufix"_over3";\
          }\
          program {\
-            name:   "left_bt_"#_sufix"_unclick2";\
+            name:   "left_bt"#_sufix"_unclick2";\
             signal: "mouse,up,1";\
-            source: "left_bt_"#_sufix"_over3";\
+            source: "left_bt"#_sufix"_over3";\
             action: STATE_SET "default" 0.0;\
             transition: DECELERATE 0.5;\
-            target: "left_bt_"#_sufix"_over3";\
+            target: "left_bt"#_sufix"_over3";\
          }\
          program { name: "inc_"#_sufix"_start";\
             signal: "mouse,down,1";\
-            source: "right_bt_"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,increment,"#_sufix",start" "";\
+            source: "right_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,increment,start"#_signal_sufix "";\
          }\
          program { name: "inc_"#_sufix"_stop";\
             signal: "mouse,up,1";\
-            source: "right_bt_"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,"#_sufix",stop" "";\
+            source: "right_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix "";     \
          }\
          program {\
-            name:   "right_bt_"#_sufix"_click";\
+            name:   "right_bt"#_sufix"_click";\
             signal: "mouse,down,1";\
-            source: "right_bt_"#_sufix"_over2";\
+            source: "right_bt"#_sufix"_over2";\
             action: STATE_SET "clicked" 0.0;\
-            target: "right_bt_"#_sufix;\
+            target: "right_bt"#_sufix;\
          }\
          program {\
-            name:   "right_bt_"#_sufix"_unclick";\
+            name:   "right_bt"#_sufix"_unclick";\
             signal: "mouse,up,1";\
-            source: "right_bt_"#_sufix"_over2";\
+            source: "right_bt"#_sufix"_over2";\
             action: STATE_SET "default" 0.0;\
-            target: "right_bt_"#_sufix;\
+            target: "right_bt"#_sufix;\
          }\
          program {\
-            name:   "right_bt_"#_sufix"_click2";\
+            name:   "right_bt"#_sufix"_click2";\
             signal: "mouse,down,1";\
-            source: "right_bt_"#_sufix"_over3";\
+            source: "right_bt"#_sufix"_over3";\
             action: STATE_SET "clicked" 0.0;\
-            target: "right_bt_"#_sufix"_over3";\
+            target: "right_bt"#_sufix"_over3";\
          }\
          program {\
-            name:   "right_bt_"#_sufix"_unclick2";\
+            name:   "right_bt"#_sufix"_unclick2";\
             signal: "mouse,up,1";\
-            source: "right_bt_"#_sufix"_over3";\
+            source: "right_bt"#_sufix"_over3";\
             action: STATE_SET "default" 0.0;\
             transition: DECELERATE 0.5;\
-            target: "right_bt_"#_sufix"_over3";\
+            target: "right_bt"#_sufix"_over3";\
          }\
          program { name: "to_rtl_"#_sufix;\
             signal: "edje,state,rtl";\
             source: "edje";\
             action: STATE_SET "rtl" 0.0;\
-            target: "left_bt_"#_sufix"_icon";\
-            target: "right_bt_"#_sufix"_icon";\
+            target: "left_bt"#_sufix"_icon";\
+            target: "right_bt"#_sufix"_icon";\
          }\
          program { name: "to_ltr_"#_sufix;\
             signal: "edje,state,ltr";\
             source: "edje";\
             action: STATE_SET "default" 0.0;\
-            target: "left_bt_"#_sufix"_icon";\
-            target: "right_bt_"#_sufix"_icon";\
+            target: "left_bt"#_sufix"_icon";\
+            target: "right_bt"#_sufix"_icon";\
          }\
       }
 
@@ -662,7 +662,7 @@ group { name: "elm/calendar/base/default";
             rel1.to: "bg";
             rel1.offset: 6 6;
             rel2.to: "bg";
-         rel2.relative: 0.5 1.0;
+            rel2.relative: 1.0 1.0;
             rel2.offset: -7 -7;
             color: 255 255 255 0;
             align: 0.0 0.0;
@@ -674,37 +674,6 @@ group { name: "elm/calendar/base/default";
             rel1.to: "spinner-base1";
             rel1.offset: -3 -3;
             rel2.to: "spinner-base1";
-            rel2.offset: 2 2;
-            image {
-               normal: "shelf_inset.png";
-               border: 7 7 7 7;
-               middle: 0;
-            }
-            fill.smooth : 0;
-         }
-      }
-      part { name: "spinner-base2";
-         type: RECT;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            min: 24 24;
-            max: 999999 24;
-            rel1.to_x: "spinner-base1";
-            rel1.to_y: "bg";
-            rel1.relative: 1.0 0;
-            rel1.offset: 6 6;
-            rel2.to: "bg";
-            rel2.offset: -7 -7;
-            color: 255 255 255 0;
-            align: 0.0 0.0;
-         }
-      }
-      part { name: "conf_over_spinner2";
-         mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.to: "spinner-base2";
-            rel1.offset: -2 -2;
-            rel2.to: "spinner-base2";
             rel2.offset: 2 2;
             image {
                normal: "shelf_inset.png";
@@ -768,8 +737,7 @@ group { name: "elm/calendar/base/default";
          }
       }
 
-      CAL_SPIN(month, spinner-base1)
-      CAL_SPIN(year, spinner-base2)
+      CAL_SPIN(,,month_text, spinner-base1)
 
       CH(0)   CH(1)   CH(2)   CH(3)   CH(4)   CH(5)   CH(6)
       CIT(0)  CIT(1)  CIT(2)  CIT(3)  CIT(4)  CIT(5)  CIT(6)
@@ -781,6 +749,79 @@ group { name: "elm/calendar/base/default";
    }
 }
 
+group { name: "elm/calendar/base/double_spinners";
+   inherit: "elm/calendar/base/default";
+   parts {
+      part { name: "spinner-base1";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            min: 24 24;
+            max: 999999 24;
+            rel1.to: "bg";
+            rel1.offset: 6 6;
+            rel2.to: "bg";
+         rel2.relative: 0.5 1.0;
+            rel2.offset: -7 -7;
+            color: 255 255 255 0;
+            align: 0.0 0.0;
+         }
+      }
+      part { name: "conf_over_spinner1";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "spinner-base1";
+            rel1.offset: -3 -3;
+            rel2.to: "spinner-base1";
+            rel2.offset: 2 2;
+            image {
+               normal: "shelf_inset.png";
+               border: 7 7 7 7;
+               middle: 0;
+            }
+            fill.smooth : 0;
+         }
+      }
+      part { name: "spinner-base2";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            min: 24 24;
+            max: 999999 24;
+            rel1.to_x: "spinner-base1";
+            rel1.to_y: "bg";
+            rel1.relative: 1.0 0;
+            rel1.offset: 6 6;
+            rel2.to: "bg";
+            rel2.offset: -7 -7;
+            color: 255 255 255 0;
+            align: 0.0 0.0;
+         }
+      }
+      part { name: "conf_over_spinner2";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "spinner-base2";
+            rel1.offset: -2 -2;
+            rel2.to: "spinner-base2";
+            rel2.offset: 2 2;
+            image {
+               normal: "shelf_inset.png";
+               border: 7 7 7 7;
+               middle: 0;
+            }
+            fill.smooth : 0;
+         }
+      }
+
+      CAL_SPIN(,,month_text, spinner-base1)
+      CAL_SPIN(_year, year, year_text, spinner-base2)
+
+   }
+}
+
+
+#undef CAL_SPIN
 #undef CIT
 #undef CH
 

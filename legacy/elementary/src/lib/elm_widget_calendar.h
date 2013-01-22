@@ -48,6 +48,7 @@ struct _Elm_Calendar_Smart_Data
    Evas_Object             *year_access;
    Eina_Bool                selected : 1;
    Elm_Calendar_Selectable  selectable;
+   Eina_Bool                double_spinners : 1;
 };
 
 struct _Elm_Calendar_Mark
