@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-17 12:51+0900\n"
+"POT-Creation-Date: 2013-01-22 11:45+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -44,7 +44,7 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
@@ -159,17 +159,13 @@ msgstr "Vybrat"
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:2909
+#: src/lib/elm_entry.c:2910
 msgid "Entry"
 msgstr "Vstup"
 
 #: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
-
-#: src/lib/elm_genlist.c:1309
-msgid "Genlist Item"
-msgstr "položka seznamu (genlist)"
 
 #: src/lib/elm_index.c:98
 msgid "Index Item"
@@ -182,10 +178,6 @@ msgstr "Index"
 #: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Popisek"
-
-#: src/lib/elm_list.c:1459
-msgid "List Item"
-msgstr "položka seznamu"
 
 #: src/lib/elm_panel.c:42
 msgid "state: opened"
@@ -246,6 +238,12 @@ msgstr "Nevybrané"
 #: src/lib/elm_toolbar.c:1719
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
+
+#~ msgid "Genlist Item"
+#~ msgstr "položka seznamu (genlist)"
+
+#~ msgid "List Item"
+#~ msgstr "položka seznamu"
 
 #~ msgid "ON"
 #~ msgstr "ZAPNUTO"

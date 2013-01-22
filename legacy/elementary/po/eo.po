@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-17 12:51+0900\n"
+"POT-Creation-Date: 2013-01-22 11:45+0900\n"
 "PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -45,7 +45,7 @@ msgid "Clicked"
 msgstr "Alklakita"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
@@ -155,17 +155,13 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2909
+#: src/lib/elm_entry.c:2910
 msgid "Entry"
 msgstr "Ero"
 
 #: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
-
-#: src/lib/elm_genlist.c:1309
-msgid "Genlist Item"
-msgstr "Ero de komuna listo"
 
 #: src/lib/elm_index.c:98
 msgid "Index Item"
@@ -178,10 +174,6 @@ msgstr "Indekso"
 #: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Etikedo"
-
-#: src/lib/elm_list.c:1459
-msgid "List Item"
-msgstr "Listero"
 
 #: src/lib/elm_panel.c:42
 msgid "state: opened"
@@ -242,3 +234,9 @@ msgstr "Malelektita"
 #: src/lib/elm_toolbar.c:1719
 msgid "Toolbar Item"
 msgstr "Ilobretero"
+
+#~ msgid "Genlist Item"
+#~ msgstr "Ero de komuna listo"
+
+#~ msgid "List Item"
+#~ msgstr "Listero"

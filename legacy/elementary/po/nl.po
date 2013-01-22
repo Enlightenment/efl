@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-17 12:51+0900\n"
+"POT-Creation-Date: 2013-01-22 11:45+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -47,7 +47,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr ""
@@ -157,16 +157,12 @@ msgstr "Selecteren"
 msgid "Paste"
 msgstr "Plakken"
 
-#: src/lib/elm_entry.c:2909
+#: src/lib/elm_entry.c:2910
 msgid "Entry"
 msgstr ""
 
 #: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
-msgstr ""
-
-#: src/lib/elm_genlist.c:1309
-msgid "Genlist Item"
 msgstr ""
 
 #: src/lib/elm_index.c:98
@@ -179,10 +175,6 @@ msgstr ""
 
 #: src/lib/elm_label.c:402
 msgid "Label"
-msgstr ""
-
-#: src/lib/elm_list.c:1459
-msgid "List Item"
 msgstr ""
 
 #: src/lib/elm_panel.c:42

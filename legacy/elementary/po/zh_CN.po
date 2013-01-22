@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-17 12:51+0900\n"
+"POT-Creation-Date: 2013-01-22 11:45+0900\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -43,7 +43,7 @@ msgid "Clicked"
 msgstr "点击"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1277 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "状态：已禁用"
@@ -159,16 +159,12 @@ msgstr "选择"
 msgid "Paste"
 msgstr "粘贴"
 
-#: src/lib/elm_entry.c:2909
+#: src/lib/elm_entry.c:2910
 msgid "Entry"
 msgstr "条目"
 
 #: src/lib/elm_gengrid.c:711
 msgid "Gengrid Item"
-msgstr ""
-
-#: src/lib/elm_genlist.c:1309
-msgid "Genlist Item"
 msgstr ""
 
 #: src/lib/elm_index.c:98
@@ -182,10 +178,6 @@ msgstr "索引"
 #: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "标签"
-
-#: src/lib/elm_list.c:1459
-msgid "List Item"
-msgstr "列表条目"
 
 #: src/lib/elm_panel.c:42
 msgid "state: opened"
@@ -246,3 +238,6 @@ msgstr "未选择"
 #: src/lib/elm_toolbar.c:1719
 msgid "Toolbar Item"
 msgstr "工具栏项目"
+
+#~ msgid "List Item"
+#~ msgstr "列表条目"
