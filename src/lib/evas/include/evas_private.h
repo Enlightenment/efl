@@ -48,6 +48,7 @@ typedef struct _Evas_Smart_Interfaces_Array Evas_Smart_Interfaces_Array;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
+typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 
 enum _Evas_Font_Style
 {
@@ -511,6 +512,22 @@ struct _Evas_Object_Proxy_Data
    Eina_Bool                src_events: 1;
 };
 
+struct _Evas_Object_Map_Data
+{
+   struct { 
+      Evas_Map             *map;
+      Evas_Object          *map_parent;
+
+      Eina_Bool             usemap : 1;
+      Eina_Bool             valid_map : 1;
+   } cur, prev;
+   void                 *surface; // surface holding map if needed
+   int                   surface_w, surface_h; // current surface w & h alloc
+
+   Evas_Map             *cache_map;
+   RGBA_Map             *spans;
+};
+
 struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
@@ -549,21 +566,6 @@ struct _Evas_Object_Protected_Data
       Eina_Bool             opaque : 1;
    } cur, prev;
 
-   struct {
-      struct { 
-         Evas_Map             *map;
-         Evas_Object          *map_parent;
-        
-         Eina_Bool             usemap : 1;
-         Eina_Bool             valid_map : 1;
-      } cur, prev;
-      void                 *surface; // surface holding map if needed
-      int                   surface_w, surface_h; // current surface w & h alloc
-
-      Evas_Map             *cache_map;
-      RGBA_Map             *spans;
-   } map;
-
    char                       *name;
 
    Evas_Intercept_Func        *interceptors;
@@ -584,7 +586,9 @@ struct _Evas_Object_Protected_Data
       Evas_Object             *parent;
    } smart;
 
+   // Eina_Cow pointer be careful when writing to it
    const Evas_Object_Proxy_Data *proxy;
+   const Evas_Object_Map_Data *map;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -1250,6 +1254,7 @@ void _evas_device_ref(Evas_Device *dev);
 void _evas_device_unref(Evas_Device *dev);
        
 extern Eina_Cow *evas_object_proxy_cow;
+extern Eina_Cow *evas_object_map_cow;
 
 /****************************************************************************/
 /*****************************************/

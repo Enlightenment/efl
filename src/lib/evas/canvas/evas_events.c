@@ -19,12 +19,12 @@ _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
         _evas_event_havemap_adjust(obj->smart.parent, smart_parent_obj, x, y, mouse_grabbed);
      }
 
-   if ((!obj->map.cur.usemap) || (!obj->map.cur.map) || (!obj->map.cur.map->count == 4))
+   if ((!obj->map->cur.usemap) || (!obj->map->cur.map) || (!obj->map->cur.map->count == 4))
       return;
 
    //FIXME: Unless map_coords_get() supports grab mode and extrapolate coords
    //outside map, this should check the return value for outside case.
-   if (evas_map_coords_get(obj->map.cur.map, *x, *y, x, y, mouse_grabbed))
+   if (evas_map_coords_get(obj->map->cur.map, *x, *y, x, y, mouse_grabbed))
      {
         *x += obj->cur.geometry.x;
         *y += obj->cur.geometry.y;
@@ -80,15 +80,15 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                {
                   int norep = 0;
 
-                  if ((obj->map.cur.usemap) && (obj->map.cur.map) &&
-                      (obj->map.cur.map->count == 4))
+                  if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
+                      (obj->map->cur.map->count == 4))
                     {
                        inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
                        if (inside)
                          {
-                            if (!evas_map_coords_get(obj->map.cur.map, x, y,
-                                                     &(obj->map.cur.map->mx),
-                                                     &(obj->map.cur.map->my), 0))
+                            if (!evas_map_coords_get(obj->map->cur.map, x, y,
+                                                     &(obj->map->cur.map->mx),
+                                                     &(obj->map->cur.map->my), 0))
                               {
                                  inside = 0;
                               }
@@ -98,8 +98,8 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                     (eo_e, in,
                                      evas_object_smart_members_get_direct(eo_obj),
                                      stop,
-                                     obj->cur.geometry.x + obj->map.cur.map->mx,
-                                     obj->cur.geometry.y + obj->map.cur.map->my,
+                                     obj->cur.geometry.x + obj->map->cur.map->mx,
+                                     obj->cur.geometry.y + obj->map->cur.map->my,
                                      &norep, source);
                               }
                          }
@@ -136,12 +136,12 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 
                   if (inside)
                     {
-                       if ((obj->map.cur.usemap) && (obj->map.cur.map) &&
-                           (obj->map.cur.map->count == 4))
+                       if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
+                           (obj->map->cur.map->count == 4))
                          {
-                            if (!evas_map_coords_get(obj->map.cur.map, x, y,
-                                                     &(obj->map.cur.map->mx),
-                                                     &(obj->map.cur.map->my), 0))
+                            if (!evas_map_coords_get(obj->map->cur.map, x, y,
+                                                     &(obj->map->cur.map->mx),
+                                                     &(obj->map->cur.map->my), 0))
                               {
                                  inside = 0;
                               }

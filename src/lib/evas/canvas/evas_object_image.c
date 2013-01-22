@@ -3351,7 +3351,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                        (obj->cur.color.g == 255) &&
                        (obj->cur.color.b == 255) &&
                        (obj->cur.color.a == 255) &&
-                       (!obj->map.cur.map) )
+                       (!obj->map->cur.map) )
                     {
                        if (obj->layer->evas->engine.func->gl_img_obj_set)
                          {
@@ -3369,13 +3369,13 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                }
              o->dirty_pixels = EINA_FALSE;
           }
-        if ((obj->map.cur.map) && (obj->map.cur.map->count > 3) && (obj->map.cur.usemap))
+        if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
           {
              evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
 
              evas_draw_image_map_async_check(
-                 obj, output, context, surface, pixels, obj->map.spans,
-                 o->cur.smooth_scale | obj->map.cur.map->smooth, 0, do_async);
+                 obj, output, context, surface, pixels, obj->map->spans,
+                 o->cur.smooth_scale | obj->map->cur.map->smooth, 0, do_async);
           }
         else
           {
@@ -3798,7 +3798,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                  (o->cur.border.b == 0) &&
                  (o->cur.image.w > 0) &&
                  (o->cur.image.h > 0) &&
-                 (!((obj->map.cur.map) && (obj->map.cur.usemap))))
+                 (!((obj->map->cur.map) && (obj->map->cur.usemap))))
                {
                   Eina_Rectangle *rr;
 
@@ -3969,9 +3969,9 @@ evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
         obj->cur.opaque = 1;
      }
 
-   if ((obj->map.cur.map) && (obj->map.cur.usemap))
+   if ((obj->map->cur.map) && (obj->map->cur.usemap))
      {
-        Evas_Map *m = obj->map.cur.map;
+        Evas_Map *m = obj->map->cur.map;
 
         if ((m->points[0].a == 255) &&
             (m->points[1].a == 255) &&
@@ -4042,9 +4042,9 @@ evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 
         obj->prev.opaque = 1;
      }
-   if (obj->map.prev.usemap)
+   if (obj->map->prev.usemap)
      {
-        Evas_Map *m = obj->map.prev.map;
+        Evas_Map *m = obj->map->prev.map;
 
         if ((m->points[0].a == 255) &&
             (m->points[1].a == 255) &&
@@ -4229,7 +4229,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
           }
 
         /* TODO: not handling map, need to apply map to point */
-        if ((obj->map.cur.map) && (obj->map.cur.map->count > 3) && (obj->map.cur.usemap))
+        if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
           {
              evas_object_map_update(eo_obj, 0, 0, imagew, imageh, uvw, uvh);
 
@@ -4489,7 +4489,7 @@ evas_object_image_has_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Dat
 {
    Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
 
-   if ((obj->map.cur.map) && (obj->map.cur.usemap)) return 0;
+   if ((obj->map->cur.map) && (obj->map->cur.usemap)) return 0;
    if (((o->cur.border.l | o->cur.border.r | o->cur.border.t | o->cur.border.b) != 0) &&
        (o->cur.border.fill == EVAS_BORDER_FILL_SOLID) &&
        (obj->cur.render_op == EVAS_RENDER_BLEND) &&

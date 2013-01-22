@@ -39,28 +39,32 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj) return;
-   if (!obj->map.cur.map) return;
+   if (!obj->map->cur.map) return;
    // WARN: Do not merge below code to SLP until it is fixed.
    // It has an infinite loop bug.
-   if (obj->map.prev.map)
+   if (obj->map->prev.map)
      {
-        if (obj->map.prev.map != obj->map.cur.map)
+        if (obj->map->prev.map != obj->map->cur.map)
           {
              // FIXME: this causes an infinite loop somewhere... hard to debug
-             if (obj->map.prev.map->count == obj->map.cur.map->count)
+             if (obj->map->prev.map->count == obj->map->cur.map->count)
                {
                   const Evas_Map_Point *p2;
                   
-                  p = obj->map.cur.map->points;
-                  p2 = obj->map.prev.map->points;
+                  p = obj->map->cur.map->points;
+                  p2 = obj->map->prev.map->points;
                   if (memcmp(p, p2, sizeof(Evas_Map_Point) * 
-                             obj->map.prev.map->count) != 0)
+                             obj->map->prev.map->count) != 0)
                     ch = EINA_TRUE;
                   if (!ch)
                     {
-                       if (obj->map.cache_map) evas_map_free(obj->map.cache_map); 
-                       obj->map.cache_map = obj->map.cur.map;
-                       obj->map.cur.map = obj->map.prev.map;
+                       EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+                         {
+                            if (map_write->cache_map) evas_map_free(map_write->cache_map); 
+                            map_write->cache_map = map_write->cur.map;
+                            map_write->cur.map = map_write->prev.map;
+                         }
+                       EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
                     }
                }
              else
@@ -70,8 +74,8 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
    else
       ch = EINA_TRUE;
    
-   p = obj->map.cur.map->points;
-   p_end = p + obj->map.cur.map->count;
+   p = obj->map->cur.map->points;
+   p_end = p + obj->map->cur.map->count;
    x1 = x2 = lround(p->x);
    yy1 = yy2 = lround(p->y);
    p++;
@@ -90,14 +94,14 @@ _evas_map_calc_map_geometry(Evas_Object *eo_obj)
 //   // add 1 pixel of fuzz around the map region to ensure updates are correct
 //   x1 -= 1; yy1 -= 1;
 //   x2 += 1; yy2 += 1;
-   if (obj->map.cur.map->normal_geometry.x != x1) ch = 1;
-   if (obj->map.cur.map->normal_geometry.y != yy1) ch = 1;
-   if (obj->map.cur.map->normal_geometry.w != (x2 - x1)) ch = 1;
-   if (obj->map.cur.map->normal_geometry.h != (yy2 - yy1)) ch = 1;
-   obj->map.cur.map->normal_geometry.x = x1;
-   obj->map.cur.map->normal_geometry.y = yy1;
-   obj->map.cur.map->normal_geometry.w = (x2 - x1);
-   obj->map.cur.map->normal_geometry.h = (yy2 - yy1);
+   if (obj->map->cur.map->normal_geometry.x != x1) ch = 1;
+   if (obj->map->cur.map->normal_geometry.y != yy1) ch = 1;
+   if (obj->map->cur.map->normal_geometry.w != (x2 - x1)) ch = 1;
+   if (obj->map->cur.map->normal_geometry.h != (yy2 - yy1)) ch = 1;
+   obj->map->cur.map->normal_geometry.x = x1;
+   obj->map->cur.map->normal_geometry.y = yy1;
+   obj->map->cur.map->normal_geometry.w = (x2 - x1);
+   obj->map->cur.map->normal_geometry.h = (yy2 - yy1);
    obj->changed_map = ch;
    // This shouldn't really be needed, but without it we do have case
    // where the clip is wrong when a map doesn't change, so always forcing
@@ -170,11 +174,15 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
    if (eo_obj)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-        if ((obj) && (obj->map.spans))
+        if ((obj) && (obj->map->spans))
           {
-             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->map.spans);
-             free(obj->map.spans);
-             obj->map.spans = NULL;
+             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->map->spans);
+             EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+               {
+                  free(map_write->spans);
+                  map_write->spans = NULL;
+               }
+             EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }      
      }
    m->magic = 0;
@@ -412,7 +420,7 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    if (!parent) return EINA_FALSE;
    list = evas_object_smart_members_get_direct(parent->smart.parent);
    EINA_INLIST_FOREACH(list, o)
-     if (o->map.cur.usemap) break ;
+     if (o->map->cur.usemap) break ;
    if (o) return EINA_FALSE; /* Still some child have a map enable */
    parent->child_has_map = EINA_FALSE;
    _evas_object_map_parent_check(parent->smart.parent);
@@ -437,26 +445,38 @@ _map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
    Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
-   if (obj->map.cur.usemap == enabled) return;
+   if (obj->map->cur.usemap == enabled) return;
    pchange = obj->changed;
-   obj->map.cur.usemap = enabled;
+
+   EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+     map_write->cur.usemap = enabled;
+   EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+
    if (enabled)
      {
-        if (!obj->map.cur.map)
-          obj->map.cur.map = _evas_map_new(4);
+        if (!obj->map->cur.map)
+          {
+             EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+               map_write->cur.map = _evas_map_new(4);
+             EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+          }
         evas_object_mapped_clip_across_mark(eo_obj, obj);
-//        obj->map.cur.map->normal_geometry = obj->cur.geometry;
+        //        obj->map->cur.map->normal_geometry = obj->cur.geometry;
      }
    else
      {
-        if (obj->map.surface)
+        if (obj->map->surface)
           {
-             obj->layer->evas->engine.func->image_map_surface_free
-               (obj->layer->evas->engine.data.output,
-                   obj->map.surface);
-             obj->map.surface = NULL;
+             EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+               {
+                  obj->layer->evas->engine.func->image_map_surface_free
+                    (obj->layer->evas->engine.data.output,
+                     map_write->surface);
+                  map_write->surface = NULL;
+               }
+             EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
-        if (obj->map.cur.map)
+        if (obj->map->cur.map)
           {
              _evas_map_calc_geom_change(eo_obj);
              evas_object_mapped_clip_across_mark(eo_obj, obj);
@@ -503,7 +523,7 @@ _map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *enabled = va_arg(*list, Eina_Bool *);
    const Evas_Object_Protected_Data *obj = _pd;
-   *enabled = obj->map.cur.usemap;
+   *enabled = obj->map->cur.usemap;
 }
 
 EAPI void
@@ -523,62 +543,80 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if ((!map) || (map->count < 4))
      {
-        if (obj->map.surface)
+        if (obj->map->surface)
           {
-             obj->layer->evas->engine.func->image_map_surface_free
-               (obj->layer->evas->engine.data.output,
-                   obj->map.surface);
-             obj->map.surface = NULL;
+             EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+               {
+                  obj->layer->evas->engine.func->image_map_surface_free
+                    (obj->layer->evas->engine.data.output,
+                     map_write->surface);
+                  map_write->surface = NULL;
+               }
+             EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
-        if (obj->map.cur.map)
+        if (obj->map->cur.map)
           {
              obj->changed_map = EINA_TRUE;
-             obj->prev.geometry = obj->map.cur.map->normal_geometry;
+             obj->prev.geometry = obj->map->cur.map->normal_geometry;
 
-             if (obj->map.prev.map == obj->map.cur.map)
-               obj->map.cur.map = NULL;
-             else if (!obj->map.cache_map)
+             EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
-                  obj->map.cache_map = obj->map.cur.map;
-                  obj->map.cur.map = NULL;
+                  if (map_write->prev.map == map_write->cur.map)
+                    map_write->cur.map = NULL;
+                  else if (!map_write->cache_map)
+                    {
+                       map_write->cache_map = map_write->cur.map;
+                       map_write->cur.map = NULL;
+                    }
+                  else
+                    {
+                       _evas_map_free(eo_obj, map_write->cur.map);
+                       map_write->cur.map = NULL;
+                    }
                }
-             else
-               {
-                  _evas_map_free(eo_obj, obj->map.cur.map);
-                  obj->map.cur.map = NULL;
-               }
+             EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
 
-             if (!obj->map.prev.map)
+             if (!obj->map->prev.map)
                {
                   evas_object_mapped_clip_across_mark(eo_obj, obj);
                   return;
                }
 
-             if (!obj->map.cur.usemap) _evas_map_calc_geom_change(eo_obj);
+             if (!obj->map->cur.usemap) _evas_map_calc_geom_change(eo_obj);
              else _evas_map_calc_map_geometry(eo_obj);
-             if (obj->map.cur.usemap)
+             if (obj->map->cur.usemap)
                evas_object_mapped_clip_across_mark(eo_obj, obj);
           }
         return;
      }
 
-   if (obj->map.prev.map == obj->map.cur.map)
-     obj->map.cur.map = NULL;
-
-   if (!obj->map.cur.map)
+   if (obj->map->prev.map == obj->map->cur.map)
      {
-        obj->map.cur.map = obj->map.cache_map;
-        obj->map.cache_map = NULL;
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          map_write->cur.map = NULL;
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+     }
+
+   if (!obj->map->cur.map)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          {
+             map_write->cur.map = map_write->cache_map;
+             map_write->cache_map = NULL;
+          }
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
    // We do have the same exact count of point in this map, so just copy it
-   if ((obj->map.cur.map) && (obj->map.cur.map->count == map->count))
-     _evas_map_copy(obj->map.cur.map, map);
+   if ((obj->map->cur.map) && (obj->map->cur.map->count == map->count))
+     _evas_map_copy(obj->map->cur.map, map);
    else
      {
-        if (obj->map.cur.map) _evas_map_free(eo_obj, obj->map.cur.map);
-        obj->map.cur.map = _evas_map_dup(map);
-        if (obj->map.cur.usemap)
+        if (obj->map->cur.map) _evas_map_free(eo_obj, obj->map->cur.map);
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          map_write->cur.map = _evas_map_dup(map);
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+        if (obj->map->cur.usemap)
            evas_object_mapped_clip_across_mark(eo_obj, obj);
      }
 
@@ -602,7 +640,7 @@ _map_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    const Evas_Map **map = va_arg(*list, const Evas_Map **);
    const Evas_Object_Protected_Data *obj = _pd;
 
-   *map = obj->map.cur.map;
+   *map = obj->map->cur.map;
 }
 
 EAPI Evas_Map *
@@ -1184,11 +1222,11 @@ evas_object_map_update(Evas_Object *eo_obj,
    RGBA_Map_Point *pts, *pt;
 
    if (!obj) return;
-   if (obj->map.spans)
+   if (obj->map->spans)
      {
-        if (obj->map.spans->x != x || obj->map.spans->y != y ||
-            obj->map.spans->image.w != imagew || obj->map.spans->image.h != imageh ||
-            obj->map.spans->uv.w != uvw || obj->map.spans->uv.h != uvh)
+        if (obj->map->spans->x != x || obj->map->spans->y != y ||
+            obj->map->spans->image.w != imagew || obj->map->spans->image.h != imageh ||
+            obj->map->spans->uv.w != uvw || obj->map->spans->uv.h != uvh)
           obj->changed_map = EINA_TRUE;
      }
    else
@@ -1198,40 +1236,52 @@ evas_object_map_update(Evas_Object *eo_obj,
 
    if (!obj->changed_map) return ;
 
-   if (obj->map.cur.map && obj->map.spans && obj->map.cur.map->count != obj->map.spans->count)
+   if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
      {
-        if (obj->map.spans)
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           {
-             // Destroy engine side spans
-             free(obj->map.spans);
+             if (map_write->spans)
+               {
+                  // Destroy engine side spans
+                  free(map_write->spans);
+               }
+             map_write->spans = NULL;
           }
-        obj->map.spans = NULL;
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
-   if (!obj->map.spans)
-     obj->map.spans = calloc(1, sizeof (RGBA_Map) +
-                         sizeof (RGBA_Map_Point) * (obj->map.cur.map->count - 1));
+   if (!obj->map->spans)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          map_write->spans = calloc(1, sizeof (RGBA_Map) +
+                                    sizeof (RGBA_Map_Point) * (map_write->cur.map->count - 1));
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+     }
 
-   if (!obj->map.spans) return ;
+   if (!obj->map->spans) return ;
 
-   obj->map.spans->count = obj->map.cur.map->count;
-   obj->map.spans->x = x;
-   obj->map.spans->y = y;
-   obj->map.spans->uv.w = uvw;
-   obj->map.spans->uv.h = uvh;
-   obj->map.spans->image.w = imagew;
-   obj->map.spans->image.h = imageh;
+   EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+     {
+        map_write->spans->count = obj->map->cur.map->count;
+        map_write->spans->x = x;
+        map_write->spans->y = y;
+        map_write->spans->uv.w = uvw;
+        map_write->spans->uv.h = uvh;
+        map_write->spans->image.w = imagew;
+        map_write->spans->image.h = imageh;
 
-   pts = obj->map.spans->pts;
+        pts = obj->map->spans->pts;
 
-   p = obj->map.cur.map->points;
-   p_end = p + obj->map.cur.map->count;
-   pt = pts;
+        p = obj->map->cur.map->points;
+        p_end = p + obj->map->cur.map->count;
+        pt = pts;
+     }
+   EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
 
-   pts[0].px = obj->map.cur.map->persp.px << FP;
-   pts[0].py = obj->map.cur.map->persp.py << FP;
-   pts[0].foc = obj->map.cur.map->persp.foc << FP;
-   pts[0].z0 = obj->map.cur.map->persp.z0 << FP;
+   pts[0].px = obj->map->cur.map->persp.px << FP;
+   pts[0].py = obj->map->cur.map->persp.py << FP;
+   pts[0].foc = obj->map->cur.map->persp.foc << FP;
+   pts[0].z0 = obj->map->cur.map->persp.z0 << FP;
    // draw geom +x +y
    for (; p < p_end; p++, pt++)
      {
@@ -1251,9 +1301,9 @@ evas_object_map_update(Evas_Object *eo_obj,
         else if (pt->v > (imageh * FP1)) pt->v = (imageh * FP1);
         pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
      }
-   if (obj->map.cur.map->count & 0x1)
+   if (obj->map->cur.map->count & 0x1)
      {
-        pts[obj->map.cur.map->count] = pts[obj->map.cur.map->count -1];
+        pts[obj->map->cur.map->count] = pts[obj->map->cur.map->count -1];
      }
 
    // Request engine to update it's point

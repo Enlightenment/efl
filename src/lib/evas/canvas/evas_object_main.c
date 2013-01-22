@@ -27,8 +27,33 @@ get_layer_objects(Evas_Layer *l)
 static const Evas_Object_Proxy_Data default_proxy = {
   NULL, NULL, 0, 0, NULL, 0, 0, 0, 0
 };
+static const Evas_Object_Map_Data default_map = {
+  { NULL, NULL, 0, 0 }, { NULL, NULL, 0, 0 }, NULL, 0, 0, NULL, NULL
+};
 
 Eina_Cow *evas_object_proxy_cow = NULL;
+Eina_Cow *evas_object_map_cow = NULL;
+
+static Eina_Bool
+_init_cow(void)
+{
+   static Eina_Bool inited_cow = EINA_FALSE;
+
+   if (inited_cow) return inited_cow;
+
+   evas_object_proxy_cow = eina_cow_add("Evas Object Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy);
+   evas_object_map_cow = eina_cow_add("Evas Object Map", sizeof (Evas_Object_Map_Data), 8, &default_map);
+
+   if (!(evas_object_map_cow && evas_object_proxy_cow))
+     {
+        eina_cow_del(evas_object_proxy_cow);
+        eina_cow_del(evas_object_map_cow);
+        return EINA_FALSE;
+     }
+
+   inited_cow = EINA_TRUE;
+   return EINA_TRUE;
+}
 
 static void
 _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
@@ -40,15 +65,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
    obj = _pd;
-   if (!obj)
-     {
-        eo_error_set(eo_obj);
-        return;
-     }
-
-   if (!evas_object_proxy_cow)
-     evas_object_proxy_cow = eina_cow_add("Evas Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy);
-   if (!evas_object_proxy_cow)
+   if (!obj || !_init_cow())
      {
         eo_error_set(eo_obj);
         return;
@@ -59,6 +76,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->is_frame = EINA_FALSE;
    obj->object = eo_obj;
    obj->proxy = eina_cow_alloc(evas_object_proxy_cow);
+   obj->map = eina_cow_alloc(evas_object_map_cow);
 }
 
 void
@@ -79,21 +97,34 @@ evas_object_cur_prev(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
-   if (!obj->map.prev.valid_map)
+   if (!obj->map->prev.valid_map && obj->map->prev.map)
      {
-        if (obj->map.prev.map != obj->map.cur.map)
-          evas_map_free(obj->map.prev.map);
-        if (obj->map.cache_map == obj->map.prev.map)
-          obj->map.cache_map = NULL;
-        obj->map.prev.map = NULL;
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          {
+             if (map_write->prev.map != map_write->cur.map)
+               evas_map_free(map_write->prev.map);
+             if (map_write->cache_map == map_write->prev.map)
+               map_write->cache_map = NULL;
+             map_write->prev.map = NULL;
+          }
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
-   if (obj->map.cur.map != obj->map.prev.map)
+   if (obj->map->cur.map != obj->map->prev.map)
      {
-        if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
-        obj->map.cache_map = obj->map.prev.map;
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          {
+             if (map_write->cache_map) evas_map_free(map_write->cache_map);
+             map_write->cache_map = map_write->prev.map;
+          }
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
-   obj->map.prev = obj->map.cur;
+   if (memcmp(&obj->map->prev, &obj->map->cur, sizeof (obj->map->cur)))
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          map_write->prev = map_write->cur;
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+     }
    obj->prev = obj->cur;
 }
 
@@ -108,17 +139,19 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
 
    if (!strcmp(obj->type, "image")) evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_map_set(eo_obj, NULL);
-   if (obj->map.prev.map) evas_map_free(obj->map.prev.map);
-   if (obj->map.cache_map) evas_map_free(obj->map.cache_map);
-   if (obj->map.surface)
+   if (obj->map->prev.map) evas_map_free(obj->map->prev.map);
+   if (obj->map->cache_map) evas_map_free(obj->map->cache_map);
+   if (obj->map->surface)
      {
         if (obj->layer)
           {
              obj->layer->evas->engine.func->image_map_surface_free
                (obj->layer->evas->engine.data.output,
-                   obj->map.surface);
+                   obj->map->surface);
           }
-        obj->map.surface = NULL;
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          map_write->surface = NULL;
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
    evas_object_grabs_cleanup(eo_obj, obj);
    evas_object_intercept_cleanup(eo_obj);
@@ -134,16 +167,21 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    evas_object_clip_changes_clean(eo_obj);
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
-   if (obj->map.spans)
+   if (obj->map->spans)
      {
-        free(obj->map.spans);
-        obj->map.spans = NULL;
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+          {
+             free(map_write->spans);
+             map_write->spans = NULL;
+          }
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
    if (obj->size_hints)
      {
        EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
      }
    eina_cow_free(evas_object_proxy_cow, obj->proxy);
+   eina_cow_free(evas_object_map_cow, obj->map);
    eo_manual_free(eo_obj);
 }
 
@@ -419,7 +457,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
 int
 evas_object_was_in_output_rect(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, int x, int y, int w, int h)
 {
-   if (obj->is_smart && !obj->map.prev.map && !obj->map.prev.usemap) return 0;
+   if (obj->is_smart && !obj->map->prev.map && !obj->map->prev.usemap) return 0;
    /* assumes coords have been recalced */
    if ((RECTS_INTERSECT(x, y, w, h,
                         obj->prev.cache.clip.x,
@@ -1488,7 +1526,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if ((!obj->is_smart) ||
-                 ((obj->map.cur.map) && (obj->map.cur.map->count == 4) && (obj->map.cur.usemap)))
+                 ((obj->map->cur.map) && (obj->map->cur.map->count == 4) && (obj->map->cur.usemap)))
                {
                   if (!obj->mouse_grabbed)
                     {

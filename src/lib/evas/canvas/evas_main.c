@@ -87,6 +87,7 @@ evas_shutdown(void)
      return _evas_init_count;
 
    eina_cow_del(evas_object_proxy_cow);
+   eina_cow_del(evas_object_map_cow);
    evas_object_proxy_cow = NULL;
 
    evas_thread_shutdown();
