@@ -11,9 +11,12 @@ typedef struct _GL_Format
 // Globals
 static Evas_GL_API gl_funcs;
 EVGL_Engine *evgl_engine = NULL;
-int _evas_gl_log_dom = -1;
+int _evas_gl_log_dom   = -1;
+int _evas_gl_log_level = -1;
 
 static void _surface_cap_print(EVGL_Engine *ee, int error);
+static void _surface_context_list_print(EVGL_Engine *ee);
+
 
 //---------------------------------------------------------------//
 // Internal Resources:
@@ -267,12 +270,20 @@ _internal_resource_make_current(EVGL_Engine *ee, EVGL_Context *ctx)
 //  - Surface capability check
 //  - Internal config choose function
 //---------------------------------------------------------------//
-// Create and allocate 2D texture
+// Gen Texture
 void
-_texture_2d_create(GLuint *tex, GLint ifmt, GLenum fmt, GLenum type, int w, int h)
+_texture_create(GLuint *tex)
 {
    glGenTextures(1, tex);
-   glBindTexture(GL_TEXTURE_2D, *tex );
+}
+
+// Create and allocate 2D texture
+void
+_texture_allocate_2d(GLuint tex, GLint ifmt, GLenum fmt, GLenum type, int w, int h)
+{
+   //if (!(*tex))
+   //   glGenTextures(1, tex);
+   glBindTexture(GL_TEXTURE_2D, tex );
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -295,7 +306,7 @@ _texture_destroy(GLuint *tex)
 // Attach 2D texture with the given format to already bound FBO
 // *NOTE: attach2 here is used for depth_stencil attachment in GLES env.
 void
-_texture_2d_attach(GLuint tex, GLenum attach, GLenum attach2, int samples)
+_texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples)
 {
    if (samples)
      {
@@ -325,12 +336,19 @@ _texture_2d_attach(GLuint tex, GLenum attach, GLenum attach2, int samples)
      }
 }
 
-// Attach a renderbuffer with the given format to already bound FBO
+// Gen Renderbuffer
 void
-_renderbuffer_create(GLuint *buf, GLenum fmt, int w, int h, int samples)
+_renderbuffer_create(GLuint *buf)
 {
    glGenRenderbuffers(1, buf);
-   glBindRenderbuffer(GL_RENDERBUFFER, *buf);
+}
+
+
+// Attach a renderbuffer with the given format to already bound FBO
+void
+_renderbuffer_allocate(GLuint buf, GLenum fmt, int w, int h, int samples)
+{
+   glBindRenderbuffer(GL_RENDERBUFFER, buf);
    if (samples)
 #ifdef GL_GLES
       EXT_FUNC(glRenderbufferStorageMultisample)(GL_RENDERBUFFER, samples, fmt, w, h);
@@ -383,24 +401,27 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
    // Color Buffer Texture
    if ((color_ifmt) && (color_fmt))
      {
-        _texture_2d_create(&color_buf, color_ifmt, color_fmt, GL_UNSIGNED_BYTE, w, h);
-        _texture_2d_attach(color_buf, GL_COLOR_ATTACHMENT0, 0, mult_samples);
+        _texture_create(&color_buf);
+        _texture_allocate_2d(color_buf, color_ifmt, color_fmt, GL_UNSIGNED_BYTE, w, h);
+        _texture_attach_2d(color_buf, GL_COLOR_ATTACHMENT0, 0, mult_samples);
      }
 
    // Check Depth_Stencil Format First
 #ifdef GL_GLES
    if (depth_fmt == GL_DEPTH_STENCIL_OES)
      {
-        _texture_2d_create(&depth_stencil_buf, depth_fmt,
+        _texture_create(&depth_stencil_buf);
+        _texture_allocate_2d(depth_stencil_buf, depth_fmt,
                            depth_fmt, GL_UNSIGNED_INT_24_8_OES, w, h);
-        _texture_2d_attach(depth_stencil_buf, GL_DEPTH_ATTACHMENT,
+        _texture_attach_2d(depth_stencil_buf, GL_DEPTH_ATTACHMENT,
                            GL_STENCIL_ATTACHMENT, mult_samples);
         depth_stencil = 1;
      }
 #else
    if (depth_fmt == GL_DEPTH24_STENCIL8)
      {
-        _renderbuffer_create(&depth_stencil_buf, depth_fmt, w, h, mult_samples);
+        _renderbuffer_create(&depth_stencil_buf);
+        _renderbuffer_allocate(depth_stencil_buf, depth_fmt, w, h, mult_samples);
         _renderbuffer_attach(depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT);
         depth_stencil = 1;
      }
@@ -409,14 +430,16 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
    // Depth Attachment
    if ((!depth_stencil) && (depth_fmt))
      {
-        _renderbuffer_create(&depth_buf, depth_fmt, w, h, mult_samples);
+        _renderbuffer_create(&depth_buf);
+        _renderbuffer_allocate(depth_buf, depth_fmt, w, h, mult_samples);
         _renderbuffer_attach(depth_buf, GL_DEPTH_ATTACHMENT);
      }
 
    // Stencil Attachment
    if ((!depth_stencil) && (stencil_fmt))
      {
-        _renderbuffer_create(&stencil_buf, stencil_fmt, w, h, mult_samples);
+        _renderbuffer_create(&stencil_buf);
+        _renderbuffer_allocate(stencil_buf, stencil_fmt, w, h, mult_samples);
         _renderbuffer_attach(stencil_buf, GL_STENCIL_ATTACHMENT);
      }
 
@@ -899,6 +922,74 @@ _surface_cap_print(EVGL_Engine *ee, int error)
 #undef PRINT_LOG
 }
 
+static void
+_surface_context_list_print(EVGL_Engine *ee)
+{
+   Eina_List *l;
+   EVGL_Surface *s;
+   EVGL_Context *c;
+   int count = 0;
+
+   // Only print them when the log level is 6
+   if (_evas_gl_log_level < 6) return;
+
+#define RESET "\e[m"
+#define GREEN "\e[1;32m"
+#define YELLOW "\e[1;33m"
+#define RED "\e[1;31m"
+
+   DBG( YELLOW "-----------------------------------------------" RESET);
+   DBG("Total Number of active Evas GL Surfaces: %d", eina_list_count(ee->surfaces));
+
+   EINA_LIST_FOREACH(ee->surfaces, l, s)
+     {
+        DBG( YELLOW "\t-----------------------------------------------" RESET);
+        DBG( RED "\t[Surface %d]" YELLOW " Ptr: %p" RED " Appx Mem: %d Byte", count++, s, (s->buffer_mem[0]+s->buffer_mem[1]+s->buffer_mem[2]+s->buffer_mem[3]));
+        DBG( GREEN "\t\t Size:" RESET " (%d, %d)",  s->w, s->h);
+
+        if (s->buffer_mem[0]) 
+          {
+             DBG( GREEN "\t\t Color Format:" RESET " %s", _glenum_string_get(s->color_fmt));
+             DBG( GREEN "\t\t Color Buffer Appx. Mem Usage:" RESET " %d Byte", s->buffer_mem[0]);
+          }
+        if (s->buffer_mem[1])
+          {
+             DBG( GREEN "\t\t Depth Format:" RESET " %s", _glenum_string_get(s->depth_fmt));
+             DBG( GREEN "\t\t Depth Buffer Appx. Mem Usage: " RESET "%d Byte", s->buffer_mem[1]);
+          }
+        if (s->buffer_mem[2])
+          {
+             DBG( GREEN "\t\t Stencil Format:" RESET " %s", _glenum_string_get(s->stencil_fmt));
+             DBG( GREEN "\t\t Stencil Buffer Appx. Mem Usage:" RESET " %d Byte", s->buffer_mem[2]);
+          }
+        if (s->buffer_mem[3])
+          {
+             DBG( GREEN "\t\t D-Stencil Format:" RESET " %s", _glenum_string_get(s->depth_stencil_fmt));
+             DBG( GREEN "\t\t D-Stencil Buffer Appx. Mem Usage:" RESET " %d Byte", s->buffer_mem[3]);
+          }
+        if (s->msaa_samples)
+           DBG( GREEN "\t\t MSAA Samples:" RESET " %d", s->msaa_samples);
+        if (s->direct_fb_opt)
+           DBG( GREEN "\t\t Direct Option Enabled" RESET );
+        DBG( YELLOW "\t-----------------------------------------------" RESET);
+     }
+
+   count = 0;
+
+   DBG( YELLOW "-----------------------------------------------" RESET);
+   DBG("Total Number of active Evas GL Contexts: %d", eina_list_count(ee->contexts));
+   EINA_LIST_FOREACH(ee->contexts, l, c)
+     {
+        DBG( YELLOW "\t-----------------------------------------------" RESET);
+        DBG( RED "\t[Context %d]" YELLOW " Ptr: %p", count++, c);
+     }
+   DBG( YELLOW "-----------------------------------------------" RESET);
+
+#undef RESET
+#undef GREEN
+#undef YELLOW
+#undef RED
+}
 
 //--------------------------------------------------------//
 // Start from here.....
@@ -924,14 +1015,14 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo)
 
    // Render Target Texture
    if (sfc->color_buf)
-      _texture_2d_attach(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples);
+      _texture_attach_2d(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples);
 
 
    // Depth Stencil RenderBuffer - Attach it to FBO
    if (sfc->depth_stencil_buf)
      {
 #ifdef GL_GLES
-        _texture_2d_attach(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT,
+        _texture_attach_2d(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT,
                            GL_STENCIL_ATTACHMENT, sfc->msaa_samples);
 #else
         _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT);
@@ -960,9 +1051,6 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo)
 static int
 _surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
 {
-   GLuint fbo = 0;
-   int ret = 0;
-
    // Set the context current with resource context/surface
    if (!_internal_resource_make_current(ee, NULL))
      {
@@ -973,8 +1061,7 @@ _surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
    // Create buffers
    if (sfc->color_fmt)
      {
-        _texture_2d_create(&sfc->color_buf, sfc->color_ifmt, sfc->color_fmt,
-                             GL_UNSIGNED_BYTE, sfc->w, sfc->h);
+        _texture_create(&sfc->color_buf);
      }
 
 
@@ -982,44 +1069,105 @@ _surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
    if (sfc->depth_stencil_fmt)
      {
 #ifdef GL_GLES
-        _texture_2d_create(&sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
-                             sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
-                             sfc->w, sfc->h);
+        _texture_create(&sfc->depth_stencil_buf);
 #else
-        _renderbuffer_create(&sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
-                               sfc->w, sfc->h, sfc->msaa_samples);
+        _renderbuffer_create(&sfc->depth_stencil_buf);
 #endif
      }
    else
      {
         if (sfc->depth_fmt)
           {
-             _renderbuffer_create(&sfc->depth_buf, sfc->depth_fmt, sfc->w, sfc->h,
-                                    sfc->msaa_samples);
+             _renderbuffer_create(&sfc->depth_buf);
           }
         if (sfc->stencil_fmt)
           {
-             _renderbuffer_create(&sfc->stencil_buf, sfc->stencil_fmt, sfc->w,
-                                    sfc->h, sfc->msaa_samples);
+             _renderbuffer_create(&sfc->stencil_buf);
           }
      }
 
-   // Set surface buffers with an fbo
-   if (!(ret = _surface_buffers_fbo_set(sfc, fbo)))
+   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
      {
-        ERR("Attaching the surface buffers to an FBO failed.");
-        if (sfc->color_buf)
-           glDeleteTextures(1, &sfc->color_buf);
-        if (sfc->depth_buf)
-           glDeleteRenderbuffers(1, &sfc->depth_buf);
-        if (sfc->stencil_buf)
-           glDeleteRenderbuffers(1, &sfc->stencil_buf);
+        ERR("Error doing make_current(NULL, NULL).");
+        return 0;
+     }
+
+   return 1; //ret;
+}
+
+
+static int
+_surface_buffers_allocate(EVGL_Engine *ee, EVGL_Surface *sfc, int w, int h)
+{
+   // Set the context current with resource context/surface
+   if (!_internal_resource_make_current(ee, NULL))
+     {
+        ERR("Error doing an internal resource make current");
+        return 0;
+     }
+ 
+   // Create buffers
+   if (sfc->color_fmt)
+     {
+        _texture_allocate_2d(sfc->color_buf, sfc->color_ifmt, sfc->color_fmt,
+                             GL_UNSIGNED_BYTE, w, h);
+        sfc->buffer_mem[0] = w * h * 4;
+     }
+
+   // Depth_stencil buffers or separate buffers
+   if (sfc->depth_stencil_fmt)
+     {
 #ifdef GL_GLES
-        if (sfc->depth_stencil_buf)
-           glDeleteTextures(1, &sfc->depth_stencil_buf);
+        _texture_allocate_2d(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
+                             sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
+                             w, h);
 #else
-        if (sfc->depth_stencil_buf)
-           glDeleteRenderbuffers(1, &sfc->depth_stencil_buf);
+        _renderbuffer_allocate(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
+                               w, h, sfc->msaa_samples);
+#endif
+        sfc->buffer_mem[3] = w * h * 4;
+     }
+   else
+     {
+        if (sfc->depth_fmt)
+          {
+             _renderbuffer_allocate(sfc->depth_buf, sfc->depth_fmt, w, h,
+                                    sfc->msaa_samples);
+             sfc->buffer_mem[1] = w * h * 3; // Assume it's 24 bits
+          }
+        if (sfc->stencil_fmt)
+          {
+             _renderbuffer_allocate(sfc->stencil_buf, sfc->stencil_fmt, w,
+                                    h, sfc->msaa_samples);
+             sfc->buffer_mem[2] = w * h; // Assume it's 8 bits
+          }
+     }
+
+   return 1; //ret;
+}
+
+static int
+_surface_buffers_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
+{
+   // Set the context current with resource context/surface
+   if (!_internal_resource_make_current(ee, NULL))
+     {
+        ERR("Error doing an internal resource make current");
+        return 0;
+     }
+
+   if (sfc->color_buf)
+      _texture_destroy(&sfc->color_buf);
+   if (sfc->depth_buf)
+      _renderbuffer_destroy(&sfc->depth_buf);
+   if (sfc->stencil_buf)
+      _renderbuffer_destroy(&sfc->stencil_buf);
+   if (sfc->depth_stencil_buf)
+     {
+#ifdef GL_GLES
+        _texture_destroy(&sfc->depth_stencil_buf);
+#else
+        _renderbuffer_destroy(&sfc->depth_stencil_buf);
 #endif
      }
 
@@ -1028,9 +1176,9 @@ _surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
         ERR("Error doing make_current(NULL, NULL).");
         return 0;
      }
-   return ret;
-}
 
+   return 1;
+}
 
 static int
 _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
@@ -1208,6 +1356,7 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
    int direct_off = 0, debug_mode = 0;
    char *s = NULL;
 
+
    if (evgl_engine) return evgl_engine;
 
    // Initialize Log Domain
@@ -1218,6 +1367,9 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
         EINA_LOG_ERR("Can not create a module log domain.");
         return NULL;
      }
+
+   // Store the Log Level
+   _evas_gl_log_level = eina_log_domain_level_get("EvasGL");
 
    // Check the validity of the efunc
    if ((!efunc) ||
@@ -1394,9 +1546,12 @@ evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
    // Create internal buffers
    if (!_surface_buffers_create(ee, sfc))
      {
-        ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+        ERR("Unable Create Specificed Surfaces.");
         goto error;
      };
+
+   // Keep track of all the created surfaces
+   ee->surfaces = eina_list_prepend(ee->surfaces, sfc);
 
    return sfc;
 
@@ -1440,34 +1595,15 @@ evgl_surface_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
         evgl_make_current(ee, NULL, NULL);
      }
 
-   // Set the context current with resource context/surface
-   if (!_internal_resource_make_current(ee, NULL))
+   // Destroy created buffers
+   if (!_surface_buffers_destroy(ee, sfc))
      {
-        ERR("Error doing an internal resource make current");
+        ERR("Error deleting surface resources.");
         return 0;
      }
 
-   // Delete buffers
-   if (sfc->color_buf)
-      glDeleteTextures(1, &sfc->color_buf);
-
-   if (sfc->depth_buf)
-      glDeleteRenderbuffers(1, &sfc->depth_buf);
-
-   if (sfc->stencil_buf)
-      glDeleteRenderbuffers(1, &sfc->stencil_buf);
-
-   if (sfc->depth_stencil_buf)
-     {
-#ifdef GL_GLES
-        glDeleteTextures(1, &sfc->depth_stencil_buf);
-#else
-        glDeleteRenderbuffers(1, &sfc->depth_stencil_buf);
-#endif
-     }
-
-   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
-      ERR("Error doing make_current(NULL, NULL). Passing over the error...");
+   // Remove it from the list
+   ee->surfaces = eina_list_remove(ee->surfaces, sfc);
 
    free(sfc);
    sfc = NULL;
@@ -1509,6 +1645,9 @@ evgl_context_create(EVGL_Engine *ee, EVGL_Context *share_ctx)
         return NULL;
      }
 
+   // Keep track of all the created context
+   ee->contexts = eina_list_prepend(ee->contexts, ctx);
+
    return ctx;
 }
 
@@ -1547,6 +1686,9 @@ evgl_context_destroy(EVGL_Engine *ee, EVGL_Context *ctx)
         ERR("Error destroying the engine context.");
         return 0;
      }
+
+   // Remove it from the list
+   ee->contexts = eina_list_remove(ee->contexts, ctx);
 
    // Free context
    free(ctx);
@@ -1592,6 +1734,34 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
 
 
+   // Allocate or free resources depending on what mode it's running.
+   if (_evgl_direct_renderable(ee, rsc, sfc))
+     {
+        // Destroy created resources
+        if (sfc->buffers_allocated)
+          {
+             if (!_surface_buffers_allocate(ee, sfc, 0, 0))
+               {
+                  ERR("Unable to destroy surface buffers!");
+                  return 0;
+               };
+             sfc->buffers_allocated = 0;
+          }
+     }
+   else
+     {
+        // Create internal buffers if not yet created
+        if (!sfc->buffers_allocated)
+          {
+             if (!_surface_buffers_allocate(ee, sfc, sfc->w, sfc->h))
+               {
+                  ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+                  return 0;
+               };
+             sfc->buffers_allocated = 1;
+          }
+     }
+
    // Do a make current
    if (!_internal_resource_make_current(ee, ctx))
      {
@@ -1636,6 +1806,8 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
 
    ctx->current_sfc = sfc;
    rsc->current_ctx = ctx;
+
+   _surface_context_list_print(ee);
 
    return 1;
 }

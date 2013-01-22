@@ -100,6 +100,14 @@ struct _EVGL_Surface
 
    // Attached Context
    int     fbo_attached;
+
+   // Init Flag
+   int     buffers_allocated;
+
+   // Rough estimate of buffer in memory per renderbuffer
+   // 0. color 1. depth 2. stencil 3. depth_stencil
+   int     buffer_mem[4];
+
    //-------------------------//
 
    EVGL_Context *current_ctx;
@@ -119,7 +127,7 @@ struct _EVGL_Context
 
    // Direct Rendering Related
    int          scissor_enabled;
-   int          scissor_upated;
+   int          scissor_updated;
    int          scissor_coord[4];
    int          dr_scissor_coord[4];
    int          direct_scissor;
@@ -237,7 +245,12 @@ struct _EVGL_Engine
    // Force Off fo Debug purposes
    int                force_direct_off;
 
+   // Keep track of all the current surfaces/contexts
+   Eina_List         *surfaces;
+   Eina_List         *contexts;
+
    void              *engine_data;  
+
 };
 
 

@@ -285,7 +285,7 @@ _evgl_glClear(GLbitfield mask)
 
              compute_gl_coordinates(img, rot, 0, 0, 0, 0, 0, oc, nc);
 
-             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
+             if ((ctx->scissor_updated) && (ctx->scissor_enabled))
                {
                   glScissor(ctx->dr_scissor_coord[0], ctx->dr_scissor_coord[1],
                             ctx->dr_scissor_coord[2], ctx->dr_scissor_coord[3]);
@@ -369,7 +369,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
 
              if (pname == GL_SCISSOR_BOX)
                {
-                  if (ctx->scissor_upated)
+                  if (ctx->scissor_updated)
                     {
                        memcpy(params, ctx->scissor_coord, sizeof(int)*4);
                        return;
@@ -498,7 +498,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              ctx->direct_scissor = 0;
 
              // Check....!!!!
-             ctx->scissor_upated = 1;
+             ctx->scissor_updated = 1;
           }
         else
           {
@@ -510,7 +510,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
              glScissor(x, y, width, height);
 
-             ctx->scissor_upated = 0;
+             ctx->scissor_updated = 0;
           }
      }
    else
@@ -563,7 +563,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
              compute_gl_coordinates(img, rot, 0, x, y, width, height, oc, nc);
 
-             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
+             if ((ctx->scissor_updated) && (ctx->scissor_enabled))
                {
                   glScissor(ctx->dr_scissor_coord[0], ctx->dr_scissor_coord[1],
                             ctx->dr_scissor_coord[2], ctx->dr_scissor_coord[3]);

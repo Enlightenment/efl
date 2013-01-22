@@ -1,3 +1,11 @@
+2013-01-07  Sung W. Park (sung_)
+
+	* Applied on-demand memory allocation policy for Evas GL Surface
+        for direct rendering optimization.  For direct rendering in EvasGL,
+        it falls back to FBO rendering if the conditions are not met.  Before,
+        the fallback resources were created in the beginning but now they are
+        created and destroyed on need base.
+
 2013-01-21  Carsten Haitzler (The Rasterman)
 
         * Fix xsync problem in ecore_x_image_get() where prior errors
