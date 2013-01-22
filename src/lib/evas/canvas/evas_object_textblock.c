@@ -3548,7 +3548,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
              tbase = str = ptr = alloca((off + 1) * sizeof(Eina_Unicode));
              ind = 0;
-             urepch = eina_unicode_utf8_get_next(repch, &ind);
+             urepch = eina_unicode_utf8_next_get(repch, &ind);
              for (i = 0 ; i < off; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
