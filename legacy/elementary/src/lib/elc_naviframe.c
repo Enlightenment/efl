@@ -1156,6 +1156,8 @@ _on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
    if (!it) return;
 
    dispmode = evas_object_size_hint_display_mode_get(obj);
+   if (sd->dispmode == dispmode) return;
+
    sd->dispmode = dispmode;
 
    switch (dispmode)
