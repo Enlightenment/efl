@@ -1256,6 +1256,8 @@ void _evas_device_unref(Evas_Device *dev);
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
 
+extern Eina_Cow *evas_object_image_load_opts_cow;
+
 /****************************************************************************/
 /*****************************************/
 /********************/
