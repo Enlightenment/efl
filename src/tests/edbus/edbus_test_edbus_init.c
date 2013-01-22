@@ -120,6 +120,38 @@ START_TEST(edbus_test_edbus_conn_object)
 
 }
 END_TEST
+
+void name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *old_id EINA_UNUSED, const char *new_id)
+{
+   const char **id = data;
+   *id = new_id;
+}
+
+START_TEST(edbus_test_edbus_name_owner_changed)
+{
+   EDBus_Connection *conn;
+   const char *id = NULL;
+
+   ecore_init();
+   edbus_init();
+
+   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
+   fail_if(conn == NULL);
+
+   edbus_name_owner_changed_callback_add(conn, "org.bus.that.not.exist",
+                                         name_owner_changed_cb, &id, EINA_TRUE);
+   ecore_timer_add(0.5, _quit_cb, NULL);
+
+   ecore_main_loop_begin();
+
+   fail_if(id == NULL);
+
+   edbus_connection_unref(conn);
+
+   edbus_shutdown();
+   ecore_shutdown();
+}
+END_TEST
 #endif
 
 void edbus_test_edbus_init(TCase *tc)
@@ -129,5 +161,6 @@ void edbus_test_edbus_init(TCase *tc)
 #if 0
    tcase_add_test(tc, edbus_test_edbus_conn);
    tcase_add_test(tc, edbus_test_edbus_conn_object);
+   tcase_add_test(tc, edbus_test_edbus_name_owner_changed);
 #endif
 }

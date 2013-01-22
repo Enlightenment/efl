@@ -19,6 +19,7 @@ typedef struct _EDBus_Connection_Name
       Eina_List   *to_delete;
    } event_handlers;
    EDBus_Signal_Handler *name_owner_changed;
+   EDBus_Pending *name_owner_get;
 } EDBus_Connection_Name;
 
 typedef struct _EDBus_Object_Context_Event_Cb

@@ -385,7 +385,10 @@ edbus_connection_name_gc(EDBus_Connection *conn, EDBus_Connection_Name *cn)
    if (cn->objects)
      eina_hash_free(cn->objects);
    eina_stringshare_del(cn->name);
-   eina_stringshare_del(cn->unique_id);
+   if (cn->name_owner_get)
+     edbus_pending_cancel(cn->name_owner_get);
+   if (cn->unique_id)
+     eina_stringshare_del(cn->unique_id);
    eina_list_free(cn->event_handlers.to_delete);
    free(cn);
 }
@@ -432,19 +435,19 @@ on_name_owner_changed(void *data, const EDBus_Message *msg)
 static void
 on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
-   const char *unique_id = "";
+   const char *unique_id = "", *error_name;
    EDBus_Connection_Name *cn = data;
 
-   if (edbus_message_error_get(msg, NULL, NULL))
+   cn->name_owner_get = NULL;
+
+   if (edbus_message_error_get(msg, &error_name, NULL))
      {
-        DBG("GetNameOwner returned an error");
-        return;
+        if (!strcmp(error_name, EDBUS_ERROR_PENDING_CANCELED))
+          return;
+        DBG("GetNameOwner of bus = %s returned an error", cn->name);
      }
    else if (!edbus_message_arguments_get(msg, "s", &unique_id))
-     {
-        ERR("Error getting arguments from GetNameOwner");
-        return;
-     }
+     ERR("Error getting arguments from GetNameOwner");
 
    cn->unique_id = eina_stringshare_add(unique_id);
    edbus_dispatch_name_owner_change(cn, NULL);
@@ -490,7 +493,7 @@ edbus_connection_name_get(EDBus_Connection *conn, const char *name)
    if (name[0] == ':')
      cn->unique_id = eina_stringshare_add(name);
    else
-     edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
+     cn->name_owner_get = edbus_name_owner_get(conn, cn->name, on_get_name_owner, cn);
 
    cn->name_owner_changed = _edbus_signal_handler_add(conn, EDBUS_FDO_BUS,
                                                       EDBUS_FDO_PATH,

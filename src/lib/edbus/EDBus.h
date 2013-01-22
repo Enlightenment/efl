@@ -125,6 +125,7 @@ extern "C" {
 #define EDBUS_FDO_INTERFACE_OBJECT_MANAGER "org.freedesktop.DBus.ObjectManager"
 #define EDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable"
 #define EDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer"
+#define EDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled"
 
 typedef struct _EDBus_Version
 {

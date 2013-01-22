@@ -218,7 +218,7 @@ edbus_pending_cancel(EDBus_Pending *pending)
    dbus_pending_call_cancel(pending->dbus_pending);
 
    error_message = edbus_message_error_new(pending->msg_sent,
-                                           "org.enlightenment.DBus.Canceled",
+                                           EDBUS_ERROR_PENDING_CANCELED,
                                            "Canceled by user.");
    edbus_pending_dispatch(pending, error_message);
 }
