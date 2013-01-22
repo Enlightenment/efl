@@ -2220,7 +2220,7 @@ _text_append_idler(void *data)
           {
              int prev_pos = pos;
              Eina_Unicode tmp =
-               eina_unicode_utf8_get_next(sd->append_text_left, &pos);
+               eina_unicode_utf8_next_get(sd->append_text_left, &pos);
 
              if (esc_start == -1)
                {
