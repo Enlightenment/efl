@@ -124,3 +124,4 @@ Fixes:
     * Evas text utils: Fixed issue with no-harfbuzz bidi.
     * Fixed pixman surface alloc where allocated and image size differ.
     * Fixed x11 error sync issue with ecore_x_image_get()
+    * Fix evas gif loader to return the correct frame duration

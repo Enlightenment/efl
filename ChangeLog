@@ -357,3 +357,7 @@
 2013-01-15  ChunEon Park (Hermet) <hermet@hermet.pe.kr>
 
         * Fix SIGFPE in evas map update if image size is 0.
+
+2013-01-22  Daniel Willmann <d.willmann@samsung.com>
+
+        * Fix evas gif loader to return the correct frame duration

@@ -1024,7 +1024,7 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
    if (frame_num < 0) return -1;
 
    f = eina_file_open(file, EINA_FALSE);
-   if (f) return -1;
+   if (!f) return -1;
 
    egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!egi.map) goto on_error;
