@@ -288,9 +288,9 @@ dnl     PKG_INTERNAL_LIBS: all other EFL as lib/name/libname.la that this
 dnl             package depend. Used in automake's _DEPENDENCIES.
 dnl
 dnl     USE_PKG_LIBS: what to use in automake's _LIBADD or _LDADD when using
-dnl             this PKG (PKG_LIBS + libpkg.la)
+dnl             this PKG (libpkg.la and public dependencies)
 dnl
-dnl     USE_PKG_INTERNAL_LIBS: extends PKG_INTERNAL_LIBS with lib/pkg/libpkg.la
+dnl     USE_PKG_INTERNAL_LIBS: lib/pkg/libpkg.la
 dnl
 dnl     requirements_pc_pkg: all pkg-config (pc) files used by this pkg,
 dnl             includes internal EFL (used in 'Requires.private' in pkg.pc)
@@ -366,8 +366,8 @@ esac
 m4_defn([UP])_LDFLAGS="${EFL_COV_LDFLAGS} ${EFL_LDFLAGS} ${m4_defn([UP])_LDFLAGS}"
 m4_defn([UP])_LIBS=" ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${m4_defn([UP])_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
 m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
-USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
-USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la ${requirements_internal_deps_libs_[]m4_defn([DOWN])}"
+USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} lib/${libdirname}/lib${libname}.la ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_efl}"
+USE_[]m4_defn([UP])_INTERNAL_LIBS="lib/${libdirname}/lib${libname}.la"
 m4_defn([UP])_CFLAGS="${EFL_COV_CFLAGS} ${EFL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
 requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
 requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
