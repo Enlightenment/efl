@@ -185,7 +185,13 @@ AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 if test "x${have_windows}" = "xyes" ; then
    lt_cv_deplibs_check_method='pass_all'
 fi
-AM_PROG_AR
+dnl OK  i notice this came with "fixing warnings from autoconf"... but
+dnl here is a big problem. autoconf 2.68 has this.. 2.67 does not, and
+dnl 2.67 isn't that old at all. half of my boxen only have 2.67, so this
+dnl is going to highly limit what machines *I* can develop and test on
+dnl so let's discuss this if you want to trun it back on... :) this
+dnl may need to wait for another day
+dnl AM_PROG_AR
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
 
