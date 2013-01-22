@@ -250,6 +250,7 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
              else
 #endif
                evas_cache_image_drop(&im->cache_entry);
+             eina_rectangle_free(rect);
              return NULL;
           }
         
