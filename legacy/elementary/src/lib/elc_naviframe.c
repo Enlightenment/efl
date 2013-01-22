@@ -438,9 +438,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
    nit = (Elm_Naviframe_Item *)it;
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
-   if (it == sd->compress_it)
-     sd->compress_it = NULL;
-
    if (nit->animator) ecore_animator_del(nit->animator);
 
    top = (it == elm_naviframe_top_item_get(WIDGET(nit)));
@@ -1062,6 +1059,22 @@ _on_item_size_hints_changed(void *data,
    elm_layout_sizing_eval(data);
 }
 
+static void
+_item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
+{
+   if (it->dispmode == dispmode) return;
+   switch (dispmode)
+     {
+      case EVAS_DISPLAY_MODE_COMPRESS:
+         edje_object_signal_emit(VIEW(it), "display,mode,compress", "");
+         break;
+      default:
+         edje_object_signal_emit(VIEW(it), "display,mode,default", "");
+         break;
+     }
+   it->dispmode = dispmode;
+}
+
 static Elm_Naviframe_Item *
 _item_new(Evas_Object *obj,
           const Elm_Naviframe_Item *prev_it,
@@ -1138,6 +1151,8 @@ _item_new(Evas_Object *obj,
      }
 
    _item_content_set(it, content);
+   _item_dispmode_set(it, sd->dispmode);
+
    it->title_visible = EINA_TRUE;
 
    return it;
@@ -1147,32 +1162,20 @@ static void
 _on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
                            Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Object_Item *it;
+   Elm_Naviframe_Item *it;
    Evas_Display_Mode dispmode;
 
    ELM_NAVIFRAME_DATA_GET(obj, sd);
-
-   it = elm_naviframe_top_item_get(obj);
-   if (!it) return;
 
    dispmode = evas_object_size_hint_display_mode_get(obj);
    if (sd->dispmode == dispmode) return;
 
    sd->dispmode = dispmode;
 
-   switch (dispmode)
-     {
-      case EVAS_DISPLAY_MODE_COMPRESS:
-        elm_object_signal_emit(VIEW(it), "display,mode,compress", "");
-        sd->compress_it = it;
-        break;
-      default:
-        if (sd->compress_it)
-          elm_object_signal_emit(VIEW(sd->compress_it), "display,mode,default",
-                                 "");
-        break;
-     }
+   EINA_INLIST_FOREACH(sd->stack, it)
+     _item_dispmode_set(it, dispmode);
 }
+
 
 static void
 _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)

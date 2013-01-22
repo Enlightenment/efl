@@ -936,3 +936,7 @@
 2013-01-19  WooHyun Jung
 
         * When string in entry is changed, access to sd should be forbidden after smart_callback_call is called.
+
+2013-01-22  ChunEon Park (Hermet)
+
+        * apply display mode to all views of a naviframe if the display mode of the views are changed.

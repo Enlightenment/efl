@@ -128,6 +128,7 @@ Fixes:
    * Fix thumb theme hook.
    * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
    * Fix memory leak of the ctxpopup and callback function to be ctxpopup obj is delivered to.
+   * Apply disply mode to all views of a naviframe if the display mode of the views are changed. Sometimes views are couldn't be recoverved to a previous status if they are stacked into more depth.
 
 Removals:
 
