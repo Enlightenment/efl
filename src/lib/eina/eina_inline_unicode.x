@@ -19,8 +19,6 @@
 #ifndef EINA_INLINE_UNICODE_
 # define EINA_INLINE_UNICODE_
 
-#include "eina_safety_checks.h"
-
 EAPI Eina_Unicode _eina_unicode_utf8_next_get(int ind,
 					      unsigned char d,
 					      const char *buf, 
@@ -36,9 +34,6 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
    int ind;
    Eina_Unicode r;
    unsigned char d;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iindex, 0);
 
    ind = *iindex;
 
