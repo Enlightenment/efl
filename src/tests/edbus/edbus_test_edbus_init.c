@@ -64,6 +64,8 @@ START_TEST(edbus_test_edbus_conn)
    EDBus_Connection *conn;
    int ret;
 
+   ecore_init();
+
    ret = edbus_init();
    fail_if(ret != 1);
 
@@ -90,6 +92,8 @@ START_TEST(edbus_test_edbus_conn_object)
    EDBus_Connection *conn;
    EDBus_Object *obj;
    int ret;
+
+   ecore_init();
 
    ret = edbus_init();
    fail_if(ret != 1);
