@@ -188,7 +188,7 @@ eina_unicode_escape(const Eina_Unicode *str)
 #define ERROR_REPLACEMENT_END   0xDCFF
 
 EAPI Eina_Unicode
-_eina_unicode_utf8_get_next(int ind,
+_eina_unicode_utf8_next_get(int ind,
                             unsigned char d,
                             const char *buf, 
 			    int *iindex)

@@ -21,7 +21,7 @@
 
 #include "eina_safety_checks.h"
 
-EAPI Eina_Unicode _eina_unicode_utf8_get_next(int ind,
+EAPI Eina_Unicode _eina_unicode_utf8_next_get(int ind,
 					      unsigned char d,
 					      const char *buf, 
 					      int *iindex);
@@ -31,7 +31,7 @@ EAPI Eina_Unicode _eina_unicode_utf8_get_next(int ind,
 #define EINA_IS_CONTINUATION_BYTE(x) ((x & 0xC0) == 0x80)
 
 static inline Eina_Unicode
-eina_unicode_utf8_get_next(const char *buf, int *iindex)
+eina_unicode_utf8_next_get(const char *buf, int *iindex)
 {
    int ind;
    Eina_Unicode r;
@@ -62,7 +62,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         return r;
      }
 
-   return _eina_unicode_utf8_get_next(ind, d, buf, iindex);
+   return _eina_unicode_utf8_next_get(ind, d, buf, iindex);
 
 /* Gets here where there was an error and we want to replace the char
  * we just use the invalid unicode codepoints 8 lower bits represent
