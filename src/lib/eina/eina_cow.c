@@ -73,13 +73,13 @@ typedef int (*Eina_Cow_Hash)(const void *, int);
   } while (0);
 
 #define EINA_COW_PTR_SIZE                       \
-  (sizeof (Eina_Cow_Ptr) < sizeof (void*) ? sizeof (void*) : sizeof (Eina_Cow_Ptr))
+  eina_mempool_alignof(sizeof (Eina_Cow_Ptr))
 
 #define EINA_COW_PTR_GET(d)				\
-  (Eina_Cow_Ptr*) (((unsigned char *)d) - EINA_COW_PTR_SIZE)
+  (((Eina_Cow_Ptr *)d) - 1)
 
 #define EINA_COW_DATA_GET(d)                    \
-  (((unsigned char *)d) + EINA_COW_PTR_SIZE)
+  ((unsigned char *)(d + 1))
 
 static int _eina_cow_log_dom = -1;
 
