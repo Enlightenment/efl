@@ -26,7 +26,7 @@ static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
 
 
 static const char INDICATOR_PART[] = "elm.swallow.indicator";
-static const char VIRTUALKEYPAD_PART[] = "elm.swallow.viertualkeypad";
+static const char VIRTUALKEYPAD_PART[] = "elm.swallow.virtualkeypad";
 static const char CLIPBOARD_PART[] = "elm.swallow.clipboard";
 static const char SOFTKEY_PART[] = "elm.swallow.softkey";
 
