@@ -1,4 +1,8 @@
-2013-01-07  Sung W. Park (sung_)
+2013-01-22  Mike Blumenkrantz
+
+        * rebase dns.c against upstream
+
+2013-01-22  Sung W. Park (sung_)
 
 	* Applied on-demand memory allocation policy for Evas GL Surface
         for direct rendering optimization.  For direct rendering in EvasGL,

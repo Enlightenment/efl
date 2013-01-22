@@ -1,7 +1,7 @@
 /* ==========================================================================
  * dns.h - Recursive, Reentrant DNS Resolver.
  * --------------------------------------------------------------------------
- * Copyright (c) 2009, 2010  William Ahern
+ * Copyright (c) 2009, 2010, 2012  William Ahern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -37,6 +37,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #else
+#include <sys/param.h>		/* BYTE_ORDER BIG_ENDIAN _BIG_ENDIAN */
 #include <sys/types.h>		/* socklen_t */
 #include <sys/socket.h>		/* struct socket */
 
@@ -46,8 +47,6 @@
 
 #include <netdb.h>		/* struct addrinfo */
 #endif
-
-#include <Eina.h>		/* EINA_UNUSED */
 
 
 /*
@@ -66,9 +65,9 @@
 
 #define DNS_VENDOR "william@25thandClement.com"
 
-#define DNS_V_REL  0x20110117
-#define DNS_V_ABI  0x20100709
-#define DNS_V_API  0x20100709
+#define DNS_V_REL  0x20121023
+#define DNS_V_ABI  0x20120806
+#define DNS_V_API  0x20120806
 
 
 const char *dns_vendor(void);
@@ -81,19 +80,78 @@ int dns_v_api(void);
 /*
  * E R R O R S
  *
+ * Errors and exceptions are always returned through an int. This should
+ * hopefully make integration easier in the majority of circumstances, and
+ * also cut down on useless compiler warnings.
+ *
+ * System and library errors are returned together. POSIX guarantees that
+ * all system errors are positive integers. Library errors are always
+ * negative integers in the range DNS_EBASE to DNS_ELAST, with the high bits
+ * set to the three magic ASCII characters "dns".
+ *
+ * dns_strerror() returns static English string descriptions of all known
+ * errors, and punts the remainder to strerror(3).
+ *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#define DNS_EBASE -(('d' << 24) | ('n' << 16) | ('s' << 8) | 64)
+
+#define dns_error_t int /* for documentation only */
+
 enum dns_errno {
-	DNS_ENOBUFS	= -(('d' << 24) | ('n' << 16) | ('s' << 8) | 64),
+	DNS_ENOBUFS = DNS_EBASE,
 	DNS_EILLEGAL,
 	DNS_EORDER,
 	DNS_ESECTION,
 	DNS_EUNKNOWN,
+	DNS_EADDRESS,
+	DNS_ELAST,
 }; /* dns_errno */
 
-const char *dns_strerror(int);
+const char *dns_strerror(dns_error_t);
 
 extern int dns_debug;
+
+
+/*
+ * C O M P I L E R  A N N O T A T I O N S
+ *
+ * GCC with -Wextra, and clang by default, complain about overrides in
+ * initializer lists. Overriding previous member initializers is well
+ * defined behavior in C. dns.c relies on this behavior to define default,
+ * overrideable member values when instantiating configuration objects.
+ *
+ * dns_quietinit() guards a compound literal expression with pragmas to
+ * silence these shrill warnings. This alleviates the burden of requiring
+ * third-party projects to adjust their compiler flags.
+ *
+ * NOTE: If you take the address of the compound literal, take the address
+ * of the transformed expression, otherwise the compound literal lifetime is
+ * tied to the scope of the GCC statement expression.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#if defined __clang__
+#define DNS_PRAGMA_PUSH _Pragma("clang diagnostic push")
+#define DNS_PRAGMA_QUIET _Pragma("clang diagnostic ignored \"-Winitializer-overrides\"")
+#define DNS_PRAGMA_POP _Pragma("clang diagnostic pop")
+
+#define dns_quietinit(...) \
+	DNS_PRAGMA_PUSH DNS_PRAGMA_QUIET __VA_ARGS__ DNS_PRAGMA_POP
+#elif (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || __GNUC__ > 4
+#define DNS_PRAGMA_PUSH _Pragma("GCC diagnostic push")
+#define DNS_PRAGMA_QUIET _Pragma("GCC diagnostic ignored \"-Woverride-init\"")
+#define DNS_PRAGMA_POP _Pragma("GCC diagnostic pop")
+
+/* GCC parses the _Pragma operator less elegantly than clang. */
+#define dns_quietinit(...) \
+	({ DNS_PRAGMA_PUSH DNS_PRAGMA_QUIET __VA_ARGS__; DNS_PRAGMA_POP })
+#else
+#define DNS_PRAGMA_PUSH
+#define DNS_PRAGMA_QUIET
+#define DNS_PRAGMA_POP
+#define dns_quietinit(...) __VA_ARGS__
+#endif
 
 
 /*
@@ -168,6 +226,7 @@ enum dns_type {
 	DNS_T_TXT	= 16,
 	DNS_T_AAAA	= 28,
 	DNS_T_SRV	= 33,
+	DNS_T_OPT	= 41,
 	DNS_T_SSHFP	= 44,
 	DNS_T_SPF	= 99,
 
@@ -261,7 +320,7 @@ extern unsigned (*dns_random)(void);
 struct dns_header {
 		unsigned qid:16;
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if (defined BYTE_ORDER && BYTE_ORDER == BIG_ENDIAN) || (defined __sun && defined _BIG_ENDIAN)
 		unsigned qr:1;
 		unsigned opcode:4;
 		unsigned aa:1;
@@ -422,7 +481,8 @@ int dns_rr_cmp(struct dns_rr *, struct dns_packet *, struct dns_rr *, struct dns
 size_t dns_rr_print(void *, size_t, struct dns_rr *, struct dns_packet *, int *);
 
 
-#define dns_rr_i_new(P, ...)		dns_rr_i_init(&(struct dns_rr_i){ .data = 0, __VA_ARGS__ }, (P))
+#define dns_rr_i_new(P, ...) \
+	dns_rr_i_init(&dns_quietinit((struct dns_rr_i){ 0, __VA_ARGS__ }), (P))
 
 struct dns_rr_i {
 	enum dns_section section;
@@ -618,6 +678,38 @@ size_t dns_srv_cname(void *, size_t, struct dns_srv *);
 
 
 /*
+ * OPT  R E S O U R C E  R E C O R D
+ */
+
+#define DNS_OPT_MINDATA 512
+
+#define DNS_OPT_BADVERS 16
+
+struct dns_opt {
+	size_t size, len;
+
+	unsigned char rcode, version;
+	unsigned short maxsize;
+
+	unsigned char data[DNS_OPT_MINDATA];
+}; /* struct dns_opt */
+
+unsigned int dns_opt_ttl(const struct dns_opt *);
+
+unsigned short dns_opt_class(const struct dns_opt *);
+
+struct dns_opt *dns_opt_init(struct dns_opt *, size_t);
+
+int dns_opt_parse(struct dns_opt *, struct dns_rr *, struct dns_packet *);
+
+int dns_opt_push(struct dns_packet *, struct dns_opt *);
+
+int dns_opt_cmp(const struct dns_opt *, const struct dns_opt *);
+
+size_t dns_opt_print(void *, size_t, struct dns_opt *);
+
+
+/*
  * SSHFP  R E S O U R C E  R E C O R D
  */
 
@@ -682,6 +774,7 @@ union dns_any {
 	struct dns_soa soa;
 	struct dns_ptr ptr;
 	struct dns_srv srv;
+	struct dns_opt opt;
 	struct dns_sshfp sshfp;
 	struct dns_txt txt, spf, rdata;
 }; /* union dns_any */
@@ -742,7 +835,7 @@ struct dns_resolv_conf {
 	char search[4][DNS_D_MAXNAME + 1];
 
 	/* (f)ile, (b)ind, (c)ache */
-	char lookup[3];
+	char lookup[4 * (1 + (4 * 2))];
 
 	struct {
 		_Bool edns0;
@@ -791,7 +884,13 @@ int dns_resconf_loadfile(struct dns_resolv_conf *, FILE *);
 
 int dns_resconf_loadpath(struct dns_resolv_conf *, const char *);
 
+int dns_nssconf_loadfile(struct dns_resolv_conf *, FILE *);
+
+int dns_nssconf_loadpath(struct dns_resolv_conf *, const char *);
+
 int dns_resconf_dump(struct dns_resolv_conf *, FILE *);
+
+int dns_nssconf_dump(struct dns_resolv_conf *, FILE *);
 
 int dns_resconf_setiface(struct dns_resolv_conf *, const char *, unsigned short);
 
@@ -885,7 +984,7 @@ void dns_cache_close(struct dns_cache *);
 #define DNS_OPTS_INITIALIZER  { DNS_OPTS_INITIALIZER_ }
 #define DNS_OPTS_INIT(...)    { DNS_OPTS_INITIALIZER_, __VA_ARGS__ }
 
-#define dns_opts(...) (&(struct dns_options)DNS_OPTS_INIT(__VA_ARGS__))
+#define dns_opts(...) (&dns_quietinit((struct dns_options)DNS_OPTS_INIT(__VA_ARGS__)))
 
 struct dns_options {
 	/*
@@ -1028,15 +1127,7 @@ int dns_ai_poll(struct dns_addrinfo *, int);
 
 const struct dns_stat *dns_ai_stat(struct dns_addrinfo *);
 
-void *dns_sa_addr(int af, void *sa);
-unsigned short *dns_sa_port(int af, void *sa);
-#if _WIN32
-const char *dns_inet_ntop(int af, const void *src, void *dst, unsigned long lim);
-#else
-#define dns_inet_pton(...)	inet_pton(__VA_ARGS__)
-#define dns_inet_ntop(...)	inet_ntop(__VA_ARGS__)
-#endif
-#define dns_sa_family(sa)	(((struct sockaddr *)(sa))->sa_family)
+
 /*
  * U T I L I T Y  I N T E R F A C E S
  *
@@ -1072,5 +1163,16 @@ size_t dns_strlcat(char *, const char *, size_t);
 #define DNS_PP_D10 9
 #define DNS_PP_D11 10
 #define DNS_PP_DEC(N) DNS_PP_XPASTE(DNS_PP_D, N)
+
+
+void *dns_sa_addr(int af, void *sa);
+unsigned short *dns_sa_port(int af, void *sa);
+#if _WIN32
+const char *dns_inet_ntop(int af, const void *src, void *dst, unsigned long lim);
+#else
+#define dns_inet_pton(...)	inet_pton(__VA_ARGS__)
+#define dns_inet_ntop(...)	inet_ntop(__VA_ARGS__)
+#endif
+#define dns_sa_family(sa)	(((struct sockaddr *)(sa))->sa_family)
 
 #endif /* DNS_H */
