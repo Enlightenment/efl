@@ -3573,22 +3573,23 @@ elm_win_main_menu_get(const Evas_Object *obj)
 }
 
 static void
-_local_menu_set(Eo *obj)
+_dbus_menu_set(Eina_Bool connect, void *data)
 {
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
-   edje_object_part_swallow(sd->layout, "elm.swallow.menu", sd->main_menu);
-   edje_object_signal_emit(sd->layout, "elm,action,show_menu", "elm");
-   _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
-}
-
-static void
-_dbus_result_cb(Eina_Bool result, void *data)
-{
-   if (!result)
+   if (connect)
      {
-        ERR("D-Bus menu error. Using local menu");
-        _local_menu_set(data);
+        DBG("Setting menu to D-Bus");
+        edje_object_part_unswallow(sd->layout, sd->main_menu);
+        edje_object_signal_emit(sd->layout, "elm,action,hide_menu", "elm");
+        _elm_menu_menu_bar_hide(sd->main_menu);
+     }
+   else
+     {
+        DBG("Setting menu to local mode");
+        edje_object_part_swallow(sd->layout, "elm.swallow.menu", sd->main_menu);
+        edje_object_signal_emit(sd->layout, "elm,action,show_menu", "elm");
+        evas_object_show(sd->main_menu);
      }
 }
 
@@ -3602,19 +3603,19 @@ _main_menu_get(Eo *obj, void *_pd, va_list *list)
    if (sd->main_menu) goto end;
 
    sd->main_menu = elm_menu_add(obj);
+   _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
 
 #ifdef HAVE_ELEMENTARY_X
    if (_elm_config->external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
 #endif
 
-   if (use_dbus)
+   if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
      {
-        _elm_dbus_menu_register(sd->main_menu);
         _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu,
-                                         _dbus_result_cb, obj);
+                                         _dbus_menu_set, obj);
      }
    else
-     _local_menu_set(obj);
+     _dbus_menu_set(EINA_FALSE, obj);
 
 end:
    *ret = sd->main_menu;

@@ -17,6 +17,8 @@
 #define DBUS_DATA_KEY       "_Elm_DBus_Menu"
 #endif
 
+typedef struct _Callback_Data Callback_Data;
+
 struct _Elm_DBus_Menu
 {
 #ifdef ELM_EDBUS2
@@ -26,7 +28,7 @@ struct _Elm_DBus_Menu
    unsigned                 timestamp;
    Eina_Hash               *elements;
    Ecore_Idler             *signal_idler;
-   Ecore_X_Window           xid;
+   Callback_Data           *app_menu_data;
 #endif
 };
 
@@ -53,7 +55,9 @@ enum
 typedef struct _Callback_Data
 {
    void (*result_cb)(Eina_Bool, void *);
-   void *data;
+   void          *data;
+   EDBus_Pending *pending_register;
+   Ecore_X_Window xid;
 } Callback_Data;
 
 static Eina_Bool
@@ -82,10 +86,49 @@ static void
 _app_register_cb(void *data, const EDBus_Message *msg,
                  EDBus_Pending *pending EINA_UNUSED)
 {
-   Callback_Data *cd = data;
+   Elm_DBus_Menu *menu = data;
+   Callback_Data *cd = menu->app_menu_data;
+   Eina_Bool result;
+   const char *error_name;
 
-   cd->result_cb(!edbus_message_error_get(msg, NULL, NULL), cd->data);
-   free(cd);
+   cd->pending_register = NULL;
+
+   result = !edbus_message_error_get(msg, &error_name, NULL);
+   if (!result && !strcmp(error_name, EDBUS_ERROR_PENDING_CANCELED))
+     {
+        DBG("Register canceled");
+        return;
+     }
+
+   if (cd->result_cb) cd->result_cb(result, cd->data);
+}
+
+static void
+_app_menu_watch_cb(void *data, const char *bus EINA_UNUSED,
+                   const char *old_id EINA_UNUSED, const char *new_id)
+{
+   Elm_DBus_Menu *menu = data;
+   Callback_Data *cd = menu->app_menu_data;
+   EDBus_Message *msg;
+   const char *obj_path;
+
+   if (!strcmp(new_id, ""))
+     {
+        if (cd->pending_register) edbus_pending_cancel(cd->pending_register);
+
+        if (cd->result_cb) cd->result_cb(EINA_FALSE, cd->data);
+     }
+   else
+     {
+        msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
+                                            REGISTRAR_INTERFACE,
+                                            "RegisterWindow");
+        obj_path = edbus_service_object_path_get(menu->iface);
+        edbus_message_arguments_append(msg, "uo", (unsigned)cd->xid,
+                                       obj_path);
+        cd->pending_register = edbus_connection_send(menu->bus, msg,
+                                                     _app_register_cb, data, -1);
+     }
 }
 
 static Eina_Bool
@@ -878,8 +921,8 @@ _elm_dbus_menu_unregister(Eo *obj)
 
    if (!sd->dbus_menu) return;
 
-   if (sd->dbus_menu->xid)
-     _elm_dbus_menu_app_menu_unregister(sd->dbus_menu->menu);
+   if (sd->dbus_menu->app_menu_data)
+     _elm_dbus_menu_app_menu_unregister(obj);
    edbus_service_interface_unregister(sd->dbus_menu->iface);
    edbus_connection_unref(sd->dbus_menu->bus);
    if (sd->dbus_menu->signal_idler)
@@ -894,8 +937,6 @@ void
 _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
                                  void (*result_cb)(Eina_Bool, void *), void *data)
 {
-   EDBus_Message *msg;
-   const char *obj_path;
    Callback_Data *cd;
 
    ELM_MENU_CHECK(obj);
@@ -907,23 +948,31 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
         return;
      }
 
-   msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
-                                       REGISTRAR_INTERFACE, "RegisterWindow");
-   cd = malloc(sizeof(Callback_Data));
+   if (sd->dbus_menu->app_menu_data)
+     {
+        if (sd->dbus_menu->app_menu_data->xid != xid)
+          ERR("There's another XID registered: %x",
+              sd->dbus_menu->app_menu_data->xid);
+
+        return;
+     }
+
+   sd->dbus_menu->app_menu_data = malloc(sizeof(Callback_Data));
+   cd = sd->dbus_menu->app_menu_data;
    cd->result_cb = result_cb;
    cd->data = data;
-   obj_path = edbus_service_object_path_get(sd->dbus_menu->iface);
-   edbus_message_arguments_append(msg, "uo", (unsigned)xid,
-                                  obj_path);
-   edbus_connection_send(sd->dbus_menu->bus, msg, _app_register_cb,
-                         cd, -1);
-   sd->dbus_menu->xid = xid;
+   cd->pending_register = NULL;
+   cd->xid = xid;
+   edbus_name_owner_changed_callback_add(sd->dbus_menu->bus, REGISTRAR_NAME,
+                                         _app_menu_watch_cb, sd->dbus_menu,
+                                         EINA_TRUE);
 }
 
 void
 _elm_dbus_menu_app_menu_unregister(Eo *obj)
 {
    EDBus_Message *msg;
+   Callback_Data *cd;
 
    ELM_MENU_CHECK(obj);
    ELM_MENU_DATA_GET(obj, sd);
@@ -934,13 +983,21 @@ _elm_dbus_menu_app_menu_unregister(Eo *obj)
         return;
      }
 
-   if (!sd->dbus_menu->xid) return;
+   cd = sd->dbus_menu->app_menu_data;
+
+   if (!cd) return;
+
+   if (cd->pending_register)
+     edbus_pending_cancel(cd->pending_register);
 
    msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
                                        REGISTRAR_INTERFACE, "UnregisterWindow");
-   edbus_message_arguments_append(msg, "u", (unsigned)sd->dbus_menu->xid);
+   edbus_message_arguments_append(msg, "u", (unsigned)cd->xid);
    edbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
-   sd->dbus_menu->xid = 0;
+   edbus_name_owner_changed_callback_del(sd->dbus_menu->bus, REGISTRAR_NAME,
+                                         _app_menu_watch_cb, sd->dbus_menu);
+   free(cd);
+   sd->dbus_menu->app_menu_data = NULL;
 }
 
 int

@@ -415,6 +415,7 @@ void                 _elm_dbus_menu_app_menu_unregister(Eo *obj);
 void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 
 void                 _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar);
+void                 _elm_menu_menu_bar_hide(Eo *obj);
 
 /* DEPRECATED, will be removed on next release */
 void                 _elm_icon_signal_emit(Evas_Object *obj,

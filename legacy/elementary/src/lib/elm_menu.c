@@ -611,6 +611,16 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 void
+_elm_menu_menu_bar_hide(Eo *obj)
+{
+  ELM_MENU_DATA_GET_OR_RETURN(obj, sd);
+
+  evas_object_hide(sd->hv);
+  evas_object_hide(obj);
+  _menu_hide(obj, NULL, NULL);
+}
+
+void
 _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
 {
    Eina_List *l;
