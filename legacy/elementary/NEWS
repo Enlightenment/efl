@@ -55,6 +55,7 @@ Improvements:
    * Allocate conformant part dummy objects only when the swallow parts are
    existed actually. since these parts are really dependent on the platform,
    in most case they don't need all parts at the same time.
+   * Enhanced diskselector add and item_append time.
 
 Fixes:
 

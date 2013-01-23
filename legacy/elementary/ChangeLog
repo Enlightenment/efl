@@ -940,3 +940,7 @@
 2013-01-22  ChunEon Park (Hermet)
 
         * apply display mode to all views of a naviframe if the display mode of the views are changed.
+
+2012-01-22  Daniel Juyung Seo (SeoZ)
+
+        * Enhanced diskselector add and item_append time.
