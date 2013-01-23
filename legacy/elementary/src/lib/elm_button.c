@@ -82,8 +82,12 @@ _elm_button_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (act != ELM_ACTIVATE_DEFAULT) return;
 
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   if (!elm_widget_disabled_get(obj) &&
+       !evas_object_freeze_events_get(obj))
+     {
+        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+        elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+     }
 
    if (ret) *ret = EINA_TRUE;
 }
