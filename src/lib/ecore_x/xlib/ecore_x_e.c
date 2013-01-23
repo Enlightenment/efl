@@ -1368,7 +1368,11 @@ ecore_x_e_window_available_profiles_get(Ecore_X_Window   win,
    if (!ecore_x_window_prop_property_get(win,
                                          ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST,
                                          XA_ATOM, 32, &data, &num))
+   {
+     if (data)
+       free(data);
      return EINA_FALSE;
+   }
 
    if (count)
      *count = num;
