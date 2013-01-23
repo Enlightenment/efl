@@ -300,6 +300,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 								    pm);
 		if (!buf->priv.pal)
 		  {
+                     if (xob) evas_software_xlib_x_output_buffer_free(xob, 1);
 		     free(buf);
 		     return NULL;
 		  }
