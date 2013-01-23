@@ -151,7 +151,7 @@ _ecore_job_event_handler(void *data EINA_UNUSED,
 
    job = ev;
    job->func(job->data);
-   return ECORE_CALLBACK_CANCEL;
+   return ECORE_CALLBACK_DONE;
 }
 
 static void
