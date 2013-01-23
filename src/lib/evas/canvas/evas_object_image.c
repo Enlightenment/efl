@@ -32,24 +32,6 @@ static const char o_type[] = "image";
 
 /* private struct for rectangle object internal data */
 typedef struct _Evas_Object_Image Evas_Object_Image;
-typedef struct _Evas_Object_Image_Load_Opts Evas_Object_Image_Load_Opts;
-
-struct _Evas_Object_Image_Load_Opts
-{
-   unsigned char  scale_down_by;
-   double         dpi;
-   short          w, h;
-   struct {
-      short       x, y, w, h;
-   } region;
-   struct {
-      int src_x, src_y, src_w, src_h;
-      int dst_w, dst_h;
-      int smooth;
-      int scale_hint;
-   } scale_load;
-   Eina_Bool  orientation : 1;
-};
 
 struct _Evas_Object_Image
 {
@@ -80,8 +62,21 @@ struct _Evas_Object_Image
    int               load_error;
    Eina_List        *pixel_updates;
 
-   // This pointer is an Eina_Cow pointer
-   const Evas_Object_Image_Load_Opts *load_opts;
+   struct {
+      unsigned char  scale_down_by;
+      double         dpi;
+      short          w, h;
+      struct {
+         short       x, y, w, h;
+      } region;
+      struct {
+         int src_x, src_y, src_w, src_h;
+         int dst_w, dst_h;
+         int smooth;
+         int scale_hint;
+      } scale_load;
+      Eina_Bool  orientation : 1;
+   } load_opts;
 
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
@@ -167,12 +162,6 @@ static const Evas_Object_Func object_func =
      evas_object_image_can_map
 };
 
-static const Evas_Object_Image_Load_Opts default_load_opts = {
-  0, 0, 0, 0, { 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0
-};
-
-Eina_Cow *evas_object_image_load_opts_cow = NULL;
-
 static void
 _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o)
 {
@@ -198,21 +187,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    eo_do_super(eo_obj, eo_constructor());
    evas_object_image_init(eo_obj);
    evas_object_inject(eo_obj, obj, eo_e);
-
-   if (!evas_object_image_load_opts_cow)
-     evas_object_image_load_opts_cow = eina_cow_add("Evas_Object_Image load opts",
-                                                    sizeof (Evas_Object_Image_Load_Opts),
-                                                    8,
-                                                    &default_load_opts);
-   if (!evas_object_image_load_opts_cow)
-     {
-        eo_error_set(eo_obj);
-        return;
-     }
-
-   o->load_opts = eina_cow_alloc(evas_object_image_load_opts_cow);
-   o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
-                                                                       o->engine_data);
+   o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output, o->engine_data);
 }
 
 EAPI Evas_Object *
@@ -419,23 +394,23 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output, o->engine_data);
      }
    o->load_error = EVAS_LOAD_ERROR_NONE;
-   lo.scale_down_by = o->load_opts->scale_down_by;
-   lo.dpi = o->load_opts->dpi;
-   lo.w = o->load_opts->w;
-   lo.h = o->load_opts->h;
-   lo.region.x = o->load_opts->region.x;
-   lo.region.y = o->load_opts->region.y;
-   lo.region.w = o->load_opts->region.w;
-   lo.region.h = o->load_opts->region.h;
-   lo.scale_load.src_x = o->load_opts->scale_load.src_x;
-   lo.scale_load.src_y = o->load_opts->scale_load.src_y;
-   lo.scale_load.src_w = o->load_opts->scale_load.src_w;
-   lo.scale_load.src_h = o->load_opts->scale_load.src_h;
-   lo.scale_load.dst_w = o->load_opts->scale_load.dst_w;
-   lo.scale_load.dst_h = o->load_opts->scale_load.dst_h;
-   lo.scale_load.smooth = o->load_opts->scale_load.smooth;
-   lo.scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
-   lo.orientation = o->load_opts->orientation;
+   lo.scale_down_by = o->load_opts.scale_down_by;
+   lo.dpi = o->load_opts.dpi;
+   lo.w = o->load_opts.w;
+   lo.h = o->load_opts.h;
+   lo.region.x = o->load_opts.region.x;
+   lo.region.y = o->load_opts.region.y;
+   lo.region.w = o->load_opts.region.w;
+   lo.region.h = o->load_opts.region.h;
+   lo.scale_load.src_x = o->load_opts.scale_load.src_x;
+   lo.scale_load.src_y = o->load_opts.scale_load.src_y;
+   lo.scale_load.src_w = o->load_opts.scale_load.src_w;
+   lo.scale_load.src_h = o->load_opts.scale_load.src_h;
+   lo.scale_load.dst_w = o->load_opts.scale_load.dst_w;
+   lo.scale_load.dst_h = o->load_opts.scale_load.dst_h;
+   lo.scale_load.smooth = o->load_opts.scale_load.smooth;
+   lo.scale_load.scale_hint = o->load_opts.scale_load.scale_hint;
+   lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
                                                               o->cur.file,
                                                               o->cur.key,
@@ -1892,12 +1867,8 @@ _image_load_dpi_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Object_Image *o = _pd;
 
-   if (dpi == o->load_opts->dpi) return;
-
-   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, o->load_opts, Evas_Object_Image_Load_Opts, low)
-     low->dpi = dpi;
-   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, o->load_opts, low);
-
+   if (dpi == o->load_opts.dpi) return;
+   o->load_opts.dpi = dpi;
    if (o->cur.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -1925,7 +1896,7 @@ _image_load_dpi_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const Evas_Object_Image *o = _pd;
    double *dpi = va_arg(*list, double *);
-   *dpi = o->load_opts->dpi;
+   *dpi = o->load_opts.dpi;
 }
 
 EAPI void
@@ -1945,15 +1916,9 @@ _image_load_size_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Object_Image *o = _pd;
 
-   if ((o->load_opts->w == w) && (o->load_opts->h == h)) return;
-
-   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, o->load_opts, Evas_Object_Image_Load_Opts, low)
-     {
-        low->w = w;
-        low->h = h;
-     }
-   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, o->load_opts, low);
-
+   if ((o->load_opts.w == w) && (o->load_opts.h == h)) return;
+   o->load_opts.w = w;
+   o->load_opts.h = h;
    if (o->cur.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -1981,8 +1946,8 @@ _image_load_size_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    int *h = va_arg(*list, int *);
    const Evas_Object_Image *o = _pd;
 
-   if (w) *w = o->load_opts->w;
-   if (h) *h = o->load_opts->h;
+   if (w) *w = o->load_opts.w;
+   if (h) *h = o->load_opts.h;
 }
 
 EAPI void
@@ -2001,11 +1966,8 @@ _image_load_scale_down_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Object_Image *o = _pd;
 
-   if (o->load_opts->scale_down_by == scale_down) return;
-   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, o->load_opts, Evas_Object_Image_Load_Opts, low)
-     low->scale_down_by = scale_down;
-   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, o->load_opts, low);
-
+   if (o->load_opts.scale_down_by == scale_down) return;
+   o->load_opts.scale_down_by = scale_down;
    if (o->cur.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -2033,7 +1995,7 @@ _image_load_scale_down_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    int *scale_down = va_arg(*list, int *);
    const Evas_Object_Image *o = _pd;
-   *scale_down = o->load_opts->scale_down_by;
+   *scale_down = o->load_opts.scale_down_by;
 }
 
 EAPI void
@@ -2055,18 +2017,12 @@ _image_load_region_set(Eo *eo_obj, void *_pd, va_list *list)
 
    Evas_Object_Image *o = _pd;
 
-   if ((o->load_opts->region.x == x) && (o->load_opts->region.y == y) &&
-       (o->load_opts->region.w == w) && (o->load_opts->region.h == h)) return;
-
-   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, o->load_opts, Evas_Object_Image_Load_Opts, low)
-     {
-        low->region.x = x;
-        low->region.y = y;
-        low->region.w = w;
-        low->region.h = h;
-     }
-   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, o->load_opts, low);
-
+   if ((o->load_opts.region.x == x) && (o->load_opts.region.y == y) &&
+       (o->load_opts.region.w == w) && (o->load_opts.region.h == h)) return;
+   o->load_opts.region.x = x;
+   o->load_opts.region.y = y;
+   o->load_opts.region.w = w;
+   o->load_opts.region.h = h;
    if (o->cur.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -2096,10 +2052,10 @@ _image_load_region_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    int *h = va_arg(*list, int *);
    const Evas_Object_Image *o = _pd;
 
-   if (x) *x = o->load_opts->region.x;
-   if (y) *y = o->load_opts->region.y;
-   if (w) *w = o->load_opts->region.w;
-   if (h) *h = o->load_opts->region.h;
+   if (x) *x = o->load_opts.region.x;
+   if (y) *y = o->load_opts.region.y;
+   if (w) *w = o->load_opts.region.w;
+   if (h) *h = o->load_opts.region.h;
 }
 
 EAPI void
@@ -2116,12 +2072,7 @@ _image_load_orientation_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool enable = va_arg(*list, int);
    Evas_Object_Image *o = _pd;
-
-   if (o->load_opts->orientation == !!enable) return ;
-
-   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, o->load_opts, Evas_Object_Image_Load_Opts, low)
-     low->orientation = !!enable;
-   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, o->load_opts, low);
+   o->load_opts.orientation = !!enable;
 }
 
 EAPI Eina_Bool
@@ -2140,7 +2091,7 @@ _image_load_orientation_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *enable = va_arg(*list, Eina_Bool *);
    const Evas_Object_Image *o = _pd;
-   *enable = o->load_opts->orientation;
+   *enable = o->load_opts.orientation;
 }
 
 EAPI void
@@ -3039,23 +2990,23 @@ evas_object_image_load(Evas_Object *eo_obj)
    if (o->engine_data) return;
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   lo.scale_down_by = o->load_opts->scale_down_by;
-   lo.dpi = o->load_opts->dpi;
-   lo.w = o->load_opts->w;
-   lo.h = o->load_opts->h;
-   lo.region.x = o->load_opts->region.x;
-   lo.region.y = o->load_opts->region.y;
-   lo.region.w = o->load_opts->region.w;
-   lo.region.h = o->load_opts->region.h;
-   lo.scale_load.src_x = o->load_opts->scale_load.src_x;
-   lo.scale_load.src_y = o->load_opts->scale_load.src_y;
-   lo.scale_load.src_w = o->load_opts->scale_load.src_w;
-   lo.scale_load.src_h = o->load_opts->scale_load.src_h;
-   lo.scale_load.dst_w = o->load_opts->scale_load.dst_w;
-   lo.scale_load.dst_h = o->load_opts->scale_load.dst_h;
-   lo.scale_load.smooth = o->load_opts->scale_load.smooth;
-   lo.scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
-   lo.orientation = o->load_opts->orientation;
+   lo.scale_down_by = o->load_opts.scale_down_by;
+   lo.dpi = o->load_opts.dpi;
+   lo.w = o->load_opts.w;
+   lo.h = o->load_opts.h;
+   lo.region.x = o->load_opts.region.x;
+   lo.region.y = o->load_opts.region.y;
+   lo.region.w = o->load_opts.region.w;
+   lo.region.h = o->load_opts.region.h;
+   lo.scale_load.src_x = o->load_opts.scale_load.src_x;
+   lo.scale_load.src_y = o->load_opts.scale_load.src_y;
+   lo.scale_load.src_w = o->load_opts.scale_load.src_w;
+   lo.scale_load.src_h = o->load_opts.scale_load.src_h;
+   lo.scale_load.dst_w = o->load_opts.scale_load.dst_w;
+   lo.scale_load.dst_h = o->load_opts.scale_load.dst_h;
+   lo.scale_load.smooth = o->load_opts.scale_load.smooth;
+   lo.scale_load.scale_hint = o->load_opts.scale_load.scale_hint;
+   lo.orientation = o->load_opts.orientation;
    o->engine_data = obj->layer->evas->engine.func->image_load
       (obj->layer->evas->engine.data.output,
           o->cur.file,

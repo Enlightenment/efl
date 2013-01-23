@@ -88,7 +88,6 @@ evas_shutdown(void)
 
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
-   eina_cow_del(evas_object_image_load_opts_cow);
    evas_object_proxy_cow = NULL;
 
    evas_thread_shutdown();
