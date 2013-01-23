@@ -340,7 +340,11 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
 	  }
      }
 
-   if (try_shm > 1) return NULL;
+   if (try_shm > 1)
+     {
+        free(xob);
+        return NULL;
+     }
 
    xob->xim = XCreateImage(d, v, depth, ZPixmap, 0, data, w, h, 32, 0);
    if (!xob->xim)
