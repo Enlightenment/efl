@@ -944,3 +944,7 @@
 2012-01-22  Daniel Juyung Seo (SeoZ)
 
         * Enhanced diskselector add and item_append time.
+
+2012-01-23  WooHyun Jung
+
+        * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
