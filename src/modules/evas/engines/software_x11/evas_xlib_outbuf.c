@@ -393,6 +393,8 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	     return buf->priv.onebuf;
 	  }
 
+        if (rect) eina_rectangle_free(rect);
+
 	obr = calloc(1, sizeof(Outbuf_Region));
         if (!obr) return NULL;
 
