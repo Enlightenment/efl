@@ -52,13 +52,13 @@ enum
    ELM_DBUS_SIGNAL_ITEM_ACTIVATION_REQUESTED,
 };
 
-typedef struct _Callback_Data
+struct _Callback_Data
 {
    void (*result_cb)(Eina_Bool, void *);
    void          *data;
    EDBus_Pending *pending_register;
    Ecore_X_Window xid;
-} Callback_Data;
+};
 
 static Eina_Bool
 _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
