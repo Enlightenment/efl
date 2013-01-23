@@ -2623,7 +2623,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 
    txt = elm_widget_access_info_get(obj);
 
-   if (!txt) txt = elm_entry_entry_get(obj);
+   if (!txt) txt = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
    if (txt) return strdup(txt);
 
    return NULL;
