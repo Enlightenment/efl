@@ -242,7 +242,7 @@ utf8_offset_to_index(const char *str, int offset)
    int i;
    for (i = 0; i < offset; i++)
      {
-        eina_unicode_utf8_get_next(str, &index);
+        eina_unicode_utf8_next_get(str, &index);
      }
 
    return index;
