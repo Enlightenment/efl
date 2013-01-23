@@ -374,14 +374,9 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	Eina_Rectangle *rect;
 
 	RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
-	obr = calloc(1, sizeof(Outbuf_Region));
-        if (!obr) return NULL;
+
         rect = eina_rectangle_new(x, y, w, h);
-        if (!rect)
-          {
-             free(obr);
-             return NULL;
-          }
+        if (!rect) return NULL;
 
         if ((eina_array_push(&buf->priv.onebuf_regions, rect)) &&
             (buf->priv.onebuf))
@@ -397,6 +392,10 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	       }
 	     return buf->priv.onebuf;
 	  }
+
+	obr = calloc(1, sizeof(Outbuf_Region));
+        if (!obr) return NULL;
+
 	obr->x = 0;
 	obr->y = 0;
 	obr->w = buf->w;
