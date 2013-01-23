@@ -52,8 +52,9 @@ Improvements:
    * Setting the same font size of the others widgets for the dayselector.
    * Added a separated spinner for year on calendar.
    * Don't link anymore with E_DBus at build time.
-   * allocate conformant part dummy objects only when the swallow parts
-   are existed actually. since these parts are really dependent on the platform, in most case they don't need all parts at the same time.
+   * Allocate conformant part dummy objects only when the swallow parts are
+   existed actually. since these parts are really dependent on the platform,
+   in most case they don't need all parts at the same time.
 
 Fixes:
 
