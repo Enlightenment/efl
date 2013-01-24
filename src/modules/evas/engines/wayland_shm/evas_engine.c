@@ -181,7 +181,28 @@ eng_setup(Evas *eo_evas, void *einfo)
                                    info->info.wl_shm, info->info.wl_surface, 
                                    try_swap)))
           return 0;
+     }
 
+   else
+     {
+        /* we have an existing render engine */
+        if (re->ob) re->outbuf_free(re->ob);
+
+        if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h, 
+                                         info->info.rotation, 
+                                         info->info.depth, 
+                                         info->info.destination_alpha, 
+                                         info->info.wl_shm, 
+                                         info->info.wl_surface)))
+          {
+             re->outbuf_free = evas_swapbuf_free;
+             re->outbuf_reconfigure = evas_swapbuf_reconfigure;
+             re->outbuf_update_region_new = evas_swapbuf_update_region_new;
+             re->outbuf_update_region_push = evas_swapbuf_update_region_push;
+             re->outbuf_update_region_free = evas_swapbuf_update_region_free;
+             re->outbuf_flush = evas_swapbuf_flush;
+             re->outbuf_idle_flush = evas_swapbuf_idle_flush;
+          }
      }
 
    return 0;
