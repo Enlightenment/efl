@@ -29,3 +29,13 @@ extern int _evas_engine_way_shm_log_dom;
 # define CRIT(...) EINA_LOG_DOM_CRIT(_evas_engine_way_shm_log_dom, __VA_ARGS__)
 
 # include <wayland-client.h>
+
+typedef enum _Outbuf_Depth Outbuf_Depth;
+
+enum _Outbuf_Depth
+{
+   OUTBUF_DEPTH_NONE,
+     OUTBUF_DEPTH_ARGB_32BPP_8888_8888,
+     OUTBUF_DEPTH_RGB_32BPP_8888_8888,
+     OUTBUF_DEPTH_LAST
+};
