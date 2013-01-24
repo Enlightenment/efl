@@ -54,6 +54,7 @@ struct _Outbuf
    int w, h;
    unsigned int rotation;
    Outbuf_Depth depth;
+   int onebuf;
 
    struct 
      {
