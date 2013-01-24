@@ -93,6 +93,14 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
           }
      }
 
+   /* if creating an output buffer failed, then return NULL */
+   if (!re->ob)
+     {
+        if (re->tb) evas_common_tilebuf_free(re->tb);
+        free(re);
+        return NULL;
+     }
+
    /* return allocated render engine */
    return re;
 }
