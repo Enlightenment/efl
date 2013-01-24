@@ -343,5 +343,5 @@ eina_mempool_alignof(unsigned int size)
       align = 16;
 #endif
 
-   return ((size / align) + 1) * align;
+   return ((size / align) + (size % align ? 1 : 0)) * align;
 }
