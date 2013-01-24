@@ -75,7 +75,11 @@ eng_info(Evas *eo_evas EINA_UNUSED)
 static void 
 eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo)
 {
+   Evas_Engine_Info_Wayland_Shm *info;
 
+   /* try to free previously allocated engine info */
+   if ((info = (Evas_Engine_Info_Wayland_Shm *)einfo))
+     free(info);
 }
 
 static int 
