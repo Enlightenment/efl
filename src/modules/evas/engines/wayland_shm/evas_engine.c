@@ -205,6 +205,10 @@ eng_setup(Evas *eo_evas, void *einfo)
           }
      }
 
+   /* reassign render engine to output */
+   epd->engine.data.output = re;
+   if (!epd->engine.data.output) return 0;
+
    return 0;
 }
 
