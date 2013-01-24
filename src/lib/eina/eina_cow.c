@@ -373,6 +373,9 @@ eina_cow_write(Eina_Cow *cow,
 
    ref = EINA_COW_PTR_GET(*data);
 
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
    if (ref->refcount == 1)
      {
         EINA_COW_PTR_MAGIC_CHECK(ref);
@@ -383,9 +386,6 @@ eina_cow_write(Eina_Cow *cow,
              return NULL;
           }
 
-#ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
-#endif
         _eina_cow_hash_del(cow, *data, ref);
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
@@ -434,16 +434,13 @@ eina_cow_done(Eina_Cow *cow,
 
    ref = EINA_COW_PTR_GET(data);
    EINA_COW_PTR_MAGIC_CHECK(ref);
-   if (!ref->writing)
-     ERR("Pointer %p is not in a writable state !", dst);
-
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
+   if (!ref->writing)
+     ERR("Pointer %p is not in a writable state !", dst);
+
    ref->writing = EINA_FALSE;
-#ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
-#endif
 
    /* needed if we want to make cow gc safe */
    if (ref->togc) return ;
@@ -455,6 +452,9 @@ eina_cow_done(Eina_Cow *cow,
    gc->dst = dst;
    cow->togc = eina_list_prepend(cow->togc, gc);
    ref->togc = EINA_TRUE;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
 }
 
 EAPI void
