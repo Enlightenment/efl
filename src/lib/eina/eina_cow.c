@@ -33,11 +33,19 @@
 
 #define EINA_COW_MAGIC 0xDEADBEEF
 
+// #define MOO // Define that one if you want magic debug for Eina_Cow_Ptr
+#ifdef MOO
+# define EINA_COW_PTR_MAGIC 0xBEEFE00
+#endif
+
 typedef struct _Eina_Cow_Ptr Eina_Cow_Ptr;
 typedef struct _Eina_Cow_GC Eina_Cow_GC;
 
 struct _Eina_Cow_Ptr
 {
+#ifdef MOO
+   EINA_MAGIC;
+#endif
    int refcount;
 
    Eina_Bool hashed : 1;
@@ -47,6 +55,8 @@ struct _Eina_Cow_Ptr
 
 struct _Eina_Cow_GC
 {
+   EINA_MAGIC;
+
    Eina_Cow_Ptr *ref;
    const void * const *dst;
 };
@@ -62,6 +72,7 @@ struct _Eina_Cow
    const void *default_value;
 
    unsigned int struct_size;
+   unsigned int total_size;
 };
 
 typedef int (*Eina_Cow_Hash)(const void *, int);
@@ -71,6 +82,16 @@ typedef int (*Eina_Cow_Hash)(const void *, int);
      if (!EINA_MAGIC_CHECK((d), EINA_COW_MAGIC))        \
        EINA_MAGIC_FAIL((d), EINA_COW_MAGIC);            \
   } while (0);
+
+#ifdef MOO
+# define EINA_COW_PTR_MAGIC_CHECK(d)                    \
+  do {                                                  \
+     if (!EINA_MAGIC_CHECK((d), EINA_COW_PTR_MAGIC))    \
+       EINA_MAGIC_FAIL((d), EINA_COW_PTR_MAGIC);        \
+  } while (0);
+#else
+# define EINA_COW_PTR_MAGIC_CHECK(d)
+#endif
 
 #define EINA_COW_PTR_SIZE                       \
   eina_mempool_alignof(sizeof (Eina_Cow_Ptr))
@@ -222,6 +243,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
 {
    const char *choice, *tmp;
    Eina_Cow *cow;
+   unsigned int total_size;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(default_value, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(struct_size, NULL);
@@ -239,9 +261,8 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
    if (tmp && tmp[0])
      choice = tmp;
 
-   cow->pool = eina_mempool_add(choice, name,
-                                NULL,
-                                struct_size + EINA_COW_PTR_SIZE, step);
+   total_size = eina_mempool_alignof(struct_size + EINA_COW_PTR_SIZE);
+   cow->pool = eina_mempool_add(choice, name, NULL, total_size, step);
    if (!cow->pool)
      {
         ERR("Mempool for cow '%s' cannot be allocated.", name);
@@ -265,6 +286,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
    cow->togc = NULL;
    cow->default_value = default_value;
    cow->struct_size = struct_size;
+   cow->total_size = total_size;
 
    EINA_MAGIC_SET(cow, EINA_COW_MAGIC);
 
@@ -311,13 +333,25 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
    if (cow->default_value == data) return ;
 
    ref = EINA_COW_PTR_GET(data);
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
    ref->refcount--;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
 
    if (ref->refcount > 0) return ;
 
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
+#ifdef MOO
+   EINA_MAGIC_SET(ref, EINA_MAGIC_NONE);
+#endif
    _eina_cow_hash_del(cow, data, ref);
    _eina_cow_togc_del(cow, ref);
-   eina_mempool_free(cow->pool, (void*) data);
+   eina_mempool_free(cow->pool, (void*) ref);
 }
 
 EAPI void *
@@ -337,29 +371,50 @@ eina_cow_write(Eina_Cow *cow,
 
    if (ref->refcount == 1)
      {
+        EINA_COW_PTR_MAGIC_CHECK(ref);
+
         if (ref->writing)
           {
              ERR("Request writing on an pointer that is already in a writing process %p\n", data);
              return NULL;
           }
 
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
         _eina_cow_hash_del(cow, *data, ref);
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
         goto end;
      }
 
  allocate:
-   ref = eina_mempool_malloc(cow->pool,
-                             cow->struct_size + EINA_COW_PTR_SIZE);
+   ref = eina_mempool_malloc(cow->pool, cow->total_size);
    ref->refcount = 1;
    ref->hashed = EINA_FALSE;
    ref->togc = EINA_FALSE;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
 
    r = EINA_COW_DATA_GET(ref);
    memcpy(r, *data, cow->struct_size);
    *((void**) data) = r;
 
+#ifdef MOO
+   EINA_MAGIC_SET(ref, EINA_COW_PTR_MAGIC);
+#endif
+
  end:
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
    ref->writing = EINA_TRUE;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
+
    return (void *) *data;
 }
 
@@ -374,9 +429,17 @@ eina_cow_done(Eina_Cow *cow,
    EINA_COW_MAGIC_CHECK(cow);
 
    ref = EINA_COW_PTR_GET(data);
+   EINA_COW_PTR_MAGIC_CHECK(ref);
    if (!ref->writing)
      ERR("Pointer %p is not in a writable state !", dst);
+
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
    ref->writing = EINA_FALSE;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
 
    /* needed if we want to make cow gc safe */
    if (ref->togc) return ;
@@ -402,7 +465,14 @@ eina_cow_memcpy(Eina_Cow *cow,
    eina_cow_free(cow, *dst);
 
    ref = EINA_COW_PTR_GET(src);
+   EINA_COW_PTR_MAGIC_CHECK(ref);
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
    ref->refcount++;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
 
    *((const void**)dst) = src;
 }
@@ -434,8 +504,14 @@ eina_cow_gc(Eina_Cow *cow)
         eina_cow_free(cow, data);
 
         ref = EINA_COW_PTR_GET(match);
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif        
         *((void**)gc->dst) = match;
         ref->refcount++;
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+#endif
      }
    else
      {
