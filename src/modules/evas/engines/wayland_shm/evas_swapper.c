@@ -42,6 +42,7 @@ struct _Wl_Swapper
 
 /* local function prototypes */
 static Eina_Bool _evas_swapper_shm_pool_new(Wl_Swapper *ws);
+static void _evas_swapper_shm_pool_free(Wl_Swapper *ws);
 static Eina_Bool _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb);
 static void _evas_swapper_buffer_free(Wl_Buffer *wb);
 static void _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count);
@@ -136,6 +137,9 @@ evas_swapper_free(Wl_Swapper *ws)
    /* loop the swapper's buffers and free them */
    for (i = 0; i < ws->buff_num; i++)
      _evas_swapper_buffer_free(&(ws->buff[i]));
+
+   /* free the shm pool */
+   _evas_swapper_shm_pool_free(ws);
 
    /* free the allocated structure */
    free(ws);
@@ -267,6 +271,22 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
    close(fd);
 
    return EINA_TRUE;
+}
+
+static void 
+_evas_swapper_shm_pool_free(Wl_Swapper *ws)
+{
+   /* check for valid swapper */
+   if (!ws) return;
+
+   /* check for valid pool */
+   if (!ws->pool) return;
+
+   /* unmap any existing data */
+   if (ws->data) munmap(ws->data, ws->pool_size);
+
+   /* destroy the shm pool */
+   wl_shm_pool_destroy(ws->pool);
 }
 
 static Eina_Bool 
