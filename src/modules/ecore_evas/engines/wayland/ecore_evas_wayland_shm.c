@@ -341,6 +341,14 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         ecore_wl_window_show(wdata->win);
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 
+        einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             einfo->info.wl_shm = ecore_wl_shm_get();
+             einfo->info.wl_surface = ecore_wl_window_surface_get(wdata->win);
+             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+          }
+
         if ((ee->prop.clas) && (wdata->win->shell_surface))
           wl_shell_surface_set_class(wdata->win->shell_surface, 
                                      ee->prop.clas);
@@ -370,12 +378,12 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if ((!ee) || (!ee->visible)) return;
    wdata = ee->engine.data;
 
-   /* einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas); */
-   /* if ((einfo) && (einfo->info.dest)) */
-   /*   { */
-   /*      einfo->info.dest = NULL; */
-   /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
-   /*   } */
+   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        einfo->info.wl_surface = NULL;
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
 
    if (wdata->win) 
      ecore_wl_window_hide(wdata->win);
