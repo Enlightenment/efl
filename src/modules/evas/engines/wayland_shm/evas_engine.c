@@ -100,6 +100,8 @@ eng_setup(Evas *eo_evas, void *einfo)
    /* test for valid engine output */
    if (!(re = epd->engine.data.output))
      {
+        static int try_swap = -1;
+
         /* NB: If we have no valid output then assume we have not been 
          * initialized yet and call any needed common init routines */
         evas_common_cpu_init();
@@ -113,6 +115,14 @@ eng_setup(Evas *eo_evas, void *einfo)
         evas_common_font_init();
         evas_common_draw_init();
         evas_common_tilebuf_init();
+
+        if (try_swap == -1)
+          {
+             /* check for env var to see if we should try swapping */
+             if (getenv("EVAS_NO_DRI_SWAPBUF")) try_swap = 0;
+             else try_swap = 1;
+          }
+
      }
 
    return 0;
