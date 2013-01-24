@@ -68,7 +68,8 @@ eng_info(Evas *eo_evas EINA_UNUSED)
    info->magic.magic = rand();
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
 
-   return NULL;
+   /* return allocated engine info */
+   return info;
 }
 
 static void 
