@@ -190,6 +190,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
+        einfo->info.wl_shm = ecore_wl_shm_get();
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
