@@ -32,3 +32,6 @@ struct _Render_Engine
    void (*outbuf_flush)(Outbuf *ob);
    void (*outbuf_idle_flush)(Outbuf *ob);
 };
+
+/* external variables */
+int _evas_engine_way_shm_log_dom = -1;
