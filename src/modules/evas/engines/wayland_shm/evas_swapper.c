@@ -20,6 +20,7 @@ struct _Wl_Buffer
    int w, h;
    struct wl_buffer *buffer;
    void *data;
+   int offset;
    size_t size;
    Eina_Bool valid : 1;
 };
@@ -31,11 +32,16 @@ struct _Wl_Swapper
    int buff_cur, buff_num;
    struct wl_shm *shm;
    struct wl_surface *surface;
+   struct wl_shm_pool *pool;
+   size_t pool_size;
+   size_t used_size;
+   void *data;
    Eina_Bool alpha : 1;
    Eina_Bool mapped : 1;
 };
 
 /* local function prototypes */
+static Eina_Bool _evas_swapper_shm_pool_new(Wl_Swapper *ws);
 static Eina_Bool _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb);
 static void _evas_swapper_buffer_free(Wl_Buffer *wb);
 static void _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count);
@@ -81,6 +87,13 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
         if (num > 3) num = 3;
 
         ws->buff_num = num;
+     }
+
+   /* create the shm pool */
+   if (!_evas_swapper_shm_pool_new(ws))
+     {
+        evas_swapper_free(ws);
+        return NULL;
      }
 
    for (i = 0; i < ws->buff_num; i++)
@@ -195,30 +208,20 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 
 /* local functions */
 static Eina_Bool 
-_evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
+_evas_swapper_shm_pool_new(Wl_Swapper *ws)
 {
    char tmp[PATH_MAX];
-   struct wl_shm_pool *pool;
-   unsigned int format = WL_SHM_FORMAT_XRGB8888;
-   void *data;
-   int fd = 0;
    size_t size;
+   int fd = 0;
 
    /* make sure swapper has a shm */
    if (!ws->shm) return EINA_FALSE;
 
-   wb->w = ws->w;
-   wb->h = ws->h;
-
    /* calculate new required size */
-   size = ((wb->w * sizeof(int)) * wb->h);
+   size = (((ws->w * sizeof(int)) * ws->h) * ws->buff_num);
 
    /* check pool size to see if we need to realloc the pool */
-   if (size <= wb->size) return EINA_TRUE;
-
-   /* create a pool equal to 1.5 times the requested size to allow for 
-    * less thrashing during resize */
-   size *= 1.5;
+   if (size <= ws->pool_size) return EINA_TRUE;
 
    /* create tmp file
     * 
@@ -241,13 +244,13 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
      }
 
    /* mem map the file */
-   data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
+   ws->data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
 
    /* unlink the tmp file */
    unlink(tmp);
 
    /* if we failed to mem map the file, return an error */
-   if (data == MAP_FAILED)
+   if (ws->data == MAP_FAILED)
      {
         ERR("Could not mmap temporary file.");
         close(fd);
@@ -255,24 +258,55 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
      }
 
    /* actually create the shm pool */
-   pool = wl_shm_create_pool(ws->shm, fd, size);
+   ws->pool = wl_shm_create_pool(ws->shm, fd, size);
+
+   ws->pool_size = size;
+   ws->used_size = 0;
 
    /* close the file */
    close(fd);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool 
+_evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
+{
+   unsigned int format = WL_SHM_FORMAT_XRGB8888;
+   size_t size;
+
+   /* make sure swapper has a shm */
+   if (!ws->shm) return EINA_FALSE;
+
+   wb->w = ws->w;
+   wb->h = ws->h;
+
+   /* calculate new required size */
+   size = ((wb->w * sizeof(int)) * wb->h);
+
+   /* check pool size to see if we need to realloc the pool */
+   if (ws->used_size + size > ws->pool_size) 
+     {
+        printf("FIXME !!! Pool Size Too Small !!!\n");
+        /* FIXME: Here we need to reallocate the pool to a greater size !! */
+        return EINA_FALSE;
+     }
 
    /* check if this buffer needs argb and set format */
    if (ws->alpha) format = WL_SHM_FORMAT_ARGB8888;
 
    /* create actual wl_buffer */
    wb->buffer = 
-     wl_shm_pool_create_buffer(pool, 0, wb->w, wb->h, 
+     wl_shm_pool_create_buffer(ws->pool, ws->used_size, wb->w, wb->h, 
                                (wb->w * sizeof(int)), format);
 
    /* add wayland buffer listener */
    wl_buffer_add_listener(wb->buffer, &_evas_swapper_buffer_listener, wb);
 
-   wb->data = data;
+   wb->data = (char *)ws->data + ws->used_size;
    wb->size = size;
+
+   ws->used_size += size;
 
    /* return allocated buffer */
    return EINA_TRUE;
@@ -308,7 +342,7 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    if (!wb) return;
 
    /* make sure buffer has mapped data */
-   if (!wb->data)
+   if ((!wb->data) || (!wb->buffer))
      {
         /* call function to mmap buffer data */
         if (!_evas_swapper_buffer_new(ws, wb))
@@ -337,7 +371,10 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    wl_surface_attach(ws->surface, wb->buffer, 0, 0);
 
    /* surface damage */
+   /* printf("Damage Surface: %d %d %d %d\n", rect->x, rect->y, rect->w, rect->h); */
+
    wl_surface_damage(ws->surface, rect->x, rect->y, rect->w, rect->h);
+   /* wl_surface_damage(ws->surface, 0, 0, rect->w, rect->h); */
 
    /* surface commit */
    wl_surface_commit(ws->surface);
