@@ -48,5 +48,8 @@ static void eng_output_redraws_next_update_push(void *data, void *surface, int x
 static void eng_output_flush(void *data, Evas_Render_Mode render_mode);
 static void eng_output_idle_flush(void *data);
 
+/* local variables */
+static Evas_Func func, pfunc;
+
 /* external variables */
 int _evas_engine_way_shm_log_dom = -1;
