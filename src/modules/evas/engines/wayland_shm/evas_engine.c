@@ -475,7 +475,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 #endif
    re->outbuf_update_region_push(re->ob, surface, x, y, w, h);
    re->outbuf_update_region_free(re->ob, surface);
-   evas_common_cpu_end_opt()
+   evas_common_cpu_end_opt();
 }
 
 static void 
