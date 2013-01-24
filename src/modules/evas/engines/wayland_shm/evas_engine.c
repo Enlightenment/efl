@@ -58,6 +58,12 @@ int _evas_engine_way_shm_log_dom = -1;
 static void *
 eng_info(Evas *eo_evas EINA_UNUSED)
 {
+   Evas_Engine_Info_Wayland_Shm *info;
+
+   /* try to allocate space for engine info */
+   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Shm))))
+     return NULL;
+
    return NULL;
 }
 
