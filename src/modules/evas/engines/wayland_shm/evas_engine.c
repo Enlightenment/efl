@@ -269,7 +269,10 @@ eng_output_tile_size_set(void *data, int w, int h)
 static void 
 eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 static void 
