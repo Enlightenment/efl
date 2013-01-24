@@ -278,7 +278,10 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 static void 
 eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   if (re->tb) evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void 
