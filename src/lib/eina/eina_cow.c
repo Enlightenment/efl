@@ -341,11 +341,11 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
    ref->refcount--;
+
+   if (ref->refcount > 0) return ;
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
 #endif
-
-   if (ref->refcount > 0) return ;
 
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
