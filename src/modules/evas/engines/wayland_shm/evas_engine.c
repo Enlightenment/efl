@@ -106,6 +106,59 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
    return re;
 }
 
+static Tilebuf_Rect *
+_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
+{
+   Tilebuf_Rect *r, *rects;
+   
+   if (r1)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
+          evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+     }
+   if (r2)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r2), r)
+          evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+     }
+   if (r2)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
+          evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+     }
+   rects = evas_common_tilebuf_get_render_rects(tb);
+
+/*   
+   // bounding box -> make a bounding box single region update of all regions.
+   // yes we could try and be smart and figure out size of regions, how far
+   // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
+   // between multiple update regions to render and total pixels to render.
+   if (rects)
+     {
+        px1 = rects->x; py1 = rects->y;
+        px2 = rects->x + rects->w; py2 = rects->y + rects->h;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+          {
+             if (r->x < x1) px1 = r->x;
+             if (r->y < y1) py1 = r->y;
+             if ((r->x + r->w) > x2) px2 = r->x + r->w;
+             if ((r->y + r->h) > y2) py2 = r->y + r->h;
+          }
+        evas_common_tilebuf_free_render_rects(rects);
+        rects = calloc(1, sizeof(Tilebuf_Rect));
+        if (rects)
+          {
+             rects->x = px1;
+             rects->y = py1;
+             rects->w = px2 - px1;
+             rects->h = py2 - py1;
+          }
+     }
+ */
+   evas_common_tilebuf_clear(tb);
+   return rects;
+}
+
 /* engine functions */
 static void *
 eng_info(Evas *eo_evas EINA_UNUSED)
