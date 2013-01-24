@@ -137,6 +137,21 @@ eng_output_idle_flush(void *data)
 static int 
 module_open(Evas_Module *em)
 {
+   /* check for valid evas module */
+   if (!em) return 0;
+
+   /* try to create our logging domain */
+   _evas_engine_way_shm_log_dom = 
+     eina_log_domain_register("evas-wayland_shm", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_way_shm_log_dom < 0)
+     {
+        /* creating the logging domain failed. notify user */
+        EINA_LOG_ERR("Could not create a module log domain.");
+
+        /* return failure */
+        return 0;
+     }
+
    return 0;
 }
 
