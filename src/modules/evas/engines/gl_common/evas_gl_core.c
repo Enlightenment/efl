@@ -1049,15 +1049,8 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo)
 }
 
 static int
-_surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
+_surface_buffers_create(EVGL_Surface *sfc)
 {
-   // Set the context current with resource context/surface
-   if (!_internal_resource_make_current(ee, NULL))
-     {
-        ERR("Error doing an internal resource make current");
-        return 0;
-     }
-
    // Create buffers
    if (sfc->color_fmt)
      {
@@ -1086,26 +1079,21 @@ _surface_buffers_create(EVGL_Engine *ee, EVGL_Surface *sfc)
           }
      }
 
-   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
-     {
-        ERR("Error doing make_current(NULL, NULL).");
-        return 0;
-     }
-
    return 1; //ret;
 }
 
 
 static int
-_surface_buffers_allocate(EVGL_Engine *ee, EVGL_Surface *sfc, int w, int h)
+_surface_buffers_allocate(EVGL_Engine *ee, EVGL_Surface *sfc, int w, int h, int mc)
 {
    // Set the context current with resource context/surface
-   if (!_internal_resource_make_current(ee, NULL))
-     {
-        ERR("Error doing an internal resource make current");
-        return 0;
-     }
- 
+   if (mc)
+      if (!_internal_resource_make_current(ee, NULL))
+        {
+           ERR("Error doing an internal resource make current");
+           return 0;
+        }
+
    // Create buffers
    if (sfc->color_fmt)
      {
@@ -1147,15 +1135,8 @@ _surface_buffers_allocate(EVGL_Engine *ee, EVGL_Surface *sfc, int w, int h)
 }
 
 static int
-_surface_buffers_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
+_surface_buffers_destroy(EVGL_Surface *sfc)
 {
-   // Set the context current with resource context/surface
-   if (!_internal_resource_make_current(ee, NULL))
-     {
-        ERR("Error doing an internal resource make current");
-        return 0;
-     }
-
    if (sfc->color_buf)
       _texture_destroy(&sfc->color_buf);
    if (sfc->depth_buf)
@@ -1169,12 +1150,6 @@ _surface_buffers_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
 #else
         _renderbuffer_destroy(&sfc->depth_stencil_buf);
 #endif
-     }
-
-   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
-     {
-        ERR("Error doing make_current(NULL, NULL).");
-        return 0;
      }
 
    return 1;
@@ -1257,7 +1232,7 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 static int
 _evgl_direct_renderable(EVGL_Engine *ee, EVGL_Resource *rsc, EVGL_Surface *sfc)
 {
-   if (ee->force_direct_off) return 0;
+   if (ee->direct_force_off) return 0;
    if (rsc->id != ee->main_tid) return 0;
    if (!sfc->direct_fb_opt) return 0;
    if (!rsc->direct_img_obj) return 0;
@@ -1318,7 +1293,7 @@ _evgl_not_in_pixel_get(EVGL_Engine *ee)
 
    EVGL_Context *ctx = rsc->current_ctx;
 
-   if ((!ee->force_direct_off) && (rsc->id == ee->main_tid) &&
+   if ((!ee->direct_force_off) && (rsc->id == ee->main_tid) &&
        (ctx) && (ctx->current_sfc) && (ctx->current_sfc->direct_fb_opt) &&
        (!rsc->direct_img_obj))
       return 1;
@@ -1353,7 +1328,7 @@ _evgl_direct_enabled(EVGL_Engine *ee)
 EVGL_Engine *
 evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
 {
-   int direct_off = 0, debug_mode = 0;
+   int direct_mem_opt = 0, direct_off = 0, debug_mode = 0;
    char *s = NULL;
 
 
@@ -1424,11 +1399,18 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
         goto error;
      }
 
+   // Check if Direct Rendering Memory Optimzation flag is on
+   // Creates resources on demand when it fallsback to fbo rendering
+   s = getenv("EVAS_GL_DIRECT_MEM_OPT");
+   if (s) direct_mem_opt = atoi(s);
+   if (direct_mem_opt == 1)
+      evgl_engine->direct_mem_opt = 1;
+
    // Check if Direct Rendering Override Force Off flag is on
    s = getenv("EVAS_GL_DIRECT_OVERRIDE_FORCE_OFF");
    if (s) direct_off = atoi(s);
    if (direct_off == 1)
-      evgl_engine->force_direct_off = 1;
+      evgl_engine->direct_force_off = 1;
 
    // Check if API Debug mode is on
    s = getenv("EVAS_GL_API_DEBUG");
@@ -1543,12 +1525,35 @@ evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
         goto error;
      }
 
+   // Set the context current with resource context/surface
+   if (!_internal_resource_make_current(ee, NULL))
+     {
+        ERR("Error doing an internal resource make current");
+        return 0;
+     }
+
    // Create internal buffers
-   if (!_surface_buffers_create(ee, sfc))
+   if (!_surface_buffers_create(sfc))
      {
         ERR("Unable Create Specificed Surfaces.");
         goto error;
      };
+
+   // Allocate resources for fallback unless the flag is on
+   if (!ee->direct_mem_opt)
+     {
+        if (!_surface_buffers_allocate(ee, sfc, sfc->w, sfc->h, 0))
+          {
+             ERR("Unable Create Allocate Memory for Surface.");
+             goto error;
+          }
+     }
+
+   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
+     {
+        ERR("Error doing make_current(NULL, NULL).");
+        return 0;
+     }
 
    // Keep track of all the created surfaces
    ee->surfaces = eina_list_prepend(ee->surfaces, sfc);
@@ -1595,10 +1600,23 @@ evgl_surface_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
         evgl_make_current(ee, NULL, NULL);
      }
 
+   // Set the context current with resource context/surface
+   if (!_internal_resource_make_current(ee, NULL))
+     {
+        ERR("Error doing an internal resource make current");
+        return 0;
+     }
+
    // Destroy created buffers
-   if (!_surface_buffers_destroy(ee, sfc))
+   if (!_surface_buffers_destroy(sfc))
      {
         ERR("Error deleting surface resources.");
+        return 0;
+     }
+
+   if (!ee->funcs->make_current(ee->engine_data, NULL, NULL, 0))
+     {
+        ERR("Error doing make_current(NULL, NULL).");
         return 0;
      }
 
@@ -1734,31 +1752,35 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
 
 
-   // Allocate or free resources depending on what mode it's running.
-   if (_evgl_direct_renderable(ee, rsc, sfc))
+   // Allocate or free resources depending on what mode (direct of fbo) it's
+   // running only if the env var EVAS_GL_DIRECT_MEM_OPT is set.
+   if (ee->direct_mem_opt)
      {
-        // Destroy created resources
-        if (sfc->buffers_allocated)
+        if (_evgl_direct_renderable(ee, rsc, sfc))
           {
-             if (!_surface_buffers_allocate(ee, sfc, 0, 0))
+             // Destroy created resources
+             if (sfc->buffers_allocated)
                {
-                  ERR("Unable to destroy surface buffers!");
-                  return 0;
-               };
-             sfc->buffers_allocated = 0;
+                  if (!_surface_buffers_allocate(ee, sfc, 0, 0, 1))
+                    {
+                       ERR("Unable to destroy surface buffers!");
+                       return 0;
+                    };
+                  sfc->buffers_allocated = 0;
+               }
           }
-     }
-   else
-     {
-        // Create internal buffers if not yet created
-        if (!sfc->buffers_allocated)
+        else
           {
-             if (!_surface_buffers_allocate(ee, sfc, sfc->w, sfc->h))
+             // Create internal buffers if not yet created
+             if (!sfc->buffers_allocated)
                {
-                  ERR("Unable Create Specificed Surfaces.  Unsupported format!");
-                  return 0;
-               };
-             sfc->buffers_allocated = 1;
+                  if (!_surface_buffers_allocate(ee, sfc, sfc->w, sfc->h, 1))
+                    {
+                       ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+                       return 0;
+                    };
+                  sfc->buffers_allocated = 1;
+               }
           }
      }
 

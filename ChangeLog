@@ -1,3 +1,8 @@
+2013-01-24  Sung W. Park (sung_)
+
+	* Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory
+        allocation policy for EvasGL direct rendering.
+
 2013-01-24  Cedric Bail
 
 	* Don't over align data if they are already aligned.

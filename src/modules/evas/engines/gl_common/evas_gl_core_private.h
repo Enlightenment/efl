@@ -240,10 +240,11 @@ struct _EVGL_Engine
 
 
    int                direct_override;
+   int                direct_mem_opt;
    int                api_debug_mode;
 
    // Force Off fo Debug purposes
-   int                force_direct_off;
+   int                direct_force_off;
 
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;
