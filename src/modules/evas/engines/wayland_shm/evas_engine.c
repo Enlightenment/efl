@@ -223,7 +223,7 @@ eng_setup(Evas *eo_evas, void *einfo)
         if (try_swap == -1)
           {
              /* check for env var to see if we should try swapping */
-             if (getenv("EVAS_NO_DRI_SWAPBUF")) try_swap = 0;
+             if (getenv("EVAS_NO_WAYLAND_SWAPBUF")) try_swap = 0;
              else try_swap = 1;
           }
 
