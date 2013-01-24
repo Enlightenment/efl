@@ -156,6 +156,9 @@ module_open(Evas_Module *em)
    if (!_evas_module_engine_inherit(&pfunc, "software_generic"))
      return 0;
 
+   /* copy base functions from the software_generic engine */
+   func = pfunc;
+
    return 0;
 }
 
