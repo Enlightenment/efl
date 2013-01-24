@@ -241,7 +241,6 @@ _ecore_evas_wl_free(Ecore_Evas *ee)
 static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
-   Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int orig_w, orig_h;
 
