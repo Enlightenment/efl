@@ -302,7 +302,17 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 static void 
 eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
 {
+   Render_Engine *re;
 
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
+   if (!(re = (Render_Engine *)data)) return;
+#if defined(BUILD_PIPE_RENDER)
+   evas_common_pipe_map_begin(surface);
+#endif
+   re->outbuf_update_region_push(re->ob, surface, x, y, w, h);
+   re->outbuf_update_region_free(re->ob, surface);
+   evas_common_cpu_end_opt()
 }
 
 static void 
