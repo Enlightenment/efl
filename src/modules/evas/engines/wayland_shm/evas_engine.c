@@ -246,7 +246,15 @@ eng_output_free(void *data)
 static void 
 eng_output_resize(void *data, int w, int h)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   re->outbuf_reconfigure(re->ob, w, h, 
+                          re->ob->rotation, re->ob->depth, 
+                          re->ob->priv.destination_alpha);
+   evas_common_tilebuf_free(re->tb);
+   if ((re->tb = evas_common_tilebuf_new(w, h)))
+     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 }
 
 static void 
