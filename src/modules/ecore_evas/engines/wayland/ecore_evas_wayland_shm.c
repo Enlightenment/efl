@@ -19,7 +19,7 @@ static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int  _ecore_evas_wl_render(Ecore_Evas *ee);
 
 /* Frame listener */
-static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t time);
+static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
 static const struct wl_callback_listener frame_listener =
 {
    _ecore_evas_wl_frame_complete,
