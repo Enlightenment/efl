@@ -172,6 +172,27 @@ evas_swapper_buffer_state_get(Wl_Swapper *ws)
    return MODE_FULL;
 }
 
+void 
+evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
+{
+   int i = 0;
+
+   /* check for valid swapper */
+   if (!ws) return;
+
+   /* loop the swapper's buffers and free them */
+   for (i = 0; i < ws->buff_num; i++)
+     {
+        Wl_Buffer *wb = NULL;
+
+        /* try to get out Wl_Buffer struct */
+        if (!(wb = (&(ws->buff[i])))) continue;
+
+        /* if this buffer is not valid, then unmap data */
+        if (!wb->valid) _evas_swapper_buffer_free(wb);
+     }
+}
+
 /* local functions */
 static Eina_Bool 
 _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
@@ -184,7 +205,7 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    size_t size;
 
    /* make sure swapper has a shm */
-   if (!ws->shm) return;
+   if (!ws->shm) return EINA_FALSE;
 
    wb->w = ws->w;
    wb->h = ws->h;
@@ -265,9 +286,11 @@ _evas_swapper_buffer_free(Wl_Buffer *wb)
 
    /* kill the wl_buffer */
    if (wb->buffer) wl_buffer_destroy(wb->buffer);
+   wb->buffer = NULL;
 
    /* unmap the buffer data */
-   munmap(wb->data, wb->size);
+   if (wb->data) munmap(wb->data, wb->size);
+   wb->data = NULL;
 }
 
 static void 
@@ -280,6 +303,17 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
 
    /* make sure swapper has a surface */
    if (!ws->surface) return;
+
+   /* check for valid buffer */
+   if (!wb) return;
+
+   /* make sure buffer has mapped data */
+   if (!wb->data)
+     {
+        /* call function to mmap buffer data */
+        if (!_evas_swapper_buffer_new(ws, wb))
+          return;
+     }
 
    rect = eina_rectangle_new(0, 0, 0, 0);
    if (rects)
@@ -307,6 +341,8 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
 
    /* surface commit */
    wl_surface_commit(ws->surface);
+
+   wb->valid = EINA_TRUE;
 }
 
 static void 
