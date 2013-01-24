@@ -65,7 +65,9 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
    ws->alpha = alpha;
    ws->shm = shm;
    ws->surface = surface;
-   ws->buff_num = 3;
+
+   /* double buffer by default */
+   ws->buff_num = 2;
 
    for (i = 0; i < ws->buff_num; i++)
      {
