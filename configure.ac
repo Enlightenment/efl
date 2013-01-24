@@ -1292,7 +1292,6 @@ AC_CHECK_HEADER([rsx/rsx.h], [:], [AC_MSG_ERROR([Missing rsx/rsx.h])])
 EVAS_ENGINE([buffer], [static])
 EVAS_ENGINE([fb], [${want_fb}], [EVAS_ENGINE_DEP_CHECK_FB])
 EVAS_ENGINE([psl1ght], [${have_ps3}], [EVAS_ENGINE_DEP_CHECK_PSL1GHT])
-EVAS_ENGINE([wayland-shm], [${want_wayland}])
 
 # XXX TODO:
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
@@ -1300,6 +1299,7 @@ EVAS_CHECK_ENGINE([gl-sdl], [${want_gl_sdl}], [no], [OpenGL SDL])
 EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
+EVAS_CHECK_ENGINE([wayland-shm], [${want_wayland}], [no], [Wayland Shm])
 
 # Software XCB
 
