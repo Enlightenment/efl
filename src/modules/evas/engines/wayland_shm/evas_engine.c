@@ -222,7 +222,25 @@ eng_setup(Evas *eo_evas, void *einfo)
 static void 
 eng_output_free(void *data)
 {
+   Render_Engine *re;
 
+   if ((re = data))
+     {
+        re->outbuf_free(re->ob);
+        evas_common_tilebuf_free(re->tb);
+        if (re->rects) 
+          evas_common_tilebuf_free_render_rects(re->rects);
+        if (re->prev_rects[0]) 
+          evas_common_tilebuf_free_render_rects(re->prev_rects[0]);
+        if (re->prev_rects[1]) 
+          evas_common_tilebuf_free_render_rects(re->prev_rects[1]);
+        if (re->prev_rects[2]) 
+          evas_common_tilebuf_free_render_rects(re->prev_rects[2]);
+        free(re);
+     }
+
+   evas_common_font_shutdown();
+   evas_common_image_shutdown();
 }
 
 static void 
