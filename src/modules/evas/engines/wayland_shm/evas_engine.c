@@ -3,6 +3,7 @@
 #include "Evas_Engine_Wayland_Shm.h"
 #include "evas_engine.h"
 #include "evas_swapbuf.h"
+#include "evas_outbuf.h"
 
 /* local structures */
 typedef struct _Render_Engine Render_Engine;
@@ -75,6 +76,22 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
 
    /* set tile size for the tile buffer */
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+
+   if (try_swap)
+     {
+        if ((re->ob = evas_swapbuf_setup(w, h, rotation, depth, 
+                                         destination_alpha, wl_shm, 
+                                         wl_surface)))
+          {
+             re->outbuf_free = evas_swapbuf_free;
+             re->outbuf_reconfigure = evas_swapbuf_reconfigure;
+             re->outbuf_update_region_new = evas_swapbuf_update_region_new;
+             re->outbuf_update_region_push = evas_swapbuf_update_region_push;
+             re->outbuf_update_region_free = evas_swapbuf_update_region_free;
+             re->outbuf_flush = evas_swapbuf_flush;
+             re->outbuf_idle_flush = evas_swapbuf_idle_flush;
+          }
+     }
 
    /* return allocated render engine */
    return re;
