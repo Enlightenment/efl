@@ -260,7 +260,10 @@ eng_output_resize(void *data, int w, int h)
 static void 
 eng_output_tile_size_set(void *data, int w, int h)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   if (re->tb) evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 static void 
