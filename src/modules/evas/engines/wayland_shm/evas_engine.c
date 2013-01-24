@@ -350,6 +350,116 @@ eng_output_redraws_clear(void *data)
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
+   Render_Engine *re;
+   RGBA_Image *surface;
+   Tilebuf_Rect *rect;
+   Eina_Bool first_rect = EINA_FALSE;
+
+#define CLEAR_PREV_RECTS(x) \
+   do { \
+      if (re->prev_rects[x]) \
+        evas_common_tilebuf_free_render_rects(re->prev_rects[x]); \
+      re->prev_rects[x] = NULL; \
+   } while (0)
+   
+   re = (Render_Engine *)data;
+   if (re->end)
+     {
+	re->end = 0;
+	return NULL;
+     }
+   
+   if (!re->rects)
+     {
+        re->mode = evas_swapbuf_state_get(re->ob);
+	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+        if (re->rects)
+          {
+             if (re->lost_back)
+               {
+                  /* if we lost our backbuffer since the last frame redraw all */
+                  re->lost_back = 0;
+                  evas_common_tilebuf_add_redraw(re->tb, 0, 0, re->ob->w, re->ob->h);
+                  evas_common_tilebuf_free_render_rects(re->rects);
+                  re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+               }
+             /* ensure we get rid of previous rect lists we dont need if mode
+              * changed/is appropriate */
+             evas_common_tilebuf_clear(re->tb);
+             CLEAR_PREV_RECTS(2);
+             re->prev_rects[2] = re->prev_rects[1];
+             re->prev_rects[1] = re->prev_rects[0];
+             re->prev_rects[0] = re->rects;
+             re->rects = NULL;
+             switch (re->mode)
+               {
+                case MODE_FULL:
+                case MODE_COPY: // no prev rects needed
+                  re->rects = 
+                    _merge_rects(re->tb, re->prev_rects[0], NULL, NULL);
+                  break;
+                case MODE_DOUBLE: // double mode - only 1 level of prev rect
+                  re->rects = 
+                    _merge_rects(re->tb, re->prev_rects[0], re->prev_rects[1], NULL);
+                  break;
+                case MODE_TRIPLE: // keep all
+                  re->rects = 
+                    _merge_rects(re->tb, re->prev_rects[0], re->prev_rects[1], re->prev_rects[2]);
+                  break;
+                default:
+                  break;
+               }
+             first_rect = EINA_TRUE;
+          }
+        evas_common_tilebuf_clear(re->tb);
+        re->cur_rect = EINA_INLIST_GET(re->rects);
+     }
+   if (!re->cur_rect) return NULL;
+   rect = (Tilebuf_Rect *)re->cur_rect;
+   if (re->rects)
+     {
+        switch (re->mode)
+          {
+           case MODE_COPY:
+           case MODE_DOUBLE:
+           case MODE_TRIPLE:
+             rect = (Tilebuf_Rect *)re->cur_rect;
+             *x = rect->x;
+             *y = rect->y;
+             *w = rect->w;
+             *h = rect->h;
+             *cx = rect->x;
+             *cy = rect->y;
+             *cw = rect->w;
+             *ch = rect->h;
+             re->cur_rect = re->cur_rect->next;
+             break;
+           case MODE_FULL:
+             re->cur_rect = NULL;
+             if (x) *x = 0;
+             if (y) *y = 0;
+             if (w) *w = re->ob->w;
+             if (h) *h = re->ob->h;
+             if (cx) *cx = 0;
+             if (cy) *cy = 0;
+             if (cw) *cw = re->ob->w;
+             if (ch) *ch = re->ob->h;
+             break;
+           default:
+             break;
+          }
+        if (first_rect)
+          {
+             // do anything needed for the first frame
+          }
+        surface = 
+          re->outbuf_update_region_new(re->ob,
+                                       *x, *y, *w, *h,
+                                       cx, cy, cw, ch);
+        if (!re->cur_rect) re->end = EINA_TRUE;
+        return surface;
+     }
+
    return NULL;
 }
 
