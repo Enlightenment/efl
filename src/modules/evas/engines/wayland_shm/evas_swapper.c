@@ -167,6 +167,9 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    int fd = 0;
    size_t size;
 
+   /* make sure swapper has a shm */
+   if (!ws->shm) return;
+
    wb->w = ws->w;
    wb->h = ws->h;
 
