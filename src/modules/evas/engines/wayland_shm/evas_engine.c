@@ -33,5 +33,20 @@ struct _Render_Engine
    void (*outbuf_idle_flush)(Outbuf *ob);
 };
 
+/* engine function prototypes */
+static void *eng_info(Evas *eo_evas EINA_UNUSED);
+static void eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo);
+static int eng_setup(Evas *eo_evas, void *einfo);
+static void eng_output_free(void *data);
+static void eng_output_resize(void *data, int w, int h);
+static void eng_output_tile_size_set(void *data, int w, int h);
+static void eng_output_redraws_rect_add(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_rect_del(void *data, int x, int y, int w, int h);
+static void eng_output_redraws_clear(void *data);
+static void *eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
+static void eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
+static void eng_output_flush(void *data, Evas_Render_Mode render_mode);
+static void eng_output_idle_flush(void *data);
+
 /* external variables */
 int _evas_engine_way_shm_log_dom = -1;
