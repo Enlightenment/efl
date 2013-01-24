@@ -152,6 +152,10 @@ module_open(Evas_Module *em)
         return 0;
      }
 
+   /* try to inherit base functions from the software generic engine */
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic"))
+     return 0;
+
    return 0;
 }
 
