@@ -56,6 +56,12 @@ static int _eina_chained_mp_log_dom = -1;
 #undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_eina_chained_mp_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_chained_mp_log_dom, __VA_ARGS__)
+
 #endif
 
 typedef struct _Chained_Mempool Chained_Mempool;
@@ -215,14 +221,14 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
    // is it in pool mem?
    if (ptr < pmem)
      {
-        INF("%p is inside the private part of %p pool from %p '%s' Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool, pool->name);
+        ERR("%p is inside the private part of %p pool from %p '%s' Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool, pool->name);
         return EINA_FALSE;
      }
 
    // is it really a pointer returned by malloc
    if ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc)
      {
-        INF("%p is %i bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !). %i",
+        ERR("%p is %i bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !). %i",
             ptr, ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc), pool, pool->name);
         return EINA_FALSE;
      }
@@ -323,7 +329,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    if (!r)
      {
 #ifdef DEBUG
-        INF("%p is not the property of %p Chained_Mempool", ptr, pool);
+        ERR("%p is not the property of %p Chained_Mempool", ptr, pool);
 #endif
         goto on_error;
      }
@@ -509,7 +515,7 @@ eina_chained_mempool_shutdown(void *data)
 
 #ifdef DEBUG
    if (mp->root)
-     INF("Bad news, list of pool and rbtree are out of sync for %p !", mp);
+     ERR("Bad news, list of pool and rbtree are out of sync for %p !", mp);
 #endif
 
 #ifndef NVALGRIND
