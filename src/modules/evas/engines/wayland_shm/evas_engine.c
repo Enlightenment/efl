@@ -85,6 +85,12 @@ eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo)
 static int 
 eng_setup(Evas *eo_evas, void *einfo)
 {
+   Evas_Engine_Info_Wayland_Shm *info;
+
+   /* try to cast the engine info to our engine info */
+   if (!(info = (Evas_Engine_Info_Wayland_Shm *)einfo))
+     return 0;
+
    return 0;
 }
 
