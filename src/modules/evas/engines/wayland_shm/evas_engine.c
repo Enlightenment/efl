@@ -287,7 +287,10 @@ eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 static void 
 eng_output_redraws_clear(void *data)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   if (re->tb) evas_common_tilebuf_clear(re->tb);
 }
 
 static void *
