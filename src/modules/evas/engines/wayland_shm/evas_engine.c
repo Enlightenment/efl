@@ -334,7 +334,10 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 static void 
 eng_output_idle_flush(void *data)
 {
+   Render_Engine *re;
 
+   if (!(re = (Render_Engine *)data)) return;
+   re->outbuf_idle_flush(re->ob);
 }
 
 /* module functions */
