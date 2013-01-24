@@ -443,8 +443,6 @@ evas_swapbuf_idle_flush(Outbuf *ob)
    /* check for valid output buffer */
    if (!ob) return;
 
-   return;
-
    /* check for valid swapper */
    if (!ob->priv.swapper) return;
 
