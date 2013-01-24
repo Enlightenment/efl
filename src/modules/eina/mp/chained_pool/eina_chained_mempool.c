@@ -144,7 +144,7 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    p->limit = ptr + pool->item_alloc * pool->pool_size;
 
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->alloc_size - alignof);
+   VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->alloc_size - eina_mempool_alignof(sizeof(Chained_Pool)));
 #endif
 
    return p;
