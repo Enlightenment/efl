@@ -112,7 +112,7 @@ _item_signal_emit(Elm_Diskselector_Item *item)
 }
 
 static Eina_Bool
-_string_check(void *data)
+_string_check_idle_enterer_cb(void *data)
 {
    Evas_Object *obj = data;
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
@@ -126,10 +126,16 @@ _string_check(void *data)
    evas_object_geometry_get(obj, &ox, NULL, &ow, NULL);
 
    if (ow <= 0)
-     return EINA_FALSE;
+     {
+        sd->string_check_idle_enterer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    if (!sd->init)
-     return EINA_FALSE;
+     {
+        sd->string_check_idle_enterer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    if (!sd->round)
      list = sd->items;
@@ -188,12 +194,25 @@ _string_check(void *data)
         edje_object_part_text_escaped_set(VIEW(it), "elm.text", buf);
      }
 
-   if (sd->check_idler)
-     ecore_idle_enterer_del(sd->check_idler);
+   sd->string_check_idle_enterer = NULL;
 
-   sd->check_idler = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
 
-   return EINA_FALSE;
+static void
+_string_check(void *data)
+{
+   Evas_Object *obj = data;
+   ELM_DISKSELECTOR_DATA_GET(obj, sd);
+
+   if (sd->string_check_idle_enterer)
+     {
+        ecore_idle_enterer_del(sd->string_check_idle_enterer);
+        sd->string_check_idle_enterer = NULL;
+     }
+
+   // call string check idle enterer directly
+   _string_check_idle_enterer_cb(data);
 }
 
 static Eina_Bool
@@ -403,7 +422,9 @@ _item_del_pre_hook(Elm_Object_Item *it)
           }
      }
 
-   sd->check_idler = ecore_idle_enterer_before_add(_string_check, obj);
+   sd->string_check_idle_enterer =
+      ecore_idle_enterer_before_add(_string_check_idle_enterer_cb,
+                                    obj);
 
    _sizing_eval(obj);
 
@@ -1384,10 +1405,10 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->scroller_move_idle_enterer = NULL;
      }
 
-   if (sd->check_idler)
+   if (sd->string_check_idle_enterer)
      {
-        ecore_idle_enterer_del(sd->check_idler);
-        sd->check_idler = NULL;
+        ecore_idle_enterer_del(sd->string_check_idle_enterer);
+        sd->string_check_idle_enterer = NULL;
      }
 
    eo_do_super(obj, evas_obj_smart_del());
