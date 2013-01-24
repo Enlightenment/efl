@@ -35,6 +35,7 @@ struct _Render_Engine
 
 /* local function prototypes */
 static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
+static Tilebuf_Rect *_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3);
 
 /* engine function prototypes */
 static void *eng_info(Evas *eo_evas EINA_UNUSED);
