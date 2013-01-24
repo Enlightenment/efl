@@ -463,7 +463,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 }
 
 static void
-_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t time EINA_UNUSED)
+_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Wl_Window *win = NULL;
