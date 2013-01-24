@@ -62,6 +62,8 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
    int i = 0;
    char *num_buffers;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* try to allocate a new swapper */
    if (!(ws = calloc(1, sizeof(Wl_Swapper)))) 
      return NULL;
@@ -117,6 +119,8 @@ evas_swapper_swap(Wl_Swapper *ws, Eina_Rectangle *rects, unsigned int count)
 {
    int n = 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid swapper */
    if (!ws) return;
 
@@ -130,6 +134,8 @@ void
 evas_swapper_free(Wl_Swapper *ws)
 {
    int i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid swapper */
    if (!ws) return;
@@ -148,6 +154,8 @@ evas_swapper_free(Wl_Swapper *ws)
 void *
 evas_swapper_buffer_map(Wl_Swapper *ws)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid swapper */
    if (!ws) return NULL;
 
@@ -161,6 +169,8 @@ evas_swapper_buffer_map(Wl_Swapper *ws)
 void 
 evas_swapper_buffer_unmap(Wl_Swapper *ws)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid swapper */
    if (!ws) return;
 
@@ -171,6 +181,8 @@ int
 evas_swapper_buffer_state_get(Wl_Swapper *ws)
 {
    int i = 0, n = 0, count = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    for (i = 0; i < ws->buff_num; i++)
      {
@@ -193,6 +205,8 @@ void
 evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 {
    int i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid swapper */
    if (!ws) return;
@@ -217,6 +231,8 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
    char tmp[PATH_MAX];
    size_t size;
    int fd = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* make sure swapper has a shm */
    if (!ws->shm) return EINA_FALSE;
@@ -276,6 +292,8 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
 static void 
 _evas_swapper_shm_pool_free(Wl_Swapper *ws)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid swapper */
    if (!ws) return;
 
@@ -294,6 +312,8 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 {
    unsigned int format = WL_SHM_FORMAT_XRGB8888;
    size_t size;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* make sure swapper has a shm */
    if (!ws->shm) return EINA_FALSE;
@@ -335,6 +355,8 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 static void 
 _evas_swapper_buffer_free(Wl_Buffer *wb)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid buffer */
    if (!wb) return;
 
@@ -351,6 +373,9 @@ static void
 _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count)
 {
    Eina_Rectangle *rect;
+   static struct wl_buffer *sent;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid swapper */
    if (!ws) return;
@@ -365,9 +390,11 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    if ((!wb->data) || (!wb->buffer))
      {
         /* call function to mmap buffer data */
-        if (!_evas_swapper_buffer_new(ws, wb))
-          return;
+        /* if (!_evas_swapper_buffer_new(ws, wb)) */
+        return;
      }
+
+   if ((!rects) || (count == 0)) return;
 
    rect = eina_rectangle_new(0, 0, 0, 0);
    if (rects)
@@ -388,7 +415,11 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
      }
 
    /* surface attach */
-   wl_surface_attach(ws->surface, wb->buffer, 0, 0);
+   if (sent != wb->buffer)
+     {
+        wl_surface_attach(ws->surface, wb->buffer, 0, 0);
+        sent = wb->buffer;
+     }
 
    /* surface damage */
    /* printf("Damage Surface: %d %d %d %d\n", rect->x, rect->y, rect->w, rect->h); */
@@ -399,13 +430,15 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* surface commit */
    wl_surface_commit(ws->surface);
 
-   wb->valid = EINA_TRUE;
+   /* wb->valid = EINA_FALSE; */
 }
 
 static void 
 _evas_swapper_buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 {
    Wl_Buffer *wb = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to get out Wl_Buffer struct */
    if (!(wb = data)) return;

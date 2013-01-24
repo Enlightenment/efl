@@ -63,6 +63,8 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
 {
    Render_Engine *re = NULL;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* try to allocate a new render engine */
    if (!(re = calloc(1, sizeof(Render_Engine)))) 
      return NULL;
@@ -110,6 +112,8 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 {
    Tilebuf_Rect *r, *rects;
    
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (r1)
      {
         EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
@@ -192,6 +196,8 @@ eng_setup(Evas *eo_evas, void *einfo)
    Evas_Engine_Info_Wayland_Shm *info;
    Evas_Public_Data *epd;
    Render_Engine *re = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to cast the engine info to our engine info */
    if (!(info = (Evas_Engine_Info_Wayland_Shm *)einfo))
@@ -283,6 +289,8 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if ((re = data))
      {
         re->outbuf_free(re->ob);
@@ -306,6 +314,8 @@ static void
 eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(re = (Render_Engine *)data)) return;
    re->outbuf_reconfigure(re->ob, w, h, 
@@ -359,6 +369,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    RGBA_Image *surface;
    Tilebuf_Rect *rect;
    Eina_Bool first_rect = EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
 #define CLEAR_PREV_RECTS(x) \
    do { \
@@ -473,6 +485,8 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 {
    Render_Engine *re;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if (!(re = (Render_Engine *)data)) return;
@@ -489,6 +503,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if (!(re = (Render_Engine *)data)) return;
@@ -504,6 +520,8 @@ static void
 eng_output_idle_flush(void *data)
 {
    Render_Engine *re;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(re = (Render_Engine *)data)) return;
    re->outbuf_idle_flush(re->ob);

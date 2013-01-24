@@ -25,6 +25,8 @@ evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina
 {
    Outbuf *ob = NULL;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* try to allocate a new Outbuf */
    if (!(ob = calloc(1, sizeof(Outbuf)))) 
      return NULL;
@@ -70,6 +72,8 @@ evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina
 void 
 evas_swapbuf_free(Outbuf *ob)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid output buffer */
    if (!ob) return;
 
@@ -78,9 +82,6 @@ evas_swapbuf_free(Outbuf *ob)
    evas_swapbuf_idle_flush(ob);
    eina_array_flush(&ob->priv.onebuf_regions);
 
-   /* destroy the wayland shm pool */
-   /* _evas_swapbuf_pool_destroy(ob); */
-
    /* free the allocated structure */
    free(ob);
 }
@@ -88,6 +89,8 @@ evas_swapbuf_free(Outbuf *ob)
 void 
 evas_swapbuf_reconfigure(Outbuf *ob, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid output buffer */
    if (!ob) return;
 
@@ -130,6 +133,8 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 {
    RGBA_Image *img;
    Eina_Rectangle *rect;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
    if ((w <= 0) || (h <= 0)) return NULL;
@@ -234,6 +239,8 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    DATA8 *dst;
    int depth = 32, bpp = 0, bpl = 0, wid = 0;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid output buffer */
    if (!ob) return;
 
@@ -245,14 +252,14 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
         func = 
           evas_common_convert_func_get(0, w, h, depth, 
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
-                                       PAL_MODE_NONE, ob->rotation);
+                                       PAL_MODE_RGB332, ob->rotation);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         func = 
           evas_common_convert_func_get(0, h, w, depth, 
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
-                                       PAL_MODE_NONE, ob->rotation);
+                                       PAL_MODE_RGB332, ob->rotation);
      }
 
    /* make sure we have a valid convert function */
@@ -322,6 +329,8 @@ evas_swapbuf_flush(Outbuf *ob)
    Eina_Rectangle *rects;
    RGBA_Image *img;
    unsigned int n = 0, i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid output buffer */
    if (!ob) return;
@@ -440,6 +449,8 @@ evas_swapbuf_flush(Outbuf *ob)
 void 
 evas_swapbuf_idle_flush(Outbuf *ob)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid output buffer */
    if (!ob) return;
 
@@ -454,6 +465,8 @@ int
 evas_swapbuf_state_get(Outbuf *ob)
 {
    int mode = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ob->priv.swapper) return MODE_FULL;
    mode = evas_swapper_buffer_state_get(ob->priv.swapper);
