@@ -57,6 +57,13 @@ static Evas_Func func, pfunc;
 /* external variables */
 int _evas_engine_way_shm_log_dom = -1;
 
+/* local functions */
+static void *
+_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
+{
+   return NULL;
+}
+
 /* engine functions */
 static void *
 eng_info(Evas *eo_evas EINA_UNUSED)
