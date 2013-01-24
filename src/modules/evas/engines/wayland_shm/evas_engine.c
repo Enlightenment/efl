@@ -132,3 +132,27 @@ eng_output_idle_flush(void *data)
 {
 
 }
+
+/* module functions */
+static int 
+module_open(Evas_Module *em)
+{
+   return 0;
+}
+
+static void 
+module_close(Evas_Module *em EINA_UNUSED)
+{
+
+}
+
+static Evas_Module_Api evas_modapi = 
+{
+   EVAS_MODULE_API_VERSION, "wayland_shm", "none", {module_open, module_close}
+};
+
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, wayland_shm);
+
+#ifndef EVAS_STATIC_BUILD_WAYLAND_SHM
+EVAS_EINA_MODULE_DEFINE(engine, wayland_shm);
+#endif
