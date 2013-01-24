@@ -211,14 +211,22 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
    // pool mem base
    pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
 
+#ifdef DEBUG
    // is it in pool mem?
    if (ptr < pmem)
      {
-#ifdef DEBUG
-        INF("%p is inside the private part of %p pool from %p Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool);
-#endif
+        INF("%p is inside the private part of %p pool from %p '%s' Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool, pool->name);
         return EINA_FALSE;
      }
+
+   // is it really a pointer returned by malloc
+   if ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc)
+     {
+        INF("%p is %i bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !). %i",
+            ptr, ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc), pool, pool->name);
+        return EINA_FALSE;
+     }
+#endif
 
    // freed node points to prev free node
    eina_trash_push(&p->base, ptr);
