@@ -39,3 +39,11 @@ enum _Outbuf_Depth
      OUTBUF_DEPTH_RGB_32BPP_8888_8888,
      OUTBUF_DEPTH_LAST
 };
+
+enum 
+{
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE
+};
