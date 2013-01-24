@@ -433,9 +433,16 @@ evas_swapbuf_flush(Outbuf *ob)
 }
 
 void 
-evas_swapbuf_idle_flush(Outbuf *ob EINA_UNUSED)
+evas_swapbuf_idle_flush(Outbuf *ob)
 {
+   /* check for valid output buffer */
+   if (!ob) return;
 
+   /* check for valid swapper */
+   if (!ob->priv.swapper) return;
+
+   /* tell the swapper to release any buffers that have been rendered */
+   evas_swapper_buffer_idle_flush(ob->priv.swapper);
 }
 
 int 
