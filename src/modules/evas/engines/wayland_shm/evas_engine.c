@@ -238,6 +238,10 @@ eng_setup(Evas *eo_evas, void *einfo)
 
    else
      {
+        int ponebuf = 0;
+
+        if ((re) && (re->ob)) ponebuf = re->ob->onebuf;
+
         /* we have an existing render engine */
         if (re->ob) re->outbuf_free(re->ob);
 
@@ -256,6 +260,8 @@ eng_setup(Evas *eo_evas, void *einfo)
              re->outbuf_flush = evas_swapbuf_flush;
              re->outbuf_idle_flush = evas_swapbuf_idle_flush;
           }
+
+        if ((re) && (re->ob)) re->ob->onebuf = ponebuf;
      }
 
    /* reassign render engine to output */
