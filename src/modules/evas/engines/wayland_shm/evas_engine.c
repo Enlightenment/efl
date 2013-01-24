@@ -67,6 +67,13 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
    if (!(re = calloc(1, sizeof(Render_Engine)))) 
      return NULL;
 
+   /* try to create a new tilebuf first */
+   if (!(re->tb = evas_common_tilebuf_new(w, h)))
+     {
+        free(re);
+        return NULL;
+     }
+
    /* return allocated render engine */
    return re;
 }
