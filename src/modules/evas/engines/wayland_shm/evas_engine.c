@@ -87,6 +87,7 @@ eng_setup(Evas *eo_evas, void *einfo)
 {
    Evas_Engine_Info_Wayland_Shm *info;
    Evas_Public_Data *epd;
+   Render_Engine *re = NULL;
 
    /* try to cast the engine info to our engine info */
    if (!(info = (Evas_Engine_Info_Wayland_Shm *)einfo))
@@ -95,6 +96,12 @@ eng_setup(Evas *eo_evas, void *einfo)
    /* try to get evas public data from the canvas */
    if (!(epd = eo_data_get(eo_evas, EVAS_CLASS)))
      return 0;
+
+   /* test for valid engine output */
+   if (!(re = epd->engine.data.output))
+     {
+
+     }
 
    return 0;
 }
