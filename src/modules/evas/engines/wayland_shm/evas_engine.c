@@ -174,6 +174,14 @@ eng_setup(Evas *eo_evas, void *einfo)
              else try_swap = 1;
           }
 
+        if (!(re = 
+              _output_engine_setup(epd->output.w, epd->output.h, 
+                                   info->info.rotation, info->info.depth, 
+                                   info->info.destination_alpha, 
+                                   info->info.wl_shm, info->info.wl_surface, 
+                                   try_swap)))
+          return 0;
+
      }
 
    return 0;
