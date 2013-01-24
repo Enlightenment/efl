@@ -5102,7 +5102,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
 {
    if (!obj) return NULL;
 
-   if ((!ENGINE_COMPARE(ELM_WAYLAND_SHM)) || 
+   if ((!ENGINE_COMPARE(ELM_WAYLAND_SHM)) &&
        (!ENGINE_COMPARE(ELM_WAYLAND_EGL)))
      return NULL;
 
