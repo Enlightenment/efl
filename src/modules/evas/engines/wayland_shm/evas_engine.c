@@ -159,6 +159,22 @@ module_open(Evas_Module *em)
    /* copy base functions from the software_generic engine */
    func = pfunc;
 
+   /* override any engine specific functions that we provide */
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(info);
+   ORD(info_free);
+   ORD(setup);
+   ORD(output_free);
+   ORD(output_resize);
+   ORD(output_tile_size_set);
+   ORD(output_redraws_rect_add);
+   ORD(output_redraws_rect_del);
+   ORD(output_redraws_clear);
+   ORD(output_redraws_next_update_get);
+   ORD(output_redraws_next_update_push);
+   ORD(output_flush);
+   ORD(output_idle_flush);
+
    return 0;
 }
 
