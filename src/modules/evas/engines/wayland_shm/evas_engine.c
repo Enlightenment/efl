@@ -86,9 +86,14 @@ static int
 eng_setup(Evas *eo_evas, void *einfo)
 {
    Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Public_Data *epd;
 
    /* try to cast the engine info to our engine info */
    if (!(info = (Evas_Engine_Info_Wayland_Shm *)einfo))
+     return 0;
+
+   /* try to get evas public data from the canvas */
+   if (!(epd = eo_data_get(eo_evas, EVAS_CLASS)))
      return 0;
 
    return 0;
