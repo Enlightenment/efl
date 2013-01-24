@@ -64,6 +64,10 @@ eng_info(Evas *eo_evas EINA_UNUSED)
    if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Shm))))
      return NULL;
 
+   /* fill in default engine info fields */
+   info->magic.magic = rand();
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
+
    return NULL;
 }
 
