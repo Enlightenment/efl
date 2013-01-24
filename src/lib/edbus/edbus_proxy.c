@@ -29,6 +29,7 @@ struct _EDBus_Proxy
    Eina_Inlist              *pendings;
    Eina_List                *handlers;
    Eina_Inlist              *cbs_free;
+   Eina_Inlist              *data;
    EDBus_Proxy_Context_Event event_handlers[EDBUS_PROXY_EVENT_LAST];
    Eina_Hash *props;
    EDBus_Signal_Handler *properties_changed;
@@ -190,6 +191,7 @@ _on_object_free(void *data, const void *dead_pointer EINA_UNUSED)
    EDBUS_PROXY_CHECK(proxy);
    DBG("proxy=%p, refcount=%d, interface=%s, obj=%p",
        proxy, proxy->refcount, proxy->interface, proxy->obj);
+   edbus_data_del_all(&(proxy->data));
    _edbus_proxy_clear(proxy);
    _edbus_proxy_free(proxy);
 }
@@ -234,6 +236,7 @@ _edbus_proxy_unref(EDBus_Proxy *proxy)
    if (proxy->refcount > 0) return;
 
    edbus_object_free_cb_del(proxy->obj, _on_object_free, proxy);
+   edbus_data_del_all(&(proxy->data));
    _edbus_proxy_clear(proxy);
    _edbus_proxy_free(proxy);
 }
@@ -271,6 +274,31 @@ edbus_proxy_free_cb_del(EDBus_Proxy *proxy, EDBus_Free_Cb cb, const void *data)
    EDBUS_PROXY_CHECK(proxy);
    EINA_SAFETY_ON_NULL_RETURN(cb);
    proxy->cbs_free = edbus_cbs_free_del(proxy->cbs_free, cb, data);
+}
+
+EAPI void
+edbus_proxy_data_set(EDBus_Proxy *proxy, const char *key, const void *data)
+{
+   EDBUS_PROXY_CHECK(proxy);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   edbus_data_set(&(proxy->data), key, data);
+}
+
+EAPI void *
+edbus_proxy_data_get(const EDBus_Proxy *proxy, const char *key)
+{
+   EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
+   return edbus_data_get(&(((EDBus_Proxy *)proxy)->data), key);
+}
+
+EAPI void *
+edbus_proxy_data_del(EDBus_Proxy *proxy, const char *key)
+{
+   EDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
+   return edbus_data_del(&(((EDBus_Proxy *)proxy)->data), key);
 }
 
 static void
