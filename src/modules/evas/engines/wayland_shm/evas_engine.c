@@ -318,7 +318,17 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 static void 
 eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
+   Render_Engine *re;
 
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+
+   if (!(re = (Render_Engine *)data)) return;
+   re->outbuf_flush(re->ob);
+   if (re->rects)
+     {
+        evas_common_tilebuf_free_render_rects(re->rects);
+        re->rects = NULL;
+     }
 }
 
 static void 
