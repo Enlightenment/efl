@@ -31,6 +31,7 @@ extern int _evas_engine_way_shm_log_dom;
 # include <wayland-client.h>
 
 typedef enum _Outbuf_Depth Outbuf_Depth;
+typedef struct _Outbuf Outbuf;
 
 enum _Outbuf_Depth
 {
@@ -47,3 +48,37 @@ enum
    MODE_DOUBLE,
    MODE_TRIPLE
 };
+
+struct _Outbuf
+{
+   int w, h;
+   unsigned int rotation;
+   Outbuf_Depth depth;
+
+   struct 
+     {
+        struct 
+          {
+             /* wayland shared memory object */
+             struct wl_shm *shm;
+             struct wl_surface *surface;
+          } wl;
+
+        /* swapper */
+        void *swapper;
+
+        /* one big buffer for updates. flushed on idle_flush */
+        RGBA_Image *onebuf;
+        Eina_Array onebuf_regions;
+
+        /* a list of pending regions to write out */
+        Eina_List *pending_writes;
+
+        /* list of previous frame pending regions to write out */
+        Eina_List *prev_pending_writes;
+
+        Eina_Bool destination_alpha : 1;
+     } priv;
+};
+
+#endif
