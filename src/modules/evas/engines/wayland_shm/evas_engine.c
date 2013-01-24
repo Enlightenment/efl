@@ -74,6 +74,9 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
         return NULL;
      }
 
+   /* set tile size for the tile buffer */
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+
    /* return allocated render engine */
    return re;
 }
