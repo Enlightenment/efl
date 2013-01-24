@@ -113,7 +113,6 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
 {
    Chained_Pool *p;
    unsigned char *ptr;
-   unsigned int alignof;
 
    eina_error_set(0);
    p = malloc(pool->alloc_size);
@@ -137,8 +136,7 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    }
 #endif
 
-   alignof = eina_mempool_alignof(sizeof(Chained_Pool));
-   ptr = (unsigned char *)p + alignof;
+   ptr = (unsigned char *)(p + 1);
    p->usage = 0;
    p->base = NULL;
 
