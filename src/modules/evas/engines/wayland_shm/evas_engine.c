@@ -209,7 +209,14 @@ eng_setup(Evas *eo_evas, void *einfo)
    epd->engine.data.output = re;
    if (!epd->engine.data.output) return 0;
 
-   return 0;
+   if (!epd->engine.data.context)
+     {
+        epd->engine.data.context = 
+          epd->engine.func->context_new(epd->engine.data.output);
+     }
+
+   /* return success */
+   return 1;
 }
 
 static void 
