@@ -590,14 +590,15 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
         return;
      }
 
-   if (obj->map->prev.map == obj->map->cur.map)
+   if (obj->map->prev.map != NULL &&
+       obj->map->prev.map == obj->map->cur.map)
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->cur.map = NULL;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
-   if (!obj->map->cur.map)
+   if (!obj->map->cur.map && obj->map->cache_map)
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           {
