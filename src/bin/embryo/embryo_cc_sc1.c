@@ -3521,18 +3521,18 @@ doif(void)
 static void
 dowhile(void)
 {
-   int                 wq[wqSIZE];	/* allocate local queue */
+   int                 lwq[wqSIZE];	/* allocate local queue */
 
-   addwhile(wq);		/* add entry to queue for "break" */
-   setlabel(wq[wqLOOP]);	/* loop label */
+   addwhile(lwq);		/* add entry to queue for "break" */
+   setlabel(lwq[wqLOOP]);	/* loop label */
    /* The debugger uses the "line" opcode to be able to "break" out of
     * a loop. To make sure that each loop has a line opcode, even for the
     * tiniest loop, set it below the top of the loop */
    setline(fline, fcurrent);
-   test(wq[wqEXIT], TRUE, FALSE);	/* branch to wq[wqEXIT] if false */
+   test(lwq[wqEXIT], TRUE, FALSE);	/* branch to lwq[wqEXIT] if false */
    statement(NULL, FALSE);	/* if so, do a statement */
-   jumplabel(wq[wqLOOP]);	/* and loop to "while" start */
-   setlabel(wq[wqEXIT]);	/* exit label */
+   jumplabel(lwq[wqLOOP]);	/* and loop to "while" start */
+   setlabel(lwq[wqEXIT]);	/* exit label */
    delwhile();			/* delete queue entry */
 }
 
@@ -3543,18 +3543,18 @@ dowhile(void)
 static void
 dodo(void)
 {
-   int                 wq[wqSIZE], top;
+   int                 lwq[wqSIZE], top;
 
-   addwhile(wq);		/* see "dowhile" for more info */
+   addwhile(lwq);		/* see "dowhile" for more info */
    top = getlabel();		/* make a label first */
    setlabel(top);		/* loop label */
    statement(NULL, FALSE);
    needtoken(tWHILE);
-   setlabel(wq[wqLOOP]);	/* "continue" always jumps to WQLOOP. */
+   setlabel(lwq[wqLOOP]);	/* "continue" always jumps to WQLOOP. */
    setline(fline, fcurrent);
-   test(wq[wqEXIT], TRUE, FALSE);
+   test(lwq[wqEXIT], TRUE, FALSE);
    jumplabel(top);
-   setlabel(wq[wqEXIT]);
+   setlabel(lwq[wqEXIT]);
    delwhile();
    needtoken(tTERM);
 }
@@ -3562,7 +3562,7 @@ dodo(void)
 static void
 dofor(void)
 {
-   int                 wq[wqSIZE], skiplab;
+   int                 lwq[wqSIZE], skiplab;
    cell                save_decl;
    int                 save_nestlevel, idx;
    int                *ptr;
@@ -3570,7 +3570,7 @@ dofor(void)
    save_decl = declared;
    save_nestlevel = nestlevel;
 
-   addwhile(wq);
+   addwhile(lwq);
    skiplab = getlabel();
    needtoken('(');
    if (matchtoken(';') == 0)
@@ -3600,7 +3600,7 @@ dofor(void)
    ptr[wqBRK] = (int)declared;
    ptr[wqCONT] = (int)declared;
    jumplabel(skiplab);		/* skip expression 3 1st time */
-   setlabel(wq[wqLOOP]);	/* "continue" goes to this label: expr3 */
+   setlabel(lwq[wqLOOP]);	/* "continue" goes to this label: expr3 */
    setline(fline, fcurrent);
    /* Expressions 2 and 3 are reversed in the generated code:
     * expression 3 precedes expression 2.
@@ -3617,7 +3617,7 @@ dofor(void)
    setlabel(skiplab);		/*jump to this point after 1st expression */
    if (matchtoken(';') == 0)
      {
-	test(wq[wqEXIT], FALSE, FALSE);	/* expression 2
+	test(lwq[wqEXIT], FALSE, FALSE);	/* expression 2
 					 *(jump to wq[wqEXIT] if false) */
 	needtoken(';');
      }				/* if */
@@ -3632,8 +3632,8 @@ dofor(void)
    stgout(idx);
    stgset(FALSE);		/* stop staging */
    statement(NULL, FALSE);
-   jumplabel(wq[wqLOOP]);
-   setlabel(wq[wqEXIT]);
+   jumplabel(lwq[wqLOOP]);
+   setlabel(lwq[wqEXIT]);
    delwhile();
 
    assert(nestlevel >= save_nestlevel);

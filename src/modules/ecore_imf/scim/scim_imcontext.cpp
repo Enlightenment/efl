@@ -23,7 +23,11 @@
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 #include <scim.h>
+#pragma GCC diagnostic pop
+
 #include "scim_imcontext.h"
 
 using namespace scim;

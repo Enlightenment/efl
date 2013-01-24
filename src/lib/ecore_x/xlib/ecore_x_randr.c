@@ -2170,6 +2170,8 @@ ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc)
 #ifdef ECORE_XRANDR
    if (_randr_version < RANDR_VERSION_1_2) return 0;
    return XRRGetCrtcGammaSize(_ecore_x_disp, crtc);
+#else
+   (void)crtc;
 #endif
    return 0;
 }
@@ -2198,6 +2200,8 @@ ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
    XRRFreeGamma(xgamma);
 
    return info;
+#else
+   (void)crtc;
 #endif
    return NULL;
 }
@@ -2217,6 +2221,9 @@ ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_G
     */
    XRRSetCrtcGamma(_ecore_x_disp, crtc, (XRRCrtcGamma *)gamma);
    return EINA_TRUE;
+#else
+   (void)crtc;
+   (void)gamma;
 #endif
    return EINA_FALSE;
 }

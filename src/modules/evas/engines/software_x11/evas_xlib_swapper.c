@@ -341,7 +341,7 @@ typedef struct _drm_slp_bo *drm_slp_bo;
 static drm_slp_bo (*sym_drm_slp_bo_import) (drm_slp_bufmgr bufmgr, unsigned int key) = NULL;
 // XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
 // void * at least
-static unsigned int (*sym_drm_slp_bo_map) (drm_slp_bo bo, int device, int opt) = NULL;
+static void *(*sym_drm_slp_bo_map) (drm_slp_bo bo, int device, int opt) = NULL;
 static int (*sym_drm_slp_bo_unmap)  (drm_slp_bo bo, int device) = NULL;
 static void (*sym_drm_slp_bo_unref) (drm_slp_bo bo) = NULL;
 static drm_slp_bufmgr (*sym_drm_slp_bufmgr_init) (int fd, void *arg) = NULL;
@@ -755,7 +755,7 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
      }
    // XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
    // void * at least
-   swp->buf_data = (void *)sym_drm_slp_bo_map(swp->buf_bo, DRM_SLP_DEVICE_CPU, 
+   swp->buf_data = sym_drm_slp_bo_map(swp->buf_bo, DRM_SLP_DEVICE_CPU,
                                               DRM_SLP_OPTION_READ |
                                               DRM_SLP_OPTION_WRITE);
    if (!swp->buf_data)

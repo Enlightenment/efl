@@ -1534,7 +1534,11 @@ AC_CHECK_TYPES([struct sigaction], [], [],
 
 AC_CHECK_FUNCS([siglongjmp])
 
-AC_CHECK_LIB([m], [lround], [AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])])
+AC_CHECK_LIB([m], [lround],
+[AC_DEFINE([HAVE_LROUND], [1], [C99 lround function exists])],
+[EFL_CHECK_GCC_BUILTIN([lround], [HAVE_LROUND])]
+)
+
 
 if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
    EFL_ADD_LIBS([EVAS], [${requirements_libs_shm}])
