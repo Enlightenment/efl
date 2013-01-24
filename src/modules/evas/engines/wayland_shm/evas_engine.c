@@ -175,7 +175,11 @@ module_open(Evas_Module *em)
    ORD(output_flush);
    ORD(output_idle_flush);
 
-   return 0;
+   /* advertise out our own api */
+   em->functions = (void *)(&func);
+
+   /* return success */
+   return 1;
 }
 
 static void 
