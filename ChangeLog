@@ -1,3 +1,7 @@
+2013-01-24  Cedric Bail
+
+	* Don't over align data if they are already aligned.
+
 2013-01-22  Mike Blumenkrantz
 
         * rebase dns.c against upstream
