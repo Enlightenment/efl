@@ -286,7 +286,7 @@ eina_magic_fail(void *d,
    if (m == EINA_MAGIC_NONE)
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
                      file, fnc, line,
-                     "*** Eina Magic Check Failed at %d !!!\n"
+                     "*** Eina Magic Check Failed at %p !!!\n"
                      "    Input handle has already been freed!\n"
                      "*** NAUGHTY PROGRAMMER!!!\n"
                      "*** SPANK SPANK SPANK!!!\n"

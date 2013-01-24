@@ -206,12 +206,12 @@ _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
 static Eina_Bool
 _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
 {
+#ifdef DEBUG
    void *pmem;
   
    // pool mem base
    pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
 
-#ifdef DEBUG
    // is it in pool mem?
    if (ptr < pmem)
      {

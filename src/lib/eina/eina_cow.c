@@ -31,6 +31,10 @@
 
 #include "eina_cow.h"
 
+#ifndef NVALGRIND
+# include <memcheck.h>
+#endif
+
 #define EINA_COW_MAGIC 0xDEADBEEF
 
 // #define MOO // Define that one if you want magic debug for Eina_Cow_Ptr
