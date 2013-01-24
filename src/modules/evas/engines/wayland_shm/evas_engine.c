@@ -33,6 +33,9 @@ struct _Render_Engine
    void (*outbuf_idle_flush)(Outbuf *ob);
 };
 
+/* local function prototypes */
+static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
+
 /* engine function prototypes */
 static void *eng_info(Evas *eo_evas EINA_UNUSED);
 static void eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo);
