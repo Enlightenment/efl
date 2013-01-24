@@ -53,6 +53,7 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
 {
    Wl_Swapper *ws;
    int i = 0;
+   char *num_buffers;
 
    /* try to allocate a new swapper */
    if (!(ws = calloc(1, sizeof(Wl_Swapper)))) 
@@ -68,6 +69,19 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
 
    /* double buffer by default */
    ws->buff_num = 2;
+
+   /* check for buffer override number */
+   if ((num_buffers = getenv("EVAS_WAYLAND_SHM_BUFFERS")))
+     {
+        int num = 0;
+
+        num = atoi(num_buffers);
+
+        if (num <= 0) num = 1;
+        if (num > 3) num = 3;
+
+        ws->buff_num = num;
+     }
 
    for (i = 0; i < ws->buff_num; i++)
      {
