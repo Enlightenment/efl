@@ -26,9 +26,6 @@
 #  define EAPI
 # endif
 
-typedef enum _Ecore_Wl_Window_Type Ecore_Wl_Window_Type;
-typedef enum _Ecore_Wl_Window_Buffer_Type Ecore_Wl_Window_Buffer_Type;
-
 typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 typedef struct _Ecore_Wl_Output Ecore_Wl_Output;
 typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
@@ -69,6 +66,9 @@ enum _Ecore_Wl_Window_Buffer_Type
    ECORE_WL_WINDOW_BUFFER_TYPE_EGL_IMAGE,
    ECORE_WL_WINDOW_BUFFER_TYPE_SHM
 };
+
+typedef enum _Ecore_Wl_Window_Type Ecore_Wl_Window_Type;
+typedef enum _Ecore_Wl_Window_Buffer_Type Ecore_Wl_Window_Buffer_Type;
 
 struct _Ecore_Wl_Display
 {
