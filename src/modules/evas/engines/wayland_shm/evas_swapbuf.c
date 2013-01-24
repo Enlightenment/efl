@@ -415,13 +415,16 @@ evas_swapbuf_flush(Outbuf *ob)
                   rects[i].h = w;
                }
 
-             free(rect);
+             eina_rectangle_free(rect);
+
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                evas_cache2_image_close(&img->cache_entry);
              else
 #endif
                evas_cache_image_drop(&img->cache_entry);
+
+             i++;
           }
 
         /* unmap the buffer */
