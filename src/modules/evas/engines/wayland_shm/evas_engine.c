@@ -61,7 +61,14 @@ int _evas_engine_way_shm_log_dom = -1;
 static void *
 _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
 {
-   return NULL;
+   Render_Engine *re = NULL;
+
+   /* try to allocate a new render engine */
+   if (!(re = calloc(1, sizeof(Render_Engine)))) 
+     return NULL;
+
+   /* return allocated render engine */
+   return re;
 }
 
 /* engine functions */
