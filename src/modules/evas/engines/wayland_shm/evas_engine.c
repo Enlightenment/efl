@@ -1,0 +1,6 @@
+#include "evas_common.h"
+#include "evas_private.h"
+#include "Evas_Engine_Wayland_Shm.h"
+#include "evas_engine.h"
+#include "evas_swapbuf.h"
+#include "evas_outbuf.h"
