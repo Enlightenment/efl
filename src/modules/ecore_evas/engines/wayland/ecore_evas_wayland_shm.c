@@ -18,12 +18,6 @@ static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int  _ecore_evas_wl_render(Ecore_Evas *ee);
 
-/* SHM Only */
-static void _ecore_evas_wl_shm_pool_free(Ecore_Evas *ee);
-static void _ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size);
-static void _ecore_evas_wl_buffer_free(Ecore_Evas *ee);
-static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, int w, int h);
-
 /* Frame listener */
 static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t time);
 static const struct wl_callback_listener frame_listener =
@@ -241,8 +235,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 static void 
 _ecore_evas_wl_free(Ecore_Evas *ee)
 {
-   _ecore_evas_wl_buffer_free(ee);
-   _ecore_evas_wl_shm_pool_free(ee);
    _ecore_evas_wl_common_free(ee);
 }
 
@@ -311,18 +303,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
 
-        _ecore_evas_wl_buffer_new(ee, w, h);
-
-        einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-        if (!einfo)
-          {
-            ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-            return;
-          }
-
-        einfo->info.dest = wdata->pool_data;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-
         if (wdata->win)
           {
              ecore_wl_window_update_size(wdata->win, w, h);
@@ -358,25 +338,12 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if ((!ee) || (ee->visible)) return;
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
    wdata = ee->engine.data;
-
-   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     {
-        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-        return;
-     }
-
-   einfo->info.dest = wdata->pool_data;
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
    if (wdata->win)
      {
         ecore_wl_window_show(wdata->win);
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
-        ecore_wl_window_buffer_attach(wdata->win, 
-                                      wdata->buffer, 0, 0);
 
         if ((ee->prop.clas) && (wdata->win->shell_surface))
           wl_shell_surface_set_class(wdata->win->shell_surface, 
@@ -407,16 +374,12 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if ((!ee) || (!ee->visible)) return;
    wdata = ee->engine.data;
 
-   _ecore_evas_wl_buffer_free(ee);
-
-   munmap(wdata->pool_data, wdata->pool_size);
-
-   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-   if ((einfo) && (einfo->info.dest))
-     {
-        einfo->info.dest = NULL;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-     }
+   /* einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas); */
+   /* if ((einfo) && (einfo->info.dest)) */
+   /*   { */
+   /*      einfo->info.dest = NULL; */
+   /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+   /*   } */
 
    if (wdata->win) 
      ecore_wl_window_hide(wdata->win);
@@ -452,22 +415,17 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    /*   ecore_wl_window_transparent_set(wdata->win, alpha); */
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = alpha;
-        einfo->info.dest = wdata->pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
 
    if (win)
-     {
-        ecore_wl_window_update_size(win, ee->w + fw, ee->h + fh);
-        ecore_wl_window_buffer_attach(win, wdata->buffer, 0, 0);
-     }
+     ecore_wl_window_update_size(win, ee->w + fw, ee->h + fh);
 }
 
 static void 
@@ -488,23 +446,17 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
      ecore_wl_window_transparent_set(wdata->win, transparent);
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   _ecore_evas_wl_buffer_new(ee, ee->w + fw, ee->h + fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = transparent;
-        einfo->info.dest = wdata->pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
 
    if (wdata->win)
-     {
-        ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
-        ecore_wl_window_buffer_attach(wdata->win, 
-                                      wdata->buffer, 0, 0);
-     }
+     ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 }
 
 static void
@@ -566,102 +518,6 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
      }
    _ecore_evas_wl_common_post_render(ee);
    return rend;
-}
-
-static void
-_ecore_evas_wl_shm_pool_free(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-   if (!wdata->pool) return;
-
-   wl_shm_pool_destroy(wdata->pool);
-   wdata->pool = NULL;
-   wdata->pool_size = 0;
-   wdata->pool_data = NULL;
-}
-
-static void
-_ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-   struct wl_shm *shm;
-   void *data;
-   char tmp[PATH_MAX];
-   int fd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (size <= wdata->pool_size)
-      return;
-
-   size *= 1.5;
-   _ecore_evas_wl_shm_pool_free(ee);
-
-   if (!(shm = ecore_wl_shm_get()))
-     {
-        ERR("ecore_wl_shm_get returned NULL");
-        return;
-     }
-
-   strcpy(tmp, "/tmp/ecore-evas-wayland_shm-XXXXXX");
-   if ((fd = mkstemp(tmp)) < 0) 
-     {
-        ERR("Could not create temporary file.");
-        return;
-     }
-
-   if (ftruncate(fd, size) < 0) 
-     {
-        ERR("Could not truncate temporary file.");
-        goto end;
-     }
-
-   data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
-   unlink(tmp);
-
-   if (data == MAP_FAILED)
-     {
-        ERR("mmap of temporary file failed.");
-        goto end;
-     }
-
-   wdata->pool_size = size;
-   wdata->pool_data = data;
-   wdata->pool = wl_shm_create_pool(shm, fd, size);
-
- end:
-   close(fd);
-}
-
-static void
-_ecore_evas_wl_buffer_free(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-   if (!wdata->buffer) return;
-
-   wl_buffer_destroy(wdata->buffer);
-   wdata->buffer = NULL;
-}
-
-static void 
-_ecore_evas_wl_buffer_new(Ecore_Evas *ee, int w, int h)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-   unsigned int format;
-   int stride = 0;
-
-   stride = (w * sizeof(int));
-
-   _ecore_evas_wl_shm_pool_create(ee, stride * h);
-
-   if ((ee->alpha) || (ee->transparent))
-     format = WL_SHM_FORMAT_ARGB8888;
-   else
-     format = WL_SHM_FORMAT_XRGB8888;
-
-   _ecore_evas_wl_buffer_free(ee);
-   wdata->buffer = 
-     wl_shm_pool_create_buffer(wdata->pool, 0, w, h, stride, format);
 }
 
 void 
