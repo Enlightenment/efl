@@ -304,11 +304,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
           evas_object_resize(wdata->frame, w, h);
 
         if (wdata->win)
-          {
-             ecore_wl_window_update_size(wdata->win, w, h);
-             ecore_wl_window_buffer_attach(wdata->win, 
-                                           wdata->buffer, 0, 0);
-          }
+          ecore_wl_window_update_size(wdata->win, w, h);
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
