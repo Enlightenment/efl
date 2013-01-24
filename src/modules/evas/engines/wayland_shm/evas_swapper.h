@@ -11,5 +11,6 @@ void evas_swapper_free(Wl_Swapper *ws);
 void *evas_swapper_buffer_map(Wl_Swapper *ws);
 void evas_swapper_buffer_unmap(Wl_Swapper *ws);
 int evas_swapper_buffer_state_get(Wl_Swapper *ws);
+void evas_swapper_buffer_idle_flush(Wl_Swapper *ws);
 
 #endif
