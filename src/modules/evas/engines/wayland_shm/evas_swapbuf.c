@@ -171,7 +171,7 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 #endif
                evas_cache_image_drop(&img->cache_entry);
 
-             free(rect);
+             eina_rectangle_free(rect);
 
              return NULL;
           }
@@ -179,6 +179,9 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
         /* clip the region to the onebuf region */
         if (cx) *cx = x;
         if (cy) *cy = y;
+        if (cw) *cw = w;
+        if (ch) *ch = h;
+        return img;
      }
    else
      {
@@ -194,7 +197,7 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 
         if (!img)
           {
-             free(rect);
+             eina_rectangle_free(rect);
              return NULL;
           }
 
@@ -214,12 +217,12 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 
         if (cx) *cx = 0;
         if (cy) *cy = 0;
+        if (cw) *cw = w;
+        if (ch) *ch = h;
+        return img;
      }
 
-   if (cw) *cw = w;
-   if (ch) *ch = h;
-
-   return img;
+   return NULL;
 }
 
 void 
@@ -379,7 +382,6 @@ evas_swapbuf_flush(Outbuf *ob)
              if (!(rect = img->extended_info)) continue;
 
              x = rect->x; y = rect->y; w = rect->w; h = rect->h;
-             rects[i] = *rect;
 
              /* based on rotation, set rectangle position */
              if (ob->rotation == 0)
@@ -440,6 +442,8 @@ evas_swapbuf_idle_flush(Outbuf *ob)
 {
    /* check for valid output buffer */
    if (!ob) return;
+
+   return;
 
    /* check for valid swapper */
    if (!ob->priv.swapper) return;
