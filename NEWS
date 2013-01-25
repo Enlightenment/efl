@@ -83,6 +83,7 @@ Improvements:
     * edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
     * rebase dns.c against upstream
     * Don't over align data if they are already aligned.
+    * edje entry: remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
 
 Fixes:
     * Fix PPC (big endian) image codec bug.

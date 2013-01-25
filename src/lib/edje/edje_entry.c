@@ -2189,9 +2189,6 @@ _edje_part_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
           {
              _edje_emit(rp->edje, "cursor,changed", rp->part->name);
              _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
-
-             _edje_entry_imf_context_reset(rp);
-             _edje_entry_imf_cursor_info_set(en);
           }
         evas_textblock_cursor_free(tc);
 

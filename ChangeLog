@@ -1,3 +1,8 @@
+2013-01-25  Jihoon Kim (jihoon)
+
+	* Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
+
+
 2013-01-24  Sung W. Park (sung_)
 
 	* Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory
