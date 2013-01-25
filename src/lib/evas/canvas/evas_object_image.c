@@ -4025,12 +4025,15 @@ evas_object_image_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *o
    /* remove those pesky changes */
    evas_object_clip_changes_clean(eo_obj);
 
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+   if (o->pixels->pixel_updates)
      {
-        EINA_LIST_FREE(pixi_write->pixel_updates, r)
-          eina_rectangle_free(r);
+        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+          {
+             EINA_LIST_FREE(pixi_write->pixel_updates, r)
+               eina_rectangle_free(r);
+          }
+        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
      }
-   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
 
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
