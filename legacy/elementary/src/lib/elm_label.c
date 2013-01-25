@@ -352,7 +352,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
-   if (!txt) txt = elm_layout_text_get(obj, NULL);
+   if (!txt) txt = _elm_util_mkup_to_text(elm_layout_text_get(obj, NULL));
    if (txt) return strdup(txt);
 
    return NULL;
