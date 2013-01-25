@@ -184,7 +184,7 @@ START_TEST(eina_magic_simple)
    fprintf(stderr, "you should see 'Input handle is wrong type' below\n");
 #endif
    TEST_MAGIC_SAFETY(__FUNCTION__,
-                     "*** Eina Magic Check Failed %p !!!\n"
+                     "*** Eina Magic Check Failed at %p !!!\n"
                      "    Input handle is wrong type\n"
                      "    Expected: %08x - %s\n"
                      "    Supplied: %08x - %s\n"
