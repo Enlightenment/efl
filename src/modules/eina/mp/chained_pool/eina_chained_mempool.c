@@ -79,7 +79,7 @@ struct _Chained_Mempool
    int minimal_size;
 #endif
 #ifdef EINA_HAVE_DEBUG_THREADS
-   Eina_Tthread self;
+   Eina_Thread self;
 #endif
    Eina_Lock mutex;
 };
@@ -363,7 +363,7 @@ eina_chained_mempool_repack(void *data,
    if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
-        assert(eina_threadequal(pool->self, eina_threadself()));
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
 #endif
      }
 
@@ -481,7 +481,7 @@ eina_chained_mempool_init(const char *context,
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   mp->self = eina_threadself();
+   mp->self = eina_thread_self();
 #endif
 
    eina_lock_new(&mp->mutex);
@@ -525,7 +525,7 @@ eina_chained_mempool_shutdown(void *data)
    eina_lock_free(&mp->mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   assert(eina_threadequal(mp->self, eina_threadself()));
+   assert(eina_thread_equal(mp->self, eina_thread_self()));
 #endif
 
    free(mp);
