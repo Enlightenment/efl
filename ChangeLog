@@ -1,6 +1,7 @@
 2013-01-25  Jihoon Kim (jihoon)
 
-	* Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
+	* edje entry : Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
+	* edje entry : move ecore_imf_context_cursor_position_set from mouse down event to mouse up event
 
 
 2013-01-24  Sung W. Park (sung_)

@@ -1975,8 +1975,6 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
      {
         _edje_emit(rp->edje, "cursor,changed", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
-
-        _edje_entry_imf_cursor_info_set(en);
      }
    evas_textblock_cursor_free(tc);
 
@@ -1999,7 +1997,6 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    Evas_Textblock_Cursor *tc;
    if ((!ev) || (ev->button != 1)) return;
    if (!rp) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -2008,6 +2005,12 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
      return;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        _edje_entry_imf_cursor_info_set(en);
+        return;
+     }
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -2090,9 +2093,10 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      {
         _edje_emit(rp->edje, "cursor,changed", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
-
-        _edje_entry_imf_cursor_info_set(en);
      }
+
+   _edje_entry_imf_cursor_info_set(en);
+
    evas_textblock_cursor_free(tc);
 
    _edje_entry_real_part_configure(rp);
