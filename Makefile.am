@@ -223,6 +223,9 @@ if HAVE_EPHYSICS
 pkgconfig_DATA += pc/ephysics.pc
 endif
 
+if HAVE_ECORE_AUDIO
+pkgconfig_DATA += pc/ecore-audio.pc
+endif
 
 # D-Bus services:
 
