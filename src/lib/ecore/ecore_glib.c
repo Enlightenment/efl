@@ -13,12 +13,13 @@
 
 static Eina_Bool _ecore_glib_active = EINA_FALSE;
 static Ecore_Select_Function _ecore_glib_select_original;
-static GCond *_ecore_glib_cond = NULL;
 static GPollFD *_ecore_glib_fds = NULL;
 static size_t _ecore_glib_fds_size = 0;
 static const size_t ECORE_GLIB_FDS_INITIAL = 128;
 static const size_t ECORE_GLIB_FDS_STEP = 8;
 static const size_t ECORE_GLIB_FDS_MAX_FREE = 256;
+static GMutex *_ecore_glib_select_lock;
+static GCond *_ecore_glib_select_cond;
 
 static Eina_Bool
 _ecore_glib_fds_resize(size_t size)
@@ -184,34 +185,27 @@ _ecore_glib_select(int             ecore_fds,
                    fd_set         *efds,
                    struct timeval *ecore_timeout)
 {
-   GStaticMutex lock;
-   GMutex *mutex;
    GMainContext *ctx;
    int ret;
 
-   g_static_mutex_init(&lock);
-   mutex = g_static_mutex_get_mutex(&lock);
    ctx = g_main_context_default();
 
    if (g_main_context_acquire(ctx))
      {
-        if (mutex) g_mutex_lock(mutex);
+        g_mutex_lock(_ecore_glib_select_lock);
      }
    else
      {
-        if (!_ecore_glib_cond)
-          _ecore_glib_cond = g_cond_new();
-
-        while (!g_main_context_wait(ctx, _ecore_glib_cond, mutex))
+        while (!g_main_context_wait(ctx, _ecore_glib_select_cond,
+                                    _ecore_glib_select_lock))
           g_thread_yield();
      }
 
    ret = _ecore_glib_select__locked
        (ctx, ecore_fds, rfds, wfds, efds, ecore_timeout);
 
-   if (mutex) g_mutex_unlock(mutex);
+   g_mutex_unlock(_ecore_glib_select_lock);
    g_main_context_release(ctx);
-   g_static_mutex_free(&lock);
 
    return ret;
 }
@@ -221,6 +215,17 @@ _ecore_glib_select(int             ecore_fds,
 void
 _ecore_glib_init(void)
 {
+#ifdef HAVE_GLIB
+#if GLIB_CHECK_VERSION(2,32,0)
+   _ecore_glib_select_lock = malloc(sizeof(GMutex));
+   g_mutex_init(_ecore_glib_select_lock);
+   _ecore_glib_select_cond = malloc(sizeof(GCond));
+   g_cond_init(_ecore_glib_select_cond);
+#else
+   _ecore_glib_select_lock = g_mutex_new();
+   _ecore_glib_select_cond = g_cond_new();
+#endif
+#endif
 }
 
 void
@@ -240,11 +245,19 @@ _ecore_glib_shutdown(void)
      }
    _ecore_glib_fds_size = 0;
 
-   if (_ecore_glib_cond)
-     {
-        g_cond_free(_ecore_glib_cond);
-        _ecore_glib_cond = NULL;
-     }
+#if GLIB_CHECK_VERSION(2,32,0)
+   g_mutex_clear(_ecore_glib_select_lock);
+   free(_ecore_glib_select_lock);
+   _ecore_glib_select_lock = NULL;
+   g_cond_clear(_ecore_glib_select_cond);
+   free(_ecore_glib_select_cond);
+   _ecore_glib_select_cond = NULL;
+#else
+   g_mutex_free(_ecore_glib_select_lock);
+   _ecore_glib_select_lock = NULL;
+   g_cond_free(_ecore_glib_select_cond);
+   _ecore_glib_select_cond = NULL;
+#endif
 #endif
 }
 
