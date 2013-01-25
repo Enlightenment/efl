@@ -300,7 +300,7 @@ source_client_method_generate(const DBus_Method *method, Eina_Strbuf *c_code, Ei
 }
 
 static void
-source_client_signal_generate(const DBus_Signal *signal, Eina_Strbuf *c_code, Eina_Strbuf * h, Eina_Strbuf *c_init_function, Eina_Strbuf *c_header)
+source_client_signal_generate(const DBus_Signal *sig, Eina_Strbuf *c_code, Eina_Strbuf * h, Eina_Strbuf *c_init_function, Eina_Strbuf *c_header)
 {
    DBus_Arg *arg;
    Eina_Strbuf *full_signature = eina_strbuf_new();
@@ -308,23 +308,23 @@ source_client_signal_generate(const DBus_Signal *signal, Eina_Strbuf *c_code, Ei
    Eina_Strbuf *string_copy = eina_strbuf_new();
    Eina_Strbuf *string_free = eina_strbuf_new();
 
-   eina_strbuf_append_printf(c_init_function, "   edbus_proxy_signal_handler_add(proxy, \"%s\", %s, proxy);\n", signal->name, signal->cb_name);
-   eina_strbuf_append_printf(c_header, "int %s;\n", signal->signal_event);
-   eina_strbuf_append_printf(h, "extern int %s;\n", signal->signal_event);
-   eina_strbuf_append_printf(c_init_function, "   if (!%s)\n", signal->signal_event);
-   eina_strbuf_append_printf(c_init_function, "     %s = ecore_event_type_new();\n", signal->signal_event);
+   eina_strbuf_append_printf(c_init_function, "   edbus_proxy_signal_handler_add(proxy, \"%s\", %s, proxy);\n", sig->name, sig->cb_name);
+   eina_strbuf_append_printf(c_header, "int %s;\n", sig->signal_event);
+   eina_strbuf_append_printf(h, "extern int %s;\n", sig->signal_event);
+   eina_strbuf_append_printf(c_init_function, "   if (!%s)\n", sig->signal_event);
+   eina_strbuf_append_printf(c_init_function, "     %s = ecore_event_type_new();\n", sig->signal_event);
 
-   eina_strbuf_append_printf(h, "typedef struct _%s\n", signal->struct_name);
+   eina_strbuf_append_printf(h, "typedef struct _%s\n", sig->struct_name);
    eina_strbuf_append_printf(h, "{\n");
    eina_strbuf_append_printf(h, "   EDBus_Proxy *proxy;\n");
 
-   if (signal->complex)
+   if (sig->complex)
      {
         eina_strbuf_append_printf(h, "   Eina_Value *value;\n");
         goto jump_simple_stuff;
      }
 
-   EINA_INLIST_FOREACH(signal->args, arg)
+   EINA_INLIST_FOREACH(sig->args, arg)
      {
         eina_strbuf_append(full_signature, arg->type);
         eina_strbuf_append_printf(parameters, ", &s_data->%s", arg->c_name);
@@ -338,12 +338,12 @@ source_client_signal_generate(const DBus_Signal *signal, Eina_Strbuf *c_code, Ei
      }
 
 jump_simple_stuff:
-   eina_strbuf_append_printf(h, "} %s;\n", signal->struct_name);
+   eina_strbuf_append_printf(h, "} %s;\n", sig->struct_name);
 
    //free function
-   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *user_data, void *func_data)\n{\n", signal->free_function);
-   eina_strbuf_append_printf(c_code, "   %s *s_data = user_data;\n", signal->struct_name);
-   if (signal->complex)
+   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *user_data, void *func_data)\n{\n", sig->free_function);
+   eina_strbuf_append_printf(c_code, "   %s *s_data = user_data;\n", sig->struct_name);
+   if (sig->complex)
      eina_strbuf_append(c_code, "   eina_value_free(s_data->proxy);\n");
    else
      eina_strbuf_append(c_code, eina_strbuf_string_get(string_free));
@@ -351,11 +351,11 @@ jump_simple_stuff:
    eina_strbuf_append_printf(c_code, "}\n");
 
    //cb function
-   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *data, const EDBus_Message *msg)\n{\n", signal->cb_name);
+   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *data, const EDBus_Message *msg)\n{\n", sig->cb_name);
    eina_strbuf_append_printf(c_code, "   EDBus_Proxy *proxy = data;\n");
-   eina_strbuf_append_printf(c_code, "   %s *s_data = calloc(1, sizeof(%s));\n", signal->struct_name, signal->struct_name);
+   eina_strbuf_append_printf(c_code, "   %s *s_data = calloc(1, sizeof(%s));\n", sig->struct_name, sig->struct_name);
    eina_strbuf_append_printf(c_code, "   s_data->proxy = proxy;\n");
-   if (signal->complex)
+   if (sig->complex)
      {
         eina_strbuf_append_printf(c_code, "   s_data->value = edbus_message_to_eina_value(msg);\n");
         goto end_signal;
@@ -368,7 +368,7 @@ jump_simple_stuff:
    eina_strbuf_append(c_code, eina_strbuf_string_get(string_copy));
 
 end_signal:
-   eina_strbuf_append_printf(c_code, "   ecore_event_add(%s, s_data, %s, NULL);\n", signal->signal_event, signal->free_function);
+   eina_strbuf_append_printf(c_code, "   ecore_event_add(%s, s_data, %s, NULL);\n", sig->signal_event, sig->free_function);
    eina_strbuf_append_printf(c_code, "}\n");
 
    eina_strbuf_free(full_signature);
@@ -532,7 +532,7 @@ source_client_generate(DBus_Object *path, const char *prefix, const char *interf
      {
         Eina_Strbuf *h, *c_init_function, *c_header, *c_code;
         DBus_Method *method;
-        DBus_Signal *signal;
+        DBus_Signal *sig;
         DBus_Property *prop;
         char *file_name, *aux;
         int i;
@@ -591,8 +591,8 @@ source_client_generate(DBus_Object *path, const char *prefix, const char *interf
         EINA_INLIST_FOREACH(iface->methods, method)
           source_client_method_generate(method, c_code, h);
 
-        EINA_INLIST_FOREACH(iface->signals, signal)
-          source_client_signal_generate(signal, c_code, h, c_init_function, c_header);
+        EINA_INLIST_FOREACH(iface->signals, sig)
+          source_client_signal_generate(sig, c_code, h, c_init_function, c_header);
 
         EINA_INLIST_FOREACH(iface->properties, prop)
           source_client_property_generate(prop, c_code, h);
