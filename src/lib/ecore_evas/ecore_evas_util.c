@@ -117,7 +117,7 @@ _ecore_evas_obj_callback_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_obj_callback_resize(void *data, Evas *e, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ecore_evas_obj_callback_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Coord ow, oh;
