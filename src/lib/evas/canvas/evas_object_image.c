@@ -3243,8 +3243,9 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
-   eina_cow_free(evas_object_image_load_opts_cow, o->load_opts);
    evas_object_image_free(eo_obj, obj);
+   eina_cow_free(evas_object_image_load_opts_cow, o->load_opts);
+   eina_cow_free(evas_object_image_pixels_cow, o->pixels);
    eo_do_super(eo_obj, eo_destructor());
 }
 
@@ -3277,12 +3278,15 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         obj->layer->evas->video_objects = eina_list_remove(obj->layer->evas->video_objects, eo_obj);
      }
    o->engine_data = NULL;
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+   if (o->pixels->pixel_updates)
      {
-        EINA_LIST_FREE(pixi_write->pixel_updates, r)
-          eina_rectangle_free(r);
+       EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+	 {
+	   EINA_LIST_FREE(pixi_write->pixel_updates, r)
+	     eina_rectangle_free(r);
+	 }
+       EINA_COW_PIXEL_WRITE_END(o, pixi_write);
      }
-   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
 }
 
 static void
