@@ -439,7 +439,7 @@ _sel_eval(Evas_Object *obj,
                   evas_object_smart_callback_call
                     (obj, SIG_CHANGED, (void *)it);
                   if (sd->delay) ecore_timer_del(sd->delay);
-                  sd->delay = ecore_timer_add(INDEX_DELAY_CHANGE_TIME,
+                  sd->delay = ecore_timer_add(sd->delay_change_time,
                                               _delay_change_cb, obj);
                }
           }
@@ -730,6 +730,8 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_add(obj, priv->bx[0]);
    elm_layout_content_set(obj, "elm.swallow.index.0", priv->bx[0]);
    evas_object_show(priv->bx[0]);
+
+   priv->delay_change_time = INDEX_DELAY_CHANGE_TIME;
 
    if (edje_object_part_exists
          (wd->resize_obj, "elm.swallow.index.1"))
@@ -1416,6 +1418,38 @@ _horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->horizontal;
 }
 
+EAPI void
+elm_index_delay_change_time_set(Evas_Object *obj, double delay_change_time)
+{
+   ELM_INDEX_CHECK(obj);
+   eo_do(obj, elm_obj_index_delay_change_time_set(delay_change_time));
+}
+
+static void
+_delay_change_time_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   double dtime = va_arg(*list, double);
+   Elm_Index_Smart_Data *sd = _pd;
+   sd->delay_change_time = dtime;
+}
+
+EAPI double
+elm_index_delay_change_time_get(const Evas_Object *obj)
+{
+   ELM_INDEX_CHECK(obj) 0.0;
+   double ret = 0.0;
+   eo_do((Eo *)obj, elm_obj_index_delay_change_time_get(&ret));
+   return ret;
+}
+
+static void
+_delay_change_time_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Index_Smart_Data *sd = _pd;
+   *ret = sd->delay_change_time;
+}
+
 static void
 _class_constructor(Eo_Class *klass)
 {
@@ -1450,6 +1484,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_GET), _indicator_disabled_get),
         EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_SET), _horizontal_set),
         EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET), _horizontal_get),
+        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET), _delay_change_time_set),
+        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET), _delay_change_time_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1472,6 +1508,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_GET, "Get the value of indicator's disabled status."),
      EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_SET, "Enable or disable horizontal mode on the index object."),
      EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET, "Get a value whether horizontal mode is enabled or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET, "Set a delay change time value for index object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET, "Get a delay change time value for index object."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

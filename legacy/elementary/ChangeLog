@@ -956,3 +956,7 @@
 2013-01-26  WooHyun Jung
 
         * A widget which doesn't have focus_region_get should give its width and height for correct focus_region_show.
+
+2013-01-26  Daniel Juyung Seo (SeoZ)
+
+        * Add elm_index_delay_change_time_set/get for changing delay change time in index.

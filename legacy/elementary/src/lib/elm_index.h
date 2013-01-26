@@ -77,6 +77,8 @@ enum
    ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_GET,
    ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_SET,
    ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET,
+   ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET,
+   ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET,
    ELM_OBJ_INDEX_SUB_ID_LAST
 };
 
@@ -306,6 +308,31 @@ enum
  * @see elm_index_horizontal_get
  */
 #define elm_obj_index_horizontal_get(ret) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_index_delay_change_time_set
+ * @since 1.8
+ *
+ * Change index delay change time.
+ *
+ * @param[out] ret
+ *
+ * @see elm_index_delay_change_time_get
+ */
+#define elm_obj_index_delay_change_time_set(dtime) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET), EO_TYPECHECK(double, dtime)
+
+/**
+ * @def elm_obj_index_delay_change_time_get
+ * @since 1.8
+ *
+ * Get index delay change time.
+ *
+ * @param[out] ret
+ *
+ * @see elm_index_delay_change_time_set
+ */
+#define elm_obj_index_delay_change_time_get(ret) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET), EO_TYPECHECK(double *, ret)
+
 /**
  * @addtogroup Index
  * @{
@@ -634,6 +661,32 @@ EAPI void                      elm_index_horizontal_set(Evas_Object *obj, Eina_B
  * @ingroup Index
  */
 EAPI Eina_Bool                 elm_index_horizontal_get(const Evas_Object *obj);
+
+/**
+ * Set a delay change time for index object.
+ *
+ * @param obj The index object.
+ * @param delay_change_time The delay change time to set.
+ *
+ * @note delay time is 0.2 sec by default.
+ *
+ * @see elm_index_delay_change_time_get
+ *
+ * @ingroup Index
+ */
+EAPI void                      elm_index_delay_change_time_set(Evas_Object *obj, double delay_change_time);
+
+/**
+ * Get a delay change time for index object.
+ *
+ * @param obj The index object.
+ * @return delay change time in seconds
+ *
+ * @see elm_index_delay_change_time_set
+ *
+ * @ingroup Index
+ */
+EAPI double                    elm_index_delay_change_time_get(const Evas_Object *obj);
 
 /**
  * @}

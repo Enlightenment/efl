@@ -28,6 +28,7 @@ struct _Elm_Index_Smart_Data
    int                   level;
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
+   double                delay_change_time;
    Eina_Bool             level_active[2];
 
    Eina_Bool             down : 1;
