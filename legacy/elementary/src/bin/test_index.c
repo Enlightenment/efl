@@ -22,6 +22,7 @@ enum _api_state
 {
    INDEX_LEVEL_SET,
    INDEX_ACTIVE_SET,
+   INDEX_DELAY_CHANGE_TIME_SET,
    INDEX_APPEND_RELATIVE,
    INDEX_PREPEND,
    INDEX_ITEM_DEL,
@@ -46,6 +47,10 @@ set_api_state(api_data *api)
 
       case INDEX_ACTIVE_SET:
          elm_index_autohide_disabled_set(d->id, EINA_FALSE);
+         break;
+
+      case INDEX_DELAY_CHANGE_TIME_SET:
+         elm_index_delay_change_time_set(d->id, 1.0);
          break;
 
       case INDEX_APPEND_RELATIVE:
