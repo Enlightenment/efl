@@ -2350,16 +2350,16 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    unsigned int idx = 0;
    int len;
 
-   type = eina_stringshare_add("elm_image");
-   //FIXME: Remove later when elm_icon is cleared.
-   type_deprecated = eina_stringshare_add("elm_icon");
-
    len = eina_list_count(image_animation->images);
    if (len)
      {
         idx = floor(progress * len);
         if (image_animation->prev_idx != idx)
           {
+             type = eina_stringshare_add("elm_image");
+             //FIXME: Remove later when elm_icon is cleared.
+             type_deprecated = eina_stringshare_add("elm_icon");
+
              EINA_LIST_FOREACH(transit->objs, elist, obj)
                {
                   if (elm_widget_type_check(obj, type, __func__) ||
@@ -2372,12 +2372,13 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
                        elm_image_preload_disabled_set(obj, EINA_TRUE);
                     }
                }
+
+             eina_stringshare_del(type);
+             eina_stringshare_del(type_deprecated);
+
           }
         image_animation->prev_idx = idx;
      }
-
-   eina_stringshare_del(type);
-   eina_stringshare_del(type_deprecated);
 }
 
 static Elm_Transit_Effect *
