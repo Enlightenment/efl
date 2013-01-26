@@ -10,6 +10,8 @@ EAPI Eo_Op ELM_OBJ_INDEX_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_index"
 
+#define INDEX_DELAY_CHANGE_TIME 0.2
+
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
 static const char SIG_SELECTED[] = "selected";
@@ -319,7 +321,7 @@ _item_find(Evas_Object *obj,
 }
 
 static Eina_Bool
-_delay_change(void *data)
+_delay_change_cb(void *data)
 {
    Elm_Object_Item *item;
 
@@ -437,7 +439,8 @@ _sel_eval(Evas_Object *obj,
                   evas_object_smart_callback_call
                     (obj, SIG_CHANGED, (void *)it);
                   if (sd->delay) ecore_timer_del(sd->delay);
-                  sd->delay = ecore_timer_add(0.2, _delay_change, obj);
+                  sd->delay = ecore_timer_add(INDEX_DELAY_CHANGE_TIME,
+                                              _delay_change_cb, obj);
                }
           }
         if (it_closest)
