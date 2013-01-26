@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-22 11:45+0900\n"
+"POT-Creation-Date: 2013-01-26 13:07+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -46,13 +46,13 @@ msgstr ""
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
-#: src/lib/elm_button.c:306
+#: src/lib/elm_button.c:310
 msgid "Button"
 msgstr "Bouton"
 
@@ -68,31 +68,31 @@ msgstr ""
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:260
+#: src/lib/elm_calendar.c:267
 msgid "calendar item"
 msgstr ""
 
-#: src/lib/elm_calendar.c:286
+#: src/lib/elm_calendar.c:293
 msgid "calendar decrement month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:291
+#: src/lib/elm_calendar.c:298
 msgid "calendar decrement year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:296
+#: src/lib/elm_calendar.c:303
 msgid "calendar increment month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:308
 msgid "calendar increment year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:306
+#: src/lib/elm_calendar.c:313
 msgid "calendar month"
 msgstr ""
 
-#: src/lib/elm_calendar.c:311
+#: src/lib/elm_calendar.c:318
 msgid "calendar year"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_diskselector.c:630
+#: src/lib/elm_diskselector.c:651
 msgid "diskselector item"
 msgstr ""
 

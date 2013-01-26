@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#: src/lib/elm_config.c:2203
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2013-01-20 13:42+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2013-01-26 13:07+0900\n"
 "PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
+"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-01-21 04:46+0000\n"
 "X-Generator: Launchpad (build 16430)\n"
-"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:773
 msgid "Up"
@@ -43,13 +44,13 @@ msgstr "Veziko"
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_button.c:306
+#: src/lib/elm_button.c:310
 msgid "Button"
 msgstr "Butono"
 
@@ -65,31 +66,31 @@ msgstr "%B"
 msgid "%Y"
 msgstr "%V"
 
-#: src/lib/elm_calendar.c:260
+#: src/lib/elm_calendar.c:267
 msgid "calendar item"
 msgstr "kalendarero"
 
-#: src/lib/elm_calendar.c:286
+#: src/lib/elm_calendar.c:293
 msgid "calendar decrement month button"
 msgstr "Dekrementa butono de monata kalendaro"
 
-#: src/lib/elm_calendar.c:291
+#: src/lib/elm_calendar.c:298
 msgid "calendar decrement year button"
 msgstr "Dekrementa butono de jara kalendaro"
 
-#: src/lib/elm_calendar.c:296
+#: src/lib/elm_calendar.c:303
 msgid "calendar increment month button"
 msgstr "Alkrementa butono de monata kalendaro"
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:308
 msgid "calendar increment year button"
 msgstr "Alkrementa butono de jara kalendaro"
 
-#: src/lib/elm_calendar.c:306
+#: src/lib/elm_calendar.c:313
 msgid "calendar month"
 msgstr "monato de kalendaro"
 
-#: src/lib/elm_calendar.c:311
+#: src/lib/elm_calendar.c:318
 msgid "calendar year"
 msgstr "jara kalendaro"
 
@@ -134,7 +135,7 @@ msgstr "ero de elektilo de kolorpaletro"
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_diskselector.c:630
+#: src/lib/elm_diskselector.c:651
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-22 11:45+0900\n"
+"POT-Creation-Date: 2013-01-26 13:07+0900\n"
 "PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -42,13 +42,13 @@ msgstr "Balão"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
-#: src/lib/elm_button.c:306
+#: src/lib/elm_button.c:310
 msgid "Button"
 msgstr "Botão"
 
@@ -64,31 +64,31 @@ msgstr "%B"
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:260
+#: src/lib/elm_calendar.c:267
 msgid "calendar item"
 msgstr "item do calendário"
 
-#: src/lib/elm_calendar.c:286
+#: src/lib/elm_calendar.c:293
 msgid "calendar decrement month button"
 msgstr "botão de redução do mês de calendário"
 
-#: src/lib/elm_calendar.c:291
+#: src/lib/elm_calendar.c:298
 msgid "calendar decrement year button"
 msgstr "botão de redução do ano de calendário"
 
-#: src/lib/elm_calendar.c:296
+#: src/lib/elm_calendar.c:303
 msgid "calendar increment month button"
 msgstr "botão de aumento do mês de calendário"
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:308
 msgid "calendar increment year button"
 msgstr "botão de aumento do ano de calendário"
 
-#: src/lib/elm_calendar.c:306
+#: src/lib/elm_calendar.c:313
 msgid "calendar month"
 msgstr "mês do calendário"
 
-#: src/lib/elm_calendar.c:311
+#: src/lib/elm_calendar.c:318
 msgid "calendar year"
 msgstr "ano do calendário"
 
@@ -133,7 +133,7 @@ msgstr "item do seletor de cor"
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
-#: src/lib/elm_diskselector.c:630
+#: src/lib/elm_diskselector.c:651
 msgid "diskselector item"
 msgstr "item do seletor de disco"
 

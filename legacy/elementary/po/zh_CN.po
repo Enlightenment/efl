@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-22 11:45+0900\n"
+"POT-Creation-Date: 2013-01-26 13:07+0900\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -42,13 +42,13 @@ msgstr "气泡"
 msgid "Clicked"
 msgstr "点击"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "状态：已禁用"
 
-#: src/lib/elm_button.c:306
+#: src/lib/elm_button.c:310
 msgid "Button"
 msgstr "按钮"
 
@@ -64,35 +64,35 @@ msgstr ""
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:260
+#: src/lib/elm_calendar.c:267
 msgid "calendar item"
 msgstr "日历条目"
 
-#: src/lib/elm_calendar.c:286
+#: src/lib/elm_calendar.c:293
 #, fuzzy
 msgid "calendar decrement month button"
 msgstr "日历减量按钮"
 
-#: src/lib/elm_calendar.c:291
+#: src/lib/elm_calendar.c:298
 #, fuzzy
 msgid "calendar decrement year button"
 msgstr "日历减量按钮"
 
-#: src/lib/elm_calendar.c:296
+#: src/lib/elm_calendar.c:303
 #, fuzzy
 msgid "calendar increment month button"
 msgstr "日历增量按钮"
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:308
 #, fuzzy
 msgid "calendar increment year button"
 msgstr "日历增量按钮"
 
-#: src/lib/elm_calendar.c:306
+#: src/lib/elm_calendar.c:313
 msgid "calendar month"
 msgstr "日历月"
 
-#: src/lib/elm_calendar.c:311
+#: src/lib/elm_calendar.c:318
 #, fuzzy
 msgid "calendar year"
 msgstr "日历条目"
@@ -139,7 +139,7 @@ msgstr "色彩选择器项目"
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_diskselector.c:630
+#: src/lib/elm_diskselector.c:651
 msgid "diskselector item"
 msgstr "磁盘选择器项目"
 
