@@ -63,6 +63,7 @@ _elm_scrollable_is(const Evas_Object *obj)
 
 /**
  * @internal
+ *
  * Resets the mirrored mode from the system mirror mode for widgets that are in
  * automatic mirroring mode. This function does not call elm_widget_theme.
  *
@@ -458,6 +459,7 @@ _elm_widget_smart_member_del(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list
 // internal funcs
 /**
  * @internal
+ *
  * Check if the widget has its own focus next function.
  *
  * @param obj The widget.
@@ -604,6 +606,8 @@ _propagate_event(void *data,
 }
 
 /**
+ * @internal
+ *
  * If elm_widget_focus_region_get() returns EINA_FALSE, this function will
  * ignore region show action.
  */
@@ -823,6 +827,8 @@ _elm_widget_theme_func(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 /**
+ * @internal
+ *
  * Returns the widget's mirrored mode.
  *
  * @param obj The widget.
@@ -848,6 +854,8 @@ _elm_widget_mirrored_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 /**
+ * @internal
+ *
  * Sets the widget's mirrored mode.
  *
  * @param obj The widget.
@@ -902,6 +910,8 @@ _elm_widget_mirrored_automatic_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
 }
 
 /**
+ * @internal
+ *
  * Sets the widget's mirrored mode setting.
  * When widget in automatic mode, it follows the system mirrored mode set by
  * elm_mirrored_set().
@@ -966,6 +976,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
    eo_do(obj, elm_wdg_sub_object_add(sobj, &ret));
    return ret;
 }
+
 static void
 _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
 {
@@ -1156,7 +1167,10 @@ _elm_widget_sub_object_del(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
-/* a resize object is a sub object with some more callbacks on it and
+/*
+ * @internal
+ *
+ * a resize object is a sub object with some more callbacks on it and
  * a smart member of the parent
  */
 EAPI void
@@ -1235,7 +1249,10 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
    _smart_reconfigure(sd);
 }
 
-/* WARNING: the programmer is responsible, in the scenario of
+/*
+ * @internal
+ *
+ * WARNING: the programmer is responsible, in the scenario of
  * exchanging a hover object, of cleaning the old hover "target"
  * before
  */
