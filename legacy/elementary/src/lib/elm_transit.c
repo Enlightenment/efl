@@ -2328,6 +2328,8 @@ _transit_effect_image_animation_context_free(Elm_Transit_Effect *effect, Elm_Tra
    const char *image;
    Eina_List *elist, *elist_next;
 
+   //FIXME: Reset the image to first one.
+
    EINA_LIST_FOREACH_SAFE(image_animation->images, elist, elist_next, image)
      {
         image_animation->images =
@@ -2351,34 +2353,34 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    int len;
 
    len = eina_list_count(image_animation->images);
-   if (len)
+   if (len <= 0) return;
+
+   idx = floor(progress * len);
+   if ((int)idx >= len) return;
+
+   if (image_animation->prev_idx == idx) return;
+
+   type = eina_stringshare_add("elm_image");
+   //FIXME: Remove later when elm_icon is cleared.
+   type_deprecated = eina_stringshare_add("elm_icon");
+
+   EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
-        idx = floor(progress * len);
-        if (image_animation->prev_idx != idx)
+        if (elm_widget_type_check(obj, type, __func__) ||
+            elm_widget_type_check(obj, type_deprecated, __func__))
           {
-             type = eina_stringshare_add("elm_image");
-             //FIXME: Remove later when elm_icon is cleared.
-             type_deprecated = eina_stringshare_add("elm_icon");
+             const char *file = eina_list_nth(image_animation->images,
+                                              idx);
 
-             EINA_LIST_FOREACH(transit->objs, elist, obj)
-               {
-                  if (elm_widget_type_check(obj, type, __func__) ||
-                      elm_widget_type_check(obj, type_deprecated, __func__))
-                    {
-                       const char *file = eina_list_nth(image_animation->images,
-                                                        idx);
-
-                       elm_image_file_set(obj, file, NULL);
-                       elm_image_preload_disabled_set(obj, EINA_TRUE);
-                    }
-               }
-
-             eina_stringshare_del(type);
-             eina_stringshare_del(type_deprecated);
-
+             elm_image_file_set(obj, file, NULL);
+             elm_image_preload_disabled_set(obj, EINA_TRUE);
           }
-        image_animation->prev_idx = idx;
      }
+
+   eina_stringshare_del(type);
+   eina_stringshare_del(type_deprecated);
+
+   image_animation->prev_idx = idx;
 }
 
 static Elm_Transit_Effect *
