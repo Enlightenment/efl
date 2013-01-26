@@ -1125,44 +1125,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    it->want_unrealize = EINA_FALSE;
 }
 
-static void
-_item_cache_free(Item_Cache *itc)
-{
-   if (itc->spacer) evas_object_del(itc->spacer);
-   if (itc->base_view) evas_object_del(itc->base_view);
-   eina_stringshare_del(itc->item_style);
-   free(itc);
-}
-
-static Item_Cache *
-_item_cache_find(Elm_Gen_Item *it)
-{
-   Item_Cache *itc = NULL;
-   Eina_Inlist *l;
-   Eina_Bool tree = 0;
-
-   if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
-   EINA_INLIST_FOREACH_SAFE(GL_IT(it)->wsd->item_cache, l, itc)
-     {
-        if ((itc->selected) || (itc->disabled) || (itc->expanded))
-          continue;
-
-        if ((itc->tree == tree) &&
-            (((!it->itc->item_style) && (!itc->item_style)) ||
-             (it->itc->item_style && itc->item_style &&
-              (!strcmp(it->itc->item_style, itc->item_style)))))
-          {
-             GL_IT(it)->wsd->item_cache =
-               eina_inlist_remove
-                 (GL_IT(it)->wsd->item_cache, EINA_INLIST_GET(itc));
-             GL_IT(it)->wsd->item_cache_count--;
-
-             return itc;
-          }
-     }
-   return NULL;
-}
-
+//-- tree expand/contract signal handle routine --//
 static void
 _expand_toggle_signal_cb(void *data,
                          Evas_Object *obj __UNUSED__,
@@ -1199,6 +1162,152 @@ _contract_signal_cb(void *data,
 
    if (it->item->expanded)
      evas_object_smart_callback_call(WIDGET(it), SIG_CONTRACT_REQUEST, it);
+}
+
+//-- item cache handle routine --//
+// clean up item cache by removing overflowed caches
+static void
+_item_cache_clean(Elm_Genlist_Smart_Data *sd)
+{
+   evas_event_freeze(evas_object_evas_get(sd->obj));
+
+   while ((sd->item_cache) && (sd->item_cache_count > sd->item_cache_max))
+     {
+        Item_Cache *itc;
+
+        itc = EINA_INLIST_CONTAINER_GET(sd->item_cache->last, Item_Cache);
+        sd->item_cache = eina_inlist_remove
+            (sd->item_cache, sd->item_cache->last);
+        sd->item_cache_count--;
+        if (itc->spacer) evas_object_del(itc->spacer);
+        if (itc->base_view) evas_object_del(itc->base_view);
+        eina_stringshare_del(itc->item_style);
+        free(itc);
+     }
+   evas_event_thaw(evas_object_evas_get(sd->obj));
+   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
+}
+
+// free one item cache
+static void
+_item_cache_free(Item_Cache *itc)
+{
+   if (itc->spacer) evas_object_del(itc->spacer);
+   if (itc->base_view) evas_object_del(itc->base_view);
+   eina_stringshare_del(itc->item_style);
+   free(itc);
+}
+
+// empty all item caches
+static void
+_item_cache_zero(Elm_Genlist_Smart_Data *sd)
+{
+   int pmax = sd->item_cache_max;
+
+   sd->item_cache_max = 0;
+   _item_cache_clean(sd);
+   sd->item_cache_max = pmax;
+}
+
+// add an item to item cache
+static void
+_item_cache_add(Elm_Gen_Item *it)
+{
+   Item_Cache *itc;
+   Evas_Object *obj = GL_IT(it)->wsd->obj;
+
+   evas_event_freeze(evas_object_evas_get(obj));
+   if (GL_IT(it)->wsd->item_cache_max <= 0)
+     {
+        evas_object_del(VIEW(it));
+        VIEW(it) = NULL;
+        if (it->spacer)
+          {
+             evas_object_del(it->spacer);
+             it->spacer = NULL;
+          }
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
+
+        return;
+     }
+
+   GL_IT(it)->wsd->item_cache_count++;
+   itc = calloc(1, sizeof(Item_Cache));
+   if (!itc)
+     {
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
+        return;
+     }
+   GL_IT(it)->wsd->item_cache =
+     eina_inlist_prepend(GL_IT(it)->wsd->item_cache, EINA_INLIST_GET(itc));
+   itc->spacer = it->spacer;
+   it->spacer = NULL;
+   itc->base_view = VIEW(it);
+
+   VIEW(it) = NULL;
+   edje_object_signal_emit(itc->base_view, "elm,state,unselected", "elm");
+   evas_object_hide(itc->base_view);
+   evas_object_move(itc->base_view, -9999, -9999);
+   itc->item_style = eina_stringshare_add(it->itc->item_style);
+   if (it->item->type & ELM_GENLIST_ITEM_TREE) itc->tree = 1;
+   itc->selected = it->selected;
+   itc->disabled = elm_widget_item_disabled_get(it);
+   itc->expanded = it->item->expanded;
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
+   if (it->item->swipe_timer)
+     {
+        ecore_timer_del(it->item->swipe_timer);
+        it->item->swipe_timer = NULL;
+     }
+   // FIXME: other callbacks?
+   edje_object_signal_callback_del_full
+     (itc->base_view, "elm,action,expand,toggle", "elm",
+     _expand_toggle_signal_cb, it);
+   edje_object_signal_callback_del_full
+     (itc->base_view, "elm,action,expand", "elm", _expand_signal_cb, it);
+   edje_object_signal_callback_del_full
+     (itc->base_view, "elm,action,contract", "elm", _contract_signal_cb, it);
+   _item_mouse_callbacks_del(it, itc->base_view);
+   _item_cache_clean(GL_IT(it)->wsd);
+
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
+}
+
+// find an item from item cache and remove it from the cache
+static Item_Cache *
+_item_cache_find(Elm_Gen_Item *it)
+{
+   Item_Cache *itc = NULL;
+   Eina_Inlist *l;
+   Eina_Bool tree = 0;
+
+   if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
+   EINA_INLIST_FOREACH_SAFE(GL_IT(it)->wsd->item_cache, l, itc)
+     {
+        if ((itc->selected) || (itc->disabled) || (itc->expanded))
+          continue;
+
+        if ((itc->tree == tree) &&
+            (((!it->itc->item_style) && (!itc->item_style)) ||
+             (it->itc->item_style && itc->item_style &&
+              (!strcmp(it->itc->item_style, itc->item_style)))))
+          {
+             GL_IT(it)->wsd->item_cache =
+               eina_inlist_remove
+                 (GL_IT(it)->wsd->item_cache, EINA_INLIST_GET(itc));
+             GL_IT(it)->wsd->item_cache_count--;
+
+             return itc;
+          }
+     }
+   return NULL;
 }
 
 static Eina_List *
@@ -2461,38 +2570,6 @@ _elm_genlist_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
             (obj, items, eina_list_data_get, dir, next);
 
    if (ret) *ret = int_ret;
-}
-
-static void
-_item_cache_clean(Elm_Genlist_Smart_Data *sd)
-{
-   evas_event_freeze(evas_object_evas_get(sd->obj));
-
-   while ((sd->item_cache) && (sd->item_cache_count > sd->item_cache_max))
-     {
-        Item_Cache *itc;
-
-        itc = EINA_INLIST_CONTAINER_GET(sd->item_cache->last, Item_Cache);
-        sd->item_cache = eina_inlist_remove
-            (sd->item_cache, sd->item_cache->last);
-        sd->item_cache_count--;
-        if (itc->spacer) evas_object_del(itc->spacer);
-        if (itc->base_view) evas_object_del(itc->base_view);
-        eina_stringshare_del(itc->item_style);
-        free(itc);
-     }
-   evas_event_thaw(evas_object_evas_get(sd->obj));
-   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
-}
-
-static void
-_item_cache_zero(Elm_Genlist_Smart_Data *sd)
-{
-   int pmax = sd->item_cache_max;
-
-   sd->item_cache_max = 0;
-   _item_cache_clean(sd);
-   sd->item_cache_max = pmax;
 }
 
 static void
@@ -4122,76 +4199,6 @@ _decorate_item_finished_signal_cb(void *data,
      (obj, buf, "elm", _decorate_item_finished_signal_cb, it);
    evas_event_thaw(te);
    evas_event_thaw_eval(te);
-}
-
-static void
-_item_cache_add(Elm_Gen_Item *it)
-{
-   Item_Cache *itc;
-   Evas_Object *obj = GL_IT(it)->wsd->obj;
-
-   evas_event_freeze(evas_object_evas_get(obj));
-   if (GL_IT(it)->wsd->item_cache_max <= 0)
-     {
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
-        if (it->spacer)
-          {
-             evas_object_del(it->spacer);
-             it->spacer = NULL;
-          }
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
-
-        return;
-     }
-
-   GL_IT(it)->wsd->item_cache_count++;
-   itc = calloc(1, sizeof(Item_Cache));
-   if (!itc)
-     {
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
-        return;
-     }
-   GL_IT(it)->wsd->item_cache =
-     eina_inlist_prepend(GL_IT(it)->wsd->item_cache, EINA_INLIST_GET(itc));
-   itc->spacer = it->spacer;
-   it->spacer = NULL;
-   itc->base_view = VIEW(it);
-
-   VIEW(it) = NULL;
-   edje_object_signal_emit(itc->base_view, "elm,state,unselected", "elm");
-   evas_object_hide(itc->base_view);
-   evas_object_move(itc->base_view, -9999, -9999);
-   itc->item_style = eina_stringshare_add(it->itc->item_style);
-   if (it->item->type & ELM_GENLIST_ITEM_TREE) itc->tree = 1;
-   itc->selected = it->selected;
-   itc->disabled = elm_widget_item_disabled_get(it);
-   itc->expanded = it->item->expanded;
-   if (it->long_timer)
-     {
-        ecore_timer_del(it->long_timer);
-        it->long_timer = NULL;
-     }
-   if (it->item->swipe_timer)
-     {
-        ecore_timer_del(it->item->swipe_timer);
-        it->item->swipe_timer = NULL;
-     }
-   // FIXME: other callbacks?
-   edje_object_signal_callback_del_full
-     (itc->base_view, "elm,action,expand,toggle", "elm",
-     _expand_toggle_signal_cb, it);
-   edje_object_signal_callback_del_full
-     (itc->base_view, "elm,action,expand", "elm", _expand_signal_cb, it);
-   edje_object_signal_callback_del_full
-     (itc->base_view, "elm,action,contract", "elm", _contract_signal_cb, it);
-   _item_mouse_callbacks_del(it, itc->base_view);
-   _item_cache_clean(GL_IT(it)->wsd);
-
-   evas_event_thaw(evas_object_evas_get(obj));
-   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static Eina_List *
