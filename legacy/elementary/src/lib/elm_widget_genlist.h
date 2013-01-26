@@ -95,10 +95,9 @@ struct _Elm_Genlist_Smart_Data
 
    int                                   multi_device;
    int                                   item_cache_count;
-   int                                   item_cache_max; /* maximum
-                                                         * number of
-                                                         * cached
-                                                         * items */
+
+   /* maximum number of cached items. (max_items_per_block * 2) */
+   int                                   item_cache_max;
    int                                   movements;
 
    /* maximum number of items per block */
