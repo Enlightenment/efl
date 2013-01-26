@@ -73,6 +73,7 @@ _entry_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    if (en->imf_context)
      {
+        // ecore_imf_context_reset should be called for flushing the preedit string in focus-out event handler
         ecore_imf_context_reset(en->imf_context);
         ecore_imf_context_focus_out(en->imf_context);
      }
@@ -129,7 +130,7 @@ _preedit_del(Entry *en)
    if (!en->preedit_start || !en->preedit_end) return;
    if (!evas_textblock_cursor_compare(en->preedit_start, en->preedit_end)) return;
 
-   /* delete the preedit characters */
+   // delete the preedit characters
    evas_textblock_cursor_range_delete(en->preedit_start, en->preedit_end);
 }
 
@@ -154,7 +155,7 @@ _preedit_clear(Entry *en)
 static Eina_Bool
 _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos)
 {
-   /* This callback will be called when the Input Method Context module requests the surrounding context. */
+   // This callback will be called when the Input Method Context module requests the surrounding context.
    Entry *en = data;
    const char *str;
 
@@ -165,7 +166,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
    if (text)
      *text = str ? strdup(str) : strdup("");
 
-   /* get the current position of cursor */
+   // get the current position of cursor
    if (cursor_pos)
      *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
@@ -175,7 +176,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
 static void
 _ecore_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
 {
-   /* called when the input method needs to delete all or part of the context surrounding the cursor */
+   // called when the input method needs to delete all or part of the context surrounding the cursor
    Entry *en = data;
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Evas_Textblock_Cursor *del_start, *del_end;
@@ -183,15 +184,18 @@ _ecore_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx, void 
 
    if (!en) return;
 
+   // get the current cursor position
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
+   // start cursor position to be deleted
    del_start = evas_object_textblock_cursor_new(en->txt_obj);
    evas_textblock_cursor_pos_set(del_start, cursor_pos + ev->offset);
 
+   // end cursor position to be deleted
    del_end = evas_object_textblock_cursor_new(en->txt_obj);
    evas_textblock_cursor_pos_set(del_end, cursor_pos + ev->offset + ev->n_chars);
 
-   /* implement function to delete character(s) from 'cursor_pos+ev->offset' cursor position to 'cursor_pos + ev->offset + ev->n_chars' */
+   // implement function to delete character(s) from 'cursor_pos+ev->offset' cursor position to 'cursor_pos + ev->offset + ev->n_chars'
    evas_textblock_cursor_range_delete(del_start, del_end);
 
    evas_textblock_cursor_free(del_start);
@@ -205,15 +209,16 @@ _ecore_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
    char *commit_str = (char *)event_info;
    if (!en) return;
 
-   /* delete preedit string */
+   // delete preedit string
    _preedit_del(en);
    _preedit_clear(en);
 
    printf("commit string : %s\n", commit_str);
 
+   // insert the commit string in the editor
    evas_object_textblock_text_markup_prepend(en->cursor, commit_str);
 
-   /* notify cursor information */
+   // notify the cursor information
    _imf_cursor_info_set(en);
 
    return;
@@ -222,7 +227,7 @@ _ecore_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
 static void
 _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
 {
-   /* example how to get preedit string */
+   // example how to get preedit string
    Entry *en = data;
    char *preedit_string;
    int cursor_pos;
@@ -236,19 +241,19 @@ _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *ev
 
    if (!en) return;
 
-   /* get preedit string, attributes */
+   // get preedit string and attributes
    ecore_imf_context_preedit_string_with_attributes_get(imf_context, &preedit_string, &attrs, &cursor_pos);
    printf("preedit string : %s\n", preedit_string);
 
    if (!strcmp(preedit_string, ""))
      preedit_end_state = EINA_TRUE;
 
-   /* delete preedit */
+   // delete preedit
    _preedit_del(en);
 
    preedit_start_pos = evas_textblock_cursor_pos_get(en->cursor);
 
-   /* insert preedit character(s) */
+   // insert preedit character(s)
    if (strlen(preedit_string) > 0)
      {
         if (attrs)
@@ -257,27 +262,27 @@ _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *ev
                {
                   if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB1) // style type
                     {
-                       /* apply appropriate style such as underline */
+                       // apply appropriate style such as underline
                     }
                   else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB2 || attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB3)
                     {
-                       /* apply appropriate style such as underline */
+                       // apply appropriate style such as underline
                     }
                }
 
-             /* insert code to display preedit string in your editor */
+             // insert code to display preedit string in your editor
              evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
           }
      }
 
    if (!preedit_end_state)
      {
-        /* set preedit start cursor */
+        // set preedit start cursor
         if (!en->preedit_start)
           en->preedit_start = evas_object_textblock_cursor_new(en->txt_obj);
         evas_textblock_cursor_copy(en->cursor, en->preedit_start);
 
-        /* set preedit end cursor */
+        // set preedit end cursor
         if (!en->preedit_end)
           en->preedit_end = evas_object_textblock_cursor_new(en->txt_obj);
         evas_textblock_cursor_copy(en->cursor, en->preedit_end);
@@ -291,11 +296,11 @@ _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *ev
 
         en->have_preedit = EINA_TRUE;
 
-        /* set cursor position */
+        // set cursor position
         evas_textblock_cursor_pos_set(en->cursor, preedit_start_pos + cursor_pos);
      }
 
-   /* notify cursor information */
+   // notify the cursor information
    _imf_cursor_info_set(en);
 
    EINA_LIST_FREE(attrs, attr)
@@ -338,7 +343,7 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         if (evas_textblock_cursor_char_prev(en->cursor))
           {
              evas_textblock_cursor_char_delete(en->cursor);
-             /* notify cursor information */
+             // notify the cursor information
              _imf_cursor_info_set(en);
           }
          return;
@@ -396,7 +401,7 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
           }
      }
 
-   /* notify cursor information */
+   // notify the cursor information
    _imf_cursor_info_set(en);
 }
 
@@ -425,15 +430,15 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
 {
    if (!en) return;
 
-   /* create background for text input field */
+   // create the background for text input field
    en->rect = evas_object_rectangle_add(evas);
-   evas_object_color_set(en->rect, 150, 150, 150, 255); /* gray */
+   evas_object_color_set(en->rect, 150, 150, 150, 255); // gray color
    evas_object_move(en->rect, x, y);
    evas_object_resize(en->rect, w, h);
    evas_object_show(en->rect);
    evas_object_data_set(en->rect, "Entry", en);
 
-   /* create text object for displaying text */
+   // create text object for displaying text
    en->txt_obj = evas_object_textblock_add(evas);
    evas_object_color_set(en->txt_obj, 0, 0, 0, 255);
    evas_object_pass_events_set(en->txt_obj, EINA_TRUE);
@@ -441,19 +446,19 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    evas_object_resize(en->txt_obj, w, h);
    evas_object_show(en->txt_obj);
 
-   /* set style on textblock */
+   // set style on textblock
    static const char *style_buf =
-     "DEFAULT='font=Sans font_size=30 color=#000 text_class=entry'"
-     "newline='br'"
-     "b='+ font=Sans:style=bold'";
+      "DEFAULT='font=Sans font_size=30 color=#000 text_class=entry'"
+      "newline='br'"
+      "b='+ font=Sans:style=bold'";
    en->txt_style = evas_textblock_style_new();
    evas_textblock_style_set(en->txt_style, style_buf);
    evas_object_textblock_style_set(en->txt_obj, en->txt_style);
 
-   /* create cursor */
+   // create cursor
    en->cursor = evas_object_textblock_cursor_new(en->txt_obj);
 
-   /* create input context */
+   // create input context
    const char *default_id = ecore_imf_context_default_id_get();
    if (!default_id)
      return;
@@ -462,10 +467,15 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    ecore_imf_context_client_window_set(en->imf_context, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(evas)));
    ecore_imf_context_client_canvas_set(en->imf_context, evas);
 
+   // register key event handler
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_KEY_UP, _key_up_cb, en);
+
+   // register mouse event handler
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, en);
+
+   // register focus event handler
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_IN, _entry_focus_in_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_OUT, _entry_focus_out_cb, en);
 
@@ -473,16 +483,16 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    en->preedit_start = NULL;
    en->preedit_end = NULL;
 
-   /* register retrieve surrounding callback */
+   // register retrieve surrounding callback
    ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context, _ecore_imf_retrieve_surrounding_cb, en);
 
-   /* register commit event callback */
+   // register commit event callback
    ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _ecore_imf_event_commit_cb, en);
 
-   /* register preedit changed event handler */
+   // register preedit changed event handler
    ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ecore_imf_event_preedit_changed_cb, en);
 
-   /* register surrounding delete event callback */
+   // register surrounding delete event callback
    ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _ecore_imf_event_delete_surrounding_cb, en);
 }
 
@@ -575,6 +585,7 @@ main(int argc, char *argv[])
    evas_object_color_set(bg, 255, 255, 255, 255);
    evas_object_show(bg);
 
+   // register canvas focus in/out event handler
    evas_event_callback_add(evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _canvas_focus_in_cb, NULL);
    evas_event_callback_add(evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _canvas_focus_out_cb, NULL);
 
