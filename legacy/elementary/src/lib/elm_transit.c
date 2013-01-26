@@ -53,6 +53,7 @@ struct _Elm_Transit
    double progress;
    unsigned int effects_pending_del;
    int walking;
+   double v1, v2;
    Eina_Bool auto_reverse : 1;
    Eina_Bool event_enabled : 1;
    Eina_Bool deleted : 1;
@@ -282,7 +283,6 @@ _transit_del(Elm_Transit *transit)
      {
         EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
           _transit_chain_go(chain_transit);
-
      }
 
    eina_list_free(transit->next_chain_transits);
@@ -343,17 +343,32 @@ _transit_animate_cb(void *data)
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
          transit->progress = ecore_animator_pos_map(transit->progress,
                                                     ECORE_POS_MAP_ACCELERATE,
-                                                    0, 0);
+                                                    transit->v1, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
          transit->progress = ecore_animator_pos_map(transit->progress,
                                                     ECORE_POS_MAP_DECELERATE,
-                                                    0, 0);
+                                                    transit->v1, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
          transit->progress = ecore_animator_pos_map(transit->progress,
                                                     ECORE_POS_MAP_SINUSOIDAL,
-                                                    0, 0);
+                                                    transit->v1, 0);
+         break;
+      case ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP:
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_DIVISOR_INTERP,
+                                                    transit->v1, transit->v2);
+         break;
+      case ELM_TRANSIT_TWEEN_MODE_BOUNCE:
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_BOUNCE,
+                                                    transit->v1, transit->v2);
+         break;
+      case ELM_TRANSIT_TWEEN_MODE_SPRING:
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_SPRING,
+                                                    transit->v1, transit->v2);
          break;
       default:
          break;
@@ -454,6 +469,9 @@ elm_transit_add(void)
    EINA_MAGIC_SET(transit, ELM_TRANSIT_MAGIC);
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
+
+   transit->v1 = 1.0;
+   transit->v2 = 0.0;
 
    return transit;
 }
@@ -632,6 +650,22 @@ elm_transit_tween_mode_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
    return transit->tween_mode;
+}
+
+EAPI void
+elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   transit->v1 = v1;
+   transit->v2 = v2;
+}
+
+EAPI void
+elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double *v2)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   if (v1) *v1 = transit->v1;
+   if (v2) *v2 = transit->v2;
 }
 
 EAPI void

@@ -948,3 +948,7 @@
 2012-01-23  WooHyun Jung
 
         * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
+
+2012-01-26  ChanWook Jung (jchanwook@gmail.com)
+
+        * Expand elm_transit tween_mode and add twee_mode_factor_set(),get() APIs

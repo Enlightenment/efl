@@ -64,11 +64,19 @@ typedef enum
    ELM_TRANSIT_TWEEN_MODE_LINEAR, /**< Constant speed */
    ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL, /**< Starts slow, increase speed
                                          over time, then decrease again
-                                         and stop slowly */
+                                         and stop slowly, v1 being a power factor */
    ELM_TRANSIT_TWEEN_MODE_DECELERATE, /**< Starts fast and decrease
-                                         speed over time */
-   ELM_TRANSIT_TWEEN_MODE_ACCELERATE /**< Starts slow and increase speed
-                                        over time */
+                                         speed over time, v1 being a power factor */
+   ELM_TRANSIT_TWEEN_MODE_ACCELERATE, /**< Starts slow and increase speed
+                                         over time, v1 being a power factor */
+   ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP, /**< Start at gradient v1,
+                                             interpolated via power of v2 curve */
+   ELM_TRANSIT_TWEEN_MODE_BOUNCE, /**< Start at 0.0 then "drop" like a ball
+                                     bouncing to the ground at 1.0, and
+                                     bounce v2 times, with decay factor of v1 */
+   ELM_TRANSIT_TWEEN_MODE_SPRING /**< Start at 0.0 then "wobble" like a spring
+                                    rest position 1.0, and wobble v2 times,
+                                    with decay factor of v1 */
 } Elm_Transit_Tween_Mode;
 
 /**
@@ -411,9 +419,18 @@ EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *tran
  *
  * This function sets the tween mode of the transit that can be:
  * ELM_TRANSIT_TWEEN_MODE_LINEAR - The default mode.
- * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Starts in accelerate mode and ends decelerating.
- * ELM_TRANSIT_TWEEN_MODE_DECELERATE - The animation will be slowed over time.
- * ELM_TRANSIT_TWEEN_MODE_ACCELERATE - The animation will accelerate over time.
+ * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Starts in accelerate mode and ends
+ * decelerating with factor.
+ * ELM_TRANSIT_TWEEN_MODE_DECELERATE - The animation will be slowed over time
+ * with factor.
+ * ELM_TRANSIT_TWEEN_MODE_ACCELERATE - The animation will accelerate over time
+ * with factor.
+ * ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP - Start at gradient v1, interpolated
+ * via power of v2 curve.
+ * ELM_TRANSIT_TWEEN_MODE_BOUNCE - Start at 0.0 then "drop" like a ball bouncing
+ * to the ground at 1.0, and bounce v2 times, with decay factor of v1.
+ * ELM_TRANSIT_TWEEN_MODE_SPRING - Start at 0.0 then "wobble" like a spring rest
+ * position 1.0, and wobble v2 times, with decay factor of v1.
  *
  * @param transit The transit object.
  * @param tween_mode The tween type.
@@ -434,6 +451,55 @@ EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm
  * @ingroup Transit
  */
 EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit);
+
+/**
+ * Set the transit animation acceleration factor.
+ *
+ * This function sets the tween mode factor of the transit that can be:
+ * If you use the below tween modes, you have to set the factor using this API.
+ * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Start slow, speed up then slow down
+ * at end, v1 being a power factor, 0.0 being linear, 1.0 being
+ * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL default, 2.0 being much more pronounced
+ * sinusoidal(squared), 3.0 being cubed, etc. 
+ * ELM_TRANSIT_TWEEN_MODE_DECELERATE - Start fast then slow down, v1 being a
+ * power factor, 0.0 being linear, 1.0 being ELM_TRANSIT_TWEEN_MODE_DECELERATE
+ * default, 2.0 being much more pronounced decelerate (squared), 3.0 being
+ * cubed, etc.
+ * ELM_TRANSIT_TWEEN_MODE_ACCELERATE - Start slow then speed up, v1 being a
+ * power factor, 0.0 being linear, 1.0 being ELM_TRANSIT_TWEEN_MODE_ACCELERATE
+ * default, 2.0 being much more pronounced accelerate (squared), 3.0 being
+ * cubed, etc.
+ * ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP - Start at gradient * v1, interpolated
+ * via power of v2 curve
+ * ELM_TRANSIT_TWEEN_MODE_BOUNCE - Start at 0.0 then "drop" like a ball bouncing
+ * to the ground at 1.0, and bounce v2 times, with decay factor of v1
+ * ELM_TRANSIT_TWEEN_MODE_SPRING - Start at 0.0 then "wobble" like a spring rest
+ * position 1.0, and wobble v2 times, with decay factor of v1
+ *
+ * @param transit The transit object.
+ * @param v1 A parameter use by the mapping (default is 1.0)
+ * @param v2 A parameter use by the mapping (default is 0.0)
+ *
+ * @see elm_transit_tween_mode_factor_get()
+ *
+ * @ingroup Transit
+ */
+EAPI void                   elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2);
+
+/**
+ * Get the transit animation acceleration factor.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ * @param v1      Pointer to an double in which to store the factor value.
+ * @param v2      Pointer to an double in which to store the factor value2.
+ *
+ * @see elm_transit_tween_mode_factor_set()
+ *
+ * @ingroup Transit
+ */
+EAPI void                   elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double *v2);
 
 /**
  * Set the transit animation time
