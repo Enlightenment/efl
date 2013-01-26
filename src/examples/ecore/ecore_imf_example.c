@@ -27,16 +27,32 @@ struct _Entry
    Eina_Bool              have_preedit : 1;
 };
 
+static void _imf_cursor_info_set(Entry *en);
+
+static void
+_mouse_down_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
+{
+   Entry *en = data;
+   if (!en) return;
+
+   // ecore_imf_context_reset should be called before calculating new cursor position
+
+   // calculate new cursor position
+}
+
 static void
 _mouse_up_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Entry *en = data;
    if (!en) return;
 
-   if (en->imf_context)
-     ecore_imf_context_reset(en->imf_context);
-
-   evas_object_focus_set(en->rect, EINA_TRUE);
+   if (evas_object_focus_get(en->rect))
+     {
+        // notify cursor information
+        _imf_cursor_info_set(en);
+     }
+   else
+     evas_object_focus_set(en->rect, EINA_TRUE);
 }
 
 static void
@@ -448,6 +464,7 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
 
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_KEY_UP, _key_up_cb, en);
+   evas_object_event_callback_add(en->rect, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_IN, _entry_focus_in_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_OUT, _entry_focus_out_cb, en);
