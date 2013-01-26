@@ -270,6 +270,7 @@ _ecore_x_input_handler(XEvent *xevent)
         break;
 
       case XI_ButtonPress:
+        INF("ButtonEvent:multi press time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_DOWN,
           evd->time,
@@ -289,6 +290,7 @@ _ecore_x_input_handler(XEvent *xevent)
         break;
 
       case XI_ButtonRelease:
+		INF("ButtonEvent:multi release time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
           (ECORE_EVENT_MOUSE_BUTTON_UP,
           evd->time,

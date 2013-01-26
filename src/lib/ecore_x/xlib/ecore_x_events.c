@@ -522,6 +522,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 {
    int i;
 
+   INF("ButtonEvent:press time=%u x=%d y=%d button=%d", (unsigned int)xevent->xbutton.time, (int)xevent->xbutton.x, (int)xevent->xbutton.y, xevent->xbutton.button);
+
    _ecore_x_last_event_mouse_move = 0;
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 8))
      {
@@ -672,6 +674,7 @@ void
 _ecore_x_event_handle_button_release(XEvent *xevent)
 {
    _ecore_x_last_event_mouse_move = 0;
+   INF("ButtonEvent:release time=%u x=%d y=%d button=%d", (unsigned int)xevent->xbutton.time, (int)xevent->xbutton.x, (int)xevent->xbutton.y, xevent->xbutton.button);
    /* filter out wheel buttons */
    if ((xevent->xbutton.button <= 3) || (xevent->xbutton.button > 7))
      {

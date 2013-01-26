@@ -1081,6 +1081,7 @@ _canvas_event_feed_mouse_down(Eo *eo_e, void *_pd, va_list *list)
    int addgrab = 0;
    int event_id = 0;
 
+   INF("ButtonEvent:down time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
    if ((b < 1) || (b > 32)) return;
 
    e->pointer.button |= (1 << (b - 1));
@@ -1318,6 +1319,7 @@ _canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
    Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
 
+   INF("ButtonEvent:up time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
    if ((b < 1) || (b > 32)) return;
    if (e->pointer.downs <= 0) return;
 
@@ -2228,6 +2230,7 @@ _canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
    int addgrab = 0;
    int event_id = 0;
 
+   INF("ButtonEvent:multi down time=%u x=%d y=%d button=%d downs=%d", timestamp, x, y, d, e->pointer.downs);
    e->pointer.downs++;
    if (e->is_frozen) return;
    e->last_timestamp = timestamp;
@@ -2340,6 +2343,7 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
    Evas_Object *eo_obj;
    int event_id = 0;
 
+   INF("ButtonEvent:multi up time=%u x=%d y=%d device=%d downs=%d", timestamp, x, y, d, e->pointer.downs);
    if (e->pointer.downs <= 0) return;
    e->pointer.downs--;
    if (e->is_frozen) return;
