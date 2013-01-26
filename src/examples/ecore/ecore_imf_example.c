@@ -36,6 +36,8 @@ _mouse_down_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
    if (!en) return;
 
    // ecore_imf_context_reset should be called before calculating new cursor position
+   if (en->imf_context)
+     ecore_imf_context_reset(en->imf_context);
 
    // calculate new cursor position
 }
