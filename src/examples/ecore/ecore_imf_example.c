@@ -182,7 +182,7 @@ _ecore_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx, void 
    Evas_Textblock_Cursor *del_start, *del_end;
    int cursor_pos;
 
-   if (!en) return;
+   if ((!en) || (!ev)) return;
 
    // get the current cursor position
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
@@ -317,8 +317,7 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Eina_Bool control, alt, shift;
    Eina_Bool multiline;
    Eina_Bool cursor_changed;
-   if (!en) return;
-   if (!ev->key) return;
+   if ((!en) || (!ev->key)) return;
 
    if (en->imf_context)
      {
@@ -430,6 +429,10 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
 {
    if (!en) return;
 
+   en->have_preedit = EINA_FALSE;
+   en->preedit_start = NULL;
+   en->preedit_end = NULL;
+
    // create the background for text input field
    en->rect = evas_object_rectangle_add(evas);
    evas_object_color_set(en->rect, 150, 150, 150, 255); // gray color
@@ -478,10 +481,6 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    // register focus event handler
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_IN, _entry_focus_in_cb, en);
    evas_object_event_callback_add(en->rect, EVAS_CALLBACK_FOCUS_OUT, _entry_focus_out_cb, en);
-
-   en->have_preedit = EINA_FALSE;
-   en->preedit_start = NULL;
-   en->preedit_end = NULL;
 
    // register retrieve surrounding callback
    ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context, _ecore_imf_retrieve_surrounding_cb, en);
