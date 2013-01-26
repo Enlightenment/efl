@@ -941,18 +941,18 @@
 
         * apply display mode to all views of a naviframe if the display mode of the views are changed.
 
-2012-01-22  Daniel Juyung Seo (SeoZ)
+2013-01-22  Daniel Juyung Seo (SeoZ)
 
         * Enhanced diskselector add and item_append time.
 
-2012-01-23  WooHyun Jung
+2013-01-23  WooHyun Jung
 
         * In _timer_cb of elm_notify, access to sd should be forbidden after smart_callback_call is called.
 
-2012-01-26  ChanWook Jung (jchanwook@gmail.com)
+2013-01-26  ChanWook Jung (jchanwook@gmail.com)
 
         * Expand elm_transit tween_mode and add twee_mode_factor_set(),get() APIs
 
-2012-01-26  WooHyun Jung
+2013-01-26  WooHyun Jung
 
         * A widget which doesn't have focus_region_get should give its width and height for correct focus_region_show.
