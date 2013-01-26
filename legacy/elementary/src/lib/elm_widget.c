@@ -3205,17 +3205,16 @@ elm_widget_focus_region_get(const Evas_Object *obj,
                             Evas_Coord *w,
                             Evas_Coord *h)
 {
-   if (!_elm_widget_is(obj))
+   ELM_WIDGET_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_wdg_focus_region_get(x, y, w, h, &ret));
+   if (!ret)
      {
         evas_object_geometry_get(obj, NULL, NULL, w, h);
         if (x) *x = 0;
         if (y) *y = 0;
-        return EINA_FALSE;
      }
-
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_wdg_focus_region_get(x, y, w, h, &ret));
-   return ret;
+   return EINA_TRUE;
 }
 
 static void
