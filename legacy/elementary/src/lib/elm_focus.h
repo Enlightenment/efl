@@ -70,6 +70,9 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
  * the focus from @p obj, passing it back to the previous element in the
  * focus chain list.
  *
+ * @warning Only visible object can get a focus. Call evas_object_show(o), if
+ * you want to give a focus to the evas object.
+ *
  * @see elm_object_focus_get(), elm_object_focus_custom_chain_get()
  *
  * @ingroup Focus
