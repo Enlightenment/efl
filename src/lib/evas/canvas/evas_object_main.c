@@ -37,9 +37,7 @@ Eina_Cow *evas_object_map_cow = NULL;
 static Eina_Bool
 _init_cow(void)
 {
-   static Eina_Bool inited_cow = EINA_FALSE;
-
-   if (inited_cow) return inited_cow;
+   if (evas_object_map_cow && evas_object_proxy_cow) return EINA_TRUE;
 
    evas_object_proxy_cow = eina_cow_add("Evas Object Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy);
    evas_object_map_cow = eina_cow_add("Evas Object Map", sizeof (Evas_Object_Map_Data), 8, &default_map);
@@ -48,10 +46,11 @@ _init_cow(void)
      {
         eina_cow_del(evas_object_proxy_cow);
         eina_cow_del(evas_object_map_cow);
+        evas_object_proxy_cow = NULL;
+        evas_object_map_cow = NULL;
         return EINA_FALSE;
      }
 
-   inited_cow = EINA_TRUE;
    return EINA_TRUE;
 }
 
