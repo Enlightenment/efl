@@ -2279,6 +2279,15 @@ _image_video_surface_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    else
      {
+        if (!o->video_surface &&
+            !o->pixels->video.update_pixels &&
+            !o->pixels->video.move &&
+            !o->pixels->video.resize &&
+            !o->pixels->video.hide &&
+            !o->pixels->video.show &&
+            !o->pixels->video.data)
+          return ;
+
         o->video_surface = EINA_FALSE;
         EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
           {
