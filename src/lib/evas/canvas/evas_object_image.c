@@ -3252,9 +3252,12 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
+   evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
    eina_cow_free(evas_object_image_load_opts_cow, o->load_opts);
+   o->load_opts = &default_load_opts;
    eina_cow_free(evas_object_image_pixels_cow, o->pixels);
+   o->pixels = &default_pixels;
    eo_do_super(eo_obj, eo_destructor());
 }
 
