@@ -2471,8 +2471,7 @@ _elm_widget_focus_direction_get(Eo *obj, void *_pd, va_list *list)
      {
         if ((int)(*weight * 1000000) == (int)(c_weight * 1000000))
           {
-             Elm_Widget_Smart_Data *sd1 =
-               evas_object_smart_data_get(*direction);
+             ELM_WIDGET_DATA_GET(*direction, sd1);
              if (sd1)
                {
                   if (sd->focus_order <= sd1->focus_order)
