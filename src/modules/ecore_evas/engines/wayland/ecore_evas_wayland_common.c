@@ -723,6 +723,33 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
    return rend;
 }
 
+int
+_ecore_evas_wl_common_render_updates(Ecore_Evas *ee)
+{
+   int rend = 0;
+   Eina_List *updates = NULL;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((updates = evas_render_updates(ee->evas)))
+     {
+        Eina_List *l = NULL;
+        Eina_Rectangle *r;
+
+        EINA_LIST_FOREACH(updates, l, r)
+          ecore_wl_window_damage(wdata->win,
+                                 r->x, r->y, r->w, r->h);
+
+        ecore_wl_flush();
+
+        evas_render_updates_free(updates);
+        rend = 1;
+     }
+
+   return rend;
+}
+
 void
 _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
 {
