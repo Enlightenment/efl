@@ -93,8 +93,10 @@ evas_shutdown(void)
 
    eina_cow_del(evas_object_image_pixels_cow);
    eina_cow_del(evas_object_image_load_opts_cow);
+   eina_cow_del(evas_object_image_state_cow);
    evas_object_image_pixels_cow = NULL;
    evas_object_image_load_opts_cow = NULL;
+   evas_object_image_state_cow = NULL;
 
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();

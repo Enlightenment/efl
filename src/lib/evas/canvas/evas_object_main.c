@@ -136,6 +136,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
 
    int was_smart_child = 0;
 
+   _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->map->prev.map) evas_map_free(obj->map->prev.map);
    if (obj->map->cache_map) evas_map_free(obj->map->cache_map);

@@ -144,31 +144,31 @@ MAGIC_CHECK_FAILED(o, t, m)
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
 #define MERR_BAD() _evas_alloc_error = EVAS_ALLOC_ERROR_RECOVERED
 
-#define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o)                              \
-   if ((o)->cur.file)                                                       \
-     {                                                                      \
-        eina_stringshare_del((o)->cur.file);                                \
-        if ((o)->prev.file == (o)->cur.file)                                \
-          (o)->prev.file = NULL;                                            \
-        (o)->cur.file = NULL;                                               \
-     }                                                                      \
-   if ((o)->cur.key)                                                        \
-     {                                                                      \
-        eina_stringshare_del((o)->cur.key);                                 \
-        if ((o)->prev.key == (o)->cur.key)                                  \
-          (o)->prev.key = NULL;                                             \
-        (o)->cur.key = NULL;                                                \
-     }                                                                      \
-   if ((o)->prev.file)                                                      \
-     {                                                                      \
-        eina_stringshare_del((o)->prev.file);                               \
-        (o)->prev.file = NULL;                                              \
-     }                                                                      \
-   if ((o)->prev.key)                                                       \
-     {                                                                      \
-        eina_stringshare_del((o)->prev.key);                                \
-        (o)->prev.key = NULL;                                               \
-     }
+#define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur, prev)                  \
+  if (cur->file)							\
+    {                                                                   \
+       eina_stringshare_del(cur->file);                                 \
+       if (prev->file == cur->file)                                     \
+         prev->file = NULL;                                             \
+       cur->file = NULL;                                                \
+    }                                                                   \
+  if (cur->key)                                                         \
+    {                                                                   \
+       eina_stringshare_del(cur->key);                                  \
+       if (prev->key == cur->key)                                       \
+         prev->key = NULL;                                              \
+       cur->key = NULL;                                                 \
+    }                                                                   \
+  if (prev->file)                                                       \
+    {                                                                   \
+       eina_stringshare_del(prev->file);                                \
+       prev->file = NULL;                                               \
+    }                                                                   \
+  if (prev->key)                                                        \
+    {                                                                   \
+       eina_stringshare_del(prev->key);                                 \
+       prev->key = NULL;                                                \
+    }
 
 struct _Evas_Coord_Touch_Point
 {
@@ -341,7 +341,7 @@ struct _Evas_Public_Data
       unsigned char  changed : 1;
    } output;
 
-   struct 
+   struct
      {
         Evas_Coord x, y, w, h;
         Eina_Bool changed : 1;
@@ -420,6 +420,11 @@ struct _Evas_Public_Data
    int            last_mouse_up_counter;
    int            nochange;
    Evas_Font_Hinting_Flags hinting;
+
+   Eina_List     *touch_points;
+   Eina_List     *devices;
+   Eina_Array    *cur_device;
+
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;
@@ -427,10 +432,6 @@ struct _Evas_Public_Data
    unsigned char  focus : 1;
    Eina_Bool      is_frozen : 1;
    Eina_Bool      rendering : 1;
-
-   Eina_List     *touch_points;
-   Eina_List     *devices;
-   Eina_Array    *cur_device;
 };
 
 struct _Evas_Layer
@@ -998,6 +999,7 @@ void _evas_object_image_preloading_check(Evas_Object *obj);
 Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
 void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
+void _evas_object_image_free(Evas_Object *obj);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);
@@ -1258,6 +1260,7 @@ extern Eina_Cow *evas_object_map_cow;
 
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;
+extern Eina_Cow *evas_object_image_state_cow;
 
 /****************************************************************************/
 /*****************************************/
