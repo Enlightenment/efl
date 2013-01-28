@@ -16,14 +16,6 @@ static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
 static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
-static int  _ecore_evas_wl_render(Ecore_Evas *ee);
-
-/* Frame listener */
-static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
-static const struct wl_callback_listener frame_listener =
-{
-   _ecore_evas_wl_frame_complete,
-};
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
@@ -81,7 +73,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // modal set
    NULL, // demand attention set
    NULL, // focus skip set
-   _ecore_evas_wl_render,
+   _ecore_evas_wl_common_render,
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get
 };
@@ -461,67 +453,6 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 
    if (wdata->win)
      ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
-}
-
-static void
-_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Wl_Window *win = NULL;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   if (!ee) return;
-   wdata = ee->engine.data;
-   if (!(win = wdata->win)) return;
-
-   win->frame_callback = NULL;
-   win->frame_pending = EINA_FALSE;
-   wl_callback_destroy(callback);
-
-   if (win->surface)
-     {
-        win->frame_callback = wl_surface_frame(win->surface);
-        wl_callback_add_listener(win->frame_callback, &frame_listener, ee);
-     }
-}
-
-static int
-_ecore_evas_wl_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-   Ecore_Wl_Window *win = NULL;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   if (!ee) return 0;
-   if (!ee->visible)
-     {
-        evas_norender(ee->evas);
-        return 0;
-     }
-
-   wdata = ee->engine.data;
-   if (!(win = wdata->win)) return 0;
-
-   rend = _ecore_evas_wl_common_pre_render(ee);
-   if (!(win->frame_pending))
-     {
-        /* FIXME - ideally have an evas_changed_get to return the value
-         * of evas->changed to avoid creating this callback and
-         * destroying it again
-         */
-
-        if (!win->frame_callback)
-          {
-             win->frame_callback = wl_surface_frame(win->surface);
-             wl_callback_add_listener(win->frame_callback, &frame_listener, ee);
-          }
-
-        rend |= _ecore_evas_wl_common_render_updates(ee);
-        if (rend)
-           win->frame_pending = EINA_TRUE;
-     }
-   _ecore_evas_wl_common_post_render(ee);
-   return rend;
 }
 
 void 

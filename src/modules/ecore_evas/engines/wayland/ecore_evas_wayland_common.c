@@ -24,6 +24,12 @@ static Evas_Smart *_ecore_evas_wl_common_smart = NULL;
 static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[5];
 
+/* Frame listener */
+static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
+static const struct wl_callback_listener frame_listener =
+{
+   _ecore_evas_wl_frame_complete,
+};
 
 static Eina_Bool
 _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -759,12 +765,34 @@ _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
 
+static void
+_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Wl_Window *win = NULL;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   if (!ee) return;
+   wdata = ee->engine.data;
+   if (!(win = wdata->win)) return;
+
+   win->frame_callback = NULL;
+   win->frame_pending = EINA_FALSE;
+   wl_callback_destroy(callback);
+
+   if (win->surface)
+     {
+        win->frame_callback = wl_surface_frame(win->surface);
+        wl_callback_add_listener(win->frame_callback, &frame_listener, ee);
+     }
+}
+
 int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
    int rend = 0;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   Ecore_Wl_Window *win = NULL;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
    if (!ee) return 0;
    if (!ee->visible)
@@ -773,10 +801,28 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
         return 0;
      }
 
-   rend = _ecore_evas_wl_common_pre_render(ee);
-   rend |= _ecore_evas_wl_common_render_updates(ee);
-   _ecore_evas_wl_common_post_render(ee);
+   wdata = ee->engine.data;
+   if (!(win = wdata->win)) return 0;
 
+   rend = _ecore_evas_wl_common_pre_render(ee);
+   if (!(win->frame_pending))
+     {
+        /* FIXME - ideally have an evas_changed_get to return the value
+         * of evas->changed to avoid creating this callback and
+         * destroying it again
+         */
+
+        if (!win->frame_callback)
+          {
+             win->frame_callback = wl_surface_frame(win->surface);
+             wl_callback_add_listener(win->frame_callback, &frame_listener, ee);
+          }
+
+        rend |= _ecore_evas_wl_common_render_updates(ee);
+        if (rend)
+           win->frame_pending = EINA_TRUE;
+     }
+   _ecore_evas_wl_common_post_render(ee);
    return rend;
 }
 
