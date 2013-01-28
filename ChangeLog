@@ -380,3 +380,8 @@
 2013-01-28  Daniel Willmann <d.willmann@samsung.com>
 
 				* Use ecore_audio in edje-multisense
+
+2013-01-28 Rafael Antognolli <antognolli@gmail.com>
+
+				* Ecore_Evas wayland-egl only renders now if last frame has
+				been presented.

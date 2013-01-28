@@ -10,6 +10,7 @@
 
 
 /* local function prototypes */
+static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
@@ -72,7 +73,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // modal set
    NULL, // demand attention set
    NULL, // focus skip set
-   _ecore_evas_wl_common_render,
+   _ecore_evas_wl_render,
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get
 };
@@ -226,6 +227,108 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
  ee_err:
    ecore_wl_shutdown();
    return NULL;
+}
+
+static void
+_ecore_evas_wl_frame_complete (void *data, struct wl_callback *callback, uint32_t time EINA_UNUSED);
+
+static const struct wl_callback_listener frame_listener = {
+   _ecore_evas_wl_frame_complete,
+};
+
+static void
+_ecore_evas_wl_frame_complete (void *data, struct wl_callback *callback, uint32_t time EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   wdata->win->frame_callback = NULL;
+   wdata->win->frame_pending = EINA_FALSE;
+   wl_callback_destroy(callback);
+
+   wdata->win->frame_callback =
+     wl_surface_frame(wdata->win->surface);
+
+   wl_callback_add_listener(wdata->win->frame_callback,
+                            &frame_listener, ee);
+}
+
+int
+_ecore_evas_wl_render_updates(Ecore_Evas *ee)
+{
+   int rend = 0;
+   Eina_List *updates = NULL;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* eglSwapBuffers is ultimately called by evas_render_updates() if
+    * there is some update to make. So we must pre-emptively create a
+    * frame callback handler. We make sure we always have one of these in
+    * available to track if the event is presented.
+    *
+    * This frame callback will be fired when the frame has been presented
+    * and we can safely call eglSwapBuffers without it blocking. Whether
+    * to render or not is handled by the frame_pending boolean which is
+    * reset on the frame callback event.
+    */
+   if (!wdata->win->frame_pending)
+     {
+        /* FIXME - ideally have an evas_changed_get to return the value
+         * of evas->changed to avoid creating this callback and
+         * destroying it again
+         */
+
+        if (!wdata->win->frame_callback)
+          {
+             wdata->win->frame_callback =
+                wl_surface_frame(wdata->win->surface);
+
+             wl_callback_add_listener(wdata->win->frame_callback,
+                                      &frame_listener, ee);
+          }
+
+        if ((updates = evas_render_updates(ee->evas)))
+          {
+             Eina_List *l = NULL;
+             Eina_Rectangle *r;
+
+             EINA_LIST_FOREACH(updates, l, r)
+                ecore_wl_window_damage(wdata->win,
+                                       r->x, r->y, r->w, r->h);
+
+             ecore_wl_flush();
+
+             evas_render_updates_free(updates);
+
+             wdata->win->frame_pending = EINA_TRUE;
+
+             rend = 1;
+          }
+     }
+
+   return rend;
+}
+
+static int
+_ecore_evas_wl_render(Ecore_Evas *ee)
+{
+   int rend = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return 0;
+   if (!ee->visible)
+     {
+        evas_norender(ee->evas);
+        return 0;
+     }
+
+   rend = _ecore_evas_wl_common_pre_render(ee);
+   rend |= _ecore_evas_wl_render_updates(ee);
+   _ecore_evas_wl_common_post_render(ee);
+
+   return rend;
 }
 
 static void 
