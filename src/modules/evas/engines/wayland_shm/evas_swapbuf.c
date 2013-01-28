@@ -80,6 +80,7 @@ evas_swapbuf_free(Outbuf *ob)
    /* flush the output buffer */
    evas_swapbuf_flush(ob);
    evas_swapbuf_idle_flush(ob);
+   evas_swapper_free(ob->priv.swapper);
    eina_array_flush(&ob->priv.onebuf_regions);
 
    /* free the allocated structure */
