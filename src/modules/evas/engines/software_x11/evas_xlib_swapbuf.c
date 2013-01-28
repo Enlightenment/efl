@@ -40,6 +40,7 @@ evas_software_xlib_swapbuf_free(Outbuf *buf)
      evas_software_xlib_x_color_deallocate
      (buf->priv.x11.xlib.disp, buf->priv.x11.xlib.cmap,
          buf->priv.x11.xlib.vis, buf->priv.pal);
+   evas_xlib_swapper_free(buf->priv.swapper);
    eina_array_flush(&buf->priv.onebuf_regions);
    free(buf);
 }
