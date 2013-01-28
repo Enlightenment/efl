@@ -210,7 +210,7 @@ _socket_path_set(char *path)
    env = getenv("EVAS_CSERVE2_SOCKET");
    if (env && env[0])
      {
-        strncpy(path, env, UNIX_PATH_MAX - 1);
+        eina_strlcpy(path, env, UNIX_PATH_MAX);
         return;
      }
 

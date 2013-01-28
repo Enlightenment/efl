@@ -369,7 +369,7 @@ int main(void)
                  (int)getuid());
         env = buf;
      }
-   strncpy(remote.sun_path, env, UNIX_PATH_MAX - 1);
+   eina_strlcpy(remote.sun_path, env, UNIX_PATH_MAX);
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
    if (connect(s, (struct sockaddr *)&remote, len) == -1)
      {
