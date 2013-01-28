@@ -1156,7 +1156,7 @@ eng_context_cutout_clear(void *data EINA_UNUSED, void *context)
 }
 
 static void
-eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
+eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
 
@@ -1168,7 +1168,7 @@ eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w
 }
 
 static void
-eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
+eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
 
@@ -1198,7 +1198,7 @@ eng_polygon_points_clear(void *data EINA_UNUSED, void *context EINA_UNUSED, void
 }
 
 static void
-eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *polygon, int x, int y)
+eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *polygon, int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
 
@@ -1886,7 +1886,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *t
 }
 
 static Eina_Bool
-eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
 
@@ -1924,7 +1924,7 @@ eng_image_scale_hint_get(void *data EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
-eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level)
+eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
@@ -1965,7 +1965,7 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
         dw = (m->pts[2].x >> FP) - dx;
         dh = (m->pts[2].y >> FP) - dy;
         eng_image_draw(data, context, surface, image,
-                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth);
+                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth, do_async);
      }
    else
      {
@@ -2051,7 +2051,7 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
 }
 
 static Eina_Bool
-eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *intl_props, Eina_Bool do_async EINA_UNUSED)
 {
    Render_Engine *re;
 
