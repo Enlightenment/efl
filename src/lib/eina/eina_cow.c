@@ -392,6 +392,7 @@ eina_cow_write(Eina_Cow *cow,
 #endif
         goto end;
      }
+   ref->refcount--;
 
  allocate:
    ref = eina_mempool_malloc(cow->pool, cow->total_size);
@@ -466,17 +467,22 @@ eina_cow_memcpy(Eina_Cow *cow,
 
    EINA_COW_MAGIC_CHECK(cow);
 
+   if (*dst == src) return ;
+
    eina_cow_free(cow, *dst);
 
-   ref = EINA_COW_PTR_GET(src);
-   EINA_COW_PTR_MAGIC_CHECK(ref);
+   if (src != cow->default_value)
+     {
+       ref = EINA_COW_PTR_GET(src);
+       EINA_COW_PTR_MAGIC_CHECK(ref);
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+       VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
-   ref->refcount++;
+       ref->refcount++;
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+       VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
 #endif
+     }
 
    *((const void**)dst) = src;
 }
