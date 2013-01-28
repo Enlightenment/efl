@@ -3160,6 +3160,17 @@ EFL_LIB_START([Edje])
 
 ### Default values
 want_multisense="no" # TODO: move to ecore_audio and enable
+AC_ARG_ENABLE([multisense],
+   [AC_HELP_STRING([--enable-multisense],
+       [Enable multisense support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_multisense="yes"
+    else
+       want_multisense="no"
+    fi
+   ],
+   [want_multisense="no"])
 
 # TODO: should we keep or remove these?
 want_edje_program_cache="no"
@@ -3185,7 +3196,7 @@ EFL_INTERNAL_DEPEND_PKG([EDJE], [embryo])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [eio])
 
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
-#EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
 
 EFL_ADD_FEATURE([EDJE], [physics])
 EFL_ADD_FEATURE([EDJE], [multisense])

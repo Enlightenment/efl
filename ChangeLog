@@ -376,3 +376,7 @@
 2013-01-22  Daniel Willmann <d.willmann@samsung.com>
 
         * Fix evas gif loader to return the correct frame duration
+
+2013-01-28  Daniel Willmann <d.willmann@samsung.com>
+
+				* Use ecore_audio in edje-multisense
