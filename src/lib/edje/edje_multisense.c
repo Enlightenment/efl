@@ -1,6 +1,8 @@
 #include "edje_private.h"
-#include "Ecore_Audio.h"
+
+#ifdef ENABLE_MULTISENSE
 #include <sndfile.h>
+#include "Ecore_Audio.h"
 
 static Ecore_Audio_Object *out = NULL;
 
@@ -66,6 +68,7 @@ eet_snd_file_tell(Ecore_Audio_Object *in)
 
    return vf->offset;
 }
+#endif
 
 Eina_Bool
 _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed EINA_UNUSED)
