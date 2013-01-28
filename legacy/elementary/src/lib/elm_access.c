@@ -6,6 +6,7 @@
 #define MY_CLASS_NAME "elm_access"
 
 static Eina_Bool mouse_event_enable = EINA_TRUE;
+static Eina_Bool read_mode = EINA_FALSE;
 
 static Evas_Object * _elm_access_add(Evas_Object *parent);
 
@@ -256,6 +257,17 @@ void _elm_access_mouse_event_enabled_set(Eina_Bool enabled)
    mouse_event_enable = enabled;
 }
 
+void _elm_access_read_mode_set(Eina_Bool enabled)
+{
+   enabled = !!enabled;
+   if (read_mode == enabled) return;
+   read_mode = enabled;
+}
+
+Eina_Bool _elm_access_read_mode_get()
+{
+   return read_mode;
+}
 //-------------------------------------------------------------------------//
 EAPI void
 _elm_access_highlight_set(Evas_Object* obj)
@@ -332,6 +344,11 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 
    if (elm_widget_is(highlight))
      {
+        _elm_access_read_mode_set(EINA_FALSE);
+
+        if (!elm_object_focus_get(highlight))
+          elm_object_focus_set(highlight, EINA_TRUE);
+
         elm_widget_activate(highlight, act);
         return;
      }
@@ -347,15 +364,7 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 EAPI void
 _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
-   Evas_Object *highlight, *focused;
-
-   highlight = _access_highlight_object_get(obj);
-   focused = elm_widget_focused_object_get(obj);
-
-   if (highlight && (highlight != focused))
-     elm_object_focus_set(highlight, EINA_TRUE);
-
-   /* use focus cycle to read next, previous object */
+   _elm_access_read_mode_set(EINA_TRUE);
    elm_widget_focus_cycle(obj, dir);
 }
 
@@ -451,6 +460,8 @@ _elm_access_object_hilight(Evas_Object *obj)
         if (ptarget)
           {
              evas_object_data_del(o, "_elm_access_target");
+             elm_widget_parent_highlight_set(ptarget, EINA_FALSE);
+
              evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_DEL,
                                                  _access_obj_hilight_del_cb, NULL);
              evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_HIDE,
@@ -462,6 +473,7 @@ _elm_access_object_hilight(Evas_Object *obj)
           }
      }
    evas_object_data_set(o, "_elm_access_target", obj);
+   elm_widget_parent_highlight_set(obj, EINA_TRUE);
 
    elm_widget_theme_object_set(obj, o, "access", "base", "default");
 
@@ -499,6 +511,7 @@ _elm_access_object_unhilight(Evas_Object *obj)
         evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_RESIZE,
                                             _access_obj_hilight_resize_cb, NULL);
         evas_object_del(o);
+        elm_widget_parent_highlight_set(ptarget, EINA_FALSE);
      }
 }
 
@@ -644,6 +657,7 @@ _elm_access_object_hilight_disable(Evas *e)
                                             _access_obj_hilight_resize_cb, NULL);
      }
    evas_object_del(o);
+   elm_widget_parent_highlight_set(ptarget, EINA_FALSE);
 }
 
 EAPI void

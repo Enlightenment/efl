@@ -960,3 +960,7 @@
 2013-01-26  Daniel Juyung Seo (SeoZ)
 
         * Add elm_index_delay_change_time_set/get for changing delay change time in index.
+
+2013-01-28  Shinwoo Kim
+
+        * [access] The read next/prev message does not move focus but move highlight only. the focus moves when the activate message is detected.

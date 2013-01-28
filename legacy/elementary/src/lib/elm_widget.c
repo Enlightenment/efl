@@ -20,6 +20,9 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
   ELM_WIDGET_DATA_GET(obj, sd);                      \
   if (!sd) return
 
+#define ELM_WIDGET_FOCUS_GET(obj)                                    \
+  ((_elm_access_read_mode_get()) ? (elm_widget_highlight_get(obj)) : \
+                                  (elm_widget_focus_get(obj)))
 
 typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
@@ -1557,6 +1560,23 @@ _elm_widget_focus_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->focused;
 }
 
+EAPI Eina_Bool
+elm_widget_highlight_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_wdg_highlight_get(&ret));
+   return ret;
+}
+
+static void
+_elm_widget_highlight_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Widget_Smart_Data *sd = _pd;
+   *ret = sd->highlighted;
+}
+
 EAPI Evas_Object *
 elm_widget_focused_object_get(const Evas_Object *obj)
 {
@@ -2017,7 +2037,12 @@ _elm_widget_focus_cycle(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      return;
    elm_widget_focus_next_get(obj, dir, &target);
    if (target)
-     elm_widget_focus_steal(target);
+     {
+        /* access */
+        if (_elm_config->access_mode && _elm_access_read_mode_get())
+          _elm_access_highlight_set(target);
+        else elm_widget_focus_steal(target);
+     }
 }
 
 /**
@@ -2616,7 +2641,7 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    /* Return */
    *next = (Evas_Object *)obj;
-   *ret = !elm_widget_focus_get(obj);
+   *ret = !ELM_WIDGET_FOCUS_GET(obj);
 }
 
 /**
@@ -2687,12 +2712,12 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const Eina_List *l = items;
 
    /* Recovery last focused sub item */
-   if (elm_widget_focus_get(obj))
+   if (ELM_WIDGET_FOCUS_GET(obj))
      {
         for (; l; l = list_next(l))
           {
              Evas_Object *cur = list_data_get(l);
-             if (elm_widget_focus_get(cur)) break;
+             if (ELM_WIDGET_FOCUS_GET(cur)) break;
           }
 
          /* Focused object, but no focused sub item */
@@ -2745,6 +2770,29 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    *next = to_focus;
    return;
+}
+
+EAPI void
+elm_widget_parent_highlight_set(Evas_Object *obj,
+                                Eina_Bool highlighted)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do(obj, elm_wdg_parent_highlight_set(highlighted));
+}
+
+
+static void
+_elm_widget_parent_highlight_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool highlighted = va_arg(*list, int);
+   Elm_Widget_Smart_Data *sd = _pd;
+   highlighted = !!highlighted;
+
+   Evas_Object *o = elm_widget_parent_get(obj);
+
+   if (o) elm_widget_parent_highlight_set(o, highlighted);
+
+   sd->highlighted = highlighted;
 }
 
 EAPI void
@@ -5326,6 +5374,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_GET), _elm_widget_can_focus_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET), _elm_widget_child_can_focus_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_GET), _elm_widget_focus_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_GET), _elm_widget_highlight_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET), _elm_widget_focused_object_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TOP_GET), _elm_widget_top_get),
 
@@ -5396,7 +5445,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET), _elm_widget_focus_list_direction_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET), _elm_widget_focus_next_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), _elm_widget_focus_list_next_get),
-
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET), _elm_widget_parent_highlight_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), _elm_widget_display_mode_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), _elm_widget_display_mode_get),
 
@@ -5458,6 +5507,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET, "description here"),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_HIGHLIGHT_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TOP_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENT_WIDGET_GET, "description here"),
@@ -5530,6 +5580,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET, "Get near object in one direction of base object in list."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET, "Get next object in focus chain of object tree."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET, "Get next object in focus chain of object tree in list."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET, "Set highlighted value from itself to top parent object."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET, "Sets the widget and child widget's Evas_Display_Mode."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET, "Returns the widget's Evas_Display_Mode"),

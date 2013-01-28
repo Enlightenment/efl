@@ -429,6 +429,7 @@ typedef struct _Elm_Widget_Smart_Data
                                                           * default */
    Eina_Bool                     still_in : 1;
    Eina_Bool                     can_access : 1;
+   Eina_Bool                     highlighted : 1;
 } Elm_Widget_Smart_Data;
 
 /**
@@ -487,6 +488,11 @@ struct _Elm_Access_Info
 };
 
 void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
+/* elm_widget_focus_list_next_get();, elm_widget_focus_next_get();
+   and elm_widget_focus_cycle(); use _elm_access_read_mode to use
+   focus chain */
+void                  _elm_access_read_mode_set(Eina_Bool enabled);
+Eina_Bool             _elm_access_read_mode_get();
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data);
@@ -580,6 +586,7 @@ EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
 EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_focus_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_focused_object_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
@@ -598,6 +605,7 @@ EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, con
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, double *weight);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
+EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
@@ -1034,6 +1042,7 @@ enum
    ELM_WIDGET_SUB_ID_CAN_FOCUS_GET,
    ELM_WIDGET_SUB_ID_CHILD_CAN_FOCUS_GET,
    ELM_WIDGET_SUB_ID_FOCUS_GET,
+   ELM_WIDGET_SUB_ID_HIGHLIGHT_GET,
    ELM_WIDGET_SUB_ID_FOCUSED_OBJECT_GET,
    ELM_WIDGET_SUB_ID_TOP_GET,
 
@@ -1107,6 +1116,7 @@ enum
    ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET,
    ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET,
    ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET,
+   ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET,
 
    ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET,
    ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET,
@@ -1575,6 +1585,17 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_focus_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_highlight_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_highlight_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_wdg_focused_object_get
@@ -2281,6 +2302,16 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  */
 #define elm_wdg_focus_list_next_get(items, list_data_get, dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_wdg_parent_highlight_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] highlighted
+ *
+ */
+#define elm_wdg_parent_highlight_set(highlighted) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET), EO_TYPECHECK(Eina_Bool, highlighted)
 
 /**
  * @def elm_wdg_display_mode_set
