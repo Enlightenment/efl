@@ -559,7 +559,7 @@ struct _Ecore_X_Event_Window_Hide
    Ecore_X_Window win;
    Ecore_X_Window event_win;
    Ecore_X_Time   time;
-   Eina_Bool      send_event : 1;
+   Eina_Bool      send_event : 1; /**< @since 1.8 */
 };
 
 struct _Ecore_X_Event_Window_Show
