@@ -253,14 +253,14 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
         func = 
           evas_common_convert_func_get(0, w, h, depth, 
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
-                                       PAL_MODE_RGB332, ob->rotation);
+                                       PAL_MODE_NONE, ob->rotation);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         func = 
           evas_common_convert_func_get(0, h, w, depth, 
                                        RED_MASK, GREEN_MASK, BLUE_MASK,
-                                       PAL_MODE_RGB332, ob->rotation);
+                                       PAL_MODE_NONE, ob->rotation);
      }
 
    /* make sure we have a valid convert function */
@@ -448,18 +448,18 @@ evas_swapbuf_flush(Outbuf *ob)
 }
 
 void 
-evas_swapbuf_idle_flush(Outbuf *ob)
+evas_swapbuf_idle_flush(Outbuf *ob EINA_UNUSED)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid output buffer */
-   if (!ob) return;
+   /* if (!ob) return; */
 
    /* check for valid swapper */
-   if (!ob->priv.swapper) return;
+   /* if (!ob->priv.swapper) return; */
 
    /* tell the swapper to release any buffers that have been rendered */
-   evas_swapper_buffer_idle_flush(ob->priv.swapper);
+   /* evas_swapper_buffer_idle_flush(ob->priv.swapper); */
 }
 
 int 
