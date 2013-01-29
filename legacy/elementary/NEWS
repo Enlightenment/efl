@@ -134,14 +134,15 @@ Fixes:
    * when parent of ctxpopup is resized, ctxpopup calls dismissed signal.
    * Fix memory leak of the ctxpopup and callback function to be ctxpopup obj is delivered to.
    * Apply disply mode to all views of a naviframe if the display mode of the views are changed. Sometimes views are couldn't be recoverved to a previous status if they are stacked into more depth.
+   * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
+
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due
      to deprecation. Thus, people using that (unstable) API will have
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
-   * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
 
 Changes since Elementary 1.0.0:
 -------------------------
