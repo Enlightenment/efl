@@ -6280,17 +6280,14 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *
 static void
 _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 {
-   const char *type;
-
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
-   type = evas_object_type_get(rp->typedata.swallow->swallowed_object);
 
    rp->typedata.swallow->swallow_params.min.w = 0;
    rp->typedata.swallow->swallow_params.min.h = 0;
    rp->typedata.swallow->swallow_params.max.w = -1;
    rp->typedata.swallow->swallow_params.max.h = -1;
-   if ((type) && (!strcmp(type, "edje")))
+   if (eo_isa(rp->typedata.swallow->swallowed_object, EDJE_OBJ_CLASS))
      {
         Evas_Coord w, h;
 
@@ -6303,8 +6300,9 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
         rp->typedata.swallow->swallow_params.max.w = w;
         rp->typedata.swallow->swallow_params.max.h = h;
      }
-   else if ((type) && ((!strcmp(type, "text")) || (!strcmp(type, "polygon")) ||
-                       (!strcmp(type, "line"))))
+   else if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_TEXT_CLASS) ||
+	    eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_POLYGON_CLASS) ||
+	    eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_LINE_CLASS))
      {
         Evas_Coord w, h;
 
@@ -6442,8 +6440,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
                                   rp);
 
    //If the map is enabled, uv should be updated when image size is changed.
-   obj_type = evas_object_type_get(rp->typedata.swallow->swallowed_object);
-   if (obj_type && !strcmp(obj_type, "image"))
+   if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_IMAGE_CLASS))
      evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_IMAGE_RESIZE,
                                     _edje_object_part_swallow_image_resize_cb,
                                     rp);
@@ -6488,7 +6485,7 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,
                                        rp);
-   if (!strcmp(evas_object_type_get(rp->typedata.swallow->swallowed_object), "image"))
+   if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_IMAGE_CLASS))
      evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
                                          EVAS_CALLBACK_IMAGE_RESIZE,
                                          _edje_object_part_swallow_image_resize_cb,
