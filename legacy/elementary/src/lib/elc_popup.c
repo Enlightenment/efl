@@ -59,7 +59,7 @@ _timeout_cb(void *data,
 }
 
 static Evas_Object *
-_access_object_get(Evas_Object *obj, const char* part)
+_access_object_get(const Evas_Object *obj, const char* part)
 {
    Evas_Object *po, *ao;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -852,8 +852,14 @@ _title_text_set(Evas_Object *obj,
    /* access */
    if (_elm_config->access_mode)
      {
-        _access_obj_process(obj, EINA_TRUE);
         ao = _access_object_get(obj, ACCESS_TITLE_PART);
+        if (!ao)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Title"));
+          }
         _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
      }
 
@@ -919,8 +925,14 @@ _content_text_set(Evas_Object *obj,
    /* access */
    if (_elm_config->access_mode)
      {
-        _access_obj_process(obj, EINA_TRUE);
         ao = _access_object_get(obj, ACCESS_BODY_PART);
+        if (!ao)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_BODY_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Body Text"));
+          }
         _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
      }
 
