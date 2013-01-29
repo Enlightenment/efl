@@ -4068,6 +4068,29 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
 }
 
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+   EO_DBG_INFO_TEXT_APPEND(group, "Wid-Type", elm_widget_type_get(eo_obj));
+   EO_DBG_INFO_TEXT_APPEND(group, "Style", elm_widget_style_get(eo_obj));
+   EO_DBG_INFO_INTEGER_APPEND(group, "Layer",
+         (int) evas_object_layer_get(eo_obj));
+   EO_DBG_INFO_DOUBLE_APPEND(group, "Scale",
+         evas_object_scale_get(eo_obj));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Has focus",
+         elm_object_focus_get(eo_obj));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Disabled",
+         elm_widget_disabled_get(eo_obj));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Mirrored",
+         elm_widget_mirrored_get(eo_obj));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Automatic mirroring",
+         elm_widget_mirrored_automatic_get(eo_obj));
+}
+
 EAPI Eina_Bool
 elm_widget_is_check(const Evas_Object *obj)
 {
@@ -5318,6 +5341,7 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_widget_smart_member_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL), _elm_widget_smart_member_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_widget_smart_add),
