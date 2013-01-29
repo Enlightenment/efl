@@ -123,10 +123,11 @@ evas_video_sink_set_property(GObject * object, guint prop_id,
    switch (prop_id) {
     case PROP_EVAS_OBJECT:
        eina_lock_take(&priv->m);
-       evas_object_event_callback_del(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv);
+       evas_object_event_callback_del(priv->o, EVAS_CALLBACK_DEL, _cleanup_priv);
        priv->o = g_value_get_pointer (value);
        INF("sink set Evas_Object %p.", priv->o);
-       evas_object_event_callback_add(priv->o, EVAS_CALLBACK_FREE, _cleanup_priv, priv);
+       if (priv->o)
+         evas_object_event_callback_add(priv->o, EVAS_CALLBACK_DEL, _cleanup_priv, priv);
        eina_lock_release(&priv->m);
        break;
     case PROP_EV:
