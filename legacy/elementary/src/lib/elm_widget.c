@@ -4075,19 +4075,19 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(eo_obj, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
-   EO_DBG_INFO_TEXT_APPEND(group, "Wid-Type", elm_widget_type_get(eo_obj));
-   EO_DBG_INFO_TEXT_APPEND(group, "Style", elm_widget_style_get(eo_obj));
-   EO_DBG_INFO_INTEGER_APPEND(group, "Layer",
+   EO_DBG_INFO_APPEND(group, "Wid-Type", EINA_VALUE_TYPE_STRING, elm_widget_type_get(eo_obj));
+   EO_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, elm_widget_style_get(eo_obj));
+   EO_DBG_INFO_APPEND(group, "Layer", EINA_VALUE_TYPE_INT,
          (int) evas_object_layer_get(eo_obj));
-   EO_DBG_INFO_DOUBLE_APPEND(group, "Scale",
+   EO_DBG_INFO_APPEND(group, "Scale", EINA_VALUE_TYPE_DOUBLE,
          evas_object_scale_get(eo_obj));
-   EO_DBG_INFO_BOOLEAN_APPEND(group, "Has focus",
+   EO_DBG_INFO_APPEND(group, "Has focus", EINA_VALUE_TYPE_CHAR,
          elm_object_focus_get(eo_obj));
-   EO_DBG_INFO_BOOLEAN_APPEND(group, "Disabled",
+   EO_DBG_INFO_APPEND(group, "Disabled", EINA_VALUE_TYPE_CHAR,
          elm_widget_disabled_get(eo_obj));
-   EO_DBG_INFO_BOOLEAN_APPEND(group, "Mirrored",
+   EO_DBG_INFO_APPEND(group, "Mirrored", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_get(eo_obj));
-   EO_DBG_INFO_BOOLEAN_APPEND(group, "Automatic mirroring",
+   EO_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          elm_widget_mirrored_automatic_get(eo_obj));
 }
 
