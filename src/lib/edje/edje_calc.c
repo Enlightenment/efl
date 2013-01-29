@@ -3378,7 +3378,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              evas_map_util_points_populate_from_object(map, ep->object);
              if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
                  ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
-                  (!strcmp(evas_object_type_get(mo), "image") &&
+                  (eo_isa(mo, EVAS_OBJ_IMAGE_CLASS) &&
                   (!evas_object_image_source_get(mo))))
                 )
                {
