@@ -61,10 +61,6 @@ lib/ecore_x/xlib/ecore_x.c \
 lib/ecore_x/xlib/ecore_x_dnd.c \
 lib/ecore_x/xlib/ecore_x_sync.c \
 lib/ecore_x/xlib/ecore_x_randr.c \
-lib/ecore_x/xlib/ecore_x_randr_11.c \
-lib/ecore_x/xlib/ecore_x_randr_12.c \
-lib/ecore_x/xlib/ecore_x_randr_12_edid.c \
-lib/ecore_x/xlib/ecore_x_randr_13.c \
 lib/ecore_x/xlib/ecore_x_fixes.c \
 lib/ecore_x/xlib/ecore_x_damage.c \
 lib/ecore_x/xlib/ecore_x_composite.c \
