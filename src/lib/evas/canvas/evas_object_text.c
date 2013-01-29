@@ -953,14 +953,14 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    const char *text;
    int size;
    eo_do(eo_obj, evas_obj_text_font_get(&text, &size));
-   EO_DBG_INFO_TEXT_APPEND(group, "Font", text);
-   EO_DBG_INFO_INTEGER_APPEND(group, "Text size", size);
+   EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
+   EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
    eo_do(eo_obj, evas_obj_text_font_source_get(&text));
-   EO_DBG_INFO_TEXT_APPEND(group, "Font source", text);
+   EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
    eo_do(eo_obj, evas_obj_text_text_get(&text));
-   EO_DBG_INFO_TEXT_APPEND(group, "Text", text);
+   EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, text);
 }
 
 EAPI void

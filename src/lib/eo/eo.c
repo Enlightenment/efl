@@ -55,16 +55,6 @@ struct _Eo {
      Eina_Bool manual_free:1;
 };
 
-/* START - EO Debug structs */
-struct _Eo_Dbg_Info
-{  /* Debug info composed of a list of Eo_Dbg_Info */
-   const char *name;
-   Eo_Dbg_Info_Type type;
-   Eo_Dbg_Info_Union un_dbg_info;
-};
-/* END   - EO Debug structs */
-
-
 /* Start of Dich */
 
 /* How we search and store the implementations in classes. */
@@ -1592,51 +1582,73 @@ eo_manual_free(Eo *obj)
    _eo_free(obj);
 }
 
-EAPI Eo_Dbg_Info *
-eo_dbg_info_append(Eo_Dbg_Info *root, const char *name, Eo_Dbg_Info_Type type)
-{
-   if (root && EO_DBG_INFO_TYPE_LIST != root->type)
-      return NULL;
-
-   Eo_Dbg_Info *st = calloc(1, sizeof(Eo_Dbg_Info));
-   if (!st) return NULL;
-
-   st->name = name;
-   st->type = type;
-
-   if (root)
-      root->un_dbg_info.list = eina_list_append(root->un_dbg_info.list, st);
-
-   return st;
-}
-
+/* Eo_Dbg */
 EAPI void
-eo_dbg_info_free(Eo_Dbg_Info *root)
+eo_dbg_info_free(Eo_Dbg_Info *info)
 {
-   if (EO_DBG_INFO_TYPE_LIST == root->type)
-     {
-        Eo_Dbg_Info *eo;
-        EINA_LIST_FREE(root->un_dbg_info.list, eo)
-           eo_dbg_info_free(eo);
-     }
-   free(root);
+   eina_value_flush(&(info->value));
+   free(info);
 }
 
-EAPI const char *
-eo_dbg_name_get(Eo_Dbg_Info *node)
+static Eina_Bool
+_eo_dbg_info_setup(const Eina_Value_Type *type, void *mem)
 {
-   return ((node) ? node->name : NULL);
+   memset(mem, 0, type->value_size);
+   return EINA_TRUE;
 }
 
-EAPI Eo_Dbg_Info_Union *
-eo_dbg_union_get(Eo_Dbg_Info *node)
+static Eina_Bool
+_eo_dbg_info_flush(const Eina_Value_Type *type EINA_UNUSED, void *_mem)
 {
-   return ((node) ? &node->un_dbg_info : NULL);
+   Eo_Dbg_Info *mem = *(Eo_Dbg_Info **) _mem;
+   eina_stringshare_del(mem->name);
+   eina_value_flush(&(mem->value));
+   free(mem);
+   return EINA_TRUE;
 }
 
-EAPI Eo_Dbg_Info_Type
-eo_dbg_type_get(Eo_Dbg_Info *node)
+static Eina_Bool
+_eo_dbg_info_copy(const Eina_Value_Type *type EINA_UNUSED, const void *_src, void *_dst)
 {
-   return ((node) ? node->type : EO_DBG_INFO_TYPE_UNKNOWN);
+   const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) _src;
+   Eo_Dbg_Info **dst = _dst;
+   *dst = calloc(1, sizeof(*dst));
+   (*dst)->name = eina_stringshare_ref((*src)->name);
+   eina_value_copy(&((*src)->value), &((*dst)->value));
+   return EINA_TRUE;
 }
 
+static Eina_Bool
+_eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const void *_ptr)
+{
+   Eo_Dbg_Info **mem = _mem;
+   if (*mem)
+      free(*mem);
+   *mem = (void *) _ptr;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_dbg_info_pget(const Eina_Value_Type *type EINA_UNUSED, const void *_mem, void *_ptr)
+{
+   Eo_Dbg_Info **ptr = _ptr;
+   *ptr = (void *) _mem;
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EO_DBG_INFO_TYPE = {
+   EINA_VALUE_TYPE_VERSION,
+   sizeof(Eo_Dbg_Info *),
+   "Eo_Dbg_Info_Ptr",
+   _eo_dbg_info_setup,
+   _eo_dbg_info_flush,
+   _eo_dbg_info_copy,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _eo_dbg_info_pset,
+   _eo_dbg_info_pget
+};
+
+EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;

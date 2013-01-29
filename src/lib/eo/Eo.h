@@ -63,138 +63,6 @@ enum _Eo_Op_Type
  */
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
-/* START - Eo Debug support */
-/**
- * @var Eo_Dbg_Info_Type
- * #Eo_Dbg_Info_Type - tells what type of info in union.
- */
-enum _Eo_Dbg_Info_Type
-{  /* Public */
-   EO_DBG_INFO_TYPE_UNKNOWN,
-   EO_DBG_INFO_TYPE_STRING,    /**< info is string          */
-   EO_DBG_INFO_TYPE_INT,       /**< Single int, enum        */
-   EO_DBG_INFO_TYPE_BOOL,      /**< Single Eina_Bool        */
-   EO_DBG_INFO_TYPE_PTR,       /**< Single PTR value        */
-   EO_DBG_INFO_TYPE_DOUBLE,    /**< Single DBL value        */
-   EO_DBG_INFO_TYPE_LIST       /**< Eina_List * of structs  */
-};
-typedef enum _Eo_Dbg_Info_Type Eo_Dbg_Info_Type;
-
-union _Eo_Dbg_Info_Union
-{
-   const char *text;
-   int i;
-   Eina_Bool b;
-   void *ptr;
-   double dbl;
-   Eina_List *list;  /* Sub-List of (Eo_Dbg_Info *) if needed */
-};
-typedef union _Eo_Dbg_Info_Union Eo_Dbg_Info_Union;
-
-/* Private */
-typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
-
-/**
- * @def EO_DBG_INFO_TEXT_APPEND
- * Append a parameter into debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] VALUE text
- *
- */
-#define EO_DBG_INFO_TEXT_APPEND(LIST, NAME, VALUE) \
-   do { \
-        Eo_Dbg_Info_Union *un = EO_DBG_INFO_APPEND(LIST, NAME, EO_DBG_INFO_TYPE_STRING); \
-        un->text = VALUE; \
-   } while (0);
-
-/**
- * @def EO_DBG_INFO_INTEGER_APPEND
- * Append a parameter into debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] VALUE integer
- *
- */
-#define EO_DBG_INFO_INTEGER_APPEND(LIST, NAME, VALUE) \
-   do { \
-        Eo_Dbg_Info_Union *un = EO_DBG_INFO_APPEND(LIST, NAME, EO_DBG_INFO_TYPE_INT); \
-        un->i = VALUE; \
-   } while (0);
-
-/**
- * @def EO_DBG_INFO_BOOLEAN_APPEND
- * Append a parameter into debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] VALUE boolean
- *
- */
-#define EO_DBG_INFO_BOOLEAN_APPEND(LIST, NAME, VALUE) \
-   do { \
-        Eo_Dbg_Info_Union *un = EO_DBG_INFO_APPEND(LIST, NAME, EO_DBG_INFO_TYPE_BOOL); \
-        un->b = VALUE; \
-   } while (0);
-
-/**
- * @def EO_DBG_INFO_PTR_APPEND
- * Append a parameter into debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] VALUE pointer
- *
- */
-#define EO_DBG_INFO_PTR_APPEND(LIST, NAME, VALUE) \
-   do { \
-        Eo_Dbg_Info_Union *un = EO_DBG_INFO_APPEND(LIST, NAME, EO_DBG_INFO_TYPE_PTR); \
-        un->ptr = VALUE; \
-   } while (0);
-
-/**
- * @def EO_DBG_INFO_DOUBLE_APPEND
- * Append a parameter into debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] VALUE double
- *
- */
-#define EO_DBG_INFO_DOUBLE_APPEND(LIST, NAME, VALUE) \
-   do { \
-        Eo_Dbg_Info_Union *un = EO_DBG_INFO_APPEND(LIST, NAME, EO_DBG_INFO_TYPE_DOUBLE); \
-        un->dbl = VALUE; \
-   } while (0);
-
-/**
- * @def EO_DBG_INFO_DOUBLE_APPEND
- * Creates a list inside debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the list
- * @return the new list
- *
- */
-#define EO_DBG_INFO_LIST_APPEND(LIST, NAME) \
-   ( \
-     eo_dbg_info_append(LIST, NAME, EO_DBG_INFO_TYPE_LIST) \
-   )
-
-/**
- * @def EO_DBG_INFO_APPEND
- * Creates a new debug info into a list
- * @param[in] LIST list where to append
- * @param[in] NAME name of the parameter
- * @param[in] TYPE type of the parameter
- * @return a pointer to the debug info union where to store the value
- * @return the new list
- *
- */
-#define EO_DBG_INFO_APPEND(LIST, NAME, TYPE) \
-   ({ \
-    Eo_Dbg_Info *_node = eo_dbg_info_append(LIST, NAME, TYPE); \
-    eo_dbg_union_get(_node); })
-
-/* END   - Eo Debug support */
-
-
 /**
  * @page eo_main Eo
  *
@@ -253,6 +121,84 @@ typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
  *
  * @addtogroup Eo
  * @{
+ */
+
+/**
+ * @addtogroup Eo_Debug_Information Eo's Debug information helper.
+ * @{
+ */
+
+/**
+ * @struct _Eo_Dbg_Info
+ * The structure for the debug info used by Eo.
+ */
+struct _Eo_Dbg_Info
+{
+   Eina_Stringshare *name; /**< The name of the part (stringshare). */
+   Eina_Value value; /**< The value. */
+};
+
+/**
+ * @var EO_DBG_INFO_TYPE
+ * The Eina_Value_Type for the debug info.
+ */
+EAPI extern const Eina_Value_Type *EO_DBG_INFO_TYPE;
+
+/**
+ * @typedef Eo_Dbg_Info
+ * A convenience typedef for #_Eo_Dbg_Info
+ */
+typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
+
+/**
+ * @def EO_DBG_INFO_LIST_APPEND
+ * Creates a list inside debug info list.
+ * @param[in] LIST list where to append
+ * @param[in] NAME name of the list
+ * @return the new list
+ */
+#define EO_DBG_INFO_LIST_APPEND(LIST, NAME) \
+({ \
+   Eo_Dbg_Info *List = LIST; \
+   Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
+   Tmp->name = eina_stringshare_add(NAME); \
+   eina_value_list_setup(&(Tmp->value), EO_DBG_INFO_TYPE); \
+   if (List) \
+     { \
+        eina_value_list_pappend(&(List->value), Tmp); \
+     } \
+   Tmp; \
+})
+
+/**
+ * @def EO_DBG_INFO_APPEND
+ * Creates a new debug info into a list
+ * @param[in] LIST list where to append (Eo_Dbg_Info *)
+ * @param[in] NAME name of the parameter (const char *)
+ * @param[in] TYPE type of the parameter (Eina_Value_Type *)
+ * @param[in] VALUE value of the parameter
+ */
+#define EO_DBG_INFO_APPEND(LIST, NAME, TYPE, VALUE) \
+do { \
+   Eo_Dbg_Info *List = LIST; \
+   Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
+   Tmp->name = eina_stringshare_add(NAME); \
+   eina_value_setup(&(Tmp->value), TYPE); \
+   eina_value_set(&(Tmp->value), VALUE); \
+   if (List) \
+     { \
+        eina_value_list_pappend(&(List->value), Tmp); \
+     } \
+} while (0)
+
+/**
+ * Frees the Eo_Dbg_Info tree. (The whole tree recursively).
+ * @param[in] info The tree to delete.
+ */
+EAPI void eo_dbg_info_free(Eo_Dbg_Info *info);
+
+/**
+ * @}
  */
 
 /**
@@ -977,57 +923,6 @@ EAPI void eo_composite_detach(Eo *comp_obj, Eo *parent);
 EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
 
 /**
- * @brief Allocates Eo_Dbg_Info node
- * @param root - tree to where we append allocated node.
- * @param name - Name (title) of info.
- * @param type - type of info.
- * Use this function to allocate Eo_Dbg_Info node.
- * Use dbg_info_free to free this node.
- *
- * @return a pointer to the newly allocated Eo_Dbg_Info.
- * @see eo_dbg_info_free, eo_dbg_type_get, eo_dbg_information_get
- */
-EAPI Eo_Dbg_Info *eo_dbg_info_append(Eo_Dbg_Info *root, const char *name, Eo_Dbg_Info_Type type);
-
-/**
- * @brief Free list of Eo_Dbg_Info node (including children)
- * @param node - node to free.
- *
- * @see eo_dbg_type_get, eo_dbg_information_get
- */
-EAPI void eo_dbg_info_free(Eo_Dbg_Info *node);
-
-/**
- * @brief Get a pointer to Eo_Dbg_Info union
- * @param node - pointer to Eo_Dbg_Info node
- *
- * @return Pointer to struct union (public data).
- * @see eo_dbg_info_free, eo_dbg_type_get, eo_dbg_information_get
- */
-EAPI Eo_Dbg_Info_Union *eo_dbg_union_get(Eo_Dbg_Info *node);
-
-/**
- * @brief Returns name of dbg-info.
- * @param node - pointer to info struct.
- * Use this function to retrieve the name field of debug info.
- *
- * @see eo_dbg_info_free
- * @see eo_dbg_type_get, eo_dbg_information_get
- */
-EAPI const char *eo_dbg_name_get(Eo_Dbg_Info *node);
-
-/**
- * @brief Returns type of dbg-info.
- * @param node - pointer to info struct.
- * Use this function to retrieve the type field of debug info.
- *
- * @return name (title) of info.
- * @see eo_dbg_info_free
- * @see eo_dbg_name_get, eo_dbg_information_get
- */
-EAPI Eo_Dbg_Info_Type eo_dbg_type_get(Eo_Dbg_Info *node);
-
-/**
  * @}
  */
 
@@ -1114,9 +1009,8 @@ enum {
 
 /**
  * @def eo_dbg_info_get(root_node)
- * Get generic data from object.
+ * Get dbg information from the object.
  * @param[in] root node of the tree
- *
  */
 #define eo_dbg_info_get(root_node) EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), EO_TYPECHECK(Eo_Dbg_Info *, root_node)
 

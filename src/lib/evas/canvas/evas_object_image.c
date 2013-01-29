@@ -775,16 +775,16 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
    const char *file, *key;
    eo_do(eo_obj, evas_obj_image_file_get(&file, &key));
-   EO_DBG_INFO_TEXT_APPEND(group, "Image File", file);
-   EO_DBG_INFO_TEXT_APPEND(group, "Key", key);
-   EO_DBG_INFO_PTR_APPEND(group, "Source",
-                          (void *) evas_object_image_source_get(eo_obj));
+   EO_DBG_INFO_APPEND(group, "Image File", EINA_VALUE_TYPE_STRING, file);
+   EO_DBG_INFO_APPEND(group, "Key", EINA_VALUE_TYPE_STRING, key);
+   EO_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
+                          (uint64_t) (uintptr_t *) evas_object_image_source_get(eo_obj));
 
    if (evas_object_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
      {
         Evas_Load_Error error;
         eo_do(eo_obj, evas_obj_image_load_error_get(&error));
-        EO_DBG_INFO_TEXT_APPEND(group, "Load Error",
+        EO_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
                                 evas_load_error_str(error));
      }
 }

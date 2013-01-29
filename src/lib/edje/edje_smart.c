@@ -45,14 +45,14 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
    const char *file, *edje_group;
    eo_do(eo_obj, edje_obj_file_get(&file, &edje_group));
-   EO_DBG_INFO_TEXT_APPEND(group, "File", file);
-   EO_DBG_INFO_TEXT_APPEND(group, "Group", edje_group);
+   EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
+   EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
    Edje_Load_Error error;
    eo_do(eo_obj, edje_obj_load_error_get(&error));
    if (error != EDJE_LOAD_ERROR_NONE)
      {
-        EO_DBG_INFO_TEXT_APPEND(group, "Error",
+        EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
               edje_load_error_str(error));
      }
 }

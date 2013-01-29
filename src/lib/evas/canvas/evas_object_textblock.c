@@ -10038,8 +10038,8 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    if (shorttext[37])
      strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */
 
-   EO_DBG_INFO_TEXT_APPEND(group, "Style", style);
-   EO_DBG_INFO_TEXT_APPEND(group, "Text", shorttext);
+   EO_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, style);
+   EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, shorttext);
 }
 
 /** @internal
