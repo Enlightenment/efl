@@ -131,6 +131,9 @@ struct _EPhysics_Body_Face_Slice {
      Eina_List *slices;
 };
 
+// EPhysics_Body is an Eina_Inlist, and Eina_Inslist iterator macros use
+// offsetof(). Since using offsetof in C++ classes is invalid,
+// EPhysics_Body must be a POD-type struct.
 struct _EPhysics_Body {
      EINA_INLIST;
      btCollisionShape *collision_shape;
@@ -140,7 +143,7 @@ struct _EPhysics_Body {
      EPhysics_World *world;
      int walking;
      EPhysics_Body_Size size;
-     btVector3 scale;
+     btScalar scale[3];
      void *data;
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;

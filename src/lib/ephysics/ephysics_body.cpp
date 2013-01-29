@@ -795,7 +795,9 @@ _ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_
      }
 
    rate = ephysics_world_rate_get(world);
-   body->scale = btVector3(1, 1, 1);
+   body->scale[0] = 1;
+   body->scale[1] = 1;
+   body->scale[2] = 1;
    body->size.w = rate;
    body->size.h = rate;
    body->size.d = rate;
@@ -1057,7 +1059,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    double mx, my, mz, sx, sy, sz;
    btTransform trans;
    int wy, height;
-   btVector3 body_scale;
+   btVector3 body_scale, old_scale;
 
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
                                       NULL, &height, NULL);
@@ -1073,10 +1075,11 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    trans = _ephysics_body_transform_get(body);
    trans.setOrigin(btVector3(mx, my, mz));
    body_scale = btVector3(sx, sy, sz);
+   old_scale = btVector3(body->scale[0], body->scale[1], body->scale[2]);
 
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(btVector3(1, 1, 1) / old_scale);
         body->soft_body->scale(body_scale);
         body->rigid_body->proceedToTransform(trans);
         _ephysics_body_transform_set(body, trans);
@@ -1085,7 +1088,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    else if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
      {
         body->soft_body->setTotalMass(body->mass, true);
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(btVector3(1, 1, 1) / old_scale);
         body->soft_body->scale(body_scale);
         _ephysics_body_transform_set(body, trans);
         _ephysics_body_cloth_constraints_rebuild(body);
@@ -1107,7 +1110,9 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    body->size.w = w;
    body->size.h = h;
    body->size.d = d;
-   body->scale = body_scale;
+   body->scale[0] = sx;
+   body->scale[1] = sy;
+   body->scale[2] = sz;
 
    DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
    DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
@@ -1131,9 +1136,10 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body_scale = btVector3(sx, sy, sz);
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
+        btVector3 old_scale(body->scale[0], body->scale[1], body->scale[2]);
         trans = _ephysics_body_transform_get(body);
 
-        body->soft_body->scale(btVector3(1, 1, 1) / body->scale);
+        body->soft_body->scale(btVector3(1, 1, 1) / old_scale);
         body->soft_body->scale(body_scale);
 
         _ephysics_body_transform_set(body, trans);
@@ -1158,7 +1164,9 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coor
    body->size.w = w;
    body->size.h = h;
    body->size.d = d;
-   body->scale = body_scale;
+   body->scale[0] = sx;
+   body->scale[1] = sy;
+   body->scale[2] = sz;
 
    ephysics_body_activate(body, EINA_TRUE);
 }
@@ -3547,17 +3555,17 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
      }
 
    trans = _ephysics_body_transform_get(body);
-   scale = body->scale;
+   scale = btVector3(body->scale[0], body->scale[1], body->scale[2]);
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
                                       NULL, &height, NULL);
    height += wy;
 
-   if (x) *x = round((trans.getOrigin().getX() - scale.x() / 2) * rate);
-   if (y) *y = height - round((trans.getOrigin().getY() + scale.y() / 2)
+   if (x) *x = round((trans.getOrigin().getX() - scale[0] / 2) * rate);
+   if (y) *y = height - round((trans.getOrigin().getY() + scale[1] / 2)
                               * rate);
-   if (z) *z = round((trans.getOrigin().getZ() - scale.z() / 2) * rate);
+   if (z) *z = round((trans.getOrigin().getZ() - scale[2] / 2) * rate);
    if (w) *w = body->size.w;
    if (h) *h = body->size.h;
    if (d) *d = body->size.d;
