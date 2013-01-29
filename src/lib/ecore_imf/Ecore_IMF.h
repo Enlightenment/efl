@@ -39,15 +39,15 @@ extern "C" {
  *
  * Functions that operate on Ecore Input Method Context objects.
 
- * Ecore Input Method Context Function defines the interface for EFL input methods. 
- * An input method is used by EFL text input widgets like elm_entry 
+ * Ecore Input Method Context Function defines the interface for EFL input methods.
+ * An input method is used by EFL text input widgets like elm_entry
  * (based on edje_entry) to map from key events to Unicode character strings.
  *
  * The default input method can be set through setting the ECORE_IMF_MODULE environment variable.
  * eg) export ECORE_IMF_MODULE=xim (or scim or ibus)
  *
- * An input method may consume multiple key events in sequence and finally output the composed result. 
- * This is called preediting, and an input method may provide feedback about 
+ * An input method may consume multiple key events in sequence and finally output the composed result.
+ * This is called preediting, and an input method may provide feedback about
  * this process by displaying the intermediate composition states as preedit text.
  *
  * Immodule is plugin to connect your application and input method framework such as SCIM, ibus, and so on.@n
@@ -559,7 +559,7 @@ EAPI const char                   *ecore_imf_context_default_id_by_canvas_type_g
  * @return Return a #Ecore_IMF_Context_Info for the Input Method Context with @p id;
  *         on failure it returns NULL.
  * @ingroup Ecore_IMF_Context_Group
- * 
+ *
  * Example
  * @code
  *
@@ -742,7 +742,7 @@ EAPI void                          ecore_imf_context_preedit_string_get(Ecore_IM
  *              }
  *         }
  *    }
- * 
+ *
  * // delete attribute list
  * EINA_LIST_FREE(attrs, attr) free(attr);
  *
@@ -800,7 +800,7 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
  * change in cursor position has been made. This will typically
  * cause the Input Method Context to clear the preedit state or commit the preedit string.
  *
- * The operation of ecore_imf_context_reset() depends on the specific characteristics of 
+ * The operation of ecore_imf_context_reset() depends on the specific characteristics of
  * each language. For example, the preedit string is cleared in the Chinese and Japanese Input Method Engine.
  * However, The preedit string is committed and then cleared in the Korean Input Method Engine.
  *
@@ -809,7 +809,7 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
  *
  * @param ctx An #Ecore_IMF_Context.
  * @ingroup Ecore_IMF_Context_Group
- * 
+ *
  * Example
  * @code
  * static void
@@ -840,7 +840,7 @@ EAPI void                          ecore_imf_context_cursor_position_set(Ecore_I
 /**
  * Notify the Input Method Context that a change in the cursor
  * location has been made. The location is relative to the canvas.
- * The cursor location can be used to determine the position of 
+ * The cursor location can be used to determine the position of
  * candidate word window in the immodule.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -989,7 +989,7 @@ EAPI void                         *ecore_imf_context_data_get(Ecore_IMF_Context 
 
 /**
  * Retrieve context around insertion point.
- * Input methods typically want context in order to constrain input text based on existing text; 
+ * Input methods typically want context in order to constrain input text based on existing text;
  * this is important for languages such as Thai where only some sequences of characters are allowed.
  * In addition, the text around the insertion point can be used for supporting autocapital feature.
  *
@@ -1134,9 +1134,9 @@ EAPI void                         *ecore_imf_context_event_callback_del(Ecore_IM
 /**
  * Call a given callback on the context @p ctx.
  *
- * ecore_imf_context_preedit_start_event_add(), ecore_imf_context_preedit_end_event_add(), 
+ * ecore_imf_context_preedit_start_event_add(), ecore_imf_context_preedit_end_event_add(),
  * ecore_imf_context_preedit_changed_event_add(), ecore_imf_context_commit_event_add() and
- * ecore_imf_context_delete_surrounding_event_add() APIs are asynchronous 
+ * ecore_imf_context_delete_surrounding_event_add() APIs are asynchronous
  * because those API adds each event to the event queue.
  *
  * This API provides the way to call each callback function immediately.
@@ -1411,7 +1411,7 @@ EAPI Ecore_IMF_Input_Panel_State   ecore_imf_context_input_panel_state_get(Ecore
 
 /**
  * Register a callback function which will be called if there is change in input panel state,language,mode etc.
- * In order to deregister the callback function 
+ * In order to deregister the callback function
  * Use @ref ecore_imf_context_input_panel_event_callback_del.
  *
  * @param ctx An #Ecore_IMF_Context
