@@ -239,7 +239,7 @@ enum
  * @def elm_obj_slider_value_get
  * @since 1.8
  *
- * Get the value displayed by the spinner.
+ * Get the value displayed by the slider.
  *
  * @param[out] ret
  *
@@ -586,12 +586,12 @@ EAPI void                         elm_slider_min_max_get(const Evas_Object *obj,
 EAPI void                         elm_slider_value_set(Evas_Object *obj, double val);
 
 /**
- * Get the value displayed by the spinner.
+ * Get the value displayed by the slider.
  *
- * @param obj The spinner object.
+ * @param obj The slider object.
  * @return The value displayed.
  *
- * @see elm_spinner_value_set() for details.
+ * @see elm_slider_value_set() for details.
  *
  * @ingroup Slider
  */
