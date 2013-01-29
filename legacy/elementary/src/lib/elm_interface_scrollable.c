@@ -2910,26 +2910,27 @@ _elm_scroll_mouse_move_event_cb(void *data,
                               }
                          }
                        {
-                          Evas_Coord minx, miny;
+                          Evas_Coord minx, miny, mx, my;
 
                           eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+                          eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&mx, &my));
                           if (y < miny)
                             y += (miny - y) *
                               _elm_config->thumbscroll_border_friction;
-                          else if (sid->content_info.h <= sid->h)
+                          else if (my <= 0)
                             y += (sid->down.sy - y) *
                               _elm_config->thumbscroll_border_friction;
-                          else if ((sid->content_info.h - sid->h + miny) < y)
-                            y += (sid->content_info.h - sid->h + miny - y) *
+                          else if ((my + miny) < y)
+                            y += (my + miny - y) *
                               _elm_config->thumbscroll_border_friction;
                           if (x < minx)
                             x += (minx - x) *
                               _elm_config->thumbscroll_border_friction;
-                          else if (sid->content_info.w <= sid->w)
+                          else if (mx <= 0)
                             x += (sid->down.sx - x) *
                               _elm_config->thumbscroll_border_friction;
-                          else if ((sid->content_info.w - sid->w + minx) < x)
-                            x += (sid->content_info.w - sid->w + minx - x) *
+                          else if ((mx + minx) < x)
+                            x += (mx + minx - x) *
                               _elm_config->thumbscroll_border_friction;
                        }
 

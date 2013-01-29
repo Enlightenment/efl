@@ -964,3 +964,7 @@
 2013-01-28  Shinwoo Kim
 
         * [access] The read next/prev message does not move focus but move highlight only. the focus moves when the activate message is detected.
+
+2013-01-29  Jaehwan Kim
+
+        * Fix the scroll position is calculated by the size of pan object, not the size of scroller.

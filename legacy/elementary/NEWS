@@ -141,6 +141,7 @@ Removals:
      to deprecation. Thus, people using that (unstable) API will have
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
+   * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
 
 Changes since Elementary 1.0.0:
 -------------------------
