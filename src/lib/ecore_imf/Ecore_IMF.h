@@ -766,11 +766,11 @@ EAPI void                          ecore_imf_context_preedit_string_with_attribu
  * static void
  * _focus_in_cb(void *data, Evas_Object *o, const char *emission, const char *source)
  * {
- *    ecore_imf_context_reset(imf_context);
+ *    Ecore_IMF_Context *imf_context = data;
  *    ecore_imf_context_focus_in(imf_context);
  * }
  *
- * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _focus_in_cb, ed);
+ * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _focus_in_cb, imf_context);
  * @endcode
  */
 EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context *ctx);
@@ -787,6 +787,7 @@ EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context 
  * static void
  * _focus_out_cb(void *data, Evas_Object *o, const char *emission, const char *source)
  * {
+ *    Ecore_IMF_Context *imf_context = data;
  *    ecore_imf_context_reset(imf_context);
  *    ecore_imf_context_focus_out(imf_context);
  * }
@@ -799,7 +800,14 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
 /**
  * Notify the Input Method Context that a change such as a
  * change in cursor position has been made. This will typically
- * cause the Input Method Context to clear the preedit state.
+ * cause the Input Method Context to clear the preedit state or commit the preedit string.
+ *
+ * The operation of ecore_imf_context_reset() depends on the specific characteristics of 
+ * each langauge. For example, the preedit string is cleared in the Chinese and Japanese Input Method Engine.
+ * However, The preedit string is committed and then cleared in the Korean Input Method Engine.
+ *
+ * This function should be called in case of the focus-out and mouse down event callback function.
+ * In addition, it should be called before inserting some text.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @ingroup Ecore_IMF_Context_Group
@@ -809,11 +817,12 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
  * static void
  * _focus_out_cb(void *data, Evas_Object *o, const char *emission, const char *source)
  * {
+ *    Ecore_IMF_Context *imf_context = data;
  *    ecore_imf_context_reset(imf_context);
  *    ecore_imf_context_focus_out(imf_context);
  * }
  *
- * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _focus_out_cb, ed);
+ * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _focus_out_cb, imf_context);
  * @endcode
  */
 EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
@@ -821,6 +830,8 @@ EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ct
 /**
  * Notify the Input Method Context that a change in the cursor
  * position has been made.
+ *
+ * This function should be called when cursor position is changed or mouse up event is generated.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param cursor_pos New cursor position in characters.
