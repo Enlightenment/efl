@@ -131,3 +131,4 @@ Fixes:
     * Fixed pixman surface alloc where allocated and image size differ.
     * Fixed x11 error sync issue with ecore_x_image_get()
     * Fix evas gif loader to return the correct frame duration
+    * Prevent a crash even if an invalid object is swallowed into an edje object.

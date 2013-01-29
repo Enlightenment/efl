@@ -6401,6 +6401,8 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
                         Evas_Object *obj_swallow,
                         Eina_Bool hints_update)
 {
+   const char *obj_type;
+
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
    if (rp->typedata.swallow->swallowed_object)
@@ -6440,7 +6442,8 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
                                   rp);
 
    //If the map is enabled, uv should be updated when image size is changed.
-   if (!strcmp(evas_object_type_get(rp->typedata.swallow->swallowed_object), "image"))
+   obj_type = evas_object_type_get(rp->typedata.swallow->swallowed_object);
+   if (obj_type && !strcmp(obj_type, "image"))
      evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_IMAGE_RESIZE,
                                     _edje_object_part_swallow_image_resize_cb,
                                     rp);

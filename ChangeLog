@@ -385,3 +385,8 @@
 
 				* Ecore_Evas wayland-egl only renders now if last frame has
 				been presented.
+
+2013-01-29 Sumanth Krishna Mannam <sumanth.m@samsung.com>
+
+				* Prevent a crash even if an invalid object is swallowed into an
+			  	edje object.
