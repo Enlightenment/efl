@@ -87,7 +87,6 @@ lib/ecore_x/xlib/ecore_x_region.c \
 lib/ecore_x/xlib/ecore_x_image.c \
 lib/ecore_x/xlib/ecore_x_xi2.c \
 lib/ecore_x/xlib/ecore_x_vsync.c \
-lib/ecore_x/xlib/ecore_x_randr.h \
 lib/ecore_x/xlib/ecore_x_gesture.c \
 lib/ecore_x/xlib/ecore_x_private.h
 endif
