@@ -370,7 +370,7 @@ psd_get_data(Image_Entry *ie EINA_UNUSED,
 
 		  for (y = 0; y < head->height * bps2; y += bps2)
                     {
-                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr)
+                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr++)
                          {
                             unsigned int newval;
 

@@ -371,7 +371,7 @@ psd_get_data(PSD_Header *head,
 
 		  for (y = 0; y < head->height * bps2; y += bps2)
                     {
-                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr)
+                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr++)
                          {
                             unsigned int newval;
 
