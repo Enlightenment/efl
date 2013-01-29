@@ -968,3 +968,8 @@
 2013-01-29  Jaehwan Kim
 
         * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
+
+2013-01-29  ChunEon Park (Hermet)
+
+        * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
+

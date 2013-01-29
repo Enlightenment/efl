@@ -172,7 +172,7 @@ _transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *e
         free(obj_data);
      }
    _remove_obj_from_list(transit, obj);
-   if (!transit->objs) elm_transit_del(transit);
+   if (!transit->objs && !transit->deleted) elm_transit_del(transit);
 }
 
 static void
@@ -250,6 +250,8 @@ _transit_del(Elm_Transit *transit)
    Elm_Transit *chain_transit;
    Eina_List *elist, *elist_next;
 
+   transit->deleted = EINA_TRUE;
+
    if (transit->animator)
      ecore_animator_del(transit->animator);
 
@@ -264,8 +266,6 @@ _transit_del(Elm_Transit *transit)
    //remove objects.
    while (transit->objs)
      _transit_obj_remove(transit, eina_list_data_get(transit->objs));
-
-   transit->deleted = EINA_TRUE;
 
    if (transit->del_data.func)
      transit->del_data.func(transit->del_data.arg, transit);
@@ -481,8 +481,9 @@ elm_transit_del(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
-   if (transit->walking) transit->deleted = EINA_TRUE;
-   else _transit_del(transit);
+   transit->deleted = EINA_TRUE;
+   if (transit->walking) return;
+   _transit_del(transit);
 }
 
 EAPI void
