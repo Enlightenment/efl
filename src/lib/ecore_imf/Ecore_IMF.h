@@ -803,7 +803,7 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
  * cause the Input Method Context to clear the preedit state or commit the preedit string.
  *
  * The operation of ecore_imf_context_reset() depends on the specific characteristics of 
- * each langauge. For example, the preedit string is cleared in the Chinese and Japanese Input Method Engine.
+ * each language. For example, the preedit string is cleared in the Chinese and Japanese Input Method Engine.
  * However, The preedit string is committed and then cleared in the Korean Input Method Engine.
  *
  * This function should be called in case of the focus-out and mouse down event callback function.
