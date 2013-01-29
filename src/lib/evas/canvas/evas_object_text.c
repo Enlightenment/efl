@@ -7,6 +7,8 @@ EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXT_CLASS
 
+#define MY_CLASS_NAME "Evas_Object_Text"
+
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
@@ -939,6 +941,26 @@ _text_ellipsis_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    double *r = va_arg(*list, double *);
 
    *r = o->cur.ellipsis;
+}
+
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+   const char *text;
+   int size;
+   eo_do(eo_obj, evas_obj_text_font_get(&text, &size));
+   EO_DBG_INFO_TEXT_APPEND(group, "Font", text);
+   EO_DBG_INFO_INTEGER_APPEND(group, "Text size", size);
+
+   eo_do(eo_obj, evas_obj_text_font_source_get(&text));
+   EO_DBG_INFO_TEXT_APPEND(group, "Font source", text);
+
+   eo_do(eo_obj, evas_obj_text_text_get(&text));
+   EO_DBG_INFO_TEXT_APPEND(group, "Text", text);
 }
 
 EAPI void
@@ -2393,6 +2415,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET), _text_font_source_set),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET), _text_font_source_get),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SET), _text_font_set),
@@ -2466,7 +2489,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Text",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TEXT_BASE_ID, op_desc, EVAS_OBJ_TEXT_SUB_ID_LAST),
      NULL,

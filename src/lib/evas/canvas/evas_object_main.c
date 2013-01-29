@@ -1858,6 +1858,121 @@ evas_object_evas_get(const Evas_Object *eo_obj)
 }
 
 static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Eo_Dbg_Info *node;
+
+   Eina_Bool visible;
+   eo_do(eo_obj, evas_obj_visibility_get(&visible));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Visibility", visible);
+
+   short layer;
+   eo_do(eo_obj, evas_obj_layer_get(&layer));
+   EO_DBG_INFO_INTEGER_APPEND(group, "Layer", layer);
+
+   int x, y;
+   eo_do(eo_obj, evas_obj_position_get(&x, &y));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Position");
+   EO_DBG_INFO_INTEGER_APPEND(node, "x", x);
+   EO_DBG_INFO_INTEGER_APPEND(node, "y", y);
+
+   int w, h;
+   eo_do(eo_obj, evas_obj_size_get(&w, &h));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Size");
+   EO_DBG_INFO_INTEGER_APPEND(node, "w", w);
+   EO_DBG_INFO_INTEGER_APPEND(node, "h", h);
+
+   double scale;
+   eo_do(eo_obj, evas_obj_scale_get(&scale));
+   EO_DBG_INFO_DOUBLE_APPEND(group, "Scale", scale);
+
+   eo_do(eo_obj, evas_obj_size_hint_min_get(&w, &h));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Min size");
+   EO_DBG_INFO_INTEGER_APPEND(node, "w", w);
+   EO_DBG_INFO_INTEGER_APPEND(node, "h", h);
+
+   eo_do(eo_obj, evas_obj_size_hint_max_get(&w, &h));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Max size");
+   EO_DBG_INFO_INTEGER_APPEND(node, "w", w);
+   EO_DBG_INFO_INTEGER_APPEND(node, "h", h);
+
+   eo_do(eo_obj, evas_obj_size_hint_request_get(&w, &h));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Request size");
+   EO_DBG_INFO_INTEGER_APPEND(node, "w", w);
+   EO_DBG_INFO_INTEGER_APPEND(node, "h", h);
+
+   double dblx, dbly;
+   eo_do(eo_obj, evas_obj_size_hint_align_get(&dblx, &dbly));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Align");
+   EO_DBG_INFO_INTEGER_APPEND(node, "x", dblx);
+   EO_DBG_INFO_INTEGER_APPEND(node, "y", dbly);
+
+   double dblw, dblh;
+   eo_do(eo_obj, evas_obj_size_hint_weight_get(&dblw, &dblh));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Weight");
+   EO_DBG_INFO_INTEGER_APPEND(node, "w", dblw);
+   EO_DBG_INFO_INTEGER_APPEND(node, "h", dblh);
+
+   int r, g, b, a;
+   eo_do(eo_obj, evas_obj_color_get(&r, &g, &b, &a));
+   node = EO_DBG_INFO_LIST_APPEND(group, "Color");
+   EO_DBG_INFO_INTEGER_APPEND(node, "r", r);
+   EO_DBG_INFO_INTEGER_APPEND(node, "g", g);
+   EO_DBG_INFO_INTEGER_APPEND(node, "b", b);
+   EO_DBG_INFO_INTEGER_APPEND(node, "a", a);
+
+   Eina_Bool focus;
+   eo_do(eo_obj, evas_obj_focus_get(&focus));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Has focus", focus);
+
+   unsigned int m;
+   eo_do(eo_obj, evas_obj_pointer_mode_get(&m));
+   const char *text = NULL;
+   if (EVAS_OBJECT_POINTER_MODE_AUTOGRAB == m)
+      text = "EVAS_OBJECT_POINTER_MODE_AUTOGRAB";
+   if (EVAS_OBJECT_POINTER_MODE_NOGRAB == m)
+      text = "EVAS_OBJECT_POINTER_MODE_NOGRAB";
+   if (EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN == m)
+      text = "EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN";
+
+   if (text)
+      EO_DBG_INFO_TEXT_APPEND(group, "Pointer Mode", text);
+
+   Eina_Bool event;
+   eo_do(eo_obj, evas_obj_pass_events_get(&event));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Pass Events", event);
+
+   eo_do(eo_obj, evas_obj_repeat_events_get(&event));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Repeat Events", event);
+
+   eo_do(eo_obj, evas_obj_propagate_events_get(&event));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Propagate Events", event);
+
+   const Eina_List *clipees;
+   eo_do(eo_obj, evas_obj_clipees_get(&clipees));
+   EO_DBG_INFO_BOOLEAN_APPEND(group, "Has clipees", (Eina_Bool) (!!clipees));
+
+   const Evas_Map *map = evas_object_map_get(eo_obj);
+   if (map)
+     {  /* Save map coords count info if object has map */
+        node = EO_DBG_INFO_LIST_APPEND(group, "Evas Map");
+        int points_count = evas_map_count_get(map);
+        for(int i = 0 ; i < points_count; i++)
+          {
+             Evas_Coord px, py, pz;
+             evas_map_point_coord_get(map, i, &px, &py, &pz);
+             Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(node, "Coords");
+             EO_DBG_INFO_INTEGER_APPEND(point, "x", px);
+             EO_DBG_INFO_INTEGER_APPEND(point, "y", py);
+             EO_DBG_INFO_INTEGER_APPEND(point, "z", pz);
+          }
+     }
+}
+
+static void
 _evas_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const Evas_Object_Protected_Data *obj = _pd;
@@ -2382,6 +2497,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_COMMON_ID(EVAS_COMMON_SUB_ID_EVAS_GET), _evas_get),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_GET), _position_get),

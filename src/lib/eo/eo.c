@@ -55,6 +55,16 @@ struct _Eo {
      Eina_Bool manual_free:1;
 };
 
+/* START - EO Debug structs */
+struct _Eo_Dbg_Info
+{  /* Debug info composed of a list of Eo_Dbg_Info */
+   const char *name;
+   Eo_Dbg_Info_Type type;
+   Eo_Dbg_Info_Union un_dbg_info;
+};
+/* END   - EO Debug structs */
+
+
 /* Start of Dich */
 
 /* How we search and store the implementations in classes. */
@@ -1581,3 +1591,52 @@ eo_manual_free(Eo *obj)
 
    _eo_free(obj);
 }
+
+EAPI Eo_Dbg_Info *
+eo_dbg_info_append(Eo_Dbg_Info *root, const char *name, Eo_Dbg_Info_Type type)
+{
+   if (root && EO_DBG_INFO_TYPE_LIST != root->type)
+      return NULL;
+
+   Eo_Dbg_Info *st = calloc(1, sizeof(Eo_Dbg_Info));
+   if (!st) return NULL;
+
+   st->name = name;
+   st->type = type;
+
+   if (root)
+      root->un_dbg_info.list = eina_list_append(root->un_dbg_info.list, st);
+
+   return st;
+}
+
+EAPI void
+eo_dbg_info_free(Eo_Dbg_Info *root)
+{
+   if (EO_DBG_INFO_TYPE_LIST == root->type)
+     {
+        Eo_Dbg_Info *eo;
+        EINA_LIST_FREE(root->un_dbg_info.list, eo)
+           eo_dbg_info_free(eo);
+     }
+   free(root);
+}
+
+EAPI const char *
+eo_dbg_name_get(Eo_Dbg_Info *node)
+{
+   return ((node) ? node->name : NULL);
+}
+
+EAPI Eo_Dbg_Info_Union *
+eo_dbg_union_get(Eo_Dbg_Info *node)
+{
+   return ((node) ? &node->un_dbg_info : NULL);
+}
+
+EAPI Eo_Dbg_Info_Type
+eo_dbg_type_get(Eo_Dbg_Info *node)
+{
+   return ((node) ? node->type : EO_DBG_INFO_TYPE_UNKNOWN);
+}
+

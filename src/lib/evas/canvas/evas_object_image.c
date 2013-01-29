@@ -25,6 +25,8 @@ EAPI Eo_Op EVAS_OBJ_IMAGE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_IMAGE_CLASS
 
+#define MY_CLASS_NAME "Evas_Object_Image"
+
 #define VERBOSE_PROXY_ERROR 1
 
 /* private magic number for image objects */
@@ -762,6 +764,29 @@ _image_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *source_events = va_arg(*list, Eina_Bool *);
    if (!source_events) return;
    *source_events = obj->proxy->src_events;
+}
+
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+   const char *file, *key;
+   eo_do(eo_obj, evas_obj_image_file_get(&file, &key));
+   EO_DBG_INFO_TEXT_APPEND(group, "Image File", file);
+   EO_DBG_INFO_TEXT_APPEND(group, "Key", key);
+   EO_DBG_INFO_PTR_APPEND(group, "Source",
+                          (void *) evas_object_image_source_get(eo_obj));
+
+   if (evas_object_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
+     {
+        Evas_Load_Error error;
+        eo_do(eo_obj, evas_obj_image_load_error_get(&error));
+        EO_DBG_INFO_TEXT_APPEND(group, "Load Error",
+                                evas_load_error_str(error));
+     }
 }
 
 EAPI void
@@ -5043,6 +5068,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET), _image_memfile_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET), _image_file_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET), _image_file_get),
@@ -5191,7 +5217,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Image",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_IMAGE_BASE_ID, op_desc, EVAS_OBJ_IMAGE_SUB_ID_LAST),
      NULL,

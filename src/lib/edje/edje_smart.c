@@ -10,6 +10,8 @@ EAPI Eo_Op EDJE_OBJ_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EDJE_OBJ_CLASS
 
+#define MY_CLASS_NAME "Edje_Smart"
+
 Eina_List *_edje_edjes = NULL;
 
 /************************** API Routines **************************/
@@ -32,6 +34,27 @@ _edje_smart_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
    eo_do_super(obj, eo_constructor());
    eo_do(obj, evas_obj_type_set("edje"));
    _edje_lib_ref();
+}
+
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+   const char *file, *edje_group;
+   eo_do(eo_obj, edje_obj_file_get(&file, &edje_group));
+   EO_DBG_INFO_TEXT_APPEND(group, "File", file);
+   EO_DBG_INFO_TEXT_APPEND(group, "Group", edje_group);
+
+   Edje_Load_Error error;
+   eo_do(eo_obj, edje_obj_load_error_get(&error));
+   if (error != EDJE_LOAD_ERROR_NONE)
+     {
+        EO_DBG_INFO_TEXT_APPEND(group, "Error",
+              edje_load_error_str(error));
+     }
 }
 
 static void
@@ -317,6 +340,7 @@ _edje_smart_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_smart_constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _edje_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _edje_smart_move),
@@ -610,7 +634,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description edje_smart_class_desc = {
      EO_VERSION,
-     "Edje_Smart",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EDJE_OBJ_BASE_ID, op_desc, EDJE_OBJ_SUB_ID_LAST),
      NULL,

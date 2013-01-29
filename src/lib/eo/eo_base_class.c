@@ -103,6 +103,13 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
+_dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED,
+      va_list *data EINA_UNUSED)
+{  /* No info required in the meantime */
+   return;
+}
+
+static void
 _data_del(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Private_Data *pd = class_data;
@@ -530,6 +537,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE), _ev_global_freeze),
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW), _ev_global_thaw),
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), _ev_global_freeze_get),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -555,6 +563,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "Freezes events globally."),
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "Thaws events globally."),
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "Get global event freeze counter."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DBG_INFO_GET, "Get debug info list for obj."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

@@ -71,6 +71,8 @@ EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXTBLOCK_CLASS
 
+#define MY_CLASS_NAME "Evas_Object_Textblock"
+
 #include "linebreak.h"
 #include "wordbreak.h"
 
@@ -10017,6 +10019,29 @@ _textblock_style_insets_get(Eo *eo_obj, void *_pd, va_list *list)
    if (b) *b = o->style_pad.b;
 }
 
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+   const char *style;
+   const char *text;
+   char shorttext[48];
+   const Evas_Textblock_Style *ts;
+
+   eo_do(eo_obj, evas_obj_textblock_style_get(&ts));
+   style = evas_textblock_style_get(ts);
+   eo_do(eo_obj, evas_obj_textblock_text_markup_get(&text));
+   strncpy(shorttext, text, 38);
+   if (shorttext[37])
+     strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */
+
+   EO_DBG_INFO_TEXT_APPEND(group, "Style", style);
+   EO_DBG_INFO_TEXT_APPEND(group, "Text", shorttext);
+}
+
 /** @internal
  * FIXME: DELETE ME! DELETE ME!
  * This is an ugly workaround to get around the fact that
@@ -10742,6 +10767,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_SET), _textblock_style_set),
         EO_OP_FUNC(EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_GET), _textblock_style_get),
         EO_OP_FUNC(EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_PUSH), _textblock_style_user_push),
@@ -10803,7 +10829,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Textblock",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TEXTBLOCK_BASE_ID, op_desc, EVAS_OBJ_TEXTBLOCK_SUB_ID_LAST),
      NULL,
