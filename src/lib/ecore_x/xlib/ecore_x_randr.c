@@ -1558,7 +1558,10 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
         if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
           {
              if ((mode == 0) || (noutputs == 0))
-               outputs = NULL;
+               {
+                  outputs = NULL;
+                  noutputs = 0;
+               }
              else if (noutputs == -1)
                {
                   outputs = (Ecore_X_Randr_Output *)info->outputs;
