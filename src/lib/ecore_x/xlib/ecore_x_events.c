@@ -1090,6 +1090,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    e->win = xevent->xunmap.window;
    e->event_win = xevent->xunmap.event;
    e->time = _ecore_x_event_last_time;
+   e->send_event = xevent->xunmap.send_event;
    ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, NULL, NULL);
 }
 
