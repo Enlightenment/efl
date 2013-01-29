@@ -26,7 +26,6 @@ struct _Elm_Popup_Smart_Data
 {
    Evas_Object          *notify;
    Evas_Object          *title_icon;
-   Evas_Object          *title_access_obj;
    Evas_Object          *content_area;
    Evas_Object          *text_content_obj;
    Evas_Object          *action_area;

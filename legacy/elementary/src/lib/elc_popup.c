@@ -12,6 +12,9 @@ EAPI Eo_Op ELM_OBJ_POPUP_BASE_ID = EO_NOOP;
 
 static void _button_remove(Evas_Object *, int, Eina_Bool);
 
+static const char ACCESS_TITLE_PART[] = "access.title";
+static const char ACCESS_BODY_PART[] = "access.body";
+
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -55,12 +58,26 @@ _timeout_cb(void *data,
    evas_object_smart_callback_call(data, SIG_TIMEOUT, NULL);
 }
 
+static Evas_Object *
+_access_object_get(Evas_Object *obj, const char* part)
+{
+   Evas_Object *po, *ao;
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+
+   po = (Evas_Object *)edje_object_part_object_get(wd->resize_obj, part);
+   ao = evas_object_data_get(po, "_part_access_obj");
+
+   return ao;
+}
+
 static void
 _on_show(void *data __UNUSED__,
          Evas *e __UNUSED__,
          Evas_Object *obj,
          void *event_info __UNUSED__)
 {
+   Evas_Object *ao;
+
    ELM_POPUP_DATA_GET(obj, sd);
 
    evas_object_show(sd->notify);
@@ -68,11 +85,11 @@ _on_show(void *data __UNUSED__,
    /* yeah, ugly, but again, this widget needs a rewrite */
    elm_object_content_set(sd->notify, obj);
 
-   // XXX: ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   /* access */
+   if (_elm_config->access_mode)
      {
-        evas_object_focus_set(sd->title_access_obj, EINA_TRUE);
-        _elm_access_highlight_set(sd->title_access_obj);
+        ao = _access_object_get(obj, ACCESS_TITLE_PART);
+        _elm_access_highlight_set(ao);
      }
 }
 
@@ -771,10 +788,53 @@ _item_new(Elm_Popup_Item *item)
    evas_object_show(VIEW(item));
 }
 
+static void
+_access_obj_process(Eo *obj, Eina_Bool is_access)
+{
+   Evas_Object *ao;
+
+   ELM_POPUP_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+
+   if (is_access)
+     {
+        if (sd->title_text)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Title"));
+          }
+
+        if (sd->text_content_obj)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_BODY_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Body Text"));
+          }
+     }
+   else
+     {
+        if (sd->title_text)
+          {
+             _elm_access_edje_object_part_object_unregister
+                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
+          }
+
+        if (sd->text_content_obj)
+          {
+             _elm_access_edje_object_part_object_unregister
+                    (obj, wd->resize_obj, ACCESS_BODY_PART);
+          }
+     }
+}
+
 static Eina_Bool
 _title_text_set(Evas_Object *obj,
                 const char *text)
 {
+   Evas_Object *ao;
    Eina_Bool title_visibility_old, title_visibility_current;
 
    ELM_POPUP_DATA_GET(obj, sd);
@@ -789,15 +849,12 @@ _title_text_set(Evas_Object *obj,
    edje_object_part_text_escaped_set
      (wd->resize_obj, "elm.text.title", text);
 
-   // XXX: ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   /* access */
+   if (_elm_config->access_mode)
      {
-        sd->title_access_obj = _elm_access_edje_object_part_object_register
-            (wd->resize_obj, wd->resize_obj,
-            "elm.text.title");
-        _elm_access_text_set(_elm_access_object_get(sd->title_access_obj),
-                             ELM_ACCESS_TYPE, E_("popup title"));
-        elm_widget_sub_object_add(obj, sd->title_access_obj);
+        _access_obj_process(obj, EINA_TRUE);
+        ao = _access_object_get(obj, ACCESS_TITLE_PART);
+        _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
      }
 
    if (sd->title_text)
@@ -820,7 +877,7 @@ static Eina_Bool
 _content_text_set(Evas_Object *obj,
                   const char *text)
 {
-   Evas_Object *prev_content;
+   Evas_Object *prev_content, *ao;
    char buf[128];
 
    ELM_POPUP_DATA_GET(obj, sd);
@@ -859,10 +916,13 @@ _content_text_set(Evas_Object *obj,
    elm_layout_content_set
      (sd->content_area, "elm.swallow.content", sd->text_content_obj);
 
-   // XXX: ACCESS
-   _elm_access_text_set
-     (_elm_access_object_get(sd->text_content_obj),
-     ELM_ACCESS_TYPE, E_("popup label"));
+   /* access */
+   if (_elm_config->access_mode)
+     {
+        _access_obj_process(obj, EINA_TRUE);
+        ao = _access_object_get(obj, ACCESS_BODY_PART);
+        _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
+     }
 
 end:
    elm_layout_sizing_eval(obj);
@@ -1247,10 +1307,10 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
        !elm_widget_focus_next_get(sd->action_area, dir, next)
       )
      {
-        // XXX: ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+        /* access */
+        if (_elm_config->access_mode)
           {
-             *next = sd->title_access_obj;
+             *next = _access_object_get(obj, ACCESS_TITLE_PART);
              return;
           }
         elm_widget_focused_object_clear((Evas_Object *)obj);
@@ -1360,6 +1420,13 @@ _elm_popup_smart_parent_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object *parent = va_arg(*list, Evas_Object *);
 
    elm_notify_parent_set(sd->notify, parent);
+}
+
+static void
+_elm_popup_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool is_access = va_arg(*list, int);
+   _access_obj_process(obj, is_access);
 }
 
 EAPI Evas_Object *
@@ -1687,6 +1754,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_popup_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_popup_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_popup_smart_focus_next),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_popup_smart_access),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_popup_smart_focus_direction_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_popup_smart_focus_direction),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_popup_smart_sub_object_del),
