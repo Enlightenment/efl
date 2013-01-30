@@ -127,9 +127,9 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window zone = 0;
    Evas_Object *top;
+   Ecore_X_Window xwin;
 #endif
    int sx = -1, sy = -1, sw = -1, sh = -1;
-   Ecore_X_Window xwin;
 
    ELM_CONFORMANT_DATA_GET(obj, sd);
 
@@ -163,18 +163,27 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 
    if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
      {
+	    DBG("[KEYPAD]:pid=%d, xwin=0x%x, zone=0x%x: keypad part size.", getpid(), xwin, zone);
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_KBD", &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
              //No information of the keyboard geometry, reset the geometry.
-             if (!ecore_x_e_illume_keyboard_geometry_get
-                   (zone, &sx, &sy, &sw, &sh))
-               sx = sy = sw = sh = 0;
+		     DBG("[KEYPAD]:no env value, check window property.");
+             if (!ecore_x_e_illume_keyboard_geometry_get(xwin, &sx, &sy, &sw, &sh))
+               {
+		          DBG("[KEYPAD]:no window property, check zone property.");
+				  if (!ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh))
+                    {
+		               DBG("[KEYPAD]:no zone property, reset value.");
+                       sx = sy = sw = sh = 0;
+				    }
+               }
 #else
              ;
 #endif
           }
+		DBG("[KEYPAD]: size(%d,%d, %dx%d).", sx, sy, sw, sh);
         _conformant_part_size_hints_set
           (obj, sd->virtualkeypad, sx, sy, sw, sh);
      }
@@ -818,6 +827,7 @@ _on_prop_change(void *data,
 
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_ZONE.\n", getpid(), ev->win);
         Conformant_Part_Type part_type;
 
         part_type = (ELM_CONFORMANT_INDICATOR_PART |
@@ -828,17 +838,35 @@ _on_prop_change(void *data,
         _conformant_part_sizing_eval(data, part_type);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORMANT_INDICATOR_PART);
+     {
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY.\n", getpid(), ev->win);
+        _conformant_part_sizing_eval(data, ELM_CONFORMANT_INDICATOR_PART);
+	 }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORMANT_SOFTKEY_PART);
+     {
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY.\n", getpid(), ev->win);
+        _conformant_part_sizing_eval(data, ELM_CONFORMANT_SOFTKEY_PART);
+	 }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
+     {
+		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY.\n", getpid(), ev->win);
+        _conformant_part_sizing_eval(data, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
+     }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORMANT_CLIPBOARD_PART);
+     {
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY.\n", getpid(), ev->win);
+        _conformant_part_sizing_eval(data, ELM_CONFORMANT_CLIPBOARD_PART);
+     }
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
-     _virtualkeypad_state_change(data, ev);
+     {
+		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE.\n", getpid(), ev->win);
+        _virtualkeypad_state_change(data, ev);
+     }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE)
-     _clipboard_state_change(data, ev);
+     {
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE.\n", getpid(), ev->win);
+        _clipboard_state_change(data, ev);
+     }
 
    return ECORE_CALLBACK_PASS_ON;
 }
