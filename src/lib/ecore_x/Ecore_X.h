@@ -1950,10 +1950,19 @@ typedef struct _Ecore_X_Randr_Mode_Info
    unsigned long modeFlags;
 } Ecore_X_Randr_Mode_Info;
 
+/*
+ * @since 1.8
+ */
+typedef struct _Ecore_X_Randr_Crtc_Gamma_Info
+{
+   int size;
+   unsigned short *red;
+   unsigned short *green;
+   unsigned short *blue;
+} Ecore_X_Randr_Crtc_Gamma_Info;
+
 EAPI int                                       ecore_x_randr_version_get(void);
 EAPI Eina_Bool                                 ecore_x_randr_query(void);
-
-/* ecore_x_randr_11.c */
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root);
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root);
 EAPI Eina_Bool                                 ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Orientation orientation);
@@ -1974,7 +1983,6 @@ EAPI Ecore_X_Randr_Refresh_Rate                ecore_x_randr_screen_primary_outp
 EAPI Ecore_X_Randr_Refresh_Rate               *ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int size_index, int *num);
 EAPI Eina_Bool                                 ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int size_index, Ecore_X_Randr_Refresh_Rate rate);
 
-/* ecore_x_randr_12.c */
 EAPI void                                      ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on);
 
 EAPI void                                      ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm);
@@ -2014,9 +2022,9 @@ EAPI Ecore_X_Randr_Output                     *ecore_x_randr_output_clones_get(E
 EAPI Ecore_X_Randr_Crtc                       *ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
 EAPI Ecore_X_Randr_Crtc                        ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 EAPI char                                     *ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len);
-EAPI int                                       ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc);
-EAPI Ecore_X_Randr_Crtc_Gamma                **ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc);
-EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma *red, const Ecore_X_Randr_Crtc_Gamma *green, const Ecore_X_Randr_Crtc_Gamma *blue);
+EINA_DEPRECATED EAPI int                       ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc);
+EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc_Gamma **ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc);
+EINA_DEPRECATED EAPI Eina_Bool                 ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma *red, const Ecore_X_Randr_Crtc_Gamma *green, const Ecore_X_Randr_Crtc_Gamma *blue);
 EAPI Eina_Bool                                 ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *not_moved, int nnot_moved, int dx, int dy);
 EAPI Eina_Bool                                 ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, int ncrtc, int dx, int dy);
 EAPI void                                      ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h);
@@ -2024,7 +2032,9 @@ EAPI Ecore_X_Randr_Connection_Status           ecore_x_randr_output_connection_s
 EAPI void                                      ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *w, int *h);
 EAPI Eina_Bool                                 ecore_x_randr_output_crtc_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const Ecore_X_Randr_Crtc crtc);
 
-/* ecore_x_randr_12_edid.c */
+EAPI int                                       ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
+EAPI Ecore_X_Randr_Crtc_Gamma_Info            *ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma); /**< @since 1.8 */
 
 /**
  * @brief Validates the header from raw EDID data.
@@ -2206,8 +2216,6 @@ EAPI Eina_Bool                                 ecore_x_randr_edid_display_type_d
  * @return The interface type.
  */
 EAPI Ecore_X_Randr_Edid_Display_Interface_Type ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long edid_length);
-
-/* ecore_x_randr_12.c */
 
 EAPI Eina_Bool                                 ecore_x_randr_output_backlight_available(void);
 EAPI void                                      ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level);
