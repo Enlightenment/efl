@@ -1950,6 +1950,14 @@ typedef struct _Ecore_X_Randr_Mode_Info
    unsigned long modeFlags;
 } Ecore_X_Randr_Mode_Info;
 
+typedef struct _Ecore_X_Randr_Crtc_Gamma_Info
+{
+   int size;
+   unsigned short *red;
+   unsigned short *green;
+   unsigned short *blue;
+} Ecore_X_Randr_Crtc_Gamma_Info;
+
 EAPI int                                       ecore_x_randr_version_get(void);
 EAPI Eina_Bool                                 ecore_x_randr_query(void);
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root);
@@ -2022,8 +2030,8 @@ EAPI void                                      ecore_x_randr_output_size_mm_get(
 EAPI Eina_Bool                                 ecore_x_randr_output_crtc_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const Ecore_X_Randr_Crtc crtc);
 
 EAPI int                                       ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
-EAPI Ecore_X_Randr_Crtc_Gamma                **ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
-EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma *red, const Ecore_X_Randr_Crtc_Gamma *green, const Ecore_X_Randr_Crtc_Gamma *blue); /**< @since 1.8 */
+EAPI Ecore_X_Randr_Crtc_Gamma_Info            *ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma); /**< @since 1.8 */
 
 /**
  * @brief Validates the header from raw EDID data.
