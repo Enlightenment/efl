@@ -2912,6 +2912,223 @@ ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 }
 
 /***************************************
+ * API Functions for RandR version 1.4 *
+ ***************************************/
+
+EAPI void 
+ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_4) return;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             if (x) *x = xpan->left;
+             if (y) *y = xpan->top;
+             if (w) *w = xpan->width;
+             if (h) *h = xpan->height;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+#endif
+}
+
+EAPI Eina_Bool 
+ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (_randr_version < RANDR_VERSION_1_4) return EINA_FALSE;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             xpan->left = x;
+             xpan->top = y;
+             xpan->width = w;
+             xpan->height = h;
+             xpan->timestamp = CurrentTime;
+
+             /* set the panning value */
+             if (!XRRSetPanning(_ecore_x_disp, res, crtc, xpan))
+               ret = EINA_TRUE;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+
+   return ret;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+EAPI void 
+ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_4) return;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             if (x) *x = xpan->track_left;
+             if (y) *y = xpan->track_top;
+             if (w) *w = xpan->track_width;
+             if (h) *h = xpan->track_height;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+#endif
+}
+
+EAPI Eina_Bool 
+ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (_randr_version < RANDR_VERSION_1_4) return EINA_FALSE;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             xpan->track_left = x;
+             xpan->track_top = y;
+             xpan->track_width = w;
+             xpan->track_height = h;
+             xpan->timestamp = CurrentTime;
+
+             /* set the panning value */
+             if (!XRRSetPanning(_ecore_x_disp, res, crtc, xpan))
+               ret = EINA_TRUE;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+
+   return ret;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+EAPI void 
+ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_4) return;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             if (x) *x = xpan->border_left;
+             if (y) *y = xpan->border_top;
+             if (w) *w = xpan->border_right;
+             if (h) *h = xpan->border_bottom;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+#endif
+}
+
+EAPI Eina_Bool 
+ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int left, const int top, const int right, const int bottom)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (_randr_version < RANDR_VERSION_1_4) return EINA_FALSE;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRPanning *xpan = NULL;
+
+        /* get this crtc's panning */
+        if ((xpan = XRRGetPanning(_ecore_x_disp, res, crtc)))
+          {
+             xpan->border_left = left;
+             xpan->border_top = top;
+             xpan->border_right = right;
+             xpan->border_bottom = bottom;
+             xpan->timestamp = CurrentTime;
+
+             /* set the panning value */
+             if (!XRRSetPanning(_ecore_x_disp, res, crtc, xpan))
+               ret = EINA_TRUE;
+
+             /* free the panning resource */
+             XRRFreePanning(xpan);
+          }
+
+        /* free the resources */
+        XRRFreeScreenResources(res);
+     }
+
+   return ret;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+/***************************************
  * API Functions for RandR Edid
  ***************************************/
 
