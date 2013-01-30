@@ -2222,12 +2222,12 @@ EAPI Ecore_X_Randr_Signal_Property            *ecore_x_randr_output_signal_prope
 EAPI int                                       ecore_x_randr_output_connector_number_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 EAPI Ecore_X_Randr_Connector_Type              ecore_x_randr_output_connector_type_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h); /**< @since 1.8 */
-EAPI Eina_Bool                                 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h); /**< @since 1.8 */
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h); /**< @since 1.8 */
-EAPI Eina_Bool                                 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h); /**< @since 1.8 */
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
-EAPI Eina_Bool                                 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int left, const int top, const int right, const int bottom); /**< @since 1.8 */
-   
+EAPI Eina_Bool                                 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int left, const int top, const int right, const int bottom); /**< @since 1.8 */
+
 /* XRender Support (horrendously incomplete) */
 typedef Ecore_X_ID Ecore_X_Picture;
 
