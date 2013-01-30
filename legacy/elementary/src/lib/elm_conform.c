@@ -163,13 +163,14 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 
    if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
      {
-	    DBG("[KEYPAD]:pid=%d, xwin=0x%x, zone=0x%x: keypad part size.", getpid(), xwin, zone);
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_KBD", &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
              //No information of the keyboard geometry, reset the geometry.
-		     DBG("[KEYPAD]:no env value, check window property.");
+#ifdef __linux__
+	         DBG("[KEYPAD]:pid=%d, xwin=0x%x, zone=0x%x: no env value and check window property.", getpid(), xwin, zone);
+#endif
              if (!ecore_x_e_illume_keyboard_geometry_get(xwin, &sx, &sy, &sw, &sh))
                {
 		          DBG("[KEYPAD]:no window property, check zone property.");
@@ -825,9 +826,16 @@ _on_prop_change(void *data,
 {
    Ecore_X_Event_Window_Property *ev = event;
 
+   int pid = 0;
+
+#ifdef __linux__
+   pid = (int)getpid();
+#endif
+
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
-		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_ZONE.\n", getpid(), ev->win);
+
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_ZONE.\n", pid, ev->win);
         Conformant_Part_Type part_type;
 
         part_type = (ELM_CONFORMANT_INDICATOR_PART |
@@ -839,32 +847,32 @@ _on_prop_change(void *data,
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
      {
-		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY.\n", getpid(), ev->win);
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY.", pid, ev->win);
         _conformant_part_sizing_eval(data, ELM_CONFORMANT_INDICATOR_PART);
 	 }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY)
      {
-		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY.\n", getpid(), ev->win);
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY.", pid, ev->win);
         _conformant_part_sizing_eval(data, ELM_CONFORMANT_SOFTKEY_PART);
 	 }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
      {
-		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY.\n", getpid(), ev->win);
+		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY.", pid, ev->win);
         _conformant_part_sizing_eval(data, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY)
      {
-		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY.\n", getpid(), ev->win);
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY.", pid, ev->win);
         _conformant_part_sizing_eval(data, ELM_CONFORMANT_CLIPBOARD_PART);
      }
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
      {
-		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE.\n", getpid(), ev->win);
+		DBG("[KEYPAD]:pid=%d, win=0x%x, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE.", pid, ev->win);
         _virtualkeypad_state_change(data, ev);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE)
      {
-		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE.\n", getpid(), ev->win);
+		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE.", pid, ev->win);
         _clipboard_state_change(data, ev);
      }
 
