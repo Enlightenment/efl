@@ -2528,7 +2528,7 @@ ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
  ***************************************/
 
 EAPI Ecore_X_Randr_Output *
-ecore_x_randr_output_wired_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
    Atom clones = None, type = None;
@@ -2579,7 +2579,7 @@ ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root, Ecore_X_Randr_O
 }
 
 EAPI Ecore_X_Randr_Signal_Format *
-ecore_x_randr_output_signal_formats_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
    XRRPropertyInfo *info = NULL;
@@ -2643,7 +2643,7 @@ ecore_x_randr_output_signal_format_set(Ecore_X_Window root, Ecore_X_Randr_Output
 }
 
 EAPI Ecore_X_Randr_Signal_Property *
-ecore_x_randr_output_signal_properties_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
    XRRPropertyInfo *info = NULL;
@@ -2710,7 +2710,7 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root, Ecore_X_Randr_Ou
  * 
  */
 EAPI int 
-ecore_x_randr_output_connector_number_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
+ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    XRRPropertyInfo *info = NULL;
@@ -2762,7 +2762,7 @@ ecore_x_randr_output_connector_number_get(Ecore_X_Window root, Ecore_X_Randr_Out
 }
 
 EAPI Ecore_X_Randr_Connector_Type 
-ecore_x_randr_output_connector_type_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
+ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
    XRRPropertyInfo *info = NULL;
