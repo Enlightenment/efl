@@ -2913,7 +2913,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                           Evas_Coord minx, miny, mx, my;
 
                           eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-                          eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&mx, &my));
+                          eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
                           if (y < miny)
                             y += (miny - y) *
                               _elm_config->thumbscroll_border_friction;
