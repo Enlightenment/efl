@@ -1,5 +1,9 @@
 2013-01-30  Christopher Michael (devilhorns)
 
+        * Implement RandR 1.4 functions which were missing in our Ecore_X API
+
+2013-01-30  Christopher Michael (devilhorns)
+
         * Deprecate ecore_x_randr_crtc_gamma_ramp_* functions.
 	* Added new ecore_x_randr_crtc_gamma_* functions that uses a proper structure
 
