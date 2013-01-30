@@ -51,7 +51,7 @@ _ecore_x_randr_init(void)
 {
 #ifdef ECORE_XRANDR
    _randr_major = 1;
-   _randr_minor = 3;
+   _randr_minor = 4;
    _randr_version = 0;
 
    /* try to query the randr extenstion version */
