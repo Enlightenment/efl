@@ -136,7 +136,7 @@ _ecore_file_download(const char *url,
         /* download */
         Ecore_File_Download_Job *job;
 
-	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data, headers);
+        job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data, headers);
         if(job_ret) *job_ret = job;
         if(job)
           return EINA_TRUE;
@@ -145,7 +145,6 @@ _ecore_file_download(const char *url,
              ERR("no job returned\n");
              return EINA_FALSE;
           }
-        return job ? EINA_TRUE : EINA_FALSE;
      }
 #else
    else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
