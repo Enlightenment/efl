@@ -515,7 +515,6 @@ ecore_x_init(const char *name)
         _ecore_x_event_handlers[_ecore_x_event_randr_id +
                                 RRNotify] = _ecore_x_event_handle_randr_notify;
      }
-
 #endif /* ifdef ECORE_XRANDR */
 #ifdef ECORE_XFIXES
    if (_ecore_x_event_fixes_selection_id)
