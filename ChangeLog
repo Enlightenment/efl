@@ -3,6 +3,20 @@
         * Fix cache miss bug when edje cache hash is null, but cache
         list may have entries.
 
+2013-01-29 Sumanth Krishna Mannam <sumanth.m@samsung.com>
+
+        * Prevent a crash even if an invalid object is swallowed into an
+        edje object.
+
+2013-01-28 Rafael Antognolli <antognolli@gmail.com>
+
+        * Ecore_Evas wayland-egl only renders now if last frame has
+        been presented.
+
+2013-01-28  Daniel Willmann <d.willmann@samsung.com>
+
+        * Use ecore_audio in edje-multisense
+
 2013-01-25  Jihoon Kim (jihoon)
 
         * edje entry : Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
@@ -16,6 +30,10 @@
 2013-01-24  Cedric Bail
 
         * Don't over align data if they are already aligned.
+
+2013-01-22  Daniel Willmann <d.willmann@samsung.com>
+
+        * Fix evas gif loader to return the correct frame duration
 
 2013-01-22  Mike Blumenkrantz
 
@@ -52,6 +70,10 @@
 
         * Fixed pixman image wrapping to handle allocated size instead
         of image size (unless allocated is 0/wrong).
+
+2013-01-15  ChunEon Park (Hermet) <hermet@hermet.pe.kr>
+
+        * Fix SIGFPE in evas map update if image size is 0.
 
 2013-01-15  Paulo Alcantara (pcacjr)
 
@@ -373,24 +395,4 @@
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
 
-2013-01-15  ChunEon Park (Hermet) <hermet@hermet.pe.kr>
 
-        * Fix SIGFPE in evas map update if image size is 0.
-
-2013-01-22  Daniel Willmann <d.willmann@samsung.com>
-
-        * Fix evas gif loader to return the correct frame duration
-
-2013-01-28  Daniel Willmann <d.willmann@samsung.com>
-
-        * Use ecore_audio in edje-multisense
-
-2013-01-28 Rafael Antognolli <antognolli@gmail.com>
-
-        * Ecore_Evas wayland-egl only renders now if last frame has
-        been presented.
-
-2013-01-29 Sumanth Krishna Mannam <sumanth.m@samsung.com>
-
-        * Prevent a crash even if an invalid object is swallowed into an
-        edje object.
