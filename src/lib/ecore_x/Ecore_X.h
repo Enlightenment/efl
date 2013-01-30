@@ -1950,17 +1950,6 @@ typedef struct _Ecore_X_Randr_Mode_Info
    unsigned long modeFlags;
 } Ecore_X_Randr_Mode_Info;
 
-/*
- * @since 1.8
- */
-typedef struct _Ecore_X_Randr_Crtc_Gamma_Info
-{
-   int size;
-   unsigned short *red;
-   unsigned short *green;
-   unsigned short *blue;
-} Ecore_X_Randr_Crtc_Gamma_Info;
-
 EAPI int                                       ecore_x_randr_version_get(void);
 EAPI Eina_Bool                                 ecore_x_randr_query(void);
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root);
@@ -2033,8 +2022,8 @@ EAPI void                                      ecore_x_randr_output_size_mm_get(
 EAPI Eina_Bool                                 ecore_x_randr_output_crtc_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const Ecore_X_Randr_Crtc crtc);
 
 EAPI int                                       ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
-EAPI Ecore_X_Randr_Crtc_Gamma_Info            *ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
-EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma); /**< @since 1.8 */
+EAPI Ecore_X_Randr_Crtc_Gamma                **ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma *red, const Ecore_X_Randr_Crtc_Gamma *green, const Ecore_X_Randr_Crtc_Gamma *blue); /**< @since 1.8 */
 
 /**
  * @brief Validates the header from raw EDID data.
@@ -2232,14 +2221,12 @@ EAPI Eina_Bool                                 ecore_x_randr_output_signal_forma
 EAPI Ecore_X_Randr_Signal_Property            *ecore_x_randr_output_signal_properties_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
 EAPI int                                       ecore_x_randr_output_connector_number_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 EAPI Ecore_X_Randr_Connector_Type              ecore_x_randr_output_connector_type_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
-/* WTF - these dont exist in ecore-x!!!!   
-EAPI Eina_Rectangle                           *ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h);
-EAPI Eina_Bool                                 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h);
-EAPI Eina_Rectangle                           *ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h);
-EAPI Eina_Bool                                 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h);
-EAPI Eina_Rectangle                           *ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
-EAPI Eina_Bool                                 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int left, const int top, const int right, const int bottom);
-*/
+EAPI Eina_Rectangle                           *ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h); /**< @since 1.8 */
+EAPI Eina_Rectangle                           *ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h); /**< @since 1.8 */
+EAPI Eina_Rectangle                           *ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int left, const int top, const int right, const int bottom); /**< @since 1.8 */
    
 /* XRender Support (horrendously incomplete) */
 typedef Ecore_X_ID Ecore_X_Picture;
