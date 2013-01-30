@@ -1,3 +1,12 @@
+2013-01-30  Christopher Michael (devilhorns)
+
+        * Deprecate ecore_x_randr_crtc_gamma_ramp_* functions.
+	* Added new ecore_x_randr_crtc_gamma_* functions that uses a proper structure
+
+2013-01-29  Christopher Michael (devilhorns)
+
+        * Removed old ecore_x_randr code and replaced with new working code.
+
 2013-01-29  Carsten Haitzler (The Rasterman)
 
         * Fix cache miss bug when edje cache hash is null, but cache
