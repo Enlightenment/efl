@@ -3416,7 +3416,8 @@ eng_gl_api_get(void *data EINA_UNUSED)
    ORD(glSampleCoverage);
 //   ORD(glScissor);/***/
 //   ORD(glShaderBinary);
-   ORD(glShaderSource);
+// Deal with double glShaderSource signature
+   funcs->glShaderSource = (void (*)(GLuint, GLsizei, const char * const *, const GLint *))glShaderSource;
    ORD(glStencilFunc);
    ORD(glStencilFuncSeparate);
    ORD(glStencilMask);

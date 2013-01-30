@@ -2323,7 +2323,8 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glSampleCoverage);
 //   ORD(glScissor);
 //   ORD(glShaderBinary);
-   ORD(glShaderSource);
+// Deal with double glShaderSource signature
+   funcs->glShaderSource = (void (*)(GLuint, GLsizei, const char * const *, const GLint *))glShaderSource;
    ORD(glStencilFunc);
    ORD(glStencilFuncSeparate);
    ORD(glStencilMask);

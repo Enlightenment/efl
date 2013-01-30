@@ -3369,7 +3369,7 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char* const* string, con
           }
      }
 
-   _sym_glShaderSource(shader, count, (const char **)s, l);
+   _sym_glShaderSource(shader, count, (const char * const *)s, l);
 
    while(i)
       free(s[--i]);
