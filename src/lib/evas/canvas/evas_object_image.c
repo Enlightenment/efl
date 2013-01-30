@@ -3460,7 +3460,7 @@ evas_object_image_new(Evas_Object *eo_obj)
 }
 
 static void
-_destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+_destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
 
