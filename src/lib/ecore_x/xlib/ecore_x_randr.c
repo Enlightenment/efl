@@ -1977,24 +1977,90 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
    return NULL;
 }
 
-EAPI int 
-ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc)
+/*
+ * @deprecated use ecore_x_randr_crtc_gamma_size_get()
+ */
+EINA_DEPRECATED EAPI int 
+ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
-   /* TODO: !!! */
    return 0;
 }
 
-EAPI Ecore_X_Randr_Crtc_Gamma **
-ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc)
+/*
+ * @deprecated use ecore_x_randr_crtc_gamma_get()
+ */
+EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc_Gamma **
+ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
-   /* TODO: !!! */
    return NULL;
 }
 
-EAPI Eina_Bool 
-ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma *red, const Ecore_X_Randr_Crtc_Gamma *green, const Ecore_X_Randr_Crtc_Gamma *blue)
+/*
+ * @deprecated use ecore_x_randr_crtc_gamma_set()
+ */
+EINA_DEPRECATED EAPI Eina_Bool 
+ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *red EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *green EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *blue EINA_UNUSED)
 {
-   /* TODO: !!! */
+   return EINA_FALSE;
+}
+
+/*
+ * @since 1.8
+ */
+EAPI int 
+ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc)
+{
+#ifdef ECORE_XRANDR
+   if (_randr_version < RANDR_VERSION_1_2) return 0;
+   return XRRGetCrtcGammaSize(_ecore_x_disp, crtc);
+#endif
+   return 0;
+}
+
+/*
+ * @since 1.8
+ */
+EAPI Ecore_X_Randr_Crtc_Gamma_Info *
+ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
+{
+#ifdef ECORE_XRANDR
+   Ecore_X_Randr_Crtc_Gamma_Info *info = NULL;
+   XRRCrtcGamma *xgamma = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_2) return NULL;
+
+   /* try to get the gamma for this crtc from Xrandr */
+   if (!(xgamma = XRRGetCrtcGamma(_ecore_x_disp, crtc)))
+     return NULL;
+
+   /* try to allocate space for the return struct and copy the results in */
+   if ((info = malloc(sizeof(Ecore_X_Randr_Crtc_Gamma_Info))))
+     memcpy(info, xgamma, sizeof(Ecore_X_Randr_Crtc_Gamma_Info));
+
+   /* free the returned gamma resource */
+   XRRFreeGamma(xgamma);
+
+   return info;
+#endif
+   return NULL;
+}
+
+/*
+ * @since 1.8
+ */
+EAPI Eina_Bool 
+ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma)
+{
+#ifdef ECORE_XRANDR
+   if (_randr_version < RANDR_VERSION_1_2) return EINA_FALSE;
+
+   /* try to set the gamma
+    * 
+    * NB: XRRSetCrtcGamma returns void
+    */
+   XRRSetCrtcGamma(_ecore_x_disp, crtc, (XRRCrtcGamma *)gamma);
+   return EINA_TRUE;
+#endif
    return EINA_FALSE;
 }
 
@@ -2259,7 +2325,7 @@ ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 }
 
 EAPI Eina_Bool 
-ecore_x_randr_output_crtc_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const Ecore_X_Randr_Crtc crtc)
+ecore_x_randr_output_crtc_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, const Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    /* TODO: !! */
    return EINA_FALSE;
@@ -2571,7 +2637,7 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
 }
 
 EAPI Ecore_X_Randr_Output **
-ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
+ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, int *num EINA_UNUSED)
 {
    /* TODO: (1.3) !! */
    //RR_PROPERTY_COMPATIBILITY_LIST
@@ -2635,7 +2701,7 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
 }
 
 EAPI Eina_Bool 
-ecore_x_randr_output_signal_format_set(Ecore_X_Window root, Ecore_X_Randr_Output output, Ecore_X_Randr_Signal_Format *signal)
+ecore_x_randr_output_signal_format_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, Ecore_X_Randr_Signal_Format *sig EINA_UNUSED)
 {
    /* TODO: (1.3) !! */
    //RR_PROPERTY_SIGNAL_FORMAT
