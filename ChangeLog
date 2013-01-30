@@ -5,17 +5,17 @@
 
 2013-01-25  Jihoon Kim (jihoon)
 
-	* edje entry : Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
-	* edje entry : move ecore_imf_context_cursor_position_set from mouse down event to mouse up event
+        * edje entry : Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
+        * edje entry : move ecore_imf_context_cursor_position_set from mouse down event to mouse up event
 
 2013-01-24  Sung W. Park (sung_)
 
-	* Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory
+        * Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory
         allocation policy for EvasGL direct rendering.
 
 2013-01-24  Cedric Bail
 
-	* Don't over align data if they are already aligned.
+        * Don't over align data if they are already aligned.
 
 2013-01-22  Mike Blumenkrantz
 
@@ -23,7 +23,7 @@
 
 2013-01-22  Sung W. Park (sung_)
 
-	* Applied on-demand memory allocation policy for Evas GL Surface
+        * Applied on-demand memory allocation policy for Evas GL Surface
         for direct rendering optimization.  For direct rendering in EvasGL,
         it falls back to FBO rendering if the conditions are not met.  Before,
         the fallback resources were created in the beginning but now they are
@@ -36,17 +36,17 @@
 
 2013-01-18  Jihoon Kim (jihoon)
 
-	* edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
+        * edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
 
 2013-01-18  Cedric Bail
 
-	* Ecore_Input_Evas: add infrastructure to handle buggy touchscreen by using
-	environment variable ECORE_INPUT_FIX and ECORE_INPUT_TIMEOUT_FIX.
+        * Ecore_Input_Evas: add infrastructure to handle buggy touchscreen by using
+        environment variable ECORE_INPUT_FIX and ECORE_INPUT_TIMEOUT_FIX.
 
 2013-01-17  Jihoon Kim (jihoon)
 
-	* Edje : cursor position and location will be passed when it's really changed
-	in case of mouse down, move, and up event
+        * Edje : cursor position and location will be passed when it's really changed
+        in case of mouse down, move, and up event
 
 2013-01-16  Carsten Haitzler (The Rasterman)
 
@@ -55,54 +55,54 @@
 
 2013-01-15  Paulo Alcantara (pcacjr)
 
-	* Evas engines: Introduce multi_font_draw() function
-	* Evas textgrid: Change render to support multi_font_draw()
+        * Evas engines: Introduce multi_font_draw() function
+        * Evas textgrid: Change render to support multi_font_draw()
 
 2013-01-15  Tom Hacohen (TAsn)
 
-	* Evas textblock: Fixed issue and simplified cursor_geometry_get.
-	* Evas text: Fixed issue with horiz advance.
-	* Evas text utils: Fixed issue with no-harfbuzz bidi.
+        * Evas textblock: Fixed issue and simplified cursor_geometry_get.
+        * Evas text: Fixed issue with horiz advance.
+        * Evas text utils: Fixed issue with no-harfbuzz bidi.
 
 2013-01-14  Daniel Willmann
 
-	* edje: Fix off-by-one errors when using alloca in various functions
+        * edje: Fix off-by-one errors when using alloca in various functions
 
 2013-01-14  Tom Hacohen (TAsn)
 
-	* Evas textblock: Fixed issue with line height when breaking on a
-	format.
+        * Evas textblock: Fixed issue with line height when breaking on a
+        format.
 
 2013-01-14  Cedric Bail
 
-	* Fix bug in eio_file_map_new container set.
+        * Fix bug in eio_file_map_new container set.
 
 2013-01-14  Albin Tonerre
 
-	* Fix endianess issue in Eet_Image.
+        * Fix endianess issue in Eet_Image.
 
 2013-01-13  Boris Faure (billiob)
 
-	* Fixed condition based on uninitialized value in ecore_x_selection
-	(both xlib and xcb).
-	* Fixed a leaked when no selection converter matches.
+        * Fixed condition based on uninitialized value in ecore_x_selection
+        (both xlib and xcb).
+        * Fixed a leaked when no selection converter matches.
 
 2013-01-11  Tom Hacohen (TAsn)
 
-	* Static libs: Updated liblinebreak to libunibreak's latest version.
-	* Evas texblock: Fixed a bug with breaking after format items.
+        * Static libs: Updated liblinebreak to libunibreak's latest version.
+        * Evas texblock: Fixed a bug with breaking after format items.
 
 2013-01-11  Cedric Bail
 
-	* Fix not up to date clip cache for Evas_Object_Text.
+        * Fix not up to date clip cache for Evas_Object_Text.
 
 2013-01-09  Jiyoun Park (jypark)
 
-	* Fix evas bmp loader code which deal with image size.
+        * Fix evas bmp loader code which deal with image size.
 
 2013-01-08  Gustavo Sverzut Barbieri (k-s)
 
-	* Fix eina_prefix_new() with debian multilib without magic check file.
+        * Fix eina_prefix_new() with debian multilib without magic check file.
 
 2013-01-08  Mike Blumenkrantz
 
@@ -110,29 +110,28 @@
 
 2013-01-07  Sung W. Park (sung_)
 
-	* Pulled out evas gl backend binary shader file caching code from 
+        * Pulled out evas gl backend binary shader file caching code from 
         evas_gl_shader.c file and made an internal generic caching api in 
         evas_gl_common.h for use in evas_gl code.
         * Implemented evas_gl surface cap. caching code in gl backend to
         accelerate the engine creation. 
 
-
 2013-01-07  Thomas Petazzoni
 
-	* Fix build of Evas XCB backend.
+        * Fix build of Evas XCB backend.
 
 2013-01-04  Jérémy Zurcher
 
-	* Improve eina_share string del speed by a maybe 5-15%.
+        * Improve eina_share string del speed by a maybe 5-15%.
 
 2013-01-03  Gustavo Sverzut Barbieri (k-s)
 
-	* Add eina_alloc.h to Eina.h to define alloca()
-	* Eeze: deprecated support for udev<148 and libmount<2.18
+        * Add eina_alloc.h to Eina.h to define alloca()
+        * Eeze: deprecated support for udev<148 and libmount<2.18
 
 2013-01-03  Cedric Bail
 
-	* Use Eina_File for evas png loader.
+        * Use Eina_File for evas png loader.
 
 2013-01-03  Carsten Haitzler (The Rasterman)
 
@@ -140,7 +139,7 @@
 
 2013-01-03  Jérémy Zurcher
 
-	* Add eio_eet_sync symbols.
+        * Add eio_eet_sync symbols.
 
 2013-01-02  Carsten Haitzler (The Rasterman)
 
@@ -149,16 +148,16 @@
 
 2013-01-02  Cedric Bail
 
-	* Use Eina_File for evas webp, gif, tiff and eet loader.
-	* Add eet_mmap to open an Eet file from an Eina_File.
+        * Use Eina_File for evas webp, gif, tiff and eet loader.
+        * Add eet_mmap to open an Eet file from an Eina_File.
 
 2012-12-31  Gustavo Sverzut Barbieri (k-s)
 
-	* Fixed eina_xattr_value_ls() an eina_xattr_value_fd_ls()
-	* Added eina_xattr_fd_get(), eina_xattr_fd_set(),
-	eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
-	eina_xattr_fd_copy()
-	* Added eina_file_copy()
+        * Fixed eina_xattr_value_ls() an eina_xattr_value_fd_ls()
+        * Added eina_xattr_fd_get(), eina_xattr_fd_set(),
+        eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
+        eina_xattr_fd_copy()
+        * Added eina_file_copy()
 
 2012-12-24  Mike Blumenkrantz
 
@@ -168,8 +167,8 @@
 
 2012-12-19  Gustavo Sverzut Barbieri (k-s)
 
-	* Fixed Evas RGBA_Image->flags.loaded for copied images.
-	* Fixed evas_object_image_is_inside() implementation.
+        * Fixed Evas RGBA_Image->flags.loaded for copied images.
+        * Fixed evas_object_image_is_inside() implementation.
 
 2012-12-19  Carsten Haitzler (The Rasterman)
 
@@ -182,37 +181,38 @@
 
 2012-12-18  Gustavo Sverzut Barbieri (k-s)
 
-	* Fixed many memory problems with ecore_evas_extn
+        * Fixed many memory problems with ecore_evas_extn
 
 2012-12-18  Leandro Pereira
 
-	* Add threaded renderer.
-	* Modify software_generic and gl_x11 to use threaded renderer.
+        * Add threaded renderer.
+        * Modify software_generic and gl_x11 to use threaded renderer.
 
 2012-12-17  Daniel Willmann
-	* Add EFL Audio API - ecore_audio
+
+        * Add EFL Audio API - ecore_audio
 
 2012-12-17  Leandro Pereira
 
-	* Get rid of unused `ref` field in RGBA_Image struct.
-	* Prepare soil to land threaded render.
-		* Use refcounted glyph arrays.
-		* Common code to draw lines, polygons, rectangles, maps,
-		and scaling.
+        * Get rid of unused `ref` field in RGBA_Image struct.
+        * Prepare soil to land threaded render.
+        * Use refcounted glyph arrays.
+        * Common code to draw lines, polygons, rectangles, maps,
+        and scaling.
 
 2012-12-13  Cedric Bail
 
-	* Fix potential segv in software engine native_set code.
-	* Fix uninitialized data in Evas OpenGL engine.
+        * Fix potential segv in software engine native_set code.
+        * Fix uninitialized data in Evas OpenGL engine.
 
 2012-12-12  Daniel Willmann
 
-	* Fix possible buffer overflow in functions relying on EET_T_LAST.
-	* Fix possible memory corruption in xrandr EDID functions.
+        * Fix possible buffer overflow in functions relying on EET_T_LAST.
+        * Fix possible memory corruption in xrandr EDID functions.
 
 2012-12-12  Cedric Bail
 
-	* Add ellipsis support in Evas_Object_Text.
+        * Add ellipsis support in Evas_Object_Text.
 
 2012-12-12  ChunEon park <hermet@hermet.pe.kr>
 
@@ -220,30 +220,30 @@
 
 2012-12-11  Cedric Bail
 
-	* Fix leak eet_pbkdf2_sha1 with OpenSSL.
+        * Fix leak eet_pbkdf2_sha1 with OpenSSL.
 
 2012-12-10  Gustavo Sverzut Barbieri (k-s)
 
-	* Added ECORE_GETOPT_ACTION_BREAK to force breaking out of argument
-	parsing logic (will behabe same as GNU's "--", useful for xterm -e)
+        * Added ECORE_GETOPT_ACTION_BREAK to force breaking out of argument
+        parsing logic (will behabe same as GNU's "--", useful for xterm -e)
 
 2012-12-07  Cedric Bail
 
-	* Don't leak fd on exec.
+        * Don't leak fd on exec.
 
 2012-12-07 Sung W. Park (sung_)
 
-	* Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
+        * Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
           fiddling that was originally in the gl backend code. The offset
           fiddling caused issues with some ARM target GPU drivers.
         * Fixed polygon rendering bug in GL backend when there are cutouts.
 
 2012-12-05  Gustavo Sverzut Barbieri (k-s)
 
-	* Removed DirectFB support (both ecore_directfb, evas and ecore_evas).
-	* Removed XRender, WinCE, X11-16 and X11-8 ecore_evas support.
-	* Bumped gnutls version requirement to >= 2.11 (released in 2010).
-	* Bumped GNU/libc requirement to >= 2.4 for inotify (sys/inotify.h).
+        * Removed DirectFB support (both ecore_directfb, evas and ecore_evas).
+        * Removed XRender, WinCE, X11-16 and X11-8 ecore_evas support.
+        * Bumped gnutls version requirement to >= 2.11 (released in 2010).
+        * Bumped GNU/libc requirement to >= 2.4 for inotify (sys/inotify.h).
 
 2012-12-04  Gwanglim Lee
 
@@ -260,16 +260,16 @@
 
 2012-12-05  Cedric Bail
 
-	* Fix build of Ecore_Evas_Extn on Solaris 11.
+        * Fix build of Ecore_Evas_Extn on Solaris 11.
 
 2012-11-30 Gustavo Sverzut Barbieri (k-s)
 
-	* Fix evas_object_box.c to properly reset size_hint_min to zero if
-	there are no objects packed into the box.
+        * Fix evas_object_box.c to properly reset size_hint_min to zero if
+        there are no objects packed into the box.
 
 2012-11-22 Paulo Alcantara (pcacjr)
 
-	* Add scalecache support to Cserve2
+        * Add scalecache support to Cserve2
 
 2012-11-22  Sung W. Park (sung_)
 
@@ -311,15 +311,15 @@
 
 2012-11-09  Vincent Torri
 
-	* Fixed longstanding memset bug in evas box.
+        * Fixed longstanding memset bug in evas box.
 
 2012-10-19  Cedric Bail
 
-	* Add eina_thread API.
+        * Add eina_thread API.
 
 2012-10-19  Patryk Kaczmarek
 
-	* eina_stringshare_add_length return NULL when func args are wrong.
+        * eina_stringshare_add_length return NULL when func args are wrong.
 
 2012-10-17  Carsten Haitzler (The Rasterman)
 
@@ -328,12 +328,12 @@
 
 2012-10-04  Vincent Torri
 
-	* Update lz4 code to rev. 77. This fix compilation on NetBSD 5.0
+        * Update lz4 code to rev. 77. This fix compilation on NetBSD 5.0
 
 2012-10-31  Cedric Bail
 
-	* Add eet_list_entries().
-	* Add eet -l -v to give more information about an eet file.
+        * Add eet_list_entries().
+        * Add eet -l -v to give more information about an eet file.
 
 2012-09-27 Patryk Kaczmarek <patryk.k@samsung.com>
 
@@ -383,14 +383,14 @@
 
 2013-01-28  Daniel Willmann <d.willmann@samsung.com>
 
-				* Use ecore_audio in edje-multisense
+        * Use ecore_audio in edje-multisense
 
 2013-01-28 Rafael Antognolli <antognolli@gmail.com>
 
-				* Ecore_Evas wayland-egl only renders now if last frame has
-				been presented.
+        * Ecore_Evas wayland-egl only renders now if last frame has
+        been presented.
 
 2013-01-29 Sumanth Krishna Mannam <sumanth.m@samsung.com>
 
-				* Prevent a crash even if an invalid object is swallowed into an
-			  	edje object.
+        * Prevent a crash even if an invalid object is swallowed into an
+        edje object.
