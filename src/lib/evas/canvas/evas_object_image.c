@@ -778,7 +778,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    EO_DBG_INFO_APPEND(group, "Image File", EINA_VALUE_TYPE_STRING, file);
    EO_DBG_INFO_APPEND(group, "Key", EINA_VALUE_TYPE_STRING, key);
    EO_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
-                          (uint64_t) (uintptr_t *) evas_object_image_source_get(eo_obj));
+                          (uint64_t) (uintptr_t) evas_object_image_source_get(eo_obj));
 
    if (evas_object_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
      {
