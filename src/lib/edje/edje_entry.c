@@ -2629,7 +2629,6 @@ _edje_entry_select_all(Edje_Real_Part *rp)
    _curs_end(en->cursor, rp->object, en);
    _sel_extend(en->cursor, rp->object, en);
 
-   _edje_entry_imf_cursor_info_set(en);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2650,8 +2649,6 @@ _edje_entry_select_begin(Edje_Real_Part *rp)
    _sel_start(en->cursor, rp->object, en);
    _sel_extend(en->cursor, rp->object, en);
 
-   _edje_entry_imf_cursor_info_set(en);
-
    _edje_entry_real_part_configure(rp);
 }
 
@@ -2666,8 +2663,6 @@ _edje_entry_select_extend(Edje_Real_Part *rp)
    if (!en) return;
    _edje_entry_imf_context_reset(rp);
    _sel_extend(en->cursor, rp->object, en);
-
-   _edje_entry_imf_cursor_info_set(en);
 
    _edje_entry_real_part_configure(rp);
 }

@@ -1,3 +1,7 @@
+2013-01-31  Jihoon Kim (jihoon)
+
+        * edje entry : Remove ecore_imf_context_cursor_position_set in functions related to selection.
+
 2013-01-30  Christopher Michael (devilhorns)
 
         * Implement RandR 1.4 functions which were missing in our Ecore_X API

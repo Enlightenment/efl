@@ -87,6 +87,7 @@ Improvements:
     * edje entry: move ecore_imf_context_cursor_position_set from mouse down event to mouse up event.
     * Use ecore_audio in edje-multisense
     * Ecore_Evas wayland-egl only renders now if last frame has been presented.
+    * edje entry : Remove ecore_imf_context_cursor_position_set in functions related to selection.
 
 Fixes:
     * Fix PPC (big endian) image codec bug.
