@@ -50,6 +50,7 @@ _ecore_con_dns_free(Ecore_Con_DNS *dns)
    if (dns->svr->infos) dns->svr->infos = eina_list_remove(dns->svr->infos, dns);
    if (dns->timer) ecore_timer_del(dns->timer);
    if (dns->fdh) ecore_main_fd_handler_del(dns->fdh);
+   if (dns->ai) dns_ai_close(dns->ai);
    dns_res_close(dns_res_mortal(dns->resolv));
    free(dns);
 }
