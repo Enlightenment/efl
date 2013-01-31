@@ -134,4 +134,4 @@ Fixes:
     * Fix evas gif loader to return the correct frame duration
     * Prevent a crash even if an invalid object is swallowed into an edje object.
     * Fix cache miss when active edje hash is empty.
-    
+	* Fix the EVAS_CALLBACK_MOUSE_MOVE callback is called even if the grabbed object is invisible by proxy object.
