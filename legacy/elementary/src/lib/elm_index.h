@@ -315,7 +315,7 @@ enum
  *
  * Change index delay change time.
  *
- * @param[out] ret
+ * @param[in] ret
  *
  * @see elm_index_delay_change_time_get
  */
