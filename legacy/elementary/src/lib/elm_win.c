@@ -3573,11 +3573,11 @@ elm_win_main_menu_get(const Evas_Object *obj)
 }
 
 static void
-_dbus_menu_set(Eina_Bool connect, void *data)
+_dbus_menu_set(Eina_Bool dbus_connect, void *data)
 {
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
-   if (connect)
+   if (dbus_connect)
      {
         DBG("Setting menu to D-Bus");
         edje_object_part_unswallow(sd->layout, sd->main_menu);
