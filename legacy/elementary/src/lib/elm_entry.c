@@ -2633,7 +2633,7 @@ static char *
 _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    Eina_Strbuf *buf;
-   char *txt;
+   char *ret;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
@@ -2656,11 +2656,13 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
         else eina_strbuf_append(buf, ", Password");
      }
 
-   txt = strdup(eina_strbuf_string_get(buf));
-   eina_strbuf_free(buf);
-   if (txt) return txt;
+   if (!eina_strbuf_length_get(buf)) goto buf_free;
 
-   return NULL;
+   ret = eina_strbuf_string_steal(buf);
+
+buf_free:
+   eina_strbuf_free(buf);
+   return ret;
 }
 
 static void
