@@ -2637,6 +2637,7 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   ret = NULL;
    buf = eina_strbuf_new();
 
    if (elm_widget_disabled_get(obj))
