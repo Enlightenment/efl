@@ -28,9 +28,41 @@
  */
 
 /**
+ * Replace the previously stringshared pointer with another stringshared pointer.
+ *
+ * The string pointed by @a p_str must be previously stringshared or
+ * @c NULL and it will be eina_stringshare_del(). The new string must also
+ * be stringshared and will be passed to eina_stringshare_ref() and then assigned to @c *p_str.
+ * This function is identical to eina_stringshare_replace() except that it calls
+ * eina_stringshare_ref() instead of eina_stringshare_del()
+ *
+ * @param p_str pointer to the stringhare to be replaced. Must not be
+ *        @c NULL, but @c *p_str may be @c NULL as it is a valid
+ *        stringshare handle.
+ * @param news new string to replace with, may be @c NULL.
+ *
+ * @return #EINA_TRUE if the strings were different and thus replaced, #EINA_FALSE
+ * if the strings were the same after shared.
+ *
+ * @since 1.8
+ */
+static inline Eina_Bool
+eina_stringshare_refplace(Eina_Stringshare **p_str, Eina_Stringshare *news)
+{
+   if (*p_str == news) return EINA_FALSE;
+
+   news = eina_stringshare_ref(news);
+   eina_stringshare_del(*p_str);
+   if (*p_str == news)
+     return EINA_FALSE;
+   *p_str = news;
+   return EINA_TRUE;
+}
+
+/**
  * Replace the previously stringshared pointer with new content.
  *
- * The string pointed by @a p_str should be previously stringshared or
+ * The string pointed by @a p_str must be previously stringshared or
  * @c NULL and it will be eina_stringshare_del(). The new string will
  * be passed to eina_stringshare_add() and then assigned to @c *p_str.
  *
@@ -58,7 +90,7 @@ eina_stringshare_replace(Eina_Stringshare **p_str, const char *news)
 /**
  * Replace the previously stringshared pointer with a new content.
  *
- * The string pointed by @a p_str should be previously stringshared or
+ * The string pointed by @a p_str must be previously stringshared or
  * @c NULL and it will be eina_stringshare_del(). The new string will
  * be passed to eina_stringshare_add_length() and then assigned to @c *p_str.
  *

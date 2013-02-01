@@ -48,6 +48,7 @@ Additions:
     * Added eina_xattr_fd_get(), eina_xattr_fd_set(),
       eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
       eina_xattr_fd_copy()
+    * added eina_stringshare_refplace()
     * Added eina_file_copy()
     * Add eet_mmap.
     * added eet_data_descriptor_name_get()
