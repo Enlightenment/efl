@@ -34,7 +34,7 @@
  * @c NULL and it will be eina_stringshare_del(). The new string must also
  * be stringshared and will be passed to eina_stringshare_ref() and then assigned to @c *p_str.
  * This function is identical to eina_stringshare_replace() except that it calls
- * eina_stringshare_ref() instead of eina_stringshare_del()
+ * eina_stringshare_ref() instead of eina_stringshare_add()
  *
  * @param p_str pointer to the stringhare to be replaced. Must not be
  *        @c NULL, but @c *p_str may be @c NULL as it is a valid
