@@ -3152,7 +3152,7 @@ test_genlist19(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "full";
-   itc1->func.text_get = gl_text_get;
+   itc1->func.text_get = NULL;
    itc1->func.content_get  = gl_content_full_get;
    itc1->func.state_get = gl_state_get;
    itc1->func.del       = NULL;
