@@ -2527,8 +2527,6 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
 
    if (_randr_version < RANDR_VERSION_1_2) return NULL;
 
-   if (!length) return NULL;
-
    /* try to get the edid atom */
    if (!(edid = XInternAtom(_ecore_x_disp, RR_PROPERTY_RANDR_EDID, True))) 
      return NULL;
