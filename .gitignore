@@ -191,6 +191,11 @@ Makefile.in
 /src/examples/ecore/ecore_thread_example
 /src/examples/ecore/ecore_time_functions_example
 /src/examples/ecore/ecore_timer_example
+/src/examples/ecore/ecore_con_client_example
+/src/examples/ecore/ecore_con_server_example
+/src/examples/ecore/ecore_file_download_example
+/src/examples/ecore/ecore_imf_example
+/src/examples/ecore/ecore_pipe_gstreamer_example
 /src/examples/edbus/banshee
 /src/examples/edbus/client
 /src/examples/edbus/complex-types
@@ -200,6 +205,8 @@ Makefile.in
 /src/examples/edbus/ofono-dial
 /src/examples/edbus/server
 /src/examples/edbus/simple-signal-emit
+/src/examples/edje/edje-multisense
+/src/examples/edje/edje_example
 /src/examples/eet/eet_basic
 /src/examples/eet/eet_data_cipher_decipher
 /src/examples/eet/eet_data_file_descriptor_01
@@ -247,8 +254,14 @@ Makefile.in
 /src/examples/eina/eina_xattr_02
 /src/examples/eio/eio_file_copy
 /src/examples/eio/eio_file_ls
+/src/examples/emotion/emotion_basic_example
+/src/examples/emotion/emotion_border_example
+/src/examples/emotion/emotion_generic_example
+/src/examples/emotion/emotion_generic_subtitle_example
+/src/examples/emotion/emotion_signals_example
 /src/examples/eo/eo_isa
 /src/examples/eo/eo_simple
+/src/examples/ethumb_client/ethumb_dbus
 /src/examples/evas/evas_box
 /src/examples/evas/evas_buffer_simple
 /src/examples/evas/evas_events
@@ -263,6 +276,9 @@ Makefile.in
 /src/examples/evas/evas_smart_object
 /src/examples/evas/evas_stacking
 /src/examples/evas/evas_text
+/src/examples/evas/evas_aspect_hints
+/src/examples/evas/evas_map_utils
+/src/examples/evas/evas_table
 /src/tests/ecore/ecore_suite.log
 /src/tests/ecore/ecore_suite.trs
 /src/tests/eet/eet_suite.log
