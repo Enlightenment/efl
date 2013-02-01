@@ -2732,6 +2732,14 @@ EAPI void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd);
 
 /**
+ * This function returns the name of a data descriptor.
+ *
+ * @since 1.8.0
+ * @ingroup Eet_Data_Group
+ */
+EAPI const char *eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd);
+
+/**
  * This function is an internal used by macros.
  *
  * This function is used by macros EET_DATA_DESCRIPTOR_ADD_BASIC(),

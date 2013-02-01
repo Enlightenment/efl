@@ -1913,6 +1913,14 @@ eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc)
    return _eet_data_descriptor_new(eddc, 2);
 }
 
+EAPI const char *
+eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
+   return edd->name;
+}
+
+
 EAPI void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
