@@ -90,6 +90,8 @@ Improvements:
     * Use ecore_audio in edje-multisense
     * Ecore_Evas wayland-egl only renders now if last frame has been presented.
     * edje entry : Remove ecore_imf_context_cursor_position_set in functions related to selection.
+    * Translations updates:
+     - french.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
