@@ -116,7 +116,7 @@ extern "C" {
  * @{
  */
 #define EDBUS_VERSION_MAJOR 1
-#define EDBUS_VERSION_MINOR 6
+#define EDBUS_VERSION_MINOR 8
 
 #define EDBUS_FDO_BUS "org.freedesktop.DBus"
 #define EDBUS_FDO_PATH "/org/freedesktop/DBus"
