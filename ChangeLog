@@ -14,10 +14,6 @@
 
         * Fix a memory leak in ecore_con_dns
 
-2013-01-31  Jaehwan Kim
-
-        * Fix the EVAS_CALLBACK_MOUSE_MOVE callback is called even if the grabbed object is invisible by proxy object.
-
 2013-01-31  Jihoon Kim (jihoon)
 
         * edje entry : Remove ecore_imf_context_cursor_position_set in functions related to selection.
