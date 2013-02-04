@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_HASH_X_
 #define EINA_INLINE_HASH_X_
 
+EAPI extern unsigned int eina_seed;
+
 /*
   djb2 hash algorithm was first reported by dan bernstein, and was the old
   default hash function for evas.
@@ -26,7 +28,7 @@
 static inline int
 eina_hash_djb2(const char *key, int len)
 {
-   unsigned int hash_num = 5381;
+   unsigned int hash_num = 5381 ^ eina_seed;
    const unsigned char *ptr;
 
    if (!key) return 0;
@@ -39,7 +41,7 @@ eina_hash_djb2(const char *key, int len)
 static inline int
 eina_hash_djb2_len(const char *key, int *plen)
 {
-   unsigned int hash_num = 5381;
+   unsigned int hash_num = 5381 ^ eina_seed;
    int len = 0;
    const unsigned char *ptr;
 
@@ -64,7 +66,7 @@ eina_hash_int32(const unsigned int *pkey, int len)
    key ^= key >> 12;
    key += key << 2;
    key ^= key >> 4;
-   key *= 2057;
+   key *= 2057 ^ eina_seed;
    key ^= key >> 16;
    return key;
 }
@@ -78,7 +80,7 @@ eina_hash_int64(const unsigned long int *pkey, int len)
 
    key  = ~key + (key << 18);
    key ^= key >> 31;
-   key *= 21;
+   key *= 21 ^ eina_seed;
    key ^= key >> 11;
    key += key << 6;
    key ^= key >> 22;
@@ -107,8 +109,8 @@ eina_hash_murmur3(const char *key, int len)
    const unsigned char * data = (const unsigned char*)key;
    const int nblocks = len / 4;
    unsigned int h1 = 0, k1;
-   unsigned int c1 = 0xcc9e2d51;
-   unsigned int c2 = 0x1b873593;
+   unsigned int c1 = 0xcc9e2d51 ^ eina_seed;
+   unsigned int c2 = 0x1b873593 ^ eina_seed;
    const unsigned int * blocks = (const unsigned int *)(data + nblocks*4);
    int i;
    const unsigned char *tail;

@@ -99,6 +99,7 @@ static int _eina_log_dom = -1;
 
 EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 EAPI Eina_Error EINA_ERROR_NOT_MAIN_LOOP = 0;
+EAPI unsigned int eina_seed = 0;
 
 static const char EINA_ERROR_NOT_MAIN_LOOP_STR[] = "Main loop thread check failed.";
 
@@ -248,6 +249,10 @@ eina_init(void)
 
    if (EINA_LIKELY(_eina_main_count > 0))
       return ++_eina_main_count;
+
+   srand(time(NULL));
+   while (eina_seed == 0)
+     eina_seed = rand();
 
 #ifdef MT
    if ((getenv("EINA_MTRACE")) && (getenv("MALLOC_TRACE")))

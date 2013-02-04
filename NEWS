@@ -140,3 +140,4 @@ Fixes:
     * Fix evas gif loader to return the correct frame duration
     * Prevent a crash even if an invalid object is swallowed into an edje object.
     * Fix cache miss when active edje hash is empty.
+    * Prevent denial of service on eina_hash function.

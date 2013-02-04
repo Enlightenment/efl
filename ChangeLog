@@ -1,3 +1,7 @@
+2013-02-04  Cedric Bail
+
+	* eina: counter measure denial of service on eina_hash function.
+
 2013-02-04  Jihoon Kim (jihoon)
 
         * edje entry : Support &, < and > in preedit string.
