@@ -48,10 +48,6 @@ static Evas_Font_Dir *object_text_font_cache_dir_add(char *dir);
 static void object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd);
 static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 
-#ifdef HAVE_FONTCONFIG
-static int fc_init = 0;
-#endif
-
 void
 evas_font_dir_cache_free(void)
 {
@@ -61,23 +57,6 @@ evas_font_dir_cache_free(void)
         eina_hash_free(font_dirs);
         font_dirs = NULL;
      }
-
-#ifdef HAVE_FONTCONFIG
-   if (fc_init > 0)
-     {
-        fc_init--;
-/* this is bad i got a:
- * fccache.c:512: FcCacheFini: Assertion fcCacheChains[i] == ((void *)0)' failed.   
- * 
- * all i can do for now is shut this puppy down. butthat breaks, so disable
- * it as in reality - there is little reason to care about the memory not
- * being freed etc.
- * 
- * note 04/08/2012 - this doesnt seem to cause an issue anymore?
- */
-        if (fc_init == 0) FcFini();
-     }
-#endif
 }
 
 const char *
@@ -217,22 +196,6 @@ evas_font_free(Evas *eo_evas, void *font)
 
 	if (eina_list_count(fonts_zero) < 43) break;
      }
-}
-
-static void
-evas_font_init(void)
-{
-   static int done = 0;
-   if (done) return;
-   done = 1;
-#ifdef HAVE_FONTCONFIG
-   fc_init++;
-   if (fc_init == 1)
-     {
-        FcInit();
-        FcConfigEnableHome(1);
-     }
-#endif
 }
 
 #ifdef HAVE_FONTCONFIG
@@ -518,8 +481,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
       wanted_rend |= FONT_REND_SLANT;
    if (fdesc->weight == EVAS_FONT_WEIGHT_BOLD)
       wanted_rend |= FONT_REND_WEIGHT;
-
-   evas_font_init();
 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
@@ -813,8 +774,6 @@ evas_font_dir_available_list(const Evas *eo_evas)
    FcFontSet *set = NULL;
    FcObjectSet *os;
    int i;
-
-   evas_font_init();
 
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
