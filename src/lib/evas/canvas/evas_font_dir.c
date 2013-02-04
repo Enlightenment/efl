@@ -152,7 +152,7 @@ evas_fonts_zero_free(Evas *eo_evas)
 }
 
 void
-evas_fonts_zero_presure(Evas *eo_evas)
+evas_fonts_zero_pressure(Evas *eo_evas)
 {
    Fndat *fd;
    Evas_Public_Data *evas = eo_data_get(eo_evas, EVAS_CLASS);

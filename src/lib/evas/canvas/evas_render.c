@@ -2159,7 +2159,7 @@ _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 
    evas_render_rendering_wait(e);
    
-   evas_fonts_zero_presure(eo_e);
+   evas_fonts_zero_pressure(eo_e);
 
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
        (e->engine.data.output))

@@ -1049,7 +1049,7 @@ Eina_List *evas_font_dir_available_list(const Evas* evas);
 void evas_font_dir_available_list_free(Eina_List *available);
 void evas_font_free(Evas *evas, void *font);
 void evas_fonts_zero_free(Evas *evas);
-void evas_fonts_zero_presure(Evas *evas);
+void evas_fonts_zero_pressure(Evas *evas);
 void evas_font_name_parse(Evas_Font_Description *fdesc, const char *name);
 int evas_font_style_find(const char *start, const char *end, Evas_Font_Style style);
 Evas_Font_Description *evas_font_desc_new(void);
