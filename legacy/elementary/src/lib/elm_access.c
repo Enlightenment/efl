@@ -80,6 +80,21 @@ _access_init(void)
    mapi = m->api;
 }
 
+static void
+_access_shutdown(void)
+{
+   Elm_Module *m;
+   if (initted == 0) return;
+   if (!(m = _elm_module_find_as("access/api"))) return;
+
+   m->shutdown_func(m);
+
+   initted = 0;
+
+   free(mapi);
+   mapi = NULL;
+}
+
 static Elm_Access_Item *
 _access_add_set(Elm_Access_Info *ac, int type)
 {
@@ -268,6 +283,12 @@ Eina_Bool _elm_access_read_mode_get()
 {
    return read_mode;
 }
+
+void _elm_access_shutdown()
+{
+   _access_shutdown();
+}
+
 //-------------------------------------------------------------------------//
 EAPI void
 _elm_access_highlight_set(Evas_Object* obj)
@@ -420,6 +441,8 @@ _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj)
 EAPI void
 _elm_access_say(const char *txt)
 {
+   if (!_elm_config->access_mode) return;
+
    _access_init();
    if (mapi)
      {

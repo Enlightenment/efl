@@ -487,6 +487,7 @@ struct _Elm_Access_Info
    Evas_Object               *part_object;
 };
 
+void                  _elm_access_shutdown();
 void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
 /* elm_widget_focus_list_next_get();, elm_widget_focus_next_get();
    and elm_widget_focus_cycle(); use _elm_access_read_mode to use

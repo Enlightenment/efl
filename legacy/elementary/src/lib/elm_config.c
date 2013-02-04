@@ -577,6 +577,8 @@ void _elm_config_access_set(Eina_Bool is_access)
    if (_elm_config->access_mode == is_access) return;
    _elm_config->access_mode = is_access;
    _elm_win_access(is_access);
+
+   if (!is_access) _elm_access_shutdown();
 }
 
 Eina_Bool _elm_config_selection_unfocused_clear_get(void)
