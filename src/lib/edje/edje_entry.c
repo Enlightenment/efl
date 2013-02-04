@@ -3739,11 +3739,16 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    int cursor_pos;
    int preedit_start_pos, preedit_end_pos;
    char *preedit_string;
+   char *markup_txt = NULL;
+   char *tagname[] = {"", "preedit", "preedit_sel", "preedit_sel",
+                      "preedit_sub1", "preedit_sub2", "preedit_sub3", "preedit_sub4"};
    int i;
+   size_t preedit_type_size = sizeof(tagname) / sizeof(tagname[0]);
    Eina_Bool preedit_end_state = EINA_FALSE;
    Eina_List *attrs = NULL, *l = NULL;
    Ecore_IMF_Preedit_Attr *attr;
    Eina_Strbuf *buf;
+   Eina_Strbuf *preedit_attr_str;
 
    if ((!rp)) return;
 
@@ -3784,49 +3789,22 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
           {
              EINA_LIST_FOREACH(attrs, l, attr)
                {
-                  if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB1)
+                  if (attr->preedit_type > ECORE_IMF_PREEDIT_TYPE_NONE &&
+                      attr->preedit_type <= preedit_type_size)
                     {
-                       eina_strbuf_append(buf, "<preedit>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit>");
-                    }
+                       preedit_attr_str = eina_strbuf_new();
+                       if (preedit_attr_str)
+                         {
+                            eina_strbuf_append_n(preedit_attr_str, preedit_string + attr->start_index, attr->end_index - attr->start_index);
+                            markup_txt = evas_textblock_text_utf8_to_markup(NULL, eina_strbuf_string_get(preedit_attr_str));
 
-                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB2 ||
-                           attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB3)
-                    {
-                       eina_strbuf_append(buf, "<preedit_sel>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit_sel>");
-                    }
-                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB4)
-                    {
-                       eina_strbuf_append(buf, "<preedit_sub1>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit_sub1>");
-                    }
-                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB5)
-                    {
-                       eina_strbuf_append(buf, "<preedit_sub2>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit_sub2>");
-                    }
-                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB6)
-                    {
-                       eina_strbuf_append(buf, "<preedit_sub3>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit_sub3>");
-                    }
-                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB7)
-                    {
-                       eina_strbuf_append(buf, "<preedit_sub4>");
-                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index);
-                       eina_strbuf_append(buf, "</preedit_sub4>");
+                            if (markup_txt)
+                              {
+                                 eina_strbuf_append_printf(buf, "<%s>%s</%s>", tagname[attr->preedit_type], markup_txt, tagname[attr->preedit_type]);
+                                 free(markup_txt);
+                              }
+                            eina_strbuf_free(preedit_attr_str);
+                         }
                     }
                }
           }

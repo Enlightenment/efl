@@ -1,3 +1,7 @@
+2013-02-04  Jihoon Kim (jihoon)
+
+        * edje entry : Support &, < and > in preedit string.
+
 2013-02-02  Chidambar Zinnoury (ilLogict)
         * Update French translation.
 
