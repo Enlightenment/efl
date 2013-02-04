@@ -1,3 +1,7 @@
+2013-02-04  Raphael Kubo da Costa <<raphael.kubo.da.costa@intel.com>
+
+        * evas: Stop initializing and shutting Fontconfig down
+
 2013-02-04  Cedric Bail
 
 	* eina: counter measure denial of service on eina_hash function.
