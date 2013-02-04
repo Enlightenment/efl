@@ -293,6 +293,14 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
         if (wdata->win)
           {
+             Evas_Engine_Info_Wayland_Egl *einfo;
+
+             if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+               {
+                  einfo->info.edges = wdata->win->edges;
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
              ecore_wl_window_update_size(wdata->win, w, h);
              ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
           }
