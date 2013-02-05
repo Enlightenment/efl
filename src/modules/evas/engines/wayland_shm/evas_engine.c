@@ -24,7 +24,7 @@ struct _Render_Engine
    /* function pointers for output buffer functions that we can 
     * override based on if we are swapping or not */
    void (*outbuf_free)(Outbuf *ob);
-   void (*outbuf_reconfigure)(Outbuf *ob, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha);
+   void (*outbuf_reconfigure)(Outbuf *ob, int x, int y, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha);
    RGBA_Image *(*outbuf_update_region_new)(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
    void (*outbuf_update_region_push)(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
    void (*outbuf_update_region_free)(Outbuf *ob, RGBA_Image *update);
@@ -33,7 +33,7 @@ struct _Render_Engine
 };
 
 /* local function prototypes */
-static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
+static void *_output_engine_setup(int x, int y, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
 static Tilebuf_Rect *_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3);
 
 /* engine function prototypes */
@@ -59,7 +59,7 @@ int _evas_engine_way_shm_log_dom = -1;
 
 /* local functions */
 static void *
-_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
+_output_engine_setup(int x, int y, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
 {
    Render_Engine *re = NULL;
 
@@ -81,10 +81,13 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
 
    if (try_swap)
      {
-        if ((re->ob = evas_swapbuf_setup(w, h, rotation, depth, 
+        if ((re->ob = evas_swapbuf_setup(x, y, w, h, rotation, depth, 
                                          destination_alpha, wl_shm, 
                                          wl_surface)))
           {
+             re->ob->x = x;
+             re->ob->y = y;
+
              re->outbuf_free = evas_swapbuf_free;
              re->outbuf_reconfigure = evas_swapbuf_reconfigure;
              re->outbuf_update_region_new = evas_swapbuf_update_region_new;
@@ -234,7 +237,8 @@ eng_setup(Evas *eo_evas, void *einfo)
           }
 
         if (!(re = 
-              _output_engine_setup(epd->output.w, epd->output.h, 
+              _output_engine_setup(info->info.edges.x, info->info.edges.y, 
+                                   epd->output.w, epd->output.h, 
                                    info->info.rotation, info->info.depth, 
                                    info->info.destination_alpha, 
                                    info->info.wl_shm, info->info.wl_surface, 
@@ -251,7 +255,9 @@ eng_setup(Evas *eo_evas, void *einfo)
         /* we have an existing render engine */
         if (re->ob) re->outbuf_free(re->ob);
 
-        if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h, 
+        if ((re->ob = evas_swapbuf_setup(info->info.edges.x, 
+                                         info->info.edges.y, 
+                                         epd->output.w, epd->output.h, 
                                          info->info.rotation, 
                                          info->info.depth, 
                                          info->info.destination_alpha, 
@@ -318,7 +324,8 @@ eng_output_resize(void *data, int w, int h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(re = (Render_Engine *)data)) return;
-   re->outbuf_reconfigure(re->ob, w, h, 
+
+   re->outbuf_reconfigure(re->ob, re->ob->x, re->ob->y, w, h, 
                           re->ob->rotation, re->ob->depth, 
                           re->ob->priv.destination_alpha);
    evas_common_tilebuf_free(re->tb);
