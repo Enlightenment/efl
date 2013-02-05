@@ -112,6 +112,31 @@ EAPI void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb 
  */
 EAPI void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, void *data);
 
+/**
+ * @brief Read out text information directly.
+ * @since 1.8
+ *
+ * @param text The text information that will be read
+ *
+ * This function will not free the @p text internally. 
+ *
+ * @ingroup Access
+ */
+EAPI void elm_access_say(const char *text);
+
+/**
+ * @brief Give the highlight to the object directly.
+ * @since 1.8
+ *
+ * @param obj The object that will have the highlight and its information be read.
+ *
+ * The object should be an elementary object or an access object.
+ *
+ * @see elm_access_object_get
+ * @ingroup Access
+ */
+EAPI void elm_access_highlight_set(Evas_Object* obj);
+
 //TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
 EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);
 EINA_DEPRECATED EAPI char *elm_access_external_info_get(const Evas_Object *obj);

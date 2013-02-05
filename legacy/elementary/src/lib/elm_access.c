@@ -871,6 +871,22 @@ elm_access_activate_cb_set(Evas_Object *obj,
 }
 
 EAPI void
+elm_access_say(const char *text)
+{
+   if (!text) return;
+
+   _elm_access_say(text);
+}
+
+EAPI void
+elm_access_highlight_set(Evas_Object* obj)
+{
+   if (!obj) return;
+
+   _access_obj_over_timeout_cb(obj);
+}
+
+EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text)
 {
    _elm_access_text_set
