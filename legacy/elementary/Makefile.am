@@ -73,6 +73,9 @@ config.rpath
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
 
+cmakeconfigdir = $(prefix)/share/cmake/Modules
+cmakeconfig_DATA = cmakeconfig/ElementaryConfig.cmake
+
 .PHONY: doc screenshots
 
 doc:
