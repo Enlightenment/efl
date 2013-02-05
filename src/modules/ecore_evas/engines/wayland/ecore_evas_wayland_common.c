@@ -933,3 +933,12 @@ _ecore_evas_wl_interface_new(void)
 
    return iface;
 }
+
+void
+_ecore_evas_wl_common_state_change(void *data)
+{
+   Ecore_Evas *ee = data;
+
+   if (ee->func.fn_state_change)
+     ee->func.fn_state_change(ee);
+}
