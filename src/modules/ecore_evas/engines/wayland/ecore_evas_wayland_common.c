@@ -6,7 +6,7 @@
 
 
 static const char *interface_wl_name = "wayland";
-static const int   interface_wl_version = 1;
+static const int interface_wl_version = 1;
 
 /* local structures */
 typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
