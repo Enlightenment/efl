@@ -69,8 +69,8 @@ static void _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window
 static void _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Window *win, unsigned int timestamp);
-static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
-static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
+static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp);
+static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp);
 static void _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp);
 
 /* static int _ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len); */
@@ -400,16 +400,13 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
         if ((input->pointer_focus) && (!input->grab) && (state))
           ecore_wl_input_grab(input, input->pointer_focus, button);
 
-        input->button = button;
         _ecore_wl_input_mouse_down_send(input, input->pointer_focus, 
-                                        timestamp);
+                                        button, timestamp);
      }
    else
      {
         _ecore_wl_input_mouse_up_send(input, input->pointer_focus, 
-                                      timestamp);
-        input->button = 0;
-
+                                      button, timestamp);
         if ((input->grab) && (input->grab_button == button) && (!state))
           ecore_wl_input_ungrab(input);
      }
@@ -714,9 +711,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
           {
              /* NB: 'Fake' a mouse_up for move finished */
              win->moving = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, input->timestamp);
-
-             input->button = 0;
+             _ecore_wl_input_mouse_up_send(input, win, BTN_LEFT,
+                                           input->timestamp);
 
              if ((input->grab) && (input->grab_button == BTN_LEFT))
                ecore_wl_input_ungrab(input);
@@ -725,9 +721,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
           {
              /* NB: 'Fake' a mouse_up for resize finished */
              win->resizing = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, input->timestamp);
-
-             input->button = 0;
+             _ecore_wl_input_mouse_up_send(input, win, BTN_LEFT,
+                                           input->timestamp);
 
              if ((input->grab) && (input->grab_button == BTN_LEFT))
                ecore_wl_input_ungrab(input);
@@ -851,11 +846,10 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
     * This needs to be tested with an actual touch device */
    /* input->timestamp = timestamp; */
    input->display->serial = serial;
-   input->button = BTN_LEFT;
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
    _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
-   _ecore_wl_input_mouse_down_send(input, input->pointer_focus, timestamp);
+   _ecore_wl_input_mouse_down_send(input, input->pointer_focus, BTN_LEFT, timestamp);
 }
 
 static void 
@@ -870,10 +864,8 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    /* FIXME: NB: Not sure yet if input->timestamp should be set here. 
     * This needs to be tested with an actual touch device */
    /* input->timestamp = timestamp; */
-   input->button = BTN_LEFT;
    input->display->serial = serial;
-   _ecore_wl_input_mouse_up_send(input, input->pointer_focus, timestamp);
-   input->button = 0;
+   _ecore_wl_input_mouse_up_send(input, input->pointer_focus, BTN_LEFT, timestamp);
 }
 
 static void 
@@ -1066,7 +1058,7 @@ _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Windo
 }
 
 static void 
-_ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp)
+_ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1074,14 +1066,14 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
-   if (input->button == BTN_LEFT)
+   if (button == BTN_LEFT)
      ev->buttons = 1;
-   else if (input->button == BTN_MIDDLE)
+   else if (button == BTN_MIDDLE)
      ev->buttons = 2;
-   else if (input->button == BTN_RIGHT)
+   else if (button == BTN_RIGHT)
      ev->buttons = 3;
    else
-     ev->buttons = input->button;
+     ev->buttons = button;
 
    ev->timestamp = timestamp;
    ev->x = input->sx;
@@ -1113,7 +1105,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
 }
 
 static void 
-_ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp)
+_ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1121,14 +1113,14 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
-   if (input->button == BTN_LEFT)
+   if (button == BTN_LEFT)
      ev->buttons = 1;
-   else if (input->button == BTN_MIDDLE)
+   else if (button == BTN_MIDDLE)
      ev->buttons = 2;
-   else if (input->button == BTN_RIGHT)
+   else if (button == BTN_RIGHT)
      ev->buttons = 3;
    else
-     ev->buttons = input->button;
+     ev->buttons = button;
 
    ev->timestamp = timestamp;
    ev->x = input->sx;
