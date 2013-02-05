@@ -1135,6 +1135,18 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
         /* try to get crtc info */
         if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
           {
+             /* if we have no outputs, return NULL */
+             if (info->noutput == 0)
+               {
+                  /* free the crtc info */
+                  XRRFreeCrtcInfo(info);
+
+                  /* free the resources */
+                  XRRFreeScreenResources(res);
+
+                  return NULL;
+               }
+
              /* try to allocate our return struct */
              if ((ret = malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
                {
