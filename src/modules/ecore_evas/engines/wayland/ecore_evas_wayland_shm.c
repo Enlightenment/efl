@@ -297,7 +297,34 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
           evas_object_resize(wdata->frame, w, h);
 
         if (wdata->win)
-          ecore_wl_window_update_size(wdata->win, w, h);
+          {
+             Ecore_Wl_Window *win;
+             Evas_Coord x = 0, y = 0;
+             Evas_Engine_Info_Wayland_Shm *einfo;
+
+             win = wdata->win;
+             if (win->surface)
+               {
+                  if (win->edges & 4)
+                    x = win->server_allocation.w - win->allocation.w;
+                  if (win->edges & 1)
+                    y = win->server_allocation.h - win->allocation.h;
+               }
+
+             win->edges = 0;
+
+             if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
+               {
+                  printf("Setting Resize Edges: %d %d\n", x, y);
+                  einfo->info.edges.x = x;
+                  einfo->info.edges.y = y;
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
+
+             win->server_allocation = win->allocation;
+             ecore_wl_window_update_size(wdata->win, w, h);
+          }
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
