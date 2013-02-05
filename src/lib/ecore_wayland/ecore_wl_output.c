@@ -16,10 +16,10 @@ static const struct wl_output_listener _ecore_wl_output_listener =
 };
 
 /* @since 1.2 */
-EAPI struct wl_list 
+EAPI struct wl_list *
 ecore_wl_outputs_get(void)
 {
-   return _ecore_wl_disp->outputs;
+   return &(_ecore_wl_disp->outputs);
 }
 
 void 

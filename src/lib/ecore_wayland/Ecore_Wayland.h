@@ -489,7 +489,7 @@ EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *s
 EAPI void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
 EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
 
-EAPI struct wl_list ecore_wl_outputs_get(void);
+EAPI struct wl_list *ecore_wl_outputs_get(void);
 
 /**
  * Retrieves the Wayland Globals Interface list used for the current Wayland connection.
