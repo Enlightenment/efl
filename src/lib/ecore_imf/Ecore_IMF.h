@@ -830,6 +830,9 @@ EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ct
  * position has been made.
  *
  * This function should be called when cursor position is changed or mouse up event is generated.
+ * Some input methods that do a heavy job using this event can give a critical performance latency problem.
+ * For better typing performance, we suggest that the cursor position change events need to be occurred
+ * only if the cursor position is on a confirmed status not on moving status.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param cursor_pos New cursor position in characters.
