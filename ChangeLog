@@ -1,11 +1,15 @@
-2013-02-04  U. Artie Eoff (uartie)
+2013-02-05  Eduardo Lima (Etrunko) <eduardo.lima@intel.com>
+
+        * ecore_wayland: Fix return type of function ecore_wl_outputs_get()
+
+2013-02-04  U. Artie Eoff (uartie) <ulysses.a.eoff@intel.com>
 
         * ecore_wayland: Add #ifdef __cplusplus to Ecore_Wayland.h so the
         API can be used by C++ programs.
         * ecore_wayland: Add ecore_wl_registry_get
         * ecore_wayland: Add ecore_wl_globals_get
 
-2013-02-04  Raphael Kubo da Costa <<raphael.kubo.da.costa@intel.com>
+2013-02-04  Raphael Kubo da Costa <raphael.kubo.da.costa@intel.com>
 
         * evas: Stop initializing and shutting Fontconfig down
 

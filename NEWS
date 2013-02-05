@@ -148,3 +148,4 @@ Fixes:
     * Prevent a crash even if an invalid object is swallowed into an edje object.
     * Fix cache miss when active edje hash is empty.
     * Prevent denial of service on eina_hash function.
+    * Fix return type of function ecore_wl_outputs_get().
