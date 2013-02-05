@@ -2040,7 +2040,10 @@ _elm_widget_focus_cycle(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         /* access */
         if (_elm_config->access_mode && _elm_access_read_mode_get())
-          _elm_access_highlight_set(target);
+          {
+             _elm_access_highlight_set(target);
+             _elm_widget_focus_region_show(target);
+          }
         else elm_widget_focus_steal(target);
      }
 }
