@@ -975,4 +975,4 @@
 
 2013-02-05  ChunEon Park (Hermet)
 
-        * Index supports "language,changed" smart callback 
+        * Index supports "language,changed" smart callback.
