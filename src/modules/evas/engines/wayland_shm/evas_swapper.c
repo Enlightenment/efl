@@ -17,7 +17,7 @@
 typedef struct _Wl_Buffer Wl_Buffer;
 struct _Wl_Buffer
 {
-   int w, h;
+   int x, y, w, h;
    struct wl_buffer *buffer;
    void *data;
    int offset;
@@ -28,7 +28,7 @@ struct _Wl_Buffer
 struct _Wl_Swapper
 {
    Wl_Buffer buff[3];
-   int w, h, depth;
+   int x, y, w, h, depth;
    int buff_cur, buff_num;
    struct wl_shm *shm;
    struct wl_surface *surface;
@@ -56,7 +56,7 @@ static const struct wl_buffer_listener _evas_swapper_buffer_listener =
 /* local variables */
 
 Wl_Swapper *
-evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
+evas_swapper_setup(int x, int y, int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
 {
    Wl_Swapper *ws;
    int i = 0;
@@ -69,6 +69,8 @@ evas_swapper_setup(int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_
      return NULL;
 
    /* set some properties */
+   ws->x = x;
+   ws->y = y;
    ws->w = w;
    ws->h = h;
    ws->depth = depth;
@@ -318,6 +320,8 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    /* make sure swapper has a shm */
    if (!ws->shm) return EINA_FALSE;
 
+   wb->x = ws->x;
+   wb->y = ws->y;
    wb->w = ws->w;
    wb->h = ws->h;
 
@@ -417,7 +421,9 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* surface attach */
    if (sent != wb->buffer)
      {
-        wl_surface_attach(ws->surface, wb->buffer, 0, 0);
+        wl_surface_attach(ws->surface, wb->buffer, wb->x, wb->y);
+        wb->x = 0;
+        wb->y = 0;
         sent = wb->buffer;
      }
 
@@ -425,12 +431,9 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* printf("Damage Surface: %d %d %d %d\n", rect->x, rect->y, rect->w, rect->h); */
 
    wl_surface_damage(ws->surface, rect->x, rect->y, rect->w, rect->h);
-   /* wl_surface_damage(ws->surface, 0, 0, rect->w, rect->h); */
 
    /* surface commit */
    wl_surface_commit(ws->surface);
-
-   /* wb->valid = EINA_FALSE; */
 }
 
 static void 
