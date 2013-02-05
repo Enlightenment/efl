@@ -293,7 +293,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
 
-
         if (wdata->win)
           {
              Evas_Engine_Info_Wayland_Egl *einfo;
