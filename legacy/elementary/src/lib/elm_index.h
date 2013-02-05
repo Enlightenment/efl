@@ -41,6 +41,7 @@
  *      level to the second level
  * - @c "level,down" - when the user moves a finger from the second
  *      level to the first level
+ * - @c "language,changed" - the program's language changed
  *
  * The @c "delay,changed" event is so that it'll wait a small time
  * before actually reporting those events and, moreover, just the

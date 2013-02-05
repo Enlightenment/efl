@@ -17,14 +17,25 @@ static const char SIG_DELAY_CHANGED[] = "delay,changed";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_LEVEL_UP[] = "level,up";
 static const char SIG_LEVEL_DOWN[] = "level,down";
+static const char SIG_LANG_CHANGED[] = "language,changed";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DELAY_CHANGED, ""},
    {SIG_SELECTED, ""},
    {SIG_LEVEL_UP, ""},
    {SIG_LEVEL_DOWN, ""},
+   {SIG_LANG_CHANGED, ""},
    {NULL, NULL}
 };
+
+static void
+_elm_index_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
+   if (ret) *ret = EINA_TRUE;
+}
 
 static void
 _item_free(Elm_Index_Item *it)
@@ -32,7 +43,7 @@ _item_free(Elm_Index_Item *it)
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
 
    sd->items = eina_list_remove(sd->items, it);
-   if (it->letter) 
+   if (it->letter)
      {
         eina_stringshare_del(it->letter);
         it->letter = NULL;
@@ -1464,6 +1475,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_index_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_index_smart_access),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_index_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_index_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_index_smart_sizing_eval),
 

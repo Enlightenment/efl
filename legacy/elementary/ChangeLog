@@ -973,3 +973,6 @@
 
         * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
 
+2013-02-05  ChunEon Park (Hermet)
+
+        * Index supports "language,changed" smart callback 
