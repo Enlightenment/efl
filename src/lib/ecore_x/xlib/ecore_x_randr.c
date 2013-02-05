@@ -349,6 +349,8 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
      {
         Ecore_X_Randr_Refresh_Rate *ret = NULL;
 
+        if (n == 0) return NULL;
+
         /* try to allocate space for the return */
         if ((ret = malloc(n * sizeof(Ecore_X_Randr_Refresh_Rate))))
           {
@@ -511,56 +513,59 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
    /* try to get the screen resources from Xrandr */
    if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
      {
-        Ecore_X_Randr_Crtc crtcs[res->ncrtc];
-        int i = 0, nenabled = 0;
-        int nw = 0, nh = 0;
-        int dx = 100000, dy = 100000;
-
-        for (i = 0; i < res->ncrtc; i++)
+        if (res->ncrtc > 0)
           {
-             XRRCrtcInfo *info = NULL;
+             Ecore_X_Randr_Crtc crtcs[res->ncrtc];
+             int i = 0, nenabled = 0;
+             int nw = 0, nh = 0;
+             int dx = 100000, dy = 100000;
 
-             /* try to get the crtc info from Xrandr */
-             if (!(info = XRRGetCrtcInfo(_ecore_x_disp, res, res->crtcs[i])))
-               continue;
-
-             /* safety check */
-             if ((info->mode <= 0) || (info->noutput == 0))
+             for (i = 0; i < res->ncrtc; i++)
                {
+                  XRRCrtcInfo *info = NULL;
+
+                  /* try to get the crtc info from Xrandr */
+                  if (!(info = XRRGetCrtcInfo(_ecore_x_disp, res, res->crtcs[i])))
+                    continue;
+
+                  /* safety check */
+                  if ((info->mode <= 0) || (info->noutput == 0))
+                    {
+                       /* free the crtc info */
+                       XRRFreeCrtcInfo(info);
+
+                       continue;
+                    }
+
+                  crtcs[nenabled++] = res->crtcs[i];
+
+                  if ((int)(info->x + info->width) > nw)
+                    nw = (info->x + info->width);
+
+                  if ((int)(info->y + info->height) > nh)
+                    nh = (info->y + info->height);
+
+                  if (info->x < dx) dx = info->x;
+                  if (info->y < dy) dy = info->y;
+
                   /* free the crtc info */
                   XRRFreeCrtcInfo(info);
-
-                  continue;
                }
 
-             crtcs[nenabled++] = res->crtcs[i];
+             /* free the resources */
+             XRRFreeScreenResources(res);
 
-             if ((int)(info->x + info->width) > nw)
-               nw = (info->x + info->width);
-
-             if ((int)(info->y + info->height) > nh)
-               nh = (info->y + info->height);
-
-             if (info->x < dx) dx = info->x;
-             if (info->y < dy) dy = info->y;
-
-             /* free the crtc info */
-             XRRFreeCrtcInfo(info);
-          }
-
-        /* free the resources */
-        XRRFreeScreenResources(res);
-
-        if ((dx > 0) || (dy > 0))
-          {
-             if (ecore_x_randr_move_crtcs(root, crtcs, nenabled, -dx, -dy))
+             if ((dx > 0) || (dy > 0))
                {
-                  nw -= dx;
-                  nh -= dy;
+                  if (ecore_x_randr_move_crtcs(root, crtcs, nenabled, -dx, -dy))
+                    {
+                       nw -= dx;
+                       nh -= dy;
+                    }
                }
-          }
 
-        ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
+             ecore_x_randr_screen_current_size_set(root, nw, nh, -1, -1);
+          }
      }
 #endif
 }
@@ -766,6 +771,14 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
         Ecore_X_Randr_Mode_Info *ret = NULL;
         int i = 0;
 
+        if (res->nmode == 0)
+          {
+             /* free the resources */
+             XRRFreeScreenResources(res);
+
+             return NULL;
+          }
+
         /* loop the mode informations and find the one we want */
         for (i = 0; i < res->nmode; i++)
           {
@@ -853,6 +866,14 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
      {
         Ecore_X_Randr_Crtc *ret = NULL;
 
+        if (res->ncrtc == 0)
+          {
+             /* free the resources */
+             XRRFreeScreenResources(res);
+
+             return NULL;
+          }
+
         /* try to allocate space for our return variable */
         if ((ret = malloc(res->ncrtc * sizeof(Ecore_X_Randr_Crtc))))
           {
@@ -887,6 +908,14 @@ ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
    if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
      {
         Ecore_X_Randr_Output *ret = NULL;
+
+        if (res->noutput == 0)
+          {
+             /* free the resources */
+             XRRFreeScreenResources(res);
+
+             return NULL;
+          }
 
         /* try to allocate space for our return variable */
         if ((ret = malloc(res->noutput * sizeof(Ecore_X_Randr_Output))))
@@ -1195,6 +1224,17 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
         /* try to get crtc info */
         if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
           {
+             if (info->npossible == 0)
+               {
+                  /* free the crtc info */
+                  XRRFreeCrtcInfo(info);
+
+                  /* free the resources */
+                  XRRFreeScreenResources(res);
+
+                  return NULL;
+               }
+
              /* try to allocate our return struct */
              if ((ret = malloc(info->npossible * sizeof(Ecore_X_Randr_Output))))
                {
@@ -1804,15 +1844,18 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output,
         /* try to get output info */
         if ((info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
           {
-             if ((modes = malloc(info->nmode * sizeof(Ecore_X_Randr_Mode))))
+             if (num) *num = info->nmode;
+             if (npreferred) *npreferred = info->npreferred;
+
+             if (info->nmode > 0)
                {
-                  int i = 0;
+                  if ((modes = malloc(info->nmode * sizeof(Ecore_X_Randr_Mode))))
+                    {
+                       int i = 0;
 
-                  for (i = 0; i < info->nmode; i++)
-                    modes[i] = info->modes[i];
-
-                  if (num) *num = info->nmode;
-                  if (npreferred) *npreferred = info->npreferred;
+                       for (i = 0; i < info->nmode; i++)
+                         modes[i] = info->modes[i];
+                    }
                }
 
              /* free the output info */
@@ -1852,15 +1895,18 @@ ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output
         /* try to get output info */
         if ((info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
           {
-             /* try to allocate space for output return */
-             if ((outputs = malloc(info->nclone * sizeof(Ecore_X_Randr_Output))))
+             if (num) *num = info->nclone;
+
+             if (info->nclone > 0)
                {
-                  int i = 0;
+                  /* try to allocate space for output return */
+                  if ((outputs = malloc(info->nclone * sizeof(Ecore_X_Randr_Output))))
+                    {
+                       int i = 0;
 
-                  for (i = 0; i < info->nclone; i++)
-                    outputs[i] = info->clones[i];
-
-                  if (num) *num = info->nclone;
+                       for (i = 0; i < info->nclone; i++)
+                         outputs[i] = info->clones[i];
+                    }
                }
 
              /* free the output info */
@@ -1893,15 +1939,18 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
         /* try to get output info */
         if ((info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
           {
-             /* try to allocate space for the return crtcs */
-             if ((crtcs = malloc(info->ncrtc * sizeof(Ecore_X_Randr_Crtc))))
+             if (num) *num = info->ncrtc;
+
+             if (info->ncrtc > 0)
                {
-                  int i = 0;
+                  /* try to allocate space for the return crtcs */
+                  if ((crtcs = malloc(info->ncrtc * sizeof(Ecore_X_Randr_Crtc))))
+                    {
+                       int i = 0;
 
-                  for (i = 0; i < info->ncrtc; i++)
-                    crtcs[i] = info->crtcs[i];
-
-                  if (num) *num = info->ncrtc;
+                       for (i = 0; i < info->ncrtc; i++)
+                         crtcs[i] = info->crtcs[i];
+                    }
                }
 
              /* free the output info */
@@ -2103,21 +2152,23 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
         int n = 0;
 
         n = (res->ncrtc - nnot_moved);
-
-        /* try to allocate space for a list of crtcs */
-        if ((crtcs = malloc(n * sizeof(Ecore_X_Randr_Crtc))))
+        if (n > 0)
           {
-             int i = 0, j = 0, k = 0;
-
-             for (i = 0, k = 0; (i < res->ncrtc) && (k < n); i++)
+             /* try to allocate space for a list of crtcs */
+             if ((crtcs = malloc(n * sizeof(Ecore_X_Randr_Crtc))))
                {
-                  for (j = 0; j < nnot_moved; j++)
-                    {
-                       if (res->crtcs[i] == not_moved[j])
-                         break;
-                    }
+                  int i = 0, j = 0, k = 0;
 
-                  if (j == nnot_moved) crtcs[k++] = res->crtcs[i];
+                  for (i = 0, k = 0; (i < res->ncrtc) && (k < n); i++)
+                    {
+                       for (j = 0; j < nnot_moved; j++)
+                         {
+                            if (res->crtcs[i] == not_moved[j])
+                              break;
+                         }
+
+                       if (j == nnot_moved) crtcs[k++] = res->crtcs[i];
+                    }
                }
           }
 
@@ -2125,8 +2176,11 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
         XRRFreeScreenResources(res);
 
         /* actually move the crtcs */
-        ret = ecore_x_randr_move_crtcs(root, crtcs, n, dx, dy);
-        free(crtcs);
+        if (crtcs)
+          {
+             ret = ecore_x_randr_move_crtcs(root, crtcs, n, dx, dy);
+             free(crtcs);
+          }
 
         return ret;
      }
@@ -2155,6 +2209,8 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
    int i = 0;
 
    if (_randr_version < RANDR_VERSION_1_2) return EINA_FALSE;
+
+   if (ncrtc < 1) return EINA_FALSE;
 
    /* try to get the screen resources from Xrandr */
    if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
@@ -2559,7 +2615,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
                             AnyPropertyType, &type, &format, &nitems, 
                             &bytes, &prop))
      {
-        if ((type == XA_INTEGER) && (format == 8))
+        if ((type == XA_INTEGER) && (nitems >= 1) && (format == 8))
           {
              unsigned char *ret = NULL;
 
@@ -2702,12 +2758,16 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
      {
         Ecore_X_Randr_Signal_Format *formats = NULL;
 
-        if ((formats = 
-             malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Format))))
+        if (num) *num = info->num_values;
+
+        if (info->num_values > 0)
           {
-             if (num) *num = info->num_values;
-             memcpy(formats, info->values, 
-                    (info->num_values * sizeof(Ecore_X_Randr_Signal_Format)));
+             if ((formats = 
+                  malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Format))))
+               {
+                  memcpy(formats, info->values, 
+                         (info->num_values * sizeof(Ecore_X_Randr_Signal_Format)));
+               }
           }
 
         /* free the info */
@@ -2766,12 +2826,16 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
      {
         Ecore_X_Randr_Signal_Property *props = NULL;
 
-        if ((props = 
-             malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Property))))
+        if (num) *num = info->num_values;
+
+        if (info->num_values > 0)
           {
-             if (num) *num = info->num_values;
-             memcpy(props, info->values, 
-                    (info->num_values * sizeof(Ecore_X_Randr_Signal_Property)));
+             if ((props = 
+                  malloc(info->num_values * sizeof(Ecore_X_Randr_Signal_Property))))
+               {
+                  memcpy(props, info->values, 
+                         (info->num_values * sizeof(Ecore_X_Randr_Signal_Property)));
+               }
           }
 
         /* free the info */
