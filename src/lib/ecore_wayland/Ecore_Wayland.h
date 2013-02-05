@@ -26,10 +26,14 @@
 #  define EAPI
 # endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 typedef struct _Ecore_Wl_Output Ecore_Wl_Output;
 typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
-typedef struct _Ecore_Wl_Global Ecore_Wl_Global;
+typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.8 */
 
 # ifndef _ECORE_WAYLAND_WINDOW_PREDEF
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
@@ -72,6 +76,7 @@ enum _Ecore_Wl_Window_Buffer_Type
 typedef enum _Ecore_Wl_Window_Type Ecore_Wl_Window_Type;
 typedef enum _Ecore_Wl_Window_Buffer_Type Ecore_Wl_Window_Buffer_Type;
 
+/** @since 1.8 */
 struct _Ecore_Wl_Global
 {
    unsigned int id;
@@ -101,7 +106,7 @@ struct _Ecore_Wl_Display
 
    struct wl_list inputs;
    struct wl_list outputs;
-   struct wl_list globals;
+   struct wl_list globals; /** @since 1.8 */
 
    struct
      {
@@ -487,6 +492,26 @@ EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
 EAPI struct wl_list ecore_wl_outputs_get(void);
 
 /**
+ * Retrieves the Wayland Globals Interface list used for the current Wayland connection.
+ *
+ * @return The current wayland globals interface list
+ *
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.8
+ */
+EAPI struct wl_list *ecore_wl_globals_get(void);
+
+/**
+ * Retrieves the Wayland Registry used for the current Wayland connection.
+ *
+ * @return The current wayland registry
+ *
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.8
+ */
+EAPI struct wl_registry *ecore_wl_registry_get(void);
+
+/**
  * @defgroup Ecore_Wl_Window_Group Wayland Window functions.
  * @ingroup Ecore_Wl_Group
  *
@@ -608,5 +633,9 @@ EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
 EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get();
 EAPI Eina_Bool ecore_wl_dnd_start_drag();
 EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

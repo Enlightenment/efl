@@ -1,3 +1,10 @@
+2013-02-04  U. Artie Eoff (uartie)
+
+        * ecore_wayland: Add #ifdef __cplusplus to Ecore_Wayland.h so the
+        API can be used by C++ programs.
+        * ecore_wayland: Add ecore_wl_registry_get
+        * ecore_wayland: Add ecore_wl_globals_get
+
 2013-02-04  Raphael Kubo da Costa <<raphael.kubo.da.costa@intel.com>
 
         * evas: Stop initializing and shutting Fontconfig down
