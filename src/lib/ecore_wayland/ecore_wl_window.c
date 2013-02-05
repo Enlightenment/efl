@@ -248,18 +248,18 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
         return;
      }
 
-   if (!win->surface) return;
-
    if (win->region.input)
      {
-        wl_surface_set_input_region(win->surface, win->region.input);
+        if (win->surface)
+          wl_surface_set_input_region(win->surface, win->region.input);
         wl_region_destroy(win->region.input);
         win->region.input = NULL;
      }
 
    if (win->region.opaque)
      {
-        wl_surface_set_opaque_region(win->surface, win->region.opaque);
+        if (win->surface)
+          wl_surface_set_opaque_region(win->surface, win->region.opaque);
         wl_region_destroy(win->region.opaque);
         win->region.opaque = NULL;
      }
