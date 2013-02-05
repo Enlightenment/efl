@@ -26,13 +26,6 @@ struct _Ecore_Evas_Engine_Wl_Data
 {
    Ecore_Wl_Window *parent, *win;
    Evas_Object *frame;
-
-#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM)
-   struct wl_shm_pool *pool;
-   size_t pool_size;
-   void *pool_data;
-   struct wl_buffer *buffer;
-#endif
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);
