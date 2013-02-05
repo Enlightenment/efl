@@ -227,6 +227,16 @@ if HAVE_ECORE_AUDIO
 pkgconfig_DATA += pc/ecore-audio.pc
 endif
 
+# Cmake configs:
+cmakeconfigdir = ${prefix}/share/cmake/Modules/
+cmakeconfig_DATA = cmakeconfig/EinaConfig.cmake \
+		   cmakeconfig/EoConfig.cmake \
+		   cmakeconfig/EetConfig.cmake \
+		   cmakeconfig/EvasConfig.cmake \
+		   cmakeconfig/EcoreConfig.cmake \
+		   cmakeconfig/EdjeConfig.cmake \
+		   cmakeconfig/EfreetConfig.cmake
+
 # D-Bus services:
 
 servicedir = @dbusservicedir@

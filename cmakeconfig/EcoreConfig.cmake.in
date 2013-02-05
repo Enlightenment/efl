@@ -1,0 +1,49 @@
+# - Try to find ecore
+# Once done this will define
+#  ECORE_FOUND - System has ecore
+#  ECORE_INCLUDE_DIRS - The ecore include directories
+#  ECORE_LIBRARIES - The libraries needed to use ecore
+#  ECORE_DEFINITIONS - Compiler switches required for using ecore
+
+set(MY_PKG ecore)
+
+find_package(PkgConfig)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBECORE ${_QUIET} ${MY_PKG})
+
+find_library(ECORE_LIBRARY
+             NAMES ${PC_LIBECORE_LIBRARIES}
+             HINTS ${PC_LIBECORE_LIBDIR} ${PC_LIBECORE_LIBRARY_DIRS} )
+
+set(ECORE_DEFINITIONS ${PC_LIBECORE_CFLAGS_OTHER})
+set(ECORE_LIBRARIES ${ECORE_LIBRARY})
+set(ECORE_INCLUDE_DIRS ${PC_LIBECORE_INCLUDE_DIRS})
+
+include(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set ECORE_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
+   ECORE_LIBRARIES ECORE_INCLUDE_DIRS)
+
+mark_as_advanced(ECORE_INCLUDE_DIRS ECORE_LIBRARY ECORE_LIBRARIES ECORE_DEFINITIONS)
+
+if (ECORE_USE_ECORE-X)
+   pkg_check_modules(PC_LIBECORE_X ${_QUIET} ecore-x)
+
+   find_library(ECORE_X_LIBRARY
+      NAMES ${PC_LIBECORE_X_LIBRARIES}
+      HINTS ${PC_LIBECORE_X_LIBDIR} ${PC_LIBECORE_LIBRARY_DIRS} )
+
+   set(ECORE_X_DEFINITIONS ${PC_LIBECORE_CFLAGS_OTHER})
+   set(ECORE_X_LIBRARIES ${ECORE_LIBRARY})
+   set(ECORE_X_INCLUDE_DIRS ${PC_LIBECORE_INCLUDE_DIRS})
+
+   include(FindPackageHandleStandardArgs)
+   # handle the QUIETLY and REQUIRED arguments and set ECORE_X_FOUND to TRUE
+   # if all listed variables are TRUE
+   find_package_handle_standard_args(ecore_x DEFAULT_MSG
+      ECORE_X_LIBRARIES ECORE_INCLUDE_DIRS)
+endif (ECORE_USE_ECORE-X)

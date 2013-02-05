@@ -3484,6 +3484,13 @@ pc/ethumb_client.pc
 dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
 $po_makefile_in
+cmakeconfig/EinaConfig.cmake
+cmakeconfig/EoConfig.cmake
+cmakeconfig/EetConfig.cmake
+cmakeconfig/EvasConfig.cmake
+cmakeconfig/EcoreConfig.cmake
+cmakeconfig/EdjeConfig.cmake
+cmakeconfig/EfreetConfig.cmake
 ])
 
 AC_OUTPUT
