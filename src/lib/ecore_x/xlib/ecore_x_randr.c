@@ -639,6 +639,18 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
      {
         Ecore_X_Randr_Mode_Info **ret = NULL;
 
+        /* set the returned number of modes */
+        if (num) *num = res->nmode;
+
+        /* if we did not get any modes from X, then cleanup and return */
+        if (res->nmode == 0)
+          {
+             /* free the resources */
+             XRRFreeScreenResources(res);
+
+             return NULL;
+          }
+
         /* try to allocate space for our return variable */
         if ((ret = (Ecore_X_Randr_Mode_Info **)
              malloc(res->nmode * sizeof(Ecore_X_Randr_Mode_Info *))))
@@ -681,9 +693,6 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
                     }
                }
           }
-
-        /* set the returned number of modes */
-        if ((ret) && (num)) *num = res->nmode;
 
         /* free the resources */
         XRRFreeScreenResources(res);
