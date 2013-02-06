@@ -1336,7 +1336,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         if (map->map == MAP_FAILED) goto on_error;
 
         eina_hash_add(file->map, &key, map);
-        eina_hash_direct_add(file->rmap, map->map, map);
+        eina_hash_direct_add(file->rmap, &map->map, map);
      }
 
    map->refcount++;

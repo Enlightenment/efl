@@ -1,3 +1,7 @@
+2013-02-06  Cedric Bail
+
+	* eina: fix map leak in Eina_File.
+
 2013-02-05  Eduardo Lima (Etrunko) <eduardo.lima@intel.com>
 
         * ecore_wayland: Fix return type of function ecore_wl_outputs_get()

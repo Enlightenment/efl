@@ -149,3 +149,4 @@ Fixes:
     * Fix cache miss when active edje hash is empty.
     * Prevent denial of service on eina_hash function.
     * Fix return type of function ecore_wl_outputs_get().
+    * Fix memleak in Eina_File.
