@@ -2603,82 +2603,81 @@ _elm_scroll_hold_animator(void *data)
 
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
-   if ((!sid->hold) && (!sid->freeze) &&
-       _elm_config->scroll_smooth_time_interval > 0.0)
-     {
-        int src_index = 0, dst_index = 0, num = 0;
-        Evas_Coord x = 0, y = 0;
-        int xsum = 0, ysum = 0;
-#define QUEUE_SIZE 10 /* for event queue size */
-        int i, count = 0; /* count for the real event number we have to
-                           * deal with */
-        struct
-        {
-           Evas_Coord x, y;
-           double     t;
-        } pos[QUEUE_SIZE];
 
-        double tdiff, tnow;
-        double time_interval = _elm_config->scroll_smooth_time_interval;
-        // FIXME: assume server and client have the same "timezone"
-        // (0 timepoint) for now. this needs to be figured out in advance
-        // though.
+   if (_elm_config->scroll_smooth_amount > 0.0)
+     {
+        int i, count = 0;
+        Evas_Coord basex = 0, basey = 0, x, y;
+        double dt, t, tdiff, tnow, twin;
+        struct
+          {
+             Evas_Coord x, y, dx, dy;
+             double t, dt;
+          } pos[60];
+
         tdiff = sid->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
-
-        memset(pos, 0, sizeof (pos));
-
-        for (i = 0; i < QUEUE_SIZE; i++)
+        t = tnow;
+        twin = _elm_config->scroll_smooth_time_window;
+        for (i = 0; i < 60; i++)
           {
-             x = sid->down.history[i].x;
-             y = sid->down.history[i].y;
-
-             //if there is no history value, we don't deal with it if
-             //there is better wat to know existance of history value
-             //, I will modify this code to it
-             if ((x == 0) && (y == 0))
+             // oldest point is sd->down.history[i]
+             // newset is sd->down.history[0]
+             dt = t - sid->down.history[i].timestamp;
+             if (dt > twin)
                {
+                  i--;
                   break;
                }
+             x = sid->down.history[i].x;
+             y = sid->down.history[i].y;
              _elm_scroll_down_coord_eval(sid, &x, &y);
-
-             pos[i].x = x;
-             pos[i].y = y;
-             pos[i].t = tnow - sid->down.history[i].timestamp;
-             num++;
-          }
-        count = --i;
-
-        // we only deal with smooth scroll if there is enough history
-        for (i = 0; i < num; i++)
-          {
-             if (src_index > count) break;
              if (i == 0)
                {
-                  xsum = pos[i].x;
-                  ysum = pos[i].y;
-                  dst_index++;
-                  continue;
+                  basex = x;
+                  basey = y;
                }
-             while ((pos[src_index].t < time_interval * i) &&
-                    (src_index <= count))
-               {
-                  src_index++;
-               }
-             if (src_index <= count)
-               {
-                  xsum += pos[src_index].x;
-                  ysum += pos[src_index].y;
-                  dst_index++;
-               }
-          }
-        if (dst_index)
+             pos[i].x = x - basex;
+             pos[i].y = y - basey;
+             pos[i].t = sid->down.history[i].timestamp - sid->down.history[0].timestamp;
+             count++;
+           }
+        count = i;
+        if (count >= 2)
           {
-            fx = xsum / dst_index;
-            fy = ysum / dst_index;
+             double dtsum = 0.0, tadd, maxdt;
+             double dxsum = 0.0, dysum = 0.0, xsum = 0.0, ysum = 0.0;
+             for (i = 0; i < (count - 1); i++)
+               {
+                  pos[i].dx = pos[i].x - pos[i + 1].x;
+                  pos[i].dy = pos[i].y - pos[i + 1].y;
+                  pos[i].dt = pos[i].t - pos[i + 1].t;
+                  dxsum += pos[i].dx;
+                  dysum += pos[i].dy;
+                  dtsum += pos[i].dt;
+                  xsum += pos[i].x;
+                  ysum += pos[i].y;
+               }
+             maxdt = pos[i].t;
+             dxsum /= (double)i;
+             dysum /= (double)i;
+             dtsum /= (double)i;
+             xsum /= (double)i;
+             ysum /= (double)i;
+             tadd = tnow - sid->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
+             tadd = tadd - (maxdt / 2);
+#define WEIGHT(n, o, v) n = (((double)o * (1.0 - v)) + ((double)n * v))
+             WEIGHT(tadd, sid->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
+             WEIGHT(dxsum, sid->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
+             WEIGHT(dysum, sid->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
+             fx = basex + xsum + ((dxsum * tadd) / dtsum);
+             fy = basey + ysum + ((dysum * tadd) / dtsum);
+             sid->down.hist.tadd = tadd;
+             sid->down.hist.dxsum = dxsum;
+             sid->down.hist.dysum = dysum;
+             WEIGHT(fx, sid->down.hold_x, _elm_config->scroll_smooth_amount);
+             WEIGHT(fy, sid->down.hold_y, _elm_config->scroll_smooth_amount);
           }
-        else
-          fx = fy = 0;
      }
 
    eo_do(sid->obj, elm_scrollable_interface_content_pos_get(&ox, &oy));
