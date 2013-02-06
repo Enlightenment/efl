@@ -398,6 +398,20 @@ _elm_scroller_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_li
 
    cur = sd->content;
 
+   /* access */
+   if (_elm_config->access_mode)
+     {
+        if ((elm_widget_can_focus_get(cur)) ||
+            (elm_widget_child_can_focus_get(cur)))
+          {
+             int_ret = elm_widget_focus_next_get(cur, dir, next);
+             if (ret) *ret = int_ret;
+             return;
+          }
+
+        return;
+     }
+
    /* Try focus cycle in subitem */
    if (elm_widget_focus_get(obj))
      {
