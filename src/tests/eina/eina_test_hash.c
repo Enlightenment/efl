@@ -197,10 +197,21 @@ START_TEST(eina_hash_all_int)
 }
 END_TEST
 
+START_TEST(eina_hash_seed)
+{
+   eina_init();
+
+   fail_if(eina_seed == 0);
+
+   eina_shutdown();
+}
+END_TEST
+
 void eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_hash_simple);
    tcase_add_test(tc, eina_hash_extended);
    tcase_add_test(tc, eina_hash_double_item);
    tcase_add_test(tc, eina_hash_all_int);
+   tcase_add_test(tc, eina_hash_seed);
 }
