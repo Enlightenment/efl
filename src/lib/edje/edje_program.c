@@ -1282,6 +1282,8 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
 void
 _edje_callbacks_patterns_clean(Edje *ed)
 {
+   if (ed->walking_callbacks > 0) return;
+
    _edje_signals_sources_patterns_clean(&ed->patterns.callbacks);
 
    eina_rbtree_delete(ed->patterns.callbacks.exact_match,

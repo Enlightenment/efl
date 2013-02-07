@@ -1,3 +1,7 @@
+2013-02-07  WooHyun Jung
+
+	* edje: Checking walking_callbacks for not removing patterns which are still used.
+
 2013-02-06  Cedric Bail
 
 	* eina: fix map leak in Eina_File.
