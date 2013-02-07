@@ -980,3 +980,7 @@
 2013-02-07  WooHyun Jung
 
         * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
+
+2013-02-07  Jaehwan Kim
+
+        * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".

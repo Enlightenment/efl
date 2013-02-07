@@ -19,6 +19,12 @@ static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
 static const char SIG_EDGE_TOP[] = "edge,top";
 static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
+static const char SIG_VBAR_DRAG[] = "vbar,drag";
+static const char SIG_VBAR_PRESS[] = "vbar,press";
+static const char SIG_VBAR_UNPRESS[] = "vbar,unpress";
+static const char SIG_HBAR_DRAG[] = "hbar,drag";
+static const char SIG_HBAR_PRESS[] = "hbar,press";
+static const char SIG_HBAR_UNPRESS[] = "hbar,unpress";
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    {SIG_SCROLL, ""},
@@ -30,6 +36,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {SIG_EDGE_RIGHT, ""},
    {SIG_EDGE_TOP, ""},
    {SIG_EDGE_BOTTOM, ""},
+   {SIG_VBAR_DRAG, ""},
+   {SIG_VBAR_PRESS, ""},
+   {SIG_VBAR_UNPRESS, ""},
+   {SIG_HBAR_DRAG, ""},
+   {SIG_HBAR_PRESS, ""},
+   {SIG_HBAR_UNPRESS, ""},
    {NULL, NULL}
 };
 
@@ -552,6 +564,48 @@ _scroll_drag_stop_cb(Evas_Object *obj,
 }
 
 static void
+_vbar_drag_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_DRAG, NULL);
+}
+
+static void
+_vbar_press_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_PRESS, NULL);
+}
+
+static void
+_vbar_unpress_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_UNPRESS, NULL);
+}
+
+static void
+_hbar_drag_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_DRAG, NULL);
+}
+
+static void
+_hbar_press_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_PRESS, NULL);
+}
+
+static void
+_hbar_unpress_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_UNPRESS, NULL);
+}
+
+static void
 _elm_scroller_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
@@ -683,6 +737,12 @@ _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_animate_stop_cb_set(_scroll_anim_stop_cb),
          elm_scrollable_interface_drag_start_cb_set(_scroll_drag_start_cb),
          elm_scrollable_interface_drag_stop_cb_set(_scroll_drag_stop_cb),
+         elm_scrollable_interface_vbar_drag_cb_set(_vbar_drag_cb),
+         elm_scrollable_interface_vbar_press_cb_set(_vbar_press_cb),
+         elm_scrollable_interface_vbar_unpress_cb_set(_vbar_unpress_cb),
+         elm_scrollable_interface_hbar_drag_cb_set(_hbar_drag_cb),
+         elm_scrollable_interface_hbar_press_cb_set(_hbar_press_cb),
+         elm_scrollable_interface_hbar_unpress_cb_set(_hbar_unpress_cb),
          elm_scrollable_interface_content_min_limit_cb_set(_elm_scroller_content_min_limit_cb));
 }
 

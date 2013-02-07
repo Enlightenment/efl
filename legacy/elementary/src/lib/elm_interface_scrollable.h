@@ -161,6 +161,12 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_BOTTOM_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_DRAG_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_PRESS_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_UNPRESS_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_DRAG_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET,
@@ -335,6 +341,72 @@ enum
  *
  */
 #define elm_scrollable_interface_edge_bottom_cb_set(edge_bottom_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_BOTTOM_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, edge_bottom_cb)
+
+/**
+ * @def elm_scrollable_interface_vbar_drag_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_drag_cb
+ *
+ */
+#define elm_scrollable_interface_vbar_drag_cb_set(vbar_drag_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_DRAG_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, vbar_drag_cb)
+
+/**
+ * @def elm_scrollable_interface_vbar_press_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_press_cb
+ *
+ */
+#define elm_scrollable_interface_vbar_press_cb_set(vbar_press_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_PRESS_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, vbar_press_cb)
+
+/**
+ * @def elm_scrollable_interface_vbar_unpress_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_unpress_cb
+ *
+ */
+#define elm_scrollable_interface_vbar_unpress_cb_set(vbar_unpress_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_UNPRESS_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, vbar_unpress_cb)
+
+/**
+ * @def elm_scrollable_interface_hbar_drag_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_drag_cb
+ *
+ */
+#define elm_scrollable_interface_hbar_drag_cb_set(hbar_drag_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_DRAG_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, hbar_drag_cb)
+
+/**
+ * @def elm_scrollable_interface_hbar_press_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_press_cb
+ *
+ */
+#define elm_scrollable_interface_hbar_press_cb_set(hbar_press_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, hbar_press_cb)
+
+/**
+ * @def elm_scrollable_interface_hbar_unpress_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] vbra_unpress_cb
+ *
+ */
+#define elm_scrollable_interface_hbar_unpress_cb_set(hbar_unpress_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, hbar_unpress_cb)
 
 /**
  * @def elm_scrollable_interface_content_min_limit_cb_set
@@ -882,6 +954,12 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Elm_Interface_Scrollable_Cb edge_right;
       Elm_Interface_Scrollable_Cb edge_top;
       Elm_Interface_Scrollable_Cb edge_bottom;
+      Elm_Interface_Scrollable_Cb vbar_drag;
+      Elm_Interface_Scrollable_Cb vbar_press;
+      Elm_Interface_Scrollable_Cb vbar_unpress;
+      Elm_Interface_Scrollable_Cb hbar_drag;
+      Elm_Interface_Scrollable_Cb hbar_press;
+      Elm_Interface_Scrollable_Cb hbar_unpress;
       Elm_Interface_Scrollable_Min_Limit_Cb content_min_limit;
    } cb_func;
 

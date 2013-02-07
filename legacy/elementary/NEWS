@@ -32,6 +32,7 @@ Additions:
    * Add "highlighted" and "unhighlighted" callbacks to list, genlist, and gengrid.
    * Add elm_index_delay_change_time_set/get for changing delay change time in index.
    * Add elm_index smart callback - "language,changed".
+   * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
 
 Improvements:
 

@@ -386,6 +386,16 @@ group { name: "elm/scroller/base/default";
          transition: LINEAR 0.5;
          target: "sb_vbar_clip";
       }
+      program { name: "sb_vbar_press";
+         signal: "mouse,down,1";
+         source: "elm.dragable.vbar";
+         action:  SIGNAL_EMIT "elm,vbar,press" "elm";
+      }
+      program { name: "sb_vbar_unpress";
+         signal: "mouse,up,1";
+         source: "elm.dragable.vbar";
+         action:  SIGNAL_EMIT "elm,vbar,unpress" "elm";
+      }
 
       program { name: "hbar_show";
          signal: "elm,action,show,hbar";
@@ -442,6 +452,16 @@ group { name: "elm/scroller/base/default";
          action:  STATE_SET "hidden" 0.0;
          transition: LINEAR 0.5;
          target: "sb_hbar_clip";
+      }
+      program { name: "sb_hbar_press";
+         signal: "mouse,down,1";
+         source: "elm.dragable.hbar";
+         action:  SIGNAL_EMIT "elm,hbar,press" "elm";
+      }
+      program { name: "sb_hbar_unpress";
+         signal: "mouse,up,1";
+         source: "elm.dragable.hbar";
+         action:  SIGNAL_EMIT "elm,hbar,unpress" "elm";
       }
 
       program { name: "scroll";

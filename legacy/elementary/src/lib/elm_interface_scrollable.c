@@ -960,6 +960,44 @@ _elm_scroll_anim_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static void
+_elm_scroll_vbar_drag_cb(void *data,
+                           Evas_Object *obj __UNUSED__,
+                           const char *emission __UNUSED__,
+                           const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.vbar_drag)
+     sid->cb_func.vbar_drag(sid->obj, NULL);
+
+   _elm_scroll_scroll_bar_read_and_update(sid);
+}
+
+static void
+_elm_scroll_vbar_press_cb(void *data,
+                          Evas_Object *obj __UNUSED__,
+                          const char *emission __UNUSED__,
+                          const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.vbar_press)
+     sid->cb_func.vbar_press(sid->obj, NULL);
+}
+
+static void
+_elm_scroll_vbar_unpress_cb(void *data,
+                            Evas_Object *obj __UNUSED__,
+                            const char *emission __UNUSED__,
+                            const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.vbar_unpress)
+     sid->cb_func.vbar_unpress(sid->obj, NULL);
+}
+
+static void
 _elm_scroll_edje_drag_v_start_cb(void *data,
                                  Evas_Object *obj __UNUSED__,
                                  const char *emission __UNUSED__,
@@ -994,6 +1032,44 @@ _elm_scroll_edje_drag_v_cb(void *data,
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
    _elm_scroll_scroll_bar_read_and_update(sid);
+}
+
+static void
+_elm_scroll_hbar_drag_cb(void *data,
+                         Evas_Object *obj __UNUSED__,
+                         const char *emission __UNUSED__,
+                         const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.hbar_drag)
+     sid->cb_func.hbar_drag(sid->obj, NULL);
+
+   _elm_scroll_scroll_bar_read_and_update(sid);
+}
+
+static void
+_elm_scroll_hbar_press_cb(void *data,
+                          Evas_Object *obj __UNUSED__,
+                          const char *emission __UNUSED__,
+                          const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.hbar_press)
+     sid->cb_func.hbar_press(sid->obj, NULL);
+}
+
+static void
+_elm_scroll_hbar_unpress_cb(void *data,
+                            Evas_Object *obj __UNUSED__,
+                            const char *emission __UNUSED__,
+                            const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.hbar_unpress)
+     sid->cb_func.hbar_unpress(sid->obj, NULL);
 }
 
 static void
@@ -3089,7 +3165,7 @@ _scroll_edje_object_attach(Evas_Object *obj)
      (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
 
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_edje_drag_v_cb,
+     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
      sid);
    edje_object_signal_callback_add
      (sid->edje_obj, "drag,set", "elm.dragable.vbar",
@@ -3107,7 +3183,13 @@ _scroll_edje_object_attach(Evas_Object *obj)
      (sid->edje_obj, "drag,page", "elm.dragable.vbar",
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_add
-     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_edje_drag_h_cb,
+     (sid->edje_obj, "elm,vbar,press", "elm",
+     _elm_scroll_vbar_press_cb, sid);
+   edje_object_signal_callback_add
+     (sid->edje_obj, "elm,vbar,unpress", "elm",
+     _elm_scroll_vbar_unpress_cb, sid);
+   edje_object_signal_callback_add
+     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_hbar_drag_cb,
      sid);
    edje_object_signal_callback_add
      (sid->edje_obj, "drag,set", "elm.dragable.hbar",
@@ -3124,6 +3206,12 @@ _scroll_edje_object_attach(Evas_Object *obj)
    edje_object_signal_callback_add
      (sid->edje_obj, "drag,page", "elm.dragable.hbar",
      _elm_scroll_edje_drag_h_cb, sid);
+   edje_object_signal_callback_add
+     (sid->edje_obj, "elm,hbar,press", "elm",
+     _elm_scroll_hbar_press_cb, sid);
+   edje_object_signal_callback_add
+     (sid->edje_obj, "elm,hbar,unpress", "elm",
+     _elm_scroll_hbar_unpress_cb, sid);
 }
 
 static void
@@ -3156,7 +3244,7 @@ _scroll_edje_object_detach(Evas_Object *obj)
      (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
 
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_edje_drag_v_cb,
+     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
      sid);
    edje_object_signal_callback_del_full
      (sid->edje_obj, "drag,set", "elm.dragable.vbar",
@@ -3174,7 +3262,13 @@ _scroll_edje_object_detach(Evas_Object *obj)
      (sid->edje_obj, "drag,page", "elm.dragable.vbar",
      _elm_scroll_edje_drag_v_cb, sid);
    edje_object_signal_callback_del_full
-     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_edje_drag_h_cb,
+     (sid->edje_obj, "elm,vbar,press", "elm",
+     _elm_scroll_vbar_press_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "elm,vbar,unpress", "elm",
+     _elm_scroll_vbar_unpress_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_hbar_drag_cb,
      sid);
    edje_object_signal_callback_del_full
      (sid->edje_obj, "drag,set", "elm.dragable.hbar",
@@ -3191,6 +3285,12 @@ _scroll_edje_object_detach(Evas_Object *obj)
    edje_object_signal_callback_del_full
      (sid->edje_obj, "drag,page", "elm.dragable.hbar",
      _elm_scroll_edje_drag_h_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "elm,hbar,press", "elm",
+     _elm_scroll_hbar_press_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "elm,hbar,unpress", "elm",
+     _elm_scroll_hbar_unpress_cb, sid);
 }
 
 static void
@@ -3493,6 +3593,54 @@ _elm_scroll_edge_bottom_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
    Elm_Interface_Scrollable_Cb edje_bottom_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
    sid->cb_func.edge_bottom = edje_bottom_cb;
+}
+
+static void
+_elm_scroll_vbar_drag_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb vbar_drag_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.vbar_drag = vbar_drag_cb;
+}
+
+static void
+_elm_scroll_vbar_press_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb vbar_press_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.vbar_press = vbar_press_cb;
+}
+
+static void
+_elm_scroll_vbar_unpress_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb vbar_unpress_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.vbar_unpress = vbar_unpress_cb;
+}
+
+static void
+_elm_scroll_hbar_drag_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb hbar_drag_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.hbar_drag = hbar_drag_cb;
+}
+
+static void
+_elm_scroll_hbar_press_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb hbar_press_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.hbar_press = hbar_press_cb;
+}
+
+static void
+_elm_scroll_hbar_unpress_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb hbar_unpress_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.hbar_unpress = hbar_unpress_cb;
 }
 
 static void
@@ -4011,6 +4159,12 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET), _elm_scroll_edge_right_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET), _elm_scroll_edge_top_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_BOTTOM_CB_SET), _elm_scroll_edge_bottom_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_DRAG_CB_SET), _elm_scroll_vbar_drag_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_PRESS_CB_SET), _elm_scroll_vbar_press_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_UNPRESS_CB_SET), _elm_scroll_vbar_unpress_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_DRAG_CB_SET), _elm_scroll_hbar_drag_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET), _elm_scroll_hbar_press_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET), _elm_scroll_hbar_unpress_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET), _elm_scroll_content_min_limit_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET), _elm_scroll_content_pos_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET), _elm_scroll_content_pos_get),
@@ -4065,6 +4219,12 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_BOTTOM_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_DRAG_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_PRESS_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_VBAR_UNPRESS_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_DRAG_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET, "description here"),

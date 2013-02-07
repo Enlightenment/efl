@@ -54,6 +54,12 @@ static const char SIG_EDGE_TOP[] = "edge,top";
 static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
 static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
+static const char SIG_VBAR_DRAG[] = "vbar,drag";
+static const char SIG_VBAR_PRESS[] = "vbar,press";
+static const char SIG_VBAR_UNPRESS[] = "vbar,unpress";
+static const char SIG_HBAR_DRAG[] = "hbar,drag";
+static const char SIG_HBAR_PRESS[] = "hbar,press";
+static const char SIG_HBAR_UNPRESS[] = "hbar,unpress";
 static const char SIG_MULTI_SWIPE_LEFT[] = "multi,swipe,left";
 static const char SIG_MULTI_SWIPE_RIGHT[] = "multi,swipe,right";
 static const char SIG_MULTI_SWIPE_UP[] = "multi,swipe,up";
@@ -95,6 +101,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EDGE_BOTTOM, ""},
    {SIG_EDGE_LEFT, ""},
    {SIG_EDGE_RIGHT, ""},
+   {SIG_VBAR_DRAG, ""},
+   {SIG_VBAR_PRESS, ""},
+   {SIG_VBAR_UNPRESS, ""},
+   {SIG_HBAR_DRAG, ""},
+   {SIG_HBAR_PRESS, ""},
+   {SIG_HBAR_UNPRESS, ""},
    {SIG_MULTI_SWIPE_LEFT, ""},
    {SIG_MULTI_SWIPE_RIGHT, ""},
    {SIG_MULTI_SWIPE_UP, ""},
@@ -4509,6 +4521,48 @@ _edge_bottom_cb(Evas_Object *obj,
 }
 
 static void
+_vbar_drag_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_DRAG, NULL);
+}
+
+static void
+_vbar_press_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_PRESS, NULL);
+}
+
+static void
+_vbar_unpress_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_VBAR_UNPRESS, NULL);
+}
+
+static void
+_hbar_drag_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_DRAG, NULL);
+}
+
+static void
+_hbar_press_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_PRESS, NULL);
+}
+
+static void
+_hbar_unpress_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_HBAR_UNPRESS, NULL);
+}
+
+static void
 _decorate_item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
@@ -4673,7 +4727,13 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_edge_left_cb_set(_edge_left_cb),
          elm_scrollable_interface_edge_right_cb_set(_edge_right_cb),
          elm_scrollable_interface_edge_top_cb_set(_edge_top_cb),
-         elm_scrollable_interface_edge_bottom_cb_set(_edge_bottom_cb));
+         elm_scrollable_interface_edge_bottom_cb_set(_edge_bottom_cb),
+         elm_scrollable_interface_vbar_drag_cb_set(_vbar_drag_cb),
+         elm_scrollable_interface_vbar_press_cb_set(_vbar_press_cb),
+         elm_scrollable_interface_vbar_unpress_cb_set(_vbar_unpress_cb),
+         elm_scrollable_interface_hbar_drag_cb_set(_hbar_drag_cb),
+         elm_scrollable_interface_hbar_press_cb_set(_hbar_press_cb),
+         elm_scrollable_interface_hbar_unpress_cb_set(_hbar_unpress_cb));
 
    priv->mode = ELM_LIST_SCROLL;
    priv->max_items_per_block = MAX_ITEMS_PER_BLOCK;

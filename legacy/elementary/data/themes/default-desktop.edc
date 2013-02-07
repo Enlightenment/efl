@@ -592,6 +592,16 @@ externals.external: "elm";
                     transition: LINEAR 1.0; \
                     target: "sb_vbar_clip"; \
                 } \
+                program { name: "sb_vbar_press"; \
+                   signal: "mouse,down,1"; \
+                   source: "elm.dragable.vbar"; \
+                   action:  SIGNAL_EMIT "elm,vbar,press" "elm"; \
+                } \
+                program { name: "sb_vbar_unpress"; \
+                   signal: "mouse,up,1"; \
+                   source: "elm.dragable.vbar"; \
+                   action:  SIGNAL_EMIT "elm,vbar,unpress" "elm"; \
+                } \
                 program { name: "sb_vbar_a1_down"; \
                     signal: "mouse,down,1"; \
                     source: "sb_vbar_a1"; \
@@ -691,6 +701,16 @@ externals.external: "elm";
                     action: STATE_SET "hidden" 0.0; \
                     transition: LINEAR 1.0; \
                     target: "sb_hbar_clip"; \
+                } \
+                program { name: "sb_hbar_press"; \
+                   signal: "mouse,down,1"; \
+                   source: "elm.dragable.hbar"; \
+                   action:  SIGNAL_EMIT "elm,hbar,press" "elm"; \
+                } \
+                program { name: "sb_hbar_unpress"; \
+                   signal: "mouse,up,1"; \
+                   source: "elm.dragable.hbar"; \
+                   action:  SIGNAL_EMIT "elm,hbar,unpress" "elm"; \
                 } \
                 program { name: "sb_hbar_a1_down"; \
                     signal: "mouse,down,1"; \
