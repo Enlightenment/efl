@@ -28,6 +28,7 @@ Additions:
        ecore_x_e_window_profile_change_send()
        ecore_x_e_window_profile_change_request_send()
        ecore_x_e_window_profile_change_done_send()
+       ecore_x_randr_crtc_info_get()
     * ecore_wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.
@@ -69,6 +70,9 @@ Deprecations:
        ECORE_X_ATOM_E_PROFILE_LIST
        ecore_x_e_window_profile_list_set()
        ecore_x_e_window_profile_list_get()
+       ecore_x_randr_crtc_gamma_ramp_size_get()
+       ecore_x_randr_crtc_gamma_ramps_get()
+       ecore_x_randr_crtc_gamma_ramps_set()
     * ecore_evas: deprecate DirectFB, XRender, WinCE, X11-16 and X11-8.
     * eeze: deprecate libudev<148 and libmount<2.18
 
