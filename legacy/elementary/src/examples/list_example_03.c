@@ -30,6 +30,7 @@ _prepend_cb(void *data, Evas_Object *obj, void *event_info)
 
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_prepend(li, label, NULL, NULL, NULL, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");
 }
@@ -43,6 +44,7 @@ _add_cb(void *data, Evas_Object *obj, void *event_info)
 
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_append(li, label, NULL, NULL, NULL, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");
 }
@@ -60,6 +62,7 @@ _add_ic_cb(void *data, Evas_Object *obj, void *event_info)
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    list_it = elm_list_item_append(li, label, ic,  NULL, NULL, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item with icon\n");
 }
@@ -80,6 +83,7 @@ _add_func_cb(void *data, Evas_Object *obj, void *event_info)
 
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_append(li, label, NULL, NULL, _sel_cb, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");
 }
@@ -110,6 +114,7 @@ _add_data_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(content, 32, "Item content %i", counter);
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_append(li, label, NULL, NULL, _sel_data_cb, content);
+   elm_list_go(li);
    if (!list_it) {
      printf("Error adding item\n");
      return;
@@ -125,6 +130,7 @@ _del_cb(void *data, Evas_Object *obj, void *event_info)
 
    selected_item = elm_list_selected_item_get(li);
    elm_object_item_del(selected_item);
+   elm_list_go(li);
 }
 
 static void
@@ -183,6 +189,7 @@ _insert_after_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_insert_after(li, selected_item, label, NULL, NULL,
                                         NULL, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");
 }
@@ -214,6 +221,7 @@ _insert_before_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_insert_before(li, selected_item, label, NULL, NULL,
                                     NULL, NULL);
+   elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");
 }
@@ -227,6 +235,7 @@ _set_separator_cb(void *data, Evas_Object *obj, void *event_info)
    selected_item = elm_list_selected_item_get(li);
    if (!selected_item) return;
    elm_list_item_separator_set(selected_item, EINA_TRUE);
+   elm_list_go(li);
 }
 
 static void
