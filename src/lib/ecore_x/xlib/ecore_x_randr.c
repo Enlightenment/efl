@@ -1780,6 +1780,42 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 }
 
 /*
+ * @since 1.8
+ */
+EAPI Ecore_X_Randr_Crtc_Info *
+ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
+{
+#ifdef ECORE_XRANDR
+   XRRScreenResources *res = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_2) return NULL;
+
+   /* try to get the screen resources from Xrandr */
+   if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
+     {
+        XRRCrtcInfo *info = NULL;
+        Ecore_X_Randr_Crtc_Info *ret = NULL;
+
+        /* try to get crtc info */
+        if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
+          {
+             if ((ret = malloc(sizeof(Ecore_X_Randr_Crtc_Info))))
+               memcpy(ret, info, sizeof(Ecore_X_Randr_Crtc_Info));
+
+             /* free the crtc info */
+             XRRFreeCrtcInfo(info);
+          }
+
+        /* free the resources */
+        XRRFreeScreenResources(res);
+
+        return ret;
+     }
+#endif
+   return NULL;
+}
+
+/*
  * @brief Add given mode to given output.
  *
  * @param output The output the mode is added to.
