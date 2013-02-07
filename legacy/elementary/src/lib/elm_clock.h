@@ -244,12 +244,12 @@ enum
 typedef enum
 {
    ELM_CLOCK_EDIT_DEFAULT = 0, /**< Default value. Means that all digits are editable, when in edition mode. */
-   ELM_CLOCK_EDIT_HOUR_DECIMAL = 1 << 0, /**< Decimal algarism of hours value should be editable */
-   ELM_CLOCK_EDIT_HOUR_UNIT = 1 << 1, /**< Unit algarism of hours value should be editable */
-   ELM_CLOCK_EDIT_MIN_DECIMAL = 1 << 2, /**< Decimal algarism of minutes value should be editable */
-   ELM_CLOCK_EDIT_MIN_UNIT = 1 << 3, /**< Unit algarism of minutes value should be editable */
-   ELM_CLOCK_EDIT_SEC_DECIMAL = 1 << 4, /**< Decimal algarism of seconds value should be editable */
-   ELM_CLOCK_EDIT_SEC_UNIT = 1 << 5, /**< Unit algarism of seconds value should be editable */
+   ELM_CLOCK_EDIT_HOUR_DECIMAL = 1 << 0, /**< Decimal algorithm of hours value should be editable */
+   ELM_CLOCK_EDIT_HOUR_UNIT = 1 << 1, /**< Unit algorithm of hours value should be editable */
+   ELM_CLOCK_EDIT_MIN_DECIMAL = 1 << 2, /**< Decimal algorithm of minutes value should be editable */
+   ELM_CLOCK_EDIT_MIN_UNIT = 1 << 3, /**< Unit algorithm of minutes value should be editable */
+   ELM_CLOCK_EDIT_SEC_DECIMAL = 1 << 4, /**< Decimal algorithm of seconds value should be editable */
+   ELM_CLOCK_EDIT_SEC_UNIT = 1 << 5, /**< Unit algorithm of seconds value should be editable */
    ELM_CLOCK_EDIT_ALL = (1 << 6) - 1 /**< All digits should be editable */
 } Elm_Clock_Edit_Mode;
 
