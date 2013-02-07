@@ -1,5 +1,9 @@
 2013-02-07  Christopher Michael (devilhorns)
 
+        * Added ecore_x_randr_crtc_info_free function.
+
+2013-02-07  Christopher Michael (devilhorns)
+
         * Added ecore_x_randr_crtc_info_get function.
 
 2013-02-07  Cedric Bail
