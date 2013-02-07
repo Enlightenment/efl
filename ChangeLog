@@ -1,3 +1,7 @@
+2013-02-07  Cedric Bail
+
+	* eina: Eina_Tiler now take tile size into account.
+
 2013-02-07  WooHyun Jung
 
 	* edje: Checking walking_callbacks for not removing patterns which are still used.

@@ -109,6 +109,8 @@ struct _Eina_Tiler
    Eina_Rectangle area;
    EINA_MAGIC
    splitter_t splitter;
+
+   Eina_Bool rounding : 1;
 };
 
 #define EINA_MAGIC_CHECK_TILER(d, ...)                                  \
@@ -1009,23 +1011,25 @@ static inline Eina_Bool _splitter_rect_add(Eina_Tiler *t, Eina_Rectangle *rect)
    rect_node_t *rn;
 
    //printf("ACCOUNTING[1]: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
-   rect->x >>= 1;
-   rect->y >>= 1;
-   rect->w += 2;
-   rect->w >>= 1;
-   rect->h += 2;
-   rect->h >>= 1;
+   if (t->rounding)
+     {
+        rect->x >>= 1;
+        rect->y >>= 1;
+        rect->w += 2;
+        rect->w >>= 1;
+        rect->h += 2;
+        rect->h >>= 1;
+     }
 
    rn = (rect_node_t *)rect_list_node_pool_get();
    rn->_lst = list_node_zeroed;
    rect_init(&rn->rect, rect->x, rect->y, rect->w, rect->h);
    //printf("ACCOUNTING[2]: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
    //testing on my core2 duo desktop - fuzz of 32 or 48 is best.
-#define FUZZ 32
    rect_list_add_split_fuzzy_and_merge(&t->splitter.rects,
                                        (list_node_t *)rn,
-                                       FUZZ * FUZZ,
-                                       FUZZ * FUZZ);
+                                       t->tile.w * t->tile.h,
+                                       t->tile.w * t->tile.h);
    return EINA_TRUE;
 }
 
@@ -1036,14 +1040,17 @@ static inline void _splitter_rect_del(Eina_Tiler *t, Eina_Rectangle *rect)
    if (!t->splitter.rects.head)
       return;
 
-   rect->x += 1;
-   rect->y += 1;
-   rect->x >>= 1;
-   rect->y >>= 1;
-   rect->w -= 1;
-   rect->w >>= 1;
-   rect->h -= 1;
-   rect->h >>= 1;
+   if (t->rounding)
+     {
+        rect->x += 1;
+        rect->y += 1;
+        rect->x >>= 1;
+        rect->y >>= 1;
+        rect->w -= 1;
+        rect->w >>= 1;
+        rect->h -= 1;
+        rect->h >>= 1;
+     }
 
    if ((rect->w <= 0) || (rect->h <= 0))
       return;
@@ -1073,10 +1080,20 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
 
         cur = ((rect_node_t *)n)->rect;
 
-        it->r.x = cur.left << 1;
-        it->r.y = cur.top << 1;
-        it->r.w = cur.width << 1;
-        it->r.h = cur.height << 1;
+        if (it->tiler->rounding)
+          {
+             it->r.x = cur.left << 1;
+             it->r.y = cur.top << 1;
+             it->r.w = cur.width << 1;
+             it->r.h = cur.height << 1;
+          }
+        else
+          {
+             it->r.x = cur.left;
+             it->r.y = cur.top;
+             it->r.w = cur.width;
+             it->r.h = cur.height;             
+          }
 
         if (eina_rectangle_intersection(&it->r, &it->tiler->area) == EINA_FALSE)
            continue;
@@ -1121,8 +1138,9 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
    t = calloc(1, sizeof(Eina_Tiler));
    t->area.w = w;
    t->area.h = h;
-   t->tile.w = w;
-   t->tile.h = h;
+   t->tile.w = 32;
+   t->tile.h = 32;
+   t->rounding = EINA_TRUE;
    EINA_MAGIC_SET(t, EINA_MAGIC_TILER);
    _splitter_new(t);
    return t;
@@ -1144,6 +1162,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
    if ((w <= 0) || (h <= 0))
       return;
 
+   if (w == 1 || h == 1) t->rounding = EINA_FALSE;
    t->tile.w = w;
    t->tile.h = h;
    _splitter_tile_size_set(t, w, h);
@@ -1216,7 +1235,7 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
         sp = (splitter_t *)&(t->splitter);
         to_merge = t->splitter.rects;
         sp->rects = list_zeroed;
-        rect_list_merge_rects(&sp->rects, &to_merge, FUZZ * FUZZ);
+        rect_list_merge_rects(&sp->rects, &to_merge, t->tile.w * t->tile.h);
         sp->need_merge = 0;
      }
 

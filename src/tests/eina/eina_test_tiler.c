@@ -38,7 +38,7 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
    unsigned int i = 0;
    struct Eina_Tile_Grid_Info *tile;
 
-      EINA_ITERATOR_FOREACH(it, tile) {
+   EINA_ITERATOR_FOREACH(it, tile) {
       fail_if(cur_test[i].col != tile->col ||
               cur_test[i].row != tile->row ||
               cur_test[i].x != tile->rect.x ||
@@ -49,10 +49,10 @@ check_iterator(Eina_Iterator *it, struct test_rect *cur_test)
       i++;
    }
 
-      fail_if(i == 0);
+   fail_if(i == 0);
 }
 
-      START_TEST(eina_test_tile_grid_slicer_iterator)
+START_TEST(eina_test_tile_grid_slicer_iterator)
 {
    Eina_Iterator *it;
    struct test_rect *cur_test;
@@ -162,13 +162,57 @@ START_TEST(eina_test_tiler_all)
       ++i;
    }
 
-      fail_if(eina_iterator_container_get(it) != tl);
+   fail_if(eina_iterator_container_get(it) != tl);
 
-      eina_iterator_free(it);
+   eina_iterator_free(it);
 
    fail_if(i == 0);
 
    eina_tiler_clear(tl);
+
+   eina_tiler_free(tl);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_tiler_stable)
+{
+   Eina_Tiler *tl;
+   Eina_Rectangle *rp;
+   Eina_Iterator *it;
+   Eina_Rectangle r;
+   int i = 0;
+
+   eina_init();
+
+   tl = eina_tiler_new(640, 480);
+   fail_if(!tl);
+
+   eina_tiler_tile_size_set(tl, 1, 1);
+
+   EINA_RECTANGLE_SET(&r, 50, 50, 20, 20);
+   fail_if(!eina_tiler_rect_add(tl, &r));
+
+   EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
+   eina_tiler_rect_del(tl, &r);
+
+   it = eina_tiler_iterator_new(tl);
+   fail_if(!it);
+
+   EINA_ITERATOR_FOREACH(it, rp)
+     {
+        EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
+        fail_if(eina_rectangle_intersection(&r, rp));
+
+        EINA_RECTANGLE_SET(&r, 50, 50, 20, 20);
+        fail_if(!eina_rectangles_intersect(&r, rp));
+        ++i;
+     }
+
+   fail_if(i != 2);
+
+   eina_iterator_free(it);
 
    eina_tiler_free(tl);
 
@@ -181,4 +225,5 @@ eina_test_tiler(TCase *tc)
 {
    tcase_add_test(tc, eina_test_tile_grid_slicer_iterator);
    tcase_add_test(tc, eina_test_tiler_all);
+   tcase_add_test(tc, eina_test_tiler_stable);
 }

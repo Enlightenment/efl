@@ -100,6 +100,7 @@ Improvements:
     * Translations updates:
      - french.
     * edje entry : Support &, < and > in preedit string
+    * eina: Eina_Tiler now take tile size into account.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
