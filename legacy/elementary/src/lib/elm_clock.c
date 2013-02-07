@@ -724,10 +724,10 @@ _elm_clock_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!sd->edit)
      {
         *next = (Evas_Object *)obj;
-        if (ret) *ret = !elm_widget_focus_get(obj);
+        if (ret) *ret = !elm_widget_highlight_get(obj);
         return;
      }
-   else if (!elm_widget_focus_get(obj))
+   else if (!elm_widget_highlight_get(obj))
      {
         *next = (Evas_Object *)obj;
         if (ret) *ret = EINA_TRUE;

@@ -7321,6 +7321,9 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
+
+   if (_elm_config->access_mode)
+      _elm_genlist_smart_focus_next_enable = EINA_TRUE;
 }
 
 static const Eo_Op_Description op_desc[] = {
