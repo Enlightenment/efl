@@ -415,7 +415,7 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
  * @param str This parameter isn't in use.
  * @param data The data to be used.
  * @param storage The storage to be used.
- * @return The function always return 1.
+ * @return The function returns 1, when storage is NULL it returns 0.
  */
 unsigned char
 ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser EINA_UNUSED, const Ecore_Getopt_Desc *desc EINA_UNUSED, const char *str EINA_UNUSED, void *data, Ecore_Getopt_Value *storage)
