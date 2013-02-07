@@ -446,7 +446,7 @@ eina_inlist_count(const Eina_Inlist *list)
    unsigned int i = 0;
 
    for (l = list; l; l = l->next)
-      i++;
+     i++;
 
    return i;
 }
