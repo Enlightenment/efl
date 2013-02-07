@@ -1800,7 +1800,38 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
         if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
           {
              if ((ret = malloc(sizeof(Ecore_X_Randr_Crtc_Info))))
-               memcpy(ret, info, sizeof(Ecore_X_Randr_Crtc_Info));
+               {
+                  /* copy the mode information into our return structure */
+                  ret->timestamp = info->timestamp;
+                  ret->x = info->x;
+                  ret->y = info->y;
+                  ret->width = info->width;
+                  ret->height = info->height;
+                  ret->mode = info->mode;
+                  ret->rotation = info->rotation;
+                  ret->noutput = info->noutput;
+                  ret->npossible = info->npossible;
+
+                  if ((ret->outputs = 
+                       malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
+                    {
+                       int i = 0;
+
+                       /* loop the outputs on this crtc */
+                       for (i = 0; i < info->noutput; i++)
+                         ret->outputs[i] = info->outputs[i];
+                    }
+
+                  if ((ret->possible = 
+                       malloc(info->npossible * sizeof(Ecore_X_Randr_Output))))
+                    {
+                       int i = 0;
+
+                       /* loop the outputs on this crtc */
+                       for (i = 0; i < info->npossible; i++)
+                         ret->possible[i] = info->possible[i];
+                    }
+               }
 
              /* free the crtc info */
              XRRFreeCrtcInfo(info);
