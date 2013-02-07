@@ -418,9 +418,17 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
    if ((!font) || (size <= 0)) return;
 
    fdesc = evas_font_desc_new();
-   evas_font_name_parse(fdesc, font);
+   if (!(o->cur.font && !strcmp(font, o->cur.font)))
+     {
+        evas_font_name_parse(fdesc, font);
+     }
+   else
+     {
+        fdesc = evas_font_desc_ref(o->cur.fdesc);
+     }
+   
    if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
-         (size == o->cur.size))
+       (size == o->cur.size))
      {
         evas_font_desc_unref(fdesc);
         return;
