@@ -141,6 +141,38 @@ EAPI void                         elm_object_item_access_unregister(Elm_Object_I
 EAPI Evas_Object                 *elm_object_item_access_object_get(const Elm_Object_Item *item);
 
 /**
+ * @brief Set highlight order
+ * @since 1.8
+ *
+ * @param item The container object item
+ * @param objs Order of objects to pass highlight
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_access_order_set(Elm_Object_Item *item, Eina_List *objs);
+
+/**
+ * @brief Get highlight order
+ * @since 1.8
+ *
+ * @param item The container object item
+ * @return Order of objects to pass highlight
+ *
+ * @ingroup General
+ */
+EAPI Eina_List                   *elm_object_item_access_order_getconst (const Elm_Object_Item *item);
+
+/**
+ * @brief Unset highlight order
+ * @since 1.8
+ *
+ * @param item The container object item
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_access_order_unset(Elm_Object_Item *item);
+
+/**
  * Get the data associated with an object item
  * @param it The Elementary object item
  * @return The data associated with @p it

@@ -265,30 +265,87 @@ _access_highlight_object_get(Evas_Object *obj)
    return ho;
 }
 
-void _elm_access_mouse_event_enabled_set(Eina_Bool enabled)
+void
+_elm_access_mouse_event_enabled_set(Eina_Bool enabled)
 {
    enabled = !!enabled;
    if (mouse_event_enable == enabled) return;
    mouse_event_enable = enabled;
 }
 
-void _elm_access_read_mode_set(Eina_Bool enabled)
+void
+_elm_access_read_mode_set(Eina_Bool enabled)
 {
    enabled = !!enabled;
    if (read_mode == enabled) return;
    read_mode = enabled;
 }
 
-Eina_Bool _elm_access_read_mode_get()
+Eina_Bool
+_elm_access_read_mode_get()
 {
    return read_mode;
 }
 
-void _elm_access_shutdown()
+void
+_elm_access_shutdown()
 {
    _access_shutdown();
 }
 
+static void
+_access_order_del_cb(void *data,
+                     Evas *e __UNUSED__,
+                     Evas_Object *obj,
+                     void *event_info __UNUSED__)
+{
+   Elm_Widget_Item *item = data;
+
+   item->access_order = eina_list_remove(item->access_order, obj);
+}
+
+void
+_elm_access_widget_item_access_order_set(Elm_Widget_Item *item,
+                                              Eina_List *objs)
+{
+   Eina_List *l;
+   Evas_Object *o;
+
+   if (!item) return;
+
+   _elm_access_widget_item_access_order_unset(item);
+
+   EINA_LIST_FOREACH(objs, l, o)
+     {
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _access_order_del_cb, item);
+     }
+
+   item->access_order = objs;
+}
+
+const Eina_List *
+_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item)
+{
+   if (!item) return NULL;
+   return item->access_order;
+}
+
+void
+_elm_access_widget_item_access_order_unset(Elm_Widget_Item *item)
+{
+   Eina_List *l, *l_next;
+   Evas_Object *o;
+
+   if (!item) return;
+
+   EINA_LIST_FOREACH_SAFE(item->access_order, l, l_next, o)
+     {
+        evas_object_event_callback_del_full
+          (o, EVAS_CALLBACK_DEL, _access_order_del_cb, item);
+        item->access_order = eina_list_remove_list(item->access_order, l);
+     }
+}
 //-------------------------------------------------------------------------//
 EAPI void
 _elm_access_highlight_set(Evas_Object* obj)

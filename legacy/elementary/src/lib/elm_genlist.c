@@ -2572,6 +2572,13 @@ _elm_genlist_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                        if (ELM_RECTS_INTERSECT
                              (x + (w / 2), y + (h / 2), 0, 0, sx, sy, sw, sh))
                          items = eina_list_append(items, it->base.access_obj);
+
+                       if (!it->base.access_order) continue;
+
+                       Eina_List *subl;
+                       Evas_Object *subo;
+                       EINA_LIST_FOREACH(it->base.access_order, subl, subo)
+                         items = eina_list_append(items, subo);
                     }
                }
           }

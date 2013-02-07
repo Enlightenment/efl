@@ -494,6 +494,10 @@ void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
    focus chain */
 void                  _elm_access_read_mode_set(Eina_Bool enabled);
 Eina_Bool             _elm_access_read_mode_get();
+void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item *item, Eina_List *objs);
+const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item);
+void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item);
+
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data);
@@ -550,6 +554,7 @@ struct _Elm_Widget_Item
    Elm_Widget_Disable_Cb          disable_func;
    Evas_Object                   *access_obj;
    const char                    *access_info;
+   Eina_List                     *access_order;
 
    Eina_Bool                      disabled : 1;
 };

@@ -1561,6 +1561,24 @@ elm_object_item_access_object_get(const Elm_Object_Item *item)
    return ((Elm_Widget_Item *)item)->access_obj;
 }
 
+EAPI void
+elm_object_item_access_order_set(Elm_Object_Item *item, Eina_List *objs)
+{
+   _elm_access_widget_item_access_order_set((Elm_Widget_Item *)item, objs);
+}
+
+EAPI Eina_List *
+elm_object_item_access_order_get(const Elm_Object_Item *item)
+{
+   _elm_access_widget_item_access_order_get((Elm_Widget_Item *)item);
+}
+
+EAPI void
+elm_object_item_access_order_unset(Elm_Object_Item *item)
+{
+   _elm_access_widget_item_access_order_unset((Elm_Widget_Item *)item);
+}
+
 EAPI void *
 elm_object_item_data_get(const Elm_Object_Item *it)
 {
