@@ -1847,6 +1847,26 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 }
 
 /*
+ * @since 1.8
+ */
+EAPI void 
+ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
+{
+#ifdef ECORE_XRANDR
+   if (_randr_version >= RANDR_VERSION_1_2)
+     {
+        if (info)
+          {
+             if (info->outputs) free(info->outputs);
+             if (info->possible) free(info->possible);
+             free(info);
+             info = NULL;
+          }
+     }
+#endif
+}
+
+/*
  * @brief Add given mode to given output.
  *
  * @param output The output the mode is added to.
