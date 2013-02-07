@@ -891,6 +891,23 @@ Eina_Bool gl3_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
    return EINA_FALSE;
 }
 
+static void _realized(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ei)
+{
+	Evas_Object *check;
+    Eina_List *items;
+	items = NULL;
+
+	if (!ei) return;
+	Elm_Object_Item *item = ei;
+
+	check = elm_object_item_part_content_get(item, "elm.swallow.end");
+
+	if (!check) return;
+
+	items = eina_list_append(items, check);
+	elm_object_item_access_order_set(item, items);
+}
+
 void
 test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -911,6 +928,8 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
+
+   evas_object_smart_callback_add(gl, "realized", _realized, NULL);
 
    itc3.item_style     = "default";
    itc3.func.text_get = gl3_text_get;
