@@ -3136,7 +3136,8 @@ _single_line_set(Eo *obj, void *_pd, va_list *list)
 
    sd->single_line = single_line;
    sd->line_wrap = ELM_WRAP_NONE;
-   elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
+   if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
+     elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
    eo_do(obj, elm_wdg_theme(NULL));
 
    if (sd->scroll)

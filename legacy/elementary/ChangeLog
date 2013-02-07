@@ -976,3 +976,7 @@
 2013-02-05  ChunEon Park (Hermet)
 
         * Index supports "language,changed" smart callback.
+
+2013-02-07  WooHyun Jung
+
+        * elm_entry_single_line_set should not change cnp_mode when PLAINTEXT mode.
