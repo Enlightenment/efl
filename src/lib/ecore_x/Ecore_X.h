@@ -464,6 +464,7 @@ typedef struct _Ecore_X_Event_Generic                      Ecore_X_Event_Generic
 
 typedef struct _Ecore_X_Randr_Screen_Size                  Ecore_X_Randr_Screen_Size;
 typedef struct _Ecore_X_Randr_Screen_Size_MM               Ecore_X_Randr_Screen_Size_MM;
+typedef struct _Ecore_X_Randr_Crtc_Info                    Ecore_X_Randr_Crtc_Info; /**< @since 1.8 */
 
 typedef struct _Ecore_X_Xdnd_Position                      Ecore_X_Xdnd_Position;
 
@@ -849,6 +850,20 @@ struct _Ecore_X_Randr_Screen_Size_MM
 {
    int width, height, width_mm, height_mm;
 };
+
+struct _Ecore_X_Randr_Crtc_Info
+{
+   Ecore_X_Time timestamp;
+   int x, y;
+   unsigned int width, height;
+   Ecore_X_Randr_Mode mode;
+   Ecore_X_Randr_Orientation rotation;
+   int noutput;
+   Ecore_X_Randr_Output *outputs;
+   Ecore_X_Randr_Orientation rotations;
+   int npossible;
+   Ecore_X_Randr_Output *possible;
+}; /**< @since 1.8 */
 
 struct _Ecore_X_Event_Screen_Change
 {
@@ -2012,6 +2027,7 @@ EAPI Eina_Bool                                 ecore_x_randr_crtc_orientation_se
 EAPI Eina_Bool                                 ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, Ecore_X_Randr_Crtc clone);
 EAPI Eina_Bool                                 ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Output *outputs, int noutputs, int x, int y, Ecore_X_Randr_Mode mode, Ecore_X_Randr_Orientation orientation);
 EAPI Eina_Bool                                 ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc_r1, Ecore_X_Randr_Crtc crtc_r2, Ecore_X_Randr_Output_Policy policy, Ecore_X_Randr_Relative_Alignment alignment);
+EAPI Ecore_X_Randr_Crtc_Info                  *ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
 EAPI Eina_Bool                                 ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode);
 EAPI void                                      ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode);
 EAPI Ecore_X_Randr_Mode                       *ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred);
