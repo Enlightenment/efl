@@ -226,11 +226,12 @@
  * @li @c string_small - slower hash function but less collisions - 32 buckets
  * (lower memory consumption)
  * @li @c string_superfast - slower hash function but less collisions - 256 buckets
- * (higher memory consumption)
+ * (higher memory consumption) - not randomized, avoid it on public remote interface.
  *
  * Basically for a very small number of keys (10 or less), @c djb2 should be
  * used, or @c string_small if you have a restriction on memory usage. And for a
- * higher number of keys, @c string_superfast should be always preferred.
+ * higher number of keys, @c string_superfast should be preferred if not used on a
+ * public remote interface.
  *
  * If just stringshared keys are being added, use @ref
  * eina_hash_stringshared_new. If a lot of keys will be added to the hash table
@@ -395,6 +396,9 @@ EAPI Eina_Hash *eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb);
  * then be looked up with pointers other than the original key pointer
  * that was used to add values. On failure, this function returns
  * @c NULL.
+ *
+ * NOTE: don't use this kind of hash when their is a possibility to remotely
+ * request and push data in it. This hash is subject to denial of service.
  */
 EAPI Eina_Hash *eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb);
 
