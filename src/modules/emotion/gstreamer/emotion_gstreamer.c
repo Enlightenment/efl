@@ -1110,6 +1110,7 @@ gstreamer_ecore_x_check(void)
                             window_manager_video = EINA_TRUE;
                          }
                     }
+                  free(supported);
                }
           }
      }
