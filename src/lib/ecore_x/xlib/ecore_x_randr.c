@@ -2307,7 +2307,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, i
         int nw = 0, nh = 0;
 
         info = alloca(ncrtc * sizeof(XRRCrtcInfo *));
-        memset(info, 0, ncrtc * sizeof(XRRCrtcInfo));
+        memset(info, 0, ncrtc * sizeof(XRRCrtcInfo *));
 
         ecore_x_randr_screen_size_range_get(root, NULL, NULL, &mw, &mh);
         ecore_x_randr_screen_current_size_get(root, &sw, &sh, NULL, NULL);
