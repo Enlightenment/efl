@@ -61,28 +61,39 @@ simple/simple_simple.h
 
 eo_simple_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@
 
+DATA_FILES = Makefile.examples
+
+EXTRA_DIST = $(DATA_FILES)
+
 examples: $(EXTRA_PROGRAMS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
+	mkdir -p $(datadir)/eo/examples
+	$(install_sh_DATA) -c $(DATA_FILES) $(datadir)/eo/examples
 	mkdir -p $(datadir)/eo/examples/isa
 	$(install_sh_DATA) -c $(eo_isa_SOURCES) $(datadir)/eo/examples/isa
-	mkdir -p $(datadir)/eo/examples/evas
-	$(install_sh_DATA) -c $(evas_SOURCES) $(datadir)/eo/examples/evas
 	mkdir -p $(datadir)/eo/examples/simple
-	$(install_sh_DATA) -c $(simple_SOURCES) $(datadir)/eo/examples/simple
+	$(install_sh_DATA) -c $(eo_simple_SOURCES) $(datadir)/eo/examples/simple
+if EO_BUILD_EXAMPLE_EVAS
+	mkdir -p $(datadir)/eo/examples/evas
+	$(install_sh_DATA) -c $(eo_evas_SOURCES) $(datadir)/eo/examples/evas
+endif
 
 uninstall-local:
+	for f in $(DATA_FILES) ; do \
+	  rm -f $(datadir)/eo/examples/$$f ; \
+	done
 	for f in $(eo_isa_SOURCES) ; do \
 	  rm -f $(datadir)/eo/examples/isa/$$f ; \
 	done
-	for f in $(evas_SOURCES) ; do \
-	  rm -f $(datadir)/eo/examples/evas/$$f ; \
-	done
-	for f in $(simple_SOURCES) ; do \
+	for f in $(eo_simple_SOURCES) ; do \
 	  rm -f $(datadir)/eo/examples/simple/$$f ; \
+	done
+	for f in $(eo_evas_SOURCES) ; do \
+	  rm -f $(datadir)/eo/examples/evas/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

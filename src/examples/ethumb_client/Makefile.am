@@ -39,6 +39,10 @@ ethumb_dbus
 SRCS = \
 ethumb_dbus.c
 
+DATA_FILES = Makefile.examples
+
+EXTRA_DIST = $(DATA_FILES)
+
 examples: $(EXTRA_PROGRAMS)
 
 clean-local:
@@ -46,10 +50,10 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/ethumb_client/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/ethumb_client/examples
+	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/ethumb_client/examples
 
 uninstall-local:
-	for f in $(SRCS); do \
+	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/ethumb_client/examples/$$f ; \
 	done
 

@@ -83,7 +83,8 @@ bubble-blue.png \
 red.png \
 test.png \
 Vera.ttf \
-duck.wav
+duck.wav \
+Makefile.examples
 
 SRCS = \
 edje-codegen-example.c \

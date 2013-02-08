@@ -1,0 +1,42 @@
+CC=gcc
+COMMON_FLAGS=`pkg-config --libs --cflags eo`
+EXTRA_FLAGS=`pkg-config --libs --cflags evas,elementary`
+
+SIMPLE= simple/simple_main.c \
+        simple/simple_interface.c \
+        simple/simple_mixin.c \
+        simple/simple_simple.c
+
+ISA= isa/eo_isa_main.c \
+     isa/eo_isa_complex.c \
+     isa/eo_isa_interface.c \
+     isa/eo_isa_simple.c \
+     isa/eo_isa_mixin.c
+
+EVAS= evas/evas_test.c \
+      evas/evas_elw_box.c \
+      evas/evas_elw_boxedbutton.c \
+      evas/evas_elw_button.c \
+      evas/evas_elw_win.c \
+      evas/evas_evas_obj.c
+
+EXAMPLES= eo_simple \
+          eo_isa 
+
+all: examples
+
+examples: $(EXAMPLES)
+	@echo "To build optional evas examples, run: make Makefile.examples eo_evas"
+
+eo_simple:
+	$(CC) -o $@ $(SIMPLE) $(COMMON_FLAGS)
+
+eo_isa:
+	$(CC) -o $@ $(ISA) $(COMMON_FLAGS)
+
+eo_evas:
+	$(CC) -o $@ $(EVAS) $(COMMON_FLAGS) $(EXTRA_FLAGS)
+
+clean:
+	@echo "Cleaning up built objects..."
+	@rm -Rf $(EXAMPLES) eo_evas

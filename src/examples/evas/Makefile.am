@@ -204,7 +204,8 @@ DATA_FILES = \
 enlightenment.png \
 red.png \
 im1.png \
-cube1.png
+cube1.png \
+Makefile.examples
 
 examples: $(EXTRA_PROGRAMS) $(EDJS)
 

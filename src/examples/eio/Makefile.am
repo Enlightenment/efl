@@ -38,6 +38,10 @@ SRCS = \
 eio_file_ls.c \
 eio_file_copy.c
 
+DATA_FILES = Makefile.examples
+
+EXTRA_DIST = $(DATA_FILES)
+
 examples: $(EXTRA_PROGRAMS)
 
 clean-local:
@@ -45,10 +49,10 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eio/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/eio/examples
+	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eio/examples
 
 uninstall-local:
-	for f in $(SRCS) ; do \
+	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/eio/examples/$$f ; \
 	done
 

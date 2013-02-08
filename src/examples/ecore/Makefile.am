@@ -255,7 +255,7 @@ ecore_thread_example.c \
 ecore_time_functions_example.c \
 ecore_timer_example.c
 
-DATA_FILES = red.png
+DATA_FILES = red.png Makefile.examples
 
 EXTRA_DIST = $(DATA_FILES)
 

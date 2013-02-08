@@ -134,6 +134,10 @@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 @EINA_LDFLAGS@
 
+DATA_FILES = addr_book.txt chat.xml Makefile.examples
+
+EXTRA_DIST = $(DATA_FILES)
+
 examples: $(EXTRA_PROGRAMS)
 
 clean-local:
@@ -141,14 +145,12 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/eina/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/eina/examples
+	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina/examples
 
 uninstall-local:
-	for f in $(SRCS) ; do \
+	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/eina/examples/$$f ; \
 	done
-
-EXTRA_DIST = addr_book.txt chat.xml
 
 if ALWAYS_BUILD_EXAMPLES
 noinst_PROGRAMS = $(EXTRA_PROGRAMS)

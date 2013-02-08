@@ -18,6 +18,17 @@ $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/edbus/libedbus2.la \
 @EDBUS_LDFLAGS@
 
+SRCS = \
+connman-list-services.c \
+ofono-dial.c \
+banshee.c \
+complex-types.c \
+complex-types-server.c \
+server.c \
+client.c \
+simple-signal-emit.c \
+complex-types-client-eina-value.c
+
 EXTRA_PROGRAMS = \
 connman-list-services \
 ofono-dial \
@@ -56,7 +67,9 @@ simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
 complex_types_client_eina_value_SOURCES = complex-types-client-eina-value.c
 complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 
-SRCS = $(EXTRA_PROGRAMS)
+DATA_FILES = Makefile.examples
+
+EXTRA_DIST = $(DATA_FILES)
 
 examples: $(EXTRA_PROGRAMS)
 
@@ -65,10 +78,10 @@ clean-local:
 
 install-examples:
 	mkdir -p $(datadir)/edbus/examples
-	$(install_sh_DATA) -c $(SRCS) $(datadir)/edbus/examples
+	$(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/edbus/examples
 
 uninstall-local:
-	for f in $(SRCS) ; do \
+	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/edbus/examples/$$f ; \
 	done
 
