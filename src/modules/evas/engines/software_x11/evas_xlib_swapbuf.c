@@ -226,18 +226,20 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
         im = buf->priv.onebuf;
         if (!im)
           {
+             int ww = 0, hh = 0;
+             
              data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
-                                                 &(buf->w), &(buf->h));
+                                                 &(ww), &(hh));
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
-                                                         buf->w, buf->h, data,
+                                                         ww, hh, data,
                                                          buf->priv.destination_alpha, 
                                                          EVAS_COLORSPACE_ARGB8888);
              else
 #endif
                im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                        buf->w, buf->h, data,
+                                                        ww, hh, data,
                                                         buf->priv.destination_alpha, 
                                                         EVAS_COLORSPACE_ARGB8888);
              buf->priv.onebuf = im;
@@ -409,13 +411,15 @@ void
 evas_software_xlib_swapbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
    Gfx_Func_Convert conv_func = NULL;
-   Eina_Rectangle r = { 0, 0, 0, 0 };
-   int d, bpl = 0, wid, bpp;
+   Eina_Rectangle r = { 0, 0, 0, 0 }, pr;
+   int d, bpl = 0, wid, bpp, rx = 0, ry = 0, ww = 0, hh = 0;
    DATA32 *src_data;
    DATA8 *dst_data;
 
    if (!buf->priv.pending_writes) return;
    d = evas_xlib_swapper_depth_get(buf->priv.swapper);
+   bpp = d / 8;
+   if (bpp <= 0) return;
    if (buf->priv.pal)
      {
 	if ((buf->rot == 0) || (buf->rot == 180))
@@ -483,13 +487,49 @@ evas_software_xlib_swapbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, 
      }
    src_data = update->image.data;
    if (!src_data) return;
-   dst_data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
-                                           &(buf->w), &(buf->h));
-   if (!dst_data) return;
-   RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, buf->w, buf->h);
+   if ((buf->rot == 0) || (buf->rot == 180))
+     {
+        dst_data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
+                                                &(ww), &(hh));
+        if (!dst_data) return;
+        if (buf->rot == 0)
+          {
+             RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, ww, hh);
+             dst_data += (bpl * r.y) + (r.x * bpp);
+             w -= rx;
+          }
+        else if (buf->rot == 180)
+          {
+             pr = r;
+             RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, ww, hh);
+             rx = pr.w - r.w; ry = pr.h - r.h;
+             src_data += (update->cache_entry.w * ry) + rx;
+             w -= rx;
+          }
+     }
+   else
+     {
+        dst_data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
+                                                &(ww), &(hh));
+        if (!dst_data) return;
+        if (buf->rot == 90)
+          {
+             pr = r;
+             RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, ww, hh);
+             rx = pr.w - r.w; ry = pr.h - r.h;
+             src_data += ry;
+             w -= ry;
+          }
+        else if (buf->rot == 270)
+          {
+             pr = r;
+             RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, ww, hh);
+             rx = pr.w - r.w; ry = pr.h - r.h;
+             src_data += (update->cache_entry.w * rx);
+             w -= ry;
+          }
+     }
    if ((r.w <= 0) || (r.h <= 0)) return;
-   bpp = d / 8;
-   if (bpp <= 0) return;
    wid = bpl / bpp;
    dst_data += (bpl * r.y) + (r.x * bpp);
    if (buf->priv.pal)
@@ -497,14 +537,14 @@ evas_software_xlib_swapbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, 
                update->cache_entry.w - w,
                wid - r.w,
                r.w, r.h,
-               x, y,
+               x + rx, y + ry,
                buf->priv.pal->lookup);
    else
      conv_func(src_data, dst_data, 
                update->cache_entry.w - w,
                wid - r.w,
                r.w, r.h,
-               x, y,
+               x + rx, y + ry,
                NULL);
 }
 
