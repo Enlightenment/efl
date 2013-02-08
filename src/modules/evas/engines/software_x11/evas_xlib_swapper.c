@@ -227,10 +227,12 @@ evas_xlib_swapper_free(X_Swapper *swp)
 }
 
 void *
-evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl)
+evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
 {
    swp->mapped = EINA_TRUE;
    if (bpl) *bpl = swp->buf[swp->buf_cur].bpl;
+   if (w) *w = swp->w;
+   if (h) *h = swp->h;
    return swp->buf[swp->buf_cur].data;
 }
 
@@ -676,7 +678,7 @@ evas_xlib_swapper_free(X_Swapper *swp)
 }
 
 void *
-evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl)
+evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
 {
    unsigned int attach = DRI2BufferBackLeft;
    int num;
@@ -766,6 +768,8 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl)
      }
    swp->w = swp->buf_w;
    swp->h = swp->buf_h;
+   if (w) *w = swp->w;
+   if (h) *h = swp->h;
    return swp->buf_data;
 }
 
@@ -806,7 +810,7 @@ evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
 {
    DRI2BufferFlags *flags;
    
-   if (!swp->mapped) evas_xlib_swapper_buffer_map(swp, NULL);
+   if (!swp->mapped) evas_xlib_swapper_buffer_map(swp, NULL, NULL, NULL);
    if (!swp->mapped) return MODE_FULL;
    flags = (DRI2BufferFlags *)(&(swp->buf->flags));
    if (flags->data.idx_reuse != swp->last_count)
@@ -906,7 +910,7 @@ evas_xlib_swapper_free(X_Swapper *swp EINA_UNUSED)
 }
 
 void *
-evas_xlib_swapper_buffer_map(X_Swapper *swp EINA_UNUSED, int *bpl EINA_UNUSED)
+evas_xlib_swapper_buffer_map(X_Swapper *swp EINA_UNUSED, int *bpl EINA_UNUSED, int *w EINA_UNUSED, int *h EINA_UNUSED)
 {
    return NULL;
 }

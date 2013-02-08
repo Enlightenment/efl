@@ -226,7 +226,8 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
         im = buf->priv.onebuf;
         if (!im)
           {
-             data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl);
+             data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
+                                                 &(buf->w), &(buf->h));
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
@@ -482,8 +483,11 @@ evas_software_xlib_swapbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, 
      }
    src_data = update->image.data;
    if (!src_data) return;
-   dst_data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl);
+   dst_data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl, 
+                                           &(buf->w), &(buf->h));
    if (!dst_data) return;
+   RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, buf->w, buf->h);
+   if ((r.w <= 0) || (r.h <= 0)) return;
    bpp = d / 8;
    if (bpp <= 0) return;
    wid = bpl / bpp;
