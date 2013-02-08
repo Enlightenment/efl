@@ -9574,7 +9574,10 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
         while (it && (it != it2))
           {
-             max_x = it->x + it->adv;
+             if ((start <= it->text_pos) && (it->text_pos <= end))
+               {
+                  max_x = it->x + it->adv;
+               }
              it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
           }
         if (min_x != max_x)

@@ -1381,6 +1381,11 @@ START_TEST(evas_textblock_geometries)
    fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
          (tr->h != tr2->h));
 
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   EINA_LIST_FREE(rects2, tr2)
+      free(tr2);
+
    /* Multiline range */
    evas_textblock_cursor_pos_set(cur, 0);
    evas_textblock_cursor_pos_set(main_cur, 14);
@@ -1413,6 +1418,23 @@ START_TEST(evas_textblock_geometries)
    tr = eina_list_data_get(rects);
    tr2 = eina_list_data_get(eina_list_next(rects));
    fail_if(tr->y >= tr2->y);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+   EINA_LIST_FREE(rects2, tr2)
+      free(tr2);
+
+   /* Same run different scripts */
+   evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
+
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 7);
+   rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
+
+   fail_if(eina_list_count(rects) != 2);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
 
    END_TB_TEST();
 }

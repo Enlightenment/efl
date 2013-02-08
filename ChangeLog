@@ -1,3 +1,8 @@
+2013-02-08  Tom Hacohen (TAsn)
+
+        * Evas textblock: Fixed a selection issue with different scripts and
+	bidi.
+	
 2013-02-08  Guillaume Friloux
         * Fix usage of Ecore_Con_Server's internal buffer.
 
@@ -38,7 +43,6 @@
         * ecore_wayland: Add ecore_wl_globals_get
 
 2013-02-04  Raphael Kubo da Costa <raphael.kubo.da.costa@intel.com>
-
         * evas: Stop initializing and shutting Fontconfig down
 
 2013-02-04  Cedric Bail
