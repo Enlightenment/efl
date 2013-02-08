@@ -2176,8 +2176,10 @@ static void
 _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    int count, num;
-   size_t buf_len, buf_offset;
+   size_t buf_len;
+   unsigned int *buf_offset;
    const unsigned char *buf;
+   Eina_Binbuf *buf_p;
 
    DBG("(svr=%p,buf=%p)", svr, svr->buf);
 #ifdef _WIN32
@@ -2191,10 +2193,19 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         return;
      }
 
-   buf = svr->buf ? eina_binbuf_string_get(svr->buf) : eina_binbuf_string_get(svr->ecs_buf);
-   buf_len = svr->buf ? eina_binbuf_length_get(svr->buf) : eina_binbuf_length_get(svr->ecs_buf);
-   buf_offset = svr->buf ? svr->write_buf_offset : svr->ecs_buf_offset;
-   num = buf_len - buf_offset;
+   if (svr->buf)
+     {
+        buf_p = svr->buf;
+        buf_offset = &(svr->write_buf_offset);
+     }
+   else
+     {
+        buf_p = svr->ecs_buf;
+        buf_offset = &(svr->ecs_buf_offset);
+     }
+   buf = eina_binbuf_string_get(buf_p);
+   buf_len = eina_binbuf_length_get(buf_p);
+   num = buf_len - *buf_offset;
 
    /* check whether we need to write anything at all.
     * we must not write zero bytes with SSL_write() since it
@@ -2215,9 +2226,9 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      }
 
    if (svr->ecs_state || (!(svr->type & ECORE_CON_SSL)))
-     count = write(svr->fd, buf + buf_offset, num);
+     count = write(svr->fd, buf + *buf_offset, num);
    else
-     count = ecore_con_ssl_server_write(svr, buf + buf_offset, num);
+     count = ecore_con_ssl_server_write(svr, buf + *buf_offset, num);
 
    if (count < 0)
      {
@@ -2230,24 +2241,27 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      }
 
    if (count && (!svr->ecs_state)) ecore_con_event_server_write(svr, count);
-   if (svr->ecs_buf)
-     buf_offset = svr->ecs_buf_offset += count;
+
+   if (!eina_binbuf_remove(buf_p, 0, count))
+     *buf_offset += count;
    else
-     buf_offset = svr->write_buf_offset += count;
-   if (buf_offset >= buf_len)
      {
+        *buf_offset = 0;
+        buf_len -= count;
+     }
+   if (*buf_offset >= buf_len)
+     {
+        *buf_offset = 0;
+        eina_binbuf_free(buf_p);
+
         if (svr->ecs_buf)
           {
-             svr->ecs_buf_offset = 0;
-             eina_binbuf_free(svr->ecs_buf);
              svr->ecs_buf = NULL;
              INF("PROXY STATE++");
              svr->ecs_state++;
           }
         else
           {
-             svr->write_buf_offset = 0;
-             eina_binbuf_free(svr->buf);
              svr->buf = NULL;
 #ifdef TCP_CORK
              if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK)
