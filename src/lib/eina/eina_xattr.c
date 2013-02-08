@@ -323,8 +323,9 @@ eina_xattr_value_ls(const char *file)
    it->length = listxattr(file, it->xattr, length);
    if (it->length != length)
      {
+        free(it->attr);
         free(it);
-	return NULL;
+        return NULL;
      }
 
    it->file = eina_stringshare_add(file);
