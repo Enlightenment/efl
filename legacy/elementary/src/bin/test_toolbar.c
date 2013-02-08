@@ -66,6 +66,14 @@ toolbar_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __U
 {
    Elm_Object_Item *it = elm_toolbar_more_item_get(obj);
 
+   if (event_info)
+     {
+        printf("toolbar item %p clicked", event_info);
+        if (elm_toolbar_item_selected_get(event_info))
+          printf(" (selected)\n");
+        else
+          printf(" (unselected)\n");
+     }
    if (!strcmp(elm_object_item_text_get(it), "Open") && (it == elm_toolbar_selected_item_get(obj)))
      {
         elm_toolbar_item_icon_set(it, "arrow_up");
