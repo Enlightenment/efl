@@ -2051,6 +2051,7 @@ ecore_x_screen_is_composited(int screen)
    char buf[32];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
    atom = XInternAtom(_ecore_x_disp, buf, True);
    if (atom == None) return EINA_FALSE;
    win = XGetSelectionOwner(_ecore_x_disp, atom);
