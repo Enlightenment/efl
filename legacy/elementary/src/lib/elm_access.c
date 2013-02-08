@@ -662,25 +662,35 @@ _access_object_register(Evas_Object *obj, Evas_Object *parent)
 static void
 _access_object_unregister(Evas_Object *obj)
 {
+   Elm_Access_Info *ac;
    Evas_Object *ao;
 
    if (!obj) return;
 
    ao = evas_object_data_get(obj, "_part_access_obj");
-   if (!ao) return;
 
-   evas_object_data_del(obj, "_part_access_obj");
+   if (ao)
+     {
+        evas_object_data_del(obj, "_part_access_obj");
 
-   /* delete callbacks */
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
-                                       _content_resize, ao);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE,
-                                       _content_move, ao);
+        /* delete callbacks */
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
+                                            _content_resize, ao);
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE,
+                                            _content_move, ao);
 
-   /* unregister access object */
-   _elm_access_object_unregister(ao, obj);
+        /* unregister access object */
+        _elm_access_object_unregister(ao, obj);
 
-   evas_object_del(ao);
+        evas_object_del(ao);
+     }
+   else
+     {
+        /* button, check, label etc. */
+        ac = evas_object_data_get(obj, "_elm_access");
+        if (ac && ac->hoverobj)
+          _elm_access_object_unregister(obj, ac->hoverobj);
+     }
 }
 
 EAPI Evas_Object *
@@ -753,6 +763,8 @@ _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj)
                                   _access_obj_del_cb, obj);
    ac = calloc(1, sizeof(Elm_Access_Info));
    evas_object_data_set(obj, "_elm_access", ac);
+
+   ac->hoverobj = hoverobj;
 }
 
 EAPI void

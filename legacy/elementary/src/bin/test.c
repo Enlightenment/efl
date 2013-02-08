@@ -413,6 +413,9 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
+   /* This label will not be read out */
+   elm_access_object_unregister(lb);
+
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "UI-Mirroring:");
