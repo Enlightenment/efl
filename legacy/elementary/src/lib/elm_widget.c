@@ -3707,12 +3707,18 @@ _elm_widget_translatable_text_part_get(Eo *obj EINA_UNUSED, void *_pd, va_list *
 EAPI void
 elm_widget_translate(Evas_Object *obj)
 {
+   ELM_WIDGET_CHECK(obj);
+   eo_do(obj, elm_wdg_translate(NULL));
+}
+
+static void
+_elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
    const Eina_List *l;
    Evas_Object *child;
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
 #endif
-
    API_ENTRY return;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
@@ -3728,13 +3734,6 @@ elm_widget_translate(Evas_Object *obj)
         elm_widget_text_part_set(obj, ts->id, s);
      }
 #endif
-}
-
-static void
-_elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
 }
 
 EAPI void
