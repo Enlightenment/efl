@@ -6399,8 +6399,6 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
                         Evas_Object *obj_swallow,
                         Eina_Bool hints_update)
 {
-   const char *obj_type;
-
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
    if (rp->typedata.swallow->swallowed_object)
