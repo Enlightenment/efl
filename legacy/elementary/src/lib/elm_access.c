@@ -306,7 +306,7 @@ _access_order_del_cb(void *data,
 
 void
 _elm_access_widget_item_access_order_set(Elm_Widget_Item *item,
-                                              Eina_List *objs)
+                                         Eina_List *objs)
 {
    Eina_List *l;
    Evas_Object *o;
