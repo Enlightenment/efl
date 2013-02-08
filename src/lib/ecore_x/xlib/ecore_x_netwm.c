@@ -2047,19 +2047,13 @@ EAPI Eina_Bool
 ecore_x_screen_is_composited(int screen)
 {
    Ecore_X_Window win;
-   static Ecore_X_Atom atom = None;
+   Ecore_X_Atom atom;
    char buf[32];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
-   if (atom == None)
-     atom = XInternAtom(_ecore_x_disp, buf, False);
-
-   if (atom == None)
-     return EINA_FALSE;
-
+   atom = XInternAtom(_ecore_x_disp, buf, True);
+   if (atom == None) return EINA_FALSE;
    win = XGetSelectionOwner(_ecore_x_disp, atom);
-
    return (win != None) ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -2067,17 +2061,13 @@ EAPI void
 ecore_x_screen_is_composited_set(int screen,
                                  Ecore_X_Window win)
 {
-   static Ecore_X_Atom atom = None;
+   Ecore_X_Atom atom;
    char buf[32];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    snprintf(buf, sizeof(buf), "_NET_WM_CM_S%i", screen);
-   if (atom == None)
-     atom = XInternAtom(_ecore_x_disp, buf, False);
-
-   if (atom == None)
-     return;
-
+   atom = XInternAtom(_ecore_x_disp, buf, False);
+   if (atom == None) return;
    XSetSelectionOwner(_ecore_x_disp, atom, win, _ecore_x_event_last_time);
 }
 

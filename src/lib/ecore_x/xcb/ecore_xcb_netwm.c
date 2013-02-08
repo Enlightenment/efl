@@ -585,34 +585,26 @@ ecore_x_screen_is_composited(int screen)
    char buff[32];
    xcb_get_selection_owner_cookie_t ocookie;
    xcb_get_selection_owner_reply_t *oreply;
+   xcb_intern_atom_cookie_t acookie;
+   xcb_intern_atom_reply_t *areply;
    Ecore_X_Window win;
-   static Ecore_X_Atom atom = XCB_NONE;
+   Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
    snprintf(buff, sizeof(buff), "_NET_WM_CM_S%i", screen);
-
-   if (atom == XCB_NONE)
-     {
-        xcb_intern_atom_cookie_t acookie;
-        xcb_intern_atom_reply_t *areply;
-
-        acookie =
-          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, strlen(buff), buff);
-        areply = xcb_intern_atom_reply(_ecore_xcb_conn, acookie, NULL);
-        if (!areply) return EINA_FALSE;
-        atom = areply->atom;
-        free(areply);
-     }
+   acookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 1, strlen(buff), buff);
+   areply = xcb_intern_atom_reply(_ecore_xcb_conn, acookie, NULL);
+   if (!areply) return EINA_FALSE;
+   atom = areply->atom;
+   free(areply);
    if (atom == XCB_NONE) return EINA_FALSE;
-
    ocookie = xcb_get_selection_owner_unchecked(_ecore_xcb_conn, atom);
    oreply = xcb_get_selection_owner_reply(_ecore_xcb_conn, ocookie, NULL);
    if (!oreply) return EINA_FALSE;
    win = oreply->owner;
    free(oreply);
-
    return (win != XCB_NONE) ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -620,26 +612,20 @@ EAPI void
 ecore_x_screen_is_composited_set(int            screen,
                                  Ecore_X_Window win)
 {
-   static Ecore_X_Atom atom = XCB_NONE;
+   Ecore_X_Atom atom;
+   xcb_intern_atom_cookie_t acookie;
+   xcb_intern_atom_reply_t *areply;
    char buff[32];
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
    snprintf(buff, sizeof(buff), "_NET_WM_CM_S%i", screen);
-   if (atom == XCB_NONE)
-     {
-        xcb_intern_atom_cookie_t acookie;
-        xcb_intern_atom_reply_t *areply;
-
-        acookie =
-          xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, strlen(buff), buff);
-        areply = xcb_intern_atom_reply(_ecore_xcb_conn, acookie, NULL);
-        if (!areply) return;
-        atom = areply->atom;
-        free(areply);
-     }
-   if (atom == XCB_NONE) return;
+   acookie = xcb_intern_atom_unchecked(_ecore_xcb_conn, 0, strlen(buff), buff);
+   areply = xcb_intern_atom_reply(_ecore_xcb_conn, acookie, NULL);
+   if (!areply) return;
+   atom = areply->atom;
+   free(areply);
    xcb_set_selection_owner(_ecore_xcb_conn, win, atom,
                            _ecore_xcb_events_last_time_get());
 }
