@@ -160,7 +160,7 @@ EAPI void                         elm_object_item_access_order_set(Elm_Object_It
  *
  * @ingroup General
  */
-EAPI Eina_List                   *elm_object_item_access_order_getconst (const Elm_Object_Item *item);
+EAPI const Eina_List              *elm_object_item_access_order_get(const Elm_Object_Item *item);
 
 /**
  * @brief Unset highlight order

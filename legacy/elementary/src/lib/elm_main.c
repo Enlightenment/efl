@@ -1567,10 +1567,10 @@ elm_object_item_access_order_set(Elm_Object_Item *item, Eina_List *objs)
    _elm_access_widget_item_access_order_set((Elm_Widget_Item *)item, objs);
 }
 
-EAPI Eina_List *
+EAPI const Eina_List *
 elm_object_item_access_order_get(const Elm_Object_Item *item)
 {
-   _elm_access_widget_item_access_order_get((Elm_Widget_Item *)item);
+   return _elm_access_widget_item_access_order_get((Elm_Widget_Item *)item);
 }
 
 EAPI void
