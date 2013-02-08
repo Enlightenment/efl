@@ -153,7 +153,7 @@ _gst_shutdown()
 }
 
 static void
-_gst_load_image(int size_w, int size_h)
+_gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 {
    GstBuffer *buffer;
 
