@@ -90,7 +90,7 @@ examples: all-am
 install-examples:
 	@for d in $(EXAMPLES_SUBDIRS); do \
 	   echo "Making install-examples in $$d"; \
-	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples; \
+	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples || exit 1; \
 	done
 
 clean-local:
