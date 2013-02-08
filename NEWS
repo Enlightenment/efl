@@ -158,4 +158,7 @@ Fixes:
     * Fix memleak in Eina_File.
     * Fix ecore_x_screen_is_composited/set() to work on multihead.
     * Fix memory usage of Ecore_Con_Server
+    * Fix memory leak in eina_xattr_value_ls.
+    * Fix memory leak in gstreamer_ecore_x_check
+    * Fix memory usage spike when rotating with the software_x11 engine.
     * Evas textblock: Fixed a selection issue with different scripts and bidi.

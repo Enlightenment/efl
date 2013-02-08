@@ -1,8 +1,17 @@
+2013-02-08  Stefan Schmidt
+
+        * Fix memory leak in eina_xattr_value_ls.
+        * Fix memory leak in gstreamer_ecore_x_check
+
+2013-02-08  Daniel Willman
+
+        * Fix memory usage spike when rotating with the software_x11 engine.
+
 2013-02-08  Tom Hacohen (TAsn)
 
         * Evas textblock: Fixed a selection issue with different scripts and
 	bidi.
-	
+
 2013-02-08  Guillaume Friloux
         * Fix usage of Ecore_Con_Server's internal buffer.
 

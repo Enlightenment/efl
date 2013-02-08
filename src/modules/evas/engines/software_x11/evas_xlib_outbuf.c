@@ -364,7 +364,7 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 RGBA_Image *
 evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
-   RGBA_Image         *im;
+   RGBA_Image         *im = NULL;
    Outbuf_Region      *obr;
    int                 bpl = 0;
    int                 use_shm = 1;
@@ -459,6 +459,11 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	  }
 	else
 	  {
+            /* FIXME: For the onebuf case we probably need to do the same thing we did below
+             * (try to get an existing image before we allocate a new one). This code path
+             * is not really used at the moment so no way to test (and that's why the change
+             * is not implemented here as well.
+             */
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
@@ -612,26 +617,73 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
      }
    else
      {
+        obr->xob = _find_xob(buf->priv.x11.xlib.disp,
+                             buf->priv.x11.xlib.vis,
+                             buf->priv.x11.xlib.depth,
+                             w, h,
+                             use_shm,
+                             NULL);
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
-          im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
+          {
+             if (obr->xob)
+               im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                        w, h,
+                                                        (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                        alpha, EVAS_COLORSPACE_ARGB8888);
+
+             if (!im)
+               {
+                  if (obr->xob) _unfind_xob(obr->xob, 0);
+                  im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
+                  if (!im)
+                    {
+                      free(obr);
+                      return NULL;
+                    }
+                  else
+                    {
+                       im->cache_entry.w = w;
+                       im->cache_entry.h = h;
+                       im->cache_entry.flags.alpha |= alpha ? 1 : 0;
+                       evas_cache2_image_surface_alloc(&im->cache_entry, w, h);
+                    }
+               }
+          }
         else
 #endif
-          im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        if (!im)
           {
-             free(obr);
-             return NULL;
+             if (obr->xob)
+               im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                        w, h,
+                                                        (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                        alpha, EVAS_COLORSPACE_ARGB8888);
+
+             if (!im)
+               {
+                  if (obr->xob) _unfind_xob(obr->xob, 0);
+                  im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+                  if (!im)
+                    {
+                      free(obr);
+                      return NULL;
+                    }
+                  else
+                    {
+                       im->cache_entry.w = w;
+                       im->cache_entry.h = h;
+                       im->cache_entry.flags.alpha |= alpha ? 1 : 0;
+                       evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+                    }
+               }
           }
+
+        /* Need to update cache_entry w/h here because the render path expects them to be updated
+         * to the new geometry. */
         im->cache_entry.w = w;
         im->cache_entry.h = h;
         im->cache_entry.flags.alpha |= alpha ? 1 : 0;
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_surface_alloc(&im->cache_entry, w, h);
-        else
-#endif
-          evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
           {
