@@ -1,3 +1,6 @@
+2013-02-08  Guillaume Friloux
+        * Fix usage of Ecore_Con_Server's internal buffer.
+
 2013-02-08  Carsten Haitzler (The Rasterman)
 
         * Fix ecore_x ecore_x_screen_is_composited/set() to work

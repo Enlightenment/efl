@@ -157,3 +157,4 @@ Fixes:
     * Fix return type of function ecore_wl_outputs_get().
     * Fix memleak in Eina_File.
     * Fix ecore_x_screen_is_composited/set() to work on multihead.
+    * Fix memory usage of Ecore_Con_Server
