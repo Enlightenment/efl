@@ -5,7 +5,7 @@
  * one) and the png image loader also built.
  *
  * @verbatim
- * gcc -o evas-table evas-table.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o evas-table evas-table.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 

@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_time_functions_example ecore_time_functions_example.c `pkg-config --libs --cflags ecore`
+
 #include <Ecore.h>
 #include <unistd.h>
 

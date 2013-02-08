@@ -5,7 +5,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o ecore_evas_callbacks ecore_evas_callbacks.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o ecore_evas_callbacks ecore_evas_callbacks.c `pkg-config --libs --cflags ecore ecore-evas`
  * @endverbatim
  */
 

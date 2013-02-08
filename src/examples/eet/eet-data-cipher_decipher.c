@@ -1,6 +1,5 @@
-/*
- * build: gcc -o eet_data_file_cipher_decipher eet-data-file_cipher_decipher.c `pkg-config --cflags --libs eet eina`
- */
+//Compile with:
+// gcc -o eet-data-cipher_decipher eet-data-cipher_decipher.c `pkg-config --cflags --libs eet eina`
 
 #include <Eina.h>
 #include <Eet.h>

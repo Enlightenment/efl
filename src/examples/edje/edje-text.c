@@ -15,6 +15,10 @@
 # define EINA_UNUSED
 #endif
 
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -35,15 +39,13 @@ _on_text_change(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 }
 
 int
-main(int argc EINA_UNUSED, char *argv[])
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
-   char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "text.edj";
+   const char  *edje_file = PACKAGE_DATA_DIR"/text.edj";
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
-   Eina_Prefix *pfx;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -51,22 +53,10 @@ main(int argc EINA_UNUSED, char *argv[])
    if (!edje_init())
      goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main,
-                         "EDJE_EXAMPLES",
-                         "edje/examples",
-                         edje_file,
-                         PACKAGE_BIN_DIR,
-                         PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
-   if (!pfx)
-     goto shutdown_edje;
-
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
-   if (!ee)
-     goto free_prefix;
+   if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje text Example");
@@ -82,9 +72,7 @@ main(int argc EINA_UNUSED, char *argv[])
 
    edje_obj = edje_object_add(evas);
 
-   snprintf(edje_file_path, sizeof(edje_file_path),
-            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
-   edje_object_file_set(edje_obj, edje_file_path, "example_group");
+   edje_object_file_set(edje_obj, edje_file, "example_group");
    evas_object_move(edje_obj, 20, 20);
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
@@ -103,15 +91,12 @@ main(int argc EINA_UNUSED, char *argv[])
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
 
    return EXIT_SUCCESS;
 
- free_prefix:
-   eina_prefix_free(pfx);
  shutdown_edje:
    edje_shutdown();
  shutdown_ecore_evas:

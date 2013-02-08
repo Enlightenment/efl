@@ -1,3 +1,6 @@
+// Compile with:
+// gcc -o ecore_audio_playback ecore_audio_playback.c `pkg-config --libs --cflags ecore eina ecore-audio`
+
 #include <stdio.h>
 #include <string.h>
 #include <libgen.h>

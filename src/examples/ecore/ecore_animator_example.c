@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g -Wall `pkg-config --cflags --libs ecore-evas` -o ecore_animator_example ecore_animator_example.c
+//gcc -g -Wall `pkg-config --cflags --libs evas ecore-evas` -o ecore_animator_example ecore_animator_example.c
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>

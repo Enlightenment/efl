@@ -10,7 +10,7 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-events evas-events.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o evas-hints evas-hints.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 

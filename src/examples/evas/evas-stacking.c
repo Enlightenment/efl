@@ -7,7 +7,7 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-stacking evas-stacking.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * gcc -o evas-stacking evas-stacking.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 

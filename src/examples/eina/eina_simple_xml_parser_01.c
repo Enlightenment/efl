@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -Wall -o eina_simple_xml_01 eina_simple_xml_01.c `pkg-config --cflags --libs eina`
+//gcc -Wall -o eina_simple_xml_parser_01 eina_simple_xml_parser_01.c `pkg-config --cflags --libs eina`
 
 #include <Eina.h>
 #include <stdio.h>

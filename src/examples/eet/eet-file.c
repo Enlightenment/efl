@@ -1,6 +1,6 @@
-/*
- * build: gcc -o eet_file eet-file.c `pkg-config --cflags --libs eet`
- */
+//Compile with:
+// gcc -o eet-file eet-file.c `pkg-config --cflags --libs eet`
+
 #include <Eet.h>
 #include <stdio.h>
 #include <string.h>

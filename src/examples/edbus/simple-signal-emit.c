@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o simple-signal-emit simple-signal-emit.c `pkg-config --cflags --libs edbus2`
+
 #include <EDBus.h>
 
 enum {

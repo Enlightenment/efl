@@ -1,3 +1,6 @@
+// Compile with:
+// gcc -o ecore_audio_to_ogg ecore_audio_to_ogg.c `pkg-config --libs --cflags ecore eina ecore-audio`
+
 #include <stdio.h>
 #include <libgen.h>
 #include <sys/types.h>

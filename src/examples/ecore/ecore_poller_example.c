@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_poller_example ecore_poller_example.c `pkg-config --libs --cflags ecore eo`
+
 #include <Ecore.h>
 #include <unistd.h>
 

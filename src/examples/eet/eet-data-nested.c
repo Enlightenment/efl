@@ -1,6 +1,6 @@
-/*
- * build: gcc -o eet_data_nested eet-data-nested.c `pkg-config --cflags --libs eet eina`
- */
+//Compile with:
+// gcc -o eet-data-nested eet-data-nested.c `pkg-config --cflags --libs eet eina`
+
 #include <Eina.h>
 #include <Eet.h>
 #include <stdio.h>

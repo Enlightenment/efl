@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o emotion_border_example emotion_border_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eina`
+
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Evas.h>

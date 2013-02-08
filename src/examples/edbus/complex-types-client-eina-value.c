@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o complex-types-client-eina-value complex-types-client-eina-value.c `pkg-config --cflags --libs edbus2 ecore eina`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

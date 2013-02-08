@@ -7,7 +7,7 @@
  * Compile with:
  *
  * @verbatim
- * gcc -o evas-buffer-simple evas-buffer-simple.c `pkg-config --libs --cflags evas evas-software-buffer`
+ * gcc -o ecore_evas_buffer_example_01 ecore_evas_buffer_example_01.c `pkg-config --libs --cflags evas ecore-evas evas-software-buffer`
  * @endverbatim
  *
  */

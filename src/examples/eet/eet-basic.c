@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o eet-basic eet-basic.c `pkg-config --cflags --libs eet`
+
 #include <Eet.h>
 
 int

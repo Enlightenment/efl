@@ -6,7 +6,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o edje-basic edje-basic.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * edje_cc basic.edc && gcc -o edje-basic edje-basic.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
  * @endverbatim
  */
 
@@ -14,6 +14,10 @@
 # include "config.h"
 #else
 # define EINA_UNUSED
+#endif
+
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
 #endif
 
 #include <stdio.h>
@@ -98,17 +102,15 @@ _on_delete(Ecore_Evas *ee EINA_UNUSED)
 }
 
 int
-main(int argc EINA_UNUSED, char *argv[])
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
-   char         border_img_path[PATH_MAX];
-   char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "basic.edj";
+   const char  *img_file = PACKAGE_DATA_DIR"/red.png";
+   const char  *edje_file = PACKAGE_DATA_DIR"/basic.edj";
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *border;
    Evas_Object *edje_obj;
-   Eina_Prefix *pfx;
    int          x;
    int          y;
    int          w;
@@ -120,22 +122,10 @@ main(int argc EINA_UNUSED, char *argv[])
    if (!edje_init())
      goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main,
-                         "EDJE_EXAMPLES",
-                         "edje/examples",
-                         edje_file,
-                         PACKAGE_BIN_DIR,
-                         PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
-   if (!pfx)
-     goto shutdown_edje;
-
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
-   if (!ee)
-     goto free_prefix;
+   if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje Basics Example");
@@ -153,11 +143,8 @@ main(int argc EINA_UNUSED, char *argv[])
 
    edje_obj = edje_object_add(evas);
 
-   snprintf(edje_file_path, sizeof(edje_file_path),
-            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
-   printf("%s\n", edje_file_path);
    /* exercising Edje loading error, on purpose */
-   if (!edje_object_file_set(edje_obj, edje_file_path, "unexistant_group"))
+   if (!edje_object_file_set(edje_obj, edje_file, "unexistant_group"))
      {
         int err = edje_object_load_error_get(edje_obj);
         const char *errmsg = edje_load_error_str(err);
@@ -165,7 +152,7 @@ main(int argc EINA_UNUSED, char *argv[])
                         " %s\n", errmsg);
      }
 
-   if (!edje_object_file_set(edje_obj, edje_file_path, "example_group"))
+   if (!edje_object_file_set(edje_obj, edje_file, "example_group"))
      {
         int err = edje_object_load_error_get(edje_obj);
         const char *errmsg = edje_load_error_str(err);
@@ -173,7 +160,7 @@ main(int argc EINA_UNUSED, char *argv[])
                 errmsg);
 
         evas_object_del(edje_obj);
-        goto free_prefix;
+        goto shutdown_edje;
      }
 
    fprintf(stdout, "Loaded Edje object bound to group 'example_group' from"
@@ -185,13 +172,10 @@ main(int argc EINA_UNUSED, char *argv[])
 
    evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, edje_obj);
 
-   snprintf(border_img_path, sizeof(border_img_path),
-            "%s/edje/examples/red.png", eina_prefix_data_get(pfx));
-
    /* this is a border around the Edje object above, here just to
     * emphasize its geometry */
    border = evas_object_image_filled_add(evas);
-   evas_object_image_file_set(border, border_img_path, NULL);
+   evas_object_image_file_set(border, img_file, NULL);
    evas_object_image_border_set(border, 2, 2, 2, 2);
    evas_object_image_border_center_fill_set(border, EVAS_BORDER_FILL_NONE);
 
@@ -239,15 +223,12 @@ main(int argc EINA_UNUSED, char *argv[])
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
 
    return EXIT_SUCCESS;
 
- free_prefix:
-   eina_prefix_free(pfx);
  shutdown_edje:
    edje_shutdown();
  shutdown_ecore_evas:

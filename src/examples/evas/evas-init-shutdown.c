@@ -8,8 +8,7 @@
  * to.
  *
  * @verbatim
- * gcc -o evas-init-shutdown evas-init-shutdown.c `pkg-config --libs \
- * --cflags evas`
+ * gcc -o evas-init-shutdown evas-init-shutdown.c `pkg-config --libs --cflags evas`
  * @endverbatim
  *
  */

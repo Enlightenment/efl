@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o banshee banshee.c `pkg-config --cflags --libs edbus2 ecore eina`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

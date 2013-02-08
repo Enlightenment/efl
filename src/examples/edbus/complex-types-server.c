@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o complex-types-server complex-types-server.c `pkg-config --cflags --libs edbus2 ecore`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_con_server_http_example ecore_con_server_http_example.c `pkg-config --libs --cflags ecore ecore-con eina`
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <Ecore.h>

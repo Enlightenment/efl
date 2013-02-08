@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -g -Wall `pkg-config --cflags --libs ecore` -o ecore_event_example_02 ecore_event_example_02.c
+
 #include <Ecore.h>
 #include <unistd.h>
 

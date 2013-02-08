@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_pipe_gstreamer_example ecore_pipe_gstreamer_example.c `pkg-config --libs --cflags ecore gstreamer-0.10`
+
 #include <gst/gst.h>
 #include <Ecore.h>
 

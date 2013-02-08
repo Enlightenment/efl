@@ -29,6 +29,10 @@
 # define EINA_UNUSED
 #endif
 
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
+
 #include "codegen_example_generated.h"
 
 #include <Ecore.h>
@@ -39,7 +43,7 @@
 #define HEIGHT (800)
 
 static void
-_on_delete(Ecore_Evas *ee)
+_on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -56,11 +60,10 @@ _columns_rows_print(Evas_Object *edje_obj)
 }
 
 static void
-_on_mouse_over(void *data, Evas_Object *obj, const char *emission,
+_on_mouse_over(void *data EINA_UNUSED, Evas_Object *obj, const char *emission,
 	       const char *source)
 {
    Evas_Object *rect;
-   Eina_Bool disabled;
    static int i = 0;
 
    printf("Mouse over, source: %s - emission: %s\n",
@@ -72,7 +75,7 @@ _on_mouse_over(void *data, Evas_Object *obj, const char *emission,
      }
    if (i++ == 5)
      {
-	Evas_Object *rect = codegen_example_part_two_get(obj);
+	rect = codegen_example_part_two_get(obj);
 	evas_object_color_set(rect, 0, 255, 0, 255);
 	codegen_example_part_below_over_callback_del_full(obj,_on_mouse_over,
 							  NULL);
@@ -97,17 +100,14 @@ _rect_create(Evas *e, unsigned char r, unsigned char g, unsigned char b)
 }
 
 int
-main(int argc, char *argv[])
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
-   char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "codegen.edj", *aux;
+   const char  *edje_file = PACKAGE_DATA_DIR"/codegen.edj";
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
    Evas_Object *red_rect, *yellow_rect, *blue_rect, *rects[4];
-   Eina_Prefix *pfx;
-   Eina_Bool    disabled;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -115,25 +115,10 @@ main(int argc, char *argv[])
    if (!edje_init())
      goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main,
-                         "EDJE_EXAMPLES",
-                         "edje/examples",
-                         edje_file,
-                         PACKAGE_BIN_DIR,
-                         PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
-   if (!pfx)
-     goto shutdown_edje;
-
-   snprintf(edje_file_path, sizeof(edje_file_path),
-            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
-
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
-   if (!ee)
-     goto free_prefix;
+   if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje codegen Example");
@@ -145,7 +130,7 @@ main(int argc, char *argv[])
    evas_object_resize(bg, WIDTH, HEIGHT); /* covers full canvas */
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   edje_obj = codegen_example_object_add(evas, edje_file_path);
+   edje_obj = codegen_example_object_add(evas, edje_file);
    evas_object_resize(edje_obj, WIDTH, HEIGHT);
    evas_object_show(edje_obj);
 
@@ -184,15 +169,12 @@ main(int argc, char *argv[])
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
 
    return EXIT_SUCCESS;
 
- free_prefix:
-   eina_prefix_free(pfx);
  shutdown_edje:
    edje_shutdown();
  shutdown_ecore_evas:

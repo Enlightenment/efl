@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ofono-dial ofono-dial.c `pkg-config --cflags --libs edbus2 ecore`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

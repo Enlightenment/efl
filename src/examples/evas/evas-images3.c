@@ -6,7 +6,7 @@
  * for output.
  *
  * @verbatim
- * gcc -o evas-images2 evas-images2.c `pkg-config --libs --cflags evas ecore ecore-evas`
+ * gcc -o evas-images3 evas-images3.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 

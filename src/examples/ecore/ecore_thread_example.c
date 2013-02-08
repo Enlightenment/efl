@@ -1,5 +1,5 @@
 /*
- * gcc -o ecore_thread_example ecore_thread_example.c `pkg-config --cflags --libs ecore`
+ * gcc -o ecore_thread_example ecore_thread_example.c `pkg-config --cflags --libs ecore eina`
  */
 #include <stdio.h>
 #include <stdlib.h>

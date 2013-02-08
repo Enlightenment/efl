@@ -1,8 +1,15 @@
+//Compile with:
+// edje_cc signalsBubble.edc && gcc -o signals2 signals2.c `pkg-config --libs --cflags ecore ecore-evas edje`
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EINA_UNUSED
+#endif
+
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
 #endif
 
 #include <Ecore.h>
@@ -56,11 +63,9 @@ _on_mouse_over(void *data, Evas_Object *edje_obj,
 }
 
 int
-main(int argc EINA_UNUSED, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   const char *edje_file = "signalsBubble.edj";
-   char edje_file_path[PATH_MAX];
-   Eina_Prefix *pfx;
+   const char *edje_file = PACKAGE_DATA_DIR"/signalsBubble.edj";
    Ecore_Evas *ee;
    Evas *evas;
    Evas_Object *bg;
@@ -70,15 +75,9 @@ main(int argc EINA_UNUSED, char **argv)
 
    if (!edje_init()) goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main, "EDJE_EXAMPLES", "edje/examples",
-                         edje_file, PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-
-   if (!pfx) goto shutdown_edje;
-
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
 
-   if (!ee) goto eina_prefix_free;
+   if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje animations and signals");
@@ -96,15 +95,12 @@ main(int argc EINA_UNUSED, char **argv)
 
    edje_obj = edje_object_add(evas);
 
-   snprintf(edje_file_path, sizeof(edje_file_path), "%s/examples/%s",
-            eina_prefix_data_get(pfx), edje_file);
-
-   if (!edje_object_file_set(edje_obj, edje_file_path, "image_group"))
+   if (!edje_object_file_set(edje_obj, edje_file, "image_group"))
      {
         int err = edje_object_load_error_get(edje_obj);
         const char *errmsg = edje_load_error_str(err);
         fprintf(stderr, "Could not load the edje file - reason:%s\n", errmsg);
-        goto eina_prefix_free;
+        goto shutdown_edje;
      }
 
    edje_object_signal_callback_add(edje_obj, "mouse,move", "part_image",
@@ -117,14 +113,11 @@ main(int argc EINA_UNUSED, char **argv)
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    edje_shutdown();
    ecore_evas_shutdown();
 
    return EXIT_SUCCESS;
-
-   eina_prefix_free: eina_prefix_free(pfx);
 
    shutdown_edje: edje_shutdown();
 

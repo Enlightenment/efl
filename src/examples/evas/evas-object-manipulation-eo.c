@@ -9,7 +9,7 @@
  * output.
  *
  * @verbatim
- * gcc -o evas-object-manipulation-eo evas-object-manipulation-eo.c `pkg-config --libs --cflags ecore evas ecore-evas`
+ * gcc -o evas-object-manipulation-eo evas-object-manipulation-eo.c `pkg-config --libs --cflags ecore evas ecore-evas eo`
  * @endverbatim
  */
 

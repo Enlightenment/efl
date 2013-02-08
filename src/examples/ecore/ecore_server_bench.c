@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_server_bench ecore_server_bench.c `pkg-config --libs --cflags ecore eina ecore-con`
+
 #include <stdio.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>

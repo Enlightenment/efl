@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o client client.c `pkg-config --cflags --libs edbus2 ecore eina`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

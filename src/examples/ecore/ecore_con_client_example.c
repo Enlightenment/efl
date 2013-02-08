@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_con_client_example ecore_con_client_example.c `pkg-config --libs --cflags ecore ecore-con eina`
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

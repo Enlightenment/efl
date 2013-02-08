@@ -1,6 +1,6 @@
-/*
- * build: gcc -o eet_data_file_descriptor eet-data-file_descriptor.c `pkg-config --cflags --libs eet eina`
- */
+//Compile with:
+// gcc -o eet-data-file_descriptor_01 eet-data-file_descriptor_01.c `pkg-config --cflags --libs eet eina`
+
 #include <Eina.h>
 #include <Eet.h>
 #include <stdio.h>

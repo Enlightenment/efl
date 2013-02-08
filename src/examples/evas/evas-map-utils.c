@@ -1,6 +1,14 @@
-/*
+/**
+ * Simple Evas example illustrating basic map utils.
+ *
+ * You'll need at least one engine built for it (excluding the buffer
+ * one). See stdout/stderr for output.
+ *
+ * @verbatim
  * gcc -o evas-map-utils evas-map-utils.c `pkg-config --cflags --libs evas ecore ecore-evas`
+ * @endverbatim
  */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else

@@ -5,7 +5,7 @@
  * buffer one) and multisense support ine edje. See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o edje-multisense edje-multisense.c `pkg-config --libs --cflags eina evas ecore ecore-evas edje`
+ * edje_cc multisense.edc && gcc -o edje-multisense edje-multisense.c `pkg-config --libs --cflags eina evas ecore ecore-evas edje`
  * @endverbatim
  */
 
@@ -14,6 +14,10 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
+
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
 
 #define WIDTH  300
 #define HEIGHT 300
@@ -29,7 +33,8 @@ static Evas_Object *create_my_group(Evas *canvas)
         return NULL;
      }
 
-   if (!edje_object_file_set(edje, "multisense.edj", "example_group"))
+   if (!edje_object_file_set(edje, PACKAGE_DATA_DIR"/multisense.edj",
+                             "example_group"))
      {
         int err = edje_object_load_error_get(edje);
         const char *errmsg = edje_load_error_str(err);

@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o server server.c `pkg-config --cflags --libs edbus2 ecore`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

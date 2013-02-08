@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g eina_xattr_02.c -o eina_xattr_02 `pkg-config --cflags --libs eina`
+//gcc -g eina_xattr_01.c -o eina_xattr_01 `pkg-config --cflags --libs eina`
 
 #include <Eina.h>
 

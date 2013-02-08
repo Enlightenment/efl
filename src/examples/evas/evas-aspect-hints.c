@@ -9,7 +9,8 @@
  * object implementing aspect control for children.
  *
  * @verbatim
- * gcc -o evas-events evas-events.c `pkg-config --libs --cflags ecore-evas edje`
+ * edje_cc aspect.edc
+ * gcc -o evas-aspect-hints evas-aspect-hints.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
  * @endverbatim
  */
 

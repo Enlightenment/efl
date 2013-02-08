@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_fd_handler_gnutls_example ecore_fd_handler_gnutls_example.c `pkg-config --cflags --libs ecore gnutls`
+
 #include <Ecore.h>
 #include <fcntl.h>
 #include <netinet/tcp.h>

@@ -1,8 +1,15 @@
+//Compile with:
+// edje_cc edje_example.edc && gcc -o edje_example edje_example.c `pkg-config --libs --cflags ecore ecore-evas edje`
+
 #include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
+
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -18,7 +25,8 @@ static Evas_Object *create_my_group(Evas *canvas, const char *text)
         return NULL;
      }
 
-   if (!edje_object_file_set(edje, "edje_example.edj", "my_group"))
+   if (!edje_object_file_set(edje, PACKAGE_DATA_DIR"/edje_example.edj",
+                             "my_group"))
      {
         int err = edje_object_load_error_get(edje);
         const char *errmsg = edje_load_error_str(err);

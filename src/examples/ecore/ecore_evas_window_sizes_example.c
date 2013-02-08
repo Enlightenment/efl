@@ -6,7 +6,7 @@
  * one). See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o evas-smart-object evas-smart-object.c `pkg-config --libs --cflags evas ecore ecore-evas`
+ * gcc -o ecore_evas_window_sizes_example ecore_evas_window_sizes_example.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 

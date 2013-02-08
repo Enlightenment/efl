@@ -2,7 +2,7 @@
  * Ecore example illustrating how to use ecore imf.
  *
  * @verbatim
- * gcc -o ecore_imf_example ecore_imf_example.c `pkg-config --cflags --libs ecore evas ecore-evas ecore-imf ecore-imf-evas`
+ * gcc -o ecore_imf_example ecore_imf_example.c `pkg-config --cflags --libs ecore evas eina ecore-evas ecore-imf ecore-imf-evas`
  * @endverbatim
  */
 

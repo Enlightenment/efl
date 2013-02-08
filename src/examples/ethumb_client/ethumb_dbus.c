@@ -17,6 +17,8 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  *
+ * gcc -o ethumb_dbus ethumb_dbus.c `pkg-config --libs --cflags eina ecore ethumb ethumb_client`
+ *
  * @author Rafael Antognolli <antognolli@profusion.mobi>
  */
 #ifdef HAVE_CONFIG_H

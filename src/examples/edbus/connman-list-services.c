@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o connman-list-services connman-list-services.c `pkg-config --cflags --libs edbus2 ecore`
+
 #include "EDBus.h"
 #include <Ecore.h>
 

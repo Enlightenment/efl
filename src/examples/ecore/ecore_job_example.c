@@ -1,3 +1,6 @@
+//Compile with:
+// gcc -o ecore_job_example ecore_job_example.c `pkg-config --libs --cflags ecore`
+
 #include <Ecore.h>
 #include <unistd.h>
 

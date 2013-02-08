@@ -15,6 +15,10 @@
 # define EINA_UNUSED
 #endif
 
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -151,17 +155,15 @@ on_destroy(Ecore_Evas *ee EINA_UNUSED)
 }
 
 int
-main(int argc EINA_UNUSED, char *argv[])
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
-   char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "box.edj";
+   const char  *edje_file = PACKAGE_DATA_DIR"/box.edj";
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
    Evas_Object *last;
    Evas_Object *o;
-   Eina_Prefix *pfx;
    int          w;
    int          h;
    int          i;
@@ -172,22 +174,10 @@ main(int argc EINA_UNUSED, char *argv[])
    if (!edje_init())
      goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main,
-                         "EDJE_EXAMPLES",
-                         "edje/examples",
-                         edje_file,
-                         PACKAGE_BIN_DIR,
-                         PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
-   if (!pfx)
-     goto shutdown_edje;
-
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, 640, 480, NULL);
-   if (!ee)
-     goto free_prefix;
+   if (!ee) goto shutdown_edje;
 
    ecore_evas_callback_resize_set(ee, on_resize);
    ecore_evas_callback_destroy_set(ee, on_destroy);
@@ -203,9 +193,7 @@ main(int argc EINA_UNUSED, char *argv[])
 
    edje_box_layout_register("custom_layout", custom_layout, NULL, NULL, NULL, NULL);
 
-   snprintf(edje_file_path, sizeof(edje_file_path),
-            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
-   edje_obj = box_new(ee, edje_file_path, "box", 0, 0, w, h);
+   edje_obj = box_new(ee, edje_file, "box", 0, 0, w, h);
    evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, on_keydown, edje_obj);
 
    for (i = 1; i <= 5; i++)
@@ -229,15 +217,12 @@ main(int argc EINA_UNUSED, char *argv[])
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
 
    return EXIT_SUCCESS;
 
- free_prefix:
-   eina_prefix_free(pfx);
  shutdown_edje:
    edje_shutdown();
  shutdown_ecore_evas:

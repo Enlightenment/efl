@@ -1,6 +1,5 @@
-/**
-  * Compile with gcc -o eio_file_ls eio_file_ls.c `pkg-config --cflags --libs ecore eio`
-  */
+//Compile with:
+//gcc -o eio_file_ls eio_file_ls.c `pkg-config --cflags --libs ecore eio`
 
 #include <stdlib.h>
 #include <stdio.h>

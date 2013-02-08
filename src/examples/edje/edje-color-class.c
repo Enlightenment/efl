@@ -15,6 +15,10 @@
 # define EINA_UNUSED
 #endif
 
+#ifndef PACKAGE_DATA_DIR
+#define PACKAGE_DATA_DIR "."
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -210,9 +214,7 @@ _create_windows(const char *edje_file_path)
 int
 main(int argc, char *argv[])
 {
-   char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "color-class.edj";
-   Eina_Prefix *pfx;
+   const char  *edje_file = PACKAGE_DATA_DIR"/color-class.edj";
    color        c1, c2, c3;
    int          i;
 
@@ -242,21 +244,7 @@ main(int argc, char *argv[])
    if (!edje_init())
      goto shutdown_ecore_evas;
 
-   pfx = eina_prefix_new(argv[0], main,
-                         "EDJE_EXAMPLES",
-                         "edje/examples",
-                         edje_file,
-                         PACKAGE_BIN_DIR,
-                         PACKAGE_LIB_DIR,
-                         PACKAGE_DATA_DIR,
-                         PACKAGE_DATA_DIR);
-   if (!pfx)
-     goto shutdown_edje;
-
-   snprintf(edje_file_path, sizeof(edje_file_path),
-            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
-   if (!_create_windows(edje_file_path))
-     goto free_prefix;
+   if (!_create_windows(edje_file)) goto shutdown_edje;
 
    edje_color_class_set(argv[1],                     /* class name   */
                         c1[0], c1[1], c1[2], c1[3],  /* Object color */
@@ -277,15 +265,12 @@ main(int argc, char *argv[])
 
    ecore_main_loop_begin();
 
-   eina_prefix_free(pfx);
    ecore_evas_free(ee1);
    ecore_evas_shutdown();
    edje_shutdown();
 
    return EXIT_SUCCESS;
 
- free_prefix:
-   eina_prefix_free(pfx);
  shutdown_edje:
    edje_shutdown();
  shutdown_ecore_evas:
