@@ -68,7 +68,14 @@
  * @author Flavio Ceolin <flavio.ceolin@@profusion.mobi>
  * @author Igor Murzov <e-mail@@date.by>
  * @author Jiyoun Park <jy0703.park@@samsung.com>
+ * @author KoziarekBeata <b.koziarek@@samsung.com>
+ * @author Daniel Zaoui <daniel.zaoui@@samsung.com>
+ * @author Yakov Goldberg <yakov.g@@samsung.com>
+ * @author Murilo Belluzzo <murilo.belluzzo@@profusion.mobi>
+ * @author Ricardo de Almeida Gonzaga <ricardo@@profusion.mobi>
  * @author Gwanglim Lee <gl77.lee@@samsung.com> <gwanglim@@gmail.com>
+ * @author JaeHyun Jo <jae_hyun_cho@@naver.com>
+ * @author Bora Hwang <bora1.hwang@@samsung.com>
  * @author Jiyoung Choi <jychoi7.choi@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
