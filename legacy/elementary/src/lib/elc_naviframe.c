@@ -2001,6 +2001,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 static const

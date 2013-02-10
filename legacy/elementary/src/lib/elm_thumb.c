@@ -4,6 +4,8 @@
 
 EAPI Eo_Op ELM_OBJ_THUMB_BASE_ID = EO_NOOP;
 
+#define MY_CLASS_NAME "elm_thumb"
+
 #define MY_CLASS ELM_OBJ_THUMB_CLASS
 
 static const char SIG_CLICKED[] = "clicked";
@@ -884,6 +886,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {
@@ -900,7 +904,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "elm_thumb",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_THUMB_BASE_ID, op_desc, ELM_OBJ_THUMB_SUB_ID_LAST),
      NULL,

@@ -333,6 +333,8 @@ _elm_pan_class_constructor(Eo_Class *klass)
            EO_OP_FUNC_SENTINEL
       };
       eo_class_funcs_set(klass, func_desc);
+
+      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME, klass);
 }
 
 static const Eo_Op_Description _elm_pan_op_desc[] = {
@@ -4204,6 +4206,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC_SENTINEL
       };
       eo_class_funcs_set(klass, func_desc);
+
+      evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

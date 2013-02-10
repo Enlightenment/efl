@@ -1689,6 +1689,8 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_calendar_smart_focus_next_enable = EINA_TRUE;
 }

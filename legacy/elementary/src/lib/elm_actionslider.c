@@ -641,6 +641,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ACTIONSLIDER_SUB_ID_INDICATOR_POS_SET, "Set actionslider indicator position."),
