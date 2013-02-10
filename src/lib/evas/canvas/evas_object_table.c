@@ -1588,6 +1588,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ADD_TO, "Create a table that is child of a given element parent."),

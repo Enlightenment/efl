@@ -618,7 +618,6 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->delete_me = 1;
    evas_object_change(eo_obj, obj);
 end:
-   obj->supported_types = eina_list_free(obj->supported_types);
    eo_do_super(eo_obj, eo_destructor());
 }
 
@@ -2265,8 +2264,6 @@ _type_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = _pd;
    const char *type = va_arg(*list, const char *);
    obj->type = type; // Store it as the top type of this class
-   // Need to add this type to the list of all the types supported
-   obj->supported_types = eina_list_append(obj->supported_types, type);
 }
 
 EAPI void
@@ -2394,101 +2391,21 @@ _smart_data_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_type_check(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_smart_type_check(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   const char *type = va_arg(*list, const char *);
+   va_arg(*list, const char *);
    Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-   if (0 == strcmp(type, "Evas_Object"))
-      *type_check = EINA_TRUE;
-   else
-      *type_check = EINA_FALSE;
-}
-
-static void
-_smart_type_check(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *type = va_arg(*list, const char *);
-   Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-
-   const Evas_Smart_Class *sc;
-
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   if (!obj) return;
-   if (!obj->is_smart)
-     {
-        *type_check = EINA_FALSE;
-        return;
-     }
-
-   if (obj->supported_types)
-     {
-        Eina_List *l;
-        const char *type_in_list;
-        EINA_LIST_FOREACH(obj->supported_types, l, type_in_list)
-           if (!strcmp(type_in_list, type))
-             {
-                *type_check = EINA_TRUE;
-                return;
-             }
-     }
-
-   eo_do((Eo *)eo_obj, evas_obj_type_check(type, type_check));
-
-   if (EINA_FALSE == *type_check)
-     {
-        if (obj->smart.smart)
-          {
-             sc = obj->smart.smart->smart_class;
-             while (sc)
-               {
-                  if (!strcmp(sc->name, type))
-                    {
-                       *type_check = EINA_TRUE;
-                       return;
-                    }
-                  sc = sc->parent;
-               }
-          }
-     }
-
    *type_check = EINA_FALSE;
+   return;
 }
 
 static void
-_smart_type_check_ptr(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+_smart_type_check_ptr(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
-   const Evas_Smart_Class *sc;
-   const char* type = va_arg(*list, const char *);
+   va_arg(*list, const char *);
    Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   if (!obj) return;
-   if (!obj->is_smart)
-     {
-        if (type_check) *type_check = EINA_FALSE;
-        return;
-     }
-
-   eo_do((Eo *)eo_obj, evas_obj_type_check(type, type_check));
-
-   if (EINA_FALSE == *type_check)
-     {
-        if (obj->smart.smart)
-          {
-             sc = obj->smart.smart->smart_class;
-             while (sc)
-               {
-                  if (sc->name == type)
-                    {
-                       if (type_check) *type_check = EINA_TRUE;
-                       return;
-                    }
-                  sc = sc->parent;
-               }
-          }
-     }
-
-   if (type_check) *type_check = EINA_FALSE;
+   *type_check = EINA_FALSE;
+   return;
 }
 
 static void
@@ -2574,7 +2491,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STACK_BELOW), _stack_below),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ABOVE_GET), _above_get),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_BELOW_GET), _below_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_CHECK), _type_check),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -2657,7 +2573,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_STACK_BELOW, "Stack obj immediately below below"),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_ABOVE_GET, "Get the Evas object stacked right above obj"),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_BELOW_GET, "Get the Evas object stacked right below obj"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_TYPE_CHECK, "description here"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

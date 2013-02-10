@@ -13583,10 +13583,11 @@ EAPI Evas_Object *evas_object_smart_parent_get(const Evas_Object *obj) EINA_WARN
  * type, @c EINA_FALSE otherwise
  *
  * If @p obj is not a smart object, this call will fail
- * immediately. Otherwise, make sure evas_smart_class_inherit() or its
- * sibling functions were used correctly when creating the smart
- * object's class, so it has a valid @b parent smart class pointer
- * set.
+ * immediately.
+ *
+ * This function supports Eo and legacy inheritance mechanisms. However,
+ * it is recommended to use eo_isa instead if your object is using Eo from
+ * top to bottom.
  *
  * The checks use smart classes names and <b>string
  * comparison</b>. There is a version of this same check using
@@ -13594,7 +13595,7 @@ EAPI Evas_Object *evas_object_smart_parent_get(const Evas_Object *obj) EINA_WARN
  * string in Evas.
  *
  * @see evas_object_smart_type_check_ptr()
- * @see #EVAS_SMART_SUBCLASS_NEW
+ * @see eo_isa
  *
  * @ingroup Evas_Smart_Object_Group
  */
@@ -13610,10 +13611,31 @@ EAPI Eina_Bool    evas_object_smart_type_check(const Evas_Object *obj, const cha
  * type, @c EINA_FALSE otherwise
  *
  * @see evas_object_smart_type_check() for more details
+ * @see eo_isa
  *
  * @ingroup Evas_Smart_Object_Group
  */
 EAPI Eina_Bool    evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Registers an object type and its associated class. LEGACY MECHANISM SUPPORT.
+ *
+ * This function is invoked in the class constructor of smart classes. It will
+ * add the type and the class into a hash table that will then be used to check
+ * the type of an object.
+ * This function has been implemented to support legacy mechanism that checks
+ * objects types by name.
+ * USE IT ONLY FOR LEGACY SUPPORT.
+ * Otherwise, it is HIGHLY recommended to use eo_isa.
+ *
+ * @param type The type (name string) to add.
+ * @param klass The class to associate to the type.
+ *
+ * @see eo_isa
+ *
+ * @ingroup Evas_Smart_Object_Group
+ */
+EAPI void evas_smart_legacy_type_register(const char *type, const Eo_Class *klass) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Get the #Evas_Smart from which @p obj smart object was created.
@@ -17434,7 +17456,6 @@ enum
    EVAS_OBJ_SUB_ID_STACK_BELOW,
    EVAS_OBJ_SUB_ID_ABOVE_GET,
    EVAS_OBJ_SUB_ID_BELOW_GET,
-   EVAS_OBJ_SUB_ID_TYPE_CHECK,
    EVAS_OBJ_SUB_ID_LAST
 };
 
@@ -18398,21 +18419,6 @@ enum
  * @see evas_object_below_get
  */
 #define evas_obj_below_get(ret) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_BELOW_GET), EO_TYPECHECK(Evas_Object **, ret)
-
-/**
- * @def evas_obj_type_check
- * @since 1.8
- *
- * Checks whether a given object is of a given class.
- *
- * @param[in] type in
- * @param[out] type_check out
- *
- * This function has been implemented to support legacy smart inheritance
- * and needs to be removed when all the objects are Eo objects (inc. Edje and ELM)
- * @see evas_object_smart_type_check
- */
-#define evas_obj_type_check(type, type_check) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_CHECK), EO_TYPECHECK(const char *, type), EO_TYPECHECK(Eina_Bool *, type_check)
 
 #define EVAS_OBJ_CLASS evas_object_class_get()
 

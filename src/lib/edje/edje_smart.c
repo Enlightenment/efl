@@ -10,7 +10,7 @@ EAPI Eo_Op EDJE_OBJ_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EDJE_OBJ_CLASS
 
-#define MY_CLASS_NAME "Edje_Smart"
+#define MY_CLASS_NAME "edje"
 
 Eina_List *_edje_edjes = NULL;
 
@@ -32,7 +32,7 @@ _edje_smart_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
    ed->base = eo_data_get(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
 
    eo_do_super(obj, eo_constructor());
-   eo_do(obj, evas_obj_type_set("edje"));
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
    _edje_lib_ref();
 }
 
@@ -489,6 +489,8 @@ _edje_smart_class_constructor(Eo_Class *klass)
    };
 
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

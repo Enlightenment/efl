@@ -9,6 +9,8 @@
 
 EAPI Eo_Op EVAS_OBJ_BOX_BASE_ID = EO_NOOP;
 
+#define MY_CLASS_NAME "Evas_Object_Box"
+
 #define MY_CLASS EVAS_OBJ_BOX_CLASS
 
 typedef struct _Evas_Object_Box_Iterator Evas_Object_Box_Iterator;
@@ -30,7 +32,6 @@ struct _Evas_Object_Box_Accessor
    const Evas_Object *box;
 };
 
-#define _evas_object_box_type "Evas_Object_Box"
 #define SIG_CHILD_ADDED "child,added"
 #define SIG_CHILD_REMOVED "child,removed"
 
@@ -503,23 +504,12 @@ evas_object_box_add(Evas *evas)
 }
 
 static void
-_type_check(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *type = va_arg(*list, const char *);
-   Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-   if (0 == strcmp(type, _evas_object_box_type))
-      *type_check = EINA_TRUE;
-   else
-      eo_do_super(obj, evas_obj_type_check(type, type_check));
-}
-
-static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
    eo_do(obj,
          evas_obj_smart_callbacks_descriptions_set(_signals, NULL),
-         evas_obj_type_set(_evas_object_box_type));
+         evas_obj_type_set(MY_CLASS_NAME));
 }
 
 EAPI Evas_Object *
@@ -2308,7 +2298,6 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
 
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_CHECK), _type_check),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_DATA_GET), _smart_data_get),
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _smart_add),
@@ -2359,6 +2348,8 @@ _class_constructor(Eo_Class *klass)
    };
 
    eo_class_funcs_set(klass, func_desc);
+
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {
@@ -2406,7 +2397,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Box",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BOX_BASE_ID, op_desc, EVAS_OBJ_BOX_SUB_ID_LAST),
      NULL,

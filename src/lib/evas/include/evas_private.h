@@ -614,7 +614,6 @@ struct _Evas_Object_Protected_Data
    void                      **interface_privates;
 
    unsigned int                ref;
-   Eina_List                  *supported_types;
 
    unsigned char               delete_me;
 

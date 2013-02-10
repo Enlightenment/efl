@@ -283,17 +283,6 @@ evas_object_smart_clipped_class_get(void)
 }
 
 static void
-_type_check(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *type = va_arg(*list, const char *);
-   Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-   if (0 == strcmp(type, "EvasObjectSmartClipped"))
-      *type_check = EINA_TRUE;
-   else
-      eo_do_super(eo_obj, evas_obj_type_check(type, type_check));
-}
-
-static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(eo_obj, eo_constructor());
@@ -304,7 +293,6 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_CHECK), _type_check),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _smart_move),
