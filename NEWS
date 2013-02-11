@@ -162,3 +162,4 @@ Fixes:
     * Fix memory leak in gstreamer_ecore_x_check
     * Fix memory usage spike when rotating with the software_x11 engine.
     * Evas textblock: Fixed a selection issue with different scripts and bidi.
+    * Fix memory leak in error case in ethumb.

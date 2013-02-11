@@ -1,3 +1,7 @@
+2013-02-11  Stefan Schmidt
+
+        * Fix memory leak in error cases in ethumb.
+
 2013-02-08  Stefan Schmidt
 
         * Fix memory leak in eina_xattr_value_ls.
