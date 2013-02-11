@@ -262,13 +262,25 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
      return 0;
    r = _ec_pipe_str_read(ec, &key);
    if (!r)
-     return 0;
+     {
+        free(path);
+        return 0;
+     }
    r = _ec_pipe_str_read(ec, &thumb_path);
    if (!r)
-     return 0;
+     {
+        free(path);
+        free(key);
+        return 0;
+     }
    r = _ec_pipe_str_read(ec, &thumb_key);
    if (!r)
-     return 0;
+     {
+        free(path);
+        free(key);
+        free(thumb_path);
+        return 0;
+     }
 
    ethumb_file_set(ec->ethumbt[idx], path, key);
    ethumb_thumb_path_set(ec->ethumbt[idx], thumb_path, thumb_key);
