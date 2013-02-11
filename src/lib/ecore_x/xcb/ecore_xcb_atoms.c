@@ -9,6 +9,8 @@
 /* local variables */
 static xcb_intern_atom_cookie_t cookies[ECORE_X_ATOMS_COUNT];
 
+#define MYMIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 void
 _ecore_xcb_atoms_init(void)
 {
@@ -18,6 +20,7 @@ _ecore_xcb_atoms_init(void)
    CHECK_XCB_CONN;
 
    num = (sizeof(atom_items) / sizeof(Atom_Item));
+   num = MYMIN(num, ECORE_X_ATOMS_COUNT);
    for (i = 0; i < num; i++)
      {
         cookies[i] =
@@ -35,6 +38,7 @@ _ecore_xcb_atoms_finalize(void)
    CHECK_XCB_CONN;
 
    num = (sizeof(atom_items) / sizeof(Atom_Item));
+   num = MYMIN(num, ECORE_X_ATOMS_COUNT);
    for (i = 0; i < num; i++)
      {
         xcb_intern_atom_reply_t *reply = NULL;
@@ -131,6 +135,7 @@ ecore_x_atoms_get(const char  **names,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
+   num = MYMIN(num, ECORE_X_ATOMS_COUNT);
    for (i = 0; i < num; i++)
      {
         cookies[i] =
