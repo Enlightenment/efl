@@ -18,7 +18,7 @@
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
 # include <Evas_Engine_Software_Gdi.h>
-#ndif
+#endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
 # include <Evas_Engine_Software_DDraw.h>
 #endif
