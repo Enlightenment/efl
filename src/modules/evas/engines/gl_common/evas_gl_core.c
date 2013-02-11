@@ -1765,7 +1765,7 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
                     {
                        ERR("Unable to destroy surface buffers!");
                        return 0;
-                    };
+                    }
                   sfc->buffers_allocated = 0;
                }
           }
