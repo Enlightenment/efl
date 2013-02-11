@@ -448,16 +448,30 @@ _ec_frame_set(struct _Ethumbd_Child *ec, Ethumb *e)
      return 0;
    r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
    if (!r)
-     return 0;
+     {
+        free(theme_file);
+        return 0;
+     }
    r = _ec_pipe_str_read(ec, &group);
    if (!r)
-     return 0;
+     {
+        free(theme_file);
+        return 0;
+     }
    r = _ec_read_safe(STDIN_FILENO, &type, sizeof(type));
    if (!r)
-     return 0;
+     {
+        free(theme_file);
+        free(group);
+        return 0;
+     }
    r = _ec_pipe_str_read(ec, &swallow);
    if (!r)
-     return 0;
+     {
+        free(theme_file);
+        free(group);
+        return 0;
+     }
    DBG("frame = %s:%s:%s", theme_file, group, swallow);
    ethumb_frame_set(e, theme_file, group, swallow);
    free(theme_file);
