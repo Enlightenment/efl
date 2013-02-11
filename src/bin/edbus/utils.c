@@ -5,7 +5,7 @@ Eina_Bool
 file_read(const char *file_name, char **buffer)
 {
    FILE *xml_handler;
-   char data;
+   int data; /* fgetc needs int to detect EOF correctly */
    Eina_Strbuf *buf;
 
    xml_handler = fopen(file_name, "rt");
@@ -17,7 +17,7 @@ file_read(const char *file_name, char **buffer)
    buf = eina_strbuf_new();
 
    while ((data = fgetc(xml_handler)) != EOF)
-     eina_strbuf_append_char(buf, data);
+     eina_strbuf_append_char(buf, (char)data);
 
    fclose(xml_handler);
    *buffer = eina_strbuf_string_steal(buf);
