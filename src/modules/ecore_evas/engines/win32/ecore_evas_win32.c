@@ -1330,6 +1330,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Data_Win32 *wdata;
+   Ecore_Evas_Interface_Win32 *iface;
 
    if (!ecore_win32_init())
      return NULL;
