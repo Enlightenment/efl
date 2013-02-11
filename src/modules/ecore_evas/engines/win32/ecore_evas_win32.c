@@ -36,7 +36,8 @@
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
-
+static const char *interface_win32_name = "win32";
+static const int   interface_win32_version = 1;
 
 typedef struct _Ecore_Evas_Engine_Data_Win32 Ecore_Evas_Engine_Data_Win32;
 
