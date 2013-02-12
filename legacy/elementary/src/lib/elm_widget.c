@@ -3741,7 +3741,6 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list 
      elm_widget_translate(child);
    if (sd->resize_obj) elm_widget_translate(sd->resize_obj);
    if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
-   eo_do(obj, elm_wdg_translate(NULL));
 #ifdef HAVE_GETTEXT
    EINA_LIST_FOREACH(sd->translate_strings, l, ts)
      {
