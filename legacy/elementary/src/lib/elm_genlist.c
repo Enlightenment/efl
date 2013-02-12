@@ -74,6 +74,7 @@ static const char SIG_INDEX_UPDATE[] = "index,update";
 static const char SIG_TREE_EFFECT_FINISHED [] = "tree,effect,finished";
 static const char SIG_HIGHLIGHTED[] = "highlighted";
 static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
+static const char SIG_LANG_CHANGED[] = "language,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED_DOUBLE, ""},
@@ -2664,7 +2665,7 @@ static void
 _elm_genlist_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, "language,changed", NULL);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }
