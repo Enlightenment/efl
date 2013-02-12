@@ -64,6 +64,9 @@ struct _Evas_Object_Image_Pixels
    } func;
 
    Evas_Video_Surface video;
+
+   const char       *tmpf;
+   int               tmpf_fd;
 };
 
 struct _Evas_Object_Image_State
@@ -95,20 +98,17 @@ struct _Evas_Object_Image
    const Evas_Object_Image_State *cur;
    const Evas_Object_Image_State *prev;
 
-   int               pixels_checked_out;
-   int               load_error;
-
    // This pointer is an Eina_Cow pointer
    const Evas_Object_Image_Load_Opts *load_opts;
    const Evas_Object_Image_Pixels *pixels;
 
-   const char             *tmpf;
-   int                     tmpf_fd;
+   void             *engine_data;
+
+   int               pixels_checked_out;
+   int               load_error;
 
    Evas_Image_Scale_Hint   scale_hint;
    Evas_Image_Content_Hint content_hint;
-
-   void             *engine_data;
 
    Eina_Bool         changed : 1;
    Eina_Bool         dirty_pixels : 1;
@@ -127,7 +127,6 @@ static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *eo_obj, Evas_Obje
 static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
 static void evas_object_image_init(Evas_Object *eo_obj);
-static void evas_object_image_new(Evas_Object *eo_obj);
 static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
@@ -184,7 +183,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL }
+  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, -1
 };
 
 static const Evas_Object_Image_State default_state = {
@@ -246,7 +245,7 @@ _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                                                  o->engine_data,
                                                                  eo_obj);
      }
-   if (o->tmpf) _cleanup_tmpf(eo_obj);
+   if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
    if (o->cur->source) _proxy_unset(eo_obj);
 }
 
@@ -342,15 +341,19 @@ _cleanup_tmpf(Evas_Object *eo_obj)
    Evas_Object_Image *o;
 
    o = eo_data_get(eo_obj, MY_CLASS);
-   if (!o->tmpf) return;
+   if (!o->pixels->tmpf) return;
 #ifdef __linux__
 #else
-   unlink(o->tmpf);
+   unlink(o->pixels->tmpf);
 #endif
-   if (o->tmpf_fd >= 0) close(o->tmpf_fd);
-   eina_stringshare_del(o->tmpf);
-   o->tmpf_fd = -1;
-   o->tmpf = NULL;
+   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
+     {
+        if (pixels->tmpf_fd >= 0) close(pixels->tmpf_fd);
+        eina_stringshare_del(pixels->tmpf);
+        pixels->tmpf_fd = -1;
+        pixels->tmpf = NULL;
+     }
+   EINA_COW_PIXEL_WRITE_END(o, pixels);
 #else
    (void) eo_obj;
 #endif
@@ -410,11 +413,15 @@ _create_tmpf(Evas_Object *eo_obj, void *data, int size, char *format EINA_UNUSED
         close(fd);
         return;
      }
-   o->tmpf_fd = fd;
+   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
+     pixels->tmpf_fd = fd;
+   EINA_COW_PIXEL_WRITE_END(o, pixels);
 #ifdef __linux__
    snprintf(buf, sizeof(buf), "/proc/%li/fd/%i", (long)getpid(), fd);
 #endif
-   o->tmpf = eina_stringshare_add(buf);
+   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
+     pixels->tmpf = eina_stringshare_add(buf);
+   EINA_COW_PIXEL_WRITE_END(o, pixels);
    memcpy(dst, data, size);
    munmap(dst, size);
 #else
@@ -453,10 +460,10 @@ _image_memfile_set(Eo *eo_obj, void *_pd, va_list *list)
    if ((size < 1) || (!data)) return;
 
    _create_tmpf(eo_obj, data, size, format);
-   evas_object_image_file_set(eo_obj, o->tmpf, key);
+   evas_object_image_file_set(eo_obj, o->pixels->tmpf, key);
    if (!o->engine_data)
      {
-        ERR("unable to load '%s' from memory", o->tmpf);
+        ERR("unable to load '%s' from memory", o->pixels->tmpf);
         _cleanup_tmpf(eo_obj);
         return;
      }
@@ -482,7 +489,7 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
    const char *file = va_arg(*list, const char*);
    const char *key = va_arg(*list, const char*);
 
-   if ((o->tmpf) && (file != o->tmpf)) _cleanup_tmpf(eo_obj);
+   if ((o->pixels->tmpf) && (file != o->pixels->tmpf)) _cleanup_tmpf(eo_obj);
    if ((o->cur->file) && (file) && (!strcmp(o->cur->file, file)))
      {
         if ((!o->cur->key) && (!key))
@@ -3431,7 +3438,6 @@ static void
 evas_object_image_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   evas_object_image_new(eo_obj);
    /* set up default settings for this kind of object */
    obj->cur.color.r = 255;
    obj->cur.color.g = 255;
@@ -3450,13 +3456,6 @@ evas_object_image_init(Evas_Object *eo_obj)
    obj->func = &object_func;
    obj->type = o_type;
    obj->cur.opaque_valid = 0;
-}
-
-static void
-evas_object_image_new(Evas_Object *eo_obj)
-{
-   Evas_Object_Image *o = eo_data_get(eo_obj, EVAS_OBJ_IMAGE_CLASS);
-   o->tmpf_fd = -1;
 }
 
 static void
