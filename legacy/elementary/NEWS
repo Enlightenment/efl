@@ -62,6 +62,7 @@ Improvements:
    * Enhanced diskselector add and item_append time.
    * Expand elm_transit_tween_mode ELM_TRANSIT_TWEEN_MODE_DIVISOR_INTERP, ELM_TRANSIT_TWEEN_MODE_BOUNCE, ELM_TRANSIT_TWEEN_MODE_SPRING
    * Added new APIs elm_transit_tween_mode_facator_set()/get()
+   * Ctxpopup will be dismissed when language is changed.
 
 Fixes:
 
