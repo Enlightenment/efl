@@ -331,52 +331,5 @@ EAPI int       elm_policy_get(unsigned int policy);
 EAPI void      elm_language_set(const char *lang);
 
 /**
- * Set the text for an objects' part, marking it as translatable.
- *
- * The string to set as @p text must be the original one. Do not pass the
- * return of @c gettext() here. Elementary will translate the string
- * internally and set it on the object using elm_object_part_text_set(),
- * also storing the original string so that it can be automatically
- * translated when the language is changed with elm_language_set().
- *
- * The @p domain will be stored along to find the translation in the
- * correct catalog. It can be NULL, in which case it will use whatever
- * domain was set by the application with @c textdomain(). This is useful
- * in case you are building a library on top of Elementary that will have
- * its own translatable strings, that should not be mixed with those of
- * programs using the library.
- *
- * @param obj The object containing the text part
- * @param part The name of the part to set
- * @param domain The translation domain to use
- * @param text The original, non-translated text to set
- *
- * @ingroup General
- */
-EAPI void      elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
-
-#define elm_object_domain_translatable_text_set(obj, domain, text) elm_object_domain_translatable_text_part_set((obj), NULL, (domain), (text))
-
-#define elm_object_translatable_text_set(obj, text)                elm_object_domain_translatable_text_part_set((obj), NULL, NULL, (text))
-
-/**
- * Gets the original string set as translatable for an object
- *
- * When setting translated strings, the function elm_object_part_text_get()
- * will return the translation returned by @c gettext(). To get the
- * original string use this function.
- *
- * @param obj The object
- * @param part The name of the part that was set
- *
- * @return The original, untranslated string
- *
- * @ingroup General
- */
-EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
-
-#define elm_object_translatable_text_get(obj) elm_object_translatable_text_part_get((obj), NULL)
-
-/**
  * @}
  */
