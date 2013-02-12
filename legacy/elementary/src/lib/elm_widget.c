@@ -4484,6 +4484,8 @@ _elm_widget_item_new(Evas_Object *widget,
 EAPI void
 _elm_widget_item_free(Elm_Widget_Item *item)
 {
+   Elm_Translate_String_Data *ts;
+
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
    if (item->del_func)
@@ -4494,6 +4496,14 @@ _elm_widget_item_free(Elm_Widget_Item *item)
 
    if (item->access_info)
      eina_stringshare_del(item->access_info);
+
+   EINA_LIST_FREE (item->translate_strings, ts)
+     {
+        eina_stringshare_del(ts->id);
+        eina_stringshare_del(ts->domain);
+        eina_stringshare_del(ts->string);
+        free(ts);
+     }
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
    free(item);
@@ -4682,6 +4692,86 @@ _elm_widget_item_disable_hook_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->disable_func = func;
+}
+
+EAPI void
+_elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item,
+                                                   const char *part,
+                                                   const char *domain,
+                                                   const char *label)
+{
+   const char *str;
+   Eina_List *l;
+   Elm_Translate_String_Data *ts = NULL;
+
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   str = eina_stringshare_add(part);
+   EINA_LIST_FOREACH(item->translate_strings, l, ts)
+     {
+        if (ts->id == str) break;
+        else ts = NULL;
+     }
+
+   if (!ts && !label)
+     eina_stringshare_del(str);
+   else if (!ts)
+     {
+        ts = malloc(sizeof(Elm_Translate_String_Data));
+        if (!ts) return;
+
+        ts->id = str;
+        ts->domain = eina_stringshare_add(domain);
+        ts->string = eina_stringshare_add(label);
+        item->translate_strings = eina_list_append(item->translate_strings, ts);
+     }
+   else
+     {
+        if (label)
+          {
+             eina_stringshare_replace(&ts->domain, domain);
+             eina_stringshare_replace(&ts->string, label);
+          }
+        else
+          {
+             item->translate_strings = eina_list_remove_list(
+                item->translate_strings, l);
+             eina_stringshare_del(ts->id);
+             eina_stringshare_del(ts->domain);
+             eina_stringshare_del(ts->string);
+             free(ts);
+          }
+        eina_stringshare_del(str);
+     }
+
+#ifdef HAVE_GETTEXT
+   if (label && label[0])
+     label = dgettext(domain, label);
+#endif
+   _elm_widget_item_part_text_set(item, part, label);
+}
+
+EAPI const char *
+_elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item,
+                                            const char *part)
+{
+   const char *str;
+   Eina_List *l;
+   Elm_Translate_String_Data *ts;
+   const char *ret = NULL;
+
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+
+   str = eina_stringshare_add(part);
+   EINA_LIST_FOREACH(item->translate_strings, l, ts)
+     if (ts->id == str)
+       {
+          ret = ts->string;
+          break;
+       }
+   eina_stringshare_del(str);
+
+   return ret;
 }
 
 typedef struct _Elm_Widget_Item_Tooltip Elm_Widget_Item_Tooltip;

@@ -992,3 +992,7 @@
 2013-02-13  ChunEon Park (Hermet)
 
         * Ctxpopup will be dismissed when elm language is changed.
+
+2013-02-13  ChunEon Park (Hermet)
+
+        * added APIs - elm_object_item_translatable_part_text_set(), elm_object_item_translatable_part_text_get().

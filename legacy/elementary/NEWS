@@ -34,6 +34,7 @@ Additions:
    * Add elm_index smart callback - "language,changed".
    * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
    * Add elm_glview, elm_gengrid smart callback - "language,changed".
+   * Add APIs - elm_object_item_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
 
 Improvements:
 

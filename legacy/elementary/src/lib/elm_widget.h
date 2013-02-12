@@ -555,6 +555,7 @@ struct _Elm_Widget_Item
    Evas_Object                   *access_obj;
    const char                    *access_info;
    Eina_List                     *access_order;
+   Eina_List                     *translate_strings;
 
    Eina_Bool                      disabled : 1;
 };
@@ -730,6 +731,8 @@ EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_
 EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, Elm_Widget_Disable_Cb func);
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
+EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
+EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.
