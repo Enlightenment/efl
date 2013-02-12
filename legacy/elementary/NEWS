@@ -33,6 +33,7 @@ Additions:
    * Add elm_index_delay_change_time_set/get for changing delay change time in index.
    * Add elm_index smart callback - "language,changed".
    * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
+   * Add elm_glview smart callback - "language,changed".
 
 Improvements:
 

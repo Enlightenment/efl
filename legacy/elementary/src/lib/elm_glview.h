@@ -14,6 +14,7 @@
  * @ref GLView:
  * - @c "focused" - when glview has received focus.
  * - @c "unfocused" - when glview has lost focus.
+ * - @c "language,changed" - the program's language changed
  *
  * Below is an illustrative example of how to use GLView and and OpenGL
  * to render in elementary environment.

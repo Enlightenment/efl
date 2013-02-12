@@ -984,3 +984,8 @@
 2013-02-07  Jaehwan Kim
 
         * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
+
+2013-02-13  ChunEon Park (Hermet)
+
+        * GLview supports "language,changed" smart callback.
+

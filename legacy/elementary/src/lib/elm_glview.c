@@ -10,13 +10,24 @@ EAPI Eo_Op ELM_OBJ_GLVIEW_BASE_ID = EO_NOOP;
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
+static const char SIG_LANG_CHANGED[] = "language,changed";
 
 /* smart callbacks coming from elm glview objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_FOCUSED, ""},
    {SIG_UNFOCUSED, ""},
+   {SIG_LANG_CHANGED, ""},
    {NULL, NULL}
 };
+
+static void
+_elm_glview_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
+
+   if (ret) *ret = EINA_TRUE;
+}
 
 static void
 _elm_glview_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
@@ -562,6 +573,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_glview_smart_resize),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_glview_smart_on_focus),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_glview_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_GLVIEW_ID(ELM_OBJ_GLVIEW_SUB_ID_GL_API_GET), _gl_api_get),
         EO_OP_FUNC(ELM_OBJ_GLVIEW_ID(ELM_OBJ_GLVIEW_SUB_ID_MODE_SET), _mode_set),
