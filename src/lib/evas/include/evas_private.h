@@ -612,9 +612,6 @@ struct _Evas_Object_Protected_Data
 
    unsigned char               delete_me;
 
-   unsigned char               recalculate_cycle;
-   Eina_Clist                  calc_entry;
-
    Evas_Object_Pointer_Mode    pointer_mode : 2;
 
    Eina_Bool                   store : 1;

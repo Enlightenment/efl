@@ -18,6 +18,7 @@ typedef struct _Evas_Smart_Callback    Evas_Smart_Callback;
 
 struct _Evas_Object_Smart
 {
+   Evas_Object      *object;
    void             *engine_data;
    void             *data;
    Eina_List        *callbacks;
@@ -27,11 +28,15 @@ struct _Evas_Object_Smart
   /* ptr array + data blob holding all interfaces private data for
    * this object */
    void            **interface_privates;
+   Eina_Clist        calc_entry;
 
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
 
    int               walking_list;
    int               member_count;
+
+   unsigned char     recalculate_cycle;
+
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
    Eina_Bool         update_boundingbox_needed : 1;
@@ -545,8 +550,13 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 }
 
 static void
-_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 {
+   Evas_Object_Smart *smart;
+
+   smart = class_data;
+   smart->object = eo_obj;
+
    eo_do_super(eo_obj, eo_constructor());
    evas_object_smart_init(eo_obj);
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -953,23 +963,23 @@ _smart_need_recalculate_set(Eo *eo_obj, void *_pd, va_list *list)
    if (obj->delete_me) return;
 
    /* remove this entry from calc_list or processed list */
-   if (eina_clist_element_is_linked(&obj->calc_entry))
-     eina_clist_remove(&obj->calc_entry);
+   if (eina_clist_element_is_linked(&o->calc_entry))
+     eina_clist_remove(&o->calc_entry);
 
    value = !!value;
    if (value)
-     eina_clist_add_tail(&obj->layer->evas->calc_list, &obj->calc_entry);
+     eina_clist_add_tail(&obj->layer->evas->calc_list, &o->calc_entry);
    else
-     eina_clist_add_tail(&obj->layer->evas->calc_done, &obj->calc_entry);
+     eina_clist_add_tail(&obj->layer->evas->calc_done, &o->calc_entry);
 
    if (o->need_recalculate == value) return;
 
-   if (obj->recalculate_cycle > 254)
+   if (o->recalculate_cycle > 254)
      {
         ERR("Object %p is not stable during recalc loop", obj);
         return;
      }
-   if (obj->layer->evas->in_smart_calc) obj->recalculate_cycle++;
+   if (obj->layer->evas->in_smart_calc) o->recalculate_cycle++;
    o->need_recalculate = value;
 }
 
@@ -1053,8 +1063,8 @@ _canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, void *_pd, va_li
 void
 evas_call_smarts_calculate(Evas *eo_e)
 {
+   Evas_Object_Smart *o;
    Eina_Clist *elem;
-   Evas_Object_Protected_Data *obj;
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
 //   printf("+CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------v\n");
@@ -1063,15 +1073,15 @@ evas_call_smarts_calculate(Evas *eo_e)
 
    while (NULL != (elem = eina_clist_head(&e->calc_list)))
      {
-        Evas_Object_Smart *o;
+        Evas_Object_Protected_Data *obj;
 
         /* move the item to the processed list */
-        obj = EINA_CLIST_ENTRY(elem, Evas_Object_Protected_Data, calc_entry);
-        eina_clist_remove(&obj->calc_entry);
-        if (obj->delete_me) continue;
-        eina_clist_add_tail(&e->calc_done, &obj->calc_entry);
+        o = EINA_CLIST_ENTRY(elem, Evas_Object_Smart, calc_entry);
+        eina_clist_remove(&o->calc_entry);
+        obj = eo_data_get(o->object, EVAS_OBJ_CLASS);
 
-        o = eo_data_get(obj->object, MY_CLASS);
+        if (obj->delete_me) continue;
+        eina_clist_add_tail(&e->calc_done, &o->calc_entry);
 
         if (o->need_recalculate)
           {
@@ -1085,9 +1095,9 @@ evas_call_smarts_calculate(Evas *eo_e)
 
    while (NULL != (elem = eina_clist_head(&e->calc_done)))
      {
-        obj = EINA_CLIST_ENTRY(elem, Evas_Object_Protected_Data, calc_entry);
-        obj->recalculate_cycle = 0;
-        eina_clist_remove(&obj->calc_entry);
+        o = EINA_CLIST_ENTRY(elem, Evas_Object_Smart, calc_entry);
+        o->recalculate_cycle = 0;
+        eina_clist_remove(&o->calc_entry);
      }
 
    e->in_smart_calc--;
@@ -1183,8 +1193,8 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
    if (obj->is_smart)
      {
         Evas_Object_Smart *o = eo_data_get(eo_obj, MY_CLASS);
-        if (obj->calc_entry.next)
-          eina_clist_remove(&obj->calc_entry);
+        if (o->calc_entry.next)
+          eina_clist_remove(&o->calc_entry);
 
         while (o->contained)
           {
