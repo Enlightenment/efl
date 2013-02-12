@@ -23,7 +23,13 @@ struct _Evas_Object_Smart
    Eina_List        *callbacks;
    Eina_Inlist      *contained;
    Eina_Inlist      *smart_callbacks_infos;
+
+  /* ptr array + data blob holding all interfaces private data for
+   * this object */
+   void            **interface_privates;
+
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
+
    int               walking_list;
    int               member_count;
    Eina_Bool         deletions_waiting : 1;
@@ -153,13 +159,14 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
                                      const Evas_Smart_Interface *iface)
 {
    unsigned int i;
+   Evas_Object_Smart *obj;
    Evas_Smart *s;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_get(eo_obj, MY_CLASS);
    s = evas_object_smart_smart_get(eo_obj);
    if (!s) return NULL;
 
@@ -461,9 +468,10 @@ static void
 _evas_smart_class_ifaces_private_data_alloc(Evas_Object *eo_obj,
                                             Evas_Smart *s)
 {
-   unsigned int i, total_priv_sz = 0;
+   Evas_Object_Smart *obj;
    const Evas_Smart_Class *sc;
    unsigned char *ptr;
+   unsigned int i, total_priv_sz = 0;
 
    /* get total size of interfaces private data */
    for (sc = s->smart_class; sc; sc = sc->parent)
@@ -490,9 +498,8 @@ _evas_smart_class_ifaces_private_data_alloc(Evas_Object *eo_obj,
           }
      }
 
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   obj->interface_privates = malloc
-       (s->interfaces.size * sizeof(void *) + total_priv_sz);
+   obj = eo_data_get(eo_obj, MY_CLASS);
+   obj->interface_privates = malloc(s->interfaces.size * sizeof(void *) + total_priv_sz);
    if (!obj->interface_privates)
      {
         ERR("malloc failed!");
@@ -1135,6 +1142,7 @@ void
 evas_object_smart_del(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Smart *sobj;
    Evas_Smart *s;
    unsigned int i;
 
@@ -1157,8 +1165,9 @@ evas_object_smart_del(Evas_Object *eo_obj)
           }
      }
 
-   free(obj->interface_privates);
-   obj->interface_privates = NULL;
+   sobj = eo_data_get(eo_obj, MY_CLASS);
+   free(sobj->interface_privates);
+   sobj->interface_privates = NULL;
 
    if (s) evas_object_smart_unuse(s);
 }

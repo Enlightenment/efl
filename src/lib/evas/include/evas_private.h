@@ -570,7 +570,6 @@ struct _Evas_Object_Protected_Data
    char                       *name;
 
    Evas_Intercept_Func        *interceptors;
-
    Eina_List                  *grabs;
 
    Evas_Callbacks             *callbacks;
@@ -608,10 +607,6 @@ struct _Evas_Object_Protected_Data
    struct {
         int                      in_move, in_resize;
    } doing;
-
-  /* ptr array + data blob holding all interfaces private data for
-   * this object */
-   void                      **interface_privates;
 
    unsigned int                ref;
 
