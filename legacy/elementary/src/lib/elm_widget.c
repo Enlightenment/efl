@@ -5228,7 +5228,7 @@ _elm_widget_item_translate(Elm_Widget_Item *item)
    EINA_LIST_FOREACH(item->translate_strings, l, ts)
      {
         const char *s = dgettext(ts->domain, ts->string);
-        _elm_widget_item_part_text_set(it, ts->id, s);
+        _elm_widget_item_part_text_set(item, ts->id, s);
      }
 #endif
 }
