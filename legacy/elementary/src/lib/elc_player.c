@@ -279,6 +279,7 @@ _play(void *data,
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
+   elm_layout_signal_emit(data, "elm,player,play", "elm");
    elm_video_play(sd->video);
    elm_layout_signal_emit(data, "elm,button,play", "elm");
    evas_object_smart_callback_call(data, SIG_PLAY_CLICKED, NULL);
@@ -401,7 +402,7 @@ _double_to_time(double value)
 
    ph = value / 3600;
    pm = value / 60 - (ph * 60);
-   ps = value - (pm * 60);
+   ps = value - (pm * 60) - (ph * 3600);
    pf = value * 100 - (ps * 100) - (pm * 60 * 100) - (ph * 60 * 60 * 100);
 
    if (ph)
@@ -428,7 +429,7 @@ _str_free(char *data)
  * layout */
 
 static void
-_elm_player_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    Evas_Object *content = va_arg(*list, Evas_Object *);

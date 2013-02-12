@@ -141,6 +141,8 @@ Fixes:
    * Apply disply mode to all views of a naviframe if the display mode of the views are changed. Sometimes views are couldn't be recoverved to a previous status if they are stacked into more depth.
    * Fix the scroll position is calculated by the size of pan object, not the size of scroller.
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
+   * Fix elc_player pause state to be in sync
+   * Fix time string display to handle hours right
 
 Removals:
 

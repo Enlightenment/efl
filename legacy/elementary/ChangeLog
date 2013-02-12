@@ -985,14 +985,19 @@
 
         * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
 
-2013-02-13  ChunEon Park (Hermet)
+2013-02-12  ChunEon Park (Hermet)
 
         * GLview, Gengrid support "language,changed" smart callback.
 
-2013-02-13  ChunEon Park (Hermet)
+2013-02-12  ChunEon Park (Hermet)
 
         * Ctxpopup will be dismissed when elm language is changed.
 
-2013-02-13  ChunEon Park (Hermet)
+2013-02-12  ChunEon Park (Hermet)
 
         * added APIs - elm_object_item_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
+
+2013-02-12  Arvind R
+
+        * Fix elc_player pause state to be in sync.
+        * Fix time string display to handle hours right.
