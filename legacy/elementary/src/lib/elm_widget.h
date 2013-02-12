@@ -733,6 +733,7 @@ EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, E
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
 EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
 EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.
@@ -955,6 +956,13 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_del_pre_hook_set(item, func) \
   _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Del_Pre_Cb)func)
+
+/**
+ * Convenience function to query translate hook.
+ * @see _elm_widget_item_translate()
+ */
+#define elm_widget_item_translate(item) \
+  _elm_widget_item_translate((Elm_Widget_Item *)item)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)              \
    do {                                                         \

@@ -5216,6 +5216,23 @@ _elm_widget_item_access_info_set(Elm_Widget_Item *item,
    else item->access_info = eina_stringshare_add(txt);
 }
 
+EAPI void
+_elm_widget_item_translate(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+#ifdef HAVE_GETTEXT
+   Elm_Translate_String_Data *ts;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(item->translate_strings, l, ts)
+     {
+        const char *s = dgettext(ts->domain, ts->string);
+        _elm_widget_item_part_text_set(it, ts->id, s);
+     }
+#endif
+}
+
 /* happy debug functions */
 #ifdef ELM_DEBUG
 static void
