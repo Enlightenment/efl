@@ -161,6 +161,7 @@ _update_slider(void *data,
    Eina_Bool seekable;
 
    ELM_PLAYER_DATA_GET(data, sd);
+   if (!sd) return;
 
    seekable = elm_video_is_seekable_get(sd->video);
    length = elm_video_play_length_get(sd->video);
@@ -169,6 +170,35 @@ _update_slider(void *data,
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
    elm_slider_value_set(sd->slider, pos);
+   sd->last_update_time = ecore_loop_time_get();
+   if (sd->delay_update) ecore_timer_del(sd->delay_update);
+}
+
+static Eina_Bool
+_update_delay(void *data)
+{
+   ELM_PLAYER_DATA_GET(data, sd);
+   if (!sd) return EINA_FALSE;
+   sd->delay_update = NULL;
+   _update_slider(data, NULL, NULL);
+   return EINA_FALSE;
+}
+
+static void
+_update_frame(void *data,
+              Evas_Object *obj,
+              void *event_info)
+{
+   ELM_PLAYER_DATA_GET(data, sd);
+   if (!sd) return;
+   
+   if ((ecore_loop_time_get() - sd->last_update_time) < 0.25)
+     {
+        if (sd->delay_update) ecore_timer_del(sd->delay_update);
+        sd->delay_update = ecore_timer_add(0.30, _update_delay, data);
+        return;
+     }
+   _update_slider(data, obj, event_info);
 }
 
 static void
@@ -455,13 +485,13 @@ _elm_player_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else elm_layout_signal_emit(obj, "elm,player,pause", "elm");
 
    evas_object_smart_callback_add(sd->emotion, "frame_decode",
-                                  _update_slider, obj);
+                                  _update_frame, obj);
    evas_object_smart_callback_add(sd->emotion, "frame_resize",
                                   _update_slider, obj);
    evas_object_smart_callback_add(sd->emotion, "length_change",
                                   _update_slider, obj);
    evas_object_smart_callback_add(sd->emotion, "position_update",
-                                  _update_slider, obj);
+                                  _update_frame, obj);
    evas_object_smart_callback_add(sd->emotion, "playback_started",
                                   _play_started, obj);
    evas_object_smart_callback_add(sd->emotion, "playback_finished",
@@ -510,6 +540,19 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
+static void
+_elm_player_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Player_Smart_Data *sd = _pd;
+   
+   if (sd->delay_update)
+     {
+        ecore_timer_del(sd->delay_update);
+        sd->delay_update = NULL;
+     }
+   eo_do_super(obj, evas_obj_smart_del());
+}
+
 #endif
 
 EAPI Evas_Object *
@@ -552,6 +595,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
 #ifdef HAVE_EMOTION
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_player_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_player_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_player_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_player_smart_event),
