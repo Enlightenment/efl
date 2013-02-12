@@ -439,6 +439,14 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 }
 
 EAPI Eina_Bool
+eo_vdo_internal(Eo *obj, Eo_Op_Type op_type, va_list *ops)
+{
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
+
+   return _eo_dov_internal(obj, op_type, ops);
+}
+
+EAPI Eina_Bool
 eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
 {
    const Eo_Class *nklass;

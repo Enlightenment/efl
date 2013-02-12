@@ -574,6 +574,13 @@ EAPI Eina_Bool eo_shutdown(void);
 #define eo_do(obj, ...) eo_do_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__, EO_NOOP)
 
 /**
+ * @def eo_vdo
+ * A convenience wrapper around eo_vdo_internal()
+ * @see eo_vdo_internal
+ */
+#define eo_vdo(obj, args) eo_vdo_internal(obj, EO_OP_TYPE_REGULAR, args)
+
+/**
  * @def eo_class_do
  * A convenience wrapper around eo_class_do_internal()
  * @see eo_class_do_internal
@@ -594,6 +601,20 @@ EAPI Eina_Bool eo_shutdown(void);
  */
 EAPI Eina_Bool eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...);
 
+/**
+ * @brief Calls op functions of an object
+ * @param obj The object to work on
+ * @param op_type The type of the ops that are passed.
+ * @param ops NULL terminated list of OPs and parameters.
+ * @return @c EINA_TRUE on success.
+ *
+ * Use the helper macros, don't pass the parameters manually.
+ * Use #eo_vdo instead of this function.
+ *
+ * @see #eo_vdo
+ */
+EAPI Eina_Bool eo_vdo_internal(Eo *obj, Eo_Op_Type op_type, va_list *ops);
+  
 /**
  * @brief Calls op functions of a class.
  * @param klass The class to work on
