@@ -59,6 +59,8 @@ static const char SIG_MOVED[] = "moved";
 static const char SIG_INDEX_UPDATE[] = "index,update";
 static const char SIG_HIGHLIGHTED[] = "highlighted";
 static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
+static const char SIG_LANG_CHANGED[] = "language,changed";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
@@ -86,8 +88,19 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_MOVED, ""},
    {SIG_HIGHLIGHTED, ""},
    {SIG_UNHIGHLIGHTED, ""},
+   {SIG_LANG_CHANGED, ""},
+
    {NULL, NULL}
 };
+
+static void
+_elm_gengrid_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
+
+   if (ret) *ret = EINA_TRUE;
+}
 
 static void
 _item_show_region(void *data)
@@ -3934,6 +3947,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_gengrid_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_gengrid_smart_access),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_gengrid_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_gengrid_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_gengrid_smart_sizing_eval),
 

@@ -987,9 +987,8 @@
 
 2013-02-13  ChunEon Park (Hermet)
 
-        * GLview supports "language,changed" smart callback.
+        * GLview, Gengrid support "language,changed" smart callback.
 
 2013-02-13  ChunEon Park (Hermet)
 
         * Ctxpopup will be dismissed when elm language is changed.
-

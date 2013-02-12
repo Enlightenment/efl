@@ -221,6 +221,9 @@
  *   The %c event_info parameter is the item that was highlighted.
  * - @c "unhighlighted" - an item in the list is unpressed and unhighlighted.
  *   The %c event_info parameter is the item that was unhighlighted.
+ * - @c "language,changed" - This is called when the program's language is
+ *   changed. Call the elm_gengrid_realized_items_update() if items text should
+ *   be translated.
  *
  * Supported elm_object common APIs
  * @li elm_object_signal_emit()

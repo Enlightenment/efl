@@ -121,6 +121,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TREE_EFFECT_FINISHED, ""},
    {SIG_HIGHLIGHTED, ""},
    {SIG_UNHIGHLIGHTED, ""},
+   {SIG_LANG_CHANGED, ""},
    {NULL, NULL}
 };
 
