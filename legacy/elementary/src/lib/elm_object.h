@@ -49,13 +49,15 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  * @param domain The translation domain to use
  * @param text The original, non-translated text to set
  *
+ * @since 1.8
+ *
  * @ingroup General
  */
-EAPI void      elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
+EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 
-#define elm_object_domain_translatable_text_set(obj, domain, text) elm_object_domain_translatable_text_part_set((obj), NULL, (domain), (text))
+#define elm_object_domain_translatable_text_set(obj, domain, text) elm_object_domain_translatable_part_text_set((obj), NULL, (domain), (text))
 
-#define elm_object_translatable_text_set(obj, text)                elm_object_domain_translatable_text_part_set((obj), NULL, NULL, (text))
+#define elm_object_translatable_text_set(obj, text)                elm_object_domain_translatable_part_text_set((obj), NULL, NULL, (text))
 
 /**
  * Gets the original string set as translatable for an object
@@ -69,11 +71,15 @@ EAPI void      elm_object_domain_translatable_text_part_set(Evas_Object *obj, co
  *
  * @return The original, untranslated string
  *
+ * @see elm_object_translatable_part_text_set()
+ *
+ * @since 1.8
+ *
  * @ingroup General
  */
-EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
+EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part);
 
-#define elm_object_translatable_text_get(obj) elm_object_translatable_text_part_get((obj), NULL)
+#define elm_object_translatable_text_get(obj) elm_object_translatable_part_text_get((obj), NULL)
 
 /**
  * Set the content on part of a given container widget

@@ -34,7 +34,9 @@ Additions:
    * Add elm_index smart callback - "language,changed".
    * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
    * Add elm_glview, elm_gengrid smart callback - "language,changed".
-   * Add APIs - elm_object_item_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
+   * Add APIs - elm_object_item_domain_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
+   * Add APIs - elm_object_domain_translatable_part_text_set(), elm_object_translatable_part_text_get().
+
 
 Improvements:
 
@@ -150,6 +152,7 @@ Removals:
      to deprecation. Thus, people using that (unstable) API will have
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
+   * Deprecate elm_object_domain_translatable_text_part_set(), elm_object_translatable_text_part_get().
 
 Changes since Elementary 1.0.0:
 -------------------------

@@ -684,8 +684,8 @@ EAPI unsigned int     elm_widget_focus_order_get(const Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *part);
-EAPI void             elm_widget_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
-EAPI const char      *elm_widget_translatable_text_part_get(const Evas_Object *obj, const char *part);
+EAPI void             elm_widget_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
+EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
@@ -1073,8 +1073,8 @@ enum
 
    ELM_WIDGET_SUB_ID_TEXT_PART_SET,
    ELM_WIDGET_SUB_ID_TEXT_PART_GET,
-   ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_TEXT_PART_SET,
-   ELM_WIDGET_SUB_ID_TRANSLATABLE_TEXT_PART_GET,
+   ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET,
+   ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET,
    ELM_WIDGET_SUB_ID_ACCESS_INFO_SET,
    ELM_WIDGET_SUB_ID_ACCESS_INFO_GET,
 
@@ -1791,7 +1791,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 
 /**
- * @def elm_wdg_domain_translatable_text_part_set
+ * @def elm_wdg_domain_translatable_part_text_set
  * @since 1.8
  *
  * No description supplied by the EAPI.
@@ -1801,10 +1801,10 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[in] label
  *
  */
-#define elm_wdg_domain_translatable_text_part_set(part, domain, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, domain), EO_TYPECHECK(const char *, label)
+#define elm_wdg_domain_translatable_part_text_set(part, domain, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, domain), EO_TYPECHECK(const char *, label)
 
 /**
- * @def elm_wdg_translatable_text_part_get
+ * @def elm_wdg_translatable_part_text_get
  * @since 1.8
  *
  * No description supplied by the EAPI.
@@ -1813,7 +1813,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[out] ret
  *
  */
-#define elm_wdg_translatable_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define elm_wdg_translatable_part_text_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
 
 /**

@@ -1001,3 +1001,7 @@
 
         * Fix elc_player pause state to be in sync.
         * Fix time string display to handle hours right.
+
+2013-02-12  ChunEon Park (Hermet)
+
+        * replace elm_object_domain_translatable_text_part_set(), elm_object_translatable_text_part_get() with elm_object_domain)translatable_part_text_set(), elm_object_translatable_part_text_get().
