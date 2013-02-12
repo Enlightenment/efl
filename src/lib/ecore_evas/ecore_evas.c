@@ -2458,6 +2458,7 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->driver = NULL;
    if (ee->engine.idle_flush_timer)
      ecore_timer_del(ee->engine.idle_flush_timer);
+   ee->engine.idle_flush_timer = NULL;
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
    if (ee->registered)
      {
@@ -2475,11 +2476,10 @@ _ecore_evas_free(Ecore_Evas *ee)
 static Eina_Bool
 _ecore_evas_cb_idle_flush(void *data)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = data;
 
-   ee = (Ecore_Evas *)data;
-   evas_render_idle_flush(ee->evas);
    ee->engine.idle_flush_timer = NULL;
+   evas_render_idle_flush(ee->evas);
    return ECORE_CALLBACK_CANCEL;
 }
 
