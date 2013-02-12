@@ -348,7 +348,8 @@
  *   item. To get the relative previous item, use elm_genlist_item_next_get().
  *   This signal is called along with "moved" signal.
  * - @c "language,changed" - This is called when the program's language is
- *   changed.
+ *   changed. Call the elm_genlist_realized_items_update() if items text should
+ *   be translated.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
  * - @c "highlighted" - an item in the list is pressed and highlighted.
  *   The %c event_info parameter is the item that was highlighted.
