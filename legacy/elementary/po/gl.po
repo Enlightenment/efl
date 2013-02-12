@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
-#: src/lib/elm_config.c:2203
+#: src/lib/elm_config.c:2205
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-26 13:07+0900\n"
+"POT-Creation-Date: 2013-02-12 15:26+0900\n"
 "PO-Revision-Date: 2012-11-16 21:51+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -42,7 +42,7 @@ msgid "Clicked"
 msgstr "Premido"
 
 #: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
@@ -133,7 +133,7 @@ msgstr "Reloxo"
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
-#: src/lib/elm_config.c:2219
+#: src/lib/elm_config.c:2221
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -157,7 +157,7 @@ msgstr "Seleccionar"
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:2910
+#: src/lib/elm_entry.c:2913
 msgid "Entry"
 msgstr "Entrada"
 
@@ -165,15 +165,15 @@ msgstr "Entrada"
 msgid "Gengrid Item"
 msgstr "Grella xenérica"
 
-#: src/lib/elm_index.c:98
+#: src/lib/elm_index.c:111
 msgid "Index Item"
 msgstr "Elemento do índice"
 
-#: src/lib/elm_index.c:668
+#: src/lib/elm_index.c:682
 msgid "Index"
 msgstr "Índice"
 
-#: src/lib/elm_label.c:402
+#: src/lib/elm_label.c:403
 msgid "Label"
 msgstr "Etiqueta"
 

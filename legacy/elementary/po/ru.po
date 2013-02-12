@@ -5,12 +5,12 @@
 # Automatically generated, 2012.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 #
-#: src/lib/elm_config.c:2203
+#: src/lib/elm_config.c:2205
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-26 13:07+0900\n"
+"POT-Creation-Date: 2013-02-12 15:26+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -47,7 +47,7 @@ msgid "Clicked"
 msgstr "Нажато"
 
 #: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
@@ -141,7 +141,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:2219
+#: src/lib/elm_config.c:2221
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -165,7 +165,7 @@ msgstr "Выбрать"
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:2910
+#: src/lib/elm_entry.c:2913
 msgid "Entry"
 msgstr "Запись"
 
@@ -173,15 +173,15 @@ msgstr "Запись"
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
-#: src/lib/elm_index.c:98
+#: src/lib/elm_index.c:111
 msgid "Index Item"
 msgstr "Элемент алфавитного указателя"
 
-#: src/lib/elm_index.c:668
+#: src/lib/elm_index.c:682
 msgid "Index"
 msgstr "Алфавитный указатель"
 
-#: src/lib/elm_label.c:402
+#: src/lib/elm_label.c:403
 msgid "Label"
 msgstr "Метка"
 

@@ -1,11 +1,12 @@
 # Spanish translation for elementary.
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
+#: src/lib/elm_config.c:2205
 msgid ""
 msgstr ""
 "Project-Id-Version: Marc Furtià  i Puig\\\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-29 18:09+0100\n"
+"POT-Creation-Date: 2013-02-12 15:26+0900\n"
 "PO-Revision-Date: 2013-02-01 09:52+0100\n"
 "Last-Translator: Marc Furtià i Puig <marc.furtia@gmail.com>\n"
 "Language-Team: \n"
@@ -25,8 +26,7 @@ msgstr "Amunt"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1017
-#: src/lib/elm_entry.c:1263
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
 #: src/lib/elm_entry.c:1288
 msgid "Cancel"
 msgstr "Cancel·lar"
@@ -43,14 +43,9 @@ msgstr "Bombolla "
 msgid "Clicked"
 msgstr "Pitjat "
 
-#: src/lib/elm_button.c:285
-#: src/lib/elm_check.c:213
-#: src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1399
-#: src/lib/elm_list.c:1382
-#: src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515
-#: src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Estat: Desactivat "
 
@@ -98,21 +93,16 @@ msgstr "mes del calendari"
 msgid "calendar year"
 msgstr "any del calendari"
 
-#: src/lib/elm_check.c:45
-#: src/lib/elm_check.c:226
-#: src/lib/elm_radio.c:84
+#: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
 #: src/lib/elm_radio.c:258
 msgid "State: On"
 msgstr "Estat: Conectat"
 
-#: src/lib/elm_check.c:51
-#: src/lib/elm_check.c:238
-#: src/lib/elm_radio.c:260
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:238 src/lib/elm_radio.c:260
 msgid "State: Off"
 msgstr "Estat: Desconectat"
 
-#: src/lib/elm_check.c:222
-#: src/lib/elm_check.c:235
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:235
 msgid "State"
 msgstr "Estat"
 
@@ -140,7 +130,7 @@ msgstr "Rellotge"
 msgid "color selector palette item"
 msgstr "Paleta de selecció de color"
 
-#: src/lib/elm_config.c:2219
+#: src/lib/elm_config.c:2221
 msgid "default:LTR"
 msgstr "Predeterminat: LTR"
 
@@ -164,7 +154,7 @@ msgstr "Seleccionar"
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:2910
+#: src/lib/elm_entry.c:2913
 msgid "Entry"
 msgstr "Entrada"
 
@@ -172,15 +162,15 @@ msgstr "Entrada"
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
-#: src/lib/elm_index.c:100
+#: src/lib/elm_index.c:111
 msgid "Index Item"
 msgstr "Element d'índex"
 
-#: src/lib/elm_index.c:671
+#: src/lib/elm_index.c:682
 msgid "Index"
 msgstr "Índex"
 
-#: src/lib/elm_label.c:402
+#: src/lib/elm_label.c:403
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -220,8 +210,7 @@ msgstr "botó de decrement del spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1286
-#: src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
 msgid "Selected"
 msgstr "Seleccionat"
 

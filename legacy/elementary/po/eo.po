@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#: src/lib/elm_config.c:2203
+#: src/lib/elm_config.c:2205
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-26 13:07+0900\n"
+"POT-Creation-Date: 2013-02-12 15:26+0900\n"
 "PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -45,7 +45,7 @@ msgid "Clicked"
 msgstr "Alklakita"
 
 #: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1290 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
@@ -131,7 +131,7 @@ msgstr "Horloĝo"
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:2219
+#: src/lib/elm_config.c:2221
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -155,7 +155,7 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2910
+#: src/lib/elm_entry.c:2913
 msgid "Entry"
 msgstr "Ero"
 
@@ -163,15 +163,15 @@ msgstr "Ero"
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
-#: src/lib/elm_index.c:98
+#: src/lib/elm_index.c:111
 msgid "Index Item"
 msgstr "Indeksero"
 
-#: src/lib/elm_index.c:668
+#: src/lib/elm_index.c:682
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_label.c:402
+#: src/lib/elm_label.c:403
 msgid "Label"
 msgstr "Etikedo"
 
