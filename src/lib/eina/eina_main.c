@@ -21,6 +21,7 @@
 #endif
 
 #include <stdio.h>
+#include <time.h>
 
 #ifdef EFL_HAVE_WIN32_THREADS
 # define WIN32_LEAN_AND_MEAN
