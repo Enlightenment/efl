@@ -253,13 +253,22 @@ _socketfd_setup(void)
    socket_local.sun_family = AF_UNIX;
    _socket_path_set(socket_local.sun_path);
    DBG("Using '%s' as server socket.", socket_local.sun_path);
-   unlink(socket_local.sun_path);
    len = strlen(socket_local.sun_path) + sizeof(socket_local.sun_family);
    if (bind(s, (struct sockaddr *)&socket_local, len) == -1)
      {
-        ERR("Could not bind socketfd: \"%s\"", strerror(errno));
-        close(s);
-        return -1;
+        if (connect(s, (struct sockaddr *)&socket_local, len) != -1)
+          {
+             ERR("cserve2 service already there: \"%s\"", strerror(errno));
+             close(s);
+             return -1;
+          }
+        unlink(socket_local.sun_path);
+        if (bind(s, (struct sockaddr *)&socket_local, len) == -1)
+          {
+             ERR("Could not bind socketfd: \"%s\"", strerror(errno));
+             close(s);
+             return -1;
+          }
      }
 
    if (listen(s, MAX_INCOMING_CONN) == -1)
