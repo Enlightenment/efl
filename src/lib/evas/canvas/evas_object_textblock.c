@@ -9574,7 +9574,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
         while (it && (it != it2))
           {
-             if ((start <= it->text_pos) && (it->text_pos <= end))
+             if ((it1->text_pos <= it->text_pos) && (it->text_pos <= it2->text_pos))
                {
                   max_x = it->x + it->adv;
                }

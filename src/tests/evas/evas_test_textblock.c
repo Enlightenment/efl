@@ -1436,6 +1436,18 @@ START_TEST(evas_textblock_geometries)
    EINA_LIST_FREE(rects, tr)
       free(tr);
 
+   /* Same run different styles */
+   evas_object_textblock_text_markup_set(tb, "test<b>test2</b>test3");
+
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 11);
+   rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
+
+   fail_if(eina_list_count(rects) != 3);
+
+   EINA_LIST_FREE(rects, tr)
+      free(tr);
+
    END_TB_TEST();
 }
 END_TEST
