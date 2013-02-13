@@ -106,11 +106,11 @@ _server_connect(void)
    remote.sun_family = AF_UNIX;
    _socket_path_set(remote.sun_path);
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-   if (connect(s, (struct sockaddr *)&remote, len) == -1)
+   for (;;)
      {
-        ERR("connect");
-	close(s);
-        return EINA_FALSE;
+        if (connect(s, (struct sockaddr *)&remote, len) != -1) break;
+        ERR("cserve connect failed. retrying.");
+        usleep(1000);
      }
 
    fcntl(s, F_SETFL, O_NONBLOCK);

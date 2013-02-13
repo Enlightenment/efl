@@ -1245,6 +1245,20 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  */
 
 /**
+ * Get the path for the cserve binary to execute
+ * 
+ * There is little need for anyone except a desktop nevironment to call this.
+ * This can be called before evas_init() has been called. It will try and find
+ * the full path to the to the cserve binary to run to provide cserve image
+ * and font caching services for evas.
+ * 
+ * @return NULL if error, or a string with the full path to the cserve binary.
+ * 
+ * @since 1.8
+ */
+EAPI const char *evas_cserve_path_get(void);
+   
+/**
  * Initialize Evas
  *
  * @return The init counter value.
