@@ -4219,15 +4219,13 @@ elm_win_rotation_set(Evas_Object *obj,
 }
 
 static void
-_rotation_set(Eo *obj, void *_pd, va_list *list)
+_win_rotate(Evas_Object *obj, Elm_Win_Smart_Data *sd, int rotation, Eina_Bool resize)
 {
-   int rotation = va_arg(*list, int);
-   Elm_Win_Smart_Data *sd = _pd;
-
    rotation = _win_rotation_degree_check(rotation);
    if (sd->rot == rotation) return;
    sd->rot = rotation;
-   TRAP(sd, rotation_set, rotation);
+   if (resize) TRAP(sd, rotation_with_resize_set, rotation);
+   else TRAP(sd, rotation_set, rotation);
    evas_object_size_hint_min_set(obj, -1, -1);
    evas_object_size_hint_max_set(obj, -1, -1);
    _elm_win_resize_objects_eval(obj);
@@ -4235,6 +4233,14 @@ _rotation_set(Eo *obj, void *_pd, va_list *list)
    _elm_win_xwin_update(sd);
 #endif
    evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
+}
+
+static void
+_rotation_set(Eo *obj, void *_pd, va_list *list)
+{
+   int rotation = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
+   _win_rotate(obj, sd, rotation, EINA_FALSE);
 }
 
 EAPI void
@@ -4250,19 +4256,7 @@ _rotation_with_resize_set(Eo *obj, void *_pd, va_list *list)
 {
    int rotation = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
-
-   rotation = _win_rotation_degree_check(rotation);
-   if (sd->rot == rotation) return;
-   sd->rot = rotation;
-   TRAP(sd, rotation_with_resize_set, rotation);
-   evas_object_size_hint_min_set(obj, -1, -1);
-   evas_object_size_hint_max_set(obj, -1, -1);
-   _elm_win_resize_objects_eval(obj);
-
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-   evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
+   _win_rotate(obj, sd, rotation, EINA_TRUE);
 }
 
 EAPI int
