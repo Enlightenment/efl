@@ -3568,16 +3568,16 @@ _elm_widget_theme_set(Eo *obj, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_widget_text_part_set(Evas_Object *obj,
+elm_widget_part_text_set(Evas_Object *obj,
                          const char *part,
                          const char *label)
 {
    ELM_WIDGET_CHECK(obj);
-   eo_do(obj, elm_wdg_text_part_set(part, label));
+   eo_do(obj, elm_wdg_part_text_set(part, label));
 }
 
 static void
-_elm_widget_text_part_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_widget_part_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
@@ -3586,17 +3586,17 @@ _elm_widget_text_part_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 EAPI const char *
-elm_widget_text_part_get(const Evas_Object *obj,
+elm_widget_part_text_get(const Evas_Object *obj,
                          const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_wdg_text_part_get(part, &ret));
+   eo_do((Eo *) obj, elm_wdg_part_text_get(part, &ret));
    return ret;
 }
 
 static void
-_elm_widget_text_part_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_widget_part_text_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    const char **ret = va_arg(*list, const char **);
@@ -3678,7 +3678,7 @@ _elm_widget_domain_translatable_part_text_set(Eo *obj, void *_pd, va_list *list)
    if (label && label[0])
      label = dgettext(domain, label);
 #endif
-   elm_widget_text_part_set(obj, part, label);
+   elm_widget_part_text_set(obj, part, label);
 }
 
 EAPI const char *
@@ -3745,7 +3745,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list 
    EINA_LIST_FOREACH(sd->translate_strings, l, ts)
      {
         const char *s = dgettext(ts->domain, ts->string);
-        elm_widget_text_part_set(obj, ts->id, s);
+        elm_widget_part_text_set(obj, ts->id, s);
      }
 #endif
 }
@@ -5484,8 +5484,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_SET), _elm_widget_scale_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_GET), _elm_widget_scale_get),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), _elm_widget_text_part_set),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), _elm_widget_text_part_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), _elm_widget_part_text_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), _elm_widget_part_text_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET), _elm_widget_domain_translatable_part_text_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET), _elm_widget_translatable_part_text_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_INFO_SET), _elm_widget_access_info_set),

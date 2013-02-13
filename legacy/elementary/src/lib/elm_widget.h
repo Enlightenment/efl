@@ -682,8 +682,8 @@ EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj)
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI unsigned int     elm_widget_focus_order_get(const Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
-EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label);
-EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *part);
+EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
+EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
@@ -1774,7 +1774,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 
 /**
- * @def elm_wdg_text_part_set
+ * @def elm_wdg_part_text_set
  * @since 1.8
  *
  * No description supplied by the EAPI.
@@ -1783,10 +1783,10 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[in] label
  *
  */
-#define elm_wdg_text_part_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
+#define elm_wdg_part_text_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
 
 /**
- * @def elm_wdg_text_part_get
+ * @def elm_wdg_part_text_get
  * @since 1.8
  *
  * No description supplied by the EAPI.
@@ -1795,7 +1795,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[out] ret
  *
  */
-#define elm_wdg_text_part_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define elm_wdg_part_text_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
 
 /**

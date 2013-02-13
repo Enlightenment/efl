@@ -317,7 +317,7 @@ EAPI int       elm_policy_get(unsigned int policy);
  *
  * Changing language with this function will make Elementary run through
  * all its widgets, translating strings set with
- * elm_object_domain_translatable_text_part_set(). This way, an entire
+ * elm_object_domain_translatable_part_text_set(). This way, an entire
  * UI can have its language changed without having to restart the program.
  *
  * For more complex cases, like having formatted strings that need
