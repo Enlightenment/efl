@@ -444,6 +444,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
    _elm_access_read_mode_set(EINA_TRUE);
    elm_widget_focus_cycle(obj, dir);
+   _elm_access_read_mode_set(EINA_FALSE);
 }
 
 EAPI char *
