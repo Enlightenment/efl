@@ -5,6 +5,7 @@
 2013-02-14  Jihoon Kim (jihoon)
 
         * edje entry : fix bug not to display preedit string with PREEDIT_TYPE_NONE style
+        * edje entry : Fix bug candidate word couldn't be selected with up/down key in the preedit status
 
 2013-02-11  Stefan Schmidt
 
