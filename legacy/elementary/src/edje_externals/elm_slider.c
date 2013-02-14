@@ -7,12 +7,12 @@ typedef struct _Elm_Params_Slider
    Evas_Object *icon;
    const char *indicator, *unit;
    double min, max, value;
+   int span;
    Eina_Bool min_exists:1;
    Eina_Bool max_exists:1;
    Eina_Bool value_exists:1;
    Eina_Bool inverted:1;
    Eina_Bool inverted_exists:1;
-   Eina_Bool span:1;
    Eina_Bool span_exists:1;
    Eina_Bool horizontal:1;
    Eina_Bool horizontal_exists:1;
