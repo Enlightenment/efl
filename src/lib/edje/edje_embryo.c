@@ -883,9 +883,9 @@ _edje_embryo_fn_get_program_id(Embryo_Program *ep, Embryo_Cell *params)
    ed = embryo_program_data_get(ep);
    GETSTR(p, params[1]);
    if (!p) return -1;
-   prog = ed->table_programs;
+   prog = ed->collection->patterns.table_programs;
    if (!prog) return -1;
-   for (i = 0; i < ed->table_programs_size; i++, prog++)
+   for (i = 0; i < ed->collection->patterns.table_programs_size; i++, prog++)
      {
         if (!(*prog)->name) continue;
         if (!strcmp((*prog)->name, p)) return (*prog)->id;
@@ -1055,7 +1055,7 @@ _edje_embryo_fn_run_program(Embryo_Program *ep, Embryo_Cell *params)
    ed = embryo_program_data_get(ep);
    program_id = params[1];
    if (program_id < 0) return 0;
-   pr = ed->table_programs[program_id % ed->table_programs_size];
+   pr = ed->collection->patterns.table_programs[program_id % ed->collection->patterns.table_programs_size];
    if (pr)
      {
 	_edje_program_run(ed, pr, 0, "", "");

@@ -268,72 +268,17 @@ edje_file_data_get(const char *file, const char *key)
 }
 
 void
-_edje_programs_patterns_clean(Edje *ed)
+_edje_programs_patterns_clean(Edje_Part_Collection *edc)
 {
-   _edje_signals_sources_patterns_clean(&ed->patterns.programs);
+   _edje_signals_sources_patterns_clean(&edc->patterns.programs);
 
-   eina_rbtree_delete(ed->patterns.programs.exact_match,
+   eina_rbtree_delete(edc->patterns.programs.exact_match,
 		      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
 		      NULL);
-   ed->patterns.programs.exact_match = NULL;
+   edc->patterns.programs.exact_match = NULL;
 
-   free(ed->patterns.programs.u.programs.globing);
-   ed->patterns.programs.u.programs.globing = NULL;
-}
-
-void
-_edje_programs_patterns_init(Edje *ed)
-{
-   Edje_Signals_Sources_Patterns *ssp = &ed->patterns.programs;
-   Edje_Program **all;
-   unsigned int i, j;
-
-   if (ssp->signals_patterns)
-     return;
-
-   if (getenv("EDJE_DUMP_PROGRAMS"))
-     {
-       INF("Group '%s' programs:", ed->group);
-#define EDJE_DUMP_PROGRAM(Section)					\
-       for (i = 0; i < ed->collection->programs.Section##_count; i++)	\
-	 INF(#Section" for ('%s', '%s')", ed->collection->programs.Section[i]->signal, ed->collection->programs.Section[i]->source);
-
-       EDJE_DUMP_PROGRAM(strcmp);
-       EDJE_DUMP_PROGRAM(strncmp);
-       EDJE_DUMP_PROGRAM(strrncmp);
-       EDJE_DUMP_PROGRAM(fnmatch);
-       EDJE_DUMP_PROGRAM(nocmp);
-     }
-
-   edje_match_program_hash_build(ed->collection->programs.strcmp,
-				 ed->collection->programs.strcmp_count,
-				 &ssp->exact_match);
-
-   j = ed->collection->programs.strncmp_count
-     + ed->collection->programs.strrncmp_count
-     + ed->collection->programs.fnmatch_count
-     + ed->collection->programs.nocmp_count;
-   if (j == 0) return ;
-
-   all = malloc(sizeof (Edje_Program *) * j);
-   if (!all) return ;
-   j = 0;
-
-   /* FIXME: Build specialized data type for each case */
-#define EDJE_LOAD_PROGRAMS_ADD(Array, Ed, It, Git, All)			\
-   for (It = 0; It < Ed->collection->programs.Array##_count; ++It, ++Git) \
-     All[Git] = Ed->collection->programs.Array[It];
-
-   EDJE_LOAD_PROGRAMS_ADD(fnmatch, ed, i, j, all);
-   EDJE_LOAD_PROGRAMS_ADD(strncmp, ed, i, j, all);
-   EDJE_LOAD_PROGRAMS_ADD(strrncmp, ed, i, j, all);
-   /* FIXME: Do a special pass for that one */
-   EDJE_LOAD_PROGRAMS_ADD(nocmp, ed, i, j, all);
-
-   ssp->u.programs.globing = all;
-   ssp->u.programs.count = j;
-   ssp->signals_patterns = edje_match_programs_signal_init(all, j);
-   ssp->sources_patterns = edje_match_programs_source_init(all, j);
+   free(edc->patterns.programs.u.programs.globing);
+   edc->patterns.programs.u.programs.globing = NULL;
 }
 
 #ifdef HAVE_EPHYSICS
@@ -791,36 +736,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    }
 	       }
 	     
-	     _edje_programs_patterns_init(ed);
-
-	     n = ed->collection->programs.fnmatch_count +
-	       ed->collection->programs.strcmp_count +
-	       ed->collection->programs.strncmp_count +
-	       ed->collection->programs.strrncmp_count +
-	       ed->collection->programs.nocmp_count;
-	     if (n > 0)
-	       {
-		  Edje_Program *pr;
-
-		  ed->table_programs = malloc(sizeof(Edje_Program *) * n);
-		  if (ed->table_programs)
-		    {
-		       ed->table_programs_size = n;
-
-#define EDJE_LOAD_BUILD_TABLE(Array, Ed, It, Tmp)	\
-		       for (It = 0; It < Ed->collection->programs.Array##_count; ++It) \
-			 {						\
-			    Tmp = Ed->collection->programs.Array[It];	\
-			    Ed->table_programs[Tmp->id] = Tmp;		\
-			 }
-
-		       EDJE_LOAD_BUILD_TABLE(fnmatch, ed, i, pr);
-		       EDJE_LOAD_BUILD_TABLE(strcmp, ed, i, pr);
-		       EDJE_LOAD_BUILD_TABLE(strncmp, ed, i, pr);
-		       EDJE_LOAD_BUILD_TABLE(strrncmp, ed, i, pr);
-		       EDJE_LOAD_BUILD_TABLE(nocmp, ed, i, pr);
-		    }
-	       }
 	     _edje_ref(ed);
 	     _edje_block(ed);
 	     _edje_freeze(ed);
@@ -1273,7 +1188,6 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
-   _edje_programs_patterns_clean(ed);
 //   if (ed->collection)
 //     {
 //        if (ed->collection->script) _edje_embryo_script_shutdown(ed);
@@ -1448,9 +1362,6 @@ _edje_file_del(Edje *ed)
    if (ed->table_parts) free(ed->table_parts);
    ed->table_parts = NULL;
    ed->table_parts_size = 0;
-   if (ed->table_programs) free(ed->table_programs);
-   ed->table_programs = NULL;
-   ed->table_programs_size = 0;
    ed->focused_part = NULL;
    if (tev)
      {
@@ -1644,6 +1555,11 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 	eina_hash_free(ec->prog_cache.matches);
      }
 #endif
+   _edje_programs_patterns_clean(ec);
+   if (ec->patterns.table_programs) free(ec->patterns.table_programs);
+   ec->patterns.table_programs = NULL;
+   ec->patterns.table_programs_size = 0;
+
    if (ec->script) embryo_program_free(ec->script);
    _edje_lua2_script_unload(ec);
 

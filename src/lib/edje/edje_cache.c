@@ -69,12 +69,69 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
    ce->ref = NULL;
 }
 
+
+void
+_edje_programs_patterns_init(Edje_Part_Collection *edc)
+{
+   Edje_Signals_Sources_Patterns *ssp = &edc->patterns.programs;
+   Edje_Program **all;
+   unsigned int i, j;
+
+   if (ssp->signals_patterns)
+     return;
+
+   if (getenv("EDJE_DUMP_PROGRAMS"))
+     {
+       INF("Group '%s' programs:", edc->part);
+#define EDJE_DUMP_PROGRAM(Section)					\
+       for (i = 0; i < edc->programs.Section##_count; i++)		\
+	 INF(#Section" for ('%s', '%s')", edc->programs.Section[i]->signal, edc->programs.Section[i]->source);
+
+       EDJE_DUMP_PROGRAM(strcmp);
+       EDJE_DUMP_PROGRAM(strncmp);
+       EDJE_DUMP_PROGRAM(strrncmp);
+       EDJE_DUMP_PROGRAM(fnmatch);
+       EDJE_DUMP_PROGRAM(nocmp);
+     }
+
+   edje_match_program_hash_build(edc->programs.strcmp,
+				 edc->programs.strcmp_count,
+				 &ssp->exact_match);
+
+   j = edc->programs.strncmp_count
+     + edc->programs.strrncmp_count
+     + edc->programs.fnmatch_count
+     + edc->programs.nocmp_count;
+   if (j == 0) return ;
+
+   all = malloc(sizeof (Edje_Program *) * j);
+   if (!all) return ;
+   j = 0;
+
+   /* FIXME: Build specialized data type for each case */
+#define EDJE_LOAD_PROGRAMS_ADD(Array, Edc, It, Git, All)		\
+   for (It = 0; It < Edc->programs.Array##_count; ++It, ++Git)		\
+     All[Git] = Edc->programs.Array[It];
+
+   EDJE_LOAD_PROGRAMS_ADD(fnmatch, edc, i, j, all);
+   EDJE_LOAD_PROGRAMS_ADD(strncmp, edc, i, j, all);
+   EDJE_LOAD_PROGRAMS_ADD(strrncmp, edc, i, j, all);
+   /* FIXME: Do a special pass for that one */
+   EDJE_LOAD_PROGRAMS_ADD(nocmp, edc, i, j, all);
+
+   ssp->u.programs.globing = all;
+   ssp->u.programs.count = j;
+   ssp->signals_patterns = edje_match_programs_signal_init(all, j);
+   ssp->sources_patterns = edje_match_programs_source_init(all, j);
+}
+
 static Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
    Edje_Part_Collection *edc = NULL;
    Edje_Part_Collection_Directory_Entry *ce;
    int id = -1, size = 0;
+   unsigned int n;
    Eina_List *l;
    char buf[256];
    void *data;
@@ -162,6 +219,39 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
      }
 
    ce->ref = edc;
+
+   _edje_programs_patterns_init(edc);
+
+   n = edc->programs.fnmatch_count +
+     edc->programs.strcmp_count +
+     edc->programs.strncmp_count +
+     edc->programs.strrncmp_count +
+     edc->programs.nocmp_count;
+
+   if (n > 0)
+     {
+       Edje_Program *pr;
+       unsigned int i;
+
+       edc->patterns.table_programs = malloc(sizeof(Edje_Program *) * n);
+       if (edc->patterns.table_programs)
+	 {
+	   edc->patterns.table_programs_size = n;
+
+#define EDJE_LOAD_BUILD_TABLE(Array, Edc, It, Tmp)			\
+	   for (It = 0; It < Edc->programs.Array##_count; ++It) \
+	     {								\
+	       Tmp = Edc->programs.Array[It];				\
+	       Edc->patterns.table_programs[Tmp->id] = Tmp;		\
+	     }
+
+	   EDJE_LOAD_BUILD_TABLE(fnmatch, edc, i, pr);
+	   EDJE_LOAD_BUILD_TABLE(strcmp, edc, i, pr);
+	   EDJE_LOAD_BUILD_TABLE(strncmp, edc, i, pr);
+	   EDJE_LOAD_BUILD_TABLE(strrncmp, edc, i, pr);
+	   EDJE_LOAD_BUILD_TABLE(nocmp, edc, i, pr);
+	 }
+     }
 
    return edc;
 }

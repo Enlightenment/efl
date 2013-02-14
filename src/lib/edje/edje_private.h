@@ -320,6 +320,7 @@ typedef struct _Edje_Var_Pool Edje_Var_Pool;
 typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
 typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
 typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
+typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
@@ -767,6 +768,24 @@ struct _Edje_Part_Limit
    Edje_Part_Limit_State height; /* -1, 0, or 1 */
 };
 
+struct _Edje_Signals_Sources_Patterns
+{
+   Edje_Patterns *signals_patterns;
+   Edje_Patterns *sources_patterns;
+
+   Eina_Rbtree   *exact_match;
+
+   union {
+      struct {
+	 Edje_Program **globing;
+	 unsigned int  count;
+      } programs;
+      struct {
+	 Eina_List     *globing;
+      } callbacks;
+   } u;
+};
+
 /*----------*/
 
 struct _Edje_Part_Collection
@@ -840,6 +859,15 @@ struct _Edje_Part_Collection
 
    Embryo_Program   *script; /* all the embryo script code for this group */
    const char       *part;
+
+   /* *** generated at runtime *** */
+   struct {
+      Edje_Signals_Sources_Patterns programs;
+
+      Edje_Program **table_programs;
+      int            table_programs_size;
+   } patterns;
+   /* *** *** */
 
    unsigned char    script_only;
 
@@ -1162,27 +1190,6 @@ struct _Edje_Signal_Source_Char
    Eina_Array  list;
 };
 
-struct _Edje_Signals_Sources_Patterns
-
-{
-   Edje_Patterns *signals_patterns;
-   Edje_Patterns *sources_patterns;
-
-   Eina_Rbtree   *exact_match;
-
-   union {
-      struct {
-	 Edje_Program **globing;
-	 unsigned int  count;
-      } programs;
-      struct {
-	 Eina_List     *globing;
-      } callbacks;
-   } u;
-};
-
-typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
-
 struct _Edje
 {
    Evas_Object_Smart_Clipped_Data *base;
@@ -1209,14 +1216,12 @@ struct _Edje
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
    Edje_Real_Part      **table_parts;
-   Edje_Program        **table_programs;
    Edje_Real_Part       *focused_part;
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
    Eina_List            *markup_filter_callbacks;
    void                 *script_only_data;
 
-   int                   table_programs_size;
    unsigned int          table_parts_size;
 
    Eina_List            *groups;
@@ -1230,7 +1235,6 @@ struct _Edje
 
    struct {
       Edje_Signals_Sources_Patterns callbacks;
-      Edje_Signals_Sources_Patterns programs;
    } patterns;
 
    int                   references;
@@ -1896,8 +1900,8 @@ void  _edje_unref(Edje *ed);
 Eina_Bool _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc);
-void _edje_programs_patterns_clean(Edje *ed);
-void _edje_programs_patterns_init(Edje *ed);
+void _edje_programs_patterns_clean(Edje_Part_Collection *ed);
+void _edje_programs_patterns_init(Edje_Part_Collection *ed);
 void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);

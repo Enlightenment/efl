@@ -463,7 +463,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 
 	     if (pa->id >= 0)
 	       {
-		  pr = ed->table_programs[pa->id % ed->table_programs_size];
+		  pr = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
 		  if (pr) _edje_program_run(ed, pr, 0, "", "");
 		  if (_edje_block_break(ed))
 		    {
@@ -709,7 +709,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	       {
 		  if (pa->id >= 0)
 		    {
-		       pr2 = ed->table_programs[pa->id % ed->table_programs_size];
+		       pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
 		       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }
@@ -1049,7 +1049,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	  {
 	     if (pa->id >= 0)
 	       {
-		  pr2 = ed->table_programs[pa->id % ed->table_programs_size];
+		  pr2 = ed->collection->patterns.table_programs[pa->id % ed->collection->patterns.table_programs_size];
 		  if (pr2) _edje_program_run(ed, pr2, 0, "", "");
 		  if (_edje_block_break(ed)) goto break_prog;
 	       }
@@ -1401,7 +1401,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
              data.source = src;
 	     data.matches = NULL;
 
-             if (ed->table_programs_size > 0)
+             if (ed->collection->patterns.table_programs_size > 0)
                {
 		  const Eina_Array *match;
 #ifdef EDJE_PROGRAM_CACHE
@@ -1411,19 +1411,19 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 		  Eina_Array_Iterator iterator;
 		  unsigned int i;       
 
-		  if (ed->patterns.programs.u.programs.globing)
-		    if (edje_match_programs_exec(ed->patterns.programs.signals_patterns,
-						 ed->patterns.programs.sources_patterns,
+		  if (ed->collection->patterns.programs.u.programs.globing)
+		    if (edje_match_programs_exec(ed->collection->patterns.programs.signals_patterns,
+						 ed->collection->patterns.programs.sources_patterns,
 						 sig,
 						 src,
-						 ed->patterns.programs.u.programs.globing,
+						 ed->collection->patterns.programs.u.programs.globing,
 						 _edje_glob_callback,
 						 &data,
                                                  prop) == 0)
 		      goto break_prog;
 
 		  match = edje_match_signal_source_hash_get(sig, src,
-							    ed->patterns.programs.exact_match);
+							    ed->collection->patterns.programs.exact_match);
                   if (match)
                     EINA_ARRAY_ITER_NEXT(match, i, pr, iterator)
                       _edje_glob_callback(pr, &data);

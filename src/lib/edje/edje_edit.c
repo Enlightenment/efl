@@ -2860,9 +2860,9 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
    /* update the 'state' field in all programs. update only if program has
       a single target */
    part_id = _edje_part_id_find(ed, part);
-   for (i = 0; i < ed->table_programs_size; i++)
+   for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
      {
-	Edje_Program *epr = ed->table_programs[i];
+	Edje_Program *epr = ed->collection->patterns.table_programs[i];
 
 	if (eina_list_count(epr->targets) == 1)
 	  {
@@ -5087,9 +5087,9 @@ _edje_program_id_find(Edje_Edit *eed, const char *program)
    Edje_Program *epr;
    int i;
 
-   for (i = 0; i < eed->base->table_programs_size; i++)
+   for (i = 0; i < eed->base->collection->patterns.table_programs_size; i++)
      {
-        epr = eed->base->table_programs[i];
+        epr = eed->base->collection->patterns.table_programs[i];
         if (epr->name && !strcmp(epr->name, program))
           return epr->id;
      }
@@ -5106,9 +5106,9 @@ _edje_program_get_byname(Evas_Object *obj, const char *prog_name)
 
    if (!prog_name) return NULL;
 
-   for (i = 0; i < ed->table_programs_size; i++)
+   for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
      {
-	epr = ed->table_programs[i];
+	epr = ed->collection->patterns.table_programs[i];
 	if ((epr->name) && (strcmp(epr->name, prog_name) == 0))
 	  return epr;
      }
@@ -5127,11 +5127,11 @@ edje_edit_programs_list_get(Evas_Object *obj)
 
    //printf("EE: Found %d programs\n", ed->table_programs_size);
 
-   for (i = 0; i < ed->table_programs_size; i++)
+   for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
      {
 	Edje_Program *epr;
 
-	epr = ed->table_programs[i];
+	epr = ed->collection->patterns.table_programs[i];
         /* XXX: bad, we miss programs this way, but since you can't access
          * them in any way without a name, better ignore them.  */
         if (!epr->name) continue;
@@ -5169,7 +5169,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    ed->collection->programs.nocmp[ed->collection->programs.nocmp_count++] = epr;
 
    //Init Edje_Program
-   epr->id = ed->table_programs_size;
+   epr->id = ed->collection->patterns.table_programs_size;
    epr->name = eina_stringshare_add(name);
    epr->signal = NULL;
    epr->source = NULL;
@@ -5189,14 +5189,14 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
 
 
    //Update table_programs
-   ed->table_programs_size++;
-   ed->table_programs = realloc(ed->table_programs,
-                                sizeof(Edje_Program *) * ed->table_programs_size);
-   ed->table_programs[epr->id % ed->table_programs_size] = epr;
+   ed->collection->patterns.table_programs_size++;
+   ed->collection->patterns.table_programs = realloc(ed->collection->patterns.table_programs,
+						     sizeof(Edje_Program *) * ed->collection->patterns.table_programs_size);
+   ed->collection->patterns.table_programs[epr->id % ed->collection->patterns.table_programs_size] = epr;
 
    //Update patterns
-   _edje_programs_patterns_clean(ed);
-   _edje_programs_patterns_init(ed);
+   _edje_programs_patterns_clean(ed->collection);
+   _edje_programs_patterns_init(ed->collection);
 
    return EINA_TRUE;
 }
@@ -5225,13 +5225,13 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_program_remove(ed->collection, epr);
 
    /* fix table program */
-   if (epr->id != ed->table_programs_size - 1)
+   if (epr->id != ed->collection->patterns.table_programs_size - 1)
      {
 	/* If the removed program is not the last in the list/table,
 	 * put the last one in its place and update references to it later */
-	ed->table_programs[epr->id] = ed->table_programs[ed->table_programs_size - 1];
-	old_id = ed->table_programs_size - 1;
-	ed->table_programs[epr->id]->id = epr->id;
+	ed->collection->patterns.table_programs[epr->id] = ed->collection->patterns.table_programs[ed->collection->patterns.table_programs_size - 1];
+	old_id = ed->collection->patterns.table_programs_size - 1;
+	ed->collection->patterns.table_programs[epr->id]->id = epr->id;
      }
 
    ps = eina_hash_find(eed->program_scripts, &id);
@@ -5280,14 +5280,14 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
      free(pa);
    free(epr);
 
-   ed->table_programs_size--;
-   ed->table_programs = realloc(ed->table_programs,
-                             sizeof(Edje_Program *) * ed->table_programs_size);
+   ed->collection->patterns.table_programs_size--;
+   ed->collection->patterns.table_programs = realloc(ed->collection->patterns.table_programs,
+						     sizeof(Edje_Program *) * ed->collection->patterns.table_programs_size);
 
    //We also update all other programs that point to old_id and id
-   for (i = 0; i < ed->table_programs_size; i++)
+   for (i = 0; i < ed->collection->patterns.table_programs_size; i++)
      {
-	p = ed->table_programs[i];
+	p = ed->collection->patterns.table_programs[i];
 
 	/* check in afters */
 	EINA_LIST_FOREACH_SAFE(p->after, l, l_next, pa)
@@ -5399,8 +5399,8 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    _edje_program_insert(ed->collection, epr);
 
    //Update patterns
-   _edje_programs_patterns_clean(ed);
-   _edje_programs_patterns_init(ed);
+   _edje_programs_patterns_clean(ed->collection);
+   _edje_programs_patterns_init(ed->collection);
 
    return EINA_TRUE;
 }
@@ -5490,8 +5490,8 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
    _edje_program_insert(ed->collection, epr);
 
    //Update patterns
-   _edje_programs_patterns_clean(ed);
-   _edje_programs_patterns_init(ed);
+   _edje_programs_patterns_clean(ed->collection);
+   _edje_programs_patterns_init(ed->collection);
 
    return EINA_TRUE;
 }
@@ -5780,7 +5780,7 @@ edje_edit_program_targets_get(Evas_Object *obj, const char *prog)
 	     /* the target is a program */
 	     Edje_Program *p;
 
-	     p = ed->table_programs[t->id % ed->table_programs_size];
+	     p = ed->collection->patterns.table_programs[t->id % ed->collection->patterns.table_programs_size];
 	     if (p && p->name)
 	       targets = eina_list_append(targets,
 		     eina_stringshare_add(p->name));
@@ -5907,7 +5907,7 @@ edje_edit_program_afters_get(Evas_Object *obj, const char *prog)
      {
 	Edje_Program *p = NULL;
 
-	p = ed->table_programs[a->id % ed->table_programs_size];
+	p = ed->collection->patterns.table_programs[a->id % ed->collection->patterns.table_programs_size];
 	if (p && p->name)
 	  {
 	     //printf("   a: %d name: %s\n", a->id, p->name);
@@ -6466,7 +6466,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              free(ps->processed);
              ps->processed = NULL;
           }
-        epr = eed->base->table_programs[ps->id];
+        epr = eed->base->collection->patterns.table_programs[ps->id];
         if (!ps->processed)
           ps->processed = _edje_edit_script_process(eed, epr->name, ps->code);
         if (!ps->processed)
