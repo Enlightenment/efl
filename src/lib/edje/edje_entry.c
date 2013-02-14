@@ -3740,7 +3740,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    int preedit_start_pos, preedit_end_pos;
    char *preedit_string;
    char *markup_txt = NULL;
-   char *tagname[] = {"", "preedit", "preedit_sel", "preedit_sel",
+   char *tagname[] = {NULL, "preedit", "preedit_sel", "preedit_sel",
                       "preedit_sub1", "preedit_sub2", "preedit_sub3", "preedit_sub4"};
    int i;
    size_t preedit_type_size = sizeof(tagname) / sizeof(tagname[0]);
@@ -3789,8 +3789,8 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
           {
              EINA_LIST_FOREACH(attrs, l, attr)
                {
-                  if (attr->preedit_type > ECORE_IMF_PREEDIT_TYPE_NONE &&
-                      attr->preedit_type <= preedit_type_size)
+                  if (attr->preedit_type <= preedit_type_size &&
+                      tagname[attr->preedit_type])
                     {
                        preedit_attr_str = eina_strbuf_new();
                        if (preedit_attr_str)
