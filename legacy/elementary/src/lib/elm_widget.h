@@ -430,6 +430,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     still_in : 1;
    Eina_Bool                     can_access : 1;
    Eina_Bool                     highlighted : 1;
+   Eina_Bool                     highlight_root : 1;
    Eina_Bool                     orientation_disabled : 1;
 } Elm_Widget_Smart_Data;
 

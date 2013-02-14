@@ -442,6 +442,24 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 EAPI void
 _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
+   Elm_Widget_Smart_Data *wd;
+   Evas_Object *ho;
+   ho = _access_highlight_object_get(obj);
+
+   /* find highlight root */
+   do
+     {
+        wd = eo_data_get(ho, ELM_OBJ_WIDGET_CLASS);
+        if (wd->highlight_root)
+          {
+             /* change highlight root */
+             obj = ho;
+             break;
+          }
+        ho = elm_widget_parent_get(ho);
+     }
+   while (ho);
+
    _elm_access_read_mode_set(EINA_TRUE);
    elm_widget_focus_cycle(obj, dir);
    _elm_access_read_mode_set(EINA_FALSE);
