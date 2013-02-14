@@ -4232,6 +4232,7 @@ _win_rotate(Evas_Object *obj, Elm_Win_Smart_Data *sd, int rotation, Eina_Bool re
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
+   elm_widget_orientation_set(obj, rotation);
    evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
 }
 

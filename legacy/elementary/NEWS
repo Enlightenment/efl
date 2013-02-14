@@ -36,6 +36,7 @@ Additions:
    * Add elm_glview, elm_gengrid smart callback - "language,changed".
    * Add APIs - elm_object_item_domain_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
    * Add APIs - elm_object_domain_translatable_part_text_set(), elm_object_translatable_part_text_get().
+   * Add APIs - elm_object_orientation_mode_disabled_set(), elm_object_orientation_mode_disabled_get().
 
 
 Improvements:

@@ -4427,7 +4427,7 @@ EAPI void
 elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 {
    ELM_WIDGET_CHECK(obj);
-   eo_do(obj, elm_wdg_display_mode_set(dispmode));
+   eo_do((Eo *) obj, elm_wdg_display_mode_set(dispmode));
 }
 
 static void
@@ -4455,6 +4455,66 @@ _elm_widget_display_mode_set(Eo *obj, void *_pd, va_list *list)
      }
 
 }
+
+EAPI void
+elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do((Eo *) obj, elm_wdg_orientation_mode_disabled_set(disabled));
+}
+
+static void
+_elm_widget_orientation_mode_disabled_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   Eina_Bool disabled = va_arg(*list, int);
+   Elm_Widget_Smart_Data *sd = _pd;
+   disabled = !!disabled;
+   sd->orientation_disabled = disabled;
+}
+
+EAPI Eina_Bool
+elm_widget_orientation_mode_disabled_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret;
+   eo_do((Eo *) obj, elm_wdg_orientation_mode_disabled_get(&ret));
+   return ret;
+}
+
+static void
+_elm_widget_orientation_mode_disabled_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = (Eina_Bool *)va_arg(*list, int);
+   Elm_Widget_Smart_Data *sd = _pd;
+   *ret = sd->orientation_disabled;
+}
+
+
+EAPI void
+elm_widget_orientation_set(Evas_Object *obj, int rotation)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do((Eo *) obj, elm_wdg_orientation_set(rotation));
+}
+
+static void
+_elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   Evas_Object *child;
+   Eina_List *l;
+   int rotation = va_arg(*list, int);
+   Elm_Widget_Smart_Data *sd = _pd;
+   if (sd->orientation_disabled) return;
+
+   if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
+     elm_widget_orientation_set(sd->resize_obj, rotation);
+   if (sd->hover_obj && _elm_widget_is(sd->hover_obj))
+     elm_widget_orientation_set(sd->hover_obj, rotation);
+
+   EINA_LIST_FOREACH (sd->subobjs, l, child)
+     elm_widget_orientation_set(child, rotation);
+}
+
 
 /**
  * @internal
@@ -5526,6 +5586,10 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET), _elm_widget_theme_object_set),
 
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), _elm_widget_orientation_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_SET), _elm_widget_orientation_mode_disabled_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_GET), _elm_widget_orientation_mode_disabled_get),
+
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET), _elm_widget_focus_custom_chain_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET), _elm_widget_focus_custom_chain_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_UNSET), _elm_widget_focus_custom_chain_unset),
@@ -5662,6 +5726,9 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET, "Get the focus region of the given widget."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ORIENTATION_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_GET, "description here"),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET, "Set custom focus chain."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET, "Get custom focus chain."),

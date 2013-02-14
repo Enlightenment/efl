@@ -430,6 +430,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     still_in : 1;
    Eina_Bool                     can_access : 1;
    Eina_Bool                     highlighted : 1;
+   Eina_Bool                     orientation_disabled : 1;
 } Elm_Widget_Smart_Data;
 
 /**
@@ -691,6 +692,9 @@ EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const 
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
+EAPI void             elm_widget_orientation_set(Evas_Object *obj, int rotation);
+EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
 EAPI Evas_Object     *_elm_widget_item_widget_get(const Elm_Widget_Item *item);
@@ -1121,6 +1125,10 @@ enum
    ELM_WIDGET_SUB_ID_FOCUS_REGION_GET,
 
    ELM_WIDGET_SUB_ID_THEME_OBJECT_SET,
+   ELM_WIDGET_SUB_ID_ORIENTATION_SET,
+   ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_SET,
+   ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_GET,
+
 /* internal */
    ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_SET,
    ELM_WIDGET_SUB_ID_FOCUS_CUSTOM_CHAIN_GET,
@@ -2386,6 +2394,39 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_can_focus_child_list_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), EO_TYPECHECK(Eina_List **, ret)
+
+/**
+ * @def elm_wdg_orientation_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_orientation_set(rotation) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), EO_TYPECHECK(int, rotation)
+
+/**
+ * @def elm_wdg_orientation_mode_disabled_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_orientation_mode_disabled_set(disabled) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
+
+/**
+ * @def elm_wdg_orientation_mode_disabled_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_orientation_mode_disabled_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 #endif
 

@@ -1540,7 +1540,6 @@ elm_object_item_translatable_part_text_get(const Elm_Object_Item *it, const char
    return _elm_widget_item_translatable_part_text_get((Elm_Widget_Item *)it, part);
 }
 
-
 EAPI void
 elm_object_access_info_set(Evas_Object *obj, const char *txt)
 {
@@ -1551,6 +1550,18 @@ EAPI Evas_Object *
 elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
    return elm_widget_name_find(obj, name, recurse);
+}
+
+EAPI void
+elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   elm_widget_orientation_mode_disabled_set(obj, disabled);
+}
+
+EAPI Eina_Bool
+elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
+{
+   return elm_widget_orientation_mode_disabled_get(obj);
 }
 
 EAPI void

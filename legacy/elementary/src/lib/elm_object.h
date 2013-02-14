@@ -437,3 +437,39 @@ EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb f
  * @ingroup General
  */
 EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
+
+/**
+ * Disable the orientation mode of a given widget.
+ *
+ * Orientation Mode is used for widgets to change it's styles or to send signals
+ * whenever it's window degree is changed. If the orientation mode is enabled
+ * and the widget has different looks and styles for the window degree(0, 90,
+ * 180, 270), it will apply a style that is readied for the current degree,
+ * otherwise, it will send signals to it's own edje to change it's states if
+ * the style doesn't be readied.
+ *
+ * @param obj The Elementary object to operate on orientation mode.
+ * @param disabled The state to put in in: @c EINA_TRUE for disabled,
+ *        @c EINA_FALSE for enabled.
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * Get the orientation mode of a give widget.
+ *
+ * @param obj The Elementary widget to query for its style
+ * @return @c EINA_TRUE, if the widget orientation mode is disabled,
+ *         @c EINA_FALSE if the orientation mode is enabled (or on errors)
+ *
+ * @see elm_object_orientation_mode_disabled_set()
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
+
