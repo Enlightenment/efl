@@ -70,7 +70,9 @@ _ecore_evas_engine_init(void)
    unsigned int i;
    unsigned int j;
 
-   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
+/* avoid freeing modules ever to avoid deferred cb symbol problems */
+//   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
+   _registered_engines = eina_hash_string_small_new(NULL);
 
    if (getenv("EFL_RUN_IN_TREE"))
      {
@@ -112,12 +114,14 @@ _ecore_evas_engine_shutdown(void)
 {
    char *path;
 
+/* don't free modules to avoid fn callback deferred symbol problems
    if (_registered_engines)
      {
        eina_hash_free(_registered_engines);
        _registered_engines = NULL;
      }
-
+ */
+   
    EINA_LIST_FREE(_engines_paths, path)
      free(path);
 
