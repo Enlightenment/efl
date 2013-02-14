@@ -606,6 +606,11 @@ _image_load_server_send(Image_Entry *ie)
      }
 
    dentry = ie->data2;
+   if (!dentry)
+     {
+        ERR("No data2 for opened file.");
+        return 0;
+     }
 
    memset(&msg, 0, sizeof(msg));
 
@@ -629,6 +634,11 @@ _image_preload_server_send(Image_Entry *ie, void (*preloaded_cb)(void *im, Eina_
      return 0;
 
    dentry = ie->data2;
+   if (!dentry)
+     {
+        ERR("No data2 for opened file.");
+        return 0;
+     }
    dentry->preloaded_cb = preloaded_cb;
 
    memset(&msg, 0, sizeof(msg));
