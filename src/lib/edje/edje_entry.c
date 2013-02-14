@@ -3806,6 +3806,8 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
                             eina_strbuf_free(preedit_attr_str);
                          }
                     }
+                  else
+                    eina_strbuf_append(buf, preedit_string);
                }
           }
         else

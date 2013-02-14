@@ -1,3 +1,7 @@
+2013-02-14  Jihoon Kim (jihoon)
+
+        * edje entry : fix bug not to display preedit string with PREEDIT_TYPE_NONE style
+
 2013-02-11  Stefan Schmidt
 
         * Fix memory leak in error cases in ethumb.
