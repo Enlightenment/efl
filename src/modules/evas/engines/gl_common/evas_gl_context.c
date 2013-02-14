@@ -376,12 +376,23 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         m = -1;
      }
 
-   if ((!gc->change.size) ||
-       ((gc->shared->w == w) && (gc->shared->h == h) &&
-           (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
-           (gc->shared->mflip == m)))
-      return;
-
+#ifdef GL_GLES
+   if (gc->shared->eglctxt == gc->eglctxt)
+#endif     
+     {
+        if ((!gc->change.size) ||
+            (
+                (gc->shared->w == w) && (gc->shared->h == h) &&
+                (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
+                (gc->shared->mflip == m)
+            )
+           )
+          return;
+     }
+#ifdef GL_GLES
+   gc->shared->eglctxt = gc->eglctxt;
+#endif
+   
    gc->shared->w = w;
    gc->shared->h = h;
    gc->shared->rot = rot;

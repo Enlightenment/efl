@@ -406,6 +406,7 @@ eng_window_new(Display *disp,
      }
 #ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
+   gw->gl_context->eglctxt = gw->egl_context[0];
 #endif
    eng_window_use(gw);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
