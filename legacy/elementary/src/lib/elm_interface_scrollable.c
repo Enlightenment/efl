@@ -963,9 +963,9 @@ _elm_scroll_anim_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 
 static void
 _elm_scroll_vbar_drag_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                         Evas_Object *obj __UNUSED__,
+                         const char *emission __UNUSED__,
+                         const char *source __UNUSED__)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
