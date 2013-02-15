@@ -76,8 +76,6 @@ _on_show(void *data __UNUSED__,
          Evas_Object *obj,
          void *event_info __UNUSED__)
 {
-   Evas_Object *ao;
-
    ELM_POPUP_DATA_GET(obj, sd);
 
    evas_object_show(sd->notify);
@@ -85,12 +83,7 @@ _on_show(void *data __UNUSED__,
    /* yeah, ugly, but again, this widget needs a rewrite */
    elm_object_content_set(sd->notify, obj);
 
-   /* access */
-   if (_elm_config->access_mode)
-     {
-        ao = _access_object_get(obj, ACCESS_TITLE_PART);
-        _elm_access_highlight_set(ao);
-     }
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void
@@ -191,6 +184,7 @@ _elm_popup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
+
    sd->button_count = 0;
 
    for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
@@ -925,6 +919,9 @@ _content_text_set(Evas_Object *obj,
    /* access */
    if (_elm_config->access_mode)
      {
+        /* unregister label, ACCESS_BODY_PART will register */
+        elm_access_object_unregister(sd->text_content_obj);
+
         ao = _access_object_get(obj, ACCESS_BODY_PART);
         if (!ao)
           {
@@ -1308,6 +1305,9 @@ _elm_popup_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSE
 static void
 _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   Evas_Object *ao;
+   Eina_List *items = NULL;
+
    Elm_Popup_Smart_Data *sd = _pd;
 
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
@@ -1315,24 +1315,29 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_TRUE;
 
-   if (!elm_widget_focus_next_get(sd->content_area, dir, next) &&
-       !elm_widget_focus_next_get(sd->action_area, dir, next)
-      )
+   /* access */
+   if (_elm_config->access_mode)
      {
-        /* access */
-        if (_elm_config->access_mode)
+        if (sd->title_text)
           {
-             *next = _access_object_get(obj, ACCESS_TITLE_PART);
-             return;
+             ao = _access_object_get(obj, ACCESS_TITLE_PART);
+             items = eina_list_append(items, ao);
           }
-        elm_widget_focused_object_clear((Evas_Object *)obj);
-        if (!elm_widget_focus_next_get(sd->content_area, dir, next))
-          {
-             Eina_Bool int_ret = elm_widget_focus_next_get(sd->action_area, dir, next);
-             if (ret) *ret = int_ret;
-          }
-        return;
+
+        ao = _access_object_get(obj, ACCESS_BODY_PART);
+        if (ao) items = eina_list_append(items, ao);
      }
+
+   /* content area */
+   if (sd->content) items = eina_list_append(items, sd->content_area);
+
+   /* action area */
+   if (sd->button_count) items = eina_list_append(items, sd->action_area);
+
+   elm_widget_focus_list_next_get
+           (obj, items, eina_list_data_get, dir, next);
+
+   return;
 }
 
 static void
@@ -1357,6 +1362,35 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int_ret = elm_widget_focus_direction_get
             (sd->notify, base, degree, direction, weight);
    if (ret) *ret = int_ret;
+}
+
+static void
+_elm_popup_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   (void)src;
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
+   if (!strcmp(ev->keyname, "Tab"))
+     {
+        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
+        else
+          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
 }
 
 static void
@@ -1419,7 +1453,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_smart_callback_add(priv->notify, "timeout", _timeout_cb, obj);
 
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    _visuals_set(obj);
    edje_object_message_signal_process(wd->resize_obj);
@@ -1769,6 +1803,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_popup_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_popup_smart_parent_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_popup_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_popup_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_popup_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_popup_smart_focus_next),

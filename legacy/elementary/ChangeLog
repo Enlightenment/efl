@@ -1013,3 +1013,7 @@
 2013-02-15  Jaehwan Kim
 
         * Add the reorder effect in toolbar.
+
+2013-02-15  Shinwoo Kim
+
+        * Popup is now a focusable object.

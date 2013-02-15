@@ -2643,6 +2643,14 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!elm_widget_can_focus_get(obj))
      return;
 
+   /* focusable object but does not have access info */
+   if (_elm_config->access_mode)
+     {
+        Elm_Access_Info *ac;
+        ac= _elm_access_object_get(obj);
+        if (!ac) return;
+     }
+
    /* Return */
    *next = (Evas_Object *)obj;
    *ret = !ELM_WIDGET_FOCUS_GET(obj);
