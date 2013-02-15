@@ -1438,7 +1438,7 @@ group { name: "elm/toolbar/item/item_centered";
          transition: LINEAR 0.1;
       }
       program { name: "go";
-         signal:  "mouse,up,1";
+         signal:  "mouse,clicked,1";
          source:  "event";
          action:  SIGNAL_EMIT "elm,action,click" "elm";
       }
