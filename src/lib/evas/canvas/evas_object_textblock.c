@@ -10028,6 +10028,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Eo_Dbg_Info *node;
 
    const char *style;
    const char *text;
@@ -10043,6 +10044,22 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
    EO_DBG_INFO_APPEND(group, "Style", EINA_VALUE_TYPE_STRING, style);
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, shorttext);
+
+     {
+        int w, h;
+        eo_do(eo_obj, evas_obj_textblock_size_formatted_get(&w, &h));
+        node = EO_DBG_INFO_LIST_APPEND(group, "Formatted size");
+        EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
+        EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
+     }
+
+     {
+        int w, h;
+        eo_do(eo_obj, evas_obj_textblock_size_native_get(&w, &h));
+        node = EO_DBG_INFO_LIST_APPEND(group, "Native size");
+        EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
+        EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
+     }
 }
 
 /** @internal
