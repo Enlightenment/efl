@@ -4092,19 +4092,28 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Widget_Smart_Data *sd = _pd;
    char buf[128];
 
+   if (*ret) *ret = EINA_FALSE;
+
    //Apply orientation styles.
-   switch (sd->orient_mode)
+   if (welement)
      {
-      case 90: snprintf(buf, sizeof(buf), "%s/90", welement);
-         break;
-      case 180: snprintf(buf, sizeof(buf), "%s/180", welement);
-         break;
-      case 270: snprintf(buf, sizeof(buf), "%s/270", welement);
-         break;
-      default: strncpy(buf, welement, sizeof(buf));
-         break;
+        switch (sd->orient_mode)
+          {
+             case 90:
+               snprintf(buf, sizeof(buf), "%s/90", welement);
+               break;
+             case 180:
+               snprintf(buf, sizeof(buf), "%s/180", welement);
+               break;
+             case 270:
+               snprintf(buf, sizeof(buf), "%s/270", welement);
+               break;
+             default:
+               strncpy(buf, welement, sizeof(buf));
+               break;
+          }
+        *ret = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
      }
-   *ret = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
    if (!*ret)
      {
         *ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
