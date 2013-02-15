@@ -43,8 +43,6 @@ ecore_con_url_headers_example \
 ecore_evas_basics_example \
 ecore_evas_buffer_example_01 \
 ecore_evas_buffer_example_02 \
-ecore_evas_extn_socket_example \
-ecore_evas_extn_plug_example \
 ecore_evas_callbacks \
 ecore_evas_ews_example \
 ecore_evas_object_example \
