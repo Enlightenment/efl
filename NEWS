@@ -64,6 +64,7 @@ Additions:
     * Add eio_eet_sync symbols.
     * Add infrastructure to handle buggy touchscreen in Ecore_Input_Evas.
     * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+    * Edje textblock: Added support for size_range.
 
 Deprecations:
     * ecore_x:
@@ -167,3 +168,4 @@ Fixes:
     * Fix memory leak in error case in ethumb.
     * fix bug not to display preedit string with PREEDIT_TYPE_NONE style
     * Fix bug candidate word couldn't be selected with up/down key in the preedit status
+    * Edje textblock: Improved textblock fit.
