@@ -151,6 +151,23 @@ _label_slide_change(Evas_Object *obj)
 }
 
 static void
+_elm_label_smart_orientation_set(Eo *obj, void *_pd, va_list *list)
+{
+   int rotation = va_arg(*list, int);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Label_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, elm_wdg_orientation_set(rotation));
+
+   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
+   evas_event_freeze(evas_object_evas_get(obj));
+   _label_format_set(wd->resize_obj, sd->format);
+   _label_slide_change(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
+}
+
+static void
 _elm_label_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -392,9 +409,6 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_signal_callback_add(wd->resize_obj, "elm,state,slide,end", "",
                                    _on_slide_end, obj);
 
-   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
-   elm_layout_text_set(obj, NULL, "<br>");
-
    /* access */
    elm_widget_can_focus_set(obj, _elm_config->access_mode);
 
@@ -403,8 +417,6 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Label"));
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EAPI Evas_Object *
@@ -427,6 +439,10 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
+
+   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
+   elm_layout_text_set(obj, NULL, "<br>");
+   elm_layout_sizing_eval(obj);
 }
 
 EAPI void
@@ -732,6 +748,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_label_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_label_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_label_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), _elm_label_smart_orientation_set),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_label_smart_sizing_eval),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_label_smart_text_set),

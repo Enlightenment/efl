@@ -314,8 +314,6 @@ _elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
 }
 
 static void
@@ -352,6 +350,8 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
+
+   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
 }
 
 EAPI void
@@ -521,6 +521,16 @@ _elm_button_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA
 }
 
 static void
+_elm_button_smart_orientation_set(Eo *obj __UNUSED__, void *_pd __UNUSED__, va_list *list)
+
+{
+   int rotation = va_arg(*list, int);
+   eo_do_super(obj, elm_wdg_orientation_set(rotation));
+   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
+   _icon_signal_emit(obj);
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -534,6 +544,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_button_smart_activate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_button_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_button_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), _elm_button_smart_orientation_set),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_button_smart_content_set),
 
