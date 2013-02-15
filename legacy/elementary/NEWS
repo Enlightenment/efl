@@ -38,7 +38,7 @@ Additions:
    * Add APIs - elm_object_domain_translatable_part_text_set(), elm_object_translatable_part_text_get().
    * Add APIs - elm_object_orientation_mode_disabled_set(), elm_object_orientation_mode_disabled_get().
    * Add the reorder effect in toolbar.
-
+   * Support naviframe, label, button orientation mode.
 
 Improvements:
 
@@ -148,6 +148,7 @@ Fixes:
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
    * Fix elc_player pause state to be in sync
    * Fix time string display to handle hours right
+   * Fix popup to not unswallow invalid contents when contents are deleted.
 
 Removals:
 

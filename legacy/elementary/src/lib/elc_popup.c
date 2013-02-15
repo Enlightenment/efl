@@ -388,8 +388,6 @@ _on_content_del(void *data,
    ELM_POPUP_DATA_GET(data, sd);
 
    sd->content = NULL;
-   edje_object_part_unswallow
-       (data, edje_object_part_swallow_get(data, "elm.swallow.content"));
    elm_layout_sizing_eval(data);
 }
 
@@ -402,8 +400,6 @@ _on_text_content_del(void *data,
    ELM_POPUP_DATA_GET(data, sd);
 
    sd->text_content_obj = NULL;
-   edje_object_part_unswallow
-       (data, edje_object_part_swallow_get(data, "elm.swallow.content"));
    elm_layout_sizing_eval(data);
 }
 
@@ -877,7 +873,7 @@ static Eina_Bool
 _content_text_set(Evas_Object *obj,
                   const char *text)
 {
-   Evas_Object *prev_content, *ao;
+   Evas_Object *ao;
    char buf[128];
 
    ELM_POPUP_DATA_GET(obj, sd);
@@ -888,18 +884,10 @@ _content_text_set(Evas_Object *obj,
         _items_remove(sd);
         _list_del(sd);
      }
-
-   prev_content = elm_layout_content_get
-       (sd->content_area, "elm.swallow.content");
-
-   if (prev_content)
-     evas_object_del(prev_content);
-
+   else edje_object_part_swallow(wd->resize_obj, "elm.swallow.content",
+                                 sd->content_area);
    if (!text) goto end;
 
-   edje_object_part_swallow
-     (wd->resize_obj, "elm.swallow.content",
-     sd->content_area);
    sd->text_content_obj = elm_label_add(obj);
 
    evas_object_event_callback_add
@@ -1026,8 +1014,6 @@ static Eina_Bool
 _content_set(Evas_Object *obj,
              Evas_Object *content)
 {
-   Evas_Object *prev_content;
-
    ELM_POPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
@@ -1037,10 +1023,6 @@ _content_set(Evas_Object *obj,
         _items_remove(sd);
         _list_del(sd);
      }
-   prev_content =
-     elm_layout_content_get(sd->content_area, "elm.swallow.content");
-   if (prev_content)
-     evas_object_del(prev_content);
 
    sd->content = content;
    if (content)
