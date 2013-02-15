@@ -25,8 +25,7 @@ AC_DEFUN([EFL_VERSION],
 m4_define([v_maj], [$1])dnl
 m4_define([v_min], [$2])dnl
 m4_define([v_mic], [$3])dnl
-m4_define([dev_version], m4_esyscmd([(LC_ALL=C svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | cut -d: -f2 | tr -d ' :MSP\n']))dnl
-m4_if(dev_version, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])dnl
+m4_define([dev_version], m4_esyscmd([git rev-list --count HEAD | tr -d '\n']))dnl
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
 m4_define([v_rel], m4_if($4, dev, [], m4_ifblank($4, [], [-release $4])))dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
