@@ -1418,6 +1418,8 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_theme_set
      (priv->content_area, "popup", "content", elm_widget_style_get(obj));
    priv->action_area = elm_layout_add(obj);
+   elm_layout_theme_set(priv->action_area, "popup", "buttons0",
+                        elm_widget_style_get(obj));
    evas_object_size_hint_weight_set(priv->action_area, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->action_area, EVAS_HINT_FILL,
