@@ -1009,3 +1009,7 @@
 2013-02-14  ChunEon Park (Hermet)
 
         * added 2 APIs elm_object_orientation_mode_disabled_set(), elm_object_orientation_mode_disabled_get()
+
+2013-02-15  Jaehwan Kim
+
+        * Add the reorder effect in toolbar.

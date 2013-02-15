@@ -1289,93 +1289,283 @@ _select_cb(void *data,
 }
 
 static void
-_items_change(Evas_Object *obj)
+_item_move_cb(void *data,
+         Evas *e __UNUSED__,
+         Evas_Object *obj __UNUSED__,
+         void *event_info __UNUSED__)
+{
+   Elm_Toolbar_Item *item = data;
+
+   item->on_move = EINA_FALSE;
+
+   evas_object_event_callback_del_full
+     (VIEW(item), EVAS_CALLBACK_MOVE, _item_move_cb, data);
+}
+
+static void
+_items_change(Elm_Toolbar_Item *reorder_from, Elm_Toolbar_Item *reorder_to)
 {
    Elm_Toolbar_Item *prev = NULL, *next = NULL;
    int tmp;
 
-   ELM_TOOLBAR_DATA_GET(obj, sd);
+   ELM_TOOLBAR_DATA_GET(WIDGET(reorder_from), sd);
+   if (reorder_from == reorder_to) return;
 
-   if ((sd->reorder_from) && (sd->reorder_to) &&
-       (!sd->reorder_from->separator) && (!sd->reorder_to->separator))
+   if ((reorder_from) && (reorder_to) &&
+       (!reorder_from->separator) && (!reorder_to->separator))
      {
         prev = ELM_TOOLBAR_ITEM_FROM_INLIST
-            (EINA_INLIST_GET(sd->reorder_from)->prev);
-        if (prev == sd->reorder_to)
-          prev = sd->reorder_from;
+            (EINA_INLIST_GET(reorder_from)->prev);
+        if (prev == reorder_to)
+          prev = reorder_from;
         if (!prev)
           next = ELM_TOOLBAR_ITEM_FROM_INLIST
-              (EINA_INLIST_GET(sd->reorder_from)->next);
-        if (next == sd->reorder_to)
+              (EINA_INLIST_GET(reorder_from)->next);
+        if (next == reorder_to)
           next = NULL;
 
         sd->items = eina_inlist_remove
-            (sd->items, EINA_INLIST_GET(sd->reorder_from));
+            (sd->items, EINA_INLIST_GET(reorder_from));
         sd->items = eina_inlist_append_relative
-            (sd->items, EINA_INLIST_GET(sd->reorder_from),
-            EINA_INLIST_GET(sd->reorder_to));
+            (sd->items, EINA_INLIST_GET(reorder_from),
+            EINA_INLIST_GET(reorder_to));
 
         sd->items = eina_inlist_remove
-            (sd->items, EINA_INLIST_GET(sd->reorder_to));
+            (sd->items, EINA_INLIST_GET(reorder_to));
         if (prev)
           sd->items = eina_inlist_append_relative
-              (sd->items, EINA_INLIST_GET(sd->reorder_to),
+              (sd->items, EINA_INLIST_GET(reorder_to),
               EINA_INLIST_GET(prev));
         else if (next)
           sd->items = eina_inlist_prepend_relative
-              (sd->items, EINA_INLIST_GET(sd->reorder_to),
+              (sd->items, EINA_INLIST_GET(reorder_to),
               EINA_INLIST_GET(next));
         else
           sd->items = eina_inlist_prepend
-             (sd->items, EINA_INLIST_GET(sd->reorder_to));
+             (sd->items, EINA_INLIST_GET(reorder_to));
 
-        if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE ||
-            sd->shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL)
-          {
-             evas_object_box_remove(sd->bx, VIEW(sd->reorder_from));
-             evas_object_box_insert_after(sd->bx, VIEW(sd->reorder_from),
-                                          VIEW(sd->reorder_to));
-             evas_object_box_remove(sd->bx, VIEW(sd->reorder_to));
-             if (prev)
-               evas_object_box_insert_after(sd->bx, VIEW(sd->reorder_to),
-                                            VIEW(prev));
-             else if (next)
-               evas_object_box_insert_before(sd->bx, VIEW(sd->reorder_to),
-                                             VIEW(next));
-             else
-               evas_object_box_prepend(sd->bx, VIEW(sd->reorder_to));
-          }
+        evas_object_box_remove(sd->bx, VIEW(reorder_from));
+        evas_object_box_insert_after(sd->bx, VIEW(reorder_from),
+                                     VIEW(reorder_to));
+        evas_object_box_remove(sd->bx, VIEW(reorder_to));
+        if (prev)
+          evas_object_box_insert_after(sd->bx, VIEW(reorder_to),
+                                       VIEW(prev));
+        else if (next)
+          evas_object_box_insert_before(sd->bx, VIEW(reorder_to),
+                                        VIEW(next));
+        else
+          evas_object_box_prepend(sd->bx, VIEW(reorder_to));
 
-        tmp = sd->reorder_from->prio.priority;
-        sd->reorder_from->prio.priority = sd->reorder_to->prio.priority;
-        sd->reorder_to->prio.priority = tmp;
+        tmp = reorder_from->prio.priority;
+        reorder_from->prio.priority = reorder_to->prio.priority;
+        reorder_to->prio.priority = tmp;
+
+        reorder_from->on_move = EINA_TRUE;
+        reorder_to->on_move = EINA_TRUE;
+
+        evas_object_event_callback_add
+           (VIEW(reorder_from), EVAS_CALLBACK_MOVE,
+           _item_move_cb, reorder_from);
+        evas_object_event_callback_add
+           (VIEW(reorder_to), EVAS_CALLBACK_MOVE,
+           _item_move_cb, reorder_to);
      }
 
-   _resize_cb(obj, NULL, NULL, NULL);
+   _resize_cb(WIDGET(reorder_from), NULL, NULL, NULL);
 }
 
 static void
-_mouse_move_reorder(Elm_Toolbar_Item *it,
+_transit_del_cb(void *data, Elm_Transit *transit __UNUSED__)
+{
+   Elm_Toolbar_Item *it, *item = data;
+   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
+
+   if (item->reorder_to)
+     {
+        if (item->reorder_to == sd->reorder_empty)
+          sd->reorder_empty = item;
+        else if (item == sd->reorder_empty)
+          sd->reorder_empty = item->reorder_to;
+
+        _items_change(item->reorder_to, item);
+
+        EINA_INLIST_FOREACH(sd->items, it)
+          {
+             if (it != item)
+               {
+                  if (it->reorder_to == item)
+                    it->reorder_to = item->reorder_to;
+                  else if (it->reorder_to == item->reorder_to)
+                    it->reorder_to = item;
+               }
+          }
+     }
+   if (item->proxy)
+     {
+        evas_object_image_source_visible_set(elm_image_object_get(item->proxy), EINA_TRUE);
+        evas_object_del(item->proxy);
+        item->proxy = NULL;
+     }
+   item->trans = NULL;
+
+   if (item->reorder_to)
+     {
+        EINA_INLIST_FOREACH(sd->items, it)
+           if (it->trans) break;
+
+        if (!it) sd->reorder_empty = sd->reorder_item;
+     }
+   item->reorder_to = NULL;
+}
+
+static void
+_item_transition_start
+(Elm_Toolbar_Item *it, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Evas_Coord tx, ty;
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   it->proxy = elm_image_add(obj);
+   elm_image_aspect_fixed_set(it->proxy, EINA_FALSE);
+   evas_object_image_source_set(elm_image_object_get(it->proxy), VIEW(it));
+   evas_object_image_source_visible_set(elm_image_object_get(it->proxy), EINA_FALSE);
+
+   it->trans = elm_transit_add();
+   elm_transit_object_add(it->trans, it->proxy);
+   evas_object_geometry_get(VIEW(sd->reorder_empty), &tx, &ty, NULL, NULL);
+   evas_object_move(it->proxy, x, y);
+   evas_object_resize(it->proxy, w, h);
+   evas_object_show(it->proxy);
+
+   elm_transit_effect_translation_add(it->trans, 0, 0, tx - x, 0);
+   elm_transit_duration_set(it->trans, 0.2);
+   elm_transit_del_cb_set(it->trans, _transit_del_cb, it);
+   elm_transit_go(it->trans);
+
+   it->reorder_to = sd->reorder_empty;
+}
+
+static void
+_animate_missed_items(Elm_Toolbar_Item *prev, Elm_Toolbar_Item *next)
+{
+   ELM_TOOLBAR_DATA_GET(WIDGET(prev), sd);
+   Elm_Toolbar_Item *it, *it2;
+   Eina_List *list, *l;
+   Evas_Object *o;
+   Eina_Bool reverse = EINA_FALSE;
+   Evas_Coord fx, fy, fw, fh;
+
+   list = evas_object_box_children_get(sd->bx);
+
+   EINA_LIST_FOREACH(list, l, o)
+     {
+        if (o == VIEW(prev))
+          break;
+        else if (o == VIEW(next))
+          reverse = EINA_TRUE;
+     }
+
+   if (!reverse)
+     l = eina_list_next(l);
+   else
+     l = eina_list_prev(l);
+
+   while (VIEW(next) != eina_list_data_get(l))
+     {
+        EINA_INLIST_FOREACH(sd->items, it)
+          {
+             if (VIEW(it) == eina_list_data_get(l))
+               {
+                  if (!it->trans && it != sd->reorder_item)
+                    {
+                       evas_object_geometry_get(VIEW(sd->reorder_empty), &fx, &fy, &fw, &fh);
+                       _item_transition_start(it, fx, fy, fw, fh);
+                       sd->reorder_empty = it;
+                    }
+                  EINA_INLIST_FOREACH(sd->items, it2)
+                    {
+                       if (it == it2->reorder_to) break;
+                    }
+                  if (it2)
+                    {
+                       it2->reorder_to = NULL;
+                       evas_object_geometry_get(it2->proxy, &fx, &fy, &fw, &fh);
+                       if (it2->trans) elm_transit_del(it2->trans);
+                       _item_transition_start(it2, fx, fy, fw, fh);
+                       sd->reorder_empty = it;
+                    }
+               }
+          }
+        if (!reverse)
+          l = eina_list_next(l);
+        else
+          l = eina_list_prev(l);
+     }
+}
+
+static void
+_mouse_move_reorder(Elm_Toolbar_Item *item,
                     Evas *evas __UNUSED__,
                     Evas_Object *obj __UNUSED__,
                     Evas_Event_Mouse_Move *ev)
 {
-   Evas_Coord w, h;
+   Evas_Coord x, y, w, h;
+   Evas_Coord fx, fy, fw, fh;
+   Elm_Toolbar_Item *it, *it2;
 
-   evas_object_geometry_get(VIEW(it), NULL, NULL, &w, &h);
-   evas_object_move
-     (VIEW(it), ev->cur.canvas.x - (w / 2), ev->cur.canvas.y - (h / 2));
-   evas_object_show(VIEW(it));
+   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
+
+   evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
+   if (sd->vertical)
+     evas_object_move(item->proxy, x, ev->cur.canvas.y - (h / 2));
+   else
+     evas_object_move(item->proxy, ev->cur.canvas.x - (w / 2), y);
+   evas_object_show(item->proxy);
+
+   if (sd->reorder_empty->on_move) return;
+
+   evas_object_geometry_get(sd->VIEW(reorder_empty), &x, &y, &w, &h);
+   if (ev->cur.canvas.x < x || ev->cur.canvas.x > x + w)
+     {
+        EINA_INLIST_FOREACH(sd->items, it)
+          {
+             if (it->on_move) continue;
+             evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
+             if (ev->cur.canvas.x > x && ev->cur.canvas.x < x + w) break;
+          }
+        if (it && (it != sd->reorder_empty))
+          {
+             _animate_missed_items(sd->reorder_empty, it);
+             if (!it->trans && it != item)
+               {
+                  evas_object_geometry_get(VIEW(it), &fx, &fy, &fw, &fh);
+                  _item_transition_start(it, fx, fy, fw, fh);
+                  sd->reorder_empty = it;
+               }
+             EINA_INLIST_FOREACH(sd->items, it2)
+               {
+                  if (it == it2->reorder_to) break;
+               }
+             if (it2)
+               {
+                  it2->reorder_to = NULL;
+                  evas_object_geometry_get(it2->proxy, &fx, &fy, &fw, &fh);
+                  if (it2->trans) elm_transit_del(it2->trans);
+                  _item_transition_start(it2, fx, fy, fw, fh);
+                  sd->reorder_empty = it;
+               }
+          }
+     }
 }
 
 static void
 _mouse_up_reorder(Elm_Toolbar_Item *it,
                   Evas *evas __UNUSED__,
                   Evas_Object *obj,
-                  Evas_Event_Mouse_Up *ev)
+                  Evas_Event_Mouse_Up *ev __UNUSED__)
 {
-   Evas_Coord x, y, w, h;
-
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    evas_object_event_callback_del_full
@@ -1393,17 +1583,12 @@ _mouse_up_reorder(Elm_Toolbar_Item *it,
    evas_object_event_callback_del_full
      (sd->more, EVAS_CALLBACK_MOUSE_UP,
      (Evas_Object_Event_Cb)_mouse_up_reorder, it);
-   elm_widget_item_del(it);
 
-   EINA_INLIST_FOREACH(sd->items, it)
+   if (it->proxy)
      {
-        evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
-        if ((x < ev->canvas.x) && (ev->canvas.x < x + w) &&
-            (y < ev->canvas.y) && (ev->canvas.y < y + h))
-          {
-             sd->reorder_to = it;
-             _items_change(WIDGET(it));
-          }
+        evas_object_image_source_visible_set(elm_image_object_get(it->proxy), EINA_TRUE);
+        evas_object_del(it->proxy);
+        it->proxy = NULL;
      }
 
    eo_do(obj, elm_scrollable_interface_hold_set(EINA_FALSE));
@@ -1413,88 +1598,45 @@ static void
 _item_reorder_start(Elm_Toolbar_Item *item)
 {
    Evas_Object *obj = WIDGET(item);
-   Evas_Object *icon_obj;
    Evas_Coord x, y, w, h;
-   Elm_Toolbar_Item *it;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
-   sd->reorder_from = item;
+   sd->reorder_empty = sd->reorder_item = item;
 
-   icon_obj = elm_icon_add(obj);
-   elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
-
-   if (!icon_obj) return;
-   it = elm_widget_item_new(obj, Elm_Toolbar_Item);
-   if (!it)
-     {
-        evas_object_del(icon_obj);
-        return;
-     }
-
-   it->label = eina_stringshare_add(item->label);
-   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-
-   if (_item_icon_set(icon_obj, "toolbar/", item->icon_str))
-     {
-        it->icon = icon_obj;
-        it->icon_str = eina_stringshare_add(item->icon_str);
-     }
-   else
-     {
-        it->icon = NULL;
-        it->icon_str = NULL;
-        evas_object_del(icon_obj);
-     }
-
-   elm_widget_theme_object_set(obj, VIEW(it), "toolbar", "item",
-                               elm_widget_style_get(obj));
-   if (it->icon)
-     {
-        int ms = 0;
-
-        ms = ((double)sd->icon_size * elm_config_scale_get());
-        evas_object_size_hint_min_set(it->icon, ms, ms);
-        evas_object_size_hint_max_set(it->icon, ms, ms);
-        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
-        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
-        evas_object_show(it->icon);
-        elm_widget_sub_object_add(obj, it->icon);
-     }
-   if (it->label)
-     {
-        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
-        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
-     }
-
-   edje_object_signal_emit(VIEW(it), "elm,state,moving", "elm");
+   item->proxy = elm_image_add(obj);
+   elm_image_aspect_fixed_set(item->proxy, EINA_FALSE);
+   evas_object_image_source_set(elm_image_object_get(item->proxy), VIEW(item));
+   evas_object_image_source_visible_set(elm_image_object_get(item->proxy), EINA_FALSE);
+   evas_object_layer_set(item->proxy, 100);
+   edje_object_signal_emit(VIEW(item), "elm,state,moving", "elm");
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_MOVE,
-     (Evas_Object_Event_Cb)_mouse_move_reorder, it);
+     (Evas_Object_Event_Cb)_mouse_move_reorder, item);
 
    evas_object_event_callback_add
      (sd->more, EVAS_CALLBACK_MOUSE_MOVE,
-     (Evas_Object_Event_Cb)_mouse_move_reorder, it);
+     (Evas_Object_Event_Cb)_mouse_move_reorder, item);
 
    evas_object_event_callback_add
-     (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
-     (Evas_Object_Event_Cb)_mouse_move_reorder, it);
+     (item->proxy, EVAS_CALLBACK_MOUSE_MOVE,
+     (Evas_Object_Event_Cb)_mouse_move_reorder, item);
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_UP,
-     (Evas_Object_Event_Cb)_mouse_up_reorder, it);
+     (Evas_Object_Event_Cb)_mouse_up_reorder, item);
 
    evas_object_event_callback_add
      (sd->more, EVAS_CALLBACK_MOUSE_UP,
-     (Evas_Object_Event_Cb)_mouse_up_reorder, it);
+     (Evas_Object_Event_Cb)_mouse_up_reorder, item);
 
    evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   evas_object_resize(VIEW(it), w, h);
-   evas_object_move(VIEW(it), x, y);
-   evas_object_show(VIEW(it));
+   evas_object_resize(item->proxy, w, h);
+   evas_object_move(item->proxy, x, y);
+   evas_object_show(item->proxy);
 
-   eo_do(WIDGET(it), elm_scrollable_interface_hold_set(EINA_TRUE));
+   eo_do(WIDGET(item), elm_scrollable_interface_hold_set(EINA_TRUE));
 }
 
 static Eina_Bool

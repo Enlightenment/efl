@@ -29,7 +29,7 @@ struct _Elm_Toolbar_Smart_Data
    Evas_Object                          *menu_parent;
    Eina_Inlist                          *items;
    Elm_Toolbar_Item                     *more_item, *selected_item;
-   Elm_Toolbar_Item                     *reorder_from, *reorder_to;
+   Elm_Toolbar_Item                     *reorder_empty, *reorder_item;
    Elm_Toolbar_Shrink_Mode               shrink_mode;
    Elm_Icon_Lookup_Order                 lookup_order;
    int                                   theme_icon_size, priv_icon_size,
@@ -61,7 +61,10 @@ struct _Elm_Toolbar_Item
    Evas_Object  *object;
    Evas_Object  *o_menu;
    Evas_Object  *in_box;
+   Evas_Object  *proxy;
    Evas_Smart_Cb func;
+   Elm_Transit  *trans;
+   Elm_Toolbar_Item *reorder_to;
    struct
    {
       int       priority;
@@ -74,6 +77,7 @@ struct _Elm_Toolbar_Item
    Eina_Bool     separator : 1;
    Eina_Bool     selected : 1;
    Eina_Bool     menu : 1;
+   Eina_Bool     on_move : 1;
 };
 
 struct _Elm_Toolbar_Item_State
