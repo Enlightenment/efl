@@ -19,8 +19,6 @@ _on_done(void *data,
    elm_exit();
 }
 
-static double size = 0.0;
-
 static void
 _press(void *data, Evas_Object *obj, void *event_info)
 {
@@ -42,9 +40,12 @@ _clicked(void *data, Evas_Object *obj, void *event_info)
 static void
 _clicked_double(void *data, Evas_Object *obj, void *event_info)
 {
-   if (elm_panes_content_left_size_get(obj) > 0)
+   static double size = 0.0;
+   double tmp_size = 0.0;
+
+   tmp_size = elm_panes_content_left_size_get(obj);
+   if (tmp_size > 0)
      {
-        size = elm_panes_content_left_size_get(obj);
         elm_panes_content_left_size_set(obj, 0.0);
         printf("Double clicked, hidding.\n");
      }
@@ -53,6 +54,7 @@ _clicked_double(void *data, Evas_Object *obj, void *event_info)
         elm_panes_content_left_size_set(obj, size);
         printf("Double clicked, restoring size.\n");
      }
+   size = tmp_size;
 }
 
 EAPI_MAIN int
