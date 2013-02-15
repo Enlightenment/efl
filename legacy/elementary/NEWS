@@ -148,7 +148,6 @@ Fixes:
    * Fix a elm_transit crash issue when user delete all target objects in the effect end callback.
    * Fix elc_player pause state to be in sync
    * Fix time string display to handle hours right
-   * Fix popup to not unswallow invalid contents when contents are deleted.
 
 Removals:
 

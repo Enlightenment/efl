@@ -1021,7 +1021,3 @@
 2013-02-15  ChunEon Park (Hermet)
 
         * support naviframe, button, label orientation mode.
-
-2013-02-15  ChunEon Park (Hermet)
-
-        * Fix popup to not unswallow invalid contents when contents are deleted.
