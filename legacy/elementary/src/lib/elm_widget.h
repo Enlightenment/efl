@@ -411,6 +411,7 @@ typedef struct _Elm_Widget_Smart_Data
                                                  Evas_Object *obj);
 
    int                           frozen;
+   int                           orient_mode; /* -1 is disabled */
 
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
@@ -431,7 +432,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     can_access : 1;
    Eina_Bool                     highlighted : 1;
    Eina_Bool                     highlight_root : 1;
-   Eina_Bool                     orientation_disabled : 1;
 } Elm_Widget_Smart_Data;
 
 /**

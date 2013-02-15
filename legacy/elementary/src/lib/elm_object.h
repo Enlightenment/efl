@@ -461,10 +461,9 @@ EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina
 /**
  * Get the orientation mode of a give widget.
  *
- * @param obj The Elementary widget to query for its style
- * @return @c EINA_TRUE, if the widget orientation mode is disabled,
- *         @c EINA_FALSE if the orientation mode is enabled (or on errors)
- *
+ * @param obj The Elementary widget to query for its orientation mode.
+ * @return @c EINA_TRUE, if the orientation mode is disabled, @c EINA_FALSE
+ *            if the orientation mode is enabled (or on errors)
  * @see elm_object_orientation_mode_disabled_set()
  *
  * @since 1.8

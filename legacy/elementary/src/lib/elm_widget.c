@@ -1016,6 +1016,7 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
                return;
           }
         sdc->parent_obj = obj;
+        sdc->orient_mode = sd->orient_mode;
         _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
 
         /* update child focusable-ness on self and parents, now that a
@@ -4467,9 +4468,17 @@ static void
 _elm_widget_orientation_mode_disabled_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
    Eina_Bool disabled = va_arg(*list, int);
+   int orient_mode = -1;
    Elm_Widget_Smart_Data *sd = _pd;
-   disabled = !!disabled;
-   sd->orientation_disabled = disabled;
+
+   if (!disabled)
+     {
+        sd->orient_mode = 0;
+        ELM_WIDGET_DATA_GET(sd->parent_obj, sd_parent);
+        if (!sd_parent) orient_mode = 0;
+        else orient_mode = sd_parent->orient_mode;
+     }
+   eo_do((Eo *) obj, elm_wdg_orientation_set(orient_mode));
 }
 
 EAPI Eina_Bool
@@ -4484,11 +4493,11 @@ elm_widget_orientation_mode_disabled_get(const Evas_Object *obj)
 static void
 _elm_widget_orientation_mode_disabled_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
-   Eina_Bool *ret = (Eina_Bool *)va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *sd = _pd;
-   *ret = sd->orientation_disabled;
+   if (sd->orient_mode == -1) *ret = EINA_TRUE;
+   else *ret = EINA_FALSE;
 }
-
 
 EAPI void
 elm_widget_orientation_set(Evas_Object *obj, int rotation)
@@ -4502,19 +4511,20 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 {
    Evas_Object *child;
    Eina_List *l;
-   int rotation = va_arg(*list, int);
+   int orient_mode = va_arg(*list, int);
    Elm_Widget_Smart_Data *sd = _pd;
-   if (sd->orientation_disabled) return;
+
+   if ((sd->orient_mode == orient_mode) || (sd->orient_mode == -1)) return;
+   sd->orient_mode = orient_mode;
 
    if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
-     elm_widget_orientation_set(sd->resize_obj, rotation);
+     elm_widget_orientation_set(sd->resize_obj, orient_mode);
    if (sd->hover_obj && _elm_widget_is(sd->hover_obj))
-     elm_widget_orientation_set(sd->hover_obj, rotation);
+     elm_widget_orientation_set(sd->hover_obj, orient_mode);
 
    EINA_LIST_FOREACH (sd->subobjs, l, child)
-     elm_widget_orientation_set(child, rotation);
+     elm_widget_orientation_set(child, orient_mode);
 }
-
 
 /**
  * @internal
