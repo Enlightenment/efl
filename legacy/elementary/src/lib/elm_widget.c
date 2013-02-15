@@ -4461,6 +4461,9 @@ EAPI void
 elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
    ELM_WIDGET_CHECK(obj);
+   ELM_WIDGET_DATA_GET(obj, sd);
+   if (disabled && (sd->orient_mode == -1)) return;
+   if (!disabled && (sd->orient_mode != -1)) return;
    eo_do((Eo *) obj, elm_wdg_orientation_mode_disabled_set(disabled));
 }
 
@@ -4473,6 +4476,7 @@ _elm_widget_orientation_mode_disabled_set(Eo *obj __UNUSED__, void *_pd, va_list
 
    if (!disabled)
      {
+        //Get current orient mode form it's parent otherwise, 0.
         sd->orient_mode = 0;
         ELM_WIDGET_DATA_GET(sd->parent_obj, sd_parent);
         if (!sd_parent) orient_mode = 0;
@@ -4503,6 +4507,8 @@ EAPI void
 elm_widget_orientation_set(Evas_Object *obj, int rotation)
 {
    ELM_WIDGET_CHECK(obj);
+   ELM_WIDGET_DATA_GET(obj, sd);
+   if ((sd->orient_mode == rotation) || (sd->orient_mode == -1)) return;
    eo_do((Eo *) obj, elm_wdg_orientation_set(rotation));
 }
 
@@ -4514,13 +4520,7 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
    int orient_mode = va_arg(*list, int);
    Elm_Widget_Smart_Data *sd = _pd;
 
-   if ((sd->orient_mode == orient_mode) || (sd->orient_mode == -1)) return;
    sd->orient_mode = orient_mode;
-
-   if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
-     elm_widget_orientation_set(sd->resize_obj, orient_mode);
-   if (sd->hover_obj && _elm_widget_is(sd->hover_obj))
-     elm_widget_orientation_set(sd->hover_obj, orient_mode);
 
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      elm_widget_orientation_set(child, orient_mode);
