@@ -9,32 +9,32 @@ static double size = 0.0;
 static void
 _press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-    printf("press\n");
+   printf("press\n");
 }
 
 static void
 _unpress(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    printf("unpress, size : %f\n", elm_panes_content_left_size_get(obj));
+   printf("unpress, size : %f\n", elm_panes_content_left_size_get(obj));
 }
 
 static void
 _clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-    printf("clicked\n");
+   printf("clicked\n");
 }
 
 static void
 _clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    printf("clicked double\n");
-    if (elm_panes_content_left_size_get(obj) > 0)
-      {
-         size = elm_panes_content_left_size_get(obj);
-         elm_panes_content_left_size_set(obj, 0.0);
-      }
-    else
-      elm_panes_content_left_size_set(obj, size);
+   printf("clicked double\n");
+   if (elm_panes_content_left_size_get(obj) > 0)
+     {
+        size = elm_panes_content_left_size_get(obj);
+        elm_panes_content_left_size_set(obj, 0.0);
+     }
+   else
+     elm_panes_content_left_size_set(obj, size);
 }
 
 void
