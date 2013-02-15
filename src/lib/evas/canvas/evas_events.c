@@ -1598,7 +1598,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                        obj->mouse_grabbed) &&
                       (!evas_event_passes_through(eo_obj, obj)) &&
                       (!evas_event_freezes_through(eo_obj, obj)) &&
-                      (!evas_object_is_source_invisible(eo_obj, obj) || obj->mouse_grabbed) &&
+                      (!evas_object_is_source_invisible(eo_obj, obj) ||
+                       obj->mouse_grabbed) &&
                       (!obj->clip.clipees))
                     {
                        ev.cur.canvas.x = e->pointer.x;
@@ -1759,7 +1760,8 @@ _canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
                  eina_list_data_find(ins, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 (!evas_object_is_source_invisible(eo_obj, obj) || obj->mouse_grabbed) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj) ||
+                  obj->mouse_grabbed) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
@@ -1953,7 +1955,8 @@ nogrep:
                  eina_list_data_find(newin, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj) ||
+                  obj->mouse_grabbed) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
@@ -2492,7 +2495,8 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                   obj->mouse_grabbed) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj) ||
+                  obj->mouse_grabbed) &&
                  (!obj->clip.clipees))
                {
                   ev.cur.canvas.x = x;
@@ -2565,7 +2569,8 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
                  eina_list_data_find(ins, eo_obj) &&
                  (!evas_event_passes_through(eo_obj, obj)) &&
                  (!evas_event_freezes_through(eo_obj, obj)) &&
-                 (!evas_object_is_source_invisible(eo_obj, obj)) &&
+                 (!evas_object_is_source_invisible(eo_obj, obj) ||
+                  obj->mouse_grabbed) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
