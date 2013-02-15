@@ -4089,8 +4089,30 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *welement = va_arg(*list, const char *);
    const char *wstyle = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Widget_Smart_Data *sd = _pd;
+   char buf[128];
 
-   *ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+   //Apply orientation styles.
+   switch (sd->orient_mode)
+     {
+      case 90: snprintf(buf, sizeof(buf), "%s/90", welement);
+         break;
+      case 180: snprintf(buf, sizeof(buf), "%s/180", welement);
+         break;
+      case 270: snprintf(buf, sizeof(buf), "%s/270", welement);
+         break;
+      default: strncpy(buf, welement, sizeof(buf));
+         break;
+     }
+   *ret = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
+   if (!*ret)
+     {
+        *ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+        strncpy(buf, "elm,state,orient,default", sizeof(buf));
+     }
+   else
+     snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
+   elm_object_signal_emit(obj, buf, "elm");
 }
 
 static void
