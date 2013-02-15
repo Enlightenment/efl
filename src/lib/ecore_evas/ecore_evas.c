@@ -2192,6 +2192,61 @@ ecore_evas_manual_render(Ecore_Evas *ee)
 }
 
 EAPI void
+ecore_evas_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_msg_parent_send");
+        return;
+     }
+   DBG("Msg(to parent): ee=%p msg_domain=%d msg_id=%d size=%d", ee, msg_domain, msg_id, size);
+   IFC(ee, fn_msg_parent_send) (ee, msg_domain, msg_id, data, size);
+   IFE;
+}
+
+EAPI void
+ecore_evas_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_msg_send");
+        return;
+     }
+   DBG("Msg: ee=%p msg_domain=%d msg_id=%d size=%d", ee, msg_domain, msg_id, size);
+   IFC(ee, fn_msg_send) (ee, msg_domain, msg_id, data, size);
+   IFE;
+}
+
+EAPI void
+ecore_evas_callback_msg_parent_handle_set(Ecore_Evas *ee, void (*func_parent_handle)(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size))
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_msg_parent_handle");
+        return;
+     }
+   DBG("Msg Parent handle: ee=%p", ee);
+   ee->func.fn_msg_parent_handle = func_parent_handle;
+}
+
+EAPI void
+ecore_evas_callback_msg_handle_set(Ecore_Evas *ee, void (*func_handle)(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size))
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_msg_handle");
+        return;
+     }
+   DBG("Msg handle: ee=%p", ee);
+   ee->func.fn_msg_handle = func_handle;
+}
+
+
+EAPI void
 ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))

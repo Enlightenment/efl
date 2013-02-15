@@ -474,6 +474,42 @@ _ecore_evas_buffer_profile_set(Ecore_Evas *ee, const char *profile)
      }
 }
 
+static void
+_ecore_evas_buffer_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   Ecore_Evas *parent_ee = NULL;
+   parent_ee = ecore_evas_data_get(ee, "parent");
+
+   if (parent_ee)
+     {
+        if (parent_ee->func.fn_msg_parent_handle)
+          parent_ee ->func.fn_msg_parent_handle(parent_ee, msg_domain, msg_id, data, size);
+     }
+   else
+     {
+        if (ee->func.fn_msg_parent_handle)
+          ee ->func.fn_msg_parent_handle(ee, msg_domain, msg_id, data, size);
+     }
+}
+
+static void
+_ecore_evas_buffer_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   Ecore_Evas *child_ee = NULL;
+   child_ee = ecore_evas_data_get(ee, "child");
+
+   if (!child_ee)
+     {
+        if (child_ee->func.fn_msg_handle)
+          child_ee->func.fn_msg_handle(child_ee, msg_domain, msg_id, data, size);
+     }
+   else
+     {
+        if (ee->func.fn_msg_handle)
+          ee->func.fn_msg_handle(ee, msg_domain, msg_id, data, size);
+     }
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -534,7 +570,9 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 
      _ecore_evas_buffer_render,
      NULL, // screen_geometry_get
-     NULL  // screen_dpi_get
+     NULL,  // screen_dpi_get
+     _ecore_evas_buffer_msg_parent_send,
+     _ecore_evas_buffer_msg_send
 };
 
 static void *

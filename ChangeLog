@@ -1,3 +1,7 @@
+2013-02-15  Jiyoun Park (jypark)
+
+    * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+
 2013-02-14  Cedric Bail
 
 	* Reduce memory consumption of Edje program handler.

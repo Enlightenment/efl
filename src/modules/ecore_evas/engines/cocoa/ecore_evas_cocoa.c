@@ -471,7 +471,9 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
 
      NULL, // render
      NULL,
-     NULL  // screen_dpi_get
+     NULL, // screen_dpi_get
+     NULL,
+     NULL  // msg_send
   };
 
 EAPI Ecore_Evas *

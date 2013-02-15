@@ -683,6 +683,73 @@ EAPI void        ecore_evas_window_available_profiles_set(Ecore_Evas *ee, const 
  */
 EAPI Eina_Bool   ecore_evas_window_available_profiles_get(Ecore_Evas *ee, char ***profiles, unsigned int *count);
 /**
+ * @brief Send message to parent ecore
+ *
+ * @param ee The Ecore_Evas to set
+ * @param msg_domain The domain of message
+ * @param msg_id The id of message
+ * @param data The data of message
+ * @param size The size of message data
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ *
+ * @see ecore_evas_msg_send()
+ * @see ecore_evas_callback_msg_parent_handle_set()
+ * @see eecore_evas_callback_msg_handle_set()
+ *
+ * This is a list of examples of these functions:
+ * @li @ref ecore_evas_extn_socket_example
+ * @li @ref ecore_evas_extn_plug_example
+ */
+EAPI void ecore_evas_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size);
+/**
+ * @brief Send message to child ecore
+ *
+ * @param ee The Ecore_Evas to set
+ * @param msg_domain The domain of message
+ * @param msg_id The id of message
+ * @param data The data of message
+ * @param size The size of message data
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ *
+ * @see ecore_evas_msg_parent_send()
+ * @see ecore_evas_callback_msg_parent_handle_set()
+ * @see eecore_evas_callback_msg_handle_set()
+ */
+EAPI void ecore_evas_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size);
+/**
+ * Set a callback for parent Ecore_Evas message.
+ *
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func_parent_handle The handle to be called when message arive.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ *
+ * @see ecore_evas_msg_parent_send()
+ * @see ecore_evas_msg_send()
+ * @see eecore_evas_callback_msg_handle_set()
+ */
+EAPI void ecore_evas_callback_msg_parent_handle_set(Ecore_Evas *ee, void (*func_parent_handle)(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size));
+/**
+ * Set a callback for child Ecore_Evas message.
+ *
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func_handle  The handle to be called when message arive
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.8.0
+ *
+ * @see ecore_evas_msg_parent_send()
+ * @see ecore_evas_msg_send()
+ * @see ecore_evas_callback_msg_parent_handle_set()
+ */
+EAPI void ecore_evas_callback_msg_handle_set(Ecore_Evas *ee, void (*func_handle)(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size));
+
+/**
  * @brief Move an Ecore_Evas.
  *
  * @param ee The Ecore_Evas to move

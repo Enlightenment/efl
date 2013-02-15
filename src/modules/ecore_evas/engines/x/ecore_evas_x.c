@@ -991,6 +991,12 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
                }
           }
      }
+   else if (e->message_type == ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL)
+   	{
+   	   ///TODO after access structure determined
+ 	   // if (ee->func.fn_msg_handle)
+	   // ee->func.fn_msg_handle(ee, msg_domain, msg_id, data, size);
+   	}
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3050,7 +3056,9 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 
      NULL, // render
      _ecore_evas_x_screen_geometry_get,
-     _ecore_evas_x_screen_dpi_get
+     _ecore_evas_x_screen_dpi_get,
+     NULL,
+     NULL //fn_msg_send
 };
 
 /*

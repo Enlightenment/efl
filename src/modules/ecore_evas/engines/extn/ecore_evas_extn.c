@@ -216,7 +216,9 @@ enum // opcodes
    OP_EV_KEY_UP,
    OP_EV_KEY_DOWN,
    OP_EV_HOLD,
-   OP_LOCK_FILE2
+   OP_LOCK_FILE2,
+   OP_MSG_PARENT,
+   OP_MSG
 };
 
 enum
@@ -607,6 +609,7 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
    Extn *extn;
    Ecore_Ipc_Client *client;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   if (!bdata) return;
 
    extn = bdata->data;
    if (extn)
@@ -675,14 +678,16 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
                                      EVAS_CALLBACK_RENDER_POST,
                                      _ecore_evas_extn_plug_targer_render_post,
                                      ee);
-        evas_object_del(bdata->image);
         ee2 = evas_object_data_get(bdata->image, "Ecore_Evas_Parent");
         if (ee2)
           {
              ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
           }
+        evas_object_del(bdata->image);
+		bdata->image = NULL;
      }
    free(bdata);
+   ee->engine.data = NULL;
    extn_ee_list = eina_list_remove(extn_ee_list, ee);
 }
 
@@ -1282,6 +1287,21 @@ _ecore_evas_extn_plug_profile_set(Ecore_Evas *ee, const char *profile)
      }
 }
 
+static void
+_ecore_evas_extn_plug_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   Extn *extn;
+
+   extn = bdata->data;
+   if (!extn) return;
+   if (!extn->ipc.server) return;
+
+   //ref = msg_domain
+   //ref_to = msg_id
+   ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_MSG, msg_domain, msg_id, 0, data, size);
+}
+
 static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 {
    _ecore_evas_extn_free,
@@ -1341,7 +1361,9 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 
    NULL, // render
    NULL, // screen_geometry_get
-   NULL  // screen_dpi_get
+   NULL, // screen_dpi_get
+   _ecore_evas_extn_plug_msg_parent_send,
+   NULL   // msg_send
 };
 
 static Eina_Bool
@@ -1528,6 +1550,18 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
       case OP_PROFILE_CHANGE_DONE:
          /* profile change finished being sent - done now. */
          /* do something here */
+         break;
+      case OP_MSG_PARENT:
+         if ((e->data) && (e->size > 0))
+           {
+              //ref = msg_domain
+              //ref_to = msg_id
+              if (ee->func.fn_msg_handle)
+                {
+                   INF("Message handle: ref=%d to=%d size=%d", e->ref, e->ref_to, e->size);
+                   ee->func.fn_msg_handle(ee, e->ref, e->ref_to, e->data, e->size);
+                }
+           }
          break;
       default:
          break;
@@ -2207,6 +2241,18 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
                 }
            }
          break;
+      case OP_MSG:
+         if ((e->data) && (e->size > 0))
+           {
+              //ref = msg_domain
+              //ref_to = msg_id
+              if (ee->func.fn_msg_parent_handle)
+                {
+                   INF("Message parent handle: ref=%d to=%d size=%d", e->ref, e->ref_to, e->size);
+                   ee->func.fn_msg_parent_handle(ee, e->ref, e->ref_to, e->data, e->size);
+                }
+           }
+         break;
       default:
          break;
      }
@@ -2284,6 +2330,25 @@ _ecore_evas_extn_socket_available_profiles_set(Ecore_Evas *ee, const char **plis
      }
 }
 
+static void
+_ecore_evas_extn_socket_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   Extn *extn;
+   Eina_List *l;
+   Ecore_Ipc_Client *client;
+
+   extn = bdata->data;
+   if (extn)
+     {
+        EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+           ecore_ipc_client_send(client, MAJOR, OP_MSG_PARENT,
+                                 msg_domain, msg_id, 0,
+                                 data,
+                                 size);
+     }
+}
+
 static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 {
    _ecore_evas_extn_free,
@@ -2345,6 +2410,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    _ecore_evas_extn_socket_render, // render
    NULL,  // screen_geometry_get
    NULL,  // screen_dpi_get
+   NULL,
+   _ecore_evas_extn_socket_msg_send
 };
 
 EAPI Ecore_Evas *

@@ -122,6 +122,8 @@ struct _Ecore_Evas_Engine_Func
    int (*fn_render) (Ecore_Evas *ee);
    void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
    void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
+   void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+   void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
 };
 
 struct _Ecore_Evas_Interface
@@ -295,6 +297,8 @@ struct _Ecore_Evas
       void          (*fn_post_render) (Ecore_Evas *ee);
       void          (*fn_pre_free) (Ecore_Evas *ee);
       void          (*fn_state_change) (Ecore_Evas *ee);
+      void          (*fn_msg_parent_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+      void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);			
    } func;
 
    Ecore_Evas_Engine engine;

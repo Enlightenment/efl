@@ -43,6 +43,8 @@ ecore_con_url_headers_example \
 ecore_evas_basics_example \
 ecore_evas_buffer_example_01 \
 ecore_evas_buffer_example_02 \
+ecore_evas_extn_socket_example \
+ecore_evas_extn_plug_example \
 ecore_evas_callbacks \
 ecore_evas_ews_example \
 ecore_evas_object_example \
@@ -141,6 +143,12 @@ ecore_evas_buffer_example_01_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 ecore_evas_buffer_example_02_SOURCES = ecore_evas_buffer_example_02.c
 ecore_evas_buffer_example_02_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
+ecore_evas_extn_socket_example_SOURCES = ecore_evas_extn_socket_example.c
+ecore_evas_extn_socket_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+
+ecore_evas_extn_plug_example_SOURCES = ecore_evas_extn_plug_example.c
+ecore_evas_extn_plug_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+
 ecore_evas_callbacks_SOURCES = ecore_evas_callbacks.c
 ecore_evas_callbacks_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 
@@ -233,6 +241,8 @@ ecore_con_url_headers_example.c \
 ecore_evas_basics_example.c \
 ecore_evas_buffer_example_01.c \
 ecore_evas_buffer_example_02.c \
+ecore_evas_extn_socket_example.c \
+ecore_evas_extn_plug_example.c \
 ecore_evas_callbacks.c \
 ecore_evas_ews_example.c \
 ecore_evas_object_example.c \
