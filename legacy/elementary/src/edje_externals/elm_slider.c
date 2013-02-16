@@ -170,7 +170,7 @@ external_slider_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      }
    else if (!strcmp(param->name, "min"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 	  {
 	     double min, max;
 	     elm_slider_min_max_get(obj, &min, &max);
@@ -180,7 +180,7 @@ external_slider_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      }
    else if (!strcmp(param->name, "max"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 	  {
 	     double min, max;
 	     elm_slider_min_max_get(obj, &min, &max);
