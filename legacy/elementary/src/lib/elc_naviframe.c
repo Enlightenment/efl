@@ -277,9 +277,14 @@ _item_title_visible_update(Elm_Naviframe_Item *nit)
 }
 
 static void
-_theme_update(Evas_Object *obj, Elm_Naviframe_Smart_Data *sd)
+_elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Naviframe_Item *it;
+   Elm_Naviframe_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
 
    EINA_INLIST_FOREACH(sd->stack, it)
      {
@@ -289,26 +294,7 @@ _theme_update(Evas_Object *obj, Elm_Naviframe_Smart_Data *sd)
      }
 
    elm_layout_sizing_eval(obj);
-}
-
-static void
-_elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
-   if (!int_ret) return;
-   _theme_update(obj, _pd);
    if (ret) *ret = EINA_TRUE;
-}
-
-static void
-_elm_naviframe_smart_orientation_set(Eo *obj, void *_pd, va_list *list)
-{
-   int rotation = va_arg(*list, int);
-   eo_do_super(obj, elm_wdg_orientation_set(rotation));
-   //TODO: Deffered Updation. update only top item.
-   _theme_update(obj, _pd);
 }
 
 static char *
@@ -1270,6 +1256,9 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_obj_size_hints_changed, obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+
+   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
+     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
 }
 
 static Eina_Bool
@@ -1370,10 +1359,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   Evas_Object *parent = eo_parent_get(obj);
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
 }
 
 EAPI Elm_Object_Item *
@@ -1985,7 +1970,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_naviframe_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_naviframe_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_naviframe_smart_access),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), _elm_naviframe_smart_orientation_set),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_naviframe_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_naviframe_smart_content_get),

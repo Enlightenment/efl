@@ -1046,7 +1046,6 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
              if (!elm_widget_sub_object_del(data, sobj)) return;
           }
      }
-
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
    evas_object_event_callback_add
@@ -4089,10 +4088,9 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *welement = va_arg(*list, const char *);
    const char *wstyle = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool ret2 = EINA_FALSE;
    Elm_Widget_Smart_Data *sd = _pd;
    char buf[128];
-
-   if (*ret) *ret = EINA_FALSE;
 
    //Apply orientation styles.
    if (welement)
@@ -4112,16 +4110,18 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                strncpy(buf, welement, sizeof(buf));
                break;
           }
-        *ret = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
+        ret2 = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
      }
-   if (!*ret)
+   if (!ret2)
      {
-        *ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
-        strncpy(buf, "elm,state,orient,default", sizeof(buf));
+        ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+        strncpy(buf, "elm,state,orient,0", sizeof(buf));
      }
    else
      snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
    elm_object_signal_emit(obj, buf, "elm");
+
+   if (ret) *ret = ret2;
 }
 
 static void
@@ -4515,13 +4515,13 @@ _elm_widget_orientation_mode_disabled_set(Eo *obj __UNUSED__, void *_pd, va_list
 
    if (!disabled)
      {
-        //Get current orient mode form it's parent otherwise, 0.
+        //Get current orient mode from it's parent otherwise, 0.
         sd->orient_mode = 0;
         ELM_WIDGET_DATA_GET(sd->parent_obj, sd_parent);
         if (!sd_parent) orient_mode = 0;
         else orient_mode = sd_parent->orient_mode;
      }
-   eo_do((Eo *) obj, elm_wdg_orientation_set(orient_mode));
+   eo_do((Eo *) obj, elm_wdg_orientation_set(orient_mode, NULL));
 }
 
 EAPI Eina_Bool
@@ -4548,7 +4548,7 @@ elm_widget_orientation_set(Evas_Object *obj, int rotation)
    ELM_WIDGET_CHECK(obj);
    ELM_WIDGET_DATA_GET(obj, sd);
    if ((sd->orient_mode == rotation) || (sd->orient_mode == -1)) return;
-   eo_do((Eo *) obj, elm_wdg_orientation_set(rotation));
+   eo_do((Eo *) obj, elm_wdg_orientation_set(rotation, NULL));
 }
 
 static void
@@ -4557,12 +4557,17 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
    Evas_Object *child;
    Eina_List *l;
    int orient_mode = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *sd = _pd;
 
    sd->orient_mode = orient_mode;
 
+   eo_do(obj, elm_wdg_theme(NULL));
+
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      elm_widget_orientation_set(child, orient_mode);
+
+   if (ret) *ret = EINA_TRUE;
 }
 
 /**

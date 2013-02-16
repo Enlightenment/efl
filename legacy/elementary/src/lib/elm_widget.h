@@ -2402,10 +2402,11 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  * No description supplied by the EAPI.
  *
+ * @param[in] degree
  * @param[out] ret
  *
  */
-#define elm_wdg_orientation_set(rotation) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), EO_TYPECHECK(int, rotation)
+#define elm_wdg_orientation_set(rotation, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_SET), EO_TYPECHECK(int, rotation), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_wdg_orientation_mode_disabled_set
