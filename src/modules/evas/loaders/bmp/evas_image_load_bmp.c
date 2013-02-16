@@ -768,7 +768,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                        else
                          {
                             if ((x & 0x7) != 0) p++;
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -823,7 +823,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                        else
                          {
                             if ((x & 0x1) != 0) p++;
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1012,7 +1012,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1191,7 +1191,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1225,7 +1225,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1264,7 +1264,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1352,7 +1352,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1392,7 +1392,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
@@ -1430,7 +1430,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        else
                          {
-                            fix = (int)(((unsigned long)p) & 0x3);
+                            fix = (int)(((uintptr_t)p) & 0x3);
                             if (fix > 0) p += 4 - fix; // align row read
                             if (p >= buffer_end) break;
                          }
