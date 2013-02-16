@@ -1047,6 +1047,8 @@ _on_item_show_finished(void *data,
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
+   elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
+
    elm_widget_tree_unfocusable_set(it->content, it->content_unfocusable);
 
    if (sd->freeze_events)
@@ -1071,10 +1073,10 @@ _item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
    switch (dispmode)
      {
       case EVAS_DISPLAY_MODE_COMPRESS:
-         edje_object_signal_emit(VIEW(it), "display,mode,compress", "");
+         elm_object_signal_emit(VIEW(it), "display,mode,compress", "");
          break;
       default:
-         edje_object_signal_emit(VIEW(it), "display,mode,default", "");
+         elm_object_signal_emit(VIEW(it), "display,mode,default", "");
          break;
      }
    it->dispmode = dispmode;
