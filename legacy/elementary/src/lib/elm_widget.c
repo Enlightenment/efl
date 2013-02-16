@@ -4098,6 +4098,7 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
    if (!ret2)
      {
+        //FIXME:For optimization, don't need to set to default when orientation mode is invalid.
         ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
         strncpy(buf, "elm,state,orient,0", sizeof(buf));
      }
