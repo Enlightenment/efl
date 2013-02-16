@@ -109,6 +109,7 @@ Improvements:
     * edje entry : Support &, < and > in preedit string
     * eina: Eina_Tiler now take tile size into account.
     * edje: reduce memory consumption of Edje program handler.
+    * eina, evas: improved support for 64bits system.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

@@ -420,7 +420,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  */
 #undef EINA_CLIST_ENTRY
 #define EINA_CLIST_ENTRY(elem, type, field) \
-    ((type *)((char *)(elem) - (unsigned long)(&((type *)0)->field)))
+    ((type *)((char *)(elem) - (uintptr_t)(&((type *)0)->field)))
 
 #include "eina_inline_clist.x"
 
