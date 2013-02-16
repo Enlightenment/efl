@@ -4459,83 +4459,13 @@ evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    return obj->prev.opaque;
 }
 
-static inline Eina_Bool
-_pixel_alpha_get(RGBA_Image *im, int x, int y, DATA8 *alpha,
-                 int src_region_x, int src_region_y, int src_region_w, int src_region_h,
-                 int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
-{
-   int px, py, dx, dy, sx, sy, src_w, src_h;
-   double scale_w, scale_h;
-
-   if ((dst_region_x > x) || (x >= (dst_region_x + dst_region_w)) ||
-       (dst_region_y > y) || (y >= (dst_region_y + dst_region_h)))
-     {
-        *alpha = 0;
-        return EINA_FALSE;
-     }
-
-   src_w = im->cache_entry.w;
-   src_h = im->cache_entry.h;
-   if ((src_w == 0) || (src_h == 0))
-     {
-        *alpha = 0;
-        return EINA_TRUE;
-     }
-
-   EINA_SAFETY_ON_TRUE_GOTO(src_region_x < 0, error_oob);
-   EINA_SAFETY_ON_TRUE_GOTO(src_region_y < 0, error_oob);
-   EINA_SAFETY_ON_TRUE_GOTO(src_region_x + src_region_w > src_w, error_oob);
-   EINA_SAFETY_ON_TRUE_GOTO(src_region_y + src_region_h > src_h, error_oob);
-
-   scale_w = (double)dst_region_w / (double)src_region_w;
-   scale_h = (double)dst_region_h / (double)src_region_h;
-
-   /* point at destination */
-   dx = x - dst_region_x;
-   dy = y - dst_region_y;
-
-   /* point at source */
-   sx = dx / scale_w;
-   sy = dy / scale_h;
-
-   /* pixel point (translated) */
-   px = src_region_x + sx;
-   py = src_region_y + sy;
-   EINA_SAFETY_ON_TRUE_GOTO(px >= src_w, error_oob);
-   EINA_SAFETY_ON_TRUE_GOTO(py >= src_h, error_oob);
-
-   switch (im->cache_entry.space)
-     {
-     case EVAS_COLORSPACE_ARGB8888:
-       {
-          DATA32 *pixel = im->image.data;
-          pixel += ((py * src_w) + px);
-          *alpha = ((*pixel) >> 24) & 0xff;
-       }
-       break;
-
-     default:
-        ERR("Colorspace %d not supported.", im->cache_entry.space);
-        *alpha = 0;
-     }
-
-   return EINA_TRUE;
-
- error_oob:
-   ERR("Invalid region src=(%d, %d, %d, %d), dst=(%d, %d, %d, %d), image=%dx%d",
-       src_region_x, src_region_y, src_region_w, src_region_h,
-       dst_region_x, dst_region_y, dst_region_w, dst_region_h,
-       src_w, src_h);
-   *alpha = 0;
-   return EINA_TRUE;
-}
-
 static int
 evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord px, Evas_Coord py)
 {
    Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
    int imagew, imageh, uvw, uvh;
    void *pixels;
+   Evas_Func *eng = obj->layer->evas->engine.func;
    int is_inside = 0;
 
    /* the following code is similar to evas_object_image_render(), but doesn't
@@ -4609,7 +4539,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
           }
         else
           {
-             RGBA_Image *im;
+             void *im;
              DATA32 *data = NULL;
              int err = 0;
 
@@ -4617,7 +4547,8 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                (obj->layer->evas->engine.data.output, pixels, 0, &data, &err);
              if ((!im) || (!data) || (err))
                {
-                  ERR("Couldn't get image pixels RGBA_Image %p: im=%p, data=%p, err=%d", pixels, im, data, err);
+                  ERR("Couldn't get image pixels %p: im=%p, data=%p, err=%d",
+                      pixels, im, data, err);
                   goto end;
                }
 
@@ -4665,7 +4596,13 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                              */
                               {
                                  DATA8 alpha = 0;
-                                 if (_pixel_alpha_get(pixels, px, py, &alpha, 0, 0, imagew, imageh, obj->cur.geometry.x + ix, obj->cur.geometry.y + iy, iw, ih))
+
+                                 if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                          0, 0,
+                                                          imagew, imageh,
+                                                          obj->cur.geometry.x + ix,
+                                                          obj->cur.geometry.y + iy,
+                                                          iw, ih))
                                    {
                                       is_inside = alpha > 0;
                                       dobreak_h = 1;
@@ -4726,7 +4663,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = bl; inh = bt;
                             outx = ox; outy = oy;
                             outw = bsl; outh = bst;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4740,7 +4679,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = imw - bl - br; inh = bt;
                             outx = ox + bsl; outy = oy;
                             outw = iw - bsl - bsr; outh = bst;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4753,7 +4694,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = br; inh = bt;
                             outx = ox + iw - bsr; outy = oy;
                             outw = bsr; outh = bst;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4761,12 +4704,14 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                  break;
                               }
                             // .--
-                            // #  
+                            // #
                             inx = 0; iny = bt;
                             inw = bl; inh = imh - bt - bb;
                             outx = ox; outy = oy + bst;
                             outw = bsl; outh = ih - bst - bsb;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4781,7 +4726,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                  inw = imw - bl - br; inh = imh - bt - bb;
                                  outx = ox + bsl; outy = oy + bst;
                                  outw = iw - bsl - bsr; outh = ih - bst - bsb;
-                                 if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                                 if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                          inx, iny, inw, inh,
+                                                          outx, outy, outw, outh))
                                    {
                                       is_inside = alpha > 0;
                                       dobreak_h = 1;
@@ -4795,7 +4742,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = br; inh = imh - bt - bb;
                             outx = ox + iw - bsr; outy = oy + bst;
                             outw = bsr; outh = ih - bst - bsb;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4808,7 +4757,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = bl; inh = bb;
                             outx = ox; outy = oy + ih - bsb;
                             outw = bsl; outh = bsb;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4821,7 +4772,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = imw - bl - br; inh = bb;
                             outx = ox + bsl; outy = oy + ih - bsb;
                             outw = iw - bsl - bsr; outh = bsb;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;
@@ -4834,7 +4787,9 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                             inw = br; inh = bb;
                             outx = ox + iw - bsr; outy = oy + ih - bsb;
                             outw = bsr; outh = bsb;
-                            if (_pixel_alpha_get(pixels, px, py, &alpha, inx, iny, inw, inh, outx, outy, outw, outh))
+                            if (eng->pixel_alpha_get(pixels, px, py, &alpha,
+                                                     inx, iny, inw, inh,
+                                                     outx, outy, outw, outh))
                               {
                                  is_inside = alpha > 0;
                                  dobreak_h = 1;

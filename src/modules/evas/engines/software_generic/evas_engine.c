@@ -1831,6 +1831,93 @@ eng_multi_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_F
    return EINA_FALSE;
 }
 
+static Eina_Bool
+eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h)
+{
+   RGBA_Image *im = image;
+   int px, py, dx, dy, sx, sy, src_w, src_h;
+   double scale_w, scale_h;
+
+   if (!im) return EINA_FALSE;
+
+   if ((dst_region_x > x) || (x >= (dst_region_x + dst_region_w)) ||
+       (dst_region_y > y) || (y >= (dst_region_y + dst_region_h)))
+     {
+        *alpha = 0;
+        return EINA_FALSE;
+     }
+
+   src_w = im->cache_entry.w;
+   src_h = im->cache_entry.h;
+   if ((src_w == 0) || (src_h == 0))
+     {
+        *alpha = 0;
+        return EINA_TRUE;
+     }
+
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_x < 0, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_y < 0, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_x + src_region_w > src_w, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(src_region_y + src_region_h > src_h, error_oob);
+
+   scale_w = (double)dst_region_w / (double)src_region_w;
+   scale_h = (double)dst_region_h / (double)src_region_h;
+
+   /* point at destination */
+   dx = x - dst_region_x;
+   dy = y - dst_region_y;
+
+   /* point at source */
+   sx = dx / scale_w;
+   sy = dy / scale_h;
+
+   /* pixel point (translated) */
+   px = src_region_x + sx;
+   py = src_region_y + sy;
+   EINA_SAFETY_ON_TRUE_GOTO(px >= src_w, error_oob);
+   EINA_SAFETY_ON_TRUE_GOTO(py >= src_h, error_oob);
+
+   switch (im->cache_entry.space)
+     {
+     case EVAS_COLORSPACE_ARGB8888:
+       {
+          DATA32 *pixel;
+
+#ifdef EVAS_CSERVE2
+          if (evas_cserve2_use_get())
+            evas_cache2_image_load_data(&im->cache_entry);
+          else
+#endif
+            evas_cache_image_load_data(&im->cache_entry);
+
+          if (!im->cache_entry.flags.loaded)
+            {
+               ERR("im %p has no pixels loaded yet", im);
+               return EINA_FALSE;
+            }
+
+          pixel = im->image.data;
+          pixel += ((py * src_w) + px);
+          *alpha = ((*pixel) >> 24) & 0xff;
+       }
+       break;
+
+     default:
+        ERR("Colorspace %d not supported.", im->cache_entry.space);
+        *alpha = 0;
+     }
+
+   return EINA_TRUE;
+
+ error_oob:
+   ERR("Invalid region src=(%d, %d, %d, %d), dst=(%d, %d, %d, %d), image=%dx%d",
+       src_region_x, src_region_y, src_region_w, src_region_h,
+       dst_region_x, dst_region_y, dst_region_w, dst_region_h,
+       src_w, src_h);
+   *alpha = 0;
+   return EINA_TRUE;
+}
+
 static void
 eng_image_cache_flush(void *data EINA_UNUSED)
 {
@@ -2565,6 +2652,7 @@ static Evas_Func func =
      eng_image_animated_frame_set,
      NULL,
      eng_multi_font_draw,
+     eng_pixel_alpha_get,
    /* FUTURE software generic calls go here */
 };
 

@@ -1,3 +1,7 @@
+2013-02-16  Paulo C. A. Cavalcanti Jr
+
+	* Evas: add pixels_alpha_get to evas engine.
+
 2013-02-16  Cedric Bail
 
 	* Eina: improved Eina_Clist support for 64bits system.
