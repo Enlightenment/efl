@@ -146,7 +146,7 @@ enum
  * @def elm_obj_panes_fixed_set
  * @since 1.8
  *
- * Set whether the left and right panes resize homogeneously or not.
+ * Set whether the left and right panes can be resized by user interaction.
  *
  * @param[in] fixed
  *
@@ -184,17 +184,14 @@ enum
 EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
 
 /**
- * Set whether the left and right panes resize homogeneously or not.
+ * Set whether the left and right panes can be resized by user interaction.
  *
  * @param obj The panes object.
- * @param fixed Use @c EINA_TRUE to make @p obj to be
- * resize the left and right panes @b homogeneously.
- * Use @c EINA_FALSE to make use of the values specified in
- * elm_panes_content_left_size_set() and
- * elm_panes_content_right_size_set()
- * to resize the left and right panes.
+ * @param fixed Use @c EINA_TRUE to fix the left and right panes sizes and make
+ * them not to be resized by user interaction. Use @c EINA_FALSE to make them
+ * resizable.
  *
- * By default panes are resized homogeneously.
+ * By default panes' contents are resizable by user interaction.
  *
  * @see elm_panes_fixed_get()
  * @see elm_panes_content_left_size_set()
@@ -208,7 +205,7 @@ EAPI void                         elm_panes_fixed_set(Evas_Object *obj, Eina_Boo
  * Retrieve the resize mode for the panes of a given panes widget.
  *
  * @param obj The panes object.
- * @return @c EINA_TRUE, if @p obj is set to be resized @b homogeneously,
+ * @return @c EINA_TRUE, if @p obj is set to be resizable by user interaction.
  *
  * @see elm_panes_fixed_set() for more details.
  * @see elm_panes_content_left_size_get()
