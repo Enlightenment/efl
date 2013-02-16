@@ -1127,51 +1127,53 @@ static void
 _elm_web_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Web_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Object *resize_obj;
 
 #ifdef HAVE_ELEMENTARY_WEB
-   wd->resize_obj = _view_add(obj);
+   resize_obj = _view_add(obj);
 #else
-   wd->resize_obj = elm_label_add(obj);
+   resize_obj = elm_label_add(obj);
+   elm_widget_resize_object_set(obj, resize_obj);
+
    elm_object_text_set
-     (wd->resize_obj, "WebKit not supported!");
-   evas_object_show(wd->resize_obj);
+     (resize_obj, "WebKit not supported!");
+   evas_object_show(resize_obj);
 #endif
 
    eo_do_super(obj, evas_obj_smart_add());
 
 #ifdef HAVE_ELEMENTARY_WEB
    ewk_view_setting_user_agent_set
-     (wd->resize_obj, ELM_WEB_USER_AGENT);
+     (resize_obj, ELM_WEB_USER_AGENT);
 
    priv->input_method = ELM_WIN_KEYBOARD_OFF;
    evas_object_smart_callback_add
-     (wd->resize_obj, "inputmethod,changed",
+     (resize_obj, "inputmethod,changed",
      _ewk_view_inputmethod_change_cb, priv);
    evas_object_smart_callback_add
-     (wd->resize_obj, "load,started",
+     (resize_obj, "load,started",
      _ewk_view_load_started_cb, priv);
    evas_object_smart_callback_add
-     (wd->resize_obj, "popup,create",
+     (resize_obj, "popup,create",
      _ewk_view_popup_create_cb, priv);
    evas_object_smart_callback_add
-     (wd->resize_obj, "load,finished",
+     (resize_obj, "load,finished",
      _ewk_view_load_finished_cb, priv);
    evas_object_smart_callback_add
-     (wd->resize_obj, "viewport,changed",
+     (resize_obj, "viewport,changed",
      _ewk_view_viewport_changed_cb, priv);
    evas_object_smart_callback_add
-     (wd->resize_obj, "view,resized",
+     (resize_obj, "view,resized",
      _ewk_view_resized_cb, priv);
 
    priv->inwin_mode = _elm_config->inwin_dialogs_enable;
    priv->zoom.min =
-     ewk_view_zoom_range_min_get(wd->resize_obj);
+     ewk_view_zoom_range_min_get(resize_obj);
    priv->zoom.max =
-     ewk_view_zoom_range_max_get(wd->resize_obj);
+     ewk_view_zoom_range_max_get(resize_obj);
    priv->zoom.current = 1.0;
 
-   _view_smart_callback_proxy(wd->resize_obj, obj);
+   _view_smart_callback_proxy(resize_obj, obj);
    eo_do(obj, elm_wdg_theme(NULL));
 
    elm_widget_can_focus_set(obj, EINA_TRUE);

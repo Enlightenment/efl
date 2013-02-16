@@ -1335,19 +1335,18 @@ _on_size_evaluate_signal(void *data,
 static void
 _elm_layout_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Object *edje;
 
    /* has to be there *before* parent's smart_add() */
-   wd->resize_obj =
-     edje_object_add(evas_object_evas_get(obj));
+   edje = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, edje);
 
    eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "size,eval", "elm",
-     _on_size_evaluate_signal, obj);
+     (edje, "size,eval", "elm", _on_size_evaluate_signal, obj);
 
    eo_do(obj, elm_obj_layout_sizing_eval());
 }

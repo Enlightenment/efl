@@ -1249,21 +1249,19 @@ static void
 _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Diskselector_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
    Evas *evas;
-   Evas_Object *blank;
+   Evas_Object *blank, *edje;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
 
-   wd->resize_obj =
-     edje_object_add(evas_object_evas_get(obj));
+   edje = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, edje);
 
    eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_theme_object_set
-     (obj, wd->resize_obj, "diskselector", "base",
-     elm_widget_style_get(obj));
+     (obj, edje, "diskselector", "base", elm_widget_style_get(obj));
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
@@ -1276,7 +1274,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_scrollable_interface_objects_set(wd->resize_obj, priv->hit_rect));
+   eo_do(obj, elm_scrollable_interface_objects_set(edje, priv->hit_rect));
 
    priv->len_side = 3;
 

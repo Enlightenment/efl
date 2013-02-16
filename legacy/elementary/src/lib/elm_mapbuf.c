@@ -233,16 +233,14 @@ static void
 _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Mapbuf_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-
-   wd->resize_obj =
-       evas_object_rectangle_add(evas_object_evas_get(obj));
+   Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, rect);
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   evas_object_static_clip_set(wd->resize_obj, EINA_TRUE);
-   evas_object_pass_events_set(wd->resize_obj, EINA_TRUE);
-   evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
+   evas_object_static_clip_set(rect, EINA_TRUE);
+   evas_object_pass_events_set(rect, EINA_TRUE);
+   evas_object_color_set(rect, 0, 0, 0, 0);
 
    priv->alpha = EINA_TRUE;
    priv->smooth = EINA_TRUE;

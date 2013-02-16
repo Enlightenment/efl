@@ -1024,8 +1024,12 @@
 
 2013-02-16  Paulo C. A. Cavalcanti Jr
 
-	* Fix elm_config to properly check file type.
+        * Fix elm_config to properly check file type.
 
 2013-02-16  ChunEon Park (Hermet)
 
         * Improve naviframe to not apply items'style multiple times.
+
+2013-02-16  ChunEon Park (Hermet)
+
+        * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. this causes overhead in some cases.

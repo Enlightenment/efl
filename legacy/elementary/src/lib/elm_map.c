@@ -3938,18 +3938,17 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw, minh;
    Elm_Map_Pan_Smart_Data *pan_data;
+   Evas_Object *edje;
 
    Elm_Map_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   wd->resize_obj =
-     edje_object_add(evas_object_evas_get(obj));
+   edje = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, edje);
 
    eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_theme_object_set
-     (obj, wd->resize_obj, "map", "base",
-     elm_widget_style_get(obj));
+     (obj, edje, "map", "base", elm_widget_style_get(obj));
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
@@ -3970,7 +3969,7 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, priv);
 
    eo_do(obj,
-         elm_scrollable_interface_objects_set(wd->resize_obj, priv->hit_rect),
+         elm_scrollable_interface_objects_set(edje, priv->hit_rect),
          elm_scrollable_interface_wheel_disabled_set(EINA_TRUE),
          elm_scrollable_interface_bounce_allow_set(
             _elm_config->thumbscroll_bounce_enable,
@@ -3991,7 +3990,7 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
 
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+   edje_object_size_min_calc(edje, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
    priv->g_layer = elm_gesture_layer_add(obj);

@@ -178,13 +178,13 @@ _elm_table_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _elm_table_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *priv = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Object *table;
 
-   priv->resize_obj = evas_object_table_add(evas_object_evas_get(obj));
+   table = evas_object_table_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, table);
 
    evas_object_event_callback_add
-     (priv->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _on_size_hints_changed, obj);
+     (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
 
    eo_do_super(obj, evas_obj_smart_add());
 

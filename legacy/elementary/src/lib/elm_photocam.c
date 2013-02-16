@@ -1293,18 +1293,18 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord minw, minh;
    Elm_Photocam_Pan_Smart_Data *pan_data;
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
+   Evas_Object *edje;
 
    Elm_Photocam_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   wd->resize_obj =
-     edje_object_add(evas_object_evas_get(obj));
+   edje = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_resize_object_set(obj, edje);
 
    eo_do_super(obj, evas_obj_smart_add());
 
    elm_widget_theme_object_set
-     (obj, wd->resize_obj, "photocam", "base",
-     elm_widget_style_get(obj));
+      (obj, edje, "photocam", "base", elm_widget_style_get(obj));
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
@@ -1317,8 +1317,7 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_scrollable_interface_objects_set
-         (wd->resize_obj, priv->hit_rect));
+   eo_do(obj, elm_scrollable_interface_objects_set(edje, priv->hit_rect));
 
    eo_do(obj,
          elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
@@ -1358,7 +1357,7 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_add
      (priv->img, EVAS_CALLBACK_IMAGE_PRELOADED, _main_img_preloaded_cb, obj);
 
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+   edje_object_size_min_calc(edje, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
    _sizing_eval(obj);

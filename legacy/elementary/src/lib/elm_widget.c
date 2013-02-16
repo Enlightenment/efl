@@ -759,8 +759,6 @@ elm_widget_theme(Evas_Object *obj)
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      if (_elm_widget_is(child)) ret &= elm_widget_theme(child);
-   if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
-     ret &= elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
 
    EINA_LIST_FOREACH(sd->tooltips, l, tt)
@@ -809,7 +807,6 @@ elm_widget_theme_specific(Evas_Object *obj,
    if (!force) return;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      elm_widget_theme_specific(child, th, force);
-   if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt)
      elm_tooltip_theme(tt);
@@ -2958,14 +2955,6 @@ _elm_widget_focus_set(Eo *obj, void *_pd, va_list *list)
                   break;
                }
           }
-        if (!l)
-          {
-             if ((_is_focusable(sd->resize_obj)) &&
-                 (!elm_widget_disabled_get(sd->resize_obj)))
-               {
-                  elm_widget_focus_set(sd->resize_obj, first);
-               }
-          }
      }
 }
 
@@ -3107,12 +3096,8 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
    API_ENTRY return;
 
    if (sd->top_win_focused == top_win_focused) return;
-   if (sd->resize_obj)
-     _elm_widget_top_win_focused_set(sd->resize_obj, top_win_focused);
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     {
-        _elm_widget_top_win_focused_set(child, top_win_focused);
-     }
+     _elm_widget_top_win_focused_set(child, top_win_focused);
    sd->top_win_focused = top_win_focused;
 }
 
@@ -3747,7 +3732,6 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list 
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      elm_widget_translate(child);
-   if (sd->resize_obj) elm_widget_translate(sd->resize_obj);
    if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
 #ifdef HAVE_GETTEXT
    EINA_LIST_FOREACH(sd->translate_strings, l, ts)
@@ -4212,14 +4196,6 @@ _widget_name_find(const Evas_Object *obj,
    INTERNAL_ENTRY NULL;
 
    if (!_elm_widget_is(obj)) return NULL;
-   if (sd->resize_obj)
-     {
-        s = evas_object_name_get(sd->resize_obj);
-        if ((s) && (!strcmp(s, name))) return sd->resize_obj;
-        if ((recurse != 0) &&
-            ((child = _widget_name_find(sd->resize_obj, name, recurse - 1))))
-          return child;
-     }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         s = evas_object_name_get(child);
@@ -4562,10 +4538,10 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 
    sd->orient_mode = orient_mode;
 
-   eo_do(obj, elm_wdg_theme(NULL));
-
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      elm_widget_orientation_set(child, orient_mode);
+
+   eo_do(obj, elm_wdg_theme(NULL));
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -5365,13 +5341,8 @@ _sub_obj_tree_dump(const Evas_Object *obj,
         printf("+ %s(%p)\n",
                elm_widget_type_get(obj),
                obj);
-        if (sd->resize_obj)
-          _sub_obj_tree_dump(sd->resize_obj, lvl + 1);
         EINA_LIST_FOREACH(sd->subobjs, l, obj)
-          {
-             if (obj != sd->resize_obj)
-               _sub_obj_tree_dump(obj, lvl + 1);
-          }
+          _sub_obj_tree_dump(obj, lvl + 1);
      }
    else
      printf("+ %s(%p)\n", evas_object_type_get(obj), obj);
