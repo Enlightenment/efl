@@ -282,10 +282,7 @@ _elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Naviframe_Item *it;
    Elm_Naviframe_Smart_Data *sd = _pd;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret = EINA_FALSE;
    const char *style, *sstyle;
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
-   if (!int_ret) return;
 
    eo_do(obj, elm_wdg_style_get(&style));
 
