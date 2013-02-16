@@ -127,7 +127,7 @@ _item_free(Elm_Naviframe_Item *it)
           {
              /* so that elm does not delete the contents with the item's
               * view after the del_pre_hook */
-             elm_object_part_content_unset(VIEW(it), "elm.swallow.content");
+             elm_object_part_content_unset(VIEW(it), CONTENT_PART);
              evas_object_event_callback_del
                 (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
           }
@@ -557,7 +557,7 @@ _item_content_unset(Elm_Naviframe_Item *it)
 
    if (!content) return NULL;
 
-   elm_object_part_content_unset(VIEW(it), "elm.swallow.content");
+   elm_object_part_content_unset(VIEW(it), CONTENT_PART);
    elm_object_signal_emit(VIEW(it), "elm,state,content,hide", "elm");
 
    evas_object_event_callback_del
@@ -574,7 +574,7 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item *it)
 
    if (!content) return NULL;
 
-   elm_object_part_content_unset(VIEW(it), "elm.swallow.prev_btn");
+   elm_object_part_content_unset(VIEW(it), PREV_BTN_PART);
    elm_object_signal_emit(VIEW(it), "elm,state,prev_btn,hide", "elm");
 
    evas_object_event_callback_del
@@ -591,7 +591,7 @@ _item_title_next_btn_unset(Elm_Naviframe_Item *it)
 
    if (!content) return NULL;
 
-   elm_object_part_content_unset(VIEW(it), "elm.swallow.next_btn");
+   elm_object_part_content_unset(VIEW(it), NEXT_BTN_PART);
    elm_object_signal_emit(VIEW(it), "elm,state,next_btn,hide", "elm");
 
    evas_object_event_callback_del
@@ -608,7 +608,7 @@ _item_title_icon_unset(Elm_Naviframe_Item *it)
 
    if (!content) return NULL;
 
-   elm_object_part_content_unset(VIEW(it), "elm.swallow.icon");
+   elm_object_part_content_unset(VIEW(it), ICON_PART);
    elm_object_signal_emit(VIEW(it), "elm,state,icon,hide", "elm");
 
    evas_object_event_callback_del
@@ -876,11 +876,11 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
     * set an icon.
     */
    ed = elm_layout_edje_get(btn);
-   if (edje_object_part_exists(ed, "elm.swallow.content"))
+   if (edje_object_part_exists(ed, CONTENT_PART))
      {
         Evas_Object *ico = elm_icon_add(btn);
         elm_icon_standard_set(ico, "arrow_left");
-        elm_layout_content_set(btn, "elm.swallow.content", ico);
+        elm_layout_content_set(btn, CONTENT_PART, ico);
      }
 
    return btn;
