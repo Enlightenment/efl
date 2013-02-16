@@ -483,8 +483,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_LEFT_SIZE_SET, "Set the size proportion of panes widget's left side."),
      EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_GET, "Get the size proportion of panes widget's right side."),
      EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_SET, "Set the size proportion of panes widget's right side."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_SET, "Set the orientation of a given panes widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_GET, "Retrieve the orientation of a given panes widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_SET, "Set how to split and dispose each content."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_GET, "Retrieve the split direction of a given panes widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_FIXED_SET, "Set whether the left and right panes can be resized by user interaction"),
      EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_FIXED_GET, "Retrieve the resize mode for the panes of a given panes widget."),
      EO_OP_DESCRIPTION_SENTINEL

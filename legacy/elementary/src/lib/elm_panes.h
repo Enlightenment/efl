@@ -14,7 +14,7 @@
  * The panes widget adds a draggable bar between two contents. When dragged
  * this bar will resize contents' size.
  *
- * Panes can be displayed vertically or horizontally, and contents
+ * Panes can be split vertically or horizontally, and contents
  * size proportion can be customized (homogeneous by default).
  *
  * This widget inherits from the @ref Layout one, so that all the
@@ -122,7 +122,7 @@ enum
  * @def elm_obj_panes_horizontal_set
  * @since 1.8
  *
- * Set the orientation of a given panes widget.
+ * Set how to split and dispose each content.
  *
  * @param[in] horizontal
  *
@@ -134,7 +134,7 @@ enum
  * @def elm_obj_panes_horizontal_get
  * @since 1.8
  *
- * Retrieve the orientation of a given panes widget.
+ * Retrieve the split direction of a given panes widget.
  *
  * @param[out] ret
  *
@@ -293,18 +293,19 @@ EAPI void                         elm_panes_content_right_size_set(Evas_Object *
 
 
 /**
- * Set the orientation of a given panes widget.
+ * Set how to split and dispose each content.
  *
  * @param obj The panes object.
- * @param horizontal Use @c EINA_TRUE to make @p obj to be
- * @b horizontal, @c EINA_FALSE to make it @b vertical.
+ * @param horizontal Use @c EINA_TRUE to make @p obj to split panes
+ * horizontally ("top" and  "bottom" contents). @c EINA_FALSE to make it
+ * vertically ("left" and "right" contents)
  *
- * Use this function to change how your panes is to be
- * disposed: vertically or horizontally.
+ * Use this function to change how your panes is to be disposed:
+ * vertically or horizontally.
  * Horizontal panes have "top" and "bottom" contents, vertical panes have
  * "left" and "right" contents.
  *
- * By default it's displayed horizontally.
+ * By default panes is in a vertical mode.
  *
  * @see elm_panes_horizontal_get()
  *
@@ -313,7 +314,7 @@ EAPI void                         elm_panes_content_right_size_set(Evas_Object *
 EAPI void                         elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
- * Retrieve the orientation of a given panes widget.
+ * Retrieve the split direction of a given panes widget.
  *
  * @param obj The panes object.
  * @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
