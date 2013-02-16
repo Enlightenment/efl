@@ -57,7 +57,14 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    size = elm_panes_content_left_size_get(obj);
 
-   if (sd->fixed) elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+   if (sd->fixed)
+     {
+        elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
+
+        //TODO: remove this signal on EFL 2.0.
+        // I left this due to the backward compatibility.
+        elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+     }
 
    elm_layout_sizing_eval(obj);
 
@@ -395,9 +402,21 @@ _elm_panes_smart_fixed_set(Eo *obj, void *_pd, va_list *list)
 
    sd->fixed = !!fixed;
    if (sd->fixed == EINA_TRUE)
-     elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,panes,fixed", "elm");
+
+        //TODO: remove this signal on EFL 2.0.
+        // I left this due to the backward compatibility.
+        elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm.panes.unfixed", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,panes,unfixed", "elm");
+
+        //TODO: remove this signal on EFL 2.0.
+        // I left this due to the backward compatibility.
+        elm_layout_signal_emit(obj, "elm.panes.unfixed", "elm");
+     }
 }
 
 EAPI Eina_Bool

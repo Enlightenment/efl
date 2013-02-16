@@ -446,7 +446,7 @@ group { name: "elm/panes/vertical/default";
       //fix the pane
       program {
          name: "panes_fixed";
-         signal: "elm.panes.fixed";
+         signal: "elm,panes,fixed";
          source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.bar";
@@ -456,7 +456,7 @@ group { name: "elm/panes/vertical/default";
       //allow the movement by interaction
       program {
          name: "panes_unfixed";
-         signal: "elm.panes.unfixed";
+         signal: "elm,panes,unfixed";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.bar";
@@ -779,7 +779,7 @@ group { name: "elm/panes/horizontal/default";
       //fix the pane
       program {
          name:   "panes_fixed";
-         signal: "elm.panes.fixed";
+         signal: "elm,panes,fixed";
          source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.bar";
@@ -789,7 +789,7 @@ group { name: "elm/panes/horizontal/default";
       //allow the movement by interaction
       program {
          name:   "panes_unfixed";
-         signal: "elm.panes.unfixed";
+         signal: "elm,panes,unfixed";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.bar";
