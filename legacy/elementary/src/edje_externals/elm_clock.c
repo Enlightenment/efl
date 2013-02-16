@@ -52,7 +52,7 @@ external_clock_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	  {
 	     int hrs, min, sec;
 	     elm_clock_time_get(obj, &hrs, &min, &sec);
-	     elm_clock_time_set(obj, param->d, min, sec);
+	     elm_clock_time_set(obj, param->i, min, sec);
 	     return EINA_TRUE;
 	  }
      }
@@ -62,7 +62,7 @@ external_clock_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	  {
 	     int hrs, min, sec;
 	     elm_clock_time_get(obj, &hrs, &min, &sec);
-	     elm_clock_time_set(obj, hrs, param->d, sec);
+	     elm_clock_time_set(obj, hrs, param->i, sec);
 	     return EINA_TRUE;
 	  }
      }
@@ -72,7 +72,7 @@ external_clock_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	  {
 	     int hrs, min, sec;
 	     elm_clock_time_get(obj, &hrs, &min, &sec);
-	     elm_clock_time_set(obj, hrs, min, param->d);
+	     elm_clock_time_set(obj, hrs, min, param->i);
 	     return EINA_TRUE;
 	  }
      }
