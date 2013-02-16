@@ -1,6 +1,7 @@
 2013-02-16  Cedric Bail
 
 	* Eina: improved Eina_Clist support for 64bits system.
+	* Evas: improved BMP support for 64bits system.
 
 2013-02-15  Tom Hacohen (TAsn)
 
