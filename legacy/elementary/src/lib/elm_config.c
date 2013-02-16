@@ -792,7 +792,7 @@ sys:
                            strlen(_elm_data_dir), "config",
                            sizeof("config") - 1);
 
-   file_it = eina_file_direct_ls(buf);
+   file_it = eina_file_stat_ls(buf);
    if (!file_it)
      goto list_free;
 
