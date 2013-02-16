@@ -80,7 +80,8 @@ _on_show(void *data __UNUSED__,
 
    evas_object_show(sd->notify);
 
-   /* yeah, ugly, but again, this widget needs a rewrite */
+/* FIXME: Should be rewritten popup. This code is for arranging child-parent relation well. Without this code, Popup't top parent will be notify. And there will be no parent for notify. Terrible! */
+   elm_widget_sub_object_add(elm_widget_parent_get(obj), sd->notify);
    elm_object_content_set(sd->notify, obj);
 
    elm_object_focus_set(obj, EINA_TRUE);
