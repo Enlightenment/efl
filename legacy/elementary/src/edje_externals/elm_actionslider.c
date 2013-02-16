@@ -92,6 +92,7 @@ external_actionslider_params_free(void *params)
 
 static Edje_External_Param_Info external_actionslider_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
