@@ -30,14 +30,14 @@ _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt = data;
    elm_object_disabled_set(bt, EINA_TRUE);
 }
 
 static void
-_enable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_enable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt = data;
    elm_object_disabled_set(bt, EINA_FALSE);
@@ -281,7 +281,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
-                  evas_object_smart_callback_add(bt, "clicked", _disable, bt);
+                  evas_object_smart_callback_add(bt, "clicked", my_disable, bt);
                   my_show(bt);
                   elm_object_focus_custom_chain_prepend(bx2, bt, NULL);
 
@@ -292,7 +292,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt2);
-                  evas_object_smart_callback_add(bt2, "clicked", _enable, bt);
+                  evas_object_smart_callback_add(bt2, "clicked", my_enable, bt);
                   my_show(bt2);
                   elm_object_focus_custom_chain_append(bx2, bt2, NULL);
                }

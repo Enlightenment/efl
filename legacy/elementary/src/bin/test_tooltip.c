@@ -53,15 +53,15 @@ gltt_exp(void *data       __UNUSED__,
 {
    Elm_Object_Item *glit = event_info;
    Evas_Object *gl = elm_object_item_widget_get(glit);
-   int val = (int)(long) elm_object_item_data_get(glit);
+   int val = (int)(uintptr_t) elm_object_item_data_get(glit);
    Elm_Object_Item *glit1, *glit2, *glit3;
 
    val *= 10;
-   glit1 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 1), glit,
+   glit1 = elm_genlist_item_append(gl, &itct, (void *)(uintptr_t) (val + 1), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   glit2 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 2), glit,
+   glit2 = elm_genlist_item_append(gl, &itct, (void *)(uintptr_t) (val + 2), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   glit3 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 3), glit,
+   glit3 = elm_genlist_item_append(gl, &itct, (void *)(uintptr_t) (val + 3), glit,
                                    ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
    elm_genlist_item_tooltip_text_set(glit1, "Testing A");
@@ -102,7 +102,7 @@ gltt_text_get(void            *data,
                const char *part __UNUSED__)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);
+   snprintf(buf, sizeof(buf), "Item mode %i", (int)(uintptr_t)data);
    return strdup(buf);
 }
 
@@ -185,7 +185,7 @@ _tt_item_icon_del(void            *data,
 {
    // test to check for del_cb behavior!
    printf("_tt_icon_del: data=%ld (== 456?), event_info=%p\n",
-          (long)data, event_info);
+          (long)(uintptr_t)data, event_info);
 }
 
 static void
@@ -275,7 +275,7 @@ _tt_icon_del(void            *data,
 {
    // test to check for del_cb behavior!
    printf("_tt_icon_del: data=%ld (== 123?), event_info=%p\n",
-          (long)data, event_info);
+          (long)(uintptr_t)data, event_info);
 }
 
 static Eina_Bool

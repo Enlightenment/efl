@@ -1033,3 +1033,7 @@
 2013-02-16  ChunEon Park (Hermet)
 
         * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. this causes overhead in some cases.
+
+2013-02-17  Cedric Bail
+
+	* Improve support on some 64bits system.

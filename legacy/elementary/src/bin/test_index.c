@@ -120,7 +120,7 @@ static Elm_Genlist_Item_Class itci;
 char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
-   int j = (long)data;
+   int j = (uintptr_t)data;
    snprintf(buf, sizeof(buf), "%c%c",
             'A' + ((j >> 4) & 0xf),
             'a' + ((j     ) & 0xf)
@@ -221,7 +221,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    for (i = 0; i < 100; i++)
      {
         glit = elm_genlist_item_append(gl, &itci,
-                                       (void *)(long)j/* item data */,
+                                       (void *)(uintptr_t)j/* item data */,
                                        NULL/* parent */,
                                        ELM_GENLIST_ITEM_NONE,
                                        NULL/* func */, NULL/* func data */);

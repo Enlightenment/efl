@@ -2,11 +2,7 @@
 #include "elm_priv.h"
 #include "elm_widget_image.h"
 
-#ifdef _WIN32
-# define FMT_SIZE_T "%Iu"
-#else
-# define FMT_SIZE_T "%zu"
-#endif
+#define FMT_SIZE_T "%zu"
 
 EAPI Eo_Op ELM_OBJ_IMAGE_BASE_ID = EO_NOOP;
 

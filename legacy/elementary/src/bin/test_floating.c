@@ -15,7 +15,7 @@ static Elm_Genlist_Item_Class itc1;
 static char *glf_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
    return strdup(buf);
 }
 
@@ -88,11 +88,11 @@ test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    for (i = 0; i < 20; i++)
      {
         elm_genlist_item_append(gl, &itc1,
-                                (void *)(long)i/* item data */,
+                                (void *)(uintptr_t)i/* item data */,
                                 NULL/* parent */,
                                 ELM_GENLIST_ITEM_NONE,
                                 gl_sel/* func */,
-                                (void *)(long)(i * 10)/* func data */);
+                                (void *)(uintptr_t)(i * 10)/* func data */);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);

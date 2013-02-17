@@ -71,6 +71,7 @@ Improvements:
    * Popup is now a focusable object.
    * Improve naviframe to not apply items' style multiple times when theme/styles are changed.
    * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. This causes overhead in some cases(ie, theme change..).
+   * Improve support on 64bits system.
 
 Fixes:
 

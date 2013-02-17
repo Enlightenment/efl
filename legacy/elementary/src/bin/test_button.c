@@ -18,7 +18,7 @@ _bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED_
 static void
 _bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   int param = (int)(long)(data);
+   int param = (int)(uintptr_t)(data);
 
    printf("clicked event on Button:%d\n", param);
 }
@@ -26,7 +26,7 @@ _bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 static void
 _bt_unpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   int param = (int)(long)(data);
+   int param = (int)(uintptr_t)(data);
 
    printf("unpressed event on Button:%d\n", param);
 }

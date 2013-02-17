@@ -283,7 +283,7 @@ _shrink_mode_set(Evas_Object *obj,
 
         sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
         evas_object_smart_callback_call
-          (obj, SIG_EXPAND_STATE_CHANGED, (void *)(long)sd->shrink);
+          (obj, SIG_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
      }
 
    if (sd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)

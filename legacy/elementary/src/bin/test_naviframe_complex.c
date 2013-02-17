@@ -26,7 +26,7 @@ static char *
 gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
    return strdup(buf);
 }
 

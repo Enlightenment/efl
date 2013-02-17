@@ -575,7 +575,7 @@ _propagate_event(void *data,
                  void *event_info)
 {
    INTERNAL_ENTRY;
-   Evas_Callback_Type type = (Evas_Callback_Type)(long)data;
+   Evas_Callback_Type type = (Evas_Callback_Type)(uintptr_t)data;
    Evas_Event_Flags *event_flags = NULL;
 
    switch (type)
