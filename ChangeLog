@@ -1,3 +1,7 @@
+2013-02-17  Mike Blumenkrantz
+
+        * fix anchor clicked mouse signals for selection-enabled entries
+
 2013-02-16  Paulo C. A. Cavalcanti Jr
 
 	* Evas: add pixels_alpha_get to evas engine.

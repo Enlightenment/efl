@@ -171,3 +171,4 @@ Fixes:
     * fix bug not to display preedit string with PREEDIT_TYPE_NONE style
     * Fix bug candidate word couldn't be selected with up/down key in the preedit status
     * Edje textblock: Improved textblock fit.
+    * fix anchor clicked mouse signals for selection-enabled entries
