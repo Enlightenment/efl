@@ -1037,3 +1037,7 @@
 2013-02-17  Cedric Bail
 
 	* Improve support on some 64bits system.
+
+2013-02-17 Mike Blumenkrantz
+
+        * ignore tab key widget focus change if control/alt is pressed

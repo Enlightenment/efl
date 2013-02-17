@@ -152,6 +152,7 @@ Fixes:
    * Fix elc_player pause state to be in sync
    * Fix time string display to handle hours right
    * Fix elm_config to properly check file type.
+   * ignore tab key widget focus change if control/alt is pressed
 
 Removals:
 
