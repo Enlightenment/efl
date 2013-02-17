@@ -1041,3 +1041,4 @@
 2013-02-17 Mike Blumenkrantz
 
         * ignore tab key widget focus change if control/alt is pressed
+        * prevent blank entry hoversels

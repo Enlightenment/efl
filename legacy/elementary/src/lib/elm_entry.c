@@ -1227,7 +1227,15 @@ _menu_call(Evas_Object *obj)
    else if (sd->context_menu)
      {
         const char *context_menu_orientation;
+        Eina_Bool ownersel;
 
+        ownersel = elm_selection_selection_has_owner(obj);
+        if (!sd->items)
+          {
+             /* prevent stupid blank hoversel */
+             if (sd->have_selection && sd->password) return;
+             if (sd->sel_mode || (_elm_config->desktop_entry && ((!sd->editable) || (!ownersel)))) return;
+          }
         if (sd->hoversel) evas_object_del(sd->hoversel);
         else elm_widget_scroll_freeze_push(obj);
 
@@ -1275,7 +1283,7 @@ _menu_call(Evas_Object *obj)
                            (sd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
                            _hover_selected_cb, obj);
                     }
-                  if (elm_selection_selection_has_owner(obj))
+                  if (ownersel)
                     {
                        if (sd->editable)
                          elm_hoversel_item_add
