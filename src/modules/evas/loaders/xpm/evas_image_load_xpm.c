@@ -160,7 +160,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
    int          pc, c, i, j, k, w, h, ncolors, cpp, comment, transp,
                 quote, context, len, done, r, g, b, backslash, lu1, lu2;
    char        *line = NULL;
-   char         s[256], tok[128], col[256], *tl;
+   char         s[256], tok[256], col[256], *tl;
    int          lsz = 256;
    CMap        *cmap = NULL;
    Eina_Rbtree *root = NULL;
