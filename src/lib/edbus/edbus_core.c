@@ -73,7 +73,9 @@ EAPI const EDBus_Version * edbus_version = &_version;
 static int _edbus_init_count = 0;
 int _edbus_log_dom = -1;
 
-static EDBus_Connection *shared_connections[3];
+/* We don't save EDBUS_CONNECTION_TYPE_UNKNOWN in here so we need room for 
+ * last - 1 elements */
+static EDBus_Connection *shared_connections[EDBUS_CONNECTION_TYPE_LAST - 1];
 
 static void _edbus_connection_event_callback_call(EDBus_Connection *conn, EDBus_Connection_Event_Type type, const void *event_info);
 static void _edbus_connection_context_event_cb_del(EDBus_Connection_Context_Event *ce, EDBus_Connection_Context_Event_Cb *ctx);
@@ -985,6 +987,10 @@ edbus_connection_get(EDBus_Connection_Type type)
    EDBus_Connection *conn;
 
    DBG("Getting connection with type %d", type);
+
+   if (!type)
+     return NULL;
+
    conn = shared_connections[type - 1];
    if (conn)
      {
@@ -1118,7 +1124,7 @@ _edbus_connection_unref(EDBus_Connection *conn)
    edbus_data_del_all(&conn->data);
 
    if (conn->idler) ecore_idler_del(conn->idler);
-   if (shared_connections[conn->type - 1] == conn)
+   if (conn->type && (shared_connections[conn->type - 1] == conn))
      shared_connections[conn->type - 1] = NULL;
 
    free(conn);
