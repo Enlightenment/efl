@@ -505,7 +505,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
      }
    if (magicsharefile)
      {
-        magic = alloca(strlen(magicsharefile));
+        magic = alloca(strlen(magicsharefile) + 1);
         strcpy(magic, magicsharefile);
         _path_sep_fix(magic);
      }
