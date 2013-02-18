@@ -713,6 +713,8 @@ _edje_pick_images_add(Edje_File *edf, Edje_File *o)
                        EINA_LOG_ERR("Image entry <%s> was not found in <%s> file.\n", buf , context.current_file->name);
                        status = EDJE_PICK_IMAGE_NOT_FOUND;
                     }
+                  /* Should that really be freed? Or is some other handling needed? */
+                  free(data);
                }
           }
 
@@ -812,6 +814,8 @@ _edje_pick_sounds_add(Edje_File *edf)
                   EINA_LOG_ERR("Sample <%s> was not found in <%s> file.\n",
                          sample->name, context.current_file->name);
                   status = EDJE_PICK_SAMPLE_NOT_FOUND;
+                  /* Should that really be freed? Or is some other handling needed? */
+                  free(data);
                }
           }
 
@@ -905,6 +909,11 @@ _edje_pick_scripts_add(Edje_File *edf, int id, int new_id)
                        buf, s->data, s->size));
         context.current_file->scriptlist = eina_list_append(context.current_file->scriptlist, s);
      }
+   else
+     {
+        /* Should that really be freed? Or is some other handling needed? */
+        free(data);
+     }
 
    return EDJE_PICK_NO_ERROR;
 }
@@ -932,6 +941,11 @@ _edje_pick_lua_scripts_add(Edje_File *edf, int id, int new_id)
         VERBOSE(EINA_LOG_INFO("Read lua script <%s> data <%p> size <%d>\n",
                        buf, s->data, s->size));
         context.current_file->luascriptlist = eina_list_append(context.current_file->luascriptlist, s);
+     }
+   else
+     {
+        /* Should that really be freed? Or is some other handling needed? */
+        free(data);
      }
 
    return EDJE_PICK_NO_ERROR;
