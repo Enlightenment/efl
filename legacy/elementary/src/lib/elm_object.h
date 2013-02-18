@@ -459,7 +459,7 @@ EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb f
 EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
- * Get the orientation mode of a give widget.
+ * Get the orientation mode of a given widget.
  *
  * @param obj The Elementary widget to query for its orientation mode.
  * @return @c EINA_TRUE, if the orientation mode is disabled, @c EINA_FALSE
