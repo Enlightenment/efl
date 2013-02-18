@@ -1,14 +1,5 @@
-group { name: "elm/naviframe/base/default";
-   alias: "elm/naviframe/base/pager";
-   parts {
-      part { name: "base0";
-         type: RECT;
-         description { state: "default" 0.0;
-         }
-      }
-   }
-}
 group { name: "elm/naviframe/item/basic/default";
+   alias: "elm/naviframe/item/basic/pager";
 
    images {
       image: "naviframe-base.jpg" COMP;
@@ -469,6 +460,7 @@ group { name: "elm/naviframe/item/basic/default";
  *  - contents follows below title
  */
 group { name: "elm/naviframe/item/overlap/default";
+   alias: "elm/naviframe/item/overlap/pager";
 
    images {
       image: "naviframe-base.jpg" COMP;
