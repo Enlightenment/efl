@@ -18,6 +18,7 @@ lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests
 
+if EFL_ENABLE_TESTS
 check_PROGRAMS += \
 tests/eo/test_access \
 tests/eo/test_composite_objects \
@@ -25,10 +26,8 @@ tests/eo/test_constructors \
 tests/eo/test_function_overrides \
 tests/eo/test_interface \
 tests/eo/test_mixin \
-tests/eo/test_signals
-
-if EFL_ENABLE_TESTS
-check_PROGRAMS += tests/eo/eo_suite
+tests/eo/test_signals \
+tests/eo/eo_suite
 
 tests_eo_test_access_SOURCES = \
 tests/eo/access/access_inherit.c \
