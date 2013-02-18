@@ -4094,12 +4094,17 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                strncpy(buf, welement, sizeof(buf));
                break;
           }
+printf("asdfasdfasdfasdfasdfasdf!\n");
         ret2 = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
      }
+   //Fallback. Apply a default if the style doesnt applied anything.
+   //Otherwise, use the previous one.
    if (!ret2)
      {
-        //FIXME:For optimization, don't need to set to default when orientation mode is invalid.
-        ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+        if (!evas_object_data_get(edj, "edje,theme,watcher"))
+          ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+        else
+          ret2 = EINA_TRUE;
         strncpy(buf, "elm,state,orient,0", sizeof(buf));
      }
    else

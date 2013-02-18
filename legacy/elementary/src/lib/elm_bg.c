@@ -100,6 +100,7 @@ static void
 _elm_bg_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Bg_Smart_Data *priv = _pd;
+   Evas_Object *parent;
 
    eo_do_super(obj, evas_obj_smart_add());
 
@@ -108,6 +109,10 @@ _elm_bg_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->option = ELM_BG_OPTION_SCALE;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, obj);
+
+   parent = eo_parent_get(obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
 
    elm_layout_theme_set(obj, "bg", "base", elm_widget_style_get(obj));
 }
@@ -134,9 +139,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 
-   Evas_Object *parent = eo_parent_get(obj);
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
 }
 
 static void
