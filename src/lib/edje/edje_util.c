@@ -701,10 +701,9 @@ edje_color_class_list(void)
 {
    Edje_List_Foreach_Data fdata;
 
-   if (!_edje_color_class_member_hash) return NULL;
-
+   if (!_edje_color_class_hash) return NULL;
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
-   eina_hash_foreach(_edje_color_class_member_hash,
+   eina_hash_foreach(_edje_color_class_hash,
                      _edje_color_class_list_foreach, &fdata);
 
    return fdata.list;
@@ -1029,8 +1028,9 @@ edje_text_class_list(void)
 {
    Edje_List_Foreach_Data fdata;
 
+   if (!_edje_text_class_hash) return NULL;
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
-   eina_hash_foreach(_edje_text_class_member_hash,
+   eina_hash_foreach(_edje_text_class_hash,
                      _edje_text_class_list_foreach, &fdata);
    return fdata.list;
 }

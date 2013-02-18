@@ -172,3 +172,4 @@ Fixes:
     * Fix bug candidate word couldn't be selected with up/down key in the preedit status
     * Edje textblock: Improved textblock fit.
     * fix anchor clicked mouse signals for selection-enabled entries
+    * Fix edje_color_class_list() and edje_text_class_list() to look at right hashes.
