@@ -417,13 +417,13 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *
      {
         if (!o->changed)
           {
-             o->offset.x += obj->cur.geometry.x - obj->prev.geometry.x;
-             o->offset.y += obj->cur.geometry.y - obj->prev.geometry.y;
+             o->offset.x = obj->cur.geometry.x - obj->prev.geometry.x;
+             o->offset.y = obj->cur.geometry.y - obj->prev.geometry.y;
           }
         else
           {
-             o->offset.x += obj->cur.geometry.x - o->geometry.x;
-             o->offset.y += obj->cur.geometry.y - o->geometry.y;
+             o->offset.x = obj->cur.geometry.x - o->geometry.x;
+             o->offset.y = obj->cur.geometry.y - o->geometry.y;
           }
      }
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
