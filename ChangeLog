@@ -2,6 +2,8 @@
 
         * Fix edje edje_color_class_list() and edje_text_class_list() to
         look at the correct hashes when returning.
+        * UIpdate ecore_x XI2.2 code to not filter out non-master
+        pointers.
 
 2013-02-17  Mike Blumenkrantz
 

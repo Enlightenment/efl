@@ -438,6 +438,9 @@ ecore_x_input_multi_select(Ecore_X_Window win)
           }
         else if (dev->use == XISlavePointer)
           {
+/* disabled as this seems nto to be needed and never was successfully
+ * tested anyway. leave this here commented out for a while to let people
+ * whickly re-enable and see. should go away one day though.
              XIDeviceInfo *atdev = NULL;
              int j;
 
@@ -448,6 +451,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                }
              if (((atdev) && (atdev->use != XIMasterPointer)) ||
                  (!atdev))
+ */
                {
                   XIEventMask eventmask;
                   unsigned char mask[4] = { 0 };
@@ -482,11 +486,11 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 # ifdef XI_TouchEnd
                   XISetMask(mask, XI_TouchEnd);
 # endif
-#endif /* #ifdef ECORE_XI2_2 */
-
+#endif
                   XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
                   find = EINA_TRUE;
                }
+/* part of the above commented int - never tested/needed the if...
 #ifdef ECORE_XI2_2
              else if ((atdev) && (atdev->use == XIMasterPointer))
                {
@@ -514,7 +518,8 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                        find = EINA_TRUE;
                     }
                }
-#endif /* #ifdef ECORE_XI2_2 */
+#endif
+ */
           }
      }
 

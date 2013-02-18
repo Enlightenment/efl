@@ -111,6 +111,7 @@ Improvements:
     * eina: Eina_Tiler now take tile size into account.
     * edje: reduce memory consumption of Edje program handler.
     * eina, evas: improved support for 64bits system.
+    * don't filter out non-master pointers in XI2.2 support.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
