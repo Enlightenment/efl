@@ -9,6 +9,7 @@ typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
 {
+   Evas_Engine_Info_Wayland_Shm *info;
    Outbuf *ob;
    Tilebuf *tb;
 
@@ -237,13 +238,14 @@ eng_setup(Evas *eo_evas, void *einfo)
           }
 
         if (!(re = 
-              _output_engine_setup(info->info.edges.x, info->info.edges.y, 
-                                   epd->output.w, epd->output.h, 
-                                   info->info.rotation, info->info.depth, 
-                                   info->info.destination_alpha, 
-                                   info->info.wl_shm, info->info.wl_surface, 
+              _output_engine_setup(0, 0,
+                                   epd->output.w, epd->output.h,
+                                   info->info.rotation, info->info.depth,
+                                   info->info.destination_alpha,
+                                   info->info.wl_shm, info->info.wl_surface,
                                    try_swap)))
           return 0;
+        re->info = info;
      }
 
    else
@@ -255,13 +257,13 @@ eng_setup(Evas *eo_evas, void *einfo)
         /* we have an existing render engine */
         if (re->ob) re->outbuf_free(re->ob);
 
-        if ((re->ob = evas_swapbuf_setup(info->info.edges.x, 
-                                         info->info.edges.y, 
-                                         epd->output.w, epd->output.h, 
-                                         info->info.rotation, 
-                                         info->info.depth, 
-                                         info->info.destination_alpha, 
-                                         info->info.wl_shm, 
+        if ((re->ob = evas_swapbuf_setup(0,
+                                         0,
+                                         epd->output.w, epd->output.h,
+                                         info->info.rotation,
+                                         info->info.depth,
+                                         info->info.destination_alpha,
+                                         info->info.wl_shm,
                                          info->info.wl_surface)))
           {
              re->outbuf_free = evas_swapbuf_free;
@@ -320,14 +322,23 @@ static void
 eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
+   Evas_Engine_Info_Wayland_Shm *info;
+   int dx = 0, dy = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(re = (Render_Engine *)data)) return;
 
-   re->outbuf_reconfigure(re->ob, re->ob->x, re->ob->y, w, h, 
-                          re->ob->rotation, re->ob->depth, 
-                          re->ob->priv.destination_alpha);
+   if (!(info = re->info)) return;
+
+   if (info->info.edges & 4)
+     dx = re->ob->w - w;
+   if (info->info.edges & 1)
+     dy = re->ob->h - h;
+
+   re->outbuf_reconfigure(re->ob, dx, dy, w, h,
+                          info->info.rotation, info->info.depth,
+                          info->info.destination_alpha);
    evas_common_tilebuf_free(re->tb);
    if ((re->tb = evas_common_tilebuf_new(w, h)))
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);

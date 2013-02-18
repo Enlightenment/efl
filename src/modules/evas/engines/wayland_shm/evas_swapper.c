@@ -17,7 +17,7 @@
 typedef struct _Wl_Buffer Wl_Buffer;
 struct _Wl_Buffer
 {
-   int x, y, w, h;
+   int w, h;
    struct wl_buffer *buffer;
    void *data;
    int offset;
@@ -320,8 +320,6 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    /* make sure swapper has a shm */
    if (!ws->shm) return EINA_FALSE;
 
-   wb->x = ws->x;
-   wb->y = ws->y;
    wb->w = ws->w;
    wb->h = ws->h;
 
@@ -421,9 +419,9 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* surface attach */
    if (sent != wb->buffer)
      {
-        wl_surface_attach(ws->surface, wb->buffer, wb->x, wb->y);
-        wb->x = 0;
-        wb->y = 0;
+        wl_surface_attach(ws->surface, wb->buffer, ws->x, ws->y);
+        ws->x = 0;
+        ws->y = 0;
         sent = wb->buffer;
      }
 
