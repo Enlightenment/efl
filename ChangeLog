@@ -18,7 +18,7 @@
 
 2013-02-15  Jiyoun Park (jypark)
 
-    * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+        * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
 
 2013-02-14  Cedric Bail
 
@@ -48,6 +48,7 @@
 	bidi.
 
 2013-02-08  Guillaume Friloux
+
         * Fix usage of Ecore_Con_Server's internal buffer.
 
 2013-02-08  Carsten Haitzler (The Rasterman)
