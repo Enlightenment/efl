@@ -282,7 +282,7 @@ _message_iter_struct_to_eina_value(EDBus_Message_Iter *iter)
         Eina_Value *v;
 
         m = calloc(1, sizeof(Eina_Value_Struct_Member));
-        sprintf(name, ARG, z);
+        snprintf(name, 7, ARG, z);
         m->name = strdup(name);
         offset = _type_offset(type, offset);
         m->offset = offset;
