@@ -1805,6 +1805,51 @@ fi
 
 EFL_ADD_LIBS([ECORE], [${LTLIBINTL}])
 
+# coroutine function specific
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <ucontext.h>
+       ]],
+       [[
+ucontext_t test;
+getcontext(&test);
+       ]])],
+   [have_ucontext="yes"],
+   [have_ucontext="no"])
+
+AC_MSG_CHECKING([for ucontext])
+AC_MSG_RESULT([${have_ucontext}])
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <setjmp.h>
+       ]],
+       [[
+jmp_buf context;
+setjmp(&context);
+       ]])],
+   [have_setjmp="yes"],
+   [have_setjmp="no"])
+
+AC_MSG_CHECKING([for setjmp])
+AC_MSG_RESULT([${have_setjmp}])
+
+if test "X${have_windows}" = "xyes"; then
+   AC_DEFINE(USE_FIBER, 1, [Define to 1 if you have Windows Fiber support.])
+   EFL_ADD_FEATURE([system], [coroutine], [fiber])
+elif test "x${have_ucontext}" = "xyes"; then
+   AC_DEFINE(USE_UCONTEXT, 1, [Define to 1 if you have posix ucontext functions.])
+   EFL_ADD_FEATURE([system], [coroutine], [ucontext])
+elif test "x${have_setjmp}" = "xyes"; then
+   AC_DEFINE(USE_SETJMP, 1, [Define to 1 if you have setjmp/longjmp functions.])
+   EFL_ADD_FEATURE([system], [coroutine], [setjmp])
+else
+   AC_MSG_ERROR([You don't have a working way to implement coroutine. Exiting...])
+fi
+
 ### Check availability
 
 EFL_LIB_END([Ecore])

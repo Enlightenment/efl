@@ -27,6 +27,7 @@ lib/ecore/ecore_time.c \
 lib/ecore/ecore_timer.c \
 lib/ecore/ecore_thread.c \
 lib/ecore/ecore_throttle.c \
+lib/ecore/ecore_coroutine.c \
 lib/ecore/ecore_private.h
 
 if HAVE_WIN32
@@ -66,6 +67,7 @@ tests/ecore/ecore_test_ecore.c \
 tests/ecore/ecore_test_ecore_con.c \
 tests/ecore/ecore_test_ecore_x.c \
 tests/ecore/ecore_test_ecore_imf.c \
+tests/ecore/ecore_test_coroutine.c \
 tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = \

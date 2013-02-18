@@ -238,6 +238,9 @@ void _ecore_job_shutdown(void);
 void _ecore_main_loop_init(void);
 void _ecore_main_loop_shutdown(void);
 
+void _ecore_coroutine_init(void);
+void _ecore_coroutine_shutdown(void);
+
 void _ecore_throttle(void);
 
 void _ecore_main_call_flush(void);
