@@ -4094,7 +4094,6 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                strncpy(buf, welement, sizeof(buf));
                break;
           }
-printf("asdfasdfasdfasdfasdfasdf!\n");
         ret2 = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
      }
    //Fallback. Apply a default if the style doesnt applied anything.
