@@ -1013,7 +1013,9 @@ EAPI Eina_Bool elm_drop_target_add(Evas_Object *widget, Elm_Sel_Format format,
 EAPI Eina_Bool elm_drop_target_del(Evas_Object *widget);
 EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
                               const char *data,
-                              void (*dragdone) (void *data, Evas_Object *),
+                              Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff),
+                              void *createdata,
+                              void (*dragdone) (void *data, Evas_Object *obj),
                               void *donecbdata);
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 

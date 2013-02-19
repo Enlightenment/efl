@@ -94,12 +94,13 @@ static Ecore_Event_Handler *handler_pos = NULL;
 static Ecore_Event_Handler *handler_drop = NULL;
 static Ecore_Event_Handler *handler_enter = NULL;
 static Ecore_Event_Handler *handler_status = NULL;
+static Ecore_Event_Handler *handler_up = NULL;
 
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
 
-#define DEBUGON 1
+//#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
@@ -173,7 +174,7 @@ static Eina_Bool      _x11_dnd_enter                (void *data __UNUSED__, int 
 static Eina_Bool      _x11_dnd_drop                 (void *data __UNUSED__, int etype __UNUSED__, void *ev);
 static Eina_Bool      _x11_dnd_position             (void *data __UNUSED__, int etype __UNUSED__, void *ev);
 static Eina_Bool      _x11_dnd_status               (void *data __UNUSED__, int etype __UNUSED__, void *ev);
-static void           _x11_drag_mouse_up            (void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data);
+static Eina_Bool      _x11_drag_mouse_up            (void *data, int etype __UNUSED__, void *event);
 static void           _x11_drag_move                (void *data __UNUSED__, Ecore_X_Xdnd_Position *pos);
 
 static Ecore_X_Window _x11_elm_widget_xwin_get           (const Evas_Object *obj);
@@ -1229,27 +1230,39 @@ _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    return EINA_TRUE;
 }
 
-static void
-_x11_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data)
+static Eina_Bool
+_x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
 {
-   Ecore_X_Window xwin = *((Ecore_X_Window *)data);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _x11_drag_mouse_up);
-   ecore_x_dnd_drop();
+   Ecore_X_Window xwin = (Ecore_X_Window)data;
+   Ecore_Event_Mouse_Button *ev = event;
 
-   cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
-
-   /* TODO BUG: should not revert to FALSE if xwin is a drop target! */
-   ecore_x_dnd_aware_set(xwin, EINA_FALSE);
-   if (dragdonecb)
+   if ((ev->buttons == 1) &&
+       (ev->event_window == xwin))
      {
-        dragdonecb(dragdonedata, _x11_selections[ELM_SEL_TYPE_XDND].widget);
-        dragdonecb = NULL;
+        ecore_x_pointer_ungrab();
+        if (handler_up) 
+          {
+             ecore_event_handler_del(handler_up);
+             handler_up = NULL;
+          }
+        ecore_x_dnd_drop();
+        
+        cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
+        
+        // TODO BUG: should not revert to FALSE if xwin is a drop target!
+        ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+        if (dragdonecb)
+          {
+             dragdonecb(dragdonedata, _x11_selections[ELM_SEL_TYPE_XDND].widget);
+             dragdonecb = NULL;
+          }
+        if (dragwin)
+          {
+             evas_object_del(dragwin);
+             dragwin = NULL;
+          }
      }
-   if (dragwin)
-     {
-        evas_object_del(dragwin);
-        dragwin = NULL;
-     }
+   return EINA_TRUE;
 }
 
 static void
@@ -1532,14 +1545,18 @@ _x11_elm_drop_target_del(Evas_Object *obj)
 }
 
 static  Eina_Bool
-_x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (*dragdone) (void *data, Evas_Object *), void *donecbdata)
+_x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, 
+                    Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff),
+                    void *createdata,
+                    void (*dragdone) (void *data, Evas_Object *obj),
+                    void *donecbdata)
 {
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    X11_Cnp_Selection *sel;
    Elm_Sel_Type xdnd = ELM_SEL_TYPE_XDND;
    Ecore_Evas *ee;
-   int x, y, x2, y2, x3, y3;
-   Evas_Object *icon;
+   int x, y, x2 = 0, y2 = 0, x3, y3;
+   Evas_Object *icon = NULL;
    int w, h;
 
    _x11_elm_cnp_init();
@@ -1566,27 +1583,48 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_x11_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _x11_drag_mouse_up, (void *)(long)xwin);
+   ecore_x_pointer_grab(xwin);
+   handler_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _x11_drag_mouse_up,
+                                        (void *)(long)xwin);
+//   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
+//                                  _x11_drag_mouse_up, (void *)(long)xwin);
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
                                             _x11_dnd_status, NULL);
    dragwin = elm_win_add(NULL, "Elm Drag Object", ELM_WIN_UTILITY);
+   elm_win_alpha_set(dragwin, EINA_TRUE);
    elm_win_override_set(dragwin, EINA_TRUE);
 
-   /* FIXME: Images only */
-   icon = elm_icon_add(dragwin);
-   if (!strncmp(data, "file://", 7))
-     elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
-   else
-     elm_image_file_set(icon, data, NULL);
+   if (createicon)
+     {
+        Evas_Coord xoff = 0, yoff = 0;
+        
+        icon = createicon(createdata, dragwin, &xoff, &yoff);
+        if (icon)
+          {
+             evas_object_geometry_get(obj, &x2, &y2, NULL, NULL);
+             evas_object_geometry_get(icon, NULL, NULL, &w, &h);
+             x2 += xoff;
+             y2 += yoff;
+          }
+     }
+   if (!icon)
+     {
+        evas_object_geometry_get(obj, &x2, &y2, &w, &h);
+   
+        /* FIXME: Images only */
+        icon = elm_icon_add(dragwin);
+        if (!strncmp(data, "file://", 7))
+          elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
+        else
+          elm_image_file_set(icon, data, NULL);
+        evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
    elm_win_resize_object_add(dragwin, icon);
-   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    /* Position subwindow appropriately */
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-   evas_object_geometry_get(obj, &x2, &y2, &w, &h);
    x += x2;
    y += y2;
    evas_object_move(dragwin, x, y);
@@ -1790,7 +1828,7 @@ static Eina_Bool  _local_elm_object_cnp_selection_clear(Evas_Object *obj __UNUSE
 static Eina_Bool  _local_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb, void *udata);
 static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb dropcb __UNUSED__, void *cbdata __UNUSED__);
 static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj __UNUSED__);
-static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, const char *data __UNUSED__, void (*dragdone) (void *data, Evas_Object *) __UNUSED__, void *donecbdata __UNUSED__);
+static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, const char *data __UNUSED__, Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff) __UNUSED__, void *createdata __UNUSED__, void (*dragdone) (void *data, Evas_Object *) __UNUSED__, void *donecbdata __UNUSED__);
 static Eina_Bool  _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__);
 
 static void
@@ -1903,7 +1941,9 @@ static Eina_Bool
 _local_elm_drag_start(Evas_Object *obj __UNUSED__,
                       Elm_Sel_Format format __UNUSED__,
                       const char *data __UNUSED__,
-                      void (*dragdone) (void *data, Evas_Object *) __UNUSED__,
+                      Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff) __UNUSED__,
+                      void *createdata __UNUSED__,
+                      void (*dragdone) (void *data, Evas_Object *obj) __UNUSED__,
                       void *donecbdata __UNUSED__)
 {
    // XXX: implement me
@@ -2135,15 +2175,20 @@ elm_drop_target_del(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, 
-               void (*dragdone) (void *data, Evas_Object *), void *donecbdata)
+elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
+               Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff),
+               void *createdata,
+               void (*dragdone) (void *data, Evas_Object *obj),
+               void *donecbdata)
 {
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
-     return _x11_elm_drag_start(obj, format, data, dragdone, donecbdata);
+     return _x11_elm_drag_start(obj, format, data, createicon, createdata, 
+                                dragdone, donecbdata);
 #endif
-   return _local_elm_drag_start(obj, format, data, dragdone, donecbdata);
+   return _local_elm_drag_start(obj, format, data, createicon, createdata,
+                                dragdone, donecbdata);
 }
 
 EAPI Eina_Bool
