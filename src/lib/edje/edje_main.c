@@ -78,6 +78,7 @@ edje_init(void)
    _edje_module_init();
    _edje_message_init();
    _edje_multisense_init();
+   edje_signal_init();
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
 					 "Edje_Real_Part", NULL,
@@ -147,6 +148,7 @@ _edje_shutdown_core(void)
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
 
+   edje_signal_shutdown();
    _edje_multisense_shutdown();
    _edje_message_shutdown();
    _edje_module_shutdown();
@@ -242,7 +244,6 @@ _edje_del(Edje *ed)
 {
    Edje_Running_Program *runp;
    Edje_Pending_Program *pp;
-   Edje_Signal_Callback *escb;
    Edje_Text_Class *tc;
    Edje_Text_Insert_Filter_Callback *cb;
 
@@ -252,7 +253,7 @@ _edje_del(Edje *ed)
 	return;
      }
    _edje_message_del(ed);
-   _edje_callbacks_patterns_clean(ed);
+   _edje_signal_callback_free(ed->callbacks);
    _edje_file_del(ed);
    if (ed->path) eina_stringshare_del(ed->path);
    if (ed->group) eina_stringshare_del(ed->group);
@@ -267,12 +268,6 @@ _edje_del(Edje *ed)
      free(runp);
    EINA_LIST_FREE(ed->pending_actions, pp)
      free(pp);
-   EINA_LIST_FREE(ed->callbacks, escb)
-     {
-	if (escb->signal) eina_stringshare_del(escb->signal);
-	if (escb->source) eina_stringshare_del(escb->source);
-	free(escb);
-     }
    eina_hash_free(ed->color_classes);
    EINA_LIST_FREE(ed->text_classes, tc)
      {
