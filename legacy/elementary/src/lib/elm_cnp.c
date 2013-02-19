@@ -99,7 +99,7 @@ static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
 
-//#define DEBUGON 1
+#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
@@ -183,7 +183,7 @@ static Eina_Bool _x11_elm_cnp_selection_set              (Evas_Object *obj, Elm_
 static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
 static Eina_Bool _x11_elm_cnp_selection_get              (Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
-static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, void *cbdata);
+static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Format format, Elm_Drop_Cb dropcb, void *cbdata);
 static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj);
 static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj __UNUSED__);
 
@@ -345,7 +345,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      NULL,
+      _x11_text_converter,
       0
    },
    [CNP_ATOM_TEXT] = {
@@ -353,7 +353,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      NULL,
+      _x11_text_converter,
       0
    },
    [CNP_ATOM_text_plain_utf8] = {
@@ -361,7 +361,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      NULL,
+      _x11_notify_handler_text,
       0
    },
    [CNP_ATOM_text_plain] = {
@@ -369,7 +369,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      NULL,
+      _x11_notify_handler_text,
       0
    },
 };
@@ -667,8 +667,32 @@ static int
 _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
+   Eina_List *l;
+   Dropable *dropable;
 
    data = notify->data;
+   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
+     {
+        Elm_Selection_Data ddata;
+
+        cnp_debug("drag & drop\n");
+        /* FIXME: this needs to be generic: Used for all receives */
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_TEXT;
+             ddata.data = data->data;
+             ddata.len = data->length;
+             dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+             goto end;
+          }
+     }
    if (sel->datacb)
      {
         Elm_Selection_Data ddata;
@@ -684,7 +708,7 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         char *stripstr, *mkupstr;
 
         stripstr = malloc(data->length + 1);
-        if (!stripstr) return 0;
+        if (!stripstr) goto end;
         strncpy(stripstr, (char *)data->data, data->length);
         stripstr[data->length] = '\0';
         cnp_debug("Notify handler text %d %d %p\n", data->format,
@@ -696,6 +720,9 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         free(stripstr);
         free(mkupstr);
      }
+end:   
+   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
+     ecore_x_dnd_send_finished();
    return 0;
 }
 
@@ -707,53 +734,89 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
 {
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
-   char *p, *stripstr;
+   char *p, *s, *stripstr = NULL;
 
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
    if (data->content == ECORE_X_SELECTION_CONTENT_FILES)
      {
+        int i, len = 0;
+        
         cnp_debug("got a files list\n");
         files = notify->data;
+        /*
         if (files->num_files > 1)
           {
-             /* Don't handle many items */
+             // Don't handle many items <- this makes mr bigglesworth sad :(
              cnp_debug("more then one file: Bailing\n");
              return 0;
           }
         stripstr = p = strdup(files->files[0]);
+         */
+        for (i = 0; i < files->num_files ; i++)
+          {
+             p = files->files[i];
+             if ((strncmp(p, "file://", 7)) && (p[0] != '/')) continue;
+             len += strlen(files->files[i]) + 1;
+          }
+        p = NULL;
+        if (len > 0)
+          {
+             s = stripstr = malloc(len + 1);
+             for (i = 0; i < files->num_files ; i++)
+               {
+                  p = files->files[i];
+                  if (!strncmp(p, "file://", 7)) p += 7;
+                  else if (p[0] != '/') continue;
+                  len = strlen(p);
+                  strcpy(s, p);
+                  if (i < (files->num_files - 1))
+                    {
+                       s[len] = '\n';
+                       s[len + 1] = 0;
+                       s += len + 1;
+                    }
+                  else
+                    {
+                       s[len] = 0;
+                       s += len;
+                    }
+               }
+          }
      }
    else
      {
-        stripstr = p = malloc(data->length + 1);
-        if (!stripstr) return 0;
-        memcpy(stripstr, data->data, data->length);
-        stripstr[data->length] = 0;
+        p = (char *)data->data;
+        if ((!strncmp(p, "file://", 7)) || (p[0] == '/'))
+          {
+             int len = data->length;
+             if (!strncmp(p, "file://", 7))
+               {
+                  p += 7;
+                  len -= 7;
+               }
+             stripstr = malloc(len + 1);
+             if (!stripstr) return 0;
+             memcpy(stripstr, p, len);
+             stripstr[len] = 0;
+          }
      }
-   if (!p)
+   if (!stripstr)
      {
         cnp_debug("Couldn't find a file\n");
         return 0;
      }
-   cnp_debug("Got %s\n", p);
-   if (strncmp(p, "file://", 7))
-     {
-        /* Try and continue if it looks sane */
-        if (*p != '/')
-          {
-             free(p);
-             return 0;
-          }
-     }
-   else p += strlen("file://");
    if (savedtypes.imgfile) free(savedtypes.imgfile);
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
-        savedtypes.imgfile = strdup(p);
+        savedtypes.imgfile = stripstr;
      }
-   else _pasteimage_append(p, sel->requestwidget);
-   free(stripstr);
+   else
+     {
+        _pasteimage_append(p, sel->requestwidget);
+        free(stripstr);
+     }
    return 0;
 }
 
@@ -1026,10 +1089,16 @@ _x11_dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    for (; l; l = l->next)
      {
         dropable = l->data;
-        evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
-        if ((savedtypes.x >= x) && (savedtypes.y >= y) &&
-            (savedtypes.x < x + w) && (savedtypes.y < y + h))
-          break; /* found! */
+        if (xwin == drop->win)
+          {
+             if (evas_object_visible_get(dropable->obj))
+               {
+                  evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
+                  if ((savedtypes.x >= x) && (savedtypes.y >= y) &&
+                      (savedtypes.x < x + w) && (savedtypes.y < y + h))
+                    break; /* found! */
+               }
+          }
      }
 
    if (!l) return EINA_TRUE; /* didn't find one */
@@ -1062,8 +1131,8 @@ found:
         if (savedtypes.imgfile)
           {
              char *entrytag;
-             static const char *tagstring = "<item absize=240x180 href="
-                "file://%s></item>";
+             static const char *tagstring = 
+               "<item absize=240x180 href=file://%s></item>";
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
 
@@ -1354,7 +1423,7 @@ _x11_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
 }
 
 static Eina_Bool
-_x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
+_x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drop_Cb dropcb, void *cbdata)
 {
    Dropable *drop;
@@ -1363,7 +1432,8 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
    int first;
 
    _x11_elm_cnp_init();
-   
+
+   printf("xwin = %x\n", xwin);
    /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
@@ -1506,7 +1576,10 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
 
    /* FIXME: Images only */
    icon = elm_icon_add(dragwin);
-   elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
+   if (!strncmp(data, "file://", 7))
+     elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
+   else
+     elm_image_file_set(icon, data, NULL);
    elm_win_resize_object_add(dragwin, icon);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1716,7 +1789,7 @@ static Eina_Bool  _local_elm_cnp_selection_set(Evas_Object *obj __UNUSED__, Elm_
 static void       _local_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection __UNUSED__, Elm_Selection_Loss_Cb func __UNUSED__, const void *data __UNUSED__);
 static Eina_Bool  _local_elm_object_cnp_selection_clear(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection);
 static Eina_Bool  _local_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb, void *udata);
-static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj __UNUSED__, Elm_Sel_Type format __UNUSED__, Elm_Drop_Cb dropcb __UNUSED__, void *cbdata __UNUSED__);
+static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb dropcb __UNUSED__, void *cbdata __UNUSED__);
 static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj __UNUSED__);
 static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, const char *data __UNUSED__, void (*dragdone) (void *data, Evas_Object *) __UNUSED__, void *donecbdata __UNUSED__);
 static Eina_Bool  _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__);
@@ -1810,7 +1883,7 @@ _local_elm_cnp_selection_get(Evas_Object *obj,
 
 static  Eina_Bool
 _local_elm_drop_target_add(Evas_Object *obj __UNUSED__,
-                           Elm_Sel_Type format __UNUSED__,
+                           Elm_Sel_Format format __UNUSED__,
                            Elm_Drop_Cb dropcb __UNUSED__,
                            void *cbdata __UNUSED__)
 {
@@ -2040,7 +2113,7 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
  * Add a widget as drop target.
  */
 EAPI Eina_Bool
-elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
+elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drop_Cb dropcb, void *cbdata)
 {
    if (!_elm_cnp_init_count) _elm_cnp_init();
