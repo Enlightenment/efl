@@ -4072,45 +4072,20 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *welement = va_arg(*list, const char *);
    const char *wstyle = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool ret2 = EINA_FALSE;
    Elm_Widget_Smart_Data *sd = _pd;
-   char buf[128];
+   int ret2;
 
-   //Apply orientation styles.
-   if (welement)
+   ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle,
+                                sd->orient_on, sd->orient_mode);
+   if (ret2 != -1)
      {
-        switch (sd->orient_mode)
-          {
-             case 90:
-               snprintf(buf, sizeof(buf), "%s/90", welement);
-               break;
-             case 180:
-               snprintf(buf, sizeof(buf), "%s/180", welement);
-               break;
-             case 270:
-               snprintf(buf, sizeof(buf), "%s/270", welement);
-               break;
-             default:
-               strncpy(buf, welement, sizeof(buf));
-               break;
-          }
-        ret2 = _elm_theme_object_set(obj, edj, wname, buf, wstyle);
+        char buf[128];
+        snprintf(buf, sizeof(buf), "elm,state,orient,%d", ret2);
+        elm_object_signal_emit(obj, buf, "elm");
+        if (ret) *ret = EINA_TRUE;
      }
-   //Fallback. Apply a default if the style doesnt applied anything.
-   //Otherwise, use the previous one.
-   if (!ret2)
-     {
-        if (!evas_object_data_get(edj, "edje,theme,watcher"))
-          ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
-        else
-          ret2 = EINA_TRUE;
-        strncpy(buf, "elm,state,orient,0", sizeof(buf));
-     }
-   else
-     snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
-   elm_object_signal_emit(obj, buf, "elm");
 
-   if (ret) *ret = ret2;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
@@ -4546,7 +4521,9 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      elm_widget_orientation_set(child, orient_mode);
 
+   sd->orient_on = EINA_TRUE;
    eo_do(obj, elm_wdg_theme(NULL));
+   sd->orient_on = EINA_FALSE;
 
    if (ret) *ret = EINA_TRUE;
 }

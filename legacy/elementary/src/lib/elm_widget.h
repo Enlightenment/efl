@@ -412,6 +412,7 @@ typedef struct _Elm_Widget_Smart_Data
 
    int                           frozen;
    int                           orient_mode; /* -1 is disabled */
+   Eina_Bool                     orient_on : 1;
 
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;

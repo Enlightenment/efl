@@ -291,19 +291,23 @@ void                 _elm_win_translate(void);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
-Eina_Bool            _elm_theme_object_set(Evas_Object *parent,
+int                  _elm_theme_object_set(Evas_Object *parent,
                                            Evas_Object *o,
                                            const char *clas,
                                            const char *group,
-                                           const char *style);
+                                           const char *style,
+                                           Eina_Bool orient_on,
+                                           int orient_mode);
 Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o,
                                                 const char *group,
                                                 const char *style);
-Eina_Bool            _elm_theme_set(Elm_Theme *th,
+int                  _elm_theme_set(Elm_Theme *th,
                                     Evas_Object *o,
                                     const char *clas,
                                     const char *group,
-                                    const char *style);
+                                    const char *style,
+                                    Eina_Bool orient_on,
+                                    int orient_mode);
 Eina_Bool            _elm_theme_icon_set(Elm_Theme *th,
                                          Evas_Object *o,
                                          const char *group,

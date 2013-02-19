@@ -2947,7 +2947,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
         sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
-        _elm_theme_object_set(obj, o, "pointer", "base", "default");
+        _elm_theme_object_set(obj, o, "pointer", "base", "default", EINA_FALSE,
+                              0);
         edje_object_size_min_calc(o, &mw, &mh);
         evas_object_resize(o, mw, mh);
         edje_object_part_geometry_get(o, "elm.swallow.hotspot",
@@ -2963,7 +2964,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
      }
 
    sd->layout = edje_object_add(sd->evas);
-   _elm_theme_object_set(obj, sd->layout, "win", "base", "default");
+   _elm_theme_object_set(obj, sd->layout, "win", "base", "default",
+                         EINA_FALSE, 0);
    sd->box = evas_object_box_add(sd->evas);
    evas_object_box_layout_set(sd->box, _window_layout_stack, obj, NULL);
    edje_object_part_swallow(sd->layout, "elm.swallow.contents", sd->box);

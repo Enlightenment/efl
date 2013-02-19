@@ -174,8 +174,9 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
    if (!cur->obj)
      return EINA_FALSE;
 
-   if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                              cur->style ? cur->style : "default"))
+   if (_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                             cur->style ? cur->style : "default", EINA_FALSE,
+                             0) == -1)
      {
         evas_object_del(cur->obj);
         cur->obj = NULL;
@@ -478,8 +479,8 @@ elm_object_cursor_style_set(Evas_Object *obj, const char *style)
      }
    else
      {
-        if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                                   style))
+        if (_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                                   style, EINA_FALSE, 0) == -1)
           ERR("Could not apply the theme to the cursor style=%s", style);
         else
           _elm_cursor_set_hot_spots(cur);
@@ -501,8 +502,9 @@ void
 elm_cursor_theme(Elm_Cursor *cur)
 {
    if ((!cur) || (!cur->obj)) return;
-   if (!_elm_theme_object_set(cur->eventarea, cur->obj, "cursor",
-                              cur->cursor_name, cur->style))
+   if (_elm_theme_object_set(cur->eventarea, cur->obj, "cursor",
+                              cur->cursor_name, cur->style, EINA_FALSE, 0)
+       == -1)
      ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
      _elm_cursor_set_hot_spots(cur);
