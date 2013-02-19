@@ -199,6 +199,7 @@ bin_SCRIPTS += bin/edje/edje_recc
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/edje/edje_suite
+TESTS += tests/edje/edje_suite
 
 tests_edje_edje_suite_SOURCES = \
 tests/edje/edje_suite.c \

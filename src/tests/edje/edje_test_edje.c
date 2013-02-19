@@ -9,6 +9,7 @@
 #include <Edje.h>
 
 #include "edje_suite.h"
+#include "edje_tests_helpers.h"
 
 START_TEST(edje_test_edje_init)
 {
@@ -22,7 +23,23 @@ START_TEST(edje_test_edje_init)
 }
 END_TEST
 
+START_TEST(edje_test_edje_load)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Edje_Load_Error error;
+   Evas_Object *obj;
+
+   obj = edje_object_add(evas);
+   edje_object_file_set(obj, "blaoeuaeoueoaua.edj", "test");
+   error = edje_object_load_error_get(obj);
+   fail_if(error != EDJE_LOAD_ERROR_DOES_NOT_EXIST);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
+   tcase_add_test(tc, edje_test_edje_load);
 }
