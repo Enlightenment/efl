@@ -2944,8 +2944,7 @@ _name_list_parse(Elm_Map_Name_List *nl)
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_list_cb, nl);
                     }
-                  else
-                    free(buf);
+                  free(buf);
                }
           }
         fclose(f);
