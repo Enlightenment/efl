@@ -77,7 +77,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret = EINA_FALSE;
 
    eo_do(obj, edje_obj_file_set(file, group, &ret));
-   _edje_object_orientation_inform(obj);
    return ret;
 }
 

@@ -333,6 +333,7 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (_edje_object_file_set_internal(obj, file, group, NULL, NULL, nested))
      if (ret) *ret = EINA_TRUE;
    eina_array_free(nested);
+   _edje_object_orientation_inform(obj);
 }
 
 static void
