@@ -1471,7 +1471,6 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EVAS_LOAD_ERROR_NONE;
 
    Elm_Photocam_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!eina_stringshare_replace(&sd->file, file)) return;
    _grid_clear_all(obj);
