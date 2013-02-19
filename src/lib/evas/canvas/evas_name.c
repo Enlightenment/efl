@@ -18,7 +18,8 @@ _name_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = _pd;
    if (obj->name)
      {
-        eina_hash_del(obj->layer->evas->name_hash, obj->name, eo_obj);
+        if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
+          eina_hash_del(obj->layer->evas->name_hash, obj->name, eo_obj);
         free(obj->name);
      }
    if (!name) obj->name = NULL;
