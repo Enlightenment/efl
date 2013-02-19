@@ -15,7 +15,6 @@ lib/eeze/Eeze_Disk.h
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
 lib/eeze/eeze_disk.c \
-lib/eeze/eeze_disk_libmount_new.c \
 lib/eeze/eeze_disk_mount.c \
 lib/eeze/eeze_disk_private.h \
 lib/eeze/eeze_disk_udev.c \
@@ -30,6 +29,16 @@ lib/eeze/eeze_udev_private.h \
 lib/eeze/eeze_udev_syspath.c \
 lib/eeze/eeze_udev_walk.c \
 lib/eeze/eeze_udev_watch.c
+
+if EEZE_NOLIBMOUNT
+lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount.c
+else
+if EEZE_LIBMOUNT_NEW
+lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount_new.c
+else
+lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount_old.c
+endif
+endif
 
 lib_eeze_libeeze_la_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \

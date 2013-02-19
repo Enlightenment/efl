@@ -3113,7 +3113,35 @@ EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([EEZE], [eet])
 
 EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
-EFL_DEPEND_PKG([EEZE], [EEZE_MOUNT], [mount >= 2.20.0])
+
+AC_ARG_ENABLE([libmount],
+   [AC_HELP_STRING([--disable-libmount],
+       [disable libmount support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libmount="yes"
+    else
+       want_libmount="no"
+    fi
+   ],
+   [want_libmount="yes"])
+
+EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
+   [EEZE_MOUNT], [mount >= 2.18.0])
+EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
+
+PKG_CHECK_EXISTS([mount > 2.19.0],
+		 [have_libmount_new="yes"],
+		 [have_libmount_new="no"])
+AC_MSG_CHECKING([Use new libmount API (older that 2.19.0)])
+AC_MSG_RESULT([${have_libmount_new}])
+
+AM_CONDITIONAL([EEZE_LIBMOUNT_NEW], [test "x${have_libmount_new}" = "xyes"])
+if test "x${have_libmount_new}" = "xno"; then
+  AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
+fi
+
+AM_CONDITIONAL([EEZE_NOLIBMOUNT], [test "x${have_eeze_mount}" = "xno"])
 
 ## modules
 if test "${want_tizen}"  = "yes"; then
