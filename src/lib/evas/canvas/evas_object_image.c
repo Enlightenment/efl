@@ -3498,22 +3498,25 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur->file) eina_stringshare_del(o->cur->file);
    if (o->cur->key) eina_stringshare_del(o->cur->key);
    if (o->cur->source) _proxy_unset(eo_obj);
-   if (o->engine_data)
+   if (obj->layer && obj->layer->evas)
      {
-        if (o->preloading)
-          {
-             o->preloading = EINA_FALSE;
-             obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-                                                                      o->engine_data,
-                                                                      eo_obj);
-          }
-        obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
-                                                  o->engine_data);
-     }
-   if (o->video_surface)
-     {
-        o->video_surface = EINA_FALSE;
-        obj->layer->evas->video_objects = eina_list_remove(obj->layer->evas->video_objects, eo_obj);
+       if (o->engine_data)
+	 {
+	   if (o->preloading)
+	     {
+	       o->preloading = EINA_FALSE;
+	       obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+									o->engine_data,
+									eo_obj);
+	     }
+	   obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
+						     o->engine_data);
+	 }
+       if (o->video_surface)
+	 {
+	   o->video_surface = EINA_FALSE;
+	   obj->layer->evas->video_objects = eina_list_remove(obj->layer->evas->video_objects, eo_obj);
+	 }
      }
    o->engine_data = NULL;
    if (o->pixels->pixel_updates)
