@@ -46,7 +46,8 @@ lib/edje/edje_smart.c \
 lib/edje/edje_text.c \
 lib/edje/edje_textblock_styles.c \
 lib/edje/edje_util.c \
-lib/edje/edje_var.c
+lib/edje/edje_var.c \
+lib/edje/edje_signal.c
 
 lib_edje_libedje_la_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@
