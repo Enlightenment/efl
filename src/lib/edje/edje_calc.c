@@ -1307,7 +1307,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              if (ep->part->scale) base_s = TO_DOUBLE(sc);
 	     eo_do(ep->object,
 		   evas_obj_scale_set(base_s),
-		   evas_obj_textblock_size_formatted_get(&tw, &th));
+		   evas_obj_textblock_size_native_get(&tw, &th));
 
              orig_s = base_s;
              /* Now make it bigger so calculations will be more accurate
@@ -1316,7 +1316,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, orig_s * params->w / (double) tw);
                   eo_do(ep->object,
                         evas_obj_scale_set(orig_s),
-                        evas_obj_textblock_size_formatted_get(&tw, &th));
+                        evas_obj_textblock_size_native_get(&tw, &th));
                }
              if (chosen_desc->text.fit_x)
                {
@@ -1325,7 +1325,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                        s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, orig_s * params->w / tw);
 		       eo_do(ep->object,
 			     evas_obj_scale_set(s),
-			     evas_obj_textblock_size_formatted_get(NULL, NULL));
+			     evas_obj_textblock_size_native_get(NULL, NULL));
                     }
                }
              if (chosen_desc->text.fit_y)
@@ -1342,9 +1342,36 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
 		       eo_do(ep->object,
 			     evas_obj_scale_set(s),
-			     evas_obj_textblock_size_formatted_get(NULL, NULL));
+			     evas_obj_textblock_size_native_get(NULL, NULL));
                     }
                }
+
+             /* Final tuning, try going down 90% at a time, hoping it'll
+              * actually end up being correct. */
+               {
+                  int i = 5; /* Tries before we give up. */
+                  Evas_Coord fw, fh;
+                  eo_do(ep->object,
+                        evas_obj_textblock_size_native_get(&fw, &fh));
+
+                  /* If we are still too big, try reducing the size to
+                   * 95% each try. */
+                  while ((i > 0) && ((fw > params->w) || (fh > params->h)))
+                    {
+                       double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
+
+                       /* Break if we are not making any progress. */
+                       if (tmp_s == s)
+                          break;
+                       s = tmp_s;
+
+                       eo_do(ep->object,
+			     evas_obj_scale_set(s),
+                             evas_obj_textblock_size_native_get(&fw, &fh));
+                       i--;
+                    }
+               }
+
           }
 
         evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
