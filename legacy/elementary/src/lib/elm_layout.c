@@ -2114,6 +2114,32 @@ _elm_layout_smart_edje_object_can_access_get(Eo *obj, void *_pd EINA_UNUSED, va_
    *ret = wd->can_access;
 }
 
+static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+
+     {
+        Elm_Widget_Smart_Data *wd = eo_data_get(eo_obj, ELM_OBJ_WIDGET_CLASS);
+        Evas_Object *edje_obj = wd->resize_obj;
+
+        const char *file, *edje_group;
+        eo_do(edje_obj, edje_obj_file_get(&file, &edje_group));
+        EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
+        EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
+
+        Edje_Load_Error error;
+        eo_do(edje_obj, edje_obj_load_error_get(&error));
+        if (error != EDJE_LOAD_ERROR_NONE)
+          {
+             EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
+                   edje_load_error_str(error));
+          }
+     }
+}
+
 EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
@@ -2141,6 +2167,7 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_layout_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_layout_smart_del),
