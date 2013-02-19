@@ -21,7 +21,7 @@
 /* local function prototypes */
 
 Outbuf *
-evas_swapbuf_setup(int x, int y, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
+evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface)
 {
    Outbuf *ob = NULL;
 
@@ -32,8 +32,6 @@ evas_swapbuf_setup(int x, int y, int w, int h, unsigned int rotation, Outbuf_Dep
      return NULL;
 
    /* set some properties */
-   ob->x = x;
-   ob->y = y;
    ob->w = w;
    ob->h = h;
    ob->rotation = rotation;
@@ -45,13 +43,13 @@ evas_swapbuf_setup(int x, int y, int w, int h, unsigned int rotation, Outbuf_Dep
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(x, y, w, h, depth, alpha, ob->priv.wl.shm, 
+          evas_swapper_setup(0, 0, w, h, depth, alpha, ob->priv.wl.shm,
                              ob->priv.wl.surface);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(x, y, h, w, depth, alpha, ob->priv.wl.shm, 
+          evas_swapper_setup(0, 0, h, w, depth, alpha, ob->priv.wl.shm,
                              ob->priv.wl.surface);
      }
 
@@ -103,8 +101,6 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int ro
      return;
 
    /* set some properties */
-   ob->x = x;
-   ob->y = y;
    ob->w = w;
    ob->h = h;
    ob->rotation = rotation;

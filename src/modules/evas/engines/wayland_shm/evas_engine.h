@@ -60,7 +60,7 @@ enum
 
 struct _Outbuf
 {
-   int x, y, w, h;
+   int w, h;
    unsigned int rotation;
    Outbuf_Depth depth;
    int onebuf;

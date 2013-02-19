@@ -28,7 +28,7 @@ struct _Wl_Buffer
 struct _Wl_Swapper
 {
    Wl_Buffer buff[3];
-   int x, y, w, h, depth;
+   int dx, dy, w, h, depth;
    int buff_cur, buff_num;
    struct wl_shm *shm;
    struct wl_surface *surface;
@@ -56,7 +56,7 @@ static const struct wl_buffer_listener _evas_swapper_buffer_listener =
 /* local variables */
 
 Wl_Swapper *
-evas_swapper_setup(int x, int y, int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
+evas_swapper_setup(int dx, int dy, int w, int h, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
 {
    Wl_Swapper *ws;
    int i = 0;
@@ -69,8 +69,8 @@ evas_swapper_setup(int x, int y, int w, int h, Outbuf_Depth depth, Eina_Bool alp
      return NULL;
 
    /* set some properties */
-   ws->x = x;
-   ws->y = y;
+   ws->dx = dx;
+   ws->dy = dy;
    ws->w = w;
    ws->h = h;
    ws->depth = depth;
@@ -419,9 +419,9 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* surface attach */
    if (sent != wb->buffer)
      {
-        wl_surface_attach(ws->surface, wb->buffer, ws->x, ws->y);
-        ws->x = 0;
-        ws->y = 0;
+        wl_surface_attach(ws->surface, wb->buffer, ws->dx, ws->dy);
+        ws->dx = 0;
+        ws->dy = 0;
         sent = wb->buffer;
      }
 

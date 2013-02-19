@@ -34,7 +34,7 @@ struct _Render_Engine
 };
 
 /* local function prototypes */
-static void *_output_engine_setup(int x, int y, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
+static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap);
 static Tilebuf_Rect *_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3);
 
 /* engine function prototypes */
@@ -60,7 +60,7 @@ int _evas_engine_way_shm_log_dom = -1;
 
 /* local functions */
 static void *
-_output_engine_setup(int x, int y, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
+_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, struct wl_shm *wl_shm, struct wl_surface *wl_surface, int try_swap)
 {
    Render_Engine *re = NULL;
 
@@ -82,13 +82,10 @@ _output_engine_setup(int x, int y, int w, int h, unsigned int rotation, unsigned
 
    if (try_swap)
      {
-        if ((re->ob = evas_swapbuf_setup(x, y, w, h, rotation, depth, 
-                                         destination_alpha, wl_shm, 
+        if ((re->ob = evas_swapbuf_setup(w, h, rotation, depth,
+                                         destination_alpha, wl_shm,
                                          wl_surface)))
           {
-             re->ob->x = x;
-             re->ob->y = y;
-
              re->outbuf_free = evas_swapbuf_free;
              re->outbuf_reconfigure = evas_swapbuf_reconfigure;
              re->outbuf_update_region_new = evas_swapbuf_update_region_new;
@@ -238,8 +235,7 @@ eng_setup(Evas *eo_evas, void *einfo)
           }
 
         if (!(re = 
-              _output_engine_setup(0, 0,
-                                   epd->output.w, epd->output.h,
+              _output_engine_setup(epd->output.w, epd->output.h,
                                    info->info.rotation, info->info.depth,
                                    info->info.destination_alpha,
                                    info->info.wl_shm, info->info.wl_surface,
@@ -257,9 +253,7 @@ eng_setup(Evas *eo_evas, void *einfo)
         /* we have an existing render engine */
         if (re->ob) re->outbuf_free(re->ob);
 
-        if ((re->ob = evas_swapbuf_setup(0,
-                                         0,
-                                         epd->output.w, epd->output.h,
+        if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h,
                                          info->info.rotation,
                                          info->info.depth,
                                          info->info.destination_alpha,
