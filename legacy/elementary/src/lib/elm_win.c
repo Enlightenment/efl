@@ -1133,7 +1133,7 @@ _elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Control") ||
             evas_key_modifier_is_set(ev->modifiers, "Alt"))
-          return EINA_FALSE;
+          return;
         if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
           elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
         else
