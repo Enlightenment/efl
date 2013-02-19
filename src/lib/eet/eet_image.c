@@ -1341,8 +1341,8 @@ eet_data_image_encode_cipher(const void  *data,
              size = ciphered_sz;
           }
         else
-        if (ciphered_d)
-          free(ciphered_d);
+          if (ciphered_d)
+            free(ciphered_d);
      }
 
    if (size_ret)
@@ -1389,8 +1389,8 @@ eet_data_image_header_decode_cipher(const void   *data,
              size = deciphered_sz;
           }
         else
-        if (deciphered_d)
-          free(deciphered_d);
+          if (deciphered_d)
+            free(deciphered_d);
      }
 
    if (_eet_image_words_bigendian == -1)
@@ -1405,7 +1405,10 @@ eet_data_image_header_decode_cipher(const void   *data,
      }
 
    if (size < 32)
-     return 0;
+     {
+        if (deciphered_d) free(deciphered_d);
+        return 0;
+     }
 
    memcpy(header, data, 32);
    if (_eet_image_words_bigendian)
@@ -1424,10 +1427,16 @@ eet_data_image_header_decode_cipher(const void   *data,
         al = header[3];
         cp = header[4];
         if ((iw < 1) || (ih < 1) || (iw > 8192) || (ih > 8192))
-          return 0;
+          {
+             if (deciphered_d) free(deciphered_d);
+             return 0;
+          }
 
         if ((cp == 0) && (size < ((iw * ih * 4) + 32)))
-          return 0;
+          {
+             if (deciphered_d) free(deciphered_d);
+             return 0;
+          }
 
         if (w)
           *w = iw;
@@ -1514,6 +1523,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           }
      }
 
+   if (deciphered_d) free(deciphered_d);
    return 0;
 }
 
