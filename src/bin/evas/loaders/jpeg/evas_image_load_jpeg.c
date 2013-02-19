@@ -1018,6 +1018,7 @@ done:
      {
         jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
+        if (ptr2) free(ptr2);
         *error = CSERVE2_NONE;
         return EINA_FALSE;
      }
@@ -1025,6 +1026,7 @@ done:
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    _evas_jpeg_membuf_src_term(&cinfo);
+   if (ptr2) free(ptr2);
    *error = CSERVE2_NONE;
    return EINA_TRUE;
 }
