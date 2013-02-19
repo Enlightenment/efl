@@ -345,7 +345,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      _x11_text_converter,
+      _x11_notify_handler_text,
       0
    },
    [CNP_ATOM_TEXT] = {
@@ -353,7 +353,7 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
       _x11_text_converter,
       NULL,
-      _x11_text_converter,
+      _x11_notify_handler_text,
       0
    },
    [CNP_ATOM_text_plain_utf8] = {
@@ -1433,7 +1433,6 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
 
    _x11_elm_cnp_init();
 
-   printf("xwin = %x\n", xwin);
    /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
