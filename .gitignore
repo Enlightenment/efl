@@ -12,6 +12,7 @@ Makefile.in
 *.a
 *.la
 *.gcno
+*.gcda
 *.dirstamp
 /ar-lib
 /stamp-h1
@@ -315,3 +316,4 @@ Makefile.in
 /src/tests/evas/evas_suite.log
 /src/tests/evas/evas_suite.trs
 /src/test-suite.log
+/coverage
