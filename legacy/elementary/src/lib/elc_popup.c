@@ -98,6 +98,9 @@ _on_hide(void *data __UNUSED__,
    evas_object_hide(sd->notify);
 
    elm_object_content_unset(sd->notify);
+
+/* FIXME:elm_object_content_unset(notify) deletes callback to revert focus status. */
+   elm_object_focus_set(obj, EINA_FALSE);
 }
 
 static void
@@ -1333,6 +1336,9 @@ _elm_popup_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_
 static void
 _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   Evas_Object *ao;
+   Eina_List *items = NULL;
+
    Elm_Popup_Smart_Data *sd = _pd;
 
    Evas_Object *base = va_arg(*list, Evas_Object *);
@@ -1340,11 +1346,31 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object **direction = va_arg(*list, Evas_Object **);
    double *weight = va_arg(*list, double *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret;
+   if (ret) *ret = EINA_TRUE;
 
-   int_ret = elm_widget_focus_direction_get
-            (sd->notify, base, degree, direction, weight);
-   if (ret) *ret = int_ret;
+   /* access */
+   if (_elm_config->access_mode)
+     {
+        if (sd->title_text)
+          {
+             ao = _access_object_get(obj, ACCESS_TITLE_PART);
+             items = eina_list_append(items, ao);
+          }
+
+        ao = _access_object_get(obj, ACCESS_BODY_PART);
+        if (ao) items = eina_list_append(items, ao);
+     }
+
+   /* content area */
+   if (sd->content) items = eina_list_append(items, sd->content_area);
+
+   /* action area */
+   if (sd->button_count) items = eina_list_append(items, sd->action_area);
+
+   elm_widget_focus_list_direction_get
+     (obj, base, items, eina_list_data_get, degree, direction, weight);
+
+   return;
 }
 
 static void
@@ -1370,10 +1396,38 @@ _elm_popup_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         else
           elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
 
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        goto success;
      }
+   else if ((!strcmp(ev->keyname, "Left")) ||
+            ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+     {
+        elm_widget_focus_direction_go(obj, 270.0);
+        goto success;
+     }
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+     {
+        elm_widget_focus_direction_go(obj, 90.0);
+        goto success;
+     }
+   else if ((!strcmp(ev->keyname, "Up")) ||
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+     {
+        elm_widget_focus_direction_go(obj, 0.0);
+        goto success;
+     }
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+     {
+        elm_widget_focus_direction_go(obj, 180.0);
+        goto success;
+     }
+
+   return;
+
+success:
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
