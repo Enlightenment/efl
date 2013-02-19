@@ -8,22 +8,22 @@ EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
 
 #define MY_PAN_CLASS_NAME "elm_pan"
 
-#define ELM_PAN_DATA_GET_OR_RETURN(o, ptr)			\
-  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);	\
-  if (!ptr)							\
-    {								\
-       CRITICAL("No smart data for object %p (%s)",		\
-                o, evas_object_type_get(o));			\
-       return;							\
+#define ELM_PAN_DATA_GET_OR_RETURN(o, ptr)                      \
+  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);       \
+  if (!ptr)                                                     \
+    {                                                           \
+       CRITICAL("No smart data for object %p (%s)",             \
+                o, evas_object_type_get(o));                    \
+       return;                                                  \
     }
 
-#define ELM_PAN_DATA_GET_OR_RETURN_VAL(o, ptr, val)		\
-  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);	\
-  if (!ptr)							\
-    {								\
-       CRITICAL("No smart data for object %p (%s)",		\
-                o, evas_object_type_get(o));			\
-       return val;						\
+#define ELM_PAN_DATA_GET_OR_RETURN_VAL(o, ptr, val)             \
+  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);       \
+  if (!ptr)                                                     \
+    {                                                           \
+       CRITICAL("No smart data for object %p (%s)",             \
+                o, evas_object_type_get(o));                    \
+       return val;                                              \
     }
 
 static const char SIG_CHANGED[] = "changed";
