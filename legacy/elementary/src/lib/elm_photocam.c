@@ -1296,7 +1296,6 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Object *edje;
 
    Elm_Photocam_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
@@ -1471,7 +1470,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EVAS_LOAD_ERROR_NONE;
 
    Elm_Photocam_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ, WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!eina_stringshare_replace(&sd->file, file)) return;
    _grid_clear_all(obj);
