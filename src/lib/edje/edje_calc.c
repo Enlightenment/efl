@@ -1356,7 +1356,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
                   /* If we are still too big, try reducing the size to
                    * 95% each try. */
-                  while ((i > 0) && ((fw > params->w) || (fh > params->h)))
+                  while ((i > 0) &&
+                        ((chosen_desc->text.fit_x && (fw > params->w)) ||
+                         (chosen_desc->text.fit_y && (fh > params->h))))
                     {
                        double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
 
