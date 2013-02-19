@@ -28,26 +28,27 @@ edje_frametime_get(void)
 void
 edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
+   const char *sig;
+   const char *src;
    Edje *ed;
-   Edje_Signal_Callback *escb;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
    if (ed->delete_me) return;
-   escb = calloc(1, sizeof(Edje_Signal_Callback));
-   escb->propagate = EINA_TRUE;
-   escb->signal = eina_stringshare_add("*");
-   escb->source = eina_stringshare_add("*");
-   escb->func = func;
-   escb->data = data;
-   ed->callbacks = eina_list_append(ed->callbacks, escb);
-   if (ed->walking_callbacks)
-     {
-	escb->just_added = 1;
-	ed->just_added_callbacks = EINA_TRUE;
-     }
-   else
-     _edje_callbacks_patterns_clean(ed);
+
+   if (!ed->callbacks)
+     ed->callbacks = _edje_signal_callback_alloc();
+
+   sig = eina_stringshare_add("*");
+   src = eina_stringshare_add("*");
+
+   _edje_signal_callback_push(ed->callbacks,
+                              sig, src,
+                              func, data,
+                              EINA_TRUE);
+
+   eina_stringshare_del(sig);
+   eina_stringshare_del(src);
 }
 
 EAPI void
@@ -66,27 +67,24 @@ _signal_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    void *data = va_arg(*list, void *);
 
    Edje *ed = _pd;
-   Edje_Signal_Callback *escb;
 
    if ((!emission) || (!source) || (!func)) return;
    ed = _pd;
    if (!ed) return;
    if (ed->delete_me) return;
-   escb = calloc(1, sizeof(Edje_Signal_Callback));
-   if (emission[0])
-     escb->signal = eina_stringshare_add(emission);
-   if (source[0])
-     escb->source = eina_stringshare_add(source);
-   escb->func = func;
-   escb->data = data;
-   ed->callbacks = eina_list_append(ed->callbacks, escb);
-   if (ed->walking_callbacks)
-     {
-	escb->just_added = 1;
-	ed->just_added_callbacks = EINA_TRUE;
-     }
-   else
-     _edje_callbacks_patterns_clean(ed);
+
+   emission = eina_stringshare_add(emission);
+   source = eina_stringshare_add(source);
+
+   if (!ed->callbacks)
+     ed->callbacks = _edje_signal_callback_alloc();
+
+   _edje_signal_callback_push(ed->callbacks,
+                              emission, source,
+                              func, data, EINA_FALSE);
+
+   eina_stringshare_del(emission);
+   eina_stringshare_del(source);
 }
 
 EAPI void *
@@ -94,7 +92,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 {
    if (!obj) return NULL;
    void *ret = NULL;
-   eo_do(obj, edje_obj_signal_callback_del(emission, source, (Edje_Signal_Cb)func, &ret));
+   eo_do(obj, edje_obj_signal_callback_del(emission, source, (Edje_Signal_Cb)func, NULL, &ret));
    return ret;
 }
 
@@ -104,46 +102,25 @@ _signal_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *emission = va_arg(*list, const char *);
    const char *source = va_arg(*list, const char *);
    Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
+   void *data = va_arg(*list, void *);
    void **ret = va_arg(*list, void **);
-   if (ret) *ret = NULL;
-
    Edje *ed = _pd;
-   Eina_List *l;
-   Edje_Signal_Callback *escb;
+
+   if (ret) *ret = NULL;
 
    if ((!emission) || (!source) || (!func)) return;
    if (!ed) return;
    if (ed->delete_me) return;
-   EINA_LIST_FOREACH(ed->callbacks, l, escb)
-     {
-	if ((escb->func == func) &&
-	    ((!escb->signal && !emission[0]) ||
-             (escb->signal && !strcmp(escb->signal, emission))) &&
-	    ((!escb->source && !source[0]) ||
-             (escb->source && !strcmp(escb->source, source))))
-	  {
-	     void *data;
 
-	     data = escb->data;
-	     if (ed->walking_callbacks)
-	       {
-		  escb->delete_me = EINA_TRUE;
-		  ed->delete_callbacks = EINA_TRUE;
-	       }
-	     else
-	       {
-		  _edje_callbacks_patterns_clean(ed);
+   emission = eina_stringshare_add(emission);
+   source = eina_stringshare_add(source);
 
-		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
-		  if (escb->signal) eina_stringshare_del(escb->signal);
-		  if (escb->source) eina_stringshare_del(escb->source);
-		  free(escb);
-	       }
-	     if (ret) *ret = data;
-             return;
-	  }
-     }
-   return;
+   _edje_signal_callback_disable(ed->callbacks,
+                                 emission, source,
+                                 func, data);
+
+   eina_stringshare_del(emission);
+   eina_stringshare_del(source);
 }
 
 EAPI void *
@@ -151,57 +128,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 {
    if (!obj) return NULL;
    void *ret = NULL;
-   eo_do(obj, edje_obj_signal_callback_del_full(emission, source, func, data, &ret));
+   eo_do(obj, edje_obj_signal_callback_del(emission, source, func, data, &ret));
    return ret;
-}
-
-void
-_signal_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
-   void *data = va_arg(*list, void *);
-   void **ret = va_arg(*list, void **);
-   if (ret) *ret = NULL;
-
-   Edje *ed = _pd;
-   Eina_List *l;
-   Edje_Signal_Callback *escb;
-
-   if ((!emission) || (!source) || (!func)) return;
-   if (!ed) return;
-   if (ed->delete_me) return;
-   EINA_LIST_FOREACH(ed->callbacks, l, escb)
-     {
-	if ((escb->func == func) && (escb->data == data) &&
-	    ((!escb->signal && !emission[0]) ||
-             (escb->signal && !strcmp(escb->signal, emission))) &&
-	    ((!escb->source && !source[0]) ||
-             (escb->source && !strcmp(escb->source, source))))
-	  {
-	     void *data2;
-
-	     data2 = escb->data;
-	     if (ed->walking_callbacks)
-	       {
-		  escb->delete_me = EINA_TRUE;
-		  ed->delete_callbacks = EINA_TRUE;
-	       }
-	     else
-	       {
-		  _edje_callbacks_patterns_clean(ed);
-
-		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
-		  if (escb->signal) eina_stringshare_del(escb->signal);
-		  if (escb->source) eina_stringshare_del(escb->source);
-		  free(escb);
-	       }
-	     if (ret) *ret = data2;
-             return;
-	  }
-     }
-   return;
 }
 
 EAPI void
@@ -1279,37 +1207,6 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
    return EINA_FALSE;
 }
 
-void
-_edje_callbacks_patterns_clean(Edje *ed)
-{
-   if (ed->walking_callbacks > 0) return;
-
-   _edje_signals_sources_patterns_clean(&ed->patterns.callbacks);
-
-   eina_rbtree_delete(ed->patterns.callbacks.exact_match,
-		      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
-		      NULL);
-   ed->patterns.callbacks.exact_match = NULL;
-
-   ed->patterns.callbacks.u.callbacks.globing = eina_list_free(ed->patterns.callbacks.u.callbacks.globing);
-}
-
-static void
-_edje_callbacks_patterns_init(Edje *ed)
-{
-   Edje_Signals_Sources_Patterns *ssp = &ed->patterns.callbacks;
-
-   if ((ssp->signals_patterns) || (ssp->sources_patterns) ||
-       (ssp->u.callbacks.globing) || (ssp->exact_match))
-     return;
-
-   ssp->u.callbacks.globing = edje_match_callback_hash_build(ed->callbacks,
-							     &ssp->exact_match);
-
-   ssp->signals_patterns = edje_match_callback_signal_init(ssp->u.callbacks.globing);
-   ssp->sources_patterns = edje_match_callback_source_init(ssp->u.callbacks.globing);
-}
-
 /* FIXME: what if we delete the evas object??? */
 void
 _edje_emit_handle(Edje *ed, const char *sig, const char *src,
@@ -1403,13 +1300,11 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
              if (ed->collection->patterns.table_programs_size > 0)
                {
-		  const Eina_Array *match;
+		  const Eina_Inarray *match;
 #ifdef EDJE_PROGRAM_CACHE
 		  const Eina_List *l;
 #endif
 		  Edje_Program *pr;
-		  Eina_Array_Iterator iterator;
-		  unsigned int i;       
 
 		  if (ed->collection->patterns.programs.u.programs.globing)
 		    if (edje_match_programs_exec(ed->collection->patterns.programs.signals_patterns,
@@ -1420,13 +1315,17 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 						 _edje_glob_callback,
 						 &data,
                                                  prop) == 0)
-		      goto break_prog;
+                      goto break_prog;
 
 		  match = edje_match_signal_source_hash_get(sig, src,
 							    ed->collection->patterns.programs.exact_match);
                   if (match)
-                    EINA_ARRAY_ITER_NEXT(match, i, pr, iterator)
-                      _edje_glob_callback(pr, &data);
+                    {
+                       Edje_Program **tpr;
+
+                       EINA_INARRAY_FOREACH(match, tpr)
+                         _edje_glob_callback(*tpr, &data);
+                    }
 
 #ifdef EDJE_PROGRAM_CACHE
                   EINA_LIST_FOREACH(data.matches, l, pr)
@@ -1489,82 +1388,68 @@ edje_object_signal_callback_extra_data_get(void)
 static void
 _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop)
 {
-   Eina_List            *l;
+   const Edje_Signals_Sources_Patterns *ssp;
+   Edje_Signal_Callback_Matches *m;
+   const void **custom_data;
+   Eina_Bool *flags;
+   const Eina_Inarray *match;
+   int r = 1;
 
    if (ed->delete_me) return;
+   if (!ed->callbacks || !ed->callbacks->matches) return;
+
    _edje_ref(ed);
    _edje_freeze(ed);
    _edje_block(ed);
 
-   if (ed->just_added_callbacks)
-     _edje_callbacks_patterns_clean(ed);
+   ssp = _edje_signal_callback_patterns_ref(ed->callbacks);
 
-   ed->walking_callbacks++;
+   m = (Edje_Signal_Callback_Matches*) ed->callbacks->matches;
+   EINA_REFCOUNT_REF(m);
 
-   if (ed->callbacks)
+   callback_extra_data = (data) ? data->data : NULL;
+   custom_data = alloca(sizeof (void*) * m->matches_count);
+   memcpy(custom_data, ed->callbacks->custom_data, sizeof (void*) * m->matches_count);
+   flags = alloca(sizeof (Eina_Bool) * m->matches_count);
+   memcpy(flags, ed->callbacks->flags, sizeof (Eina_Bool) * (m->matches_count >> 1));
+
+   if (eina_inarray_count(&ssp->u.callbacks.globing))
+     r = edje_match_callback_exec(ssp,
+				  m->matches,
+				  custom_data,
+				  flags,
+                                  sig,
+                                  src,
+                                  ed,
+                                  prop);
+
+   if (!r)
+     goto break_prog;
+
+   match = edje_match_signal_source_hash_get(sig, src,
+                                             ssp->exact_match);
+   if (match)
      {
-	Edje_Signal_Callback *escb;
-	const Eina_Array *match;
-        Eina_Array_Iterator iterator;
-        unsigned int i;
-        int r = 1;
-        callback_extra_data = (data) ? data->data : NULL;
+        const Edje_Signal_Callback_Match *cb;
+        size_t *i;
 
-	_edje_callbacks_patterns_init(ed);
-	if (ed->patterns.callbacks.u.callbacks.globing)
-	  r = edje_match_callback_exec(ed->patterns.callbacks.signals_patterns,
-				       ed->patterns.callbacks.sources_patterns,
-				       sig,
-				       src,
-				       ed->patterns.callbacks.u.callbacks.globing,
-				       ed,
-                                       prop);
+        EINA_INARRAY_FOREACH(match, i)
+          {
+             cb = &m->matches[*i];
 
-        if (!r)
-          goto break_prog;
+             if ((prop) && (_edje_signal_callback_prop(flags, *i))) continue;
 
-	match = edje_match_signal_source_hash_get(sig, src,
-						  ed->patterns.callbacks.exact_match);
-        if (match)
-          EINA_ARRAY_ITER_NEXT(match, i, escb, iterator)
-            {
-               if ((prop) && (escb->propagate)) continue;
-               if ((!escb->just_added) && (!escb->delete_me))
-                 {
-                    escb->func(escb->data, ed->obj, sig, src);
-                    if (_edje_block_break(ed))
-                      break;
-                 }
-            }
+             cb->func((void*) custom_data[*i], ed->obj, sig, src);
+             if (_edje_block_break(ed))
+               break;
+          }
      }
-   break_prog:
 
-   ed->walking_callbacks--;
-   if (!ed->walking_callbacks &&
-       ((ed->delete_callbacks) || (ed->just_added_callbacks)))
-     {
-	ed->delete_callbacks = EINA_FALSE;
-	ed->just_added_callbacks = EINA_FALSE;
-	l = ed->callbacks;
-	while (l)
-	  {
-	     Edje_Signal_Callback *escb = l->data;
-	     Eina_List *next_l = l->next;
+ break_prog:
+   _edje_signal_callback_matches_unref(m);
 
-	     if (escb->just_added)
-	       escb->just_added = 0;
-	     if (escb->delete_me)
-	       {
-		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
-		  if (escb->signal) eina_stringshare_del(escb->signal);
-		  if (escb->source) eina_stringshare_del(escb->source);
-		  free(escb);
-	       }
-	     l = next_l;
-	  }
+   _edje_signal_callback_patterns_unref(ssp);
 
-        _edje_callbacks_patterns_clean(ed);
-     }
    _edje_unblock(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
