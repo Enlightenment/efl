@@ -78,6 +78,8 @@ void test_list4(void *data, Evas_Object *obj, void *event_info);
 void test_list5(void *data, Evas_Object *obj, void *event_info);
 void test_list6(void *data, Evas_Object *obj, void *event_info);
 void test_list7(void *data, Evas_Object *obj, void *event_info);
+void test_list8(void *data, Evas_Object *obj, void *event_info);
+void test_list9(void *data, Evas_Object *obj, void *event_info);
 void test_list_separator(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
 void test_inwin2(void *data, Evas_Object *obj, void *event_info);
@@ -104,6 +106,7 @@ void test_genlist16(void *data, Evas_Object *obj, void *event_info);
 void test_genlist17(void *data, Evas_Object *obj, void *event_info);
 void test_genlist18(void *data, Evas_Object *obj, void *event_info);
 void test_genlist19(void *data, Evas_Object *obj, void *event_info);
+void test_genlist20(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_item_styles(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
@@ -365,7 +368,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
     * type is a basic window (the final parameter).
     * You can call elm_win_util_standard_add() instead. This is a convenient API
     * for window and bg creation. You don't need to create bg object manually.
-    * You can also set the title of the window at the same time. 
+    * You can also set the title of the window at the same time.
     *   ex) win = elm_win_util_standard_add("main", "Elementary Tests"); */
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    /* Set the title of the window - This is in the titlebar. */
@@ -591,6 +594,8 @@ add_tests:
    ADD_TEST(NULL, "Lists", "List 5", test_list5);
    ADD_TEST(NULL, "Lists", "List 6", test_list6);
    ADD_TEST(NULL, "Lists", "List 7", test_list7);
+   ADD_TEST(NULL, "Lists", "List Focus", test_list8);
+   ADD_TEST(NULL, "Lists", "List Focus Horizontal", test_list9);
    ADD_TEST(NULL, "Lists", "List Separator", test_list_separator);
    ADD_TEST(NULL, "Lists", "Genlist", test_genlist);
    ADD_TEST(NULL, "Lists", "Genlist 2", test_genlist2);
@@ -614,6 +619,7 @@ add_tests:
    ADD_TEST(NULL, "Lists", "Genlist Decorate Modes", test_genlist17);
    ADD_TEST(NULL, "Lists", "Genlist Tree and Decorate All Mode", test_genlist18);
    ADD_TEST(NULL, "Lists", "Genlist Full Widget", test_genlist19);
+   ADD_TEST(NULL, "Lists", "Genlist Focus", test_genlist20);
    ADD_TEST(NULL, "Lists", "Genlist Item Styles", test_genlist_item_styles);
    ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
    ADD_TEST(NULL, "Lists", "GenGrid 2", test_gengrid2);

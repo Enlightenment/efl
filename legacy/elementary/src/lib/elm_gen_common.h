@@ -39,6 +39,7 @@ struct Elm_Gen_Item
    int                       walking;
    int                       generation; /**< a generation of an item. when the item is created, this value is set to the value of genlist generation. this value will be decreased when the item is going to be deleted */
    const char               *mouse_cursor;
+   Eina_List                *item_focus_chain;
 
    struct
    {

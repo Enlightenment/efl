@@ -643,3 +643,30 @@ EAPI Eina_Bool          elm_genlist_highlight_mode_get(const Evas_Object *obj);
 EAPI Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
 
+/**
+ * Set focus upon items selection mode
+ *
+ * @param obj The genlist object
+ * @param enabled The tree effect status
+ * (EINA_TRUE = enabled, EINA_FALSE = disabled)
+ *
+ * When enabled, every selection of an item inside the genlist will automatically set focus to 
+ * its first focusable widget from the left. This is true of course if the selection was made by
+ * clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a 
+ * focusable widget inside an item will couse this particular item to get focus as usual.
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_focus_on_selection_set(Evas_Object *obj, Eina_Bool enabled);
+
+
+/**
+ * Gets whether focus upon item's selection mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The tree effect status
+ * (EINA_TRUE = enabled, EINA_FALSE = disabled)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool elm_genlist_focus_on_selection_get(const Evas_Object *obj);

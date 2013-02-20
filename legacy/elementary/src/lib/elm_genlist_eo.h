@@ -50,6 +50,8 @@ enum
    ELM_OBJ_GENLIST_SUB_ID_HIGHLIGHT_MODE_GET,
    ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_SET,
    ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_GET,
+   ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_SET,
+   ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_GET,
    ELM_OBJ_GENLIST_SUB_ID_LAST
 };
 
@@ -510,6 +512,29 @@ enum
  */
 #define elm_obj_genlist_tree_effect_enabled_get(ret) ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_obj_genlist_focus_on_selection_set
+ * @since 1.8
+ *
+ * Set focus to a first from left focusable widget upon item selection.
+ *
+ * @param[in] enabled
+ *
+ * @see elm_obj_genlist_focus_on_selection_get
+ */
+#define elm_obj_genlist_focus_on_selection_set(enabled) ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_SET), EO_TYPECHECK(Eina_Bool, enabled)
+
+/**
+ * @def elm_obj_genlist_focus_on_selection_get
+ * @since 1.8
+ *
+ * Get whether the focus will be set to a widget on an item upon it's selection.
+ *
+ * @param[out] ret
+ *
+ * @see elm_obj_genlist_focus_on_selection_set
+ */
+#define elm_obj_genlist_focus_on_selection_get(ret) ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_GET), EO_TYPECHECK(Eina_Bool *, ret)
 /**
  * @}
  */

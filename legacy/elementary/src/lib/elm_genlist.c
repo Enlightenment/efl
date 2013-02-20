@@ -391,6 +391,9 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
+   eina_list_free(it->item_focus_chain);
+   it->item_focus_chain = NULL;
+
    it->unrealize_cb(it);
 
    it->realized = EINA_FALSE;
@@ -1687,6 +1690,18 @@ _item_realize(Elm_Gen_Item *it,
                edje_object_signal_emit(VIEW(it), "elm,state,hide", "");
              it->item->tree_effect_hide_me = EINA_FALSE;
           }
+
+        if (it->item->type == ELM_GENLIST_ITEM_NONE)
+          {
+             Evas_Object* eobj;
+             Eina_List* l;
+             EINA_LIST_FOREACH(it->content_objs, l, eobj)
+                if (elm_object_focus_allow_get(eobj))
+                  it->item_focus_chain = eina_list_append
+                      (it->item_focus_chain, eobj);
+
+          }
+
         evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
      }
 
@@ -2358,6 +2373,50 @@ _item_single_select_down(Elm_Genlist_Smart_Data *sd)
 }
 
 static void
+_elm_genlist_item_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
+{
+   Evas_Object *focused_obj = NULL;
+   Eina_List *l;
+   if (!it) return;
+
+   if (!GL_IT(it)->wsd->focus_on_selection_enabled) return;
+
+   if (!it->item_focus_chain)
+     {
+        elm_object_focus_set(VIEW(it), EINA_TRUE);
+        return;
+     }
+
+   EINA_LIST_FOREACH(it->item_focus_chain, l, focused_obj)
+     if (elm_object_focus_get(focused_obj)) break;
+
+   if (focused_obj && (dir != ELM_FOCUS_PREVIOUS))
+     {
+        Evas_Object *nextfocus;
+        if (elm_widget_focus_next_get(focused_obj, dir, &nextfocus))
+          {
+             elm_object_focus_set(nextfocus, EINA_TRUE);
+             return;
+          }
+     }
+
+   if (!l) l = it->item_focus_chain;
+
+   if (dir == ELM_FOCUS_RIGHT)
+     {
+        l = eina_list_next(l);
+        if (!l) l = it->item_focus_chain;
+     }
+   else if (dir == ELM_FOCUS_LEFT)
+     {
+        l = eina_list_prev(l);
+        if (!l) l = eina_list_last(it->item_focus_chain);
+     }
+
+   elm_object_focus_set(eina_list_data_get(l), EINA_TRUE);
+}
+
+static void
 _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
@@ -2396,11 +2455,17 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
        ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
         x -= step_x;
+
+        Elm_Gen_Item *gt = (Elm_Gen_Item*)elm_genlist_selected_item_get(obj);
+        _elm_genlist_item_focus_set(gt, ELM_FOCUS_LEFT);
      }
    else if ((!strcmp(ev->keyname, "Right")) ||
             ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
         x += step_x;
+
+        Elm_Gen_Item *gt = (Elm_Gen_Item*)elm_genlist_selected_item_get(obj);
+        _elm_genlist_item_focus_set(gt, ELM_FOCUS_RIGHT);
      }
    else if ((!strcmp(ev->keyname, "Up")) ||
             ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
@@ -3047,6 +3112,14 @@ _item_unselect(Elm_Gen_Item *it)
    if ((it->generation < sd->generation)) return;
    _item_unhighlight(it); /* unhighlight the item first */
    if (!it->selected) return; /* then check whether the item is selected */
+
+  if (GL_IT(it)->wsd->focus_on_selection_enabled)
+     {
+        Evas_Object* eobj;
+        Eina_List* l;
+        EINA_LIST_FOREACH(it->item_focus_chain, l, eobj)
+          elm_object_focus_set(eobj, EINA_FALSE);
+     }
 
    it->selected = EINA_FALSE;
    sd->selected = eina_list_remove(sd->selected, it);
@@ -5069,6 +5142,8 @@ _item_select(Elm_Gen_Item *it)
    if (it->generation == sd->generation)
      evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
 
+   _elm_genlist_item_focus_set(it, ELM_FOCUS_PREVIOUS);
+
    it->walking--;
    sd->walking--;
    if ((sd->clear_me) && (!sd->walking))
@@ -6317,6 +6392,17 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
         it->content_objs = _item_content_realize(it, VIEW(it),
                                                  &it->contents, parts);
 
+        if (it->item->type == ELM_GENLIST_ITEM_NONE)
+          {
+             Evas_Object* eobj;
+             Eina_List* l;
+             eina_list_free(it->item_focus_chain);
+             it->item_focus_chain = NULL;
+             EINA_LIST_FOREACH(it->content_objs, l, eobj)
+               if (elm_object_focus_allow_get(eobj))
+                 it->item_focus_chain = eina_list_append(it->item_focus_chain, eobj);
+          }
+
         if (it->flipped)
           {
              it->item->flip_content_objs =
@@ -7341,6 +7427,39 @@ _tree_effect_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->tree_effect_enabled;
 }
 
+EAPI void
+elm_genlist_focus_on_selection_set(Evas_Object *obj,
+                                    Eina_Bool enabled)
+{
+   ELM_GENLIST_CHECK(obj);
+   eo_do(obj, elm_obj_genlist_focus_on_selection_set(enabled));
+}
+
+static void
+_focus_on_selection_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool enabled = va_arg(*list, int);
+   Elm_Genlist_Smart_Data *sd = _pd;
+   sd->focus_on_selection_enabled = !!enabled;
+}
+
+EAPI Eina_Bool
+elm_genlist_focus_on_selection_get(const Evas_Object *obj)
+{
+   ELM_GENLIST_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_genlist_focus_on_selection_get(&ret));
+   return ret;
+}
+
+static void
+_focus_on_selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Genlist_Smart_Data *sd = _pd;
+   *ret = sd->focus_on_selection_enabled;
+}
+
 EAPI Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
 {
@@ -7427,6 +7546,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_HIGHLIGHT_MODE_GET), _highlight_mode_get),
         EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_SET), _tree_effect_enabled_set),
         EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_GET), _tree_effect_enabled_get),
+        EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_SET), _focus_on_selection_set),
+        EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_GET), _focus_on_selection_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -7473,6 +7594,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_GENLIST_SUB_ID_HIGHLIGHT_MODE_GET, "Get whether the genlist items' should be highlighted when item selected."),
      EO_OP_DESCRIPTION(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_SET, "Set Genlist tree effect."),
      EO_OP_DESCRIPTION(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_GET, "Get Genlist tree effect."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_SET, "Set focus upon item's selection mode."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_GET, "Get focus upon item's selection mode."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

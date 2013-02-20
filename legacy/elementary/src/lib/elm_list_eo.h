@@ -32,6 +32,8 @@
    ELM_OBJ_LIST_SUB_ID_FIRST_ITEM_GET,
    ELM_OBJ_LIST_SUB_ID_LAST_ITEM_GET,
    ELM_OBJ_LIST_SUB_ID_AT_XY_ITEM_GET,
+   ELM_OBJ_LIST_SUB_ID_FOCUS_ON_SELECTION_SET,
+   ELM_OBJ_LIST_SUB_ID_FOCUS_ON_SELECTION_GET,
    ELM_OBJ_LIST_SUB_ID_LAST
 };
 
@@ -370,6 +372,30 @@
  * @see elm_list_at_xy_item_get
  */
 #define elm_obj_list_at_xy_item_get(x, y, posret, ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_AT_XY_ITEM_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, posret), EO_TYPECHECK(Elm_Object_Item **, ret)
+
+/**
+ * @def elm_obj_list_focus_on_selection_set
+ * @since 1.8
+ *
+ * Set focus to a first from left focusable widget upon item selection.
+ *
+ * @param[in] enabled
+ *
+ * @see elm_obj_list_focus_on_selection_get
+ */
+#define elm_obj_list_focus_on_selection_set(enabled) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_FOCUS_ON_SELECTION_SET), EO_TYPECHECK(Eina_Bool, enabled)
+
+/**
+ * @def elm_obj_list_focus_on_selection_get
+ * @since 1.8
+ *
+ * Get whether the focus will be set to a widget on an item upon it's selection.
+ *
+ * @param[out] ret
+ *
+ * @see elm_obj_list_focus_on_selection_set
+ */
+#define elm_obj_list_focus_on_selection_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_FOCUS_ON_SELECTION_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @}

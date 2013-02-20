@@ -1227,6 +1227,142 @@ test_list7(void        *data __UNUSED__,
    evas_object_show(win);
 }
 
+static const unsigned _list_focus_objects = 5;
+static const char *_list_focus_names[] = {"None", "Square", "Button", "Check", "Box"};
+static const int _list_focus_combo[] = { 1, 0, 2, 33, 43, 44, 10, 30, 22, 11, 10, -1 };
+
+static Evas_Object *
+test_list8_content_get(Evas_Object *obj, unsigned type, Eina_Bool horiz)
+{
+   Evas_Object *cnt = NULL;
+
+   switch(type)
+     {
+      case 1:
+         cnt = elm_bg_add(obj);
+         evas_object_color_set(cnt, 128, 18, 128, 255);
+         evas_object_size_hint_min_set(cnt, 50, 50);
+         break;
+      case 2:
+         cnt = elm_button_add(obj);
+         break;
+      case 3:
+         cnt = elm_check_add(obj);
+         break;
+      case 4:
+         cnt = elm_box_add(obj);
+         elm_box_horizontal_set(cnt, !horiz);
+         evas_object_size_hint_align_set(cnt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+         elm_box_pack_end(cnt, test_list8_content_get(obj, 2, horiz));
+         elm_box_pack_end(cnt, test_list8_content_get(obj, 3, horiz));
+         elm_box_pack_end(cnt, test_list8_content_get(obj, 2, horiz));
+         break;
+      default:
+         break;
+
+     }
+
+   if (cnt)
+   {
+       evas_object_size_hint_weight_set(cnt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+       evas_object_show(cnt);
+   }
+
+   return cnt;
+}
+
+static void
+test_list8_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
+{
+    elm_list_focus_on_selection_set(gl, focus);
+    elm_check_state_set(chk, focus);
+    printf("list_focus_on_selection = %s\n", (focus) ? "true" : "false");
+}
+
+static void
+test_list8_focus_check_changed(void *data, Evas_Object *obj, void *event_info  __UNUSED__)
+{
+   Eina_Bool nextstate = !elm_list_focus_on_selection_get(data);
+   test_list8_focus_on_selection_set(data, obj, nextstate);
+}
+
+void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
+{
+   Evas_Object *win, *li, *bx, *bxx, *chk;
+   unsigned lhand, rhand, idx;
+   char buf[256];
+
+   elm_config_focus_highlight_enabled_set(EINA_TRUE);
+
+   win = elm_win_util_standard_add(name, title);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_list_horizontal_set(li, horiz);
+   elm_box_pack_end(bxx, li);
+   evas_object_show(li);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_show(bx);
+
+   chk = elm_check_add(win);
+   elm_object_text_set(chk, "Focus on selection");
+   evas_object_smart_callback_add(chk, "changed", test_list8_focus_check_changed, li);
+   elm_box_pack_end(bx, chk);
+   evas_object_show(chk);
+
+   elm_box_pack_end(bxx, bx);
+
+   test_list8_focus_on_selection_set(li, chk, EINA_TRUE);
+
+   for (idx = 0; _list_focus_combo[idx] >= 0; idx++)
+     {
+        lhand = _list_focus_combo[idx] / 10;
+        rhand = _list_focus_combo[idx] % 10;
+
+        snprintf(buf, sizeof(buf), " %s / %s ",
+            _list_focus_names[lhand],
+            _list_focus_names[rhand]);
+
+        elm_list_item_append(li, buf,
+                test_list8_content_get(li, lhand, horiz),
+                test_list8_content_get(li, rhand, horiz),
+                NULL, NULL);
+     }
+
+   elm_list_go(li);
+   evas_object_show(li);
+
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
+}
+
+void
+test_list8(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
+{
+    test_list_focus("list-focus", "List Focus", EINA_FALSE);
+}
+
+void
+test_list9(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
+{
+    test_list_focus("list-focus-horizontal", "List Focus Horizontal", EINA_TRUE);
+}
+
 void
 test_list_separator(void        *data __UNUSED__,
                     Evas_Object *obj __UNUSED__,

@@ -39,6 +39,7 @@ struct _Elm_List_Smart_Data
       Evas_Coord x, y;
    } history[ELM_LIST_SWIPE_MOVES];
 
+   Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             was_selected : 1;
    Eina_Bool                             fix_pending : 1;
    Eina_Bool                             longpressed : 1;
