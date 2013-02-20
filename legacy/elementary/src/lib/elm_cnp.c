@@ -100,7 +100,7 @@ static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
 
-//#define DEBUGON 1
+#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
@@ -1239,6 +1239,10 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
    if ((ev->buttons == 1) &&
        (ev->event_window == xwin))
      {
+        Eina_Bool have_drops = EINA_FALSE;
+        Eina_List *l;
+        Dropable *dropable;
+        
         ecore_x_pointer_ungrab();
         if (handler_up) 
           {
@@ -1249,8 +1253,15 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
         
         cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
         
-        // TODO BUG: should not revert to FALSE if xwin is a drop target!
-        ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (xwin == _x11_elm_widget_xwin_get(dropable->obj))
+               {
+                  have_drops = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
         if (dragdonecb)
           {
              dragdonecb(dragdonedata, _x11_selections[ELM_SEL_TYPE_XDND].widget);
@@ -1503,9 +1514,10 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
 static Eina_Bool
 _x11_elm_drop_target_del(Evas_Object *obj)
 {
-   Dropable *drop,*del;
-   Eina_List *item;
+   Dropable *drop, *del, *dropable;
+   Eina_List *item, *l;
    Ecore_X_Window xwin;
+   Eina_Bool have_drops = EINA_FALSE;
 
    _x11_elm_cnp_init();
    
@@ -1532,7 +1544,15 @@ _x11_elm_drop_target_del(Evas_Object *obj)
 
    cnp_debug("Disabling DND\n");
    xwin = _x11_elm_widget_xwin_get(obj);
-   ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (xwin == _x11_elm_widget_xwin_get(dropable->obj))
+          {
+             have_drops = EINA_TRUE;
+             break;
+          }
+     }
+   if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
 
    ecore_event_handler_del(handler_pos);
    ecore_event_handler_del(handler_drop);
