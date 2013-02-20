@@ -986,8 +986,7 @@ _ctxpopup_restack_cb(void *data __UNUSED__,
                      void *event_info __UNUSED__)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
-
-   evas_object_layer_set(sd->bg, evas_object_layer_get(obj));
+   evas_object_stack_below(sd->bg, obj);
 }
 
 static void
