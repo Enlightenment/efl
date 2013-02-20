@@ -2698,7 +2698,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
    /* get the output property
     * 
     * NB: Returns 0 on success */
-   if (!XRRGetOutputProperty(_ecore_x_disp, output, edid, 0, 100, False, False, 
+   if (!XRRGetOutputProperty(_ecore_x_disp, output, edid, 0, 128, False, False,
                             AnyPropertyType, &type, &format, &nitems, 
                             &bytes, &prop))
      {

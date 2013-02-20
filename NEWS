@@ -175,3 +175,5 @@ Fixes:
     * Fix edje_color_class_list() and edje_text_class_list() to look at right hashes.
     * Evas: Fix Evas_Object_Text when LTR and RTL are used in the same paragraph.
     * Properly report file not found in Edje.
+    * Fix ecore-x edid fetch to ftech 128, not 100 bytes.
+    
