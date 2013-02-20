@@ -154,6 +154,7 @@ Fixes:
    * Fix elm_config to properly check file type.
    * ignore tab key widget focus change if control/alt is pressed
    * prevent blank entry hoversels
+   * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
 
 Removals:
 

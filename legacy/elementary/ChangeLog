@@ -1042,3 +1042,8 @@
 
         * ignore tab key widget focus change if control/alt is pressed
         * prevent blank entry hoversels
+
+2013-02-17 Shinwoo Kim
+
+        * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
+
