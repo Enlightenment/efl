@@ -102,6 +102,7 @@ START_TEST(eina_log_macro)
 {
    struct log_ctx ctx;
    int oldlevel;
+   int maxlevel;
 
    fail_if(!eina_init());
 
@@ -116,25 +117,46 @@ START_TEST(eina_log_macro)
    ctx.fnc = __FUNCTION__;                      \
    ctx.did = EINA_FALSE
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "Critical message");
-   EINA_LOG_CRIT("Critical message");
-   fail_unless(ctx.did);
+#ifdef EINA_LOG_LEVEL_MAXIMUM
+   maxlevel = EINA_LOG_LEVEL_MAXIMUM;
+#else
+   maxlevel = EINA_LOG_LEVEL_DBG;
+#endif
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
-   EINA_LOG_ERR("An error");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_CRITICAL <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "Critical message");
+        EINA_LOG_CRIT("Critical message");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
-   EINA_LOG_WARN("A warning");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_ERR <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
+        EINA_LOG_ERR("An error");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
-   EINA_LOG_INFO("An info");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_WARN <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
+        EINA_LOG_WARN("A warning");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
-   EINA_LOG_DBG("A debug");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_INFO <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
+        EINA_LOG_INFO("An info");
+        fail_unless(ctx.did);
+     }
+
+   if (EINA_LOG_LEVEL_DBG <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
+        EINA_LOG_DBG("A debug");
+        fail_unless(ctx.did);
+     }
 
 #undef TEST_LOG_CTX
 
@@ -149,6 +171,7 @@ START_TEST(eina_log_domains_macros)
 {
    struct log_ctx ctx;
    int oldlevel;
+   int maxlevel;
 
    fail_if(!eina_init());
 
@@ -171,25 +194,46 @@ START_TEST(eina_log_domains_macros)
    ctx.dom = "MyDomain";                        \
    ctx.did = EINA_FALSE
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "A critical message");
-   EINA_LOG_DOM_CRIT(d, "A critical message");
-   fail_unless(ctx.did);
+#ifdef EINA_LOG_LEVEL_MAXIMUM
+   maxlevel = EINA_LOG_LEVEL_MAXIMUM;
+#else
+   maxlevel = EINA_LOG_LEVEL_DBG;
+#endif
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
-   EINA_LOG_DOM_ERR(d, "An error");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_CRITICAL <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "A critical message");
+        EINA_LOG_DOM_CRIT(d, "A critical message");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
-   EINA_LOG_DOM_WARN(d, "A warning");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_ERR <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
+        EINA_LOG_DOM_ERR(d, "An error");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
-   EINA_LOG_DOM_INFO(d, "An info");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_WARN <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
+        EINA_LOG_DOM_WARN(d, "A warning");
+        fail_unless(ctx.did);
+     }
 
-   TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
-   EINA_LOG_DOM_DBG(d, "A debug");
-   fail_unless(ctx.did);
+   if (EINA_LOG_LEVEL_INFO <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
+        EINA_LOG_DOM_INFO(d, "An info");
+        fail_unless(ctx.did);
+     }
+
+   if (EINA_LOG_LEVEL_DBG <= maxlevel)
+     {
+        TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
+        EINA_LOG_DOM_DBG(d, "A debug");
+        fail_unless(ctx.did);
+     }
 
 #undef TEST_LOG_CTX
 
@@ -260,6 +304,7 @@ END_TEST
 START_TEST(eina_log_level_indexes)
 {
    struct log_ctx ctx;
+   int maxlevel;
 
    fail_if(!eina_init());
    fail_if(!eina_threads_init());
@@ -278,27 +323,45 @@ START_TEST(eina_log_level_indexes)
    ctx.dom = "Levels";                          \
    ctx.did = EINA_FALSE;
 
-   // Displayed unless user sets level lower than -1
-   eina_log_domain_level_set("Levels", -1);
-   TEST_LOG_CTX(-1, "Negative index message");
-   EINA_LOG(d, -1, "Negative index message");
-   fail_unless(ctx.did);
+#ifdef EINA_LOG_LEVEL_MAXIMUM
+   maxlevel = EINA_LOG_LEVEL_MAXIMUM;
+#else
+   maxlevel = EINA_LOG_LEVEL_DBG;
+#endif
 
-   eina_log_domain_level_set("Levels", -2);
-   TEST_LOG_CTX(-1, "Negative index message");
-   EINA_LOG(d, -1, "Negative index message");
-   fail_if(ctx.did);
+   if (-1 <= maxlevel)
+     {
+        // Displayed unless user sets level lower than -1
+        eina_log_domain_level_set("Levels", -1);
+        TEST_LOG_CTX(-1, "Negative index message");
+        EINA_LOG(d, -1, "Negative index message");
+        fail_unless(ctx.did);
+     }
 
-   // Displayed only if user sets level 6 or higher
-   eina_log_domain_level_set("Levels", 6);
-   TEST_LOG_CTX(6, "Higher level debug");
-   EINA_LOG(d, 6, "Higher level debug");
-   fail_unless(ctx.did);
+   if (-2 <= maxlevel)
+     {
+        eina_log_domain_level_set("Levels", -2);
+        TEST_LOG_CTX(-1, "Negative index message");
+        EINA_LOG(d, -1, "Negative index message");
+        fail_if(ctx.did);
+     }
 
-   eina_log_domain_level_set("Levels", 5);
-   TEST_LOG_CTX(6, "Higher level debug");
-   EINA_LOG(d, 6, "Higher level debug");
-   fail_if(ctx.did);
+   if (6 <= maxlevel)
+     {
+        // Displayed only if user sets level 6 or higher
+        eina_log_domain_level_set("Levels", 6);
+        TEST_LOG_CTX(6, "Higher level debug");
+        EINA_LOG(d, 6, "Higher level debug");
+        fail_unless(ctx.did);
+     }
+
+   if (5 <= maxlevel)
+     {
+        eina_log_domain_level_set("Levels", 5);
+        TEST_LOG_CTX(6, "Higher level debug");
+        EINA_LOG(d, 6, "Higher level debug");
+        fail_if(ctx.did);
+     }
 
 #undef TEST_LOG_CTX
 
