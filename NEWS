@@ -165,7 +165,6 @@ Fixes:
     * Fix memory usage of Ecore_Con_Server
     * Fix memory leak in eina_xattr_value_ls.
     * Fix memory leak in gstreamer_ecore_x_check
-    * Fix memory usage spike when rotating with the software_x11 engine.
     * Evas textblock: Fixed a selection issue with different scripts and bidi.
     * Fix memory leak in error case in ethumb.
     * fix bug not to display preedit string with PREEDIT_TYPE_NONE style
