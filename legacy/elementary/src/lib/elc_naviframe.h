@@ -25,7 +25,7 @@
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for naviframe objects.
  *
- * Becase this widget is a layout, one places content on those areas
+ * Because this widget is a layout, one places content on those areas
  * by using elm_layout_content_set() on the right swallow part names
  * expected for each, which are:
  * @li @c "default" - The main content of the current page
@@ -50,7 +50,7 @@
  * - @c "basic"   - views are switched sliding horizontally, one after
  *                  the other
  * - @c "overlap" - like the previous one, but the previous view stays
- *                  at its place and is ovelapped by the new
+ *                  at its place and is overlapped by the new
  *
  *
  * This widget emits the following signals, besides the ones sent from
