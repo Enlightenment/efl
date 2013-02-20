@@ -403,7 +403,10 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
    struct stat st;
 
    if (stat(file, &st) != 0)
-      return NULL;
+     {
+        *error_ret = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+        return NULL;
+     }
 
    if (!_edje_file_hash)
      {

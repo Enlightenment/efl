@@ -1,4 +1,8 @@
-2013-02-19 Daniel Zaoui
+2013-02-20  Cedric Bail
+
+	* Properly report file not found in Edje.
+
+2013-02-19  Daniel Zaoui
 
         * Fix Evas_Object_Text when LTR and RTL are used in the same paragraph.
 
