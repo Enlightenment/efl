@@ -372,7 +372,7 @@ _pulse(Eo *obj, void *_pd, va_list *list)
    Elm_Progressbar_Smart_Data *sd = _pd;
 
    state = !!state;
-   if ((!sd->pulse) && (sd->pulse_state == state)) return;
+   if ((!sd->pulse) || (sd->pulse_state == state)) return;
 
    sd->pulse_state = state;
 

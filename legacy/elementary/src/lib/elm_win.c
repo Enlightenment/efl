@@ -2657,6 +2657,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
                   opt_i++;
                   opt[opt_i] = 1;
                   opt_i++;
+                  opt[opt_i] = 0;
                }
              if (opt_i > 0)
                tmp_sd.ee = ecore_evas_gl_x11_options_new

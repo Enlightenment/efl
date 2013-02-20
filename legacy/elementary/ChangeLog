@@ -1047,3 +1047,7 @@
 
         * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
 
+2013-02-20 Carsten Haitzler (The Rasterman)
+
+        * Fix gl engine vsync option pass-in in elm_win
+        * Fix elm_progressbar_pulse() to abort if pulsing not enabled

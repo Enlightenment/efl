@@ -155,7 +155,9 @@ Fixes:
    * ignore tab key widget focus change if control/alt is pressed
    * prevent blank entry hoversels
    * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
-
+   * Fix vsync option in gl engine windows
+   * Fix elm_progressbar_pulse() to abort if pulsing not enabled
+   
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due
