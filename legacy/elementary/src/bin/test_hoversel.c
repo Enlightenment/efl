@@ -96,7 +96,7 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bt, *ic, *bxx;
+   Evas_Object *win, *bx, *bt, *ic, *bxx, *hoversel;
    char buf[PATH_MAX];
    api_data *api = calloc(1, sizeof(api_data));
 
@@ -124,86 +124,101 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    elm_box_pack_end(bxx, bx);
 
-   bt = elm_hoversel_add(win);
+   hoversel = elm_hoversel_add(win);
 // FIXME: need to add horizontal hoversel theme to default some day
 //   elm_hoversel_horizontal_set(bt, 1);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "Labels");
-   elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Labels");
+   elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
-   bt = elm_hoversel_add(win);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "Some Icons");
-   elm_hoversel_item_add(bt, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Some Icons");
+   elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", "home", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
-   bt = elm_hoversel_add(win);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "All Icons");
-   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "All Icons");
+   elm_hoversel_item_add(hoversel, "Item 1", "apps", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", "arrow_down", ELM_ICON_STANDARD,
+                         NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", "home", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
-   bt = elm_hoversel_add(win);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "All Icons");
-   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "All Icons");
+   elm_hoversel_item_add(hoversel, "Item 1", "apps", ELM_ICON_STANDARD, NULL,
+                         NULL);
    snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
-   elm_hoversel_item_add(bt, "Item 2", buf, ELM_ICON_FILE, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   elm_hoversel_item_add(hoversel, "Item 2", buf, ELM_ICON_FILE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", "home", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
-   bt = elm_hoversel_add(win);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "Disabled Hoversel");
-   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 2", "close", ELM_ICON_STANDARD, NULL, NULL);
-   elm_object_disabled_set(bt, 1);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Disabled Hoversel");
+   elm_hoversel_item_add(hoversel, "Item 1", "apps", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", "close", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_object_disabled_set(hoversel, 1);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
-   bt = elm_hoversel_add(win);
-   elm_hoversel_hover_parent_set(bt, win);
-   elm_object_text_set(bt, "Icon + Label");
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Icon + Label");
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_object_part_content_set(bt, "icon", ic);
+   elm_object_part_content_set(hoversel, "icon", ic);
    evas_object_show(ic);
 
-   elm_hoversel_item_add(bt, "Item 1", "apps", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 2", "arrow_down", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 3", "home", ELM_ICON_STANDARD, NULL, NULL);
-   elm_hoversel_item_add(bt, "Item 4", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, 0.5, 0.5);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
+   elm_hoversel_item_add(hoversel, "Item 1", "apps", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 2", "arrow_down", ELM_ICON_STANDARD,
+                         NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 3", "home", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
+                         NULL);
+   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
+   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
 
    evas_object_resize(win, 320, 300);
 
