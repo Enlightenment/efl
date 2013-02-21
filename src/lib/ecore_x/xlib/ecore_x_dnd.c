@@ -630,29 +630,20 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
 
    /* Attempt to find a DND-capable window under the cursor */
    skip = ecore_x_window_ignore_list(&num);
-   int i;
-   for (i = 0; i < num; i++) printf("skip %x\n", skip[i]);
 // WARNING - this function is HEAVY. it goes to and from x a LOT walking the
 // window tree - use the SHADOW version - makes a 1-off tree copy, then uses
 // that instead.
 //   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
    win = ecore_x_window_shadow_tree_at_xy_with_skip_get(root, x, y, skip, num);
-   printf("win1 %x\n", win);
-
 // NOTE: This now uses the shadow version to find parent windows
 //   while ((win) && !(ecore_x_dnd_version_get(win)))
 //     win = ecore_x_window_parent_get(win);
    while ((win) && !(ecore_x_dnd_version_get(win)))
-     {
-        printf("win parent %x\n", win);
-        win = ecore_x_window_shadow_parent_get(root, win);
-     }
-   printf("win2 %x\n", win);
+     win = ecore_x_window_shadow_parent_get(root, win);
 
    /* Send XdndLeave to current destination window if we have left it */
    if ((_source->dest) && (win != _source->dest))
      {
-        printf("leave...\n");
         xev.xclient.window = _source->dest;
         xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
         xev.xclient.data.l[0] = _source->win;
@@ -668,7 +659,6 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
 
         _source->version = MIN(ECORE_X_DND_VERSION,
                                ecore_x_dnd_version_get(win));
-        printf("win %x == %x\n", win, _source->dest);
         if (win != _source->dest)
           {
              int i;
