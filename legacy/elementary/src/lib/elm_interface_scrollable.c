@@ -2029,6 +2029,7 @@ _elm_scroll_scroll_to_x_animator(void *data)
         eo_do(sid->obj, elm_scrollable_interface_content_pos_set(px, py));
         sid->down.sx = px;
         sid->down.x = sid->down.history[0].x;
+        sid->down.pdx = 0;
         _elm_scroll_wanted_coordinates_update(sid, px, py);
         sid->scrollto.x.animator = NULL;
         if ((!sid->scrollto.y.animator) && (!sid->down.bounce_y_animator))
@@ -2063,6 +2064,7 @@ _elm_scroll_scroll_to_y_animator(void *data)
         eo_do(sid->obj, elm_scrollable_interface_content_pos_set(px, py));
         sid->down.sy = py;
         sid->down.y = sid->down.history[0].y;
+        sid->down.pdy = 0;
         _elm_scroll_wanted_coordinates_update(sid, px, py);
         sid->scrollto.y.animator = NULL;
         if ((!sid->scrollto.x.animator) && (!sid->down.bounce_x_animator))
