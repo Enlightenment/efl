@@ -190,7 +190,8 @@ bin/edje/edje_convert.h \
 bin/edje/edje_convert.c \
 bin/edje/edje_data_convert.c \
 bin/edje/edje_convert_main.c \
-lib/edje/edje_convert.c
+lib/edje/edje_convert.c \
+rc/tests/edje/edje_tests_helpers.h
 
 bin_SCRIPTS += bin/edje/edje_recc
 
