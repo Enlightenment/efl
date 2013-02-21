@@ -7,12 +7,13 @@
 #define EDJE_TEST_INIT_EVAS() _setup_evas()
 
 #define EDJE_TEST_FREE_EVAS() \
-do \
-{ \
-   evas_free(evas); \
-   evas_shutdown(); \
-} \
-while (0)
+  do			      \
+    {			      \
+      edje_shutdown();	      \
+      evas_free(evas);	      \
+      evas_shutdown();	      \
+    }			      \
+  while (0)
 
 static Evas *
 _setup_evas()
@@ -21,6 +22,8 @@ _setup_evas()
    Evas_Engine_Info *einfo;
 
    evas_init();
+   edje_init();
+
    evas = evas_new();
 
    evas_output_method_set(evas, evas_render_method_lookup("buffer"));
