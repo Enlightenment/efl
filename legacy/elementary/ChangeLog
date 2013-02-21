@@ -1051,3 +1051,8 @@
 
         * Fix gl engine vsync option pass-in in elm_win
         * Fix elm_progressbar_pulse() to abort if pulsing not enabled
+
+2013-02-21 Carsten Haitzler (The Rasterman)
+
+        * Improve a lot of the dnd infra to be more fully baked
+        * Add elm_drop_target_add() elm_drop_target_del() and elm_drag_start()

@@ -106,6 +106,37 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Dat
  */
 typedef void (*Elm_Selection_Loss_Cb)(void *data, Elm_Sel_Type selection);
 
+/**
+ * Callback called to create a drag icon object
+ * 
+ * @param data Application specific data
+ * @param win The window to create the objects relative to
+ * @param xoff A return coordinate for the X offset at which to place the drag icon object relative to the source drag object
+ * @param yoff A return coordinate for the Y offset at which to place the drag icon object relative to the source drag object
+ * @return An object to fill the drag window with or NULL if not needed
+ * @since 1.8
+ */
+typedef Evas_Object *(*Elm_Drag_Icon_Create_Cb) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff);
+
+/**
+ * Callback called when a drag is finished, enters, or leaves an object
+ * 
+ * @param data Application specific data
+ * @param obj The object where the drag started
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_State) (void *data, Evas_Object *obj);
+
+/**
+ * Callback called when a drag is ober an object, and gives object-lrelative coordinates
+ * 
+ * @param data Application specific data
+ * @param obj The object where the drag started
+ * @param x The X coordinate relative to the top-left of the object
+ * @param y The Y coordinate relative to the top-left of the object
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_Pos) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 /**
  * @brief Set copy data for a widget.
@@ -198,6 +229,61 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  * @since 1.7
  */
 EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
+
+/**
+ * @brief Set the given object as a target for drops for drag-and-drop
+ *
+ * @param obj The target object
+ * @param format The formats supported for dropping
+ * @param entercb The function to call when the object is entered with a drag
+ * @param enterdata The application data to pass to enterdata
+ * @param leavecb The function to call when the object is left with a drag
+ * @param leavedata The application data to pass to leavedata
+ * @param poscb The function to call when the object has a drag over it
+ * @param posdata The application data to pass to posdata
+ * @param dropcb The function to call when a drop has occurred
+ * @param cbdata The application data to pass to dropcb
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, 
+                                   Elm_Drag_State entercb, void *enterdata,
+                                   Elm_Drag_State leavecb, void *leavedata,
+                                   Elm_Drag_Pos poscb, void *posdata,
+                                   Elm_Drop_Cb dropcb, void *cbdata);
+
+/**
+ * @brief Deletes the drop target status of an object
+ *
+ * @param obj The target object
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
+
+/**
+ * @brief Begins a drag given a source object
+ *
+ * @param obj The source object
+ * @param format The drag formats supported by the data
+ * @param data The drag data itself (a string)
+ * @param createicon Function to call to create a drag object, or NULL if not wanted
+ * @param createdata Application data passed to @p createicon
+ * @param dragdone Function to call when drag is done
+ * @param donecbdata Application data to pass to @p dragdone
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, Elm_Drag_Icon_Create_Cb createicon, void *createdata, Elm_Drag_State dragdone, void *donecbdata);
 
 /**
  * @}

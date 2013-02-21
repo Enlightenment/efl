@@ -998,25 +998,6 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * parsing script skips it */
 #define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW
 
-/**
- * The drag and drop API.
- * Currently experimental, and will change when it does dynamic type
- * addition RSN.
- *
- * Here so applications can start to use it, if they ask elm nicely.
- *
- * And yes, elm_widget, should probably be elm_experimental...
- * Complaints about this code should go to /dev/null, or failing that nash.
- */
-EAPI Eina_Bool elm_drop_target_add(Evas_Object *widget, Elm_Sel_Format format,
-                                   Elm_Drop_Cb dropcb, void *cbdata);
-EAPI Eina_Bool elm_drop_target_del(Evas_Object *widget);
-EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
-                              const char *data,
-                              Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff),
-                              void *createdata,
-                              void (*dragdone) (void *data, Evas_Object *obj),
-                              void *donecbdata);
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
 #define ELM_OBJ_WIDGET_CLASS elm_widget_class_get()
