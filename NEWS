@@ -30,6 +30,8 @@ Additions:
        ecore_x_e_window_profile_change_done_send()
        ecore_x_randr_crtc_info_get()
        ecore_x_randr_crtc_info_free()
+       ecore_x_dnd_self_begin()
+       ecore_x_dnd_self_drop()
     * ecore_wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.

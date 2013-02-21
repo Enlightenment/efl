@@ -1351,6 +1351,8 @@ EAPI void                      ecore_x_dnd_types_set(Ecore_X_Window win, const c
 EAPI void                      ecore_x_dnd_actions_set(Ecore_X_Window win, Ecore_X_Atom *actions, unsigned int num_actions);
 EAPI Eina_Bool                 ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size);
 EAPI Eina_Bool                 ecore_x_dnd_drop(void);
+EAPI Eina_Bool                 ecore_x_dnd_self_begin(Ecore_X_Window source, unsigned char *data, int size); /**< @since 1.8 */
+EAPI Eina_Bool                 ecore_x_dnd_self_drop(void); /**< @since 1.8 */
 EAPI void                      ecore_x_dnd_send_status(Eina_Bool will_accept, Eina_Bool suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
 EAPI void                      ecore_x_dnd_send_finished(void);
 EAPI void                      ecore_x_dnd_source_action_set(Ecore_X_Atom action);

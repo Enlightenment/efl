@@ -1,7 +1,12 @@
+2013-02-21  Carsten Haitzler (The Rasterman)
+
+        * Add ecore_x_dnd_self_begin() and ecore_x_dnd_self_drop() to
+        allow xdnd chatting to yourself (your source drag window).
+
 2013-02-20  Carsten Haitzler (The Rasterman)
 
         * Fix ecore-x edid fetch to ftech 128, not 100 bytes.
-        
+
 2013-02-20  Cedric Bail
 
 	* Properly report file not found in Edje.
