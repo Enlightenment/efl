@@ -1423,6 +1423,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
      }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
+   evas_object_raise(VIEW(it));
 
    /* access */
    if (_elm_config->access_mode) _access_focus_set(it);
