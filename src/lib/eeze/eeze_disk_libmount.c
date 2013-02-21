@@ -50,7 +50,7 @@ static libmnt_lock *_eeze_mtab_lock = NULL;
 extern Eina_List *_eeze_disks;
 
 static libmnt_table *_eeze_mount_tab_parse(const char *filename);
-static void _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path);
+static void _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon EINA_UNUSED, Ecore_File_Event event EINA_UNUSED, const char *path);
 
 static Eina_Bool
 _eeze_mount_lock_mtab(void)
@@ -80,7 +80,7 @@ _eeze_mount_unlock_mtab(void)
 
 
 static int
-_eeze_mount_tab_parse_errcb(libmnt_table *tab __UNUSED__, const char *filename, int line)
+_eeze_mount_tab_parse_errcb(libmnt_table *tab EINA_UNUSED, const char *filename, int line)
 {
    ERR("%s:%d: could not parse line!", filename, line); /* most worthless error reporting ever. */
    return -1;
@@ -111,7 +111,7 @@ _eeze_mount_tab_parse(const char *filename)
 }
 
 static void
-_eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path)
+_eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon EINA_UNUSED, Ecore_File_Event event EINA_UNUSED, const char *path)
 {
    libmnt_table *bak;
 
