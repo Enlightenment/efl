@@ -4083,6 +4083,7 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", ret2);
         elm_object_signal_emit(obj, buf, "elm");
         if (ret) *ret = EINA_TRUE;
+        return;
      }
 
    if (ret) *ret = EINA_FALSE;
