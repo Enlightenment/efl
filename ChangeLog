@@ -1,3 +1,8 @@
+2013-02-21  Tom Hacohen (TAsn)
+
+        * Evas text: Fixed bug with the text object direction detection.
+
+	size_range.
 2013-02-21  Carsten Haitzler (The Rasterman)
 
         * Add ecore_x_dnd_self_begin() and ecore_x_dnd_self_drop() to

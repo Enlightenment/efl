@@ -280,6 +280,14 @@ START_TEST(evas_text_set_get)
    evas_object_text_text_set(to, "");
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_NEUTRAL);
 
+   /* LTR paragraphs */
+   evas_object_text_text_set(to, "Test נסיון");
+   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
+
+   /* RTL paragraphs */
+   evas_object_text_text_set(to, "נסיון test");
+   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+
    END_TEXT_TEST();
 }
 END_TEST

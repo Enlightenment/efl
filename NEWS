@@ -177,4 +177,5 @@ Fixes:
     * Evas: Fix Evas_Object_Text when LTR and RTL are used in the same paragraph.
     * Properly report file not found in Edje.
     * Fix ecore-x edid fetch to ftech 128, not 100 bytes.
+    * Evas text: Fixed bug with the text object direction detection.
     

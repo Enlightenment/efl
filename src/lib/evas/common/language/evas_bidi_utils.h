@@ -90,12 +90,36 @@ struct _Evas_BiDi_Props
 #define EVAS_BIDI_PARAGRAPH_WLTR    FRIBIDI_PAR_WLTR
 #define EVAS_BIDI_PARAGRAPH_WRTL    FRIBIDI_PAR_WRTL
 
-#define EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(x)       \
-   (((x) &&                                \
-     ((x->direction == EVAS_BIDI_PARAGRAPH_RTL) ||   \
-      (x->direction == EVAS_BIDI_PARAGRAPH_WRTL))) ?   \
+#define EVAS_BIDI_DIRECTION_IS_RTL(x)       \
+   ((((x) == EVAS_BIDI_PARAGRAPH_RTL) ||   \
+     ((x) == EVAS_BIDI_PARAGRAPH_WRTL)) ?   \
     EINA_TRUE : EINA_FALSE)
 
+#define EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(x)       \
+   ((x) && EVAS_BIDI_DIRECTION_IS_RTL((x)->direction))
+
+#define EVAS_BIDI_PAR_TYPE_TO_DIRECTION(x) \
+   _evas_bidi_par_type_to_direction(x)
+
+static inline Evas_BiDi_Direction
+_evas_bidi_par_type_to_direction(EvasBiDiParType par_type)
+{
+   switch (par_type)
+     {
+      case EVAS_BIDI_PARAGRAPH_LTR:
+      case EVAS_BIDI_PARAGRAPH_WLTR:
+         return EVAS_BIDI_DIRECTION_LTR;
+         break;
+      case EVAS_BIDI_PARAGRAPH_RTL:
+      case EVAS_BIDI_PARAGRAPH_WRTL:
+         return EVAS_BIDI_DIRECTION_RTL;
+         break;
+      case EVAS_BIDI_PARAGRAPH_NEUTRAL:
+      default:
+         return EVAS_BIDI_DIRECTION_NEUTRAL;
+         break;
+     }
+}
 
 # define evas_bidi_position_visual_to_logical(list, position) \
                 (list) ? list[position] : position;

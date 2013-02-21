@@ -53,6 +53,7 @@ struct _Evas_Object_Text
       Evas_Object_Text_Item    *ellipsis_end;
    } last_computed;
 
+   Evas_BiDi_Direction         bidi_dir : 2;
    char                        changed : 1;
 };
 
@@ -700,11 +701,20 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
 
    if (o->items) _evas_object_text_items_clean(obj, o);
 
+   if (text && *text)
+      o->bidi_dir = EVAS_BIDI_DIRECTION_LTR;
+   else
+      o->bidi_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
 #ifdef BIDI_SUPPORT
    if (o->bidi_delimiters)
       segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
    o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs);
+
+   if (o->bidi_par_props)
+      o->bidi_dir = EVAS_BIDI_PAR_TYPE_TO_DIRECTION(o->bidi_par_props->direction);
+
    evas_bidi_props_reorder_line(NULL, 0, len, o->bidi_par_props, &v_to_l);
    if (segment_idxs) free(segment_idxs);
 #endif
@@ -1098,7 +1108,7 @@ _text_direction_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_BiDi_Direction *bidi_dir = va_arg(*list, Evas_BiDi_Direction *);
    const Evas_Object_Text *o = _pd;
-   *bidi_dir = o->items ? o->items->text_props.bidi_dir : EVAS_BIDI_DIRECTION_NEUTRAL;
+   *bidi_dir = o->bidi_dir;
 }
 
 EAPI Evas_Coord
