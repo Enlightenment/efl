@@ -14,6 +14,7 @@ static void _button_remove(Evas_Object *, int, Eina_Bool);
 
 static const char ACCESS_TITLE_PART[] = "access.title";
 static const char ACCESS_BODY_PART[] = "access.body";
+static const char CONTENT_PART[] = "elm.swallow.content";
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
@@ -530,7 +531,7 @@ _list_add(Evas_Object *obj)
      (sd->tbl, EVAS_CALLBACK_DEL, _on_table_del, obj);
 
    edje_object_part_swallow
-     (wd->resize_obj, "elm.swallow.content", sd->tbl);
+     (wd->resize_obj, CONTENT_PART, sd->tbl);
    evas_object_size_hint_weight_set
      (sd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -641,7 +642,7 @@ _item_icon_set(Elm_Popup_Item *item,
         elm_widget_sub_object_add(WIDGET(item), item->icon);
         evas_object_data_set(item->icon, "_popup_icon_parent_item", item);
         edje_object_part_swallow
-          (VIEW(item), "elm.swallow.content", item->icon);
+          (VIEW(item), CONTENT_PART, item->icon);
         edje_object_signal_emit
           (VIEW(item), "elm,state,item,icon,visible", "elm");
      }
@@ -888,7 +889,7 @@ _content_text_set(Evas_Object *obj,
         _items_remove(sd);
         _list_del(sd);
      }
-   else edje_object_part_swallow(wd->resize_obj, "elm.swallow.content",
+   else edje_object_part_swallow(wd->resize_obj, CONTENT_PART,
                                  sd->content_area);
    if (!text) goto end;
 
@@ -906,7 +907,7 @@ _content_text_set(Evas_Object *obj,
    evas_object_size_hint_align_set
      (sd->text_content_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_layout_content_set
-     (sd->content_area, "elm.swallow.content", sd->text_content_obj);
+     (sd->content_area, CONTENT_PART, sd->text_content_obj);
 
    /* access */
    if (_elm_config->access_mode)
@@ -1033,11 +1034,11 @@ _content_set(Evas_Object *obj,
      {
         //bare edje as to avoid loop
         edje_object_part_swallow
-          (wd->resize_obj, "elm.swallow.content",
+          (wd->resize_obj, CONTENT_PART,
           sd->content_area);
 
         elm_layout_content_set
-          (sd->content_area, "elm.swallow.content", content);
+          (sd->content_area, CONTENT_PART, content);
         evas_object_show(content);
 
         evas_object_event_callback_add
@@ -1222,7 +1223,7 @@ _content_unset(Evas_Object *obj)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
-   content = elm_layout_content_unset(sd->content_area, "elm.swallow.content");
+   content = elm_layout_content_unset(sd->content_area, CONTENT_PART);
    sd->content = NULL;
 
    elm_layout_sizing_eval(obj);
@@ -1806,7 +1807,7 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (sd->content || sd->text_content_obj)
      {
         prev_content = elm_layout_content_get
-            (sd->content_area, "elm.swallow.content");
+            (sd->content_area, CONTENT_PART);
         if (prev_content)
           evas_object_del(prev_content);
      }
