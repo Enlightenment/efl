@@ -178,4 +178,5 @@ Fixes:
     * Properly report file not found in Edje.
     * Fix ecore-x edid fetch to ftech 128, not 100 bytes.
     * Evas text: Fixed bug with the text object direction detection.
+    * Evas font: Fixed font run detection for specific cases with 2 different fonts in the middle of a run.
     

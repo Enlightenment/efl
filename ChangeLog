@@ -1,8 +1,9 @@
 2013-02-21  Tom Hacohen (TAsn)
 
         * Evas text: Fixed bug with the text object direction detection.
+        * Evas font: Fixed font run detection for specific cases with 2
+	different fonts in the middle of a run.
 
-	size_range.
 2013-02-21  Carsten Haitzler (The Rasterman)
 
         * Add ecore_x_dnd_self_begin() and ecore_x_dnd_self_drop() to

@@ -79,12 +79,10 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                 continue;
              /* Break if either it's not in the font, or if it is in the
               * script's font. */
-             if (fi == *script_fi)
-               {
-                  if (!evas_common_get_char_index(fi, *itr))
-                     break;
-               }
-             else
+             if (!evas_common_get_char_index(fi, *itr))
+                break;
+
+             if (fi != *script_fi)
                {
                   if (evas_common_get_char_index(*script_fi, *itr))
                      break;
