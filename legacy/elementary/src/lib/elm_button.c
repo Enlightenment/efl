@@ -117,6 +117,7 @@ _elm_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
+
    eo_do_super(obj, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
    _icon_signal_emit(obj);
@@ -293,6 +294,10 @@ _elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
+   Evas_Object *parent = eo_parent_get(obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
+
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,click", "",
      _on_clicked_signal, obj);
@@ -312,6 +317,7 @@ _elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
 }
 
 static void
@@ -344,12 +350,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   Evas_Object *parent = eo_parent_get(obj);
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
 }
 
 EAPI void

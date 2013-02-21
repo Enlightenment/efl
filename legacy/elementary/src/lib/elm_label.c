@@ -378,6 +378,10 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
+   Evas_Object *parent = eo_parent_get(obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
+
    priv->linewrap = ELM_WRAP_NONE;
    priv->wrap_w = -1;
    priv->slide_duration = 10;
@@ -400,6 +404,10 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Label"));
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+
+   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
+   elm_layout_text_set(obj, NULL, "<br>");
+   elm_layout_sizing_eval(obj);
 }
 
 EAPI Evas_Object *
@@ -418,14 +426,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   Evas_Object *parent = eo_parent_get(obj);
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
-   elm_layout_text_set(obj, NULL, "<br>");
-   elm_layout_sizing_eval(obj);
 }
 
 EAPI void
