@@ -646,14 +646,11 @@ _title_content_set(Elm_Naviframe_Item *it,
    if (pair)
      {
         if (pair->content == content) return;
-        if (content) elm_object_part_content_set(VIEW(it), part, content);
         if (pair->content)
-          {
-             evas_object_event_callback_del(pair->content,
-                                            EVAS_CALLBACK_DEL,
-                                            _title_content_del);
-             evas_object_del(pair->content);
-          }
+          evas_object_event_callback_del(pair->content,
+                                         EVAS_CALLBACK_DEL,
+                                         _title_content_del);
+        if (content) elm_object_part_content_set(VIEW(it), part, content);
      }
    else
      {
