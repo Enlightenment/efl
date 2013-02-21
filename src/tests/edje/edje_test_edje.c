@@ -9,7 +9,7 @@
 #include <Edje.h>
 
 #include "edje_suite.h"
-//#include "edje_tests_helpers.h"
+#include "edje_tests_helpers.h"
 
 START_TEST(edje_test_edje_init)
 {
@@ -23,7 +23,6 @@ START_TEST(edje_test_edje_init)
 }
 END_TEST
 
-#if 0 // Re-enable once the missing header is commited
 START_TEST(edje_test_edje_load)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
@@ -38,10 +37,9 @@ START_TEST(edje_test_edje_load)
    EDJE_TEST_FREE_EVAS();
 }
 END_TEST
-#endif
 
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
-//   tcase_add_test(tc, edje_test_edje_load);
+   tcase_add_test(tc, edje_test_edje_load);
 }
