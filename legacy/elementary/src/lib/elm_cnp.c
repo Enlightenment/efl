@@ -1686,16 +1686,25 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *cbdata)
 {
-   Dropable *drop;
+   Dropable *drop, *dropable;
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
-   Eina_List *item;
+   Eina_List *item, *l;
    int first;
-
+   Eina_Bool have_drops = EINA_FALSE;
+   
    _x11_elm_cnp_init();
 
    /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
+   EINA_LIST_FOREACH(drops, l, dropable)
+     {
+        if (xwin == _x11_elm_widget_xwin_get(dropable->obj))
+          {
+             have_drops = EINA_TRUE;
+             break;
+          }
+     }
    first = (!drops) ? 1 : 0;
 
    EINA_LIST_FOREACH(drops, item, drop)
@@ -1736,7 +1745,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                   /* I love C and varargs */
                                   (Evas_Object_Event_Cb)elm_drop_target_del,
                                   obj);
-   ecore_x_dnd_aware_set(xwin, EINA_TRUE);
+   if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    
    /* TODO BUG: should handle dnd-aware per window, not just the first
     * window that requested it! */
