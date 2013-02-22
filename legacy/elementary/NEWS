@@ -158,6 +158,7 @@ Fixes:
    * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
    * Fix vsync option in gl engine windows
    * Fix elm_progressbar_pulse() to abort if pulsing not enabled
+   * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
    
 Removals:
 

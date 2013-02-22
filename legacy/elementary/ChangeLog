@@ -1056,3 +1056,8 @@
 
         * Improve a lot of the dnd infra to be more fully baked
         * Add elm_drop_target_add() elm_drop_target_del() and elm_drag_start()
+
+2013-02-21  Jaehwan Kim
+
+        * Fix scroller acceleration bug. It was accelerated even it's scrolled
+        after finishing the previous scroll. This happens with page scroll enabled.
