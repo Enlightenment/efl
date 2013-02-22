@@ -303,7 +303,7 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
  * @param action The drag action to be done
  * @param createicon Function to call to create a drag object, or NULL if not wanted
  * @param createdata Application data passed to @p createicon
- * @param dragpos Function called with each position of the drag, x, y being screen coordinates if possible, and action being the current action. Do not change action inside theis callback (defer it to another).
+ * @param dragpos Function called with each position of the drag, x, y being screen coordinates if possible, and action being the current action.
  * @param dragdata Application data passed to @p dragpos
  * @param acceptcb Function called indicating if drop target accepts (or does not) the drop data while dragging
  * 
