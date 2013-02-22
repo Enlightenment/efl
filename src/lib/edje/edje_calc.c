@@ -1223,53 +1223,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
         if (ep->part->scale)
           evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-        if (stl)
-          {
-             const char *ptxt;
-
-             if (evas_object_textblock_style_get(ep->object) != stl->style)
-               evas_object_textblock_style_set(ep->object, stl->style);
-             // FIXME: need to account for editing
-             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-               {
-                  // do nothing - should be done elsewhere
-               }
-             else
-               {
-                  ptxt = evas_object_textblock_text_markup_get(ep->object);
-                  if (((!ptxt) && (text)) ||
-                      ((ptxt) && (text) && (strcmp(ptxt, text))) ||
-                      ((ptxt) && (!text)))
-                    evas_object_textblock_text_markup_set(ep->object, text);
-               }
-             if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
-               {
-                  int mw = 0, mh = 0;
-
-                  tw = th = 0;
-                  if (!chosen_desc->text.min_x)
-                    {
-		       eo_do(ep->object,
-			     evas_obj_size_set(params->w, params->h),
-			     evas_obj_textblock_size_formatted_get(&tw, &th));
-                    }
-                  else
-                    evas_object_textblock_size_native_get(ep->object, &tw, &th);
-                  evas_object_textblock_style_insets_get(ep->object, &ins_l,
-                                                         &ins_r, &ins_t, &ins_b);
-                  mw = ins_l + tw + ins_r;
-                  mh = ins_t + th + ins_b;
-                  if (minw && chosen_desc->text.min_x)
-                    {
-                       if (mw > *minw) *minw = mw;
-                    }
-                  if (minh && chosen_desc->text.min_y)
-                    {
-                       if (mh > *minh) *minh = mh;
-                    }
-               }
-          }
-
         if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
           {
              double base_s = 1.0;
@@ -1346,6 +1299,53 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     }
                }
 
+          }
+
+        if (stl)
+          {
+             const char *ptxt;
+
+             if (evas_object_textblock_style_get(ep->object) != stl->style)
+               evas_object_textblock_style_set(ep->object, stl->style);
+             // FIXME: need to account for editing
+             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+               {
+                  // do nothing - should be done elsewhere
+               }
+             else
+               {
+                  ptxt = evas_object_textblock_text_markup_get(ep->object);
+                  if (((!ptxt) && (text)) ||
+                      ((ptxt) && (text) && (strcmp(ptxt, text))) ||
+                      ((ptxt) && (!text)))
+                    evas_object_textblock_text_markup_set(ep->object, text);
+               }
+             if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+               {
+                  int mw = 0, mh = 0;
+
+                  tw = th = 0;
+                  if (!chosen_desc->text.min_x)
+                    {
+		       eo_do(ep->object,
+			     evas_obj_size_set(params->w, params->h),
+			     evas_obj_textblock_size_formatted_get(&tw, &th));
+                    }
+                  else
+                    evas_object_textblock_size_native_get(ep->object, &tw, &th);
+                  evas_object_textblock_style_insets_get(ep->object, &ins_l,
+                                                         &ins_r, &ins_t, &ins_b);
+                  mw = ins_l + tw + ins_r;
+                  mh = ins_t + th + ins_b;
+                  if (minw && chosen_desc->text.min_x)
+                    {
+                       if (mw > *minw) *minw = mw;
+                    }
+                  if (minh && chosen_desc->text.min_y)
+                    {
+                       if (mh > *minh) *minh = mh;
+                    }
+               }
           }
 
         if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
