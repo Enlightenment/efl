@@ -1269,34 +1269,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     }
                }
           }
-        if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
-          {
-             int mw = 0, mh = 0;
-
-             tw = th = 0;
-             if (!chosen_desc->text.max_x)
-               {
-		  eo_do(ep->object,
-			evas_obj_size_set(params->w, params->h),
-			evas_obj_textblock_size_formatted_get(&tw, &th));
-               }
-             else
-               evas_object_textblock_size_native_get(ep->object, &tw, &th);
-             evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
-                                                    &ins_t, &ins_b);
-             mw = ins_l + tw + ins_r;
-             mh = ins_t + th + ins_b;
-             if (maxw && chosen_desc->text.max_x)
-               {
-                  if (mw > *maxw) *maxw = mw;
-                  if (minw && (*maxw < *minw)) *maxw = *minw;
-               }
-             if (maxh && chosen_desc->text.max_y)
-               {
-                  if (mh > *maxh) *maxh = mh;
-                  if (minh && (*maxh < *minh)) *maxh = *minh;
-               }
-          }
 
         if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
           {
@@ -1374,6 +1346,35 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     }
                }
 
+          }
+
+        if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+          {
+             int mw = 0, mh = 0;
+
+             tw = th = 0;
+             if (!chosen_desc->text.max_x)
+               {
+		  eo_do(ep->object,
+			evas_obj_size_set(params->w, params->h),
+			evas_obj_textblock_size_formatted_get(&tw, &th));
+               }
+             else
+               evas_object_textblock_size_native_get(ep->object, &tw, &th);
+             evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
+                                                    &ins_t, &ins_b);
+             mw = ins_l + tw + ins_r;
+             mh = ins_t + th + ins_b;
+             if (maxw && chosen_desc->text.max_x)
+               {
+                  if (mw > *maxw) *maxw = mw;
+                  if (minw && (*maxw < *minw)) *maxw = *minw;
+               }
+             if (maxh && chosen_desc->text.max_y)
+               {
+                  if (mh > *maxh) *maxh = mh;
+                  if (minh && (*maxh < *minh)) *maxh = *minh;
+               }
           }
 
         evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
