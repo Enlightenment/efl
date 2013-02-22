@@ -99,15 +99,15 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 
    if (dst_clip_x < dst_region_x)
      {
-	dst_clip_w += dst_clip_x - dst_region_x;
-	dst_clip_x = dst_region_x;
+        dst_clip_w += dst_clip_x - dst_region_x;
+        dst_clip_x = dst_region_x;
      }
    if ((dst_clip_x + dst_clip_w) > (dst_region_x + dst_region_w))
      dst_clip_w = dst_region_x + dst_region_w - dst_clip_x;
    if (dst_clip_y < dst_region_y)
      {
-	dst_clip_h += dst_clip_y - dst_region_y;
-	dst_clip_y = dst_region_y;
+        dst_clip_h += dst_clip_y - dst_region_y;
+        dst_clip_y = dst_region_y;
      }
    if ((dst_clip_y + dst_clip_h) > (dst_region_y + dst_region_h))
      dst_clip_h = dst_region_y + dst_region_h - dst_clip_y;
@@ -120,68 +120,68 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    /* sanitise x */
    if (src_region_x < 0)
      {
-	dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
-	dst_region_w += (src_region_x * dst_region_w) / src_region_w;
-	src_region_w += src_region_x;
-	src_region_x = 0;
+        dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
+        dst_region_w += (src_region_x * dst_region_w) / src_region_w;
+        src_region_w += src_region_x;
+        src_region_x = 0;
      }
    if (src_region_x >= src_w) return;
    if ((src_region_x + src_region_w) > src_w)
      {
-	dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
-	src_region_w = src_w - src_region_x;
+        dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
+        src_region_w = src_w - src_region_x;
      }
    if (dst_region_w <= 0) return;
    if (src_region_w <= 0) return;
    if (dst_clip_x < 0)
      {
-	dst_clip_w += dst_clip_x;
-	dst_clip_x = 0;
+        dst_clip_w += dst_clip_x;
+        dst_clip_x = 0;
      }
    if (dst_clip_w <= 0) return;
    if (dst_clip_x >= dst_w) return;
    if (dst_clip_x < dst_region_x)
      {
-	dst_clip_w += (dst_clip_x - dst_region_x);
-	dst_clip_x = dst_region_x;
+        dst_clip_w += (dst_clip_x - dst_region_x);
+        dst_clip_x = dst_region_x;
      }
    if ((dst_clip_x + dst_clip_w) > dst_w)
      {
-	dst_clip_w = dst_w - dst_clip_x;
+        dst_clip_w = dst_w - dst_clip_x;
      }
    if (dst_clip_w <= 0) return;
 
    /* sanitise y */
    if (src_region_y < 0)
      {
-	dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
-	dst_region_h += (src_region_y * dst_region_h) / src_region_h;
-	src_region_h += src_region_y;
-	src_region_y = 0;
+        dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
+        dst_region_h += (src_region_y * dst_region_h) / src_region_h;
+        src_region_h += src_region_y;
+        src_region_y = 0;
      }
    if (src_region_y >= src_h) return;
    if ((src_region_y + src_region_h) > src_h)
      {
-	dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
-	src_region_h = src_h - src_region_y;
+        dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
+        src_region_h = src_h - src_region_y;
      }
    if (dst_region_h <= 0) return;
    if (src_region_h <= 0) return;
    if (dst_clip_y < 0)
      {
-	dst_clip_h += dst_clip_y;
-	dst_clip_y = 0;
+        dst_clip_h += dst_clip_y;
+        dst_clip_y = 0;
      }
    if (dst_clip_h <= 0) return;
    if (dst_clip_y >= dst_h) return;
    if (dst_clip_y < dst_region_y)
      {
-	dst_clip_h += (dst_clip_y - dst_region_y);
-	dst_clip_y = dst_region_y;
+        dst_clip_h += (dst_clip_y - dst_region_y);
+        dst_clip_y = dst_region_y;
      }
    if ((dst_clip_y + dst_clip_h) > dst_h)
      {
-	dst_clip_h = dst_h - dst_clip_y;
+        dst_clip_h = dst_h - dst_clip_y;
      }
    if (dst_clip_h <= 0) return;
 
@@ -215,13 +215,13 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    else
      {
         /* fill scale tables */
-	for (x = 0; x < dst_clip_w; x++)
+        for (x = 0; x < dst_clip_w; x++)
           lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-	for (y = 0; y < dst_clip_h; y++)
+        for (y = 0; y < dst_clip_h; y++)
           row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
                                     + src_region_y) * src_w);
-	/* scale to dst */
-	dptr = dst_ptr;
+        /* scale to dst */
+        dptr = dst_ptr;
 
         /* a scanline buffer */
         buf = alloca(dst_clip_w * sizeof(DATA32));
