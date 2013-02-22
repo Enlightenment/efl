@@ -74,6 +74,9 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h,
                          0, 0, src->cache_entry.w, src->cache_entry.h))) return;
 
+   if ((src_region_w <= 0) || (src_region_h <= 0) ||
+       (dst_region_w <= 0) || (dst_region_h <= 0)) return;
+
    src_w = src->cache_entry.w;
    src_h = src->cache_entry.h;
    dst_w = dst->cache_entry.w;
@@ -112,10 +115,7 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    if ((dst_clip_y + dst_clip_h) > (dst_region_y + dst_region_h))
      dst_clip_h = dst_region_y + dst_region_h - dst_clip_y;
 
-   if ((src_region_w <= 0) || (src_region_h <= 0) ||
-       (dst_region_w <= 0) || (dst_region_h <= 0) ||
-       (dst_clip_w <= 0) || (dst_clip_h <= 0))
-     return;
+   if ((dst_clip_w <= 0) || (dst_clip_h <= 0)) return;
 
    /* sanitise x */
    if (src_region_x < 0)
