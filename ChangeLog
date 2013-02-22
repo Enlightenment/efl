@@ -2,7 +2,7 @@
 
         * Evas text: Fixed bug with the text object direction detection.
         * Evas font: Fixed font run detection for specific cases with 2
-	different fonts in the middle of a run.
+        different fonts in the middle of a run.
 
 2013-02-21  Carsten Haitzler (The Rasterman)
 
@@ -15,7 +15,7 @@
 
 2013-02-20  Cedric Bail
 
-	* Properly report file not found in Edje.
+        * Properly report file not found in Edje.
 
 2013-02-19  Daniel Zaoui
 
@@ -32,17 +32,17 @@
 
 2013-02-16  Paulo C. A. Cavalcanti Jr
 
-	* Evas: add pixels_alpha_get to evas engine.
+        * Evas: add pixels_alpha_get to evas engine.
 
 2013-02-16  Cedric Bail
 
-	* Eina: improved Eina_Clist support for 64bits system.
-	* Evas: improved BMP support for 64bits system.
+        * Eina: improved Eina_Clist support for 64bits system.
+        * Evas: improved BMP support for 64bits system.
 
 2013-02-15  Tom Hacohen (TAsn)
 
         * Edje textblock: Improved textblock fit and added support for
-	size_range.
+        size_range.
 
 2013-02-15  Jiyoun Park (jypark)
 
@@ -50,7 +50,7 @@
 
 2013-02-14  Cedric Bail
 
-	* Reduce memory consumption of Edje program handler.
+        * Reduce memory consumption of Edje program handler.
 
 2013-02-14  Jihoon Kim (jihoon)
 
@@ -69,7 +69,7 @@
 2013-02-08  Tom Hacohen (TAsn)
 
         * Evas textblock: Fixed a selection issue with different scripts and
-	bidi.
+        bidi.
 
 2013-02-08  Guillaume Friloux
 
@@ -90,15 +90,15 @@
 
 2013-02-07  Cedric Bail
 
-	* eina: Eina_Tiler now take tile size into account.
+        * eina: Eina_Tiler now take tile size into account.
 
 2013-02-07  WooHyun Jung
 
-	* edje: Checking walking_callbacks for not removing patterns which are still used.
+        * edje: Checking walking_callbacks for not removing patterns which are still used.
 
 2013-02-06  Cedric Bail
 
-	* eina: fix map leak in Eina_File.
+        * eina: fix map leak in Eina_File.
 
 2013-02-05  Eduardo Lima (Etrunko) <eduardo.lima@intel.com>
 
@@ -116,7 +116,7 @@
 
 2013-02-04  Cedric Bail
 
-	* eina: counter measure denial of service on eina_hash function.
+        * eina: counter measure denial of service on eina_hash function.
 
 2013-02-04  Jihoon Kim (jihoon)
 
@@ -145,7 +145,7 @@
 2013-01-30  Christopher Michael (devilhorns)
 
         * Deprecate ecore_x_randr_crtc_gamma_ramp_* functions.
-	* Added new ecore_x_randr_crtc_gamma_* functions that uses a proper structure
+        * Added new ecore_x_randr_crtc_gamma_* functions that uses a proper structure
 
 2013-01-29  Christopher Michael (devilhorns)
 
