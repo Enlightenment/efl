@@ -447,8 +447,7 @@ _sel_eval(Evas_Object *obj,
                   selectraise = edje_object_data_get(VIEW(it), "selectraise");
                   if ((selectraise) && (!strcmp(selectraise, "on")))
                     evas_object_raise(VIEW(it));
-                  evas_object_smart_callback_call
-                    (obj, SIG_CHANGED, (void *)it);
+                  evas_object_smart_callback_call(obj, SIG_CHANGED, it);
                   if (sd->delay) ecore_timer_del(sd->delay);
                   sd->delay = ecore_timer_add(sd->delay_change_time,
                                               _delay_change_cb, obj);
