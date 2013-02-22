@@ -1736,12 +1736,13 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                   /* I love C and varargs */
                                   (Evas_Object_Event_Cb)elm_drop_target_del,
                                   obj);
+   ecore_x_dnd_aware_set(xwin, EINA_TRUE);
+   
    /* TODO BUG: should handle dnd-aware per window, not just the first
     * window that requested it! */
    /* If not the first: We're done */
    if (!first) return EINA_TRUE;
 
-   ecore_x_dnd_aware_set(xwin, EINA_TRUE);
 
    cnp_debug("Adding drop target calls xwin=%#llx\n", (unsigned long long)xwin);
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
