@@ -162,8 +162,11 @@ _long_press_cb(void *obj)
         /* FIXME: Deal with relative paths; use PATH_MAX */
         snprintf(buf, sizeof(buf), "file://%s", file);
         if (elm_drag_start
-              (obj, ELM_SEL_FORMAT_IMAGE, NULL, NULL,
-                  buf, _drag_done_cb, NULL))
+              (obj, ELM_SEL_FORMAT_IMAGE, buf, ELM_XDND_ACTION_MOVE,
+                  NULL, NULL,
+                  NULL, NULL,
+                  NULL, NULL,
+                  _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(obj);
              evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);

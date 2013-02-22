@@ -76,14 +76,31 @@ typedef enum
 } Elm_Sel_Format;
 
 /**
+ * Defines the kind of action associated with the drop data if for XDND
+ * @since 1.8
+ */
+typedef enum
+{
+   ELM_XDND_ACTION_UNKNOWN, /**< Action type is unknown */
+   ELM_XDND_ACTION_COPY, /**< Copy the data */
+   ELM_XDND_ACTION_MOVE, /**< Move the data */
+   ELM_XDND_ACTION_PRIVATE, /**< Pricate action type */
+   ELM_XDND_ACTION_ASK, /**< Ask the user what to do */
+   ELM_XDND_ACTION_LIST, /**< List the data */
+   ELM_XDND_ACTION_LINK, /**< Link the data */
+   ELM_XDND_ACTION_DESCRIPTION /**< Describe the data */
+} Elm_Xdnd_Action;
+
+/**
  * Structure holding the info about selected data.
  */
 struct _Elm_Selection_Data
 {
-   Evas_Coord     x, y;
-   Elm_Sel_Format format;
-   void          *data;
-   size_t         len;
+   Evas_Coord       x, y;
+   Elm_Sel_Format   format;
+   void            *data;
+   size_t           len;
+   Elm_Xdnd_Action  action; /**< The action to perform with the data @since 1.8 */
 };
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
 
@@ -128,7 +145,17 @@ typedef Evas_Object *(*Elm_Drag_Icon_Create_Cb) (void *data, Evas_Object *win, E
 typedef void (*Elm_Drag_State) (void *data, Evas_Object *obj);
 
 /**
- * Callback called when a drag is ober an object, and gives object-lrelative coordinates
+ * Callback called when a drag is responded to with an accept or deny
+ * 
+ * @param data Application specific data
+ * @param obj The object where the drag started
+ * @param doaccept A boolean as to if the target accepts the drag or not
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_Accept) (void *data, Evas_Object *obj, Eina_Bool doaccept);
+
+/**
+ * Callback called when a drag is over an object, and gives object-relative coordinates
  * 
  * @param data Application specific data
  * @param obj The object where the drag started
@@ -136,7 +163,7 @@ typedef void (*Elm_Drag_State) (void *data, Evas_Object *obj);
  * @param y The Y coordinate relative to the top-left of the object
  * @since 1.8
  */
-typedef void (*Elm_Drag_Pos) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+typedef void (*Elm_Drag_Pos) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action);
 
 /**
  * @brief Set copy data for a widget.
@@ -273,8 +300,14 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
  * @param obj The source object
  * @param format The drag formats supported by the data
  * @param data The drag data itself (a string)
+ * @param action The drag action to be done
  * @param createicon Function to call to create a drag object, or NULL if not wanted
  * @param createdata Application data passed to @p createicon
+ * @param dragpos Function called with each position of the drag, x, y being screen coordinates if possible, and action being the current action. Do not change action inside theis callback (defer it to another).
+ * @param dragdata Application data passed to @p dragpos
+ * @param acceptcb Function called indicating if drop target accepts (or does not) the drop data while dragging
+ * 
+ * @param acceptdata Application data passed to @p acceptcb
  * @param dragdone Function to call when drag is done
  * @param donecbdata Application data to pass to @p dragdone
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
@@ -283,7 +316,24 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, Elm_Drag_Icon_Create_Cb createicon, void *createdata, Elm_Drag_State dragdone, void *donecbdata);
+EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, 
+                              const char *data, Elm_Xdnd_Action action, 
+                              Elm_Drag_Icon_Create_Cb createicon, void *createdata, 
+                              Elm_Drag_Pos dragpos, void *dragdata,
+                              Elm_Drag_Accept acceptcb, void *acceptdata,
+                              Elm_Drag_State dragdone, void *donecbdata);
+/**
+ * @brief Changes the current drag action
+ *
+ * @param obj The source of a drag if a drag is underway 
+ * @param action The drag action to be done
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action);
 
 /**
  * @}

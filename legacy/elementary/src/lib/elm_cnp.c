@@ -92,8 +92,14 @@ static const char *text_uri;
 static Saved_Type savedtypes =  { NULL, NULL, 0, 0, 0, EINA_FALSE };
 
 /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
-static void (*dragdonecb) (void *data, Evas_Object *obj) = NULL;
+static Elm_Drag_Pos dragposcb = NULL;
+static Elm_Drag_Accept dragacceptcb = NULL;
+static Elm_Drag_State dragdonecb = NULL;
+static void *dragposdata = NULL;
+static void *dragacceptdata = NULL;
 static void *dragdonedata = NULL;
+static Evas_Object *dragwidget = NULL;
+static Elm_Xdnd_Action dragaction = ELM_XDND_ACTION_UNKNOWN;
 
 /* Drag & Drop functions */
 /* FIXME: Way too many globals */
@@ -148,6 +154,7 @@ struct _X11_Cnp_Selection
    Elm_Sel_Format     format;
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
+   Elm_Xdnd_Action    action;
 
    Eina_Bool          active : 1;
 };
@@ -425,6 +432,7 @@ _x11_sel_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 {
    X11_Cnp_Selection *sel = data;
    if (sel->widget == obj) sel->widget = NULL;
+   if (dragwidget == obj) dragwidget = NULL;
 }
 
 static void
@@ -706,6 +714,7 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
              ddata.format = ELM_SEL_FORMAT_TEXT;
              ddata.data = data->data;
              ddata.len = data->length;
+             ddata.action = sel->action;
              dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
              goto end;
           }
@@ -718,6 +727,7 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         ddata.format = ELM_SEL_FORMAT_TEXT;
         ddata.data = data->data;
         ddata.len = data->length;
+        ddata.action = sel->action;
         sel->datacb(sel->udata, sel->widget, &ddata);
      }
    else
@@ -871,6 +881,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.format = ELM_SEL_FORMAT_VCARD;
         ddata.data = data->data;
         ddata.len = data->length;
+        ddata.action = sel->action;
         dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
         ecore_x_dnd_send_finished();
      }
@@ -881,6 +892,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.format = ELM_SEL_FORMAT_VCARD;
         ddata.data = data->data;
         ddata.len = data->length;
+        ddata.action = sel->action;
         sel->datacb(sel->udata, sel->widget, &ddata);
      }
    else cnp_debug("Paste request\n");
@@ -905,6 +917,7 @@ _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
         ddata.format = ELM_SEL_FORMAT_IMAGE;
         ddata.data = data->data;
         ddata.len = data->length;
+        ddata.action = sel->action;
         sel->datacb(sel->udata, sel->widget, &ddata);
         return 0;
      }
@@ -944,6 +957,7 @@ _x11_notify_handler_html(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         ddata.format = ELM_SEL_FORMAT_HTML;
         ddata.data = stripstr;
         ddata.len = data->length;
+        ddata.action = ELM_XDND_ACTION_UNKNOWN;
         sel->datacb(sel->udata, sel->widget, &ddata);
         free(stripstr);
         return 0;
@@ -1133,7 +1147,7 @@ _x11_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 }
 
 static void
-_x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj)
+_x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj, Elm_Xdnd_Action action)
 {
    Dropable *dropable_last = NULL;
    
@@ -1145,7 +1159,7 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
      {
         cnp_debug("same obj dropable %p\n", dropable);
         if (dropable->poscb)
-          dropable->poscb(dropable->posdata, dropable->obj, x, y);
+          dropable->poscb(dropable->posdata, dropable->obj, x, y, action);
      }
    else if ((have_obj) && (!dropable_last)) // enter new obj
      {
@@ -1153,7 +1167,7 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
         if (dropable->entercb)
           dropable->entercb(dropable->enterdata, dropable->obj);
         if (dropable->poscb)
-          dropable->poscb(dropable->posdata, dropable->obj, x, y);
+          dropable->poscb(dropable->posdata, dropable->obj, x, y, action);
      }
    else if ((!have_obj) && (dropable_last)) // leave last obj
      {
@@ -1176,12 +1190,57 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
      }
 }
 
+static Elm_Xdnd_Action
+_x11_dnd_action_map(Ecore_X_Atom action)
+{
+   Elm_Xdnd_Action act = ELM_XDND_ACTION_UNKNOWN;
+
+   if (action == ECORE_X_ATOM_XDND_ACTION_COPY)
+     act = ELM_XDND_ACTION_COPY;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_MOVE)
+     act = ELM_XDND_ACTION_MOVE;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_PRIVATE)
+     act = ELM_XDND_ACTION_PRIVATE;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_ASK)
+     act = ELM_XDND_ACTION_ASK;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_LIST)
+     act = ELM_XDND_ACTION_LIST;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_LINK)
+     act = ELM_XDND_ACTION_LINK;
+   else if (action == ECORE_X_ATOM_XDND_ACTION_DESCRIPTION)
+     act = ELM_XDND_ACTION_DESCRIPTION;
+   return act;
+}
+
+static Ecore_X_Atom
+_x11_dnd_action_rev_map(Elm_Xdnd_Action action)
+{
+   Ecore_X_Atom act = ECORE_X_ATOM_XDND_ACTION_MOVE;
+
+   if (action == ELM_XDND_ACTION_COPY)
+     act = ECORE_X_ATOM_XDND_ACTION_COPY;
+   else if (action == ELM_XDND_ACTION_MOVE)
+     act = ECORE_X_ATOM_XDND_ACTION_MOVE;
+   else if (action == ELM_XDND_ACTION_PRIVATE)
+     act = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
+   else if (action == ELM_XDND_ACTION_ASK)
+     act = ECORE_X_ATOM_XDND_ACTION_ASK;
+   else if (action == ELM_XDND_ACTION_LIST)
+     act = ECORE_X_ATOM_XDND_ACTION_LIST;
+   else if (action == ELM_XDND_ACTION_LINK)
+     act = ECORE_X_ATOM_XDND_ACTION_LINK;
+   else if (action == ELM_XDND_ACTION_DESCRIPTION)
+     act = ECORE_X_ATOM_XDND_ACTION_DESCRIPTION;
+   return act;
+}
+
 static Eina_Bool
 _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Position *pos = ev;
    Ecore_X_Rectangle rect;
    Dropable *dropable, *dropable_old;
+   Elm_Xdnd_Action act;
    
    /* Need to send a status back */
    /* FIXME: Should check I can drop here */
@@ -1195,6 +1254,7 @@ _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
         y = pos->position.y;
         _x11_dropable_coords_adjust(dropable, &x, &y);
         dropable = _x11_dropable_geom_find(pos->win, x, y);
+        act = _x11_dnd_action_map(pos->action);
         if (dropable)
           {
              evas_object_geometry_get(dropable->obj, &ox, &oy, &ow, &oh);
@@ -1204,7 +1264,8 @@ _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
              rect.height = oh;
              ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, rect, pos->action);
              cnp_debug("dnd position %i %i %p\n", x - ox, y - oy, dropable);
-             _x11_dnd_dropable_handle(dropable, x - ox, y - oy, EINA_TRUE);
+             _x11_dnd_dropable_handle(dropable, x - ox, y - oy, EINA_TRUE, 
+                                      act);
              // CCCCCCC: call dnd exit on last obj if obj != last
              // CCCCCCC: call drop position on obj
              _x11_dropable_all_set(pos->win, x, y, EINA_TRUE);
@@ -1213,7 +1274,8 @@ _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
           {
              ecore_x_dnd_send_status(EINA_FALSE, EINA_FALSE, rect, pos->action);
              cnp_debug("dnd position not in obj\n");
-             _x11_dnd_dropable_handle(dropable_old, 0, 0, EINA_FALSE);
+             _x11_dnd_dropable_handle(dropable_old, 0, 0, EINA_FALSE, 
+                                      act);
              // CCCCCCC: call dnd exit on last obj
              _x11_dropable_all_set(pos->win, x, y, EINA_TRUE);
           }
@@ -1235,7 +1297,7 @@ _x11_dnd_leave(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    if (dropable)
      {
         cnp_debug("Leave %x\n", leave->win);
-        _x11_dnd_dropable_handle(dropable, 0, 0, EINA_FALSE);
+        _x11_dnd_dropable_handle(dropable, 0, 0, EINA_FALSE, ELM_XDND_ACTION_UNKNOWN);
         _x11_dropable_all_set(leave->win, 0, 0, EINA_FALSE);
         // CCCCCCC: call dnd exit on last obj if there was one
      }
@@ -1250,6 +1312,7 @@ _x11_dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    Dropable *dropable;
    Elm_Selection_Data ddata;
    Evas_Coord x = 0, y = 0;
+   Elm_Xdnd_Action act = ELM_XDND_ACTION_UNKNOWN;
    int i, j;
 
    drop = ev;
@@ -1289,6 +1352,8 @@ found:
    cnp_debug("Found a target we'd like: %s\n", _x11_atoms[i].name);
    cnp_debug("0x%x\n", drop->win);
 
+   act = _x11_dnd_action_map(drop->action);
+   
    if (i == CNP_ATOM_text_urilist)
      {
         cnp_debug("We found a URI... (%scached) %s\n",
@@ -1301,6 +1366,7 @@ found:
                "<item absize=240x180 href=file://%s></item>";
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
+             ddata.action = act;
 
              /* If it's markup that also supports images */
              if ((dropable->types & ELM_SEL_FORMAT_MARKUP) &&
@@ -1354,6 +1420,7 @@ found:
    _x11_selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
    _x11_selections[ELM_SEL_TYPE_XDND].requestformat = ELM_SEL_FORMAT_MARKUP;
    _x11_selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
+   _x11_selections[ELM_SEL_TYPE_XDND].action = act;
 
    ecore_x_selection_xdnd_request(drop->win, _x11_atoms[i].name);
    return EINA_TRUE;
@@ -1363,11 +1430,22 @@ static Eina_Bool
 _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Status *status = ev;
-
+   Eina_Bool doaccept = EINA_FALSE;
+   
    /* Only thing we care about: will accept */
-   if ((status) && (status->will_accept)) cnp_debug("Will accept\n");
+   if ((status) && (status->will_accept))
+     {
+        cnp_debug("Will accept\n");
+        doaccept = EINA_TRUE;
+     }
    /* Won't accept */   
-   else cnp_debug("Won't accept accept\n");
+   else
+     {
+        cnp_debug("Won't accept accept\n");
+     }
+   if (dragacceptcb)
+     dragacceptcb(dragacceptdata, _x11_selections[ELM_SEL_TYPE_XDND].widget,
+                  doaccept);
    return EINA_TRUE;
 }
 
@@ -1408,11 +1486,11 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
                }
           }
         if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
-        if (dragdonecb)
-          {
-             dragdonecb(dragdonedata, _x11_selections[ELM_SEL_TYPE_XDND].widget);
-             dragdonecb = NULL;
-          }
+        if (dragdonecb) dragdonecb(dragdonedata, dragwidget);
+        dragdonecb = NULL;
+        dragacceptcb = NULL;
+        dragposcb = NULL;
+        dragwidget = NULL;
         if (dragwin)
           {
              evas_object_del(dragwin);
@@ -1425,7 +1503,14 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
 static void
 _x11_drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
 {
-   evas_object_move(dragwin, pos->position.x - _dragx, pos->position.y - _dragy);
+   evas_object_move(dragwin, 
+                    pos->position.x - _dragx, pos->position.y - _dragy);
+   printf("dragevas: %p -> %p\n",
+          dragwidget, 
+          evas_object_evas_get(dragwidget));
+   if (dragposcb)
+     dragposcb(dragposdata, dragwidget, pos->position.x, pos->position.y,
+               dragaction);
 }
 
 static Ecore_X_Window
@@ -1743,9 +1828,24 @@ _x11_elm_drop_target_del(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static void
+_x11_drag_target_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
+{
+   X11_Cnp_Selection *sel = _x11_selections + ELM_SEL_TYPE_XDND;
+
+   if (dragwidget == obj)
+     {
+        sel->widget = NULL;
+        dragwidget = NULL;
+     }
+}
+
 static  Eina_Bool
 _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, 
+                    Elm_Xdnd_Action action,
                     Elm_Drag_Icon_Create_Cb createicon, void *createdata,
+                    Elm_Drag_Pos dragpos, void *dragdata,
+                    Elm_Drag_Accept acceptcb, void *acceptdata,
                     Elm_Drag_State dragdone, void *donecbdata)
 {
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
@@ -1755,10 +1855,11 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    int x, y, x2 = 0, y2 = 0, x3, y3;
    Evas_Object *icon = NULL;
    int w, h;
+   Ecore_X_Atom actx;
 
    _x11_elm_cnp_init();
    
-   cnp_debug("starting drag...\n");
+   cnp_debug("starting drag... %p\n", obj);
 
    if (dragwin)
      {
@@ -1772,14 +1873,25 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    sel->widget = obj;
    sel->format = format;
    sel->selbuf = data ? strdup(data) : NULL;
+   sel->action = action;
+   dragwidget = obj;
+   dragaction = action;
 
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  _x11_drag_target_del, obj);
    /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
+   dragposcb = dragpos;
+   dragposdata = dragdata;
+   dragacceptcb = acceptcb;
+   dragacceptdata = acceptdata;
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
    /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _x11_drag_mouse_up() */
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_x11_drag_move, NULL);
    ecore_x_dnd_self_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
+   actx = _x11_dnd_action_rev_map(dragaction);
+   ecore_x_dnd_source_action_set(actx);
    ecore_x_pointer_grab(xwin);
    handler_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
                                         _x11_drag_mouse_up,
@@ -1834,6 +1946,22 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    _dragx = x3 - x2;
    _dragy = y3 - y2;
 
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_x11_elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
+{
+   Ecore_X_Atom actx;
+   
+   _x11_elm_cnp_init();
+   if (!dragwin) return EINA_FALSE;
+   
+   if (dragwidget != obj) return EINA_FALSE;
+   if (dragaction == action) return EINA_TRUE;
+   dragaction = action;
+   actx = _x11_dnd_action_rev_map(dragaction);
+   ecore_x_dnd_source_action_set(actx);
    return EINA_TRUE;
 }
 
@@ -2028,7 +2156,18 @@ static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj __UNUSED__, Elm_Se
                                              Elm_Drag_Pos poscb __UNUSED__, void *posdata __UNUSED__,
                                              Elm_Drop_Cb dropcb __UNUSED__, void *cbdata __UNUSED__);
 static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj __UNUSED__);
-static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, const char *data __UNUSED__, Evas_Object *(*createicon) (void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff) __UNUSED__, void *createdata __UNUSED__, void (*dragdone) (void *data, Evas_Object *) __UNUSED__, void *donecbdata __UNUSED__);
+static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__,
+                                        Elm_Sel_Format format __UNUSED__,
+                                        const char *data __UNUSED__,
+                                        Elm_Xdnd_Action action __UNUSED__,
+                                        Elm_Drag_Icon_Create_Cb createicon __UNUSED__,
+                                        void *createdata __UNUSED__,
+                                        Elm_Drag_Pos dragpos __UNUSED__,
+                                        void *dragdata __UNUSED__,
+                                        Elm_Drag_Accept acceptcb __UNUSED__,
+                                        void *acceptdata __UNUSED__,
+                                        Elm_Drag_State dragdone __UNUSED__,
+                                        void *donecbdata __UNUSED__);
 static Eina_Bool  _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__);
 
 static void
@@ -2043,6 +2182,7 @@ _local_get_job(void *data)
    ev.format = info->format;
    ev.data = info->sel.buf;
    ev.len = info->sel.size;
+   ev.action = ELM_XDND_ACTION_UNKNOWN;
    if (info->get.func)
      info->get.func(info->get.data, info->get.obj, &ev);
 }
@@ -2147,10 +2287,24 @@ static Eina_Bool
 _local_elm_drag_start(Evas_Object *obj __UNUSED__,
                       Elm_Sel_Format format __UNUSED__,
                       const char *data __UNUSED__,
+                      Elm_Xdnd_Action action __UNUSED__,
                       Elm_Drag_Icon_Create_Cb createicon __UNUSED__,
                       void *createdata __UNUSED__,
+                      Elm_Drag_Pos dragpos __UNUSED__,
+                      void *dragdata __UNUSED__,
+                      Elm_Drag_Accept acceptcb __UNUSED__,
+                      void *acceptdata __UNUSED__,
                       Elm_Drag_State dragdone __UNUSED__,
                       void *donecbdata __UNUSED__)
+{
+   // XXX: implement me
+   _local_elm_cnp_init();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_local_elm_drag_action_set(Evas_Object *obj __UNUSED__,
+                           Elm_Xdnd_Action action __UNUSED__)
 {
    // XXX: implement me
    _local_elm_cnp_init();
@@ -2389,17 +2543,37 @@ elm_drop_target_del(Evas_Object *obj)
 
 EAPI Eina_Bool
 elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
+               Elm_Xdnd_Action action,
                Elm_Drag_Icon_Create_Cb createicon, void *createdata,
+               Elm_Drag_Pos dragpos, void *dragdata,
+               Elm_Drag_Accept acceptcb, void *acceptdata,
                Elm_Drag_State dragdone, void *donecbdata)
 {
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
-     return _x11_elm_drag_start(obj, format, data, createicon, createdata, 
+     return _x11_elm_drag_start(obj, format, data, action, 
+                                createicon, createdata, 
+                                dragpos, dragdata,
+                                acceptcb, acceptdata,
                                 dragdone, donecbdata);
 #endif
-   return _local_elm_drag_start(obj, format, data, createicon, createdata,
+   return _local_elm_drag_start(obj, format, data, action,
+                                createicon, createdata,
+                                dragpos, dragdata,
+                                acceptcb, acceptdata,
                                 dragdone, donecbdata);
+}
+
+EAPI Eina_Bool
+elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
+{
+   if (!_elm_cnp_init_count) _elm_cnp_init();
+#ifdef HAVE_ELEMENTARY_X
+   if (_x11_elm_widget_xwin_get(obj))
+     return _x11_elm_drag_action_set(obj, action);
+#endif
+   return _local_elm_drag_action_set(obj, action);
 }
 
 EAPI Eina_Bool
