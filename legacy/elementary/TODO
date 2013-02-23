@@ -1,5 +1,4 @@
 Bugs:
-  pager is not smooth at large sizes
   large tooltips do not work with compositing enabled
   toolbar sizing is broken in some cases (WEIGHT(0,0) in horizontal box with entry WEIGHT(EXPAND,EXPAND))
 
@@ -8,7 +7,7 @@ Things That Just Need To Be Rewritten (tm):
   panel edc
 
 callbacks add/del
-  pager, panes
+  anes
 
 api:
   elm_win_type_get()
