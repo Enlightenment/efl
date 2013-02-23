@@ -78,112 +78,118 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
        (dst_region_w <= 0) || (dst_region_h <= 0)) return;
 
    src_w = src->cache_entry.w;
+   if (src_region_x >= src_w) return;
+
    src_h = src->cache_entry.h;
+   if (src_region_y >= src_h) return;
+
    dst_w = dst->cache_entry.w;
    dst_h = dst->cache_entry.h;
 
    src_data = src->image.data;
    dst_data = dst->image.data;
 
+   /* sanitise clip x */
    if (dst_clip_x < 0)
      {
         dst_clip_w += dst_clip_x;
         dst_clip_x = 0;
      }
-   if (dst_clip_y < 0)
-     {
-        dst_clip_h += dst_clip_y;
-        dst_clip_y = 0;
-     }
+
    if ((dst_clip_x + dst_clip_w) > dst_w)
      dst_clip_w = dst_w - dst_clip_x;
-   if ((dst_clip_y + dst_clip_h) > dst_h)
-     dst_clip_h = dst_h - dst_clip_y;
 
    if (dst_clip_x < dst_region_x)
      {
         dst_clip_w += dst_clip_x - dst_region_x;
         dst_clip_x = dst_region_x;
      }
+
+   if (dst_clip_x >= dst_w) return;
+
    if ((dst_clip_x + dst_clip_w) > (dst_region_x + dst_region_w))
      dst_clip_w = dst_region_x + dst_region_w - dst_clip_x;
+
+   if (dst_clip_w <= 0) return;
+
+   /* sanitise clip y */
+   if (dst_clip_y < 0)
+     {
+        dst_clip_h += dst_clip_y;
+        dst_clip_y = 0;
+     }
+
+   if ((dst_clip_y + dst_clip_h) > dst_h)
+     dst_clip_h = dst_h - dst_clip_y;
+
    if (dst_clip_y < dst_region_y)
      {
         dst_clip_h += dst_clip_y - dst_region_y;
         dst_clip_y = dst_region_y;
      }
+
+   if (dst_clip_y >= dst_h) return;
+
    if ((dst_clip_y + dst_clip_h) > (dst_region_y + dst_region_h))
      dst_clip_h = dst_region_y + dst_region_h - dst_clip_y;
 
-   if ((dst_clip_w <= 0) || (dst_clip_h <= 0)) return;
+   if (dst_clip_h <= 0) return;
 
-   /* sanitise x */
+   /* sanitise region x */
    if (src_region_x < 0)
      {
         dst_region_x -= (src_region_x * dst_region_w) / src_region_w;
         dst_region_w += (src_region_x * dst_region_w) / src_region_w;
         src_region_w += src_region_x;
         src_region_x = 0;
+
+        if (dst_clip_x < dst_region_x)
+          {
+             dst_clip_w += (dst_clip_x - dst_region_x);
+             dst_clip_x = dst_region_x;
+          }
      }
-   if (src_region_x >= src_w) return;
+
+   if ((dst_clip_x + dst_clip_w) > dst_w)
+     dst_clip_w = dst_w - dst_clip_x;
+
+   if (dst_clip_w <= 0) return;
+
    if ((src_region_x + src_region_w) > src_w)
      {
         dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
         src_region_w = src_w - src_region_x;
      }
-   if (dst_region_w <= 0) return;
-   if (src_region_w <= 0) return;
-   if (dst_clip_x < 0)
-     {
-        dst_clip_w += dst_clip_x;
-        dst_clip_x = 0;
-     }
-   if (dst_clip_w <= 0) return;
-   if (dst_clip_x >= dst_w) return;
-   if (dst_clip_x < dst_region_x)
-     {
-        dst_clip_w += (dst_clip_x - dst_region_x);
-        dst_clip_x = dst_region_x;
-     }
-   if ((dst_clip_x + dst_clip_w) > dst_w)
-     {
-        dst_clip_w = dst_w - dst_clip_x;
-     }
-   if (dst_clip_w <= 0) return;
 
-   /* sanitise y */
+   if ((dst_region_w <= 0) || (src_region_w <= 0)) return;
+
+   /* sanitise region y */
    if (src_region_y < 0)
      {
         dst_region_y -= (src_region_y * dst_region_h) / src_region_h;
         dst_region_h += (src_region_y * dst_region_h) / src_region_h;
         src_region_h += src_region_y;
         src_region_y = 0;
+
+        if (dst_clip_y < dst_region_y)
+          {
+             dst_clip_h += (dst_clip_y - dst_region_y);
+             dst_clip_y = dst_region_y;
+          }
      }
-   if (src_region_y >= src_h) return;
+
+   if ((dst_clip_y + dst_clip_h) > dst_h)
+     dst_clip_h = dst_h - dst_clip_y;
+
+   if (dst_clip_h <= 0) return;
+
    if ((src_region_y + src_region_h) > src_h)
      {
         dst_region_h = (dst_region_h * (src_h - src_region_y)) / (src_region_h);
         src_region_h = src_h - src_region_y;
      }
-   if (dst_region_h <= 0) return;
-   if (src_region_h <= 0) return;
-   if (dst_clip_y < 0)
-     {
-        dst_clip_h += dst_clip_y;
-        dst_clip_y = 0;
-     }
-   if (dst_clip_h <= 0) return;
-   if (dst_clip_y >= dst_h) return;
-   if (dst_clip_y < dst_region_y)
-     {
-        dst_clip_h += (dst_clip_y - dst_region_y);
-        dst_clip_y = dst_region_y;
-     }
-   if ((dst_clip_y + dst_clip_h) > dst_h)
-     {
-        dst_clip_h = dst_h - dst_clip_y;
-     }
-   if (dst_clip_h <= 0) return;
+
+   if ((dst_region_h <= 0) || (src_region_h <= 0)) return;
 
    /* allocate scale lookup tables */
    lin_ptr = alloca(dst_clip_w * sizeof(int));
