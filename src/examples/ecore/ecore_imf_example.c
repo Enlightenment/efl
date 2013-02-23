@@ -36,11 +36,21 @@ static void
 _mouse_down_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Entry *en = data;
+   Evas_Event_Mouse_Down *ev = event_info;
    if (!en) return;
 
-   // ecore_imf_context_reset should be called before calculating new cursor position
    if (en->imf_context)
-     ecore_imf_context_reset(en->imf_context);
+     {
+        Ecore_IMF_Event_Mouse_Down ecore_ev;
+        ecore_imf_evas_event_mouse_down_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_DOWN,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+          return;
+
+        // ecore_imf_context_reset should be called before calculating new cursor position
+        ecore_imf_context_reset(en->imf_context);
+     }
 
    // calculate new cursor position
 }
@@ -49,7 +59,24 @@ static void
 _mouse_up_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Entry *en = data;
+   Evas_Event_Mouse_Up *ev = event_info;
    if (!en) return;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        _imf_cursor_info_set(en);
+        return;
+     }
+
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Mouse_Up ecore_ev;
+        ecore_imf_evas_event_mouse_up_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_UP,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+          return;
+     }
 
    if (evas_object_focus_get(en->rect))
      {
