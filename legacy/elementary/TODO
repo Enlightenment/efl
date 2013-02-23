@@ -7,7 +7,8 @@ Things That Just Need To Be Rewritten (tm):
   panel edc
 
 callbacks add/del
-  anes
+  panes
 
 api:
   elm_win_type_get()
+
