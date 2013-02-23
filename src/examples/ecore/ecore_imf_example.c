@@ -13,6 +13,9 @@
 #include <Evas.h>
 #include <stdio.h>
 
+#define WIDTH 480
+#define HEIGHT 800
+
 typedef struct _Entry Entry;
 
 struct _Entry
@@ -33,11 +36,21 @@ static void
 _mouse_down_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Entry *en = data;
+   Evas_Event_Mouse_Down *ev = event_info;
    if (!en) return;
 
-   // ecore_imf_context_reset should be called before calculating new cursor position
    if (en->imf_context)
-     ecore_imf_context_reset(en->imf_context);
+     {
+        Ecore_IMF_Event_Mouse_Down ecore_ev;
+        ecore_imf_evas_event_mouse_down_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_DOWN,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+          return;
+
+        // ecore_imf_context_reset should be called before calculating new cursor position
+        ecore_imf_context_reset(en->imf_context);
+     }
 
    // calculate new cursor position
 }
@@ -46,7 +59,24 @@ static void
 _mouse_up_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
    Entry *en = data;
+   Evas_Event_Mouse_Up *ev = event_info;
    if (!en) return;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        _imf_cursor_info_set(en);
+        return;
+     }
+
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Mouse_Up ecore_ev;
+        ecore_imf_evas_event_mouse_up_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_UP,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+          return;
+     }
 
    if (evas_object_focus_get(en->rect))
      {
@@ -161,7 +191,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
    Entry *en = data;
    const char *str;
 
-   if (!en) return;
+   if (!en) return EINA_FALSE;
 
    str = evas_object_textblock_text_markup_get(en->txt_obj);
 
@@ -317,8 +347,6 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Entry *en = data;
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool control, alt, shift;
-   Eina_Bool multiline;
-   Eina_Bool cursor_changed;
    if ((!en) || (!ev->key)) return;
 
    if (en->imf_context)
@@ -560,8 +588,8 @@ main(int argc, char *argv[])
 
    ecore_imf_init();
 
-   // create a new window, with size=480x800 and default engine
-   ee = ecore_evas_new(NULL, 0, 0, 480, 800, NULL);
+   // create a new window, with size=WIDTHxHEIGHT and default engine
+   ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
 
    if (!ee)
      {
@@ -582,7 +610,7 @@ main(int argc, char *argv[])
    // create input field rectangle
    Evas_Object *bg = evas_object_rectangle_add(evas);
    evas_object_move(bg, 0, 0);
-   evas_object_resize(bg, 480, 800);
+   evas_object_resize(bg, WIDTH, HEIGHT);
    evas_object_color_set(bg, 255, 255, 255, 255);
    evas_object_show(bg);
 
