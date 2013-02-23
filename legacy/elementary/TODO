@@ -12,3 +12,5 @@ callbacks add/del
 api:
   elm_win_type_get()
 
+improvement:
+  add a smart move object and autodetect group of moving object in genlist.
