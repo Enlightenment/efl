@@ -13,6 +13,9 @@
 #include <Evas.h>
 #include <stdio.h>
 
+#define WIDTH 480
+#define HEIGHT 800
+
 typedef struct _Entry Entry;
 
 struct _Entry
@@ -161,7 +164,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
    Entry *en = data;
    const char *str;
 
-   if (!en) return;
+   if (!en) return EINA_FALSE;
 
    str = evas_object_textblock_text_markup_get(en->txt_obj);
 
@@ -317,8 +320,6 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Entry *en = data;
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool control, alt, shift;
-   Eina_Bool multiline;
-   Eina_Bool cursor_changed;
    if ((!en) || (!ev->key)) return;
 
    if (en->imf_context)
@@ -560,8 +561,8 @@ main(int argc, char *argv[])
 
    ecore_imf_init();
 
-   // create a new window, with size=480x800 and default engine
-   ee = ecore_evas_new(NULL, 0, 0, 480, 800, NULL);
+   // create a new window, with size=WIDTHxHEIGHT and default engine
+   ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
 
    if (!ee)
      {
@@ -582,7 +583,7 @@ main(int argc, char *argv[])
    // create input field rectangle
    Evas_Object *bg = evas_object_rectangle_add(evas);
    evas_object_move(bg, 0, 0);
-   evas_object_resize(bg, 480, 800);
+   evas_object_resize(bg, WIDTH, HEIGHT);
    evas_object_color_set(bg, 255, 255, 255, 255);
    evas_object_show(bg);
 
