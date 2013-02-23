@@ -41,7 +41,7 @@ syn keyword	edcLabel	padding prefer weight aspect_mode contained
 syn keyword	edcLabel	options layout position span contained
 syn keyword	edcLabel	homogeneous contained
 syn keyword	edcLabel	on perspective light perspective_on contained
-syn keyword	edcLabel	backface_cull alpha center focus zplane contained
+syn keyword	edcLabel	backface_cull alpha center focus zplane focal contained
 syn keyword	edcLabel	int double string external script_only contained
 
 syn keyword	edcConstant 	COMP RAW LOSSY NONE ON_HOLD AUTOGRAB NOGRAB
@@ -52,6 +52,9 @@ syn keyword	edcConstant	GLOW FAR_SHADOW FAR_SOFT_SHADOW
 syn keyword	edcConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT FOCUS_SET
 syn keyword	edcConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	edcConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE
+syn keyword	edcConstant	LIN DECEL DIVIS BOUNCE SPRING
+syn keyword	edcConstant	ACCEL_FAC DECEL_FAC SIN_FAC DIVISOR_INTERP
+syn keyword	edcConstant	ACCELERATE_FACTOR DECELERATE_FACTOR
 syn keyword	edcConstant	VERTICAL HORIZONTAL BOTH BOX TABLE
 syn keyword	edcConstant	EDITABLE PASSWORD "default"
 
