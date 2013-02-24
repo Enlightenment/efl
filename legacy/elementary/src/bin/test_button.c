@@ -184,6 +184,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bt = elm_button_add(win);
    elm_object_access_info_set(bt, "This is some custom text describing this widget");
    elm_object_style_set(bt, "anchor");
+   elm_object_text_set(bt, "Disabled");
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)9);
