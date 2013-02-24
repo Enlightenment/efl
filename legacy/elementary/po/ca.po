@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Marc Furtià  i Puig\\\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-12 15:26+0900\n"
+"POT-Creation-Date: 2013-02-24 12:11+0900\n"
 "PO-Revision-Date: 2013-02-01 09:52+0100\n"
 "Last-Translator: Marc Furtià i Puig <marc.furtia@gmail.com>\n"
 "Language-Team: \n"
@@ -26,8 +26,8 @@ msgstr "Amunt"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
-#: src/lib/elm_entry.c:1288
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1271
+#: src/lib/elm_entry.c:1296
 msgid "Cancel"
 msgstr "Cancel·lar"
 
@@ -43,13 +43,13 @@ msgstr "Bombolla "
 msgid "Clicked"
 msgstr "Pitjat "
 
-#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
+#: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1789
 msgid "State: Disabled"
 msgstr "Estat: Desactivat "
 
-#: src/lib/elm_button.c:310
+#: src/lib/elm_button.c:313
 msgid "Button"
 msgstr "Botó "
 
@@ -138,27 +138,27 @@ msgstr "Predeterminat: LTR"
 msgid "diskselector item"
 msgstr "Selector de disc"
 
-#: src/lib/elm_entry.c:1256
+#: src/lib/elm_entry.c:1264
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1260
+#: src/lib/elm_entry.c:1268
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1275
+#: src/lib/elm_entry.c:1283
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1290
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:2913
+#: src/lib/elm_entry.c:2923
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:711
+#: src/lib/elm_gengrid.c:724
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
@@ -166,11 +166,11 @@ msgstr "Quadrícula genèrica"
 msgid "Index Item"
 msgstr "Element d'índex"
 
-#: src/lib/elm_index.c:682
+#: src/lib/elm_index.c:681
 msgid "Index"
 msgstr "Índex"
 
-#: src/lib/elm_label.c:403
+#: src/lib/elm_label.c:404
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -210,27 +210,27 @@ msgstr "botó de decrement del spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1849
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:1645
+#: src/lib/elm_toolbar.c:1787
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1649
+#: src/lib/elm_toolbar.c:1791
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
-#: src/lib/elm_toolbar.c:1651
+#: src/lib/elm_toolbar.c:1793
 msgid "Has menu"
 msgstr "Té menú"
 
-#: src/lib/elm_toolbar.c:1702
+#: src/lib/elm_toolbar.c:1844
 msgid "Unselected"
 msgstr "Des-seleccionat "
 
-#: src/lib/elm_toolbar.c:1719
+#: src/lib/elm_toolbar.c:1861
 msgid "Toolbar Item"
 msgstr "Element de barra d'eines"
 

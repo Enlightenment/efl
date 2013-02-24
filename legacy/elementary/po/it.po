@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-12 15:26+0900\n"
+"POT-Creation-Date: 2013-02-24 12:11+0900\n"
 "PO-Revision-Date: 2013-01-04 22:08+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -23,8 +23,8 @@ msgstr "Su"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
-#: src/lib/elm_entry.c:1288
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1271
+#: src/lib/elm_entry.c:1296
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -40,13 +40,13 @@ msgstr "Bolla"
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
+#: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1789
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
-#: src/lib/elm_button.c:310
+#: src/lib/elm_button.c:313
 msgid "Button"
 msgstr "Bottone"
 
@@ -135,27 +135,27 @@ msgstr "predefintito: LTR"
 msgid "diskselector item"
 msgstr "selettore disco"
 
-#: src/lib/elm_entry.c:1256
+#: src/lib/elm_entry.c:1264
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1260
+#: src/lib/elm_entry.c:1268
 msgid "Cut"
 msgstr "Taglia"
 
-#: src/lib/elm_entry.c:1275
+#: src/lib/elm_entry.c:1283
 msgid "Select"
 msgstr "Seleziona"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1290
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:2913
+#: src/lib/elm_entry.c:2923
 msgid "Entry"
 msgstr "Voce"
 
-#: src/lib/elm_gengrid.c:711
+#: src/lib/elm_gengrid.c:724
 msgid "Gengrid Item"
 msgstr "Voce della griglia generica"
 
@@ -163,11 +163,11 @@ msgstr "Voce della griglia generica"
 msgid "Index Item"
 msgstr "Voce dell'indice"
 
-#: src/lib/elm_index.c:682
+#: src/lib/elm_index.c:681
 msgid "Index"
 msgstr "Indice"
 
-#: src/lib/elm_label.c:403
+#: src/lib/elm_label.c:404
 msgid "Label"
 msgstr "Etichetta"
 
@@ -207,27 +207,27 @@ msgstr "bottone di diminuzione"
 msgid "spinner"
 msgstr "spinner bottoni"
 
-#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1849
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:1645
+#: src/lib/elm_toolbar.c:1787
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:1649
+#: src/lib/elm_toolbar.c:1791
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_toolbar.c:1651
+#: src/lib/elm_toolbar.c:1793
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:1702
+#: src/lib/elm_toolbar.c:1844
 msgid "Unselected"
 msgstr "Non selezionato"
 
-#: src/lib/elm_toolbar.c:1719
+#: src/lib/elm_toolbar.c:1861
 msgid "Toolbar Item"
 msgstr "Voce della barra strumenti"
 

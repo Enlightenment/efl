@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-12 15:26+0900\n"
+"POT-Creation-Date: 2013-02-24 12:11+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -26,8 +26,8 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1263
-#: src/lib/elm_entry.c:1288
+#: src/lib/elc_fileselector.c:1017 src/lib/elm_entry.c:1271
+#: src/lib/elm_entry.c:1296
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -43,13 +43,13 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:285 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1411 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1647
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
+#: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:515 src/lib/elm_toolbar.c:1789
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elm_button.c:310
+#: src/lib/elm_button.c:313
 msgid "Button"
 msgstr "Tlačítko"
 
@@ -143,27 +143,27 @@ msgstr "výchozí:LTR"
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elm_entry.c:1256
+#: src/lib/elm_entry.c:1264
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1260
+#: src/lib/elm_entry.c:1268
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1275
+#: src/lib/elm_entry.c:1283
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1290
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:2913
+#: src/lib/elm_entry.c:2923
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:711
+#: src/lib/elm_gengrid.c:724
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -171,11 +171,11 @@ msgstr "Položka mřížky"
 msgid "Index Item"
 msgstr "Položka indexu"
 
-#: src/lib/elm_index.c:682
+#: src/lib/elm_index.c:681
 msgid "Index"
 msgstr "Index"
 
-#: src/lib/elm_label.c:403
+#: src/lib/elm_label.c:404
 msgid "Label"
 msgstr "Popisek"
 
@@ -215,27 +215,27 @@ msgstr "odečítací tlačítko spinneru"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1707
+#: src/lib/elm_toolbar.c:1286 src/lib/elm_toolbar.c:1849
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:1645
+#: src/lib/elm_toolbar.c:1787
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:1649
+#: src/lib/elm_toolbar.c:1791
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:1651
+#: src/lib/elm_toolbar.c:1793
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:1702
+#: src/lib/elm_toolbar.c:1844
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:1719
+#: src/lib/elm_toolbar.c:1861
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
 
