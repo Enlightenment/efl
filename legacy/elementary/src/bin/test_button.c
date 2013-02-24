@@ -142,6 +142,34 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
+   elm_object_text_set(bt, "Icon sized to button");
+   elm_object_part_content_set(bt, "icon", ic);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)1);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)1);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+
+   ic = elm_icon_add(bx);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "anchor");
+   elm_object_text_set(bt, "Icon no scale");
+   elm_object_part_content_set(bt, "icon", ic);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)2);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)2);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_show(ic);
+   
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "anchor");
    elm_object_part_content_set(bt, "icon", ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)8);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)8);
