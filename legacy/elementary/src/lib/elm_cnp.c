@@ -1452,7 +1452,7 @@ _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 static Eina_Bool
 _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
 {
-   Ecore_X_Window xwin = (Ecore_X_Window)data;
+   Ecore_X_Window xwin = (Ecore_X_Window)(long)data;
    Ecore_Event_Mouse_Button *ev = event;
 
    if ((ev->buttons == 1) &&
