@@ -69,34 +69,34 @@ _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
 	ERR("invalid command to player.");
 	return;
      }
-   if (ev->fd_write == -1)
+   if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
         return ;
      }
-   if (write(ev->fd_write, &cmd, sizeof(cmd)) < 0) perror("write");
+   ecore_pipe_write(ev->fd_write, &cmd, sizeof(cmd));
 }
 
 static void
 _player_send_int(Emotion_Generic_Video *ev, int number)
 {
-   if (ev->fd_write == -1)
+   if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
         return ;
      }
-   if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
+   ecore_pipe_write(ev->fd_write, &number, sizeof(number));
 }
 
 static void
 _player_send_float(Emotion_Generic_Video *ev, float number)
 {
-   if (ev->fd_write == -1)
+   if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
         return ;
      }
-   if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
+   ecore_pipe_write(ev->fd_write, &number, sizeof(number));
 }
 
 static void
@@ -105,11 +105,10 @@ _player_send_str(Emotion_Generic_Video *ev, const char *str, Eina_Bool stringsha
    int len;
 
    if (stringshared)
-     len = eina_stringshare_strlen(str) + 1;
+     len = str ? eina_stringshare_strlen(str) + 1 : 0;
    else
-     len = strlen(str) + 1;
-   if (write(ev->fd_write, &len, sizeof(len)) < 0) perror("write");
-   if (write(ev->fd_write, str, len) < 0) perror("write");
+     len = str ? strlen(str) + 1 : 0;
+   ecore_pipe_write(ev->fd_write, str, len);
 }
 
 static Eina_Bool
@@ -242,19 +241,10 @@ _player_cmd_param_read(Emotion_Generic_Video *ev, void *param, size_t size)
 
    todo = ev->cmd.total - ev->cmd.i;
    i = ev->cmd.i;
-   done = read(ev->fd_read, &ev->cmd.tmp[i], todo);
 
-   if (done < 0 &&  errno != EINTR && errno != EAGAIN)
-     {
-	if (ev->cmd.tmp)
-	  {
-	     free(ev->cmd.tmp);
-	     ev->cmd.tmp = NULL;
-	  }
-	ERR("problem when reading parameter from pipe.");
-	ev->cmd.type = -1;
-	return EINA_FALSE;
-     }
+   done = (ev->offset + todo > ev->length) ? ev->length - ev->offset : todo;
+   memcpy(&ev->cmd.tmp[i], &ev->buffer[ev->offset], done);
+   ev->offset += done;
 
    if (done == todo)
      {
@@ -794,20 +784,19 @@ _player_cmd_read(Emotion_Generic_Video *ev)
    }
 }
 
-static Eina_Bool
-_player_cmd_handler_cb(void *data, Ecore_Fd_Handler *fd_handler)
+static void
+_player_cmd_handler_cb(void *data, void *buffer, unsigned int nbyte)
 {
    Emotion_Generic_Video *ev = data;
 
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
-     {
-	ERR("an error occurred on fd_read %d.", ev->fd_read);
-	return ECORE_CALLBACK_CANCEL;
-     }
+   ev->buffer = buffer;
+   ev->length = nbyte;
+   ev->offset = 0;
 
    _player_cmd_read(ev);
 
-   return ECORE_CALLBACK_RENEW;
+   ev->buffer = NULL;
+   ev->length = 0;
 }
 
 static Eina_Bool
@@ -866,64 +855,73 @@ _player_del_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    ev->player.exe = NULL;
    ev->ready = EINA_FALSE;
    ev->file_ready = EINA_FALSE;
-   ecore_main_fd_handler_del(ev->fd_handler);
-   close(ev->fd_read);
-   close(ev->fd_write);
-   ev->fd_read = -1;
-   ev->fd_write = -1;
+   ecore_pipe_del(ev->fd_read);
+   ecore_pipe_del(ev->fd_write);
+   ev->fd_read = NULL;
+   ev->fd_write = NULL;
    _emotion_decode_stop(ev->obj);
 
    return ECORE_CALLBACK_DONE;
 }
 
+static void
+_player_dummy(void *data EINA_UNUSED,
+              void *buffer EINA_UNUSED,
+              unsigned int nbyte EINA_UNUSED)
+{
+}
+
 static Eina_Bool
 _player_exec(Emotion_Generic_Video *ev)
 {
-   int pipe_out[2];
-   int pipe_in[2];
+   Ecore_Pipe *in;
+   Ecore_Pipe *out;
    char buf[PATH_MAX];
 
-   if (pipe(pipe_out) == -1)
+   out = ecore_pipe_full_add(_player_dummy, NULL, -1, -1, EINA_TRUE, EINA_FALSE);
+   if (!out)
      {
 	ERR("could not create pipe for communication emotion -> player: %s", strerror(errno));
 	return EINA_FALSE;
      }
 
-   if (pipe(pipe_in) == -1)
+   in = ecore_pipe_full_add(_player_cmd_handler_cb, ev, -1, -1, EINA_FALSE, EINA_TRUE);
+   if (!in)
      {
 	ERR("could not create pipe for communication player -> emotion: %s", strerror(errno));
-	close(pipe_out[0]);
-	close(pipe_out[1]);
+        ecore_pipe_del(in);
+        ecore_pipe_del(out);
 	return EINA_FALSE;
      }
 
-   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->engine->path, pipe_out[0], pipe_in[1]);
+   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->engine->path,
+            ecore_pipe_read_fd(out),
+            ecore_pipe_write_fd(in));
 
    ev->player.exe = ecore_exe_pipe_run(
       buf,
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
-      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER,
+      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER |
+      ECORE_EXE_TERM_WITH_PARENT,
       ev);
 
-   INF("created pipe emotion -> player: %d -> %d", pipe_out[1], pipe_out[0]);
-   INF("created pipe player -> emotion: %d -> %d", pipe_in[1], pipe_in[0]);
+   INF("created pipe emotion -> player: %d -> %d",
+       ecore_pipe_write_fd(out), ecore_pipe_read_fd(out));
+   INF("created pipe player -> emotion: %d -> %d",
+       ecore_pipe_write_fd(in), ecore_pipe_read_fd(in));
 
-   close(pipe_in[1]);
-   close(pipe_out[0]);
+   ecore_pipe_write_close(in);
+   ecore_pipe_read_close(out);
 
    if (!ev->player.exe)
      {
-	close(pipe_in[0]);
-	close(pipe_out[1]);
+        ecore_pipe_del(in);
+        ecore_pipe_del(out);
 	return EINA_FALSE;
      }
 
-   ev->fd_read = pipe_in[0];
-   ev->fd_write = pipe_out[1];
-
-   ev->fd_handler = ecore_main_fd_handler_add(
-      ev->fd_read, ECORE_FD_READ | ECORE_FD_ERROR, _player_cmd_handler_cb, ev,
-      NULL, NULL);
+   ev->fd_read = in;
+   ev->fd_write = out;
 
    return EINA_TRUE;
 }
@@ -966,8 +964,8 @@ em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options
    ev = calloc(1, sizeof(*ev));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
 
-   ev->fd_read = -1;
-   ev->fd_write = -1;
+   ev->fd_read = NULL;
+   ev->fd_write = NULL;
    ev->speed = 1.0;
    ev->volume = 0.5;
    ev->audio_mute = EINA_FALSE;
@@ -985,11 +983,35 @@ em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options
    return ev;
 }
 
+typedef struct _Delay_Munmap Delay_Munmap;
+struct _Delay_Munmap
+{
+   void *map;
+   size_t size;
+};
+
+static void
+_delayed_munmap(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   Delay_Munmap *dm = data;
+
+   fprintf(stderr, "munmapping !\n");
+   munmap(dm->map, dm->size);
+   free(dm);
+
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _delayed_munmap, data);
+}
+
+static void
+_delayed_next_frame(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, _delayed_munmap, data);
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_PRE, _delayed_next_frame, data);
+}
+
 static void
 em_partial_shutdown(Emotion_Generic_Video *ev)
 {
-   _emotion_image_reset(ev->obj);
-
    if (ev->player.exe)
      {
 	ecore_exe_terminate(ev->player.exe);
@@ -1000,18 +1022,34 @@ em_partial_shutdown(Emotion_Generic_Video *ev)
    ev->file_ready = EINA_FALSE;
 
    if (ev->shared)
-     munmap(ev->shared, ev->shared->size);
+     {
+        Evas_Object *o;
+        Delay_Munmap *dm;
+
+        dm = malloc(sizeof (Delay_Munmap));
+        if (dm)
+          {
+             dm->map = ev->shared;
+             dm->size = ev->shared->size;
+             evas_event_callback_add(evas_object_evas_get(ev->obj),
+                                     EVAS_CALLBACK_RENDER_PRE,
+                                     _delayed_next_frame, dm);
+          }
+
+        o = emotion_object_image_get(ev->obj);
+        evas_object_image_data_set(o, NULL);
+        evas_object_image_size_set(o, 1, 1);     
+     }
    ev->shared = NULL;
 
-   if (ev->fd_read >= 0)
-     close(ev->fd_read);
-   ev->fd_read = -1;
-   if (ev->fd_write >= 0)
-     close(ev->fd_write);
-   ev->fd_write = -1;
-   if (ev->fd_handler)
-     ecore_main_fd_handler_del(ev->fd_handler);
-   ev->fd_handler = NULL;
+   _emotion_image_reset(ev->obj);
+
+   if (ev->fd_read)
+     ecore_pipe_del(ev->fd_read);
+   ev->fd_read = NULL;
+   if (ev->fd_write)
+     ecore_pipe_del(ev->fd_write);
+   ev->fd_write = NULL;
 
    if (ev->player_add) ecore_event_handler_del(ev->player_add);
    ev->player_add = NULL;

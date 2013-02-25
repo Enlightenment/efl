@@ -75,8 +75,11 @@ struct _Emotion_Generic_Video
    Ecore_Event_Handler	     *player_add, *player_del, *player_data;
    Ecore_Idler               *player_restart;
    int			     drop;
-   int			     fd_read, fd_write;
-   Ecore_Fd_Handler	     *fd_handler;
+   Ecore_Pipe                *fd_read;
+   Ecore_Pipe                *fd_write;
+   const unsigned char       *buffer;
+   ssize_t                    length;
+   ssize_t                    offset;
 
    const char		     *filename;
    volatile double	     len;

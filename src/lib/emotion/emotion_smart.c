@@ -175,7 +175,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _emotion_image_data_zero(Evas_Object *img)
 {
-   void *data;
+   void *data = NULL;
 
    data = evas_object_image_data_get(img, 1);
    if (data)
