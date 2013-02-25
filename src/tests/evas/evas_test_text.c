@@ -166,6 +166,37 @@ START_TEST(evas_text_evas)
 }
 END_TEST
 
+START_TEST(evas_text_ellipsis)
+{
+   START_TEXT_TEST();
+   const char *buf = "נסיון בלה בלה בלה בלה";
+   const char *font = TEST_FONT_NAME;
+   Evas_Font_Size size = 14;
+
+   evas_object_text_ellipsis_set(to, 0.0);
+   evas_object_move(to, 0, 0);
+   evas_object_resize(to, 500, 500);
+   evas_object_text_font_set(to, font, size);
+   evas_object_text_text_set(to, buf);
+
+   /* Make it smaller to force ellipsis and check the resulting size. */
+     {
+        Evas_Coord w, h;
+        evas_object_geometry_get(to, NULL, NULL, NULL, &h);
+        evas_object_resize(to, 140, h);
+
+        /* Because of the way text object behaves, this will actually force
+         * a resize. */
+        evas_object_geometry_get(to, NULL, NULL, &w, NULL);
+        /* If it's gotten way too small, it means we have an issue. */
+        fail_if(w < 100);
+     }
+
+
+   END_TEXT_TEST();
+}
+END_TEST
+
 /* Tests for functions that are in evas_object_text.c but
  * don't really have anything to do with it. */
 START_TEST(evas_text_unrelated)
@@ -497,6 +528,7 @@ void evas_test_text(TCase *tc)
    tcase_add_test(tc, evas_text_set_get);
    tcase_add_test(tc, evas_text_geometries);
    tcase_add_test(tc, evas_text_evas);
+   tcase_add_test(tc, evas_text_ellipsis);
 #ifdef HAVE_FRIBIDI
    tcase_add_test(tc, evas_text_bidi);
 #endif
