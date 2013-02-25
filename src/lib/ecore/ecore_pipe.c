@@ -179,6 +179,13 @@ out:
    _ecore_unlock();
 }
 
+EAPI int
+ecore_pipe_read_fd(Ecore_Pipe *p)
+{
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   return p->fd_read;
+}
+
 /**
  * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thaw()
  * for monitoring it again.
@@ -279,6 +286,13 @@ ecore_pipe_write_close(Ecore_Pipe *p)
      }
 out:
    _ecore_unlock();
+}
+
+EAPI int
+ecore_pipe_write_fd(Ecore_Pipe *p)
+{
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
+   return p->fd_write;
 }
 
 /**
@@ -386,14 +400,13 @@ out:
    return ok;
 }
 
-/**
- * @}
- */
-
-/* Private functions */
-Ecore_Pipe *
-_ecore_pipe_add(Ecore_Pipe_Cb handler,
-                const void   *data)
+EAPI Ecore_Pipe *
+ecore_pipe_full_add(Ecore_Pipe_Cb handler,
+                    const void   *data,
+                    int fd_read,
+                    int fd_write,
+                    Eina_Bool read_survive_fork,
+		    Eina_Bool write_survive_fork)
 {
    Ecore_Pipe *p = NULL;
    int fds[2];
@@ -404,20 +417,33 @@ _ecore_pipe_add(Ecore_Pipe_Cb handler,
    p = ecore_pipe_calloc(1);
    if (!p) return NULL;
 
-   if (pipe(fds))
+   if (fd_read == -1 &&
+       fd_write == -1)
      {
-        ecore_pipe_mp_free(p);
-        return NULL;
+        if (pipe(fds))
+          {
+             ecore_pipe_mp_free(p);
+             return NULL;
+          }
+        fd_read = fds[0];
+        fd_write = fds[1];
+     }
+   else
+     {
+        fd_read = fd_read == -1 ? PIPE_FD_INVALID : fd_read;
+        fd_write = fd_write == -1 ? PIPE_FD_INVALID : fd_write;
      }
 
    ECORE_MAGIC_SET(p, ECORE_MAGIC_PIPE);
-   p->fd_read = fds[0];
-   p->fd_write = fds[1];
+   p->fd_read = fd_read;
+   p->fd_write = fd_write;
    p->handler = handler;
    p->data = data;
 
-   _ecore_fd_close_on_exec(fds[0]);
-   _ecore_fd_close_on_exec(fds[1]);
+   if (!read_survive_fork)
+     _ecore_fd_close_on_exec(fd_read);
+   if (!write_survive_fork)
+     _ecore_fd_close_on_exec(fd_write);
 
    fcntl(p->fd_read, F_SETFL, O_NONBLOCK);
    p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
@@ -426,7 +452,21 @@ _ecore_pipe_add(Ecore_Pipe_Cb handler,
                                              p,
                                              NULL, NULL);
 
-   return p;
+   return p;   
+}
+
+/**
+ * @}
+ */
+
+/* Private functions */
+Ecore_Pipe *
+_ecore_pipe_add(Ecore_Pipe_Cb handler,
+                const void   *data)
+{
+   return ecore_pipe_full_add(handler, data,
+                              -1, -1,
+			      EINA_FALSE, EINA_FALSE);
 }
 
 void *

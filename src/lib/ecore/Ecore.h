@@ -2830,10 +2830,17 @@ typedef struct _Ecore_Pipe Ecore_Pipe; /**< A handle for pipes */
 typedef void (*Ecore_Pipe_Cb)(void *data, void *buffer, unsigned int nbyte);
 
 EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
+EAPI Ecore_Pipe *ecore_pipe_full_add(Ecore_Pipe_Cb handler,
+				     const void *data,
+				     int fd_read, int fd_write,
+				     Eina_Bool read_survive_fork,
+				     Eina_Bool write_survive_fork);
 EAPI void *ecore_pipe_del(Ecore_Pipe *p);
 EAPI Eina_Bool ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
 EAPI void ecore_pipe_write_close(Ecore_Pipe *p);
 EAPI void ecore_pipe_read_close(Ecore_Pipe *p);
+EAPI int ecore_pipe_read_fd(Ecore_Pipe *p);
+EAPI int ecore_pipe_write_fd(Ecore_Pipe *p);
 EAPI void ecore_pipe_thaw(Ecore_Pipe *p);
 EAPI void ecore_pipe_freeze(Ecore_Pipe *p);
 EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
