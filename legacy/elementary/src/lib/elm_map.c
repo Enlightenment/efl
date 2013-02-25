@@ -2800,12 +2800,11 @@ _kml_parse(Elm_Map_Route *r)
         sz = ftell(f);
         if (sz > 0)
           {
-             char *buf;
-
-             fseek(f, 0, SEEK_SET);
-             buf = malloc(sz);
+             char *buf = malloc(sz + 1);
              if (buf)
                {
+                  memset(buf, 0, sz + 1);
+                  rewind(f);
                   if (fread(buf, 1, sz, f))
                     {
                        eina_simple_xml_parse
@@ -2891,12 +2890,11 @@ _name_parse(Elm_Map_Name *n)
         sz = ftell(f);
         if (sz > 0)
           {
-             char *buf;
-
-             fseek(f, 0, SEEK_SET);
-             buf = malloc(sz);
+             char *buf = malloc(sz + 1);
              if (buf)
                {
+                  memset(buf, 0, sz + 1);
+                  rewind(f);
                   if (fread(buf, 1, sz, f))
                     {
                        eina_simple_xml_parse
@@ -2933,12 +2931,11 @@ _name_list_parse(Elm_Map_Name_List *nl)
         sz = ftell(f);
         if (sz > 0)
           {
-             char *buf;
-
-             fseek(f, 0, SEEK_SET);
-             buf = malloc(sz);
+             char *buf = malloc(sz + 1);
              if (buf)
                {
+                  memset(buf, 0, sz + 1);
+                  rewind(f);
                   if (fread(buf, 1, sz, f))
                     {
                        eina_simple_xml_parse
