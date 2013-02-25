@@ -166,14 +166,10 @@ START_TEST(evas_text_evas)
 }
 END_TEST
 
-START_TEST(evas_text_ellipsis)
+static void
+_test_ellipsis(Evas_Object *to, const char *buf, const char *font, Evas_Font_Size size, double ellipsis)
 {
-   START_TEXT_TEST();
-   const char *buf = "נסיון בלה בלה בלה בלה";
-   const char *font = TEST_FONT_NAME;
-   Evas_Font_Size size = 14;
-
-   evas_object_text_ellipsis_set(to, 0.0);
+   evas_object_text_ellipsis_set(to, ellipsis);
    evas_object_move(to, 0, 0);
    evas_object_resize(to, 500, 500);
    evas_object_text_font_set(to, font, size);
@@ -191,7 +187,33 @@ START_TEST(evas_text_ellipsis)
         /* If it's gotten way too small, it means we have an issue. */
         fail_if(w < 100);
      }
+}
 
+START_TEST(evas_text_ellipsis)
+{
+   START_TEXT_TEST();
+   const char *buf = "נסיון בלה בלה בלה בלה";
+   const char *font = TEST_FONT_NAME;
+   Evas_Font_Size size = 14;
+
+   /* Test various ellipsis types. */
+
+   /* RTL */
+   _test_ellipsis(to, buf, font, size, 0.0);
+   _test_ellipsis(to, buf, font, size, 0.5);
+   _test_ellipsis(to, buf, font, size, 1.0);
+
+   /* BiDi */
+   buf = "Test נסיון בלה בלה בלה";
+   _test_ellipsis(to, buf, font, size, 0.0);
+   _test_ellipsis(to, buf, font, size, 0.5);
+   _test_ellipsis(to, buf, font, size, 1.0);
+
+   /* LTR */
+   buf = "Test test test test test";
+   _test_ellipsis(to, buf, font, size, 0.0);
+   _test_ellipsis(to, buf, font, size, 0.5);
+   _test_ellipsis(to, buf, font, size, 1.0);
 
    END_TEXT_TEST();
 }

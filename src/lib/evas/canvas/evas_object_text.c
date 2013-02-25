@@ -820,12 +820,11 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                }
              if (itr && (itr != start_ellip_it))
                {
-                  int cut = 1 + ENFN->font_char_at_coords_get(ENDT,
+                  int cut = 1 + ENFN->font_last_up_to_pos(ENDT,
                         o->font,
                         &itr->text_props,
                         ellipsis_coord - advance,
-                        0,
-                        NULL, NULL, NULL, NULL);
+                        0);
                   if (cut > 0)
                     {
                        start_ellip_it->text_pos = itr->text_pos;
@@ -864,12 +863,11 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                   /* FIXME: We shouldn't do anything. */
                }
 
-             int cut = ENFN->font_char_at_coords_get(ENDT,
+             int cut = ENFN->font_last_up_to_pos(ENDT,
                    o->font,
                    &itr->text_props,
                    ellip_frame - advance,
-                   0,
-                   NULL, NULL, NULL, NULL);
+                   0);
              if (cut >= 0)
                {
                   end_ellip_it->text_pos = itr->text_pos + cut;
