@@ -1,3 +1,7 @@
+2013-02-23  ChunEon Park (Hermet)
+
+        * Evas cache: remove the freed worker from the pthread worker list when it's failed to create a new thread so as not to access it if a thread is working newly.
+
 2013-02-21  Tom Hacohen (TAsn)
 
         * Evas text: Fixed bug with the text object direction detection.

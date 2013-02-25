@@ -179,4 +179,4 @@ Fixes:
     * Fix ecore-x edid fetch to ftech 128, not 100 bytes.
     * Evas text: Fixed bug with the text object direction detection.
     * Evas font: Fixed font run detection for specific cases with 2 different fonts in the middle of a run.
-    
+    * Evas cache: remove the freed worker from the pthread worker list when it's failed to create a new thread so as not to access it if a thread is working newly.
