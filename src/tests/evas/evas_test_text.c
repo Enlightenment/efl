@@ -9,12 +9,16 @@
 #include "Evas.h"
 #include "evas_tests_helpers.h"
 
+#define TEST_FONT_NAME "TEST_FONT"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "./DejaVuSans.eet"
+
 #define START_TEXT_TEST() \
    Evas *evas; \
    Evas_Object *to; \
    evas = EVAS_TEST_INIT_EVAS(); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    to = evas_object_text_add(evas); \
+   evas_object_text_font_source_set(to, TEST_FONT_SOURCE); \
 do \
 { \
 } \
@@ -44,7 +48,7 @@ START_TEST(evas_text_geometries)
 {
    START_TEXT_TEST();
    const char *buf = "Tests";
-   const char *font = "Sans";
+   const char *font = TEST_FONT_NAME;
    Evas_Font_Size size = 14;
    Evas_Coord prev;
    int i;
@@ -144,7 +148,7 @@ START_TEST(evas_text_evas)
    Evas_Coord w, h, bw, bh;
    START_TEXT_TEST();
    const char *buf = "Test - בדיקה";
-   const char *font = "Sans";
+   const char *font = TEST_FONT_NAME;
    Evas_Font_Size size = 14;
 
    evas_object_text_font_set(to, font, size);
@@ -214,19 +218,19 @@ START_TEST(evas_text_set_get)
    _CHECK_SET_GET(outline_color);
 
    /* Font and size */
-   const char *font = "Sans";
+   const char *font = TEST_FONT_NAME;
    Evas_Font_Size size = 14;
    evas_object_text_font_set(to, font, size);
    font = NULL;
    size = 0;
    evas_object_text_font_get(to, &font, &size);
-   fail_if(strcmp(font, "Sans"));
+   fail_if(strcmp(font, TEST_FONT_NAME));
    fail_if(size != 14);
    evas_object_text_font_set(to, font, size);
    font = NULL;
    size = 0;
    evas_object_text_font_get(to, &font, &size);
-   fail_if(strcmp(font, "Sans"));
+   fail_if(strcmp(font, TEST_FONT_NAME));
    fail_if(size != 14);
 
    font = "NON-EXISTING-FONT";
@@ -350,7 +354,7 @@ START_TEST(evas_text_bidi)
    const char *buf = "Test - בדיקה";
    int i;
    Evas_Coord x, y, w, h, px;
-   const char *font = "Sans";
+   const char *font = TEST_FONT_NAME;
    Evas_Font_Size size = 14;
 
    evas_object_text_font_set(to, font, size);

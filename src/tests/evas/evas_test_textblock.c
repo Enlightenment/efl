@@ -1,3 +1,8 @@
+/*
+ * TODO:
+ * * Test different font lodaing mechanisms.
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -18,9 +23,10 @@ EAPI int
 _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
+#define TEST_FONT "font=TEST_FONT fount_source" TESTS_SRC_DIR "./DejaVuSans.eet"
 
 static const char *style_buf =
-   "DEFAULT='font=Sans font_size=10 color=#000 text_class=entry'"
+   "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"
    "newline='br'"
    "b='+ font=Sans:style=bold'";
 
@@ -2016,7 +2022,7 @@ START_TEST(evas_textblock_style)
    newst = evas_textblock_style_new();
    fail_if(!newst);
    evas_textblock_style_set(newst,
-         "DEFAULT='font=Sans font_size=20 color=#000 text_class=entry'"
+         "DEFAULT='" TEST_FONT " font_size=20 color=#000 text_class=entry'"
          "br='\n'"
          "ps='ps'"
          "tab='\t'");
