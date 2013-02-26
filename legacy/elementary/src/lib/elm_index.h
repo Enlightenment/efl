@@ -80,6 +80,8 @@ enum
    ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET,
    ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET,
    ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET,
+   ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_SET,
+   ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_GET,
    ELM_OBJ_INDEX_SUB_ID_LAST
 };
 
@@ -333,6 +335,30 @@ enum
  * @see elm_index_delay_change_time_set
  */
 #define elm_obj_index_delay_change_time_get(ret) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET), EO_TYPECHECK(double *, ret)
+
+/**
+ * @def elm_obj_index_omit_enabled_set
+ * @since 1.8
+ *
+ * Enable or disable omit feature for a given index widget.
+ *
+ * @param[in] enabled
+ *
+ * @see elm_index_omit_enabled_set
+ */
+#define elm_obj_index_omit_enabled_set(enabled) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_SET), EO_TYPECHECK(Eina_Bool, enabled)
+
+/**
+ * @def elm_obj_index_omit_enabled_get
+ * @since 1.8
+ *
+ * Get whether omit feature is enabled or not for a given index widget.
+ *
+ * @param[out] ret
+ *
+ * @see elm_index_omit_enabled_get
+ */
+#define elm_obj_index_omit_enabled_get(ret) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @addtogroup Index
@@ -688,6 +714,30 @@ EAPI void                      elm_index_delay_change_time_set(Evas_Object *obj,
  * @ingroup Index
  */
 EAPI double                    elm_index_delay_change_time_get(const Evas_Object *obj);
+
+/**
+ * Enable or disable omit feature for a given index widget.
+ *
+ * @param obj The index object
+ * @param enabled @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable
+ *
+ * @see elm_index_omit_enabled_get()
+ *
+ * @ingroup Index
+ */
+EAPI void                      elm_index_omit_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+
+/**
+ * Get whether omit feature is enabled or not for a given index widget.
+ *
+ * @param obj The index object
+ * @return @c EINA_TRUE, if omit feature is enabled, @c EINA_FALSE otherwise
+ *
+ * @see elm_index_omit_enabled_set() for more details
+ *
+ * @ingroup Index
+ */
+EAPI Eina_Bool                 elm_index_omit_enabled_get(const Evas_Object *obj);
 
 /**
  * @}

@@ -25,6 +25,8 @@ struct _Elm_Index_Smart_Data
    Eina_List            *items;  /* 1 list. N levels, but only 2
                                   * for now and # of items will be
                                   * small */
+   Eina_List            *omit;
+
    int                   level;
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
@@ -35,6 +37,7 @@ struct _Elm_Index_Smart_Data
    Eina_Bool             horizontal : 1;
    Eina_Bool             autohide_disabled : 1;
    Eina_Bool             indicator_disabled : 1;
+   Eina_Bool             omit_enabled : 1;
 };
 
 typedef struct _Elm_Index_Item       Elm_Index_Item;
@@ -46,7 +49,17 @@ struct _Elm_Index_Item
    int           level;
    Evas_Smart_Cb func;
 
+   Eina_List    *omitted;
+   Elm_Index_Item       *head;
+
    Eina_Bool     selected : 1;
+};
+
+typedef struct _Elm_Index_Omit Elm_Index_Omit;
+struct _Elm_Index_Omit
+{
+   int offset;
+   int count;
 };
 
 /**
