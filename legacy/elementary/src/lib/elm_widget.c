@@ -4073,16 +4073,17 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *wstyle = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *sd = _pd;
-   int ret2;
 
-   ret2 = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
-   if (ret2 && (sd->orient_mode != -1))
+   if (!_elm_theme_object_set(obj, edj, wname, welement, wstyle))
+     {
+        if (ret) *ret = EINA_FALSE;
+     }
+
+   if (sd->orient_mode != -1)
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
         elm_object_signal_emit(obj, buf, "elm");
-        if (ret) *ret = EINA_TRUE;
-        return;
      }
 
    if (ret) *ret = EINA_FALSE;
@@ -4521,7 +4522,7 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      elm_widget_orientation_set(child, orient_mode);
 
-   if (sd->orient_mode != -1)
+   if (orient_mode != -1)
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", orient_mode);

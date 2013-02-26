@@ -1018,10 +1018,6 @@
 
         * Popup is now a focusable object.
 
-2013-02-15  ChunEon Park (Hermet)
-
-        * support naviframe, button, label orientation mode.
-
 2013-02-16  Paulo C. A. Cavalcanti Jr
 
         * Fix elm_config to properly check file type.

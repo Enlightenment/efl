@@ -230,10 +230,9 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
 {
    Elm_Theme *th = NULL;
    void *test;
-   int ret;
 
    if (parent) th = elm_widget_theme_get(parent);
-   ret = _elm_theme_set(th, o, clas, group, style);
+   if (!_elm_theme_set(th, o, clas, group, style)) return EINA_FALSE;
 
    test = evas_object_data_get(o, "edje,theme,watcher");
    if (!test)
@@ -242,7 +241,7 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
                                         _elm_theme_reload, NULL);
         evas_object_data_set(o, "edje,theme,watcher", (void*) -1);
      }
-   return ret;
+   return EINA_TRUE;
 }
 
 /* only issued by elm_icon.c */
