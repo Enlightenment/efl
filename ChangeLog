@@ -1,3 +1,14 @@
+2013-02-26  Carsten Haitzler (The Rasterman)
+
+        * Fix evas GL common engine to have a shader to do oversampling on
+        downscaling. This makes quality much better and "at best"
+        equates to a 16 point sample (2x2 linear interpolation samples,
+        where a linear interpolation sample equates to a 2x2 sample). This
+        will have perfomance impact, but the quality is worth it and
+        makes it closer to software downscaling in quality. It supports
+        2x2, 2x1 and 1x2 oversampling. YUV not done, nor image mask
+        (font shaders not needed).
+
 2013-02-23  ChunEon Park (Hermet)
 
         * Evas cache: remove the freed worker from the pthread worker list when it's failed to create a new thread so as not to access it if a thread is working newly.

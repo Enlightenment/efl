@@ -117,6 +117,7 @@
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
 #define SHAD_TEXM   5
+#define SHAD_TEXSAM 6
 
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
@@ -132,19 +133,44 @@ typedef struct _Evas_GL_Polygon_Point                Evas_GL_Polygon_Point;
 typedef enum {
   SHADER_RECT,
   SHADER_FONT,
+   
+  SHADER_IMG_MASK,
+   
   SHADER_IMG,
   SHADER_IMG_NOMUL,
   SHADER_IMG_BGRA,
   SHADER_IMG_BGRA_NOMUL,
-  SHADER_IMG_MASK,
+  SHADER_TEX,
+  SHADER_TEX_NOMUL,
+   
+  SHADER_IMG_21,
+  SHADER_IMG_21_NOMUL,
+  SHADER_IMG_21_BGRA,
+  SHADER_IMG_21_BGRA_NOMUL,
+  SHADER_TEX_21,
+  SHADER_TEX_21_NOMUL,
+   
+  SHADER_IMG_12,
+  SHADER_IMG_12_NOMUL,
+  SHADER_IMG_12_BGRA,
+  SHADER_IMG_12_BGRA_NOMUL,
+  SHADER_TEX_12,
+  SHADER_TEX_12_NOMUL,
+   
+  SHADER_IMG_22,
+  SHADER_IMG_22_NOMUL,
+  SHADER_IMG_22_BGRA,
+  SHADER_IMG_22_BGRA_NOMUL,
+  SHADER_TEX_22,
+  SHADER_TEX_22_NOMUL,
+   
   SHADER_YUV,
   SHADER_YUV_NOMUL,
   SHADER_YUY2,
   SHADER_YUY2_NOMUL,
   SHADER_NV12,
   SHADER_NV12_NOMUL,
-  SHADER_TEX,
-  SHADER_TEX_NOMUL,
+/*   
   SHADER_FILTER_INVERT,
   SHADER_FILTER_INVERT_NOMUL,
   SHADER_FILTER_INVERT_BGRA,
@@ -157,6 +183,7 @@ typedef enum {
   SHADER_FILTER_SEPIA_NOMUL,
   SHADER_FILTER_SEPIA_BGRA,
   SHADER_FILTER_SEPIA_BGRA_NOMUL,
+ */
   /* SHADER_FILTER_BLUR, */
   /* SHADER_FILTER_BLUR_NOMUL, */
   /* SHADER_FILTER_BLUR_BGRA, */
@@ -328,6 +355,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv2;
          GLfloat *texuv3;
          GLfloat *texm;
+         GLfloat *texsam;
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
          Eina_Bool use_color : 1;
@@ -335,6 +363,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv2 : 1;
          Eina_Bool use_texuv3 : 1;
          Eina_Bool use_texm : 1;
+         Eina_Bool use_texsam : 1;
          Evas_GL_Image *im;
          GLuint buffer;
          int buffer_alloc;

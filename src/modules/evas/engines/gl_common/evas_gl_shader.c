@@ -38,6 +38,499 @@ Evas_GL_Program_Source shader_font_vert_src =
    NULL, 0
 };
 
+
+
+
+/////////////////////////////////////////////
+const char img_mask_frag_glsl[] =
+#include "shader/img_mask_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_mask_frag_src =
+{
+   img_mask_frag_glsl,
+   NULL, 0
+};
+
+const char img_mask_vert_glsl[] =
+#include "shader/img_mask_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_mask_vert_src =
+{
+   img_mask_vert_glsl,
+   NULL, 0
+};
+
+
+
+
+/////////////////////////////////////////////
+const char img_frag_glsl[] =
+#include "shader/img_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_frag_src =
+{
+   img_frag_glsl,
+   NULL, 0
+};
+
+const char img_vert_glsl[] =
+#include "shader/img_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_vert_src =
+{
+   img_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_nomul_frag_glsl[] =
+#include "shader/img_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_nomul_frag_src =
+{
+   img_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_nomul_vert_glsl[] =
+#include "shader/img_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_nomul_vert_src =
+{
+   img_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_bgra_frag_glsl[] =
+#include "shader/img_bgra_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_frag_src =
+{
+   img_bgra_frag_glsl,
+   NULL, 0
+};
+
+const char img_bgra_vert_glsl[] =
+#include "shader/img_bgra_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_vert_src =
+{
+   img_bgra_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_bgra_nomul_frag_glsl[] =
+#include "shader/img_bgra_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
+{
+   img_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_bgra_nomul_vert_glsl[] =
+#include "shader/img_bgra_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
+{
+   img_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_frag_glsl[] =
+#include "shader/tex_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_frag_src =
+{
+   tex_frag_glsl,
+   NULL, 0
+};
+
+const char tex_vert_glsl[] =
+#include "shader/tex_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_vert_src =
+{
+   tex_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_nomul_frag_glsl[] =
+#include "shader/tex_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_nomul_frag_src =
+{
+   tex_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char tex_nomul_vert_glsl[] =
+#include "shader/tex_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_nomul_vert_src =
+{
+   tex_nomul_vert_glsl,
+   NULL, 0
+};
+
+
+
+
+/////////////////////////////////////////////
+const char img_21_frag_glsl[] =
+#include "shader/img_21_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_21_frag_src =
+{
+   img_21_frag_glsl,
+   NULL, 0
+};
+
+const char img_21_vert_glsl[] =
+#include "shader/img_21_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_21_vert_src =
+{
+   img_21_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_21_nomul_frag_glsl[] =
+#include "shader/img_21_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_21_nomul_frag_src =
+{
+   img_21_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_21_nomul_vert_glsl[] =
+#include "shader/img_21_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_21_nomul_vert_src =
+{
+   img_21_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_21_bgra_frag_glsl[] =
+#include "shader/img_21_bgra_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_21_bgra_frag_src =
+{
+   img_21_bgra_frag_glsl,
+   NULL, 0
+};
+
+const char img_21_bgra_vert_glsl[] =
+#include "shader/img_21_bgra_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_21_bgra_vert_src =
+{
+   img_21_bgra_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_21_bgra_nomul_frag_glsl[] =
+#include "shader/img_21_bgra_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_21_bgra_nomul_frag_src =
+{
+   img_21_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_21_bgra_nomul_vert_glsl[] =
+#include "shader/img_21_bgra_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_21_bgra_nomul_vert_src =
+{
+   img_21_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_21_frag_glsl[] =
+#include "shader/tex_21_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_frag_src =
+{
+   tex_21_frag_glsl,
+   NULL, 0
+};
+
+const char tex_21_vert_glsl[] =
+#include "shader/tex_21_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_vert_src =
+{
+   tex_21_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_21_nomul_frag_glsl[] =
+#include "shader/tex_21_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_nomul_frag_src =
+{
+   tex_21_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char tex_21_nomul_vert_glsl[] =
+#include "shader/tex_21_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_nomul_vert_src =
+{
+   tex_21_nomul_vert_glsl,
+   NULL, 0
+};
+
+
+
+
+/////////////////////////////////////////////
+const char img_12_frag_glsl[] =
+#include "shader/img_12_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_12_frag_src =
+{
+   img_12_frag_glsl,
+   NULL, 0
+};
+
+const char img_12_vert_glsl[] =
+#include "shader/img_12_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_12_vert_src =
+{
+   img_12_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_12_nomul_frag_glsl[] =
+#include "shader/img_12_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_12_nomul_frag_src =
+{
+   img_12_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_12_nomul_vert_glsl[] =
+#include "shader/img_12_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_12_nomul_vert_src =
+{
+   img_12_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_12_bgra_frag_glsl[] =
+#include "shader/img_12_bgra_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_12_bgra_frag_src =
+{
+   img_12_bgra_frag_glsl,
+   NULL, 0
+};
+
+const char img_12_bgra_vert_glsl[] =
+#include "shader/img_12_bgra_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_12_bgra_vert_src =
+{
+   img_12_bgra_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_12_bgra_nomul_frag_glsl[] =
+#include "shader/img_12_bgra_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_12_bgra_nomul_frag_src =
+{
+   img_12_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_12_bgra_nomul_vert_glsl[] =
+#include "shader/img_12_bgra_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_12_bgra_nomul_vert_src =
+{
+   img_12_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_12_frag_glsl[] =
+#include "shader/tex_12_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_frag_src =
+{
+   tex_12_frag_glsl,
+   NULL, 0
+};
+
+const char tex_12_vert_glsl[] =
+#include "shader/tex_12_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_vert_src =
+{
+   tex_12_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_12_nomul_frag_glsl[] =
+#include "shader/tex_12_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_nomul_frag_src =
+{
+   tex_12_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char tex_12_nomul_vert_glsl[] =
+#include "shader/tex_12_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_nomul_vert_src =
+{
+   tex_12_nomul_vert_glsl,
+   NULL, 0
+};
+
+
+
+
+/////////////////////////////////////////////
+const char img_22_frag_glsl[] =
+#include "shader/img_22_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_22_frag_src =
+{
+   img_22_frag_glsl,
+   NULL, 0
+};
+
+const char img_22_vert_glsl[] =
+#include "shader/img_22_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_22_vert_src =
+{
+   img_22_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_22_nomul_frag_glsl[] =
+#include "shader/img_22_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_22_nomul_frag_src =
+{
+   img_22_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_22_nomul_vert_glsl[] =
+#include "shader/img_22_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_22_nomul_vert_src =
+{
+   img_22_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_22_bgra_frag_glsl[] =
+#include "shader/img_22_bgra_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_22_bgra_frag_src =
+{
+   img_22_bgra_frag_glsl,
+   NULL, 0
+};
+
+const char img_22_bgra_vert_glsl[] =
+#include "shader/img_22_bgra_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_22_bgra_vert_src =
+{
+   img_22_bgra_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char img_22_bgra_nomul_frag_glsl[] =
+#include "shader/img_22_bgra_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_22_bgra_nomul_frag_src =
+{
+   img_22_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char img_22_bgra_nomul_vert_glsl[] =
+#include "shader/img_22_bgra_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_22_bgra_nomul_vert_src =
+{
+   img_22_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_22_frag_glsl[] =
+#include "shader/tex_22_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_frag_src =
+{
+   tex_22_frag_glsl,
+   NULL, 0
+};
+
+const char tex_22_vert_glsl[] =
+#include "shader/tex_22_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_vert_src =
+{
+   tex_22_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_22_nomul_frag_glsl[] =
+#include "shader/tex_22_nomul_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_nomul_frag_src =
+{
+   tex_22_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char tex_22_nomul_vert_glsl[] =
+#include "shader/tex_22_nomul_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_nomul_vert_src =
+{
+   tex_22_nomul_vert_glsl,
+   NULL, 0
+};
+
+
+
+
 /////////////////////////////////////////////
 const char yuv_frag_glsl[] =
 #include "shader/yuv_frag.h"
@@ -151,141 +644,6 @@ Evas_GL_Program_Source shader_yuv_nomul_vert_src =
    NULL, 0
 };
 
-/////////////////////////////////////////////
-const char tex_frag_glsl[] =
-#include "shader/tex_frag.h"
-  ;
-Evas_GL_Program_Source shader_tex_frag_src =
-{
-   tex_frag_glsl,
-   NULL, 0
-};
-
-const char tex_vert_glsl[] =
-#include "shader/tex_vert.h"
-  ;
-Evas_GL_Program_Source shader_tex_vert_src =
-{
-   tex_vert_glsl,
-   NULL, 0
-};
-
-/////////////////////////////////////////////
-const char tex_nomul_frag_glsl[] =
-#include "shader/tex_nomul_frag.h"
-  ;
-Evas_GL_Program_Source shader_tex_nomul_frag_src =
-{
-   tex_nomul_frag_glsl,
-   NULL, 0
-};
-
-const char tex_nomul_vert_glsl[] =
-#include "shader/tex_nomul_vert.h"
-  ;
-Evas_GL_Program_Source shader_tex_nomul_vert_src =
-{
-   tex_nomul_vert_glsl,
-   NULL, 0
-};
-
-/////////////////////////////////////////////
-const char img_frag_glsl[] =
-#include "shader/img_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_frag_src =
-{
-   img_frag_glsl,
-   NULL, 0
-};
-
-const char img_vert_glsl[] =
-#include "shader/img_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_vert_src =
-{
-   img_vert_glsl,
-   NULL, 0
-};
-
-/////////////////////////////////////////////
-const char img_nomul_frag_glsl[] =
-#include "shader/img_nomul_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_nomul_frag_src =
-{
-   img_nomul_frag_glsl,
-   NULL, 0
-};
-
-const char img_nomul_vert_glsl[] =
-#include "shader/img_nomul_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_nomul_vert_src =
-{
-   img_nomul_vert_glsl,
-   NULL, 0
-};
-
-/////////////////////////////////////////////
-const char img_bgra_frag_glsl[] =
-#include "shader/img_bgra_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_bgra_frag_src =
-{
-   img_bgra_frag_glsl,
-   NULL, 0
-};
-
-const char img_bgra_vert_glsl[] =
-#include "shader/img_bgra_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_bgra_vert_src =
-{
-   img_bgra_vert_glsl,
-   NULL, 0
-};
-
-
-/////////////////////////////////////////////
-const char img_mask_frag_glsl[] =
-#include "shader/img_mask_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_mask_frag_src =
-{
-   img_mask_frag_glsl,
-   NULL, 0
-};
-
-const char img_mask_vert_glsl[] =
-#include "shader/img_mask_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_mask_vert_src =
-{
-   img_mask_vert_glsl,
-   NULL, 0
-};
-
-
-/////////////////////////////////////////////
-const char img_bgra_nomul_frag_glsl[] =
-#include "shader/img_bgra_nomul_frag.h"
-  ;
-Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
-{
-   img_bgra_nomul_frag_glsl,
-   NULL, 0
-};
-
-const char img_bgra_nomul_vert_glsl[] =
-#include "shader/img_bgra_nomul_vert.h"
-  ;
-Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
-{
-   img_bgra_nomul_vert_glsl,
-   NULL, 0
-};
-
 
 /////////////////////////////////////////////
 static void
@@ -364,6 +722,7 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
    glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
+   glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
 
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -487,6 +846,8 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glLinkProgram(p->prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -517,19 +878,43 @@ static const struct {
 } _shaders_source[] = {
   SHADER_SOURCE_LINE(RECT, rect),
   SHADER_SOURCE_LINE(FONT, font),
+   
+  SHADER_SOURCE_LINE(IMG_MASK, img_mask),
+   
   SHADER_SOURCE_LINE(IMG, img),
   SHADER_SOURCE_LINE(IMG_NOMUL, img_nomul),
   SHADER_SOURCE_LINE(IMG_BGRA, img_bgra),
   SHADER_SOURCE_LINE(IMG_BGRA_NOMUL, img_bgra_nomul),
-  SHADER_SOURCE_LINE(IMG_MASK, img_mask),
+  SHADER_SOURCE_LINE(TEX, tex),
+  SHADER_SOURCE_LINE(TEX_NOMUL, tex_nomul),
+   
+  SHADER_SOURCE_LINE(IMG_21, img_21),
+  SHADER_SOURCE_LINE(IMG_21_NOMUL, img_21_nomul),
+  SHADER_SOURCE_LINE(IMG_21_BGRA, img_21_bgra),
+  SHADER_SOURCE_LINE(IMG_21_BGRA_NOMUL, img_21_bgra_nomul),
+  SHADER_SOURCE_LINE(TEX_21, tex_21),
+  SHADER_SOURCE_LINE(TEX_21_NOMUL, tex_21_nomul),
+   
+  SHADER_SOURCE_LINE(IMG_12, img_12),
+  SHADER_SOURCE_LINE(IMG_12_NOMUL, img_12_nomul),
+  SHADER_SOURCE_LINE(IMG_12_BGRA, img_12_bgra),
+  SHADER_SOURCE_LINE(IMG_12_BGRA_NOMUL, img_12_bgra_nomul),
+  SHADER_SOURCE_LINE(TEX_12, tex_12),
+  SHADER_SOURCE_LINE(TEX_12_NOMUL, tex_12_nomul),
+   
+  SHADER_SOURCE_LINE(IMG_22, img_22),
+  SHADER_SOURCE_LINE(IMG_22_NOMUL, img_22_nomul),
+  SHADER_SOURCE_LINE(IMG_22_BGRA, img_22_bgra),
+  SHADER_SOURCE_LINE(IMG_22_BGRA_NOMUL, img_22_bgra_nomul),
+  SHADER_SOURCE_LINE(TEX_22, tex_22),
+  SHADER_SOURCE_LINE(TEX_22_NOMUL, tex_22_nomul),
+   
   SHADER_SOURCE_LINE(YUV, yuv),
   SHADER_SOURCE_LINE(YUV_NOMUL, yuv_nomul),
   SHADER_SOURCE_LINE(YUY2, yuy2),
   SHADER_SOURCE_LINE(YUY2_NOMUL, yuy2_nomul),
   SHADER_SOURCE_LINE(NV12, nv12),
   SHADER_SOURCE_LINE(NV12_NOMUL, nv12_nomul),
-  SHADER_SOURCE_LINE(TEX, tex),
-  SHADER_SOURCE_LINE(TEX_NOMUL, tex_nomul),
 };
 
 static int
@@ -537,13 +922,15 @@ _evas_gl_common_shader_source_init(Evas_GL_Shared *shared)
 {
   unsigned int i;
 
-  for (i = 0; i < sizeof (_shaders_source) / sizeof (_shaders_source[0]); ++i)
-    if (!_evas_gl_common_shader_program_source_init(&(shared->shader[_shaders_source[i].id]),
-                                                    _shaders_source[i].vert,
-                                                    _shaders_source[i].frag,
-                                                    _shaders_source[i].name))
-        return 0;
-
+  for (i = 0; i < sizeof (_shaders_source) / sizeof (_shaders_source[0]); i++)
+     {
+        if (!_evas_gl_common_shader_program_source_init
+            (&(shared->shader[_shaders_source[i].id]),
+                _shaders_source[i].vert,
+                _shaders_source[i].frag,
+                _shaders_source[i].name))
+          return 0;
+     }
    return 1;
 }
 

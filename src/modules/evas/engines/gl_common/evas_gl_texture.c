@@ -302,16 +302,19 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
    tex->gc = gc;
    tex->references = 1;
 
+#define TEX_HREP 1
+#define TEX_VREP 1
+   
    if (im->cache_entry.flags.alpha)
      {
         if (gc->shared->info.bgra)
-           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                                    im->cache_entry.h + 1, bgra_ifmt, bgra_fmt,
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + TEX_HREP + 2,
+                                    im->cache_entry.h + TEX_VREP, bgra_ifmt, bgra_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
         else
-           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 2,
-                                    im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + TEX_HREP + 2,
+                                    im->cache_entry.h + TEX_VREP, rgba_ifmt, rgba_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
         tex->alpha = 1;
@@ -319,19 +322,19 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
    else
      {
         if (gc->shared->info.bgra)
-           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3,
-                                    im->cache_entry.h + 1, bgr_ifmt, bgr_fmt,
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + TEX_HREP + 2,
+                                    im->cache_entry.h + TEX_VREP, bgr_ifmt, bgr_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
         else
 #ifdef GL_GLES
-           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3,
-                                    im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + TEX_HREP + 2,
+                                    im->cache_entry.h + TEX_VREP, rgba_ifmt, rgba_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
 #else
-           tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3,
-                                    im->cache_entry.h + 1, rgb_ifmt, rgb_fmt,
+           tex->pt = _pool_tex_find(gc, im->cache_entry.w + TEX_HREP + 2,
+                                    im->cache_entry.h + TEX_VREP, rgb_ifmt, rgb_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
 #endif

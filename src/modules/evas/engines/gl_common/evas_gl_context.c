@@ -812,6 +812,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
              if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
              if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+             if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
           }
      }
 
@@ -1047,32 +1048,43 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define PUSH_TEXM(n, u, v) \
    gc->pipe[n].array.texm[nm++] = u; \
    gc->pipe[n].array.texm[nm++] = v
+#define PUSH_TEXSAM(n, x, y) \
+   gc->pipe[n].array.texsam[ns++] = x; \
+   gc->pipe[n].array.texsam[ns++] = y
 
 
 static inline void
 array_alloc(Evas_Engine_GL_Context *gc, int n)
 {
    gc->havestuff = EINA_TRUE;
-   if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc) return;
+   if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc)
+     {
+#define ALOC(field, type, size) \
+   if ((gc->pipe[n].array.use_##field) && (!gc->pipe[n].array.field)) \
+       gc->pipe[n].array.field = \
+     malloc(gc->pipe[n].array.alloc * sizeof(type) * size)
+        ALOC(vertex, GLshort, 3);
+        ALOC(color,  GLubyte, 4);
+        ALOC(texuv,  GLfloat, 2);
+        ALOC(texm,   GLfloat, 2);
+        ALOC(texuv2, GLfloat, 2);
+        ALOC(texuv3, GLfloat, 2);
+        ALOC(texsam, GLfloat, 2);
+        return;
+     }
    gc->pipe[n].array.alloc += 6 * 1024;
-   if (gc->pipe[n].array.use_vertex)
-     gc->pipe[n].array.vertex = realloc(gc->pipe[n].array.vertex,
-                                gc->pipe[n].array.alloc * sizeof(GLshort) * 3);
-   if (gc->pipe[n].array.use_color)
-     gc->pipe[n].array.color  = realloc(gc->pipe[n].array.color,
-                                gc->pipe[n].array.alloc * sizeof(GLubyte) * 4);
-   if (gc->pipe[n].array.use_texuv)
-     gc->pipe[n].array.texuv  = realloc(gc->pipe[n].array.texuv,
-                                gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
-   if (gc->pipe[n].array.use_texm)
-     gc->pipe[n].array.texm  = realloc(gc->pipe[n].array.texm,
-                                gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
-   if (gc->pipe[n].array.use_texuv2)
-     gc->pipe[n].array.texuv2  = realloc(gc->pipe[n].array.texuv2,
-                               gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
-   if (gc->pipe[n].array.use_texuv3)
-     gc->pipe[n].array.texuv3  = realloc(gc->pipe[n].array.texuv3,
-                                 gc->pipe[n].array.alloc * sizeof(GLfloat) * 2);
+#define RALOC(field, type, size) \
+   if (gc->pipe[n].array.use_##field) \
+       gc->pipe[n].array.field = realloc \
+     (gc->pipe[n].array.field, \
+         gc->pipe[n].array.alloc * sizeof(type) * size)
+   RALOC(vertex, GLshort, 3);
+   RALOC(color,  GLubyte, 4);
+   RALOC(texuv,  GLfloat, 2);
+   RALOC(texm,   GLfloat, 2);
+   RALOC(texuv2, GLfloat, 2);
+   RALOC(texuv3, GLfloat, 2);
+   RALOC(texsam, GLfloat, 2);
 }
 
 #ifdef GLPIPES
@@ -1304,6 +1316,8 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 0;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pnum = gc->pipe[pn].array.num;
    nv = pnum * 3; nc = pnum * 4;
@@ -1325,6 +1339,8 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 0;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 }
 
 void
@@ -1362,6 +1378,8 @@ again:
         gc->pipe[pn].array.use_texuv = 0;
         gc->pipe[pn].array.use_texuv2 = 0;
         gc->pipe[pn].array.use_texuv3 = 0;
+        gc->pipe[pn].array.use_texm = 0;
+        gc->pipe[pn].array.use_texsam = 0;
      }
    else
      {
@@ -1408,6 +1426,8 @@ again:
              gc->pipe[pn].array.use_texuv = 0;
              gc->pipe[pn].array.use_texuv2 = 0;
              gc->pipe[pn].array.use_texuv3 = 0;
+             gc->pipe[pn].array.use_texm = 0;
+             gc->pipe[pn].array.use_texsam = 0;
          }
      }
 #else
@@ -1438,6 +1458,8 @@ again:
    gc->pipe[pn].array.use_texuv = 0;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 #endif
 
    pipe_region_expand(gc, pn, x, y, w, h);
@@ -1469,11 +1491,11 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
-   int pnum, nv, nc, nu, i;
+   int pnum, nv, nc, nu, ns, i;
    GLfloat tx1, tx2, ty1, ty2;
    Eina_Bool blend = 1;
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
-   int pn = 0;
+   int pn = 0, sam = 0;
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
@@ -1486,26 +1508,110 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      {
         if (tex->pt->dyn.img)
           {
-             prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                    SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
+             if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_22_BGRA_NOMUL, SHADER_IMG_22_BGRA)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sw >= (w * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_21_BGRA_NOMUL, SHADER_IMG_21_BGRA)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sh >= (h * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_12_BGRA_NOMUL, SHADER_IMG_12_BGRA)].prog;
+                  sam = 1;
+               }
+             else
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
+               }
           }
         else
           {
-             prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                    SHADER_TEX_NOMUL, SHADER_TEX)].prog;
+             if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_TEX_22_NOMUL, SHADER_TEX_22)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sw >= (w * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_TEX_21_NOMUL, SHADER_TEX_21)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sh >= (h * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_TEX_12_NOMUL, SHADER_TEX_12)].prog;
+                  sam = 1;
+               }
+             else
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_TEX_NOMUL, SHADER_TEX)].prog;
+               }
           }
      }
    else
      {
         if (tex->gc->shared->info.bgra)
           {
-             prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                    SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
+             if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_22_BGRA_NOMUL, SHADER_IMG_22_BGRA)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sw >= (w * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_21_BGRA_NOMUL, SHADER_IMG_21_BGRA)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sh >= (h * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_12_BGRA_NOMUL, SHADER_IMG_12_BGRA)].prog;
+                  sam = 1;
+               }
+             else
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
+               }
           }
         else
           {
-             prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                    SHADER_IMG_NOMUL, SHADER_IMG)].prog;
+             if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_22_NOMUL, SHADER_IMG_22)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sw >= (w * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_21_NOMUL, SHADER_IMG_21)].prog;
+                  sam = 1;
+               }
+             else if ((smooth) && (sh >= (h * 2)))
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_12_NOMUL, SHADER_IMG_12)].prog;
+                  sam = 1;
+               }
+             else
+               {
+                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                         SHADER_IMG_NOMUL, SHADER_IMG)].prog;
+               }
           }
      }
 
@@ -1535,11 +1641,13 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = sam;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
    pnum = gc->pipe[pn].array.num;
-   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2;
+   nv = pnum * 3; nc = pnum * 4; nu = pnum * 2; ns = pnum * 2;
    gc->pipe[pn].array.num += 6;
    array_alloc(gc, pn);
 
@@ -1574,6 +1682,20 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    PUSH_TEXUV(pn, tx2, ty2);
    PUSH_TEXUV(pn, tx1, ty2);
 
+   if (sam)
+     {
+        double samx = (double)(sw) / (double)(tex->pt->w * w * 4);
+        double samy = (double)(sh) / (double)(tex->pt->h * h * 4);
+        
+        PUSH_TEXSAM(pn, samx, samy);
+        PUSH_TEXSAM(pn, samx, samy);
+        PUSH_TEXSAM(pn, samx, samy);
+        
+        PUSH_TEXSAM(pn, samx, samy);
+        PUSH_TEXSAM(pn, samx, samy);
+        PUSH_TEXSAM(pn, samx, samy);
+     }
+   
    // if nomul... dont need this
    for (i = 0; i < 6; i++)
      {
@@ -1639,6 +1761,7 @@ evas_gl_common_context_image_mask_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texm = 1;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -1745,6 +1868,8 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -1836,6 +1961,8 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 1;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -1938,6 +2065,8 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -2034,6 +2163,8 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -2276,6 +2407,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
+   gc->pipe[pn].array.use_texm = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
 
@@ -2582,6 +2715,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texuv2_ptr = NULL;
         unsigned char *texuv3_ptr = NULL;
         unsigned char *texm_ptr = NULL;
+        unsigned char *texsam_ptr = NULL;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
@@ -2596,11 +2730,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv2_ptr = texuv_ptr + TEX_SIZE;
              texuv3_ptr = texuv2_ptr + TEX_SIZE;
              texm_ptr = texuv3_ptr + TEX_SIZE;
-# define END_POINTER (texm_ptr + TEX_SIZE)
+             texsam_ptr = texm_ptr + TEX_SIZE;
+# define END_POINTER (texsam_ptr + TEX_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
              if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
-
                  (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
                {
                   glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
@@ -2624,6 +2758,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     memcpy(x + (unsigned long)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
                   if (gc->pipe[i].array.use_texm)
                     memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texm, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texsam)
+                    memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, TEX_SIZE);
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
                }
           }
@@ -2635,6 +2771,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv2_ptr = (unsigned char *)gc->pipe[i].array.texuv2;
              texuv3_ptr = (unsigned char *)gc->pipe[i].array.texuv3;
              texm_ptr = (unsigned char *)gc->pipe[i].array.texm;
+             texsam_ptr = (unsigned char *)gc->pipe[i].array.texsam;
           }
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)vertex_ptr);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -2684,6 +2821,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              else
                {
                   glDisableVertexAttribArray(SHAD_TEXM);
+               }
+             if (gc->pipe[i].array.use_texsam)
+               {
+                  glEnableVertexAttribArray(SHAD_TEXSAM);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXSAM, 2, GL_FLOAT, GL_FALSE, 0, (void *)texsam_ptr);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisableVertexAttribArray(SHAD_TEXSAM);
                }
              if ((gc->pipe[i].array.use_texuv2) && (gc->pipe[i].array.use_texuv3))
                {
@@ -2788,13 +2936,24 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
         if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
         if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+        if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
 
+        gc->pipe[i].array.line = 0;
+        gc->pipe[i].array.use_vertex = 0;
+        gc->pipe[i].array.use_color = 0;
+        gc->pipe[i].array.use_texuv = 0;
+        gc->pipe[i].array.use_texuv2 = 0;
+        gc->pipe[i].array.use_texuv3 = 0;
+        gc->pipe[i].array.use_texm = 0;
+        gc->pipe[i].array.use_texsam = 0;
+        
         gc->pipe[i].array.vertex = NULL;
         gc->pipe[i].array.color = NULL;
         gc->pipe[i].array.texuv = NULL;
         gc->pipe[i].array.texm = NULL;
         gc->pipe[i].array.texuv2 = NULL;
         gc->pipe[i].array.texuv3 = NULL;
+        gc->pipe[i].array.texsam = NULL;
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
