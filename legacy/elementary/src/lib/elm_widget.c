@@ -4083,7 +4083,7 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
-        elm_object_signal_emit(obj, buf, "elm");
+        eo_do(obj, elm_wdg_signal_emit(buf, "elm"));
      }
 
    if (ret) *ret = EINA_FALSE;
@@ -4526,7 +4526,7 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", orient_mode);
-        elm_object_signal_emit(obj, buf, "elm");
+        eo_do(obj, elm_wdg_signal_emit(buf, "elm"));
      }
 
    if (ret) *ret = EINA_TRUE;
