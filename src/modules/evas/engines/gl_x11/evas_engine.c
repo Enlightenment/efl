@@ -2689,7 +2689,7 @@ eng_gl_context_destroy(void *data, void *context)
 }
 
 static int
-eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
+eng_gl_make_current(void *data, void *surface, void *context)
 {
    Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
@@ -2699,7 +2699,7 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
 }
 
 static void *
-eng_gl_string_query(void *data EINA_UNUSED, int name)
+eng_gl_string_query(void *data, int name)
 {
    Render_Engine *re  = (Render_Engine *)data;
 
@@ -2714,7 +2714,7 @@ eng_gl_proc_address_get(void *data EINA_UNUSED, const char *name EINA_UNUSED)
 }
 
 static int
-eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_surface)
+eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
 {
    Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
@@ -2724,7 +2724,7 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 }
 
 static void *
-eng_gl_api_get(void *data EINA_UNUSED)
+eng_gl_api_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
