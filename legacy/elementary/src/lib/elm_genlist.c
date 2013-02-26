@@ -5033,7 +5033,14 @@ static Evas_Object *
 _item_content_get_hook(Elm_Gen_Item *it,
                        const char *part)
 {
-   return edje_object_part_swallow_get(VIEW(it), part);
+   Evas_Object *ret = NULL;
+   if (it->deco_all_view)
+     ret = edje_object_part_swallow_get(it->deco_all_view, part);
+   else if (it->decorate_it_set)
+     ret = edje_object_part_swallow_get(it->item->deco_it_view, part);
+   if (!ret)
+     ret = edje_object_part_swallow_get(VIEW(it), part);
+   return ret;
 }
 
 static const char *
@@ -5041,7 +5048,14 @@ _item_text_get_hook(Elm_Gen_Item *it,
                     const char *part)
 {
    if (!it->itc->func.text_get) return NULL;
-   return edje_object_part_text_get(VIEW(it), part);
+   const char *ret = NULL;
+   if (it->deco_all_view)
+     ret = edje_object_part_text_get(it->deco_all_view, part);
+   else if (it->decorate_it_set)
+     ret = edje_object_part_text_get(it->item->deco_it_view, part);
+   if (!ret)
+     ret = edje_object_part_text_get(VIEW(it), part);
+   return ret;
 }
 
 static void
