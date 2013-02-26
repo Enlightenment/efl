@@ -225,16 +225,15 @@ _elm_theme_reload(void *data __UNUSED__, Evas_Object *obj,
      }
 }
 
-int
-_elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool orient_on, int orient_mode)
+Eina_Bool
+_elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
    void *test;
    int ret;
 
    if (parent) th = elm_widget_theme_get(parent);
-   ret = _elm_theme_set(th, o, clas, group, style, orient_on, orient_mode);
-   if (ret == -1) return -1;
+   ret = _elm_theme_set(th, o, clas, group, style);
 
    test = evas_object_data_get(o, "edje,theme,watcher");
    if (!test)
@@ -257,41 +256,20 @@ _elm_theme_object_icon_set(Evas_Object *o,
    return _elm_theme_icon_set(th, o, group, style);
 }
 
-int
-_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool orient_on, int orient_mode)
+Eina_Bool
+_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    const char *file;
    char buf2[1024];
 
-   if ((!clas) || (!group) || (!style)) return -1;
+   if ((!clas) || (!group) || (!style)) return EINA_FALSE;
    if (!th) th = &(theme_default);
 
-   //First Try. Apply orient mode.
-   if (orient_mode > 0)
-     {
-        snprintf(buf2, sizeof(buf2), "elm/%s/%s/%d/%s", clas, group,
-                 orient_mode, style);
-        file = _elm_theme_group_file_find(th, buf2);
-        if (file)
-          {
-             if (edje_object_file_set(o, file, buf2)) return orient_mode;
-             else
-               {
-                  DBG("could not set theme group '%s' from file '%s': %s",
-                      buf2, file,
-                      edje_load_error_str(edje_object_load_error_get(o)));
-               }
-          }
-        if (orient_on && evas_object_data_get(o, "edje,theme,watcher"))
-          return orient_mode;
-     }
-
-   //Second Try. Use the default group.
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
    file = _elm_theme_group_file_find(th, buf2);
    if (file)
      {
-        if (edje_object_file_set(o, file, buf2)) return 0;
+        if (edje_object_file_set(o, file, buf2)) return EINA_TRUE;
         else
           {
              DBG("could not set theme group '%s' from file '%s': %s",
@@ -299,15 +277,15 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
           }
      }
 
-   //Third Try. Use the elementary default theme.
+   //Use the elementary default theme.
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
    file = _elm_theme_group_file_find(th, buf2);
-   if (!file) return -1;
-   if (edje_object_file_set(o, file, buf2)) return 0;
+   if (!file) return EINA_FALSE;
+   if (edje_object_file_set(o, file, buf2)) return EINA_TRUE;
    DBG("could not set theme group '%s' from file '%s': %s",
        buf2, file, edje_load_error_str(edje_object_load_error_get(o)));
 
-   return -1;
+   return EINA_FALSE;
 }
 
 Eina_Bool

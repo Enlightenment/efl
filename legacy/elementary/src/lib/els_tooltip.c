@@ -275,9 +275,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      {
         const char *style = tt->style ? tt->style : "default";
         const char *str;
-        if (_elm_theme_object_set(tt->tt_win ? NULL : tt->owner, tt->tooltip,
-                                  "tooltip", "base", style, EINA_FALSE, 0)
-            == -1)
+        if (!_elm_theme_object_set(tt->tt_win ? NULL : tt->owner, tt->tooltip,
+                                  "tooltip", "base", style))
           {
              ERR("Could not apply the theme to the tooltip! style=%s", style);
              if (tt->tt_win) evas_object_del(tt->tt_win);

@@ -438,7 +438,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
         if (sd->popup)
           _elm_theme_set(NULL, sd->popup,
                          "slider", "horizontal/popup",
-                         elm_widget_style_get(obj), EINA_FALSE, 0);
+                         elm_widget_style_get(obj));
      }
    else
      {
@@ -446,7 +446,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
         if (sd->popup)
           _elm_theme_set(NULL, sd->popup,
                          "slider", "vertical/popup",
-                         elm_widget_style_get(obj), EINA_FALSE, 0);
+                         elm_widget_style_get(obj));
      }
 
    eo_do_super(obj, elm_wdg_theme(&int_ret));
@@ -782,9 +782,8 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         // XXX popup needs to adapt to theme etc.
         priv->popup = edje_object_add(evas_object_evas_get(obj));
-        _elm_theme_set(NULL, priv->popup,
-                       "slider", "horizontal/popup",
-                       elm_widget_style_get(obj), EINA_FALSE, 0);
+        _elm_theme_set(NULL, priv->popup, "slider", "horizontal/popup",
+                       elm_widget_style_get(obj));
         edje_object_scale_set(priv->popup, elm_widget_scale_get(obj) *
                               elm_config_scale_get());
         edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm",

@@ -169,8 +169,7 @@ _elm_ews_border_config_apply(Ecore_Evas *ee, Evas_Object *o, Elm_Theme *th)
    if (ecore_evas_borderless_get(ee))
      style = "borderless";
 
-   _elm_theme_set(th, o, "ews", "decoration", style ? style : "default",
-                  EINA_FALSE, 0);
+   _elm_theme_set(th, o, "ews", "decoration", style ? style : "default");
 
    if (ecore_evas_shaped_get(ee) || ecore_evas_alpha_get(ee) ||
        ecore_evas_transparent_get(ee))
@@ -447,8 +446,7 @@ _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme)
           _elm_ews_wm_border_theme_set(*(void**)tp->key, tp->data, NULL);
 
         if (_ews_bg)
-          _elm_theme_set(NULL, _ews_bg, "ews", "background", "default",
-                         EINA_FALSE, 0);
+          _elm_theme_set(NULL, _ews_bg, "ews", "background", "default");
      }
    else
      {
@@ -456,8 +454,7 @@ _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme)
           _elm_ews_wm_border_theme_set(*(void**)tp->key, tp->data, th);
 
         if (_ews_bg)
-          _elm_theme_set(th, _ews_bg, "ews", "background", "default",
-                         EINA_FALSE, 0);
+          _elm_theme_set(th, _ews_bg, "ews", "background", "default");
      }
 
    eina_iterator_free(it);
@@ -480,8 +477,7 @@ _elm_ews_wm_init(void)
    o = edje_object_add(e);
    if (!o) return EINA_FALSE;
 
-   if (_elm_theme_set(NULL, o, "ews", "background", "default", EINA_FALSE, 0)
-       == -1)
+   if (!_elm_theme_set(NULL, o, "ews", "background", "default"))
      {
         ERR("Could not set background theme, fallback to rectangle");
         evas_object_del(o);
