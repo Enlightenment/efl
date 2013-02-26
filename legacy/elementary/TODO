@@ -15,3 +15,4 @@ api:
 improvement:
   add a smart move object and autodetect group of moving object in genlist.
   reduce memory used by all this callback we setup around.
+  integrate with EO and Clouseau.
