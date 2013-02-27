@@ -56,7 +56,7 @@ void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max);
 void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full);
 void _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore);
 int  _ecore_evas_wl_common_pre_render(Ecore_Evas *ee);
-int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee);
+/* int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee); */
 void _ecore_evas_wl_common_post_render(Ecore_Evas *ee);
 int  _ecore_evas_wl_common_render(Ecore_Evas *ee);
 void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
