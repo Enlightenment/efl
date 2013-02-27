@@ -116,6 +116,56 @@ evas_swapper_setup(int dx, int dy, int w, int h, Outbuf_Depth depth, Eina_Bool a
    return ws;
 }
 
+Wl_Swapper *
+evas_swapper_reconfigure(Wl_Swapper *ws, int dx, int dy, int w, int h, Outbuf_Depth depth, Eina_Bool alpha)
+{
+   int i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ws)
+     {
+        ERR("No swapper to reconfigure.");
+        return NULL;
+     }
+
+   /* loop the swapper's buffers and free them */
+   for (i = 0; i < ws->buff_num; i++)
+     _evas_swapper_buffer_free(&(ws->buff[i]));
+
+   /* free the shm pool */
+   _evas_swapper_shm_pool_free(ws);
+
+   ws->dx += dx;
+   ws->dy += dy;
+   ws->w = w;
+   ws->h = h;
+   ws->depth = depth;
+   ws->alpha = alpha;
+
+   /* create the shm pool */
+   if (!_evas_swapper_shm_pool_new(ws))
+     {
+        ERR("Could not allocate new shm pool.");
+        evas_swapper_free(ws);
+        return NULL;
+     }
+
+   for (i = 0; i < ws->buff_num; i++)
+     {
+        /* try to create new internal Wl_Buffer */
+        if (!_evas_swapper_buffer_new(ws, &(ws->buff[i])))
+          {
+             ERR("failed to create wl_buffer. free the swapper.");
+             evas_swapper_free(ws);
+             return NULL;
+          }
+     }
+
+   /* return reconfigured swapper */
+   return ws;
+}
+
 void 
 evas_swapper_swap(Wl_Swapper *ws, Eina_Rectangle *rects, unsigned int count)
 {
@@ -307,6 +357,8 @@ _evas_swapper_shm_pool_free(Wl_Swapper *ws)
 
    /* destroy the shm pool */
    wl_shm_pool_destroy(ws->pool);
+
+   ws->pool_size = 0;
 }
 
 static Eina_Bool 

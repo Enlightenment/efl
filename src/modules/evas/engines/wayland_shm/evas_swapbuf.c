@@ -110,8 +110,15 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int ro
    /* check for valid swapper */
    if (ob->priv.swapper)
      {
-        /* free existing swapper */
-        evas_swapper_free(ob->priv.swapper);
+        if ((ob->rotation == 0) || (ob->rotation == 180))
+          ob->priv.swapper = evas_swapper_reconfigure(ob->priv.swapper,
+                                                      x, y, w, h, depth,
+                                                      alpha);
+        else if ((ob->rotation == 90) || (ob->rotation == 270))
+          ob->priv.swapper = evas_swapper_reconfigure(ob->priv.swapper,
+                                                      x, y, h, w, depth,
+                                                      alpha);
+        return;
      }
 
    /* create new swapper */
