@@ -1,3 +1,8 @@
+2013-02-28  Cedric Bail
+
+	* eina_strlcat work with a NULL src.
+
+
 2013-02-26  Carsten Haitzler (The Rasterman)
 
         * Fix evas GL common engine to have a shader to do oversampling on

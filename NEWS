@@ -114,6 +114,7 @@ Improvements:
     * edje: reduce memory consumption of Edje program handler.
     * eina, evas: improved support for 64bits system.
     * Evas GL engine downscale quality in smooth mode much improved with multisampling up to effectively 16x16 via shaders.
+    * eina: eina_strlcat now work with a NULL source.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
