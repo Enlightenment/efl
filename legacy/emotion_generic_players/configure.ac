@@ -108,7 +108,7 @@ AC_MSG_RESULT([${EMOTION_GENERIC_PLAYERS_DIR}])
 AC_SUBST(EMOTION_GENERIC_PLAYERS_DIR)
 
 #### Players
-EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 0.9 eina >= 1.1.99])
+EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 0.9 eina >= 1.1.99 ecore >= 1.7.99])
 
 
 AC_CONFIG_FILES([
