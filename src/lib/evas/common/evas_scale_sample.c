@@ -63,8 +63,9 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 {
    int      x, y;
    int     *lin_ptr;
+   int      offset;
    DATA32  *buf, *dptr;
-   DATA32 **row_ptr;
+   DATA32  *row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func;
@@ -191,10 +192,6 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 
    if ((dst_region_h <= 0) || (src_region_h <= 0)) return;
 
-   /* allocate scale lookup tables */
-   lin_ptr = alloca(dst_clip_w * sizeof(int));
-   row_ptr = alloca(dst_clip_h * sizeof(DATA32 *));
-
    /* figure out dst jump */
    //dst_jump = dst_w - dst_clip_w;
 
@@ -208,7 +205,7 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
-        ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
+        ptr = src_data + (((dst_clip_y - dst_region_y) + src_region_y) * src_w) + ((dst_clip_x - dst_region_x) + src_region_x);
         for (y = 0; y < dst_clip_h; y++)
           {
              /* * blend here [clip_w *] ptr -> dst_ptr * */
@@ -220,23 +217,29 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
      }
    else
      {
+        /* allocate scale lookup tables */
+        lin_ptr = alloca(dst_clip_w * sizeof(int));
+
         /* fill scale tables */
         for (x = 0; x < dst_clip_w; x++)
           lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
-        for (y = 0; y < dst_clip_h; y++)
-          row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
-                                    + src_region_y) * src_w);
+
         /* scale to dst */
         dptr = dst_ptr;
 
         /* a scanline buffer */
         buf = alloca(dst_clip_w * sizeof(DATA32));
+
+        offset = dst_clip_y - dst_region_y;
+
         for (y = 0; y < dst_clip_h; y++)
           {
              dst_ptr = buf;
+             row_ptr = src_data + (((((y + offset) * src_region_h) / dst_region_h) + src_region_y) * src_w);
+
              for (x = 0; x < dst_clip_w; x++)
                {
-                  ptr = row_ptr[y] + lin_ptr[x];
+                  ptr = row_ptr + lin_ptr[x];
                   *dst_ptr = *ptr;
                   dst_ptr++;
                }
