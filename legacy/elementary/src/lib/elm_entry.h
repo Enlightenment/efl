@@ -401,6 +401,14 @@ struct _Elm_Entry_Anchor_Info
 typedef struct _Elm_Entry_Anchor_Hover_Info Elm_Entry_Anchor_Hover_Info;
 
 /**
+ * @typedef Elm_Entry_Context_Menu_Item
+ *
+ * Type of contextual item that can be added in to long press menu.
+ * @since 1.8
+ */
+typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
+
+/**
  * @struct _Elm_Entry_Anchor_Hover_Info
  *
  * The info sent in the callback for "anchor,clicked" signals emitted by
@@ -1794,6 +1802,38 @@ EAPI const char                 *elm_entry_anchor_hover_style_get(const Evas_Obj
  * @ingroup Entry
  */
 EAPI void                        elm_entry_anchor_hover_end(Evas_Object *obj);
+
+/**
+ * Get the text of the contextual menu item.
+ *
+ * Gets the text of the contextual menu item of entry.
+ *
+ * @param item The item to get the label
+ * @return The text of contextual menu item
+ *
+ * @see elm_entry_context_menu_item_add()
+ * @ingroup Entry
+ * @since 1.8
+ */
+EAPI const char                  *elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item);
+
+/**
+ * Get the icon object of the contextual menu item.
+ *
+ * Gets the icon object packed in the contextual menu item of entry.
+ *
+ * @param item The item to get the icon from
+ * @param icon_file The image file path on disk used for the icon or standard
+ * icon name
+ * @param icon_group The edje group used if @p icon_file is an edje file. NULL
+ * if the icon is not an edje file
+ * @param icon_type The icon type
+ *
+ * @see elm_entry_context_menu_item_add()
+ * @ingroup Entry
+ * @since 1.8
+ */
+EAPI void                         elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
 #define ELM_OBJ_ENTRY_CLASS elm_obj_entry_class_get()
 

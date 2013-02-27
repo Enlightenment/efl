@@ -266,6 +266,13 @@ scrolled_anchor_test(void *data, Evas_Object *obj __UNUSED__, void *event_info _
    elm_entry_entry_insert(en, "ANCHOR CLICKED");
 }
 
+static void
+_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Entry_Context_Menu_Item *item = (Elm_Entry_Context_Menu_Item *)event_info;
+   printf("\ncurrent selected text = %s\n", elm_entry_context_menu_item_label_get(item));
+}
+
 void
 test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -338,6 +345,8 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_select_all(en);
+   elm_entry_context_menu_item_add(en, "Menu1", NULL, ELM_ICON_NONE, _item_cb, NULL);
+   elm_entry_context_menu_item_add(en, "Menu2", NULL, ELM_ICON_NONE, _item_cb, NULL);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 

@@ -1206,9 +1206,9 @@ _hover_item_clicked_cb(void *data,
                        void *event_info __UNUSED__)
 {
    Elm_Entry_Context_Menu_Item *it = data;
-   Evas_Object *obj2 = it->obj;
+   if (!it) return;
 
-   if (it->func) it->func(it->data, obj2, NULL);
+   if (it->func) it->func(it->data, it->obj, it);
 }
 
 static void
@@ -3974,6 +3974,25 @@ _context_menu_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Entry_Smart_Data *sd = _pd;
 
    *ret = !sd->context_menu;
+}
+
+EAPI const char *
+elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item)
+{
+   if(!item) return NULL;
+   return item->label;
+}
+
+EAPI void
+elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item,
+                                     const char **icon_file,
+                                     const char **icon_group,
+                                     Elm_Icon_Type *icon_type)
+{
+   if(!item) return;
+   if (icon_file) *icon_file = item->icon_file;
+   if (icon_group) *icon_group = item->icon_group;
+   if (icon_type) *icon_type = item->icon_type;
 }
 
 EAPI void
