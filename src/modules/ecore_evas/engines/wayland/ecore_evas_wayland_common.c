@@ -115,6 +115,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Window_Configure *ev;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    int nw = 0, nh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -160,7 +161,32 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      {
         ee->req.w = nw;
         ee->req.h = nh;
+        ee->w = ev->w;
+        ee->h = ev->h;
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ev->h, ev->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ev->h, ev->w);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ev->w, ev->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ev->w, ev->h);
+          }
+
+        wdata = ee->engine.data;
+
+        if (wdata->win)
+          {
+             Ecore_Wl_Window *win;
+
+             win = wdata->win;
+
+             win->server_allocation = win->allocation;
+             ecore_wl_window_update_size(wdata->win, ev->w, ev->h);
+          }
      }
 
    return ECORE_CALLBACK_PASS_ON;
