@@ -4,11 +4,12 @@
 #include "config.h"
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_gl_common.h"
 #include "Evas.h"
 #include "Evas_Engine_Wayland_Egl.h"
 
 #include <EGL/egl.h>
+#include "evas_gl_common.h"
+
 #include <wayland-egl.h>
 
 extern int _evas_engine_wl_egl_log_dom;
