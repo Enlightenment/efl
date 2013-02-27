@@ -30,6 +30,7 @@ static const Ecore_Getopt options = {
                                  ecore_getopt_callback_geometry_parse, NULL),
       ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
       ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
+      ECORE_GETOPT_STORE_TRUE('w', "webcams", "show all the available v4l streams"),
       ECORE_GETOPT_COUNT('v', "verbose", "be more verbose"),
       ECORE_GETOPT_STORE_TRUE('R', "reflex", "show video reflex effect"),
       ECORE_GETOPT_VERSION('V', "version"),
@@ -684,6 +685,7 @@ main(int argc, char **argv)
    char              *engine = NULL;
    char              *backend = NULL;
    int                verbose = 0;
+   Eina_Bool          webcams = EINA_FALSE;
    int                visual = EMOTION_VIS_NONE;
    unsigned char      help = 0;
    unsigned char      engines_listed = 0;
@@ -693,6 +695,7 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_PTR_CAST(geometry),
       ECORE_GETOPT_VALUE_STR(backend),
       ECORE_GETOPT_VALUE_INT(visual),
+      ECORE_GETOPT_VALUE_BOOL(webcams),
       ECORE_GETOPT_VALUE_INT(verbose),
       ECORE_GETOPT_VALUE_BOOL(reflex),
       ECORE_GETOPT_VALUE_NONE,
@@ -718,7 +721,7 @@ main(int argc, char **argv)
    if (args < 0) goto shutdown_edje;
    else if (help) goto shutdown_edje;
    else if (engines_listed) goto shutdown_edje;
-   else if (args == argc)
+   else if ((args == argc) && (!webcams))
      {
         printf("must provide at least one file to play!\n");
         goto shutdown_edje;
@@ -758,6 +761,21 @@ main(int argc, char **argv)
 
    for (; args < argc; args++)
      init_video_object(backend, argv[args]);
+
+   if (webcams)
+     {
+        const Eina_List *wl, *l;
+        Emotion_Webcam *webcam;
+
+        wl = emotion_webcams_get();
+        EINA_LIST_FOREACH(wl, l, webcam)
+          {
+             printf("Playing stream: '%s' url: '%s'\n",
+                     emotion_webcam_name_get(webcam),
+                     emotion_webcam_device_get(webcam));
+             init_video_object(backend, emotion_webcam_device_get(webcam));
+          }
+     }
 
    ecore_animator_add(check_positions, NULL);
 
