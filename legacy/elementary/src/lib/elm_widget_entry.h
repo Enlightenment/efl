@@ -91,7 +91,6 @@ struct _Elm_Entry_Smart_Data
    Eina_Bool                             scroll : 1;
 };
 
-typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
 typedef struct _Elm_Entry_Item_Provider     Elm_Entry_Item_Provider;
 typedef struct _Elm_Entry_Markup_Filter     Elm_Entry_Markup_Filter;
 
