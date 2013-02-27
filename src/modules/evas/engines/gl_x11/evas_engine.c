@@ -959,7 +959,7 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
              evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
           }
      }
-   if (r2)
+   if (r3)
      {
         EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
           {
