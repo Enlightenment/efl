@@ -200,13 +200,14 @@ _op_blend_pan_can_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
 
 static void
 _op_blend_pan_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
-#if 1 
+#if 1
    DATA32 *e;
+   DATA32 sc;
    int alpha;
    c = 1 + (c & 0xff);
    UNROLL8_PLD_WHILE(d, l, e,
                     {
-                       DATA32 sc = MUL_256(c, *s);
+                       sc = MUL_256(c, *s);
                        alpha = 256 - (sc >> 24);
                        *d = sc + MUL_256(alpha, *d);
                        d++;
