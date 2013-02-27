@@ -88,6 +88,20 @@ if test "x${want_poppler}" = "xyes" ; then
          [have_poppler="yes"],
          [have_poppler="no"])
    fi
+
+   if test "x${have_poppler}" = "xyes" ; then
+      AC_LANG(C++)
+      save_CPPFLAGS=$CPPFLAGS
+      CPPFLAGS="${CPPFLAGS} ${POPPLER_CFLAGS}"
+      save_CXXFLAGS=$CXXFLAGS
+      CXXFLAGS="${CXXFLAGS} ${POPPLER_CFLAGS}"
+      AC_CHECK_HEADERS([GlobalParams.h],
+		       [have_poppler="yes"],
+		       [have_poppler="no"])
+      CXXFLAGS=$save_CXXFLAGS
+      CPPFLAGS=$save_CPPFLAGS
+      AC_LANG(C)
+   fi
 else
    have_poppler="no"
 fi
