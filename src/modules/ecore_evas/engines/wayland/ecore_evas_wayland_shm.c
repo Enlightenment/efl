@@ -481,7 +481,11 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
    if (wdata->win) 
      {
         int fw, fh;
+        Evas_Engine_Info_Wayland_Shm *einfo;
         wdata->win->resizing = EINA_TRUE;
+
+        if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
+          einfo->info.edges = wdata->win->edges;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);

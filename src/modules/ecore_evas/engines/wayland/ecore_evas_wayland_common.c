@@ -24,8 +24,10 @@ static Evas_Smart *_ecore_evas_wl_common_smart = NULL;
 static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[5];
 
-/* Frame listener */
+static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
+
+/* Frame listener */
 static const struct wl_callback_listener frame_listener =
 {
    _ecore_evas_wl_frame_complete,
@@ -186,6 +188,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
              win->server_allocation = win->allocation;
              ecore_wl_window_update_size(wdata->win, ev->w, ev->h);
+
+             _ecore_evas_wayland_resize(ee, win->edges);
           }
      }
 
