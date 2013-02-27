@@ -226,6 +226,52 @@ _mirrored_set(Evas_Object *obj,
 }
 
 static void
+_access_obj_process(Eo *obj, Eina_Bool is_access)
+{
+   Evas_Object *ao;
+
+   ELM_POPUP_DATA_GET(obj, sd);
+   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+
+   if (is_access)
+     {
+        if (sd->title_text)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Title"));
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_INFO, sd->title_text);
+          }
+
+        if (sd->text_content_obj)
+          {
+             ao = _elm_access_edje_object_part_object_register
+                    (obj, wd->resize_obj, ACCESS_BODY_PART);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                                  ELM_ACCESS_TYPE, E_("Popup Body Text"));
+             _elm_access_text_set(_elm_access_object_get(ao),
+               ELM_ACCESS_INFO, elm_object_text_get(sd->text_content_obj));
+          }
+     }
+   else
+     {
+        if (sd->title_text)
+          {
+             _elm_access_edje_object_part_object_unregister
+                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
+          }
+
+        if (sd->text_content_obj)
+          {
+             _elm_access_edje_object_part_object_unregister
+                    (obj, wd->resize_obj, ACCESS_BODY_PART);
+          }
+     }
+}
+
+static void
 _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Popup_Item *item;
@@ -300,6 +346,9 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
    _visuals_set(obj);
    edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
+
+   /* access */
+   if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -781,48 +830,6 @@ _item_new(Elm_Popup_Item *item)
    evas_object_size_hint_align_set
      (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(VIEW(item));
-}
-
-static void
-_access_obj_process(Eo *obj, Eina_Bool is_access)
-{
-   Evas_Object *ao;
-
-   ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-
-   if (is_access)
-     {
-        if (sd->title_text)
-          {
-             ao = _elm_access_edje_object_part_object_register
-                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
-                                  ELM_ACCESS_TYPE, E_("Popup Title"));
-          }
-
-        if (sd->text_content_obj)
-          {
-             ao = _elm_access_edje_object_part_object_register
-                    (obj, wd->resize_obj, ACCESS_BODY_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
-                                  ELM_ACCESS_TYPE, E_("Popup Body Text"));
-          }
-     }
-   else
-     {
-        if (sd->title_text)
-          {
-             _elm_access_edje_object_part_object_unregister
-                    (obj, wd->resize_obj, ACCESS_TITLE_PART);
-          }
-
-        if (sd->text_content_obj)
-          {
-             _elm_access_edje_object_part_object_unregister
-                    (obj, wd->resize_obj, ACCESS_BODY_PART);
-          }
-     }
 }
 
 static Eina_Bool
