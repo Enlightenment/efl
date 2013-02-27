@@ -42,7 +42,7 @@ typedef struct _Evas_GL_Wl_Window Evas_GL_Wl_Window;
 struct _Evas_GL_Wl_Window
 {
    struct wl_display *disp;
-   struct wl_surface *surf;
+   struct wl_surface *surface;
    struct wl_egl_window *win;
    Evas_Coord w, h;
    Eina_Bool alpha : 1;
