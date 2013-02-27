@@ -73,7 +73,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // modal set
    NULL, // demand attention set
    NULL, // focus skip set
-   _ecore_evas_wl_common_render,
+   NULL, //_ecore_evas_wl_common_render,
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get
 };
@@ -154,6 +154,11 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
+
    /* frame offset and size */
    fx = 4;
    fy = 18;
@@ -206,6 +211,8 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         evas_object_is_frame_object_set(wdata->frame, EINA_TRUE);
         evas_object_move(wdata->frame, 0, 0);
      }
+
+   ee->engine.func->fn_render = _ecore_evas_wl_common_render;
 
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
