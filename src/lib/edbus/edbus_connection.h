@@ -59,6 +59,17 @@ EAPI EDBus_Connection *edbus_connection_ref(EDBus_Connection *conn) EINA_ARG_NON
 EAPI void              edbus_connection_unref(EDBus_Connection *conn) EINA_ARG_NONNULL(1);
 
 /**
+ * Integrate an existing DBus connection with the ecore main loop
+ *
+ * @param type - type of bus
+ * @param conn - a dbus connection (must be a DBusConnection *)
+ *
+ * @note this is a low-level function, it is meant to be used by language
+ *       bindings, don't use unless you know what are you doing!
+ */
+EAPI EDBus_Connection *edbus_connection_from_dbus_connection(EDBus_Connection_Type type, void *conn);
+
+/**
  * @brief Add a callback function to be called when connection is freed
  *
  * @param conn The connection object to add the callback to.

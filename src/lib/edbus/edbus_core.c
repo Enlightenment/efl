@@ -976,6 +976,34 @@ _connection_get(EDBus_Connection_Type type)
 }
 
 EAPI EDBus_Connection *
+edbus_connection_from_dbus_connection(EDBus_Connection_Type type, void *conn)
+{
+   EDBus_Connection *econn;
+   EDBus_Object *obj;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((type < EDBUS_CONNECTION_TYPE_LAST) &&
+                                   (type > EDBUS_CONNECTION_TYPE_UNKNOWN), NULL);
+
+   econn = calloc(1, sizeof(EDBus_Connection));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(econn, NULL);
+
+   econn->dbus_conn = (DBusConnection*) conn;
+   edbus_connection_setup(econn);
+   econn->type = type;
+   econn->refcount = 1;
+   EINA_MAGIC_SET(econn, EDBUS_CONNECTION_MAGIC);
+   econn->names = eina_hash_string_superfast_new(NULL);
+
+   edbus_signal_handler_add(econn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL,
+                            "Disconnected", _disconnected, econn);
+   obj = edbus_object_get(econn, EDBUS_FDO_BUS, EDBUS_FDO_PATH);
+   econn->fdo_proxy = edbus_proxy_get(obj, EDBUS_FDO_INTERFACE);
+
+   DBG("Attached to connection at %p", conn);
+   return econn;
+}
+
+EAPI EDBus_Connection *
 edbus_private_connection_get(EDBus_Connection_Type type)
 {
    return _connection_get(type);
