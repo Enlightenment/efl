@@ -494,6 +494,9 @@ _sel_extend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    _sel_enable(c, o, en);
    if (!evas_textblock_cursor_compare(c, en->sel_end)) return;
    evas_textblock_cursor_copy(c, en->sel_end);
+
+   _edje_entry_imf_cursor_info_set(en);
+
    if (en->selection)
      {
         free(en->selection);
@@ -510,6 +513,9 @@ _sel_preextend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
    _sel_enable(c, o, en);
    if (!evas_textblock_cursor_compare(c, en->sel_start)) return;
    evas_textblock_cursor_copy(c, en->sel_start);
+
+   _edje_entry_imf_cursor_info_set(en);
+
    if (en->selection)
      {
         free(en->selection);
@@ -3614,11 +3620,23 @@ _edje_entry_imf_cursor_location_set(Entry *en)
 static void
 _edje_entry_imf_cursor_info_set(Entry *en)
 {
+   int cursor_pos;
+
 #ifdef HAVE_ECORE_IMF
    if (!en || !en->rp || !en->imf_context) return;
 
-   ecore_imf_context_cursor_position_set(en->imf_context,
-                                         evas_textblock_cursor_pos_get(en->cursor));
+   if (en->have_selection)
+     {
+        if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
+          cursor_pos = evas_textblock_cursor_pos_get(en->sel_start);
+        else
+          cursor_pos = evas_textblock_cursor_pos_get(en->sel_end);
+     }
+   else
+     cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+
+   ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
+
    _edje_entry_imf_cursor_location_set(en);
 #else
    (void) en;
