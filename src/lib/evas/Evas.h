@@ -6543,7 +6543,7 @@ EAPI Evas_Map       *evas_map_new(int count);
 EAPI void            evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled);
 
 /**
- * get the smoothing for map rendering
+ * Get the smoothing for map rendering
  *
  * This gets smoothing for map rendering.
  *
@@ -6566,7 +6566,7 @@ EAPI Eina_Bool       evas_map_smooth_get(const Evas_Map *m);
 EAPI void            evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled);
 
 /**
- * get the alpha flag for map rendering
+ * Get the alpha flag for map rendering
  *
  * This gets the alpha flag for map rendering.
  *
