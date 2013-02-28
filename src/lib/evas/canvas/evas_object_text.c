@@ -699,6 +699,8 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
        o->last_computed.h == obj->cur.geometry.h)
      return ;
 
+   evas_object_content_change(eo_obj, obj);
+
    if (o->items) _evas_object_text_items_clean(obj, o);
 
    if (text && *text)

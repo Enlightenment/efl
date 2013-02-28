@@ -942,6 +942,7 @@ void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Dat
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);
 void evas_object_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_content_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_clip_changes_clean(Evas_Object *obj);
 void evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);

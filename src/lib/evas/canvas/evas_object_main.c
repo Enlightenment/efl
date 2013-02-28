@@ -229,6 +229,26 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 void
+evas_object_content_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   if ((obj->map) && (obj->map->surface))
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_map_cow,
+                             obj->map, Evas_Object_Map_Data, map_write)
+          {
+             obj->layer->evas->engine.func->image_map_surface_free
+               (obj->layer->evas->engine.data.output, map_write->surface);
+             map_write->surface = NULL;
+          }
+        EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+     }
+}
+
+void
 evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
