@@ -1057,3 +1057,9 @@
 
         * Fix scroller acceleration bug. It was accelerated even it's scrolled
         after finishing the previous scroll. This happens with page scroll enabled.
+
+2013-02-28  Jaehwan Kim
+
+        * Add the option about sending signals in content_pos_set.
+        When the scroller is resized, the signals("elm,action,scroll", "elm,edge,top" so on) shouldn't be sent,
+        because it's not a scroll-action. So in this case, the content_pos_set should be called without the signals.

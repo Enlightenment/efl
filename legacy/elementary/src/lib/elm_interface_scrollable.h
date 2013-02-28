@@ -427,9 +427,10 @@ enum
  *
  * @param[in] x
  * @param[in] y
+ * @param[in] sig
  *
  */
-#define elm_scrollable_interface_content_pos_set(x, y) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
+#define elm_scrollable_interface_content_pos_set(x, y, sig) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Eina_Bool, sig)
 
 /**
  * @def elm_scrollable_interface_content_pos_get

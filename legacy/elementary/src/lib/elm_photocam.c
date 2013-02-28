@@ -1019,7 +1019,7 @@ _elm_photocam_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else return;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y));
+   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
 
    if (ret) *ret = EINA_TRUE;
 }

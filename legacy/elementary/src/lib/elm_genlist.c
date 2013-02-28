@@ -537,7 +537,7 @@ _calc_job(void *data)
              it_y = sd->anchor_y;
              eo_do(sd->obj, elm_scrollable_interface_content_pos_set
                (sd->pan_x, it->item->block->y
-               + it->y + it_y));
+               + it->y + it_y, EINA_TRUE));
              sd->anchor_item = it;
              sd->anchor_y = it_y;
           }
@@ -2446,7 +2446,7 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    if (y < 0) y = 0;
    if (y > pan_max_y) y = pan_max_y;
 
-   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y));
+   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
 
    if (ret) *ret = EINA_TRUE;
 }
