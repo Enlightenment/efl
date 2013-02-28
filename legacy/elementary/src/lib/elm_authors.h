@@ -78,6 +78,7 @@
  * @author Bora Hwang <bora1.hwang@@samsung.com>
  * @author Jiyoung Choi <jychoi7.choi@@samsung.com>
  * @author Arvind R <arvino55@@gmail.com>
+ * @author Paulo Cavalcanti <paulo.cavalcanti@@linux.intel.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
