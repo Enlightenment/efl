@@ -42,7 +42,7 @@ Additions:
    * Support widget orientation mode in order to widgets have multiple styles for each window degree.
    * Add elm_drop_target_add() elm_drop_target_del() and elm_drag_start()
    * Add the option about sending signals in content_pos_set.
-	* Add elm_transit_smooth_set(), elm_transit_smooth_get()
+   * Add elm_transit_smooth_set(), elm_transit_smooth_get()
 
 Improvements:
 
