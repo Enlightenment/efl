@@ -42,6 +42,7 @@ Additions:
    * Support widget orientation mode in order to widgets have multiple styles for each window degree.
    * Add elm_drop_target_add() elm_drop_target_del() and elm_drag_start()
    * Add the option about sending signals in content_pos_set.
+   * Add omit feature to elm_index.
    * Add elm_transit_smooth_set(), elm_transit_smooth_get()
 
 Improvements:
@@ -75,7 +76,6 @@ Improvements:
    * Improve naviframe to not apply items' style multiple times when theme/styles are changed.
    * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. This causes overhead in some cases(ie, theme change..).
    * Improve support on 64bits system.
-   * Add omit feature to elm_index.
 
 Fixes:
 
