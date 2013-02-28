@@ -59,6 +59,7 @@ struct _Elm_Transit
    Eina_Bool deleted : 1;
    Eina_Bool state_keep : 1;
    Eina_Bool finished : 1;
+   Eina_Bool smooth : 1;
 };
 
 struct _Elm_Transit_Effect_Module
@@ -472,6 +473,7 @@ elm_transit_add(void)
 
    transit->v1 = 1.0;
    transit->v2 = 0.0;
+   transit->smooth = EINA_TRUE;
 
    return transit;
 }
@@ -577,6 +579,20 @@ elm_transit_objects_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    return transit->objs;
+}
+
+EAPI void
+elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool smooth)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   transit->smooth = !!smooth;
+}
+
+EAPI Eina_Bool
+elm_transit_smooth_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
+   return transit->smooth;
 }
 
 EAPI void
@@ -1069,6 +1085,7 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
         _recover_image_uv(obj, map, EINA_FALSE, EINA_FALSE);
         evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0,
                                      _TRANSIT_FOCAL);
+        if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_set(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
      }
@@ -1225,6 +1242,7 @@ _transit_effect_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
         evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
         evas_object_map_enable_set(front, EINA_TRUE);
         evas_object_map_enable_set(back, EINA_TRUE);
+        if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_set(obj, map);
      }
    evas_map_free(map);
@@ -1531,6 +1549,7 @@ _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *trans
                                      _TRANSIT_FOCAL);
         evas_object_map_enable_set(resizable_flip_node->front, EINA_TRUE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_TRUE);
+        if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_set(obj, map);
      }
    evas_map_free(map);
@@ -1753,7 +1772,7 @@ _transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
           _elm_fx_wipe_show(map, wipe->dir, _x, _y, _w, _h, (float)progress);
         else
           _elm_fx_wipe_hide(map, wipe->dir, _x, _y, _w, _h, (float)progress);
-
+        if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
@@ -2273,6 +2292,7 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
         half_h = (float)h * 0.5;
 
         evas_map_util_rotate(map, degree, x + half_w, y + half_h);
+        if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
