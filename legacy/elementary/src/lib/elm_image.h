@@ -706,7 +706,7 @@ EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
  * @param obj The image object
  * @return @c EINA_TRUE if smooth scaling is enabled, @c EINA_FALSE otherwise.
  *
- * @see elm_image_smooth_get()
+ * @see elm_image_smooth_set()
  *
  * @ingroup Image
  */
