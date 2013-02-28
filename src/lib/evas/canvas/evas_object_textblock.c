@@ -3198,6 +3198,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    Evas_Object_Textblock_Item *it;
    Evas_Coord x = 0;
 
+   c->position = TEXTBLOCK_POSITION_ELSE;
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
    if (c->maxascent + c->maxdescent == 0)
@@ -3273,7 +3274,6 @@ loop_advance:
 static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
-   c->position = TEXTBLOCK_POSITION_ELSE;
    _layout_line_finalize(c, fmt);
    _layout_line_new(c, fmt);
 }
