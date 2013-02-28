@@ -74,6 +74,7 @@ Improvements:
    * Improve naviframe to not apply items' style multiple times when theme/styles are changed.
    * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. This causes overhead in some cases(ie, theme change..).
    * Improve support on 64bits system.
+   * Add omit feature to elm_index.
 
 Fixes:
 
@@ -160,6 +161,7 @@ Fixes:
    * Fix vsync option in gl engine windows
    * Fix elm_progressbar_pulse() to abort if pulsing not enabled
    * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
+   * Fix 1byte invalid read & do memset, rewind if needed.
    
 Removals:
 
