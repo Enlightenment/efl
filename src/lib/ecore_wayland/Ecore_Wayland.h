@@ -33,7 +33,7 @@ extern "C" {
 typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 typedef struct _Ecore_Wl_Output Ecore_Wl_Output;
 typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
-typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.8 */
+typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.7.6 */
 
 # ifndef _ECORE_WAYLAND_WINDOW_PREDEF
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
@@ -76,7 +76,7 @@ enum _Ecore_Wl_Window_Buffer_Type
 typedef enum _Ecore_Wl_Window_Type Ecore_Wl_Window_Type;
 typedef enum _Ecore_Wl_Window_Buffer_Type Ecore_Wl_Window_Buffer_Type;
 
-/** @since 1.8 */
+/** @since 1.7.6 */
 struct _Ecore_Wl_Global
 {
    unsigned int id;
@@ -106,7 +106,7 @@ struct _Ecore_Wl_Display
 
    struct wl_list inputs;
    struct wl_list outputs;
-   struct wl_list globals; /** @since 1.8 */
+   struct wl_list globals; /** @since 1.7.6 */
 
    struct
      {
@@ -497,7 +497,7 @@ EAPI struct wl_list *ecore_wl_outputs_get(void);
  * @return The current wayland globals interface list
  *
  * @ingroup Ecore_Wl_Display_Group
- * @since 1.8
+ * @since 1.7.6
  */
 EAPI struct wl_list *ecore_wl_globals_get(void);
 
@@ -507,7 +507,7 @@ EAPI struct wl_list *ecore_wl_globals_get(void);
  * @return The current wayland registry
  *
  * @ingroup Ecore_Wl_Display_Group
- * @since 1.8
+ * @since 1.7.6
  */
 EAPI struct wl_registry *ecore_wl_registry_get(void);
 
