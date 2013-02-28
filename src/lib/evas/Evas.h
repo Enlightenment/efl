@@ -6548,6 +6548,7 @@ EAPI void            evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled);
  * This gets smoothing for map rendering.
  *
  * @param m map to get the smooth from. Must not be NULL.
+ * @return @c EINA_TRUE if the smooth is enabled, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool       evas_map_smooth_get(const Evas_Map *m);
 
