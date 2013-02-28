@@ -274,6 +274,46 @@ evas_common_font_query_right_inset(RGBA_Font *fn EINA_UNUSED, const Evas_Text_Pr
 
 /**
  * @internal
+ * Calculate the ascent/descent of a run. This is different from
+ * evas_common_font_[max]_ascent/descent_get because this one returns the
+ * actual sizee (i.e including accents), and not just what the font reports.
+ *
+ * @param fn the font set to use.
+ * @param text_props the string object.
+ * @param[out] ascent the calculated ascent
+ * @param[out] descent the calculated descent
+ */
+EAPI void
+evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent)
+{
+   int asc = 0, desc = 0;
+   int max_asc, max_desc;
+
+   max_asc = evas_common_font_ascent_get(fn);
+   max_desc = evas_common_font_descent_get(fn);
+
+   /* FIXME: Not supported yet!!! */
+   desc = max_desc;
+
+   EVAS_FONT_WALK_TEXT_INIT();
+   EVAS_FONT_WALK_TEXT_START()
+     {
+        EVAS_FONT_WALK_TEXT_WORK();
+        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
+
+        if ((EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR) > asc)
+          {
+             asc = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
+          }
+     }
+   EVAS_FONT_WALK_TEXT_END();
+
+   if (ascent) *ascent = (asc > max_asc) ? asc : max_asc;
+   if (descent) *descent = (desc < max_desc) ? desc : max_desc;
+}
+
+/**
+ * @internal
  * Calculate the size of the string (width and height).
  * The width is the disntance between the first pen position and the last pixel
  * drawn.

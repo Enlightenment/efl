@@ -1,3 +1,8 @@
+2013-02-28  Tom Hacohen (TAsn)
+
+        * Evas textblock: Added proper size adjustments for
+	"high" shaped texts.
+
 2013-02-28  Mike Blumenkrantz
 
     * fix custom states for edje SPACER parts    

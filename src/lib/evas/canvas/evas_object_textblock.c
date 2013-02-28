@@ -2436,6 +2436,13 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
 
 
 
+typedef enum
+{
+   TEXTBLOCK_POSITION_START,
+   TEXTBLOCK_POSITION_END,
+   TEXTBLOCK_POSITION_ELSE
+} Textblock_Position;
+
 /**
  * @internal
  * @typedef Ctxt
@@ -2467,6 +2474,7 @@ struct _Ctxt
    int underline_extend;
    int have_underline, have_underline2;
    double align, valign;
+   Textblock_Position position;
    Eina_Bool align_auto : 1;
    Eina_Bool width_changed : 1;
 };
@@ -2474,6 +2482,7 @@ struct _Ctxt
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
 static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti);
 static void _layout_do_format(const Evas_Object *eo_obj, Ctxt *c, Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n, int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b, Eina_Bool create_item);
+
 /**
  * @internal
  * Adjust the ascent/descent of the format and context.
@@ -2524,6 +2533,36 @@ _layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
              *maxascent += dh - (dh / 2);
              // FIXME: set flag that says "if heigh changes - reformat"
           }
+     }
+}
+
+/**
+ * @internal
+ * Adjust the ascent/descent of the item and context.
+ *
+ * @param maxascent The ascent to update - Not NUL.
+ * @param maxdescent The descent to update - Not NUL.
+ * @param it The format to adjust - NOT NULL.
+ * @param position The position inside the textblock
+ */
+static void
+_layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
+      Evas_Coord *maxascent, Evas_Coord *maxdescent,
+      Evas_Object_Textblock_Item *it, Textblock_Position position)
+{
+   _layout_format_ascent_descent_adjust(eo_obj, maxascent, maxdescent, it->format);
+
+   if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+         (position == TEXTBLOCK_POSITION_START))
+     {
+        int asc = 0, desc = 0;
+        evas_common_font_ascent_descent_get((void *) it->format->font.font,
+              &_ITEM_TEXT(it)->text_props, &asc, &desc);
+
+        if (maxascent && (asc > *maxascent))
+           *maxascent = asc;
+        if (maxdescent && (desc < *maxdescent))
+           *maxdescent = desc;
      }
 }
 
@@ -3234,6 +3273,7 @@ loop_advance:
 static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
+   c->position = TEXTBLOCK_POSITION_ELSE;
    _layout_line_finalize(c, fmt);
    _layout_line_new(c, fmt);
 }
@@ -4315,9 +4355,8 @@ _layout_par(Ctxt *c)
 
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-             _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-                   &c->maxdescent, ti->parent.format);
+             _layout_item_ascent_descent_adjust(c->obj, &c->maxascent,
+                   &c->maxdescent, it, c->position);
           }
         else
           {
@@ -4329,8 +4368,8 @@ _layout_par(Ctxt *c)
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
                   if (c->maxascent + c->maxdescent == 0)
-                     _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-                           &c->maxdescent, it->format);
+                     _layout_item_ascent_descent_adjust(c->obj, &c->maxascent,
+                           &c->maxdescent, it, c->position);
 
                   _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
                         &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
@@ -4896,6 +4935,8 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
       int par_index_step = o->num_paragraphs / TEXTBLOCK_PAR_INDEX_SIZE;
       int par_count = 1; /* Force it to take the first one */
       int par_index_pos = 0;
+
+      c->position = TEXTBLOCK_POSITION_START;
 
       if (par_index_step == 0) par_index_step = 1;
 
@@ -9852,7 +9893,7 @@ _textblock_size_formatted_get(Eo *eo_obj, void *_pd, va_list *list)
 
 static void
 _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
-      Evas_Coord *ascent, Evas_Coord *descent, Evas_Coord *w)
+      Evas_Coord *ascent, Evas_Coord *descent, Evas_Coord *w, Textblock_Position position)
 {
    Evas_Object_Textblock_Item *it;
    Eina_List *i;
@@ -9865,8 +9906,8 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         /* If there are no text items yet, calc ascent/descent
          * according to the current format. */
         if (*ascent + *descent == 0)
-           _layout_format_ascent_descent_adjust(eo_obj, ascent, descent,
-                 it->format);
+           _layout_item_ascent_descent_adjust(eo_obj, ascent, descent,
+                 it, position);
 
         /* Add margins. */
         if (it->format)
@@ -9904,6 +9945,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
    Evas_Object_Textblock_Item *it;
    Eina_List *line_items = NULL;
    Evas_Coord w = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
+   Textblock_Position position = TEXTBLOCK_POSITION_START;
 
    EINA_LIST_FOREACH(par->logical_items, i, it)
      {
@@ -9915,7 +9957,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                       _IS_PARAGRAPH_SEPARATOR(o, fi->item)))
                {
                   _size_native_calc_line_finalize(eo_obj, line_items, &ascent,
-                        &descent, &w);
+                        &descent, &w, position);
 
                   if (ascent + descent > h)
                      h = ascent + descent;
@@ -9925,6 +9967,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                      wmax = w;
                   h = 0;
                   ascent = descent = 0;
+                  position = TEXTBLOCK_POSITION_ELSE;
                   line_items = eina_list_free(line_items);
                }
              else
@@ -9933,8 +9976,8 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
                   if (it && (ascent + descent == 0))
-                     _layout_format_ascent_descent_adjust(eo_obj, &ascent,
-                           &descent, it->format);
+                     _layout_item_ascent_descent_adjust(eo_obj, &ascent,
+                           &descent, it, position);
 
                   _layout_calculate_format_item_size(eo_obj, fi, &ascent,
                         &descent, &fy, &fw, &fh);
@@ -9942,12 +9985,12 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
           }
         else
           {
-             _layout_format_ascent_descent_adjust(eo_obj, &ascent,
-                   &descent, it->format);
+             _layout_item_ascent_descent_adjust(eo_obj, &ascent,
+                   &descent, it, position);
           }
      }
 
-   _size_native_calc_line_finalize(eo_obj, line_items, &ascent, &descent, &w);
+   _size_native_calc_line_finalize(eo_obj, line_items, &ascent, &descent, &w, position);
 
    line_items = eina_list_free(line_items);
 
