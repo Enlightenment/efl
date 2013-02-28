@@ -163,6 +163,7 @@ Fixes:
    * Fix elm_progressbar_pulse() to abort if pulsing not enabled
    * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
    * Fix 1byte invalid read & do memset, rewind if needed.
+   * Fix the standard of scrollbar-calculation from the scroller's x to pan's x.
    
 Removals:
 

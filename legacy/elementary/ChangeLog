@@ -1075,3 +1075,8 @@
 2013-02-28  ChunEon Park (Hermet)
 
         * Add elm_transit_smooth_set(), elm_transit_smooth_get()
+
+2013-02-28  Jaehwan Kim
+
+        * Fix the standard of scrollbar-calculation from the scroller's x to pan's x.
+        The scrollbar have to sync with pan. if not, the scrollbar doesn't move even if the position of content moves.

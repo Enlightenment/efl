@@ -1450,7 +1450,7 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Eina_Bool sig = va_arg(*list, int);
 
-   Evas_Coord mx = 0, my = 0, px = 0, py = 0, minx = 0, miny = 0;
+   Evas_Coord mx = 0, my = 0, px = 0, py = 0, spx = 0, spy = 0, minx = 0, miny = 0;
    double vx, vy;
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -1460,25 +1460,6 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    // FIXME: allow for bounce outside of range
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-
-   if (mx > 0) vx = (double)(x - minx) / (double)mx;
-   else vx = 0.0;
-
-   if (vx < 0.0) vx = 0.0;
-   else if (vx > 1.0)
-     vx = 1.0;
-
-   if (my > 0) vy = (double)(y - miny) / (double)my;
-   else vy = 0.0;
-
-   if (vy < 0.0) vy = 0.0;
-   else if (vy > 1.0)
-     vy = 1.0;
-
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
    if (!_elm_config->thumbscroll_bounce_enable)
      {
@@ -1500,6 +1481,27 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
      }
 
    eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
+   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&spx, &spy));
+
+   if (mx > 0) vx = (double)(spx - minx) / (double)mx;
+   else vx = 0.0;
+
+   if (vx < 0.0) vx = 0.0;
+   else if (vx > 1.0)
+     vx = 1.0;
+
+   if (my > 0) vy = (double)(spy - miny) / (double)my;
+   else vy = 0.0;
+
+   if (vy < 0.0) vy = 0.0;
+   else if (vy > 1.0)
+     vy = 1.0;
+
+   edje_object_part_drag_value_set
+     (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
+   edje_object_part_drag_value_set
+     (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+
    if (sig && ((px != x) || (py != y)))
      edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
    if (!sid->down.bounce_x_animator)
