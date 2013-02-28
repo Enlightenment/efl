@@ -1739,6 +1739,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 	  }
 
 	ALLOC_DESC(RECTANGLE, Common, d);
+	ALLOC_DESC(SPACER, Common, d);
 	ALLOC_DESC(SWALLOW, Common, d);
 	ALLOC_DESC(GROUP, Common, d);
 

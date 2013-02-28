@@ -1,3 +1,7 @@
+2013-02-28  Mike Blumenkrantz
+
+    * fix custom states for edje SPACER parts    
+
 2013-02-28  Cedric Bail
 
 	* eina_strlcat work with a NULL src.
