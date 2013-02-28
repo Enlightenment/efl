@@ -134,7 +134,7 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
    Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    edje_object_signal_emit(wd->resize_obj, buf, "elm");
 
-   /* themes might need imediate action here */
+   /* themes might need immediate action here */
    edje_object_message_signal_process(wd->resize_obj);
 }
 
@@ -166,7 +166,7 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
 
    edje_object_signal_emit(wd->resize_obj, buf, "elm");
 
-   /* themes might need imediate action here */
+   /* themes might need immediate action here */
    edje_object_message_signal_process(wd->resize_obj);
 }
 
