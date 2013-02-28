@@ -1269,7 +1269,7 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
      {
 	rp = _edje_real_part_get(data->ed, pr->filter.part ? pr->filter.part : data->source);
 	if (rp)
-          exec = (rp->chosen_description->state.name == pr->filter.state);
+          exec = !strcmp(rp->chosen_description->state.name, pr->filter.state);
      }
 
    pr->exec = exec;

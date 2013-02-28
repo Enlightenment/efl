@@ -1,6 +1,7 @@
 2013-02-28  Mike Blumenkrantz
 
     * fix custom states for edje SPACER parts    
+    * fix edje program filters
 
 2013-02-28  Cedric Bail
 
