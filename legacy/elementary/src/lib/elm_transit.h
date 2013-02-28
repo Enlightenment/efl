@@ -460,7 +460,7 @@ EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transi
  * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Start slow, speed up then slow down
  * at end, v1 being a power factor, 0.0 being linear, 1.0 being
  * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL default, 2.0 being much more pronounced
- * sinusoidal(squared), 3.0 being cubed, etc. 
+ * sinusoidal(squared), 3.0 being cubed, etc.
  * ELM_TRANSIT_TWEEN_MODE_DECELERATE - Start fast then slow down, v1 being a
  * power factor, 0.0 being linear, 1.0 being ELM_TRANSIT_TWEEN_MODE_DECELERATE
  * default, 2.0 being much more pronounced decelerate (squared), 3.0 being
@@ -658,7 +658,7 @@ EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bo
  *
  * @see elm_transit_smooth_set()
  * @since 1.8
- * 
+ *
  */
 Eina_Bool                   elm_transit_smooth_get(const Elm_Transit *transit);
 
