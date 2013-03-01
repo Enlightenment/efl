@@ -57,6 +57,7 @@ syn keyword	edcConstant	ACCEL_FAC DECEL_FAC SIN_FAC DIVISOR_INTERP
 syn keyword	edcConstant	ACCELERATE_FACTOR DECELERATE_FACTOR
 syn keyword	edcConstant	VERTICAL HORIZONTAL BOTH BOX TABLE
 syn keyword	edcConstant	EDITABLE PASSWORD "default"
+syn keyword edcConstant SOLID
 
 syn keyword	edcTodo		contained TODO FIXME XXX
 
