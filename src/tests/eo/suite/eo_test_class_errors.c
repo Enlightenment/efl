@@ -8,6 +8,9 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 
+/* The Max level to consider when working with the print cb. */
+#define _EINA_LOG_MAX 2
+
 struct log_ctx {
    const char *msg;
    const char *fnc;
@@ -21,6 +24,9 @@ static void
 _eo_test_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
 {
    struct log_ctx *myctx = data;
+
+   if (level > _EINA_LOG_MAX)
+      return;
 
    ck_assert_int_eq(level, myctx->expected_level);
    if (myctx->msg)
@@ -43,6 +49,9 @@ _eo_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const c
    struct log_ctx *myctx = data;
    va_list cp_args;
    const char *str;
+
+   if (level > _EINA_LOG_MAX)
+      return;
 
    va_copy(cp_args, args);
    str = va_arg(cp_args, const char *);
