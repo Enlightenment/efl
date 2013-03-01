@@ -16,7 +16,7 @@
 
 #define RED_MASK 0x00ff0000
 #define GREEN_MASK 0x0000ff00
-#define BLUE_MASK 0xff000000
+#define BLUE_MASK 0x000000ff
 
 /* local function prototypes */
 
@@ -153,7 +153,7 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
           {
              void *data;
 
-             data = evas_swapper_buffer_map(ob->priv.swapper);
+             data = evas_swapper_buffer_map(ob->priv.swapper, NULL, NULL);
 
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
@@ -242,10 +242,12 @@ void
 evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h)
 {
    Gfx_Func_Convert func = NULL;
-   Eina_Rectangle rect = {0, 0, 0, 0};
+   Eina_Rectangle rect = {0, 0, 0, 0}, pr;
    DATA32 *src;
    DATA8 *dst;
    int depth = 32, bpp = 0, bpl = 0, wid = 0;
+   int ww = 0, hh = 0;
+   int rx = 0, ry = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -310,18 +312,54 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    /* check for valid update image data */
    if (!(src = update->image.data)) return;
 
-   /* check for valid desination data */
-   if (!(dst = evas_swapper_buffer_map(ob->priv.swapper))) return;
 
    bpp = depth / 8;
    if (bpp <= 0) return;
 
-   bpl = (ob->w * sizeof(int));
+   /* check for valid desination data */
+   if (!(dst = evas_swapper_buffer_map(ob->priv.swapper, &ww, &hh))) return;
+
+   bpl = (ww * sizeof(int));
+
+   if (ob->rotation == 0)
+     {
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 0, 0, ww, hh);
+        dst += (bpl * rect.y) + (rect.x + bpp);
+        w -= rx;
+     }
+   else if (ob->rotation == 180)
+     {
+        pr = rect;
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 0, 0, ww, hh);
+        rx = pr.w - rect.w;
+        ry = pr.h - rect.h;
+        src += (update->cache_entry.w * ry) + rx;
+        w -= rx;
+     }
+   else if (ob->rotation == 90)
+     {
+        pr = rect;
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 0, 0, ww, hh);
+        rx = pr.w - rect.w; ry = pr.h - rect.h;
+        src += ry;
+        w -= ry;
+     }
+   else if (ob->rotation == 270)
+     {
+        pr = rect;
+        RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 0, 0, ww, hh);
+        rx = pr.w - rect.w; ry = pr.h - rect.h;
+        src += (update->cache_entry.w * rx);
+        w -= ry;
+     }
+
+   if ((rect.w <= 0) || (rect.h <= 0)) return;
+
    wid = bpl / bpp;
 
    dst += (bpl * rect.y) + (rect.x * bpp);
 
-   func(src, dst, (update->cache_entry.w - w), (wid - rect.w), 
+   func(src, dst, (update->cache_entry.w - w), (wid - rect.w),
         rect.w, rect.h, x, y, NULL);
 }
 

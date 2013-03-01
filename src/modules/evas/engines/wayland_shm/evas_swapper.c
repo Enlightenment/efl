@@ -204,7 +204,7 @@ evas_swapper_free(Wl_Swapper *ws)
 }
 
 void *
-evas_swapper_buffer_map(Wl_Swapper *ws)
+evas_swapper_buffer_map(Wl_Swapper *ws, int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -213,6 +213,8 @@ evas_swapper_buffer_map(Wl_Swapper *ws)
 
    /* set mapped property */
    ws->mapped = EINA_TRUE;
+   if (w) *w = ws->w;
+   if (h) *h = ws->h;
 
    /* return wl_buffer data */
    return ws->buff[ws->buff_cur].data;
