@@ -420,23 +420,13 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
    highlight = _access_highlight_object_get(obj);
    if (!highlight) return;
 
-   if (elm_widget_is(highlight))
-     {
-        _elm_access_read_mode_set(EINA_FALSE);
+   _elm_access_read_mode_set(EINA_FALSE);
 
-        if (!elm_object_focus_get(highlight))
-          elm_object_focus_set(highlight, EINA_TRUE);
+   if (!elm_object_focus_get(highlight))
+     elm_object_focus_set(highlight, EINA_TRUE);
 
-        elm_widget_activate(highlight, act);
-        return;
-     }
-
-   ac = evas_object_data_get(highlight, "_elm_access");
-   if (!ac) return;
-
-   if (ac->activate)
-     ac->activate(ac->activate_data, highlight,
-                  (Elm_Object_Item *)ac->widget_item);
+   elm_widget_activate(highlight, act);
+   return;
 }
 
 EAPI void
