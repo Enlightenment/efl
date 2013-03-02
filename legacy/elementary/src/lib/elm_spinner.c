@@ -159,7 +159,7 @@ _drag_cb(void *data,
          const char *emission __UNUSED__,
          const char *source __UNUSED__)
 {
-   double pos = 0.0, offset, delta;
+   double pos = 0.0, delta;
    Evas_Object *obj = data;
    Eina_Bool ret = EINA_FALSE;
 
@@ -170,8 +170,7 @@ _drag_cb(void *data,
    eo_do((Eo *)wd->resize_obj,
          edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL, &ret));
 
-   offset = sd->step * _elm_config->scale;
-   delta = pos * offset;
+   delta = pos * sd->step * _elm_config->scale;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (elm_widget_mirrored_get(obj)) delta *= -1;
    if (_value_set(data, sd->drag_start_val + delta)) _label_write(data);
