@@ -54,30 +54,45 @@ _orient_set_do(Evas_Object *obj)
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
-        elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj));
+        if (!elm_layout_theme_set
+              (obj, "panel", "top", elm_widget_style_get(obj)))
+          CRITICAL("Failed to set layout!");
         break;
 
       case ELM_PANEL_ORIENT_BOTTOM:
-        elm_layout_theme_set
-          (obj, "panel", "bottom", elm_widget_style_get(obj));
+        if (!elm_layout_theme_set
+              (obj, "panel", "bottom", elm_widget_style_get(obj)))
+          CRITICAL("Failed to set layout!");
         break;
 
       case ELM_PANEL_ORIENT_LEFT:
         if (!elm_widget_mirrored_get(obj))
-          elm_layout_theme_set
-            (obj, "panel", "left", elm_widget_style_get(obj));
+          {
+             if (!elm_layout_theme_set
+                   (obj, "panel", "left", elm_widget_style_get(obj)))
+               CRITICAL("Failed to set layout!");
+          }
         else
-          elm_layout_theme_set
-            (obj, "panel", "right", elm_widget_style_get(obj));
+          {
+             if (!elm_layout_theme_set
+                   (obj, "panel", "right", elm_widget_style_get(obj)))
+               CRITICAL("Failed to set layout!");
+          }
         break;
 
       case ELM_PANEL_ORIENT_RIGHT:
         if (!elm_widget_mirrored_get(obj))
-          elm_layout_theme_set
-            (obj, "panel", "right", elm_widget_style_get(obj));
+          {
+             if (!elm_layout_theme_set
+                   (obj, "panel", "right", elm_widget_style_get(obj)))
+               CRITICAL("Failed to set layout!");
+          }
         else
-          elm_layout_theme_set
-            (obj, "panel", "left", elm_widget_style_get(obj));
+          {
+             if (!elm_layout_theme_set
+                   (obj, "panel", "left", elm_widget_style_get(obj)))
+               CRITICAL("Failed to set layout!");
+          }
         break;
      }
 
@@ -86,7 +101,7 @@ _orient_set_do(Evas_Object *obj)
      {
         Evas_Object *ao;
         ao = _elm_access_edje_object_part_object_register
-               (obj, wd->resize_obj, "btn_icon");
+            (obj, wd->resize_obj, "btn_icon");
         _elm_access_text_set(_elm_access_object_get(ao),
                              ELM_ACCESS_TYPE, E_("panel button"));
         _elm_access_callback_set
@@ -322,7 +337,8 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    /* just to bootstrap and have theme hook to work */
-   elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    eo_do(obj, elm_wdg_theme(NULL));
 

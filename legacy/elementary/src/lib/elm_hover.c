@@ -537,7 +537,9 @@ _elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    for (i = 0; i < sizeof(priv->subs) / sizeof(priv->subs[0]); i++)
      priv->subs[i].swallow = _content_aliases[i].alias;
 
-   elm_layout_theme_set(obj, "hover", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "hover", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
+
    elm_layout_signal_callback_add
      (obj, "elm,action,dismiss", "", _hov_dismiss_cb, obj);
 

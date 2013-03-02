@@ -1008,7 +1008,9 @@ _elm_calendar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   elm_layout_theme_set(obj, "calendar", "base", elm_object_style_get(obj));
+   if (!elm_layout_theme_set(obj, "calendar", "base",
+                             elm_object_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    evas_object_smart_changed(obj);
 

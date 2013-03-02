@@ -49,7 +49,11 @@ test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(box);
 
    ly = elm_layout_add(win);
-   elm_layout_theme_set(ly, "layout", "application", "titlebar");
+
+   if (!elm_layout_theme_set(
+         ly, "layout", "application", "titlebar"))
+     fprintf(stderr, "Failed to set layout");
+
    elm_object_part_text_set(ly, "elm.text", "Some title");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -217,7 +221,11 @@ test_layout2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    /* Layout Box Test */
    api->box_layout = ly = elm_layout_add(win);
-   elm_layout_theme_set(ly, "layout", "application", "toolbar-vbox");
+
+   if (!elm_layout_theme_set(
+         ly, "layout", "application", "toolbar-vbox"))
+     fprintf(stderr, "Failed to set layout");
+
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, ly);
@@ -232,7 +240,11 @@ test_layout2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    /* Layout Table Test */
    api->table_layout = ly = elm_layout_add(win);
-   elm_layout_theme_set(ly, "layout", "application", "toolbar-table");
+
+   if (!elm_layout_theme_set(
+         ly, "layout", "application", "toolbar-table"))
+     fprintf(stderr, "Failed to set layout");
+
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, ly);

@@ -760,8 +760,9 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->expand = !!_elm_config->fileselector_expand_enable;
 
-   elm_layout_theme_set
-     (obj, "fileselector", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "fileselector", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    // up btn
    ic = elm_icon_add(obj);

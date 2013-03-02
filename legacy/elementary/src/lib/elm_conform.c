@@ -888,7 +888,9 @@ _elm_conformant_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNU
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   elm_layout_theme_set(obj, "conformant", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "conformant", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    _conformant_parts_swallow(obj);
 

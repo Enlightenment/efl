@@ -555,8 +555,9 @@ _elm_flipselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   elm_layout_theme_set
-     (obj, "flipselector", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "flipselector", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add
      (obj, "elm,action,up,start", "", _signal_val_up_start, obj);

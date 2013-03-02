@@ -2,7 +2,11 @@
 
 Evas_Object *layout = elm_layout_add(win);
 evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-elm_layout_theme_set(layout, "layout", "application", "toolbar-content-back-next");
+
+if (!elm_layout_theme_set
+    (layout, "layout", "application", "toolbar-content-back-next"))
+  fprintf(stderr, "Failed to set layout!");
+
 elm_win_resize_object_add(win, layout);
 evas_object_show(layout);
 

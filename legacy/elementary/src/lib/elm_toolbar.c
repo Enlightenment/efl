@@ -1015,8 +1015,9 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
      (obj, wd->resize_obj, "toolbar", "base",
      elm_widget_style_get(obj));
 
-   elm_layout_theme_set
-     (sd->more, "toolbar", "more", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
@@ -2329,7 +2330,9 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_show(priv->bx);
 
    priv->more = elm_layout_add(obj);
-   elm_layout_theme_set(priv->more, "toolbar", "more", "default");
+   if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
+     CRITICAL("Failed to set layout!");
+
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
 

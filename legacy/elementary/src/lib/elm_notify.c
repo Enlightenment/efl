@@ -86,7 +86,9 @@ _block_events_theme_apply(Evas_Object *obj)
 
    const char *style = elm_widget_style_get(obj);
 
-   elm_layout_theme_set(sd->block_events, "notify", "block_events", style);
+   if (!elm_layout_theme_set
+       (sd->block_events, "notify", "block_events", style))
+     CRITICAL("Failed to set layout!");
 }
 
 static void

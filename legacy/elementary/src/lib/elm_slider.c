@@ -757,8 +757,9 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->indicator_show = EINA_TRUE;
    priv->val_max = 1.0;
 
-   elm_layout_theme_set
-     (obj, "slider", "horizontal", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "slider", "horizontal", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add(obj, "drag", "*", _drag, obj);
    elm_layout_signal_callback_add(obj, "drag,start", "*", _drag_start, obj);

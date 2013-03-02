@@ -187,7 +187,9 @@ _elm_panes_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   elm_layout_theme_set(obj, "panes", "vertical", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "panes", "vertical", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    elm_panes_content_left_size_set(obj, 0.5);
 

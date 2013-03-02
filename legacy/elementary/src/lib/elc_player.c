@@ -510,7 +510,8 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Player_Smart_Data *priv = _pd;
 
-   elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    priv->forward = _player_button_add(obj, "media_player/forward", _forward);
    priv->info = _player_button_add(obj, "media_player/info", _info);

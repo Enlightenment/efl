@@ -58,8 +58,9 @@ elm_main(int argc, char **argv)
    layout = elm_layout_add(win);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, layout);
-   elm_layout_theme_set(
-       layout, "layout", "application", "content-back-next");
+   if (!elm_layout_theme_set(
+         layout, "layout", "application", "content-back-next"))
+     fprintf(stderr, "Failed to set layout");
    evas_object_show(layout);
 
    icon = elm_icon_add(win);

@@ -342,8 +342,9 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   elm_layout_theme_set
-     (obj, "fileselector_entry", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    priv->button = elm_fileselector_button_add(obj);
    elm_widget_mirrored_automatic_set(priv->button, EINA_FALSE);

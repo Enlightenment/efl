@@ -766,7 +766,9 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   elm_layout_theme_set(obj, "datetime", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "datetime", "base",
+                             elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    // module - initialise module for datetime
    if (!dt_mod) dt_mod = _dt_mod_init();

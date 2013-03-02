@@ -57,7 +57,11 @@ _emo_content_get(void *data, Evas_Object *obj, const char *part)
    if (strcmp(part, "elm.swallow.icon"))
      return NULL;
    o = elm_layout_add(obj);
-   elm_layout_theme_set(o, "entry/emoticon", data, "default");
+   if (!elm_layout_theme_set(o, "entry/emoticon", data, "default"))
+     {
+        fprintf(stderr, "Failed to set layout");
+        return NULL;
+     }
    return o;
 }
 
@@ -545,7 +549,11 @@ elm_main(int argc, char *argv[])
    evas_object_show(o);
 
    icon = elm_layout_add(win);
-   elm_layout_theme_set(icon, "entry", "emoticon/haha", "default");
+
+   if (!elm_layout_theme_set(
+         icon, "entry", "emoticon/haha", "default"))
+     fprintf(stderr, "Failed to set layout");
+
    elm_object_part_content_set(o, "icon", icon);
 
    evas_object_smart_callback_add(o, "clicked", _image_insert_cb, &app);

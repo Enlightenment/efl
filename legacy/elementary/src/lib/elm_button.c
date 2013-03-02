@@ -317,7 +317,8 @@ _elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 }
 
 static void

@@ -1518,26 +1518,31 @@ _overlay_default_layout_update(Overlay_Default *ovl)
    if (ovl->icon)
      {
         evas_object_color_set(ovl->layout, 255, 255, 255, 255);
-        elm_layout_theme_set
-          (ovl->layout, "map/marker", "empty",
-          elm_widget_style_get((ovl->wsd)->obj));
+        if (!elm_layout_theme_set
+            (ovl->layout, "map/marker", "empty",
+             elm_widget_style_get((ovl->wsd)->obj)))
+          CRITICAL("Failed to set layout!");
+
         elm_object_part_content_set(ovl->layout, "elm.icon", ovl->icon);
      }
    else if (!ovl->icon && ovl->clas_icon)
      {
         evas_object_color_set(ovl->layout, 255, 255, 255, 255);
-        elm_layout_theme_set
-          (ovl->layout, "map/marker", "empty",
-          elm_widget_style_get((ovl->wsd)->obj));
+        if (!elm_layout_theme_set
+            (ovl->layout, "map/marker", "empty",
+             elm_widget_style_get((ovl->wsd)->obj)))
+          CRITICAL("Failed to set layout!");
+
         elm_object_part_content_set(ovl->layout, "elm.icon", ovl->clas_icon);
      }
    else
      {
         evas_object_color_set
           (ovl->layout, ovl->c.r, ovl->c.g, ovl->c.b, ovl->c.a);
-        elm_layout_theme_set
-          (ovl->layout, "map/marker", "radio",
-          elm_widget_style_get((ovl->wsd)->obj));
+        if (!elm_layout_theme_set
+            (ovl->layout, "map/marker", "radio",
+             elm_widget_style_get((ovl->wsd)->obj)))
+          CRITICAL("Failed to set layout!");
      }
 }
 
@@ -1619,8 +1624,10 @@ _overlay_default_new(Elm_Map_Overlay *overlay,
    ovl->layout = elm_layout_add((ovl->wsd)->obj);
    evas_object_smart_member_add(ovl->layout, ovl->wsd->pan_obj);
    evas_object_stack_above(ovl->layout, ovl->wsd->sep_maps_overlays);
-   elm_layout_theme_set(ovl->layout, "map/marker", "radio",
-                        elm_widget_style_get((ovl->wsd)->obj));
+   if (!elm_layout_theme_set(ovl->layout, "map/marker", "radio",
+                             elm_widget_style_get((ovl->wsd)->obj)))
+     CRITICAL("Failed to set layout!");
+
    evas_object_event_callback_add(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN,
                                   _overlay_clicked_cb, overlay);
    ovl->lon = lon;
@@ -2310,8 +2317,10 @@ _overlay_circle_new(Elm_Map_Smart_Data *sd,
    ovl->obj = elm_layout_add(sd->obj);
    evas_object_smart_member_add(ovl->obj, sd->pan_obj);
    evas_object_stack_above(ovl->obj, sd->sep_maps_overlays);
-   elm_layout_theme_set(ovl->obj, "map/circle", "base",
-                        elm_widget_style_get(sd->obj));
+   if (!elm_layout_theme_set(ovl->obj, "map/circle", "base",
+                             elm_widget_style_get(sd->obj)))
+     CRITICAL("Failed to set layout!");
+
    _overlay_circle_color_update(ovl, c);
 
    return ovl;
@@ -2394,8 +2403,10 @@ _overlay_scale_new(Elm_Map_Smart_Data *sd,
    ovl->obj = elm_layout_add(sd->obj);
    evas_object_smart_member_add(ovl->obj, sd->pan_obj);
    evas_object_stack_above(ovl->obj, sd->sep_maps_overlays);
-   elm_layout_theme_set(ovl->obj, "map/scale", "base",
-                        elm_widget_style_get(sd->obj));
+   if (!elm_layout_theme_set(ovl->obj, "map/scale", "base",
+                             elm_widget_style_get(sd->obj)))
+     CRITICAL("Failed to set layout!");
+
    s = edje_object_data_get(elm_layout_edje_get(ovl->obj), "size_w");
 
    if (s) ovl->w = atoi(s);

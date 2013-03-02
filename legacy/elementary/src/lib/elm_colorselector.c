@@ -1093,8 +1093,10 @@ _elm_colorselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    EINA_LIST_FOREACH(sd->items, elist, item)
      {
-        elm_layout_theme_set
-          (VIEW(item), "colorselector", "item", elm_widget_style_get(obj));
+        if (!elm_layout_theme_set
+            (VIEW(item), "colorselector", "item", elm_widget_style_get(obj)))
+          CRITICAL("Failed to set layout!");
+
         elm_widget_theme_object_set
           (obj, item->color_obj, "colorselector", "item/color",
           elm_widget_style_get(obj));
@@ -1357,8 +1359,9 @@ _item_new(Evas_Object *obj)
    if (!item) return NULL;
 
    VIEW(item) = elm_layout_add(obj);
-   elm_layout_theme_set
-     (VIEW(item), "colorselector", "item", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (VIEW(item), "colorselector", "item", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1460,8 +1463,9 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, evas_obj_smart_add());
 
-   elm_layout_theme_set
-     (obj, "colorselector", "palette", elm_object_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "colorselector", "palette", elm_object_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    priv->palette_box = elm_box_add(obj);
    elm_box_layout_set

@@ -50,8 +50,9 @@ _elm_separator_smart_add(Eo *obj, void *_pd __UNUSED__,
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   elm_layout_theme_set
-     (obj, "separator", "vertical", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (obj, "separator", "vertical", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    elm_layout_sizing_eval(obj);
 }

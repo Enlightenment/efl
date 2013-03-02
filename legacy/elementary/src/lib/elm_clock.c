@@ -361,13 +361,25 @@ _time_update(Evas_Object *obj)
           }
 
         if ((sd->seconds) && (sd->am_pm))
-          elm_layout_theme_set(obj, "clock", "base-all", style);
+          {
+             if (!elm_layout_theme_set(obj, "clock", "base-all", style))
+               CRITICAL("Failed to set layout!");
+          }
         else if (sd->seconds)
-          elm_layout_theme_set(obj, "clock", "base-seconds", style);
+          {
+             if (!elm_layout_theme_set(obj, "clock", "base-seconds", style))
+               CRITICAL("Failed to set layout!");
+          }
         else if (sd->am_pm)
-          elm_layout_theme_set(obj, "clock", "base-am_pm", style);
+          {
+             if (!elm_layout_theme_set(obj, "clock", "base-am_pm", style))
+               CRITICAL("Failed to set layout!");
+          }
         else
-          elm_layout_theme_set(obj, "clock", "base", style);
+          {
+             if (!elm_layout_theme_set(obj, "clock", "base", style))
+               CRITICAL("Failed to set layout!");
+          }
 
         edje_object_scale_set
           (wd->resize_obj, elm_widget_scale_get(obj) *
@@ -446,8 +458,8 @@ _time_update(Evas_Object *obj)
              evas_object_show(sd->am_pm_obj);
           }
 
-       /* access */
-       if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+        /* access */
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
           _access_time_register(obj, EINA_TRUE);
 
         edje_object_size_min_calc(wd->resize_obj, &mw, &mh);

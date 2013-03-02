@@ -2781,7 +2781,8 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
 
-   elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);

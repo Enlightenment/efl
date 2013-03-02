@@ -630,7 +630,10 @@ _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->step = 1.0;
    priv->first_interval = 0.85;
 
-   elm_layout_theme_set(obj, "spinner", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "spinner", "base",
+                             elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
+
    elm_layout_signal_callback_add(obj, "drag", "*", _drag_cb, obj);
    elm_layout_signal_callback_add(obj, "drag,start", "*", _drag_start_cb, obj);
    elm_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop_cb, obj);
@@ -699,6 +702,8 @@ _elm_spinner_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int_ret = elm_layout_theme_set(obj, "spinner", "base",
                               elm_widget_style_get(obj));
    if (ret) *ret = int_ret;
+
+   if (!int_ret) CRITICAL("Failed to set layout!");
 
    if (_elm_config->access_mode)
      _access_spinner_register(obj, EINA_TRUE);

@@ -533,9 +533,13 @@ _elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
    eo_do_super(obj, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
-   elm_layout_theme_set
-     (wd->resize_obj, "thumb", "base",
-     elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(wd->resize_obj, "thumb", "base",
+                             elm_widget_style_get(obj)))
+     {
+        if (ret) *ret = EINA_FALSE;
+        CRITICAL("Failed to set layout!");
+        return;
+     }
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -567,9 +571,9 @@ _elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_resize_object_set(obj, elm_layout_add(obj));
 
-   elm_layout_theme_set
-     (wd->resize_obj, "thumb", "base",
-     elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(wd->resize_obj, "thumb", "base",
+                             elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    evas_object_event_callback_add

@@ -244,7 +244,9 @@ _elm_video_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->emotion = emotion_object_add(evas_object_evas_get(obj));
    emotion_object_init(priv->emotion, NULL);
 
-   elm_layout_theme_set(obj, "video", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "video", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
+
    elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
 
    evas_object_smart_callback_add

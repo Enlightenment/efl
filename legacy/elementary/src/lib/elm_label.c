@@ -405,7 +405,9 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
 
-   elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj)))
+     CRITICAL("Failed to set layout!");
+
    elm_layout_text_set(obj, NULL, "<br>");
    elm_layout_sizing_eval(obj);
 }
