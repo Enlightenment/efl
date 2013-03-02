@@ -161,13 +161,14 @@ _drag_cb(void *data,
 {
    double pos = 0.0, offset, delta;
    Evas_Object *obj = data;
+   Eina_Bool ret = EINA_FALSE;
 
    ELM_SPINNER_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->entry_visible) return;
-   edje_object_part_drag_value_get
-     (wd->resize_obj, "elm.dragable.slider", &pos, NULL);
+   eo_do((Eo *)wd->resize_obj,
+         edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL, &ret));
 
    offset = sd->step * _elm_config->scale;
    delta = pos * offset;
