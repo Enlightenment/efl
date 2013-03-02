@@ -174,7 +174,7 @@ _drag_cb(void *data,
    delta = pos * offset;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (elm_widget_mirrored_get(obj)) delta *= -1;
-   if (_value_set(data, sd->drag_start_pos + delta)) _label_write(data);
+   if (_value_set(data, sd->drag_start_val + delta)) _label_write(data);
    sd->dragging = 1;
 }
 
@@ -186,7 +186,7 @@ _drag_start_cb(void *data,
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->drag_start_pos = sd->val;
+   sd->drag_start_val = sd->val;
 }
 
 static void
@@ -198,7 +198,7 @@ _drag_stop_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
 
-   sd->drag_start_pos = 0;
+   sd->drag_start_val = 0;
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 }
