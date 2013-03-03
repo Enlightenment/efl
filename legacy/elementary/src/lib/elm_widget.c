@@ -4077,6 +4077,7 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!_elm_theme_object_set(obj, edj, wname, welement, wstyle))
      {
         if (ret) *ret = EINA_FALSE;
+        return;
      }
 
    if (sd->orient_mode != -1)
