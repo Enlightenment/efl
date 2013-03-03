@@ -4086,7 +4086,7 @@ _elm_widget_theme_object_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         eo_do(obj, elm_wdg_signal_emit(buf, "elm"));
      }
 
-   if (ret) *ret = EINA_FALSE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
