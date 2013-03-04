@@ -2708,7 +2708,7 @@ _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (!it) return;
 
    sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(it));
-   it->position = eina_inlist_count(sd->items);
+   it->position = sd->item_count;
    it->position_update = EINA_TRUE;
 
    if (it->group)
