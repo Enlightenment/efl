@@ -227,9 +227,9 @@ Eina_Cow *evas_object_image_state_cow = NULL;
     {                                                   \
        EINA_COW_STATE_WRITE_BEGIN(Obj, cur_write)                       \
          {                                                              \
-            EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->cur, Evas_Object_Image_State, prev_write) \
+            EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->prev, Evas_Object_Image_State, prev_write) \
               EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur_write, prev_write); \
-            EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, prev_write); \
+            EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->prev, prev_write); \
          }                                                              \
        EINA_COW_STATE_WRITE_END(Obj, cur_write);                        \
     }
