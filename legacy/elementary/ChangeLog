@@ -1084,3 +1084,7 @@
 2013-03-04  Jaeun Choi
 
         * Fix elm_index to send a signal to the selected item in smart theme.
+
+2013-03-04  WooHyun Jung
+
+        * Focus highlight should not be showed on (0, 0).

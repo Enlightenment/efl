@@ -165,6 +165,7 @@ Fixes:
    * Fix 1byte invalid read & do memset, rewind if needed.
    * Fix the standard of scrollbar-calculation from the scroller's x to pan's x.
    * Fix elm_index to send a signal to the selected item in smart theme.
+   * Focus highlight should not be shown on (0 ,0).
    
 Removals:
 

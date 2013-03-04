@@ -660,18 +660,18 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    evas_object_geometry_get(target, &tx, &ty, &tw, &th);
    evas_object_geometry_get(previous, &px, &py, &pw, &ph);
-   evas_object_move(obj, 0, 0);
+   evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
    evas_object_clip_unset(obj);
 
    m = alloca(sizeof(*m) + (sizeof(int) * 8));
    m->count = 8;
-   m->val[0] = px;
-   m->val[1] = py;
+   m->val[0] = px - tx;
+   m->val[1] = py - ty;
    m->val[2] = pw;
    m->val[3] = ph;
-   m->val[4] = tx;
-   m->val[5] = ty;
+   m->val[4] = 0;
+   m->val[5] = 0;
    m->val[6] = tw;
    m->val[7] = th;
    edje_object_message_send(obj, EDJE_MESSAGE_INT_SET, 1, m);
