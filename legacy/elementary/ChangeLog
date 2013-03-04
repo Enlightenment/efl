@@ -1081,6 +1081,10 @@
         * Fix the standard of scrollbar-calculation from the scroller's x to pan's x.
         The scrollbar have to sync with pan. if not, the scrollbar doesn't move even if the position of content moves.
 
+2013-03-02  Brian J. Lovin
+
+        * Fix initial value of the spinner on the first mouse move.
+
 2013-03-04  Jaeun Choi
 
         * Fix elm_index to send a signal to the selected item in smart theme.
@@ -1088,3 +1092,7 @@
 2013-03-04  WooHyun Jung
 
         * Focus highlight should not be showed on (0, 0).
+
+2013-03-04  Junki Cho
+
+        * Improved gengrid item append performance.

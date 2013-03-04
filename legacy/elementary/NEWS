@@ -76,6 +76,7 @@ Improvements:
    * Improve naviframe to not apply items' style multiple times when theme/styles are changed.
    * Don't handle the resize objects in widget infrastructure. Actually resize objects are sub objects so we don't need to care them separately. This causes overhead in some cases(ie, theme change..).
    * Improve support on 64bits system.
+   * Improve gengrid item append performance.
 
 Fixes:
 
@@ -164,6 +165,7 @@ Fixes:
    * Fix scroller acceleration bug. It was accelerated even it's scrolled after finishing the previous scroll. This happens with page scroll enabled.
    * Fix 1byte invalid read & do memset, rewind if needed.
    * Fix the standard of scrollbar-calculation from the scroller's x to pan's x.
+   * Fix initial value of the spinner on the first mouse move.
    * Fix elm_index to send a signal to the selected item in smart theme.
    * Focus highlight should not be shown on (0 ,0).
    
