@@ -316,6 +316,8 @@ static void
 _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Coord minw = 0, minh = 0;
+   Elm_Index_Item *it;
+
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
@@ -384,6 +386,15 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
         elm_layout_signal_emit(obj, "elm,state,active", "elm");
      }
    else elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
+
+   it = (Elm_Index_Item *)elm_index_selected_item_get(obj, sd->level);
+   if (it)
+     {
+        if (it->head)
+          edje_object_signal_emit(VIEW(it->head), "elm,state,active", "elm");
+        else
+          edje_object_signal_emit(VIEW(it), "elm,state,active", "elm");
+     }
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -863,21 +874,18 @@ _index_resize_cb(void *data,
 
    if (!sd->omit_enabled) return;
 
-   Eina_List *l;
    Elm_Index_Item *it;
 
    _index_box_clear(data, sd->bx[0], 0);
    _index_box_auto_fill(data, sd->bx[0], 0);
 
-   EINA_LIST_FOREACH(sd->items, l, it)
+   it = (Elm_Index_Item *)elm_index_selected_item_get(obj, sd->level);
+   if (it)
      {
-        if (it->selected)
-          {
-             if (it->head)
-               edje_object_signal_emit(VIEW(it->head), "elm,state,active", "elm");
-             else
-               edje_object_signal_emit(VIEW(it), "elm,state,active", "elm");
-          }
+        if (it->head)
+          edje_object_signal_emit(VIEW(it->head), "elm,state,active", "elm");
+        else
+          edje_object_signal_emit(VIEW(it), "elm,state,active", "elm");
      }
 }
 
