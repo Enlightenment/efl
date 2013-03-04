@@ -164,7 +164,6 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
    for (i = 0; i < num_of_extra_items; i++)
      omit_info[group_pos[i % max_group_num]]++;
 
-   g = 0;
    sum = 0;
    for (i = 0; i < max_num_of_items; i++)
      {
@@ -174,7 +173,6 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
              o->offset = sum;
              o->count = omit_info[i];
              sd->omit = eina_list_append(sd->omit, o);
-             g++;
           }
         sum += omit_info[i];
      }
