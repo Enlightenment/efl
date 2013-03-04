@@ -22,105 +22,6 @@ static void _surface_context_list_print(EVGL_Engine *ee);
 // Internal Resources:
 //  - Surface and Context used for internal buffer creation
 //---------------------------------------------------------------//
-static int
-_native_surface_pool_create(EVGL_Engine *ee)
-{
-   int i = 0;
-   int pool_num = 0;
-   char *s = NULL;
-   void *sfc = NULL, *win = NULL;
-
-   // Check if engine is valid
-   if (!ee)
-     {
-        ERR("EVGL Engine not initialized!");
-        return 0;
-     }
-
-   // Check for evn var. Otherwise default max is 8
-   s = getenv("EVAS_GL_CONTEXT_POOL_COUNT");
-   if (s) pool_num = atoi(s);
-   if (pool_num <= 0) pool_num = 8;
-   ee->pool_num = pool_num;
-
-   // Allocate surface pool
-   ee->surface_pool = calloc(1, sizeof(Native_Surface)*pool_num);
-
-   if (!ee->surface_pool)
-     {
-        ERR("Error allocating native surface pool.");
-        goto error;
-     }
-
-   for (i = 0; i < pool_num; ++i)
-     {
-        sfc = win = NULL;
-
-        win = ee->funcs->native_window_create(ee->engine_data);
-        if (!win)
-          {
-             ERR("Error creating native window");
-             goto error;
-          }
-
-        sfc = ee->funcs->surface_create(ee->engine_data, win);
-        if (!sfc)
-          {
-             ERR("Error creating native surface");
-             goto error;
-          }
-
-        ee->surface_pool[i].window  = win;
-        ee->surface_pool[i].surface = sfc;
-     }
-
-   return 1;
-
-error:
-   for (i = 0; i < ee->pool_num; ++i)
-     {
-        win = ee->surface_pool[i].window;
-        sfc = ee->surface_pool[i].surface;
-
-        if (win)
-           ee->funcs->native_window_destroy(ee->engine_data, win);
-        if (sfc)
-           ee->funcs->surface_destroy(ee->engine_data, sfc);
-     }
-   if (!ee->surface_pool) free(ee->surface_pool);
-
-   return 0;
-}
-
-static int
-_native_surface_pool_destroy(EVGL_Engine *ee)
-{
-   int i = 0;
-   void *sfc = NULL, *win = NULL;
-
-   // Check if engine is valid
-   if (!ee)
-     {
-        ERR("EVGL Engine not initialized!");
-        return 0;
-     }
-
-   for (i = 0; i < ee->pool_num; ++i)
-     {
-        win = ee->surface_pool[i].window;
-        sfc = ee->surface_pool[i].surface;
-
-        if (win)
-           ee->funcs->native_window_destroy(ee->engine_data, win);
-        if (sfc)
-           ee->funcs->surface_destroy(ee->engine_data, sfc);
-     }
-
-   if (!ee->surface_pool) free(ee->surface_pool);
-
-   return 1;
-}
-
 static void *
 _internal_resources_create(EVGL_Engine *ee)
 {
@@ -152,16 +53,21 @@ _internal_resources_create(EVGL_Engine *ee)
    if (rsc->id == ee->main_tid)
       rsc->surface = ee->funcs->evas_surface_get(ee->engine_data);
    else
-      if (rsc->id <= ee->pool_num)
-        {
-           rsc->surface = ee->surface_pool[rsc->id-1].surface;
-           ERR("Surface Pool[%d]: %p", (rsc->id-1), rsc->surface);
-        }
-      else
-        {
-           ERR("Too many threads using EvasGL.");
-           goto error;
-        }
+     {
+        rsc->window = ee->funcs->native_window_create(ee->engine_data);
+        if (!rsc->window)
+          {
+             ERR("Error creating native window");
+             goto error;
+          }
+
+        rsc->surface = ee->funcs->surface_create(ee->engine_data, rsc->window);
+        if (!rsc->surface)
+          {
+             ERR("Error creating native surface");
+             goto error;
+          }
+     }
 
    if (!rsc->surface)
      {
@@ -192,6 +98,9 @@ error:
    if (rsc->surface)
       if (rsc->id != ee->main_tid)    // 0 is the main thread
          ee->funcs->surface_destroy(ee->engine_data, rsc->surface);
+   if (rsc->window)
+      if (rsc->id != ee->main_tid)    // 0 is the main thread
+         ee->funcs->native_window_destroy(ee->engine_data, rsc->window);
 
    if (rsc) free(rsc);
 
@@ -218,6 +127,12 @@ _internal_resources_destroy(EVGL_Engine *ee)
         // Only delete contexts here.
         if (rsc->context)
            ee->funcs->context_destroy(ee->engine_data, rsc->context);
+        if (rsc->window)
+           if (rsc->id != ee->main_tid)    // 0 is the main thread
+              ee->funcs->native_window_destroy(ee->engine_data, rsc->window);
+        if (rsc->surface)
+           if (rsc->id != ee->main_tid)    // 0 is the main thread
+              ee->funcs->surface_destroy(ee->engine_data, rsc->surface);
         free(rsc);
      }
    eina_list_free(ee->resource_list);
@@ -1368,13 +1283,6 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
    evgl_engine->funcs       = efunc;
    evgl_engine->engine_data = engine_data;
 
-   // Create a surface pool
-   if (!_native_surface_pool_create(evgl_engine))
-     {
-        ERR("Error createing native surface pool");
-        goto error;
-     }
-
    // Initialize Resource TLS
    if (eina_tls_new(&evgl_engine->resource_key) == EINA_FALSE)
      {
@@ -1454,9 +1362,6 @@ int evgl_engine_destroy(EVGL_Engine *ee)
 
    // Destroy internal resources
    _internal_resources_destroy(ee);
-
-   // Destroy surface pool
-   _native_surface_pool_destroy(ee);
 
    // Destroy TLS
    if (ee->resource_key)

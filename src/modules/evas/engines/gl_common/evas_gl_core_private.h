@@ -204,18 +204,13 @@ struct _EVGL_Resource
 
    EVGLNative_Display   display;
    EVGLNative_Context   context;
+   EVGLNative_Window    window;
    EVGLNative_Surface   surface;
 
    EVGL_Context        *current_ctx;
 
    int                  direct_rendered;
    Evas_Object         *direct_img_obj;
-};
-
-struct _Native_Surface
-{
-   void  *surface;
-   void  *window;
 };
 
 struct _EVGL_Engine
@@ -235,9 +230,6 @@ struct _EVGL_Engine
    Eina_List         *resource_list;
    int                resource_count;
    int                main_tid;
-   int                pool_num;
-   Native_Surface    *surface_pool;
-
 
    int                direct_override;
    int                direct_mem_opt;
