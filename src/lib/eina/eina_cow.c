@@ -37,7 +37,7 @@
 
 #define EINA_COW_MAGIC 0xDEADBEEF
 
-// #define MOO // Define that one if you want magic debug for Eina_Cow_Ptr
+//#define MOO // Define that one if you want magic debug for Eina_Cow_Ptr
 #ifdef MOO
 # define EINA_COW_PTR_MAGIC 0xBEEFE00
 #endif
@@ -45,10 +45,19 @@
 typedef struct _Eina_Cow_Ptr Eina_Cow_Ptr;
 typedef struct _Eina_Cow_GC Eina_Cow_GC;
 
+#ifdef HAVE_BACKTRACE
+#define EINA_DEBUG_BT_NUM 64
+typedef void (*Eina_Bt_Func) ();
+#endif
+
 struct _Eina_Cow_Ptr
 {
 #ifdef MOO
    EINA_MAGIC;
+# ifdef HAVE_BACKTRACE
+   Eina_Bt_Func writer_bt[EINA_DEBUG_BT_NUM];
+   int  writer_bt_num;
+# endif
 #endif
    int refcount;
 
@@ -374,7 +383,7 @@ eina_cow_write(Eina_Cow *cow,
    ref = EINA_COW_PTR_GET(*data);
 
 #ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
    if (ref->refcount == 1)
      {
@@ -383,6 +392,10 @@ eina_cow_write(Eina_Cow *cow,
         if (ref->writing)
           {
              ERR("Request writing on an pointer that is already in a writing process %p\n", data);
+#if defined(MOO) && defined(HAVE_BACKTRACE)
+             backtrace_symbols_fd((void **) ref->writer_bt,
+                                  ref->writer_bt_num, 1);
+#endif
              return NULL;
           }
 
@@ -414,6 +427,10 @@ eina_cow_write(Eina_Cow *cow,
  end:
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+#endif
+#if defined(MOO) && defined(HAVE_BACKTRACE)
+   ref->writer_bt_num = backtrace((void **)(ref->writer_bt),
+                                  EINA_DEBUG_BT_NUM);
 #endif
    ref->writing = EINA_TRUE;
 #ifndef NVALGRIND
