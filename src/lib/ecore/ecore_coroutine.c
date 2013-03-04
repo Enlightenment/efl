@@ -117,8 +117,8 @@ _ecore_coroutine_setjmp(Ecore_Coroutine *coro)
    /* The idea of this trick come from libcoroutine */
    /* __jmpbuf[6] == stack pointer */
    /* __jmpbuf[7] == program counter */
-   self->env[0].__jmpbuf[6] = ((uintptr_t)(&coro->stack));
-   self->env[0].__jmpbuf[7] = ((uintptr_t)_ecore_coroutine_entry_point);
+   coro->context->env[0].__jmpbuf[6] = ((uintptr_t)(&coro->stack));
+   coro->context->env[0].__jmpbuf[7] = ((uintptr_t)_ecore_coroutine_entry_point);
 }
 # endif
 #endif
