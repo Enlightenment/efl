@@ -31,6 +31,7 @@
 #include "eina_inlist.h"
 #include "eina_log.h"
 #include "eina_lock.h"
+#include "eina_thread.h"
 
 #ifndef NVALGRIND
 # include <memcheck.h>
