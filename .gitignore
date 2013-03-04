@@ -179,6 +179,8 @@ Makefile.in
 /src/examples/ecore/ecore_evas_ews_example
 /src/examples/ecore/ecore_evas_object_example
 /src/examples/ecore/ecore_evas_window_sizes_example
+/src/examples/ecore/ecore_evas_extn_plug_example
+/src/examples/ecore/ecore_evas_extn_socket_example
 /src/examples/ecore/ecore_event_example_01
 /src/examples/ecore/ecore_event_example_02
 /src/examples/ecore/ecore_exe_example
