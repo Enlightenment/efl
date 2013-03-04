@@ -45,14 +45,14 @@ struct _Elm_Index_Item
 {
    ELM_WIDGET_ITEM;
 
-   const char   *letter;
-   int           level;
-   Evas_Smart_Cb func;
+   const char      *letter;
+   int              level;
+   Evas_Smart_Cb    func;
 
-   Eina_List    *omitted;
-   Elm_Index_Item       *head;
+   Eina_List       *omitted;
+   Elm_Index_Item  *head;
 
-   Eina_Bool     selected : 1;
+   Eina_Bool        selected : 1;
 };
 
 typedef struct _Elm_Index_Omit Elm_Index_Omit;

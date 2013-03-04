@@ -123,7 +123,7 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
    Eina_List *l;
 
    EINA_LIST_FREE(sd->omit, o)
-      free(o);
+     free(o);
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
@@ -989,7 +989,7 @@ _elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    EINA_LIST_FREE(sd->omit, o)
-      free(o);
+     free(o);
 
    if (sd->delay) ecore_timer_del(sd->delay);
 
