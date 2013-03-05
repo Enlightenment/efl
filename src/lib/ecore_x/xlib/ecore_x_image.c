@@ -176,6 +176,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    if (im->shminfo.shmid == -1)
      {
         XDestroyImage(im->xim);
+        im->xim = NULL;
         return;
      }
 
@@ -188,6 +189,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
         shmdt(im->shminfo.shmaddr);
         shmctl(im->shminfo.shmid, IPC_RMID, 0);
         XDestroyImage(im->xim);
+        im->xim = NULL;
         return;
      }
 

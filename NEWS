@@ -185,3 +185,4 @@ Fixes:
     * Evas cache: remove the freed worker from the pthread worker list when it's failed to create a new thread so as not to access it if a thread is working newly.
     * fix custom states for edje SPACER parts    
     * fix edje program filters
+    * fix dangling pointer problem related with shmget fail

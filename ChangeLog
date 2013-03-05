@@ -1,3 +1,7 @@
+2013-03-05  Jiyoun Park (Jypar)
+
+        * Ecore_x: Fix dangling pointer problem related with shmget fail
+
 2013-03-04  Sung W. Park (sung_)
 
         * Evas Evas_GL: removed resource surface/context pool in favor of
