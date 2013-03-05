@@ -774,11 +774,11 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
    Ecore_X_Virtual_Keyboard_State state =
       ecore_x_e_virtual_keyboard_state_get(ev->win);
 
-   DBG("[KEYPAD]:window's state pid=%d, win=0x%x, state=%d.", getpid(), ev->win, state);
+   DBG("[KEYPAD]:window's state win=0x%x, state=%d.", ev->win, state);
    if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN)
      {
         state = ecore_x_e_virtual_keyboard_state_get(zone);
-        DBG("[KEYPAD]:zone's state pid=%d, zone=0x%x, state=%d.", getpid(), zone, state);
+        DBG("[KEYPAD]:zone's state zone=0x%x, state=%d.", zone, state);
      }
 
    if (sd->vkb_state == state) return;
@@ -811,12 +811,12 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
    Ecore_X_Illume_Clipboard_State state =
       ecore_x_e_illume_clipboard_state_get(ev->win);
 
-   DBG("[CLIPBOARD]:window's state pid=%d, win=0x%x, state=%d.", getpid(), ev->win, state);
+   DBG("[CLIPBOARD]:window's state win=0x%x, state=%d.", ev->win, state);
 
    if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN)
      {
         state = ecore_x_e_illume_clipboard_state_get(ev->win);
-        DBG("[CLIPBOARD]:zone's state pid=%d, zone=0x%x, state=%d.", getpid(), zone, state);
+        DBG("[CLIPBOARD]:zone's state zone=0x%x, state=%d.", zone, state);
      }
 
    if (sd->clipboard_state == state) return;
