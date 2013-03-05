@@ -28,6 +28,8 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
 	if ((!strcasecmp(p, "eet")) || (!strcasecmp(p, "edj")) ||
             (!strcasecmp(p, "eap")))
           saver = "eet";
+	if (!strcasecmp(p, "webp"))
+          saver = "webp";
      }
 
    if (saver)

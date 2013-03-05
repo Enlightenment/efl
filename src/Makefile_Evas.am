@@ -1264,7 +1264,7 @@ endif
 
 if BUILD_LOADER_WEBP
 if EVAS_STATIC_BUILD_WEBP
-lib_evas_libevas_la_SOURCES += modules/evas/loaders/webp/evas_image_load_webp.c
+lib_evas_libevas_la_SOURCES += modules/evas/loaders/webp/evas_image_load_webp.c modules/evas/savers/webp/evas_image_save_webp.c
 lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_webp_cflags@
 lib_evas_libevas_la_LIBADD += @evas_image_loader_webp_libs@
 else
@@ -1281,6 +1281,20 @@ modules_evas_loaders_webp_module_la_LIBADD = \
 modules_evas_loaders_webp_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_loaders_webp_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_loaders_webp_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+saverwebppkgdir = $(libdir)/evas/modules/savers/webp/$(MODULE_ARCH)
+saverwebppkg_LTLIBRARIES = modules/evas/savers/webp/module.la
+modules_evas_savers_webp_module_la_SOURCES = modules/evas/savers/webp/evas_image_save_webp.c
+modules_evas_savers_webp_module_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_image_loader_webp_cflags@
+modules_evas_savers_webp_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_image_loader_webp_libs@
+modules_evas_savers_webp_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_savers_webp_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_savers_webp_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 

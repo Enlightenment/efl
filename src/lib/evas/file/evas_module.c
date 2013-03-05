@@ -133,6 +133,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, png);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, tiff);
+EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, webp);
 
 static const struct {
    Eina_Bool (*init)(void);
@@ -221,6 +222,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_TIFF
   EVAS_EINA_STATIC_MODULE_USE(image_saver, tiff),
+#endif
+#ifdef EVAS_STATIC_BUILD_WEBP
+  EVAS_EINA_STATIC_MODULE_USE(image_saver, webp),
 #endif
   { NULL, NULL }
 };
