@@ -159,7 +159,7 @@ typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
 static inline Eo_Dbg_Info *
 EO_DBG_INFO_LIST_APPEND(Eo_Dbg_Info *list, const char *name)
 {
-   Eo_Dbg_Info *tmp = calloc(1, sizeof(*tmp));
+   Eo_Dbg_Info *tmp = (Eo_Dbg_Info *)calloc(1, sizeof(*tmp));
    tmp->name = eina_stringshare_add(name);
    eina_value_list_setup(&(tmp->value), EO_DBG_INFO_TYPE);
    if (list)
