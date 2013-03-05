@@ -52,6 +52,7 @@ Additions:
      - Add window profile support.
     * ecore_getopt: add ECORE_GETOPT_ACTION_BREAK
     * evas:
+     - Add WebP image loader and saver modules.
      - Add ellipsis support in Evas_Object_Text.
      - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
      - Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory allocation policy for EvasGL direct rendering.

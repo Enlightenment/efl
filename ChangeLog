@@ -1,3 +1,7 @@
+2013-03-08  Igor Murzov
+
+        * Add WebP image saver.
+
 2013-03-07  Jiyoun Park (Jypark)
 
         * Ecore_x: Add manual render code before deiconify
@@ -603,4 +607,7 @@
         * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
         first item in the struct.
 
+2012-09-03  Igor Murzov
+
+        * Add WebP image loader.
 
