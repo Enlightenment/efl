@@ -333,10 +333,8 @@ _ecore_wl_cb_idle_enterer(void *data)
 
    ret = wl_display_flush(ewd->wl.display);
    if ((ret < 0) && (errno == EAGAIN))
-     {
-        ecore_main_fd_handler_active_set(ewd->fd_hdl, 
-                                         (ECORE_FD_READ | ECORE_FD_WRITE));
-     }
+     ecore_main_fd_handler_active_set(ewd->fd_hdl, 
+                                      (ECORE_FD_READ | ECORE_FD_WRITE));
    else if (ret < 0)
      {
       /* FIXME: need do error processing? */
