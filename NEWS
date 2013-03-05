@@ -68,6 +68,7 @@ Additions:
     * Add infrastructure to handle buggy touchscreen in Ecore_Input_Evas.
     * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
     * Edje textblock: Added support for size_range.
+	* Ecore_x: Add atom related with indicator type. 
 
 Deprecations:
     * ecore_x:

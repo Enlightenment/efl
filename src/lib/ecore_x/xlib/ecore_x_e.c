@@ -1840,6 +1840,74 @@ ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
 }
 
 static Ecore_X_Atom
+_ecore_x_e_indicator_type_atom_get(Ecore_X_Illume_Indicator_Type_Mode mode)
+{
+   switch (mode)
+     {
+      case ECORE_X_ILLUME_INDICATOR_TYPE_1:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_1;
+
+      case ECORE_X_ILLUME_INDICATOR_TYPE_2:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_2;
+
+      default:
+        break;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Indicator_Type_Mode
+_ecore_x_e_indicator_type_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_1)
+     return ECORE_X_ILLUME_INDICATOR_TYPE_1;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_2)
+     return ECORE_X_ILLUME_INDICATOR_TYPE_2;
+
+   return ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN;
+}
+
+EAPI void
+ecore_x_e_illume_indicator_type_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Indicator_Type_Mode mode)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   atom = _ecore_x_e_indicator_type_atom_get(mode);
+   ecore_x_window_prop_atom_set(win,
+                                ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
+                                &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Indicator_Type_Mode
+ecore_x_e_illume_indicator_type_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_atom_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
+                                     &atom, 1))
+     return ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN;
+
+   return _ecore_x_e_indicator_type_get(atom);
+}
+
+EAPI void
+ecore_x_e_illume_indicator_type_send(Ecore_X_Window win,
+                                      Ecore_X_Illume_Indicator_Type_Mode mode)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send(win,
+                                 ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_MODE,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 _ecore_x_e_indicator_type_atom_get(mode),
+                                 0, 0, 0, 0);
+}
+
+static Ecore_X_Atom
 _ecore_x_e_illume_window_state_atom_get(Ecore_X_Illume_Window_State state)
 {
    switch (state)

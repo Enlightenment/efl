@@ -1,4 +1,9 @@
-2013-03-05  Jiyoun Park (Jypar)
+2013-03-05  Jiyoun Park (Jypark)
+
+        * Ecore_x: Add atom related with indicator type.
+		It can support several types of indicator
+
+2013-03-05  Jiyoun Park (Jypark)
 
         * Ecore_x: Fix dangling pointer problem related with shmget fail
 

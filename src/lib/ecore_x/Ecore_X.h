@@ -1266,6 +1266,13 @@ typedef enum _Ecore_X_Illume_Indicator_Opacity_Mode
    ECORE_X_ILLUME_INDICATOR_TRANSPARENT
 } Ecore_X_Illume_Indicator_Opacity_Mode;
 
+typedef enum _Ecore_X_Illume_Indicator_Type_Mode
+{
+   ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN = 0,
+   ECORE_X_ILLUME_INDICATOR_TYPE_1,
+   ECORE_X_ILLUME_INDICATOR_TYPE_2
+} Ecore_X_Illume_Indicator_Type_Mode; /**< @since 1.8 */
+
 typedef enum _Ecore_X_Illume_Window_State
 {
    ECORE_X_ILLUME_WINDOW_STATE_NORMAL = 0,
@@ -2537,10 +2544,12 @@ EAPI Ecore_X_Illume_Indicator_State        ecore_x_e_illume_indicator_state_get(
 EAPI void                                  ecore_x_e_illume_indicator_state_send(Ecore_X_Window win, Ecore_X_Illume_Indicator_State state);
 
 EAPI void                                  ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win, Ecore_X_Illume_Indicator_Opacity_Mode mode);
-
 EAPI Ecore_X_Illume_Indicator_Opacity_Mode ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win);
-
 EAPI void                                  ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win, Ecore_X_Illume_Indicator_Opacity_Mode mode);
+
+EAPI void                                  ecore_x_e_illume_indicator_type_set(Ecore_X_Window win, Ecore_X_Illume_Indicator_Type_Mode mode);  /**< @since 1.8 */
+EAPI Ecore_X_Illume_Indicator_Type_Mode    ecore_x_e_illume_indicator_type_get(Ecore_X_Window win);  /**< @since 1.8 */
+EAPI void                                  ecore_x_e_illume_indicator_type_send(Ecore_X_Window win, Ecore_X_Illume_Indicator_Type_Mode mode);  /**< @since 1.8 */
 
 EAPI void
 ecore_x_e_illume_window_state_set(Ecore_X_Window win,
