@@ -1096,3 +1096,7 @@
 2013-03-04  Junki Cho
 
         * Improved gengrid item append performance.
+
+2013-03-05 Jiyoun Park
+
+        * Fix elm_conform didn't set size hint when keypad on.

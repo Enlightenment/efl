@@ -772,13 +772,21 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
 
    Ecore_X_Window zone = ecore_x_e_illume_zone_get(ev->win);
    Ecore_X_Virtual_Keyboard_State state =
-      ecore_x_e_virtual_keyboard_state_get(zone);
+      ecore_x_e_virtual_keyboard_state_get(ev->win);
+
+   DBG("[KEYPAD]:window's state pid=%d, win=0x%x, state=%d.", getpid(), ev->win, state);
+   if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN)
+     {
+        state = ecore_x_e_virtual_keyboard_state_get(zone);
+        DBG("[KEYPAD]:zone's state pid=%d, zone=0x%x, state=%d.", getpid(), zone, state);
+     }
 
    if (sd->vkb_state == state) return;
    sd->vkb_state = state;
 
    if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
      {
+        DBG("[KEYPAD]:ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF");
         evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
         evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
@@ -786,6 +794,8 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
      }
    else if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
      {
+        DBG("[KEYPAD]:ECORE_X_VIRTUAL_KEYBOARD_STATE_ON");
+        _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
         evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_ON, NULL);
@@ -799,7 +809,15 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
 
    Ecore_X_Window zone = ecore_x_e_illume_zone_get(ev->win);
    Ecore_X_Illume_Clipboard_State state =
-      ecore_x_e_illume_clipboard_state_get(zone);
+      ecore_x_e_illume_clipboard_state_get(ev->win);
+
+   DBG("[CLIPBOARD]:window's state pid=%d, win=0x%x, state=%d.", getpid(), ev->win, state);
+
+   if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN)
+     {
+        state = ecore_x_e_illume_clipboard_state_get(ev->win);
+        DBG("[CLIPBOARD]:zone's state pid=%d, zone=0x%x, state=%d.", getpid(), zone, state);
+     }
 
    if (sd->clipboard_state == state) return;
    sd->clipboard_state = state;
@@ -834,7 +852,6 @@ _on_prop_change(void *data,
 
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
-
 		DBG("pid=%d, win=0x%x, ECORE_X_ATOM_E_ILLUME_ZONE.\n", pid, ev->win);
         Conformant_Part_Type part_type;
 
