@@ -138,8 +138,6 @@ ecore_wl_init(const char *name)
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
-   wl_display_dispatch(_ecore_wl_disp->wl.display);
-
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
         ERR("Could not initialize XKB");
