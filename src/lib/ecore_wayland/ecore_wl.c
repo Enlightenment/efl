@@ -122,8 +122,7 @@ ecore_wl_init(const char *name)
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
    _ecore_wl_disp->fd_hdl =
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd,
-                               ECORE_FD_READ,
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd, ECORE_FD_READ,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
