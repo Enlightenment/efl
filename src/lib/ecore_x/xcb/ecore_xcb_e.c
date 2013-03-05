@@ -1132,7 +1132,7 @@ _ecore_xcb_e_clipboard_state_get(Ecore_X_Atom atom)
    if (atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_OFF)
      return ECORE_X_ILLUME_CLIPBOARD_STATE_OFF;
 
-   return ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN;
+   return ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN;
 }
 
 EAPI void
