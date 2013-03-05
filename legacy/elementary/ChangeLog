@@ -1100,3 +1100,8 @@
 2013-03-05 Jiyoun Park
 
         * Fix elm_conform didn't set size hint when keypad on.
+
+2013-03-05  Jaehwan Kim
+
+        * Add edje_object_message_signal_process before edje_object_size_min_restricted_calc.
+        If the min size is changed by edje signal in edc, the the function should be called before the calculation.

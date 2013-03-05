@@ -44,6 +44,7 @@ Additions:
    * Add the option about sending signals in content_pos_set.
    * Add omit feature to elm_index.
    * Add elm_transit_smooth_set(), elm_transit_smooth_get()
+   * Add edje_object_message_signal_process before edje_object_size_min_restricted_calc.
 
 Improvements:
 

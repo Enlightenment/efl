@@ -885,6 +885,9 @@ _item_theme_hook(Evas_Object *obj,
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 
+   // If the min size is changed by edje signal in edc,
+   //the below function should be called before the calculation.
+   edje_object_message_signal_process(view);
    edje_object_size_min_restricted_calc(view, &mw, &mh, mw, mh);
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
@@ -1050,6 +1053,9 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
      edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
 
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   // If the min size is changed by edje signal in edc,
+   //the below function should be called before the calculation.
+   edje_object_message_signal_process(VIEW(item));
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
@@ -1960,6 +1966,9 @@ _item_new(Evas_Object *obj,
    mw = mh = -1;
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   // If the min size is changed by edje signal in edc,
+   //the below function should be called before the calculation.
+   edje_object_message_signal_process(VIEW(it));
    edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
@@ -2015,6 +2024,9 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
        edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
    evas_object_hide(old_icon);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   // If the min size is changed by edje signal in edc,
+   //the below function should be called before the calculation.
+   edje_object_message_signal_process(VIEW(item));
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
