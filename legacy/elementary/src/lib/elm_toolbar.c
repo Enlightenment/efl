@@ -844,12 +844,12 @@ _item_theme_hook(Evas_Object *obj,
              evas_object_size_hint_max_set(it->icon, ms, ms);
              edje_object_part_swallow(view, "elm.swallow.icon", it->icon);
              edje_object_signal_emit
-               (VIEW(it), "elm,state,icon,visible", "elm");
+               (view, "elm,state,icon,visible", "elm");
           }
         if (it->label)
           {
              edje_object_part_text_escaped_set(view, "elm.text", it->label);
-             edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+             edje_object_signal_emit(view, "elm,state,text,visible", "elm");
           }
      }
    else
