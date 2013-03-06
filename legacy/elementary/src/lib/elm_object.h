@@ -341,7 +341,7 @@ EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission,
  * @param source The signal's source.
  * @param func The callback function to be executed when the signal is
  * emitted.
- * @param data A pointer to data to pass in to the callback function.
+ * @param data A pointer to data to pass to the callback function.
  * @ingroup General
  */
 EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
@@ -358,7 +358,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
  * errors.
  *
  * This function removes the @b last callback, previously attached to
- * a signal emitted by an undelying Edje object of @a obj, whose
+ * a signal emitted by an underlying Edje object of @a obj, whose
  * parameters @a emission, @a source and @c func match exactly with
  * those passed to a previous call to
  * elm_object_signal_callback_add(). The data pointer that was passed
