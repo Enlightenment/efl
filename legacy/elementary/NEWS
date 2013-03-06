@@ -45,6 +45,7 @@ Additions:
    * Add omit feature to elm_index.
    * Add elm_transit_smooth_set(), elm_transit_smooth_get()
    * Add edje_object_message_signal_process before edje_object_size_min_restricted_calc.
+   * Add elm_object_item_signal_callback_add(), elm_object_item_signal_callback_del().
 
 Improvements:
 

@@ -1110,3 +1110,7 @@
 
         * Fix elm_conform didn't change indicator mode when create.
 
+2013-03-06  ChunEon Park (Hermet)
+
+        * Add elm_object_item_signal_callback_add(), elm_object_item_signal_callback_del().
+

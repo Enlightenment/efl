@@ -1,4 +1,18 @@
 /**
+ * @typedef Elm_Object_Item_Signal_Cb
+ *
+ * Elm_Object_Item Signal Callback functions' prototype definition. @c data
+ * will have the auxiliary data pointer at the time the callback registration.
+ * @c it will be a pointer the Elm_Object_Item that have the edje object where
+ * the signal comes from. @c emission will identify the exact signal's emission
+ * string and @c source the exact signal's source one.
+ *
+ * @see elm_object_item_signal_callback_add()
+ * @since 1.8
+ */
+typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Object_Item *it, const char *emission, const char *source);
+
+/**
  * Get the widget object's handle which contains a given item
  *
  * @param it The Elementary object item
@@ -254,6 +268,50 @@ EAPI void                         elm_object_item_data_set(Elm_Object_Item *it, 
  * @ingroup General
  */
 EAPI void                         elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source);
+
+/**
+ * Add a callback for a signal emitted by object item edje.
+ *
+ * This function connects a callback function to a signal emitted by the
+ * edje object of the object item.
+ * Globs can occur in either the emission or source name.
+ *
+ * @param it The elementary object item
+ * @param emission The signal's name.
+ * @param source The signal's source.
+ * @param func The callback function to be executed when the signal is
+ * emitted.
+ * @param data A pointer to data to pass to the callback function.
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_signal_callback_add(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data);
+
+/**
+ * Remove a signal-triggered callback from a object item edje object.
+ *
+ * @param it The elementary object item
+ * @param emission The signal's name.
+ * @param source The signal's source.
+ * @param func The callback function to be executed when the signal is
+ * emitted.
+ * @return The data pointer of the signal callback or @c NULL, on
+ * errors.
+ *
+ * This function removes the @b last callback, previously attached to
+ * a signal emitted by an underlying Edje object of @a it, whose
+ * parameters @a emission, @a source and @c func match exactly with
+ * those passed to a previous call to
+ * elm_object_item_signal_callback_add(). The data pointer that was passed
+ * to this call will be returned.
+ *
+ * @see elm_object_item_signal_callback_add()
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void                        *elm_object_item_signal_callback_del(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func);
 
 /**
  * Set the disabled state of an widget item.

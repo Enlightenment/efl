@@ -4576,6 +4576,7 @@ EAPI void
 _elm_widget_item_free(Elm_Widget_Item *item)
 {
    Elm_Translate_String_Data *ts;
+   Elm_Widget_Item_Signal_Data *wisd;
 
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
@@ -4587,6 +4588,13 @@ _elm_widget_item_free(Elm_Widget_Item *item)
 
    if (item->access_info)
      eina_stringshare_del(item->access_info);
+
+   EINA_LIST_FREE (item->signals, wisd)
+     {
+        eina_stringshare_del(wisd->emission);
+        eina_stringshare_del(wisd->source);
+        free(wisd);
+     }
 
    EINA_LIST_FREE (item->translate_strings, ts)
      {
@@ -5281,6 +5289,89 @@ _elm_widget_item_signal_emit_hook_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->signal_emit_func = func;
+}
+
+
+static void
+_elm_widget_item_signal_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission,
+                           const char *source)
+{
+   Elm_Widget_Item_Signal_Data *wisd = data;
+   wisd->func(wisd->data, wisd->item, emission, source);
+}
+
+EAPI void
+_elm_widget_item_signal_callback_add(Elm_Widget_Item *item,
+                                     const char *emission,
+                                     const char *source,
+                                     Elm_Widget_Item_Signal_Cb func,
+                                     void *data)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   Elm_Widget_Item_Signal_Data *wisd;
+
+   wisd = malloc(sizeof(Elm_Widget_Item_Signal_Data));
+   if (!wisd) return;
+
+   wisd->item = item;
+   wisd->func = func;
+   wisd->data = data;
+   wisd->emission = eina_stringshare_add(emission);
+   wisd->source = eina_stringshare_add(source);
+
+   if (_elm_widget_is(item->view))
+     elm_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
+   else if (!strcmp(eo_class_name_get(eo_class_get(item->view)), "edje"))
+     edje_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
+   else
+     {
+        WRN("The %s widget item doesn't support signal callback add!",
+            eo_class_name_get(eo_class_get(item->widget)));
+        free(wisd);
+        return;
+     }
+
+   item->signals = eina_list_append(item->signals, wisd);
+}
+
+EAPI void *
+_elm_widget_item_signal_callback_del(Elm_Widget_Item *item,
+                                    const char *emission,
+                                    const char *source,
+                                    Elm_Widget_Item_Signal_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   Elm_Widget_Item_Signal_Data *wisd;
+   Eina_List *l;
+   void *data = NULL;
+
+   EINA_LIST_FOREACH(item->signals, l, wisd)
+     {
+        if ((wisd->func == func) && !strcmp(wisd->emission, emission) &&
+            !strcmp(wisd->source, source))
+          {
+             item->signals = eina_list_remove_list(item->signals, l);
+             eina_stringshare_del(wisd->emission);
+             eina_stringshare_del(wisd->source);
+             data = wisd->data;
+
+             if (_elm_widget_is(item->view))
+               elm_object_signal_callback_del(item->view, emission, source,
+                                              _elm_widget_item_signal_cb);
+             else if (!strcmp(eo_class_name_get(eo_class_get(item->view)),
+                              "edje"))
+               edje_object_signal_callback_del_full(item->view, emission,
+                                                    source,
+                                                    _elm_widget_item_signal_cb,
+                                                    data);
+          }
+     }
+
+   return data;
 }
 
 EAPI void

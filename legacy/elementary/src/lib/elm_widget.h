@@ -443,6 +443,7 @@ typedef struct _Elm_Cursor      Elm_Cursor;
 
 /**< base structure for all widget items that are not Elm_Widget themselves */
 typedef struct _Elm_Widget_Item Elm_Widget_Item;
+typedef struct _Elm_Widget_Item_Signal_Data Elm_Widget_Item_Signal_Data;
 
 /**< accessibility information to be able to set and get from the access API */
 typedef struct _Elm_Access_Info Elm_Access_Info;
@@ -458,6 +459,7 @@ typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, c
 typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
+typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item *item, const char *emission, const char *source);
 
 #define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
@@ -528,6 +530,15 @@ EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Di
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base
 
+struct _Elm_Widget_Item_Signal_Data
+{
+   Elm_Widget_Item *item;
+   Elm_Widget_Item_Signal_Cb func;
+   const char *emission;
+   const char *source;
+   void *data;
+};
+
 struct _Elm_Widget_Item
 {
 /* ef1 ~~ efl, el3 ~~ elm */
@@ -558,6 +569,7 @@ struct _Elm_Widget_Item
    const char                    *access_info;
    Eina_List                     *access_order;
    Eina_List                     *translate_strings;
+   Eina_List                     *signals;
 
    Eina_Bool                      disabled : 1;
 };
@@ -724,6 +736,9 @@ EAPI Evas_Object     *_elm_widget_item_part_content_get(const Elm_Widget_Item *i
 EAPI Evas_Object     *_elm_widget_item_part_content_unset(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_part_text_set(Elm_Widget_Item *item, const char *part, const char *label);
 EAPI const char      *_elm_widget_item_part_text_get(const Elm_Widget_Item *item, const char *part);
+
+EAPI void             _elm_widget_item_signal_callback_add(Elm_Widget_Item *item, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func, void *data);
+EAPI void            *_elm_widget_item_signal_callback_del(Elm_Widget_Item *it, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func);
 EAPI void             _elm_widget_item_signal_emit(Elm_Widget_Item *item, const char *emission, const char *source);
 EAPI void             _elm_widget_item_content_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Content_Set_Cb func);
 EAPI void             _elm_widget_item_content_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Content_Get_Cb func);

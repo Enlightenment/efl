@@ -1633,6 +1633,18 @@ elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const cha
    _elm_widget_item_signal_emit((Elm_Widget_Item *)it, emission, source);
 }
 
+EAPI void
+elm_object_item_signal_callback_add(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data)
+{
+   _elm_widget_item_signal_callback_add((Elm_Widget_Item *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func, data);
+}
+
+EAPI void *
+elm_object_item_signal_callback_del(Elm_Object_Item *it, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func)
+{
+   return _elm_widget_item_signal_callback_del((Elm_Widget_Item *)it, emission, source, (Elm_Widget_Item_Signal_Cb) func);
+}
+
 EAPI void elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {
    _elm_widget_item_disabled_set((Elm_Widget_Item *)it, disabled);
