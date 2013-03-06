@@ -3160,7 +3160,7 @@ fi
 
 AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
                [test "x${have_libmount_old}" = "xyes"])
-AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xno"])
+AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xyes"])
 
 ## modules
 if test "${want_tizen}"  = "yes"; then
