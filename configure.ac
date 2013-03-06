@@ -3134,18 +3134,33 @@ EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
    [EEZE_MOUNT], [mount >= 2.18.0])
 EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
 
+PKG_CHECK_EXISTS([mount < 2.19.0],
+	         [have_libmount_old="yes"],
+		 [have_libmount_old="no"])
+AC_MSG_CHECKING([Use old libmount API (before 2.19.0)])
+AC_MSG_RESULT([${have_libmount_old}])
+
+PKG_CHECK_EXISTS([mount == 2.19.0],
+	         [have_libmount_219="yes"],
+		 [have_libmount_219="no"])
+AC_MSG_CHECKING([Use libmount 2.19.0 API])
+AC_MSG_RESULT([${have_libmount_219}])
+
 PKG_CHECK_EXISTS([mount > 2.19.0],
 		 [have_libmount_new="yes"],
 		 [have_libmount_new="no"])
-AC_MSG_CHECKING([Use new libmount API (older that 2.19.0)])
+AC_MSG_CHECKING([Use new libmount API (older than 2.19.0)])
 AC_MSG_RESULT([${have_libmount_new}])
 
-AM_CONDITIONAL([EEZE_LIBMOUNT_NEW], [test "x${have_libmount_new}" = "xyes"])
-if test "x${have_libmount_new}" = "xno"; then
+AM_CONDITIONAL([EEZE_LIBMOUNT_AFTER_219],
+	       [test "x${have_libmount_new}" = "xyes"])
+if test "x${have_libmount_old}" = "xyes"; then
   AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
 fi
 
-AM_CONDITIONAL([EEZE_NOLIBMOUNT], [test "x${have_eeze_mount}" = "xno"])
+AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
+               [test "x${have_libmount_old}" = "xyes"])
+AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xno"])
 
 ## modules
 if test "${want_tizen}"  = "yes"; then
