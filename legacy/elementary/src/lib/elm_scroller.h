@@ -173,19 +173,6 @@ typedef enum
 EAPI Evas_Object                 *elm_scroller_add(Evas_Object *parent);
 
 /**
- * @brief Set custom theme elements for the scroller
- *
- * @param obj The scroller object
- * @param widget The widget name to use (default is "scroller")
- * @param base The base name to use (default is "base")
- *
- * @deprecated Use elm_layout_theme_set() instead.
- *
- * @ingroup Scroller
- */
-EINA_DEPRECATED EAPI void         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
-
-/**
  * @brief Make the scroller minimum size limited to the minimum size of the content
  *
  * @param obj The scroller object

@@ -533,3 +533,737 @@ EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas
  */
 EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
 
+/**
+ * Enable/disable horizontal and vertical bouncing effect.
+ *
+ * @param obj The genlist object
+ * @param h_bounce Allow bounce horizontally (@c EINA_TRUE = on, @c
+ * EINA_FALSE = off). Default is @c EINA_FALSE.
+ * @param v_bounce Allow bounce vertically (@c EINA_TRUE = on, @c
+ * EINA_FALSE = off). Default is @c EINA_TRUE.
+ *
+ * This will enable or disable the scroller bouncing effect for the
+ * genlist. See elm_scroller_bounce_set() for details.
+ *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @see elm_scroller_bounce_set()
+ * @see elm_genlist_bounce_get()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void          elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * Get whether the horizontal and vertical bouncing effect is enabled.
+ *
+ * @param obj The genlist object
+ * @param h_bounce Pointer to a bool to receive if the bounce horizontally
+ * option is set.
+ * @param v_bounce Pointer to a bool to receive if the bounce vertically
+ * option is set.
+ *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @see elm_scroller_bounce_get()
+ * @see elm_genlist_bounce_set()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+
+/**
+ * Set the scrollbar policy
+ *
+ * @param obj The genlist object
+ * @param policy_h Horizontal scrollbar policy.
+ * @param policy_v Vertical scrollbar policy.
+ *
+ * This sets the scrollbar visibility policy for the given genlist
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
+ * made visible if it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON
+ * turns it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ * Default is #ELM_SCROLLER_POLICY_AUTO
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @see elm_scroller_policy_set()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+
+/**
+ * Get the scrollbar policy
+ *
+ * @param obj The genlist object
+ * @param policy_h Pointer to store the horizontal scrollbar policy.
+ * @param policy_v Pointer to store the vertical scrollbar policy.
+ *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @see elm_scroller_policy_get()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+
+/**
+ * This sets the entry's scrollbar policy (i.e. enabling/disabling
+ * them).
+ *
+ * Setting an entry to single-line mode with elm_entry_single_line_set()
+ * will automatically disable the display of scrollbars when the entry
+ * moves inside its scroller.
+ *
+ * @param obj The entry object
+ * @param h The horizontal scrollbar policy to apply
+ * @param v The vertical scrollbar policy to apply
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @ingroup Entry
+ */
+EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
+
+/**
+ * This enables/disables bouncing within the entry.
+ *
+ * This function sets whether the entry will bounce when scrolling reaches
+ * the end of the contained entry.
+ *
+ * @param obj The entry object
+ * @param h_bounce The horizontal bounce state
+ * @param v_bounce The vertical bounce state
+ *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @ingroup Entry
+ */
+EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * Get the bounce mode
+ *
+ * @param obj The Entry object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @ingroup Entry
+ */
+EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+
+/**
+ * @brief Set the photocam scrolling bouncing.
+ *
+ * @param obj The photocam object
+ * @param h_bounce set this to @c EINA_TRUE for horizontal bouncing
+ * @param v_bounce set this to @c EINA_TRUE for vertical bouncing
+ *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @ingroup Photocam
+ */
+EINA_DEPRECATED EAPI void   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * @brief Get the photocam scrolling bouncing.
+ *
+ * @param obj The photocam object
+ * @param h_bounce horizontal bouncing
+ * @param v_bounce vertical bouncing
+ *
+ * @see elm_photocam_bounce_set()
+ *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @ingroup Photocam
+ */
+EINA_DEPRECATED EAPI void   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+
+/**
+ * Set bouncing behaviour when the scrolled content reaches an edge.
+ *
+ * Tell the internal scroller object whether it should bounce or not
+ * when it reaches the respective edges for each axis.
+ *
+ * @param obj The list object
+ * @param h_bounce Whether to bounce or not in the horizontal axis.
+ * @param v_bounce Whether to bounce or not in the vertical axis.
+ *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @see elm_scroller_bounce_set()
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * Get the bouncing behaviour of the internal scroller.
+ *
+ * Get whether the internal scroller should bounce when the edge of each
+ * axis is reached scrolling.
+ *
+ * @param obj The list object.
+ * @param h_bounce Pointer to store the bounce state of the horizontal
+ * axis.
+ * @param v_bounce Pointer to store the bounce state of the vertical
+ * axis.
+ *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @see elm_scroller_bounce_get()
+ * @see elm_list_bounce_set()
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+
+/**
+ * Set the scrollbar policy.
+ *
+ * @param obj The list object
+ * @param policy_h Horizontal scrollbar policy.
+ * @param policy_v Vertical scrollbar policy.
+ *
+ * This sets the scrollbar visibility policy for the given
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made
+ * visible if it is needed, and otherwise kept
+ * hidden. #ELM_SCROLLER_POLICY_ON turns it on all the time, and
+ * #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
+ * respectively for the horizontal and vertical scrollbars.
+ *
+ * The both are disabled by default, i.e., are set to
+ * #ELM_SCROLLER_POLICY_OFF.
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+
+/**
+ * Get the scrollbar policy.
+ *
+ * @see elm_list_scroller_policy_get() for details.
+ *
+ * @param obj The list object.
+ * @param policy_h Pointer to store horizontal scrollbar policy.
+ * @param policy_v Pointer to store vertical scrollbar policy.
+ *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+
+/**
+ * @brief Set custom theme elements for the scroller
+ *
+ * @param obj The scroller object
+ * @param widget The widget name to use (default is "scroller")
+ * @param base The base name to use (default is "base")
+ *
+ * @deprecated Use elm_layout_theme_set() instead.
+ *
+ * @ingroup Scroller
+ */
+EINA_DEPRECATED EAPI void         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
+
+/**
+ * Set bouncing behaviour when the scrolled content reaches an edge.
+ *
+ * Tell the internal scroller object whether it should bounce or not
+ * when it reaches the respective edges for each axis.
+ *
+ * @param obj The diskselector object.
+ * @param h_bounce Whether to bounce or not in the horizontal axis.
+ * @param v_bounce Whether to bounce or not in the vertical axis.
+ *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @see elm_scroller_bounce_set()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * Get the bouncing behaviour of the internal scroller.
+ *
+ * Get whether the internal scroller should bounce when the edge of each
+ * axis is reached scrolling.
+ *
+ * @param obj The diskselector object.
+ * @param h_bounce Pointer to store the bounce state of the horizontal
+ * axis.
+ * @param v_bounce Pointer to store the bounce state of the vertical
+ * axis.
+ *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @see elm_scroller_bounce_get()
+ * @see elm_diskselector_bounce_set()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+
+/**
+ * Get the scrollbar policy.
+ *
+ * @see elm_diskselector_scroller_policy_get() for details.
+ *
+ * @param obj The diskselector object.
+ * @param policy_h Pointer to store horizontal scrollbar policy.
+ * @param policy_v Pointer to store vertical scrollbar policy.
+ *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @see elm_scroller_policy_get()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+
+/**
+ * Set the scrollbar policy.
+ *
+ * @param obj The diskselector object.
+ * @param policy_h Horizontal scrollbar policy.
+ * @param policy_v Vertical scrollbar policy.
+ *
+ * This sets the scrollbar visibility policy for the given
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if
+ * it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
+ * it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ *
+ * The both are disabled by default, i.e., are set to #ELM_SCROLLER_POLICY_OFF.
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @see elm_scroller_policy_set()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+
+/**
+ * Set the file that will be used as icon.
+ *
+ * @param obj The icon object
+ * @param file The path to file that will be used as icon image
+ * @param group The group that the icon belongs to an edje file
+ *
+ * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+ *
+ * @note The icon image set by this function can be changed by
+ * elm_icon_standard_set().
+ *
+ * @see elm_icon_file_get()
+ *
+ * @deprecated Use elm_image_file_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+
+/**
+ * Set a location in memory to be used as an icon
+ *
+ * @param obj The icon object
+ * @param img The binary data that will be used as an image
+ * @param size The size of binary data @p img
+ * @param format Optional format of @p img to pass to the image loader
+ * @param key Optional key of @p img to pass to the image loader (eg. if @p img is an edje file)
+ *
+ * The @p format string should be something like "png", "jpg", "tga",
+ * "tiff", "bmp" etc. if it is provided (NULL if not). This improves
+ * the loader performance as it tries the "correct" loader first before
+ * trying a range of other possible loaders until one succeeds.
+ *
+ * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+ *
+ * @note The icon image set by this function can be changed by
+ * elm_icon_standard_set().
+ *
+ * @deprecated Use elm_image_memfile_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
+
+/**
+ * Get the file that will be used as icon.
+ *
+ * @param obj The icon object
+ * @param file The path to file that will be used as the icon image
+ * @param group The group that the icon belongs to, in edje file
+ *
+ * @see elm_image_file_set()
+ *
+ * @deprecated Use elm_image_file_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group);
+
+/**
+ * Set the smooth scaling for an icon object.
+ *
+ * @param obj The icon object
+ * @param smooth @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
+ * otherwise. Default is @c EINA_TRUE.
+ *
+ * Set the scaling algorithm to be used when scaling the icon image. Smooth
+ * scaling provides a better resulting image, but is slower.
+ *
+ * The smooth scaling should be disabled when making animations that change
+ * the icon size, since they will be faster. Animations that don't require
+ * resizing of the icon can keep the smooth scaling enabled (even if the icon
+ * is already scaled, since the scaled icon image will be cached).
+ *
+ * @see elm_icon_smooth_get()
+ *
+ * @deprecated Use elm_image_smooth_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+
+/**
+ * Get whether smooth scaling is enabled for an icon object.
+ *
+ * @param obj The icon object
+ * @return @c EINA_TRUE if smooth scaling is enabled, @c EINA_FALSE otherwise.
+ *
+ * @see elm_icon_smooth_set()
+ *
+ * @deprecated Use elm_image_smooth_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
+
+/**
+ * Disable scaling of this object.
+ *
+ * @param obj The icon object.
+ * @param no_scale @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
+ * otherwise. Default is @c EINA_FALSE.
+ *
+ * This function disables scaling of the icon object through the function
+ * elm_object_scale_set(). However, this does not affect the object
+ * size/resize in any way. For that effect, take a look at
+ * elm_icon_resizable_set().
+ *
+ * @see elm_icon_no_scale_get()
+ * @see elm_icon_resizable_set()
+ * @see elm_object_scale_set()
+ *
+ * @deprecated Use elm_image_no_scale_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+
+/**
+ * Get whether scaling is disabled on the object.
+ *
+ * @param obj The icon object
+ * @return @c EINA_TRUE if scaling is disabled, @c EINA_FALSE otherwise
+ *
+ * @see elm_icon_no_scale_set()
+ *
+ * @deprecated Use elm_image_no_scale_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
+
+/**
+ * Set if the object is (up/down) resizable.
+ *
+ * @param obj The icon object
+ * @param size_up A bool to set if the object is resizable up. Default is
+ * @c EINA_TRUE.
+ * @param size_down A bool to set if the object is resizable down. Default
+ * is @c EINA_TRUE.
+ *
+ * This function limits the icon object resize ability. If @p size_up is set to
+ * @c EINA_FALSE, the object can't have its height or width resized to a value
+ * higher than the original icon size. Same is valid for @p size_down.
+ *
+ * @see elm_icon_resizable_get()
+ *
+ * @deprecated Use elm_image_resizable_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
+
+/**
+ * Get if the object is (up/down) resizable.
+ *
+ * @param obj The icon object
+ * @param size_up A bool to set if the object is resizable up
+ * @param size_down A bool to set if the object is resizable down
+ *
+ * @see elm_icon_resizable_set()
+ *
+ * @deprecated Use elm_image_resizable_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down);
+
+/**
+ * Get the object's image size
+ *
+ * @param obj The icon object
+ * @param w A pointer to store the width in
+ * @param h A pointer to store the height in
+ *
+ * @deprecated Use elm_image_object_size_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_size_get(const Evas_Object *obj, int *w, int *h);
+
+/**
+ * Set if the icon fill the entire object area.
+ *
+ * @param obj The icon object
+ * @param fill_outside @c EINA_TRUE if the object is filled outside,
+ * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+ *
+ * When the icon object is resized to a different aspect ratio from the
+ * original icon image, the icon image will still keep its aspect. This flag
+ * tells how the image should fill the object's area. They are: keep the
+ * entire icon inside the limits of height and width of the object (@p
+ * fill_outside is @c EINA_FALSE) or let the extra width or height go outside
+ * of the object, and the icon will fill the entire object (@p fill_outside
+ * is @c EINA_TRUE).
+ *
+ * @note Unlike @ref Image, there's no option in icon to set the aspect ratio
+ * retain property to false. Thus, the icon image will always keep its
+ * original aspect ratio.
+ *
+ * @see elm_icon_fill_outside_get()
+ *
+ * @deprecated Use elm_image_fill_outside_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+
+/**
+ * Get if the object is filled outside.
+ *
+ * @param obj The icon object
+ * @return @c EINA_TRUE if the object is filled outside, @c EINA_FALSE
+ *         otherwise.
+ *
+ * @see elm_icon_fill_outside_set()
+ *
+ * @deprecated Use elm_image_fill_outside_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
+
+/**
+ * Set the prescale size for the icon.
+ *
+ * @param obj The icon object
+ * @param size The prescale size. This value is used for both width and
+ * height.
+ *
+ * This function sets a new size for pixmap representation of the given
+ * icon. It allows the icon to be loaded already in the specified size,
+ * reducing the memory usage and load time when loading a big icon with load
+ * size set to a smaller size.
+ *
+ * It's equivalent to the elm_bg_load_size_set() function for bg.
+ *
+ * @note this is just a hint, the real size of the pixmap may differ
+ * depending on the type of icon being loaded, being bigger than requested.
+ *
+ * @see elm_icon_prescale_get()
+ * @see elm_bg_load_size_set()
+ *
+ * @deprecated Use elm_image_prescale_set() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
+
+/**
+ * Get the prescale size for the icon.
+ *
+ * @param obj The icon object
+ * @return The prescale size
+ *
+ * @see elm_icon_prescale_set()
+ *
+ * @deprecated Use elm_image_prescale_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
+
+/**
+ * Gets the image object of the icon. DO NOT MODIFY THIS.
+ *
+ * @param obj The icon object
+ * @return The internal icon object
+ *
+ * @deprecated Use elm_image_object_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj);
+
+/**
+ * Enable or disable preloading of the icon
+ *
+ * @param obj The icon object
+ * @param disabled If EINA_TRUE, preloading will be disabled
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_preload_disabled_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * Get if the icon supports animation or not.
+ *
+ * @param obj The icon object
+ * @return @c EINA_TRUE if the icon supports animation,
+ *         @c EINA_FALSE otherwise.
+ *
+ * Return if this elm icon's image can be animated. Currently Evas only
+ * supports gif animation. If the return value is EINA_FALSE, other
+ * elm_icon_animated_xxx APIs won't work.
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_animated_available_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_available_get(const Evas_Object *obj);
+
+/**
+ * Set animation mode of the icon.
+ *
+ * @param obj The icon object
+ * @param animated @c EINA_TRUE if the object do animation job,
+ * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+ *
+ * Since the default animation mode is set to EINA_FALSE,
+ * the icon is shown without animation. Files like animated GIF files
+ * can animate, and this is supported if you enable animated support
+ * on the icon.
+ * Set it to EINA_TRUE when the icon needs to be animated.
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_animated_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void  elm_icon_animated_set(Evas_Object *obj, Eina_Bool animated);
+
+/**
+ * Get animation mode of the icon.
+ *
+ * @param obj The icon object
+ * @return The animation mode of the icon object
+ * @see elm_icon_animated_set
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_animated_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_get(const Evas_Object *obj);
+
+/**
+ * Set animation play mode of the icon.
+ *
+ * @param obj The icon object
+ * @param play @c EINA_TRUE the object play animation images,
+ * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+ *
+ * To play elm icon's animation, set play to EINA_TRUE.
+ * For example, you make gif player using this set/get API and click event.
+ * This literally lets you control current play or paused state. To have
+ * this work with animated GIF files for example, you first, before
+ * setting the file have to use elm_icon_animated_set() to enable animation
+ * at all on the icon.
+ *
+ * 1. Click event occurs
+ * 2. Check play flag using elm_icon_animated_play_get
+ * 3. If elm icon was playing, set play to EINA_FALSE.
+ *    Then animation will be stopped and vice versa
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_animated_play_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void  elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play);
+
+/**
+ * Get animation play mode of the icon.
+ *
+ * @param obj The icon object
+ * @return The play mode of the icon object
+ *
+ * @see elm_icon_animated_play_get
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_animated_play_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_play_get(const Evas_Object *obj);
+
+/**
+ * Set whether the original aspect ratio of the icon should be kept on resize.
+ *
+ * @param obj The icon object.
+ * @param fixed @c EINA_TRUE if the icon should retain the aspect,
+ * @c EINA_FALSE otherwise.
+ *
+ * The original aspect ratio (width / height) of the icon is usually
+ * distorted to match the object's size. Enabling this option will retain
+ * this original aspect, and the way that the icon is fit into the object's
+ * area depends on the option set by elm_icon_fill_outside_set().
+ *
+ * @see elm_icon_aspect_fixed_get()
+ * @see elm_icon_fill_outside_set()
+ *
+ * @ingroup Icon
+ *
+ * @deprecated Use elm_image_aspect_fixed_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void  elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+
+/**
+ * Get if the object retains the original aspect ratio.
+ *
+ * @param obj The icon object.
+ * @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
+ * otherwise.
+ *
+ * @deprecated Use elm_image_aspect_fixed_get() instead.
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_aspect_fixed_get(const Evas_Object *obj);
+
+//TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
+EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);
+EINA_DEPRECATED EAPI char *elm_access_external_info_get(const Evas_Object *obj);

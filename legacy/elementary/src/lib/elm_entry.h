@@ -1312,53 +1312,6 @@ EAPI void               elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool s
 EAPI void               elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting);
 
 /**
- * This sets the entry's scrollbar policy (i.e. enabling/disabling
- * them).
- *
- * Setting an entry to single-line mode with elm_entry_single_line_set()
- * will automatically disable the display of scrollbars when the entry
- * moves inside its scroller.
- *
- * @param obj The entry object
- * @param h The horizontal scrollbar policy to apply
- * @param v The vertical scrollbar policy to apply
- *
- * @deprecated Use elm_scroller_policy_set() instead.
- *
- * @ingroup Entry
- */
-EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
-
-/**
- * This enables/disables bouncing within the entry.
- *
- * This function sets whether the entry will bounce when scrolling reaches
- * the end of the contained entry.
- *
- * @param obj The entry object
- * @param h_bounce The horizontal bounce state
- * @param v_bounce The vertical bounce state
- *
- * @deprecated Use elm_scroller_bounce_set() instead.
- *
- * @ingroup Entry
- */
-EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-
-/**
- * Get the bounce mode
- *
- * @param obj The Entry object
- * @param h_bounce Allow bounce horizontally
- * @param v_bounce Allow bounce vertically
- *
- * @deprecated Use elm_scroller_bounce_get() instead.
- *
- * @ingroup Entry
- */
-EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-
-/**
  * Set the input panel layout of the entry
  *
  * @param obj The entry object

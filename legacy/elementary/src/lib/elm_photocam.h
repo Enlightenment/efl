@@ -488,34 +488,6 @@ EAPI Eina_Bool              elm_photocam_paused_get(const Evas_Object *obj);
 EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *obj);
 
 /**
- * @brief Set the photocam scrolling bouncing.
- *
- * @param obj The photocam object
- * @param h_bounce set this to @c EINA_TRUE for horizontal bouncing
- * @param v_bounce set this to @c EINA_TRUE for vertical bouncing
- *
- * @deprecated Use elm_scroller_bounce_set() instead.
- *
- * @ingroup Photocam
- */
-EINA_DEPRECATED EAPI void   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-
-/**
- * @brief Get the photocam scrolling bouncing.
- *
- * @param obj The photocam object
- * @param h_bounce horizontal bouncing
- * @param v_bounce vertical bouncing
- *
- * @see elm_photocam_bounce_set()
- *
- * @deprecated Use elm_scroller_bounce_get() instead.
- *
- * @ingroup Photocam
- */
-EINA_DEPRECATED EAPI void   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-
-/**
  * @brief Set the gesture state for photocam.
  *
  * @param obj The photocam object

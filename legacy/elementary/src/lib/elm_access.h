@@ -136,7 +136,3 @@ EAPI void elm_access_say(const char *text);
  * @ingroup Access
  */
 EAPI void elm_access_highlight_set(Evas_Object* obj);
-
-//TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
-EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);
-EINA_DEPRECATED EAPI char *elm_access_external_info_get(const Evas_Object *obj);

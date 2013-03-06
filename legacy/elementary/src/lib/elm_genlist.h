@@ -1072,45 +1072,6 @@ EAPI void                          elm_genlist_mode_set(Evas_Object *obj, Elm_Li
 EAPI Elm_List_Mode                 elm_genlist_mode_get(const Evas_Object *obj);
 
 /**
- * Enable/disable horizontal and vertical bouncing effect.
- *
- * @param obj The genlist object
- * @param h_bounce Allow bounce horizontally (@c EINA_TRUE = on, @c
- * EINA_FALSE = off). Default is @c EINA_FALSE.
- * @param v_bounce Allow bounce vertically (@c EINA_TRUE = on, @c
- * EINA_FALSE = off). Default is @c EINA_TRUE.
- *
- * This will enable or disable the scroller bouncing effect for the
- * genlist. See elm_scroller_bounce_set() for details.
- *
- * @deprecated Use elm_scroller_bounce_set() instead.
- *
- * @see elm_scroller_bounce_set()
- * @see elm_genlist_bounce_get()
- *
- * @ingroup Genlist
- */
-EINA_DEPRECATED EAPI void          elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-
-/**
- * Get whether the horizontal and vertical bouncing effect is enabled.
- *
- * @param obj The genlist object
- * @param h_bounce Pointer to a bool to receive if the bounce horizontally
- * option is set.
- * @param v_bounce Pointer to a bool to receive if the bounce vertically
- * option is set.
- *
- * @deprecated Use elm_scroller_bounce_get() instead.
- *
- * @see elm_scroller_bounce_get()
- * @see elm_genlist_bounce_set()
- *
- * @ingroup Genlist
- */
-EINA_DEPRECATED EAPI void          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-
-/**
  * Append a new item in a given genlist widget.
  *
  * @param obj The genlist object
@@ -1317,43 +1278,6 @@ EAPI Elm_Object_Item             *elm_genlist_first_item_get(const Evas_Object *
  * @ingroup Genlist
  */
 EAPI Elm_Object_Item             *elm_genlist_last_item_get(const Evas_Object *obj);
-
-/**
- * Set the scrollbar policy
- *
- * @param obj The genlist object
- * @param policy_h Horizontal scrollbar policy.
- * @param policy_v Vertical scrollbar policy.
- *
- * This sets the scrollbar visibility policy for the given genlist
- * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
- * made visible if it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON
- * turns it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
- * Default is #ELM_SCROLLER_POLICY_AUTO
- *
- * @deprecated Use elm_scroller_policy_set() instead.
- *
- * @see elm_scroller_policy_set()
- *
- * @ingroup Genlist
- */
-EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
-
-/**
- * Get the scrollbar policy
- *
- * @param obj The genlist object
- * @param policy_h Pointer to store the horizontal scrollbar policy.
- * @param policy_v Pointer to store the vertical scrollbar policy.
- *
- * @deprecated Use elm_scroller_policy_get() instead.
- *
- * @see elm_scroller_policy_get()
- *
- * @ingroup Genlist
- */
-EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Get the @b next item in a genlist widget's internal list of items,
