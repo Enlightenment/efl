@@ -9,15 +9,10 @@ installed_eezemainheadersdir = $(includedir)/eeze-@VMAJ@
 dist_installed_eezemainheaders_DATA = \
 lib/eeze/Eeze.h \
 lib/eeze/Eeze_Net.h \
-lib/eeze/Eeze_Sensor.h \
-lib/eeze/Eeze_Disk.h
+lib/eeze/Eeze_Sensor.h
 
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
-lib/eeze/eeze_disk.c \
-lib/eeze/eeze_disk_mount.c \
-lib/eeze/eeze_disk_private.h \
-lib/eeze/eeze_disk_udev.c \
 lib/eeze/eeze_main.c \
 lib/eeze/eeze_net.c \
 lib/eeze/eeze_net_private.h \
@@ -31,6 +26,8 @@ lib/eeze/eeze_udev_walk.c \
 lib/eeze/eeze_udev_watch.c
 
 if HAVE_EEZE_MOUNT
+lib_eeze_libeeze_la_SOURCES += eeze_disk.c eeze_disk_udev.c eeze_disk_mount.c eeze_disk_private.h
+dist_installed_eezemainheaders_DATA += lib/eeze/Eeze_Disk.h
 if EEZE_LIBMOUNT_BEFORE_219
 lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount_old.c
 else
