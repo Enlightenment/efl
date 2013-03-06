@@ -115,13 +115,6 @@ typedef enum
    ELM_OBJECT_SELECT_MODE_MAX
 } Elm_Object_Select_Mode;
 
-/**
- * @typedef Elm_Object_Item
- * An Elementary Object item handle.
- * @ingroup General
- */
-typedef struct _Elm_Object_Item Elm_Object_Item;
-
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 
 #ifndef ELM_LIB_QUICKLAUNCH

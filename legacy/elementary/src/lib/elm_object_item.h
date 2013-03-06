@@ -1,4 +1,11 @@
 /**
+ * @typedef Elm_Object_Item
+ * An Elementary Object item handle.
+ * @ingroup General
+ */
+typedef struct _Elm_Object_Item Elm_Object_Item;
+
+/**
  * @typedef Elm_Object_Item_Signal_Cb
  *
  * Elm_Object_Item Signal Callback functions' prototype definition. @c data
@@ -9,6 +16,8 @@
  *
  * @see elm_object_item_signal_callback_add()
  * @since 1.8
+ *
+ * @ingroup General
  */
 typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Object_Item *it, const char *emission, const char *source);
 

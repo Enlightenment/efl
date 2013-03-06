@@ -234,7 +234,7 @@ EAPI const char  *elm_object_style_get(const Evas_Object *obj);
  * This sets the state for the widget, either disabling it or
  * enabling it back.
  *
- * @ingroup Styles
+ * @ingroup General 
  */
 EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -247,7 +247,7 @@ EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * This gets the state of the widget, which might be enabled or disabled.
  *
- * @ingroup Styles
+ * @ingroup General
  */
 EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
