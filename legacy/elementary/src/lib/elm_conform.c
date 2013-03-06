@@ -538,14 +538,10 @@ _on_indicator_mode_changed(void *data,
 
    indmode = elm_win_indicator_mode_get(win);
    ind_o_mode = elm_win_indicator_opacity_get(win);
-   if (indmode == sd->indmode)
-     {
-        if (ind_o_mode == sd->ind_o_mode) return;
-        else _indicator_opacity_set(conformant, ind_o_mode);
-     }
-   else
+   if (indmode != sd->indmode)
      _indicator_mode_set(conformant, indmode);
-
+   if (ind_o_mode != sd->ind_o_mode)
+     _indicator_opacity_set(conformant, ind_o_mode);
 }
 
 static void
@@ -787,8 +783,7 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
    if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
      {
         DBG("[KEYPAD]:ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF");
-        evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
-        evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
+        _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
         evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_OFF, NULL);
      }

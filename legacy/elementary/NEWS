@@ -170,6 +170,7 @@ Fixes:
    * Fix elm_index to send a signal to the selected item in smart theme.
    * Focus highlight should not be shown on (0 ,0).
    * Fix elm_conform didn't set size hint when keypad on.
+   * Fix elm_conform didn't change indicator mode when create.
    
 Removals:
 
