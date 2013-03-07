@@ -4,6 +4,7 @@ group "Elm_Config" struct {
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 1;
   value "thumbscroll_threshold" int: 24;
+  value "thumbscroll_hold_threshold" int: 24;
   value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_friction" double: 1.0;
   value "thumbscroll_bounce_friction" double: 0.5;

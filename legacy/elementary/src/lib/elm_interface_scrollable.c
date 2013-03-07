@@ -2804,9 +2804,9 @@ _elm_scroll_on_hold_animator(void *data)
      {
         td = t - sid->down.onhold_tlast;
         vx = sid->down.onhold_vx * td *
-          (double)_elm_config->thumbscroll_threshold * 2.0;
+          (double)_elm_config->thumbscroll_hold_threshold * 2.0;
         vy = sid->down.onhold_vy * td *
-          (double)_elm_config->thumbscroll_threshold * 2.0;
+          (double)_elm_config->thumbscroll_hold_threshold * 2.0;
         eo_do(sid->obj, elm_scrollable_interface_content_pos_get(&ox, &oy));
         x = ox;
         y = oy;
@@ -3045,37 +3045,37 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
                   x = ev->cur.canvas.x - sid->x;
                   y = ev->cur.canvas.y - sid->y;
-                  if (x < _elm_config->thumbscroll_threshold)
+                  if (x < _elm_config->thumbscroll_hold_threshold)
                     {
-                       if (_elm_config->thumbscroll_threshold > 0.0)
-                         vx = -(double)(_elm_config->thumbscroll_threshold - x)
-                           / _elm_config->thumbscroll_threshold;
+                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                         vx = -(double)(_elm_config->thumbscroll_hold_threshold - x)
+                           / _elm_config->thumbscroll_hold_threshold;
                        else
                          vx = -1.0;
                     }
-                  else if (x > (sid->w - _elm_config->thumbscroll_threshold))
+                  else if (x > (sid->w - _elm_config->thumbscroll_hold_threshold))
                     {
-                       if (_elm_config->thumbscroll_threshold > 0.0)
-                         vx = (double)(_elm_config->thumbscroll_threshold -
+                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                         vx = (double)(_elm_config->thumbscroll_hold_threshold -
                                        (sid->w - x)) /
-                           _elm_config->thumbscroll_threshold;
+                           _elm_config->thumbscroll_hold_threshold;
                        else
                          vx = 1.0;
                     }
-                  if (y < _elm_config->thumbscroll_threshold)
+                  if (y < _elm_config->thumbscroll_hold_threshold)
                     {
-                       if (_elm_config->thumbscroll_threshold > 0.0)
-                         vy = -(double)(_elm_config->thumbscroll_threshold - y)
-                           / _elm_config->thumbscroll_threshold;
+                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                         vy = -(double)(_elm_config->thumbscroll_hold_threshold - y)
+                           / _elm_config->thumbscroll_hold_threshold;
                        else
                          vy = -1.0;
                     }
-                  else if (y > (sid->h - _elm_config->thumbscroll_threshold))
+                  else if (y > (sid->h - _elm_config->thumbscroll_hold_threshold))
                     {
-                       if (_elm_config->thumbscroll_threshold > 0.0)
-                         vy = (double)(_elm_config->thumbscroll_threshold -
+                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                         vy = (double)(_elm_config->thumbscroll_hold_threshold -
                                        (sid->h - y)) /
-                           _elm_config->thumbscroll_threshold;
+                           _elm_config->thumbscroll_hold_threshold;
                        else
                          vy = 1.0;
                     }

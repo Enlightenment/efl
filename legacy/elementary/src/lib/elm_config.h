@@ -306,6 +306,27 @@ EAPI unsigned int elm_config_scroll_thumbscroll_threshold_get(void);
 EAPI void         elm_config_scroll_thumbscroll_threshold_set(unsigned int threshold);
 
 /**
+ * Get the number of pixels the range which can be scrolled,
+ * while the scroller is holded.
+ *
+ * @return the thumb scroll hold threshold
+ *
+ * @ingroup Scrolling
+ */
+EAPI unsigned int elm_config_scroll_thumbscroll_hold_threshold_get(void);
+
+/**
+ * Set the number of pixels the range which can be scrolled,
+ * while the scroller is holded.
+ *
+ * @param threshold the thumb scroll hold threshold
+ *
+ * @see elm_config_thumbscroll_hold_threshold_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_hold_threshold_set(unsigned int threshold);
+
+/**
  * Get the minimum speed of mouse cursor movement which will trigger
  * list self scrolling animation after a mouse up event
  * (pixels/second).

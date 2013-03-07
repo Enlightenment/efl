@@ -1114,3 +1114,7 @@
 
         * Add elm_object_item_signal_callback_add(), elm_object_item_signal_callback_del().
 
+2013-03-07  Jaehwan Kim
+
+        * Add the config ELM_THUMBSCROLL_HOLD_THRESHOLD.
+        This is the number of pixels the range which can be scrolled, while the scroller is holed.
