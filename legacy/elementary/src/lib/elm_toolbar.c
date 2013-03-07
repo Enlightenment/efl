@@ -1846,12 +1846,7 @@ _access_activate_cb(void *data __UNUSED__,
 
    if (elm_widget_item_disabled_get(it)) return;
 
-   if (it->selected)
-     {
-        _elm_access_say(E_("Unselected"));
-        _item_unselect(it);
-     }
-   else
+   if (!it->selected)
      {
         _elm_access_say(E_("Selected"));
         _item_select(it);
