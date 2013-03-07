@@ -300,4 +300,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY;
 /* for SDB(Samsung Debug Bridge) */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SDB_SERVER_CONNECT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SDB_SERVER_DISCONNECT;
+
+/* for deiconify approve protcol */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_DEICONIFY_APPROVE;
 #endif /* _ECORE_X_ATOMS_H */
