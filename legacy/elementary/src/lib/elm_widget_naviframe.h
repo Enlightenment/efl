@@ -44,7 +44,9 @@ struct _Elm_Naviframe_Item
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
    Ecore_Animator *animator;
-   Evas_Display_Mode     dispmode;
+   Evas_Display_Mode dispmode;
+   Elm_Naviframe_Item_Pop_Cb pop_cb;
+   void        *pop_data;
    const char  *style;
    const char  *title_label;
    const char  *subtitle_label;

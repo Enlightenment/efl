@@ -25,6 +25,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static const char SIG_CLICKED[] = "clicked";
+
 static void
 _item_content_del_cb(void *data,
                      Evas *e __UNUSED__,
@@ -840,7 +842,7 @@ _on_item_back_btn_clicked(void *data,
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   evas_object_smart_callback_del(obj, "clicked", _on_item_back_btn_clicked);
+   evas_object_smart_callback_del(obj, SIG_CLICKED, _on_item_back_btn_clicked);
    elm_naviframe_item_pop(data);
 }
 
@@ -854,7 +856,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 
    if (!btn) return NULL;
    evas_object_smart_callback_add
-     (btn, "clicked", _on_item_back_btn_clicked, obj);
+     (btn, SIG_CLICKED, _on_item_back_btn_clicked, obj);
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
@@ -1257,7 +1259,7 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_obj_size_hints_changed, obj);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
      ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
@@ -1309,6 +1311,31 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->on_deletion = EINA_FALSE;
 
    eo_do_super(obj, evas_obj_smart_del());
+}
+
+static void
+_elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *source = va_arg(*list, Evas_Object *);
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   Evas_Event_Key_Down *ev = va_arg(*list, Evas_Event_Key_Down *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Naviframe_Item *it;
+   (void) source;
+
+   if (ret) *ret = EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (strcmp(ev->keyname, "BackSpace")) return;
+
+   eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));
+   if (!it) return;
+
+   if (it->title_prev_btn)
+     evas_object_smart_callback_call(it->title_prev_btn, SIG_CLICKED, NULL);
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -1563,6 +1590,8 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
 
    it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!it) return;
+
+   if (it->pop_cb) it->pop_cb(it->pop_data, (Elm_Object_Item *)it);
 
    if (sd->preserve)
      content = it->content;
@@ -1860,6 +1889,17 @@ elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
 }
 
 EAPI void
+elm_naviframe_item_pop_cb_set(Elm_Object_Item *it, Elm_Naviframe_Item_Pop_Cb func, void *data)
+{
+   Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
+
+   ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it);
+
+   nit->pop_cb = func;
+   nit->pop_data = data;
+}
+
+EAPI void
 elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj,
                                        Eina_Bool auto_pushed)
 {
@@ -1973,6 +2013,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_naviframe_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_naviframe_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_naviframe_smart_access),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_naviframe_smart_event),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_naviframe_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_naviframe_smart_content_get),

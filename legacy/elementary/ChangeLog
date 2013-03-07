@@ -1118,3 +1118,7 @@
 
         * Add the config ELM_THUMBSCROLL_HOLD_THRESHOLD.
         This is the number of pixels the range which can be scrolled, while the scroller is holed.
+
+2013-03-07  ChunEon Park (Hermet)
+
+        * Add elm_naviframe_item_pop_cb_set().

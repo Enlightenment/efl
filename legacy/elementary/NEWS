@@ -47,6 +47,7 @@ Additions:
    * Add edje_object_message_signal_process before edje_object_size_min_restricted_calc.
    * Add elm_object_item_signal_callback_add(), elm_object_item_signal_callback_del().
    * Add the config ELM_THUMBSCROLL_HOLD_THRESHOLD.
+   * Add elm_naviframe_item_pop_cb_set().
 
 Improvements:
 
