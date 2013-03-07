@@ -833,6 +833,9 @@ _elm_win_focus_out(Ecore_Evas *ee)
         edje_object_signal_emit(sd->frame_obj, "elm,action,unfocus", "elm");
      }
 
+   /* access */
+   _elm_access_object_hilight_disable(evas_object_evas_get(obj));
+
    /* do nothing */
    /* if (sd->img_obj) */
    /*   { */
