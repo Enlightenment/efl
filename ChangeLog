@@ -1,3 +1,7 @@
+2013-03-07  Jiyoun Park (Jypark)
+
+        * Ecore_x: Add manual render code before deiconify
+
 2013-03-06  Jihoon Kim (jihoon)
 
         * Edje entry: fix bug scroll works when PgDn, PgUp, Home, End key in entry is pressed in preedit state
