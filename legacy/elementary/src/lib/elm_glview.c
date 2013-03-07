@@ -353,6 +353,7 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
 
    sd->mode = mode;
 
+   _glview_update_surface(obj);
    elm_glview_changed_set(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -423,7 +424,6 @@ _render_policy_set(Eo *obj, void *_pd, va_list *list)
 
    sd->render_policy = policy;
    _set_render_policy_callback(obj);
-   _glview_update_surface(obj);
 }
 
 EAPI void
@@ -446,8 +446,8 @@ _size_set(Eo *obj, void *_pd, va_list *list)
 
    sd->w = w;
    sd->h = h;
-   _glview_update_surface(obj);
 
+   _glview_update_surface(obj);
    elm_glview_changed_set(obj);
 }
 
