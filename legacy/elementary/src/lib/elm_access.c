@@ -959,7 +959,12 @@ elm_access_say(const char *text)
 EAPI void
 elm_access_highlight_set(Evas_Object* obj)
 {
+   Evas_Object *ho;
+
    if (!obj) return;
+
+   ho = _access_highlight_object_get(obj);
+   if (ho == obj) return;
 
    _access_obj_over_timeout_cb(obj);
 }
