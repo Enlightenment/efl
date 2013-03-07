@@ -1122,3 +1122,4 @@
 2013-03-07  ChunEon Park (Hermet)
 
         * Add elm_naviframe_item_pop_cb_set().
+        * Naviframe works for H/W backkey event.
