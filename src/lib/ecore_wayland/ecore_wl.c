@@ -122,8 +122,7 @@ ecore_wl_init(const char *name)
    _ecore_wl_disp->fd = wl_display_get_fd(_ecore_wl_disp->wl.display);
 
    _ecore_wl_disp->fd_hdl =
-     ecore_main_fd_handler_add(_ecore_wl_disp->fd,
-                               ECORE_FD_READ,
+     ecore_main_fd_handler_add(_ecore_wl_disp->fd, ECORE_FD_READ,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp,
                                NULL, NULL);
 
@@ -138,8 +137,6 @@ ecore_wl_init(const char *name)
      wl_display_get_registry(_ecore_wl_disp->wl.display);
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
-
-   wl_display_dispatch(_ecore_wl_disp->wl.display);
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
@@ -336,10 +333,8 @@ _ecore_wl_cb_idle_enterer(void *data)
 
    ret = wl_display_flush(ewd->wl.display);
    if ((ret < 0) && (errno == EAGAIN))
-     {
-        ecore_main_fd_handler_active_set(ewd->fd_hdl, 
-                                         (ECORE_FD_READ | ECORE_FD_WRITE));
-     }
+     ecore_main_fd_handler_active_set(ewd->fd_hdl, 
+                                      (ECORE_FD_READ | ECORE_FD_WRITE));
    else if (ret < 0)
      {
       /* FIXME: need do error processing? */

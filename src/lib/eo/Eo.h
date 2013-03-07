@@ -151,24 +151,23 @@ EAPI extern const Eina_Value_Type *EO_DBG_INFO_TYPE;
 typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
 
 /**
- * @def EO_DBG_INFO_LIST_APPEND
  * Creates a list inside debug info list.
- * @param[in] LIST list where to append
- * @param[in] NAME name of the list
+ * @param[in] list list where to append
+ * @param[in] name name of the list
  * @return the new list
  */
-#define EO_DBG_INFO_LIST_APPEND(LIST, NAME) \
-({ \
-   Eo_Dbg_Info *List = LIST; \
-   Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
-   Tmp->name = eina_stringshare_add(NAME); \
-   eina_value_list_setup(&(Tmp->value), EO_DBG_INFO_TYPE); \
-   if (List) \
-     { \
-        eina_value_list_pappend(&(List->value), Tmp); \
-     } \
-   Tmp; \
-})
+static inline Eo_Dbg_Info *
+EO_DBG_INFO_LIST_APPEND(Eo_Dbg_Info *list, const char *name)
+{
+   Eo_Dbg_Info *tmp = (Eo_Dbg_Info *)calloc(1, sizeof(*tmp));
+   tmp->name = eina_stringshare_add(name);
+   eina_value_list_setup(&(tmp->value), EO_DBG_INFO_TYPE);
+   if (list)
+     {
+        eina_value_list_pappend(&(list->value), tmp);
+     }
+   return tmp;
+}
 
 /**
  * @def EO_DBG_INFO_APPEND

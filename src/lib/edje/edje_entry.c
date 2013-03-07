@@ -1230,12 +1230,20 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                                          ECORE_IMF_EVENT_KEY_DOWN,
                                                          (Ecore_IMF_Event *)&ecore_ev);
 
-             if (!strcmp(ev->keyname, "Down") ||
-                 (!strcmp(ev->keyname, "KP_Down") && !ev->string) ||
-                 !strcmp(ev->keyname, "Up") ||
-                 (!strcmp(ev->keyname, "KP_Up") && !ev->string))
+             if (en->have_preedit)
                {
-                  if (en->have_preedit)
+                  if (!strcmp(ev->keyname, "Down") ||
+                      (!strcmp(ev->keyname, "KP_Down") && !ev->string) ||
+                      !strcmp(ev->keyname, "Up") ||
+                      (!strcmp(ev->keyname, "KP_Up") && !ev->string) ||
+                      !strcmp(ev->keyname, "Next") ||
+                      (!strcmp(ev->keyname, "KP_Next") && !ev->string) ||
+                      !strcmp(ev->keyname, "Prior") ||
+                      (!strcmp(ev->keyname, "KP_Prior") && !ev->string) ||
+                      !strcmp(ev->keyname, "Home") ||
+                      (!strcmp(ev->keyname, "KP_Home") && !ev->string) ||
+                      !strcmp(ev->keyname, "End") ||
+                      (!strcmp(ev->keyname, "KP_End") && !ev->string))
                     ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
 
