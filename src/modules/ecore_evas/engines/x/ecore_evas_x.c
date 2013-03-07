@@ -183,6 +183,12 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    ecore_x_window_prop_card32_set(ee->prop.window,
                                   ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER,
                                   &tmp, 1);
+
+   // set property on window to say "I talk the deiconify approve protcol"
+   tmp = 1;
+   ecore_x_window_prop_card32_set(ee->prop.window,
+                                  ECORE_X_ATOM_E_DEICONIFY_APPROVE,
+                                  &tmp, 1);
 }
 
 static void
@@ -996,6 +1002,19 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
    	   ///TODO after access structure determined
  	   // if (ee->func.fn_msg_handle)
 	   // ee->func.fn_msg_handle(ee, msg_domain, msg_id, data, size);
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_DEICONIFY_APPROVE)
+     {
+        ee = ecore_event_window_match(e->win);
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+
+        if (ecore_evas_manual_render_get(ee))
+          ecore_evas_manual_render(ee);
+
+        ecore_x_client_message32_send(e->win, ECORE_X_ATOM_E_DEICONIFY_APPROVE,
+                                      ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                      e->win, 1,
+                                      0, 0, 0);
    	}
    return ECORE_CALLBACK_PASS_ON;
 }
