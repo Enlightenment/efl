@@ -1629,4 +1629,4 @@ tests_evas_evas_suite_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \
-DejaVuSans.eet
+tests/evas/DejaVuSans.eet
