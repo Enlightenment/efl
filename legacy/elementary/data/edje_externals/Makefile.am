@@ -5,7 +5,7 @@ EDJE_CC = @edje_cc@
 EDJE_FLAGS_VERBOSE_ =
 EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_$(V)) -id $(top_srcdir)/data/edje_externals -fd $(top_srcdir)/data/edje_externals
+EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) -id $(top_srcdir)/data/edje_externals -fd $(top_srcdir)/data/edje_externals
 
 filesdir = $(datadir)/elementary/edje_externals
 files_DATA = icons.edj
