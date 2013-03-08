@@ -945,7 +945,11 @@ _item_styles_list_create(Evas_Object *parent)
 
 /* Set elementary widget's min size.
  * We should not set min size hint to elementary widgets because elementary has
- * its own size policy/logic. This is an official trick from raster
+ * its own size policy/logic. This is an official trick from raster.
+ * @param obj the actual object that you want to set the min size
+ * @param parent parent object for elm_table_add
+ * @param w min width
+ * @param h min height
  */
 Evas_Object *
 _elm_min_set(Evas_Object *obj, Evas_Object *parent, Evas_Coord w, Evas_Coord h)
