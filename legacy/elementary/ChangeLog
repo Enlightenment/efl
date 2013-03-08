@@ -1128,3 +1128,7 @@
 
         * Add elm_widget_newest_focus_order_get for knowing the last object(and its focus order) which got focus.
         * After elm_win is created, if there is no manual focus setting, only elm_win should get focus when focus state is changed.
+
+2013-03-08  Jaehwan Kim
+
+        * Fix the toolbar cannot be unselected when it's mode is ELM_OBJECT_SELECT_MODE_ALWAYS.

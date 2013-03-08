@@ -1843,10 +1843,16 @@ _access_activate_cb(void *data __UNUSED__,
 {
    Elm_Toolbar_Item *it;
    it = (Elm_Toolbar_Item *)item;
+   ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (elm_widget_item_disabled_get(it)) return;
 
-   if (!it->selected)
+   if (it->selected && (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
+     {
+        _elm_access_say(E_("Unselected"));
+        _item_unselect(it);
+     }
+   else
      {
         _elm_access_say(E_("Selected"));
         _item_select(it);
