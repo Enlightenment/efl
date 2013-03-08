@@ -633,6 +633,7 @@ EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
+EAPI Evas_Object     *elm_widget_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI Evas_Display_Mode elm_widget_display_mode_get(const Evas_Object *obj);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
@@ -1153,6 +1154,7 @@ enum
    ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET,
 
    ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET,
+   ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET,
 #if 0
    ELM_WIDGET_SUB_ID_THEME, /* API + virtual*/
    ELM_WIDGET_SUB_ID_THEME_SPECIFIC,
@@ -2397,6 +2399,19 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_can_focus_child_list_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), EO_TYPECHECK(Eina_List **, ret)
+
+/**
+ * @def elm_wdg_newest_focus_order_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] newest_focus_order
+ * @param[in] can_focus_only
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_newest_focus_order_get(newest_focus_order, can_focus_only, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET), EO_TYPECHECK(unsigned int *, newest_focus_order), EO_TYPECHECK(Eina_Bool, can_focus_only), EO_TYPECHECK(Evas_Object **, ret)
 
 /**
  * @def elm_wdg_orientation_set

@@ -188,42 +188,6 @@ _elm_widget_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 }
 
-static Evas_Object *
-_newest_focus_order_get(Evas_Object *obj,
-                        unsigned int *newest_focus_order,
-                        Eina_Bool can_focus_only)
-{
-   const Eina_List *l;
-   Evas_Object *child, *ret, *best;
-
-   API_ENTRY return NULL;
-
-   if (!evas_object_visible_get(obj)
-       || (elm_widget_disabled_get(obj))
-       || (elm_widget_tree_unfocusable_get(obj)))
-     return NULL;
-
-   best = NULL;
-   if (*newest_focus_order < sd->focus_order)
-     {
-        *newest_focus_order = sd->focus_order;
-        best = obj;
-     }
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
-     {
-        ret = _newest_focus_order_get
-            (child, newest_focus_order, can_focus_only);
-        if (!ret) continue;
-        best = ret;
-     }
-   if (can_focus_only)
-     {
-        if ((!best) || (!elm_widget_can_focus_get(best)))
-          return NULL;
-     }
-   return best;
-}
-
 static void
 _if_focused_revert(Evas_Object *obj,
                    Eina_Bool can_focus_only)
@@ -240,8 +204,8 @@ _if_focused_revert(Evas_Object *obj,
    top = elm_widget_top_get(sd->parent_obj);
    if (top)
      {
-        newest = _newest_focus_order_get
-            (top, &newest_focus_order, can_focus_only);
+        newest = elm_widget_newest_focus_order_get
+           (top, &newest_focus_order, can_focus_only);
         if (newest)
           {
              elm_object_focus_set(newest, EINA_FALSE);
@@ -2445,7 +2409,6 @@ elm_widget_focus_direction_get(const Evas_Object *obj,
                                Evas_Object **direction,
                                double *weight)
 {
-
    ELM_WIDGET_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
    eo_do((Eo *) obj, elm_wdg_focus_direction_get(base, degree, direction, weight, &ret));
@@ -3079,7 +3042,7 @@ _elm_widget_focus_restore(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNU
    Evas_Object *newest = NULL;
    unsigned int newest_focus_order = 0;
 
-   newest = _newest_focus_order_get(obj, &newest_focus_order, EINA_TRUE);
+   newest = elm_widget_newest_focus_order_get(obj, &newest_focus_order, EINA_TRUE);
    if (newest)
      {
         elm_object_focus_set(newest, EINA_FALSE);
@@ -4344,6 +4307,56 @@ _elm_widget_focus_order_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    unsigned int *ret = va_arg(*list, unsigned int *);
    Elm_Widget_Smart_Data *sd = _pd;
    *ret = sd->focus_order;
+}
+
+EAPI Evas_Object *
+elm_widget_newest_focus_order_get(Evas_Object *obj,
+                                  unsigned int *newest_focus_order,
+                                  Eina_Bool can_focus_only)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+   Evas_Object *ret = NULL;
+   eo_do((Eo *) obj, elm_wdg_newest_focus_order_get(newest_focus_order, can_focus_only, &ret));
+   return ret;
+}
+
+static void
+_elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
+{
+   unsigned int *newest_focus_order = va_arg(*list, unsigned int *);
+   Eina_Bool can_focus_only = va_arg(*list, int);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Elm_Widget_Smart_Data *sd = _pd;
+   *ret = NULL;
+
+   const Eina_List *l;
+   Evas_Object *child, *cur, *best;
+
+   if (!evas_object_visible_get(obj)
+       || (elm_widget_disabled_get(obj))
+       || (elm_widget_tree_unfocusable_get(obj)))
+     return;
+
+   best = NULL;
+   if (*newest_focus_order < sd->focus_order)
+     {
+        *newest_focus_order = sd->focus_order;
+        best = obj;
+     }
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     {
+        cur = elm_widget_newest_focus_order_get
+           (child, newest_focus_order, can_focus_only);
+        if (!cur) continue;
+        best = cur;
+     }
+   if (can_focus_only)
+     {
+        if ((!best) || (!elm_widget_can_focus_get(best)))
+          return;
+     }
+   *ret = best;
+   return;
 }
 
 EAPI void
@@ -5712,6 +5725,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET), _elm_widget_tree_unfocusable_get),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), _elm_widget_can_focus_child_list_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET), _elm_widget_newest_focus_order_get),
 
         EO_OP_FUNC_SENTINEL
    };
@@ -5853,6 +5867,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET, "Returns true, if the object sub-tree is unfocusable"),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET, "Get the list of focusable child objects."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET, "Get the newest focused object and its order."),
 
      EO_OP_DESCRIPTION_SENTINEL
 };

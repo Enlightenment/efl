@@ -1123,3 +1123,8 @@
 
         * Add elm_naviframe_item_pop_cb_set().
         * Naviframe works for H/W backkey event.
+
+2013-03-08  WooHyun Jung
+
+        * Add elm_widget_newest_focus_order_get for knowing the last object(and its focus order) which got focus.
+        * After elm_win is created, if there is no manual focus setting, only elm_win should get focus when focus state is changed.

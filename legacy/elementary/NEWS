@@ -48,6 +48,7 @@ Additions:
    * Add elm_object_item_signal_callback_add(), elm_object_item_signal_callback_del().
    * Add the config ELM_THUMBSCROLL_HOLD_THRESHOLD.
    * Add elm_naviframe_item_pop_cb_set().
+   * Add elm_widget_newest_focus_order_get for knowing the last object(and its focus order) which got focus.
 
 Improvements:
 
@@ -175,6 +176,7 @@ Fixes:
    * Focus highlight should not be shown on (0 ,0).
    * Fix elm_conform didn't set size hint when keypad on.
    * Fix elm_conform didn't change indicator mode when create.
+   * After elm_win is created, if there is no manual focus setting, only elm_win should get focus when focus state is changed.
    
 Removals:
 
