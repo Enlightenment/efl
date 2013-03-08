@@ -427,7 +427,7 @@ static void
 _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count)
 {
    Eina_Rectangle *rect;
-   static struct wl_buffer *sent;
+   static Wl_Buffer *sent = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -469,12 +469,12 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
      }
 
    /* surface attach */
-   if (sent != wb->buffer)
+   if (sent != wb)
      {
         wl_surface_attach(ws->surface, wb->buffer, ws->dx, ws->dy);
         ws->dx = 0;
         ws->dy = 0;
-        sent = wb->buffer;
+        sent = wb;
      }
 
    /* surface damage */
