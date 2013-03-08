@@ -13,8 +13,8 @@
 typedef struct _Ecore_Coroutine_Test Ecore_Coroutine_Test;
 struct _Ecore_Coroutine_Test
 {
-   int v;
-   int s;
+   unsigned int v;
+   unsigned int s;
 };
 
 static Ecore_Coroutine_Test t1;
@@ -49,7 +49,7 @@ START_TEST(ecore_test_coroutine_simple)
 {
    Ecore_Coroutine *coro1;
    Ecore_Coroutine *coro2;
-   int value[] = { 7, 42, 0xDEADBEEF };
+   unsigned int value[] = { 7, 42, 0xDEADBEEF };
 
    ecore_init();
 
@@ -65,11 +65,11 @@ START_TEST(ecore_test_coroutine_simple)
    fail_if(t1.v != 0xDEADBEEF || t1.s != 0xDEADBEEF);
    fail_if(ecore_coroutine_resume(coro1) != 42);
    fail_if(t1.v != value[0] || t1.s != 0xDEADBEEF);
-   fail_if(ecore_coroutine_resume(coro1) != 0xDEADBEEF);
+   fail_if((unsigned int) ecore_coroutine_resume(coro1) != 0xDEADBEEF);
    fail_if(t1.v != value[0] || t1.s != value[0]);
    fail_if(ecore_coroutine_resume(coro2) != 7);
    fail_if(t1.v != value[1] || t1.s != value[0]);
-   fail_if(ecore_coroutine_resume(coro2) != 0xDEADBEEF);
+   fail_if((unsigned int) ecore_coroutine_resume(coro2) != 0xDEADBEEF);
    fail_if(t1.v != value[1] || t1.s != value[1]);
    fail_if(ecore_coroutine_state_get(coro2) != ECORE_COROUTINE_FINISHED);
 
