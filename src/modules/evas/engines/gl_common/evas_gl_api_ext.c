@@ -122,12 +122,14 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
 
    fp_getproc gp = (fp_getproc)getproc;
 
-	memset(_gl_ext_string, 0x00, MAX_EXTENSION_STRING_BUFFER);
-
+   memset(_gl_ext_string, 0x00, MAX_EXTENSION_STRING_BUFFER);
 
 #define FINDSYM(getproc, dst, sym) \
-   if ((!dst) && (getproc)) dst = (__typeof__(dst))getproc(sym); \
-   if (!dst) dst = (__typeof__(dst))dlsym(RTLD_DEFAULT, sym);
+   if (getproc) { \
+      if (!dst) dst = (__typeof__(dst))getproc(sym); \
+   } else { \
+      if (!dst) dst = (__typeof__(dst))dlsym(RTLD_DEFAULT, sym); \
+   }
 
    // GLES Extensions
    glexts = (const char*)glGetString(GL_EXTENSIONS);

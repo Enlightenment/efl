@@ -31,11 +31,11 @@ GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 // just used for finding symbols :)
 typedef void (*_eng_fn) (void);
 
-typedef _eng_fn       (*secsym_func_eng_fn) ();
+typedef _eng_fn (*glsym_func_eng_fn) ();
 typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
-static _eng_fn  (*secsym_eglGetProcAddress)          (const char *a) = NULL;
+static _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 
 void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
 unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
@@ -43,6 +43,11 @@ void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
 void          *(*secsym_eglMapImageSEC)               (void *a, void *b) = NULL;
 unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
+#else
+typedef void (*_eng_fn) (void);
+
+typedef _eng_fn (*glsym_func_eng_fn) ();
+static _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
 #endif
 
 static int dbgflushnum = -1;
@@ -63,9 +68,30 @@ gl_symbols(void)
     * instead of dlsym
     * if (!dst) dst = (typ)SDL_GL_GetProcAddress(sym)
     */
-#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
+#ifdef GL_GLES
+#define FINDSYM(dst, sym, typ) \
+   if (glsym_eglGetProcAddress) { \
+      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
+   } else { \
+      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+   }
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
+#else
+#define FINDSYM(dst, sym, typ) \
+   if (glsym_glXGetProcAddress) { \
+      if (!dst) dst = (typ)glsym_glXGetProcAddress(sym); \
+   } else { \
+      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+   }
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
+#endif
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
-
+   
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", glsym_func_void);
@@ -119,20 +145,11 @@ gl_symbols(void)
      }
 
 #ifdef GL_GLES
-#undef FINDSYM
-#define FINDSYM(dst, sym, typ) \
-   if ((!dst) && (secsym_eglGetProcAddress)) dst = (typ)secsym_eglGetProcAddress(sym); \
-   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 // yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
 // but it will work as the egl/glx layer calls gl core common stuff and thus
 // these symbols will work. making the glx/egl + x11 layer do this kind-of is
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
-
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddress", secsym_func_eng_fn);
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressEXT", secsym_func_eng_fn);
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressARB", secsym_func_eng_fn);
-   FINDSYM(secsym_eglGetProcAddress, "eglGetProcAddressKHR", secsym_func_eng_fn);
 
    FINDSYM(secsym_eglCreateImage, "eglCreateImage", secsym_func_void_ptr);
    FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT", secsym_func_void_ptr);
