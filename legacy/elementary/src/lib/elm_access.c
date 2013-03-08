@@ -121,11 +121,33 @@ _access_add_set(Elm_Access_Info *ac, int type)
    return ai;
 }
 
+static Evas_Object *
+_access_highlight_object_get(Evas_Object *obj)
+{
+   Evas_Object *o, *ho;
+
+   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
+   if (!o) return NULL;
+
+   ho = evas_object_data_get(o, "_elm_access_target");
+
+   return ho;
+}
+
 static Eina_Bool
 _access_obj_over_timeout_cb(void *data)
 {
-   Elm_Access_Info *ac = evas_object_data_get(data, "_elm_access");
+   Elm_Access_Info *ac;
+   Evas_Object *ho;
+
+   if (!data) return EINA_FALSE;
+
+   ho = _access_highlight_object_get(data);
+   if (ho == data) return EINA_FALSE;
+
+   ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return EINA_FALSE;
+
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      {
         if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
@@ -250,19 +272,6 @@ _access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Ob
    if (!o) return;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_resize(o, w, h);
-}
-
-static Evas_Object *
-_access_highlight_object_get(Evas_Object *obj)
-{
-   Evas_Object *o, *ho;
-
-   o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
-   if (!o) return NULL;
-
-   ho = evas_object_data_get(o, "_elm_access_target");
-
-   return ho;
 }
 
 void
