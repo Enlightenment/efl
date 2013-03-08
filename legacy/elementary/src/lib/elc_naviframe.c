@@ -29,7 +29,6 @@ static const char SIG_CLICKED[] = "clicked";
 
 static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__);
 
-
 static void
 _item_content_del_cb(void *data,
                      Evas *e __UNUSED__,
@@ -522,6 +521,8 @@ _item_title_prev_btn_set(Elm_Naviframe_Item *it,
    elm_object_signal_emit(VIEW(it), "elm,state,prev_btn,show", "elm");
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb, it);
+
+   //FIXME: set back button callback here after elm 2.0
 }
 
 static void
