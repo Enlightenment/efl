@@ -27,6 +27,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static const char SIG_CLICKED[] = "clicked";
 
+static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__);
+
+
 static void
 _item_content_del_cb(void *data,
                      Evas *e __UNUSED__,
