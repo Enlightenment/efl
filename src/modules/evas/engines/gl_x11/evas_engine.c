@@ -520,8 +520,11 @@ gl_symbols(void)
 
 #ifdef GL_GLES
 #define FINDSYM(dst, sym, typ) \
-   if ((!dst) && (glsym_eglGetProcAddress)) dst = (typ)glsym_eglGetProcAddress(sym); \
-   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
+   if (glsym_eglGetProcAddress) { \
+      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
+   } else { \
+      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+   }
 
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
@@ -546,8 +549,11 @@ gl_symbols(void)
    FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
 #else
 #define FINDSYM(dst, sym, typ) \
-   if ((!dst) && (glsym_glXGetProcAddress)) dst = (typ)glsym_glXGetProcAddress(sym); \
-   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
+   if (glsym_glXGetProcAddress) { \
+      if (!dst) dst = (typ)glsym_glXGetProcAddress(sym); \
+   } else { \
+      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+   }
 
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
