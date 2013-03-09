@@ -1358,7 +1358,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * the last. @p data is the data related to the current element.
  * @p l is an #Eina_List used as the list iterator.
  *
- * The following diagram ilustrates this macro iterating over a list of four
+ * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-foreach.png" style="max-width: 100%;" />
@@ -1416,7 +1416,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * @p data is the data related to the current element, while @p l
  * is an #Eina_List that is used as the list iterator.
  *
- * The following diagram ilustrates this macro iterating over a list of four
+ * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-reverse-foreach.png" style="max-width: 100%;" />
@@ -1477,7 +1477,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * Since this macro stores a pointer to the next list node in @p l_next,
  * deleting the current node and continuing looping is safe.
  *
- * The following diagram ilustrates this macro iterating over a list of four
+ * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-foreach-safe.png" style="max-width: 100%;" />
@@ -1533,7 +1533,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * Since this macro stores a pointer to the previous list node in @p l_prev,
  * deleting the current node and continuing looping is safe.
  *
- * The following diagram ilustrates this macro iterating over a list of four
+ * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-reverse-foreach-safe.png" style="max-width: 100%;" />
@@ -1581,7 +1581,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * This macro will call #eina_list_remove_list for each list node, and store
  * the data contained in the current node in @p data.
  *
- * The following diagram ilustrates this macro iterating over a list of four
+ * The following diagram illustrates this macro iterating over a list of four
  * elements("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-free.png" style="max-width: 100%;" />
