@@ -1789,8 +1789,8 @@ _x11_elm_drop_target_del(Evas_Object *obj)
 
    evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
                                   (Evas_Object_Event_Cb)elm_drop_target_del);
-   free(drop);
-
+   if (del) free(del);
+   
    /* TODO BUG: we should handle dnd-aware per window, not just the last that reelased it */
 
    /* If still drops there: All fine.. continue */
