@@ -27,9 +27,9 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
    _evas_object_event_new();
 
    event_id = _evas_event_counter;
+   if (obj->focused == focus) goto end;
    if (focus)
      {
-        if (obj->focused) goto end;
         if (obj->layer->evas->focused)
           evas_object_focus_set(obj->layer->evas->focused, 0);
         obj->focused = 1;
@@ -40,7 +40,6 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    else
      {
-        if (!obj->focused) goto end;
         obj->focused = 0;
         obj->layer->evas->focused = NULL;
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, event_id);
