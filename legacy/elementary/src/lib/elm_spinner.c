@@ -683,7 +683,7 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->spin) ecore_timer_del(sd->spin);
    if (sd->special_values)
      {
-        EINA_LIST_FREE (sd->special_values, sv)
+        EINA_LIST_FREE(sd->special_values, sv)
           {
              eina_stringshare_del(sv->label);
              free(sv);

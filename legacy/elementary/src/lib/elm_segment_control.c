@@ -610,7 +610,7 @@ _elm_segment_control_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Segment_Control_Smart_Data *sd = _pd;
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         _item_free(it);
         elm_widget_item_free(it);

@@ -935,7 +935,7 @@ _grid_all_clear(Elm_Map_Smart_Data *sd)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   EINA_LIST_FREE (sd->grids, g)
+   EINA_LIST_FREE(sd->grids, g)
      {
         Eina_Matrixsparse_Cell *cell;
         Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
@@ -1316,7 +1316,7 @@ _region_max_min_get(Eina_List *overlays,
    double max_lat = -90, min_lat = 90;
    Elm_Map_Overlay *overlay;
 
-   EINA_LIST_FREE (overlays, overlay)
+   EINA_LIST_FREE(overlays, overlay)
      {
         double lon, lat;
 
@@ -2069,10 +2069,10 @@ _overlay_route_free(Overlay_Route *route)
 
    evas_object_del(route->obj);
 
-   EINA_LIST_FREE (route->paths, p)
+   EINA_LIST_FREE(route->paths, p)
      free(p);
 
-   EINA_LIST_FREE (route->nodes, n)
+   EINA_LIST_FREE(route->nodes, n)
      {
         if (n->pos.address) eina_stringshare_del(n->pos.address);
         free(n);
@@ -2231,7 +2231,7 @@ _overlay_polygon_free(Overlay_Polygon *ovl)
 
    evas_object_del(ovl->obj);
 
-   EINA_LIST_FREE (ovl->regions, r)
+   EINA_LIST_FREE(ovl->regions, r)
      free(r);
 
    free(ovl);
@@ -4076,7 +4076,7 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_list_free(sd->group_overlays);
    eina_list_free(sd->all_overlays);
 
-   EINA_LIST_FREE (sd->track, track)
+   EINA_LIST_FREE(sd->track, track)
      evas_object_del(track);
 
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
@@ -5058,13 +5058,13 @@ elm_map_route_del(Elm_Map_Route *route)
 
    if (route->job) ecore_file_download_abort(route->job);
 
-   EINA_LIST_FREE (route->waypoint, w)
+   EINA_LIST_FREE(route->waypoint, w)
      {
         if (w->point) eina_stringshare_del(w->point);
         free(w);
      }
 
-   EINA_LIST_FREE (route->nodes, n)
+   EINA_LIST_FREE(route->nodes, n)
      {
         if (n->pos.address) eina_stringshare_del(n->pos.address);
         free(n);

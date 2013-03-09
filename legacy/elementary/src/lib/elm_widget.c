@@ -246,7 +246,7 @@ _elm_widget_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
    sd->cursors = eina_list_free(sd->cursors); /* should be empty anyway */
-   EINA_LIST_FREE (sd->translate_strings, ts)
+   EINA_LIST_FREE(sd->translate_strings, ts)
      {
         eina_stringshare_del(ts->id);
         eina_stringshare_del(ts->domain);
@@ -254,7 +254,7 @@ _elm_widget_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
         free(ts);
      }
 
-   EINA_LIST_FREE (sd->event_cb, ecb)
+   EINA_LIST_FREE(sd->event_cb, ecb)
      free(ecb);
 
    if (sd->style) eina_stringshare_del(sd->style);
@@ -313,7 +313,7 @@ _elm_widget_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list EINA
 
    if ((list = evas_object_smart_members_get(obj)))
      {
-        EINA_LIST_FREE (list, o)
+        EINA_LIST_FREE(list, o)
           {
              if (evas_object_data_get(o, "_elm_leaveme")) continue;
              evas_object_show(o);
@@ -328,7 +328,7 @@ _elm_widget_smart_hide(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list EINA
    Evas_Object *o;
 
    list = evas_object_smart_members_get(obj);
-   EINA_LIST_FREE (list, o)
+   EINA_LIST_FREE(list, o)
      {
         if (evas_object_data_get(o, "_elm_leaveme")) continue;
         evas_object_hide(o);
@@ -347,7 +347,7 @@ _elm_widget_smart_color_set(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list
 
    if ((list = evas_object_smart_members_get(obj)))
      {
-        EINA_LIST_FREE (list, o)
+        EINA_LIST_FREE(list, o)
           {
              if (evas_object_data_get(o, "_elm_leaveme")) continue;
              evas_object_color_set(o, r, g, b, a);
@@ -364,7 +364,7 @@ _elm_widget_smart_clip_set(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list)
 
    if ((list = evas_object_smart_members_get(obj)))
      {
-        EINA_LIST_FREE (list, o)
+        EINA_LIST_FREE(list, o)
           {
              if (evas_object_data_get(o, "_elm_leaveme")) continue;
              evas_object_clip_set(o, clip);
@@ -380,7 +380,7 @@ _elm_widget_smart_clip_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *params_lis
 
    if ((list = evas_object_smart_members_get(obj)))
      {
-        EINA_LIST_FREE (list, o)
+        EINA_LIST_FREE(list, o)
           {
              if (evas_object_data_get(o, "_elm_leaveme")) continue;
              evas_object_clip_unset(o);
@@ -4222,7 +4222,7 @@ EAPI void
 elm_widget_stringlist_free(Eina_List *list)
 {
    const char *s;
-   EINA_LIST_FREE (list, s)
+   EINA_LIST_FREE(list, s)
      eina_stringshare_del(s);
 }
 
@@ -4602,14 +4602,14 @@ _elm_widget_item_free(Elm_Widget_Item *item)
    if (item->access_info)
      eina_stringshare_del(item->access_info);
 
-   EINA_LIST_FREE (item->signals, wisd)
+   EINA_LIST_FREE(item->signals, wisd)
      {
         eina_stringshare_del(wisd->emission);
         eina_stringshare_del(wisd->source);
         free(wisd);
      }
 
-   EINA_LIST_FREE (item->translate_strings, ts)
+   EINA_LIST_FREE(item->translate_strings, ts)
      {
         eina_stringshare_del(ts->id);
         eina_stringshare_del(ts->domain);

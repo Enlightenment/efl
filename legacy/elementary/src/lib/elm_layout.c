@@ -1165,7 +1165,7 @@ _elm_layout_smart_box_remove_all(Eo *obj, void *_pd, va_list *list)
    Eina_List *lst;
 
    lst = eina_list_clone(sd->subs);
-   EINA_LIST_FREE (lst, sub_d)
+   EINA_LIST_FREE(lst, sub_d)
      {
         if (!_sub_box_is(sub_d)) continue;
         if (!strcmp(sub_d->part, part))
@@ -1305,7 +1305,7 @@ _elm_layout_smart_table_clear(Eo *obj, void *_pd, va_list *list)
    Eina_List *lst;
 
    lst = eina_list_clone(sd->subs);
-   EINA_LIST_FREE (lst, sub_d)
+   EINA_LIST_FREE(lst, sub_d)
      {
         if (sub_d->type != TABLE_PACK) continue;
         if (!strcmp(sub_d->part, part))
@@ -1365,7 +1365,7 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_layout_freeze(obj);
 
-   EINA_LIST_FREE (sd->subs, sub_d)
+   EINA_LIST_FREE(sd->subs, sub_d)
      {
         eina_stringshare_del(sub_d->part);
 
@@ -1375,10 +1375,10 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         free(sub_d);
      }
 
-   EINA_LIST_FREE (sd->parts_cursors, pc)
+   EINA_LIST_FREE(sd->parts_cursors, pc)
      _part_cursor_free(pc);
 
-   EINA_LIST_FREE (sd->edje_signals, esd)
+   EINA_LIST_FREE(sd->edje_signals, esd)
      {
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);

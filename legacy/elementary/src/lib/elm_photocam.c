@@ -615,7 +615,7 @@ _grid_clear_all(Evas_Object *obj)
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
 
-   EINA_LIST_FREE (sd->grids, g)
+   EINA_LIST_FREE(sd->grids, g)
      {
         _grid_clear(obj, g);
         free(g);
@@ -1370,7 +1370,7 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Photocam_Smart_Data *sd = _pd;
 
-   EINA_LIST_FREE (sd->grids, g)
+   EINA_LIST_FREE(sd->grids, g)
      {
         if (g->grid) free(g->grid);
         free(g);
@@ -1725,7 +1725,7 @@ _zoom_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        EINA_LIST_FREE (sd->grids, g)
+        EINA_LIST_FREE(sd->grids, g)
           {
              _grid_clear(obj, g);
              free(g);

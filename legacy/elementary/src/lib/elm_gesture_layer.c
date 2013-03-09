@@ -1403,8 +1403,8 @@ _tap_gestures_test_reset(Gesture_Info *gesture)
    if (!gesture->data)
      return;
 
-   EINA_LIST_FREE (((Taps_Type *)gesture->data)->l, data)
-     EINA_LIST_FREE (data, pe)
+   EINA_LIST_FREE(((Taps_Type *)gesture->data)->l, data)
+     EINA_LIST_FREE(data, pe)
        free(pe);
 
    memset(gesture->data, 0, sizeof(Taps_Type));
@@ -3625,7 +3625,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _event_history_clear(obj);
    eina_list_free(sd->pending);
 
-   EINA_LIST_FREE (sd->touched, data)
+   EINA_LIST_FREE(sd->touched, data)
      free(data);
 
    if (!elm_widget_disabled_get(obj))

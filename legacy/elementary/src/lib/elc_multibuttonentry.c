@@ -1543,7 +1543,7 @@ _elm_multibuttonentry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Multibuttonentry_Smart_Data *sd = _pd;
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      {
         evas_object_del(item->button);
         free(item);
@@ -1991,7 +1991,7 @@ _clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->items)
      {
-        EINA_LIST_FREE (sd->items, item)
+        EINA_LIST_FREE(sd->items, item)
           {
              elm_box_unpack(sd->box, item->button);
              evas_object_del(item->button);

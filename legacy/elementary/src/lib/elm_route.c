@@ -22,7 +22,7 @@ _clear_route(Evas_Object *obj)
    sd->lat_max = EMAP_LAT_MIN;
 #endif
 
-   EINA_LIST_FREE (sd->segments, segment)
+   EINA_LIST_FREE(sd->segments, segment)
      {
         evas_object_del(segment->obj);
         free(segment);

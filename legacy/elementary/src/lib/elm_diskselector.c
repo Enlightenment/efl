@@ -1390,7 +1390,7 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
      }
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         _item_del(it);
         elm_widget_item_free(it);
@@ -1702,7 +1702,7 @@ _clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!sd->items) return;
 
    sd->selected_item = NULL;
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         _item_del(it);
         elm_widget_item_free(it);

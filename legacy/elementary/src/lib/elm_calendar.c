@@ -1032,7 +1032,7 @@ _elm_calendar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->marks)
      {
-        EINA_LIST_FREE (sd->marks, mark)
+        EINA_LIST_FREE(sd->marks, mark)
           {
              _mark_free(mark);
           }
@@ -1478,7 +1478,7 @@ _marks_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    Elm_Calendar_Smart_Data *sd = _pd;
    Elm_Calendar_Mark *mark;
 
-   EINA_LIST_FREE (sd->marks, mark)
+   EINA_LIST_FREE(sd->marks, mark)
      _mark_free(mark);
 }
 

@@ -458,7 +458,7 @@ _populate(Evas_Object *obj,
 
    dirs = eina_list_sort
        (dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
-   EINA_LIST_FREE (dirs, entry)
+   EINA_LIST_FREE(dirs, entry)
      {
         if (sd->mode == ELM_FILESELECTOR_LIST)
           elm_genlist_item_append(sd->files_list, list_itc[ELM_DIRECTORY],
@@ -473,7 +473,7 @@ _populate(Evas_Object *obj,
                                   NULL, NULL);
      }
 
-   EINA_LIST_FREE (files, entry)
+   EINA_LIST_FREE(files, entry)
      {
         Elm_Fileselector_Type type =
           evas_object_image_extension_can_load_fast_get(entry) ?

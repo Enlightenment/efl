@@ -220,7 +220,7 @@ _elm_hoversel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Hoversel_Smart_Data *sd = _pd;
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      {
         eina_stringshare_del(item->label);
         eina_stringshare_del(item->icon_file);

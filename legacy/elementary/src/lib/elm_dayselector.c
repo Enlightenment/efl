@@ -445,7 +445,7 @@ _elm_dayselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Dayselector_Item *it;
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         sd->items = eina_list_remove(sd->items, it);
         eina_stringshare_del(it->day_style);

@@ -354,7 +354,7 @@ _elm_slideshow_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_stringlist_free(sd->transitions);
    if (sd->timer) ecore_timer_del(sd->timer);
 
-   EINA_LIST_FREE (sd->layout.list, layout)
+   EINA_LIST_FREE(sd->layout.list, layout)
      eina_stringshare_del(layout);
 
    eo_do_super(obj, evas_obj_smart_del());
@@ -775,13 +775,13 @@ _elm_slideshow_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 
    sd->previous = NULL;
    sd->current = NULL;
-   EINA_LIST_FREE (sd->items_built, item)
+   EINA_LIST_FREE(sd->items_built, item)
      {
         if (item->itc->func.del)
           item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
      }
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      elm_widget_item_free(item);
 }
 

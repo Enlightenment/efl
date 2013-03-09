@@ -375,7 +375,7 @@ _elm_list_deletions_process(Elm_List_Smart_Data *sd)
 
    sd->walking++; // avoid nested deletion and also _sub_del() items_fix
 
-   EINA_LIST_FREE (sd->to_delete, it)
+   EINA_LIST_FREE(sd->to_delete, it)
      {
         sd->items = eina_list_remove_list(sd->items, it->node);
 
@@ -1671,7 +1671,7 @@ _elm_list_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _elm_list_walk(sd);
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
@@ -2030,7 +2030,7 @@ _clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _elm_list_walk(sd);
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);

@@ -302,7 +302,7 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
    Evas_Object_Box_Option *opt;
    Transition_Animation_Data *tad;
 
-   EINA_LIST_FREE (layout_data->objs, tad)
+   EINA_LIST_FREE(layout_data->objs, tad)
      free(tad);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -310,7 +310,7 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
         tad = calloc(1, sizeof(Transition_Animation_Data));
         if (!tad)
           {
-             EINA_LIST_FREE (layout_data->objs, tad)
+             EINA_LIST_FREE(layout_data->objs, tad)
                free(tad);
              layout_data->objs = NULL;
              return EINA_FALSE;
@@ -784,7 +784,7 @@ elm_box_transition_free(void *data)
      box_data->start.free_data(box_data->start.data);
    if ((box_data->end.free_data) && (box_data->end.data))
      box_data->end.free_data(box_data->end.data);
-   EINA_LIST_FREE (box_data->objs, tad)
+   EINA_LIST_FREE(box_data->objs, tad)
      free(tad);
 
    evas_object_event_callback_del

@@ -34,7 +34,7 @@ _items_del(Elm_Colorselector_Smart_Data *sd)
 
    if (!sd->items) return;
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      {
         free(item->color);
         elm_widget_item_free(item);

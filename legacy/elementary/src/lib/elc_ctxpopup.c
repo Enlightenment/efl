@@ -1114,7 +1114,7 @@ _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_del(sd->bg);
    sd->bg = NULL;
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      elm_widget_item_free(it);
 
    eo_do_super(obj, evas_obj_smart_del());

@@ -1555,7 +1555,7 @@ _item_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         if (it->level != sd->level) continue;
         clear = eina_list_append(clear, it);
      }
-   EINA_LIST_FREE (clear, it)
+   EINA_LIST_FREE(clear, it)
      {
         _item_free(it);
         elm_widget_item_del(it);

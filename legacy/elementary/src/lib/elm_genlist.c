@@ -374,7 +374,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    it->contents = NULL;
    elm_widget_stringlist_free(it->states);
    it->states = NULL;
-   EINA_LIST_FREE (it->content_objs, content)
+   EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
    it->unrealize_cb(it);
@@ -759,7 +759,7 @@ _item_sub_items_clear(Elm_Gen_Item *it)
 
    EINA_LIST_FOREACH(it->item->items, l, it2)
      tl = eina_list_append(tl, it2);
-   EINA_LIST_FREE (tl, it2)
+   EINA_LIST_FREE(tl, it2)
      elm_object_item_del(it2);
 }
 
@@ -2875,7 +2875,7 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
    it->item->deco_all_contents = NULL;
    elm_widget_stringlist_free(it->item->deco_all_states);
    it->item->deco_all_states = NULL;
-   EINA_LIST_FREE (it->item->deco_all_content_objs, icon)
+   EINA_LIST_FREE(it->item->deco_all_content_objs, icon)
      evas_object_del(icon);
    edje_object_message_signal_process(it->deco_all_view);
    _item_mouse_callbacks_del(it, it->deco_all_view);
@@ -4179,7 +4179,7 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
    it->item->deco_it_contents = NULL;
    elm_widget_stringlist_free(it->item->deco_it_states);
 
-   EINA_LIST_FREE (it->item->deco_it_content_objs, content)
+   EINA_LIST_FREE(it->item->deco_it_content_objs, content)
      evas_object_del(content);
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
@@ -4295,7 +4295,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
    Evas_Object *content;
    elm_widget_stringlist_free(it->item->flip_contents);
    it->item->flip_contents = NULL;
-   EINA_LIST_FREE (it->item->flip_content_objs, content)
+   EINA_LIST_FREE(it->item->flip_content_objs, content)
      evas_object_del(content);
 
    /* access */
@@ -6208,7 +6208,7 @@ elm_genlist_item_all_contents_unset(Elm_Object_Item *it,
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
-   EINA_LIST_FREE (((Elm_Gen_Item *)it)->content_objs, content)
+   EINA_LIST_FREE(((Elm_Gen_Item *)it)->content_objs, content)
      {
         elm_widget_sub_object_del(WIDGET(it), content);
         evas_object_smart_member_del(content);

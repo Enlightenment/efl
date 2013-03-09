@@ -281,7 +281,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
      }
 
    if (pending_request == 0)
-     EINA_LIST_FREE (retry, sd)
+     EINA_LIST_FREE(retry, sd)
        {
           eina_stringshare_del(sd->thumb.thumb_path);
           sd->thumb.thumb_path = NULL;

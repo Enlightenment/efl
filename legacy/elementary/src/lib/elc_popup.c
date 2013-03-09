@@ -170,7 +170,7 @@ _items_remove(Elm_Popup_Smart_Data *sd)
 
    if (!sd->items) return;
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      elm_widget_item_del(item);
 
    sd->items = NULL;

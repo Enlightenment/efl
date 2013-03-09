@@ -2974,18 +2974,18 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->append_text_idler = NULL;
      }
    if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         eina_stringshare_del(it->label);
         eina_stringshare_del(it->icon_file);
         eina_stringshare_del(it->icon_group);
         free(it);
      }
-   EINA_LIST_FREE (sd->item_providers, ip)
+   EINA_LIST_FREE(sd->item_providers, ip)
      {
         free(ip);
      }
-   EINA_LIST_FREE (sd->markup_filters, tf)
+   EINA_LIST_FREE(sd->markup_filters, tf)
      {
         _filter_free(tf);
      }
@@ -3896,7 +3896,7 @@ _context_menu_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Entry_Smart_Data *sd = _pd;
 
-   EINA_LIST_FREE (sd->items, it)
+   EINA_LIST_FREE(sd->items, it)
      {
         eina_stringshare_del(it->label);
         eina_stringshare_del(it->icon_file);

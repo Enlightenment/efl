@@ -531,7 +531,7 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    it->contents = NULL;
    elm_widget_stringlist_free(it->states);
    it->states = NULL;
-   EINA_LIST_FREE (it->content_objs, content)
+   EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
    it->unrealize_cb(it);

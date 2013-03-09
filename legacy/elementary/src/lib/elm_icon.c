@@ -141,7 +141,7 @@ _icon_thumb_cleanup(Ethumb_Client *ethumbd)
        }
 
    if (_icon_pending_request == 0)
-     EINA_LIST_FREE (_elm_icon_retry, sd)
+     EINA_LIST_FREE(_elm_icon_retry, sd)
        _icon_thumb_stop(sd, ethumbd);
 }
 
@@ -354,7 +354,7 @@ _edje_signals_free(Elm_Icon_Smart_Data *sd)
 {
    Edje_Signal_Data *esd;
 
-   EINA_LIST_FREE (sd->edje_signals, esd)
+   EINA_LIST_FREE(sd->edje_signals, esd)
      {
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);

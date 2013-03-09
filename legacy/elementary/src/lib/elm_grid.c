@@ -287,7 +287,7 @@ _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!clear)
      {
         chld = evas_object_grid_children_get(wd->resize_obj);
-        EINA_LIST_FREE (chld, o)
+        EINA_LIST_FREE(chld, o)
           elm_widget_sub_object_del(obj, o);
      }
 

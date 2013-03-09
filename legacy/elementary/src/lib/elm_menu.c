@@ -19,7 +19,7 @@ _item_del(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *child;
 
-   EINA_LIST_FREE (item->submenu.items, child)
+   EINA_LIST_FREE(item->submenu.items, child)
      _item_del(child);
 
    if (item->label) eina_stringshare_del(item->label);
@@ -598,7 +598,7 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_del_full
      (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
 
-   EINA_LIST_FREE (sd->items, item)
+   EINA_LIST_FREE(sd->items, item)
      _item_del(item);
 
    evas_object_event_callback_del_full
@@ -875,7 +875,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    ELM_MENU_DATA_GET(WIDGET(item), sd);
 
-   EINA_LIST_FREE (item->submenu.items, _item)
+   EINA_LIST_FREE(item->submenu.items, _item)
      elm_object_item_del(_item);
    if (item->label) eina_stringshare_del(item->label);
    if (item->content) evas_object_del(item->content);
