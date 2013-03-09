@@ -181,7 +181,7 @@
  * hash_of_element is calculated using the hashing function, passed as
  * parameter to the @ref eina_hash_new function. N is the number of buckets
  * (array positions), and is calculated based on the buckets_power_size
- * (argument of @ref eina_hash_new too). The following picture ilustrates the
+ * (argument of @ref eina_hash_new too). The following picture illustrates the
  * basic idea:
  *
  * @htmlonly
