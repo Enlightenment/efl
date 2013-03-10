@@ -628,7 +628,7 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
 }
 
 static void
-_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+_ecore_evas_win32_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 {
    INF("ecore evas rotation: %s", rotation ? "yes" : "no");
 
@@ -1054,7 +1054,7 @@ _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
 }
 
 static void
-_ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+_ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
 {
    HDC dc;
 
@@ -1324,7 +1324,7 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 #endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
 static Ecore_Evas *
-_ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
+_ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas *ee),
                                Ecore_Win32_Window *parent,
                                int                 x,
                                int                 y,
@@ -1392,7 +1392,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
         return NULL;
      }
 
-   if (!_ecore_evas_engine_init(ee))
+   if (!_ecore_evas_engine_backend_init(ee))
      {
         _ecore_evas_win32_shutdown();
         free(ee);
