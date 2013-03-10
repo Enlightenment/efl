@@ -407,8 +407,8 @@ evil_pipe(int *fds)
  out0:
    closesocket (temp);
 
-   fds[0] = INVALID_SOCKET;
-   fds[1] = INVALID_SOCKET;
+   fds[0] = -1;
+   fds[1] = -1;
 
    return -1;
 }

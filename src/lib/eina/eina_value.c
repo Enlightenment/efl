@@ -3539,10 +3539,12 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type EINA_UNUSED, con
    else if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
             convert == EINA_VALUE_TYPE_STRING)
      {
-        const char *other_mem;
         char buf[64];
-        strftime
-          (buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&(v.tv_sec)));
+        const char *other_mem;
+        time_t t;
+
+        t = v.tv_sec;
+        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&t));
         other_mem = buf; /* required due &buf == buf */
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
