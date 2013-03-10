@@ -5,7 +5,10 @@
 #ifdef __OpenBSD__
 # include <sys/types.h>
 #endif /* ifdef __OpenBSD__ */
-#include <netinet/in.h>
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 
 #ifdef _WIN32
 # include <winsock2.h>

@@ -313,6 +313,7 @@ sys/signalfd.h \
 sys/types.h \
 sys/param.h \
 sys/mman.h \
+netinet/in.h \
 ])
 
 have_inotify="${ac_cv_header_sys_inotify_h}"
@@ -478,12 +479,11 @@ mkdirat \
 mtrace \
 realpath \
 strlcpy \
-fcntl \
 ])
 
 AC_FUNC_ALLOCA
 
-EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday dirfd])
+EFL_CHECK_FUNCS([EFL], [fnmatch gettimeofday dirfd fcntl])
 
 have_atfile_source="${ac_cv_func_fstatat}"
 AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
@@ -1776,8 +1776,10 @@ EFL_EVAL_PKGS([ECORE])
 AC_HEADER_SYS_WAIT
 
 AC_CHECK_HEADERS([ \
+langinfo.h \
 features.h \
 sys/prctl.h \
+sys/resource.h \
 sys/timerfd.h \
 ])
 

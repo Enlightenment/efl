@@ -11,7 +11,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include <langinfo.h>
+#ifdef HAVE_LANGINFO_H
+# include <langinfo.h>
+#endif
 
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
