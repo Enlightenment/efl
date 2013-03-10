@@ -25,6 +25,10 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #ifdef _MSC_VER
 # include <float.h>
 #endif
@@ -949,6 +953,9 @@ EAPI void
 ecore_main_loop_begin(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+#ifdef HAVE_SYSTEMD
+   sd_notify(0, "READY=1");
+#endif
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
    in_main_loop++;

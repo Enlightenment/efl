@@ -73,6 +73,7 @@ Additions:
     * Ecore_x: Add manual render code before deiconify
     * Eeze: Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con: Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
+    * Ecore: notify systemd that we are ready as soon as the main loop is running.
 
 Deprecations:
     * ecore_x:
