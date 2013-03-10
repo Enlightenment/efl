@@ -519,7 +519,8 @@ AC_SUBST([EVIL_DLFCN_LIBS])
 
 EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
 # TODO: should we have these at EFL (global?)
-EVIL_CFLAGS="-Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls ${EVIL_CFLAGS}"
+# Note: these warnings should not be used with C++ code
+EVIL_CFLAGS_WRN="-Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
 EVIL_CXXFLAGS="${EVIL_CXXFLAGS}"
 
 if test "x${have_win32}" = "xyes" ; then
@@ -528,6 +529,7 @@ if test "x${have_win32}" = "xyes" ; then
 fi
 
 AC_SUBST([EVIL_DLFCN_CPPFLAGS])
+AC_SUBST([EVIL_CFLAGS_WRN])
 AC_SUBST([EVIL_CXXFLAGS])
 
 ### Checks for linker characteristics
