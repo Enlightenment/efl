@@ -3087,6 +3087,11 @@ EFL_LIB_END([Efreet])
 #### End of Efreet
 
 #### Eeze
+have_libmount_new="no"
+have_libmount_old="no"
+have_eeze_mount="no"
+want_tizen="no"
+
 EFL_LIB_START_OPTIONAL([Eeze], [test "${have_linux}" = "yes"])
 
 ### Additional options to configure
