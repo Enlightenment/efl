@@ -62,12 +62,16 @@ int fcntl(int fd, int cmd, ...)
 #endif /* ! __MINGW32CE__ */
           }
      }
+   else if (cmd == F_GETFL)
+     {
+        /* does nothing*/
+     }
    else if (cmd == F_SETFL)
      {
         long flag;
 
         flag = va_arg(va, long);
-        if (flag == O_NONBLOCK)
+        if (flag & O_NONBLOCK)
           {
              u_long arg = 1;
              int    type;
