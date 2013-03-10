@@ -3,6 +3,7 @@
 	* Eeze: add a dummy implementation of libmount when it is not available.
 	* Ecore_Con: add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
 	* Ecore: notify systemd that we are ready as soon as the main loop is running.
+	* EFL: use HAVE_FCNTL to disable code using fcntl.
 
 2013-03-08  Igor Murzov
 

@@ -156,7 +156,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         /* no zero page device - open it */
         if (_eina_mmap_zero_fd < 0)
           {
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
              int flags;
 #endif
 
@@ -164,7 +164,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
              /* if we don;'t have one - fail to set up mmap safety */
              if (_eina_mmap_zero_fd < 0) return EINA_FALSE;
 
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
              flags = fcntl(_eina_mmap_zero_fd, F_GETFD);
              flags |= FD_CLOEXEC;
              fcntl(_eina_mmap_zero_fd, F_SETFD, flags);

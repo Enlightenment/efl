@@ -180,7 +180,7 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
 Eina_Bool
 _ecore_fd_close_on_exec(int fd)
 {
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 
    flags = fcntl(fd, F_GETFD);
