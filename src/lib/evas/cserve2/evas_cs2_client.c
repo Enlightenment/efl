@@ -87,7 +87,7 @@ _server_connect(void)
 {
    int s, len;
    struct sockaddr_un remote;
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 #endif
 
@@ -97,7 +97,7 @@ _server_connect(void)
         return EINA_FALSE;
      }
 
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    flags = fcntl(s, F_GETFD);
    flags |= FD_CLOEXEC;
    fcntl(s, F_SETFD, flags);

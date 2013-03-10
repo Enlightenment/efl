@@ -957,7 +957,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    char *filename;
    struct stat file_stat;
    int fd = -1;
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 #endif
 
@@ -977,7 +977,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (fd < 0) goto on_error;
 
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    flags = fcntl(fd, F_GETFD);
    if (flags == -1)
      goto on_error;

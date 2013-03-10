@@ -122,6 +122,7 @@ Improvements:
     * Evas GL engine downscale quality in smooth mode much improved with multisampling up to effectively 16x16 via shaders.
     * eina: eina_strlcat now work with a NULL source.
     * Evas textblock: Added proper size adjustments for "high" shaped texts.
+    * Use the right macro to disable fcntl.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

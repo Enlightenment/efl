@@ -468,7 +468,8 @@ malloc_usable_size \
 mkdirat \
 mtrace \
 realpath \
-strlcpy
+strlcpy \
+fcntl \
 ])
 
 AC_FUNC_ALLOCA

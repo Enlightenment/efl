@@ -50,7 +50,7 @@ int
 ecore_file_monitor_backend_init(void)
 {
    int fd;
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 #endif
 
@@ -58,7 +58,7 @@ ecore_file_monitor_backend_init(void)
    if (fd < 0)
      return 0;
 
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    flags = fcntl(fd, F_GETFD);
    flags |= FD_CLOEXEC;
    fcntl(fd, F_SETFD, flags);

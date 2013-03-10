@@ -35,7 +35,7 @@ static int _init_evas_event = 0;
 Eina_Bool
 _evas_fd_close_on_exec(int fd)
 {
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    int flags;
 
    flags = fcntl(fd, F_GETFD);
@@ -74,7 +74,7 @@ evas_async_events_init(void)
    _fd_read = filedes[0];
    _fd_write = filedes[1];
 
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
 #endif
 
@@ -195,7 +195,7 @@ evas_async_events_process(void)
 static void
 _evas_async_events_fd_blocking_set(Eina_Bool blocking)
 {
-#ifdef HAVE_EXECVP
+#ifdef HAVE_FCNTL
    long flags = fcntl(_fd_read, F_GETFL);
 
    if (blocking) flags &= ~O_NONBLOCK;
