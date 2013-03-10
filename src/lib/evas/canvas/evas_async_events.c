@@ -74,7 +74,9 @@ evas_async_events_init(void)
    _fd_read = filedes[0];
    _fd_write = filedes[1];
 
+#ifdef HAVE_EXECVP
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
+#endif
 
    eina_lock_new(&async_lock);
    eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
@@ -193,12 +195,16 @@ evas_async_events_process(void)
 static void
 _evas_async_events_fd_blocking_set(Eina_Bool blocking)
 {
+#ifdef HAVE_EXECVP
    long flags = fcntl(_fd_read, F_GETFL);
 
    if (blocking) flags &= ~O_NONBLOCK;
    else flags |= O_NONBLOCK;
 
    fcntl(_fd_read, F_SETFL, flags);
+#else
+   (void) blocking;
+#endif
 }
 
 int
