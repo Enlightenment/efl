@@ -159,7 +159,7 @@ case "$host_os" in
    ;;
    linux*)
       have_linux="yes"
-      want_systemd="yes"
+      want_systemd="no"
    ;;
 esac
 
