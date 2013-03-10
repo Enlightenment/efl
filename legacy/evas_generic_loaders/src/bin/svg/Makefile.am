@@ -22,3 +22,7 @@ evas_image_loader_svg_CFLAGS = @SVG_CFLAGS@
 evas_image_loader_svg_LDADD = @SVG_LIBS@ @SHM_OPEN_LIBS@ -lm
 evas_image_loader_svg_LDFLAGS =
 
+
+install-exec-hook:
+	ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.svgz
+	ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.svg.gz
