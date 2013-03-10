@@ -270,6 +270,11 @@ struct Ecore_Con_Socks_v5
    unsigned int plen;
 };
 
+#ifdef HAVE_SYSTEMD
+extern int sd_fd_index;
+extern int sd_fd_max;
+#endif
+
 extern Ecore_Con_Socks *_ecore_con_proxy_once;
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 void ecore_con_socks_init(void);

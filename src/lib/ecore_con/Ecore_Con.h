@@ -662,7 +662,8 @@ typedef enum _Ecore_Con_Type
     * @note Only functional for clients
     * @since 1.2
     */
-   ECORE_CON_NO_PROXY = (1 << 8)
+   ECORE_CON_NO_PROXY = (1 << 8),
+   ECORE_CON_SOCKET_ACTIVATE = (1 << 9) 
 } Ecore_Con_Type;
 
 /**

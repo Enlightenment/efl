@@ -1,6 +1,7 @@
 2013-03-10  Cedric Bail
 
 	* Eeze: add a dummy implementation of libmount when it is not available.
+	* Ecore_Con: add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
 
 2013-03-08  Igor Murzov
 

@@ -1883,21 +1883,26 @@ want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
 if test "${have_wince}" = "yes"; then
+   want_systemd="no"
    want_curl="no"
    want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_win32}" = "yes"; then
+   want_systemd="no"
    want_cares="yes"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_darwin}" = "yes"; then
+   want_systemd="no"
    want_cares="no"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_ps3}" = "yes"; then
+   want_systemd="no"
    want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
 else
+   want_systemd="yes"
    want_cares="no"
 fi
 
@@ -1934,11 +1939,14 @@ else
    ecore_con_resolver="fork"
 fi
 
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+
 EFL_ADD_FEATURE([ECORE_CON], [curl])
 EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [resolver], [${ecore_con_resolver}])
+EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${want_systemd}])
 
 EFL_EVAL_PKGS([ECORE_CON])
 

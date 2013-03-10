@@ -72,6 +72,7 @@ Additions:
 	* Ecore_x: Add atom related with indicator type. 
     * Ecore_x: Add manual render code before deiconify
     * Eeze: Add a dummy libmount replacement for when libmount is not there.
+    * Ecore_Con: Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
 
 Deprecations:
     * ecore_x:
