@@ -6,6 +6,7 @@ dnl Macros that check functions availability for the EFL:
 dnl dirfd
 dnl dladdr
 dnl dlopen
+dnl fcntl
 dnl fnmatch
 dnl gettimeofday
 dnl iconv
@@ -110,6 +111,22 @@ case "$host_os" in
 #include <stdlib.h>
 #include <dlfcn.h>
 ]], [[void *res = dlsym(NULL, NULL);]])
+   ;;
+esac
+])
+
+dnl _EFL_CHECK_FUNC_FCNTL is for internal use
+dnl _EFL_CHECK_FUNC_FCNTL(EFL, VARIABLE)
+AC_DEFUN([_EFL_CHECK_FUNC_FCNTL],
+[
+case "$host_os" in
+   mingw*)
+      $2="yes"
+   ;;
+   *)
+      EFL_FIND_LIB_FOR_CODE([$1], [], [$2], [[
+#include <fcntl.h>
+]], [[int g = fcntl(0, 0);]])
    ;;
 esac
 ])

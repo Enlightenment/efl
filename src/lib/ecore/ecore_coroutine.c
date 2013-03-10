@@ -14,7 +14,9 @@
 # include <ucontext.h>
 #elif defined(USE_SETJMP)
 # include <sys/time.h>
-# include <sys/resource.h>
+# if HAVE_SYS_RESOURCE_H
+#  include <sys/resource.h>
+# endif
 # include <setjmp.h>
 #endif
 

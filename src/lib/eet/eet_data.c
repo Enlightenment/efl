@@ -7,7 +7,10 @@
 #include <math.h>
 #include <ctype.h>
 #include <limits.h>
-#include <netinet/in.h>
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 
 #ifdef _WIN32
 # include <winsock2.h>
