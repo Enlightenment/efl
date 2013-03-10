@@ -96,6 +96,7 @@ endif
 endif
 
 lib_eina_libeina_la_SOURCES = \
+lib/eina/eina_abi.c \
 lib/eina/eina_accessor.c \
 lib/eina/eina_array.c \
 lib/eina/eina_benchmark.c \
@@ -103,6 +104,7 @@ lib/eina/eina_binbuf.c \
 lib/eina/eina_binshare.c \
 lib/eina/eina_convert.c \
 lib/eina/eina_counter.c \
+lib/eina/eina_cow.c \
 lib/eina/eina_cpu.c \
 lib/eina/eina_error.c \
 lib/eina/eina_fp.c \
@@ -134,6 +136,7 @@ lib/eina/eina_strbuf_common.c \
 lib/eina/eina_stringshare.c \
 lib/eina/eina_tiler.c \
 lib/eina/eina_thread.c \
+lib/eina/eina_tmpstr.c \
 lib/eina/eina_unicode.c \
 lib/eina/eina_ustrbuf.c \
 lib/eina/eina_ustringshare.c \
@@ -141,10 +144,7 @@ lib/eina/eina_value.c \
 lib/eina/eina_xattr.c \
 lib/eina/eina_share_common.h \
 lib/eina/eina_private.h \
-lib/eina/eina_strbuf_common.h \
-lib/eina/eina_tmpstr.c \
-lib/eina/eina_cow.c \
-lib/eina/eina_abi.c
+lib/eina/eina_strbuf_common.h
 
 # Will be back for developper after 1.2
 # lib/eina/eina_model.c \
