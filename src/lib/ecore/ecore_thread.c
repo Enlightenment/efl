@@ -420,7 +420,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join, 
-					  (void*) PHS());
+					  (void*)(intptr_t)PHS());
 
    return NULL;
 }
@@ -458,7 +458,7 @@ restart:
    _ecore_thread_count--;
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
-					  (void*) PHS());
+					  (void*)(intptr_t)PHS());
    LKU(_ecore_pending_job_threads_mutex);
 
    return NULL;
