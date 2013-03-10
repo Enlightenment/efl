@@ -95,8 +95,8 @@ else
 lib_evil_libevil_la_SOURCES += lib/evil/evil_link_xp.cpp
 endif
 
-lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@
-lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
+lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@
+lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@ @EVIL_CFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_DEPENDENCIES = @EVIL_INTERNAL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
