@@ -9,7 +9,8 @@ installed_eezemainheadersdir = $(includedir)/eeze-@VMAJ@
 dist_installed_eezemainheaders_DATA = \
 lib/eeze/Eeze.h \
 lib/eeze/Eeze_Net.h \
-lib/eeze/Eeze_Sensor.h
+lib/eeze/Eeze_Sensor.h \
+lib/eeze/Eeze_Disk.h
 
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
@@ -23,15 +24,13 @@ lib/eeze/eeze_udev_private.c \
 lib/eeze/eeze_udev_private.h \
 lib/eeze/eeze_udev_syspath.c \
 lib/eeze/eeze_udev_walk.c \
-lib/eeze/eeze_udev_watch.c
-
-if HAVE_EEZE_MOUNT
-lib_eeze_libeeze_la_SOURCES += \
+lib/eeze/eeze_udev_watch.c \
 lib/eeze/eeze_disk.c \
 lib/eeze/eeze_disk_udev.c \
 lib/eeze/eeze_disk_mount.c \
 lib/eeze/eeze_disk_private.h
-dist_installed_eezemainheaders_DATA += lib/eeze/Eeze_Disk.h
+
+if HAVE_EEZE_MOUNT
 if EEZE_LIBMOUNT_BEFORE_219
 lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount_old.c
 else
@@ -41,6 +40,8 @@ else
 lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_libmount.c
 endif
 endif
+else
+lib_eeze_libeeze_la_SOURCES += lib/eeze/eeze_disk_dummy.c
 endif
 
 lib_eeze_libeeze_la_CPPFLAGS = \

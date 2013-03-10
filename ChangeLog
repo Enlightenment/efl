@@ -1,3 +1,7 @@
+2013-03-10  Cedric Bail
+
+	* Eeze: add a dummy implementation of libmount when it is not available.
+
 2013-03-08  Igor Murzov
 
         * Add WebP image saver.
