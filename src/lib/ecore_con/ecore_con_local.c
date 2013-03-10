@@ -13,6 +13,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
@@ -186,6 +190,7 @@ ecore_con_local_listen(
    struct stat st;
    mode_t mask;
    int socket_unix_len;
+   Eina_Bool abstract_socket;
 
    mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
@@ -249,6 +254,57 @@ ecore_con_local_listen(
 
    pmode = umask(mask);
 start:
+   socket_unix.sun_family = AF_UNIX;
+   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
+     {
+        abstract_socket = EINA_TRUE;
+#ifdef HAVE_ABSTRACT_SOCKETS
+        /* . is a placeholder */
+        snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s",
+                 svr->name);
+        /* first char null indicates abstract namespace */
+        socket_unix.sun_path[0] = '\0';
+        socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix,
+                                                         svr->name);
+#else
+        ERR("Your system does not support abstract sockets!");
+        goto error_umask;
+#endif
+     }
+   else
+     {
+        abstract_socket = EINA_FALSE;
+        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+     }
+
+#ifdef HAVE_SYSTEMD
+   if (svr->type & ECORE_CON_SOCKET_ACTIVATE && sd_fd_index < sd_fd_max)
+     {
+        if (sd_is_socket_unix(SD_LISTEN_FDS_START + sd_fd_index,
+			      SOCK_STREAM, 1,
+			      socket_unix.sun_path,
+			      abstract_socket ? socket_unix_len : 0) <= 0)
+	  {
+	     ERR("Your systemd unit seems to provide fd in the wrong order for Socket activation.");
+	     goto error_umask;
+	  }
+	svr->fd = SD_LISTEN_FDS_START + sd_fd_index++;
+
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
+	  goto error_umask;
+
+	lin.l_onoff = 1;
+	lin.l_linger = 0;
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
+		       sizeof(struct linger)) < 0)
+	  goto error_umask;
+
+	goto fd_ready;
+     }
+#else
+   (void) abstract_socket;
+#endif
    svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (svr->fd < 0)
      goto error_umask;
@@ -265,28 +321,6 @@ start:
                   sizeof(struct linger)) < 0)
      goto error_umask;
 
-   socket_unix.sun_family = AF_UNIX;
-   if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
-     {
-#ifdef HAVE_ABSTRACT_SOCKETS
-        /* . is a placeholder */
-        snprintf(socket_unix.sun_path, sizeof(socket_unix.sun_path), ".%s",
-                 svr->name);
-        /* first char null indicates abstract namespace */
-        socket_unix.sun_path[0] = '\0';
-        socket_unix_len = LENGTH_OF_ABSTRACT_SOCKADDR_UN(&socket_unix,
-                                                         svr->name);
-#else
-        ERR("Your system does not support abstract sockets!");
-        goto error_umask;
-#endif
-     }
-   else
-     {
-        strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
-        socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-     }
-
    if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
         if ((((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER) ||
@@ -302,6 +336,9 @@ start:
    if (listen(svr->fd, 4096) < 0)
      goto error_umask;
 
+#ifdef HAVE_SYSTEMD
+ fd_ready:
+#endif
    svr->path = strdup(buf);
    if (!svr->path)
      goto error_umask;

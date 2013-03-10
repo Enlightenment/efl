@@ -15,6 +15,10 @@
 #include <arpa/inet.h>
 #include <sys/un.h>
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
@@ -88,6 +92,10 @@ static void _ecore_con_lookup_done(void           *data,
 
 static const char * _ecore_con_pretty_ip(struct sockaddr *client_addr);
 
+#ifdef HAVE_SYSTEMD
+int sd_fd_index = 0;
+int sd_fd_max = 0;
+#endif
 
 void
 _ecore_con_client_kill(Ecore_Con_Client *cl)
@@ -158,7 +166,6 @@ ecore_con_init(void)
 #ifdef HAVE_EVIL
    if (!evil_init())
      return --_ecore_con_init_count;
-
 #endif
 
    if (!ecore_init())
@@ -196,6 +203,10 @@ ecore_con_init(void)
    ecore_con_socks_init();
    ecore_con_ssl_init();
    ecore_con_info_init();
+
+#ifdef HAVE_SYSTEMD
+   sd_fd_max = sd_listen_fds(0);
+#endif
 
    return _ecore_con_init_count;
 }
@@ -1425,6 +1436,45 @@ _ecore_con_cb_tcp_listen(void           *data,
         goto error;
      }
 
+#ifdef HAVE_SYSTEMD
+   if (svr->type & ECORE_CON_SOCKET_ACTIVATE && sd_fd_index < sd_fd_max)
+     {
+        if (sd_is_socket_inet(SD_LISTEN_FDS_START + sd_fd_index,
+			      net_info->info.ai_family,
+			      net_info->info.ai_socktype,
+			      1,
+			      svr->port) <= 0)
+	  {
+	     ERR("Your systemd unit seems to provide fd in the wrong order for Socket activation.");
+	     goto error;
+	  }
+
+	svr->fd = SD_LISTEN_FDS_START + sd_fd_index++;
+
+	/* I am wondering if that's really going to work as the bind is already done */
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+
+	lin.l_onoff = 1;
+	lin.l_linger = 0;
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
+		       sizeof(struct linger)) < 0)
+	  goto error;                                                    
+
+	if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
+	  {
+	     int flag = 1;
+
+	     if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
+			    sizeof(int)) < 0)
+	       {
+		 goto error;
+	       }
+	  }
+
+	goto fd_ready;
+     }
+#endif
+
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
    if (svr->fd < 0) goto error;
@@ -1439,7 +1489,7 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
-        int flag = 1;
+       int flag = 1;
 
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
                        sizeof(int)) < 0)
@@ -1453,8 +1503,11 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    if (listen(svr->fd, 4096) < 0) goto error;
 
+#ifdef HAVE_SYSTEMD
+ fd_ready:
+#endif
    svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                                               _ecore_con_svr_tcp_handler, svr, NULL, NULL);
+					       _ecore_con_svr_tcp_handler, svr, NULL, NULL);
    if (!svr->fd_handler)
      {
         memerr = "Memory allocation failure";
@@ -1492,7 +1545,27 @@ _ecore_con_cb_udp_listen(void           *data,
         svr->delete_me = EINA_TRUE;
         goto error;
      }
+#ifdef HAVE_SYSTEMD
+   if (svr->type & ECORE_CON_SOCKET_ACTIVATE && sd_fd_index < sd_fd_max)
+     {
+        if (sd_is_socket_inet(SD_LISTEN_FDS_START + sd_fd_index,
+			      net_info->info.ai_family,
+			      net_info->info.ai_socktype,
+			      -1,
+			      svr->port) <= 0)
+	  {
+	     ERR("Your systemd unit seems to provide fd in the wrong order for Socket activation.");
+	     goto error;
+	  }
+	svr->fd = SD_LISTEN_FDS_START + sd_fd_index++;
 
+	if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on, sizeof(on)) != 0)
+	  goto error;
+	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+
+	goto fd_ready;
+     }
+#endif
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
    if (svr->fd < 0) goto error;
@@ -1532,6 +1605,9 @@ _ecore_con_cb_udp_listen(void           *data,
    if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
      goto error;
 
+#ifdef HAVE_SYSTEMD
+ fd_ready:
+#endif
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
                                _ecore_con_svr_udp_handler, svr, NULL, NULL);
