@@ -137,6 +137,7 @@ case "$host_os" in
    ;;
 esac
 
+want_systemd="no"
 have_wince="no"
 have_win32="no"
 have_windows="no"
@@ -158,6 +159,7 @@ case "$host_os" in
    ;;
    linux*)
       have_linux="yes"
+      want_systemd="yes"
    ;;
 esac
 
@@ -1735,6 +1737,9 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+
+EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
 EFL_ADD_FEATURE([ECORE], [g-main-loop])
 
@@ -1885,26 +1890,21 @@ want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
 if test "${have_wince}" = "yes"; then
-   want_systemd="no"
    want_curl="no"
    want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_win32}" = "yes"; then
-   want_systemd="no"
    want_cares="yes"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_darwin}" = "yes"; then
-   want_systemd="no"
    want_cares="no"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_ps3}" = "yes"; then
-   want_systemd="no"
    want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
 else
-   want_systemd="yes"
    want_cares="no"
 fi
 
