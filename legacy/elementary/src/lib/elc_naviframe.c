@@ -454,7 +454,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
      goto end;
 
-   if (nit->content && !sd->on_deletion)
+   if (!sd->on_deletion)
      {
         nit->unfocusable = elm_widget_tree_unfocusable_get(VIEW(nit));
         elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
@@ -1012,8 +1012,7 @@ _on_item_push_finished(void *data,
 
    evas_object_hide(VIEW(it));
 
-   if (it->content)
-     elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
+   elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
 
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
@@ -1031,7 +1030,7 @@ _on_item_pop_finished(void *data,
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   if (sd->preserve && it->content)
+   if (sd->preserve)
      elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
    sd->popping = eina_list_remove(sd->popping, it);
 
