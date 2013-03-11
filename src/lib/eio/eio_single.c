@@ -157,7 +157,7 @@ _eio_file_lstat(void *data, Ecore_Thread *thread)
    Eio_File_Stat *s = data;
    struct stat buf;
 
-   if (lstat(s->path, &buf) != 0)
+   if (_eio_lstat(s->path, &buf) != 0)
      eio_file_thread_error(&s->common, thread);
 
    _eio_file_struct_2_eina(&s->buffer, &buf);
