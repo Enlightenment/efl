@@ -544,10 +544,15 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->scroll)
      {
         const char *str;
-
+        Eina_Bool ok = EINA_FALSE;
+        
         eo_do(obj, elm_scrollable_interface_mirrored_set(elm_widget_mirrored_get(obj)));
 
-        elm_widget_theme_object_set
+        if (sd->single_line)
+          ok = elm_widget_theme_object_set
+          (obj, sd->scr_edje, "scroller", "entry_single", elm_widget_style_get(obj));
+        if (!ok)
+          elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry", elm_widget_style_get(obj));
 
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
@@ -557,6 +562,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
 
+   sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
 
    sd->has_text = !sd->has_text;
