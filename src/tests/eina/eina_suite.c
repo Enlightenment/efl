@@ -72,6 +72,7 @@ static const Eina_Test_Case etc[] = {
    // Disabling Eina_Model test
    //   { "Model", eina_test_model },
    { "Barrier", eina_test_barrier },
+   { "Tmp String", eina_test_tmpstr },
    { NULL, NULL }
 };
 
