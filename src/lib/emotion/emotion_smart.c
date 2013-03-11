@@ -198,6 +198,14 @@ _emotion_image_data_zero(Evas_Object *img)
 static void
 _smart_data_free(Smart_Data *sd)
 {
+#ifdef HAVE_EIO
+   /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
+   if (sd->load_xattr) eio_file_cancel(sd->load_xattr);
+   sd->load_xattr = NULL;
+   if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
+   sd->save_xattr = NULL;
+#endif
+
    if (sd->engine_instance)
      {
         emotion_engine_instance_file_close(sd->engine_instance);
