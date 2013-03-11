@@ -292,10 +292,8 @@ AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 # check for systemd library if requested
 if test "x{want_systemd}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon],
-   		[have_systemd="yes"],
-		[have_systemd="no"])
-else
-   have_systemd="no"
+   		[want_systemd="yes"],
+		[want_systemd="no"])
 fi
 
 #### Checks for header files
@@ -1747,7 +1745,7 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${have_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
 
 EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${have_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
