@@ -123,7 +123,8 @@ struct _Evas_Font_Glyph_Info
 #if 1
    // done with shorts to save space... if we need 32k or bigger glyphs and
    // relative layout info... worry then.
-   short x_bear, y_bear, width, pen_after; // 8
+   Evas_Coord pen_after; // 4
+   short x_bear, y_bear, width; // 6
 #else   
    Evas_Coord x_bear; // 4
    /* This one is rarely used, only in draw, in which we already get the glyph
