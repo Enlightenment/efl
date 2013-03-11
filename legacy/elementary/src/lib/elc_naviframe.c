@@ -1704,7 +1704,7 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
 EAPI void
 elm_naviframe_item_promote(Elm_Object_Item *it)
 {
-   Elm_Object_Item * prev_top;
+   Elm_Object_Item *prev_top;
    Elm_Naviframe_Item *nit;
    Elm_Naviframe_Item *prev_it;
 
