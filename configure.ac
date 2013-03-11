@@ -159,7 +159,7 @@ case "$host_os" in
    ;;
    linux*)
       have_linux="yes"
-      want_systemd="no"
+      want_systemd="yes"
    ;;
 esac
 
@@ -288,6 +288,15 @@ case "$build_crypto" in
 esac
 AM_CONDITIONAL([HAVE_CRYPTO_GNUTLS], [test "${build_crypto}" = "gnutls"])
 AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
+
+# check for systemd library if requested
+if test "x{want_systemd}" = "xyes"; then
+   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon],
+   		[have_systemd="yes"],
+		[have_systemd="no"])
+else
+   have_systemd="no"
+fi
 
 #### Checks for header files
 
@@ -1738,9 +1747,9 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${have_systemd}], [SYSTEMD], [libsystemd-daemon])
 
-EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
+EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${have_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
 EFL_ADD_FEATURE([ECORE], [g-main-loop])
 
@@ -1942,14 +1951,14 @@ else
    ecore_con_resolver="fork"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${have_systemd}], [SYSTEMD], [libsystemd-daemon])
 
 EFL_ADD_FEATURE([ECORE_CON], [curl])
 EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [resolver], [${ecore_con_resolver}])
-EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${want_systemd}])
+EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${have_systemd}])
 
 EFL_EVAL_PKGS([ECORE_CON])
 
