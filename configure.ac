@@ -274,7 +274,7 @@ AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 # check for crypto/tls library to use
 case "$build_crypto" in
    gnutls)
-      EFL_DEPEND_PKG([crypto], [GNUTLS], [gnutls >= 2.11])
+      EFL_DEPEND_PKG([crypto], [GNUTLS], [gnutls >= 2.12.16])
 
       AM_PATH_LIBGCRYPT([], [:],
          [AC_MSG_ERROR([libgcrypt required but not found])])
