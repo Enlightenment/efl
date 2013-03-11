@@ -194,3 +194,4 @@ Fixes:
     * fix edje program filters
     * fix dangling pointer problem related with shmget fail
     * fix bug scroll works when PgDn, PgUp, Home, End key in entry is pressed in preedit state
+    * clean up gnutls session initialization
