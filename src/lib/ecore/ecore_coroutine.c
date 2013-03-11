@@ -26,6 +26,8 @@
 
 #ifdef _WIN32
 # define USE_FIBERS
+# undef USE_UCONTEXT
+# undef USE_SETJMP
 #endif
 
 #include "Ecore.h"
