@@ -1140,3 +1140,4 @@
 2013-03-11  WooHyun Jung
 
         * Fixed a bug that naviframe's focus_next didn't work after changing evenry item to elm_layout.
+        * Naviframe is now supproting .

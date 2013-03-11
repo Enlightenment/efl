@@ -83,6 +83,7 @@ Improvements:
    * Improve support on 64bits system.
    * Improve gengrid item append performance.
    * Naviframe works for H/W Back key event.
+   * Naviframe is now supproting focus_direction.
 
 Fixes:
 
