@@ -2595,9 +2595,9 @@ proceed:
         size_t tlen;
 
         tlen = strlen(text);
-	/* FIXME: need that or we do copy unitialised data */
+        /* FIXME: need that or we do copy unitialised data */
         tmpbuf = calloc(1, tlen + sd->append_text_len -
-              sd->append_text_position + 1);
+                        sd->append_text_position + 1);
         if (!tmpbuf)
           {
              ERR("Failed to allocate memory for entry's text %p", obj);
