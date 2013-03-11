@@ -55,6 +55,9 @@ typedef const char     *(*glsym_func_const_char_ptr) ();
 #ifndef EGL_NATIVE_PIXMAP_KHR
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
 #endif
+#ifndef EGL_BUFFER_AGE_EXT
+#define EGL_BUFFER_AGE_EXT 0x313d
+#endif
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
@@ -62,6 +65,7 @@ void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void          *(*glsym_eglMapImageSEC)         (void *a, void *b) = NULL;
 unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b) = NULL;
 const char    *(*glsym_eglQueryString)         (EGLDisplay a, int name) = NULL;
+void     (*glsym_eglSwapBuffersRegion)         (EGLDisplay a, void *b, EGLint c, const EGLint *d) = NULL;
 
 #else
 typedef XID     (*glsym_func_xid) ();
@@ -547,6 +551,9 @@ gl_symbols(void)
    FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 
    FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
+
+   FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegion", glsym_func_void_ptr);
+   FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegionSEC", glsym_func_void_ptr);
 #else
 #define FINDSYM(dst, sym, typ) \
    if (glsym_glXGetProcAddress) { \
@@ -1032,6 +1039,22 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         re->rects = evas_common_tilebuf_get_render_rects(re->tb);
         if (re->rects)
           {
+#ifdef GL_GLES
+        if (re->info->swap_mode == EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO)
+          {
+             EGLint age = 0;
+        
+             if (eglQuerySurface(re->win->egl_disp, re->win->egl_surface[0],
+                                 EGL_BUFFER_AGE_EXT, &age))
+               {
+                  if (age == 1) re->mode = MODE_COPY;
+                  else if (age == 2) re->mode = MODE_DOUBLE;
+                  else if (age == 3) re->mode = MODE_TRIPLE;
+                  else re->mode = MODE_FULL;
+               }
+             else re->mode = MODE_FULL;
+          }
+#endif
              if (re->lost_back)
                {
                   /* if we lost our backbuffer since the last frame redraw all */
@@ -1197,8 +1220,33 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   // XXX: if partial swaps can be done use re->rects
-   eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
+   if (glsym_eglSwapBuffersRegion)
+     {
+        EGLint num = 0, *rects = NULL, i;
+        Tilebuf_Rect *r;
+        
+        // if partial swaps can be done use re->rects
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r) num++;
+        if (num > 0) rects = malloc(sizeof(EGLint) * 4 * num);
+        if (rects)
+          {
+             i = 0;
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r)
+               {
+                  rects[i + 0] = r->x;
+                  rects[i + 1] = r->y;
+                  rects[i + 2] = r->w;
+                  rects[i + 3] = r->h;
+                  i += 4;
+               }
+             glsym_eglSwapBuffersRegion(re->win->egl_disp,
+                                        re->win->egl_surface[0],
+                                        num, rects);
+             free(rects);
+          }
+     }
+   else
+     eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
    if (!safe_native) eglWaitGL();
    if (re->info->callback.post_swap)
      {
