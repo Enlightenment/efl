@@ -186,12 +186,15 @@ _eio_file_xattr_set(void *data, Ecore_Thread *thread)
 }
 
 static void
-_eio_file_xattr_set_done(void *data, Ecore_Thread *thread EINA_UNUSED)
+_eio_file_xattr_set_done(void *data, Ecore_Thread *thread)
 {
    Eio_File_Xattr *async = data;
 
-   if (async->common.done_cb)
-     async->common.done_cb((void*) async->common.data, &async->common);
+   if (!ecore_thread_check(thread))
+     {
+        if (async->common.done_cb)
+          async->common.done_cb((void*) async->common.data, &async->common);
+     }
 
    _eio_file_xattr_free(async);
 }

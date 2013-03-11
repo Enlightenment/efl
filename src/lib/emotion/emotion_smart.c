@@ -53,6 +53,7 @@ struct _Smart_Data
    Emotion_Engine_Instance *engine_instance;
 
    const char    *file;
+   Evas_Object   *smartobj;
    Evas_Object   *obj;
    Evas_Object   *bg;
 
@@ -205,20 +206,29 @@ _smart_data_free(Smart_Data *sd)
    if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
    sd->save_xattr = NULL;
 #endif
-
+   
    if (sd->engine_instance)
      {
         emotion_engine_instance_file_close(sd->engine_instance);
         emotion_engine_instance_del(sd->engine_instance);
      }
-   evas_object_del(sd->obj);
-   evas_object_del(sd->crop.clipper);
-   evas_object_del(sd->bg);
-   eina_stringshare_del(sd->file);
+   sd->engine_instance = NULL;
+   if (sd->obj) evas_object_del(sd->obj);
+   sd->obj = NULL;
+   if (sd->crop.clipper) evas_object_del(sd->crop.clipper);
+   sd->crop.clipper = NULL;
+   if (sd->bg) evas_object_del(sd->bg);
+   sd->bg = NULL;
+   if (sd->file) eina_stringshare_del(sd->file);
+   sd->file = NULL;
    if (sd->job) ecore_job_del(sd->job);
+   sd->job = NULL;
    if (sd->anim) ecore_animator_del(sd->anim);
+   sd->anim = NULL;
    free(sd->progress.info);
+   sd->progress.info = NULL;
    free(sd->ref.file);
+   sd->ref.file = NULL;
    free(sd);
 
    /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
@@ -1229,7 +1239,11 @@ _eio_load_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
    if (handler == sd->load_xattr) sd->load_xattr = NULL;
 
    EINA_REFCOUNT_UNREF(sd)
-     _smart_data_free(sd);
+     {
+        if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
+        sd->smartobj = NULL;
+        _smart_data_free(sd);
+     }
 }
 
 static void
@@ -1301,7 +1315,11 @@ _eio_save_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
    if (handler == sd->save_xattr) sd->save_xattr = NULL;
 
    EINA_REFCOUNT_UNREF(sd)
-     _smart_data_free(sd);
+     {
+        if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
+        sd->smartobj = NULL;
+        _smart_data_free(sd);
+     }
 }
 
 static void
@@ -1798,6 +1816,7 @@ _smart_add(Evas_Object * obj)
 
    EINA_REFCOUNT_INIT(sd);
    sd->state = EMOTION_WAKEUP;
+   sd->smartobj = obj;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    sd->bg = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(sd->bg, 0, 0, 0, 0);
@@ -1828,6 +1847,30 @@ _smart_del(Evas_Object * obj)
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->engine_instance)
+     {
+        emotion_engine_instance_file_close(sd->engine_instance);
+        emotion_engine_instance_del(sd->engine_instance);
+     }
+   sd->engine_instance = NULL;
+   if (sd->obj) evas_object_del(sd->obj);
+   sd->obj = NULL;
+   if (sd->crop.clipper) evas_object_del(sd->crop.clipper);
+   sd->crop.clipper = NULL;
+   if (sd->bg) evas_object_del(sd->bg);
+   sd->bg = NULL;
+   if (sd->file) eina_stringshare_del(sd->file);
+   sd->file = NULL;
+   if (sd->job) ecore_job_del(sd->job);
+   sd->job = NULL;
+   if (sd->anim) ecore_animator_del(sd->anim);
+   sd->anim = NULL;
+   free(sd->progress.info);
+   sd->progress.info = NULL;
+   free(sd->ref.file);
+   sd->ref.file = NULL;
+   if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
+   sd->smartobj = NULL;
    EINA_REFCOUNT_UNREF(sd)
      _smart_data_free(sd);
 }
