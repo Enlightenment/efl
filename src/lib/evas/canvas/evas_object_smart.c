@@ -752,6 +752,7 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
    if (!event) return NULL;
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
+        if (!cb) continue;
         if ((!strcmp(cb->event, event)) && (cb->func == func))
           {
              void *data;
@@ -780,6 +781,7 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
    if (!event) return NULL;
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
+        if (!cb) continue;
         if ((!strcmp(cb->event, event)) && (cb->func == func) && (cb->func_data == data))
           {
              void *ret;
@@ -814,6 +816,7 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    strshare = eina_stringshare_add(event);
    EINA_LIST_FOREACH(o->callbacks, l, cb)
      {
+        if (!cb) continue;
         if (!cb->delete_me)
           {
              if (cb->event == strshare)
@@ -1139,6 +1142,7 @@ evas_object_smart_callbacks_clear(Evas_Object *eo_obj)
      {
         cb = eina_list_data_get(l);
         l = eina_list_next(l);
+        if (!cb) continue;
         if (cb->delete_me)
           {
              o->callbacks = eina_list_remove(o->callbacks, cb);
@@ -1206,6 +1210,7 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
           {
              Evas_Smart_Callback *cb = o->callbacks->data;
              o->callbacks = eina_list_remove(o->callbacks, cb);
+             if (!cb) continue;
              if (cb->event) eina_stringshare_del(cb->event);
              EVAS_MEMPOOL_FREE(_mp_cb, cb);
           }
