@@ -434,6 +434,53 @@ START_TEST(strbuf_prepend_realloc)
 }
 END_TEST
 
+START_TEST(strbuf_trim)
+{
+    Eina_Strbuf* buf;
+    char* str;
+
+    eina_init();
+    buf = eina_strbuf_new();
+    fail_unless(buf);
+
+    eina_strbuf_append(buf, "  string     ");
+    eina_strbuf_trim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "string") != 0);
+    eina_strbuf_reset(buf);
+
+    eina_strbuf_append(buf, "  string     ");
+    eina_strbuf_ltrim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "string     ") != 0);
+    eina_strbuf_rtrim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "string") != 0);
+    eina_strbuf_reset(buf);
+
+    eina_strbuf_append(buf,"             ");
+    eina_strbuf_trim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "") != 0);
+    eina_strbuf_reset(buf);
+
+    eina_strbuf_append(buf,"             ");
+    eina_strbuf_rtrim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "") != 0);
+    eina_strbuf_reset(buf);
+
+    eina_strbuf_append(buf, "             ");
+    eina_strbuf_ltrim(buf);
+    str = eina_strbuf_string_get(buf);
+    fail_if(str == NULL || strcmp(str, "") != 0);
+    eina_strbuf_reset(buf);
+
+    eina_strbuf_free(buf);
+    eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -446,4 +493,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_append_realloc);
    tcase_add_test(tc, strbuf_prepend_realloc);
    tcase_add_test(tc, strbuf_manage_simple);
+   tcase_add_test(tc, strbuf_trim);
 }
