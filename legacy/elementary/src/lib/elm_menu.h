@@ -228,10 +228,12 @@ EAPI void                         elm_menu_close(Evas_Object *obj);
 EAPI const Eina_List             *elm_menu_items_get(const Evas_Object *obj);
 
 /**
- * @brief Get the Evas_Object of an Elm_Object_Item
+ * Get the real Evas(Edje) object created to implement the view of a given
+ * menu @p item.
  *
- * @param it The menu item object.
- * @return The edje object containing the swallowed content
+ * @param it The menu item.
+ * @return The base Edje object containing the swallowed content associated with
+ * @p it.
  *
  * @warning Don't manipulate this object!
  *

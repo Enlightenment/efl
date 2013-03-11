@@ -176,11 +176,7 @@
  *   @c event_info parameter is the gengrid item that was unselected.
  * - @c "realized" - This is called when the item in the gengrid
  *   has its implementing Evas object instantiated, de facto. @c
- *   event_info is the gengrid item that was created. The object
- *   may be deleted at any time, so it is highly advised to the
- *   caller @b not to use the object pointer returned from
- *   elm_gengrid_item_object_get(), because it may point to freed
- *   objects.
+ *   event_info is the gengrid item that was created.
  * - @c "unrealized" - This is called when the implementing Evas
  *   object for this item is deleted. @c event_info is the gengrid
  *   item that was deleted.

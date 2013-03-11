@@ -1020,10 +1020,11 @@ EAPI void                         elm_list_item_show(Elm_Object_Item *it);
 EAPI void                         elm_list_item_bring_in(Elm_Object_Item *it);
 
 /**
- * Gets the base object of the item.
+ * Get the real Evas(Edje) object created to implement the view of a given
+ * list @p item.
  *
  * @param it The list item
- * @return The base object associated with @p item
+ * @return The base Edje object associated with @p it.
  *
  * Base object is the @c Evas_Object that represents that item.
  *

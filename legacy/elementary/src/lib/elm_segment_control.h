@@ -370,10 +370,11 @@ EAPI Evas_Object      *elm_segment_control_item_icon_get(const Evas_Object *obj,
 EAPI int               elm_segment_control_item_index_get(const Elm_Object_Item *it);
 
 /**
- * Get the base object of the item.
+ * Get the real Evas(Edje) object created to implement the view of a given
+ * segment_control @p item.
  *
  * @param it The segment control item.
- * @return The base object associated with @p it.
+ * @return The base Edje object associated with @p it.
  *
  * Base object is the @c Evas_Object that represents that item.
  *

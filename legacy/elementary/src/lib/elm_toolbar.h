@@ -513,10 +513,11 @@ EAPI void                         elm_toolbar_item_icon_set(Elm_Object_Item *it,
 EAPI const char                  *elm_toolbar_item_icon_get(const Elm_Object_Item *it);
 
 /**
- * Get the object of @p item.
+ * Get the real Evas(Edje) object created to implement the view of a given
+ * toolbar @p item.
  *
  * @param it The toolbar item.
- * @return The object
+ * @return The base Edje object associated with @p it.
  *
  * @ingroup Toolbar
  */
