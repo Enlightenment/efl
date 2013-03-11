@@ -2,14 +2,14 @@
 # include <config.h>
 #endif
 
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
-
 #include <stdlib.h>
 #include <string.h>
 
 #include <Eina.h>
 #include <Ecore.h>
+#include "ecore_private.h"
+#include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 
 #include <Ecore_X.h>
 #include <Ecore_X_Atoms.h>
@@ -22,9 +22,12 @@
 # include <Evas_Engine_GL_X11.h>
 #endif
 
+#include <Ecore_Evas.h>
+#include "ecore_evas_private.h"
+#include "ecore_evas_x11.h"
+
 #define EDBG(...)                                                       \
   EINA_LOG(_ecore_evas_log_dom, EINA_LOG_LEVEL_DBG + 1, __VA_ARGS__);
-
 
 static int _ecore_evas_init_count = 0;
 

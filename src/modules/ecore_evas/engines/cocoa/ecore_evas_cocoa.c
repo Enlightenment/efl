@@ -2,16 +2,16 @@
 # include <config.h>
 #endif
 
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
-
-#include "Ecore.h"
+#include <Ecore.h>
 #include "ecore_private.h"
-#include "Ecore_Input.h"
-#include "Ecore_Input_Evas.h"
+#include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 
 #include <Ecore_Cocoa.h>
 #include <Evas_Engine_GL_Cocoa.h>
+
+#include "Ecore_Evas.h"
+#include "ecore_evas_private.h"
 
 
 // FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more

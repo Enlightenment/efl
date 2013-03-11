@@ -1,9 +1,8 @@
 #ifndef _ECORE_EVAS_H
 #define _ECORE_EVAS_H
 
-#include "Ecore_Evas_Types.h"
-
 #include <Evas.h>
+#include <Ecore_Evas_Types.h>
 
 #ifdef EAPI
 # undef EAPI

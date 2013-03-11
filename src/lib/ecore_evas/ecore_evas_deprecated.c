@@ -7,8 +7,8 @@
 #include <Ecore.h>
 #include "ecore_private.h"
 
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+#include "ecore_evas_private.h"
 
 
 /* Ecore_Evas WinCE support was removed. However we keep the functions

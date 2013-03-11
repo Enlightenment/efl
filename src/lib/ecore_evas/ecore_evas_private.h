@@ -1,14 +1,6 @@
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
-#include "Ecore_Evas_Types.h"
-
-#include <Evas.h>
-#include <Ecore.h>
-#include <ecore_private.h>
-#include <Ecore_Input.h>
-#include <Ecore_Input_Evas.h>
-
 #define ECORE_MAGIC_EVAS 0x76543211
 
 /** Log domain macros and variables **/
@@ -53,14 +45,6 @@ typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
 
 /* Engines interfaces */
-typedef struct _Ecore_Evas_Interface_Extn Ecore_Evas_Interface_Extn;
-typedef struct _Ecore_Evas_Interface_X11 Ecore_Evas_Interface_X11;
-typedef struct _Ecore_Evas_Interface_Software_X11 Ecore_Evas_Interface_Software_X11;
-typedef struct _Ecore_Evas_Interface_Gl_X11 Ecore_Evas_Interface_Gl_X11;
-typedef struct _Ecore_Evas_Interface_Wayland Ecore_Evas_Interface_Wayland;
-typedef struct _Ecore_Evas_Interface_Win32 Ecore_Evas_Interface_Win32;
-
-
 struct _Ecore_Evas_Engine_Func
 {
    void (*fn_free) (Ecore_Evas *ee);
@@ -131,64 +115,6 @@ struct _Ecore_Evas_Interface
 {
     const char *name;
     unsigned int version;
-};
-
-struct _Ecore_Evas_Interface_X11 {
-   Ecore_Evas_Interface base;
-
-   void           (*leader_set)(Ecore_Evas *ee, Ecore_X_Window win);
-   Ecore_X_Window (*leader_get)(Ecore_Evas *ee);
-   void           (*leader_default_set)(Ecore_Evas *ee);
-   void           (*shape_input_rectangle_set)(Ecore_Evas *ee, int x, int y, int w, int h);
-   void           (*shape_input_rectangle_add)(Ecore_Evas *ee, int x, int y, int w, int h);
-   void           (*shape_input_rectangle_subtract)(Ecore_Evas *ee, int x, int y, int w, int h);
-   void           (*shape_input_empty)(Ecore_Evas *ee);
-   void           (*shape_input_reset)(Ecore_Evas *ee);
-   void           (*shape_input_apply)(Ecore_Evas *ee);
-};
-
-struct _Ecore_Evas_Interface_Software_X11 {
-   Ecore_Evas_Interface base;
-
-   Ecore_X_Window (*window_get)(const Ecore_Evas *ee);
-   void           (*resize_set)(Ecore_Evas *ee, Eina_Bool on);
-   Eina_Bool      (*resize_get)(const Ecore_Evas *ee);
-   void           (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
-};
-
-struct _Ecore_Evas_Interface_Gl_X11 {
-   Ecore_Evas_Interface base;
-
-   Ecore_X_Window  (*window_get)(const Ecore_Evas *ee);
-   void            (*resize_set)(Ecore_Evas *ee, Eina_Bool on);
-   Eina_Bool       (*resize_get)(const Ecore_Evas *ee);
-   void            (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
-   void            (*pre_post_swap_callback_set)(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
-};
-
-struct _Ecore_Evas_Interface_Extn {
-   Ecore_Evas_Interface base;
-
-    void            (*data_lock)(Ecore_Evas *ee);
-    void            (*data_unlock)(Ecore_Evas *ee);
-    Eina_Bool       (*connect)(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
-    Eina_Bool       (*listen)(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
-};
-
-struct _Ecore_Evas_Interface_Wayland {
-   Ecore_Evas_Interface base;
-
-    void             (*resize)(Ecore_Evas *ee, int location);
-    void             (*move)(Ecore_Evas *ee, int x, int y);
-    void             (*pointer_set)(Ecore_Evas *ee, int hot_x, int hot_y);
-    void             (*type_set)(Ecore_Evas *ee, int type);
-    Ecore_Wl_Window* (*window_get)(const Ecore_Evas *ee);
-};
-
-struct _Ecore_Evas_Interface_Win32 {
-   Ecore_Evas_Interface base;
-
-   Ecore_Win32_Window* (*window_get)(const Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Engine

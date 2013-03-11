@@ -2,6 +2,9 @@
 # include <config.h>
 #endif
 
+#include <Ecore.h>
+#include "ecore_private.h"
+
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
 
@@ -9,7 +12,7 @@ static Eina_Hash *_registered_engines = NULL;
 static Eina_List *_engines_paths = NULL;
 static Eina_List *_engines_available = NULL;
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__) || defined(_WIN32)
+#ifdef _WIN32
 # define ECORE_EVAS_ENGINE_NAME "module.dll"
 #else
 # define ECORE_EVAS_ENGINE_NAME "module.so"

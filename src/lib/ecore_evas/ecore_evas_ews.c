@@ -6,15 +6,14 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include <Eina.h>
-#include <Ecore.h>
-#include "ecore_private.h"
 #include <Evas.h>
 #include <Evas_Engine_Buffer.h>
+#include <Ecore.h>
+#include "ecore_private.h"
 #include <Ecore_Input.h>
 
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+#include "ecore_evas_private.h"
 
 EAPI int ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE = 0;
 EAPI int ECORE_EVAS_EWS_EVENT_ADD = 0;
