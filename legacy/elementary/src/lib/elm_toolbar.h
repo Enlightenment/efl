@@ -191,6 +191,8 @@ EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_O
  * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
  * If an absolute path is provided it will load it direct from a file.
  *
+ * @note This function does not accept relative icon path.
+ *
  * @see elm_toolbar_item_icon_set()
  * @see elm_object_item_del()
  *
@@ -225,6 +227,8 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  * Toolbar will load icon image from fdo or current theme.
  * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
  * If an absolute path is provided it will load it direct from a file.
+ *
+ * @note This function does not accept relative icon path.
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_object_item_del()
@@ -262,6 +266,8 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
  * If an absolute path is provided it will load it direct from a file.
  *
+ * @note This function does not accept relative icon path.
+ *
  * @see elm_toolbar_item_icon_set()
  * @see elm_object_item_del()
  *
@@ -297,6 +303,8 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  * Toolbar will load icon image from fdo or current theme.
  * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
  * If an absolute path is provided it will load it direct from a file.
+ *
+ * @note This function does not accept relative icon path.
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_object_item_del()
@@ -482,6 +490,8 @@ EAPI Elm_Object_Item             *elm_toolbar_more_item_get(const Evas_Object *o
  * Toolbar will load icon image from fdo or current theme.
  * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
  * If an absolute path is provided it will load it direct from a file.
+ *
+ * @note This function does not accept relative icon path.
  *
  * @see elm_toolbar_icon_order_lookup_set()
  * @see elm_toolbar_icon_order_lookup_get()

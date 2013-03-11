@@ -259,6 +259,8 @@ EAPI void                  elm_icon_thumb_set(Evas_Object *obj, const char *file
  * @note The icon image set by this function can be changed by
  * elm_image_file_set().
  *
+ * @note This function does not accept relative icon path.
+ *
  * @see elm_icon_standard_get()
  * @see elm_image_file_set()
  *

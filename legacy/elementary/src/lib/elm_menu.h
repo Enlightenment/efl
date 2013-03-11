@@ -250,6 +250,8 @@ EAPI Evas_Object                 *elm_menu_item_object_get(const Elm_Object_Item
  * @param data Data sent by the callback.
  * @return Returns the new item.
  *
+ * @note This function does not accept relative icon path.
+ *
  * @ingroup Menu
  */
 EAPI Elm_Object_Item             *elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
