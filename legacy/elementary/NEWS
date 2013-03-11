@@ -181,6 +181,7 @@ Fixes:
    * Fix the toolbar cannot be unselected when it's mode is ELM_OBJECT_SELECT_MODE_ALWAYS.
    * Remove the back button callback if the back button is unset on the naviframe.
    * Fixed a bug that naviframe's focus_next didn't work after changing evenry item to elm_layout.
+   * Entry: Fixed a bug with text appending.
    
 Removals:
 

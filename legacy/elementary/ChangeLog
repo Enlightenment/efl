@@ -1141,3 +1141,8 @@
 
         * Fixed a bug that naviframe's focus_next didn't work after changing evenry item to elm_layout.
         * Naviframe is now supproting .
+	
+2013-03-11  Tom Hacohen (TAsn)
+
+        * Entry: Fixed a bug with text appending.
+
