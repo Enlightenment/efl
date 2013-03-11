@@ -15,10 +15,15 @@
 #endif
 
 #include <Eina.h>
-
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
+#include <Ecore.h>
+#include "ecore_private.h"
+#include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 #include <Ecore_Wayland.h>
+
+#include <Ecore_Evas.h>
+#include "ecore_evas_private.h"
+#include "ecore_evas_wayland.h"
 
 typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 

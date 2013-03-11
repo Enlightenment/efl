@@ -21,12 +21,17 @@
 # include <Evil.h>
 #endif
 
-#include "Ecore.h"
+#include <Ecore.h>
 #include "ecore_private.h"
-#include "Ecore_Input.h"
+#include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+#include "ecore_evas_private.h"
+#include "ecore_evas_x11.h"
+#include "ecore_evas_wayland.h"
+#include "ecore_evas_extn.h"
+#include "ecore_evas_win32.h"
 
 EAPI Eina_Bool _ecore_evas_app_comp_sync = 1;
 EAPI int _ecore_evas_log_dom = -1;

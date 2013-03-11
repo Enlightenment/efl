@@ -2,23 +2,23 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+#include <string.h>
 
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
-
+#include <SDL/SDL.h>
 
 #include <Ecore.h>
+#include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Sdl.h>
 #include <Evas_Engine_Buffer.h>
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-#  include <Evas_Engine_GL_SDL.h>
+# include <Evas_Engine_GL_SDL.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-#include <SDL/SDL.h>
+#include <Ecore_Evas.h>
+#include "ecore_evas_private.h"
 /*
  * SDL only handle one window at a time. That's by definition, there is nothing wrong here.
  *

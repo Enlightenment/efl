@@ -25,10 +25,18 @@
 #include <sys/file.h>
 #include <unistd.h>
 
+#include <Evas.h>
+#include <Evas_Engine_Buffer.h>
+#include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Ecore_Input.h>
+
 #include <Ecore_Ipc.h>
 
+#include "ecore_private.h" // FIXME: Because of ECORE_MAGIC
+#include "ecore_evas_private.h"
 #include "ecore_evas_buffer.h"
-#include <Evas_Engine_Buffer.h>
+#include "ecore_evas_extn.h"
 
 static const char *interface_extn_name = "extn";
 static const int   interface_extn_version = 1;

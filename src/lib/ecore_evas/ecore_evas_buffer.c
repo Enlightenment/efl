@@ -2,8 +2,17 @@
 # include <config.h>
 #endif
 
-#include "ecore_evas_buffer.h"
+#include <stdlib.h>
+
+#include <Evas.h>
 #include <Evas_Engine_Buffer.h>
+#include <Ecore.h>
+#include "ecore_private.h"
+#include <Ecore_Input.h>
+
+#include "Ecore_Evas.h"
+#include "ecore_evas_buffer.h"
+#include "ecore_evas_private.h"
 
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)

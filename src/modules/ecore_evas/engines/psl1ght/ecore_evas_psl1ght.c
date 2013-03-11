@@ -3,14 +3,15 @@
 #endif
 
 #include <Ecore.h>
+#include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 
-#include "ecore_evas_private.h"
-#include "Ecore_Evas.h"
-
 #include <Ecore_Psl1ght.h>
 #include <Evas_Engine_PSL1GHT.h>
+
+#include <Ecore_Evas.h>
+#include "ecore_evas_private.h"
 
 static int _ecore_evas_init_count = 0;
 
