@@ -437,11 +437,11 @@ END_TEST
 START_TEST(strbuf_trim)
 {
     Eina_Strbuf* buf;
-    char* str;
+    const char *str;
 
     eina_init();
     buf = eina_strbuf_new();
-    fail_unless(buf);
+    fail_unless(buf != NULL);
 
     eina_strbuf_append(buf, "  string     ");
     eina_strbuf_trim(buf);
