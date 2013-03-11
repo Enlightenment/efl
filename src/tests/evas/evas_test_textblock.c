@@ -1353,6 +1353,40 @@ START_TEST(evas_textblock_various)
    evas_textblock_cursor_pos_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
 
+   /* Super big one line item. */
+     {
+#define CNT 10000
+        char str[(CNT * 6) + 128], *d;
+        const char substr[] = "x";
+        Evas_Textblock_Style *stt;
+        int i, l;
+
+        l = strlen(substr);
+        d = str;
+        for (i = 0; i < CNT; i++)
+          {
+             memcpy(d, substr, l);
+             d += l;
+          }
+        *d = 0;
+
+        stt = evas_textblock_style_new();
+        evas_textblock_style_set(stt,
+              "DEFAULT='font=" TEST_FONT " font_size=10 align=left color=#000000 wrap=char'");
+        evas_object_textblock_style_set(tb, stt);
+        evas_textblock_style_free(stt);
+
+        evas_object_textblock_text_markup_set(tb, substr);
+        Evas_Textblock_Cursor *cr;
+
+        cr = evas_object_textblock_cursor_get(tb);
+        evas_textblock_cursor_text_append(cr, str);
+        evas_object_resize(tb, 480, 800);
+
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        fail_if(w == 0);
+     }
+
    END_TB_TEST();
 }
 END_TEST
