@@ -1132,7 +1132,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    obj = emotion_object_image_get(o);
    if (!obj)
      {
-        ERR("Not Evas_Object specified");
+//        ERR("Not Evas_Object specified");
         return NULL;
      }
 
