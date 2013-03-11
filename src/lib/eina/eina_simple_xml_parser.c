@@ -413,7 +413,7 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                              break;
                          }
 
-                       if ((strip) && (type != EINA_SIMPLE_XML_ERROR))
+                       if ((strip) && (type != EINA_SIMPLE_XML_ERROR) && (type != EINA_SIMPLE_XML_CDATA))
                          {
                             start = _eina_simple_xml_whitespace_skip
                               (start, end);
