@@ -4310,7 +4310,7 @@ _elm_widget_focus_order_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI Evas_Object *
-elm_widget_newest_focus_order_get(Evas_Object *obj,
+elm_widget_newest_focus_order_get(const Evas_Object *obj,
                                   unsigned int *newest_focus_order,
                                   Eina_Bool can_focus_only)
 {

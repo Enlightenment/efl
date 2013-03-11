@@ -633,7 +633,7 @@ EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
+EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI Evas_Display_Mode elm_widget_display_mode_get(const Evas_Object *obj);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
