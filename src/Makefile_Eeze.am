@@ -133,6 +133,7 @@ install-data-hook::
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/eeze/eeze_suite
+TESTS += tests/eeze/eeze_suite
 
 tests_eeze_eeze_suite_SOURCES = tests/eeze/eeze_suite.c
 tests_eeze_eeze_suite_CPPFLAGS = \
