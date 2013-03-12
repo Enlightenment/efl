@@ -491,6 +491,18 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 
 ######################  EFL  ######################
 
+AC_ARG_ENABLE([systemd],
+   [AC_HELP_STRING([--enable-systemd],
+      [Enable SystemD support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_systemd="yes"
+    else
+       want_systemd="no"
+    fi
+   ],
+   [want_systemd="no"])
+
 #### Platform-dependent
 DL_LIBS=""
 DL_INTERNAL_LIBS=""
