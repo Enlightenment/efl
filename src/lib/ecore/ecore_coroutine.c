@@ -188,7 +188,7 @@ ecore_coroutine_add(int stack_size, Ecore_Coroutine_Cb func, void *data)
    coro = malloc(sizeof (Ecore_Coroutine) + stack_size - 1);
    if (!coro) return NULL;
 
-#ifdef USE_FIBERS
+#ifndef USE_FIBERS
    stack = coro->stack;
 #endif
 
