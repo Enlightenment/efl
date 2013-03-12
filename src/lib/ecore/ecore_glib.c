@@ -222,6 +222,7 @@ _ecore_glib_init(void)
    _ecore_glib_select_cond = malloc(sizeof(GCond));
    g_cond_init(_ecore_glib_select_cond);
 #else
+   if (!g_thread_get_initialized()) g_thread_init(NULL);
    _ecore_glib_select_lock = g_mutex_new();
    _ecore_glib_select_cond = g_cond_new();
 #endif

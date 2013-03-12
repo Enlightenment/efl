@@ -1739,7 +1739,7 @@ EFL_ADD_LIBS([ECORE], [-lm])
 
 # glib
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0])
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0 gthread-2.0])
 if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
