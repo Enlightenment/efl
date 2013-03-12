@@ -72,6 +72,7 @@ tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = \
 -DTESTS_SRC_DIR=\"`pwd`/$(top_srcdir)\" \
+-DCHECK_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 @CHECK_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @ECORE_AUDIO_CFLAGS@ \

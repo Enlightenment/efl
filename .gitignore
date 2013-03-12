@@ -318,4 +318,13 @@ Makefile.in
 /src/tests/evas/evas_suite.log
 /src/tests/evas/evas_suite.trs
 /src/test-suite.log
+/src/tests/ecore/check-results.xml
+/src/tests/edbus/check-results.xml
+/src/tests/edje/check-results.xml
+/src/tests/eet/check-results.xml
+/src/tests/eeze/check-results.xml
+/src/tests/efreet/check-results.xml
+/src/tests/eina/check-results.xml
+/src/tests/eo/check-results.xml
+/src/tests/evas/check-results.xml
 /coverage

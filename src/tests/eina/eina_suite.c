@@ -175,6 +175,8 @@ main(int argc, char **argv)
    s = eina_build_suite(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
+   srunner_set_xml (sr, PACKAGE_BUILD_DIR "/check-results.xml");
+
    _mempool_init();
 
    srunner_run_all(sr, CK_ENV);

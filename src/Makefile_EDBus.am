@@ -71,7 +71,9 @@ tests/edbus/edbus_suite.c \
 tests/edbus/edbus_test_edbus_init.c \
 tests/edbus/edbus_suite.h
 
-tests_edbus_edbus_suite_CPPFLAGS = @CHECK_CFLAGS@ @EDBUS_CFLAGS@
+tests_edbus_edbus_suite_CPPFLAGS = @CHECK_CFLAGS@ @EDBUS_CFLAGS@ \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edbus\"
+
 tests_edbus_edbus_suite_LDADD = @CHECK_LIBS@ @USE_EDBUS_LIBS@
 tests_edbus_edbus_suite_DEPENDENCIES = @USE_EDBUS_INTERNAL_LIBS@
 

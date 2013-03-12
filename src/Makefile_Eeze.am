@@ -137,8 +137,8 @@ TESTS += tests/eeze/eeze_suite
 
 tests_eeze_eeze_suite_SOURCES = tests/eeze/eeze_suite.c
 tests_eeze_eeze_suite_CPPFLAGS = \
--DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eeze\" \
 @EEZE_CFLAGS@ \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eeze\" \
 @CHECK_CFLAGS@
 tests_eeze_eeze_suite_LDADD = @CHECK_LIBS@ @USE_EEZE_LIBS@
 tests_eeze_eeze_suite_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@

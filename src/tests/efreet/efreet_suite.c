@@ -97,6 +97,8 @@ main(int argc, char **argv)
    s = efreet_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
+   srunner_set_xml (sr, TESTS_SRC_DIR "/check-results.xml");
+
    srunner_run_all(sr, CK_NORMAL);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
