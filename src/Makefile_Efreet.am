@@ -197,7 +197,8 @@ tests/efreet/efreet_suite.h \
 tests/efreet/efreet_test_efreet.c \
 tests/efreet/efreet_test_efreet_cache.c
 
-tests_efreet_efreet_suite_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@
+tests_efreet_efreet_suite_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@ \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efreet\"
 tests_efreet_efreet_suite_LDADD = @CHECK_LIBS@ @USE_EFREET_LIBS@
 tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 

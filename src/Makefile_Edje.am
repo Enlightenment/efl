@@ -210,6 +210,7 @@ tests/edje/edje_suite.h
 
 tests_edje_edje_suite_CPPFLAGS = \
 $(EDJE_COMMON_CPPFLAGS) \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edje\" \
 @CHECK_CFLAGS@
 tests_edje_edje_suite_LDADD = @CHECK_LIBS@ @USE_EDJE_LIBS@
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
