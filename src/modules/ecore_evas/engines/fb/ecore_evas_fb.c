@@ -7,7 +7,6 @@
 #include <dirent.h>
 
 #include <Eina.h>
-#include <Evas_Engine_FB.h>
 #include <Ecore.h>
 #include "ecore_private.h"
 #include <Ecore_Input.h>
@@ -17,6 +16,7 @@
 
 #include <Ecore_Evas.h>
 #include "ecore_evas_private.h"
+#include <Evas_Engine_FB.h>
 
 static int _ecore_evas_init_count = 0;
 
