@@ -1,3 +1,7 @@
+2013-03-12  Jiyoun Park (Jypark)
+
+        * Ecore_x: fix bug not check data value when get deiconify message
+
 2013-03-11  Mike Blumenkrantz
 
         * clean up gnutls session initialization

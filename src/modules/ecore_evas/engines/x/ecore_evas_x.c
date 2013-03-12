@@ -1007,10 +1007,12 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->win);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+        if (e->data.l[1] != 0) //wm sends request message using value 0
+          return ECORE_CALLBACK_PASS_ON;
 
         if (ecore_evas_manual_render_get(ee))
           ecore_evas_manual_render(ee);
-
+        //client sends reply message using value 1
         ecore_x_client_message32_send(e->win, ECORE_X_ATOM_E_DEICONIFY_APPROVE,
                                       ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                       e->win, 1,

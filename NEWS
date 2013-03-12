@@ -195,3 +195,4 @@ Fixes:
     * fix dangling pointer problem related with shmget fail
     * fix bug scroll works when PgDn, PgUp, Home, End key in entry is pressed in preedit state
     * clean up gnutls session initialization
+    * fix bug not check data value when get deiconify message
