@@ -14,7 +14,7 @@
 #define SF_FORMAT_RAW 0x040000
 #define SF_FORMAT_PCM_U8 0x0005
 
-#define SOUNDS_DIR TESTS_SRC_DIR"/src/tests/ecore/"
+#define SOUNDS_DIR TESTS_SRC_DIR
 
 #if 0
 /* TODO: must fix these tests to produce no warnings and to be
