@@ -1635,6 +1635,7 @@ tests/evas/evas_suite.h
 
 tests_evas_evas_suite_CPPFLAGS = \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas\" \
+-DTESTS_BUILD_DIR=\"$(top_srcdir)/src/tests/evas\" \
 @CHECK_CFLAGS@ \
 @EVAS_CFLAGS@
 

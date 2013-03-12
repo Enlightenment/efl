@@ -64,6 +64,7 @@ tests/eet/eet_suite.h
 tests_eet_eet_suite_CPPFLAGS = \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet\" \
 @CHECK_CFLAGS@ \
 @EET_CFLAGS@
 tests_eet_eet_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@

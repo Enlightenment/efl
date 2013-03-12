@@ -2762,7 +2762,7 @@ main(int argc EINA_UNUSED, char *argv[])
 
    s = eet_suite();
    sr = srunner_create(s);
-   srunner_set_xml (sr, TESTS_SRC_DIR "/check-results.xml");
+   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);

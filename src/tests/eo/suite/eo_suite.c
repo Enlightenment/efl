@@ -98,7 +98,7 @@ main(int argc, char **argv)
    s = eo_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
-   srunner_set_xml (sr, TESTS_SRC_DIR "/check-results.xml");
+   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
 
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);

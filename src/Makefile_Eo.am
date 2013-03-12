@@ -84,7 +84,7 @@ tests/eo/suite/eo_test_class_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_init.c
 tests_eo_eo_suite_CPPFLAGS = \
--DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eo\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
 TESTS += tests/eo/eo_suite
