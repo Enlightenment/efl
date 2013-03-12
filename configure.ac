@@ -1950,7 +1950,7 @@ else
    ecore_con_resolver="fork"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${have_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
 
 EFL_ADD_FEATURE([ECORE_CON], [curl])
 EFL_ADD_FEATURE([ECORE_CON], [cares])
