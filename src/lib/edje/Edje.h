@@ -893,6 +893,7 @@ enum
 
    EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_ADD,
    EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL,
+   EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL_FULL,
    EDJE_OBJ_SUB_ID_SIGNAL_EMIT,
    EDJE_OBJ_SUB_ID_PLAY_SET,
    EDJE_OBJ_SUB_ID_PLAY_GET,
@@ -2708,7 +2709,23 @@ enum
  *
  * @see edje_object_signal_callback_del
  */
-#define edje_obj_signal_callback_del(emission, source, func, data, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(void **, ret)
+#define edje_obj_signal_callback_del(emission, source, func, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void **, ret)
+
+/**
+ * @def edje_obj_signal_callback_del_full
+ * @since 1.8
+ *
+ * @brief Unregister/delete a callback set for an arriving Edje
+ *
+ * @param[in] emission
+ * @param[in] source
+ * @param[in] func
+ * @param[in] data
+ * @param[out] ret
+ *
+ * @see edje_object_signal_callback_del_full
+ */
+#define edje_obj_signal_callback_del_full(emission, source, func, data, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL_FULL), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Edje_Signal_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(void **, ret)
 
 /**
  * @def edje_obj_signal_emit
