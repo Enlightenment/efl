@@ -15,6 +15,7 @@ int _evas_engine_GL_common_log_dom = -1;
 typedef void       (*glsym_func_void) ();
 typedef void      *(*glsym_func_void_ptr) ();
 typedef GLboolean  (*glsym_func_boolean) ();
+typedef const char *(*glsym_func_const_char_ptr) ();
 
 void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
 void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
@@ -36,6 +37,7 @@ typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
 static _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
+static const char *(*glsym_eglQueryString)             (void *a, int name) = NULL;
 
 void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
 unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
@@ -48,6 +50,7 @@ typedef void (*_eng_fn) (void);
 
 typedef _eng_fn (*glsym_func_eng_fn) ();
 static _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
+static const char *(*glsym_glXQueryExtensionsString) (void *a, int screen) = NULL;
 #endif
 
 static int dbgflushnum = -1;
@@ -79,6 +82,8 @@ gl_symbols(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
+   
+   FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
 #else
 #define FINDSYM(dst, sym, typ) \
    if (glsym_glXGetProcAddress) { \
@@ -89,6 +94,8 @@ gl_symbols(void)
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
+   
+   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
 #endif
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
    
@@ -576,6 +583,8 @@ evas_gl_common_context_new(void)
              if ((strstr((char *)ext, "GL_ARB_get_program_binary")) ||
                  (strstr((char *)ext, "GL_OES_get_program_binary")))
                shared->info.bin_program = 1;
+             else
+               glsym_glGetProgramBinary = NULL;
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
              if ((strstr((char *)ext, "GL_EXT_texture_filter_anisotropic")))
                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,

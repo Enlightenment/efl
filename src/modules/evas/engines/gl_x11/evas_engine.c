@@ -62,10 +62,10 @@ _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
-void          *(*glsym_eglMapImageSEC)         (void *a, void *b) = NULL;
-unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b) = NULL;
-const char    *(*glsym_eglQueryString)         (EGLDisplay a, int name) = NULL;
-void     (*glsym_eglSwapBuffersRegion)         (EGLDisplay a, void *b, EGLint c, const EGLint *d) = NULL;
+void        *(*glsym_eglMapImageSEC)           (void *a, void *b) = NULL;
+unsigned int (*glsym_eglUnmapImageSEC)         (void *a, void *b) = NULL;
+const char  *(*glsym_eglQueryString)           (EGLDisplay a, int name) = NULL;
+void         (*glsym_eglSwapBuffersRegion)     (EGLDisplay a, void *b, EGLint c, const EGLint *d) = NULL;
 
 #else
 typedef XID     (*glsym_func_xid) ();
@@ -80,6 +80,7 @@ void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
+const char *(*glsym_glXQueryExtensionsString) (Display *a, int screen) = NULL;
 
 #endif
 
@@ -554,6 +555,8 @@ gl_symbols(void)
 
    FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegion", glsym_func_void_ptr);
    FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegionSEC", glsym_func_void_ptr);
+
+
 #else
 #define FINDSYM(dst, sym, typ) \
    if (glsym_glXGetProcAddress) { \
@@ -598,6 +601,43 @@ gl_symbols(void)
 #endif
 
    done = 1;
+}
+
+static void
+gl_extn_veto(Render_Engine *re)
+{
+   const char *str = NULL;
+#ifdef GL_GLES
+   if (glsym_eglQueryString)
+     str = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
+   if (str)
+     {
+        if (getenv("EVAS_GL_INFO"))
+          printf("EGL EXTN:\n%s\n", str);
+//        if (!strstr(str, ""))
+//          {
+//          }
+     }
+#else
+   if (glsym_glXQueryExtensionsString)
+     str = glsym_glXQueryExtensionsString(re->info->info.display,
+                                          re->info->info.screen);
+   if (str)
+     {
+        if (getenv("EVAS_GL_INFO"))
+          printf("GLX EXTN:\n%s\n", str);
+        if (!strstr(str, "_texture_from_pixmap"))
+          {
+             glsym_glXBindTexImage = NULL;
+             glsym_glXReleaseTexImage = NULL;
+          }
+        if (!strstr(str, "_video_sync"))
+          {
+             glsym_glXGetVideoSync = NULL;
+             glsym_glXWaitVideoSync = NULL;
+          }
+     }
+#endif
 }
 
 int _evas_engine_GL_X11_log_dom = -1;
@@ -709,6 +749,7 @@ eng_setup(Evas *eo_e, void *in)
              evas_common_font_init();
              evas_common_draw_init();
              evas_common_tilebuf_init();
+             gl_extn_veto(re);
              initted = 1;
           }
      }
