@@ -129,7 +129,6 @@ _ecore_coroutine_setjmp(Ecore_Coroutine *coro)
 
 #if defined(USE_FIBERS)
 static void *caller;
-static void *callee;
 #elif defined(USE_UCONTEXT)
 static ucontext_t caller;
 static ucontext_t callee;
@@ -167,7 +166,9 @@ EAPI Ecore_Coroutine *
 ecore_coroutine_add(int stack_size, Ecore_Coroutine_Cb func, void *data)
 {
    Ecore_Coroutine *coro;
+#ifndef USE_FIBERS
    unsigned char *stack;
+#endif
 
    if (stack_size <= 0)
      {
@@ -187,7 +188,9 @@ ecore_coroutine_add(int stack_size, Ecore_Coroutine_Cb func, void *data)
    coro = malloc(sizeof (Ecore_Coroutine) + stack_size - 1);
    if (!coro) return NULL;
 
+#ifdef USE_FIBERS
    stack = coro->stack;
+#endif
 
 #ifdef USE_VALGRIND
    coro->vg_stack_id = VALGRIND_STACK_REGISTER(stack, stack + stack_size);
