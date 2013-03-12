@@ -612,12 +612,6 @@ struct _Evas_Object_Protected_Data
 
    unsigned char               delete_me;
 
-   Evas_Object_Pointer_Mode    pointer_mode : 2;
-
-   Eina_Bool                   store : 1;
-   Eina_Bool                   pass_events : 1;
-   Eina_Bool                   freeze_events : 1;
-   Eina_Bool                   repeat_events : 1;
    struct  {
       Eina_Bool                pass_events : 1;
       Eina_Bool                pass_events_valid : 1;
@@ -626,28 +620,34 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                src_invisible : 1;
       Eina_Bool                src_invisible_valid : 1;
    } parent_cache;
+
+   Evas_Object_Pointer_Mode    pointer_mode : 2;
+   Eina_Bool                   store : 1;
+   Eina_Bool                   pass_events : 1;
+   Eina_Bool                   freeze_events : 1;
+   Eina_Bool                   repeat_events : 1;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_active : 1;
+
    Eina_Bool                   precise_is_inside : 1;
    Eina_Bool                   is_static_clip : 1;
-
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
    Eina_Bool                   mouse_in : 1;
    Eina_Bool                   pre_render_done : 1;
    Eina_Bool                   intercepted : 1;
    Eina_Bool                   focused : 1;
+
    Eina_Bool                   in_layer : 1;
    Eina_Bool                   no_propagate : 1;
-
    Eina_Bool                   changed : 1;
    Eina_Bool                   changed_move : 1;
    Eina_Bool                   changed_color : 1;
    Eina_Bool                   changed_map : 1;
    Eina_Bool                   changed_pchange : 1;
    Eina_Bool                   changed_src_visible : 1;
-   Eina_Bool                   del_ref : 1;
 
+   Eina_Bool                   del_ref : 1;
    Eina_Bool                   is_frame : 1;
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   eo_del_called : 1;

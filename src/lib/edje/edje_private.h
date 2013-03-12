@@ -1234,9 +1234,6 @@ struct _Edje
    const char           *group;
    const char           *parent;
 
-   Evas_Coord            x, y, w, h;
-   Edje_Size             min;
-   double                paused_at;
    Evas_Object          *obj; /* the smart object */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
@@ -1254,8 +1251,6 @@ struct _Edje
    Eina_List            *markup_filter_callbacks;
    void                 *script_only_data;
 
-   unsigned int          table_parts_size;
-
    Eina_List            *groups;
 
    struct {
@@ -1267,13 +1262,6 @@ struct _Edje
 
    const Edje_Signal_Callback_Group *callbacks;
 
-   int                   references;
-   int                   block;
-   int                   load_error;
-   int                   freeze;
-   FLOAT_T		 scale;
-   Eina_Bool             is_rtl : 1;
-
    struct {
       Edje_Text_Change_Cb  func;
       void                *data;
@@ -1284,29 +1272,41 @@ struct _Edje
       void                    *data;
       int                      num;
    } message;
-   int                   processing_messages;
-
-   int                   state;
-
-   int			 preload_count;
-
-   lua_State            *L;
-   Eina_Inlist          *lua_objs;
-   int                   lua_ref;
 
    struct {
       Edje_Item_Provider_Cb  func;
       void                  *data;
    } item_provider;
 
-   Eina_List            *user_defined;
-
-   int                   walking_callbacks;
-
 #ifdef HAVE_EPHYSICS
    EPhysics_World       *world;
 #endif
 
+   Eina_List            *user_defined;
+
+   lua_State            *L;
+   Eina_Inlist          *lua_objs;
+   int                   lua_ref;
+
+   int                   processing_messages;
+   int                   state;
+   int			 preload_count;
+
+   unsigned int          table_parts_size;
+
+   int                   walking_callbacks;
+
+   int                   references;
+   int                   block;
+   int                   load_error;
+   int                   freeze;
+
+   Evas_Coord            x, y, w, h;
+   Edje_Size             min;
+   double                paused_at;
+   FLOAT_T		 scale;
+
+   Eina_Bool          is_rtl : 1;
    Eina_Bool          dirty : 1;
    Eina_Bool          recalc : 1;
    Eina_Bool          delete_callbacks : 1;
