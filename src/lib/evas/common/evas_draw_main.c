@@ -77,11 +77,13 @@ evas_common_draw_context_free(RGBA_Draw_Context *dc)
    if (!dc) return;
 
 #ifdef HAVE_PIXMAN
+#if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
    if (dc->col.pixman_color_image)
      {
         pixman_image_unref(dc->col.pixman_color_image);
         dc->col.pixman_color_image = NULL;
      }
+#endif
 #endif
 
    evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
@@ -143,6 +145,7 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
    B_VAL(&(dc->col.col)) = (DATA8)b;
    A_VAL(&(dc->col.col)) = (DATA8)a;
 #ifdef HAVE_PIXMAN
+#if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
    if (dc && dc->col.pixman_color_image)
      pixman_image_unref(dc->col.pixman_color_image);
    
@@ -154,6 +157,7 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
    pixman_color.blue = (dc->col.col & 0x000000ff) << 8;
 
    dc->col.pixman_color_image = pixman_image_create_solid_fill(&pixman_color);
+#endif   
 #endif
 
 }
