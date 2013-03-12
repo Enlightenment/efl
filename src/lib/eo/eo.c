@@ -38,7 +38,6 @@ struct _Eo {
      Eo *parent;
      Eina_Inlist *children;
      const Eo_Class *klass;
-     int refcount;
 #ifdef EO_DEBUG
      Eina_Inlist *xrefs;
 #endif
@@ -46,6 +45,8 @@ struct _Eo {
      Eina_List *composite_objects;
 
      Eo_Kls_Itr mro_itr;
+
+     int refcount;
 
      Eina_Bool do_error:1;
      Eina_Bool condtor_done:1;
@@ -99,17 +100,17 @@ struct _Eo_Class
    const Eo_Class *parent;
    const Eo_Class_Description *desc;
    Dich_Chain1 *chain; /**< The size is chain size */
-   size_t chain_size;
-   size_t base_id;
 
    const Eo_Class **extensions;
 
    Eo_Extension_Data_Offset *extn_data_off;
-   size_t extn_data_size;
 
    const Eo_Class **mro;
    Eo_Kls_Itr mro_itr;
 
+   size_t extn_data_size;
+   size_t chain_size;
+   size_t base_id;
    size_t data_offset; /* < Offset of the data within object data. */
 
    Eina_Bool constructed : 1;

@@ -25,33 +25,36 @@ struct _Evas_Object_Text
    DATA32               magic;
 
    struct {
-      const char          *utf8_text; /* The text exposed to the API */
-      const char          *font;
-      Evas_Font_Description *fdesc;
-      const char          *source;
-      Evas_Font_Size       size;
       struct {
 	 unsigned char  r, g, b, a;
       } outline, shadow, glow, glow2;
 
-      unsigned char        style;
-      double               ellipsis;
+      const char          *utf8_text; /* The text exposed to the API */
+      const char          *font;
+      Evas_Font_Description *fdesc;
+      const char          *source;
       Eina_Unicode        *text;
+
+      double               ellipsis;
+
+      Evas_Font_Size       size;
+      unsigned char        style;
    } cur, prev;
 
-   float                       ascent, descent;
-   float                       max_ascent, max_descent;
+   struct {
+      Evas_Object_Text_Item    *ellipsis_start;
+      Evas_Object_Text_Item    *ellipsis_end;
+      Evas_Coord                w, h;
+   } last_computed;
+
    Evas_BiDi_Paragraph_Props  *bidi_par_props;
    const char                 *bidi_delimiters;
    Evas_Object_Text_Item      *items;
 
    Evas_Font_Set              *font;
 
-   struct {
-      Evas_Coord                w, h;
-      Evas_Object_Text_Item    *ellipsis_start;
-      Evas_Object_Text_Item    *ellipsis_end;
-   } last_computed;
+   float                       ascent, descent;
+   float                       max_ascent, max_descent;
 
    Evas_BiDi_Direction         bidi_dir : 2;
    char                        changed : 1;
