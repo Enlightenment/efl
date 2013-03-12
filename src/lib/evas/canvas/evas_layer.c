@@ -11,11 +11,11 @@ evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
    if (!obj) return;
    if (!e) return;
    if (obj->in_layer) return;
-   lay = evas_layer_find(e, obj->cur.layer);
+   lay = evas_layer_find(e, obj->cur->layer);
    if (!lay)
      {
         lay = evas_layer_new(e);
-        lay->layer = obj->cur.layer;
+        lay->layer = obj->cur->layer;
         evas_layer_add(lay);
      }
    lay->objects = (Evas_Object_Protected_Data *)eina_inlist_append(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(obj));
@@ -145,9 +145,14 @@ _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
    Evas_Object_Protected_Data *par_obj = eo_data_get(par, EVAS_OBJ_CLASS);
 
    if (obj->delete_me) return;
-   if (obj->cur.layer == l) return;
+   if (obj->cur->layer == l) return;
    evas_object_release(eo_obj, obj, 1);
-   obj->cur.layer = l;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->layer = l;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    obj->layer = par_obj->layer;
    obj->layer->usage++;
    if (obj->is_smart)
@@ -185,14 +190,19 @@ _layer_set(Eo *eo_obj, void *_obj, va_list *list)
    if (obj->delete_me) return;
    if (evas_object_intercept_call_layer_set(eo_obj, l)) return;
    if (obj->smart.parent) return;
-   if (obj->cur.layer == l)
+   if (obj->cur->layer == l)
      {
         evas_object_raise(eo_obj);
         return;
      }
    eo_e = obj->layer->evas->evas;
    evas_object_release(eo_obj, obj, 1);
-   obj->cur.layer = l;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->layer = l;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    evas_object_inject(eo_obj, obj, eo_e);
    obj->restack = 1;
    evas_object_change(eo_obj, obj);
@@ -207,7 +217,7 @@ _layer_set(Eo *eo_obj, void *_obj, va_list *list)
         if (evas_object_is_in_output_rect(eo_obj, obj,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y, 1, 1) &&
-            obj->cur.visible)
+            obj->cur->visible)
           if (eina_list_data_find(obj->layer->evas->pointer.object.in, obj))
             evas_event_feed_mouse_move(obj->layer->evas->evas,
                                        obj->layer->evas->pointer.x,
@@ -248,7 +258,7 @@ _layer_get(Eo *eo_obj EINA_UNUSED, void *_obj, va_list *list)
    if (obj->smart.parent)
      {
         Evas_Object_Protected_Data *smart_parent_obj = eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
-        *layer = smart_parent_obj->cur.layer;
+        *layer = smart_parent_obj->cur->layer;
      }
-   *layer = obj->cur.layer;
+   *layer = obj->cur->layer;
 }

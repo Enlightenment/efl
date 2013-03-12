@@ -26,8 +26,8 @@ _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
    //outside map, this should check the return value for outside case.
    if (evas_map_coords_get(obj->map->cur.map, *x, *y, x, y, mouse_grabbed))
      {
-        *x += obj->cur.geometry.x;
-        *y += obj->cur.geometry.y;
+        *x += obj->cur->geometry.x;
+        *y += obj->cur->geometry.y;
      }
 }
 
@@ -73,7 +73,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              if (evas_object_is_source_invisible(eo_obj, obj)) continue;
           }
         if ((obj->delete_me == 0) &&
-            ((source) || ((obj->cur.visible) && (!obj->clip.clipees) &&
+            ((source) || ((obj->cur->visible) && (!obj->clip.clipees) &&
              evas_object_clippers_is_visible(eo_obj, obj))))
           {
              if (obj->is_smart)
@@ -98,8 +98,8 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                     (eo_e, in,
                                      evas_object_smart_members_get_direct(eo_obj),
                                      stop,
-                                     obj->cur.geometry.x + obj->map->cur.map->mx,
-                                     obj->cur.geometry.y + obj->map->cur.map->my,
+                                     obj->cur->geometry.x + obj->map->cur.map->mx,
+                                     obj->cur->geometry.y + obj->map->cur.map->my,
                                      &norep, source);
                               }
                          }
@@ -109,14 +109,14 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                        if (!obj->child_has_map)
                          evas_object_smart_bounding_box_update(eo_obj, obj);
                        if (obj->child_has_map ||
-                           (obj->cur.bounding_box.x <= x &&
-                            obj->cur.bounding_box.x + obj->cur.bounding_box.w >= x &&
-                            obj->cur.bounding_box.y <= y &&
-                            obj->cur.bounding_box.y + obj->cur.bounding_box.h >= y) ||
-                           (obj->cur.geometry.x <= x &&
-                            obj->cur.geometry.y + obj->cur.geometry.w >= x &&
-                            obj->cur.geometry.y <= y &&
-                            obj->cur.geometry.y + obj->cur.geometry.h >= y))
+                           (obj->cur->bounding_box.x <= x &&
+                            obj->cur->bounding_box.x + obj->cur->bounding_box.w >= x &&
+                            obj->cur->bounding_box.y <= y &&
+                            obj->cur->bounding_box.y + obj->cur->bounding_box.h >= y) ||
+                           (obj->cur->geometry.x <= x &&
+                            obj->cur->geometry.y + obj->cur->geometry.w >= x &&
+                            obj->cur->geometry.y <= y &&
+                            obj->cur->geometry.y + obj->cur->geometry.h >= y))
                          in = _evas_event_object_list_in_get
                             (eo_e, in, evas_object_smart_members_get_direct(eo_obj),
                             stop, x, y, &norep, source);
@@ -168,21 +168,21 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 static void
 _transform_to_src_space(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *src, Evas_Coord *x, Evas_Coord *y)
 {
-   Evas_Coord obj_w = obj->cur.geometry.w, obj_h = obj->cur.geometry.h;
-   Evas_Coord src_w = src->cur.geometry.w, src_h = src->cur.geometry.h;
+   Evas_Coord obj_w = obj->cur->geometry.w, obj_h = obj->cur->geometry.h;
+   Evas_Coord src_w = src->cur->geometry.w, src_h = src->cur->geometry.h;
    Evas_Coord tmp_x = *x;
    Evas_Coord tmp_y = *y;
 
-   tmp_x -= obj->cur.geometry.x;
-   tmp_y -= obj->cur.geometry.y;
+   tmp_x -= obj->cur->geometry.x;
+   tmp_y -= obj->cur->geometry.y;
 
    if (obj_w != src_w)
      tmp_x = (Evas_Coord) ((float)tmp_x * ((float)src_w / (float)obj_w));
    if (obj_h != src_h)
      tmp_y = (Evas_Coord) ((float)tmp_y * ((float)src_h / (float)obj_h));
 
-   tmp_x += src->cur.geometry.x;
-   tmp_y += src->cur.geometry.y;
+   tmp_x += src->cur->geometry.x;
+   tmp_y += src->cur->geometry.y;
    *x = tmp_x;
    *y = tmp_y;
 }

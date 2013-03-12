@@ -140,11 +140,17 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
         min_y = y2;
         max_y = y1;
      }
-   obj->cur.geometry.x = min_x;
-   obj->cur.geometry.y = min_y;
-   obj->cur.geometry.w = max_x - min_x + 2;
-   obj->cur.geometry.h = max_y - min_y + 2;
-////   obj->cur.cache.geometry.validity = 0;
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->geometry.x = min_x;
+       state_write->geometry.y = min_y;
+       state_write->geometry.w = max_x - min_x + 2;
+       state_write->geometry.h = max_y - min_y + 2;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
+////   obj->cur->cache.geometry.validity = 0;
    o->cur.x1 = x1 - min_x;
    o->cur.y1 = y1 - min_y;
    o->cur.x2 = x2 - min_x;
@@ -162,7 +168,7 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
             !evas_event_freezes_through(eo_obj, obj) &&
             !evas_object_is_source_invisible(eo_obj, obj))
           {
-             if ((is ^ was) && obj->cur.visible)
+             if ((is ^ was) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -198,10 +204,10 @@ _line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   if (x1) *x1 = obj->cur.geometry.x + o->cur.x1;
-   if (y1) *y1 = obj->cur.geometry.y + o->cur.y1;
-   if (x2) *x2 = obj->cur.geometry.x + o->cur.x2;
-   if (y2) *y2 = obj->cur.geometry.y + o->cur.y2;
+   if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
+   if (y1) *y1 = obj->cur->geometry.y + o->cur.y1;
+   if (x2) *x2 = obj->cur->geometry.x + o->cur.x2;
+   if (y2) *y2 = obj->cur->geometry.y + o->cur.y2;
 }
 
 /* all nice and private */
@@ -209,20 +215,6 @@ static void
 evas_object_line_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   /* set up default settings for this kind of object */
-   obj->cur.color.r = 255;
-   obj->cur.color.g = 255;
-   obj->cur.color.b = 255;
-   obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0;
-   obj->cur.geometry.y = 0;
-   obj->cur.geometry.w = 0;
-   obj->cur.geometry.h = 0;
-   obj->cur.layer = 0;
-   obj->cur.anti_alias = EINA_TRUE;
-   obj->cur.render_op = EVAS_RENDER_BLEND;
-   /* set up object-specific settings */
-   obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -261,16 +253,16 @@ evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 
    obj->layer->evas->engine.func->context_color_set(output,
                                                     context,
-                                                    obj->cur.cache.clip.r,
-                                                    obj->cur.cache.clip.g,
-                                                    obj->cur.cache.clip.b,
-                                                    obj->cur.cache.clip.a);
+                                                    obj->cur->cache.clip.r,
+                                                    obj->cur->cache.clip.g,
+                                                    obj->cur->cache.clip.b,
+                                                    obj->cur->cache.clip.a);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
                                                            context);
    obj->layer->evas->engine.func->context_anti_alias_set(output, context,
-                                                         obj->cur.anti_alias);
+                                                         obj->cur->anti_alias);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
-                                                        obj->cur.render_op);
+                                                        obj->cur->render_op);
    obj->layer->evas->engine.func->line_draw(output,
                                             context,
                                             surface,
@@ -297,11 +289,11 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw lines */
    /* if someone is clipping this obj - go calculate the clipper */
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
+	if (obj->cur->cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -323,10 +315,10 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* clipper changed this is in addition to anything else for obj */
    evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, eo_obj);
 
-   if ((obj->cur.color.r != obj->prev.color.r) ||
-       (obj->cur.color.g != obj->prev.color.g) ||
-       (obj->cur.color.b != obj->prev.color.b) ||
-       (obj->cur.color.a != obj->prev.color.a))
+   if ((obj->cur->color.r != obj->prev->color.r) ||
+       (obj->cur->color.g != obj->prev->color.g) ||
+       (obj->cur->color.b != obj->prev->color.b) ||
+       (obj->cur->color.a != obj->prev->color.a))
      changed_color = EINA_TRUE;
 
    /* if we restacked (layer or just within a layer) */
@@ -334,8 +326,8 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* or if ii changed render op */
    /* or if it changed color */
    if ((obj->restack) ||
-       (obj->cur.anti_alias != obj->prev.anti_alias) ||
-       (obj->cur.render_op != obj->prev.render_op) ||
+       (obj->cur->anti_alias != obj->prev->anti_alias) ||
+       (obj->cur->render_op != obj->prev->render_op) ||
        (changed_color)
       )
      {
@@ -347,10 +339,10 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
    /* we really only need to update the differences */
-   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
-       (obj->cur.geometry.y != obj->prev.geometry.y) ||
-       (obj->cur.geometry.w != obj->prev.geometry.w) ||
-       (obj->cur.geometry.h != obj->prev.geometry.h) ||
+   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
+       (obj->cur->geometry.y != obj->prev->geometry.y) ||
+       (obj->cur->geometry.w != obj->prev->geometry.w) ||
+       (obj->cur->geometry.h != obj->prev->geometry.h) ||
        ((o->changed) &&
         ((o->cur.x1 != o->prev.x1) ||
          (o->cur.y1 != o->prev.y1) ||
@@ -439,12 +431,12 @@ evas_object_line_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *
 {
    Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
 
-   o->cur.cache.x1 = obj->cur.geometry.x + o->cur.x1;
-   o->cur.cache.y1 = obj->cur.geometry.y + o->cur.y1;
-   o->cur.cache.x2 = obj->cur.geometry.x + o->cur.x2;
-   o->cur.cache.y2 = obj->cur.geometry.y + o->cur.y2;
-   o->cur.cache.object.w = obj->cur.geometry.w;
-   o->cur.cache.object.h = obj->cur.geometry.h;
+   o->cur.cache.x1 = obj->cur->geometry.x + o->cur.x1;
+   o->cur.cache.y1 = obj->cur->geometry.y + o->cur.y1;
+   o->cur.cache.x2 = obj->cur->geometry.x + o->cur.x2;
+   o->cur.cache.y2 = obj->cur->geometry.y + o->cur.y2;
+   o->cur.cache.object.w = obj->cur->geometry.w;
+   o->cur.cache.object.h = obj->cur->geometry.h;
 }
 
 static void

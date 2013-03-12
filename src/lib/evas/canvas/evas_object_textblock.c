@@ -2429,7 +2429,7 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
 
    /* FIXME: just ref the font here... */
    fmt2->font.font = evas_font_load(obj->layer->evas->evas, fmt2->font.fdesc,
-         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur.scale));
+         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale));
    return fmt2;
 }
 
@@ -2526,7 +2526,7 @@ _layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
           {
              int dh;
 
-             dh = obj->cur.geometry.h - (*maxascent + *maxdescent);
+             dh = obj->cur->geometry.h - (*maxascent + *maxdescent);
              if (dh < 0) dh = 0;
              dh = fmt->linefill * dh;
              *maxdescent += dh / 2;
@@ -3107,8 +3107,8 @@ _layout_calculate_format_item_size(const Evas_Object *eo_obj,
               p += 6;
               if (sscanf(p, "%ix%i", &w, &h) == 2)
                 {
-                   w = w * obj->cur.scale;
-                   h = h * obj->cur.scale;
+                   w = w * obj->cur->scale;
+                   h = h * obj->cur->scale;
                 }
            }
          break;
@@ -3723,7 +3723,7 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    of = fmt->font.font;
 
    fmt->font.font = evas_font_load(obj->layer->evas->evas, fmt->font.fdesc,
-         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur.scale));
+         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur->scale));
    if (of) evas_font_free(obj->layer->evas->evas, of);
 }
 
@@ -4873,7 +4873,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
-   c->width_changed = (obj->cur.geometry.w != o->last_w);
+   c->width_changed = (obj->cur->geometry.w != o->last_w);
 
    /* Start of logical layout creation */
    /* setup default base style */
@@ -5029,11 +5029,11 @@ _relayout(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Textblock *o = eo_data_get(eo_obj, MY_CLASS);
-   _layout(eo_obj, obj->cur.geometry.w, obj->cur.geometry.h,
+   _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
-   o->last_w = obj->cur.geometry.w;
-   o->last_h = obj->cur.geometry.h;
+   o->last_w = obj->cur->geometry.w;
+   o->last_h = obj->cur->geometry.h;
    o->changed = 0;
    o->content_changed = 0;
    o->format_changed = EINA_FALSE;
@@ -9180,7 +9180,7 @@ evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textb
    TB_HEAD_RETURN(EINA_FALSE);
    eo_e = evas_object_evas_get(eo_obj);
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
-   cy = 0 - obj->cur.geometry.y;
+   cy = 0 - obj->cur->geometry.y;
    ch = e->viewport.h;
    evas_textblock_cursor_line_coord_set(start, cy);
    evas_textblock_cursor_line_coord_set(end, cy + ch);
@@ -10131,18 +10131,6 @@ evas_object_textblock_init(Evas_Object *eo_obj)
         init_wordbreak();
      }
 
-   /* set up default settings for this kind of object */
-   obj->cur.color.r = 255;
-   obj->cur.color.g = 255;
-   obj->cur.color.b = 255;
-   obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0.0;
-   obj->cur.geometry.y = 0.0;
-   obj->cur.geometry.w = 0.0;
-   obj->cur.geometry.h = 0.0;
-   obj->cur.layer = 0;
-   /* set up object-specific settings */
-   obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -10211,10 +10199,10 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 							   context);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
    ENFN->context_clip_clip(output, context,
-                              obj->cur.geometry.x + x,
-                              obj->cur.geometry.y + y,
-                              obj->cur.geometry.w,
-                              obj->cur.geometry.h);
+                              obj->cur->geometry.x + x,
+                              obj->cur->geometry.y + y,
+                              obj->cur->geometry.w,
+                              obj->cur->geometry.h);
    clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
    /* If there are no paragraphs and thus there are no lines,
     * there's nothing left to do. */
@@ -10226,9 +10214,9 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         if (!par->visible) continue; \
         if (clip) \
           { \
-             if ((obj->cur.geometry.y + y + par->y + par->h) < (cy - 20)) \
+             if ((obj->cur->geometry.y + y + par->y + par->h) < (cy - 20)) \
              continue; \
-             if ((obj->cur.geometry.y + y + par->y) > (cy + ch + 20)) \
+             if ((obj->cur->geometry.y + y + par->y) > (cy + ch + 20)) \
              break; \
           } \
         _layout_paragraph_render(o, par); \
@@ -10238,9 +10226,9 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
              \
              if (clip) \
                { \
-                  if ((obj->cur.geometry.y + y + par->y + ln->y + ln->h) < (cy - 20)) \
+                  if ((obj->cur->geometry.y + y + par->y + ln->y + ln->h) < (cy - 20)) \
                   continue; \
-                  if ((obj->cur.geometry.y + y + par->y + ln->y) > (cy + ch + 20)) \
+                  if ((obj->cur->geometry.y + y + par->y + ln->y) > (cy + ch + 20)) \
                   break; \
                } \
              EINA_INLIST_FOREACH(ln->items, itr) \
@@ -10253,13 +10241,13 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                     } \
                   if (clip) \
                     { \
-                       if ((obj->cur.geometry.x + x + ln->x + itr->x + itr->w) < (cx - 20)) \
+                       if ((obj->cur->geometry.x + x + ln->x + itr->x + itr->w) < (cx - 20)) \
                        continue; \
-                       if ((obj->cur.geometry.x + x + ln->x + itr->x) > (cx + cw + 20)) \
+                       if ((obj->cur->geometry.x + x + ln->x + itr->x) > (cx + cw + 20)) \
                        break; \
                     } \
                   if ((ln->x + itr->x + itr->w) <= 0) continue; \
-                  if (ln->x + itr->x > obj->cur.geometry.w) break; \
+                  if (ln->x + itr->x > obj->cur->geometry.w) break; \
                   do
 
 #define ITEM_WALK_END() \
@@ -10270,22 +10258,22 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    do {} while(0)
 #define COLOR_SET(col) \
    ENFN->context_color_set(output, context, \
-         (obj->cur.cache.clip.r * ti->parent.format->color.col.r) / 255, \
-         (obj->cur.cache.clip.g * ti->parent.format->color.col.g) / 255, \
-         (obj->cur.cache.clip.b * ti->parent.format->color.col.b) / 255, \
-         (obj->cur.cache.clip.a * ti->parent.format->color.col.a) / 255);
+         (obj->cur->cache.clip.r * ti->parent.format->color.col.r) / 255, \
+         (obj->cur->cache.clip.g * ti->parent.format->color.col.g) / 255, \
+         (obj->cur->cache.clip.b * ti->parent.format->color.col.b) / 255, \
+         (obj->cur->cache.clip.a * ti->parent.format->color.col.a) / 255);
 #define COLOR_SET_AMUL(col, amul) \
    ENFN->context_color_set(output, context, \
-         (obj->cur.cache.clip.r * ti->parent.format->color.col.r * (amul)) / 65025, \
-         (obj->cur.cache.clip.g * ti->parent.format->color.col.g * (amul)) / 65025, \
-         (obj->cur.cache.clip.b * ti->parent.format->color.col.b * (amul)) / 65025, \
-         (obj->cur.cache.clip.a * ti->parent.format->color.col.a * (amul)) / 65025);
+         (obj->cur->cache.clip.r * ti->parent.format->color.col.r * (amul)) / 65025, \
+         (obj->cur->cache.clip.g * ti->parent.format->color.col.g * (amul)) / 65025, \
+         (obj->cur->cache.clip.b * ti->parent.format->color.col.b * (amul)) / 65025, \
+         (obj->cur->cache.clip.a * ti->parent.format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy)                                               \
    if (ti->parent.format->font.font)                                    \
      evas_font_draw_async_check(obj, output, context, surface,          \
         ti->parent.format->font.font,                                   \
-        obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox),          \
-        obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy),     \
+        obj->cur->geometry.x + ln->x + ti->parent.x + x + (ox),          \
+        obj->cur->geometry.y + ln->par->y + ln->y + yoff + y + (oy),     \
         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h,         \
         &ti->text_props, do_async);
 
@@ -10295,15 +10283,15 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
      { \
         ENFN->context_color_set(output, \
               context, \
-              (obj->cur.cache.clip.r * or) / 255, \
-              (obj->cur.cache.clip.g * og) / 255, \
-              (obj->cur.cache.clip.b * ob) / 255, \
-              (obj->cur.cache.clip.a * oa) / 255); \
+              (obj->cur->cache.clip.r * or) / 255, \
+              (obj->cur->cache.clip.g * og) / 255, \
+              (obj->cur->cache.clip.b * ob) / 255, \
+              (obj->cur->cache.clip.a * oa) / 255); \
         ENFN->rectangle_draw(output, \
               context, \
               surface, \
-              obj->cur.geometry.x + ln->x + x + (ox), \
-              obj->cur.geometry.y + ln->par->y + ln->y + y + (oy), \
+              obj->cur->geometry.x + ln->x + x + (ox), \
+              obj->cur->geometry.y + ln->par->y + ln->y + y + (oy), \
               (ow), \
               (oh), \
               do_async); \
@@ -10365,10 +10353,10 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    while (0)
 
      {
-        Evas_Coord look_for_y = 0 - (obj->cur.geometry.y + y);
+        Evas_Coord look_for_y = 0 - (obj->cur->geometry.y + y);
         if (clip)
           {
-             Evas_Coord tmp_lfy = cy - (obj->cur.geometry.y + y);
+             Evas_Coord tmp_lfy = cy - (obj->cur->geometry.y + y);
              if (tmp_lfy > look_for_y)
                 look_for_y = tmp_lfy;
           }
@@ -10601,9 +10589,9 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
    if ((o->changed) || (o->content_changed) || (o->format_changed) ||
-       ((obj->cur.geometry.w != o->last_w) ||
+       ((obj->cur->geometry.w != o->last_w) ||
            (((o->valign != 0.0) || (o->have_ellipsis)) &&
-               (obj->cur.geometry.h != o->last_h))))
+               (obj->cur->geometry.h != o->last_h))))
      {
         _relayout(eo_obj);
 	o->redraw = 0;
@@ -10621,11 +10609,11 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
 	goto done;
      }
    /* if someone is clipping this obj - go calculate the clipper */
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
+	if (obj->cur->cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -10653,10 +10641,10 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
 	goto done;
      }
    /* if it changed color */
-   if ((obj->cur.color.r != obj->prev.color.r) ||
-       (obj->cur.color.g != obj->prev.color.g) ||
-       (obj->cur.color.b != obj->prev.color.b) ||
-       (obj->cur.color.a != obj->prev.color.a))
+   if ((obj->cur->color.r != obj->prev->color.r) ||
+       (obj->cur->color.g != obj->prev->color.g) ||
+       (obj->cur->color.b != obj->prev->color.b) ||
+       (obj->cur->color.a != obj->prev->color.a))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
@@ -10664,10 +10652,10 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
    /* we really only need to update the differences */
-   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
-       (obj->cur.geometry.y != obj->prev.geometry.y) ||
-       (obj->cur.geometry.w != obj->prev.geometry.w) ||
-       (obj->cur.geometry.h != obj->prev.geometry.h))
+   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
+       (obj->cur->geometry.y != obj->prev->geometry.y) ||
+       (obj->cur->geometry.w != obj->prev->geometry.w) ||
+       (obj->cur->geometry.h != obj->prev->geometry.h))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
@@ -10733,9 +10721,9 @@ static void
 evas_object_textblock_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Textblock *o = eo_data_get(eo_obj, MY_CLASS);
-   if ((obj->cur.geometry.w != o->last_w) ||
+   if ((obj->cur->geometry.w != o->last_w) ||
        (((o->valign != 0.0) || (o->have_ellipsis)) &&
-           (obj->cur.geometry.h != o->last_h)))
+           (obj->cur->geometry.h != o->last_h)))
      {
 	o->formatted.valid = 0;
 	o->changed = 1;

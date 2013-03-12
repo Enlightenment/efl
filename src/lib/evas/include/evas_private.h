@@ -536,7 +536,7 @@ struct _Evas_Object_Protected_State
 {
    Evas_Object_Protected_Data *clipper;
    Evas_Object          *eo_clipper;
-   double                scale;
+
    Evas_Coord_Rectangle  geometry;
    Evas_Coord_Rectangle  bounding_box;
    struct {
@@ -547,10 +547,13 @@ struct _Evas_Object_Protected_State
          Eina_Bool       dirty : 1;
       } clip;
    } cache;
-   short                 layer;
    struct {
       unsigned char      r, g, b, a;
    } color;
+
+   double                scale;
+
+   short                 layer;
 
    Evas_Render_Op        render_op : 4;
 
@@ -558,10 +561,9 @@ struct _Evas_Object_Protected_State
    Eina_Bool             have_clipees : 1;
    Eina_Bool             anti_alias : 1;
    Eina_Bool             valid_bounding_box : 1;
+
    Eina_Bool             cached_surface : 1;
    Eina_Bool             parent_cached_surface : 1;
-   Eina_Bool             opaque_valid : 1;
-   Eina_Bool             opaque : 1;
 };
 
 struct _Evas_Object_Protected_Data
@@ -571,7 +573,8 @@ struct _Evas_Object_Protected_Data
    const char              *type;
    Evas_Layer              *layer;
 
-   Evas_Object_Protected_State cur, prev;
+   const Evas_Object_Protected_State *cur;
+   const Evas_Object_Protected_State *prev;
 
    char                       *name;
 
@@ -1257,10 +1260,18 @@ void _evas_device_unref(Evas_Device *dev);
        
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
+extern Eina_Cow *evas_object_state_cow;
 
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
+
+# define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
+  EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
+                       Evas_Object_Protected_State, Write)
+
+# define EINA_COW_STATE_WRITE_END(Obj, Write, State)                    \
+  EINA_COW_WRITE_END(evas_object_state_cow, Obj->State, Write)
 
 /****************************************************************************/
 /*****************************************/

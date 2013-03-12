@@ -257,7 +257,12 @@ _smart_member_add(Eo *smart_obj, void *_pd, va_list *list)
    o->member_count++;
    evas_object_release(eo_obj, obj, 1);
    obj->layer = smart->layer;
-   obj->cur.layer = obj->layer->layer;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->layer = obj->layer->layer;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    obj->layer->usage++;
    obj->smart.parent = smart_obj;
    o->contained = eina_inlist_append(o->contained, EINA_INLIST_GET(obj));
@@ -303,7 +308,13 @@ _smart_member_del(Eo *smart_obj, void *_pd EINA_UNUSED, va_list *list)
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE, EINA_TRUE);
    obj->layer->usage--;
-   obj->cur.layer = obj->layer->layer;
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->layer = obj->layer->layer;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    evas_object_inject(eo_obj, obj, obj->layer->evas->evas);
    obj->restack = 1;
    evas_object_change(eo_obj, obj);
@@ -1347,17 +1358,17 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
           {
              evas_object_smart_bounding_box_update(o->object, o);
 
-             tx = o->cur.bounding_box.x;
-             ty = o->cur.bounding_box.y;
-             tw = o->cur.bounding_box.x + o->cur.bounding_box.w;
-             th = o->cur.bounding_box.y + o->cur.bounding_box.h;
+             tx = o->cur->bounding_box.x;
+             ty = o->cur->bounding_box.y;
+             tw = o->cur->bounding_box.x + o->cur->bounding_box.w;
+             th = o->cur->bounding_box.y + o->cur->bounding_box.h;
           }
         else
           {
-             tx = o->cur.geometry.x;
-             ty = o->cur.geometry.y;
-             tw = o->cur.geometry.x + o->cur.geometry.w;
-             th = o->cur.geometry.y + o->cur.geometry.h;
+             tx = o->cur->geometry.x;
+             ty = o->cur->geometry.y;
+             tw = o->cur->geometry.x + o->cur->geometry.w;
+             th = o->cur->geometry.y + o->cur->geometry.h;
           }
 
         if (tx < minx) minx = tx;
@@ -1366,26 +1377,42 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
         if (th > maxh) maxh = th;
      }
 
-   if (minx != obj->cur.bounding_box.x)
+   if (minx != obj->cur->bounding_box.x)
      {
-        obj->cur.bounding_box.w += obj->cur.bounding_box.x - minx;
-        obj->cur.bounding_box.x = minx;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->bounding_box.w += state_write->bounding_box.x - minx;
+             state_write->bounding_box.x = minx;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
 
-   if (miny != obj->cur.bounding_box.y)
+   if (miny != obj->cur->bounding_box.y)
      {
-        obj->cur.bounding_box.h += obj->cur.bounding_box.y - miny;
-        obj->cur.bounding_box.y = miny;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->bounding_box.h += state_write->bounding_box.y - miny;
+             state_write->bounding_box.y = miny;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
 
-   if (maxw != obj->cur.bounding_box.x + obj->cur.bounding_box.w)
+   if (maxw != obj->cur->bounding_box.x + obj->cur->bounding_box.w)
      {
-        obj->cur.bounding_box.w = maxw - obj->cur.bounding_box.x;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->bounding_box.w = maxw - state_write->bounding_box.x;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
 
-   if (maxh != obj->cur.bounding_box.y + obj->cur.bounding_box.h)
+   if (maxh != obj->cur->bounding_box.y + obj->cur->bounding_box.h)
      {
-        obj->cur.bounding_box.h = maxh - obj->cur.bounding_box.y;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->bounding_box.h = maxh - state_write->bounding_box.y;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
 }
 
@@ -1395,18 +1422,6 @@ evas_object_smart_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    obj->is_smart = EINA_TRUE;
-   /* set up default settings for this kind of object */
-   obj->cur.color.r = 255;
-   obj->cur.color.g = 255;
-   obj->cur.color.b = 255;
-   obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0;
-   obj->cur.geometry.y = 0;
-   obj->cur.geometry.w = 0;
-   obj->cur.geometry.h = 0;
-   obj->cur.layer = 0;
-   /* set up object-specific settings */
-   obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
 }
@@ -1421,7 +1436,7 @@ static void
 evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->pre_render_done) return;
-   if (!obj->child_has_map && !obj->cur.cached_surface)
+   if (!obj->child_has_map && !obj->cur->cached_surface)
      {
 #if 0
         Evas_Object_Smart *o;
@@ -1429,10 +1444,10 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         fprintf(stderr, "");
         o = (Evas_Object_Smart *)(obj->object_data);
         if (/* o->member_count > 1 && */
-            obj->cur.bounding_box.w == obj->prev.bounding_box.w &&
-            obj->cur.bounding_box.h == obj->prev.bounding_box.h &&
-            (obj->cur.bounding_box.x != obj->prev.bounding_box.x ||
-             obj->cur.bounding_box.y != obj->prev.bounding_box.y))
+            obj->cur->bounding_box.w == obj->prev->bounding_box.w &&
+            obj->cur->bounding_box.h == obj->prev->bounding_box.h &&
+            (obj->cur->bounding_box.x != obj->prev->bounding_box.x ||
+             obj->cur->bounding_box.y != obj->prev->bounding_box.y))
           {
              Eina_Bool cache_map = EINA_FALSE;
 
@@ -1456,14 +1471,14 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                        int speed_x, speed_y;
                        int speed_px, speed_py;
 
-                       speed_x = obj->cur.geometry.x - obj->prev.geometry.x;
-                       speed_y = obj->cur.geometry.y - obj->prev.geometry.y;
+                       speed_x = obj->cur->geometry.x - obj->prev->geometry.x;
+                       speed_y = obj->cur->geometry.y - obj->prev->geometry.y;
 
                        speed_px = obj->smart.parent->cur.geometry.x - obj->smart.parent->prev.geometry.x;
                        speed_py = obj->smart.parent->cur.geometry.y - obj->smart.parent->prev.geometry.y;
 
-                       /* speed_x = obj->cur.bounding_box.x - obj->prev.bounding_box.x; */
-                       /* speed_y = obj->cur.bounding_box.y - obj->prev.bounding_box.y; */
+                       /* speed_x = obj->cur->bounding_box.x - obj->prev->bounding_box.x; */
+                       /* speed_y = obj->cur->bounding_box.y - obj->prev->bounding_box.y; */
 
                        /* speed_px = obj->smart.parent->cur.bounding_box.x - obj->smart.parent->prev.bounding_box.x; */
                        /* speed_py = obj->smart.parent->cur.bounding_box.y - obj->smart.parent->prev.bounding_box.y; */
@@ -1480,15 +1495,15 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
              if (cache_map)
                fprintf(stderr, "Wouhou, I can detect moving smart object (%s, %p [%i, %i, %i, %i] < %s, %p [%i, %i, %i, %i])\n",
                        evas_object_type_get(eo_obj), obj,
-                       obj->cur.bounding_box.x - obj->prev.bounding_box.x,
-                       obj->cur.bounding_box.y - obj->prev.bounding_box.y,
-                       obj->cur.bounding_box.w, obj->cur.bounding_box.h,
+                       obj->cur->bounding_box.x - obj->prev->bounding_box.x,
+                       obj->cur->bounding_box.y - obj->prev->bounding_box.y,
+                       obj->cur->bounding_box.w, obj->cur->bounding_box.h,
                        evas_object_type_get(obj->smart.parent), obj->smart.parent,
                        obj->smart.parent->cur.bounding_box.x - obj->smart.parent->prev.bounding_box.x,
                        obj->smart.parent->cur.bounding_box.y - obj->smart.parent->prev.bounding_box.y,
                        obj->smart.parent->cur.bounding_box.w, obj->smart.parent->cur.bounding_box.h);
 
-             obj->cur.cached_surface = cache_map;
+             obj->cur->cached_surface = cache_map;
           }
 #endif
      }

@@ -172,7 +172,7 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text 
        (!memcmp(&o->cur.glow, &o->prev.glow, sizeof (o->cur.glow))) &&
        (!memcmp(&o->cur.glow2, &o->prev.glow2, sizeof (o->cur.glow2))) &&
        (o->cur.style == o->prev.style) &&
-       (obj->cur.scale == obj->prev.scale))
+       (obj->cur->scale == obj->prev->scale))
      {
         if ((o->last_computed.ellipsis_start) &&
             (o->last_computed.ellipsis_start == o->items))
@@ -465,7 +465,7 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
      }
 
    o->font = evas_font_load(obj->layer->evas->evas, o->cur.fdesc, o->cur.source,
-         (int)(((double) o->cur.size) * obj->cur.scale));
+         (int)(((double) o->cur.size) * obj->cur->scale));
    if (o->font)
      {
         o->ascent = ENFN->font_ascent_get(ENDT, o->font);
@@ -493,7 +493,7 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
                                                 obj->layer->evas->pointer.x,
                                                 obj->layer->evas->pointer.y,
                                                 1, 1);
-             if ((is ^ was) && obj->cur.visible)
+             if ((is ^ was) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -697,9 +697,9 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    if (o->items &&
        !memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
        o->cur.text == text &&
-       obj->cur.scale == obj->prev.scale &&
-       o->last_computed.w == obj->cur.geometry.w &&
-       o->last_computed.h == obj->cur.geometry.h)
+       obj->cur->scale == obj->prev->scale &&
+       o->last_computed.w == obj->cur->geometry.w &&
+       o->last_computed.h == obj->cur->geometry.h)
      return ;
 
    evas_object_content_change(eo_obj, obj);
@@ -767,9 +767,9 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
      }
 
    /* Handle ellipsis */
-   if ((o->cur.ellipsis >= 0.0) && (advance > obj->cur.geometry.w) && (obj->cur.geometry.w > 0))
+   if ((o->cur.ellipsis >= 0.0) && (advance > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
      {
-        Evas_Coord ellip_frame = obj->cur.geometry.w;
+        Evas_Coord ellip_frame = obj->cur->geometry.w;
         Evas_Object_Text_Item *start_ellip_it = NULL, *end_ellip_it = NULL;
         /* Account of the ellipsis item width. As long as ellipsis != 0
          * we have a left ellipsis. And the same with 1 and right. */
@@ -1029,7 +1029,7 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
    is = evas_object_is_in_output_rect(eo_obj, obj,
 				      obj->layer->evas->pointer.x,
 				      obj->layer->evas->pointer.y, 1, 1);
-   if ((is || was) && obj->cur.visible)
+   if ((is || was) && obj->cur->visible)
      evas_event_feed_mouse_move(obj->layer->evas->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
@@ -1302,14 +1302,14 @@ _text_char_pos_get(Eo *eo_obj, void *_pd, va_list *list)
 	w += x;
 	x = 0;
      }
-   if ((x + w) > obj->cur.geometry.w) w = obj->cur.geometry.w - x;
+   if ((x + w) > obj->cur->geometry.w) w = obj->cur->geometry.w - x;
    if (w < 0) w = 0;
    if (y < 0)
      {
 	h += y;
 	y = 0;
      }
-   if ((y + h) > obj->cur.geometry.h) h = obj->cur.geometry.h - y;
+   if ((y + h) > obj->cur->geometry.h) h = obj->cur->geometry.h - y;
    if (h < 0) h = 0;
    if (cx) *cx = x;
    if (cy) *cy = y;
@@ -1387,14 +1387,14 @@ _text_char_coords_get(Eo *eo_obj, void *_pd, va_list *list)
 	rx = 0;
      }
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   if ((rx + rw) > obj->cur.geometry.w) rw = obj->cur.geometry.w - rx;
+   if ((rx + rw) > obj->cur->geometry.w) rw = obj->cur->geometry.w - rx;
    if (rw < 0) rw = 0;
    if (ry < 0)
      {
 	rh += ry;
 	ry = 0;
      }
-   if ((ry + rh) > obj->cur.geometry.h) rh = obj->cur.geometry.h - ry;
+   if ((ry + rh) > obj->cur->geometry.h) rh = obj->cur->geometry.h - ry;
    if (rh < 0) rh = 0;
    if (cx) *cx = rx;
    if (cy) *cy = ry;
@@ -1425,11 +1425,17 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_text_style_pad_get(o->cur.style, &pl, &pr, &pt, &pb);
    o->cur.style = style;
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-   if (o->items)
-     obj->cur.geometry.w += (l - pl) + (r - pr);
-   else
-     obj->cur.geometry.w = 0;
-   obj->cur.geometry.h += (t - pt) + (b - pb);
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       if (o->items)
+	 state_write->geometry.w += (l - pl) + (r - pr);
+       else
+	 state_write->geometry.w = 0;
+       state_write->geometry.h += (t - pt) + (b - pb);
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
 }
@@ -1878,18 +1884,6 @@ static void
 evas_object_text_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   /* set up default settings for this kind of object */
-   obj->cur.color.r = 255;
-   obj->cur.color.g = 255;
-   obj->cur.color.b = 255;
-   obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0;
-   obj->cur.geometry.y = 0;
-   obj->cur.geometry.w = 0;
-   obj->cur.geometry.h = 0;
-   obj->cur.layer = 0;
-   /* set up object-specific settings */
-   obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -1968,13 +1962,13 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
    /* render object to surface with context, and offxet by x,y */
    evas_text_style_pad_get(o->cur.style, &sl, NULL, &st, NULL);
    ENFN->context_multiplier_unset(output, context);
-   ENFN->context_render_op_set(output, context, obj->cur.render_op);
+   ENFN->context_render_op_set(output, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
    ENFN->context_clip_clip(output, context,
-                              obj->cur.geometry.x + x,
-                              obj->cur.geometry.y + y,
-                              obj->cur.geometry.w,
-                              obj->cur.geometry.h);
+                              obj->cur->geometry.x + x,
+                              obj->cur->geometry.y + y,
+                              obj->cur->geometry.w,
+                              obj->cur->geometry.h);
 /*
    ENFN->context_color_set(output,
                            context,
@@ -1982,10 +1976,10 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
    ENFN->rectangle_draw(output,
                         context,
                         surface,
-                        obj->cur.geometry.x + x,
-                        obj->cur.geometry.y + y,
-                        obj->cur.geometry.w,
-                        obj->cur.geometry.h);
+                        obj->cur->geometry.x + x,
+                        obj->cur->geometry.y + y,
+                        obj->cur->geometry.w,
+                        obj->cur->geometry.h);
  */
 #define COLOR_ONLY_SET(object, sub, col) \
 	ENFN->context_color_set(output, context, \
@@ -1995,13 +1989,13 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 				object->sub.col.a);
 
 #define COLOR_SET(object, sub, col) \
-        if (obj->cur.clipper)\
+        if (obj->cur->clipper)\
         { \
 	   ENFN->context_color_set(output, context, \
-				((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
-				((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
-				((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
-				((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8); \
+				((int)object->sub.col.r * ((int)obj->cur->clipper->cur->cache.clip.r + 1)) >> 8, \
+				((int)object->sub.col.g * ((int)obj->cur->clipper->cur->cache.clip.g + 1)) >> 8, \
+				((int)object->sub.col.b * ((int)obj->cur->clipper->cur->cache.clip.b + 1)) >> 8, \
+				((int)object->sub.col.a * ((int)obj->cur->clipper->cur->cache.clip.a + 1)) >> 8); \
         } \
         else\
 	   ENFN->context_color_set(output, context, \
@@ -2011,13 +2005,13 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 				object->sub.col.a);
 
 #define COLOR_SET_AMUL(object, sub, col, amul) \
-        if (obj->cur.clipper) \
+        if (obj->cur->clipper) \
         { \
 	    ENFN->context_color_set(output, context, \
-				(((int)object->sub.col.r) * ((int)obj->cur.clipper->cur.cache.clip.r) * (amul)) / 65025, \
-				(((int)object->sub.col.g) * ((int)obj->cur.clipper->cur.cache.clip.g) * (amul)) / 65025, \
-				(((int)object->sub.col.b) * ((int)obj->cur.clipper->cur.cache.clip.b) * (amul)) / 65025, \
-				(((int)object->sub.col.a) * ((int)obj->cur.clipper->cur.cache.clip.a) * (amul)) / 65025); \
+				(((int)object->sub.col.r) * ((int)obj->cur->clipper->cur->cache.clip.r) * (amul)) / 65025, \
+				(((int)object->sub.col.g) * ((int)obj->cur->clipper->cur->cache.clip.g) * (amul)) / 65025, \
+				(((int)object->sub.col.b) * ((int)obj->cur->clipper->cur->cache.clip.b) * (amul)) / 65025, \
+				(((int)object->sub.col.a) * ((int)obj->cur->clipper->cur->cache.clip.a) * (amul)) / 65025); \
         } \
         else \
 	    ENFN->context_color_set(output, context, \
@@ -2032,14 +2026,14 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
                                 context,                                \
                                 surface,                                \
                                 o->font,                                \
-                                obj->cur.geometry.x + x + sl + ox + it->x, \
-                                obj->cur.geometry.y + y + st + oy +     \
+                                obj->cur->geometry.x + x + sl + ox + it->x, \
+                                obj->cur->geometry.y + y + st + oy +     \
                                 (int)                                   \
-                                (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
-                                obj->cur.geometry.w,                    \
-                                obj->cur.geometry.h,                    \
-                                obj->cur.geometry.w,                    \
-                                obj->cur.geometry.h,                    \
+                                (((o->max_ascent * obj->cur->geometry.h) / obj->cur->geometry.h)), \
+                                obj->cur->geometry.w,                    \
+                                obj->cur->geometry.h,                    \
+                                obj->cur->geometry.w,                    \
+                                obj->cur->geometry.h,                    \
                                 &it->text_props,                        \
                                 do_async);
 
@@ -2191,7 +2185,7 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
           }
 
         /* normal text */
-        COLOR_ONLY_SET(obj, cur.cache, clip);
+        COLOR_ONLY_SET(obj, cur->cache, clip);
         DRAW_TEXT(0, 0);
      }
 }
@@ -2210,18 +2204,18 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
     Then when this is done the object needs to figure if it changed and 
     if so what and where and add the appropriate redraw rectangles */
    /* if someone is clipping this obj - go calculate the clipper */
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
+	if (obj->cur->cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
      }
    /* If object size changed and ellipsis is set */
    if (((o->cur.ellipsis >= 0.0 ||
 	 o->cur.ellipsis != o->prev.ellipsis) &&
-	((obj->cur.geometry.w != o->last_computed.w) ||
-	 (obj->cur.geometry.h != o->last_computed.h))) ||
-       (obj->cur.scale != obj->prev.scale))
+	((obj->cur->geometry.w != o->last_computed.w) ||
+	 (obj->cur->geometry.h != o->last_computed.h))) ||
+       (obj->cur->scale != obj->prev->scale))
      {
        _evas_object_text_recalc(eo_obj, o->cur.text);
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
@@ -2256,10 +2250,10 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 	goto done;
      }
    /* if it changed color */
-   if ((obj->cur.color.r != obj->prev.color.r) ||
-       (obj->cur.color.g != obj->prev.color.g) ||
-       (obj->cur.color.b != obj->prev.color.b) ||
-       (obj->cur.color.a != obj->prev.color.a))
+   if ((obj->cur->color.r != obj->prev->color.r) ||
+       (obj->cur->color.g != obj->prev->color.g) ||
+       (obj->cur->color.b != obj->prev->color.b) ||
+       (obj->cur->color.a != obj->prev->color.a))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
 					    eo_obj, obj);
@@ -2268,16 +2262,16 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* if it changed geometry - and obviously not visibility or color
     calculate differences since we have a constant color fill
     we really only need to update the differences */
-   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
-       (obj->cur.geometry.y != obj->prev.geometry.y) ||
-       (obj->cur.geometry.w != obj->prev.geometry.w) ||
-       (obj->cur.geometry.h != obj->prev.geometry.h))
+   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
+       (obj->cur->geometry.y != obj->prev->geometry.y) ||
+       (obj->cur->geometry.w != obj->prev->geometry.w) ||
+       (obj->cur->geometry.h != obj->prev->geometry.h))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
 					    eo_obj, obj);
 	goto done;
      }
-   if (obj->cur.render_op != obj->prev.render_op)
+   if (obj->cur->render_op != obj->prev->render_op)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
 					    eo_obj, obj);
@@ -2385,7 +2379,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
    is = evas_object_is_in_output_rect(eo_obj, obj,
 				      obj->layer->evas->pointer.x,
 				      obj->layer->evas->pointer.y, 1, 1);
-   if ((is || was) && obj->cur.visible)
+   if ((is || was) && obj->cur->visible)
      evas_event_feed_mouse_move(obj->layer->evas->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
@@ -2412,21 +2406,32 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
         w = _evas_object_text_horiz_advance_get(eo_obj, o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-        obj->cur.geometry.w = w + l + r;
-        obj->cur.geometry.h = h + t + b;
-////        obj->cur.cache.geometry.validity = 0;
+
+	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+	  {
+	    state_write->geometry.w = w + l + r;
+	    state_write->geometry.h = h + t + b;
+	  }
+	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
+////        obj->cur->cache.geometry.validity = 0;
      }
    else
      {
 	int t = 0, b = 0;
 
 	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-        obj->cur.geometry.w = 0;
-        obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
-////        obj->cur.cache.geometry.validity = 0;
+	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+	  {
+	    state_write->geometry.w = 0;
+	    state_write->geometry.h = o->max_ascent + o->max_descent + t + b;
+	  }
+	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+	    
+////        obj->cur->cache.geometry.validity = 0;
      }
-   o->last_computed.w = obj->cur.geometry.w;
-   o->last_computed.h = obj->cur.geometry.h;
+   o->last_computed.w = obj->cur->geometry.w;
+   o->last_computed.h = obj->cur->geometry.h;
    evas_object_clip_dirty(eo_obj, obj);
 }
 
