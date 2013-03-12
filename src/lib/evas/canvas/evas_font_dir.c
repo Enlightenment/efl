@@ -470,7 +470,9 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
    Evas_Font_Set *font = NULL;
    Eina_List *fonts, *l;
    Fndat *fd;
+#ifdef HAVE_FONTCONFIG
    Fndat *found_fd = NULL;
+#endif
    char *nm;
    Font_Rend_Flags wanted_rend = 0;
 
