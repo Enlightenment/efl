@@ -20,6 +20,10 @@
 # include <sys/wait.h>
 #endif
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
@@ -485,6 +489,9 @@ ecore_exe_pipe_run(const char     *exe_cmd,
       }
       else if (pid == 0) /* child */
       {
+#ifdef HAVE_SYSTEMD
+         unsetenv("NOTIFY_SOCKET");
+#endif
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
          {
 #ifdef PRIO_PROCESS            
