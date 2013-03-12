@@ -108,10 +108,10 @@ struct _Eo_Class
    const Eo_Class **mro;
    Eo_Kls_Itr mro_itr;
 
-   size_t extn_data_size;
-   size_t chain_size;
-   size_t base_id;
-   size_t data_offset; /* < Offset of the data within object data. */
+   unsigned int extn_data_size;
+   unsigned int chain_size;
+   unsigned int base_id;
+   unsigned int data_offset; /* < Offset of the data within object data. */
 
    Eina_Bool constructed : 1;
 };
@@ -1064,7 +1064,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
 
    if (getenv("EO_DEBUG"))
      {
-        fprintf(stderr, "Eo class '%s' will take %i bytes per object.\n",
+        fprintf(stderr, "Eo class '%s' will take %d bytes per object.\n",
                 desc->name,
                 klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size);
      }
