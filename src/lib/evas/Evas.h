@@ -718,13 +718,6 @@ typedef struct _Evas_Public_Data  Evas_Public_Data;
  */
 typedef Eo                 Evas_Object;
 
-/**
- * @typedef Evas_Object_Protected_Data
- * Protected data for an Evas Object.
- * @ingroup Evas_Object_Group
- */
-typedef struct _Evas_Object_Protected_Data Evas_Object_Protected_Data;
-
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containing information on which modifier keys are registered in an Evas canvas */
 typedef struct _Evas_Lock           Evas_Lock; /**< An opaque type containing information on which lock keys are registered in an Evas canvas */

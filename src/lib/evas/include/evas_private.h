@@ -50,6 +50,9 @@ typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 
+typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
+typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
+
 enum _Evas_Font_Style
 {
    EVAS_FONT_STYLE_SLANT,
@@ -529,6 +532,38 @@ struct _Evas_Object_Map_Data
    RGBA_Map             *spans;
 };
 
+struct _Evas_Object_Protected_State
+{
+   Evas_Object_Protected_Data *clipper;
+   Evas_Object          *eo_clipper;
+   double                scale;
+   Evas_Coord_Rectangle  geometry;
+   Evas_Coord_Rectangle  bounding_box;
+   struct {
+      struct {
+         Evas_Coord      x, y, w, h;
+         unsigned char   r, g, b, a;
+         Eina_Bool       visible : 1;
+         Eina_Bool       dirty : 1;
+      } clip;
+   } cache;
+   short                 layer;
+   struct {
+      unsigned char      r, g, b, a;
+   } color;
+
+   Evas_Render_Op        render_op : 4;
+
+   Eina_Bool             visible : 1;
+   Eina_Bool             have_clipees : 1;
+   Eina_Bool             anti_alias : 1;
+   Eina_Bool             valid_bounding_box : 1;
+   Eina_Bool             cached_surface : 1;
+   Eina_Bool             parent_cached_surface : 1;
+   Eina_Bool             opaque_valid : 1;
+   Eina_Bool             opaque : 1;
+};
+
 struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
@@ -536,36 +571,7 @@ struct _Evas_Object_Protected_Data
    const char              *type;
    Evas_Layer              *layer;
 
-   struct {
-      Evas_Object_Protected_Data *clipper;
-      Evas_Object          *eo_clipper;
-      double                scale;
-      Evas_Coord_Rectangle  geometry;
-      Evas_Coord_Rectangle  bounding_box;
-      struct {
-         struct {
-            Evas_Coord      x, y, w, h;
-            unsigned char   r, g, b, a;
-            Eina_Bool       visible : 1;
-            Eina_Bool       dirty : 1;
-         } clip;
-      } cache;
-      short                 layer;
-      struct {
-         unsigned char      r, g, b, a;
-      } color;
-
-      Evas_Render_Op        render_op : 4;
-
-      Eina_Bool             visible : 1;
-      Eina_Bool             have_clipees : 1;
-      Eina_Bool             anti_alias : 1;
-      Eina_Bool             valid_bounding_box : 1;
-      Eina_Bool             cached_surface : 1;
-      Eina_Bool             parent_cached_surface : 1;
-      Eina_Bool             opaque_valid : 1;
-      Eina_Bool             opaque : 1;
-   } cur, prev;
+   Evas_Object_Protected_State cur, prev;
 
    char                       *name;
 
