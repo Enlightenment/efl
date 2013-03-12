@@ -83,7 +83,7 @@ _raise(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
              if (evas_object_is_in_output_rect(eo_obj, obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               1, 1) && obj->cur.visible)
+                                               1, 1) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -140,7 +140,7 @@ _lower(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
              if (evas_object_is_in_output_rect(eo_obj, obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               1, 1) && obj->cur.visible)
+                                               1, 1) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -227,7 +227,7 @@ _stack_above(Eo *eo_obj, void *_pd, va_list *list)
              if (evas_object_is_in_output_rect(eo_obj, obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               1, 1) && obj->cur.visible)
+                                               1, 1) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -314,7 +314,7 @@ _stack_below(Eo *eo_obj, void *_pd, va_list *list)
              if (evas_object_is_in_output_rect(eo_obj, obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               1, 1) && obj->cur.visible)
+                                               1, 1) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,

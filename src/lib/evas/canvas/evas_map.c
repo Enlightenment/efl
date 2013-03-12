@@ -18,7 +18,7 @@ _evas_map_calc_geom_change(Evas_Object *eo_obj)
              is = evas_object_is_in_output_rect(eo_obj, obj,
                                                 obj->layer->evas->pointer.x,
                                                 obj->layer->evas->pointer.y, 1, 1);
-             if ((is ^ was) && obj->cur.visible)
+             if ((is ^ was) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
@@ -461,7 +461,7 @@ _map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
         evas_object_mapped_clip_across_mark(eo_obj, obj);
-        //        obj->map->cur.map->normal_geometry = obj->cur.geometry;
+        //        obj->map->cur.map->normal_geometry = obj->cur->geometry;
      }
    else
      {
@@ -557,7 +557,12 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
         if (obj->map->cur.map)
           {
              obj->changed_map = EINA_TRUE;
-             obj->prev.geometry = obj->map->cur.map->normal_geometry;
+
+	     EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)
+	       {
+		 state_write->geometry = obj->map->cur.map->normal_geometry;
+	       }
+	     EINA_COW_STATE_WRITE_END(obj, state_write, prev);
 
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
@@ -847,8 +852,8 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *e
         ERR("map has count=%d where 4 was expected.", m->count);
         return;
      }
-   _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
-                                  obj->cur.geometry.w, obj->cur.geometry.h, z);
+   _evas_map_util_points_populate(m, obj->cur->geometry.x, obj->cur->geometry.y,
+                                  obj->cur->geometry.w, obj->cur->geometry.h, z);
 }
 
 EAPI void
@@ -869,8 +874,8 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
         ERR("map has count=%d where 4 was expected.", m->count);
         return;
      }
-   _evas_map_util_points_populate(m, obj->cur.geometry.x, obj->cur.geometry.y,
-                                  obj->cur.geometry.w, obj->cur.geometry.h, 0);
+   _evas_map_util_points_populate(m, obj->cur->geometry.x, obj->cur->geometry.y,
+                                  obj->cur->geometry.w, obj->cur->geometry.h, 0);
 }
 
 EAPI void

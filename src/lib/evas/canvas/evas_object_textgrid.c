@@ -342,18 +342,6 @@ static void
 evas_object_textgrid_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   /* set up default settings for this kind of object */
-   obj->cur.color.r = 255;
-   obj->cur.color.g = 255;
-   obj->cur.color.b = 255;
-   obj->cur.color.a = 255;
-   obj->cur.geometry.x = 0;
-   obj->cur.geometry.y = 0;
-   obj->cur.geometry.w = 0;
-   obj->cur.geometry.h = 0;
-   obj->cur.layer = 0;
-   /* set up object-specific settings */
-   obj->prev = obj->cur;
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -578,14 +566,14 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* render object to surface with context, and offset by x,y */
    Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
    ENFN->context_multiplier_unset(output, context);
-   ENFN->context_render_op_set(output, context, obj->cur.render_op);
+   ENFN->context_render_op_set(output, context, obj->cur->render_op);
 
    if (!(o->font) || (!o->cur.cells)) return;
 
    w = o->cur.char_width;
    h = o->cur.char_height;
-   ww = obj->cur.geometry.w;
-   hh = obj->cur.geometry.h;
+   ww = obj->cur->geometry.w;
+   hh = obj->cur->geometry.h;
 
    // generate row data from cells (and only deal with rows that updated)
    for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
@@ -672,14 +660,14 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                                                   rr, rg, rb, ra);
           }
      }
-   yp = obj->cur.geometry.y + y;
+   yp = obj->cur->geometry.y + y;
    // draw the row data that is generated from the cell array
    for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
      {
         Evas_Object_Textgrid_Row *row = &(o->cur.rows[yy]);
         Evas_Font_Array          *texts;
 
-        xp = obj->cur.geometry.x + x;
+        xp = obj->cur->geometry.x + x;
         for (xx = 0; xx < row->rects_num; xx++)
           {
              ENFN->context_color_set(output, context,
@@ -803,11 +791,11 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* if so what and where and add thr appropriate redraw rectangles */
    Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
    /* if someone is clipping this obj - go calculate the clipper */
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
+	if (obj->cur->cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -835,10 +823,10 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 	goto done;
      }
    /* if it changed color */
-   if ((obj->cur.color.r != obj->prev.color.r) ||
-       (obj->cur.color.g != obj->prev.color.g) ||
-       (obj->cur.color.b != obj->prev.color.b) ||
-       (obj->cur.color.a != obj->prev.color.a))
+   if ((obj->cur->color.r != obj->prev->color.r) ||
+       (obj->cur->color.g != obj->prev->color.g) ||
+       (obj->cur->color.b != obj->prev->color.b) ||
+       (obj->cur->color.a != obj->prev->color.a))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
@@ -846,20 +834,20 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
    /* we really only need to update the differences */
-   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
-       (obj->cur.geometry.y != obj->prev.geometry.y) ||
-       (obj->cur.geometry.w != obj->prev.geometry.w) ||
-       (obj->cur.geometry.h != obj->prev.geometry.h))
+   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
+       (obj->cur->geometry.y != obj->prev->geometry.y) ||
+       (obj->cur->geometry.w != obj->prev->geometry.w) ||
+       (obj->cur->geometry.h != obj->prev->geometry.h))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
-   if (obj->cur.render_op != obj->prev.render_op)
+   if (obj->cur->render_op != obj->prev->render_op)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
-   if (obj->cur.scale != obj->prev.scale)
+   if (obj->cur->scale != obj->prev->scale)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
@@ -896,9 +884,9 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
                   Evas_Object_Textgrid_Row *r = &(o->cur.rows[i]);
                   if (r->ch1 >= 0)
                     evas_add_rect(&obj->layer->evas->clip_changes,
-                                  obj->cur.geometry.x + 
+                                  obj->cur->geometry.x + 
                                   (r->ch1 * o->cur.char_width),
-                                  obj->cur.geometry.y + 
+                                  obj->cur->geometry.y + 
                                   (i * o->cur.char_height),
                                   (r->ch2 - r->ch1 + 1) * o->cur.char_width,
                                   o->cur.char_height);
@@ -1221,7 +1209,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
    o->font = evas_font_load(obj->layer->evas->evas, o->cur.font_description,
                             o->cur.font_source,
                             (int)(((double) o->cur.font_size) * 
-                                  obj->cur.scale));
+                                  obj->cur->scale));
    if (o->font)
      {
         Eina_Unicode W[2] = { 'W', 0 };
@@ -1251,8 +1239,13 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    else
      {
-        obj->cur.geometry.w = 0;
-        obj->cur.geometry.h = 0;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->geometry.w = 0;
+             state_write->geometry.h = 0;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
         o->max_ascent = 0;
      }
 
@@ -1268,7 +1261,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
                                                 obj->layer->evas->pointer.x,
                                                 obj->layer->evas->pointer.y,
                                                 1, 1);
-             if ((is ^ was) && obj->cur.visible)
+             if ((is ^ was) && obj->cur->visible)
                evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,

@@ -41,8 +41,8 @@ _smart_move_children_relative(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
         // evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
         if (child->delete_me) continue;
         if (child->is_static_clip) continue;
-        orig_x = child->cur.geometry.x;
-        orig_y = child->cur.geometry.y;
+        orig_x = child->cur->geometry.x;
+        orig_y = child->cur->geometry.y;
 	evas_object_move(child->object, orig_x + dx, orig_y + dy);
      }
 }

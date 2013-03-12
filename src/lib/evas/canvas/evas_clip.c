@@ -6,11 +6,16 @@ evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
 {
    Eina_List *l;
    Evas_Object *data;
-
-   if (obj->cur.cache.clip.dirty) return;
-
-   obj->cur.cache.clip.dirty = EINA_TRUE;
    Evas_Object_Protected_Data *clipee = NULL;
+
+   if (obj->cur->cache.clip.dirty) return;
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+       state_write->cache.clip.dirty = EINA_TRUE;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    EINA_LIST_FOREACH(obj->clip.clipees, l, data)
      {
         clipee = eo_data_get(data, EVAS_OBJ_CLASS);
@@ -24,7 +29,7 @@ evas_object_recalc_clippees(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    Eina_List *l;
    Evas_Object *data;
 
-   if (obj->cur.cache.clip.dirty)
+   if (obj->cur->cache.clip.dirty)
      {
         evas_object_clip_recalc(eo_obj, obj);
         EINA_LIST_FOREACH(obj->clip.clipees, l, data)
@@ -38,11 +43,11 @@ evas_object_recalc_clippees(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 int
 evas_object_clippers_was_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   if (obj->prev.visible)
+   if (obj->prev->visible)
      {
-	if (obj->prev.clipper)
+	if (obj->prev->clipper)
           {
-             return evas_object_clippers_is_visible(obj->prev.eo_clipper, obj->prev.clipper);
+             return evas_object_clippers_is_visible(obj->prev->eo_clipper, obj->prev->clipper);
           }
 	return 1;
      }
@@ -94,7 +99,12 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
           map_write->cur.map_parent = map_obj;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
 
-        obj->cur.cache.clip.dirty = 1;
+	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+	  {
+	    state_write->cache.clip.dirty = 1;
+	  }
+	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
         evas_object_clip_recalc(eo_obj, obj);
         if (obj->is_smart)
           {
@@ -127,8 +137,8 @@ void
 evas_object_clip_across_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
 #ifdef MAP_ACROSS
-   if (!obj->cur.clipper) return;
-   if (obj->cur.clipper->map->cur.map_parent != obj->map->cur.map_parent)
+   if (!obj->cur->clipper) return;
+   if (obj->cur->clipper->map->cur.map_parent != obj->map->cur.map_parent)
       evas_object_child_map_across_mark(eo_obj, obj, obj->map->cur.map_parent, 1);
 #endif
 }
@@ -145,7 +155,7 @@ evas_object_clip_across_clippees_check(Evas_Object *eo_obj, Evas_Object_Protecte
 //   evas_object_child_map_across_mark(eo_obj, obj->map->cur.map_parent, 1);
 // buggy:
    evas_object_child_map_across_mark(eo_obj, obj, obj->map->cur.map_parent, 0);
-   if (obj->cur.cache.clip.dirty)
+   if (obj->cur->cache.clip.dirty)
      {
 	EINA_LIST_FOREACH(obj->clip.clipees, l, eo_obj2)
           {
@@ -213,7 +223,7 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    MAGIC_CHECK_END();
 
    clip = eo_data_get(eo_clip, EVAS_OBJ_CLASS);
-   if (obj->cur.eo_clipper == eo_clip) return;
+   if (obj->cur->eo_clipper == eo_clip) return;
    if (eo_obj == eo_clip)
      {
         CRIT("Setting clip %p on itself", eo_obj);
@@ -252,41 +262,61 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         eo_do(eo_obj, evas_obj_smart_clip_set(eo_clip));
      }
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
 	/* unclip */
-        obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, eo_obj);
-        if (!obj->cur.clipper->clip.clipees)
+        obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, eo_obj);
+        if (!obj->cur->clipper->clip.clipees)
           {
-             obj->cur.clipper->cur.have_clipees = 0;
-             if (obj->cur.clipper->cur.visible)
-               evas_damage_rectangle_add(obj->cur.clipper->layer->evas->evas,
-                                         obj->cur.clipper->cur.geometry.x,
-                                         obj->cur.clipper->cur.geometry.y,
-                                         obj->cur.clipper->cur.geometry.w,
-                                         obj->cur.clipper->cur.geometry.h);
+             EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
+               {
+                  state_write->have_clipees = 0;
+               }
+             EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
+
+             if (obj->cur->clipper->cur->visible)
+               evas_damage_rectangle_add(obj->cur->clipper->layer->evas->evas,
+                                         obj->cur->clipper->cur->geometry.x,
+                                         obj->cur->clipper->cur->geometry.y,
+                                         obj->cur->clipper->cur->geometry.w,
+                                         obj->cur->clipper->cur->geometry.h);
           }
-        evas_object_change(obj->cur.eo_clipper, obj->cur.clipper);
+        evas_object_change(obj->cur->eo_clipper, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
-        obj->cur.clipper = NULL;
-	obj->cur.eo_clipper = NULL;	
+
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          {
+             state_write->clipper = NULL;
+             state_write->eo_clipper = NULL;
+          }
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
    /* clip me */
-   if ((!clip->clip.clipees) && (clip->cur.visible))
+   if ((!clip->clip.clipees) && (clip->cur->visible))
      {
         /* Basically it just went invisible */
         clip->changed = 1;
         clip->layer->evas->changed = 1;
         evas_damage_rectangle_add(clip->layer->evas->evas,
-                                  clip->cur.geometry.x, clip->cur.geometry.y,
-                                  clip->cur.geometry.w, clip->cur.geometry.h);
+                                  clip->cur->geometry.x, clip->cur->geometry.y,
+                                  clip->cur->geometry.w, clip->cur->geometry.h);
      }
-   obj->cur.eo_clipper = eo_clip;
-   obj->cur.clipper = clip;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+        state_write->eo_clipper = eo_clip;
+        state_write->clipper = clip;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    clip->clip.clipees = eina_list_append(clip->clip.clipees, eo_obj);
    if (clip->clip.clipees)
      {
-        clip->cur.have_clipees = 1;
+        EINA_COW_STATE_WRITE_BEGIN(clip, state_write, cur)
+          {
+             state_write->have_clipees = 1;
+          }
+        EINA_COW_STATE_WRITE_END(clip, state_write, cur);
+
         if (clip->changed)
           evas_object_update_bounding_box(eo_clip, clip);
      }
@@ -333,7 +363,7 @@ _clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object **clip = va_arg(*list, Evas_Object **);
    const Evas_Object_Protected_Data *obj = _pd;
-   *clip = obj->cur.eo_clipper;
+   *clip = obj->cur->eo_clipper;
 }
 
 EAPI void
@@ -350,30 +380,40 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = _pd;
 
-   if (!obj->cur.clipper) return;
+   if (!obj->cur->clipper) return;
    /* unclip */
    if (evas_object_intercept_call_clip_unset(eo_obj)) return;
    if (obj->is_smart)
      {
         eo_do(eo_obj, evas_obj_smart_clip_unset());
      }
-   if (obj->cur.clipper)
+   if (obj->cur->clipper)
      {
-        obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, eo_obj);
-        if (!obj->cur.clipper->clip.clipees)
+        obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, eo_obj);
+        if (!obj->cur->clipper->clip.clipees)
           {
-             obj->cur.clipper->cur.have_clipees = 0;
-             if (obj->cur.clipper->cur.visible)
-                evas_damage_rectangle_add(obj->cur.clipper->layer->evas->evas,
-                                         obj->cur.clipper->cur.geometry.x,
-                                         obj->cur.clipper->cur.geometry.y,
-                                         obj->cur.clipper->cur.geometry.w,
-                                         obj->cur.clipper->cur.geometry.h);
+             EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
+               {
+                  state_write->have_clipees = 0;
+               }
+             EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
+
+             if (obj->cur->clipper->cur->visible)
+                evas_damage_rectangle_add(obj->cur->clipper->layer->evas->evas,
+                                         obj->cur->clipper->cur->geometry.x,
+                                         obj->cur->clipper->cur->geometry.y,
+                                         obj->cur->clipper->cur->geometry.w,
+                                         obj->cur->clipper->cur->geometry.h);
           }
-	evas_object_change(obj->cur.eo_clipper, obj->cur.clipper);
+	evas_object_change(obj->cur->eo_clipper, obj->cur->clipper);
      }
-   obj->cur.clipper = NULL;
-   obj->cur.eo_clipper = NULL;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+        state_write->clipper = NULL;
+        state_write->eo_clipper = NULL;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(eo_obj, obj);
