@@ -321,10 +321,6 @@ typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
 typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
 typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
-typedef struct _Edje_Signal_Callback_Group Edje_Signal_Callback_Group;
-typedef struct _Edje_Signal_Callback_Match Edje_Signal_Callback_Match;
-typedef struct _Edje_Signal_Callback_Matches Edje_Signal_Callback_Matches;
-typedef struct _Edje_Signal_Callback_Custom Edje_Signal_Callback_Custom;
 
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
@@ -774,7 +770,6 @@ struct _Edje_Part_Limit
 
 struct _Edje_Signals_Sources_Patterns
 {
-   EINA_REFCOUNT;
    Edje_Patterns *signals_patterns;
    Edje_Patterns *sources_patterns;
 
@@ -786,37 +781,9 @@ struct _Edje_Signals_Sources_Patterns
 	 unsigned int  count;
       } programs;
       struct {
-         Eina_Inarray   globing;
+	 Eina_List     *globing;
       } callbacks;
    } u;
-};
-
-struct _Edje_Signal_Callback_Match
-{
-   const char     *signal;
-   const char     *source;
-   Edje_Signal_Cb  func;
-};
-
-struct _Edje_Signal_Callback_Matches
-{
-   Edje_Signal_Callback_Match *matches;
-
-   Edje_Signals_Sources_Patterns *patterns;
-
-   unsigned int matches_count;
-   EINA_REFCOUNT;
-
-   Eina_Bool hashed : 1;
-};
-
-struct _Edje_Signal_Callback_Group
-{
-   const Edje_Signal_Callback_Matches *matches;
-
-   void **custom_data;
-
-   Eina_Bool *flags; /* 4 bits per custom data (delete_me, just_added, propagate) */
 };
 
 /*----------*/
@@ -1220,7 +1187,7 @@ struct _Edje_Signal_Source_Char
    const char *signal;
    const char *source;
 
-   Eina_Inarray  list;
+   Eina_Array  list;
 };
 
 struct _Edje
@@ -1238,6 +1205,7 @@ struct _Edje
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
    Eina_List            *actions; /* currently running actions */
+   Eina_List            *callbacks;
    Eina_List            *pending_actions;
    Eina_Hash            *color_classes;
    Eina_List            *text_classes;
@@ -1260,7 +1228,9 @@ struct _Edje
 
    Edje_Perspective     *persp;
 
-   const Edje_Signal_Callback_Group *callbacks;
+   struct {
+      Edje_Signals_Sources_Patterns callbacks;
+   } patterns;
 
    struct {
       Edje_Text_Change_Cb  func;
@@ -1811,10 +1781,8 @@ Edje_Patterns   *edje_match_programs_signal_init(Edje_Program * const *array,
 						 unsigned int count);
 Edje_Patterns   *edje_match_programs_source_init(Edje_Program * const *array,
 						 unsigned int count);
-Edje_Patterns   *edje_match_callback_signal_init(const Eina_Inarray *lst,
-                                                 const Edje_Signal_Callback_Match *matches);
-Edje_Patterns   *edje_match_callback_source_init(const Eina_Inarray *lst,
-                                                 const Edje_Signal_Callback_Match *matches);
+Edje_Patterns   *edje_match_callback_signal_init(const Eina_List *lst);
+Edje_Patterns   *edje_match_callback_source_init(const Eina_List *lst);
 
 Eina_Bool        edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
 						const char               *string);
@@ -1826,29 +1794,25 @@ Eina_Bool        edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 					  Eina_Bool (*func)(Edje_Program *pr, void *data),
 					  void                   *data,
                                           Eina_Bool               prop);
-int edje_match_callback_exec(const Edje_Signals_Sources_Patterns *ssp,
-			     const Edje_Signal_Callback_Match *matches,
-			     const void **custom_data,
-			     const Eina_Bool *flags,
-			     const char *sig,
-			     const char *source,
-			     Edje *ed,
-			     Eina_Bool prop);
+int              edje_match_callback_exec(Edje_Patterns          *ppat_signal,
+					  Edje_Patterns          *ppat_source,
+					  const char             *signal,
+					  const char             *source,
+					  Eina_List              *callbacks,
+					  Edje                   *ed,
+                                          Eina_Bool               prop);
 
 void             edje_match_patterns_free(Edje_Patterns *ppat);
 
 Eina_List *edje_match_program_hash_build(Edje_Program * const * programs,
 					 unsigned int count,
 					 Eina_Rbtree **tree);
-void edje_match_callback_hash_build(const Edje_Signal_Callback_Match *callback,
-				    int callbacks_count,
-				    Eina_Rbtree **tree,
-				    Eina_Inarray *result);
-const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
-						      const char *source,
-						      const Eina_Rbtree *tree);
+Eina_List *edje_match_callback_hash_build(const Eina_List *callbacks,
+					  Eina_Rbtree **tree);
+const Eina_Array *edje_match_signal_source_hash_get(const char *signal,
+						    const char *source,
+						    const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
-void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
 
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
@@ -1906,16 +1870,6 @@ void  _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
 void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
-const Edje_Signal_Callback_Group *_edje_signal_callback_alloc(void);
-void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
-void _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
-                                const char *signal, const char *source,
-                                Edje_Signal_Cb func, void *data,
-                                Eina_Bool propagate);
-void *_edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
-                                    const char *signal, const char *source,
-                                    Edje_Signal_Cb func, void *data);
-
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 
@@ -1952,12 +1906,7 @@ void  _edje_emit(Edje *ed, const char *sig, const char *src);
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
-
-const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
-void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
-Eina_Bool _edje_signal_callback_prop(const Eina_Bool *flags, int i);
-
-void _edje_signal_callback_free(const Edje_Signal_Callback_Group *gp);
+void  _edje_callbacks_patterns_clean(Edje *ed);
 
 void           _edje_text_init(void);
 void           _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
@@ -2501,9 +2450,6 @@ void _play_set(Eo *obj, void *_pd, va_list *list);
 void _play_get(Eo *obj, void *_pd, va_list *list);
 void _animation_set(Eo *obj, void *_pd, va_list *list);
 void _animation_get(Eo *obj, void *_pd, va_list *list);
-
-void edje_signal_init(void);
-void edje_signal_shutdown(void);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
