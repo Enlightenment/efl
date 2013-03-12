@@ -269,6 +269,7 @@ tests/eina/eina_test_tmpstr.c
 
 tests_eina_eina_suite_CPPFLAGS = \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 tests_eina_eina_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
