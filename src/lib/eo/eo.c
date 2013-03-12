@@ -1064,7 +1064,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
 
    if (getenv("EO_DEBUG"))
      {
-        fprintf(stderr, "Eo class '%s' will take %i octets per object.\n",
+        fprintf(stderr, "Eo class '%s' will take %i bytes per object.\n",
                 desc->name,
                 klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size);
      }
