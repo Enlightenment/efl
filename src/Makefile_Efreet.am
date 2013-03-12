@@ -189,6 +189,7 @@ efreettestsub_DATA = \
 tests/efreet/data/sub/test.desktop
 
 check_PROGRAMS += tests/efreet/efreet_suite
+TESTS += tests/efreet/efreet_suite
 
 tests_efreet_efreet_suite_SOURCES = \
 tests/efreet/efreet_suite.c \
