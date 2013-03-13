@@ -22,5 +22,5 @@ bench_eo_do_general(int request)
 void eo_bench_eo_do(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "various",
-         EINA_BENCHMARK(bench_eo_do_general), 100, 10000, 500);
+         EINA_BENCHMARK(bench_eo_do_general), 1000, 100000, 500);
 }
