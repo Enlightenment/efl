@@ -78,10 +78,10 @@ gl_symbols(void)
    } else { \
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
    
    FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
 #else
@@ -91,64 +91,67 @@ gl_symbols(void)
    } else { \
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
    
    FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
 #endif
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
    
-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", glsym_func_void);
+   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
 
-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", glsym_func_void);
+   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
    FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
 
-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
    FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
 
-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", glsym_func_void);
+   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
    FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
 
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryKHR", glsym_func_void);
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", glsym_func_void);
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryARB", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", glsym_func_void);
+   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", glsym_func_void);
 
-   FINDSYM(glsym_glProgramBinary, "glProgramBinary", glsym_func_void);
+   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", glsym_func_void);
+   FINDSYM(glsym_glProgramBinary, "glProgramBinaryKHR", glsym_func_void);
    FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", glsym_func_void);
    FINDSYM(glsym_glProgramBinary, "glProgramBinaryARB", glsym_func_void);
+   FINDSYM(glsym_glProgramBinary, "glProgramBinary", glsym_func_void);
 
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
 
-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", glsym_func_void);
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerEXT", glsym_func_void);
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerARB", glsym_func_void);
+   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", glsym_func_void);
 
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
-        FINDSYM(glsym_glMapBuffer, "glMapBuffer", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", glsym_func_void_ptr);
         FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", glsym_func_void_ptr);
         FINDSYM(glsym_glMapBuffer, "glMapBufferARB", glsym_func_void_ptr);
-        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", glsym_func_void_ptr);
         FINDSYM(glsym_glMapBuffer, "glMapBufferKHR", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBuffer", glsym_func_void_ptr);
 
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", glsym_func_boolean); 
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", glsym_func_boolean);
-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", glsym_func_boolean);
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferKHR", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", glsym_func_boolean);
      }
 
 #ifdef GL_GLES
@@ -158,33 +161,23 @@ gl_symbols(void)
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYM(secsym_eglCreateImage, "eglCreateImage", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageOES", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", secsym_func_void_ptr);
    FINDSYM(secsym_eglCreateImage, "eglCreateImageEXT", secsym_func_void_ptr);
    FINDSYM(secsym_eglCreateImage, "eglCreateImageARB", secsym_func_void_ptr);
-   FINDSYM(secsym_eglCreateImage, "eglCreateImageKHR", secsym_func_void_ptr);
+   FINDSYM(secsym_eglCreateImage, "eglCreateImage", secsym_func_void_ptr);
 
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", secsym_func_uint);
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImageEXT", secsym_func_uint);
    FINDSYM(secsym_eglDestroyImage, "eglDestroyImageARB", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", secsym_func_uint);
+   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", secsym_func_uint);
 
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryARB", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", glsym_func_void);
-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryKHR", glsym_func_void);
-
-   FINDSYM(glsym_glProgramBinary, "glProgramBinary", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryARB", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", glsym_func_void);
-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryKHR", glsym_func_void);
-
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", glsym_func_void);
-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriOES", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriKHR", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", glsym_func_void);
+   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", glsym_func_void);
 
    FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
 

@@ -531,20 +531,20 @@ gl_symbols(void)
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
 
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
 
-   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
 
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
    FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", glsym_func_void);
 
@@ -553,8 +553,8 @@ gl_symbols(void)
 
    FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
 
-   FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegion", glsym_func_void_ptr);
    FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegionSEC", glsym_func_void_ptr);
+   FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegion", glsym_func_void_ptr);
 
 
 #else
@@ -565,33 +565,33 @@ gl_symbols(void)
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
 
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
 
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", glsym_func_void);
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", glsym_func_void);
    FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", glsym_func_void);
 
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", glsym_func_void);
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", glsym_func_void);
    FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", glsym_func_void);
 
    FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", glsym_func_int);
 
    FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", glsym_func_int);
 
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
    FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapEXT", glsym_func_xid);
    FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmapARB", glsym_func_xid);
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", glsym_func_xid);
 
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
    FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapEXT", glsym_func_void);
    FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmapARB", glsym_func_void);
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", glsym_func_void);
 
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
 
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
