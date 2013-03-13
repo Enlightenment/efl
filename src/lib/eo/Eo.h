@@ -630,6 +630,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
 /**
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
+ * @param cur_klass The *current* class (use the class *after* this in the MRO).
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
  *
@@ -637,11 +638,12 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  *
  * @see #eo_do
  */
-#define eo_do_super(obj, ...) eo_do_super_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__)
+#define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(obj, cur_klass, EO_OP_TYPE_REGULAR, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
  * @param klass The klass to work on
+ * @param cur_klass The *current* class (use the class *after* this in the MRO).
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
  *
@@ -649,11 +651,12 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  *
  * @see #eo_class_do
  */
-#define eo_class_do_super(klass, ...) eo_class_do_super_internal(klass, __VA_ARGS__)
+#define eo_class_do_super(klass, cur_klass, ...) eo_class_do_super_internal(klass, cur_klass, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
+ * @param cur_klass The *current* class (use the class *after* this in the MRO).
  * @param op_type The type of the ops that are passed.
  * @param op The wanted op.
  * @param ... list of parameters.
@@ -664,11 +667,12 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  * @see #eo_do
  * @see #eo_do_super
  */
-EAPI Eina_Bool eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...);
+EAPI Eina_Bool eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
 
 /**
  * @brief Calls the super function for the specific op.
  * @param klass The klass to work on
+ * @param cur_klass The *current* class (use the class *after* this in the MRO).
  * @param op The wanted op.
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
@@ -678,7 +682,7 @@ EAPI Eina_Bool eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...);
  * @see #eo_class_do
  * @see #eo_class_do_super
  */
-EAPI Eina_Bool eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...);
+EAPI Eina_Bool eo_class_do_super_internal(const Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, ...);
 
 /**
  * @brief Gets the class of the object.

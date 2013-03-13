@@ -165,19 +165,20 @@ END_TEST
 
 static Eina_Bool _man_should_con = EINA_TRUE;
 static Eina_Bool _man_should_des = EINA_TRUE;
+static const Eo_Class *cur_klass = NULL;
 
 static void
 _man_con(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    if (_man_should_con)
       eo_manual_free_set(obj, EINA_TRUE);
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, cur_klass, eo_constructor());
 }
 
 static void
 _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, cur_klass, eo_destructor());
    if (_man_should_des)
       eo_manual_free_set(obj, EINA_FALSE);
 }
@@ -214,6 +215,7 @@ START_TEST(eo_man_free)
 
    const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
+   cur_klass = klass;
 
    Eo *obj = eo_add(klass, NULL);
    fail_if(!obj);
@@ -226,6 +228,7 @@ START_TEST(eo_man_free)
 
    _man_should_des = EINA_FALSE;
    klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   cur_klass = klass;
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -244,6 +247,7 @@ START_TEST(eo_man_free)
 
    _man_should_con = EINA_FALSE;
    klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   cur_klass = klass;
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -577,12 +581,14 @@ START_TEST(eo_magic_checks)
         fail_if(!obj);
 
         fail_if(eo_do((Eo *) buf, EO_NOOP));
-        fail_if(eo_do_super((Eo *) buf, EO_NOOP));
+        fail_if(eo_do_super((Eo *) buf, SIMPLE_CLASS, EO_NOOP));
+        fail_if(eo_do_super(obj, (const Eo_Class *) buf, EO_NOOP));
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         eo_class_funcs_set((Eo_Class *) buf, NULL);
         eo_class_do((Eo_Class *) buf, NULL);
-        eo_class_do_super((Eo_Class *) buf, EO_NOOP);
+        eo_class_do_super((Eo_Class *) buf, SIMPLE_CLASS, EO_NOOP);
+        eo_class_do_super(SIMPLE_CLASS, (Eo_Class *) buf, EO_NOOP);
 
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
