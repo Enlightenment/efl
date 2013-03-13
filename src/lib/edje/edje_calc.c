@@ -3656,9 +3656,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (pf == &lp3)
      {
         eina_cow_free(_edje_calc_params_map_cow, lp3.map);
-        eina_cow_free(_edje_calc_params_physics_cow, lp3.physics);
         lp3.map = NULL;
+#ifdef HAVE_EPHYSICS
+        eina_cow_free(_edje_calc_params_physics_cow, lp3.physics);
         lp3.physics = NULL;
+#endif
      }
 
 #ifdef EDJE_CALC_CACHE
@@ -3669,6 +3671,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      }
 #else
    eina_cow_free(_edje_calc_params_map_cow, lp1.map);
+#ifdef HAVE_EPHYSICS
    eina_cow_free(_edje_calc_params_physics_cow, lp1.physics);
+#endif
 #endif
 }
