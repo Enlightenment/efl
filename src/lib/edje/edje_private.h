@@ -304,6 +304,8 @@ typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
+typedef struct _Edje_Calc_Params_Map Edje_Calc_Params_Map;
+typedef struct _Edje_Calc_Params_Physics Edje_Calc_Params_Physics;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Edje_Text_Style Edje_Text_Style;
 typedef struct _Edje_Color_Class Edje_Color_Class;
@@ -1302,6 +1304,60 @@ struct _Edje
    Eina_Bool          recalc_hints : 1;
 };
 
+struct _Edje_Calc_Params_Map
+{
+   struct {
+      int x, y, z;
+   } center; // 12
+   struct {
+      FLOAT_T x, y, z;
+   } rotation; // 24
+   struct {
+      int x, y, z;
+      int r, g, b;
+      int ar, ag, ab;
+   } light; // 36
+   struct {
+      int x, y, z;
+      int focal;
+   } persp; // 16
+};
+
+struct _Edje_Calc_Params_Physics
+{
+   double mass; // 8
+   double restitution; // 8
+   double friction; // 8
+   double density; // 8
+   double hardness; // 8
+   struct {
+      double linear; //8
+      double angular; //8
+   } damping; // 16
+   struct {
+      double linear; //8
+      double angular; //8
+   } sleep; // 16
+   int z; // 4
+   int depth; // 4
+   struct {
+      struct {
+         unsigned char x;
+         unsigned char y;
+         unsigned char z;
+      } lin; // 3
+      struct {
+         unsigned char x;
+         unsigned char y;
+         unsigned char z;
+      } ang; // 3
+   } mov_freedom; // 6
+   unsigned char backcull;
+   unsigned char material; // 1
+   unsigned char light_on; // 1
+   unsigned char ignore_part_pos; //1
+};
+
 struct _Edje_Calc_Params
 {
    int              x, y, w, h; // 16
@@ -1330,64 +1386,16 @@ struct _Edje_Calc_Params
 	 Edje_Color     color2, color3; // 8
       } text; // 36
    } type; // 40
-   struct {
-      struct {
-         int x, y, z;
-      } center; // 12
-      struct {
-         FLOAT_T x, y, z;
-      } rotation; // 24
-      struct {
-         int x, y, z;
-         int r, g, b;
-         int ar, ag, ab;
-      } light; // 36
-      struct {
-         int x, y, z;
-         int focal;
-      } persp;
-   } map;
+   const Edje_Calc_Params_Map *map; // 88
 #ifdef HAVE_EPHYSICS
-   struct {
-      double mass; // 8
-      double restitution; // 8
-      double friction; // 8
-      double density; // 8
-      double hardness; // 8
-      struct {
-         double linear; //8
-         double angular; //8
-      } damping; // 16
-      struct {
-         double linear; //8
-         double angular; //8
-      } sleep; // 16
-      int z; // 4
-      int depth; // 4
-      struct {
-         struct {
-            unsigned char x;
-            unsigned char y;
-            unsigned char z;
-         } lin; // 3
-         struct {
-            unsigned char x;
-            unsigned char y;
-            unsigned char z;
-         } ang; // 3
-      } mov_freedom; // 6
-      unsigned char backcull;
-      unsigned char material; // 1
-      unsigned char light_on; // 1
-      unsigned char ignore_part_pos; //1
-   } physics;
+   const Edje_Calc_Params_Physics *physics; // 90
 #endif
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
    unsigned char    mapped : 1;
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
-}; // 96
+}; // 271
 
 struct _Edje_Real_Part_Set
 {
@@ -1407,12 +1415,12 @@ struct _Edje_Real_Part_State
    Edje_Real_Part        *rel2_to_y; // 4
 #ifdef EDJE_CALC_CACHE
    int                    state; // 4
-   Edje_Calc_Params       p; // 96
+   Edje_Calc_Params       p; // 271
 #endif
    void                  *external_params; // 4
    Edje_Real_Part_Set    *set; // 4
 }; // 32
-// WITH EDJE_CALC_CACHE 132
+// WITH EDJE_CALC_CACHE 307
 
 struct _Edje_Real_Part_Drag
 {
@@ -1487,7 +1495,7 @@ struct _Edje_Real_Part
    FLOAT_T                   description_pos; // 8
    Edje_Part_Description_Common *chosen_description; // 4
    Edje_Real_Part_State      param1; // 32
-   // WITH EDJE_CALC_CACHE: 140
+   // WITH EDJE_CALC_CACHE: 307
    Edje_Real_Part_State     *param2, *custom; // 8
    Edje_Calc_Params         *current; // 4
    Edje_Real_Part           *clip_to; // 4
@@ -1513,8 +1521,8 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1; // 0
 #endif
-}; //  287 -> 126
-// WITH EDJE_CALC_CACHE: 404
+}; // 128
+// WITH EDJE_CALC_CACHE: 407
 
 struct _Edje_Running_Program
 {
@@ -1838,6 +1846,9 @@ extern FLOAT_T          _edje_password_show_last_timeout;
 
 extern Eina_Mempool *_edje_real_part_mp;
 extern Eina_Mempool *_edje_real_part_state_mp;
+
+extern Eina_Cow *_edje_calc_params_map_cow;
+extern Eina_Cow *_edje_calc_params_physics_cow;
 
 EAPI extern Eina_Mempool *_emp_RECTANGLE;
 EAPI extern Eina_Mempool *_emp_TEXT;

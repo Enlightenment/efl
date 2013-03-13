@@ -634,12 +634,18 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 
 				 rp->current->x -= ed->x;
 				 rp->current->y -= ed->y;
-				 rp->current->map.center.x -= ed->x;
-				 rp->current->map.center.y -= ed->y;
-				 rp->current->map.light.x -= ed->x;
-				 rp->current->map.light.y -= ed->y;
-				 rp->current->map.persp.x -= ed->x;
-				 rp->current->map.persp.y -= ed->y;
+
+				 EINA_COW_WRITE_BEGIN(_edje_calc_params_map_cow, rp->current->map, Edje_Calc_Params_Map, rp_write)
+				   {
+				     rp_write->center.x -= ed->x;
+				     rp_write->center.y -= ed->y;
+				     rp_write->light.x -= ed->x;
+				     rp_write->light.y -= ed->y;
+				     rp_write->persp.x -= ed->x;
+				     rp_write->persp.y -= ed->y;
+				   }
+				 EINA_COW_WRITE_END(_edje_calc_params_map_cow, rp->current->map, rp_write);
+
                               }
                             else
                               {
@@ -959,23 +965,19 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
         break;
 #ifdef HAVE_EPHYSICS
      case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_central_impulse_apply))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_central_impulse_apply))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_torque_impulse_apply))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_torque_impulse_apply))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_FORCE:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_central_force_apply))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_central_force_apply))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_torque_apply))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_torque_apply))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
@@ -992,13 +994,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
           }
         break;
      case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_linear_velocity_set))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_linear_velocity_set))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
-        if (!_edje_physics_action_set(
-              ed, pr, ephysics_body_angular_velocity_set))
+        if (!_edje_physics_action_set(ed, pr, ephysics_body_angular_velocity_set))
           goto break_prog;
         break;
      case EDJE_ACTION_TYPE_PHYSICS_STOP:

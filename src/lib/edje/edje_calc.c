@@ -11,6 +11,18 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
                                      Edje_Real_Part *confine_to, Edje_Calc_Params *params,
                                      FLOAT_T pos);
 
+#define EINA_COW_CALC_PHYSICS_BEGIN(Calc, Write)	\
+  EINA_COW_WRITE_BEGIN(_edje_calc_params_physics_cow, Calc->physics, Edje_Calc_Params_Physics, Write)
+
+#define EINA_COW_CALC_PHYSICS_END(Calc, Write)	\
+  EINA_COW_WRITE_END(_edje_calc_params_physics_cow, Calc->physics, Write)
+
+#define EINA_COW_CALC_MAP_BEGIN(Calc, Write)	\
+  EINA_COW_WRITE_BEGIN(_edje_calc_params_map_cow, Calc->map, Edje_Calc_Params_Map, Write)
+
+#define EINA_COW_CALC_MAP_END(Calc, Write)	\
+  EINA_COW_WRITE_END(_edje_calc_params_map_cow, Calc->map, Write);
+
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2)
 {
@@ -543,6 +555,10 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
              ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp,
                                               sizeof(Edje_Real_Part_State));
              memset(ep->param2, 0, sizeof(Edje_Real_Part_State));
+	     ep->param2->p.map = eina_cow_alloc(_edje_calc_params_map_cow);
+#ifdef HAVE_EPHYSICS
+	     ep->param2->p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+#endif
           }
         else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
           {
@@ -564,7 +580,13 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
                                                    ep->param2->external_params);
             }
           if (ep->param2)
-            free(ep->param2->set);
+	    {
+	      free(ep->param2->set);
+	      eina_cow_free(_edje_calc_params_map_cow, ep->param2->p.map);
+#ifdef HAVE_EPHYSICS
+	      eina_cow_free(_edje_calc_params_physics_cow, ep->param2->p.physics);
+#endif
+	    }
           eina_mempool_free(_edje_real_part_state_mp, ep->param2);
           ep->param2 = NULL;
        }
@@ -2062,89 +2084,93 @@ _edje_part_recalc_single_map(Edje *ed,
 
    if (!params->mapped) return ;
 
-   if (center)
+   EINA_COW_CALC_MAP_BEGIN(params, params_write)
      {
-        params->map.center.x = ed->x + center->x + (center->w / 2);
-        params->map.center.y = ed->y + center->y + (center->h / 2);
-     }
-   else
-     {
-        params->map.center.x = ed->x + params->x + (params->w / 2);
-        params->map.center.y = ed->y + params->y + (params->h / 2);
-     }
-   params->map.center.z = 0;
-
-   params->map.rotation.x = desc->map.rot.x;
-   params->map.rotation.y = desc->map.rot.y;
-   params->map.rotation.z = desc->map.rot.z;
-
-   if (light)
-     {
-        Edje_Part_Description_Common *light_desc2;
-        FLOAT_T pos, pos2;
-
-        params->map.light.x = ed->x + light->x + (light->w / 2);
-        params->map.light.y = ed->y + light->y + (light->h / 2);
-
-        pos = light->description_pos;
-        pos2 = (pos < ZERO) ? ZERO : ((pos > FROM_INT(1)) ? FROM_INT(1) : pos);
-
-        light_desc2 = light->param2 ? light->param2->description : NULL;
-
-        /* take into account CURRENT state also */
-        if (pos != ZERO && light_desc2)
+        if (center)
           {
-             params->map.light.z = light->param1.description->persp.zplane +
-               TO_INT(SCALE(pos, light_desc2->persp.zplane - light->param1.description->persp.zplane));
-             params->map.light.r = light->param1.description->color.r +
-               TO_INT(SCALE(pos2, light_desc2->color.r - light->param1.description->color.r));
-             params->map.light.g = light->param1.description->color.g +
-               TO_INT(SCALE(pos2, light_desc2->color.g - light->param1.description->color.g));
-             params->map.light.b = light->param1.description->color.b +
-               TO_INT(SCALE(pos2, light_desc2->color.b - light->param1.description->color.b));
-             params->map.light.ar = light->param1.description->color2.r +
-               TO_INT(SCALE(pos2, light_desc2->color2.r - light->param1.description->color2.r));
-             params->map.light.ag = light->param1.description->color2.g +
-               TO_INT(SCALE(pos2, light_desc2->color2.g - light->param1.description->color2.g));
-             params->map.light.ab = light->param1.description->color2.b +
-               TO_INT(SCALE(pos2, light_desc2->color2.b - light->param1.description->color2.b));
+             params_write->center.x = ed->x + center->x + (center->w / 2);
+             params_write->center.y = ed->y + center->y + (center->h / 2);
           }
         else
           {
-             params->map.light.z = light->param1.description->persp.zplane;
-             params->map.light.r = light->param1.description->color.r;
-             params->map.light.g = light->param1.description->color.g;
-             params->map.light.b = light->param1.description->color.b;
-             params->map.light.ar = light->param1.description->color2.r;
-             params->map.light.ag = light->param1.description->color2.g;
-             params->map.light.ab = light->param1.description->color2.b;
+             params_write->center.x = ed->x + params->x + (params->w / 2);
+             params_write->center.y = ed->y + params->y + (params->h / 2);
+          }
+        params_write->center.z = 0;
+
+        params_write->rotation.x = desc->map.rot.x;
+        params_write->rotation.y = desc->map.rot.y;
+        params_write->rotation.z = desc->map.rot.z;
+
+        if (light)
+          {
+             Edje_Part_Description_Common *light_desc2;
+             FLOAT_T pos, pos2;
+
+             params_write->light.x = ed->x + light->x + (light->w / 2);
+             params_write->light.y = ed->y + light->y + (light->h / 2);
+
+             pos = light->description_pos;
+             pos2 = (pos < ZERO) ? ZERO : ((pos > FROM_INT(1)) ? FROM_INT(1) : pos);
+
+             light_desc2 = light->param2 ? light->param2->description : NULL;
+
+             /* take into account CURRENT state also */
+             if (pos != ZERO && light_desc2)
+               {
+                  params_write->light.z = light->param1.description->persp.zplane +
+                    TO_INT(SCALE(pos, light_desc2->persp.zplane - light->param1.description->persp.zplane));
+                  params_write->light.r = light->param1.description->color.r +
+                    TO_INT(SCALE(pos2, light_desc2->color.r - light->param1.description->color.r));
+                  params_write->light.g = light->param1.description->color.g +
+                    TO_INT(SCALE(pos2, light_desc2->color.g - light->param1.description->color.g));
+                  params_write->light.b = light->param1.description->color.b +
+                    TO_INT(SCALE(pos2, light_desc2->color.b - light->param1.description->color.b));
+                  params_write->light.ar = light->param1.description->color2.r +
+                    TO_INT(SCALE(pos2, light_desc2->color2.r - light->param1.description->color2.r));
+                  params_write->light.ag = light->param1.description->color2.g +
+                    TO_INT(SCALE(pos2, light_desc2->color2.g - light->param1.description->color2.g));
+                  params_write->light.ab = light->param1.description->color2.b +
+                    TO_INT(SCALE(pos2, light_desc2->color2.b - light->param1.description->color2.b));
+               }
+             else
+               {
+                  params_write->light.z = light->param1.description->persp.zplane;
+                  params_write->light.r = light->param1.description->color.r;
+                  params_write->light.g = light->param1.description->color.g;
+                  params_write->light.b = light->param1.description->color.b;
+                  params_write->light.ar = light->param1.description->color2.r;
+                  params_write->light.ag = light->param1.description->color2.g;
+                  params_write->light.ab = light->param1.description->color2.b;
+               }
+          }
+
+        if (persp)
+          {
+             FLOAT_T pos;
+
+             params_write->persp.x = ed->x + persp->x + (persp->w / 2);
+             params_write->persp.y = ed->y + persp->y + (persp->h / 2);
+
+             pos = persp->description_pos;
+
+             if (pos != 0 && persp->param2)
+               {
+                  params_write->persp.z = persp->param1.description->persp.zplane +
+                    TO_INT(SCALE(pos, persp->param2->description->persp.zplane -
+                                 persp->param1.description->persp.zplane));
+                  params_write->persp.focal = persp->param1.description->persp.focal +
+                    TO_INT(SCALE(pos, persp->param2->description->persp.focal -
+                                 persp->param1.description->persp.focal));
+               }
+             else
+               {
+                  params_write->persp.z = persp->param1.description->persp.zplane;
+                  params_write->persp.focal = persp->param1.description->persp.focal;
+               }
           }
      }
-
-   if (persp)
-     {
-        FLOAT_T pos;
-
-        params->map.persp.x = ed->x + persp->x + (persp->w / 2);
-        params->map.persp.y = ed->y + persp->y + (persp->h / 2);
-
-        pos = persp->description_pos;
-
-        if (pos != 0 && persp->param2)
-          {
-             params->map.persp.z = persp->param1.description->persp.zplane +
-               TO_INT(SCALE(pos, persp->param2->description->persp.zplane -
-                            persp->param1.description->persp.zplane));
-             params->map.persp.focal = persp->param1.description->persp.focal +
-               TO_INT(SCALE(pos, persp->param2->description->persp.focal -
-                            persp->param1.description->persp.focal));
-          }
-        else
-          {
-             params->map.persp.z = persp->param1.description->persp.zplane;
-             params->map.persp.focal = persp->param1.description->persp.focal;
-          }
-     }
+   EINA_COW_CALC_MAP_END(params, params_write);
 }
 
 static void
@@ -2364,27 +2390,34 @@ _edje_part_recalc_single(Edje *ed,
      }
 
 #ifdef HAVE_EPHYSICS
-   params->physics.mass = desc->physics.mass;
-   params->physics.restitution = desc->physics.restitution;
-   params->physics.friction = desc->physics.friction;
-   params->physics.damping.linear = desc->physics.damping.linear;
-   params->physics.damping.angular = desc->physics.damping.angular;
-   params->physics.sleep.linear = desc->physics.sleep.linear;
-   params->physics.sleep.angular = desc->physics.sleep.angular;
-   params->physics.material = desc->physics.material;
-   params->physics.density = desc->physics.density;
-   params->physics.hardness = desc->physics.hardness;
-   params->physics.ignore_part_pos = desc->physics.ignore_part_pos;
-   params->physics.light_on = desc->physics.light_on;
-   params->physics.mov_freedom.lin.x = desc->physics.mov_freedom.lin.x;
-   params->physics.mov_freedom.lin.y = desc->physics.mov_freedom.lin.y;
-   params->physics.mov_freedom.lin.z = desc->physics.mov_freedom.lin.z;
-   params->physics.mov_freedom.ang.x = desc->physics.mov_freedom.ang.x;
-   params->physics.mov_freedom.ang.y = desc->physics.mov_freedom.ang.y;
-   params->physics.mov_freedom.ang.z = desc->physics.mov_freedom.ang.z;
-   params->physics.backcull = desc->physics.backcull;
-   params->physics.z = desc->physics.z;
-   params->physics.depth = desc->physics.depth;
+   if (ep->part->physics_body || ep->body)
+     {
+        EINA_COW_CALC_PHYSICS_BEGIN(params, params_write)
+          {
+             params_write->mass = desc->physics.mass;
+             params_write->restitution = desc->physics.restitution;
+             params_write->friction = desc->physics.friction;
+             params_write->damping.linear = desc->physics.damping.linear;
+             params_write->damping.angular = desc->physics.damping.angular;
+             params_write->sleep.linear = desc->physics.sleep.linear;
+             params_write->sleep.angular = desc->physics.sleep.angular;
+             params_write->material = desc->physics.material;
+             params_write->density = desc->physics.density;
+             params_write->hardness = desc->physics.hardness;
+             params_write->ignore_part_pos = desc->physics.ignore_part_pos;
+             params_write->light_on = desc->physics.light_on;
+             params_write->mov_freedom.lin.x = desc->physics.mov_freedom.lin.x;
+             params_write->mov_freedom.lin.y = desc->physics.mov_freedom.lin.y;
+             params_write->mov_freedom.lin.z = desc->physics.mov_freedom.lin.z;
+             params_write->mov_freedom.ang.x = desc->physics.mov_freedom.ang.x;
+             params_write->mov_freedom.ang.y = desc->physics.mov_freedom.ang.y;
+             params_write->mov_freedom.ang.z = desc->physics.mov_freedom.ang.z;
+             params_write->backcull = desc->physics.backcull;
+             params_write->z = desc->physics.z;
+             params_write->depth = desc->physics.depth;
+          }
+        EINA_COW_CALC_PHYSICS_END(params, params_write);
+     }
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
 }
@@ -2542,13 +2575,13 @@ static void
 _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_Bool pos_update)
 {
    ephysics_body_linear_movement_enable_set(ep->body,
-                                            pf->physics.mov_freedom.lin.x,
-                                            pf->physics.mov_freedom.lin.y,
-                                            pf->physics.mov_freedom.lin.z);
+                                            pf->physics->mov_freedom.lin.x,
+                                            pf->physics->mov_freedom.lin.y,
+                                            pf->physics->mov_freedom.lin.z);
    ephysics_body_angular_movement_enable_set(ep->body,
-                                             pf->physics.mov_freedom.ang.x,
-                                             pf->physics.mov_freedom.ang.y,
-                                             pf->physics.mov_freedom.ang.z);
+                                             pf->physics->mov_freedom.ang.x,
+                                             pf->physics->mov_freedom.ang.y,
+                                             pf->physics->mov_freedom.ang.z);
 
    /* Boundaries geometry and mass shouldn't be changed */
    if (ep->part->physics_body < EDJE_PART_PHYSICS_BODY_BOUNDARY_TOP)
@@ -2558,7 +2591,7 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
         if (pos_update)
           {
              ephysics_body_move(ep->body, ep->edje->x + pf->x,
-                                ep->edje->y + pf->y, pf->physics.z);
+                                ep->edje->y + pf->y, pf->physics->z);
              ep->x = pf->x;
              ep->y = pf->y;
              ep->w = pf->w;
@@ -2566,18 +2599,18 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
           }
 
         ephysics_body_geometry_get(ep->body, &x, &y, &z, &w, &h, &d);
-        if ((d) && (d != pf->physics.depth))
-          ephysics_body_resize(ep->body, w, h, pf->physics.depth);
-        if (z != pf->physics.z)
-          ephysics_body_move(ep->body, x, y, pf->physics.z);
+        if ((d) && (d != pf->physics->depth))
+          ephysics_body_resize(ep->body, w, h, pf->physics->depth);
+        if (z != pf->physics->z)
+          ephysics_body_move(ep->body, x, y, pf->physics->z);
 
-        ephysics_body_material_set(ep->body, pf->physics.material);
-        if (!pf->physics.material)
+        ephysics_body_material_set(ep->body, pf->physics->material);
+        if (!pf->physics->material)
           {
-             if (pf->physics.density)
-               ephysics_body_density_set(ep->body, pf->physics.density);
+             if (pf->physics->density)
+               ephysics_body_density_set(ep->body, pf->physics->density);
              else
-               ephysics_body_mass_set(ep->body, pf->physics.mass);
+               ephysics_body_mass_set(ep->body, pf->physics->mass);
           }
 
         if ((ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_BOX) ||
@@ -2585,21 +2618,21 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_SOFT_CYLINDER) ||
             (ep->part->physics_body == EDJE_PART_PHYSICS_BODY_CLOTH))
           ephysics_body_soft_body_hardness_set(ep->body,
-                                               pf->physics.hardness * 100);
+                                               pf->physics->hardness * 100);
      }
 
-   if (!pf->physics.material)
+   if (!pf->physics->material)
      {
-        ephysics_body_restitution_set(ep->body, pf->physics.restitution);
-        ephysics_body_friction_set(ep->body, pf->physics.friction);
+        ephysics_body_restitution_set(ep->body, pf->physics->restitution);
+        ephysics_body_friction_set(ep->body, pf->physics->friction);
      }
 
-   ephysics_body_damping_set(ep->body, pf->physics.damping.linear,
-                             pf->physics.damping.angular);
-   ephysics_body_sleeping_threshold_set(ep->body, pf->physics.sleep.linear,
-                                        pf->physics.sleep.angular);
-   ephysics_body_light_set(ep->body, pf->physics.light_on);
-   ephysics_body_back_face_culling_set(ep->body, pf->physics.backcull);
+   ephysics_body_damping_set(ep->body, pf->physics->damping.linear,
+                             pf->physics->damping.angular);
+   ephysics_body_sleeping_threshold_set(ep->body, pf->physics->sleep.linear,
+                                        pf->physics->sleep.angular);
+   ephysics_body_light_set(ep->body, pf->physics->light_on);
+   ephysics_body_back_face_culling_set(ep->body, pf->physics->backcull);
 }
 
 static void
@@ -2973,12 +3006,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              memcpy(p1, ep->current, sizeof (Edje_Calc_Params));
              p1->x += ed->x;
              p1->y += ed->y;
-             p1->map.center.x += ed->x;
-             p1->map.center.y += ed->y;
-             p1->map.light.x += ed->x;
-             p1->map.light.y += ed->y;
-             p1->map.persp.x += ed->x;
-             p1->map.persp.y += ed->y;
+	     EINA_COW_CALC_MAP_BEGIN(p1, p1_write) // FIXME: this will force an allocation on p1
+	       {
+		 p1_write->center.x += ed->x;
+		 p1_write->center.y += ed->y;
+		 p1_write->light.x += ed->x;
+		 p1_write->light.y += ed->y;
+		 p1_write->persp.x += ed->x;
+		 p1_write->persp.y += ed->y;
+	       }
+	     EINA_COW_CALC_MAP_END(p1, p1_write);
           }
 
         p3 = &lp3;
@@ -3072,56 +3109,63 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->color.a = INTP(p1->color.a, p2->color.a, pos2);
 
 #ifdef HAVE_EPHYSICS
-        p3->physics.mass = TO_DOUBLE(FINTP(p1->physics.mass, p2->physics.mass,
-                                         pos));
-        p3->physics.restitution = TO_DOUBLE(FINTP(p1->physics.restitution,
-                                                  p2->physics.restitution,
-                                                  pos));
-        p3->physics.friction = TO_DOUBLE(FINTP(p1->physics.friction,
-                                               p2->physics.friction, pos));
-        p3->physics.density = TO_DOUBLE(FINTP(p1->physics.density,
-                                              p2->physics.density, pos));
-        p3->physics.hardness = TO_DOUBLE(FINTP(p1->physics.hardness,
-                                               p2->physics.hardness, pos));
+        if (ep->part->physics_body || ep->body)
+          {
+             EINA_COW_CALC_PHYSICS_BEGIN(p3, p3_write)
+               {
+                  p3_write->mass = TO_DOUBLE(FINTP(p1->physics->mass, p2->physics->mass,
+                                                   pos));
+                  p3_write->restitution = TO_DOUBLE(FINTP(p1->physics->restitution,
+                                                          p2->physics->restitution,
+                                                          pos));
+                  p3_write->friction = TO_DOUBLE(FINTP(p1->physics->friction,
+                                                       p2->physics->friction, pos));
+                  p3_write->density = TO_DOUBLE(FINTP(p1->physics->density,
+                                                      p2->physics->density, pos));
+                  p3_write->hardness = TO_DOUBLE(FINTP(p1->physics->hardness,
+                                                       p2->physics->hardness, pos));
 
-        p3->physics.damping.linear = TO_DOUBLE(FINTP(
-              p1->physics.damping.linear, p2->physics.damping.linear, pos));
-        p3->physics.damping.angular = TO_DOUBLE(FINTP(
-              p1->physics.damping.angular, p2->physics.damping.angular, pos));
+                  p3_write->damping.linear = TO_DOUBLE(FINTP(p1->physics->damping.linear,
+                                                             p2->physics->damping.linear, pos));
+                  p3_write->damping.angular = TO_DOUBLE(FINTP(p1->physics->damping.angular,
+                                                              p2->physics->damping.angular, pos));
 
-        p3->physics.sleep.linear = TO_DOUBLE(FINTP(
-              p1->physics.sleep.linear, p2->physics.sleep.linear, pos));
-        p3->physics.sleep.angular = TO_DOUBLE(FINTP(
-              p1->physics.sleep.angular, p2->physics.sleep.angular, pos));
+                  p3_write->sleep.linear = TO_DOUBLE(FINTP(p1->physics->sleep.linear,
+                                                           p2->physics->sleep.linear, pos));
+                  p3_write->sleep.angular = TO_DOUBLE(FINTP(p1->physics->sleep.angular,
+                                                            p2->physics->sleep.angular, pos));
 
-        p3->physics.z = INTP(p1->physics.z, p2->physics.z, pos);
-        p3->physics.depth = INTP(p1->physics.depth, p2->physics.depth, pos);
+                  p3_write->z = INTP(p1->physics->z, p2->physics->z, pos);
+                  p3_write->depth = INTP(p1->physics->depth, p2->physics->depth, pos);
 
-        if ((p1->physics.ignore_part_pos) && (p2->physics.ignore_part_pos))
-          p3->physics.ignore_part_pos = 1;
-        else
-          p3->physics.ignore_part_pos = 0;
+                  if ((p1->physics->ignore_part_pos) && (p2->physics->ignore_part_pos))
+                    p3_write->ignore_part_pos = 1;
+                  else
+                    p3_write->ignore_part_pos = 0;
 
-        if ((p1->physics.material) && (p2->physics.material))
-          p3->physics.material = p1->physics.material;
-        else
-          p3->physics.material = EPHYSICS_BODY_MATERIAL_CUSTOM;
+                  if ((p1->physics->material) && (p2->physics->material))
+                    p3_write->material = p1->physics->material;
+                  else
+                    p3_write->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
 
-        p3->physics.light_on = p1->physics.light_on || p2->physics.light_on;
-        p3->physics.backcull = p1->physics.backcull || p2->physics.backcull;
+                  p3_write->light_on = p1->physics->light_on || p2->physics->light_on;
+                  p3_write->backcull = p1->physics->backcull || p2->physics->backcull;
 
-        p3->physics.mov_freedom.lin.x = p1->physics.mov_freedom.lin.x ||
-           p2->physics.mov_freedom.lin.x;
-        p3->physics.mov_freedom.lin.y = p1->physics.mov_freedom.lin.y ||
-           p2->physics.mov_freedom.lin.y;
-        p3->physics.mov_freedom.lin.z = p1->physics.mov_freedom.lin.z ||
-           p2->physics.mov_freedom.lin.z;
-        p3->physics.mov_freedom.ang.x = p1->physics.mov_freedom.ang.x ||
-           p2->physics.mov_freedom.ang.x;
-        p3->physics.mov_freedom.ang.y = p1->physics.mov_freedom.ang.y ||
-           p2->physics.mov_freedom.ang.y;
-        p3->physics.mov_freedom.ang.z = p1->physics.mov_freedom.ang.z ||
-           p2->physics.mov_freedom.ang.z;
+                  p3_write->mov_freedom.lin.x = p1->physics->mov_freedom.lin.x ||
+                    p2->physics->mov_freedom.lin.x;
+                  p3_write->mov_freedom.lin.y = p1->physics->mov_freedom.lin.y ||
+                    p2->physics->mov_freedom.lin.y;
+                  p3_write->mov_freedom.lin.z = p1->physics->mov_freedom.lin.z ||
+                    p2->physics->mov_freedom.lin.z;
+                  p3_write->mov_freedom.ang.x = p1->physics->mov_freedom.ang.x ||
+                    p2->physics->mov_freedom.ang.x;
+                  p3_write->mov_freedom.ang.y = p1->physics->mov_freedom.ang.y ||
+                    p2->physics->mov_freedom.ang.y;
+                  p3_write->mov_freedom.ang.z = p1->physics->mov_freedom.ang.z ||
+                    p2->physics->mov_freedom.ang.z;
+               }
+             EINA_COW_CALC_PHYSICS_END(p3, p3_write);
+          }
 #endif
 
         switch (part_type)
@@ -3162,52 +3206,56 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->lighted = p3->mapped ? p1->lighted | p2->lighted : 0;
         if (p1->mapped)
           {
-             p3->map.center.x = INTP(p1->map.center.x, p2->map.center.x, pos);
-             p3->map.center.y = INTP(p1->map.center.y, p2->map.center.y, pos);
-             p3->map.center.z = INTP(p1->map.center.z, p2->map.center.z, pos);
-             p3->map.rotation.x = FFP(p1->map.rotation.x, p2->map.rotation.x, pos);
-             p3->map.rotation.y = FFP(p1->map.rotation.y, p2->map.rotation.y, pos);
-             p3->map.rotation.z = FFP(p1->map.rotation.z, p2->map.rotation.z, pos);
+             EINA_COW_CALC_MAP_BEGIN(p3, p3_write)
+               {
+                  p3_write->center.x = INTP(p1->map->center.x, p2->map->center.x, pos);
+                  p3_write->center.y = INTP(p1->map->center.y, p2->map->center.y, pos);
+                  p3_write->center.z = INTP(p1->map->center.z, p2->map->center.z, pos);
+                  p3_write->rotation.x = FFP(p1->map->rotation.x, p2->map->rotation.x, pos);
+                  p3_write->rotation.y = FFP(p1->map->rotation.y, p2->map->rotation.y, pos);
+                  p3_write->rotation.z = FFP(p1->map->rotation.z, p2->map->rotation.z, pos);
 
-#define MIX(P1, P2, P3, pos, info)              \
-             P3->info = P1->info + TO_INT(SCALE(pos, P2->info - P1->info));
+#define MIX(P1, P2, P3, pos, info)                                      \
+                  P3->info = P1->map->info + TO_INT(SCALE(pos, P2->map->info - P1->map->info));
 
-             if (p1->lighted && p2->lighted)
-               {
-                  MIX(p1, p2, p3, pos, map.light.x);
-                  MIX(p1, p2, p3, pos, map.light.y);
-                  MIX(p1, p2, p3, pos, map.light.z);
-                  MIX(p1, p2, p3, pos, map.light.r);
-                  MIX(p1, p2, p3, pos, map.light.g);
-                  MIX(p1, p2, p3, pos, map.light.b);
-                  MIX(p1, p2, p3, pos, map.light.ar);
-                  MIX(p1, p2, p3, pos, map.light.ag);
-                  MIX(p1, p2, p3, pos, map.light.ab);
-               }
-             else if (p1->lighted)
-               {
-                  memcpy(&p3->map.light, &p1->map.light, sizeof (p1->map.light));
-               }
-             else if (p2->lighted)
-               {
-                  memcpy(&p3->map.light, &p2->map.light, sizeof (p2->map.light));
-               }
+                  if (p1->lighted && p2->lighted)
+                    {
+                       MIX(p1, p2, p3_write, pos, light.x);
+                       MIX(p1, p2, p3_write, pos, light.y);
+                       MIX(p1, p2, p3_write, pos, light.z);
+                       MIX(p1, p2, p3_write, pos, light.r);
+                       MIX(p1, p2, p3_write, pos, light.g);
+                       MIX(p1, p2, p3_write, pos, light.b);
+                       MIX(p1, p2, p3_write, pos, light.ar);
+                       MIX(p1, p2, p3_write, pos, light.ag);
+                       MIX(p1, p2, p3_write, pos, light.ab);
+                    }
+                  else if (p1->lighted)
+                    {
+                       memcpy(&p3_write->light, &p1->map->light, sizeof (p1->map->light));
+                    }
+                  else if (p2->lighted)
+                    {
+                       memcpy(&p3_write->light, &p2->map->light, sizeof (p2->map->light));
+                    }
 
-             if (p1->persp_on && p2->persp_on)
-               {
-                  MIX(p1, p2, p3, pos, map.persp.x);
-                  MIX(p1, p2, p3, pos, map.persp.y);
-                  MIX(p1, p2, p3, pos, map.persp.z);
-                  MIX(p1, p2, p3, pos, map.persp.focal);
+                  if (p1->persp_on && p2->persp_on)
+                    {
+                       MIX(p1, p2, p3_write, pos, persp.x);
+                       MIX(p1, p2, p3_write, pos, persp.y);
+                       MIX(p1, p2, p3_write, pos, persp.z);
+                       MIX(p1, p2, p3_write, pos, persp.focal);
+                    }
+                  else if (p1->persp_on)
+                    {
+                       memcpy(&p3_write->persp, &p1->map->persp, sizeof (p1->map->persp));
+                    }
+                  else if (p2->persp_on)
+                    {
+                       memcpy(&p3_write->persp, &p2->map->persp, sizeof (p2->map->persp));
+                    }
                }
-             else if (p1->persp_on)
-               {
-                  memcpy(&p3->map.persp, &p1->map.persp, sizeof (p1->map.persp));
-               }
-             else if (p2->persp_on)
-               {
-                  memcpy(&p3->map.persp, &p2->map.persp, sizeof (p2->map.persp));
-               }
+             EINA_COW_CALC_MAP_END(p3, p3_write);
           }
 
         pf = p3;
@@ -3221,10 +3269,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      {
         if (ed->persp)
           {
-             pf->map.persp.x = ed->persp->px;
-             pf->map.persp.y = ed->persp->py;
-             pf->map.persp.z = ed->persp->z0;
-             pf->map.persp.focal = ed->persp->foc;
+             EINA_COW_CALC_MAP_BEGIN(pf, pf_write)
+               {
+                  pf_write->persp.x = ed->persp->px;
+                  pf_write->persp.y = ed->persp->py;
+                  pf_write->persp.z = ed->persp->z0;
+                  pf_write->persp.focal = ed->persp->foc;
+               }
+             EINA_COW_CALC_MAP_END(pf, pf_write);
           }
         else
           {
@@ -3234,20 +3286,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              ps = edje_object_perspective_get(ed->obj);
              if (!ps)
                ps = edje_evas_global_perspective_get(evas_object_evas_get(ed->obj));
-             if (ps)
+             EINA_COW_CALC_MAP_BEGIN(pf, pf_write)
                {
-                  pf->map.persp.x = ps->px;
-                  pf->map.persp.y = ps->py;
-                  pf->map.persp.z = ps->z0;
-                  pf->map.persp.focal = ps->foc;
+                  if (ps)
+                    {
+                       pf_write->persp.x = ps->px;
+                       pf_write->persp.y = ps->py;
+                       pf_write->persp.z = ps->z0;
+                       pf_write->persp.focal = ps->foc;
+                    }
+                  else
+                    {
+                       pf_write->persp.x = ed->x + (ed->w / 2);
+                       pf_write->persp.y = ed->y + (ed->h / 2);
+                       pf_write->persp.z = 0;
+                       pf_write->persp.focal = 1000;
+                    }
                }
-             else
-               {
-                  pf->map.persp.x = ed->x + (ed->w / 2);
-                  pf->map.persp.y = ed->y + (ed->h / 2);
-                  pf->map.persp.z = 0;
-                  pf->map.persp.focal = 1000;
-               }
+             EINA_COW_CALC_MAP_END(pf, pf_write);
           }
      }
 
@@ -3346,7 +3402,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                         (chosen_desc != ep->prev_description)) ||
                        (pf != p1))
                      _edje_physics_body_props_update(
-                        ep, pf, !pf->physics.ignore_part_pos);
+                        ep, pf, !pf->physics->ignore_part_pos);
                 }
               else
                 eo_do(ep->object,
@@ -3462,27 +3518,27 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   evas_map_point_image_uv_set(map, 3, 0.0, ih );
                }
              evas_map_util_3d_rotate(map,
-                                     TO_DOUBLE(pf->map.rotation.x),
-                                     TO_DOUBLE(pf->map.rotation.y),
-                                     TO_DOUBLE(pf->map.rotation.z),
-                                     pf->map.center.x, pf->map.center.y,
-                                     pf->map.center.z);
+                                     TO_DOUBLE(pf->map->rotation.x),
+                                     TO_DOUBLE(pf->map->rotation.y),
+                                     TO_DOUBLE(pf->map->rotation.z),
+                                     pf->map->center.x, pf->map->center.y,
+                                     pf->map->center.z);
 
              // calculate light color & position etc. if there is one
              if (pf->lighted)
                {
                   evas_map_util_3d_lighting(map,
-                                            pf->map.light.x, pf->map.light.y, pf->map.light.z,
-                                            pf->map.light.r, pf->map.light.g, pf->map.light.b,
-                                            pf->map.light.ar, pf->map.light.ag, pf->map.light.ab);
+                                            pf->map->light.x, pf->map->light.y, pf->map->light.z,
+                                            pf->map->light.r, pf->map->light.g, pf->map->light.b,
+                                            pf->map->light.ar, pf->map->light.ag, pf->map->light.ab);
                }
 
              // calculate perspective point
              if (chosen_desc->map.persp_on)
                {
                   evas_map_util_3d_perspective(map,
-                                               pf->map.persp.x, pf->map.persp.y, pf->map.persp.z,
-                                               pf->map.persp.focal);
+                                               pf->map->persp.x, pf->map->persp.y, pf->map->persp.z,
+                                               pf->map->persp.focal);
                }
 
              // handle backface culling (object is facing away from view

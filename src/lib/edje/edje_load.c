@@ -463,6 +463,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
 		  memset(rp, 0, sizeof (Edje_Real_Part));
 
+		  rp->param1.p.map = eina_cow_alloc(_edje_calc_params_map_cow);
+#ifdef HAVE_EPHYSICS
+		  rp->param1.p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+#endif
+
 		  if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
 		    {
 		       rp->drag = calloc(1, sizeof (Edje_Real_Part_Drag));
@@ -1298,14 +1303,30 @@ _edje_file_del(Edje *ed)
 	     free(rp->param1.set);
 
 	     if (rp->param2)
-	       free(rp->param2->set);
+	       {
+		 free(rp->param2->set);
+		 eina_cow_free(_edje_calc_params_map_cow, rp->param2->p.map);
+#ifdef HAVE_EPHYSICS
+		 eina_cow_free(_edje_calc_params_physics_cow, rp->param2->p.physics);
+#endif
+	       }
 	     eina_mempool_free(_edje_real_part_state_mp, rp->param2);
 
 	     if (rp->custom)
-	       free(rp->custom->set);
+	       {
+		 free(rp->custom->set);
+		 eina_cow_free(_edje_calc_params_map_cow, rp->custom->p.map);
+#ifdef HAVE_EPHYSICS
+		 eina_cow_free(_edje_calc_params_physics_cow, rp->custom->p.physics);
+#endif
+	       }
 	     eina_mempool_free(_edje_real_part_state_mp, rp->custom);
              
 	     _edje_unref(rp->edje);
+	     eina_cow_free(_edje_calc_params_map_cow, rp->param1.p.map);
+#ifdef HAVE_EPHYSICS
+	     eina_cow_free(_edje_calc_params_physics_cow, rp->param1.p.physics);
+#endif
 	     eina_mempool_free(_edje_real_part_mp, rp);
 	  }
      }
