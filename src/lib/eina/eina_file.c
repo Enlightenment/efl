@@ -1747,8 +1747,10 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
    success = _eina_file_copy_internal(s, d, st.st_size, cb, cb_data);
    if (success)
      {
+#ifdef HAVE_FCHMOD
         if (flags & EINA_FILE_COPY_PERMISSION)
           fchmod(d, st.st_mode);
+#endif
         if (flags & EINA_FILE_COPY_XATTR)
           eina_xattr_fd_copy(s, d);
      }
