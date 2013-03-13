@@ -2966,6 +2966,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
 #ifndef EDJE_CALC_CACHE
    p1 = &lp1;
+   p1.map = eina_cow_alloc(_edje_calc_params_map_cow);
+#ifdef HAVE_EPHYSICS
+   p1.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+#endif
 #else
    p1 = &ep->param1.p;
 #endif
@@ -3019,9 +3023,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           }
 
         p3 = &lp3;
+        lp3.map = eina_cow_alloc(_edje_calc_params_map_cow);
+#ifdef HAVE_EPHYSICS
+        lp3.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+#endif
 
 #ifndef EDJE_CALC_CACHE
         p2 = &lp2;
+        lp2.map = eina_cow_alloc(_edje_calc_params_map_cow);
+#ifdef HAVE_EPHYSICS
+        lp2.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+#endif
 #else
         p2 = &ep->param2->p;
 
@@ -3258,6 +3270,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              EINA_COW_CALC_MAP_END(p3, p3_write);
           }
 
+#ifndef EDJE_CALC_CACHE
+        eina_cow_free(_edje_calc_params_map_cow, lp2.map);
+#ifdef HAVE_EPHYSICS
+        eina_cow_free(_edje_calc_params_physics_cow, lp2.physics);
+#endif
+#endif
+
         pf = p3;
      }
    else
@@ -3309,7 +3328,26 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (state)
      {
+        const Edje_Calc_Params_Map *map;
+#ifdef HAVE_EPHYSICS
+        const Edje_Calc_Params_Physics *physics;
+#endif
+
+        map = state->map;
+#ifdef HAVE_EPHYSICS
+        physics = state->physics;
+#endif
+
         memcpy(state, pf, sizeof (Edje_Calc_Params));
+
+        state->map = map;
+#ifdef HAVE_EPHYSICS
+        state->physics = physics;
+#endif
+        eina_cow_memcpy(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &state->map, pf->map);
+#ifdef HAVE_EPHYSICS
+        eina_cow_memcpy(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &state->physics, pf->physics);
+#endif
      }
 
    ep->req = pf->req;
@@ -3615,11 +3653,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    ep->calculated |= flags;
    ep->calculating = FLAG_NONE;
 
+   if (pf == &lp3)
+     {
+        eina_cow_free(_edje_calc_params_map_cow, lp3.map);
+        eina_cow_free(_edje_calc_params_physics_cow, lp3.physics);
+        lp3.map = NULL;
+        lp3.physics = NULL;
+     }
+
 #ifdef EDJE_CALC_CACHE
    if (ep->calculated == FLAG_XY)
      {
         ep->state = ed->state;
         ep->invalidate = 0;
      }
+#else
+   eina_cow_free(_edje_calc_params_map_cow, lp1.map);
+   eina_cow_free(_edje_calc_params_physics_cow, lp1.physics);
 #endif
 }
