@@ -3151,7 +3151,7 @@ _long_press_cb(void *data)
 {
    Elm_Gen_Item *it = data, *it_tmp;
    Elm_Genlist_Smart_Data *sd;
-   Eina_List *list, *l;
+   Eina_List *list;
 
    sd = GL_IT(it)->wsd;
 
@@ -3177,10 +3177,9 @@ _long_press_cb(void *data)
 
         list = elm_genlist_realized_items_get
             ((GL_IT(it)->wsd)->obj);
-        EINA_LIST_FOREACH(list, l, it_tmp)
-          {
-             if (it != it_tmp) _item_unselect(it_tmp);
-          }
+        EINA_LIST_FREE(list, it_tmp)
+          if (it != it_tmp) _item_unselect(it_tmp);
+
         if (elm_genlist_item_expanded_get((Elm_Object_Item *)it))
           {
              elm_genlist_item_expanded_set((Elm_Object_Item *)it, EINA_FALSE);
@@ -6793,11 +6792,11 @@ elm_genlist_realized_items_update(Evas_Object *obj)
 static void
 _realized_items_update(Eo *obj, void *_pd EINA_UNUSED, va_list *list_unused EINA_UNUSED)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Elm_Object_Item *it;
 
    list = elm_genlist_realized_items_get(obj);
-   EINA_LIST_FOREACH(list, l, it)
+   EINA_LIST_FREE(list, it)
      elm_genlist_item_update(it);
 }
 
@@ -6905,7 +6904,7 @@ static void
 _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
 {
    Elm_Gen_Item *it;
-   Eina_List *list, *l;
+   Eina_List *list;
    Elm_Object_Item *deco_it;
 
    Eina_Bool decorated = va_arg(*valist, int);
@@ -6925,7 +6924,7 @@ _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
    list = elm_genlist_realized_items_get(obj);
    if (!sd->decorate_all_mode)
      {
-        EINA_LIST_FOREACH(list, l, it)
+        EINA_LIST_FREE(list, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                _decorate_all_item_unrealize(it);
@@ -6944,7 +6943,7 @@ _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
              _decorate_item_finished_signal_cb(deco_it, obj, NULL, NULL);
           }
 
-        EINA_LIST_FOREACH(list, l, it)
+        EINA_LIST_FREE(list, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {
@@ -6953,6 +6952,7 @@ _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
                }
           }
      }
+
    if (sd->calc_job) ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd);
 }

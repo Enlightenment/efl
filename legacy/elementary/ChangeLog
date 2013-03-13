@@ -1149,3 +1149,7 @@
 2013-03-13  WooHyun Jung
 
         * Fixed a bug in elm_list. Focus_next is needed only when access mode is enabled.
+
+2013-03-13  Tae-Hwan Kim (bluezery)
+
+        * Fix a memory leak in elm_genlist. Return value of elm_genlist_realized_items_get should be freed
