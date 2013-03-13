@@ -1146,3 +1146,6 @@
 
         * Entry: Fixed a bug with text appending.
 
+2013-03-13  WooHyun Jung
+
+        * Fixed a bug in elm_list. Focus_next is needed only when access mode is enabled.

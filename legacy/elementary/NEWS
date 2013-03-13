@@ -182,6 +182,7 @@ Fixes:
    * Remove the back button callback if the back button is unset on the naviframe.
    * Fixed a bug that naviframe's focus_next didn't work after changing evenry item to elm_layout.
    * Entry: Fixed a bug with text appending.
+   * Fixed a bug in elm_list. Focus_next is needed only when access mode is enabled.
    
 Removals:
 

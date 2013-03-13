@@ -1543,11 +1543,13 @@ _elm_list_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED
    *ret = EINA_TRUE;
 }
 
+static Eina_Bool _elm_list_smart_focus_next_enable = EINA_FALSE;
+
 static void
 _elm_list_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   *ret = _elm_list_smart_focus_next_enable;
 }
 static void
 _elm_list_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
@@ -1728,12 +1730,12 @@ static void
 _elm_list_smart_access(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_List_Smart_Data *sd = _pd;
-   int is_access = va_arg(*list, int);
+   _elm_list_smart_focus_next_enable = va_arg(*list, int);
    Eina_List *elist = NULL;
    Elm_List_Item *it;
 
    EINA_LIST_FOREACH(sd->items, elist, it)
-     _access_widget_item_register(it, is_access);
+     _access_widget_item_register(it, _elm_list_smart_focus_next_enable);
 }
 
 EAPI Evas_Object *
@@ -2522,6 +2524,9 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC_SENTINEL
       };
       eo_class_funcs_set(klass, func_desc);
+
+      if (_elm_config->access_mode)
+        _elm_list_smart_focus_next_enable = EINA_TRUE;
 
       evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
