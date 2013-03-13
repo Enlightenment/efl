@@ -138,8 +138,8 @@ static Eina_Bool
 eina_simple_xml_parser_parse_with_custom_callback_tag_cb(void *data,
                                                          Eina_Simple_XML_Type type,
                                                          const char *content,
-                                                         unsigned offset,
-                                                         unsigned length)
+                                                         unsigned offset EINA_UNUSED,
+                                                         unsigned length EINA_UNUSED)
 {
     int* parse_current_state = (int*) data;
 
@@ -217,6 +217,7 @@ eina_simple_xml_parser_parse_with_custom_callback_tag_cb(void *data,
             *parse_current_state = simple_xml_parser_current_state_end;
           }
       }
+    return EINA_TRUE;
 }
 
 START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
