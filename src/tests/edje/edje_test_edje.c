@@ -38,8 +38,41 @@ START_TEST(edje_test_edje_load)
 }
 END_TEST
 
-void edje_test_edje(TCase *tc)
+static const char *
+test_layout_get(void)
 {
+   static int is_local = -1;
+   if (is_local == -1)
+     {
+        struct stat st;
+        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/edje/data/test_layout.edj", &st) == 0);
+     }
+
+   if (is_local)
+     return PACKAGE_BUILD_DIR"/src/tests/edje/data/test_layout.edj";
+   else
+     return PACKAGE_DATA_DIR"/data/test_layout.edj";
+}
+
+START_TEST(edje_test_load_simple_layout)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *obj;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get(), "test_group"));
+
+   fail_if(edje_object_part_exists(obj, "unexistant_part"));
+   fail_unless(edje_object_part_exists(obj, "background"));
+
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
+void edje_test_edje(TCase *tc)
+{    
    tcase_add_test(tc, edje_test_edje_init);
+   tcase_add_test(tc,edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);
 }
