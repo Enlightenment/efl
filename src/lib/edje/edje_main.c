@@ -4,16 +4,26 @@ static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Edje_Version *edje_version = &_version;
 
 static int _edje_init_count = 0;
+static Eina_Bool _need_imf = EINA_FALSE;
+
 int _edje_default_log_dom = -1;
 Eina_Mempool *_edje_real_part_mp = NULL;
 Eina_Mempool *_edje_real_part_state_mp = NULL;
-static Eina_Bool _need_imf = EINA_FALSE;
+
+Eina_Cow *_edje_calc_params_map_cow = NULL;
+Eina_Cow *_edje_calc_params_physics_cow = NULL;
+
+static const Edje_Calc_Params_Map default_calc_map = {
+  { 0, 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }
+};
+
+static const Edje_Calc_Params_Physics default_calc_physics = {
+  0.0, 0.0, 0.0, 0.0, 0.0, { 0.0, 0.0 }, { 0.0, 0.0 }, 0, 0, { { 0, 0, 0 }, { 0, 0, 0 } }, 0, 0, 0, 0
+};
 
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-
-
 EAPI int
 edje_init(void)
 {
@@ -87,6 +97,9 @@ edje_init(void)
 	goto shutdown_all;
      }
 
+   _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params), 8, &default_calc_map);
+   _edje_calc_params_physics_cow= eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics);
+
    return _edje_init_count;
 
  shutdown_all:
@@ -142,6 +155,11 @@ _edje_shutdown_core(void)
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
    _edje_edd_shutdown();
+
+   eina_cow_del(_edje_calc_params_map_cow);
+   eina_cow_del(_edje_calc_params_physics_cow);
+   _edje_calc_params_map_cow = NULL;
+   _edje_calc_params_physics_cow = NULL;
 
 #ifdef HAVE_ECORE_IMF
    if (_need_imf)
