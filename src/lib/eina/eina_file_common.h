@@ -1,0 +1,100 @@
+/* EINA - EFL data type library
+ * Copyright (C) 2013 Cedric Bail
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library;
+ * if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef EINA_FILE_COMMON_H_
+# define EINA_FILE_COMMON_H_
+
+#include "eina_file.h"
+#include "eina_tmpstr.h"
+#include "eina_lock.h"
+
+typedef struct _Eina_File_Map Eina_File_Map;
+typedef struct _Eina_Lines_Iterator Eina_Lines_Iterator;
+
+struct _Eina_File
+{
+   const char *filename;
+
+   Eina_Hash *map;
+   Eina_Hash *rmap;
+   void *global_map;
+
+   Eina_Lock lock;
+
+#ifndef _WIN32
+   unsigned long long length;
+   time_t mtime;
+   ino_t inode;
+#ifdef _STAT_VER_LINUX
+   unsigned long int mtime_nsec;
+#endif
+#else
+   ULONGLONG length;
+   ULONGLONG mtime;
+#endif
+
+   int refcount;
+   int global_refcount;
+
+#ifndef _WIN32
+   int fd;
+#else
+   HANDLE handle;
+   HANDLE fm;
+#endif
+
+   Eina_Bool shared : 1;
+   Eina_Bool delete_me : 1;
+   Eina_Bool global_faulty : 1;
+};
+
+struct _Eina_File_Map
+{
+   void *map;
+
+   unsigned long int offset;
+   unsigned long int length;
+
+   int refcount;
+
+   Eina_Bool hugetlb : 1;
+   Eina_Bool faulty : 1;
+};
+
+struct _Eina_Lines_Iterator
+{
+   Eina_Iterator iterator;
+
+   Eina_File *fp;
+   const char *map;
+   const char *end;
+
+   int boundary;
+
+   Eina_File_Line current;
+};
+
+Eina_Bool eina_file_path_relative(const char *path);
+Eina_Tmpstr *eina_file_current_directory_get(const char *path, size_t len);
+char *eina_file_cleanup(Eina_Tmpstr *path);
+void eina_file_real_close(Eina_File *file);
+
+extern Eina_Hash *_eina_file_cache;
+extern Eina_Lock _eina_file_lock_cache;
+
+#endif /* EINA_FILE_COMMON_H_ */
