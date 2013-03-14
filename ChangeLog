@@ -1,3 +1,7 @@
+2013-03-13  Cedric Bail
+
+	* Edje: use Eina_Cow to reduce memory usage.
+
 2013-03-12  Jiyoun Park (Jypark)
 
         * Ecore_x: fix bug not check data value when get deiconify message
