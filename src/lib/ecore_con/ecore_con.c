@@ -1821,8 +1821,13 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
            ecore_con_event_server_add(svr);
      }
 
-   if (svr->fd_handler && (!svr->buf))
-     ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+   if (svr->fd_handler)
+     {
+        if (svr->buf)
+          ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+        else
+          ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+     }
 
    if (!svr->delete_me)
      return ECORE_CON_CONNECTED;
@@ -2258,12 +2263,13 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    Eina_Binbuf *buf_p;
 
    DBG("(svr=%p,buf=%p)", svr, svr->buf);
+   if (!svr->fd_handler) return;
 #ifdef _WIN32
    if (ecore_con_local_win32_server_flush(svr))
      return;
 #endif
 
-   if ((!svr->buf) && (!svr->ecs_buf) && svr->fd_handler)
+   if ((!svr->buf) && (!svr->ecs_buf))
      {
         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
         return;
@@ -2361,12 +2367,13 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 {
    int num = 0, count = 0;
 
+   if (!cl->fd_handler) return;
 #ifdef _WIN32
    if (ecore_con_local_win32_client_flush(cl))
      return;
 #endif
 
-   if (!cl->buf && cl->fd_handler)
+   if (!cl->buf)
      {
         ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
         return;
