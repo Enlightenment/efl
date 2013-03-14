@@ -76,7 +76,6 @@
 #define MAP_FAILED ((void *)-1)
 
 typedef struct _Eina_File_Iterator        Eina_File_Iterator;
-typedef struct _Eina_Lines_Iterator       Eina_Lines_Iterator;
 typedef struct _Eina_File_Direct_Iterator Eina_File_Direct_Iterator;
 typedef struct _Eina_File_Map             Eina_File_Map;
 
@@ -90,19 +89,6 @@ struct _Eina_File_Iterator
    Eina_Bool       is_last : 1;
 
    char            dir[1];
-};
-
-struct _Eina_Lines_Iterator
-{
-   Eina_Iterator iterator;
-
-   Eina_File *fp;
-   const char *map;
-   const char *end;
-
-   int boundary;
-
-   Eina_File_Line current;
 };
 
 struct _Eina_File_Direct_Iterator
