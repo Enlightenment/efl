@@ -107,6 +107,8 @@ lib/eina/eina_counter.c \
 lib/eina/eina_cow.c \
 lib/eina/eina_cpu.c \
 lib/eina/eina_error.c \
+lib/eina/eina_file_common.h \
+lib/eina/eina_file_common.c \
 lib/eina/eina_fp.c \
 lib/eina/eina_hamster.c \
 lib/eina/eina_hash.c \
