@@ -7,11 +7,18 @@ Changes since 1.7.0:
 
 Additions:
     * Add multiple font draws support to engines
-    * Add DOCTYPE children parsing in eina_simple_xml
-    * Add eina_barrier thread API
-    * Add eina_tmpstr_add() and eina_tmpstr_del()
-    * Add eina_thread API
-    * Add eina_list_last_data_get
+    * eina :
+     - Add DOCTYPE children parsing in eina_simple_xml
+     - Add eina_barrier thread API
+     - Add eina_tmpstr_add(), eina_tmpstr_del(), eina_tmpstr_add_length() and
+       	    eina_tmpstr_strlen().
+     - Add eina_thread API
+     - Add eina_list_last_data_get
+     - Add eina_xattr_fd_get(), eina_xattr_fd_set(),
+           eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
+      	   eina_xattr_fd_copy()
+     - Add eina_stringshare_refplace()
+     - Add eina_file_copy()
     * Add Cserve2 scalecache support
     * ecore_x:
      - Add window profile support.
@@ -58,11 +65,6 @@ Additions:
      - Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory allocation policy for EvasGL direct rendering.
      - Add engine specific alpha_get.
     * Add ecore_audio API
-    * Added eina_xattr_fd_get(), eina_xattr_fd_set(),
-      eina_xattr_del(), eina_xattr_fd_del(), eina_xattr_copy() and
-      eina_xattr_fd_copy()
-    * added eina_stringshare_refplace()
-    * Added eina_file_copy()
     * Add eet_mmap.
     * added eet_data_descriptor_name_get()
     * Add eio_eet_sync symbols.

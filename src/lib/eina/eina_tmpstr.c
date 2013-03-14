@@ -45,6 +45,7 @@ typedef struct _Str Str;
 
 struct _Str
 {
+   size_t length;
    Str *next;
    char *str;
 };
@@ -67,15 +68,14 @@ eina_tmpstr_shutdown(void)
 }
 
 EAPI Eina_Tmpstr *
-eina_tmpstr_add(const char *str)
+eina_tmpstr_add_length(const char *str, size_t length)
 {
    Str *s;
-   int len;
-   
-   if (!str) return NULL;
-   len = strlen(str);
-   s = malloc(sizeof(Str) + len + 1);
+
+   if (!str || !length) return NULL;
+   s = malloc(sizeof(Str) + length + 1);
    if (!s) return NULL;
+   s->length = length;
    s->str = ((char *)s) + sizeof(Str);
    strcpy(s->str, str);
    eina_lock_take(&_mutex);
@@ -83,6 +83,16 @@ eina_tmpstr_add(const char *str)
    strs = s;
    eina_lock_release(&_mutex);
    return s->str;
+}
+
+EAPI Eina_Tmpstr *
+eina_tmpstr_add(const char *str)
+{
+   size_t len;
+   
+   if (!str) return NULL;
+   len = strlen(str);
+   return eina_tmpstr_add_length(str, len);
 }
 
 EAPI void
@@ -103,4 +113,25 @@ eina_tmpstr_del(Eina_Tmpstr *tmpstr)
           }
      }
    eina_lock_release(&_mutex);
+}
+
+EAPI size_t
+eina_tmpstr_strlen(Eina_Tmpstr *tmpstr)
+{
+   Str *s;
+
+   if (!tmpstr) return 0;
+   if (!strs) return strlen(tmpstr) + 1;
+   eina_lock_take(&_mutex);
+   for (s = strs; s; s = s->next)
+     {
+        if (s->str == tmpstr)
+	  {
+             eina_lock_release(&_mutex);
+             return s->length;
+	  }
+     }
+   eina_lock_release(&_mutex);
+
+   return strlen(tmpstr) + 1;
 }

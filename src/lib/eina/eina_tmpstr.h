@@ -158,10 +158,50 @@ typedef const char Eina_Tmpstr;
  * @endcode
  * 
  * @see eina_tmpstr_del()
+ * @see eina_tmpstr_add_length()
  * 
  * @since 1.8.0
  */
 EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Add a new temporary string based on the input string and length.
+ * 
+ * @param str This is the input stringthat is copied into the temp string.
+ * @param length This is the maximum length and the allocated length of the temp string.
+ * @return A pointer to the tmp string that is a standard C string.
+ * 
+ * When you add a temporary string (tmpstr) it is expected to have a very
+ * short lifespan, and at any one time only a few of these are intended to
+ * exist. This is not intended for longer term storage of strings. The
+ * intended use is the ability to safely pass strings as return values from
+ * functions directly into parameters of new functions and then have the
+ * string be cleaned up automatically by the caller.
+ * 
+ * If @p str is NULL, or no memory space exists to store the tmpstr, then
+ * NULL will be returned, otherwise a valid string pointer will be returned
+ * that you can treat as any other C string (eg strdup(tmpstr) or
+ * printf("%s\n", tmpstr) etc.). This string should be considered read-only
+ * and immutable, and when youa re done with the string yo should delete it
+ * with eina_tmpstr_del().
+ * 
+ * @see eina_tmpstr_del()
+ * @see eina_tmpstr_add()
+ * 
+ * @since 1.8.0
+ */
+EAPI Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
+
+/**
+ * @brief Return the length of a temporary string including the '\0'.
+ *
+ * @param tmpstr This is any C string pointer, but if it is a tmp string
+ * it will return the length faster.
+ * @return The length of the string including the '\0';
+ *
+ * @since 1.8.0
+ */
+EAPI size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
 
 /**
  * @brief Delete the temporary string if it is one, or ignore it if it is not.
