@@ -1524,6 +1524,15 @@ _item_realize(Elm_Gen_Item *it,
 
    _item_order_update(EINA_INLIST_GET(it), in);
 
+   if (!(it->deco_all_view) && (it->item->type != ELM_GENLIST_ITEM_GROUP))
+     {
+        if (GL_IT(it)->wsd->reorder_mode)
+          edje_object_signal_emit
+            (VIEW(it), "elm,state,reorder,mode_set", "elm");
+        else
+          edje_object_signal_emit
+            (VIEW(it), "elm,state,reorder,mode_unset", "elm");
+    }
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
    if (!it->spacer && treesize)
@@ -2866,6 +2875,14 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
    elm_widget_sub_object_add(WIDGET(it), VIEW(it));
    _elm_genlist_item_odd_even_update(it);
    _elm_genlist_item_state_update(it, NULL);
+
+   if (it->item->wsd->reorder_mode)
+     {
+        edje_object_signal_emit
+          (VIEW(it), "elm,state,reorder,mode_set", "elm");
+        edje_object_signal_emit
+          (it->deco_all_view, "elm,state,reorder,mode_unset", "elm");
+     }
 
    evas_object_del(it->deco_all_view);
    it->deco_all_view = NULL;
@@ -6968,10 +6985,30 @@ elm_genlist_reorder_mode_set(Evas_Object *obj,
 static void
 _reorder_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   Eina_List *realized;
+   Elm_Gen_Item *it;
    Eina_Bool reorder_mode = va_arg(*list, int);
    Elm_Genlist_Smart_Data *sd = _pd;
 
+   if (sd->reorder_mode == !!reorder_mode) return;
    sd->reorder_mode = !!reorder_mode;
+   realized = elm_genlist_realized_items_get(obj);
+   EINA_LIST_FREE(realized, it)
+    {
+       if (it->item->type != ELM_GENLIST_ITEM_GROUP)
+         {
+            Evas_Object *view;
+            if (it->deco_all_view) view = it->deco_all_view;
+            else view = VIEW(it);
+
+            if (sd->reorder_mode)
+              edje_object_signal_emit
+                (view, "elm,state,reorder,mode_set", "elm");
+            else
+              edje_object_signal_emit
+                (view, "elm,state,reorder,mode_unset", "elm");
+        }
+   }
 }
 
 EAPI Eina_Bool
