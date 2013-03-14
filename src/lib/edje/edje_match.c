@@ -176,7 +176,7 @@ _edje_match_patterns_exec_class(const char   *cl,
 {
    enum status status = patterns_not_found;
    int	       pos = 1;
-   size_t      neg;
+   unsigned int neg;
 
    if (_edje_match_patterns_exec_class_complement(cl + 1, &neg) != EDJE_MATCH_OK)
       return EDJE_MATCH_SYNTAX_ERROR;
