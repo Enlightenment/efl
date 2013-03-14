@@ -163,7 +163,9 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
 	eng_window_free(gw);
 	return NULL;
      }
+#ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
+#endif
    eng_window_use(gw);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
