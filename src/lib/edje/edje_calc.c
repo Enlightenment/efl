@@ -3006,8 +3006,24 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         if (ep->current)
           {
+             const Edje_Calc_Params_Map *map;
+#ifdef HAVE_EPHYSICS
+             const Edje_Calc_Params_Physics *physics;
+#endif
+
+             map = p1->map;
+#ifdef HAVE_EPHYSICS
+             physics = p1->physics;
+#endif
+
              /* FIXME: except for text, we don't need in that case to recalc p1 at all*/
              memcpy(p1, ep->current, sizeof (Edje_Calc_Params));
+
+             p1->map = map;
+#ifdef HAVE_EPHYSICS
+             p1->physics = physics;
+#endif
+             
              p1->x += ed->x;
              p1->y += ed->y;
 	     EINA_COW_CALC_MAP_BEGIN(p1, p1_write) // FIXME: this will force an allocation on p1
