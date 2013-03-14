@@ -3040,10 +3040,10 @@ compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->cur.geometry.x;
-        imgc[1] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
-        imgc[2] = imgc[0] + obj->cur.geometry.w;
-        imgc[3] = imgc[1] + obj->cur.geometry.h;
+        imgc[0] = obj->cur->geometry.x;
+        imgc[1] = obj->layer->evas->output.h - obj->cur->geometry.y - obj->cur->geometry.h;
+        imgc[2] = imgc[0] + obj->cur->geometry.w;
+        imgc[3] = imgc[1] + obj->cur->geometry.h;
 
         // transformed (x,y,width,height) in gl coordinate
         objc[0] = imgc[0] + x;
@@ -3054,14 +3054,14 @@ compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
    else if (rot == 180)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
-        imgc[1] = obj->cur.geometry.y;
-        imgc[2] = imgc[0] + obj->cur.geometry.w;
-        imgc[3] = imgc[1] + obj->cur.geometry.h;
+        imgc[0] = obj->layer->evas->output.w - obj->cur->geometry.x - obj->cur->geometry.w;
+        imgc[1] = obj->cur->geometry.y;
+        imgc[2] = imgc[0] + obj->cur->geometry.w;
+        imgc[3] = imgc[1] + obj->cur->geometry.h;
 
         // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj->cur.geometry.w - x - width;
-        objc[1] = imgc[1] + obj->cur.geometry.h - y - height;
+        objc[0] = imgc[0] + obj->cur->geometry.w - x - width;
+        objc[1] = imgc[1] + obj->cur->geometry.h - y - height;
         objc[2] = objc[0] + width;
         objc[3] = objc[1] + height;
 
@@ -3069,13 +3069,13 @@ compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
    else if (rot == 90)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->cur.geometry.y;
-        imgc[1] = obj->cur.geometry.x;
-        imgc[2] = imgc[0] + obj->cur.geometry.h;
-        imgc[3] = imgc[1] + obj->cur.geometry.w;
+        imgc[0] = obj->cur->geometry.y;
+        imgc[1] = obj->cur->geometry.x;
+        imgc[2] = imgc[0] + obj->cur->geometry.h;
+        imgc[3] = imgc[1] + obj->cur->geometry.w;
 
         // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj->cur.geometry.h - y - height;
+        objc[0] = imgc[0] + obj->cur->geometry.h - y - height;
         objc[1] = imgc[1] + x;
         objc[2] = objc[0] + height;
         objc[3] = objc[1] + width;
@@ -3083,14 +3083,14 @@ compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
    else if (rot == 270)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
-        imgc[1] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
-        imgc[2] = imgc[0] + obj->cur.geometry.h;
-        imgc[3] = imgc[1] + obj->cur.geometry.w;
+        imgc[0] = obj->layer->evas->output.h - obj->cur->geometry.y - obj->cur->geometry.h;
+        imgc[1] = obj->layer->evas->output.w - obj->cur->geometry.x - obj->cur->geometry.w;
+        imgc[2] = imgc[0] + obj->cur->geometry.h;
+        imgc[3] = imgc[1] + obj->cur->geometry.w;
 
         // transformed (x,y,width,height) in gl coordinate
         objc[0] = imgc[0] + y;
-        objc[1] = imgc[1] + obj->cur.geometry.w - x - width;
+        objc[1] = imgc[1] + obj->cur->geometry.w - x - width;
         objc[2] = objc[0] + height;
         objc[3] = objc[1] + width;
      }
