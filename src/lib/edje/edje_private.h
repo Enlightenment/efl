@@ -1751,7 +1751,7 @@ struct _Edje_Patterns
    
    size_t          patterns_size;
    size_t          max_length;
-   size_t          finals[];
+   unsigned int    finals[];
 };
 
 typedef enum _Edje_User_Defined_Type 
