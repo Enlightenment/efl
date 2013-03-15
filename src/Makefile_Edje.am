@@ -82,6 +82,12 @@ endif
 
 ### Binary
 
+if HAVE_WIN32
+USE_EDJE_BIN_LIBS = -L$(top_builddir)/src/lib/evil @USE_EDJE_LIBS@
+else
+USE_EDJE_BIN_LIBS = @USE_EDJE_LIBS@
+endif         
+
 bin_PROGRAMS += \
 bin/edje/edje_cc \
 bin/edje/edje_decc \
@@ -103,7 +109,7 @@ bin/edje/edje_cc_handlers.c \
 bin/edje/edje_cc_sources.c \
 bin/edje/edje_multisense_convert.c
 bin_edje_edje_cc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_cc_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_cc_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_cc_DEPENDENCIES = \
 @USE_EDJE_INTERNAL_LIBS@ \
 bin/edje/epp/epp # epp is an artificial dependency because edje_cc will use it at runtime, so we be sure if we depend on edje_cc we get epp.
@@ -114,37 +120,37 @@ bin/edje/edje_decc.h \
 bin/edje/edje_cc_mem.c \
 bin/edje/edje_cc_sources.c
 bin_edje_edje_decc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_decc_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_decc_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_decc_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_player_SOURCES = bin/edje/edje_player.c
 bin_edje_edje_player_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_player_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_player_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_player_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_inspector_SOURCES = bin/edje/edje_inspector.c
 bin_edje_edje_inspector_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_inspector_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_inspector_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_inspector_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_external_inspector_SOURCES = bin/edje/edje_external_inspector.c
 bin_edje_edje_external_inspector_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_external_inspector_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_external_inspector_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_external_inspector_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_codegen_SOURCES = bin/edje/edje_codegen.c
 bin_edje_edje_codegen_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_codegen_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_codegen_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_codegen_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_pick_SOURCES = bin/edje/edje_pick.c
 bin_edje_edje_pick_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_pick_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_pick_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_pick_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_watch_SOURCES = bin/edje/edje_watch.c
 bin_edje_edje_watch_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_watch_LDADD = @USE_EDJE_LIBS@
+bin_edje_edje_watch_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_watch_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 # EPP (Edje's CPP)
@@ -226,7 +232,7 @@ tests_edje_edje_suite_CPPFLAGS = \
 $(EDJE_COMMON_CPPFLAGS) \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje\" \
 @CHECK_CFLAGS@
-tests_edje_edje_suite_LDADD = @CHECK_LIBS@ @USE_EDJE_LIBS@
+tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 tests/edje/data/test_layout.edj: tests/edje/data/test_layout.edc bin/edje/edje_cc

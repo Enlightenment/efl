@@ -17,6 +17,12 @@ lib_ethumb_client_libethumb_client_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binary
 
+if HAVE_WIN32
+USE_ETHUMB_CLIENT_BIN_LIBS = -L$(top_builddir)/src/lib/evil @USE_ETHUMB_CLIENT_LIBS@
+else
+USE_ETHUMB_CLIENT_BIN_LIBS = @USE_ETHUMB_CLIENT_LIBS@
+endif
+
 bin_PROGRAMS += \
 bin/ethumb_client/ethumbd \
 bin/ethumb_client/ethumbd_client
@@ -34,12 +40,12 @@ bin_ethumb_client_ethumbd_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb_client\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 @ETHUMB_CLIENT_CFLAGS@
-bin_ethumb_client_ethumbd_LDADD = @USE_ETHUMB_CLIENT_LIBS@
+bin_ethumb_client_ethumbd_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
 
 bin_ethumb_client_ethumbd_client_SOURCES = bin/ethumb_client/ethumbd_client.c
 bin_ethumb_client_ethumbd_client_CPPFLAGS = @ETHUMB_CLIENT_CFLAGS@
-bin_ethumb_client_ethumbd_client_LDADD = @USE_ETHUMB_CLIENT_LIBS@
+bin_ethumb_client_ethumbd_client_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_client_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
 
 # slave does not use dbus, it's a simple ethumb application
@@ -47,5 +53,5 @@ bin_ethumb_client_ethumbd_slave_SOURCES = \
 bin/ethumb_client/ethumbd_private.h \
 bin/ethumb_client/ethumbd_slave.c
 bin_ethumb_client_ethumbd_slave_CPPFLAGS = @ETHUMB_CFLAGS@
-bin_ethumb_client_ethumbd_slave_LDADD = @USE_ETHUMB_LIBS@
+bin_ethumb_client_ethumbd_slave_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_slave_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@
