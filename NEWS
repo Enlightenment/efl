@@ -201,3 +201,4 @@ Fixes:
     * fix bug not check data value when get deiconify message
     * fix use of ecore_con_*_flush functions with unconnected objects
     * fix setting of write flags on ecore-con servers during connect
+    * fix gles support to only use GL_UNPACK_ROW_LENGTH if extension exists

@@ -1,3 +1,8 @@
+2013-03-15  Carsten Haitzler (The Rasterman)
+
+        * Fix opengl-es 2.0 engine support to only use GL_UNPACK_ROW_LENGTH
+        if the correct gles extension exists.
+
 2013-03-14  Mike Blumenkrantz
 
         * fix use of ecore_con_*_flush functions with unconnected objects
