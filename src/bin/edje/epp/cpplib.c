@@ -79,7 +79,9 @@ const char         *version_string = "0.0.0";
 #ifndef USG
 #include <time.h>
 #include <sys/time.h>		/* for __DATE__ and __TIME__ */
-#include <sys/resource.h>
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 #else
 #include <sys/param.h>		/* CYGNUS LOCAL: shebs -noquiet */
 #include <sys/times.h>

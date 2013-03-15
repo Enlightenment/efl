@@ -45,6 +45,12 @@
 #include "cpplib.h"
 #include "cpphash.h"
 
+#ifdef _WIN32
+# ifdef ERROR
+#  undef ERROR
+# endif
+#endif
+
 /* This is used for communicating lists of keywords with cccp.c.  */
 struct arglist {
    struct arglist     *next;
