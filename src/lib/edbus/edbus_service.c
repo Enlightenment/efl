@@ -1,5 +1,9 @@
-#include "edbus_private_types.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "edbus_private.h"
+#include "edbus_private_types.h"
 
 #define DBUS_ANNOTATION(name, value) \
         "<annotation" \

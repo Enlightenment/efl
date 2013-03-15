@@ -1,8 +1,10 @@
 #ifndef EDBUS_PRIVATE_H
 #define EDBUS_PRIVATE_H
 
+#include <dbus/dbus.h>
 #include <Eina.h>
 #include "eina_safety_checks.h"
+#include <Ecore.h>
 #include "EDBus.h"
 #include "edbus_private_types.h"
 
