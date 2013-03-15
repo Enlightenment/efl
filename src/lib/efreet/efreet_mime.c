@@ -8,8 +8,14 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fnmatch.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 
 #ifdef _WIN32
 # include <winsock2.h>
