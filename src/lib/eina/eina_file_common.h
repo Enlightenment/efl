@@ -89,6 +89,31 @@ struct _Eina_Lines_Iterator
    Eina_File_Line current;
 };
 
+#ifndef EINA_LOG_COLOR_DEFAULT
+#define EINA_LOG_COLOR_DEFAULT EINA_COLOR_CYAN
+#endif
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_file_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_eina_file_log_dom, __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_eina_file_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
+
+
 Eina_Bool eina_file_path_relative(const char *path);
 Eina_Tmpstr *eina_file_current_directory_get(const char *path, size_t len);
 char *eina_file_cleanup(Eina_Tmpstr *path);
@@ -96,5 +121,6 @@ void eina_file_real_close(Eina_File *file);
 
 extern Eina_Hash *_eina_file_cache;
 extern Eina_Lock _eina_file_lock_cache;
+extern int _eina_file_log_dom;
 
 #endif /* EINA_FILE_COMMON_H_ */

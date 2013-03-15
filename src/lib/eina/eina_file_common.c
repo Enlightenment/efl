@@ -22,6 +22,13 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif
+#include <unistd.h>
+#include <fcntl.h>
+
 
 #define COPY_BLOCKSIZE (4 * 1024 * 1024)
 
@@ -31,6 +38,7 @@
 #include "eina_hash.h"
 #include "eina_safety_checks.h"
 #include "eina_file_common.h"
+#include "eina_xattr.h"
 
 #ifdef HAVE_ESCAPE
 # include <Escape.h>
@@ -302,4 +310,259 @@ eina_file_map_lines(Eina_File *file)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_map_lines_iterator_free);
 
    return &it->iterator;
+}
+
+static Eina_Bool
+_eina_file_copy_write_internal(int fd, char *buf, size_t size)
+{
+   size_t done = 0;
+   while (done < size)
+     {
+        ssize_t w = write(fd, buf + done, size - done);
+        if (w >= 0)
+          done += w;
+        else if ((errno != EAGAIN) && (errno != EINTR))
+          {
+             ERR("Error writing destination file during copy: %s",
+                 strerror(errno));
+             return EINA_FALSE;
+          }
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_file_copy_read_internal(int fd, char *buf, off_t bufsize, ssize_t *readsize)
+{
+   while (1)
+     {
+        ssize_t r = read(fd, buf, bufsize);
+        if (r == 0)
+          {
+             ERR("Premature end of source file during copy.");
+             return EINA_FALSE;
+          }
+        else if (r < 0)
+          {
+             if ((errno != EAGAIN) && (errno != EINTR))
+               {
+                  ERR("Error reading source file during copy: %s",
+                      strerror(errno));
+                  return EINA_FALSE;
+               }
+          }
+        else
+          {
+             *readsize = r;
+             return EINA_TRUE;
+          }
+     }
+}
+
+#ifdef HAVE_SPLICE
+static Eina_Bool
+_eina_file_copy_write_splice_internal(int fd, int pipefd, size_t size)
+{
+   size_t done = 0;
+   while (done < size)
+     {
+        ssize_t w = splice(pipefd, NULL, fd, NULL, size - done, SPLICE_F_MORE);
+        if (w >= 0)
+          done += w;
+        else if (errno == EINVAL)
+          {
+             INF("Splicing is not supported for destination file");
+             return EINA_FALSE;
+          }
+        else if ((errno != EAGAIN) && (errno != EINTR))
+          {
+             ERR("Error splicing to destination file during copy: %s",
+                 strerror(errno));
+             return EINA_FALSE;
+          }
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_file_copy_read_splice_internal(int fd, int pipefd, off_t bufsize, ssize_t *readsize)
+{
+   while (1)
+     {
+        ssize_t r = splice(fd, NULL, pipefd, NULL, bufsize, SPLICE_F_MORE);
+        if (r == 0)
+          {
+             ERR("Premature end of source file during splice.");
+             return EINA_FALSE;
+          }
+        else if (r < 0)
+          {
+             if (errno == EINVAL)
+               {
+                  INF("Splicing is not supported for source file");
+                  return EINA_FALSE;
+               }
+             else if ((errno != EAGAIN) && (errno != EINTR))
+               {
+                  ERR("Error splicing from source file during copy: %s",
+                      strerror(errno));
+                  return EINA_FALSE;
+               }
+          }
+        else
+          {
+             *readsize = r;
+             return EINA_TRUE;
+          }
+     }
+}
+#endif
+
+static Eina_Bool
+_eina_file_copy_splice_internal(int s, int d, off_t total, Eina_File_Copy_Progress cb, const void *cb_data, Eina_Bool *splice_unsupported)
+{
+#ifdef HAVE_SPLICE
+   off_t bufsize = COPY_BLOCKSIZE;
+   off_t done;
+   Eina_Bool ret;
+   int pipefd[2];
+
+   *splice_unsupported = EINA_TRUE;
+
+   if (pipe(pipefd) < 0) return EINA_FALSE;
+
+   done = 0;
+   ret = EINA_TRUE;
+   while (done < total)
+     {
+        size_t todo;
+        ssize_t r;
+
+        if (done + bufsize < total)
+          todo = bufsize;
+        else
+          todo = total - done;
+
+        ret = _eina_file_copy_read_splice_internal(s, pipefd[1], todo, &r);
+        if (!ret) break;
+
+        ret = _eina_file_copy_write_splice_internal(d, pipefd[0], r);
+        if (!ret) break;
+
+        *splice_unsupported = EINA_FALSE;
+        done += r;
+
+        if (cb)
+          {
+             ret = cb((void *)cb_data, done, total);
+             if (!ret) break;
+          }
+     }
+
+   close(pipefd[0]);
+   close(pipefd[1]);
+
+   return ret;
+#endif
+   *splice_unsupported = EINA_TRUE;
+   return EINA_FALSE;
+   (void)s;
+   (void)d;
+   (void)total;
+   (void)cb;
+   (void)cb_data;
+}
+
+static Eina_Bool
+_eina_file_copy_internal(int s, int d, off_t total, Eina_File_Copy_Progress cb, const void *cb_data)
+{
+   void *buf = NULL;
+   off_t bufsize = COPY_BLOCKSIZE;
+   off_t done;
+   Eina_Bool ret, splice_unsupported;
+
+   ret = _eina_file_copy_splice_internal(s, d, total, cb, cb_data,
+                                         &splice_unsupported);
+   if (ret)
+     return EINA_TRUE;
+   else if (!splice_unsupported) /* splice works, but copy failed anyway */
+     return EINA_FALSE;
+
+   /* make sure splice didn't change the position */
+   lseek(s, 0, SEEK_SET);
+   lseek(d, 0, SEEK_SET);
+
+   while ((bufsize > 0) && ((buf = malloc(bufsize)) == NULL))
+     bufsize /= 128;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, EINA_FALSE);
+
+   done = 0;
+   ret = EINA_TRUE;
+   while (done < total)
+     {
+        size_t todo;
+        ssize_t r;
+
+        if (done + bufsize < total)
+          todo = bufsize;
+        else
+          todo = total - done;
+
+        ret = _eina_file_copy_read_internal(s, buf, todo, &r);
+        if (!ret) break;
+
+        ret = _eina_file_copy_write_internal(d, buf, r);
+        if (!ret) break;
+
+        done += r;
+
+        if (cb)
+          {
+             ret = cb((void *)cb_data, done, total);
+             if (!ret) break;
+          }
+     }
+
+   free(buf);
+   return ret;
+}
+
+EAPI Eina_Bool
+eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data)
+{
+   struct stat st;
+   int s, d;
+   Eina_Bool success;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+
+   s = open(src, O_RDONLY);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL (s < 0, EINA_FALSE);
+
+   success = (fstat(s, &st) == 0);
+   EINA_SAFETY_ON_FALSE_GOTO(success, end);
+
+   d = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+   EINA_SAFETY_ON_TRUE_GOTO(d < 0, end);
+
+   success = _eina_file_copy_internal(s, d, st.st_size, cb, cb_data);
+   if (success)
+     {
+#ifdef HAVE_FCHMOD
+        if (flags & EINA_FILE_COPY_PERMISSION)
+          fchmod(d, st.st_mode);
+#endif
+        if (flags & EINA_FILE_COPY_XATTR)
+          eina_xattr_fd_copy(s, d);
+     }
+
+ end:
+   close(s);
+
+   if (!success)
+     unlink(dst);
+
+   return success;
 }

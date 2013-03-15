@@ -51,25 +51,6 @@
  * @cond LOCAL
  */
 
-#ifndef EINA_LOG_COLOR_DEFAULT
-#define EINA_LOG_COLOR_DEFAULT EINA_COLOR_CYAN
-#endif
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eina_file_log_dom, __VA_ARGS__)
-
-#ifdef WRN
-#undef WRN
-#endif
-#define WRN(...) EINA_LOG_DOM_WARN(_eina_file_log_dom, __VA_ARGS__)
-
-#ifdef DBG
-#undef DBG
-#endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
-
 #ifdef MAP_FAILED
 # undef MAP_FAILED
 #endif
@@ -105,7 +86,7 @@ struct _Eina_File_Direct_Iterator
    char                  dir[1];
 };
 
-static int _eina_file_log_dom = -1;
+int _eina_file_log_dom = -1;
 
 static Eina_Bool
 _eina_file_win32_is_dir(const char *dir)
