@@ -98,7 +98,6 @@ endif
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@ @EVIL_CFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
-lib_evil_libevil_la_DEPENDENCIES = @EVIL_INTERNAL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 if HAVE_WINCE
@@ -115,7 +114,6 @@ lib_evil_libdl_la_CPPFLAGS = \
 lib_evil_libdl_la_LIBADD = \
 @USE_EVIL_LIBS@ \
 @EVIL_DLFCN_LIBS@
-lib_evil_libdl_la_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 lib_evil_libdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binary
@@ -154,11 +152,9 @@ endif
 
 bin_evil_evil_suite_CPPFLAGS = @EVIL_CFLAGS@
 bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
-bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_LIBS@
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
-bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_LIBS@
 
 endif
 EXTRA_DIST += \
