@@ -9207,7 +9207,8 @@ EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *o
  * ) will be invisible.
  *
  * This API works differently to evas_object_show() and evas_object_hide().
- * Once source object is hidden by evas_object_hide() then the proxy object will * be hidden as well. Actually in this case both objects are excluded from the
+ * Once source object is hidden by evas_object_hide() then the proxy object will
+ * be hidden as well. Actually in this case both objects are excluded from the
  * Evas internal update circle.
  *
  * By this API, instead, one can toggle the visibility of a proxy's source
