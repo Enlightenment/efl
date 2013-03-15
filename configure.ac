@@ -1786,12 +1786,19 @@ EFL_EVAL_PKGS([ECORE])
 
 AC_HEADER_SYS_WAIT
 
+AC_CHECK_HEADERS([sys/socket.h])
+
 AC_CHECK_HEADERS([ \
+arpa/inet.h \
 langinfo.h \
 features.h \
+net/if.h \
+netinet/in.h \
+netinet/tcp.h \
 sys/prctl.h \
 sys/resource.h \
 sys/timerfd.h \
+sys/un.h \
 ])
 
 ### Checks for types
