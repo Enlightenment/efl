@@ -1153,3 +1153,7 @@
 2013-03-13  Tae-Hwan Kim (bluezery)
 
         * Fix a memory leak in elm_genlist. Return value of elm_genlist_realized_items_get should be freed
+
+2013-03-15  Jaehwan Kim
+
+        * Add the smart signals in scroller. "scroll,left", "scroll,right", "scroll,up", "scroll,down".

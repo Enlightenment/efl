@@ -49,6 +49,7 @@ Additions:
    * Add the config ELM_THUMBSCROLL_HOLD_THRESHOLD.
    * Add elm_naviframe_item_pop_cb_set().
    * Add elm_widget_newest_focus_order_get for knowing the last object(and its focus order) which got focus.
+   * Add the smart signals in scroller. "scroll,left", "scroll,right", "scroll,up", "scroll,down".
 
 Improvements:
 

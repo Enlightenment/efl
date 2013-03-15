@@ -157,6 +157,10 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_START_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_STOP_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_LEFT_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_RIGHT_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_UP_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_DOWN_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_LEFT_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET,
@@ -297,6 +301,50 @@ enum
  *
  */
 #define elm_scrollable_interface_scroll_cb_set(scroll_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, scroll_cb)
+
+/**
+ * @def elm_scrollable_interface_scroll_left_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scroll_left_cb
+ *
+ */
+#define elm_scrollable_interface_scroll_left_cb_set(scroll_left_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_LEFT_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, scroll_left_cb)
+
+/**
+ * @def elm_scrollable_interface_scroll_right_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scroll_right_cb
+ *
+ */
+#define elm_scrollable_interface_scroll_right_cb_set(scroll_right_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_RIGHT_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, scroll_right_cb)
+
+/**
+ * @def elm_scrollable_interface_scroll_up_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scroll_up_cb
+ *
+ */
+#define elm_scrollable_interface_scroll_up_cb_set(scroll_up_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_UP_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, scroll_up_cb)
+
+/**
+ * @def elm_scrollable_interface_scroll_down_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] scroll_down_cb
+ *
+ */
+#define elm_scrollable_interface_scroll_down_cb_set(scroll_down_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_DOWN_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, scroll_down_cb)
 
 /**
  * @def elm_scrollable_interface_edge_left_cb_set
@@ -951,6 +999,10 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Elm_Interface_Scrollable_Cb animate_start;
       Elm_Interface_Scrollable_Cb animate_stop;
       Elm_Interface_Scrollable_Cb scroll;
+      Elm_Interface_Scrollable_Cb scroll_left;
+      Elm_Interface_Scrollable_Cb scroll_right;
+      Elm_Interface_Scrollable_Cb scroll_up;
+      Elm_Interface_Scrollable_Cb scroll_down;
       Elm_Interface_Scrollable_Cb edge_left;
       Elm_Interface_Scrollable_Cb edge_right;
       Elm_Interface_Scrollable_Cb edge_top;

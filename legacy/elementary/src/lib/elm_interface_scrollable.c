@@ -1502,8 +1502,6 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    edje_object_part_drag_value_set
      (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
 
-   if (sig && ((px != x) || (py != y)))
-     edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
    if (!sid->down.bounce_x_animator)
      {
         if (((x < minx) && (0 <= sid->down.dx)) ||
@@ -1527,13 +1525,38 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
           sid->bouncemey = EINA_FALSE;
      }
 
-   if ((x != px) || (y != py))
-     {
-        if (sid->cb_func.scroll)
-          sid->cb_func.scroll(obj, NULL);
-     }
    if (sig)
      {
+        if ((x != px) || (y != py))
+          {
+             if (sid->cb_func.scroll)
+               sid->cb_func.scroll(obj, NULL);
+             edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
+             if (x < px)
+               {
+                  if (sid->cb_func.scroll_left)
+                    sid->cb_func.scroll_left(obj, NULL);
+                  edje_object_signal_emit(sid->edje_obj, "elm,action,scroll,left", "elm");
+               }
+             if (x > px)
+               {
+                  if (sid->cb_func.scroll_right)
+                    sid->cb_func.scroll_right(obj, NULL);
+                  edje_object_signal_emit(sid->edje_obj, "elm,action,scroll,right", "elm");
+               }
+             if (y < py)
+               {
+                  if (sid->cb_func.scroll_up)
+                    sid->cb_func.scroll_up(obj, NULL);
+                  edje_object_signal_emit(sid->edje_obj, "elm,action,scroll,up", "elm");
+               }
+             if (y > py)
+               {
+                  if (sid->cb_func.scroll_down)
+                    sid->cb_func.scroll_down(obj, NULL);
+                  edje_object_signal_emit(sid->edje_obj, "elm,action,scroll,down", "elm");
+               }
+          }
         if (x != px)
           {
              if (x == minx)
@@ -3574,6 +3597,38 @@ _elm_scroll_scroll_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_elm_scroll_scroll_left_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb scroll_left_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.scroll_left = scroll_left_cb;
+}
+
+static void
+_elm_scroll_scroll_right_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb scroll_right_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.scroll_right = scroll_right_cb;
+}
+
+static void
+_elm_scroll_scroll_up_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb scroll_up_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.scroll_up = scroll_up_cb;
+}
+
+static void
+_elm_scroll_scroll_down_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb scroll_down_cb = va_arg(*list, Elm_Interface_Scrollable_Cb);
+   sid->cb_func.scroll_down = scroll_down_cb;
+}
+
+static void
 _elm_scroll_edge_left_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -4165,6 +4220,10 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_START_CB_SET), _elm_scroll_animate_start_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_STOP_CB_SET), _elm_scroll_animate_stop_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_CB_SET), _elm_scroll_scroll_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_LEFT_CB_SET), _elm_scroll_scroll_left_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_RIGHT_CB_SET), _elm_scroll_scroll_right_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_UP_CB_SET), _elm_scroll_scroll_up_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_DOWN_CB_SET), _elm_scroll_scroll_down_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_LEFT_CB_SET), _elm_scroll_edge_left_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET), _elm_scroll_edge_right_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET), _elm_scroll_edge_top_cb_set),
@@ -4227,6 +4286,10 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_START_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_ANIMATE_STOP_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_LEFT_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_RIGHT_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_UP_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SCROLL_DOWN_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_LEFT_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_RIGHT_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_EDGE_TOP_CB_SET, "description here"),
