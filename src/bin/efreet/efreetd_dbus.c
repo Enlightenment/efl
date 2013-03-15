@@ -22,7 +22,7 @@ enum
 static EDBus_Connection *conn;
 static EDBus_Service_Interface *iface;
 
-static Ecore_Timer *shutdown = NULL;
+static Ecore_Timer *_shutdown = NULL;
 static int clients = 0;
 
 static Eina_Bool
@@ -50,8 +50,8 @@ client_name_owner_changed_cb(void *data EINA_UNUSED, const char *bus, const char
    if (clients <= 0)
      {
         clients = 0;
-        if (shutdown) ecore_timer_del(shutdown);
-        shutdown = ecore_timer_add(10.0, do_shutdown, NULL);
+        if (_shutdown) ecore_timer_del(_shutdown);
+        _shutdown = ecore_timer_add(10.0, do_shutdown, NULL);
      }
 }
 
@@ -69,8 +69,8 @@ do_register(const EDBus_Service_Interface *ifc EINA_UNUSED, const EDBus_Message 
    setenv("LANG", lang, 1);
 
    clients++;
-   if (shutdown) ecore_timer_del(shutdown);
-   shutdown = NULL;
+   if (_shutdown) ecore_timer_del(_shutdown);
+   _shutdown = NULL;
 
    edbus_name_owner_changed_callback_add(conn,
                                          edbus_message_sender_get(message),
