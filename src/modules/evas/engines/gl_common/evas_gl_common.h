@@ -42,6 +42,9 @@
 #ifndef GL_BGRA
 # define GL_BGRA 0x80E1
 #endif
+#ifndef GL_UNPACK_ROW_LENGTH_EXT
+# define GL_UNPACK_ROW_LENGTH_EXT 0x0cf2
+#endif
 
 #ifndef EGL_NO_CONTEXT
 # define EGL_NO_CONTEXT 0
@@ -222,6 +225,7 @@ struct _Evas_GL_Shared
       Eina_Bool tex_rect : 1;
       Eina_Bool sec_image_map : 1;
       Eina_Bool bin_program : 1;
+      Eina_Bool unpack_row_length : 1;
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
