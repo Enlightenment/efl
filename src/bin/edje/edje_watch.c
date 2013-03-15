@@ -2,13 +2,19 @@
 # include "config.h"
 #endif
 
-#include <sys/wait.h>
+#ifdef HAVE_SYS_WAIT_H
+# include <sys/wait.h>
+#endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eio.h>
-#ifdef HAVE_EVIL
-# include <Evil.h>
+
+#ifdef _WIN32
+# define WEXITSTATUS(r) r
 #endif
 
 static char watchfile[PATH_MAX];
