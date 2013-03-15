@@ -391,6 +391,10 @@ ecore_fork_reset(void)
              free(fcb);
           }
      }
+
+#ifdef HAVE_SYSTEMD
+   unsetenv("NOTIFY_SOCKET");
+#endif
 }
 
 /**
