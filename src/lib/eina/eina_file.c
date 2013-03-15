@@ -36,6 +36,10 @@
 #endif
 #include <fcntl.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #define PATH_DELIM '/'
 #define COPY_BLOCKSIZE (4 * 1024 * 1024)
 
