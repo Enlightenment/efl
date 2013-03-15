@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2205
+#: src/lib/elm_config.c:2221
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-04 14:27+0900\n"
+"POT-Creation-Date: 2013-03-15 10:03+0900\n"
 "PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -25,8 +25,8 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1271
-#: src/lib/elm_entry.c:1296
+#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1277
+#: src/lib/elm_entry.c:1302
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -44,7 +44,7 @@ msgstr "Clicado"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1790
+#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1796
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -129,7 +129,7 @@ msgstr "Relógio"
 msgid "color selector palette item"
 msgstr "item do seletor de cor"
 
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2237
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
@@ -137,23 +137,23 @@ msgstr "padrão: LTR"
 msgid "diskselector item"
 msgstr "item do seletor de disco"
 
-#: src/lib/elm_entry.c:1264
+#: src/lib/elm_entry.c:1270
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1268
+#: src/lib/elm_entry.c:1274
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1283
+#: src/lib/elm_entry.c:1289
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1290
+#: src/lib/elm_entry.c:1296
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:2924
+#: src/lib/elm_entry.c:2931
 msgid "Entry"
 msgstr "Entrada"
 
@@ -165,7 +165,7 @@ msgstr "Item da grelha genérica"
 msgid "Index Item"
 msgstr "Item do índice"
 
-#: src/lib/elm_index.c:853
+#: src/lib/elm_index.c:862
 msgid "Index"
 msgstr "Índice"
 
@@ -209,27 +209,27 @@ msgstr "botão de diminuição do spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1287 src/lib/elm_toolbar.c:1850
+#: src/lib/elm_toolbar.c:1293 src/lib/elm_toolbar.c:1857
 msgid "Selected"
 msgstr "Selecionado"
 
-#: src/lib/elm_toolbar.c:1788
+#: src/lib/elm_toolbar.c:1794
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1792
+#: src/lib/elm_toolbar.c:1798
 msgid "State: Selected"
 msgstr "Estado: selecionado"
 
-#: src/lib/elm_toolbar.c:1794
+#: src/lib/elm_toolbar.c:1800
 msgid "Has menu"
 msgstr "Tem menu"
 
-#: src/lib/elm_toolbar.c:1845
+#: src/lib/elm_toolbar.c:1852
 msgid "Unselected"
 msgstr "Não selecionado"
 
-#: src/lib/elm_toolbar.c:1862
+#: src/lib/elm_toolbar.c:1869
 msgid "Toolbar Item"
 msgstr "Item da barra de ferramentas"
 

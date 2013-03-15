@@ -2,12 +2,12 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-#: src/lib/elm_config.c:2205
+#: src/lib/elm_config.c:2221
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-04 14:27+0900\n"
+"POT-Creation-Date: 2013-03-15 10:03+0900\n"
 "PO-Revision-Date: 2013-01-04 14:42+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -25,8 +25,8 @@ msgstr "Arriba"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1271
-#: src/lib/elm_entry.c:1296
+#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1277
+#: src/lib/elm_entry.c:1302
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -44,7 +44,7 @@ msgstr "Clickado"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1790
+#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1796
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -129,7 +129,7 @@ msgstr "Reloj"
 msgid "color selector palette item"
 msgstr "Paleta de selección de color"
 
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2237
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -137,23 +137,23 @@ msgstr "Predeterminado: LTR"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1264
+#: src/lib/elm_entry.c:1270
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1268
+#: src/lib/elm_entry.c:1274
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1283
+#: src/lib/elm_entry.c:1289
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1290
+#: src/lib/elm_entry.c:1296
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:2924
+#: src/lib/elm_entry.c:2931
 msgid "Entry"
 msgstr "Entrada"
 
@@ -165,7 +165,7 @@ msgstr "Cuadrícula genérica"
 msgid "Index Item"
 msgstr "Elemento del índice"
 
-#: src/lib/elm_index.c:853
+#: src/lib/elm_index.c:862
 msgid "Index"
 msgstr "Índice"
 
@@ -209,27 +209,27 @@ msgstr "botón de decremento del spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1287 src/lib/elm_toolbar.c:1850
+#: src/lib/elm_toolbar.c:1293 src/lib/elm_toolbar.c:1857
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:1788
+#: src/lib/elm_toolbar.c:1794
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1792
+#: src/lib/elm_toolbar.c:1798
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
-#: src/lib/elm_toolbar.c:1794
+#: src/lib/elm_toolbar.c:1800
 msgid "Has menu"
 msgstr "Tiene menú"
 
-#: src/lib/elm_toolbar.c:1845
+#: src/lib/elm_toolbar.c:1852
 msgid "Unselected"
 msgstr "Sin seleccionar"
 
-#: src/lib/elm_toolbar.c:1862
+#: src/lib/elm_toolbar.c:1869
 msgid "Toolbar Item"
 msgstr "Elemento de la barra de herramientas"
 
