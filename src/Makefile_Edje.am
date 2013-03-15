@@ -184,6 +184,9 @@ $(CWARNFLAGS) \
 -DTARGET_CR=13 \
 -DTARGET_TAB=9 \
 -DTARGET_VT=11
+if HAVE_WIN32
+bin_edje_epp_epp_LDADD = lib/evil/libevil.la
+endif
 
 # TODO: why keep these?
 EXTRA_DIST += \
