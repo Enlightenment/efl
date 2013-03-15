@@ -46,7 +46,11 @@ bin_eet_eet_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
 @EET_CFLAGS@
 
+if HAVE_WIN32
+bin_eet_eet_LDADD = -L$(top_builddir)/src/lib/evil @USE_EET_LIBS@
+else
 bin_eet_eet_LDADD = @USE_EET_LIBS@
+endif
 bin_eet_eet_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 
 ### Unit tests

@@ -67,6 +67,12 @@ lib_efreet_libefreet_trash_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binary
 
+if HAVE_WIN32
+USE_EFREET_BIN_LIBS = -L$(top_builddir)/src/lib/evil @USE_EFREET_LIBS@
+else
+USE_EFREET_BIN_LIBS = @USE_EFREET_LIBS@
+endif
+
 bin_PROGRAMS += bin/efreet/efreetd
 
 bin_efreet_efreetd_SOURCES = \
@@ -78,7 +84,7 @@ bin/efreet/efreetd_cache.h \
 bin/efreet/efreetd_cache.c
 
 bin_efreet_efreetd_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreetd_LDADD = @USE_EFREET_LIBS@
+bin_efreet_efreetd_LDADD = $(USE_EFREET_BIN_LIBS)
 bin_efreet_efreetd_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 
 efreetinternal_bindir=$(libdir)/efreet/$(MODULE_ARCH)
@@ -87,12 +93,12 @@ bin/efreet/efreet_desktop_cache_create \
 bin/efreet/efreet_icon_cache_create
 
 bin_efreet_efreet_desktop_cache_create_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreet_desktop_cache_create_LDADD = @USE_EFREET_LIBS@
+bin_efreet_efreet_desktop_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
 bin_efreet_efreet_desktop_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 bin_efreet_efreet_desktop_cache_create_SOURCES = bin/efreet/efreet_desktop_cache_create.c
 
 bin_efreet_efreet_icon_cache_create_CPPFLAGS = $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreet_icon_cache_create_LDADD = @USE_EFREET_LIBS@
+bin_efreet_efreet_icon_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
 bin_efreet_efreet_icon_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 bin_efreet_efreet_icon_cache_create_SOURCES = bin/efreet/efreet_icon_cache_create.c
 

@@ -66,5 +66,9 @@ bin/ethumb/ethumb
 
 bin_ethumb_ethumb_SOURCES = bin/ethumb/ethumb.c
 bin_ethumb_ethumb_CPPFLAGS = @ETHUMB_CFLAGS@
+if HAVE_WIN32
+bin_ethumb_ethumb_LDADD = -L$(top_builddir)/src/lib/evil @USE_ETHUMB_LIBS@
+else
 bin_ethumb_ethumb_LDADD = @USE_ETHUMB_LIBS@
+endif
 bin_ethumb_ethumb_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@

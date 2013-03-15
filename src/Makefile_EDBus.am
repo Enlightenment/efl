@@ -56,7 +56,12 @@ bin_edbus_edbus_codegen_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/edbus\" \
 @EDBUS_CFLAGS@
+
+if HAVE_WIN32
+bin_edbus_edbus_codegen_LDADD = -L$(top_builddir)/src/lib/evil @USE_EDBUS_LIBS@
+else
 bin_edbus_edbus_codegen_LDADD = @USE_EDBUS_LIBS@
+endif
 bin_edbus_edbus_codegen_DEPENDENCIES = @USE_EDBUS_INTERNAL_LIBS@
 
 ### Unit tests

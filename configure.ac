@@ -823,6 +823,9 @@ EFL_LIB_START([Eo])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EO] [evil])
+
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EO], [eina])
 
@@ -2030,6 +2033,9 @@ EFL_LIB_START([Ecore_Ipc])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_IPC] [evil])
+
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IPC], [ecore])
@@ -2066,6 +2072,9 @@ EFL_LIB_START([Ecore_File])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_FILE] [evil])
+
 ### Checks for libraries
 EFL_PLATFORM_DEPEND([ECORE_FILE], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_FILE], [ecore-con])
@@ -2098,6 +2107,9 @@ EFL_LIB_START([Ecore_Input])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_INPUT] [evil])
+
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eo])
@@ -2127,6 +2139,9 @@ EFL_LIB_START([Ecore_Input_Evas])
 ### Default values
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_INPUT_EVAS] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT_EVAS], [ecore-input])
@@ -2390,6 +2405,9 @@ AC_ARG_ENABLE([pulseaudio],
 ### Default values
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_AUDIO] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_AUDIO], [ecore])
@@ -2749,6 +2767,9 @@ fi
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_IMF] [evil])
+
 ### Checks for libraries
 EFL_PLATFORM_DEPEND([ECORE_IMF], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF], [ecore])
@@ -2835,6 +2856,9 @@ EFL_LIB_START([Ecore_Imf_Evas])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_IMF_EVAS] [evil])
+
 ### Checks for libraries
 EFL_PLATFORM_DEPEND([ECORE_IMF_EVAS], [escape])
 EFL_INTERNAL_DEPEND_PKG([ECORE_IMF_EVAS], [ecore-imf])
@@ -2879,6 +2903,9 @@ if test "x${have_ecore_ipc}" = "xno" || \
 fi
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_EVAS] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-input-evas])
@@ -3024,6 +3051,9 @@ EFL_LIB_START([Eio])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EIO] [evil])
+
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EIO], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EIO], [eet])
@@ -3058,6 +3088,9 @@ EFL_LIB_START([EDBus])
 ### Default values
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EDBUS] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EDBUS], [ecore])
@@ -3094,6 +3127,9 @@ EFL_LIB_START([Efreet])
 AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EFREET] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eet])
@@ -3477,6 +3513,9 @@ EFL_LIB_START([Ethumb])
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ETHUMB] [evil])
+
 ### Checks for libraries
 EFL_PLATFORM_DEPEND([EINA], [evil])
 
@@ -3517,6 +3556,9 @@ EFL_LIB_START([Ethumb_Client])
 ### Additional options to configure
 
 ### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ETHUMB_CLIENT] [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eina])
