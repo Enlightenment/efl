@@ -3365,6 +3365,10 @@ AC_SUBST([want_physics])
 
 ### Checks for header files
 
+AC_CHECK_HEADERS([ \
+sys/wait.h \
+])
+
 ### Checks for types
 
 ### Checks for structures
