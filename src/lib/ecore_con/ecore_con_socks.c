@@ -10,12 +10,29 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <arpa/inet.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+
+#ifdef HAVE_SYS_UN_H
 #include <sys/un.h>
-#include <sys/socket.h>
+#endif
+
+#ifdef HAVE_NET_IF_H
+# include <net/if.h>
+#endif
 
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
@@ -29,6 +46,10 @@
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
+
+#if defined(_WIN32) && !defined(IF_NAMESIZE)
+#define IF_NAMESIZE 16
+#endif
 
 /* http://tools.ietf.org/html/rfc1928
           o  X'00' NO AUTHENTICATION REQUIRED
