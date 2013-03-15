@@ -9,14 +9,14 @@
 # include <winsock2.h>
 #endif
 
+#include <Ecore_File.h>
+
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_base_log_dom
 static int _efreet_base_log_dom = -1;
 
 #include "Efreet.h"
 #include "efreet_private.h"
-
-#include <Ecore_File.h>
 
 static Efreet_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Efreet_Version *efreet_version = &_version;

@@ -19,7 +19,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EFREET_MIME_BUILD
+# ifdef EFL_EFREET_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
