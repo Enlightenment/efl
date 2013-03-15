@@ -4,9 +4,6 @@
 
 #include "edbus_private.h"
 #include "edbus_private_types.h"
-#include <dbus/dbus.h>
-
-#include <Ecore.h>
 
 #define EDBUS_CONNECTION_CHECK(conn)                        \
   do                                                        \

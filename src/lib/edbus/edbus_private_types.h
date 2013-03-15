@@ -1,11 +1,6 @@
 #ifndef EDBUS_PRIVATE_TYPES_H
 #define EDBUS_PRIVATE_TYPES_H 1
 
-#include "EDBus.h"
-#include <Eina.h>
-#include <dbus/dbus.h>
-#include <Ecore.h>
-
 typedef struct _EDBus_Connection_Name
 {
    const char *name;
