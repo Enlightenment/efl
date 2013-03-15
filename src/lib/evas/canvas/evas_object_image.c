@@ -185,7 +185,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, -1
+  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, -1
 };
 
 static const Evas_Object_Image_State default_state = {
@@ -198,7 +198,7 @@ static const Evas_Object_Image_State default_state = {
   EVAS_COLORSPACE_ARGB8888,
   EVAS_TEXTURE_REPEAT,
 
-  EINA_TRUE, EINA_FALSE, EINA_FALSE
+  EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
 
 Eina_Cow *evas_object_image_load_opts_cow = NULL;
