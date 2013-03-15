@@ -20,10 +20,6 @@
 # include <sys/wait.h>
 #endif
 
-#ifdef HAVE_SYSTEMD
-# include <systemd/sd-daemon.h>
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
