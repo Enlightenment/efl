@@ -19,6 +19,7 @@ Additions:
       	   eina_xattr_fd_copy()
      - Add eina_stringshare_refplace()
      - Add eina_file_copy()
+     - Add eina_log_print_cb_journald()
     * Add Cserve2 scalecache support
     * ecore_x:
      - Add window profile support.

@@ -891,6 +891,35 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  void                  *data,
                                  va_list                args);
 
+
+/**
+ * Alternative logging method, this will output to systemd journal.
+ *
+ * @param d The domain.
+ * @param level Not used.
+ * @param file The file which is logged.
+ * @param fnc The function which is logged.
+ * @param line The line which is logged.
+ * @param fmt The ouptut format to use.
+ * @param data The file which will store the output (as a FILE *).
+ * @param args The arguments needed by the format.
+ *
+ * This method will never output color.
+ *
+ * @note if systemd journal is not there it will display error on stderr.
+ * @note if the process has been started by systemd this will be the default logging method.
+ *
+ * @since 1.8
+ */
+EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
+				     Eina_Log_Level level,
+				     const char *file,
+				     const char *fnc,
+				     int line,
+				     const char *fmt,
+				     void *data,
+				     va_list args);
+
 /**
  * Configure console color of given file.
  *

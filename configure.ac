@@ -290,7 +290,7 @@ AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 
 # check for systemd library if requested
 if test "x{want_systemd}" = "xyes"; then
-   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon],
+   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon libsystemd-journal],
    		[want_systemd="yes"],
 		[want_systemd="no"])
 fi
@@ -695,6 +695,8 @@ AC_DEFINE_IF([EINA_DEBUG_MALLOC],
    [test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"],
    [1], [Turn on debugging overhead in mempool])
 
+EFL_OPTIONAL_DEPEND_PKG([EINA], [${want_systemd}], [SYSTEMD], [libsystemd-journal])
+
 EFL_EVAL_PKGS([EINA])
 
 ## Examples
@@ -760,6 +762,8 @@ EINA_CONFIG([HAVE_DEBUG_THREADS], [test "$want_debug_threads" = "yes"])
 EINA_CHECK_MODULE([chained-pool], [static], [chained pool])
 EINA_CHECK_MODULE([pass-through], [static], [pass through])
 EINA_CHECK_MODULE([one-big],      [static], [one big])
+
+EFL_ADD_FEATURE([EINA], [systemd-journal], [${have_systemd}])
 
 EFL_LIB_END([Eina])
 #### End of Eina
@@ -3740,6 +3744,7 @@ echo "  Image Loaders.: ${features_evas_loader}"
 if test "x${have_pixman}" = "xyes" ; then
 echo "  Pixman........: ${features_evas_pixman}"
 fi
+echo "Eina............: yes (${features_eina})"
 echo "Ecore...........: yes (${features_ecore})"
 echo "Ecore_Con.......: yes (${features_ecore_con})"
 echo "Ecore_File......: yes"
