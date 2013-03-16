@@ -54,4 +54,4 @@ bin/ethumb_client/ethumbd_private.h \
 bin/ethumb_client/ethumbd_slave.c
 bin_ethumb_client_ethumbd_slave_CPPFLAGS = @ETHUMB_CFLAGS@
 bin_ethumb_client_ethumbd_slave_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
-bin_ethumb_client_ethumbd_slave_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@
+bin_ethumb_client_ethumbd_slave_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@ @USE_ETHUMB_INTERNAL_LIBS@
