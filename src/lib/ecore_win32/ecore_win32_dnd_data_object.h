@@ -24,7 +24,7 @@ class DataObject : public IDataObject
  public: // structors
 
    DataObject(FORMATETC *fmtetc, STGMEDIUM *stgmed, int count);
-   ~DataObject();
+   virtual ~DataObject();
 
  public: // IUnknown
 

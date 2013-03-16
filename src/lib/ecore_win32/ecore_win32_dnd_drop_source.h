@@ -19,6 +19,7 @@ class DropSource : public IDropSource
  public: // structors
 
    DropSource();
+   virtual ~DropSource() { }
 
  public: // IUnknown
 
