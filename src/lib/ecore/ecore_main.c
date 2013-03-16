@@ -343,7 +343,7 @@ _ecore_epoll_add(int   efd,
    memset(&ev, 0, sizeof (ev));
    ev.events = events;
    ev.data.ptr = ptr;
-   INF("adding poll on %d %08x", fd, events);
+   DBG("adding poll on %d %08x", fd, events);
    return epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
 }
 
@@ -386,7 +386,7 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
-        INF("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
+        DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_add_poll(ecore_glib_source, &fdh->gfd);
 #endif
      }
@@ -402,7 +402,7 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
         int efd = _ecore_get_epoll_fd();
 
         memset(&ev, 0, sizeof (ev));
-        INF("removing poll on %d", fdh->fd);
+        DBG("removing poll on %d", fdh->fd);
         /* could get an EBADF if somebody closed the FD before removing it */
         if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0))
           {
@@ -425,7 +425,7 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
-        INF("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
+        DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_add_poll(ecore_glib_source, &fdh->gfd);
 #endif
      }
@@ -443,7 +443,7 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
         memset(&ev, 0, sizeof (ev));
         ev.events = _ecore_poll_events_from_fdh(fdh);
         ev.data.ptr = fdh;
-        INF("modifing epoll on %d to %08x", fdh->fd, ev.events);
+        DBG("modifing epoll on %d to %08x", fdh->fd, ev.events);
         r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
      }
    else
@@ -452,7 +452,7 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
-        INF("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
+        DBG("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
 #endif
      }
    return r;
