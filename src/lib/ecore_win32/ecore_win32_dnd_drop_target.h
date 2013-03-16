@@ -28,6 +28,7 @@ class DropTarget : public IDropTarget
  public: // structors
 
    DropTarget(HWND hwnd, Ecore_Win32_Dnd_DropTarget_Callback callback, void *window_obj_ptr);
+   virtual ~DropTarget() { }
 
 public: // IUnknown
 
