@@ -66,21 +66,21 @@ ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *parent EINA_UNUSED,
 }
 
 EAPI Ecore_Evas *
-ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
-			int                 x,
-			int                 y,
-			int                 width,
-			int                 height)
+ecore_evas_direct3d_new(Ecore_Win32_Window *parent EINA_UNUSED,
+			int                 x EINA_UNUSED,
+			int                 y EINA_UNUSED,
+			int                 width EINA_UNUSED,
+			int                 height EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI Ecore_Evas *
-ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
-		       int                 x,
-		       int                 y,
-		       int                 width,
-		       int                 height)
+ecore_evas_gl_glew_new(Ecore_Win32_Window *parent EINA_UNUSED,
+		       int                 x EINA_UNUSED,
+		       int                 y EINA_UNUSED,
+		       int                 width EINA_UNUSED,
+		       int                 height EINA_UNUSED)
 {
    return NULL;
 }
