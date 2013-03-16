@@ -189,18 +189,6 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return EINA_FALSE;
 #endif
-      case ECORE_EVAS_ENGINE_DIRECT3D:
-#ifdef BUILD_ECORE_EVAS_DIRECT3D
-        return EINA_TRUE;
-#else
-        return EINA_FALSE;
-#endif
-      case ECORE_EVAS_ENGINE_OPENGL_GLEW:
-#ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
-        return EINA_TRUE;
-#else
-        return EINA_FALSE;
-#endif
      case ECORE_EVAS_ENGINE_SOFTWARE_SDL:
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
         return EINA_TRUE;
@@ -229,6 +217,10 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
       case ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW:
         return EINA_FALSE;
       case ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE:
+        return EINA_FALSE;
+      case ECORE_EVAS_ENGINE_DIRECT3D:
+        return EINA_FALSE;
+      case ECORE_EVAS_ENGINE_OPENGL_GLEW:
         return EINA_FALSE;
 
       case ECORE_EVAS_ENGINE_OPENGL_COCOA:
@@ -3344,7 +3336,7 @@ ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
-   new = eina_module_symbol_get(m, "ecore_evas_software_gdi_new_internal");
+   new = eina_module_symbol_get(m, "ecore_evas_software_gdi_new");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(parent, x, y, width, height);
@@ -3361,41 +3353,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
-   new = eina_module_symbol_get(m, "ecore_evas_software_ddraw_new_internal");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
-
-   return new(parent, x, y, width, height);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_direct3d_new(Ecore_Win32_Window *parent,
-			int                 x,
-			int                 y,
-			int                 width,
-			int                 height)
-{
-   Ecore_Evas *(*new)(Ecore_Win32_Window *, int, int, int, int);
-   Eina_Module *m = _ecore_evas_engine_load("win32");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-
-   new = eina_module_symbol_get(m, "ecore_evas_direct3d_new_internal");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
-
-   return new(parent, x, y, width, height);
-}
-
-EAPI Ecore_Evas *
-ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
-		       int                 x,
-		       int                 y,
-		       int                 width,
-		       int                 height)
-{
-   Ecore_Evas *(*new)(Ecore_Win32_Window *, int, int, int, int);
-   Eina_Module *m = _ecore_evas_engine_load("win32");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-
-   new = eina_module_symbol_get(m, "ecore_evas_gl_glew_new_internal");
+   new = eina_module_symbol_get(m, "ecore_evas_software_ddraw_new");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(parent, x, y, width, height);
