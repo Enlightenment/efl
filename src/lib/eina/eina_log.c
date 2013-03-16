@@ -34,6 +34,10 @@
 # define EINA_LOG_BACKTRACE
 #endif
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-journal.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -43,6 +47,8 @@
 #include "eina_inlist.h"
 #include "eina_lock.h"
 #include "eina_thread.h"
+#include "eina_convert.h"
+#include "eina_strbuf.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -1354,6 +1360,11 @@ eina_log_init(void)
      }
 #endif
 
+#ifdef HAVE_SYSTEMD
+   if (getenv("NOTIFY_SOCKET"))
+      _print_cb = eina_log_print_cb_journald;
+#endif
+
    if ((tmp = getenv(EINA_LOG_ENV_FILE_DISABLE)) && (atoi(tmp) == 1))
       _disable_file = EINA_TRUE;
 
@@ -1371,6 +1382,10 @@ eina_log_init(void)
    // Global log level
    if ((level = getenv(EINA_LOG_ENV_LEVEL)))
       _log_level = atoi(level);
+#ifdef HAVE_SYSTEMD
+   else if (getenv("NOTIFY_SOCKET") && (_print_cb == eina_log_print_cb_journald))
+      _log_level = EINA_LOG_LEVEL_INFO;
+#endif
 
    // Register UNKNOWN domain, the default logger
    EINA_LOG_DOMAIN_GLOBAL = eina_log_domain_register("", NULL);
@@ -1871,6 +1886,74 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d,
    (void) fmt;
    (void) data;
    (void) args;
+#endif
+}
+
+EAPI void
+eina_log_print_cb_journald(const Eina_Log_Domain *d,
+			   Eina_Log_Level level,
+			   const char *file,
+			   const char *fnc,
+			   int line,
+			   const char *fmt,
+			   void *data EINA_UNUSED,
+			   va_list args)
+{
+#ifdef HAVE_SYSTEMD
+   char buf[12];
+   char *tmp;
+   Eina_Thread cur;
+
+   vasprintf(&tmp, fmt, args);
+
+   eina_convert_itoa(line, buf);
+
+   cur = SELF();
+
+#ifdef EINA_LOG_BACKTRACE
+   if (EINA_LIKELY(level >= _backtrace_level))
+#endif
+     sd_journal_send_with_location(file, buf, fnc,
+				   "PRIORITY=%i", level,
+				   "MESSAGE=%s", tmp,
+				   "EFL_DOMAIN=%s", d->domain_str,
+				   "THREAD=%lu", cur,
+				   NULL);
+#ifdef EINA_LOG_BACKTRACE
+   else
+     {
+        Eina_Strbuf *bts;
+	char **strings;
+        void *bt[256];
+	int btlen;
+	int i;
+
+	btlen = backtrace((void **)bt, 256);
+	strings = backtrace_symbols((void **)bt, btlen);
+
+	bts = eina_strbuf_new();
+	for (i = 0; i < btlen; i++)
+	  if (i + 1 == btlen)
+	    eina_strbuf_append_printf(bts, "[%s]", strings[i]);
+	  else
+	    eina_strbuf_append_printf(bts, "[%s], ", strings[i]);
+
+	sd_journal_send_with_location(file, buf, fnc,
+				      "PRIORITY=%i", level,
+				      "MESSAGE=%s", tmp,
+				      "EFL_DOMAIN=%s", d->domain_str,
+				      "THREAD=%lu", cur,
+				      "BACKTRACE=%s", eina_strbuf_string_get(bts),
+				      NULL);
+	eina_strbuf_free(bts);
+	free(strings);
+     }
+#endif
+
+   free(tmp);
+
+#else
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, data, args);
 #endif
 }
 

@@ -1,6 +1,7 @@
 2013-03-16  Cedric Bail
 
 	* Remove Glew and Direct3d code from Ecore_Evas module.
+	* Add Eina_Log integration for Systemd journal.
 
 2013-03-15  Carsten Haitzler (The Rasterman)
 
