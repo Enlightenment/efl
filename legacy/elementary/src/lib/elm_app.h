@@ -5,6 +5,16 @@
  * run time location of the software in question, so other data files
  * such as images, sound files, executable utilities, libraries,
  * modules and locale files can be found.
+ */
+
+/**
+ * @addtogroup App
+ * @{
+ */
+
+/**
+ * Re-locate the application somewhere else after compilation, if the developer
+ * wishes for easier distribution of pre-compiled binaries.
  *
  * @param mainfunc This is your application's main function name,
  *        whose binary's location is to be found. Providing @c NULL
@@ -19,10 +29,6 @@
  *        under the share directory provided above). Its presence will
  *        help determine the prefix found was correct. Pass @c NULL if
  *        the check is not to be done.
- *
- * This function allows one to re-locate the application somewhere
- * else after compilation, if the developer wishes for easier
- * distribution of pre-compiled binaries.
  *
  * The prefix system is designed to locate where the given software is
  * installed (under a common path prefix) at run time and then report
@@ -258,3 +264,7 @@ EAPI const char *elm_app_data_dir_get(void);
  * @ingroup App
  */
 EAPI const char *elm_app_locale_dir_get(void);
+
+/**
+ * @}
+ */
