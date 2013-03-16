@@ -976,7 +976,7 @@ elm_exit(void)
         Evas_Object *win;
 
         EINA_LIST_FOREACH_SAFE(_elm_win_list, l, l_next, win)
-           evas_object_del(win);
+          evas_object_del(win);
      }
 }
 
