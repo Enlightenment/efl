@@ -1,3 +1,7 @@
+2013-03-16  Cedric Bail
+
+	* Remove Glew and Direct3d code from Ecore_Evas module.
+
 2013-03-15  Carsten Haitzler (The Rasterman)
 
         * Fix opengl-es 2.0 engine support to only use GL_UNPACK_ROW_LENGTH
