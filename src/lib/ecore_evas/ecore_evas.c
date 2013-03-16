@@ -3336,7 +3336,7 @@ ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
-   new = eina_module_symbol_get(m, "ecore_evas_software_gdi_new");
+   new = eina_module_symbol_get(m, "ecore_evas_software_gdi_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(parent, x, y, width, height);
@@ -3353,7 +3353,7 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
    Eina_Module *m = _ecore_evas_engine_load("win32");
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
-   new = eina_module_symbol_get(m, "ecore_evas_software_ddraw_new");
+   new = eina_module_symbol_get(m, "ecore_evas_software_ddraw_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(parent, x, y, width, height);

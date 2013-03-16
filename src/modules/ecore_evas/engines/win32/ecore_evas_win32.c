@@ -1310,67 +1310,53 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    return ee;
 }
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
-
 EAPI Ecore_Evas *
-ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
-                            int                 x,
-                            int                 y,
-                            int                 width,
-                            int                 height)
+ecore_evas_software_gdi_new_internal(Ecore_Win32_Window *parent,
+				     int                 x,
+				     int                 y,
+				     int                 width,
+				     int                 height)
 {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_gdi_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-}
-
 #else
-
-EAPI Ecore_Evas *
-ecore_evas_software_gdi_new(Ecore_Win32_Window *parent EINA_UNUSED,
-                            int                 x EINA_UNUSED,
-                            int                 y EINA_UNUSED,
-                            int                 width EINA_UNUSED,
-                            int                 height EINA_UNUSED)
-{
+   (void) parent;
+   (void) x;
+   (void) y;
+   (void) width;
+   (void) height;
    return NULL;
+#endif
 }
 
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_GDI */
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
-
 EAPI Ecore_Evas *
-ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
-                              int                 x,
-                              int                 y,
-                              int                 width,
-                              int                 height)
+ecore_evas_software_ddraw_new_internal(Ecore_Win32_Window *parent,
+				       int                 x,
+				       int                 y,
+				       int                 width,
+				       int                 height)
 {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
    return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_ddraw_init,
                                          parent,
                                          x,
                                          y,
                                          width,
                                          height);
-}
-
 #else
-
-EAPI Ecore_Evas *
-ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent EINA_UNUSED,
-                              int                 x EINA_UNUSED,
-                              int                 y EINA_UNUSED,
-                              int                 width EINA_UNUSED,
-                              int                 height EINA_UNUSED)
-{
+   (void) parent;
+   (void) x;
+   (void) y;
+   (void) width;
+   (void) height;
    return NULL;
-}
-
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
+}
 
 static Ecore_Win32_Window *
 _ecore_evas_win32_window_get(const Ecore_Evas *ee)
