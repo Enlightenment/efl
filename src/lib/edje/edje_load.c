@@ -238,7 +238,7 @@ edje_file_group_exists(const char *file, const char *glob)
      }
    _edje_cache_file_unref(edf);
 
-   INF("edje_file_group_exists: '%s', '%s': %i.", file, glob, succeed);
+   DBG("edje_file_group_exists: '%s', '%s': %i.", file, glob, succeed);
 
    return succeed;
 }
