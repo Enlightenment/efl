@@ -1408,6 +1408,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 {
    const Edje_Signals_Sources_Patterns *ssp;
    Edje_Signal_Callback_Matches *m;
+   const void **custom_data;
+   Eina_Bool *flags;
    const Eina_Inarray *match;
    int r = 1;
 
@@ -1418,18 +1420,22 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    _edje_freeze(ed);
    _edje_block(ed);
 
-   ed->walking_callbacks++;
-
    ssp = _edje_signal_callback_patterns_ref(ed->callbacks);
 
    m = (Edje_Signal_Callback_Matches*) ed->callbacks->matches;
    EINA_REFCOUNT_REF(m);
 
    callback_extra_data = (data) ? data->data : NULL;
+   custom_data = alloca(sizeof (void*) * m->matches_count);
+   memcpy(custom_data, ed->callbacks->custom_data, sizeof (void*) * m->matches_count);
+   flags = alloca(sizeof (Eina_Bool) * m->matches_count);
+   memcpy(flags, ed->callbacks->flags, sizeof (Eina_Bool) * (m->matches_count >> 1));
 
    if (eina_inarray_count(&ssp->u.callbacks.globing))
      r = edje_match_callback_exec(ssp,
 				  m->matches,
+				  custom_data,
+				  flags,
                                   sig,
                                   src,
                                   ed,
@@ -1447,13 +1453,11 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
         EINA_INARRAY_FOREACH(match, i)
           {
-	     if (_edje_signal_callback_run(ed->callbacks->flags, *i)) continue;
-             if ((prop) && (_edje_signal_callback_prop(ed->callbacks->flags,
-						       *i))) continue;
-
              cb = &m->matches[*i];
 
-             cb->func((void*) ed->callbacks->custom_data[*i], ed->obj, sig, src);
+             if ((prop) && (_edje_signal_callback_prop(flags, *i))) continue;
+
+             cb->func((void*) custom_data[*i], ed->obj, sig, src);
              if (_edje_block_break(ed))
                break;
           }
@@ -1463,12 +1467,6 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    _edje_signal_callback_matches_unref(m);
 
    _edje_signal_callback_patterns_unref(ssp);
-
-   ed->walking_callbacks--;
-
-   if (ed->walking_callbacks == 0)
-     _edje_signal_callback_reset(ed->callbacks->flags,
-				 ed->callbacks->matches->matches_count);
 
    _edje_unblock(ed);
    _edje_thaw(ed);

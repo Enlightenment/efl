@@ -1836,6 +1836,8 @@ Eina_Bool        edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
                                           Eina_Bool               prop);
 int edje_match_callback_exec(const Edje_Signals_Sources_Patterns *ssp,
 			     const Edje_Signal_Callback_Match *matches,
+			     const void **custom_data,
+			     const Eina_Bool *flags,
 			     const char *sig,
 			     const char *source,
 			     Edje *ed,
@@ -1965,8 +1967,6 @@ void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
 Eina_Bool _edje_signal_callback_prop(const Eina_Bool *flags, int i);
-Eina_Bool _edje_signal_callback_run(const Eina_Bool *flags, unsigned int i);
-void _edje_signal_callback_reset(Eina_Bool *flags, unsigned int length);
 
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *gp);
 
