@@ -841,6 +841,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
      }
    else
      {
+        savedtypes.imgfile = NULL;
         _pasteimage_append(p, sel->requestwidget);
         free(stripstr);
      }
