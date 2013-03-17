@@ -261,7 +261,7 @@ ecore_con_url_new(const char *url)
    return url_con;
 #else
    return NULL;
-   url = NULL;
+   (void)url;
 #endif
 }
 
@@ -296,8 +296,8 @@ ecore_con_url_custom_new(const char *url,
    return url_con;
 #else
    return NULL;
-   url = NULL;
-   custom_request = NULL;
+   (void)url;
+   (void)custom_request;
 #endif
 }
 
@@ -427,8 +427,8 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
    url_con->data = data;
 #else
    return;
-   url_con = NULL;
-   data = NULL;
+   (void)url_con;
+   (void)data;
 #endif
 }
 
@@ -456,9 +456,9 @@ ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key, con
                                                   tmp);
 #else
    return;
-   url_con = NULL;
-   key = NULL;
-   value = NULL;
+   (void)url_con;
+   (void)key;
+   (void)value;
 #endif
 }
 
@@ -479,7 +479,7 @@ ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
      free(s);
 #else
    return;
-   url_con = NULL;
+   (void)url_con;
 #endif
 }
 
@@ -496,7 +496,7 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
    return url_con->data;
 #else
    return NULL;
-   url_con = NULL;
+   (void)url_con;
 #endif
 }
 
