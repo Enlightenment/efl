@@ -475,27 +475,3 @@ _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp)
       free(ssp);
    }
 }
-
-Eina_Bool
-_edje_signal_callback_run(const Eina_Bool *flags, unsigned int i)
-{
-   Eina_Bool r;
-  
-   r = flags[i >> 1] & ((_DELETE_ME | _JUST_ADDED) << ((i & 0x1) * 4));
-
-   return r;
-}
-
-void
-_edje_signal_callback_reset(Eina_Bool *flags, unsigned int length)
-{
-   Eina_Bool mask;
-   unsigned int i;
-
-   mask = ~((_JUST_ADDED << 4) | _JUST_ADDED);
-
-   length >>= 1;
-   for (i = 0; i < length; ++i)
-     flags[i] &= mask;
-}
-

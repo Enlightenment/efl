@@ -509,6 +509,8 @@ edje_match_programs_exec_check_finals(const unsigned int *signal_finals,
 static int
 edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
                                       const Edje_Signal_Callback_Match    *matches,
+                                      const void       **custom_data,
+                                      const Eina_Bool   *flags,
                                       const Edje_States *signal_states,
                                       const Edje_States *source_states,
                                       const char        *sig,
@@ -539,7 +541,7 @@ edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
                     cb = &matches[*e];
                     if (cb)
                       {
-			 if ((prop) && _edje_signal_callback_prop(ed->callbacks->flags, *e)) continue;
+                         if ((prop) && _edje_signal_callback_prop(flags, *e)) continue;
 			 eina_array_push(&run, cb);
 			 r = 2;
                       }
@@ -551,9 +553,7 @@ edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
      {
         int idx = cb - matches;
 
-	if (_edje_signal_callback_run(ed->callbacks->flags, idx)) continue; 
-
-        cb->func((void*) ed->callbacks->custom_data[idx], ed->obj, sig, source);
+        cb->func((void*) custom_data[idx], ed->obj, sig, source);
         if (_edje_block_break(ed))
 	  {
              r = 0;
@@ -684,6 +684,8 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
 int
 edje_match_callback_exec(const Edje_Signals_Sources_Patterns *ssp,
 			 const Edje_Signal_Callback_Match *matches,
+			 const void **custom_data,
+			 const Eina_Bool *flags,
                          const char *sig,
                          const char *source,
                          Edje *ed,
@@ -711,6 +713,8 @@ edje_match_callback_exec(const Edje_Signals_Sources_Patterns *ssp,
    if (signal_result && source_result)
      r = edje_match_callback_exec_check_finals(ssp,
 					       matches,
+					       custom_data,
+					       flags,
                                                signal_result,
                                                source_result,
                                                sig,
