@@ -216,9 +216,9 @@ _move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Object_Item *gli;
    gli = elm_genlist_at_xy_item_get(gl, ev->cur.canvas.x, ev->cur.canvas.y, &where);
    if (gli)
-     INF("over %p, where %i", elm_object_item_data_get(gli), where);
+     INF("<%s> over %p, where %i\n", __func__, elm_object_item_data_get(gli), where);
    else
-     INF("over none, where %i", where);
+     INF("<%s> over none, where %i\n", __func__,where);
 }
 
 static void

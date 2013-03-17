@@ -42,6 +42,7 @@ typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
 typedef struct _Cnp_Escape    Cnp_Escape;
 typedef struct _Dropable      Dropable;
+static Eina_Bool doaccept = EINA_FALSE;
 
 struct _Tmp_Info
 {
@@ -85,6 +86,48 @@ struct _Dropable
    } last;
 };
 
+struct _Item_Container_Drop_Info
+{  /* Info kept for containers to support drop */
+   Evas_Object *obj;
+   Elm_Xy_Item_Get_Cb itemgetcb;
+   Elm_Drop_Item_Container_Cb dropcb;
+   Elm_Drag_Item_Container_Pos poscb;
+};
+typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
+
+struct _Anim_Icon
+{
+   int start_x;
+   int start_y;
+   int start_w;
+   int start_h;
+   Evas_Object *o;
+};
+typedef struct _Anim_Icon Anim_Icon;
+
+struct _Item_Container_Drag_Info
+{  /* Info kept for containers to support drag */
+   Evas_Object *obj;
+   Ecore_Timer *tm;    /* When this expires, start drag */
+   double anim_tm;  /* Time period to set tm         */
+   double tm_to_drag;  /* Time period to set tm         */
+   Elm_Xy_Item_Get_Cb itemgetcb;
+   Elm_Item_Container_Data_Get_Cb data_get;
+
+   Evas_Coord x_down;  /* Mouse down x cord when drag starts */
+   Evas_Coord y_down;  /* Mouse down y cord when drag starts */
+
+   /* Some extra information needed to impl default anim */
+   Evas *e;
+   Eina_List *icons;   /* List of icons to animate (Anim_Icon) */
+   int final_icon_w; /* We need the w and h of the final icon for the animation */
+   int final_icon_h;
+   Ecore_Animator *ea;
+
+   Elm_Drag_User_Info user_info;
+};
+typedef struct _Item_Container_Drag_Info Item_Container_Drag_Info;
+
 static int _elm_cnp_init_count = 0;
 /* Stringshared, so I can just compare pointers later */
 static const char *text_uri;
@@ -101,10 +144,18 @@ static void *dragdonedata = NULL;
 static Evas_Object *dragwidget = NULL;
 static Elm_Xdnd_Action dragaction = ELM_XDND_ACTION_UNKNOWN;
 
+static Eina_List *cont_drop_tg = NULL; /* List of Item_Container_Drop_Info */
+static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
+
+static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
+
 /* Drag & Drop functions */
 /* FIXME: Way too many globals */
 static Eina_List *drops = NULL;
 static Evas_Object *dragwin = NULL;
+static int dragwin_x_start, dragwin_y_start;
+static int dragwin_x_end, dragwin_y_end;
 static int _dragx = 0, _dragy = 0;
 static Ecore_Event_Handler *handler_pos = NULL;
 static Ecore_Event_Handler *handler_drop = NULL;
@@ -1036,8 +1087,16 @@ _x11_general_converter(char *target __UNUSED__, void *data, int size, void **dat
    else
      {
         X11_Cnp_Selection *sel = _x11_selections + *((int *)data);
-        if (data_ret) *data_ret = strdup(sel->selbuf);
-        if (size_ret) *size_ret = strlen(sel->selbuf);
+        if (sel->selbuf)
+          {
+             if (data_ret) *data_ret = strdup(sel->selbuf);
+             if (size_ret) *size_ret = strlen(sel->selbuf);
+          }
+        else
+          {
+             if (data_ret) *data_ret = NULL;
+             if (size_ret) *size_ret = 0;
+          }
      }
    return EINA_TRUE;
 }
@@ -1431,15 +1490,15 @@ static Eina_Bool
 _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Status *status = ev;
-   Eina_Bool doaccept = EINA_FALSE;
-   
+   doaccept = EINA_FALSE;
+
    /* Only thing we care about: will accept */
    if ((status) && (status->will_accept))
      {
         cnp_debug("Will accept\n");
         doaccept = EINA_TRUE;
      }
-   /* Won't accept */   
+   /* Won't accept */
    else
      {
         cnp_debug("Won't accept accept\n");
@@ -1448,6 +1507,25 @@ _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
      dragacceptcb(dragacceptdata, _x11_selections[ELM_SEL_TYPE_XDND].widget,
                   doaccept);
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_drag_cancel_animate(void *data __UNUSED__, double pos)
+{  /* Animation to "move back" drag-window */
+   if (pos >= 0.99)
+     {
+        evas_object_del(data);
+        return ECORE_CALLBACK_CANCEL;
+     }
+   else
+     {
+        int x, y;
+        x = dragwin_x_end - (pos * (dragwin_x_end - dragwin_x_start));
+        y = dragwin_y_end - (pos * (dragwin_y_end - dragwin_y_start));
+        evas_object_move(data, x, y);
+     }
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1462,9 +1540,9 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
         Eina_Bool have_drops = EINA_FALSE;
         Eina_List *l;
         Dropable *dropable;
-        
+
         ecore_x_pointer_ungrab();
-        if (handler_up) 
+        if (handler_up)
           {
              ecore_event_handler_del(handler_up);
              handler_up = NULL;
@@ -1475,9 +1553,9 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
              handler_status = NULL;
           }
         ecore_x_dnd_self_drop();
-        
+
         cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
-        
+
         EINA_LIST_FOREACH(drops, l, dropable)
           {
              if (xwin == _x11_elm_widget_xwin_get(dropable->obj))
@@ -1488,15 +1566,34 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
           }
         if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
         if (dragdonecb) dragdonecb(dragdonedata, dragwidget);
+        if (dragwin)
+          {
+             if (!doaccept)
+               {  /* Commit animation when drag cancelled */
+                  /* Record final position of dragwin, then do animation */
+                  ecore_animator_timeline_add(0.3,
+                        _drag_cancel_animate, dragwin);
+               }
+             else
+               {  /* No animation drop was committed */
+                  evas_object_del(dragwin);
+               }
+
+             dragwin = NULL;  /* if not freed here, free in end of anim */
+          }
+
         dragdonecb = NULL;
         dragacceptcb = NULL;
         dragposcb = NULL;
         dragwidget = NULL;
+        doaccept = EINA_FALSE;
+        /*  moved to _drag_cancel_animate
         if (dragwin)
           {
              evas_object_del(dragwin);
              dragwin = NULL;
           }
+          */
      }
    return EINA_TRUE;
 }
@@ -1504,10 +1601,12 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
 static void
 _x11_drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
 {
-   evas_object_move(dragwin, 
+   evas_object_move(dragwin,
                     pos->position.x - _dragx, pos->position.y - _dragy);
-   printf("dragevas: %p -> %p\n",
-          dragwidget, 
+   dragwin_x_end = pos->position.x - _dragx;
+   dragwin_y_end = pos->position.y - _dragy;
+   cnp_debug("dragevas: %p -> %p\n",
+          dragwidget,
           evas_object_evas_get(dragwidget));
    if (dragposcb)
      dragposcb(dragposdata, dragwidget, pos->position.x, pos->position.y,
@@ -1519,7 +1618,7 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 {
    Evas_Object *top;
    Ecore_X_Window xwin = 0;
-   
+
    top = elm_widget_top_get(obj);
    if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
    if (top) xwin = elm_win_xwindow_get(top);
@@ -1540,7 +1639,7 @@ _x11_elm_cnp_init(void)
 {
    int i;
    static int _init_count = 0;
-   
+
    if (_init_count > 0) return EINA_TRUE;
    _init_count++;
    for (i = 0; i < CNP_N_ATOMS; i++)
@@ -1853,7 +1952,7 @@ _x11_drag_target_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj
 }
 
 static  Eina_Bool
-_x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, 
+_x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                     Elm_Xdnd_Action action,
                     Elm_Drag_Icon_Create_Cb createicon, void *createdata,
                     Elm_Drag_Pos dragpos, void *dragdata,
@@ -1870,7 +1969,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    Ecore_X_Atom actx;
 
    _x11_elm_cnp_init();
-   
+
    cnp_debug("starting drag... %p\n", obj);
 
    if (dragwin)
@@ -1917,28 +2016,21 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    if (createicon)
      {
         Evas_Coord xoff = 0, yoff = 0;
-        
+
         icon = createicon(createdata, dragwin, &xoff, &yoff);
         if (icon)
           {
-             evas_object_geometry_get(obj, &x2, &y2, NULL, NULL);
+             x2 = xoff;
+             y2 = yoff;
              evas_object_geometry_get(icon, NULL, NULL, &w, &h);
-             x2 += xoff;
-             y2 += yoff;
           }
      }
-   if (!icon)
+   else
      {
-        evas_object_geometry_get(obj, &x2, &y2, &w, &h);
-   
-        /* FIXME: Images only */
         icon = elm_icon_add(dragwin);
-        if (!strncmp(data, "file://", 7))
-          elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
-        else
-          elm_image_file_set(icon, data, NULL);
         evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        // need to resize
      }
    elm_win_resize_object_add(dragwin, icon);
 
@@ -1947,8 +2039,9 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    x += x2;
    y += y2;
+   dragwin_x_start = dragwin_x_end = x;
+   dragwin_y_start = dragwin_y_end = y;
    evas_object_move(dragwin, x, y);
-   evas_object_resize(icon, w, h);
    evas_object_resize(dragwin, w, h);
 
    evas_object_show(icon);
@@ -2604,4 +2697,470 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    return _local_elm_selection_selection_has_owner(obj);
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/
+/* START - Support elm containers for Drag and Drop */
+/* START - Support elm containers for Drop */
+static int
+_drop_item_container_cmp(const void *d1,
+               const void *d2)
+{
+   const Item_Container_Drop_Info *st = d1;
+   return (((uintptr_t) (st->obj)) - ((uintptr_t) d2));
+}
+
+static void
+_elm_item_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
+{  /* obj is the container pointer */
+   Elm_Object_Item *it = NULL;
+   int xposret = 0;
+   int yposret = 0;
+   Item_Container_Drop_Info *st =
+      eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
+
+   if (st && st->poscb)
+     {  /* Call container drop func with specific item pointer */
+        int xo = 0;
+        int yo = 0;
+        eo_do(obj, evas_obj_position_get(&xo, &yo));
+        if (st->itemgetcb)
+          it = st->itemgetcb(obj, x+xo, y+yo, &xposret, &yposret);
+
+        st->poscb(data, obj, it, x, y, xposret, yposret, action);
+     }
+}
+
+static Eina_Bool
+_elm_item_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *ev)
+{  /* obj is the container pointer */
+   Elm_Object_Item *it = NULL;
+   int xposret = 0;
+   int yposret = 0;
+   Item_Container_Drop_Info *st =
+      eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
+
+   if (st && st->dropcb)
+     {  /* Call container drop func with specific item pointer */
+        int xo = 0;
+        int yo = 0;
+        eo_do(obj, evas_obj_position_get(&xo, &yo));
+        if (st->itemgetcb)
+          it = st->itemgetcb(obj, ev->x+xo, ev->y+yo, &xposret, &yposret);
+
+        return st->dropcb(data, obj, it, ev, xposret, yposret);
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
+{
+   Item_Container_Drop_Info *st =
+      eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
+
+   if (st)
+     {
+        elm_drop_target_del(obj);
+        st->itemgetcb= NULL;
+        st->poscb = NULL;
+        st->dropcb = NULL;
+
+        if (full)
+          {
+             cont_drop_tg = eina_list_remove(cont_drop_tg, st);
+             free(st);
+          }
+
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+elm_drop_item_container_del(Evas_Object *obj)
+{
+   return elm_drop_item_container_del_internal(obj, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+elm_drop_item_container_add(Evas_Object *obj,
+      Elm_Sel_Format format,
+      Elm_Xy_Item_Get_Cb itemgetcb,
+      Elm_Drag_State entercb, void *enterdata,
+      Elm_Drag_State leavecb, void *leavedata,
+      Elm_Drag_Item_Container_Pos poscb, void *posdata,
+      Elm_Drop_Item_Container_Cb dropcb, void *cbdata)
+{
+   Item_Container_Drop_Info *st;
+
+   if (elm_drop_item_container_del_internal(obj, EINA_FALSE))
+     {  /* Updating info of existing obj */
+        st = eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
+     }
+   else
+     {
+        st = calloc(1, sizeof(*st));
+        st->obj = obj;
+        cont_drop_tg = eina_list_append(cont_drop_tg, st);
+     }
+
+   st->itemgetcb = itemgetcb;
+   st->poscb = poscb;
+   st->dropcb = dropcb;
+   elm_drop_target_add(obj, format,
+                       entercb, enterdata,
+                       leavecb, leavedata,
+                       _elm_item_container_pos_cb, posdata,
+                       _elm_item_container_drop_cb, cbdata);
+
+   return EINA_TRUE;
+}
+/* END   - Support elm containers for Drop */
+
+
+/* START - Support elm containers for Drag */
+static int
+_drag_item_container_cmp(const void *d1,
+               const void *d2)
+{
+   const Item_Container_Drag_Info *st = d1;
+   return (((uintptr_t) (st->obj)) - ((uintptr_t) d2));
+}
+
+static void
+_cont_drag_done_cb(void *data, Evas_Object *obj __UNUSED__)
+{
+   Item_Container_Drag_Info *st = data;
+   elm_widget_scroll_freeze_pop(st->obj);
+   if (st->user_info.dragdone) st->user_info.dragdone(st->user_info.donecbdata, dragwidget, doaccept);
+}
+
+static Eina_Bool
+_cont_obj_drag_start(void *data)
+{  /* Start a drag-action when timer expires */
+   cnp_debug("%s In\n", __FUNCTION__);
+   Item_Container_Drag_Info *st = data;
+   st->tm = NULL;
+   Elm_Drag_User_Info *info = &st->user_info;
+   elm_widget_scroll_freeze_push(st->obj);
+   evas_object_event_callback_del_full
+      (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
+   elm_drag_start(  /* Commit the start only if data_get successful */
+         st->obj, info->format,
+         info->data, info->action,
+         info->createicon, info->createdata,
+         info->dragpos, info->dragdata,
+         info->acceptcb, info->acceptdata,
+         _cont_drag_done_cb, st);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+void
+_anim_st_free(Item_Container_Drag_Info *st)
+{  /* Stops and free mem of ongoing animation */
+   if (st)
+     {
+        if (st->ea)
+          {
+             ecore_animator_del(st->ea);
+             st->ea = NULL;
+          }
+
+        Anim_Icon *sti;
+
+        EINA_LIST_FREE(st->icons, sti)
+          {
+             evas_object_del(sti->o);
+             free(sti);
+          }
+
+        st->icons = NULL;
+     }
+}
+
+static inline Eina_List *
+_anim_icons_make(Eina_List *icons)
+{  /* Make local copies of all icons, add them to list */
+   Eina_List *list = NULL, *itr;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH(icons, itr, o)
+     {  /* Now add icons to animation window */
+        Anim_Icon *st = calloc(1, sizeof(*st));
+        evas_object_geometry_get(o, &st->start_x, &st->start_y, &st->start_w, &st->start_h);
+        evas_object_show(o);
+        st->o = o;
+        list = eina_list_append(list, st);
+     }
+
+   return list;
+}
+
+static Eina_Bool
+_drag_anim_play(void *data, double pos)
+{  /* Impl of the animation of icons, called on frame time */
+   cnp_debug("%s In\n", __FUNCTION__);
+   Item_Container_Drag_Info *st = data;
+   Eina_List *l;
+   Anim_Icon *sti;
+
+   if (st->ea)
+     {
+        if (pos > 0.99)
+          {
+             st->ea = NULL;  /* Avoid deleting on mouse up */
+             EINA_LIST_FOREACH(st->icons, l, sti)
+                evas_object_hide(sti->o);
+
+             _cont_obj_drag_start(st);  /* Start dragging */
+             return ECORE_CALLBACK_CANCEL;
+          }
+
+        Evas_Coord xm, ym;
+        evas_pointer_canvas_xy_get(st->e, &xm, &ym);
+        EINA_LIST_FOREACH(st->icons, l, sti)
+          {
+             int x, y, h, w;
+             w = sti->start_w + ((st->final_icon_w - sti->start_w) * pos);
+             h = sti->start_h + ((st->final_icon_h - sti->start_h) * pos);
+             x = sti->start_x - (pos * ((sti->start_x + (w/2) - xm)));
+             y = sti->start_y - (pos * ((sti->start_y + (h/2) - ym)));
+             evas_object_move(sti->o, x, y);
+             evas_object_resize(sti->o, w, h);
+          }
+
+        return ECORE_CALLBACK_RENEW;
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static inline Eina_Bool
+_drag_anim_start(void *data)
+{  /* Start default animation */
+   cnp_debug("%s In\n", __FUNCTION__);
+   Item_Container_Drag_Info *st = data;
+
+   st->tm = NULL;
+   /* Now we need to build an (Anim_Icon *) list */
+   st->icons = _anim_icons_make(st->user_info.icons);
+   if (st->user_info.createicon)
+     {
+        Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_UTILITY);
+        Evas_Object *final_icon = st->user_info.createicon(st->user_info.createdata, temp_win, NULL, NULL);
+        evas_object_geometry_get(final_icon, NULL, NULL, &st->final_icon_w, &st->final_icon_h);
+        evas_object_del(final_icon);
+        evas_object_del(temp_win);
+     }
+   st->ea = ecore_animator_timeline_add(st->anim_tm, _drag_anim_play, st);
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_cont_obj_anim_start(void *data)
+{  /* Start a drag-action when timer expires */
+   cnp_debug("%s In\n", __FUNCTION__);
+   Item_Container_Drag_Info *st = data;
+   int xposret, yposret;  /* Unused */
+   Elm_Object_Item *it = (st->itemgetcb) ?
+      (st->itemgetcb(st->obj, st->x_down, st->y_down, &xposret, &yposret))
+      : NULL;
+
+   st->tm = NULL;
+   st->user_info.format = ELM_SEL_FORMAT_TARGETS; /* Default */
+   st->icons = NULL;
+   st->user_info.data = NULL;
+   st->user_info.action = ELM_XDND_ACTION_COPY;  /* Default */
+
+   if (!it)   /* Failed to get mouse-down item, abort drag */
+     return ECORE_CALLBACK_CANCEL;
+
+   if (st->data_get)
+     {  /* collect info then start animation or start dragging */
+        if(st->data_get(    /* Collect drag info */
+                 st->obj,      /* The container object */
+                 it,           /* Drag started on this item */
+                 &st->user_info))
+          {
+             if (st->user_info.icons)
+               _drag_anim_start(st);
+             else
+               {
+                  if (st->anim_tm)
+                    {
+                       // even if we don't manage the icons animation, we have
+                       // to wait until it is finished before beginning drag.
+                       st->tm = ecore_timer_add(st->anim_tm, _cont_obj_drag_start, st);
+                    }
+                  else
+                    _cont_obj_drag_start(st);  /* Start dragging, no anim */
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_cont_obj_mouse_down(
+   void *data,
+   Evas *e,
+   Evas_Object *obj __UNUSED__,
+   void *event_info)
+{  /* Launch a timer to start dragging */
+   Evas_Event_Mouse_Down *ev = event_info;
+   cnp_debug("%s In - event %X\n", __FUNCTION__, ev->event_flags);
+   if (ev->button != 1)
+     return;  /* We only process left-click at the moment */
+
+   Item_Container_Drag_Info *st = data;
+   evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_MOVE,
+         _cont_obj_mouse_move, st);
+
+   evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_UP,
+         _cont_obj_mouse_up, st);
+
+   if (st->tm)
+     ecore_timer_del(st->tm);
+
+   st->e = e;
+   st->x_down = ev->canvas.x;
+   st->y_down = ev->canvas.y;
+   st->tm = ecore_timer_add(st->tm_to_drag, _cont_obj_anim_start, st);
+}
+
+static Eina_Bool elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full);
+
+static void
+_cont_obj_mouse_move(
+   void *data,
+   Evas *e __UNUSED__,
+   Evas_Object *obj __UNUSED__,
+   void *event_info)
+{  /* Cancel any drag waiting to start on timeout */
+
+   cnp_debug("%s In\n", __FUNCTION__);
+   if (((Evas_Event_Mouse_Move *)event_info)->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        cnp_debug("%s event on hold - have to cancel DnD\n", __FUNCTION__);
+        Item_Container_Drag_Info *st = data;
+        evas_object_event_callback_del_full
+           (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
+        evas_object_event_callback_del_full
+           (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
+        elm_drag_item_container_del_internal(obj, EINA_FALSE);
+
+        if (st->tm)
+          {
+             ecore_timer_del(st->tm);
+             st->tm = NULL;
+          }
+
+        _anim_st_free(st);
+     }
+   cnp_debug("%s Out\n", __FUNCTION__);
+}
+
+static void
+_cont_obj_mouse_up(
+   void *data,
+   Evas *e __UNUSED__,
+   Evas_Object *obj __UNUSED__,
+   void *event_info)
+{  /* Cancel any drag waiting to start on timeout */
+   Item_Container_Drag_Info *st = data;
+
+   cnp_debug("%s In\n", __FUNCTION__);
+   if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
+     return;  /* We only process left-click at the moment */
+
+   evas_object_event_callback_del_full
+      (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
+   evas_object_event_callback_del_full
+      (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
+
+   if (st->tm)
+     {
+        ecore_timer_del(st->tm);
+        st->tm = NULL;
+     }
+
+   _anim_st_free(st);
+}
+
+static Eina_Bool
+elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
+{
+   Item_Container_Drag_Info *st =
+      eina_list_search_unsorted(cont_drag_tg, _drag_item_container_cmp, obj);
+
+   if (st)
+     {
+        if (st->tm)
+          ecore_timer_del(st->tm);  /* Cancel drag-start timer */
+
+        if (st->ea)  /* Cancel ongoing default animation */
+          _anim_st_free(st);
+
+        st->tm = NULL;
+
+        if (full)
+          {
+             st->itemgetcb = NULL;;
+             st->data_get = NULL;
+             evas_object_event_callback_del_full
+                (obj, EVAS_CALLBACK_MOUSE_DOWN, _cont_obj_mouse_down, st);
+
+             free(st);
+             cont_drag_tg = eina_list_remove(cont_drag_tg, st);
+          }
+
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+elm_drag_item_container_del(Evas_Object *obj)
+{
+   return elm_drag_item_container_del_internal(obj, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+elm_drag_item_container_add(
+   Evas_Object *obj,
+   double anim_tm,
+   double tm_to_drag,
+   Elm_Xy_Item_Get_Cb itemgetcb,
+   Elm_Item_Container_Data_Get_Cb data_get)
+{
+   Item_Container_Drag_Info *st;
+
+   if (elm_drag_item_container_del_internal(obj, EINA_FALSE))
+     {  /* Updating info of existing obj */
+        st = eina_list_search_unsorted(cont_drag_tg, _drag_item_container_cmp, obj);
+     }
+   else
+     {
+        st = calloc(1, sizeof(*st));
+        st->obj = obj;
+        cont_drag_tg = eina_list_append(cont_drag_tg, st);
+
+        /* Register for mouse callback for container to start/abort drag */
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cont_obj_mouse_down, st);
+     }
+
+   st->tm = NULL;
+   st->anim_tm = anim_tm;
+   st->tm_to_drag = tm_to_drag;
+   st->itemgetcb = itemgetcb;
+   st->data_get = data_get;
+
+   return EINA_TRUE;
+}
+/* END   - Support elm containers for Drag */
+/* END   - Support elm containers for Drag and Drop */

@@ -866,3 +866,32 @@ EAPI Eina_Bool                     elm_gengrid_highlight_mode_get(const Evas_Obj
  * @since 1.8
  */
 EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth);
+
+/**
+ * Get the item that is at the x, y canvas coords.
+ *
+ * @param obj The gengrid object.
+ * @param x The input x coordinate
+ * @param y The input y coordinate
+ * @param xposret The position relative to the item returned here
+ * @param yposret The position relative to the item returned here
+ * @return The item at the coordinates or NULL if none
+ *
+ * This returns the item at the given coordinates (which are canvas
+ * relative, not object-relative). If an item is at that coordinate,
+ * that item handle is returned, and if @p xposret is not NULL, the
+ * integer pointed to is set to a value of -1, 0 or 1, depending if
+ * the coordinate is on the left portion of that item (-1), on the
+ * middle section (0) or on the right part (1).
+ * if @p yposret is not NULL, the
+ * integer pointed to is set to a value of -1, 0 or 1, depending if
+ * the coordinate is on the upper portion of that item (-1), on the
+ * middle section (0) or on the lower part (1). If NULL is returned as
+ * an item (no item found there), then posret may indicate -1 or 1
+ * based if the coordinate is above or below all items respectively in
+ * the gengrid.
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Object_Item             *elm_gengrid_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret);
+

@@ -49,6 +49,7 @@ enum
    ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_GET,
    ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_SET,
    ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET,
+   ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET,
    ELM_OBJ_GENGRID_SUB_ID_LAST
 };
 
@@ -602,6 +603,22 @@ enum
  * @see elm_gengrid_highlight_mode_get
  */
 #define elm_obj_gengrid_highlight_mode_get(ret) ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_gengrid_at_xy_item_get
+ * @since 1.8
+ *
+ * Get the item that is at the x, y canvas coords.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[out] xposret
+ * @param[out] yposret
+ * @param[out] ret
+ *
+ * @see elm_gengrid_at_xy_item_get
+ */
+#define elm_obj_gengrid_at_xy_item_get(x, y, xposret, yposret, ret) ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, xposret), EO_TYPECHECK(int *, yposret), EO_TYPECHECK(Elm_Object_Item **, ret)
 
 
 /**

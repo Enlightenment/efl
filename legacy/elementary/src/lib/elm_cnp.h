@@ -115,6 +115,18 @@ typedef struct _Elm_Selection_Data Elm_Selection_Data;
 typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Data *ev);
 
 /**
+ * Callback invoked to find out what object is under (x,y) coords
+ *
+ * @param obj The container object
+ * @param x cord to check
+ * @param y cord to check
+ * @param xposret Position relative to item (left (-1), middle (0), right (1)
+ * @param yposret Position relative to item (upper (-1), middle (0), bottom (1)
+ * @return object under x,y cords or NULL if not found.
+ */
+typedef Elm_Object_Item *(*Elm_Xy_Item_Get_Cb)(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret);
+
+/**
  * Callback invoked in when the selection ownership for a given selection is lost.
  *
  * @param data Application specific data
@@ -125,7 +137,7 @@ typedef void (*Elm_Selection_Loss_Cb)(void *data, Elm_Sel_Type selection);
 
 /**
  * Callback called to create a drag icon object
- * 
+ *
  * @param data Application specific data
  * @param win The window to create the objects relative to
  * @param xoff A return coordinate for the X offset at which to place the drag icon object relative to the source drag object
@@ -145,8 +157,18 @@ typedef Evas_Object *(*Elm_Drag_Icon_Create_Cb) (void *data, Evas_Object *win, E
 typedef void (*Elm_Drag_State) (void *data, Evas_Object *obj);
 
 /**
+ * Callback called when a drag is finished.
+ *
+ * @param data Application specific data
+ * @param obj The object where the drag started
+ * @param accepted TRUE if the droppped-data is accepted on drop
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_Done) (void *data, Evas_Object *obj, Eina_Bool accepted);
+
+/**
  * Callback called when a drag is responded to with an accept or deny
- * 
+ *
  * @param data Application specific data
  * @param obj The object where the drag started
  * @param doaccept A boolean as to if the target accepts the drag or not
@@ -306,7 +328,7 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
  * @param dragpos Function called with each position of the drag, x, y being screen coordinates if possible, and action being the current action.
  * @param dragdata Application data passed to @p dragpos
  * @param acceptcb Function called indicating if drop target accepts (or does not) the drop data while dragging
- * 
+ *
  * @param acceptdata Application data passed to @p acceptcb
  * @param dragdone Function to call when drag is done
  * @param donecbdata Application data to pass to @p dragdone
@@ -316,16 +338,17 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, 
-                              const char *data, Elm_Xdnd_Action action, 
-                              Elm_Drag_Icon_Create_Cb createicon, void *createdata, 
+EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
+                              const char *data, Elm_Xdnd_Action action,
+                              Elm_Drag_Icon_Create_Cb createicon,
+                              void *createdata,
                               Elm_Drag_Pos dragpos, void *dragdata,
                               Elm_Drag_Accept acceptcb, void *acceptdata,
                               Elm_Drag_State dragdone, void *donecbdata);
 /**
  * @brief Changes the current drag action
  *
- * @param obj The source of a drag if a drag is underway 
+ * @param obj The source of a drag if a drag is underway
  * @param action The drag action to be done
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
  *
@@ -334,6 +357,147 @@ EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
  * @since 1.8
  */
 EAPI Eina_Bool elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action);
+
+/**
+ * Callback called when a drag is over an object
+ *
+ * @param data Application specific data
+ * @param cont The container object where the drag started
+ * @param it The object item in container where mouse-over
+ * @param x The X coordinate relative to the top-left of the object
+ * @param y The Y coordinate relative to the top-left of the object
+ * @param xposret Position relative to item (left (-1), middle (0), right (1)
+ * @param yposret Position relative to item (upper (-1), middle (0), bottom (1)
+ * @param action The drag action to be done
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_Item_Container_Pos) (void *data, Evas_Object *cont, Elm_Object_Item *it, Evas_Coord x, Evas_Coord y, int xposret, int yposret, Elm_Xdnd_Action action);
+
+/**
+ * Callback invoked in when the selected data is 'dropped' on container.
+ *
+ * @param data Application specific data
+ * @param obj The evas object where selected data is 'dropped'.
+ * @param it The item in container where drop-cords
+ * @param ev struct holding information about selected data
+ * @param xposret Position relative to item (left (-1), middle (0), right (1)
+ * @param yposret Position relative to item (upper (-1), middle (0), bottom (1)
+ */
+typedef Eina_Bool (*Elm_Drop_Item_Container_Cb)(void *data, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret, int yposret);
+
+/**
+ * Structure describing user information for the drag process.
+ *
+ * @param format The drag formats supported by the data (output)
+ * @param data The drag data itself (a string) (output)
+ * @param icons if value not NULL, play default anim (output)
+ * @param action The drag action to be done (output)
+ * @param createicon Function to call to create a drag object, or NULL if not wanted (output)
+ * @param createdata Application data passed to @p createicon (output)
+ * @param dragpos Function called with each position of the drag, x, y being screen coordinates if possible, and action being the current action. (output)
+ * @param dragdata Application data passed to @p dragpos (output)
+ * @param acceptcb Function called indicating if drop target accepts (or does not) the drop data while dragging (output)
+ * @param acceptdata Application data passed to @p acceptcb (output)
+ * @param dragdone Function to call when drag is done (output)
+ * @param donecbdata Application data to pass to @p dragdone (output)
+ */
+typedef struct _Elm_Drag_User_Info Elm_Drag_User_Info;
+
+struct _Elm_Drag_User_Info
+{
+   Elm_Sel_Format format;
+   const char *data;
+   Eina_List *icons;
+   Elm_Xdnd_Action action;
+   Elm_Drag_Icon_Create_Cb createicon;
+   void *createdata;
+   Elm_Drag_Pos dragpos;
+   void *dragdata;
+   Elm_Drag_Accept acceptcb;
+   void *acceptdata;
+   Elm_Drag_Done dragdone;
+   void *donecbdata;
+};
+
+/**
+ * Callback invoked when starting to drag for a container.
+ *
+ * @param obj The container object
+ * @param it The Elm_Object_Item pointer where drag-start
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ */
+typedef Eina_Bool (*Elm_Item_Container_Data_Get_Cb)(
+      Evas_Object *obj,
+      Elm_Object_Item *it,
+      Elm_Drag_User_Info *info);
+
+/**
+ * @brief Set a item container (list, genlist, grid) as source of drag
+ *
+ * @param obj The container object.
+ * @param tm_to_anim Time period to wait before start animation.
+ * @param tm_to_drag Time period to wait before start draggind.
+ * @param itemgetcb Callback to get Evas_Object pointer for item at (x,y)
+ * @param data_get  Callback to get drag info
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drag_item_container_add(Evas_Object *obj, double tm_to_anim, double tm_to_drag, Elm_Xy_Item_Get_Cb itemgetcb, Elm_Item_Container_Data_Get_Cb data_get);
+
+/**
+ * @brief Deletes a item container from drag-source list
+ *
+ * @param obj The target object
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
+
+/**
+ * @brief Set a item container (list, genlist, grid) as target for drop.
+ *
+ * @param obj The container object.
+ * @param format The formats supported for dropping
+ * @param itemgetcb Callback to get Evas_Object pointer for item at (x,y)
+ * @param entercb The function to call when the object is entered with a drag
+ * @param enterdata The application data to pass to enterdata
+ * @param leavecb The function to call when the object is left with a drag
+ * @param leavedata The application data to pass to leavedata
+ * @param poscb The function to call when the object has a drag over it
+ * @param posdata The application data to pass to posdata
+ * @param dropcb The function to call when a drop has occurred
+ * @param cbdata The application data to pass to dropcb
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
+      Elm_Sel_Format format,
+      Elm_Xy_Item_Get_Cb itemgetcb,
+      Elm_Drag_State entercb, void *enterdata,
+      Elm_Drag_State leavecb, void *leavedata,
+      Elm_Drag_Item_Container_Pos poscb, void *posdata,
+      Elm_Drop_Item_Container_Cb dropcb, void *cbdata);
+
+/**
+ * @brief Removes a container from list of drop tragets.
+ *
+ * @param obj The container object
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool elm_drop_item_container_del(Evas_Object *obj);
 
 /**
  * @}

@@ -31,6 +31,7 @@
    ELM_OBJ_LIST_SUB_ID_ITEM_SORTED_INSERT,
    ELM_OBJ_LIST_SUB_ID_FIRST_ITEM_GET,
    ELM_OBJ_LIST_SUB_ID_LAST_ITEM_GET,
+   ELM_OBJ_LIST_SUB_ID_AT_XY_ITEM_GET,
    ELM_OBJ_LIST_SUB_ID_LAST
 };
 
@@ -354,6 +355,21 @@
  * @see elm_list_last_item_get
  */
 #define elm_obj_list_last_item_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_LAST_ITEM_GET), EO_TYPECHECK(Elm_Object_Item **, ret)
+
+/**
+ * @def elm_obj_list_at_xy_item_get
+ * @since 1.8
+ *
+ * Get the item that is at the x, y canvas coords.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[out] posret
+ * @param[out] ret
+ *
+ * @see elm_list_at_xy_item_get
+ */
+#define elm_obj_list_at_xy_item_get(x, y, posret, ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_AT_XY_ITEM_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, posret), EO_TYPECHECK(Elm_Object_Item **, ret)
 
 /**
  * @}

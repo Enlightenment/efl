@@ -3604,6 +3604,118 @@ _first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = (Elm_Object_Item *)it;
 }
 
+
+EAPI Elm_Object_Item *
+elm_gengrid_at_xy_item_get(const Evas_Object *obj,
+                           Evas_Coord x,
+                           Evas_Coord y,
+                           int *xposret,
+                           int *yposret)
+{
+   ELM_GENGRID_CHECK(obj) NULL;
+   Elm_Object_Item *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_gengrid_at_xy_item_get(x, y,
+            xposret, yposret, &ret));
+
+   return ret;
+}
+
+static void
+_at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord x = va_arg(*list, Evas_Coord);
+   Evas_Coord y = va_arg(*list, Evas_Coord);
+   int *xposret = va_arg(*list, int *);
+   int *yposret = va_arg(*list, int *);
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+
+   Elm_Gengrid_Smart_Data *sd = _pd;
+   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
+
+   Evas_Coord l, r, t, b; /* left, right, top, bottom */
+   Eina_Bool init = EINA_TRUE;
+
+   while ((it) && (it->generation < sd->generation))
+     it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+
+   if (it)
+     do
+       {
+          Evas_Coord itx, ity;
+          Evas_Coord itw, ith;
+          evas_object_geometry_get(VIEW(it), &itx, &ity, &itw, &ith);
+
+          /* Record leftmost, rightmost, top, bottom cords to set posret */
+          if ((itw > 0) && (ith > 0) && (itx >= 0) && (ity >= 0))
+            {  /* A scroller, ignore items in negative cords,or not rendered */
+               if (init)
+                 {
+                    l = itx;
+                    r = itx + itw;
+                    t = ity;
+                    b = ity + ith;
+                    init = EINA_FALSE;
+                 }
+               else
+                 {
+                    if (itx < l)
+                      l = itx;
+                    if ((itx + itw) > r)
+                      r = itx + itw;
+                    if (ity < t)
+                      t = ity;
+                    if ((ity + ith) > b)
+                      b = ity + ith;
+                 }
+            }
+
+          if (ELM_RECTS_INTERSECT
+                (itx, ity, itw, ith, x, y, 1, 1))
+            {
+               if (yposret)
+                 {
+                    if (y <= (ity + (ith / 4))) *yposret = -1;
+                    else if (y >= (ity + ith - (ith / 4)))
+                      *yposret = 1;
+                    else *yposret = 0;
+                 }
+
+               if (xposret)
+                 {
+                    if (x <= (itx + (itw / 4))) *xposret = -1;
+                    else if (x >= (itx + itw - (itw / 4)))
+                      *xposret = 1;
+                    else *xposret = 0;
+                 }
+
+               *ret = (Elm_Object_Item *) it;
+               return;
+            }
+
+       } while ((it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next)));
+
+   /* No item found, tell the user if hit left/right/top/bottom of items */
+   if (xposret)
+     {
+        *xposret = 0;
+        if (x < l)
+          *xposret = (-1);
+        else if (x > r)
+          *xposret = (1);
+     }
+
+   if (yposret)
+     {
+        *yposret = 0;
+        if (y < t)
+          *yposret = (-1);
+        else if (y > b)
+          *yposret = (1);
+     }
+
+   *ret = NULL;
+}
+
 EAPI Elm_Object_Item *
 elm_gengrid_last_item_get(const Evas_Object *obj)
 {
@@ -4008,6 +4120,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_GET), _select_mode_get),
         EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_SET), _highlight_mode_set),
         EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET), _highlight_mode_get),
+        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET), _at_xy_item_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -4052,6 +4165,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_GET, "Get the gengrid select mode."),
      EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_SET, "Set whether the gengrid items should be highlighted when item selected."),
      EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET, "Get whether the gengrid items should be highlighted when item selected."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET, "Get the item that is at the x, y canvas coords."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
