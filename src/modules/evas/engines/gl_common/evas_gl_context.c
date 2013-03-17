@@ -97,26 +97,35 @@ gl_symbols(void)
    
    FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
 #endif
-#define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing;
+#define FINDSYM2(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
+#define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing
    
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", glsym_func_void);
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
+   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
+   FINDSYM2(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
    FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
 
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", glsym_func_void);
    FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
+   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
+   FINDSYM2(glsym_glBindFramebuffer, "glBindFramebuffer", glsym_func_void);
    FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
 
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", glsym_func_void);
    FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
+   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
+   FINDSYM2(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", glsym_func_void);
    FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
 
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", glsym_func_void);
    FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
+   // nvidia tegra3 drivers seem to not expose via getprocaddress, but dlsym finds it
+   FINDSYM2(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", glsym_func_void);
    FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
 
    FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", glsym_func_void);
