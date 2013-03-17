@@ -657,6 +657,8 @@ evas_gl_common_context_new(void)
           {
              if      (strstr(s, "PowerVR SGX 540"))
                 shared->info.tune.pipes.max = DEF_PIPES_SGX_540;
+             else if (strstr(s, "NVIDIA Tegra 3"))
+                shared->info.tune.pipes.max = DEF_PIPES_TEGRA_3;
              else if (strstr(s, "NVIDIA Tegra"))
                 shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
           }

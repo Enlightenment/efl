@@ -230,11 +230,11 @@ struct _Evas_GL_Shared
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
 
-// FIXME bug with pipes > 1 right now, should default to 32
 #define MAX_PIPES              128
 #define DEF_PIPES                    32
-#define DEF_PIPES_SGX_540            32
-#define DEF_PIPES_TEGRA_2             1
+#define DEF_PIPES_SGX_540            24
+#define DEF_PIPES_TEGRA_2             8
+#define DEF_PIPES_TEGRA_3            24
 
 #define MIN_ATLAS_ALLOC         16
 #define MAX_ATLAS_ALLOC       1024
