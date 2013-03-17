@@ -21,7 +21,7 @@ class CEnumFormatEtc : public IEnumFORMATETC
 
    CEnumFormatEtc(FORMATETC *pFormatEtc, int nNumFormats);
 
-   ~CEnumFormatEtc();
+   virtual ~CEnumFormatEtc();
 
  public: // IUnknown
 
