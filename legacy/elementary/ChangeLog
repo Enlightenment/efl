@@ -1157,3 +1157,7 @@
 2013-03-15  Jaehwan Kim
 
         * Add the smart signals in scroller. "scroll,left", "scroll,right", "scroll,up", "scroll,down".
+
+2013-03-18  WooHyun Jung
+
+        * Focus highlight should be reconfigured when theme is changed.

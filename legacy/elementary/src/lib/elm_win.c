@@ -707,7 +707,8 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
                       sd->focus_highlight.prev.visible);
 
    if ((target == previous) && (!visible_changed) &&
-       (!sd->focus_highlight.geometry_changed))
+       (!sd->focus_highlight.geometry_changed) &&
+       (!sd->focus_highlight.changed_theme))
      return;
 
    if ((previous) && (sd->focus_highlight.prev.handled))
