@@ -1287,7 +1287,8 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
                                  if (rp->program)
                                    exec = EINA_FALSE;
                                  else
-                                   exec = (rp->chosen_description->state.name == pr->filter.state);
+                                   exec = (rp->chosen_description->state.name != pr->filter.state) ? 
+				     !strcmp(rp->chosen_description->state.name, pr->filter.state) : EINA_TRUE;
                               }
                          }
 
