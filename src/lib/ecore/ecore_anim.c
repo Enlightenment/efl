@@ -175,7 +175,7 @@ _ecore_animator_add(Ecore_Animator *obj,
       }
 
    animator->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -428,7 +428,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pd->delete_me = EINA_TRUE;
    animators_delete_me++;
 
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EAPI void

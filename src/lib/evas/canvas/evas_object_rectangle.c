@@ -85,7 +85,7 @@ evas_object_rectangle_add(Evas *e)
 static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_rectangle_init(eo_obj);
@@ -105,7 +105,7 @@ evas_object_rectangle_init(Evas_Object *eo_obj)
 static void
 _destructor(Eo *eo_obj, void *_obj EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_destructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 static void

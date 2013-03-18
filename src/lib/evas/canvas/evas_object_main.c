@@ -69,7 +69,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
 
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
@@ -650,7 +650,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->delete_me = 1;
    evas_object_change(eo_obj, obj);
 end:
-   eo_do_super(eo_obj, eo_destructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 
@@ -1967,7 +1967,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
 

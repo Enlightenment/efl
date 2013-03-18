@@ -226,7 +226,7 @@ static void
 _smart_member_add(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *member = va_arg(*list, Evas_Object *);
-   eo_do_super(eo_obj, evas_obj_smart_member_add(member));
+   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_add(member));
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
 }
 
@@ -246,7 +246,7 @@ _smart_member_del(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *member = va_arg(*list, Evas_Object *);
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
-   eo_do_super(eo_obj, evas_obj_smart_member_del(member));
+   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_del(member));
 }
 
 EAPI void
@@ -285,7 +285,7 @@ evas_object_smart_clipped_class_get(void)
 static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 }
 
 static void

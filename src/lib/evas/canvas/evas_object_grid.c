@@ -260,7 +260,7 @@ evas_object_grid_add(Evas *evas)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_smart_attach(_evas_object_grid_smart_class_new()));
 
 //   return evas_object_smart_add(evas, _evas_object_grid_smart_class_new());

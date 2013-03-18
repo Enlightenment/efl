@@ -174,7 +174,7 @@ _ecore_timer_add(Ecore_Timer *obj,
      }
 
    timer->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -656,7 +656,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      timers_delete_me++;
    }
 
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 void

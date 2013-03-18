@@ -223,7 +223,7 @@ evas_object_line_init(Evas_Object *eo_obj)
 static void
 _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_line_init(eo_obj);
@@ -241,7 +241,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 static void
 _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_destructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 static void

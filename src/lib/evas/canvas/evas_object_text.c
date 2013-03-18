@@ -346,7 +346,7 @@ evas_object_text_add(Evas *e)
 static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_text_init(eo_obj);
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
@@ -968,7 +968,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *text;
@@ -1902,7 +1902,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_text_free(eo_obj, obj);
-   eo_do_super(eo_obj, eo_destructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 static void

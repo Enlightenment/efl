@@ -891,7 +891,7 @@ _smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->expand_h = 0;
    priv->expand_v = 0;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 }
 
 static void
@@ -916,7 +916,7 @@ _smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         priv->cache = NULL;
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -959,7 +959,7 @@ evas_object_table_add(Evas *evas)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 }
 

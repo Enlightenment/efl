@@ -295,7 +295,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    Evas *eo_e = evas_object_evas_get(eo_parent_get(eo_obj));
    Evas_Colorspace cspace;
 
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_image_init(eo_obj);
    evas_object_inject(eo_obj, obj, eo_e);
 
@@ -784,7 +784,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *key;
@@ -3457,7 +3457,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
-   eo_do_super(eo_obj, eo_destructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 void

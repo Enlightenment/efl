@@ -63,7 +63,7 @@ _idler_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Ecore_Idler_Private_Data *ie = _pd;
 
    ie->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -126,7 +126,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    idler->delete_me = 1;
    idlers_delete_me = 1;
 
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 void

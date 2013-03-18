@@ -52,7 +52,7 @@ _ecore_idle_enterer_add(Ecore_Idle_Enterer *obj,
       }
 
    ie->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -191,7 +191,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    idle_enterer->delete_me = 1;
    idle_enterers_delete_me = 1;
 
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 void

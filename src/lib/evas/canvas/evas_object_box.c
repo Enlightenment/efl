@@ -431,7 +431,7 @@ _evas_object_box_remove_at_default(Eo *o, void *_pd, va_list *list)
 static void
 _smart_add(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(o, evas_obj_smart_add());
+   eo_do_super(o, MY_CLASS, evas_obj_smart_add());
    Evas_Object_Box_Data *priv = _pd;
 
    evas_object_event_callback_add
@@ -466,7 +466,7 @@ _smart_del(Eo *o, void *_pd, va_list *list EINA_UNUSED)
    if (priv->layout.data && priv->layout.free_data)
      priv->layout.free_data(priv->layout.data);
 
-   eo_do_super(o, evas_obj_smart_del());
+   eo_do_super(o, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -506,7 +506,7 @@ evas_object_box_add(Evas *evas)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_smart_callbacks_descriptions_set(_signals, NULL),
          evas_obj_type_set(MY_CLASS_NAME));

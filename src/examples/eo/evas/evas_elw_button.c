@@ -28,7 +28,7 @@ _position_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
    x = va_arg(*list, Evas_Coord);
    y = va_arg(*list, Evas_Coord);
    printf("But set position %d,%d\n", x, y);
-   eo_do_super(obj, exevas_obj_position_set(x, y));
+   eo_do_super(obj, MY_CLASS, exevas_obj_position_set(x, y));
 }
 
 static void
@@ -52,7 +52,7 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
 static void
 _constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 
    Widget_Data *wd = class_data;
 
@@ -68,7 +68,7 @@ _constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 
    //Widget_Data *wd = class_data;
    /* FIXME: Commented out because it's automatically done because our tree
