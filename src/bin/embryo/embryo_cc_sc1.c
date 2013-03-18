@@ -683,7 +683,8 @@ setconfig(char *root)
 	 * to the list in that case
 	 */
 	*(ptr + 1) = '\0';
-	if (strlen(path) < (sizeof(path) - 1 - 7))
+        /* Need room for 'include' and DIRSEP_CHAR - so 8 chars - and \0 */
+	if (strlen(path) < (sizeof(path) - 1 - 8))
 	  {
 	     strcat(path, "include");
 	  }
