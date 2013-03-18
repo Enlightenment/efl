@@ -207,5 +207,7 @@ main(int argc, char **argv)
    if (write(sock, sbuf, slen) < 0)
      printf("elementary_quicklaunch: cannot write to socket '%s'\n", buf);
    close(sock);
+
+   free(cwd);
    return 0;
 }
