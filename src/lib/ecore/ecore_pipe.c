@@ -53,6 +53,8 @@
  * code is in Evil and not here.
  */
 
+#define PIPE_FD_INVALID -1
+
 #ifdef _WIN32
 
 # include <winsock2.h>
@@ -60,7 +62,6 @@
 # define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
 # define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
 # define pipe_close(fd)               closesocket(fd)
-# define PIPE_FD_INVALID INVALID_SOCKET
 # define PIPE_FD_ERROR   SOCKET_ERROR
 
 #else
@@ -71,7 +72,6 @@
 # define pipe_write(fd, buffer, size) write((fd), buffer, size)
 # define pipe_read(fd, buffer, size)  read((fd), buffer, size)
 # define pipe_close(fd)               close(fd)
-# define PIPE_FD_INVALID -1
 # define PIPE_FD_ERROR   -1
 
 #endif /* ! _WIN32 */
