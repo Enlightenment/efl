@@ -13,7 +13,7 @@ static void
 _a_get(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int *name = va_arg(*list, int *);
-   eo_do_super(obj, simple_a_get(name));
+   eo_do_super(obj, MY_CLASS, simple_a_get(name));
    printf("%s\n", __func__);
 }
 

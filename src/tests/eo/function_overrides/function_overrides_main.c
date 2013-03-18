@@ -41,8 +41,6 @@ main(int argc, char *argv[])
    obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(eo_do(obj, inherit2_print2()));
 
-   fail_if(eo_do_super(obj, simple_a_print()));
-
 #ifdef EO_DEBUG
    fail_if(eo_do(obj, simple_class_print()));
 #endif
@@ -56,8 +54,8 @@ main(int argc, char *argv[])
    fail_if(eo_class_do(SIMPLE_CLASS, simple_a_print()));
 #endif
 
-   eo_do_super(obj, eo_constructor());
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, SIMPLE_CLASS, eo_constructor());
+   eo_do_super(obj, SIMPLE_CLASS, eo_destructor());
 
    eo_unref(obj);
 

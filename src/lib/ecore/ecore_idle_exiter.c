@@ -75,7 +75,7 @@ _idle_exiter_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Ecore_Idle_Exiter_Private_Data *ie = _pd;
 
    ie->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -141,7 +141,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    idle_exiter->delete_me = 1;
    idle_exiters_delete_me = 1;
 
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 void

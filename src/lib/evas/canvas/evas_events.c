@@ -999,7 +999,7 @@ evas_event_thaw(Evas *eo_e)
 void
 _canvas_event_freeze(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_e, eo_event_freeze());
+   eo_do_super(eo_e, EVAS_CLASS, eo_event_freeze());
    Evas_Public_Data *e = _pd;
    e->is_frozen = EINA_TRUE;
 }
@@ -1008,7 +1008,7 @@ void
 _canvas_event_thaw(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 {
    int fcount = -1;
-   eo_do_super(eo_e,
+   eo_do_super(eo_e, EVAS_CLASS,
          eo_event_thaw(),
          eo_event_freeze_get(&fcount));
    if (0 == fcount)

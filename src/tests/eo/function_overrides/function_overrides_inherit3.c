@@ -15,7 +15,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
    int a;
    a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
-   eo_do_super(obj, simple_a_set(a + 1));
+   eo_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 }
 
 static void

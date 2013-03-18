@@ -157,7 +157,7 @@ _edje_edit_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Edje_Edit *eed = _pd;
    _edje_edit_data_clean(eed);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -198,7 +198,7 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
     *    groups).
     */
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, edje_obj_file_set(file, group, &int_ret));
+   eo_do_super(obj, MY_CLASS, edje_obj_file_set(file, group, &int_ret));
    if (!int_ret)
      return;
 
@@ -256,7 +256,7 @@ _edje_edit_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
    Edje_Edit *eed = class_data;
    eed->base = eo_data_get(obj, EDJE_OBJ_CLASS);
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eina_error_set(0);
 
    if (!EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST)

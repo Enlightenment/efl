@@ -31,7 +31,7 @@ _edje_smart_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
    Edje *ed = class_data;
    ed->base = eo_data_get(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
    _edje_lib_ref();
 }
@@ -40,7 +40,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *edje_group;
@@ -278,7 +278,7 @@ _edje_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Edje *ed = _pd;
 
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    if (evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
      {
@@ -298,7 +298,7 @@ _edje_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Edje *ed = _pd;
 
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    if (!evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
      {

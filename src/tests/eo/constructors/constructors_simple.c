@@ -50,7 +50,7 @@ _simple_constructor(Eo *obj, void *class_data, va_list *list)
    int a;
    a = va_arg(*list, int);
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
@@ -61,7 +61,7 @@ _simple_constructor(Eo *obj, void *class_data, va_list *list)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 
    my_init_count++;
 }
@@ -69,7 +69,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 
    my_init_count--;
 }

@@ -14,7 +14,7 @@
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   fail_if(eo_do_super(obj, eo_constructor()));
+   fail_if(eo_do_super(obj, MY_CLASS, eo_constructor()));
 }
 
 static void

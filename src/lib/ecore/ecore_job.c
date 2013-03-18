@@ -82,7 +82,7 @@ _job_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         eo_error_set(obj);
         EINA_MAIN_LOOP_CHECK_RETURN;
      }
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
@@ -135,7 +135,7 @@ static void
 _destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    /*FIXME: check if ecore_event_del should be called from here*/
-   eo_do_super(obj, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 /**

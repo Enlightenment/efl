@@ -126,7 +126,7 @@ evas_new(void)
 static void
 _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Public_Data *e = class_data;
    e->evas = eo_obj;
@@ -274,7 +274,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    _evas_device_cleanup(eo_e);
    
    e->magic = 0;
-   eo_do_super(eo_e, eo_destructor());
+   eo_do_super(eo_e, MY_CLASS, eo_destructor());
 }
 
 EAPI void

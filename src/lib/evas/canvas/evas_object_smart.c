@@ -568,7 +568,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    smart = class_data;
    smart->object = eo_obj;
 
-   eo_do_super(eo_obj, eo_constructor());
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_smart_init(eo_obj);
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
