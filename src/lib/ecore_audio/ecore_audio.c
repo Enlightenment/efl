@@ -348,6 +348,7 @@ ecore_audio_input_add(Ecore_Audio_Type type)
    in->module = module;
    in->output = NULL;
    in->paused = EINA_FALSE;
+   in->speed = 1.0;
 
    return module->in_ops->input_new((Ecore_Audio_Object *)in);
 }
@@ -419,6 +420,32 @@ EAPI void ecore_audio_input_samplerate_set(Ecore_Audio_Object *input, int sample
      return;
 
    in->samplerate = samplerate;
+
+   if (in->output)
+     {
+        outmod = in->output->module;
+        outmod->out_ops->output_update_input_format((Ecore_Audio_Object *)in->output, input);
+     }
+}
+
+EAPI double ecore_audio_input_speed_get(Ecore_Audio_Object *input)
+{
+   Ecore_Audio_Input* in = (Ecore_Audio_Input *)input;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, 0);
+
+   return in->speed;
+}
+
+EAPI void ecore_audio_input_speed_set(Ecore_Audio_Object *input, double speed)
+{
+   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   Ecore_Audio_Module *outmod;
+
+   if ((in->speed == speed) || (speed < 0.2) || (speed > 5.0))
+     return;
+
+   in->speed = speed;
 
    if (in->output)
      {
