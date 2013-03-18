@@ -38,9 +38,13 @@ _my_progressbar_value_set (void *data __UNUSED__)
 static void
 my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   fprintf(stderr, "s1\n");
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_TRUE);
+   fprintf(stderr, "s2\n");
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_TRUE);
+   fprintf(stderr, "s3 %p\n", _test_progressbar.pb7);
    elm_progressbar_pulse(_test_progressbar.pb7, EINA_TRUE);
+   fprintf(stderr, "s4\n");
    if (!_test_progressbar.run)
      {
         _test_progressbar.timer = ecore_timer_add(0.1, _my_progressbar_value_set, NULL);
@@ -183,6 +187,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    pb = elm_progressbar_add(win);
    elm_object_style_set(pb, "wheel");
    elm_object_text_set(pb, "Style: wheel");
+   elm_progressbar_pulse_set(pb, EINA_TRUE);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, pb);
