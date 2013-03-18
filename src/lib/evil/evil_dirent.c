@@ -19,8 +19,7 @@ struct DIR
 DIR *opendir(char const *name)
 {
    DIR     *dir;
-   char    *tmp1;
-   char    *tmp2;
+   char    *tmp;
    DWORD    attr;
    size_t   l;
 #ifdef UNICODE
@@ -71,39 +70,34 @@ DIR *opendir(char const *name)
      }
 
    l = strlen(name);
-   tmp1 = (char *)malloc(sizeof(char) * l + 5);
-   if (!tmp1)
+   tmp = (char *)malloc(sizeof(char) * l + 5);
+   if (!tmp)
      {
         errno = ENOMEM;
         return NULL;
      }
 
-   memcpy(tmp1, name, l);
-   memcpy(tmp1 + l, "\\*.*", 5);
+   memcpy(tmp, name, l);
+   memcpy(tmp + l, "\\*.*", 5);
 
-   tmp2 = tmp1;
-   while (*tmp2)
-     {
-        if (*tmp2 == '/') *tmp2 = '\\';
-        tmp2++;
-     }
+   EVIL_PATH_SEP_UNIX_TO_WIN32(tmp);
 
 #ifdef UNICODE
-   wname = evil_char_to_wchar(tmp1);
+   wname = evil_char_to_wchar(tmp);
    if (!wname)
      {
         errno = ENOMEM;
-        free(tmp1);
+        free(tmp);
 
         return NULL;
      }
    dir->handle = FindFirstFile(wname, &dir->data);
    free(wname);
 #else
-   dir->handle = FindFirstFile(tmp1, &dir->data);
+   dir->handle = FindFirstFile(tmp, &dir->data);
 #endif
 
-   free(tmp1);
+   free(tmp);
 
    if (dir->handle == INVALID_HANDLE_VALUE)
      {

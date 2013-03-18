@@ -31,12 +31,8 @@ evil_basename(char *path)
         memcpy(_evil_basename_buf, "C:\\", 4);
         return _evil_basename_buf;
      }
-   p2 = p1;
-   while (*p2)
-     {
-        if (*p2 == '/') *p2 = '\\';
-        p2++;
-     }
+
+   EVIL_PATH_SEP_UNIX_TO_WIN32(p1);
 
    /* remove trailing backslashes */
    p2 = p1 + (length - 1);

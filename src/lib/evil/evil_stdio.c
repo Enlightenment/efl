@@ -29,7 +29,6 @@ FILE *evil_fopen(const char *path, const char *mode)
 {
    FILE *f;
    char *filename;
-   char *tmp;
 
    if (!path || !*path)
      return NULL;
@@ -56,13 +55,7 @@ FILE *evil_fopen(const char *path, const char *mode)
    else
      filename = _strdup(path);
 
-   tmp = filename;
-   while (*tmp)
-     {
-        if (*tmp == '/')
-          *tmp = '\\';
-        tmp++;
-     }
+   EVIL_PATH_SEP_UNIX_TO_WIN32(filename);
 
    printf ("fopen : %s\n", filename);
 
@@ -108,7 +101,6 @@ FILE *evil_fopen_native(const char *path, const char *mode)
 {
    HANDLE   handle;
    char    *filename;
-   char    *tmp;
    wchar_t *wfilename;
    DWORD    acs = GENERIC_READ;
    DWORD    creation;
@@ -138,13 +130,7 @@ FILE *evil_fopen_native(const char *path, const char *mode)
    else
      filename = _strdup(path);
 
-   tmp = filename;
-   while (*tmp)
-     {
-        if (*tmp == '/')
-          *tmp = '\\';
-        tmp++;
-     }
+   EVIL_PATH_SEP_UNIX_TO_WIN32(filename);
    printf ("fopen native : %s\n", filename);
 
    wfilename = evil_char_to_wchar(filename);

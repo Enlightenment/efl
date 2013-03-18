@@ -497,7 +497,6 @@ char *
 eina_file_cleanup(Eina_Tmpstr *path)
 {
    char *result;
-   char *p;
 
    result = strdup(path ? path : "");
    eina_tmpstr_del(path);
@@ -505,12 +504,7 @@ eina_file_cleanup(Eina_Tmpstr *path)
    if (!result)
      return NULL;
 
-   p = result;
-   while (*p)
-     {
-        if (*p == '\\') *p = '/';
-        p++;
-     }
+   EVIL_PATH_SEP_WIN32_TO_UNIX(result);
 
    return result;
 }

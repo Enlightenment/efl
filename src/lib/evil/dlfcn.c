@@ -196,7 +196,6 @@ dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
    TCHAR  tpath[PATH_MAX];
    MEMORY_BASIC_INFORMATION mbi;
    char  *path;
-   char  *tmp;
    size_t length;
    int    ret = 0;
 
@@ -236,13 +235,7 @@ dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
        path[PATH_MAX - 1] = '\0';
      }
 
-   /* replace '/' by '\' */
-   tmp = path;
-   while (*tmp)
-     {
-        if (*tmp == '/') *tmp = '\\';
-        tmp++;
-     }
+   EVIL_PATH_SEP_UNIX_TO_WIN32(path);
 
    memcpy (info->dli_fname, path, length + 1);
    info->dli_fbase = NULL;

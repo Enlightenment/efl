@@ -13,6 +13,20 @@
  * @{
  */
 
+#define EVIL_PATH_SEP_SWAP(p, s1, s2) \
+   do { \
+     char *_evil_path_tmp; \
+     _evil_path_tmp = p; \
+     while (*_evil_path_tmp) \
+       { \
+          if (*_evil_path_tmp == s1) \
+            *_evil_path_tmp = s2; \
+          _evil_path_tmp++; \
+       } \
+   } while (0)
+
+#define EVIL_PATH_SEP_WIN32_TO_UNIX(p) EVIL_PATH_SEP_SWAP(p, '\\', '/')
+#define EVIL_PATH_SEP_UNIX_TO_WIN32(p) EVIL_PATH_SEP_SWAP(p, '/', '\\')
 
 #ifdef _WIN32_WCE
 
