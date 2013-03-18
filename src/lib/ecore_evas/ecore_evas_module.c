@@ -102,10 +102,10 @@ _ecore_evas_engine_init(void)
    for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)
      for (i = j + 1; i < sizeof (paths) / sizeof (char*); ++i)
        if (paths[i] && paths[j] && !strcmp(paths[i], paths[j]))
-	 {
-	    free(paths[i]);
-	    paths[i] = NULL;
-	 }
+         {
+            free(paths[i]);
+            paths[i] = NULL;
+         }
 
    for (i = 0; i < sizeof (paths) / sizeof (char*); ++i)
      if (paths[i])
@@ -154,20 +154,23 @@ _ecore_evas_available_engines_get(void)
 
    EINA_LIST_FOREACH(_engines_paths, l, path)
      {
-	it = eina_file_direct_ls(path);
+        it = eina_file_direct_ls(path);
 
-	if (it)
-	  {
-	     EINA_ITERATOR_FOREACH(it, info)
-	       {
-		  char tmp[PATH_MAX];
-		  snprintf(tmp, sizeof (tmp), "%s/%s/" ECORE_EVAS_ENGINE_NAME,
-			   info->path, MODULE_ARCH);
+        if (it)
+          {
+             EINA_ITERATOR_FOREACH(it, info)
+               {
+                  char tmp[PATH_MAX];
+                  snprintf(tmp, sizeof (tmp), "%s/%s/" ECORE_EVAS_ENGINE_NAME,
+                           info->path, MODULE_ARCH);
 
-		  if (_file_exists(tmp))
+                  if (_file_exists(tmp))
                     {
                        const char *name;
-                       
+
+#ifdef _WIN32
+                       EVIL_PATH_SEP_WIN32_TO_UNIX(info->path);
+#endif
                        name = strrchr(info->path, '/');
                        if (name) name++;
                        else name = info->path;
@@ -246,9 +249,9 @@ _ecore_evas_available_engines_get(void)
 #endif
                          }
                     }
-	       }
-	     eina_iterator_free(it);
-	  }
+               }
+             eina_iterator_free(it);
+          }
      }
 
    _engines_available = result;

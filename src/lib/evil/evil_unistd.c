@@ -169,7 +169,6 @@ evil_stat(const char *file_name, struct stat *st)
    WIN32_FIND_DATA data;
    HANDLE          handle;
    char           *f;
-   char           *tmp;
    wchar_t        *file;
    int             permission = 0;
 
@@ -180,12 +179,7 @@ evil_stat(const char *file_name, struct stat *st)
    if (!f)
      return -1;
 
-   tmp = f;
-   while (*tmp)
-     {
-        if (*tmp == '/') *tmp = '\\';
-        tmp++;
-     }
+   EVIL_PATH_SEP_UNIX_TO_WIN32(f);
 
    if (!strcmp(file_name, "\\"))
      {
