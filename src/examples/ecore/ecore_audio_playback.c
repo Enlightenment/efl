@@ -87,17 +87,41 @@ handle_cmd(char *cmd, size_t bread)
      }
    else if (!strncmp(cmd, "+", bread))
      {
-        if (volume <= 1.5)
+        if (volume < 1.5)
           volume += 0.01;
         ecore_audio_output_volume_set(out, volume);
         printf("Volume: %3.0f%%\n", volume * 100);
      }
    else if (!strncmp(cmd, "-", bread))
      {
-        if (volume >= 0)
+        if (volume > 0)
           volume -= 0.01;
         ecore_audio_output_volume_set(out, volume);
         printf("Volume: %3.0f%%\n", volume * 100);
+     }
+   else if (!strncmp(cmd, "*", bread))
+     {
+        double speed;
+        EINA_LIST_FOREACH(out_inputs, input, in)
+          {
+             speed = ecore_audio_input_speed_get(in);
+             if (speed < 2.0)
+               speed += 0.01;
+             ecore_audio_input_speed_set(in, speed);
+             printf("Speed: %3.0f%% (%s)\n", speed * 100, ecore_audio_input_name_get(in));
+          }
+     }
+   else if (!strncmp(cmd, "/", bread))
+     {
+        double speed;
+        EINA_LIST_FOREACH(out_inputs, input, in)
+          {
+             speed = ecore_audio_input_speed_get(in);
+             if (speed > 0.5)
+               speed -= 0.01;
+             ecore_audio_input_speed_set(in, speed);
+             printf("Speed: %3.0f%% (%s)\n", speed * 100, ecore_audio_input_name_get(in));
+          }
      }
    else if (!strncmp(cmd, " ", bread))
      {
