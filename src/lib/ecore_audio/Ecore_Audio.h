@@ -356,6 +356,27 @@ EAPI int ecore_audio_input_samplerate_get(Ecore_Audio_Object *input);
 EAPI void ecore_audio_input_samplerate_set(Ecore_Audio_Object *input, int samplerate);
 
 /**
+ * @brief Get the speed the input is played back at
+ *
+ * @param input The input
+ *
+ * @return The speed
+ *
+ * @since 1.8
+ */
+EAPI double ecore_audio_input_speed_get(Ecore_Audio_Object *input);
+
+/**
+ * @brief Set the speed the input is played back at
+ *
+ * @param input The input
+ * @param samplerate The speed (1.0 is normal speed)
+ *
+ * @since 1.8
+ */
+EAPI void ecore_audio_input_speed_set(Ecore_Audio_Object *input, double speed);
+
+/**
  * @brief Get the channels of the input
  *
  * @param input The input

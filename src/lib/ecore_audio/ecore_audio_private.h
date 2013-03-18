@@ -283,6 +283,7 @@ struct _Ecore_Audio_Input
    int                 samplerate;
    int                 channels;
    Eina_Bool           looped; /**< Loop the sound */
+   double              speed;
    double              length; /**< Length of the sound */
    Eina_Bool           preloaded;
    Eina_Bool           ended;

@@ -402,7 +402,7 @@ _pulse_output_add_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
 
    pa_sample_spec ss = {
       .format = PA_SAMPLE_FLOAT32LE,
-      .rate = in->samplerate,
+      .rate = in->samplerate * in->speed,
       .channels = in->channels,
    };
 
@@ -416,7 +416,7 @@ _pulse_output_add_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
    in->obj_data = stream;
 
    pa_stream_set_write_callback(stream, _pulse_output_write_cb, in);
-   pa_stream_connect_playback(stream, NULL, NULL, PA_STREAM_NOFLAGS, NULL, NULL);
+   pa_stream_connect_playback(stream, NULL, NULL, PA_STREAM_VARIABLE_RATE, NULL, NULL);
 
    return EINA_TRUE;
 }
@@ -449,7 +449,7 @@ _pulse_output_update_input_format(Ecore_Audio_Object *output EINA_UNUSED, Ecore_
   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
   pa_stream *stream = (pa_stream *)in->obj_data;
 
-  pa_operation_unref(pa_stream_update_sample_rate(stream, in->samplerate, NULL, NULL));
+  pa_operation_unref(pa_stream_update_sample_rate(stream, in->samplerate * in->speed, NULL, NULL));
 }
 
 static int
