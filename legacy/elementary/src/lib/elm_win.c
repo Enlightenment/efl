@@ -1207,7 +1207,7 @@ _elm_win_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!evas_object_visible_get(obj))
      _elm_win_state_eval_queue();
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    TRAP(sd, show);
 
@@ -1221,7 +1221,7 @@ _elm_win_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (evas_object_visible_get(obj))
      _elm_win_state_eval_queue();
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    TRAP(sd, hide);
 
@@ -1499,7 +1499,7 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    ecore_evas_callback_move_set(sd->ee, NULL);
    ecore_evas_callback_state_change_set(sd->ee, NULL);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 
    if ((!_elm_win_list) &&
        (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
@@ -1561,7 +1561,7 @@ _elm_win_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (!ecore_evas_override_get(sd->ee))  return;
      }
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    if (ecore_evas_override_get(sd->ee))
      {
@@ -1590,7 +1590,7 @@ _elm_win_smart_resize(Eo *obj, void *_pd, va_list *list)
 
    Elm_Win_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    if (sd->img_obj)
      {
@@ -2435,7 +2435,7 @@ _elm_win_on_icon_del(void *data,
 static void
 _elm_win_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -2779,7 +2779,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
      }
 
    eo_parent_set(obj, ecore_evas_get(tmp_sd.ee));
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

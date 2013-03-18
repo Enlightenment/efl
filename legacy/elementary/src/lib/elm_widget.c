@@ -399,7 +399,7 @@ _elm_widget_smart_member_add(Eo *obj, void *_pd EINA_UNUSED, va_list *params_lis
 {
    int r, g, b, a;
    Evas_Object *child = va_arg(*params_list, Evas_Object *);
-   eo_do_super(obj, evas_obj_smart_member_add(child));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(child));
 
    if (evas_object_data_get(child, "_elm_leaveme")) return;
 
@@ -420,7 +420,7 @@ _elm_widget_smart_member_del(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list
    Evas_Object *child = va_arg(*list, Evas_Object *);
    if (!evas_object_data_get(child, "_elm_leaveme"))
       evas_object_clip_unset(child);
-   eo_do_super(obj, evas_obj_smart_member_del(child));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_del(child));
 }
 
 // internal funcs
@@ -4057,7 +4057,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    EO_DBG_INFO_APPEND(group, "Wid-Type", EINA_VALUE_TYPE_STRING, elm_widget_type_get(eo_obj));
@@ -5523,7 +5523,7 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_do(obj, elm_wdg_parent_set(eo_parent_get(obj)));
 }

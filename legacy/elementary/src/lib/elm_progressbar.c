@@ -115,7 +115,7 @@ _elm_progressbar_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *l
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if(!int_ret) return;
 
    _icon_signal_emit(obj);
@@ -134,7 +134,7 @@ _elm_progressbar_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
    if(!int_ret) return;
 
    _icon_signal_emit(obj);
@@ -156,7 +156,7 @@ _elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if (sd->pulse)
@@ -238,7 +238,7 @@ _elm_progressbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Progressbar_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->horizontal = EINA_TRUE;
    priv->units = eina_stringshare_add("%.0f %%");
@@ -278,7 +278,7 @@ _elm_progressbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->units) eina_stringshare_del(sd->units);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -307,7 +307,7 @@ elm_progressbar_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

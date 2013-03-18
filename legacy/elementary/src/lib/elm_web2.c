@@ -112,7 +112,7 @@ _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 #ifdef HAVE_ELEMENTARY_WEB
    elm_widget_resize_object_set(obj, _view_add(obj));
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 #endif
@@ -121,7 +121,7 @@ _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 _elm_web_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -139,7 +139,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Web_Smart_Data *sd = _pd;
    sd->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks, NULL));

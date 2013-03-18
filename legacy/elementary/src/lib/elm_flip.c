@@ -95,7 +95,7 @@ _elm_flip_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret;
    if (ret) *ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -147,7 +147,7 @@ _elm_flip_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      goto end;
 
-   eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_add(sobj, &int_ret));
    if (!int_ret) return;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
@@ -169,7 +169,7 @@ _elm_flip_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
    Elm_Flip_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    if (sobj == sd->front.content)
@@ -1801,7 +1801,7 @@ _elm_flip_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Flip_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);
@@ -1848,7 +1848,7 @@ _elm_flip_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->animator) ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -1866,7 +1866,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Flip_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

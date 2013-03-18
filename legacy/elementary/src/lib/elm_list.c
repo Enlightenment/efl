@@ -737,7 +737,7 @@ _elm_list_smart_disable(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_disabled_get(obj))
@@ -783,7 +783,7 @@ _elm_list_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -809,7 +809,7 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)
@@ -831,7 +831,7 @@ _elm_list_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    if ((sobj == sd->box) || (sobj == obj)) goto end;
@@ -1588,7 +1588,7 @@ _elm_list_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_List_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -1687,7 +1687,7 @@ _elm_list_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eina_list_free(sd->selected);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -1697,7 +1697,7 @@ _elm_list_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -1709,7 +1709,7 @@ _elm_list_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -1720,7 +1720,7 @@ _elm_list_smart_member_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_List_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -1750,7 +1750,7 @@ elm_list_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -1984,7 +1984,7 @@ _scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
      return;
 
-   eo_do_super(obj, elm_scrollable_interface_policy_set(policy_h, policy_v));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_policy_set(policy_h, policy_v));
 }
 
 EAPI void

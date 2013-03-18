@@ -120,7 +120,7 @@ _elm_panel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -264,7 +264,7 @@ _elm_panel_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
         goto end;
      }
 
@@ -295,7 +295,7 @@ _elm_panel_smart_content_get(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, elm_obj_container_content_get(part, ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, ret));
         return;
      }
 
@@ -313,7 +313,7 @@ _elm_panel_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, elm_obj_container_content_unset(part, &content));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &content));
         goto end;
      }
 
@@ -332,7 +332,7 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Panel_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -381,7 +381,7 @@ _elm_panel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -410,7 +410,7 @@ elm_panel_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
 

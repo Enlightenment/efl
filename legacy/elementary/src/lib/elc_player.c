@@ -112,7 +112,7 @@ _elm_player_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
 
    Elm_Player_Smart_Data *sd = _pd;
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
 #define UPDATE_THEME(Target, Name)                                    \
@@ -442,7 +442,7 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "video"))
      {
-        eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
         if (ret) *ret = int_ret;
         return;
      }
@@ -506,7 +506,7 @@ end:
 static void
 _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Elm_Player_Smart_Data *priv = _pd;
 
@@ -552,7 +552,7 @@ _elm_player_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ecore_timer_del(sd->delay_update);
         sd->delay_update = NULL;
      }
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 #endif
@@ -575,7 +575,7 @@ static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
 #ifdef HAVE_EMOTION
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

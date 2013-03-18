@@ -332,7 +332,7 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    else
      eina_stringshare_replace(&ld->group, "base/vertical");
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -896,7 +896,7 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Index_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))
@@ -991,7 +991,7 @@ _elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->delay) ecore_timer_del(sd->delay);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static Eina_Bool _elm_index_smart_focus_next_enable = EINA_FALSE;
@@ -1112,7 +1112,7 @@ elm_index_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

@@ -620,7 +620,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
 static void
 _elm_image_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Elm_Image_Smart_Data *priv = _pd;
 
@@ -665,7 +665,7 @@ _elm_image_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_del(sd->img);
    if (sd->prev_img) evas_object_del(sd->prev_img);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -676,7 +676,7 @@ _elm_image_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    if ((sd->img_x == x) && (sd->img_y == y)) return;
    sd->img_x = x;
@@ -693,7 +693,7 @@ _elm_image_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    if ((sd->img_w == w) && (sd->img_h == h)) return;
 
@@ -712,7 +712,7 @@ _elm_image_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->show = EINA_TRUE;
    if (sd->preloading) return;
 
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    evas_object_show(sd->img);
 
@@ -728,7 +728,7 @@ _elm_image_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Image_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    sd->show = EINA_FALSE;
    evas_object_hide(sd->img);
@@ -743,7 +743,7 @@ _elm_image_smart_member_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_Image_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -759,7 +759,7 @@ _elm_image_smart_color_set(Eo *obj, void *_pd, va_list *list)
    int b = va_arg(*list, int);
    int a = va_arg(*list, int);
 
-   eo_do_super(obj, evas_obj_smart_color_set(r, g, b, a));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_color_set(r, g, b, a));
 
    evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
    evas_object_color_set(sd->img, r, g, b, a);
@@ -773,7 +773,7 @@ _elm_image_smart_clip_set(Eo *obj, void *_pd, va_list *list)
 
    Evas_Object *clip = va_arg(*list, Evas_Object *);
 
-   eo_do_super(obj, evas_obj_smart_clip_set(clip));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_set(clip));
 
    evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
@@ -785,7 +785,7 @@ _elm_image_smart_clip_unset(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Image_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_clip_unset());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_unset());
 
    evas_object_clip_unset(sd->img);
    if (sd->prev_img) evas_object_clip_unset(sd->prev_img);
@@ -798,7 +798,7 @@ _elm_image_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    eo_do(obj, elm_obj_image_sizing_eval());
@@ -1098,7 +1098,7 @@ elm_image_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

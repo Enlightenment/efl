@@ -449,7 +449,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
                          elm_widget_style_get(obj));
      }
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if (sd->popup)
@@ -751,7 +751,7 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Slider_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->horizontal = EINA_TRUE;
    priv->indicator_show = EINA_TRUE;
@@ -833,7 +833,7 @@ _elm_slider_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->popup) evas_object_del(sd->popup);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -862,7 +862,7 @@ elm_slider_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

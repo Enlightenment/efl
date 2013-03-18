@@ -35,7 +35,7 @@ _elm_fileselector_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *li
    /* file selector button's style has an extra bit */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -154,7 +154,7 @@ _elm_fileselector_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED
 {
    Elm_Fileselector_Button_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    if (getenv("HOME")) priv->fsd.path = eina_stringshare_add(getenv("HOME"));
@@ -188,7 +188,7 @@ _elm_fileselector_button_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED
         evas_object_del(win);
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -213,7 +213,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Fileselector_Button_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

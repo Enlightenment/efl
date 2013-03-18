@@ -120,7 +120,7 @@ _elm_notify_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -179,7 +179,7 @@ _elm_notify_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    if (sobj == sd->content)
@@ -218,7 +218,7 @@ _elm_notify_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    _calc(obj);
 }
@@ -228,7 +228,7 @@ _elm_notify_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    _calc(obj);
 }
@@ -268,7 +268,7 @@ _elm_notify_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -281,7 +281,7 @@ _elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
@@ -439,7 +439,7 @@ _elm_notify_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->allow_events = EINA_TRUE;
 
@@ -467,7 +467,7 @@ _elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->timer = NULL;
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -482,7 +482,7 @@ elm_notify_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
 

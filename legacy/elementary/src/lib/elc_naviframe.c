@@ -900,7 +900,7 @@ _elm_naviframe_smart_signal_emit(Eo *obj, void *_pd, va_list *list)
 
    if (!sd->stack) return;
 
-   eo_do_super(obj, elm_obj_layout_signal_emit(emission, source));
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_emit(emission, source));
 }
 
 /* content/text smart functions proxying things to the top item, which
@@ -1271,7 +1271,7 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Naviframe_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->dummy_edje = wd->resize_obj;
    evas_object_smart_member_add(priv->dummy_edje, obj);
@@ -1332,7 +1332,7 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    sd->on_deletion = EINA_FALSE;
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -1406,7 +1406,7 @@ elm_naviframe_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

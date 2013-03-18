@@ -1914,7 +1914,7 @@ _elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Gengrid_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&
@@ -1973,7 +1973,7 @@ _mirrored_set(Evas_Object *obj,
 
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   eo_do_super(obj, elm_scrollable_interface_mirrored_set(rtl));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_mirrored_set(rtl));
 
    if (!sd->items) return;
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
@@ -1993,7 +1993,7 @@ _elm_gengrid_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -2385,7 +2385,7 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Gengrid_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
@@ -2448,7 +2448,7 @@ _elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->calc_job) ecore_job_del(sd->calc_job);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -2458,7 +2458,7 @@ _elm_gengrid_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Elm_Gengrid_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -2470,7 +2470,7 @@ _elm_gengrid_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_Gengrid_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -2481,7 +2481,7 @@ _elm_gengrid_smart_member_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_Gengrid_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -2525,7 +2525,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Gengrid_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -3405,7 +3405,7 @@ _bounce_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool h_bounce = va_arg(*list, int);
    Eina_Bool v_bounce = va_arg(*list, int);
-   eo_do_super(obj, elm_scrollable_interface_bounce_allow_set(!!h_bounce, !!v_bounce));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_bounce_allow_set(!!h_bounce, !!v_bounce));
 }
 
 EAPI void
@@ -3536,7 +3536,7 @@ _scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
      return;
 
-   eo_do_super(obj, elm_scrollable_interface_policy_set(policy_h, policy_v));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_policy_set(policy_h, policy_v));
 }
 
 EAPI void
@@ -3556,7 +3556,7 @@ _scroller_policy_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Scroller_Policy *policy_h = va_arg(*list, Elm_Scroller_Policy *);
    Elm_Scroller_Policy *policy_v = va_arg(*list, Elm_Scroller_Policy *);
 
-   eo_do_super((Eo *)obj, elm_scrollable_interface_policy_get(&s_policy_h, &s_policy_v));
+   eo_do_super((Eo *)obj, MY_CLASS, elm_scrollable_interface_policy_get(&s_policy_h, &s_policy_v));
    if (policy_h) *policy_h = (Elm_Scroller_Policy)s_policy_h;
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
 }

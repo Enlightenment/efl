@@ -186,7 +186,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Menu_Item *item;
    const char *s;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    ll = eina_list_append(ll, sd->items);
@@ -564,7 +564,7 @@ _elm_menu_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Menu_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -607,7 +607,7 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->hv) evas_object_del(sd->hv);
    if (sd->location) evas_object_del(sd->location);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 void
@@ -673,7 +673,7 @@ static void
 _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Menu_Smart_Data *sd = _pd;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

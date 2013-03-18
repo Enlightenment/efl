@@ -108,7 +108,7 @@ _elm_web_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    theme = elm_object_theme_get(obj);
@@ -1140,7 +1140,7 @@ _elm_web_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_show(resize_obj);
 #endif
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
 #ifdef HAVE_ELEMENTARY_WEB
    ewk_view_setting_user_agent_set
@@ -1203,7 +1203,7 @@ _elm_web_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    (void)_pd;
 #endif
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -1221,7 +1221,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Web_Smart_Data *sd = _pd;
    sd->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks, NULL));

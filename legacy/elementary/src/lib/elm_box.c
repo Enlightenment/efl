@@ -129,7 +129,7 @@ _elm_box_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -185,7 +185,7 @@ _elm_box_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(child, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(child, &int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -406,7 +406,7 @@ _elm_box_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
       (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
       _on_size_hints_changed, obj);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    evas_object_smart_callback_add
      (wd->resize_obj, SIG_CHILD_ADDED,
@@ -447,7 +447,7 @@ _elm_box_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -462,7 +462,7 @@ elm_box_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

@@ -200,7 +200,7 @@ _elm_segment_control_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    rtl = elm_widget_mirrored_get(obj);
@@ -228,7 +228,7 @@ _elm_segment_control_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
    if (!int_ret) return;
 
    _update_list(sd);
@@ -589,7 +589,7 @@ _item_new(Evas_Object *obj,
 static void
 _elm_segment_control_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set
        (obj, "segment_control", "base", elm_widget_style_get(obj)))
@@ -616,7 +616,7 @@ _elm_segment_control_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         elm_widget_item_free(it);
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static Eina_Bool _elm_segment_control_smart_focus_next_enable = EINA_FALSE;
@@ -694,7 +694,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Elm_Segment_Control_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

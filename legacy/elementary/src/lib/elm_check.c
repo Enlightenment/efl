@@ -79,7 +79,7 @@ _elm_check_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    _icon_signal_emit(obj);
@@ -113,7 +113,7 @@ _elm_check_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
    if (!int_ret) return;
 
    _icon_signal_emit(obj);
@@ -174,7 +174,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Check_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
@@ -286,7 +286,7 @@ _elm_check_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Check_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,check,on", "",
@@ -340,7 +340,7 @@ elm_check_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

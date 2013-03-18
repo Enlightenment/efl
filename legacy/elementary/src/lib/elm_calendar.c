@@ -545,7 +545,7 @@ _elm_calendar_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    evas_object_smart_changed(obj);
@@ -943,7 +943,7 @@ _elm_calendar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Calendar_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->first_interval = 0.85;
    priv->year_min = 2;
@@ -1041,7 +1041,7 @@ _elm_calendar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static Eina_Bool _elm_calendar_smart_focus_next_enable = EINA_FALSE;
@@ -1176,7 +1176,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Calendar_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

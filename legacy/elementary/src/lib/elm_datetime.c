@@ -496,7 +496,7 @@ _elm_datetime_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Datetime_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if ((!dt_mod) || (!dt_mod->field_value_display))
@@ -764,7 +764,7 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Datetime_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set(obj, "datetime", "base",
                              elm_widget_style_get(obj)))
@@ -830,7 +830,7 @@ _elm_datetime_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if ((dt_mod) && (dt_mod->obj_unhook))
      dt_mod->obj_unhook(sd->mod_data);  // module - unhook
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -845,7 +845,7 @@ elm_datetime_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

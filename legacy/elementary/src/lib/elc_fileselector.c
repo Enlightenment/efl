@@ -41,7 +41,7 @@ _elm_fileselector_smart_del_do(Elm_Fileselector_Smart_Data *sd)
    if (sd->selection) eina_stringshare_del(sd->selection);
    if (sd->sel_idler) free(ecore_idler_del(sd->sel_idler));
 
-   eo_do_super(sd->obj, evas_obj_smart_del());
+   eo_do_super(sd->obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -82,7 +82,7 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    style = elm_widget_style_get(obj);
@@ -754,7 +754,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    EINA_REFCOUNT_INIT(priv);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -909,7 +909,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Elm_Fileselector_Smart_Data *sd = _pd;
    sd->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

@@ -39,7 +39,7 @@ _elm_hoversel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    /* hoversel's style has an extra bit: orientation */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -204,7 +204,7 @@ static void
 _elm_hoversel_smart_add(Eo *obj, void *_pd __UNUSED__,
                         va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
@@ -229,7 +229,7 @@ _elm_hoversel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
    elm_hoversel_hover_parent_set(obj, NULL);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -258,7 +258,7 @@ elm_hoversel_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

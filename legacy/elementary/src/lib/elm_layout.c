@@ -101,10 +101,25 @@ _part_cursor_free(Elm_Layout_Sub_Object_Cursor *pc)
 static void
 _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
 {
-   Evas_Coord minw = -1, minh = -1;
-
+   Evas_Coord minh = -1, minw = -1;
    Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+
+     {
+        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, wd->w, 0);
+
+        /* This is a hack to workaround the way min size hints are treated.
+         * If the minimum width is smaller than the restricted width, it
+         * means the minimum doesn't matter. */
+        if (minw <= wd->w)
+          {
+             Evas_Coord ominw = -1;
+
+             evas_object_size_hint_min_get(obj, &ominw, NULL);
+             minw = ominw;
+          }
+     }
+
+   printf("%d %d %d %d\n", minw, minh, wd->w, wd->h);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -306,7 +321,7 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Layout_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
    /* The following lines are here to support entry design; the _theme function
     * of entry needs to call directly the widget _theme function */
@@ -423,7 +438,7 @@ _elm_layout_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      goto end;
 
-   eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_add(sobj, &int_ret));
    if (!int_ret) return;
 
    Eina_Bool enable = EINA_TRUE;
@@ -456,7 +471,7 @@ _elm_layout_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_sub_object_size_hint_change, obj);
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1341,7 +1356,7 @@ _elm_layout_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -1400,7 +1415,17 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+}
+
+static void
+_elm_layout_smart_resize(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
+   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_resize(w, h));
+
+   eo_do(eo_obj, elm_obj_layout_sizing_eval());
 }
 
 /* rewrite or extend this one on your derived class as to suit your
@@ -2118,7 +2143,7 @@ static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
-   eo_do_super(eo_obj, eo_dbg_info_get(root));
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
      {
@@ -2154,7 +2179,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Layout_Smart_Data *sd = _pd;
    sd->obj = obj;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -2171,6 +2196,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_layout_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_layout_smart_del),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_layout_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_layout_smart_calculate),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_layout_smart_on_focus),

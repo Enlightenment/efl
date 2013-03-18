@@ -161,7 +161,7 @@ _elm_label_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) goto end;
 
    _label_format_set(wd->resize_obj, sd->format);
@@ -329,7 +329,7 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
-   eo_do_super(obj, elm_obj_layout_text_set(item, label, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(item, label, &int_ret));
    if (int_ret)
      {
         sd->lastw = 0;
@@ -376,7 +376,7 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Label_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Evas_Object *parent = eo_parent_get(obj);
    if (!elm_widget_sub_object_add(parent, obj))
@@ -424,7 +424,7 @@ elm_label_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

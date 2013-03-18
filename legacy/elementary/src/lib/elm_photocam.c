@@ -876,7 +876,7 @@ _elm_photocam_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -1300,7 +1300,7 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_theme_object_set
       (obj, edje, "photocam", "base", elm_widget_style_get(obj));
@@ -1387,7 +1387,7 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      ecore_animator_del(sd->g_layer_zoom.bounce.animator);
    if (sd->long_timer) ecore_timer_del(sd->long_timer);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -1397,7 +1397,7 @@ _elm_photocam_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Elm_Photocam_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -1409,7 +1409,7 @@ _elm_photocam_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_Photocam_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -1420,7 +1420,7 @@ _elm_photocam_smart_member_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_Photocam_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -1438,7 +1438,7 @@ elm_photocam_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -2029,7 +2029,7 @@ _image_region_bring_in(Eo *obj, void *_pd, va_list *list)
         _zoom_do(obj, 1.0);
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
-   eo_do_super(obj, elm_scrollable_interface_region_bring_in(rx, ry, rw, rh));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_region_bring_in(rx, ry, rw, rh));
 }
 
 EAPI void

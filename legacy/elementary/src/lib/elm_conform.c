@@ -597,7 +597,7 @@ _elm_conformant_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _conformant_parts_swallow(obj);
@@ -896,7 +896,7 @@ _on_prop_change(void *data,
 static void
 _elm_conformant_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -934,7 +934,7 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    top = elm_widget_top_get(obj);
    evas_object_data_set(top, "\377 elm,conformant", NULL);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -980,7 +980,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object *top;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

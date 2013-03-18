@@ -3586,7 +3586,7 @@ _elm_gesture_layer_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Elm_Gesture_Layer_Smart_Data *priv = _pd;
 
@@ -3641,7 +3641,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           free(sd->gesture[i]);
        }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -3656,7 +3656,7 @@ elm_gesture_layer_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 
    if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))

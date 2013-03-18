@@ -553,7 +553,7 @@ _elm_ctxpopup_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_add(sobj, &int_ret));
 
    if (ret) *ret = int_ret;
 }
@@ -666,7 +666,7 @@ _elm_ctxpopup_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    elm_widget_theme_object_set
@@ -704,7 +704,7 @@ _elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
         goto end;
      }
 
@@ -749,7 +749,7 @@ _elm_ctxpopup_smart_content_get(Eo *obj, void *_pd, va_list *list)
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, elm_obj_container_content_get(part, ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, ret));
         return;
      }
 
@@ -768,7 +768,7 @@ _elm_ctxpopup_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, elm_obj_container_content_unset(part, &content));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &content));
         goto end;
      }
 
@@ -1035,7 +1035,7 @@ _elm_ctxpopup_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
    if (!int_ret) return;
 
    elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
@@ -1048,7 +1048,7 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Ctxpopup_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set
        (obj, "ctxpopup", "base", elm_widget_style_get(obj)))
@@ -1088,7 +1088,7 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    /* box will be our content placeholder, thus the parent's version call */
    Eina_Bool ret;
-   eo_do_super(obj, elm_obj_container_content_set("elm.swallow.content", priv->box, &ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set("elm.swallow.content", priv->box, &ret));
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);
@@ -1117,7 +1117,7 @@ _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE(sd->items, it)
      elm_widget_item_free(it);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -1146,7 +1146,7 @@ elm_ctxpopup_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

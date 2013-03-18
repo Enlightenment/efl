@@ -86,7 +86,7 @@ _elm_glview_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_Glview_Smart_Data * sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    sd->resized = EINA_TRUE;
 
@@ -199,7 +199,7 @@ _elm_glview_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_resize_object_set(obj, img);
    evas_object_image_size_set(img, 1, 1);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Elm_Glview_Smart_Data *priv = _pd;
    // Evas_GL
@@ -264,7 +264,7 @@ _elm_glview_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->config) evas_gl_config_free(sd->config);
    if (sd->evasgl) evas_gl_free(sd->evasgl);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -280,7 +280,7 @@ static void
 _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    const Elm_Glview_Smart_Data *sd = _pd;
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

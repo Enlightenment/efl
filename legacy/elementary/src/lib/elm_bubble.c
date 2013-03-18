@@ -133,7 +133,7 @@ _elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, elm_obj_layout_text_set(item, label, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(item, label, &int_ret));
    if (!int_ret) return;
 
    if (item && (!strcmp(item, "info") || !strcmp(item, "elm.info")))
@@ -195,7 +195,7 @@ _elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Bubble_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->pos = ELM_BUBBLE_POS_TOP_LEFT; //default
 
@@ -245,7 +245,7 @@ elm_bubble_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

@@ -1012,7 +1012,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    Eina_Bool int_ret;
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    elm_widget_theme_object_set
@@ -2294,7 +2294,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_theme_object_set
      (obj, edje, "toolbar", "base", elm_widget_style_get(obj));
@@ -2408,7 +2408,7 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->long_timer = NULL;
      }
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -2418,7 +2418,7 @@ _elm_toolbar_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Elm_Toolbar_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -2430,7 +2430,7 @@ _elm_toolbar_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_Toolbar_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -2441,7 +2441,7 @@ _elm_toolbar_smart_member_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_Toolbar_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -2542,7 +2542,7 @@ elm_toolbar_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

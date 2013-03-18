@@ -63,7 +63,7 @@ _elm_pan_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Pan_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_add());
 
    priv->self = obj;
 }
@@ -73,7 +73,7 @@ _elm_pan_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    _elm_pan_content_set(obj, NULL);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -108,7 +108,7 @@ _elm_pan_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Pan_Smart_Data *psd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_show());
 
    if (psd->content)
      evas_object_show(psd->content);
@@ -119,7 +119,7 @@ _elm_pan_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Pan_Smart_Data *psd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_hide());
 
    if (psd->content)
      evas_object_hide(psd->content);
@@ -229,7 +229,7 @@ _elm_pan_add(Evas *evas)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_PAN_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_PAN_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -4172,7 +4172,7 @@ _elm_scroll_interface_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _elm_scroll_scroll_bar_reset(sid);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, evas_obj_smart_add());
 }
 
 static void
@@ -4180,7 +4180,7 @@ _elm_scroll_interface_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, evas_obj_smart_del());
 
    eo_do(obj, elm_scrollable_interface_content_set(NULL));
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);
@@ -4202,7 +4202,7 @@ _elm_scroll_interface_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_scroll_interface_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, eo_constructor());
 }
 
 static void

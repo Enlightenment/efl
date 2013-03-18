@@ -32,7 +32,7 @@ _elm_mapbuf_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -58,7 +58,7 @@ _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
 
    if (sobj == sd->content)
@@ -139,7 +139,7 @@ _elm_mapbuf_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    _configure(obj, EINA_FALSE);
 }
@@ -149,7 +149,7 @@ _elm_mapbuf_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    _configure(obj, EINA_FALSE);
 }
@@ -236,7 +236,7 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, rect);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    evas_object_static_clip_set(rect, EINA_TRUE);
    evas_object_pass_events_set(rect, EINA_TRUE);
@@ -262,7 +262,7 @@ elm_mapbuf_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
 

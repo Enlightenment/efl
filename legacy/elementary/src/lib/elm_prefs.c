@@ -42,7 +42,7 @@ static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *,
 static void
 _elm_prefs_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 }
 
 static void _item_free(Elm_Prefs_Item_Node *it);
@@ -463,7 +463,7 @@ _elm_prefs_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->page);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -521,7 +521,7 @@ elm_prefs_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks,

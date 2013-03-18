@@ -131,7 +131,7 @@ _elm_dayselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    Elm_Dayselector_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -246,7 +246,7 @@ _elm_dayselector_smart_content_set(Eo *obj, void *_pd, va_list *list)
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, elm_obj_container_content_set(buf, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(buf, content, &int_ret));
         if (!int_ret) return;
 
         if (!content)
@@ -265,7 +265,7 @@ _elm_dayselector_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, elm_obj_container_content_set(buf, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(buf, content, &int_ret));
         if (!int_ret)
           {
              elm_widget_item_free(it);
@@ -320,7 +320,7 @@ _elm_dayselector_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
    content = VIEW(it);
 
-   eo_do_super(obj, elm_obj_container_content_unset(buf, &content));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(buf, &content));
    if (!content) return;
 
    sd->items = eina_list_remove(sd->items, it);
@@ -422,7 +422,7 @@ _elm_dayselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Dayselector_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set(obj, "dayselector", "base", "dayselector"))
      CRITICAL("Failed to set layout!");
@@ -453,7 +453,7 @@ _elm_dayselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    /* handles freeing sd */
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -468,7 +468,7 @@ elm_dayselector_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

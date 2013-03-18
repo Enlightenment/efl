@@ -48,7 +48,7 @@ _elm_multibuttonentry_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    EINA_LIST_FOREACH(sd->items, l, item)
@@ -330,7 +330,7 @@ _elm_multibuttonentry_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj))
@@ -1444,7 +1444,7 @@ _elm_multibuttonentry_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *li
         if (label) _guide_text_set(obj, label);
         int_ret = EINA_TRUE;
      }
-   else eo_do_super(obj, elm_obj_layout_text_set(part, label, &int_ret));
+   else eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
 
    if (ret) *ret = int_ret;
 }
@@ -1466,7 +1466,7 @@ _elm_multibuttonentry_smart_text_get(Eo *obj, void *_pd, va_list *list)
         *text = sd->guide_text_str;
      }
    else
-     eo_do_super(obj, elm_obj_layout_text_get(part, text));
+     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, text));
 }
 
 static char *
@@ -1513,7 +1513,7 @@ _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Multibuttonentry_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set
        (obj, "multibuttonentry", "base", elm_widget_style_get(obj)))
@@ -1560,7 +1560,7 @@ _elm_multibuttonentry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->end) evas_object_del(sd->end);
    if (sd->rect_for_end) evas_object_del(sd->rect_for_end);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
@@ -1669,7 +1669,7 @@ elm_multibuttonentry_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

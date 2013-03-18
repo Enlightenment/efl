@@ -487,7 +487,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -922,7 +922,7 @@ _elm_entry_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   eo_do_super(obj, elm_wdg_sub_object_del(sobj, ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, ret));
    if (!ret) return;
 
    if (ret) *ret = EINA_TRUE;
@@ -2408,14 +2408,14 @@ _elm_entry_smart_callback_add(Eo *obj, void *_pd, va_list *list)
 
    wd->resize_obj = sd->entry_edje;
 
-   eo_do_super(obj, elm_obj_layout_signal_callback_add
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_add
      (emission, source, func_cb, data));
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
-        eo_do_super(obj, elm_obj_layout_signal_callback_add
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_add
               (emission, source, func_cb, data));
      }
 
@@ -2438,14 +2438,14 @@ _elm_entry_smart_callback_del(Eo *obj, void *_pd, va_list *list)
 
    wd->resize_obj = sd->entry_edje;
 
-   eo_do_super(obj, elm_obj_layout_signal_callback_del
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
          (emission, source, func_cb, data));
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
-        eo_do_super(obj, elm_obj_layout_signal_callback_del
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
               (emission, source, func_cb, data));
      }
 
@@ -2461,7 +2461,7 @@ _elm_entry_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
    if (!int_ret) return;
 
    /* too bad entry does not follow the pattern
@@ -2483,7 +2483,7 @@ _elm_entry_smart_content_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (content) *content = NULL;
 
    Evas_Object *int_content;
-   eo_do_super(obj, elm_obj_container_content_unset(part, &int_content));
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &int_content));
    if (!int_content) return;
 
    /* too bad entry does not follow the pattern
@@ -2778,7 +2778,7 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Entry_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    priv->entry_edje = wd->resize_obj;
 
@@ -3005,7 +3005,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
@@ -3015,7 +3015,7 @@ _elm_entry_smart_move(Eo *obj, void *_pd, va_list *list)
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_move(x, y));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 
@@ -3029,7 +3029,7 @@ _elm_entry_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_resize(w, h));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -3040,7 +3040,7 @@ _elm_entry_smart_member_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *member = va_arg(*list, Evas_Object *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_member_add(member));
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -3073,7 +3073,7 @@ elm_entry_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
@@ -4644,7 +4644,7 @@ _scroller_policy_set(Eo *obj, void *_pd, va_list *list)
 
    sd->policy_h = h;
    sd->policy_v = v;
-   eo_do_super(obj, elm_scrollable_interface_policy_set(sd->policy_h, sd->policy_v));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_policy_set(sd->policy_h, sd->policy_v));
 }
 
 EAPI void
@@ -4665,7 +4665,7 @@ _bounce_set(Eo *obj, void *_pd, va_list *list)
 
    sd->h_bounce = h_bounce;
    sd->v_bounce = v_bounce;
-   eo_do_super(obj, elm_scrollable_interface_bounce_allow_set(h_bounce, v_bounce));
+   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_bounce_allow_set(h_bounce, v_bounce));
 }
 
 EAPI void

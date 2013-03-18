@@ -190,7 +190,7 @@ _elm_fileselector_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    style = elm_widget_style_get(obj);
@@ -223,7 +223,7 @@ _elm_fileselector_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, elm_wdg_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
    if (!int_ret) return;
 
    val = elm_widget_disabled_get(obj);
@@ -246,7 +246,7 @@ _elm_fileselector_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
 
    if (item && strcmp(item, "default"))
      {
-        eo_do_super(obj, elm_obj_layout_text_set(item, label, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(item, label, &int_ret));
         goto end;
      }
 
@@ -267,7 +267,7 @@ _elm_fileselector_entry_smart_text_get(Eo *obj, void *_pd, va_list *list)
 
    if (item && strcmp(item, "default"))
      {
-        eo_do_super(obj, elm_obj_layout_text_get(item, text));
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(item, text));
         return;
      }
 
@@ -286,7 +286,7 @@ _elm_fileselector_entry_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "button icon"))
      {
-        eo_do_super(obj, elm_obj_container_content_set(part, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
         goto end;
      }
 
@@ -308,7 +308,7 @@ _elm_fileselector_entry_smart_content_get(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "button icon"))
      {
-        eo_do_super(obj, elm_obj_container_content_get(part, ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, ret));
         return;
      }
 
@@ -326,7 +326,7 @@ _elm_fileselector_entry_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "button icon"))
      {
-        eo_do_super(obj, elm_obj_container_content_unset(part, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &int_ret));
         goto end;
      }
 
@@ -340,7 +340,7 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Fileselector_Entry_Smart_Data *priv = _pd;
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    if (!elm_layout_theme_set
        (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
@@ -397,7 +397,7 @@ _elm_fileselector_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->path) free(sd->path);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -412,7 +412,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

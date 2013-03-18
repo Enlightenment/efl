@@ -417,7 +417,7 @@ _elm_thumb_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Thumb_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, evas_obj_smart_show());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
 #ifdef ELM_ETHUMB
    _thumb_show(sd);
@@ -436,7 +436,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #endif
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_hide());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    evas_object_hide(wd->resize_obj);
 
@@ -530,7 +530,7 @@ _elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if (!elm_layout_theme_set(wd->resize_obj, "thumb", "base",
@@ -567,7 +567,7 @@ _elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Thumb_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_resize_object_set(obj, elm_layout_add(obj));
 
@@ -613,7 +613,7 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->eeh) ecore_event_handler_del(sd->eeh);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -628,7 +628,7 @@ elm_thumb_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set("Elm_Thumb"),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));

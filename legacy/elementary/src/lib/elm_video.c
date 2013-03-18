@@ -236,7 +236,7 @@ _elm_video_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _elm_emotion_init();
 
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -283,7 +283,7 @@ _elm_video_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    (void) sd;
 #endif
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 EAPI Evas_Object *
@@ -304,7 +304,7 @@ static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
 #ifdef HAVE_EMOTION
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
 

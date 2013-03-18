@@ -344,7 +344,7 @@ _elm_icon_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 #endif
 
-   eo_do_super(obj, elm_obj_image_sizing_eval());
+   eo_do_super(obj, MY_CLASS, elm_obj_image_sizing_eval());
 
    sd->in_eval--;
 }
@@ -390,7 +390,7 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
 
    if (!sd->is_video)
      {
-        eo_do_super(obj, elm_obj_image_file_set(file, key, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_image_file_set(file, key, &int_ret));
         if (ret) *ret = int_ret;
         return;
      }
@@ -451,7 +451,7 @@ _elm_icon_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
 
    _edje_signals_free(sd);
 
-   eo_do_super(obj, elm_obj_image_memfile_set(img, size, format, key, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_image_memfile_set(img, size, format, key, &int_ret));
    if (ret) *ret = int_ret;
 }
 
@@ -466,7 +466,7 @@ _elm_icon_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   eo_do_super(obj, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
    if (ret) *ret = EINA_TRUE;
@@ -606,7 +606,7 @@ _elm_icon_thumb_resize_cb(void *data,
 static void
 _elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, evas_obj_smart_add());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    Elm_Icon_Smart_Data *priv = _pd;
 
    priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
@@ -642,7 +642,7 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _edje_signals_free(sd);
 
-   eo_do_super(obj, evas_obj_smart_del());
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 /* WARNING: to be deprecated */
@@ -754,7 +754,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Icon_Smart_Data *sd = _pd;
    sd->obj = obj;
 
-   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
