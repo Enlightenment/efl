@@ -899,7 +899,7 @@ _inform_item_number(Evas_Object *obj)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
    Elm_Toolbar_Item *it;
-   char buf[sizeof("elm,action,click,") + 3];
+   char buf[sizeof("elm,number,item,") + 4];
    static int scount = 0;
    int count = 0;
 
@@ -910,7 +910,8 @@ _inform_item_number(Evas_Object *obj)
    if (scount != count)
      {
         scount = count;
-        sprintf(buf, "elm,number,item,%d", count);
+        if (snprintf(buf, sizeof(buf), "elm,number,item,%d", count) >= sizeof(buf))
+          ERR("Too many items to fit signal buffer (%d)", count);
 
         EINA_INLIST_FOREACH(sd->items, it)
           {
