@@ -579,7 +579,7 @@ eina_value_array_count(const Eina_Value *value)
    EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(value, 0);
    if (!eina_value_pget(value, &desc))
      return 0;
-   return eina_inarray_count(desc.array);
+   return desc.array ? eina_inarray_count(desc.array) : 0;
 }
 
 static inline Eina_Bool
