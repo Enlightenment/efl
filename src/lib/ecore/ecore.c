@@ -15,7 +15,7 @@
 # include <langinfo.h>
 #endif
 
-#ifdef HAVE_SYS_MMAN_H
+#if defined(HAVE_SYS_MMAN_H) || defined(HAVE_EVIL)
 # include <sys/mman.h>
 #endif
 
