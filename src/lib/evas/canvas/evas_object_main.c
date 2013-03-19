@@ -2013,14 +2013,14 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    double dblx, dbly;
    eo_do(eo_obj, evas_obj_size_hint_align_get(&dblx, &dbly));
    node = EO_DBG_INFO_LIST_APPEND(group, "Align");
-   EO_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_INT, dblx);
-   EO_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_INT, dbly);
+   EO_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_DOUBLE, dblx);
+   EO_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_DOUBLE, dbly);
 
    double dblw, dblh;
    eo_do(eo_obj, evas_obj_size_hint_weight_get(&dblw, &dblh));
    node = EO_DBG_INFO_LIST_APPEND(group, "Weight");
-   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, dblw);
-   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, dblh);
+   EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_DOUBLE, dblw);
+   EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_DOUBLE, dblh);
 
    int r, g, b, a;
    eo_do(eo_obj, evas_obj_color_get(&r, &g, &b, &a));
