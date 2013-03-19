@@ -32,7 +32,8 @@ EAPI void *eina_cow_write(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *src) EINA_WARN_UNUSED_RESULT;
 EAPI void eina_cow_done(Eina_Cow *cow,
 			const Eina_Cow_Data * const *dst,
-			const void *data);
+			const void *data,
+			Eina_Bool needed_gc);
 EAPI void eina_cow_memcpy(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *dst,
 			  const Eina_Cow_Data *src);
@@ -47,7 +48,8 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
       Write = eina_cow_write(Cow, ((const Eina_Cow_Data**)&(Read)));
 
 #define EINA_COW_WRITE_END(Cow, Read, Write)				\
-      eina_cow_done(Cow, ((const Eina_Cow_Data**)&(Read)), Write);	\
+      eina_cow_done(Cow, ((const Eina_Cow_Data**)&(Read)), Write,	\
+		    EINA_TRUE);						\
     }									\
   while (0);
 

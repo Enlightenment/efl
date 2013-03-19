@@ -20,6 +20,14 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_BACKTRACE
+# include <execinfo.h>
+#endif
+
+#ifndef NVALGRIND
+# include <memcheck.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"
@@ -31,13 +39,6 @@
 
 #include "eina_cow.h"
 
-#ifndef NVALGRIND
-# include <memcheck.h>
-#endif
-
-#ifdef HAVE_BACKTRACE
-# include <execinfo.h>
-#endif
 #ifdef EINA_COW_MAGIC_ON
 #define EINA_COW_MAGIC 0xDEADBEEF
 
@@ -458,7 +459,8 @@ eina_cow_write(Eina_Cow *cow,
 EAPI void
 eina_cow_done(Eina_Cow *cow,
 	      const Eina_Cow_Data * const * dst,
-	      const void *data)
+	      const void *data,
+              Eina_Bool needed_gc)
 {
    Eina_Cow_Ptr *ref;
    Eina_Cow_GC *gc;
@@ -476,6 +478,8 @@ eina_cow_done(Eina_Cow *cow,
 
    ref->writing = EINA_FALSE;
 #endif
+
+   if (!needed_gc) return ;
 
    /* needed if we want to make cow gc safe */
    if (ref->togc) return ;
