@@ -620,6 +620,7 @@ case "${build_profile}" in
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
+     want_cow_magic="yes"
      ;;
 
    debug)
@@ -629,6 +630,7 @@ case "${build_profile}" in
      want_debug_malloc="yes"
      want_debug_threads="yes"
      want_default_mempool="yes"
+     want_cow_magic="yes"
      ;;
 
    release)
@@ -638,6 +640,7 @@ case "${build_profile}" in
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
+     want_cow_magic="no"
      ;;
 esac
 
@@ -694,6 +697,10 @@ fi
 AC_DEFINE_IF([EINA_DEBUG_MALLOC],
    [test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"],
    [1], [Turn on debugging overhead in mempool])
+
+AC_DEFINE_IF([EINA_COW_MAGIC_ON],
+   [test "x${want_cow_magic}" = "xyes" ],
+   [1], [Turn on Eina_Magic in Eina_Cow])
 
 EFL_OPTIONAL_DEPEND_PKG([EINA], [${want_systemd}], [SYSTEMD], [libsystemd-journal])
 
