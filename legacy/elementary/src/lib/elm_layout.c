@@ -103,22 +103,7 @@ _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
 {
    Evas_Coord minh = -1, minw = -1;
    Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
-
-     {
-        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, wd->w, 0);
-
-        /* This is a hack to workaround the way min size hints are treated.
-         * If the minimum width is smaller than the restricted width, it
-         * means the minimum doesn't matter. */
-        if (minw <= wd->w)
-          {
-             Evas_Coord ominw = -1;
-
-             evas_object_size_hint_min_get(obj, &ominw, NULL);
-             minw = ominw;
-          }
-     }
-
+   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -1417,16 +1402,6 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_layout_smart_resize(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_resize(w, h));
-
-   eo_do(eo_obj, elm_obj_layout_sizing_eval());
-}
-
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 static void
@@ -2195,7 +2170,6 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_layout_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_layout_smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_layout_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_layout_smart_calculate),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_layout_smart_on_focus),
