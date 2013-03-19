@@ -332,6 +332,8 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
    Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
    unsigned int i;
 
+   if (!gp || !gp->matches) return NULL;
+
    // FIXME: Shall we check DELETE_ME flags ?
    for (i = 0; i < gp->matches->matches_count; ++i)
      {
