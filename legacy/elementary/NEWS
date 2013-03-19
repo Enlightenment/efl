@@ -186,6 +186,7 @@ Fixes:
    * Fixed a bug in elm_list. Focus_next is needed only when access mode is enabled.
    * Fix a memory leak of elm_genlist - EINA_LIST_FREE should be used for returned value of elm_genlist_realized_items_get
    * Focus highlight should be reconfigured when theme is changed.
+   * Fix the elm_shutdown bug in _elm_shutdown_config.
    
 Removals:
 
