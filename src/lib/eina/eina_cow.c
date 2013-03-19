@@ -35,10 +35,9 @@
 # include <memcheck.h>
 #endif
 
+#ifdef EINA_COW_MAGIC_ON
 #define EINA_COW_MAGIC 0xDEADBEEF
 
-//#define MOO // Define that one if you want magic debug for Eina_Cow_Ptr
-#ifdef MOO
 # define EINA_COW_PTR_MAGIC 0xBEEFE00
 #endif
 
@@ -52,7 +51,7 @@ typedef void (*Eina_Bt_Func) ();
 
 struct _Eina_Cow_Ptr
 {
-#ifdef MOO
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC;
 # ifdef HAVE_BACKTRACE
    Eina_Bt_Func writer_bt[EINA_DEBUG_BT_NUM];
@@ -63,12 +62,16 @@ struct _Eina_Cow_Ptr
 
    Eina_Bool hashed : 1;
    Eina_Bool togc : 1;
+#ifdef EINA_COW_MAGIC_ON
    Eina_Bool writing : 1;
+#endif
 };
 
 struct _Eina_Cow_GC
 {
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC;
+#endif
 
    Eina_Cow_Ptr *ref;
    const void * const *dst;
@@ -76,9 +79,11 @@ struct _Eina_Cow_GC
 
 struct _Eina_Cow
 {
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC;
+#endif
 
-   Eina_List *togc;
+   Eina_Hash *togc;
    Eina_Hash *match;
 
    Eina_Mempool *pool;
@@ -90,19 +95,20 @@ struct _Eina_Cow
 
 typedef int (*Eina_Cow_Hash)(const void *, int);
 
-#define EINA_COW_MAGIC_CHECK(d)                         \
+#ifdef EINA_COW_MAGIC_ON
+# define EINA_COW_MAGIC_CHECK(d)                        \
   do {                                                  \
      if (!EINA_MAGIC_CHECK((d), EINA_COW_MAGIC))        \
        EINA_MAGIC_FAIL((d), EINA_COW_MAGIC);            \
   } while (0);
 
-#ifdef MOO
 # define EINA_COW_PTR_MAGIC_CHECK(d)                    \
   do {                                                  \
      if (!EINA_MAGIC_CHECK((d), EINA_COW_PTR_MAGIC))    \
        EINA_MAGIC_FAIL((d), EINA_COW_PTR_MAGIC);        \
   } while (0);
 #else
+# define EINA_COW_MAGIC_CHECK(d)
 # define EINA_COW_PTR_MAGIC_CHECK(d)
 #endif
 
@@ -196,21 +202,17 @@ _eina_cow_hash_del(Eina_Cow *cow,
 }
 
 static void
+_eina_cow_gc_free(void *data)
+{
+   eina_mempool_free(gc_pool, data);
+}
+
+static void
 _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
 {
-   Eina_Cow_GC *gc;
-   Eina_List *l;
-
    /* eina_cow_gc is not supposed to be thread safe */
    if (!ref->togc) return ;
-
-   EINA_LIST_FOREACH(cow->togc, l, gc)
-     if (gc->ref == ref)
-       {
-          cow->togc = eina_list_remove_list(cow->togc, l);
-          eina_mempool_free(gc_pool, gc);
-          break;
-       }
+   eina_hash_del(cow->togc, &ref, NULL);
    ref->togc = EINA_FALSE;
 }
 
@@ -295,13 +297,14 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
                               NULL,
                               6);   
 #endif
-
-   cow->togc = NULL;
+   cow->togc = eina_hash_pointer_new(_eina_cow_gc_free);
    cow->default_value = default_value;
    cow->struct_size = struct_size;
    cow->total_size = total_size;
 
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(cow, EINA_COW_MAGIC);
+#endif
 
    return cow;
 
@@ -313,24 +316,25 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
 EAPI void
 eina_cow_del(Eina_Cow *cow)
 {
-   Eina_Cow_GC *gc;
-
    if (!cow) return ;
 
+#ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
+#endif
 
    eina_mempool_del(cow->pool);
    eina_hash_free(cow->match);
+   eina_hash_free(cow->togc);
 
-   EINA_LIST_FREE(cow->togc, gc)
-     eina_mempool_free(gc_pool, gc);
    free(cow);
 }
 
 EAPI const Eina_Cow_Data *
 eina_cow_alloc(Eina_Cow *cow)
 {
+#ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
+#endif
 
    return cow->default_value;
 }
@@ -340,7 +344,9 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 {
    Eina_Cow_Ptr *ref;
 
+#ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
+#endif
 
    if (!data) return ;
    if (cow->default_value == data) return ;
@@ -359,7 +365,7 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
-#ifdef MOO
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(ref, EINA_MAGIC_NONE);
 #endif
    _eina_cow_hash_del(cow, data, ref);
@@ -374,7 +380,9 @@ eina_cow_write(Eina_Cow *cow,
    Eina_Cow_Ptr *ref;
    void *r;
 
+#ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
+#endif
 
    if (!*data) return NULL; /* cow pointer is always != NULL */
    if (*data == cow->default_value)
@@ -387,17 +395,19 @@ eina_cow_write(Eina_Cow *cow,
 #endif
    if (ref->refcount == 1)
      {
+#ifdef EINA_COW_MAGIC_ON
         EINA_COW_PTR_MAGIC_CHECK(ref);
 
         if (ref->writing)
           {
              ERR("Request writing on an pointer that is already in a writing process %p\n", data);
-#if defined(MOO) && defined(HAVE_BACKTRACE)
+#ifdef HAVE_BACKTRACE
              backtrace_symbols_fd((void **) ref->writer_bt,
                                   ref->writer_bt_num, 1);
 #endif
              return NULL;
           }
+#endif
 
         _eina_cow_hash_del(cow, *data, ref);
 #ifndef NVALGRIND
@@ -420,7 +430,7 @@ eina_cow_write(Eina_Cow *cow,
    memcpy(r, *data, cow->struct_size);
    *((void**) data) = r;
 
-#ifdef MOO
+#ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(ref, EINA_COW_PTR_MAGIC);
 #endif
 
@@ -428,11 +438,13 @@ eina_cow_write(Eina_Cow *cow,
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
-#if defined(MOO) && defined(HAVE_BACKTRACE)
+#ifdef EINA_COW_MAGIC_ON
+# ifdef HAVE_BACKTRACE
    ref->writer_bt_num = backtrace((void **)(ref->writer_bt),
                                   EINA_DEBUG_BT_NUM);
-#endif
+# endif
    ref->writing = EINA_TRUE;
+#endif
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
 #endif
@@ -455,10 +467,12 @@ eina_cow_done(Eina_Cow *cow,
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
 #endif
+#ifdef EINA_COW_MAGIC_ON
    if (!ref->writing)
      ERR("Pointer %p is not in a writable state !", dst);
 
    ref->writing = EINA_FALSE;
+#endif
 
    /* needed if we want to make cow gc safe */
    if (ref->togc) return ;
@@ -468,7 +482,7 @@ eina_cow_done(Eina_Cow *cow,
 
    gc->ref = ref;
    gc->dst = dst;
-   cow->togc = eina_list_prepend(cow->togc, gc);
+   eina_hash_direct_add(cow->togc, &gc->ref, gc);
    ref->togc = EINA_TRUE;
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
@@ -509,20 +523,25 @@ eina_cow_gc(Eina_Cow *cow)
 {
    Eina_Cow_Ptr *ref;
    Eina_Cow_GC *gc;
+   Eina_Iterator *it;
    void *data;
    void *match;
+   Eina_Bool r;
 
    EINA_COW_MAGIC_CHECK(cow);
 
-   if (!cow->togc) return EINA_FALSE; /* Nothing more to do */
+   if (!eina_hash_population(cow->togc)) return EINA_FALSE;
+
+   it = eina_hash_iterator_data_new(cow->togc);
+   r = eina_iterator_next(it, (void**) &gc);
+   eina_iterator_free(it);
+   
+   if (!r) return EINA_FALSE; /* Something did go wrong here */
 
    /* Do handle hash and all funky merge think here */
-   gc = eina_list_data_get(eina_list_last(cow->togc));
-
    data = EINA_COW_DATA_GET(gc->ref);
 
    gc->ref->togc = EINA_FALSE;
-   cow->togc = eina_list_remove_list(cow->togc, eina_list_last(cow->togc));
 
    current_cow_size = cow->struct_size;
    match = eina_hash_find(cow->match, data);
@@ -546,7 +565,7 @@ eina_cow_gc(Eina_Cow *cow)
         gc->ref->hashed = EINA_TRUE;
      }
 
-   eina_mempool_free(gc_pool, gc);
+   eina_hash_del(cow->togc, &gc->ref, gc);
 
    return EINA_TRUE;
 }
