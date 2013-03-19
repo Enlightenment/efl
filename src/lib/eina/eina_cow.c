@@ -38,7 +38,7 @@
 #ifdef HAVE_BACKTRACE
 # include <execinfo.h>
 #endif
-
+#undef EINA_COW_MAGIC_ON
 #ifdef EINA_COW_MAGIC_ON
 #define EINA_COW_MAGIC 0xDEADBEEF
 
