@@ -620,7 +620,7 @@ case "${build_profile}" in
      want_debug_malloc="no"
      want_debug_threads="no"
      want_default_mempool="no"
-     want_cow_magic="yes"
+     want_cow_magic="no"
      ;;
 
    debug)
