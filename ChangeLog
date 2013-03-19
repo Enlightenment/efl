@@ -1,3 +1,7 @@
+2013-03-19  Mike Blumenkrantz
+
+        * Fix magic failure in eina_value_array_count when array has not been allocated
+
 2013-03-16  Cedric Bail
 
 	* Remove Glew and Direct3d code from Ecore_Evas module.
