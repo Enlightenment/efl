@@ -1070,6 +1070,7 @@ eet_decipher(const void   *data,
    unsigned int salt;
    int tmp_len;
    int tmp = 0;
+   int opened = 0;
 
    /* At least the salt and an AES block */
    if (size < sizeof(unsigned int) + 16)
@@ -1129,7 +1130,6 @@ eet_decipher(const void   *data,
 
 # else /* ifdef HAVE_GNUTLS */
    EVP_CIPHER_CTX ctx;
-   int opened = 0;
 
    /* Openssl create the corresponding cipher */
    EVP_CIPHER_CTX_init(&ctx);
@@ -1178,6 +1178,7 @@ on_error:
    memset(ik, 0, sizeof (ik));
 
 # ifdef HAVE_GNUTLS
+   (void)opened;
 # else
    if (opened)
      EVP_CIPHER_CTX_cleanup(&ctx);
