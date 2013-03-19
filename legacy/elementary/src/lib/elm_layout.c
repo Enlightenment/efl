@@ -119,7 +119,6 @@ _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
           }
      }
 
-   printf("%d %d %d %d\n", minw, minh, wd->w, wd->h);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
