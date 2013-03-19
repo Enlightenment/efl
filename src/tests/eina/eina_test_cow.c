@@ -58,7 +58,7 @@ START_TEST(eina_cow_bad)
    fail_if(write == NULL || write == &default_value);
 
    write->i = 7;
-   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_FALSE);
    fail_if(cur->i != 7 || default_value.i != 42);
 
 #ifdef EINA_COW_MAGIC
@@ -67,7 +67,7 @@ START_TEST(eina_cow_bad)
 
    eina_log_print_cb_set(_eina_test_log, &over_commit);
    /* Testing over commit */
-   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_FALSE);
    fail_if(!over_commit);
 
    write = eina_cow_write(cow, (const Eina_Cow_Data**) &cur);
@@ -106,7 +106,7 @@ START_TEST(eina_cow)
    fail_if(write == NULL || write == &default_value);
 
    write->i = 7;
-   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_TRUE);
    fail_if(cur->i != 7 || prev->i != 0);
 
    eina_cow_memcpy(cow,
@@ -119,7 +119,7 @@ START_TEST(eina_cow)
    fail_if(write == NULL || write == &default_value);
 
    write->i = 42; write->c = 5;
-   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_TRUE);
    fail_if(cur->i != 42 || cur->c != 5 ||
            prev->i != 7 || prev->c != 42 ||
            default_value.c != 42 || default_value.i != 0);
@@ -129,7 +129,7 @@ START_TEST(eina_cow)
 
    write = eina_cow_write(cow, (const Eina_Cow_Data**) &cur);
    write->i = 7; write->c = 42;
-   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_TRUE);
 
    fail_if(eina_cow_gc(cow) == EINA_FALSE);
    fail_if(cur != prev);

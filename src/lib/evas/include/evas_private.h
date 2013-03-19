@@ -1271,7 +1271,10 @@ extern Eina_Cow *evas_object_image_state_cow;
                        Evas_Object_Protected_State, Write)
 
 # define EINA_COW_STATE_WRITE_END(Obj, Write, State)                    \
-  EINA_COW_WRITE_END(evas_object_state_cow, Obj->State, Write)
+    eina_cow_done(evas_object_state_cow, ((const Eina_Cow_Data**)&(Obj->State)), \
+		  Write, EINA_FALSE);					\
+   }									\
+  while (0);
 
 /****************************************************************************/
 /*****************************************/
