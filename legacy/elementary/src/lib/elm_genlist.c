@@ -228,7 +228,7 @@ _elm_genlist_pan_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         psd->resize_job = NULL;
      }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_del());
 }
 
 static void
