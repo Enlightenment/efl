@@ -68,9 +68,9 @@ struct _Ecore_Coroutine
 };
 
 #ifdef __x86_64__
-static const int const _ecore_coroutine_default_stack_size = 16 * 1024;
+static const int _ecore_coroutine_default_stack_size = 16 * 1024;
 #else
-static const int const _ecore_coroutine_default_stack_size = 12 * 1024;
+static const int _ecore_coroutine_default_stack_size = 12 * 1024;
 #endif
 
 static void
