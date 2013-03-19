@@ -46,8 +46,6 @@ START_TEST(eina_cow_bad)
    const Eina_Cow_Test *cur;
    Eina_Cow_Test *write;
    Eina_Cow *cow;
-   Eina_Bool over_commit = EINA_FALSE;
-   Eina_Bool over_writing = EINA_FALSE;
    Eina_Cow_Test default_value = { 7, 42, NULL };
 
    cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value);
@@ -63,6 +61,10 @@ START_TEST(eina_cow_bad)
    eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
    fail_if(cur->i != 7 || default_value.i != 42);
 
+#ifdef EINA_COW_MAGIC
+   Eina_Bool over_commit = EINA_FALSE;
+   Eina_Bool over_writing = EINA_FALSE;
+
    eina_log_print_cb_set(_eina_test_log, &over_commit);
    /* Testing over commit */
    eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write);
@@ -75,6 +77,9 @@ START_TEST(eina_cow_bad)
    /* Testing over writing */
    write = eina_cow_write(cow, (const Eina_Cow_Data**) &cur);
    fail_if(write != NULL || !over_writing);
+#else
+   (void) _eina_test_log;
+#endif
 
    eina_cow_free(cow, cur);
 
