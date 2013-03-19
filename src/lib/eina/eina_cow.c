@@ -35,6 +35,10 @@
 # include <memcheck.h>
 #endif
 
+#ifdef HAVE_BACKTRACE
+# include <execinfo.h>
+#endif
+
 #ifdef EINA_COW_MAGIC_ON
 #define EINA_COW_MAGIC 0xDEADBEEF
 
