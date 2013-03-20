@@ -276,9 +276,8 @@ _sym_init(void)
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
       if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
-   } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
-   }
+   } \
+   if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym);
    
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
