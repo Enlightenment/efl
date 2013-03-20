@@ -416,8 +416,12 @@ START_TEST(eina_test_shuffle)
        j = 0;
        list = eina_list_sort(list, 0, (Eina_Compare_Cb)&uicmp);
        EINA_LIST_FOREACH(list, item, p)
-          fail_if(*p != j++);
-       fail_if(j != SHUFFLE_SZ);
+         {
+            if (*p != j++)
+              fail_if(*p != j++);
+         }
+       if (j != SHUFFLE_SZ)
+         fail_if(j != SHUFFLE_SZ);
     }
 
   d = SHUFFLE_SZ/(float)(SHUFFLE_N);
