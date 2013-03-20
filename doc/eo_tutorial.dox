@@ -55,9 +55,18 @@
  * @endcode
  * 
  *   - Eo way:
+ *     Two functions can be used to extract object data. The use depends if you want to store the data or not. If you just need to access data in the function (most of the time), just use eo_data_scope_get. If you need to store the data (for example in a list of objects data), you have to use eo_data_ref. This function references the data. If you don't need the referenced data anymore, call eo_data_unref.
+ *     This reference mechanism will be used in the future to detect bad usage of objects, defragment the memory space used by the objects...
  * @code
- *    Evas_Object_Line *o = eo_data_get(obj, EVAS_OBJ_LINE_CLASS);
+ *    Evas_Object_Line *o = eo_data_scope_get(obj, EVAS_OBJ_LINE_CLASS);
  *    if (!o) return;
+ * @endcode
+ *    or
+ * @code
+ *    Evas_Object_Line *o = eo_data_ref(obj, EVAS_OBJ_LINE_CLASS);
+ *    if (!o) return;
+ *    ...
+ *    eo_data_unref(obj, o);
  * @endcode
  * 
  * - Call function of parent
@@ -74,10 +83,12 @@
  * @section Important to know
  * - eo_do() is the function used to invoke functions of a specific class on an object.
  * 
- * - eo_data_get() receives an object and a class and returns the data of the given class for the object. The class must belong to the object class hierarchy.
- * 
+ * - eo_data_scope_get() and eo_data_ref() receives an object and a class and returns the data of the given class for the object. The class must belong to the object class hierarchy.
+ *
+ * - eo_data_unref() receives an object and the data to unreference. The data MUST belong to this object.
+ *
  * - eo_isa() indicates if a given object is of a given type.
- * 
+ *
  * - eo_do_super() is in charge to invoke a function in the next parents that implement it. It is recommended to use eo_do_super() only from a function with the same op id.\n
  * In addition, there is no way to jump over classes who implement the function. If A inherits from B, B from C and A, B and C implement a virtual function defined in C, the function calls order will be A, then B and finally C. It is impossible to pass over B.
  * 
@@ -242,7 +253,7 @@
  *    Evas_Coord *x2 = va_arg(*list, Evas_Coord *);
  *    Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
  * 
- *    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+ *    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
  *    if (x1) *x1 = obj->cur.geometry.x + o->cur.x1;
  *    if (y1) *y1 = obj->cur.geometry.y + o->cur.y1;
  *    if (x2) *x2 = obj->cur.geometry.x + o->cur.x2;
@@ -254,7 +265,7 @@
  * {
  *    eo_do_super(eo_obj, eo_constructor());
  * 
- *    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+ *    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
  *    evas_object_line_init(eo_obj);
  * }
  * 

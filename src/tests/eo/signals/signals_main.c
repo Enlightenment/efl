@@ -44,7 +44,7 @@ main(int argc, char *argv[])
    eo_init();
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
-   Simple_Public_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
+   Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */
    eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));

@@ -14,7 +14,7 @@ EAPI Eo_Op INHERIT_BASE_ID = 0;
 static void
 _prot_print(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   Simple_Protected_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
+   Simple_Protected_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    (void) list;
    printf("%s %d\n", __func__, pd->protected_x1);
 }

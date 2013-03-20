@@ -33,7 +33,9 @@ static Eo_Op _eo_ops_last_id = 0;
 static size_t _eo_sz = 0;
 
 static void _eo_condtor_reset(_Eo *obj);
-static inline void *_eo_data_get(const _Eo *obj, const _Eo_Class *klass);
+static inline void *_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass);
+static inline void *_eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *klass, const _Eo *ref_obj);
+static inline void _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj);
 static inline _Eo *_eo_ref(_Eo *obj);
 static inline void _eo_unref(_Eo *obj);
 static const _Eo_Class *_eo_op_class_get(Eo_Op op);
@@ -48,6 +50,7 @@ struct _Eo_Internal {
      const _Eo_Class *klass;
 #ifdef EO_DEBUG
      Eina_Inlist *xrefs;
+     Eina_Inlist *data_xrefs;
 #endif
 
      Eina_List *composite_objects;
@@ -55,6 +58,7 @@ struct _Eo_Internal {
      Eo_Id obj_id;
 
      int refcount;
+     int datarefcount;
 
      Eina_Bool do_error:1;
      Eina_Bool condtor_done:1;
@@ -357,7 +361,7 @@ _eo_op_internal(const char *file, int line, _Eo *obj, const _Eo_Class *cur_klass
         const op_type_funcs *func = _eo_kls_itr_func_get(cur_klass, op);
         if (EINA_LIKELY(func != NULL))
           {
-             void *func_data =_eo_data_get(obj, func->src);
+             void *func_data = _eo_data_scope_get(obj, func->src);
              func->func((Eo *)obj->obj_id, func_data, p_list);
              return EINA_TRUE;
           }
@@ -1240,7 +1244,7 @@ eo_xunref(Eo *obj_id, const Eo *ref_obj_id)
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->xrefs, xref)
      {
-        if (xref->ref_obj == ref_obj)
+        if (xref->ref_obj == ref_obj_id)
           break;
      }
 
@@ -1251,7 +1255,7 @@ eo_xunref(Eo *obj_id, const Eo *ref_obj_id)
      }
    else
      {
-        ERR("ref_obj (%p) does not reference obj (%p). Aborting unref.", ref_obj, obj);
+        ERR("ref_obj (%p) does not reference obj (%p). Aborting unref.", ref_obj_id, obj_id);
         return;
      }
 #else
@@ -1324,6 +1328,12 @@ _eo_del_internal(const char *file, int line, _Eo *obj)
 static inline void
 _eo_free(_Eo *obj)
 {
+#ifdef EO_DEBUG
+   if (obj->datarefcount)
+     {
+        ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
+     }
+#endif
    _eo_id_release(obj->obj_id);
    free(obj);
 }
@@ -1350,6 +1360,15 @@ _eo_unref(_Eo *obj)
              Eina_Inlist *nitr = obj->xrefs->next;
              free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
              obj->xrefs = nitr;
+          }
+        while (obj->data_xrefs)
+          {
+             Eina_Inlist *nitr = obj->data_xrefs->next;
+             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+             ERR("Data of object 0x%p is still referenced by object 0x%X", obj->obj_id, xref->ref_obj);
+
+             free(xref);
+             obj->data_xrefs = nitr;
           }
 #endif
 
@@ -1426,7 +1445,7 @@ _eo_condtor_reset(_Eo *obj)
 }
 
 static inline void *
-_eo_data_get(const _Eo *obj, const _Eo_Class *klass)
+_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass)
 {
    if (EINA_LIKELY(klass->desc->data_size > 0))
      {
@@ -1453,8 +1472,85 @@ _eo_data_get(const _Eo *obj, const _Eo_Class *klass)
    return NULL;
 }
 
+static inline void *
+_eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *klass, const _Eo *ref_obj)
+{
+   void *data;
+   if (klass != NULL)
+     {
+        data = _eo_data_scope_get(obj, klass);
+        if (data == NULL) return NULL;
+     }
+   (obj->datarefcount)++;
+#ifdef EO_DEBUG
+   Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
+   xref->ref_obj = (Eo *)ref_obj->obj_id;
+   xref->file = file;
+   xref->line = line;
+
+   obj->data_xrefs = eina_inlist_prepend(obj->data_xrefs, EINA_INLIST_GET(xref));
+#else
+   (void) ref_obj;
+   (void) file;
+   (void) line;
+#endif
+   return data;
+}
+
+static inline void
+_eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
+{
+#ifdef EO_DEBUG
+   const _Eo_Class *klass = obj->klass;
+   char *data_base = ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj));
+   Eina_Bool in_range = ((char *)data >= data_base &&
+         (char *)data < (data_base + (klass->data_offset +
+               EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size)));
+   if (!in_range)
+     {
+        ERR("Data %p is not in the data range of the object 0x%X (%s).", data, obj->obj_id, obj->klass->desc->name);
+     }
+#else
+   (void) data;
+#endif
+   if (obj->datarefcount == 0)
+     {
+        ERR("Data for object 0x%X (%s) is already not referenced.", obj->obj_id, obj->klass->desc->name);
+     }
+   else
+     {
+        (obj->datarefcount)--;
+     }
+#ifdef EO_DEBUG
+   Eo_Xref_Node *xref = NULL;
+   EINA_INLIST_FOREACH(obj->data_xrefs, xref)
+     {
+        if (xref->ref_obj == (Eo *)ref_obj->obj_id)
+          break;
+     }
+
+   if (xref)
+     {
+        obj->data_xrefs = eina_inlist_remove(obj->data_xrefs, EINA_INLIST_GET(xref));
+        free(xref);
+     }
+   else
+     {
+        ERR("ref_obj (0x%X) does not reference data (%p) of obj (0x%X).", ref_obj->obj_id, data, obj->obj_id);
+     }
+#else
+   (void) ref_obj;
+#endif
+}
+
 EAPI void *
 eo_data_get(const Eo *obj_id, const Eo_Class *klass_id)
+{
+   return eo_data_scope_get(obj_id, klass_id);
+}
+
+EAPI void *
+eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
@@ -1469,7 +1565,7 @@ eo_data_get(const Eo *obj_id, const Eo_Class *klass_id)
      }
 #endif
 
-   ret = _eo_data_get(obj, klass);
+   ret = _eo_data_scope_get(obj, klass);
 
 #ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
@@ -1479,6 +1575,47 @@ eo_data_get(const Eo *obj_id, const Eo_Class *klass_id)
 #endif
 
    return ret;
+}
+
+EAPI void *
+eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Class *klass_id, const Eo *ref_obj_id)
+{
+   void *ret;
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   EO_OBJ_POINTER_RETURN_VAL(ref_obj_id, ref_obj, NULL);
+   _Eo_Class *klass = NULL;
+   if (klass_id)
+     {
+        klass = _eo_class_pointer_get(klass_id);
+        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+
+#ifdef EO_DEBUG
+        if (!_eo_class_mro_has(obj->klass, klass))
+          {
+             ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+             return NULL;
+          }
+#endif
+     }
+
+   ret = _eo_data_xref_internal(file, line, obj, klass, ref_obj);
+
+#ifdef EO_DEBUG
+   if (klass && !ret && (klass->desc->data_size == 0))
+     {
+        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+     }
+#endif
+
+   return ret;
+}
+
+EAPI void
+eo_data_xunref_internal(const Eo *obj_id, void *data, const Eo *ref_obj_id)
+{
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
+   EO_OBJ_POINTER_RETURN(ref_obj_id, ref_obj);
+   _eo_data_xunref_internal(obj, data, ref_obj);
 }
 
 EAPI Eina_Bool

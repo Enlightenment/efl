@@ -127,7 +127,7 @@ START_TEST(eo_data_fetch)
    Eo *obj = eo_add(klass, NULL);
    fail_if(!obj);
 #ifdef EO_DEBUG
-   fail_if(eo_data_get(obj, SIMPLE_CLASS));
+   fail_if(eo_data_scope_get(obj, SIMPLE_CLASS));
 #endif
    eo_unref(obj);
 
@@ -137,7 +137,7 @@ START_TEST(eo_data_fetch)
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
-   fail_if(eo_data_get(obj, klass));
+   fail_if(eo_data_scope_get(obj, klass));
    eo_unref(obj);
 
    eo_shutdown();
@@ -695,7 +695,7 @@ START_TEST(eo_magic_checks)
 
         eo_error_set((Eo *) buf);
 
-        fail_if(eo_data_get((Eo *) buf, SIMPLE_CLASS));
+        fail_if(eo_data_scope_get((Eo *) buf, SIMPLE_CLASS));
 
         eo_composite_attach((Eo *) buf, obj);
         eo_composite_attach(obj, (Eo *) buf);
@@ -808,13 +808,13 @@ START_TEST(eo_add_do_and_custom)
 
    obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(7));
    fail_if(!obj);
-   pd = eo_data_get(obj, SIMPLE_CLASS);
+   pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 
    obj = eo_add_custom(SIMPLE_CLASS, NULL, eo_constructor(), simple_a_set(7));
    fail_if(!obj);
-   pd = eo_data_get(obj, SIMPLE_CLASS);
+   pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 

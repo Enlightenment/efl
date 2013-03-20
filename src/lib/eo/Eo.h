@@ -775,8 +775,77 @@ EAPI Eina_Bool eo_parent_set(Eo *obj, const Eo *parent);
  * @param obj the object to work on.
  * @param klass the klass associated with the data.
  * @return a pointer to the data.
+ * @deprecated use eo_data_scope_get or eo_data_ref instead.
  */
-EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass);
+EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass) EINA_DEPRECATED;
+
+/**
+ * @brief Get a pointer to the data of an object for a specific class.
+ * The data reference count is not incremented. The pointer must be used only
+ * in the scope of the function and its callees.
+ * @param obj the object to work on.
+ * @param klass the klass associated with the data.
+ * @return a pointer to the data.
+ *
+ * @see eo_data_ref()
+ * @see eo_data_unref()
+ */
+EAPI void *eo_data_scope_get(const Eo *obj, const Eo_Class *klass);
+
+/**
+ * @def eo_data_xref(obj, klass, ref_obj)
+ * Use this macro if you want to associate a referencer object.
+ * Convenience macro around eo_data_xref_internal()
+ */
+#define eo_data_xref(obj, klass, ref_obj) eo_data_xref_internal(__FILE__, __LINE__, obj, klass, ref_obj)
+
+/**
+ * @def eo_data_ref(obj, klass)
+ * Use this macro if you don't want to associate a referencer object.
+ * Convenience macro around eo_data_xref_internal()
+ */
+#define eo_data_ref(obj, klass) eo_data_xref_internal(__FILE__, __LINE__, obj, klass, (const Eo *)obj)
+
+/**
+ * @brief Get a pointer to the data of an object for a specific class and
+ * increment the data reference count.
+ * @param obj the object to work on.
+ * @param klass the klass associated with the data.
+ * @param ref_obj the object that references the data.
+ * @param file the call's filename.
+ * @param line the call's line number.
+ * @return a pointer to the data.
+ *
+ * @see eo_data_xunref_internal()
+ */
+EAPI void *eo_data_xref_internal(const char *file, int line, const Eo *obj, const Eo_Class *klass, const Eo *ref_obj);
+
+/**
+ * @def eo_data_xunref(obj, data, ref_obj)
+ * Use this function if you used eo_data_xref to reference the data.
+ * Convenience macro around eo_data_xunref_internal()
+ * @see eo_data_xref()
+ */
+#define eo_data_xunref(obj, data, ref_obj) eo_data_xunref_internal(obj, data, ref_obj)
+
+/**
+ * @def eo_data_unref(obj, data)
+ * Use this function if you used eo_data_ref to reference the data.
+ * Convenience macro around eo_data_unref_internal()
+ * @see eo_data_ref()
+ */
+#define eo_data_unref(obj, data) eo_data_xunref_internal(obj, data, obj)
+
+/**
+ * @brief Decrement the object data reference count by 1.
+ * @param obj the object to work on.
+ * @param data a pointer to the data to unreference
+ * @param file the call's filename.
+ * @param line the call's line number.
+ *
+ * @see eo_data_xref_internal()
+ */
+EAPI void eo_data_xunref_internal(const Eo *obj, void *data, const Eo *ref_obj);
 
 /**
  * @brief Increment the object's reference count by 1.

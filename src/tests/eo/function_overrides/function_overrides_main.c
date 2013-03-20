@@ -20,7 +20,7 @@ main(int argc, char *argv[])
    Eo *obj = eo_add(INHERIT2_CLASS, NULL);
 
    eo_do(obj, simple_a_set(1));
-   Simple_Public_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
+   Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 2);
 
    eo_unref(obj);
@@ -28,7 +28,7 @@ main(int argc, char *argv[])
    obj = eo_add(INHERIT3_CLASS, NULL);
 
    eo_do(obj, simple_a_set(1));
-   pd = eo_data_get(obj, SIMPLE_CLASS);
+   pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 3);
 
    eo_unref(obj);
