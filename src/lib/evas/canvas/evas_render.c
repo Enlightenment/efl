@@ -1931,7 +1931,12 @@ evas_render_updates_internal(Evas *eo_e,
    evas_module_clean();
 
    if (!do_async)
-      evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
+     {
+        Evas_Event_Render_Post post;
+
+        post.updated_area = e->render.updates;
+        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, e->render.updates ? &post : NULL);
+     }
 
    RD("---]\n");
 
@@ -1960,6 +1965,7 @@ _drop_texts_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_
 static void
 evas_render_wakeup(Evas *eo_e)
 {
+   Evas_Event_Render_Post post;
    Render_Updates *ru;
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
@@ -1975,10 +1981,7 @@ evas_render_wakeup(Evas *eo_e)
            ru->area->x, ru->area->y, ru->area->w, ru->area->h,
            EVAS_RENDER_MODE_ASYNC_END);
 
-        if (e->render.updates_cb)
-           ret_updates = eina_list_append(ret_updates, ru->area);
-        else
-           eina_rectangle_free(ru->area);
+        ret_updates = eina_list_append(ret_updates, ru->area);
         evas_cache_image_drop(ru->surface);
         free(ru);
         haveup = EINA_TRUE;
@@ -2017,9 +2020,11 @@ evas_render_wakeup(Evas *eo_e)
    e->render.data = NULL;
    e->rendering = EINA_FALSE;
 
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
+   post.updated_area = ret_updates;
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
 
    if (up_cb) up_cb(up_data, eo_e, ret_updates);
+   else evas_render_updates_free(ret_updates);
 
    eo_unref(eo_e);
 }

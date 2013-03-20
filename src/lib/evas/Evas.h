@@ -824,6 +824,7 @@ typedef struct _Evas_Event_Multi_Move    Evas_Event_Multi_Move; /**< Event struc
 typedef struct _Evas_Event_Key_Down      Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
 typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
+typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
 
 typedef enum _Evas_Load_Error
 {
@@ -1190,6 +1191,11 @@ struct _Evas_Event_Key_Up /** Key release event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+};
+
+struct _Evas_Event_Render_Post /** Send when the frame rendering is done @since 1.8 */
+{
+   Eina_List *updated_area; /**< A list of rectangle that were updated in the canvas */
 };
 
 struct _Evas_Event_Hold /** Hold change event */
