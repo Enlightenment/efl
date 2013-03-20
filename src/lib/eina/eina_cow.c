@@ -484,8 +484,15 @@ eina_cow_done(Eina_Cow *cow,
 
    if (!needed_gc) return ;
 
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
+#endif
    /* needed if we want to make cow gc safe */
    if (ref->togc) return ;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
+#endif
+
 
    gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
    if (!gc) return ; /* That one will not get gced this time */
@@ -493,10 +500,10 @@ eina_cow_done(Eina_Cow *cow,
    gc->ref = ref;
    gc->dst = dst;
    eina_hash_direct_add(cow->togc, &gc->ref, gc);
-   ref->togc = EINA_TRUE;
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
+   ref->togc = EINA_TRUE;
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
