@@ -2332,6 +2332,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->shrink_mode = ELM_TOOLBAR_SHRINK_NONE;
    priv->theme_icon_size = _elm_toolbar_icon_size_get(obj);
+   priv->icon_size = priv->theme_icon_size;
 
    priv->homogeneous = EINA_TRUE;
    priv->align = 0.5;
