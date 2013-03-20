@@ -75,6 +75,8 @@ static const char SIG_TREE_EFFECT_FINISHED [] = "tree,effect,finished";
 static const char SIG_HIGHLIGHTED[] = "highlighted";
 static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 static const char SIG_LANG_CHANGED[] = "language,changed";
+static const char SIG_PRESSED[] = "pressed";
+static const char SIG_RELEASED[] = "released";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED_DOUBLE, ""},
@@ -122,6 +124,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_HIGHLIGHTED, ""},
    {SIG_UNHIGHLIGHTED, ""},
    {SIG_LANG_CHANGED, ""},
+   {SIG_PRESSED, ""},
+   {SIG_RELEASED, ""},
+
    {NULL, NULL}
 };
 
@@ -3446,6 +3451,7 @@ _item_mouse_down_cb(void *data,
           evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
           evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
        }
+   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
    it->item->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
@@ -4013,6 +4019,7 @@ _item_mouse_up_cb(void *data,
    sd = GL_IT(it)->wsd;
 
    sd->mouse_down = EINA_FALSE;
+   evas_object_smart_callback_call(WIDGET(it), SIG_RELEASED, it);
    if (sd->multi_touched)
      {
         if ((!sd->multi) && (!it->selected) && (it->highlighted))

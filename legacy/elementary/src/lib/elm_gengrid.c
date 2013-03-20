@@ -60,6 +60,8 @@ static const char SIG_INDEX_UPDATE[] = "index,update";
 static const char SIG_HIGHLIGHTED[] = "highlighted";
 static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 static const char SIG_LANG_CHANGED[] = "language,changed";
+static const char SIG_PRESSED[] = "pressed";
+static const char SIG_RELEASED[] = "released";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
@@ -89,6 +91,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_HIGHLIGHTED, ""},
    {SIG_UNHIGHLIGHTED, ""},
    {SIG_LANG_CHANGED, ""},
+   {SIG_PRESSED, ""},
+   {SIG_RELEASED, ""},
 
    {NULL, NULL}
 };
@@ -499,6 +503,8 @@ _item_mouse_down_cb(void *data,
         evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
      }
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
      it->long_timer = ecore_timer_add
@@ -562,6 +568,7 @@ _item_mouse_up_cb(void *data,
      sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
 
+   evas_object_smart_callback_call(WIDGET(it), SIG_RELEASED, it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);

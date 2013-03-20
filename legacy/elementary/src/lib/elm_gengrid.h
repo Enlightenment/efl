@@ -166,6 +166,10 @@
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @c event_info parameter
  *   is the gengrid item that was activated.
+ * - @c "pressed" - The user pressed the an item. The @c event_info
+ *   parameter is the item that was pressed.
+ * - @c "released" - The user released the an item. The @c event_info
+ *   parameter is the item that was released.
  * - @c "clicked,double" - The user has double-clicked an item.
  *   The @c event_info parameter is the gengrid item that was double-clicked.
  * - @c "longpressed" - This is called when the item is pressed for a certain
