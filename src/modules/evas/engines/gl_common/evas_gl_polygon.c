@@ -128,7 +128,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    int x = 0, y = 0, w = 0, h = 0;
 
    Eina_List *l;
-   int n, k, num_active_edges, y0, y1, *sorted_index, j;
+   int n, k, num_active_edges, yy0, yy1, *sorted_index, j;
    RGBA_Edge *edges;
    RGBA_Vertex *point;
    Evas_GL_Polygon_Point *pt;
@@ -181,14 +181,14 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
         k++;
      }
 
-   y0 = MAX(cy, ceil(point[sorted_index[0]].y - 0.5));
-   y1 = MIN(cy + ch - 1, floor(point[sorted_index[n - 1]].y - 0.5));
+   yy0 = MAX(cy, ceil(point[sorted_index[0]].y - 0.5));
+   yy1 = MIN(cy + ch - 1, floor(point[sorted_index[n - 1]].y - 0.5));
 
    k = 0;
    num_active_edges = 0;
    spans = NULL;
 
-   for (y = y0; y <= y1; y++)
+   for (y = yy0; y <= yy1; y++)
      {
         for (; (k < n) && (point[sorted_index[k]].y <= ((double)y + 0.5)); k++)
           {
