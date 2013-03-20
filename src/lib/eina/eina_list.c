@@ -1095,6 +1095,85 @@ eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func)
 }
 
 EAPI Eina_List *
+eina_list_shuffle(Eina_List *list, Eina_Random_Cb func)
+{
+   unsigned int n, i, j;
+   Eina_List_Accounting *accounting;
+   Eina_List *shuffled_list, *shuffled_last, *li;
+
+   if (!list)
+     return NULL;
+
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+
+   accounting = list->accounting;
+   n = accounting->count;
+   shuffled_list = shuffled_last = NULL;
+
+   if (n == 1)
+     return list;
+
+   while (n > 1)
+     {
+        if (func)
+          i = func(0, (n - 1));
+        else
+          i = (int) ((float)n*rand()/(RAND_MAX+1.0));
+
+        if(i == 0)
+          {
+             li = list;
+             list = list->next;
+          }
+        else if (i == (n - 1) || i == n)
+          {
+             li = accounting->last;
+             accounting->last = li->prev;
+          }
+        else
+          {
+             if (i > (n / 2))
+               for (j = n - 1,
+                    li = accounting->last;
+                    j!=i;
+                    li = li->prev, j--);
+             else
+               for (j = 0,
+                    li = list;
+                    j!=i;
+                    li = li->next, j++);
+
+             li->prev->next = li->next;
+             li->next->prev = li->prev;
+          }
+
+        n--;
+
+        if (shuffled_list == NULL)
+          {
+             li->prev = NULL;
+             shuffled_list = li;
+             shuffled_last = li;
+          }
+        else
+          {
+             shuffled_last->next = li;
+             li->prev = shuffled_last;
+             shuffled_last = li;
+          }
+     }
+
+   list->next = NULL;
+   list->prev = shuffled_last;
+   shuffled_last->next = list;
+
+   accounting->last = list;
+   shuffled_list->accounting = accounting;
+
+   return shuffled_list;
+}
+
+EAPI Eina_List *
 eina_list_merge(Eina_List *left, Eina_List *right)
 {
    unsigned int n_left, n_right;
