@@ -862,6 +862,11 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    /* TODO: handle comp no sync */
 
    if (ee->in_async_render) return 0;
+   if (!ee->visible)
+     {
+        evas_norender(ee->evas);
+        return 0;
+     }
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee2)
      {
