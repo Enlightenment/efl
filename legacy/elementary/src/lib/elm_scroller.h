@@ -21,10 +21,20 @@
  * @li @c "edge,top" - the top edge of the content has been reached
  * @li @c "edge,bottom" - the bottom edge of the content has been reached
  * @li @c "scroll" - the content has been scrolled (moved)
+ * @li @c "scroll,left" - the content has been scrolled (moved) leftwards
+ * @li @c "scroll,right"  - the content has been scrolled (moved) rightwards
+ * @li @c "scroll,up"  - the content has been scrolled (moved) upwards
+ * @li @c "scroll,down" - the content has been scrolled (moved) downwards
  * @li @c "scroll,anim,start" - scrolling animation has started
  * @li @c "scroll,anim,stop" - scrolling animation has stopped
  * @li @c "scroll,drag,start" - dragging the contents around has started
  * @li @c "scroll,drag,stop" - dragging the contents around has stopped
+ * @li @c "vbar,drag" - the vertical scroll bar has been dragged
+ * @li @c "vbar,press" - the vertical scroll bar has been pressed
+ * @li @c "vbar,unpress" - the vertical scroll bar has been unpressed
+ * @li @c "hbar,drag" - the horizontal scroll bar has been dragged
+ * @li @c "hbar,press" - the horizontal scroll bar has been pressed
+ * @li @c "hbar,unpress" - the horizontal scroll bar has been unpressed
  *
  * This widget implements the @ref elm-scrollable-interface interface.
  * Its (non-deprecated) API functions, except for elm_scroller_add(),
