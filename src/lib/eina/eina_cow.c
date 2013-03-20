@@ -395,7 +395,7 @@ eina_cow_write(Eina_Cow *cow,
    ref = EINA_COW_PTR_GET(*data);
 
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
    if (ref->refcount == 1)
      {
@@ -415,7 +415,7 @@ eina_cow_write(Eina_Cow *cow,
 
         _eina_cow_hash_del(cow, *data, ref);
 #ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
         goto end;
      }
@@ -426,21 +426,21 @@ eina_cow_write(Eina_Cow *cow,
    ref->refcount = 1;
    ref->hashed = EINA_FALSE;
    ref->togc = EINA_FALSE;
+#ifdef EINA_COW_MAGIC_ON
+   EINA_MAGIC_SET(ref, EINA_COW_PTR_MAGIC);
+#endif
+
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
    r = EINA_COW_DATA_GET(ref);
    memcpy(r, *data, cow->struct_size);
    *((void**) data) = r;
 
-#ifdef EINA_COW_MAGIC_ON
-   EINA_MAGIC_SET(ref, EINA_COW_PTR_MAGIC);
-#endif
-
  end:
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
 #ifdef EINA_COW_MAGIC_ON
 # ifdef HAVE_BACKTRACE
@@ -450,7 +450,7 @@ eina_cow_write(Eina_Cow *cow,
    ref->writing = EINA_TRUE;
 #endif
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
    return (void *) *data;
@@ -468,15 +468,18 @@ eina_cow_done(Eina_Cow *cow,
    EINA_COW_MAGIC_CHECK(cow);
 
    ref = EINA_COW_PTR_GET(data);
-   EINA_COW_PTR_MAGIC_CHECK(ref);
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
+   EINA_COW_PTR_MAGIC_CHECK(ref);
 #ifdef EINA_COW_MAGIC_ON
    if (!ref->writing)
      ERR("Pointer %p is not in a writable state !", dst);
 
    ref->writing = EINA_FALSE;
+#endif
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
    if (!needed_gc) return ;
@@ -492,7 +495,10 @@ eina_cow_done(Eina_Cow *cow,
    eina_hash_direct_add(cow->togc, &gc->ref, gc);
    ref->togc = EINA_TRUE;
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
+#endif
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 }
 
@@ -514,11 +520,11 @@ eina_cow_memcpy(Eina_Cow *cow,
        ref = EINA_COW_PTR_GET(src);
        EINA_COW_PTR_MAGIC_CHECK(ref);
 #ifndef NVALGRIND
-       VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+       VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
        ref->refcount++;
 #ifndef NVALGRIND
-       VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+       VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
      }
 
@@ -558,12 +564,12 @@ eina_cow_gc(Eina_Cow *cow)
 
         ref = EINA_COW_PTR_GET(match);
 #ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif        
         *((void**)gc->dst) = match;
         ref->refcount++;
 #ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
      }
    else
