@@ -1,3 +1,7 @@
+2013-03-20  Jérémy Zurcher (jeyzu)
+
+        * Eina: Add eina_list_shuffle
+
 2013-03-19  Mike Blumenkrantz
 
         * Fix magic failure in eina_value_array_count when array has not been allocated

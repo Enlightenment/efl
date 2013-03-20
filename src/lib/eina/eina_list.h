@@ -886,8 +886,7 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  * nodes.
  * @return the new head of list.
  *
- * This function sorts @p list. @p size if the number of the first
- * element to sort. If @p limit is 0 or greater than the number of
+ * This function sorts @p list. If @p limit is 0 or greater than the number of
  * elements in @p list, all the elements are sorted. @p func is used to
  * compare two elements of @p list. If @p func is @c NULL, this function returns
  * @p list.
@@ -919,6 +918,27 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  * @warning @p list must be a pointer to the first element of the list.
  */
 EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
+
+
+/**
+ * @brief Shuffle list.
+ *
+ * @param list The list handle to shuffle.
+ * @param func A function pointer that can return an int between 2 inclusives values
+ * @return the new head of list.
+ *
+ * This function shuffles @p list.
+ * @p func is used to generate random list indexes within the range of
+ * unshuffled list items. If @p func is @c NULL, rand is used.
+ *
+ * @note @b in-place: this will change the given list, so you should
+ * now point to the new list head that is returned by this function.
+ *
+ * @since 1.8
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ */
+EAPI Eina_List            *eina_list_shuffle(Eina_List *list, Eina_Random_Cb func) EINA_WARN_UNUSED_RESULT;
 
 
 /**

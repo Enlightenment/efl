@@ -6,6 +6,7 @@ Changes since 1.7.0:
 --------------------
 
 Additions:
+    * Add eina_list_shuffle
     * Add multiple font draws support to engines
     * eina :
      - Add DOCTYPE children parsing in eina_simple_xml
