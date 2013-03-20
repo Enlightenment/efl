@@ -213,6 +213,26 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           Evas_Object *obj,
                                           void *event_info);
 
+EAPI double _elm_startup_time = 0;
+
+static void
+_elm_win_first_frame_do(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   double end = ecore_time_unix_get();
+   char *first = getenv("ELM_FIRST_FRAME");
+
+   switch (*first)
+     {
+      case 'A': abort();
+      case 'E':
+      case 'D': exit(-1);
+      case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f'\n", end, _elm_startup_time, end - _elm_startup_time);
+         break;
+     }
+
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _elm_win_first_frame_do, NULL);
+}
+
 static void
 _elm_win_state_eval(void *data __UNUSED__)
 {
@@ -2783,6 +2803,10 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+
+   if (getenv("ELM_FIRST_FRAME"))
+     evas_event_callback_add(ecore_evas_get(tmp_sd.ee), EVAS_CALLBACK_RENDER_POST,
+			     _elm_win_first_frame_do, NULL);
 
    /* copying possibly altered fields back */
 #define SD_CPY(_field)             \

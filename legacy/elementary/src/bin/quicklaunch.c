@@ -103,6 +103,8 @@ handle_run(int fd, unsigned long bytes)
    int argc, envnum;
    unsigned long off;
 
+   _elm_startup_time = ecore_time_unix_get();
+
    buf = alloca(bytes);
    if (read(fd, buf, bytes) != (int)bytes)
      {
