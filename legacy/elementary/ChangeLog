@@ -1167,3 +1167,8 @@
         * Fix the elm_shutdown bug in _elm_shutdown_config.
         When the elm_shutdown is used after elm_config_all_flush, the segment fault occur.
         It's why it uses ecore_x in _prop_all_update_cb after removing it.
+
+2013-03-20 Carsten Haitzler (The Rasterman)
+
+        * Fix elm box layout when an item has a max size, and that squashes all
+        content even when the minimum size is greater.

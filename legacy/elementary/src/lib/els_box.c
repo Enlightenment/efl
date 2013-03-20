@@ -98,6 +98,8 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
                }
           }
      }
+   if ((maxw >= 0) && (minw > maxw)) maxw = minw;
+   if ((maxh >= 0) && (minh > maxh)) maxh = minh;
    c = eina_list_count(priv->children) - 1;
    if (c > 0)
      {

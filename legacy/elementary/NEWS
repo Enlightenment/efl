@@ -187,7 +187,8 @@ Fixes:
    * Fix a memory leak of elm_genlist - EINA_LIST_FREE should be used for returned value of elm_genlist_realized_items_get
    * Focus highlight should be reconfigured when theme is changed.
    * Fix the elm_shutdown bug in _elm_shutdown_config.
-   
+   * Fix box layout bug when items with max size force sizes below minimum.
+
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due
