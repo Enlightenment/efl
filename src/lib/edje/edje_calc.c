@@ -3203,7 +3203,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
               p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
               p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
-              p3->type.common.spec.image.border_scale_by = INTP(p1->type.common.spec.image.border_scale_by, p2->type.common.spec.image.border_scale_by, pos);
+              p3->type.common.spec.image.border_scale_by = FFP(p1->type.common.spec.image.border_scale_by, p2->type.common.spec.image.border_scale_by, pos);
            case EDJE_PART_TYPE_PROXY:
               p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
               p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
