@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-15 10:03+0900\n"
+"POT-Creation-Date: 2013-03-20 08:15+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -48,7 +48,7 @@ msgstr "Cliqué"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1796
+#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -216,28 +216,28 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1293 src/lib/elm_toolbar.c:1857
+#: src/lib/elm_toolbar.c:1294 src/lib/elm_toolbar.c:1858
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1794
+#: src/lib/elm_toolbar.c:1795
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1798
+#: src/lib/elm_toolbar.c:1799
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:1800
+#: src/lib/elm_toolbar.c:1801
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:1852
+#: src/lib/elm_toolbar.c:1853
 #, fuzzy
 msgid "Unselected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1869
+#: src/lib/elm_toolbar.c:1870
 #, fuzzy
 msgid "Toolbar Item"
 msgstr "Élément outil"

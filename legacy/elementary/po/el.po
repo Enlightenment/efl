@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-15 10:03+0900\n"
+"POT-Creation-Date: 2013-03-20 08:15+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -48,7 +48,7 @@ msgstr "Επιλεγμένο"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1796
+#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
@@ -223,27 +223,27 @@ msgstr "κουμπί spinner προηγούμενο"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1293 src/lib/elm_toolbar.c:1857
+#: src/lib/elm_toolbar.c:1294 src/lib/elm_toolbar.c:1858
 msgid "Selected"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:1794
+#: src/lib/elm_toolbar.c:1795
 msgid "Separator"
 msgstr "Διαχωριστικό"
 
-#: src/lib/elm_toolbar.c:1798
+#: src/lib/elm_toolbar.c:1799
 msgid "State: Selected"
 msgstr "Κατάσταση: Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:1800
+#: src/lib/elm_toolbar.c:1801
 msgid "Has menu"
 msgstr "Έχει μενού"
 
-#: src/lib/elm_toolbar.c:1852
+#: src/lib/elm_toolbar.c:1853
 msgid "Unselected"
 msgstr "Μη Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:1869
+#: src/lib/elm_toolbar.c:1870
 msgid "Toolbar Item"
 msgstr "Αντικείμενο μπάρας εργαλείων"
 
