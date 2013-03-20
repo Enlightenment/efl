@@ -375,6 +375,62 @@ START_TEST(eina_test_list_split)
 }
 END_TEST
 
+static int uicmp(const void *d1, const void *d2)
+{
+   const unsigned int *a = d1;
+   const unsigned int *b = d2;
+
+   if(*a == *b) return 0;
+   if(*a >  *b) return 1;
+
+   return -1;
+}
+
+#define SHUFFLE_SZ 100
+#define SHUFFLE_N 100000
+START_TEST(eina_test_shuffle)
+{
+  double d;
+  unsigned int *p;
+  unsigned int i, j;
+  unsigned int n[SHUFFLE_SZ];
+  unsigned int rand_count[SHUFFLE_SZ];
+  Eina_List *list = NULL;
+  Eina_List *item = NULL;
+
+  eina_init();
+
+  for(i = 0; i < SHUFFLE_SZ; i++)
+    {
+       n[i] = i;
+       rand_count[i] = 0;
+       list = eina_list_append(list, &n[i]);
+    }
+
+  for(i = 0; i < SHUFFLE_N; i++)
+    {
+       list = eina_list_shuffle(list, NULL);
+       p = eina_list_nth(list, SHUFFLE_SZ/2);
+       rand_count[*p]++;
+
+       j = 0;
+       list = eina_list_sort(list, 0, (Eina_Compare_Cb)&uicmp);
+       EINA_LIST_FOREACH(list, item, p)
+          fail_if(*p != j++);
+       fail_if(j != SHUFFLE_SZ);
+    }
+
+  d = SHUFFLE_SZ/(float)(SHUFFLE_N);
+  for(i = 0; i < SHUFFLE_SZ; i++)
+    {
+       fail_if(rand_count[i]*d > 1.20f);
+       fail_if(rand_count[i]*d < 0.80f);
+    }
+
+  eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
@@ -382,4 +438,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_merge);
    tcase_add_test(tc, eina_test_sorted_insert);
    tcase_add_test(tc, eina_test_list_split);
+   tcase_add_test(tc, eina_test_shuffle);
 }
