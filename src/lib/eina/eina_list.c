@@ -60,6 +60,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
