@@ -2465,100 +2465,99 @@ _elm_scroll_mouse_down_event_cb(void *data,
    if (_elm_scroll_smooth_debug) _elm_scroll_smooth_debug_init();
 #endif
 
-   if (_elm_config->thumbscroll_enable)
+   if (!_elm_config->thumbscroll_enable) return;
+
+   sid->down.hold = EINA_FALSE;
+   if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
+       (sid->down.momentum_animator) || (sid->scrollto.x.animator) ||
+       (sid->scrollto.y.animator))
      {
-        sid->down.hold = EINA_FALSE;
-        if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
-            (sid->down.momentum_animator) || (sid->scrollto.x.animator) ||
-            (sid->scrollto.y.animator))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL |
-               EVAS_EVENT_FLAG_ON_HOLD;
-             sid->down.scroll = EINA_TRUE;
-             sid->down.hold = EINA_TRUE;
-             _elm_scroll_anim_stop(sid);
-          }
-        if (sid->scrollto.x.animator)
-          {
-             ecore_animator_del(sid->scrollto.x.animator);
-             sid->scrollto.x.animator = NULL;
-          }
-        if (sid->scrollto.y.animator)
-          {
-             ecore_animator_del(sid->scrollto.y.animator);
-             sid->scrollto.y.animator = NULL;
-          }
-        if (sid->down.bounce_x_animator)
-          {
-             ecore_animator_del(sid->down.bounce_x_animator);
-             sid->down.bounce_x_animator = NULL;
-             sid->bouncemex = EINA_FALSE;
-             if (sid->content_info.resized)
-               _elm_scroll_wanted_region_set(sid->obj);
-          }
-        if (sid->down.bounce_y_animator)
-          {
-             ecore_animator_del(sid->down.bounce_y_animator);
-             sid->down.bounce_y_animator = NULL;
-             sid->bouncemey = EINA_FALSE;
-             if (sid->content_info.resized)
-               _elm_scroll_wanted_region_set(sid->obj);
-          }
-        if (sid->down.hold_animator)
-          {
-             ecore_animator_del(sid->down.hold_animator);
-             sid->down.hold_animator = NULL;
-             _elm_scroll_drag_stop(sid);
-             if (sid->content_info.resized)
-               _elm_scroll_wanted_region_set(sid->obj);
-          }
-        if (sid->down.momentum_animator)
-          {
-             ecore_animator_del(sid->down.momentum_animator);
-             sid->down.momentum_animator = NULL;
-             sid->down.bounce_x_hold = EINA_FALSE;
-             sid->down.bounce_y_hold = EINA_FALSE;
-             sid->down.ax = 0;
-             sid->down.ay = 0;
-             if (sid->content_info.resized)
-               _elm_scroll_wanted_region_set(sid->obj);
-          }
-        if (ev->button == 1)
-          {
-             sid->down.hist.est_timestamp_diff =
-               ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
-             sid->down.hist.tadd = 0.0;
-             sid->down.hist.dxsum = 0.0;
-             sid->down.hist.dysum = 0.0;
-             sid->down.now = EINA_TRUE;
-             sid->down.dragged = EINA_FALSE;
-             sid->down.dir_x = EINA_FALSE;
-             sid->down.dir_y = EINA_FALSE;
-             sid->down.x = ev->canvas.x;
-             sid->down.y = ev->canvas.y;
-             eo_do(sid->obj, elm_scrollable_interface_content_pos_get(&x, &y));
-             sid->down.sx = x;
-             sid->down.sy = y;
-             sid->down.locked = EINA_FALSE;
-             memset(&(sid->down.history[0]), 0,
-                    sizeof(sid->down.history[0]) * 60);
-#ifdef EVTIME
-             sid->down.history[0].timestamp = ev->timestamp / 1000.0;
-             sid->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-             sid->down.history[0].timestamp = ecore_loop_time_get();
-#endif
-             sid->down.history[0].x = ev->canvas.x;
-             sid->down.history[0].y = ev->canvas.y;
-          }
-        sid->down.dragged_began = EINA_FALSE;
-        sid->down.hold_parent = EINA_FALSE;
-        sid->down.cancelled = EINA_FALSE;
-        if (sid->hold || sid->freeze)
-          sid->down.want_reset = EINA_TRUE;
-        else
-          sid->down.want_reset = EINA_FALSE;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL |
+          EVAS_EVENT_FLAG_ON_HOLD;
+        sid->down.scroll = EINA_TRUE;
+        sid->down.hold = EINA_TRUE;
+        _elm_scroll_anim_stop(sid);
      }
+   if (sid->scrollto.x.animator)
+     {
+        ecore_animator_del(sid->scrollto.x.animator);
+        sid->scrollto.x.animator = NULL;
+     }
+   if (sid->scrollto.y.animator)
+     {
+        ecore_animator_del(sid->scrollto.y.animator);
+        sid->scrollto.y.animator = NULL;
+     }
+   if (sid->down.bounce_x_animator)
+     {
+        ecore_animator_del(sid->down.bounce_x_animator);
+        sid->down.bounce_x_animator = NULL;
+        sid->bouncemex = EINA_FALSE;
+        if (sid->content_info.resized)
+          _elm_scroll_wanted_region_set(sid->obj);
+     }
+   if (sid->down.bounce_y_animator)
+     {
+        ecore_animator_del(sid->down.bounce_y_animator);
+        sid->down.bounce_y_animator = NULL;
+        sid->bouncemey = EINA_FALSE;
+        if (sid->content_info.resized)
+          _elm_scroll_wanted_region_set(sid->obj);
+     }
+   if (sid->down.hold_animator)
+     {
+        ecore_animator_del(sid->down.hold_animator);
+        sid->down.hold_animator = NULL;
+        _elm_scroll_drag_stop(sid);
+        if (sid->content_info.resized)
+          _elm_scroll_wanted_region_set(sid->obj);
+     }
+   if (sid->down.momentum_animator)
+     {
+        ecore_animator_del(sid->down.momentum_animator);
+        sid->down.momentum_animator = NULL;
+        sid->down.bounce_x_hold = EINA_FALSE;
+        sid->down.bounce_y_hold = EINA_FALSE;
+        sid->down.ax = 0;
+        sid->down.ay = 0;
+        if (sid->content_info.resized)
+          _elm_scroll_wanted_region_set(sid->obj);
+     }
+   if (ev->button == 1)
+     {
+        sid->down.hist.est_timestamp_diff =
+          ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
+        sid->down.hist.tadd = 0.0;
+        sid->down.hist.dxsum = 0.0;
+        sid->down.hist.dysum = 0.0;
+        sid->down.now = EINA_TRUE;
+        sid->down.dragged = EINA_FALSE;
+        sid->down.dir_x = EINA_FALSE;
+        sid->down.dir_y = EINA_FALSE;
+        sid->down.x = ev->canvas.x;
+        sid->down.y = ev->canvas.y;
+        eo_do(sid->obj, elm_scrollable_interface_content_pos_get(&x, &y));
+        sid->down.sx = x;
+        sid->down.sy = y;
+        sid->down.locked = EINA_FALSE;
+        memset(&(sid->down.history[0]), 0,
+               sizeof(sid->down.history[0]) * 60);
+#ifdef EVTIME
+        sid->down.history[0].timestamp = ev->timestamp / 1000.0;
+        sid->down.history[0].localtimestamp = ecore_loop_time_get();
+#else
+        sid->down.history[0].timestamp = ecore_loop_time_get();
+#endif
+        sid->down.history[0].x = ev->canvas.x;
+        sid->down.history[0].y = ev->canvas.y;
+     }
+   sid->down.dragged_began = EINA_FALSE;
+   sid->down.hold_parent = EINA_FALSE;
+   sid->down.cancelled = EINA_FALSE;
+   if (sid->hold || sid->freeze)
+     sid->down.want_reset = EINA_TRUE;
+   else
+     sid->down.want_reset = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -2881,249 +2880,249 @@ _elm_scroll_mouse_move_event_cb(void *data,
    evas_post_event_callback_push(e, _elm_scroll_post_event_move, sid);
 
    // FIXME: respect elm_widget_scroll_hold_get of parent container
-   if (_elm_config->thumbscroll_enable)
+   if (!_elm_config->thumbscroll_enable)
+     return;
+
+   if (sid->down.now)
      {
-        if (sid->down.now)
+        int dodir = 0;
+
+        if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze))
           {
-             int dodir = 0;
+             Evas_Coord px;
+             ecore_animator_del(sid->scrollto.x.animator);
+             sid->scrollto.x.animator = NULL;
+             eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, NULL));
+             sid->down.sx = px;
+             sid->down.x = sid->down.history[0].x;
+          }
 
-             if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze))
-               {
-                  Evas_Coord px;
-                  ecore_animator_del(sid->scrollto.x.animator);
-                  sid->scrollto.x.animator = NULL;
-                  eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, NULL));
-                  sid->down.sx = px;
-                  sid->down.x = sid->down.history[0].x;
-               }
-
-             if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze))
-               {
-                  Evas_Coord py;
-                  ecore_animator_del(sid->scrollto.y.animator);
-                  sid->scrollto.y.animator = NULL;
-                  eo_do(sid->pan_obj, elm_obj_pan_pos_get(NULL, &py));
-                  sid->down.sy = py;
-                  sid->down.y = sid->down.history[0].y;
-               }
+        if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze))
+          {
+             Evas_Coord py;
+             ecore_animator_del(sid->scrollto.y.animator);
+             sid->scrollto.y.animator = NULL;
+             eo_do(sid->pan_obj, elm_obj_pan_pos_get(NULL, &py));
+             sid->down.sy = py;
+             sid->down.y = sid->down.history[0].y;
+          }
 
 #ifdef SCROLLDBG
-             DBG("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
+        DBG("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
 #endif
-             memmove(&(sid->down.history[1]), &(sid->down.history[0]),
-                     sizeof(sid->down.history[0]) * (60 - 1));
+        memmove(&(sid->down.history[1]), &(sid->down.history[0]),
+                sizeof(sid->down.history[0]) * (60 - 1));
 #ifdef EVTIME
-             sid->down.history[0].timestamp = ev->timestamp / 1000.0;
-             sid->down.history[0].localtimestamp = ecore_loop_time_get();
+        sid->down.history[0].timestamp = ev->timestamp / 1000.0;
+        sid->down.history[0].localtimestamp = ecore_loop_time_get();
 #else
-             sid->down.history[0].timestamp = ecore_loop_time_get();
+        sid->down.history[0].timestamp = ecore_loop_time_get();
 #endif
-             sid->down.history[0].x = ev->cur.canvas.x;
-             sid->down.history[0].y = ev->cur.canvas.y;
+        sid->down.history[0].x = ev->cur.canvas.x;
+        sid->down.history[0].y = ev->cur.canvas.y;
 
-             if (!sid->down.dragged_began)
+        if (!sid->down.dragged_began)
+          {
+             x = ev->cur.canvas.x - sid->down.x;
+             y = ev->cur.canvas.y - sid->down.y;
+
+             sid->down.hdir = -1;
+             sid->down.vdir = -1;
+
+             if (x > 0) sid->down.hdir = LEFT;
+             else if (x < 0)
+               sid->down.hdir = RIGHT;
+             if (y > 0) sid->down.vdir = UP;
+             else if (y < 0)
+               sid->down.vdir = DOWN;
+
+             if (x < 0) x = -x;
+             if (y < 0) y = -y;
+
+             if ((sid->one_direction_at_a_time) &&
+                 (!((sid->down.dir_x) || (sid->down.dir_y))))
                {
-                  x = ev->cur.canvas.x - sid->down.x;
-                  y = ev->cur.canvas.y - sid->down.y;
-
-                  sid->down.hdir = -1;
-                  sid->down.vdir = -1;
-
-                  if (x > 0) sid->down.hdir = LEFT;
-                  else if (x < 0)
-                    sid->down.hdir = RIGHT;
-                  if (y > 0) sid->down.vdir = UP;
-                  else if (y < 0)
-                    sid->down.vdir = DOWN;
-
-                  if (x < 0) x = -x;
-                  if (y < 0) y = -y;
-
-                  if ((sid->one_direction_at_a_time) &&
-                      (!((sid->down.dir_x) || (sid->down.dir_y))))
+                  if (x > _elm_config->thumbscroll_threshold)
                     {
-                       if (x > _elm_config->thumbscroll_threshold)
-                         {
-                            if (x > (y * 2))
-                              {
-                                 sid->down.dir_x = EINA_TRUE;
-                                 sid->down.dir_y = EINA_FALSE;
-                                 dodir++;
-                              }
-                         }
-                       if (y > _elm_config->thumbscroll_threshold)
-                         {
-                            if (y > (x * 2))
-                              {
-                                 sid->down.dir_x = EINA_FALSE;
-                                 sid->down.dir_y = EINA_TRUE;
-                                 dodir++;
-                              }
-                         }
-                       if (!dodir)
+                       if (x > (y * 2))
                          {
                             sid->down.dir_x = EINA_TRUE;
-                            sid->down.dir_y = EINA_TRUE;
+                            sid->down.dir_y = EINA_FALSE;
+                            dodir++;
                          }
                     }
-                  else
+                  if (y > _elm_config->thumbscroll_threshold)
+                    {
+                       if (y > (x * 2))
+                         {
+                            sid->down.dir_x = EINA_FALSE;
+                            sid->down.dir_y = EINA_TRUE;
+                            dodir++;
+                         }
+                    }
+                  if (!dodir)
                     {
                        sid->down.dir_x = EINA_TRUE;
                        sid->down.dir_y = EINA_TRUE;
                     }
                }
-             if ((!sid->hold) && (!sid->freeze))
+             else
                {
-                  if ((sid->down.dragged) ||
-                      (((x * x) + (y * y)) >
-                       (_elm_config->thumbscroll_threshold *
+                  sid->down.dir_x = EINA_TRUE;
+                  sid->down.dir_y = EINA_TRUE;
+               }
+          }
+        if ((!sid->hold) && (!sid->freeze))
+          {
+             if ((sid->down.dragged) ||
+                 (((x * x) + (y * y)) >
+                  (_elm_config->thumbscroll_threshold *
                         _elm_config->thumbscroll_threshold)))
+               {
+                  sid->down.dragged_began = EINA_TRUE;
+                  if (!sid->down.dragged)
                     {
-                       sid->down.dragged_began = EINA_TRUE;
-                       if (!sid->down.dragged)
-                         {
-                            sid->down.want_dragged = EINA_TRUE;
-                            ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                         }
-                       if (sid->down.dragged)
-                         {
-                            ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                         }
-                       if (sid->down.dir_x)
-                         x = sid->down.sx - (ev->cur.canvas.x - sid->down.x);
-                       else
-                         x = sid->down.sx;
-                       if (sid->down.dir_y)
-                         y = sid->down.sy - (ev->cur.canvas.y - sid->down.y);
-                       else
-                         y = sid->down.sy;
-                       if (sid->down.want_reset)
-                         {
-                            sid->down.x = ev->cur.canvas.x;
-                            sid->down.y = ev->cur.canvas.y;
-                            sid->down.want_reset = EINA_FALSE;
-                         }
-                       if ((sid->down.dir_x) || (sid->down.dir_y))
-                         {
-                            if (!sid->down.locked)
-                              {
-                                 sid->down.locked_x = x;
-                                 sid->down.locked_y = y;
-                                 sid->down.locked = EINA_TRUE;
-                              }
-                            if (!((sid->down.dir_x) && (sid->down.dir_y)))
-                              {
-                                 if (sid->down.dir_x) y = sid->down.locked_y;
-                                 else x = sid->down.locked_x;
-                              }
-                         }
-                       {
-                          Evas_Coord minx, miny, mx, my;
-
-                          eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-                          eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-                          if (y < miny)
-                            y += (miny - y) *
-                              _elm_config->thumbscroll_border_friction;
-                          else if (my <= 0)
-                            y += (sid->down.sy - y) *
-                              _elm_config->thumbscroll_border_friction;
-                          else if ((my + miny) < y)
-                            y += (my + miny - y) *
-                              _elm_config->thumbscroll_border_friction;
-                          if (x < minx)
-                            x += (minx - x) *
-                              _elm_config->thumbscroll_border_friction;
-                          else if (mx <= 0)
-                            x += (sid->down.sx - x) *
-                              _elm_config->thumbscroll_border_friction;
-                          else if ((mx + minx) < x)
-                            x += (mx + minx - x) *
-                              _elm_config->thumbscroll_border_friction;
-                       }
-
-                       sid->down.hold_x = x;
-                       sid->down.hold_y = y;
-                       if (!sid->down.hold_animator)
-                         sid->down.hold_animator =
-                           ecore_animator_add(_elm_scroll_hold_animator, sid);
+                       sid->down.want_dragged = EINA_TRUE;
+                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                     }
-                  else
+                  if (sid->down.dragged)
                     {
-                       if (sid->down.dragged_began)
+                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                    }
+                  if (sid->down.dir_x)
+                    x = sid->down.sx - (ev->cur.canvas.x - sid->down.x);
+                  else
+                    x = sid->down.sx;
+                  if (sid->down.dir_y)
+                    y = sid->down.sy - (ev->cur.canvas.y - sid->down.y);
+                  else
+                    y = sid->down.sy;
+                  if (sid->down.want_reset)
+                    {
+                       sid->down.x = ev->cur.canvas.x;
+                       sid->down.y = ev->cur.canvas.y;
+                       sid->down.want_reset = EINA_FALSE;
+                    }
+                  if ((sid->down.dir_x) || (sid->down.dir_y))
+                    {
+                       if (!sid->down.locked)
                          {
-                            ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                            if (!sid->down.hold)
-                              {
-                                 sid->down.hold = EINA_TRUE;
-                                 evas_event_feed_hold
-                                   (e, 1, ev->timestamp, ev->data);
-                              }
+                            sid->down.locked_x = x;
+                            sid->down.locked_y = y;
+                            sid->down.locked = EINA_TRUE;
+                         }
+                       if (!((sid->down.dir_x) && (sid->down.dir_y)))
+                         {
+                            if (sid->down.dir_x) y = sid->down.locked_y;
+                            else x = sid->down.locked_x;
+                         }
+                    }
+                  {
+                     Evas_Coord minx, miny, mx, my;
+
+                     eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+                     eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
+                     if (y < miny)
+                       y += (miny - y) *
+                         _elm_config->thumbscroll_border_friction;
+                     else if (my <= 0)
+                       y += (sid->down.sy - y) *
+                         _elm_config->thumbscroll_border_friction;
+                     else if ((my + miny) < y)
+                       y += (my + miny - y) *
+                         _elm_config->thumbscroll_border_friction;
+                     if (x < minx)
+                       x += (minx - x) *
+                         _elm_config->thumbscroll_border_friction;
+                     else if (mx <= 0)
+                       x += (sid->down.sx - x) *
+                         _elm_config->thumbscroll_border_friction;
+                     else if ((mx + minx) < x)
+                       x += (mx + minx - x) *
+                         _elm_config->thumbscroll_border_friction;
+                  }
+
+                  sid->down.hold_x = x;
+                  sid->down.hold_y = y;
+                  if (!sid->down.hold_animator)
+                    sid->down.hold_animator =
+                      ecore_animator_add(_elm_scroll_hold_animator, sid);
+               }
+             else
+               {
+                  if (sid->down.dragged_began)
+                    {
+                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                       if (!sid->down.hold)
+                         {
+                            sid->down.hold = EINA_TRUE;
+                            evas_event_feed_hold
+                              (e, 1, ev->timestamp, ev->data);
                          }
                     }
                }
-             else if (!sid->freeze)
-               {
-                  double vx = 0.0, vy = 0.0;
+          }
+        else if (!sid->freeze)
+          {
+             double vx = 0.0, vy = 0.0;
 
-                  x = ev->cur.canvas.x - sid->x;
-                  y = ev->cur.canvas.y - sid->y;
-                  if (x < _elm_config->thumbscroll_hold_threshold)
-                    {
-                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
-                         vx = -(double)(_elm_config->thumbscroll_hold_threshold - x)
-                           / _elm_config->thumbscroll_hold_threshold;
-                       else
-                         vx = -1.0;
-                    }
-                  else if (x > (sid->w - _elm_config->thumbscroll_hold_threshold))
-                    {
-                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
-                         vx = (double)(_elm_config->thumbscroll_hold_threshold -
-                                       (sid->w - x)) /
-                           _elm_config->thumbscroll_hold_threshold;
-                       else
-                         vx = 1.0;
-                    }
-                  if (y < _elm_config->thumbscroll_hold_threshold)
-                    {
-                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
-                         vy = -(double)(_elm_config->thumbscroll_hold_threshold - y)
-                           / _elm_config->thumbscroll_hold_threshold;
-                       else
-                         vy = -1.0;
-                    }
-                  else if (y > (sid->h - _elm_config->thumbscroll_hold_threshold))
-                    {
-                       if (_elm_config->thumbscroll_hold_threshold > 0.0)
-                         vy = (double)(_elm_config->thumbscroll_hold_threshold -
-                                       (sid->h - y)) /
-                           _elm_config->thumbscroll_hold_threshold;
-                       else
-                         vy = 1.0;
-                    }
-                  if ((vx != 0.0) || (vy != 0.0))
-                    {
-                       sid->down.onhold_vx = vx;
-                       sid->down.onhold_vy = vy;
-                       if (!sid->down.onhold_animator)
-                         {
-                            sid->down.onhold_vxe = 0.0;
-                            sid->down.onhold_vye = 0.0;
-                            sid->down.onhold_tlast = 0.0;
-                            sid->down.onhold_animator = ecore_animator_add
-                                (_elm_scroll_on_hold_animator, sid);
-                         }
-                    }
+             x = ev->cur.canvas.x - sid->x;
+             y = ev->cur.canvas.y - sid->y;
+             if (x < _elm_config->thumbscroll_hold_threshold)
+               {
+                  if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                    vx = -(double)(_elm_config->thumbscroll_hold_threshold - x)
+                      / _elm_config->thumbscroll_hold_threshold;
                   else
+                    vx = -1.0;
+               }
+             else if (x > (sid->w - _elm_config->thumbscroll_hold_threshold))
+               {
+                  if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                    vx = (double)(_elm_config->thumbscroll_hold_threshold -
+                                  (sid->w - x)) /
+                      _elm_config->thumbscroll_hold_threshold;
+                  else
+                    vx = 1.0;
+               }
+             if (y < _elm_config->thumbscroll_hold_threshold)
+               {
+                  if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                    vy = -(double)(_elm_config->thumbscroll_hold_threshold - y)
+                      / _elm_config->thumbscroll_hold_threshold;
+                  else
+                    vy = -1.0;
+               }
+             else if (y > (sid->h - _elm_config->thumbscroll_hold_threshold))
+               {
+                  if (_elm_config->thumbscroll_hold_threshold > 0.0)
+                    vy = (double)(_elm_config->thumbscroll_hold_threshold -
+                                  (sid->h - y)) /
+                      _elm_config->thumbscroll_hold_threshold;
+                  else
+                    vy = 1.0;
+               }
+             if ((vx != 0.0) || (vy != 0.0))
+               {
+                  sid->down.onhold_vx = vx;
+                  sid->down.onhold_vy = vy;
+                  if (!sid->down.onhold_animator)
                     {
-                       if (sid->down.onhold_animator)
-                         {
-                            ecore_animator_del(sid->down.onhold_animator);
-                            sid->down.onhold_animator = NULL;
-                            if (sid->content_info.resized)
-                              _elm_scroll_wanted_region_set(sid->obj);
-                         }
+                       sid->down.onhold_vxe = 0.0;
+                       sid->down.onhold_vye = 0.0;
+                       sid->down.onhold_tlast = 0.0;
+                       sid->down.onhold_animator = ecore_animator_add
+                           (_elm_scroll_on_hold_animator, sid);
+                    }
+               }
+             else
+               {
+                  if (sid->down.onhold_animator)
+                    {
+                       ecore_animator_del(sid->down.onhold_animator);
+                       sid->down.onhold_animator = NULL;
+                       if (sid->content_info.resized)
+                         _elm_scroll_wanted_region_set(sid->obj);
                     }
                }
           }
