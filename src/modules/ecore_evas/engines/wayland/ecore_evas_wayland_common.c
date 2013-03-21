@@ -4,19 +4,29 @@
 
 #include "ecore_evas_wayland_private.h"
 
+#define _smart_frame_type "ecore_evas_wl_frame"
+
 static const char *interface_wl_name = "wayland";
 static const int interface_wl_version = 1;
 
-/* local structures */
+/* local structures for the frame smart object */
 typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
 struct _EE_Wl_Smart_Data
 {
+   Evas_Object_Smart_Clipped_Data base;
    Evas_Object *frame;
    Evas_Object *text;
    Evas_Coord x, y, w, h;
 };
 
-static Evas_Smart *_ecore_evas_wl_common_smart = NULL;
+static const Evas_Smart_Cb_Description _smart_callbacks[] =
+{
+     {NULL, NULL}
+};
+
+EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
+                        Evas_Smart_Class, Evas_Smart_Class,
+                        evas_object_smart_clipped_class_get, _smart_callbacks);
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
@@ -228,6 +238,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
              _ecore_evas_wayland_resize(ee, win->edges);
           }
+
+        if (wdata->frame)
+          evas_object_resize(wdata->frame, ev->w, ev->h);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -451,7 +464,11 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(sd = calloc(1, sizeof(EE_Wl_Smart_Data)))) return;
+   EVAS_SMART_DATA_ALLOC(obj, EE_Wl_Smart_Data);
+
+   _ecore_evas_wl_frame_parent_sc->add(obj);
+
+   sd = priv;
 
    evas = evas_object_evas_get(obj);
 
@@ -470,8 +487,6 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
    evas_object_text_font_set(sd->text, "Sans", 10);
    evas_object_text_text_set(sd->text, "Smart Test");
    evas_object_smart_member_add(sd->text, obj);
-
-   evas_object_smart_data_set(obj, sd);
 }
 
 static void
@@ -484,7 +499,7 @@ _ecore_evas_wl_common_smart_del(Evas_Object *obj)
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_del(sd->text);
    evas_object_del(sd->frame);
-   free(sd);
+   _ecore_evas_wl_frame_parent_sc->del(obj);
 }
 
 static void
@@ -511,6 +526,8 @@ _ecore_evas_wl_common_smart_show(Evas_Object *obj)
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_show(sd->frame);
    evas_object_show(sd->text);
+
+   _ecore_evas_wl_frame_parent_sc->show(obj);
 }
 
 static void
@@ -523,28 +540,18 @@ _ecore_evas_wl_common_smart_hide(Evas_Object *obj)
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_hide(sd->text);
    evas_object_hide(sd->frame);
+
+   _ecore_evas_wl_frame_parent_sc->hide(obj);
 }
 
 static void
-_ecore_evas_wl_common_smart_init(void)
+_ecore_evas_wl_frame_smart_set_user(Evas_Smart_Class *sc)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (_ecore_evas_wl_common_smart) return;
-     {
-        static const Evas_Smart_Class sc =
-          {
-             "ecore_evas_wl_frame", EVAS_SMART_CLASS_VERSION,
-             _ecore_evas_wl_common_smart_add,
-             _ecore_evas_wl_common_smart_del,
-             NULL,
-             _ecore_evas_wl_common_smart_resize,
-             _ecore_evas_wl_common_smart_show,
-             _ecore_evas_wl_common_smart_hide,
-             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-          };
-        _ecore_evas_wl_common_smart = evas_smart_class_new(&sc);
-     }
+   sc->add = _ecore_evas_wl_common_smart_add;
+   sc->del = _ecore_evas_wl_common_smart_del;
+   sc->show = _ecore_evas_wl_common_smart_show;
+   sc->hide = _ecore_evas_wl_common_smart_hide;
+   sc->resize = _ecore_evas_wl_common_smart_resize;
 }
 
 Evas_Object *
@@ -552,8 +559,7 @@ _ecore_evas_wl_common_frame_add(Evas *evas)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _ecore_evas_wl_common_smart_init();
-   return evas_object_smart_add(evas, _ecore_evas_wl_common_smart);
+   return evas_object_smart_add(evas, _ecore_evas_wl_frame_smart_class_new());
 }
 
 void
