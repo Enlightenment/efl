@@ -1089,8 +1089,8 @@ START_TEST(eina_value_test_array)
    fail_unless(eina_value_array_get(value, 3, &c));
    fail_unless(c == 's');
 
-   snprintf(buf, sizeof(buf), "[%hhd, %hhd, %hhd, %hhd]",
-            '*', 'k', '-', 's');
+   snprintf(buf, sizeof(buf), "[%d, %d, %d, %d]",
+            (int) '*', (int) 'k', (int) '-', (int) 's');
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
@@ -1201,8 +1201,8 @@ START_TEST(eina_value_test_list)
    fail_unless(eina_value_list_get(value, 3, &c));
    fail_unless(c == 's');
 
-   snprintf(buf, sizeof(buf), "[%hhd, %hhd, %hhd, %hhd]",
-            '*', 'k', '-', 's');
+   snprintf(buf, sizeof(buf), "[%d, %d, %d, %d]",
+            (int) '*', (int) 'k', (int) '-', (int) 's');
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
@@ -1303,13 +1303,13 @@ START_TEST(eina_value_test_hash)
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
 
-   snprintf(buf, sizeof(buf), "first: %hhd", '!');
+   snprintf(buf, sizeof(buf), "first: %d", (int) '!');
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
 
-   snprintf(buf, sizeof(buf), "second: %hhd", '-');
+   snprintf(buf, sizeof(buf), "second: %d", (int) '-');
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
 
-   snprintf(buf, sizeof(buf), "third: %hhd", 's');
+   snprintf(buf, sizeof(buf), "third: %d", (int) 's');
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
 
    free(str);
