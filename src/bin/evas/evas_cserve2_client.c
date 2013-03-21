@@ -14,8 +14,7 @@
 static unsigned int _rid_count = 0;
 
 #ifndef UNIX_PATH_MAX
-static struct sockaddr_un socket_local;
-#define UNIX_PATH_MAX sizeof(socket_local.sun_path)
+#define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
 
 static void
