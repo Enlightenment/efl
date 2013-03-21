@@ -1086,10 +1086,10 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
      strncpy(buf, "tree", sizeof(buf));
    else strncpy(buf, "item", sizeof(buf));
    if (GL_IT(it)->wsd->mode == ELM_LIST_COMPRESS)
-     strncat(buf, "_compress", sizeof(buf) - strlen(buf));
+     strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
 
-   strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->itc->decorate_all_item_style, sizeof(buf) - strlen(buf));
+   strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
+   strncat(buf, it->itc->decorate_all_item_style, sizeof(buf) - strlen(buf) - 1);
 
    elm_widget_theme_object_set(WIDGET(it), it->deco_all_view, "genlist", buf,
                                elm_widget_style_get(WIDGET(it)));
@@ -4616,12 +4616,12 @@ _decorate_item_realize(Elm_Gen_Item *it)
 
    strncpy(buf, "item", sizeof(buf));
    if (GL_IT(it)->wsd->mode == ELM_LIST_COMPRESS)
-     strncat(buf, "_compress", sizeof(buf) - strlen(buf));
+     strncat(buf, "_compress", sizeof(buf) - strlen(buf) - 1);
 
    if (it->item->order_num_in & 0x1)
-     strncat(buf, "_odd", sizeof(buf) - strlen(buf));
-   strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf));
+     strncat(buf, "_odd", sizeof(buf) - strlen(buf) - 1);
+   strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
+   strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf) - 1);
 
    elm_widget_theme_object_set
      (WIDGET(it), it->item->deco_it_view, "genlist", buf,
