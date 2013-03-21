@@ -910,7 +910,7 @@ _inform_item_number(Evas_Object *obj)
    if (scount != count)
      {
         scount = count;
-        if (snprintf(buf, sizeof(buf), "elm,number,item,%d", count) >= sizeof(buf))
+        if (snprintf(buf, sizeof(buf), "elm,number,item,%d", count) >= (int)sizeof(buf))
           ERR("Too many items to fit signal buffer (%d)", count);
 
         EINA_INLIST_FOREACH(sd->items, it)
