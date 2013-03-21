@@ -18,9 +18,8 @@ static int socketfd = -1;
 static unsigned int _rid_count = 1;
 static int _evas_cserve2_debug_log_dom = -1;
 
-static struct sockaddr_un socksize;
 #ifndef UNIX_PATH_MAX
-#define UNIX_PATH_MAX sizeof(socksize.sun_path)
+#define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
 
 #ifdef ERR

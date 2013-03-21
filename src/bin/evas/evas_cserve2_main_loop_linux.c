@@ -61,7 +61,7 @@ static Timeout_Cb timeout_func = NULL;
 static Main_Loop_Child_Dead_Cb reap_children_func = NULL;
 
 #ifndef UNIX_PATH_MAX
-#define UNIX_PATH_MAX sizeof(socket_local.sun_path)
+#define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
 
 static void
