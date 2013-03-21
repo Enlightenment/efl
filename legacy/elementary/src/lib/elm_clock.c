@@ -642,8 +642,14 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
         else ampm = "AM";
      }
 
-   eina_strbuf_append_printf(buf, (ampm) ? ("%d, %d, %s") : ("%d, %d"),
-                             hrs, sd->min, ampm);
+   if (ampm)
+     {
+        eina_strbuf_append_printf(buf, "%d, %d, %s", hrs, sd->min, ampm);
+     }
+   else
+     {
+        eina_strbuf_append_printf(buf, "%d, %d", hrs, sd->min);
+     }
 
    ret = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
