@@ -320,6 +320,7 @@ _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
 
    _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches*) gp->matches);
    gp->matches = NULL;
+   free(gp->flags);
    free(gp->custom_data);
    free(gp);
 }
