@@ -479,6 +479,7 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
 
    sd->frame = evas_object_rectangle_add(evas);
    evas_object_color_set(sd->frame, 249, 249, 249, 255);
+   evas_object_show(sd->frame);
    evas_object_smart_member_add(sd->frame, obj);
 
    sd->text = evas_object_text_add(evas);
@@ -486,6 +487,7 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
    evas_object_text_style_set(sd->text, EVAS_TEXT_STYLE_PLAIN);
    evas_object_text_font_set(sd->text, "Sans", 10);
    evas_object_text_text_set(sd->text, "Smart Test");
+   evas_object_show(sd->text);
    evas_object_smart_member_add(sd->text, obj);
 }
 
@@ -517,40 +519,10 @@ _ecore_evas_wl_common_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 static void
-_ecore_evas_wl_common_smart_show(Evas_Object *obj)
-{
-   EE_Wl_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-   evas_object_show(sd->frame);
-   evas_object_show(sd->text);
-
-   _ecore_evas_wl_frame_parent_sc->show(obj);
-}
-
-static void
-_ecore_evas_wl_common_smart_hide(Evas_Object *obj)
-{
-   EE_Wl_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-   evas_object_hide(sd->text);
-   evas_object_hide(sd->frame);
-
-   _ecore_evas_wl_frame_parent_sc->hide(obj);
-}
-
-static void
 _ecore_evas_wl_frame_smart_set_user(Evas_Smart_Class *sc)
 {
    sc->add = _ecore_evas_wl_common_smart_add;
    sc->del = _ecore_evas_wl_common_smart_del;
-   sc->show = _ecore_evas_wl_common_smart_show;
-   sc->hide = _ecore_evas_wl_common_smart_hide;
    sc->resize = _ecore_evas_wl_common_smart_resize;
 }
 
