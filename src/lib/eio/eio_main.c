@@ -212,7 +212,7 @@ eio_init(void)
 
    if (!ecore_init())
      {
-        ERR("Can not initialize Eina\n");
+        ERR("Can not initialize Ecore\n");
         goto unregister_log_domain;
      }
 
