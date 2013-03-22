@@ -506,8 +506,6 @@ event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
 
-   eeze_sensor_free(sens);
-
    ecore_main_loop_quit();
 
    return EINA_FALSE;
