@@ -239,6 +239,7 @@ static void st_collections_group_parts_part_box_items_item_type(void);
 static void st_collections_group_parts_part_box_items_item_name(void);
 static void st_collections_group_parts_part_box_items_item_source(void);
 static void st_collections_group_parts_part_box_items_item_min(void);
+static void st_collections_group_parts_part_box_items_item_spread(void);
 static void st_collections_group_parts_part_box_items_item_prefer(void);
 static void st_collections_group_parts_part_box_items_item_max(void);
 static void st_collections_group_parts_part_box_items_item_padding(void);
@@ -528,6 +529,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
      {"collections.group.parts.part.box.items.item.source", st_collections_group_parts_part_box_items_item_source},
      {"collections.group.parts.part.box.items.item.min", st_collections_group_parts_part_box_items_item_min},
+     {"collections.group.parts.part.box.items.item.spread", st_collections_group_parts_part_box_items_item_spread},
      {"collections.group.parts.part.box.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer},
      {"collections.group.parts.part.box.items.item.max", st_collections_group_parts_part_box_items_item_max},
      {"collections.group.parts.part.box.items.item.padding", st_collections_group_parts_part_box_items_item_padding},
@@ -540,6 +542,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.table.items.item.name", st_collections_group_parts_part_box_items_item_name}, /* dup */
      {"collections.group.parts.part.table.items.item.source", st_collections_group_parts_part_box_items_item_source}, /* dup */
      {"collections.group.parts.part.table.items.item.min", st_collections_group_parts_part_box_items_item_min}, /* dup */
+     {"collections.group.parts.part.table.items.item.spread", st_collections_group_parts_part_box_items_item_spread}, /* dup */
      {"collections.group.parts.part.table.items.item.prefer", st_collections_group_parts_part_box_items_item_prefer}, /* dup */
      {"collections.group.parts.part.table.items.item.max", st_collections_group_parts_part_box_items_item_max}, /* dup */
      {"collections.group.parts.part.table.items.item.padding", st_collections_group_parts_part_box_items_item_padding}, /* dup */
@@ -4309,6 +4312,8 @@ static void ob_collections_group_parts_part_box_items_item(void)
    item->row = -1;
    item->colspan = 1;
    item->rowspan = 1;
+   item->spread.w = 1;
+   item->spread.h = 1;
    pitem = (Edje_Pack_Element_Parser *)item;
    pitem->can_override = EINA_FALSE;
 }
@@ -4426,6 +4431,27 @@ static void st_collections_group_parts_part_box_items_item_min(void)
 
    current_item->min.w = parse_int_range(0, 0, 0x7ffffff);
    current_item->min.h = parse_int_range(1, 0, 0x7ffffff);
+}
+
+/**
+   @page edcref
+   @property
+       spread
+   @parameters
+       [width] [height]
+   @effect
+       Will replicate the item in a rectangle of size width x height
+       box starting from the defined position of this item.
+
+       default value will be 1 1;
+   @endproperty
+*/
+static void st_collections_group_parts_part_box_items_item_spread(void)
+{
+   check_arg_count(2);
+
+   current_item->spread.w = parse_int_range(0, 0, 0x7ffffff);
+   current_item->spread.h = parse_int_range(1, 0, 0x7ffffff);
 }
 
 /**

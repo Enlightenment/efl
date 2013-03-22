@@ -72,8 +72,10 @@ Additions:
     * Add eio_eet_sync symbols.
     * Add infrastructure to handle buggy touchscreen in Ecore_Input_Evas.
     * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
-    * Edje textblock: Added support for size_range.
-	* Ecore_x: Add atom related with indicator type. 
+    * Edje:
+     - textblock: Added support for size_range.
+     - table: Added spread.{w,h} to repeat and automatically name an item in a TABLE part.
+    * Ecore_x: Add atom related with indicator type. 
     * Ecore_x: Add manual render code before deiconify
     * Eeze: Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con: Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).

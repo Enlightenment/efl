@@ -164,7 +164,7 @@ EAPI extern int _edje_default_log_dom ;
 /* increment this when you add new feature to edje file format without
  * breaking backward compatibility.
  */
-#define EDJE_FILE_MINOR 4
+#define EDJE_FILE_MINOR 5
 
 /* FIXME:
  *
@@ -723,8 +723,11 @@ struct _Edje_Pack_Element
    const char      *source; /* group name to use as source for this element */
    Edje_Size        min, prefer, max;
    struct {
-	   int l, r, t, b;
+      int l, r, t, b;
    } padding;
+   struct {
+      int w, h;
+   } spread;
    Edje_Alignment   align;
    Edje_Alignment   weight;
    Edje_Aspect      aspect;

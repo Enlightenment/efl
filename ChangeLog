@@ -1,3 +1,7 @@
+2013-03-22  Cedric Bail
+
+	* Edje: Add spread width and height in TABLE part.
+
 2013-03-20  Jérémy Zurcher (jeyzu)
 
         * Eina: Add eina_list_shuffle
@@ -67,7 +71,6 @@
         * Evas Evas_GL: removed resource surface/context pool in favor of
         creating on-demand. resource surface/contexts are used for creating
         GL resources for Evas_GL.
-        
 
 2013-02-28  Tom Hacohen (TAsn)
 
@@ -76,7 +79,7 @@
 
 2013-02-28  Mike Blumenkrantz
 
-        * fix custom states for edje SPACER parts    
+        * fix custom states for edje SPACER parts
         * fix edje program filters
 
 2013-02-28  Cedric Bail

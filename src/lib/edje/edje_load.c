@@ -827,6 +827,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    {
 		       Eina_List *l;
 		       Evas_Object *child_obj;
+                       Edje_Pack_Element pack_it_copy;
 		       const char *group_path_entry = eina_stringshare_add(source);
 		       const char *data;
 
@@ -848,80 +849,124 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      }
 			 }
 
-		       child_obj = edje_object_add(ed->base->evas);
-		       group_path = eina_list_append(group_path, group_path_entry);
-		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
-			 {
-                            _edje_real_part_swallow(rp, child_obj, EINA_FALSE);
-			 }
+                       if (pack_it)
+                         {
+                            pack_it_copy = *pack_it;
+                         }
+                       else
+                         {
+                            pack_it_copy.spread.w = 0;
+                            pack_it_copy.spread.h = 0;
+                         }
 
-		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
+		       do
 			 {
-                            ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
-                                rp->part->name, group_path_entry, file, source);
-			    ed->load_error = edje_object_load_error_get(child_obj);
-                            evas_object_del(child_obj);
-                            eina_stringshare_del(group_path_entry);
-                            goto on_error;
-			 }
-
-		       group_path = eina_list_remove(group_path, group_path_entry);
-		       eina_stringshare_del(group_path_entry);
-
-                       edje_object_propagate_callback_add(child_obj,
-                                                          _cb_signal_repeat,
-                                                          obj);
-		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
-			 {
-                            ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
-                            _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
-                            _edje_subobj_register(ed, child_obj);
-			    source = NULL;
-			 }
-		       else
-			 {
-                            if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
-                                (rp->typedata.container))
+                            child_obj = edje_object_add(ed->base->evas);
+                            group_path = eina_list_append(group_path, group_path_entry);
+                            if (rp->part->type == EDJE_PART_TYPE_GROUP)
                               {
-                                 pack_it->parent = rp;
-                                 
-                                 _edje_object_pack_item_hints_set(child_obj, pack_it);
-                                 if (pack_it->name)
-                                   evas_object_name_set(child_obj, pack_it->name);
-                                 
-                                 if (rp->part->type == EDJE_PART_TYPE_BOX)
-                                   {
-                                      _edje_real_part_box_append(rp, child_obj);
-                                      evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
-                                   }
-                                 else if (rp->part->type == EDJE_PART_TYPE_TABLE)
-                                   {
-                                      _edje_real_part_table_pack(rp, child_obj, pack_it->col, pack_it->row, pack_it->colspan, pack_it->rowspan);
-                                      evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
-                                   }
+                                 _edje_real_part_swallow(rp, child_obj, EINA_FALSE);
+                              }
+
+                            if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
+                              {
+                                 ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
+                                     rp->part->name, group_path_entry, file, source);
+                                 ed->load_error = edje_object_load_error_get(child_obj);
+                                 evas_object_del(child_obj);
+                                 eina_stringshare_del(group_path_entry);
+                                 goto on_error;
+                              }
+
+                            group_path = eina_list_remove(group_path, group_path_entry);
+
+                            edje_object_propagate_callback_add(child_obj,
+                                                               _cb_signal_repeat,
+                                                               obj);
+                            if (rp->part->type == EDJE_PART_TYPE_GROUP)
+                              {
+                                 ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
+                                 _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
                                  _edje_subobj_register(ed, child_obj);
-                                 evas_object_show(child_obj);
-                                 rp->typedata.container->items = eina_list_append(rp->typedata.container->items, child_obj);
-                                 
-                                 if (item_count > 0)
+                                 source = NULL;
+                              }
+                            else
+                              {
+                                 if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
+                                     (rp->typedata.container))
                                    {
-                                      pack_it = *curr_item;
-                                      source = pack_it->source;
-                                      curr_item++;
-                                      item_count--;
-                                   }
-                                 else
-                                   {
-                                      source = NULL;
-                                      curr_item = NULL;
-                                      pack_it = NULL;
+                                      Eina_Strbuf *buf = NULL;
+                                      const char *name = pack_it_copy.name;
+
+                                      pack_it->parent = rp;
+
+                                      _edje_object_pack_item_hints_set(child_obj, &pack_it_copy);
+
+                                      if (pack_it_copy.spread.h >= 1 && pack_it_copy.spread.w > 1)
+                                        {
+                                           buf = eina_strbuf_new();
+                                           if (name)
+                                             eina_strbuf_append_printf(buf, "%s{%i,%i}", name, pack_it_copy.col, pack_it_copy.row);
+                                           else
+                                             eina_strbuf_append_printf(buf, "%i,%i", pack_it_copy.col, pack_it_copy.row);
+                                           name = eina_strbuf_string_get(buf);
+                                        }
+                                      if (name) evas_object_name_set(child_obj, name);
+                                      if (buf) eina_strbuf_free(buf);
+				   
+                                      if (rp->part->type == EDJE_PART_TYPE_BOX)
+                                        {
+                                           _edje_real_part_box_append(rp, child_obj);
+                                           evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
+                                        }
+                                      else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+                                        {
+                                           _edje_real_part_table_pack(rp, child_obj,
+                                                                      pack_it_copy.col, pack_it_copy.row,
+                                                                      pack_it_copy.colspan, pack_it_copy.rowspan);
+                                           evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
+                                        }
+                                      _edje_subobj_register(ed, child_obj);
+                                      evas_object_show(child_obj);
+                                      rp->typedata.container->items = eina_list_append(rp->typedata.container->items, child_obj);
                                    }
                               }
-			 }
-		    }
-	       }
 
-	     if (group_path_started)
+                            pack_it_copy.spread.w--;
+                            pack_it_copy.col++;
+                            if (pack_it_copy.spread.w < 1 && pack_it)
+                              {
+                                 pack_it_copy.col = pack_it->col;
+                                 pack_it_copy.row++;
+                                 pack_it_copy.spread.h--;
+                                 pack_it_copy.spread.w = pack_it->spread.w;
+                              }
+                         }
+                       while (pack_it_copy.spread.h > 0);
+
+                       eina_stringshare_del(group_path_entry);
+
+                       if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
+                           (rp->typedata.container))
+                         {
+                            if (item_count > 0)
+                              {
+                                 pack_it = *curr_item;
+                                 source = pack_it->source;
+                                 curr_item++;
+                                 item_count--;
+                              }
+                            else
+                              {
+                                 source = NULL;
+                                 curr_item = NULL;
+                                 pack_it = NULL;
+                              }
+                         }
+                    }
+               }
+
+             if (group_path_started)
 	       {
 		  const char *str;
 
@@ -1746,6 +1791,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    size_t	 length_source;
    int           i = 0;
    const char   *alias = NULL;
+   const char   *name = NULL;
    Edje_Message_Signal emsg;
 
    parent = data;
@@ -1754,9 +1800,12 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
 
    pack_it = evas_object_data_get(obj, "\377 edje.box_item");
    if (!pack_it) pack_it = evas_object_data_get(obj, "\377 edje.table_item");
+   name = evas_object_name_get(obj);
+
    if (pack_it)
      {
-        if (!pack_it->name)
+        if (!name) name = pack_it->name;
+        if (!name)
           {
              Eina_List *child = NULL;
              Evas_Object *o;
@@ -1782,7 +1831,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
           }
         else
           {
-             length_index = strlen(pack_it->name) + 2;
+             length_index = strlen(name) + 2;
           }
      }
 
@@ -1802,7 +1851,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
           length_parent += eina_convert_itoa(i, new_src + length_parent);
         else
           {
-             memcpy(new_src + length_parent, pack_it->name, length_index);
+             memcpy(new_src + length_parent, name, length_index);
              length_parent += length_index - 2;
           }
         new_src[length_parent++] = EDJE_PART_PATH_SEPARATOR_INDEXR;
