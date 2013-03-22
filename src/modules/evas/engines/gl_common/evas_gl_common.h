@@ -42,8 +42,8 @@
 #ifndef GL_BGRA
 # define GL_BGRA 0x80E1
 #endif
-#ifndef GL_UNPACK_ROW_LENGTH_EXT
-# define GL_UNPACK_ROW_LENGTH_EXT 0x0cf2
+#ifndef GL_UNPACK_ROW_LENGTH
+# define GL_UNPACK_ROW_LENGTH 0x0cf2
 #endif
 
 #ifndef EGL_NO_CONTEXT
