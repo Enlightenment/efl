@@ -35,6 +35,7 @@ struct _Render_Engine
    int                      w, h;
    int                      vsync;
    int                      lost_back;
+   int                      prev_age;
 
    EVGL_Engine             *evgl_engine;
 };
@@ -1092,6 +1093,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                   else if (age == 2) re->mode = MODE_DOUBLE;
                   else if (age == 3) re->mode = MODE_TRIPLE;
                   else re->mode = MODE_FULL;
+                  if (age != re->prev_age) re->mode = MODE_FULL;
+                  re->prev_age = age;
                }
              else re->mode = MODE_FULL;
           }
