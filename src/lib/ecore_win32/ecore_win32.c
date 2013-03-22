@@ -63,7 +63,6 @@ _ecore_win32_window_procedure(HWND   window,
                               LPARAM data_param)
 {
    Ecore_Win32_Callback_Data *data;
-   POINTS                     point;
    DWORD                      coord;
 
    data = (Ecore_Win32_Callback_Data *)malloc(sizeof(Ecore_Win32_Callback_Data));
@@ -75,9 +74,8 @@ _ecore_win32_window_procedure(HWND   window,
    data->data_param = data_param;
    data->timestamp = GetMessageTime();
    coord = GetMessagePos();
-   point = MAKEPOINTS(coord);
-   data->x = point.x;
-   data->y = point.y;
+   data->x = GET_X_LPARAM(coord);
+   data->y = GET_Y_LPARAM(coord);
    data->discard_ctrl = EINA_FALSE;
 
    switch (data->message)
