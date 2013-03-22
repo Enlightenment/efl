@@ -134,6 +134,22 @@ _access_highlight_object_get(Evas_Object *obj)
    return ho;
 }
 
+static void
+_access_highlight_read(Elm_Access_Info *ac, Evas_Object *obj)
+{
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     {
+        if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
+        _elm_access_object_hilight(obj);
+        _elm_access_read(ac, ELM_ACCESS_CANCEL, obj);
+        _elm_access_read(ac, ELM_ACCESS_TYPE,   obj);
+        _elm_access_read(ac, ELM_ACCESS_INFO,   obj);
+        _elm_access_read(ac, ELM_ACCESS_STATE,  obj);
+        _elm_access_read(ac, ELM_ACCESS_CONTEXT_INFO, obj);
+        _elm_access_read(ac, ELM_ACCESS_DONE,   obj);
+     }
+}
+
 static Eina_Bool
 _access_obj_over_timeout_cb(void *data)
 {
@@ -142,23 +158,12 @@ _access_obj_over_timeout_cb(void *data)
 
    if (!data) return EINA_FALSE;
 
-   ho = _access_highlight_object_get(data);
-   if (ho == data) return EINA_FALSE;
-
    ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return EINA_FALSE;
 
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-     {
-        if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
-        _elm_access_object_hilight(data);
-        _elm_access_read(ac, ELM_ACCESS_CANCEL, data);
-        _elm_access_read(ac, ELM_ACCESS_TYPE,   data);
-        _elm_access_read(ac, ELM_ACCESS_INFO,   data);
-        _elm_access_read(ac, ELM_ACCESS_STATE,  data);
-        _elm_access_read(ac, ELM_ACCESS_CONTEXT_INFO, data);
-        _elm_access_read(ac, ELM_ACCESS_DONE,   data);
-     }
+   ho = _access_highlight_object_get(data);
+   if (ho != data) _access_highlight_read(ac, data);
+
    ac->delay_timer = NULL;
    return EINA_FALSE;
 }
@@ -359,7 +364,18 @@ _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item)
 EAPI void
 _elm_access_highlight_set(Evas_Object* obj)
 {
-   _access_obj_over_timeout_cb(obj);
+   Elm_Access_Info *ac;
+   Evas_Object *ho;
+
+   if (!obj) return;
+
+   ho = _access_highlight_object_get(obj);
+   if (ho == obj) return;
+
+   ac = evas_object_data_get(obj, "_elm_access");
+   if (!ac) return;
+
+   _access_highlight_read(ac, obj);
 }
 
 EAPI void
@@ -968,14 +984,7 @@ elm_access_say(const char *text)
 EAPI void
 elm_access_highlight_set(Evas_Object* obj)
 {
-   Evas_Object *ho;
-
-   if (!obj) return;
-
-   ho = _access_highlight_object_get(obj);
-   if (ho == obj) return;
-
-   _access_obj_over_timeout_cb(obj);
+   _elm_access_highlight_set(obj);
 }
 
 EAPI void
