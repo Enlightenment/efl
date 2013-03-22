@@ -838,6 +838,7 @@ elm_quicklaunch_fork(int    argc,
    if (postfork_func) postfork_func(postfork_data);
 
    ecore_fork_reset();
+   eina_main_loop_define();
 
    if (quicklaunch_on)
      {
