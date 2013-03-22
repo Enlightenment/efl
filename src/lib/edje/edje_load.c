@@ -1851,7 +1851,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
           length_parent += eina_convert_itoa(i, new_src + length_parent);
         else
           {
-             memcpy(new_src + length_parent, name, length_index);
+             memcpy(new_src + length_parent, name, length_index - 2);
              length_parent += length_index - 2;
           }
         new_src[length_parent++] = EDJE_PART_PATH_SEPARATOR_INDEXR;
