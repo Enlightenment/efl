@@ -71,7 +71,7 @@ eet_snd_file_tell(Ecore_Audio_Object *in)
 #endif
 
 Eina_Bool
-_edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed EINA_UNUSED)
+_edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed)
 {
  #ifdef ENABLE_MULTISENSE
    Ecore_Audio_Object *in;
@@ -99,6 +99,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             snprintf(snd_id_str, sizeof(snd_id_str), "edje/sounds/%i", sample->id);
             in = ecore_audio_input_add(ECORE_AUDIO_TYPE_SNDFILE);
             ecore_audio_input_name_set(in, snd_id_str);
+            ecore_audio_input_speed_set(in, speed);
 
             eet_data = calloc(1, sizeof(struct _edje_multisense_eet_data));
             ef = eet_open(ed->file->path, EET_FILE_MODE_READ);
