@@ -290,13 +290,14 @@ enum
  * @typedef Elm_Naviframe_Item_Pop_Cb
  *
  * Pop callback called when @c it is going to be popped. @c data is user
- * specific data.
+ * specific data. If it returns the @c EINA_FALSE in the callback, item popping
+ * will be cancelled.
  *
  * @see elm_naviframe_item_pop_cb_set()
  *
  * @since 1.8
  */
-typedef void (*Elm_Naviframe_Item_Pop_Cb)(void *data, Elm_Object_Item *it);
+typedef Eina_Bool (*Elm_Naviframe_Item_Pop_Cb)(void *data, Elm_Object_Item *it);
 
 /**
  * @addtogroup Naviframe

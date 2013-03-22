@@ -1353,6 +1353,8 @@ _elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));
    if (!it) return;
 
+   //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.
+   ///Leave for compatibility. 
    if (it->title_prev_btn)
      evas_object_smart_callback_call(it->title_prev_btn, SIG_CLICKED, NULL);
 
@@ -1615,7 +1617,10 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!it) return;
 
-   if (it->pop_cb) it->pop_cb(it->pop_data, (Elm_Object_Item *)it);
+   if (it->pop_cb)
+     {
+        if (!it->pop_cb(it->pop_data, (Elm_Object_Item *)it)) return;
+     }
 
    if (sd->preserve)
      content = it->content;
