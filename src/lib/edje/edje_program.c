@@ -571,20 +571,6 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 				   }
                                  rp->current = tmp;
 
-				 rp->current->x -= ed->x;
-				 rp->current->y -= ed->y;
-
-				 EINA_COW_WRITE_BEGIN(_edje_calc_params_map_cow, rp->current->map, Edje_Calc_Params_Map, rp_write)
-				   {
-				     rp_write->center.x -= ed->x;
-				     rp_write->center.y -= ed->y;
-				     rp_write->light.x -= ed->x;
-				     rp_write->light.y -= ed->y;
-				     rp_write->persp.x -= ed->x;
-				     rp_write->persp.y -= ed->y;
-				   }
-				 EINA_COW_WRITE_END(_edje_calc_params_map_cow, rp->current->map, rp_write);
-
                               }
                             else
                               {

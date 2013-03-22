@@ -3024,18 +3024,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              p1->physics = physics;
 #endif
              
-             p1->x += ed->x;
-             p1->y += ed->y;
-	     EINA_COW_CALC_MAP_BEGIN(p1, p1_write) // FIXME: this will force an allocation on p1
-	       {
-		 p1_write->center.x += ed->x;
-		 p1_write->center.y += ed->y;
-		 p1_write->light.x += ed->x;
-		 p1_write->light.y += ed->y;
-		 p1_write->persp.x += ed->x;
-		 p1_write->persp.y += ed->y;
-	       }
-	     EINA_COW_CALC_MAP_END(p1, p1_write);
           }
 
         p3 = &lp3;
