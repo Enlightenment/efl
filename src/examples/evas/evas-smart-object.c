@@ -196,15 +196,19 @@ _evas_smart_example_smart_add(Evas_Object *o)
 {
    EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Example_Data);
 
+   /* call parent_sc->add() before member_adding the children, otherwise the
+    * smart object's clipper won't be created yet, and the children won't be
+    * clipped to it */
+   _evas_smart_example_parent_sc->add(o);
+
    /* this is a border around the smart object's area, delimiting it */
    priv->border = evas_object_image_filled_add(evas_object_evas_get(o));
    evas_object_image_file_set(priv->border, border_img_path, NULL);
    evas_object_image_border_set(priv->border, 3, 3, 3, 3);
    evas_object_image_border_center_fill_set(
      priv->border, EVAS_BORDER_FILL_NONE);
+   evas_object_show(priv->border);
    evas_object_smart_member_add(priv->border, o);
-
-   _evas_smart_example_parent_sc->add(o);
 }
 
 static void
@@ -225,30 +229,6 @@ _evas_smart_example_smart_del(Evas_Object *o)
      }
 
    _evas_smart_example_parent_sc->del(o);
-}
-
-static void
-_evas_smart_example_smart_show(Evas_Object *o)
-{
-   EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
-
-   if (priv->children[0]) evas_object_show(priv->children[0]);
-   if (priv->children[1]) evas_object_show(priv->children[1]);
-   evas_object_show(priv->border);
-
-   _evas_smart_example_parent_sc->show(o);
-}
-
-static void
-_evas_smart_example_smart_hide(Evas_Object *o)
-{
-   EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
-
-   if (priv->children[0]) evas_object_hide(priv->children[0]);
-   if (priv->children[1]) evas_object_hide(priv->children[1]);
-   evas_object_hide(priv->border);
-
-   _evas_smart_example_parent_sc->hide(o);
 }
 
 static void
@@ -296,8 +276,6 @@ _evas_smart_example_smart_set_user(Evas_Smart_Class *sc)
    /* specializing these two */
    sc->add = _evas_smart_example_smart_add;
    sc->del = _evas_smart_example_smart_del;
-   sc->show = _evas_smart_example_smart_show;
-   sc->hide = _evas_smart_example_smart_hide;
 
    /* clipped smart object has no hook on resizes or calculations */
    sc->resize = _evas_smart_example_smart_resize;
