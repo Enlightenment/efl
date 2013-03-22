@@ -1,3 +1,7 @@
+2013-03-22  Jiyoun Park (Jypark)
+
+    * Ecore_x: fix alpha set function not clear sync counter
+
 2013-03-22  Cedric Bail
 
 	* Edje: Add spread width and height in TABLE part.

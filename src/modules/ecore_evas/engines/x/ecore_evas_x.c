@@ -2161,6 +2161,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
 
    ee->shaped = 0;
    ee->alpha = alpha;
+   _ecore_evas_x_sync_clear(ee);
    ecore_x_window_free(ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
    if (ee->alpha)
@@ -2268,6 +2269,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
         ee->shaped = 0;
         ee->alpha = alpha;
+        _ecore_evas_x_sync_clear(ee);
         ecore_x_window_free(ee->prop.window);
         ecore_event_window_unregister(ee->prop.window);
         ee->prop.window = 0;
