@@ -61,6 +61,7 @@ EXTRA_DIST = \
 README \
 AUTHORS \
 COPYING \
+COMPLIANCE \
 autogen.sh \
 elementary.pc.in \
 elementary.spec \
