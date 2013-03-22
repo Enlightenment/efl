@@ -855,8 +855,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                          }
                        else
                          {
-                            pack_it_copy.spread.w = 0;
-                            pack_it_copy.spread.h = 0;
+                            memset(&pack_it_copy, 0, sizeof (pack_it_copy));
                          }
 
 		       do
