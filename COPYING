@@ -1,5 +1,15 @@
-EFL comes with several licences. Listed are the library/project
-name and the license file covering it.
+Licensing
+
+EFL comes with several licences. Different shared libraries are
+covered by different licenses, and are distributed here as an
+aggregation with a single build system. Listed below are the library/project
+names and the license file covering it. Note that this license would
+cover all of the source invovled in each project (src/lib/PROJECT,
+src/modules/PROJECT, src/bin/PROJECT data/PROJECT) unless specifically
+noted otherwise (eg epp in edje or lz4, libunibreak etc.), so please
+refer to these imported project sources for details (but be aware that
+the licensing of such libraries is compatible with the libraries that
+use them and is not more restrictive).
 
 evil:            licenses/COPYING.BSD
 escape:          licenses/COPYING.GPL (used in PlayStation native)
@@ -19,5 +29,5 @@ edje/epp:        licenses/COPYING.GPL (separate binary/executable)
 emotion:         licenses/COPYING.BSD
 ethumb:          licenses/COPYING.LGPL
 
-NOTE: If linked together, the result will be LGPL (or GPL is Escape is
-used) due that license characteristics.
+NOTE: If linked together, the result will be effectively be LGPL (or
+GPL if escape is used) due to license characteristics.

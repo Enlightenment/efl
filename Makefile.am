@@ -55,6 +55,10 @@ m4/libgcrypt.m4 \
 m4/gcc_check_builtin.m4
 
 EXTRA_DIST += \
+README \
+AUTHORS \
+COPYING \
+COMPLIANCE \
 autogen.sh \
 licenses/COPYING.LGPL \
 licenses/COPYING.GPL \

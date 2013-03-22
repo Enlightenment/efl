@@ -1,0 +1,71 @@
+Compliance
+
+  This is not a legal notice, so do not treat it as one. This is
+intended as "plain English" advice for the average person to ensure
+they comply with licenses in this software in the most simple way. It takes
+the position of "comply with the MOST restrictive license in this
+aggregation and then you will comply with all." If you have any doubts,
+please consult the full license COPYING files and a lawyer. Take this
+as a rough guide.
+
+The simple advice
+
+  Do this and you won't go too wrong.
+
+1. Provide the content of ALL of the COPYING, AUTHORS and licenses/COPYING.*
+files as printed material with your product and/or in a dialog (e.g.
+an "about" dialog) in your product user interface.
+2. Provide a URL from which to be able to download "tar files" with
+ALL of the source of EFL exactly as it was when used to compile the
+binaries for your product that ships EFL. Keep this URL valid for the
+lifetime of the product.
+3. Unless you are doing PS3 (PSl1ght) development any libraries or
+applications you write that use EFL are yours and you do not need to
+make the source available.
+4. If you made changes to EFL it would be appreciated if you
+interacted with us (see http://www.enlightenment.org ) and provided the
+changes you made in patch form BEFORE you ship a product, so they may
+be reviewed to see if you have made any mistakes and perhaps have
+created problems you do not know of yet.
+
+F.A.Q.
+
+Q. Where is the licensing information?
+A. See the COPYING file here and then the COPYING.* files inside the
+licenses directory that it references. These are the proper legal
+pieces of information you will need.
+
+Q. Do I need to make the source public of libraries or applications that I
+build on top of EFL?
+A. No, UNLESS you use the escape library. Escape is GPL. This is ONLY
+needed for PS3 development, so unless you are doing this, it is not
+relevant.
+
+Q. Do I need to provide the source for EFL?
+A. Yes. In general you do. If you are shipping any of the binaries or
+libraries that are produced, you must provide the EXACT source code
+used to build those binaries. So stick to doing this and you'll be fine.
+
+Q. If I have to provide source, how should I do this?
+A. The best way is to provide a reference in an "about" dialog in the
+product that ships the EFL libraries/tools that gives a URL from
+which the source can be downloaded EXACTLY as you used to compile EFL.
+You may not simply point to upstream repositories and pass the problem
+to someone else. You MUST provide the source exactly as used.
+
+  You MAY also provide the source code itself on the product itself
+(e.g. on its filesystem) (provide the tar archives of the source), or in
+place of a download link if you do not believe you will be able to
+maintain that download link for the lifetime of the product.
+
+  You MAY also (or instead of the above 2) provide the source on media
+(CD, DVD, flash etc.) that accompany the product.
+
+  Choose 1 or more of the above methods and you will be fine.
+
+Q. Do I need to reproduce the license information in the COPYING* files?
+A. Yes. You must provide these with your product, and just like the
+source code, provide them as part of the user interface in full (e.g.
+in a dialog), or as files in the filesystem, on actual printed
+material (manuals, papers) that accompany the product or in CD, DVD
+etc. media.
