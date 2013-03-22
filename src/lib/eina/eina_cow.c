@@ -357,18 +357,18 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 
    ref = EINA_COW_PTR_GET(data);
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
    ref->refcount--;
 
-   if (ref->refcount > 0) return ;
+   if (ref->refcount > 0)
+     {
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (ref));
+       VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
+       return ;
+     }
 
-#ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (ref));
-#endif
 #ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(ref, EINA_MAGIC_NONE);
 #endif
