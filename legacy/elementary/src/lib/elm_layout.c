@@ -776,7 +776,7 @@ _elm_layout_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
-        if ((sub_d->type == SWALLOW))
+        if (sub_d->type == SWALLOW)
           {
              if (!strcmp(part, sub_d->part))
                {

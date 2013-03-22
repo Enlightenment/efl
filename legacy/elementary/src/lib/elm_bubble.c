@@ -217,7 +217,7 @@ _elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_layout_sizing_eval(obj);
 
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 

@@ -336,7 +336,7 @@ _elm_multibuttonentry_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (elm_widget_focus_get(obj))
      {
         // ACCESS
-        if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON)) goto end;
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) goto end;
 
         if (sd->editable)
           {
@@ -703,7 +703,7 @@ _button_item_add(Elm_Multibuttonentry_Smart_Data *sd,
    item->visible = EINA_TRUE;
 
    // ACCESS
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      {
         const char *text;
         Eina_Strbuf *buf;
@@ -847,7 +847,7 @@ _elm_multibuttonentry_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va
    if (ret) *ret = EINA_FALSE;
 
    // ACCESS
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON)) return;
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return;
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -1375,7 +1375,7 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Smart_Data *sd)
    elm_widget_sub_object_add(obj, sd->label);
 
    // ACCESS
-   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_multibuttonentry_label_register(obj, EINA_TRUE);
 
    sd->entry = elm_entry_add(obj);
