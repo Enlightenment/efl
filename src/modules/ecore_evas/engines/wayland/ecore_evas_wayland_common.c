@@ -208,8 +208,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      {
         ee->req.w = nw;
         ee->req.h = nh;
-        ee->w = ev->w;
-        ee->h = ev->h;
+        ee->w = nw;
+        ee->h = nh;
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
         if ((ee->rotation == 90) || (ee->rotation == 270))
