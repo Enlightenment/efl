@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Marc Furtià  i Puig\\\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-21 23:10+0900\n"
+"POT-Creation-Date: 2013-03-22 17:40+0900\n"
 "PO-Revision-Date: 2013-02-01 09:52+0100\n"
 "Last-Translator: Marc Furtià i Puig <marc.furtia@gmail.com>\n"
 "Language-Team: \n"
@@ -118,11 +118,11 @@ msgstr "Botó d'augment de rellotge per am,pm"
 msgid "clock decrement button for am,pm"
 msgstr "Botó de decrement de rellotge per am,pm"
 
-#: src/lib/elm_clock.c:658
+#: src/lib/elm_clock.c:664
 msgid "State: Editable"
 msgstr "Estat: Editable "
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:699
 msgid "Clock"
 msgstr "Rellotge"
 

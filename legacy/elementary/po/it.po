@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-21 23:10+0900\n"
+"POT-Creation-Date: 2013-03-22 17:40+0900\n"
 "PO-Revision-Date: 2013-01-04 22:08+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -115,11 +115,11 @@ msgstr "bottone di aumento dell'orologio per am-pm"
 msgid "clock decrement button for am,pm"
 msgstr "bottone di diminuzione dell'orologio per am-pm"
 
-#: src/lib/elm_clock.c:658
+#: src/lib/elm_clock.c:664
 msgid "State: Editable"
 msgstr "Stato: modificabile"
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:699
 msgid "Clock"
 msgstr "Orologio"
 
