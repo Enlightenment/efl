@@ -326,10 +326,10 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
  * Get data from the file level data block of an edje file
  * @param file The path to the .edj file
  * @param key The data key
- * @return The string value of the data. Must be freed by the user when no
- * longer needed.
+ * @return The string value of the data or NULL if no key is found.
+ * Must be freed by the user when no longer needed.
  *
- * If an edje file is built from the following edc:
+ * If an edje file test.edj is built from the following edc:
  *
  * data {
  *   item: "key1" "value1";
@@ -337,14 +337,14 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
  * }
  * collections { ... }
  *
- * Then, edje_file_data_get("key1") will return "value1"
+ * Then, edje_file_data_get("test.edj", "key1") will return "value1"
  */
 EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
 /**
  * @brief Load a new module in Edje.
  * @param module The name of the module that will be added to Edje.
- * @return EINA_TRUE if if the module was successfully loaded. Otherwise, EINA_FALSE.
+ * @return EINA_TRUE if the module was successfully loaded. Otherwise, EINA_FALSE.
  *
  * Modules are used to add functionality to Edje.
  * So, when a module is loaded, its functionality should be available for use.
