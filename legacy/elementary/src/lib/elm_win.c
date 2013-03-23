@@ -1144,14 +1144,12 @@ _elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Evas_Event_Key_Down *ev = event_info;
-   Evas_Object *current_focused;
 
    if (elm_widget_disabled_get(obj)) return;
 
    if (type != EVAS_CALLBACK_KEY_DOWN)
      return;
 
-   current_focused = elm_widget_focused_object_get(obj);
    if ((!strcmp(ev->keyname, "Tab")) ||
        (!strcmp(ev->keyname, "ISO_Left_Tab")))
      {
@@ -1168,40 +1166,28 @@ _elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else if ((!strcmp(ev->keyname, "Left")) ||
             ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
-        if (current_focused == obj)
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-        else
-          elm_widget_focus_direction_go(obj, 270.0);
+        elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
 
         goto success;
      }
    else if ((!strcmp(ev->keyname, "Right")) ||
             ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
-        if (current_focused == obj)
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-        else
-          elm_widget_focus_direction_go(obj, 90.0);
+        elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
 
         goto success;
      }
    else if ((!strcmp(ev->keyname, "Up")) ||
             ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
-        if (current_focused == obj)
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-        else
-          elm_widget_focus_direction_go(obj, 0.0);
+        elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
 
         goto success;
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
             ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
-        if (current_focused == obj)
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-        else
-          elm_widget_focus_direction_go(obj, 180.0);
+        elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
 
         goto success;
      }
