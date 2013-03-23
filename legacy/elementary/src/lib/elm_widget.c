@@ -2550,7 +2550,7 @@ _elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
  * focus before chain end, the first candidate will be returned.
  *
  * @param obj The widget root of sub-tree
- * @param dir Direction os focus chain
+ * @param dir Direction of focus chain
  * @param next The next object in focus chain
  * @return EINA_TRUE if don't need focus chain restart/loop back
  *         to use 'next' obj.
@@ -2578,6 +2578,7 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Widget_Smart_Data *sd = _pd;
    *ret = EINA_FALSE;
 
    if (!next)
@@ -2595,6 +2596,29 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         Eina_Bool int_ret = EINA_FALSE;
         eo_do((Eo *)obj, elm_wdg_focus_next(dir, next, &int_ret));
+        if (!int_ret && elm_widget_focus_get(obj))
+          {
+             Evas_Object *o = NULL;
+             if (dir == ELM_FOCUS_PREVIOUS)
+               o = sd->focus_previous;
+             else if (dir == ELM_FOCUS_NEXT)
+               o = sd->focus_next;
+             else if (dir == ELM_FOCUS_UP)
+               o = sd->focus_up;
+             else if (dir == ELM_FOCUS_DOWN)
+               o = sd->focus_down;
+             else if (dir == ELM_FOCUS_RIGHT)
+               o = sd->focus_right;
+             else if (dir == ELM_FOCUS_LEFT)
+               o = sd->focus_left;
+
+             if (o)
+               {
+                  *next = o;
+                  *ret = EINA_TRUE;
+                  return;
+               }
+          }
         *ret = int_ret;
         return;
      }
@@ -2608,6 +2632,28 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         Elm_Access_Info *ac;
         ac= _elm_access_object_get(obj);
         if (!ac) return;
+     }
+
+   if (elm_widget_focus_get(obj))
+     {
+        if (dir == ELM_FOCUS_PREVIOUS)
+          *next = sd->focus_previous;
+        else if (dir == ELM_FOCUS_NEXT)
+          *next = sd->focus_next;
+        else if (dir == ELM_FOCUS_UP)
+          *next = sd->focus_up;
+        else if (dir == ELM_FOCUS_DOWN)
+          *next = sd->focus_down;
+        else if (dir == ELM_FOCUS_RIGHT)
+          *next = sd->focus_right;
+        else if (dir == ELM_FOCUS_LEFT)
+          *next = sd->focus_left;
+
+        if (*next)
+          {
+             *ret = EINA_TRUE;
+             return;
+          }
      }
 
    /* Return */
@@ -2625,7 +2671,7 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
  * focus before list end, the first candidate will be returned.
  *
  * @param obj The widget root of sub-tree
- * @param dir Direction os focus chain
+ * @param dir Direction of focus chain
  * @param items list with ordered objects
  * @param list_data_get function to get the object from one item of list
  * @param next The next object in focus chain
@@ -2658,6 +2704,7 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Eina_List *(*list_next)(const Eina_List *list) = NULL;
+   Evas_Object *focused_object = NULL;
 
    if (!next)
      return;
@@ -2669,13 +2716,55 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!items)
      return;
 
+   /* When Up, Down, Right, or Left, try direction_get first. */
+   focused_object = elm_widget_focused_object_get(obj);
+   if (focused_object)
+     {
+        if((dir == ELM_FOCUS_UP)
+           || (dir == ELM_FOCUS_DOWN)
+           || (dir == ELM_FOCUS_RIGHT)
+           || (dir == ELM_FOCUS_LEFT))
+          {
+             *next = elm_widget_focus_next_object_get(focused_object, dir);
+             if (*next)
+               {
+                  if (ret) *ret = EINA_TRUE;
+                  return;
+               }
+             else
+               {
+                  Evas_Object *n;
+                  double degree;
+                  double weight;
+
+                  if (dir == ELM_FOCUS_UP) degree = 0.0;
+                  else if (dir == ELM_FOCUS_DOWN) degree = 180.0;
+                  else if (dir == ELM_FOCUS_RIGHT) degree = 90.0;
+                  else if (dir == ELM_FOCUS_LEFT) degree = 270.0;
+
+                  if (elm_widget_focus_list_direction_get(obj, focused_object,
+                                                          items, list_data_get,
+                                                          degree, &n, &weight))
+                    {
+                       *next = n;
+                       if (ret) *ret = EINA_TRUE;
+                       return;
+                    }
+               }
+          }
+     }
+
    /* Direction */
    if (dir == ELM_FOCUS_PREVIOUS)
      {
         items = eina_list_last(items);
         list_next = eina_list_prev;
      }
-   else if (dir == ELM_FOCUS_NEXT)
+   else if ((dir == ELM_FOCUS_NEXT)
+            || (dir == ELM_FOCUS_UP)
+            || (dir == ELM_FOCUS_DOWN)
+            || (dir == ELM_FOCUS_RIGHT)
+            || (dir == ELM_FOCUS_LEFT))
      list_next = eina_list_next;
    else
      return;
@@ -2715,6 +2804,17 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
              if (ret) *ret = EINA_TRUE;
              return;
           }
+        else if ((dir == ELM_FOCUS_UP)
+                 || (dir == ELM_FOCUS_DOWN)
+                 || (dir == ELM_FOCUS_RIGHT)
+                 || (dir == ELM_FOCUS_LEFT))
+          {
+             if (tmp && elm_widget_focus_get(cur))
+               {
+                  *next = tmp;
+                  return;
+               }
+          }
         else if ((tmp) && (!to_focus))
           to_focus = tmp;
      }
@@ -2741,6 +2841,96 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    *next = to_focus;
    return;
+}
+
+/**
+ * @internal
+ *
+ * Get next object which was set with specific focus direction.
+ *
+ * Get next object which was set by elm_widget_focus_next_object_set
+ * with specific focus directioin.
+ *
+ * @param obj The widget
+ * @param dir Direction of focus
+ * @return Widget which was registered with sepecific focus direction.
+ *
+ * @ingroup Widget
+ */
+EAPI Evas_Object *
+elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+
+   Evas_Object *ret = NULL;
+   eo_do((Eo *) obj, elm_wdg_focus_next_object_get(dir, &ret));
+   return ret;
+}
+
+static void
+_elm_widget_focus_next_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Elm_Widget_Smart_Data *sd = _pd;
+
+   if (dir == ELM_FOCUS_PREVIOUS)
+     *ret = sd->focus_previous;
+   else if (dir == ELM_FOCUS_NEXT)
+     *ret = sd->focus_next;
+   else if (dir == ELM_FOCUS_UP)
+     *ret = sd->focus_up;
+   else if (dir == ELM_FOCUS_DOWN)
+     *ret = sd->focus_down;
+   else if (dir == ELM_FOCUS_RIGHT)
+     *ret = sd->focus_right;
+   else if (dir == ELM_FOCUS_LEFT)
+     *ret = sd->focus_left;
+}
+
+/**
+ * @internal
+ *
+ * Set next object with specific focus direction.
+ *
+ * When a widget is set with specific focus direction, this widget will be
+ * the first candidate when finding the next focus object.
+ * Focus next object can be registered with six directions that are previous,
+ * next, up, down, right, and left.
+ *
+ * @param obj The widget
+ * @param next Next focus object
+ * @param dir Direction of focus
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir)
+{
+   ELM_WIDGET_CHECK(obj);
+   if (!next) return;
+   eo_do((Eo *) obj, elm_wdg_focus_next_object_set(next, dir));
+}
+
+static void
+_elm_widget_focus_next_object_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object *next = va_arg(*list, Evas_Object *);
+   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
+   Elm_Widget_Smart_Data *sd = _pd;
+
+   if (dir == ELM_FOCUS_PREVIOUS)
+     sd->focus_previous = next;
+   else if (dir == ELM_FOCUS_NEXT)
+     sd->focus_next = next;
+   else if (dir == ELM_FOCUS_UP)
+     sd->focus_up = next;
+   else if (dir == ELM_FOCUS_DOWN)
+     sd->focus_down = next;
+   else if (dir == ELM_FOCUS_RIGHT)
+     sd->focus_right = next;
+   else if (dir == ELM_FOCUS_LEFT)
+     sd->focus_left = next;
 }
 
 EAPI void
@@ -5717,6 +5907,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET), _elm_widget_focus_list_direction_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET), _elm_widget_focus_next_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), _elm_widget_focus_list_next_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_GET), _elm_widget_focus_next_object_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_SET), _elm_widget_focus_next_object_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET), _elm_widget_parent_highlight_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), _elm_widget_display_mode_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), _elm_widget_display_mode_get),
@@ -5858,6 +6050,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET, "Get near object in one direction of base object in list."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET, "Get next object in focus chain of object tree."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET, "Get next object in focus chain of object tree in list."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_GET, "Get next object specified by focus direction."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_SET, "Set next object with specific focus direction."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET, "Set highlighted value from itself to top parent object."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET, "Sets the widget and child widget's Evas_Display_Mode."),

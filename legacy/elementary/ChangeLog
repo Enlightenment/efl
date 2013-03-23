@@ -1172,3 +1172,9 @@
 
         * Fix elm box layout when an item has a max size, and that squashes all
         content even when the minimum size is greater.
+
+2013-03-23 WooHyun Jung
+
+        * Add four more focus directions. ELM_FOCUS_UP/DOWN/RIGHT/LEFT.
+        * Add elm_object_focus_next_object_get/set.
+        * Add elm_object_focused_object_get.

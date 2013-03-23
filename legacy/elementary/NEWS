@@ -50,6 +50,9 @@ Additions:
    * Add elm_naviframe_item_pop_cb_set().
    * Add elm_widget_newest_focus_order_get for knowing the last object(and its focus order) which got focus.
    * Add the smart signals in scroller. "scroll,left", "scroll,right", "scroll,up", "scroll,down".
+   * Add four more focus diretions. ELM_FOCUS_UP, ELM_FOCUS_DOWN, ELM_FOCUS_RIGHT, ELM_FOCUS_LEFT.
+   * Add APIs - elm_object_focus_next_object_get, elm_object_focus_next_object_set.
+   * Add API - elm_object_focused_object_get.
 
 Improvements:
 

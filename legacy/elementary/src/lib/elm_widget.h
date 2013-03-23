@@ -377,6 +377,8 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *resize_obj;
    Evas_Object                  *hover_obj;
    Eina_List                    *tooltips, *cursors;
+   Evas_Object                  *focus_previous, *focus_next;
+   Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
 
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -626,6 +628,8 @@ EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, con
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, double *weight);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
+EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
+EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
@@ -1145,6 +1149,8 @@ enum
    ELM_WIDGET_SUB_ID_FOCUS_LIST_DIRECTION_GET,
    ELM_WIDGET_SUB_ID_FOCUS_NEXT_GET,
    ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_SET,
    ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET,
 
    ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET,
@@ -2331,6 +2337,30 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_focus_list_next_get(items, list_data_get, dir, next, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_LIST_NEXT_GET), EO_TYPECHECK(const Eina_List *, items), EO_TYPECHECK(list_data_get_func_type, list_data_get), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, next), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_next_object_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] dir
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_focus_next_object_get(dir, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_GET), EO_TYPECHECK(Elm_Focus_Direction, dir), EO_TYPECHECK(Evas_Object **, ret)
+
+/**
+ * @def elm_wdg_focus_next_object_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] next
+ * @param[in] dir
+ *
+ */
+#define elm_wdg_focus_next_object_set(next, dir) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_SET), EO_TYPECHECK(Evas_Object *, next), EO_TYPECHECK(Elm_Focus_Direction, dir)
 
 /**
  * @def elm_wdg_parent_highlight_set
