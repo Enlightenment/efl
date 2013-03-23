@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-29 18:09+0100\n"
+"POT-Creation-Date: 2013-03-22 17:44+0900\n"
 "PO-Revision-Date: 2013-02-01 09:52+0100\n"
 "Last-Translator: Joan Coll <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -66,7 +66,7 @@ msgstr "ERROR: opció desconeguda -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:852
 msgid "ERROR: "
-msgstr "ERROR:"
+msgstr "ERROR: "
 
 #: src/lib/ecore/ecore_getopt.c:935 src/lib/ecore/ecore_getopt.c:1072
 #: src/lib/ecore/ecore_getopt.c:1088 src/lib/ecore/ecore_getopt.c:1103
@@ -75,14 +75,12 @@ msgstr "ERROR:"
 msgid "value has no pointer set.\n"
 msgstr "no s'ha definit el valor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:967
-#: src/lib/ecore/ecore_getopt.c:1187
+#: src/lib/ecore/ecore_getopt.c:967 src/lib/ecore/ecore_getopt.c:1187
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valor booleà desconegut %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1018
-#: src/lib/ecore/ecore_getopt.c:1275
+#: src/lib/ecore/ecore_getopt.c:1018 src/lib/ecore/ecore_getopt.c:1275
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "format numèric invàlid %s\n"
@@ -207,4 +205,3 @@ msgstr "Imatges"
 #: src/lib/efreet/efreet_base.c:188
 msgid "Videos"
 msgstr "Vídeos"
-

@@ -35,14 +35,17 @@ lib_ecore_evas_libecore_evas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 if BUILD_ECORE_EVAS_EXTN
 EXTNSOURCES = \
-modules/ecore_evas/engines/extn/ecore_evas_extn.c
+modules/ecore_evas/engines/extn/ecore_evas_extn.c \
+modules/ecore_evas/engines/extn/ecore_evas_extn_engine.h \
+modules/ecore_evas/engines/extn/ecore_evas_extn_buf.c
 ecoreevasengineextnpkgdir = $(libdir)/ecore_evas/engines/extn/$(MODULE_ARCH)
 ecoreevasengineextnpkg_LTLIBRARIES = modules/ecore_evas/engines/extn/module.la
 modules_ecore_evas_engines_extn_module_la_SOURCES = $(EXTNSOURCES)
 modules_ecore_evas_engines_extn_module_la_CPPFLAGS = \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_IPC_CFLAGS@ \
--I$(top_srcdir)/src/modules/evas/engines/buffer
+-I$(top_srcdir)/src/modules/evas/engines/buffer \
+-I$(top_srcdir)/src/modules/ecore_evas/engines/extn
 modules_ecore_evas_engines_extn_module_la_LIBADD = \
 @USE_ECORE_EVAS_LIBS@ \
 @USE_ECORE_IPC_LIBS@ \

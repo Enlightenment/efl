@@ -1,409 +1,43 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "ecore_evas_extn_engine.h"
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else
-# ifdef HAVE_STDLIB_H
-#  include <stdlib.h>
-# endif
-#endif
+#define NBUF 2
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <math.h>
-#include <time.h>
-#ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
-#endif
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <sys/file.h>
-#include <unistd.h>
-
-#include <Evas.h>
-#include <Evas_Engine_Buffer.h>
-#include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Ecore_Input.h>
-
-#include <Ecore_Ipc.h>
-
-#include "ecore_private.h" // FIXME: Because of ECORE_MAGIC
-#include "ecore_evas_private.h"
-#include "ecore_evas_buffer.h"
-#include "ecore_evas_extn.h"
-
+static int blank = 0x00000000;
 static const char *interface_extn_name = "extn";
 static const int   interface_extn_version = 1;
 
-typedef struct _Shmfile Shmfile;
-
-struct _Shmfile
-{
-   void *addr, *addr2;
-   const char *file, *file2;
-   int fd, fd2;
-   int size;
-};
-
-static int blank = 0x00000000;
-
 static Ecore_Evas_Interface_Extn *_ecore_evas_extn_interface_new(void);
-
-static Shmfile *
-shmfile_new(const char *base, int id, int size, Eina_Bool sys)
-{
-   Shmfile *sf;
-   char file[PATH_MAX], file2[PATH_MAX];
-
-   sf = calloc(1, sizeof(Shmfile));
-   if (!sf) return NULL;
-   sf->fd = -1;
-   sf->fd2 = -1;
-   sf->addr = MAP_FAILED;
-   sf->addr = MAP_FAILED;
-   do
-     {
-        mode_t mode;
-        int v1, v2, v3;
-
-        v1 = (int)time(NULL);
-        v2 = (int)getpid();
-        v3 = (int)rand();
-        mode = S_IRUSR | S_IWUSR;
-        if (sys) mode |= S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
-        snprintf(file, sizeof(file), "/%s-%i-%i.%i.%i", base, id, v1, v2, v3);
-        sf->fd = shm_open(file, O_RDWR | O_CREAT | O_EXCL, mode);
-        if (sf->fd >= 0)
-          {
-             snprintf(file2, sizeof(file2), "/%s-%i-%i.%i.%i-b", base, id, v1, v2, v3);
-             sf->fd2 = shm_open(file2, O_RDWR | O_CREAT | O_EXCL, mode);
-             if (sf->fd2 < 0)
-               {
-                  close(sf->fd);
-                  sf->fd = -1;
-               }
-          }
-     }
-   while (sf->fd < 0);
-
-   sf->file = eina_stringshare_add(file);
-   if (!sf->file) goto err;
-   sf->file2 = eina_stringshare_add(file2);
-   if (!sf->file2) goto err;
-   sf->size = size;
-   if (ftruncate(sf->fd, size) < 0) goto err;
-   if (ftruncate(sf->fd2, size) < 0) goto err;
-   sf->addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd, 0);
-   if (sf->addr == MAP_FAILED) goto err;
-   sf->addr2 = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd2, 0);
-   if (sf->addr2 == MAP_FAILED) goto err;
-   return sf;
-err:
-   if (sf->addr != MAP_FAILED) munmap(sf->addr, sf->size);
-   if (sf->addr2 != MAP_FAILED) munmap(sf->addr2, sf->size);
-   if (sf->fd >= 0)
-     {
-        close(sf->fd);
-        shm_unlink(file);
-     }
-   if (sf->fd2 >= 0)
-     {
-        close(sf->fd2);
-        shm_unlink(file2);
-     }
-   if (sf->file) eina_stringshare_del(sf->file);
-   if (sf->file2) eina_stringshare_del(sf->file2);
-   free(sf);
-   return NULL;
-}
-
-void
-shmfile_free(Shmfile *sf)
-{
-   munmap(sf->addr, sf->size);
-   munmap(sf->addr2, sf->size);
-   close(sf->fd);
-   close(sf->fd2);
-   shm_unlink(sf->file);
-   shm_unlink(sf->file2);
-   eina_stringshare_del(sf->file);
-   eina_stringshare_del(sf->file2);
-   free(sf);
-}
-
-static Shmfile *
-shmfile_open(const char *ref, int size, Eina_Bool sys)
-{
-   Shmfile *sf;
-   mode_t mode;
-   char *s;
-   int l;
-   
-   sf = calloc(1, sizeof(Shmfile));
-   if (!sf) return NULL;
-   sf->fd = -1;
-   sf->fd2 = -1;
-   sf->addr = MAP_FAILED;
-   sf->addr = MAP_FAILED;
-   mode = S_IRUSR | S_IWUSR;
-   if (sys) mode |= S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
-   l = strlen(ref);
-   s = alloca(l + 3);
-   strcpy(s, ref);
-   s[l] = '-';
-   s[l + 1] = 'b';
-   s[l + 2] = 0;
-   sf->file = eina_stringshare_add(ref);
-   if (!sf->file) goto err;
-   sf->file2 = eina_stringshare_add(s);
-   if (!sf->file2) goto err;
-   sf->fd = shm_open(sf->file, O_RDWR, mode);
-   if (sf->fd < 0) goto err;
-   sf->fd2 = shm_open(sf->file2, O_RDWR, mode);
-   if (sf->fd2 < 0) goto err;
-   sf->size = size;
-   sf->addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd, 0);
-   if (sf->addr == MAP_FAILED) goto err;
-   sf->addr2 = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, sf->fd2, 0);
-   if (sf->addr2 == MAP_FAILED) goto err;
-   return sf;
-err:
-   if (sf->addr != MAP_FAILED) munmap(sf->addr, sf->size);
-   if (sf->addr2 != MAP_FAILED) munmap(sf->addr2, sf->size);
-   if (sf->fd >= 0) close(sf->fd);
-   if (sf->fd2 >= 0) close(sf->fd2);
-   if (sf->file) eina_stringshare_del(sf->file);
-   if (sf->file2) eina_stringshare_del(sf->file2);
-   free(sf);
-   return NULL;
-}
-
-void
-shmfile_close(Shmfile *sf)
-{
-   munmap(sf->addr, sf->size);
-   munmap(sf->addr2, sf->size);
-   close(sf->fd);
-   close(sf->fd2);
-   eina_stringshare_del(sf->file);
-   eina_stringshare_del(sf->file2);
-   free(sf);
-}
-
-// procotol version - change this as needed
-#define MAJOR 0x1011
-
-enum // opcodes
-{
-   OP_RESIZE,
-   OP_SHOW,
-   OP_HIDE,
-   OP_FOCUS,
-   OP_UNFOCUS,
-   OP_UPDATE,
-   OP_UPDATE_DONE,
-   OP_LOCK_FILE,
-   OP_SHM_REF,
-   OP_PROFILE_CHANGE_REQUEST,
-   OP_PROFILE_CHANGE_DONE,
-   OP_EV_MOUSE_IN,
-   OP_EV_MOUSE_OUT,
-   OP_EV_MOUSE_UP,
-   OP_EV_MOUSE_DOWN,
-   OP_EV_MOUSE_MOVE,
-   OP_EV_MOUSE_WHEEL,
-   OP_EV_MULTI_UP,
-   OP_EV_MULTI_DOWN,
-   OP_EV_MULTI_MOVE,
-   OP_EV_KEY_UP,
-   OP_EV_KEY_DOWN,
-   OP_EV_HOLD,
-   OP_LOCK_FILE2,
-   OP_MSG_PARENT,
-   OP_MSG
-};
-
-enum
-{
-   MOD_SHIFT  = (1 << 0),
-   MOD_CTRL   = (1 << 1),
-   MOD_ALT    = (1 << 2),
-   MOD_META   = (1 << 3),
-   MOD_HYPER  = (1 << 4),
-   MOD_SUPER  = (1 << 5),
-   MOD_CAPS   = (1 << 6),
-   MOD_NUM    = (1 << 7),
-   MOD_SCROLL = (1 << 8),
-};
-
-typedef struct _Ipc_Data_Resize Ipc_Data_Resize;
-typedef struct _Ipc_Data_Update Ipc_Data_Update;
-typedef struct _Ipc_Data_Profile Ipc_Data_Profile;
-typedef struct _Ipc_Data_Ev_Mouse_In Ipc_Data_Ev_Mouse_In;
-typedef struct _Ipc_Data_Ev_Mouse_Out Ipc_Data_Ev_Mouse_Out;
-typedef struct _Ipc_Data_Ev_Mouse_Up Ipc_Data_Ev_Mouse_Up;
-typedef struct _Ipc_Data_Ev_Mouse_Down Ipc_Data_Ev_Mouse_Down;
-typedef struct _Ipc_Data_Ev_Mouse_Move Ipc_Data_Ev_Mouse_Move;
-typedef struct _Ipc_Data_Ev_Mouse_Wheel Ipc_Data_Ev_Mouse_Wheel;
-typedef struct _Ipc_Data_Ev_Hold Ipc_Data_Ev_Hold;
-typedef struct _Ipc_Data_Ev_Multi_Up Ipc_Data_Ev_Multi_Up;
-typedef struct _Ipc_Data_Ev_Multi_Down Ipc_Data_Ev_Multi_Down;
-typedef struct _Ipc_Data_Ev_Multi_Move Ipc_Data_Ev_Multi_Move;
-typedef struct _Ipc_Data_Ev_Key_Up Ipc_Data_Ev_Key_Up;
-typedef struct _Ipc_Data_Ev_Key_Down Ipc_Data_Ev_Key_Down;
-
-struct _Ipc_Data_Resize
-{
-   int w, h;
-};
-
-struct _Ipc_Data_Update
-{
-   int x, w, y, h;
-};
-
-struct _Ipc_Data_Profile
-{
-   const char *name;
-};
-
-struct _Ipc_Data_Ev_Mouse_In
-{
-   unsigned int timestamp;
-   int mask;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Mouse_Out
-{
-   unsigned int timestamp;
-   int mask;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Mouse_Up
-{
-   int b;
-   Evas_Button_Flags flags;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Mouse_Down
-{
-   int b;
-   Evas_Button_Flags flags;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Mouse_Move
-{
-   int x, y;
-   Evas_Button_Flags flags;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Mouse_Wheel
-{
-   int direction, z;
-   Evas_Button_Flags flags;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Hold
-{
-   int hold;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Multi_Up
-{
-   Evas_Button_Flags flags;
-   int d, x, y;
-   double rad, radx, rady, pres, ang, fx, fy;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Multi_Down
-{
-   Evas_Button_Flags flags;
-   int d, x, y;
-   double rad, radx, rady, pres, ang, fx, fy;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Multi_Move
-{
-   int d, x, y;
-   double rad, radx, rady, pres, ang, fx, fy;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Key_Up
-{
-   const char *keyname, *key, *string, *compose;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
-
-struct _Ipc_Data_Ev_Key_Down
-{
-   const char *keyname, *key, *string, *compose;
-   int mask;
-   unsigned int timestamp;
-   Evas_Event_Flags event_flags;
-};
+static void *_ecore_evas_socket_switch(void *data, void *dest_buf);
 
 typedef struct _Extn Extn;
 
 struct _Extn
 {
    struct {
-        Ecore_Ipc_Server *server;
-        Eina_List *clients;
-        Eina_List *handlers;
-        Eina_Bool am_server : 1;
+      Ecore_Ipc_Server *server;
+      Eina_List *clients;
+      Eina_List *handlers;
+      Eina_Bool am_server : 1;
    } ipc;
    struct {
-        const char *name;
-        int         num;
-        Eina_Bool   sys : 1;
+      const char *name;
+      int         num;
+      Eina_Bool   sys : 1;
    } svc;
    struct {
-        const char *lock, *lock2;
-        int         lockfd, lockfd2;
-        const char *shm;
-        int         w, h;
-        Shmfile    *shmfile;
-        Eina_List  *updates;
-        Eina_Bool   have_lock : 1;
-        Eina_Bool   have_real_lock : 1;
-        Eina_Bool   have_lock2 : 1;
-        Eina_Bool   have_real_lock2 : 1;
+      int         w, h;
+      Eina_List  *updates;
    } file;
    struct {
-        Eina_Bool   done : 1; /* need to send change done event to the client(plug) */
+      Extnbuf *buf, *obuf; // current buffer and if needed an "old" buffer
+      const char *base, *lock;
+      int id, num, w, h;
+      Eina_Bool sys : 1;
+      Eina_Bool alpha : 1;
+   } b[NBUF];
+   int cur_b; // current buffer (b) being displayed or rendered to
+   struct {
+      Eina_Bool   done : 1; /* need to send change done event to the client(plug) */
    } profile;
 };
 
@@ -452,117 +86,34 @@ _ecore_evas_extn_event(Ecore_Evas *ee, int event)
                    _ecore_evas_extn_event_free, ee);
 }
 
-static Eina_Bool
-_ecore_evas_lock_other_have(Ecore_Evas *ee, int buf)
-{
-   Eina_List *l;
-   Ecore_Evas *ee2;
-   Extn *extn, *extn2;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-   Ecore_Evas_Engine_Buffer_Data *bdata2;
-
-   extn = bdata->data;
-   if (!extn) return EINA_FALSE;
-   // brute force - i know. i expect extn_ee_list to be fairly short. could
-   // be improved with a hash of lockfiles
-   EINA_LIST_FOREACH(extn_ee_list, l, ee2)
-     {
-        if (ee == ee2) continue;
-	bdata2 = ee2->engine.data;
-        extn2 = bdata2->data;
-        if (!extn2) continue;
-        if (buf == 0)
-          {
-             if ((extn->file.lock) && (extn2->file.lock) &&
-                 (!strcmp(extn->file.lock, extn2->file.lock)) &&
-                 (extn2->file.have_real_lock))
-               return EINA_TRUE;
-          }
-        else if (buf == 1)
-          {
-             if ((extn->file.lock2) && (extn2->file.lock2) &&
-                 (!strcmp(extn->file.lock2, extn2->file.lock2)) &&
-                 (extn2->file.have_real_lock2))
-               return EINA_TRUE;
-          }
-     }
-   return EINA_FALSE;
-}
-
 static void
-_ecore_evas_socket_lock(Ecore_Evas *ee, int buf)
-{
-   Extn *extn;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-
-   extn = bdata->data;
-   if (!extn) return;
-   if (buf == 0)
-     {
-        if (extn->file.lockfd < 0) return;
-        if (extn->file.have_lock) return;
-        extn->file.have_lock = EINA_TRUE;
-        if (_ecore_evas_lock_other_have(ee, buf)) return;
-        if (lockf(extn->file.lockfd, F_ULOCK, 0) < 0)
-          {
-             extn->file.have_lock = EINA_FALSE;
-             return;
-          }
-        extn->file.have_real_lock = EINA_TRUE;
-     }
-   else if (buf == 1)
-     {
-        if (extn->file.lockfd2 < 0) return;
-        if (extn->file.have_lock2) return;
-        extn->file.have_lock2 = EINA_TRUE;
-        if (_ecore_evas_lock_other_have(ee, buf)) return;
-        if (lockf(extn->file.lockfd2, F_ULOCK, 0) < 0)
-          {
-             extn->file.have_lock2 = EINA_FALSE;
-             return;
-          }
-        extn->file.have_real_lock2 = EINA_TRUE;
-     }
-}
-
-static void
-_ecore_evas_socket_unlock(Ecore_Evas *ee, int buf)
-{
-   Extn *extn;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-
-   extn = bdata->data;
-   if (!extn) return;
-   if (buf == 0)
-     {
-        if (extn->file.lockfd < 0) return;
-        if (!extn->file.have_lock) return;
-        extn->file.have_lock = EINA_FALSE;
-        if (!extn->file.have_real_lock) return;
-        if (lockf(extn->file.lockfd, F_ULOCK, 0) < 0) return;
-     }
-   else if (buf == 1)
-     {
-        if (extn->file.lockfd2 < 0) return;
-        if (!extn->file.have_lock2) return;
-        extn->file.have_lock2 = EINA_FALSE;
-        if (!extn->file.have_real_lock2) return;
-        if (lockf(extn->file.lockfd2, F_ULOCK, 0) < 0) return;
-     }
-}
-
-static void
-_ecore_evas_extn_plug_targer_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_extn_plug_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   if (ee) _ecore_evas_socket_lock(ee, 0); // XXX choose right buffer to lock
+   Ecore_Evas_Engine_Buffer_Data *bdata;
+   Extn *extn;
+   
+   if (!ee) return;
+   bdata = ee->engine.data;
+   if (!bdata) return;
+   extn = bdata->data;
+   if (!extn) return;
+   bdata->pixels = _extnbuf_lock(extn->b[extn->cur_b].buf, NULL, NULL, NULL);
 }
 
 static void
-_ecore_evas_extn_plug_targer_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_extn_plug_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   if (ee) _ecore_evas_socket_unlock(ee, 0); // XXX choose right buffer to lock
+   Ecore_Evas_Engine_Buffer_Data *bdata;
+   Extn *extn;
+   
+   if (!ee) return;
+   bdata = ee->engine.data;
+   if (!bdata) return;
+   extn = bdata->data;
+   if (!extn) return;
+   _extnbuf_unlock(extn->b[extn->cur_b].buf);
 }
 
 static void
@@ -624,24 +175,18 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
      {
         Ecore_Event_Handler *hdl;
         Ipc_Data_Update *ipc;
+        int i;
 
-        if (extn->file.have_lock) _ecore_evas_socket_unlock(ee, 0);
-        if (extn->file.have_lock2) _ecore_evas_socket_unlock(ee, 1);
-        if (extn->file.lockfd >= 0)
+        for (i = 0; i < NBUF; i++)
           {
-             close(extn->file.lockfd);
-             if (extn->ipc.am_server)
-               {
-                  if (extn->file.lock) unlink(extn->file.lock);
-               }
-          }
-        if (extn->file.lockfd2 >= 0)
-          {
-             close(extn->file.lockfd2);
-             if (extn->ipc.am_server)
-               {
-                  if (extn->file.lock2) unlink(extn->file.lock2);
-               }
+             if (extn->b[i].buf) _extnbuf_free(extn->b[i].buf);
+             if (extn->b[i].obuf) _extnbuf_free(extn->b[i].obuf);
+             if (extn->b[i].base) eina_stringshare_del(extn->b[i].base);
+             if (extn->b[i].lock) eina_stringshare_del(extn->b[i].lock);
+             extn->b[i].buf = NULL;
+             extn->b[i].obuf = NULL;
+             extn->b[i].base = NULL;
+             extn->b[i].lock = NULL;
           }
         if (extn->svc.name) eina_stringshare_del(extn->svc.name);
         if (extn->ipc.clients)
@@ -650,16 +195,6 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
                ecore_ipc_client_del(client);
           }
         if (extn->ipc.server) ecore_ipc_server_del(extn->ipc.server);
-        if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-        if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
-        if (extn->file.shm) eina_stringshare_del(extn->file.shm);
-        if (extn->file.shmfile)
-          {
-             if (extn->ipc.am_server)
-               shmfile_free(extn->file.shmfile);
-             else
-               shmfile_close(extn->file.shmfile);
-          }
 
         EINA_LIST_FREE(extn->file.updates, ipc)
           free(ipc);
@@ -680,11 +215,11 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
                                             ee);
         evas_event_callback_del_full(evas_object_evas_get(bdata->image),
                                      EVAS_CALLBACK_RENDER_PRE,
-                                     _ecore_evas_extn_plug_targer_render_pre,
+                                     _ecore_evas_extn_plug_render_pre,
                                      ee);
         evas_event_callback_del_full(evas_object_evas_get(bdata->image),
                                      EVAS_CALLBACK_RENDER_POST,
-                                     _ecore_evas_extn_plug_targer_render_post,
+                                     _ecore_evas_extn_plug_render_post,
                                      ee);
         ee2 = evas_object_data_get(bdata->image, "Ecore_Evas_Parent");
         if (ee2)
@@ -1267,31 +802,9 @@ _ecore_evas_extn_plug_profile_set(Ecore_Evas *ee, const char *profile)
      {
         ee->prop.profile.name = (char *)eina_stringshare_add(profile);
         if (extn->ipc.server)
-          {
-             Ipc_Data_Profile *ipc;
-             char *st, *p;
-             int len = 0;
-
-             len += sizeof(Ipc_Data_Profile);
-             len += strlen(ee->prop.profile.name) + 1;
-             len += 1;
-
-             st = alloca(len);
-             ipc = (Ipc_Data_Profile *)st;
-             memset(st, 0, len);
-             p = st + sizeof(Ipc_Data_Profile);
-
-             strcpy(p, ee->prop.profile.name);
-             ipc->name = p - (long)st;
-             p += strlen(p) + 1;
-
-             /* send window profile change request to the server(socket)
-              * and wait for profile change done from the server
-              */
-             ecore_ipc_server_send(extn->ipc.server, MAJOR,
-                                   OP_PROFILE_CHANGE_REQUEST,
-                                   0, 0, 0, ipc, len);
-          }
+          ecore_ipc_server_send(extn->ipc.server, MAJOR,
+                                OP_PROFILE_CHANGE_REQUEST,
+                                0, 0, 0, profile, strlen(profile) + 1);
      }
 }
 
@@ -1399,23 +912,25 @@ _ipc_server_del(void *data, int type EINA_UNUSED, void *event)
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn;
+   int i;
 
    extn = bdata->data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
    if (extn->ipc.server != e->server) return ECORE_CALLBACK_PASS_ON;
    evas_object_image_data_set(bdata->image, NULL);
    bdata->pixels = NULL;
-   if (extn->file.shmfile)
+
+   for (i = 0; i < NBUF; i++)
      {
-        shmfile_close(extn->file.shmfile);
-        extn->file.shmfile = NULL;
+        if (extn->b[i].buf) _extnbuf_free(extn->b[i].buf);
+        if (extn->b[i].obuf) _extnbuf_free(extn->b[i].obuf);
+        if (extn->b[i].base) eina_stringshare_del(extn->b[i].base);
+        if (extn->b[i].lock) eina_stringshare_del(extn->b[i].lock);
+        extn->b[i].buf = NULL;
+        extn->b[i].obuf = NULL;
+        extn->b[i].base = NULL;
+        extn->b[i].lock = NULL;
      }
-   if (extn->file.shm)
-     {
-        eina_stringshare_del(extn->file.shm);
-        extn->file.shm = NULL;
-     }
-   extn->ipc.server = NULL;
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1446,15 +961,18 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
               if (ipc)
                 {
                    memcpy(ipc, e->data, sizeof(Ipc_Data_Update));
-                   extn->file.updates = eina_list_append(extn->file.updates, ipc);
+                   extn->file.updates = eina_list_append(extn->file.updates,
+                                                         ipc);
                 }
            }
          break;
       case OP_UPDATE_DONE:
-         // updates finished being sent - done now. frame ready
+        // e->response == display buffer #
+        // updates finished being sent - done now. frame ready
            {
               Ipc_Data_Update *ipc;
-
+              int n = e->response;
+              
               EINA_LIST_FREE(extn->file.updates, ipc)
                 {
                    if (bdata->image)
@@ -1463,89 +981,110 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
                                                        ipc->w, ipc->h);
                    free(ipc);
                 }
-           }
-         break;
-      case OP_LOCK_FILE:
-         if ((e->data) && (e->size > 0) &&
-             (((unsigned char *)e->data)[e->size - 1] == 0))
-           {
-              if (extn->file.have_lock) _ecore_evas_socket_unlock(ee, 0);
-              if (extn->file.lockfd) close(extn->file.lockfd);
-              if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-              extn->file.lock = eina_stringshare_add(e->data);
-              extn->file.lockfd = open(extn->file.lock, O_RDONLY);
-           }
-         break;
-      case OP_LOCK_FILE2:
-         if ((e->data) && (e->size > 0) &&
-             (((unsigned char *)e->data)[e->size - 1] == 0))
-           {
-              if (extn->file.have_lock2) _ecore_evas_socket_unlock(ee, 1);
-              if (extn->file.lockfd2 >= 0) close(extn->file.lockfd2);
-              if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
-              extn->file.lock2 = eina_stringshare_add(e->data);
-              extn->file.lockfd2 = open(extn->file.lock2, O_RDONLY);
-           }
-         break;
-      case OP_SHM_REF:
-         // e->ref == w
-         // e->ref_to == h
-         // e->response == alpha
-         // e->data = shm ref string + nul byte
-         if ((e->data) && ((unsigned char *)e->data)[e->size - 1] == 0)
-           {
-              bdata->pixels = NULL;
-              if (extn->file.shmfile)
+              if ((n >= 0) && (n < NBUF))
                 {
-                   shmfile_close(extn->file.shmfile);
-                   extn->file.shmfile = NULL;
-                }
-              if (extn->file.shm)
-                {
-                   eina_stringshare_del(extn->file.shm);
-                   extn->file.shm = NULL;
-                }
-              if ((e->ref > 0) && (e->ref_to > 0))
-                {
-                   extn->file.w = e->ref;
-                   extn->file.h = e->ref_to;
-                   extn->file.shm = eina_stringshare_add(e->data);
-                   extn->file.shmfile = shmfile_open(extn->file.shm,
-                                                     extn->file.w *
-                                                     extn->file.h * 4,
-                                                     EINA_TRUE);
-                   if (extn->file.shmfile)
+                   void *data;
+                   int w = 0, h = 0, pn;
+
+                   pn = extn->cur_b;
+                   extn->cur_b = n;
+                   
+                   if (extn->b[pn].buf) _extnbuf_unlock(extn->b[pn].buf);
+                   if (extn->b[pn].obuf)
                      {
-                        bdata->pixels = extn->file.shmfile->addr;
-                        if (bdata->image)
-                          {
-                             if (e->response)
-                               evas_object_image_alpha_set(bdata->image,
-                                                           EINA_TRUE);
-                             else
-                               evas_object_image_alpha_set(bdata->image,
-                                                           EINA_FALSE);
-                             evas_object_image_size_set(bdata->image,
-                                                        extn->file.w,
-                                                        extn->file.h);
-                             evas_object_image_data_set(bdata->image,
-                                                        bdata->pixels);
-                             evas_object_image_data_update_add(bdata->image,
-                                                               0, 0,
-                                                               extn->file.w,
-                                                               extn->file.h);
-                             _ecore_evas_resize(ee,
-                                                extn->file.w,
-                                                extn->file.h);
-                          }
-                        else
-                          evas_object_image_data_set(bdata->image, NULL);
+                        _extnbuf_unlock(extn->b[pn].obuf);
+                        _extnbuf_free(extn->b[pn].obuf);
+                        extn->b[pn].obuf = NULL;
+                     }
+                   if (extn->b[n].buf)
+                     {
+                        data = _extnbuf_data_get(extn->b[n].buf, &w, &h, NULL);
+                        bdata->pixels = data;
+                        evas_object_image_alpha_set(bdata->image,
+                                                    extn->b[n].alpha);
+                        evas_object_image_size_set(bdata->image, w, h);
+                        evas_object_image_data_set(bdata->image, data);
                      }
                    else
-                     evas_object_image_data_set(bdata->image, NULL);
+                     {
+                        bdata->pixels = NULL;
+                        evas_object_image_alpha_set(bdata->image, EINA_TRUE);
+                        evas_object_image_size_set(bdata->image, 1, 1);
+                        evas_object_image_data_set(bdata->image, &blank);
+                     }
                 }
-              else
-                evas_object_image_data_set(bdata->image, NULL);
+           }
+         break;
+      case OP_SHM_REF0:
+         // e->ref == shm id
+         // e->ref_to == shm num
+         // e->response == buffer num
+         // e->data = shm ref string + nul byte
+         if ((e->data) && (e->size > 0) &&
+             (((unsigned char *)e->data)[e->size - 1] == 0))
+           {
+              int n = e->response;
+              
+              if ((n >= 0) && (n < NBUF))
+                {
+                   extn->b[n].id = e->ref;
+                   extn->b[n].num = e->ref_to;
+                   if (extn->b[n].base) eina_stringshare_del(extn->b[n].base);
+                   extn->b[n].base = eina_stringshare_add(e->data);
+                }
+           }
+         break;
+      case OP_SHM_REF1:
+         // e->ref == w
+         // e->ref_to == h
+         // e->response == buffer num
+         // e->data = lockfile + nul byte
+         if ((e->data) && (e->size > 0) &&
+             (((unsigned char *)e->data)[e->size - 1] == 0))
+           {
+              int n = e->response;
+              
+              if ((n >= 0) && (n < NBUF))
+                {
+                   extn->b[n].w = e->ref;
+                   extn->b[n].h = e->ref_to;
+                   if (extn->b[n].lock) eina_stringshare_del(extn->b[n].lock);
+                   extn->b[n].lock = eina_stringshare_add(e->data);
+                }
+           }
+         break;
+      case OP_SHM_REF2:
+         // e->ref == alpha
+         // e->ref_to == sys
+         // e->response == buffer num
+           {
+              int n = e->response;
+
+              if ((n >= 0) && (n < NBUF))
+                {
+                   extn->b[n].alpha = e->ref;
+                   extn->b[n].sys = e->ref_to;
+                   if (extn->b[n].buf)
+                     {
+                        if (_extnbuf_lock_get(extn->b[n].buf))
+                          {
+                             if (extn->b[n].obuf) ERR("obuf is non-null");
+                             extn->b[n].obuf = extn->b[n].buf;
+                          }
+                        else
+                          _extnbuf_free(extn->b[n].buf);
+                     }
+                   extn->b[n].buf = _extnbuf_new(extn->b[n].base,
+                                                 extn->b[n].id,
+                                                 extn->b[n].sys,
+                                                 extn->b[n].num,
+                                                 extn->b[n].w,
+                                                 extn->b[n].h,
+                                                 EINA_FALSE);
+                   if ((extn->b[n].buf) && (extn->b[n].lock))
+                     _extnbuf_lock_file_set(extn->b[n].buf,
+                                            extn->b[n].lock);
+                }
            }
          break;
       case OP_RESIZE:
@@ -1596,7 +1135,6 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
 	free(ee);
 	return NULL;
      }
-
    ee->engine.data = bdata;
    o = evas_object_image_filled_add(ee_target->evas);
    /* this make problem in gl engine, so I'll block this until solve problem 
@@ -1693,11 +1231,6 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
 
    extn_ee_list = eina_list_append(extn_ee_list, ee);
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
-
-   evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_PRE,
-                           _ecore_evas_extn_plug_targer_render_pre, ee);
-   evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_POST,
-                           _ecore_evas_extn_plug_targer_render_post, ee);
    return o;
 }
 
@@ -1756,20 +1289,6 @@ _ecore_evas_extn_plug_connect(Ecore_Evas *ee, const char *svcname, int svcnum, E
 }
 
 static void
-_ecore_evas_extn_plug_object_data_lock(Ecore_Evas *ee)
-{
-   if (!ee) return;
-   _ecore_evas_socket_lock(ee, 0); // XXX lock correct buffer
-}
-
-static void
-_ecore_evas_extn_plug_object_data_unlock(Ecore_Evas *ee)
-{
-   if (!ee) return;
-   _ecore_evas_socket_unlock(ee, 0); // XXX lock correct buffer
-}
-
-static void
 _ecore_evas_socket_resize(Ecore_Evas *ee, int w, int h)
 {
    Extn *extn;
@@ -1790,15 +1309,38 @@ _ecore_evas_socket_resize(Ecore_Evas *ee, int w, int h)
    extn = bdata->data;
    if (extn)
      {
-        if (extn->file.shmfile)
-          shmfile_free(extn->file.shmfile);
+        int i, last_try = 0;
+        
+        for (i = 0; i < NBUF; i++)
+          {
+             if (extn->b[i].buf) _extnbuf_free(extn->b[i].buf);
+             if (extn->b[i].obuf) _extnbuf_free(extn->b[i].obuf);
+             if (extn->b[i].base) eina_stringshare_del(extn->b[i].base);
+             if (extn->b[i].lock) eina_stringshare_del(extn->b[i].lock);
+             extn->b[i].buf = NULL;
+             extn->b[i].obuf = NULL;
+             extn->b[i].base = NULL;
+             extn->b[i].lock = NULL;
+          }
         bdata->pixels = NULL;
-        extn->file.shmfile = shmfile_new(extn->svc.name, extn->svc.num,
-                                         ee->w * ee->h * 4, extn->svc.sys);
-        if (extn->file.shmfile)
-          bdata->pixels = extn->file.shmfile->addr;
-
-        stride = ee->w * 4;
+        for (i = 0; i < NBUF; i++)
+          {
+             do
+               {
+                  extn->b[i].buf = _extnbuf_new(extn->svc.name, extn->svc.num,
+                                                extn->svc.sys, last_try,
+                                                ee->w, ee->h, EINA_TRUE);
+                  if (extn->b[i].buf) extn->b[i].num = last_try;
+                  last_try++;
+                  if (last_try > 1024) break;
+               }
+             while (!extn->b[i].buf);
+             
+          }
+        
+        if (extn->b[extn->cur_b].buf)
+          bdata->pixels = _extnbuf_data_get(extn->b[extn->cur_b].buf,
+                                            NULL, NULL, &stride);
         einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
@@ -1812,28 +1354,43 @@ _ecore_evas_socket_resize(Ecore_Evas *ee, int w, int h)
              einfo->info.alpha_threshold = 0;
              einfo->info.func.new_update_region = NULL;
              einfo->info.func.free_update_region = NULL;
+             einfo->info.func.switch_buffer = _ecore_evas_socket_switch;
+             einfo->info.switch_data = ee;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
                }
           }
 
-        if (extn->ipc.clients && extn->file.shmfile)
+        if (extn->ipc.clients && extn->b[extn->cur_b].buf)
           {
              Ipc_Data_Resize ipc;
              Eina_List *l;
              Ecore_Ipc_Client *client;
 
              EINA_LIST_FOREACH(extn->ipc.clients, l, client)
-                ecore_ipc_client_send(client, MAJOR, OP_SHM_REF,
-                                      ee->w, ee->h, ee->alpha,
-                                      extn->file.shmfile->file,
-                                      strlen(extn->file.shmfile->file) + 1);
-             ipc.w = ee->w;
-             ipc.h = ee->h;
-             EINA_LIST_FOREACH(extn->ipc.clients, l, client)
-                ecore_ipc_client_send(client, MAJOR, OP_RESIZE,
-                                      0, 0, 0, &ipc, sizeof(ipc));
+               {
+                  for (i = 0; i < NBUF; i++)
+                    {
+                       const char *lock;
+                       
+                       ecore_ipc_client_send(client, MAJOR, OP_SHM_REF0,
+                                             extn->svc.num, extn->b[i].num, i,
+                                             extn->svc.name,
+                                             strlen(extn->svc.name) + 1);
+                       lock = _extnbuf_lock_file_get(extn->b[i].buf);
+                       ecore_ipc_client_send(client, MAJOR, OP_SHM_REF1,
+                                             ee->w, ee->h, i,
+                                             lock, strlen(lock) + 1);
+                       ecore_ipc_client_send(client, MAJOR, OP_SHM_REF2,
+                                             ee->alpha, extn->svc.sys, i,
+                                             NULL, 0);
+                       ipc.w = ee->w;
+                       ipc.h = ee->h;
+                       ecore_ipc_client_send(client, MAJOR, OP_RESIZE,
+                                             0, 0, 0, &ipc, sizeof(ipc));
+                    }
+               }
           }
      }
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
@@ -1852,32 +1409,33 @@ _ecore_evas_extn_socket_window_profile_change_done_send(Ecore_Evas *ee)
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Ecore_Ipc_Client *client;
    Eina_List *l = NULL;
-   Ipc_Data_Profile *ipc;
-   char *st, *p;
+   char *s;
    int len = 0;
 
    extn = bdata->data;
    if (!extn) return;
-
-   len += sizeof(Ipc_Data_Profile);
-   len += strlen(ee->prop.profile.name) + 1;
-   len += 1;
-
-   st = alloca(len);
-   ipc = (Ipc_Data_Profile *)st;
-   memset(st, 0, len);
-   p = st + sizeof(Ipc_Data_Profile);
-
-   strcpy(p, ee->prop.profile.name);
-   ipc->name = p - (long)st;
-   p += strlen(p) + 1;
-
+   s = ee->prop.profile.name;
+   if (s) len = strlen(s);
    EINA_LIST_FOREACH(extn->ipc.clients, l, client)
      {
         ecore_ipc_client_send(client, MAJOR,
                               OP_PROFILE_CHANGE_DONE,
-                              0, 0, 0, ipc, len);
+                              0, 0, 0, s, len);
      }
+}
+
+static void *
+_ecore_evas_socket_switch(void *data, void *dest_buf)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+   Extn *extn = bdata->data;
+   
+   extn->cur_b++;
+   if (extn->cur_b >= NBUF) extn->cur_b = 0;
+   bdata->pixels = _extnbuf_data_get(extn->b[extn->cur_b].buf,
+                                     NULL, NULL, NULL);
+   return bdata->pixels;
 }
 
 int
@@ -1890,7 +1448,8 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
    Extn *extn;
    Ecore_Ipc_Client *client;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-
+   int cur_b;
+   
    extn = bdata->data;
    if (!extn) return rend;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
@@ -1902,30 +1461,33 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
      }
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
+   cur_b = extn->cur_b;
    if (bdata->pixels)
      {
-        _ecore_evas_socket_lock(ee, 0); // XXX lock correct buffer
+        bdata->pixels = _extnbuf_lock(extn->b[cur_b].buf, NULL, NULL, NULL);
         updates = evas_render_updates(ee->evas);
-        _ecore_evas_socket_unlock(ee, 0); // XXX lock correct buffer
-     }
-   EINA_LIST_FOREACH(updates, l, r)
-     {
-        Ipc_Data_Update ipc;
-
-
-        ipc.x = r->x;
-        ipc.y = r->y;
-        ipc.w = r->w;
-        ipc.h = r->h;
-        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
-           ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc, sizeof(ipc));
+        _extnbuf_unlock(extn->b[cur_b].buf);
      }
    if (updates)
      {
+        EINA_LIST_FOREACH(updates, l, r)
+          {
+             Ipc_Data_Update ipc;
+             
+             
+             ipc.x = r->x;
+             ipc.y = r->y;
+             ipc.w = r->w;
+             ipc.h = r->h;
+             EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+               ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc,
+                                     sizeof(ipc));
+          }
         evas_render_updates_free(updates);
         _ecore_evas_idle_timeout_update(ee);
         EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
-           ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0, 0, NULL, 0);
+           ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0, 
+                                 cur_b, NULL, 0);
         if (extn->profile.done)
           {
              _ecore_evas_extn_socket_window_profile_change_done_send(ee);
@@ -1944,6 +1506,7 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn;
+   int i;
 
    if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
      return ECORE_CALLBACK_PASS_ON;
@@ -1953,22 +1516,32 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    if (!extn) return ECORE_CALLBACK_PASS_ON;
 
    extn->ipc.clients = eina_list_append(extn->ipc.clients, e->client);
-   ecore_ipc_client_send(e->client, MAJOR, OP_LOCK_FILE, 0, 0, 0, extn->file.lock, strlen(extn->file.lock) + 1);
-   ecore_ipc_client_send(e->client, MAJOR, OP_LOCK_FILE2, 0, 0, 0, extn->file.lock2, strlen(extn->file.lock2) + 1);
-
-   if (extn->file.shmfile)
+   
+   for (i = 0; i < NBUF; i++)
      {
+        const char *lock;
         Ipc_Data_Resize ipc;
-
-        ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF,
-                              ee->w, ee->h, ee->alpha,
-                              extn->file.shmfile->file,
-                              strlen(extn->file.shmfile->file) + 1);
-        ipc.w = ee->w;
-        ipc.h = ee->h;
-
+        Ipc_Data_Update ipc2;
+        
+        ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF0,
+                              extn->svc.num, extn->b[i].num, i,
+                              extn->svc.name,
+                              strlen(extn->svc.name) + 1);
+        lock = _extnbuf_lock_file_get(extn->b[i].buf);
+        ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF1,
+                              ee->w, ee->h, i,
+                              lock, strlen(lock) + 1);
+        ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF2,
+                              ee->alpha, extn->svc.sys, i,
+                              NULL, 0);
+        ipc.w = ee->w; ipc.h = ee->h;
         ecore_ipc_client_send(e->client, MAJOR, OP_RESIZE,
                               0, 0, 0, &ipc, sizeof(ipc));
+        ipc2.x = 0; ipc2.y = 0; ipc2.w = ee->w; ipc2.h = ee->h;
+        ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc2,
+                              sizeof(ipc2));
+        ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE_DONE, 0, 0, 
+                              extn->cur_b, NULL, 0);
      }
    _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
    return ECORE_CALLBACK_PASS_ON;
@@ -2229,24 +1802,16 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
            }
          break;
       case OP_PROFILE_CHANGE_REQUEST:
-         if (e->size >= (int)sizeof(Ipc_Data_Profile))
-           {
-              if ((e->data) && (e->size > 0) &&
-                  (((unsigned char *)e->data)[e->size - 1] == 0))
-                {
-                   Ipc_Data_Profile *ipc = e->data;
-                   STRGET(name);
-                   if (ipc->name)
-                     {
-                        _ecore_evas_window_profile_free(ee);
-                        ee->prop.profile.name = (char *)eina_stringshare_add(ipc->name);
-
-                        if (ee->func.fn_state_change)
-                          ee->func.fn_state_change(ee);
-
-                        extn->profile.done = EINA_TRUE;
-                     }
-                }
+        if ((e->data) && (e->size > 0) &&
+            (((unsigned char *)e->data)[e->size - 1] == 0))
+          {
+             _ecore_evas_window_profile_free(ee);
+             ee->prop.profile.name = (char *)eina_stringshare_add(e->data);
+             
+             if (ee->func.fn_state_change)
+               ee->func.fn_state_change(ee);
+             
+             extn->profile.done = EINA_TRUE;
            }
          break;
       case OP_MSG:
@@ -2294,10 +1859,26 @@ _ecore_evas_extn_socket_alpha_set(Ecore_Evas *ee, int alpha)
              evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
           }
         EINA_LIST_FOREACH(extn->ipc.clients, l, client)
-           ecore_ipc_client_send(client, MAJOR, OP_SHM_REF,
-                                 ee->w, ee->h, ee->alpha,
-                                 extn->file.shmfile->file,
-                                 strlen(extn->file.shmfile->file) + 1);
+          {
+             int i;
+             
+             for (i = 0; i < NBUF; i++)
+               {
+                  const char *lock;
+                  
+                  ecore_ipc_client_send(client, MAJOR, OP_SHM_REF0,
+                                        extn->svc.num, extn->b[i].num, i,
+                                        extn->svc.name,
+                                        strlen(extn->svc.name) + 1);
+                  lock = _extnbuf_lock_file_get(extn->b[i].buf);
+                  ecore_ipc_client_send(client, MAJOR, OP_SHM_REF1,
+                                        ee->w, ee->h, i,
+                                        lock, strlen(lock) + 1);
+                  ecore_ipc_client_send(client, MAJOR, OP_SHM_REF1,
+                                        ee->alpha, extn->svc.sys, i,
+                                        NULL, 0);
+               }
+          }
      }
 }
 
@@ -2491,6 +2072,8 @@ ecore_evas_extn_socket_new_internal(int w, int h)
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
         einfo->info.func.free_update_region = NULL;
+        einfo->info.func.switch_buffer = _ecore_evas_socket_switch;
+        einfo->info.switch_data = ee;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -2535,50 +2118,35 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
    else
      {
         Ecore_Ipc_Type ipctype = ECORE_IPC_LOCAL_USER;
-        char buf[PATH_MAX];
+        int i;
+        int last_try = 0;
 
         ecore_ipc_init();
         extn->svc.name = eina_stringshare_add(svcname);
         extn->svc.num = svcnum;
         extn->svc.sys = svcsys;
 
-        snprintf(buf, sizeof(buf), "/tmp/ee-lock-XXXXXX");
-        extn->file.lockfd = mkstemp(buf);
-        if (extn->file.lockfd >= 0)
-          extn->file.lock = eina_stringshare_add(buf);
-        if ((extn->file.lockfd < 0) || (!extn->file.lock))
+        for (i = 0; i < NBUF; i++)
           {
-             if (extn->file.lockfd)
+             do
                {
-                  close(extn->file.lockfd >= 0);
-                  unlink(buf);
+                  extn->b[i].buf = _extnbuf_new(extn->svc.name, extn->svc.num,
+                                                extn->svc.sys, last_try,
+                                                ee->w, ee->h, EINA_TRUE);
+                  if (extn->b[i].buf) extn->b[i].num = last_try;
+                  last_try++;
+                  if (last_try > 1024) break;
                }
-             eina_stringshare_del(extn->svc.name);
-             if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-             free(extn);
-             ecore_ipc_shutdown();
-             return EINA_FALSE;
+             while (!extn->b[i].buf);
+             
           }
-
-        snprintf(buf, sizeof(buf), "/tmp/ee-lock-XXXXXX");
-        extn->file.lockfd2 = mkstemp(buf);
-        if (extn->file.lockfd2 >= 0)
-          extn->file.lock2 = eina_stringshare_add(buf);
-        if ((extn->file.lockfd2 < 0) || (!extn->file.lock2))
+        
+        if (extn->b[extn->cur_b].buf)
+          bdata->pixels = _extnbuf_data_get(extn->b[extn->cur_b].buf,
+                                            NULL, NULL, NULL);
+        else
           {
-             if (extn->file.lockfd >= 0)
-               {
-                  close(extn->file.lockfd);
-                  if (extn->file.lock) unlink(extn->file.lock);
-               }
-             if (extn->file.lockfd2 >= 0)
-               {
-                  close(extn->file.lockfd2);
-                  unlink(buf);
-               }
              eina_stringshare_del(extn->svc.name);
-             if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-             if (extn->file.lock2) eina_stringshare_del(extn->file.lock2);
              free(extn);
              ecore_ipc_shutdown();
              return EINA_FALSE;
@@ -2591,19 +2159,18 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
                                                 extn->svc.num, ee);
         if (!extn->ipc.server)
           {
-             if (extn->file.lockfd >= 0)
+             for (i = 0; i < NBUF; i++)
                {
-                  close(extn->file.lockfd);
-                  if (extn->file.lock) unlink(extn->file.lock);
-               }
-             if (extn->file.lockfd2 >= 0)
-               {
-                  close(extn->file.lockfd2);
-                  if (extn->file.lock2) unlink(extn->file.lock2);
+                  if (extn->b[i].buf) _extnbuf_free(extn->b[i].buf);
+                  if (extn->b[i].obuf) _extnbuf_free(extn->b[i].obuf);
+                  if (extn->b[i].base) eina_stringshare_del(extn->b[i].base);
+                  if (extn->b[i].lock) eina_stringshare_del(extn->b[i].lock);
+                  extn->b[i].buf = NULL;
+                  extn->b[i].obuf = NULL;
+                  extn->b[i].base = NULL;
+                  extn->b[i].lock = NULL;
                }
              eina_stringshare_del(extn->svc.name);
-             eina_stringshare_del(extn->file.lock);
-             eina_stringshare_del(extn->file.lock2);
              free(extn);
              ecore_ipc_shutdown();
              return EINA_FALSE;
@@ -2636,8 +2203,6 @@ _ecore_evas_extn_interface_new(void)
    iface->base.name = interface_extn_name;
    iface->base.version = interface_extn_version;
 
-   iface->data_lock = _ecore_evas_extn_plug_object_data_lock;
-   iface->data_unlock = _ecore_evas_extn_plug_object_data_unlock;
    iface->connect = _ecore_evas_extn_plug_connect;
    iface->listen = _ecore_evas_extn_socket_listen;
 
