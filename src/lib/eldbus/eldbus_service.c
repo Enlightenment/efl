@@ -66,9 +66,9 @@ static DBusObjectPathVTable vtable = {
   NULL
 };
 
-Eldbus_Service_Interface *introspectable;
-Eldbus_Service_Interface *properties_iface;
-Eldbus_Service_Interface *objmanager;
+static Eldbus_Service_Interface *introspectable;
+static Eldbus_Service_Interface *properties_iface;
+static Eldbus_Service_Interface *objmanager;
 
 static inline void
 _introspect_arguments_append(Eina_Strbuf *buf, const Eldbus_Arg_Info *args,
@@ -1147,41 +1147,29 @@ _object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_d
    eldbus_msg = eldbus_message_new(EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(eldbus_msg, DBUS_HANDLER_RESULT_NEED_MEMORY);
    eldbus_msg->dbus_msg = msg;
+   dbus_message_ref(eldbus_msg->dbus_msg);
    dbus_message_iter_init(eldbus_msg->dbus_msg, &eldbus_msg->iterator->dbus_iterator);
 
    if (!_have_signature(method->in, eldbus_msg))
-     {
-        reply = eldbus_message_error_new(eldbus_msg,
-                                        DBUS_ERROR_INVALID_SIGNATURE,
-                                        "See introspectable to know the expected signature");
-     }
+     reply = eldbus_message_error_new(eldbus_msg, DBUS_ERROR_INVALID_SIGNATURE,
+                                      "See introspectable to know the expected signature");
    else
      {
         if (iface->obj)
           reply = method->cb(iface, eldbus_msg);
         else
           {
-             //if iface does have obj it is some of FreeDesktop interfaces:
-             //Introspectable, Properties...
-             Eldbus_Service_Interface *cpy;
-             cpy = calloc(1, sizeof(Eldbus_Service_Interface));
-             if (!cpy)
-	       {
-	          dbus_message_ref(eldbus_msg->dbus_msg);
-                  eldbus_message_unref(eldbus_msg);
-                  return DBUS_HANDLER_RESULT_NEED_MEMORY;
-               }
-             cpy->obj = obj;
-             reply = method->cb(cpy, eldbus_msg);
-             free(cpy);
+             /* if iface does have obj it is some of FreeDesktop interfaces:
+                Introspectable, Properties or ObjectManager */
+             iface->obj = obj;
+             reply = method->cb(iface, eldbus_msg);
+             iface->obj = NULL;
           }
      }
 
-   dbus_message_ref(eldbus_msg->dbus_msg);
    eldbus_message_unref(eldbus_msg);
-   if (!reply) return DBUS_HANDLER_RESULT_HANDLED;
-
-   _eldbus_connection_send(obj->conn, reply, NULL, NULL, -1);
+   if (reply)
+     _eldbus_connection_send(obj->conn, reply, NULL, NULL, -1);
 
    return DBUS_HANDLER_RESULT_HANDLED;
 }
