@@ -128,7 +128,7 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
    pending->cb = cb;
    pending->cb_data = cb_data;
    pending->conn = conn;
-   pending->dest = eina_stringshare_add(dbus_message_get_member(msg->dbus_msg));
+   pending->dest = eina_stringshare_add(dbus_message_get_destination(msg->dbus_msg));
    pending->interface = eina_stringshare_add(dbus_message_get_interface(msg->dbus_msg));
    pending->method = eina_stringshare_add(dbus_message_get_member(msg->dbus_msg));
    pending->path = eina_stringshare_add(dbus_message_get_path(msg->dbus_msg));
