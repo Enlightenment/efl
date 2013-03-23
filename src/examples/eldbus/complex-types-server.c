@@ -142,14 +142,13 @@ _send_array_int(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    Eldbus_Message_Iter *iter, *array;
-   int i;
+   int numbers[] = { 10, 9, 8, 7, 6, 5 };
 
    printf("- sendArrayInt\n\n");
 
    iter = eldbus_message_iter_get(reply);
    array = eldbus_message_iter_container_new(iter, 'a', "i");
-   for (i = 0; i < 5; i++)
-     eldbus_message_iter_arguments_append(array, "i", i);
+   eldbus_message_iter_fixed_array_append(array, 'i', numbers, EINA_C_ARRAY_LENGTH(numbers));
    eldbus_message_iter_container_close(iter, array);
 
    return reply;

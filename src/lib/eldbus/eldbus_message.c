@@ -548,6 +548,16 @@ eldbus_message_iter_basic_append(Eldbus_Message_Iter *iter, int type, ...)
    return r;
 }
 
+EAPI Eina_Bool
+eldbus_message_iter_fixed_array_append(Eldbus_Message_Iter *iter, int type, const void *array, unsigned int size)
+{
+   ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_type_is_basic(type), EINA_FALSE);
+   return dbus_message_iter_append_fixed_array(&iter->dbus_iterator, type, &array, (int)size);
+}
+
 EAPI void
 eldbus_message_iter_basic_get(Eldbus_Message_Iter *iter, void *value)
 {

@@ -213,6 +213,17 @@ EAPI Eina_Bool               eldbus_message_iter_arguments_append(Eldbus_Message
  */
 EAPI Eina_Bool               eldbus_message_iter_arguments_vappend(Eldbus_Message_Iter *iter, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 3);
 
+
+/**
+ * Append a array of basic type with fixed size to Eldbus_Message_Iter.
+ *
+ * @param iter iterator
+ * @param type basic type that will be appended
+ * @param array data to append
+ * @param size of array
+ */
+EAPI Eina_Bool               eldbus_message_iter_fixed_array_append(Eldbus_Message_Iter *iter, int type, const void *array, unsigned int size);
+
 /**
  * @brief Closes a container-typed value appended to the message.
  *
