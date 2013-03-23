@@ -110,8 +110,8 @@ EAPI Eldbus_Service_Interface *eldbus_service_interface_register(Eldbus_Connecti
 
 /**
  * @brief Unregister a interface.
- * If this is the last interface of the object path, the object path will be
- * removed too.
+ * Note: This doesn't unregister the object path if interface count reaches 0.
+ * Use eldbus_service_object_unregister() to unregister the object.
  */
 EAPI void eldbus_service_interface_unregister(Eldbus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 

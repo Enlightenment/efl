@@ -1082,17 +1082,12 @@ _on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
 EAPI void
 eldbus_service_interface_unregister(Eldbus_Service_Interface *iface)
 {
+   Eldbus_Service_Object *obj;
    ELDBUS_SERVICE_INTERFACE_CHECK(iface);
-   if (!eina_hash_find(iface->obj->interfaces, objmanager->name))
-     {
-        //properties + introspectable + iface that user wants unregister
-        if (eina_hash_population(iface->obj->interfaces) < 4)
-          eldbus_service_object_unregister(iface);
-        return;
-     }
-   eina_hash_del(iface->obj->interfaces, NULL, iface);
-   iface->obj->introspection_dirty = EINA_TRUE;
+   obj = iface->obj;
+   eina_hash_del(obj->interfaces, NULL, iface);
    _interface_free(iface);
+   obj->introspection_dirty = EINA_TRUE;
 }
 
 EAPI void
