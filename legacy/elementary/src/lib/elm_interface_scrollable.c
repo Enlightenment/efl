@@ -1853,7 +1853,8 @@ _elm_scroll_wheel_event_cb(void *data,
           _elm_scroll_wanted_region_set(sid->obj);
      }
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
+   if (sid->pan_obj)
+     eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    if (!direction)
      {
         if (ch > vh || cw <= vw)
