@@ -1,14 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = @edje_cc@
-EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
-EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
-EDJE_CC_FLAGS_VERBOSE_1 = -v
-EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE) -id $(srcdir) -fd $(srcdir)
-
-AM_V_EDJ = $(am__v_EDJ_@AM_V@)
-am__v_EDJ_ = $(am__v_EDJ_@AM_DEFAULT_V@)
-am__v_EDJ_0 = @echo "  EDJ   " $@;
+include ../../Makefile_Edje_Helper.am
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
