@@ -62,7 +62,7 @@ edje/vim/syntax/edc.vim \
 edje/vim/syntax/embryo.vim
 
 # Helper for people using EDJ
-EDJE_CC = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_cc
+EDJE_CC = @edje_cc@
 EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
 EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
 EDJE_CC_FLAGS_VERBOSE_1 = -v

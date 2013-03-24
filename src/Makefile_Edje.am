@@ -212,7 +212,7 @@ tests/edje/edje_tests_helpers.h
 bin_SCRIPTS += bin/edje/edje_recc
 
 # Useful to other modules that generate EDJ
-EDJE_CC = EFL_RUN_IN_TREE=1 $(builddir)/bin/edje/edje_cc${EXEEXT}
+EDJE_CC = @edje_cc@
 EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
 EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
 EDJE_CC_FLAGS_VERBOSE_1 = -v

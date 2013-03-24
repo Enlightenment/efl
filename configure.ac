@@ -97,6 +97,8 @@ AC_ARG_WITH([dbus-services],
    [dbusservicedir=$withval])
 AC_SUBST(dbusservicedir)
 
+EFL_WITH_BIN([edje], [edje-cc])
+
 
 #### Default values
 
