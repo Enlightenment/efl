@@ -4,6 +4,9 @@
 lib_LTLIBRARIES += lib/edje/libedje.la
 
 EDJE_COMMON_CPPFLAGS = \
+-I$(top_builddir) \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
@@ -112,7 +115,7 @@ bin_edje_edje_cc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_cc_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_cc_DEPENDENCIES = \
 @USE_EDJE_INTERNAL_LIBS@ \
-bin/edje/epp/epp # epp is an artificial dependency because edje_cc will use it at runtime, so we be sure if we depend on edje_cc we get epp.
+bin/edje/epp/epp$(EXEEXT) # epp is an artificial dependency because edje_cc will use it at runtime, so we be sure if we depend on edje_cc we get epp.
 
 bin_edje_edje_decc_SOURCES = \
 bin/edje/edje_decc.c \
@@ -191,6 +194,9 @@ $(CWARNFLAGS) \
 -DTARGET_TAB=9 \
 -DTARGET_VT=11
 if HAVE_WIN32
+bin_edje_epp_epp_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
 bin_edje_epp_epp_LDADD = lib/evil/libevil.la
 endif
 
@@ -206,7 +212,7 @@ tests/edje/edje_tests_helpers.h
 bin_SCRIPTS += bin/edje/edje_recc
 
 # Useful to other modules that generate EDJ
-EDJE_CC = EFL_RUN_IN_TREE=1 $(builddir)/bin/edje/edje_cc
+EDJE_CC = EFL_RUN_IN_TREE=1 $(builddir)/bin/edje/edje_cc${EXEEXT}
 EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
 EDJE_CC_FLAGS_VERBOSE_ = $(EDJE_CC_FLAGS_VERBOSE_@AM_DEFAULT_V@)
 EDJE_CC_FLAGS_VERBOSE_1 = -v
@@ -235,7 +241,7 @@ $(EDJE_COMMON_CPPFLAGS) \
 tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
-tests/edje/data/test_layout.edj: tests/edje/data/test_layout.edc bin/edje/edje_cc
+tests/edje/data/test_layout.edj: tests/edje/data/test_layout.edc bin/edje/edje_cc${EXEEXT}
 	@$(MKDIR_P) tests/edje/data
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/edje/data $< $@
 
