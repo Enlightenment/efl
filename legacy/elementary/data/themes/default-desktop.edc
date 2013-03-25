@@ -916,6 +916,7 @@ collections {
                 }
                 description { state: "visible" 0.0;
                     inherit: "default" 0.0;
+                    align: 0.0 1.0;
                     visible: 1;
                 }
             }
@@ -939,6 +940,7 @@ collections {
                 }
                 description { state: "visible" 0.0;
                     inherit: "default" 0.0;
+                    align: 1.0 1.0;
                     visible: 1;
                 }
             }
