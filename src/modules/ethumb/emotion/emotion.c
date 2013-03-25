@@ -33,6 +33,7 @@ struct _emotion_plugin
    double total_time, tmp_time;
    unsigned int pcount;
    unsigned int frnum;
+   unsigned int okfr;
    Eina_Bool first;
    Eet_File *ef;
    Evas_Object *video;
@@ -88,6 +89,7 @@ _video_stopped_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_
 {
    struct _emotion_plugin *_plugin = data;
 
+   _plugin->okfr = 0;
    _plugin->pi = 0;
    _plugin->ptotal = 0;
    _plugin->first = EINA_FALSE;
@@ -107,12 +109,12 @@ _video_pos_set(struct _emotion_plugin *_plugin)
    if (_plugin->len > 0)
      _plugin->first = EINA_TRUE;
 
-   if (pos <=0 || pos >= 1)
-     _plugin->pi = 0.1 * _plugin->len + _plugin->pcount *
-	_plugin->len * interval;
+   if ((pos <= 0) || (pos >= 1))
+     _plugin->pi = (0.1 * _plugin->len) + 
+     (_plugin->pcount * _plugin->len * interval);
    else
-     _plugin->pi = pos * _plugin->len + _plugin->pcount *
-	_plugin->len * interval;
+     _plugin->pi = (pos * _plugin->len) + 
+     (_plugin->pcount * _plugin->len * interval);
 
    emotion_object_position_set(_plugin->video, _plugin->pi);
 }
@@ -233,8 +235,8 @@ _frame_grab_single(void *data)
      }
 
    p = emotion_object_position_get(_plugin->video);
-//   if (p < _plugin->pi)
-   if (p <= 0.0)
+   _plugin->okfr++;
+   if (_plugin->okfr < 5)
      return EINA_TRUE;
 
    DBG("saving static thumbnail at position=%f (intended=%f)", p, _plugin->pi);
