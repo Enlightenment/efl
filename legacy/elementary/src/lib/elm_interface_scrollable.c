@@ -2601,63 +2601,61 @@ _elm_scroll_post_event_move(void *data,
                             Evas *e __UNUSED__)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
+   int start = 0;
 
-   if (sid->down.want_dragged)
+   if (!sid->down.want_dragged) return EINA_TRUE;
+
+   if (sid->down.hold_parent)
      {
-        int start = 0;
-
-        if (sid->down.hold_parent)
+        if ((sid->down.dir_x) &&
+            !_elm_scroll_can_scroll(sid, sid->down.hdir))
           {
-             if ((sid->down.dir_x) &&
-                 !_elm_scroll_can_scroll(sid, sid->down.hdir))
-               {
-                  sid->down.dir_x = EINA_FALSE;
-               }
-             if ((sid->down.dir_y) &&
-                 !_elm_scroll_can_scroll(sid, sid->down.vdir))
-               {
-                  sid->down.dir_y = EINA_FALSE;
-               }
+             sid->down.dir_x = EINA_FALSE;
           }
-        if (sid->down.dir_x)
+        if ((sid->down.dir_y) &&
+            !_elm_scroll_can_scroll(sid, sid->down.vdir))
           {
-             if ((!sid->obj) ||
-                 (!elm_widget_drag_child_locked_x_get(sid->obj)))
-               {
-                  sid->down.want_dragged = EINA_FALSE;
-                  sid->down.dragged = EINA_TRUE;
-                  if (sid->obj)
-                    {
-                       elm_widget_drag_lock_x_set(sid->obj, 1);
-                    }
-                  start = 1;
-               }
-             else
-               sid->down.dir_x = EINA_FALSE;
+             sid->down.dir_y = EINA_FALSE;
           }
-        if (sid->down.dir_y)
-          {
-             if ((!sid->obj) ||
-                 (!elm_widget_drag_child_locked_y_get(sid->obj)))
-               {
-                  sid->down.want_dragged = EINA_FALSE;
-                  sid->down.dragged = EINA_TRUE;
-                  if (sid->obj)
-                    {
-                       elm_widget_drag_lock_y_set
-                         (sid->obj, EINA_TRUE);
-                    }
-                  start = 1;
-               }
-             else
-               sid->down.dir_y = EINA_FALSE;
-          }
-        if ((!sid->down.dir_x) && (!sid->down.dir_y))
-          {
-             sid->down.cancelled = EINA_TRUE;
-          }
-        if (start) _elm_scroll_drag_start(sid);
      }
+   if (sid->down.dir_x)
+     {
+        if ((!sid->obj) ||
+            (!elm_widget_drag_child_locked_x_get(sid->obj)))
+          {
+             sid->down.want_dragged = EINA_FALSE;
+             sid->down.dragged = EINA_TRUE;
+             if (sid->obj)
+               {
+                  elm_widget_drag_lock_x_set(sid->obj, 1);
+               }
+             start = 1;
+          }
+        else
+          sid->down.dir_x = EINA_FALSE;
+     }
+   if (sid->down.dir_y)
+     {
+        if ((!sid->obj) ||
+            (!elm_widget_drag_child_locked_y_get(sid->obj)))
+          {
+             sid->down.want_dragged = EINA_FALSE;
+             sid->down.dragged = EINA_TRUE;
+             if (sid->obj)
+               {
+                  elm_widget_drag_lock_y_set
+                    (sid->obj, EINA_TRUE);
+               }
+             start = 1;
+          }
+        else
+          sid->down.dir_y = EINA_FALSE;
+     }
+   if ((!sid->down.dir_x) && (!sid->down.dir_y))
+     {
+        sid->down.cancelled = EINA_TRUE;
+     }
+   if (start) _elm_scroll_drag_start(sid);
 
    return EINA_TRUE;
 }
