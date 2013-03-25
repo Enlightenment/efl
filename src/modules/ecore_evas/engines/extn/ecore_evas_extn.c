@@ -983,7 +983,7 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
                 }
               if ((n >= 0) && (n < NBUF))
                 {
-                   void *data;
+                   void *data2;
                    int w = 0, h = 0, pn;
 
                    pn = extn->cur_b;
@@ -998,12 +998,12 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
                      }
                    if (extn->b[n].buf)
                      {
-                        data = _extnbuf_data_get(extn->b[n].buf, &w, &h, NULL);
-                        bdata->pixels = data;
+                        data2 = _extnbuf_data_get(extn->b[n].buf, &w, &h, NULL);
+                        bdata->pixels = data2;
                         evas_object_image_alpha_set(bdata->image,
                                                     extn->b[n].alpha);
                         evas_object_image_size_set(bdata->image, w, h);
-                        evas_object_image_data_set(bdata->image, data);
+                        evas_object_image_data_set(bdata->image, data2);
                      }
                    else
                      {
