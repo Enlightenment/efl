@@ -60,7 +60,6 @@ struct _Elm_Win_Smart_Data
    Evas_Object          *img_obj, *frame_obj;
    Eo                   *layout;
    Eo                   *box;
-   Evas_Coord           fx, fy, fw, fh;
    Evas_Object          *obj; /* The object itself */
 #ifdef HAVE_ELEMENTARY_X
    struct
@@ -611,7 +610,12 @@ _elm_win_resize_job(void *data)
      }
 
    if (sd->frame_obj)
-     evas_object_resize(sd->frame_obj, w, h);
+     {
+        int fw, fh;
+
+        evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
+        evas_object_resize(sd->frame_obj, w + fw, h + fh);
+     }
 
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->layout, w, h);
@@ -2269,11 +2273,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    short layer;
 
    // FIXME: Don't use hardcoded framespace values, get it from theme
-   sd->fx = 0;
-   sd->fy = 22;
-   sd->fw = 0;
-   sd->fh = 26;
-
+   evas_output_framespace_set(sd->evas, 0, 22, 0, 26);
    sd->frame_obj = edje_object_add(sd->evas);
    layer = evas_object_layer_get(obj);
    evas_object_layer_set(sd->frame_obj, layer + 1);
