@@ -27,7 +27,7 @@
 #include "eina_types.h"
 #include "eina_array.h"
 #include "eina_iterator.h"
-
+#include "eina_tmpstr.h"
 
 /**
  * @page eina_file_example_01_page
@@ -322,6 +322,8 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @since 1.2
  */
 EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
+
+EAPI int eina_file_mkstemp(const char *filename, Eina_Tmpstr **path);
 
 /**
  * @brief Get an iterator to list the content of a directory, with direct

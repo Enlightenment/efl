@@ -6,7 +6,6 @@ Changes since 1.7.0:
 --------------------
 
 Additions:
-    * Add eina_list_shuffle
     * Add multiple font draws support to engines
     * eina :
      - Add DOCTYPE children parsing in eina_simple_xml
@@ -21,6 +20,8 @@ Additions:
      - Add eina_stringshare_refplace()
      - Add eina_file_copy()
      - Add eina_log_print_cb_journald()
+     - Add eina_list_shuffle()
+     - Add eina_file_mkstemp()
     * Add Cserve2 scalecache support
     * ecore_x:
      - Add window profile support.

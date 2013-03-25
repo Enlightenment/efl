@@ -569,3 +569,27 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
 
    return success;
 }
+
+EAPI int
+eina_file_mkstemp(const char *filename, Eina_Tmpstr **path)
+{
+   char buffer[PATH_MAX];
+   const char *tmpdir;
+   int fd;
+
+#ifndef HAVE_EVIL
+   tmpdir = getenv("TMPDIR");
+   if (!tmpdir) tmpdir = "/tmp";
+#else
+   tmpdir = (char *)evil_tmpdir_get();
+#endif /* ! HAVE_EVIL */
+
+   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, filename);
+
+   fd = mkstemp(buffer);
+   if (path) *path = eina_tmpstr_add(buffer);
+   if (fd < 0)
+     return -1;
+
+   return fd;
+}
