@@ -1748,7 +1748,7 @@ ecore_x_window_key_grab(Ecore_X_Window win,
         if (keysym == NoSymbol)
           return;
 
-        keycode = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+        keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
@@ -1831,7 +1831,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
         if (keysym == NoSymbol)
           return;
 
-        keycode = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+        keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
