@@ -51,10 +51,18 @@ my_show(Evas_Object *obj)
    evas_object_show(obj);
 }
 
+static void
+_tb_sel(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   printf("tb sel %p\n", obj);
+}
+
 void
 test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win;
+   Evas_Object *win, *tbx, *tbar, *menu;
+   Elm_Object_Item *tb_it;
+   Elm_Object_Item *menu_it;
    unsigned int i, j;
 
    win = elm_win_util_standard_add("focus", "Focus");
@@ -64,10 +72,49 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_autodel_set(win, EINA_TRUE);
    my_show(win);
 
+   tbx = elm_box_add(win);
+   evas_object_size_hint_weight_set(tbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, tbx);
+   evas_object_show(tbx);
+
+   tbar = elm_toolbar_add(win);
+   elm_toolbar_shrink_mode_set(tbar, ELM_TOOLBAR_SHRINK_MENU);
+   evas_object_size_hint_weight_set(tbar, 0.0, 0.0);
+   evas_object_size_hint_align_set(tbar, EVAS_HINT_FILL, 0.0);
+   tb_it = elm_toolbar_item_append(tbar, "document-print", "Hello", _tb_sel, NULL);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
+   elm_toolbar_item_priority_set(tb_it, 100);
+   
+   tb_it = elm_toolbar_item_append(tbar, "folder-new", "World", _tb_sel, NULL);
+   elm_toolbar_item_priority_set(tb_it, -100);
+   
+   tb_it = elm_toolbar_item_append(tbar, "object-rotate-right", "H", _tb_sel, NULL);
+   elm_toolbar_item_priority_set(tb_it, 150);
+   
+   tb_it = elm_toolbar_item_append(tbar, "mail-send", "Comes", _tb_sel, NULL);
+   elm_toolbar_item_priority_set(tb_it, 0);
+   
+   tb_it = elm_toolbar_item_append(tbar, "clock", "Elementary", _tb_sel, NULL);
+   elm_toolbar_item_priority_set(tb_it, -200);
+   
+   tb_it = elm_toolbar_item_append(tbar, "refresh", "Menu", NULL, NULL);
+   elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
+   elm_toolbar_item_priority_set(tb_it, -9999);
+   elm_toolbar_menu_parent_set(tbar, win);
+   menu = elm_toolbar_item_menu_get(tb_it);
+   
+   elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", _tb_sel, NULL);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", _tb_sel, NULL);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", _tb_sel, NULL);
+   elm_menu_item_add(menu, NULL, "edit-delete", "Menu", _tb_sel, NULL);
+   
+   elm_box_pack_end(tbx, tbar);
+   evas_object_show(tbar);
+   
    Evas_Object *mainbx = elm_box_add(win);
    elm_box_horizontal_set(mainbx, EINA_TRUE);
    evas_object_size_hint_weight_set(mainbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, mainbx);
+   elm_box_pack_end(tbx, mainbx);
    my_show(mainbx);
 
      { //First Col
