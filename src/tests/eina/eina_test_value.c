@@ -1043,6 +1043,285 @@ START_TEST(eina_value_test_convert_uchar)
 }
 END_TEST
 
+START_TEST(eina_value_test_convert_long)
+{
+   Eina_Value *value, conv;
+   char c;
+   short s;
+   int i;
+   long l;
+   int64_t i64;
+   unsigned char uc;
+   unsigned short us;
+   unsigned int ui;
+   unsigned long ul;
+   uint64_t u64;
+   float f;
+   double d;
+   const char *str;
+
+   eina_init();
+
+   value = eina_value_new(EINA_VALUE_TYPE_LONG);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_set(value, 32l));
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UCHAR));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &uc));
+   fail_unless(uc == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_USHORT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &us));
+   fail_unless(us == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &ui));
+   fail_unless(ui == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_ULONG));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &ul));
+   fail_unless(ul == 32ul);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT64));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &u64));
+   fail_unless(u64 == 32ull);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &c));
+   fail_unless(c == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_SHORT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &s));
+   fail_unless(s == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &i));
+   fail_unless(i == 32);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_LONG));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &l));
+   fail_unless(l == 32l);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_INT64));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &i64));
+   fail_unless(i64 == 32ll);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_FLOAT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &f));
+   fail_unless(CHECK_FP(f, 32));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_DOUBLE));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &d));
+   fail_unless(CHECK_FP(d, 32));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_STRING));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &str));
+   fail_unless(str != NULL);
+   ck_assert_str_eq(str, "32");
+   eina_value_flush(&conv);
+
+   /* negative tests */
+   fail_unless(eina_value_set(value, 128l));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_CHAR));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 256l));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UCHAR));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 32768l));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_SHORT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 65536l));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_USHORT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, -32l));
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UCHAR));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_USHORT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_ULONG));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT64));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_value_test_convert_ulong)
+{
+   Eina_Value *value, conv;
+   char c;
+   short s;
+   int i;
+   long l;
+   int64_t i64;
+   unsigned char uc;
+   unsigned short us;
+   unsigned int ui;
+   unsigned long ul;
+   uint64_t u64;
+   float f;
+   double d;
+   const char *str;
+
+   eina_init();
+
+   value = eina_value_new(EINA_VALUE_TYPE_ULONG);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_set(value, 42ul));
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UCHAR));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &uc));
+   fail_unless(uc == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_USHORT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &us));
+   fail_unless(us == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &ui));
+   fail_unless(ui == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_ULONG));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &ul));
+   fail_unless(ul == 42ul);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UINT64));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &u64));
+   fail_unless(u64 == 42ull);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &c));
+   fail_unless(c == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_SHORT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &s));
+   fail_unless(s == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &i));
+   fail_unless(i == 42);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_LONG));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &l));
+   fail_unless(l == 42l);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_INT64));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &i64));
+   fail_unless(i64 == 42ll);
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_FLOAT));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &f));
+   fail_unless(CHECK_FP(f, 42));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_DOUBLE));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &d));
+   fail_unless(CHECK_FP(d, 42));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_STRING));
+   fail_unless(eina_value_convert(value, &conv));
+   fail_unless(eina_value_get(&conv, &str));
+   fail_unless(str != NULL);
+   ck_assert_str_eq(str, "42");
+   eina_value_flush(&conv);
+
+   /* negative tests */
+   fail_unless(eina_value_set(value, 128ul));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_CHAR));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 256ul));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_UCHAR));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 32768ul));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_SHORT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   fail_unless(eina_value_set(value, 65536ul));
+   fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_USHORT));
+   fail_if(eina_value_convert(value, &conv));
+   eina_value_flush(&conv);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
 
 START_TEST(eina_value_test_array)
 {
@@ -1873,6 +2152,8 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_to_string);
    tcase_add_test(tc, eina_value_test_convert_char);
    tcase_add_test(tc, eina_value_test_convert_uchar);
+   tcase_add_test(tc, eina_value_test_convert_long);
+   tcase_add_test(tc, eina_value_test_convert_ulong);
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
    tcase_add_test(tc, eina_value_test_list);
