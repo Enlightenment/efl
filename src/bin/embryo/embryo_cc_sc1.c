@@ -267,6 +267,7 @@ sc_compile(int argc, char *argv[])
    char                lcl_ctrlchar;
    int                 lcl_packstr, lcl_needsemicolon, lcl_tabsize;
    char               *tmpdir;
+   Eina_Tmpstr        *outfname;
 
    /* set global variables to their initial value */
    binf = NULL;
@@ -291,16 +292,7 @@ sc_compile(int argc, char *argv[])
    setopt(argc, argv, inpfname, binfname, incfname, reportname);
 
    /* open the output file */
-
-#ifndef HAVE_EVIL
-   tmpdir = getenv("TMPDIR");
-   if (!tmpdir) tmpdir = "/tmp";
-#else
-   tmpdir = (char *)evil_tmpdir_get();
-#endif /* ! HAVE_EVIL */
-
-   snprintf(outfname, PATH_MAX, "%s/embryo_cc.asm-tmp-XXXXXX", tmpdir);
-   fd_out = mkstemp(outfname);
+   fd_out = eina_file_mkstemp("embryo_cc.asm-tmp-XXXXXX", &outfname);
    if (fd_out < 0)
      error(101, outfname);
 
@@ -407,7 +399,8 @@ sc_compile(int argc, char *argv[])
      }				/* if */
    if (outf)
       sc_closeasm(outf);
-   unlink (outfname);
+   unlink(outfname);
+   eina_tmpstr_del(outfname);
    if (binf)
       sc_closebin(binf, errnum != 0);
 
@@ -550,7 +543,6 @@ initglobals(void)
    sc_rationaltag = 0;		/* assume no support for rational numbers */
    rational_digits = 0;		/* number of fractional digits */
 
-   outfname[0] = '\0';		/* output file name */
    inpf = NULL;			/* file read from */
    inpfname = NULL;		/* pointer to name of the file currently
 				 * read from */

@@ -45,7 +45,6 @@ constvalue libname_tab = { NULL, "", 0, 0 };	/* library table (#pragma library "
 constvalue *curlibrary = NULL;	/* current library */
 symbol  *curfunc;	/* pointer to current function */
 char    *inpfname;	/* pointer to name of the file currently read from */
-char     outfname[PATH_MAX];	/* output file name */
 char     sc_ctrlchar = CTRL_CHAR;	/* the control character (or escape character) */
 int      litidx = 0;	/* index to literal table */
 int      litmax = sDEF_LITMAX;	/* current size of the literal table */

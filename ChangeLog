@@ -1,6 +1,7 @@
 2013-03-25  Cedric Bail
 
 	* Eina: add portable eina_file_mkstemp().
+	* Embryo: use eina_file_mkstemp().
 
 2013-03-22  Jiyoun Park (Jypark)
 
