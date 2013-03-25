@@ -146,7 +146,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           }
         eina_lock_release(&sti->lock);
         eina_lock_free(&sti->lock);
-        st->items = NULL;
+        st->items = eina_inlist_remove(st->items, EINA_INLIST_GET(sti));
         free(sti);
      }
    // FIXME: kill threads and more
@@ -576,6 +576,7 @@ elm_store_free(Elm_Store *st)
           }
         eina_lock_release(&sti->lock);
         eina_lock_free(&sti->lock);
+        st->items = eina_inlist_remove(st->items, EINA_INLIST_GET(sti));
         free(sti);
      }
    if (st->genlist)
