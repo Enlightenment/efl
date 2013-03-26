@@ -266,7 +266,6 @@ sc_compile(int argc, char *argv[])
    void               *inpfmark;
    char                lcl_ctrlchar;
    int                 lcl_packstr, lcl_needsemicolon, lcl_tabsize;
-   char               *tmpdir;
    Eina_Tmpstr        *outfname;
 
    /* set global variables to their initial value */
