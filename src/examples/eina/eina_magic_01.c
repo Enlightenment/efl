@@ -46,6 +46,8 @@ pilot_new(const char *name, const char *callsign)
    EINA_MAGIC_SET(&ptr->base, BASETYPE_MAGIC);
    ptr->base.name = strdup(name);
    ptr->callsign = strdup(callsign);
+
+   return ptr;
 }
 
 void
