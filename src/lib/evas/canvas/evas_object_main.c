@@ -1024,8 +1024,8 @@ _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!obj->is_frame) && (eo_obj != evas->framespace.clip))
      {
-        if (nx > 0) nx -= evas->framespace.x;
-        if (ny > 0) ny -= evas->framespace.y;
+        nx -= evas->framespace.x;
+        ny -= evas->framespace.y;
      }
 
    if (x) *x = nx;
