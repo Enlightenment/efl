@@ -133,7 +133,7 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         break;
 
       default:
-        ERR("Not possible to set a callback for this sensor type.");
+        ERR("Not possible to read from this sensor type.");
         free(obj);
         return EINA_FALSE;
      }
@@ -141,7 +141,7 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
 }
 
 /* This function gets called when the module is loaded from the disk. Its the
- * entry point to anything in this module. After settign ourself up we register
+ * entry point to anything in this module. After setting ourself up we register
  * into the core of eeze sensor to make our functionality available.
  */
 Eina_Bool
