@@ -27,7 +27,7 @@ AC_MSG_NOTICE(DOWN[ set to ${_efl_with_binary}])
 
 with_binary_[]m4_defn([DOWN])=${_efl_with_binary}
 
-AM_CONDITIONAL(HAVE_[]UP, [test "${_efl_binary_define}" = "xyes"])
+AM_CONDITIONAL(HAVE_[]UP, [test "x${_efl_binary_define}" = "xyes"])
 AC_SUBST(DOWN)
 
 ])
