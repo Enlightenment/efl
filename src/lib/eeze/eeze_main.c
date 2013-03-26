@@ -117,6 +117,10 @@ eeze_shutdown(void)
    ecore_shutdown();
    eina_log_domain_unregister(_eeze_udev_log_dom);
    _eeze_udev_log_dom = -1;
+   eina_log_domain_unregister(_eeze_net_log_dom);
+   _eeze_net_log_dom = -1;
+   eina_log_domain_unregister(_eeze_sensor_log_dom);
+   _eeze_sensor_log_dom = -1;
    eina_shutdown();
    return _eeze_init_count;
 }
