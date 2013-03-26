@@ -355,10 +355,14 @@
  *   changed. Call the elm_genlist_realized_items_update() if items text should
  *   be translated.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
- * - @c "highlighted" - an item in the list is pressed and highlighted.
- *   The %c event_info parameter is the item that was highlighted.
- * - @c "unhighlighted" - an item in the list is unpressed and unhighlighted.
- *   The %c event_info parameter is the item that was unhighlighted.
+ * - @c "highlighted" - an item in the list is highlighted. This is called when
+ *   the user presses an item or keyboard selection is done so the item is
+ *   physically highlighted. The %c event_info parameter is the item that was
+ *   highlighted.
+ * - @c "unhighlighted" - an item in the list is unhighlighted. This is called
+ *   when the user releases an item or keyboard selection is moved so the item
+ *   is physically unhighlighted. The %c event_info parameter is the item that
+ *   was unhighlighted.
  *
  *
  * Supported elm_object_item common APIs

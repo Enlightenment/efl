@@ -36,11 +36,15 @@
  * - @c "edge,bottom" - the list is scrolled until the bottom edge
  * - @c "edge,left" - the list is scrolled until the left edge
  * - @c "edge,right" - the list is scrolled until the right edge
+ * - @c "highlighted" - an item in the list is highlighted. This is called when
+ *   the user presses an item or keyboard selection is done so the item is
+ *   physically highlighted. The %c event_info parameter is the item that was
+ *   highlighted.
+ * - @c "unhighlighted" - an item in the list is unhighlighted. This is called
+ *   when the user releases an item or keyboard selection is moved so the item
+ *   is physically unhighlighted. The %c event_info parameter is the item that
+ *   was unhighlighted.
  * - @c "language,changed" - the program's language changed
- * - @c "highlighted" - an item in the list is pressed and highlighted.
- *   The %c event_info parameter is the item that was highlighted.
- * - @c "unhighlighted" - an item in the list is unpressed and unhighlighted.
- *   The %c event_info parameter is the item that was unhighlighted.
  *
  * Available styles for it are:
  * - @c "default"
