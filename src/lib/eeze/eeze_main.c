@@ -27,7 +27,7 @@ eeze_init(void)
      return _eeze_init_count;
 
    if (!eina_init())
-     return 0;
+     return --_eeze_init_count;
 
    _eeze_udev_log_dom = eina_log_domain_register("eeze_udev", EINA_COLOR_CYAN);
    if (_eeze_udev_log_dom < 0)
@@ -94,7 +94,7 @@ eina_net_fail:
    _eeze_udev_log_dom = -1;
 eina_fail:
    eina_shutdown();
-   return 0;
+   return --_eeze_init_count;
 }
 
 EAPI int
