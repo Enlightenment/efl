@@ -833,11 +833,8 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if ((!obj->is_frame) && (eo_obj != evas->framespace.clip))
      {
-        if ((!obj->smart.parent) && (obj->is_smart))
-          {
-             nx += evas->framespace.x;
-             ny += evas->framespace.y;
-          }
+        nx += evas->framespace.x;
+        ny += evas->framespace.y;
      }
 
    if (evas_object_intercept_call_move(eo_obj, obj, nx, ny)) return;
@@ -864,7 +861,7 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_move(nx, ny));
+        eo_do(eo_obj, evas_obj_smart_move(x, y));
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -1027,11 +1024,8 @@ _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!obj->is_frame) && (eo_obj != evas->framespace.clip))
      {
-        if ((!obj->smart.parent) && (obj->is_smart))
-          {
-             if (nx > 0) nx -= evas->framespace.x;
-             if (ny > 0) ny -= evas->framespace.y;
-          }
+        if (nx > 0) nx -= evas->framespace.x;
+        if (ny > 0) ny -= evas->framespace.y;
      }
 
    if (x) *x = nx;
@@ -2455,11 +2449,31 @@ evas_object_is_frame_object_set(Evas_Object *eo_obj, Eina_Bool is_frame)
 }
 
 static void
-_is_frame_object_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+_is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {
-   Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool is_frame = va_arg(*list, int);
+   const Eina_Inlist *l;
+   Evas_Object_Protected_Data *child;
+
    obj->is_frame = is_frame;
+
+   l = evas_object_smart_members_get_direct(obj->object);
+
+   EINA_INLIST_FOREACH(l, child)
+     _is_frame_flag_set(child, is_frame);
+}
+
+static void
+_is_frame_object_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Eina_Bool is_frame = va_arg(*list, int);
+   Evas_Object_Protected_Data *obj = _pd;
+   Evas_Coord x, y;
+
+   evas_object_geometry_get(eo_obj, &x, &y, NULL, NULL);
+
+   _is_frame_flag_set(obj, is_frame);
+
+   evas_object_move(eo_obj, x, y);
 }
 
 EAPI Eina_Bool
