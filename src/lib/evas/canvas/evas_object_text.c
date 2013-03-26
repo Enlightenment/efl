@@ -1917,7 +1917,8 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->cur.text) free(o->cur.text);
-   if (o->font) evas_font_free(obj->layer->evas->evas, o->font);
+   if (o->font && obj->layer && obj->layer->evas)
+      evas_font_free(obj->layer->evas->evas, o->font);
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
 #endif
