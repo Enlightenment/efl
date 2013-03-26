@@ -635,6 +635,16 @@ EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get();
 EAPI Eina_Bool ecore_wl_dnd_start_drag();
 EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
 
+/**
+ * Returns a wl_surface with no association to any wl_shell_surface.
+ *
+ * @param win The window which will use this newly created surface.
+ *
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI struct wl_surface *ecore_wl_window_surface_create(Ecore_Wl_Window *win);
+
 #ifdef __cplusplus
 }
 #endif

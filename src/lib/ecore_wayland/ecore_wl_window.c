@@ -265,6 +265,17 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
      }
 }
 
+EAPI struct wl_surface*
+ecore_wl_window_surface_create(Ecore_Wl_Window *win)
+{
+   if (!win) return NULL;
+   if (win->surface) return NULL;
+
+   win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
+   wl_surface_set_user_data(win->surface, win);
+   return win->surface;
+}
+
 EAPI void 
 ecore_wl_window_show(Ecore_Wl_Window *win)
 {
@@ -273,9 +284,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
    if (!win) return;
    if (win->surface) return;
 
-   win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
-   wl_surface_set_user_data(win->surface, win);
-   /* wl_surface_add_listener(win->surface, &_ecore_wl_surface_listener, win); */
+   ecore_wl_window_surface_create(win);
 
    win->shell_surface = 
      wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, win->surface);
