@@ -22,6 +22,9 @@ EAPI Eo_Op ELM_OBJ_GENLIST_BASE_ID = EO_NOOP;
 
 #define MAX_ITEMS_PER_BLOCK 32
 #define REORDER_EFFECT_TIME 0.5
+#define MULTI_DOWN_TIME 1.0
+#define SWIPE_TIME 0.4
+#define SCR_HOLD_TIME 0.1
 
 #define ERR_ABORT(_msg) \
   ERR(_msg);            \
@@ -3436,7 +3439,7 @@ _item_mouse_down_cb(void *data,
         sd->prev_y = ev->canvas.y;
         sd->multi_timeout = EINA_FALSE;
         if (sd->multi_timer) ecore_timer_del(sd->multi_timer);
-        sd->multi_timer = ecore_timer_add(1, _multi_cancel, sd);
+        sd->multi_timer = ecore_timer_add(MULTI_DOWN_TIME, _multi_cancel, sd);
      }
    sd->longpressed = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
@@ -3453,7 +3456,7 @@ _item_mouse_down_cb(void *data,
        }
    evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
-   it->item->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
+   it->item->swipe_timer = ecore_timer_add(SWIPE_TIME, _swipe_cancel, it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
      it->long_timer = ecore_timer_add
@@ -4695,7 +4698,7 @@ _decorate_item_set(Elm_Gen_Item *it)
         sd->scr_hold_timer = NULL;
      }
    eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_TRUE));
-   sd->scr_hold_timer = ecore_timer_add(0.1, _scroll_hold_timer_cb, sd);
+   sd->scr_hold_timer = ecore_timer_add(SCR_HOLD_TIME, _scroll_hold_timer_cb, sd);
 
    evas_event_freeze(evas_object_evas_get(sd->obj));
    _decorate_item_realize(it);
