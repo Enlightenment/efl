@@ -105,6 +105,8 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
 
+   if (win->frame_callback) wl_callback_destroy(win->frame_callback);
+   win->frame_callback = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
 
