@@ -901,7 +901,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
                                       _edje_object_pack_item_hints_set(child_obj, &pack_it_copy);
 
-                                      if (pack_it_copy.spread.h >= 1 && pack_it_copy.spread.w > 1)
+                                      if (pack_it_copy.spread.h > 0 && pack_it_copy.spread.w > 0)
                                         {
                                            buf = eina_strbuf_new();
                                            if (name)
