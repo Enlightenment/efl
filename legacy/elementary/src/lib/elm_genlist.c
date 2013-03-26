@@ -3496,12 +3496,20 @@ _item_block_new(Elm_Genlist_Smart_Data *sd,
    return itb;
 }
 
+/**
+ * @internal
+ *
+ * This function adds an item to a block's item list. This may or may not
+ * rearrange existing blocks and create a new block.
+ *
+ */
 static Eina_Bool
 _item_block_add(Elm_Genlist_Smart_Data *sd,
                 Elm_Gen_Item *it)
 {
    Item_Block *itb = NULL;
 
+   // when a new item does not depend on another item
    if (!it->item->rel)
      {
 newblock:
@@ -3569,6 +3577,7 @@ newblock:
           }
         else
           {
+             // item move_before, prepend, insert_before, sorted_insert with before
              if (it->item->before)
                {
                   if (sd->blocks)
@@ -3589,6 +3598,7 @@ newblock:
 
                   _item_position_update(itb->items, 0);
                }
+             // item move_after, append, insert_after, sorted_insert without before
              else
                {
                   if (sd->blocks)
@@ -3610,6 +3620,7 @@ newblock:
                }
           }
      }
+   // when a new item depends on another item
    else
      {
         Eina_List *tmp;
