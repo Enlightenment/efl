@@ -3984,8 +3984,10 @@ _access_activate_cb(void *data __UNUSED__,
              Elm_Gen_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it)
-                 _item_unselect(it2);
+               {
+                  if (it2 != it)
+                    _item_unselect(it2);
+               }
           }
         _item_highlight(it);
         it->sel_cb(it);
@@ -4144,8 +4146,10 @@ _item_mouse_up_cb(void *data,
              Elm_Gen_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it)
-                 _item_unselect(it2);
+               {
+                  if (it2 != it)
+                    _item_unselect(it2);
+               }
           }
         _item_highlight(it);
         it->sel_cb(it);
