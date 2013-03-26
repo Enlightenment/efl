@@ -67,6 +67,7 @@ int  _ecore_evas_wl_common_render(Ecore_Evas *ee);
 void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 void _ecore_evas_wl_common_state_change(void *data);
+void _ecore_evas_wl_common_render_updates(void *data, Evas *evas, void *event);
 
 Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
 

@@ -557,7 +557,6 @@ _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
      }
    else
      evas_norender(ee->evas);
-   evas_render_updates_free(updates);
 
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
@@ -585,14 +584,16 @@ _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 static void
 _ecore_evas_x_render_updates(void *data, Evas *e EINA_UNUSED, void *event_info)
 {
+   Evas_Event_Render_Post *ev = event_info;
    Ecore_Evas *ee = data;
-   Eina_List *updates = event_info;
+
+   if (!ev) return ;
 
    EDBG("ee=%p finished asynchronous render.", ee);
 
    ee->in_async_render = EINA_FALSE;
 
-   _render_updates_process(ee, updates);
+   _render_updates_process(ee, ev->updated_area);
 
    if (ee->delayed.resize_shape)
      {
@@ -655,8 +656,9 @@ _ecore_evas_x_render(Ecore_Evas *ee)
      {
         Eina_List *updates = evas_render_updates(ee->evas);
         rend = _render_updates_process(ee, updates);
+        evas_render_updates_free(updates);
      }
-   else if (evas_render_async(ee->evas, _ecore_evas_x_render_updates, ee))
+   else if (evas_render_async(ee->evas))
      {
         EDBG("ee=%p started asynchronous render.", ee);
         ee->in_async_render = EINA_TRUE;
@@ -3224,6 +3226,9 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
                            _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
+   if (ee->can_async_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
+			     _ecore_evas_x_render_updates, ee);
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);

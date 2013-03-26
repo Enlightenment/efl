@@ -61,7 +61,7 @@ struct _Render_Updates
 };
 
 static Eina_Bool
-evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Evas_Event_Cb updates_func, void *updates_data, Eina_Bool do_async);
+evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
 static double
@@ -1424,7 +1424,6 @@ evas_render_updates_internal(Evas *eo_e,
                              unsigned char do_draw,
                              Evas_Render_Done_Cb done_func,
                              void *done_data,
-                             Evas_Event_Cb updates_func, void *updates_data,
                              Eina_Bool do_async)
 {
    Evas_Object *eo_obj;
@@ -1828,8 +1827,6 @@ evas_render_updates_internal(Evas *eo_e,
           {
              eo_ref(eo_e);
              e->rendering = EINA_TRUE;
-             e->render.data = updates_data;
-             e->render.updates_cb = updates_func;
 
              evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
           }
@@ -1970,8 +1967,6 @@ evas_render_wakeup(Evas *eo_e)
    Eina_Bool haveup = EINA_FALSE;
    Eina_List *ret_updates = NULL;
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
-   Evas_Event_Cb up_cb;
-   void *up_data;
 
    EINA_LIST_FREE(e->render.updates, ru)
      {
@@ -2014,17 +2009,12 @@ evas_render_wakeup(Evas *eo_e)
    eina_array_clean(&e->texts_unref_queue);
 
    /* post rendering */
-   up_cb = e->render.updates_cb;
-   up_data = e->render.data;
-   e->render.updates_cb = NULL;
-   e->render.data = NULL;
    e->rendering = EINA_FALSE;
 
    post.updated_area = ret_updates;
    evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
 
-   if (up_cb) up_cb(up_data, eo_e, ret_updates);
-   else evas_render_updates_free(ret_updates);
+   evas_render_updates_free(ret_updates);
 
    eo_unref(eo_e);
 }
@@ -2052,26 +2042,24 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 EAPI Eina_Bool
-evas_render_async(Evas *eo_e, Evas_Event_Cb func, void *data)
+evas_render_async(Evas *eo_e)
 {
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
    MAGIC_CHECK_END();
    Eina_Bool ret = EINA_FALSE;
-   eo_do(eo_e, evas_canvas_render_async(func, data, &ret));
+   eo_do(eo_e, evas_canvas_render_async(&ret));
    return ret;
 }
 
 void
 _canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
 {
-   Evas_Event_Cb func = va_arg(*list, Evas_Event_Cb);
-   void *data = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Public_Data *e = _pd;
 
    *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
-                                       e, func, data, EINA_TRUE);
+                                       e, EINA_TRUE);
 }
 
 EAPI Eina_List *
@@ -2094,7 +2082,7 @@ evas_render_updates_internal_wait(Evas *eo_e,
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
    if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
-                                     NULL, NULL, NULL, EINA_FALSE))
+                                     NULL, EINA_FALSE))
       return NULL;
 
    ret = e->render.updates;

@@ -378,8 +378,6 @@ struct _Evas_Public_Data
 
    struct {
       Eina_List *updates;
-      Evas_Event_Cb updates_cb;
-      void *data;
    } render;
 
    Eina_Array     delete_objects;

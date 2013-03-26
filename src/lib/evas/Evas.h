@@ -1684,7 +1684,7 @@ EAPI void              evas_obscured_clear(Evas *e) EINA_ARG_NONNULL(1);
  * @ingroup Evas_Canvas
  * @since 1.8
  */
-EAPI Eina_Bool         evas_render_async(Evas *e, Evas_Event_Cb func, void *data) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool         evas_render_async(Evas *e) EINA_ARG_NONNULL(1);
 
 /**
  * Force immediate renderization of the given Evas canvas.
@@ -3715,13 +3715,11 @@ enum
  *
  * Render canvas asynchronously
  *
- * @param[in] func Callback function for list of updates
- * @param[in] data User data pointer to pass to func
  * @param[out] ret Whether or not a frame will get rendered after the call
  *
  * @see evas_render_async
  */
-#define evas_canvas_render_async(func, data, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_ASYNC), EO_TYPECHECK(Evas_Event_Cb, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_canvas_render_async(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_ASYNC), EO_TYPECHECK(Eina_Bool *, ret)
 
 
 

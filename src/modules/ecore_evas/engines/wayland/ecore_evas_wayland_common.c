@@ -36,7 +36,7 @@ static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
 /* local function prototypes */
 static int _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
-static void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
+void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 
 /* Frame listener */
 static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
@@ -72,8 +72,6 @@ _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
      }
    else
      evas_norender(ee->evas);
-
-   evas_render_updates_free(updates);
 
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
@@ -780,18 +778,17 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
    return rend;
 }
 
-static void 
+void 
 _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
 {
-   Ecore_Evas *ee;
-   Eina_List *updates;
+   Evas_Event_Render_Post *ev = event;
+   Ecore_Evas *ee = data;
 
-   if (!(ee = data)) return;
-   if (!(updates = event)) return;
+   if (!(ee) || !(ev)) return;
 
    ee->in_async_render = EINA_FALSE;
 
-   _ecore_evas_wl_common_render_updates_process(ee, updates);
+   _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
 }
 
 void
@@ -871,13 +868,13 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 
              updates = evas_render_updates(ee->evas);
              rend = _ecore_evas_wl_common_render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
 
              if (rend) 
                win->frame_pending = EINA_TRUE;
           }
      }
-   else if (evas_render_async(ee->evas, 
-                              _ecore_evas_wl_common_render_updates, ee))
+   else if (evas_render_async(ee->evas))
      {
         ee->in_async_render = EINA_TRUE;
         rend = 1;
