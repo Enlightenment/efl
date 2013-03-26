@@ -13,6 +13,13 @@
 #include <Eeze_Sensor.h>
 #include "eeze_sensor_private.h"
 
+static int _eeze_sensor_tizen_log_dom = -1;
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...)  EINA_LOG_DOM_ERR(_eeze_sensor_tizen_log_dom, __VA_ARGS__)
+
 Eeze_Sensor_Module *esensor_module;
 /* Tizen sensor handle */
 sensor_h sensor_handle;
@@ -826,6 +833,14 @@ eeze_sensor_tizen_init(void)
 Eina_Bool
 sensor_tizen_init(void)
 {
+
+   _eeze_sensor_tizen_log_dom = eina_log_domain_register("eeze_sensor_tizen", EINA_COLOR_BLUE);
+   if (_eeze_sensor_tizen_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register 'eeze_sensor_tizen' log domain.");
+        return EINA_FALSE;
+     }
+
    /* Check to avoid multi-init */
    if (esensor_module) return EINA_FALSE;
 
@@ -862,6 +877,9 @@ sensor_tizen_shutdown(void)
 
    free(esensor_module);
    esensor_module = NULL;
+
+   eina_log_domain_unregister(_eeze_sensor_tizen_log_dom);
+   _eeze_sensor_tizen_log_dom = -1;
 }
 
 EINA_MODULE_INIT(sensor_tizen_init);
