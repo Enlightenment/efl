@@ -1425,7 +1425,7 @@ _ecore_evas_extn_socket_window_profile_change_done_send(Ecore_Evas *ee)
 }
 
 static void *
-_ecore_evas_socket_switch(void *data, void *dest_buf)
+_ecore_evas_socket_switch(void *data, void *dest_buf EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
