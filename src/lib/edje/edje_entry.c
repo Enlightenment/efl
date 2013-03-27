@@ -1431,8 +1431,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _edje_emit(ed, "entry,key,delete", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Home") ||
-            ((!strcmp(ev->keyname, "KP_Home")) && !ev->string))
+   else if ((!alt) &&
+            (!strcmp(ev->keyname, "Home") ||
+             ((!strcmp(ev->keyname, "KP_Home")) && !ev->string)))
      {
         _compose_seq_reset(en);
         if (en->select_allow)
@@ -1451,8 +1452,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _edje_emit(ed, "entry,key,home", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "End") ||
-            ((!strcmp(ev->keyname, "KP_End")) && !ev->string))
+   else if ((!alt) &&
+            (!strcmp(ev->keyname, "End") ||
+             ((!strcmp(ev->keyname, "KP_End")) && !ev->string)))
      {
         _compose_seq_reset(en);
         if (en->select_allow)
