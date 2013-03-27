@@ -2179,6 +2179,9 @@ eina_log_timing(int domain,
      }
 #endif
 
+   if (!t->phase && state == EINA_LOG_STATE_STOP)
+     return ;
+
    if (t->phase == EINA_LOG_STATE_INIT &&
        phase == EINA_LOG_STATE_SHUTDOWN)
      return ;
