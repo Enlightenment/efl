@@ -3595,6 +3595,40 @@ _edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
 }
 
 void
+_edje_entry_input_panel_layout_variation_set(Edje_Real_Part *rp, int variation)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return;
+   en = rp->typedata.text->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_layout_variation_set(en->imf_context, variation);
+#else
+   (void) variation;
+#endif
+}
+
+int
+_edje_entry_input_panel_layout_variation_get(Edje_Real_Part *rp)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return 0;
+   en = rp->typedata.text->entry_data;
+   if (!en) return 0;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_layout_variation_get(en->imf_context);
+#endif
+
+   return 0;
+}
+
+void
 _edje_entry_imf_context_reset(Edje_Real_Part *rp)
 {
 #ifdef HAVE_ECORE_IMF

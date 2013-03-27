@@ -5227,6 +5227,14 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Edje_Input_Panel_Layout;
 
+enum
+{
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL
+};
+
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
@@ -5344,6 +5352,34 @@ EAPI void             edje_object_part_text_input_panel_layout_set      (Evas_Ob
  * @since 1.1
  */
 EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get (const Evas_Object *obj, const char *part);
+
+/**
+ * @brief Set the layout variation of the input panel.
+ *
+ * The layout variation of the input panel or virtual keyboard can make it easier or
+ * harder to enter content. This allows you to hint what kind of input you
+ * are expecting to enter and thus have the input panel automatically
+ * come up with the right mode.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param variation layout variation type
+ * @since 1.8
+ */
+EAPI void             edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const char *part, int variation);
+
+/**
+ * @brief Get the layout variation of the input panel.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return Layout variation type of the input panel
+ *
+ * @see edje_object_part_text_input_panel_layout_variation_set
+ * @since 1.8
+ */
+EAPI int              edje_object_part_text_input_panel_layout_variation_get(const Evas_Object *obj, const char *part);
 
 /**
  * @brief Set the autocapitalization type on the immodule.
