@@ -552,6 +552,10 @@ elm_quicklaunch_init(int    argc,
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
 
+   eina_log_timing(_elm_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _elm_ql_init_count;
 }
 
@@ -642,6 +646,11 @@ elm_quicklaunch_shutdown(void)
 {
    _elm_ql_init_count--;
    if (_elm_ql_init_count > 0) return _elm_ql_init_count;
+
+   eina_log_timing(_elm_log_dom,
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_SHUTDOWN);
+
    if (pfx) eina_prefix_free(pfx);
    pfx = NULL;
    eina_stringshare_del(_elm_data_dir);
