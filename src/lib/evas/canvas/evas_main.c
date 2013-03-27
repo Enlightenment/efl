@@ -732,8 +732,8 @@ _canvas_pointer_output_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    int *x = va_arg(*list, int *);
    int *y = va_arg(*list, int *);
    const Evas_Public_Data *e = _pd;
-   if (x) *x = e->pointer.x;
-   if (y) *y = e->pointer.y;
+   if (x) *x = e->pointer.x - e->framespace.x;
+   if (y) *y = e->pointer.y - e->framespace.y;
 }
 
 EAPI void
@@ -754,8 +754,8 @@ _canvas_pointer_canvas_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord *y = va_arg(*list, Evas_Coord *);
 
    const Evas_Public_Data *e = _pd;
-   if (x) *x = e->pointer.x;
-   if (y) *y = e->pointer.y;
+   if (x) *x = e->pointer.x - e->framespace.x;
+   if (y) *y = e->pointer.y - e->framespace.y;
 }
 
 EAPI int
