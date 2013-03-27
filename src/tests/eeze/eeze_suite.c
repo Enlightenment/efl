@@ -524,9 +524,6 @@ START_TEST(eeze_test_sensor_async_read)
    ret = eeze_init();
    fail_if(ret != 1);
 
-   EEZE_SENSOR_EVENT_ACCELEROMETER = ecore_event_type_new();
-   fail_if(EEZE_SENSOR_EVENT_ACCELEROMETER < 1);
-
    handler = ecore_event_handler_add(EEZE_SENSOR_EVENT_ACCELEROMETER, event_cb, NULL);
    fail_if(handler == NULL);
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_ACCELEROMETER);
