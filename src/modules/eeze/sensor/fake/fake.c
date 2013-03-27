@@ -117,7 +117,6 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
    switch (sensor_type)
      {
       case EEZE_SENSOR_TYPE_ACCELEROMETER:
-         ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
       case EEZE_SENSOR_TYPE_MAGNETIC:
       case EEZE_SENSOR_TYPE_ORIENTATION:
       case EEZE_SENSOR_TYPE_GYROSCOPE:
@@ -127,6 +126,7 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         obj->data[2] = 42;
         gettimeofday(&tv, NULL);
         obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
+        ecore_event_add(sensor_type, obj, NULL, NULL);
         break;
 
       case EEZE_SENSOR_TYPE_LIGHT:
@@ -137,6 +137,7 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         obj->data[0] = 7;
         gettimeofday(&tv, NULL);
         obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
+        ecore_event_add(sensor_type, obj, NULL, NULL);
         break;
 
       default:
