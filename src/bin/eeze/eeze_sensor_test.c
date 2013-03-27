@@ -120,7 +120,7 @@ main(void)
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_PROXIMITY);
    if (sens)
      {
-         if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
+         if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
          printf("Proximity output: accuracy %i, distance %f at time: %lli\n", acc, x, timestamp);
@@ -132,7 +132,7 @@ main(void)
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
    if (sens)
      {
-         if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
+         if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
          printf("Light output: accuracy %i, lux %f at time: %lli\n", acc, x, timestamp);
