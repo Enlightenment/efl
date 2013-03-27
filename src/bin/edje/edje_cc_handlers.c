@@ -190,6 +190,7 @@ static void st_collections_group_max(void);
 static void st_collections_group_broadcast_signal(void);
 static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
+static void st_collections_group_mouse_events(void);
 
 static void st_collections_group_limits_vertical(void);
 static void st_collections_group_limits_horizontal(void);
@@ -437,6 +438,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.max", st_collections_group_max},
      {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
      {"collections.group.orientation", st_collections_group_orientation},
+     {"collections.group.mouse_events", st_collections_group_mouse_events},
      {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
      {"collections.group.limits.vertical", st_collections_group_limits_vertical},
@@ -2411,6 +2413,7 @@ static void
 ob_collections_group(void)
 {
    Edje_Part_Collection *pc;
+   Edje_Part_Collection_Parser *pcp;
    Code *cd;
 
    if (current_de && !current_de->entry)
@@ -2424,13 +2427,16 @@ ob_collections_group(void)
 
    eina_hash_add(edje_collections_lookup, &current_de->id, current_de);
 
-   pc = mem_alloc(SZ(Edje_Part_Collection));
+   pc = mem_alloc(SZ(Edje_Part_Collection_Parser));
    edje_collections = eina_list_append(edje_collections, pc);
    pc->id = current_de->id;
    pc->broadcast_signal = EINA_TRUE; /* This was the behaviour by default in Edje 1.1 */
 
    cd = mem_alloc(SZ(Code));
    codes = eina_list_append(codes, cd);
+
+   pcp = (Edje_Part_Collection_Parser *)pc;
+   pcp->default_mouse_events = 1;
 
 #ifdef HAVE_EPHYSICS
    pc->physics.world.gravity.x = 0;
@@ -2535,6 +2541,7 @@ static void
 st_collections_group_inherit(void)
 {
    Edje_Part_Collection *pc, *pc2;
+   Edje_Part_Collection_Parser *pcp, *pcp2;
    Edje_Part *ep, *ep2;
    Edje_Part_Parser *epp, *epp2;
    Edje_Pack_Element *item, *item2;
@@ -2630,6 +2637,10 @@ st_collections_group_inherit(void)
    pc->prop.orientation = pc2->prop.orientation;
 
    pc->lua_script_only = pc2->lua_script_only;
+
+   pcp = (Edje_Part_Collection_Parser *)pc;
+   pcp2 = (Edje_Part_Collection_Parser *)pc2;
+   pcp->default_mouse_events = pcp2->default_mouse_events;
 
    #define STRDUP(x) x ? strdup(x) : NULL
    for (i = 0 ; i < pc2->parts_count ; i++)
@@ -3070,6 +3081,28 @@ st_collections_group_orientation(void)
 }
 
 /**
+    @page edcref
+    @property
+        mouse_events
+    @parameters
+        [1 or 0]
+    @effect
+        Change the default value of mouse_events for every part in this group.
+        Defaults to 1 if not set, to maintain compatibility.
+    @endproperty
+ */
+static void
+st_collections_group_mouse_events(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(1);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = parse_bool(0);
+}
+
+/**
    @edcsubsection{collections_group_limits,Limits}
  */
 
@@ -3247,6 +3280,7 @@ static Edje_Part *
 edje_cc_handlers_part_make(void)
 {  /* Doing ob_collections_group_parts_part() job, without hierarchy */
    Edje_Part_Collection *pc;
+   Edje_Part_Collection_Parser *pcp;
    Edje_Part *ep;
    Edje_Part_Parser *epp;
 
@@ -3261,10 +3295,11 @@ edje_cc_handlers_part_make(void)
         exit(-1);
      }
    current_part = pc->parts[pc->parts_count - 1] = ep;
+   pcp = (Edje_Part_Collection_Parser *)pc;
 
    ep->id = pc->parts_count - 1;
    ep->type = EDJE_PART_TYPE_IMAGE;
-   ep->mouse_events = 1;
+   ep->mouse_events = pcp->default_mouse_events;
    ep->repeat_events = 0;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
    ep->scale = 0;
@@ -3593,7 +3628,8 @@ st_collections_group_parts_part_insert_after(void)
     @effect
         Specifies whether the part will emit signals, although it is named
         "mouse_events", disabling it (0) will prevent the part from emitting
-        any type of signal at all. It's set to 1 by default.
+        any type of signal at all. It's set to 1 by default, or to the value
+        set to "mouse_events" at the group level, if any.
     @endproperty
 */
 static void

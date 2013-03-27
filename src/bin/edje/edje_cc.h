@@ -53,6 +53,7 @@ typedef struct _SrcFile_List          SrcFile_List;
 typedef struct _Edje_Program_Parser                  Edje_Program_Parser;
 typedef struct _Edje_Pack_Element_Parser             Edje_Pack_Element_Parser;
 typedef struct _Edje_Part_Parser                     Edje_Part_Parser;
+typedef struct _Edje_Part_Collection_Parser          Edje_Part_Collection_Parser;
 
 struct _New_Object_Handler
 {
@@ -137,6 +138,12 @@ struct _Edje_Part_Parser
       int                 linked_next; /* the number linked next part for reorder */
    } reorder;
    Eina_Bool can_override;
+};
+
+struct _Edje_Part_Collection_Parser
+{
+   Edje_Part_Collection common;
+   Eina_Bool default_mouse_events;
 };
 
 /* global fn calls */
