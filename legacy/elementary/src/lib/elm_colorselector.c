@@ -27,6 +27,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {NULL, NULL}
 };
 
+enum Palette_Box_Direction
+{
+   PALETTE_BOX_UP,
+   PALETTE_BOX_DOWN
+};
+
 static void
 _items_del(Elm_Colorselector_Smart_Data *sd)
 {
@@ -1566,6 +1572,63 @@ _elm_colorselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      free(tmp[i]);
 }
 
+static Eina_List*
+_palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction dir)
+{
+   Evas_Coord basex, basey, x, y, dx, min_dx;
+   Elm_Color_Item *item;
+   Eina_List* l;
+   Eina_List* res = NULL;
+   Eina_List* (*dir_func)(const Eina_List*);
+
+   if (!ref_item) return NULL;
+
+   switch(dir)
+     {
+        case PALETTE_BOX_UP:
+          dir_func = eina_list_prev;
+          break;
+        case PALETTE_BOX_DOWN:
+          dir_func = eina_list_next;
+          break;
+        default:
+          return NULL;
+     }
+
+   item = eina_list_data_get(ref_item);
+   evas_object_geometry_get(VIEW(item), &basex, &basey, NULL, NULL);
+
+   for (l = ref_item; l; l = dir_func(l))
+     {
+        item = eina_list_data_get(l);
+        evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
+        if (basey != y) break;
+     }
+
+   basey = y;
+   min_dx = -1;
+
+   for (; l; l = dir_func(l))
+     {
+        item = eina_list_data_get(l);
+        evas_object_geometry_get(VIEW(item), &x, &y, NULL, NULL);
+        if (basey != y) break;
+
+        dx = abs(x - basex);
+        if (dx < min_dx || min_dx < 0)
+          {
+             min_dx = dx;
+             res = l;
+          }
+        else
+          {
+             break;
+          }
+      }
+
+   return res;
+}
+
 static void
 _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
 {
@@ -1631,21 +1694,24 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
                }
           }
         else if (sd->focused == ELM_COLORSELECTOR_PALETTE)
-          return;
+        {
+            cl = _palette_box_vertical_item_get(sd->selected, PALETTE_BOX_UP);
+            if (!cl) cl = sd->selected;
+        }
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
             ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE)
           {
-             if (sd->mode == ELM_COLORSELECTOR_BOTH)
+             cl = _palette_box_vertical_item_get(sd->selected, PALETTE_BOX_DOWN);
+             if (sd->mode == ELM_COLORSELECTOR_BOTH && !cl)
                {
                   sd->focused = ELM_COLORSELECTOR_COMPONENTS;
                   /*when focus is shifted to component start from
                    * first color type*/
                   sd->sel_color_type = HUE;
                }
-             else return;
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
