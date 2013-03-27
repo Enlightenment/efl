@@ -571,7 +571,7 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
 }
 
 EAPI int
-eina_file_mkstemp(const char *filename, Eina_Tmpstr **path)
+eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
    const char *tmpdir;
@@ -584,7 +584,7 @@ eina_file_mkstemp(const char *filename, Eina_Tmpstr **path)
    tmpdir = (char *)evil_tmpdir_get();
 #endif /* ! HAVE_EVIL */
 
-   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, filename);
+   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
 
    fd = mkstemp(buffer);
    if (path) *path = eina_tmpstr_add(buffer);
@@ -592,4 +592,28 @@ eina_file_mkstemp(const char *filename, Eina_Tmpstr **path)
      return -1;
 
    return fd;
+}
+
+EAPI Eina_Bool
+eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
+{
+   char buffer[PATH_MAX];
+   const char *tmpdir;
+   char *tmpdirname;
+
+#ifndef HAVE_EVIL
+   tmpdir = getenv("TMPDIR");
+   if (!tmpdir) tmpdir = "/tmp";
+#else
+   tmpdir = (char *)evil_tmpdir_get();
+#endif /* ! HAVE_EVIL */
+
+   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
+
+   tmpdirname = mkdtemp(buffer);
+   if (path) *path = eina_tmpstr_add(buffer);
+   if (tmpdirname == NULL)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }

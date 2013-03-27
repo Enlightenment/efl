@@ -23,10 +23,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
 #include "eina_safety_checks.h"
+
+static int default_dir_rights = 0777;
 
 #ifdef EINA_SAFETY_CHECKS
 struct log_ctx {
@@ -134,9 +137,128 @@ START_TEST(eina_file_split_simple)
 }
 END_TEST
 
+Eina_Tmpstr*
+get_full_path(const char* tmpdirname, const char* filename)
+{
+    char full_path[PATH_MAX] = "";
+    eina_str_join(full_path, sizeof(full_path), '/', tmpdirname, filename);
+    return eina_tmpstr_add(full_path);
+}
+
+Eina_Tmpstr*
+get_eina_test_file_tmp_dir()
+{
+   Eina_Tmpstr *tmp_dir;
+
+   Eina_Bool created = eina_file_mkdtemp("EinaFileTestXXXXXX", &tmp_dir);
+
+   if (!created)
+     {
+        return NULL;
+     }
+
+   return tmp_dir;
+}
+
+START_TEST(eina_file_direct_ls_simple)
+{
+   eina_init();
+
+   const char *good_dirs[] =
+     {
+        "eina_file_direct_ls_simple_dir",
+        "a.",
+        "$a$b",
+        "~$a@:-*$b!{}"
+     };
+   const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
+   Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
+   fail_if(test_dirname == NULL);
+
+   for (int i = 0; i != good_dirs_count; ++i)
+     {
+        Eina_Tmpstr *dirname = get_full_path(test_dirname, good_dirs[i]);
+        // clean old test directories
+        rmdir(dirname);
+        fail_if(mkdir(dirname, default_dir_rights) != 0);
+
+        Eina_File_Direct_Info *dir_info;
+        Eina_Iterator *it = eina_file_direct_ls(test_dirname);
+        Eina_Bool found_dir = EINA_FALSE;
+
+        while (eina_iterator_next(it, (void **)&dir_info))
+          {
+             if (!strcmp(dir_info->path, dirname))
+               {
+                  found_dir = EINA_TRUE;
+               }
+          }
+
+        eina_iterator_free(it);
+
+        fail_if(!found_dir);
+        fail_if(rmdir(dirname) != 0);
+
+        eina_tmpstr_del(dirname);
+     }
+   fail_if(rmdir(test_dirname) != 0);
+   eina_tmpstr_del(test_dirname);
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_file_ls_simple)
+{
+   eina_init();
+
+   const char *good_dirs[] =
+     {
+        "eina_file_ls_simple_dir",
+        "b.",
+        "$b$a",
+        "~$b@:-*$a!{}"
+     };
+   const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
+   Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
+   fail_if(test_dirname == NULL);
+
+   for (int i = 0; i != good_dirs_count; ++i)
+     {
+        Eina_Tmpstr *dirname = get_full_path(test_dirname, good_dirs[i]);
+        // clean old test directories
+        rmdir(dirname);
+        fail_if(mkdir(dirname, default_dir_rights) != 0);
+
+        char *filename;
+        Eina_Iterator *it = eina_file_ls(test_dirname);
+        Eina_Bool found_dir = EINA_FALSE;
+
+        while (eina_iterator_next(it, (void **)&filename))
+          {
+             if (!strcmp(filename, dirname))
+               {
+                  found_dir = EINA_TRUE;
+               }
+          }
+
+        eina_iterator_free(it);
+
+        fail_if(!found_dir);
+        fail_if(rmdir(dirname) != 0);
+
+        eina_tmpstr_del(dirname);
+     }
+   fail_if(rmdir(test_dirname) != 0);
+   eina_tmpstr_del(test_dirname);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
    tcase_add_test(tc, eina_file_split_simple);
+   tcase_add_test(tc, eina_file_direct_ls_simple);
+   tcase_add_test(tc, eina_file_ls_simple);
 }
 

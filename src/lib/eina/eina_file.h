@@ -323,7 +323,40 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  */
 EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
-EAPI int eina_file_mkstemp(const char *filename, Eina_Tmpstr **path);
+/**
+ * @brief Generate and create a uniquely named temporary file from template.
+ *        Generated file is opened with the open(2) O_EXCL flag.
+ *
+ * @param [in] templatename is a string. The last six characters of templatename must be XXXXXX. 
+ * @param [out] path Where to put the name of the created file. If not NULL
+ *              should be released by eina_tmpstr_del.
+ * @return On success @c file descriptor of the temporary file is returned, 
+ *         On error @c -1 is returned, in which case errno is set appropriately.
+ *
+ * This function calls mkstemp, generates a unique temporary filename 
+ * from template, creates and opens the file, and returns an open file 
+ * descriptor for the file. 
+ *
+ * @see eina_file_mkdtemp()
+ * @since 1.8
+ */
+EAPI int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path);
+
+/**
+ * @brief Generate and create a uniquely named temporary directory from template.
+ *
+ * @param [in] templatename is a string. The last six characters of templatename must be XXXXXX.
+ * @param [out] path Where to put the name of the created directory. If not NULL
+ *              should be released by eina_tmpstr_del.
+ * @return On success @c EINA_TRUE is returned, On error @c EINA_FALSE is returned, 
+ *         in which case errno is set appropriately.
+ *
+ * This function calls mkdtemp. The directory is then created with permissions 0700. 
+ *
+ * @see eina_file_mkstemp()
+ * @since 1.8
+ */
+EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path);
 
 /**
  * @brief Get an iterator to list the content of a directory, with direct
