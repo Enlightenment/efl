@@ -83,7 +83,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    char buf[8];
    unsigned int i;
    Evas_Object *win, *bx, *fp, *bt, *bx2, *sl;
-   Elm_Object_Item *it, *edje_it = NULL;
+   Elm_Object_Item *it;
    static const char *lbl[] = {
         "Elementary",
         "Evas",
@@ -111,9 +111,9 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    for (i = 0; i < sizeof(lbl)/sizeof(char *); i++)
      {
         it = elm_flipselector_item_append(fp, lbl[i], NULL, NULL);
-        if (i == 3) edje_it = it;
+        if (i == 3)
+          elm_flipselector_item_selected_set(it, EINA_TRUE);
      }
-   elm_flipselector_item_selected_set(edje_it, EINA_TRUE);
    elm_box_pack_end(bx, fp);
    evas_object_show(fp);
 
