@@ -310,6 +310,8 @@ eina_init(void)
 
    eina_cpu_count_internal();
 
+   eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
+
    _eina_main_count = 1;
    return 1;
 }
@@ -325,6 +327,10 @@ eina_shutdown(void)
    _eina_main_count--;
    if (EINA_UNLIKELY(_eina_main_count == 0))
      {
+        eina_log_timing(_eina_log_dom,
+                        EINA_LOG_STATE_START,
+                        EINA_LOG_STATE_SHUTDOWN);
+
         _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
 
 #ifdef EINA_HAVE_DEBUG_THREADS

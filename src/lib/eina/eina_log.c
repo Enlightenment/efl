@@ -54,6 +54,8 @@
 #include "eina_safety_checks.h"
 #include "eina_log.h"
 
+#include "eina_inline_private.h"
+
 /* TODO
  * + printing logs to stdout or stderr can be implemented
  * using a queue, useful for multiple threads printing
@@ -91,6 +93,14 @@ struct _Eina_Log_Domain_Level_Pending
    char name[];
 };
 
+typedef struct _Eina_Log_Timing Eina_Log_Timing;
+struct _Eina_Log_Timing
+{
+   const char *phase;
+   Eina_Nano_Time start;
+   Eina_Log_State state;
+};
+
 /*
  * List of levels for domains set by the user before the domains are registered,
  * updates the domain levels on the first log and clears itself.
@@ -104,6 +114,7 @@ static Eina_Bool _disable_color = EINA_FALSE;
 static Eina_Bool _disable_file = EINA_FALSE;
 static Eina_Bool _disable_function = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
+static Eina_Bool _disable_timing = EINA_TRUE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EINA_LOG_BACKTRACE
@@ -179,6 +190,7 @@ static Eina_Lock _log_mutex;
 
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
+static Eina_Log_Timing *_log_timing = NULL;
 static unsigned int _log_domains_count = 0;
 static size_t _log_domains_allocated = 0;
 
@@ -940,7 +952,8 @@ eina_log_domain_str_get(const char *name, const char *color)
  * constructor acts upon an pre-allocated object.
  */
 static Eina_Log_Domain *
-eina_log_domain_new(Eina_Log_Domain *d, const char *name, const char *color)
+eina_log_domain_new(Eina_Log_Domain *d, Eina_Log_Timing *t,
+                    const char *name, const char *color)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(d,    NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
@@ -955,6 +968,8 @@ eina_log_domain_new(Eina_Log_Domain *d, const char *name, const char *color)
 
    d->name = strdup(name);
    d->namelen = strlen(name);
+
+   t->phase = NULL;
 
    return d;
 }
@@ -1082,7 +1097,7 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
         if (_log_domains[i].deleted)
           {
              // Found a flagged slot, free domain_str and replace slot
-             eina_log_domain_new(&_log_domains[i], name, color);
+             eina_log_domain_new(&_log_domains[i], &_log_timing[i], name, color);
              goto finish_register;
           }
      }
@@ -1090,6 +1105,7 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
    if (_log_domains_count >= _log_domains_allocated)
      {
         Eina_Log_Domain *tmp;
+        Eina_Log_Timing *tim;
         size_t size;
 
         if (!_log_domains)
@@ -1100,19 +1116,25 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
            size = _log_domains_allocated + 8;
 
         tmp = realloc(_log_domains, sizeof(Eina_Log_Domain) * size);
+        tim = realloc(_log_timing, sizeof (Eina_Log_Timing) * size);
 
-        if (tmp)
+        if (tmp && tim)
           {
              // Success!
              _log_domains = tmp;
+             _log_timing = tim;
              _log_domains_allocated = size;
           }
         else
-           return -1;
+          {
+             free(tmp);
+             free(tim);
+             return -1;
+          }
      }
 
    // Use an allocated slot
-   eina_log_domain_new(&_log_domains[i], name, color);
+   eina_log_domain_new(&_log_domains[i], &_log_timing[i], name, color);
    _log_domains_count++;
 
 finish_register:
@@ -1142,6 +1164,8 @@ finish_register:
    // Check if level is still UNKNOWN, set it to global
    if (_log_domains[i].level == EINA_LOG_LEVEL_UNKNOWN)
       _log_domains[i].level = _log_level;
+
+   eina_log_timing(i, EINA_LOG_STATE_START, EINA_LOG_STATE_INIT);
 
    return i;
 }
@@ -1197,6 +1221,8 @@ eina_log_domain_unregister_unlocked(int domain)
 
    if ((unsigned int)domain >= _log_domains_count)
       return;
+
+   eina_log_timing(domain, EINA_LOG_STATE_STOP, EINA_LOG_STATE_SHUTDOWN);
 
    d = &_log_domains[domain];
    eina_log_domain_free(d);
@@ -1365,6 +1391,9 @@ eina_log_init(void)
       _print_cb = eina_log_print_cb_journald;
 #endif
 
+   if (getenv("EINA_LOG_TIMING"))
+     _disable_timing = EINA_FALSE;
+
    if ((tmp = getenv(EINA_LOG_ENV_FILE_DISABLE)) && (atoi(tmp) == 1))
       _disable_file = EINA_TRUE;
 
@@ -1402,6 +1431,10 @@ eina_log_init(void)
    // Parse pending domains passed through EINA_LOG_LEVELS
    eina_log_domain_parse_pendings();
 
+   eina_log_timing(EINA_LOG_DOMAIN_GLOBAL,
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
+
 #endif
    return EINA_TRUE;
 }
@@ -1427,6 +1460,10 @@ eina_log_shutdown(void)
 #ifdef EINA_ENABLE_LOG
    Eina_Inlist *tmp;
 
+   eina_log_timing(EINA_LOG_DOMAIN_GLOBAL,
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
+
    while (_log_domains_count--)
      {
         if (_log_domains[_log_domains_count].deleted)
@@ -1435,7 +1472,8 @@ eina_log_shutdown(void)
         eina_log_domain_free(&_log_domains[_log_domains_count]);
      }
 
-        free(_log_domains);
+   free(_log_domains);
+   free(_log_timing);
 
    _log_domains = NULL;
    _log_domains_count = 0;
@@ -2117,4 +2155,61 @@ eina_log_console_color_set(FILE *fp, const char *color)
 #else
    (void)color;
 #endif
+}
+
+EAPI void
+eina_log_timing(int domain,
+                Eina_Log_State state,
+                const char *phase)
+{
+   Eina_Log_Domain *d;
+   Eina_Log_Timing *t;
+
+   if (_disable_timing) return ;
+
+   d = _log_domains + domain;
+   t = _log_timing + domain;
+#ifdef EINA_SAFETY_CHECKS
+   if (EINA_UNLIKELY(d->deleted))
+     {
+        fprintf(stderr,
+                "ERR: eina_log_print() domain %d is deleted\n",
+                domain);
+        return;
+     }
+#endif
+
+   if (t->phase == EINA_LOG_STATE_INIT &&
+       phase == EINA_LOG_STATE_SHUTDOWN)
+     return ;
+
+   if (state == EINA_LOG_STATE_START &&
+       t->phase &&
+       strcmp(t->phase, phase)) // Different phase
+     {
+        fprintf(stderr, "%s vs %s\n", t->phase, phase);
+        eina_log_timing(domain, EINA_LOG_STATE_STOP, t->phase);
+     }
+
+   switch (state)
+     {
+      case EINA_LOG_STATE_START:
+        {
+           _eina_time_get(&t->start);
+           t->phase = phase;
+           break;
+        }
+      case EINA_LOG_STATE_STOP:
+        {
+           Eina_Nano_Time end;
+           long int r;
+
+           _eina_time_get(&end);
+           r = _eina_time_delta(&t->start, &end);
+           EINA_LOG_DOM_INFO(domain, "%s timing: %li", t->phase, r);
+
+           t->phase = NULL;
+           break;
+        }
+     }
 }

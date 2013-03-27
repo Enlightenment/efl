@@ -22,6 +22,7 @@ Additions:
      - Add eina_log_print_cb_journald()
      - Add eina_list_shuffle()
      - Add eina_file_mkstemp()
+     - Add eina_log_timing()
     * Add Cserve2 scalecache support
     * ecore_x:
      - Add window profile support.

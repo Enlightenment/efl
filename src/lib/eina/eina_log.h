@@ -464,6 +464,12 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d,
                                   const char *file, const char *fnc, int line,
                                   const char *fmt, void *data, va_list args);
 
+typedef enum _Eina_Log_State
+{
+  EINA_LOG_STATE_START,
+  EINA_LOG_STATE_STOP
+} Eina_Log_State;
+
 /*
  * Customization
  */
@@ -934,6 +940,26 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
  */
 EAPI void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
+
+#define EINA_LOG_STATE_INIT "init"
+#define EINA_LOG_STATE_SHUTDOWN "shutdown"
+
+/**
+ * @brief Start or stop the timing of a phase.
+ *
+ * @param d The domain.
+ * @param state State indicating if we are starting or stopping a phase.
+ * @param phase The name of the phase to be used in the log.
+ *
+ * @note One domain can be in only one phase at a time.
+ * @note If you change the name of the phase, it is assumed that
+ *    the previous phase has stopped.
+ * @note The phase name should be available for all the life of the timing.
+ * @since 1.8
+ */
+EAPI void eina_log_timing(int domain,
+                          Eina_Log_State state,
+                          const char *phase) EINA_ARG_NONNULL(1, 3);
 
 #include "eina_inline_log.x"
 

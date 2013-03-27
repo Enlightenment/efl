@@ -1,8 +1,11 @@
+2013-03-27  Cedric Bail
+
+	* Eina: Add eina_log_timing.
+
 2013-03-27  Jihoon Kim
 
 	* Add ecore_imf_context_input_panel_variation_set/get API.
 	* Add edje_object_part_text_input_panel_layout_variation_set/get API.
-
 
 2013-03-25  Cedric Bail
 

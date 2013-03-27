@@ -24,14 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#ifndef _WIN32
-# include <time.h>
-# include <sys/time.h>
-#else
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif /* _WIN2 */
 
 #include "eina_config.h"
 #include "eina_private.h"
@@ -46,6 +38,8 @@
 # include <Escape.h>
 #endif
 
+#include "eina_private.h"
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -53,12 +47,6 @@
 /**
  * @cond LOCAL
  */
-
-#ifndef _WIN32
-typedef struct timespec Eina_Nano_Time;
-#else
-typedef LARGE_INTEGER Eina_Nano_Time;
-#endif
 
 typedef struct _Eina_Clock Eina_Clock;
 
@@ -81,40 +69,12 @@ struct _Eina_Clock
    Eina_Bool valid;
 };
 
-#ifndef _WIN32
-static inline int
-_eina_counter_time_get(Eina_Nano_Time *tp)
-{
-# if defined(CLOCK_PROCESS_CPUTIME_ID)
-   return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
-# elif defined(CLOCK_PROF)
-   return clock_gettime(CLOCK_PROF, tp);
-# elif defined(CLOCK_REALTIME)
-   return clock_gettime(CLOCK_REALTIME, tp);
-# else
-   struct timeval tv;
-
-   if (gettimeofday(&tv, NULL))
-     return -1;
-
-   tp->tv_sec = tv.tv_sec;
-   tp->tv_nsec = tv.tv_usec * 1000L;
-
-   return 0;
-# endif
-}
-#else
+#ifdef _WIN32
 static const char EINA_ERROR_COUNTER_WINDOWS_STR[] =
    "Change your OS, you moron !";
 static int EINA_ERROR_COUNTER_WINDOWS = 0;
-static LARGE_INTEGER _eina_counter_frequency;
-
-static inline int
-_eina_counter_time_get(Eina_Nano_Time *tp)
-{
-   return QueryPerformanceCounter(tp);
-}
-#endif /* _WIN2 */
+LARGE_INTEGER _eina_counter_frequency;
+#endif
 
 static char *
 _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
@@ -265,10 +225,10 @@ eina_counter_start(Eina_Counter *counter)
    Eina_Nano_Time tp;
 
    EINA_SAFETY_ON_NULL_RETURN(counter);
-   if (_eina_counter_time_get(&tp) != 0)
+   if (_eina_time_get(&tp) != 0)
       return;
 
-        eina_error_set(0);
+   eina_error_set(0);
    clk = calloc(1, sizeof (Eina_Clock));
    if (!clk)
      {
@@ -289,7 +249,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
    Eina_Nano_Time tp;
 
    EINA_SAFETY_ON_NULL_RETURN(counter);
-   if (_eina_counter_time_get(&tp) != 0)
+   if (_eina_time_get(&tp) != 0)
       return;
 
    clk = (Eina_Clock *)counter->clocks;
@@ -327,28 +287,9 @@ eina_counter_dump(Eina_Counter *counter)
       if (clk->valid == EINA_FALSE)
          continue;
 
-#ifndef _WIN32
-      start = clk->start.tv_sec * 1000000000 + clk->start.tv_nsec;
-      end = clk->end.tv_sec * 1000000000 + clk->end.tv_nsec;
-      diff =
-         (clk->end.tv_sec -
-          clk->start.tv_sec) * 1000000000 + clk->end.tv_nsec -
-         clk->start.tv_nsec;
-#else
-      start =
-         (long int)(((long long int)clk->start.QuadPart *
-                     1000000000ll) /
-                    (long long int)_eina_counter_frequency.QuadPart);
-      end =
-         (long int)(((long long int)clk->end.QuadPart *
-                     1000000000LL) /
-                    (long long int)_eina_counter_frequency.QuadPart);
-      diff =
-         (long int)(((long long int)(clk->end.QuadPart -
-                                     clk->start.QuadPart) *
-                     1000000000LL) /
-                    (long long int)_eina_counter_frequency.QuadPart);
-#endif /* _WIN2 */
+      start = _eina_time_convert(&clk->start);
+      end = _eina_time_convert(&clk->end);
+      diff = _eina_time_delta(&clk->start, &clk->end);
 
       result = _eina_counter_asiprintf(result, &position,
                                        "%i\t%li\t%li\t%li\n",

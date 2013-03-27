@@ -146,5 +146,7 @@ void eina_cpu_count_internal(void);
 
 void eina_file_mmap_faulty(void *addr, long page_size);
 
+#include "eina_inline_private.h"
+
 #endif /* EINA_PRIVATE_H_ */
 
