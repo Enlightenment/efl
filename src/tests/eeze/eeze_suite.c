@@ -568,8 +568,6 @@ START_TEST(eeze_test_sensor_async_read)
    fail_if(event == NULL);
 
    /* Error case */
-   event = ecore_event_add(42, sens, NULL, NULL);
-   fail_if(event != NULL);
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LAST + 1);
    fail_if(sens != NULL);
    rc = eeze_sensor_async_read(NULL, NULL);
