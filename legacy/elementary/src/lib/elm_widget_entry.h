@@ -57,6 +57,7 @@ struct _Elm_Entry_Smart_Data
    Elm_Input_Panel_Return_Key_Type       input_panel_return_key_type;
    void                                 *input_panel_imdata;
    int                                   input_panel_imdata_len;
+   int                                   input_panel_layout_variation;
    struct
    {
       Evas_Object *hover_parent;

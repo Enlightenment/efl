@@ -320,6 +320,14 @@ typedef enum
    ELM_INPUT_PANEL_LAYOUT_PASSWORD     /**< Like normal, but no auto-correct, no auto-capitalization etc. */
 } Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
 
+enum
+{
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL
+};
+
 /**
  * @typedef Elm_Input_Panel_Lang
  *
@@ -1334,6 +1342,31 @@ EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, E
 EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(const Evas_Object *obj);
 
 /**
+ * Set the input panel layout variation of the entry
+ *
+ * @param obj The entry object
+ * @param variation layout variation type
+ *
+ * @ingroup Entry
+ * @since 1.8
+ */
+EAPI void                   elm_entry_input_panel_layout_variation_set(Evas_Object *obj, int variation);
+
+/**
+ * Get the input panel layout variation of the entry
+ *
+ * @param obj The entry object
+ * @return layout variation type
+ *
+ * @see elm_entry_input_panel_layout_variation_set
+ *
+ * @ingroup Entry
+ * @since 1.8
+ */
+EAPI int                    elm_entry_input_panel_layout_variation_get(const Evas_Object *obj);
+
+
+/**
  * Set the autocapitalization type on the immodule.
  *
  * @param obj The entry object
@@ -1881,6 +1914,8 @@ enum
    ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_SET,
    ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_GET,
    ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END,
+   ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET,
+   ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET,
    ELM_OBJ_ENTRY_SUB_ID_LAST
 };
 
@@ -2625,6 +2660,30 @@ enum
  * @see elm_entry_input_panel_layout_get
  */
 #define elm_obj_entry_input_panel_layout_get(ret) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_GET), EO_TYPECHECK(Elm_Input_Panel_Layout *, ret)
+
+/**
+ * @def elm_obj_entry_input_panel_layout_variation_set
+ * @since 1.8
+ *
+ * Set the input panel layout variation of the entry
+ *
+ * @param[in] layout variation
+ *
+ * @see elm_entry_input_panel_layout_variation_set
+ */
+#define elm_obj_entry_input_panel_layout_variation_set(variation) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET), EO_TYPECHECK(int, variation)
+
+/**
+ * @def elm_obj_entry_input_panel_layout_variation_get
+ * @since 1.8
+ *
+ * Get the input panel layout variation of the entry
+ *
+ * @param[out] ret
+ *
+ * @see elm_entry_input_panel_layout_variation_get
+ */
+#define elm_obj_entry_input_panel_layout_variation_get(ret) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET), EO_TYPECHECK(int *, ret)
 
 /**
  * @def elm_obj_entry_autocapital_type_set

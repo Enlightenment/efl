@@ -1178,3 +1178,7 @@
         * Add four more focus directions. ELM_FOCUS_UP/DOWN/RIGHT/LEFT.
         * Add elm_object_focus_next_object_get/set.
         * Add elm_object_focused_object_get.
+
+2013-03-27 Jihoon Kim
+
+        * Add elm_entry_input_panel_layout_variation_set/get API

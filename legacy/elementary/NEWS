@@ -53,6 +53,7 @@ Additions:
    * Add four more focus diretions. ELM_FOCUS_UP, ELM_FOCUS_DOWN, ELM_FOCUS_RIGHT, ELM_FOCUS_LEFT.
    * Add APIs - elm_object_focus_next_object_get, elm_object_focus_next_object_set.
    * Add API - elm_object_focused_object_get.
+   * Add APIs - elm_entry_input_panel_layout_variation_set/get
 
 Improvements:
 

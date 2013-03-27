@@ -519,6 +519,8 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "elm.text", sd->input_panel_layout);
+   edje_object_part_text_input_panel_layout_variation_set
+     (sd->entry_edje, "elm.text", sd->input_panel_layout_variation);
    edje_object_part_text_autocapital_type_set
      (sd->entry_edje, "elm.text", sd->autocapital_type);
    edje_object_part_text_prediction_allow_set
@@ -4716,6 +4718,45 @@ _input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_entry_input_panel_layout_variation_set(Evas_Object *obj,
+                                           int variation)
+{
+   ELM_ENTRY_CHECK(obj);
+   eo_do(obj, elm_obj_entry_input_panel_layout_variation_set(variation));
+}
+
+static void
+_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int variation = va_arg(*list, int);
+   Elm_Entry_Smart_Data *sd = _pd;
+
+   sd->input_panel_layout_variation = variation;
+
+   edje_object_part_text_input_panel_layout_variation_set
+     (sd->entry_edje, "elm.text", variation);
+}
+
+EAPI int
+elm_entry_input_panel_layout_variation_get(const Evas_Object *obj)
+{
+   ELM_ENTRY_CHECK(obj) 0;
+   int ret = 0;
+   eo_do((Eo *) obj, elm_obj_entry_input_panel_layout_variation_get(&ret));
+
+   return ret;
+}
+
+static void
+_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Entry_Smart_Data *sd = _pd;
+
+   *ret = sd->input_panel_layout_variation;
+}
+
+EAPI void
 elm_entry_autocapital_type_set(Evas_Object *obj,
                                Elm_Autocapital_Type autocapital_type)
 {
@@ -5314,6 +5355,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_SET), _anchor_hover_style_set),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_GET), _anchor_hover_style_get),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END), _anchor_hover_end),
+        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET), _input_panel_layout_variation_set),
+        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET), _input_panel_layout_variation_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -5407,6 +5450,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_SET, "Set the style that the hover should use."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_GET, "Get the style that the hover should use."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END, "Ends the hover popup in the entry."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET, "Set the input panel layout variation of the entry."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET, "Get the input panel layout variation of the entry."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
