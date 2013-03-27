@@ -1,3 +1,8 @@
+2013-03-27  Jihoon Kim
+
+	* Add ecore_imf_context_input_panel_variation_set/get API.
+
+
 2013-03-25  Cedric Bail
 
 	* Eina: add portable eina_file_mkstemp().

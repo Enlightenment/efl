@@ -81,6 +81,7 @@ Additions:
     * Eeze: Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con: Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
     * Ecore: notify systemd that we are ready as soon as the main loop is running.
+    * ecore_imf: Add ecore_imf_context_input_panel_layout_variation_set/get API
 
 Deprecations:
     * ecore_x:

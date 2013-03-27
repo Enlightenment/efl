@@ -821,6 +821,32 @@ ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx)
 }
 
 EAPI void
+ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int variation)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_layout_variation_set");
+        return;
+     }
+
+   ctx->input_panel_layout_variation = variation;
+}
+
+EAPI int
+ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_layout_variation_get");
+        return 0;
+     }
+
+   return ctx->input_panel_layout_variation;
+}
+
+EAPI void
 ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))

@@ -299,6 +299,14 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
 } Ecore_IMF_Input_Panel_Return_Key_Type;
 
+enum
+{
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,
+   ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL
+};
+
 struct _Ecore_IMF_Event_Preedit_Start
 {
    Ecore_IMF_Context *ctx;
@@ -1254,6 +1262,27 @@ EAPI void                          ecore_imf_context_input_panel_layout_set(Ecor
  * @since 1.1.0
  */
 EAPI Ecore_IMF_Input_Panel_Layout  ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx);
+
+/**
+ * Set the layout variation of the current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param variation the layout variation
+ * @note Default layout variation type is NORMAL.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI void                          ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int variation);
+
+/**
+ * Get the layout variation of the current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return the layout variation
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI int                           ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx);
 
 /**
  * Set the language of the input panel.
