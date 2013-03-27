@@ -135,8 +135,6 @@ ecore_init(void)
    if (++_ecore_init_count != 1)
      return _ecore_init_count;
 
-   eo_init();
-
    setlocale(LC_CTYPE, "");
    /*
       if (strcmp(nl_langinfo(CODESET), "UTF-8"))
@@ -156,6 +154,9 @@ ecore_init(void)
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
         goto shutdown_log_dom;
      }
+
+   eo_init();
+
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
@@ -194,18 +195,21 @@ ecore_init(void)
 #endif
    _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
 
+   eina_log_timing(_ecore_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _ecore_init_count;
 
 shutdown_mempool:
    ecore_mempool_shutdown();
+   eo_shutdown();
 shutdown_log_dom:
    eina_shutdown();
 shutdown_evil:
 #ifdef HAVE_EVIL
    evil_shutdown();
 #endif
-
-   eo_shutdown();
 
    return --_ecore_init_count;
 }
@@ -237,6 +241,10 @@ ecore_shutdown(void)
        }
      if (--_ecore_init_count != 0)
        goto unlock;
+
+     eina_log_timing(_ecore_log_dom,
+		     EINA_LOG_STATE_START,
+		     EINA_LOG_STATE_SHUTDOWN);
 
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
      _ecore_coroutine_shutdown();

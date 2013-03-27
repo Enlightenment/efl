@@ -100,6 +100,10 @@ ecore_audio_init(void)
    if (mod)
      ecore_audio_modules = eina_list_append(ecore_audio_modules, mod);
 
+   eina_log_timing(_ecore_audio_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _ecore_audio_init_count;
 }
 
@@ -111,6 +115,9 @@ ecore_audio_shutdown(void)
      return _ecore_audio_init_count;
 
    /* FIXME: Shutdown all the inputs and outputs first */
+   eina_log_timing(_ecore_audio_log_dom,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
 #ifdef HAVE_ALSA
    ecore_audio_alsa_shutdown();

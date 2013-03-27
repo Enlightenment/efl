@@ -223,6 +223,10 @@ ecore_con_init(void)
    sd_fd_max = sd_listen_fds(0);
 #endif
 
+   eina_log_timing(_ecore_con_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _ecore_con_init_count;
 }
 
@@ -234,6 +238,10 @@ ecore_con_shutdown(void)
 
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
+
+   eina_log_timing(_ecore_con_log_dom,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    EINA_LIST_FOREACH_SAFE(servers, l, l2, svr)
      {

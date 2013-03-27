@@ -228,6 +228,10 @@ eio_init(void)
 
    eio_monitor_init();
 
+   eina_log_timing(_eio_log_dom_global,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _eio_init_count;
 
 unregister_log_domain:
@@ -253,6 +257,10 @@ eio_shutdown(void)
      }
    if (--_eio_init_count != 0)
      return _eio_init_count;
+
+   eina_log_timing(_eio_log_dom_global,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    eio_monitor_shutdown();
 

@@ -101,6 +101,10 @@ edje_init(void)
    _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params), 8, &default_calc_map);
    _edje_calc_params_physics_cow= eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics);
 
+   eina_log_timing(_edje_default_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return _edje_init_count;
 
  shutdown_all:
@@ -138,6 +142,10 @@ static void
 _edje_shutdown_core(void)
 {
    if (_edje_users > 0) return;
+
+   eina_log_timing(_edje_default_log_dom,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    _edje_file_cache_shutdown();
    _edje_color_class_members_free();

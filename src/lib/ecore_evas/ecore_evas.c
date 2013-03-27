@@ -314,6 +314,10 @@ ecore_evas_init(void)
 
    _ecore_evas_engine_init();
 
+   eina_log_timing(_ecore_evas_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    if (getenv("ECORE_EVAS_COMP_NOSYNC"))
       _ecore_evas_app_comp_sync = 0;
    return _ecore_evas_init_count;
@@ -331,6 +335,10 @@ ecore_evas_shutdown(void)
 {
    if (--_ecore_evas_init_count != 0)
      return _ecore_evas_init_count;
+
+   eina_log_timing(_ecore_evas_log_dom,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 

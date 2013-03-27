@@ -1,6 +1,8 @@
 2013-03-27  Cedric Bail
 
 	* Eina: Add eina_log_timing.
+	* Ecore, Ecore_Audio, Ecore_Con, Ecore_Evas,
+	Edje, Eet, Eio, Eo, Evas: use eina_log_timing.
 
 2013-03-27  Jihoon Kim
 

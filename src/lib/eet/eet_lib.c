@@ -590,6 +590,10 @@ eet_init(void)
    OpenSSL_add_all_algorithms();
 #endif /* ifdef HAVE_OPENSSL */
 
+   eina_log_timing(_eet_log_dom_global,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return eet_init_count;
 
 #ifdef HAVE_GNUTLS
@@ -616,6 +620,10 @@ eet_shutdown(void)
      }
    if (--eet_init_count != 0)
      return eet_init_count;
+
+   eina_log_timing(_eet_log_dom_global,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    eet_clearcache();
 

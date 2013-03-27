@@ -24,8 +24,6 @@ evas_init(void)
    if (++_evas_init_count != 1)
      return _evas_init_count;
 
-   eo_init();
-
 #ifdef LKDEBUG
    if (getenv("EVAS_LOCK_DEBUG"))
       {
@@ -50,6 +48,8 @@ evas_init(void)
         goto shutdown_eina;
      }
 
+   eo_init();
+
    evas_module_init();
    if (!evas_async_events_init())
      goto shutdown_module;
@@ -59,6 +59,10 @@ evas_init(void)
    _evas_preload_thread_init();
 
    evas_thread_init();
+
+   eina_log_timing(_evas_log_dom_global,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
 
    return _evas_init_count;
 
@@ -86,6 +90,10 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
+   eina_log_timing(_evas_log_dom_global,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
+
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
    evas_object_map_cow = NULL;
@@ -104,13 +112,14 @@ evas_shutdown(void)
    evas_font_dir_cache_free();
    evas_common_shutdown();
    evas_module_shutdown();
+   eo_shutdown();
+
    eina_log_domain_unregister(_evas_log_dom_global);
+
    eina_shutdown();
 #ifdef HAVE_EVIL
    evil_shutdown();
 #endif
-
-   eo_shutdown();
 
    return _evas_init_count;
 }

@@ -1449,6 +1449,10 @@ eo_init(void)
    _eo_class_isa_func(NULL, NULL, NULL);
 #endif
 
+   eina_log_timing(_eo_log_dom,
+		   EINA_LOG_STATE_STOP,
+		   EINA_LOG_STATE_INIT);
+
    return EINA_TRUE;
 }
 
@@ -1460,6 +1464,10 @@ eo_shutdown(void)
 
    if (--_eo_init_count > 0)
       return EINA_TRUE;
+
+   eina_log_timing(_eo_log_dom,
+		   EINA_LOG_STATE_START,
+		   EINA_LOG_STATE_SHUTDOWN);
 
    for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr++)
      {
