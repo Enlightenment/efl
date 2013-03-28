@@ -491,6 +491,8 @@ START_TEST(eeze_test_sensor_read)
 }
 END_TEST
 
+static int cb_count = 0;
+
 static Eina_Bool
 event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
@@ -506,15 +508,16 @@ event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
 
-   ecore_main_loop_quit();
+   /* We expect 5 callbacks from async reads right now */
+   if (++cb_count == 5)
+     ecore_main_loop_quit();
 
-   return EINA_FALSE;
+   return ECORE_CALLBACK_DONE;
 }
 
 START_TEST(eeze_test_sensor_async_read)
 {
    Ecore_Event_Handler *handler;
-   Ecore_Event *event;
 
    Eeze_Sensor_Obj *sens = NULL;
    int ret = 0;
@@ -560,9 +563,6 @@ START_TEST(eeze_test_sensor_async_read)
    fail_if(sens == NULL);
    rc = eeze_sensor_async_read(sens, NULL);
    fail_if(rc == EINA_FALSE);
-
-   event = ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, sens, NULL, NULL);
-   fail_if(event == NULL);
 
    /* Error case */
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LAST + 1);
