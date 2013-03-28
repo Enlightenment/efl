@@ -9218,6 +9218,9 @@ EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *o
  * By this API, instead, one can toggle the visibility of a proxy's source
  * object remaining the proxy visibility untouched.
  *
+ * @warning If the all of proxies are deleted, then the source visibility of the
+ * source object will be cancelled.
+ *
  * @see evas_object_image_source_visible_get()
  * @see evas_object_image_source_set()
  * @see evas_object_show()
