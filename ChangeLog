@@ -1,3 +1,12 @@
+2013-03-28  Carsten Haitzler (The Rasterman)
+
+        * Change evas_textblock_cursor_word_start() and
+        evas_textblock_cursor_word_end() to walk extra whitespaces when
+        moving up and down words that tends to look more like other
+        toolkits (gtk, qt). the docs dont specifically say the rules
+        on word finding, so being consistent is better i believe and
+        so we can assume the prior behavior is a bug.
+
 2013-03-27  Cedric Bail
 
 	* Eina: Add eina_log_timing.
