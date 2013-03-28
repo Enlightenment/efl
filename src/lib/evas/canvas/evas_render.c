@@ -948,7 +948,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
 
-   if ((evas_object_is_source_invisible(eo_obj, obj) && (!proxy_render)))
+   if ((!proxy_render) && (evas_object_is_source_invisible(eo_obj, obj)))
      return clean_them;
 
    evas_object_clip_recalc(eo_obj, obj);
