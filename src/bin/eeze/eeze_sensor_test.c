@@ -141,6 +141,7 @@ main(void)
    else
      printf("Could not find a light sensor!\n");
 
+   printf("=== Test snyc read update: ===\n");
    /* Get updated values on a sensor. This readout is synchronous. This way we
     * can force a read out of the physical sensor instead of using the cached
     * values. Depending on the hardware this can take a long time. If you don't have special
