@@ -24,6 +24,8 @@ person_new(const char *name)
    person *ptr = malloc(sizeof(person));
    EINA_MAGIC_SET(ptr, BASETYPE_MAGIC);
    ptr->name = strdup(name);
+
+   return ptr;
 }
 
 void
