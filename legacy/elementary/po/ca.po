@@ -1,4 +1,4 @@
-#Catalan translation for Elementary.
+# Catalan translation for Elementary.
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-20 08:15+0900\n"
+"POT-Creation-Date: 2013-03-28 08:29+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -24,8 +24,8 @@ msgstr "Amunt"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1277
-#: src/lib/elm_entry.c:1302
+#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Cancel·la"
 
@@ -41,8 +41,8 @@ msgstr "Bombolla "
 msgid "Clicked"
 msgstr "Clicat"
 
-#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1413 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:701
+#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
 msgid "State: Disabled"
 msgstr "Estat: desactivat "
@@ -116,11 +116,11 @@ msgstr "botó increment de rellotge per am,pm"
 msgid "clock decrement button for am,pm"
 msgstr "botó decrement de rellotge per am,pm"
 
-#: src/lib/elm_clock.c:658
+#: src/lib/elm_clock.c:664
 msgid "State: Editable"
 msgstr "Estat: Editable "
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:699
 msgid "Clock"
 msgstr "Rellotge"
 
@@ -136,27 +136,27 @@ msgstr "Per defecte: LTR"
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elm_entry.c:1270
+#: src/lib/elm_entry.c:1272
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1274
+#: src/lib/elm_entry.c:1276
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1291
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elm_entry.c:1296
+#: src/lib/elm_entry.c:1298
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:2931
+#: src/lib/elm_entry.c:2933
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:724
+#: src/lib/elm_gengrid.c:731
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 

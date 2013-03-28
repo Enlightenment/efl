@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-22 17:40+0900\n"
+"POT-Creation-Date: 2013-03-28 08:29+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -29,8 +29,8 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1277
-#: src/lib/elm_entry.c:1302
+#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -47,7 +47,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:701
-#: src/lib/elm_genlist.c:1418 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
+#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
 #: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
 msgid "State: Disabled"
 msgstr "État : désactivé"
@@ -142,23 +142,23 @@ msgstr "LTR par défaut"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1270
+#: src/lib/elm_entry.c:1272
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1274
+#: src/lib/elm_entry.c:1276
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1291
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1296
+#: src/lib/elm_entry.c:1298
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2931
+#: src/lib/elm_entry.c:2933
 msgid "Entry"
 msgstr ""
 
