@@ -1,3 +1,7 @@
+2013-03-28  Cedric Bail
+
+	* Ecore: automatically turn on Systemd watchdog in Ecore main loop.
+
 2013-03-28  Carsten Haitzler (The Rasterman)
 
         * Change evas_textblock_cursor_word_start() and

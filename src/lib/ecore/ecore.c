@@ -19,6 +19,10 @@
 # include <sys/mman.h>
 #endif
 
+#ifdef HAVE_SYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -69,6 +73,10 @@ struct _Ecore_Safe_Call
    Eina_Bool      suspend : 1;
 };
 
+#ifdef HAVE_SYSTEMD
+static Eina_Bool _systemd_watchdog_cb(void *data);
+#endif
+
 static void _ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order);
 static void _thread_safe_cleanup(void *data);
 static void _thread_callback(void        *data,
@@ -89,6 +97,10 @@ static Eina_Lock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
 static int _thread_id_update = 0;
+
+#ifdef HAVE_SYSTEMD
+static Ecore_Timer *_systemd_watchdog = NULL;
+#endif
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -195,6 +207,18 @@ ecore_init(void)
 #endif
    _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
 
+#ifdef HAVE_SYSTEMD
+   if (getenv("WATCHDOG_USEC"))
+     {
+        double sec;
+
+	sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
+
+	_systemd_watchdog = ecore_timer_add(sec / 2, _systemd_watchdog_cb, NULL);
+	unsetenv("WATCHDOG_USEC");
+     }
+#endif
+
    eina_log_timing(_ecore_log_dom,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -245,6 +269,14 @@ ecore_shutdown(void)
      eina_log_timing(_ecore_log_dom,
 		     EINA_LOG_STATE_START,
 		     EINA_LOG_STATE_SHUTDOWN);
+
+#ifdef HAVE_SYSTEMD
+     if (_systemd_watchdog)
+       {
+	  ecore_timer_del(_systemd_watchdog);
+	  _systemd_watchdog = NULL;
+       }
+#endif
 
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
      _ecore_coroutine_shutdown();
@@ -752,6 +784,15 @@ _ecore_fps_debug_runtime_add(double t)
         *(_ecore_fps_runtime_mmap) += tm;
      }
 }
+
+#ifdef HAVE_SYSTEMD
+static Eina_Bool
+_systemd_watchdog_cb(EINA_UNUSED void *data)
+{
+   sd_notify(0, "WATCHDOG=1");
+   return ECORE_CALLBACK_RENEW;
+}
+#endif
 
 #if HAVE_MALLINFO
 static Eina_Bool
