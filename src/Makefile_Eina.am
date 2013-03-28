@@ -301,5 +301,6 @@ endif
 EXTRA_DIST += \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
+lib/eina/eina_inline_private.h \
 tests/eina/sample.gpx \
 $(bin_SCRIPTS)
