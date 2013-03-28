@@ -114,30 +114,48 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         return EINA_FALSE;
      }
 
+   /* Default values for sensor objects with three data points */
+   obj->accuracy = -1;
+   obj->data[0] = 7;
+   obj->data[1] = 23;
+   obj->data[2] = 42;
+   gettimeofday(&tv, NULL);
+   obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
+
    switch (sensor_type)
      {
       case EEZE_SENSOR_TYPE_ACCELEROMETER:
-      case EEZE_SENSOR_TYPE_MAGNETIC:
-      case EEZE_SENSOR_TYPE_ORIENTATION:
-      case EEZE_SENSOR_TYPE_GYROSCOPE:
-        obj->accuracy = -1;
-        obj->data[0] = 7;
-        obj->data[1] = 23;
-        obj->data[2] = 42;
-        gettimeofday(&tv, NULL);
-        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
-        ecore_event_add(sensor_type, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
         break;
-
+      case EEZE_SENSOR_TYPE_MAGNETIC:
+        ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
+        break;
+      case EEZE_SENSOR_TYPE_ORIENTATION:
+        ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
+        break;
+      case EEZE_SENSOR_TYPE_GYROSCOPE:
+        ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
+        break;
       case EEZE_SENSOR_TYPE_LIGHT:
+        /* Reset values that are not used for sensor object with one data point */
+        obj->data[1] = 0;
+        obj->data[2] = 0;
+        ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
+        break;
       case EEZE_SENSOR_TYPE_PROXIMITY:
+        obj->data[1] = 0;
+        obj->data[2] = 0;
+        ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
+        break;
       case EEZE_SENSOR_TYPE_BAROMETER:
+        obj->data[1] = 0;
+        obj->data[2] = 0;
+        ecore_event_add(EEZE_SENSOR_EVENT_BAROMETER, obj, NULL, NULL);
+        break;
       case EEZE_SENSOR_TYPE_TEMPERATURE:
-        obj->accuracy = -1;
-        obj->data[0] = 7;
-        gettimeofday(&tv, NULL);
-        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
-        ecore_event_add(sensor_type, obj, NULL, NULL);
+        obj->data[1] = 0;
+        obj->data[2] = 0;
+        ecore_event_add(EEZE_SENSOR_EVENT_TEMPERATURE, obj, NULL, NULL);
         break;
 
       default:
