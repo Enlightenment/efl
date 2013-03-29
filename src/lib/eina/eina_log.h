@@ -941,8 +941,11 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
 EAPI void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
 
-#define EINA_LOG_STATE_INIT "init"
-#define EINA_LOG_STATE_SHUTDOWN "shutdown"
+extern EAPI const char *_eina_log_state_init;
+extern EAPI const char *_eina_log_state_shutdown;
+
+#define EINA_LOG_STATE_INIT _eina_log_state_init
+#define EINA_LOG_STATE_SHUTDOWN _eina_log_state_shutdown
 
 /**
  * @brief Start or stop the timing of a phase.

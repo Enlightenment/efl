@@ -101,6 +101,9 @@ struct _Eina_Log_Timing
    Eina_Log_State state;
 };
 
+EAPI const char *_eina_log_state_init = "init";
+EAPI const char *_eina_log_state_shutdown = "shutdown";
+
 /*
  * List of levels for domains set by the user before the domains are registered,
  * updates the domain levels on the first log and clears itself.
