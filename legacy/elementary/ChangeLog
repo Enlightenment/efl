@@ -1182,3 +1182,8 @@
 2013-03-27 Jihoon Kim
 
         * Add elm_entry_input_panel_layout_variation_set/get API
+
+2013-03-29  ChunEon Park (Hermet)
+
+        * Map supports "language,changed" smart callback.
+

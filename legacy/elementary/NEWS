@@ -31,7 +31,7 @@ Additions:
    * Add a label signal callback "slide,end"
    * Add "highlighted" and "unhighlighted" callbacks to list, genlist, and gengrid.
    * Add elm_index_delay_change_time_set/get for changing delay change time in index.
-   * Add elm_index smart callback - "language,changed".
+   * add elm_index smart callback - "language,changed".
    * Add smart callback signals of a scroller. "vbar,drag", "vbar,press", "vbar,unpress", "hbar,drag", "hbar,press", "hbar,unpress".
    * Add elm_glview, elm_gengrid smart callback - "language,changed".
    * Add APIs - elm_object_item_domain_translatable_part_text_set(), elm_object_item_translatable_part_text_get().
@@ -54,6 +54,7 @@ Additions:
    * Add APIs - elm_object_focus_next_object_get, elm_object_focus_next_object_set.
    * Add API - elm_object_focused_object_get.
    * Add APIs - elm_entry_input_panel_layout_variation_set/get
+   * Add elm_map smart callback - "language,changed".
 
 Improvements:
 
