@@ -531,7 +531,7 @@ EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas
  *
  * @ingroup General
  */
-EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
+EINA_DEPRECATED EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
 
 /**
  * Enable/disable horizontal and vertical bouncing effect.
