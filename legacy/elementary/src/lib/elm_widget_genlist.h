@@ -200,6 +200,7 @@ struct Elm_Gen_Item_Type
    Evas_Coord              scrl_x, scrl_y, old_scrl_y;
 
    Elm_Gen_Item           *rel;
+   Eina_List              *rel_revs; // FIXME: find better way not to use this
    Evas_Object            *deco_it_view;
    int                     expanded_depth;
    int                     order_num_in;

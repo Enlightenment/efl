@@ -2917,7 +2917,7 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
                                                      * the item is
                                                      * deleted */
 
-   if ((it->relcount > 0) || (it->walking > 0)) return;
+   if (it->walking > 0) return;
 
    if (it->selected)
      GL_IT(it)->wsd->selected =
@@ -3499,20 +3499,12 @@ _item_block_new(Elm_Genlist_Smart_Data *sd,
    return itb;
 }
 
-/**
- * @internal
- *
- * This function adds an item to a block's item list. This may or may not
- * rearrange existing blocks and create a new block.
- *
- */
 static Eina_Bool
 _item_block_add(Elm_Genlist_Smart_Data *sd,
                 Elm_Gen_Item *it)
 {
    Item_Block *itb = NULL;
 
-   // when a new item does not depend on another item
    if (!it->item->rel)
      {
 newblock:
@@ -3580,7 +3572,6 @@ newblock:
           }
         else
           {
-             // item move_before, prepend, insert_before, sorted_insert with before
              if (it->item->before)
                {
                   if (sd->blocks)
@@ -3601,7 +3592,6 @@ newblock:
 
                   _item_position_update(itb->items, 0);
                }
-             // item move_after, append, insert_after, sorted_insert without before
              else
                {
                   if (sd->blocks)
@@ -3623,7 +3613,6 @@ newblock:
                }
           }
      }
-   // when a new item depends on another item
    else
      {
         Eina_List *tmp;
@@ -3666,17 +3655,6 @@ newblock:
    it->item->block = itb;
    if (itb->sd->calc_job) ecore_job_del(itb->sd->calc_job);
    itb->sd->calc_job = ecore_job_add(_calc_job, itb->sd);
-   if (it->item->rel)
-     {
-        it->item->rel->relcount--;
-        if ((it->item->rel->generation < GL_IT(it)->wsd->generation)
-            && (!it->item->rel->relcount))
-          {
-             _item_del(it->item->rel);
-             elm_widget_item_free(it->item->rel);
-          }
-        it->item->rel = NULL;
-     }
 
    if (itb->count > itb->sd->max_items_per_block)
      {
@@ -3939,7 +3917,7 @@ _item_move_after(Elm_Gen_Item *it,
    GL_IT(it)->wsd->items = eina_inlist_append_relative
        (GL_IT(it)->wsd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
    it->item->rel = after;
-   it->item->rel->relcount++;
+   after->item->rel_revs = eina_list_append(after->item->rel_revs, it);
    it->item->before = EINA_FALSE;
    if (after->item->group_item) it->item->group_item = after->item->group_item;
    _item_queue(GL_IT(it)->wsd, it, NULL);
@@ -4010,7 +3988,7 @@ _item_move_before(Elm_Gen_Item *it,
    GL_IT(it)->wsd->items = eina_inlist_prepend_relative
        (GL_IT(it)->wsd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
    it->item->rel = before;
-   it->item->rel->relcount++;
+   before->item->rel_revs = eina_list_append(before->item->rel_revs, it);
    it->item->before = EINA_TRUE;
    if (before->item->group_item)
      it->item->group_item = before->item->group_item;
@@ -5060,11 +5038,8 @@ _item_select(Elm_Gen_Item *it)
      {
         if ((!it->walking) && (it->generation < GL_IT(it)->wsd->generation))
           {
-             if (!it->relcount)
-               {
-                  it->del_cb(it);
-                  elm_widget_item_free(it);
-               }
+             it->del_cb(it);
+             elm_widget_item_free(it);
           }
         else
           GL_IT(it)->wsd->last_selected_item = (Elm_Object_Item *)it;
@@ -5141,6 +5116,15 @@ _item_del_pre_hook(Elm_Object_Item *item)
 
    if ((it->relcount > 0) || (it->walking > 0))
      {
+     // FIXME: relative will be better to be fixed. it is too harsh.
+      if (it->item->rel)
+        it->item->rel->item->rel_revs =
+          eina_list_remove(it->item->rel->item->rel_revs, it);
+      if (it->item->rel_revs)
+         {
+           Elm_Gen_Item *tmp;
+           EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
+         }
         elm_genlist_item_subitems_clear(item);
         if (GL_IT(it)->wsd->show_item == it)
           GL_IT(it)->wsd->show_item = NULL;
@@ -5329,7 +5313,7 @@ _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         sd->items = eina_inlist_append_relative
             (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
         it->item->rel = it2;
-        it->item->rel->relcount++;
+        it2->item->rel_revs = eina_list_append(it2->item->rel_revs, it);
      }
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
@@ -5390,7 +5374,7 @@ _item_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         sd->items = eina_inlist_prepend_relative
             (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
         it->item->rel = it2;
-        it->item->rel->relcount++;
+        it2->item->rel_revs = eina_list_append(it2->item->rel_revs, it);
      }
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
@@ -5457,7 +5441,7 @@ _item_insert_after(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
 
    it->item->rel = after;
-   it->item->rel->relcount++;
+   after->item->rel_revs = eina_list_append(after->item->rel_revs, it);
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
 
@@ -5522,7 +5506,6 @@ _item_insert_before(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
 
    it->item->rel = before;
-   it->item->rel->relcount++;
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
 
@@ -5631,7 +5614,7 @@ _item_sorted_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (rel)
      {
         it->item->rel = rel;
-        it->item->rel->relcount++;
+        rel->item->rel_revs = eina_list_append(rel->item->rel_revs, it);
      }
 
    _item_queue(sd, it, _elm_genlist_item_list_compare);
