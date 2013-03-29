@@ -1187,3 +1187,6 @@
 
         * Map supports "language,changed" smart callback.
 
+2013-03-29  Mike Blumenkrantz
+
+        * Fix ctxpopup geometry when parent is an elm_win.
