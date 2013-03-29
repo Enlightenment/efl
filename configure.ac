@@ -3449,7 +3449,7 @@ AC_ARG_ENABLE([xine],
    [AC_HELP_STRING([--enable-xine],
                    [enable xine support. @<:@default=disabled@:>@])],
    [
-    if test "x${withval}" = "xyes" ; then
+    if test "x${enableval}" = "xyes" ; then
        want_xine="yes"
     else
        want_xine="no"
@@ -3460,7 +3460,7 @@ AC_ARG_ENABLE([xine],
 AC_ARG_ENABLE([v4l2],
    [AC_HELP_STRING([--enable-v4l2], [enable v4l2 support.])],
    [
-    if test "x${withval}" = "xyes" ; then
+    if test "x${enableval}" = "xyes" ; then
        want_v4l2="yes"
     else
        want_v4l2="no"
