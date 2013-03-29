@@ -1255,7 +1255,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
 
-   edje = edje_object_add(evas_object_evas_get(obj));
+   edje = edje_object_add(evas);
    elm_widget_resize_object_set(obj, edje);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -1263,7 +1263,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_theme_object_set
      (obj, edje, "diskselector", "base", elm_widget_style_get(obj));
 
-   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   priv->hit_rect = evas_object_rectangle_add(evas);
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
 
