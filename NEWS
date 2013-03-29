@@ -216,3 +216,4 @@ Fixes:
     * Fix magic failure in eina_value_array_count when array has not been allocated
     * Ecore_x: fix alpha set function not clear sync counter
     * Fix evas word start/end find in textblock to be consistent with other toolkit logic on the matter
+    * Fix edje entry to respect filters and if input filtered out, don't clear selections

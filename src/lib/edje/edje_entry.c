@@ -13,6 +13,8 @@ typedef struct _Anchor Anchor;
 
 static void _edje_entry_imf_cursor_location_set(Entry *en);
 static void _edje_entry_imf_cursor_info_set(Entry *en);
+static void _range_del_emit(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en);
+static void _text_filter_format_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text);
 
 struct _Entry
 {
@@ -189,8 +191,11 @@ _edje_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 #endif
 }
 
-static void
-_text_filter_markup_prepend_internal(Entry *en, Evas_Textblock_Cursor *c, char *text)
+static Edje_Entry_Change_Info *
+_text_filter_markup_prepend_internal(Entry *en, Evas_Textblock_Cursor *c,
+                                     char *text,
+                                     const char *fmtpre, const char *fmtpost,
+                                     Eina_Bool clearsel, Eina_Bool changeinfo)
 {
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
@@ -210,19 +215,46 @@ _text_filter_markup_prepend_internal(Entry *en, Evas_Textblock_Cursor *c, char *
 #endif
    if (text)
      {
+        Edje_Entry_Change_Info *info = NULL;
+        
+        if (changeinfo)
+          {
+             info = calloc(1, sizeof(*info));
+             if (info)
+               {
+                  info->insert = EINA_TRUE;
+                  info->change.insert.content = eina_stringshare_add(text);
+                  info->change.insert.plain_length = 
+                    eina_unicode_utf8_get_len(info->change.insert.content);
+               }
+          }
+        if ((clearsel) && (en->have_selection))
+          {
+             _range_del_emit(en->rp->edje, en->cursor, en->rp->object, en);
+             if (info) info->merge = EINA_TRUE;
+          }
+        if (info) info->change.insert.pos =
+          evas_textblock_cursor_pos_get(en->cursor);
+        if (fmtpre) _text_filter_format_prepend(en, en->cursor, fmtpre);
         evas_object_textblock_text_markup_prepend(c, text);
         free(text);
+        if (fmtpost) _text_filter_format_prepend(en, en->cursor, fmtpost);
+        return info;
      }
+   return NULL;
 }
 
-static void
-_text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
+static Edje_Entry_Change_Info *
+_text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, 
+                          const char *text,
+                          const char *fmtpre, const char *fmtpost,
+                          Eina_Bool clearsel, Eina_Bool changeinfo)
 {
-   char *text2;
+   char *text2 = NULL;
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
-   EINA_SAFETY_ON_NULL_RETURN(text);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
    text2 = strdup(text);
    EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
      {
@@ -235,11 +267,17 @@ _text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
    if (text2)
      {
         char *markup_text;
+        Edje_Entry_Change_Info *info = NULL;
+        
         markup_text = evas_textblock_text_utf8_to_markup(NULL, text2);
         free(text2);
         if (markup_text)
-          _text_filter_markup_prepend_internal(en, c, markup_text);
+          info = _text_filter_markup_prepend_internal(en, c, markup_text,
+                                                     fmtpre, fmtpost,
+                                                     clearsel, changeinfo);
+        return info;
      }
+   return NULL;
 }
 
 static void
@@ -315,18 +353,23 @@ _text_filter_format_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
           }
         free(text2);
         if (markup_text)
-          _text_filter_markup_prepend_internal(en, c, markup_text);
+          _text_filter_markup_prepend_internal(en, c, markup_text,
+                                               NULL, NULL,
+                                               EINA_FALSE, EINA_FALSE);
      }
 }
 
-static void
-_text_filter_markup_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
+static Edje_Entry_Change_Info *
+_text_filter_markup_prepend(Entry *en, Evas_Textblock_Cursor *c,
+                            const char *text,
+                            const char *fmtpre, const char *fmtpost,
+                            Eina_Bool clearsel, Eina_Bool changeinfo)
 {
    char *text2;
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
-   EINA_SAFETY_ON_NULL_RETURN(text);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
    text2 = strdup(text);
    EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
      {
@@ -337,7 +380,15 @@ _text_filter_markup_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
           }
      }
    if (text2)
-     _text_filter_markup_prepend_internal(en, c, text2);
+     {
+        Edje_Entry_Change_Info *info;
+        
+        info = _text_filter_markup_prepend_internal(en, c, text2,
+                                                    fmtpre, fmtpost,
+                                                    clearsel, changeinfo);
+        return info;
+     }
+   return NULL;
 }
 
 static void
@@ -1101,12 +1152,12 @@ noop:
    _sel_clear(en->cursor, en->rp->object, en);
 }
 
-static void
-_range_del(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en)
-{
-   evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
-   _sel_clear(en->cursor, en->rp->object, en);
-}
+//static void
+//_range_del(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en)
+//{
+//   evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+//   _sel_clear(en->cursor, en->rp->object, en);
+//}
 
 static void
 _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
@@ -1558,8 +1609,6 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   info->change.insert.pos =
                      evas_textblock_cursor_pos_get(en->cursor);
                   info->change.insert.content = eina_stringshare_add("<tab/>");
-                  //yy
-//                  evas_textblock_cursor_format_prepend(en->cursor, "tab");
                   _text_filter_format_prepend(en, en->cursor, "tab");
                   _anchors_get(en->cursor, rp->object, en);
                   _edje_emit(ed, "entry,changed", rp->part->name);
@@ -1631,15 +1680,11 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift ||
                  evas_object_textblock_legacy_newline_get(rp->object))
                {
-                  //yy
-//                  evas_textblock_cursor_format_prepend(en->cursor, "br");
                   _text_filter_format_prepend(en, en->cursor, "br");
                   info->change.insert.content = eina_stringshare_add("<br/>");
                }
              else
                {
-                  //yy
-//                  evas_textblock_cursor_format_prepend(en->cursor, "ps");
                   _text_filter_format_prepend(en, en->cursor, "ps");
                   info->change.insert.content = eina_stringshare_add("<ps/>");
                }
@@ -1688,49 +1733,48 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
         if (string)
           {
-             Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
-             info->insert = EINA_TRUE;
-             info->change.insert.plain_length = 1;
-             info->change.insert.content = eina_stringshare_add(string);
-
-             if (en->have_selection)
-               {
-                  _range_del_emit(ed, en->cursor, rp->object, en);
-                  info->merge = EINA_TRUE;
-               }
-
-             info->change.insert.pos =
-                evas_textblock_cursor_pos_get(en->cursor);
-             // if PASSWORD_SHOW_LAST mode, appending text with password=off tag
+             Edje_Entry_Change_Info *info = NULL;
+// if PASSWORD_SHOW_LAST mode, appending text with password=off tag
              if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
                  _edje_password_show_last)
                {
                   _edje_entry_hide_visible_password(en->rp);
-                  _text_filter_format_prepend(en, en->cursor, "+ password=off");
-                  _text_filter_text_prepend(en, en->cursor, string);
-                  _text_filter_format_prepend(en, en->cursor, "- password");
-                  if (en->pw_timer)
+                  info = _text_filter_text_prepend(en, en->cursor, string,
+                                                   "+ password=off",
+                                                   "- password",
+                                                   EINA_TRUE, EINA_TRUE);
+                  if (info)
                     {
-                       ecore_timer_del(en->pw_timer);
-                       en->pw_timer = NULL;
+                       if (en->pw_timer)
+                         {
+                            ecore_timer_del(en->pw_timer);
+                            en->pw_timer = NULL;
+                         }
+                       en->pw_timer = ecore_timer_add
+                         (TO_DOUBLE(_edje_password_show_last_timeout),
+                             _password_timer_cb, en);
                     }
-                  en->pw_timer = ecore_timer_add(TO_DOUBLE(_edje_password_show_last_timeout),
-                                                 _password_timer_cb, en);
                }
              else
-               _text_filter_text_prepend(en, en->cursor, string);
+               info = _text_filter_text_prepend(en, en->cursor, string,
+                                                NULL, NULL,
+                                                EINA_TRUE, EINA_TRUE);
              _anchors_get(en->cursor, rp->object, en);
-             _edje_emit(ed, "entry,changed", rp->part->name);
-             _edje_emit_full(ed, "entry,changed,user", rp->part->name,
-                             info, _free_entry_change_info);
-             _edje_emit(ed, "cursor,changed", rp->part->name);
-             cursor_changed = EINA_TRUE;
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (info)
+               {
+                  _edje_emit(ed, "entry,changed", rp->part->name);
+                  _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                                  info, _free_entry_change_info);
+                  _edje_emit(ed, "cursor,changed", rp->part->name);
+                  cursor_changed = EINA_TRUE;
+                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+               }
           }
         if (free_string) free(string);
      }
 end:
-   if (!cursor_changed && (old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)))
+   if (!cursor_changed && 
+       (old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)))
      _edje_emit(ed, "cursor,changed", rp->part->name);
 
    _edje_entry_imf_cursor_info_set(en);
@@ -2564,7 +2608,8 @@ _edje_entry_text_markup_append(Edje_Real_Part *rp, const char *text)
    end_cur = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_paragraph_last(end_cur);
 
-   _text_filter_markup_prepend(en, end_cur, text);
+   _text_filter_markup_prepend(en, end_cur, text, NULL, NULL,
+                               EINA_TRUE, EINA_FALSE);
    evas_textblock_cursor_free(end_cur);
 
    /* We are updating according to the real cursor on purpose */
@@ -2585,12 +2630,11 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    if (!en) return;
    _edje_entry_imf_context_reset(rp);
 
-   // prepend markup @ cursor pos
-   if (en->have_selection)
-     _range_del(en->cursor, rp->object, en);
-   //xx
-//   evas_object_textblock_text_markup_prepend(en->cursor, text);
-   _text_filter_markup_prepend(en, en->cursor, text);
+   // prepend markup @ cursor pos .. XXX: do we need to do this? maybe not?
+//   if (en->have_selection)
+//     _range_del(en->cursor, rp->object, en);
+   _text_filter_markup_prepend(en, en->cursor, text, NULL, NULL,
+                               EINA_TRUE, EINA_FALSE);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);
@@ -2835,31 +2879,16 @@ _edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-   info = calloc(1, sizeof(*info));
-   if (!info) return;
-   info->insert = EINA_TRUE;
-   info->change.insert.plain_length = 1;
-   info->change.insert.content = eina_stringshare_add(text);
-     {
-        char *tmp;
-        tmp = evas_textblock_text_markup_to_utf8(rp->object,
-                                                 info->change.insert.content);
-        info->change.insert.plain_length = eina_unicode_utf8_get_len(tmp);
-        free(tmp);
-     }
-
-   if (en->have_selection)
-     {
-        _range_del_emit(rp->edje, en->cursor, rp->object, en);
-        info->merge = EINA_TRUE;
-     }
-   info->change.insert.pos = evas_textblock_cursor_pos_get(en->cursor);
-   _text_filter_markup_prepend(en, en->cursor, text);
+   info = _text_filter_markup_prepend(en, en->cursor, text, NULL, NULL,
+                                     EINA_TRUE, EINA_TRUE);
    _anchors_get(en->cursor, rp->object, en);
-   _edje_emit(rp->edje, "entry,changed", rp->part->name);
-   _edje_emit_full(rp->edje, "entry,changed,user", rp->part->name,
-                   info, _free_entry_change_info);
-   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+   if (info)
+     {
+        _edje_emit(rp->edje, "entry,changed", rp->part->name);
+        _edje_emit_full(rp->edje, "entry,changed,user", rp->part->name,
+                        info, _free_entry_change_info);
+        _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+     }
 
    _edje_entry_imf_cursor_info_set(en);
    _edje_entry_real_part_configure(rp);
@@ -3729,8 +3758,8 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en = NULL;
    char *commit_str = event_info;
-   int start_pos;
-
+   Edje_Entry_Change_Info *info = NULL;
+   
    if ((!rp)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3750,8 +3779,6 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
           }
      }
 
-   start_pos = evas_textblock_cursor_pos_get(en->cursor);
-
    /* delete preedit characters */
    _preedit_del(en);
    _preedit_clear(en);
@@ -3769,38 +3796,38 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
    if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
        _edje_password_show_last && (!en->preedit_start))
      {
-        _text_filter_format_prepend(en, en->cursor, "+ password=off");
-        _text_filter_text_prepend(en, en->cursor, commit_str);
-        _text_filter_format_prepend(en, en->cursor, "- password");
-
-        if (en->pw_timer)
+        info = _text_filter_text_prepend(en, en->cursor, commit_str,
+                                         "+ password=off", "- password",
+                                         EINA_TRUE, EINA_TRUE);
+        if (info)
           {
-             ecore_timer_del(en->pw_timer);
-             en->pw_timer = NULL;
+             if (en->pw_timer)
+               {
+                  ecore_timer_del(en->pw_timer);
+                  en->pw_timer = NULL;
+               }
+             en->pw_timer = ecore_timer_add
+               (TO_DOUBLE(_edje_password_show_last_timeout),
+                   _password_timer_cb, en);
           }
-        en->pw_timer = ecore_timer_add(TO_DOUBLE(_edje_password_show_last_timeout),
-                                       _password_timer_cb, en);
      }
    else
-     _text_filter_text_prepend(en, en->cursor, commit_str);
+     {
+        info = _text_filter_text_prepend(en, en->cursor, commit_str,
+                                        NULL, NULL,
+                                         EINA_TRUE, EINA_TRUE);
+     }
 
 
    _edje_entry_imf_cursor_info_set(en);
    _anchors_get(en->cursor, rp->object, en);
-   _edje_emit(rp->edje, "entry,changed", rp->part->name);
-
+   if (info)
      {
-        Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
-        info->insert = EINA_TRUE;
-        info->change.insert.pos = start_pos;
-        info->change.insert.content = eina_stringshare_add(commit_str);
-        info->change.insert.plain_length =
-           eina_unicode_utf8_get_len(info->change.insert.content);
+        _edje_emit(rp->edje, "entry,changed", rp->part->name);
         _edje_emit_full(ed, "entry,changed,user", rp->part->name,
                         info, _free_entry_change_info);
         _edje_emit(ed, "cursor,changed", rp->part->name);
      }
-
    _edje_entry_imf_cursor_info_set(en);
    _edje_entry_real_part_configure(rp);
 }
@@ -3844,12 +3871,6 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
 
    if (!strcmp(preedit_string, ""))
      preedit_end_state = EINA_TRUE;
-
-   if (en->have_selection && !preedit_end_state)
-     {
-        /* delete selected characters */
-        _range_del_emit(ed, en->cursor, rp->object, en);
-     }
 
    /* delete preedit characters */
    _preedit_del(en);
@@ -3897,22 +3918,31 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
         if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
             _edje_password_show_last)
           {
+             Edje_Entry_Change_Info *info;
+             
              _edje_entry_hide_visible_password(en->rp);
-             _text_filter_format_prepend(en, en->cursor, "+ password=off");
-             _text_filter_markup_prepend(en, en->cursor, eina_strbuf_string_get(buf));
-             _text_filter_format_prepend(en, en->cursor, "- password");
-             if (en->pw_timer)
+             info = _text_filter_text_prepend(en, en->cursor,
+                                              eina_strbuf_string_get(buf),
+                                              "+ password=off",
+                                              "- password",
+                                              EINA_TRUE, EINA_TRUE);
+             if (info)
                {
-                  ecore_timer_del(en->pw_timer);
-                  en->pw_timer = NULL;
+                  if (en->pw_timer)
+                    {
+                       ecore_timer_del(en->pw_timer);
+                       en->pw_timer = NULL;
+                    }
+                  en->pw_timer = ecore_timer_add
+                    (TO_DOUBLE(_edje_password_show_last_timeout),
+                        _password_timer_cb, en);
                }
-             en->pw_timer = ecore_timer_add(TO_DOUBLE(_edje_password_show_last_timeout),
-                                            _password_timer_cb, en);
           }
         else
-          {
-             _text_filter_markup_prepend(en, en->cursor, eina_strbuf_string_get(buf));
-          }
+          _text_filter_markup_prepend(en, en->cursor,
+                                      eina_strbuf_string_get(buf),
+                                      NULL, NULL,
+                                      EINA_TRUE, EINA_FALSE);
         eina_strbuf_free(buf);
      }
 

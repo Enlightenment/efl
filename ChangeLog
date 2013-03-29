@@ -1,3 +1,8 @@
+2013-03-29  Carsten Haitzler (The Rasterman)
+
+        * Fix edje entry to resepct filter callbacks and not clear
+        selections if filters filter out all contents.
+
 2013-03-28  Cedric Bail
 
 	* Ecore: automatically turn on Systemd watchdog in Ecore main loop.
