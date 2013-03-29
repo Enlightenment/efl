@@ -59,6 +59,7 @@ $ cd ~/bullet/build
 $ cmake .. -DBUILD_CPU_DEMOS=OFF -DBUILD_DEMOS=OFF -DBUILD_SHARED_LIBS=ON
 $ make
 $ sudo make install
+$ sudo ldconfig
 
 * Ubuntu Users:
 Alternatively ubuntu users have the option to install the BulletPhysics from
