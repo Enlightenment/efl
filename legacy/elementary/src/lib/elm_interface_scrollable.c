@@ -2938,7 +2938,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
         if (y < 0) y = -y;
 
         if ((sid->one_direction_at_a_time) &&
-            (!((sid->down.dir_x) || (sid->down.dir_y))))
+            (((sid->down.dir_x) || (sid->down.dir_y))))
           {
              if (x > _elm_config->thumbscroll_threshold)
                {
