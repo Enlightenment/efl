@@ -7,6 +7,7 @@
 #include <io.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include <errno.h>
 
@@ -269,11 +270,90 @@ unsetenv(const char *name)
  * Files related functions
  *
  */
+static int
+_mkstemp_init(char *__template, char **suffix, size_t *length, DWORD *val)
+{
+   *length = strlen(__template);
+   if ((*length < 6) ||
+       (strncmp (__template + *length - 6, "XXXXXX", 6)))
+     {
+        errno = EINVAL;
+        return 0;
+     }
+
+   *suffix = __template + *length - 6;
+
+   *val = GetTickCount();
+   *val += GetCurrentProcessId();
+
+   return 1;
+}
+
+static int
+_mkstemp(char *suffix, int val)
+{
+   const char lookup[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   DWORD v = val;
+
+   suffix[0] = lookup[v % 62];
+   v /= 62;
+   suffix[1] = lookup[v % 62];
+   v /= 62;
+   suffix[2] = lookup[v % 62];
+   v /= 62;
+   suffix[3] = lookup[v % 62];
+   v /= 62;
+   suffix[4] = lookup[v % 62];
+   v /= 62;
+   suffix[5] = lookup[v % 62];
+   v /= 62;
+
+   val += 7777;
+
+   return v;
+}
+
+EAPI char *
+mkdtemp(char *__template)
+{
+   char      *suffix;
+   DWORD      val;
+   size_t     length;
+   int        i;
+
+   if (!__template)
+     {
+        errno = EINVAL;
+	return NULL;
+     }
+
+   if (!_mkstemp_init(__template, &suffix, &length, &val))
+     return NULL;
+
+   for (i = 0; i < 32768; i++)
+     {
+        val = _mkstemp(suffix, val);
+
+	if (mkdir(__template))
+	  return __template;
+
+	if (errno == EFAULT ||
+	    errno == ENOSPC ||
+	    errno == ENOMEM ||
+	    errno == ENOENT ||
+	    errno == ENOTDIR ||
+	    errno == EPERM ||
+	    errno == EROFS)
+	  return NULL;
+     }
+
+   errno = EEXIST;
+   return NULL;
+}
 
 int
 mkstemp(char *__template)
 {
-   const char lookup[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
    char      *suffix;
    DWORD      val;
    size_t     length;
@@ -282,38 +362,14 @@ mkstemp(char *__template)
    if (!__template)
      return 0;
 
-   length = strlen(__template);
-   if ((length < 6) ||
-       (strncmp (__template + length - 6, "XXXXXX", 6)))
-     {
-        errno = EINVAL;
-        return -1;
-     }
-
-   suffix = __template + length - 6;
-
-   val = GetTickCount();
-   val += GetCurrentProcessId();
+   if (!_mkstemp_init(__template, &suffix, &length, &val))
+     return -1;
 
    for (i = 0; i < 32768; i++)
      {
-        DWORD v;
         int fd;
 
-        v = val;
-
-        suffix[0] = lookup[v % 62];
-        v /= 62;
-        suffix[1] = lookup[v % 62];
-        v /= 62;
-        suffix[2] = lookup[v % 62];
-        v /= 62;
-        suffix[3] = lookup[v % 62];
-        v /= 62;
-        suffix[4] = lookup[v % 62];
-        v /= 62;
-        suffix[5] = lookup[v % 62];
-        v /= 62;
+	val = _mkstemp(suffix, val);
 
 #ifndef __MINGW32CE__
         fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
@@ -337,8 +393,6 @@ mkstemp(char *__template)
 #endif /* __MINGW32CE__ */
         if (fd >= 0)
           return fd;
-
-        val += 7777;
      }
 
    errno = EEXIST;

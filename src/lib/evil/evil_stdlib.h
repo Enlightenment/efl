@@ -160,6 +160,13 @@ EAPI int unsetenv(const char *name);
 EAPI int mkstemp(char *__template);
 
 /**
+ * @brief create an unique temporary directory
+ *
+ * @since 1.8.0
+ */
+EAPI char *mkdtemp(char *__template);
+
+/**
  * @brief Return an absolute or full path name for a specified relative path name.
  *
  * @param file_name The absolute path name.

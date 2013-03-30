@@ -1,3 +1,7 @@
+2013-03-30  Cedric Bail
+
+	* Evil: Add mkdtemp.
+
 2013-03-29  Carsten Haitzler (The Rasterman)
 
         * Fix edje entry to resepct filter callbacks and not clear
