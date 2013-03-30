@@ -1274,16 +1274,13 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_scrollable_interface_objects_set(edje, priv->hit_rect));
-
    priv->len_side = 3;
 
-   eo_do(obj, elm_wdg_theme(NULL));
-
-   eo_do(obj, elm_scrollable_interface_policy_set(ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
-   eo_do(obj, elm_scrollable_interface_bounce_allow_set(EINA_TRUE, EINA_FALSE));
-
    eo_do(obj,
+         elm_scrollable_interface_objects_set(edje, priv->hit_rect),
+         elm_wdg_theme(NULL),
+         elm_scrollable_interface_policy_set(ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF),
+         elm_scrollable_interface_bounce_allow_set(EINA_TRUE, EINA_FALSE),
          elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
          elm_scrollable_interface_animate_stop_cb_set(_scroll_animate_stop_cb),
          elm_scrollable_interface_drag_start_cb_set(_scroll_drag_start_cb),
