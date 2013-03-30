@@ -292,7 +292,7 @@ AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 
 # check for systemd library if requested
 if test "x{want_systemd}" = "xyes"; then
-   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon libsystemd-journal],
+   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
    		[want_systemd="yes"],
 		[want_systemd="no"])
 fi
