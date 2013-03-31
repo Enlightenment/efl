@@ -106,7 +106,8 @@ old/README.escape \
 old/README.ethumb \
 old/README.evas \
 old/README.evil \
-spec/efl.spec
+spec/efl.spec \
+pkgbuild/PKGBUILD
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -304,6 +305,10 @@ examples:
 
 install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src install-examples
+
+pkgbuild::
+	@echo "making arch packages"
+	makepkg -f -p $(top_builddir)/pkgbuild/PKGBUILD
 
 # cleaning
 

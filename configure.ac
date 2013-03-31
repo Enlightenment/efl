@@ -3639,6 +3639,7 @@ src/examples/ethumb_client/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 spec/efl.spec
+pkgbuild/PKGBUILD
 pc/evil.pc
 pc/escape.pc
 pc/eina.pc
