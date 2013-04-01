@@ -96,6 +96,8 @@ evas_shutdown(void)
 
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
+   eina_cow_del(evas_object_state_cow);
+   evas_object_state_cow = NULL;
    evas_object_map_cow = NULL;
    evas_object_proxy_cow = NULL;
 
