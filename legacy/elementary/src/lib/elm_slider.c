@@ -474,7 +474,12 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
      }
-
+   if (sd->indicator_show)
+     {
+        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+     }
    _visuals_refresh(obj);
 
    edje_object_message_signal_process(wd->resize_obj);
