@@ -22,7 +22,7 @@ struct _Evas_Object_Smart
    void             *engine_data;
    void             *data;
    Eina_List        *callbacks;
-   Eina_Inlist      *contained;
+   Eina_Inlist      *contained; /** list of smart member objects */
    Eina_Inlist      *smart_callbacks_infos;
 
   /* ptr array + data blob holding all interfaces private data for
@@ -33,7 +33,7 @@ struct _Evas_Object_Smart
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
 
    int               walking_list;
-   int               member_count;
+   int               member_count; /** number of smart member objects */
 
    unsigned char     recalculate_cycle;
 
