@@ -150,6 +150,8 @@ EAPI void      elm_object_item_domain_translatable_part_text_set(Elm_Object_Item
 
 #define elm_object_item_translatable_text_set(it, text) elm_object_item_domain_translatable_part_text_set((it), NULL, NULL, (text))
 
+#define elm_object_item_translatable_part_text_set(it, part, text) elm_object_item_domain_translatable_part_text_set((it), (part), NULL, (text))
+
 /**
  * Gets the original string set as translatable for an object item.
  *

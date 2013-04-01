@@ -56,6 +56,7 @@ Additions:
    * Add APIs - elm_entry_input_panel_layout_variation_set/get
    * Add elm_map smart callback - "language,changed".
    * Add the repeat_events_set/get for blocking the events of content objects.
+	* Add convenient macros - elm_object_translatable_part_text_set(), elm_object_item_translatable_part_text_set().
 
 Improvements:
 

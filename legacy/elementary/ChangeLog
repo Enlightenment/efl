@@ -1199,3 +1199,8 @@
 
         * Add the repeat_events_set/get for blocking the events of content objects.
         This feature is useful to the access.
+
+2013-04-01  ChunEon Park (Hermet)
+
+        * Add convenient macros - elm_object_translatable_part_text_set(), elm_object_item_translatable_part_text_set().
+
