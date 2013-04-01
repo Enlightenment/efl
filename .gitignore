@@ -60,6 +60,7 @@ Makefile.in
 /pc/evas-wayland-shm.pc
 /pc/evas.pc
 /spec/efl.spec
+/pkgbuild/PKGBUILD
 /src/bin/eet/eet
 /src/bin/embryo/embryo_cc
 /src/bin/evas/dummy_slave
