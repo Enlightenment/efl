@@ -90,6 +90,7 @@ Improvements:
    * Improve gengrid item append performance.
    * Naviframe works for H/W Back key event.
    * Naviframe is now supproting focus_direction.
+   * Scroller decides whether the accelerator is on or not, depending on the velocity and the interval time of the flick event.
 
 Fixes:
 

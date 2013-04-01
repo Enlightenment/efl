@@ -1190,3 +1190,7 @@
 2013-03-29  Mike Blumenkrantz
 
         * Fix ctxpopup geometry when parent is an elm_win.
+
+2013-04-01  Jaehwan Kim
+
+        * Scroller decides whether the accelerator is on or not, depending on the velocity and the interval time of the flick event.

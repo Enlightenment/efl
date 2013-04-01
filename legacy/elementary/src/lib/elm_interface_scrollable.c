@@ -2280,6 +2280,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                            (vel > _elm_config->thumbscroll_momentum_threshold))
                          {
                             int minx, miny, mx, my, px, py;
+                            double tt = 0.0, dtt = 0.0;
 
                             eo_do(sid->pan_obj, elm_obj_pan_pos_min_get
                                   (&minx, &miny));
@@ -2289,22 +2290,12 @@ _elm_scroll_mouse_up_event_cb(void *data,
                             sid->down.dx = ((double)dx / at);
                             sid->down.dy = ((double)dy / at);
                             if (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
-                                ((sid->down.dx < 0) && (sid->down.pdx < 0)))
-                              if (px > minx && px < mx)
-                                sid->down.dx += (double)sid->down.pdx * 1.5;
-                            // FIXME: * 1.5 - probably should be config
-                            if (((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
-                                ((sid->down.dy < 0) && (sid->down.pdy < 0)))
-                              if (py > miny && py < my)
-                                sid->down.dy += (double)sid->down.pdy * 1.5;
-                            // FIXME: * 1.5 - probably should be config
-                            if (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
                                 ((sid->down.dx < 0) && (sid->down.pdx < 0)) ||
                                 ((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
                                 ((sid->down.dy < 0) && (sid->down.pdy < 0)))
                               {
-                                 double tt = ecore_loop_time_get();
-                                 double dtt = tt - sid->down.anim_start;
+                                 tt = ecore_loop_time_get();
+                                 dtt = tt - sid->down.anim_start;
 
                                  if (dtt < 0.0) dtt = 0.0;
                                  else if (dtt >
@@ -2315,6 +2306,19 @@ _elm_scroll_mouse_up_event_cb(void *data,
                               }
                             else
                               sid->down.extra_time = 0.0;
+
+                            if (abs(sid->down.dx) > 500 && (dtt < 0.7) &&
+                                (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
+                                ((sid->down.dx < 0) && (sid->down.pdx < 0))))
+                              if (px > minx && px < mx)
+                                sid->down.dx += (double)sid->down.pdx * 2.5;
+                            // FIXME: > 500, < 0.7, * 1.5 - probably should be config
+                            if (abs(sid->down.dy) > 500 && (dtt < 0.7) &&
+                                (((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
+                                ((sid->down.dy < 0) && (sid->down.pdy < 0))))
+                              if (py > miny && py < my)
+                                sid->down.dy += (double)sid->down.pdy * 2.5;
+                            // FIXME: > 500, < 0.7, * 1.5 - probably should be config
                             sid->down.pdx = sid->down.dx;
                             sid->down.pdy = sid->down.dy;
                             ox = -sid->down.dx;
