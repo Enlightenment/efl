@@ -101,6 +101,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Horizontal inverted");
    elm_object_part_content_set(sl, "end", ic);
+   elm_slider_unit_format_set(sl, "%3.0f units");
    elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -183,6 +184,13 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    evas_object_smart_callback_add(sl1, "changed", _change_cb, sl);
 
+   /* vertical disable state */
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
+
    sl = elm_slider_add(win);
    elm_object_part_content_set(sl, "icon", ic);
    elm_object_text_set(sl, "Disabled vertical");
@@ -200,25 +208,18 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ic);
    evas_object_show(sl);
 
-   /* vertical disable state */
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
-
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Vertical");
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 60);
    evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sl, 0.0, EVAS_HINT_EXPAND);
-   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_indicator_show_set(sl, EINA_FALSE);
    elm_slider_value_set(sl, 0.2);
    elm_object_scale_set(sl, 1.0);
    elm_slider_horizontal_set(sl, EINA_FALSE);
    evas_object_smart_callback_add(sl, "changed", _change_print_cb, sl);
    elm_box_pack_end(bx2, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
    bx2 = elm_box_add(win);
