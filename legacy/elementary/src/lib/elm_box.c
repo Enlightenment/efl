@@ -176,7 +176,6 @@ _on_size_hints_changed(void *data,
    _sizing_eval(data);
 }
 
-
 static void
 _elm_box_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -192,7 +191,6 @@ _elm_box_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (ret) *ret = EINA_TRUE;
 }
-
 
 static void
 _elm_box_custom_layout(Evas_Object *o,
@@ -398,28 +396,26 @@ static void
 _elm_box_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-   elm_widget_resize_object_set(obj, evas_object_box_add(evas_object_evas_get(obj)));
+   elm_widget_resize_object_set(obj,
+                                evas_object_box_add(evas_object_evas_get(obj)));
 
-   evas_object_box_layout_set(wd->resize_obj, _elm_box_custom_layout, obj, NULL);
+   evas_object_box_layout_set(wd->resize_obj, _elm_box_custom_layout,
+                              obj, NULL);
 
-   evas_object_event_callback_add
-      (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-      _on_size_hints_changed, obj);
+   evas_object_event_callback_add(wd->resize_obj,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _on_size_hints_changed, obj);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
-   evas_object_smart_callback_add
-     (wd->resize_obj, SIG_CHILD_ADDED,
-     _child_added_cb_proxy, obj);
-   evas_object_smart_callback_add
-     (wd->resize_obj, SIG_CHILD_REMOVED,
-     _child_removed_cb_proxy, obj);
-
+   evas_object_smart_callback_add(wd->resize_obj, SIG_CHILD_ADDED,
+                                  _child_added_cb_proxy, obj);
+   evas_object_smart_callback_add(wd->resize_obj, SIG_CHILD_REMOVED,
+                                  _child_removed_cb_proxy, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
 }
-
 
 static void
 _elm_box_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
@@ -578,7 +574,6 @@ _pack_end(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_append(wd->resize_obj, subobj);
 }
-
 
 EAPI void
 elm_box_pack_before(Evas_Object *obj,
