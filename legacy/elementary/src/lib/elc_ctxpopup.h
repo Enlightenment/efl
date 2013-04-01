@@ -24,8 +24,9 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * - @c "dismissed" - this is called when the outside of ctxpopup was clicked or
- * it's parent area is changed or the language is changed. and then ctxpopup is
+ * - @c "dismissed" - This is called when the outside of ctxpopup was clicked or
+ * its parent area is changed or the language is changed and also when the
+ * parent object is resized due to the window rotation. Then ctxpopup is
  * dismissed.
  *
  * Default content parts of the ctxpopup widget that you can use for are:
