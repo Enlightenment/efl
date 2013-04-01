@@ -55,6 +55,7 @@ Additions:
    * Add API - elm_object_focused_object_get.
    * Add APIs - elm_entry_input_panel_layout_variation_set/get
    * Add elm_map smart callback - "language,changed".
+   * Add the repeat_events_set/get for blocking the events of content objects.
 
 Improvements:
 

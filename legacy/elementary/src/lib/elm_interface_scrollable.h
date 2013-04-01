@@ -187,6 +187,8 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET,
@@ -649,6 +651,28 @@ enum
  *
  */
 #define elm_scrollable_interface_single_direction_get(single_dir) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET), EO_TYPECHECK(Eina_Bool *, single_dir)
+
+/**
+ * @def elm_scrollable_interface_repeat_events_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] repeat_events
+ *
+ */
+#define elm_scrollable_interface_repeat_events_set(repeat_events) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET), EO_TYPECHECK(Eina_Bool, repeat_events)
+
+/**
+ * @def elm_scrollable_interface_repeat_events_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] repeat_events
+ *
+ */
+#define elm_scrollable_interface_repeat_events_get(repeat_events) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, repeat_events)
 
 /**
  * @def elm_scrollable_interface_mirrored_set

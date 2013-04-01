@@ -1194,3 +1194,8 @@
 2013-04-01  Jaehwan Kim
 
         * Scroller decides whether the accelerator is on or not, depending on the velocity and the interval time of the flick event.
+
+2013-04-01  Jaehwan Kim
+
+        * Add the repeat_events_set/get for blocking the events of content objects.
+        This feature is useful to the access.

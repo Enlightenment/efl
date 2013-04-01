@@ -3921,6 +3921,28 @@ _elm_scroll_single_direction_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_elm_scroll_repeat_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Eina_Bool repeat_events = va_arg(*list, int);
+
+   if (sid->event_rect)
+	   evas_object_repeat_events_set(sid->event_rect, repeat_events);
+}
+
+static void
+_elm_scroll_repeat_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   if (sid->event_rect)
+	   *ret = evas_object_repeat_events_get(sid->event_rect);
+   else
+	   *ret = EINA_TRUE;
+}
+
+static void
 _elm_scroll_hold_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -3928,6 +3950,7 @@ _elm_scroll_hold_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sid->hold = hold;
 }
+
 static void
 _elm_scroll_freeze_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
@@ -4250,6 +4273,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_GET), _elm_scroll_policy_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET), _elm_scroll_single_direction_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET), _elm_scroll_single_direction_get),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET), _elm_scroll_repeat_events_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET), _elm_scroll_repeat_events_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET), _elm_scroll_mirrored_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET), _elm_scroll_hold_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET), _elm_scroll_freeze_set),
@@ -4316,6 +4341,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET, "description here"),
