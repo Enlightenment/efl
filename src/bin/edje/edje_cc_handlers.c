@@ -4354,6 +4354,14 @@ static void ob_collections_group_parts_part_box_items_item(void)
    pitem->can_override = EINA_FALSE;
 }
 
+#define CURRENT_ITEM_CHECK						\
+  if (!current_item)							\
+    {									\
+       ERR("parse error %s:%i. Item not defined at this stage.",        \
+           file_in, line - 1);                                          \
+      exit(-1);								\
+    }
+
 /**
     @page edcref
     @property
@@ -4366,6 +4374,8 @@ static void ob_collections_group_parts_part_box_items_item(void)
 */
 static void st_collections_group_parts_part_box_items_item_type(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(1);
 
      {
@@ -4398,6 +4408,8 @@ static void st_collections_group_parts_part_box_items_item_name(void)
    Edje_Part *ep;
    Edje_Pack_Element *item;
    Edje_Pack_Element_Parser *pitem;
+
+   CURRENT_ITEM_CHECK;
 
    check_arg_count(1);
 
@@ -4445,6 +4457,10 @@ static void st_collections_group_parts_part_box_items_item_name(void)
 */
 static void st_collections_group_parts_part_box_items_item_source(void)
 {
+   CURRENT_ITEM_CHECK;
+
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(1);
 
    current_item->source = parse_str(0);
@@ -4463,6 +4479,8 @@ static void st_collections_group_parts_part_box_items_item_source(void)
 */
 static void st_collections_group_parts_part_box_items_item_min(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->min.w = parse_int_range(0, 0, 0x7ffffff);
@@ -4484,6 +4502,8 @@ static void st_collections_group_parts_part_box_items_item_min(void)
 */
 static void st_collections_group_parts_part_box_items_item_spread(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->spread.w = parse_int_range(0, 0, 0x7ffffff);
@@ -4502,6 +4522,8 @@ static void st_collections_group_parts_part_box_items_item_spread(void)
 */
 static void st_collections_group_parts_part_box_items_item_prefer(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->prefer.w = parse_int_range(0, 0, 0x7ffffff);
@@ -4519,6 +4541,8 @@ static void st_collections_group_parts_part_box_items_item_prefer(void)
 */
 static void st_collections_group_parts_part_box_items_item_max(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->max.w = parse_int_range(0, 0, 0x7ffffff);
@@ -4537,6 +4561,8 @@ static void st_collections_group_parts_part_box_items_item_max(void)
 */
 static void st_collections_group_parts_part_box_items_item_padding(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(4);
 
    current_item->padding.l = parse_int_range(0, 0, 0x7ffffff);
@@ -4557,6 +4583,8 @@ static void st_collections_group_parts_part_box_items_item_padding(void)
 */
 static void st_collections_group_parts_part_box_items_item_align(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
@@ -4575,6 +4603,8 @@ static void st_collections_group_parts_part_box_items_item_align(void)
 */
 static void st_collections_group_parts_part_box_items_item_weight(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->weight.x = FROM_DOUBLE(parse_float_range(0, 0.0, 99999.99));
@@ -4593,6 +4623,8 @@ static void st_collections_group_parts_part_box_items_item_weight(void)
 */
 static void st_collections_group_parts_part_box_items_item_aspect(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    current_item->aspect.w = parse_int_range(0, 0, 0x7fffffff);
@@ -4611,6 +4643,8 @@ static void st_collections_group_parts_part_box_items_item_aspect(void)
 */
 static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(1);
 
    current_item->aspect.mode = parse_enum(0,
@@ -4634,6 +4668,8 @@ static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
 */
 static void st_collections_group_parts_part_box_items_item_options(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(1);
 
    current_item->options = parse_str(0);
@@ -4652,6 +4688,8 @@ static void st_collections_group_parts_part_box_items_item_options(void)
 */
 static void st_collections_group_parts_part_table_items_item_position(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    if (current_part->type != EDJE_PART_TYPE_TABLE)
@@ -4678,6 +4716,8 @@ static void st_collections_group_parts_part_table_items_item_position(void)
 */
 static void st_collections_group_parts_part_table_items_item_span(void)
 {
+   CURRENT_ITEM_CHECK;
+
    check_arg_count(2);
 
    if (current_part->type != EDJE_PART_TYPE_TABLE)
