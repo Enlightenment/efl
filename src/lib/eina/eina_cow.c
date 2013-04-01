@@ -201,7 +201,7 @@ _eina_cow_hash_del(Eina_Cow *cow,
    if (!ref->hashed) return ;
 
    current_cow_size = cow->struct_size;
-   eina_hash_del(cow->match, data, ref);
+   eina_hash_del(cow->match, data, data);
    ref->hashed = EINA_FALSE;
 }
 
@@ -493,7 +493,6 @@ eina_cow_done(Eina_Cow *cow,
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
-
    gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
    if (!gc) return ; /* That one will not get gced this time */
 
@@ -561,18 +560,22 @@ eina_cow_gc(Eina_Cow *cow)
    /* Do handle hash and all funky merge think here */
    data = EINA_COW_DATA_GET(gc->ref);
 
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(gc->ref, sizeof (*ref));
+#endif        
    gc->ref->togc = EINA_FALSE;
 
    current_cow_size = cow->struct_size;
    match = eina_hash_find(cow->match, data);
    if (match)
      {
+        if (match == data) abort();
         eina_cow_free(cow, data);
 
         ref = EINA_COW_PTR_GET(match);
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
-#endif        
+#endif
         *((void**)gc->dst) = match;
         ref->refcount++;
 #ifndef NVALGRIND
@@ -584,6 +587,9 @@ eina_cow_gc(Eina_Cow *cow)
         eina_hash_direct_add(cow->match, data, data);
         gc->ref->hashed = EINA_TRUE;
      }
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(gc->ref, sizeof (*ref));
+#endif
 
    eina_hash_del(cow->togc, &gc->ref, gc);
 
