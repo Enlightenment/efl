@@ -2150,7 +2150,7 @@ evas_render_idle_flush(Evas *eo_e)
 }
 
 void
-_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list)
 {
    Evas_Public_Data *e = _pd;
 
@@ -2240,6 +2240,16 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    if ((e->engine.func) && (e->engine.func->output_dump) &&
        (e->engine.data.output))
      e->engine.func->output_dump(e->engine.data.output);
+
+#define GC_ALL(Cow)				\
+   while (eina_cow_gc(Cow))			\
+     ;
+
+   GC_ALL(evas_object_proxy_cow);
+   GC_ALL(evas_object_map_cow);
+   GC_ALL(evas_object_image_pixels_cow);
+   GC_ALL(evas_object_image_load_opts_cow);
+   GC_ALL(evas_object_image_state_cow);
 }
 
 void
