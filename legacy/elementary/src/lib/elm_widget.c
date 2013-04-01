@@ -35,9 +35,9 @@ struct _Elm_Event_Cb_Data
 
 struct _Elm_Translate_String_Data
 {
-   const char *id;
-   const char *domain;
-   const char *string;
+   Eina_Stringshare *id;
+   Eina_Stringshare *domain;
+   Eina_Stringshare *string;
 };
 
 /* local subsystem globals */
