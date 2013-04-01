@@ -165,8 +165,9 @@
 /**
  * @typedef Eina_Stringshare
  *
- * Interchangeable with "const char *" but still a good visual hint for the
- * purpose. Maybe in the far far future we'll even add strict type checking.
+ * "Eina_Stringshare *" is interchangeable with "const char *" but still a good
+ * visual hint for the purpose. Maybe in the far far future we'll even add
+ * strict type checking.
  *
  * @since 1.2.0
  */
