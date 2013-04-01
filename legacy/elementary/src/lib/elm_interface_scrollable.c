@@ -3927,7 +3927,7 @@ _elm_scroll_repeat_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool repeat_events = va_arg(*list, int);
 
    if (sid->event_rect)
-	   evas_object_repeat_events_set(sid->event_rect, repeat_events);
+     evas_object_repeat_events_set(sid->event_rect, repeat_events);
 }
 
 static void
@@ -3937,9 +3937,9 @@ _elm_scroll_repeat_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
    if (sid->event_rect)
-	   *ret = evas_object_repeat_events_get(sid->event_rect);
+     *ret = evas_object_repeat_events_get(sid->event_rect);
    else
-	   *ret = EINA_TRUE;
+     *ret = EINA_TRUE;
 }
 
 static void
@@ -4341,8 +4341,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET, "description here"),
-     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_SET, "It decides whether the scrollable object propagates the events to content object or not."),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_REPEAT_EVENTS_GET, "It gets whether the scrollable object propagates the events to content object or not."),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET, "description here"),
