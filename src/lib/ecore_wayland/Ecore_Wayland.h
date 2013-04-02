@@ -129,6 +129,7 @@ struct _Ecore_Wl_Output
    struct wl_output *output;
    Eina_Rectangle allocation;
    int mw, mh;
+   int transform;
    struct wl_list link;
 
    void (*destroy) (Ecore_Wl_Output *output, void *data);

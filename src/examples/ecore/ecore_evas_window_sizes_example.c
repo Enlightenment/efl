@@ -36,6 +36,7 @@ static const char commands[] = \
   "\tx - impose a maximum size to the window\n"
   "\tb - impose a base size to the window\n"
   "\ts - impose a step size (different than 1 px) to the window\n"
+  "\tg - get the screen geometry\n"
   "\th - print help\n";
 
 /* to inform current window's size */
@@ -145,6 +146,14 @@ _on_keydown(void *data EINA_UNUSED,
              fprintf(stdout, "Taking off step size restriction from the"
                              " window\n");
           }
+        return;
+     }
+
+   if (strcmp(ev->keyname, "g") == 0) /* get screen geometry */
+     {
+        int x, y, w, h;
+        ecore_evas_screen_geometry_get(ee, &x, &y, &w, &h);
+        fprintf(stdout, "screen geometry: %d,%d, %dx%d\n", x, y, w, h);
         return;
      }
 }

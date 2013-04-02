@@ -54,7 +54,7 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
 
 /* local functions */
 static void 
-_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED)
+_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform)
 {
    Ecore_Wl_Output *output;
 
@@ -65,6 +65,7 @@ _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED
    output->allocation.y = y;
    output->mw = w;
    output->mh = h;
+   output->transform = transform;
 }
 
 static void 
