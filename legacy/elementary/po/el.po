@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-28 08:29+0900\n"
+"POT-Creation-Date: 2013-04-03 01:50+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -204,7 +204,7 @@ msgstr "Μπάρα Προόδου"
 msgid "Radio"
 msgstr "Επιλογή"
 
-#: src/lib/elm_slider.c:816
+#: src/lib/elm_slider.c:821
 msgid "slider"
 msgstr "μπάρα κύλισης"
 

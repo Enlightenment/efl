@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-28 08:29+0900\n"
+"POT-Creation-Date: 2013-04-03 01:50+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -207,7 +207,7 @@ msgstr "индикатор прогресса"
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_slider.c:816
+#: src/lib/elm_slider.c:821
 msgid "slider"
 msgstr "бегунок"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-28 08:29+0900\n"
+"POT-Creation-Date: 2013-04-03 01:50+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -192,7 +192,7 @@ msgstr "barra de progrés "
 msgid "Radio"
 msgstr "Opció"
 
-#: src/lib/elm_slider.c:816
+#: src/lib/elm_slider.c:821
 msgid "slider"
 msgstr "control lliscant"
 
