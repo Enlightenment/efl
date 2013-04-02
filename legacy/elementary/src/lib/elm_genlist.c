@@ -5125,7 +5125,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
 
-   if ((it->relcount > 0) || (it->walking > 0))
+   if (it->walking > 0)
      {
      // FIXME: relative will be better to be fixed. it is too harsh.
       if (it->item->rel)

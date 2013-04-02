@@ -2028,7 +2028,7 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
    it->generation = GG_IT(it)->wsd->generation - 1; /* This means that the
                                                      * item is deleted */
 
-   if ((it->relcount > 0) || (it->walking > 0)) return;
+   if (it->walking > 0) return;
 
    if (it->selected)
      GG_IT(it)->wsd->selected =
@@ -2192,7 +2192,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
 
-   if ((it->relcount > 0) || (it->walking > 0))
+   if (it->walking > 0)
      {
         _elm_gengrid_item_del_not_serious(it);
         return;
@@ -2319,11 +2319,8 @@ _item_select(Elm_Gen_Item *it)
      {
         if ((!it->walking) && (it->generation < GG_IT(it)->wsd->generation))
           {
-             if (!it->relcount)
-               {
-                  it->del_cb(it);
-                  elm_widget_item_free(it);
-               }
+             it->del_cb(it);
+             elm_widget_item_free(it);
           }
         else
           GG_IT(it)->wsd->last_selected_item = (Elm_Object_Item *)it;
