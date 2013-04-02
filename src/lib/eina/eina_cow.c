@@ -220,6 +220,67 @@ _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
    ref->togc = EINA_FALSE;
 }
 
+static void
+_eina_cow_togc_add(Eina_Cow *cow,
+                   Eina_Cow_Ptr *ref,
+                   const Eina_Cow_Data * const * dst)
+{
+   Eina_Cow_GC *gc;
+
+   /* needed if we want to make cow gc safe */
+   if (ref->togc) return ;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
+#endif
+
+   gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
+   if (!gc) return ; /* That one will not get gced this time */
+
+   gc->ref = ref;
+   gc->dst = dst;
+   eina_hash_direct_add(cow->togc, &gc->ref, gc);
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
+#endif
+   ref->togc = EINA_TRUE;
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
+#endif
+}
+
+static void
+_eina_cow_gc(Eina_Cow *cow, Eina_Cow_Ptr *ref,
+             const Eina_Cow_Data * const *dst,
+             void *data)
+{
+   void *match;
+
+   ref->togc = EINA_FALSE;
+
+   current_cow_size = cow->struct_size;
+   match = eina_hash_find(cow->match, data);
+   if (match)
+     {
+        ref = EINA_COW_PTR_GET(match);
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
+#endif
+        *((void**)dst) = match;
+        ref->refcount++;
+
+        eina_cow_free(cow, data);
+
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
+#endif
+     }
+   else
+     {
+        eina_hash_direct_add(cow->match, data, data);
+        ref->hashed = EINA_TRUE;
+     }
+}
+
 Eina_Bool
 eina_cow_init(void)
 {
@@ -463,7 +524,6 @@ eina_cow_done(Eina_Cow *cow,
               Eina_Bool needed_gc)
 {
    Eina_Cow_Ptr *ref;
-   Eina_Cow_GC *gc;
 
    EINA_COW_MAGIC_CHECK(cow);
 
@@ -487,25 +547,8 @@ eina_cow_done(Eina_Cow *cow,
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
-   /* needed if we want to make cow gc safe */
-   if (ref->togc) return ;
-#ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
-#endif
 
-   gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
-   if (!gc) return ; /* That one will not get gced this time */
-
-   gc->ref = ref;
-   gc->dst = dst;
-   eina_hash_direct_add(cow->togc, &gc->ref, gc);
-#ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
-#endif
-   ref->togc = EINA_TRUE;
-#ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
-#endif
+   _eina_cow_togc_add(cow, ref, dst);
 }
 
 EAPI void
@@ -519,20 +562,24 @@ eina_cow_memcpy(Eina_Cow *cow,
 
    if (*dst == src) return ;
 
-   eina_cow_free(cow, *dst);
-
    if (src != cow->default_value)
      {
        ref = EINA_COW_PTR_GET(src);
-       EINA_COW_PTR_MAGIC_CHECK(ref);
 #ifndef NVALGRIND
        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
+
+       EINA_COW_PTR_MAGIC_CHECK(ref);
        ref->refcount++;
+
+       _eina_cow_togc_del(cow, ref);
+
 #ifndef NVALGRIND
        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
      }
+
+   eina_cow_free(cow, *dst);
 
    *((const void**)dst) = src;
 }
@@ -544,7 +591,6 @@ eina_cow_gc(Eina_Cow *cow)
    Eina_Cow_GC *gc;
    Eina_Iterator *it;
    void *data;
-   void *match;
    Eina_Bool r;
 
    EINA_COW_MAGIC_CHECK(cow);
@@ -562,31 +608,8 @@ eina_cow_gc(Eina_Cow *cow)
 
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(gc->ref, sizeof (*ref));
-#endif        
-   gc->ref->togc = EINA_FALSE;
-
-   current_cow_size = cow->struct_size;
-   match = eina_hash_find(cow->match, data);
-   if (match)
-     {
-        if (match == data) abort();
-        eina_cow_free(cow, data);
-
-        ref = EINA_COW_PTR_GET(match);
-#ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
-        *((void**)gc->dst) = match;
-        ref->refcount++;
-#ifndef NVALGRIND
-        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
-#endif
-     }
-   else
-     {
-        eina_hash_direct_add(cow->match, data, data);
-        gc->ref->hashed = EINA_TRUE;
-     }
+   _eina_cow_gc(cow, gc->ref, gc->dst, data);
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(gc->ref, sizeof (*ref));
 #endif
