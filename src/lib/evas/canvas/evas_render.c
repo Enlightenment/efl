@@ -2150,7 +2150,7 @@ evas_render_idle_flush(Evas *eo_e)
 }
 
 void
-_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list)
+_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = _pd;
 
