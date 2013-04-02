@@ -1566,11 +1566,14 @@ evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return ;
    MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_image_preload(cancel));
+   if (cancel)
+     eo_do(eo_obj, evas_obj_image_preload_cancel());
+   else
+     eo_do(eo_obj, evas_obj_image_preload_begin());
 }
 
 static void
-_image_preload(Eo *eo_obj, void *_pd, va_list *list)
+_image_preload_internal(Eo *eo_obj, void *_pd, Eina_Bool cancel)
 {
    Evas_Object_Image *o = _pd;
 
@@ -1583,7 +1586,6 @@ _image_preload(Eo *eo_obj, void *_pd, va_list *list)
    // FIXME: if already busy preloading, then dont request again until
    // preload done
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   Eina_Bool cancel = va_arg(*list, int);
    if (cancel)
      {
         if (o->preloading)
@@ -1604,6 +1606,18 @@ _image_preload(Eo *eo_obj, void *_pd, va_list *list)
                                                                        eo_obj);
           }
      }
+}
+
+static void
+_image_preload_begin(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   _image_preload_internal(eo_obj, _pd, EINA_FALSE);
+}
+
+static void
+_image_preload_cancel(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   _image_preload_internal(eo_obj, _pd, EINA_TRUE);
 }
 
 EAPI void
@@ -5093,7 +5107,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_CONVERT), _image_data_convert),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_SET), _image_data_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_GET), _image_data_get),
-        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD), _image_preload),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_BEGIN), _image_preload_begin),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_CANCEL), _image_preload_cancel),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_COPY_SET), _image_data_copy_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_UPDATE_ADD), _image_data_update_add),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ALPHA_SET), _image_alpha_set),
@@ -5168,7 +5183,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_DATA_CONVERT, "Converts the raw image data of the given image object to the specified colorspace."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_DATA_SET, "Sets the raw image data of the given image object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_DATA_GET, "Get a pointer to the raw image data of the given image object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD, "Preload an image object's image data in the background."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_BEGIN, "Begin preload an image object's image data in the background."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_CANCEL, "Cancel preload an image object's image data in the background."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_DATA_COPY_SET, "Replaces the raw image data of the given image object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_DATA_UPDATE_ADD, "Mark a sub-region of the given image object to be redrawn."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_ALPHA_SET, "Enable or disable alpha channel usage on the given image object."),

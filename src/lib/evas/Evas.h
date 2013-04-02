@@ -18471,7 +18471,8 @@ enum
    EVAS_OBJ_IMAGE_SUB_ID_DATA_CONVERT,
    EVAS_OBJ_IMAGE_SUB_ID_DATA_SET,
    EVAS_OBJ_IMAGE_SUB_ID_DATA_GET,
-   EVAS_OBJ_IMAGE_SUB_ID_PRELOAD,
+   EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_BEGIN,
+   EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_CANCEL,
    EVAS_OBJ_IMAGE_SUB_ID_DATA_COPY_SET,
    EVAS_OBJ_IMAGE_SUB_ID_DATA_UPDATE_ADD,
    EVAS_OBJ_IMAGE_SUB_ID_ALPHA_SET,
@@ -18978,16 +18979,24 @@ enum
 #define evas_obj_image_smooth_scale_get(smooth_scale) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_GET), EO_TYPECHECK(Eina_Bool *, smooth_scale)
 
 /**
- * @def evas_obj_image_preload
+ * @def evas_obj_image_preload_begin
  * @since 1.8
  *
- * Preload an image object's image data in the background
- *
- * @param[in] cancel in
+ * Begin preloading an image object's image data in the background
  *
  * @see evas_object_image_preload
  */
-#define evas_obj_image_preload(cancel) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD), EO_TYPECHECK(Eina_Bool, cancel)
+#define evas_obj_image_preload_begin() EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_BEGIN)
+
+/**
+ * @def evas_obj_image_preload_cancel
+ * @since 1.8
+ *
+ * Cancel preloading an image object's image data in the background
+ *
+ * @see evas_object_image_preload
+ */
+#define evas_obj_image_preload_cancel() EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD_CANCEL)
 
 /**
  * @def evas_obj_image_reload
