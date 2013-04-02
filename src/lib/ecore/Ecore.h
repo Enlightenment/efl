@@ -2221,7 +2221,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
  * so here it's safe to use anything from the EFL freely.
  *
  * The thread can also be cancelled before its completion calling
- *ecore_thread_cancel(), either from the main thread or @p func_blocking.
+ * ecore_thread_cancel(), either from the main thread or @p func_blocking.
  * In this case, @p func_cancel will be called, also from the main thread
  * to inform of this happening. If the thread could not be created, this
  * function will be called and it's @c thread parameter will be NULL. It's
@@ -2268,7 +2268,7 @@ EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_
  * be called from the main thread for every message sent from @p func_heavy
  * with ecore_thread_feedback().
  *
- * Like with ecore_thread_run(), a new thread will be launched to run
+ * Like ecore_thread_run(), a new thread will be launched to run
  * @p func_heavy unless the maximum number of simultaneous threads has been
  * reached, in which case the function will be scheduled to run whenever a
  * running task ends and a thread becomes free. But if @p try_no_queue is
