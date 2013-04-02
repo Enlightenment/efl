@@ -1470,7 +1470,7 @@ ecore_x_e_illume_zone_set(Ecore_X_Window win,
 EAPI Ecore_X_Window
 ecore_x_e_illume_zone_get(Ecore_X_Window win)
 {
-   Ecore_X_Window zone;
+   Ecore_X_Window zone = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
