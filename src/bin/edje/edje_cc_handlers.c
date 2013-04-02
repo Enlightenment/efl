@@ -4459,8 +4459,6 @@ static void st_collections_group_parts_part_box_items_item_source(void)
 {
    CURRENT_ITEM_CHECK;
 
-   CURRENT_ITEM_CHECK;
-
    check_arg_count(1);
 
    current_item->source = parse_str(0);
