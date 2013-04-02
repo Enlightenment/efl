@@ -9262,7 +9262,7 @@ EAPI Eina_Bool                     evas_object_image_source_visible_get(const Ev
  *
  * @see evas_object_image_source_get()
  * @see evas_object_image_source_visible_set()
- * @see evas_object_source_events_set()
+ * @see evas_object_image_source_events_get()
  * @since 1.8
  */
 EAPI void evas_object_image_source_events_set(Evas_Object *obj, Eina_Bool source) EINA_ARG_NONNULL(1);
@@ -9276,7 +9276,7 @@ EAPI void evas_object_image_source_events_set(Evas_Object *obj, Eina_Bool source
  *
  * @see evas_object_image_source_set()
  * @see evas_object_image_source_visible_set()
- * @see evas_object_source_events_set()
+ * @see evas_object_image_source_events_set()
  * @since 1.8
  */
 EAPI Eina_Bool evas_object_image_source_events_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
