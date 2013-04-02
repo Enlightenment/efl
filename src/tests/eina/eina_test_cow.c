@@ -48,7 +48,7 @@ START_TEST(eina_cow_bad)
    Eina_Cow *cow;
    Eina_Cow_Test default_value = { 7, 42, NULL };
 
-   cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value);
+   cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value, EINA_TRUE);
    fail_if(cow == NULL);
 
    cur = eina_cow_alloc(cow);
@@ -95,7 +95,7 @@ START_TEST(eina_cow)
    Eina_Cow *cow;
    Eina_Cow_Test default_value = { 42, 0, NULL };
 
-   cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value);
+   cow = eina_cow_add("COW Test", sizeof (Eina_Cow_Test), 16, &default_value, EINA_TRUE);
    fail_if(cow == NULL);
 
    prev = eina_cow_alloc(cow);
