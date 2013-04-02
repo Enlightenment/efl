@@ -95,6 +95,7 @@ _activate(Evas_Object *obj)
    if (elm_widget_disabled_get(obj)) return;
 
    sd->hover = elm_hover_add(sd->hover_parent);
+   elm_widget_sub_object_add(obj, sd->hover);
    elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
 
    if (sd->horizontal)
