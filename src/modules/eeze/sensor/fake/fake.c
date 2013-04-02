@@ -67,6 +67,9 @@ fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
    switch (sensor_type)
      {
       case EEZE_SENSOR_TYPE_ACCELEROMETER:
+      case EEZE_SENSOR_TYPE_GRAVITY:
+      case EEZE_SENSOR_TYPE_LINEAR_ACCELERATION:
+      case EEZE_SENSOR_TYPE_DEVICE_ORIENTATION:
       case EEZE_SENSOR_TYPE_MAGNETIC:
       case EEZE_SENSOR_TYPE_ORIENTATION:
       case EEZE_SENSOR_TYPE_GYROSCOPE:
@@ -126,6 +129,15 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
      {
       case EEZE_SENSOR_TYPE_ACCELEROMETER:
         ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
+        break;
+      case EEZE_SENSOR_TYPE_GRAVITY:
+        ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
+        break;
+      case EEZE_SENSOR_TYPE_LINEAR_ACCELERATION:
+        ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
+        break;
+      case EEZE_SENSOR_TYPE_DEVICE_ORIENTATION:
+        ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
         break;
       case EEZE_SENSOR_TYPE_MAGNETIC:
         ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
