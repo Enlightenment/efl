@@ -266,15 +266,18 @@ _init_cow(Eo *eo_obj)
         evas_object_image_load_opts_cow = eina_cow_add("Evas_Object_Image load opts",
                                                        sizeof (Evas_Object_Image_Load_Opts),
                                                        8,
-                                                       &default_load_opts);
+                                                       &default_load_opts,
+                                                       EINA_TRUE);
         evas_object_image_pixels_cow = eina_cow_add("Evas_Object_Image pixels",
                                                     sizeof (Evas_Object_Image_Pixels),
                                                     8,
-                                                    &default_pixels);
+                                                    &default_pixels,
+                                                    EINA_TRUE);
         evas_object_image_state_cow = eina_cow_add("Evas_Object_Image states",
                                                    sizeof (Evas_Object_Image_State),
                                                    8,
-                                                   &default_state);
+                                                   &default_state,
+                                                   EINA_TRUE);
      }
    if (!evas_object_image_load_opts_cow ||
        !evas_object_image_pixels_cow ||

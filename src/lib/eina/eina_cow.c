@@ -319,7 +319,7 @@ eina_cow_shutdown(void)
 }
 
 EAPI Eina_Cow *
-eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value)
+eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value, Eina_Bool gc)
 {
    const char *choice, *tmp;
    Eina_Cow *cow;
@@ -362,7 +362,10 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
                               NULL,
                               6);   
 #endif
-   cow->togc = eina_hash_pointer_new(_eina_cow_gc_free);
+   if (gc)
+     cow->togc = eina_hash_pointer_new(_eina_cow_gc_free);
+   else
+     cow->togc = NULL;
    cow->default_value = default_value;
    cow->struct_size = struct_size;
    cow->total_size = total_size;
@@ -389,8 +392,7 @@ eina_cow_del(Eina_Cow *cow)
 
    eina_mempool_del(cow->pool);
    eina_hash_free(cow->match);
-   eina_hash_free(cow->togc);
-
+   if (cow->togc) eina_hash_free(cow->togc);
    free(cow);
 }
 
@@ -542,7 +544,7 @@ eina_cow_done(Eina_Cow *cow,
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
-   if (!needed_gc) return ;
+   if (!cow->togc || !needed_gc) return ;
 
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
@@ -572,7 +574,8 @@ eina_cow_memcpy(Eina_Cow *cow,
        EINA_COW_PTR_MAGIC_CHECK(ref);
        ref->refcount++;
 
-       _eina_cow_togc_del(cow, ref);
+       if (cow->togc)
+         _eina_cow_togc_del(cow, ref);
 
 #ifndef NVALGRIND
        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
@@ -595,7 +598,8 @@ eina_cow_gc(Eina_Cow *cow)
 
    EINA_COW_MAGIC_CHECK(cow);
 
-   if (!eina_hash_population(cow->togc)) return EINA_FALSE;
+   if (!cow->togc || !eina_hash_population(cow->togc))
+     return EINA_FALSE;
 
    it = eina_hash_iterator_data_new(cow->togc);
    r = eina_iterator_next(it, (void**) &gc);
