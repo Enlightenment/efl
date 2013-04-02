@@ -185,7 +185,7 @@ START_TEST(ecore_test_ecore_audio_sndfile)
    in = ecore_audio_input_add(ECORE_AUDIO_TYPE_SNDFILE);
    fail_if(!in);
 
-   ecore_audio_input_userdata_set(in, &len);
+   ecore_audio_input_data_set(in, &len);
    ecore_audio_input_name_set(in, "sms.ogg");
    ecore_audio_input_sndfile_filename_set(in, SOUNDS_DIR"sms.ogg");
    fail_if(ecore_audio_input_channels_get(in) != 2);
@@ -195,7 +195,7 @@ START_TEST(ecore_test_ecore_audio_sndfile)
 //   fail_if(len != ecore_audio_input_remaining_get(in));
    fail_if(strcmp("sms.ogg", ecore_audio_input_name_get(in)));
 
-   fail_if(ecore_audio_input_userdata_get(in) != &len);
+   fail_if(ecore_audio_input_data_get(in) != &len);
    ecore_audio_input_del(in);
 }
 END_TEST
@@ -208,13 +208,13 @@ struct buffer {
 
 int _get_length(Ecore_Audio_Object *in)
 {
-  struct buffer *buf = ecore_audio_input_userdata_get(in);
+  struct buffer *buf = ecore_audio_input_data_get(in);
   return buf->length;
 }
 
 int _seek(Ecore_Audio_Object *in, int offs, int whence)
 {
-  struct buffer *buf = ecore_audio_input_userdata_get(in);
+  struct buffer *buf = ecore_audio_input_data_get(in);
 
   switch (whence) {
     case SEEK_SET:
@@ -232,13 +232,13 @@ int _seek(Ecore_Audio_Object *in, int offs, int whence)
 
 int _tell(Ecore_Audio_Object *in)
 {
-  struct buffer *buf = ecore_audio_input_userdata_get(in);
+  struct buffer *buf = ecore_audio_input_data_get(in);
   return buf->offset;
 }
 
 int _read(Ecore_Audio_Object *in, void *buffer, int length)
 {
-  struct buffer *buf = ecore_audio_input_userdata_get(in);
+  struct buffer *buf = ecore_audio_input_data_get(in);
 
   if ((buf->offset + length) > buf->length)
     length = buf->length - buf->offset;
@@ -251,7 +251,7 @@ int _read(Ecore_Audio_Object *in, void *buffer, int length)
 
 int _write(Ecore_Audio_Object *out, const void *buffer, int length)
 {
-  struct buffer *buf = ecore_audio_output_userdata_get(out);
+  struct buffer *buf = ecore_audio_output_data_get(out);
 
   if ((buf->offset + length) > buf->length)
     length = buf->length - buf->offset;
@@ -305,7 +305,7 @@ START_TEST(ecore_test_ecore_audio_sndfile_vio)
    ecore_audio_input_name_set(in, "tmp");
    ecore_audio_input_channels_set(in, 1);
    ecore_audio_input_samplerate_set(in, 44100);
-   ecore_audio_input_userdata_set(in, &indata);
+   ecore_audio_input_data_set(in, &indata);
    ecore_audio_input_sndfile_format_set(in, SF_FORMAT_RAW | SF_FORMAT_PCM_U8);
 
    ecore_audio_input_sndfile_vio_set(in, &vio);
@@ -314,7 +314,7 @@ START_TEST(ecore_test_ecore_audio_sndfile_vio)
    fail_if(!out);
    ecore_audio_output_name_set(out, "tmp");
    ecore_audio_output_sndfile_format_set(out, SF_FORMAT_RAW | SF_FORMAT_PCM_U8);
-   ecore_audio_output_userdata_set(out, &outdata);
+   ecore_audio_output_data_set(out, &outdata);
 
    ecore_audio_output_sndfile_vio_set(out, &vio);
 

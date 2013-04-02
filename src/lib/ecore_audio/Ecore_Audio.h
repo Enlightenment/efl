@@ -166,7 +166,7 @@ EAPI void                ecore_audio_output_del(Ecore_Audio_Object *output);
  *
  * @since 1.8
  */
-EAPI void ecore_audio_output_userdata_set(Ecore_Audio_Object *output, void *data);
+EAPI void ecore_audio_output_data_set(Ecore_Audio_Object *output, void *data);
 
 /**
  * @brief Get the user data pointer
@@ -177,7 +177,7 @@ EAPI void ecore_audio_output_userdata_set(Ecore_Audio_Object *output, void *data
  *
  * @since 1.8
  */
-EAPI void *ecore_audio_output_userdata_get(Ecore_Audio_Object *output);
+EAPI void *ecore_audio_output_data_get(Ecore_Audio_Object *output);
 
 /**
  * @brief Set the volume of the output
@@ -321,7 +321,7 @@ EAPI void                ecore_audio_input_del(Ecore_Audio_Object *input);
  *
  * @since 1.8
  */
-EAPI void ecore_audio_input_userdata_set(Ecore_Audio_Object *input, void *data);
+EAPI void ecore_audio_input_data_set(Ecore_Audio_Object *input, void *data);
 
 /**
  * @brief Get the user data pointer
@@ -332,7 +332,7 @@ EAPI void ecore_audio_input_userdata_set(Ecore_Audio_Object *input, void *data);
  *
  * @since 1.8
  */
-EAPI void *ecore_audio_input_userdata_get(Ecore_Audio_Object *input);
+EAPI void *ecore_audio_input_data_get(Ecore_Audio_Object *input);
 
 /**
  * @brief Get the sample rate of the input

@@ -190,13 +190,13 @@ ecore_audio_output_del(Ecore_Audio_Object *output)
    free(output);
 }
 
-EAPI void ecore_audio_output_userdata_set(Ecore_Audio_Object *output, void *data)
+EAPI void ecore_audio_output_data_set(Ecore_Audio_Object *output, void *data)
 {
   Ecore_Audio_Output *out = (Ecore_Audio_Output *)output;
   out->user_data = data;
 }
 
-EAPI void *ecore_audio_output_userdata_get(Ecore_Audio_Object *output)
+EAPI void *ecore_audio_output_data_get(Ecore_Audio_Object *output)
 {
   Ecore_Audio_Output *out = (Ecore_Audio_Output *)output;
   return out->user_data;
@@ -371,13 +371,13 @@ ecore_audio_input_del(Ecore_Audio_Object *input)
    free(in);
 }
 
-EAPI void ecore_audio_input_userdata_set(Ecore_Audio_Object *input, void *data)
+EAPI void ecore_audio_input_data_set(Ecore_Audio_Object *input, void *data)
 {
   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
   in->user_data = data;
 }
 
-EAPI void *ecore_audio_input_userdata_get(Ecore_Audio_Object *input)
+EAPI void *ecore_audio_input_data_get(Ecore_Audio_Object *input)
 {
   Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
   return in->user_data;

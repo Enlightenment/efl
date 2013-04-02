@@ -23,14 +23,14 @@ struct _edje_multisense_eet_data
 static int
 eet_snd_file_get_length(Ecore_Audio_Object *in)
 {
-   struct _edje_multisense_eet_data *vf = ecore_audio_input_userdata_get(in);
+   struct _edje_multisense_eet_data *vf = ecore_audio_input_data_get(in);
    return vf->length;
 }
 
 static int
 eet_snd_file_seek(Ecore_Audio_Object *in, int offset, int whence)
 {
-   struct _edje_multisense_eet_data *vf = ecore_audio_input_userdata_get(in);
+   struct _edje_multisense_eet_data *vf = ecore_audio_input_data_get(in);
 
    switch (whence)
       {
@@ -52,7 +52,7 @@ eet_snd_file_seek(Ecore_Audio_Object *in, int offset, int whence)
 static int
 eet_snd_file_read(Ecore_Audio_Object *in, void *buffer, int count)
 {
-   struct _edje_multisense_eet_data *vf = ecore_audio_input_userdata_get(in);
+   struct _edje_multisense_eet_data *vf = ecore_audio_input_data_get(in);
 
    if ((vf->offset + count) > vf->length)
      count = vf->length - vf->offset;
@@ -64,7 +64,7 @@ eet_snd_file_read(Ecore_Audio_Object *in, void *buffer, int count)
 static int
 eet_snd_file_tell(Ecore_Audio_Object *in)
 {
-   struct _edje_multisense_eet_data *vf = ecore_audio_input_userdata_get(in);
+   struct _edje_multisense_eet_data *vf = ecore_audio_input_data_get(in);
 
    return vf->offset;
 }
@@ -115,7 +115,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 
             eet_data->offset = 0;
 
-            ecore_audio_input_userdata_set(in, eet_data);
+            ecore_audio_input_data_set(in, eet_data);
             ecore_audio_input_sndfile_vio_set(in, &eet_data->vio);
 
             if (!out)
