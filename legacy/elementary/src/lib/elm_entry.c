@@ -1342,6 +1342,18 @@ _long_press_cb(void *data)
 }
 
 static void
+_key_down_cb(void *data,
+               Evas *evas __UNUSED__,
+               Evas_Object *obj __UNUSED__,
+               void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (!strcmp(ev->keyname, "Menu"))
+     _menu_call(data);
+}
+
+static void
 _mouse_down_cb(void *data,
                Evas *evas __UNUSED__,
                Evas_Object *obj __UNUSED__,
@@ -2810,6 +2822,8 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_text_markup_filter_callback_add
      (priv->entry_edje, "elm.text", _markup_filter_cb, obj);
 
+   evas_object_event_callback_add
+     (priv->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
    evas_object_event_callback_add
      (priv->entry_edje, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
