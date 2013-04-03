@@ -769,8 +769,7 @@ eeze_sensor_tizen_sensors_find(void)
    sensor_type_e type;
    bool supported = 0;
 
-   /* FIXME: Make this safe against changes in the enum. But how? */
-   for (type = SENSOR_ACCELEROMETER; type <= SENSOR_MOTION_FACEDOWN; type++)
+   for (type = SENSOR_ACCELEROMETER; type <= SENSOR_LAST; type++)
      {
         sensor_is_supported(type, &supported);
         if (supported)
