@@ -220,7 +220,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320, 500);
 
    evas_object_show(win);
 }
