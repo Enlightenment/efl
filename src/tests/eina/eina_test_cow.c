@@ -125,12 +125,15 @@ START_TEST(eina_cow)
            default_value.c != 42 || default_value.i != 0);
 
    fail_if(eina_cow_gc(cow) == EINA_FALSE);
-   fail_if(eina_cow_gc(cow) == EINA_FALSE);
 
    write = eina_cow_write(cow, (const Eina_Cow_Data**) &cur);
    write->i = 7; write->c = 42;
    eina_cow_done(cow, (const Eina_Cow_Data**) &cur, write, EINA_TRUE);
 
+   write = eina_cow_write(cow, (const Eina_Cow_Data**) &prev);
+   eina_cow_done(cow, (const Eina_Cow_Data**) &prev, write, EINA_TRUE);
+
+   fail_if(eina_cow_gc(cow) == EINA_FALSE);
    fail_if(eina_cow_gc(cow) == EINA_FALSE);
    fail_if(cur != prev);
 
