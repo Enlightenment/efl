@@ -62,8 +62,13 @@ struct _Elm_Genlist_Smart_Data
                                                   * number of items in
                                                   * a block is
                                                   * 'max_items_per_block'. */
-   Evas_Coord                            reorder_old_pan_y, w, h, realminw,
-                                         prev_viewport_w;
+   Evas_Coord                            reorder_old_pan_y, w, h, realminw;
+   Evas_Coord                            prev_viewport_w; /* previous scrollable
+                                                           * interface's
+                                                           * viewport size.
+                                                           * This is used only
+                                                           * when genlist is in
+                                                           * a compress mode. */
    Ecore_Job                            *update_job;
    Ecore_Idle_Enterer                   *queue_idle_enterer;
    Ecore_Idler                          *must_recalc_idler;
