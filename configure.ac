@@ -357,7 +357,15 @@ EFL_CHECK_COMPILER_FLAGS([EFL], [-Wall -Wextra -Wpointer-arith -Wno-missing-fiel
 EFL_CHECK_LINKER_FLAGS([EFL], [-fvisibility=hidden -fdata-sections -ffunction-sections -Wl,--gc-sections -fno-strict-aliasing -Wl,--as-needed -Wl,--no-copy-dt-needed-entries])
 case "${build_profile}" in
    dev)
-     EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])
+     dnl Check if compiler has a dodgy -Wshadow that emits errors when shadowing a global
+     AC_MSG_CHECKING([whether -Wshadow generates spurious warnings])
+     CFLAGS_save="${CFLAGS}"
+     CFLAGS="${CFLAGS} -Werror -Wshadow"
+     AC_TRY_COMPILE([int x;], [int x = 0; (void)x;],
+       [AC_MSG_RESULT([no])
+        EFL_CHECK_COMPILER_FLAGS([EFL], [-Wshadow])],
+       [AC_MSG_RESULT([yes])])
+     CFLAGS="${CFLAGS_save}"
      ;;
 
    debug)
