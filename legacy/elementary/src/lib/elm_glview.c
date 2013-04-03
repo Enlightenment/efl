@@ -291,8 +291,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         return;
      }
 
-   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
-     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI Evas_GL_API *

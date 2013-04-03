@@ -378,9 +378,7 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
-   Evas_Object *parent = eo_parent_get(obj);
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 
    priv->linewrap = ELM_WRAP_NONE;
    priv->wrap_w = -1;

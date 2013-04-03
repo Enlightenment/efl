@@ -934,11 +934,16 @@ elm_widget_sub_object_add(Evas_Object *obj,
    ELM_WIDGET_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
-   if (!sobj) return EINA_FALSE;
+   if (!sobj) goto err;
 
    Eina_Bool ret = EINA_FALSE;
    eo_do(obj, elm_wdg_sub_object_add(sobj, &ret));
-   return ret;
+
+   if (ret) return EINA_TRUE;
+
+err:
+   ERR("could not add %p as sub object of %p", obj, sobj);
+   return EINA_FALSE;
 }
 
 static void

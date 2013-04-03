@@ -3033,8 +3033,7 @@ _resize_object_add(Eo *obj, void *_pd, va_list *list)
 
    Elm_Win_Smart_Data *sd = _pd;
 
-   if (!elm_widget_sub_object_add(obj, subobj))
-     ERR("could not add %p as sub object of %p", subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
 
    if (!evas_object_box_append(sd->box, subobj))
      ERR("could not append %p to box", subobj);

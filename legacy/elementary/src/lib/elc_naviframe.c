@@ -1283,8 +1283,7 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
                                   _on_obj_size_hints_changed, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
-     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static Eina_Bool

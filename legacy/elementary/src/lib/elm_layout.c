@@ -797,10 +797,7 @@ _elm_layout_smart_content_set(Eo *obj, void *_pd, va_list *list)
    if (content)
      {
         if (!elm_widget_sub_object_add(obj, content))
-          {
-             ERR("could not add %p as sub object of %p", content, obj);
-             return;
-          }
+          return;
 
         if (!edje_object_part_swallow
               (wd->resize_obj, part, content))
@@ -914,7 +911,6 @@ _elm_layout_smart_box_append(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_widget_sub_object_add(obj, child))
      {
-        ERR("could not add %p as sub object of %p", child, obj);
         edje_object_part_box_remove
           (wd->resize_obj, part, child);
         return;
@@ -955,7 +951,6 @@ _elm_layout_smart_box_prepend(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_widget_sub_object_add(obj, child))
      {
-        ERR("could not add %p as sub object of %p", child, obj);
         edje_object_part_box_remove
           (wd->resize_obj, part, child);
         return;
@@ -1008,7 +1003,6 @@ _elm_layout_smart_box_insert_before(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_widget_sub_object_add(obj, child))
      {
-        ERR("could not add %p as sub object of %p", child, obj);
         edje_object_part_box_remove
           (wd->resize_obj, part, child);
         return;
@@ -1055,7 +1049,6 @@ _elm_layout_smart_box_insert_at(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_widget_sub_object_add(obj, child))
      {
-        ERR("could not add %p as sub object of %p", child, obj);
         edje_object_part_box_remove
           (wd->resize_obj, part, child);
         return;
@@ -1212,7 +1205,6 @@ _elm_layout_smart_table_pack(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_widget_sub_object_add(obj, child))
      {
-        ERR("could not add %p as sub object of %p", child, obj);
         edje_object_part_table_unpack
           (wd->resize_obj, part, child);
         return;
@@ -2157,8 +2149,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
-     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static void

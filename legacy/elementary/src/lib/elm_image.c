@@ -1103,8 +1103,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
-   if (!elm_widget_sub_object_add(eo_parent_get(obj), obj))
-     ERR("could not add %p as sub object of %p", obj, eo_parent_get(obj));
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI Eina_Bool
