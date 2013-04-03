@@ -43,7 +43,7 @@ struct _Elm_Entry_Smart_Data
    Elm_Text_Format                       format;
    Evas_Coord                            last_w, ent_mw, ent_mh;
    Evas_Coord                            downx, downy;
-   Eina_List                            *items;
+   Eina_List                            *items; /** context menu item list */
    Eina_List                            *item_providers;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;

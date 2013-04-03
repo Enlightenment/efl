@@ -57,7 +57,7 @@ _elm_box_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    void *(*list_data_get)(const Eina_List *list);
 
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next =  va_arg(*list, Evas_Object **);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
    if (ret) *ret = EINA_FALSE;

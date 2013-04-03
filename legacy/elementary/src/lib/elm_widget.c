@@ -2672,9 +2672,9 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
  * focus before list end, the first candidate will be returned.
  *
  * @param obj The widget root of sub-tree
- * @param dir Direction of focus chain
  * @param items list with ordered objects
  * @param list_data_get function to get the object from one item of list
+ * @param dir Direction of focus chain
  * @param next The next object in focus chain
  * @return EINA_TRUE if don't need focus chain restart/loop back
  *         to use 'next' obj.
