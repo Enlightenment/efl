@@ -6,6 +6,9 @@ lib_LTLIBRARIES += lib/ecore/libecore.la
 installed_ecoremainheadersdir = $(includedir)/ecore-@VMAJ@
 dist_installed_ecoremainheaders_DATA = \
 lib/ecore/Ecore.h \
+lib/ecore/Ecore_Common.h \
+lib/ecore/Ecore_Legacy.h \
+lib/ecore/Ecore_Eo.h \
 lib/ecore/Ecore_Getopt.h
 
 lib_ecore_libecore_la_SOURCES = \
