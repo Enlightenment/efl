@@ -121,13 +121,14 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 		 ((buf->depth == OUTBUF_DEPTH_BGRA_32BPP_8888_8888)))
 	       {
 		  im->cache_entry.flags.alpha = 1;
-#ifdef EVAS_CSERVE2
-                  if (evas_cserve2_use_get())
-                    evas_cache2_image_size_set(&im->cache_entry, w, h);
-                  else
-#endif
-                  im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
                }
+
+#ifdef EVAS_CSERVE2
+	     if (evas_cserve2_use_get())
+	       evas_cache2_image_size_set(&im->cache_entry, w, h);
+	     else
+#endif
+	       im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
           }
      }
    return im;

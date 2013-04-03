@@ -1,3 +1,7 @@
+2013-03-04  Cedric Bail
+
+        * Evas: fix crash with Buffer engine with non alpha output.
+
 2013-03-30  Cedric Bail
 
 	* Evil: Add mkdtemp.

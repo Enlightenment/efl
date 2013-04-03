@@ -219,3 +219,4 @@ Fixes:
     * Ecore_x: fix alpha set function not clear sync counter
     * Fix evas word start/end find in textblock to be consistent with other toolkit logic on the matter
     * Fix edje entry to respect filters and if input filtered out, don't clear selections
+    * Fix evas buffer engine allocation with non alpha output
