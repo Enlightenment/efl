@@ -1256,7 +1256,6 @@ elm_widget_can_focus_set(Evas_Object *obj,
    eo_do(obj, elm_wdg_can_focus_set(can_focus));
 }
 
-
 static void
 _elm_widget_can_focus_set(Eo *obj, void *_pd, va_list *list)
 {
@@ -2428,7 +2427,6 @@ _elm_widget_focus_direction_get(Eo *obj, void *_pd, va_list *list)
    Elm_Widget_Smart_Data *sd = _pd;
    double c_weight;
 
-
    /* -1 means the best was already decided. Don't need any more searching. */
    if (!direction || !weight || !base || (obj == base))
      return;
@@ -2447,7 +2445,6 @@ _elm_widget_focus_direction_get(Eo *obj, void *_pd, va_list *list)
         *ret = int_ret;
         return;
      }
-
 
    if (!elm_widget_can_focus_get(obj) || elm_widget_focus_get(obj))
      return;
@@ -2520,7 +2517,6 @@ _elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
    double degree = va_arg(*list, double);
    Evas_Object **direction = va_arg(*list, Evas_Object **);
    double *weight  = va_arg(*list, double *);
-
 
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
@@ -2940,7 +2936,6 @@ elm_widget_parent_highlight_set(Evas_Object *obj,
    ELM_WIDGET_CHECK(obj);
    eo_do(obj, elm_wdg_parent_highlight_set(highlighted));
 }
-
 
 static void
 _elm_widget_parent_highlight_set(Eo *obj, void *_pd, va_list *list)
@@ -5493,7 +5488,6 @@ _elm_widget_item_signal_emit_hook_set(Elm_Widget_Item *item,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->signal_emit_func = func;
 }
-
 
 static void
 _elm_widget_item_signal_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission,

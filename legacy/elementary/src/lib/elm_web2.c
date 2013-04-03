@@ -435,7 +435,6 @@ elm_web_bg_color_set(Evas_Object *obj,
    eo_do(obj, elm_obj_web_bg_color_set(r, g, b, a));
 }
 
-
 static void
 _bg_color_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1203,7 +1202,6 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
    return;
 }
 #endif
-
 
 #if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
 static void

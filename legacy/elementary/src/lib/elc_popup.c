@@ -1911,6 +1911,3 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 EO_DEFINE_CLASS(elm_obj_popup_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
-
-
-

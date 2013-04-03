@@ -521,7 +521,6 @@ _audio_mute_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 #endif
 }
 
-
 EAPI void
 elm_video_audio_mute_set(Evas_Object *obj,
                          Eina_Bool mute)

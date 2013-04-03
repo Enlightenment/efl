@@ -317,7 +317,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
      ERR("could not add %p as sub object of %p", obj, parent);
 }
 
-
 EAPI void
 elm_progressbar_pulse_set(Evas_Object *obj,
                           Eina_Bool pulse)
@@ -529,7 +528,6 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, char *(func)(double),
    ELM_PROGRESSBAR_CHECK(obj);
    eo_do(obj, elm_obj_progressbar_unit_format_function_set(func, free_func));
 }
-
 
 EAPI void
 _unit_format_function_set(Eo *obj, void *_pd, va_list *list)

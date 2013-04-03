@@ -578,7 +578,6 @@ _elm_win_obj_callback_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Ob
 }
 /* end of elm-win specific associate */
 
-
 static void
 _elm_win_move(Ecore_Evas *ee)
 {
@@ -4213,7 +4212,6 @@ elm_win_render(Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
    ecore_evas_manual_render(sd->ee);
 }
-
 
 static int
 _win_rotation_degree_check(int rotation)

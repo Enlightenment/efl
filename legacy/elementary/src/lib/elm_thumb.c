@@ -778,7 +778,6 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->anim_setting = setting;
 
-
 #ifdef HAVE_ELEMENTARY_ETHUMB
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
