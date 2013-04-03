@@ -95,7 +95,6 @@ _activate(Evas_Object *obj)
    if (elm_widget_disabled_get(obj)) return;
 
    sd->hover = elm_hover_add(sd->hover_parent);
-   evas_object_smart_member_add(sd->hover, obj);
    elm_widget_sub_object_add(obj, sd->hover);
    elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
 
@@ -232,6 +231,22 @@ _elm_hoversel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_hoversel_hover_parent_set(obj, NULL);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+}
+
+static void
+_elm_hoversel_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Elm_Hoversel_Smart_Data *sd = _pd;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   evas_object_show(sd->hover);
+}
+
+static void
+_elm_hoversel_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Hoversel_Smart_Data *sd = _pd;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+   //evas_object_hide(sd->hover);
 }
 
 static void
@@ -525,6 +540,8 @@ _class_constructor(Eo_Class *klass)
 
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_hoversel_smart_add),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_hoversel_smart_del),
+           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_hoversel_smart_show),
+           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hoversel_smart_hide),
 
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_hoversel_smart_theme),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
