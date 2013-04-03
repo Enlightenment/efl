@@ -75,7 +75,9 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
 
 cmakeconfigdir = $(prefix)/share/cmake/Modules
-cmakeconfig_DATA = cmakeconfig/ElementaryConfig.cmake
+cmakeconfig_DATA = \
+cmakeconfig/ElementaryConfig.cmake \
+cmakeconfig/ElementaryConfigVersion.cmake
 
 .PHONY: doc screenshots
 
