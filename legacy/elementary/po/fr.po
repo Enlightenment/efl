@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 01:50+0900\n"
+"POT-Creation-Date: 2013-04-03 23:53+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -29,12 +29,12 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
 #: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/lib/elc_fileselector.c:1027
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "OK"
 
@@ -52,7 +52,7 @@ msgstr "Cliqué"
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
-#: src/lib/elm_button.c:313
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Bouton"
 
@@ -158,7 +158,7 @@ msgstr "Sélectionner"
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2933
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: src/lib/elm_label.c:404
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr ""
 

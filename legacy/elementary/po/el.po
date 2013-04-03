@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 01:50+0900\n"
+"POT-Creation-Date: 2013-04-03 23:53+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -28,12 +28,12 @@ msgstr "Πάνω"
 msgid "Home"
 msgstr "Αρχική"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
 #: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Άκυρο"
 
-#: src/lib/elc_fileselector.c:1027
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "Εντάξει"
 
@@ -52,7 +52,7 @@ msgstr "Επιλεγμένο"
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
-#: src/lib/elm_button.c:313
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Κουμπί"
 
@@ -164,7 +164,7 @@ msgstr "Επιλογή"
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: src/lib/elm_entry.c:2933
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr "Καταχώριση"
 
@@ -180,7 +180,7 @@ msgstr "Αντικείμενο Καταλόγου"
 msgid "Index"
 msgstr "Κατάλογος"
 
-#: src/lib/elm_label.c:404
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Ετικέτα"
 

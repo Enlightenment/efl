@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 01:50+0900\n"
+"POT-Creation-Date: 2013-04-03 23:53+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -26,12 +26,12 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
 #: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/lib/elc_fileselector.c:1027
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "OK"
 
@@ -49,7 +49,7 @@ msgstr "Kliknuto"
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elm_button.c:313
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Tlačítko"
 
@@ -159,7 +159,7 @@ msgstr "Vybrat"
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:2933
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr "Vstup"
 
@@ -175,7 +175,7 @@ msgstr "Položka indexu"
 msgid "Index"
 msgstr "Index"
 
-#: src/lib/elm_label.c:404
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Popisek"
 

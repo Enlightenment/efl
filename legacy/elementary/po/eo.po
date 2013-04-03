@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 01:50+0900\n"
+"POT-Creation-Date: 2013-04-03 23:53+0900\n"
 "PO-Revision-Date: 2013-01-05 14:07+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -27,12 +27,12 @@ msgstr "Supren"
 msgid "Home"
 msgstr "Hejmo"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
 #: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: src/lib/elc_fileselector.c:1027
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "Bone"
 
@@ -50,7 +50,7 @@ msgstr "Alklakita"
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_button.c:313
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Butono"
 
@@ -155,7 +155,7 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2933
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr "Ero"
 
@@ -171,7 +171,7 @@ msgstr "Indeksero"
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_label.c:404
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Etikedo"
 

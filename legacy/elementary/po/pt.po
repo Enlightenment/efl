@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 01:50+0900\n"
+"POT-Creation-Date: 2013-04-03 23:53+0900\n"
 "PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -25,12 +25,12 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1018 src/lib/elm_entry.c:1279
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
 #: src/lib/elm_entry.c:1304
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1027
+#: src/lib/elc_fileselector.c:1025
 msgid "OK"
 msgstr "Aceitar"
 
@@ -48,7 +48,7 @@ msgstr "Clicado"
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
-#: src/lib/elm_button.c:313
+#: src/lib/elm_button.c:311
 msgid "Button"
 msgstr "Botão"
 
@@ -153,7 +153,7 @@ msgstr "Selecionar"
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:2933
+#: src/lib/elm_entry.c:2947
 msgid "Entry"
 msgstr "Entrada"
 
@@ -169,7 +169,7 @@ msgstr "Item do índice"
 msgid "Index"
 msgstr "Índice"
 
-#: src/lib/elm_label.c:404
+#: src/lib/elm_label.c:402
 msgid "Label"
 msgstr "Texto"
 
