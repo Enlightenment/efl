@@ -1042,10 +1042,10 @@ eo_parent_set(Eo *obj, const Eo *parent)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
    if (parent)
-      EO_MAGIC_RETURN_VAL(parent, EO_EINA_MAGIC, EINA_FALSE);
+     EO_MAGIC_RETURN_VAL(parent, EO_EINA_MAGIC, EINA_FALSE);
 
    if (obj->parent == parent)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    _eo_ref(obj);
 
@@ -1089,8 +1089,8 @@ eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
      }
 
    Eo *obj = calloc(1, EO_ALIGN_SIZE(sizeof(*obj)) +
-         (klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size)) +
-         klass->extn_data_size);
+                    (klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size)) +
+                    klass->extn_data_size);
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    obj->refcount++;
    obj->klass = klass;
@@ -1172,7 +1172,7 @@ eo_xunref(Eo *obj, const Eo *ref_obj)
    EINA_INLIST_FOREACH(obj->xrefs, xref)
      {
         if (xref->ref_obj == ref_obj)
-           break;
+          break;
      }
 
    if (xref)
@@ -1283,9 +1283,9 @@ _eo_unref(Eo *obj)
 #endif
 
         if (!obj->manual_free)
-           _eo_free(obj);
+          _eo_free(obj);
         else
-           _eo_ref(obj); /* If we manual free, we keep a phantom ref. */
+          _eo_ref(obj); /* If we manual free, we keep a phantom ref. */
      }
    else if (obj->refcount < 0)
      {
@@ -1365,13 +1365,13 @@ _eo_data_get(const Eo *obj, const Eo_Class *klass)
                 eo_class_get(obj)->extn_data_off;
 
              if (!doff_itr)
-                return NULL;
+               return NULL;
 
              while (doff_itr->klass)
                {
                   if (doff_itr->klass == klass)
-                     return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
-                        doff_itr->offset;
+                    return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
+                       doff_itr->offset;
                   doff_itr++;
                }
           }
@@ -1417,7 +1417,7 @@ eo_init(void)
 {
    const char *log_dom = "eo";
    if (_eo_init_count++ > 0)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    eina_init();
 
@@ -1439,9 +1439,9 @@ eo_init(void)
 
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_FREED_EINA_MAGIC,
-         EO_FREED_EINA_MAGIC_STR);
+                                EO_FREED_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
-         EO_CLASS_EINA_MAGIC_STR);
+                                EO_CLASS_EINA_MAGIC_STR);
 
 #ifdef EO_DEBUG
    /* Call it just for coverage purposes. Ugly I know, but I like it better than
@@ -1450,8 +1450,8 @@ eo_init(void)
 #endif
 
    eina_log_timing(_eo_log_dom,
-		   EINA_LOG_STATE_STOP,
-		   EINA_LOG_STATE_INIT);
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    return EINA_TRUE;
 }
@@ -1463,20 +1463,20 @@ eo_shutdown(void)
    Eo_Class **cls_itr = _eo_classes;
 
    if (--_eo_init_count > 0)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    eina_log_timing(_eo_log_dom,
-		   EINA_LOG_STATE_START,
-		   EINA_LOG_STATE_SHUTDOWN);
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
 
    for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr++)
      {
         if (*cls_itr)
-           eo_class_free(*cls_itr);
+          eo_class_free(*cls_itr);
      }
 
    if (_eo_classes)
-      free(_eo_classes);
+     free(_eo_classes);
 
    eina_lock_free(&_eo_class_creation_lock);
 
@@ -1594,7 +1594,7 @@ _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Valu
    /* FIXME: For the meanwhile, just use the inner type for the value. */
    const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) type_mem;
    if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
-            convert == EINA_VALUE_TYPE_STRING)
+       convert == EINA_VALUE_TYPE_STRING)
      {
         Eina_Bool ret;
         const char *other_mem;
@@ -1614,7 +1614,7 @@ _eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const voi
 {
    Eo_Dbg_Info **mem = _mem;
    if (*mem)
-      free(*mem);
+     free(*mem);
    *mem = (void *) _ptr;
    return EINA_TRUE;
 }
