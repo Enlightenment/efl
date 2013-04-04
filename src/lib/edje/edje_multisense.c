@@ -94,7 +94,6 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
        if (!strcmp(sample->name, sample_name))
          {
             struct _edje_multisense_eet_data *eet_data;
-            Eet_File *ef;
 
             snprintf(snd_id_str, sizeof(snd_id_str), "edje/sounds/%i", sample->id);
             in = ecore_audio_input_add(ECORE_AUDIO_TYPE_SNDFILE);
@@ -102,10 +101,8 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             ecore_audio_input_speed_set(in, speed);
 
             eet_data = calloc(1, sizeof(struct _edje_multisense_eet_data));
-            ef = eet_open(ed->file->path, EET_FILE_MODE_READ);
 
-            eet_data->data = eet_read(ef, snd_id_str, (int *)&eet_data->length);
-            eet_close(ef);
+            eet_data->data = eet_read_direct(ed->file->ef, snd_id_str, (int *)&eet_data->length);
 
             /* action->speed */
 
