@@ -656,7 +656,8 @@ enum
  * @def elm_scrollable_interface_repeat_events_set
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * It decides whether the scrollable object propagates the events to content
+ * object or not.
  *
  * @param[in] repeat_events
  *
@@ -667,7 +668,8 @@ enum
  * @def elm_scrollable_interface_repeat_events_get
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * It gets whether the scrollable object propagates the events to content object
+ * or not.
  *
  * @param[out] repeat_events
  *
