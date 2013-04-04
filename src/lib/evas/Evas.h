@@ -2265,7 +2265,7 @@ EAPI void              evas_pointer_output_xy_get(const Evas *e, int *x, int *y)
  * Evas_Coord mouse_x, mouse_y;
  *
  * evas_pointer_output_xy_get(evas, &mouse_x, &mouse_y);
- * printf("Mouse is at canvas position %f, %f\n", mouse_x, mouse_y);
+ * printf("Mouse is at canvas position %d, %d\n", mouse_x, mouse_y);
  * @endcode
  */
 EAPI void              evas_pointer_canvas_xy_get(const Evas *e, Evas_Coord *x, Evas_Coord *y) EINA_ARG_NONNULL(1);
