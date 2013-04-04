@@ -65,6 +65,8 @@ static int _eina_chained_mp_log_dom = -1;
 
 #endif
 
+static int aligned_chained_pool = 0;
+
 typedef struct _Chained_Mempool Chained_Mempool;
 struct _Chained_Mempool
 {
@@ -151,7 +153,7 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    p->limit = ptr + pool->item_alloc * pool->pool_size;
 
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->alloc_size - eina_mempool_alignof(sizeof(Chained_Pool)));
+   VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->alloc_size - aligned_chained_pool);
 #endif
 
    return p;
@@ -469,13 +471,18 @@ eina_chained_mempool_init(const char *context,
         memcpy((char *)mp->name, context, length);
      }
 
+   mp->item_alloc = eina_mempool_alignof(item_size);
+
+   mp->pool_size = (((((mp->item_alloc * mp->pool_size + aligned_chained_pool) / 4096) 
+		      + 1) * 4096)
+		    - aligned_chained_pool) / mp->item_alloc;
+
 #ifdef EINA_DEBUG_MALLOC
    mp->minimal_size = item_size * mp->pool_size + sizeof(Chained_Pool);
 #endif
 
-   mp->item_alloc = eina_mempool_alignof(item_size);
    mp->group_size = mp->item_alloc * mp->pool_size;
-   mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
+   mp->alloc_size = mp->group_size + aligned_chained_pool;
 
 #ifndef NVALGRIND
    VALGRIND_CREATE_MEMPOOL(mp, 0, 1);
@@ -556,6 +563,8 @@ Eina_Bool chained_init(void)
      }
 
 #endif
+   aligned_chained_pool = eina_mempool_alignof(sizeof(Chained_Pool));
+
    return eina_mempool_register(&_eina_chained_mp_backend);
 }
 
