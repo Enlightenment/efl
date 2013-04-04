@@ -23,6 +23,10 @@ evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
    obj->layer = lay;
    obj->in_layer = 1;
 
+   if (obj->cur->geometry.x == obj->layer->evas->framespace.x &&
+       obj->cur->geometry.y == obj->layer->evas->framespace.y)
+     return ;
+
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->geometry.x = obj->layer->evas->framespace.x;
