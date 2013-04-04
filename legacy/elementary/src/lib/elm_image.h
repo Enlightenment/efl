@@ -643,7 +643,7 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
  *
  * @ingroup Image
  */
-EAPI Eina_Bool             elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
+EAPI Eina_Bool        elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
 
 /**
  * Set the file that will be used as the image's source.
@@ -831,7 +831,7 @@ EAPI Eina_Bool        elm_image_fill_outside_get(const Evas_Object *obj);
  * @param disabled If EINA_TRUE, preloading will be disabled
  * @ingroup Image
  */
-EAPI void                  elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+EAPI void             elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Set the prescale size for the image
