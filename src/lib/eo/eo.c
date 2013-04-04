@@ -64,8 +64,7 @@ struct _Eo {
       (_eo_classes[id - 1]) : NULL; \
       })
 
-#define EO_ALIGN_SIZE(size) \
-        ((size) + (sizeof(void *) - ((size) % sizeof(void *))))
+#define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
 
 typedef struct _Dich_Chain1 Dich_Chain1;
 
