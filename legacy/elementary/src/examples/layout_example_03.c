@@ -15,15 +15,15 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 
    if (_btn_large == EINA_FALSE)
      {
-	_btn_large = EINA_TRUE;
-	elm_object_signal_emit(layout, "button,enlarge", "");
-	elm_object_text_set(btn, "Reduce me!");
+        _btn_large = EINA_TRUE;
+        elm_object_signal_emit(layout, "button,enlarge", "");
+        elm_object_text_set(btn, "Reduce me!");
      }
    else
      {
-	_btn_large = EINA_FALSE;
-	elm_object_signal_emit(layout, "button,reduce", "");
-	elm_object_text_set(btn, "Enlarge me!");
+        _btn_large = EINA_FALSE;
+        elm_object_signal_emit(layout, "button,reduce", "");
+        elm_object_text_set(btn, "Enlarge me!");
      }
 }
 
@@ -70,8 +70,8 @@ elm_main(int argc, char **argv)
    const char *title = elm_layout_data_get(layout, "title");
    if (title)
      {
-	elm_win_title_set(win, title);
-	elm_object_part_text_set(layout, TITLE, title);
+        elm_win_title_set(win, title);
+        elm_object_part_text_set(layout, TITLE, title);
      }
 
    btn = elm_button_add(win);

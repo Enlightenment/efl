@@ -455,7 +455,7 @@ default_content_set(Evas_Object *web)
    ewk_frame_contents_set(frame, contents, sizeof(contents) - 1, "text/html",
                           "UTF-8", NULL);
 #else
-	(void) web;
+   (void) web;
 #endif
 }
 

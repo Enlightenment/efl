@@ -30,8 +30,8 @@ _index_item_del(void *data,
                 void *event_info)
 {
    fprintf(stdout, "Deleting index node (%s). Comparing index "
-                   "item data reported via callback with the one returned by "
-                   "index's API on items: %s.\n",
+           "item data reported via callback with the one returned by "
+           "index's API on items: %s.\n",
            elm_index_item_letter_get(event_info),
            data == elm_object_item_data_get(event_info) ? "OK" :
            "FAIL, something went wrong");
@@ -48,7 +48,7 @@ _item_del(void *data,
    if (!iit) return;
 
    fprintf(stdout, "Deleting last selected index item, which had letter"
-                   " %s (pointing to %p)\n", elm_index_item_letter_get(iit),
+           " %s (pointing to %p)\n", elm_index_item_letter_get(iit),
            elm_object_item_data_get(iit));
 
    elm_object_item_del(iit);
@@ -68,7 +68,7 @@ _active_set(void *data,
             void *event_info)
 {
    elm_index_autohide_disabled_set
-     (d.index, !elm_index_autohide_disabled_get(d.index));
+      (d.index, !elm_index_autohide_disabled_get(d.index));
 
    fprintf(stdout, "Toggling index programmatically.\n");
 }
@@ -90,8 +90,8 @@ _index_selected(void *data,
    Elm_Object_Item *lit = event_info;
 
    fprintf(stdout, "New index item selected. Comparing item reported"
-                   " via callback with the selection returned by the API: "
-                   "%s.\n", lit == elm_index_selected_item_get(obj, 0) ? "OK" :
+           " via callback with the selection returned by the API: "
+           "%s.\n", lit == elm_index_selected_item_get(obj, 0) ? "OK" :
            "FAIL, something went wrong");
 }
 

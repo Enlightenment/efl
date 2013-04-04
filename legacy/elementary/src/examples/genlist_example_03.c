@@ -18,10 +18,10 @@ _item_label_get(void *data, Evas_Object *obj, const char *part)
      snprintf(buf, sizeof(buf), "Item # %i", i);
    else
      {
-	int n;
-	snprintf(buf, sizeof(buf), "created at %s", ctime(&t));
-	n = strlen(buf);
-	buf[n - 1] = '\0';
+        int n;
+        snprintf(buf, sizeof(buf), "created at %s", ctime(&t));
+        n = strlen(buf);
+        buf[n - 1] = '\0';
      }
 
    return strdup(buf);
@@ -42,7 +42,7 @@ static void
 _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n",
-	  data, obj, event_info);
+          data, obj, event_info);
 }
 
 static Evas_Object *
@@ -64,10 +64,10 @@ _genlist_fill(Evas_Object *list)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-	elm_genlist_item_append(list, _itc,
-				(void *)(long)i, NULL,
-				ELM_GENLIST_ITEM_NONE,
-				_item_sel_cb, NULL);
+        elm_genlist_item_append(list, _itc,
+                                (void *)(long)i, NULL,
+                                ELM_GENLIST_ITEM_NONE,
+                                _item_sel_cb, NULL);
      }
 }
 

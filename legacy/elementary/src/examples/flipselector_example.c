@@ -12,13 +12,13 @@
 #include <Elementary.h>
 
 static const char *commands = \
-  "commands are:\n"
-  "\tn - flip to next item\n"
-  "\tp - flip to previous item\n"
-  "\tf - print first item's label\n"
-  "\tl - print last item's label\n"
-  "\ts - print selected item's label\n"
-  "\th - print help\n";
+                              "commands are:\n"
+                              "\tn - flip to next item\n"
+                              "\tp - flip to previous item\n"
+                              "\tf - print first item's label\n"
+                              "\tl - print last item's label\n"
+                              "\ts - print selected item's label\n"
+                              "\th - print help\n";
 
 static void
 _on_done(void        *data,
@@ -42,8 +42,8 @@ _unsel_cb(void        *data,
 
 void /* delete the item shown in the flip selector */
 _del_cb(void        *data,
-          Evas_Object *obj,
-          void        *event_info)
+        Evas_Object *obj,
+        void        *event_info)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -88,7 +88,7 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "n") == 0) /* flip to next item */
      {
-         elm_flipselector_flip_next(fs);
+        elm_flipselector_flip_next(fs);
 
         fprintf(stdout, "Flipping to next item\n");
 
@@ -97,7 +97,7 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "p") == 0) /* flip to previous item */
      {
-         elm_flipselector_flip_prev(fs);
+        elm_flipselector_flip_prev(fs);
 
         fprintf(stdout, "Flipping to previous item\n");
 
@@ -106,36 +106,36 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "f") == 0) /* print first item's label */
      {
-         Elm_Object_Item *it;
+        Elm_Object_Item *it;
 
-         it = elm_flipselector_first_item_get(fs);
+        it = elm_flipselector_first_item_get(fs);
 
-         fprintf(stdout, "Flip selector's first item is: %s\n", it ?
-                 elm_object_item_text_get(it) : "none");
+        fprintf(stdout, "Flip selector's first item is: %s\n", it ?
+                elm_object_item_text_get(it) : "none");
 
         return;
      }
 
    if (strcmp(ev->keyname, "l") == 0) /* print last item's label */
      {
-         Elm_Object_Item *it;
+        Elm_Object_Item *it;
 
-         it = elm_flipselector_last_item_get(fs);
+        it = elm_flipselector_last_item_get(fs);
 
-         fprintf(stdout, "Flip selector's last item is: %s\n", it ?
-                 elm_object_item_text_get(it) : "none");
+        fprintf(stdout, "Flip selector's last item is: %s\n", it ?
+                elm_object_item_text_get(it) : "none");
 
         return;
      }
 
    if (strcmp(ev->keyname, "s") == 0) /* print selected item's label */
      {
-         Elm_Object_Item *it;
+        Elm_Object_Item *it;
 
-         it = elm_flipselector_selected_item_get(fs);
+        it = elm_flipselector_selected_item_get(fs);
 
-         fprintf(stdout, "Flip selector's selected item is: %s\n", it ?
-                 elm_object_item_text_get(it) : "none");
+        fprintf(stdout, "Flip selector's selected item is: %s\n", it ?
+                elm_object_item_text_get(it) : "none");
 
         return;
      }
@@ -147,16 +147,16 @@ elm_main(int argc, char **argv)
    unsigned int i;
    Evas_Object *win, *bg, *bx, *fp, *bt;
    static const char *lbl[] =
-   {
-      "Elementary",
-      "Evas",
-      "Eina",
-      "Edje",
-      "Eet",
-      "Ecore",
-      "Efreet",
-      "Edbus"
-   };
+     {
+        "Elementary",
+        "Evas",
+        "Eina",
+        "Edje",
+        "Eet",
+        "Ecore",
+        "Efreet",
+        "Edbus"
+     };
 
    win = elm_win_add(NULL, "flipselector", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip Selector Example");

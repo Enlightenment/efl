@@ -77,8 +77,8 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 
    for (i = 0; _transitions[i].label; i++)
      {
-	if (_transitions[i].checked)
-	  _transitions[i].transition_add_cb(trans);
+        if (_transitions[i].checked)
+          _transitions[i].transition_add_cb(trans);
      }
 
    elm_transit_duration_set(trans, 2.0);

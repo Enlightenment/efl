@@ -59,17 +59,17 @@ my_thread_run(LPVOID arg)
 static void
 my_thread_new(void)
 {
-  InitializeCriticalSection(&lock);
-  thread = CreateThread(NULL, 0, my_thread_run, NULL, 0, NULL);
-  if (!thread)
-    {
-       char *str = evil_last_error_get();
-       if (str)
-         {
-            fprintf("thread creation failed: %s\n", str);
-            free(str);
-         }
-    }
+   InitializeCriticalSection(&lock);
+   thread = CreateThread(NULL, 0, my_thread_run, NULL, 0, NULL);
+   if (!thread)
+     {
+        char *str = evil_last_error_get();
+        if (str)
+          {
+             fprintf("thread creation failed: %s\n", str);
+             free(str);
+          }
+     }
 }
 
 static void

@@ -142,21 +142,21 @@ elm_main(int argc, char *argv[])
    tdata.box = bx;
    tdata.last_layout = evas_object_box_layout_horizontal;
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_vertical);
+                                        evas_object_box_layout_vertical);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_horizontal);
+                                        evas_object_box_layout_horizontal);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_stack);
+                                        evas_object_box_layout_stack);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_homogeneous_vertical);
+                                        evas_object_box_layout_homogeneous_vertical);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_homogeneous_horizontal);
+                                        evas_object_box_layout_homogeneous_horizontal);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_flow_vertical);
+                                        evas_object_box_layout_flow_vertical);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_flow_horizontal);
+                                        evas_object_box_layout_flow_horizontal);
    tdata.transitions = eina_list_append(tdata.transitions,
-         evas_object_box_layout_stack);
+                                        evas_object_box_layout_stack);
 
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(&tdata);

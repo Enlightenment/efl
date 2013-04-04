@@ -112,7 +112,7 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-    Evas_Object *win, *fs, *bg, *vbox, *buttons_bx, *bt, *sep, *bx;
+   Evas_Object *win, *fs, *bg, *vbox, *buttons_bx, *bt, *sep, *bx;
 
    /* Set the locale according to the system pref. If you dont do so
     * the file selector will order the files list in a case sensitive

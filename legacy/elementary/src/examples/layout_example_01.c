@@ -80,8 +80,8 @@ elm_main(int argc, char **argv)
    const char *title = elm_layout_data_get(layout, "title");
    if (title)
      {
-	elm_win_title_set(win, title);
-	elm_object_part_text_set(layout, TITLE, title);
+        elm_win_title_set(win, title);
+        elm_object_part_text_set(layout, TITLE, title);
      }
 
    // Add icon, clock and button to the table

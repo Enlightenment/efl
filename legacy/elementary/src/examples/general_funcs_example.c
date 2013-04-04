@@ -40,8 +40,8 @@ _btn_focus_cb(void        *data,
 static void
 /* unfocus callback */
 _btn_unfocus_cb(void        *data,
-              Evas_Object *obj,
-              void        *event)
+                Evas_Object *obj,
+                void        *event)
 {
    elm_object_focus_set(d.btn, EINA_FALSE);
 }
@@ -162,7 +162,7 @@ elm_main(int    argc,
    elm_slider_unit_format_set(slider, "%1.1f");
    elm_slider_indicator_format_set(slider, "%1.1f");
    evas_object_size_hint_weight_set(
-     slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+      slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(slider, "changed", _btn_scale_cb, NULL);
    elm_box_pack_end(box, slider);

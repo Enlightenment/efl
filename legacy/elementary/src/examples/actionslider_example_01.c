@@ -22,9 +22,9 @@ static void
 _magnet_enable_disable_cb(void *data, Evas_Object *obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
-      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_CENTER);
+     elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_CENTER);
    else if (!strcmp((char *)event_info, "right"))
-      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_NONE);
+     elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_NONE);
 }
 
 static void

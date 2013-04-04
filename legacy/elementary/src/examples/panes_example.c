@@ -13,8 +13,8 @@
 
 static void
 _on_done(void *data,
-        Evas_Object *obj,
-        void *event_info)
+         Evas_Object *obj,
+         void *event_info)
 {
    elm_exit();
 }
@@ -22,19 +22,19 @@ _on_done(void *data,
 static void
 _press(void *data, Evas_Object *obj, void *event_info)
 {
-    printf("Pressed\n");
+   printf("Pressed\n");
 }
 
 static void
 _unpress(void *data, Evas_Object *obj, void *event_info)
 {
-    printf("Unpressed, size : %f\n", elm_panes_content_left_size_get(obj));
+   printf("Unpressed, size : %f\n", elm_panes_content_left_size_get(obj));
 }
 
 static void
 _clicked(void *data, Evas_Object *obj, void *event_info)
 {
-    printf("Clicked\n");
+   printf("Clicked\n");
 }
 
 static void

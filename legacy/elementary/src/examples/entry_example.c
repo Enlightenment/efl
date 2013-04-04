@@ -248,9 +248,9 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
    ewidth = elm_entry_add(parent);
    elm_entry_single_line_set(ewidth, EINA_TRUE);
    elm_entry_markup_filter_append(ewidth, elm_entry_filter_accept_set,
-                                &accept_set);
+                                  &accept_set);
    elm_entry_markup_filter_append(ewidth, elm_entry_filter_limit_size,
-                                &limit_size);
+                                  &limit_size);
    elm_object_text_set(ewidth, buf);
    evas_object_size_hint_weight_set(ewidth, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ewidth, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -270,9 +270,9 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
    eheight = elm_entry_add(parent);
    elm_entry_single_line_set(eheight, EINA_TRUE);
    elm_entry_markup_filter_append(eheight, elm_entry_filter_accept_set,
-                                &accept_set);
+                                  &accept_set);
    elm_entry_markup_filter_append(eheight, elm_entry_filter_limit_size,
-                                &limit_size);
+                                  &limit_size);
    elm_object_text_set(eheight, buf);
    evas_object_size_hint_weight_set(eheight, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(eheight, EVAS_HINT_FILL, EVAS_HINT_FILL);

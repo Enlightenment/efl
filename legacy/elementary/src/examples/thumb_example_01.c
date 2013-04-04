@@ -30,7 +30,7 @@ elm_main(int argc, char **argv)
 #ifdef ELM_ETHUMB   
    Ethumb_Client *client;
 #endif
-   
+
    elm_need_ethumb();
 
    elm_app_info_set(elm_main, "elementary", "images/plant_01.jpg");
@@ -48,12 +48,12 @@ elm_main(int argc, char **argv)
    client = elm_thumb_ethumb_client_get();
    if (!client)
      {
-	printf("error: could not get Ethumb client.\n");
-	return 1;
+        printf("error: could not get Ethumb client.\n");
+        return 1;
      }
    ethumb_client_size_set(client, 160, 160);
 #endif
-   
+
    thumb = elm_thumb_add(win);
 
    evas_object_smart_callback_add(thumb, "generate,start", _generation_started_cb, NULL);

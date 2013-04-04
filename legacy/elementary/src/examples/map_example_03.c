@@ -44,10 +44,10 @@ _name_loaded(void *data, Evas_Object *obj, void *ev)
                            &(exam_data->dest_lat));
 
    exam_data->route = elm_map_route_add(map, ELM_MAP_ROUTE_TYPE_FOOT,
-                     ELM_MAP_ROUTE_METHOD_SHORTEST,
-                     exam_data->start_lon, exam_data->start_lat,
-                     exam_data->dest_lon, exam_data->dest_lat,
-                     NULL, NULL);
+                                        ELM_MAP_ROUTE_METHOD_SHORTEST,
+                                        exam_data->start_lon, exam_data->start_lat,
+                                        exam_data->dest_lon, exam_data->dest_lat,
+                                        NULL, NULL);
 }
 
 static void

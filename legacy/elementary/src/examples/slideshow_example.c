@@ -88,8 +88,8 @@ _mouse_out(void        *data,
 /* transition changed */
 static void
 _transition_select(void        *data,
-           Evas_Object *obj,
-           void        *event_info)
+                   Evas_Object *obj,
+                   void        *event_info)
 {
    elm_slideshow_transition_set(slideshow, data);
    elm_object_text_set(obj, data);
@@ -273,7 +273,7 @@ elm_main(int    argc,
      elm_hoversel_item_add(hv, transition, NULL, 0, _transition_select,
                            transition);
    elm_object_text_set(hv, eina_list_data_get(
-                         elm_slideshow_transitions_get(slideshow)));
+         elm_slideshow_transitions_get(slideshow)));
    evas_object_show(hv);
 
    hv = elm_hoversel_add(win);

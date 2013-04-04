@@ -7,12 +7,13 @@ typedef struct
 {
    Evas_Object *mid;
    Evas_Object *icon_still;
-   struct {
-      Evas_Object *up;
-      Evas_Object *down;
-      Evas_Object *left;
-      Evas_Object *right;
-   } cursors;
+   struct
+     {
+        Evas_Object *up;
+        Evas_Object *down;
+        Evas_Object *left;
+        Evas_Object *right;
+     } cursors;
 } App_Data;
 
 static void

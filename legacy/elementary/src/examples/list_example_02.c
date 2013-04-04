@@ -25,15 +25,15 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *bx, *li;
    unsigned int i;
    static const char *lbl[] =
-   {
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
-   };
+     {
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+     };
 
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List Example");
@@ -69,7 +69,7 @@ elm_main(int argc, char **argv)
    /* set bounce and scroller policy */
    elm_scroller_bounce_set(li, EINA_TRUE, EINA_TRUE);
    elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO,
-                                ELM_SCROLLER_POLICY_ON);
+                           ELM_SCROLLER_POLICY_ON);
 
    elm_list_go(li);
    evas_object_show(li);

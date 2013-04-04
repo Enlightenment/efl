@@ -64,7 +64,7 @@ _progressbar_example_start(void        *data,
    if (!example_data.run)
      {
         example_data.timer = ecore_timer_add(
-            0.1, _progressbar_example_value_set, NULL);
+           0.1, _progressbar_example_value_set, NULL);
         example_data.run = EINA_TRUE;
      }
 }

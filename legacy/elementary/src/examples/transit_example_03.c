@@ -5,13 +5,14 @@
 #include <Elementary.h>
 
 /* structure to hold context for many callbacks */
-struct Context {
-     Eina_Bool events_enabled;
-     Eina_Bool auto_reverse;
-     Eina_Bool final_state_keep;
-     int repeat_times;
-     Elm_Transit_Tween_Mode tween_mode;
-     Evas_Object *obj;
+struct Context
+{
+   Eina_Bool events_enabled;
+   Eina_Bool auto_reverse;
+   Eina_Bool final_state_keep;
+   int repeat_times;
+   Elm_Transit_Tween_Mode tween_mode;
+   Evas_Object *obj;
 };
 
 static void

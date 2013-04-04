@@ -26,8 +26,8 @@ elm_main(int argc, char **argv)
    image = elm_image_add(win);
    if (!elm_image_file_set(image, buf, NULL))
      {
-	printf("error: could not load image \"%s\"\n", buf);
-	return -1;
+        printf("error: could not load image \"%s\"\n", buf);
+        return -1;
      }
 
    elm_image_no_scale_set(image, EINA_TRUE);

@@ -56,7 +56,7 @@ mandel(int *pix, int w, int h)
                      (val  << 24) | (rr << 16) | (gg << 8) | (bb);
                }
              else
-                pix[(hy * w) + hx] = 0xffffffff;
+               pix[(hy * w) + hx] = 0xffffffff;
           }
      }
 }

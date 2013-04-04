@@ -225,11 +225,11 @@ elm_main(int argc, char *argv[])
 
 #define WIN_ACTION(name) \
    do { \
-      btn = elm_button_add(win); \
-      elm_object_text_set(btn, #name); \
-      elm_box_pack_end(box, btn); \
-      evas_object_show(btn); \
-      evas_object_smart_callback_add(btn, "clicked", _btn_##name##_cb, win2); \
+        btn = elm_button_add(win); \
+        elm_object_text_set(btn, #name); \
+        elm_box_pack_end(box, btn); \
+        evas_object_show(btn); \
+        evas_object_smart_callback_add(btn, "clicked", _btn_##name##_cb, win2); \
    } while (0)
 
    WIN_ACTION(activate);

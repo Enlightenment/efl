@@ -64,7 +64,7 @@ elm_main(int argc, char **argv)
    eina_value_set(&value, 3000);
 
    ok = elm_prefs_data_event_callback_add
-       (prefs_data, ELM_PREFS_DATA_EVENT_ITEM_CHANGED, _item_changed_cb, NULL);
+      (prefs_data, ELM_PREFS_DATA_EVENT_ITEM_CHANGED, _item_changed_cb, NULL);
    printf("elm_prefs_data_event_callback_add(): %s\n", ok ? "ok" : "fail");
 
    ok = elm_prefs_data_value_set(prefs_data, "position", &value);

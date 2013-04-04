@@ -57,9 +57,9 @@ _item_changed_cb(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *layout = data;
 
    if (!strcmp(item, "main:config:options:animation_time"))
-      _update_animation_time(obj, layout);
+     _update_animation_time(obj, layout);
    else if (!strcmp(item, "main:config:options:animation"))
-      _update_animation(obj, layout);
+     _update_animation(obj, layout);
 }
 
 EAPI_MAIN int
@@ -95,7 +95,7 @@ elm_main(int argc, char **argv)
    elm_prefs_autosave_set(prefs, EINA_TRUE);
 
    prefs_data =
-     elm_prefs_data_new("./prefs_example_03.cfg", NULL, EET_FILE_MODE_READ_WRITE);
+      elm_prefs_data_new("./prefs_example_03.cfg", NULL, EET_FILE_MODE_READ_WRITE);
 
    elm_prefs_file_set(prefs, "prefs_example_03.epb", NULL);
    elm_prefs_data_set(prefs, prefs_data);
@@ -116,5 +116,4 @@ elm_main(int argc, char **argv)
 
    return 0;
 }
-
 ELM_MAIN()

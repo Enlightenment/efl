@@ -31,7 +31,7 @@ static void
 _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n",
-	  data, obj, event_info);
+          data, obj, event_info);
 }
 
 EAPI_MAIN int
@@ -66,10 +66,10 @@ elm_main(int argc, char **argv)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-	elm_genlist_item_append(list, _itc,
-				(void *)(long)i, NULL,
-				ELM_GENLIST_ITEM_NONE,
-				_item_sel_cb, NULL);
+        elm_genlist_item_append(list, _itc,
+                                (void *)(long)i, NULL,
+                                ELM_GENLIST_ITEM_NONE,
+                                _item_sel_cb, NULL);
      }
 
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

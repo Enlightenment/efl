@@ -25,15 +25,15 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *bx, *li;
    unsigned int i;
    static const char *lbl[] =
-   {
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
-   };
+     {
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+     };
 
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List Example");

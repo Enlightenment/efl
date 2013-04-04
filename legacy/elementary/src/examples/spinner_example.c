@@ -13,8 +13,8 @@
 
 static void
 _on_done(void *data,
-        Evas_Object *obj,
-        void *event_info)
+         Evas_Object *obj,
+         void *event_info)
 {
    elm_exit();
 }

@@ -115,10 +115,11 @@ _add_data_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_append(li, label, NULL, NULL, _sel_data_cb, content);
    elm_list_go(li);
-   if (!list_it) {
-     printf("Error adding item\n");
-     return;
-   }
+   if (!list_it)
+     {
+        printf("Error adding item\n");
+        return;
+     }
    elm_object_item_del_cb_set(list_it, _free_data);
 }
 
@@ -220,7 +221,7 @@ _insert_before_cb(void *data, Evas_Object *obj, void *event_info)
 
    snprintf(label, sizeof(label), "Item %i", counter++);
    list_it = elm_list_item_insert_before(li, selected_item, label, NULL, NULL,
-                                    NULL, NULL);
+                                         NULL, NULL);
    elm_list_go(li);
    if (!list_it)
      printf("Error adding item\n");

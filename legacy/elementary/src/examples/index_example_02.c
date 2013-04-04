@@ -11,7 +11,7 @@
 
 #include <Elementary.h>
 
-static const char *items[] = \
+static const char *items[] =
 {
    "Judith",
    "Paulina",
@@ -51,8 +51,8 @@ _grid_label_get(void        *data,
 
 Evas_Object *
 _grid_content_get(void        *data,
-               Evas_Object *obj,
-               const char  *part)
+                  Evas_Object *obj,
+                  const char  *part)
 {
    if (!strcmp(part, "elm.swallow.icon"))
      {

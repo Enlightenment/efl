@@ -40,9 +40,9 @@ my_thread_new(void)
    pthread_attr_t attr;
 
    if (pthread_attr_init(&attr) != 0)
-      perror("pthread_attr_init");
+     perror("pthread_attr_init");
    if (pthread_create(&thread_id, &attr, my_thread_run, NULL) != 0)
-      perror("pthread_create");
+     perror("pthread_create");
 }
 
 EAPI_MAIN int

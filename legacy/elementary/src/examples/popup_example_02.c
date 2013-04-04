@@ -26,7 +26,7 @@ elm_main(int argc, char **argv)
 
    // Setting popup content-text
    elm_object_text_set(popup, "This is the Content-Text for popup. The wrap"
-            "for the content-text is character wrapping");
+                       "for the content-text is character wrapping");
    // Setting the wrapping type to character wrapping
    elm_popup_content_text_wrap_type_set(popup, ELM_WRAP_CHAR);
 

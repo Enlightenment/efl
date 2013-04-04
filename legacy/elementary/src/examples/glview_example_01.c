@@ -39,7 +39,7 @@ load_shader( GLData *gld, GLenum type, const char *shader_src )
    // Create the shader object
    shader = gl->glCreateShader(type);
    if (shader==0)
-      return 0;
+     return 0;
 
    // Load/Compile shader source
    gl->glShaderSource(shader, 1, &shader_src, NULL);
@@ -95,7 +95,7 @@ init_shaders(GLData *gld)
    // Create the program object
    gld->program = gl->glCreateProgram( );
    if (gld->program==0)
-      return 0;
+     return 0;
 
    gl->glAttachShader(gld->program, gld->vtx_shader);
    gl->glAttachShader(gld->program, gld->fgmt_shader);
@@ -131,9 +131,10 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
    Evas_GL_API *gl = gld->glapi;
-   GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f,
-                           -0.5f, -0.5f, 0.0f,
-                            0.5f, -0.5f, 0.0f };
+   GLfloat vVertices[] = {
+        0.0f,  0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f };
 
    if (!init_shaders(gld))
      {
@@ -252,7 +253,7 @@ elm_main(int argc, char **argv)
    // set the preferred engine to opengl_x11. if it isnt' available it
    // may use another transparently
    elm_config_preferred_engine_set("opengl_x11");
-   
+
    win = elm_win_add(NULL, "glview simple", ELM_WIN_BASIC);
    elm_win_title_set(win, "GLView Simple");
    elm_win_autodel_set(win, EINA_TRUE);

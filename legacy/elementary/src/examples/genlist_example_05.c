@@ -45,7 +45,7 @@ static void
 _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n",
-	  data, obj, event_info);
+          data, obj, event_info);
 }
 
 static char *
@@ -55,7 +55,7 @@ _parent_label_get(void *data, Evas_Object *obj, const char *part)
    Node_Data *d = data;
 
    snprintf(buf, sizeof(buf), "Group %d (%d items)", d->value / 7,
-	    eina_list_count(d->children));
+            eina_list_count(d->children));
 
    return strdup(buf);
 }

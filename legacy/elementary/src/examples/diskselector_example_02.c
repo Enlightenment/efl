@@ -93,10 +93,11 @@ _add_data_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(content, 32, "Item content %i", counter);
    snprintf(label, sizeof(label), "Item %i", counter++);
    ds_it = elm_diskselector_item_append(ds, label, NULL, _sel_data_cb, content);
-   if (!ds_it) {
-     printf("Error adding item\n");
-     return;
-   }
+   if (!ds_it)
+     {
+        printf("Error adding item\n");
+        return;
+     }
    elm_object_item_del_cb_set(ds_it, _free_data);
 }
 

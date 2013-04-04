@@ -16,16 +16,16 @@ _print_position(Elocation_Position *position)
 
    if (!position) return;
    snprintf(buffer, sizeof(buffer),
-	    "<b>GeoClue position reply with data from timestamp</b> %i<br/>"
-	    "<b>Latitude:</b> %f<br/>"
-	    "<b>Longitude:</b> %f<br/>"
-	    "<b>Altitude:</b> %f<br/>"
-	    "<b>Accuracy level:</b> %i<br/>"
-	    "<b>Accuracy horizontal:</b> %f<br/>"
-	    "<b>Accuracy vertical:</b> %f",
-	    position->timestamp, position->latitude, position->longitude,
-	    position->altitude, position->accur->level,
-	    position->accur->horizontal, position->accur->vertical);
+            "<b>GeoClue position reply with data from timestamp</b> %i<br/>"
+            "<b>Latitude:</b> %f<br/>"
+            "<b>Longitude:</b> %f<br/>"
+            "<b>Altitude:</b> %f<br/>"
+            "<b>Accuracy level:</b> %i<br/>"
+            "<b>Accuracy horizontal:</b> %f<br/>"
+            "<b>Accuracy vertical:</b> %f",
+            position->timestamp, position->latitude, position->longitude,
+            position->altitude, position->accur->level,
+            position->accur->horizontal, position->accur->vertical);
    elm_object_text_set(label, buffer);
 }
 

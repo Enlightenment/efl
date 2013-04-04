@@ -106,7 +106,7 @@ _multi_change(void        *data,
         Elm_Object_Item *gg_it;
         const Eina_List *selected = elm_gengrid_selected_items_get(grid), *l;
         EINA_LIST_FOREACH(selected, l, gg_it)
-          elm_gengrid_item_selected_set(gg_it, EINA_FALSE);
+           elm_gengrid_item_selected_set(gg_it, EINA_FALSE);
      }
 }
 
@@ -140,7 +140,7 @@ _grid_sel(void        *data,
    elm_gengrid_item_pos_get(event_info, &x, &y);
 
    fprintf(stdout, "Item [%p], with data [%p], path %s, at position (%d, %d),"
-                   " has been selected\n", event_info, data, it->path, x, y);
+           " has been selected\n", event_info, data, it->path, x, y);
 }
 
 /* new item with random path */
@@ -314,8 +314,8 @@ _grid_label_get(void        *data,
 /* icon fetching callback */
 static Evas_Object *
 _grid_content_get(void        *data,
-               Evas_Object *obj,
-               const char  *part)
+                  Evas_Object *obj,
+                  const char  *part)
 {
    const Example_Item *it = data;
 
@@ -371,10 +371,10 @@ _grid_scroll_stopped_cb(void        *data,
                         Evas_Object *obj,
                         void        *event_info)
 {
-  int h_pagenumber = 0, v_pagenumber = 0;
-  elm_gengrid_current_page_get(obj, &h_pagenumber, &v_pagenumber);
-  fprintf(stdout, "Grid current horiz page is %d, vert page is %d\n",
-          h_pagenumber, v_pagenumber);
+   int h_pagenumber = 0, v_pagenumber = 0;
+   elm_gengrid_current_page_get(obj, &h_pagenumber, &v_pagenumber);
+   fprintf(stdout, "Grid current horiz page is %d, vert page is %d\n",
+           h_pagenumber, v_pagenumber);
 }
 
 /* items grid horizontal alignment change */
@@ -424,7 +424,7 @@ elm_main(int    argc,
          char **argv)
 {
    Evas_Object *win, *bg, *grid, *bx, *hbx_1, *hbx_2, *hbx_3, *bt, *ck, *sl,
-   *sp;
+               *sp;
    Eina_Bool bounce;
    double h, v;
 

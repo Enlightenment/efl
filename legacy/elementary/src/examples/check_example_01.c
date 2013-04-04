@@ -3,7 +3,11 @@
 
 #include <Elementary.h>
 
-static void _print(void *data, Evas_Object *obj, void *event_info);
+static void
+_print(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("check %smarked\n", *((Eina_Bool*)data) ? "" : "un");
+}
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
@@ -52,8 +56,3 @@ elm_main(int argc, char **argv)
 }
 ELM_MAIN()
 
-static void
-_print(void *data, Evas_Object *obj, void *event_info)
-{
-   printf("check %smarked\n", *((Eina_Bool*)data) ? "" : "un");
-}

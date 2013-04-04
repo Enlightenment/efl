@@ -13,8 +13,8 @@
 
 static void
 _on_done(void *data,
-        Evas_Object *obj,
-        void *event_info)
+         Evas_Object *obj,
+         void *event_info)
 {
    elm_exit();
 }
@@ -22,15 +22,15 @@ _on_done(void *data,
 static void
 _changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    double val = elm_slider_value_get(obj);
-    printf("Changed to %1.2f\n", val);
+   double val = elm_slider_value_get(obj);
+   printf("Changed to %1.2f\n", val);
 }
 
 static void
 _delay_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    double val = elm_slider_value_get(obj);
-    printf("Delay changed to %1.2f\n", val);
+   double val = elm_slider_value_get(obj);
+   printf("Delay changed to %1.2f\n", val);
 }
 
 static char*

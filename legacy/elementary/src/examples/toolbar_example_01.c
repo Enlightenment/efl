@@ -78,7 +78,7 @@ elm_main(int argc, char **argv)
    elm_toolbar_item_append(tb, "folder-new", "New Folder", _item_2_pressed, bt);
 
    tb_it = elm_toolbar_item_append(tb, "mail-send", "Create and send email",
-                                  _item_3_pressed, bt);
+                                   _item_3_pressed, bt);
    elm_object_item_disabled_set(tb_it, EINA_TRUE);
 
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
