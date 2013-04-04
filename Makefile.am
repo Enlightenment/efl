@@ -236,12 +236,19 @@ endif
 # Cmake configs:
 cmakeconfigdir = ${prefix}/share/cmake/Modules/
 cmakeconfig_DATA = cmakeconfig/EinaConfig.cmake \
+		   cmakeconfig/EinaConfigVersion.cmake \
 		   cmakeconfig/EoConfig.cmake \
+		   cmakeconfig/EoConfigVersion.cmake \
 		   cmakeconfig/EetConfig.cmake \
+		   cmakeconfig/EetConfigVersion.cmake \
 		   cmakeconfig/EvasConfig.cmake \
+		   cmakeconfig/EvasConfigVersion.cmake \
 		   cmakeconfig/EcoreConfig.cmake \
+		   cmakeconfig/EcoreConfigVersion.cmake \
 		   cmakeconfig/EdjeConfig.cmake \
-		   cmakeconfig/EfreetConfig.cmake
+		   cmakeconfig/EdjeConfigVersion.cmake \
+		   cmakeconfig/EfreetConfig.cmake \
+		   cmakeconfig/EfreetConfigVersion.cmake
 
 # D-Bus services:
 

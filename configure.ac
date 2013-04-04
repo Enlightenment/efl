@@ -3700,12 +3700,19 @@ dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
 $po_makefile_in
 cmakeconfig/EinaConfig.cmake
+cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EoConfig.cmake
+cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EetConfig.cmake
+cmakeconfig/EetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EvasConfig.cmake
+cmakeconfig/EvasConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EcoreConfig.cmake
+cmakeconfig/EcoreConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EdjeConfig.cmake
+cmakeconfig/EdjeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EfreetConfig.cmake
+cmakeconfig/EfreetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
