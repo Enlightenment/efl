@@ -33,13 +33,13 @@ struct _Eet_String
 
    int           next;
    int           prev;
-
-   unsigned char hash;
-   unsigned char allocated : 1;
 };
 struct _Eet_Dictionary
 {
-   Eet_String *all;
+   Eet_String    *all;
+   unsigned char *all_hash;
+   unsigned char *all_allocated;
+
    Eina_Hash  *converts;
    Eina_Lock   mutex;
 

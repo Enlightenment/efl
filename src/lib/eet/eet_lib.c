@@ -446,7 +446,7 @@ eet_flush2(Eet_File *ef)
           {
              int sbuf[EET_FILE2_DICTIONARY_ENTRY_COUNT];
 
-             sbuf[0] = (int)htonl((unsigned int)ef->ed->all[j].hash);
+             sbuf[0] = (int)htonl((unsigned int)ef->ed->all_hash[j]);
              sbuf[1] = (int)htonl((unsigned int)offset);
              sbuf[2] = (int)htonl((unsigned int)ef->ed->all[j].len);
              sbuf[3] = (int)htonl((unsigned int)ef->ed->all[j].prev);
@@ -942,6 +942,14 @@ eet_internal_read2(Eet_File *ef)
         if (eet_test_close(!ef->ed->all, ef))
           return NULL;
 
+	ef->ed->all_hash = calloc(1, num_dictionary_entries * sizeof (unsigned char));
+	if (eet_test_close(!ef->ed->all_hash, ef))
+	  return NULL;
+
+	ef->ed->all_allocated = calloc(1, (num_dictionary_entries >> 8) * sizeof (unsigned char));
+	if (eet_test_close(!ef->ed->all_allocated, ef))
+	  return NULL;
+
         ef->ed->count = num_dictionary_entries;
         ef->ed->total = num_dictionary_entries;
         ef->ed->start = start + bytes_dictionary_entries +
@@ -983,7 +991,7 @@ eet_internal_read2(Eet_File *ef)
                                 '\0', ef))
                return NULL;
 
-             ef->ed->all[j].hash = hash;
+             ef->ed->all_hash[j] = hash;
              if (ef->ed->all[j].prev == -1)
                ef->ed->hash[hash] = j;
 
