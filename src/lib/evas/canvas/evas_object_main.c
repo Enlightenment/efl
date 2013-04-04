@@ -2060,14 +2060,26 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
      {  /* Save map coords count info if object has map */
         node = EO_DBG_INFO_LIST_APPEND(group, "Evas Map");
         int points_count = evas_map_count_get(map);
-        for(int i = 0 ; i < points_count; i++)
+        Eo_Dbg_Info *points = EO_DBG_INFO_LIST_APPEND(node, "Points");
+        Eo_Dbg_Info *pointsuv = EO_DBG_INFO_LIST_APPEND(node, "Image UV");
+        for (int i = 0 ; i < points_count; i++)
           {
-             Evas_Coord px, py, pz;
-             evas_map_point_coord_get(map, i, &px, &py, &pz);
-             Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(node, "Coords");
-             EO_DBG_INFO_APPEND(point, "x", EINA_VALUE_TYPE_INT, px);
-             EO_DBG_INFO_APPEND(point, "y", EINA_VALUE_TYPE_INT, py);
-             EO_DBG_INFO_APPEND(point, "z", EINA_VALUE_TYPE_INT, pz);
+               {
+                  Evas_Coord px, py, pz;
+                  evas_map_point_coord_get(map, i, &px, &py, &pz);
+                  Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(points, "Points");
+                  EO_DBG_INFO_APPEND(point, "x", EINA_VALUE_TYPE_INT, px);
+                  EO_DBG_INFO_APPEND(point, "y", EINA_VALUE_TYPE_INT, py);
+                  EO_DBG_INFO_APPEND(point, "z", EINA_VALUE_TYPE_INT, pz);
+               }
+
+               {
+                  double pu, pv;
+                  evas_map_point_image_uv_get(map, i, &pu, &pv);
+                  Eo_Dbg_Info *point = EO_DBG_INFO_LIST_APPEND(pointsuv, "Image UV");
+                  EO_DBG_INFO_APPEND(point, "u", EINA_VALUE_TYPE_DOUBLE, pu);
+                  EO_DBG_INFO_APPEND(point, "v", EINA_VALUE_TYPE_DOUBLE, pv);
+               }
           }
      }
 }
