@@ -118,7 +118,7 @@ START_TEST(evas_text_geometries)
         px = x;
         /* Get back the coords */
         fail_if(i != evas_object_text_char_coords_get(to, x + (w / 4),
-                 y + (h / 2), &x, &y, &w, &h));
+                 y + (h / 2), NULL, NULL, NULL, NULL));
         /* Get back cursor position, if click on right half of char. */
         fail_if((i + 1) != evas_object_text_char_coords_get(to, x + ((3 * w) / 4),
                  y + (h / 2), &x, &y, &w, &h));
@@ -457,7 +457,7 @@ START_TEST(evas_text_bidi)
         fail_if(x <= px);
         px = x;
         /* Get back the coords */
-        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 2),
+        fail_if(i != evas_object_text_char_coords_get(to, x + (w / 4),
                  y + (h / 2), &x, &y, &w, &h));
      }
 
