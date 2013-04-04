@@ -946,7 +946,7 @@ eet_internal_read2(Eet_File *ef)
 	if (eet_test_close(!ef->ed->all_hash, ef))
 	  return NULL;
 
-	ef->ed->all_allocated = calloc(1, (num_dictionary_entries >> 8) * sizeof (unsigned char));
+	ef->ed->all_allocated = calloc(1, ((num_dictionary_entries >> 8) + 1) * sizeof (unsigned char));
 	if (eet_test_close(!ef->ed->all_allocated, ef))
 	  return NULL;
 
