@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 23:53+0900\n"
-"PO-Revision-Date: 2013-04-03 01:49+0900\n"
-"Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
+"POT-Creation-Date: 2013-04-04 13:06+0900\n"
+"PO-Revision-Date: 2013-04-04 13:05+0900\n"
+"Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: General\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -74,11 +74,11 @@ msgstr "달력 월 감소 버튼"
 
 #: src/lib/elm_calendar.c:298
 msgid "calendar decrement year button"
-msgstr "가달력 년 감소 버튼"
+msgstr "달력 년 감소 버튼"
 
 #: src/lib/elm_calendar.c:303
 msgid "calendar increment month button"
-msgstr "달력 월 증 버튼"
+msgstr "달력 월 증가 버튼"
 
 #: src/lib/elm_calendar.c:308
 msgid "calendar increment year button"
@@ -111,11 +111,11 @@ msgstr "체크"
 
 #: src/lib/elm_clock.c:295
 msgid "clock increment button for am,pm"
-msgstr "시계 am,pm을 위한 증가 버튼"
+msgstr "시계 am,pm 증가 버튼"
 
 #: src/lib/elm_clock.c:303
 msgid "clock decrement button for am,pm"
-msgstr "시계 am,pm을 위한 감소 버튼"
+msgstr "시계 am,pm 감소 버튼"
 
 #: src/lib/elm_clock.c:664
 msgid "State: Editable"
@@ -171,7 +171,7 @@ msgstr "인덱스"
 
 #: src/lib/elm_label.c:402
 msgid "Label"
-msgstr "레이"
+msgstr "레이블"
 
 #: src/lib/elm_panel.c:42
 msgid "state: opened"
