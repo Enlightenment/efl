@@ -15,6 +15,7 @@
 
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include "evas_font_ot.h"
+#include <freetype/tttables.h> /* Freetype2 OS/2 font table. */
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
@@ -505,7 +506,13 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 
    if ((fi->wanted_rend & FONT_REND_WEIGHT) &&
        !(fi->src->ft.face->style_flags & FT_STYLE_FLAG_BOLD))
-      fi->runtime_rend |= FONT_REND_WEIGHT;
+     {
+        TT_OS2 *tt_os2 = FT_Get_Sfnt_Table(fi->src->ft.face, ft_sfnt_os2);
+        if (!tt_os2 || (tt_os2->usWeightClass < 600))
+          {
+             fi->runtime_rend |= FONT_REND_WEIGHT;
+          }
+     }
 
    return fi;
 }
