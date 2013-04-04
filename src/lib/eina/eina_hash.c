@@ -92,16 +92,16 @@ struct _Eina_Hash
 struct _Eina_Hash_Head
 {
    EINA_RBTREE;
-   int          hash;
 
    Eina_Rbtree *head;
+
+   int          hash;
 };
 
 struct _Eina_Hash_Element
 {
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
-   Eina_Bool       begin : 1;
 };
 
 struct _Eina_Hash_Foreach_Data
@@ -246,8 +246,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    if (!hash_head)
      {
         /* If not found allocate it and an element. */
-        hash_head = malloc(sizeof(Eina_Hash_Head) + sizeof(Eina_Hash_Element)
-                           + alloc_length);
+        hash_head = malloc(sizeof(Eina_Hash_Head));
         if (!hash_head)
           goto on_error;
 
@@ -260,23 +259,15 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
                                     EINA_RBTREE_CMP_NODE_CB(
                                       _eina_hash_hash_rbtree_cmp_node),
                                     NULL);
-
-        new_hash_element = (Eina_Hash_Element *)(hash_head + 1);
-        new_hash_element->begin = EINA_TRUE;
      }
 
+   /*
+     Alloc a new element
+     (No more lookup as we expect to support more than one item for one key).
+   */
+   new_hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
    if (!new_hash_element)
-     {
-        /*
-           Alloc a new element
-           (No more lookup as we expect to support more than one item for one key).
-         */
-        new_hash_element = malloc(sizeof (Eina_Hash_Element) + alloc_length);
-        if (!new_hash_element)
-          goto on_error;
-
-        new_hash_element->begin = EINA_FALSE;
-     }
+     goto on_error;
 
    /* Setup the element */
    new_hash_element->tuple.key_length = key_length;
@@ -403,8 +394,7 @@ _eina_hash_el_free(Eina_Hash_Element *hash_element, Eina_Hash *hash)
    if (hash->data_free_cb)
      hash->data_free_cb(hash_element->tuple.data);
 
-   if (hash_element->begin == EINA_FALSE)
-     free(hash_element);
+   free(hash_element);
 }
 
 static void
