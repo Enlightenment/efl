@@ -132,6 +132,11 @@ static int _eina_cow_log_dom = -1;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_cow_log_dom, __VA_ARGS__)
 
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_eina_cow_log_dom, __VA_ARGS__)
+
 #ifdef DBG
 #undef DBG
 #endif
@@ -341,6 +346,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
    if (tmp && tmp[0])
      choice = tmp;
 
+   INF("Creating Cow '%s' with mempool of type '%s'", name, choice);
    total_size = eina_mempool_alignof(struct_size + EINA_COW_PTR_SIZE);
    cow->pool = eina_mempool_add(choice, name, NULL, total_size, step);
    if (!cow->pool)
