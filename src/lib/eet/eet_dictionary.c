@@ -132,7 +132,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 	if (!new_hash) goto on_error;
 	ed->all_hash = new_hash;
 
-	new_allocated = realloc(ed->all_allocated, total * sizeof (unsigned char));
+	new_allocated = realloc(ed->all_allocated, ((total >> 3) + 1) * sizeof (unsigned char));
 	if (!new_allocated) goto on_error;
 	ed->all_allocated = new_allocated;
 	
