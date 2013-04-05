@@ -32,7 +32,6 @@ struct _Eet_String
    int           len;
 
    int           next;
-   int           prev;
 };
 struct _Eet_Dictionary
 {

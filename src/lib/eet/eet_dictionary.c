@@ -52,7 +52,8 @@ static int
 _eet_dictionary_lookup(Eet_Dictionary *ed,
                        const char     *string,
                        int             len,
-                       int             hash)
+                       int             hash,
+                       int            *previous)
 {
    Eina_Bool found = EINA_FALSE;
    int prev = -1;
@@ -78,8 +79,14 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
      }
 
    if ((current == -1) && found)
-     return prev;
+     {
+        // WTF ?!? How can current == -1 and found == EINA_TRUE
+        // If you happen to trigger this abort, contact enlightenment developer mailing list
+        abort();
+        return prev;
+     }
 
+   if (previous) *previous = prev;
    return current;
 }
 
@@ -91,6 +98,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    const char *str;
    int hash;
    int idx;
+   int pidx;
    int len;
    int cnt;
 
@@ -102,7 +110,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    eina_lock_take(&ed->mutex);
 
-   idx = _eet_dictionary_lookup(ed, string, len, hash);
+   idx = _eet_dictionary_lookup(ed, string, len, hash, &pidx);
 
    if (idx != -1)
      {
@@ -153,19 +161,14 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    if (idx == -1)
      {
         current->next = ed->hash[hash];
-        current->prev = -1;
         ed->hash[hash] = ed->count;
      }
    else
      {
         current->next = idx;
-        current->prev = ed->all[idx].prev;
 
-        if (current->next != -1)
-          ed->all[current->next].prev = ed->count;
-
-        if (current->prev != -1)
-          ed->all[current->prev].next = ed->count;
+        if (pidx != -1)
+          ed->all[pidx].next = ed->count;
         else
           ed->hash[hash] = ed->count;
      }

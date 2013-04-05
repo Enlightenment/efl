@@ -445,11 +445,16 @@ eet_flush2(Eet_File *ef)
         for (j = 0; j < ef->ed->count; ++j)
           {
              int sbuf[EET_FILE2_DICTIONARY_ENTRY_COUNT];
+	     int prev = 0;
+
+             // We still use the prev as an hint for knowing if it is the head of the hash
+	     if (ef->ed->hash[ef->ed->all_hash[j]] == j)
+	       prev = -1;
 
              sbuf[0] = (int)htonl((unsigned int)ef->ed->all_hash[j]);
              sbuf[1] = (int)htonl((unsigned int)offset);
              sbuf[2] = (int)htonl((unsigned int)ef->ed->all[j].len);
-             sbuf[3] = (int)htonl((unsigned int)ef->ed->all[j].prev);
+             sbuf[3] = (int)htonl((unsigned int)prev);
              sbuf[4] = (int)htonl((unsigned int)ef->ed->all[j].next);
 
              offset += ef->ed->all[j].len;
@@ -959,12 +964,13 @@ eet_internal_read2(Eet_File *ef)
         for (j = 0; j < ef->ed->count; ++j)
           {
              unsigned int offset;
+	     int prev;
              int hash;
 
              GET_INT(hash, dico, idx);
              GET_INT(offset, dico, idx);
              GET_INT(ef->ed->all[j].len, dico, idx);
-             GET_INT(ef->ed->all[j].prev, dico, idx);
+             GET_INT(prev, dico, idx); // Let's ignore prev link for dictionary, use it only as an hint to head
              GET_INT(ef->ed->all[j].next, dico, idx);
 
              /* Hash value could be stored on 8bits data, but this will break alignment of all the others data.
@@ -992,7 +998,7 @@ eet_internal_read2(Eet_File *ef)
                return NULL;
 
              ef->ed->all_hash[j] = hash;
-             if (ef->ed->all[j].prev == -1)
+             if (prev == -1)
                ef->ed->hash[hash] = j;
 
              /* compute the possible position of a signature */
