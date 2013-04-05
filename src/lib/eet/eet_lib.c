@@ -943,6 +943,9 @@ eet_internal_read2(Eet_File *ef)
         if (eet_test_close(!ef->ed, ef))
           return NULL;
 
+        INF("loading dictionnary for '%s' with %lu entries of size %i",
+            ef->path, num_dictionary_entries, sizeof(Eet_String));
+
         ef->ed->all = calloc(1, num_dictionary_entries * sizeof(Eet_String));
         if (eet_test_close(!ef->ed->all, ef))
           return NULL;
