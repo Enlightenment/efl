@@ -1,3 +1,7 @@
+2013-04-05  Cedric Bail
+
+        * Evas: Fix over redrawing of Evas_Map when applied on smart object.
+
 2013-04-04  Jiyoun Park
 
         * Evas font: fix font source have wrong current size.

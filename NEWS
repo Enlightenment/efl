@@ -223,4 +223,4 @@ Fixes:
     * Evas font: click on left/right half of char does matter now.
     * Evas font: If OS/2 table is available and the font is demi-bold, don't do runtime emboldment.
     * Evas font: fix font source have wrong current size.
-
+    * Evas: Fix over redrawing of Evas_Map when applied on smart object.

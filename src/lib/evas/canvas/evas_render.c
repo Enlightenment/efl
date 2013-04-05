@@ -430,6 +430,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                   if (obj->is_smart)
                     {
                        Evas_Object_Protected_Data *obj2;
+
                        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
                          {
                             _evas_render_phase1_object_process(e, obj2->object,
@@ -1114,6 +1115,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            , level + 1
 #endif
                                                            , do_async);
+                          evas_object_change_reset(obj2->object);
                        }
                }
              else
