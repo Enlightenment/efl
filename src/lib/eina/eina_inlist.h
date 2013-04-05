@@ -744,7 +744,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
  * typedef struct _Sort_Ex Sort_Ex;
  * struct _Sort_Ex
  * {
- *   INLIST;
+ *   EINA_INLIST;
  *   const char *text;
  * };
  *
