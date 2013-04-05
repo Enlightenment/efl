@@ -75,7 +75,9 @@ _evas_common_font_source_free(RGBA_Font_Source *fs)
 static void
 _evas_common_font_int_free(RGBA_Font_Int *fi)
 {
+   FTLOCK();
    FT_Done_Size(fi->ft.size);
+   FTUNLOCK();
 
    evas_common_font_int_modify_cache_by(fi, -1);
    _evas_common_font_int_clear(fi);
@@ -265,6 +267,7 @@ EAPI void
 evas_common_font_source_free(RGBA_Font_Source *fs)
 {
    fs->references--;
+   fs->current_size = 0;
    if (fs->references > 0) return;
    eina_hash_del(fonts_src, fs->name, fs);
 }
