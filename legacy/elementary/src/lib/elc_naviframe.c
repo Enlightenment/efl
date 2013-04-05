@@ -1084,10 +1084,10 @@ _item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
    switch (dispmode)
      {
       case EVAS_DISPLAY_MODE_COMPRESS:
-         elm_object_signal_emit(VIEW(it), "display,mode,compress", "");
+         elm_object_signal_emit(VIEW(it), "elm,state,display,compress", "elm");
          break;
       default:
-         elm_object_signal_emit(VIEW(it), "display,mode,default", "");
+         elm_object_signal_emit(VIEW(it), "elm,state,display,default", "elm");
          break;
      }
    it->dispmode = dispmode;
