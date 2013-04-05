@@ -12,6 +12,8 @@ static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl);
 static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
+static void _ecore_wl_sync_wait(Ecore_Wl_Display *ewd);
+static void _ecore_wl_sync_callback(void *data, struct wl_callback *callback, uint32_t serial);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
@@ -19,6 +21,11 @@ static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
    _ecore_wl_cb_handle_global,
    NULL // handle_global_remove
+};
+
+static const struct wl_callback_listener _ecore_wl_sync_listener =
+{
+   _ecore_wl_sync_callback
 };
 
 /* external variables */
@@ -176,7 +183,9 @@ ecore_wl_sync(void)
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   wl_display_sync(_ecore_wl_disp->wl.display);
+   _ecore_wl_sync_wait(_ecore_wl_disp);
+   while (_ecore_wl_disp->sync_ref_count > 0)
+     wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
 
 EAPI struct wl_shm *
@@ -472,4 +481,23 @@ struct wl_data_source *
 _ecore_wl_create_data_source(Ecore_Wl_Display *ewd)
 {
    return wl_data_device_manager_create_data_source(ewd->wl.data_device_manager);
+}
+
+static void
+_ecore_wl_sync_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
+{
+   Ecore_Wl_Display *ewd = data;
+
+   ewd->sync_ref_count--;
+   wl_callback_destroy(callback);
+}
+
+static void
+_ecore_wl_sync_wait(Ecore_Wl_Display *ewd)
+{
+   struct wl_callback *callback;
+
+   ewd->sync_ref_count++;
+   callback = wl_display_sync(ewd->wl.display);
+   wl_callback_add_listener(callback, &_ecore_wl_sync_listener, ewd);
 }

@@ -102,6 +102,7 @@ struct _Ecore_Wl_Display
    int fd;
    unsigned int mask;
    unsigned int serial;
+   int sync_ref_count;
    Ecore_Fd_Handler *fd_hdl;
    Ecore_Idle_Enterer *idle_enterer;
 
