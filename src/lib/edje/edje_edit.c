@@ -314,13 +314,13 @@ _edje_image_name_find(Edje_Edit *eed, int image_id)
 }
 
 static void
-_edje_real_part_free(Edje_Real_Part *rp)
+_edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
 {
    if (!rp) return;
 
    if (rp->object)
      {
-	_edje_callbacks_del(rp->object, rp->edje);
+	_edje_callbacks_del(rp->object, ed);
 	evas_object_del(rp->object);
      }
 
@@ -333,7 +333,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
 	evas_object_clip_unset(rp->typedata.swallow->swallowed_object);
 	evas_object_data_del(rp->typedata.swallow->swallowed_object, "\377 edje.swallowing_part");
 	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->typedata.swallow->swallowed_object, rp->edje);
+	  _edje_callbacks_del(rp->typedata.swallow->swallowed_object, ed);
 
 	if (rp->part->type == EDJE_PART_TYPE_GROUP ||
 	    rp->part->type == EDJE_PART_TYPE_EXTERNAL)
@@ -360,7 +360,7 @@ _edje_real_part_free(Edje_Real_Part *rp)
    if (rp->param2) free(rp->param2->set);
    eina_mempool_free(_edje_real_part_state_mp, rp->param2);
 
-   _edje_unref(rp->edje);
+   _edje_unref(ed);
    eina_mempool_free(_edje_real_part_mp, rp);
 }
 
@@ -2069,8 +2069,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ep->other.desc_count = 0;
 
    /* Init Edje_Real_Part */
-   rp->edje = ed;
-   _edje_ref(rp->edje);
+   _edje_ref(ed);
    rp->part = ep;
 
    if (ep->type == EDJE_PART_TYPE_RECTANGLE)
@@ -2126,7 +2125,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	     Evas_Object *child;
 	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL, name);
 	     if (child)
-	       _edje_real_part_swallow(rp, child, EINA_TRUE);
+	       _edje_real_part_swallow(ed, rp, child, EINA_TRUE);
 	  }
 	evas_object_clip_set(rp->object, ed->base->clipper);
 	evas_object_show(ed->base->clipper);
@@ -2267,7 +2266,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    eina_mempool_free(ce->mp.part, ep);
 
    /* Free Edje_Real_Part */
-   _edje_real_part_free(rp);
+   _edje_real_part_free(ed, rp);
 
    /* if all parts are gone, hide the clipper */
    if (ed->table_parts_size == 0)
@@ -2667,7 +2666,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
 	rp->part->source = eina_stringshare_add(source);
 	child_obj = edje_object_add(ed->base->evas);
 	edje_object_file_set(child_obj, ed->file->path, source);
-	_edje_real_part_swallow(rp, child_obj, EINA_TRUE);
+	_edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
      }
    else
      rp->part->source = NULL;

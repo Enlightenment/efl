@@ -184,7 +184,7 @@ _edje_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                                 ed->x + ep->x, 
                                 ed->y + ep->y);
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-               _edje_entry_real_part_configure(ep);
+               _edje_entry_real_part_configure(ed, ep);
              if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
                  (ep->typedata.swallow))
                {

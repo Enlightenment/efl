@@ -1517,22 +1517,18 @@ struct _Edje_Real_Part_Swallow
 
 struct _Edje_Real_Part
 {
-   Edje                     *edje; // 4
+   Edje_Real_Part_State      param1; // 32
+   Edje_Real_Part_State     *param2, *custom; // 8
    Edje_Part                *part; // 4
-   int                       x, y, w, h; // 16
-   Edje_Rectangle            req; // 16
    Evas_Object              *object; // 4
    Evas_Object              *nested_smart; // 4
    Edje_Real_Part_Drag      *drag; // 4
-   Edje_Real_Part	    *events_to; // 4
-   FLOAT_T                   description_pos; // 8
    Edje_Part_Description_Common *chosen_description; // 4
-   Edje_Real_Part_State      param1; // 32
    // WITH EDJE_CALC_CACHE: 307
-   Edje_Real_Part_State     *param2, *custom; // 8
-   Edje_Calc_Params         *current; // 4
-   Edje_Real_Part           *clip_to; // 4
    Edje_Running_Program     *program; // 4
+   Edje_Calc_Params         *current; // 4
+   Edje_Real_Part	    *events_to; // 4
+   Edje_Real_Part           *clip_to; // 4
 #ifdef HAVE_EPHYSICS
    Edje_Part_Description_Common *prev_description; // 4
    EPhysics_Body            *body; // 4
@@ -1543,14 +1539,17 @@ struct _Edje_Real_Part
       Edje_Real_Part_Container *container;
       Edje_Real_Part_Swallow   *swallow;
    } typedata; // 4
+   FLOAT_T                   description_pos; // 8
+   Edje_Rectangle            req; // 16
+   int                       x, y, w, h; // 16
    int                       clicked_button; // 4
 #ifdef EDJE_CALC_CACHE
    int                       state; // 4
 #endif
    unsigned char             type; // 1
-   unsigned char             calculated; // 1
-   unsigned char             calculating; // 1
-   unsigned char             still_in   : 1; // 1
+   unsigned char             calculated : 2; // 1
+   unsigned char             calculating : 2; // 0
+   unsigned char             still_in   : 1; // 0
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1; // 0
 #endif
@@ -2012,7 +2011,7 @@ int               _edje_block_break(Edje *ed);
 void              _edje_block_violate(Edje *ed);
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_object_part_swallow_changed_hints_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-void              _edje_real_part_swallow(Edje_Real_Part *rp, Evas_Object *obj_swallow, Eina_Bool hints_update);
+void              _edje_real_part_swallow(Edje *ed, Edje_Real_Part *rp, Evas_Object *obj_swallow, Eina_Bool hints_update);
 void              _edje_real_part_swallow_clear(Edje_Real_Part *rp);
 void              _edje_box_init(void);
 void              _edje_box_shutdown(void);
@@ -2023,19 +2022,19 @@ void              _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object 
 Edje_Part_Box_Animation * _edje_box_layout_anim_new(Evas_Object *box);
 void              _edje_box_layout_free_data(void *data);
 
-Eina_Bool         _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj);
-Eina_Bool         _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj);
-Eina_Bool         _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
-Eina_Bool         _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
-Evas_Object      *_edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj);
-Evas_Object      *_edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos);
-Eina_Bool         _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool clear);
-Eina_Bool         _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
-Eina_Bool         _edje_real_part_table_unpack(Edje_Real_Part *rp, Evas_Object *child_obj);
-void              _edje_real_part_table_clear(Edje_Real_Part *rp, Eina_Bool clear);
+Eina_Bool         _edje_real_part_box_append(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
+Eina_Bool         _edje_real_part_box_prepend(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
+Eina_Bool         _edje_real_part_box_insert_before(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
+Eina_Bool         _edje_real_part_box_insert_at(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
+Evas_Object      *_edje_real_part_box_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
+Evas_Object      *_edje_real_part_box_remove_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos);
+Eina_Bool         _edje_real_part_box_remove_all(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear);
+Eina_Bool         _edje_real_part_table_pack(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+Eina_Bool         _edje_real_part_table_unpack(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
+void              _edje_real_part_table_clear(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear);
 Evas_Object      *_edje_children_get(Edje_Real_Part *rp, const char *partid);
 
-Eina_Bool         _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text);
+Eina_Bool         _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text);
 char             *_edje_text_escape(const char *text);
 char             *_edje_text_unescape(const char *text);
 
@@ -2229,9 +2228,9 @@ void _edje_lua_script_only_message(Edje *ed, Edje_Message *em);
 
 void _edje_entry_init(Edje *ed);
 void _edje_entry_shutdown(Edje *ed);
-void _edje_entry_real_part_init(Edje_Real_Part *rp);
-void _edje_entry_real_part_shutdown(Edje_Real_Part *rp);
-void _edje_entry_real_part_configure(Edje_Real_Part *rp);
+void _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp);
+void _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp);
+void _edje_entry_real_part_configure(Edje *ed, Edje_Real_Part *rp);
 const char *_edje_entry_selection_get(Edje_Real_Part *rp);
 const char *_edje_entry_text_get(Edje_Real_Part *rp);
 void _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text);

@@ -1932,6 +1932,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 
 static void
 _edje_part_recalc_single_min_max(FLOAT_T sc,
+				 Edje *edje,
                                  Edje_Real_Part *ep,
                                  Edje_Part_Description_Common *desc,
                                  int *minw, int *minh,
@@ -1946,7 +1947,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           *minw = ep->typedata.swallow->swallow_params.min.w;
      }
 
-   if (ep->edje->calc_only)
+   if (edje->calc_only)
      {
         if (desc->minmul.have)
           {
@@ -1995,7 +1996,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              if (*maxw < 1) *maxw = 1;
           }
      }
-   if ((ep->edje->calc_only) && (desc->minmul.have) &&
+   if ((edje->calc_only) && (desc->minmul.have) &&
        (desc->minmul.w != FROM_INT(1))) *maxw = *minw;
    if (*maxw >= 0)
      {
@@ -2011,7 +2012,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           *minh = ep->typedata.swallow->swallow_params.min.h;
      }
 
-   if (ep->edje->calc_only)
+   if (edje->calc_only)
      {
         if (desc->minmul.have)
           {
@@ -2060,7 +2061,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              if (*maxh < 1) *maxh = 1;
           }
      }
-   if ((ep->edje->calc_only) && (desc->minmul.have) &&
+   if ((edje->calc_only) && (desc->minmul.have) &&
        (desc->minmul.h != FROM_INT(1))) *maxh = *minh;
    if (*maxh >= 0)
      {
@@ -2196,7 +2197,7 @@ _edje_part_recalc_single(Edje *ed,
 
    sc = ed->scale;
    if (sc == ZERO) sc = _edje_scale;
-   _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh);
+   _edje_part_recalc_single_min_max(sc, ed, ep, desc, &minw, &minh, &maxw, &maxh);
 
    /* relative coords of top left & bottom right */
    _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params);
@@ -2572,7 +2573,8 @@ _edje_physics_world_geometry_check(EPhysics_World *world)
 }
 
 static void
-_edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_Bool pos_update)
+_edje_physics_body_props_update(Edje *edje, Edje_Real_Part *ep, Edje_Calc_Params *pf,
+				Eina_Bool pos_update)
 {
    ephysics_body_linear_movement_enable_set(ep->body,
                                             pf->physics->mov_freedom.lin.x,
@@ -2590,8 +2592,10 @@ _edje_physics_body_props_update(Edje_Real_Part *ep, Edje_Calc_Params *pf, Eina_B
 
         if (pos_update)
           {
-             ephysics_body_move(ep->body, ep->edje->x + pf->x,
-                                ep->edje->y + pf->y, pf->physics->z);
+             ephysics_body_move(ep->body,
+				edje->x + pf->x,
+                                edje->y + pf->y,
+				pf->physics->z);
              ep->x = pf->x;
              ep->y = pf->y;
              ep->w = pf->w;
@@ -2639,14 +2643,16 @@ static void
 _edje_physics_body_update_cb(void *data, EPhysics_Body *body, void *event_info EINA_UNUSED)
 {
    Edje_Real_Part *rp = data;
+   Edje *edje = ephysics_body_data_get(body);
+
    ephysics_body_geometry_get(body, &(rp->x), &(rp->y), NULL,
                               &(rp->w), &(rp->h), NULL);
    ephysics_body_evas_object_update(body);
-   rp->edje->dirty = EINA_TRUE;
+   edje->dirty = EINA_TRUE;
 }
 
 static void
-_edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
+_edje_physics_body_add(Edje *edje, Edje_Real_Part *rp, EPhysics_World *world)
 {
    Eina_Bool resize = EINA_TRUE;
    Edje_Physics_Face *pface;
@@ -2715,7 +2721,7 @@ _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
         edje_obj = edje_object_add(evas);
         if (!edje_obj) continue;
 
-        edje_object_file_set(edje_obj, rp->edje->path, pface->source);
+        edje_object_file_set(edje_obj, edje->path, pface->source);
         evas_object_resize(edje_obj, 1, 1);
         ephysics_body_face_evas_object_set(rp->body, pface->type,
                                            edje_obj, EINA_FALSE);
@@ -2725,6 +2731,7 @@ _edje_physics_body_add(Edje_Real_Part *rp, EPhysics_World *world)
    ephysics_body_evas_object_set(rp->body, rp->object, resize);
    ephysics_body_event_callback_add(rp->body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     _edje_physics_body_update_cb, rp);
+   ephysics_body_data_set(rp->body, edje);
 }
 #endif
 
@@ -3432,10 +3439,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                     evas_obj_size_set(pf->w, pf->h));
               if ((ep->part->physics_body) && (!ep->body))
                 {
-                   if (_edje_physics_world_geometry_check(ep->edje->world))
+                   if (_edje_physics_world_geometry_check(ed->world))
                      {
-                        _edje_physics_body_add(ep, ep->edje->world);
-                        _edje_physics_body_props_update(ep, pf, EINA_TRUE);
+		        _edje_physics_body_add(ed, ep, ed->world);
+                        _edje_physics_body_props_update(ed, ep, pf, EINA_TRUE);
                      }
                 }
               else if (ep->body)
@@ -3443,8 +3450,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                    if (((ep->prev_description) &&
                         (chosen_desc != ep->prev_description)) ||
                        (pf != p1))
-                     _edje_physics_body_props_update(
-                        ep, pf, !pf->physics->ignore_part_pos);
+                     _edje_physics_body_props_update(ed, ep, pf, !pf->physics->ignore_part_pos);
                 }
               else
                 eo_do(ep->object,
@@ -3463,7 +3469,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 			 evas_obj_size_set(pf->w, pf->h));
                 }
               if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-                _edje_entry_real_part_configure(ep);
+                _edje_entry_real_part_configure(ed, ep);
               break;
            case EDJE_PART_TYPE_TEXT:
               /* This is correctly handle in _edje_text_recalc_apply at the moment. */
