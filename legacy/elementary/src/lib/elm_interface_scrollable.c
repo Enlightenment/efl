@@ -1982,7 +1982,7 @@ static Evas_Coord
 _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
                        int offset)
 {
-   Evas_Coord x, y, w, h, cw, ch, minx = 0;
+   Evas_Coord x, y, w, h, dx, cw, ch, minx = 0;
 
    if (!sid->pan_obj) return 0;
 
@@ -1991,10 +1991,16 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, NULL));
 
-   x += offset;
-
    if (sid->pagerel_h > 0.0)
      sid->pagesize_h = w * sid->pagerel_h;
+
+   dx = (sid->pagesize_h * ((double)sid->page_limit_h - 0.5));
+
+   if (offset > 0)
+     x += (abs(offset) < dx ? offset : dx);
+   else
+     x += (abs(offset) < dx ? offset : -dx);
+
    if (sid->pagesize_h > 0)
      {
         x = x + (sid->pagesize_h * 0.5);
@@ -2011,7 +2017,7 @@ static Evas_Coord
 _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
                        int offset)
 {
-   Evas_Coord x, y, w, h, cw, ch, miny = 0;
+   Evas_Coord x, y, w, h, dy, cw, ch, miny = 0;
 
    if (!sid->pan_obj) return 0;
 
@@ -2020,10 +2026,16 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(NULL, &miny));
 
-   y += offset;
-
    if (sid->pagerel_v > 0.0)
      sid->pagesize_v = h * sid->pagerel_v;
+
+   dy = (sid->pagesize_v * ((double)sid->page_limit_v - 0.5));
+
+   if (offset > 0)
+     y += (abs(offset) < dy ? offset : dy);
+   else
+     y += (abs(offset) < dy ? offset : -dy);
+
    if (sid->pagesize_v > 0)
      {
         y = y + (sid->pagesize_v * 0.5);
@@ -4027,6 +4039,28 @@ _elm_scroll_paging_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_elm_scroll_page_scroll_limit_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   int page_limit_h = va_arg(*list, int);
+   int page_limit_v = va_arg(*list, int);
+
+   sid->page_limit_h = page_limit_h;
+   sid->page_limit_v = page_limit_v;
+}
+
+static void
+_elm_scroll_page_scroll_limit_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   int *page_limit_h = va_arg(*list, int *);
+   int *page_limit_v = va_arg(*list, int *);
+
+   if (page_limit_h) *page_limit_h = sid->page_limit_h;
+   if (page_limit_v) *page_limit_v = sid->page_limit_v;
+}
+
+static void
 _elm_scroll_current_page_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Coord x, y;
@@ -4181,6 +4215,8 @@ _elm_scroll_interface_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sid->step.y = 32;
    sid->page.x = -50;
    sid->page.y = -50;
+   sid->page_limit_h = 9999;
+   sid->page_limit_v = 9999;
    sid->hbar_flags = ELM_SCROLLER_POLICY_AUTO;
    sid->vbar_flags = ELM_SCROLLER_POLICY_AUTO;
    sid->hbar_visible = EINA_TRUE;
@@ -4282,6 +4318,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET), _elm_scroll_bounce_allow_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET), _elm_scroll_paging_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_GET), _elm_scroll_paging_get),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_SET), _elm_scroll_page_scroll_limit_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_GET), _elm_scroll_page_scroll_limit_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CURRENT_PAGE_GET), _elm_scroll_current_page_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_LAST_PAGE_GET), _elm_scroll_last_page_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SHOW), _elm_scroll_page_show),
@@ -4350,6 +4388,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_SET, "Set the maxium of the movable page at a flicking"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_GET, "Get the maxium of the movable page at a flicking"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CURRENT_PAGE_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_LAST_PAGE_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SHOW, "description here"),

@@ -196,6 +196,8 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_GET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CURRENT_PAGE_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_LAST_PAGE_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SHOW,
@@ -762,6 +764,30 @@ enum
 #define elm_scrollable_interface_paging_get(pagerel_h, pagerel_v, pagesize_h, pagesize_v) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_GET), EO_TYPECHECK(double *, pagerel_h), EO_TYPECHECK(double *, pagerel_v), EO_TYPECHECK(Evas_Coord *, pagesize_h), EO_TYPECHECK(Evas_Coord *, pagesize_v)
 
 /**
+ * @def elm_scrollable_interface_page_scroll_limit_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] page_limit_h
+ * @param[in] page_limit_v
+ *
+ */
+#define elm_scrollable_interface_page_scroll_limit_set(page_limit_h, page_limit_v) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_SET), EO_TYPECHECK(int, page_limit_h), EO_TYPECHECK(int, page_limit_v)
+
+/**
+ * @def elm_scrollable_interface_page_scroll_limit_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] page_limit_h
+ * @param[out] page_limit_v
+ *
+ */
+#define elm_scrollable_interface_page_scroll_limit_get(page_limit_h, page_limit_v) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_GET), EO_TYPECHECK(int *, page_limit_h), EO_TYPECHECK(int *, page_limit_v)
+
+/**
  * @def elm_scrollable_interface_current_page_get
  * @since 1.8
  *
@@ -1054,6 +1080,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    double     pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
+   int        page_limit_h, page_limit_v;
 
    Eina_Bool  momentum_animator_disabled : 1;
    Eina_Bool  bounce_animator_disabled : 1;

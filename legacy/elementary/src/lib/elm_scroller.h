@@ -73,6 +73,8 @@ enum
    ELM_OBJ_SCROLLER_SUB_ID_REGION_GET,
    ELM_OBJ_SCROLLER_SUB_ID_CHILD_SIZE_GET,
    ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET,
+   ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_SET,
+   ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_GET,
    ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_SET,
    ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_GET,
    ELM_OBJ_SCROLLER_SUB_ID_LAST
@@ -134,6 +136,32 @@ enum
  * @see elm_scroller_page_relative_set
  */
 #define elm_obj_scroller_page_relative_set(h_pagerel, v_pagerel) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET), EO_TYPECHECK(double, h_pagerel), EO_TYPECHECK(double, v_pagerel)
+
+/**
+ * @def elm_obj_scroller_page_scroll_limit_set
+ * @since 1.8
+ *
+ * @brief Set the maxium of the movable page at a flicking.
+ *
+ * @param[in] page_limit_h
+ * @param[in] page_limit_v
+ *
+ * @see elm_scroller_page_scroll_limit_set
+ */
+#define elm_obj_scroller_page_scroll_limit_set(page_limit_h, page_limit_v) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_SET), EO_TYPECHECK(int, page_limit_h), EO_TYPECHECK(int, page_limit_v)
+
+/**
+ * @def elm_obj_scroller_page_scroll_limit_get
+ * @since 1.8
+ *
+ * @brief Get the maxium of the movable page at a flicking.
+ *
+ * @param[in] page_limit_h
+ * @param[in] page_limit_v
+ *
+ * @see elm_scroller_page_scroll_limit_get
+ */
+#define elm_obj_scroller_page_scroll_limit_get(page_limit_h, page_limit_v) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_GET), EO_TYPECHECK(int *, page_limit_h), EO_TYPECHECK(int *, page_limit_v)
 
 /**
  * @def elm_obj_scroller_propagate_events_set
@@ -380,6 +408,38 @@ EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, E
  * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_size_get(const Evas_Object *obj, Evas_Coord *h_pagesize, Evas_Coord *v_pagesize);
+
+/**
+ * @brief Set the maxium of the movable page at a flicking.
+ *
+ * @param obj The scroller object
+ * @param page_limit_h The maxium of the movable horizontal page
+ * @param page_limit_v The maxium of the movable vertical page
+ *
+ * The value of maxium movable page should be more than 1.
+ *
+ * @see elm_scroller_page_scroll_limit_get()
+ *
+ * @since 1.8
+ *
+ * @ingroup Scroller
+ */
+EAPI void                         elm_scroller_page_scroll_limit_set(const Evas_Object *obj, Evas_Coord page_limit_h, Evas_Coord page_limit_v);
+
+/**
+ * @brief Get the maxium of the movable page at a flicking.
+ *
+ * @param obj The scroller object
+ * @param page_limit_h The maxium of the movable horizontal page
+ * @param page_limit_v The maxium of the movable vertical page
+ *
+ * @see elm_scroller_page_scroll_limit_set()
+ *
+ * @since 1.8
+ *
+ * @ingroup Scroller
+ */
+EAPI void                         elm_scroller_page_scroll_limit_get(const Evas_Object *obj, Evas_Coord *page_limit_h, Evas_Coord *page_limit_v);
 
 /**
  * @brief Get scroll current page number.

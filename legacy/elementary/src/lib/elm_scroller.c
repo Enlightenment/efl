@@ -1049,6 +1049,51 @@ elm_scroller_page_size_get(const Evas_Object *obj,
 }
 
 EAPI void
+elm_scroller_page_scroll_limit_set(const Evas_Object *obj,
+                                   int page_limit_h,
+                                   int page_limit_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+   eo_do((Eo *)obj, elm_obj_scroller_page_scroll_limit_set
+         (page_limit_h, page_limit_v));
+}
+
+static void
+_page_scroll_limit_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int page_limit_h = va_arg(*list, int);
+   int page_limit_v = va_arg(*list, int);
+
+   if (page_limit_h < 1)
+     page_limit_h = 9999;
+   if (page_limit_v < 1)
+     page_limit_v = 9999;
+
+   eo_do(obj, elm_scrollable_interface_page_scroll_limit_set
+         (page_limit_h, page_limit_v));
+}
+
+EAPI void
+elm_scroller_page_scroll_limit_get(const Evas_Object *obj,
+                                   int *page_limit_h,
+                                   int *page_limit_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+   eo_do((Eo *)obj, elm_obj_scroller_page_scroll_limit_get
+         (page_limit_h, page_limit_v));
+}
+
+static void
+_page_scroll_limit_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int *page_limit_h = va_arg(*list, int *);
+   int *page_limit_v = va_arg(*list, int *);
+
+   eo_do(obj, elm_scrollable_interface_page_scroll_limit_get
+         (page_limit_h, page_limit_v));
+}
+
+EAPI void
 elm_scroller_current_page_get(const Evas_Object *obj,
                               int *h_pagenumber,
                               int *v_pagenumber)
@@ -1187,6 +1232,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_REGION_GET), _region_get),
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_CHILD_SIZE_GET), _child_size_get),
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET), _page_relative_set),
+        EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_SET), _page_scroll_limit_set),
+        EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_GET), _page_scroll_limit_get),
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_SET), _propagate_events_set),
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_GET), _propagate_events_get),
         EO_OP_FUNC_SENTINEL
@@ -1201,6 +1248,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_REGION_GET, "Get the currently visible content region."),
      EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_CHILD_SIZE_GET, "Get the size of the content object."),
      EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET, "Set scroll page size relative to viewport size."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_SET, "Set the maxium of the movable page at a flicking."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_GET, "Get the maxium of the movable page at a flicking."),
      EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_SET, "Set event propagation on a scroller."),
      EO_OP_DESCRIPTION(ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_GET, "Get event propagation for a scroller."),
      EO_OP_DESCRIPTION_SENTINEL
