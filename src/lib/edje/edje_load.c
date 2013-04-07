@@ -672,31 +672,22 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 }
 		       if (rp->part->clip_to_id >= 0)
 			 {
-			    rp->clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
-			    if (rp->clip_to &&
-                                rp->clip_to->object &&
+			    Edje_Real_Part *clip_to;
+
+			    clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+			    if (clip_to &&
+                                clip_to->object &&
                                 rp->object)
 			      {
-				 evas_object_pass_events_set(rp->clip_to->object, 1);
-				 evas_object_pointer_mode_set(rp->clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-				 evas_object_clip_set(rp->object, rp->clip_to->object);
+				 evas_object_pass_events_set(clip_to->object, 1);
+				 evas_object_pointer_mode_set(clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+				 evas_object_clip_set(rp->object, clip_to->object);
 			      }
 			 }
 		       if (rp->drag)
 			 {
 			    if (rp->part->dragable.confine_id >= 0)
 			      rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
-			 }
-
-		       /* replay events for dragable */
-		       if (rp->part->dragable.event_id >= 0)
-			 {
-			    rp->events_to =
-			      ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
-			    /* events_to may be used only with dragable */
-			    if (!rp->events_to->part->dragable.x &&
-				!rp->events_to->part->dragable.y)
-			      rp->events_to = NULL;
 			 }
 
                        if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&

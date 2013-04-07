@@ -2226,10 +2226,10 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	     if (real->custom->rel2_to_y == rp) real->custom->rel2_to_y = NULL;
 	  }
 
-	if (real->clip_to == rp)
+	if (real->part->clip_to_id == rp->part->id)
 	  {
 	     evas_object_clip_set(real->object, ed->base->clipper);
-	     real->clip_to = NULL;
+	     real->part->clip_to_id = -1;
 	  }
 	if (real->drag && real->drag->confine_to == rp)
 	  real->drag->confine_to = NULL;
@@ -2472,9 +2472,11 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
      {
 	//printf("UnSet clip_to for part: %s\n", part);
 
-	if (rp->clip_to && rp->clip_to->object)
+	if (rp->part->clip_to_id >= 0)
 	  {
-	     evas_object_pointer_mode_set(rp->clip_to->object,
+	     clip = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+
+	     evas_object_pointer_mode_set(clip->object,
 					  EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
 	     evas_object_clip_unset(rp->object);
 	  }
@@ -2484,7 +2486,6 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
 	  evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
 
 	rp->part->clip_to_id = -1;
-	rp->clip_to = NULL;
 
 	edje_object_calc_force(obj);
 
@@ -2504,13 +2505,12 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
      }
 
    rp->part->clip_to_id = clip->part->id;
-   rp->clip_to = clip;
 
-   evas_object_pass_events_set(rp->clip_to->object, 1);
-   evas_object_pointer_mode_set(rp->clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-   evas_object_clip_set(rp->object, rp->clip_to->object);
+   evas_object_pass_events_set(clip->object, 1);
+   evas_object_pointer_mode_set(clip->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+   evas_object_clip_set(rp->object, clip->object);
    if (rp->typedata.swallow->swallowed_object)
-     evas_object_clip_set(rp->typedata.swallow->swallowed_object, rp->clip_to->object);
+     evas_object_clip_set(rp->typedata.swallow->swallowed_object, clip->object);
 
    edje_object_calc_force(obj);
 

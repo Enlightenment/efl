@@ -6418,8 +6418,13 @@ _edje_real_part_swallow(Edje *ed,
    if (!obj_swallow) return;
    rp->typedata.swallow->swallowed_object = obj_swallow;
    evas_object_smart_member_add(rp->typedata.swallow->swallowed_object, ed->obj);
-   if (rp->clip_to)
-     evas_object_clip_set(rp->typedata.swallow->swallowed_object, rp->clip_to->object);
+   if (rp->part->clip_to_id >= 0)
+     {
+       Edje_Real_Part *clip_to;
+
+       clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+       evas_object_clip_set(rp->typedata.swallow->swallowed_object, clip_to->object);
+     }
    else evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
    evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
    evas_object_event_callback_add(rp->typedata.swallow->swallowed_object,

@@ -523,6 +523,7 @@ open:
 		       prev = ep2;
 
 		       ep2 = edc->parts[ep2->dragable.event_id];
+		       /* events_to may be used only with dragable */
 		       if (!ep2->dragable.x && !ep2->dragable.y)
 			 {
 			    prev->dragable.event_id = -1;

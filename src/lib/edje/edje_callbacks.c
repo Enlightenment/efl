@@ -107,9 +107,9 @@ _edje_mouse_down_signal_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 	_edje_emit(ed, buf, rp->part->name);
      }
 
-   if (rp->events_to)
+   if (rp->part->dragable.event_id >= 0)
      {
-        rp = rp->events_to;
+        rp = ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
         if (!ignored)
           {
              snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
@@ -167,9 +167,9 @@ _edje_mouse_up_signal_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void
 	_edje_emit(ed, buf, rp->part->name);
      }
 
-   if (rp->events_to)
+   if (rp->part->dragable.event_id >= 0)
      {
-	rp = rp->events_to;
+	rp = ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
 	if (!ignored)
 	  {
 	     snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
@@ -221,7 +221,10 @@ _edje_mouse_move_signal_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-   if (rp->events_to) rp = rp->events_to;
+   if (rp->part->dragable.event_id >= 0)
+     {
+        rp = ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
+     }
 
    ignored = rp->part->ignore_flags & ev->event_flags;
 
