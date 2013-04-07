@@ -76,9 +76,9 @@ struct _Evas_Object_Image_State
       short         w, h, stride;
    } image;
    struct {
+      double        scale;
       short         l, r, t, b;
       unsigned char fill;
-      double        scale;
    } border;
 
    Evas_Object   *source;
@@ -86,8 +86,9 @@ struct _Evas_Object_Image_State
    const char    *file;
    const char    *key;
    int            frame;
-   Evas_Colorspace cspace;
    int             spread;
+
+   Evas_Colorspace cspace;
 
    Eina_Bool      smooth_scale : 1;
    Eina_Bool      has_alpha :1;
@@ -191,12 +192,12 @@ static const Evas_Object_Image_Pixels default_pixels = {
 static const Evas_Object_Image_State default_state = {
   { 0, 0, 0, 0 }, // fill
   { 0, 0, 0 }, // image
-  { 0, 0, 0, 0, 1, 1.0 }, // border
+  { 1.0, 0, 0, 0, 0, 1 }, // border
 
   NULL, NULL, NULL, NULL,
   0,
-  EVAS_COLORSPACE_ARGB8888,
   EVAS_TEXTURE_REPEAT,
+  EVAS_COLORSPACE_ARGB8888,
 
   EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
