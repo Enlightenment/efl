@@ -164,7 +164,7 @@ _base_geometry_calc(Evas_Object *obj,
    evas_object_geometry_get
      (sd->parent, &hover_area.x, &hover_area.y, &hover_area.w,
      &hover_area.h);
-   if (!strcmp(evas_object_type_get(sd->parent), "elm_win"))
+   if (sd->parent && !strcmp(evas_object_type_get(sd->parent), "elm_win"))
      hover_area.x = hover_area.y = 0;
 
    evas_object_geometry_get(obj, &pos.x, &pos.y, NULL, NULL);
