@@ -1608,8 +1608,8 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                        int speed_x, speed_y;
                        int speed_px, speed_py;
 
-                       speed_x = os->geometry.x - obj->prev->geometry.x;
-                       speed_y = os->geometry.y - obj->prev->geometry.y;
+                       speed_x = obj->cur->geometry.x - obj->prev->geometry.x;
+                       speed_y = obj->cur->geometry.y - obj->prev->geometry.y;
 
                        speed_px = obj->smart.parent->cur.geometry.x - obj->smart.parent->prev.geometry.x;
                        speed_py = obj->smart.parent->cur.geometry.y - obj->smart.parent->prev.geometry.y;
