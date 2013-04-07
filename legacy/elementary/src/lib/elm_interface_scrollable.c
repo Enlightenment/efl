@@ -1945,12 +1945,13 @@ _elm_scroll_momentum_animator(void *data)
         _elm_scroll_wanted_coordinates_update(sid, x, y);
         eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&maxx, &maxy));
         eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-        if (!sid->bounce_horiz)
+
+        if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_horiz)
           {
              if (x <= minx) no_bounce_x_end = EINA_TRUE;
              if ((x - minx) >= maxx) no_bounce_x_end = EINA_TRUE;
           }
-        if (!sid->bounce_vert)
+        if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_vert)
           {
              if (y <= miny) no_bounce_y_end = EINA_TRUE;
              if ((y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;

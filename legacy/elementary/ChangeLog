@@ -1208,3 +1208,7 @@
 
         * Add the API elm_scroller_page_scroll_limit_set/get.
         It sets the maxium of the movable page at flicking.
+
+2013-04-08  Jaehwan Kim
+
+        * Quit the scroll animator if the scroller don't have a bounce and reach a edge.
