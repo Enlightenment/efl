@@ -5,6 +5,7 @@
 *.gmo
 Makefile
 Makefile.in
+tags
 .deps
 .libs
 *.exe
