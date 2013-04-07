@@ -2205,6 +2205,27 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	if (real->typedata.text->source == rp) real->typedata.text->source = NULL;
 	if (real->typedata.text->text_source == rp) real->typedata.text->text_source = NULL;
 
+	if (real->param1.rel1_to_x == rp) real->param1.rel1_to_x = NULL;
+	if (real->param1.rel1_to_y == rp) real->param1.rel1_to_y = NULL;
+	if (real->param1.rel2_to_x == rp) real->param1.rel2_to_x = NULL;
+	if (real->param1.rel2_to_y == rp) real->param1.rel2_to_y = NULL;
+
+	if (real->param2)
+	  {
+	     if (real->param2->rel1_to_x == rp) real->param2->rel1_to_x = NULL;
+	     if (real->param2->rel1_to_y == rp) real->param2->rel1_to_y = NULL;
+	     if (real->param2->rel2_to_x == rp) real->param2->rel2_to_x = NULL;
+	     if (real->param2->rel2_to_y == rp) real->param2->rel2_to_y = NULL;
+	  }
+
+	if (real->custom)
+	  {
+	     if (real->custom->rel1_to_x == rp) real->custom->rel1_to_x = NULL;
+	     if (real->custom->rel1_to_y == rp) real->custom->rel1_to_y = NULL;
+	     if (real->custom->rel2_to_x == rp) real->custom->rel2_to_x = NULL;
+	     if (real->custom->rel2_to_y == rp) real->custom->rel2_to_y = NULL;
+	  }
+
 	if (real->part->clip_to_id == rp->part->id)
 	  {
 	     evas_object_clip_set(real->object, ed->base->clipper);
