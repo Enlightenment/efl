@@ -103,13 +103,17 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                     }
                   else
                     {
+		       Evas_Coord_Rectangle bounding_box;
+
+		       evas_object_smart_bounding_box_get(eo_obj, &bounding_box, NULL);
+
                        if (!obj->child_has_map)
                          evas_object_smart_bounding_box_update(eo_obj, obj);
                        if (obj->child_has_map ||
-                           (obj->cur->bounding_box.x <= x &&
-                            obj->cur->bounding_box.x + obj->cur->bounding_box.w >= x &&
-                            obj->cur->bounding_box.y <= y &&
-                            obj->cur->bounding_box.y + obj->cur->bounding_box.h >= y) ||
+                           (bounding_box.x <= x &&
+                            bounding_box.x + bounding_box.w >= x &&
+                            bounding_box.y <= y &&
+                            bounding_box.y + bounding_box.h >= y) ||
                            (obj->cur->geometry.x <= x &&
                             obj->cur->geometry.y + obj->cur->geometry.w >= x &&
                             obj->cur->geometry.y <= y &&

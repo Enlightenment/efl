@@ -18,6 +18,9 @@ typedef struct _Evas_Smart_Callback    Evas_Smart_Callback;
 
 struct _Evas_Object_Smart
 {
+   struct {
+      Evas_Coord_Rectangle bounding_box;
+   } cur, prev;
    Evas_Object      *object;
    void             *engine_data;
    void             *data;
@@ -1198,6 +1201,155 @@ evas_object_smart_del(Evas_Object *eo_obj)
 }
 
 void
+evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Object_Smart *s = NULL;
+   Eina_Bool propagate = EINA_FALSE;
+   Eina_Bool computeminmax = EINA_FALSE;
+   Evas_Coord x, y, w, h;
+   Evas_Coord px, py, pw, ph;
+   Eina_Bool noclip;
+
+   if (!obj->smart.parent) return ;
+   if (obj->child_has_map) return ; /* Disable bounding box computation for this object and its parent */
+   /* We could also remove object that are not visible from the bounding box, use the clipping information
+      to reduce the bounding of the object they are clipping, but for the moment this will do it's jobs */
+   noclip = !(obj->clip.clipees || obj->is_static_clip);
+
+   if (obj->is_smart)
+     {
+        s = eo_data_get(eo_obj, MY_CLASS);
+
+        x = s->cur.bounding_box.x;
+        y = s->cur.bounding_box.y;
+        w = s->cur.bounding_box.w;
+        h = s->cur.bounding_box.h;
+        px = s->prev.bounding_box.x;
+        py = s->prev.bounding_box.y;
+        pw = s->prev.bounding_box.w;
+        ph = s->prev.bounding_box.h;
+     }
+   else
+     {
+        x = obj->cur->geometry.x;
+        y = obj->cur->geometry.y;
+        w = obj->cur->geometry.w;
+        h = obj->cur->geometry.h;
+        px = obj->prev->geometry.x;
+        py = obj->prev->geometry.y;
+        pw = obj->prev->geometry.w;
+        ph = obj->prev->geometry.h;
+     }
+
+   /* We are not yet trying to find the smallest bounding box, but we want to find a good approximation quickly.
+    * That's why we initialiaze min and max search to geometry of the parent object.
+    */
+   Evas_Object_Protected_Data *smart_obj = eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
+   Evas_Object_Smart *smart_parent = eo_data_get(obj->smart.parent, MY_CLASS);
+   if (!smart_parent || !smart_obj) return;
+
+   if (smart_obj->cur->valid_bounding_box)
+     {
+        /* Update left limit */
+        if (noclip && x < smart_parent->cur.bounding_box.x)
+          {
+	     smart_parent->cur.bounding_box.w += smart_parent->cur.bounding_box.x - x;
+	     smart_parent->cur.bounding_box.x = x;
+
+             propagate = EINA_TRUE;
+          }
+        else if ((px == smart_parent->prev.bounding_box.x &&
+		  x > smart_parent->cur.bounding_box.x)
+                 || (!noclip && x == smart_parent->cur.bounding_box.x))
+          {
+             computeminmax = EINA_TRUE;
+          }
+
+        /* Update top limit */
+        if (noclip && y < smart_parent->cur.bounding_box.y)
+          {
+	     smart_parent->cur.bounding_box.h += smart_parent->cur.bounding_box.x - x;
+	     smart_parent->cur.bounding_box.y = y;
+
+             propagate = EINA_TRUE;
+          }
+        else if ((py == smart_parent->prev.bounding_box.y &&
+		  y  > smart_parent->cur.bounding_box.y)
+                 || (!noclip && y == smart_parent->cur.bounding_box.y))
+          {
+             computeminmax = EINA_TRUE;
+          }
+
+        /* Update right limit */
+        if (noclip && x + w > smart_parent->cur.bounding_box.x + smart_parent->cur.bounding_box.w)
+          {
+	     smart_parent->cur.bounding_box.w = x + w - smart_parent->cur.bounding_box.x;
+             
+             propagate = EINA_TRUE;
+          }
+        else if ((px + pw == smart_parent->prev.bounding_box.x + smart_parent->prev.bounding_box.w &&
+                  x + w < smart_parent->cur.bounding_box.x + smart_parent->cur.bounding_box.w)
+                 || (!noclip && x + w == smart_parent->cur.bounding_box.x + smart_parent->cur.bounding_box.w))
+          {
+             computeminmax = EINA_TRUE;
+          }
+
+        /* Update bottom limit */
+        if (noclip && y + h > smart_parent->cur.bounding_box.y + smart_parent->cur.bounding_box.h)
+          {
+	     smart_parent->cur.bounding_box.h = y + h - smart_parent->cur.bounding_box.y;
+
+             propagate = EINA_TRUE;
+          }
+        else if ((py + ph == smart_parent->prev.bounding_box.y + smart_parent->prev.bounding_box.h &&
+                  y + h < smart_parent->cur.bounding_box.y + smart_parent->cur.bounding_box.h) ||
+                 (!noclip && y + h == smart_parent->cur.bounding_box.y + smart_parent->cur.bounding_box.h))
+          {
+             computeminmax = EINA_TRUE;
+          }
+
+	if (computeminmax)
+          {
+             evas_object_smart_need_bounding_box_update(obj->smart.parent);
+          }
+     }
+   else
+     {
+        if (noclip)
+          {
+	     smart_parent->cur.bounding_box.x = x;
+	     smart_parent->cur.bounding_box.y = y;
+	     smart_parent->cur.bounding_box.w = w;
+	     smart_parent->cur.bounding_box.h = h;
+
+	     EINA_COW_STATE_WRITE_BEGIN(smart_obj, smart_write, cur)
+	       smart_write->valid_bounding_box = EINA_TRUE;
+	     EINA_COW_STATE_WRITE_END(smart_obj, smart_write, cur);
+
+             propagate = EINA_TRUE;
+          }
+     }
+
+   if (propagate)
+     evas_object_update_bounding_box(obj->smart.parent, smart_obj);
+}
+
+void
+evas_object_smart_bounding_box_get(Evas_Object *eo_obj,
+				   Evas_Coord_Rectangle *cur_bounding_box,
+				   Evas_Coord_Rectangle *prev_bounding_box)
+{
+   Evas_Object_Smart *s = eo_data_get(eo_obj, MY_CLASS);
+
+   if (cur_bounding_box) memcpy(cur_bounding_box,
+				&s->cur.bounding_box,
+				sizeof (*cur_bounding_box));
+   if (prev_bounding_box) memcpy(prev_bounding_box,
+				 &s->prev.bounding_box,
+				 sizeof (*prev_bounding_box));
+}
+
+void
 evas_object_smart_cleanup(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
@@ -1354,14 +1506,14 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
         if (o == obj) continue ;
         if (o->clip.clipees || o->is_static_clip) continue ;
 
-        if (eo_isa(o->object, EVAS_OBJ_SMART_CLASS))
+        if (o->is_smart)
           {
              evas_object_smart_bounding_box_update(o->object, o);
 
-             tx = o->cur->bounding_box.x;
-             ty = o->cur->bounding_box.y;
-             tw = o->cur->bounding_box.x + o->cur->bounding_box.w;
-             th = o->cur->bounding_box.y + o->cur->bounding_box.h;
+             tx = os->cur.bounding_box.x;
+             ty = os->cur.bounding_box.y;
+             tw = os->cur.bounding_box.x + os->cur.bounding_box.w;
+             th = os->cur.bounding_box.y + os->cur.bounding_box.h;
           }
         else
           {
@@ -1377,42 +1529,26 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
         if (th > maxh) maxh = th;
      }
 
-   if (minx != obj->cur->bounding_box.x)
+   if (minx != os->cur.bounding_box.x)
      {
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          {
-             state_write->bounding_box.w += state_write->bounding_box.x - minx;
-             state_write->bounding_box.x = minx;
-          }
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        os->cur.bounding_box.w += os->cur.bounding_box.x - minx;
+	os->cur.bounding_box.x = minx;
      }
 
-   if (miny != obj->cur->bounding_box.y)
+   if (miny != os->cur.bounding_box.y)
      {
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          {
-             state_write->bounding_box.h += state_write->bounding_box.y - miny;
-             state_write->bounding_box.y = miny;
-          }
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        os->cur.bounding_box.h += os->cur.bounding_box.y - miny;
+	os->cur.bounding_box.y = miny;
      }
 
-   if (maxw != obj->cur->bounding_box.x + obj->cur->bounding_box.w)
+   if (maxw != os->cur.bounding_box.x + os->cur.bounding_box.w)
      {
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          {
-             state_write->bounding_box.w = maxw - state_write->bounding_box.x;
-          }
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        os->cur.bounding_box.w = maxw - os->cur.bounding_box.x;
      }
 
-   if (maxh != obj->cur->bounding_box.y + obj->cur->bounding_box.h)
+   if (maxh != os->cur.bounding_box.y + os->cur.bounding_box.h)
      {
-        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          {
-             state_write->bounding_box.h = maxh - state_write->bounding_box.y;
-          }
-        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        os->cur.bounding_box.h = maxh - os->cur.bounding_box.y;
      }
 }
 
@@ -1439,12 +1575,13 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    if (!obj->child_has_map && !obj->cur->cached_surface)
      {
 #if 0
+       // REDO to handle smart move
         Evas_Object_Smart *o;
 
         fprintf(stderr, "");
         o = (Evas_Object_Smart *)(obj->object_data);
         if (/* o->member_count > 1 && */
-            obj->cur->bounding_box.w == obj->prev->bounding_box.w &&
+            o->cur.bounding_box.w == o->prev.bounding_box.w &&
             obj->cur->bounding_box.h == obj->prev->bounding_box.h &&
             (obj->cur->bounding_box.x != obj->prev->bounding_box.x ||
              obj->cur->bounding_box.y != obj->prev->bounding_box.y))
@@ -1471,8 +1608,8 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                        int speed_x, speed_y;
                        int speed_px, speed_py;
 
-                       speed_x = obj->cur->geometry.x - obj->prev->geometry.x;
-                       speed_y = obj->cur->geometry.y - obj->prev->geometry.y;
+                       speed_x = os->geometry.x - obj->prev->geometry.x;
+                       speed_y = os->geometry.y - obj->prev->geometry.y;
 
                        speed_px = obj->smart.parent->cur.geometry.x - obj->smart.parent->prev.geometry.x;
                        speed_py = obj->smart.parent->cur.geometry.y - obj->smart.parent->prev.geometry.y;
@@ -1518,7 +1655,9 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 static void
 evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
+   Evas_Object_Smart *o = eo_data_get(eo_obj, MY_CLASS);
    evas_object_cur_prev(eo_obj);
+   o->cur = o->prev;
 }
 
 static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj)
