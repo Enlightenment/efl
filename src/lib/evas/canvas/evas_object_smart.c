@@ -1211,6 +1211,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    Eina_Bool noclip;
 
    if (!obj->smart.parent) return ;
+
    if (obj->child_has_map) return ; /* Disable bounding box computation for this object and its parent */
    /* We could also remove object that are not visible from the bounding box, use the clipping information
       to reduce the bounding of the object they are clipping, but for the moment this will do it's jobs */
@@ -1489,7 +1490,8 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
    os = eo_data_get(eo_obj, MY_CLASS);
 
-   if (!os->update_boundingbox_needed) return ;
+   // FIXME: disable optimization and always rebuild the child map for now.
+   /* if (!os->update_boundingbox_needed) return ; */
    os->update_boundingbox_needed = EINA_FALSE;
 
    minx = obj->layer->evas->output.w;
@@ -1506,14 +1508,16 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
         if (o == obj) continue ;
         if (o->clip.clipees || o->is_static_clip) continue ;
 
-        if (o->is_smart)
+	if (o->is_smart)
           {
+	     Evas_Object_Smart *s = eo_data_get(o->object, MY_CLASS);
+
              evas_object_smart_bounding_box_update(o->object, o);
 
-             tx = os->cur.bounding_box.x;
-             ty = os->cur.bounding_box.y;
-             tw = os->cur.bounding_box.x + os->cur.bounding_box.w;
-             th = os->cur.bounding_box.y + os->cur.bounding_box.h;
+             tx = s->cur.bounding_box.x;
+             ty = s->cur.bounding_box.y;
+             tw = s->cur.bounding_box.x + s->cur.bounding_box.w;
+             th = s->cur.bounding_box.y + s->cur.bounding_box.h;
           }
         else
           {
