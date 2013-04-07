@@ -266,14 +266,12 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
    RD("  [--- PHASE 1 DIRECT\n");
    for (i = 0; i < active_objects->count; i++)
      {
-        Evas_Object *eo_obj;
-
         Evas_Object_Protected_Data *obj = eina_array_data_get(active_objects, i);
-        eo_obj = obj->object;
+
         if (obj->changed)
           {
              /* Flag need redraw on proxy too */
-             evas_object_clip_recalc(eo_obj, obj);
+             evas_object_clip_recalc(obj);
              EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                {
 		 Evas_Object_Protected_Data *proxy;
@@ -296,7 +294,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
         if (obj->changed)
           {
              /* Flag need redraw on proxy too */
-             evas_object_clip_recalc(eo_obj, obj);
+             evas_object_clip_recalc(obj);
              obj->func->render_pre(eo_obj, obj);
              if (obj->proxy->redraw)
                _evas_render_prev_cur_clip_cache_add(e, obj);
@@ -379,7 +377,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
    if (obj->delete_me != 0) clean_them = EINA_TRUE;
 
    /* build active object list */
-   evas_object_clip_recalc(eo_obj, obj);
+   evas_object_clip_recalc(obj);
    is_active = evas_object_is_active(eo_obj, obj);
    obj->is_active = is_active;
 
@@ -659,7 +657,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
        if (obj->changed_map && _evas_render_has_map(eo_obj, obj))
          goto clean_stuff;
 
-        evas_object_clip_recalc(eo_obj, obj);
+        evas_object_clip_recalc(obj);
         is_active = evas_object_is_active(eo_obj, obj);
 
         if ((!is_active) && (!obj->is_active) && (!obj->render_pre) &&
@@ -952,7 +950,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    if ((!proxy_render) && (evas_object_is_source_invisible(eo_obj, obj)))
      return clean_them;
 
-   evas_object_clip_recalc(eo_obj, obj);
+   evas_object_clip_recalc(obj);
 
    RDI(level);
    RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped, level);
@@ -1163,7 +1161,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                {
                   int x, y, w, h;
 
-                  evas_object_clip_recalc(eo_obj, obj);
+                  evas_object_clip_recalc(obj);
                   x = obj->cur->cache.clip.x;
                   y = obj->cur->cache.clip.y;
                   w = obj->cur->cache.clip.w;
@@ -1271,7 +1269,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        int x, y, w, h;
 
                        if (_evas_render_has_map(eo_obj, obj))
-                         evas_object_clip_recalc(eo_obj, obj);
+                         evas_object_clip_recalc(obj);
 
                        x = obj->cur->cache.clip.x + off_x;
                        y = obj->cur->cache.clip.y + off_y;
@@ -1299,7 +1297,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   int x, y, w, h;
 
                   if (_evas_render_has_map(eo_obj, obj))
-                    evas_object_clip_recalc(eo_obj, obj);
+                    evas_object_clip_recalc(obj);
                   x = obj->cur->cache.clip.x;
                   y = obj->cur->cache.clip.y;
                   w = obj->cur->cache.clip.w;
@@ -1362,7 +1360,7 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
                                      oo->cur->geometry.y,
                                      oo->cur->geometry.w,
                                      oo->cur->geometry.h);
-                  eo_oo = oo->cur->eo_clipper;
+                  eo_oo = oo->cur->clipper->object;
                   oo = oo->cur->clipper;
                }
           }

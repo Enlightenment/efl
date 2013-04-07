@@ -534,7 +534,6 @@ struct _Evas_Object_Map_Data
 struct _Evas_Object_Protected_State
 {
    Evas_Object_Protected_Data *clipper;
-   Evas_Object          *eo_clipper;
 
    Evas_Coord_Rectangle  geometry;
    Evas_Coord_Rectangle  bounding_box;
@@ -959,7 +958,7 @@ void evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, 
 void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 
 void evas_object_clip_dirty(Evas_Object *obj, Evas_Object_Protected_Data *pd);
-void evas_object_recalc_clippees(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_recalc_clippees(Evas_Object_Protected_Data *pd);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free_objects(Evas_Layer *lay);

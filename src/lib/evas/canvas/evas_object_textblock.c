@@ -10615,8 +10615,8 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
    if (obj->cur->clipper)
      {
 	if (obj->cur->cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
-	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
+	  evas_object_clip_recalc(obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */

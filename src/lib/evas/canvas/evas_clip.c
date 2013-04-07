@@ -24,18 +24,18 @@ evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
 }
 
 void
-evas_object_recalc_clippees(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_recalc_clippees(Evas_Object_Protected_Data *obj)
 {
    Eina_List *l;
    Evas_Object *data;
 
    if (obj->cur->cache.clip.dirty)
      {
-        evas_object_clip_recalc(eo_obj, obj);
+        evas_object_clip_recalc(obj);
         EINA_LIST_FOREACH(obj->clip.clipees, l, data)
           {
              Evas_Object_Protected_Data *clipee = eo_data_get(data, EVAS_OBJ_CLASS);
-             evas_object_recalc_clippees(data, clipee);
+             evas_object_recalc_clippees(clipee);
           }
      }
 }
@@ -47,7 +47,7 @@ evas_object_clippers_was_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
      {
 	if (obj->prev->clipper)
           {
-             return evas_object_clippers_is_visible(obj->prev->eo_clipper, obj->prev->clipper);
+             return evas_object_clippers_is_visible(obj->prev->clipper->object, obj->prev->clipper);
           }
 	return 1;
      }
@@ -105,7 +105,7 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
 	  }
 	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-        evas_object_clip_recalc(eo_obj, obj);
+        evas_object_clip_recalc(obj);
         if (obj->is_smart)
           {
              Evas_Object_Protected_Data *obj2;
@@ -223,7 +223,7 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    MAGIC_CHECK_END();
 
    clip = eo_data_get(eo_clip, EVAS_OBJ_CLASS);
-   if (obj->cur->eo_clipper == eo_clip) return;
+   if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
    if (eo_obj == eo_clip)
      {
         CRIT("Setting clip %p on itself", eo_obj);
@@ -281,13 +281,12 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
                                          obj->cur->clipper->cur->geometry.w,
                                          obj->cur->clipper->cur->geometry.h);
           }
-        evas_object_change(obj->cur->eo_clipper, obj->cur->clipper);
+        evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
 
         EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
           {
              state_write->clipper = NULL;
-             state_write->eo_clipper = NULL;
           }
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
@@ -303,7 +302,6 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
-        state_write->eo_clipper = eo_clip;
         state_write->clipper = clip;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
@@ -331,7 +329,7 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_clip, clip);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
-   evas_object_recalc_clippees(eo_obj, obj);
+   evas_object_recalc_clippees(obj);
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))))
      {
@@ -363,7 +361,11 @@ _clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object **clip = va_arg(*list, Evas_Object **);
    const Evas_Object_Protected_Data *obj = _pd;
-   *clip = obj->cur->eo_clipper;
+
+   *clip = NULL;
+
+   if (obj->cur->clipper)
+     *clip = obj->cur->clipper->object;
 }
 
 EAPI void
@@ -405,18 +407,17 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
                                          obj->cur->clipper->cur->geometry.w,
                                          obj->cur->clipper->cur->geometry.h);
           }
-	evas_object_change(obj->cur->eo_clipper, obj->cur->clipper);
+	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->clipper = NULL;
-        state_write->eo_clipper = NULL;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
-   evas_object_recalc_clippees(eo_obj, obj);
+   evas_object_recalc_clippees(obj);
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))))
      {

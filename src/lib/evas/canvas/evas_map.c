@@ -12,7 +12,7 @@ _evas_map_calc_geom_change(Evas_Object *eo_obj)
    evas_object_clip_dirty(eo_obj, obj);
    if (!(obj->layer->evas->is_frozen))
      {
-        evas_object_recalc_clippees(eo_obj, obj);
+        evas_object_recalc_clippees(obj);
         if (!obj->is_smart)
           {
              is = evas_object_is_in_output_rect(eo_obj, obj,

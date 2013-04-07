@@ -2208,8 +2208,8 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    if (obj->cur->clipper)
      {
 	if (obj->cur->cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur->eo_clipper, obj->cur->clipper);
-	obj->cur->clipper->func->render_pre(obj->cur->eo_clipper, obj->cur->clipper);
+	  evas_object_clip_recalc(obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
      }
    /* If object size changed and ellipsis is set */
    if (((o->cur.ellipsis >= 0.0 ||

@@ -142,7 +142,7 @@ evas_object_clippers_is_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
      {
         if (obj->cur->clipper)
           {
-             return evas_object_clippers_is_visible(obj->cur->eo_clipper,
+             return evas_object_clippers_is_visible(obj->cur->clipper->object,
                                                     obj->cur->clipper);
           }
         return 1;
@@ -215,13 +215,15 @@ evas_object_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static inline void
-evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Protected_Data *clipper = NULL;
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
    Eina_Bool cvis, nvis;
+   Evas_Object *eo_obj;
 
+   eo_obj = obj->object;
    clipper = obj->cur->clipper;
 
    if ((!obj->cur->cache.clip.dirty) &&
@@ -257,7 +259,7 @@ evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      {
         // this causes problems... hmmm ?????
         if (clipper->cur->cache.clip.dirty)
-          evas_object_clip_recalc(obj->cur->eo_clipper, clipper);
+          evas_object_clip_recalc(clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.

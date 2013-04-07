@@ -989,9 +989,8 @@ _canvas_event_thaw(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 
              EINA_INLIST_FOREACH(lay->objects, obj)
                {
-                  Evas_Object *eo_obj = obj->object;
-                  evas_object_clip_recalc(eo_obj, obj);
-                  evas_object_recalc_clippees(eo_obj, obj);
+                  evas_object_clip_recalc(obj);
+                  evas_object_recalc_clippees(obj);
                }
           }
 
