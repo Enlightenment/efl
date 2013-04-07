@@ -1442,10 +1442,6 @@ struct _Edje_Real_Part_State
 {
    Edje_Part_Description_Common *description; // 4
    Edje_Part_Description_Common *description_rtl; // 4
-   Edje_Real_Part        *rel1_to_x; // 4
-   Edje_Real_Part        *rel1_to_y; // 4
-   Edje_Real_Part        *rel2_to_x; // 4
-   Edje_Real_Part        *rel2_to_y; // 4
 #ifdef EDJE_CALC_CACHE
    int                    state; // 4
    Edje_Calc_Params       p; // 271
