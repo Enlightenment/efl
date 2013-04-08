@@ -190,6 +190,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    Eina_Rectangle *r;
    Evas_Coord_Touch_Point *touch_point;
    Evas_Layer *lay;
+   Evas_Out *evo;
    int i;
    int del;
 
@@ -248,6 +249,8 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
+   EINA_LIST_FREE(e->outputs, evo) evas_output_del(evo);
+   
    if (e->engine.func)
      {
 	e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
