@@ -154,7 +154,7 @@ _base_geometry_calc(Evas_Object *obj,
    ELM_CTXPOPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   if (!rect) return ELM_CTXPOPUP_DIRECTION_DOWN;
+   if (!rect || !sd->parent) return ELM_CTXPOPUP_DIRECTION_DOWN;
 
    edje_object_part_geometry_get
      (sd->arrow, "ctxpopup_arrow", NULL, NULL, &arrow_size.x, &arrow_size.y);
@@ -164,7 +164,7 @@ _base_geometry_calc(Evas_Object *obj,
    evas_object_geometry_get
      (sd->parent, &hover_area.x, &hover_area.y, &hover_area.w,
      &hover_area.h);
-   if (sd->parent && !strcmp(evas_object_type_get(sd->parent), "elm_win"))
+   if (!strcmp(evas_object_type_get(sd->parent), "elm_win"))
      hover_area.x = hover_area.y = 0;
 
    evas_object_geometry_get(obj, &pos.x, &pos.y, NULL, NULL);
@@ -570,6 +570,7 @@ _elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!sd->arrow) return;  /* simple way to flag "under deletion" */
+   if (!sd->parent) return; /* do not calculate sizes unless parent is set */
 
    //Base
    sd->dir = _base_geometry_calc(obj, &rect);
