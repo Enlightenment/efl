@@ -2324,13 +2324,13 @@ _elm_scroll_mouse_up_event_cb(void *data,
                                 (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
                                 ((sid->down.dx < 0) && (sid->down.pdx < 0))))
                               if (px > minx && px < mx)
-                                sid->down.dx += (double)sid->down.pdx * 2.5;
+                                sid->down.dx += (double)sid->down.pdx * 1.5;
                             // FIXME: > 500, < 0.7, * 1.5 - probably should be config
                             if (abs(sid->down.dy) > 500 && (dtt < 0.7) &&
                                 (((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
                                 ((sid->down.dy < 0) && (sid->down.pdy < 0))))
                               if (py > miny && py < my)
-                                sid->down.dy += (double)sid->down.pdy * 2.5;
+                                sid->down.dy += (double)sid->down.pdy * 1.5;
                             // FIXME: > 500, < 0.7, * 1.5 - probably should be config
                             sid->down.pdx = sid->down.dx;
                             sid->down.pdy = sid->down.dy;
