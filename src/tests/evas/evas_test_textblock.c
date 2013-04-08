@@ -604,6 +604,27 @@ START_TEST(evas_textblock_cursor)
         fail_if(1 != evas_textblock_cursor_pos_get(cur));
      }
 
+   /* Make sure coords are correct for ligatures */
+     {
+        evas_object_textblock_text_markup_set(tb, "fi<br/>fii");
+
+        for (i = 0 ; i < 2 ; i++)
+          {
+             evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+             ck_assert_int_eq(w, 3);
+             evas_textblock_cursor_char_next(cur);
+          }
+
+        evas_textblock_cursor_char_next(cur);
+
+        for (i = 0 ; i < 3 ; i++)
+          {
+             evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+             ck_assert_int_eq(w, 3);
+             evas_textblock_cursor_char_next(cur);
+          }
+     }
+
    END_TB_TEST();
 }
 END_TEST

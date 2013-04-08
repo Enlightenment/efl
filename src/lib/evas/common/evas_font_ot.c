@@ -166,7 +166,7 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
      }
    else
      {
-        if (right_bound >= (int) (props->text_offset + props->text_len))
+        if (right_bound >= (int) (props->start + props->len))
           {
              items = props->text_offset + props->text_len - base_cluster;
           }

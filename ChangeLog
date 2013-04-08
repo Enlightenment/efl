@@ -1,3 +1,8 @@
+2013-04-08  Tom Hacohen
+
+        * Evas font: Fix a bug with cluster size calculation with texts ending
+	with ligatures.
+
 2013-04-08  Carsten Haitzler (The Rasterman)
 
         * Evas: Add control API for multiple outputs (non-functional).
