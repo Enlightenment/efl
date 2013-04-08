@@ -33,6 +33,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
+static Eina_Bool _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid);
+static Evas_Coord
+_elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid, int offset);
+static Evas_Coord
+_elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid, int offset);
 
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
@@ -1702,10 +1707,18 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
           _elm_scroll_wanted_region_set(sid->obj);
      }
 
-   x = nx;
+   if (_paging_is_enabled(sid))
+     {
+        x = _elm_scroll_page_x_get(sid, nx - px);
+        y = _elm_scroll_page_y_get(sid, ny - py);
+     }
+   else
+     {
+        x = nx;
+        y = ny;
+     }
    if ((x + pw) > cw) x = cw - pw;
    if (x < minx) x = minx;
-   y = ny;
    if ((y + ph) > ch) y = ch - ph;
    if (y < miny) y = miny;
 
