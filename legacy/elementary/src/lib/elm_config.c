@@ -187,6 +187,7 @@ _prop_config_get(void)
    _elm_config_font_overlay_apply();
    _elm_rescale();
    _elm_recache();
+   _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
    return EINA_TRUE;
 }
