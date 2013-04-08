@@ -1950,11 +1950,6 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETINT(rp->custom->description->rel1.id_x, params[3]);
 	 GETINT(rp->custom->description->rel1.id_y, params[4]);
 
-	 if (rp->param1.description->rel1.id_x >= 0)
-	   rp->param1.rel1_to_x = ed->table_parts[rp->param1.description->rel1.id_x % ed->table_parts_size];
-	 if (rp->param1.description->rel1.id_y >= 0)
-	   rp->param1.rel1_to_y = ed->table_parts[rp->param1.description->rel1.id_y % ed->table_parts_size];
-
 	 break;
       case EDJE_STATE_PARAM_REL1_OFFSET:
 	 CHKPARAM(4);
@@ -1975,11 +1970,6 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
 	 GETINT(rp->custom->description->rel2.id_x, params[3]);
 	 GETINT(rp->custom->description->rel2.id_y, params[4]);
-
-	 if (rp->param1.description->rel2.id_x >= 0)
-	   rp->param1.rel2_to_x = ed->table_parts[rp->param1.description->rel2.id_x % ed->table_parts_size];
-	 if (rp->param1.description->rel2.id_y >= 0)
-	   rp->param1.rel2_to_y = ed->table_parts[rp->param1.description->rel2.id_y % ed->table_parts_size];
 
 	 break;
       case EDJE_STATE_PARAM_REL2_OFFSET:
