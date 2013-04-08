@@ -425,6 +425,8 @@ struct _Evas_Public_Data
    Eina_List     *touch_points;
    Eina_List     *devices;
    Eina_Array    *cur_device;
+   
+   Eina_List     *outputs;
 
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;

@@ -75,7 +75,8 @@ lib/evas/canvas/evas_async_events.c \
 lib/evas/canvas/evas_stats.c \
 lib/evas/canvas/evas_touch_point.c \
 lib/evas/canvas/evas_map.c \
-lib/evas/canvas/evas_gl.c
+lib/evas/canvas/evas_gl.c \
+lib/evas/canvas/evas_out.c
 
 # Cache
 lib_evas_libevas_la_SOURCES += \

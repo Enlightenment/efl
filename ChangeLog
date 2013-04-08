@@ -1,3 +1,7 @@
+2013-04-08  Carsten Haitzler (The Rasterman)
+
+        * Evas: Add control API for multiple outputs (non-functional).
+
 2013-04-05  Cedric Bail
 
         * Evas: Fix over redrawing of Evas_Map when applied on smart object.

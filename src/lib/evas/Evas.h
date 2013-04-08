@@ -19413,6 +19413,216 @@ enum
  */
 #define evas_obj_image_animated_frame_set(frame_index) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET), EO_TYPECHECK(int, frame_index)
 
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+#define EVAS_OUT_CLASS evas_out_class_get()
+const Eo_Class *evas_out_class_get(void) EINA_CONST;
+extern EAPI Eo_Op EVAS_OUT_BASE_ID;
+typedef Eo Evas_Out;
+   
+enum
+  {
+     EVAS_OUT_SUB_ID_VIEW_SET,
+     EVAS_OUT_SUB_ID_VIEW_GET,
+     EVAS_OUT_SUB_ID_ENGINE_INFO_SET,
+     EVAS_OUT_SUB_ID_ENGINE_INFO_GET,
+     EVAS_OUT_SUB_ID_LAST
+  };
+   
+#define EVAS_OUT_ID(sub_id) (EVAS_OUT_BASE_ID + sub_id)
+   
+/**
+ * @def evas_out_view_set
+ * @since 1.8
+ *
+ * Sets the viewport region of the canvas that the output displays
+ * 
+ * This sets both the viewport region in the canvas that displays on the
+ * given output, but also the viewport size will match the output
+ * resolution 1:1.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ *
+ * @see evas_out_engine_info_set
+ * @see evas_output_viewport_set
+ * @see evas_output_size_set
+ */
+#define evas_out_view_set(x, y, w, h) \
+   EVAS_OUT_ID(EVAS_OUT_SUB_ID_VIEW_SET), \
+EO_TYPECHECK(Evas_Coord, x), \
+EO_TYPECHECK(Evas_Coord, y), \
+EO_TYPECHECK(Evas_Coord, w), \
+EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_out_view_get
+ * @since 1.8
+ *
+ * Gets the viewport region of the canvas that the output displays
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ *
+ * @see evas_out_engine_info_get
+ * @see evas_out_view_set
+ * @see evas_output_viewport_get
+ * @see evas_output_size_get
+ */
+#define evas_out_view_get(x, y, w, h) \
+   EVAS_OUT_ID(EVAS_OUT_SUB_ID_VIEW_GET), \
+EO_TYPECHECK(Evas_Coord *, x), \
+EO_TYPECHECK(Evas_Coord *, y), \
+EO_TYPECHECK(Evas_Coord *, w), \
+EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_out_engine_info_set
+ * @since 1.8
+ *
+ * Sets the engine specific output parameters for a given output.
+ *
+ * @param[in] info The engine parameters
+ * @param[out] ret Return value for success (EINA_TRUE for success)
+ *
+ * @see evas_out_engine_info_get
+ * @see evas_output_viewport_set
+ * @see evas_output_size_set
+ */
+#define evas_out_engine_info_set(info, ret) \
+   EVAS_OUT_ID(EVAS_OUT_SUB_ID_ENGINE_INFO_SET), \
+EO_TYPECHECK(Evas_Engine_Info *, info), \
+EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def evas_out_engine_info_get
+ * @since 1.8
+ *
+ * Gets the engine specific output parameters for a given output.
+ *
+ * @param[ret] info The engine parameters return (NULL on failure)
+ *
+ * @see evas_out_engine_info_set
+ * @see evas_output_viewport_get
+ * @see evas_output_size_get
+ */
+#define evas_out_engine_info_get(ret) \
+   EVAS_OUT_ID(EVAS_OUT_SUB_ID_ENGINE_INFO_GET), \
+EO_TYPECHECK(Evas_Engine_Info **, ret)
+
+/**
+ * @since 1.8
+ *
+ * Adds an output to the canvas
+ * 
+ * @parem e The canvas to add the output to
+ * @return The output
+ *
+ * @see evas_out_engine_info_set
+ * @see evas_output_viewport_set
+ * @see evas_output_size_set
+ */
+EAPI Evas_Out *evas_out_add(Evas *e);
+
+/**
+ * @since 1.8
+ *
+ * Deletes an output
+ * 
+ * @parem evo The output object
+ *
+ * @see evas_out_add
+ */
+EAPI void evas_output_del(Evas_Out *evo);
+
+/**
+ * @since 1.8
+ *
+ * Sets the viewport region of the canvas that the output displays
+ * 
+ * This sets both the viewport region in the canvas that displays on the
+ * given output, but also the viewport size will match the output
+ * resolution 1:1.
+ *
+ * @parem evo The output object
+ * @param x The X coordinate of the viewport
+ * @param y The Y coordinate of the viewport
+ * @param w The Width of the viewport
+ * @param h The Height of the viewport
+ *
+ * @see evas_out_engine_info_set
+ * @see evas_output_viewport_set
+ * @see evas_output_size_set
+ */
+EAPI void evas_output_view_set(Evas_Out *evo, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @since 1.8
+ *
+ * Gets the viewport region of the canvas that the output displays
+ *
+ * @parem evo The output object
+ * @param x Pointer to X return value
+ * @param y Pointer to Y return value
+ * @param w Pointer to Width return value
+ * @param h Pointer to Height return value
+ *
+ * @see evas_out_engine_info_get
+ * @see evas_out_view_set
+ * @see evas_output_viewport_get
+ * @see evas_output_size_get
+ */
+EAPI void evas_output_view_get(const Evas_Out *evo, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @since 1.8
+ *
+ * Sets the engine specific output parameters for a given output.
+ *
+ * @parem evo The output object
+ * @param info The engine parameters
+ * @return EINA_TRUE for success.
+ *
+ * @see evas_out_engine_info_get
+ * @see evas_output_viewport_set
+ * @see evas_output_size_set
+ */
+EAPI Eina_Bool evas_output_engine_info_set(Evas_Out *evo, Evas_Engine_Info *info);
+
+/**
+ * @since 1.8
+ *
+ * Gets the engine specific output parameters for a given output.
+ *
+ * @param evo The output object
+ * @return info The engine parameters return (NULL on failure)
+ *
+ * @see evas_out_engine_info_set
+ * @see evas_output_viewport_get
+ * @see evas_output_size_get
+ */
+EAPI Evas_Engine_Info *evas_output_engine_info_get(const Evas_Out *evo);
+   
+/*
+ * XXX: need output add/del events on evas
+ * XXX: need output name/id, label, data
+ */
+   
 #ifdef __cplusplus
 }
 #endif
