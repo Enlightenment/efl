@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 EAPI Evas_Device *
-evas_device_new(Evas *eo_e)
+evas_device_add(Evas *eo_e)
 {
    Evas_Device *dev;
    
@@ -21,7 +21,7 @@ evas_device_new(Evas *eo_e)
 }
 
 EAPI void
-evas_device_free(Evas_Device *dev)
+evas_device_del(Evas_Device *dev)
 {
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
@@ -33,7 +33,7 @@ evas_device_free(Evas_Device *dev)
         EINA_LIST_FREE(dev->children, dev2)
           {
              dev2->parent = NULL;
-             evas_device_free(dev2);
+             evas_device_del(dev2);
           }
         if (dev->src)
           {
@@ -224,7 +224,7 @@ _evas_device_cleanup(Evas *eo_e)
      }
    EINA_LIST_FREE(e->devices, dev)
      {
-        evas_device_free(dev);
+        evas_device_del(dev);
      }
 }
 

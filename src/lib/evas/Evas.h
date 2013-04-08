@@ -4107,12 +4107,12 @@ EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
 /**
  * @since 1.8
  */
-EAPI Evas_Device *evas_device_new(Evas *e);
+EAPI Evas_Device *evas_device_add(Evas *e);
 
 /**
  * @since 1.8
  */
-EAPI void evas_device_free(Evas_Device *dev);
+EAPI void evas_device_del(Evas_Device *dev);
    
 /**
  * @since 1.8
