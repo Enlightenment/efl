@@ -6,17 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-22 17:44+0900\n"
-"PO-Revision-Date: 2013-02-04 22:41+0000\n"
-"Last-Translator: Eliovir <Unknown>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-01-05 11:32+0100\n"
+"PO-Revision-Date: 2013-02-21 15:24+0000\n"
+"Last-Translator: Michael Moroni <michael.moroni@mailoo.org>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-02-05 04:45+0000\n"
-"X-Generator: Launchpad (build 16468)\n"
+"X-Launchpad-Export-Date: 2013-02-22 05:19+0000\n"
+"X-Generator: Launchpad (build 16506)\n"
+"Language: eo\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
@@ -29,7 +29,7 @@ msgstr "Uzado:"
 #: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]\n"
-msgstr "%s [elektebloj]\n"
+msgstr "%s [opcioj]\n"
 
 #: src/lib/ecore/ecore_getopt.c:256
 msgid "Copyright:"
@@ -53,17 +53,17 @@ msgstr "Elektoj: "
 
 #: src/lib/ecore/ecore_getopt.c:653
 msgid "Options:\n"
-msgstr "Elektebloj:\n"
+msgstr "Opcioj:\n"
 
 #: src/lib/ecore/ecore_getopt.c:787
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
-msgstr "ERARO: nekonata elekteblo --%s.\n"
+msgstr "ERARO: nekonata opcio --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:789
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
-msgstr "ERARO: nekonata elekteblo -%c.\n"
+msgstr "ERARO: nekonata opcio -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:852
 msgid "ERROR: "
@@ -122,22 +122,22 @@ msgstr "neniu permesilo estas difinita.\n"
 #: src/lib/ecore/ecore_getopt.c:1488
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr "ERARO: nekonata elekteblo --%s. Ignorita.\n"
+msgstr "ERARO: nekonata opcio --%s. Ignorita.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1521
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr "ERARO: elekteblo --%s postulas argumenton!\n"
+msgstr "ERARO: opcio --%s postulas argumenton!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1563
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr "ERARO: nekonata elekteblo -%c. Ignorata.\n"
+msgstr "ERARO: nekonata opcio -%c. Ignorata.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1601
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr "ERARO: elekteblo -%c postulas argumenton!\n"
+msgstr "ERARO: opcio -%c postulas argumenton!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1812
 msgid "ERROR: no parser provided.\n"
@@ -153,7 +153,7 @@ msgstr "ERARO: neniu argumento provizita.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1852
 msgid "ERROR: invalid options found."
-msgstr "ERARO: nevalidaj elektebloj trovitaj."
+msgstr "ERARO: nevalidaj opcioj trovitaj."
 
 #: src/lib/ecore/ecore_getopt.c:1858
 #, c-format
