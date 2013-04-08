@@ -28,7 +28,7 @@ _signal_cb(void *data, Evas_Object *o, const char *emission, const char *source)
      app->current++;
 
    if (app->current < 0)
-     app->current = sizeof(images) - 1;
+     app->current = (sizeof(images) / sizeof(images[0])) - 2;
    else if (images[app->current] == NULL)
      app->current = 0;
 

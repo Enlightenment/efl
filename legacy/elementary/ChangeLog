@@ -1216,3 +1216,7 @@
 2013-04-08  Jaehwan Kim
 
         * Fix the scroller show by a page if the page size is set and the region_bring_in or region_show is called.
+
+2013-04-08  Rafael Antognolli
+
+        * Fix layout_example_02.
