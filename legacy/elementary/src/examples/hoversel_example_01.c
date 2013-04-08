@@ -71,14 +71,13 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
 static void
 _rm_items(void *data, Evas_Object *obj, void *event_info)
 {
-   if (!elm_hoversel_expanded_get(obj))
-     elm_hoversel_clear(obj);
+   elm_hoversel_clear(obj);
 }
 
 static void
 _sel(void *data, Evas_Object *obj, void *event_info)
 {
-   if (!elm_hoversel_expanded_get(obj) && event_info != data)
+   if (event_info != data)
      elm_object_item_del(event_info);
 }
 
