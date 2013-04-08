@@ -1980,7 +1980,7 @@ const char *   _edje_text_class_font_get(Edje *ed,
 
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
-Edje_Real_Part   *_edje_real_part_recursive_get(const Edje *ed, const char *part);
+Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
 void              _edje_color_class_member_direct_del(const char *color_class, void *lookup);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
@@ -2006,7 +2006,7 @@ void              _edje_block_violate(Edje *ed);
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_object_part_swallow_changed_hints_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 void              _edje_real_part_swallow(Edje *ed, Edje_Real_Part *rp, Evas_Object *obj_swallow, Eina_Bool hints_update);
-void              _edje_real_part_swallow_clear(Edje_Real_Part *rp);
+void              _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp);
 void              _edje_box_init(void);
 void              _edje_box_shutdown(void);
 Eina_Bool         _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data));

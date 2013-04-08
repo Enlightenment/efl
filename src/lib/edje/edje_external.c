@@ -46,7 +46,7 @@ _part_external_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
@@ -87,7 +87,7 @@ _part_external_param_set(Eo *obj, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
@@ -115,14 +115,14 @@ _part_external_param_get(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
 
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!param) || (!param->name)) return;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
@@ -151,14 +151,14 @@ _part_external_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object **ret = va_arg(*list, Evas_Object **);
    *ret = NULL;
 
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if (!content) return;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);
@@ -186,14 +186,14 @@ _part_external_param_type_get(Eo *obj, void *_pd, va_list *list)
    Edje_External_Param_Type *ret = va_arg(*list, Edje_External_Param_Type *);
    *ret = EDJE_EXTERNAL_PARAM_TYPE_MAX;
 
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_External_Type *type;
    Edje_External_Param_Info *info;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
      {
 	ERR("no part '%s'", part);

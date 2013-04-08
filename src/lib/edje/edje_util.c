@@ -49,7 +49,7 @@ static void _edje_object_signal_preload_cb(void *data, Evas_Object *obj, const c
 static void _edje_user_def_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child EINA_UNUSED, void *einfo EINA_UNUSED);
 static void _edje_child_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child);
 
-Edje_Real_Part *_edje_real_part_recursive_get_helper(const Edje *ed, char **path);
+Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje **ed, char **path);
 
 static Edje_User_Defined *
 _edje_user_definition_new(Edje_User_Defined_Type type, const char *part, Edje *ed)
@@ -89,10 +89,10 @@ _edje_user_definition_free(Edje_User_Defined *eud)
      {
       case EDJE_USER_SWALLOW:
          child = eud->u.swallow.child;
-         rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
          if (rp)
            {
-              _edje_real_part_swallow_clear(rp);
+	      _edje_real_part_swallow_clear(eud->ed, rp);
               if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                   (rp->typedata.swallow))
                 {
@@ -112,12 +112,12 @@ _edje_user_definition_free(Edje_User_Defined *eud)
          break;
       case EDJE_USER_BOX_PACK:
          child = eud->u.box.child;
-         rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
          _edje_child_remove(eud->ed, rp, child);
          break;
       case EDJE_USER_TABLE_PACK:
          child = eud->u.table.child;
-         rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
          _edje_child_remove(eud->ed, rp, child);
          break;
       case EDJE_USER_STRING:
@@ -1146,11 +1146,11 @@ _part_exists(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
 
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    *ret = EINA_TRUE;
 }
@@ -1178,7 +1178,7 @@ _part_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    *ret = rp->object;
 }
@@ -1218,7 +1218,7 @@ _part_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp)
      {
         if (x) *x = 0;
@@ -1369,7 +1369,7 @@ _part_text_style_user_push(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Textblock_Style *ts;
 
    if ((!ed) || (!part) || (!style)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
@@ -1399,7 +1399,7 @@ _part_text_style_user_pop(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
@@ -1426,12 +1426,12 @@ _part_text_style_user_peek(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    const char **ret = va_arg(*list, const char **);
    if (ret) *ret = NULL;
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    const Evas_Textblock_Style *ts;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
@@ -1487,7 +1487,7 @@ _part_text_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool r;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
@@ -1525,7 +1525,7 @@ _part_text_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -1570,7 +1570,7 @@ _part_text_escaped_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -1766,7 +1766,7 @@ _part_text_unescaped_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -1806,7 +1806,7 @@ _part_text_unescaped_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -1846,12 +1846,12 @@ _part_text_selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    const char **ret = va_arg(*list, const char **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
       *ret = _edje_entry_selection_get(rp);
@@ -1872,7 +1872,7 @@ _part_text_select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_none(rp);
@@ -1893,7 +1893,7 @@ _part_text_select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_all(rp);
@@ -1915,7 +1915,7 @@ _part_text_insert(Eo *obj, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
    if (rp->part->entry_mode <= EDJE_ENTRY_EDIT_MODE_NONE) return;
@@ -1947,7 +1947,7 @@ _part_text_append(Eo *obj, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
    _edje_object_part_text_raw_append(ed, obj, rp, part, text);
@@ -1976,12 +1976,12 @@ _part_text_anchor_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    const Eina_List **ret = va_arg(*list, const Eina_List **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      *ret = _edje_entry_anchors_list(rp);
@@ -2002,12 +2002,12 @@ _part_text_anchor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    const char *anchor = va_arg(*list, const char *);
    const Eina_List **ret = va_arg(*list, const Eina_List **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      *ret = _edje_entry_anchor_geometry_get(rp, anchor);
@@ -2027,12 +2027,12 @@ _part_text_item_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    const Eina_List **ret = va_arg(*list, const Eina_List **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      *ret = _edje_entry_items_list(rp);
@@ -2057,12 +2057,12 @@ _part_text_item_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord *cw = va_arg(*list, Evas_Coord *);
    Evas_Coord *ch = va_arg(*list, Evas_Coord *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2086,7 +2086,7 @@ _part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord *y = va_arg(*list, Evas_Coord *);
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if (x) *x = 0;
@@ -2094,7 +2094,7 @@ _part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (w) *w = 0;
    if (h) *h = 0;
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2120,7 +2120,7 @@ _part_text_user_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_user_insert(rp, text);
@@ -2142,7 +2142,7 @@ _part_text_select_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_allow_set(rp, allow);
@@ -2163,7 +2163,7 @@ _part_text_select_abort(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_abort(rp);
@@ -2184,7 +2184,7 @@ _part_text_select_begin(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_begin(rp);
@@ -2205,7 +2205,7 @@ _part_text_select_extend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_select_extend(rp);
@@ -2225,13 +2225,13 @@ _part_text_imf_context_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    void **ret = va_arg(*list, void **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp) return;
 
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -2258,7 +2258,7 @@ _part_text_cursor_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2287,7 +2287,7 @@ _part_text_cursor_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2316,7 +2316,7 @@ _part_text_cursor_up(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2345,7 +2345,7 @@ _part_text_cursor_down(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2370,7 +2370,7 @@ _part_text_cursor_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2394,7 +2394,7 @@ _part_text_cursor_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2419,7 +2419,7 @@ _part_text_cursor_copy(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2443,7 +2443,7 @@ _part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2467,7 +2467,7 @@ _part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2499,7 +2499,7 @@ _part_text_cursor_coord_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if (ret) *ret = EINA_FALSE;
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2523,12 +2523,12 @@ _part_text_cursor_is_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    Edje_Cursor cur = va_arg(*list, Edje_Cursor);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2551,12 +2551,12 @@ _part_text_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list 
    const char *part = va_arg(*list, const char *);
    Edje_Cursor cur = va_arg(*list, Edje_Cursor);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2579,12 +2579,12 @@ _part_text_cursor_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    Edje_Cursor cur = va_arg(*list, Edje_Cursor);
    char **ret = va_arg(*list, char **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2609,7 +2609,7 @@ _part_text_cursor_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2632,12 +2632,12 @@ _part_text_cursor_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    Edje_Cursor cur = va_arg(*list, Edje_Cursor);
    int *ret = va_arg(*list, int *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = 0;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2656,11 +2656,11 @@ void
 _part_text_imf_context_reset(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2684,7 +2684,7 @@ _part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2706,12 +2706,12 @@ _part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    Edje_Input_Panel_Layout *ret = va_arg(*list, Edje_Input_Panel_Layout *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EDJE_INPUT_PANEL_LAYOUT_INVALID;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2727,7 +2727,7 @@ edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const c
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2743,7 +2743,7 @@ edje_object_part_text_input_panel_layout_variation_get(const Evas_Object *obj, c
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return 0;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return 0;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2768,7 +2768,7 @@ _part_text_autocapital_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2790,12 +2790,12 @@ _part_text_autocapital_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    Edje_Text_Autocapital_Type *ret = va_arg(*list, Edje_Text_Autocapital_Type *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2819,7 +2819,7 @@ _part_text_prediction_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2841,12 +2841,12 @@ _part_text_prediction_allow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2870,7 +2870,7 @@ _part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2892,12 +2892,12 @@ _part_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
 {
    const char *part = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2920,7 +2920,7 @@ _part_text_input_panel_show(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_input_panel_show(rp);
@@ -2941,7 +2941,7 @@ _part_text_input_panel_hide(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      _edje_entry_input_panel_hide(rp);
@@ -2963,7 +2963,7 @@ _part_text_input_panel_language_set(Eo *obj EINA_UNUSED, void *_pd, va_list *lis
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -2985,12 +2985,12 @@ _part_text_input_panel_language_get(Eo *obj EINA_UNUSED, void *_pd, va_list *lis
 {
    const char *part = va_arg(*list, const char *);
    Edje_Input_Panel_Lang *ret = va_arg(*list, Edje_Input_Panel_Lang *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EDJE_INPUT_PANEL_LANG_AUTOMATIC;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3015,7 +3015,7 @@ _part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3036,11 +3036,11 @@ _part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    void *data = va_arg(*list, void *);
    int *len = va_arg(*list, int *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3064,7 +3064,7 @@ _part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, void *_pd, va_li
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3086,12 +3086,12 @@ _part_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, void *_pd, va_li
 {
    const char *part = va_arg(*list, const char *);
    Edje_Input_Panel_Return_Key_Type *ret = va_arg(*list, Edje_Input_Panel_Return_Key_Type *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3115,7 +3115,7 @@ _part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, void *_pd, v
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3137,12 +3137,12 @@ _part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, void *_pd, v
 {
    const char *part = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
@@ -3387,7 +3387,7 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         edje_object_part_unswallow(ed->obj, obj_swallow);
      }
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp)
      {
         DBG("cannot swallow part %s: part not exist!", part);
@@ -3743,7 +3743,7 @@ _part_unswallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                }
           }
 
-        _edje_real_part_swallow_clear(rp);
+        _edje_real_part_swallow_clear(ed, rp);
         rp->typedata.swallow->swallowed_object = NULL;
         rp->typedata.swallow->swallow_params.min.w = 0;
         rp->typedata.swallow->swallow_params.min.h = 0;
@@ -3782,7 +3782,7 @@ _part_swallow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
@@ -3801,7 +3801,7 @@ _size_min_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Coord *minw = va_arg(*list, Evas_Coord *);
    Evas_Coord *minh = va_arg(*list, Evas_Coord *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
 
    if ((!ed) || (!ed->collection))
      {
@@ -4160,7 +4160,7 @@ _part_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp)
      {
         if (val_ret) *val_ret = 0;
@@ -4214,7 +4214,7 @@ _part_drag_dir_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if ((rp->part->dragable.x) && (rp->part->dragable.y)) *ret = EDJE_DRAG_DIR_XY;
    else if (rp->part->dragable.x) *ret = EDJE_DRAG_DIR_X;
@@ -4244,7 +4244,7 @@ _part_drag_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
    if (rp->drag->down.count > 0) return;
@@ -4320,7 +4320,7 @@ _part_drag_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp || !rp->drag)
      {
         if (dx) *dx = 0;
@@ -4359,7 +4359,7 @@ _part_drag_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
 
@@ -4430,7 +4430,7 @@ _part_drag_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp || !rp->drag)
      {
         if (dw) *dw = 0;
@@ -4465,7 +4465,7 @@ _part_drag_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
 
@@ -4528,7 +4528,7 @@ _part_drag_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp || !rp->drag)
      {
         if (dx) *dx = 0;
@@ -4563,7 +4563,7 @@ _part_drag_page_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
 
@@ -4626,7 +4626,7 @@ _part_drag_page_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp || !rp->drag)
      {
         if (dx) *dx = 0;
@@ -4662,7 +4662,7 @@ _part_drag_step(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
    if (rp->drag->down.count > 0) return;
@@ -4729,7 +4729,7 @@ _part_drag_page(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (!rp->drag) return;
    if (rp->drag->down.count > 0) return;
@@ -4808,7 +4808,7 @@ _part_box_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part) || (!child)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -4847,7 +4847,7 @@ _part_box_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -4886,7 +4886,7 @@ _part_box_insert_before(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -4925,7 +4925,7 @@ _part_box_insert_at(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -4964,7 +4964,7 @@ _part_box_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -5008,7 +5008,7 @@ _part_box_remove_at(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -5051,7 +5051,7 @@ _part_box_remove_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_BOX) return;
 
@@ -5083,7 +5083,7 @@ void
 _access_part_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_List **ret = va_arg(*list, Eina_List **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Eina_List *access_parts = NULL;
    *ret = NULL;
 
@@ -5313,13 +5313,13 @@ _part_table_child_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    unsigned int col = va_arg(*list, unsigned int);
    unsigned int row = va_arg(*list, unsigned int);
    Evas_Object **ret = va_arg(*list, Evas_Object **);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    *ret = NULL;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
 
@@ -5352,7 +5352,7 @@ _part_table_pack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
 
@@ -5393,7 +5393,7 @@ _part_table_unpack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
 
@@ -5430,13 +5430,13 @@ _part_table_col_row_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int *cols = va_arg(*list, int *);
    int *rows = va_arg(*list, int *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
    if (ret) *ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
 
@@ -5465,7 +5465,7 @@ _part_table_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if ((!ed) || (!part)) return;
 
-   rp = _edje_real_part_recursive_get(ed, part);
+   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
 
@@ -5850,7 +5850,7 @@ _edje_real_part_table_clear(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear)
 }
 
 Edje_Real_Part *
-_edje_real_part_recursive_get(const Edje *ed, const char *part)
+_edje_real_part_recursive_get(Edje **ed, const char *part)
 {
    Edje_Real_Part *rp;
    char **path;
@@ -5947,7 +5947,7 @@ _edje_merge_path(const char *alias, char * const *path)
 
 
 Edje_Real_Part *
-_edje_real_part_recursive_get_helper(const Edje *ed, char **path)
+_edje_real_part_recursive_get_helper(Edje **ed, char **path)
 {
    Edje_Real_Part *rp;
    Evas_Object *child;
@@ -5956,11 +5956,11 @@ _edje_real_part_recursive_get_helper(const Edje *ed, char **path)
    if (!path[0])
      return NULL;
 
-   if (ed->collection && ed->collection->alias)
+   if ((*ed)->collection && (*ed)->collection->alias)
      {
         char *alias;
 
-        alias = _edje_merge_path(eina_hash_find(ed->collection->alias, path[0]), path + 1);
+        alias = _edje_merge_path(eina_hash_find((*ed)->collection->alias, path[0]), path + 1);
         if (alias) {
            rp = _edje_real_part_recursive_get(ed, alias);
            free(alias);
@@ -5983,7 +5983,7 @@ _edje_real_part_recursive_get_helper(const Edje *ed, char **path)
           }
      }
 
-   rp = _edje_real_part_get(ed, path[0]);
+   rp = _edje_real_part_get(*ed, path[0]);
    if (!path[1] && !idx) return rp;
    if (!rp) return NULL;
 
@@ -5993,8 +5993,8 @@ _edje_real_part_recursive_get_helper(const Edje *ed, char **path)
          if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
              (!rp->typedata.swallow)) return NULL;
          if (!rp->typedata.swallow->swallowed_object) return NULL;
-         ed = _edje_fetch(rp->typedata.swallow->swallowed_object);
-         if (!ed) return NULL;
+         *ed = _edje_fetch(rp->typedata.swallow->swallowed_object);
+         if (!*ed) return NULL;
          path++;
          return _edje_real_part_recursive_get_helper(ed, path);
       case EDJE_PART_TYPE_BOX:
@@ -6005,9 +6005,9 @@ _edje_real_part_recursive_get_helper(const Edje *ed, char **path)
 
          child = _edje_children_get(rp, idx);
 
-         ed = _edje_fetch(child);
+         *ed = _edje_fetch(child);
 
-         if (!ed) return NULL;
+         if (!*ed) return NULL;
          return _edje_real_part_recursive_get_helper(ed, path);
       default:
          return NULL;
@@ -6358,6 +6358,7 @@ _edje_object_part_swallow_changed_hints_cb(void *data, EINA_UNUSED Evas *e, Evas
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
    ed->recalc_hints = EINA_TRUE;
+
    _edje_recalc(ed);
    return;
 }
@@ -6469,10 +6470,8 @@ _edje_real_part_swallow(Edje *ed,
 }
 
 void
-_edje_real_part_swallow_clear(Edje_Real_Part *rp)
+_edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
 {
-   Edje *ed;
-
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
    if (!rp->typedata.swallow->swallowed_object) return;
@@ -6485,7 +6484,6 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,
                                        rp);
-   ed = evas_object_data_del(rp->typedata.swallow->swallowed_object, ".edje");
    if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_IMAGE_CLASS))
      evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
                                          EVAS_CALLBACK_IMAGE_RESIZE,

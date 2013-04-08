@@ -1160,7 +1160,7 @@ _edje_object_collect(Edje *ed)
                    Evas_Object *child;
                    int idx = 0;
 
-                   rp = _edje_real_part_recursive_get(ed, eud->part);
+                   rp = _edje_real_part_recursive_get(&ed, eud->part);
                    if (rp->part->type != EDJE_PART_TYPE_BOX) continue ;
 
                    children = evas_object_box_children_get(rp->object);
@@ -1185,7 +1185,7 @@ _edje_object_collect(Edje *ed)
              {
                 Edje_Real_Part *rp;
 
-                rp = _edje_real_part_recursive_get(ed, eud->part);
+                rp = _edje_real_part_recursive_get(&ed, eud->part);
                 if (rp->part->type != EDJE_PART_TYPE_TABLE) continue ;
 
                 _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
@@ -1309,7 +1309,7 @@ _edje_file_del(Edje *ed)
                           default:
                             break;
                          }
-                       _edje_real_part_swallow_clear(rp);
+                       _edje_real_part_swallow_clear(ed, rp);
                        rp->typedata.swallow->swallowed_object = NULL;
                     }
                   free(rp->typedata.swallow);
