@@ -909,7 +909,7 @@ EAPI void      elm_config_cache_flush_enabled_set(Eina_Bool enabled);
 /**
  * Get the configured font cache size
  *
- * This gets the globally configured font cache size, in bytes.
+ * This gets the globally configured font cache size, in kilo bytes.
  *
  * @return The font cache size
  * @ingroup Caches
@@ -919,7 +919,7 @@ EAPI int       elm_config_cache_font_cache_size_get(void);
 /**
  * Set the configured font cache size
  *
- * This sets the globally configured font cache size, in bytes
+ * This sets the globally configured font cache size, in kilo bytes
  *
  * @param size The font cache size
  * @ingroup Caches
@@ -929,7 +929,7 @@ EAPI void      elm_config_cache_font_cache_size_set(int size);
 /**
  * Get the configured image cache size
  *
- * This gets the globally configured image cache size, in bytes
+ * This gets the globally configured image cache size, in kilo bytes
  *
  * @return The image cache size
  * @ingroup Caches
@@ -939,7 +939,7 @@ EAPI int       elm_config_cache_image_cache_size_get(void);
 /**
  * Set the configured image cache size
  *
- * This sets the globally configured image cache size, in bytes
+ * This sets the globally configured image cache size, in kilo bytes
  *
  * @param size The image cache size
  * @ingroup Caches
