@@ -1922,7 +1922,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
 
 static void
 _edje_part_recalc_single_min_max(FLOAT_T sc,
-				 Edje *edje,
+				 Edje *ed,
                                  Edje_Real_Part *ep,
                                  Edje_Part_Description_Common *desc,
                                  int *minw, int *minh,
@@ -1937,7 +1937,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           *minw = ep->typedata.swallow->swallow_params.min.w;
      }
 
-   if (edje->calc_only)
+   if (ed->calc_only)
      {
         if (desc->minmul.have)
           {
@@ -1986,7 +1986,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              if (*maxw < 1) *maxw = 1;
           }
      }
-   if ((edje->calc_only) && (desc->minmul.have) &&
+   if ((ed->calc_only) && (desc->minmul.have) &&
        (desc->minmul.w != FROM_INT(1))) *maxw = *minw;
    if (*maxw >= 0)
      {
@@ -2002,7 +2002,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           *minh = ep->typedata.swallow->swallow_params.min.h;
      }
 
-   if (edje->calc_only)
+   if (ed->calc_only)
      {
         if (desc->minmul.have)
           {
@@ -2051,7 +2051,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
              if (*maxh < 1) *maxh = 1;
           }
      }
-   if ((edje->calc_only) && (desc->minmul.have) &&
+   if ((ed->calc_only) && (desc->minmul.have) &&
        (desc->minmul.h != FROM_INT(1))) *maxh = *minh;
    if (*maxh >= 0)
      {
@@ -2563,7 +2563,7 @@ _edje_physics_world_geometry_check(EPhysics_World *world)
 }
 
 static void
-_edje_physics_body_props_update(Edje *edje, Edje_Real_Part *ep, Edje_Calc_Params *pf,
+_edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *pf,
 				Eina_Bool pos_update)
 {
    ephysics_body_linear_movement_enable_set(ep->body,
@@ -2583,8 +2583,8 @@ _edje_physics_body_props_update(Edje *edje, Edje_Real_Part *ep, Edje_Calc_Params
         if (pos_update)
           {
              ephysics_body_move(ep->body,
-				edje->x + pf->x,
-                                edje->y + pf->y,
+				ed->x + pf->x,
+                                ed->y + pf->y,
 				pf->physics->z);
              ep->x = pf->x;
              ep->y = pf->y;
@@ -2633,16 +2633,16 @@ static void
 _edje_physics_body_update_cb(void *data, EPhysics_Body *body, void *event_info EINA_UNUSED)
 {
    Edje_Real_Part *rp = data;
-   Edje *edje = ephysics_body_data_get(body);
+   Edje *ed = ephysics_body_data_get(body);
 
    ephysics_body_geometry_get(body, &(rp->x), &(rp->y), NULL,
                               &(rp->w), &(rp->h), NULL);
    ephysics_body_evas_object_update(body);
-   edje->dirty = EINA_TRUE;
+   ed->dirty = EINA_TRUE;
 }
 
 static void
-_edje_physics_body_add(Edje *edje, Edje_Real_Part *rp, EPhysics_World *world)
+_edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
 {
    Eina_Bool resize = EINA_TRUE;
    Edje_Physics_Face *pface;
@@ -2711,7 +2711,7 @@ _edje_physics_body_add(Edje *edje, Edje_Real_Part *rp, EPhysics_World *world)
         edje_obj = edje_object_add(evas);
         if (!edje_obj) continue;
 
-        edje_object_file_set(edje_obj, edje->path, pface->source);
+        edje_object_file_set(edje_obj, ed->path, pface->source);
         evas_object_resize(edje_obj, 1, 1);
         ephysics_body_face_evas_object_set(rp->body, pface->type,
                                            edje_obj, EINA_FALSE);
@@ -2721,7 +2721,7 @@ _edje_physics_body_add(Edje *edje, Edje_Real_Part *rp, EPhysics_World *world)
    ephysics_body_evas_object_set(rp->body, rp->object, resize);
    ephysics_body_event_callback_add(rp->body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     _edje_physics_body_update_cb, rp);
-   ephysics_body_data_set(rp->body, edje);
+   ephysics_body_data_set(rp->body, ed);
 }
 #endif
 
