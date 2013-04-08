@@ -1490,8 +1490,7 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
    os = eo_data_get(eo_obj, MY_CLASS);
 
-   // FIXME: disable optimization and always rebuild the child map for now.
-   /* if (!os->update_boundingbox_needed) return ; */
+   if (!os->update_boundingbox_needed) return ;
    os->update_boundingbox_needed = EINA_FALSE;
 
    minx = obj->layer->evas->output.w;
@@ -1661,7 +1660,7 @@ evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prote
 {
    Evas_Object_Smart *o = eo_data_get(eo_obj, MY_CLASS);
    evas_object_cur_prev(eo_obj);
-   o->cur = o->prev;
+   o->prev = o->cur;
 }
 
 static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj)
