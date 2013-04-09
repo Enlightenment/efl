@@ -26,6 +26,7 @@ lib/eina/eina_clist.h \
 lib/eina/eina_inline_clist.x \
 lib/eina/eina_inarray.h \
 lib/eina/eina_inlist.h \
+lib/eina/eina_inline_inlist.x \
 lib/eina/eina_list.h \
 lib/eina/eina_file.h \
 lib/eina/eina_mempool.h \

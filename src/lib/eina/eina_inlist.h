@@ -580,6 +580,38 @@ EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
                                        Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Get the first list node in the list.
+ *
+ * @param list The list to get the first list node from.
+ * @return The first list node in the list.
+ *
+ * This function returns the first list node in the list @p list. If
+ * @p list is @c NULL, @c NULL is returned.
+ *
+ * This is a O(N) operation (it takes time proportional
+ * to the length of the list).
+ *
+ * @since 1.8
+ */
+static inline Eina_Inlist *eina_inlist_first(const Eina_Inlist *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Get the last list node in the list.
+ *
+ * @param list The list to get the last list node from.
+ * @return The last list node in the list.
+ *
+ * This function returns the last list node in the list @p list. If
+ * @p list is @c NULL, @c NULL is returned.
+ *
+ * This is a O(N) operation (it takes time proportional
+ * to the length of the list).
+ *
+ * @since 1.8
+ */
+static inline Eina_Inlist *eina_inlist_last(const Eina_Inlist *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Get the count of the number of items in a list.
  *
  * @param list The list whose count to return.
@@ -824,6 +856,8 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 #define EINA_INLIST_REVERSE_FOREACH(list, it)                                \
   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list->last) : NULL); \
        it; it = (EINA_INLIST_GET(it)->prev ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->prev) : NULL))
+
+#include "eina_inline_inlist.x"
 
 /**
  * @}

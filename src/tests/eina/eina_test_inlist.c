@@ -86,6 +86,7 @@ _eina_test_inlist_build(int i)
 START_TEST(eina_inlist_simple)
 {
    Eina_Inlist *lst = NULL;
+   Eina_Inlist *tmpl = NULL;
    Eina_Test_Inlist *tmp;
    Eina_Test_Inlist *prev;
    int i = 0;
@@ -284,6 +285,11 @@ START_TEST(eina_inlist_simple)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    lst = bkp;
 #endif
+
+   tmpl = eina_inlist_last(lst);
+   fail_if(tmpl == lst);
+   tmpl = eina_inlist_first(tmpl);
+   fail_if(tmpl != lst);
 
    tmp = EINA_INLIST_CONTAINER_GET(lst, Eina_Test_Inlist);
    lst = eina_inlist_demote(lst, lst);

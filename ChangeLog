@@ -1,3 +1,7 @@
+2013-04-09  Jérémy Zurcher (jeyzu)
+
+        * Eina: Add eina_inlist_first and eina_inlist_last
+
 2013-04-08  Tom Hacohen
 
         * Evas font: Fix a bug with cluster size calculation with texts ending
