@@ -1230,3 +1230,6 @@
 
         * Add elm_mapbuf_auto_set()/elm_mapbuf_auto_get()
 
+2013-04-09  WooHyun Jung
+
+        * Ctxpopup is now supproting focus_direction.
