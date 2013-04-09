@@ -171,7 +171,11 @@ _update_slider(void *data,
    elm_slider_min_max_set(sd->slider, 0, length);
    elm_slider_value_set(sd->slider, pos);
    sd->last_update_time = ecore_loop_time_get();
-   if (sd->delay_update) ecore_timer_del(sd->delay_update);
+   if (sd->delay_update)
+     {
+        ecore_timer_del(sd->delay_update);
+        sd->delay_update = NULL;
+     }
 }
 
 static Eina_Bool

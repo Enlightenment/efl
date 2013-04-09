@@ -1221,3 +1221,7 @@
 
         * Fix layout_example_02.
         * Fix hoversel_example_01.
+
+2013-04-09  Daniel Juyung Seo (SeoZ)
+
+        * Fix elc_player crash issue.
