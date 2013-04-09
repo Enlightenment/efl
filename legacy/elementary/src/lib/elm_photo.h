@@ -34,8 +34,11 @@ enum
 {
    ELM_OBJ_PHOTO_SUB_ID_FILE_SET,
    ELM_OBJ_PHOTO_SUB_ID_SIZE_SET,
+   ELM_OBJ_PHOTO_SUB_ID_SIZE_GET,
    ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET,
+   ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_GET,
    ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET,
+   ELM_OBJ_PHOTO_SUB_ID_EDITABLE_GET,
    ELM_OBJ_PHOTO_SUB_ID_THUMB_SET,
    ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_SET,
    ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET,
@@ -83,6 +86,21 @@ enum
 #define elm_obj_photo_size_set(size) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_SIZE_SET), EO_TYPECHECK(int, size)
 
 /**
+ * @def elm_obj_photo_size_get
+ * @since 1.8
+ *
+ * Get the size that will be used on the photo
+ *
+ * @param[out] ret
+ *
+ * @note There is no elm_photo_size_get
+ *
+ * @see elm_photo_size_set
+ * @see elm_obj_photo_size_set
+ */
+#define elm_obj_photo_size_get(ret) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_SIZE_GET), EO_TYPECHECK(int *, ret)
+
+/**
  * @def elm_obj_photo_fill_inside_set
  * @since 1.8
  *
@@ -95,6 +113,21 @@ enum
 #define elm_obj_photo_fill_inside_set(fill) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET), EO_TYPECHECK(Eina_Bool, fill)
 
 /**
+ * @def elm_obj_photo_fill_inside_get
+ * @since 1.8
+ *
+ * Get if the photo should be completely visible or not.
+ *
+ * @param[out] ret
+ *
+ * @note There is no elm_photo_fill_inside_get
+ *
+ * @see elm_photo_fill_inside_set
+ * @see elm_obj_photo_fill_inside_set
+ */
+#define elm_obj_photo_fill_inside_get(ret) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
  * @def elm_obj_photo_editable_set
  * @since 1.8
  *
@@ -105,6 +138,21 @@ enum
  * @see elm_photo_editable_set
  */
 #define elm_obj_photo_editable_set(set) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET), EO_TYPECHECK(Eina_Bool, set)
+
+/**
+ * @def elm_obj_photo_editable_get
+ * @since 1.8
+ *
+ * Get editability of the photo.
+ *
+ * @param[out] ret
+ *
+ * @note There is no elm_photo_editable_get
+ *
+ * @see elm_photo_editable_set
+ * @see elm_obj_photo_editable_set
+ */
+#define elm_obj_photo_editable_get(ret) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_photo_thumb_set

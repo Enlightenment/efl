@@ -21,6 +21,9 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *sc, *tb, *ph;
    int i, j, n;
    char buf[PATH_MAX];
+   int size = 0;
+   Eina_Bool fill = EINA_FALSE, editable = EINA_FALSE;
+
    const char *img[9] =
      {
         "panel_01.jpg",
@@ -80,6 +83,14 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_show(ph);
           }
      }
+
+   eo_do(ph,
+         elm_obj_photo_size_get(&size),
+         elm_obj_photo_fill_inside_get(&fill),
+         elm_obj_photo_editable_get(&editable));
+   printf("Last Photo Information:\n");
+   printf("\tobject %p, size %d, fill_inside %d, editable %d\n",
+          ph, size, fill, editable);
 
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

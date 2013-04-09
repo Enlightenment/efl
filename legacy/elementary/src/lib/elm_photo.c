@@ -379,6 +379,14 @@ _size_set(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
 }
 
+static void
+_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Photo_Smart_Data *sd = _pd;
+   *ret = sd->size;
+}
+
 EAPI void
 elm_photo_fill_inside_set(Evas_Object *obj,
                           Eina_Bool fill)
@@ -399,6 +407,14 @@ _fill_inside_set(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
 }
 
+static void
+_fill_inside_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Photo_Smart_Data *sd = _pd;
+   *ret = sd->fill_inside;
+}
+
 EAPI void
 elm_photo_editable_set(Evas_Object *obj,
       Eina_Bool set)
@@ -413,6 +429,14 @@ _editable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool set = va_arg(*list, int);
    Elm_Photo_Smart_Data *sd = _pd;
    elm_image_editable_set(sd->icon, set);
+}
+
+static void
+_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Photo_Smart_Data *sd = _pd;
+   *ret = elm_image_editable_get(sd->icon);
 }
 
 EAPI void
@@ -490,8 +514,11 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILE_SET), _file_set),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_SIZE_SET), _size_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_SIZE_GET), _size_get),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET), _fill_inside_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_GET), _fill_inside_get),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET), _editable_set),
+        EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_GET), _editable_get),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_THUMB_SET), _thumb_set),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_SET), _aspect_fixed_set),
         EO_OP_FUNC(ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET), _aspect_fixed_get),
@@ -505,8 +532,11 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_FILE_SET, "Set the file that will be used as the photo widget's image."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_SIZE_SET, "Set the size that will be used on the photo."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_SIZE_GET, "Get the size that will be used on the photo."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_SET, "Set if the photo should be completely visible or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_FILL_INSIDE_GET, "Get if the photo should be completely visible or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_SET, "Set editability of the photo."),
+     EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_EDITABLE_GET, "Get editability of the photo."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_THUMB_SET, "Set the file that will be used as thumbnail in the photo."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_SET, "Set whether the original aspect ratio of the photo should be kept on resize."),
      EO_OP_DESCRIPTION(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET, "Get if the object keeps the original aspect ratio."),
