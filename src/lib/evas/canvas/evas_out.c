@@ -12,8 +12,7 @@ EAPI Eo_Op EVAS_OUT_BASE_ID = EO_NOOP;
 typedef struct _Evas_Out_Public_Data Evas_Out_Public_Data;
 struct _Evas_Out_Public_Data
 {
-   int dummy;
-   Evas_Engine_Info *info;
+   void *info;/*, *context, *output;*/
    Evas_Coord x, y, w, h;
 };
 
@@ -36,10 +35,11 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Public_Data *e = eo_data_get(eo_parent, EVAS_CLASS);
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    if (!e) return;
-   eo_dat->dummy = 7;
    e->outputs = eina_list_append(e->outputs, eo_obj);
-   // XXX: create eo_dat->info from current engine
-   // XXX: ensure on evas free e->outputs are unreffed
+   if (e->engine.func->info) eo_dat->info = e->engine.func->info(eo_parent);
+   // XXX: context and output are currently held in the core engine and are
+   // allocated by engine specific internal code. this all needs a new engine
+   // api to make it work
 }
 
 EAPI void
@@ -54,8 +54,10 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Out_Public_Data *eo_dat = _pd;
    Eo *eo_parent = eo_parent_get(eo_obj);
    Evas_Public_Data *e = eo_data_get(eo_parent, EVAS_CLASS);
-   // XXX: delete eo_dat->info and tell engine
-   eo_dat->dummy = -7;
+   // XXX: need to free output and context one they get allocated one day   
+   // e->engine.func->context_free(eo_dat->output, eo_dat->context);
+   // e->engine.func->output_free(eo_dat->output);
+   e->engine.func->info_free(eo_parent, eo_dat->info);
    if (e)
      {
         e->outputs = eina_list_remove(e->outputs, eo_obj);
