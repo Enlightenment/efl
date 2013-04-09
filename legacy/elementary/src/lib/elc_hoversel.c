@@ -246,7 +246,7 @@ _elm_hoversel_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Hoversel_Smart_Data *sd = _pd;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
-   //evas_object_hide(sd->hover);
+   evas_object_hide(sd->hover);
 }
 
 static void
