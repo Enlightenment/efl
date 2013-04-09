@@ -165,7 +165,7 @@ _dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
      {
         const Eo_Class *op_kls = _eo_op_class_get(op);
         const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-        ERR("Already set function for op %x (%s:%s). Overriding with func %p",
+        ERR("Already set function for op 0x%x (%s:%s). Overriding with func %p",
               op, op_kls->desc->name, op_desc->name, func);
      }
 
@@ -294,7 +294,7 @@ _eo_kls_itr_func_get(const Eo_Class *cur_klass, Eo_Op op)
       { \
          const Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
-         ERR("Can't find func for op %x (%s:%s) for class '%s'. Aborting.", \
+         ERR("Can't find func for op 0x%x (%s:%s) for class '%s'. Aborting.", \
                op, _dom_name, _eo_op_id_name_get(op), \
                (klass) ? klass->desc->name : NULL); \
       } \
@@ -310,7 +310,7 @@ _eo_op_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op
      {
         if (op_desc->op_type == EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling a class op '%s' (%x) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("Tried calling a class op '%s' (0x%x) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
@@ -435,7 +435,7 @@ _eo_class_op_internal(Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, va_l
      {
         if (op_desc->op_type != EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling an instance op '%s' (%x) from a class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("Tried calling an instance op '%s' (0x%x) from a class context.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
@@ -704,7 +704,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
 
              if (EINA_UNLIKELY(!op_desc || (itr->op == EO_NOOP)))
                {
-                  ERR("Setting implementation for non-existent op %x for class '%s'. Func index: %lu", itr->op, klass->desc->name, (unsigned long) (itr - func_descs));
+                  ERR("Setting implementation for non-existent op 0x%x for class '%s'. Func index: %lu", itr->op, klass->desc->name, (unsigned long) (itr - func_descs));
                }
              else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
                {
@@ -712,7 +712,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else
                {
-                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu",
+                  ERR("Set function's op type (0x%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu",
                         itr->op_type,
                         (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
                         klass->desc->name,
@@ -777,11 +777,11 @@ _eo_class_check_op_descs(const Eo_Class *klass)
           {
              if (itr->name)
                {
-                  ERR("Wrong order in Ops description for class '%s'. Expected %lx and got %lx", desc->name, (unsigned long) i, (unsigned long) itr->sub_op);
+                  ERR("Wrong order in Ops description for class '%s'. Expected 0x%lx and got 0x%lx", desc->name, (unsigned long) i, (unsigned long) itr->sub_op);
                }
              else
                {
-                  ERR("Found too few Ops description for class '%s'. Expected %lx descriptions, but found %lx.", desc->name, (unsigned long) desc->ops.count, (unsigned long) i);
+                  ERR("Found too few Ops description for class '%s'. Expected 0x%lx descriptions, but found 0x%lx.", desc->name, (unsigned long) desc->ops.count, (unsigned long) i);
                }
              return EINA_FALSE;
           }
