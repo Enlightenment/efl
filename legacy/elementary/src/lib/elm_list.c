@@ -1536,20 +1536,20 @@ _resize_cb(void *data,
    elm_layout_sizing_eval(data);
 }
 
+static Eina_Bool _elm_list_smart_focus_next_enable = EINA_FALSE;
+
 static void
 _elm_list_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   *ret = _elm_list_smart_focus_next_enable;
 }
-
-static Eina_Bool _elm_list_smart_focus_next_enable = EINA_FALSE;
 
 static void
 _elm_list_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_list_smart_focus_next_enable;
+   *ret = EINA_FALSE;
 }
 static void
 _elm_list_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
