@@ -71,6 +71,7 @@ Additions:
      - Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory allocation policy for EvasGL direct rendering.
      - Add engine specific alpha_get.
      - Add multiple output support API.
+     - Add buffer age support to gl for automatic partial redraws.
     * Add ecore_audio API
     * Add eet_mmap.
     * added eet_data_descriptor_name_get()

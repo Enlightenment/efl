@@ -42,6 +42,7 @@ struct _Render_Engine
 
 static int initted = 0;
 static int gl_wins = 0;
+static int extn_have_buffer_age = 1;
 
 typedef void            (*_eng_fn) (void);
 typedef _eng_fn         (*glsym_func_eng_fn) ();
@@ -57,8 +58,9 @@ typedef const char     *(*glsym_func_const_char_ptr) ();
 # define EGL_NATIVE_PIXMAP_KHR 0x30b0
 #endif
 #ifndef EGL_BUFFER_AGE_EXT
-#define EGL_BUFFER_AGE_EXT 0x313d
+# define EGL_BUFFER_AGE_EXT 0x313d
 #endif
+
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
@@ -69,6 +71,11 @@ const char  *(*glsym_eglQueryString)           (EGLDisplay a, int name) = NULL;
 void         (*glsym_eglSwapBuffersRegion)     (EGLDisplay a, void *b, EGLint c, const EGLint *d) = NULL;
 
 #else
+
+#ifndef GLX_BACK_BUFFER_AGE_EXT
+# define GLX_BACK_BUFFER_AGE_EXT 0x20f4
+#endif
+
 typedef XID     (*glsym_func_xid) ();
 
 _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
@@ -615,6 +622,10 @@ gl_extn_veto(Render_Engine *re)
      {
         if (getenv("EVAS_GL_INFO"))
           printf("EGL EXTN:\n%s\n", str);
+        if (!strstr(str, "EGL_EXT_buffer_age"))
+          {
+             extn_have_buffer_age = 0;
+          }
 //        if (!strstr(str, ""))
 //          {
 //          }
@@ -636,6 +647,10 @@ gl_extn_veto(Render_Engine *re)
           {
              glsym_glXGetVideoSync = NULL;
              glsym_glXWaitVideoSync = NULL;
+          }
+        if (!strstr(str, "GLX_EXT_buffer_age"))
+          {
+             extn_have_buffer_age = 0;
           }
      }
 #endif
@@ -1081,24 +1096,33 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         re->rects = evas_common_tilebuf_get_render_rects(re->tb);
         if (re->rects)
           {
-#ifdef GL_GLES
-        if (re->info->swap_mode == EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO)
-          {
-             EGLint age = 0;
-        
-             if (eglQuerySurface(re->win->egl_disp, re->win->egl_surface[0],
-                                 EGL_BUFFER_AGE_EXT, &age))
+             if (re->info->swap_mode == EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO)
                {
-                  if (age == 1) re->mode = MODE_COPY;
-                  else if (age == 2) re->mode = MODE_DOUBLE;
-                  else if (age == 3) re->mode = MODE_TRIPLE;
-                  else re->mode = MODE_FULL;
-                  if (age != re->prev_age) re->mode = MODE_FULL;
-                  re->prev_age = age;
-               }
-             else re->mode = MODE_FULL;
-          }
+#ifdef GL_GLES
+                  EGLint age = 0;
+                  
+                  if (!eglQuerySurface(re->win->egl_disp,
+                                       re->win->egl_surface[0],
+                                       EGL_BUFFER_AGE_EXT, &age))
+                    age = 0;
+#else
+                  unsigned int age = 0;
+                  
+                  if (glsym_glXQueryDrawable)
+                    glsym_glXQueryDrawable(re->win->disp, re->win->win,
+                                           GLX_BACK_BUFFER_AGE_EXT, &age);
 #endif
+                  if (extn_have_buffer_age)
+                    {
+                       if (age == 1) re->mode = MODE_COPY;
+                       else if (age == 2) re->mode = MODE_DOUBLE;
+                       else if (age == 3) re->mode = MODE_TRIPLE;
+                       else re->mode = MODE_FULL;
+                       if (age != re->prev_age) re->mode = MODE_FULL;
+                       re->prev_age = age;
+                    }
+                  else re->mode = MODE_FULL;
+               }
              if (re->lost_back)
                {
                   /* if we lost our backbuffer since the last frame redraw all */
@@ -1109,7 +1133,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                }
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
-            evas_common_tilebuf_clear(re->tb);
+             evas_common_tilebuf_clear(re->tb);
              CLEAR_PREV_RECTS(2);
              re->rects_prev[2] = re->rects_prev[1];
              re->rects_prev[1] = re->rects_prev[0];
