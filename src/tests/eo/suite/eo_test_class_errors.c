@@ -132,7 +132,7 @@ START_TEST(eo_incomplete_desc)
    class_desc.ops.descs = op_desc;
    class_desc.ops.count = TEST_SUB_ID_LAST + 1;
 
-   TEST_EO_ERROR("_eo_class_check_op_descs", "Found too few Ops description for class '%s'. Expected %lx descriptions, but found %lx.");
+   TEST_EO_ERROR("_eo_class_check_op_descs", "Found too few Ops description for class '%s'. Expected 0x%lx descriptions, but found 0x%lx.");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -147,7 +147,7 @@ START_TEST(eo_incomplete_desc)
    class_desc.ops.count = TEST_SUB_ID_LAST;
    class_desc.ops.descs = op_desc_wrong;
 
-   TEST_EO_ERROR("_eo_class_check_op_descs", "Wrong order in Ops description for class '%s'. Expected %lx and got %lx");
+   TEST_EO_ERROR("_eo_class_check_op_descs", "Wrong order in Ops description for class '%s'. Expected 0x%lx and got 0x%lx");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -432,7 +432,7 @@ START_TEST(eo_op_types)
         NULL
    };
 
-   TEST_EO_ERROR("eo_class_funcs_set", "Set function's op type (%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu");
+   TEST_EO_ERROR("eo_class_funcs_set", "Set function's op type (0x%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu");
    klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
