@@ -39,7 +39,7 @@ static void
 _elm_ctxpopup_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   *ret = EINA_TRUE;
 }
 
 static void
@@ -48,7 +48,7 @@ _elm_ctxpopup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Ctxpopup_Smart_Data *sd = _pd;
 
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next =  va_arg(*list, Evas_Object **);
+   Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
@@ -63,6 +63,36 @@ _elm_ctxpopup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if (ret) *ret = EINA_TRUE;
 }
+
+static void
+_elm_ctxpopup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Ctxpopup_Smart_Data *sd = _pd;
+
+   Evas_Object *base = va_arg(*list, Evas_Object *);
+   double degree = va_arg(*list, double);
+   Evas_Object **direction = va_arg(*list, Evas_Object **);
+   double *weight = va_arg(*list, double *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+
+   Eina_List *l = NULL;
+   void *(*list_data_get)(const Eina_List *list);
+
+   if (!sd)
+     return;
+
+   list_data_get = eina_list_data_get;
+
+   l = eina_list_append(l, sd->box);
+
+   int_ret = elm_widget_focus_list_direction_get
+            (obj, base, l, list_data_get, degree, direction, weight);
+   if (ret) *ret = int_ret;
+   eina_list_free(l);
+}
+
 
 static void
 _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
@@ -904,7 +934,7 @@ _on_show(void *data __UNUSED__,
      {
         elm_list_go(sd->list);
         sd->visible = EINA_TRUE;
-        elm_object_focus_set(obj, EINA_TRUE);
+        elm_object_focus_set(sd->list, EINA_TRUE);
         return;
      }
 
@@ -1449,6 +1479,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_ctxpopup_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_ctxpopup_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_ctxpopup_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION),  _elm_ctxpopup_smart_focus_direction),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_ctxpopup_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_ctxpopup_smart_content_set),
