@@ -1905,7 +1905,7 @@ EAPI int               evas_render_method_lookup(const char *name) EINA_WARN_UNU
  *   }
  * printf("Available Evas Engines:\n");
  * EINA_LIST_FOREACH(engine_list, l, engine_name)
- *     printf("%s\n", engine_name);
+ *   printf("%s\n", engine_name);
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
@@ -1935,7 +1935,7 @@ EAPI Eina_List        *evas_render_method_list(void) EINA_WARN_UNUSED_RESULT;
  *   }
  * printf("Available Evas Engines:\n");
  * EINA_LIST_FOREACH(engine_list, l, engine_name)
- *     printf("%s\n", engine_name);
+ *   printf("%s\n", engine_name);
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
@@ -4955,7 +4955,7 @@ EAPI void             evas_object_clip_unset(Evas_Object *obj);
  *     clippees = evas_object_clipees_get(clipper);
  *     printf("Clipper clips %i objects\n", eina_list_count(clippees));
  *     EINA_LIST_FOREACH(clippees, l, obj_tmp)
- *         evas_object_show(obj_tmp);
+ *       evas_object_show(obj_tmp);
  *   }
  * @endcode
  */
