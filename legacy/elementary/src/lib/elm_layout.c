@@ -2110,13 +2110,16 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
-   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Elm_Widget_Smart_Data *wd = eo_data_get(eo_obj, ELM_OBJ_WIDGET_CLASS);
 
+   if (!wd) return;
+
+   if (eo_isa(wd->resize_obj, EDJE_OBJ_CLASS))
      {
-        Elm_Widget_Smart_Data *wd = eo_data_get(eo_obj, ELM_OBJ_WIDGET_CLASS);
+        Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+        const char *file, *edje_group;
         Evas_Object *edje_obj = wd->resize_obj;
 
-        const char *file, *edje_group;
         eo_do(edje_obj, edje_obj_file_get(&file, &edje_group));
         EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
         EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
@@ -2126,7 +2129,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
         if (error != EDJE_LOAD_ERROR_NONE)
           {
              EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
-                   edje_load_error_str(error));
+                                edje_load_error_str(error));
           }
      }
 }
