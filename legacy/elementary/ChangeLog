@@ -1225,3 +1225,8 @@
 2013-04-09  Daniel Juyung Seo (SeoZ)
 
         * Fix elc_player crash issue.
+
+2013-04-09 Carsten Haitzler (The Rasterman)
+
+        * Add elm_mapbuf_auto_set()/elm_mapbuf_auto_get()
+

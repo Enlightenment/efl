@@ -135,12 +135,29 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
 }
 
 static void
+_mapbuf_auto_eval(Evas_Object *obj)
+{
+   Eina_Bool vis;
+   Evas_Coord x, y, w, h;
+   Evas_Coord vx, vy, vw, vh;
+   Eina_Bool on = EINA_FALSE;
+   
+   vis = evas_object_visible_get(obj);
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_output_viewport_get(obj, &vx, &vy, &vw, &vh);
+   if ((vis) && (ELM_RECTS_INTERSECT(x, y, w, h, vx, vy, vw, vh)))
+     on = EINA_TRUE;
+   elm_mapbuf_enabled_set(obj, on);
+}
+
+static void
 _elm_mapbuf_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
+   _mapbuf_auto_eval(obj);
    _configure(obj, EINA_FALSE);
 }
 
@@ -151,6 +168,25 @@ _elm_mapbuf_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
+   _mapbuf_auto_eval(obj);
+   _configure(obj, EINA_FALSE);
+}
+
+static void
+_elm_mapbuf_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+
+   _mapbuf_auto_eval(obj);
+   _configure(obj, EINA_FALSE);
+}
+
+static void
+_elm_mapbuf_smart_hide(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+
+   _mapbuf_auto_eval(obj);
    _configure(obj, EINA_FALSE);
 }
 
@@ -379,6 +415,50 @@ _alpha_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->alpha;
 }
 
+EAPI void
+elm_mapbuf_auto_set(Evas_Object *obj,
+                     Eina_Bool on)
+{
+   ELM_MAPBUF_CHECK(obj);
+   eo_do(obj, elm_obj_mapbuf_auto_set(on));
+}
+
+static void
+_auto_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool on = va_arg(*list, int);
+   Elm_Mapbuf_Smart_Data *sd = _pd;
+
+   if (sd->automode == on) return;
+   sd->automode = on;
+   if (on)
+     {
+        _mapbuf_auto_eval(obj);
+     }
+   else
+     {
+        _enabled_set(obj, _pd, EINA_FALSE);
+     }
+   _configure(obj, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+elm_mapbuf_auto_get(const Evas_Object *obj)
+{
+   ELM_MAPBUF_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_mapbuf_auto_get(&ret));
+   return ret;
+}
+
+static void
+_auto_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Mapbuf_Smart_Data *sd = _pd;
+   *ret = sd->automode;
+}
+
 static void
 _class_constructor(Eo_Class *klass)
 {
@@ -388,6 +468,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_mapbuf_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_mapbuf_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_mapbuf_smart_move),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_mapbuf_smart_show),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_mapbuf_smart_hide),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_mapbuf_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_mapbuf_smart_sub_object_del),
@@ -402,6 +484,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_SMOOTH_GET), _smooth_get),
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_SET), _alpha_set),
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET), _alpha_get),
+        EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET), _auto_set),
+        EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET), _auto_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -415,6 +499,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_SMOOTH_GET, "Get a value whether smooth map rendering is enabled or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_SET, "Set or unset alpha flag for map rendering."),
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET, "Get a value whether alpha blending is enabled or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET, "Turn map on or off automatically based on object visibility."),
+     EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET, "Get automatic mode state."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

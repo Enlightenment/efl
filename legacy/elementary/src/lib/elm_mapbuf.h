@@ -45,6 +45,8 @@ enum
    ELM_OBJ_MAPBUF_SUB_ID_SMOOTH_GET,
    ELM_OBJ_MAPBUF_SUB_ID_ALPHA_SET,
    ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET,
+   ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET,
+   ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET,
    ELM_OBJ_MAPBUF_SUB_ID_LAST
 };
 
@@ -122,6 +124,30 @@ enum
  * @see elm_mapbuf_alpha_get
  */
 #define elm_obj_mapbuf_alpha_get(ret) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_mapbuf_auto_set
+ * @since 1.8
+ *
+ * Set or unset automatic flag for map rendering.
+ *
+ * @param[in] on
+ *
+ * @see elm_mapbuf_auto_set
+ */
+#define elm_obj_mapbuf_auto_set(on) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET), EO_TYPECHECK(Eina_Bool, on)
+
+/**
+ * @def elm_obj_mapbuf_auto_get
+ * @since 1.8
+ *
+ * Get a value automatic map mode is enabled ore not.
+ *
+ * @param[out] ret
+ *
+ * @see elm_mapbuf_auto_get
+ */
+#define elm_obj_mapbuf_auto_get(ret) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET), EO_TYPECHECK(Eina_Bool *, ret)
 /**
  * @addtogroup Mapbuf
  * @{
@@ -239,6 +265,40 @@ EAPI void                         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bo
  * @ingroup Mapbuf
  */
 EAPI Eina_Bool                    elm_mapbuf_alpha_get(const Evas_Object *obj);
+
+/**
+ * Set or unset auto flag for map rendering.
+ *
+ * @param obj The mapbuf object.
+ * @param on @c EINA_TRUE to enable auto mode or @c EINA_FALSE
+ * to disable it.
+ * 
+ * When a ampbuf object has "auto mode" enabled, then it will enable and
+ * disable map mode based on current visibility. Mapbuf will track if you show
+ * or hide it AND if the object is inside the canvas viewport or not when it
+ * is moved or resized. Note that if you turn automode off, then map mode
+ * will be in a disabled state at this point. When you turn it on for the
+ * first time, the current state will be evaluated base on current properties
+ * of the mapbuf object.
+ *
+ * Auto mode is disabled by default.
+ *
+ * @ingroup Mapbuf
+ */
+EAPI void                         elm_mapbuf_auto_set(Evas_Object *obj, Eina_Bool on);
+
+/**
+ * Get a value whether auto mode is enabled or not.
+ *
+ * @param obj The mapbuf object.
+ * @return @c EINA_TRUE means autso mode is enabled. @c EINA_FALSE
+ * indicates it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @see elm_mapbuf_auto_set() for details.
+ *
+ * @ingroup Mapbuf
+ */
+EAPI Eina_Bool                    elm_mapbuf_auto_get(const Evas_Object *obj);
 
 /**
  * @}
