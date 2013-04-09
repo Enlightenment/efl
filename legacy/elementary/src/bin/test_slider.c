@@ -177,7 +177,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_value_set(sl, 0.2);
    elm_object_scale_set(sl, 1.0);
-   elm_slider_horizontal_set(sl, 0);
+   elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_box_pack_end(bx2, sl);
    evas_object_show(ic);
    evas_object_show(sl);
@@ -202,7 +202,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_value_set(sl, 0.2);
    elm_object_scale_set(sl, 1.0);
-   elm_slider_horizontal_set(sl, 0);
+   elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_object_disabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx2, sl);
    evas_object_show(ic);

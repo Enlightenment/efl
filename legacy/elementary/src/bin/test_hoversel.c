@@ -126,7 +126,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    hoversel = elm_hoversel_add(win);
 // FIXME: need to add horizontal hoversel theme to default some day
-//   elm_hoversel_horizontal_set(bt, 1);
+//   elm_hoversel_horizontal_set(bt, EINA_TRUE);
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_object_text_set(hoversel, "Labels");
    elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
