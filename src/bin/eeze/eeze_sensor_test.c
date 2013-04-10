@@ -147,13 +147,17 @@ main(void)
     * values. Depending on the hardware this can take a long time. If you don't have special
     * requirements the cached values should be used. */
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
-   eeze_sensor_read(sens);
-   if (!sens) printf("can't find an light sensor!\n");
-   if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
-   if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
-   if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-   printf("Light output: accuracy %i, lux %f at time: %lli\n", acc, x, timestamp);
-   eeze_sensor_free(sens);
+   if (sens)
+     {
+         eeze_sensor_read(sens);
+         if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
+         if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
+         if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
+         printf("Light output: accuracy %i, lux %f at time: %lli\n", acc, x, timestamp);
+         eeze_sensor_free(sens);
+     }
+   else
+     printf("Could not find an light sensor!\n");
 
    printf("=== Test async reads / events: ===\n");
    /* Async read request for sensors. You have to register an event handler for
