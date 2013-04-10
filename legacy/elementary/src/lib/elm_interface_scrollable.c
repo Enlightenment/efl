@@ -34,10 +34,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
 static Eina_Bool _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid);
-static Evas_Coord
-_elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid, int offset);
-static Evas_Coord
-_elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid, int offset);
+static Evas_Coord _elm_scroll_page_x_get
+(Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
+static Evas_Coord _elm_scroll_page_y_get
+(Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
 
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
@@ -1709,8 +1709,8 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
 
    if (_paging_is_enabled(sid))
      {
-        x = _elm_scroll_page_x_get(sid, nx - px);
-        y = _elm_scroll_page_y_get(sid, ny - py);
+        x = _elm_scroll_page_x_get(sid, nx - px, EINA_FALSE);
+        y = _elm_scroll_page_y_get(sid, ny - py, EINA_FALSE);
      }
    else
      {
@@ -1994,7 +1994,7 @@ _elm_scroll_momentum_animator(void *data)
 
 static Evas_Coord
 _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
-                       int offset)
+                       int offset, Eina_Bool limit)
 {
    Evas_Coord x, y, w, h, dx, cw, ch, minx = 0;
 
@@ -2008,12 +2008,17 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
    if (sid->pagerel_h > 0.0)
      sid->pagesize_h = w * sid->pagerel_h;
 
-   dx = (sid->pagesize_h * ((double)sid->page_limit_h - 0.5));
-
-   if (offset > 0)
-     x += (abs(offset) < dx ? offset : dx);
+   if (!limit)
+     x += offset;
    else
-     x += (abs(offset) < dx ? offset : -dx);
+     {
+        dx = (sid->pagesize_h * ((double)sid->page_limit_h - 0.5));
+
+        if (offset > 0)
+          x += (abs(offset) < dx ? offset : dx);
+        else
+          x += (abs(offset) < dx ? offset : -dx);
+     }
 
    if (sid->pagesize_h > 0)
      {
@@ -2029,7 +2034,7 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
 
 static Evas_Coord
 _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
-                       int offset)
+                       int offset, Eina_Bool limit)
 {
    Evas_Coord x, y, w, h, dy, cw, ch, miny = 0;
 
@@ -2043,12 +2048,17 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
    if (sid->pagerel_v > 0.0)
      sid->pagesize_v = h * sid->pagerel_v;
 
-   dy = (sid->pagesize_v * ((double)sid->page_limit_v - 0.5));
-
-   if (offset > 0)
-     y += (abs(offset) < dy ? offset : dy);
+   if (!limit)
+     y += offset;
    else
-     y += (abs(offset) < dy ? offset : -dy);
+     {
+        dy = (sid->pagesize_v * ((double)sid->page_limit_v - 0.5));
+
+        if (offset > 0)
+          y += (abs(offset) < dy ? offset : dy);
+        else
+          y += (abs(offset) < dy ? offset : -dy);
+     }
 
    if (sid->pagesize_v > 0)
      {
@@ -2391,7 +2401,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                       (!elm_widget_drag_child_locked_x_get
                          (sid->obj)))
                     {
-                       pgx = _elm_scroll_page_x_get(sid, ox);
+                       pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
                        if (pgx != x)
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
@@ -2403,7 +2413,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                       (!elm_widget_drag_child_locked_y_get
                          (sid->obj)))
                     {
-                       pgy = _elm_scroll_page_y_get(sid, oy);
+                       pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
                        if (pgy != y)
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
@@ -2427,7 +2437,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                       (!elm_widget_drag_child_locked_x_get
                          (sid->obj)))
                     {
-                       pgx = _elm_scroll_page_x_get(sid, ox);
+                       pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
                        if (pgx != x)
                          _elm_scroll_scroll_to_x
                            (sid, _elm_config->page_scroll_friction, pgx);
@@ -2436,7 +2446,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                       (!elm_widget_drag_child_locked_y_get
                          (sid->obj)))
                     {
-                       pgy = _elm_scroll_page_y_get(sid, oy);
+                       pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
                        if (pgy != y)
                          _elm_scroll_scroll_to_y
                            (sid, _elm_config->page_scroll_friction, pgy);
@@ -3165,8 +3175,8 @@ _elm_scroll_page_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
 
-   x = _elm_scroll_page_x_get(sid, 0);
-   y = _elm_scroll_page_y_get(sid, 0);
+   x = _elm_scroll_page_x_get(sid, 0, EINA_TRUE);
+   y = _elm_scroll_page_y_get(sid, 0, EINA_TRUE);
 
    eo_do(sid->obj, elm_scrollable_interface_content_region_set(x, y, w, h));
 }

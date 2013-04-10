@@ -1233,3 +1233,7 @@
 2013-04-09  WooHyun Jung
 
         * Ctxpopup is now supproting focus_direction.
+
+2013-04-10  Jaehwan Kim
+
+        * Fix the region_show/region_bring_in don't have a limit at a paging movement.
