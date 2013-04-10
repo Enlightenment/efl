@@ -2910,7 +2910,6 @@ _elm_scroll_mouse_move_event_cb(void *data,
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Event_Mouse_Move *ev;
    Evas_Coord x = 0, y = 0;
-   int dodir = 0;
 
    if (!sid->pan_obj) return;
 
@@ -2977,31 +2976,49 @@ _elm_scroll_mouse_move_event_cb(void *data,
         if (x < 0) x = -x;
         if (y < 0) y = -y;
 
-        if ((sid->one_direction_at_a_time) &&
-            (((sid->down.dir_x) || (sid->down.dir_y))))
+        if (sid->one_direction_at_a_time)
           {
-             if (x > _elm_config->thumbscroll_threshold)
+             if (!((sid->down.dir_x) || (sid->down.dir_y)) &&
+                 (((x * x) + (y * y)) >
+                  (_elm_config->thumbscroll_threshold *
+                   _elm_config->thumbscroll_threshold)))
                {
-                  if (x > (y * 2))
+                  if (sid->one_direction_at_a_time ==
+                      ELM_SCROLLER_SINGLE_DIRECTION_SOFT)
                     {
-                       sid->down.dir_x = EINA_TRUE;
-                       sid->down.dir_y = EINA_FALSE;
-                       dodir++;
+                       int dodir = 0;
+                       if (x > (y * 2))
+                         {
+                            sid->down.dir_x = EINA_TRUE;
+                            sid->down.dir_y = EINA_FALSE;
+                            dodir++;
+                         }
+                       if (y > (x * 2))
+                         {
+                            sid->down.dir_x = EINA_FALSE;
+                            sid->down.dir_y = EINA_TRUE;
+                            dodir++;
+                         }
+                       if (!dodir)
+                         {
+                            sid->down.dir_x = EINA_TRUE;
+                            sid->down.dir_y = EINA_TRUE;
+                         }
                     }
-               }
-             if (y > _elm_config->thumbscroll_threshold)
-               {
-                  if (y > (x * 2))
+                  else if (sid->one_direction_at_a_time ==
+                           ELM_SCROLLER_SINGLE_DIRECTION_HARD)
                     {
-                       sid->down.dir_x = EINA_FALSE;
-                       sid->down.dir_y = EINA_TRUE;
-                       dodir++;
+                       if (x > y)
+                         {
+                            sid->down.dir_x = EINA_TRUE;
+                            sid->down.dir_y = EINA_FALSE;
+                         }
+                       if (y > x)
+                         {
+                            sid->down.dir_x = EINA_FALSE;
+                            sid->down.dir_y = EINA_TRUE;
+                         }
                     }
-               }
-             if (!dodir)
-               {
-                  sid->down.dir_x = EINA_TRUE;
-                  sid->down.dir_y = EINA_TRUE;
                }
           }
         else
@@ -3942,7 +3959,8 @@ static void
 _elm_scroll_single_direction_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
-   Eina_Bool single_dir = va_arg(*list, int);
+   Elm_Scroller_Single_Direction single_dir =
+      va_arg(*list, Elm_Scroller_Single_Direction);
 
    sid->one_direction_at_a_time = single_dir;
 }
@@ -3951,7 +3969,8 @@ static void
 _elm_scroll_single_direction_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Scroller_Single_Direction *ret =
+      va_arg(*list, Elm_Scroller_Single_Direction *);
 
    *ret = sid->one_direction_at_a_time;
 }
@@ -4249,7 +4268,7 @@ _elm_scroll_interface_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sid->bounce_horiz = EINA_TRUE;
    sid->bounce_vert = EINA_TRUE;
 
-   sid->one_direction_at_a_time = EINA_TRUE;
+   sid->one_direction_at_a_time = ELM_SCROLLER_SINGLE_DIRECTION_SOFT;
    sid->momentum_animator_disabled = EINA_FALSE;
    sid->bounce_animator_disabled = EINA_FALSE;
 

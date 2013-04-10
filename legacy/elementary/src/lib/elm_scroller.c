@@ -924,6 +924,46 @@ elm_scroller_policy_get(const Evas_Object *obj,
 }
 
 EAPI void
+elm_scroller_single_direction_set(Evas_Object *obj,
+                                  Elm_Scroller_Single_Direction single_dir)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+   eo_do(obj, elm_scrollable_interface_single_direction_set(single_dir));
+}
+
+static void
+_single_direction_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Scroller_Single_Direction single_dir = va_arg(*list, Elm_Scroller_Single_Direction);
+
+   if (single_dir >= ELM_SCROLLER_SINGLE_DIRECTION_LAST)
+     return;
+
+   eo_do_super(obj, MY_CLASS,
+               elm_scrollable_interface_single_direction_set(single_dir));
+}
+
+EAPI Elm_Scroller_Single_Direction
+elm_scroller_single_direction_get(const Evas_Object *obj)
+{
+   ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
+   Elm_Scroller_Single_Direction single_dir;
+
+   eo_do((Eo *) obj, elm_scrollable_interface_single_direction_get(&single_dir));
+   return single_dir;
+}
+
+static void
+_single_direction_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Scroller_Single_Direction *ret =
+      va_arg(*list, Elm_Scroller_Single_Direction *);
+
+   eo_do_super(obj, MY_CLASS,
+               elm_scrollable_interface_single_direction_get(ret));
+}
+
+EAPI void
 elm_scroller_region_get(const Evas_Object *obj,
                         Evas_Coord *x,
                         Evas_Coord *y,
@@ -1226,6 +1266,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_scroller_smart_sizing_eval),
 
         EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_SET), _policy_set),
+        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET), _single_direction_set),
+        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET), _single_direction_get),
         EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SIZE_SET), _page_size_set),
 
         EO_OP_FUNC(ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_CUSTOM_WIDGET_BASE_THEME_SET), _custom_widget_base_theme_set),

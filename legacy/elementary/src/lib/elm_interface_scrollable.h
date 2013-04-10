@@ -652,7 +652,7 @@ enum
  * @param[out] single_dir
  *
  */
-#define elm_scrollable_interface_single_direction_get(single_dir) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET), EO_TYPECHECK(Eina_Bool *, single_dir)
+#define elm_scrollable_interface_single_direction_get(single_dir) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_GET), EO_TYPECHECK(Elm_Scroller_Single_Direction *, single_dir)
 
 /**
  * @def elm_scrollable_interface_repeat_events_set
@@ -963,18 +963,19 @@ typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
 struct _Elm_Scrollable_Smart_Interface_Data
 {
-   Evas_Coord          x, y, w, h;
-   Evas_Coord          wx, wy, ww, wh; /**< Last "wanted" geometry */
+   Evas_Coord                    x, y, w, h;
+   Evas_Coord                    wx, wy, ww, wh; /**< Last "wanted" geometry */
 
-   Evas_Object        *obj;
-   Evas_Object        *content;
-   Evas_Object        *pan_obj;
-   Evas_Object        *edje_obj;
-   Evas_Object        *event_rect;
+   Evas_Object                  *obj;
+   Evas_Object                  *content;
+   Evas_Object                  *pan_obj;
+   Evas_Object                  *edje_obj;
+   Evas_Object                  *event_rect;
 
-   Evas_Object        *parent_widget;
+   Evas_Object                  *parent_widget;
 
-   Elm_Scroller_Policy hbar_flags, vbar_flags;
+   Elm_Scroller_Policy           hbar_flags, vbar_flags;
+   Elm_Scroller_Single_Direction one_direction_at_a_time;
 
    struct
    {
@@ -1084,7 +1085,6 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    Eina_Bool  momentum_animator_disabled : 1;
    Eina_Bool  bounce_animator_disabled : 1;
-   Eina_Bool  one_direction_at_a_time : 1;
    Eina_Bool  wheel_disabled : 1;
    Eina_Bool  hbar_visible : 1;
    Eina_Bool  vbar_visible : 1;
