@@ -34,6 +34,18 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
 
+static double
+_round(double value, int pos)
+{
+   double temp;
+
+   temp = value * pow( 10, pos );
+   temp = floor( temp + 0.5 );
+   temp *= pow( 10, -pos );
+
+   return temp;
+}
+
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
@@ -928,8 +940,8 @@ _elm_scroll_scroll_bar_read_and_update(
      (sid->edje_obj, "elm.dragable.hbar", &vx, NULL);
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   x = vx * (double)mx + minx;
-   y = vy * (double)my + miny;
+   x = _round(vx * (double)mx + minx, 1);
+   y = _round(vy * (double)my + miny, 1);
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
    eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
    if ((px != x) || (py != y))

@@ -1242,3 +1242,8 @@
 
         * Add the API elm_scroller_single_direction_set/get.
         This sets how the content is scrolled.
+
+2013-04-10  Jaehwan Kim
+
+        * Fix the calculation double type number.
+        Round off to the nearest whole number.

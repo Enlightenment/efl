@@ -205,6 +205,7 @@ Fixes:
    * Fix the scroller show by a page if the page size is set and the region_bring_in or region_show is called.
    * Fix elc_player crash issue.
    * Fix the region_show/region_bring_in don't have a limit at a paging movement.
+   * Fix the calculation double type number.
 
 Removals:
 
