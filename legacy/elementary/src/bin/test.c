@@ -738,11 +738,11 @@ add_tests:
    ADD_TEST(NULL, "System", "Systray Item", test_systray);
 
    //------------------------------//
-   ADD_TEST(NULL, "Micellaneous", "Copy And Paste", test_cnp);
-   ADD_TEST(NULL, "Micellaneous", "Weather", test_weather);
-   ADD_TEST(NULL, "Micellaneous", "Icon Desktops", test_icon_desktops);
-   ADD_TEST(NULL, "Micellaneous", "Floating Objects", test_floating);
-   ADD_TEST(NULL, "Micellaneous", "Configuration", test_config);
+   ADD_TEST(NULL, "Miscellaneous", "Copy And Paste", test_cnp);
+   ADD_TEST(NULL, "Miscellaneous", "Weather", test_weather);
+   ADD_TEST(NULL, "Miscellaneous", "Icon Desktops", test_icon_desktops);
+   ADD_TEST(NULL, "Miscellaneous", "Floating Objects", test_floating);
+   ADD_TEST(NULL, "Miscellaneous", "Configuration", test_config);
 
 #undef ADD_TEST
 
