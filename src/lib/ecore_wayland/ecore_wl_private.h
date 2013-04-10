@@ -99,5 +99,8 @@ void _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device);
 void _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer);
 void _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source);
 
+void _ecore_wl_events_init(void);
+void _ecore_wl_events_shutdown(void);
+
 struct wl_data_source *_ecore_wl_create_data_source(Ecore_Wl_Display *ewd);
 #endif

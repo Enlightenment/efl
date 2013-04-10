@@ -35,7 +35,25 @@
 # define BTN_BACK 0x116
 #endif
 
+typedef struct _Ecore_Wl_Mouse_Down_Info
+{
+   EINA_INLIST;
+   void         *dev;
+   int last_win;
+   int last_last_win;
+   int last_event_win;
+   int last_last_event_win;
+   unsigned int last_time;
+   unsigned int last_last_time;
+   Eina_Bool    did_double : 1;
+   Eina_Bool    did_triple : 1;
+} Ecore_Wl_Mouse_Down_Info;
+
 Ecore_Wl_Dnd *glb_dnd = NULL;
+
+/* FIXME: This should be a global setting, used by wayland and X */
+static double _ecore_wl_double_click_time = 0.25;
+static Eina_Inlist *_ecore_wl_mouse_down_info_list = NULL;
 
 /* local function prototypes */
 static void _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps);
@@ -43,7 +61,7 @@ static void _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat 
 static void _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy);
 static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy);
-static void _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
 static void _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, unsigned int axis, wl_fixed_t value);
 static void _ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsigned int timestamp EINA_UNUSED);
 static void _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size);
@@ -52,8 +70,8 @@ static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *ke
 static void _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state);
 static void _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group);
 static Eina_Bool _ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler EINA_UNUSED);
-static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
-static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED);
+static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
+static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED);
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int timestamp, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_frame(void *data EINA_UNUSED, struct wl_touch *touch EINA_UNUSED);
 static void _ecore_wl_input_cb_touch_cancel(void *data EINA_UNUSED, struct wl_touch *touch EINA_UNUSED);
@@ -69,9 +87,10 @@ static void _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window
 static void _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Window *win, unsigned int timestamp);
-static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp);
-static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp);
+static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp);
+static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp);
 static void _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp);
+static Ecore_Wl_Mouse_Down_Info *_ecore_wl_mouse_down_info_get(void *dev);
 
 /* static int _ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len); */
 
@@ -382,7 +401,7 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer EINA_UN
 }
 
 static void 
-_ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state)
+_ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state)
 {
    Ecore_Wl_Input *input;
 
@@ -400,13 +419,13 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
         if ((input->pointer_focus) && (!input->grab) && (state))
           ecore_wl_input_grab(input, input->pointer_focus, button);
 
-        _ecore_wl_input_mouse_down_send(input, input->pointer_focus, 
-                                        button, timestamp);
+        _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
+                                        pointer, button, timestamp);
      }
    else
      {
-        _ecore_wl_input_mouse_up_send(input, input->pointer_focus, 
-                                      button, timestamp);
+        _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
+                                      pointer, button, timestamp);
         if ((input->grab) && (input->grab_button == button) && (!state))
           ecore_wl_input_ungrab(input);
      }
@@ -665,7 +684,7 @@ _ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler EINA_UN
 }
 
 static void 
-_ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
+_ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
@@ -711,8 +730,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
           {
              /* NB: 'Fake' a mouse_up for move finished */
              win->moving = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, BTN_LEFT,
-                                           input->timestamp);
+             _ecore_wl_input_mouse_up_send(input, win, pointer,
+                                           BTN_LEFT, input->timestamp);
 
              if ((input->grab) && (input->grab_button == BTN_LEFT))
                ecore_wl_input_ungrab(input);
@@ -721,8 +740,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
           {
              /* NB: 'Fake' a mouse_up for resize finished */
              win->resizing = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, BTN_LEFT,
-                                           input->timestamp);
+             _ecore_wl_input_mouse_up_send(input, win, pointer,
+                                           BTN_LEFT, input->timestamp);
 
              if ((input->grab) && (input->grab_button == BTN_LEFT))
                ecore_wl_input_ungrab(input);
@@ -833,7 +852,7 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
 }
 
 static void 
-_ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y)
+_ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl_Input *input;
 
@@ -849,11 +868,12 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
    _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
-   _ecore_wl_input_mouse_down_send(input, input->pointer_focus, BTN_LEFT, timestamp);
+   _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
+                                   touch, BTN_LEFT, timestamp);
 }
 
 static void 
-_ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED)
+_ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED)
 {
    Ecore_Wl_Input *input;
 
@@ -865,7 +885,8 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
     * This needs to be tested with an actual touch device */
    /* input->timestamp = timestamp; */
    input->display->serial = serial;
-   _ecore_wl_input_mouse_up_send(input, input->pointer_focus, BTN_LEFT, timestamp);
+   _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
+                                 touch, BTN_LEFT, timestamp);
 }
 
 static void 
@@ -1058,7 +1079,7 @@ _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input EINA_UNUSED, Ecore_Wl_Windo
 }
 
 static void 
-_ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp)
+_ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1082,9 +1103,56 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    /* ev->root.y = input->sy; */
    ev->modifiers = input->modifiers;
 
-   /* FIXME: Need to get these from wayland somehow */
    ev->double_click = 0;
    ev->triple_click = 0;
+
+   /* handling double and triple click, taking into account multiple input
+    * devices */
+   Ecore_Wl_Mouse_Down_Info *down_info = _ecore_wl_mouse_down_info_get(device);
+
+   if (down_info)
+     {
+        if (down_info->did_triple)
+          {
+             down_info->last_win = 0;
+             down_info->last_last_win = 0;
+             down_info->last_event_win = 0;
+             down_info->last_last_event_win = 0;
+             down_info->last_time = 0;
+             down_info->last_last_time = 0;
+          }
+        //Check Double Clicked
+        if (((int)(timestamp - down_info->last_time) <=
+             (int)(1000 * _ecore_wl_double_click_time)) &&
+            (win->id == down_info->last_win) &&
+            (win->id == down_info->last_event_win))
+          {
+             ev->double_click = 1;
+             down_info->did_double = EINA_TRUE;
+          }
+        else
+          {
+             down_info->did_double = EINA_FALSE;
+             down_info->did_triple = EINA_FALSE;
+          }
+
+        //Check Triple Clicked
+        if (((int)(timestamp - down_info->last_last_time) <=
+             (int)(2 * 1000 * _ecore_wl_double_click_time)) &&
+            (win->id == down_info->last_win) &&
+            (win->id == down_info->last_last_win) &&
+            (win->id == down_info->last_event_win) &&
+            (win->id == down_info->last_last_event_win)
+           )
+          {
+             ev->triple_click = 1;
+             down_info->did_triple = EINA_TRUE;
+          }
+        else
+          {
+             down_info->did_triple = EINA_FALSE;
+          }
+     }
 
    ev->multi.device = 0;
    ev->multi.radius = 1;
@@ -1102,10 +1170,21 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+
+   if ((down_info) &&
+       (!down_info->did_triple))
+     {
+        down_info->last_last_win = down_info->last_win;
+        down_info->last_win = win->id;
+        down_info->last_last_event_win = down_info->last_event_win;
+        down_info->last_event_win = win->id;
+        down_info->last_last_time = down_info->last_time;
+        down_info->last_time = timestamp;
+     }
 }
 
 static void 
-_ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button, unsigned int timestamp)
+_ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
 
@@ -1129,9 +1208,17 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
    /* ev->root.y = input->sy; */
    ev->modifiers = input->modifiers;
 
-   /* FIXME: Need to get these from wayland somehow */
    ev->double_click = 0;
    ev->triple_click = 0;
+
+   Ecore_Wl_Mouse_Down_Info *down_info = _ecore_wl_mouse_down_info_get(device);
+   if (down_info)
+     {
+        if (down_info->did_double)
+          ev->double_click = 1;
+        if (down_info->did_triple)
+          ev->triple_click = 1;
+     }
 
    ev->multi.device = 0;
    ev->multi.radius = 1;
@@ -1198,3 +1285,47 @@ _ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *sour
    wl_data_device_set_selection(input->data_device, source, input->display->serial);
 }
 
+static void
+_ecore_wl_mouse_down_info_clear(void)
+{
+   Eina_Inlist *l = _ecore_wl_mouse_down_info_list;
+   Ecore_Wl_Mouse_Down_Info *info = NULL;
+   while (l)
+     {
+        info = EINA_INLIST_CONTAINER_GET(l, Ecore_Wl_Mouse_Down_Info);
+        l = eina_inlist_remove(l, l);
+        free(info);
+     }
+   _ecore_wl_mouse_down_info_list = NULL;
+}
+
+static Ecore_Wl_Mouse_Down_Info *
+_ecore_wl_mouse_down_info_get(void *dev)
+{
+   Eina_Inlist *l = _ecore_wl_mouse_down_info_list;
+   Ecore_Wl_Mouse_Down_Info *info = NULL;
+
+   //Return the exist info
+   EINA_INLIST_FOREACH(l, info)
+     if (info->dev == dev) return info;
+
+   //New Device. Add it.
+   info = calloc(1, sizeof(Ecore_Wl_Mouse_Down_Info));
+   if (!info) return NULL;
+
+   info->dev = dev;
+   l = eina_inlist_append(l, (Eina_Inlist *)info);
+   _ecore_wl_mouse_down_info_list = l;
+   return info;
+}
+
+void
+_ecore_wl_events_init(void)
+{
+}
+
+void
+_ecore_wl_events_shutdown(void)
+{
+   _ecore_wl_mouse_down_info_clear();
+}

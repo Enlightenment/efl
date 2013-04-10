@@ -158,6 +158,7 @@ ecore_wl_init(const char *name)
      }
 
    _ecore_wl_window_init();
+   _ecore_wl_events_init();
 
    return _ecore_wl_init_count;
 }
@@ -293,6 +294,7 @@ _ecore_wl_shutdown(Eina_Bool close)
    if (--_ecore_wl_init_count != 0) return _ecore_wl_init_count;
    if (!_ecore_wl_disp) return _ecore_wl_init_count;
 
+   _ecore_wl_events_shutdown();
    _ecore_wl_window_shutdown();
 
    if (_ecore_wl_disp->fd_hdl)
