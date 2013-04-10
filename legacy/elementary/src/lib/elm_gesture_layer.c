@@ -1417,7 +1417,6 @@ _tap_gestures_test_reset(Gesture_Info *gesture)
 static void
 _n_long_tap_test_reset(Gesture_Info *gesture)
 {
-   Eina_List *l;
    Pointer_Event *p;
    Long_Tap_Type *st;
 
@@ -1426,10 +1425,10 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
 
    st = gesture->data;
 
-   EINA_LIST_FOREACH(st->touched, l, p)
+   EINA_LIST_FREE(st->touched, p)
      free(p);
+   st->touched = NULL;
 
-   eina_list_free(st->touched);
    if (st->timeout)
      {
         ecore_timer_del(st->timeout);
@@ -1460,21 +1459,16 @@ _line_data_reset(Line_Data *st)
 static void
 _line_test_reset(Gesture_Info *gesture)
 {
-   Eina_List *l;
    Line_Type *st;
-   Eina_List *list;
    Line_Data *t_line;
 
    EINA_SAFETY_ON_NULL_RETURN(gesture);
    if (!gesture->data) return;
 
    st = gesture->data;
-   list = st->list;
 
-   EINA_LIST_FOREACH(list, l, t_line)
+   EINA_LIST_FREE(st->list, t_line)
      free(t_line);
-
-   eina_list_free(list);
    st->list = NULL;
 }
 
@@ -3623,7 +3617,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    int i;
 
    _event_history_clear(obj);
-   eina_list_free(sd->pending);
+   sd->pending = eina_list_free(sd->pending);
 
    EINA_LIST_FREE(sd->touched, data)
      free(data);

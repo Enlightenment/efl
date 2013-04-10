@@ -3387,8 +3387,7 @@ error_state_add:
         eina_stringshare_del(item->label);
         eina_stringshare_del(item->icon_str);
         free(eina_list_data_get(item->states));
-        eina_list_free(item->states);
-        item->states = NULL;
+        item->states = eina_list_free(item->states);
      }
    return NULL;
 }
@@ -3427,8 +3426,7 @@ elm_toolbar_item_state_del(Elm_Object_Item *it,
         eina_stringshare_del(it_state->label);
         eina_stringshare_del(it_state->icon_str);
         free(eina_list_data_get(item->states));
-        eina_list_free(item->states);
-        item->states = NULL;
+        item->states = eina_list_free(item->states);
      }
 
    return EINA_TRUE;

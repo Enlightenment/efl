@@ -1685,7 +1685,7 @@ _elm_list_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->to_delete)
      ERR("ERROR: leaking nodes!\n");
 
-   eina_list_free(sd->selected);
+   sd->selected = eina_list_free(sd->selected);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -2010,8 +2010,7 @@ _clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!sd->items) return;
 
-   eina_list_free(sd->selected);
-   sd->selected = NULL;
+   sd->selected = eina_list_free(sd->selected);
 
    if (sd->walking > 0)
      {

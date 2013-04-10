@@ -2572,8 +2572,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
    Eina_List *l, *ll;
    Elm_Map_Overlay *overlay;
 
-   eina_list_free(sd->group_overlays);
-   sd->group_overlays = NULL;
+   sd->group_overlays = eina_list_free(sd->group_overlays);
 
    EINA_LIST_FOREACH(sd->overlays, l, overlay)
      {
@@ -5311,8 +5310,7 @@ _overlays_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Map_Smart_Data *sd = _pd;
 
-   eina_list_free(sd->all_overlays);
-   sd->all_overlays = NULL;
+   sd->all_overlays = eina_list_free(sd->all_overlays);
 
    EINA_LIST_FOREACH(sd->overlays, l, ovl)
      sd->all_overlays = eina_list_append(sd->all_overlays, ovl);

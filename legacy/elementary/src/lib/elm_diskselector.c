@@ -1573,8 +1573,7 @@ _round_enabled_set(Eo *obj, void *_pd, va_list *list)
 
         _blank_item_check(obj, sd->display_item_num);
 
-        eina_list_free(sd->r_items);
-        sd->r_items = NULL;
+        sd->r_items = eina_list_free(sd->r_items);
      }
 
    if (sd->selected_item) _selected_item_indicate(sd->selected_item);
