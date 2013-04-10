@@ -23,24 +23,28 @@ _clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
-_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_clicked_double(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   static double size = 0.0;
+   double *size = data;
    double tmp_size = 0.0;
 
    tmp_size = elm_panes_content_left_size_get(obj);
    printf("clicked double\n");
    if (tmp_size > 0)
-     elm_panes_content_left_size_set(obj, 0.0);
+     {
+        elm_panes_content_left_size_set(obj, 0.0);
+        *size = tmp_size;
+     }
    else
-     elm_panes_content_left_size_set(obj, size);
-   size = tmp_size;
+     elm_panes_content_left_size_set(obj, *size);
 }
 
 void
 test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *panes, *panes_h, *bt;
+   static double vbar_size = 0.0;
+   static double hbar_size = 0.0;
 
    win = elm_win_add(NULL, "panes", ELM_WIN_BASIC);
    elm_win_title_set(win, "Panes");
@@ -58,7 +62,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(panes);
 
    evas_object_smart_callback_add(panes, "clicked", _clicked, panes);
-   evas_object_smart_callback_add(panes, "clicked,double", _clicked_double, panes);
+   evas_object_smart_callback_add(panes, "clicked,double", _clicked_double, &vbar_size);
 
    evas_object_smart_callback_add(panes, "press", _press, panes);
    evas_object_smart_callback_add(panes, "unpress", _unpress, panes);
@@ -79,7 +83,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(panes_h);
 
    evas_object_smart_callback_add(panes_h, "clicked", _clicked, panes_h);
-   evas_object_smart_callback_add(panes_h, "clicked,double", _clicked_double, panes_h);
+   evas_object_smart_callback_add(panes_h, "clicked,double", _clicked_double, &hbar_size);
 
    evas_object_smart_callback_add(panes_h, "press", _press, panes_h);
    evas_object_smart_callback_add(panes_h, "unpress", _unpress, panes_h);
