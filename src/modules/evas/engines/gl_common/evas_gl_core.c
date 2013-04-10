@@ -529,13 +529,14 @@ _surface_cap_load(EVGL_Engine *ee, Eet_File *ef)
 {
    int res = 0, i = 0, length = 0;
    char tag[80];
-   void *data = 0;
+   char *data = NULL;
 
    data = eet_read(ef, "num_fbo_fmts", &length);
    if ((!data) || (length <= 0)) goto finish;
+   if (data[length - 1] != 0) goto finish;
    ee->caps.num_fbo_fmts = atoi(data);
    free(data);
-   data = 0;
+   data = NULL;
 
    // !!!FIXME 
    // Should use eet functionality instead of just reading using sscanfs...
@@ -546,6 +547,7 @@ _surface_cap_load(EVGL_Engine *ee, Eet_File *ef)
         snprintf(tag, sizeof(tag), "fbo_%d", i);
         data = eet_read(ef, tag, &length);
         if ((!data) || (length <= 0)) goto finish;
+        if (data[length - 1] != 0) goto finish;
         sscanf(data, "%d%d%d%d%d%d%d%d%d%d",
                &(fmt->index),
                (int*)(&(fmt->color_bit)), &(fmt->color_ifmt), &(fmt->color_fmt),
@@ -554,11 +556,9 @@ _surface_cap_load(EVGL_Engine *ee, Eet_File *ef)
                &(fmt->depth_stencil_fmt),
                &(fmt->samples));
         free(data);
-        data = 0;
+        data = NULL;
      }
-
    res = 1;
-   goto finish;
 
 finish:
    if (data) free(data);
@@ -569,10 +569,10 @@ static int
 _surface_cap_save(EVGL_Engine *ee, Eet_File *ef)
 {
    int i = 0;
-   char tag[80], data[80];;
+   char tag[80], data[80];
 
    snprintf(data, sizeof(data), "%d", ee->caps.num_fbo_fmts);
-   if (eet_write(ef, "num_fbo_fmts", data, sizeof(data), 1) < 0)
+   if (eet_write(ef, "num_fbo_fmts", data, strlen(data) + 1, 1) < 0)
       return 0;
 
    // !!!FIXME 
@@ -589,7 +589,7 @@ _surface_cap_save(EVGL_Engine *ee, Eet_File *ef)
                  fmt->stencil_bit, fmt->stencil_fmt,
                  fmt->depth_stencil_fmt,
                  fmt->samples);
-        if (eet_write(ef, tag, data, sizeof(data), 1) < 0) return 0;
+        if (eet_write(ef, tag, data, strlen(data) + 1, 1) < 0) return 0;
      }
 
    return 1;
