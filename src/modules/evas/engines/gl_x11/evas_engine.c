@@ -18,6 +18,14 @@
 #include "Evas_GL.h"
 
 enum {
+   MERGE_BOUNDING,
+   MERGE_FULL
+};
+
+static int partial_render_debug = -1;
+static int partial_rect_union_mode = -1;
+
+enum {
    MODE_FULL,
    MODE_COPY,
    MODE_DOUBLE,
@@ -1133,29 +1141,47 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
      }
    rects = evas_common_tilebuf_get_render_rects(tb);
    
+   if (partial_rect_union_mode == -1)
+     {
+        const char *s = getenv("EVAS_GL_PARTIAL_MERGE");
+        if (s)
+          {
+             if ((!strcmp(s, "bounding")) ||
+                 (!strcmp(s, "b")))
+               partial_rect_union_mode = MERGE_BOUNDING;
+             else if ((!strcmp(s, "full")) ||
+                      (!strcmp(s, "f")))
+               partial_rect_union_mode = MERGE_FULL;
+          }
+        else
+          partial_rect_union_mode = MERGE_BOUNDING;
+     }
+   if (partial_rect_union_mode == MERGE_BOUNDING)
+     {
 // bounding box -> make a bounding box single region update of all regions.
 // yes we could try and be smart and figure out size of regions, how far
 // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
 // between multiple update regions to render and total pixels to render.
-   if (rects)
-     {
-        p1.x = rects->x; p1.y = rects->y;
-        p2.x = rects->x + rects->w; p2.y = rects->y + rects->h;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
-          {
-             if (r->x < p1.x) p1.x = r->x;
-             if (r->y < p1.y) p1.y = r->y;
-             if ((r->x + r->w) > p2.x) p2.x = r->x + r->w;
-             if ((r->y + r->h) > p2.y) p2.y = r->y + r->h;
-          }
-        evas_common_tilebuf_free_render_rects(rects);
-        rects = calloc(1, sizeof(Tilebuf_Rect));
         if (rects)
           {
-             rects->x = p1.x;
-             rects->y = p1.y;
-             rects->w = p2.x - p1.x;
-             rects->h = p2.y - p1.y;
+             p1.x = rects->x; p1.y = rects->y;
+             p2.x = rects->x + rects->w; p2.y = rects->y + rects->h;
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+               {
+                  if (r->x < p1.x) p1.x = r->x;
+                  if (r->y < p1.y) p1.y = r->y;
+                  if ((r->x + r->w) > p2.x) p2.x = r->x + r->w;
+                  if ((r->y + r->h) > p2.y) p2.y = r->y + r->h;
+               }
+             evas_common_tilebuf_free_render_rects(rects);
+             rects = calloc(1, sizeof(Tilebuf_Rect));
+             if (rects)
+               {
+                  rects->x = p1.x;
+                  rects->y = p1.y;
+                  rects->w = p2.x - p1.x;
+                  rects->h = p2.y - p1.y;
+               }
           }
      }
    evas_common_tilebuf_clear(tb);
@@ -1299,9 +1325,16 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              
              evas_gl_common_context_flush(re->win->gl_context);
              evas_gl_common_context_newframe(re->win->gl_context);
-//// debug partial updates :)
-//             glClearColor(1.0, 0.5, 0.2, 1.0);
-//             glClear(GL_COLOR_BUFFER_BIT);
+             if (partial_render_debug == -1)
+               {
+                  if (getenv("EVAS_GL_PARTIAL_DEBUG")) partial_render_debug = 1;
+                  else partial_render_debug = 0;
+               }
+             if (partial_render_debug == 1)
+               {
+                  glClearColor(0.2, 0.5, 1.0, 1.0);
+                  glClear(GL_COLOR_BUFFER_BIT);
+               }
           }
         if (!re->cur_rect)
           {
