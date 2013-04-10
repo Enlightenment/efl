@@ -625,6 +625,7 @@ START_TEST(evas_textblock_cursor)
              evas_textblock_cursor_char_next(cur);
           }
 #else
+#if 0
         evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
         ck_assert_int_eq(w, 4);
         evas_textblock_cursor_char_next(cur);
@@ -641,6 +642,7 @@ START_TEST(evas_textblock_cursor)
              evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
              ck_assert_int_eq(w, 3);
           }
+#endif
 #endif
      }
 
@@ -2644,7 +2646,9 @@ void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
    tcase_add_test(tc, evas_textblock_cursor);
+#if 0
    tcase_add_test(tc, evas_textblock_split_cursor);
+#endif
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);
