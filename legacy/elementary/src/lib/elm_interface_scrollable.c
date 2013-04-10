@@ -33,11 +33,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
-static Eina_Bool _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid);
-static Evas_Coord _elm_scroll_page_x_get
-(Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
-static Evas_Coord _elm_scroll_page_y_get
-(Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
 
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
@@ -400,6 +395,11 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 static void _elm_scroll_scroll_bar_size_adjust(
   Elm_Scrollable_Smart_Interface_Data *);
 static void _elm_scroll_wanted_region_set(Evas_Object *);
+static Eina_Bool _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid);
+static Evas_Coord _elm_scroll_page_x_get(
+   Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
+static Evas_Coord _elm_scroll_page_y_get(
+   Elm_Scrollable_Smart_Interface_Data *sid, int offset, Eina_Bool limit);
 
 #define LEFT               0
 #define RIGHT              1
