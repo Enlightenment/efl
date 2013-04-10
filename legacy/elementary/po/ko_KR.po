@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 #
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-04 13:06+0900\n"
+"POT-Creation-Date: 2013-04-10 00:10+0900\n"
 "PO-Revision-Date: 2013-04-04 13:05+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: General\n"
@@ -129,7 +129,7 @@ msgstr "시계"
 msgid "color selector palette item"
 msgstr "색상 선택기 팔레트 항목"
 
-#: src/lib/elm_config.c:2237
+#: src/lib/elm_config.c:2238
 msgid "default:LTR"
 msgstr "default:LTR"
 

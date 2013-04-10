@@ -5,12 +5,12 @@
 # Automatically generated, 2012.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 #
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 23:53+0900\n"
+"POT-Creation-Date: 2013-04-10 00:10+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -141,7 +141,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:2237
+#: src/lib/elm_config.c:2238
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 

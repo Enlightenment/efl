@@ -4,12 +4,12 @@
 # Alex-P. Natsios <drakevr@linuxteam.teilar.gr> 2012.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
 #
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 23:53+0900\n"
+"POT-Creation-Date: 2013-04-10 00:10+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -140,7 +140,7 @@ msgstr "Ρολοι"
 msgid "color selector palette item"
 msgstr "παλέτα επιλογής χρώματος"
 
-#: src/lib/elm_config.c:2237
+#: src/lib/elm_config.c:2238
 msgid "default:LTR"
 msgstr "default:LTR"
 

@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 23:53+0900\n"
+"POT-Creation-Date: 2013-04-10 00:10+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -128,7 +128,7 @@ msgstr "Rellotge"
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:2237
+#: src/lib/elm_config.c:2238
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 

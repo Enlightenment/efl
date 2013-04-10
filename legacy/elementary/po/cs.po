@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:2221
+#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-03 23:53+0900\n"
+"POT-Creation-Date: 2013-04-10 00:10+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -135,7 +135,7 @@ msgstr "Hodiny"
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:2237
+#: src/lib/elm_config.c:2238
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
