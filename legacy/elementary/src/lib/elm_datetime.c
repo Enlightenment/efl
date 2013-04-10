@@ -437,7 +437,7 @@ _elm_datetime_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         list_free = eina_list_free;
         if (!items) return;
      }
-printf("count = %d\n", eina_list_count(items));
+
    int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
    if (list_free) list_free((Eina_List *)items);
 
