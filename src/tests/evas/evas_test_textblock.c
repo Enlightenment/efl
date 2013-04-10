@@ -608,6 +608,7 @@ START_TEST(evas_textblock_cursor)
      {
         evas_object_textblock_text_markup_set(tb, "fi<br/>fii");
 
+#ifdef HAVE_HARFBUZZ
         for (i = 0 ; i < 2 ; i++)
           {
              evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
@@ -623,6 +624,24 @@ START_TEST(evas_textblock_cursor)
              ck_assert_int_eq(w, 3);
              evas_textblock_cursor_char_next(cur);
           }
+#else
+        evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+        ck_assert_int_eq(w, 4);
+        evas_textblock_cursor_char_next(cur);
+        evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+        ck_assert_int_eq(w, 3);
+
+        evas_textblock_cursor_pos_set(cur, 3);
+        evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+        ck_assert_int_eq(w, 4);
+
+        for (i = 0 ; i < 2 ; i++)
+          {
+             evas_textblock_cursor_char_next(cur);
+             evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
+             ck_assert_int_eq(w, 3);
+          }
+#endif
      }
 
    END_TB_TEST();
