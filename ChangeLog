@@ -1,3 +1,7 @@
+2013-04-10  WooHyun Jung
+
+        * Edje: When cursor is located to each edge, entry now doesn't grab events for cursor movement.
+
 2013-04-09  Jérémy Zurcher (jeyzu)
 
         * Eina: Add eina_inlist_first and eina_inlist_last

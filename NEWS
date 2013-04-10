@@ -229,3 +229,4 @@ Fixes:
     * Evas: Fix over redrawing of Evas_Map when applied on smart object.
     * Evas font: Fix a bug with cluster size calculation with texts ending
 	with ligatures.
+    * Edje entry: When cursor is located to each edge, entry now doesn't grab events for cursor movement.
