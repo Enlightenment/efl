@@ -17,7 +17,6 @@
  * @{
  */
 
-
 #define ELM_OBJ_GRID_CLASS elm_obj_grid_class_get()
 
 const Eo_Class *elm_obj_grid_class_get(void) EINA_CONST;
@@ -26,7 +25,6 @@ extern EAPI Eo_Op ELM_OBJ_GRID_BASE_ID;
 
 enum
 {
-
    ELM_OBJ_GRID_SUB_ID_SIZE_SET,
    ELM_OBJ_GRID_SUB_ID_SIZE_GET,
    ELM_OBJ_GRID_SUB_ID_PACK,
@@ -37,7 +35,6 @@ enum
 };
 
 #define ELM_OBJ_GRID_ID(sub_id) (ELM_OBJ_GRID_BASE_ID + sub_id)
-
 
 /**
  * @def elm_obj_grid_size_set
@@ -215,9 +212,9 @@ EAPI void         elm_grid_pack_get(Evas_Object *subobj, Evas_Coord *x, Evas_Coo
  * @param obj The grid object
  *
  * @note This is a duplicate of the list kept by the grid internally.
-         It's up to the user to destroy it when it no longer needs it.
-			It's possible to remove objects from the grid when walking this
-			list, but these removals won't be reflected on it.
+ * It's up to the user to destroy it when it no longer needs it.
+ * It's possible to remove objects from the grid when walking this
+ * list, but these removals won't be reflected on it.
  *
  * @ingroup Grid
  */
