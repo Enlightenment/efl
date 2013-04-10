@@ -6,6 +6,8 @@
 
         * Evas: Add glx buffer age support for automatic partial
           redraw in glx.
+        * Evas: Support GLX_MESA_release_buffers extension to release
+          unused aux buffers.
 
 2013-04-09  Jérémy Zurcher (jeyzu)
 

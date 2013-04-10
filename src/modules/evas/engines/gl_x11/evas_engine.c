@@ -2,6 +2,12 @@
 #include "evas_engine.h"
 #include "evas_gl_core_private.h"
 
+//#define TIMDBG 1
+#ifdef TIMDBG
+# include <sys/time.h>
+# include <unistd.h>
+#endif
+
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
@@ -89,7 +95,53 @@ void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d)
 int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 const char *(*glsym_glXQueryExtensionsString) (Display *a, int screen) = NULL;
+void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
 
+#endif
+
+#ifdef TIMDBG
+static double
+gettime(void)
+{
+   struct timeval      timev;
+   
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
+static void
+measure(int end, const char *name)
+{
+   FILE *fs; 
+   static unsigned long user = 0, kern = 0, user2 = 0, kern2 = 0;
+   static double t = 0.0, t2 = 0.0;
+   unsigned long u = 0, k = 0;
+   
+   fs = fopen("/proc/self/stat", "rb");
+   if (fs) {
+      fscanf(fs, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s "
+             "%lu %lu %*s", &u, &k);
+      fclose(fs);
+   }
+   if (end)
+     {
+        long hz;
+        
+        t2 = gettime();
+        user2 = u;
+        kern2 = k;
+        hz = sysconf(_SC_CLK_TCK);
+        fprintf(stderr, "(%8lu %8lu) k=%4lu u=%4lu == tot=%4lu@%4li in=%3.5f < %s\n", 
+                user, kern, kern2 - kern, user2 - user, 
+                (kern2 - kern) + (user2 - user), hz, t2 - t, name);
+     }
+   else
+     {
+        user = u;
+        kern = k;
+        t = gettime();
+     }
+}
 #endif
 
 //----------------------------------------------------------//
@@ -156,8 +208,8 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    EGLSurface sfc = (EGLSurface)surface;
    EGLDisplay dpy = re->win->egl_disp; //eglGetCurrentDisplay();
 
-   if ((context==NULL) && (surface==NULL))
-       {
+   if ((!context) && (!surface))
+     {
         ret = eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
@@ -165,7 +217,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
              return 0;
           }
         return 1;
-       }
+     }
 
    if ((eglGetCurrentContext() != ctx) ||
        (eglGetCurrentSurface(EGL_READ) != sfc) ||
@@ -191,7 +243,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    GLXContext ctx = (GLXContext)context;
    Window     sfc = (Window)surface;
 
-   if ((context==NULL) && (surface==NULL))
+   if ((!context) && (!surface))
      {
         ret = glXMakeCurrent(re->info->info.display, None, NULL); 
         if (!ret)
@@ -601,10 +653,16 @@ gl_symbols(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
 
+   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsStringEXT", glsym_func_const_char_ptr);
+   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsStringARB", glsym_func_const_char_ptr);
+   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
+
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
 
    FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
+
+   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", glsym_func_void);
 
 #endif
 
@@ -626,9 +684,12 @@ gl_extn_veto(Render_Engine *re)
           {
              extn_have_buffer_age = 0;
           }
-//        if (!strstr(str, ""))
-//          {
-//          }
+     }
+   else
+     {
+        if (getenv("EVAS_GL_INFO"))
+          printf("NO EGL EXTN!\n");
+        extn_have_buffer_age = 0;
      }
 #else
    if (glsym_glXQueryExtensionsString)
@@ -652,6 +713,31 @@ gl_extn_veto(Render_Engine *re)
           {
              extn_have_buffer_age = 0;
           }
+        if (!strstr(str, "GLX_EXT_swap_control"))
+          {
+             glsym_glXSwapIntervalEXT = NULL;
+          }
+        if (!strstr(str, "GLX_SGI_swap_control"))
+          {
+             glsym_glXSwapIntervalSGI = NULL;
+          }
+        if (!strstr(str, "GLX_MESA_release_buffers"))
+          {
+             glsym_glXReleaseBuffersMESA = NULL;
+          }
+     }
+   else
+     {
+        if (getenv("EVAS_GL_INFO"))
+          printf("NO GLX EXTN!\n");
+        glsym_glXBindTexImage = NULL;
+        glsym_glXReleaseTexImage = NULL;
+        glsym_glXGetVideoSync = NULL;
+        glsym_glXWaitVideoSync = NULL;
+        extn_have_buffer_age = 0;
+        glsym_glXSwapIntervalEXT = NULL;
+        glsym_glXSwapIntervalSGI = NULL;
+        glsym_glXReleaseBuffersMESA = NULL;
      }
 #endif
 }
@@ -932,13 +1018,22 @@ eng_output_free(void *data)
 #endif
         if (re->win)
           {
+#ifdef GL_GLES
              eng_window_free(re->win);
+#else        
+             Display *disp = re->win->disp;
+             Window win = re->win->win;
+             eng_window_free(re->win);
+             if (glsym_glXReleaseBuffersMESA)
+               glsym_glXReleaseBuffersMESA(disp, win);
+#endif
              gl_wins--;
 
              // NEW_EVAS_GL
-             if (gl_wins==0)
-                evgl_engine_destroy(re->evgl_engine);
+             if (gl_wins == 0)
+               evgl_engine_destroy(re->evgl_engine);
           }
+        
         evas_common_tilebuf_free(re->tb);
         if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
         if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
@@ -1109,7 +1204,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                   unsigned int age = 0;
                   
                   if (glsym_glXQueryDrawable)
-                    glsym_glXQueryDrawable(re->win->disp, re->win->win,
+                    glsym_glXQueryDrawable(re->win->disp, re->win->glxwin,
                                            GLX_BACK_BUFFER_AGE_EXT, &age);
 #endif
                   if (extn_have_buffer_age)
@@ -1118,10 +1213,9 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                        else if (age == 2) re->mode = MODE_DOUBLE;
                        else if (age == 3) re->mode = MODE_TRIPLE;
                        else re->mode = MODE_FULL;
-                       if (age != re->prev_age) re->mode = MODE_FULL;
+                       if ((int)age != re->prev_age) re->mode = MODE_FULL;
                        re->prev_age = age;
                     }
-                  else re->mode = MODE_FULL;
                }
              if (re->lost_back)
                {
@@ -1337,7 +1431,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                   re->vsync = 1;
                }
           }
-        if (glsym_glXSwapIntervalSGI)
+        else if (glsym_glXSwapIntervalSGI)
           {
              if (!re->vsync)
                {
@@ -1363,7 +1457,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
    // XXX: if partial swaps can be done use re->rects
+//   measure(0, "swap");
    glXSwapBuffers(re->win->disp, re->win->win);
+//   measure(1, "swap");
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
