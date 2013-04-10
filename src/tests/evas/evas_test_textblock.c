@@ -648,6 +648,332 @@ START_TEST(evas_textblock_cursor)
 }
 END_TEST
 
+START_TEST(evas_textblock_split_cursor)
+{
+#ifdef HAVE_FRIBIDI
+   START_TB_TEST();
+   Evas_Coord x, w, x2, w2;
+   Evas_Coord nw, nh;
+   Evas_Coord cx, cy, cx2, cy2;
+
+   /* Split cursor in LTR paragraph. */
+                                            /*0123456789  10  123  14  5678901234 */
+   evas_object_textblock_text_markup_set(tb, "test נסיון\u202babc\u202cנסיון bang");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+
+   /* Logical cursor after "test " */
+   evas_textblock_cursor_pos_set(cur, 5);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 4);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   fail_if(cx != (x + w));
+   fail_if(cx2 != (x2 + w2));
+
+   /* Logical cursor before " bang" */
+   evas_textblock_cursor_pos_set(cur, 20);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 19);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   fail_if(cx != x);
+   fail_if(cx2 != x2);
+
+   /* Logical cursor before "a" */
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 9);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   fail_if(cx != x);
+   fail_if(cx2 != x2);
+
+   /* Logical cursor after "c" */
+   evas_textblock_cursor_pos_set(cur, 15);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 13);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   fail_if(cx != (x + w));
+   fail_if(cx2 != (x2 + w2));
+
+   /* Logical cursor in the beginning */
+   evas_textblock_cursor_line_char_first(cur);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+
+   /* Logical cursor in the end */
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 24);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   fail_if(cx != (x + w));
+
+   /* Logical cursor on the first pos */
+   evas_textblock_cursor_pos_set(cur, 1);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+
+   /* Split cursor in RTL paragraph. */
+                                           /*              1                2
+                                              0123456789   0  12345  6   7890123456 */
+   evas_object_textblock_text_markup_set(tb, "שלום test \u202aעברית\u202c efl נסיון");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+
+   /* Logical cursor before "test" */
+   evas_textblock_cursor_pos_set(cur, 4);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   evas_textblock_cursor_pos_set(cur, 5);
+
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   fail_if(cx != x);
+   fail_if(cx2 != x2);
+
+   /* Logical cursor after " efl" */
+   evas_textblock_cursor_pos_set(cur, 21);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 20);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   fail_if(cx != (x + w));
+   fail_if(cx2 != (x2 + w2));
+
+   /* Logical cursor before " efl" */
+   evas_textblock_cursor_pos_set(cur, 17);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 15);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   fail_if(cx != x2);
+   fail_if(cx2 != x);
+
+   /* Logical cursor after "test " */
+   evas_textblock_cursor_pos_set(cur, 11);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 9);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   fail_if(cx != (x + w));
+   fail_if(cx2 != (x2 + w2));
+
+   /* Logical cursor in the beginning */
+   evas_textblock_cursor_line_char_first(cur);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   fail_if(cx != (x + w));
+
+   /* Logical cursor in the end */
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 26);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+
+   /* Corner cases for split cursor. */
+
+   /* End of line in LTR paragraph */
+                                             /*         1
+                                              01234567890123  4   567   */
+   evas_object_textblock_text_markup_set(tb, "test נסיוןشسيب\u202babc");
+   evas_textblock_cursor_line_char_last(cur);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 4);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   fail_if(cx != (x + w));
+   fail_if(cx2 != (x2 + w2));
+
+   /* End of line in RTL paragraph */
+                                          /*            1              2
+                                              0123456789012345678   9  0123 */
+   evas_object_textblock_text_markup_set(tb, "נסיוןشسي testпривет\u202aשלום");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw, nh);
+
+   evas_textblock_cursor_line_char_last(cur);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, &cx2, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 8);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   evas_textblock_cursor_pos_set(cur, 9);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+   fail_if(cx2 != x2);
+
+   /* Cursor is between items of the same direction */
+   evas_textblock_cursor_pos_set(cur, 13);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+
+   /* Cursor type is UNDER */
+   evas_textblock_cursor_pos_set(cur, 0);
+   fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+                                                    NULL, NULL, NULL, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_UNDER));
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+
+   /* Multiline */
+   Evas_Coord ly;
+   int i;
+                                                      /* 012345678901234 */
+   evas_object_textblock_text_markup_set(tb, "<wrap=char>testשלוםشسيبefl");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   nh = nh * 15;
+   evas_object_resize(tb, nw, nh);
+
+   for (i = 0; i < nw; i++)
+     {
+        evas_object_resize(tb, i, nh);
+
+        evas_textblock_cursor_pos_set(cur, 12);
+        fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
+                                                         NULL, &cx2, &cy2, NULL, NULL,
+                                                         EVAS_TEXTBLOCK_CURSOR_BEFORE));
+        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        fail_if(cy != ly);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+        fail_if(cx != x);
+        evas_textblock_cursor_pos_set(cur, 11);
+        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        fail_if(cy2 != ly);
+        evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+        fail_if(cx2 != x2);
+     }
+                                                      /* 01234567890123456789 */
+   evas_object_textblock_text_markup_set(tb, "<wrap=char>נסיוןhelloприветשלום");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   nh = nh * 20;
+   evas_object_resize(tb, nw, nh);
+
+   for (i = 0; i < nw; i++)
+     {
+        evas_object_resize(tb, i, nh);
+
+        evas_textblock_cursor_pos_set(cur, 16);
+        fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
+                                                         NULL, &cx2, &cy2, NULL, NULL,
+                                                         EVAS_TEXTBLOCK_CURSOR_BEFORE));
+        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        fail_if(cy != ly);
+        evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+        fail_if(cx != (x + w));
+        evas_textblock_cursor_pos_set(cur, 15);
+        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        fail_if(cy2 != ly);
+        evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+        fail_if(cx2 != (x2 + w2));
+     }
+
+   /* Testing multiline, when only RTL item is in the line. */
+                                                      /* 012345678901234567890123 */
+   evas_object_textblock_text_markup_set(tb, "<wrap=char>testtesttestтестשלוםشسيب");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   nh = nh * 23;
+   evas_object_resize(tb, nw, nh);
+
+   evas_textblock_cursor_pos_set(cur, 15);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   /* Resizing textblock, so RTL item will be on the next line.*/
+   evas_object_resize(tb, x + w, nh);
+
+   evas_textblock_cursor_pos_set(cur, 24);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
+                                                    NULL, &cx2, &cy2, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 16);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   fail_if(cx != (x + w));
+   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   fail_if(cy != ly);
+
+   evas_textblock_cursor_pos_set(cur, 23);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
+   fail_if(cx2 != x2);
+   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   fail_if(cy2 != ly);
+
+   /* Testing multiline, when only LTR item is in the line. */
+                                                      /* 012345678901234567890123 */
+   evas_object_textblock_text_markup_set(tb, "<wrap=char>שלוםשלוםשלוםشسيبtestтест");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   nh = nh * 23;
+   evas_object_resize(tb, nw, nh);
+
+   evas_textblock_cursor_pos_set(cur, 15);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
+   /* Resizing textblock, so LTR item will be on the next line.*/
+   evas_object_resize(tb, nw - x, nh);
+
+   evas_textblock_cursor_pos_set(cur, 24);
+   fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
+                                                    NULL, &cx2, &cy2, NULL, NULL,
+                                                    EVAS_TEXTBLOCK_CURSOR_BEFORE));
+   evas_textblock_cursor_pos_set(cur, 16);
+   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
+   fail_if(cx != x);
+   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   fail_if(cy != ly);
+
+   evas_textblock_cursor_pos_set(cur, 23);
+   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
+   fail_if(cx2 != (x2 + w2));
+   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   fail_if(cy2 != ly);
+
+   END_TB_TEST();
+#endif
+}
+END_TEST
+
 START_TEST(evas_textblock_format_removal)
 {
    START_TB_TEST();
@@ -2318,6 +2644,7 @@ void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
    tcase_add_test(tc, evas_textblock_cursor);
+   tcase_add_test(tc, evas_textblock_split_cursor);
    tcase_add_test(tc, evas_textblock_size);
    tcase_add_test(tc, evas_textblock_editing);
    tcase_add_test(tc, evas_textblock_style);

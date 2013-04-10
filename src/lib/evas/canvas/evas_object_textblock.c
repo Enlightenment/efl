@@ -8950,21 +8950,43 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
    return EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(text[cur->pos]);
 }
 
+#ifdef BIDI_SUPPORT
+static Evas_Object_Textblock_Line*
+_find_layout_line_by_item(Evas_Object_Textblock_Paragraph *par, Evas_Object_Textblock_Item *_it)
+{
+   Evas_Object_Textblock_Line *ln;
+
+   EINA_INLIST_FOREACH(par->lines, ln)
+     {
+        Evas_Object_Textblock_Item *it;
+
+        EINA_INLIST_FOREACH(ln->items, it)
+          {
+             if (_it == it)
+               return ln;
+          }
+     }
+   return NULL;
+}
+#endif
+
 EAPI Eina_Bool
 evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype)
 {
-   const Evas_Textblock_Cursor *dir_cur;
-   Evas_Textblock_Cursor cur2;
    if (!cur) return EINA_FALSE;
    Evas_Object_Textblock *o = eo_data_get(cur->obj, MY_CLASS);
    if (!o->formatted.valid) _relayout(cur->obj);
 
-   dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
         evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
         return EINA_FALSE;
      }
+
+#ifdef BIDI_SUPPORT
+#define IS_RTL(par) ((par) % 2)
+#define IS_DIFFERENT_DIR(l1, l2) ((IS_RTL(l1) && (!IS_RTL(l2))) || \
+                                  ((!IS_RTL(l1)) && IS_RTL(l2)))
    else
      {
         Evas_Object_Textblock_Line *ln = NULL;
@@ -8972,74 +8994,159 @@ evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_C
         _find_layout_item_match(cur, &ln, &it);
         if (ln && it)
           {
-             if (cw) *cw = 0;
-             if (cw2) *cw2 = 0;
-             /* If we are at the start or the end of the item there's a chance
-              * we'll want a split cursor.
-              * FIXME: Handle the last char of the last paragraph.
-              * FIXME: Handle multiple items of the same direction.
-              * FIXME: Handle items across different lines.. */
-             if (cur->pos == it->text_pos)
+             if (ln->par->is_bidi)
                {
-                  Evas_BiDi_Direction itdir = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-                     _ITEM_TEXT(it)->text_props.bidi_dir : _ITEM_FORMAT(it)->bidi_dir;
+                  if (cw) *cw = 0;
+                  if (cw2) *cw2 = 0;
+
+                  /* If we are at the start or the end of the item there's a chance
+                   * we'll want a split cursor.  */
                   Evas_Object_Textblock_Item *previt = NULL;
-                  Evas_BiDi_Direction previtdir = EVAS_BIDI_DIRECTION_NEUTRAL;
-                  /* Get the logically previous item. */
+                  Evas_Object_Textblock_Item *it1 = NULL, *it2 = NULL;
+                  Evas_Coord adv1 = 0, adv2 = 0;
+
+                  if (cur->pos == it->text_pos)
                     {
-                       Eina_List *itr;
-                       Evas_Object_Textblock_Item *ititr;
-                       EINA_LIST_FOREACH(ln->par->logical_items, itr, ititr)
+                       EvasBiDiLevel par_level, it_level, previt_level;
+
+                       _layout_update_bidi_props(o, ln->par);
+                       par_level = *(ln->par->bidi_props->embedding_levels);
+                       it_level = ln->par->bidi_props->embedding_levels[it->text_pos];
+                       /* Get the logically previous item. */
                          {
-                            if (ititr == it)
-                               break;
-                            previt = ititr;
+                            Eina_List *itr;
+                            Evas_Object_Textblock_Item *ititr;
+
+                            EINA_LIST_FOREACH(ln->par->logical_items, itr, ititr)
+                              {
+                                 if (ititr == it)
+                                   break;
+                                 previt = ititr;
+                              }
+
+                            if (previt)
+                              {
+                                 previt_level = ln->par->bidi_props->embedding_levels[previt->text_pos];
+                              }
                          }
 
-                       if (previt)
+                       if (previt && (it_level != previt_level))
                          {
-                            previtdir = (previt->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-                               _ITEM_TEXT(previt)->text_props.bidi_dir : _ITEM_FORMAT(previt)->bidi_dir;
+                            Evas_Object_Textblock_Item *curit = NULL, *curit_opp = NULL;
+                            EvasBiDiLevel cur_level;
+
+                            if (it_level > previt_level)
+                              {
+                                 curit = it;
+                                 curit_opp = previt;
+                                 cur_level = it_level;
+                              }
+                            else
+                              {
+                                 curit = previt;
+                                 curit_opp = it;
+                                 cur_level = previt_level;
+                              }
+
+                            if (((curit == it) && (!IS_RTL(par_level))) ||
+                                ((curit == previt) && (IS_RTL(par_level))))
+                              {
+                                 adv1 = (IS_DIFFERENT_DIR(cur_level, par_level)) ?
+                                                          curit_opp->adv : 0;
+                                 adv2 = curit->adv;
+                              }
+                            else if (((curit == previt) && (!IS_RTL(par_level))) ||
+                                     ((curit == it) && (IS_RTL(par_level))))
+                              {
+                                 adv1 = (IS_DIFFERENT_DIR(cur_level, par_level)) ?
+                                                          0 : curit->adv;
+                                 adv2 = 0;
+                              }
+
+                            if (!IS_DIFFERENT_DIR(cur_level, par_level))
+                              curit_opp = curit;
+
+                            it1 = curit_opp;
+                            it2 = curit;
                          }
+                       /* Clear the bidi props because we don't need them anymore. */
+                       evas_bidi_paragraph_props_unref(ln->par->bidi_props);
+                       ln->par->bidi_props = NULL;
+                    }
+                  /* Handling last char in line (or in paragraph).
+                   * T.e. prev condition didn't work, so we are not standing in the beginning of item,
+                   * but in the end of line or paragraph. */
+                  else if (evas_textblock_cursor_eol_get(cur))
+                    {
+                       EvasBiDiLevel par_level, it_level;
+
+                       _layout_update_bidi_props(o, ln->par);
+                       par_level = *(ln->par->bidi_props->embedding_levels);
+                       it_level = ln->par->bidi_props->embedding_levels[it->text_pos];
+
+                       if (it_level > par_level)
+                         {
+                            Evas_Object_Textblock_Item *lastit = it;
+
+                            if (IS_RTL(par_level)) /* RTL par*/
+                              {
+                                 /*  We know, that all the items before current are of the same or bigger embedding level.
+                                  *  So search backwards for the first one. */
+                                 while (EINA_INLIST_GET(lastit)->prev)
+                                   {
+                                      lastit = _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(lastit)->prev);
+                                   }
+
+                                 adv1 = 0;
+                                 adv2 = it->adv;
+                              }
+                            else /* LTR par */
+                              {
+                                 /*  We know, that all the items after current are of bigger or same embedding level.
+                                  *  So search forward for the last one. */
+                                 while (EINA_INLIST_GET(lastit)->next)
+                                   {
+                                      lastit = _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(lastit)->next);
+                                   }
+
+                                 adv1 = lastit->adv;
+                                 adv2 = 0;
+                              }
+
+                            it1 = lastit;
+                            it2 = it;
+                         }
+                       /* Clear the bidi props because we don't need them anymore. */
+                       evas_bidi_paragraph_props_unref(ln->par->bidi_props);
+                       ln->par->bidi_props = NULL;
                     }
 
-                  if (previt && (itdir != previtdir))
+                  if (it1 && it2)
                     {
-                       Evas_Object_Textblock_Item *curit = NULL;
-                       /* If the current dir is different than the paragraph dir
-                        * this is our item. */
-                       if (itdir != ln->par->direction)
-                         {
-                            curit = it;
-                         }
-                       else
-                         {
-                            curit = previt;
-                         }
+                       Evas_Object_Textblock_Line *ln1 = NULL, *ln2 = NULL;
+                       ln1 = _find_layout_line_by_item(ln->par, it1);
+                       if (cx) *cx = ln1->x + it1->x + adv1;
+                       if (cy) *cy = ln1->par->y + ln1->y;
+                       if (ch) *ch = ln1->h;
 
-                       if (((curit == it) && (ln->par->direction == EVAS_BIDI_DIRECTION_LTR)) ||
-                          ((curit == previt) && (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)))
-                         {
-                            if (cx) *cx = ln->x + curit->x;
-                            if (cx2) *cx2 = ln->x + curit->x + curit->w;
-                         }
-                       else
-                         {
-                            if (cx) *cx = ln->x + curit->x + curit->w;
-                            if (cx2) *cx2 = ln->x + curit->x;
-                         }
+                       ln2 = _find_layout_line_by_item(ln->par, it2);
+                       if (cx2) *cx2 = ln2->x + it2->x + adv2;
+                       if (cy2) *cy2 = ln2->par->y + ln2->y;
+                       if (ch2) *ch2 = ln2->h;
 
-                       if (cy) *cy = ln->par->y + ln->y;
-                       if (ch) *ch = curit->h;
-
-                       if (cy2) *cy2 = ln->par->y + ln->y;
-                       if (ch2) *ch2 = curit->h;
                        return EINA_TRUE;
                     }
                }
           }
      }
-
+#undef IS_DIFFERENT_DIR
+#undef IS_RTL
+#else
+   (void) cx2;
+   (void) cy2;
+   (void) cw2;
+   (void) ch2;
+#endif
    evas_textblock_cursor_geometry_get(cur, cx, cy, cw, ch, NULL, ctype);
    return EINA_FALSE;
 }

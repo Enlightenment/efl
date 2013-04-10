@@ -11628,8 +11628,30 @@ EAPI char                                    *evas_textblock_cursor_range_text_g
  */
 EAPI char                                    *evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-/** FIXME: doc.
- * The cw2 and etc are not valid if false is returned. */
+/**
+ * Returns the geometry of two cursors ("split cursor"), if logical cursor is
+ * between LTR/RTL text, also considering paragraph direction.
+ * Upper cursor is shown for the text of the same direction as paragraph,
+ * lower cursor - for opposite.
+ *
+ * Split cursor geometry is valid only  in '|' cursor mode.
+ * In this case @c EINA_TRUE is returned and cx2, cy2, cw2, ch2 are set,
+ * otherwise it behaves like cursor_geometry_get.
+ *
+ * @param[in] cur the cursor.
+ * @param[out] cx the x of the cursor (or upper cursor)
+ * @param[out] cy the y of the cursor (or upper cursor)
+ * @param[out] cw the width of the cursor (or upper cursor)
+ * @param[out] ch the height of the cursor (or upper cursor)
+ * @param[out] cx2 the x of the lower cursor
+ * @param[out] cy2 the y of the lower cursor
+ * @param[out] cw2 the width of the lower cursor
+ * @param[out] ch2 the height of the lower cursor
+ * @param[in] dir the direction of the cursor, can be NULL.
+ * @param[in] ctype the type of the cursor.
+ * @return @c EINA_TRUE for split cursor, @c EINA_FALSE otherwise
+ * @since 1.8
+ */
 EAPI Eina_Bool
 evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype);
 

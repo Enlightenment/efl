@@ -144,6 +144,7 @@ Improvements:
     * Use the right macro to disable fcntl.
     * Edje: use Eina_Cow to reduce memory usage.
     * Embryo: use eina_file_mkstemp().
+    * Evas textblock : Added split cursor for BiDi text
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

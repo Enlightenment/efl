@@ -2409,14 +2409,14 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
    /* A proxy to the main cursor. */
    if (rp->part->cursor_mode == EDJE_ENTRY_CURSOR_MODE_BEFORE)
      {
-        en->cursor_fg2 = evas_object_image_add(rp->edje->base->evas);
+        en->cursor_fg2 = evas_object_image_add(ed->base->evas);
         evas_object_image_source_set(en->cursor_fg2, en->cursor_fg);
         evas_object_image_fill_set(en->cursor_fg2, 0, 0, 1, 1);
-        evas_object_smart_member_add(en->cursor_fg2, rp->edje->obj);
+        evas_object_smart_member_add(en->cursor_fg2, ed->obj);
         evas_object_stack_above(en->cursor_fg2, rp->object);
         evas_object_clip_set(en->cursor_fg2, evas_object_clip_get(rp->object));
         evas_object_pass_events_set(en->cursor_fg2, EINA_TRUE);
-        _edje_subobj_register(en->rp->edje, en->cursor_fg2);
+        _edje_subobj_register(en->ed, en->cursor_fg2);
      }
 
    evas_object_textblock_legacy_newline_set(rp->object, EINA_TRUE);
