@@ -20,6 +20,8 @@ static Eo_Class_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
 static Eo_Op _eo_ops_last_id = 0;
 
+static size_t _eo_sz = 0;
+
 static void _eo_condtor_reset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 static inline Eo *_eo_ref(Eo *obj);
@@ -1369,15 +1371,13 @@ _eo_data_get(const Eo *obj, const Eo_Class *klass)
              while (doff_itr->klass)
                {
                   if (doff_itr->klass == klass)
-                    return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
-                       doff_itr->offset;
+                    return ((char *) obj) + _eo_sz + doff_itr->offset;
                   doff_itr++;
                }
           }
         else
           {
-             return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
-                klass->data_offset;
+             return ((char *) obj) + _eo_sz + klass->data_offset;
           }
      }
 
@@ -1419,6 +1419,8 @@ eo_init(void)
      return EINA_TRUE;
 
    eina_init();
+
+   _eo_sz = EO_ALIGN_SIZE(sizeof (Eo));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
