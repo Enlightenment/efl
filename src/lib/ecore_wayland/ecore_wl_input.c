@@ -38,15 +38,15 @@
 typedef struct _Ecore_Wl_Mouse_Down_Info
 {
    EINA_INLIST;
-   void         *dev;
+   void *dev;
    int last_win;
    int last_last_win;
    int last_event_win;
    int last_last_event_win;
    unsigned int last_time;
    unsigned int last_last_time;
-   Eina_Bool    did_double : 1;
-   Eina_Bool    did_triple : 1;
+   Eina_Bool did_double : 1;
+   Eina_Bool did_triple : 1;
 } Ecore_Wl_Mouse_Down_Info;
 
 Ecore_Wl_Dnd *glb_dnd = NULL;
@@ -380,7 +380,6 @@ _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum 
         input->touch = NULL;
      }
 }
-
 
 static void 
 _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy)
@@ -1082,6 +1081,7 @@ static void
 _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
+   Ecore_Wl_Mouse_Down_Info *down_info;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1108,9 +1108,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, voi
 
    /* handling double and triple click, taking into account multiple input
     * devices */
-   Ecore_Wl_Mouse_Down_Info *down_info = _ecore_wl_mouse_down_info_get(device);
-
-   if (down_info)
+   if ((down_info = _ecore_wl_mouse_down_info_get(device)))
      {
         if (down_info->did_triple)
           {
@@ -1187,6 +1185,7 @@ static void
 _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void *device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
+   Ecore_Wl_Mouse_Down_Info *down_info;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1211,8 +1210,7 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, void 
    ev->double_click = 0;
    ev->triple_click = 0;
 
-   Ecore_Wl_Mouse_Down_Info *down_info = _ecore_wl_mouse_down_info_get(device);
-   if (down_info)
+   if ((down_info = _ecore_wl_mouse_down_info_get(device)))
      {
         if (down_info->did_double)
           ev->double_click = 1;
@@ -1288,8 +1286,10 @@ _ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *sour
 static void
 _ecore_wl_mouse_down_info_clear(void)
 {
-   Eina_Inlist *l = _ecore_wl_mouse_down_info_list;
+   Eina_Inlist *l;
    Ecore_Wl_Mouse_Down_Info *info = NULL;
+
+   l = _ecore_wl_mouse_down_info_list;
    while (l)
      {
         info = EINA_INLIST_CONTAINER_GET(l, Ecore_Wl_Mouse_Down_Info);
@@ -1302,10 +1302,11 @@ _ecore_wl_mouse_down_info_clear(void)
 static Ecore_Wl_Mouse_Down_Info *
 _ecore_wl_mouse_down_info_get(void *dev)
 {
-   Eina_Inlist *l = _ecore_wl_mouse_down_info_list;
+   Eina_Inlist *l = NULL;
    Ecore_Wl_Mouse_Down_Info *info = NULL;
 
    //Return the exist info
+   l = _ecore_wl_mouse_down_info_list;
    EINA_INLIST_FOREACH(l, info)
      if (info->dev == dev) return info;
 
