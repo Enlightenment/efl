@@ -801,6 +801,7 @@ struct _RGBA_Image
    struct {
       LK(lock);
       Eina_List *list;
+      Eina_Hash *hash;
       unsigned long long orig_usage;
       unsigned long long usage_count;
       int populate_count;

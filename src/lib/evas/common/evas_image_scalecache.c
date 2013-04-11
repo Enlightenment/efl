@@ -27,7 +27,16 @@
 #define SCALE_CACHE_SIZE 4 * 1024 * 1024
 //#define SCALE_CACHE_SIZE 0
 
+typedef struct _ScaleitemKey ScaleitemKey;
 typedef struct _Scaleitem Scaleitem;
+
+struct _ScaleitemKey
+{
+   int src_x, src_y;
+   unsigned int src_w, src_h;
+   unsigned int dst_w, dst_h;
+   Eina_Bool smooth : 1;   
+};
 
 struct _Scaleitem
 {
@@ -35,13 +44,13 @@ struct _Scaleitem
    unsigned long long usage;
    unsigned long long usage_count;
    RGBA_Image *im, *parent_im;
-   int src_x, src_y;
-   unsigned int src_w, src_h;
-   unsigned int dst_w, dst_h;
+   Eina_List *item;
    unsigned int flop;
    unsigned int size_adjust;
+
+   ScaleitemKey key;
+
    Eina_Bool forced_unload : 1;
-   Eina_Bool smooth : 1;
    Eina_Bool populate_me : 1;
 };
 
@@ -59,6 +68,49 @@ static unsigned int max_flop_count = MAX_FLOP_COUNT;
 static unsigned int max_scale_items = MAX_SCALEITEMS;
 static unsigned int min_scale_uses = MIN_SCALE_USES;
 #endif
+
+static int
+_evas_common_scalecache_key_hash(const void *key, int key_length EINA_UNUSED)
+{
+   const ScaleitemKey *skey;
+   unsigned int tohash;
+   int r;
+
+   skey = key;
+
+   tohash = (skey->src_x ^ skey->src_y) ^ ((skey->src_w ^ skey->src_h) ^ (skey->dst_w ^ skey->dst_h));
+   r = eina_hash_int32(&tohash, sizeof (int));
+
+   return r;
+}
+
+static unsigned int
+_evas_common_scalecache_key_length(const void *key EINA_UNUSED)
+{
+   return sizeof (ScaleitemKey);
+}
+
+static int
+_evas_common_scalecache_key_cmp(const void *key1, int key1_length EINA_UNUSED,
+                                const void *key2, int key2_length EINA_UNUSED)
+{
+   const ScaleitemKey *sk1 = key1;
+   const ScaleitemKey *sk2 = key2;
+
+#define CMP_SKEY(Sk1, Sk2, Name)                 \
+   if (Sk1->Name != Sk2->Name)                   \
+     return Sk1->Name - Sk2->Name;
+
+   CMP_SKEY(sk1, sk2, src_w);
+   CMP_SKEY(sk1, sk2, src_h);
+   CMP_SKEY(sk1, sk2, dst_w);
+   CMP_SKEY(sk1, sk2, dst_h);
+   CMP_SKEY(sk1, sk2, src_x);
+   CMP_SKEY(sk1, sk2, src_y);
+   CMP_SKEY(sk1, sk2, smooth);
+
+   return 0;
+}
 
 void
 evas_common_scalecache_init(void)
@@ -134,7 +186,7 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
              sci->im = NULL;
 
              if (!sci->forced_unload)
-               cache_size -= sci->dst_w * sci->dst_h * 4;
+               cache_size -= sci->key.dst_w * sci->key.dst_h * 4;
              else
                cache_size -= sci->size_adjust;
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
@@ -145,6 +197,8 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
         if (!sci->im)
           free(sci);
      }
+   eina_hash_free(im->cache.hash);
+   im->cache.hash = NULL;
    LKU(im->cache.lock);
 #endif
 }
@@ -175,7 +229,7 @@ evas_common_rgba_image_scalecache_usage_get(Image_Entry *ie)
    LKL(im->cache.lock);
    EINA_LIST_FOREACH(im->cache.list, l, sci)
      {
-        if (sci->im) size += sci->dst_w * sci->dst_h * 4;
+        if (sci->im) size += sci->key.dst_w * sci->key.dst_h * 4;
      }
    LKU(im->cache.lock);
    return size;
@@ -240,36 +294,41 @@ _sci_fix_newest(RGBA_Image *im)
 static Scaleitem *
 _sci_find(RGBA_Image *im,
           RGBA_Draw_Context *dc EINA_UNUSED, int smooth,
-          int src_region_x, int src_region_y,
-          unsigned int src_region_w, unsigned int src_region_h,
-          unsigned int dst_region_w, unsigned int dst_region_h)
+          int src_x, int src_y,
+          unsigned int src_w, unsigned int src_h,
+          unsigned int dst_w, unsigned int dst_h)
 {
    Eina_List *l;
    Scaleitem *sci;
+   ScaleitemKey key;
 
-   EINA_LIST_FOREACH(im->cache.list, l, sci)
+#define SET_SKEY(S, Name)                \
+   S.Name = Name
+
+   if (im->cache.hash)
      {
-        if (
-            (sci->src_w == src_region_w) &&
-            (sci->src_h == src_region_h) &&
-            (sci->dst_w == dst_region_w) &&
-            (sci->dst_h == dst_region_h) &&
-            (sci->src_x == src_region_x) &&
-            (sci->src_y == src_region_y) &&
-            (sci->smooth == smooth)
-            )
+        SET_SKEY(key, src_w);
+        SET_SKEY(key, src_h);
+        SET_SKEY(key, dst_w);
+        SET_SKEY(key, dst_h);
+        SET_SKEY(key, src_x);
+        SET_SKEY(key, src_y);
+        SET_SKEY(key, smooth);
+
+        sci = eina_hash_find(im->cache.hash, &key);
+        if (sci)
           {
-             if (im->cache.list != l)
-               {
-                  im->cache.list = eina_list_promote_list(im->cache.list, l);
-               }
+             im->cache.list = eina_list_promote_list(im->cache.list, sci->item);
              return sci;
           }
      }
+
    if (eina_list_count(im->cache.list) > max_scale_items)
      {
         l = eina_list_last(im->cache.list);
-        sci = l->data;
+        sci = eina_list_data_get(l);
+
+        eina_hash_del(im->cache.hash, &sci->key, sci);
         im->cache.list = eina_list_remove_list(im->cache.list, l);
         if ((sci->usage == im->cache.newest_usage) ||
             (sci->usage_count == im->cache.newest_usage_count))
@@ -281,7 +340,7 @@ _sci_find(RGBA_Image *im,
 
              evas_common_rgba_image_free(&sci->im->cache_entry);
              if (!sci->forced_unload)
-               cache_size -= sci->dst_w * sci->dst_h * 4;
+               cache_size -= sci->key.dst_w * sci->key.dst_h * 4;
              else
                cache_size -= sci->size_adjust;
 //             INF(" 1- %i", sci->dst_w * sci->dst_h * 4);
@@ -302,17 +361,25 @@ try_alloc:
    sci->usage = 0;
    sci->usage_count = 0;
    sci->populate_me = 0;
-   sci->smooth = smooth;
+   sci->key.smooth = smooth;
    sci->forced_unload = 0;
    sci->flop = 0;
    sci->im = NULL;
-   sci->src_x = src_region_x;
-   sci->src_y = src_region_y;
-   sci->src_w = src_region_w;
-   sci->src_h = src_region_h;
-   sci->dst_w = dst_region_w;
-   sci->dst_h = dst_region_h;
+   sci->key.src_x = src_x;
+   sci->key.src_y = src_y;
+   sci->key.src_w = src_w;
+   sci->key.src_h = src_h;
+   sci->key.dst_w = dst_w;
+   sci->key.dst_h = dst_h;
+   if (!im->cache.hash)
+     im->cache.hash = eina_hash_new(_evas_common_scalecache_key_length,
+                                    _evas_common_scalecache_key_cmp,
+                                    _evas_common_scalecache_key_hash,
+                                    NULL,
+                                    3);
+   eina_hash_direct_add(im->cache.hash, &sci->key, sci);
    im->cache.list = eina_list_prepend(im->cache.list, sci);
+   sci->item = im->cache.list;
    return sci;
 }
 
@@ -354,7 +421,7 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
         sci->flop += FLOP_ADD;
 
         if (!sci->forced_unload)
-          cache_size -= sci->dst_w * sci->dst_h * 4;
+          cache_size -= sci->key.dst_w * sci->key.dst_h * 4;
         else
           cache_size -= sci->size_adjust;
 
@@ -529,8 +596,8 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
      {
         if (!sci->im)
           {
-             if ((sci->dst_w < max_dimension) && 
-                 (sci->dst_h < max_dimension))
+             if ((sci->key.dst_w < max_dimension) && 
+                 (sci->key.dst_h < max_dimension))
                {
                   if (sci->flop <= max_flop_count)
                     {
@@ -672,7 +739,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
              used = 0;
              EINA_LIST_FOREACH(im->cache.list, l, sci2)
                {
-                  if (sci2->im) used += sci2->dst_w * sci2->dst_h;
+                  if (sci2->im) used += sci2->key.dst_w * sci2->key.dst_h;
                }
              if ((size < osize) && (used == 0))
                sci->size_adjust = 0;
@@ -772,7 +839,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                }
              else
                {
-                  cache_size += sci->dst_w * sci->dst_h * 4;
+                  cache_size += sci->key.dst_w * sci->key.dst_h * 4;
                }
 //             INF(" + %i @ flop: %i (%ix%i)",
 //                    sci->dst_w * sci->dst_h * 4, sci->flop,
