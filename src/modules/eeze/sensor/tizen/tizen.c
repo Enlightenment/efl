@@ -96,6 +96,75 @@ eeze_to_tizen(Eeze_Sensor_Type type)
      }
 }
 
+/* Reverse mapping from Tizen to eeze sensor types */
+static Eeze_Sensor_Type
+tizen_to_eeze(sesnor_type_e type)
+{
+   switch (type)
+     {
+      case SENSOR_ACCELEROMETER:
+        return EEZE_SENSOR_TYPE_ACCELEROMETER;
+
+      case SENSOR_GRAVITY:
+        return EEZE_SENSOR_TYPE_GRAVITY;
+
+      case SENSOR_LINEAR_ACCELERATION:
+        return EEZE_SENSOR_TYPE_LINEAR_ACCELERATION;
+
+      case SENSOR_DEVICE_ORIENTATION:
+        return EEZE_SENSOR_TYPE_DEVICE_ORIENTATION;
+
+      case SENSOR_MAGNETIC:
+        return EEZE_SENSOR_TYPE_MAGNETIC;
+
+      case SENSOR_ORIENTATION:
+        return EEZE_SENSOR_TYPE_ORIENTATION;
+
+      case SENSOR_GYROSCOPE:
+        return EEZE_SENSOR_TYPE_GYROSCOPE;
+
+      case SENSOR_LIGHT:
+        return EEZE_SENSOR_TYPE_LIGHT;
+
+      case SENSOR_PROXIMITY:
+        return EEZE_SENSOR_TYPE_PROXIMITY;
+
+      case SENSOR_MOTION_SNAP:
+        return EEZE_SENSOR_TYPE_MOTION_SNAP;
+
+      case SENSOR_MOTION_SHAKE:
+        return EEZE_SENSOR_TYPE_MOTION_SHAKE;
+
+      case SENSOR_MOTION_DOUBLETAP:
+        return EEZE_SENSOR_TYPE_MOTION_DOUBLETAP;
+
+      case SENSOR_MOTION_PANNING:
+        return EEZE_SENSOR_TYPE_MOTION_PANNING;
+
+      case SENSOR_MOTION_PANNING_BROWSE:
+        return EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE;
+
+      case SENSOR_MOTION_TILT:
+        return EEZE_SENSOR_TYPE_MOTION_TILT;
+
+      case SENSOR_MOTION_FACEDOWN:
+        return EEZE_SENSOR_TYPE_MOTION_FACEDOWN;
+
+      case SENSOR_MOTION_DIRECTCALL:
+        return EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL;
+
+      case SENSOR_MOTION_SMART_ALERT:
+        return EEZE_SENSOR_TYPE_MOTION_SMART_ALERT;
+
+      case SENSOR_MOTION_NO_MOVE:
+        return EEZE_SENSOR_TYPE_MOTION_NO_MOVE;
+
+      default:
+        ERR("No matching eeze sensor type available.");
+        return -1;
+     }
+}
+
 /* All following callback function work with the same scheme.
  * They are callbacks coming in from the tizen system sensor library. With the
  * data we receive we update the matching sensor object to always have the
@@ -1230,7 +1299,7 @@ eeze_sensor_tizen_sensors_find(void)
         if (supported)
           {
              Eeze_Sensor_Obj *obj = calloc(1, sizeof(Eeze_Sensor_Obj));
-             obj->type = type;
+             obj->type = tizen_to_eeze(type);
              esensor_module->sensor_list = eina_list_append(esensor_module->sensor_list, obj);
           }
      }
