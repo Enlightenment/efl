@@ -142,7 +142,7 @@ EAPI int EEZE_SENSOR_EVENT_TEMPERATURE;
  */
 typedef struct _Eeze_Sensor_Obj
 {
-   unsigned int   type; /**< Sensor type see #Eeze_Sensor_Type */
+   Eeze_Sensor_Type type; /**< Sensor type see #Eeze_Sensor_Type */
    int   accuracy; /**< Accuracy of the sensor value */
    float data[3]; /**< Sensor data depending on the sensor type */
    unsigned long long timestamp; /**< Timestamp of data read */
