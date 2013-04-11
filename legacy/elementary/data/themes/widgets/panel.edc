@@ -924,19 +924,19 @@ group {
          target: "btn_over3";
       }
       program { name: "btn_unclick3";
-         signal: "mouse,up,1";
+         signal: "mouse,clicked,1";
          source: "btn_over2";
          action: SIGNAL_EMIT "elm,action,panel,toggle" "";
       }
       program { name: "highlight_show";
-         signal: "elm,action,focus";
+         signal: "elm,action,focus_highlight,show";
          source: "elm";
          action: STATE_SET "enabled" 0.0;
          transition: ACCELERATE 0.3;
          target: "focus_highlight";
       }
       program { name: "highlight_hide";
-         signal: "elm,action,unfocus";
+         signal: "elm,action,focus_highlight,hide";
          source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
