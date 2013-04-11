@@ -1331,15 +1331,13 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 }
 
 static void
-_evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
+_evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, int off_x, int off_y)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-
-   if (evas_object_is_source_invisible(eo_obj, obj)) return;
-   if (evas_object_is_opaque(eo_obj, obj))
+   if (evas_object_is_source_invisible(obj->object, obj)) return;
+   if (evas_object_is_opaque(obj->object, obj))
      {
         Evas_Coord cox, coy, cow, coh;
+
         cox = obj->cur->cache.clip.x;
         coy = obj->cur->cache.clip.y;
         cow = obj->cur->cache.clip.w;
@@ -1349,7 +1347,7 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
              Evas_Object *eo_oo;
              Evas_Object_Protected_Data *oo;
 
-             eo_oo = eo_obj;
+             eo_oo = obj->object;
              oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
              while (oo->cur->clipper)
                {
@@ -1376,7 +1374,7 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
           {
              Evas_Coord obx, oby, obw, obh;
 
-             obj->func->get_opaque_rect(eo_obj, obj, &obx, &oby, &obw, &obh);
+             obj->func->get_opaque_rect(obj->object, obj, &obx, &oby, &obw, &obh);
              if ((obw > 0) && (obh > 0))
                {
                   obx += off_x;
@@ -1726,7 +1724,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                        /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
                        if (alpha)
-                         _evas_render_cutout_add(eo_e, eo_obj, off_x, off_y);
+                         _evas_render_cutout_add(e, obj, off_x, off_y);
                     }
                }
              if (alpha)
@@ -1794,7 +1792,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                                  obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
                                    (&e->temporary_objects, j);
-                                 _evas_render_cutout_add(eo_e, obj2->object, off_x, off_y);
+                                 _evas_render_cutout_add(e, obj2, off_x, off_y);
                               }
 #endif
                             clean_them |= evas_render_mapped(e, eo_obj, obj, e->engine.data.context,
