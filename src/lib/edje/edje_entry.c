@@ -221,7 +221,7 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
    if (text)
      {
         Edje_Entry_Change_Info *info = NULL;
-        
+
         if (changeinfo)
           {
              info = calloc(1, sizeof(*info));
@@ -229,7 +229,7 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
                {
                   info->insert = EINA_TRUE;
                   info->change.insert.content = eina_stringshare_add(text);
-                  info->change.insert.plain_length = 
+                  info->change.insert.plain_length =
                     eina_unicode_utf8_get_len(info->change.insert.content);
                }
           }
@@ -250,7 +250,7 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
 }
 
 static Edje_Entry_Change_Info *
-_text_filter_text_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, 
+_text_filter_text_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c,
                           const char *text,
                           const char *fmtpre, const char *fmtpost,
                           Eina_Bool clearsel, Eina_Bool changeinfo)
@@ -273,7 +273,7 @@ _text_filter_text_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c,
      {
         char *markup_text;
         Edje_Entry_Change_Info *info = NULL;
-        
+
         markup_text = evas_textblock_text_utf8_to_markup(NULL, text2);
         free(text2);
         if (markup_text)
@@ -387,7 +387,7 @@ _text_filter_markup_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c,
    if (text2)
      {
         Edje_Entry_Change_Info *info;
-        
+
         info = _text_filter_markup_prepend_internal(ed, en, c, text2,
                                                     fmtpre, fmtpost,
                                                     clearsel, changeinfo);
@@ -531,8 +531,8 @@ _sel_start(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 }
 
 static void
-_sel_enable(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, 
-	    Evas_Object *o EINA_UNUSED, Entry *en)
+_sel_enable(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED,
+            Evas_Object *o EINA_UNUSED, Entry *en)
 {
    if (en->have_selection) return;
    en->have_selection = EINA_TRUE;
@@ -1353,7 +1353,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (en->select_allow)
                {
-		 if (shift) _sel_extend(ed, en->cursor, rp->object, en);
+                  if (shift) _sel_extend(ed, en->cursor, rp->object, en);
                   else _sel_clear(ed, en->cursor, rp->object, en);
                }
           }
@@ -1375,7 +1375,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (en->select_allow)
                {
-		 if (shift) _sel_extend(ed, en->cursor, rp->object, en);
+                  if (shift) _sel_extend(ed, en->cursor, rp->object, en);
                   else _sel_clear(ed, en->cursor, rp->object, en);
                }
           }
@@ -1388,7 +1388,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _compose_seq_reset(en);
         if (en->select_allow)
           {
-	     if (shift) _sel_start(en->cursor, rp->object, en);
+             if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         if (evas_textblock_cursor_char_prev(en->cursor))
@@ -1397,7 +1397,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         if (control) evas_textblock_cursor_word_start(en->cursor);
         if (en->select_allow)
           {
-	     if (shift) _sel_extend(ed, en->cursor, rp->object, en);
+             if (shift) _sel_extend(ed, en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,left", rp->part->name);
@@ -1409,7 +1409,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _compose_seq_reset(en);
         if (en->select_allow)
           {
-	     if (shift) _sel_start(en->cursor, rp->object, en);
+             if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         /* If control is pressed, go to the end of the word */
@@ -1418,7 +1418,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (en->select_allow)
           {
-	     if (shift) _sel_extend(ed, en->cursor, rp->object, en);
+             if (shift) _sel_extend(ed, en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,right", rp->part->name);
@@ -1514,7 +1514,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           _curs_lin_start(en->cursor, rp->object, en);
         if (en->select_allow)
           {
-	     if (shift) _sel_extend(ed, en->cursor, rp->object, en);
+             if (shift) _sel_extend(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,home", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1696,12 +1696,12 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift ||
                  evas_object_textblock_legacy_newline_get(rp->object))
                {
-		  _text_filter_format_prepend(ed, en, en->cursor, "br");
+                  _text_filter_format_prepend(ed, en, en->cursor, "br");
                   info->change.insert.content = eina_stringshare_add("<br/>");
                }
              else
                {
-		  _text_filter_format_prepend(ed, en, en->cursor, "ps");
+                  _text_filter_format_prepend(ed, en, en->cursor, "ps");
                   info->change.insert.content = eina_stringshare_add("<ps/>");
                }
              _anchors_get(en->cursor, rp->object, en);
@@ -1754,7 +1754,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
                  _edje_password_show_last)
                {
-		 _edje_entry_hide_visible_password(ed, en->rp);
+                  _edje_entry_hide_visible_password(ed, en->rp);
                   info = _text_filter_text_prepend(ed, en, en->cursor, string,
                                                    "+ password=off",
                                                    "- password",
@@ -1789,7 +1789,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         if (free_string) free(string);
      }
 end:
-   if (!cursor_changed && 
+   if (!cursor_changed &&
        (old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)))
      _edje_emit(ed, "cursor,changed", rp->part->name);
 
@@ -3809,7 +3809,7 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
    Entry *en = NULL;
    char *commit_str = event_info;
    Edje_Entry_Change_Info *info = NULL;
-   
+
    if ((!rp)) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3864,7 +3864,7 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
    else
      {
         info = _text_filter_text_prepend(ed, en, en->cursor, commit_str,
-					 NULL, NULL,
+                                         NULL, NULL,
                                          EINA_TRUE, EINA_TRUE);
      }
 
@@ -3969,7 +3969,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
             _edje_password_show_last)
           {
              Edje_Entry_Change_Info *info;
-             
+
              _edje_entry_hide_visible_password(ed, en->rp);
              info = _text_filter_text_prepend(ed, en, en->cursor,
                                               eina_strbuf_string_get(buf),
