@@ -287,6 +287,18 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
    if ((ca == 0 && obj->cur->render_op == EVAS_RENDER_BLEND) ||
        (cw <= 0) || (ch <= 0)) cvis = EINA_FALSE;
 
+   if (obj->cur->cache.clip.x == cx &&
+       obj->cur->cache.clip.y == cy &&
+       obj->cur->cache.clip.w == cw &&
+       obj->cur->cache.clip.h == ch &&
+       obj->cur->cache.clip.visible == cvis &&
+       obj->cur->cache.clip.r == cr &&
+       obj->cur->cache.clip.g == cg &&
+       obj->cur->cache.clip.b == cb &&
+       obj->cur->cache.clip.a == ca &&
+       obj->cur->cache.clip.dirty == EINA_FALSE)
+     return ;
+
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->cache.clip.x = cx;
