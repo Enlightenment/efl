@@ -11,12 +11,14 @@ EAPI Eo_Op EO_BASE_BASE_ID = 0;
 
 static int event_freeze_count = 0;
 
+typedef struct _Eo_Callback_Description Eo_Callback_Description;
+
 typedef struct
 {
    Eina_Inlist *generic_data;
    Eo ***wrefs;
 
-   Eina_Inlist *callbacks;
+   Eo_Callback_Description *callbacks;
    int walking_list;
    int event_freeze_count;
    Eina_Bool deletions_waiting : 1;
@@ -242,41 +244,58 @@ _wref_destruct(Private_Data *pd)
 
 /* Callbacks */
 
-typedef struct
+struct _Eo_Callback_Description
 {
-   EINA_INLIST;
+   Eo_Callback_Description *next;
    const Eo_Event_Description *event;
    Eo_Event_Cb func;
    void *func_data;
    Eo_Callback_Priority priority;
    Eina_Bool delete_me : 1;
-} Eo_Callback_Description;
+};
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
 {
-   pd->callbacks = eina_inlist_remove(pd->callbacks,
-         EINA_INLIST_GET(cb));
-   free(cb);
+   Eo_Callback_Description *itr, *pitr;
+
+   itr = pitr = pd->callbacks;
+   if (pd->callbacks == cb)
+      pd->callbacks = cb->next;
+
+   for ( ; itr ; )
+     {
+        Eo_Callback_Description *titr = itr;
+        itr = itr->next;
+
+        if (titr == cb)
+          {
+             if (pitr)
+               {
+                  pitr->next = titr->next;
+               }
+             free(titr);
+          }
+        pitr = titr;
+     }
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove_all(Private_Data *pd)
 {
-   Eina_Inlist *initr;
-   Eo_Callback_Description *cb = NULL;
-   EINA_INLIST_FOREACH_SAFE(pd->callbacks, initr, cb)
+   while (pd->callbacks)
      {
-        _eo_callback_remove(pd, cb);
+        Eo_Callback_Description *next = pd->callbacks->next;
+        free(pd->callbacks);
+        pd->callbacks = next;
      }
 }
 
 static void
 _eo_callbacks_clear(Private_Data *pd)
 {
-   Eina_Inlist *itn;
    Eo_Callback_Description *cb = NULL;
 
    /* Abort if we are currently walking the list. */
@@ -289,25 +308,38 @@ _eo_callbacks_clear(Private_Data *pd)
 
    pd->deletions_waiting = EINA_FALSE;
 
-   EINA_INLIST_FOREACH_SAFE(pd->callbacks, itn, cb)
+   for (cb = pd->callbacks ; cb ; )
      {
-        if (cb->delete_me)
+        Eo_Callback_Description *titr = cb;
+        cb = cb->next;
+
+        if (titr->delete_me)
           {
-             _eo_callback_remove(pd, cb);
+             _eo_callback_remove(pd, titr);
           }
      }
 }
 
-static int
-_callback_priority_cmp(const void *_a, const void *_b)
+static void
+_eo_callbacks_sorted_insert(Private_Data *pd, Eo_Callback_Description *cb)
 {
-   const Eo_Callback_Description *a, *b;
-   a = (const Eo_Callback_Description *) _a;
-   b = (const Eo_Callback_Description *) _b;
-   if (a->priority < b->priority)
-      return -1;
+   Eo_Callback_Description *itr, *itrp = NULL;
+   for (itr = pd->callbacks ; itr && (itr->priority < cb->priority) ;
+         itr = itr->next)
+     {
+        itrp = itr;
+     }
+
+   if (itrp)
+     {
+        cb->next = itrp->next;
+        itrp->next = cb;
+     }
    else
-      return 1;
+     {
+        cb->next = pd->callbacks;
+        pd->callbacks = cb;
+     }
 }
 
 static void
@@ -324,8 +356,7 @@ _ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
    cb->func = func;
    cb->func_data = (void *) data;
    cb->priority = priority;
-   pd->callbacks = eina_inlist_sorted_insert(pd->callbacks,
-         EINA_INLIST_GET(cb), _callback_priority_cmp);
+   _eo_callbacks_sorted_insert(pd, cb);
 
    eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, desc, NULL));
 }
@@ -339,7 +370,7 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
    void *user_data = va_arg(*list, void *);
 
    Eo_Callback_Description *cb;
-   EINA_INLIST_FOREACH(pd->callbacks, cb)
+   for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
         if ((cb->event == desc) && (cb->func == func) &&
               (cb->func_data == user_data))
@@ -363,8 +394,6 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-   Eo_Callback_Description *cb;
-
    if (ret) *ret = EINA_TRUE;
 
    if (event_freeze_count || pd->event_freeze_count)
@@ -374,7 +403,8 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
    eo_ref(obj);
    pd->walking_list++;
 
-   EINA_INLIST_FOREACH(pd->callbacks, cb)
+   Eo_Callback_Description *cb;
+   for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
         if (!cb->delete_me && (cb->event == desc))
           {
