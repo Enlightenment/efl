@@ -17,6 +17,9 @@ EDJE_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 installed_edjemainheadersdir = $(includedir)/edje-@VMAJ@
 dist_installed_edjemainheaders_DATA = \
 lib/edje/Edje.h \
+lib/edje/Edje_Common.h \
+lib/edje/Edje_Eo.h \
+lib/edje/Edje_Legacy.h \
 lib/edje/Edje_Edit.h
 
 lib_edje_libedje_la_SOURCES = \
