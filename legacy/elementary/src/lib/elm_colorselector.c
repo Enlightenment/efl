@@ -1151,12 +1151,14 @@ static void
 _item_sizing_eval(Elm_Color_Item *item)
 {
    Evas_Coord minw = -1, minh = -1;
+   Evas_Object *edje;
 
    if (!item) return;
+   edje = elm_layout_edje_get(VIEW(item));
+   if (!edje) return;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   if (VIEW(item) && eo_isa(VIEW(item), EDJE_OBJ_CLASS))
-      edje_object_size_min_restricted_calc(VIEW(item), &minw, &minh, minw, minh);
+   edje_object_size_min_restricted_calc(edje, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(VIEW(item), minw, minh);
 }
 
