@@ -323,25 +323,3 @@ EAPI void eina_mempool_statistics(Eina_Mempool *mp)
    mp->backend.statistics(mp->backend_data);
 }
 
-EAPI unsigned int
-eina_mempool_alignof(unsigned int size)
-{
-   int align;
-
-   if (size <= 2)
-      align = 2;
-   else if (size < 8)
-      align = 4;
-   else
-#if __WORDSIZE == 32
-      align = 8;
-
-#else
-   if (size < 16)
-      align = 8;
-   else
-      align = 16;
-#endif
-
-   return ((size / align) + (size % align ? 1 : 0)) * align;
-}

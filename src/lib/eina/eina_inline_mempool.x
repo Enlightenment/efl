@@ -142,6 +142,38 @@ eina_mempool_free(Eina_Mempool *mp, void *element)
    mp->backend.free(mp->backend_data, element);
 }
 
+static inline unsigned int
+eina_mempool_alignof(unsigned int size)
+{
+   unsigned int align;
+
+   if (EINA_UNLIKELY(size <= 2))
+     {
+        align = 2;
+     }
+   else if (EINA_UNLIKELY(size < 8))
+     {
+        align = 4;
+     }
+   else
+#if __WORDSIZE == 32
+     {
+        align = 8;
+     }
+#else
+   if (EINA_UNLIKELY(size < 16))
+     {
+        align = 8;
+     }
+   else
+     {
+        align = 16;
+     }
+#endif
+
+   return ((size / align) + (size % align ? 1 : 0)) * align;
+}
+
 /**
  * @}
  */

@@ -30,3 +30,40 @@ EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex)
    return eina_unicode_utf8_next_get(buf, iindex);
 }
 
+EAPI unsigned int
+eina_mempool_alignof(unsigned int size)
+{
+   unsigned int align;
+   unsigned int mask;
+
+   if (EINA_UNLIKELY(size <= 2))
+     {
+        align = 1;
+        mask = 0x1;
+     }
+   else if (EINA_UNLIKELY(size < 8))
+     {
+        align = 2;
+        mask = 0x3;
+     }
+   else
+#if __WORDSIZE == 32
+     {
+        align = 3;
+        mask = 0x7;
+     }
+#else
+   if (EINA_UNLIKELY(size < 16))
+     {
+        align = 3;
+        mask = 0x7;
+     }
+   else
+     {
+        align = 4;
+        mask = 0x15;
+     }
+#endif
+
+   return ((size >> align) + (size & mask ? 1 : 0)) << align;
+}
