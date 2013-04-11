@@ -674,7 +674,7 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
-   int nx = 0, ny = 0;
+   int nx, ny;
 
    if (obj->delete_me) return;
    if (!obj->layer) return;
