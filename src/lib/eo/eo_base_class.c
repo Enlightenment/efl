@@ -19,8 +19,8 @@ typedef struct
    Eo ***wrefs;
 
    Eo_Callback_Description *callbacks;
-   int walking_list;
-   int event_freeze_count;
+   unsigned short walking_list;
+   unsigned short event_freeze_count;
    Eina_Bool deletions_waiting : 1;
 } Private_Data;
 
