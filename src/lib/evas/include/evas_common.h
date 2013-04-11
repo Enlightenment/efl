@@ -1042,16 +1042,10 @@ struct rect_node
 
 struct _Tilebuf
 {
-   int outbuf_w;
-   int outbuf_h;
-
+   int outbuf_w, outbuf_h;
    struct {
-      int           w, h;
+      short w, h;
    } tile_size;
-
-   struct {
-      int x, y, w, h;
-   } prev_add, prev_del;
 #ifdef RECTUPDATE
 /*
    Regionbuf *rb;
@@ -1067,6 +1061,10 @@ struct _Tilebuf
    } tiles;
  */
 #endif
+   struct {
+      int x, y, w, h;
+   } prev_add, prev_del;
+   Eina_Bool strict_tiles : 1;
 };
 
 struct _Tilebuf_Tile
@@ -1224,6 +1222,7 @@ EAPI Tilebuf      *evas_common_tilebuf_new               (int w, int h);
 EAPI void          evas_common_tilebuf_free              (Tilebuf *tb);
 EAPI void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
 EAPI void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
+EAPI void          evas_common_tilebuf_tile_strict_set   (Tilebuf *tb, Eina_Bool strict);
 EAPI int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
 EAPI int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
 EAPI int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);

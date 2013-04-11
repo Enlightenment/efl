@@ -17,6 +17,8 @@
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
+#define EVAS_GL_UPDATE_TILE_SIZE 16
+
 enum {
    MERGE_BOUNDING,
    MERGE_FULL
@@ -992,7 +994,8 @@ eng_setup(Evas *eo_e, void *in)
         free(re);
         return 0;
      }
-   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   evas_common_tilebuf_set_tile_size(re->tb, EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
+   evas_common_tilebuf_tile_strict_set(re->tb, EINA_TRUE);
 
    if (!e->engine.data.context)
      e->engine.data.context =
@@ -1070,7 +1073,10 @@ eng_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+     {
+        evas_common_tilebuf_set_tile_size(re->tb, EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
+        evas_common_tilebuf_tile_strict_set(re->tb, EINA_TRUE);
+     }
 }
 
 static void
