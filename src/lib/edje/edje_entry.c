@@ -2900,7 +2900,7 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
          cur_type = EVAS_TEXTBLOCK_CURSOR_BEFORE;
          break;
       case EDJE_ENTRY_CURSOR_MODE_UNDER:
-         /* no break for a resaon */
+         /* no break for a reason */
       default:
          cur_type = EVAS_TEXTBLOCK_CURSOR_UNDER;
      }
