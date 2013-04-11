@@ -197,7 +197,7 @@ _eina_cow_cmp(const void *key1, int key1_length,
    return memcmp(key1, key2, key1_length);
 }
 
-static void
+static inline void
 _eina_cow_hash_del(Eina_Cow *cow,
                    const void *data,
                    Eina_Cow_Ptr *ref)
@@ -216,7 +216,7 @@ _eina_cow_gc_free(void *data)
    eina_mempool_free(gc_pool, data);
 }
 
-static void
+static inline void
 _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
 {
    /* eina_cow_gc is not supposed to be thread safe */
@@ -482,7 +482,9 @@ eina_cow_write(Eina_Cow *cow,
           }
 #endif
 
-        _eina_cow_hash_del(cow, *data, ref);
+	if (cow->togc)
+	  _eina_cow_hash_del(cow, *data, ref);
+
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
