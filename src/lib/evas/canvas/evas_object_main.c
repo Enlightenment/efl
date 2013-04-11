@@ -662,6 +662,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->delete_me = 1;
    evas_object_change(eo_obj, obj);
 end:
+   evas_object_event_callback_all_del(eo_obj);
+   evas_object_event_callback_cleanup(eo_obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 

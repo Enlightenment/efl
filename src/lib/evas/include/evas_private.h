@@ -32,7 +32,6 @@ typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
 typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
-typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef RGBA_Image_Loadopts                 Evas_Image_Load_Opts;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
@@ -40,7 +39,6 @@ typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
-typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
@@ -307,13 +305,6 @@ struct _Evas_Post_Callback
    unsigned char              delete_me : 1;
 };
 
-struct _Evas_Callbacks
-{
-   Eina_Inlist *callbacks;
-   int               walking_list;
-   unsigned char     deletions_waiting : 1;
-};
-
 struct _Evas_Public_Data
 {
    EINA_INLIST;
@@ -400,8 +391,7 @@ struct _Evas_Public_Data
 
    Eina_List     *post_events; // free me on evas_free
 
-   Evas_Callbacks *callbacks;
-   Eina_Inlist    *callbacks_infos;
+   Eina_Inlist    *callbacks;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -579,7 +569,7 @@ struct _Evas_Object_Protected_Data
    Evas_Intercept_Func        *interceptors;
    Eina_List                  *grabs;
 
-   Evas_Callbacks             *callbacks;
+   Eina_Inlist                *callbacks;
 
    struct {
       Eina_List               *clipees;
@@ -660,16 +650,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   eo_del_called : 1;
    Eina_Bool                   is_smart : 1;
-};
-
-struct _Evas_Func_Node
-{
-   EINA_INLIST;
-   void (*func) ();
-   void *data;
-   Evas_Callback_Type type;
-   Evas_Callback_Priority priority;
-   unsigned char delete_me : 1;
 };
 
 struct _Evas_Data_Node

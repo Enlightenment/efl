@@ -215,13 +215,6 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 
 	     EINA_INLIST_FOREACH(lay->objects, o)
 	       {
-		  if ((o->callbacks) && (o->callbacks->walking_list))
-		    {
-		       /* Defer free */
-		       e->delete_me = 1;
-		       e->walking_list--;
-		       return;
-		    }
 		  if (!o->delete_me)
 		    del = 1;
 	       }

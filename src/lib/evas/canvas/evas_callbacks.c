@@ -1,12 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static void evas_object_event_callback_clear(Evas_Object_Protected_Data *obj);
-static void evas_event_callback_clear(Evas_Public_Data *e);
 int _evas_event_counter = 0;
 
-EVAS_MEMPOOL(_mp_fn);
-EVAS_MEMPOOL(_mp_cb);
 EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;
@@ -117,7 +113,39 @@ static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAS
    EVAS_EVENT_RENDER_PRE,
    EVAS_EVENT_RENDER_POST
 };
- 
+
+typedef struct
+{
+   EINA_INLIST;
+   Evas_Object_Event_Cb func;
+   void *data;
+   Evas_Callback_Type type;
+} _eo_evas_object_cb_info;
+
+static Eina_Bool
+_eo_evas_object_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   _eo_evas_object_cb_info *info = data;
+   if (info->func) info->func(info->data, evas_object_evas_get(eo_obj), eo_obj, event_info);
+   return EINA_TRUE;
+}
+
+typedef struct
+{
+   EINA_INLIST;
+   Evas_Event_Cb func;
+   void *data;
+   Evas_Callback_Type type;
+} _eo_evas_cb_info;
+
+static Eina_Bool
+_eo_evas_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   _eo_evas_cb_info *info = data;
+   if (info->func) info->func(info->data, eo_obj, event_info);
+   return EINA_TRUE;
+}
+
 void
 _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
 {
@@ -150,143 +178,68 @@ _evas_post_event_callback_free(Evas *eo_e)
 }
 
 void
-evas_event_callback_list_post_free(Eina_Inlist **list)
-{
-   Eina_Inlist *l;
-
-   /* MEM OK */
-   for (l = *list; l;)
-     {
-        Evas_Func_Node *fn;
-
-        fn = (Evas_Func_Node *)l;
-        l = l->next;
-        if (fn->delete_me)
-          {
-             *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
-             EVAS_MEMPOOL_FREE(_mp_fn, fn);
-          }
-     }
-}
-
-static void
-evas_object_event_callback_clear(Evas_Object_Protected_Data *obj)
-{
-   if (!obj) return;
-   if (!obj->callbacks) return;
-   if (!obj->callbacks->deletions_waiting) return;
-   obj->callbacks->deletions_waiting = 0;
-   evas_event_callback_list_post_free(&obj->callbacks->callbacks);
-   if (!obj->callbacks->callbacks)
-     {
-        EVAS_MEMPOOL_FREE(_mp_cb, obj->callbacks);
-        obj->callbacks = NULL;
-     }
-}
-
-static void
-evas_event_callback_clear(Evas_Public_Data *e)
-{
-   if (!e) return;
-   if (!e->callbacks) return;
-   if (!e->callbacks->deletions_waiting) return;
-   e->callbacks->deletions_waiting = 0;
-   evas_event_callback_list_post_free(&e->callbacks->callbacks);
-   if (!e->callbacks->callbacks)
-     {
-        EVAS_MEMPOOL_FREE(_mp_cb, e->callbacks);
-        e->callbacks = NULL;
-     }
-}
-
-void
 evas_object_event_callback_all_del(Evas_Object *eo_obj)
 {
-   Evas_Func_Node *fn;
+   _eo_evas_object_cb_info *info;
+   Eina_Inlist *itr;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
    if (!obj) return;
    if (!obj->callbacks) return;
-   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
-      fn->delete_me = 1;
+   EINA_INLIST_FOREACH_SAFE(obj->callbacks, itr, info)
+     {
+        eo_do(eo_obj, eo_event_callback_del(
+                 _legacy_evas_callback_table[info->type], _eo_evas_object_cb, info));
+
+        obj->callbacks =
+           eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
+        free(info);
+     }
 }
 
 void
 evas_object_event_callback_cleanup(Evas_Object *eo_obj)
 {
-   /* MEM OK */
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   if (!obj) return;
-   if (!obj->callbacks) return;
-   evas_event_callback_list_post_free(&obj->callbacks->callbacks);
-   EVAS_MEMPOOL_FREE(_mp_cb, obj->callbacks);
-   obj->callbacks = NULL;
+   evas_object_event_callback_all_del(eo_obj);
 }
 
 void
 evas_event_callback_all_del(Evas *eo_e)
 {
+   _eo_evas_object_cb_info *info;
+   Eina_Inlist *itr;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   Evas_Func_Node *fn;
 
    if (!e) return;
    if (!e->callbacks) return;
-   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
-      fn->delete_me = 1;
+
+   EINA_INLIST_FOREACH_SAFE(e->callbacks, itr, info)
+     {
+        eo_do(eo_e, eo_event_callback_del(
+                 _legacy_evas_callback_table[info->type], _eo_evas_cb, info));
+
+        e->callbacks =
+           eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
+        free(info);
+     }
 }
 
 void
 evas_event_callback_cleanup(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   /* MEM OK */
-   if (!e) return;
-   if (!e->callbacks) return;
-   evas_event_callback_list_post_free(&e->callbacks->callbacks);
-   EVAS_MEMPOOL_FREE(_mp_cb, e->callbacks);
-   e->callbacks = NULL;
+   evas_event_callback_all_del(eo_e);
 }
 
 void
 evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   Eina_Inlist **l_mod = NULL, *l;
-
-   if (!e) return;
-   _evas_walk(e);
-   if (e->callbacks)
-     {
-        l_mod = &e->callbacks->callbacks;
-        e->callbacks->walking_list++;
-        for (l = *l_mod; l; l = l->next)
-          {
-             Evas_Func_Node *fn;
-
-             fn = (Evas_Func_Node *)l;
-             if ((fn->type == type) && (!fn->delete_me))
-               {
-                  Evas_Event_Cb func = fn->func;
-                  if (func)
-                    func(fn->data, eo_e, event_info);
-               }
-             if (e->delete_me) break;
-          }
-        e->callbacks->walking_list--;
-        if (!e->callbacks->walking_list)
-          {
-             evas_event_callback_clear(e);
-             l_mod = NULL;
-          }
-     }
-   _evas_unwalk(e);
+   eo_do(eo_e, eo_event_callback_call(_legacy_evas_callback_table[type], event_info, NULL));
 }
 
 void
 evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Callback_Type type, void *event_info, int event_id)
 {
    /* MEM OK */
-   Eina_Inlist **l_mod = NULL, *l;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
    Evas_Public_Data *e;
 
@@ -308,9 +261,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    if (!(e = obj->layer->evas)) return;
 
    _evas_walk(e);
-   if (obj->callbacks)
      {
-        l_mod = &obj->callbacks->callbacks;
         switch (type)
           {
            case EVAS_CALLBACK_MOUSE_DOWN:
@@ -342,30 +293,8 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
            default:
               break;
           }
-        obj->callbacks->walking_list++;
-        for (l = *l_mod; l; l = l->next)
-          {
-             Evas_Func_Node *fn;
 
-             fn = (Evas_Func_Node *)l;
-             if ((fn->type == type) && (!fn->delete_me))
-               {
-                  Evas_Object_Event_Cb func = fn->func;
-                  if (func)
-                    func(fn->data, obj->layer->evas->evas, eo_obj, event_info);
-               }
-             if (obj->delete_me) break;
-          }
-        obj->callbacks->walking_list--;
-        if (!obj->callbacks->walking_list)
-          {
-	    evas_object_event_callback_clear(obj);
-             l_mod = NULL;
-          }
-
-        const Eo_Event_Description *event_desc = eina_hash_find(signals_hash_table, _legacy_evas_callback_table[type]->name);
-        if (event_desc)
-           eo_do(eo_obj, eo_event_callback_call(_legacy_evas_callback_table[type], event_info, NULL));
+        eo_do(eo_obj, eo_event_callback_call(_legacy_evas_callback_table[type], event_info, NULL));
 
         if (type == EVAS_CALLBACK_MOUSE_DOWN)
           {
@@ -379,31 +308,16 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
           }
      }
 
-   if (!((obj->no_propagate) && (l_mod) && (*l_mod)))
+   if (!obj->no_propagate)
      {
-        if (!obj->no_propagate)
+        if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
+              (type <= EVAS_CALLBACK_KEY_UP))
           {
-             if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
-                 (type <= EVAS_CALLBACK_KEY_UP))
-               {
-                  Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
-                  evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id);
-               }
+             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
+             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id);
           }
      }
    _evas_unwalk(e);
-}
-
-static int
-_callback_priority_cmp(const void *_a, const void *_b)
-{
-   const Evas_Func_Node *a, *b;
-   a = EINA_INLIST_CONTAINER_GET(_a, Evas_Func_Node);
-   b = EINA_INLIST_CONTAINER_GET(_b, Evas_Func_Node);
-   if (a->priority < b->priority)
-     return -1;
-   else
-     return 1;
 }
 
 EAPI void
@@ -417,43 +331,29 @@ EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   /* MEM OK */
-   Evas_Func_Node *fn;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
 
-   if (!obj) return;
    if (!func) return;
 
-   if (!obj->callbacks)
-     {
-        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 64, );
-        obj->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
-        if (!obj->callbacks) return;
-        EVAS_MEMPOOL_PREP(_mp_cb, obj->callbacks, Evas_Callbacks);
-     }
+   _eo_evas_object_cb_info *cb_info = calloc(1, sizeof(*cb_info));
+   cb_info->func = func;
+   cb_info->data = (void *)data;
+   cb_info->type = type;
 
-   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 128, );
-   fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
-   if (!fn) return;
-   EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);
-   fn->func = func;
-   fn->data = (void *)data;
-   fn->type = type;
-   fn->priority = priority;
+   const Eo_Event_Description *desc = _legacy_evas_callback_table[type];
+   eo_do(eo_obj, eo_event_callback_priority_add(desc, priority, _eo_evas_object_cb, cb_info));
 
-   obj->callbacks->callbacks =
-      eina_inlist_sorted_insert(obj->callbacks->callbacks, EINA_INLIST_GET(fn),
-                                _callback_priority_cmp);
+   obj->callbacks =
+      eina_inlist_append(obj->callbacks, EINA_INLIST_GET(cb_info));
 }
 
 EAPI void *
 evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
-   /* MEM OK */
-   Evas_Func_Node *fn;
+   _eo_evas_object_cb_info *info;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -465,17 +365,17 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 
    if (!obj->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(obj->callbacks, info)
      {
-        if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
+        if ((info->func == func) && (info->type == type))
           {
-             void *tmp;
+             void *tmp = info->data;
+             eo_do(eo_obj, eo_event_callback_del(
+                      _legacy_evas_callback_table[type], _eo_evas_object_cb, info));
 
-             tmp = fn->data;
-             fn->delete_me = 1;
-             obj->callbacks->deletions_waiting = 1;
-             if (!obj->callbacks->walking_list)
-               evas_object_event_callback_clear(obj);
+             obj->callbacks =
+                eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
+             free(info);
              return tmp;
           }
      }
@@ -485,8 +385,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void *
 evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
-   /* MEM OK */
-   Evas_Func_Node *fn;
+   _eo_evas_object_cb_info *info;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -498,17 +397,17 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
 
    if (!obj->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(obj->callbacks, info)
      {
-        if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+        if ((info->func == func) && (info->type == type) && info->data == data)
           {
-             void *tmp;
+             void *tmp = info->data;
+             eo_do(eo_obj, eo_event_callback_del(
+                      _legacy_evas_callback_table[type], _eo_evas_object_cb, info));
 
-             tmp = fn->data;
-             fn->delete_me = 1;
-             obj->callbacks->deletions_waiting = 1;
-             if (!obj->callbacks->walking_list)
-               evas_object_event_callback_clear(obj);
+             obj->callbacks =
+                eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
+             free(info);
              return tmp;
           }
      }
@@ -526,43 +425,29 @@ EAPI void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   /* MEM OK */
-   Evas_Func_Node *fn;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   if (!e) return;
    if (!func) return;
 
-   if (!e->callbacks)
-     {
-        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 64, );
-        e->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
-        if (!e->callbacks) return;
-        EVAS_MEMPOOL_PREP(_mp_cb, e->callbacks, Evas_Callbacks);
-     }
+   _eo_evas_cb_info *cb_info = calloc(1, sizeof(*cb_info));
+   cb_info->func = func;
+   cb_info->data = (void *)data;
+   cb_info->type = type;
 
-   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 128, );
-   fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
-   if (!fn) return;
-   EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);
-   fn->func = func;
-   fn->data = (void *)data;
-   fn->type = type;
-   fn->priority = priority;
+   const Eo_Event_Description *desc = _legacy_evas_callback_table[type];
+   eo_do(eo_e, eo_event_callback_priority_add(desc, priority, _eo_evas_cb, cb_info));
 
-   e->callbacks->callbacks = eina_inlist_sorted_insert(e->callbacks->callbacks,
-                                                       EINA_INLIST_GET(fn), _callback_priority_cmp);
+   e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
 }
 
 EAPI void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   /* MEM OK */
-   Evas_Func_Node *fn;
+   _eo_evas_cb_info *info;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
@@ -573,18 +458,18 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 
    if (!e->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(e->callbacks, info)
      {
-        if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
+        if ((info->func == func) && (info->type == type))
           {
-             void *data;
+             void *tmp = info->data;
+             eo_do(eo_e, eo_event_callback_del(
+                      _legacy_evas_callback_table[type], _eo_evas_cb, info));
 
-             data = fn->data;
-             fn->delete_me = 1;
-             e->callbacks->deletions_waiting = 1;
-             if (!e->callbacks->walking_list)
-               evas_event_callback_clear(e);
-             return data;
+             e->callbacks =
+                eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
+             free(info);
+             return tmp;
           }
      }
    return NULL;
@@ -593,8 +478,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 EAPI void *
 evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
-   /* MEM OK */
-   Evas_Func_Node *fn;
+   _eo_evas_cb_info *info;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
@@ -606,17 +490,17 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
 
    if (!e->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
+   EINA_INLIST_FOREACH(e->callbacks, info)
      {
-        if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+        if ((info->func == func) && (info->type == type) && (info->data == data))
           {
-             void *tmp;
+             void *tmp = info->data;
+             eo_do(eo_e, eo_event_callback_del(
+                      _legacy_evas_callback_table[type], _eo_evas_cb, info));
 
-             tmp = fn->data;
-             fn->delete_me = 1;
-             e->callbacks->deletions_waiting = 1;
-             if (!e->callbacks->walking_list)
-               evas_event_callback_clear(e);
+             e->callbacks =
+                eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
+             free(info);
              return tmp;
           }
      }
