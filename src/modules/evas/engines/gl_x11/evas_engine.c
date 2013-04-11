@@ -1219,22 +1219,32 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
           {
              if (re->info->swap_mode == EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO)
                {
-#ifdef GL_GLES
-                  EGLint age = 0;
-                  
-                  if (!eglQuerySurface(re->win->egl_disp,
-                                       re->win->egl_surface[0],
-                                       EGL_BUFFER_AGE_EXT, &age))
-                    age = 0;
-#else
-                  unsigned int age = 0;
-                  
-                  if (glsym_glXQueryDrawable)
-                    glsym_glXQueryDrawable(re->win->disp, re->win->glxwin,
-                                           GLX_BACK_BUFFER_AGE_EXT, &age);
-#endif
                   if (extn_have_buffer_age)
                     {
+#ifdef GL_GLES
+                       EGLint age = 0;
+                  
+                       if (!eglQuerySurface(re->win->egl_disp,
+                                            re->win->egl_surface[0],
+                                            EGL_BUFFER_AGE_EXT, &age))
+                         age = 0;
+#else
+                       unsigned int age = 0;
+                  
+                       if (glsym_glXQueryDrawable)
+                         {
+                            if (re->win->glxwin)
+                              glsym_glXQueryDrawable(re->win->disp,
+                                                     re->win->glxwin,
+                                                     GLX_BACK_BUFFER_AGE_EXT,
+                                                     &age);
+                            else
+                              glsym_glXQueryDrawable(re->win->disp,
+                                                     re->win->win,
+                                                     GLX_BACK_BUFFER_AGE_EXT,
+                                                     &age);
+                         }
+#endif
                        if (age == 1) re->mode = MODE_COPY;
                        else if (age == 2) re->mode = MODE_DOUBLE;
                        else if (age == 3) re->mode = MODE_TRIPLE;
