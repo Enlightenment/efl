@@ -9,6 +9,7 @@
 #include "eeze_udev_private.h"
 #include "eeze_net_private.h"
 #include "eeze_disk_private.h"
+#include "eeze_sensor_private.h"
 
 _udev *udev;
 

@@ -74,7 +74,7 @@ typedef struct _Eeze_Sensor_Module
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
+Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
 
 /**
  * @brief Unregister a module from eeze_sensor core.
@@ -85,5 +85,40 @@ EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module 
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_module_unregister(const char *name);
+Eina_Bool eeze_sensor_module_unregister(const char *name);
+
+/**
+ * @brief Fetch the sensor object by type from the sensor object list
+ * @param type Sensor type to fetch from the list of sensor objects.
+ * @return The sensor object matching the given type
+ *
+ * @since 1.8
+ */
+Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
+
+/**
+ * @brief Initialize the Eeze sensor subsystem.
+ * @return EINA_TRUE for success and EINA_FALSE for failure
+ *
+ * This function must be called before using any of the Eeze_Sensor
+ * functionality to make sure the subsystem is setup correctly for usage. If
+ * you already call #eeze_init in your program this is already been take care
+ * of and there is no need to call this to initialize this subsystem manually.
+ *
+ * @since 1.8
+ */
+Eina_Bool            eeze_sensor_init(void);
+
+/**
+ * @brief Clean up and shutdown the Eeze sensor subsystem.
+ *
+ * This function must be called when now longer using Eeze_Sensor to allow the
+ * subsystem to shutdown cleanly. If you already called #eeze_shutdown this is
+ * already been taken care of and there is no need to call this to shutdown this
+ * subsystem manually.
+ *
+ * @since 1.8
+ */
+void                 eeze_sensor_shutdown(void);
+
 #endif // EEZE_SENSOR_PRIVATE_H
