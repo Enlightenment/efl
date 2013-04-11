@@ -14,7 +14,6 @@ extern Eina_Hash* signals_hash_table;
 static Eina_Hash *_evas_smart_class_names_hash_table = NULL;
 
 typedef struct _Evas_Object_Smart      Evas_Object_Smart;
-typedef struct _Evas_Smart_Callback    Evas_Smart_Callback;
 
 struct _Evas_Object_Smart
 {
@@ -24,9 +23,8 @@ struct _Evas_Object_Smart
    Evas_Object      *object;
    void             *engine_data;
    void             *data;
-   Eina_List        *callbacks;
+   Eina_Inlist      *callbacks;
    Eina_Inlist      *contained; /** list of smart member objects */
-   Eina_Inlist      *smart_callbacks_infos;
 
   /* ptr array + data blob holding all interfaces private data for
    * this object */
@@ -45,17 +43,23 @@ struct _Evas_Object_Smart
    Eina_Bool         update_boundingbox_needed : 1;
 };
 
-struct _Evas_Smart_Callback
+typedef struct
 {
-   const char *event;
+   EINA_INLIST;
    Evas_Smart_Cb func;
-   void *func_data;
-   Evas_Callback_Priority priority;
-   char  delete_me : 1;
-};
+   void *data;
+   _Evas_Event_Description *desc;
+} _eo_evas_smart_cb_info;
+
+static Eina_Bool
+_eo_evas_smart_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   _eo_evas_smart_cb_info *info = data;
+   if (info->func) info->func(info->data, eo_obj, event_info);
+   return EINA_TRUE;
+}
 
 /* private methods for smart objects */
-static void evas_object_smart_callbacks_clear(Evas_Object *eo_obj);
 static void evas_object_smart_init(Evas_Object *eo_obj);
 static void evas_object_smart_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 static void evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
@@ -92,7 +96,6 @@ static const Evas_Object_Func object_func =
 };
 
 
-EVAS_MEMPOOL(_mp_cb);
 /* public funcs */
 EAPI void
 evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
@@ -712,18 +715,6 @@ _smart_attach(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do(eo_obj, evas_obj_smart_add());
 }
 
-static int
-_callback_priority_cmp(const void *_a, const void *_b)
-{
-   const Evas_Smart_Callback *a, *b;
-   a = (const Evas_Smart_Callback *) _a;
-   b = (const Evas_Smart_Callback *) _b;
-   if (a->priority < b->priority)
-      return -1;
-   else
-      return 1;
-}
-
 EAPI void
 evas_object_smart_callback_add(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
@@ -735,32 +726,41 @@ EAPI void
 evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
    Evas_Object_Smart *o;
-   Evas_Smart_Callback *cb;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
    o = eo_data_scope_get(eo_obj, MY_CLASS);
+
    if (!event) return;
    if (!func) return;
-   EVAS_MEMPOOL_INIT(_mp_cb, "evas_smart_callback", Evas_Smart_Callback, 32, );
-   cb = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Smart_Callback);
-   if (!cb) return;
-   EVAS_MEMPOOL_PREP(_mp_cb, cb, Evas_Smart_Callback);
-   cb->event = eina_stringshare_add(event);
-   cb->func = func;
-   cb->func_data = (void *)data;
-   cb->priority = priority;
-   o->callbacks = eina_list_sorted_insert(o->callbacks, _callback_priority_cmp,
-         cb);
+
+   _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
+   if (!event_desc)
+     {
+        event_desc = calloc (1, sizeof(*event_desc));
+        event_desc->eo_desc = calloc(1, sizeof(Eo_Event_Description));
+        event_desc->eo_desc->name = eina_stringshare_add(event);
+        event_desc->eo_desc->doc = "";
+        event_desc->is_desc_allocated = EINA_TRUE;
+        eina_hash_add(signals_hash_table, event, event_desc);
+     }
+   _eo_evas_smart_cb_info *cb_info = calloc(1, sizeof(*cb_info));
+   cb_info->func = func;
+   cb_info->data = (void *)data;
+   cb_info->desc = event_desc;
+
+   o->callbacks = eina_inlist_append(o->callbacks,
+        EINA_INLIST_GET(cb_info));
+
+   eo_do(eo_obj, eo_event_callback_priority_add(event_desc->eo_desc, priority, _eo_evas_smart_cb, cb_info));
 }
 
 EAPI void *
 evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func)
 {
    Evas_Object_Smart *o;
-   Eina_List *l;
-   Evas_Smart_Callback *cb;
+   _eo_evas_smart_cb_info *info;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -768,18 +768,21 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
    o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!event) return NULL;
-   EINA_LIST_FOREACH(o->callbacks, l, cb)
-     {
-        if (!cb) continue;
-        if ((!strcmp(cb->event, event)) && (cb->func == func))
-          {
-             void *data;
+   const _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
+   if (!event_desc) return NULL;
 
-             data = cb->func_data;
-             cb->delete_me = 1;
-             o->deletions_waiting = 1;
-             evas_object_smart_callbacks_clear(eo_obj);
-             return data;
+   EINA_INLIST_FOREACH(o->callbacks, info)
+     {
+        if ((info->func == func) && (info->desc == event_desc))
+          {
+             void *tmp = info->data;
+             eo_do(eo_obj, eo_event_callback_del(
+                      event_desc->eo_desc, _eo_evas_smart_cb, info));
+
+             o->callbacks =
+                eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
+             free(info);
+             return tmp;
           }
      }
    return NULL;
@@ -789,26 +792,29 @@ EAPI void *
 evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
    Evas_Object_Smart *o;
-   Eina_List *l;
-   Evas_Smart_Callback *cb;
+   _eo_evas_smart_cb_info *info;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
    o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!event) return NULL;
-   EINA_LIST_FOREACH(o->callbacks, l, cb)
-     {
-        if (!cb) continue;
-        if ((!strcmp(cb->event, event)) && (cb->func == func) && (cb->func_data == data))
-          {
-             void *ret;
 
-             ret = cb->func_data;
-             cb->delete_me = 1;
-             o->deletions_waiting = 1;
-             evas_object_smart_callbacks_clear(eo_obj);
-             return ret;
+   const _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
+   if (!event_desc) return NULL;
+
+   EINA_INLIST_FOREACH(o->callbacks, info)
+     {
+        if ((info->func == func) && (info->desc == event_desc) && (info->data == data))
+          {
+             void *tmp = info->data;
+             eo_do(eo_obj, eo_event_callback_del(
+                      event_desc->eo_desc, _eo_evas_smart_cb, info));
+
+             o->callbacks =
+                eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
+             free(info);
+             return tmp;
           }
      }
    return NULL;
@@ -817,36 +823,11 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
 EAPI void
 evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *event_info)
 {
-   Evas_Object_Smart *o;
-   Eina_List *l;
-   Evas_Smart_Callback *cb;
-   const char *strshare;
-
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   o = eo_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
    if (!event) return;
-   if (obj->delete_me) return;
-   o->walking_list++;
-   strshare = eina_stringshare_add(event);
-   EINA_LIST_FOREACH(o->callbacks, l, cb)
-     {
-        if (!cb) continue;
-        if (!cb->delete_me)
-          {
-             if (cb->event == strshare)
-               cb->func(cb->func_data, eo_obj, event_info);
-          }
-        if (obj->delete_me)
-          break;
-     }
-   eina_stringshare_del(strshare);
-   o->walking_list--;
-   evas_object_smart_callbacks_clear(eo_obj);
-
    const _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
    if (event_desc)
       eo_do(eo_obj, eo_event_callback_call(event_desc->eo_desc, event_info, NULL));
@@ -1144,32 +1125,6 @@ _smart_changed(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(eo_obj, evas_obj_smart_need_recalculate_set(1));
 }
 
-/* internal calls */
-static void
-evas_object_smart_callbacks_clear(Evas_Object *eo_obj)
-{
-   Evas_Object_Smart *o;
-   Eina_List *l;
-   Evas_Smart_Callback *cb;
-
-   o = eo_data_scope_get(eo_obj, MY_CLASS);
-
-   if (o->walking_list) return;
-   if (!o->deletions_waiting) return;
-   for (l = o->callbacks; l;)
-     {
-        cb = eina_list_data_get(l);
-        l = eina_list_next(l);
-        if (!cb) continue;
-        if (cb->delete_me)
-          {
-             o->callbacks = eina_list_remove(o->callbacks, cb);
-             if (cb->event) eina_stringshare_del(cb->event);
-             EVAS_MEMPOOL_FREE(_mp_cb, cb);
-          }
-     }
-}
-
 void
 evas_object_smart_del(Evas_Object *eo_obj)
 {
@@ -1376,11 +1331,11 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
 
         while (o->callbacks)
           {
-             Evas_Smart_Callback *cb = o->callbacks->data;
-             o->callbacks = eina_list_remove(o->callbacks, cb);
-             if (!cb) continue;
-             if (cb->event) eina_stringshare_del(cb->event);
-             EVAS_MEMPOOL_FREE(_mp_cb, cb);
+             _eo_evas_smart_cb_info *info = (_eo_evas_smart_cb_info *)o->callbacks;
+             eo_do(eo_obj, eo_event_callback_del(
+                      info->desc->eo_desc, _eo_evas_smart_cb, info));
+             o->callbacks = eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
+             free(info);
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
