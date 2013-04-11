@@ -2,6 +2,7 @@
 #define ECORE_AUDIO_H
 
 #include <Eina.h>
+#include <Eo.h>
 
 #ifdef EAPI
 #undef EAPI
@@ -16,6 +17,12 @@
 #else
 #define EAPI
 #endif
+
+#include <ecore_audio_obj.h>
+#include <ecore_audio_obj_in.h>
+#include <ecore_audio_obj_out.h>
+
+#include <ecore_audio_obj_in_sndfile.h>
 
 /**
  * @file Ecore_Audio.h

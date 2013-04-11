@@ -235,9 +235,12 @@ struct _Ecore_Audio_Object
 {
    ECORE_MAGIC;
    const char         *name;
+   const char         *source;
+
    Ecore_Audio_Module *module;
 
    Eina_Bool           paused;
+   double              volume;
 
    void               *module_data;
    void               *obj_data;
@@ -278,7 +281,7 @@ struct _Ecore_Audio_Input
    void               *obj_data;
    void               *user_data;
 
-   Ecore_Audio_Output *output; /**< The output this input is connected to */
+   Eo                 *output; /**< The output this input is connected to */
 
    int                 samplerate;
    int                 channels;
@@ -343,16 +346,6 @@ void                ecore_audio_pulse_shutdown(void);
 struct _Ecore_Audio_Sndfile_Private
 {
    SF_VIRTUAL_IO vio_wrapper;
-};
-
-struct _Ecore_Audio_Sndfile
-{
-   const char *filename;
-   SNDFILE *handle;
-   SF_INFO  sfinfo;
-   Ecore_Audio_Vio *vio;
-   double volume;
-   Ecore_Timer *timer;
 };
 
 Ecore_Audio_Module *ecore_audio_sndfile_init(void);

@@ -17,15 +17,6 @@
 #define SOUNDS_DIR TESTS_SRC_DIR
 
 #if 0
-/* TODO: must fix these tests to produce no warnings and to be
- * passing on all platforms that support them.
- *
- * It would be nice if timers are not used so it doesn't take an
- * eternity to run ecore_suite. :-)
- */
-static Ecore_Audio_Object *out;
-static Ecore_Audio_Object *in;
-
 Eina_Bool
 seek(void *data)
 {
@@ -339,6 +330,101 @@ START_TEST(ecore_test_ecore_audio_custom)
 END_TEST
 #endif
 
+START_TEST(ecore_test_ecore_audio_obj_in_out)
+{
+  Eo *out2;
+  Eina_List *in3;
+
+  Eo *in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+  Eo *in2 = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+  Eo *out = eo_add(ECORE_AUDIO_OBJ_OUT_CLASS, NULL);
+
+  fail_if(!in);
+  fail_if(!in2);
+  fail_if(!out);
+
+  fail_if(!eo_do(in, ecore_audio_obj_in_output_get(&out2)));
+
+  fail_if(out2);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
+
+  fail_if(eina_list_count(in3) != 0);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in)));
+
+  fail_if(!eo_do(in, ecore_audio_obj_in_output_get(&out2)));
+
+  fail_if(out2 != out);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
+
+  fail_if(eina_list_count(in3) != 1);
+  fail_if(eina_list_data_get(in3) != in);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in2)));
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
+
+  fail_if(eina_list_count(in3) != 2);
+  fail_if(eina_list_data_get(in3) != in);
+
+  eo_del(in2);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
+
+  fail_if(eina_list_count(in3) != 1);
+  fail_if(eina_list_data_get(in3) != in);
+
+  eo_del(out);
+
+  fail_if(!eo_do(in, ecore_audio_obj_in_output_get(&out2)));
+
+  fail_if(out2);
+
+  eo_del(in);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_audio_obj)
+{
+  const char *name;
+  Eina_Bool paused;
+  double volume;
+
+  Eo *in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+
+  fail_if(!in);
+
+  fail_if(!eo_do(in, ecore_audio_obj_name_get(&name)));
+
+  fail_if(name);
+
+  fail_if(!eo_do(in, ecore_audio_obj_name_set("In1")));
+  fail_if(!eo_do(in, ecore_audio_obj_name_get(&name)));
+
+  ck_assert_str_eq(name, "In1");
+
+  fail_if(!eo_do(in, ecore_audio_obj_name_get(NULL)));
+
+  fail_if(!eo_do(in, ecore_audio_obj_paused_get(&paused)));
+  fail_if(paused);
+
+  fail_if(!eo_do(in, ecore_audio_obj_paused_set(EINA_TRUE)));
+  fail_if(!eo_do(in, ecore_audio_obj_paused_get(&paused)));
+  fail_if(!paused);
+
+  fail_if(!eo_do(in, ecore_audio_obj_volume_get(&volume)));
+  fail_if(volume != 1.0);
+
+  fail_if(!eo_do(in, ecore_audio_obj_volume_set(0.5)));
+  fail_if(!eo_do(in, ecore_audio_obj_volume_get(&volume)));
+  fail_if(volume != 0.5);
+
+  eo_del(in);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_audio_init)
 {
    int ret;
@@ -380,13 +466,15 @@ ecore_test_ecore_audio(TCase *tc)
 
    tcase_add_test(tc, ecore_test_ecore_audio_init);
 
-#if 0
+   tcase_add_test(tc, ecore_test_ecore_audio_obj);
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_in_out);
+
+/*
    tcase_add_test(tc, ecore_test_ecore_audio_default);
    tcase_add_test(tc, ecore_test_ecore_audio_sndfile);
    tcase_add_test(tc, ecore_test_ecore_audio_sndfile_vio);
    tcase_add_test(tc, ecore_test_ecore_audio_custom);
-
    tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
-#endif
+*/
 }
 

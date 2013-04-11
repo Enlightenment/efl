@@ -6,15 +6,17 @@ lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
 
 installed_ecoreaudiomainheadersdir = $(includedir)/ecore-audio-@VMAJ@
 dist_installed_ecoreaudiomainheaders_DATA = \
-lib/ecore_audio/Ecore_Audio.h
+lib/ecore_audio/Ecore_Audio.h \
+lib/ecore_audio/ecore_audio_obj.h \
+lib/ecore_audio/ecore_audio_obj_in.h \
+lib/ecore_audio/ecore_audio_obj_out.h
+
 
 lib_ecore_audio_libecore_audio_la_SOURCES = \
 lib/ecore_audio/ecore_audio.c \
-lib/ecore_audio/ecore_audio_alsa.c \
-lib/ecore_audio/ecore_audio_pulse.c \
-lib/ecore_audio/ecore_audio_sndfile.c \
-lib/ecore_audio/ecore_audio_tone.c \
-lib/ecore_audio/ecore_audio_custom.c \
+lib/ecore_audio/ecore_audio_obj.c \
+lib/ecore_audio/ecore_audio_obj_in.c \
+lib/ecore_audio/ecore_audio_obj_out.c \
 lib/ecore_audio/ecore_audio_private.h
 
 lib_ecore_audio_libecore_audio_la_CPPFLAGS = @ECORE_AUDIO_CFLAGS@
