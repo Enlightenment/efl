@@ -346,7 +346,11 @@ START_TEST(evas_text_set_get)
 
    /* RTL paragraphs */
    evas_object_text_text_set(to, "נסיון test");
+#ifdef HAVE_FRIBIDI
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+#else
+   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
+#endif
 
    END_TEXT_TEST();
 }
