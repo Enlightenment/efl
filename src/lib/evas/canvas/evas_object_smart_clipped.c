@@ -144,7 +144,7 @@ static void
 evas_object_smart_clipped_smart_show(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
-   if (evas_object_clipees_get(cso->clipper))
+   if (evas_object_clipees_has(cso->clipper))
      evas_object_show(cso->clipper); /* just show if clipper being used */
 }
 

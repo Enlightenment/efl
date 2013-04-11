@@ -1,8 +1,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static void evas_object_event_callback_clear(Evas_Object *eo_obj);
-static void evas_event_callback_clear(Evas *eo_e);
+static void evas_object_event_callback_clear(Evas_Object_Protected_Data *obj);
+static void evas_event_callback_clear(Evas_Public_Data *e);
 int _evas_event_counter = 0;
 
 EVAS_MEMPOOL(_mp_fn);
@@ -170,9 +170,8 @@ evas_event_callback_list_post_free(Eina_Inlist **list)
 }
 
 static void
-evas_object_event_callback_clear(Evas_Object *eo_obj)
+evas_object_event_callback_clear(Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj) return;
    if (!obj->callbacks) return;
    if (!obj->callbacks->deletions_waiting) return;
@@ -186,9 +185,8 @@ evas_object_event_callback_clear(Evas_Object *eo_obj)
 }
 
 static void
-evas_event_callback_clear(Evas *eo_e)
+evas_event_callback_clear(Evas_Public_Data *e)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e) return;
    if (!e->callbacks) return;
    if (!e->callbacks->deletions_waiting) return;
@@ -277,7 +275,7 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
         e->callbacks->walking_list--;
         if (!e->callbacks->walking_list)
           {
-             evas_event_callback_clear(eo_e);
+             evas_event_callback_clear(e);
              l_mod = NULL;
           }
      }
@@ -361,7 +359,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         obj->callbacks->walking_list--;
         if (!obj->callbacks->walking_list)
           {
-             evas_object_event_callback_clear(eo_obj);
+	    evas_object_event_callback_clear(obj);
              l_mod = NULL;
           }
 
@@ -477,7 +475,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
              fn->delete_me = 1;
              obj->callbacks->deletions_waiting = 1;
              if (!obj->callbacks->walking_list)
-               evas_object_event_callback_clear(eo_obj);
+               evas_object_event_callback_clear(obj);
              return tmp;
           }
      }
@@ -510,7 +508,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
              fn->delete_me = 1;
              obj->callbacks->deletions_waiting = 1;
              if (!obj->callbacks->walking_list)
-               evas_object_event_callback_clear(eo_obj);
+               evas_object_event_callback_clear(obj);
              return tmp;
           }
      }
@@ -585,7 +583,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
              fn->delete_me = 1;
              e->callbacks->deletions_waiting = 1;
              if (!e->callbacks->walking_list)
-               evas_event_callback_clear(eo_e);
+               evas_event_callback_clear(e);
              return data;
           }
      }
@@ -618,7 +616,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
              fn->delete_me = 1;
              e->callbacks->deletions_waiting = 1;
              if (!e->callbacks->walking_list)
-               evas_event_callback_clear(eo_e);
+               evas_event_callback_clear(e);
              return tmp;
           }
      }

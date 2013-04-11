@@ -173,6 +173,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    if (!was_smart_child) evas_object_release(eo_obj, obj, obj->clean_layer);
    if (obj->clip.clipees)
      eina_list_free(obj->clip.clipees);
+   obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
    evas_object_clip_changes_clean(eo_obj);
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
@@ -200,6 +201,7 @@ void
 evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Eina_List *l;
+   Evas_Object_Protected_Data *obj2;
    Evas_Object *eo_obj2;
    Eina_Bool movch = EINA_FALSE;
 
@@ -219,17 +221,16 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))
      {
-        EINA_LIST_FOREACH(obj->clip.clipees, l, eo_obj2)
+        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2)
           {
-             Evas_Object_Protected_Data *obj2 = eo_data_get(eo_obj2, MY_CLASS);
-             if (!obj2) continue;
-             evas_object_change(eo_obj2, obj2);
+             evas_object_change(obj2->object, obj2);
           }
      }
    EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
      {
-        Evas_Object_Protected_Data *obj2 = eo_data_get(eo_obj2, MY_CLASS);
-        if (!obj2) continue;
+        obj2 = eo_data_get(eo_obj2, MY_CLASS);
+
+	if (!obj2) continue;
         evas_object_change(eo_obj2, obj2);
      }
    if (obj->smart.parent)
@@ -605,6 +606,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    return;
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = _pd;
+   Evas_Object_Protected_Data *tmp;
 
    evas_object_hide(eo_obj);
    if (obj->focused)
@@ -635,8 +637,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
         goto end;
      }
    evas_object_grabs_cleanup(eo_obj, obj);
-   while (obj->clip.clipees)
-     evas_object_clip_unset(obj->clip.clipees->data);
+   EINA_LIST_FREE(obj->clip.clipees, tmp)
+     evas_object_clip_unset(tmp->object);
    while (obj->proxy->proxies)
      evas_object_image_source_unset(obj->proxy->proxies->data);
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
@@ -1904,9 +1906,9 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do(eo_obj, evas_obj_propagate_events_get(&event));
    EO_DBG_INFO_APPEND(group, "Propagate Events", EINA_VALUE_TYPE_CHAR, event);
 
-   const Eina_List *clipees;
-   eo_do(eo_obj, evas_obj_clipees_get(&clipees));
-   EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, (Eina_Bool) (!!clipees));
+   const Eina_Bool clipees_has;
+   eo_do(eo_obj, evas_obj_clipees_has(&clipees_has));
+   EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);
    if (map)
@@ -2461,6 +2463,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_GET), _clip_get),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_UNSET), _clip_unset),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_GET), _clipees_get),
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_HAS), _clipees_has),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_SET), _map_enable_set),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_GET), _map_enable_get),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_SET), _map_set),
@@ -2543,6 +2546,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIP_GET, "Get the object clipping obj (if any)."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIP_UNSET, "Disable/cease clipping on a clipped obj object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIPEES_GET, "Return a list of objects currently clipped by obj."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIPEES_HAS, "Return EINA_TRUE if there is any object is clipped by obj."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_ENABLE_SET, "Enable or disable the map that is set."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_ENABLE_GET, "Get the map enabled state"),
      EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_SET, "Set current object transformation map."),

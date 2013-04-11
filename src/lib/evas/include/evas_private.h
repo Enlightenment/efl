@@ -584,6 +584,7 @@ struct _Evas_Object_Protected_Data
 
    struct {
       Eina_List               *clipees;
+      Eina_List               *cache_clipees_answer;
       Eina_List               *changes;
    } clip;
 
@@ -1107,6 +1108,7 @@ void _clip_set(Eo *obj, void *_pd, va_list *list);
 void _clip_get(Eo *obj, void *_pd, va_list *list);
 void _clip_unset(Eo *obj, void *_pd, va_list *list);
 void _clipees_get(Eo *obj, void *_pd, va_list *list);
+void _clipees_has(Eo *obj, void *_pd, va_list *list);
 void _map_enable_set(Eo *obj, void *_pd, va_list *list);
 void _map_enable_get(Eo *obj, void *_pd, va_list *list);
 void _map_source_set(Eo *obj, void *_pd, va_list *list);

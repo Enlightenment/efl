@@ -4765,6 +4765,15 @@ EAPI void             evas_object_clip_unset(Evas_Object *obj);
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * Test if any object is clipped by @p obj.
+ *
+ * @param obj The object to get a list of clippees from
+ * @return EINA_TRUE if @p obj clip any object.
+ * @since 1.8
+ */
+EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *eo_obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
  * Sets or unsets a given object as the currently focused one on its
  * canvas.
  *
@@ -17483,6 +17492,7 @@ enum
    EVAS_OBJ_SUB_ID_CLIP_GET,
    EVAS_OBJ_SUB_ID_CLIP_UNSET,
    EVAS_OBJ_SUB_ID_CLIPEES_GET,
+   EVAS_OBJ_SUB_ID_CLIPEES_HAS,
    EVAS_OBJ_SUB_ID_MAP_ENABLE_SET,
    EVAS_OBJ_SUB_ID_MAP_ENABLE_GET,
    EVAS_OBJ_SUB_ID_MAP_SET,
@@ -18134,6 +18144,17 @@ enum
  * @see evas_object_clipees_get
  */
 #define evas_obj_clipees_get(clipees) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_GET), EO_TYPECHECK(const Eina_List **, clipees)
+
+/**
+ * @def evas_obj_clipees_has
+ * @since 1.8
+ * Return a list of objects currently clipped by @p obj.
+ *
+ * @param[out] clipees out
+ *
+ * @see evas_object_clipees_has
+ */
+#define evas_obj_clipees_has(clipees_has) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_HAS), EO_TYPECHECK(const Eina_Bool *, clipees_has)
 
 /**
  * @def evas_obj_focus_set
