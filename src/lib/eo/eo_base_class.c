@@ -281,7 +281,10 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
                }
              free(titr);
           }
-        pitr = titr;
+        else
+          {
+             pitr = titr;
+          }
      }
 }
 

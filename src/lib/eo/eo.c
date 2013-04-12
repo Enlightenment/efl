@@ -366,12 +366,12 @@ _eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list *p_list)
         op = va_arg(*p_list, Eo_Op);
      }
 
-   _eo_unref(obj);
-
    if (obj->do_error)
       ret = EINA_FALSE;
 
    obj->do_error = prev_error;
+
+   _eo_unref(obj);
 
    return ret;
 }
@@ -1495,8 +1495,8 @@ eo_composite_attach(Eo *comp_obj, Eo *parent)
    EO_MAGIC_RETURN(parent, EO_EINA_MAGIC);
 
    comp_obj->composite = EINA_TRUE;
-   eo_parent_set(comp_obj, parent);
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj);
+   eo_parent_set(comp_obj, parent);
 }
 
 EAPI void
