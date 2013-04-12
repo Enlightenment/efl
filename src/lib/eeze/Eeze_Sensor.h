@@ -309,31 +309,6 @@ EAPI Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_da
  */
 EAPI Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
 
-/**
- * @brief Initialize the Eeze sensor subsystem.
- * @return EINA_TRUE for success and EINA_FALSE for failure
- *
- * This function must be called before using any of the Eeze_Sensor
- * functionality to make sure the subsystem is setup correctly for usage. If
- * you already call #eeze_init in your program this is already been take care
- * of and there is no need to call this to initialize this subsystem manually.
- *
- * @since 1.8
- */
-EAPI Eina_Bool            eeze_sensor_init(void);
-
-/**
- * @brief Clean up and shutdown the Eeze sensor subsystem.
- *
- * This function must be called when now longer using Eeze_Sensor to allow the
- * subsystem to shutdown cleanly. If you already called #eeze_shutdown this is
- * already been taken care of and there is no need to call this to shutdown this
- * subsystem manually.
- *
- * @since 1.8
- */
-EAPI void                 eeze_sensor_shutdown(void);
-
 #ifdef __cplusplus
 }
 #endif
