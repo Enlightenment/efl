@@ -113,6 +113,18 @@
 #ifndef GL_WRITE_ONLY
 #define GL_WRITE_ONLY 0x88B9
 #endif
+#ifndef EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC
+#define EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC 1
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_DEVICE_G2D_SEC
+#define EGL_MAP_GL_TEXTURE_DEVICE_G2D_SEC 2
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_OPTION_READ_SEC
+#define EGL_MAP_GL_TEXTURE_OPTION_READ_SEC (1<<0)
+#endif
+#ifndef EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC
+#define EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC (1<<1)
+#endif
 
 #define SHAD_VERTEX 0
 #define SHAD_COLOR  1
@@ -671,8 +683,8 @@ extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
 extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
-extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b);
-extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
+extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d);
+extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c);
 extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 

@@ -42,8 +42,8 @@ static const char *(*glsym_eglQueryString)             (void *a, int name) = NUL
 void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
 unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
 void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
-void          *(*secsym_eglMapImageSEC)               (void *a, void *b) = NULL;
-unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
+void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d) = NULL;
+unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
 #else
 typedef void (*_eng_fn) (void);

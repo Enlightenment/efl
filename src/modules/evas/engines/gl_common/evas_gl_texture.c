@@ -656,7 +656,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
    if (pt->dyn.img)
      {
         if (pt->dyn.checked_out > 0)
-          secsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img);
+          secsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
         secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
         pt->dyn.img = NULL;
         pt->dyn.data = NULL;
@@ -1455,7 +1455,10 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
         char *texture_addr;
 	char *tmp;
 
-	texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
+        texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp,
+                                             tex->pt->dyn.img,
+                                             EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC,
+                                             EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
 
 	/* Iterate each Y macroblock like we do in evas_convert_yuv.c */
 	for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
@@ -1510,9 +1513,12 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	       }
 	  }
 
-	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
+	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
 
-	texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
+        texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp,
+                                             tex->ptuv->dyn.img,
+                                             EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC,
+                                             EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
 
 	/* Iterate each UV macroblock like we do in evas_convert_yuv.c */
 	base_h = (mb_h >> 1) + (mb_h & 0x1);
@@ -1577,7 +1583,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	       }
 	  }
 
-	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
+	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
 	return ;
      }
 #endif

@@ -147,8 +147,8 @@ void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLe
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void     (*glsym_glEGLImageTargetRenderbufferStorageOES) (int a, void *b)  = NULL;
-void          *(*glsym_eglMapImageSEC)         (void *a, void *b) = NULL;
-unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b) = NULL;
+void          *(*glsym_eglMapImageSEC)         (void *a, void *b, int c, int d) = NULL;
+unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b, int c) = NULL;
 const char    *(*glsym_eglQueryString)         (EGLDisplay a, int name) = NULL;
 
 unsigned int   (*glsym_eglLockSurface)          (EGLDisplay a, EGLSurface b, const int *attrib_list) = NULL;
@@ -1718,7 +1718,10 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
              if (err) *err = EVAS_LOAD_ERROR_NONE;
              return im;
           }
-        *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
+        *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->win->egl_disp, 
+                                                                   im->tex->pt->dyn.img,
+                                                                   EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC,
+                                                                   EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
 
         if (!im->tex->pt->dyn.data)
           {
@@ -1807,7 +1810,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
           {
              im->tex->pt->dyn.checked_out--;
              if (im->tex->pt->dyn.checked_out == 0)
-               glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
+               glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
              return image;
           }
 
