@@ -39,7 +39,7 @@ const Eo_Class *ecore_audio_obj_in_class_get() EINA_CONST;
 
 extern EAPI Eo_Op ECORE_AUDIO_OBJ_IN_BASE_ID;
 
-enum
+enum Ecore_Audio_Obj_In_Sub_Ids
 {
    ECORE_AUDIO_OBJ_IN_SUB_ID_SPEED_SET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_SPEED_GET,
@@ -56,7 +56,7 @@ enum
    ECORE_AUDIO_OBJ_IN_SUB_ID_LAST
 };
 
-#define ECORE_AUDIO_OBJ_IN_ID(sub_id) (ECORE_AUDIO_OBJ_IN_BASE_ID + sub_id)
+#define ECORE_AUDIO_OBJ_IN_ID(sub_id) (ECORE_AUDIO_OBJ_IN_BASE_ID + EO_TYPECHECK(enum Ecore_Audio_Obj_In_Sub_Ids, sub_id))
 
 /*
  * @def ecore_audio_obj_in_speed_set
