@@ -47,7 +47,7 @@ _timer2_cb(void *data)
    struct _timers *timer = (struct _timers*)data;
 
    // choose next settings (delay, interval, precision) for timer 1
-   if (timer->num_elem++ > 2)
+   if (++timer->num_elem > 2)
      timer->num_elem = 0;
 
    // check add/delay timer 2
