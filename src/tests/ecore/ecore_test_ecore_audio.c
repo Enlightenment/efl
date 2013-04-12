@@ -11,9 +11,6 @@
 #include <Ecore.h>
 #include <Ecore_Audio.h>
 
-#define SF_FORMAT_RAW 0x040000
-#define SF_FORMAT_PCM_U8 0x0005
-
 #define SOUNDS_DIR TESTS_SRC_DIR
 
 #if 0
@@ -169,28 +166,6 @@ START_TEST(ecore_test_ecore_audio_default)
 }
 END_TEST
 
-START_TEST(ecore_test_ecore_audio_sndfile)
-{
-   double len;
-
-   in = ecore_audio_input_add(ECORE_AUDIO_TYPE_SNDFILE);
-   fail_if(!in);
-
-   ecore_audio_input_data_set(in, &len);
-   ecore_audio_input_name_set(in, "sms.ogg");
-   ecore_audio_input_sndfile_filename_set(in, SOUNDS_DIR"sms.ogg");
-   fail_if(ecore_audio_input_channels_get(in) != 2);
-   fail_if(ecore_audio_input_samplerate_get(in) != 44100);
-   len = ecore_audio_input_length_get(in);
-//   fail_if(len == 0);
-//   fail_if(len != ecore_audio_input_remaining_get(in));
-   fail_if(strcmp("sms.ogg", ecore_audio_input_name_get(in)));
-
-   fail_if(ecore_audio_input_data_get(in) != &len);
-   ecore_audio_input_del(in);
-}
-END_TEST
-
 struct buffer {
     int offset;
     int length;
@@ -330,6 +305,31 @@ START_TEST(ecore_test_ecore_audio_custom)
 END_TEST
 #endif
 
+START_TEST(ecore_test_ecore_audio_obj_sndfile)
+{
+   Eo *in;
+   double len, rem;
+   int channel, rate;
+
+   in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+   fail_if(!in);
+
+   eo_do(in, ecore_audio_obj_name_set("sms.ogg"));
+   eo_do(in, ecore_audio_obj_source_set(SOUNDS_DIR"/sms.ogg"));
+
+   eo_do(in, ecore_audio_obj_in_channels_get(&channel));
+   fail_if(channel != 2);
+   eo_do(in, ecore_audio_obj_in_samplerate_get(&rate));
+   fail_if(rate != 44100);
+   eo_do(in, ecore_audio_obj_in_length_get(&len));
+   fail_if(len == 0);
+   eo_do(in, ecore_audio_obj_in_remaining_get(&rem));
+   fail_if(len != rem);
+
+   eo_del(in);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
@@ -468,10 +468,10 @@ ecore_test_ecore_audio(TCase *tc)
 
    tcase_add_test(tc, ecore_test_ecore_audio_obj);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in_out);
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
 
 /*
    tcase_add_test(tc, ecore_test_ecore_audio_default);
-   tcase_add_test(tc, ecore_test_ecore_audio_sndfile);
    tcase_add_test(tc, ecore_test_ecore_audio_sndfile_vio);
    tcase_add_test(tc, ecore_test_ecore_audio_custom);
    tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
