@@ -247,11 +247,15 @@ _wref_destruct(Private_Data *pd)
 struct _Eo_Callback_Description
 {
    Eo_Callback_Description *next;
-   const Eo_Event_Description *event;
-   Eo_Event_Cb func;
+   union
+     {
+        Eo_Callback_Array_Item item;
+        const Eo_Callback_Array_Item *item_array;
+     } items;
    void *func_data;
    Eo_Callback_Priority priority;
    Eina_Bool delete_me : 1;
+   Eina_Bool func_array : 1;
 };
 
 /* Actually remove, doesn't care about walking list, or delete_me */
@@ -352,13 +356,16 @@ _ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
    const void *data = va_arg(*list, const void *);
 
    Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
-   cb->event = desc;
-   cb->func = func;
+   cb->items.item.desc = desc;
+   cb->items.item.func = func;
    cb->func_data = (void *) data;
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
 
-   eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, desc, NULL));
+     {
+        const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, arr, NULL));
+     }
 }
 
 static void
@@ -372,18 +379,64 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
    Eo_Callback_Description *cb;
    for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
-        if ((cb->event == desc) && (cb->func == func) &&
+        if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
               (cb->func_data == user_data))
           {
+             const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
+
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, desc, NULL));
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, arr, NULL));
              return;
           }
      }
 
    ERR("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
+}
+
+static void
+_ev_cb_array_priority_add(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   const Eo_Callback_Array_Item *array = va_arg(*list, const Eo_Callback_Array_Item *);
+   Eo_Callback_Priority priority = va_arg(*list, int);
+   const void *data = va_arg(*list, const void *);
+
+   Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
+   cb->func_data = (void *) data;
+   cb->priority = priority;
+   cb->items.item_array = array;
+   cb->func_array = EINA_TRUE;
+   _eo_callbacks_sorted_insert(pd, cb);
+
+     {
+        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, array, NULL));
+     }
+}
+
+static void
+_ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   const Eo_Callback_Array_Item *array = va_arg(*list, const Eo_Callback_Array_Item *);
+   void *user_data = va_arg(*list, void *);
+
+   Eo_Callback_Description *cb;
+   for (cb = pd->callbacks ; cb ; cb = cb->next)
+     {
+        if ((cb->items.item_array == array) && (cb->func_data == user_data))
+          {
+             cb->delete_me = EINA_TRUE;
+             pd->deletions_waiting = EINA_TRUE;
+             _eo_callbacks_clear(pd);
+
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, array, NULL));
+             return;
+          }
+     }
+
+   ERR("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
 }
 
 static void
@@ -406,17 +459,41 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
    Eo_Callback_Description *cb;
    for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
-        if (!cb->delete_me && (cb->event == desc))
+        if (!cb->delete_me)
           {
-             /* Abort callback calling if the func says so. */
-             if (!cb->func((void *) cb->func_data, obj, desc,
-                      (void *) event_info))
+             if (cb->func_array)
                {
-                  if (ret) *ret = EINA_FALSE;
-                  break;
+                  const Eo_Callback_Array_Item *it;
+                  for (it = cb->items.item_array ; it->func ; it++)
+                    {
+                       if (it->desc != desc)
+                          continue;
+                       /* Abort callback calling if the func says so. */
+                       if (!it->func((void *) cb->func_data, obj, desc,
+                                (void *) event_info))
+                         {
+                            if (ret) *ret = EINA_FALSE;
+                            goto end;
+                         }
+                    }
+               }
+             else
+               {
+                  if (cb->items.item.desc == desc)
+                    {
+                       /* Abort callback calling if the func says so. */
+                       if (!cb->items.item.func((void *) cb->func_data, obj, desc,
+                                (void *) event_info))
+                         {
+                            if (ret) *ret = EINA_FALSE;
+                            goto end;
+                         }
+                    }
                }
           }
      }
+
+end:
    pd->walking_list--;
    _eo_callbacks_clear(pd);
    eo_unref(obj);
@@ -558,6 +635,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), _ev_cb_priority_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), _ev_cb_del),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD), _ev_cb_array_priority_add),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL), _ev_cb_array_del),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
@@ -584,6 +663,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_WREF_DEL, "Delete the weak ref."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "Add an event callback with a priority."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "Delete an event callback"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD, "Add an event callback array with a priority."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL, "Delete an event callback array"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "Call the event callbacks for an event."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "Add an event forwarder."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "Delete an event forwarder."),

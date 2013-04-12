@@ -988,6 +988,8 @@ enum {
      EO_BASE_SUB_ID_WREF_DEL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD,
      EO_BASE_SUB_ID_EVENT_CALLBACK_DEL,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_CALL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL,
@@ -1199,6 +1201,23 @@ typedef short Eo_Callback_Priority;
 typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 
 /**
+ * @typedef Eo_Callback_Array_Item
+ * A convenience typedef for #_Eo_Callback_Array_Item
+ */
+typedef struct _Eo_Callback_Array_Item Eo_Callback_Array_Item;
+
+/**
+ * @struct _Eo_Callback_Array_Item
+ * An item in an array of callback desc/func.
+ * @see eo_event_callback_array_add()
+ */
+struct _Eo_Callback_Array_Item
+{
+   const Eo_Event_Description *desc; /**< The event description. */
+   Eo_Event_Cb func; /**< The callback function. */
+};
+
+/**
  * @def eo_event_callback_forwarder_add
  * @brief Add an event callback forwarder for an event and an object.
  * @param[in] desc The description of the event to listen to.
@@ -1316,7 +1335,6 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  */
 #define eo_event_callback_priority_add(desc, priority, cb, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(Eo_Event_Cb, cb), EO_TYPECHECK(const void *, data)
 
-
 /**
  * @def eo_event_callback_del
  * @brief Del a callback with a specific data associated to it for an event.
@@ -1326,6 +1344,42 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  *
  */
 #define eo_event_callback_del(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(const void *, user_data)
+
+/**
+ * @def eo_event_callback_array_add(obj, desc, cb, data)
+ * Add a callback array for an event.
+ * @param[in] array an #Eo_Callback_Array_Item of events to listen to.
+ * @param[in] data additional data to pass to the callback.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * @see eo_event_callback_array_priority_add()
+ */
+#define eo_event_callback_array_add(array, data) \
+   eo_event_callback_array_priority_add(array, \
+         EO_CALLBACK_PRIORITY_DEFAULT, data)
+
+/**
+ * @def eo_event_callback_priority_add
+ * @brief Add a callback array for an event with a specific priority.
+ * @param[in] array an #Eo_Callback_Array_Item of events to listen to.
+ * @param[in] priority The priority of the callback.
+ * @param[in] data additional data to pass to the callback.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * @see #eo_event_callback_add
+ */
+#define eo_event_callback_array_priority_add(array, priority, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def eo_event_callback_del
+ * @brief Del a callback array with a specific data associated to it for an event.
+ * @param[in] array an #Eo_Callback_Array_Item of events to listen to.
+ * @param[in] user_data The data to compare.
+ *
+ */
+#define eo_event_callback_array_del(array, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(const void *, user_data)
 
 /**
  * @def eo_event_callback_call

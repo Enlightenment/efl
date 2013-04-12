@@ -21,8 +21,8 @@ typedef struct
 #define simple_a_print() SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT)
 #define simple_class_hi_print() SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT)
 
-extern const Eo_Event_Description _SIG_A_CHANGED;
-#define SIG_A_CHANGED (&(_SIG_A_CHANGED))
+extern const Eo_Event_Description _EV_A_CHANGED;
+#define EV_A_CHANGED (&(_EV_A_CHANGED))
 
 #define SIMPLE_CLASS simple_class_get()
 const Eo_Class *simple_class_get(void);

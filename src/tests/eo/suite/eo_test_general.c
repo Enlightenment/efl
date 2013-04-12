@@ -24,6 +24,76 @@ START_TEST(eo_simple)
 }
 END_TEST
 
+static int _eo_signals_cb_curent = 0;
+static int _eo_signals_cb_flag = 0;
+
+static Eina_Bool
+_eo_signals_a_changed_cb(void *_data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int data = (intptr_t) _data;
+   _eo_signals_cb_curent++;
+   ck_assert_int_eq(data, _eo_signals_cb_curent);
+   _eo_signals_cb_flag |= 0x1;
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_eo_signals_a_changed_cb2(void *_data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _eo_signals_cb_flag |= 0x2;
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_eo_signals_eo_del_cb(void *_data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _eo_signals_cb_flag |= 0x4;
+   return EO_CALLBACK_CONTINUE;
+}
+
+Eina_Bool
+_eo_signals_cb_added_deled(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   const Eo_Callback_Array_Item *callback_array = event_info;
+
+   fail_if((callback_array != data) &&
+         (callback_array->func != _eo_signals_cb_added_deled));
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+START_TEST(eo_signals)
+{
+   eo_init();
+   static const Eo_Callback_Array_Item callbacks[] = {
+          { EV_A_CHANGED, _eo_signals_a_changed_cb },
+          { EV_A_CHANGED, _eo_signals_a_changed_cb2 },
+          { EO_EV_DEL, _eo_signals_eo_del_cb },
+          { NULL, NULL }
+   };
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks));
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks));
+   eo_do(obj, eo_event_callback_array_priority_add(callbacks, -100, (void *) 1));
+   eo_do(obj, eo_event_callback_array_add(callbacks, (void *) 3));
+   eo_do(obj, eo_event_callback_array_priority_add(callbacks, -50, (void *) 2));
+   fail_if(!eo_do(obj, simple_a_set(1)));
+   ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
+
+   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 1));
+   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 2));
+   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 3));
+   _eo_signals_cb_flag = 0;
+   fail_if(!eo_do(obj, simple_a_set(1)));
+   ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
+
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 START_TEST(eo_data_fetch)
 {
    eo_init();
@@ -755,4 +825,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_isa_tests);
    tcase_add_test(tc, eo_multiple_do);
    tcase_add_test(tc, eo_add_do_and_custom);
+   tcase_add_test(tc, eo_signals);
 }

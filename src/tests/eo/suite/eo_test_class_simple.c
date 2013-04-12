@@ -9,6 +9,9 @@
 
 EAPI Eo_Op SIMPLE_BASE_ID = 0;
 
+EAPI const Eo_Event_Description _EV_A_CHANGED =
+        EO_EVENT_DESCRIPTION("a,changed", "Called when a has changed.");
+
 static void
 _a_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
@@ -17,6 +20,8 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
    a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
+
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
 }
 
 static void
