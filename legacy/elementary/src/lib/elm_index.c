@@ -85,6 +85,17 @@ _index_box_clear(Evas_Object *obj,
    sd->level_active[level] = 0;
 }
 
+static void
+_access_index_register(Evas_Object *obj)
+{
+   Evas_Object *ao;
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   ao = _elm_access_edje_object_part_object_register
+              (obj, elm_layout_edje_get(obj), "access");
+   _elm_access_text_set
+     (_elm_access_object_get(ao), ELM_ACCESS_TYPE, E_("Index"));
+}
+
 static char *
 _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
@@ -395,6 +406,10 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    if (ret) *ret = EINA_TRUE;
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _access_index_register(obj);
 }
 
 static void
@@ -849,17 +864,6 @@ _on_mouse_out_access(void *data,
 
    if (!sd->autohide_disabled)
      elm_layout_signal_emit(data, "elm,state,inactive", "elm");
-}
-
-static void
-_access_index_register(Evas_Object *obj)
-{
-   Evas_Object *ao;
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   ao = _elm_access_edje_object_part_object_register
-              (obj, elm_layout_edje_get(obj), "access");
-   _elm_access_text_set
-     (_elm_access_object_get(ao), ELM_ACCESS_TYPE, E_("Index"));
 }
 
 static void
