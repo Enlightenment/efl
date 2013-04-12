@@ -41,6 +41,14 @@ static Eina_Bool
 _eo_signals_a_changed_cb2(void *_data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _eo_signals_cb_flag |= 0x2;
+   return EO_CALLBACK_STOP;
+}
+
+static Eina_Bool
+_eo_signals_a_changed_never(void *_data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   /* This one should never be called. */
+   fail_if(1);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -68,6 +76,7 @@ START_TEST(eo_signals)
    static const Eo_Callback_Array_Item callbacks[] = {
           { EV_A_CHANGED, _eo_signals_a_changed_cb },
           { EV_A_CHANGED, _eo_signals_a_changed_cb2 },
+          { EV_A_CHANGED, _eo_signals_a_changed_never },
           { EO_EV_DEL, _eo_signals_eo_del_cb },
           { NULL, NULL }
    };
@@ -84,6 +93,8 @@ START_TEST(eo_signals)
    eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 1));
    eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 2));
    eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 3));
+   /* Try to delete something that doesn't exist. */
+   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 4));
    _eo_signals_cb_flag = 0;
    fail_if(!eo_do(obj, simple_a_set(1)));
    ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
