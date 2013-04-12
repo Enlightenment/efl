@@ -300,15 +300,6 @@ EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
  */
 EAPI Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data);
 
-/**
- * @brief Fetch the sensor object by type from the sensor object list
- * @param type Sensor type to fetch from the list of sensor objects.
- * @return The sensor object matching the given type
- *
- * @since 1.8
- */
-EAPI Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
-
 #ifdef __cplusplus
 }
 #endif

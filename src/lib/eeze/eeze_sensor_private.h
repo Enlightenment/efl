@@ -88,6 +88,15 @@ EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module 
 EAPI Eina_Bool eeze_sensor_module_unregister(const char *name);
 
 /**
+ * @brief Fetch the sensor object by type from the sensor object list
+ * @param type Sensor type to fetch from the list of sensor objects.
+ * @return The sensor object matching the given type
+ *
+ * @since 1.8
+ */
+EAPI Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
+
+/**
  * @brief Initialize the Eeze sensor subsystem.
  * @return EINA_TRUE for success and EINA_FALSE for failure
  *
