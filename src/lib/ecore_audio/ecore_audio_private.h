@@ -101,6 +101,7 @@ struct _Ecore_Audio_Object
 
    Eina_Bool           paused;
    double              volume;
+   Ecore_Audio_Format  format;
 
 };
 

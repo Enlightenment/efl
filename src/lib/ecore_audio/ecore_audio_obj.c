@@ -77,6 +77,25 @@ static void _volume_get(Eo *eo_obj, void *_pd, va_list *list)
     *ret = obj->volume;
 }
 
+static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+  Ecore_Audio_Object *obj = _pd;
+
+  double volume = va_arg(*list, double);
+
+  obj->volume = volume;
+}
+
+static void _format_get(Eo *eo_obj, void *_pd, va_list *list)
+{
+  const Ecore_Audio_Object *obj = _pd;
+
+  double *ret = va_arg(*list, double *);
+
+  if (ret)
+    *ret = obj->volume;
+}
+
 static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   Ecore_Audio_Object *obj = _pd;
@@ -116,6 +135,8 @@ static const Eo_Op_Description op_desc[] = {
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_VOLUME_GET, "Gets the volume of the object."),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET, "Sets the source of the object."),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET, "Gets the source of the object."),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET, "Sets the format of the object."),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET, "Gets the format of the object."),
     EO_OP_DESCRIPTION_SENTINEL
 };
 

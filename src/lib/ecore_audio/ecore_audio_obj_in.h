@@ -49,9 +49,12 @@ enum Ecore_Audio_Obj_In_Sub_Ids
    ECORE_AUDIO_OBJ_IN_SUB_ID_CHANNELS_GET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_PRELOADED_SET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_PRELOADED_GET,
+   ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_SET,
+   ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_READ,
    ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK,
    ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET,
+   ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_REMAINING_GET,
    ECORE_AUDIO_OBJ_IN_SUB_ID_LAST
 };
@@ -91,11 +94,17 @@ enum Ecore_Audio_Obj_In_Sub_Ids
 
 #define ecore_audio_obj_in_preloaded_get(preloaded) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_PRELOADED_GET), EO_TYPECHECK(Eina_Bool *, preloaded)
 
+#define ecore_audio_obj_in_looped_set(looped) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_SET), EO_TYPECHECK(Eina_Bool, looped)
+
+#define ecore_audio_obj_in_looped_get(preloaded) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET), EO_TYPECHECK(Eina_Bool *, looped)
+
 #define ecore_audio_obj_in_read(buf, len, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), EO_TYPECHECK(char *, buf), EO_TYPECHECK(int, len), EO_TYPECHECK(int *, ret)
 
-#define ecore_audio_obj_in_seek(mode, offs, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), EO_TYPECHECK(int, mode), EO_TYPECHECK(double, offs), EO_TYPECHECK(double *, ret)
+#define ecore_audio_obj_in_seek(offs, mode, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), EO_TYPECHECK(double, offs), EO_TYPECHECK(int, mode), EO_TYPECHECK(double *, ret)
 
 #define ecore_audio_obj_in_output_get(ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET), EO_TYPECHECK(Eo **, ret)
+
+#define ecore_audio_obj_in_length_get(ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET), EO_TYPECHECK(double *, ret)
 
 #define ecore_audio_obj_in_remaining_get(ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_REMAINING_GET), EO_TYPECHECK(double *, ret)
 

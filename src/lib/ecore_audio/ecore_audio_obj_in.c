@@ -90,6 +90,25 @@ static void _channels_get(Eo *eo_obj, void *_pd, va_list *list)
     *channels = obj->channels;
 }
 
+static void _looped_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+  Ecore_Audio_Input *obj = _pd;
+
+  Eina_Bool looped = va_arg(*list, int);
+
+  obj->looped = looped;
+}
+
+static void _looped_get(Eo *eo_obj, void *_pd, va_list *list)
+{
+  const Ecore_Audio_Input *obj = _pd;
+
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+  if (ret)
+    *ret = obj->looped;
+}
+
 static void _read(Eo *eo_obj, void *_pd, va_list *list)
 {
   const Ecore_Audio_Input *obj = _pd;
@@ -112,6 +131,17 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
     *ret = len_read;
 }
 
+static void _length_get(Eo *eo_obj, void *_pd, va_list *list)
+{
+  const Ecore_Audio_Input *obj = _pd;
+
+  double *ret = va_arg(*list, double *);
+
+  if (ret) {
+    *ret = obj->length;
+  }
+}
+
 static void _remaining_get(Eo *eo_obj, void *_pd, va_list *list)
 {
   const Ecore_Audio_Input *obj = _pd;
@@ -119,7 +149,7 @@ static void _remaining_get(Eo *eo_obj, void *_pd, va_list *list)
   double *ret = va_arg(*list, double *);
 
   if (ret) {
-    eo_do(eo_obj, ecore_audio_obj_in_seek(SEEK_CUR, 0, ret));
+    eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_CUR, ret));
     *ret = obj->length - *ret;
   }
 }
@@ -172,6 +202,7 @@ static void _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), _read),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), NULL),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET), _output_get),
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET), _length_get),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_REMAINING_GET), _remaining_get),
 
       EO_OP_FUNC_SENTINEL
@@ -192,9 +223,12 @@ static const Eo_Op_Description op_desc[] = {
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_CHANNELS_GET, G(channels)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_PRELOADED_SET, S(preloaded)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_PRELOADED_GET, G(preloaded)),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_SET, S(looped)),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET, G(looped)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_READ, "Read from the input"),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK, "Seek within the input"),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET, G(output)),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET, G(length)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_REMAINING_GET, G(remaining)),
     EO_OP_DESCRIPTION_SENTINEL
 };

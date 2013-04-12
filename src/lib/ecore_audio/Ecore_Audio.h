@@ -48,7 +48,20 @@ enum _Ecore_Audio_Type {
     ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
 };
 
+enum _Ecore_Audio_Format {
+    ECORE_AUDIO_FORMAT_AUTO,
+    ECORE_AUDIO_FORMAT_RAW,
+    ECORE_AUDIO_FORMAT_WAV,
+    ECORE_AUDIO_FORMAT_OGG,
+    ECORE_AUDIO_FORMAT_FLAC,
+    ECORE_AUDIO_FORMAT_MP3,
+    ECORE_AUDIO_FORMAT_LAST
+};
+
 typedef enum _Ecore_Audio_Type Ecore_Audio_Type;
+
+typedef enum _Ecore_Audio_Format Ecore_Audio_Format;
+/**< The format of the audio data */
 
   /** @since 1.8
    */
@@ -59,10 +72,6 @@ typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
    */
 typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
 
-  /** @since 1.8
-   */
-typedef struct _Ecore_Audio_Format Ecore_Audio_Format;
-/**< The format of the audio data */
 
 typedef int (*Ecore_Audio_Read_Callback)(void *user_data, void *data, int len);
 
