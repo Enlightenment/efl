@@ -1002,8 +1002,23 @@ typedef enum _Evas_Device_Class
    EVAS_DEVICE_CLASS_PEN, /**< A special pen device @since 1.8 */
    EVAS_DEVICE_CLASS_POINTER, /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
    EVAS_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
-} Evas_Device_Class;
-   
+} Evas_Device_Class; /**< A general class of device @since 1.8 */
+
+typedef enum _Evas_Device_Subclass
+{
+   EVAS_DEVICE_SUBCLASS_NONE, /**< Not a device @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_FINGER, /**< The normal flat of your finger @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_FINGERNAIL, /**< A fingernail @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_KNUCKLE, /**< A Knuckle @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_PALM, /**< The palm of a users hand @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_HAND_SIZE, /**< The side of your hand @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_HAND_FLAT, /**< The flat of your hand @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_PEN_TIP, /**< The tip of a pen @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_TRACKPAD, /**< A trackpad style mouse @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_TRACKPOINT, /**< A trackpoint style mouse @since 1.8 */
+   EVAS_DEVICE_SUBCLASS_TRACKBALL, /**< A trackball style mouse @since 1.8 */
+} Evas_Device_Subclass; /**< A general class of device @since 1.8 */
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
@@ -4105,76 +4120,258 @@ EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
  */
 
 /**
+ * Add a new device type
+ * 
+ * @param e The canvas to create the device node for.
+ * 
+ * Adds a new device nod to the given canvas @p e. All devices created as
+ * part of the canvas @p e will automatically be deleted when the canvas
+ * is freed.
+ * 
+ * @see evas_device_del
  * @since 1.8
  */
 EAPI Evas_Device *evas_device_add(Evas *e);
 
 /**
+ * Delete a new device type
+ * 
+ * @see evas_device_add
+ * @see evas_device_push
+ * @see evas_device_pop
  * @since 1.8
  */
 EAPI void evas_device_del(Evas_Device *dev);
    
 /**
+ * Push the current context device onto the device stack
+ * 
+ * @param e The canvas to push the device on to
+ * @param dev The device to push.
+ * 
+ * This pushes the given device @p dev onto the stack for the canvas @p e
+ * resulting in the dev pointer in all events that get fed to the canvas
+ * being the device at the top of the device stack for that canvas.
+ * 
+ * If a device is pushed onto the device stack, it will not be deleted
+ * until a canvas free OR until it has been popped from the stack even if
+ * evas_device_del() is called.
+ * 
+ * The device @p dev must have been created as a device for the canvas it
+ * is pushed onto (and not another canvas).
+ * 
+ * Example:
+ * @code
+ * evas_device_push(canvas, dev);
+ * evas_event_feed_mouse_move(canvas, 20, 30, 0, NULL);
+ * evas_device_pop(canvas);
+ * @endcode
+ * 
+ * @see evas_device_pop
  * @since 1.8
  */
 EAPI void evas_device_push(Evas *e, Evas_Device *dev);
    
 /**
+ * This pops the top of the device stack for the canvas
+ * 
+ * @param e The canvas to pop the device stack from
+ * 
+ * This pops the top of the device stack making the current device context
+ * used for device events being what is now at the top of the stack after
+ * popping.
+ * 
+ * @see evas_device_push
  * @since 1.8
  */
 EAPI void evas_device_pop(Evas *e);
    
 /**
+ * List all current devices attached to the given canvas and/or device
+ * 
+ * @param e The canvas to query for a device list
+ * @param dev A specific device inside the canvas to query for child devices or NULL if just querying the base canvas devices
+ * @return An internal list of Evas_Device pointers, or NULL if no devices are found
+ * 
+ * This will list all devices belonging to a specific evas canvas @p e, at the
+ * top-level in the device tree if @p dev passed in is NULL. If @p dev is
+ * a valid device for the given canvas @p e, then a list of child devices
+ * of @p dev will be returned, allowing you to walk the device tree.
+ * 
+ * The list returned is only valid so long as no changes are made to the
+ * device tree in the given canvas @p e. If there are no devices or children
+ * then NULL is returned.
+ * 
+ * @see evas_device_parent_get
+ * @see evas_device_name_get
+ * @see evas_device_description_get
+ * @see evas_device_class_get
+ * @see evas_device_subclass_get
+ * @see evas_device_emulation_source_get
  * @since 1.8
  */
 EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
    
 /**
+ * Set the name of a device as a string
+ * 
+ * @p dev The device to set the name of
+ * @p name The name string as a readable C UTF8 string
+ * 
  * @since 1.8
  */
 EAPI void evas_device_name_set(Evas_Device *dev, const char *name);
    
 /**
+ * Get the name of a device
+ * 
+ * @p dev The device to query
+ * @return The device name string or NULL if none is set
+ * 
+ * This gets the name set by evas_device_name_set(). This is a readable UTF8
+ * C string, or NULL if no name is set.
+ *
+ * The name should be a short name like "Wireless Mouse", "Joystick",
+ * "Finger", "Keyboard" or "Numberpad" etc.
+ * 
  * @since 1.8
  */
 EAPI const char *evas_device_name_get(const Evas_Device *dev);
    
 /**
+ * Set the description of a device as a string
+ * 
+ * @p dev The device to set the description of
+ * @p name The description string as a readable C UTF8 string
+ * 
  * @since 1.8
  */
 EAPI void evas_device_description_set(Evas_Device *dev, const char *desc);
    
 /**
+ * Get the description of a device
+ * 
+ * @p dev The device to query
+ * @return The device description string or NULL if none is set
+ * 
+ * This gets the description set by evas_device_description_set(). This is
+ * a readable UTF8 C string, or NULL if no description is set.
+ * 
+ * A description is meant to be a longer string describing the device so a
+ * human may make sense of it. For example "Wireless 6 button mouse in Black
+ * with red buttons" would be a good description, so a user may identify
+ * precisely which device is being talked about.
+ * 
  * @since 1.8
  */
 EAPI const char *evas_device_description_get(const Evas_Device *dev);
    
 /**
+ * Set the parent of a device
+ * 
+ * @p dev The device to set the parent of
+ * @p parent The new parent device
+ * 
+ * This sets the parent of a device @p dev to the parent given by @p parent.
+ * If the device already has a parent, it is removed from that parent's list.
+ * If @p parent is NULL then the device is unparented and placed back as a
+ * root device in the canvas.
+ * 
+ * When a device is deleted with evas_device_del(), all children are also
+ * deleted along with it.
+ * 
+ * @see evas_device_del
+ * @see evas_device_parent_get
+ * @see evas_device_list
+ * 
  * @since 1.8
  */
 EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
    
 /**
+ * Get the parent of a device
+ * 
+ * @param dev The device to query
+ * @return The parent device or NULL if it is a toplevel
+ * 
+ * This returns the parent device of any given device entry, or NULL if no
+ * parent device exists (is a toplevel device).
+ * 
  * @since 1.8
  */
 EAPI const Evas_Device *evas_device_parent_get(const Evas_Device *dev);
    
 /**
+ * Set the major class of device
+ * 
+ * @param dev The device whose class to set
+ * @param clas The class to set it to
+ * 
+ * This sets the "primary" class of device (a broad thing like mouse, keyboard,
+ * touch, pen etc.).
+ * 
  * @since 1.8
  */
 EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
    
 /**
+ * Get the major class of a device
+ * 
+ * @param dev The devise to query
+ * @return The device class to set
+ * 
+ * This sets the device class set by evas_device_class_set().
+ * 
  * @since 1.8
  */
 EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
    
 /**
+ * Set the sub-class of a device
+ * 
+ * @param dev The device to modify
+ * @param clas The sub-class to set
+ * 
+ * This sets the sub-class of a device whihc gives much more detailed usage
+ * within a broader category.
+ * 
+ * @since 1.8
+ */
+EAPI void evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas);
+   
+/**
+ * Get the device sub-class
+ * 
+ * @param dev The device to query
+ * @return The device sub-class set by evas_device_subclass_set().
+ * 
+ * @since 1.8
+ */
+EAPI Evas_Device_Subclass evas_device_subclass_get(const Evas_Device *dev);
+   
+/**
+ * Set the emulation source device
+ * 
+ * @param dev The device being emulated
+ * @param src The primary source device producing events in the emulated device
+ * 
+ * Devices may not be real, but may be emulated by listening to input on other
+ * devices and modifying or interpeting it to generate output on an emulated
+ * device (example a fingeron a touchscreen will often emulate a mouse when
+ * it presses). This allows you to set which device primarily emulates @p dev
+ * so the user can choose to ignore events from emulated devices if they also
+ * pay attention to source device events for example.
+ * 
  * @since 1.8
  */
 EAPI void evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src);
    
 /**
+ * Get the emulation source device
+ * 
+ * @param dev The device to query
+ * @return The source emulation device set by evas_device_emulation_source_set().
+ * 
  * @since 1.8
  */
 EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev);

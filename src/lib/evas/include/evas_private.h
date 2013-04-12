@@ -733,6 +733,7 @@ struct _Evas_Device
    const char *desc;
    int ref;
    Evas_Device_Class clas;
+   Evas_Device_Subclass subclas;
 };
 
 struct _Evas_Object_Func

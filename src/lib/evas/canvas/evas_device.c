@@ -138,6 +138,7 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
    MAGIC_CHECK_END();
+   Evas_Public_Data *e = eo_data_get(e->evas, EVAS_CLASS);
    if (parent)
      {
         MAGIC_CHECK(parent, Evas_Device, MAGIC_DEV);
@@ -147,9 +148,14 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    if (dev->parent == parent) return;
    if (dev->parent)
      dev->parent->children = eina_list_remove(dev->parent->children, dev);
+   else if (parent)
+     e->devices = eina_list_remove(e->devices, dev);
    dev->parent = parent;
    if (parent)
      parent->children = eina_list_append(parent->children, dev);
+   else
+     e->devices = eina_list_append(e->devices, dev);
+   
    evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
@@ -179,6 +185,25 @@ evas_device_class_get(const Evas_Device *dev)
    return EVAS_DEVICE_CLASS_NONE;
    MAGIC_CHECK_END();
    return dev->clas;
+}
+
+EAPI void
+evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
+{
+   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
+   return;
+   MAGIC_CHECK_END();
+   dev->subclas = clas;
+   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+}
+
+EAPI Evas_Device_Subclass
+evas_device_subclass_get(const Evas_Device *dev)
+{
+   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
+   return EVAS_DEVICE_SUBCLASS_NONE;
+   MAGIC_CHECK_END();
+   return dev->subclas;
 }
 
 EAPI void
