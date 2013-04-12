@@ -10,6 +10,9 @@
 
 #include "ecore_suite.h"
 
+#define FP_ERR (0.0000001)
+#define CHECK_FP(a, b) ((a - b) < FP_ERR)
+
 static int _log_dom;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 
@@ -379,6 +382,137 @@ START_TEST(ecore_test_ecore_app)
 }
 END_TEST
 
+Eina_Bool _poller_cb(void *data)
+{
+   int *val = data;
+   (*val)++;
+   return ECORE_CALLBACK_RENEW;
+}
+
+START_TEST(ecore_test_ecore_main_loop_poller)
+{
+   int ret;
+
+   Ecore_Poller *poll1_ptr = NULL;
+   int poll1_interval = 1;
+   int poll1_counter = 0;
+
+   Ecore_Poller *poll2_ptr = NULL;
+   int poll2_interval = 2;
+   int poll2_counter = 0;
+
+   Ecore_Poller *poll3_ptr = NULL;
+   int poll3_interval = 4;
+   int poll3_counter = 0;
+
+   Eina_Bool did = EINA_FALSE;
+
+   ret = ecore_init();
+   fail_if(ret != 1);
+
+   /* Check ECORE_POLLER_CORE poll interval */
+   double interval = 1.0;
+   ecore_poller_poll_interval_set(ECORE_POLLER_CORE, interval);
+   fail_unless(CHECK_FP(ecore_poller_poll_interval_get(ECORE_POLLER_CORE), interval));
+
+   /* Create three pollers with different poller interval */
+   poll1_ptr = ecore_poller_add(ECORE_POLLER_CORE, poll1_interval, _poller_cb, &poll1_counter);
+   poll2_ptr = ecore_poller_add(ECORE_POLLER_CORE, poll2_interval, _poller_cb, &poll2_counter);
+   poll3_ptr = ecore_poller_add(ECORE_POLLER_CORE, poll3_interval, _poller_cb, &poll3_counter);
+
+   /* Add one time processed quit poller */
+   ecore_poller_add(ECORE_POLLER_CORE, 8, _quit_cb, &did);
+
+   /* Enter main loop and wait 8 seconds for quit */
+   ecore_main_loop_begin();
+
+   /* Check each poller poll interval */
+   fail_if(ecore_poller_poller_interval_get(poll1_ptr) != poll1_interval);
+   fail_if(ecore_poller_poller_interval_get(poll2_ptr) != poll2_interval);
+   fail_if(ecore_poller_poller_interval_get(poll3_ptr) != poll3_interval);
+
+   /* Check each poller call counter */
+   fail_if(8 != poll1_counter);
+   fail_if(4 != poll2_counter);
+   fail_if(2 != poll3_counter);
+
+   /* Destroy renewable pollers */
+   ecore_poller_del(poll3_ptr);
+   ecore_poller_del(poll2_ptr);
+   ecore_poller_del(poll1_ptr);
+
+   fail_if(did == EINA_FALSE);
+
+   ret = ecore_shutdown();
+   fail_if(ret != 0);
+}
+END_TEST
+
+Eina_Bool _poller_handler(void *data)
+{
+   int *val = data;
+   (*val)++;
+   return ECORE_CALLBACK_RENEW;
+}
+
+Eina_Bool _poller_loop(void *data)
+{
+   int *res = data;
+
+   static Ecore_Poller *poll_ptr = NULL;
+   static int count = 0;
+
+   switch (count)
+      {
+      case 2:
+         poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 2, _poller_handler, res);
+         break;
+      case 6:
+         ecore_poller_poller_interval_set(poll_ptr, 1);
+         break;
+      case 10:
+         ecore_poller_del(poll_ptr);
+         break;
+      default:
+         // do nothing
+         break;
+      }
+   count++;
+   return ECORE_CALLBACK_RENEW;
+}
+
+START_TEST(ecore_test_ecore_main_loop_poller_add_del)
+{
+   int ret, count_res = 0;
+
+   Eina_Bool did = EINA_FALSE;
+
+   ret = ecore_init();
+   fail_if(ret != 1);
+
+   /* Create renewable main poller */
+   Ecore_Poller *poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop, &count_res);
+
+   /* One time processed poller */
+   ecore_poller_add(ECORE_POLLER_CORE, 16, _quit_cb, &did);
+
+   /* Enter main loop and wait for quit*/
+   ecore_main_loop_begin();
+
+   fprintf(stderr, "count_res: %i\n", count_res);
+   /* Validation call counter */
+   fail_if(6 != count_res);
+
+   /* Destroy renewable main poller */
+   ecore_poller_del(poll_ptr);
+
+   fail_if(did == EINA_FALSE);
+
+   ret = ecore_shutdown();
+   fail_if(ret != 0);
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -392,4 +526,6 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);
    tcase_add_test(tc, ecore_test_ecore_app);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
 }
