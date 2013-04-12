@@ -138,7 +138,7 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
    MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_get(e->evas, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_get(dev->evas, EVAS_CLASS);
    if (parent)
      {
         MAGIC_CHECK(parent, Evas_Device, MAGIC_DEV);
