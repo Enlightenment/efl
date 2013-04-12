@@ -7015,7 +7015,7 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
 
-   for (i = cur->pos; (BREAK_AFTER(i)); i--)
+   for (i = cur->pos; BREAK_AFTER(i); i--)
      {
         if (i == 0) break;
      }
