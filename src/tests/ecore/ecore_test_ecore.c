@@ -351,6 +351,34 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_app)
+{
+   int ret;
+
+   int argc_in = 2;
+   const char *argv_in[] = {"arg_str_1", "arg_str2"};
+
+   int argc_out = 0;
+   char **argv_out = NULL;
+
+   ret = ecore_init();
+   fail_if(ret != 1);
+
+   ecore_app_args_set(argc_in, argv_in);
+   ecore_app_args_get(&argc_out, &argv_out);
+
+   fail_if(argc_in != argc_out);
+   int i;
+   for (i = 0; i < argc_out; i++)
+   {
+	   fail_if( 0 != strcmp(argv_in[i], argv_out[i]) );
+   }
+
+   ret = ecore_shutdown();
+   fail_if(ret != 0);
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -363,4 +391,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);
+   tcase_add_test(tc, ecore_test_ecore_app);
 }
