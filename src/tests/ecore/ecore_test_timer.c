@@ -27,9 +27,9 @@ struct _timers           // timer struct
    int add_timer2;      // flag add timer 2
    int check_freeze_thaw_timer3;
    int num_elem;
-   float delay_1[3];
-   float interval_1[3];
-   float precision[3];
+   double delay_1[3];
+   double interval_1[3];
+   double precision[3];
 };
 
 static Eina_Bool
