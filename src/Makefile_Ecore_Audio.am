@@ -9,7 +9,8 @@ dist_installed_ecoreaudiomainheaders_DATA = \
 lib/ecore_audio/Ecore_Audio.h \
 lib/ecore_audio/ecore_audio_obj.h \
 lib/ecore_audio/ecore_audio_obj_in.h \
-lib/ecore_audio/ecore_audio_obj_out.h
+lib/ecore_audio/ecore_audio_obj_out.h \
+lib/ecore_audio/ecore_audio_protected.h
 
 
 lib_ecore_audio_libecore_audio_la_SOURCES = \

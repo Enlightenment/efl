@@ -16,6 +16,11 @@
 
 EAPI Eo_Op ECORE_AUDIO_OBJ_IN_BASE_ID = EO_NOOP;
 
+EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_LOOPED =
+         EO_EVENT_DESCRIPTION("in,looped", "Called when an input has looped.");
+EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_STOPPED =
+         EO_EVENT_DESCRIPTION("in,stopped", "Called when an input has stopped playing.");
+
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_CLASS
 #define MY_CLASS_NAME "ecore_audio_obj_in"
 
@@ -122,9 +127,17 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
     memset(buf, 0, len);
     len_read = len;
   } else {
-      /* FIXME: Module read func */
-      len_read = 0;
-      /* FIXME: Signals for loop/EOF */
+      eo_do(eo_obj, ecore_audio_obj_in_read_internal(buf, len, &len_read));
+      if (len_read == 0) {
+          if (!obj->looped) {
+              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_IN_STOPPED, NULL, NULL));
+          } else {
+              eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_SET, NULL));
+              eo_do(eo_obj, ecore_audio_obj_in_read_internal(buf, len, &len_read));
+              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_IN_LOOPED, NULL, NULL));
+          }
+      }
+
   }
 
   if (ret)
@@ -226,6 +239,7 @@ static const Eo_Op_Description op_desc[] = {
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_SET, S(looped)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET, G(looped)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_READ, "Read from the input"),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL, "Internal implementation for the read"),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK, "Seek within the input"),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET, G(output)),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET, G(length)),
@@ -233,12 +247,18 @@ static const Eo_Op_Description op_desc[] = {
     EO_OP_DESCRIPTION_SENTINEL
 };
 
+static const Eo_Event_Description *event_desc[] = {
+    ECORE_AUDIO_EV_IN_LOOPED,
+    ECORE_AUDIO_EV_IN_STOPPED,
+    NULL
+};
+
 static const Eo_Class_Description class_desc = {
     EO_VERSION,
     MY_CLASS_NAME,
     EO_CLASS_TYPE_REGULAR,
     EO_CLASS_DESCRIPTION_OPS(&ECORE_AUDIO_OBJ_IN_BASE_ID, op_desc, ECORE_AUDIO_OBJ_IN_SUB_ID_LAST),
-    NULL,
+    event_desc,
     sizeof(Ecore_Audio_Input),
     _class_constructor,
     NULL
