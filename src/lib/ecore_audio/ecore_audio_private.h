@@ -184,14 +184,6 @@ Ecore_Audio_Module *ecore_audio_sndfile_init(void);
 void                ecore_audio_sndfile_shutdown(void);
 #endif /* HAVE_SNDFILE */
 
-/* ecore_audio_tone */
-struct _Ecore_Audio_Tone
-{
-   int    freq;
-   double duration;
-   int    phase;
-};
-
 Ecore_Audio_Module *ecore_audio_tone_init(void);
 void                ecore_audio_tone_shutdown(void);
 

@@ -12,6 +12,7 @@ lib/ecore_audio/ecore_audio_obj_in.h \
 lib/ecore_audio/ecore_audio_obj_out.h \
 lib/ecore_audio/ecore_audio_obj_in_sndfile.h \
 lib/ecore_audio/ecore_audio_obj_out_sndfile.h \
+lib/ecore_audio/ecore_audio_obj_in_tone.h \
 lib/ecore_audio/ecore_audio_protected.h
 
 
@@ -22,6 +23,7 @@ lib/ecore_audio/ecore_audio_obj_in.c \
 lib/ecore_audio/ecore_audio_obj_out.c \
 lib/ecore_audio/ecore_audio_obj_in_sndfile.c \
 lib/ecore_audio/ecore_audio_obj_out_sndfile.c \
+lib/ecore_audio/ecore_audio_obj_in_tone.c \
 lib/ecore_audio/ecore_audio_private.h
 
 lib_ecore_audio_libecore_audio_la_CPPFLAGS = @ECORE_AUDIO_CFLAGS@
