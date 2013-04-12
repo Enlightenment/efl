@@ -974,7 +974,6 @@ int evas_object_was_in_output_rect(Evas_Object *obj, Evas_Object_Protected_Data 
 int evas_object_was_opaque(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 int evas_object_is_inside(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
 int evas_object_was_inside(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
-int evas_object_clippers_was_visible(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_clip_across_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_clip_across_clippees_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_mapped_clip_across_mark(Evas_Object *obj, Evas_Object_Protected_Data *pd);

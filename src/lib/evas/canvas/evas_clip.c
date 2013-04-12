@@ -37,20 +37,6 @@ evas_object_recalc_clippees(Evas_Object_Protected_Data *obj)
      }
 }
 
-int
-evas_object_clippers_was_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
-{
-   if (obj->prev->visible)
-     {
-	if (obj->prev->clipper)
-          {
-             return evas_object_clippers_is_visible(obj->prev->clipper->object, obj->prev->clipper);
-          }
-	return 1;
-     }
-   return 0;
-}
-
 /* aaaaargh (pirate voice) ... notes!
  *
  * we have a big problem until now that's gone undetected... until yesterday.
