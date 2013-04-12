@@ -26,6 +26,7 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore Audio", ecore_test_ecore_audio},
 #endif
   { "Ecore_Coroutine", ecore_test_coroutine },
+  { "Ecore_Timers", ecore_test_timer },
   { NULL, NULL }
 };
 

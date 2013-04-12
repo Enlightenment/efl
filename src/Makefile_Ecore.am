@@ -68,6 +68,7 @@ tests/ecore/ecore_test_ecore_con.c \
 tests/ecore/ecore_test_ecore_x.c \
 tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_test_coroutine.c \
+tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = \
