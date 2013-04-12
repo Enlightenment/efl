@@ -842,10 +842,6 @@ eng_setup(Evas *eo_e, void *in)
         e->engine.data.output = re;
         gl_wins++;
 
-        re->evgl_engine = evgl_engine_create(&evgl_funcs, (void*)re);
-        if (!re->evgl_engine)
-          ERR("Error Creating Evas_GL Engine. Evas GL will not be supported!");
-
         if (!initted)
           {
              gl_symbols();
@@ -864,6 +860,10 @@ eng_setup(Evas *eo_e, void *in)
              gl_extn_veto(re);
              initted = 1;
           }
+
+        re->evgl_engine = evgl_engine_create(&evgl_funcs, (void*)re);
+        if (!re->evgl_engine)
+          ERR("Error Creating Evas_GL Engine. Evas GL will not be supported!");
      }
    else
      {
