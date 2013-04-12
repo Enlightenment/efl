@@ -585,6 +585,98 @@ _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, va_list *list)
    *ret = event_freeze_count;
 }
 
+/* Eo_Dbg */
+EAPI void
+eo_dbg_info_free(Eo_Dbg_Info *info)
+{
+   eina_value_flush(&(info->value));
+   free(info);
+}
+
+static Eina_Bool
+_eo_dbg_info_setup(const Eina_Value_Type *type, void *mem)
+{
+   memset(mem, 0, type->value_size);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_dbg_info_flush(const Eina_Value_Type *type EINA_UNUSED, void *_mem)
+{
+   Eo_Dbg_Info *mem = *(Eo_Dbg_Info **) _mem;
+   eina_stringshare_del(mem->name);
+   eina_value_flush(&(mem->value));
+   free(mem);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_dbg_info_copy(const Eina_Value_Type *type EINA_UNUSED, const void *_src, void *_dst)
+{
+   const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) _src;
+   Eo_Dbg_Info **dst = _dst;
+   *dst = calloc(1, sizeof(*dst));
+   (*dst)->name = eina_stringshare_ref((*src)->name);
+   eina_value_copy(&((*src)->value), &((*dst)->value));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   /* FIXME: For the meanwhile, just use the inner type for the value. */
+   const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) type_mem;
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        Eina_Bool ret;
+        const char *other_mem;
+        char *inner_val = eina_value_to_string(&(*src)->value);
+        other_mem = inner_val;
+        ret = eina_value_type_pset(convert, convert_mem, &other_mem);
+        free(inner_val);
+        return ret;
+     }
+
+   eina_error_set(EINA_ERROR_VALUE_FAILED);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_eo_dbg_info_pset(const Eina_Value_Type *type EINA_UNUSED, void *_mem, const void *_ptr)
+{
+   Eo_Dbg_Info **mem = _mem;
+   if (*mem)
+     free(*mem);
+   *mem = (void *) _ptr;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_dbg_info_pget(const Eina_Value_Type *type EINA_UNUSED, const void *_mem, void *_ptr)
+{
+   Eo_Dbg_Info **ptr = _ptr;
+   *ptr = (void *) _mem;
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EO_DBG_INFO_TYPE = {
+   EINA_VALUE_TYPE_VERSION,
+   sizeof(Eo_Dbg_Info *),
+   "Eo_Dbg_Info_Ptr",
+   _eo_dbg_info_setup,
+   _eo_dbg_info_flush,
+   _eo_dbg_info_copy,
+   NULL,
+   _eo_dbg_info_convert_to,
+   NULL,
+   NULL,
+   _eo_dbg_info_pset,
+   _eo_dbg_info_pget
+};
+
+EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
+
 
 /* EOF event callbacks */
 
