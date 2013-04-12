@@ -560,14 +560,6 @@ EINA_DEPRECATED EAPI void
 elm_notify_orient_set(Evas_Object *obj,
                       Elm_Notify_Orient orient)
 {
-   ELM_NOTIFY_CHECK(obj);
-   eo_do(obj, elm_obj_notify_orient_set(orient));
-}
-
-static void
-_orient_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Elm_Notify_Orient orient = va_arg(*list, Elm_Notify_Orient);
    double horizontal = 0, vertical = 0;
 
    switch (orient)
@@ -617,16 +609,6 @@ _orient_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 EINA_DEPRECATED EAPI Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
-   ELM_NOTIFY_CHECK(obj) - 1;
-   Elm_Notify_Orient ret = - 1;
-   eo_do((Eo *) obj, elm_obj_notify_orient_get(&ret));
-   return ret;
-}
-
-static void
-_orient_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Elm_Notify_Orient *ret = va_arg(*list, Elm_Notify_Orient *);
    Elm_Notify_Orient orient;
    double horizontal, vertical;
 
@@ -652,7 +634,8 @@ _orient_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
      orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
    else
      orient = ELM_NOTIFY_ORIENT_TOP;
-   *ret = orient;
+
+   return orient;
 }
 
 EAPI void
@@ -740,7 +723,15 @@ EAPI void
 elm_notify_align_set(Evas_Object *obj, double horizontal, double vertical)
 {
    ELM_NOTIFY_CHECK(obj);
-   ELM_NOTIFY_DATA_GET(obj, sd);
+   eo_do(obj, elm_obj_notify_align_set(horizontal, vertical));
+}
+
+static void
+_align_set(Eo *obj, void *_pd, va_list *list)
+{
+   double horizontal = va_arg(*list, double);
+   double vertical = va_arg(*list, double);
+   Elm_Notify_Smart_Data *sd = _pd;
 
    sd->horizontal_align = horizontal;
    sd->vertical_align = vertical;
@@ -753,10 +744,20 @@ EAPI void
 elm_notify_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
 {
    ELM_NOTIFY_CHECK(obj);
-   ELM_NOTIFY_DATA_GET(obj, sd);
+   eo_do((Eo *) obj, elm_obj_notify_align_get(horizontal, vertical));
+}
 
-   *horizontal = sd->horizontal_align;
-   *vertical = sd->vertical_align;
+static void
+_align_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *horizontal = va_arg(*list, double *);
+   double *vertical = va_arg(*list, double *);
+   Elm_Notify_Smart_Data *sd = _pd;
+
+   if (horizontal)
+     *horizontal = sd->horizontal_align;
+   if (vertical)
+     *vertical = sd->vertical_align;
 }
 
 static void
@@ -785,12 +786,12 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_notify_smart_content_get),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_notify_smart_content_unset),
 
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_SET), _orient_set),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_GET), _orient_get),
         EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_SET), _timeout_set),
         EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_GET), _timeout_get),
         EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_SET), _allow_events_set),
         EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET), _allow_events_get),
+        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET), _align_set),
+        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET), _align_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -798,12 +799,12 @@ _class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_SET, "Set the orientation."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_GET, "Return the orientation."),
      EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_SET, "Set the time interval after which the notify window is going to be hidden."),
      EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_GET, "Return the timeout value (in seconds)."),
      EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_SET, "Sets whether events should be passed to by a click outside its area."),
      EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET, "Return true if events are allowed below the notify object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET, "Set the alignment."),
+     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET, "Return the alignment."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

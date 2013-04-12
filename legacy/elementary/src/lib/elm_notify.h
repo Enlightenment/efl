@@ -42,41 +42,16 @@ extern EAPI Eo_Op ELM_OBJ_NOTIFY_BASE_ID;
 
 enum
 {
-   ELM_OBJ_NOTIFY_SUB_ID_ORIENT_SET,
-   ELM_OBJ_NOTIFY_SUB_ID_ORIENT_GET,
    ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_SET,
    ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_GET,
    ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_SET,
    ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET,
+   ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET,
+   ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET,
    ELM_OBJ_NOTIFY_SUB_ID_LAST
 };
 
 #define ELM_OBJ_NOTIFY_ID(sub_id) (ELM_OBJ_NOTIFY_BASE_ID + sub_id)
-
-
-/**
- * @def elm_obj_notify_orient_set
- * @since 1.8
- *
- * No description supplied by the EAPI.
- *
- * @param[in] orient
- *
- * @see elm_notify_orient_set
- */
-#define elm_obj_notify_orient_set(orient) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_SET), EO_TYPECHECK(Elm_Notify_Orient, orient)
-
-/**
- * @def elm_obj_notify_orient_get
- * @since 1.8
- *
- * No description supplied by the EAPI.
- *
- * @param[out] ret
- *
- * @see elm_notify_orient_get
- */
-#define elm_obj_notify_orient_get(ret) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ORIENT_GET), EO_TYPECHECK(Elm_Notify_Orient *, ret)
 
 /**
  * @def elm_obj_notify_timeout_set
@@ -125,6 +100,32 @@ enum
  * @see elm_notify_allow_events_get
  */
 #define elm_obj_notify_allow_events_get(ret) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_notify_align_set
+ * @since 1.8
+ *
+ * @brief Set the alignment of the notify object
+ *
+ * @param[in] horizontal
+ * @param[in] vertical
+ *
+ * @see elm_notify_align_set
+ */
+#define elm_obj_notify_align_set(horizontal, vertical) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET), EO_TYPECHECK(double, horizontal), EO_TYPECHECK(double, vertical)
+
+/**
+ * @def elm_obj_notify_align_get
+ * @since 1.8
+ *
+ * @brief Return the alignment of the notify object
+ *
+ * @param[out] horizontal
+ * @param[out] vertical
+ *
+ * @see elm_notify_align_get
+ */
+#define elm_obj_notify_align_get(horizontal, vertical) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
 
 /**
  * @brief Add a new notify to the parent
