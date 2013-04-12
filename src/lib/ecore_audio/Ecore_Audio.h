@@ -18,12 +18,6 @@
 #define EAPI
 #endif
 
-#include <ecore_audio_obj.h>
-#include <ecore_audio_obj_in.h>
-#include <ecore_audio_obj_out.h>
-
-#include <ecore_audio_obj_in_sndfile.h>
-
 /**
  * @file Ecore_Audio.h
  * @brief Audio utility functions
@@ -81,14 +75,6 @@ struct _Ecore_Audio_Vio {
 };
 
 typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio; /**< Functions to implement IO virtually */
-
-EAPI extern int ECORE_AUDIO_INPUT_STARTED; /**< Sound was started */
-EAPI extern int ECORE_AUDIO_INPUT_STOPPED; /**< Sound was stopped */
-EAPI extern int ECORE_AUDIO_INPUT_LOOPED;  /**< Sound looped */
-EAPI extern int ECORE_AUDIO_INPUT_ENDED;   /**< Sound playback ended */
-EAPI extern int ECORE_AUDIO_INPUT_PAUSED;  /**< Sound paused */
-EAPI extern int ECORE_AUDIO_OUTPUT_INPUT_ADDED;   /**< Input added to output */
-EAPI extern int ECORE_AUDIO_OUTPUT_INPUT_REMOVED; /**< Input removed from output */
 
 /* Audio operations */
 
@@ -571,5 +557,12 @@ EAPI void                ecore_audio_input_callback_setup(Ecore_Audio_Object *in
 #ifdef __cplusplus
 }
 #endif
+
+#include <ecore_audio_obj.h>
+#include <ecore_audio_obj_in.h>
+#include <ecore_audio_obj_out.h>
+
+#include <ecore_audio_obj_in_sndfile.h>
+#include <ecore_audio_obj_out_sndfile.h>
 
 #endif
