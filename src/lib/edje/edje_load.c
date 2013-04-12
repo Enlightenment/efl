@@ -1715,6 +1715,7 @@ static void
 _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
 {
    Evas_Coord w = 0, h = 0, minw, minh;
+   Evas_Aspect_Control mode = EVAS_ASPECT_CONTROL_NONE;
 
    minw = it->min.w;
    minh = it->min.h;
@@ -1740,7 +1741,16 @@ _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
    evas_object_size_hint_padding_set(obj, it->padding.l, it->padding.r, it->padding.t, it->padding.b);
    evas_object_size_hint_align_set(obj, TO_DOUBLE(it->align.x), TO_DOUBLE(it->align.y));
    evas_object_size_hint_weight_set(obj, TO_DOUBLE(it->weight.x), TO_DOUBLE(it->weight.y));
-   evas_object_size_hint_aspect_set(obj, it->aspect.mode, it->aspect.w, it->aspect.h);
+
+   switch (it->aspect.mode)
+     {
+      case EDJE_ASPECT_CONTROL_NONE: mode = EVAS_ASPECT_CONTROL_NONE; break;
+      case EDJE_ASPECT_CONTROL_NEITHER: mode = EVAS_ASPECT_CONTROL_NEITHER; break;
+      case EDJE_ASPECT_CONTROL_HORIZONTAL: mode = EVAS_ASPECT_CONTROL_HORIZONTAL; break;
+      case EDJE_ASPECT_CONTROL_VERTICAL: mode = EVAS_ASPECT_CONTROL_VERTICAL; break;
+      case EDJE_ASPECT_CONTROL_BOTH: mode = EVAS_ASPECT_CONTROL_BOTH; break;
+     }
+   evas_object_size_hint_aspect_set(obj, mode, it->aspect.w, it->aspect.h);
 
    evas_object_resize(obj, w, h);
 }
