@@ -31,7 +31,6 @@ void isf_imf_context_use_preedit_set (Ecore_IMF_Context* ctx, Eina_Bool use_pree
 Eina_Bool  isf_imf_context_filter_event (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 void isf_imf_context_prediction_allow_set (Ecore_IMF_Context* ctx, Eina_Bool prediction);
 void isf_imf_context_autocapital_type_set (Ecore_IMF_Context* ctx, Ecore_IMF_Autocapital_Type autocapital_type);
-void isf_imf_context_input_panel_layout_set (Ecore_IMF_Context* ctx, Ecore_IMF_Input_Panel_Layout layout);
 void isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx);
 void isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx);
 
