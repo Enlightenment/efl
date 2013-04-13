@@ -104,7 +104,7 @@ evas_image_load_file_data_webp(Evas_Img_Load_Params *ilp, const char *file, cons
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         free(data);
-        goto close_file;
+        return EINA_FALSE;
      }
    // XXX: this copy of the surface is inefficient
    memcpy(ilp->buffer, decoded, width * height * 4);
