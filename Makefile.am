@@ -234,21 +234,40 @@ pkgconfig_DATA += pc/ecore-audio.pc
 endif
 
 # Cmake configs:
-cmakeconfigdir = ${prefix}/share/cmake/Modules/
-cmakeconfig_DATA = cmakeconfig/EinaConfig.cmake \
-		   cmakeconfig/EinaConfigVersion.cmake \
-		   cmakeconfig/EoConfig.cmake \
-		   cmakeconfig/EoConfigVersion.cmake \
-		   cmakeconfig/EetConfig.cmake \
-		   cmakeconfig/EetConfigVersion.cmake \
-		   cmakeconfig/EvasConfig.cmake \
-		   cmakeconfig/EvasConfigVersion.cmake \
-		   cmakeconfig/EcoreConfig.cmake \
-		   cmakeconfig/EcoreConfigVersion.cmake \
-		   cmakeconfig/EdjeConfig.cmake \
-		   cmakeconfig/EdjeConfigVersion.cmake \
-		   cmakeconfig/EfreetConfig.cmake \
-		   cmakeconfig/EfreetConfigVersion.cmake
+eina_cmakeconfigdir = $(libdir)/cmake/Eina/
+eina_cmakeconfig_DATA = \
+cmakeconfig/EinaConfig.cmake \
+cmakeconfig/EinaConfigVersion.cmake
+
+eo_cmakeconfigdir = $(libdir)/cmake/Eo/
+eo_cmakeconfig_DATA = \
+cmakeconfig/EoConfig.cmake \
+cmakeconfig/EoConfigVersion.cmake
+
+eet_cmakeconfigdir = $(libdir)/cmake/Eet/
+eet_cmakeconfig_DATA = \
+cmakeconfig/EetConfig.cmake \
+cmakeconfig/EetConfigVersion.cmake
+
+evas_cmakeconfigdir =  $(libdir)/cmake/Evas/
+evas_cmakeconfig_DATA = \
+cmakeconfig/EvasConfig.cmake \
+cmakeconfig/EvasConfigVersion.cmake
+
+ecore_cmakeconfigdir =  $(libdir)/cmake/Ecore/
+ecore_cmakeconfig_DATA = \
+cmakeconfig/EcoreConfig.cmake \
+cmakeconfig/EcoreConfigVersion.cmake
+
+edje_cmakeconfigdir =  $(libdir)/cmake/Edje/
+edje_cmakeconfig_DATA = \
+cmakeconfig/EdjeConfig.cmake \
+cmakeconfig/EdjeConfigVersion.cmake
+
+efreet_cmakeconfigdir =  $(libdir)/cmake/Efreet/
+efreet_cmakeconfig_DATA = \
+cmakeconfig/EfreetConfig.cmake \
+cmakeconfig/EfreetConfigVersion.cmake
 
 # D-Bus services:
 
