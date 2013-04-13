@@ -12,6 +12,8 @@
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
 
+Ecore_IMF_Context *show_req_ctx = NULL;
+
 EAPI Eina_List *
 ecore_imf_context_available_ids_get(void)
 {
@@ -251,6 +253,8 @@ ecore_imf_context_show(Ecore_IMF_Context *ctx)
                          "ecore_imf_context_show");
         return;
      }
+
+   show_req_ctx = ctx;
    if (ctx->klass->show) ctx->klass->show(ctx);
 }
 
@@ -263,6 +267,8 @@ ecore_imf_context_hide(Ecore_IMF_Context *ctx)
                          "ecore_imf_context_hide");
         return;
      }
+
+   show_req_ctx = NULL;
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
 
@@ -772,6 +778,7 @@ ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
         return;
      }
 
+   show_req_ctx = ctx;
    if (ctx->klass->show) ctx->klass->show(ctx);
 }
 
@@ -785,6 +792,7 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
         return;
      }
 
+   show_req_ctx = NULL;
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
 

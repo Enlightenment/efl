@@ -536,6 +536,14 @@ EAPI int                           ecore_imf_shutdown(void);
 EAPI void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));
 
 /**
+ * Hide the input panel.
+ * @return  EINA_TRUE if the input panel will be hidden
+            EINA_FALSE if the input panel is already in hidden state
+ * @ingroup Ecore_IMF_Lib_Group
+ */
+EAPI Eina_Bool                     ecore_imf_input_panel_hide(void);
+
+/**
  * Get the list of the available Input Method Context ids.
  *
  * Note that the caller is responsible for freeing the Eina_List
