@@ -36,6 +36,7 @@ extern int _ecore_imf_log_dom;
 
 typedef struct _Ecore_IMF_Module Ecore_IMF_Module;
 typedef struct _Ecore_IMF_Func_Node Ecore_IMF_Func_Node;
+typedef struct _Ecore_IMF_Input_Panel_Callback_Node Ecore_IMF_Input_Panel_Callback_Node;
 
 struct _Ecore_IMF_Context
 {
@@ -49,6 +50,7 @@ struct _Ecore_IMF_Context
    Eina_Bool                    (*retrieve_surrounding_func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
    void                          *retrieve_surrounding_data;
    Eina_List                     *callbacks;
+   Eina_List                     *input_panel_callbacks;
    Ecore_IMF_Autocapital_Type     autocapital_type;
    Ecore_IMF_Input_Panel_Layout   input_panel_layout;
    Ecore_IMF_Input_Panel_Lang     input_panel_lang;
@@ -72,6 +74,13 @@ struct _Ecore_IMF_Func_Node
    void (*func) ();
    const void *data;
    Ecore_IMF_Callback_Type type;
+};
+
+struct _Ecore_IMF_Input_Panel_Callback_Node
+{
+   void (*func) ();
+   const void *data;
+   Ecore_IMF_Input_Panel_Event type;
 };
 
 void               ecore_imf_module_init(void);

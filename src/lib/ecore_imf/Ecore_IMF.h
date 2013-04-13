@@ -1475,6 +1475,28 @@ EAPI void                          ecore_imf_context_input_panel_event_callback_
 EAPI void                          ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value));
 
 /**
+ * Call a given input panel callback on the context @p ctx.
+ *
+ * @param ctx Ecore_IMF_Context.
+ * @param type The type of event that will trigger the callback
+ * @param value the event value
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI void                          ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, int value);
+
+/**
+ * Delete all input panel callback on the context @p ctx.
+ *
+ * Delete all input panel callback to be registered by ecore_imf_context_input_panel_event_callback_add()
+ *
+ * @param ctx Ecore_IMF_Context.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI void                          ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx);
+
+/**
  * Get the current language locale of the input panel.
  *
  * ex) fr_FR

@@ -190,6 +190,12 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
            free(fn);
      }
 
+   if (ctx->input_panel_callbacks)
+     {
+        EINA_LIST_FREE(ctx->input_panel_callbacks, fn)
+           free(fn);
+     }
+
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_NONE);
    free(ctx);
 }
@@ -268,7 +274,6 @@ ecore_imf_context_hide(Ecore_IMF_Context *ctx)
         return;
      }
 
-   show_req_ctx = NULL;
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
 
@@ -792,7 +797,6 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
         return;
      }
 
-   show_req_ctx = NULL;
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
 
@@ -1060,6 +1064,8 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
                                                  void (*func) (void *data, Ecore_IMF_Context *ctx, int value),
                                                  const void *data)
 {
+   Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
+
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
@@ -1067,8 +1073,16 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
         return;
      }
 
-   if (ctx->klass->input_panel_event_callback_add)
-     ctx->klass->input_panel_event_callback_add(ctx, type, func, (void *)data);
+   if (!func) return;
+
+   fn = calloc(1, sizeof (Ecore_IMF_Input_Panel_Callback_Node));
+   if (!fn) return;
+
+   fn->func = func;
+   fn->data = data;
+   fn->type = type;
+
+   ctx->input_panel_callbacks = eina_list_append(ctx->input_panel_callbacks, fn);
 }
 
 EAPI void
@@ -1076,6 +1090,10 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
                                                  Ecore_IMF_Input_Panel_Event type,
                                                  void (*func) (void *data, Ecore_IMF_Context *ctx, int value))
 {
+   Eina_List *l = NULL;
+   Eina_List *l_next = NULL;
+   Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
+
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
@@ -1083,8 +1101,70 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
         return;
      }
 
-   if (ctx->klass->input_panel_event_callback_del)
-     ctx->klass->input_panel_event_callback_del(ctx, type, func);
+   if (!func) return;
+   if (!ctx->input_panel_callbacks) return;
+
+   EINA_LIST_FOREACH_SAFE(ctx->input_panel_callbacks, l, l_next, fn)
+     {
+        if ((fn) && (fn->func == func) && (fn->type == type))
+          {
+             free(fn);
+             ctx->input_panel_callbacks = eina_list_remove_list(ctx->input_panel_callbacks, l);
+             return;
+          }
+     }
+}
+
+EAPI void
+ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, int value)
+{
+   Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
+   Eina_List *l = NULL;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_event_callback_call");
+        return;
+     }
+
+   EINA_LIST_FOREACH(ctx->input_panel_callbacks, l, fn)
+     {
+        if ((fn) && (fn->type == type) && (fn->func))
+          {
+             fn->func(fn->data, ctx, value);
+             if (type == ECORE_IMF_INPUT_PANEL_STATE_EVENT &&
+                 value == ECORE_IMF_INPUT_PANEL_STATE_HIDE &&
+                 show_req_ctx == ctx)
+               show_req_ctx = NULL;
+          }
+     }
+}
+
+EAPI void
+ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx)
+{
+   Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
+   Eina_List *l = NULL;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_event_callback_clear");
+        return;
+     }
+
+   for (l = ctx->input_panel_callbacks; l;)
+     {
+        fn = (Ecore_IMF_Input_Panel_Callback_Node *)l->data;
+
+        if (fn)
+          {
+             ctx->input_panel_callbacks = eina_list_remove(ctx->input_panel_callbacks, fn);
+             free (fn);
+          }
+        l = l->next;
+     }
 }
 
 EAPI void

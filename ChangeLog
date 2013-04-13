@@ -1,6 +1,7 @@
 2013-04-13  Jihoon Kim
 
         * Ecore_IMF: Add ecore_imf_input_panel_hide () API
+        * Ecore_IMF: Add ecore_imf_context_input_panel_event_callback_call, clear API
 
 2013-04-10  Rafael Antognolli
 
