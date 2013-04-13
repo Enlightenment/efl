@@ -396,14 +396,14 @@ ecore_hash_dump_graph(Ecore_Hash *hash)
    for (i = 0; i < ecore_prime_table[hash->size]; i++)
       if (hash->buckets[i])
         {
-           int n = 0;
+           unsigned int n = 0;
            Ecore_Hash_Node *node;
            for (node = hash->buckets[i]; node; node = node->next)
               n++;
-           printf("%d\t%u", i, n);
+           printf("%u\t%u", i, n);
         }
       else
-           printf("%d\t0",  i);
+           printf("%u\t0",  i);
 
 }
 

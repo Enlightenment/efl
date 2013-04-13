@@ -27,7 +27,7 @@ handler(void *data, void *buf, unsigned int len)
    char *str = malloc(sizeof(char) * len + 1);
    memcpy(str, buf, len);
    str[len] = '\0';
-   printf("received %d bytes\n", len);
+   printf("received %u bytes\n", len);
    printf("content: %s\n", (const char *)str);
    free(str);
    if (len && !strncmp(buf, "close", len < 5 ? len : 5))

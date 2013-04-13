@@ -199,7 +199,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
         if (!s)
           {
              /* Default to "Desk-<number>" */
-             sprintf(ss, "Desk-%d", i);
+             sprintf(ss, "Desk-%u", i);
              s = ss;
           }
 

@@ -213,7 +213,7 @@ _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, EDBus_Mess
     }
 }
 
-#define ARG "arg%d"
+#define ARG "arg%u"
 
 typedef struct _EDBus_Struct_Desc
 {

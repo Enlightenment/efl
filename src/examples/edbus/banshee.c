@@ -61,7 +61,7 @@ iterate_dict(void *data EINA_UNUSED, const void *key, EDBus_Message_Iter *var)
         unsigned count;
         if (!edbus_message_iter_arguments_get(var, "u", &count))
           printf("error2\n");
-        printf("PlaylistCount=%d\n", count);
+        printf("PlaylistCount=%u\n", count);
      }
    else if (!strcmp(skey, "Orderings"))
      {

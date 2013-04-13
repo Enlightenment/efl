@@ -97,7 +97,7 @@ _mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    len = strlen(buf);
    ecore_evas_data_set(ee, "text", buf);
 
-   printf("ecore extn socket txt = \"%s\" len=%d.", buf, len);
+   printf("ecore extn socket txt = \"%s\" len=%zu.", buf, len);
    ecore_evas_msg_send(ee, MSG_DOMAIN_CONTROL_OBJECT, MSG_ID_TEXT, buf, len);
 }
 

@@ -14,7 +14,7 @@ main(int argc, char **argv)
                 "\t%s get <file> <key>\n"
                 "\t%s del <file> <key>\n"
                 "\t%s set <file> <key> <value>\n",
-                argv[0], argv[0], argv[0]);
+                argv[0], argv[0], argv[0], argv[0]);
         return EXIT_FAILURE;
      }
 
@@ -29,7 +29,7 @@ main(int argc, char **argv)
 
         itr = eina_xattr_value_ls(argv[2]);
         EINA_ITERATOR_FOREACH(itr, xattr)
-          printf("\t%s: %.*s\n", xattr->name, xattr->length, xattr->value);
+          printf("\t%s: %.*s\n", xattr->name, (int)xattr->length, xattr->value);
         eina_iterator_free(itr);
 
         eina_shutdown();
@@ -68,8 +68,6 @@ main(int argc, char **argv)
      }
    else if (strcmp(argv[1], "set") == 0)
      {
-        size_t size = 0;
-        const char *value;
         Eina_Bool ret;
 
         if (argc < 5)

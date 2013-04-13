@@ -572,7 +572,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    memset(keyname, 0, sizeof(keyname));
    xkb_keysym_get_name(sym, keyname, sizeof(keyname));
    if (keyname[0] == '\0')
-     snprintf(keyname, sizeof(keyname), "Keycode-%i", code);
+     snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
    memset(string, 0, sizeof(string));
    if (xkb_keysym_to_utf8(sym, string, 32) <= 0)
