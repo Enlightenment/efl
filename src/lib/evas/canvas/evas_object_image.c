@@ -4042,7 +4042,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
-   if (is_v && was_v)
+   if (was_v)
      evas_object_render_pre_clipper_change(&e->clip_changes, eo_obj);
    /* if we restacked (layer or just within a layer) and don't clip anyone */
    if (obj->restack)
