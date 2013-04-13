@@ -74,7 +74,7 @@ config.rpath
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
 
-cmakeconfigdir = $(prefix)/share/cmake/Modules
+cmakeconfigdir = $(libdir)/cmake/Elementary
 cmakeconfig_DATA = \
 cmakeconfig/ElementaryConfig.cmake \
 cmakeconfig/ElementaryConfigVersion.cmake
