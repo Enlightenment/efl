@@ -25,6 +25,8 @@ compile img_bgra
 compile img_bgra_nomul
 compile tex
 compile tex_nomul
+compile tex_afill
+compile tex_nomul_afill
 
 compile img_21
 compile img_21_nomul
@@ -32,6 +34,8 @@ compile img_21_bgra
 compile img_21_bgra_nomul
 compile tex_21
 compile tex_21_nomul
+compile tex_21_afill
+compile tex_21_nomul_afill
 
 compile img_12
 compile img_12_nomul
@@ -39,6 +43,8 @@ compile img_12_bgra
 compile img_12_bgra_nomul
 compile tex_12
 compile tex_12_nomul
+compile tex_12_afill
+compile tex_12_nomul_afill
 
 compile img_22
 compile img_22_nomul
@@ -46,6 +52,8 @@ compile img_22_bgra
 compile img_22_bgra_nomul
 compile tex_22
 compile tex_22_nomul
+compile tex_22_afill
+compile tex_22_nomul_afill
 
 ## above section must have 21, 22 and 12 versions
 

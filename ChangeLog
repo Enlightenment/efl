@@ -1,3 +1,9 @@
+2013-04-14  Carsten Haitzler (The Rasterman)
+
+        * Evas: Work around new intel Mesa/xorg bug where alpha
+        channel in NON-ARGB windows is not filled in with 0xff even if all the
+        code does things right.
+
 2013-04-13  ChunEon Park
 
         * Evas: Don't be crashed even if the map image size is 0.

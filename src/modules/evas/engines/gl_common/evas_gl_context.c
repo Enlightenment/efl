@@ -1574,26 +1574,42 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
           {
              if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
                {
-                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                         SHADER_TEX_22_NOMUL, SHADER_TEX_22)].prog;
+                  if ((!tex->alpha) && (tex->pt->native))
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_22_NOMUL_AFILL, SHADER_TEX_22_AFILL)].prog;
+                  else
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_22_NOMUL, SHADER_TEX_22)].prog;
                   sam = 1;
                }
              else if ((smooth) && (sw >= (w * 2)))
                {
-                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                         SHADER_TEX_21_NOMUL, SHADER_TEX_21)].prog;
+                  if ((!tex->alpha) && (tex->pt->native))
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_21_NOMUL_AFILL, SHADER_TEX_21_AFILL)].prog;
+                  else
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_21_NOMUL, SHADER_TEX_21)].prog;
                   sam = 1;
                }
              else if ((smooth) && (sh >= (h * 2)))
                {
-                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                         SHADER_TEX_12_NOMUL, SHADER_TEX_12)].prog;
+                  if ((!tex->alpha) && (tex->pt->native))
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_12_NOMUL_AFILL, SHADER_TEX_12_AFILL)].prog;
+                  else
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_12_NOMUL, SHADER_TEX_12)].prog;
                   sam = 1;
                }
              else
                {
-                  prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
-                                                                         SHADER_TEX_NOMUL, SHADER_TEX)].prog;
+                  if ((!tex->alpha) && (tex->pt->native))
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_NOMUL_AFILL, SHADER_TEX_AFILL)].prog;
+                  else
+                    prog = gc->shared->shader[evas_gl_common_shader_choice(0, NULL, r, g, b, a,
+                                                                           SHADER_TEX_NOMUL, SHADER_TEX)].prog;
                }
           }
      }

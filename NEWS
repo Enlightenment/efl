@@ -149,6 +149,7 @@ Improvements:
     * Edje: use Eina_Cow to reduce memory usage.
     * Embryo: use eina_file_mkstemp().
     * Evas textblock : Added split cursor for BiDi text
+    * Evas works around MESA/intel xorg bug where alpha channel of non-argb windows is not filled in with 0xff.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

@@ -159,6 +159,25 @@ Evas_GL_Program_Source shader_tex_vert_src =
 };
 
 /////////////////////////////////////////////
+const char tex_afill_frag_glsl[] =
+#include "shader/tex_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_afill_frag_src =
+{
+   tex_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_afill_vert_glsl[] =
+#include "shader/tex_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_afill_vert_src =
+{
+   tex_afill_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
 const char tex_nomul_frag_glsl[] =
 #include "shader/tex_nomul_frag.h"
   ;
@@ -174,6 +193,25 @@ const char tex_nomul_vert_glsl[] =
 Evas_GL_Program_Source shader_tex_nomul_vert_src =
 {
    tex_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_nomul_afill_frag_glsl[] =
+#include "shader/tex_nomul_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_nomul_afill_frag_src =
+{
+   tex_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_nomul_afill_vert_glsl[] =
+#include "shader/tex_nomul_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_nomul_afill_vert_src =
+{
+   tex_nomul_afill_vert_glsl,
    NULL, 0
 };
 
@@ -276,6 +314,25 @@ Evas_GL_Program_Source shader_tex_21_vert_src =
 };
 
 /////////////////////////////////////////////
+const char tex_21_afill_frag_glsl[] =
+#include "shader/tex_21_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_afill_frag_src =
+{
+   tex_21_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_21_afill_vert_glsl[] =
+#include "shader/tex_21_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_afill_vert_src =
+{
+   tex_21_afill_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
 const char tex_21_nomul_frag_glsl[] =
 #include "shader/tex_21_nomul_frag.h"
   ;
@@ -291,6 +348,25 @@ const char tex_21_nomul_vert_glsl[] =
 Evas_GL_Program_Source shader_tex_21_nomul_vert_src =
 {
    tex_21_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_21_nomul_afill_frag_glsl[] =
+#include "shader/tex_21_nomul_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_nomul_afill_frag_src =
+{
+   tex_21_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_21_nomul_afill_vert_glsl[] =
+#include "shader/tex_21_nomul_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_21_nomul_afill_vert_src =
+{
+   tex_21_nomul_afill_vert_glsl,
    NULL, 0
 };
 
@@ -393,6 +469,25 @@ Evas_GL_Program_Source shader_tex_12_vert_src =
 };
 
 /////////////////////////////////////////////
+const char tex_12_afill_frag_glsl[] =
+#include "shader/tex_12_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_afill_frag_src =
+{
+   tex_12_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_12_afill_vert_glsl[] =
+#include "shader/tex_12_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_afill_vert_src =
+{
+   tex_12_afill_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
 const char tex_12_nomul_frag_glsl[] =
 #include "shader/tex_12_nomul_frag.h"
   ;
@@ -408,6 +503,25 @@ const char tex_12_nomul_vert_glsl[] =
 Evas_GL_Program_Source shader_tex_12_nomul_vert_src =
 {
    tex_12_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_12_nomul_afill_frag_glsl[] =
+#include "shader/tex_12_nomul_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_nomul_afill_frag_src =
+{
+   tex_12_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_12_nomul_afill_vert_glsl[] =
+#include "shader/tex_12_nomul_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_12_nomul_afill_vert_src =
+{
+   tex_12_nomul_afill_vert_glsl,
    NULL, 0
 };
 
@@ -510,6 +624,25 @@ Evas_GL_Program_Source shader_tex_22_vert_src =
 };
 
 /////////////////////////////////////////////
+const char tex_22_afill_frag_glsl[] =
+#include "shader/tex_22_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_afill_frag_src =
+{
+   tex_22_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_22_afill_vert_glsl[] =
+#include "shader/tex_22_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_afill_vert_src =
+{
+   tex_22_afill_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
 const char tex_22_nomul_frag_glsl[] =
 #include "shader/tex_22_nomul_frag.h"
   ;
@@ -525,6 +658,25 @@ const char tex_22_nomul_vert_glsl[] =
 Evas_GL_Program_Source shader_tex_22_nomul_vert_src =
 {
    tex_22_nomul_vert_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char tex_22_nomul_afill_frag_glsl[] =
+#include "shader/tex_22_nomul_afill_frag.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_nomul_afill_frag_src =
+{
+   tex_22_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+const char tex_22_nomul_afill_vert_glsl[] =
+#include "shader/tex_22_nomul_afill_vert.h"
+  ;
+Evas_GL_Program_Source shader_tex_22_nomul_afill_vert_src =
+{
+   tex_22_nomul_afill_vert_glsl,
    NULL, 0
 };
 
@@ -887,6 +1039,8 @@ static const struct {
   SHADER_SOURCE_LINE(IMG_BGRA_NOMUL, img_bgra_nomul),
   SHADER_SOURCE_LINE(TEX, tex),
   SHADER_SOURCE_LINE(TEX_NOMUL, tex_nomul),
+  SHADER_SOURCE_LINE(TEX_AFILL, tex_afill),
+  SHADER_SOURCE_LINE(TEX_NOMUL_AFILL, tex_nomul_afill),
    
   SHADER_SOURCE_LINE(IMG_21, img_21),
   SHADER_SOURCE_LINE(IMG_21_NOMUL, img_21_nomul),
@@ -894,6 +1048,8 @@ static const struct {
   SHADER_SOURCE_LINE(IMG_21_BGRA_NOMUL, img_21_bgra_nomul),
   SHADER_SOURCE_LINE(TEX_21, tex_21),
   SHADER_SOURCE_LINE(TEX_21_NOMUL, tex_21_nomul),
+  SHADER_SOURCE_LINE(TEX_21_AFILL, tex_21_afill),
+  SHADER_SOURCE_LINE(TEX_21_NOMUL_AFILL, tex_21_nomul_afill),
    
   SHADER_SOURCE_LINE(IMG_12, img_12),
   SHADER_SOURCE_LINE(IMG_12_NOMUL, img_12_nomul),
@@ -901,6 +1057,8 @@ static const struct {
   SHADER_SOURCE_LINE(IMG_12_BGRA_NOMUL, img_12_bgra_nomul),
   SHADER_SOURCE_LINE(TEX_12, tex_12),
   SHADER_SOURCE_LINE(TEX_12_NOMUL, tex_12_nomul),
+  SHADER_SOURCE_LINE(TEX_12_AFILL, tex_12_afill),
+  SHADER_SOURCE_LINE(TEX_12_NOMUL_AFILL, tex_12_nomul_afill),
    
   SHADER_SOURCE_LINE(IMG_22, img_22),
   SHADER_SOURCE_LINE(IMG_22_NOMUL, img_22_nomul),
@@ -908,6 +1066,8 @@ static const struct {
   SHADER_SOURCE_LINE(IMG_22_BGRA_NOMUL, img_22_bgra_nomul),
   SHADER_SOURCE_LINE(TEX_22, tex_22),
   SHADER_SOURCE_LINE(TEX_22_NOMUL, tex_22_nomul),
+  SHADER_SOURCE_LINE(TEX_22_AFILL, tex_22_afill),
+  SHADER_SOURCE_LINE(TEX_22_NOMUL_AFILL, tex_22_nomul_afill),
    
   SHADER_SOURCE_LINE(YUV, yuv),
   SHADER_SOURCE_LINE(YUV_NOMUL, yuv_nomul),

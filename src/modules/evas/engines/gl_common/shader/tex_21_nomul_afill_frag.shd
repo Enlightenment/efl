@@ -1,0 +1,18 @@
+#ifdef GL_ES
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#endif
+uniform sampler2D tex;
+varying vec2 tex_c;
+varying vec2 tex_s[2];
+varying vec4 div_s;
+void main()
+{
+   vec4 col00 = texture2D(tex, tex_c + tex_s[0]);
+   vec4 col01 = texture2D(tex, tex_c + tex_s[1]);
+   vec4 c = (col00 + col01) / div_s;
+   gl_FragColor = vec4(c.r, c.g, c.b, 1);
+}
