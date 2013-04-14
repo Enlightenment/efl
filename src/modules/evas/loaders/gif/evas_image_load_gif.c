@@ -36,6 +36,7 @@ struct _Gif_Frame
       int        delay;
       int        input;
    } frame_info;
+   int bg_val;
 };
 
 static Eina_Bool evas_image_load_file_data_gif_internal(Image_Entry *ie, Image_Entry_Frame *frame, int *error);
@@ -349,12 +350,6 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
         return EINA_FALSE;
      }
 
-   /* get the background value */
-   r = cmap->Colors[bg].Red;
-   g = cmap->Colors[bg].Green;
-   b = cmap->Colors[bg].Blue;
-   bg_val =  ARGB_JOIN(0xff, r, g, b);
-
    per_inc = 100.0 / (((double)w) * h);
    per = 0.0;
    cur_h = scale_h;
@@ -401,6 +396,8 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                {
                   gif_frame2 = (Gif_Frame *)(new_frame->info);
                   disposal = gif_frame2->frame_info.disposal;
+				  gif_frame->bg_val = gif_frame2->bg_val;
+				  bg_val = gif_frame->bg_val;
                }
              switch(disposal) /* we only support disposal flag 0,1,2 */
                {
@@ -509,6 +506,13 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
      }
    else /* first frame decoding */
      {
+        /* get the background value */
+        r = cmap->Colors[bg].Red;
+        g = cmap->Colors[bg].Green;
+        b = cmap->Colors[bg].Blue;
+        bg_val =  ARGB_JOIN(0xff, r, g, b);
+        gif_frame->bg_val = bg_val;
+
         memset(ptr, 0, siz);
 
         /* fill background color */

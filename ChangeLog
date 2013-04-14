@@ -1,3 +1,7 @@
+2013-04-14  Jiyoun Park
+
+        * Evas: fix gif decoding bug related with background color.
+
 2013-04-14  ChunEon Park
 
         * Evas: Don't update evas update area by the clipper if the image obj visible is changed.
