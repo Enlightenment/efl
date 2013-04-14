@@ -361,28 +361,30 @@ _scale_set(Eo *obj, void *_pd, va_list *list)
    double scale = va_arg(*list, double);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_TRUE;
-
    Edje *ed, *ged;
    Evas_Object *o;
    Eina_List *l;
    unsigned int i;
-
+   
    ed = _pd;
    if (ed->scale == scale) return;
    ed->scale = FROM_DOUBLE(scale);
    EINA_LIST_FOREACH(ed->groups, l, ged)
-      ged->scale = ed->scale;
+     ged->scale = ed->scale;
    EINA_LIST_FOREACH(ed->subobjs, l, o)
-      edje_object_calc_force(o);
-   for(i = 0; i < ed->table_parts_size; ++i)
+     {
+        const char *s = evas_object_type_get(o);
+        if ((s) && (!strcmp(s, "edje"))) edje_object_calc_force(o);
+     }
+   for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *ep;
         ep = ed->table_parts[i];
-        if ((ep->part->type == EDJE_PART_TYPE_BOX)
-            || (ep->part->type == EDJE_PART_TYPE_TABLE))
+        if ((ep->part->type == EDJE_PART_TYPE_BOX) ||
+            (ep->part->type == EDJE_PART_TYPE_TABLE))
           {
              EINA_LIST_FOREACH(ep->typedata.container->items, l, o)
-                edje_object_scale_set(o, scale);
+               edje_object_scale_set(o, scale);
           }
      }
    edje_object_calc_force(obj);
