@@ -1,3 +1,8 @@
+2013-04-15  ChunEon Park
+        * Evas: If an object goes to be hidden without replacing the cur/prev
+        state info, the object context can be corrupted at the next show time.
+        Now it replaces the cur/prev in that rare case.
+
 2013-04-15 Tom Hacohen
         * Evas textblock: Fixed a bug with deletion of ranges that end just
 	before a visual format.
