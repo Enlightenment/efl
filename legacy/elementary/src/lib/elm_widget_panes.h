@@ -20,6 +20,7 @@
 typedef struct _Elm_Panes_Smart_Data Elm_Panes_Smart_Data;
 struct _Elm_Panes_Smart_Data
 {
+   Evas_Object *event;
    struct
    {
       int       x_diff;
