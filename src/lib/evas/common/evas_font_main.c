@@ -496,9 +496,9 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
      {
         FT_Done_Glyph(fg->glyph);
         FTUNLOCK();
-        free(fg);
         if (!fi->fash) fi->fash = _fash_gl_new();
         if (fi->fash) _fash_gl_add(fi->fash, fg->index, (void *)(-1));
+        free(fg);
         return EINA_FALSE;
      }
    FTUNLOCK();
