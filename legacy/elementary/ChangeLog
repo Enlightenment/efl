@@ -1247,3 +1247,7 @@
 
         * Fix the calculation double type number.
         Round off to the nearest whole number.
+
+2013-04-15  Jaehwan Kim
+
+        * Add the feature for key events.

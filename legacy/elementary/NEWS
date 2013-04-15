@@ -60,6 +60,7 @@ Additions:
    * Add the API elm_scroller_page_scroll_limit_set/get.
    * Add elm_mapbuf_auto_set/get.
    * Add the API elm_scroller_single_direction_set/get.
+   * Add the feature for key events.
 
 Improvements:
 

@@ -28,7 +28,8 @@ struct _Elm_Toolbar_Smart_Data
    Evas_Object                          *bx, *more, *bx_more, *bx_more2;
    Evas_Object                          *menu_parent;
    Eina_Inlist                          *items;
-   Elm_Toolbar_Item                     *more_item, *selected_item;
+   Elm_Toolbar_Item                     *more_item;
+   Elm_Toolbar_Item                     *selected_item, *highlighted_item;
    Elm_Toolbar_Item                     *reorder_empty, *reorder_item;
    Elm_Toolbar_Shrink_Mode               shrink_mode;
    Elm_Icon_Lookup_Order                 lookup_order;

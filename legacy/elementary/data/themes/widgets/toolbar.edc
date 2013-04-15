@@ -390,6 +390,7 @@ group { name: "elm/toolbar/more/default";
 group { name: "elm/toolbar/item/default";
    images {
       image: "toolbar_sel.png" COMP;
+      image: "item_highlight.png" COMP;
    }
    data.item: "transition_animation_on" "1";
    parts {
@@ -665,6 +666,20 @@ group { name: "elm/toolbar/item/default";
             color: 255 255 255 255;
          }
       }
+      part { name: "highlight";
+         type: IMAGE;
+         description { state: "default" 0.0;
+            visible: 0;
+            image {
+                normal: "item_highlight.png";
+                border: 3 3 3 3;
+            }
+         }
+         description { state: "highlighted" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
       part { name: "event";
          type: RECT;
          mouse_events: 1;
@@ -827,6 +842,18 @@ group { name: "elm/toolbar/item/default";
          action: STATE_SET "default" 0.0;
          target: "elm.icon.clipper";
          target: "elm.icon_new.clipper";
+      }
+      program { name: "highlight_on";
+         signal: "elm,highlight,on";
+         source: "elm";
+         action: STATE_SET "highlighted" 0.0;
+         target: "highlight";
+      }
+      program { name: "highlight_off";
+         signal: "elm,highlight,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
       }
    }
 }
@@ -1397,6 +1424,20 @@ group { name: "elm/toolbar/item/item_centered";
             color: 255 255 255 153;
          }
       }
+      part { name: "highlight";
+         type: IMAGE;
+         description { state: "default" 0.0;
+            visible: 0;
+            image {
+                normal: "item_highlight.png";
+                border: 3 3 3 3;
+            }
+         }
+         description { state: "highlighted" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
       part { name: "event";
          type: RECT;
          mouse_events: 1;
@@ -1611,6 +1652,18 @@ group { name: "elm/toolbar/item/item_centered";
               set_state(PART:"padding_after_icon", "default", 0.0);
          }
       }
+      program { name: "highlight_on";
+         signal: "elm,highlight,on";
+         source: "elm";
+         action: STATE_SET "highlighted" 0.0;
+         target: "highlight";
+      }
+      program { name: "highlight_off";
+         signal: "elm,highlight,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
+      }
    }
 }
 
@@ -1642,6 +1695,34 @@ group { name: "elm/toolbar/object/default";
          type: SWALLOW;
          description { state: "default" 0.0;
          }
+      }
+      part { name: "highlight";
+         type: IMAGE;
+         description { state: "default" 0.0;
+            visible: 0;
+            image {
+                normal: "item_highlight.png";
+                border: 3 3 3 3;
+            }
+         }
+         description { state: "highlighted" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "highlight_on";
+         signal: "elm,highlight,on";
+         source: "elm";
+         action: STATE_SET "highlighted" 0.0;
+         target: "highlight";
+      }
+      program { name: "highlight_off";
+         signal: "elm,highlight,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
       }
    }
 }
