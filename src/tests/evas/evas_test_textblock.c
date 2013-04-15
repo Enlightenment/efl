@@ -1218,6 +1218,13 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
 
+   /* Range delete with empty paragraphs. */
+   evas_object_textblock_text_markup_set(tb, "<ps/><ps/><ps/><ps/><ps/>");
+   evas_textblock_cursor_pos_set(cur, 2);
+   evas_textblock_cursor_pos_set(main_cur, 3);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "<ps/><ps/><ps/><ps/>");
+
    /* Verify fmt position and REP_CHAR positions are the same */
    evas_object_textblock_text_markup_set(tb,
          "This is<ps/>an <item absize=93x152 vsize=ascent></>a.");

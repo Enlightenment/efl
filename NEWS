@@ -242,4 +242,5 @@ Fixes:
     * Evas: Don't update evas update area by the clipper if the image obj visible is changed.
     * Evas: fix gif decoding bug related with background color.
     * Evas: fix gif bug related with scale down decode.
+    * Evas textblock: Fixed a bug with deletion of ranges that end just a visual format.
 

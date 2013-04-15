@@ -1,3 +1,7 @@
+2013-04-15 Tom Hacohen
+        * Evas textblock: Fixed a bug with deletion of ranges that end just
+	before a visual format.
+
 2013-04-14  Jiyoun Park
 
         * Evas: fix gif bug related with scale down decode.
