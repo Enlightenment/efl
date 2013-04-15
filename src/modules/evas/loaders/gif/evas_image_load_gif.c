@@ -396,8 +396,8 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                {
                   gif_frame2 = (Gif_Frame *)(new_frame->info);
                   disposal = gif_frame2->frame_info.disposal;
-				  gif_frame->bg_val = gif_frame2->bg_val;
-				  bg_val = gif_frame->bg_val;
+                  gif_frame->bg_val = gif_frame2->bg_val;
+                  bg_val = gif_frame->bg_val;
                }
              switch(disposal) /* we only support disposal flag 0,1,2 */
                {
