@@ -228,15 +228,15 @@ _polygon_points_clear(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Polygon *o = _pd;
+   void *list_data;
    int is, was;
 
    was = evas_object_is_in_output_rect(eo_obj, obj,
                                        obj->layer->evas->pointer.x,
                                        obj->layer->evas->pointer.y, 1, 1);
-   while (o->points)
+   EINA_LIST_FREE(o->points, list_data)
      {
-        free(o->points->data);
-        o->points = eina_list_remove(o->points, o->points->data);
+        free(list_data);
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -288,11 +288,11 @@ static void
 evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   void *list_data;
    /* free obj */
-   while (o->points)
+   EINA_LIST_FREE(o->points, list_data)
      {
-        free(o->points->data);
-        o->points = eina_list_remove(o->points, o->points->data);
+        free(list_data);
      }
    o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
                                                                         obj->layer->evas->engine.data.context,
