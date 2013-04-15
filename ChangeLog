@@ -1,5 +1,9 @@
 2013-04-14  Jiyoun Park
 
+        * Evas: fix gif bug related with scale down decode.
+
+2013-04-14  Jiyoun Park
+
         * Evas: fix gif decoding bug related with background color.
 
 2013-04-14  ChunEon Park

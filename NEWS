@@ -240,5 +240,6 @@ Fixes:
     * Edje entry: When cursor is located to each edge, entry now doesn't grab events for cursor movement.
     * Evas map: don't be crashed even if image size is 0.
     * Evas: Don't update evas update area by the clipper if the image obj visible is changed.
-	* Evas: fix gif decoding bug related with background color.
+    * Evas: fix gif decoding bug related with background color.
+    * Evas: fix gif bug related with scale down decode.
 
