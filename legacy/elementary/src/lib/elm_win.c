@@ -1659,14 +1659,6 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
             EE_ENGINE_COMPARE(ee, ELM_OPENGL_COCOA))
      {
      }
-   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_16_X11))
-     {
-        if (ee) xwin = ecore_evas_software_x11_16_window_get(ee);
-     }
-   else if (EE_ENGINE_COMPARE(ee, ELM_SOFTWARE_8_X11))
-     {
-        if (ee) xwin = ecore_evas_software_x11_8_window_get(ee);
-     }
    else if (EE_ENGINE_COMPARE(ee, ELM_OPENGL_X11))
      {
         if (ee) xwin = ecore_evas_gl_x11_window_get(ee);
@@ -2617,51 +2609,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
                   FALLBACK_STORE("Software X11");
                }
           }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_DIRECTFB))
-          {
-             tmp_sd.ee = ecore_evas_directfb_new(NULL, 1, 0, 0, 1, 1);
-             FALLBACK_TRY("Software DirectFB");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
-               }
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
-          {
-             tmp_sd.ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Software-16");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
-               }
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
-          {
-             tmp_sd.ee = ecore_evas_software_x11_8_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Software-8");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
-               }
-          }
         else if (ENGINE_COMPARE(ELM_OPENGL_X11))
           {
              int opt[10];
@@ -2696,11 +2643,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           {
              tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              FALLBACK_TRY("Software Win32");
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
-          {
-             tmp_sd.ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
-             FALLBACK_TRY("Software-16-WinCE");
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_PSL1GHT))
           {
