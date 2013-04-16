@@ -3080,7 +3080,6 @@ _elm_entry_smart_theme_enable(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_lis
    *enable = EINA_FALSE;
 }
 
-
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
 {

@@ -319,7 +319,7 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    /* function already prints error messages, if any */
    int_ret = elm_widget_theme_object_set
-       (obj, wd->resize_obj, sd->klass, sd->group,
+      (obj, wd->resize_obj, sd->klass, sd->group,
        elm_widget_style_get(obj));
 
    edje_object_mirrored_set
