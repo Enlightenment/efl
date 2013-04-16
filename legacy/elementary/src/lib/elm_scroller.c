@@ -1041,9 +1041,9 @@ _page_relative_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    double h_pagerel = va_arg(*list, double);
    double v_pagerel = va_arg(*list, double);
 
-   eo_do(obj, elm_scrollable_interface_paging_get(NULL, NULL, &pagesize_h, &pagesize_v));
-
-   eo_do(obj, elm_scrollable_interface_paging_set(h_pagerel, v_pagerel, pagesize_h, pagesize_v));
+   eo_do(obj,
+         elm_scrollable_interface_paging_get(NULL, NULL, &pagesize_h, &pagesize_v),
+         elm_scrollable_interface_paging_set(h_pagerel, v_pagerel, pagesize_h, pagesize_v));
 }
 
 EAPI void
