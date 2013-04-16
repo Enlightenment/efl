@@ -363,7 +363,7 @@ START_TEST(eeze_test_sensor_read)
    int ret = 0;
    float x, y, z;
    int acc;
-   unsigned long long timestamp;
+   double timestamp;
    Eina_Bool rc = EINA_FALSE;
 
    ecore_init();
@@ -499,7 +499,7 @@ event_cb(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Eeze_Sensor_Obj *sens = NULL;
    int acc;
-   unsigned long long timestamp;
+   double timestamp;
    Eina_Bool rc = EINA_FALSE;
 
    sens = event;

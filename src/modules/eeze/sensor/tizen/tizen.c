@@ -165,6 +165,15 @@ tizen_to_eeze(sesnor_type_e type)
      }
 }
 
+/* We receive the timestamp in nanoseconds from the Tizen system lib. Convert
+ * it to seconds as floating point value which is used in our public API.
+  */
+double
+clock_convert(unsigned long long timestamp)
+{
+   return ((double)timestamp) / 1000000000.0;
+}
+
 /* All following callback function work with the same scheme.
  * They are callbacks coming in from the tizen system sensor library. With the
  * data we receive we update the matching sensor object to always have the
@@ -189,7 +198,7 @@ accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
@@ -209,7 +218,7 @@ gravity_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float 
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
@@ -229,7 +238,7 @@ linear_acceleration_cb(unsigned long long timestamp, sensor_data_accuracy_e accu
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
@@ -250,7 +259,7 @@ device_orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    obj->data[0] = yaw;
    obj->data[1] = pitch;
    obj->data[2] = roll;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
@@ -270,7 +279,7 @@ magnetic_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
@@ -290,7 +299,7 @@ orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, fl
    obj->data[0] = azimuth;
    obj->data[1] = pitch;
    obj->data[2] = roll;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
@@ -310,7 +319,7 @@ gyroscope_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, floa
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
@@ -329,7 +338,7 @@ light_cb(unsigned long long timestamp, float lux, void *user_data)
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = lux;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
@@ -348,7 +357,7 @@ proximity_cb(unsigned long long timestamp, float distance, void *user_data)
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = distance;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
@@ -367,7 +376,7 @@ snap_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = snap;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
@@ -386,7 +395,7 @@ shake_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_d
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = shake;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
@@ -406,7 +415,7 @@ panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
@@ -426,7 +435,7 @@ panning_browse_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
@@ -446,7 +455,7 @@ tilt_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
@@ -464,7 +473,7 @@ facedown_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
@@ -484,7 +493,7 @@ directcall_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, NULL, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
@@ -504,7 +513,7 @@ smart_alert_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, NULL, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
@@ -524,7 +533,7 @@ no_move_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, NULL, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
@@ -544,7 +553,7 @@ doubletap_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
@@ -568,7 +577,7 @@ accelerometer_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
@@ -590,7 +599,7 @@ gravity_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, f
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
@@ -612,7 +621,7 @@ linear_acceleration_read_cb(unsigned long long timestamp, sensor_data_accuracy_e
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
@@ -635,7 +644,7 @@ device_orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e 
    obj->data[0] = yaw;
    obj->data[1] = pitch;
    obj->data[2] = roll;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
@@ -657,7 +666,7 @@ magnetic_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
@@ -679,7 +688,7 @@ orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accurac
    obj->data[0] = azimuth;
    obj->data[1] = pitch;
    obj->data[2] = roll;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
@@ -701,7 +710,7 @@ gyroscope_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy,
    obj->data[0] = x;
    obj->data[1] = y;
    obj->data[2] = z;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
@@ -722,7 +731,7 @@ light_read_cb(unsigned long long timestamp, float lux, void *user_data)
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = lux;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
@@ -743,7 +752,7 @@ proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
    /* We have to set this ourselves because we don't get it for this type */
    bj->accuracy = -1;
    obj->data[0] = distance;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
@@ -764,7 +773,7 @@ snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = snap;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
@@ -785,7 +794,7 @@ shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *u
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = shake;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
@@ -805,7 +814,7 @@ doubletap_read_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
@@ -827,7 +836,7 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
@@ -849,7 +858,7 @@ panning_browse_read_cb(unsigned long long timestamp, int x, int y, void *user_da
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
@@ -871,7 +880,7 @@ tilt_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
@@ -891,7 +900,7 @@ facedown_read_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 }
@@ -911,7 +920,7 @@ directcall_read_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL));
 }
@@ -931,7 +940,7 @@ smart_alert_read_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SMART_ALERT));
 }
@@ -951,7 +960,7 @@ no_move_read_cb(unsigned long long timestamp, void *user_data)
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
-   obj->timestamp = timestamp;
+   obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_NO_MOVE));
 }
@@ -999,7 +1008,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_GRAVITY:
@@ -1008,7 +1017,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_LINEAR_ACCELERATION:
@@ -1017,7 +1026,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_DEVICE_ORIENTATION:
@@ -1026,7 +1035,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = yaw;
         obj->data[1] = pitch;
         obj->data[2] = roll;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_MAGNETIC:
@@ -1035,7 +1044,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_ORIENTATION:
@@ -1044,7 +1053,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = azimuth;
         obj->data[1] = pitch;
         obj->data[2] = roll;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_GYROSCOPE:
@@ -1053,7 +1062,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_LIGHT:
@@ -1061,7 +1070,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         /* As we do not get any accuracy value from the system we go with -1 */
         obj->accuracy = -1;
         obj->data[0] = lux;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       case SENSOR_PROXIMITY:
@@ -1069,7 +1078,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         /* As we do not get any accuracy value from the system we go with -1 */
         obj->accuracy = -1;
         obj->data[0] = distance;
-        obj->timestamp = 0;
+        obj->timestamp = ecore_time_get();
         break;
 
       default:

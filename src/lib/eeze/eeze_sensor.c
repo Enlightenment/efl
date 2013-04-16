@@ -256,7 +256,7 @@ eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x)
 }
 
 EAPI Eina_Bool
-eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long long *timestamp)
+eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp)
 {
    if (!sens) return EINA_FALSE;
 

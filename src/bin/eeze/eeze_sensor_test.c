@@ -21,7 +21,7 @@ event_cb(void *data EINA_UNUSED, int ev_type, void *event)
    Eeze_Sensor_Obj *sens = NULL;
    float x, y, z;
    int acc;
-   unsigned long long timestamp;
+   double timestamp;
 
    sens = event;
    if (!sens) printf("can't find sensor!\n");
@@ -31,16 +31,16 @@ event_cb(void *data EINA_UNUSED, int ev_type, void *event)
    if (ev_type == EEZE_SENSOR_EVENT_ACCELEROMETER)
      {
         if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
-        printf("Accelerometer callback: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+        printf("Accelerometer callback: accuracy %i, x %f, y %f, z %f at time: %f\n", acc, x, y, z, timestamp);
      }
    else if (ev_type == EEZE_SENSOR_EVENT_FACEDOWN)
-     printf("Facedown callback at time: %lli\n", timestamp);
+     printf("Facedown callback at time: %f\n", timestamp);
    else if (ev_type == EEZE_SENSOR_EVENT_DOUBLETAP)
-     printf("Doubletap callback at time: %lli\n", timestamp);
+     printf("Doubletap callback at time: %f\n", timestamp);
    else if (ev_type == EEZE_SENSOR_EVENT_SHAKE)
      {
         if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
-        printf("Shake callback: accuracy %i, x %f at time: %lli\n", acc, x, timestamp);
+        printf("Shake callback: accuracy %i, x %f at time: %f\n", acc, x, timestamp);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -52,7 +52,7 @@ main(void)
    Eeze_Sensor_Obj *sens;
    float x, y, z;
    int acc;
-   unsigned long long timestamp;
+   double timestamp;
 
    /* Init the subsystems we use to make sure they are ready to use. */
    ecore_init();
@@ -74,7 +74,7 @@ main(void)
          /* Here we read the timestamp the data was read out from the physical
           * sensor. Can be used to detect how old the readout it.*/
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Magnetic output: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+         printf("Magnetic output: accuracy %i, x %f, y %f, z %f at time: %f\n", acc, x, y, z, timestamp);
          /* Free the sensor when we do not longer use it. */
          eeze_sensor_free(sens);
      }
@@ -87,7 +87,7 @@ main(void)
          if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Acceleromter output: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+         printf("Acceleromter output: accuracy %i, x %f, y %f, z %f at time: %f\n", acc, x, y, z, timestamp);
          eeze_sensor_free(sens);
      }
    else
@@ -99,7 +99,7 @@ main(void)
          if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Orientation output: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+         printf("Orientation output: accuracy %i, x %f, y %f, z %f at time: %f\n", acc, x, y, z, timestamp);
          eeze_sensor_free(sens);
      }
    else
@@ -111,7 +111,7 @@ main(void)
          if (!eeze_sensor_xyz_get(sens, &x, &y, &z)) printf("fail get xyz\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Gyroscope output: accuracy %i, x %f, y %f, z %f at time: %lli\n", acc, x, y, z, timestamp);
+         printf("Gyroscope output: accuracy %i, x %f, y %f, z %f at time: %f\n", acc, x, y, z, timestamp);
          eeze_sensor_free(sens);
      }
    else
@@ -123,7 +123,7 @@ main(void)
          if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Proximity output: accuracy %i, distance %f at time: %lli\n", acc, x, timestamp);
+         printf("Proximity output: accuracy %i, distance %f at time: %f\n", acc, x, timestamp);
          eeze_sensor_free(sens);
      }
    else
@@ -135,7 +135,7 @@ main(void)
          if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Light output: accuracy %i, lux %f at time: %lli\n", acc, x, timestamp);
+         printf("Light output: accuracy %i, lux %f at time: %f\n", acc, x, timestamp);
          eeze_sensor_free(sens);
      }
    else
@@ -153,7 +153,7 @@ main(void)
          if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
          if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
          if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
-         printf("Light output: accuracy %i, lux %f at time: %lli\n", acc, x, timestamp);
+         printf("Light output: accuracy %i, lux %f at time: %f\n", acc, x, timestamp);
          eeze_sensor_free(sens);
      }
    else

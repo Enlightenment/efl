@@ -132,7 +132,8 @@ EAPI int EEZE_SENSOR_EVENT_TEMPERATURE;
  * Object for a sensor type. Keeps information about the type and holds the
  * data for the accessor functions. As this information gets also updated by
  * asynchronous reads it might be a good idea to check the timestamp value to
- * see when the data has been updated. The timestamp is given in microseconds.
+ * see when the data has been updated. The timestamp is given as floating point
+ * value in seconds.
  *
  * You are not supposed to access the raw data values from here but use the
  * getter functions for it. Using the raw values from this struct might break
@@ -145,7 +146,7 @@ typedef struct _Eeze_Sensor_Obj
    Eeze_Sensor_Type type; /**< Sensor type see #Eeze_Sensor_Type */
    int   accuracy; /**< Accuracy of the sensor value */
    float data[3]; /**< Sensor data depending on the sensor type */
-   unsigned long long timestamp; /**< Timestamp of data read */
+   double timestamp; /**< Timestamp of data read */
    Eina_Bool continuous_flow; /**< FUTURE USE: Continuous flow of sensor read out */
 } Eeze_Sensor_Obj;
 
@@ -255,11 +256,11 @@ EAPI Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
  *
  * Access function to get the timestamp property from the sensor object. It
  * allows you to determine if the values have been updated since the last time
- * you requested them.
+ * you requested them. Timestamp is given as a floating point value in seconds.
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long long *timestamp);
+EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp);
 
 /**
  * @brief Read out sensor data
