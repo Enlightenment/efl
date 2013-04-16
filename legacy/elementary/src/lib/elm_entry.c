@@ -5235,6 +5235,7 @@ _anchor_hover_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    sd->anchor_hover.hover = NULL;
    sd->anchor_hover.pop = NULL;
 }
+/* END - ANCHOR HOVER */
 
 static void
 _elm_entry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
@@ -5483,4 +5484,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_entry_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_SCROLLABLE_INTERFACE, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-/* END - ANCHOR HOVER */
