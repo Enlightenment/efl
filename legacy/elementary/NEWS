@@ -207,6 +207,7 @@ Fixes:
    * Fix elc_player crash issue.
    * Fix the region_show/region_bring_in don't have a limit at a paging movement.
    * Fix the calculation double type number.
+   * Fix the policy is not changed when the theme is changed.
 
 Removals:
 

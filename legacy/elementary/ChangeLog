@@ -1251,3 +1251,8 @@
 2013-04-15  Jaehwan Kim
 
         * Add the feature for key events.
+
+2013-04-16  Jaehwan Kim
+
+        * Fix the policy is not changed when the theme is changed.
+        The "reload" signal from edc is necessary always.

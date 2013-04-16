@@ -979,6 +979,41 @@ _elm_scroll_anim_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static void
+_elm_scroll_policy_signal_emit(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   if (sid->hbar_flags == ELM_SCROLLER_POLICY_ON)
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,show_always,hbar", "elm");
+   else if (sid->hbar_flags == ELM_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,hide,hbar", "elm");
+   else
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,show_notalways,hbar", "elm");
+   if (sid->vbar_flags == ELM_SCROLLER_POLICY_ON)
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,show_always,vbar", "elm");
+   else if (sid->vbar_flags == ELM_SCROLLER_POLICY_OFF)
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,hide,vbar", "elm");
+   else
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
+   edje_object_message_signal_process(sid->edje_obj);
+   _elm_scroll_scroll_bar_size_adjust(sid);
+}
+
+static void
+_elm_scroll_reload_cb(void *data,
+                      Evas_Object *obj __UNUSED__,
+                      const char *emission __UNUSED__,
+                      const char *source __UNUSED__)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+   _elm_scroll_policy_signal_emit(sid);
+}
+
+static void
 _elm_scroll_vbar_drag_cb(void *data,
                          Evas_Object *obj __UNUSED__,
                          const char *emission __UNUSED__,
@@ -3263,6 +3298,8 @@ _scroll_edje_object_attach(Evas_Object *obj)
      (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
 
    edje_object_signal_callback_add
+     (sid->edje_obj, "reload", "elm", _elm_scroll_reload_cb, sid);
+   edje_object_signal_callback_add
      (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
      sid);
    edje_object_signal_callback_add
@@ -3931,26 +3968,7 @@ _elm_scroll_policy_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sid->hbar_flags = hbar;
    sid->vbar_flags = vbar;
-   if (sid->hbar_flags == ELM_SCROLLER_POLICY_ON)
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,show_always,hbar", "elm");
-   else if (sid->hbar_flags == ELM_SCROLLER_POLICY_OFF)
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,hide,hbar", "elm");
-   else
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,show_notalways,hbar", "elm");
-   if (sid->vbar_flags == ELM_SCROLLER_POLICY_ON)
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,show_always,vbar", "elm");
-   else if (sid->vbar_flags == ELM_SCROLLER_POLICY_OFF)
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,hide,vbar", "elm");
-   else
-     edje_object_signal_emit
-       (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
-   edje_object_message_signal_process(sid->edje_obj);
-   _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_scroll_policy_signal_emit(sid);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
    _elm_direction_arrows_eval(sid);
