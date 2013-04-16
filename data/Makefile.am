@@ -43,8 +43,8 @@ eo/libeo-gdb.py: eo/libeo-gdb.py.in
 	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/eo/libeo-gdb.py
 
 install-data-hook: eo/libeo-gdb.py
-	$(MKDIR_P) $(datadir)/gdb/auto-load/$(libdir)
-	$(INSTALL) $(builddir)/eo/libeo-gdb.py $(datadir)/gdb/auto-load/$(libdir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
+	$(MKDIR_P) $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)
+	$(INSTALL) $(builddir)/eo/libeo-gdb.py $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
 EXTRA_DIST += $(gdbscripts_SCRIPTS) eo/libeo-gdb.py.in
 
