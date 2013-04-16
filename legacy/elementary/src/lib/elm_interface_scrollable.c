@@ -3459,12 +3459,12 @@ _elm_scroll_objects_set(Eo *obj, void *_pd, va_list *list)
    if (!edje_object || !hit_rectangle) return;
 
    if (sid->edje_obj)
-       _scroll_edje_object_detach(obj);
+     _scroll_edje_object_detach(obj);
 
    sid->edje_obj = edje_object;
 
    if (sid->event_rect)
-       _scroll_event_object_detach(obj);
+     _scroll_event_object_detach(obj);
 
    sid->event_rect = hit_rectangle;
    evas_object_repeat_events_set(hit_rectangle, EINA_TRUE);
@@ -3479,7 +3479,7 @@ _elm_scroll_objects_set(Eo *obj, void *_pd, va_list *list)
         Evas_Object *base;
 
         base = edje_object_part_swallow_get
-            (sid->edje_obj, "elm.scrollbar.base");
+           (sid->edje_obj, "elm.scrollbar.base");
         if (!base)
           {
              base = evas_object_rectangle_add
