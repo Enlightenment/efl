@@ -475,7 +475,6 @@
  *
  * Eval sizing
  *
- *
  * @see elm_layout_sizing_eval
  */
 #define elm_obj_layout_sizing_eval() ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL)
@@ -578,7 +577,7 @@
  * @def elm_obj_layout_edje_object_can_access_set
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Set accessibility to all texblock(text) parts in the layout object
  *
  * @param[in] can_access
  * @param[out] ret
@@ -591,7 +590,7 @@
  * @def elm_obj_layout_edje_object_can_access_get
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Get accessibility state of texblock(text) parts in the layout object
  *
  * @param[out] ret
  *
@@ -606,8 +605,6 @@
  * No description supplied by the EAPI.
  *
  * @param[out] aliases
- *
- * @see elm_layout_smart_text_aliases_get
  */
 #define elm_obj_layout_smart_text_aliases_get(aliases) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), EO_TYPECHECK(const Elm_Layout_Part_Alias_Description **, aliases)
 
@@ -618,8 +615,6 @@
  * No description supplied by the EAPI.
  *
  * @param[out] aliases
- *
- * @see elm_layout_smart_content_aliases_get
  */
 #define elm_obj_layout_smart_content_aliases_get(aliases) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), EO_TYPECHECK(const Elm_Layout_Part_Alias_Description **, aliases)
 
@@ -642,8 +637,6 @@
  * No description supplied by the EAPI.
  *
  * @param[in] enable
- *
- * @see elm_layout_theme_enable
  */
 #define elm_obj_layout_theme_enable(enable) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_THEME_ENABLE), EO_TYPECHECK(Eina_Bool *, enable)
 
