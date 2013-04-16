@@ -1256,3 +1256,7 @@
 
         * Fix the policy is not changed when the theme is changed.
         The "reload" signal from edc is necessary always.
+
+2013-04-16  WooHyun Jung
+
+        * When entry is disabled, scrolling is also disabled.
