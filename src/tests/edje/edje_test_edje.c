@@ -45,11 +45,11 @@ test_layout_get(void)
    if (is_local == -1)
      {
         struct stat st;
-        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/edje/data/test_layout.edj", &st) == 0);
+        is_local = (stat(TESTS_BUILD_DIR"/data/test_layout.edj", &st) == 0);
      }
 
    if (is_local)
-     return PACKAGE_BUILD_DIR"/src/tests/edje/data/test_layout.edj";
+     return TESTS_BUILD_DIR"/data/test_layout.edj";
    else
      return PACKAGE_DATA_DIR"/data/test_layout.edj";
 }
