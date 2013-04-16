@@ -1,3 +1,7 @@
+# Implement eo_break that'll break on a macro/subid/whatever.
+
+import gdb
+
 class Eo_step(gdb.Command):
    def __init__(self):
       gdb.Command.__init__(self, "eo_step", gdb.COMMAND_OBSCURE)
@@ -15,3 +19,17 @@ class Eo_step(gdb.Command):
 
       print "Stopped at file " + gdb.selected_frame().find_sal().symtab.filename+ " line " + str(gdb.selected_frame().find_sal().line) + " function " + str(gdb.selected_frame().function())
 Eo_step()
+
+# Very crude, but works for the meanwhile
+class Eo_backtrace(gdb.Command):
+   def __init__(self):
+      gdb.Command.__init__(self, "eo_backtrace", gdb.COMMAND_OBSCURE)
+
+   def invoke (self, arg, from_tty):
+      btrace = gdb.execute("backtrace", False, to_string=True).split('\n')
+
+      for line in btrace:
+         if line.find("libeo.so") == -1 and line.find("src/lib/eo/") == -1:
+            print line
+
+Eo_backtrace()
