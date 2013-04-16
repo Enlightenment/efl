@@ -29,7 +29,7 @@ class Eo_backtrace(gdb.Command):
       btrace = gdb.execute("backtrace", False, to_string=True).split('\n')
 
       for line in btrace:
-         if line.find("libeo.so") == -1 and line.find("src/lib/eo/") == -1:
+         if line.find("libeo.so") == -1 and line.find("lib/eo/") == -1:
             print line
 
 Eo_backtrace()
