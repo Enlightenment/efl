@@ -510,7 +510,7 @@ _sel_eval(Evas_Object *obj,
              if (it->selected)
                {
                   it_last = it;
-                  it->selected = 0;
+                  it->selected = EINA_FALSE;
                }
              if (VIEW(it))
                {
@@ -562,8 +562,8 @@ _sel_eval(Evas_Object *obj,
                }
           }
 
-        if (om_closest) om_closest->selected = 1;
-        else if (it_closest) it_closest->selected = 1;
+        if (om_closest) om_closest->selected = EINA_TRUE;
+        else if (it_closest) it_closest->selected = EINA_TRUE;
 
         if (it_closest != it_last)
           {
@@ -1222,13 +1222,13 @@ elm_index_item_selected_set(Elm_Object_Item *it,
 
         if (it_last)
           {
-             it_last->selected = 0;
+             it_last->selected = EINA_FALSE;
              if (it_last->head)
                edje_object_signal_emit(VIEW(it_last->head), "elm,state,inactive", "elm");
              else
                edje_object_signal_emit(VIEW(it_last), "elm,state,inactive", "elm");
           }
-        it_sel->selected = 1;
+        it_sel->selected = EINA_TRUE;
         if (it_sel->head)
           edje_object_signal_emit(VIEW(it_sel->head), "elm,state,active", "elm");
         else
@@ -1244,7 +1244,7 @@ elm_index_item_selected_set(Elm_Object_Item *it,
      }
    else
      {
-        it_sel->selected = 0;
+        it_sel->selected = EINA_FALSE;
         if (it_sel->head)
           edje_object_signal_emit(VIEW(it_sel->head), "elm,state,inactive", "elm");
         else

@@ -52,7 +52,7 @@ struct _Elm_Index_Item
    Eina_List       *omitted;
    Elm_Index_Item  *head;
 
-   Eina_Bool        selected : 1;
+   Eina_Bool        selected : 1; /**< a flag that remembers an item is selected. this is set true when mouse down/move occur above an item and when elm_index_item_selected_set() API is called. */
 };
 
 typedef struct _Elm_Index_Omit Elm_Index_Omit;
