@@ -264,7 +264,7 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
 }
 
 static Eina_Bool
-_elm_toolbar_item_coordinates_calc(Elm_Object_Item *item,
+_elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item *item,
                                    Elm_Toolbar_Item_Scrollto_Type type,
                                    Evas_Coord *x,
                                    Evas_Coord *y,
@@ -623,7 +623,7 @@ _highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
 
 
 static void
-_elm_toolbar_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
    (void) src;
@@ -633,6 +633,7 @@ _elm_toolbar_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *li
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Elm_Toolbar_Item *it = NULL;
+   Evas_Coord x, y, w, h;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
@@ -707,6 +708,10 @@ _elm_toolbar_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *li
      edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
    sd->highlighted_item = it;
    edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,on", "elm");
+
+   if (_elm_toolbar_item_coordinates_calc(
+         sd->highlighted_item, ELM_TOOLBAR_ITEM_SCROLLTO_IN, &x, &y, &w, &h))
+     eo_do(obj, elm_scrollable_interface_region_bring_in(x, y, w, h));
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
@@ -3870,7 +3875,7 @@ elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type)
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
-   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+   if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
      eo_do(WIDGET(item), elm_scrollable_interface_content_region_show
      (x, y, w, h));
 }
@@ -3883,7 +3888,7 @@ elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type ty
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
-   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+   if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
      eo_do(WIDGET(item), elm_scrollable_interface_region_bring_in
      (x, y, w, h));
 }
