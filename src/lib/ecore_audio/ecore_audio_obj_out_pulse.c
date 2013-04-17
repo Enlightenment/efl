@@ -85,8 +85,9 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
   pa_stream_write(stream, buf, bread, free, 0, PA_SEEK_RELATIVE);
   if (bread < len)
     {
+      pa_operation_unref(pa_stream_trigger(stream, NULL, NULL));
       //in->ended = EINA_TRUE;
-      pa_operation_unref(pa_stream_drain(stream, NULL, NULL));
+      //pa_operation_unref(pa_stream_drain(stream, NULL, NULL));
     }
 }
 
