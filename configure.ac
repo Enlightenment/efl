@@ -2771,6 +2771,7 @@ want_ecore_imf="yes"
 want_ecore_imf_xim="no"
 want_ecore_imf_scim="no"
 want_ecore_imf_ibus="no"
+want_ecore_imf_wayland="no"
 
 if test "${have_wince}" = "yes"; then
    want_ecore_imf="no"
@@ -2782,6 +2783,9 @@ else
       want_ecore_imf_xim="yes"
       want_ecore_imf_scim="yes"
       want_ecore_imf_ibus="yes"
+      if test "${want_wayland}" = "yes"; then
+          want_ecore_imf_wayland="yes"
+      fi
    fi
 fi
 
@@ -2850,6 +2854,20 @@ fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_XIM], [test "x${have_ecore_imf_xim}" = "xyes"])
 EFL_ADD_FEATURE([ECORE_IMF], [xim])
+
+# wayland
+if test "x${want_ecore_imf_wayland}" = "xyes" ; then
+   PKG_CHECK_MODULES([WAYLAND],
+      [wayland-client],
+      [
+       have_ecore_imf_wayland="yes"
+       AC_DEFINE([BUILD_ECORE_IMF_WAYLAND], [1], [Ecore Imf Wayland Support])
+      ],
+      [have_ecore_imf_wayland="no"])
+fi
+
+AM_CONDITIONAL([BUILD_ECORE_IMF_WAYLAND], [test "x${have_ecore_imf_wayland}" = "xyes"])
+EFL_ADD_FEATURE([ECORE_IMF], [wayland], [${want_ecore_imf_wayland}])
 
 ### Checks for header files
 
