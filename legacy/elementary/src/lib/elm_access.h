@@ -10,13 +10,23 @@
 
 const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
 
-#define ELM_ACCESS_TYPE          0    /* when reading out widget or item
-                                       * this is read first */
-#define ELM_ACCESS_INFO          1    /* next read is info - this is
-                                       * normally label */
-#define ELM_ACCESS_STATE         2    /* if there is a state (eg checkbox)
-                                       * then read state out */
-#define ELM_ACCESS_CONTEXT_INFO  3    /* to give contextual information */
+enum _Elm_Access_Info_Type
+{
+   ELM_ACCESS_INFO_FIRST = -1,
+   ELM_ACCESS_INFO,         /* next read is info - this is
+                             * normally label */
+   ELM_ACCESS_TYPE,         /* when reading out widget or item
+                             * this is read first */
+   ELM_ACCESS_STATE,        /* if there is a state (eg checkbox)
+                             * then read state out */
+   ELM_ACCESS_CONTEXT_INFO, /* to give contextual information */
+   ELM_ACCESS_INFO_LAST
+};
+
+/**
+ * @typedef Elm_Access_Info_Type
+ */
+typedef enum _Elm_Access_Info_Type Elm_Access_Info_Type;
 
 typedef char *(*Elm_Access_Info_Cb)(void *data, Evas_Object *obj);
 typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Object_Item *item);

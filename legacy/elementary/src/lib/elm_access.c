@@ -137,17 +137,37 @@ _access_highlight_object_get(Evas_Object *obj)
 static void
 _access_highlight_read(Elm_Access_Info *ac, Evas_Object *obj)
 {
+   int type;
+   char *txt = NULL;
+   Eina_Strbuf *strbuf;
+
+   strbuf = eina_strbuf_new();
+
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      {
         if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
         _elm_access_object_hilight(obj);
-        _elm_access_read(ac, ELM_ACCESS_CANCEL, obj);
-        _elm_access_read(ac, ELM_ACCESS_TYPE,   obj);
-        _elm_access_read(ac, ELM_ACCESS_INFO,   obj);
-        _elm_access_read(ac, ELM_ACCESS_STATE,  obj);
-        _elm_access_read(ac, ELM_ACCESS_CONTEXT_INFO, obj);
-        _elm_access_read(ac, ELM_ACCESS_DONE,   obj);
+
+        for (type = ELM_ACCESS_INFO_FIRST + 1; type < ELM_ACCESS_INFO_LAST; type++)
+          {
+             txt = _elm_access_text_get(ac, type, obj);
+             if (txt && (strlen(txt) > 0))
+               {
+                  if (eina_strbuf_length_get(strbuf) > 0)
+                    eina_strbuf_append_printf(strbuf, ", %s", txt);
+                  else
+                    eina_strbuf_append(strbuf, txt);
+
+                  free(txt);
+               }
+          }
      }
+
+   txt = eina_strbuf_string_steal(strbuf);
+   eina_strbuf_free(strbuf);
+
+   _elm_access_say(txt);
+   free(txt);
 }
 
 static Eina_Bool
